@@ -4,6 +4,22 @@
 import sys
 import os
 import shutil
+import filecmp
+
+
+def files_are_not_the_same(src_file, dest_path):
+    dest_file = os.path.join(dest_path, src_file.split('/')[-1])
+    f1 = file(src_file)
+    f2 = file(dest_file)
+
+    i = 0
+    for l1, l2 in map(None, f1, f2):
+        if i > 2:
+            if l1 != l2:
+                return True
+        i += 1
+        
+    return False
 
 ipcon_src = ['ip_connection.c', 'ip_connection.h', 'ip_connection.py']
 ipcon_dest = ['imu-brick', 
@@ -75,9 +91,9 @@ for binding in bindings:
                                                       dest,
                                                       'software/bindings',
                                                       binding)
-                shutil.copy(src_file, dest_path)
-                print(' * {0} to {1}'.format(src, dest))
-#                print(' {0} to {1}'.format(src_file, dest_path))
+                if files_are_not_the_same(src_file, dest_path):
+                    shutil.copy(src_file, dest_path)
+                    print(' * {0} to {1}'.format(src, dest))
 
 print('')
 print('Copying bindings to Bricks:')
@@ -87,20 +103,24 @@ for binding in bindings:
     for f in os.listdir(src_file_path):
         if not f.endswith('.swp'):
             for b in bind_trans:
-                if b[0] in f:
+                if b[0] + '.' in f:
                     src_file = '{0}/{1}'.format(src_file_path, f)
                     dest_path = '{0}/{1}/{2}/{3}'.format(start_path,
                                                          b[1],
                                                          'software/bindings',
                                                          binding)
-                    shutil.copy(src_file, dest_path)
-                    print(' * {0} to {1} ({2})'.format(f, b[1], binding))
+                    if files_are_not_the_same(src_file, dest_path):
+                        print src_file
+                        print dest_path
+                        shutil.copy(src_file, dest_path)
+                        print(' * {0} to {1} ({2})'.format(f, b[1], binding))
 
 print('')
 print('Copying ip_connection to brickv:')
 src_file = '{0}/{1}'.format(path, 'python/ip_connection.py')
-shutil.copy(src_file, brickv_path_ipcon)
-print(' * ip_connection.py')
+if files_are_not_the_same(src_file, brickv_path_ipcon):
+    shutil.copy(src_file, brickv_path_ipcon)
+    print(' * ip_connection.py')
 
 print('')
 print('Copying Python bindings to brickv:')
@@ -113,8 +133,9 @@ for f in os.listdir(src_file_path):
                 src_file = '{0}/{1}'.format(src_file_path, f)
                 dest_path = '{0}/{1}'.format(brickv_path_plugin, b[2])
 
-                shutil.copy(src_file, dest_path)
-                print(' * {0}'.format(f))
+                if files_are_not_the_same(src_file, dest_path):
+                    shutil.copy(src_file, dest_path)
+                    print(' * {0}'.format(f))
 
 print('')
 print('Copying documentation and examples:')
@@ -132,6 +153,7 @@ for binding in bindings:
                     dest_path = '{0}/{1}/{2}'.format(start_path,
                                                      doc_path,
                                                      t[1])
-                    shutil.copy(src_file, dest_path)
-                    print(' * {0}'.format(f))
+                    if files_are_not_the_same(src_file, dest_path):
+                        shutil.copy(src_file, dest_path)
+                        print(' * {0}'.format(f))
 
