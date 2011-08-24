@@ -8,7 +8,7 @@ com = {
     'type': 'Bricklet',
     'name': ('IO4', 'io4'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for controlling up to 16 general purpose input/output pins',
+    'description': 'Device for controlling up to 4 general purpose input/output pins',
     'packets': []
 }
 
