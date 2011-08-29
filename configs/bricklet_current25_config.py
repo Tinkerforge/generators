@@ -20,7 +20,7 @@ com['packets'].append({
 'en':
 """
 Returns the current of the sensor. The value is in mA
-and between -25000mA and 25000.
+and between -25000mA and 25000mA.
 
 If you want to get the current periodically, it is recommended to use the
 callback :func:`Current` and set the period with 
