@@ -9,8 +9,11 @@ import filecmp
 
 def files_are_not_the_same(src_file, dest_path):
     dest_file = os.path.join(dest_path, src_file.split('/')[-1])
-    f1 = file(src_file)
-    f2 = file(dest_file)
+    try:
+        f1 = file(src_file)
+        f2 = file(dest_file)
+    except:
+        return True
 
     i = 0
     for l1, l2 in map(None, f1, f2):
