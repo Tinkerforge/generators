@@ -116,9 +116,13 @@ def make_parameter_list(packet):
 
 def make_header():
     date = datetime.datetime.now().strftime("%Y-%m-%d")
+    ref = '.. _{0}_{1}_c:\n'.format(com['name'][1], com['type'].lower())
     title = 'C - {0} {1}'.format(com['name'][0], com['type'])
     title_under = '='*len(title)
-    return '{0}\n{1}\n{2}\n'.format(gen_text.format(date), title, title_under)
+    return '{0}\n{1}\n{2}\n{3}\n'.format(gen_text.format(date), 
+                                         ref,
+                                         title, 
+                                         title_under)
 
 def make_examples():
     def title_from_file(f):
