@@ -134,10 +134,14 @@ def make_examples():
         return s[:-1]
 
     ex = """
-{0}
+This is the API site for the C bindings of the {1} {2}. General information
+on what this device does and the technical specifications can be found 
+:ref:`here <{3}>`.
 
-TODO: links zur api übersicht, zur hardware seite vom device, zur
-installation
+A tutorial on how to test the {1} {2} and get the first examples running
+can be found :ref:`here <{4}>`.
+
+{0}
 
 Examples
 --------
@@ -147,7 +151,7 @@ Examples
 {0}
 {1}
 
-TODO: link zum download der datei
+`Download <../../_static/examples/{2}>`__
 
 .. literalinclude:: {2}
  :language: c
@@ -157,9 +161,9 @@ TODO: link zum download der datei
 
     ref = '.. _{0}_{1}_c_examples:\n'.format(com['name'][1], 
                                              com['type'].lower())
-
-
-    ex = ex.format(ref)
+    hw_link = com['name'][1] + '_' + com['type'].lower()
+    hw_test = hw_link + '_test'
+    ex = ex.format(ref, com['name'][0], com['type'], hw_link, hw_test)
     files = find_examples()
     copy_files = []
     for f in files:
