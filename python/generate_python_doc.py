@@ -148,7 +148,7 @@ Examples
 {0}
 {1}
 
-`Download <../../_static/examples/{2}>`__
+`Download <https://github.com/Tinkerforge/{3}/raw/master/software/bindings/python/{4}>`__
 
 .. literalinclude:: {2}
  :language: python
@@ -167,7 +167,8 @@ Examples
         include = '{0}_{1}_Python_{2}'.format(com['name'][0], com['type'], f[0])
         copy_files.append((f[1], include))
         title = title_from_file(f[0])
-        ex += imp.format(title, '^'*len(title), include)
+        git_name = com['name'][1].replace('_', '-') + '-' + com['type'].lower()
+        ex += imp.format(title, '^'*len(title), include, git_name, f[0])
 
     copy_examples(copy_files)
     return ex
