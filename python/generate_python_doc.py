@@ -332,6 +332,8 @@ API
 ---
 
 {1}
+
+{2}
 """
     cre = create_str.format(com['name'][1],
                             com['name'][0], 
@@ -356,7 +358,13 @@ API
     ref = '.. _{0}_{1}_python_api:\n'.format(com['name'][1], 
                                              com['type'].lower())
 
-    return api.format(ref, api_str) 
+    api_desc = ''
+    try:
+        api_desc = com['api']
+    except:
+        pass
+
+    return api.format(ref, api_desc, api_str) 
         
 def make_files(com_new, directory):
     global com

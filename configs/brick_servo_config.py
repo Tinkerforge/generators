@@ -12,6 +12,16 @@ com = {
     'packets': []
 }
 
+com['api'] = """
+Every method of the Servo Brick API that has a *servo_num* parameter can
+address a servo with the servo number (0 to 6) or with a bitmask for the 
+servos, if the last bit is set. For example: "1" will address servo 1, 
+"(1 << 1) | (1 << 5) | (1 << 8)" will address servos 1 and 5, "0xFF" will
+address all seven servos, etc. This allows to set configurations to several
+servos with one function call. It is guaranteed that the changes will take
+effect in the same PWM period for all servos you specified in the bitmask.
+"""
+
 com['packets'].append({
 'type': 'method', 
 'name': ('Enable', 'enable'), 

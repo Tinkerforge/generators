@@ -318,6 +318,8 @@ Possible error codes are
 as defined in :file:`ip_connection.h`.
 
 {1}
+
+{2}
 """
     cre = create_str.format(com['name'][1], 
                             com['name'][0], 
@@ -343,8 +345,13 @@ as defined in :file:`ip_connection.h`.
 
     ref = '.. _{0}_{1}_c_api:\n'.format(com['name'][1], 
                                         com['type'].lower())
+    api_desc = ''
+    try:
+        api_desc = com['api']
+    except:
+        pass
 
-    return api.format(ref, api_str)
+    return api.format(ref, api_desc, api_str)
 
 def make_files(com_new, directory):
     global com
