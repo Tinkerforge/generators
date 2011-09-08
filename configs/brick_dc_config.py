@@ -417,7 +417,8 @@ The EmergencyShutdown callback is called if either the current consumption
 is too high (above 5A) or the temperature of the driver is too high 
 (above 175°C). These two possibilities are essentially the same, since the
 temperature will reach this threshold immediately if the motor draws too
-much current.
+much current. In case of an voltage below 3.3V (external/Stack) this
+callback is called as well.
 
 If this callback is called, the driver gets disabled at the same time. 
 That means, :func:`Enable` has to be called to drive the motor again.
