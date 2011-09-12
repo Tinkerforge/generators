@@ -436,7 +436,7 @@ That means, :func:`Enable` has to be called to drive the motor again.
 com['packets'].append({
 'type': 'signal', 
 'name': ('VelocityReached', 'velocity_reached'), 
-'elements': [('voltage', 'int16', 1, 'out')], 
+'elements': [('velocity', 'int16', 1, 'out')], 
 'doc': ['c', {
 'en':
 """
@@ -460,7 +460,7 @@ the set velocity is actually reached.
 com['packets'].append({
 'type': 'signal', 
 'name': ('CurrentVelocity', 'current_velocity'), 
-'elements': [('voltage', 'int16', 1, 'out')], 
+'elements': [('velocity', 'int16', 1, 'out')], 
 'doc': ['c', {
 'en':
 """

@@ -270,7 +270,7 @@ Sets the step mode of the stepper motor. Possible values are:
 A higher value will increase the resolution and
 decrease the torque of the stepper motor.
 
-The default value is 1 (Full Step).
+The default value is 8 (Eighth Step).
 """,
 'de':
 """
