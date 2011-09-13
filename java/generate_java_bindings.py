@@ -350,6 +350,7 @@ def make_methods():
 \t\tbb.order(ByteOrder.LITTLE_ENDIAN);
 
 {1}
+\t\tsemaphoreWrite.release();
 \t\treturn {2};"""
 
     loop = """\t\tfor(int i = 0; i < {0}; i++) {{
