@@ -171,7 +171,7 @@ public class IPConnection {
 			return length;
 		}
 		
-		if(device.callbacks[type] != null) {
+		if(device.callbacks[type] != null && device.listenerObjects[type] != null) {
 			device.callbacks[type].callback(data);
 		}
 
