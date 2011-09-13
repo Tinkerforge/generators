@@ -193,7 +193,7 @@ def make_parameter_list(packet):
         java_type = get_java_type(element[1])
         name = to_camel_case(element[0])
         arr = ''
-        if element[2] > 1:
+        if element[2] > 1 and element[1] != 'string':
             arr = '[]'
        
         param.append('{0}{1} {2}'.format(java_type, arr, name))
@@ -356,6 +356,12 @@ def make_methods():
 {1}
 \t\t}}
 """
+    string_loop = """\t\ttry {{
+\t\t{0}
+\t\t\t}} catch(Exception e) {{
+\t\t\t\tbb.put((byte)0);
+\t\t\t}}"""
+
     cls = com['name'][0]
     for packet in com['packets']:
         if packet['type'] != 'method':
@@ -367,19 +373,26 @@ def make_methods():
         size = str(get_bb_size(packet['elements']))
         name_upper = packet['name'][1].upper()
 
-# TODO: string
         bbputs = ''
         bbput = '\t\tbb.put{0}(({1}){2});'
         for element in packet['elements']:
             if element[3] != 'in':
                 continue
 
+            name = to_camel_case(element[0])
+            if element[1] == 'bool':
+                name = '({0} ? 1 : 0)'.format(name)
+
             bbput_format = bbput.format(get_put_type(element[1]),
                                         get_put_java_type(element[1]), 
-                                        to_camel_case(element[0]))
+                                        name)
 
             if element[2] > 1:
-                bbput_format = bbput_format.replace(');', '[i]);')
+                if element[1] == 'string':
+                    bbput_format = bbput_format.replace(');', '.charAt(i));')
+                    bbput_format = string_loop.format(bbput_format)
+                else:
+                    bbput_format = bbput_format.replace(');', '[i]);')
                 bbput_format = loop.format(element[2], '\t' + bbput_format)
 
             bbputs += bbput_format + '\n'

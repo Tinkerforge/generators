@@ -98,6 +98,8 @@ for binding in bindings:
                                                       dest,
                                                       'software/bindings',
                                                       binding)
+                if ".java" in src_file:
+                    dest_path += 'com/tinkerforge'
                 if files_are_not_the_same(src_file, dest_path):
                     shutil.copy(src_file, dest_path)
                     print(' * {0} to {1}'.format(src, dest))
