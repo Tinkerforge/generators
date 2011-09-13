@@ -90,7 +90,7 @@ class RecvLoopThread extends Thread {
 				}
 			} 
 			catch(java.io.IOException e) {
-				e.printStackTrace();
+				return;
 			}
 		}
 	}
