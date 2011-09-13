@@ -1,8 +1,20 @@
+/*
  * Copyright (c) 2011, Olaf Lüke (olaf@tinkerforge.com)
+ *
+ * Redistribution and use in source and binary forms of this file, 
+ * with or without modification, are permitted.
+ */
 
 package com.tinkerforge;
 
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.SynchronousQueue;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 class Device {
 	long uid = (long)0;
