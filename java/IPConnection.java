@@ -52,7 +52,6 @@ class RecvLoopThread extends Thread {
 	}
 
 	public void run() {
-		System.out.println("start run");
 		byte[] data = new byte[8192];
 		byte[] tmp = new byte[8192];
 		
@@ -63,7 +62,6 @@ class RecvLoopThread extends Thread {
 			e.printStackTrace();
 		}
 
-		System.out.println("start run loop");
 		while(ipcon.recvLoopFlag) {
 			try {
 				int length = ipcon.in.read(data, 0, 8192);
@@ -81,16 +79,8 @@ class RecvLoopThread extends Thread {
 					return;
 				}
 				
-				String recvStr = new String("recv:");
-				for(int i = 0; i < length; i++) {
-					recvStr += " " + data[i];
-				}
-				
-				System.out.println(recvStr);
-				
 				int handled = 0;
 				while(length != handled) {
-					System.out.println(length + " " + handled);
 					if(handled == 0) {
 						handled += ipcon.handleMessage(data);
 					} else {
@@ -145,22 +135,16 @@ public class IPConnection {
 	}
 	
 	public IPConnection(String host, int port) throws java.io.IOException {
-		System.out.println("constructor start");
-		
 		sock = new Socket(host, port);
 		out = sock.getOutputStream();
 		out.flush();
 
-		System.out.println("before rlt");
 		recvLoopThread = new RecvLoopThread(this);
-		System.out.println("before start");
 		recvLoopThread.start();
-		System.out.println("constructor end");
 	}
 	
 	public int handleMessage(byte[] data) {
 		byte type = getTypeFromData(data);
-		System.out.println("type: " + type);
 		
 		if(type == TYPE_GET_STACK_ID) {
 			return handleAddDevice(data);
@@ -169,9 +153,7 @@ public class IPConnection {
 		}
 		
 		byte stackID = getStackIDFromData(data);
-		System.out.println("stack_id: " + stackID);
 		int length = getLengthFromData(data);
-		System.out.println("length: " + length);
 		
 		if(devices[stackID] == null) {
 			System.out.println("Message with unknown Stack ID, discarded: " + stackID);
@@ -189,11 +171,7 @@ public class IPConnection {
 			return length;
 		}
 		
-		
-		System.out.println("probably callback");
-		
 		if(device.callbacks[type] != null) {
-			System.out.println("probably callback!");
 			device.callbacks[type].callback(data);
 		}
 
@@ -235,7 +213,6 @@ public class IPConnection {
 	}
 	
 	public void write(Device device, ByteBuffer bb, byte type, boolean hasReturn) {
-		System.out.println("write: " + type);
 		try {
 			device.semaphoreWrite.acquire();
 		} catch (InterruptedException e) {
@@ -259,15 +236,12 @@ public class IPConnection {
 			device.semaphoreWrite.release();
 		}
 		
-		System.out.println("write end: " + type);
 	}
 	
 	public int handleAddDevice(byte[] data) {
-		System.out.println("handleAddDevice");
 		int length = getLengthFromData(data);
 		
 		if(addDevice == null) {
-			System.out.println("addDevice null");
 			return length;
 		}
 		
@@ -281,14 +255,10 @@ public class IPConnection {
 			addDevice = null;
 		}
 		
-		
-		System.out.println("handleAddDevice end");
-		
 		return length;
 	}
 	
 	public int handleEnumerate(byte[] data) {
-		System.out.println("handleEnumerate");
 		int length = getLengthFromData(data);
 		
 		if(enumerateListener == null) {
@@ -315,7 +285,6 @@ public class IPConnection {
 	}
 
 	public void destroy() {
-		System.out.println("destroy start");
 		recvLoopFlag = false;
 		try {
 			if(in != null) {
@@ -343,8 +312,6 @@ public class IPConnection {
 		catch(java.io.IOException e) {
 			e.printStackTrace();
 		}
-
-		System.out.println("destroy end");
 	}
 
 	public void enumerate(EnumerateListener enumerateListener) {
@@ -390,8 +357,6 @@ public class IPConnection {
 		}
 		
 		device.ipcon = this;
-
-		System.out.println("uid " + device.uid);
 	}
 	
 	public void enumerate(Object o) {
