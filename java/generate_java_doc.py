@@ -253,7 +253,7 @@ def make_api():
     create_str = """
 .. py:function:: {1}(uid)
 
- Creates a {0} object with the unique device ID *uid*::
+ Creates an {0} object with the unique device ID *uid*::
 
     {0} = {1}("YOUR_DEVICE_UID");
 
