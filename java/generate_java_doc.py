@@ -85,8 +85,11 @@ def fix_links(text):
 
         text = text.replace(name_false, name_right)
 
-    text = text.replace('Callback', 'Listener')
-    text = text.replace('callback', 'listener')
+
+    text = text.replace('Callback ', 'Listener ')
+    text = text.replace(' Callback', ' Listener')
+    text = text.replace('callback ', 'listener ')
+    text = text.replace(' callback', ' listener')
 
     return text
 
