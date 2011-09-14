@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-Python Documentation Generator
+Java Documentation Generator
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
-generator_python_doc.py: Generator for Python documentation
+generator_java_doc.py: Generator for Java documentation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License 
@@ -69,27 +69,39 @@ def shift_right(text, n):
     return text.replace('\n', '\n' + ' '*n)
 
 def fix_links(text):
+    cb_link = ':java:func:`{3} <{0}{1}.{2}Listener>`' 
+    fu_link = ':java:func:`{2}() <{0}{1}::{2}>`'
+
     cls = com['name'][0]
     for packet in com['packets']:
         name_false = ':func:`{0}`'.format(packet['name'][0])
         if packet['doc'][0] == 'c':
-            name_upper = packet['name'][1].upper()
-            name_right = ':py:attr:`{0}.CALLBACK_{1}`'.format(cls, name_upper)
+            name = packet['name'][0] 
+            name_lower = packet['name'][0][0].lower() + packet['name'][0][1:] 
+            name_right = cb_link.format(com['type'], cls, name, name_lower)
         else:
-            name_right = ':py:func:`{0}.{1}`'.format(cls, packet['name'][1])
+            name = packet['name'][0][0].lower() + packet['name'][0][1:] 
+            name_right = fu_link.format(com['type'], cls, name)
+
         text = text.replace(name_false, name_right)
+
+
+    text = text.replace('Callback ', 'Listener ')
+    text = text.replace(' Callback', ' Listener')
+    text = text.replace('callback ', 'listener ')
+    text = text.replace(' callback', ' listener')
 
     return text
 
 def find_examples():
     path = file_path
-    start_path = path.replace('/generators/python', '')
+    start_path = path.replace('/generators/java', '')
     board = '{0}-{1}'.format(com['name'][1], com['type'].lower())
     board = board.replace('_', '-')
-    board_path = os.path.join(start_path, board, 'software/bindings/python')
+    board_path = os.path.join(start_path, board, 'software/bindings/java')
     files = []
     for f in os.listdir(board_path):
-        if f.startswith('example_') and f.endswith('.py'):
+        if f.startswith('Example') and f.endswith('.java'):
             f_dir = '{0}/{1}'.format(board_path, f)
             lines = 0
             for line in open(os.path.join(f, f_dir)):
@@ -113,8 +125,8 @@ def copy_examples(cf):
 
 def make_header():
     date = datetime.datetime.now().strftime("%Y-%m-%d")
-    ref = '.. _{0}_{1}_python:\n'.format(com['name'][1], com['type'].lower())
-    title = 'Python - {0} {1}'.format(com['name'][0], com['type'])
+    ref = '.. _{0}_{1}_java:\n'.format(com['name'][1], com['type'].lower())
+    title = 'Java - {0} {1}'.format(com['name'][0], com['type'])
     title_under = '='*len(title)
     return '{0}\n{1}\n{2}\n{3}\n'.format(gen_text.format(date), 
                                          ref,
@@ -123,15 +135,15 @@ def make_header():
 
 def make_examples():
     def title_from_file(f):
-        f = f.replace('example_', '')
-        f = f.replace('.py', '')
+        f = f.replace('Example', '')
+        f = f.replace('.java', '')
         s = ''
         for l in f.split('_'):
             s += l[0].upper() + l[1:] + ' '
         return s[:-1]
 
     ex = """
-This is the API site for the C bindings of the {1} {2}. General information
+This is the API site for the Java bindings of the {1} {2}. General information
 on what this device does and the technical specifications can be found 
 :ref:`here <{3}>`.
 
@@ -148,15 +160,15 @@ Examples
 {0}
 {1}
 
-`Download <https://github.com/Tinkerforge/{3}/raw/master/software/bindings/python/{4}>`__
+`Download <https://github.com/Tinkerforge/{3}/raw/master/software/bindings/java/{4}>`__
 
 .. literalinclude:: {2}
- :language: python
+ :language: java
  :linenos:
  :tab-width: 4
 """
 
-    ref = '.. _{0}_{1}_python_examples:\n'.format(com['name'][1], 
+    ref = '.. _{0}_{1}_java_examples:\n'.format(com['name'][1], 
                                                   com['type'].lower())
     hw_link = com['name'][1] + '_' + com['type'].lower()
     hw_test = hw_link + '_test'
@@ -164,7 +176,7 @@ Examples
     files = find_examples()
     copy_files = []
     for f in files:
-        include = '{0}_{1}_Python_{2}'.format(com['name'][0], com['type'], f[0])
+        include = '{0}_{1}_Java_{2}'.format(com['name'][0], com['type'], f[0])
         copy_files.append((f[1], include))
         title = title_from_file(f[0])
         git_name = com['name'][1].replace('_', '-') + '-' + com['type'].lower()
@@ -173,104 +185,143 @@ Examples
     copy_examples(copy_files)
     return ex
 
-def make_parameter_list(packet):
-    params = []
-    for element in packet['elements']:
-        if element[3] != 'in':
-            continue
-        params.append(element[0])
-    return ", ".join(params)
+def to_camel_case(name):
+    names = name.split('_')
+    ret = names[0]
+    for n in names[1:]:
+        ret += n[0].upper() + n[1:]
+    return ret
 
-def make_parameter_desc(packet, io):
-    desc = '\n'
-    param = ' :param {0}: {1}\n'
-    for element in packet['elements']:
-        if element[3] != io:
-            continue
-        t = type_to_pytype(element)
-        desc += param.format(element[0], t)
+def get_java_type(typ):
+    forms = {
+        'int8' : 'byte',
+        'uint8' : 'short',
+        'int16' : 'short',
+        'uint16' : 'int',
+        'int32' : 'int',
+        'uint32' : 'long',
+        'int64' : 'long',
+        'uint64' : 'long',
+        'float' : 'float',
+        'bool' : 'boolean',
+        'string' : 'String',
+        'char' : 'char'
+    }
 
-    return desc
+    if typ in forms:
+        return forms[typ]
 
-def make_return_desc(packet):
-    ret = ' :rtype: {0}\n'
-    ret_list = []
-    for element in packet['elements']:
-        if element[3] != 'out':
-            continue
-        ret_list.append(type_to_pytype(element))
-    if len(ret_list) == 0:
-        return ret.format(None)
-    elif len(ret_list) == 1:
-        return ret.format(ret_list[0])
+    return ''
+
+def get_num_return(elements): 
+    num = 0
+    for element in elements:
+        if element[3] == 'out':
+            num += 1
+
+    return num
+
+def get_object_name(packet):
+    name = packet['name'][0]
+    if name.startswith('Get'):
+        name = name[3:]
+
+    return name
+
+def get_return_type(packet):
+    if get_num_return(packet['elements']) == 0:
+        return 'void'
+    if get_num_return(packet['elements']) > 2:
+        return get_object_name(packet)
     
-    return ret.format('(' + ', '.join(ret_list) + ')')
+    for element in packet['elements']:
+        if element[3] == 'out':
+            return get_java_type(element[1])
+
+def make_parameter_list(packet):
+    param = []
+    for element in packet['elements']:
+        if element[3] == 'out' and packet['type'] == 'method':
+            continue
+        java_type = get_java_type(element[1])
+        name = to_camel_case(element[0])
+        arr = ''
+        if element[2] > 1 and element[1] != 'string':
+            arr = '[]'
+       
+        param.append('{0}{1} {2}'.format(java_type, arr, name))
+    return ', '.join(param)
 
 def make_methods(typ):
     methods = ''
-    func_start = '.. py:function:: '
-    cls = com['name'][0]
+    func_start = '.. java:function:: '
+    cls = com['type'] + com['name'][0]
     for packet in com['packets']:
         if packet['type'] != 'method' or packet['doc'][0] != typ:
             continue
-        name = packet['name'][1]
+
+        ret_type = get_return_type(packet)
+        name = packet['name'][0][0].lower() + packet['name'][0][1:]
         params = make_parameter_list(packet)
-        pd = make_parameter_desc(packet, 'in')
-        r = make_return_desc(packet)
-        d = fix_links(shift_right(packet['doc'][1][lang], 1))
-        desc = '{0}{1}{2}'.format(pd, r, d)
-        func = '{0}{1}.{2}({3})\n{4}'.format(func_start, 
-                                             cls, 
-                                             name, 
-                                             params, 
-                                             desc)
+        desc = fix_links(shift_right(packet['doc'][1][lang], 1))
+        func = '{0}public {1} {2}::{3}({4})\n{5}'.format(func_start, 
+                                                 ret_type,
+                                                 cls, 
+                                                 name, 
+                                                 params, 
+                                                 desc)
         methods += func + '\n'
 
     return methods
 
 def make_callbacks():
+    cb = """
+.. java:function:: public class {0}{1}.{2}Listener()
+
+ .. java:function:: public void {3}({4})
+  :noindex:
+
+{5}
+"""
+
     cbs = ''
-    func_start = '.. py:attribute:: '
     cls = com['name'][0]
     for packet in com['packets']:
         if packet['type'] != 'signal':
             continue
 
-        param_desc = make_parameter_desc(packet, 'out')
-        desc = fix_links(shift_right(packet['doc'][1][lang], 1))
+        desc = fix_links(shift_right(packet['doc'][1][lang], 2))
+        params = make_parameter_list(packet)
 
-        func = '{0}{1}.CALLBACK_{2}\n{3}\n{4}'.format(func_start,
-                                                      cls,
-                                                      packet['name'][1].upper(),
-                                                      param_desc,
-                                                      desc)
-        cbs += func + '\n'
+        cbs += cb.format(com['type'],
+                         cls,
+                         packet['name'][0],
+                         packet['name'][0][0].lower() + packet['name'][0][1:],
+                         params,
+                         desc)
 
     return cbs
        
 
 def make_api():
     create_str = """
-.. py:function:: {1}(uid)
+.. java:function:: class {3}{1}(String uid)
 
- Creates an {0} object with the unique device ID *uid*::
+ Creates a {0} object with the unique device ID *uid*:
 
-    {0} = {1}("YOUR_DEVICE_UID");
+ .. code-block:: java
+
+  {3}{1} {0} = new {3}{1}("YOUR_DEVICE_UID");
 
  This object can then be added to the IP connection (see examples 
- :ref:`above <{0}_{2}_python_examples>`).
+ :ref:`above <{0}_{2}_java_examples>`).
 """
 
     register_str = """
-.. py:function:: {1}.register_callback(cb_id, func)
+.. java:function:: public void {3}{1}::addListener(Object o)
 
- :param cb_id: int
- :param func: function
- :rtype: None
-
- Registers a callback with ID *cb_id* to the function *func*. The available
- IDs with corresponding function signatures are listed 
- :ref:`below <{0}_{2}_python_callbacks>`.
+ Registers a listener object. The available listeners are listed 
+ :ref:`below <{0}_{2}_java_callbacks>`.
 """
 
     bm_str = """
@@ -290,7 +341,7 @@ Advanced Methods
 """
 
     ccm_str = """
-Callback Configuration Methods
+Listener Configuration Methods
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 {0}
@@ -299,29 +350,32 @@ Callback Configuration Methods
 """
 
     c_str = """
-.. _{1}_{2}_python_callbacks:
+.. _{1}_{2}_java_callbacks:
 
-Callbacks
+Listeners
 ^^^^^^^^^
 
-*Callbacks* can be registered with *callback IDs* to receive
+*Listeners* can be registered with listeners to receive
 time critical or recurring data from the device. The registration is done
-with the ``register_callback`` function of the device object. The first
-parameter is the callback id and the second parameter the callback
-function::
+with the ``addListener`` function of the device object. 
 
-    def my_callback(param):
-        print(param)
+The parameter is a listener class object, for example:
 
-    {1}.register_callback({1}.CALLBACK_EXAMPLE, my_callback)
+.. code-block:: java
 
-The available constants with inherent number and type of parameters are 
-described below.
+    device.addListener(new BrickDevice.PropertyListener() {{
+        public void property(int value) {{
+            System.out.println("Value: " + value);
+        }}
+    }});
 
- .. note::
-  Using callbacks for recurring events is *always* prefered 
-  compared to using getters. It will use less USB bandwith and the latency
-  will be a lot better, since there is no roundtrip time.
+The available listener classes with inherent methods to overwrite 
+are described below.
+
+.. note::
+ Using listeners for recurring events is *always* prefered 
+ compared to using getters. It will use less USB bandwith and the latency
+ will be a lot better, since there is no roundtrip time.
 
 {0}
 """
@@ -335,12 +389,14 @@ API
 
 {2}
 """
-    cre = create_str.format(com['name'][1],
+    cre = create_str.format(com['name'][0][0].lower() + com['name'][0][1:],
                             com['name'][0], 
-                            com['type'].lower())
+                            com['type'].lower(),
+                            com['type'])
     reg = register_str.format(com['name'][1], 
                               com['name'][0],
-                              com['type'].lower())
+                              com['type'].lower(),
+                              com['type'])
 
     bm = make_methods('bm')
     am = make_methods('am')
@@ -355,7 +411,7 @@ API
         api_str += ccm_str.format(reg, ccm)
         api_str += c_str.format(c, com['name'][1], com['type'].lower())
 
-    ref = '.. _{0}_{1}_python_api:\n'.format(com['name'][1], 
+    ref = '.. _{0}_{1}_java_api:\n'.format(com['name'][1], 
                                              com['type'].lower())
 
     api_desc = ''
@@ -370,13 +426,11 @@ def make_files(com_new, directory):
     global com
     com = com_new
 
-    file_name = '{0}_{1}_Python'.format(com['name'][0], com['type'])
+    file_name = '{0}_{1}_Java'.format(com['name'][0], com['type'])
     
     directory += '/doc'
     if not os.path.exists(directory):
         os.makedirs(directory)
-
-    return
 
     f = file('{0}/{1}.rst'.format(directory, file_name), "w")
     f.write(make_header())
