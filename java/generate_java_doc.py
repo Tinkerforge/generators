@@ -389,7 +389,7 @@ API
 
 {2}
 """
-    cre = create_str.format(com['name'][1],
+    cre = create_str.format(com['name'][0][0].lower() + com['name'][0][1:],
                             com['name'][0], 
                             com['type'].lower(),
                             com['type'])
