@@ -125,7 +125,7 @@ for binding in bindings:
                     if files_are_not_the_same(src_file, dest_path):
                         shutil.copy(src_file, dest_path)
                         print(' * {0} to {1} ({2})'.format(f, b[1], binding))
-                if (java_name(b) in f):
+                if (java_name(b) + '.' in f):
                     src_file = '{0}/{1}'.format(src_file_path, f)
                     dest_path = '{0}/{1}/{2}/{3}/{4}'.format(start_path,
                                                             b[1],
