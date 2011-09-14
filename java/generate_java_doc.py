@@ -42,29 +42,6 @@ gen_text = """..
  #############################################################
 """
 
-def type_to_pytype(element):
-    type_dict = {
-        'int8': 'int',
-        'uint8': 'int',
-        'int16': 'int',
-        'uint16': 'int',
-        'int32': 'int',
-        'uint32': 'int',
-        'int64': 'int',
-        'uint64': 'int',
-        'bool': 'bool',
-        'char': 'chr',
-        'string': 'str',
-        'float': 'float'
-    }
-
-    t = type_dict[element[1]]
-    
-    if element[2] == 1 or t == 'str':
-        return t
-
-    return '[' + ', '.join([t]*element[2]) + ']'
-
 def shift_right(text, n):
     return text.replace('\n', '\n' + ' '*n)
 
@@ -231,8 +208,8 @@ def get_object_name(packet):
 def get_return_type(packet):
     if get_num_return(packet['elements']) == 0:
         return 'void'
-    if get_num_return(packet['elements']) > 2:
-        return get_object_name(packet)
+    if get_num_return(packet['elements']) > 1:
+        return com['type'] + com['name'][0] + '.' + get_object_name(packet)
     
     for element in packet['elements']:
         if element[3] == 'out':
@@ -252,6 +229,27 @@ def make_parameter_list(packet):
         param.append('{0}{1} {2}'.format(java_type, arr, name))
     return ', '.join(param)
 
+def make_obj_desc(packet):
+    if get_num_return(packet['elements']) < 2:
+        return ''
+    
+    desc = '\n The returned object has the public member variables {0}.\n'
+    var = []
+    for element in packet['elements']:
+        if element[3] == 'out':
+            var.append('``{0} {1}``'.format(get_java_type(element[1]),
+                                            to_camel_case(element[0])))
+
+    if len(var) == 1:
+        return desc.format(var[0])
+
+    if len(var) == 2:
+        return desc.format(var[0] + ' and ' + var[1])
+
+    return desc.format(', '.join(var[:-1]) + ' and ' + var[-1])
+
+
+
 def make_methods(typ):
     methods = ''
     func_start = '.. java:function:: '
@@ -264,12 +262,14 @@ def make_methods(typ):
         name = packet['name'][0][0].lower() + packet['name'][0][1:]
         params = make_parameter_list(packet)
         desc = fix_links(shift_right(packet['doc'][1][lang], 1))
-        func = '{0}public {1} {2}::{3}({4})\n{5}'.format(func_start, 
-                                                 ret_type,
-                                                 cls, 
-                                                 name, 
-                                                 params, 
-                                                 desc)
+        obj_desc = make_obj_desc(packet)
+        func = '{0}public {1} {2}::{3}({4})\n{5}{6}'.format(func_start, 
+                                                            ret_type,
+                                                            cls, 
+                                                            name, 
+                                                            params, 
+                                                            desc,
+                                                            obj_desc)
         methods += func + '\n'
 
     return methods
@@ -384,6 +384,19 @@ are described below.
 {0}
 API
 ---
+
+Generally, every method of the java bindings that returns a value can
+throw a IPConnection.TimeoutException. This exception gets thrown if the
+device didn't answer. If a cable based connection is used, it is 
+unlikely that this exception gets thrown (Assuming nobody plugs the 
+device out). However, if a wireless connection is used, timeouts will occur
+if the distance to the device gets too big.
+
+Since java does not support multiple return values and return by reference
+is not possible for primitive types, we use small classes that 
+only consist of member variables (comparable to structs in C). The member
+variables of the returned objects are described in the corresponding method 
+descriptions.
 
 {1}
 
