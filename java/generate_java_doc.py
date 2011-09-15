@@ -355,7 +355,7 @@ Listener Configuration Methods
 Listeners
 ^^^^^^^^^
 
-*Listeners* can be registered with listeners to receive
+*Listeners* can be registered to receive
 time critical or recurring data from the device. The registration is done
 with the ``addListener`` function of the device object. 
 
@@ -369,7 +369,7 @@ The parameter is a listener class object, for example:
         }}
     }});
 
-The available listener classes with inherent methods to overwrite 
+The available listener classes with inherent methods to be overwritten
 are described below.
 
 .. note::

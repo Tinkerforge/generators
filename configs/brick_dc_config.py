@@ -417,7 +417,7 @@ The EmergencyShutdown callback is called if either the current consumption
 is too high (above 5A) or the temperature of the driver is too high 
 (above 175°C). These two possibilities are essentially the same, since the
 temperature will reach this threshold immediately if the motor draws too
-much current. In case of an voltage below 3.3V (external/Stack) this
+much current. In case of a voltage below 3.3V (external or stack) this
 callback is called as well.
 
 If this callback is called, the driver gets disabled at the same time. 
@@ -443,7 +443,7 @@ com['packets'].append({
 """
 This callback is called whenever a set velocity is reached. For example:
 If a velocity of 0 is present, acceleration is set to 5000 and velocity
-to 10000, func:`VelocityReached` will be called after about 2 seconds, when
+to 10000, :func:`VelocityReached` will be called after about 2 seconds, when
 the set velocity is actually reached.
 
 .. note::
