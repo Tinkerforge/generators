@@ -398,6 +398,9 @@ only consist of member variables (comparable to structs in C). The member
 variables of the returned objects are described in the corresponding method 
 descriptions.
 
+The package for all Brick/Bricklet bindings and the IPConnection is
+``com.tinkerforge.*``
+
 {1}
 
 {2}
