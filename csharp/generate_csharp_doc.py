@@ -247,7 +247,7 @@ def make_methods(typ):
 
 def make_callbacks():
     cb = """
-.. csharp:function:: public void {0}::{1}({2})
+.. csharp:function:: public delegate void {0}::{1}({2})
 
 {3}
 """
