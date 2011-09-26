@@ -1,0 +1,391 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+Bindings Generator
+Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+
+generate_csharp_bindings.py: Generator for C# bindings
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License 
+as published by the Free Software Foundation; either version 2 
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with this program; if not, write to the
+Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+Boston, MA 02111-1307, USA.
+"""
+
+import datetime
+import sys
+import os
+
+com = None
+
+gen_text = """/*************************************************************
+ * This file was automatically generated on {0}.      *
+ *                                                           *
+ * If you have a bugfix for this file and want to commit it, *
+ * please fix the bug in the generator. You can find a link  *
+ * to the generator git on tinkerforge.com                   *
+ *************************************************************/
+"""
+
+def make_import():
+    include = """{0}
+namespace Tinkerforge
+{{"""
+    date = datetime.datetime.now().strftime("%Y-%m-%d")
+    return include.format(gen_text.format(date))
+
+def make_class():
+    class_str = """
+\tpublic class {0}{1} : Device 
+\t{{
+"""
+        
+    return class_str.format(com['type'], com['name'][0])
+
+def make_delegates():
+    cbs = '\n'
+    cb = """\t\tpublic delegate void {0}({1});
+"""
+    for packet in com['packets']:
+        if packet['type'] != 'signal':
+            continue
+
+        name = packet['name'][0]
+        parameter = make_parameter_list(packet)
+        cbs += cb.format(name, parameter)
+    return cbs
+
+def make_type_definitions():
+    types = ''
+    type = '\t\tprivate static byte TYPE_{0} = {1};\n'
+    for i, packet in zip(range(len(com['packets'])), com['packets']):
+        types += type.format(packet['name'][1].upper(), i+1)
+    return types
+
+def make_parameter_list(packet):
+    param = []
+    for element in packet['elements']:
+        out = ''
+        if element[3] == 'out' and packet['type'] == 'method':
+            out = 'out '
+
+        csharp_type = get_csharp_type(element[1])
+        name = to_camel_case(element[0])
+        arr = ''
+        if element[2] > 1 and element[1] != 'string':
+            arr = '[]'
+       
+        param.append('{0}{1}{2} {3}'.format(out, csharp_type, arr, name))
+    return ', '.join(param)
+
+def make_constructor():
+    cbs = []
+    cb = '\t\t\tmessageCallbacks[TYPE_{0}] = new MessageCallback(Callback{1});'
+    con = """
+\t\tpublic {0}{1}(string uid) : base(uid) 
+\t\t{{
+{2}
+\t\t}}
+"""
+
+    for packet in com['packets']:
+        if packet['type'] != 'signal':
+            continue
+
+        name_upper = packet['name'][1].upper()
+        name_pascal = packet['name'][0]
+        cbs.append(cb.format(name_upper, name_pascal))
+
+    return con.format(com['type'], com['name'][0], '\n'.join(cbs))
+
+def get_from_type(element):
+    forms = {
+        'int8' : 'SByteFrom',
+        'uint8' : 'ByteFrom',
+        'int16' : 'ShortFrom',
+        'uint16' : 'UShortFrom',
+        'int32' : 'IntFrom',
+        'uint32' : 'UIntFrom',
+        'int64' : 'LongFrom',
+        'uint64' : 'ULongFrom',
+        'float' : 'FloatFrom',
+        'bool' : 'BoolFrom',
+        'string' : 'StringFrom',
+        'char' : 'CharFrom'
+    }
+
+    if element[1] in forms:
+        from_type = forms[element[1]]
+        if from_type != 'StringFrom' and element[2] > 1:
+            from_type = from_type.replace('From', 'ArrayFrom')
+
+        return from_type
+
+    return ''
+
+
+def get_csharp_type(typ):
+    forms = {
+        'int8' : 'sbyte',
+        'uint8' : 'byte',
+        'int16' : 'short',
+        'uint16' : 'ushort',
+        'int32' : 'int',
+        'uint32' : 'uint',
+        'int64' : 'long',
+        'uint64' : 'ulong',
+        'float' : 'float',
+        'bool' : 'bool',
+        'string' : 'string',
+        'char' : 'char'
+    }
+
+    if typ in forms:
+        return forms[typ]
+
+    return ''
+
+
+def get_type_size(element):
+    forms = {
+        'int8' : 1,
+        'uint8' : 1,
+        'int16' : 2,
+        'uint16' : 2,
+        'int32' : 4,
+        'uint32' : 4,
+        'int64' : 8,
+        'uint64' : 8,
+        'float' : 4,
+        'bool' : 1,
+        'string' : 1,
+        'char' : 1
+    }
+
+    if element[1] in forms:
+        return forms[element[1]]*element[2]
+
+    return 0
+
+def make_register_callback():
+    typeofs = ''
+    typeof = """\t\t\t{0}if(d.GetType() == typeof({1}))
+\t\t\t{{
+\t\t\t\tcallbacks[TYPE_{2}] = d;
+\t\t\t}}
+"""
+
+    cb = """
+\t\tpublic void RegisterCallback(System.Delegate d)
+\t\t{{
+{0}\t\t}}
+\t}}
+}}
+"""
+
+    i = 0
+    for packet in com['packets']:
+        if packet['type'] != 'signal':
+            continue
+
+        els = ''
+        if i > 0:
+            els = 'else '
+
+        name = packet['name'][0]
+        name_upper = packet['name'][1].upper()
+
+        typeofs += typeof.format(els, name, name_upper)
+        
+        i += 1
+
+    return cb.format(typeofs)
+
+def make_callbacks():
+    cbs = ''
+    cb = """
+\t\tpublic int Callback{0}(byte[] data)
+\t\t{{
+{1}\t\t\t(({0})callbacks[TYPE_{2}])({3});
+\t\t\treturn {4};
+\t\t}}
+"""
+    cls = com['name'][0]
+    for packet in com['packets']:
+        if packet['type'] != 'signal':
+            continue
+
+        name = packet['name'][0]
+        name_upper = packet['name'][1].upper()
+        eles = []
+        for element in packet['elements']:
+            if element[3] == 'out':
+                eles.append(to_camel_case(element[0]))
+        params = ", ".join(eles)
+        size = str(get_data_size(packet['elements']))
+
+        convs = ''
+        conv = '\t\t\t{0} {1} = LEConverter.{2}({3}, data);\n'
+
+        pos = 4
+        for element in packet['elements']:
+            if element[3] != 'out':
+                continue
+
+            csharp_type = get_csharp_type(element[1])
+            cname = to_camel_case(element[0])
+            from_type = get_from_type(element)
+            convs += conv.format(csharp_type, 
+                                 cname, 
+                                 from_type,
+                                 pos)
+
+            pos += get_type_size(element)
+
+        if convs != '':
+            convs += '\n'
+        
+        cbs += cb.format(name, convs, name_upper, params, pos)
+
+    return cbs
+
+def make_methods():
+    methods = ''
+    method = """
+\t\tpublic void {0}({1})
+\t\t{{
+\t\t\tbyte[] data = new byte[{2}];
+\t\t\tLEConverter.To(stackID, 0, data);
+\t\t\tLEConverter.To(TYPE_{3}, 1, data);
+\t\t\tLEConverter.To((ushort){2}, 2, data);
+{5}
+\t\t\tipcon.Write(this, data, TYPE_{3}, {4});
+{6}\t\t}}
+"""
+    method_answer = """
+\t\t\tbyte[] answer;
+\t\t\tif(!answerQueue.TryDequeue(out answer, IPConnection.TIMEOUT_ANSWER))
+\t\t\t{{
+\t\t\t\tthrow new TimeoutException("Did not receive answer for {0} in time");
+\t\t\t}}
+
+{1}
+\t\t\twriteEvent.Set();
+"""
+
+    cls = com['name'][0]
+    for packet in com['packets']:
+        if packet['type'] != 'method':
+            continue
+
+        name = packet['name'][0]
+        params = make_parameter_list(packet)
+        size = str(get_data_size(packet['elements']))
+        name_upper = packet['name'][1].upper()
+        has_ret = has_return_value(packet['elements'])
+
+        write_convs = ''
+        write_conv = '\t\t\tLEConverter.To({0}, {1}, data);\n'
+
+        pos = 4
+        for element in packet['elements']:
+            if element[3] != 'in':
+                continue
+            wname = to_camel_case(element[0])
+            write_convs += write_conv.format(wname, pos)
+            pos += get_type_size(element)
+            
+        answer = ''
+        if has_ret == 'true':
+            read_convs = ''
+            read_conv = '\t\t\t{0} = LEConverter.{1}({2}, answer);\n'
+
+            pos = 4
+            for element in packet['elements']:
+                if element[3] != 'out':
+                    continue
+
+                aname = to_camel_case(element[0])
+                from_type = get_from_type(element)
+                read_convs += read_conv.format(aname, from_type, pos)
+                pos += get_type_size(element)
+
+            answer = method_answer.format(name, read_convs)
+
+        methods += method.format(name,
+                                 params,
+                                 size,
+                                 name_upper,
+                                 has_ret,
+                                 write_convs,
+                                 answer)
+
+    return methods
+
+def get_data_size(elements):
+    size = 0
+    for element in elements:
+        if element[3] != 'in':
+            continue
+        size += get_type_size(element)
+    return size + 4
+
+def has_return_value(elements):
+    for element in elements:
+        if element[3] == 'out':
+            return 'true'
+    return 'false'
+
+def to_camel_case(name):
+    names = name.split('_')
+    ret = names[0]
+    for n in names[1:]:
+        ret += n[0].upper() + n[1:]
+    return ret
+
+def make_files(com_new, directory):
+    global com
+    com = com_new
+
+    file_name = '{0}{1}'.format(com['type'], com['name'][0])
+    
+    directory += '/bindings'
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    csharp = file('{0}/{1}.cs'.format(directory, file_name), "w")
+    csharp.write(make_import())
+    csharp.write(make_class())
+    csharp.write(make_type_definitions())
+    csharp.write(make_delegates())
+    csharp.write(make_constructor())
+    csharp.write(make_methods())
+    csharp.write(make_callbacks())
+    csharp.write(make_register_callback())
+
+def generate(path):
+    path_list = path.split('/')
+    path_list[-1] = 'configs'
+    path_config = '/'.join(path_list)
+    sys.path.append(path_config)
+    configs = os.listdir(path_config)
+
+    for config in configs:
+        if config.endswith('_config.py'):
+            module = __import__(config[:-3])
+            print(" * {0}".format(config[:-10]))            
+            make_files(module.com, path)
+
+if __name__ == "__main__":
+    generate(os.getcwd())

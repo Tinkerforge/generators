@@ -28,7 +28,7 @@ def java_name(binding):
     pos = binding[3].find('_')
     return binding[3][pos+1:] + binding[3][0:pos]
 
-ipcon_src = ['ip_connection.c', 'ip_connection.h', 'ip_connection.py', 'IPConnection.java']
+ipcon_src = ['ip_connection.c', 'ip_connection.h', 'ip_connection.py', 'IPConnection.java', 'IPConnection.cs']
 ipcon_dest = ['imu-brick', 
               'servo-brick', 
               'master-brick', 
@@ -112,7 +112,7 @@ for binding in bindings:
     for f in os.listdir(src_file_path):
         if not (f.endswith('.swp') or f.endswith('.class')):
             for b in bind_trans:
-                if (b[0] + '.' in f):
+                if (b[0] + '.' in f) or (java_name(b) + '.cs' in f):
                     src_file = '{0}/{1}'.format(src_file_path, f)
                     dest_path = '{0}/{1}/{2}/{3}'.format(start_path,
                                                          b[1],
@@ -125,7 +125,7 @@ for binding in bindings:
                     if files_are_not_the_same(src_file, dest_path):
                         shutil.copy(src_file, dest_path)
                         print(' * {0} to {1} ({2})'.format(f, b[1], binding))
-                if (java_name(b) + '.' in f):
+                if (java_name(b) + '.java' in f):
                     src_file = '{0}/{1}'.format(src_file_path, f)
                     dest_path = '{0}/{1}/{2}/{3}/{4}'.format(start_path,
                                                             b[1],
