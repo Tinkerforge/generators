@@ -225,7 +225,7 @@ def make_api():
     create_str = """
 .. c:function:: void {0}_create({1} *{0}, const char *uid)
 
- Creates a {1} object with the unique device ID *uid*::
+ Creates an object with the unique device ID *uid*::
 
     {1} {0};
     {0}_create(&{0}, "YOUR_DEVICE_UID");
