@@ -352,7 +352,7 @@ API
 ---
 
 Generally, every method of the C# bindings that returns a value can
-throw a Tinkerforge.TimeoutException. This exception gets thrown if the
+throw a ``Tinkerforge.TimeoutException``. This exception gets thrown if the
 device didn't answer. If a cable based connection is used, it is 
 unlikely that this exception gets thrown (Assuming nobody plugs the 
 device out). However, if a wireless connection is used, timeouts will occur
