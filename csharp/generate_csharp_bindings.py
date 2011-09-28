@@ -236,7 +236,7 @@ def make_callbacks():
         size = str(get_data_size(packet['elements']))
 
         convs = ''
-        conv = '\t\t\t{0} {1} = LEConverter.{2}({3}, data);\n'
+        conv = '\t\t\t{0} {1} = LEConverter.{2}({3}, data{4});\n'
 
         pos = 4
         for element in packet['elements']:
@@ -246,10 +246,14 @@ def make_callbacks():
             csharp_type = get_csharp_type(element[1])
             cname = to_camel_case(element[0])
             from_type = get_from_type(element)
+            length = ''
+            if element[2] > 1:
+                length = ', ' + str(element[2])
             convs += conv.format(csharp_type, 
                                  cname, 
                                  from_type,
-                                 pos)
+                                 pos,
+                                 length)
 
             pos += get_type_size(element)
 
@@ -309,7 +313,7 @@ def make_methods():
         answer = ''
         if has_ret == 'true':
             read_convs = ''
-            read_conv = '\t\t\t{0} = LEConverter.{1}({2}, answer);\n'
+            read_conv = '\t\t\t{0} = LEConverter.{1}({2}, answer{3});\n'
 
             pos = 4
             for element in packet['elements']:
@@ -318,7 +322,11 @@ def make_methods():
 
                 aname = to_camel_case(element[0])
                 from_type = get_from_type(element)
-                read_convs += read_conv.format(aname, from_type, pos)
+                length = ''
+                if element[2] > 1:
+                    length = ', ' + str(element[2])
+
+                read_convs += read_conv.format(aname, from_type, pos, length)
                 pos += get_type_size(element)
 
             answer = method_answer.format(name, read_convs)
