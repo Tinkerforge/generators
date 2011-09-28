@@ -672,6 +672,36 @@ namespace Tinkerforge
 			return ret;
 		}
 
+		static public float FloatFrom(int position, byte[] array) 
+		{
+			// We need Little Endian 
+			if(BitConverter.IsLittleEndian)
+			{
+				return BitConverter.ToSingle(array, position);
+			}
+			else
+			{
+				byte[] array_tmp = new byte[4];
+				array_tmp[3] = array[position + 0];
+				array_tmp[2] = array[position + 1];
+				array_tmp[1] = array[position + 2];
+				array_tmp[0] = array[position + 3];
+				return BitConverter.ToSingle(array_tmp, 0);
+			}
+		}
+
+		static public float[] FloatArrayFrom(int position, byte[] array, int len) 
+		{
+			float[] ret = new float[len];
+
+			for(int i = 0; i < len; i++) 
+			{
+				ret[i] = FloatFrom(position + i*4, array);
+			}
+
+			return ret;
+		}
+
 		static public string StringFrom(int position, byte[] array, int len) 
 		{
 			string s = "";
