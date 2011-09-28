@@ -273,7 +273,7 @@ def make_api():
     create_str = """
 .. csharp:function:: class {3}{1}(String uid)
 
- Creates a {0} object with the unique device ID *uid*:
+ Creates an object with the unique device ID *uid*:
 
  .. code-block:: csharp
 

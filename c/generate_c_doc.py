@@ -117,7 +117,7 @@ def make_parameter_list(packet):
 def make_header():
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     ref = '.. _{0}_{1}_c:\n'.format(com['name'][1], com['type'].lower())
-    title = 'C - {0} {1}'.format(com['name'][0], com['type'])
+    title = 'C/C++ - {0} {1}'.format(com['name'][0], com['type'])
     title_under = '='*len(title)
     return '{0}\n{1}\n{2}\n{3}\n'.format(gen_text.format(date), 
                                          ref,
@@ -134,7 +134,7 @@ def make_examples():
         return s[:-1]
 
     ex = """
-This is the API site for the C bindings of the {1} {2}. General information
+This is the API site for the C/C++ bindings of the {1} {2}. General information
 on what this device does and the technical specifications can be found 
 :ref:`here <{3}>`.
 
@@ -225,7 +225,7 @@ def make_api():
     create_str = """
 .. c:function:: void {0}_create({1} *{0}, const char *uid)
 
- Creates a {1} object with the unique device ID *uid*::
+ Creates an object with the unique device ID *uid*::
 
     {1} {0};
     {0}_create(&{0}, "YOUR_DEVICE_UID");
@@ -300,7 +300,7 @@ are described below.
 API
 ---
 
-Every function of the c bindings returns an integer which describes an
+Every function of the C/C++ bindings returns an integer which describes an
 error code. Data returned from the device, when a getter is called,
 is handled via call by reference. These parameters are labelled with the
 ``ret_`` prefix.
