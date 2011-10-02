@@ -27,6 +27,7 @@ import datetime
 import sys
 import os
 import shutil
+import subprocess
 
 com = None
 lang = 'en'
@@ -280,7 +281,7 @@ def make_api():
   {3}{1} {0} = new {3}{1}("YOUR_DEVICE_UID");
 
  This object can then be added to the IP connection (see examples 
- :ref:`above <{0}_{2}_csharp_examples>`).
+ :ref:`above <{4}_{2}_csharp_examples>`).
 """
 
     register_str = """
@@ -371,7 +372,8 @@ The namespace for all Brick/Bricklet bindings and the IPConnection is
     cre = create_str.format(com['name'][0][0].lower() + com['name'][0][1:],
                             com['name'][0], 
                             com['type'].lower(),
-                            com['type'])
+                            com['type'],
+                            com['name'][1])
     reg = register_str.format(com['name'][1], 
                               com['name'][0],
                               com['type'].lower(),
@@ -430,6 +432,33 @@ def generate(path):
             module = __import__(config[:-3])
             print(" * {0}".format(config[:-10]))            
             make_files(module.com, path)
+
+    # Make temporary generator directory
+    if os.path.exists('/tmp/generator'):
+        shutil.rmtree('/tmp/generator/')
+    os.makedirs('/tmp/generator/dll/source')
+               
+    # Copy bindings
+    shutil.copytree(path + '/bindings', '/tmp/generator/dll/source/Tinkerforge')
+    shutil.copy(path + '/IPConnection.cs', '/tmp/generator/dll/source/Tinkerforge')
+
+    # Make dll
+    args = ['/usr/bin/gmcs',
+            '-target:library',
+            '-out:/tmp/generator/dll/Tinkerforge.dll',
+            '/tmp/generator/dll/source/Tinkerforge/*.cs']
+    subprocess.call(args)
+
+    # Make zip
+    os.chdir('/tmp/generator/dll')
+    args = ['/usr/bin/zip',
+            '-r',
+            'tinkerforge_csharp_bindings.zip',
+            '.']
+    subprocess.call(args)
+
+    # Copy zip
+    shutil.copy('/tmp/generator/dll/tinkerforge_csharp_bindings.zip', path)
 
 if __name__ == "__main__":
     generate(os.getcwd())

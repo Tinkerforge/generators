@@ -314,7 +314,7 @@ def make_api():
   {3}{1} {0} = new {3}{1}("YOUR_DEVICE_UID");
 
  This object can then be added to the IP connection (see examples 
- :ref:`above <{0}_{2}_java_examples>`).
+ :ref:`above <{4}_{2}_java_examples>`).
 """
 
     register_str = """
@@ -408,7 +408,8 @@ The package for all Brick/Bricklet bindings and the IPConnection is
     cre = create_str.format(com['name'][0][0].lower() + com['name'][0][1:],
                             com['name'][0], 
                             com['type'].lower(),
-                            com['type'])
+                            com['type'],
+                            com['name'][1])
     reg = register_str.format(com['name'][1], 
                               com['name'][0],
                               com['type'].lower(),
