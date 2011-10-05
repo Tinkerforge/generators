@@ -27,6 +27,7 @@ import datetime
 import sys
 import os
 import shutil
+import subprocess
 
 com = None
 lang = 'en'
@@ -439,6 +440,18 @@ The package for all Brick/Bricklet bindings and the IPConnection is
 
     return api.format(ref, api_desc, api_str) 
         
+def copy_examples_for_zip():
+    examples = find_examples()
+    dest = os.path.join('/tmp/generator/jar/examples/', 
+                        com['type'], 
+                        com['name'][0])
+
+    if not os.path.exists(dest):
+        os.makedirs(dest)
+
+    for example in examples:
+        shutil.copy(example[1], dest)
+
 def make_files(com_new, directory):
     global com
     com = com_new
@@ -454,6 +467,8 @@ def make_files(com_new, directory):
     f.write(make_examples())
     f.write(make_api())
 
+    copy_examples_for_zip()
+
 def generate(path):
     global file_path
     file_path = path
@@ -463,11 +478,49 @@ def generate(path):
     sys.path.append(path_config)
     configs = os.listdir(path_config)
 
+    # Make temporary generator directory
+    if os.path.exists('/tmp/generator'):
+        shutil.rmtree('/tmp/generator/')
+    os.makedirs('/tmp/generator/jar/source/com')
+
+    # Make bindings
     for config in configs:
         if config.endswith('_config.py'):
             module = __import__(config[:-3])
             print(" * {0}".format(config[:-10]))            
             make_files(module.com, path)
+
+    # Copy bindings and readme
+    shutil.copytree(path + '/bindings', '/tmp/generator/jar/source/com/tinkerforge')
+    shutil.copy(path + '/IPConnection.java', '/tmp/generator/jar/source/com/tinkerforge')
+    shutil.copy(path + '/Readme.txt', '/tmp/generator/jar')
+
+    # Make jar
+    args = ['/usr/bin/javac /tmp/generator/jar/source/com/tinkerforge/*']
+    subprocess.call(args, shell=True)
+
+    os.chdir('/tmp/generator/jar/source')
+    args = ['/usr/bin/jar ' +
+            'cf ' +
+            '/tmp/generator/jar/Tinkerforge.jar ' +
+            'com']
+    subprocess.call(args, shell=True)
+
+    # Remove class
+    for f in os.listdir('/tmp/generator/jar/source/com/tinkerforge/'):
+        if f.endswith('.class'):
+            os.remove('/tmp/generator/jar/source/com/tinkerforge/' + f)
+
+    # Make zip
+    os.chdir('/tmp/generator/jar')
+    args = ['/usr/bin/zip',
+            '-r',
+            'tinkerforge_java_bindings.zip',
+            '.']
+    subprocess.call(args)
+
+    # Copy zip
+    shutil.copy('/tmp/generator/jar/tinkerforge_java_bindings.zip', path)
 
 if __name__ == "__main__":
     generate(os.getcwd())
