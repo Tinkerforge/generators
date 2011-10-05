@@ -76,7 +76,7 @@ def find_examples():
     start_path = path.replace('/generators/java', '')
     board = '{0}-{1}'.format(com['name'][1], com['type'].lower())
     board = board.replace('_', '-')
-    board_path = os.path.join(start_path, board, 'software/bindings/java')
+    board_path = os.path.join(start_path, board, 'software/examples/java')
     files = []
     for f in os.listdir(board_path):
         if f.startswith('Example') and f.endswith('.java'):

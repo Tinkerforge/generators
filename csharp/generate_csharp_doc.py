@@ -64,7 +64,7 @@ def find_examples():
     start_path = path.replace('/generators/csharp', '')
     board = '{0}-{1}'.format(com['name'][1], com['type'].lower())
     board = board.replace('_', '-')
-    board_path = os.path.join(start_path, board, 'software/bindings/csharp')
+    board_path = os.path.join(start_path, board, 'software/examples/csharp')
     files = []
     for f in os.listdir(board_path):
         if f.startswith('Example') and f.endswith('.cs'):
@@ -460,6 +460,7 @@ def generate(path):
 
     # Make dll
     args = ['/usr/bin/gmcs',
+            '/optimize',
             '/target:library',
             '/out:/tmp/generator/dll/Tinkerforge.dll',
             '/tmp/generator/dll/source/Tinkerforge/*.cs']

@@ -86,7 +86,7 @@ def find_examples():
     start_path = path.replace('/generators/python', '')
     board = '{0}-{1}'.format(com['name'][1], com['type'].lower())
     board = board.replace('_', '-')
-    board_path = os.path.join(start_path, board, 'software/bindings/python')
+    board_path = os.path.join(start_path, board, 'software/examples/python')
     files = []
     for f in os.listdir(board_path):
         if f.startswith('example_') and f.endswith('.py'):

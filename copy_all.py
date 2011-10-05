@@ -28,7 +28,12 @@ def java_name(binding):
     pos = binding[3].find('_')
     return binding[3][pos+1:] + binding[3][0:pos]
 
-ipcon_src = ['ip_connection.c', 'ip_connection.h', 'ip_connection.py', 'IPConnection.java', 'IPConnection.cs']
+ipcon_src = ['ip_connection.c', 
+             'ip_connection.h', 
+             'ip_connection.py', 
+             'IPConnection.java', 
+             'IPConnection.cs']
+
 ipcon_dest = ['imu-brick', 
               'servo-brick', 
               'master-brick', 
@@ -86,60 +91,6 @@ for d in os.listdir(path):
     if os.path.isdir(d):
         if not d in ('configs', '.git'):
             bindings.append(d)
-
-print('Copying ip_connections to Bricks:')
-for binding in bindings:
-    path_binding = '{0}/{1}'.format(path, binding)
-    for src in ipcon_src:
-        src_file = '{0}/{1}'.format(path_binding, src)
-        if os.path.isfile(src_file):
-            for dest in ipcon_dest:
-                dest_path = '{0}/{1}/{2}/{3}/'.format(start_path,
-                                                      dest,
-                                                      'software/bindings',
-                                                      binding)
-                if ".java" in src_file:
-                    dest_path += 'com/tinkerforge'
-                if files_are_not_the_same(src_file, dest_path):
-                    shutil.copy(src_file, dest_path)
-                    print(' * {0} to {1}'.format(src, dest))
-
-print('')
-print('Copying bindings to Bricks:')
-for binding in bindings:
-    path_binding = '{0}/{1}'.format(path, binding)
-    src_file_path = '{0}/{1}'.format(path_binding, 'bindings')
-    for f in os.listdir(src_file_path):
-        if not (f.endswith('.swp') or f.endswith('.class')):
-            for b in bind_trans:
-                if (b[0] + '.' in f) or (java_name(b) + '.cs' in f):
-                    src_file = '{0}/{1}'.format(src_file_path, f)
-                    dest_path = '{0}/{1}/{2}/{3}'.format(start_path,
-                                                         b[1],
-                                                         'software/bindings',
-                                                         binding)
-                    try:
-                        os.makedirs(dest_path)
-                    except:
-                        pass
-                    if files_are_not_the_same(src_file, dest_path):
-                        shutil.copy(src_file, dest_path)
-                        print(' * {0} to {1} ({2})'.format(f, b[1], binding))
-                if (java_name(b) + '.java' in f):
-                    src_file = '{0}/{1}'.format(src_file_path, f)
-                    dest_path = '{0}/{1}/{2}/{3}/{4}'.format(start_path,
-                                                            b[1],
-                                                            'software/bindings',
-                                                            binding,
-                                                            'com/tinkerforge')
-                    try:
-                        os.makedirs(dest_path)
-                    except:
-                        pass
-                    if files_are_not_the_same(src_file, dest_path):
-                        shutil.copy(src_file, dest_path)
-                        print(' * {0} to {1} ({2})'.format(f, b[1], binding))
-
 
 print('')
 print('Copying ip_connection to brickv:')
