@@ -27,6 +27,7 @@ import datetime
 import sys
 import os
 import shutil
+import subprocess
 
 com = None
 lang = 'en'
@@ -353,6 +354,18 @@ as defined in :file:`ip_connection.h`.
 
     return api.format(ref, api_desc, api_str)
 
+def copy_examples_for_zip():
+    examples = find_examples()
+    dest = os.path.join('/tmp/generator/examples/', 
+                        com['type'].lower(), 
+                        com['name'][1])
+
+    if not os.path.exists(dest):
+        os.makedirs(dest)
+
+    for example in examples:
+        shutil.copy(example[1], dest)
+
 def make_files(com_new, directory):
     global com
     com = com_new
@@ -368,6 +381,8 @@ def make_files(com_new, directory):
     f.write(make_examples())
     f.write(make_api())
 
+    copy_examples_for_zip()
+
 def generate(path):
     global file_path
     file_path = path
@@ -377,11 +392,34 @@ def generate(path):
     sys.path.append(path_config)
     configs = os.listdir(path_config)
 
+    # Make temporary generator directory
+    if os.path.exists('/tmp/generator'):
+        shutil.rmtree('/tmp/generator/')
+    os.makedirs('/tmp/generator')
+
     for config in configs:
         if config.endswith('_config.py'):
             module = __import__(config[:-3])
             print(" * {0}".format(config[:-10]))            
             make_files(module.com, path)
+
+    # Copy bindings and readme
+    shutil.copytree(path + '/bindings', '/tmp/generator/bindings')
+    shutil.copy(path + '/ip_connection.c', '/tmp/generator/bindings')
+    shutil.copy(path + '/ip_connection.h', '/tmp/generator/bindings')
+    shutil.copy(path + '/readme.txt', '/tmp/generator/')
+
+
+    # Make zip
+    os.chdir('/tmp/generator')
+    args = ['/usr/bin/zip',
+            '-r',
+            'tinkerforge_c_bindings.zip',
+            '.']
+    subprocess.call(args)
+
+    # Copy zip
+    shutil.copy('/tmp/generator/tinkerforge_c_bindings.zip', path)
 
 if __name__ == "__main__":
     generate(os.getcwd())
