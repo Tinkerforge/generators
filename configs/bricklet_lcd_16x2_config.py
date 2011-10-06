@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke (olaf@tinkerforge.com)',
-    'version': '1.0',
+    'version': [1, 0, 0],
     'type': 'Bricklet',
     'name': ('LCD16x2', 'lcd_16x2'),
     'manufacturer': 'Tinkerforge',
