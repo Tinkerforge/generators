@@ -73,8 +73,10 @@ typedef struct Device_{
 	HANDLE  sem_write;
 	HANDLE  sem_answer;
 #else
-	sem_t sem_write;
-	sem_t sem_answer;
+	pthread_cond_t cond;
+	bool sem_answer_flag;
+	pthread_mutex_t sem_write;
+	pthread_mutex_t sem_answer;
 #endif
 	DeviceAnswer answer;
 	void *callbacks[MAX_NUM_CALLBACKS];

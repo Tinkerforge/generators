@@ -17,8 +17,8 @@
 	#include <winsock2.h>
 #else
 	#include <pthread.h>
-	#include <semaphore.h>
 	#include <sys/types.h>
+	#include <sys/time.h> // gettimeofday
 	#include <sys/socket.h> // connect
 	#include <sys/select.h>
 	#include <netinet/in.h> // struct sockaddr_in
@@ -130,7 +130,9 @@ int ipcon_handle_message(IPConnection *ipcon, const unsigned char *buffer) {
 	unsigned char stack_id = ipcon_get_stack_id_from_data(buffer);
 	int length = ipcon_get_length_from_data(buffer);
 	if(ipcon->devices[stack_id] == NULL) {
-		fprintf(stderr, "Message with unknown Stack ID, discarded %d %d\n", stack_id, type);
+		fprintf(stderr, "Message with unknown Stack ID, discarded %d %d\n", 
+		                stack_id, 
+				        type);
 		return length;
 	}
 
@@ -151,7 +153,10 @@ int ipcon_handle_message(IPConnection *ipcon, const unsigned char *buffer) {
 #ifdef _WIN32
 		ReleaseSemaphore(device->sem_answer,1,NULL);
 #else
-		sem_post(&device->sem_answer);
+		pthread_mutex_lock(&device->sem_answer);
+		device->sem_answer_flag = true;
+		pthread_cond_signal(&device->cond);
+		pthread_mutex_unlock(&device->sem_answer);
 #endif
 		return length;
 	}
@@ -193,11 +198,11 @@ void ipcon_device_create(Device *device, const char *uid) {
 	// Default state for answer semaphore is locked
 	device->sem_answer = CreateSemaphore(NULL,0,1,NULL);
 #else
-	sem_init(&device->sem_write, 0, 1);
-	sem_init(&device->sem_answer, 0, 1);
+	pthread_mutex_init(&device->sem_write, NULL);
+	pthread_mutex_init(&device->sem_answer, NULL);
+	pthread_cond_init(&device->cond, NULL);
 
-	// Default state for answer semaphore is locked
-	sem_wait(&device->sem_answer);
+	device->sem_answer_flag = false;
 #endif
 }
 
@@ -205,10 +210,26 @@ int ipcon_answer_sem_wait_timeout(Device *device) {
 #ifdef _WIN32
 	return WaitForSingleObject(device->sem_answer, TIMEOUT_ANSWER);
 #else
-	struct timespec time;
-	clock_gettime(CLOCK_REALTIME, &time);
-	time.tv_sec += TIMEOUT_ANSWER/1000;
-	return sem_timedwait(&device->sem_answer, &time);
+	struct timespec ts;
+	struct timeval tp;
+	gettimeofday(&tp, NULL);
+	ts.tv_sec  = tp.tv_sec + TIMEOUT_ANSWER/1000;
+    ts.tv_nsec = tp.tv_usec * 1000;
+	pthread_mutex_lock(&device->sem_answer);
+
+	int ret = 0;
+	while(!device->sem_answer_flag) {
+		ret = pthread_cond_timedwait(&device->cond, 
+		                             &device->sem_answer, 
+									 &ts);
+		if(ret != 0) {
+			break;
+		}
+	}
+	device->sem_answer_flag = false;
+	pthread_mutex_unlock(&device->sem_answer);
+
+	return ret;
 #endif
 
 }
@@ -298,7 +319,10 @@ int ipcon_add_device_handler(IPConnection *ipcon,
 #ifdef _WIN32
 		ReleaseSemaphore(ipcon->add_device->sem_answer,1,NULL);
 #else
-		sem_post(&ipcon->add_device->sem_answer);
+		pthread_mutex_lock(&ipcon->add_device->sem_answer);
+		ipcon->add_device->sem_answer_flag = true;
+		pthread_cond_signal(&ipcon->add_device->cond);
+		pthread_mutex_unlock(&ipcon->add_device->sem_answer);
 #endif
 
 		ipcon->add_device = NULL;
@@ -345,7 +369,7 @@ int ipcon_sem_wait_write(Device *device) {
 #ifdef _WIN32
 	return WaitForSingleObject(device->sem_write, INFINITE);
 #else
-	return sem_wait(&device->sem_write);
+	return pthread_mutex_lock(&device->sem_write);
 #endif
 }
 
@@ -353,7 +377,7 @@ int ipcon_sem_post_write(Device *device) {
 #ifdef _WIN32
 	return ReleaseSemaphore(device->sem_write,1,NULL);
 #else
-	return sem_post(&device->sem_write);
+	return pthread_mutex_unlock(&device->sem_write);
 #endif
 }
 
