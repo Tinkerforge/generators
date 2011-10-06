@@ -252,6 +252,17 @@ def make_obj_desc(packet):
 
 
 def make_methods(typ):
+    version_method = """
+.. java:function:: public {0}.Version {0}::getVersion()
+
+ Returns the name (including the hardware version), the firmware version 
+ and the binding version of the device. The firmware and binding versions are
+ given in arrays of size 3 with the syntax [major, minor, revision].
+
+ The returned object has the public member variables ``String name``, 
+ ``short[3] firmwareVersion`` and ``short[3] bindingVersion``.
+"""
+
     methods = ''
     func_start = '.. java:function:: '
     cls = com['type'] + com['name'][0]
@@ -272,6 +283,9 @@ def make_methods(typ):
                                                             desc,
                                                             obj_desc)
         methods += func + '\n'
+
+    if typ == 'am':
+        methods += version_method.format(cls)
 
     return methods
 

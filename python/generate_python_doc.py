@@ -208,6 +208,16 @@ def make_return_desc(packet):
     return ret.format('(' + ', '.join(ret_list) + ')')
 
 def make_methods(typ):
+    version_method = """
+.. py:function:: {0}.get_version()
+
+ :rtype: (str, [int, int, int], [int, int, int])
+
+ Returns the name (including the hardware version), the firmware version 
+ and the binding version of the device. The firmware and binding versions are
+ given in arrays of size 3 with the syntax [major, minor, revision].
+"""
+
     methods = ''
     func_start = '.. py:function:: '
     cls = com['name'][0]
@@ -227,7 +237,10 @@ def make_methods(typ):
                                              desc)
         methods += func + '\n'
 
-    return methods
+    if typ == 'am':
+        methods += version_method.format(cls)
+
+    return methods 
 
 def make_callbacks():
     cbs = ''

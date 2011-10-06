@@ -186,6 +186,10 @@ def make_create_func():
     func = """
 void {0}_create({1} *{0}, const char *uid) {{
 \tipcon_device_create({0}, uid);
+
+\t{0}->binding_version[0] = {3};
+\t{0}->binding_version[1] = {4};
+\t{0}->binding_version[2] = {5};
 {2}\n}}
 """
 
@@ -200,7 +204,8 @@ void {0}_create({1} *{0}, const char *uid) {{
         type_name = packet['name'][1]
         cbs += cb_temp.format(dev_name, type_name.upper(), type_name)
     
-    return func.format(dev_name, com['name'][0], cbs)
+    v = com['version']
+    return func.format(dev_name, com['name'][0], cbs, v[0], v[1], v[2])
 
 def make_method_funcs():
     def make_struct_list(packet):
@@ -244,7 +249,21 @@ def make_method_funcs():
                 return_list += temp.format(element[0], sf)
         return return_list
 
-            
+    func_version = """
+int {0}_get_version({1} *{0}, char ret_name[40], uint8_t ret_firmware_version[3], uint8_t ret_binding_version[3]) {{
+	strncpy(ret_name, {0}->name, 40);
+
+	ret_firmware_version[0] = {0}->firmware_version[0];
+	ret_firmware_version[1] = {0}->firmware_version[1];
+	ret_firmware_version[2] = {0}->firmware_version[2];
+
+	ret_binding_version[0] = {0}->binding_version[0];
+	ret_binding_version[1] = {0}->binding_version[1];
+	ret_binding_version[2] = {0}->binding_version[2];
+
+	return E_OK;
+}}
+"""
 
     func = """
 int {0}_{1}({2} *{0}{3}) {{
@@ -307,7 +326,7 @@ int {0}_{1}({2} *{0}{3}) {{
 
         funcs += func.format(a, b, c, d, e, f, g, h, i, j, k)
 
-    return funcs
+    return funcs + func_version.format(a, c)
 
 def make_set_callback_funcs():
     func = """
@@ -408,6 +427,7 @@ def make_create_declaration():
     return create.format(com['name'][1], com['name'][0])
 
 def make_method_declarations():
+    func_version = """int {0}_get_version({1} *{0}, char ret_name[40], uint8_t ret_firmware_version[3], uint8_t ret_binding_version[3]);"""
     func = 'int {0}_{1}({2} *{0}{3});\n'
     a = com['name'][1]
     c = com['name'][0]
@@ -418,7 +438,8 @@ def make_method_declarations():
         d = make_parameter_list(packet)
 
         funcs += func.format(a, b, c, d)
-    return funcs
+
+    return funcs + func_version.format(a, c)
 
 def make_set_callback_declarations():
     func = 'void {0}_set_callback_{1}({2} *{0}, {1}_func_t func);\n'

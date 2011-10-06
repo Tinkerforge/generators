@@ -54,6 +54,8 @@ from ip_connection import Device, IPConnection, Error
     return include.format(gen_text.format(date), lower_type, com['name'][1])
 
 def make_namedtuples():
+    version_tup = """GetVersion = namedtuple('Version', ['name', 'firmware_version', 'binding_version'])
+"""
     tup = """{0} = namedtuple('{1}', [{2}])
 """
 
@@ -77,7 +79,7 @@ def make_namedtuples():
                 params.append("'{0}'".format(element[0]))
 
         tups += tup.format(name, name_tup, ", ".join(params))
-    return tups
+    return tups + version_tup
        
 def make_class():
     return '\nclass {0}(Device):\n'.format(com['name'][0])
@@ -99,10 +101,19 @@ def make_type_definitions():
     return types
 
 def make_init_method():
-    return """
+    dev_init = """
     def __init__(self, uid):
         Device.__init__(self, uid)
 
+        self.binding_version = {0}
+
+"""
+    return dev_init.format(str(com['version']))
+
+def make_version_method():
+    return """
+    def get_version(self):
+        return GetVersion(self.name, self.firmware_version, self.binding_version)
 """
 
 def make_callbacks_format():
@@ -225,6 +236,7 @@ def make_files(com_new, directory):
     py.write(make_type_definitions())
     py.write(make_init_method())
     py.write(make_callbacks_format())
+    py.write(make_version_method())
     py.write(make_methods())
 
 def generate(path):

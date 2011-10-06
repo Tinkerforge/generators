@@ -133,12 +133,15 @@ namespace Tinkerforge
 			}
 
 			ulong uid = LEConverter.ULongFrom(4, data);
-			byte stackID = LEConverter.ByteFrom(12, data);
 
 			if(addDev.uid == uid) 
 			{
-				addDev.stackID = stackID;
-				devices[stackID] = addDev;
+				addDev.firmwareVersion[0] = LEConverter.ByteFrom(12, data);
+				addDev.firmwareVersion[1] = LEConverter.ByteFrom(13, data);
+				addDev.firmwareVersion[2] = LEConverter.ByteFrom(14, data);
+				addDev.name = LEConverter.StringFrom(15, data, 40);
+				addDev.stackID = LEConverter.ByteFrom(55, data);
+				devices[addDev.stackID] = addDev;
 				addDev.answerQueue.Enqueue(data);
 				addDev = null;
 			}
@@ -247,6 +250,9 @@ namespace Tinkerforge
 	public class Device
 	{
 		public byte stackID = 0;
+		public String name;
+		public byte[] firmwareVersion = new byte[3];
+		public byte[] bindingVersion = new byte[3];
 		public ulong uid = 0;
 		public byte answerType = 0;
 		public Delegate[] callbacks = new Delegate[256];

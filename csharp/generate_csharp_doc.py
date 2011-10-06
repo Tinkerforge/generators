@@ -203,28 +203,15 @@ def make_parameter_list(packet):
         param.append('{0}{1}{2} {3}'.format(out, csharp_type, arr, name))
     return ', '.join(param)
 
-def make_obj_desc(packet):
-    if get_num_return(packet['elements']) < 2:
-        return ''
-    
-    desc = '\n The returned object has the public member variables {0}.\n'
-    var = []
-    for element in packet['elements']:
-        if element[3] == 'out':
-            var.append('``{0} {1}``'.format(get_csharp_type(element[1]),
-                                            to_camel_case(element[0])))
-
-    if len(var) == 1:
-        return desc.format(var[0])
-
-    if len(var) == 2:
-        return desc.format(var[0] + ' and ' + var[1])
-
-    return desc.format(', '.join(var[:-1]) + ' and ' + var[-1])
-
-
-
 def make_methods(typ):
+    method_version = """
+.. csharp:function:: public void {0}::GetVersion(out string name, out byte[] firmwareVersion, out byte[] bindingVersion)
+
+ Returns the name (including the hardware version), the firmware version 
+ and the binding version of the device. The firmware and binding versions are
+ given in arrays of size 3 with the syntax [major, minor, revision].
+"""
+
     methods = ''
     func_start = '.. csharp:function:: '
     cls = com['type'] + com['name'][0]
@@ -235,14 +222,15 @@ def make_methods(typ):
         name = packet['name'][0]
         params = make_parameter_list(packet)
         desc = fix_links(shift_right(packet['doc'][1][lang], 1))
-        obj_desc = make_obj_desc(packet)
-        func = '{0}public void {1}::{2}({3})\n{4}{5}'.format(func_start, 
+        func = '{0}public void {1}::{2}({3})\n{4}'.format(func_start, 
                                                              cls, 
                                                              name, 
                                                              params, 
-                                                             desc,
-                                                             obj_desc)
+                                                             desc)
         methods += func + '\n'
+
+    if typ == 'am':
+        methods += method_version.format(cls)
 
     return methods
 

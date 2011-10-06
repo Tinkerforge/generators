@@ -34,6 +34,8 @@
 #define TIMEOUT_ADD_DEVICE 2500
 #define TIMEOUT_ANSWER 2500
 
+#define MAX_LENGTH_NAME 40
+
 #define MAX_NUM_DEVICES 256
 #define MAX_NUM_CALLBACKS 256
 #define MAX_PACKET_SIZE 4096
@@ -78,6 +80,9 @@ typedef struct Device_{
 	pthread_mutex_t sem_write;
 	pthread_mutex_t sem_answer;
 #endif
+	char name[40];
+	uint8_t firmware_version[3];
+	uint8_t binding_version[3];
 	DeviceAnswer answer;
 	void *callbacks[MAX_NUM_CALLBACKS];
 	device_callback_func_t device_callbacks[MAX_NUM_CALLBACKS];
@@ -112,6 +117,8 @@ typedef struct {
 	uint8_t type;
 	uint16_t length;
 	uint64_t device_uid;
+	uint8_t device_firmware_version[3];
+	char device_name[MAX_LENGTH_NAME];
 	uint8_t device_stack_id;
 } __attribute__((__packed__)) GetStackIDReturn;
 

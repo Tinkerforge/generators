@@ -178,6 +178,14 @@ Examples
     return ex
 
 def make_methods(typ):
+    version_method = """
+.. c:function:: int {0}_get_version({1} *{0}, char ret_name[40], uint8_t ret_firmware_version[3], uint8_t ret_binding_version[3])
+
+ Returns the name (including the hardware version), the firmware version 
+ and the binding version of the device. The firmware and binding versions are
+ given in arrays of size 3 with the syntax [major, minor, revision].
+"""
+
     methods = ''
     func_start = '.. c:function:: int '
     for packet in com['packets']:
@@ -189,6 +197,9 @@ def make_methods(typ):
         desc = fix_links(shift_right(packet['doc'][1][lang], 1))
         func = '{0}{1}({2})\n{3}'.format(func_start, name, params, desc)
         methods += func + '\n'
+
+    if typ == 'am':
+        methods += version_method.format(com['name'][1], com['name'][0])
 
     return methods
 

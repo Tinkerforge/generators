@@ -315,6 +315,11 @@ int ipcon_add_device_handler(IPConnection *ipcon,
 	if(ipcon->add_device != NULL && 
 	   ipcon->add_device->uid == gsidr->device_uid) {
 		ipcon->add_device->stack_id = gsidr->device_stack_id;
+		strncpy(ipcon->add_device->name, gsidr->device_name, MAX_LENGTH_NAME);
+		ipcon->add_device->firmware_version[0] = gsidr->device_firmware_version[0];
+		ipcon->add_device->firmware_version[1] = gsidr->device_firmware_version[1];
+		ipcon->add_device->firmware_version[2] = gsidr->device_firmware_version[2];
+
 		ipcon->devices[gsidr->device_stack_id] = ipcon->add_device;
 #ifdef _WIN32
 		ReleaseSemaphore(ipcon->add_device->sem_answer,1,NULL);

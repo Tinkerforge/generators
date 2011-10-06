@@ -19,6 +19,9 @@ import java.nio.ByteOrder;
 class Device {
 	long uid = (long)0;
 	short stackID = (short)0;
+	String name = null;
+	short[] firmwareVersion = new short[3];
+	short[] bindingVersion = new short[3];
 	byte answerType = (byte)0;
 	Semaphore semaphoreAnswer = new Semaphore(1, true);
 	Semaphore semaphoreWrite = new Semaphore(1, true);
@@ -247,8 +250,20 @@ public class IPConnection {
 		
 		ByteBuffer bb = ByteBuffer.wrap(data, 4, length - 4);
 		bb.order(ByteOrder.LITTLE_ENDIAN);
+
+
 		long uid = bb.getLong();
 		if(addDevice.uid == uid) {
+
+			addDevice.firmwareVersion[0] = IPConnection.unsignedByte(bb.get());
+			addDevice.firmwareVersion[1] = IPConnection.unsignedByte(bb.get());
+			addDevice.firmwareVersion[2] = IPConnection.unsignedByte(bb.get());
+
+			addDevice.name = new String("");
+			for(int i = 0; i < 40; i++) {
+				addDevice.name += (char)bb.get();
+			}
+
 			addDevice.stackID = unsignedByte(bb.get());
 			devices[addDevice.stackID] = addDevice;
 			addDevice.semaphoreAnswer.release();

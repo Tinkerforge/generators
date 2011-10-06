@@ -95,6 +95,9 @@ def make_constructor():
     con = """
 \t\tpublic {0}{1}(string uid) : base(uid) 
 \t\t{{
+\t\t\tthis.bindingVersion[0] = {3};
+\t\t\tthis.bindingVersion[1] = {4};
+\t\t\tthis.bindingVersion[2] = {5};
 {2}
 \t\t}}
 """
@@ -107,7 +110,8 @@ def make_constructor():
         name_pascal = packet['name'][0]
         cbs.append(cb.format(name_upper, name_pascal))
 
-    return con.format(com['type'], com['name'][0], '\n'.join(cbs))
+    v = com['version']
+    return con.format(com['type'], com['name'][0], '\n'.join(cbs), v[0], v[1], v[2])
 
 def get_from_type(element):
     forms = {
@@ -264,6 +268,16 @@ def make_callbacks():
 
     return cbs
 
+def make_version_method():
+    return """
+\t\tpublic void GetVersion(out string name, out byte[] firmwareVersion, out byte[] bindingVersion)
+\t\t{{
+\t\t\tname = this.name;
+\t\t\tfirmwareVersion = this.firmwareVersion;
+\t\t\tbindingVersion = this.bindingVersion;
+\t\t}}
+"""
+
 def make_methods():
     methods = ''
     method = """
@@ -379,6 +393,7 @@ def make_files(com_new, directory):
     csharp.write(make_delegates())
     csharp.write(make_constructor())
     csharp.write(make_methods())
+    csharp.write(make_version_method())
     csharp.write(make_callbacks())
     csharp.write(make_register_callback())
 
