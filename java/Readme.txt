@@ -18,6 +18,6 @@ and run it with the following parameters (1. Windows and 2. linux/Mac OS)
 
 (Note: The difference is colon vs semicolon)
 
-Or, alternatively add the jar and the Example to an Java IDE of your choice (such as Eclipse or NetBeans).
+Or, alternatively add the jar and the Example in an Java IDE of your choice (such as Eclipse or NetBeans).
 
 Documentation for the API can be found at http://www.tinkerforge.com/doc/index.html

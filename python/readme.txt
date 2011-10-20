@@ -9,7 +9,7 @@ example_folder/
  -> tinkerforge/
  -> example_configuration.py
 
-If you just want to use a few Bricks or Bricklets and you don't want to have this many files in you project, you can also copy the files as they are needed, for the stepper examples we need ip_connection.py and stepper_brick.py. After copying these in the project folder  
+If you just want to use a few Bricks or Bricklets and you don't want to have this many files in you project, you can also copy the files as they are needed. For the stepper examples we need ip_connection.py and stepper_brick.py. After copying these in the project folder  
 
 example_folder/
  -> ip_connection.py

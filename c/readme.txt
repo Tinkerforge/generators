@@ -4,8 +4,11 @@ examples/).
 
 To keep the C/C++ bindings stupid and simple, they only have
 dependencies that are available nearly everywhere, thus making it
-possible to compile into any project hassle-free. This means, the
-bindings should work on most platforms (arm, x86, etc.) and on most
+possible to compile into any project hassle-free. 
+We do not offer a pre compiled lib, since it would be a
+pain in the ass to provide them for all combinations of architectures and
+operating systems. This means, the
+bindings should work on most architectures (arm, x86, etc.) and on most
 operating systems (Windows and posix systems such as linux and Mac
 OS, etc.).
 
