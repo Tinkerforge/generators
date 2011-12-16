@@ -510,7 +510,7 @@ def generate(path):
     shutil.copy(path + '/Readme.txt', '/tmp/generator/jar')
 
     # Make jar
-    args = ['/usr/bin/javac /tmp/generator/jar/source/com/tinkerforge/*']
+    args = ['/usr/bin/javac /tmp/generator/jar/source/com/tinkerforge/*.java']
     subprocess.call(args, shell=True)
 
     os.chdir('/tmp/generator/jar/source')
