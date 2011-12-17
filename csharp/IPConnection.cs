@@ -23,12 +23,14 @@ namespace Tinkerforge
 #else
 		NetworkStream socketStream;
 		TcpClient socket;
-		Thread thread;
-		bool RecvLoopFlag = true;
+		Thread recvThread;
+		Thread callbackThread;
 #endif
+		bool RecvLoopFlag = true;
 		Device addDev = null;
 		Device[] devices = new Device[256];
 		EnumerateCallback enumerateCallback = null;
+		public BlockingQueue callbackQueue = new BlockingQueue();
 
     	public const int TIMEOUT_ADD_DEVICE = 2500;
     	public const int TIMEOUT_ANSWER = 2500;
@@ -61,8 +63,10 @@ namespace Tinkerforge
 
 			socketStream = socket.GetStream();
 
-			thread = new Thread(this.RecvLoop);
-			thread.Start();
+			callbackThread = new Thread(this.CallbackLoop);
+			callbackThread.Start();
+			recvThread = new Thread(this.RecvLoop);
+			recvThread.Start();
 #endif
 		}
 
@@ -115,7 +119,8 @@ namespace Tinkerforge
 		{
 			try
 			{
-				while(RecvLoopFlag) {
+				while(RecvLoopFlag) 
+				{
 					byte[] data = new byte[8192];
 					int length = socketStream.Read(data, 0, data.Length);
 
@@ -124,7 +129,14 @@ namespace Tinkerforge
 						str += data[i] + " ";
 					}
 
-					HandleMessage(data);
+					int handled = 0;
+					while(length != handled)
+					{
+						byte[] tmp = new byte[length-handled];
+						Array.Copy(data, handled, tmp, 0, length - handled);
+						handled += HandleMessage(tmp);
+						System.Console.WriteLine("handled: " + handled);
+					}
 				}
 			}
 			catch(Exception)
@@ -135,6 +147,38 @@ namespace Tinkerforge
 
 		}
 #endif
+
+		private void CallbackLoop()
+		{
+			while(RecvLoopFlag)
+			{
+				byte[] data;			
+				callbackQueue.TryDequeue(out data, Timeout.Infinite);
+
+				byte type = GetTypeFromData(data);
+
+				if(type == TYPE_ENUMERATE_CALLBACK)
+				{
+					ulong uid = LEConverter.ULongFrom(4, data);
+					string name = LEConverter.StringFrom(12, data, 40);
+					byte stackID = LEConverter.ByteFrom(52, data);
+					bool isNew = LEConverter.BoolFrom(53, data);
+
+					enumerateCallback(Base58.Encode(uid), name, stackID, isNew);
+				}
+				else
+				{
+					byte stackID = GetStackIDFromData(data);
+					Device device = devices[stackID];
+
+					Device.MessageCallback callback = device.messageCallbacks[type];
+					if(callback != null && device.callbacks[type] != null) 
+					{
+						callback(data);
+					}
+				}
+			}
+		}
 
 		private static byte GetStackIDFromData(byte[] data)
 		{
@@ -185,7 +229,7 @@ namespace Tinkerforge
 			Device.MessageCallback callback = device.messageCallbacks[type];
 			if(callback != null && device.callbacks[type] != null)
 			{
-				return callback(data);
+				callbackQueue.Enqueue(data);
 			}
 
 			// Message seems to be OK, but can't be handled, most likely
@@ -227,12 +271,7 @@ namespace Tinkerforge
 				return length;
 			}
 
-			ulong uid = LEConverter.ULongFrom(4, data);
-			string name = LEConverter.StringFrom(12, data, 40);
-			byte stackID = LEConverter.ByteFrom(52, data);
-			bool isNew = LEConverter.BoolFrom(53, data);
-
-			enumerateCallback(Base58.Encode(uid), name, stackID, isNew);
+			callbackQueue.Enqueue(data);
 
 			return length;
 		}
@@ -304,7 +343,7 @@ namespace Tinkerforge
 		{
 #if WINDOWS_PHONE
 #else
-			thread.Join();
+			recvThread.Join();
 #endif
 		}
 
