@@ -10,6 +10,7 @@ package com.tinkerforge;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -56,7 +57,6 @@ class RecvLoopThread extends Thread {
 
 	public void run() {
 		byte[] data = new byte[8192];
-		byte[] tmp = new byte[8192];
 		
 		try {
 			ipcon.in = ipcon.sock.getInputStream();
@@ -84,12 +84,11 @@ class RecvLoopThread extends Thread {
 				
 				int handled = 0;
 				while(length != handled) {
-					if(handled == 0) {
-						handled += ipcon.handleMessage(data);
-					} else {
-						System.arraycopy(data, handled, tmp, 0, length - handled);
-						handled += ipcon.handleMessage(tmp);
-					}
+					// Copy data, otherwise callback data might be overwritten
+					byte[] tmp = new byte[length-handled];
+					System.arraycopy(data, handled, tmp, 0, length - handled);
+					
+					handled += ipcon.handleMessage(tmp);
 				}
 			} 
 			catch(java.io.IOException e) {
@@ -99,11 +98,61 @@ class RecvLoopThread extends Thread {
 	}
 }
 
+
+class CallbackLoopThread extends Thread {
+	IPConnection ipcon = null;
+
+	CallbackLoopThread(IPConnection ipcon) {
+		this.ipcon = ipcon;
+	}
+
+	public void run() {
+		while(ipcon.recvLoopFlag) {
+			byte[] data = null;
+			try {
+				data = ipcon.callbackQueue.take();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				continue;
+			}
+
+		
+			byte type = ipcon.getTypeFromData(data);
+			if(type == ipcon.TYPE_ENUMERATE_CALLBACK) {
+				int length = ipcon.getLengthFromData(data);
+				ByteBuffer bb = ByteBuffer.wrap(data, 4, length - 4);
+				bb.order(ByteOrder.LITTLE_ENDIAN);
+				long uid_num = bb.getLong();
+				
+				String uid = ipcon.base58Encode(uid_num);
+				
+				String name = new String();
+				for(int i = 0; i < 40; i++) {
+					name += (char)bb.get();
+				}
+				
+				short stackID = ipcon.unsignedByte(bb.get());
+				boolean isNew = bb.get() != 0;
+				
+				ipcon.enumerateListener.enumerate(uid, name, stackID, isNew);
+			} else {
+				byte stackID = ipcon.getStackIDFromData(data);
+				Device device = ipcon.devices[stackID];
+				System.out.println(type);
+				System.out.println(device.callbacks[type]);
+				if(device.callbacks[type] != null) {
+					device.callbacks[type].callback(data);
+				}
+			}
+		}
+	}
+}
+
 public class IPConnection {
 	private final static String BASE58 = new String("123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ");
     private final static byte TYPE_GET_STACK_ID = (byte)255;
     private final static byte TYPE_ENUMERATE = (byte)254;
-    private final static byte TYPE_ENUMERATE_CALLBACK = (byte)253;
+    protected final static byte TYPE_ENUMERATE_CALLBACK = (byte)253;
     private final static byte TYPE_STACK_ENUMERATE = (byte)252;
     private final static byte TYPE_ADC_CALIBRATE = (byte)251;
     private final static byte TYPE_GET_ADC_CALIBRATION = (byte)250;
@@ -115,15 +164,17 @@ public class IPConnection {
     public final static int TIMEOUT_ADD_DEVICE = 2500;
     public final static int TIMEOUT_ANSWER = 2500;
     
-    private Device[] devices = new Device[255];
+    protected Device[] devices = new Device[255];
     private Device addDevice = null;
+	protected LinkedBlockingQueue<byte[]> callbackQueue = new LinkedBlockingQueue<byte[]>();
 
     boolean recvLoopFlag = true;
 	Socket sock = null;
 	OutputStream out = null;
 	InputStream in = null;
-	EnumerateListener enumerateListener = null;
+	protected EnumerateListener enumerateListener = null;
 	RecvLoopThread recvLoopThread = null;
+	CallbackLoopThread callbackLoopThread = null;
 
 	public static class TimeoutException extends Exception {
 		private static final long serialVersionUID = 1L;
@@ -142,6 +193,8 @@ public class IPConnection {
 		out = sock.getOutputStream();
 		out.flush();
 
+		callbackLoopThread = new CallbackLoopThread(this);
+		callbackLoopThread.start();
 		recvLoopThread = new RecvLoopThread(this);
 		recvLoopThread.start();
 	}
@@ -175,7 +228,11 @@ public class IPConnection {
 		}
 		
 		if(device.callbacks[type] != null && device.listenerObjects[type] != null) {
-			device.callbacks[type].callback(data);
+			try {
+				callbackQueue.put(data);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 
         // Message seems to be OK, but can't be handled, most likely
@@ -183,15 +240,15 @@ public class IPConnection {
 		return length;
 	}
 	
-	private byte getStackIDFromData(byte[] data) {
+	protected byte getStackIDFromData(byte[] data) {
 		return data[0];
 	}
 	
-	private byte getTypeFromData(byte[] data) {
+	protected byte getTypeFromData(byte[] data) {
 		return data[1];
 	}
 	
-	private int getLengthFromData(byte[] data) {
+	protected int getLengthFromData(byte[] data) {
 		return (data[2] & 0xFF) | ((data[3] & 0xFF) << 8);
 	}
 	
@@ -279,22 +336,13 @@ public class IPConnection {
 		if(enumerateListener == null) {
 			return length;
 		}
-		
-		ByteBuffer bb = ByteBuffer.wrap(data, 4, length - 4);
-		bb.order(ByteOrder.LITTLE_ENDIAN);
-		long uid_num = bb.getLong();
-		
-		String uid = base58Encode(uid_num);
-		
-		String name = new String();
-		for(int i = 0; i < 40; i++) {
-			name += (char)bb.get();
+
+		try {
+			callbackQueue.put(data);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
-		
-		short stackID = unsignedByte(bb.get());
-		boolean isNew = bb.get() != 0;
-		
-		enumerateListener.enumerate(uid, name, stackID, isNew);
+
 		
 		return length;
 	}
