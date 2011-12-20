@@ -151,7 +151,10 @@ namespace Tinkerforge
 			while(RecvLoopFlag)
 			{
 				byte[] data;			
-				callbackQueue.TryDequeue(out data, Timeout.Infinite);
+				if(!callbackQueue.TryDequeue(out data, Timeout.Infinite))
+				{
+					return;
+				}
 
 				byte type = GetTypeFromData(data);
 
@@ -358,6 +361,7 @@ namespace Tinkerforge
 			{
 			}
 			socket.Close();
+			callbackQueue.Close();
 #endif
 		}
     }
@@ -835,6 +839,10 @@ namespace Tinkerforge
 			string s = "";
 			for(int i = position; i < position + len; i++) 
 			{
+				if(array[i] == 0)
+				{
+					break;
+				}
 				s += (char)array[i];
 			}
 
