@@ -138,8 +138,6 @@ class CallbackLoopThread extends Thread {
 			} else {
 				byte stackID = ipcon.getStackIDFromData(data);
 				Device device = ipcon.devices[stackID];
-				System.out.println(type);
-				System.out.println(device.callbacks[type]);
 				if(device.callbacks[type] != null) {
 					device.callbacks[type].callback(data);
 				}
