@@ -75,7 +75,6 @@ namespace Tinkerforge
         {
             if(e.SocketError != SocketError.Success)
             {
-                System.Diagnostics.Debug.WriteLine("error: " + e);
                 return;
             }
 
@@ -135,7 +134,6 @@ namespace Tinkerforge
 						byte[] tmp = new byte[length-handled];
 						Array.Copy(data, handled, tmp, 0, length - handled);
 						handled += HandleMessage(tmp);
-						System.Console.WriteLine("handled: " + handled);
 					}
 				}
 			}
