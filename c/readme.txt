@@ -30,9 +30,20 @@ project_folder/
 The only dependency on Unix-like systems is pthread, therefore a
 compilation of the project with gcc on linux looks like:
 
-gcc -lpthread -o example_configuration brick_stepper.c ip_connection.c example_configuration.c
+gcc -pthread -o example_configuration brick_stepper.c ip_connection.c example_configuration.c
 
-On Windows WinThreads???? (TODO) are used for threading, we can compile
-the example as following:
+On Windows Winsock2 is used for threading. Under MinGW we can compile the example as following (hint: the library linking must come after the source):
 
-gcc.exe ?????? -o example_configuration.exe brick_stepper.c ip_connection.c example_configuration.c
+gcc -o example_configuration.exe brick_stepper.c ip_connection.c example_configuration.c -lws2_32
+
+With Visual Studio we can use our project_folder/ as follows:
+File -> New -> Project From Existing Code -> Type: Visual C++ -> choose test_project, choose project name -> Next ->  choose Console Application -> Finish
+
+Now we have to tell Visual Studio to use the C++ compiler, since we
+would need C99 but Visual Studio can only compile C89... Also we have to
+include ws2_32.lib:
+
+Project -> properties -> C/C++ -> Advanced and option "Compile as" -> choose "Compile as C++ Code (/TP)"
+Project -> properties -> Linker -> Additional Dependencies -> add "ws2_32.lib;"
+
+Now we are ready to go!

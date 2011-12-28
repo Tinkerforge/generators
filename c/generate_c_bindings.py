@@ -127,7 +127,7 @@ typedef struct {{
 \tuint8_t stack_id;
 \tuint8_t type;
 \tuint16_t length;
-{0}}} PACKED {1}{2};
+{0}}} PACKED {1}{2}_;
 """
 
     for packet in com['packets']:
@@ -273,12 +273,12 @@ int {0}_{1}({2} *{0}{3}) {{
 
 \tipcon_sem_wait_write({0});
 
-{9}\t{5} {6};
+{9}\t{5}_ {6};
 \t{6}.stack_id = {0}->stack_id;
 \t{6}.type = {4};
-\t{6}.length = sizeof({5});{7}
+\t{6}.length = sizeof({5}_);{7}
 
-\tipcon_device_write({0}, (char *)&{6}, sizeof({5}));
+\tipcon_device_write({0}, (char *)&{6}, sizeof({5}_));
 
 {10}{8}\tipcon_sem_post_write({0});
 
@@ -286,12 +286,12 @@ int {0}_{1}({2} *{0}{3}) {{
 }}
 """
 
-    func_ret = """\t{0}Return *{1}r = ({0}Return *){2}->answer.buffer;
+    func_ret = """\t{0}Return_ *{1}r = ({0}Return_ *){2}->answer.buffer;
 {3}
 """
 
     sizeof_ret = """\t{0}->answer.type = {1};
-\t{0}->answer.length = sizeof({2}Return);
+\t{0}->answer.length = sizeof({2}Return_);
 """
 
     answer_sem = """\tif(ipcon_answer_sem_wait_timeout({0}) != 0) {{
@@ -358,9 +358,9 @@ void {0}_register_callback({1} *{0}, uint8_t cb, void *func) {{
 def make_callback_funcs():
     func = """
 int {0}_callback_{1}({2} *{0}, const unsigned char *buffer) {{
-\t{3}Callback *{4}c = ({3}Callback *)buffer;
+\t{3}Callback_ *{4}c = ({3}Callback_ *)buffer;
 \t(({1}_func_t){0}->callbacks[{4}c->type])({5});
-\treturn sizeof({3}Callback);
+\treturn sizeof({3}Callback_);
 }}
 """
 
