@@ -452,6 +452,9 @@ def generate(path):
     shutil.rmtree('/tmp/generator/egg/source/dist')
 
     # Make zip
+    f = open('/tmp/generator/egg/source/tinkerforge/__init__.py', 'w')
+    f.write(' ')
+    f.close()
     os.chdir('/tmp/generator/egg')
     args = ['/usr/bin/zip',
             '-r',
