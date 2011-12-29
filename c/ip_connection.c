@@ -7,15 +7,15 @@
 
 #include "ip_connection.h"
 
-#include <stdbool.h>
 #include <stdio.h>
-
 #include <time.h>
 
 #ifdef _WIN32
 	#include <windows.h>
 	#include <winsock2.h>
 #else
+	#include <stdbool.h>
+	#include <unistd.h> 
 	#include <pthread.h>
 	#include <sys/types.h>
 	#include <sys/time.h> // gettimeofday
@@ -25,7 +25,7 @@
 	#include <netdb.h> // gethostbyname
 #endif
 
-#include <unistd.h> 
+
 
 #define MAX_BASE58_STR_SIZE 13
 const char BASE58_STR[] = \
@@ -42,7 +42,7 @@ void* ipcon_recv_loop(void *param) {
 
 	while(ipcon->recv_loop_flag) {
 #ifdef _WIN32
-		int length = recv(ipcon->s, buffer, RECV_BUFFER_SIZE, 0);
+		int length = recv(ipcon->s, (char*)buffer, RECV_BUFFER_SIZE, 0);
 #else
 		int length = read(ipcon->fd, buffer, RECV_BUFFER_SIZE);
 #endif
@@ -356,6 +356,8 @@ int ipcon_add_device(IPConnection *ipcon, Device *device) {
 	if(ipcon_answer_sem_wait_timeout(device) != 0) {
 		return E_TIMEOUT;
 	}
+
+	return E_OK;
 }
 
 unsigned short ipcon_get_length_from_data(const unsigned char *data) {

@@ -9,12 +9,14 @@
 #endif
 
 #include <stdint.h>
-#include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
 
 
 #ifdef _WIN32
+#ifndef WIN32_LEAN_AND_MEAN
+	#define WIN32_LEAN_AND_MEAN
+#endif
 	#include <windows.h>
 	#include <winsock2.h>
 #else
@@ -105,12 +107,21 @@ typedef struct IPConnection_{
 	enumerate_callback_func_t enumerate_callback;
 } IPConnection;
 
+#ifdef _MSC_VER
+	#pragma pack(push)
+	#pragma pack(1)
+
+	#define PACKED
+#else
+	#define PACKED __attribute__((packed))
+#endif
+
 typedef struct {
 	uint8_t stack_id;
 	uint8_t type;
 	uint16_t length;
 	uint64_t uid;
-} __attribute__((__packed__)) GetStackID;
+} PACKED GetStackID;
 
 typedef struct {
 	uint8_t stack_id;
@@ -120,13 +131,13 @@ typedef struct {
 	uint8_t device_firmware_version[3];
 	char device_name[MAX_LENGTH_NAME];
 	uint8_t device_stack_id;
-} __attribute__((__packed__)) GetStackIDReturn;
+} PACKED GetStackIDReturn;
 
 typedef struct {
 	uint8_t stack_id;
 	uint8_t type;
 	uint16_t length;
-} __attribute__((__packed__)) Enumerate;
+} PACKED Enumerate;
 
 typedef struct {
 	unsigned short length;
@@ -136,7 +147,11 @@ typedef struct {
 	char device_name[40];
 	uint8_t device_stack_id;
 	bool is_new;
-} __attribute__((__packed__)) EnumerateReturn;
+} PACKED EnumerateReturn;
+
+#ifdef _MSC_VER
+	#pragma pack(pop)
+#endif
 
 int ipcon_create(IPConnection *ipcon, const char* host, const int port);
 void ipcon_enumerate(IPConnection *ipcon, enumerate_callback_func_t cb);
