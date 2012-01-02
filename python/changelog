@@ -1,3 +1,4 @@
 1.0.0: Initial Version
 1.0.1: Add thread for callbacks in python ip_connection (allows to call getters in callbacks)
 1.0.2: Add __init__.py to source/tinkerforge/
+1.0.3: Fix thread exception at shutdown

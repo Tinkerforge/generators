@@ -160,7 +160,14 @@ class IPConnection:
 
     def callback_loop(self):
         while self.recv_loop_flag:
-            data = self.callback_queue.get()
+            try:
+                data = self.callback_queue.get(True, 1.0)
+            except:
+                if self.recv_loop_flag:
+                    continue
+                else:
+                    return
+
 
             typ = get_type_from_data(data)
             stack_id = get_stack_id_from_data(data)
@@ -196,6 +203,8 @@ class IPConnection:
             pass
         self.sock.close()
 
+        self.join_thread()
+
     def data_to_return(self, data, form):
         ret = []
         for f in form.split(' '):
@@ -216,7 +225,8 @@ class IPConnection:
         return ret
 
     def join_thread(self):
-        self.thread.join()
+        self.thread_recv.join()
+        self.thread_callback.join()
 
     def write(self, device, typ, data, form, form_ret):
         device.sem_write.acquire()
