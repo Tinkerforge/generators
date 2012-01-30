@@ -152,7 +152,7 @@ Examples
 {0}
 {1}
 
-`Download <https://github.com/Tinkerforge/{3}/raw/master/software/bindings/c/{4}>`__
+`Download <https://github.com/Tinkerforge/{3}/raw/master/software/examples/c/{4}>`__
 
 .. literalinclude:: {2}
  :language: c

@@ -126,7 +126,7 @@ Examples
 {0}
 {1}
 
-`Download <https://github.com/Tinkerforge/{3}/raw/master/software/bindings/csharp/{4}>`__
+`Download <https://github.com/Tinkerforge/{3}/raw/master/software/examples/csharp/{4}>`__
 
 .. literalinclude:: {2}
  :language: csharp
