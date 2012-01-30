@@ -55,7 +55,9 @@ ipcon_dest = ['imu-brick',
               'temperature-ir-bricklet',
               'io16-bricklet',
               'io4-bricklet',
-              'humidity-bricklet']
+              'humidity-bricklet',
+              'analog-in-bricklet',
+              'analog-out-bricklet']
 
 bind_trans = [('brick_imu', 'imu-brick', 'imu', 'IMU_Brick'),
               ('brick_servo', 'servo-brick', 'servo', 'Servo_Brick'),
@@ -78,7 +80,9 @@ bind_trans = [('brick_imu', 'imu-brick', 'imu', 'IMU_Brick'),
               ('bricklet_temperature_ir', 'temperature-ir-bricklet', 'temperature_ir', 'TemperatureIR_Bricklet'),
               ('bricklet_io16', 'io16-bricklet', 'io16', 'IO16_Bricklet'),
               ('bricklet_io4', 'io4-bricklet', 'io4', 'IO4_Bricklet'),
-              ('bricklet_ambient_light', 'ambient-light-bricklet', 'ambient_light', 'AmbientLight_Bricklet')]
+              ('bricklet_ambient_light', 'ambient-light-bricklet', 'ambient_light', 'AmbientLight_Bricklet'),
+              ('bricklet_analog_in', 'analog-in-bricklet', 'analog_in', 'AnalogIn_Bricklet'),
+              ('bricklet_analog_out', 'analog-out-bricklet', 'analog_out', 'AnalogOut_Bricklet')]
 
 path = os.getcwd()
 start_path = path.replace('/generators', '')
