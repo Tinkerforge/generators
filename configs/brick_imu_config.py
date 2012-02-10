@@ -98,7 +98,7 @@ com['packets'].append({
 Returns the data from :func:`GetAcceleration`, :func:`GetMagneticField` 
 and :func:`GetAngularVelocity` as well as the temperature of the IMU Brick.
 
-The temperature is given in °C/10.
+The temperature is given in °C/100.
 
 If you want to get the data periodically, it is recommended 
 to use the callback :func:`AllData` and set the period with 
@@ -183,7 +183,7 @@ com['packets'].append({
 'en':
 """
 Returns the temperature of the IMU Brick. The temperature is given in 
-°C/10.
+°C/100.
 """,
 'de':
 """
