@@ -20,6 +20,7 @@
 	#include <windows.h>
 	#include <winsock2.h>
 #else
+	#include <stdbool.h>
 	#include <netinet/in.h> // struct sockaddr_in
 	#include <pthread.h>
 	#include <semaphore.h>

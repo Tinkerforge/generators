@@ -357,7 +357,7 @@ Returns the convergence speed as set by :func:`SetConvergenceSpeed`.
 com['packets'].append({
 'type': 'method', 
 'name': ('SetCalibration', 'set_calibration'), 
-'elements': [('type', 'uint8', 1, 'in'),
+'elements': [('typ', 'uint8', 1, 'in'),
              ('data', 'int16', 10, 'in')],
 'doc': ['am', {
 'en':
@@ -399,7 +399,7 @@ to obtain a usable result in the end.
 com['packets'].append({
 'type': 'method', 
 'name': ('GetCalibration', 'get_calibration'), 
-'elements': [('type', 'uint8', 1, 'in'),
+'elements': [('typ', 'uint8', 1, 'in'),
              ('data', 'int16', 10, 'out')],
 'doc': ['am', {
 'en':
