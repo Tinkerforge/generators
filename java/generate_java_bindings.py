@@ -463,7 +463,9 @@ def make_methods():
 def make_bbgets(packet, with_obj = False):
     bbgets = ''
     bbget = '\t\t{0}{1}{2} = {3}(bb.get{4}()){5};'
-    loop = """\t\tfor(int i = 0; i < {0}; i++) {{
+    new_arr ='{0}[] {1} = new {0}[{2}];'
+    loop = """\t\t{2}
+\t\tfor(int i = 0; i < {0}; i++) {{
 {1}
 \t\t}}
 """
@@ -490,7 +492,11 @@ def make_bbgets(packet, with_obj = False):
             elif element[1] == 'char':
                 cast = '(char)'
 
-            bbget_format = bbget.format(typ,
+            format_typ = ''
+            if not element[2] > 1:
+                format_typ = typ
+
+            bbget_format = bbget.format(format_typ,
                                         obj,
                                         bbret, 
                                         cast,
@@ -498,8 +504,9 @@ def make_bbgets(packet, with_obj = False):
                                         boolean)
 
             if element[2] > 1:
+                arr = new_arr.format(typ.replace(' ', ''), bbret, element[2])
                 bbget_format = bbget_format.replace(' =', '[i] =')
-                bbget_format = loop.format(element[2], '\t' + bbget_format)
+                bbget_format = loop.format(element[2], '\t' + bbget_format, arr)
 
             bbgets += bbget_format + '\n'
     return bbgets, bbret
@@ -525,6 +532,8 @@ def get_return_value(packet):
     for element in packet['elements']:
         if element[3] == 'out':
             ret = get_java_type(element[1])
+            if element[2] > 1:
+                ret += '[]'
             num += 1
 
     if num > 1:

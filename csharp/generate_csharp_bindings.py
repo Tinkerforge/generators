@@ -219,7 +219,7 @@ def make_register_callback():
 def make_callbacks():
     cbs = ''
     cb = """
-\t\tpublic int Callback{0}(byte[] data)
+\t\tpublic int Callback{0}(byte[] data_)
 \t\t{{
 {1}\t\t\t(({0})callbacks[TYPE_{2}])({3});
 \t\t\treturn {4};
@@ -240,7 +240,7 @@ def make_callbacks():
         size = str(get_data_size(packet['elements']))
 
         convs = ''
-        conv = '\t\t\t{0} {1} = LEConverter.{2}({3}, data{4});\n'
+        conv = '\t\t\t{0} {1} = LEConverter.{2}({3}, data_{4});\n'
 
         pos = 4
         for element in packet['elements']:
@@ -283,12 +283,12 @@ def make_methods():
     method = """
 \t\tpublic void {0}({1})
 \t\t{{
-\t\t\tbyte[] data = new byte[{2}];
-\t\t\tLEConverter.To(stackID, 0, data);
-\t\t\tLEConverter.To(TYPE_{3}, 1, data);
-\t\t\tLEConverter.To((ushort){2}, 2, data);
+\t\t\tbyte[] data_ = new byte[{2}];
+\t\t\tLEConverter.To(stackID, 0, data_);
+\t\t\tLEConverter.To(TYPE_{3}, 1, data_);
+\t\t\tLEConverter.To((ushort){2}, 2, data_);
 {5}
-\t\t\tipcon.Write(this, data, TYPE_{3}, {4});
+\t\t\tipcon.Write(this, data_, TYPE_{3}, {4});
 {6}\t\t}}
 """
     method_answer = """
@@ -314,7 +314,7 @@ def make_methods():
         has_ret = has_return_value(packet['elements'])
 
         write_convs = ''
-        write_conv = '\t\t\tLEConverter.To({0}, {1}, data);\n'
+        write_conv = '\t\t\tLEConverter.To({0}, {1}, data_);\n'
 
         pos = 4
         for element in packet['elements']:
