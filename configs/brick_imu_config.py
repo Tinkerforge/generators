@@ -707,10 +707,10 @@ This callback is called periodically with the period that is set by
 com['packets'].append({
 'type': 'signal', 
 'name': ('Quaternion', 'quaternion'), 
-'elements': [('w', 'float', 1, 'out'),
-             ('x', 'float', 1, 'out'),
+'elements': [('x', 'float', 1, 'out'),
              ('y', 'float', 1, 'out'),
-             ('z', 'float', 1, 'out')],
+             ('z', 'float', 1, 'out'),
+             ('w', 'float', 1, 'out')],
 'doc': ['c', {
 'en':
 """
