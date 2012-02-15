@@ -2,3 +2,4 @@
 1.0.1: Add thread for callbacks in IPConnection (allows to call getters in callbacks)
 1.0.2: Remove accidental debug output that was present in 1.0.1
 1.0.3: Remove trailing '\0' from StringFrom Method (issue #2), clean up if callbackQueue is closed
+1.0.4: Add support for IMU Brick, Analog In Bricklet and Analog Out Bricklet
