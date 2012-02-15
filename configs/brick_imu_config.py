@@ -120,7 +120,7 @@ com['packets'].append({
 'en':
 """
 Returns the current orientation (roll, pitch, yaw) of the IMU Brick as euler 
-angles in degree. Note that euler angles always experience a
+angles in one-hundredth degree. Note that euler angles always experience a
 `gimbal lock <http://en.wikipedia.org/wiki/Gimbal_lock>`__.
 
 We recommend that you use quaternions instead.
