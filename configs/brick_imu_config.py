@@ -373,8 +373,7 @@ There are several different types that can be calibrated:
  "2", "Magnetometer Gain", "[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]" 
  "3", "Magnetometer Bias", "[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]"
  "4", "Gyroscope Gain", "[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]" 
- "5", "Gyroscope Bias", "[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]"
- "6", "Temperature Calibration", "Not implemented yet."
+ "5", "Gyroscope Bias", "[bias xl, bias yl, bias zl, temp l, bias xh, bias yh, bias zh, temp h, 0, 0]"
 
 The calibration via gain and bias is done with the following formula::
 
@@ -384,6 +383,14 @@ If you really want to write your own calibration software, please keep
 in mind that you first have to undo the old calibration (set bias to 0 and
 gain to 1/1) and that you have to average over several thousand values
 to obtain a usable result in the end.
+
+The gyroscope bias is highly dependent on the temperature, so you have to
+calibrate the bias two times with different temperatures. The values xl, yl, zl 
+and temp l are the bias for x, y, z and the corresponding temperature for a 
+low temperature. The values xh, yh, zh and temp h are the same for a high 
+temperatures. The temperature difference should be at least 5°C. If you have 
+a temperature where the IMU Brick is mostly used, you should use this 
+temperature for one of the sampling points.
 
 .. note::
  We highly recommend that you use the Brick Viewer to calibrate your
