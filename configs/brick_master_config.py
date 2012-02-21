@@ -206,3 +206,59 @@ com['packets'].append({
 """
 }]
 })
+
+com['packets'].append({
+'type': 'method', 
+'name': ('SetChibiFrequency', 'set_chibi_frequency'), 
+'elements': [('frequency', 'uint8', 1, 'in')], 
+'doc': ['bm', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'method', 
+'name': ('GetChibiFrequency', 'get_chibi_frequency'), 
+'elements': [('frequency', 'uint8', 1, 'out')], 
+'doc': ['bm', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'method', 
+'name': ('SetChibiChannel', 'set_chibi_channel'), 
+'elements': [('channel', 'uint8', 1, 'in')], 
+'doc': ['bm', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'method', 
+'name': ('GetChibiChannel', 'get_chibi_channel'), 
+'elements': [('channel', 'uint8', 1, 'out')], 
+'doc': ['bm', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
