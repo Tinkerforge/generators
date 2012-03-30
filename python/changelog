@@ -3,3 +3,4 @@
 1.0.2: Add __init__.py to source/tinkerforge/
 1.0.3: Fix thread exception at shutdown
 1.0.4: Add support for IMU Brick, Analog In Bricklet and Analog Out Bricklet
+1.0.5: Remove python 3.2 bug (no decode function for str in 3.2)
