@@ -132,7 +132,7 @@ def make_examples():
         return s[:-1]
 
     ex = """
-This is the API site for the C bindings of the {1} {2}. General information
+This is the API site for the Python bindings of the {1} {2}. General information
 on what this device does and the technical specifications can be found 
 :ref:`here <{3}>`.
 
