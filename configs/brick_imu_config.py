@@ -125,6 +125,9 @@ angles in one-hundredth degree. Note that euler angles always experience a
 
 We recommend that you use quaternions instead.
 
+The order to sequence in which the orientation values should be applied is 
+roll, yaw, pitch. 
+
 If you want to get the orientation periodically, it is recommended 
 to use the callback :func:`Orientation` and set the period with 
 :func:`SetOrientationPeriod`.
