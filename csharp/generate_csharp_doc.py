@@ -433,6 +433,7 @@ def generate(path):
     if os.path.exists('/tmp/generator'):
         shutil.rmtree('/tmp/generator/')
     os.makedirs('/tmp/generator/dll/source')
+    os.chdir('/tmp/generator')
 
     # Make bindings
     for config in configs:
