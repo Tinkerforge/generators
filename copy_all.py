@@ -123,6 +123,12 @@ print('Copying documentation and examples:')
 doc_copy = [('_Brick_', 'Bricks'), 
             ('_Bricklet_', 'Bricklets')]
 doc_path = 'doc/source/Software'
+
+for t in doc_copy:
+    dest_dir = '{0}/{1}/{2}'.format(start_path, doc_path, t[1])
+    if not os.path.exists(dest_dir):
+        os.makedirs(dest_dir)
+
 for binding in bindings:
     path_binding = '{0}/{1}'.format(path, binding)
     src_file_path = '{0}/{1}'.format(path_binding, 'doc')
