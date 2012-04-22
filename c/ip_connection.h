@@ -83,7 +83,7 @@ typedef struct Device_{
 	pthread_mutex_t sem_write;
 	pthread_mutex_t sem_answer;
 #endif
-	char name[40];
+	char name[MAX_LENGTH_NAME];
 	uint8_t firmware_version[3];
 	uint8_t binding_version[3];
 	DeviceAnswer answer;
@@ -145,7 +145,7 @@ typedef struct {
 	unsigned char stack_id;
 	unsigned char type;
 	uint64_t device_uid;
-	char device_name[40];
+	char device_name[MAX_LENGTH_NAME];
 	uint8_t device_stack_id;
 	bool is_new;
 } PACKED EnumerateReturn;
