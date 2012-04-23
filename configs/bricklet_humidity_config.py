@@ -69,11 +69,11 @@ com['packets'].append({
 'doc': ['ccm', {
 'en':
 """
-Sets the period in ms with which the :func:`Humidity` callback is called 
+Sets the period in ms with which the :func:`Humidity` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Humidity` is only called if the humidity has changed since the
-last call.
+:func:`Humidity` is only triggered if the humidity has changed since the
+last triggering.
 
 The default value is 0.
 """,
@@ -105,11 +105,11 @@ com['packets'].append({
 'doc': ['ccm', {
 'en':
 """
-Sets the period in ms with which the :func:`AnalogValue` callback is called 
+Sets the period in ms with which the :func:`AnalogValue` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`AnalogValue` is only called if the analog value has changed since the
-last call.
+:func:`AnalogValue` is only triggered if the analog value has changed since the
+last triggering.
 
 The default value is 0.
 """,
@@ -152,10 +152,10 @@ The following options are possible:
  :widths: 10, 100
 
  "'x'", "Callback is turned off."
- "'o'", "Callback is called when the humidity is *outside* the min and max values"
- "'i'", "Callback is called when the humidity is *inside* the min and max values"
- "'<'", "Callback is called when the humidity is smaller than the min value (max is ignored)"
- "'>'", "Callback is called when the humidity is greater than the min value (max is ignored)"
+ "'o'", "Callback is triggered when the humidity is *outside* the min and max values"
+ "'i'", "Callback is triggered when the humidity is *inside* the min and max values"
+ "'<'", "Callback is triggered when the humidity is smaller than the min value (max is ignored)"
+ "'>'", "Callback is triggered when the humidity is greater than the min value (max is ignored)"
 
 The default value is ('x', 0, 0).
 """,
@@ -200,10 +200,10 @@ The following options are possible:
  :widths: 10, 100
 
  "'x'", "Callback is turned off."
- "'o'", "Callback is called when the humidity is *outside* the min and max values"
- "'i'", "Callback is called when the humidity is *inside* the min and max values"
- "'<'", "Callback is called when the humidity is smaller than the min value (max is ignored)"
- "'>'", "Callback is called when the humidity is greater than the min value (max is ignored)"
+ "'o'", "Callback is triggered when the humidity is *outside* the min and max values"
+ "'i'", "Callback is triggered when the humidity is *inside* the min and max values"
+ "'<'", "Callback is triggered when the humidity is smaller than the min value (max is ignored)"
+ "'>'", "Callback is triggered when the humidity is greater than the min value (max is ignored)"
 
 The default value is ('x', 0, 0).
 """,
@@ -241,7 +241,7 @@ Sets the period in ms with which the threshold callbacks
 
  :func:`HumidityReached`, :func:`AnalogValueReached`
 
-are called, if the thresholds 
+are triggered, if the thresholds
 
  :func:`SetHumidityCallbackThreshold`, :func:`SetAnalogValueCallbackThreshold`
 
@@ -277,12 +277,12 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called periodically with the period that is set by 
+This callback is triggered periodically with the period that is set by
 :func:`SetHumidityCallbackPeriod`. The parameter is the humidity of the
 sensor.
 
-:func:`Humidity` is only called if the humidity has changed since the
-last call.
+:func:`Humidity` is only triggered if the humidity has changed since the
+last triggering.
 """,
 'de':
 """
@@ -297,12 +297,12 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called periodically with the period that is set by 
+This callback is triggered periodically with the period that is set by
 :func:`SetAnalogValueCallbackPeriod`. The parameter is the analog value of the
 sensor.
 
-:func:`AnalogValue` is only called if the humidity has changed since the
-last call.
+:func:`AnalogValue` is only triggered if the humidity has changed since the
+last triggering.
 """,
 'de':
 """
@@ -317,11 +317,11 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called when the threshold as set by
+This callback is triggered when the threshold as set by
 :func:`SetHumidityCallbackThreshold` is reached.
 The parameter is the humidity of the sensor.
 
-If the threshold keeps beeing reached, the callback is called periodically 
+If the threshold keeps beeing reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
@@ -337,11 +337,11 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called when the threshold as set by
+This callback is triggered when the threshold as set by
 :func:`SetAnalogValueCallbackThreshold` is reached.
 The parameter is the analog value of the sensor.
 
-If the threshold keeps beeing reached, the callback is called periodically 
+If the threshold keeps beeing reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':

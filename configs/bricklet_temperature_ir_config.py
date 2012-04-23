@@ -116,11 +116,11 @@ com['packets'].append({
 'doc': ['ccm', {
 'en':
 """
-Sets the period in ms with which the :func:`AmbientTemperature` callback is called 
+Sets the period in ms with which the :func:`AmbientTemperature` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`AmbientTemperature` is only called if the temperature has changed since the
-last call.
+:func:`AmbientTemperature` is only triggered if the temperature has changed since the
+last triggering.
 
 The default value is 0.
 """,
@@ -152,11 +152,11 @@ com['packets'].append({
 'doc': ['ccm', {
 'en':
 """
-Sets the period in ms with which the :func:`ObjectTemperature` callback is called 
+Sets the period in ms with which the :func:`ObjectTemperature` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`ObjectTemperature` is only called if the temperature has changed since the
-last call.
+:func:`ObjectTemperature` is only triggered if the temperature has changed since the
+last triggering.
 
 The default value is 0.
 """,
@@ -200,10 +200,10 @@ The following options are possible:
  :widths: 10, 100
 
  "'x'", "Callback is turned off."
- "'o'", "Callback is called when the temperature is *outside* the min and max values"
- "'i'", "Callback is called when the temperature is *inside* the min and max values"
- "'<'", "Callback is called when the temperature is smaller than the min value (max is ignored)"
- "'>'", "Callback is called when the temperature is greater than the min value (max is ignored)"
+ "'o'", "Callback is triggered when the temperature is *outside* the min and max values"
+ "'i'", "Callback is triggered when the temperature is *inside* the min and max values"
+ "'<'", "Callback is triggered when the temperature is smaller than the min value (max is ignored)"
+ "'>'", "Callback is triggered when the temperature is greater than the min value (max is ignored)"
 
 The default value is ('x', 0, 0).
 """,
@@ -248,10 +248,10 @@ The following options are possible:
  :widths: 10, 100
 
  "'x'", "Callback is turned off."
- "'o'", "Callback is called when the temperature is *outside* the min and max values"
- "'i'", "Callback is called when the temperature is *inside* the min and max values"
- "'<'", "Callback is called when the temperature is smaller than the min value (max is ignored)"
- "'>'", "Callback is called when the temperature is greater than the min value (max is ignored)"
+ "'o'", "Callback is triggered when the temperature is *outside* the min and max values"
+ "'i'", "Callback is triggered when the temperature is *inside* the min and max values"
+ "'<'", "Callback is triggered when the temperature is smaller than the min value (max is ignored)"
+ "'>'", "Callback is triggered when the temperature is greater than the min value (max is ignored)"
 
 The default value is ('x', 0, 0).
 """,
@@ -289,7 +289,7 @@ Sets the period in ms with which the threshold callbacks
 
  :func:`AmbientTemperatureReached`, :func:`ObjectTemperatureReached`
 
-are called, if the thresholds 
+are triggered, if the thresholds
 
  :func:`SetAmbientTemperatureCallbackThreshold`, :func:`SetObjectTemperatureCallbackThreshold`
 
@@ -325,12 +325,12 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called periodically with the period that is set by 
+This callback is triggered periodically with the period that is set by
 :func:`SetAmbientTemperatureCallbackPeriod`. The parameter is the ambient 
 temperature of the sensor.
 
-:func:`AmbientTemperature` is only called if the ambient temperature 
-has changed since the last call.
+:func:`AmbientTemperature` is only triggered if the ambient temperature
+has changed since the last triggering.
 """,
 'de':
 """
@@ -345,12 +345,12 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called periodically with the period that is set by 
+This callback is triggered periodically with the period that is set by
 :func:`SetObjectTemperatureCallbackPeriod`. The parameter is the object 
 temperature of the sensor.
 
-:func:`AmbientTemperature` is only called if the object temperature 
-has changed since the last call.
+:func:`AmbientTemperature` is only triggered if the object temperature
+has changed since the last triggering.
 """,
 'de':
 """
@@ -365,11 +365,11 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called when the threshold as set by
+This callback is triggered when the threshold as set by
 :func:`SetAmbientTemperatureCallbackThreshold` is reached.
 The parameter is the ambient temperature of the sensor.
 
-If the threshold keeps beeing reached, the callback is called periodically 
+If the threshold keeps beeing reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
@@ -385,11 +385,11 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called when the threshold as set by
+This callback is triggered when the threshold as set by
 :func:`SetObjectTemperatureCallbackThreshold` is reached.
 The parameter is the object temperature of the sensor.
 
-If the threshold keeps beeing reached, the callback is called periodically 
+If the threshold keeps beeing reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':

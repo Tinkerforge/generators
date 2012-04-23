@@ -199,7 +199,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called whenever a change of the voltage level is detected
+This callback is triggered whenever a change of the voltage level is detected
 on pins where the interrupt was activated with :func:`SetPortInterrupt`.
 
 The values are the port, a bit mask that specifies which interrupts occurred

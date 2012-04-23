@@ -429,7 +429,7 @@ com['packets'].append({
 'doc': ['ccm', {
 'en':
 """
-Sets the period in ms with which the :func:`Acceleration` callback is called 
+Sets the period in ms with which the :func:`Acceleration` callback is triggered
 periodically. A value of 0 turns the callback off.
 
 The default value is 0.
@@ -462,7 +462,7 @@ com['packets'].append({
 'doc': ['ccm', {
 'en':
 """
-Sets the period in ms with which the :func:`MagneticField` callback is called 
+Sets the period in ms with which the :func:`MagneticField` callback is triggered
 periodically. A value of 0 turns the callback off.
 """,
 'de':
@@ -493,7 +493,7 @@ com['packets'].append({
 'doc': ['ccm', {
 'en':
 """
-Sets the period in ms with which the :func:`AngularVelocity` callback is called 
+Sets the period in ms with which the :func:`AngularVelocity` callback is triggered
 periodically. A value of 0 turns the callback off.
 """,
 'de':
@@ -524,7 +524,7 @@ com['packets'].append({
 'doc': ['ccm', {
 'en':
 """
-Sets the period in ms with which the :func:`AllData` callback is called 
+Sets the period in ms with which the :func:`AllData` callback is triggered
 periodically. A value of 0 turns the callback off.
 """,
 'de':
@@ -555,7 +555,7 @@ com['packets'].append({
 'doc': ['ccm', {
 'en':
 """
-Sets the period in ms with which the :func:`Orientation` callback is called 
+Sets the period in ms with which the :func:`Orientation` callback is triggered
 periodically. A value of 0 turns the callback off.
 """,
 'de':
@@ -586,7 +586,7 @@ com['packets'].append({
 'doc': ['ccm', {
 'en':
 """
-Sets the period in ms with which the :func:`Quaternion` callback is called 
+Sets the period in ms with which the :func:`Quaternion` callback is triggered
 periodically. A value of 0 turns the callback off.
 """,
 'de':
@@ -619,7 +619,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called periodically with the period that is set by 
+This callback is triggered periodically with the period that is set by
 :func:`SetAccelerationPeriod`. The parameters are the acceleration
 for the x, y and z axis.
 """,
@@ -638,7 +638,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called periodically with the period that is set by 
+This callback is triggered periodically with the period that is set by
 :func:`SetMagneticFieldPeriod`. The parameters are the magnetic field
 for the x, y and z axis.
 """,
@@ -657,7 +657,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called periodically with the period that is set by 
+This callback is triggered periodically with the period that is set by
 :func:`SetAngularVelocityPeriod`. The parameters are the angular velocity
 for the x, y and z axis.
 """,
@@ -683,7 +683,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called periodically with the period that is set by 
+This callback is triggered periodically with the period that is set by
 :func:`SetAllDataPeriod`. The parameters are the acceleration, 
 the magnetic field and the angular velocity for the x, y and z axis as
 well as the temperature of the IMU Brick.
@@ -703,7 +703,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called periodically with the period that is set by 
+This callback is triggered periodically with the period that is set by
 :func:`SetOrientationPeriod`. The parameters are the orientation
 (roll, pitch and yaw) of the IMU Brick in euler angles. See
 :func:`GetOrientation` for details.
@@ -724,7 +724,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called periodically with the period that is set by 
+This callback is triggered periodically with the period that is set by
 :func:`SetQuaternionPeriod`. The parameters are the orientation
 (w, x, y, z) of the IMU Brick in quaternions. See :func:`GetQuaternion`
 for details.

@@ -318,7 +318,7 @@ com['packets'].append({
 'en':
 """
 Drives the stepper motor backward until :func:`DriveForward` or
-:func:`Stop` is called. The velocity, acceleration and deacceleration as 
+:func:`Stop` is triggered. The velocity, acceleration and deacceleration as
 set by :func:`SetMaxVelocity` and :func:`SetSpeedRamping` will be used.
 """,
 'de':
@@ -543,8 +543,8 @@ com['packets'].append({
 'doc': ['ccm', {
 'en':
 """
-Sets the minimum voltage in mV, below which the :func:`UnderVoltage` signal
-is called. The minimum possible value that works with the Stepper Brick is 8V. 
+Sets the minimum voltage in mV, below which the :func:`UnderVoltage` callback
+is triggered. The minimum possible value that works with the Stepper Brick is 8V.
 You can use this function to detect the discharge of a battery that is used
 to drive the stepper motor. If you have a fixed power supply, you likely do 
 not need this functionality.
@@ -579,7 +579,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called when the input voltage drops below the value set by
+This callback is triggered when the input voltage drops below the value set by
 :func:`SetMinimumVoltage`. The parameter is the current voltage given
 in mV.
 """,
@@ -596,14 +596,14 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called when a position set by :func:`SetSteps` or
+This callback is triggered when a position set by :func:`SetSteps` or
 :func:`SetTargetPosition` is reached.
 
 .. note::
  Since we can't get any feedback from the stepper motor, this only works if the
  acceleration (see :func:`SetSpeedRamping`) is set smaller or equal to the
  maximum acceleration of the motor. Otherwise the motor will lag behind the
- control value and the callback will be called too early.
+ control value and the callback will be triggered too early.
 """,
 'de':
 """

@@ -58,7 +58,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called if a beep set by :func:`Beep` is finished
+This callback is triggered if a beep set by :func:`Beep` is finished
 """,
 'de':
 """
@@ -73,7 +73,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called if the playback of the morse code set by 
+This callback is triggered if the playback of the morse code set by
 :func:`MorseCode` is finished.
 """,
 'de':
