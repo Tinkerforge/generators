@@ -414,6 +414,7 @@ def generate(path):
     if os.path.exists('/tmp/generator'):
         shutil.rmtree('/tmp/generator/')
     os.makedirs('/tmp/generator')
+    os.chdir('/tmp/generator')
 
     for config in configs:
         if config.endswith('_config.py'):
