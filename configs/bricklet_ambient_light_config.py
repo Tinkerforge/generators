@@ -247,7 +247,7 @@ are triggered, if the thresholds
 
  :func:`SetIlluminanceCallbackThreshold`, :func:`SetAnalogValueCallbackThreshold`
 
-keep beeing reached.
+keep being reached.
 
 The default value is 100.
 """,
@@ -323,7 +323,7 @@ This callback is triggered when the threshold as set by
 :func:`SetIlluminanceCallbackThreshold` is reached.
 The parameter is the illuminance of the ambient light sensor.
 
-If the threshold keeps beeing reached, the callback is triggered periodically
+If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
@@ -343,7 +343,7 @@ This callback is triggered when the threshold as set by
 :func:`SetAnalogValueCallbackThreshold` is reached.
 The parameter is the analog value of the ambient light sensor.
 
-If the threshold keeps beeing reached, the callback is triggered periodically
+If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':

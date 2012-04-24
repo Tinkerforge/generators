@@ -72,14 +72,14 @@ Sets a sampling point value to a specific position of the lookup table.
 The lookup table is comprised of 128 equidistant analog values with
 corresponding distances.
 
-If you measure a distance of 50cm at the analog value 2048, you have
-shoud call this function with (64, 5000). The utilized analog to digital
+If you measure a distance of 50cm at the analog value 2048, you
+should call this function with (64, 5000). The utilized analog to digital
 converter has a resolution of 12 bit. With 128 sampling points on the
 whole range, this means that every sampling point has a size of 32
 analog values. Thus the analog value 2048 has the corresponding sampling
 point 64 = 2048/32.
 
-Sampling points are saved on the eeprom of the Distance-IR Bricklet and
+Sampling points are saved on the EEPROM of the Distance-IR Bricklet and
 loaded again on startup.
 
  .. note::
@@ -294,7 +294,7 @@ are triggered, if the thresholds
 
  :func:`SetDistanceCallbackThreshold`, :func:`SetAnalogValueCallbackThreshold`
 
-keep beeing reached.
+keep being reached.
 
 The default value is 100.
 """,
@@ -370,7 +370,7 @@ This callback is triggered when the threshold as set by
 :func:`SetDistanceCallbackThreshold` is reached.
 The parameter is the distance of the sensor.
 
-If the threshold keeps beeing reached, the callback is triggered periodically
+If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
@@ -390,7 +390,7 @@ This callback is triggered when the threshold as set by
 :func:`SetAnalogValueCallbackThreshold` is reached.
 The parameter is the analog value of the sensor.
 
-If the threshold keeps beeing reached, the callback is triggered periodically
+If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':

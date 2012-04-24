@@ -117,7 +117,7 @@ com['packets'].append({
 'doc': ['am', {
 'en':
 """
-Sets the frequency (in Hz) of the PWM whith which the motor is driven. 
+Sets the frequency (in Hz) of the PWM with which the motor is driven.
 The possible range of the frequency is 1-20000Hz. Often a high frequency
 is less noisy and the motor runs smoother. However, with a low frequency
 there are less switches and therefore fewer switching losses. Also with
@@ -198,7 +198,7 @@ com['packets'].append({
 Returns the external input voltage in mV. The external input voltage is
 given via the black power input connector on the DC Brick. 
  
-If there is  an externel input voltage and a stack input voltage, the motor 
+If there is an external input voltage and a stack input voltage, the motor
 will be driven by the external input voltage. If there is only a stack 
 voltage present, the motor will be driven by this voltage.
 
@@ -333,7 +333,7 @@ with slower velocities.
 In Drive/Coast mode, the motor is always either driving or freewheeling.
 Advantages are: Less current consumption and less demands on the motor/driver.
 
-The defaukt value is 0 = Drive/Brake.
+The default value is 0 = Drive/Brake.
 """,
 'de':
 """
@@ -447,7 +447,7 @@ to 10000, :func:`VelocityReached` will be triggered after about 2 seconds, when
 the set velocity is actually reached.
 
 .. note::
- Since we can't get any feedback from the dc motor, this only works if the
+ Since we can't get any feedback from the DC motor, this only works if the
  acceleration (see :func:`SetAcceleration`) is set smaller or equal to the
  maximum acceleration of the motor. Otherwise the motor will lag behind the
  control value and the callback will be triggered too early.

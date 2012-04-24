@@ -293,7 +293,7 @@ are triggered, if the thresholds
 
  :func:`SetAmbientTemperatureCallbackThreshold`, :func:`SetObjectTemperatureCallbackThreshold`
 
-keep beeing reached.
+keep being reached.
 
 The default value is 100.
 """,
@@ -369,7 +369,7 @@ This callback is triggered when the threshold as set by
 :func:`SetAmbientTemperatureCallbackThreshold` is reached.
 The parameter is the ambient temperature of the sensor.
 
-If the threshold keeps beeing reached, the callback is triggered periodically
+If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
@@ -389,7 +389,7 @@ This callback is triggered when the threshold as set by
 :func:`SetObjectTemperatureCallbackThreshold` is reached.
 The parameter is the object temperature of the sensor.
 
-If the threshold keeps beeing reached, the callback is triggered periodically
+If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':

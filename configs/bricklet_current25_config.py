@@ -48,7 +48,7 @@ the length of the Bricklet cable and the temperature. Thus, if you change
 the Brick or the environment in which the Bricklet is used, you might
 have to recalibrate.
 
-The resulting calibration will be saved on the eeprom of the Current
+The resulting calibration will be saved on the EEPROM of the Current
 Bricklet.
 """,
 'de':
@@ -288,7 +288,7 @@ are triggered, if the thresholds
 
  :func:`SetCurrentCallbackThreshold`, :func:`SetAnalogValueCallbackThreshold`
 
-keep beeing reached.
+keep being reached.
 
 The default value is 100.
 """,
@@ -364,7 +364,7 @@ This callback is triggered when the threshold as set by
 :func:`SetCurrentCallbackThreshold` is reached.
 The parameter is the current of the sensor.
 
-If the threshold keeps beeing reached, the callback is triggered periodically
+If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
@@ -384,7 +384,7 @@ This callback is triggered when the threshold as set by
 :func:`SetAnalogValueCallbackThreshold` is reached.
 The parameter is the analog value of the sensor.
 
-If the threshold keeps beeing reached, the callback is triggered periodically
+If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':

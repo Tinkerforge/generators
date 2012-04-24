@@ -242,7 +242,7 @@ are triggered, if the thresholds
 
  :func:`SetVoltageCallbackThreshold`, :func:`SetAnalogValueCallbackThreshold`
 
-keep beeing reached.
+keep being reached.
 
 The default value is 100.
 """,
@@ -318,7 +318,7 @@ This callback is triggered when the threshold as set by
 :func:`SetVoltageCallbackThreshold` is reached.
 The parameter is the voltage of the sensor.
 
-If the threshold keeps beeing reached, the callback is triggered periodically
+If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
@@ -338,7 +338,7 @@ This callback is triggered when the threshold as set by
 :func:`SetAnalogValueCallbackThreshold` is reached.
 The parameter is the analog value of the sensor.
 
-If the threshold keeps beeing reached, the callback is triggered periodically
+If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':

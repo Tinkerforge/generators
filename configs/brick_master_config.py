@@ -153,7 +153,7 @@ com['packets'].append({
 'en':
 """
 Sets the address (1-255) of the Chibi Master. This address is used if the
-Chibi Extensio is used as slave (i.e. it does not have a USB connection).
+Chibi Extension is used as slave (i.e. it does not have a USB connection).
 
 It is possible to set the address with the Brick Viewer and it will be 
 saved in the EEPROM of the Chibi Extension, it does not
@@ -247,9 +247,9 @@ com['packets'].append({
 'doc': ['am', {
 'en':
 """
-Returns underrun, crc error, no ack and overflow error counts of the chibi
+Returns underrun, CRC error, no ACK and overflow error counts of the Chibi
 communication. If these errors start rising, it is likely that either the
-distance between two Chibi stacks is becomming too big or there are
+distance between two Chibi stacks is becoming too big or there are
 interferences.
 """,
 'de':

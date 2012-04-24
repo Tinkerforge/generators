@@ -90,7 +90,7 @@ Calibrates the middle position of the Joystick. If your Joystick Bricklet
 does not return x=0 and y=0 in the middle position, call this function
 while the Joystick is standing still in the middle position.
 
-The resulting calibration will be saved on the eeprom of the Joystick 
+The resulting calibration will be saved on the EEPROM of the Joystick
 Bricklet, thus you only have to calibrate it once.
 """,
 'de':
@@ -290,7 +290,7 @@ are triggered, if the thresholds
 
  :func:`SetPositionCallbackThreshold`, :func:`SetAnalogValueCallbackThreshold`
 
-keep beeing reached.
+keep being reached.
 
 The default value is 100.
 """,
@@ -369,7 +369,7 @@ This callback is triggered when the threshold as set by
 :func:`SetPositionCallbackThreshold` is reached.
 The parameter is the position of the Joystick.
 
-If the threshold keeps beeing reached, the callback is triggered periodically
+If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
@@ -390,7 +390,7 @@ This callback is triggered when the threshold as set by
 :func:`SetAnalogValueCallbackThreshold` is reached.
 The parameters are the analog values of the Joystick.
 
-If the threshold keeps beeing reached, the callback is triggered periodically
+If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':

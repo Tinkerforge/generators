@@ -48,7 +48,7 @@ The value is between 0 and 4095.
   to yield less noise, while :func:`GetAnalogValue` gives back raw
   unfiltered analog values. The returned humidity value is calibrated for
   room temperatures, if you use the sensor in extreme cold or extreme
-  warm enviroments, you might want to calculate the humidity from
+  warm environments, you might want to calculate the humidity from
   the analog value yourself. See the HIH 5030 datasheet (TODO: link).
 
 If you want the analog value periodically, it is recommended to use the 
@@ -245,7 +245,7 @@ are triggered, if the thresholds
 
  :func:`SetHumidityCallbackThreshold`, :func:`SetAnalogValueCallbackThreshold`
 
-keep beeing reached.
+keep being reached.
 
 The default value is 100.
 """,
@@ -321,7 +321,7 @@ This callback is triggered when the threshold as set by
 :func:`SetHumidityCallbackThreshold` is reached.
 The parameter is the humidity of the sensor.
 
-If the threshold keeps beeing reached, the callback is triggered periodically
+If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
@@ -341,7 +341,7 @@ This callback is triggered when the threshold as set by
 :func:`SetAnalogValueCallbackThreshold` is reached.
 The parameter is the analog value of the sensor.
 
-If the threshold keeps beeing reached, the callback is triggered periodically
+If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':

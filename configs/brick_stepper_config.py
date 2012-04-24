@@ -137,7 +137,7 @@ com['packets'].append({
 """
 Sets the current steps of the internal step counter. This can be used to
 set the current position to 0 when some kind of starting position
-is reached (e.g. when a cnc machine reaches a corner).
+is reached (e.g. when a CNC machine reaches a corner).
 """,
 'de':
 """
@@ -370,7 +370,7 @@ com['packets'].append({
 Returns the external input voltage in mV. The external input voltage is
 given via the black power input connector on the Stepper Brick. 
  
-If there is  an externel input voltage and a stack input voltage, the motor 
+If there is an external input voltage and a stack input voltage, the motor
 will be driven by the external input voltage. If there is only a stack 
 voltage present, the motor will be driven by this voltage.
 
