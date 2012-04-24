@@ -8,7 +8,7 @@ com = {
     'type': 'Brick',
     'name': ('Stepper', 'stepper'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for controlling Stepper Motors',
+    'description': 'Device for controlling stepper motors',
     'packets': []
 }
 
@@ -352,7 +352,7 @@ com['packets'].append({
 """
 Returns the stack input voltage in mV. The stack input voltage is the
 voltage that is supplied via the stack, i.e. it is given by a 
-Step-Down or Step-Up power supply Brick.
+Step-Down or Step-Up Power Supply.
 """,
 'de':
 """

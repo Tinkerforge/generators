@@ -8,7 +8,7 @@ com = {
     'type': 'Brick',
     'name': ('DC', 'dc'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for controlling DC Motors',
+    'description': 'Device for controlling DC motors',
     'packets': []
 }
 
@@ -19,7 +19,7 @@ com['packets'].append({
 'doc': ['bm', {
 'en':
 """ 
-Sets the velocity of the Motor. Whereas -32767 is full speed backward, 
+Sets the velocity of the motor. Whereas -32767 is full speed backward,
 0 is stop and 32767 is full speed forward. Depending on the 
 acceleration (see :func:`SetAcceleration`), the motor is not immediately 
 brought to the velocity but smoothly accelerated.
@@ -76,7 +76,7 @@ com['packets'].append({
 'doc': ['bm', {
 'en':
 """
-Sets the acceleration of the Motor. It is given in *velocity/s*. An
+Sets the acceleration of the motor. It is given in *velocity/s*. An
 acceleration of 10000 means, that every second the velocity is increased
 by 10000 (or about 30% duty cycle).
 
@@ -180,7 +180,7 @@ com['packets'].append({
 """
 Returns the stack input voltage in mV. The stack input voltage is the
 voltage that is supplied via the stack, i.e. it is given by a 
-Step-Down or Step-Up power supply Brick.
+Step-Down or Step-Up Power Supply.
 """,
 'de':
 """

@@ -380,7 +380,7 @@ There are several different types that can be calibrated:
 
 The calibration via gain and bias is done with the following formula::
 
- new_value = (bias + orig_value)*gain_mul/gain_div
+ new_value = (bias + orig_value) * gain_mul / gain_div
 
 If you really want to write your own calibration software, please keep
 in mind that you first have to undo the old calibration (set bias to 0 and

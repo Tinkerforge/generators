@@ -21,7 +21,7 @@ com['packets'].append({
 """
 Returns the stack voltage in mV. The stack voltage is the
 voltage that is supplied via the stack, i.e. it is given by a 
-Step-Down or Step-Up power supply Brick.
+Step-Down or Step-Up Power Supply.
 """,
 'de':
 """
@@ -38,7 +38,7 @@ com['packets'].append({
 """
 Returns the stack current in mA. The stack current is the
 current that is drawn via the stack, i.e. it is given by a
-Step-Down or Step-Up power supply Brick.
+Step-Down or Step-Up Power Supply.
 """,
 'de':
 """
