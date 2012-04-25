@@ -28,6 +28,7 @@ import sys
 import os
 import shutil
 import subprocess
+import glob
 
 com = None
 lang = 'en'
@@ -413,8 +414,8 @@ def generate(path):
     # Make temporary generator directory
     if os.path.exists('/tmp/generator'):
         shutil.rmtree('/tmp/generator/')
-    os.makedirs('/tmp/generator')
-    os.chdir('/tmp/generator')
+    os.makedirs('/tmp/generator/bindings')
+    os.chdir('/tmp/generator/bindings')
 
     for config in configs:
         if config.endswith('_config.py'):
@@ -423,11 +424,12 @@ def generate(path):
             make_files(module.com, path)
 
     # Copy bindings and readme
-    shutil.copytree(path + '/bindings', '/tmp/generator/bindings')
+    for filename in glob.glob(path + '/bindings/*.[ch]'):
+        shutil.copy(filename, '/tmp/generator/bindings')
+
     shutil.copy(path + '/ip_connection.c', '/tmp/generator/bindings')
     shutil.copy(path + '/ip_connection.h', '/tmp/generator/bindings')
     shutil.copy(path + '/readme.txt', '/tmp/generator/')
-
 
     # Make zip
     os.chdir('/tmp/generator')

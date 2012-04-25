@@ -28,6 +28,7 @@ import sys
 import os
 import shutil
 import subprocess
+import glob
 
 com = None
 lang = 'en'
@@ -62,7 +63,6 @@ def fix_links(text):
             name_right = fu_link.format(com['type'], cls, name)
 
         text = text.replace(name_false, name_right)
-
 
     text = text.replace('Callback ', 'Listener ')
     text = text.replace(' Callback', ' Listener')
@@ -502,7 +502,7 @@ def generate(path):
     # Make temporary generator directory
     if os.path.exists('/tmp/generator'):
         shutil.rmtree('/tmp/generator/')
-    os.makedirs('/tmp/generator/jar/source/com')
+    os.makedirs('/tmp/generator/jar/source/com/tinkerforge')
     os.chdir('/tmp/generator')
 
     # Make bindings
@@ -513,7 +513,9 @@ def generate(path):
             make_files(module.com, path)
 
     # Copy bindings and readme
-    shutil.copytree(path + '/bindings', '/tmp/generator/jar/source/com/tinkerforge')
+    for filename in glob.glob(path + '/bindings/*.java'):
+        shutil.copy(filename, '/tmp/generator/jar/source/com/tinkerforge')
+
     shutil.copy(path + '/IPConnection.java', '/tmp/generator/jar/source/com/tinkerforge')
     shutil.copy(path + '/Readme.txt', '/tmp/generator/jar')
 

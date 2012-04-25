@@ -28,6 +28,7 @@ import sys
 import os
 import shutil
 import subprocess
+import glob
 
 com = None
 lang = 'en'
@@ -428,7 +429,7 @@ def generate(path):
     # Make temporary generator directory
     if os.path.exists('/tmp/generator'):
         shutil.rmtree('/tmp/generator/')
-    os.makedirs('/tmp/generator/egg/source')
+    os.makedirs('/tmp/generator/egg/source/tinkerforge')
     os.chdir('/tmp/generator')
 
     # Make bindings
@@ -439,7 +440,9 @@ def generate(path):
             make_files(module.com, path)
 
     # Copy bindings and readme
-    shutil.copytree(path + '/bindings', '/tmp/generator/egg/source/tinkerforge')
+    for filename in glob.glob(path + '/bindings/*.py'):
+        shutil.copy(filename, '/tmp/generator/egg/source/tinkerforge')
+
     shutil.copy(path + '/ip_connection.py', '/tmp/generator/egg/source/tinkerforge')
     shutil.copy(path + '/readme.txt', '/tmp/generator/egg')
     shutil.copy(path + '/setup.py', '/tmp/generator/egg/source')
