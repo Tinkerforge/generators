@@ -22,7 +22,7 @@ com['packets'].append({
 'en':
 """ 
 Returns the calibrated acceleration from the accelerometer for the 
-x,y and z axis in mG (G/1000, 1G = 9.80605m/s²).
+x, y and z axis in mG (G/1000, 1G = 9.80605m/s²).
 
 If you want to get the acceleration periodically, it is recommended 
 to use the callback :func:`Acceleration` and set the period with 
@@ -44,7 +44,7 @@ com['packets'].append({
 'en':
 """
 Returns the calibrated magnetic field from the magnetometer for the 
-x,y and z axis in mG (Milligauss or Nanotesla).
+x, y and z axis in mG (Milligauss or Nanotesla).
 
 If you want to get the magnetic field periodically, it is recommended 
 to use the callback :func:`MagneticField` and set the period with 
@@ -66,7 +66,7 @@ com['packets'].append({
 'en':
 """
 Returns the calibrated angular velocity from the gyroscope for the 
-x,y and z axis in °/17.5s (you have to divide by 17.5 to
+x, y and z axis in °/17.5s (you have to divide by 17.5 to
 get the value in °/s).
 
 If you want to get the angular velocity periodically, it is recommended 
