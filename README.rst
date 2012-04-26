@@ -23,6 +23,6 @@ copy_all.py:
 Usage
 -----
 
-To use the generators you have to clone _all_ Brick gits and _all_ 
-Bricklet gits in parallel to the generator git. Otherwise the generator and
-copy scripts can't find the examples that are used in the documentation.
+To use the generators you have to clone **all** Brick gits and **all**
+Bricklet gits in parallel to the generators git. Otherwise the generate_all and
+copy_all scripts can't find the examples that are used in the documentation.
