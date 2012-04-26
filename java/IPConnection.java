@@ -389,23 +389,6 @@ public class IPConnection {
 		device.ipcon = this;
 	}
 	
-	public void enumerate(Object o) {
-		enumerateListener = (EnumerateListener)o;
-		
-		ByteBuffer bb = ByteBuffer.allocate(12);
-		bb.order(ByteOrder.LITTLE_ENDIAN);
-		bb.put(BROADCAST_ADDRESS);
-		bb.put(TYPE_ENUMERATE);
-		bb.putShort(ENUMERATE_LENGTH);
-		
-		try {
-			out.write(bb.array());
-		}
-		catch(java.io.IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
 	public static String base58Encode(long value) {
 		String encoded = new String("");
 		while(value >= 58) {
