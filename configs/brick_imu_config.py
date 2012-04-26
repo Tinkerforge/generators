@@ -726,7 +726,7 @@ com['packets'].append({
 """
 This callback is triggered periodically with the period that is set by
 :func:`SetQuaternionPeriod`. The parameters are the orientation
-(w, x, y, z) of the IMU Brick in quaternions. See :func:`GetQuaternion`
+(x, y, z, w) of the IMU Brick in quaternions. See :func:`GetQuaternion`
 for details.
 """,
 'de':
