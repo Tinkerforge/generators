@@ -516,6 +516,7 @@ def generate(path):
     for filename in glob.glob(path + '/bindings/*.java'):
         shutil.copy(filename, '/tmp/generator/jar/source/com/tinkerforge')
 
+    shutil.copy(path + '/Device.java', '/tmp/generator/jar/source/com/tinkerforge')
     shutil.copy(path + '/IPConnection.java', '/tmp/generator/jar/source/com/tinkerforge')
     shutil.copy(path + '/Readme.txt', '/tmp/generator/jar')
 
