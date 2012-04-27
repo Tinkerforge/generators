@@ -30,15 +30,15 @@ namespace Tinkerforge
 		Device addDev = null;
 		Device[] devices = new Device[256];
 		EnumerateCallback enumerateCallback = null;
-		public BlockingQueue callbackQueue = new BlockingQueue();
+		BlockingQueue callbackQueue = new BlockingQueue();
 
-    	public const int TIMEOUT_ADD_DEVICE = 2500;
-    	public const int TIMEOUT_ANSWER = 2500;
+		internal const int TIMEOUT_ADD_DEVICE = 2500;
+		internal const int TIMEOUT_ANSWER = 2500;
 
 		public delegate void EnumerateCallback(string uid, 
 		                                       string name, 
-											   byte stackID, 
-											   bool isNew);
+		                                       byte stackID,
+		                                       bool isNew);
 
 		public IPConnection(string host, int port) 
 		{
@@ -375,19 +375,19 @@ namespace Tinkerforge
 
 	public class Device
 	{
-		public byte stackID = 0;
-		public String name;
-		public byte[] firmwareVersion = new byte[3];
-		public byte[] bindingVersion = new byte[3];
-		public ulong uid = 0;
-		public byte answerType = 0;
-		public Delegate[] callbacks = new Delegate[256];
-		public MessageCallback[] messageCallbacks = new MessageCallback[256];
-		public BlockingQueue answerQueue = new BlockingQueue();
-		public IPConnection ipcon = null;
-		public AutoResetEvent writeEvent = new AutoResetEvent(true);
+		internal byte stackID = 0;
+		internal String name;
+		internal byte[] firmwareVersion = new byte[3];
+		internal byte[] bindingVersion = new byte[3];
+		internal ulong uid = 0;
+		internal byte answerType = 0;
+		internal Delegate[] callbacks = new Delegate[256];
+		internal MessageCallback[] messageCallbacks = new MessageCallback[256];
+		internal BlockingQueue answerQueue = new BlockingQueue();
+		internal IPConnection ipcon = null;
+		internal AutoResetEvent writeEvent = new AutoResetEvent(true);
 
-		public delegate int MessageCallback(byte[] data);
+		internal delegate int MessageCallback(byte[] data);
 
 		public Device(string uid) 
 		{
@@ -441,7 +441,7 @@ namespace Tinkerforge
 		}
 	}
 
-	public class LEConverter 
+	internal class LEConverter
 	{
 		static public void To(string data, int position, byte[] array)
 		{

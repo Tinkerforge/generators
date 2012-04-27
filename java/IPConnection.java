@@ -166,7 +166,7 @@ public class IPConnection {
 		recvLoopThread.start();
 	}
 	
-	public int handleMessage(byte[] data) {
+	int handleMessage(byte[] data) {
 		byte type = getTypeFromData(data);
 		
 		if(type == TYPE_GET_STACK_ID) {
@@ -265,7 +265,7 @@ public class IPConnection {
 		
 	}
 	
-	public int handleAddDevice(byte[] data) {
+	private int handleAddDevice(byte[] data) {
 		int length = getLengthFromData(data);
 		
 		if(addDevice == null) {
@@ -297,7 +297,7 @@ public class IPConnection {
 		return length;
 	}
 	
-	public int handleEnumerate(byte[] data) {
+	private int handleEnumerate(byte[] data) {
 		int length = getLengthFromData(data);
 		
 		if(enumerateListener == null) {
