@@ -496,6 +496,9 @@ between 0 and 65535. A value of 0 sets the fast decay mode, a value of
 65535 sets the slow decay mode and a value in between sets the mixed
 decay mode.
 
+Changing the decay mode is only possible if synchronous rectification
+is enabled (see :func:`SetSyncRect`).
+
 For a good explanation of the different decay modes see 
 `this <http://robot.avayanex.com/?p=86/>`_ blog post by Avayan.
 
@@ -618,6 +621,22 @@ com['packets'].append({
 'doc': ['am', {
 'en':
 """
+Turns synchronous rectification on or off (true/false).
+
+With synchronous rectification on, the decay can be changed
+(see :func:`SetDecay`). Without synchronous rectification fast
+decay is used.
+
+For an eplanation of synchronous rectification see 
+`here <http://en.wikipedia.org/wiki/Active_rectification>`__.
+
+.. warning::
+ If you want to use high speeds (> 10000 steps/s) for a large 
+ stepper motor with a large inductivity we strongly
+ suggest that you disable synchronous rectification. Otherwise the
+ Brick may not be able to cope with the load and overheat.
+
+The default value is false.
 """,
 'de':
 """
@@ -632,6 +651,7 @@ com['packets'].append({
 'doc': ['am', {
 'en':
 """
+Returns true if synchronous rectification is enabled, false otherwise.
 """,
 'de':
 """
