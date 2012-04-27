@@ -4,3 +4,4 @@
 1.0.3: Fix thread exception at shutdown
 1.0.4: Add support for IMU Brick, Analog In Bricklet and Analog Out Bricklet
 1.0.5: Remove python 3.2 bug (no decode function for str in 3.2)
+1.0.6: Add sync rect support to stepper bindings

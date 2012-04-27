@@ -610,3 +610,31 @@ This callback is called when a position set by :func:`SetSteps` or
 """
 }]
 })
+
+com['packets'].append({
+'type': 'method', 
+'name': ('SetSyncRect', 'set_sync_rect'), 
+'elements': [('sync_rect', 'bool', 1, 'in')],
+'doc': ['am', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'method', 
+'name': ('IsSyncRect', 'is_sync_rect'), 
+'elements': [('sync_rect', 'bool', 1, 'out')],
+'doc': ['am', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})

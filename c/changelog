@@ -1,3 +1,5 @@
 1.0.0: Initial Version
 1.0.1: Add Visual Studio support
 1.0.2: Add support for IMU Brick, Analog In Bricklet and Analog Out Bricklet
+1.0.3: Add ChibiChannel and ChibiFrequency Methods
+1.0.4: Add sync rect support to stepper bindings

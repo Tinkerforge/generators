@@ -2,3 +2,5 @@
 1.0.1: Add thread for callbacks in ip_connection (allows to call getters in callbacks)
 1.0.2: Remove accidental debug output that was present in 1.0.1
 1.0.3: Add support for IMU Brick, Analog In Bricklet and Analog Out Bricklet
+1.0.4: Add ChibiFreuqency and ChibiChannel methods
+1.0.5: Add sync rect support to stepper bindings
