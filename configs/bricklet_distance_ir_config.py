@@ -19,8 +19,9 @@ com['packets'].append({
 'doc': ['bm', {
 'en':
 """
-Returns the distance of the sensor. The value is in mm and
-between TODO
+Returns the distance measured by the sensor. The value is in mm and possible
+distance ranges are 40 to 300, 100 to 800 and 200 to 1500, depending on the
+selected IR sensor.
 
 If you want to get the distance periodically, it is recommended to use the
 callback :func:`Distance` and set the period with 
