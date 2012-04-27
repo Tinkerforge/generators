@@ -48,16 +48,15 @@ def shift_right(text, n):
     return text.replace('\n', '\n' + ' '*n)
 
 def fix_links(text):
-    cb_link = ':java:func:`{3} <{0}{1}.{2}Listener>`' 
+    cb_link = ':java:func:`{2}Listener <{0}{1}.{2}Listener>`'
     fu_link = ':java:func:`{2}() <{0}{1}::{2}>`'
 
     cls = com['name'][0]
     for packet in com['packets']:
         name_false = ':func:`{0}`'.format(packet['name'][0])
         if packet['doc'][0] == 'c':
-            name = packet['name'][0] 
-            name_lower = packet['name'][0][0].lower() + packet['name'][0][1:] 
-            name_right = cb_link.format(com['type'], cls, name, name_lower)
+            name = packet['name'][0]
+            name_right = cb_link.format(com['type'], cls, name)
         else:
             name = packet['name'][0][0].lower() + packet['name'][0][1:] 
             name_right = fu_link.format(com['type'], cls, name)
