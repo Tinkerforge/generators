@@ -48,7 +48,7 @@ the length of the Bricklet cable and the temperature. Thus, if you change
 the Brick or the environment in which the Bricklet is used, you might
 have to recalibrate.
 
-The resulting calibration will be saved on the eeprom of the Current
+The resulting calibration will be saved on the EEPROM of the Current
 Bricklet.
 """,
 'de':
@@ -112,11 +112,11 @@ com['packets'].append({
 'doc': ['ccm', {
 'en':
 """
-Sets the period in ms with which the :func:`Current` callback is called 
+Sets the period in ms with which the :func:`Current` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Current` is only called if the current has changed since the
-last call.
+:func:`Current` is only triggered if the current has changed since the
+last triggering.
 
 The default value is 0.
 """,
@@ -148,11 +148,11 @@ com['packets'].append({
 'doc': ['ccm', {
 'en':
 """
-Sets the period in ms with which the :func:`AnalogValue` callback is called 
+Sets the period in ms with which the :func:`AnalogValue` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`AnalogValue` is only called if the analog value has changed since the
-last call.
+:func:`AnalogValue` is only triggered if the analog value has changed since the
+last triggering.
 
 The default value is 0.
 """,
@@ -195,10 +195,10 @@ The following options are possible:
  :widths: 10, 100
 
  "'x'", "Callback is turned off."
- "'o'", "Callback is called when the current is *outside* the min and max values"
- "'i'", "Callback is called when the current is *inside* the min and max values"
- "'<'", "Callback is called when the current is smaller than the min value (max is ignored)"
- "'>'", "Callback is called when the current is greater than the min value (max is ignored)"
+ "'o'", "Callback is triggered when the current is *outside* the min and max values"
+ "'i'", "Callback is triggered when the current is *inside* the min and max values"
+ "'<'", "Callback is triggered when the current is smaller than the min value (max is ignored)"
+ "'>'", "Callback is triggered when the current is greater than the min value (max is ignored)"
 
 The default value is ('x', 0, 0).
 """,
@@ -243,10 +243,10 @@ The following options are possible:
  :widths: 10, 100
 
  "'x'", "Callback is turned off."
- "'o'", "Callback is called when the current is *outside* the min and max values"
- "'i'", "Callback is called when the current is *inside* the min and max values"
- "'<'", "Callback is called when the current is smaller than the min value (max is ignored)"
- "'>'", "Callback is called when the current is greater than the min value (max is ignored)"
+ "'o'", "Callback is triggered when the current is *outside* the min and max values"
+ "'i'", "Callback is triggered when the current is *inside* the min and max values"
+ "'<'", "Callback is triggered when the current is smaller than the min value (max is ignored)"
+ "'>'", "Callback is triggered when the current is greater than the min value (max is ignored)"
 
 The default value is ('x', 0, 0).
 """,
@@ -284,11 +284,11 @@ Sets the period in ms with which the threshold callbacks
 
  :func:`CurrentReached`, :func:`AnalogValueReached`
 
-are called, if the thresholds 
+are triggered, if the thresholds
 
  :func:`SetCurrentCallbackThreshold`, :func:`SetAnalogValueCallbackThreshold`
 
-keep beeing reached.
+keep being reached.
 
 The default value is 100.
 """,
@@ -320,12 +320,12 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called periodically with the period that is set by 
+This callback is triggered periodically with the period that is set by
 :func:`SetCurrentCallbackPeriod`. The parameter is the current of the
 sensor.
 
-:func:`Current` is only called if the current has changed since the
-last call.
+:func:`Current` is only triggered if the current has changed since the
+last triggering.
 """,
 'de':
 """
@@ -340,12 +340,12 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called periodically with the period that is set by 
+This callback is triggered periodically with the period that is set by
 :func:`SetAnalogValueCallbackPeriod`. The parameter is the analog value of the
 sensor.
 
-:func:`AnalogValue` is only called if the current has changed since the
-last call.
+:func:`AnalogValue` is only triggered if the current has changed since the
+last triggering.
 """,
 'de':
 """
@@ -360,11 +360,11 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called when the threshold as set by
+This callback is triggered when the threshold as set by
 :func:`SetCurrentCallbackThreshold` is reached.
 The parameter is the current of the sensor.
 
-If the threshold keeps beeing reached, the callback is called periodically 
+If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
@@ -380,11 +380,11 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called when the threshold as set by
+This callback is triggered when the threshold as set by
 :func:`SetAnalogValueCallbackThreshold` is reached.
 The parameter is the analog value of the sensor.
 
-If the threshold keeps beeing reached, the callback is called periodically 
+If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
@@ -400,7 +400,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called when an over current is measured
+This callback is triggered when an over current is measured
 (see :func:`IsOverCurrent`).
 """,
 'de':

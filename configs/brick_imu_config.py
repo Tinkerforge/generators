@@ -22,7 +22,7 @@ com['packets'].append({
 'en':
 """ 
 Returns the calibrated acceleration from the accelerometer for the 
-x,y and z axis in mG (G/1000, 1G = 9.80605m/s^2).
+x, y and z axis in mG (G/1000, 1G = 9.80605m/s²).
 
 If you want to get the acceleration periodically, it is recommended 
 to use the callback :func:`Acceleration` and set the period with 
@@ -44,7 +44,7 @@ com['packets'].append({
 'en':
 """
 Returns the calibrated magnetic field from the magnetometer for the 
-x,y and z axis in mG (Miligauss or Nanotesla).
+x, y and z axis in mG (Milligauss or Nanotesla).
 
 If you want to get the magnetic field periodically, it is recommended 
 to use the callback :func:`MagneticField` and set the period with 
@@ -66,7 +66,7 @@ com['packets'].append({
 'en':
 """
 Returns the calibrated angular velocity from the gyroscope for the 
-x,y and z axis in °/17.5s (you have to divide by 17.5 to
+x, y and z axis in °/17.5s (you have to divide by 17.5 to
 get the value in °/s).
 
 If you want to get the angular velocity periodically, it is recommended 
@@ -119,8 +119,8 @@ com['packets'].append({
 'doc': ['bm', {
 'en':
 """
-Returns the current orientation (roll, pitch, yaw) of the IMU Brick as euler 
-angles in one-hundredth degree. Note that euler angles always experience a
+Returns the current orientation (roll, pitch, yaw) of the IMU Brick as Euler
+angles in one-hundredth degree. Note that Euler angles always experience a
 `gimbal lock <http://en.wikipedia.org/wiki/Gimbal_lock>`__.
 
 We recommend that you use quaternions instead.
@@ -151,7 +151,7 @@ com['packets'].append({
 Returns the current orientation (x, y, z, w) of the IMU as 
 `quaternions <http://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__.
 
-You can go from quaternions to euler angles with the following formula::
+You can go from quaternions to Euler angles with the following formula::
 
  roll  = atan2(2*y*w - 2*x*z, 1 - 2*y*y - 2*z*z)
  pitch = atan2(2*x*w - 2*y*z, 1 - 2*x*x - 2*z*z)
@@ -160,7 +160,7 @@ You can go from quaternions to euler angles with the following formula::
 This process is not reversible, because of the 
 `gimbal lock <http://en.wikipedia.org/wiki/Gimbal_lock>`__.
 
-Converting the quaternions to an opengl translation matrix is
+Converting the quaternions to an OpenGL translation matrix is
 possible with the following formula::
 
  matrix = [[1 - 2*(y*y + z*z), 2*(x*y - w*z),     2*(x*z + w*y),     0],
@@ -380,7 +380,7 @@ There are several different types that can be calibrated:
 
 The calibration via gain and bias is done with the following formula::
 
- new_value = (bias + orig_value)*gain_mul/gain_div
+ new_value = (bias + orig_value) * gain_mul / gain_div
 
 If you really want to write your own calibration software, please keep
 in mind that you first have to undo the old calibration (set bias to 0 and
@@ -429,7 +429,7 @@ com['packets'].append({
 'doc': ['ccm', {
 'en':
 """
-Sets the period in ms with which the :func:`Acceleration` callback is called 
+Sets the period in ms with which the :func:`Acceleration` callback is triggered
 periodically. A value of 0 turns the callback off.
 
 The default value is 0.
@@ -462,7 +462,7 @@ com['packets'].append({
 'doc': ['ccm', {
 'en':
 """
-Sets the period in ms with which the :func:`MagneticField` callback is called 
+Sets the period in ms with which the :func:`MagneticField` callback is triggered
 periodically. A value of 0 turns the callback off.
 """,
 'de':
@@ -493,7 +493,7 @@ com['packets'].append({
 'doc': ['ccm', {
 'en':
 """
-Sets the period in ms with which the :func:`AngularVelocity` callback is called 
+Sets the period in ms with which the :func:`AngularVelocity` callback is triggered
 periodically. A value of 0 turns the callback off.
 """,
 'de':
@@ -524,7 +524,7 @@ com['packets'].append({
 'doc': ['ccm', {
 'en':
 """
-Sets the period in ms with which the :func:`AllData` callback is called 
+Sets the period in ms with which the :func:`AllData` callback is triggered
 periodically. A value of 0 turns the callback off.
 """,
 'de':
@@ -555,7 +555,7 @@ com['packets'].append({
 'doc': ['ccm', {
 'en':
 """
-Sets the period in ms with which the :func:`Orientation` callback is called 
+Sets the period in ms with which the :func:`Orientation` callback is triggered
 periodically. A value of 0 turns the callback off.
 """,
 'de':
@@ -586,7 +586,7 @@ com['packets'].append({
 'doc': ['ccm', {
 'en':
 """
-Sets the period in ms with which the :func:`Quaternion` callback is called 
+Sets the period in ms with which the :func:`Quaternion` callback is triggered
 periodically. A value of 0 turns the callback off.
 """,
 'de':
@@ -619,7 +619,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called periodically with the period that is set by 
+This callback is triggered periodically with the period that is set by
 :func:`SetAccelerationPeriod`. The parameters are the acceleration
 for the x, y and z axis.
 """,
@@ -638,7 +638,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called periodically with the period that is set by 
+This callback is triggered periodically with the period that is set by
 :func:`SetMagneticFieldPeriod`. The parameters are the magnetic field
 for the x, y and z axis.
 """,
@@ -657,7 +657,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called periodically with the period that is set by 
+This callback is triggered periodically with the period that is set by
 :func:`SetAngularVelocityPeriod`. The parameters are the angular velocity
 for the x, y and z axis.
 """,
@@ -683,7 +683,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called periodically with the period that is set by 
+This callback is triggered periodically with the period that is set by
 :func:`SetAllDataPeriod`. The parameters are the acceleration, 
 the magnetic field and the angular velocity for the x, y and z axis as
 well as the temperature of the IMU Brick.
@@ -703,9 +703,9 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called periodically with the period that is set by 
+This callback is triggered periodically with the period that is set by
 :func:`SetOrientationPeriod`. The parameters are the orientation
-(roll, pitch and yaw) of the IMU Brick in euler angles. See
+(roll, pitch and yaw) of the IMU Brick in Euler angles. See
 :func:`GetOrientation` for details.
 """,
 'de':
@@ -724,9 +724,9 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called periodically with the period that is set by 
+This callback is triggered periodically with the period that is set by
 :func:`SetQuaternionPeriod`. The parameters are the orientation
-(w, x, y, z) of the IMU Brick in quaternions. See :func:`GetQuaternion`
+(x, y, z, w) of the IMU Brick in quaternions. See :func:`GetQuaternion`
 for details.
 """,
 'de':

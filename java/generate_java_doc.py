@@ -28,6 +28,7 @@ import sys
 import os
 import shutil
 import subprocess
+import glob
 
 com = None
 lang = 'en'
@@ -62,7 +63,6 @@ def fix_links(text):
             name_right = fu_link.format(com['type'], cls, name)
 
         text = text.replace(name_false, name_right)
-
 
     text = text.replace('Callback ', 'Listener ')
     text = text.replace(' Callback', ' Listener')
@@ -111,6 +111,21 @@ def make_header():
                                          title, 
                                          title_under)
 
+def make_summary():
+    su = """
+This is the API site for the Java bindings of the {0} {1}. General information
+on what this device does and the technical specifications can be found
+:ref:`here <{2}>`.
+
+A tutorial on how to test the {0} {1} and get the first examples running
+can be found :ref:`here <{3}>`.
+"""
+
+    hw_link = com['name'][1] + '_' + com['type'].lower()
+    hw_test = hw_link + '_test'
+    su = su.format(com['name'][0], com['type'], hw_link, hw_test)
+    return su
+
 def make_examples():
     def title_from_file(f):
         f = f.replace('Example', '')
@@ -121,13 +136,6 @@ def make_examples():
         return s[:-1]
 
     ex = """
-This is the API site for the Java bindings of the {1} {2}. General information
-on what this device does and the technical specifications can be found 
-:ref:`here <{3}>`.
-
-A tutorial on how to test the {1} {2} and get the first examples running
-can be found :ref:`here <{4}>`.
-
 {0}
 
 Examples
@@ -148,9 +156,7 @@ Examples
 
     ref = '.. _{0}_{1}_java_examples:\n'.format(com['name'][1], 
                                                   com['type'].lower())
-    hw_link = com['name'][1] + '_' + com['type'].lower()
-    hw_test = hw_link + '_test'
-    ex = ex.format(ref, com['name'][0], com['type'], hw_link, hw_test)
+    ex = ex.format(ref)
     files = find_examples()
     copy_files = []
     for f in files:
@@ -478,6 +484,7 @@ def make_files(com_new, directory):
 
     f = file('{0}/{1}.rst'.format(directory, file_name), "w")
     f.write(make_header())
+    f.write(make_summary())
     f.write(make_examples())
     f.write(make_api())
 
@@ -495,7 +502,8 @@ def generate(path):
     # Make temporary generator directory
     if os.path.exists('/tmp/generator'):
         shutil.rmtree('/tmp/generator/')
-    os.makedirs('/tmp/generator/jar/source/com')
+    os.makedirs('/tmp/generator/jar/source/com/tinkerforge')
+    os.chdir('/tmp/generator')
 
     # Make bindings
     for config in configs:
@@ -505,7 +513,10 @@ def generate(path):
             make_files(module.com, path)
 
     # Copy bindings and readme
-    shutil.copytree(path + '/bindings', '/tmp/generator/jar/source/com/tinkerforge')
+    for filename in glob.glob(path + '/bindings/*.java'):
+        shutil.copy(filename, '/tmp/generator/jar/source/com/tinkerforge')
+
+    shutil.copy(path + '/Device.java', '/tmp/generator/jar/source/com/tinkerforge')
     shutil.copy(path + '/IPConnection.java', '/tmp/generator/jar/source/com/tinkerforge')
     shutil.copy(path + '/Readme.txt', '/tmp/generator/jar')
 

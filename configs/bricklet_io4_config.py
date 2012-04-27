@@ -99,8 +99,8 @@ For example: A return value of the bitstrings "1100" and "1010" for
 direction and value means that:
 
  * pin 0 is configured as input pull up, 
- * pin 1 is configured as intput default, 
- * pin 2 is  configured as output high 
+ * pin 1 is configured as input default,
+ * pin 2 is configured as output high
  * and pin 3 is are configured as output low.
 
 """,
@@ -191,7 +191,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called whenever a change of the voltage level is detected
+This callback is triggered whenever a change of the voltage level is detected
 on pins where the interrupt was activated with :func:`SetPortInterrupt`.
 
 The values are a bit mask that specifies which interrupts occurred
@@ -202,7 +202,7 @@ For example:
  * (1, 1) means that an interrupt on pin 0 occurred and
    currently pin 0 is high and pins 1-3 are low.
  * (9, 14) means that an interrupt on pins 0 and 3
-   occured and currently pin 0 is low and pins 1-3 are high.
+   occurred and currently pin 0 is low and pins 1-3 are high.
 
 """,
 'de':

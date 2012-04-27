@@ -324,7 +324,7 @@ Sets the minimum and maximum degree for the specified servo (by default
 given as °/100).
 
 This only specifies the abstract values between which the minimum and maximum
-pulse width is scaled. For example: If you specifiy a pulse width of 1000µs
+pulse width is scaled. For example: If you specify a pulse width of 1000µs
 to 2000µs and a degree range of -90° to 90°, a call of :func:`SetPosition`
 with 0 will result in a pulse width of 1500µs 
 (-90° = 1000µs, 90° = 2000µs, etc.).
@@ -333,9 +333,9 @@ Possible usage:
 
  * The datasheet of your servo specifies a range of 200° with the middle position at 110°. In this case you can set the minimum to -9000 and the maximum to 11000.
  * You measure a range of 220° on your servo and you don't have or need a middle position. In this case you can set the minimum to 0 and the maximum to 22000.
- * You have a linear servo with a drive length of 20cm, In this case you could set the minimum to 0 and the maximum to 20000. Now you can set the Position with :func:`SetPosition` with a resolution of cm/100. Also the velocity will have a resoltion of cm/100s and the acceleration will have a resolution of cm/100s².
+ * You have a linear servo with a drive length of 20cm, In this case you could set the minimum to 0 and the maximum to 20000. Now you can set the Position with :func:`SetPosition` with a resolution of cm/100. Also the velocity will have a resolution of cm/100s and the acceleration will have a resolution of cm/100s².
  * You don't care about units and just want the highest possible resolution. In this case you should set the minimum to -32767 and the maximum to 32767.
- * You have a brushless motor with a maximum speed of 10000 rpm and want to conrol it with a RC brushless motor controller. In this case you can set the minimum to 0 and the maximum to 10000. :func:`SetPosition` now controls the rpm.
+ * You have a brushless motor with a maximum speed of 10000 rpm and want to control it with a RC brushless motor controller. In this case you can set the minimum to 0 and the maximum to 10000. :func:`SetPosition` now controls the rpm.
 
 Both values have a possible range from -32767 to 32767 
 (signed 16 bit integer). The minimum must be smaller than the maximum.
@@ -452,7 +452,7 @@ com['packets'].append({
 """
 Returns the stack input voltage in mV. The stack input voltage is the
 voltage that is supplied via the stack, i.e. it is given by a 
-Step-Down or Step-Up power supply Brick.
+Step-Down or Step-Up Power Supply.
 """,
 'de':
 """
@@ -470,7 +470,7 @@ com['packets'].append({
 Returns the external input voltage in mV. The external input voltage is
 given via the black power input connector on the Servo Brick. 
  
-If there is  an externel input voltage and a stack input voltage, the motor 
+If there is an external input voltage and a stack input voltage, the motor
 will be driven by the external input voltage. If there is only a stack 
 voltage present, the motor will be driven by this voltage.
 
@@ -493,8 +493,8 @@ com['packets'].append({
 'doc': ['ccm', {
 'en':
 """
-Sets the minimum voltage in mV, below which the :func:`UnderVoltage` signal
-is called. The minimum possible value that works with the Servo Brick is 5V. 
+Sets the minimum voltage in mV, below which the :func:`UnderVoltage` callback
+is triggered. The minimum possible value that works with the Servo Brick is 5V.
 You can use this function to detect the discharge of a battery that is used
 to drive the stepper motor. If you have a fixed power supply, you likely do 
 not need this functionality.
@@ -529,7 +529,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called when the input voltage drops below the value set by
+This callback is triggered when the input voltage drops below the value set by
 :func:`SetMinimumVoltage`. The parameter is the current voltage given
 in mV.
 """,
@@ -547,14 +547,14 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called when a position set by :func:`SetPosition` 
+This callback is triggered when a position set by :func:`SetPosition`
 is reached. The parameters are the servo and the position that is reached.
 
 .. note::
  Since we can't get any feedback from the servo, this only works if the
  velocity (see :func:`SetVelocity`) is set smaller or equal to the
  maximum velocity of the servo. Otherwise the servo will lag behind the
- control value and the callback will be called too early.
+ control value and the callback will be triggered too early.
 """,
 'de':
 """
@@ -570,14 +570,14 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called when a velocity set by :func:`SetVelocity` 
+This callback is triggered when a velocity set by :func:`SetVelocity`
 is reached. The parameters are the servo and the velocity that is reached.
 
 .. note::
  Since we can't get any feedback from the servo, this only works if the
  acceleration (see :func:`SetAcceleration`) is set smaller or equal to the
  maximum acceleration of the servo. Otherwise the servo will lag behind the
- control value and the callback will be called too early.
+ control value and the callback will be triggered too early.
 """,
 'de':
 """

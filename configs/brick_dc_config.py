@@ -8,7 +8,7 @@ com = {
     'type': 'Brick',
     'name': ('DC', 'dc'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for controlling DC Motors',
+    'description': 'Device for controlling DC motors',
     'packets': []
 }
 
@@ -19,7 +19,7 @@ com['packets'].append({
 'doc': ['bm', {
 'en':
 """ 
-Sets the velocity of the Motor. Whereas -32767 is full speed backward, 
+Sets the velocity of the motor. Whereas -32767 is full speed backward,
 0 is stop and 32767 is full speed forward. Depending on the 
 acceleration (see :func:`SetAcceleration`), the motor is not immediately 
 brought to the velocity but smoothly accelerated.
@@ -76,7 +76,7 @@ com['packets'].append({
 'doc': ['bm', {
 'en':
 """
-Sets the acceleration of the Motor. It is given in *velocity/s*. An
+Sets the acceleration of the motor. It is given in *velocity/s*. An
 acceleration of 10000 means, that every second the velocity is increased
 by 10000 (or about 30% duty cycle).
 
@@ -117,7 +117,7 @@ com['packets'].append({
 'doc': ['am', {
 'en':
 """
-Sets the frequency (in Hz) of the PWM whith which the motor is driven. 
+Sets the frequency (in Hz) of the PWM with which the motor is driven.
 The possible range of the frequency is 1-20000Hz. Often a high frequency
 is less noisy and the motor runs smoother. However, with a low frequency
 there are less switches and therefore fewer switching losses. Also with
@@ -180,7 +180,7 @@ com['packets'].append({
 """
 Returns the stack input voltage in mV. The stack input voltage is the
 voltage that is supplied via the stack, i.e. it is given by a 
-Step-Down or Step-Up power supply Brick.
+Step-Down or Step-Up Power Supply.
 """,
 'de':
 """
@@ -198,7 +198,7 @@ com['packets'].append({
 Returns the external input voltage in mV. The external input voltage is
 given via the black power input connector on the DC Brick. 
  
-If there is  an externel input voltage and a stack input voltage, the motor 
+If there is an external input voltage and a stack input voltage, the motor
 will be driven by the external input voltage. If there is only a stack 
 voltage present, the motor will be driven by this voltage.
 
@@ -284,7 +284,7 @@ com['packets'].append({
 'en':
 """
 Sets the minimum voltage in mV, below which the :func:`UnderVoltage` callback
-is called. The minimum possible value that works with the DC Brick is 5V.
+is triggered. The minimum possible value that works with the DC Brick is 5V.
 You can use this function to detect the discharge of a battery that is used
 to drive the motor. If you have a fixed power supply, you likely do not need 
 this functionality.
@@ -333,7 +333,7 @@ with slower velocities.
 In Drive/Coast mode, the motor is always either driving or freewheeling.
 Advantages are: Less current consumption and less demands on the motor/driver.
 
-The defaukt value is 0 = Drive/Brake.
+The default value is 0 = Drive/Brake.
 """,
 'de':
 """
@@ -363,7 +363,7 @@ com['packets'].append({
 'doc': ['ccm', {
 'en':
 """
-Sets a period in ms with which the :func:`CurrentVelocity` callback is called.
+Sets a period in ms with which the :func:`CurrentVelocity` callback is triggered.
 A period of 0 turns the callback off.
 
 The default value is 0.
@@ -396,7 +396,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called when the input voltage drops below the value set by
+This callback is triggered when the input voltage drops below the value set by
 :func:`SetMinimumVoltage`. The parameter is the current voltage given
 in mV.
 """,
@@ -413,14 +413,14 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-The EmergencyShutdown callback is called if either the current consumption
+This callback is triggered if either the current consumption
 is too high (above 5A) or the temperature of the driver is too high 
 (above 175°C). These two possibilities are essentially the same, since the
 temperature will reach this threshold immediately if the motor draws too
 much current. In case of a voltage below 3.3V (external or stack) this
-callback is called as well.
+callback is triggered as well.
 
-If this callback is called, the driver gets disabled at the same time. 
+If this callback is triggered, the driver gets disabled at the same time.
 That means, :func:`Enable` has to be called to drive the motor again.
 
 .. note::
@@ -441,16 +441,16 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called whenever a set velocity is reached. For example:
+This callback is triggered whenever a set velocity is reached. For example:
 If a velocity of 0 is present, acceleration is set to 5000 and velocity
-to 10000, :func:`VelocityReached` will be called after about 2 seconds, when
+to 10000, :func:`VelocityReached` will be triggered after about 2 seconds, when
 the set velocity is actually reached.
 
 .. note::
- Since we can't get any feedback from the dc motor, this only works if the
+ Since we can't get any feedback from the DC motor, this only works if the
  acceleration (see :func:`SetAcceleration`) is set smaller or equal to the
  maximum acceleration of the motor. Otherwise the motor will lag behind the
- control value and the callback will be called too early.
+ control value and the callback will be triggered too early.
 """,
 'de':
 """
@@ -465,11 +465,11 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called with the period that is set by 
+This callback is triggered with the period that is set by
 :func:`SetCurrentVelocityPeriod`. The parameter is the *current* velocity
 used by the motor.
 
-:func:`CurrentVelocity` is only called after the set period if there is 
+:func:`CurrentVelocity` is only triggered after the set period if there is
 a change in the velocity.
 """,
 'de':

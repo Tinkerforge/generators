@@ -1,0 +1,9 @@
+*.pyc
+c/bindings/
+c/doc/
+csharp/bindings/
+csharp/doc/
+java/bindings/
+java/doc/
+python/bindings/
+python/doc/

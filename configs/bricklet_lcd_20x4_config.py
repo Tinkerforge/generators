@@ -157,7 +157,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called when a button is pressed. The parameter is
+This callback is triggered when a button is pressed. The parameter is
 the number of the button (0 to 2).
 """,
 'de':
@@ -173,7 +173,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called when a button is released. The parameter is
+This callback is triggered when a button is released. The parameter is
 the number of the button (0 to 2).
 """,
 'de':

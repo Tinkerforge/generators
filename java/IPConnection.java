@@ -17,37 +17,6 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-class Device {
-	long uid = (long)0;
-	short stackID = (short)0;
-	String name = null;
-	short[] firmwareVersion = new short[3];
-	short[] bindingVersion = new short[3];
-	byte answerType = (byte)0;
-	Semaphore semaphoreAnswer = new Semaphore(1, true);
-	Semaphore semaphoreWrite = new Semaphore(1, true);
-	SynchronousQueue<byte[]> answerQueue = new SynchronousQueue<byte[]>();
-	
-	IPConnection ipcon = null;
-	
-	CallbackListener[] callbacks = new CallbackListener[255];
-	Object[] listenerObjects = new Object[255];
-	
-	public interface CallbackListener {
-		public void callback(byte data[]);
-	}
-	
-	public Device(String uid) {
-		try {
-			semaphoreAnswer.acquire();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
-		this.uid = IPConnection.base58Decode(uid);
-	}
-}
-
 class RecvLoopThread extends Thread {
 	IPConnection ipcon = null;
 
@@ -418,23 +387,6 @@ public class IPConnection {
 		}
 		
 		device.ipcon = this;
-	}
-	
-	public void enumerate(Object o) {
-		enumerateListener = (EnumerateListener)o;
-		
-		ByteBuffer bb = ByteBuffer.allocate(12);
-		bb.order(ByteOrder.LITTLE_ENDIAN);
-		bb.put(BROADCAST_ADDRESS);
-		bb.put(TYPE_ENUMERATE);
-		bb.putShort(ENUMERATE_LENGTH);
-		
-		try {
-			out.write(bb.array());
-		}
-		catch(java.io.IOException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	public static String base58Encode(long value) {
