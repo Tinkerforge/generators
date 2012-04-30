@@ -276,7 +276,7 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetVoltageCallbackPeriod`. The parameter is the voltage of the
+:func:`SetVoltageCallbackPeriod`. The :word:`parameter` is the voltage of the
 sensor.
 
 :func:`Voltage` is only triggered if the voltage has changed since the
@@ -296,7 +296,7 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetAnalogValueCallbackPeriod`. The parameter is the analog value of the
+:func:`SetAnalogValueCallbackPeriod`. The :word:`parameter` is the analog value of the
 sensor.
 
 :func:`AnalogValue` is only triggered if the voltage has changed since the
@@ -317,7 +317,7 @@ com['packets'].append({
 """
 This callback is triggered when the threshold as set by
 :func:`SetVoltageCallbackThreshold` is reached.
-The parameter is the voltage of the sensor.
+The :word:`parameter` is the voltage of the sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
@@ -337,7 +337,7 @@ com['packets'].append({
 """
 This callback is triggered when the threshold as set by
 :func:`SetAnalogValueCallbackThreshold` is reached.
-The parameter is the analog value of the sensor.
+The :word:`parameter` is the analog value of the sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.

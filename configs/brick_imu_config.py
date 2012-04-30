@@ -620,7 +620,7 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetAccelerationPeriod`. The parameters are the acceleration
+:func:`SetAccelerationPeriod`. The :word:`parameters` are the acceleration
 for the x, y and z axis.
 """,
 'de':
@@ -639,7 +639,7 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetMagneticFieldPeriod`. The parameters are the magnetic field
+:func:`SetMagneticFieldPeriod`. The :word:`parameters` are the magnetic field
 for the x, y and z axis.
 """,
 'de':
@@ -658,7 +658,7 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetAngularVelocityPeriod`. The parameters are the angular velocity
+:func:`SetAngularVelocityPeriod`. The :word:`parameters` are the angular velocity
 for the x, y and z axis.
 """,
 'de':
@@ -684,7 +684,7 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetAllDataPeriod`. The parameters are the acceleration, 
+:func:`SetAllDataPeriod`. The :word:`parameters` are the acceleration,
 the magnetic field and the angular velocity for the x, y and z axis as
 well as the temperature of the IMU Brick.
 """,
@@ -704,7 +704,7 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetOrientationPeriod`. The parameters are the orientation
+:func:`SetOrientationPeriod`. The :word:`parameters` are the orientation
 (roll, pitch and yaw) of the IMU Brick in Euler angles. See
 :func:`GetOrientation` for details.
 """,
@@ -725,7 +725,7 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetQuaternionPeriod`. The parameters are the orientation
+:func:`SetQuaternionPeriod`. The :word:`parameters` are the orientation
 (x, y, z, w) of the IMU Brick in quaternions. See :func:`GetQuaternion`
 for details.
 """,

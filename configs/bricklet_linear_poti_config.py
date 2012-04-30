@@ -275,7 +275,7 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetPositionCallbackPeriod`. The parameter is the position of the
+:func:`SetPositionCallbackPeriod`. The :word:`parameter` is the position of the
 Linear Potentiometer.
 
 :func:`Position` is only triggered if the position has changed since the
@@ -295,7 +295,7 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetAnalogValueCallbackPeriod`. The parameter is the analog value of the
+:func:`SetAnalogValueCallbackPeriod`. The :word:`parameter` is the analog value of the
 Linear Potentiometer.
 
 :func:`AnalogValue` is only triggered if the position has changed since the
@@ -316,7 +316,7 @@ com['packets'].append({
 """
 This callback is triggered when the threshold as set by
 :func:`SetPositionCallbackThreshold` is reached.
-The parameter is the position of the Linear Potentiometer.
+The :word:`parameter` is the position of the Linear Potentiometer.
 
 If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
@@ -336,7 +336,7 @@ com['packets'].append({
 """
 This callback is triggered when the threshold as set by
 :func:`SetAnalogValueCallbackThreshold` is reached.
-The parameter is the analog value of the Linear Potentiometer.
+The :word:`parameter` is the analog value of the Linear Potentiometer.
 
 If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.

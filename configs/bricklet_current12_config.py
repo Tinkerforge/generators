@@ -321,7 +321,7 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetCurrentCallbackPeriod`. The parameter is the current of the
+:func:`SetCurrentCallbackPeriod`. The :word:`parameter` is the current of the
 sensor.
 
 :func:`Current` is only triggered if the current has changed since the
@@ -341,8 +341,8 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetAnalogValueCallbackPeriod`. The parameter is the analog value of the
-sensor.
+:func:`SetAnalogValueCallbackPeriod`. The :word:`parameter` is the analog value
+of the sensor.
 
 :func:`AnalogValue` is only triggered if the current has changed since the
 last triggering.
@@ -362,7 +362,7 @@ com['packets'].append({
 """
 This callback is triggered when the threshold as set by
 :func:`SetCurrentCallbackThreshold` is reached.
-The parameter is the current of the sensor.
+The :word:`parameter` is the current of the sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
@@ -382,7 +382,7 @@ com['packets'].append({
 """
 This callback is triggered when the threshold as set by
 :func:`SetAnalogValueCallbackThreshold` is reached.
-The parameter is the analog value of the sensor.
+The :word:`parameter` is the analog value of the sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.

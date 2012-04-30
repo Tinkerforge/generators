@@ -397,7 +397,7 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the input voltage drops below the value set by
-:func:`SetMinimumVoltage`. The parameter is the current voltage given
+:func:`SetMinimumVoltage`. The :word:`parameter` is the current voltage given
 in mV.
 """,
 'de':
@@ -466,7 +466,7 @@ com['packets'].append({
 'en':
 """
 This callback is triggered with the period that is set by
-:func:`SetCurrentVelocityPeriod`. The parameter is the *current* velocity
+:func:`SetCurrentVelocityPeriod`. The :word:`parameter` is the *current* velocity
 used by the motor.
 
 :func:`CurrentVelocity` is only triggered after the set period if there is

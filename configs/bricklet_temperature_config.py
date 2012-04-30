@@ -165,8 +165,8 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetTemperatureCallbackPeriod`. The parameter is the temperature of the
-sensor.
+:func:`SetTemperatureCallbackPeriod`. The :word:`parameter` is the temperature
+of the sensor.
 
 :func:`Temperature` is only triggered if the temperature has changed since the
 last triggering.
@@ -186,7 +186,7 @@ com['packets'].append({
 """
 This callback is triggered when the threshold as set by
 :func:`SetTemperatureCallbackThreshold` is reached.
-The parameter is the temperature of the sensor.
+The :word:`parameter` is the temperature of the sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.

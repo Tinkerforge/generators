@@ -280,7 +280,7 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetIlluminanceCallbackPeriod`. The parameter is the illuminance of the
+:func:`SetIlluminanceCallbackPeriod`. The :word:`parameter` is the illuminance of the
 ambient light sensor.
 
 :func:`Illuminance` is only triggered if the illuminance has changed since the
@@ -300,7 +300,7 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetAnalogValueCallbackPeriod`. The parameter is the analog value of the
+:func:`SetAnalogValueCallbackPeriod`. The :word:`parameter` is the analog value of the
 ambient light sensor.
 
 :func:`AnalogValue` is only triggered if the illuminance has changed since the
@@ -321,7 +321,7 @@ com['packets'].append({
 """
 This callback is triggered when the threshold as set by
 :func:`SetIlluminanceCallbackThreshold` is reached.
-The parameter is the illuminance of the ambient light sensor.
+The :word:`parameter` is the illuminance of the ambient light sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
@@ -341,7 +341,7 @@ com['packets'].append({
 """
 This callback is triggered when the threshold as set by
 :func:`SetAnalogValueCallbackThreshold` is reached.
-The parameter is the analog value of the ambient light sensor.
+The :word:`parameter` is the analog value of the ambient light sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.

@@ -81,6 +81,9 @@ def fix_links(text):
             name_right = ':py:func:`{0}.{1}`'.format(cls, packet['name'][1])
         text = text.replace(name_false, name_right)
 
+    text = text.replace(":word:`parameter`", "parameter")
+    text = text.replace(":word:`parameters`", "parameters")
+
     return text
 
 def find_examples():

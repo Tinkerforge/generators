@@ -530,7 +530,7 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the input voltage drops below the value set by
-:func:`SetMinimumVoltage`. The parameter is the current voltage given
+:func:`SetMinimumVoltage`. The :word:`parameter` is the current voltage given
 in mV.
 """,
 'de':
@@ -548,7 +548,7 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when a position set by :func:`SetPosition`
-is reached. The parameters are the servo and the position that is reached.
+is reached. The :word:`parameters` are the servo and the position that is reached.
 
 .. note::
  Since we can't get any feedback from the servo, this only works if the
@@ -571,7 +571,7 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when a velocity set by :func:`SetVelocity`
-is reached. The parameters are the servo and the velocity that is reached.
+is reached. The :word:`parameters` are the servo and the velocity that is reached.
 
 .. note::
  Since we can't get any feedback from the servo, this only works if the

@@ -583,7 +583,7 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when the input voltage drops below the value set by
-:func:`SetMinimumVoltage`. The parameter is the current voltage given
+:func:`SetMinimumVoltage`. The :word:`parameter` is the current voltage given
 in mV.
 """,
 'de':

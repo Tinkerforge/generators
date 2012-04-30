@@ -68,6 +68,9 @@ def fix_links(text):
                                                     packet['name'][1])
         text = text.replace(name_false, name_right)
 
+    text = text.replace(":word:`parameter`", "parameter")
+    text = text.replace(":word:`parameters`", "parameters")
+
     return text
 
 def find_examples():
