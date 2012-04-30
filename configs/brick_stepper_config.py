@@ -78,8 +78,8 @@ For example: If the current velocity is 0 and you want to accelerate to a
 velocity of 8000 *steps/s* in 10 seconds, you should set an acceleration
 of 800 *steps/s²*.
 
-An dacceleration/deacceleration of 0 means instantaneous 
-acceleration/deacceleration (not recomended)
+An acceleration/deacceleration of 0 means instantaneous 
+acceleration/deacceleration (not recommended)
 
 The default value is 1000 for both
 """,
@@ -627,7 +627,7 @@ With synchronous rectification on, the decay can be changed
 (see :func:`SetDecay`). Without synchronous rectification fast
 decay is used.
 
-For an eplanation of synchronous rectification see 
+For an explanation of synchronous rectification see 
 `here <http://en.wikipedia.org/wiki/Active_rectification>`__.
 
 .. warning::
