@@ -287,19 +287,17 @@ def make_methods():
 \t\t\tLEConverter.To(stackID, 0, data_);
 \t\t\tLEConverter.To(TYPE_{3}, 1, data_);
 \t\t\tLEConverter.To((ushort){2}, 2, data_);
-{5}
-\t\t\tipcon.Write(this, data_, TYPE_{3}, {4});
-{6}\t\t}}
+{4}
+{5}\t\t}}
+"""
+    method_oneway = """
+\t\t\tsendOneWayMessage(data_);
 """
     method_answer = """
 \t\t\tbyte[] answer;
-\t\t\tif(!answerQueue.TryDequeue(out answer, IPConnection.TIMEOUT_ANSWER))
-\t\t\t{{
-\t\t\t\tthrow new TimeoutException("Did not receive answer for {0} in time");
-\t\t\t}}
+\t\t\tsendReturningMessage(data_, TYPE_{0}, out answer);
 
 {1}
-\t\t\twriteEvent.Set();
 """
 
     cls = com['name'][0]
@@ -324,7 +322,7 @@ def make_methods():
             write_convs += write_conv.format(wname, pos)
             pos += get_type_size(element)
             
-        answer = ''
+        method_tail = ''
         if has_ret == 'true':
             read_convs = ''
             read_conv = '\t\t\t{0} = LEConverter.{1}({2}, answer{3});\n'
@@ -343,15 +341,16 @@ def make_methods():
                 read_convs += read_conv.format(aname, from_type, pos, length)
                 pos += get_type_size(element)
 
-            answer = method_answer.format(name, read_convs)
+            method_tail = method_answer.format(name_upper, read_convs)
+        else:
+            method_tail = method_oneway
 
         methods += method.format(name,
                                  params,
                                  size,
                                  name_upper,
-                                 has_ret,
                                  write_convs,
-                                 answer)
+                                 method_tail)
 
     return methods
 

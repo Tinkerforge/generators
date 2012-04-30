@@ -277,30 +277,14 @@ namespace Tinkerforge
 			return length;
 		}
 
-		public void Write(Device device, 
-		                  byte[] data, 
-						  byte type, 
-						  bool hasReturn) 
-		{
-			if(!device.writeEvent.WaitOne())
-			{
-				return;
-			}
-
-			if(hasReturn)
-			{
-				device.answerType = type;
-			}
+        public void Write(byte[] data)
+        {
 #if WINDOWS_PHONE
 			WriteAsync(data);
 #else
-			socketStream.Write(data, 0, data.Length);
+            socketStream.Write(data, 0, data.Length);
 #endif
-			if(!hasReturn) 
-			{
-				device.writeEvent.Set();
-			}
-		}
+        }
 
 		public void Enumerate(EnumerateCallback enumerateCallback) 
 		{
@@ -373,7 +357,7 @@ namespace Tinkerforge
 		}
 	}
 
-	public class Device
+	public abstract class Device
 	{
 		internal byte stackID = 0;
 		internal String name;
@@ -385,7 +369,7 @@ namespace Tinkerforge
 		internal MessageCallback[] messageCallbacks = new MessageCallback[256];
 		internal BlockingQueue answerQueue = new BlockingQueue();
 		internal IPConnection ipcon = null;
-		internal AutoResetEvent writeEvent = new AutoResetEvent(true);
+        private object writeLock = new object();
 
 		internal delegate int MessageCallback(byte[] data);
 
@@ -393,6 +377,28 @@ namespace Tinkerforge
 		{
 			this.uid = Base58.Decode(uid);
 		}
+
+        protected void sendOneWayMessage(byte[] data)
+        {
+            lock (writeLock)
+            {
+                ipcon.Write(data);
+            }
+        }
+
+        protected void sendReturningMessage(byte[] data, byte type, out byte[] answer)
+        {
+            lock (writeLock)
+            {
+                sendOneWayMessage(data);
+
+                answerType = type;
+                if (!answerQueue.TryDequeue(out answer, IPConnection.TIMEOUT_ANSWER))
+                {
+                    throw new TimeoutException("Did not receive answer in time");
+                }
+            }
+        }
 	}
 
 	public class Base58 {
