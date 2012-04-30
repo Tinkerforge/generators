@@ -150,7 +150,7 @@ class IPConnection:
             data = self.sock.recv(8192)
             if len(data) == 0:
                 if self.recv_loop_flag:
-                    print("Socket disconnected by Server, destroying ipcon\n")
+                    sys.stderr.write("Socket disconnected by Server, destroying ipcon\n")
                     self.destroy()
                 return
 
@@ -280,8 +280,8 @@ class IPConnection:
         length = get_length_from_data(data)
 
         if not stack_id in self.devices:
-            print("Message with unknown Stack ID, discarded: " + 
-                  str((stack_id, typ)))
+            sys.stderr.write("Message with unknown Stack ID, discarded: " +
+                             str((stack_id, typ)) + "\n")
             return length
 
         device = self.devices[stack_id]

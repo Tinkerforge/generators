@@ -39,13 +39,13 @@ class RecvLoopThread extends Thread {
 				int length = ipcon.in.read(data, 0, 8192);
 				if(length == 0) {
 					if(ipcon.recvLoopFlag) {
-						System.out.println("Socket disconnected by Server, destroying ipcon");
+						System.err.println("Socket disconnected by Server, destroying ipcon");
 						ipcon.destroy();
 					}
 					return;
 				} else if(length == -1) {
 					if(ipcon.recvLoopFlag) {
-						System.out.println("Socket disconnected by Server, destroying ipcon");
+						System.err.println("Socket disconnected by Server, destroying ipcon");
 						ipcon.destroy();
 					}
 					return;
@@ -179,7 +179,7 @@ public class IPConnection {
 		int length = getLengthFromData(data);
 		
 		if(devices[stackID] == null) {
-			System.out.println("Message with unknown Stack ID, discarded: " + stackID);
+			System.err.println("Message with unknown Stack ID, discarded: " + stackID);
 			return length;
 		}
 		

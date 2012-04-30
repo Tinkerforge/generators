@@ -216,8 +216,8 @@ namespace Tinkerforge
 
 			if(device == null)
 			{
-				Console.WriteLine("Message with unknown Stack ID, discarded: "
-				                  + stackID);
+				Console.Error.WriteLine("Message with unknown Stack ID, discarded: "
+				                        + stackID);
 				return length;
 			}
 

@@ -48,7 +48,7 @@ void* ipcon_recv_loop(void *param) {
 #endif
 		if(length == 0) {
 			if(ipcon->recv_loop_flag) {
-				printf("Socket disconnected by Server, destroying ipcon\n");
+				fprintf(stderr, "Socket disconnected by Server, destroying ipcon\n");
 				ipcon_destroy(ipcon);
 			}
 #ifdef _WIN32
