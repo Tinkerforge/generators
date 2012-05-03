@@ -918,7 +918,12 @@ namespace Tinkerforge
 			}
 		}
 
-		public bool TryDequeue(out byte[] value, int timeout = Timeout.Infinite)
+		public bool TryDequeue(out byte[] value)
+		{
+			return TryDequeue(out value, Timeout.Infinite);
+		}
+		
+		public bool TryDequeue(out byte[] value, int timeout)
 		{
 			lock(queue)
 			{
