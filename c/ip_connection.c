@@ -287,7 +287,7 @@ int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
 #endif
 
 #ifdef _WIN32
-	double thread_recv_loop_id;
+	DWORD thread_recv_loop_id;
 	ipcon->handle_recv_loop = CreateThread(
 		NULL,
 		0,
