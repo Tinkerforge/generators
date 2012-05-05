@@ -254,10 +254,9 @@ int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
 	}
 
 	ipcon->s = socket(AF_INET, SOCK_STREAM, 0);
-	if(ipcon->s < 0) {
+	if(ipcon->s == INVALID_SOCKET) {
 		return E_NO_STREAM_SOCKET;
 	}
-
 #else
 	ipcon->fd = socket(AF_INET, SOCK_STREAM, 0);
 	if(ipcon->fd < 0) {
@@ -277,7 +276,7 @@ int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
 #ifdef _WIN32
 	if(connect(ipcon->s, 
 	           (struct sockaddr *)&ipcon->server, 
-	           sizeof(ipcon->server)) < 0 ) {
+	           sizeof(ipcon->server)) == SOCKET_ERROR) {
 		return E_NO_CONNECT;
 	}
 #else
@@ -298,6 +297,9 @@ int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
 		0,
 		(LPDWORD)&thread_recv_loop_id
 	);
+	if(ipcon->handle_recv_loop == NULL) {
+		return E_NO_THREAD;
+	}
 #else
 	if(pthread_create(&ipcon->thread_recv_loop, 
 					  NULL, 
