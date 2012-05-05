@@ -34,11 +34,10 @@ const char BASE58_STR[] = \
 #ifdef _WIN32
 void ipcon_recv_loop(void *param) {
 #else
-void* ipcon_recv_loop(void *param) {
+void *ipcon_recv_loop(void *param) {
 #endif
 	IPConnection *ipcon = (IPConnection*)param;
 	unsigned char buffer[RECV_BUFFER_SIZE] = { 0 };
-	int position = 0;
 
 	while(ipcon->recv_loop_flag) {
 #ifdef _WIN32
@@ -62,6 +61,9 @@ void* ipcon_recv_loop(void *param) {
 			handled += ipcon_handle_message(ipcon, buffer + handled);
 		} while(handled < length);
 	}
+#ifndef _WIN32
+	return NULL;
+#endif
 }
 
 void ipcon_destroy(IPConnection *ipcon) {
@@ -234,7 +236,7 @@ int ipcon_answer_sem_wait_timeout(Device *device) {
 
 }
 
-int ipcon_create(IPConnection *ipcon, const char* host, const int port) {
+int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
 	int i;
 	for(i = 0; i < MAX_NUM_DEVICES; i++) {
 		ipcon->devices[i] = NULL;
@@ -244,15 +246,13 @@ int ipcon_create(IPConnection *ipcon, const char* host, const int port) {
 	ipcon->recv_loop_flag = true;
 
 #ifdef _WIN32
-
 	WSADATA wsaData;
-	
+
 	// Initialize Winsock
 	if(WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
 		return E_NO_STREAM_SOCKET;
 	}
 
-	ipcon->s = INVALID_SOCKET;
 	ipcon->s = socket(AF_INET, SOCK_STREAM, 0);
 	if(ipcon->s < 0) {
 		return E_NO_STREAM_SOCKET;
@@ -283,7 +283,7 @@ int ipcon_create(IPConnection *ipcon, const char* host, const int port) {
 #else
 	if(connect(ipcon->fd, 
 	           (struct sockaddr *)&ipcon->server, 
-	           sizeof(ipcon->server)) < 0 ) {
+	           sizeof(ipcon->server)) < 0) {
 		return E_NO_CONNECT;
 	}
 #endif

@@ -103,7 +103,7 @@ typedef struct IPConnection_{
 #endif
 	bool recv_loop_flag;
 	struct sockaddr_in server;
-	Device* devices[MAX_NUM_DEVICES];
+	Device *devices[MAX_NUM_DEVICES];
 	Device *add_device;
 	enumerate_callback_func_t enumerate_callback;
 } IPConnection;
@@ -154,7 +154,7 @@ typedef struct {
 	#pragma pack(pop)
 #endif
 
-int ipcon_create(IPConnection *ipcon, const char* host, const int port);
+int ipcon_create(IPConnection *ipcon, const char *host, const int port);
 void ipcon_enumerate(IPConnection *ipcon, enumerate_callback_func_t cb);
 int ipcon_add_device(IPConnection *ipcon, Device *device);
 void ipcon_join_thread(IPConnection *ipcon);
@@ -166,7 +166,7 @@ uint64_t ipcon_base58decode(const char *str);
 #ifdef _WIN32
 void ipcon_recv_loop(void *param);
 #else
-void* ipcon_recv_loop(void *param);
+void *ipcon_recv_loop(void *param);
 #endif
 int ipcon_handle_enumerate(IPConnection *ipcon, const unsigned char *buffer);
 int ipcon_handle_message(IPConnection *ipcon, const unsigned char *buffer);
