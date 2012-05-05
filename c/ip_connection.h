@@ -1,26 +1,29 @@
+/*******************************************************************
+ * Copyright (c) 2012, Matthias Bolte (matthias@tinkerforge.com)   *
+ * Copyright (c) 2011, Olaf Lüke (olaf@tinkerforge.com)            *
+ *                                                                 *
+ * Redistribution and use in source and binary forms of this file, *
+ * with or without modification, are permitted.                    *
+ *******************************************************************/
+
 #ifndef IP_CONNECTION
 #define IP_CONNECTION
-
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE // for CLOCK_REALTIME
-#endif
-#ifndef __USE_BSD
-#define __USE_BSD // for sleep 
-#endif
 
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
 
+#if !defined __cplusplus && defined __GNUC__
+	#include <stdbool.h>
+#endif
 
 #ifdef _WIN32
-#ifndef WIN32_LEAN_AND_MEAN
-	#define WIN32_LEAN_AND_MEAN
-#endif
+	#ifndef WIN32_LEAN_AND_MEAN
+		#define WIN32_LEAN_AND_MEAN
+	#endif
 	#include <windows.h>
 	#include <winsock2.h>
 #else
-	#include <stdbool.h>
 	#include <netinet/in.h> // struct sockaddr_in
 	#include <pthread.h>
 	#include <semaphore.h>

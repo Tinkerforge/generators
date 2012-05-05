@@ -1,4 +1,5 @@
 /*******************************************************************
+ * Copyright (c) 2012, Matthias Bolte (matthias@tinkerforge.com)   *
  * Copyright (c) 2011, Olaf Lüke (olaf@tinkerforge.com)            *
  *                                                                 *
  * Redistribution and use in source and binary forms of this file, *
@@ -10,18 +11,12 @@
 #include <stdio.h>
 #include <time.h>
 
-#ifdef _WIN32
-	#include <windows.h>
-	#include <winsock2.h>
-#else
-	#include <stdbool.h>
+#ifndef _WIN32
 	#include <unistd.h> 
-	#include <pthread.h>
 	#include <sys/types.h>
 	#include <sys/time.h> // gettimeofday
 	#include <sys/socket.h> // connect
 	#include <sys/select.h>
-	#include <netinet/in.h> // struct sockaddr_in
 	#include <netdb.h> // gethostbyname
 #endif
 
