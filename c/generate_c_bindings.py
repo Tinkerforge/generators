@@ -112,13 +112,14 @@ def make_callback_defines():
 
 def make_structs():
     structs = """
-#ifdef _MSC_VER
+#if defined _MSC_VER || defined __BORLANDC__
 \t#pragma pack(push)
 \t#pragma pack(1)
-
-\t#define PACKED
+\t#define ATTRIBUTE_PACKED
+#elif defined __GNUC__
+\t#define ATTRIBUTE_PACKED __attribute__((packed))
 #else
-\t#define PACKED __attribute__((packed))
+\t#error unknown compiler, do not know how to enable struct packing
 #endif
 """
 
@@ -127,7 +128,7 @@ typedef struct {{
 \tuint8_t stack_id;
 \tuint8_t type;
 \tuint16_t length;
-{0}}} PACKED {1}{2}_;
+{0}}} ATTRIBUTE_PACKED {1}{2}_;
 """
 
     for packet in com['packets']:
@@ -176,9 +177,10 @@ typedef struct {{
         structs += struct_temp.format(struct_body, packet['name'][0], 'Return')
 
     structs += """
-#ifdef _MSC_VER
+#if defined _MSC_VER || defined __BORLANDC__
 \t#pragma pack(pop)
 #endif
+#undef ATTRIBUTE_PACKED
 """    
     return structs
 

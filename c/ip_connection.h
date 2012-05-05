@@ -111,13 +111,14 @@ typedef struct IPConnection_{
 	enumerate_callback_func_t enumerate_callback;
 } IPConnection;
 
-#ifdef _MSC_VER
+#if defined _MSC_VER || defined __BORLANDC__
 	#pragma pack(push)
 	#pragma pack(1)
-
-	#define PACKED
+	#define ATTRIBUTE_PACKED
+#elif defined __GNUC__
+	#define ATTRIBUTE_PACKED __attribute__((packed))
 #else
-	#define PACKED __attribute__((packed))
+	#error unknown compiler, do not know how to enable struct packing
 #endif
 
 typedef struct {
@@ -125,7 +126,7 @@ typedef struct {
 	uint8_t type;
 	uint16_t length;
 	uint64_t uid;
-} PACKED GetStackID;
+} ATTRIBUTE_PACKED GetStackID;
 
 typedef struct {
 	uint8_t stack_id;
@@ -135,13 +136,13 @@ typedef struct {
 	uint8_t device_firmware_version[3];
 	char device_name[MAX_LENGTH_NAME];
 	uint8_t device_stack_id;
-} PACKED GetStackIDReturn;
+} ATTRIBUTE_PACKED GetStackIDReturn;
 
 typedef struct {
 	uint8_t stack_id;
 	uint8_t type;
 	uint16_t length;
-} PACKED Enumerate;
+} ATTRIBUTE_PACKED Enumerate;
 
 typedef struct {
 	uint8_t stack_id;
@@ -151,11 +152,12 @@ typedef struct {
 	char device_name[MAX_LENGTH_NAME];
 	uint8_t device_stack_id;
 	bool is_new;
-} PACKED EnumerateReturn;
+} ATTRIBUTE_PACKED EnumerateReturn;
 
-#ifdef _MSC_VER
+#if defined _MSC_VER || defined __BORLANDC__
 	#pragma pack(pop)
 #endif
+#undef ATTRIBUTE_PACKED
 
 int ipcon_create(IPConnection *ipcon, const char *host, const int port);
 void ipcon_enumerate(IPConnection *ipcon, enumerate_callback_func_t cb);
