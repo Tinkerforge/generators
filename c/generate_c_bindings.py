@@ -393,7 +393,7 @@ typedef Device {3};
 
 """
 
-    date = datetime.datetime.now().strftime("%d.%m.%Y")
+    date = datetime.datetime.now().strftime("%Y-%m-%d")
     upper_type = com['type'].upper()
     upper_name = com['name'][1].upper()
 
