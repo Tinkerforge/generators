@@ -103,7 +103,7 @@ void ipcon_enumerate(IPConnection *ipcon, enumerate_callback_func_t cb) {
 }
 
 int ipcon_handle_enumerate(IPConnection *ipcon, const unsigned char *buffer) {
-	int length = ipcon_get_length_from_data(buffer);
+	uint16_t length = ipcon_get_length_from_data(buffer);
 
 	if(ipcon->enumerate_callback == NULL) {
 		return length;
@@ -122,15 +122,15 @@ int ipcon_handle_enumerate(IPConnection *ipcon, const unsigned char *buffer) {
 }
 
 int ipcon_handle_message(IPConnection *ipcon, const unsigned char *buffer) {
-	unsigned char type = ipcon_get_type_from_data(buffer);
+	uint8_t type = ipcon_get_type_from_data(buffer);
 	if(type == TYPE_GET_STACK_ID) {
 		return ipcon_add_device_handler(ipcon, buffer);
 	} else if(type == TYPE_ENUMERATE_CALLBACK) {
 		return ipcon_handle_enumerate(ipcon, buffer);
 	}
 
-	unsigned char stack_id = ipcon_get_stack_id_from_data(buffer);
-	int length = ipcon_get_length_from_data(buffer);
+	uint8_t stack_id = ipcon_get_stack_id_from_data(buffer);
+	uint16_t length = ipcon_get_length_from_data(buffer);
 	if(ipcon->devices[stack_id] == NULL) {
 		fprintf(stderr, "Message with unknown Stack ID, discarded %d %d\n", 
 		                stack_id, 
@@ -362,16 +362,16 @@ int ipcon_add_device(IPConnection *ipcon, Device *device) {
 	return E_OK;
 }
 
-unsigned short ipcon_get_length_from_data(const unsigned char *data) {
-	return *((unsigned short*)(data + 2));
-}
-
-unsigned char ipcon_get_stack_id_from_data(const unsigned char *data) {
+uint8_t ipcon_get_stack_id_from_data(const unsigned char *data) {
 	return data[0];
 }
 
-unsigned char ipcon_get_type_from_data(const unsigned char *data) {
+uint8_t ipcon_get_type_from_data(const unsigned char *data) {
 	return data[1];
+}
+
+uint16_t ipcon_get_length_from_data(const unsigned char *data) {
+	return *((uint16_t*)(data + 2));
 }
 
 int ipcon_sem_wait_write(Device *device) {

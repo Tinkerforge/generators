@@ -66,14 +66,14 @@ typedef void (*enumerate_callback_func_t)(char*, char*, uint8_t, bool);
 typedef int (*device_callback_func_t)(struct Device_*, const unsigned char*);
 
 typedef struct {
-	unsigned char type;
-	int length;
+	uint8_t type;
+	uint16_t length;
 	char buffer[MAX_PACKET_SIZE];
 } DeviceAnswer;
 
 typedef struct Device_{
-	unsigned char stack_id;
-	unsigned long long uid;
+	uint8_t stack_id;
+	uint64_t uid;
 #ifdef _WIN32
 	HANDLE  sem_write;
 	HANDLE  sem_answer;
@@ -141,9 +141,9 @@ typedef struct {
 } PACKED Enumerate;
 
 typedef struct {
-	unsigned short length;
-	unsigned char stack_id;
-	unsigned char type;
+	uint8_t stack_id;
+	uint8_t type;
+	uint16_t length;
 	uint64_t device_uid;
 	char device_name[MAX_LENGTH_NAME];
 	uint8_t device_stack_id;
@@ -176,9 +176,9 @@ int ipcon_add_device_handler(IPConnection *ipcon,
                              const unsigned char *buffer);
 int ipcon_answer_sem_wait_timeout(Device *device);
 
-unsigned short ipcon_get_length_from_data(const unsigned char *data);
-unsigned char ipcon_get_stack_id_from_data(const unsigned char *data);
-unsigned char ipcon_get_type_from_data(const unsigned char *data);
+uint8_t ipcon_get_stack_id_from_data(const unsigned char *data);
+uint8_t ipcon_get_type_from_data(const unsigned char *data);
+uint16_t ipcon_get_length_from_data(const unsigned char *data);
 
 int ipcon_sem_wait_write(Device *device);
 int ipcon_sem_post_write(Device *device);
