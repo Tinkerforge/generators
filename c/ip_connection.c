@@ -210,8 +210,12 @@ int ipcon_answer_sem_wait_timeout(Device *device) {
 	struct timespec ts;
 	struct timeval tp;
 	gettimeofday(&tp, NULL);
-	ts.tv_sec  = tp.tv_sec + TIMEOUT_ANSWER/1000;
-    ts.tv_nsec = tp.tv_usec * 1000;
+	ts.tv_sec  = tp.tv_sec + TIMEOUT_ANSWER / 1000;
+	ts.tv_nsec = (tp.tv_usec + (TIMEOUT_ANSWER % 1000) * 1000) * 1000;
+	while (ts.tv_nsec >= 1000000000) {
+		ts.tv_sec  += 1;
+		ts.tv_nsec -= 1000000000;
+	}
 	pthread_mutex_lock(&device->sem_answer);
 
 	int ret = 0;
