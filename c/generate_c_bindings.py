@@ -3,6 +3,7 @@
 
 """
 Bindings Generator
+Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_c_bindings.py: Generator for C bindings

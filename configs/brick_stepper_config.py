@@ -3,7 +3,7 @@
 # Stepper Brick communication config
 
 com = {
-    'author': 'Olaf Lüke (olaf@tinkerforge.com)',
+    'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'version': [1, 0, 0],
     'type': 'Brick',
     'name': ('Stepper', 'stepper'),

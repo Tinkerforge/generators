@@ -1,10 +1,10 @@
-/*******************************************************************
- * Copyright (c) 2012, Matthias Bolte (matthias@tinkerforge.com)   *
- * Copyright (c) 2011, Olaf Lüke (olaf@tinkerforge.com)            *
- *                                                                 *
- * Redistribution and use in source and binary forms of this file, *
- * with or without modification, are permitted.                    *
- *******************************************************************/
+/*
+ * Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+ *
+ * Redistribution and use in source and binary forms of this file,
+ * with or without modification, are permitted.
+ */
 
 #ifndef IP_CONNECTION
 #define IP_CONNECTION
@@ -95,7 +95,6 @@ typedef struct Device_{
 	struct IPConnection_ *ipcon;
 } Device;
 
-
 typedef struct IPConnection_{
 #ifdef _WIN32
 	SOCKET s;
@@ -177,7 +176,7 @@ int ipcon_handle_enumerate(IPConnection *ipcon, const unsigned char *buffer);
 int ipcon_handle_message(IPConnection *ipcon, const unsigned char *buffer);
 void ipcon_device_write(Device *device, const char *buffer, const int length);
 void ipcon_device_create(Device *device, const char *uid);
-int ipcon_add_device_handler(IPConnection *ipcon, 
+int ipcon_add_device_handler(IPConnection *ipcon,
                              const unsigned char *buffer);
 int ipcon_answer_sem_wait_timeout(Device *device);
 
@@ -187,4 +186,5 @@ uint16_t ipcon_get_length_from_data(const unsigned char *data);
 
 int ipcon_sem_wait_write(Device *device);
 int ipcon_sem_post_write(Device *device);
+
 #endif

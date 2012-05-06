@@ -3,7 +3,7 @@
 # IO-4 Bricklet communication config
 
 com = {
-    'author': 'Olaf Lüke (olaf@tinkerforge.com)',
+    'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'version': [1, 0, 0],
     'type': 'Bricklet',
     'name': ('IO4', 'io4'),

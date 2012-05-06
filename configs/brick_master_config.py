@@ -3,7 +3,7 @@
 # Servo Brick communication config
 
 com = {
-    'author': 'Olaf Lüke (olaf@tinkerforge.com)',
+    'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'version': [1, 1, 0],
     'type': 'Brick',
     'name': ('Master', 'master'),

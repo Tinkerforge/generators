@@ -3,6 +3,7 @@
 
 """
 Python Documentation Generator
+Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_python_doc.py: Generator for Python documentation

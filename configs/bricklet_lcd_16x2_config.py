@@ -3,7 +3,7 @@
 # LCD 16x2 Bricklet communication config
 
 com = {
-    'author': 'Olaf Lüke (olaf@tinkerforge.com)',
+    'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'version': [1, 0, 0],
     'type': 'Bricklet',
     'name': ('LCD16x2', 'lcd_16x2'),

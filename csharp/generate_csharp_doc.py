@@ -3,6 +3,7 @@
 
 """
 C# Documentation Generator
+Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_csharp_doc.py: Generator for C# documentation

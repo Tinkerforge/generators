@@ -1,10 +1,10 @@
-/*******************************************************************
- * Copyright (c) 2012, Matthias Bolte (matthias@tinkerforge.com)   *
- * Copyright (c) 2011, Olaf Lüke (olaf@tinkerforge.com)            *
- *                                                                 *
- * Redistribution and use in source and binary forms of this file, *
- * with or without modification, are permitted.                    *
- *******************************************************************/
+/*
+ * Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+ *
+ * Redistribution and use in source and binary forms of this file,
+ * with or without modification, are permitted.
+ */
 
 #include "ip_connection.h"
 
@@ -12,7 +12,7 @@
 #include <time.h>
 
 #ifndef _WIN32
-	#include <unistd.h> 
+	#include <unistd.h>
 	#include <sys/types.h>
 	#include <sys/time.h> // gettimeofday
 	#include <sys/socket.h> // connect
@@ -108,10 +108,10 @@ int ipcon_handle_enumerate(IPConnection *ipcon, const unsigned char *buffer) {
 	char str_uid[MAX_BASE58_STR_SIZE];
 	ipcon_base58encode(er->device_uid, str_uid);
 
-	ipcon->enumerate_callback(str_uid, 
-	                          er->device_name, 
+	ipcon->enumerate_callback(str_uid,
+	                          er->device_name,
 	                          er->device_stack_id,
-							  er->is_new);
+	                          er->is_new);
 
 	return length;
 }
@@ -127,9 +127,9 @@ int ipcon_handle_message(IPConnection *ipcon, const unsigned char *buffer) {
 	uint8_t stack_id = ipcon_get_stack_id_from_data(buffer);
 	uint16_t length = ipcon_get_length_from_data(buffer);
 	if(ipcon->devices[stack_id] == NULL) {
-		fprintf(stderr, "Message with unknown Stack ID, discarded %d %d\n", 
-		                stack_id, 
-				        type);
+		fprintf(stderr, "Message with unknown Stack ID, discarded %d %d\n",
+		                stack_id,
+		                type);
 		return length;
 	}
 
@@ -138,8 +138,8 @@ int ipcon_handle_message(IPConnection *ipcon, const unsigned char *buffer) {
 
 	if(answer->type == type) {
 		if(answer->length != 0 && answer->length != length) {
-			fprintf(stderr, 
-			        "Received malformed message, discarded: %d\n", 
+			fprintf(stderr,
+			        "Received malformed message, discarded: %d\n",
 			        stack_id);
 			return length;
 		}
@@ -170,7 +170,7 @@ int ipcon_handle_message(IPConnection *ipcon, const unsigned char *buffer) {
 void ipcon_device_write(Device *device, const char *buffer, const int length) {
 	// Wait for next write until answer is there. This makes the
 	// IMU API thread safe.
-	// It is in theory possible to allow concurrent writes from different 
+	// It is in theory possible to allow concurrent writes from different
 	// threads, we would have to use lists of buffers for that.
 	// Perhaps someone will implement that in the future.
 #ifdef _WIN32
@@ -220,9 +220,9 @@ int ipcon_answer_sem_wait_timeout(Device *device) {
 
 	int ret = 0;
 	while(!device->sem_answer_flag) {
-		ret = pthread_cond_timedwait(&device->cond, 
-		                             &device->sem_answer, 
-									 &ts);
+		ret = pthread_cond_timedwait(&device->cond,
+		                             &device->sem_answer,
+		                             &ts);
 		if(ret != 0) {
 			break;
 		}
@@ -264,7 +264,7 @@ int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
 #endif
 
 	struct hostent *he = gethostbyname(host);
-	if(he == NULL) { 
+	if(he == NULL) {
 		return E_HOSTNAME_INVALID;
 	}
 
@@ -273,14 +273,14 @@ int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
 	ipcon->server.sin_family = AF_INET;
 	ipcon->server.sin_port = htons(port);
 #ifdef _WIN32
-	if(connect(ipcon->s, 
-	           (struct sockaddr *)&ipcon->server, 
+	if(connect(ipcon->s,
+	           (struct sockaddr *)&ipcon->server,
 	           sizeof(ipcon->server)) == SOCKET_ERROR) {
 		return E_NO_CONNECT;
 	}
 #else
-	if(connect(ipcon->fd, 
-	           (struct sockaddr *)&ipcon->server, 
+	if(connect(ipcon->fd,
+	           (struct sockaddr *)&ipcon->server,
 	           sizeof(ipcon->server)) < 0) {
 		return E_NO_CONNECT;
 	}
@@ -288,32 +288,30 @@ int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
 
 #ifdef _WIN32
 	DWORD thread_recv_loop_id;
-	ipcon->handle_recv_loop = CreateThread(
-		NULL,
-		0,
-		(LPTHREAD_START_ROUTINE)ipcon_recv_loop,
-		(void*)ipcon,
-		0,
-		(LPDWORD)&thread_recv_loop_id
-	);
+	ipcon->handle_recv_loop = CreateThread(NULL,
+	                                       0,
+	                                       (LPTHREAD_START_ROUTINE)ipcon_recv_loop,
+	                                       (void*)ipcon,
+	                                       0,
+	                                       (LPDWORD)&thread_recv_loop_id);
 	if(ipcon->handle_recv_loop == NULL) {
 		return E_NO_THREAD;
 	}
 #else
-	if(pthread_create(&ipcon->thread_recv_loop, 
-					  NULL, 
-					  ipcon_recv_loop, 
-					  (void*)ipcon) < 0) {
+	if(pthread_create(&ipcon->thread_recv_loop,
+	                  NULL,
+	                  ipcon_recv_loop,
+	                  (void*)ipcon) < 0) {
 		return E_NO_THREAD;
 	}
 #endif
 	return E_OK;
 }
 
-int ipcon_add_device_handler(IPConnection *ipcon, 
+int ipcon_add_device_handler(IPConnection *ipcon,
                              const unsigned char *buffer) {
 	const GetStackIDReturn *gsidr = (const GetStackIDReturn*)buffer;
-	if(ipcon->add_device != NULL && 
+	if(ipcon->add_device != NULL &&
 	   ipcon->add_device->uid == gsidr->device_uid) {
 		ipcon->add_device->stack_id = gsidr->device_stack_id;
 		strncpy(ipcon->add_device->name, gsidr->device_name, MAX_LENGTH_NAME);
@@ -438,11 +436,10 @@ uint64_t ipcon_base58decode(const char *str) {
 				break;
 			}
 		}
-		
+
 		value += column * column_multiplier;
 		column_multiplier *= 58;
 	}
 
 	return value;
 }
-
