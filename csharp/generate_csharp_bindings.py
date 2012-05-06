@@ -219,7 +219,7 @@ def make_register_callback():
 def make_callbacks():
     cbs = ''
     cb = """
-\t\tpublic int Callback{0}(byte[] data_)
+\t\tinternal int Callback{0}(byte[] data_)
 \t\t{{
 {1}\t\t\t(({0})callbacks[TYPE_{2}])({3});
 \t\t\treturn {4};
