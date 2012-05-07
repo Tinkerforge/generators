@@ -3,3 +3,4 @@
 1.0.2: Add support for IMU Brick, Analog In Bricklet and Analog Out Bricklet
 1.0.3: Add ChibiChannel and ChibiFrequency Methods
 1.0.4: Add sync rect support to Stepper Brick bindings
+1.0.5: Ensure precise timeout duration on Linux and enable struct packing for the Borland C compiler
