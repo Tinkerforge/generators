@@ -278,7 +278,9 @@ def make_api():
     create_str = """
 .. py:function:: {1}(uid)
 
- Creates an object with the unique device ID *uid*::
+ Creates an object with the unique device ID *uid*:
+
+ .. code-block:: python
 
     {0} = {1}("YOUR_DEVICE_UID");
 
@@ -332,7 +334,7 @@ Callbacks
 *Callbacks* can be registered with *callback IDs* to receive
 time critical or recurring data from the device. The registration is done
 with the ``register_callback`` function of the device object. The first
-parameter is the callback id and the second parameter the callback
+parameter is the callback ID and the second parameter the callback
 function::
 
     def my_callback(param):

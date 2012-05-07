@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-Bindings Generator
+Java Bindings Generator
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
-generator_python.py: Generator for Python bindings
+generator_java_bindings.py: Generator for Java bindings
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License 

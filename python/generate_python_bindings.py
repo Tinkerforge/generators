@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Bindings Generator
+Python Bindings Generator
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_python.py: Generator for Python bindings

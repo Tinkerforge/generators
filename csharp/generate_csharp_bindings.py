@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Bindings Generator
+C# Bindings Generator
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_csharp_bindings.py: Generator for C# bindings

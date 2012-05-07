@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 """
-C Documentation Generator
+C/C++ Documentation Generator
 Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
-generator_c_doc.py: Generator for C documentation
+generator_c_doc.py: Generator for C/C++ documentation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License 
@@ -299,7 +299,7 @@ Callbacks
 *Callbacks* can be registered with *callback IDs* to receive
 time critical or recurring data from the device. The registration is done
 with the ``register_callback`` function. The parameters consist of
-the device object, the callback id and the callback function::
+the device object, the callback ID and the callback function::
 
     void my_callback(int p) {{
         printf("parameter: %d\n", p);
