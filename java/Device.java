@@ -11,7 +11,7 @@ package com.tinkerforge;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.SynchronousQueue;
 
-public class Device {
+public abstract class Device {
 	long uid = (long)0;
 	short stackID = (short)0;
 	String name = null;
