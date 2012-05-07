@@ -379,7 +379,7 @@ Listeners
 
 *Listeners* can be registered to receive
 time critical or recurring data from the device. The registration is done
-with the ``addListener`` function of the device object. 
+with the :java:func:`addListener <{3}{4}::addListener>` function of the device object.
 
 The parameter is a listener class object, for example:
 
@@ -448,7 +448,7 @@ The package for all Brick/Bricklet bindings and the IPConnection is
         api_str += am_str.format(am)
     if c:
         api_str += ccm_str.format(reg, ccm)
-        api_str += c_str.format(c, com['name'][1], com['type'].lower())
+        api_str += c_str.format(c, com['name'][1], com['type'].lower(), com['type'], com['name'][0])
 
     ref = '.. _{0}_{1}_java_api:\n'.format(com['name'][1], 
                                              com['type'].lower())

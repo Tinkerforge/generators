@@ -290,13 +290,13 @@ def make_api():
 """
 
     register_str = """
-.. py:function:: {1}.register_callback(cb_id, func)
+.. py:function:: {1}.register_callback(cb, func)
 
- :param cb_id: int
+ :param cb: int
  :param func: function
  :rtype: None
 
- Registers a callback with ID *cb_id* to the function *func*. The available
+ Registers a callback with ID *cb* to the function *func*. The available
  IDs with corresponding function signatures are listed 
  :ref:`below <{0}_{2}_python_callbacks>`.
 """
@@ -334,14 +334,14 @@ Callbacks
 
 *Callbacks* can be registered with *callback IDs* to receive
 time critical or recurring data from the device. The registration is done
-with the ``register_callback`` function of the device object. The first
-parameter is the callback ID and the second parameter the callback
-function::
+with the :py:func:`register_callback <{3}.register_callback>` function of
+the device object. The first parameter is the callback ID and the second
+parameter the callback function::
 
     def my_callback(param):
         print(param)
 
-    {1}.register_callback({1}.CALLBACK_EXAMPLE, my_callback)
+    {1}.register_callback({3}.CALLBACK_EXAMPLE, my_callback)
 
 The available constants with inherent number and type of parameters are 
 described below.
@@ -381,7 +381,7 @@ API
         api_str += am_str.format(am)
     if c:
         api_str += ccm_str.format(reg, ccm)
-        api_str += c_str.format(c, com['name'][1], com['type'].lower())
+        api_str += c_str.format(c, com['name'][1], com['type'].lower(), com['name'][0])
 
     ref = '.. _{0}_{1}_python_api:\n'.format(com['name'][1], 
                                              com['type'].lower())

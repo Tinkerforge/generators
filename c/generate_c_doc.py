@@ -259,9 +259,9 @@ def make_api():
 """
 
     register_str = """
-.. c:function:: void {0}_register_callback({1} *{0}, uint8_t cb_id, void *func)
+.. c:function:: void {0}_register_callback({1} *{0}, uint8_t cb, void *func)
 
- Registers a callback with ID *cb_id* to the function *func*. The available
+ Registers a callback with ID *cb* to the function *func*. The available
  IDs with corresponding function signatures are listed 
  :ref:`below <{0}_{2}_c_callbacks>`.
 """
@@ -299,7 +299,7 @@ Callbacks
 
 *Callbacks* can be registered with *callback IDs* to receive
 time critical or recurring data from the device. The registration is done
-with the ``register_callback`` function. The parameters consist of
+with the :c:func:`{0}_register_callback` function. The parameters consist of
 the device object, the callback ID and the callback function::
 
     void my_callback(int p) {{
