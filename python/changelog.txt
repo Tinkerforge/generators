@@ -1,0 +1,7 @@
+1.0.0: Initial version
+1.0.1: Add thread for callbacks in IPConnection (allows to call getters in callbacks)
+1.0.2: Add __init__.py to source/tinkerforge/
+1.0.3: Fix thread exception at shutdown
+1.0.4: Add support for IMU Brick, Analog In Bricklet and Analog Out Bricklet
+1.0.5: Remove Python 3.2 bug (no decode function for str in 3.2)
+1.0.6: Add sync rect support to Stepper Brick bindings

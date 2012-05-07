@@ -450,6 +450,7 @@ def generate(path):
         shutil.copy(filename, '/tmp/generator/egg/source/tinkerforge')
 
     shutil.copy(path + '/ip_connection.py', '/tmp/generator/egg/source/tinkerforge')
+    shutil.copy(path + '/changelog.txt', '/tmp/generator/egg')
     shutil.copy(path + '/readme.txt', '/tmp/generator/egg')
     shutil.copy(path + '/setup.py', '/tmp/generator/egg/source')
 

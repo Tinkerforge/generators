@@ -433,6 +433,7 @@ def generate(path):
 
     shutil.copy(path + '/ip_connection.c', '/tmp/generator/bindings')
     shutil.copy(path + '/ip_connection.h', '/tmp/generator/bindings')
+    shutil.copy(path + '/changelog.txt', '/tmp/generator/')
     shutil.copy(path + '/readme.txt', '/tmp/generator/')
 
     # Make zip

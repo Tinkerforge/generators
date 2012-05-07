@@ -459,6 +459,7 @@ def generate(path):
         shutil.copy(filename, '/tmp/generator/dll/source/Tinkerforge')
 
     shutil.copy(path + '/IPConnection.cs', '/tmp/generator/dll/source/Tinkerforge')
+    shutil.copy(path + '/changelog.txt', '/tmp/generator/dll')
     shutil.copy(path + '/Readme.txt', '/tmp/generator/dll')
 
     # Make dll
