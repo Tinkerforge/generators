@@ -30,6 +30,7 @@ import os
 import shutil
 import subprocess
 import glob
+import re
 
 com = None
 lang = 'en'
@@ -406,6 +407,17 @@ def make_files(com_new, directory):
 
     copy_examples_for_zip()
 
+def get_version(path):
+    r = re.compile('^(\d+)\.(\d+)\.(\d+):')
+    last = None
+    for line in file(path + '/changelog.txt').readlines():
+        m = r.match(line)
+
+        if m is not None:
+            last = (m.group(1), m.group(2), m.group(3))
+
+    return last
+
 def generate(path):
     global file_path
     file_path = path
@@ -437,15 +449,17 @@ def generate(path):
     shutil.copy(path + '/readme.txt', '/tmp/generator/')
 
     # Make zip
+    version = get_version(path)
+    zipname = 'tinkerforge_c_bindings_{0}_{1}_{2}.zip'.format(*version)
     os.chdir('/tmp/generator')
     args = ['/usr/bin/zip',
             '-r',
-            'tinkerforge_c_bindings.zip',
+            zipname,
             '.']
     subprocess.call(args)
 
     # Copy zip
-    shutil.copy('/tmp/generator/tinkerforge_c_bindings.zip', path)
+    shutil.copy(zipname, path)
 
 if __name__ == "__main__":
     generate(os.getcwd())

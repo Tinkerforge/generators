@@ -30,6 +30,7 @@ import os
 import shutil
 import subprocess
 import glob
+import re
 
 com = None
 lang = 'en'
@@ -432,6 +433,17 @@ def make_files(com_new, directory):
 
     copy_examples_for_zip()
 
+def get_version(path):
+    r = re.compile('^(\d+)\.(\d+)\.(\d+):')
+    last = None
+    for line in file(path + '/changelog.txt').readlines():
+        m = r.match(line)
+
+        if m is not None:
+            last = (m.group(1), m.group(2), m.group(3))
+
+    return last
+
 def generate(path):
     global file_path
     file_path = path
@@ -462,6 +474,23 @@ def generate(path):
     shutil.copy(path + '/changelog.txt', '/tmp/generator/dll')
     shutil.copy(path + '/Readme.txt', '/tmp/generator/dll')
 
+    # Write AssemblyInfo
+    version = get_version(path)
+    file('/tmp/generator/dll/source/Tinkerforge/AssemblyInfo.cs', 'wb').write("""
+using System.Reflection;
+using System.Runtime.CompilerServices;
+
+[assembly: AssemblyTitle("C# API Bindings")]
+[assembly: AssemblyDescription("C# API Bindings for Tinkerforge Bricks and Bricklets")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("Tinkerforge GmbH")]
+[assembly: AssemblyProduct("C# API Bindings")]
+[assembly: AssemblyCopyright("Tinkerforge GmbH 2011-2012")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+[assembly: AssemblyVersion("{0}.{1}.{2}.0")]
+""".format(*version))
+
     # Make dll
     args = ['/usr/bin/gmcs',
             '/optimize',
@@ -471,15 +500,16 @@ def generate(path):
     subprocess.call(args)
 
     # Make zip
+    zipname = 'tinkerforge_csharp_bindings_{0}_{1}_{2}.zip'.format(*version)
     os.chdir('/tmp/generator/dll')
     args = ['/usr/bin/zip',
             '-r',
-            'tinkerforge_csharp_bindings.zip',
+            zipname,
             '.']
     subprocess.call(args)
 
     # Copy zip
-    shutil.copy('/tmp/generator/dll/tinkerforge_csharp_bindings.zip', path)
+    shutil.copy(zipname, path)
 
 
 if __name__ == "__main__":

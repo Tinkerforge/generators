@@ -30,6 +30,7 @@ import os
 import shutil
 import subprocess
 import glob
+import re
 
 com = None
 lang = 'en'
@@ -256,8 +257,6 @@ def make_obj_desc(packet):
         return desc.format(var[0] + ' and ' + var[1])
 
     return desc.format(', '.join(var[:-1]) + ' and ' + var[-1])
-
-
 
 def make_methods(typ):
     version_method = """
@@ -492,6 +491,17 @@ def make_files(com_new, directory):
 
     copy_examples_for_zip()
 
+def get_version(path):
+    r = re.compile('^(\d+)\.(\d+)\.(\d+):')
+    last = None
+    for line in file(path + '/changelog.txt').readlines():
+        m = r.match(line)
+
+        if m is not None:
+            last = (m.group(1), m.group(2), m.group(3))
+
+    return last
+
 def generate(path):
     global file_path
     file_path = path
@@ -523,14 +533,19 @@ def generate(path):
     shutil.copy(path + '/changelog.txt', '/tmp/generator/jar')
     shutil.copy(path + '/Readme.txt', '/tmp/generator/jar')
 
+    # Make Manifest
+    version = get_version(path)
+    file('/tmp/generator/manifest.txt', 'wb').write('Bindings-Version: {0}.{1}.{2}\n'.format(*version))
+
     # Make jar
     args = ['/usr/bin/javac /tmp/generator/jar/source/com/tinkerforge/*.java']
     subprocess.call(args, shell=True)
 
     os.chdir('/tmp/generator/jar/source')
     args = ['/usr/bin/jar ' +
-            'cf ' +
+            'cfm ' +
             '/tmp/generator/jar/Tinkerforge.jar ' +
+            '/tmp/generator/manifest.txt ' +
             'com']
     subprocess.call(args, shell=True)
 
@@ -540,15 +555,16 @@ def generate(path):
             os.remove('/tmp/generator/jar/source/com/tinkerforge/' + f)
 
     # Make zip
+    zipname = 'tinkerforge_java_bindings_{0}_{1}_{2}.zip'.format(*version)
     os.chdir('/tmp/generator/jar')
     args = ['/usr/bin/zip',
             '-r',
-            'tinkerforge_java_bindings.zip',
+            zipname,
             '.']
     subprocess.call(args)
 
     # Copy zip
-    shutil.copy('/tmp/generator/jar/tinkerforge_java_bindings.zip', path)
+    shutil.copy(zipname, path)
 
 if __name__ == "__main__":
     generate(os.getcwd())
