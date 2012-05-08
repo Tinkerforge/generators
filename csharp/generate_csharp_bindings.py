@@ -347,9 +347,7 @@ def make_methods():
 
                 if ret_count == 1:
                     read_convs = '\n\t\t\treturn LEConverter.{0}({1}, answer{2});'.format(from_type, pos, length)
-                    return_type = get_csharp_type(element[1])
-                    if element[2] > 1 and element[1] != 'string':
-                        return_type += '[]'
+                    return_type = get_csharp_type(element)
                 else:
                     read_convs += read_conv.format(aname, from_type, pos, length)
                 pos += get_type_size(element)
