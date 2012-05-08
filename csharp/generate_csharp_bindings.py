@@ -26,6 +26,7 @@ Boston, MA 02111-1307, USA.
 import datetime
 import sys
 import os
+import csharp_common
 
 com = None
 
@@ -40,6 +41,8 @@ gen_text = """/*************************************************************
 
 def make_import():
     include = """{0}
+using System;
+
 namespace Tinkerforge
 {{"""
     date = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -62,7 +65,7 @@ def make_delegates():
             continue
 
         name = packet['name'][0]
-        parameter = make_parameter_list(packet)
+        parameter = csharp_common.make_parameter_list(packet)
         cbs += cb.format(name, parameter)
     return cbs
 
@@ -72,19 +75,6 @@ def make_type_definitions():
     for i, packet in zip(range(len(com['packets'])), com['packets']):
         types += type.format(packet['name'][1].upper(), i+1)
     return types
-
-def make_parameter_list(packet):
-    param = []
-    for element in packet['elements']:
-        out = ''
-        if element[3] == 'out' and packet['type'] == 'method':
-            out = 'out '
-
-        csharp_type = get_csharp_type(element)
-        name = to_camel_case(element[0])
-       
-        param.append('{0}{1} {2}'.format(out, csharp_type, name))
-    return ', '.join(param)
 
 def make_constructor():
     cbs = []
@@ -134,34 +124,6 @@ def get_from_type(element):
         return from_type
 
     return ''
-
-
-def get_csharp_type(element):
-    forms = {
-        'int8' : 'sbyte',
-        'uint8' : 'byte',
-        'int16' : 'short',
-        'uint16' : 'ushort',
-        'int32' : 'int',
-        'uint32' : 'uint',
-        'int64' : 'long',
-        'uint64' : 'ulong',
-        'float' : 'float',
-        'bool' : 'bool',
-        'string' : 'string',
-        'char' : 'char'
-    }
-    
-    sharpType = ''
-    if element[1] in forms:
-        sharpType = forms[element[1]]
-    else:
-        return ''
-
-    if element[2] > 1 and element[1] != 'string':
-        sharpType += '[]'
-    return sharpType
-
 	
 def get_type_size(element):
     forms = {
@@ -237,7 +199,7 @@ def make_callbacks():
         eles = []
         for element in packet['elements']:
             if element[3] == 'out':
-                eles.append(to_camel_case(element[0]))
+                eles.append(csharp_common.to_camel_case(element[0]))
         params = ", ".join(eles)
         size = str(get_data_size(packet['elements']))
 
@@ -249,8 +211,8 @@ def make_callbacks():
             if element[3] != 'out':
                 continue
 
-            csharp_type = get_csharp_type(element)
-            cname = to_camel_case(element[0])
+            csharp_type = csharp_common.get_csharp_type(element)
+            cname = csharp_common.to_camel_case(element[0])
             from_type = get_from_type(element)
             length = ''
             if element[2] > 1:
@@ -283,35 +245,29 @@ def make_version_method():
 def make_methods():
     methods = ''
     method = """
-\t\tpublic void {0}({1})
+\t\t{0}
 \t\t{{
-\t\t\tbyte[] data_ = new byte[{2}];
+\t\t\tbyte[] data_ = new byte[{1}];
 \t\t\tLEConverter.To(stackID, 0, data_);
-\t\t\tLEConverter.To(TYPE_{3}, 1, data_);
-\t\t\tLEConverter.To((ushort){2}, 2, data_);
+\t\t\tLEConverter.To(TYPE_{2}, 1, data_);
+\t\t\tLEConverter.To((ushort){1}, 2, data_);
+{3}
 {4}
-{5}\t\t}}
+\t\t}}
 """
-    method_oneway = """
-\t\t\tsendOneWayMessage(data_);
-"""
-    method_answer = """
-\t\t\tbyte[] answer;
+    method_oneway = "\t\t\tsendOneWayMessage(data_);"
+    method_answer = """\t\t\tbyte[] answer;
 \t\t\tsendReturningMessage(data_, TYPE_{0}, out answer);
-
-{1}
-"""
+{1}"""
 
     cls = com['name'][0]
     for packet in com['packets']:
         if packet['type'] != 'method':
             continue
 
-        name = packet['name'][0]
-        params = make_parameter_list(packet)
+        ret_count = csharp_common.count_return_values(packet['elements'])
         size = str(get_data_size(packet['elements']))
         name_upper = packet['name'][1].upper()
-        has_ret = has_return_value(packet['elements'])
 
         write_convs = ''
         write_conv = '\t\t\tLEConverter.To({0}, {1}, data_);\n'
@@ -320,39 +276,74 @@ def make_methods():
         for element in packet['elements']:
             if element[3] != 'in':
                 continue
-            wname = to_camel_case(element[0])
+            wname = csharp_common.to_camel_case(element[0])
             write_convs += write_conv.format(wname, pos)
             pos += get_type_size(element)
             
         method_tail = ''
-        if has_ret == 'true':
+        if ret_count > 0:
             read_convs = ''
-            read_conv = '\t\t\t{0} = LEConverter.{1}({2}, answer{3});\n'
+            read_conv = '\n\t\t\t{0} = LEConverter.{1}({2}, answer{3});'
 
             pos = 4
             for element in packet['elements']:
                 if element[3] != 'out':
                     continue
 
-                aname = to_camel_case(element[0])
+                aname = csharp_common.to_camel_case(element[0])
                 from_type = get_from_type(element)
                 length = ''
                 if element[2] > 1:
                     length = ', ' + str(element[2])
 
-                read_convs += read_conv.format(aname, from_type, pos, length)
+                if ret_count == 1:
+                    read_convs = '\n\t\t\treturn LEConverter.{0}({1}, answer{2});'.format(from_type, pos, length)
+                else:
+                    read_convs += read_conv.format(aname, from_type, pos, length)
                 pos += get_type_size(element)
 
             method_tail = method_answer.format(name_upper, read_convs)
         else:
             method_tail = method_oneway
 
-        methods += method.format(name,
-                                 params,
+        signature = csharp_common.make_method_signature(packet)
+        methods += method.format(signature,
                                  size,
                                  name_upper,
                                  write_convs,
                                  method_tail)
+
+    return methods
+
+def make_obsolete_methods():
+    methods = ''
+    method = """
+\t\t[Obsolete()]
+\t\tpublic void {0}({1})
+\t\t{{
+\t\t\t{2} = {0}({3});
+\t\t}}
+"""
+
+    cls = com['name'][0]
+    for packet in com['packets']:
+        if packet['type'] != 'method':
+            continue
+
+        ret_count = csharp_common.count_return_values(packet['elements'])
+        if ret_count <> 1:
+            continue
+
+        name = packet['name'][0]
+        sigParams = csharp_common.make_parameter_list(packet, True)
+        
+        outParam = csharp_common.to_camel_case(filter(lambda e: e[3] == 'out', packet['elements'])[0][0])
+        callParams = ", ".join(map(lambda e: csharp_common.to_camel_case(e[0]), filter(lambda e: e[3] == 'in', packet['elements'])))
+
+        methods += method.format(name,
+                                 sigParams,
+								 outParam,
+                                 callParams)
 
     return methods
 
@@ -363,19 +354,6 @@ def get_data_size(elements):
             continue
         size += get_type_size(element)
     return size + 4
-
-def has_return_value(elements):
-    for element in elements:
-        if element[3] == 'out':
-            return 'true'
-    return 'false'
-
-def to_camel_case(name):
-    names = name.split('_')
-    ret = names[0]
-    for n in names[1:]:
-        ret += n[0].upper() + n[1:]
-    return ret
 
 def make_files(com_new, directory):
     global com
@@ -394,6 +372,7 @@ def make_files(com_new, directory):
     csharp.write(make_delegates())
     csharp.write(make_constructor())
     csharp.write(make_methods())
+    csharp.write(make_obsolete_methods())
     csharp.write(make_version_method())
     csharp.write(make_callbacks())
     csharp.write(make_register_callback())
