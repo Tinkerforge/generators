@@ -73,9 +73,12 @@ def make_type_definitions():
         types += type.format(packet['name'][1].upper(), i+1)
     return types
 
-def make_parameter_list(packet):
+def make_parameter_list(packet, useOutParams = True):
     param = []
     for element in packet['elements']:
+        if (not useOutParams) and element[3] == 'out':
+            continue
+        
         out = ''
         if element[3] == 'out' and packet['type'] == 'method':
             out = 'out '
@@ -280,15 +283,16 @@ def make_version_method():
 
 def make_methods():
     methods = ''
+    sig_format = "public {0} {1}({2})"
     method = """
-\t\tpublic void {0}({1})
+\t\t{0}
 \t\t{{
-\t\t\tbyte[] data_ = new byte[{2}];
+\t\t\tbyte[] data_ = new byte[{1}];
 \t\t\tLEConverter.To(stackID, 0, data_);
-\t\t\tLEConverter.To(TYPE_{3}, 1, data_);
-\t\t\tLEConverter.To((ushort){2}, 2, data_);
-{4}
-{5}\t\t}}
+\t\t\tLEConverter.To(TYPE_{2}, 1, data_);
+\t\t\tLEConverter.To((ushort){1}, 2, data_);
+{3}
+{4}\t\t}}
 """
     method_oneway = """
 \t\t\tsendOneWayMessage(data_);
@@ -305,11 +309,12 @@ def make_methods():
         if packet['type'] != 'method':
             continue
 
+        ret_count = count_return_values(packet['elements'])
+        useOutParams = ret_count > 1
         name = packet['name'][0]
-        params = make_parameter_list(packet)
+        params = make_parameter_list(packet, useOutParams)
         size = str(get_data_size(packet['elements']))
         name_upper = packet['name'][1].upper()
-        has_ret = has_return_value(packet['elements'])
 
         write_convs = ''
         write_conv = '\t\t\tLEConverter.To({0}, {1}, data_);\n'
@@ -322,8 +327,10 @@ def make_methods():
             write_convs += write_conv.format(wname, pos)
             pos += get_type_size(element)
             
+        signature = ''
+        return_type = 'void'
         method_tail = ''
-        if has_ret == 'true':
+        if ret_count > 0:
             read_convs = ''
             read_conv = '\t\t\t{0} = LEConverter.{1}({2}, answer{3});\n'
 
@@ -338,15 +345,21 @@ def make_methods():
                 if element[2] > 1:
                     length = ', ' + str(element[2])
 
-                read_convs += read_conv.format(aname, from_type, pos, length)
+                if ret_count == 1:
+                    read_convs = '\t\t\treturn LEConverter.{0}({1}, answer{2});\n'.format(from_type, pos, length)
+                    return_type = get_csharp_type(element[1])
+                    if element[2] > 1 and element[1] != 'string':
+                        return_type += '[]'
+                else:
+                    read_convs += read_conv.format(aname, from_type, pos, length)
                 pos += get_type_size(element)
 
             method_tail = method_answer.format(name_upper, read_convs)
         else:
             method_tail = method_oneway
 
-        methods += method.format(name,
-                                 params,
+        signature = sig_format.format(return_type, name, params)
+        methods += method.format(signature,
                                  size,
                                  name_upper,
                                  write_convs,
@@ -362,11 +375,12 @@ def get_data_size(elements):
         size += get_type_size(element)
     return size + 4
 
-def has_return_value(elements):
+def count_return_values(elements):
+    count = 0
     for element in elements:
         if element[3] == 'out':
-            return 'true'
-    return 'false'
+            count += 1
+    return count
 
 def to_camel_case(name):
     names = name.split('_')
