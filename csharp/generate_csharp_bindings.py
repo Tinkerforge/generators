@@ -296,17 +296,13 @@ def make_methods():
 \t\t\tLEConverter.To(TYPE_{2}, 1, data_);
 \t\t\tLEConverter.To((ushort){1}, 2, data_);
 {3}
-{4}\t\t}}
+{4}
+\t\t}}
 """
-    method_oneway = """
-\t\t\tsendOneWayMessage(data_);
-"""
-    method_answer = """
-\t\t\tbyte[] answer;
+    method_oneway = "\t\t\tsendOneWayMessage(data_);"
+    method_answer = """\t\t\tbyte[] answer;
 \t\t\tsendReturningMessage(data_, TYPE_{0}, out answer);
-
-{1}
-"""
+{1}"""
 
     cls = com['name'][0]
     for packet in com['packets']:
@@ -336,7 +332,7 @@ def make_methods():
         method_tail = ''
         if ret_count > 0:
             read_convs = ''
-            read_conv = '\t\t\t{0} = LEConverter.{1}({2}, answer{3});\n'
+            read_conv = '\n\t\t\t{0} = LEConverter.{1}({2}, answer{3});'
 
             pos = 4
             for element in packet['elements']:
@@ -350,7 +346,7 @@ def make_methods():
                     length = ', ' + str(element[2])
 
                 if ret_count == 1:
-                    read_convs = '\t\t\treturn LEConverter.{0}({1}, answer{2});\n'.format(from_type, pos, length)
+                    read_convs = '\n\t\t\treturn LEConverter.{0}({1}, answer{2});'.format(from_type, pos, length)
                     return_type = get_csharp_type(element)
                 else:
                     read_convs += read_conv.format(aname, from_type, pos, length)
