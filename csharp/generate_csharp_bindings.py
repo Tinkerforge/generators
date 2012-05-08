@@ -85,13 +85,10 @@ def make_parameter_list(packet, useOutParams = True):
         if element[3] == 'out' and packet['type'] == 'method':
             out = 'out '
 
-        csharp_type = get_csharp_type(element[1])
+        csharp_type = get_csharp_type(element)
         name = to_camel_case(element[0])
-        arr = ''
-        if element[2] > 1 and element[1] != 'string':
-            arr = '[]'
        
-        param.append('{0}{1}{2} {3}'.format(out, csharp_type, arr, name))
+        param.append('{0}{1} {2}'.format(out, csharp_type, name))
     return ', '.join(param)
 
 def make_constructor():
@@ -144,7 +141,7 @@ def get_from_type(element):
     return ''
 
 
-def get_csharp_type(typ):
+def get_csharp_type(element):
     forms = {
         'int8' : 'sbyte',
         'uint8' : 'byte',
@@ -159,13 +156,18 @@ def get_csharp_type(typ):
         'string' : 'string',
         'char' : 'char'
     }
+    
+    sharpType = ''
+    if element[1] in forms:
+        sharpType = forms[element[1]]
+    else:
+        return ''
 
-    if typ in forms:
-        return forms[typ]
+    if element[2] > 1 and element[1] != 'string':
+        sharpType += '[]'
+    return sharpType
 
-    return ''
-
-
+	
 def get_type_size(element):
     forms = {
         'int8' : 1,
@@ -252,7 +254,7 @@ def make_callbacks():
             if element[3] != 'out':
                 continue
 
-            csharp_type = get_csharp_type(element[1])
+            csharp_type = get_csharp_type(element)
             cname = to_camel_case(element[0])
             from_type = get_from_type(element)
             length = ''
