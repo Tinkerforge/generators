@@ -285,9 +285,18 @@ def make_version_method():
 \t\t}}
 """
 
+def make_method_signature(packet):
+    sig_format = "public {0} {1}({2})"
+    ret_count = count_return_values(packet['elements'])
+    params = make_parameter_list(packet, ret_count > 1)
+    return_type = 'void'
+    if ret_count == 1:
+        return_type = get_csharp_type(filter(lambda e: e[3] == 'out', packet['elements'])[0])
+
+    return sig_format.format(return_type, packet['name'][0], params)
+
 def make_methods():
     methods = ''
-    sig_format = "public {0} {1}({2})"
     method = """
 \t\t{0}
 \t\t{{
@@ -310,9 +319,6 @@ def make_methods():
             continue
 
         ret_count = count_return_values(packet['elements'])
-        useOutParams = ret_count > 1
-        name = packet['name'][0]
-        params = make_parameter_list(packet, useOutParams)
         size = str(get_data_size(packet['elements']))
         name_upper = packet['name'][1].upper()
 
@@ -327,8 +333,6 @@ def make_methods():
             write_convs += write_conv.format(wname, pos)
             pos += get_type_size(element)
             
-        signature = ''
-        return_type = 'void'
         method_tail = ''
         if ret_count > 0:
             read_convs = ''
@@ -347,7 +351,6 @@ def make_methods():
 
                 if ret_count == 1:
                     read_convs = '\n\t\t\treturn LEConverter.{0}({1}, answer{2});'.format(from_type, pos, length)
-                    return_type = get_csharp_type(element)
                 else:
                     read_convs += read_conv.format(aname, from_type, pos, length)
                 pos += get_type_size(element)
@@ -356,7 +359,7 @@ def make_methods():
         else:
             method_tail = method_oneway
 
-        signature = sig_format.format(return_type, name, params)
+        signature = make_method_signature(packet)
         methods += method.format(signature,
                                  size,
                                  name_upper,
