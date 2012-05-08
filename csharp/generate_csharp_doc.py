@@ -31,6 +31,7 @@ import shutil
 import subprocess
 import glob
 import re
+import csharp_common
 
 com = None
 lang = 'en'
@@ -168,27 +169,6 @@ def to_camel_case(name):
         ret += n[0].upper() + n[1:]
     return ret
 
-def get_csharp_type(typ):
-    forms = {
-        'int8' : 'sbyte',
-        'uint8' : 'byte',
-        'int16' : 'short',
-        'uint16' : 'ushort',
-        'int32' : 'int',
-        'uint32' : 'uint',
-        'int64' : 'long',
-        'uint64' : 'ulong',
-        'float' : 'float',
-        'bool' : 'bool',
-        'string' : 'string',
-        'char' : 'char'
-    }
-
-    if typ in forms:
-        return forms[typ]
-
-    return ''
-
 def get_num_return(elements): 
     num = 0
     for element in elements:
@@ -196,22 +176,6 @@ def get_num_return(elements):
             num += 1
 
     return num
-
-def make_parameter_list(packet):
-    param = []
-    for element in packet['elements']:
-        out = ''
-        if element[3] == 'out' and packet['type'] == 'method':
-            out = 'out '
-
-        csharp_type = get_csharp_type(element[1])
-        name = to_camel_case(element[0])
-        arr = ''
-        if element[2] > 1 and element[1] != 'string':
-            arr = '[]'
-       
-        param.append('{0}{1}{2} {3}'.format(out, csharp_type, arr, name))
-    return ', '.join(param)
 
 def make_methods(typ):
     method_version = """
@@ -229,14 +193,11 @@ def make_methods(typ):
         if packet['type'] != 'method' or packet['doc'][0] != typ:
             continue
 
-        name = packet['name'][0]
-        params = make_parameter_list(packet)
+        signature = csharp_common.make_method_signature(packet, True, com)
         desc = fix_links(shift_right(packet['doc'][1][lang], 1))
-        func = '{0}public void {1}::{2}({3})\n{4}'.format(func_start, 
-                                                             cls, 
-                                                             name, 
-                                                             params, 
-                                                             desc)
+        func = '{0}{1}\n{2}'.format(func_start, 
+                                    signature, 
+                                    desc)
         methods += func + '\n'
 
     if typ == 'am':
@@ -258,7 +219,7 @@ def make_callbacks():
             continue
 
         desc = fix_links(shift_right(packet['doc'][1][lang], 2))
-        params = make_parameter_list(packet)
+        params = csharp_common.make_parameter_list(packet)
 
         cbs += cb.format(com['type'] + com['name'][0],
                          packet['name'][0],

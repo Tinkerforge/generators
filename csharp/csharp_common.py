@@ -47,15 +47,18 @@ def make_parameter_list(packet, useOutParams=True):
         param.append('{0}{1} {2}'.format(out, csharp_type, name))
     return ', '.join(param)
 
-def make_method_signature(packet):
-    sig_format = "public {0} {1}({2})"
+def make_method_signature(packet, printFullName=False, com=None):
+    sig_format = "public {0} {1}{2}({3})"
     ret_count = count_return_values(packet['elements'])
     params = make_parameter_list(packet, ret_count > 1)
     return_type = 'void'
     if ret_count == 1:
         return_type = get_csharp_type(filter(lambda e: e[3] == 'out', packet['elements'])[0])
+    classPrefix = ''
+    if printFullName:
+        classPrefix = com['type'] + com['name'][0] + '::'
 
-    return sig_format.format(return_type, packet['name'][0], params)
+    return sig_format.format(return_type, classPrefix, packet['name'][0], params)
 
 def get_csharp_type(element):
     forms = {
