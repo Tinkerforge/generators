@@ -40,6 +40,8 @@ gen_text = """/*************************************************************
 
 def make_import():
     include = """{0}
+using System;
+
 namespace Tinkerforge
 {{"""
     date = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -367,6 +369,38 @@ def make_methods():
 
     return methods
 
+def make_obsolete_methods():
+    methods = ''
+    method = """
+\t\t[Obsolete()]
+\t\tpublic void {0}({1})
+\t\t{{
+\t\t\t{2} = {0}({3});
+\t\t}}
+"""
+
+    cls = com['name'][0]
+    for packet in com['packets']:
+        if packet['type'] != 'method':
+            continue
+
+        ret_count = count_return_values(packet['elements'])
+        if ret_count <> 1:
+            continue
+
+        name = packet['name'][0]
+        sigParams = make_parameter_list(packet, True)
+        
+        outParam = to_camel_case(filter(lambda e: e[3] == 'out', packet['elements'])[0][0])
+        callParams = ", ".join(map(lambda e: to_camel_case(e[0]), filter(lambda e: e[3] == 'in', packet['elements'])))
+
+        methods += method.format(name,
+                                 sigParams,
+								 outParam,
+                                 callParams)
+
+    return methods
+
 def get_data_size(elements):
     size = 0
     for element in elements:
@@ -406,6 +440,7 @@ def make_files(com_new, directory):
     csharp.write(make_delegates())
     csharp.write(make_constructor())
     csharp.write(make_methods())
+    csharp.write(make_obsolete_methods())
     csharp.write(make_version_method())
     csharp.write(make_callbacks())
     csharp.write(make_register_callback())
