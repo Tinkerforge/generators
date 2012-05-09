@@ -211,23 +211,6 @@ def make_parameter_list(packet):
         param.append('{0}{1} {2}'.format(java_type, arr, name))
     return ', '.join(param)
 
-def make_init_method():
-    return """
-    def __init__(self, uid):
-        Device.__init__(self, uid)
-
-"""
-
-def make_callbacks_format():
-    cbs = ''
-    cb = "        self.callbacks_format[{0}.CALLBACK_{1}] = '{2}'\n"
-    for i, packet in zip(range(len(com['packets'])), com['packets']):
-        if packet['type'] != 'signal':
-            continue
-        form = make_format_list(packet, 'out')
-        cbs += cb.format(com['name'][0], packet['name'][1].upper(), form)
-    return cbs
-
 def make_constructor():
     con = """
 \tpublic {0}{1}(String uid) {{
