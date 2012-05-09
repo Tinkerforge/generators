@@ -200,6 +200,9 @@ def make_methods(typ):
                                     desc)
         methods += func + '\n'
 
+        if csharp_common.count_return_values(packet['elements']) == 1:
+            methods += '\n .. versionchanged:: 1.1.0\n    Result is returned. Previously it was passed as ``out`` parameter.\n'
+
     if typ == 'am':
         methods += method_version.format(cls)
 
