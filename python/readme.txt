@@ -7,8 +7,8 @@ After that you can use the examples as they are.
 
 If you can't or don't want to use the egg, you can also use the source directly,
 just create a folder for your project and copy the tinkerforge folder from
-source/ and the example you want to try in there (e.g. the stepper configuration
-example from examples/brick/stepper/example_configuration.py).
+source/ and the example you want to try in there (e.g. the Stepper Brick
+configuration example from examples/brick/stepper/example_configuration.py).
 
 example_folder/
  -> tinkerforge/
@@ -16,8 +16,8 @@ example_folder/
 
 If you just want to use a few Bricks or Bricklets and you don't want to have
 this many files in you project, you can also copy the files as they are needed.
-For the stepper examples we need ip_connection.py and brick_stepper.py. After
-copying these in the project folder
+For the Stepper Brick examples we need ip_connection.py and brick_stepper.py.
+After copying these in the project folder
 
 example_folder/
  -> ip_connection.py
