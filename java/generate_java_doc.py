@@ -133,10 +133,8 @@ def make_examples():
     def title_from_file(f):
         f = f.replace('Example', '')
         f = f.replace('.java', '')
-        s = ''
-        for l in f.split('_'):
-            s += l[0].upper() + l[1:] + ' '
-        return s[:-1]
+        pattern = re.compile('([A-Z][A-Z][a-z])|([a-z][A-Z])')
+        return pattern.sub(lambda m: m.group()[:1] + " " + m.group()[1:], f)
 
     ex = """
 {0}
