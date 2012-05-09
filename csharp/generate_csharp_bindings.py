@@ -235,11 +235,11 @@ def make_callbacks():
 def make_version_method():
     return """
 \t\tpublic void GetVersion(out string name, out byte[] firmwareVersion, out byte[] bindingVersion)
-\t\t{{
+\t\t{
 \t\t\tname = this.name;
 \t\t\tfirmwareVersion = this.firmwareVersion;
 \t\t\tbindingVersion = this.bindingVersion;
-\t\t}}
+\t\t}
 """
 
 def make_methods():
