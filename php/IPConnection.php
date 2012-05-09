@@ -389,8 +389,7 @@ class IPConnection
         }
 
         if (!array_key_exists($header['stackID'], $this->devices)) {
-            error_log('Response with unknown stack ID, discarded: ' .
-                      $header['stackID'] . ' ' . $header['functionID']);
+            // Message for an unknown device, ignoring it
             return $header['length'];
         }
 

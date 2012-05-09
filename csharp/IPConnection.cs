@@ -158,7 +158,7 @@ namespace Tinkerforge
 		{
 			while(RecvLoopFlag)
 			{
-				byte[] data;			
+				byte[] data;
 				if(!callbackQueue.TryDequeue(out data, Timeout.Infinite))
 				{
 					return;
@@ -224,8 +224,7 @@ namespace Tinkerforge
 
 			if(device == null)
 			{
-				Console.Error.WriteLine("Message with unknown Stack ID, discarded: "
-				                        + stackID);
+				// Message for an unknown device, ignoring it
 				return length;
 			}
 

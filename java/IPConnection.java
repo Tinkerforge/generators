@@ -151,11 +151,11 @@ public class IPConnection {
 			super(string);
 		}
 	}
-	
+
 	public interface EnumerateListener {
 		public void enumerate(String uid, String name, short stackID, boolean isNew);
 	}
-	
+
 	public IPConnection(String host, int port) throws java.io.IOException {
 		sock = new Socket(host, port);
 		out = sock.getOutputStream();
@@ -180,7 +180,7 @@ public class IPConnection {
 		int length = getLengthFromData(data);
 		
 		if(devices[stackID] == null) {
-			System.err.println("Message with unknown Stack ID, discarded: " + stackID);
+			// Message for an unknown device, ignoring it
 			return length;
 		}
 		
