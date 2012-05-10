@@ -278,8 +278,7 @@ class IPConnection:
         length = get_length_from_data(data)
 
         if not stack_id in self.devices:
-            sys.stderr.write("Message with unknown Stack ID, discarded: " +
-                             str((stack_id, typ)) + "\n")
+            # Message for an unknown device, ignoring it
             return length
 
         device = self.devices[stack_id]
