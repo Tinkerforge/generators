@@ -1,1 +1,4 @@
 1.0.0: Initial version
+1.0.1: Silently ignore messages from devices with unknown stack ID
+       Don't generate registerCallback method for devices without callbacks
+       Add inline code documentation

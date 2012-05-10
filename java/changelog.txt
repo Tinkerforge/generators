@@ -5,3 +5,7 @@
 1.0.4: Add ChibiFreuqency and ChibiChannel methods
 1.0.5: Add sync rect support to Stepper Brick bindings and make Device class public
 1.0.6: Make Device class abstract
+1.0.7: Add version information to manifest of tinkerforge.jar
+       Silently ignore messages from devices with unknown stack ID
+       Don't generate addListener method for devices without callbacks
+       Add inline code documentation

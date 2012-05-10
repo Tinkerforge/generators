@@ -459,6 +459,7 @@ using System.Runtime.CompilerServices;
             '/optimize',
             '/target:library',
             '/out:/tmp/generator/dll/Tinkerforge.dll',
+            '/doc:/tmp/generator/dll/Tinkerforge.xml',
             '/tmp/generator/dll/source/Tinkerforge/*.cs']
     subprocess.call(args)
 

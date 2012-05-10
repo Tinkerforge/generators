@@ -435,7 +435,7 @@ def generate(path):
     file('/tmp/generator/pear/source/package.xml', 'wb').write("""<?xml version="1.0" encoding="UTF-8"?>
 <package packagerversion="1.9.0" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0">
  <name>Tinkerforge</name>
- <uri>http://download.tinkerforge.com/bindings/php/pear/Tinkerforge-1.0.0</uri>
+ <uri>http://download.tinkerforge.com/bindings/php/pear/Tinkerforge-{2}.{3}.{4}</uri>
  <summary>PHP API Bindings for Tinkerforge Bricks and Bricklets</summary>
  <description>no description</description>
  <lead>
