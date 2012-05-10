@@ -147,6 +147,14 @@ def get_type_size(element):
     return 0
 
 def make_register_callback():
+    signal_count = 0
+    for packet in com['packets']:
+        if packet['type'] == 'signal':
+            signal_count += 1
+
+    if signal_count == 0:
+        return '\t}\n}\n'
+
     typeofs = ''
     typeof = """\t\t\t{0}if(d.GetType() == typeof({1}))
 \t\t\t{{

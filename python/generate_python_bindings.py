@@ -218,6 +218,20 @@ def make_methods():
 
     return methods
 
+def make_register_callback_method():
+    signal_count = 0
+    for packet in com['packets']:
+        if packet['type'] == 'signal':
+            signal_count += 1
+
+    if signal_count == 0:
+        return ''
+
+    return """
+    def register_callback(self, cb, func):
+        self.callbacks[cb] = func
+"""
+
 def make_files(com_new, directory):
     global com
     com = com_new
@@ -238,6 +252,7 @@ def make_files(com_new, directory):
     py.write(make_callbacks_format())
     py.write(make_version_method())
     py.write(make_methods())
+    py.write(make_register_callback_method())
 
 def generate(path):
     path_list = path.split('/')

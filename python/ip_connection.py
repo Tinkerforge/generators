@@ -98,10 +98,7 @@ class Device(DeviceConCheckerMeta):
         self.answer_type = -1
         self.answer = None
         self.answer_queue = Queue()
-        self.sem_write  = BoundedSemaphore(value=1)
-
-    def register_callback(self, cb, func):
-        self.callbacks[cb] = func
+        self.sem_write = BoundedSemaphore(value=1)
 
 class IPConnection:
     TYPE_GET_STACK_ID = 255

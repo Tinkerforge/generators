@@ -320,7 +320,20 @@ def make_methods():
 """ + methods
 
 def make_callback_wrappers():
-    wrappers = ''
+    signal_count = 0
+    for packet in com['packets']:
+        if packet['type'] == 'signal':
+            signal_count += 1
+
+    if signal_count == 0:
+        return ''
+
+    wrappers = """
+    public function registerCallback($id, $callback)
+    {
+        $this->callbacks[$id] = $callback;
+    }
+"""
     wrapper = """
     public function callback{0}($data)
     {{

@@ -406,7 +406,7 @@ typedef Device {3};
                           com['name'][0])
 
 def make_end_h():
-    return "\n#endif"
+    return "\n#endif\n"
 
 def make_typedefs():
     typedef = 'typedef void (*{0}_func_t)({1});\n'
@@ -458,6 +458,14 @@ def make_set_callback_declarations():
     return funcs
 
 def make_register_callback_declaration():
+    signal_count = 0
+    for packet in com['packets']:
+        if packet['type'] == 'signal':
+            signal_count += 1
+
+    if signal_count == 0:
+        return '\n'
+
     func = """
 void {0}_register_callback({1} *{0}, uint8_t cb, void *func);
 """

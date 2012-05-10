@@ -170,6 +170,14 @@ def make_callback_listener_definitions():
     return cbs + cbs_end
 
 def make_add_listener():
+    signal_count = 0
+    for packet in com['packets']:
+        if packet['type'] == 'signal':
+            signal_count += 1
+
+    if signal_count == 0:
+        return '}'
+
     listeners = """
 \tpublic void addListener(Object o) {{
 \t\t{0}
