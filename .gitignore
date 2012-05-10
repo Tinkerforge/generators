@@ -6,6 +6,8 @@ csharp/bindings/
 csharp/doc/
 java/bindings/
 java/doc/
+php/bindings/
+php/doc/
 python/bindings/
 python/doc/
 tcpip/doc/

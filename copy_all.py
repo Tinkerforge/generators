@@ -6,7 +6,6 @@ import os
 import shutil
 import filecmp
 
-
 def files_are_not_the_same(src_file, dest_path):
     dest_file = os.path.join(dest_path, src_file.split('/')[-1])
     try:
@@ -23,41 +22,6 @@ def files_are_not_the_same(src_file, dest_path):
         i += 1
         
     return False
-
-def java_name(binding):
-    pos = binding[3].find('_')
-    return binding[3][pos+1:] + binding[3][0:pos]
-
-ipcon_src = ['ip_connection.c', 
-             'ip_connection.h', 
-             'ip_connection.py', 
-             'IPConnection.java', 
-             'IPConnection.cs']
-
-ipcon_dest = ['imu-brick', 
-              'servo-brick', 
-              'master-brick', 
-              'dc-brick', 
-              'stepper-brick', 
-              'rotary-poti-bricklet',
-              'linear-poti-bricklet',
-              'joystick-bricklet',
-              'ambient-light-bricklet',
-              'current25-bricklet',
-              'current12-bricklet',
-              'voltage-bricklet',
-              'distance-ir-bricklet',
-              'dual-relay-bricklet',
-              'temperature-bricklet',
-              'piezo-buzzer-bricklet',
-              'lcd-20x4-bricklet',
-              'lcd-16x2-bricklet',
-              'temperature-ir-bricklet',
-              'io16-bricklet',
-              'io4-bricklet',
-              'humidity-bricklet',
-              'analog-in-bricklet',
-              'analog-out-bricklet']
 
 bind_trans = [('brick_imu', 'imu-brick', 'imu', 'IMU_Brick'),
               ('brick_servo', 'servo-brick', 'servo', 'Servo_Brick'),

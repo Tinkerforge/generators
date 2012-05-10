@@ -30,6 +30,7 @@ import os
 import shutil
 import subprocess
 import glob
+import re
 
 com = None
 lang = 'en'
@@ -289,13 +290,13 @@ def make_api():
 """
 
     register_str = """
-.. py:function:: {1}.register_callback(cb_id, func)
+.. py:function:: {1}.register_callback(cb, func)
 
- :param cb_id: int
+ :param cb: int
  :param func: function
  :rtype: None
 
- Registers a callback with ID *cb_id* to the function *func*. The available
+ Registers a callback with ID *cb* to the function *func*. The available
  IDs with corresponding function signatures are listed 
  :ref:`below <{0}_{2}_python_callbacks>`.
 """
@@ -333,14 +334,14 @@ Callbacks
 
 *Callbacks* can be registered with *callback IDs* to receive
 time critical or recurring data from the device. The registration is done
-with the ``register_callback`` function of the device object. The first
-parameter is the callback ID and the second parameter the callback
-function::
+with the :py:func:`register_callback <{3}.register_callback>` function of
+the device object. The first parameter is the callback ID and the second
+parameter the callback function::
 
     def my_callback(param):
         print(param)
 
-    {1}.register_callback({1}.CALLBACK_EXAMPLE, my_callback)
+    {1}.register_callback({3}.CALLBACK_EXAMPLE, my_callback)
 
 The available constants with inherent number and type of parameters are 
 described below.
@@ -380,7 +381,7 @@ API
         api_str += am_str.format(am)
     if c:
         api_str += ccm_str.format(reg, ccm)
-        api_str += c_str.format(c, com['name'][1], com['type'].lower())
+        api_str += c_str.format(c, com['name'][1], com['type'].lower(), com['name'][0])
 
     ref = '.. _{0}_{1}_python_api:\n'.format(com['name'][1], 
                                              com['type'].lower())
@@ -423,6 +424,17 @@ def make_files(com_new, directory):
 
     copy_examples_for_zip()
 
+def get_version(path):
+    r = re.compile('^(\d+)\.(\d+)\.(\d+):')
+    last = None
+    for line in file(path + '/changelog.txt').readlines():
+        m = r.match(line)
+
+        if m is not None:
+            last = (m.group(1), m.group(2), m.group(3))
+
+    return last
+
 def generate(path):
     global file_path
     file_path = path
@@ -452,7 +464,23 @@ def generate(path):
     shutil.copy(path + '/ip_connection.py', '/tmp/generator/egg/source/tinkerforge')
     shutil.copy(path + '/changelog.txt', '/tmp/generator/egg')
     shutil.copy(path + '/readme.txt', '/tmp/generator/egg')
-    shutil.copy(path + '/setup.py', '/tmp/generator/egg/source')
+
+    # Write setup.py
+    version = get_version(path)
+    file('/tmp/generator/egg/source/setup.py', 'wb').write("""
+#!/usr/bin/env python
+
+from setuptools import setup
+
+setup(
+    name='tinkerforge',
+    version='{0}.{1}.{2}',
+    description='TCP/IP based library for Bricks and Bricklets',
+    author='Tinkerforge GmbH',
+    author_email='olaf@tinkerforge.com',
+    url='http://www.tinkerforge.com',
+    packages=['tinkerforge'])
+""".format(*version))
 
     # Make egg
     os.chdir('/tmp/generator/egg/source')
@@ -469,19 +497,22 @@ def generate(path):
                 '/tmp/generator/egg/tinkerforge.egg')
     shutil.rmtree('/tmp/generator/egg/source/dist')
 
-    # Make zip
+    # Make __init__.py
     f = open('/tmp/generator/egg/source/tinkerforge/__init__.py', 'w')
     f.write(' ')
     f.close()
+
+    # Make zip
+    zipname = 'tinkerforge_python_bindings_{0}_{1}_{2}.zip'.format(*version)
     os.chdir('/tmp/generator/egg')
     args = ['/usr/bin/zip',
             '-r',
-            'tinkerforge_python_bindings.zip',
+            zipname,
             '.']
     subprocess.call(args)
 
     # Copy zip
-    shutil.copy('/tmp/generator/egg/tinkerforge_python_bindings.zip', path)
+    shutil.copy(zipname, path)
 
 if __name__ == "__main__":
     generate(os.getcwd())

@@ -65,7 +65,7 @@ com['packets'].append({
 'doc': ['bm', {
 'en':
 """
-Configures the value and direction of a specified port. possible directions
+Configures the value and direction of a specified port. Possible directions
 are "i" and "o" for input and output.
 
 If the direction is configured as output, the value is either high or low
@@ -97,7 +97,7 @@ com['packets'].append({
 'doc': ['bm', {
 'en':
 """
-Returns a value bit mask and a direction  bit mask for the specified port.
+Returns a value bit mask and a direction bit mask for the specified port.
 
 For example: A return value of the bitstrings "11110000" and "11001100" for
 direction and value means that:

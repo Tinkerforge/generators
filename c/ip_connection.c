@@ -127,9 +127,7 @@ int ipcon_handle_message(IPConnection *ipcon, const unsigned char *buffer) {
 	uint8_t stack_id = ipcon_get_stack_id_from_data(buffer);
 	uint16_t length = ipcon_get_length_from_data(buffer);
 	if(ipcon->devices[stack_id] == NULL) {
-		fprintf(stderr, "Message with unknown Stack ID, discarded %d %d\n",
-		                stack_id,
-		                type);
+		// Message for an unknown device, ignoring it
 		return length;
 	}
 
@@ -137,7 +135,7 @@ int ipcon_handle_message(IPConnection *ipcon, const unsigned char *buffer) {
 	DeviceAnswer *answer = &device->answer;
 
 	if(answer->type == type) {
-		if(answer->length != 0 && answer->length != length) {
+		if(answer->length != length) {
 			fprintf(stderr,
 			        "Received malformed message, discarded: %d\n",
 			        stack_id);

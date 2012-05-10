@@ -31,7 +31,7 @@ def to_camel_case(name):
         ret += n[0].upper() + n[1:]
     return ret
 
-def make_parameter_list(packet, useOutParams = True):
+def make_parameter_list(packet, useOutParams=True):
     param = []
     for element in packet['elements']:
         if (not useOutParams) and element[3] == 'out':
@@ -47,7 +47,7 @@ def make_parameter_list(packet, useOutParams = True):
         param.append('{0}{1} {2}'.format(out, csharp_type, name))
     return ', '.join(param)
 
-def make_method_signature(packet, printFullName = False, com = None):
+def make_method_signature(packet, printFullName=False, com=None):
     sig_format = "public {0} {1}{2}({3})"
     ret_count = count_return_values(packet['elements'])
     params = make_parameter_list(packet, ret_count > 1)
@@ -57,7 +57,7 @@ def make_method_signature(packet, printFullName = False, com = None):
     classPrefix = ''
     if printFullName:
         classPrefix = com['type'] + com['name'][0] + '::'
-	
+
     return sig_format.format(return_type, classPrefix, packet['name'][0], params)
 
 def get_csharp_type(element):

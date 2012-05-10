@@ -6,3 +6,8 @@
 1.0.5: Add ChibiChannel and ChibiFrequency Methods
 1.0.6: Add sync rect support to Stepper Brick bindings
 1.0.7: Better locking (thanks to Jan)
+1.1.0: Replaced optional argument with method-overloading to be compatible with older C# versions
+       Callback methods are only internally visible
+       Add version information to Tinkerforge.dll
+       Silently ignore messages from devices with unknown stack ID
+       Single-return methods return their value instead of using out-parameters, old single-out methods stay for compatibility

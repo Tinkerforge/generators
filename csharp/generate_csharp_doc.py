@@ -30,6 +30,7 @@ import os
 import shutil
 import subprocess
 import glob
+import re
 import csharp_common
 
 com = None
@@ -124,10 +125,8 @@ def make_examples():
     def title_from_file(f):
         f = f.replace('Example', '')
         f = f.replace('.cs', '')
-        s = ''
-        for l in f.split('_'):
-            s += l[0].upper() + l[1:] + ' '
-        return s[:-1]
+        pattern = re.compile('([A-Z][A-Z][a-z])|([a-z][A-Z])')
+        return pattern.sub(lambda m: m.group()[:1] + " " + m.group()[1:], f)
 
     ex = """
 {0}
@@ -200,6 +199,9 @@ def make_methods(typ):
                                     signature, 
                                     desc)
         methods += func + '\n'
+
+        if csharp_common.count_return_values(packet['elements']) == 1:
+            methods += '\n .. versionchanged:: 1.1.0\n    Result is returned. Previously it was passed as ``out`` parameter.\n'
 
     if typ == 'am':
         methods += method_version.format(cls)
@@ -284,7 +286,8 @@ Callbacks
 
 *Callbacks* can be registered to receive
 time critical or recurring data from the device. The registration is done
-with the ``RegisterCallback`` function of the device object. 
+with the :csharp:func:`RegisterCallback <{3}{4}::RegisterCallback>` function
+of the device object.
 
 The parameter is a delegate object of the corresponding method, for example:
 
@@ -350,7 +353,7 @@ The namespace for all Brick/Bricklet bindings and the IPConnection is
         api_str += am_str.format(am)
     if c:
         api_str += ccm_str.format(reg, ccm)
-        api_str += c_str.format(c, com['name'][1], com['type'].lower())
+        api_str += c_str.format(c, com['name'][1], com['type'].lower(), com['type'], com['name'][0])
 
     ref = '.. _{0}_{1}_csharp_api:\n'.format(com['name'][1], 
                                              com['type'].lower())
@@ -393,6 +396,17 @@ def make_files(com_new, directory):
 
     copy_examples_for_zip()
 
+def get_version(path):
+    r = re.compile('^(\d+)\.(\d+)\.(\d+):')
+    last = None
+    for line in file(path + '/changelog.txt').readlines():
+        m = r.match(line)
+
+        if m is not None:
+            last = (m.group(1), m.group(2), m.group(3))
+
+    return last
+
 def generate(path):
     global file_path
     file_path = path
@@ -423,6 +437,23 @@ def generate(path):
     shutil.copy(path + '/changelog.txt', '/tmp/generator/dll')
     shutil.copy(path + '/Readme.txt', '/tmp/generator/dll')
 
+    # Write AssemblyInfo
+    version = get_version(path)
+    file('/tmp/generator/dll/source/Tinkerforge/AssemblyInfo.cs', 'wb').write("""
+using System.Reflection;
+using System.Runtime.CompilerServices;
+
+[assembly: AssemblyTitle("C# API Bindings")]
+[assembly: AssemblyDescription("C# API Bindings for Tinkerforge Bricks and Bricklets")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("Tinkerforge GmbH")]
+[assembly: AssemblyProduct("C# API Bindings")]
+[assembly: AssemblyCopyright("Tinkerforge GmbH 2011-2012")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+[assembly: AssemblyVersion("{0}.{1}.{2}.0")]
+""".format(*version))
+
     # Make dll
     args = ['/usr/bin/gmcs',
             '/optimize',
@@ -432,15 +463,16 @@ def generate(path):
     subprocess.call(args)
 
     # Make zip
+    zipname = 'tinkerforge_csharp_bindings_{0}_{1}_{2}.zip'.format(*version)
     os.chdir('/tmp/generator/dll')
     args = ['/usr/bin/zip',
             '-r',
-            'tinkerforge_csharp_bindings.zip',
+            zipname,
             '.']
     subprocess.call(args)
 
     # Copy zip
-    shutil.copy('/tmp/generator/dll/tinkerforge_csharp_bindings.zip', path)
+    shutil.copy(zipname, path)
 
 
 if __name__ == "__main__":

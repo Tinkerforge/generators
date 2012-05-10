@@ -2,15 +2,15 @@
 # -*- coding: utf-8 -*-
 
 """
-Java Documentation Generator
+PHP Documentation Generator
 Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
-generator_java_doc.py: Generator for Java documentation
+generator_php_doc.py: Generator for PHP documentation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -50,39 +50,31 @@ def shift_right(text, n):
     return text.replace('\n', '\n' + ' '*n)
 
 def fix_links(text):
-    cb_link = ':java:func:`{2}Listener <{0}{1}.{2}Listener>`'
-    fu_link = ':java:func:`{2}() <{0}{1}::{2}>`'
-
-    cls = com['name'][0]
+    cls = com['type'] + com['name'][0]
     for packet in com['packets']:
         name_false = ':func:`{0}`'.format(packet['name'][0])
         if packet['doc'][0] == 'c':
-            name = packet['name'][0]
-            name_right = cb_link.format(com['type'], cls, name)
+            name_upper = packet['name'][1].upper()
+            name_right = ':php:member:`CALLBACK_{1} <{0}::CALLBACK_{1}>`'.format(cls, name_upper)
         else:
-            name = packet['name'][0][0].lower() + packet['name'][0][1:] 
-            name_right = fu_link.format(com['type'], cls, name)
-
+            name = packet['name'][0][0].lower() + packet['name'][0][1:]
+            name_right = ':php:func:`{1} <{0}::{1}>`'.format(cls, name)
         text = text.replace(name_false, name_right)
 
     text = text.replace(":word:`parameter`", "parameter")
     text = text.replace(":word:`parameters`", "parameters")
-    text = text.replace('Callback ', 'Listener ')
-    text = text.replace(' Callback', ' Listener')
-    text = text.replace('callback ', 'listener ')
-    text = text.replace(' callback', ' listener')
 
     return text
 
 def find_examples():
     path = file_path
-    start_path = path.replace('/generators/java', '')
+    start_path = path.replace('/generators/php', '')
     board = '{0}-{1}'.format(com['name'][1], com['type'].lower())
     board = board.replace('_', '-')
-    board_path = os.path.join(start_path, board, 'software/examples/java')
+    board_path = os.path.join(start_path, board, 'software/examples/php')
     files = []
     for f in os.listdir(board_path):
-        if f.startswith('Example') and f.endswith('.java'):
+        if f.startswith('Example') and f.endswith('.php'):
             f_dir = '{0}/{1}'.format(board_path, f)
             lines = 0
             for line in open(os.path.join(f, f_dir)):
@@ -92,7 +84,7 @@ def find_examples():
     files.sort(lambda i, j: cmp(i[2], j[2]))
 
     return files
-   
+
 def copy_examples(cf):
     path = file_path
     doc_path = '{0}/doc'.format(path)
@@ -102,21 +94,21 @@ def copy_examples(cf):
         doc_src = f[0]
         shutil.copy(doc_src, doc_dest)
         print('   - {0}'.format(f[1]))
-    
+
 
 def make_header():
     date = datetime.datetime.now().strftime("%Y-%m-%d")
-    ref = '.. _{0}_{1}_java:\n'.format(com['name'][1], com['type'].lower())
-    title = 'Java - {0} {1}'.format(com['name'][0], com['type'])
+    ref = '.. _{0}_{1}_php:\n'.format(com['name'][1], com['type'].lower())
+    title = 'PHP - {0} {1}'.format(com['name'][0], com['type'])
     title_under = '='*len(title)
-    return '{0}\n{1}\n{2}\n{3}\n'.format(gen_text.format(date), 
+    return '{0}\n{1}\n{2}\n{3}\n'.format(gen_text.format(date),
                                          ref,
-                                         title, 
+                                         title,
                                          title_under)
 
 def make_summary():
     su = """
-This is the API site for the Java bindings of the {0} {1}. General information
+This is the API site for the PHP bindings of the {0} {1}. General information
 on what this device does and the technical specifications can be found
 :ref:`here <{2}>`.
 
@@ -132,7 +124,7 @@ can be found :ref:`here <{3}>`.
 def make_examples():
     def title_from_file(f):
         f = f.replace('Example', '')
-        f = f.replace('.java', '')
+        f = f.replace('.php', '')
         pattern = re.compile('([A-Z][A-Z][a-z])|([a-z][A-Z])')
         return pattern.sub(lambda m: m.group()[:1] + " " + m.group()[1:], f)
 
@@ -147,21 +139,21 @@ Examples
 {0}
 {1}
 
-`Download <https://github.com/Tinkerforge/{3}/raw/master/software/examples/java/{4}>`__
+`Download <https://github.com/Tinkerforge/{3}/raw/master/software/examples/php/{4}>`__
 
 .. literalinclude:: {2}
- :language: java
+ :language: php
  :linenos:
  :tab-width: 4
 """
 
-    ref = '.. _{0}_{1}_java_examples:\n'.format(com['name'][1], 
-                                                  com['type'].lower())
+    ref = '.. _{0}_{1}_php_examples:\n'.format(com['name'][1], 
+                                               com['type'].lower())
     ex = ex.format(ref)
     files = find_examples()
     copy_files = []
     for f in files:
-        include = '{0}_{1}_Java_{2}'.format(com['name'][0], com['type'], f[0])
+        include = '{0}_{1}_PHP_{2}'.format(com['name'][0], com['type'], f[0])
         copy_files.append((f[1], include))
         title = title_from_file(f[0])
         git_name = com['name'][1].replace('_', '-') + '-' + com['type'].lower()
@@ -170,27 +162,20 @@ Examples
     copy_examples(copy_files)
     return ex
 
-def to_camel_case(name):
-    names = name.split('_')
-    ret = names[0]
-    for n in names[1:]:
-        ret += n[0].upper() + n[1:]
-    return ret
-
-def get_java_type(typ):
+def get_php_type(typ):
     forms = {
-        'int8' : 'byte',
-        'uint8' : 'short',
-        'int16' : 'short',
+        'int8' : 'int',
+        'uint8' : 'int',
+        'int16' : 'int',
         'uint16' : 'int',
         'int32' : 'int',
-        'uint32' : 'long',
-        'int64' : 'long',
-        'uint64' : 'long',
+        'uint32' : 'int',
+        'int64' : 'int',
+        'uint64' : 'int',
         'float' : 'float',
-        'bool' : 'boolean',
-        'string' : 'String',
-        'char' : 'char'
+        'bool' : 'bool',
+        'string' : 'string',
+        'char' : 'string'
     }
 
     if typ in forms:
@@ -205,71 +190,46 @@ def get_num_return(elements):
             num += 1
 
     return num
-
-def get_object_name(packet):
-    name = packet['name'][0]
-    if name.startswith('Get'):
-        name = name[3:]
-
-    return name
-
+    
 def get_return_type(packet):
     if get_num_return(packet['elements']) == 0:
         return 'void'
     if get_num_return(packet['elements']) > 1:
-        return com['type'] + com['name'][0] + '.' + get_object_name(packet)
+        return 'array'
     
     for element in packet['elements']:
         if element[3] == 'out':
-            return get_java_type(element[1])
+            if element[2] > 1:
+                return 'array'
+            else:
+                return get_php_type(element[1])
 
 def make_parameter_list(packet):
     param = []
     for element in packet['elements']:
         if element[3] == 'out' and packet['type'] == 'method':
             continue
-        java_type = get_java_type(element[1])
-        name = to_camel_case(element[0])
-        arr = ''
+        php_type = get_php_type(element[1])
+        name = element[0]
         if element[2] > 1 and element[1] != 'string':
-            arr = '[]'
+            php_type = 'array'
        
-        param.append('{0}{1} {2}'.format(java_type, arr, name))
+        param.append('{0} ${1}'.format(php_type, name))
     return ', '.join(param)
-
-def make_obj_desc(packet):
-    if get_num_return(packet['elements']) < 2:
-        return ''
-    
-    desc = '\n The returned object has the public member variables {0}.\n'
-    var = []
-    for element in packet['elements']:
-        if element[3] == 'out':
-            var.append('``{0} {1}``'.format(get_java_type(element[1]),
-                                            to_camel_case(element[0])))
-
-    if len(var) == 1:
-        return desc.format(var[0])
-
-    if len(var) == 2:
-        return desc.format(var[0] + ' and ' + var[1])
-
-    return desc.format(', '.join(var[:-1]) + ' and ' + var[-1])
 
 def make_methods(typ):
     version_method = """
-.. java:function:: public {0}.Version {0}::getVersion()
+.. php:function:: array {0}::getVersion()
 
- Returns the name (including the hardware version), the firmware version 
- and the binding version of the device. The firmware and binding versions are
- given in arrays of size 3 with the syntax [major, minor, revision].
+ Returns the name (including the hardware version), the firmware version
+ and the binding version of the device. The firmware and binding versions
+ are given in arrays of size 3 with the syntax (major, minor, revision).
 
- The returned object has the public member variables ``String name``, 
- ``short[3] firmwareVersion`` and ``short[3] bindingVersion``.
+ The returned array contains name, firmwareVersion and bindingVersion.
 """
 
     methods = ''
-    func_start = '.. java:function:: '
+    func_start = '.. php:function:: '
     cls = com['type'] + com['name'][0]
     for packet in com['packets']:
         if packet['type'] != 'method' or packet['doc'][0] != typ:
@@ -279,14 +239,12 @@ def make_methods(typ):
         name = packet['name'][0][0].lower() + packet['name'][0][1:]
         params = make_parameter_list(packet)
         desc = fix_links(shift_right(packet['doc'][1][lang], 1))
-        obj_desc = make_obj_desc(packet)
-        func = '{0}public {1} {2}::{3}({4})\n{5}{6}'.format(func_start, 
+        func = '{0}{1} {2}::{3}({4})\n{5}'.format(func_start, 
                                                             ret_type,
                                                             cls, 
                                                             name, 
                                                             params, 
-                                                            desc,
-                                                            obj_desc)
+                                                            desc)
         methods += func + '\n'
 
     if typ == 'am':
@@ -295,53 +253,51 @@ def make_methods(typ):
     return methods
 
 def make_callbacks():
-    cb = """
-.. java:function:: public class {0}{1}.{2}Listener()
-
- .. java:function:: public void {3}({4})
-  :noindex:
-
-{5}
-"""
-
     cbs = ''
-    cls = com['name'][0]
+    func_start = '.. php:member:: int '
+    cls = com['type'] + com['name'][0]
     for packet in com['packets']:
         if packet['type'] != 'signal':
             continue
 
-        desc = fix_links(shift_right(packet['doc'][1][lang], 2))
         params = make_parameter_list(packet)
+        desc = fix_links(shift_right(packet['doc'][1][lang], 1))
 
-        cbs += cb.format(com['type'],
-                         cls,
-                         packet['name'][0],
-                         packet['name'][0][0].lower() + packet['name'][0][1:],
-                         params,
-                         desc)
+        signature = """
+ .. php:function:: void callback({0})
+    :noindex:
+""".format(params)
+
+        func = '{0}{1}::CALLBACK_{2}\n{3}{4}'.format(func_start,
+                                                      cls,
+                                                      packet['name'][1].upper(),
+                                                      signature,
+                                                      desc)
+        cbs += func + '\n'
 
     return cbs
-       
+
 
 def make_api():
     create_str = """
-.. java:function:: class {3}{1}(String uid)
+.. php:function:: class {3}{1}(string $uid)
 
- Creates an object with the unique device ID *uid*:
+ Creates an object with the unique device ID *$uid*:
 
- .. code-block:: java
+ .. code-block:: php
 
-  {3}{1} {0} = new {3}{1}("YOUR_DEVICE_UID");
+    ${0} = new {3}{1}('YOUR_DEVICE_UID');
 
- This object can then be added to the IP connection (see examples 
- :ref:`above <{4}_{2}_java_examples>`).
+ This object can then be added to the IP connection (see examples
+ :ref:`above <{0}_{2}_php_examples>`).
 """
 
     register_str = """
-.. java:function:: public void {3}{1}::addListener(Object o)
+.. php:function:: void {3}{1}::registerCallback(int $id, callable $callback)
 
- Registers a listener object. The available listeners are listed 
- :ref:`below <{0}_{2}_java_callbacks>`.
+ Registers a callback with ID *$id* to the callable *$callback*. The available
+ IDs with corresponding function signatures are listed
+ :ref:`below <{0}_{2}_php_callbacks>`.
 """
 
     bm_str = """
@@ -361,7 +317,7 @@ Advanced Methods
 """
 
     ccm_str = """
-Listener Configuration Methods
+Callback Configuration Methods
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 {0}
@@ -370,32 +326,31 @@ Listener Configuration Methods
 """
 
     c_str = """
-.. _{1}_{2}_java_callbacks:
+.. _{1}_{2}_php_callbacks:
 
-Listeners
+Callbacks
 ^^^^^^^^^
 
-*Listeners* can be registered to receive
+*Callbacks* can be registered with *callback IDs* to receive
 time critical or recurring data from the device. The registration is done
-with the :java:func:`addListener <{3}{4}::addListener>` function of the device object.
+with the :php:func:`registerCallback <{3}{4}::registerCallback>` function of
+the device object. The first parameter is the callback ID and the second
+parameter the callback function::
 
-The parameter is a listener class object, for example:
+    function my_callback($param)
+    {{
+        echo $param . "\\n";
+    }}
 
-.. code-block:: java
+    ${1}->registerCallback({3}{4}::CALLBACK_EXAMPLE, 'my_callback');
 
-    device.addListener(new BrickDevice.PropertyListener() {{
-        public void property(int value) {{
-            System.out.println("Value: " + value);
-        }}
-    }});
+The available constants with inherent number and type of parameters are
+described below.
 
-The available listener classes with inherent methods to be overwritten
-are described below.
-
-.. note::
- Using listeners for recurring events is *always* prefered 
- compared to using getters. It will use less USB bandwith and the latency
- will be a lot better, since there is no roundtrip time.
+ .. note::
+  Using callbacks for recurring events is *always* prefered
+  compared to using getters. It will use less USB bandwith and the latency
+  will be a lot better, since there is no roundtrip time.
 
 {0}
 """
@@ -405,32 +360,15 @@ are described below.
 API
 ---
 
-Generally, every method of the java bindings that returns a value can
-throw a IPConnection.TimeoutException. This exception gets thrown if the
-device didn't answer. If a cable based connection is used, it is 
-unlikely that this exception gets thrown (Assuming nobody plugs the 
-device out). However, if a wireless connection is used, timeouts will occur
-if the distance to the device gets too big.
-
-Since java does not support multiple return values and return by reference
-is not possible for primitive types, we use small classes that 
-only consist of member variables (comparable to structs in C). The member
-variables of the returned objects are described in the corresponding method 
-descriptions.
-
-The package for all Brick/Bricklet bindings and the IPConnection is
-``com.tinkerforge.*``
-
 {1}
 
 {2}
 """
-    cre = create_str.format(com['name'][0][0].lower() + com['name'][0][1:],
-                            com['name'][0], 
+    cre = create_str.format(com['name'][1],
+                            com['name'][0],
                             com['type'].lower(),
-                            com['type'],
-                            com['name'][1])
-    reg = register_str.format(com['name'][1], 
+                            com['type'])
+    reg = register_str.format(com['name'][1],
                               com['name'][0],
                               com['type'].lower(),
                               com['type'])
@@ -448,8 +386,8 @@ The package for all Brick/Bricklet bindings and the IPConnection is
         api_str += ccm_str.format(reg, ccm)
         api_str += c_str.format(c, com['name'][1], com['type'].lower(), com['type'], com['name'][0])
 
-    ref = '.. _{0}_{1}_java_api:\n'.format(com['name'][1], 
-                                             com['type'].lower())
+    ref = '.. _{0}_{1}_php_api:\n'.format(com['name'][1],
+                                          com['type'].lower())
 
     api_desc = ''
     try:
@@ -457,13 +395,13 @@ The package for all Brick/Bricklet bindings and the IPConnection is
     except:
         pass
 
-    return api.format(ref, api_desc, api_str) 
-        
+    return api.format(ref, api_desc, api_str)
+
 def copy_examples_for_zip():
     examples = find_examples()
-    dest = os.path.join('/tmp/generator/jar/examples/', 
-                        com['type'], 
-                        com['name'][0])
+    dest = os.path.join('/tmp/generator/pear/examples/',
+                        com['type'].lower(),
+                        com['name'][1])
 
     if not os.path.exists(dest):
         os.makedirs(dest)
@@ -475,8 +413,8 @@ def make_files(com_new, directory):
     global com
     com = com_new
 
-    file_name = '{0}_{1}_Java'.format(com['name'][0], com['type'])
-    
+    file_name = '{0}_{1}_PHP'.format(com['name'][0], com['type'])
+
     directory += '/doc'
     if not os.path.exists(directory):
         os.makedirs(directory)
@@ -512,49 +450,86 @@ def generate(path):
     # Make temporary generator directory
     if os.path.exists('/tmp/generator'):
         shutil.rmtree('/tmp/generator/')
-    os.makedirs('/tmp/generator/jar/source/com/tinkerforge')
+    os.makedirs('/tmp/generator/pear/source/Tinkerforge')
     os.chdir('/tmp/generator')
 
     # Make bindings
     for config in configs:
         if config.endswith('_config.py'):
             module = __import__(config[:-3])
-            print(" * {0}".format(config[:-10]))            
+            print(" * {0}".format(config[:-10]))
             make_files(module.com, path)
 
     # Copy bindings and readme
-    for filename in glob.glob(path + '/bindings/*.java'):
-        shutil.copy(filename, '/tmp/generator/jar/source/com/tinkerforge')
+    package_files = ['<file name="Tinkerforge/IPConnection.php" role="php" />']
+    for filename in glob.glob(path + '/bindings/*.php'):
+        shutil.copy(filename, '/tmp/generator/pear/source/Tinkerforge')
+        package_files.append('<file name="Tinkerforge/{0}" role="php" />'.format(os.path.basename(filename)))
 
-    shutil.copy(path + '/Device.java', '/tmp/generator/jar/source/com/tinkerforge')
-    shutil.copy(path + '/IPConnection.java', '/tmp/generator/jar/source/com/tinkerforge')
-    shutil.copy(path + '/changelog.txt', '/tmp/generator/jar')
-    shutil.copy(path + '/Readme.txt', '/tmp/generator/jar')
+    shutil.copy(path + '/IPConnection.php', '/tmp/generator/pear/source/Tinkerforge')
+    shutil.copy(path + '/changelog.txt', '/tmp/generator/pear')
+    shutil.copy(path + '/readme.txt', '/tmp/generator/pear')
 
-    # Make Manifest
+    # Write package.xml
     version = get_version(path)
-    file('/tmp/generator/manifest.txt', 'wb').write('Bindings-Version: {0}.{1}.{2}\n'.format(*version))
+    date = datetime.datetime.now().strftime("%Y-%m-%d")
+    file('/tmp/generator/pear/source/package.xml', 'wb').write("""<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.9.0" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0">
+ <name>Tinkerforge</name>
+ <uri>http://download.tinkerforge.com/bindings/php/pear/Tinkerforge-1.0.0</uri>
+ <summary>PHP API Bindings for Tinkerforge Bricks and Bricklets</summary>
+ <description>no description</description>
+ <lead>
+  <name>Matthias Bolte</name>
+  <user>matthias</user>
+  <email>matthias@tinkerforge.com</email>
+  <active>yes</active>
+ </lead>
+ <date>{0}</date>
+ <version>
+  <release>{2}.{3}.{4}</release>
+  <api>{2}.{3}.{4}</api>
+ </version>
+ <stability>
+  <release>stable</release>
+  <api>stable</api>
+ </stability>
+ <license>Public Domain</license>
+ <notes>no notes</notes>
+ <contents>
+  <dir name="Tinkerforge">
+   {1}
+  </dir>
+ </contents>
+ <dependencies>
+  <required>
+   <php>
+    <min>5.3.0</min>
+   </php>
+   <pearinstaller>
+    <min>1.9.0</min>
+   </pearinstaller>
+  </required>
+ </dependencies>
+ <phprelease />
+</package>
+""".format(date, '\n    '.join(package_files), *version))
 
-    # Make jar
-    args = ['/usr/bin/javac /tmp/generator/jar/source/com/tinkerforge/*.java']
-    subprocess.call(args, shell=True)
+    # Make PEAR package
+    os.chdir('/tmp/generator/pear/source')
+    args = ['/usr/bin/pear',
+            'package',
+            'package.xml']
+    subprocess.call(args)
 
-    os.chdir('/tmp/generator/jar/source')
-    args = ['/usr/bin/jar ' +
-            'cfm ' +
-            '/tmp/generator/jar/Tinkerforge.jar ' +
-            '/tmp/generator/manifest.txt ' +
-            'com']
-    subprocess.call(args, shell=True)
-
-    # Remove class
-    for f in os.listdir('/tmp/generator/jar/source/com/tinkerforge/'):
-        if f.endswith('.class'):
-            os.remove('/tmp/generator/jar/source/com/tinkerforge/' + f)
+    # Remove build stuff
+    shutil.move('/tmp/generator/pear/source/Tinkerforge-{0}.{1}.{2}.tgz'.format(*version),
+                '/tmp/generator/pear/Tinkerforge.tgz')
+    os.remove('/tmp/generator/pear/source/package.xml')
 
     # Make zip
-    zipname = 'tinkerforge_java_bindings_{0}_{1}_{2}.zip'.format(*version)
-    os.chdir('/tmp/generator/jar')
+    zipname = 'tinkerforge_php_bindings_{0}_{1}_{2}.zip'.format(*version)
+    os.chdir('/tmp/generator/pear')
     args = ['/usr/bin/zip',
             '-r',
             zipname,
