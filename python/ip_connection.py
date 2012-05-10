@@ -18,6 +18,15 @@ import socket
 import types
 import sys
 
+# use normal tuples instead of namedtuples in python version below 2.6
+if sys.hexversion < 0x02060000:
+    def namedtuple(typename, field_names, verbose=False, rename=False):
+        def ntuple(*args):
+            return args
+
+        return ntuple
+else:
+    from collections import namedtuple
 
 def get_stack_id_from_data(data):
     return ord(data[0:0 + 1])
@@ -85,6 +94,8 @@ class DeviceConChecker(type):
 
 DeviceConCheckerMeta = DeviceConChecker('DeviceConCheckerMeta', (object, ), {})
 
+GetVersion = namedtuple('Version', ['name', 'firmware_version', 'binding_version'])
+
 class Device(DeviceConCheckerMeta):
     def __init__(self, uid):
         self.uid = base58decode(uid)
@@ -99,6 +110,9 @@ class Device(DeviceConCheckerMeta):
         self.answer = None
         self.answer_queue = Queue()
         self.sem_write = BoundedSemaphore(value=1)
+
+    def get_version(self):
+        return GetVersion(self.name, self.firmware_version, self.binding_version)
 
 class IPConnection:
     TYPE_GET_STACK_ID = 255
@@ -431,11 +445,3 @@ class IPConnection:
                              'Q')
 
         return base58encode(uid_int)
-
-# use normal tuples instead of namedtuples in python version below 2.6
-if sys.hexversion < 0x02060000:
-    def namedtuple(typename, field_names, verbose=False, rename=False):
-        def ntuple(*args):
-            return args
-
-        return ntuple

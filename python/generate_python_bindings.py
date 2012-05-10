@@ -3,6 +3,7 @@
 
 """
 Python Bindings Generator
+Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_python.py: Generator for Python bindings
@@ -54,8 +55,6 @@ from ip_connection import Device, IPConnection, Error
     return include.format(gen_text.format(date), lower_type, com['name'][1])
 
 def make_namedtuples():
-    version_tup = """GetVersion = namedtuple('Version', ['name', 'firmware_version', 'binding_version'])
-"""
     tup = """{0} = namedtuple('{1}', [{2}])
 """
 
@@ -79,7 +78,7 @@ def make_namedtuples():
                 params.append("'{0}'".format(element[0]))
 
         tups += tup.format(name, name_tup, ", ".join(params))
-    return tups + version_tup
+    return tups
        
 def make_class():
     return '\nclass {0}(Device):\n'.format(com['name'][0])
@@ -109,12 +108,6 @@ def make_init_method():
 
 """
     return dev_init.format(str(com['version']))
-
-def make_version_method():
-    return """
-    def get_version(self):
-        return GetVersion(self.name, self.firmware_version, self.binding_version)
-"""
 
 def make_callbacks_format():
     cbs = ''
@@ -250,7 +243,6 @@ def make_files(com_new, directory):
     py.write(make_type_definitions())
     py.write(make_init_method())
     py.write(make_callbacks_format())
-    py.write(make_version_method())
     py.write(make_methods())
     py.write(make_register_callback_method())
 

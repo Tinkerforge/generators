@@ -385,6 +385,13 @@ namespace Tinkerforge
 			this.uid = Base58.Decode(uid);
 		}
 
+		public void GetVersion(out string name, out byte[] firmwareVersion, out byte[] bindingVersion)
+		{
+			name = this.name;
+			firmwareVersion = this.firmwareVersion;
+			bindingVersion = this.bindingVersion;
+		}
+
         protected void sendOneWayMessage(byte[] data)
         {
             lock (writeLock)

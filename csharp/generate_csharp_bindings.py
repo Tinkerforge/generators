@@ -3,6 +3,7 @@
 
 """
 C# Bindings Generator
+Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_csharp_bindings.py: Generator for C# bindings
@@ -240,16 +241,6 @@ def make_callbacks():
 
     return cbs
 
-def make_version_method():
-    return """
-\t\tpublic void GetVersion(out string name, out byte[] firmwareVersion, out byte[] bindingVersion)
-\t\t{
-\t\t\tname = this.name;
-\t\t\tfirmwareVersion = this.firmwareVersion;
-\t\t\tbindingVersion = this.bindingVersion;
-\t\t}
-"""
-
 def make_methods():
     methods = ''
     method = """
@@ -381,7 +372,6 @@ def make_files(com_new, directory):
     csharp.write(make_constructor())
     csharp.write(make_methods())
     csharp.write(make_obsolete_methods())
-    csharp.write(make_version_method())
     csharp.write(make_callbacks())
     csharp.write(make_register_callback())
 
