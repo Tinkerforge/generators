@@ -437,6 +437,9 @@ def make_method_declarations():
 
     funcs = ''
     for packet in com['packets']:
+        if packet['type'] != 'method':
+            continue
+
         b = packet['name'][1]
         d = make_parameter_list(packet)
 
