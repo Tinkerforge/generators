@@ -31,6 +31,7 @@ import shutil
 import subprocess
 import glob
 import re
+import php_common
 
 com = None
 lang = 'en'
@@ -53,7 +54,7 @@ def fix_links(text):
     cls = com['type'] + com['name'][0]
     for packet in com['packets']:
         name_false = ':func:`{0}`'.format(packet['name'][0])
-        if packet['doc'][0] == 'c':
+        if packet['type'] == 'signal':
             name_upper = packet['name'][1].upper()
             name_right = ':php:member:`CALLBACK_{1} <{0}::CALLBACK_{1}>`'.format(cls, name_upper)
         else:
@@ -162,54 +163,12 @@ Examples
     copy_examples(copy_files)
     return ex
 
-def get_php_type(typ):
-    forms = {
-        'int8' : 'int',
-        'uint8' : 'int',
-        'int16' : 'int',
-        'uint16' : 'int',
-        'int32' : 'int',
-        'uint32' : 'int',
-        'int64' : 'int',
-        'uint64' : 'int',
-        'float' : 'float',
-        'bool' : 'bool',
-        'string' : 'string',
-        'char' : 'string'
-    }
-
-    if typ in forms:
-        return forms[typ]
-
-    return ''
-
-def get_num_return(elements): 
-    num = 0
-    for element in elements:
-        if element[3] == 'out':
-            num += 1
-
-    return num
-    
-def get_return_type(packet):
-    if get_num_return(packet['elements']) == 0:
-        return 'void'
-    if get_num_return(packet['elements']) > 1:
-        return 'array'
-    
-    for element in packet['elements']:
-        if element[3] == 'out':
-            if element[2] > 1:
-                return 'array'
-            else:
-                return get_php_type(element[1])
-
 def make_parameter_list(packet):
     param = []
     for element in packet['elements']:
         if element[3] == 'out' and packet['type'] == 'method':
             continue
-        php_type = get_php_type(element[1])
+        php_type = php_common.get_php_type(element[1])
         name = element[0]
         if element[2] > 1 and element[1] != 'string':
             php_type = 'array'
@@ -235,7 +194,7 @@ def make_methods(typ):
         if packet['type'] != 'method' or packet['doc'][0] != typ:
             continue
 
-        ret_type = get_return_type(packet)
+        ret_type = php_common.get_return_type(packet)
         name = packet['name'][0][0].lower() + packet['name'][0][1:]
         params = make_parameter_list(packet)
         desc = fix_links(shift_right(packet['doc'][1][lang], 1))

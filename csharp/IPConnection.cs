@@ -385,6 +385,11 @@ namespace Tinkerforge
 			this.uid = Base58.Decode(uid);
 		}
 
+		/// <summary>
+		///  Returns the name (including the hardware version), the firmware version
+		///  and the binding version of the device. The firmware and binding versions are
+		///  given in arrays of size 3 with the syntax [major, minor, revision].
+		/// </summary>
 		public void GetVersion(out string name, out byte[] firmwareVersion, out byte[] bindingVersion)
 		{
 			name = this.name;

@@ -62,7 +62,7 @@ def fix_links(text):
     cls = com['name'][0]
     for packet in com['packets']:
         name_false = ':func:`{0}`'.format(packet['name'][0])
-        if packet['doc'][0] == 'c':
+        if packet['type'] == 'signal':
             name_upper = packet['name'][1].upper()
             name_right = ':tcpip:func:`{0}.CALLBACK_{1}`'.format(cls, name_upper)
         else:
@@ -123,7 +123,7 @@ def make_response_desc(packet):
         desc += returns.format(element[0], t)
 
     if desc == '\n':
-        if packet['doc'][0] == 'c':
+        if packet['type'] == 'signal':
             desc += ' :emptyresponse: empty payload\n'
         else:
             desc += ' :noresponse: no response\n'

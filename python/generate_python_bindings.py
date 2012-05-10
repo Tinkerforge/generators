@@ -29,6 +29,7 @@ import sys
 import os
 
 com = None
+lang = 'en'
 
 gen_text = """# -*- coding: utf-8 -*-
 #############################################################
@@ -39,6 +40,22 @@ gen_text = """# -*- coding: utf-8 -*-
 # to the generator git on tinkerforge.com                   #
 #############################################################
 """
+
+def fix_links(text):
+    """link = '<see cref="Tinkerforge.{0}{1}.{2}">'
+
+    cls = com['name'][0]
+    for packet in com['packets']:
+        name_false = ':func:`{0}`'.format(packet['name'][0])
+        name = packet['name'][0]
+        name_right = link.format(com['type'], cls, name)
+
+        text = text.replace(name_false, name_right)"""
+
+    text = text.replace(":word:`parameter`", "parameter")
+    text = text.replace(":word:`parameters`", "parameters")
+
+    return text
 
 def make_import():
     include = """{0}
@@ -81,7 +98,13 @@ def make_namedtuples():
     return tups
        
 def make_class():
-    return '\nclass {0}(Device):\n'.format(com['name'][0])
+    return """
+class {0}(Device):
+    \"\"\"
+    {1}
+    \"\"\"
+
+""".format(com['name'][0], com['description'])
 
 def make_callback_definitions():
     cbs = ''
@@ -102,6 +125,10 @@ def make_type_definitions():
 def make_init_method():
     dev_init = """
     def __init__(self, uid):
+        \"\"\"
+        Creates an object with the unique device ID *uid*. This object can
+        then be added to the IP connection.
+        \"\"\"
         Device.__init__(self, uid)
 
         self.binding_version = {0}
@@ -170,14 +197,23 @@ def make_methods():
             
     m_tup = """
     def {0}(self{7}{4}):
+        \"\"\"
+        {9}
+        \"\"\"
         return {1}(*self.ipcon.write(self, {2}.TYPE_{3}, ({4}{8}), '{5}', '{6}'))
 """
     m_ret = """
     def {0}(self{6}{3}):
+        \"\"\"
+        {8}
+        \"\"\"
         return self.ipcon.write(self, {1}.TYPE_{2}, ({3}{7}), '{4}', '{5}')
 """
     m_nor = """
     def {0}(self{6}{3}):
+        \"\"\"
+        {8}
+        \"\"\"
         self.ipcon.write(self, {1}.TYPE_{2}, ({3}{7}), '{4}', '{5}')
 """
     methods = ''
@@ -191,6 +227,7 @@ def make_methods():
         ns = packet['name'][1]
         nh = ns.upper()
         par = make_parameter_list(packet)
+        doc = '\n        '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
         cp = ''
         ct = ''
         if par != '':
@@ -203,11 +240,11 @@ def make_methods():
 
         elements =  get_typ_elements(packet, 'out')
         if elements > 1:
-            methods += m_tup.format(ns, nb, cls, nh, par, in_f, out_f, cp, ct)
+            methods += m_tup.format(ns, nb, cls, nh, par, in_f, out_f, cp, ct, doc)
         elif elements == 1:
-            methods += m_ret.format(ns, cls, nh, par, in_f, out_f, cp, ct)
+            methods += m_ret.format(ns, cls, nh, par, in_f, out_f, cp, ct, doc)
         else:
-            methods += m_nor.format(ns, cls, nh, par, in_f, out_f, cp, ct)
+            methods += m_nor.format(ns, cls, nh, par, in_f, out_f, cp, ct, doc)
 
     return methods
 
@@ -222,6 +259,9 @@ def make_register_callback_method():
 
     return """
     def register_callback(self, cb, func):
+        \"\"\"
+        Registers a callback with ID cb to the function func.
+        \"\"\"
         self.callbacks[cb] = func
 """
 

@@ -28,8 +28,10 @@ import datetime
 import sys
 import os
 import csharp_common
+from xml.sax.saxutils import escape
 
 com = None
+lang = 'en'
 
 gen_text = """/*************************************************************
  * This file was automatically generated on {0}.      *
@@ -39,6 +41,64 @@ gen_text = """/*************************************************************
  * to the generator git on tinkerforge.com                   *
  *************************************************************/
 """
+
+def fix_links(text):
+    link = '<see cref="Tinkerforge.{0}{1}.{2}"/>'
+
+    # escape XML special chars
+    text = escape(text)
+
+    # handle notes and warnings
+    lines = text.split('\n')
+    replaced_lines = []
+    in_note = False
+    in_warning = False
+    in_table_head = False
+    in_table_body = False
+
+    for line in lines:
+        if line.strip() == '.. note::':
+            in_note = True
+            replaced_lines.append('<note>')
+        elif line.strip() == '.. warning::':
+            in_warning = True
+            replaced_lines.append('<note type="caution">')
+        elif len(line.strip()) == 0 and (in_note or in_warning):
+            if in_note:
+                in_note = False
+            if in_warning:
+                in_warning = False
+
+            replaced_lines.append('</note>')
+            replaced_lines.append('')
+        elif line.strip() == '.. csv-table::':
+            in_table_head = True
+            replaced_lines.append('<code>')
+        elif len(line.strip()) == 0 and in_table_head:
+            in_table_head = False
+            in_table_body = True
+        elif len(line.strip()) == 0 and in_table_body:
+            in_table_body = False
+
+            replaced_lines.append('</code>')
+            replaced_lines.append('')
+        else:
+            replaced_lines.append(line)
+
+    text = '\n'.join(replaced_lines)
+
+    cls = com['name'][0]
+    for packet in com['packets']:
+        name_false = ':func:`{0}`'.format(packet['name'][0])
+        name = packet['name'][0]
+        name_right = link.format(com['type'], cls, name)
+
+        text = text.replace(name_false, name_right)
+
+    text = text.replace(":word:`parameter`", "parameter")
+    text = text.replace(":word:`parameters`", "parameters")
+
+    return text
 
 def make_import():
     include = """{0}
@@ -51,15 +111,22 @@ namespace Tinkerforge
 
 def make_class():
     class_str = """
+\t/// <summary>
+\t///  {2}
+\t/// </summary>
 \tpublic class {0}{1} : Device 
 \t{{
 """
         
-    return class_str.format(com['type'], com['name'][0])
+    return class_str.format(com['type'], com['name'][0], com['description'])
 
 def make_delegates():
     cbs = '\n'
-    cb = """\t\tpublic delegate void {0}({1});
+    cb = """
+\t\t/// <summary>
+\t\t///  {2}
+\t\t/// </summary>
+\t\tpublic delegate void {0}({1});
 """
     for packet in com['packets']:
         if packet['type'] != 'signal':
@@ -67,7 +134,8 @@ def make_delegates():
 
         name = packet['name'][0]
         parameter = csharp_common.make_parameter_list(packet)
-        cbs += cb.format(name, parameter)
+        doc = '\n\t\t///  '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
+        cbs += cb.format(name, parameter, doc)
     return cbs
 
 def make_type_definitions():
@@ -81,6 +149,10 @@ def make_constructor():
     cbs = []
     cb = '\t\t\tmessageCallbacks[TYPE_{0}] = new MessageCallback(Callback{1});'
     con = """
+\t\t/// <summary>
+\t\t///  Creates an object with the unique device ID <c>uid</c>. This object can
+\t\t///  then be added to the IP connection.
+\t\t/// </summary>
 \t\tpublic {0}{1}(string uid) : base(uid) 
 \t\t{{
 \t\t\tthis.bindingVersion[0] = {3};
@@ -164,6 +236,9 @@ def make_register_callback():
 """
 
     cb = """
+\t\t/// <summary>
+\t\t///  Registers a callback function.
+\t\t/// </summary>
 \t\tpublic void RegisterCallback(System.Delegate d)
 \t\t{{
 {0}\t\t}}
@@ -244,6 +319,9 @@ def make_callbacks():
 def make_methods():
     methods = ''
     method = """
+\t\t/// <summary>
+\t\t///  {5}
+\t\t/// </summary>
 \t\t{0}
 \t\t{{
 \t\t\tbyte[] data_ = new byte[{1}];
@@ -267,6 +345,7 @@ def make_methods():
         ret_count = csharp_common.count_return_values(packet['elements'])
         size = str(get_data_size(packet['elements']))
         name_upper = packet['name'][1].upper()
+        doc = '\n\t\t///  '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
 
         write_convs = ''
         write_conv = '\t\t\tLEConverter.To({0}, {1}, data_);\n'
@@ -310,13 +389,17 @@ def make_methods():
                                  size,
                                  name_upper,
                                  write_convs,
-                                 method_tail)
+                                 method_tail,
+                                 doc)
 
     return methods
 
 def make_obsolete_methods():
     methods = ''
     method = """
+\t\t/// <summary>
+\t\t///  Obsolete. Use overloaded version instead that returns the result.
+\t\t/// </summary>
 \t\t[Obsolete()]
 \t\tpublic void {0}({1})
 \t\t{{
@@ -335,14 +418,15 @@ def make_obsolete_methods():
 
         name = packet['name'][0]
         sigParams = csharp_common.make_parameter_list(packet, True)
-        
         outParam = csharp_common.to_camel_case(filter(lambda e: e[3] == 'out', packet['elements'])[0][0])
         callParams = ", ".join(map(lambda e: csharp_common.to_camel_case(e[0]), filter(lambda e: e[3] == 'in', packet['elements'])))
+        doc = '\n\t\t///  '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
 
         methods += method.format(name,
                                  sigParams,
-								 outParam,
-                                 callParams)
+                                 outParam,
+                                 callParams,
+                                 doc)
 
     return methods
 

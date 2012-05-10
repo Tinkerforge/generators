@@ -29,6 +29,7 @@ import sys
 import os
 
 com = None
+lang = 'en'
 
 gen_text = """\
 /*************************************************************
@@ -39,6 +40,51 @@ gen_text = """\
  * to the generator git on tinkerforge.com                   *
  *************************************************************/
 """
+
+def fix_links(text):
+    link = '{{@link {0}_{1}}}'
+    link_c = '{{@link {0}_CALLBACK_{1}}}'
+
+    # handle tables
+    lines = text.split('\n')
+    replaced_lines = []
+    in_table_head = False
+    in_table_body = False
+
+    for line in lines:
+        if line.strip() == '.. csv-table::':
+            in_table_head = True
+            replaced_lines.append('\\verbatim')
+        elif len(line.strip()) == 0 and (in_table_head):
+            in_table_head = False
+            in_table_body = True
+        elif len(line.strip()) == 0 and (in_table_body):
+            in_table_body = False
+
+            replaced_lines.append('\\endverbatim')
+            replaced_lines.append('')
+        else:
+            replaced_lines.append(line)
+
+    text = '\n'.join(replaced_lines)
+
+    for packet in com['packets']:
+        name_false = ':func:`{0}`'.format(packet['name'][0])
+        if packet['type'] == 'signal':
+            name = packet['name'][1].upper()
+            name_right = link_c.format(com['name'][1].upper(), name)
+        else:
+            name = packet['name'][1]
+            name_right = link.format(com['name'][1], name)
+
+        text = text.replace(name_false, name_right)
+
+    text = text.replace(":word:`parameter`", "parameter")
+    text = text.replace(":word:`parameters`", "parameters")
+    text = text.replace('.. note::', '\\note')
+    text = text.replace('.. warning::', '\\warning')
+
+    return text
 
 def make_parameter_list(packet):
     param = ''
@@ -98,15 +144,26 @@ def make_type_defines():
     return defines
 
 def make_callback_defines():
-    define_temp = '#define {0}_CALLBACK_{1} {2}\n'
+    define_temp = """
+/**
+ * \ingroup {5}{4}
+ *
+ * {3}
+ */
+#define {0}_CALLBACK_{1} {2}
+"""
 
     defines = ''
     for i, packet in zip(range(len(com['packets'])), com['packets']):
         if packet['type'] != 'signal':
             continue
+        doc = '\n * '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
         defines += define_temp.format(com['name'][1].upper(), 
                                       packet['name'][1].upper(), 
-                                      i+1)
+                                      i+1,
+                                      doc,
+                                      com['name'][0],
+                                      com['type'])
 
     return defines
 
@@ -392,8 +449,16 @@ def make_include_h():
 
 #include "ip_connection.h"
 
-typedef Device {3};
+/**
+ * \defgroup {4}{3} {3} {4}
+ */
 
+/**
+ * \ingroup {4}{3}
+ *
+ * {5}
+ */
+typedef Device {3};
 """
 
     date = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -403,13 +468,17 @@ typedef Device {3};
     return include.format(gen_text.format(date), 
                           upper_type, 
                           upper_name, 
-                          com['name'][0])
+                          com['name'][0],
+                          com['type'],
+                          com['description'])
 
 def make_end_h():
     return "\n#endif\n"
 
 def make_typedefs():
-    typedef = 'typedef void (*{0}_func_t)({1});\n'
+    typedef = """
+typedef void (*{0}_func_t)({1});
+"""
 
     typedefs = '\n'
     for packet in com['packets']:
@@ -426,12 +495,37 @@ def make_typedefs():
     return typedefs
 
 def make_create_declaration():
-    create = '\nvoid {0}_create({1} *{0}, const char *uid);\n\n'
-    return create.format(com['name'][1], com['name'][0])
+    create = """
+/**
+ * \ingroup {2}{1}
+ *
+ * Creates an object with the unique device ID \c uid. This object can then be
+ * added to the IP connection.
+ */
+void {0}_create({1} *{0}, const char *uid);
+"""
+    return create.format(com['name'][1], com['name'][0], com['type'])
 
 def make_method_declarations():
-    func_version = """int {0}_get_version({1} *{0}, char ret_name[40], uint8_t ret_firmware_version[3], uint8_t ret_binding_version[3]);"""
-    func = 'int {0}_{1}({2} *{0}{3});\n'
+    func_version = """
+/**
+ * \ingroup {2}{1}
+ *
+ * Returns the name (including the hardware version), the firmware version
+ * and the binding version of the device. The firmware and binding versions are
+ * given in arrays of size 3 with the syntax [major, minor, revision].
+ */
+int {0}_get_version({1} *{0}, char ret_name[40], uint8_t ret_firmware_version[3], uint8_t ret_binding_version[3]);
+"""
+    func = """
+/**
+ * \ingroup {5}{2}
+ *
+ * {4}
+ */
+int {0}_{1}({2} *{0}{3});
+"""
+
     a = com['name'][1]
     c = com['name'][0]
 
@@ -442,10 +536,11 @@ def make_method_declarations():
 
         b = packet['name'][1]
         d = make_parameter_list(packet)
+        doc = '\n * '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
 
-        funcs += func.format(a, b, c, d)
+        funcs += func.format(a, b, c, d, doc, com['type'])
 
-    return funcs + func_version.format(a, c)
+    return funcs + func_version.format(a, c, com['type'])
 
 def make_set_callback_declarations():
     func = 'void {0}_set_callback_{1}({2} *{0}, {1}_func_t func);\n'
@@ -470,9 +565,14 @@ def make_register_callback_declaration():
         return '\n'
 
     func = """
+/**
+ * \ingroup {2}{1}
+ *
+ * Registers a callback with ID \c cb to the function \c func.
+ */
 void {0}_register_callback({1} *{0}, uint8_t cb, void *func);
 """
-    return func.format(com['name'][1], com['name'][0])
+    return func.format(com['name'][1], com['name'][0], com['type'])
 
 def make_callback_declarations():
     func = 'int {0}_callback_{1}({2} *{0}, const unsigned char *buffer);\n'

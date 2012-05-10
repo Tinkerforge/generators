@@ -112,6 +112,11 @@ class Device(DeviceConCheckerMeta):
         self.sem_write = BoundedSemaphore(value=1)
 
     def get_version(self):
+        """
+        Returns the name (including the hardware version), the firmware version
+        and the binding version of the device. The firmware and binding versions are
+        given in arrays of size 3 with the syntax [major, minor, revision].
+        """
         return GetVersion(self.name, self.firmware_version, self.binding_version)
 
 class IPConnection:

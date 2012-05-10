@@ -27,8 +27,10 @@ Boston, MA 02111-1307, USA.
 import datetime
 import sys
 import os
+import php_common
 
 com = None
+lang = 'en'
 
 gen_text = """/*************************************************************
  * This file was automatically generated on {0}.      *
@@ -38,6 +40,83 @@ gen_text = """/*************************************************************
  * to the generator git on tinkerforge.com                   *
  *************************************************************/
 """
+
+def fix_links(text):
+    link = '{0}{1}::{2}()'
+    link_c = '{0}{1}::CALLBACK_{2}'
+
+    # handle notes and warnings
+    lines = text.split('\n')
+    replaced_lines = []
+    in_note = False
+    in_warning = False
+    in_table_head = False
+    in_table_body = False
+
+    for line in lines:
+        if line.strip() == '.. note::':
+            in_note = True
+            replaced_lines.append('<note>')
+        elif line.strip() == '.. warning::':
+            in_warning = True
+            replaced_lines.append('<warning>')
+        elif len(line.strip()) == 0 and in_note:
+            in_note = False
+            replaced_lines.append('</note>')
+            replaced_lines.append('')
+        elif len(line.strip()) == 0 and in_warning:
+            in_warning = False
+            replaced_lines.append('</warning>')
+            replaced_lines.append('')
+        elif line.strip() == '.. csv-table::':
+            in_table_head = True
+            replaced_lines.append('<code>')
+        elif len(line.strip()) == 0 and in_table_head:
+            in_table_head = False
+            in_table_body = True
+        elif len(line.strip()) == 0 and in_table_body:
+            in_table_body = False
+
+            replaced_lines.append('</code>')
+            replaced_lines.append('')
+        else:
+            replaced_lines.append(line)
+
+    text = '\n'.join(replaced_lines)
+
+    cls = com['name'][0]
+    for packet in com['packets']:
+        name_false = ':func:`{0}`'.format(packet['name'][0])
+        if packet['type'] == 'signal':
+            name = packet['name'][1].upper()
+            name_right = link_c.format(com['type'], cls, name)
+        else:
+            name = packet['name'][0][0].lower() + packet['name'][0][1:]
+            name_right = link.format(com['type'], cls, name)
+
+        text = text.replace(name_false, name_right)
+
+    text = text.replace(":word:`parameter`", "parameter")
+    text = text.replace(":word:`parameters`", "parameters")
+    text = text.replace('.. note::', '\\note')
+    text = text.replace('.. warning::', '\\warning')
+
+    return text
+
+def make_parameter_doc(packet):
+    param = []
+    for element in packet['elements']:
+        if element[3] == 'out' or packet['type'] != 'method':
+            continue
+
+        php_type = php_common.get_php_type(element[1])
+        if element[2] > 1 and element[1] != 'string':
+            param.append('@param {0}[] ${1}'.format(php_type, element[0]))
+        else:
+            param.append('@param {0} ${1}'.format(php_type, element[0]))
+
+    param.append('\n@return ' + php_common.get_return_type(packet))
+    return '\n'.join(param)
 
 def make_import():
     include = """{0}
@@ -50,11 +129,14 @@ require_once(__DIR__ . '/IPConnection.php');
 
 def make_class():
     class_str = """
+/**
+ * {2}
+ */
 class {0}{1} extends Device
 {{
 """
 
-    return class_str.format(com['type'], com['name'][0])
+    return class_str.format(com['type'], com['name'][0], com['description'])
 
 def make_callback_wrapper_definitions():
     cbs = ''
@@ -73,16 +155,27 @@ def make_callback_wrapper_definitions():
 
 def make_callback_definitions():
     cbs = ''
-    cb = '    const CALLBACK_{0} = {1};\n'
+    cb = """
+    /**
+     * {2}
+     */
+    const CALLBACK_{0} = {1};
+"""
     for i, packet in zip(range(len(com['packets'])), com['packets']):
         if packet['type'] != 'signal':
             continue
-        cbs += cb.format(packet['name'][1].upper(), i+1)
+        doc = '\n     * '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
+        cbs += cb.format(packet['name'][1].upper(), i+1, doc)
     return cbs + '\n'
 
 def make_function_id_definitions():
     function_ids = ''
-    function_id = '    const FUNCTION_ID_{0} = {1};\n'
+    function_id = """
+    /**
+     * @internal
+     */
+    const FUNCTION_ID_{0} = {1};
+"""
     for i, packet in zip(range(len(com['packets'])), com['packets']):
         if packet['type'] != 'method':
             continue
@@ -100,6 +193,12 @@ def make_parameter_list(packet):
 
 def make_constructor():
     con = """
+    /**
+     * Creates an object with the unique device ID $uid. This object can
+     * then be added to the IP connection.
+     *
+     * @param string $uid
+     */
     public function __construct($uid)
     {{
         parent::__construct($uid);
@@ -186,6 +285,9 @@ def get_unpack_fix(element):
 def make_methods():
     methods = ''
     method_multi = """
+    /**
+     * {6}
+     */
     public function {0}({1})
     {{
         $result = array();
@@ -203,6 +305,9 @@ def make_methods():
     }}
 """
     method_single = """
+    /**
+     * {6}
+     */
     public function {0}({1})
     {{
         $payload = '';
@@ -297,22 +402,31 @@ def make_methods():
         if response_payload_size > 0:
             final_unpack = '        $payload = unpack(\'{0}\', $data);'.format('/'.join(unpack))
 
+        doc = '\n     * '.join(fix_links(packet['doc'][1][lang]).strip().split('\n') + [''] + make_parameter_doc(packet).split('\n'))
+
         if response_payload_elements > 1:
             methods += method_multi.format(name_lower,
                                            parameter,
                                            '\n'.join(pack),
                                            send,
                                            final_unpack,
-                                           '\n'.join(collect))
+                                           '\n'.join(collect),
+                                           doc)
         else:
             methods += method_single.format(name_lower,
                                             parameter,
                                             '\n'.join(pack),
                                             send,
                                             final_unpack,
-                                            '\n'.join(collect))
+                                            '\n'.join(collect),
+                                            doc)
 
     return """
+    /**
+     * @internal
+     * @param string $header
+     * @param string $data
+     */
     public function handleCallback($header, $data)
     {
         call_user_func(array($this, $this->deviceCallbacks[$header['functionID']]), $data);
@@ -329,12 +443,24 @@ def make_callback_wrappers():
         return ''
 
     wrappers = """
+    /**
+     * Registers a callback with ID $id to the callable $callback.
+     *
+     * @param int $id
+     * @param callable $callback
+     *
+     * @return void
+     */
     public function registerCallback($id, $callback)
     {
         $this->callbacks[$id] = $callback;
     }
 """
     wrapper = """
+    /**
+     * @internal
+     * @param string $data
+     */
     public function callback{0}($data)
     {{
         $result = array();
