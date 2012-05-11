@@ -62,18 +62,23 @@ namespace Tinkerforge
         {
 #if WINDOWS_PHONE
             IPAddress ipAddress = IPAddress.Parse(host);
-            endpoint = new IPEndPoint(ipAddress, port);
+            var endpoint = new IPEndPoint(ipAddress, port);
 
             SocketAsyncEventArgs args = new SocketAsyncEventArgs();
             args.RemoteEndPoint = endpoint;
 
-            throw new NotImplementedException();
-            /*TODO: implement correctly
-            args.Completed += new EventHandler<SocketAsyncEventArgs>(IOCompleted);
-            if(!socket.ConnectAsync(args))
+            AutoResetEvent connectedEvent = new AutoResetEvent(false);
+            args.Completed += new EventHandler<SocketAsyncEventArgs>((o, e) => { connectedEvent.Set(); });
+            bool connectPending = Socket.ConnectAsync(args);
+
+            if(connectPending)
             {
-                IOCompleted(args.ConnectSocket, args);
-            }*/
+                connectedEvent.WaitOne();
+            }
+            if(!connectPending || args.SocketError != SocketError.Success)
+            {
+                throw new IOException(string.Format("Could not connect: {0}", args.SocketError));
+            }
 #else
             Socket.Connect(host, port);
 #endif
@@ -969,6 +974,10 @@ namespace Tinkerforge
                     byte[] receiveBuffer = new byte[e.BytesTransferred];
                     Array.Copy(e.Buffer, receiveBuffer, e.BytesTransferred);
                     ReceiveQueue.Enqueue(receiveBuffer);
+                    if (!Socket.ReceiveAsync(e))
+                    {
+                        //TODO: error handling
+                    }
                     break;
                 case SocketAsyncOperation.Send:
                     WriteCompleteEvent.Set();
