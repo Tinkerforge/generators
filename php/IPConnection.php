@@ -138,6 +138,7 @@ abstract class Device
 
     public $callbacks = array();
     public $deviceCallbacks = array();
+    public $pendingCallbacks = array();
 
     public function __construct($uid)
     {
@@ -158,6 +159,19 @@ abstract class Device
                      'bindingVersion' => $this->bindingVersion);
     }
 
+    /**
+     * @internal
+     */
+    public function dispatchCallbacks()
+    {
+        $pendingCallbacks = $this->pendingCallbacks;
+        $this->pendingCallbacks = array();
+
+        foreach ($pendingCallbacks as $pendingCallback) {
+            $this->handleCallback($pendingCallback[0], $pendingCallback[1]);
+        }
+    }
+
     protected function sendRequestNoResponse($functionID, $payload)
     {
         $header = pack('CCv', $this->stackID, $functionID, 4 + strlen($payload));
@@ -174,7 +188,7 @@ abstract class Device
                                                  $expectedResponsePayloadLength)
     {
         if ($this->ipcon == NULL) {
-            throw new \Exception('No added to IPConnection');
+            throw new \Exception('Not added to IPConnection');
         }
 
         $header = pack('CCv', $this->stackID, $functionID, 4 + strlen($payload));
@@ -185,7 +199,7 @@ abstract class Device
         $this->receivedResponsePayload = NULL;
 
         $this->ipcon->send($request);
-        $this->ipcon->receive(IPConnection::TIMEOUT_RESPONSE, $this);
+        $this->ipcon->receive(IPConnection::TIMEOUT_RESPONSE, $this, FALSE);
 
         if ($this->receivedResponsePayload == NULL) {
             throw new TimeoutException('Did not receive response in time');
@@ -208,6 +222,7 @@ class IPConnection
     const TIMEOUT_RESPONSE = 2.5;
 
     const BROADCAST_ADDRESS = 0;
+
     const FUNCTION_ID_GET_STACK_ID = 255;
     const FUNCTION_ID_ENUMERATE = 254;
     const FUNCTION_ID_ENUMERATE_CALLBACK = 253;
@@ -270,7 +285,7 @@ class IPConnection
         $this->pendingAddDevice = $device;
 
         $this->send($request);
-        $this->receive(self::TIMEOUT_ADD_DEVICE, NULL);
+        $this->receive(self::TIMEOUT_ADD_DEVICE, NULL, FALSE);
 
         if ($this->pendingAddDevice != NULL) {
             $this->pendingAddDevice = NULL;
@@ -282,16 +297,26 @@ class IPConnection
 
     public function dispatchCallbacks($seconds)
     {
+        // Dispatch all pending callbacks
+        foreach ($this->devices as $device) {
+            $device->dispatchCallbacks();
+        }
+
         if ($seconds < 0) {
             while (TRUE) {
-                $this->receive(self::TIMEOUT_RESPONSE, NULL);
+                $this->receive(self::TIMEOUT_RESPONSE, NULL, TRUE);
+
+                // Dispatch all pending callbacks that were received by getters in the meantime
+                foreach ($this->devices as $device) {
+                    $device->dispatchCallbacks();
+                }
             }
         } else {
-            $this->receive($seconds, NULL);
+            $this->receive($seconds, NULL, TRUE);
         }
     }
 
-    public function receive($seconds, $device)
+    public function receive($seconds, $device, $directCallbackDispatch)
     {
         if ($seconds < 0) {
             $seconds = 0;
@@ -331,7 +356,7 @@ class IPConnection
                 $before = microtime(true);
 
                 while (strlen($data) > 0) {
-                    $handled = $this->handleResponse($data);
+                    $handled = $this->handleResponse($data, $directCallbackDispatch);
                     $data = substr($data, $handled);
                 }
 
@@ -372,7 +397,7 @@ class IPConnection
         }
     }
 
-    private function handleResponse($data)
+    private function handleResponse($data, $directCallbackDispatch)
     {
         $header = unpack('CstackID/CfunctionID/vlength', $data);
         $data = substr($data, 4);
@@ -403,7 +428,11 @@ class IPConnection
         }
 
         if (array_key_exists($header['functionID'], $device->callbacks)) {
-            $device->handleCallback($header, $data);
+            if ($directCallbackDispatch) {
+                $device->handleCallback($header, $data);
+            } else {
+                array_push($device->pendingCallbacks, array($header, $data));
+            }
 
             return $header['length'];
         }
