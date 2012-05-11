@@ -26,15 +26,11 @@ namespace Tinkerforge
 		const byte TYPE_ADC_CALIBRATE = 251;
 		const byte TYPE_GET_ADC_CALIBRATION = 250;
 
-#if WINDOWS_PHONE
-		IPEndPoint endpoint;
-		Socket socket;
-#else
-		NetworkStream socketStream;
-		TcpClient socket;
+        Socket Socket;
+        NetworkStream SocketStream;
 		Thread recvThread;
 		Thread callbackThread;
-#endif
+
 		bool RecvLoopFlag = true;
 		Device addDev = null;
 		Device[] devices = new Device[256];
@@ -51,78 +47,38 @@ namespace Tinkerforge
 
 		public IPConnection(string host, int port) 
 		{
-#if WINDOWS_PHONE
-            IPAddress ipAddress = IPAddress.Parse(host);
-            endpoint = new IPEndPoint(ipAddress, port);
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            ConnectSocket(host, port);
 
-            SocketAsyncEventArgs args = new SocketAsyncEventArgs();
-            args.UserToken = socket;
-            args.RemoteEndPoint = endpoint;
-            args.Completed += new EventHandler<SocketAsyncEventArgs>(IOCompleted);
-
-
-            if(!socket.ConnectAsync(args))
-            {
-                IOCompleted(args.ConnectSocket, args);
-            }
-#else
-			socket = new TcpClient();
-			socket.Connect(host, port);
-
-			socketStream = socket.GetStream();
+            SocketStream = new NetworkStream(Socket);
 
 			callbackThread = new Thread(this.CallbackLoop);
 			callbackThread.Start();
 			recvThread = new Thread(this.RecvLoop);
 			recvThread.Start();
-#endif
 		}
 
-#if WINDOWS_PHONE
-        private void IOCompleted(object sender, SocketAsyncEventArgs e)
+        private void ConnectSocket(string host, int port)
         {
-            if(e.SocketError != SocketError.Success)
-            {
-                return;
-            }
+#if WINDOWS_PHONE
+            IPAddress ipAddress = IPAddress.Parse(host);
+            endpoint = new IPEndPoint(ipAddress, port);
 
-            switch(e.LastOperation)
-            {
-                case SocketAsyncOperation.Connect:
-					byte[] receiveBuffer = new byte[8192];
-					e.SetBuffer(receiveBuffer, 0, receiveBuffer.Length);
-
-					if(!socket.ReceiveAsync(e))
-					{
-						IOCompleted(e.ConnectSocket, e);
-					}
-
-
-					break;
-                case SocketAsyncOperation.Receive:
-					HandleMessage(e.Buffer);
-
-					if(!socket.ReceiveAsync(e))
-					{
-						IOCompleted(e.ConnectSocket, e);
-					}
-
-					break;
-            }
-        }
-		
-		private void WriteAsync(byte[] data)
-		{
             SocketAsyncEventArgs args = new SocketAsyncEventArgs();
-            args.SetBuffer(data, 0, data.Length);
-            args.UserToken = socket;
             args.RemoteEndPoint = endpoint;
-            args.Completed += new EventHandler<SocketAsyncEventArgs>(IOCompleted);
 
-			socket.SendAsync(args);
-		}
+            throw new NotImplementedException();
+            /*TODO: implement correctly
+            args.Completed += new EventHandler<SocketAsyncEventArgs>(IOCompleted);
+            if(!socket.ConnectAsync(args))
+            {
+                IOCompleted(args.ConnectSocket, args);
+            }*/
 #else
+            Socket.Connect(host, port);
+#endif
+        }
+
 		private void RecvLoop() 
 		{
 			try
@@ -130,7 +86,7 @@ namespace Tinkerforge
 				while(RecvLoopFlag) 
 				{
 					byte[] data = new byte[8192];
-					int length = socketStream.Read(data, 0, data.Length);
+					int length = SocketStream.Read(data, 0, data.Length);
 
 					string str = "";
 					for(int i = 0; i < length; i++) {
@@ -151,9 +107,7 @@ namespace Tinkerforge
 				RecvLoopFlag = false;
 				return;
 			}
-
 		}
-#endif
 
 		private void CallbackLoop()
 		{
@@ -287,11 +241,7 @@ namespace Tinkerforge
 
         public void Write(byte[] data)
         {
-#if WINDOWS_PHONE
-			WriteAsync(data);
-#else
-            socketStream.Write(data, 0, data.Length);
-#endif
+            SocketStream.Write(data, 0, data.Length);
         }
 
 		public void Enumerate(EnumerateCallback enumerateCallback) 
@@ -301,11 +251,7 @@ namespace Tinkerforge
 			LEConverter.To(BROADCAST_ADDRESS, 0, data);
 			LEConverter.To(TYPE_ENUMERATE, 1, data);
 			LEConverter.To((ushort)4, 2, data);
-#if WINDOWS_PHONE
-			WriteAsync(data);
-#else
-            socketStream.Write(data, 0, data.Length);
-#endif
+            Write(data);
 		}
 
 		public void AddDevice(Device device) {
@@ -316,12 +262,8 @@ namespace Tinkerforge
 			LEConverter.To(device.uid, 4, data);
 
 			addDev = device;
-			
-#if WINDOWS_PHONE
-			WriteAsync(data);
-#else
-            socketStream.Write(data, 0, data.Length);
-#endif
+
+            Write(data);
 
 			byte[] tmp;
 			if(!device.answerQueue.TryDequeue(out tmp, TIMEOUT_ADD_DEVICE))
@@ -334,27 +276,21 @@ namespace Tinkerforge
 
 		public void JoinThread()
 		{
-#if WINDOWS_PHONE
-#else
 			recvThread.Join();
-#endif
 		}
 
 		public void Destroy() 
 		{
-#if WINDOWS_PHONE
-#else
 			RecvLoopFlag = false;
 			try 
 			{
-				socketStream.Close();
+				SocketStream.Close();
 			}
 			catch(Exception)
 			{
 			}
-			socket.Close();
+			Socket.Close();
 			callbackQueue.Close();
-#endif
 		}
     }
 
@@ -975,7 +911,7 @@ namespace Tinkerforge
 #if WINDOWS_PHONE
     class NetworkStream : Stream
     {
-        public Socket Socket { get; private set; }
+        private Socket Socket;
 
         private BlockingQueue ReceiveQueue = new BlockingQueue();
         private byte[] ImmediateReadBuffer;
@@ -1020,6 +956,8 @@ namespace Tinkerforge
 
         private void OnIOCompletion(object sender, SocketAsyncEventArgs e)
         {
+            //TODO: test for socket-error
+
             switch (e.LastOperation)
             {
                 case SocketAsyncOperation.Receive:
