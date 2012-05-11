@@ -4,3 +4,6 @@
 1.0.3: Add ChibiChannel and ChibiFrequency Methods
 1.0.4: Add sync rect support to Stepper Brick bindings
 1.0.5: Ensure precise timeout duration on Linux and enable struct packing for the Borland C compiler
+1.0.6: Silently ignore messages from devices with unknown stack ID
+       Don't generate register_callback function for devices without callbacks
+       Add inline code documentation

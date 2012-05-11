@@ -3,6 +3,7 @@
 
 """
 Python Bindings Generator
+Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_python.py: Generator for Python bindings
@@ -28,6 +29,7 @@ import sys
 import os
 
 com = None
+lang = 'en'
 
 gen_text = """# -*- coding: utf-8 -*-
 #############################################################
@@ -38,6 +40,22 @@ gen_text = """# -*- coding: utf-8 -*-
 # to the generator git on tinkerforge.com                   #
 #############################################################
 """
+
+def fix_links(text):
+    """link = '<see cref="Tinkerforge.{0}{1}.{2}">'
+
+    cls = com['name'][0]
+    for packet in com['packets']:
+        name_false = ':func:`{0}`'.format(packet['name'][0])
+        name = packet['name'][0]
+        name_right = link.format(com['type'], cls, name)
+
+        text = text.replace(name_false, name_right)"""
+
+    text = text.replace(":word:`parameter`", "parameter")
+    text = text.replace(":word:`parameters`", "parameters")
+
+    return text
 
 def make_import():
     include = """{0}
@@ -54,8 +72,6 @@ from ip_connection import Device, IPConnection, Error
     return include.format(gen_text.format(date), lower_type, com['name'][1])
 
 def make_namedtuples():
-    version_tup = """GetVersion = namedtuple('Version', ['name', 'firmware_version', 'binding_version'])
-"""
     tup = """{0} = namedtuple('{1}', [{2}])
 """
 
@@ -79,10 +95,16 @@ def make_namedtuples():
                 params.append("'{0}'".format(element[0]))
 
         tups += tup.format(name, name_tup, ", ".join(params))
-    return tups + version_tup
+    return tups
        
 def make_class():
-    return '\nclass {0}(Device):\n'.format(com['name'][0])
+    return """
+class {0}(Device):
+    \"\"\"
+    {1}
+    \"\"\"
+
+""".format(com['name'][0], com['description'])
 
 def make_callback_definitions():
     cbs = ''
@@ -103,18 +125,16 @@ def make_type_definitions():
 def make_init_method():
     dev_init = """
     def __init__(self, uid):
+        \"\"\"
+        Creates an object with the unique device ID *uid*. This object can
+        then be added to the IP connection.
+        \"\"\"
         Device.__init__(self, uid)
 
         self.binding_version = {0}
 
 """
     return dev_init.format(str(com['version']))
-
-def make_version_method():
-    return """
-    def get_version(self):
-        return GetVersion(self.name, self.firmware_version, self.binding_version)
-"""
 
 def make_callbacks_format():
     cbs = ''
@@ -177,14 +197,23 @@ def make_methods():
             
     m_tup = """
     def {0}(self{7}{4}):
+        \"\"\"
+        {9}
+        \"\"\"
         return {1}(*self.ipcon.write(self, {2}.TYPE_{3}, ({4}{8}), '{5}', '{6}'))
 """
     m_ret = """
     def {0}(self{6}{3}):
+        \"\"\"
+        {8}
+        \"\"\"
         return self.ipcon.write(self, {1}.TYPE_{2}, ({3}{7}), '{4}', '{5}')
 """
     m_nor = """
     def {0}(self{6}{3}):
+        \"\"\"
+        {8}
+        \"\"\"
         self.ipcon.write(self, {1}.TYPE_{2}, ({3}{7}), '{4}', '{5}')
 """
     methods = ''
@@ -198,6 +227,7 @@ def make_methods():
         ns = packet['name'][1]
         nh = ns.upper()
         par = make_parameter_list(packet)
+        doc = '\n        '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
         cp = ''
         ct = ''
         if par != '':
@@ -210,13 +240,30 @@ def make_methods():
 
         elements =  get_typ_elements(packet, 'out')
         if elements > 1:
-            methods += m_tup.format(ns, nb, cls, nh, par, in_f, out_f, cp, ct)
+            methods += m_tup.format(ns, nb, cls, nh, par, in_f, out_f, cp, ct, doc)
         elif elements == 1:
-            methods += m_ret.format(ns, cls, nh, par, in_f, out_f, cp, ct)
+            methods += m_ret.format(ns, cls, nh, par, in_f, out_f, cp, ct, doc)
         else:
-            methods += m_nor.format(ns, cls, nh, par, in_f, out_f, cp, ct)
+            methods += m_nor.format(ns, cls, nh, par, in_f, out_f, cp, ct, doc)
 
     return methods
+
+def make_register_callback_method():
+    signal_count = 0
+    for packet in com['packets']:
+        if packet['type'] == 'signal':
+            signal_count += 1
+
+    if signal_count == 0:
+        return ''
+
+    return """
+    def register_callback(self, cb, func):
+        \"\"\"
+        Registers a callback with ID cb to the function func.
+        \"\"\"
+        self.callbacks[cb] = func
+"""
 
 def make_files(com_new, directory):
     global com
@@ -236,8 +283,8 @@ def make_files(com_new, directory):
     py.write(make_type_definitions())
     py.write(make_init_method())
     py.write(make_callbacks_format())
-    py.write(make_version_method())
     py.write(make_methods())
+    py.write(make_register_callback_method())
 
 def generate(path):
     path_list = path.split('/')

@@ -56,7 +56,7 @@ def fix_links(text):
     cls = com['name'][0]
     for packet in com['packets']:
         name_false = ':func:`{0}`'.format(packet['name'][0])
-        if packet['doc'][0] == 'c':
+        if packet['type'] == 'signal':
             name = packet['name'][0]
             name_right = cb_link.format(com['type'], cls, name)
         else:

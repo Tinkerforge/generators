@@ -3,6 +3,7 @@
 
 """
 Java Bindings Generator
+Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_java_bindings.py: Generator for Java bindings
@@ -28,6 +29,7 @@ import sys
 import os
 
 com = None
+lang = 'en'
 
 gen_text = """/*************************************************************
  * This file was automatically generated on {0}.      *
@@ -37,6 +39,56 @@ gen_text = """/*************************************************************
  * to the generator git on tinkerforge.com                   *
  *************************************************************/
 """
+
+def fix_links(text):
+    link = '{{@link com.tinkerforge.{0}{1}.{2}}}'
+    link_c = '{{@link com.tinkerforge.{0}{1}.{2}Listener}}'
+
+    # handle tables
+    lines = text.split('\n')
+    replaced_lines = []
+    in_table_head = False
+    in_table_body = False
+
+    for line in lines:
+        if line.strip() == '.. csv-table::':
+            in_table_head = True
+            replaced_lines.append('\\verbatim')
+        elif len(line.strip()) == 0 and in_table_head:
+            in_table_head = False
+            in_table_body = True
+        elif len(line.strip()) == 0 and in_table_body:
+            in_table_body = False
+
+            replaced_lines.append('\\endverbatim')
+            replaced_lines.append('')
+        else:
+            replaced_lines.append(line)
+
+    text = '\n'.join(replaced_lines)
+
+    cls = com['name'][0]
+    for packet in com['packets']:
+        name_false = ':func:`{0}`'.format(packet['name'][0])
+        if packet['type'] == 'signal':
+            name = packet['name'][0]
+            name_right = link_c.format(com['type'], cls, name)
+        else:
+            name = packet['name'][0][0].lower() + packet['name'][0][1:]
+            name_right = link.format(com['type'], cls, name)
+
+        text = text.replace(name_false, name_right)
+
+    text = text.replace(":word:`parameter`", "parameter")
+    text = text.replace(":word:`parameters`", "parameters")
+    text = text.replace('Callback ', 'Listener ')
+    text = text.replace(' Callback', ' Listener')
+    text = text.replace('callback ', 'listener ')
+    text = text.replace(' callback', ' listener')
+    text = text.replace('.. note::', '\\note')
+    text = text.replace('.. warning::', '\\warning')
+
+    return text
 
 def make_import():
     include = """{0}
@@ -51,23 +103,16 @@ import java.util.concurrent.TimeUnit;
     return include.format(gen_text.format(date))
 
 def make_class():
-    class_str = '\npublic class {0}{1} extends Device {{\n'
-        
-    return class_str.format(com['type'], com['name'][0])
-
-def make_return_objects():
-    obj_version = """
-	public class Version {
-		public String name = null;
-		public short[] firmwareVersion = new short[3];
-		public short[] bindingVersion = new short[3];
-
-		public String toString() {
-			 return "[" + "name = " + name + ", " + "firmwareVersion = " + firmwareVersion + ", " + "bindingVersion = " + bindingVersion + "]";
-		}
-	}
+    class_str = """
+/**
+ * {2}
+ */
+public class {0}{1} extends Device {{
 """
 
+    return class_str.format(com['type'], com['name'][0], com['description'])
+
+def make_return_objects():
     objs = ''
     obj = """
 \tpublic class {0} {{
@@ -108,11 +153,14 @@ def make_return_objects():
                            '\n'.join(params),
                            ' ", " + '.join(tostr))
         
-    return objs + obj_version
+    return objs
 
 def make_listener_definitions():
     cbs = ''
     cb = """
+\t/**
+\t * {3}
+\t */
 \tpublic interface {0}Listener {{
 \t\tpublic void {1}({2});
 \t}}
@@ -124,7 +172,8 @@ def make_listener_definitions():
         name = packet['name'][0]
         name_lower = name[0].lower() + name[1:]
         parameter = make_parameter_list(packet)
-        cbs += cb.format(name, name_lower, parameter)
+        doc = '\n\t * '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
+        cbs += cb.format(name, name_lower, parameter, doc)
     return cbs
 
 def make_callback_listener_definitions():
@@ -170,7 +219,18 @@ def make_callback_listener_definitions():
     return cbs + cbs_end
 
 def make_add_listener():
+    signal_count = 0
+    for packet in com['packets']:
+        if packet['type'] == 'signal':
+            signal_count += 1
+
+    if signal_count == 0:
+        return '}'
+
     listeners = """
+\t/**
+\t * Registers a listener object.
+\t */
 \tpublic void addListener(Object o) {{
 \t\t{0}
 \t}}
@@ -213,6 +273,10 @@ def make_parameter_list(packet):
 
 def make_constructor():
     con = """
+\t/**
+\t * Creates an object with the unique device ID \c uid. This object can
+\t * then be added to the IP connection.
+\t */
 \tpublic {0}{1}(String uid) {{
 \t\tsuper(uid);
 
@@ -323,23 +387,11 @@ def make_format_list(packet, io):
     return " ".join(forms)
 
 def make_methods():
-    method_version = """
-	public Version getVersion() {
-		Version version = new Version();
-		version.name = name;
-		version.firmwareVersion[0] = firmwareVersion[0];
-		version.firmwareVersion[1] = firmwareVersion[1];
-		version.firmwareVersion[2] = firmwareVersion[2];
-		version.bindingVersion[0] = bindingVersion[0];
-		version.bindingVersion[1] = bindingVersion[1];
-		version.bindingVersion[2] = bindingVersion[2];
-
-		return version;
-	}
-"""
-
     methods = ''
     method = """
+\t/**
+\t * {9}
+\t */
 \tpublic {0} {1}({2}) {3} {{
 \t\tByteBuffer bb = ByteBuffer.allocate({4});
 \t\tbb.order(ByteOrder.LITTLE_ENDIAN);
@@ -389,7 +441,7 @@ def make_methods():
         parameter = make_parameter_list(packet)
         size = str(get_bb_size(packet['elements']))
         name_upper = packet['name'][1].upper()
-
+        doc = '\n\t * '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
         bbputs = ''
         bbput = '\t\tbb.put{0}(({1}){2});'
         for element in packet['elements']:
@@ -439,9 +491,10 @@ def make_methods():
                                  name_upper,
                                  bbputs,
                                  has_ret,
-                                 answer)
+                                 answer,
+                                 doc)
 
-    return methods + method_version
+    return methods
 
 def make_bbgets(packet, with_obj = False):
     bbgets = ''

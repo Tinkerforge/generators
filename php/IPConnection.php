@@ -158,11 +158,6 @@ abstract class Device
                      'bindingVersion' => $this->bindingVersion);
     }
 
-    public function registerCallback($id, $callback)
-    {
-        $this->callbacks[$id] = $callback;
-    }
-
     protected function sendRequestNoResponse($functionID, $payload)
     {
         $header = pack('CCv', $this->stackID, $functionID, 4 + strlen($payload));

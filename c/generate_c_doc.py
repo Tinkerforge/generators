@@ -60,7 +60,7 @@ def shift_right(text, n):
 def fix_links(text):
     for packet in com['packets']:
         name_false = ':func:`{0}`'.format(packet['name'][0])
-        if packet['doc'][0] == 'c':
+        if packet['type'] == 'signal':
             name_upper = packet['name'][1].upper()
             pre_upper = com['name'][1].upper()
             name_right = ':c:data:`{0}_CALLBACK_{1}`'.format(pre_upper,

@@ -5,3 +5,7 @@
 1.0.4: Add support for IMU Brick, Analog In Bricklet and Analog Out Bricklet
 1.0.5: Remove Python 3.2 bug (no decode function for str in 3.2)
 1.0.6: Add sync rect support to Stepper Brick bindings
+1.0.7: Add version information to tinkerforge.egg
+       Silently ignore messages from devices with unknown stack ID
+       Don't generate register_callback method for devices without callbacks
+       Add inline code documentation
