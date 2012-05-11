@@ -961,7 +961,10 @@ namespace Tinkerforge
 
         private void OnIOCompletion(object sender, SocketAsyncEventArgs e)
         {
-            //TODO: test for socket-error
+            if (e.SocketError != SocketError.Success)
+            {
+                //TODO: error handling
+            }
 
             switch (e.LastOperation)
             {
