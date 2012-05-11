@@ -12,6 +12,7 @@ using System.Threading;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using System.IO;
 
 namespace Tinkerforge
 {
@@ -971,4 +972,138 @@ namespace Tinkerforge
 			}
 		}
 	}
+#if WINDOWS_PHONE
+    class NetworkStream : Stream
+    {
+        public Socket Socket { get; private set; }
+
+        private BlockingQueue ReceiveQueue = new BlockingQueue();
+        private byte[] ImmediateReadBuffer;
+        private int ImmediateReadOffset;
+
+        private object readLock = new object();
+        private object writeLock = new object();
+        private AutoResetEvent WriteCompleteEvent = new AutoResetEvent(false);
+
+        public override bool CanRead
+        {
+            get { return true; }
+        }
+
+        public override bool CanSeek
+        {
+            get { return false; }
+        }
+
+        public override bool CanWrite
+        {
+            get { return true; }
+        }
+
+        public override void Flush()
+        {
+            //stream is always flushed
+        }
+
+        public NetworkStream(Socket socket)
+        {
+            Socket = socket;
+            SocketAsyncEventArgs args = new SocketAsyncEventArgs();
+            byte[] buffer = new byte[8192];
+            args.SetBuffer(buffer, 0, buffer.Length);
+            args.Completed += OnIOCompletion;
+            if (!Socket.ReceiveAsync(args))
+            {
+                throw new IOException(string.Format("Could not initialize NetworkStream: {0}", args.SocketError));
+            }
+        }
+
+        private void OnIOCompletion(object sender, SocketAsyncEventArgs e)
+        {
+            switch (e.LastOperation)
+            {
+                case SocketAsyncOperation.Receive:
+                    if (e.BytesTransferred == 0)
+                    {
+                        //TODO: error handling
+                        break;
+                    }
+                    byte[] receiveBuffer = new byte[e.BytesTransferred];
+                    Array.Copy(e.Buffer, receiveBuffer, e.BytesTransferred);
+                    ReceiveQueue.Enqueue(receiveBuffer);
+                    break;
+                case SocketAsyncOperation.Send:
+                    WriteCompleteEvent.Set();
+                    break;
+                default:
+                    break; //TODO: error handling
+            }
+        }
+
+        public override int Read(byte[] buffer, int offset, int count)
+        {
+            int readLength;
+            lock (readLock)
+            {
+                if (ImmediateReadBuffer == null)
+                {
+                    ReceiveQueue.TryDequeue(out ImmediateReadBuffer);
+                }
+
+                readLength = Math.Min(count, ImmediateReadBuffer.Length - ImmediateReadOffset);
+                Array.Copy(ImmediateReadBuffer, ImmediateReadOffset, buffer, offset, readLength);
+
+                ImmediateReadOffset += readLength;
+                if (ImmediateReadOffset == ImmediateReadBuffer.Length)
+                {
+                    ImmediateReadBuffer = null;
+                    ImmediateReadOffset = 0;
+                }
+            }
+            return readLength;
+        }
+
+        public override void Write(byte[] buffer, int offset, int count)
+        {
+            lock (writeLock)
+            {
+                SocketAsyncEventArgs args = new SocketAsyncEventArgs();
+                args.SetBuffer(buffer, offset, count);
+                args.Completed += OnIOCompletion;
+                if (!Socket.SendAsync(args))
+                {
+                    throw new IOException(string.Format("Could not write on NetworkStream: {0}", args.SocketError));
+                }
+                WriteCompleteEvent.WaitOne();
+            }
+        }
+
+        public override long Seek(long offset, SeekOrigin origin)
+        {
+            throw new NotSupportedException();
+        }
+
+        public override void SetLength(long value)
+        {
+            throw new NotSupportedException();
+        }
+
+        public override long Position
+        {
+            get
+            {
+                throw new NotSupportedException();
+            }
+            set
+            {
+                throw new NotSupportedException();
+            }
+        }
+
+        public override long Length
+        {
+            get { throw new NotSupportedException(); }
+        }
+    }
+#endif
 }
