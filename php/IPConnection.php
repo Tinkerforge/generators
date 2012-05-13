@@ -133,11 +133,11 @@ abstract class Device
     public $ipcon = NULL;
 
     public $expectedResponseFunctionID = 0;
-    public $expectedResponsePacketLength = 0;
+    public $expectedResponseLength = 0;
     public $receivedResponsePayload = NULL;
 
-    public $callbacks = array();
-    public $deviceCallbacks = array();
+    public $registeredCallbacks = array();
+    public $callbackWrappers = array();
     public $pendingCallbacks = array();
 
     public function __construct($uid)
@@ -178,7 +178,7 @@ abstract class Device
         $request = $header . $payload;
 
         $this->expectedResponseFunctionID = 0;
-        $this->expectedResponsePacketLength = 0;
+        $this->expectedResponseLength = 0;
         $this->receivedResponsePayload = NULL;
 
         $this->ipcon->send($request);
@@ -195,7 +195,7 @@ abstract class Device
         $request = $header . $payload;
 
         $this->expectedResponseFunctionID = $functionID;
-        $this->expectedResponsePacketLength = 4 + $expectedResponsePayloadLength;
+        $this->expectedResponseLength = 4 + $expectedResponsePayloadLength;
         $this->receivedResponsePayload = NULL;
 
         $this->ipcon->send($request);
@@ -208,7 +208,7 @@ abstract class Device
         $payload = $this->receivedResponsePayload;
 
         $this->expectedResponseFunctionID = 0;
-        $this->expectedResponsePacketLength = 0;
+        $this->expectedResponseLength = 0;
         $this->receivedResponsePayload = NULL;
 
         return $payload;
@@ -367,7 +367,7 @@ class IPConnection
                 }
 
                 if (($isAddingDevice && $this->pendingAddDevice == NULL) ||
-                    ($device != NULL && $device->expectedResponsePacketLength > 0 &&
+                    ($device != NULL && $device->expectedResponseLength > 0 &&
                      $device->receivedResponsePayload != NULL)) {
                     break;
                 }
@@ -416,7 +416,7 @@ class IPConnection
         $device = $this->devices[$header['stackID']];
 
         if ($device->expectedResponseFunctionID == $header['functionID']) {
-            if ($device->expectedResponsePacketLength != $header['length']) {
+            if ($device->expectedResponseLength != $header['length']) {
                 error_log('Malformed response, discarded: ' .
                           $header['stackID'] . ' ' . $header['functionID']);
                 return $header['length'];
@@ -427,7 +427,7 @@ class IPConnection
             return $header['length'];
         }
 
-        if (array_key_exists($header['functionID'], $device->callbacks)) {
+        if (array_key_exists($header['functionID'], $device->registeredCallbacks)) {
             if ($directCallbackDispatch) {
                 $device->handleCallback($header, $data);
             } else {

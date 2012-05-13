@@ -141,7 +141,7 @@ class {0}{1} extends Device
 def make_callback_wrapper_definitions():
     cbs = ''
     cb = """
-        $this->deviceCallbacks[self::CALLBACK_{0}] = 'callback{1}';"""
+        $this->callbackWrappers[self::CALLBACK_{0}] = 'callback{1}';"""
     cbs_end = '\n    }\n'
     for i, packet in zip(range(len(com['packets'])), com['packets']):
         if packet['type'] != 'callback':
@@ -429,7 +429,7 @@ def make_methods():
      */
     public function handleCallback($header, $data)
     {
-        call_user_func(array($this, $this->deviceCallbacks[$header['functionID']]), $data);
+        call_user_func(array($this, $this->callbackWrappers[$header['functionID']]), $data);
     }
 """ + methods
 
@@ -453,7 +453,7 @@ def make_callback_wrappers():
      */
     public function registerCallback($id, $callback)
     {
-        $this->callbacks[$id] = $callback;
+        $this->registeredCallbacks[$id] = $callback;
     }
 """
     wrapper = """
@@ -468,7 +468,7 @@ def make_callback_wrappers():
 
 {2}
 
-        call_user_func_array($this->callbacks[self::CALLBACK_{3}], $result);
+        call_user_func_array($this->registeredCallbacks[self::CALLBACK_{3}], $result);
     }}
 """
 
