@@ -71,9 +71,8 @@ class Error(Exception):
 def decorator_ipcon_check(f):
     def func(self, *args, **kwargs):
         if self.ipcon is None:
-            msg = 'Device ' + \
-                  base58encode(self.uid) + \
-                  ' not yet added to IPConnection'
+            msg = 'Device ' + base58encode(self.uid) + ' not yet added to IPConnection'
+            raise Error(Error.NOT_ADDED, msg)
         return f(self, *args, **kwargs)
 
     return func
