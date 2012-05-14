@@ -12,6 +12,7 @@ using System.Threading;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using System.IO;
 
 namespace Tinkerforge
 {
@@ -25,15 +26,11 @@ namespace Tinkerforge
 		const byte TYPE_ADC_CALIBRATE = 251;
 		const byte TYPE_GET_ADC_CALIBRATION = 250;
 
-#if WINDOWS_PHONE
-		IPEndPoint endpoint;
-		Socket socket;
-#else
-		NetworkStream socketStream;
-		TcpClient socket;
+        Socket Socket;
+        NetworkStream SocketStream;
 		Thread recvThread;
 		Thread callbackThread;
-#endif
+
 		bool RecvLoopFlag = true;
 		Device addDev = null;
 		Device[] devices = new Device[256];
@@ -50,78 +47,43 @@ namespace Tinkerforge
 
 		public IPConnection(string host, int port) 
 		{
-#if WINDOWS_PHONE
-            IPAddress ipAddress = IPAddress.Parse(host);
-            endpoint = new IPEndPoint(ipAddress, port);
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            ConnectSocket(host, port);
 
-            SocketAsyncEventArgs args = new SocketAsyncEventArgs();
-            args.UserToken = socket;
-            args.RemoteEndPoint = endpoint;
-            args.Completed += new EventHandler<SocketAsyncEventArgs>(IOCompleted);
-
-
-            if(!socket.ConnectAsync(args))
-            {
-                IOCompleted(args.ConnectSocket, args);
-            }
-#else
-			socket = new TcpClient();
-			socket.Connect(host, port);
-
-			socketStream = socket.GetStream();
+            SocketStream = new NetworkStream(Socket);
 
 			callbackThread = new Thread(this.CallbackLoop);
 			callbackThread.Start();
 			recvThread = new Thread(this.RecvLoop);
 			recvThread.Start();
-#endif
 		}
 
-#if WINDOWS_PHONE
-        private void IOCompleted(object sender, SocketAsyncEventArgs e)
+        private void ConnectSocket(string host, int port)
         {
-            if(e.SocketError != SocketError.Success)
-            {
-                return;
-            }
+#if WINDOWS_PHONE
+            IPAddress ipAddress = IPAddress.Parse(host);
+            var endpoint = new IPEndPoint(ipAddress, port);
 
-            switch(e.LastOperation)
-            {
-                case SocketAsyncOperation.Connect:
-					byte[] receiveBuffer = new byte[8192];
-					e.SetBuffer(receiveBuffer, 0, receiveBuffer.Length);
-
-					if(!socket.ReceiveAsync(e))
-					{
-						IOCompleted(e.ConnectSocket, e);
-					}
-
-
-					break;
-                case SocketAsyncOperation.Receive:
-					HandleMessage(e.Buffer);
-
-					if(!socket.ReceiveAsync(e))
-					{
-						IOCompleted(e.ConnectSocket, e);
-					}
-
-					break;
-            }
-        }
-		
-		private void WriteAsync(byte[] data)
-		{
             SocketAsyncEventArgs args = new SocketAsyncEventArgs();
-            args.SetBuffer(data, 0, data.Length);
-            args.UserToken = socket;
             args.RemoteEndPoint = endpoint;
-            args.Completed += new EventHandler<SocketAsyncEventArgs>(IOCompleted);
 
-			socket.SendAsync(args);
-		}
+            AutoResetEvent connectedEvent = new AutoResetEvent(false);
+            args.Completed += new EventHandler<SocketAsyncEventArgs>((o, e) => { connectedEvent.Set(); });
+            bool connectPending = Socket.ConnectAsync(args);
+
+            if(connectPending)
+            {
+                connectedEvent.WaitOne();
+            }
+            if(!connectPending || args.SocketError != SocketError.Success)
+            {
+                throw new IOException(string.Format("Could not connect: {0}", args.SocketError));
+            }
 #else
+            Socket.Connect(host, port);
+#endif
+        }
+
 		private void RecvLoop() 
 		{
 			try
@@ -129,7 +91,7 @@ namespace Tinkerforge
 				while(RecvLoopFlag) 
 				{
 					byte[] data = new byte[8192];
-					int length = socketStream.Read(data, 0, data.Length);
+					int length = SocketStream.Read(data, 0, data.Length);
 
 					string str = "";
 					for(int i = 0; i < length; i++) {
@@ -150,9 +112,7 @@ namespace Tinkerforge
 				RecvLoopFlag = false;
 				return;
 			}
-
 		}
-#endif
 
 		private void CallbackLoop()
 		{
@@ -286,11 +246,7 @@ namespace Tinkerforge
 
         public void Write(byte[] data)
         {
-#if WINDOWS_PHONE
-			WriteAsync(data);
-#else
-            socketStream.Write(data, 0, data.Length);
-#endif
+            SocketStream.Write(data, 0, data.Length);
         }
 
 		public void Enumerate(EnumerateCallback enumerateCallback) 
@@ -300,11 +256,7 @@ namespace Tinkerforge
 			LEConverter.To(BROADCAST_ADDRESS, 0, data);
 			LEConverter.To(TYPE_ENUMERATE, 1, data);
 			LEConverter.To((ushort)4, 2, data);
-#if WINDOWS_PHONE
-			WriteAsync(data);
-#else
-            socketStream.Write(data, 0, data.Length);
-#endif
+            Write(data);
 		}
 
 		public void AddDevice(Device device) {
@@ -315,12 +267,8 @@ namespace Tinkerforge
 			LEConverter.To(device.uid, 4, data);
 
 			addDev = device;
-			
-#if WINDOWS_PHONE
-			WriteAsync(data);
-#else
-            socketStream.Write(data, 0, data.Length);
-#endif
+
+            Write(data);
 
 			byte[] tmp;
 			if(!device.answerQueue.TryDequeue(out tmp, TIMEOUT_ADD_DEVICE))
@@ -333,27 +281,21 @@ namespace Tinkerforge
 
 		public void JoinThread()
 		{
-#if WINDOWS_PHONE
-#else
 			recvThread.Join();
-#endif
 		}
 
 		public void Destroy() 
 		{
-#if WINDOWS_PHONE
-#else
 			RecvLoopFlag = false;
 			try 
 			{
-				socketStream.Close();
+				SocketStream.Close();
 			}
 			catch(Exception)
 			{
 			}
-			socket.Close();
+			Socket.Close();
 			callbackQueue.Close();
-#endif
 		}
     }
 
@@ -971,4 +913,147 @@ namespace Tinkerforge
 			}
 		}
 	}
+#if WINDOWS_PHONE
+    class NetworkStream : Stream
+    {
+        private Socket Socket;
+
+        private BlockingQueue ReceiveQueue = new BlockingQueue();
+        private byte[] ImmediateReadBuffer;
+        private int ImmediateReadOffset;
+
+        private object readLock = new object();
+        private object writeLock = new object();
+        private AutoResetEvent WriteCompleteEvent = new AutoResetEvent(false);
+
+        public override bool CanRead
+        {
+            get { return true; }
+        }
+
+        public override bool CanSeek
+        {
+            get { return false; }
+        }
+
+        public override bool CanWrite
+        {
+            get { return true; }
+        }
+
+        public override void Flush()
+        {
+            //stream is always flushed
+        }
+
+        public NetworkStream(Socket socket)
+        {
+            Socket = socket;
+            SocketAsyncEventArgs args = new SocketAsyncEventArgs();
+            byte[] buffer = new byte[8192];
+            args.SetBuffer(buffer, 0, buffer.Length);
+            args.Completed += OnIOCompletion;
+            if (!Socket.ReceiveAsync(args))
+            {
+                throw new IOException(string.Format("Could not initialize NetworkStream: {0}", args.SocketError));
+            }
+        }
+
+        private void OnIOCompletion(object sender, SocketAsyncEventArgs e)
+        {
+            if (e.SocketError != SocketError.Success)
+            {
+                //TODO: error handling
+            }
+
+            switch (e.LastOperation)
+            {
+                case SocketAsyncOperation.Receive:
+                    if (e.BytesTransferred == 0)
+                    {
+                        //TODO: error handling
+                        break;
+                    }
+                    byte[] receiveBuffer = new byte[e.BytesTransferred];
+                    Array.Copy(e.Buffer, receiveBuffer, e.BytesTransferred);
+                    ReceiveQueue.Enqueue(receiveBuffer);
+                    if (!Socket.ReceiveAsync(e))
+                    {
+                        //TODO: error handling
+                    }
+                    break;
+                case SocketAsyncOperation.Send:
+                    WriteCompleteEvent.Set();
+                    break;
+                default:
+                    break; //TODO: error handling
+            }
+        }
+
+        public override int Read(byte[] buffer, int offset, int count)
+        {
+            int readLength;
+            lock (readLock)
+            {
+                if (ImmediateReadBuffer == null)
+                {
+                    ReceiveQueue.TryDequeue(out ImmediateReadBuffer);
+                }
+
+                readLength = Math.Min(count, ImmediateReadBuffer.Length - ImmediateReadOffset);
+                Array.Copy(ImmediateReadBuffer, ImmediateReadOffset, buffer, offset, readLength);
+
+                ImmediateReadOffset += readLength;
+                if (ImmediateReadOffset == ImmediateReadBuffer.Length)
+                {
+                    ImmediateReadBuffer = null;
+                    ImmediateReadOffset = 0;
+                }
+            }
+            return readLength;
+        }
+
+        public override void Write(byte[] buffer, int offset, int count)
+        {
+            lock (writeLock)
+            {
+                SocketAsyncEventArgs args = new SocketAsyncEventArgs();
+                args.SetBuffer(buffer, offset, count);
+                args.Completed += OnIOCompletion;
+                if (!Socket.SendAsync(args))
+                {
+                    throw new IOException(string.Format("Could not write on NetworkStream: {0}", args.SocketError));
+                }
+                WriteCompleteEvent.WaitOne();
+            }
+        }
+
+        public override long Seek(long offset, SeekOrigin origin)
+        {
+            throw new NotSupportedException();
+        }
+
+        public override void SetLength(long value)
+        {
+            throw new NotSupportedException();
+        }
+
+        public override long Position
+        {
+            get
+            {
+                throw new NotSupportedException();
+            }
+            set
+            {
+                throw new NotSupportedException();
+            }
+        }
+
+        public override long Length
+        {
+            get { throw new NotSupportedException(); }
+        }
+    }
+#endif
 }
