@@ -201,7 +201,7 @@ namespace Tinkerforge
 			}
 
 			// Message seems to be OK, but can't be handled, most likely
-			// a signal without registered callback
+			// a callback without registered function
 			return length;
 		}
 
@@ -820,7 +820,7 @@ namespace Tinkerforge
 
 	// There is no BlockingQueue in c# version <= 2.0, we make our own
 	// to be backward compatible
-	public class BlockingQueue
+	internal class BlockingQueue
 	{
 		private bool closing;
 		private readonly Queue<byte[]> queue = new Queue<byte[]>();

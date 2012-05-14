@@ -29,17 +29,11 @@ import sys
 import os
 import php_common
 
+sys.path.append(os.path.split(os.getcwd())[0])
+import common
+
 com = None
 lang = 'en'
-
-gen_text = """/*************************************************************
- * This file was automatically generated on {0}.      *
- *                                                           *
- * If you have a bugfix for this file and want to commit it, *
- * please fix the bug in the generator. You can find a link  *
- * to the generator git on tinkerforge.com                   *
- *************************************************************/
-"""
 
 def fix_links(text):
     link = '{0}{1}::{2}()'
@@ -87,7 +81,7 @@ def fix_links(text):
     cls = com['name'][0]
     for packet in com['packets']:
         name_false = ':func:`{0}`'.format(packet['name'][0])
-        if packet['type'] == 'signal':
+        if packet['type'] == 'callback':
             name = packet['name'][1].upper()
             name_right = link_c.format(com['type'], cls, name)
         else:
@@ -106,7 +100,7 @@ def fix_links(text):
 def make_parameter_doc(packet):
     param = []
     for element in packet['elements']:
-        if element[3] == 'out' or packet['type'] != 'method':
+        if element[3] == 'out' or packet['type'] != 'function':
             continue
 
         php_type = php_common.get_php_type(element[1])
@@ -125,7 +119,7 @@ namespace Tinkerforge;
 require_once(__DIR__ . '/IPConnection.php');
 """
     date = datetime.datetime.now().strftime("%Y-%m-%d")
-    return include.format(gen_text.format(date))
+    return include.format(common.gen_text_star.format(date))
 
 def make_class():
     class_str = """
@@ -141,10 +135,10 @@ class {0}{1} extends Device
 def make_callback_wrapper_definitions():
     cbs = ''
     cb = """
-        $this->deviceCallbacks[self::CALLBACK_{0}] = 'callback{1}';"""
+        $this->callbackWrappers[self::CALLBACK_{0}] = 'callback{1}';"""
     cbs_end = '\n    }\n'
     for i, packet in zip(range(len(com['packets'])), com['packets']):
-        if packet['type'] != 'signal':
+        if packet['type'] != 'callback':
             continue
 
         typ = packet['name'][1].upper()
@@ -153,7 +147,7 @@ def make_callback_wrapper_definitions():
         cbs += cb.format(typ, name)
     return cbs + cbs_end
 
-def make_callback_definitions():
+def make_callback_id_definitions():
     cbs = ''
     cb = """
     /**
@@ -162,7 +156,7 @@ def make_callback_definitions():
     const CALLBACK_{0} = {1};
 """
     for i, packet in zip(range(len(com['packets'])), com['packets']):
-        if packet['type'] != 'signal':
+        if packet['type'] != 'callback':
             continue
         doc = '\n     * '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
         cbs += cb.format(packet['name'][1].upper(), i+1, doc)
@@ -174,10 +168,10 @@ def make_function_id_definitions():
     /**
      * @internal
      */
-    const FUNCTION_ID_{0} = {1};
+    const FUNCTION_{0} = {1};
 """
     for i, packet in zip(range(len(com['packets'])), com['packets']):
-        if packet['type'] != 'method':
+        if packet['type'] != 'function':
             continue
         function_ids += function_id.format(packet['name'][1].upper(), i+1)
     return function_ids
@@ -185,7 +179,7 @@ def make_function_id_definitions():
 def make_parameter_list(packet):
     param = []
     for element in packet['elements']:
-        if element[3] == 'out' and packet['type'] == 'method':
+        if element[3] == 'out' and packet['type'] == 'function':
             continue
         name = element[0]
         param.append('$' + name)
@@ -322,7 +316,7 @@ def make_methods():
 """
 
     for packet in com['packets']:
-        if packet['type'] != 'method':
+        if packet['type'] != 'function':
             continue
 
         name_lower = packet['name'][0][0].lower() + packet['name'][0][1:]
@@ -393,9 +387,9 @@ def make_methods():
                     collect.append('        return {1}$payload[\'{0}\']{2};'.format(element[0], unpack_fix[0], unpack_fix[1]))
 
         if response_payload_size > 0:
-            send = '        $data = $this->sendRequestExpectResponse(self::FUNCTION_ID_{0}, $payload, {1});\n'.format(packet['name'][1].upper(), response_payload_size)
+            send = '        $data = $this->sendRequestExpectResponse(self::FUNCTION_{0}, $payload, {1});\n'.format(packet['name'][1].upper(), response_payload_size)
         else:
-            send = '        $this->sendRequestNoResponse(self::FUNCTION_ID_{0}, $payload);\n'.format(packet['name'][1].upper())
+            send = '        $this->sendRequestNoResponse(self::FUNCTION_{0}, $payload);\n'.format(packet['name'][1].upper())
 
         final_unpack = ''
 
@@ -429,17 +423,12 @@ def make_methods():
      */
     public function handleCallback($header, $data)
     {
-        call_user_func(array($this, $this->deviceCallbacks[$header['functionID']]), $data);
+        call_user_func(array($this, $this->callbackWrappers[$header['functionID']]), $data);
     }
 """ + methods
 
 def make_callback_wrappers():
-    signal_count = 0
-    for packet in com['packets']:
-        if packet['type'] == 'signal':
-            signal_count += 1
-
-    if signal_count == 0:
+    if common.get_callback_count(com) == 0:
         return ''
 
     wrappers = """
@@ -453,7 +442,7 @@ def make_callback_wrappers():
      */
     public function registerCallback($id, $callback)
     {
-        $this->callbacks[$id] = $callback;
+        $this->registeredCallbacks[$id] = $callback;
     }
 """
     wrapper = """
@@ -468,12 +457,12 @@ def make_callback_wrappers():
 
 {2}
 
-        call_user_func_array($this->callbacks[self::CALLBACK_{3}], $result);
+        call_user_func_array($this->registeredCallbacks[self::CALLBACK_{3}], $result);
     }}
 """
 
     for packet in com['packets']:
-        if packet['type'] != 'signal':
+        if packet['type'] != 'callback':
             continue
 
         name = packet['name'][0]
@@ -539,7 +528,7 @@ def make_files(com_new, directory):
     php.write("<?php\n\n")
     php.write(make_import())
     php.write(make_class())
-    php.write(make_callback_definitions())
+    php.write(make_callback_id_definitions())
     php.write(make_function_id_definitions())
     php.write(make_constructor())
     php.write(make_callback_wrapper_definitions())

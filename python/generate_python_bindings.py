@@ -28,37 +28,21 @@ import datetime
 import sys
 import os
 
+sys.path.append(os.path.split(os.getcwd())[0])
+import common
+
 com = None
 lang = 'en'
 
-gen_text = """# -*- coding: utf-8 -*-
-#############################################################
-# This file was automatically generated on {0}.      #
-#                                                           #
-# If you have a bugfix for this file and want to commit it, #
-# please fix the bug in the generator. You can find a link  #
-# to the generator git on tinkerforge.com                   #
-#############################################################
-"""
-
 def fix_links(text):
-    """link = '<see cref="Tinkerforge.{0}{1}.{2}">'
-
-    cls = com['name'][0]
-    for packet in com['packets']:
-        name_false = ':func:`{0}`'.format(packet['name'][0])
-        name = packet['name'][0]
-        name_right = link.format(com['type'], cls, name)
-
-        text = text.replace(name_false, name_right)"""
-
     text = text.replace(":word:`parameter`", "parameter")
     text = text.replace(":word:`parameters`", "parameters")
 
     return text
 
 def make_import():
-    include = """{0}
+    include = """# -*- coding: utf-8 -*-
+{0}
 try:
     from collections import namedtuple
 except ImportError:
@@ -69,7 +53,8 @@ from ip_connection import Device, IPConnection, Error
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     lower_type = com['type'].lower()
 
-    return include.format(gen_text.format(date), lower_type, com['name'][1])
+    return include.format(common.gen_text_hash.format(date),
+                          lower_type, com['name'][1])
 
 def make_namedtuples():
     tup = """{0} = namedtuple('{1}', [{2}])
@@ -82,7 +67,7 @@ def make_namedtuples():
             if element[3] == 'out':
                 elements_out += 1
             
-        if elements_out < 2 or packet['type'] != 'method':
+        if elements_out < 2 or packet['type'] != 'function':
             continue
 
         name = packet['name'][0]
@@ -106,21 +91,23 @@ class {0}(Device):
 
 """.format(com['name'][0], com['description'])
 
-def make_callback_definitions():
+def make_callback_id_definitions():
     cbs = ''
     cb = '    CALLBACK_{0} = {1}\n'
     for i, packet in zip(range(len(com['packets'])), com['packets']):
-        if packet['type'] != 'signal':
+        if packet['type'] != 'callback':
             continue
         cbs += cb.format(packet['name'][1].upper(), i+1)
     return cbs
 
-def make_type_definitions():
-    types = '\n'
-    type = '    TYPE_{0} = {1}\n'
+def make_function_id_definitions():
+    function_ids = '\n'
+    function_id = '    FUNCTION_{0} = {1}\n'
     for i, packet in zip(range(len(com['packets'])), com['packets']):
-        types += type.format(packet['name'][1].upper(), i+1)
-    return types
+        if packet['type'] != 'function':
+            continue
+        function_ids += function_id.format(packet['name'][1].upper(), i+1)
+    return function_ids
 
 def make_init_method():
     dev_init = """
@@ -140,7 +127,7 @@ def make_callbacks_format():
     cbs = ''
     cb = "        self.callbacks_format[{0}.CALLBACK_{1}] = '{2}'\n"
     for i, packet in zip(range(len(com['packets'])), com['packets']):
-        if packet['type'] != 'signal':
+        if packet['type'] != 'callback':
             continue
         form = make_format_list(packet, 'out')
         cbs += cb.format(com['name'][0], packet['name'][1].upper(), form)
@@ -200,27 +187,27 @@ def make_methods():
         \"\"\"
         {9}
         \"\"\"
-        return {1}(*self.ipcon.write(self, {2}.TYPE_{3}, ({4}{8}), '{5}', '{6}'))
+        return {1}(*self.ipcon.write(self, {2}.FUNCTION_{3}, ({4}{8}), '{5}', '{6}'))
 """
     m_ret = """
     def {0}(self{6}{3}):
         \"\"\"
         {8}
         \"\"\"
-        return self.ipcon.write(self, {1}.TYPE_{2}, ({3}{7}), '{4}', '{5}')
+        return self.ipcon.write(self, {1}.FUNCTION_{2}, ({3}{7}), '{4}', '{5}')
 """
     m_nor = """
     def {0}(self{6}{3}):
         \"\"\"
         {8}
         \"\"\"
-        self.ipcon.write(self, {1}.TYPE_{2}, ({3}{7}), '{4}', '{5}')
+        self.ipcon.write(self, {1}.FUNCTION_{2}, ({3}{7}), '{4}', '{5}')
 """
     methods = ''
 
     cls = com['name'][0]
     for packet in com['packets']:
-        if packet['type'] != 'method':
+        if packet['type'] != 'function':
             continue
 
         nb = packet['name'][0]
@@ -249,12 +236,7 @@ def make_methods():
     return methods
 
 def make_register_callback_method():
-    signal_count = 0
-    for packet in com['packets']:
-        if packet['type'] == 'signal':
-            signal_count += 1
-
-    if signal_count == 0:
+    if common.get_callback_count(com) == 0:
         return ''
 
     return """
@@ -279,8 +261,8 @@ def make_files(com_new, directory):
     py.write(make_import())
     py.write(make_namedtuples())
     py.write(make_class())
-    py.write(make_callback_definitions())
-    py.write(make_type_definitions())
+    py.write(make_callback_id_definitions())
+    py.write(make_function_id_definitions())
     py.write(make_init_method())
     py.write(make_callbacks_format())
     py.write(make_methods())

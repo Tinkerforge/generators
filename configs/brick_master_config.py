@@ -13,7 +13,7 @@ com = {
 }
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetStackVoltage', 'get_stack_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')], 
 'doc': ['bm', {
@@ -30,7 +30,7 @@ Step-Down or Step-Up Power Supply.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetStackCurrent', 'get_stack_current'), 
 'elements': [('current', 'uint16', 1, 'out')], 
 'doc': ['bm', {
@@ -47,7 +47,7 @@ Step-Down or Step-Up Power Supply.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetExtensionType', 'set_extension_type'), 
 'elements': [('extension', 'uint8', 1, 'in'),
              ('exttype', 'uint32', 1, 'in')], 
@@ -80,7 +80,7 @@ have to be set on every startup.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetExtensionType', 'get_extension_type'), 
 'elements': [('extension', 'uint8', 1, 'in'),
              ('exttype', 'uint32', 1, 'out')], 
@@ -97,7 +97,7 @@ Returns the extension type for a given extension as set by
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('IsChibiPresent', 'is_chibi_present'), 
 'elements': [('present', 'bool', 1, 'out')], 
 'doc': ['am', {
@@ -112,7 +112,7 @@ Returns true if a Chibi Extension is available to be used by the Master.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetChibiAddress', 'set_chibi_address'), 
 'elements': [('address', 'uint8', 1, 'in')], 
 'doc': ['am', {
@@ -131,7 +131,7 @@ have to be set on every startup.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetChibiAddress', 'get_chibi_address'), 
 'elements': [('address', 'uint8', 1, 'out')], 
 'doc': ['am', {
@@ -146,7 +146,7 @@ Returns the address as set by :func:`SetChibiAddress`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetChibiMasterAddress', 'set_chibi_master_address'), 
 'elements': [('address', 'uint8', 1, 'in')], 
 'doc': ['am', {
@@ -166,7 +166,7 @@ have to be set on every startup.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetChibiMasterAddress', 'get_chibi_master_address'), 
 'elements': [('address', 'uint8', 1, 'out')], 
 'doc': ['am', {
@@ -181,7 +181,7 @@ Returns the address as set by :func:`SetChibiMasterAddress`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetChibiSlaveAddress', 'set_chibi_slave_address'), 
 'elements': [('num', 'uint8', 1, 'in'),
              ('address', 'uint8', 1, 'in')], 
@@ -205,7 +205,7 @@ have to be set on every startup.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetChibiSlaveAddress', 'get_chibi_slave_address'), 
 'elements': [('num', 'uint8', 1, 'in'),
              ('address', 'uint8', 1, 'out')], 
@@ -222,7 +222,7 @@ Returns the slave address for a given num as set by
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetChibiSignalStrength', 'get_chibi_signal_strength'), 
 'elements': [('signal_strength', 'uint8', 1, 'out')], 
 'doc': ['am', {
@@ -238,7 +238,7 @@ packet is received.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetChibiErrorLog', 'get_chibi_error_log'), 
 'elements': [('underrun', 'uint16', 1, 'out'),
              ('crc_error', 'uint16', 1, 'out'),
@@ -259,7 +259,7 @@ interferences.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetChibiFrequency', 'set_chibi_frequency'), 
 'elements': [('frequency', 'uint8', 1, 'in')], 
 'doc': ['am', {
@@ -287,7 +287,7 @@ have to be set on every startup.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetChibiFrequency', 'get_chibi_frequency'), 
 'elements': [('frequency', 'uint8', 1, 'out')], 
 'doc': ['am', {
@@ -302,7 +302,7 @@ Returns the frequency value as set by :func:`SetChibiFrequency`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetChibiChannel', 'set_chibi_channel'), 
 'elements': [('channel', 'uint8', 1, 'in')], 
 'doc': ['am', {
@@ -331,7 +331,7 @@ have to be set on every startup.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetChibiChannel', 'get_chibi_channel'), 
 'elements': [('channel', 'uint8', 1, 'out')], 
 'doc': ['am', {

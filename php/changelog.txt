@@ -2,3 +2,4 @@
 1.0.1: Silently ignore messages from devices with unknown stack ID
        Don't generate registerCallback method for devices without callbacks
        Add inline code documentation
+1.0.2: Fix possible TimeoutException when calling getters in callbacks

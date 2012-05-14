@@ -13,7 +13,7 @@ com = {
 }
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetState', 'set_state'), 
 'elements': [('relay1', 'bool', 1, 'in'),
              ('relay2', 'bool', 1, 'in')],
@@ -35,7 +35,7 @@ The default value is (false, false).
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetState', 'get_state'), 
 'elements': [('relay1', 'bool', 1, 'out'),
              ('relay2', 'bool', 1, 'out')],

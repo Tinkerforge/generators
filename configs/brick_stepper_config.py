@@ -14,7 +14,7 @@ com = {
 
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetMaxVelocity', 'set_max_velocity'), 
 'elements': [('velocity', 'uint16', 1, 'in')],
 'doc': ['bm', {
@@ -33,7 +33,7 @@ either :func:`SetTargetPosition`, :func:`SetSteps`, :func:`DriveForward` or
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetMaxVelocity', 'get_max_velocity'), 
 'elements': [('velocity', 'uint16', 1, 'out')],
 'doc': ['bm', {
@@ -48,7 +48,7 @@ Returns the velocity as set by :func:`SetMaxVelocity`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetCurrentVelocity', 'get_current_velocity'), 
 'elements': [('velocity', 'uint16', 1, 'out')],
 'doc': ['bm', {
@@ -63,7 +63,7 @@ Returns the *current* velocity of the stepper motor in steps per second.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetSpeedRamping', 'set_speed_ramping'), 
 'elements': [('acceleration', 'uint16', 1, 'in'),
              ('deacceleration', 'uint16', 1, 'in')],
@@ -90,7 +90,7 @@ The default value is 1000 for both
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetSpeedRamping', 'get_speed_ramping'), 
 'elements': [('acceleration', 'uint16', 1, 'out'),
              ('deacceleration', 'uint16', 1, 'out')],
@@ -107,7 +107,7 @@ Returns the acceleration and deacceleration as set by
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('FullBrake', 'full_brake'), 
 'elements': [],
 'doc': ['bm', {
@@ -129,7 +129,7 @@ Call :func:`Stop` if you just want to stop the motor.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetCurrentPosition', 'set_current_position'), 
 'elements': [('position', 'int32', 1, 'in')],
 'doc': ['am', {
@@ -146,7 +146,7 @@ is reached (e.g. when a CNC machine reaches a corner).
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetCurrentPosition', 'get_current_position'), 
 'elements': [('position', 'int32', 1, 'out')],
 'doc': ['am', {
@@ -165,7 +165,7 @@ set them to any other desired value with :func:`SetCurrentPosition`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetTargetPosition', 'set_target_position'), 
 'elements': [('position', 'int32', 1, 'in')],
 'doc': ['am', {
@@ -188,7 +188,7 @@ a call of :func:`SetSteps` with the parameter
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetTargetPosition', 'get_target_position'), 
 'elements': [('position', 'int32', 1, 'out')],
 'doc': ['am', {
@@ -203,7 +203,7 @@ Returns the last target position as set by :func:`SetTargetPosition`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetSteps', 'set_steps'), 
 'elements': [('steps', 'int32', 1, 'in')],
 'doc': ['bm', {
@@ -221,7 +221,7 @@ The velocity, acceleration and deacceleration as set by
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetSteps', 'get_steps'), 
 'elements': [('steps', 'int32', 1, 'out')],
 'doc': ['bm', {
@@ -236,7 +236,7 @@ Returns the last steps as set by :func:`SetSteps`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetRemainingSteps', 'get_remaining_steps'), 
 'elements': [('steps', 'int32', 1, 'out')],
 'doc': ['bm', {
@@ -254,7 +254,7 @@ it will return 1500.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetStepMode', 'set_step_mode'), 
 'elements': [('mode', 'uint8', 1, 'in')],
 'doc': ['am', {
@@ -279,7 +279,7 @@ The default value is 8 (Eighth Step).
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetStepMode', 'get_step_mode'), 
 'elements': [('mode', 'uint8', 1, 'out')],
 'doc': ['am', {
@@ -294,7 +294,7 @@ Returns the step mode as set by :func:`SetStepMode`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('DriveForward', 'drive_forward'), 
 'elements': [],
 'doc': ['bm', {
@@ -311,7 +311,7 @@ set by :func:`SetMaxVelocity` and :func:`SetSpeedRamping` will be used.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('DriveBackward', 'drive_backward'), 
 'elements': [],
 'doc': ['bm', {
@@ -328,7 +328,7 @@ set by :func:`SetMaxVelocity` and :func:`SetSpeedRamping` will be used.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('Stop', 'stop'), 
 'elements': [],
 'doc': ['bm', {
@@ -344,7 +344,7 @@ Stops the stepper motor with the deacceleration as set by
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetStackInputVoltage', 'get_stack_input_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')],
 'doc': ['am', {
@@ -361,7 +361,7 @@ Step-Down or Step-Up Power Supply.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetExternalInputVoltage', 'get_external_input_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')],
 'doc': ['am', {
@@ -387,7 +387,7 @@ voltage present, the motor will be driven by this voltage.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetCurrentConsumption', 'get_current_consumption'), 
 'elements': [('current', 'uint16', 1, 'out')],
 'doc': ['am', {
@@ -402,7 +402,7 @@ Returns the current consumption of the motor in mA.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetMotorCurrent', 'set_motor_current'), 
 'elements': [('current', 'uint16', 1, 'in')],
 'doc': ['bm', {
@@ -423,7 +423,7 @@ default value is 800mA.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetMotorCurrent', 'get_motor_current'), 
 'elements': [('current', 'uint16', 1, 'out')],
 'doc': ['bm', {
@@ -438,7 +438,7 @@ Returns the current as set by :func:`SetMotorCurrent`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('Enable', 'enable'), 
 'elements': [],
 'doc': ['bm', {
@@ -454,7 +454,7 @@ acceleration, etc) before it is enabled.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('Disable', 'disable'), 
 'elements': [],
 'doc': ['bm', {
@@ -470,7 +470,7 @@ acceleration, etc) but the motor is not driven until it is enabled again.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('IsEnabled', 'is_enabled'), 
 'elements': [('enabled', 'bool', 1, 'out')],
 'doc': ['bm', {
@@ -485,7 +485,7 @@ Returns true if the motor is enabled, false otherwise.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetDecay', 'set_decay'), 
 'elements': [('decay', 'uint16', 1, 'in')],
 'doc': ['am', {
@@ -525,7 +525,7 @@ The default value is 10000.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetDecay', 'get_decay'), 
 'elements': [('decay', 'uint16', 1, 'out')],
 'doc': ['am', {
@@ -540,7 +540,7 @@ Returns the decay mode as set by :func:`SetDecay`
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetMinimumVoltage', 'set_minimum_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'in')],
 'doc': ['ccm', {
@@ -561,7 +561,7 @@ The default value is 8V.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetMinimumVoltage', 'get_minimum_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')],
 'doc': ['ccm', {
@@ -576,7 +576,7 @@ Returns the minimum voltage as set by :func:`SetMinimumVoltage`.
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('UnderVoltage', 'under_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')],
 'doc': ['c', {
@@ -593,7 +593,7 @@ in mV.
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('PositionReached', 'position_reached'), 
 'elements': [('position', 'int32', 1, 'out')],
 'doc': ['c', {
@@ -615,7 +615,7 @@ This callback is triggered when a position set by :func:`SetSteps` or
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetSyncRect', 'set_sync_rect'), 
 'elements': [('sync_rect', 'bool', 1, 'in')],
 'doc': ['am', {
@@ -645,7 +645,7 @@ The default value is false.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('IsSyncRect', 'is_sync_rect'), 
 'elements': [('sync_rect', 'bool', 1, 'out')],
 'doc': ['am', {

@@ -13,7 +13,7 @@ com = {
 }
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetAmbientTemperature', 'get_ambient_temperature'), 
 'elements': [('temperature', 'int16', 1, 'out')],
 'doc': ['bm', {
@@ -35,7 +35,7 @@ to use the callback :func:`AmbientTemperature` and set the period with
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetObjectTemperature', 'get_object_temperature'), 
 'elements': [('temperature', 'int16', 1, 'out')],
 'doc': ['bm', {
@@ -63,7 +63,7 @@ to use the callback :func:`ObjectTemperature` and set the period with
 
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetEmissivity', 'set_emissivity'), 
 'elements': [('emissivity', 'uint16', 1, 'in')],
 'doc': ['am', {
@@ -95,7 +95,7 @@ sensor can handle is 0.1 (value of 6553).
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetEmissivity', 'get_emissivity'), 
 'elements': [('emissivity', 'uint16', 1, 'out')],
 'doc': ['am', {
@@ -110,7 +110,7 @@ Returns the emissivity as set by :func:`SetEmissivity`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetAmbientTemperatureCallbackPeriod', 'set_ambient_temperature_callback_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
 'doc': ['ccm', {
@@ -131,7 +131,7 @@ The default value is 0.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetAmbientTemperatureCallbackPeriod', 'get_ambient_temperature_callback_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
 'doc': ['ccm', {
@@ -146,7 +146,7 @@ Returns the period as set by :func:`SetAmbientTemperatureCallbackPeriod`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetObjectTemperatureCallbackPeriod', 'set_object_temperature_callback_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
 'doc': ['ccm', {
@@ -167,7 +167,7 @@ The default value is 0.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetObjectTemperatureCallbackPeriod', 'get_object_temperature_callback_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
 'doc': ['ccm', {
@@ -183,7 +183,7 @@ Returns the period as set by :func:`SetObjectTemperatureCallbackPeriod`.
 
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetAmbientTemperatureCallbackThreshold', 'set_ambient_temperature_callback_threshold'), 
 'elements': [('option', 'char', 1, 'in'), 
              ('min', 'int16', 1, 'in'),
@@ -214,7 +214,7 @@ The default value is ('x', 0, 0).
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetAmbientTemperatureCallbackThreshold', 'get_ambient_temperature_callback_threshold'), 
 'elements': [('option', 'char', 1, 'out'), 
              ('min', 'int16', 1, 'out'),
@@ -231,7 +231,7 @@ Returns the threshold as set by :func:`SetAmbientTemperatureCallbackThreshold`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetObjectTemperatureCallbackThreshold', 'set_object_temperature_callback_threshold'), 
 'elements': [('option', 'char', 1, 'in'), 
              ('min', 'int16', 1, 'in'),
@@ -262,7 +262,7 @@ The default value is ('x', 0, 0).
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetObjectTemperatureCallbackThreshold', 'get_object_temperature_callback_threshold'), 
 'elements': [('option', 'char', 1, 'out'), 
              ('min', 'int16', 1, 'out'),
@@ -279,7 +279,7 @@ Returns the threshold as set by :func:`SetAmbientTemperatureCallbackThreshold`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetDebouncePeriod', 'set_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'in')],
 'doc': ['ccm', {
@@ -304,7 +304,7 @@ The default value is 100.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetDebouncePeriod', 'get_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'out')],
 'doc': ['ccm', {
@@ -319,7 +319,7 @@ Returns the debounce period as set by :func:`SetDebouncePeriod`.
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('AmbientTemperature', 'ambient_temperature'), 
 'elements': [('temperature', 'int16', 1, 'out')],
 'doc': ['c', {
@@ -339,7 +339,7 @@ has changed since the last triggering.
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('ObjectTemperature', 'object_temperature'), 
 'elements': [('temperature', 'int16', 1, 'out')],
 'doc': ['c', {
@@ -359,7 +359,7 @@ has changed since the last triggering.
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('AmbientTemperatureReached', 'ambient_temperature_reached'), 
 'elements': [('temperature', 'int16', 1, 'out')],
 'doc': ['c', {
@@ -379,7 +379,7 @@ with the period as set by :func:`SetDebouncePeriod`.
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('ObjectTemperatureReached', 'object_temperature_reached'), 
 'elements': [('temperature', 'int16', 1, 'out')],
 'doc': ['c', {

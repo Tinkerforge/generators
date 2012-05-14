@@ -13,7 +13,7 @@ com = {
 }
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetIlluminance', 'get_illuminance'), 
 'elements': [('illuminance', 'uint16', 1, 'out')],
 'doc': ['bm', {
@@ -34,7 +34,7 @@ callback :func:`Illuminance` and set the period with
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetAnalogValue', 'get_analog_value'), 
 'elements': [('value', 'uint16', 1, 'out')],
 'doc': ['am', {
@@ -65,7 +65,7 @@ callback :func:`AnalogValue` and set the period with
 
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetIlluminanceCallbackPeriod', 'set_illuminance_callback_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
 'doc': ['ccm', {
@@ -86,7 +86,7 @@ The default value is 0.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetIlluminanceCallbackPeriod', 'get_illuminance_callback_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
 'doc': ['ccm', {
@@ -101,7 +101,7 @@ Returns the period as set by :func:`SetIlluminanceCallbackPeriod`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetAnalogValueCallbackPeriod', 'set_analog_value_callback_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
 'doc': ['ccm', {
@@ -122,7 +122,7 @@ The default value is 0.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetAnalogValueCallbackPeriod', 'get_analog_value_callback_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
 'doc': ['ccm', {
@@ -137,7 +137,7 @@ Returns the period as set by :func:`SetAnalogValueCallbackPeriod`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetIlluminanceCallbackThreshold', 'set_illuminance_callback_threshold'), 
 'elements': [('option', 'char', 1, 'in'), 
              ('min', 'int16', 1, 'in'),
@@ -168,7 +168,7 @@ The default value is ('x', 0, 0).
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetIlluminanceCallbackThreshold', 'get_illuminance_callback_threshold'), 
 'elements': [('option', 'char', 1, 'out'), 
              ('min', 'int16', 1, 'out'),
@@ -185,7 +185,7 @@ Returns the threshold as set by :func:`SetIlluminanceCallbackThreshold`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetAnalogValueCallbackThreshold', 'set_analog_value_callback_threshold'), 
 'elements': [('option', 'char', 1, 'in'), 
              ('min', 'uint16', 1, 'in'),
@@ -216,7 +216,7 @@ The default value is ('x', 0, 0).
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetAnalogValueCallbackThreshold', 'get_analog_value_callback_threshold'), 
 'elements': [('option', 'char', 1, 'out'), 
              ('min', 'uint16', 1, 'out'),
@@ -233,7 +233,7 @@ Returns the threshold as set by :func:`SetAnalogValueCallbackThreshold`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetDebouncePeriod', 'set_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'in')],
 'doc': ['ccm', {
@@ -258,7 +258,7 @@ The default value is 100.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetDebouncePeriod', 'get_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'out')],
 'doc': ['ccm', {
@@ -273,7 +273,7 @@ Returns the debounce period as set by :func:`SetDebouncePeriod`.
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('Illuminance', 'illuminance'), 
 'elements': [('illuminance', 'uint16', 1, 'out')],
 'doc': ['c', {
@@ -293,7 +293,7 @@ last triggering.
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('AnalogValue', 'analog_value'), 
 'elements': [('value', 'uint16', 1, 'out')],
 'doc': ['c', {
@@ -313,7 +313,7 @@ last triggering.
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('IlluminanceReached', 'illuminance_reached'), 
 'elements': [('illuminance', 'uint16', 1, 'out')],
 'doc': ['c', {
@@ -333,7 +333,7 @@ with the period as set by :func:`SetDebouncePeriod`.
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('AnalogValueReached', 'analog_value_reached'), 
 'elements': [('value', 'uint16', 1, 'out')],
 'doc': ['c', {

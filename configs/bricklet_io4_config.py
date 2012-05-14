@@ -13,7 +13,7 @@ com = {
 }
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetValue', 'set_value'), 
 'elements': [('value_mask', 'uint8', 1, 'in')],
 'doc': ['bm', {
@@ -37,7 +37,7 @@ pins 2-3 low.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetValue', 'get_value'), 
 'elements': [('value_mask', 'uint8', 1, 'out')],
 'doc': ['bm', {
@@ -54,7 +54,7 @@ as well as if it is configured to output.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetConfiguration', 'set_configuration'), 
 'elements': [('pin_mask', 'uint8', 1, 'in'),
              ('direction', 'char', 1, 'in'),
@@ -86,7 +86,7 @@ For example:
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetConfiguration', 'get_configuration'), 
 'elements': [('direction_mask', 'uint8', 1, 'out'),
              ('value_mask', 'uint8', 1, 'out')],
@@ -111,7 +111,7 @@ direction and value means that:
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetDebouncePeriod', 'set_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'in')],
 'doc': ['ccm', {
@@ -132,7 +132,7 @@ The default value is 100.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetDebouncePeriod', 'get_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'out')],
 'doc': ['ccm', {
@@ -147,7 +147,7 @@ Returns the debounce period as set by :func:`SetDebouncePeriod`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetInterrupt', 'set_interrupt'), 
 'elements': [('interrupt_mask', 'uint8', 1, 'in')],
 'doc': ['ccm', {
@@ -169,7 +169,7 @@ The interrupt is delivered with the callback :func:`Interrupt`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetInterrupt', 'get_interrupt'), 
 'elements': [('interrupt_mask', 'uint8', 1, 'out')],
 'doc': ['ccm', {
@@ -184,7 +184,7 @@ Returns the interrupt bit mask as set by :func:`SetPortInterrupt`.
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('Interrupt', 'interrupt'), 
 'elements': [('interrupt_mask', 'uint8', 1, 'out'),
              ('value_mask', 'uint8', 1, 'out')],
