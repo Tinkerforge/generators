@@ -96,7 +96,7 @@ class CallbackLoopThread extends Thread {
 				
 				String uid = ipcon.base58Encode(uid_num);
 				
-				String name = new String();
+				String name = "";
 				for(int i = 0; i < 40; i++) {
 					name += (char)bb.get();
 				}
@@ -117,7 +117,7 @@ class CallbackLoopThread extends Thread {
 }
 
 public class IPConnection {
-	private final static String BASE58 = new String("123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ");
+	private final static String BASE58 = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
     private final static byte TYPE_GET_STACK_ID = (byte)255;
     private final static byte TYPE_ENUMERATE = (byte)254;
     protected final static byte TYPE_ENUMERATE_CALLBACK = (byte)253;
@@ -284,7 +284,7 @@ public class IPConnection {
 			addDevice.firmwareVersion[1] = IPConnection.unsignedByte(bb.get());
 			addDevice.firmwareVersion[2] = IPConnection.unsignedByte(bb.get());
 
-			addDevice.name = new String("");
+			addDevice.name = "";
 			for(int i = 0; i < 40; i++) {
 				addDevice.name += (char)bb.get();
 			}
@@ -391,7 +391,7 @@ public class IPConnection {
 	}
 	
 	public static String base58Encode(long value) {
-		String encoded = new String("");
+		String encoded = "";
 		while(value >= 58) {
 			long div = value/58;
 			int mod = (int)(value % 58);
