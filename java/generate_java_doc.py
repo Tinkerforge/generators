@@ -365,14 +365,14 @@ are described below.
 API
 ---
 
-Generally, every method of the java bindings that returns a value can
+Generally, every method of the Java bindings that returns a value can
 throw a IPConnection.TimeoutException. This exception gets thrown if the
 device didn't answer. If a cable based connection is used, it is 
 unlikely that this exception gets thrown (Assuming nobody plugs the 
 device out). However, if a wireless connection is used, timeouts will occur
 if the distance to the device gets too big.
 
-Since java does not support multiple return values and return by reference
+Since Java does not support multiple return values and return by reference
 is not possible for primitive types, we use small classes that 
 only consist of member variables (comparable to structs in C). The member
 variables of the returned objects are described in the corresponding method 
