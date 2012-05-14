@@ -60,7 +60,7 @@ def shift_right(text, n):
 def fix_links(text):
     for packet in com['packets']:
         name_false = ':func:`{0}`'.format(packet['name'][0])
-        if packet['type'] == 'signal':
+        if packet['type'] == 'callback':
             name_upper = packet['name'][1].upper()
             pre_upper = com['name'][1].upper()
             name_right = ':c:data:`{0}_CALLBACK_{1}`'.format(pre_upper,
@@ -201,7 +201,7 @@ def make_methods(typ):
     methods = ''
     func_start = '.. c:function:: int '
     for packet in com['packets']:
-        if packet['type'] != 'method' or packet['doc'][0] != typ:
+        if packet['type'] != 'function' or packet['doc'][0] != typ:
             continue
         name = '{0}_{1}'.format(com['name'][1], packet['name'][1])
         plist = make_parameter_list(packet)
@@ -219,7 +219,7 @@ def make_callbacks():
     cbs = ''
     func_start = '.. c:var:: '
     for packet in com['packets']:
-        if packet['type'] != 'signal':
+        if packet['type'] != 'callback':
             continue
 
         plist = make_parameter_list(packet)[2:].replace('*ret_', '')

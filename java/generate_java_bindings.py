@@ -70,7 +70,7 @@ def fix_links(text):
     cls = com['name'][0]
     for packet in com['packets']:
         name_false = ':func:`{0}`'.format(packet['name'][0])
-        if packet['type'] == 'signal':
+        if packet['type'] == 'callback':
             name = packet['name'][0]
             name_right = link_c.format(com['type'], cls, name)
         else:
@@ -125,7 +125,7 @@ def make_return_objects():
 """
     param = '\t\tpublic {0}{1} {2}{3};'
     for i, packet in zip(range(len(com['packets'])), com['packets']):
-        if packet['type'] == 'signal':
+        if packet['type'] == 'callback':
             continue
 
         if get_num_return(packet['elements']) < 2:
@@ -166,7 +166,7 @@ def make_listener_definitions():
 \t}}
 """
     for i, packet in zip(range(len(com['packets'])), com['packets']):
-        if packet['type'] != 'signal':
+        if packet['type'] != 'callback':
             continue
 
         name = packet['name'][0]
@@ -179,9 +179,9 @@ def make_listener_definitions():
 def make_callback_listener_definitions():
     cbs = ''
     cb = """
-\t\tcallbacks[TYPE_{0}] = new CallbackListener() {{
+\t\tcallbacks[CALLBACK_{0}] = new CallbackListener() {{
 \t\t\tpublic void callback(byte[] data) {{{1}
-\t\t\t\t(({2}Listener)listenerObjects[TYPE_{0}]).{3}({4});
+\t\t\t\t(({2}Listener)listenerObjects[CALLBACK_{0}]).{3}({4});
 \t\t\t}}
 \t\t}};
 """
@@ -193,7 +193,7 @@ def make_callback_listener_definitions():
 {1}"""
     cbs_end = '\t}\n'
     for i, packet in zip(range(len(com['packets'])), com['packets']):
-        if packet['type'] != 'signal':
+        if packet['type'] != 'callback':
             continue
 
         typ = packet['name'][1].upper()
@@ -219,12 +219,12 @@ def make_callback_listener_definitions():
     return cbs + cbs_end
 
 def make_add_listener():
-    signal_count = 0
+    callback_count = 0
     for packet in com['packets']:
-        if packet['type'] == 'signal':
-            signal_count += 1
+        if packet['type'] == 'callback':
+            callback_count += 1
 
-    if signal_count == 0:
+    if callback_count == 0:
         return '}'
 
     listeners = """
@@ -236,12 +236,12 @@ def make_add_listener():
 \t}}
 }}"""
     listener = """if(o instanceof {0}Listener) {{
-\t\t\tlistenerObjects[TYPE_{1}] = o;
+\t\t\tlistenerObjects[CALLBACK_{1}] = o;
 \t\t}}"""
 
     l = []
     for i, packet in zip(range(len(com['packets'])), com['packets']):
-        if packet['type'] != 'signal':
+        if packet['type'] != 'callback':
             continue
 
         name = packet['name'][0]
@@ -249,18 +249,21 @@ def make_add_listener():
         l.append(listener.format(name, name_upper))
     return listeners.format(' else '.join(l))
 
-def make_type_definitions():
-    types = ''
-    type = '\tprivate final static byte TYPE_{0} = (byte){1};\n'
+def make_function_id_definitions():
+    function_ids = ''
+    function_id = '\tprivate final static byte {2}_{0} = (byte){1};\n'
     for i, packet in zip(range(len(com['packets'])), com['packets']):
-        types += type.format(packet['name'][1].upper(), i+1)
-    return types
+        if packet['type'] == 'callback':
+            function_ids += function_id.format(packet['name'][1].upper(), i+1, 'CALLBACK')
+        else:
+            function_ids += function_id.format(packet['name'][1].upper(), i+1, 'FUNCTION')
+    return function_ids
 
 
 def make_parameter_list(packet):
     param = []
     for element in packet['elements']:
-        if element[3] == 'out' and packet['type'] == 'method':
+        if element[3] == 'out' and packet['type'] == 'function':
             continue
         java_type = get_java_type(element[1])
         name = to_camel_case(element[0])
@@ -396,10 +399,10 @@ def make_methods():
 \t\tByteBuffer bb = ByteBuffer.allocate({4});
 \t\tbb.order(ByteOrder.LITTLE_ENDIAN);
 \t\tbb.put((byte)stackID);
-\t\tbb.put((byte)TYPE_{5});
+\t\tbb.put((byte)FUNCTION_{5});
 \t\tbb.putShort((short){4});
 {6}
-\t\tipcon.write(this, bb, TYPE_{5}, {7});{8}
+\t\tipcon.write(this, bb, FUNCTION_{5}, {7});{8}
 \t}}
 """
     method_answer = """
@@ -433,7 +436,7 @@ def make_methods():
 
     cls = com['name'][0]
     for packet in com['packets']:
-        if packet['type'] != 'method':
+        if packet['type'] != 'function':
             continue
 
         ret = get_return_value(packet)
@@ -611,7 +614,7 @@ def make_files(com_new, directory):
     java = file('{0}/{1}.java'.format(directory, file_name), "w")
     java.write(make_import())
     java.write(make_class())
-    java.write(make_type_definitions())
+    java.write(make_function_id_definitions())
     java.write(make_return_objects())
     java.write(make_listener_definitions())
     java.write(make_constructor())

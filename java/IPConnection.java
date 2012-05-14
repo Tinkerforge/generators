@@ -203,8 +203,8 @@ public class IPConnection {
 			}
 		}
 
-        // Message seems to be OK, but can't be handled, most likely
-        // a signal without registered callback
+		// Message seems to be OK, but can't be handled, most likely
+		// a callback without registered function
 		return length;
 	}
 	

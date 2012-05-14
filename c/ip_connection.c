@@ -20,8 +20,6 @@
 	#include <netdb.h> // gethostbyname
 #endif
 
-
-
 #define MAX_BASE58_STR_SIZE 13
 const char BASE58_STR[] = \
 	"123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
@@ -86,7 +84,7 @@ void ipcon_enumerate(IPConnection *ipcon, enumerate_callback_func_t cb) {
 
 	Enumerate e = {
 		BROADCAST_ADDRESS,
-		TYPE_ENUMERATE,
+		FUNCTION_ENUMERATE,
 		sizeof(Enumerate)
 	};
 
@@ -117,10 +115,10 @@ int ipcon_handle_enumerate(IPConnection *ipcon, const unsigned char *buffer) {
 }
 
 int ipcon_handle_message(IPConnection *ipcon, const unsigned char *buffer) {
-	uint8_t type = ipcon_get_type_from_data(buffer);
-	if(type == TYPE_GET_STACK_ID) {
+	uint8_t function_id = ipcon_get_function_id_from_data(buffer);
+	if(function_id == FUNCTION_GET_STACK_ID) {
 		return ipcon_add_device_handler(ipcon, buffer);
-	} else if(type == TYPE_ENUMERATE_CALLBACK) {
+	} else if(function_id == FUNCTION_ENUMERATE_CALLBACK) {
 		return ipcon_handle_enumerate(ipcon, buffer);
 	}
 
@@ -134,7 +132,7 @@ int ipcon_handle_message(IPConnection *ipcon, const unsigned char *buffer) {
 	Device *device =  ipcon->devices[stack_id];
 	DeviceAnswer *answer = &device->answer;
 
-	if(answer->type == type) {
+	if(answer->function_id == function_id) {
 		if(answer->length != length) {
 			fprintf(stderr,
 			        "Received malformed message, discarded: %d\n",
@@ -156,12 +154,12 @@ int ipcon_handle_message(IPConnection *ipcon, const unsigned char *buffer) {
 		return length;
 	}
 
-	if(device->callbacks[type] != NULL) {
-		return device->device_callbacks[type](device, buffer);
+	if(device->callbacks[function_id] != NULL) {
+		return device->device_callbacks[function_id](device, buffer);
 	}
 
 	// Message seems to be OK, but can't be handled, most likely
-	// a signal without registered callback
+	// a callback without registered function
 	return length;
 }
 
@@ -230,7 +228,6 @@ int ipcon_answer_sem_wait_timeout(Device *device) {
 
 	return ret;
 #endif
-
 }
 
 int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
@@ -338,7 +335,7 @@ int ipcon_add_device(IPConnection *ipcon, Device *device) {
 
 	GetStackID gsid = {
 		BROADCAST_ADDRESS,
-		TYPE_GET_STACK_ID,
+		FUNCTION_GET_STACK_ID,
 		sizeof(GetStackID),
 		device->uid
 	};
@@ -361,7 +358,7 @@ uint8_t ipcon_get_stack_id_from_data(const unsigned char *data) {
 	return data[0];
 }
 
-uint8_t ipcon_get_type_from_data(const unsigned char *data) {
+uint8_t ipcon_get_function_id_from_data(const unsigned char *data) {
 	return data[1];
 }
 

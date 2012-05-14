@@ -76,7 +76,7 @@ def fix_links(text):
     cls = com['name'][0]
     for packet in com['packets']:
         name_false = ':func:`{0}`'.format(packet['name'][0])
-        if packet['type'] == 'signal':
+        if packet['type'] == 'callback':
             name_upper = packet['name'][1].upper()
             name_right = ':py:attr:`{0}.CALLBACK_{1}`'.format(cls, name_upper)
         else:
@@ -234,7 +234,7 @@ def make_methods(typ):
     func_start = '.. py:function:: '
     cls = com['name'][0]
     for packet in com['packets']:
-        if packet['type'] != 'method' or packet['doc'][0] != typ:
+        if packet['type'] != 'function' or packet['doc'][0] != typ:
             continue
         name = packet['name'][1]
         params = make_parameter_list(packet)
@@ -259,7 +259,7 @@ def make_callbacks():
     func_start = '.. py:attribute:: '
     cls = com['name'][0]
     for packet in com['packets']:
-        if packet['type'] != 'signal':
+        if packet['type'] != 'callback':
             continue
 
         param_desc = make_parameter_desc(packet, 'out')

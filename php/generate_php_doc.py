@@ -54,7 +54,7 @@ def fix_links(text):
     cls = com['type'] + com['name'][0]
     for packet in com['packets']:
         name_false = ':func:`{0}`'.format(packet['name'][0])
-        if packet['type'] == 'signal':
+        if packet['type'] == 'callback':
             name_upper = packet['name'][1].upper()
             name_right = ':php:member:`CALLBACK_{1} <{0}::CALLBACK_{1}>`'.format(cls, name_upper)
         else:
@@ -166,7 +166,7 @@ Examples
 def make_parameter_list(packet):
     param = []
     for element in packet['elements']:
-        if element[3] == 'out' and packet['type'] == 'method':
+        if element[3] == 'out' and packet['type'] == 'function':
             continue
         php_type = php_common.get_php_type(element[1])
         name = element[0]
@@ -191,7 +191,7 @@ def make_methods(typ):
     func_start = '.. php:function:: '
     cls = com['type'] + com['name'][0]
     for packet in com['packets']:
-        if packet['type'] != 'method' or packet['doc'][0] != typ:
+        if packet['type'] != 'function' or packet['doc'][0] != typ:
             continue
 
         ret_type = php_common.get_return_type(packet)
@@ -216,7 +216,7 @@ def make_callbacks():
     func_start = '.. php:member:: int '
     cls = com['type'] + com['name'][0]
     for packet in com['packets']:
-        if packet['type'] != 'signal':
+        if packet['type'] != 'callback':
             continue
 
         params = make_parameter_list(packet)

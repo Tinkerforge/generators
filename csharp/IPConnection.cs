@@ -241,7 +241,7 @@ namespace Tinkerforge
 			}
 
 			// Message seems to be OK, but can't be handled, most likely
-			// a signal without registered callback
+			// a callback without registered function
 			return length;
 		}
 

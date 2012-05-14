@@ -62,7 +62,7 @@ def fix_links(text):
     cls = com['name'][0]
     for packet in com['packets']:
         name_false = ':func:`{0}`'.format(packet['name'][0])
-        if packet['type'] == 'signal':
+        if packet['type'] == 'callback':
             name_upper = packet['name'][1].upper()
             name_right = ':tcpip:func:`{0}.CALLBACK_{1}`'.format(cls, name_upper)
         else:
@@ -123,7 +123,7 @@ def make_response_desc(packet):
         desc += returns.format(element[0], t)
 
     if desc == '\n':
-        if packet['type'] == 'signal':
+        if packet['type'] == 'callback':
             desc += ' :emptyresponse: empty payload\n'
         else:
             desc += ' :noresponse: no response\n'
@@ -135,7 +135,7 @@ def make_methods(typ):
     func_start = '.. tcpip:function:: '
     cls = com['name'][0]
     for packet in com['packets']:
-        if packet['type'] != 'method' or packet['doc'][0] != typ:
+        if packet['type'] != 'function' or packet['doc'][0] != typ:
             continue
         name = packet['name'][1]
         fid = '\n :functionid: {0}'.format(packet['function_id'])
@@ -158,7 +158,7 @@ def make_callbacks():
     pt = 1
     for packet in com['packets']:
         pt += 1
-        if packet['type'] != 'signal':
+        if packet['type'] != 'callback':
             continue
 
         fid = '\n :functionid: {0}'.format(packet['function_id'])

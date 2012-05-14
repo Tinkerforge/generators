@@ -129,7 +129,7 @@ def make_delegates():
 \t\tpublic delegate void {0}({1});
 """
     for packet in com['packets']:
-        if packet['type'] != 'signal':
+        if packet['type'] != 'callback':
             continue
 
         name = packet['name'][0]
@@ -138,16 +138,19 @@ def make_delegates():
         cbs += cb.format(name, parameter, doc)
     return cbs
 
-def make_type_definitions():
-    types = ''
-    type = '\t\tprivate static byte TYPE_{0} = {1};\n'
+def make_function_id_definitions():
+    function_ids = ''
+    function_id = '\t\tprivate static byte {2}_{0} = {1};\n'
     for i, packet in zip(range(len(com['packets'])), com['packets']):
-        types += type.format(packet['name'][1].upper(), i+1)
-    return types
+        if packet['type'] == 'callback':
+            function_ids += function_id.format(packet['name'][1].upper(), i+1, 'CALLBACK')
+        else:
+            function_ids += function_id.format(packet['name'][1].upper(), i+1, 'FUNCTION')
+    return function_ids
 
 def make_constructor():
     cbs = []
-    cb = '\t\t\tmessageCallbacks[TYPE_{0}] = new MessageCallback(Callback{1});'
+    cb = '\t\t\tmessageCallbacks[CALLBACK_{0}] = new MessageCallback(Callback{1});'
     con = """
 \t\t/// <summary>
 \t\t///  Creates an object with the unique device ID <c>uid</c>. This object can
@@ -163,7 +166,7 @@ def make_constructor():
 """
 
     for packet in com['packets']:
-        if packet['type'] != 'signal':
+        if packet['type'] != 'callback':
             continue
 
         name_upper = packet['name'][1].upper()
@@ -197,7 +200,7 @@ def get_from_type(element):
         return from_type
 
     return ''
-	
+
 def get_type_size(element):
     forms = {
         'int8' : 1,
@@ -220,18 +223,18 @@ def get_type_size(element):
     return 0
 
 def make_register_callback():
-    signal_count = 0
+    callback_count = 0
     for packet in com['packets']:
-        if packet['type'] == 'signal':
-            signal_count += 1
+        if packet['type'] == 'callback':
+            callback_count += 1
 
-    if signal_count == 0:
+    if callback_count == 0:
         return '\t}\n}\n'
 
     typeofs = ''
     typeof = """\t\t\t{0}if(d.GetType() == typeof({1}))
 \t\t\t{{
-\t\t\t\tcallbacks[TYPE_{2}] = d;
+\t\t\t\tcallbacks[CALLBACK_{2}] = d;
 \t\t\t}}
 """
 
@@ -248,7 +251,7 @@ def make_register_callback():
 
     i = 0
     for packet in com['packets']:
-        if packet['type'] != 'signal':
+        if packet['type'] != 'callback':
             continue
 
         els = ''
@@ -269,13 +272,13 @@ def make_callbacks():
     cb = """
 \t\tinternal int Callback{0}(byte[] data_)
 \t\t{{
-{1}\t\t\t(({0})callbacks[TYPE_{2}])({3});
+{1}\t\t\t(({0})callbacks[CALLBACK_{2}])({3});
 \t\t\treturn {4};
 \t\t}}
 """
     cls = com['name'][0]
     for packet in com['packets']:
-        if packet['type'] != 'signal':
+        if packet['type'] != 'callback':
             continue
 
         name = packet['name'][0]
@@ -326,7 +329,7 @@ def make_methods():
 \t\t{{
 \t\t\tbyte[] data_ = new byte[{1}];
 \t\t\tLEConverter.To(stackID, 0, data_);
-\t\t\tLEConverter.To(TYPE_{2}, 1, data_);
+\t\t\tLEConverter.To(FUNCTION_{2}, 1, data_);
 \t\t\tLEConverter.To((ushort){1}, 2, data_);
 {3}
 {4}
@@ -334,12 +337,12 @@ def make_methods():
 """
     method_oneway = "\t\t\tsendOneWayMessage(data_);"
     method_answer = """\t\t\tbyte[] answer;
-\t\t\tsendReturningMessage(data_, TYPE_{0}, out answer);
+\t\t\tsendReturningMessage(data_, FUNCTION_{0}, out answer);
 {1}"""
 
     cls = com['name'][0]
     for packet in com['packets']:
-        if packet['type'] != 'method':
+        if packet['type'] != 'function':
             continue
 
         ret_count = csharp_common.count_return_values(packet['elements'])
@@ -409,7 +412,7 @@ def make_obsolete_methods():
 
     cls = com['name'][0]
     for packet in com['packets']:
-        if packet['type'] != 'method':
+        if packet['type'] != 'function':
             continue
 
         ret_count = csharp_common.count_return_values(packet['elements'])
@@ -451,7 +454,7 @@ def make_files(com_new, directory):
     csharp = file('{0}/{1}.cs'.format(directory, file_name), "w")
     csharp.write(make_import())
     csharp.write(make_class())
-    csharp.write(make_type_definitions())
+    csharp.write(make_function_id_definitions())
     csharp.write(make_delegates())
     csharp.write(make_constructor())
     csharp.write(make_methods())

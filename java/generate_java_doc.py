@@ -56,7 +56,7 @@ def fix_links(text):
     cls = com['name'][0]
     for packet in com['packets']:
         name_false = ':func:`{0}`'.format(packet['name'][0])
-        if packet['type'] == 'signal':
+        if packet['type'] == 'callback':
             name = packet['name'][0]
             name_right = cb_link.format(com['type'], cls, name)
         else:
@@ -226,7 +226,7 @@ def get_return_type(packet):
 def make_parameter_list(packet):
     param = []
     for element in packet['elements']:
-        if element[3] == 'out' and packet['type'] == 'method':
+        if element[3] == 'out' and packet['type'] == 'function':
             continue
         java_type = get_java_type(element[1])
         name = to_camel_case(element[0])
@@ -272,7 +272,7 @@ def make_methods(typ):
     func_start = '.. java:function:: '
     cls = com['type'] + com['name'][0]
     for packet in com['packets']:
-        if packet['type'] != 'method' or packet['doc'][0] != typ:
+        if packet['type'] != 'function' or packet['doc'][0] != typ:
             continue
 
         ret_type = get_return_type(packet)
@@ -307,7 +307,7 @@ def make_callbacks():
     cbs = ''
     cls = com['name'][0]
     for packet in com['packets']:
-        if packet['type'] != 'signal':
+        if packet['type'] != 'callback':
             continue
 
         desc = fix_links(shift_right(packet['doc'][1][lang], 2))

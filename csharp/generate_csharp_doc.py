@@ -190,7 +190,7 @@ def make_methods(typ):
     func_start = '.. csharp:function:: '
     cls = com['type'] + com['name'][0]
     for packet in com['packets']:
-        if packet['type'] != 'method' or packet['doc'][0] != typ:
+        if packet['type'] != 'function' or packet['doc'][0] != typ:
             continue
 
         signature = csharp_common.make_method_signature(packet, True, com)
@@ -218,7 +218,7 @@ def make_callbacks():
     cbs = ''
     cls = com['name'][0]
     for packet in com['packets']:
-        if packet['type'] != 'signal':
+        if packet['type'] != 'callback':
             continue
 
         desc = fix_links(shift_right(packet['doc'][1][lang], 2))

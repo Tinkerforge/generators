@@ -31,11 +31,11 @@ else:
 def get_stack_id_from_data(data):
     return ord(data[0:0 + 1])
 
+def get_function_id_from_data(data):
+    return ord(data[1:1 + 1])
+
 def get_length_from_data(data):
     return struct.unpack('<H', data[2:4])[0]
-
-def get_type_from_data(data):
-    return ord(data[1:1 + 1])
 
 BASE58 = '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'
 def base58encode(value):
@@ -106,7 +106,7 @@ class Device(DeviceConCheckerMeta):
         self.binding_version = [0, 0, 0]
         self.callbacks = {}
         self.callbacks_format = {}
-        self.answer_type = -1
+        self.answer_function_id = -1
         self.answer = None
         self.answer_queue = Queue()
         self.sem_write = BoundedSemaphore(value=1)
@@ -120,19 +120,19 @@ class Device(DeviceConCheckerMeta):
         return GetVersion(self.name, self.firmware_version, self.binding_version)
 
 class IPConnection:
-    TYPE_GET_STACK_ID = 255
-    TYPE_ENUMERATE = 254
-    TYPE_ENUMERATE_CALLBACK = 253
-    TYPE_STACK_ENUMERATE = 252
-    TYPE_ADC_CALIBRATE = 251
-    TYPE_GET_ADC_CALIBRATION = 250
+    FUNCTION_GET_STACK_ID = 255
+    FUNCTION_ENUMERATE = 254
+    FUNCTION_ENUMERATE_CALLBACK = 253
+    FUNCTION_STACK_ENUMERATE = 252
+    FUNCTION_ADC_CALIBRATE = 251
+    FUNCTION_GET_ADC_CALIBRATION = 250
 
-    TYPE_READ_BRICKLET_UID = 249
-    TYPE_WRITE_BRICKLET_UID = 248
-    TYPE_READ_BRICKLET_PLUGIN = 247
-    TYPE_WRITE_BRICKLET_PLUGIN = 246
-    TYPE_READ_BRICKLET_NAME = 245
-    TYPE_WRITE_BRICKLET_NAME = 244
+    FUNCTION_READ_BRICKLET_UID = 249
+    FUNCTION_WRITE_BRICKLET_UID = 248
+    FUNCTION_READ_BRICKLET_PLUGIN = 247
+    FUNCTION_WRITE_BRICKLET_PLUGIN = 246
+    FUNCTION_READ_BRICKLET_NAME = 245
+    FUNCTION_WRITE_BRICKLET_NAME = 244
 
     BROADCAST_ADDRESS = 0
     ENUMERATE_LENGTH = 4
@@ -185,12 +185,11 @@ class IPConnection:
                 else:
                     return
 
-
-            typ = get_type_from_data(data)
             stack_id = get_stack_id_from_data(data)
+            function_id = get_function_id_from_data(data)
             length = get_length_from_data(data)
             
-            if typ == IPConnection.TYPE_ENUMERATE_CALLBACK:
+            if function_id == IPConnection.FUNCTION_ENUMERATE_CALLBACK:
                 data = data[:length]
                 data = data[4:]
 
@@ -203,14 +202,14 @@ class IPConnection:
                 continue
 
             device = self.devices[stack_id]
-            if typ in device.callbacks:
-                form = device.callbacks_format[typ]
+            if function_id in device.callbacks:
+                form = device.callbacks_format[function_id]
                 if len(form) == 0:
-                    device.callbacks[typ]()
+                    device.callbacks[function_id]()
                 elif len(form) == 1:
-                    device.callbacks[typ](self.data_to_return(data[4:], form))
+                    device.callbacks[function_id](self.data_to_return(data[4:], form))
                 else:
-                    device.callbacks[typ](*self.data_to_return(data[4:], form))
+                    device.callbacks[function_id](*self.data_to_return(data[4:], form))
 
     def destroy(self):
         self.recv_loop_flag = False
@@ -245,14 +244,14 @@ class IPConnection:
         self.thread_recv.join()
         self.thread_callback.join()
 
-    def write(self, device, typ, data, form, form_ret):
+    def write(self, device, function_id, data, form, form_ret):
         device.sem_write.acquire()
        
         length = struct.pack('<H', struct.calcsize('<' + form) + 4)
         if sys.hexversion < 0x03000000:
-            write_data = chr(device.stack_id) + chr(typ) + length
+            write_data = chr(device.stack_id) + chr(function_id) + length
         else:
-            write_data = bytes([device.stack_id, typ]) + length
+            write_data = bytes([device.stack_id, function_id]) + length
 
         for f, d in zip(form.split(' '), data):
             if len(f) > 1 and not 's' in f:
@@ -261,7 +260,7 @@ class IPConnection:
                 write_data += struct.pack('<' + f, d)
 
         if len(form_ret) != 0:
-            device.answer_type = typ
+            device.answer_function_id = function_id
 
         try:
             self.sock.send(write_data)
@@ -287,10 +286,10 @@ class IPConnection:
         return self.data_to_return(answer, form_ret)
 
     def handle_message(self, data):
-        typ = get_type_from_data(data)
-        if typ == IPConnection.TYPE_GET_STACK_ID:
+        function_id = get_function_id_from_data(data)
+        if function_id == IPConnection.FUNCTION_GET_STACK_ID:
             return self.handle_add_device(data)
-        if typ == IPConnection.TYPE_ENUMERATE_CALLBACK:
+        if function_id == IPConnection.FUNCTION_ENUMERATE_CALLBACK:
             return self.handle_enumerate(data)
 
         stack_id = get_stack_id_from_data(data)
@@ -301,16 +300,16 @@ class IPConnection:
             return length
 
         device = self.devices[stack_id]
-        if device.answer_type == typ:
+        if device.answer_function_id == function_id:
             device.answer_queue.put(data[4:])
             return length
     
-        if typ in device.callbacks:
+        if function_id in device.callbacks:
             self.callback_queue.put(data)
             return length
 
         # Message seems to be OK, but can't be handled, most likely
-        # a signal without registered callback
+        # a callback without registered function
         return length;
 
     def handle_enumerate(self, data):
@@ -327,11 +326,11 @@ class IPConnection:
         self.enumerate_callback = func
         if sys.hexversion < 0x03000000:
             msg = chr(IPConnection.BROADCAST_ADDRESS) + \
-                  chr(IPConnection.TYPE_ENUMERATE) + \
+                  chr(IPConnection.FUNCTION_ENUMERATE) + \
                   struct.pack('<H', IPConnection.ENUMERATE_LENGTH)
         else:
             msg = bytes([IPConnection.BROADCAST_ADDRESS, 
-                         IPConnection.TYPE_ENUMERATE]) + \
+                         IPConnection.FUNCTION_ENUMERATE]) + \
                   struct.pack('<H', IPConnection.ENUMERATE_LENGTH)
 
         self.sock.send(msg)
@@ -360,15 +359,14 @@ class IPConnection:
     def add_device(self, device):
         if sys.hexversion < 0x03000000:
             msg = chr(IPConnection.BROADCAST_ADDRESS) + \
-                  chr(IPConnection.TYPE_GET_STACK_ID) + \
+                  chr(IPConnection.FUNCTION_GET_STACK_ID) + \
                   struct.pack('<H', IPConnection.GET_STACK_ID_LENGTH) + \
                   struct.pack('<Q', device.uid)
         else:
             msg = bytes([IPConnection.BROADCAST_ADDRESS,
-                         IPConnection.TYPE_GET_STACK_ID]) + \
+                         IPConnection.FUNCTION_GET_STACK_ID]) + \
                   struct.pack('<H', IPConnection.GET_STACK_ID_LENGTH) + \
                   struct.pack('<Q', device.uid)
-
   
         self.add_dev = device
         self.sock.send(msg)
@@ -397,7 +395,7 @@ class IPConnection:
             plugin = plugin[IPConnection.PLUGIN_CHUNK_SIZE:]
 
             self.write(device,
-                       IPConnection.TYPE_WRITE_BRICKLET_PLUGIN,
+                       IPConnection.FUNCTION_WRITE_BRICKLET_PLUGIN,
                        (port, position, plugin_chunk),
                        'c B 32s',
                        '')
@@ -409,7 +407,7 @@ class IPConnection:
         position = 0
         while len(plugin) < length:
             plugin += self.write(device, 
-                                 IPConnection.TYPE_READ_BRICKLET_PLUGIN, 
+                                 IPConnection.FUNCTION_READ_BRICKLET_PLUGIN,
                                  (port, position), 
                                  'c B', 
                                  '32s')
@@ -420,7 +418,7 @@ class IPConnection:
         
     def get_adc_calibration(self, device):
         return self.write(device, 
-                          IPConnection.TYPE_GET_ADC_CALIBRATION, 
+                          IPConnection.FUNCTION_GET_ADC_CALIBRATION,
                           (), 
                           '', 
                           'h h')
@@ -428,7 +426,7 @@ class IPConnection:
 
     def adc_calibrate(self, device, port):
         self.write(device,
-                   IPConnection.TYPE_ADC_CALIBRATE,
+                   IPConnection.FUNCTION_ADC_CALIBRATE,
                    (port,),
                    'c',
                    '')
@@ -437,14 +435,14 @@ class IPConnection:
         uid_int = base58decode(uid)
 
         self.write(device,
-                   IPConnection.TYPE_WRITE_BRICKLET_UID,
+                   IPConnection.FUNCTION_WRITE_BRICKLET_UID,
                    (port, uid_int),
                    'c Q',
                    '')
 
     def read_bricklet_uid(self, device, port):
         uid_int = self.write(device, 
-                             IPConnection.TYPE_READ_BRICKLET_UID, 
+                             IPConnection.FUNCTION_READ_BRICKLET_UID,
                              (port,), 
                              'c', 
                              'Q')

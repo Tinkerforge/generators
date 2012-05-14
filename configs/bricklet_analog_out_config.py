@@ -13,7 +13,7 @@ com = {
 }
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetVoltage', 'set_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'in')],
 'doc': ['bm', {
@@ -31,7 +31,7 @@ The default value is 0 (with mode 1).
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetVoltage', 'get_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')],
 'doc': ['bm', {
@@ -46,7 +46,7 @@ Returns the voltage as set by :func:`SetVoltage`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetMode', 'set_mode'), 
 'elements': [('mode', 'uint8', 1, 'in')],
 'doc': ['bm', {
@@ -71,7 +71,7 @@ The default mode is 1.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetMode', 'get_mode'), 
 'elements': [('mode', 'uint8', 1, 'out')],
 'doc': ['bm', {

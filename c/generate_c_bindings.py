@@ -70,7 +70,7 @@ def fix_links(text):
 
     for packet in com['packets']:
         name_false = ':func:`{0}`'.format(packet['name'][0])
-        if packet['type'] == 'signal':
+        if packet['type'] == 'callback':
             name = packet['name'][1].upper()
             name_right = link_c.format(com['name'][1].upper(), name)
         else:
@@ -134,12 +134,15 @@ def make_include_c():
 
     return include.format(gen_text.format(date), lower_type, com['name'][1])
 
-def make_type_defines():
-    define_temp = '#define TYPE_{0} {1}\n'
+def make_function_id_defines():
+    define_temp = '#define {2}_{0} {1}\n'
 
     defines = ''
     for i, packet in zip(range(len(com['packets'])), com['packets']):
-        defines += define_temp.format(packet['name'][1].upper(), i+1)
+        if packet['type'] != 'function':
+            continue
+
+        defines += define_temp.format(packet['name'][1].upper(), i+1, 'FUNCTION')
 
     return defines
 
@@ -155,7 +158,7 @@ def make_callback_defines():
 
     defines = ''
     for i, packet in zip(range(len(com['packets'])), com['packets']):
-        if packet['type'] != 'signal':
+        if packet['type'] != 'callback':
             continue
         doc = '\n * '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
         defines += define_temp.format(com['name'][1].upper(), 
@@ -184,13 +187,13 @@ def make_structs():
     struct_temp = """
 typedef struct {{
 \tuint8_t stack_id;
-\tuint8_t type;
+\tuint8_t function_id;
 \tuint16_t length;
 {0}}} ATTRIBUTE_PACKED {1}{2}_;
 """
 
     for packet in com['packets']:
-        if packet['type'] == 'signal':
+        if packet['type'] == 'callback':
             cb = "Callback"
             struct_body = ''
             for element in packet['elements']:
@@ -254,15 +257,15 @@ void {0}_create({1} *{0}, const char *uid) {{
 """
 
     cb_temp = """
-\t{0}->device_callbacks[TYPE_{1}] = {0}_callback_{2};"""
+\t{0}->device_callbacks[{3}_CALLBACK_{1}] = {0}_callback_{2};"""
 
     cbs = ''
     dev_name = com['name'][1]
     for packet in com['packets']:
-        if packet['type'] != 'signal':
+        if packet['type'] != 'callback':
             continue
         type_name = packet['name'][1]
-        cbs += cb_temp.format(dev_name, type_name.upper(), type_name)
+        cbs += cb_temp.format(dev_name, type_name.upper(), type_name, dev_name.upper())
     
     v = com['version']
     return func.format(dev_name, com['name'][0], cbs, v[0], v[1], v[2])
@@ -335,7 +338,7 @@ int {0}_{1}({2} *{0}{3}) {{
 
 {9}\t{5}_ {6};
 \t{6}.stack_id = {0}->stack_id;
-\t{6}.type = {4};
+\t{6}.function_id = {4};
 \t{6}.length = sizeof({5}_);{7}
 
 \tipcon_device_write({0}, (char *)&{6}, sizeof({5}_));
@@ -350,7 +353,7 @@ int {0}_{1}({2} *{0}{3}) {{
 {3}
 """
 
-    sizeof_ret = """\t{0}->answer.type = {1};
+    sizeof_ret = """\t{0}->answer.function_id = {1};
 \t{0}->answer.length = sizeof({2}Return_);
 """
 
@@ -366,12 +369,12 @@ int {0}_{1}({2} *{0}{3}) {{
 
     funcs = ''
     for packet in com['packets']:
-        if packet['type'] != 'method':
+        if packet['type'] != 'function':
             continue
 
         b = packet['name'][1]
         d = make_parameter_list(packet)
-        e = 'TYPE_{0}'.format(packet['name'][1].upper())
+        e = 'FUNCTION_{0}'.format(packet['name'][1].upper())
         f = packet['name'][0]
         g = make_short_form(b)
         h = make_struct_list(packet)
@@ -388,25 +391,6 @@ int {0}_{1}({2} *{0}{3}) {{
 
     return funcs + func_version.format(a, c)
 
-def make_set_callback_funcs():
-    func = """
-void {0}_set_callback_{1}({2} *{0}, {1}_func_t func) {{
-\t{0}->callbacks[{3}] = (void*)func;
-}}
-"""
-    
-    funcs = ''       
-    for packet in com['packets']:
-        if packet['type'] != 'signal':
-            continue
-
-
-        funcs += func.format(com['name'][1], 
-                             packet['name'][1], 
-                             com['name'][0],
-                             'TYPE_{0}'.format(packet['name'][1].upper()))
-    return funcs
-
 def make_register_callback_func():
     func = """
 void {0}_register_callback({1} *{0}, uint8_t cb, void *func) {{
@@ -417,16 +401,16 @@ void {0}_register_callback({1} *{0}, uint8_t cb, void *func) {{
 
 def make_callback_funcs():
     func = """
-int {0}_callback_{1}({2} *{0}, const unsigned char *buffer) {{
+static int {0}_callback_{1}({2} *{0}, const unsigned char *buffer) {{
 \t{3}Callback_ *{4}c = ({3}Callback_ *)buffer;
-\t(({1}_func_t){0}->callbacks[{4}c->type])({5});
+\t(({1}_func_t){0}->callbacks[{4}c->function_id])({5});
 \treturn sizeof({3}Callback_);
 }}
 """
 
     funcs = ''
     for packet in com['packets']:
-        if packet['type'] != 'signal':
+        if packet['type'] != 'callback':
             continue
         a = com['name'][1]
         b = packet['name'][1]
@@ -482,7 +466,7 @@ typedef void (*{0}_func_t)({1});
 
     typedefs = '\n'
     for packet in com['packets']:
-        if packet['type'] != 'signal':
+        if packet['type'] != 'callback':
             continue
 
         name = packet['name'][1]
@@ -531,7 +515,7 @@ int {0}_{1}({2} *{0}{3});
 
     funcs = ''
     for packet in com['packets']:
-        if packet['type'] != 'method':
+        if packet['type'] != 'function':
             continue
 
         b = packet['name'][1]
@@ -542,26 +526,13 @@ int {0}_{1}({2} *{0}{3});
 
     return funcs + func_version.format(a, c, com['type'])
 
-def make_set_callback_declarations():
-    func = 'void {0}_set_callback_{1}({2} *{0}, {1}_func_t func);\n'
-
-    funcs = '\n'       
-    for packet in com['packets']:
-        if packet['type'] != 'signal':
-            continue
-
-        funcs += func.format(com['name'][1], 
-                             packet['name'][1],  
-                             com['name'][0])
-    return funcs
-
 def make_register_callback_declaration():
-    signal_count = 0
+    callback_count = 0
     for packet in com['packets']:
-        if packet['type'] == 'signal':
-            signal_count += 1
+        if packet['type'] == 'callback':
+            callback_count += 1
 
-    if signal_count == 0:
+    if callback_count == 0:
         return '\n'
 
     func = """
@@ -579,7 +550,7 @@ def make_callback_declarations():
 
     funcs = '\n'
     for packet in com['packets']:
-        if packet['type'] != 'signal':
+        if packet['type'] != 'callback':
             continue
 
         funcs += func.format(com['name'][1], 
@@ -600,7 +571,7 @@ def make_files(com_new, directory):
 
     c = file('{0}/{1}.c'.format(directory, file_name), "w")
     c.write(make_include_c())
-    c.write(make_type_defines())
+    c.write(make_function_id_defines())
     c.write(make_typedefs())
     c.write(make_structs())
     c.write(make_method_funcs())

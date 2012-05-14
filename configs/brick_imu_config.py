@@ -13,7 +13,7 @@ com = {
 }
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetAcceleration', 'get_acceleration'), 
 'elements': [('x', 'int16', 1, 'out'), 
              ('y', 'int16', 1, 'out'),
@@ -35,7 +35,7 @@ to use the callback :func:`Acceleration` and set the period with
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetMagneticField', 'get_magnetic_field'), 
 'elements': [('x', 'int16', 1, 'out'), 
              ('y', 'int16', 1, 'out'),
@@ -57,7 +57,7 @@ to use the callback :func:`MagneticField` and set the period with
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetAngularVelocity', 'get_angular_velocity'), 
 'elements': [('x', 'int16', 1, 'out'), 
              ('y', 'int16', 1, 'out'),
@@ -80,7 +80,7 @@ to use the callback :func:`AngularVelocity` and set the period with
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetAllData', 'get_all_data'), 
 'elements': [('acc_x', 'int16', 1, 'out'), 
              ('acc_y', 'int16', 1, 'out'),
@@ -111,7 +111,7 @@ to use the callback :func:`AllData` and set the period with
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetOrientation', 'get_orientation'), 
 'elements': [('roll', 'int16', 1, 'out'), 
              ('pitch', 'int16', 1, 'out'),
@@ -139,7 +139,7 @@ to use the callback :func:`Orientation` and set the period with
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetQuaternion', 'get_quaternion'), 
 'elements': [('x', 'float', 1, 'out'),
              ('y', 'float', 1, 'out'), 
@@ -179,7 +179,7 @@ to use the callback :func:`Quaternion` and set the period with
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetIMUTemperature', 'get_imu_temperature'), 
 'elements': [('temperature', 'int16', 1, 'out')],
 'doc': ['am', {
@@ -196,7 +196,7 @@ Returns the temperature of the IMU Brick. The temperature is given in
 
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('LedsOn', 'leds_on'), 
 'elements': [],
 'doc': ['bm', {
@@ -211,7 +211,7 @@ Turns the orientation and direction LEDs of the IMU Brick on.
 })
     
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('LedsOff', 'leds_off'), 
 'elements': [],
 'doc': ['bm', {
@@ -226,7 +226,7 @@ Turns the orientation and direction LEDs of the IMU Brick off.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('AreLedsOn', 'are_leds_on'), 
 'elements': [('leds', 'bool', 1, 'out')],
 'doc': ['bm', {
@@ -242,7 +242,7 @@ are on, false otherwise.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetAccelerationRange', 'set_acceleration_range'), 
 'elements': [('range', 'uint8', 1, 'in')],
 'doc': ['am', {
@@ -257,7 +257,7 @@ Not implemented yet.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetAccelerationRange', 'get_acceleration_range'), 
 'elements': [('range', 'uint8', 1, 'out')],
 'doc': ['am', {
@@ -272,7 +272,7 @@ Not implemented yet.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetMagnetometerRange', 'set_magnetometer_range'), 
 'elements': [('range', 'uint8', 1, 'in')],
 'doc': ['am', {
@@ -287,7 +287,7 @@ Not implemented yet.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetMagnetometerRange', 'get_magnetometer_range'), 
 'elements': [('range', 'uint8', 1, 'out')],
 'doc': ['am', {
@@ -302,7 +302,7 @@ Not implemented yet.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetConvergenceSpeed', 'set_convergence_speed'), 
 'elements': [('speed', 'uint16', 1, 'in')],
 'doc': ['bm', {
@@ -343,7 +343,7 @@ The default value is 30.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetConvergenceSpeed', 'get_convergence_speed'), 
 'elements': [('speed', 'uint16', 1, 'out')],
 'doc': ['bm', {
@@ -358,7 +358,7 @@ Returns the convergence speed as set by :func:`SetConvergenceSpeed`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetCalibration', 'set_calibration'), 
 'elements': [('typ', 'uint8', 1, 'in'),
              ('data', 'int16', 10, 'in')],
@@ -407,7 +407,7 @@ temperature for one of the sampling points.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetCalibration', 'get_calibration'), 
 'elements': [('typ', 'uint8', 1, 'in'),
              ('data', 'int16', 10, 'out')],
@@ -423,7 +423,7 @@ Returns the calibration for a given type as set by :func:`SetCalibration`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetAccelerationPeriod', 'set_acceleration_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
 'doc': ['ccm', {
@@ -441,7 +441,7 @@ The default value is 0.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetAccelerationPeriod', 'get_acceleration_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
 'doc': ['ccm', {
@@ -456,7 +456,7 @@ Returns the period as set by :func:`SetAccelerationPeriod`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetMagneticFieldPeriod', 'set_magnetic_field_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
 'doc': ['ccm', {
@@ -472,7 +472,7 @@ periodically. A value of 0 turns the callback off.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetMagneticFieldPeriod', 'get_magnetic_field_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
 'doc': ['ccm', {
@@ -487,7 +487,7 @@ Returns the period as set by :func:`SetMagneticFieldPeriod`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetAngularVelocityPeriod', 'set_angular_velocity_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
 'doc': ['ccm', {
@@ -503,7 +503,7 @@ periodically. A value of 0 turns the callback off.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetAngularVelocityPeriod', 'get_angular_velocity_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
 'doc': ['ccm', {
@@ -518,7 +518,7 @@ Returns the period as set by :func:`SetAngularVelocityPeriod`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetAllDataPeriod', 'set_all_data_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
 'doc': ['ccm', {
@@ -534,7 +534,7 @@ periodically. A value of 0 turns the callback off.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetAllDataPeriod', 'get_all_data_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
 'doc': ['ccm', {
@@ -549,7 +549,7 @@ Returns the period as set by :func:`SetAllDataPeriod`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetOrientationPeriod', 'set_orientation_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
 'doc': ['ccm', {
@@ -565,7 +565,7 @@ periodically. A value of 0 turns the callback off.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetOrientationPeriod', 'get_orientation_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
 'doc': ['ccm', {
@@ -580,7 +580,7 @@ Returns the period as set by :func:`SetOrientationPeriod`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetQuaternionPeriod', 'set_quaternion_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
 'doc': ['ccm', {
@@ -596,7 +596,7 @@ periodically. A value of 0 turns the callback off.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetQuaternionPeriod', 'get_quaternion_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
 'doc': ['ccm', {
@@ -611,7 +611,7 @@ Returns the period as set by :func:`SetQuaternionPeriod`.
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('Acceleration', 'acceleration'), 
 'elements': [('x', 'int16', 1, 'out'),
              ('y', 'int16', 1, 'out'),
@@ -630,7 +630,7 @@ for the x, y and z axis.
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('MagneticField', 'magnetic_field'), 
 'elements': [('x', 'int16', 1, 'out'),
              ('y', 'int16', 1, 'out'),
@@ -649,7 +649,7 @@ for the x, y and z axis.
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('AngularVelocity', 'angular_velocity'), 
 'elements': [('x', 'int16', 1, 'out'),
              ('y', 'int16', 1, 'out'),
@@ -668,7 +668,7 @@ for the x, y and z axis.
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('AllData', 'all_data'), 
 'elements': [('acc_x', 'int16', 1, 'out'), 
              ('acc_y', 'int16', 1, 'out'),
@@ -695,7 +695,7 @@ well as the temperature of the IMU Brick.
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('Orientation', 'orientation'), 
 'elements': [('roll', 'int16', 1, 'out'),
              ('pitch', 'int16', 1, 'out'),
@@ -715,7 +715,7 @@ This callback is triggered periodically with the period that is set by
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('Quaternion', 'quaternion'), 
 'elements': [('x', 'float', 1, 'out'),
              ('y', 'float', 1, 'out'),

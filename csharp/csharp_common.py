@@ -38,7 +38,7 @@ def make_parameter_list(packet, useOutParams=True):
             continue
         
         out = ''
-        if element[3] == 'out' and packet['type'] == 'method':
+        if element[3] == 'out' and packet['type'] == 'function':
             out = 'out '
 
         csharp_type = get_csharp_type(element)
