@@ -33,22 +33,12 @@ import glob
 import re
 import csharp_common
 
+sys.path.append(os.path.split(os.getcwd())[0])
+import common
+
 com = None
 lang = 'en'
 file_path = ''
-
-gen_text = """..
- #############################################################
- # This file was automatically generated on {0}.      #
- #                                                           #
- # If you have a bugfix for this file and want to commit it, #
- # please fix the bug in the generator. You can find a link  #
- # to the generator git on tinkerforge.com                   #
- #############################################################
-"""
-
-def shift_right(text, n):
-    return text.replace('\n', '\n' + ' '*n)
 
 def fix_links(text):
     link = ':csharp:func:`{2}() <{0}{1}::{2}>`' 
@@ -66,42 +56,12 @@ def fix_links(text):
 
     return text
 
-def find_examples():
-    path = file_path
-    start_path = path.replace('/generators/csharp', '')
-    board = '{0}-{1}'.format(com['name'][1], com['type'].lower())
-    board = board.replace('_', '-')
-    board_path = os.path.join(start_path, board, 'software/examples/csharp')
-    files = []
-    for f in os.listdir(board_path):
-        if f.startswith('Example') and f.endswith('.cs'):
-            f_dir = '{0}/{1}'.format(board_path, f)
-            lines = 0
-            for line in open(os.path.join(f, f_dir)):
-                lines += 1
-            files.append((f, f_dir, lines))
-
-    files.sort(lambda i, j: cmp(i[2], j[2]))
-
-    return files
-   
-def copy_examples(cf):
-    path = file_path
-    doc_path = '{0}/doc'.format(path)
-    print('  * Copying examples:')
-    for f in cf:
-        doc_dest = '{0}/{1}'.format(doc_path, f[1])
-        doc_src = f[0]
-        shutil.copy(doc_src, doc_dest)
-        print('   - {0}'.format(f[1]))
-    
-
 def make_header():
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     ref = '.. _{0}_{1}_csharp:\n'.format(com['name'][1], com['type'].lower())
     title = 'C# - {0} {1}'.format(com['name'][0], com['type'])
     title_under = '='*len(title)
-    return '{0}\n{1}\n{2}\n{3}\n'.format(gen_text.format(date), 
+    return '{0}\n{1}\n{2}\n{3}\n'.format(common.gen_text_rst.format(date),
                                          ref,
                                          title, 
                                          title_under)
@@ -150,7 +110,7 @@ Examples
     ref = '.. _{0}_{1}_csharp_examples:\n'.format(com['name'][1], 
                                                   com['type'].lower())
     ex = ex.format(ref)
-    files = find_examples()
+    files = common.find_examples(com, file_path, 'csharp', 'Example', '.cs')
     copy_files = []
     for f in files:
         include = '{0}_{1}_CSharp_{2}'.format(com['name'][0], com['type'], f[0])
@@ -159,7 +119,7 @@ Examples
         git_name = com['name'][1].replace('_', '-') + '-' + com['type'].lower()
         ex += imp.format(title, '^'*len(title), include, git_name, f[0])
 
-    copy_examples(copy_files)
+    common.copy_examples(copy_files, file_path)
     return ex
 
 def to_camel_case(name):
@@ -194,7 +154,7 @@ def make_methods(typ):
             continue
 
         signature = csharp_common.make_method_signature(packet, True, com)
-        desc = fix_links(shift_right(packet['doc'][1][lang], 1))
+        desc = fix_links(common.shift_right(packet['doc'][1][lang], 1))
         func = '{0}{1}\n{2}'.format(func_start, 
                                     signature, 
                                     desc)
@@ -221,7 +181,7 @@ def make_callbacks():
         if packet['type'] != 'callback':
             continue
 
-        desc = fix_links(shift_right(packet['doc'][1][lang], 2))
+        desc = fix_links(common.shift_right(packet['doc'][1][lang], 2))
         params = csharp_common.make_parameter_list(packet)
 
         cbs += cb.format(com['type'] + com['name'][0],
@@ -367,7 +327,7 @@ The namespace for all Brick/Bricklet bindings and the IPConnection is
     return api.format(ref, api_desc, api_str) 
         
 def copy_examples_for_zip():
-    examples = find_examples()
+    examples = common.find_examples(com, file_path, 'csharp', 'Example', '.cs')
     dest = os.path.join('/tmp/generator/dll/examples/', 
                         com['type'], 
                         com['name'][0])
@@ -395,17 +355,6 @@ def make_files(com_new, directory):
     f.write(make_api())
 
     copy_examples_for_zip()
-
-def get_version(path):
-    r = re.compile('^(\d+)\.(\d+)\.(\d+):')
-    last = None
-    for line in file(path + '/changelog.txt').readlines():
-        m = r.match(line)
-
-        if m is not None:
-            last = (m.group(1), m.group(2), m.group(3))
-
-    return last
 
 def generate(path):
     global file_path
@@ -438,7 +387,7 @@ def generate(path):
     shutil.copy(path + '/Readme.txt', '/tmp/generator/dll')
 
     # Write AssemblyInfo
-    version = get_version(path)
+    version = common.get_version(path)
     file('/tmp/generator/dll/source/Tinkerforge/AssemblyInfo.cs', 'wb').write("""
 using System.Reflection;
 using System.Runtime.CompilerServices;

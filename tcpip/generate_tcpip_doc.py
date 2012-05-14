@@ -30,19 +30,12 @@ import os
 import shutil
 import subprocess
 
+sys.path.append(os.path.split(os.getcwd())[0])
+import common
+
 com = None
 lang = 'en'
 file_path = ''
-
-gen_text = """..
- #############################################################
- # This file was automatically generated on {0}.      #
- #                                                           #
- # If you have a bugfix for this file and want to commit it, #
- # please fix the bug in the generator. You can find a link  #
- # to the generator git on tinkerforge.com                   #
- #############################################################
-"""
 
 def type_to_pytype(element):
     t = element[1]
@@ -54,9 +47,6 @@ def type_to_pytype(element):
         return t
 
     return t + '[' + str(element[2]) + ']'
-
-def shift_right(text, n):
-    return text.replace('\n', '\n' + ' '*n)
 
 def fix_links(text):
     cls = com['name'][0]
@@ -79,7 +69,7 @@ def make_header():
     ref = '.. _{0}_{1}_tcpip:\n'.format(com['name'][1], com['type'].lower())
     title = 'TCP/IP - {0} {1}'.format(com['name'][0], com['type'])
     title_under = '='*len(title)
-    return '{0}\n{1}\n{2}\n{3}\n'.format(gen_text.format(date),
+    return '{0}\n{1}\n{2}\n{3}\n'.format(common.gen_text_rst.format(date),
                                          ref,
                                          title,
                                          title_under)
@@ -141,7 +131,7 @@ def make_methods(typ):
         fid = '\n :functionid: {0}'.format(packet['function_id'])
         request = make_request_desc(packet)
         response = make_response_desc(packet)
-        d = fix_links(shift_right(packet['doc'][1][lang], 1))
+        d = fix_links(common.shift_right(packet['doc'][1][lang], 1))
         desc = '{0}{1}{2}{3}'.format(fid, request, response, d)
         func = '{0}{1}.{2}\n{3}'.format(func_start,
                                              cls,
@@ -163,7 +153,7 @@ def make_callbacks():
 
         fid = '\n :functionid: {0}'.format(packet['function_id'])
         response = make_response_desc(packet)
-        desc = fix_links(shift_right(packet['doc'][1][lang], 1))
+        desc = fix_links(common.shift_right(packet['doc'][1][lang], 1))
 
         func = '{0}{1}.CALLBACK_{2}\n{3}\n{4}\n{5}'.format(func_start,
                                                       cls,

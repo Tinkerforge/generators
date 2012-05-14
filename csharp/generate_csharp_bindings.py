@@ -30,17 +30,11 @@ import os
 import csharp_common
 from xml.sax.saxutils import escape
 
+sys.path.append(os.path.split(os.getcwd())[0])
+import common
+
 com = None
 lang = 'en'
-
-gen_text = """/* ***********************************************************
- * This file was automatically generated on {0}.      *
- *                                                           *
- * If you have a bugfix for this file and want to commit it, *
- * please fix the bug in the generator. You can find a link  *
- * to the generator git on tinkerforge.com                   *
- *************************************************************/
-"""
 
 def fix_links(text):
     link = '<see cref="Tinkerforge.{0}{1}.{2}"/>'
@@ -107,7 +101,7 @@ using System;
 namespace Tinkerforge
 {{"""
     date = datetime.datetime.now().strftime("%Y-%m-%d")
-    return include.format(gen_text.format(date))
+    return include.format(common.gen_text_star.format(date))
 
 def make_class():
     class_str = """
@@ -223,12 +217,7 @@ def get_type_size(element):
     return 0
 
 def make_register_callback():
-    callback_count = 0
-    for packet in com['packets']:
-        if packet['type'] == 'callback':
-            callback_count += 1
-
-    if callback_count == 0:
+    if common.get_callback_count(com) == 0:
         return '\t}\n}\n'
 
     typeofs = ''
@@ -416,7 +405,7 @@ def make_obsolete_methods():
             continue
 
         ret_count = csharp_common.count_return_values(packet['elements'])
-        if ret_count <> 1:
+        if ret_count != 1:
             continue
 
         name = packet['name'][0]

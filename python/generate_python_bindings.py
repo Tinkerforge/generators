@@ -28,18 +28,11 @@ import datetime
 import sys
 import os
 
+sys.path.append(os.path.split(os.getcwd())[0])
+import common
+
 com = None
 lang = 'en'
-
-gen_text = """# -*- coding: utf-8 -*-
-#############################################################
-# This file was automatically generated on {0}.      #
-#                                                           #
-# If you have a bugfix for this file and want to commit it, #
-# please fix the bug in the generator. You can find a link  #
-# to the generator git on tinkerforge.com                   #
-#############################################################
-"""
 
 def fix_links(text):
     text = text.replace(":word:`parameter`", "parameter")
@@ -48,7 +41,8 @@ def fix_links(text):
     return text
 
 def make_import():
-    include = """{0}
+    include = """# -*- coding: utf-8 -*-
+{0}
 try:
     from collections import namedtuple
 except ImportError:
@@ -59,7 +53,8 @@ from ip_connection import Device, IPConnection, Error
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     lower_type = com['type'].lower()
 
-    return include.format(gen_text.format(date), lower_type, com['name'][1])
+    return include.format(common.gen_text_hash.format(date),
+                          lower_type, com['name'][1])
 
 def make_namedtuples():
     tup = """{0} = namedtuple('{1}', [{2}])
@@ -241,12 +236,7 @@ def make_methods():
     return methods
 
 def make_register_callback_method():
-    callback_count = 0
-    for packet in com['packets']:
-        if packet['type'] == 'callback':
-            callback_count += 1
-
-    if callback_count == 0:
+    if common.get_callback_count(com) == 0:
         return ''
 
     return """

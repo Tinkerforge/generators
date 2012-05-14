@@ -28,17 +28,11 @@ import datetime
 import sys
 import os
 
+sys.path.append(os.path.split(os.getcwd())[0])
+import common
+
 com = None
 lang = 'en'
-
-gen_text = """/*************************************************************
- * This file was automatically generated on {0}.      *
- *                                                           *
- * If you have a bugfix for this file and want to commit it, *
- * please fix the bug in the generator. You can find a link  *
- * to the generator git on tinkerforge.com                   *
- *************************************************************/
-"""
 
 def fix_links(text):
     link = '{{@link com.tinkerforge.{0}{1}.{2}}}'
@@ -100,7 +94,7 @@ import java.util.concurrent.TimeUnit;
 
 """
     date = datetime.datetime.now().strftime("%Y-%m-%d")
-    return include.format(gen_text.format(date))
+    return include.format(common.gen_text_star.format(date))
 
 def make_class():
     class_str = """
@@ -119,7 +113,7 @@ def make_return_objects():
 {1}
 
 \t\tpublic String toString() {{
-\t\t\t return "[" + {2} "]";
+\t\t\treturn "[" + {2} "]";
 \t\t}}
 \t}}
 """
@@ -219,12 +213,7 @@ def make_callback_listener_definitions():
     return cbs + cbs_end
 
 def make_add_listener():
-    callback_count = 0
-    for packet in com['packets']:
-        if packet['type'] == 'callback':
-            callback_count += 1
-
-    if callback_count == 0:
+    if common.get_callback_count(com) == 0:
         return '}'
 
     listeners = """

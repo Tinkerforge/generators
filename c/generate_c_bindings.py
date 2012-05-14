@@ -28,18 +28,11 @@ import datetime
 import sys
 import os
 
+sys.path.append(os.path.split(os.getcwd())[0])
+import common
+
 com = None
 lang = 'en'
-
-gen_text = """\
-/*************************************************************
- * This file was automatically generated on {0}.      *
- *                                                           *
- * If you have a bugfix for this file and want to commit it, *
- * please fix the bug in the generator. You can find a link  *
- * to the generator git on tinkerforge.com                   *
- *************************************************************/
-"""
 
 def fix_links(text):
     link = '{{@link {0}_{1}}}'
@@ -132,7 +125,7 @@ def make_include_c():
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     lower_type = com['type'].lower()
 
-    return include.format(gen_text.format(date), lower_type, com['name'][1])
+    return include.format(common.gen_text_star.format(date), lower_type, com['name'][1])
 
 def make_function_id_defines():
     define_temp = '#define {2}_{0} {1}\n'
@@ -449,7 +442,7 @@ typedef Device {3};
     upper_type = com['type'].upper()
     upper_name = com['name'][1].upper()
 
-    return include.format(gen_text.format(date), 
+    return include.format(common.gen_text_star.format(date),
                           upper_type, 
                           upper_name, 
                           com['name'][0],
@@ -527,12 +520,7 @@ int {0}_{1}({2} *{0}{3});
     return funcs + func_version.format(a, c, com['type'])
 
 def make_register_callback_declaration():
-    callback_count = 0
-    for packet in com['packets']:
-        if packet['type'] == 'callback':
-            callback_count += 1
-
-    if callback_count == 0:
+    if common.get_callback_count(com) == 0:
         return '\n'
 
     func = """
