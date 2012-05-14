@@ -33,7 +33,7 @@ from xml.sax.saxutils import escape
 com = None
 lang = 'en'
 
-gen_text = """/*************************************************************
+gen_text = """/* ***********************************************************
  * This file was automatically generated on {0}.      *
  *                                                           *
  * If you have a bugfix for this file and want to commit it, *

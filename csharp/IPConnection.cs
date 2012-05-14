@@ -878,7 +878,7 @@ namespace Tinkerforge
 
 	// There is no BlockingQueue in c# version <= 2.0, we make our own
 	// to be backward compatible
-	public class BlockingQueue
+	internal class BlockingQueue
 	{
 		private bool closing;
 		private readonly Queue<byte[]> queue = new Queue<byte[]>();
