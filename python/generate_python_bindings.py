@@ -46,8 +46,8 @@ def make_import():
 try:
     from collections import namedtuple
 except ImportError:
-    from ip_connection import namedtuple
-from ip_connection import Device, IPConnection, Error
+    from .ip_connection import namedtuple
+from .ip_connection import Device, IPConnection, Error
 
 """
     date = datetime.datetime.now().strftime("%Y-%m-%d")
