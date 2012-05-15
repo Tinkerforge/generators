@@ -174,6 +174,10 @@ abstract class Device
 
     protected function sendRequestNoResponse($functionID, $payload)
     {
+        if ($this->ipcon == NULL) {
+            throw new \Exception('Not added to IPConnection');
+        }
+
         $header = pack('CCv', $this->stackID, $functionID, 4 + strlen($payload));
         $request = $header . $payload;
 
