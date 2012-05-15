@@ -103,3 +103,8 @@ def copy_examples(copy_files, path):
         doc_src = copy_file[0]
         shutil.copy(doc_src, doc_dest)
         print('   - {0}'.format(copy_file[1]))
+
+re_camel_case_to_space = re.compile('([A-Z][A-Z][a-z])|([a-z][A-Z])')
+
+def camel_case_to_space(name):
+    return re_camel_case_to_space.sub(lambda m: m.group()[:1] + " " + m.group()[1:], name)

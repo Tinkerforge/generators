@@ -67,7 +67,8 @@ def fix_links(text):
 def make_header():
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     ref = '.. _{0}_{1}_tcpip:\n'.format(com['name'][1], com['type'].lower())
-    title = 'TCP/IP - {0} {1}'.format(com['name'][0], com['type'])
+    name = common.camel_case_to_space(com['name'][0])
+    title = 'TCP/IP - {0} {1}'.format(name, com['type'])
     title_under = '='*len(title)
     return '{0}\n{1}\n{2}\n{3}\n'.format(common.gen_text_rst.format(date),
                                          ref,
@@ -86,7 +87,8 @@ can be found :ref:`here <{3}>`.
 
     hw_link = com['name'][1] + '_' + com['type'].lower()
     hw_test = hw_link + '_test'
-    su = su.format(com['name'][0], com['type'], hw_link, hw_test)
+    name = common.camel_case_to_space(com['name'][0])
+    su = su.format(name, com['type'], hw_link, hw_test)
     return su
 
 def make_request_desc(packet):
