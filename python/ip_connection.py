@@ -255,6 +255,17 @@ class IPConnection:
         for f, d in zip(form.split(' '), data):
             if len(f) > 1 and not 's' in f:
                 write_data += struct.pack('<' + f, *d)
+            elif 's' in f:
+                if sys.hexversion < 0x03000000:
+                    if type(d) == types.UnicodeType:
+                        write_data += struct.pack('<' + f, d.encode('ascii'))
+                    else:
+                        write_data += struct.pack('<' + f, d)
+                else:
+                    if isinstance(d, str):
+                        write_data += struct.pack('<' + f, bytes(d, 'ascii'))
+                    else:
+                        write_data += struct.pack('<' + f, d)
             else:
                 write_data += struct.pack('<' + f, d)
 

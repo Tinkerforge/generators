@@ -9,3 +9,4 @@
        Silently ignore messages from devices with unknown stack ID
        Don't generate register_callback method for devices without callbacks
        Add inline code documentation
+1.0.8: Fix relative import and str packing problem with Python 3
