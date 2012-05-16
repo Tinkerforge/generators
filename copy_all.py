@@ -50,9 +50,7 @@ bind_trans = [('brick_imu', 'imu-brick', 'imu', 'IMU_Brick'),
 
 path = os.getcwd()
 start_path = path.replace('/generators', '')
-brickv_path_ipcon = '{0}/{1}'.format(start_path, 'brickv/src/brickv')
-brickv_path_plugin = '{0}/{1}'.format(brickv_path_ipcon, 
-                                      'plugin_system/plugins')
+brickv_path_bindings = '{0}/{1}'.format(start_path, 'brickv/src/brickv/bindings')
 
 bindings = []
 for d in os.listdir(path):
@@ -63,8 +61,8 @@ for d in os.listdir(path):
 print('')
 print('Copying ip_connection to brickv:')
 src_file = '{0}/{1}'.format(path, 'python/ip_connection.py')
-if files_are_not_the_same(src_file, brickv_path_ipcon):
-    shutil.copy(src_file, brickv_path_ipcon)
+if files_are_not_the_same(src_file, brickv_path_bindings):
+    shutil.copy(src_file, brickv_path_bindings)
     print(' * ip_connection.py')
 
 print('')
@@ -72,15 +70,13 @@ print('Copying Python bindings to brickv:')
 path_binding = '{0}/{1}'.format(path, 'python')
 src_file_path = '{0}/{1}'.format(path_binding, 'bindings')
 for f in os.listdir(src_file_path):
-    if not f.endswith('.swp'):
-        for b in bind_trans:
-            if b[0] in f:
-                src_file = '{0}/{1}'.format(src_file_path, f)
-                dest_path = '{0}/{1}'.format(brickv_path_plugin, b[2])
+    if f.endswith('.py'):
+        src_file = '{0}/{1}'.format(src_file_path, f)
+        dest_path = brickv_path_bindings
 
-                if files_are_not_the_same(src_file, dest_path):
-                    shutil.copy(src_file, dest_path)
-                    print(' * {0}'.format(f))
+        if files_are_not_the_same(src_file, dest_path):
+            shutil.copy(src_file, dest_path)
+            print(' * {0}'.format(f))
 
 print('')
 print('Copying documentation and examples:')
