@@ -7,3 +7,4 @@
 1.0.6: Silently ignore messages from devices with unknown stack ID
        Don't generate register_callback function for devices without callbacks
        Add inline code documentation
+1.0.7: Add thread for callbacks (allows to call getters in callbacks)

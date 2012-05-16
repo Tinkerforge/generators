@@ -79,8 +79,8 @@ typedef struct Device_{
 	uint8_t stack_id;
 	uint64_t uid;
 #ifdef _WIN32
-	HANDLE  sem_write;
-	HANDLE  sem_answer;
+	HANDLE sem_write;
+	HANDLE sem_answer;
 #else
 	pthread_cond_t cond;
 	bool sem_answer_flag;
@@ -96,19 +96,36 @@ typedef struct Device_{
 	struct IPConnection_ *ipcon;
 } Device;
 
+typedef struct CallbackQueueNode_{
+	struct CallbackQueueNode_ *next;
+	unsigned char buffer[1];
+} CallbackQueueNode;
+
 typedef struct IPConnection_{
 #ifdef _WIN32
 	SOCKET s;
 	HANDLE handle_recv_loop;
+	HANDLE handle_callback_loop;
 #else
 	int fd;
 	pthread_t thread_recv_loop;
+	pthread_t thread_callback_loop;
 #endif
 	bool recv_loop_flag;
 	struct sockaddr_in server;
 	Device *devices[MAX_NUM_DEVICES];
 	Device *add_device;
 	enumerate_callback_func_t enumerate_callback;
+	CallbackQueueNode *callback_queue_head;
+	CallbackQueueNode *callback_queue_tail;
+#ifdef _WIN32
+	CRITICAL_SECTION callback_queue_mutex;
+	HANDLE callback_queue_semaphore;
+#else
+	pthread_mutex_t callback_queue_mutex;
+	sem_t callback_queue_semaphore_object;
+	sem_t *callback_queue_semaphore;
+#endif
 } IPConnection;
 
 #if defined _MSC_VER || defined __BORLANDC__

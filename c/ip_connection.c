@@ -8,7 +8,9 @@
 
 #include "ip_connection.h"
 
+#include <stddef.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 
 #ifndef _WIN32
@@ -59,23 +61,111 @@ void *ipcon_recv_loop(void *param) {
 #endif
 }
 
+#ifdef _WIN32
+void ipcon_callback_loop(void *param) {
+#else
+void *ipcon_callback_loop(void *param) {
+#endif
+	IPConnection *ipcon = (IPConnection*)param;
+
+	while(ipcon->recv_loop_flag) {
+#ifdef _WIN32
+		if (WaitForSingleObject(ipcon->callback_queue_semaphore, INFINITE) != 0) {
+			continue;
+		}
+#else
+		if (sem_wait(ipcon->callback_queue_semaphore) != 0) {
+			continue;
+		}
+#endif
+
+		if (!ipcon->recv_loop_flag) {
+			break;
+		}
+
+		if (ipcon->callback_queue_head == NULL) {
+			continue;
+		}
+
+#ifdef _WIN32
+		EnterCriticalSection(&ipcon->callback_queue_mutex);
+#else
+		pthread_mutex_lock(&ipcon->callback_queue_mutex);
+#endif
+
+		CallbackQueueNode *node = ipcon->callback_queue_head;
+		ipcon->callback_queue_head = node->next;
+		node->next = NULL;
+
+		if (ipcon->callback_queue_tail == node) {
+			ipcon->callback_queue_head = NULL;
+			ipcon->callback_queue_tail = NULL;
+		}
+
+#ifdef _WIN32
+		LeaveCriticalSection(&ipcon->callback_queue_mutex);
+#else
+		pthread_mutex_unlock(&ipcon->callback_queue_mutex);
+#endif
+
+		uint8_t stack_id = ipcon_get_stack_id_from_data(node->buffer);
+		uint8_t function_id = ipcon_get_function_id_from_data(node->buffer);
+		Device *device = ipcon->devices[stack_id];
+
+		device->device_callbacks[function_id](device, node->buffer);
+
+		free(node);
+	}
+#ifndef _WIN32
+	return NULL;
+#endif
+}
+
 void ipcon_destroy(IPConnection *ipcon) {
 	ipcon->recv_loop_flag = false;
 
 #ifdef _WIN32
+	ReleaseSemaphore(ipcon->callback_queue_semaphore, 1, NULL);
+
 	shutdown(ipcon->s, 2);
 	closesocket(ipcon->s);
+
+	EnterCriticalSection(&ipcon->callback_queue_mutex);
 #else
+	sem_post(ipcon->callback_queue_semaphore);
+
 	shutdown(ipcon->fd, 2);
 	close(ipcon->fd);
+
+	pthread_mutex_lock(&ipcon->callback_queue_mutex);
+#endif
+
+	CallbackQueueNode *node = ipcon->callback_queue_head;
+
+	while (node != NULL) {
+		CallbackQueueNode *next = node->next;
+
+		free(node);
+		node = next;
+	}
+
+	ipcon->callback_queue_head = NULL;
+	ipcon->callback_queue_tail = NULL;
+
+#ifdef _WIN32
+	LeaveCriticalSection(&ipcon->callback_queue_mutex);
+#else
+	pthread_mutex_unlock(&ipcon->callback_queue_mutex);
 #endif
 }
 
 void ipcon_join_thread(IPConnection *ipcon) {
 #ifdef _WIN32
 	WaitForSingleObject(ipcon->handle_recv_loop, INFINITE);
+	WaitForSingleObject(ipcon->handle_callback_loop, INFINITE);
 #else
 	pthread_join(ipcon->thread_recv_loop, NULL);
+	pthread_join(ipcon->thread_callback_loop, NULL);
 #endif
 }
 
@@ -129,7 +219,7 @@ int ipcon_handle_message(IPConnection *ipcon, const unsigned char *buffer) {
 		return length;
 	}
 
-	Device *device =  ipcon->devices[stack_id];
+	Device *device = ipcon->devices[stack_id];
 	DeviceAnswer *answer = &device->answer;
 
 	if(answer->function_id == function_id) {
@@ -155,7 +245,34 @@ int ipcon_handle_message(IPConnection *ipcon, const unsigned char *buffer) {
 	}
 
 	if(device->callbacks[function_id] != NULL) {
-		return device->device_callbacks[function_id](device, buffer);
+		CallbackQueueNode *node = (CallbackQueueNode *)malloc(offsetof(CallbackQueueNode, buffer) + length);
+
+		node->next = NULL;
+		memcpy(node->buffer, buffer, length);
+
+#ifdef _WIN32
+		EnterCriticalSection(&ipcon->callback_queue_mutex);
+#else
+		pthread_mutex_lock(&ipcon->callback_queue_mutex);
+#endif
+
+		if (ipcon->callback_queue_tail == NULL) {
+			ipcon->callback_queue_head = node;
+			ipcon->callback_queue_tail = node;
+		} else {
+			ipcon->callback_queue_tail->next = node;
+			ipcon->callback_queue_tail = node;
+		}
+
+#ifdef _WIN32
+		LeaveCriticalSection(&ipcon->callback_queue_mutex);
+		ReleaseSemaphore(ipcon->callback_queue_semaphore, 1, NULL);
+#else
+		pthread_mutex_unlock(&ipcon->callback_queue_mutex);
+		sem_post(ipcon->callback_queue_semaphore);
+#endif
+
+		return length;
 	}
 
 	// Message seems to be OK, but can't be handled, most likely
@@ -185,6 +302,8 @@ void ipcon_device_create(Device *device, const char *uid) {
 
 	device->uid = ipcon_base58decode(uid);
 	device->ipcon = NULL;
+	device->answer.function_id = 0;
+	device->answer.length = 0;
 
 #ifdef _WIN32
 	device->sem_write = CreateSemaphore(NULL,1,1,NULL);
@@ -238,6 +357,8 @@ int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
 	ipcon->add_device = NULL;
 	ipcon->enumerate_callback = NULL;
 	ipcon->recv_loop_flag = true;
+	ipcon->callback_queue_head = NULL;
+	ipcon->callback_queue_tail = NULL;
 
 #ifdef _WIN32
 	WSADATA wsaData;
@@ -282,6 +403,26 @@ int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
 #endif
 
 #ifdef _WIN32
+	InitializeCriticalSection(&ipcon->callback_queue_mutex);
+	ipcon->callback_queue_semaphore = CreateSemaphore(NULL, 0, INT32_MAX, NULL);
+#elif defined __APPLE__
+	pthread_mutex_init(&ipcon->callback_queue_mutex, NULL);
+
+	// Mac OS does not support unnamed semaphores, so we fake them.
+	// Unlink first to ensure that there is no existing semaphore with that name.
+	// Then open the semaphore to create a new one. Finally unlink it again to
+	// avoid leaking the name. The semaphore will just work fine without a name.
+	#define SEMAPHORE_NAME "tinkerforge-ipcon-internal"
+	sem_unlink(SEMAPHORE_NAME);
+	ipcon->callback_queue_semaphore = sem_open(SEMAPHORE_NAME, O_CREAT | O_EXCL, S_IRUSR | S_IWUSR | S_IXUSR, 0);
+	sem_unlink(SEMAPHORE_NAME);
+#else
+	pthread_mutex_init(&ipcon->callback_queue_mutex, NULL);
+	ipcon->callback_queue_semaphore = &ipcon->callback_queue_semaphore_object;
+	sem_init(ipcon->callback_queue_semaphore, 0, 0);
+#endif
+
+#ifdef _WIN32
 	DWORD thread_recv_loop_id;
 	ipcon->handle_recv_loop = CreateThread(NULL,
 	                                       0,
@@ -292,10 +433,26 @@ int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
 	if(ipcon->handle_recv_loop == NULL) {
 		return E_NO_THREAD;
 	}
+	DWORD thread_callback_loop_id;
+	ipcon->handle_callback_loop = CreateThread(NULL,
+	                                           0,
+	                                           (LPTHREAD_START_ROUTINE)ipcon_callback_loop,
+	                                           (void*)ipcon,
+	                                           0,
+	                                           (LPDWORD)&thread_callback_loop_id);
+	if(ipcon->handle_callback_loop == NULL) {
+		return E_NO_THREAD;
+	}
 #else
 	if(pthread_create(&ipcon->thread_recv_loop,
 	                  NULL,
 	                  ipcon_recv_loop,
+	                  (void*)ipcon) < 0) {
+		return E_NO_THREAD;
+	}
+	if(pthread_create(&ipcon->thread_callback_loop,
+	                  NULL,
+	                  ipcon_callback_loop,
 	                  (void*)ipcon) < 0) {
 		return E_NO_THREAD;
 	}
