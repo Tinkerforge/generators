@@ -69,17 +69,9 @@ def get_changelog_version(path):
 
     return last
 
-def get_callback_count(com):
-    callback_count = 0
-    for packet in com['packets']:
-        if packet['type'] == 'callback':
-            callback_count += 1
-
-    return callback_count
-
 def find_examples(com, path, dirname, prefix, suffix):
     start_path = path.replace('/generators/' + dirname, '')
-    board = '{0}-{1}'.format(com['name'][1], com['type'].lower())
+    board = '{0}-{1}'.format(com['name'][1], com['category'].lower())
     board = board.replace('_', '-')
     board_path = os.path.join(start_path, board, 'software/examples/' + dirname)
     files = []
@@ -108,3 +100,41 @@ re_camel_case_to_space = re.compile('([A-Z][A-Z][a-z])|([a-z][A-Z])')
 
 def camel_case_to_space(name):
     return re_camel_case_to_space.sub(lambda m: m.group()[:1] + " " + m.group()[1:], name)
+
+class Device:
+    def __init__(self, com):
+        self.com = com
+
+    def get_version(self):
+        return self.com['version']
+
+    def get_category(self):
+        return self.com['category']
+
+    def get_camel_case_name(self):
+        return self.com['name'][0]
+
+    def get_headless_camel_case_name(self):
+        m = re.match('([A-Z]+)(.*)', self.com['name'][0])
+        return m.group(1).lower() + m.group(2)
+
+    def get_underscore_name(self):
+        return self.com['name'][1]
+
+    # this is also the name stored in the firmware
+    def get_display_name(self):
+        return self.com['name'][2]
+
+    def get_description(self):
+        return self.com['description']
+
+    def get_packets(self):
+        return self.com['packets']
+
+    def get_callback_count(self):
+        callback_count = 0
+        for packet in self.com['packets']:
+            if packet['type'] == 'callback':
+                callback_count += 1
+
+        return callback_count

@@ -32,7 +32,7 @@ import php_common
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-com = None
+device = None
 lang = 'en'
 
 def fix_links(text):
@@ -78,15 +78,15 @@ def fix_links(text):
 
     text = '\n'.join(replaced_lines)
 
-    cls = com['name'][0]
-    for packet in com['packets']:
+    cls = device.get_camel_case_name()
+    for packet in device.get_packets():
         name_false = ':func:`{0}`'.format(packet['name'][0])
         if packet['type'] == 'callback':
             name = packet['name'][1].upper()
-            name_right = link_c.format(com['type'], cls, name)
+            name_right = link_c.format(device.get_category(), cls, name)
         else:
             name = packet['name'][0][0].lower() + packet['name'][0][1:]
-            name_right = link.format(com['type'], cls, name)
+            name_right = link.format(device.get_category(), cls, name)
 
         text = text.replace(name_false, name_right)
 
@@ -130,14 +130,14 @@ class {0}{1} extends Device
 {{
 """
 
-    return class_str.format(com['type'], com['name'][0], com['description'])
+    return class_str.format(device.get_category(), device.get_camel_case_name(), device.get_description())
 
 def make_callback_wrapper_definitions():
     cbs = ''
     cb = """
         $this->callbackWrappers[self::CALLBACK_{0}] = 'callback{1}';"""
     cbs_end = '\n    }\n'
-    for i, packet in zip(range(len(com['packets'])), com['packets']):
+    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
         if packet['type'] != 'callback':
             continue
 
@@ -155,7 +155,7 @@ def make_callback_id_definitions():
      */
     const CALLBACK_{0} = {1};
 """
-    for i, packet in zip(range(len(com['packets'])), com['packets']):
+    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
         if packet['type'] != 'callback':
             continue
         doc = '\n     * '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
@@ -170,7 +170,7 @@ def make_function_id_definitions():
      */
     const FUNCTION_{0} = {1};
 """
-    for i, packet in zip(range(len(com['packets'])), com['packets']):
+    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
         if packet['type'] != 'function':
             continue
         function_ids += function_id.format(packet['name'][1].upper(), i+1)
@@ -200,8 +200,8 @@ def make_constructor():
         $this->bindingVersion = array({2}, {3}, {4});
 """
 
-    v = com['version']
-    return con.format(com['type'], com['name'][0], v[0], v[1], v[2])
+    v = device.get_version()
+    return con.format(device.get_category(), device.get_camel_case_name(), v[0], v[1], v[2])
 
 def get_pack_type(element):
     forms = {
@@ -315,7 +315,7 @@ def make_methods():
     }}
 """
 
-    for packet in com['packets']:
+    for packet in device.get_packets():
         if packet['type'] != 'function':
             continue
 
@@ -428,7 +428,7 @@ def make_methods():
 """ + methods
 
 def make_callback_wrappers():
-    if common.get_callback_count(com) == 0:
+    if device.get_callback_count() == 0:
         return ''
 
     wrappers = """
@@ -461,7 +461,7 @@ def make_callback_wrappers():
     }}
 """
 
-    for packet in com['packets']:
+    for packet in device.get_packets():
         if packet['type'] != 'callback':
             continue
 
@@ -515,10 +515,10 @@ def get_num_return(elements):
     return num
 
 def make_files(com_new, directory):
-    global com
-    com = com_new
+    global device
+    device = common.Device(com_new)
 
-    file_name = '{0}{1}'.format(com['type'], com['name'][0])
+    file_name = '{0}{1}'.format(device.get_category(), device.get_camel_case_name())
 
     directory += '/bindings'
     if not os.path.exists(directory):

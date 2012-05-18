@@ -5,8 +5,8 @@
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'version': [1, 1, 0],
-    'type': 'Brick',
-    'name': ('Master', 'master'),
+    'category': 'Brick',
+    'name': ('Master', 'master', 'Master'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling Stacks and four Bricklets',
     'packets': []

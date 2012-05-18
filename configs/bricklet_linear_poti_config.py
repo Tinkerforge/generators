@@ -5,8 +5,8 @@
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'version': [1, 0, 0],
-    'type': 'Bricklet',
-    'name': ('LinearPoti', 'linear_poti'),
+    'category': 'Bricklet',
+    'name': ('LinearPoti', 'linear_poti', 'Linear Poti'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing Linear Potentiometer input',
     'packets': []

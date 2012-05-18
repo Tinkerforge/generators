@@ -5,8 +5,8 @@
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'version': [1, 0, 0],
-    'type': 'Bricklet',
-    'name': ('Current25', 'current25'),
+    'category': 'Bricklet',
+    'name': ('Current25', 'current25', 'Current25'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing current of up to 25A',
     'packets': []

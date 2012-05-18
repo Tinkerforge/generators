@@ -5,8 +5,8 @@
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'version': [1, 0, 0],
-    'type': 'Bricklet',
-    'name': ('AmbientLight', 'ambient_light'),
+    'category': 'Bricklet',
+    'name': ('AmbientLight', 'ambient_light', 'Ambient Light'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing Ambient Light',
     'packets': []

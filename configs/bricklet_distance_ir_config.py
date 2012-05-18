@@ -5,8 +5,8 @@
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'version': [1, 0, 0],
-    'type': 'Bricklet',
-    'name': ('DistanceIR', 'distance_ir'),
+    'category': 'Bricklet',
+    'name': ('DistanceIR', 'distance_ir', 'Distance IR'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing distance via infrared',
     'packets': []

@@ -5,8 +5,8 @@
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'version': [1, 0, 0],
-    'type': 'Brick',
-    'name': ('IMU', 'imu'),
+    'category': 'Brick',
+    'name': ('IMU', 'imu', 'IMU'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing acceleration, magnetic field and angular velocity',
     'packets': []

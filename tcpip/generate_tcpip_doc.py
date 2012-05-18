@@ -33,7 +33,7 @@ import subprocess
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-com = None
+device = None
 lang = 'en'
 file_path = ''
 
@@ -49,8 +49,8 @@ def type_to_pytype(element):
     return t + '[' + str(element[2]) + ']'
 
 def fix_links(text):
-    cls = com['name'][0]
-    for packet in com['packets']:
+    cls = device.get_camel_case_name()
+    for packet in device.get_packets():
         name_false = ':func:`{0}`'.format(packet['name'][0])
         if packet['type'] == 'callback':
             name_upper = packet['name'][1].upper()
@@ -66,9 +66,8 @@ def fix_links(text):
 
 def make_header():
     date = datetime.datetime.now().strftime("%Y-%m-%d")
-    ref = '.. _{0}_{1}_tcpip:\n'.format(com['name'][1], com['type'].lower())
-    name = common.camel_case_to_space(com['name'][0])
-    title = 'TCP/IP - {0} {1}'.format(name, com['type'])
+    ref = '.. _{0}_{1}_tcpip:\n'.format(device.get_underscore_name(), device.get_category().lower())
+    title = 'TCP/IP - {0} {1}'.format(device.get_display_name(), device.get_category())
     title_under = '='*len(title)
     return '{0}\n{1}\n{2}\n{3}\n'.format(common.gen_text_rst.format(date),
                                          ref,
@@ -85,10 +84,9 @@ A tutorial on how to test the {0} {1} and get the first examples running
 can be found :ref:`here <{3}>`.
 """
 
-    hw_link = com['name'][1] + '_' + com['type'].lower()
+    hw_link = device.get_underscore_name() + '_' + device.get_category().lower()
     hw_test = hw_link + '_test'
-    name = common.camel_case_to_space(com['name'][0])
-    su = su.format(name, com['type'], hw_link, hw_test)
+    su = su.format(device.get_display_name(), device.get_category(), hw_link, hw_test)
     return su
 
 def make_request_desc(packet):
@@ -125,8 +123,8 @@ def make_response_desc(packet):
 def make_methods(typ):
     methods = ''
     func_start = '.. tcpip:function:: '
-    cls = com['name'][0]
-    for packet in com['packets']:
+    cls = device.get_camel_case_name()
+    for packet in device.get_packets():
         if packet['type'] != 'function' or packet['doc'][0] != typ:
             continue
         name = packet['name'][1]
@@ -146,9 +144,9 @@ def make_methods(typ):
 def make_callbacks():
     cbs = ''
     func_start = '.. tcpip:function:: '
-    cls = com['name'][0]
+    cls = device.get_camel_case_name()
     pt = 1
-    for packet in com['packets']:
+    for packet in device.get_packets():
         pt += 1
         if packet['type'] != 'callback':
             continue
@@ -224,27 +222,27 @@ A general description of the TCP/IP protocol structure can be found
         api_str += am_str.format(am)
     if c:
         api_str += ccm_str.format(ccm)
-        api_str += c_str.format(c, com['name'][1], com['type'].lower())
+        api_str += c_str.format(c, device.get_underscore_name(), device.get_category().lower())
 
-    ref = '.. _{0}_{1}_tcpip_api:\n'.format(com['name'][1],
-                                            com['type'].lower())
+    ref = '.. _{0}_{1}_tcpip_api:\n'.format(device.get_underscore_name(),
+                                            device.get_category().lower())
 
     api_desc = ''
     try:
-        api_desc = com['api']
+        api_desc = device.com['api']
     except:
         pass
 
     return api.format(ref, api_desc, api_str)
 
 def make_files(com_new, directory):
-    global com
-    com = com_new
+    global device
+    device = common.Device(com_new)
 
-    for i, packet in zip(range(len(com['packets'])), com['packets']):
+    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
         packet['function_id'] = i + 1
 
-    file_name = '{0}_{1}_TCPIP'.format(com['name'][0], com['type'])
+    file_name = '{0}_{1}_TCPIP'.format(device.get_camel_case_name(), device.get_category())
 
     directory += '/doc'
     if not os.path.exists(directory):

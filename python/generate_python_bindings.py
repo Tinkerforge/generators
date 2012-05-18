@@ -31,7 +31,7 @@ import os
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-com = None
+device = None
 lang = 'en'
 
 def fix_links(text):
@@ -51,17 +51,17 @@ from .ip_connection import Device, IPConnection, Error
 
 """
     date = datetime.datetime.now().strftime("%Y-%m-%d")
-    lower_type = com['type'].lower()
+    lower_type = device.get_category().lower()
 
     return include.format(common.gen_text_hash.format(date),
-                          lower_type, com['name'][1])
+                          lower_type, device.get_underscore_name())
 
 def make_namedtuples():
     tup = """{0} = namedtuple('{1}', [{2}])
 """
 
     tups = ''
-    for packet in com['packets']:
+    for packet in device.get_packets():
         elements_out = 0
         for element in packet['elements']:
             if element[3] == 'out':
@@ -89,12 +89,12 @@ class {0}(Device):
     {1}
     \"\"\"
 
-""".format(com['name'][0], com['description'])
+""".format(device.get_camel_case_name(), device.get_description())
 
 def make_callback_id_definitions():
     cbs = ''
     cb = '    CALLBACK_{0} = {1}\n'
-    for i, packet in zip(range(len(com['packets'])), com['packets']):
+    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
         if packet['type'] != 'callback':
             continue
         cbs += cb.format(packet['name'][1].upper(), i+1)
@@ -103,7 +103,7 @@ def make_callback_id_definitions():
 def make_function_id_definitions():
     function_ids = '\n'
     function_id = '    FUNCTION_{0} = {1}\n'
-    for i, packet in zip(range(len(com['packets'])), com['packets']):
+    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
         if packet['type'] != 'function':
             continue
         function_ids += function_id.format(packet['name'][1].upper(), i+1)
@@ -121,16 +121,16 @@ def make_init_method():
         self.binding_version = {0}
 
 """
-    return dev_init.format(str(com['version']))
+    return dev_init.format(str(device.get_version()))
 
 def make_callbacks_format():
     cbs = ''
     cb = "        self.callbacks_format[{0}.CALLBACK_{1}] = '{2}'\n"
-    for i, packet in zip(range(len(com['packets'])), com['packets']):
+    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
         if packet['type'] != 'callback':
             continue
         form = make_format_list(packet, 'out')
-        cbs += cb.format(com['name'][0], packet['name'][1].upper(), form)
+        cbs += cb.format(device.get_camel_case_name(), packet['name'][1].upper(), form)
     return cbs
 
 def make_format_from_element(element):
@@ -205,8 +205,8 @@ def make_methods():
 """
     methods = ''
 
-    cls = com['name'][0]
-    for packet in com['packets']:
+    cls = device.get_camel_case_name()
+    for packet in device.get_packets():
         if packet['type'] != 'function':
             continue
 
@@ -236,7 +236,7 @@ def make_methods():
     return methods
 
 def make_register_callback_method():
-    if common.get_callback_count(com) == 0:
+    if device.get_callback_count() == 0:
         return ''
 
     return """
@@ -248,10 +248,10 @@ def make_register_callback_method():
 """
 
 def make_files(com_new, directory):
-    global com
-    com = com_new
+    global device
+    device = common.Device(com_new)
 
-    file_name = '{0}_{1}'.format(com['type'].lower(), com['name'][1])
+    file_name = '{0}_{1}'.format(device.get_category().lower(), device.get_underscore_name())
     
     directory += '/bindings'
     if not os.path.exists(directory):

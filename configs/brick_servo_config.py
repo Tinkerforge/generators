@@ -5,8 +5,8 @@
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'version': [1, 0, 0],
-    'type': 'Brick',
-    'name': ('Servo', 'servo'),
+    'category': 'Brick',
+    'name': ('Servo', 'servo', 'Servo'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling up to seven servos',
     'packets': []

@@ -56,7 +56,7 @@ def make_method_signature(packet, printFullName=False, com=None):
         return_type = get_csharp_type(filter(lambda e: e[3] == 'out', packet['elements'])[0])
     classPrefix = ''
     if printFullName:
-        classPrefix = com['type'] + com['name'][0] + '::'
+        classPrefix = com['category'] + com['name'][0] + '::'
 
     return sig_format.format(return_type, classPrefix, packet['name'][0], params)
 

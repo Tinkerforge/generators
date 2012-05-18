@@ -36,18 +36,18 @@ import csharp_common
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-com = None
+device = None
 lang = 'en'
 file_path = ''
 
 def fix_links(text):
     link = ':csharp:func:`{2}() <{0}{1}::{2}>`' 
 
-    cls = com['name'][0]
-    for packet in com['packets']:
+    cls = device.get_camel_case_name()
+    for packet in device.get_packets():
         name_false = ':func:`{0}`'.format(packet['name'][0])
         name = packet['name'][0] 
-        name_right = link.format(com['type'], cls, name)
+        name_right = link.format(device.get_category(), cls, name)
 
         text = text.replace(name_false, name_right)
 
@@ -58,9 +58,8 @@ def fix_links(text):
 
 def make_header():
     date = datetime.datetime.now().strftime("%Y-%m-%d")
-    ref = '.. _{0}_{1}_csharp:\n'.format(com['name'][1], com['type'].lower())
-    name = common.camel_case_to_space(com['name'][0])
-    title = 'C# - {0} {1}'.format(name, com['type'])
+    ref = '.. _{0}_{1}_csharp:\n'.format(device.get_underscore_name(), device.get_category().lower())
+    title = 'C# - {0} {1}'.format(device.get_display_name(), device.get_category())
     title_under = '='*len(title)
     return '{0}\n{1}\n{2}\n{3}\n'.format(common.gen_text_rst.format(date),
                                          ref,
@@ -77,10 +76,9 @@ A tutorial on how to test the {0} {1} and get the first examples running
 can be found :ref:`here <{3}>`.
 """
 
-    hw_link = com['name'][1] + '_' + com['type'].lower()
+    hw_link = device.get_underscore_name() + '_' + device.get_category().lower()
     hw_test = hw_link + '_test'
-    name = common.camel_case_to_space(com['name'][0])
-    su = su.format(name, com['type'], hw_link, hw_test)
+    su = su.format(device.get_display_name(), device.get_category(), hw_link, hw_test)
     return su
 
 def make_examples():
@@ -108,16 +106,16 @@ Examples
  :tab-width: 4
 """
 
-    ref = '.. _{0}_{1}_csharp_examples:\n'.format(com['name'][1], 
-                                                  com['type'].lower())
+    ref = '.. _{0}_{1}_csharp_examples:\n'.format(device.get_underscore_name(),
+                                                  device.get_category().lower())
     ex = ex.format(ref)
-    files = common.find_examples(com, file_path, 'csharp', 'Example', '.cs')
+    files = common.find_examples(device.com, file_path, 'csharp', 'Example', '.cs')
     copy_files = []
     for f in files:
-        include = '{0}_{1}_CSharp_{2}'.format(com['name'][0], com['type'], f[0])
+        include = '{0}_{1}_CSharp_{2}'.format(device.get_camel_case_name(), device.get_category(), f[0])
         copy_files.append((f[1], include))
         title = title_from_file(f[0])
-        git_name = com['name'][1].replace('_', '-') + '-' + com['type'].lower()
+        git_name = device.get_underscore_name().replace('_', '-') + '-' + device.get_category().lower()
         ex += imp.format(title, '^'*len(title), include, git_name, f[0])
 
     common.copy_examples(copy_files, file_path)
@@ -149,12 +147,12 @@ def make_methods(typ):
 
     methods = ''
     func_start = '.. csharp:function:: '
-    cls = com['type'] + com['name'][0]
-    for packet in com['packets']:
+    cls = device.get_category() + device.get_camel_case_name()
+    for packet in device.get_packets():
         if packet['type'] != 'function' or packet['doc'][0] != typ:
             continue
 
-        signature = csharp_common.make_method_signature(packet, True, com)
+        signature = csharp_common.make_method_signature(packet, True, device.com)
         desc = fix_links(common.shift_right(packet['doc'][1][lang], 1))
         func = '{0}{1}\n{2}'.format(func_start, 
                                     signature, 
@@ -177,15 +175,15 @@ def make_callbacks():
 """
 
     cbs = ''
-    cls = com['name'][0]
-    for packet in com['packets']:
+    cls = device.get_camel_case_name()
+    for packet in device.get_packets():
         if packet['type'] != 'callback':
             continue
 
         desc = fix_links(common.shift_right(packet['doc'][1][lang], 2))
         params = csharp_common.make_parameter_list(packet)
 
-        cbs += cb.format(com['type'] + com['name'][0],
+        cbs += cb.format(device.get_category() + device.get_camel_case_name(),
                          packet['name'][0],
                          params,
                          desc)
@@ -293,15 +291,15 @@ The namespace for all Brick/Bricklet bindings and the IPConnection is
 
 {2}
 """
-    cre = create_str.format(com['name'][0][0].lower() + com['name'][0][1:],
-                            com['name'][0], 
-                            com['type'].lower(),
-                            com['type'],
-                            com['name'][1])
-    reg = register_str.format(com['name'][1], 
-                              com['name'][0],
-                              com['type'].lower(),
-                              com['type'])
+    cre = create_str.format(device.get_headless_camel_case_name(),
+                            device.get_camel_case_name(),
+                            device.get_category().lower(),
+                            device.get_category(),
+                            device.get_underscore_name())
+    reg = register_str.format(device.get_underscore_name(),
+                              device.get_camel_case_name(),
+                              device.get_category().lower(),
+                              device.get_category())
 
     bm = make_methods('bm')
     am = make_methods('am')
@@ -314,24 +312,27 @@ The namespace for all Brick/Bricklet bindings and the IPConnection is
         api_str += am_str.format(am)
     if c:
         api_str += ccm_str.format(reg, ccm)
-        api_str += c_str.format(c, com['name'][1], com['type'].lower(), com['type'], com['name'][0])
+        api_str += c_str.format(c, device.get_underscore_name(),
+                                device.get_category().lower(),
+                                device.get_category(),
+                                device.get_camel_case_name())
 
-    ref = '.. _{0}_{1}_csharp_api:\n'.format(com['name'][1], 
-                                             com['type'].lower())
+    ref = '.. _{0}_{1}_csharp_api:\n'.format(device.get_underscore_name(),
+                                             device.get_category().lower())
 
     api_desc = ''
     try:
-        api_desc = com['api']
+        api_desc = device.com['api']
     except:
         pass
 
     return api.format(ref, api_desc, api_str) 
         
 def copy_examples_for_zip():
-    examples = common.find_examples(com, file_path, 'csharp', 'Example', '.cs')
+    examples = common.find_examples(device.com, file_path, 'csharp', 'Example', '.cs')
     dest = os.path.join('/tmp/generator/dll/examples/', 
-                        com['type'], 
-                        com['name'][0])
+                        device.get_category(),
+                        device.get_camel_case_name())
 
     if not os.path.exists(dest):
         os.makedirs(dest)
@@ -340,10 +341,10 @@ def copy_examples_for_zip():
         shutil.copy(example[1], dest)
 
 def make_files(com_new, directory):
-    global com
-    com = com_new
+    global device
+    device = common.Device(com_new)
 
-    file_name = '{0}_{1}_CSharp'.format(com['name'][0], com['type'])
+    file_name = '{0}_{1}_CSharp'.format(device.get_camel_case_name(), device.get_category())
     
     directory += '/doc'
     if not os.path.exists(directory):

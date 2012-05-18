@@ -5,8 +5,8 @@
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'version': [1, 0, 0],
-    'type': 'Bricklet',
-    'name': ('LCD20x4', 'lcd_20x4'),
+    'category': 'Bricklet',
+    'name': ('LCD20x4', 'lcd_20x4', 'LCD 20x4'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling a LCD with 4 lines a 20 characters',
     'packets': []

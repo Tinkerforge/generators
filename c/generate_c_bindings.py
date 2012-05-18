@@ -31,7 +31,7 @@ import os
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-com = None
+device = None
 lang = 'en'
 
 def fix_links(text):
@@ -61,14 +61,14 @@ def fix_links(text):
 
     text = '\n'.join(replaced_lines)
 
-    for packet in com['packets']:
+    for packet in device.get_packets():
         name_false = ':func:`{0}`'.format(packet['name'][0])
         if packet['type'] == 'callback':
             name = packet['name'][1].upper()
-            name_right = link_c.format(com['name'][1].upper(), name)
+            name_right = link_c.format(device.get_underscore_name().upper(), name)
         else:
             name = packet['name'][1]
-            name_right = link.format(com['name'][1], name)
+            name_right = link.format(device.get_underscore_name(), name)
 
         text = text.replace(name_false, name_right)
 
@@ -123,15 +123,16 @@ def make_include_c():
 
 """
     date = datetime.datetime.now().strftime("%Y-%m-%d")
-    lower_type = com['type'].lower()
 
-    return include.format(common.gen_text_star.format(date), lower_type, com['name'][1])
+    return include.format(common.gen_text_star.format(date),
+                          device.get_category().lower(),
+                          device.get_underscore_name())
 
 def make_function_id_defines():
     define_temp = '#define {2}_{0} {1}\n'
 
     defines = ''
-    for i, packet in zip(range(len(com['packets'])), com['packets']):
+    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
         if packet['type'] != 'function':
             continue
 
@@ -150,16 +151,16 @@ def make_callback_defines():
 """
 
     defines = ''
-    for i, packet in zip(range(len(com['packets'])), com['packets']):
+    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
         if packet['type'] != 'callback':
             continue
         doc = '\n * '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
-        defines += define_temp.format(com['name'][1].upper(), 
+        defines += define_temp.format(device.get_underscore_name().upper(),
                                       packet['name'][1].upper(), 
                                       i+1,
                                       doc,
-                                      com['name'][0],
-                                      com['type'])
+                                      device.get_camel_case_name(),
+                                      device.get_category())
 
     return defines
 
@@ -185,7 +186,7 @@ typedef struct {{
 {0}}} ATTRIBUTE_PACKED {1}{2}_;
 """
 
-    for packet in com['packets']:
+    for packet in device.get_packets():
         if packet['type'] == 'callback':
             cb = "Callback"
             struct_body = ''
@@ -253,15 +254,15 @@ void {0}_create({1} *{0}, const char *uid) {{
 \t{0}->device_callbacks[{3}_CALLBACK_{1}] = {0}_callback_{2};"""
 
     cbs = ''
-    dev_name = com['name'][1]
-    for packet in com['packets']:
+    dev_name = device.get_underscore_name()
+    for packet in device.get_packets():
         if packet['type'] != 'callback':
             continue
         type_name = packet['name'][1]
         cbs += cb_temp.format(dev_name, type_name.upper(), type_name, dev_name.upper())
     
-    v = com['version']
-    return func.format(dev_name, com['name'][0], cbs, v[0], v[1], v[2])
+    v = device.get_version()
+    return func.format(dev_name, device.get_camel_case_name(), cbs, v[0], v[1], v[2])
 
 def make_method_funcs():
     def make_struct_list(packet):
@@ -357,11 +358,11 @@ int {0}_{1}({2} *{0}{3}) {{
 
 """
 
-    a = com['name'][1]
-    c = com['name'][0]
+    a = device.get_underscore_name()
+    c = device.get_camel_case_name()
 
     funcs = ''
-    for packet in com['packets']:
+    for packet in device.get_packets():
         if packet['type'] != 'function':
             continue
 
@@ -390,7 +391,7 @@ void {0}_register_callback({1} *{0}, uint8_t cb, void *func) {{
     {0}->callbacks[cb] = func;
 }}
 """
-    return func.format(com['name'][1], com['name'][0])
+    return func.format(device.get_underscore_name(), device.get_camel_case_name())
 
 def make_callback_funcs():
     func = """
@@ -402,12 +403,12 @@ static int {0}_callback_{1}({2} *{0}, const unsigned char *buffer) {{
 """
 
     funcs = ''
-    for packet in com['packets']:
+    for packet in device.get_packets():
         if packet['type'] != 'callback':
             continue
-        a = com['name'][1]
+        a = device.get_underscore_name()
         b = packet['name'][1]
-        c = com['name'][0]
+        c = device.get_camel_case_name()
         d = packet['name'][0]
         e = make_short_form(b)
         f_list = []
@@ -439,15 +440,15 @@ typedef Device {3};
 """
 
     date = datetime.datetime.now().strftime("%Y-%m-%d")
-    upper_type = com['type'].upper()
-    upper_name = com['name'][1].upper()
+    upper_type = device.get_category().upper()
+    upper_name = device.get_underscore_name().upper()
 
     return include.format(common.gen_text_star.format(date),
                           upper_type, 
                           upper_name, 
-                          com['name'][0],
-                          com['type'],
-                          com['description'])
+                          device.get_camel_case_name(),
+                          device.get_category(),
+                          device.get_description())
 
 def make_end_h():
     return "\n#endif\n"
@@ -458,7 +459,7 @@ typedef void (*{0}_func_t)({1});
 """
 
     typedefs = '\n'
-    for packet in com['packets']:
+    for packet in device.get_packets():
         if packet['type'] != 'callback':
             continue
 
@@ -481,7 +482,9 @@ def make_create_declaration():
  */
 void {0}_create({1} *{0}, const char *uid);
 """
-    return create.format(com['name'][1], com['name'][0], com['type'])
+    return create.format(device.get_underscore_name(),
+                         device.get_camel_case_name(),
+                         device.get_category())
 
 def make_method_declarations():
     func_version = """
@@ -503,11 +506,11 @@ int {0}_get_version({1} *{0}, char ret_name[40], uint8_t ret_firmware_version[3]
 int {0}_{1}({2} *{0}{3});
 """
 
-    a = com['name'][1]
-    c = com['name'][0]
+    a = device.get_underscore_name()
+    c = device.get_camel_case_name()
 
     funcs = ''
-    for packet in com['packets']:
+    for packet in device.get_packets():
         if packet['type'] != 'function':
             continue
 
@@ -515,12 +518,12 @@ int {0}_{1}({2} *{0}{3});
         d = make_parameter_list(packet)
         doc = '\n * '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
 
-        funcs += func.format(a, b, c, d, doc, com['type'])
+        funcs += func.format(a, b, c, d, doc, device.get_category())
 
-    return funcs + func_version.format(a, c, com['type'])
+    return funcs + func_version.format(a, c, device.get_category())
 
 def make_register_callback_declaration():
-    if common.get_callback_count(com) == 0:
+    if device.get_callback_count() == 0:
         return '\n'
 
     func = """
@@ -531,27 +534,27 @@ def make_register_callback_declaration():
  */
 void {0}_register_callback({1} *{0}, uint8_t cb, void *func);
 """
-    return func.format(com['name'][1], com['name'][0], com['type'])
+    return func.format(device.get_underscore_name(), device.get_camel_case_name(), device.get_category())
 
 def make_callback_declarations():
     func = 'int {0}_callback_{1}({2} *{0}, const unsigned char *buffer);\n'
 
     funcs = '\n'
-    for packet in com['packets']:
+    for packet in device.get_packets():
         if packet['type'] != 'callback':
             continue
 
-        funcs += func.format(com['name'][1], 
+        funcs += func.format(device.get_underscore_name(),
                              packet['name'][1],
-                             com['name'][0])
+                             device.get_camel_case_name())
 
     return funcs
 
 def make_files(com_new, directory):
-    global com
-    com = com_new
+    global device
+    device = common.Device(com_new)
 
-    file_name = '{0}_{1}'.format(com['type'].lower(), com['name'][1])
+    file_name = '{0}_{1}'.format(device.get_category().lower(), device.get_underscore_name())
     
     directory += '/bindings'
     if not os.path.exists(directory):

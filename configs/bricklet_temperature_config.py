@@ -5,8 +5,8 @@
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'version': [1, 0, 0],
-    'type': 'Bricklet',
-    'name': ('Temperature', 'temperature'),
+    'category': 'Bricklet',
+    'name': ('Temperature', 'temperature', 'Temperature'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing Temperature',
     'packets': []

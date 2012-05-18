@@ -5,8 +5,8 @@
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'version': [1, 0, 0],
-    'type': 'Bricklet',
-    'name': ('IO16', 'io16'),
+    'category': 'Bricklet',
+    'name': ('IO16', 'io16', 'IO-16'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling up to 16 general purpose input/output pins',
     'packets': []

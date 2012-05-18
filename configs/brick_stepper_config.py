@@ -5,8 +5,8 @@
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'version': [1, 0, 0],
-    'type': 'Brick',
-    'name': ('Stepper', 'stepper'),
+    'category': 'Brick',
+    'name': ('Stepper', 'stepper', 'Stepper'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling stepper motors',
     'packets': []

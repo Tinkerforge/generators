@@ -5,8 +5,8 @@
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'version': [1, 0, 0],
-    'type': 'Bricklet',
-    'name': ('Joystick', 'joystick'),
+    'category': 'Bricklet',
+    'name': ('Joystick', 'joystick', 'Joystick'),
     'manufacturer': 'Tinkerforge',
     'description': 'Dual-Axis Joystick with Button',
     'packets': []

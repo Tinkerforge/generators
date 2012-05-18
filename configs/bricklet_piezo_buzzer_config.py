@@ -5,8 +5,8 @@
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'version': [1, 0, 0],
-    'type': 'Bricklet',
-    'name': ('PiezoBuzzer', 'piezo_buzzer'),
+    'category': 'Bricklet',
+    'name': ('PiezoBuzzer', 'piezo_buzzer', 'Piezo Buzzer'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling a piezo buzzer',
     'packets': []

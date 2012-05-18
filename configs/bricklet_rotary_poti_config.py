@@ -5,8 +5,8 @@
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'version': [1, 0, 0],
-    'type': 'Bricklet',
-    'name': ('RotaryPoti', 'rotary_poti'),
+    'category': 'Bricklet',
+    'name': ('RotaryPoti', 'rotary_poti', 'Rotary Poti'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing Rotary Potentiometer input',
     'packets': []

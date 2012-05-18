@@ -5,8 +5,8 @@
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'version': [1, 0, 0],
-    'type': 'Brick',
-    'name': ('DC', 'dc'),
+    'category': 'Brick',
+    'name': ('DC', 'dc', 'DC'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling DC motors',
     'packets': []

@@ -33,7 +33,7 @@ from xml.sax.saxutils import escape
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-com = None
+device = None
 lang = 'en'
 
 def fix_links(text):
@@ -81,11 +81,11 @@ def fix_links(text):
 
     text = '\n'.join(replaced_lines)
 
-    cls = com['name'][0]
-    for packet in com['packets']:
+    cls = device.get_camel_case_name()
+    for packet in device.get_packets():
         name_false = ':func:`{0}`'.format(packet['name'][0])
         name = packet['name'][0]
-        name_right = link.format(com['type'], cls, name)
+        name_right = link.format(device.get_category(), cls, name)
 
         text = text.replace(name_false, name_right)
 
@@ -112,7 +112,9 @@ def make_class():
 \t{{
 """
         
-    return class_str.format(com['type'], com['name'][0], com['description'])
+    return class_str.format(device.get_category(),
+                            device.get_camel_case_name(),
+                            device.get_description())
 
 def make_delegates():
     cbs = '\n'
@@ -122,7 +124,7 @@ def make_delegates():
 \t\t/// </summary>
 \t\tpublic delegate void {0}({1});
 """
-    for packet in com['packets']:
+    for packet in device.get_packets():
         if packet['type'] != 'callback':
             continue
 
@@ -135,7 +137,7 @@ def make_delegates():
 def make_function_id_definitions():
     function_ids = ''
     function_id = '\t\tprivate static byte {2}_{0} = {1};\n'
-    for i, packet in zip(range(len(com['packets'])), com['packets']):
+    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
         if packet['type'] == 'callback':
             function_ids += function_id.format(packet['name'][1].upper(), i+1, 'CALLBACK')
         else:
@@ -159,7 +161,7 @@ def make_constructor():
 \t\t}}
 """
 
-    for packet in com['packets']:
+    for packet in device.get_packets():
         if packet['type'] != 'callback':
             continue
 
@@ -167,8 +169,8 @@ def make_constructor():
         name_pascal = packet['name'][0]
         cbs.append(cb.format(name_upper, name_pascal))
 
-    v = com['version']
-    return con.format(com['type'], com['name'][0], '\n'.join(cbs), v[0], v[1], v[2])
+    v = device.get_version()
+    return con.format(device.get_category(), device.get_camel_case_name(), '\n'.join(cbs), v[0], v[1], v[2])
 
 def get_from_type(element):
     forms = {
@@ -217,7 +219,7 @@ def get_type_size(element):
     return 0
 
 def make_register_callback():
-    if common.get_callback_count(com) == 0:
+    if device.get_callback_count() == 0:
         return '\t}\n}\n'
 
     typeofs = ''
@@ -239,7 +241,7 @@ def make_register_callback():
 """
 
     i = 0
-    for packet in com['packets']:
+    for packet in device.get_packets():
         if packet['type'] != 'callback':
             continue
 
@@ -265,8 +267,8 @@ def make_callbacks():
 \t\t\treturn {4};
 \t\t}}
 """
-    cls = com['name'][0]
-    for packet in com['packets']:
+    cls = device.get_camel_case_name()
+    for packet in device.get_packets():
         if packet['type'] != 'callback':
             continue
 
@@ -329,8 +331,8 @@ def make_methods():
 \t\t\tsendReturningMessage(data_, FUNCTION_{0}, out answer);
 {1}"""
 
-    cls = com['name'][0]
-    for packet in com['packets']:
+    cls = device.get_camel_case_name()
+    for packet in device.get_packets():
         if packet['type'] != 'function':
             continue
 
@@ -399,8 +401,8 @@ def make_obsolete_methods():
 \t\t}}
 """
 
-    cls = com['name'][0]
-    for packet in com['packets']:
+    cls = device.get_camel_case_name()
+    for packet in device.get_packets():
         if packet['type'] != 'function':
             continue
 
@@ -431,10 +433,10 @@ def get_data_size(elements):
     return size + 4
 
 def make_files(com_new, directory):
-    global com
-    com = com_new
+    global device
+    device = common.Device(com_new)
 
-    file_name = '{0}{1}'.format(com['type'], com['name'][0])
+    file_name = '{0}{1}'.format(device.get_category(), device.get_camel_case_name())
     
     directory += '/bindings'
     if not os.path.exists(directory):
