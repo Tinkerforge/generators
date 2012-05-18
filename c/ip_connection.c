@@ -108,11 +108,24 @@ void *ipcon_callback_loop(void *param) {
 		pthread_mutex_unlock(&ipcon->callback_queue_mutex);
 #endif
 
-		uint8_t stack_id = ipcon_get_stack_id_from_data(node->buffer);
 		uint8_t function_id = ipcon_get_function_id_from_data(node->buffer);
-		Device *device = ipcon->devices[stack_id];
+		if (function_id == FUNCTION_ENUMERATE_CALLBACK) {
+			EnumerateReturn *er = (EnumerateReturn *)node->buffer;
+			char str_uid[MAX_BASE58_STR_SIZE];
+			ipcon_base58encode(er->device_uid, str_uid);
 
-		device->device_callbacks[function_id](device, node->buffer);
+			if (ipcon->enumerate_callback != NULL) {
+				ipcon->enumerate_callback(str_uid,
+				                          er->device_name,
+				                          er->device_stack_id,
+				                          er->is_new);
+			}
+		} else {
+			uint8_t stack_id = ipcon_get_stack_id_from_data(node->buffer);
+			Device *device = ipcon->devices[stack_id];
+
+			device->device_callbacks[function_id](device, node->buffer);
+		}
 
 		free(node);
 	}
@@ -185,6 +198,37 @@ void ipcon_enumerate(IPConnection *ipcon, enumerate_callback_func_t cb) {
 #endif
 }
 
+static void ipcon_callback_queue_enqueue(IPConnection *ipcon, const unsigned char *buffer)
+{
+	uint16_t length = ipcon_get_length_from_data(buffer);
+	CallbackQueueNode *node = (CallbackQueueNode *)malloc(offsetof(CallbackQueueNode, buffer) + length);
+
+	node->next = NULL;
+	memcpy(node->buffer, buffer, length);
+
+#ifdef _WIN32
+	EnterCriticalSection(&ipcon->callback_queue_mutex);
+#else
+	pthread_mutex_lock(&ipcon->callback_queue_mutex);
+#endif
+
+	if (ipcon->callback_queue_tail == NULL) {
+		ipcon->callback_queue_head = node;
+		ipcon->callback_queue_tail = node;
+	} else {
+		ipcon->callback_queue_tail->next = node;
+		ipcon->callback_queue_tail = node;
+	}
+
+#ifdef _WIN32
+	LeaveCriticalSection(&ipcon->callback_queue_mutex);
+	ReleaseSemaphore(ipcon->callback_queue_semaphore, 1, NULL);
+#else
+	pthread_mutex_unlock(&ipcon->callback_queue_mutex);
+	sem_post(ipcon->callback_queue_semaphore);
+#endif
+}
+
 int ipcon_handle_enumerate(IPConnection *ipcon, const unsigned char *buffer) {
 	uint16_t length = ipcon_get_length_from_data(buffer);
 
@@ -192,14 +236,7 @@ int ipcon_handle_enumerate(IPConnection *ipcon, const unsigned char *buffer) {
 		return length;
 	}
 
-	EnumerateReturn *er = (EnumerateReturn *)buffer;
-	char str_uid[MAX_BASE58_STR_SIZE];
-	ipcon_base58encode(er->device_uid, str_uid);
-
-	ipcon->enumerate_callback(str_uid,
-	                          er->device_name,
-	                          er->device_stack_id,
-	                          er->is_new);
+	ipcon_callback_queue_enqueue(ipcon, buffer);
 
 	return length;
 }
@@ -245,32 +282,7 @@ int ipcon_handle_message(IPConnection *ipcon, const unsigned char *buffer) {
 	}
 
 	if(device->callbacks[function_id] != NULL) {
-		CallbackQueueNode *node = (CallbackQueueNode *)malloc(offsetof(CallbackQueueNode, buffer) + length);
-
-		node->next = NULL;
-		memcpy(node->buffer, buffer, length);
-
-#ifdef _WIN32
-		EnterCriticalSection(&ipcon->callback_queue_mutex);
-#else
-		pthread_mutex_lock(&ipcon->callback_queue_mutex);
-#endif
-
-		if (ipcon->callback_queue_tail == NULL) {
-			ipcon->callback_queue_head = node;
-			ipcon->callback_queue_tail = node;
-		} else {
-			ipcon->callback_queue_tail->next = node;
-			ipcon->callback_queue_tail = node;
-		}
-
-#ifdef _WIN32
-		LeaveCriticalSection(&ipcon->callback_queue_mutex);
-		ReleaseSemaphore(ipcon->callback_queue_semaphore, 1, NULL);
-#else
-		pthread_mutex_unlock(&ipcon->callback_queue_mutex);
-		sem_post(ipcon->callback_queue_semaphore);
-#endif
+		ipcon_callback_queue_enqueue(ipcon, buffer);
 
 		return length;
 	}
