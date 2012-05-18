@@ -380,7 +380,7 @@ def generate(path):
     shutil.copy(path + '/readme.txt', '/tmp/generator/pear')
 
     # Write package.xml
-    version = common.get_version(path)
+    version = common.get_changelog_version(path)
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     file('/tmp/generator/pear/source/package.xml', 'wb').write("""<?xml version="1.0" encoding="UTF-8"?>
 <package packagerversion="1.9.0" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0">

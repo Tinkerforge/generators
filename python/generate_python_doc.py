@@ -417,7 +417,7 @@ def generate(path):
     shutil.copy(path + '/readme.txt', '/tmp/generator/egg')
 
     # Write setup.py
-    version = common.get_version(path)
+    version = common.get_changelog_version(path)
     file('/tmp/generator/egg/source/setup.py', 'wb').write("""
 #!/usr/bin/env python
 

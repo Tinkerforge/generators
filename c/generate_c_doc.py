@@ -399,7 +399,7 @@ def generate(path):
     shutil.copy(path + '/readme.txt', '/tmp/generator/')
 
     # Make zip
-    version = common.get_version(path)
+    version = common.get_changelog_version(path)
     zipname = 'tinkerforge_c_bindings_{0}_{1}_{2}.zip'.format(*version)
     os.chdir('/tmp/generator')
     args = ['/usr/bin/zip',

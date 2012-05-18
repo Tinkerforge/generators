@@ -58,7 +58,7 @@ gen_text_rst = """..
 def shift_right(text, n):
     return text.replace('\n', '\n' + ' '*n)
 
-def get_version(path):
+def get_changelog_version(path):
     r = re.compile('^(\d+)\.(\d+)\.(\d+):')
     last = None
     for line in file(path + '/changelog.txt').readlines():

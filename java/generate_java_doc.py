@@ -482,7 +482,7 @@ def generate(path):
     shutil.copy(path + '/Readme.txt', '/tmp/generator/jar')
 
     # Make Manifest
-    version = common.get_version(path)
+    version = common.get_changelog_version(path)
     file('/tmp/generator/manifest.txt', 'wb').write('Bindings-Version: {0}.{1}.{2}\n'.format(*version))
 
     # Make jar

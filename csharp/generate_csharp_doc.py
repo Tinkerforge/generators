@@ -388,7 +388,7 @@ def generate(path):
     shutil.copy(path + '/Readme.txt', '/tmp/generator/dll')
 
     # Write AssemblyInfo
-    version = common.get_version(path)
+    version = common.get_changelog_version(path)
     file('/tmp/generator/dll/source/Tinkerforge/AssemblyInfo.cs', 'wb').write("""
 using System.Reflection;
 using System.Runtime.CompilerServices;
