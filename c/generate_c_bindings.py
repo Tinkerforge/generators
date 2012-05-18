@@ -244,6 +244,8 @@ def make_create_func():
 void {0}_create({1} *{0}, const char *uid) {{
 \tipcon_device_create({0}, uid);
 
+\t{0}->expected_name = "{6} {7}";
+
 \t{0}->binding_version[0] = {3};
 \t{0}->binding_version[1] = {4};
 \t{0}->binding_version[2] = {5};
@@ -262,7 +264,8 @@ void {0}_create({1} *{0}, const char *uid) {{
         cbs += cb_temp.format(dev_name, type_name.upper(), type_name, dev_name.upper())
     
     v = device.get_version()
-    return func.format(dev_name, device.get_camel_case_name(), cbs, v[0], v[1], v[2])
+    return func.format(dev_name, device.get_camel_case_name(), cbs, v[0], v[1], v[2],
+                       device.get_display_name(), device.get_category())
 
 def make_method_funcs():
     def make_struct_list(packet):

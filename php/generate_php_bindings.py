@@ -197,11 +197,19 @@ def make_constructor():
     {{
         parent::__construct($uid);
 
+        $this->expectedName = '{5} {6}';
+
         $this->bindingVersion = array({2}, {3}, {4});
 """
 
     v = device.get_version()
-    return con.format(device.get_category(), device.get_camel_case_name(), v[0], v[1], v[2])
+    return con.format(device.get_category(),
+                      device.get_camel_case_name(),
+                      v[0],
+                      v[1],
+                      v[2],
+                      device.get_display_name(),
+                      device.get_category())
 
 def get_pack_type(element):
     forms = {

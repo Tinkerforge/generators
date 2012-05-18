@@ -154,6 +154,7 @@ def make_constructor():
 \t\t/// </summary>
 \t\tpublic {0}{1}(string uid) : base(uid) 
 \t\t{{
+\t\t\tthis.expectedName = "{6} {7}";
 \t\t\tthis.bindingVersion[0] = {3};
 \t\t\tthis.bindingVersion[1] = {4};
 \t\t\tthis.bindingVersion[2] = {5};
@@ -170,7 +171,14 @@ def make_constructor():
         cbs.append(cb.format(name_upper, name_pascal))
 
     v = device.get_version()
-    return con.format(device.get_category(), device.get_camel_case_name(), '\n'.join(cbs), v[0], v[1], v[2])
+    return con.format(device.get_category(),
+                      device.get_camel_case_name(),
+                      '\n'.join(cbs),
+                      v[0],
+                      v[1],
+                      v[2],
+                      device.get_display_name(),
+                      device.get_category())
 
 def get_from_type(element):
     forms = {

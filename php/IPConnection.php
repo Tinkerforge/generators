@@ -125,8 +125,8 @@ abstract class Device
 {
     public $uid = '0'; # Base10
     public $stackID = 0;
+    public $expectedName = '';
     public $name = '';
-
     public $firmwareVersion = array(0, 0, 0);
     public $bindingVersion = array(0, 0, 0);
 
@@ -461,12 +461,19 @@ class IPConnection
             return $header['length'];
         }
 
-        // firmware Version
+        // firmware version
         $this->pendingAddDevice->firmwareVersion =
                 self::collectUnpackedArray($payload, 'firmwareVersion', 3);
 
         // name
-        $this->pendingAddDevice->name = self::implodeUnpackedString($payload, 'name', 40);
+        $name = self::implodeUnpackedString($payload, 'name', 40);
+        $i = strrpos($name, ' ');
+
+        if ($i === FALSE || substr($name, 0, $i) != $this->pendingAddDevice->expectedName) {
+            return $header['length'];
+        }
+
+        $this->pendingAddDevice->name = $name;
 
         // stack ID
         $this->pendingAddDevice->stackID = $payload['stackID'];

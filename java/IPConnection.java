@@ -284,11 +284,17 @@ public class IPConnection {
 			addDevice.firmwareVersion[1] = IPConnection.unsignedByte(bb.get());
 			addDevice.firmwareVersion[2] = IPConnection.unsignedByte(bb.get());
 
-			addDevice.name = "";
+			String name = "";
 			for(int i = 0; i < 40; i++) {
-				addDevice.name += (char)bb.get();
+				name += (char)bb.get();
 			}
 
+			int i = name.lastIndexOf(' ');
+			if (i < 0 || !name.substring(0, i).equals(addDevice.expectedName)) {
+				return length;
+			}
+
+			addDevice.name = name;
 			addDevice.stackID = unsignedByte(bb.get());
 			devices[addDevice.stackID] = addDevice;
 			addDevice.semaphoreAnswer.release();

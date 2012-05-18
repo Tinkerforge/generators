@@ -118,10 +118,14 @@ def make_init_method():
         \"\"\"
         Device.__init__(self, uid)
 
+        self.expected_name = '{1} {2}';
+
         self.binding_version = {0}
 
 """
-    return dev_init.format(str(device.get_version()))
+    return dev_init.format(str(device.get_version()),
+                           device.get_display_name(),
+                           device.get_category())
 
 def make_callbacks_format():
     cbs = ''

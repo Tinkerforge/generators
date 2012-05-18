@@ -14,6 +14,7 @@ import java.util.concurrent.SynchronousQueue;
 public abstract class Device {
 	long uid = (long)0;
 	short stackID = (short)0;
+	String expectedName = null;
 	String name = null;
 	short[] firmwareVersion = new short[3];
 	short[] bindingVersion = new short[3];

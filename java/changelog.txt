@@ -9,3 +9,4 @@
        Silently ignore messages from devices with unknown stack ID
        Don't generate addListener method for devices without callbacks
        Add inline code documentation
+1.0.8: Ensure that the answering device matches the expected type in IPConnection.addDevice

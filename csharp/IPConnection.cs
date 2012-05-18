@@ -218,10 +218,17 @@ namespace Tinkerforge
 
 			if(addDev.uid == uid) 
 			{
+				string name = LEConverter.StringFrom(15, data, 40);
+				int i = name.LastIndexOf(' ');
+
+				if (i < 0 || name.Substring(0, i) != addDev.expectedName) {
+					return length;
+				}
+
 				addDev.firmwareVersion[0] = LEConverter.ByteFrom(12, data);
 				addDev.firmwareVersion[1] = LEConverter.ByteFrom(13, data);
 				addDev.firmwareVersion[2] = LEConverter.ByteFrom(14, data);
-				addDev.name = LEConverter.StringFrom(15, data, 40);
+				addDev.name = name;
 				addDev.stackID = LEConverter.ByteFrom(55, data);
 				devices[addDev.stackID] = addDev;
 				addDev.answerQueue.Enqueue(data);
@@ -309,6 +316,7 @@ namespace Tinkerforge
 	public abstract class Device
 	{
 		internal byte stackID = 0;
+		internal String expectedName;
 		internal String name;
 		internal byte[] firmwareVersion = new byte[3];
 		internal byte[] bindingVersion = new byte[3];

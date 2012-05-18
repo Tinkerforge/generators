@@ -13,3 +13,5 @@
        Single-return methods return their value instead of using out-parameters, old single-out methods stay for compatibility
 1.1.1: Don't generate RegisterCallback method for devices without callbacks
        Add inline code documentation
+1.1.2: Unify networking for Windows Phone 7 and Rest of .NET (thanks to Jan)
+       Ensure that the answering device matches the expected type in IPConnection.AddDevice

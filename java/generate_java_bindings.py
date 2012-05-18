@@ -272,13 +272,21 @@ def make_constructor():
 \tpublic {0}{1}(String uid) {{
 \t\tsuper(uid);
 
+\t\texpectedName = "{5} {6}";
+
 \t\tbindingVersion[0] = {2};
 \t\tbindingVersion[1] = {3};
 \t\tbindingVersion[2] = {4};
 """
 
     v = device.get_version()
-    return con.format(device.get_category(), device.get_camel_case_name(), v[0], v[1], v[2])
+    return con.format(device.get_category(),
+                      device.get_camel_case_name(),
+                      v[0],
+                      v[1],
+                      v[2],
+                      device.get_display_name(),
+                      device.get_category())
 
 def get_put_type(typ):
     forms = {

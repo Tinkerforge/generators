@@ -87,6 +87,7 @@ typedef struct Device_{
 	pthread_mutex_t sem_write;
 	pthread_mutex_t sem_answer;
 #endif
+	const char *expected_name;
 	char name[MAX_LENGTH_NAME];
 	uint8_t firmware_version[3];
 	uint8_t binding_version[3];

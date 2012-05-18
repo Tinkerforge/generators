@@ -3,3 +3,4 @@
        Don't generate registerCallback method for devices without callbacks
        Add inline code documentation
 1.0.2: Fix possible TimeoutException when calling getters in callbacks
+1.0.3: Ensure that the answering device matches the expected type in IPConnection.addDevice

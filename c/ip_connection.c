@@ -477,6 +477,32 @@ int ipcon_add_device_handler(IPConnection *ipcon,
 	const GetStackIDReturn *gsidr = (const GetStackIDReturn*)buffer;
 	if(ipcon->add_device != NULL &&
 	   ipcon->add_device->uid == gsidr->device_uid) {
+		const char *p = gsidr->device_name;
+		const char *e = gsidr->device_name + MAX_LENGTH_NAME;
+
+		// Search for a possible NUL-terminator
+		while (p < e && *p != '\0') {
+			++p;
+		}
+
+		// Go back to the previous char if there is any
+		if (p >= gsidr->device_name) {
+			--p;
+		}
+
+		// Go back to the last space if there is any
+		while (p >= gsidr->device_name && *p != ' ') {
+			--p;
+		}
+
+		// Match with expected name
+		int length = p - gsidr->device_name;
+		int expected_length = strlen(ipcon->add_device->expected_name);
+		if (length != expected_length ||
+		    memcmp(gsidr->device_name, ipcon->add_device->expected_name, length) != 0) {
+			return sizeof(GetStackIDReturn);
+		}
+
 		ipcon->add_device->stack_id = gsidr->device_stack_id;
 		strncpy(ipcon->add_device->name, gsidr->device_name, MAX_LENGTH_NAME);
 		ipcon->add_device->firmware_version[0] = gsidr->device_firmware_version[0];
