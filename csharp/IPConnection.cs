@@ -19,12 +19,13 @@ namespace Tinkerforge
     public class IPConnection 
     {
 		const byte BROADCAST_ADDRESS = 0;
-		const byte TYPE_GET_STACK_ID = 255;
-		const byte TYPE_ENUMERATE = 254;
-		const byte TYPE_ENUMERATE_CALLBACK = 253;
-		const byte TYPE_STACK_ENUMERATE = 252;
-		const byte TYPE_ADC_CALIBRATE = 251;
-		const byte TYPE_GET_ADC_CALIBRATION = 250;
+
+		const byte FUNCTION_GET_STACK_ID = 255;
+		const byte FUNCTION_ENUMERATE = 254;
+		const byte FUNCTION_ENUMERATE_CALLBACK = 253;
+		const byte FUNCTION_STACK_ENUMERATE = 252;
+		const byte FUNCTION_ADC_CALIBRATE = 251;
+		const byte FUNCTION_GET_ADC_CALIBRATION = 250;
 
         Socket Socket;
         NetworkStream SocketStream;
@@ -126,7 +127,7 @@ namespace Tinkerforge
 
 				byte type = GetTypeFromData(data);
 
-				if(type == TYPE_ENUMERATE_CALLBACK)
+				if(type == FUNCTION_ENUMERATE_CALLBACK)
 				{
 					ulong uid = LEConverter.ULongFrom(4, data);
 					string name = LEConverter.StringFrom(12, data, 40);
@@ -168,11 +169,11 @@ namespace Tinkerforge
 		private int HandleMessage(byte[] data)
 		{
 			byte type = GetTypeFromData(data);
-			if(type == TYPE_GET_STACK_ID) 
+			if(type == FUNCTION_GET_STACK_ID)
 			{
 				return HandleAddDevice(data);
 			}
-			else if(type == TYPE_ENUMERATE_CALLBACK)
+			else if(type == FUNCTION_ENUMERATE_CALLBACK)
 			{
 				return HandleEnumerate(data);
 			}
@@ -261,7 +262,7 @@ namespace Tinkerforge
 			this.enumerateCallback = enumerateCallback;
 			byte[] data = new byte[4];
 			LEConverter.To(BROADCAST_ADDRESS, 0, data);
-			LEConverter.To(TYPE_ENUMERATE, 1, data);
+			LEConverter.To(FUNCTION_ENUMERATE, 1, data);
 			LEConverter.To((ushort)4, 2, data);
             Write(data);
 		}
@@ -269,7 +270,7 @@ namespace Tinkerforge
 		public void AddDevice(Device device) {
 			byte[] data = new byte[12];
 			LEConverter.To(BROADCAST_ADDRESS, 0, data);
-			LEConverter.To(TYPE_GET_STACK_ID, 1, data);
+			LEConverter.To(FUNCTION_GET_STACK_ID, 1, data);
 			LEConverter.To((ushort)12, 2, data);
 			LEConverter.To(device.uid, 4, data);
 
