@@ -336,8 +336,8 @@ def make_methods():
 
             if element[1] == 'bool':
                 if element[2] > 1:
-                    pack.append('        foreach (${0} as $i) {{'.format(element[0]))
-                    pack.append('            $payload .= pack(\'{0}\', intval((bool)$i));\n        }}'.format(get_pack_type(element)))
+                    pack.append('        for ($i = 0; $i < {0}; $i++) {{'.format(element[2]))
+                    pack.append('            $payload .= pack(\'{0}\', intval((bool)${1}[$i]));\n        }}'.format(get_pack_type(element), element[0]))
                 else:
                     pack.append('        $payload .= pack(\'{0}\', intval((bool)${1}));'.format(get_pack_type(element), element[0]))
             elif element[1] == 'string':
@@ -358,8 +358,8 @@ def make_methods():
                     pack.append('        $payload .= pack(\'{0}\', ord(${1}));'.format(get_pack_type(element), element[0]))
             else:
                 if element[2] > 1:
-                    pack.append('        foreach (${0} as $i) {{'.format(element[0]))
-                    pack.append('            $payload .= pack(\'{0}\', $i);\n        }}'.format(get_pack_type(element)))
+                    pack.append('        for ($i = 0; $i < {0}; $i++) {{'.format(element[2]))
+                    pack.append('            $payload .= pack(\'{0}\', ${1}[$i]);\n        }}'.format(get_pack_type(element), element[0]))
                 else:
                     pack.append('        $payload .= pack(\'{0}\', ${1});'.format(get_pack_type(element), element[0]))
 
