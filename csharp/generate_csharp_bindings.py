@@ -351,13 +351,17 @@ def make_methods():
 
         write_convs = ''
         write_conv = '\t\t\tLEConverter.To({0}, {1}, data_);\n'
+        write_conv_length = '\t\t\tLEConverter.To({0}, {1}, {2}, data_);\n'
 
         pos = 4
         for element in packet['elements']:
             if element[3] != 'in':
                 continue
             wname = csharp_common.to_camel_case(element[0])
-            write_convs += write_conv.format(wname, pos)
+            if element[2] > 1:
+                write_convs += write_conv_length.format(wname, pos, element[2])
+            else:
+                write_convs += write_conv.format(wname, pos)
             pos += get_type_size(element)
             
         method_tail = ''

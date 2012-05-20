@@ -419,11 +419,16 @@ namespace Tinkerforge
 
 	internal class LEConverter
 	{
-		static public void To(string data, int position, byte[] array)
+		static public void To(string data, int position, int len, byte[] array)
 		{
-			for(int i = 0; i < Math.Min(array.Length, data.Length); i++)
+			for(int i = 0; i < Math.Min(len, data.Length); i++)
 			{
 				array[position + i] = (byte)data[i];
+			}
+
+			for(int i = Math.Min(len, data.Length); i < len; i++)
+			{
+				array[position + i] = 0;
 			}
 		}
 
@@ -439,9 +444,9 @@ namespace Tinkerforge
 			array[position + 7] = (byte)(((ulong)data >> 56) & 0xFF);
 		}
 
-		static public void To(long[] data, int position, byte[] array)
+		static public void To(long[] data, int position, int len, byte[] array)
 		{
-			for(int i = 0; i < data.Length; i++)
+			for(int i = 0; i < len; i++)
 			{
 				To(data[i], position + i, array);
 			}
@@ -459,9 +464,9 @@ namespace Tinkerforge
 			array[position + 7] = (byte)(((ulong)data >> 56) & 0xFF);
 		}
 
-		static public void To(ulong[] data, int position, byte[] array)
+		static public void To(ulong[] data, int position, int len, byte[] array)
 		{
-			for(int i = 0; i < data.Length; i++)
+			for(int i = 0; i < len; i++)
 			{
 				To(data[i], position + i, array);
 			}
@@ -475,9 +480,9 @@ namespace Tinkerforge
 			array[position + 3] = (byte)(((uint)data >> 24) & 0xFF);
 		}
 
-		static public void To(int[] data, int position, byte[] array)
+		static public void To(int[] data, int position, int len, byte[] array)
 		{
-			for(int i = 0; i < data.Length; i++)
+			for(int i = 0; i < len; i++)
 			{
 				To(data[i], position + i, array);
 			}
@@ -491,9 +496,9 @@ namespace Tinkerforge
 			array[position + 3] = (byte)(((uint)data >> 24) & 0xFF);
 		}
 
-		static public void To(uint[] data, int position, byte[] array)
+		static public void To(uint[] data, int position, int len, byte[] array)
 		{
-			for(int i = 0; i < data.Length; i++)
+			for(int i = 0; i < len; i++)
 			{
 				To(data[i], position + i, array);
 			}
@@ -505,9 +510,9 @@ namespace Tinkerforge
 			array[position + 1] = (byte)(((ushort)data >> 8) & 0xFF);
 		}
 
-		static public void To(short[] data, int position, byte[] array)
+		static public void To(short[] data, int position, int len, byte[] array)
 		{
-			for(int i = 0; i < data.Length; i++)
+			for(int i = 0; i < len; i++)
 			{
 				To(data[i], position + i, array);
 			}
@@ -519,9 +524,9 @@ namespace Tinkerforge
 			array[position + 1] = (byte)(((ushort)data >> 8) & 0xFF);
 		}
 
-		static public void To(ushort[] data, int position, byte[] array)
+		static public void To(ushort[] data, int position, int len, byte[] array)
 		{
-			for(int i = 0; i < data.Length; i++)
+			for(int i = 0; i < len; i++)
 			{
 				To(data[i], position + i, array);
 			}
@@ -532,9 +537,9 @@ namespace Tinkerforge
 			array[position + 0] = (byte)data;
 		}
 
-		static public void To(byte[] data, int position, byte[] array)
+		static public void To(byte[] data, int position, int len, byte[] array)
 		{
-			for(int i = 0; i < data.Length; i++)
+			for(int i = 0; i < len; i++)
 			{
 				To(data[i], position + i, array);
 			}
@@ -545,9 +550,9 @@ namespace Tinkerforge
 			array[position + 0] = (byte)data;
 		}
 
-		static public void To(sbyte[] data, int position, byte[] array)
+		static public void To(sbyte[] data, int position, int len, byte[] array)
 		{
-			for(int i = 0; i < data.Length; i++)
+			for(int i = 0; i < len; i++)
 			{
 				To(data[i], position + i, array);
 			}
@@ -558,9 +563,9 @@ namespace Tinkerforge
 			array[position + 0] = (byte)data;
 		}
 
-		static public void To(char[] data, int position, byte[] array)
+		static public void To(char[] data, int position, int len, byte[] array)
 		{
-			for(int i = 0; i < data.Length; i++)
+			for(int i = 0; i < len; i++)
 			{
 				To(data[i], position + i, array);
 			}
@@ -578,9 +583,9 @@ namespace Tinkerforge
 			}
 		}
 
-		static public void To(bool[] data, int position, byte[] array)
+		static public void To(bool[] data, int position, int len, byte[] array)
 		{
-			for(int i = 0; i < data.Length; i++)
+			for(int i = 0; i < len; i++)
 			{
 				To(data[i], position + i, array);
 			}
