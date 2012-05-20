@@ -276,8 +276,8 @@ def make_method_funcs():
             
             sf = make_short_form(packet['name'][1])
             if element[1] == 'string':
-                temp = '\n\tstrcpy({0}.{1}, {1});\n'
-                struct_list += temp.format(sf, element[0])
+                temp = '\n\tstrncpy({0}.{1}, {1}, {2});\n'
+                struct_list += temp.format(sf, element[0], element[2])
             elif element[2] > 1:
                 temp = '\n\tmemcpy({0}.{1}, {1}, {2}*sizeof({3}));'
                 struct_list += temp.format(sf, 
