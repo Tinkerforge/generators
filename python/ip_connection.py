@@ -358,7 +358,7 @@ class IPConnection:
             if sys.hexversion < 0x03000000:
                 name = value[7].replace(chr(0), '').decode()
             else:
-                name = str(value[7]).replace(chr(0), '')
+                name = value[7].decode('ascii').replace(chr(0), '')
 
             i = name.rfind(' ')
             if i < 0 or name[0:i] != self.add_dev.expected_name:
