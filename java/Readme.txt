@@ -20,8 +20,8 @@ In this folder we can now call the Java compiler with the following parameters
 
 and run it with the following parameters (1. Windows and 2. Linux/Mac OS)
 
-1.) java -cp Tinkerforge.jar;. ExampleConfiguration (windows)
-2.) java -cp Tinkerforge.jar:. ExampleConfiguration (linux)
+1.) java -cp Tinkerforge.jar;. ExampleConfiguration
+2.) java -cp Tinkerforge.jar:. ExampleConfiguration
 
 (Note: The difference is colon vs semicolon)
 
