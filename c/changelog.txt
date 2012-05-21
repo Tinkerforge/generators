@@ -10,3 +10,4 @@
 1.0.7: Add thread for callbacks (allows to call getters in callbacks)
 1.0.8: Also call the enumerate callback from the callback thread
        Ensure that the answering device matches the expected type in ipcon_add_device
+1.0.9: Don't use strcpy on non-NUL-terminated strings
