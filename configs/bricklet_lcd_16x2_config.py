@@ -26,6 +26,12 @@ Writes text to a specific line (0 to 1) with a specific position
 
 For example: (0, 5, "Hello") will write *Hello* in the middle of the
 first line of the display.
+
+The display uses a special charset that includes all ASCII characters except
+backslash and tilde. The LCD charset also includes several other non-ASCII characters, see
+the `charset specification <https://github.com/Tinkerforge/lcd-16x2-bricklet/raw/master/datasheets/standard_charset.pdf>`__
+for details. The Unicode example above shows how to specify non-ASCII characters
+and how to translate from Unicode to the LCD charset.
 """,
 'de':
 """
