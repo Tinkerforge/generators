@@ -5,7 +5,7 @@
 # Redistribution and use in source and binary forms of this file, 
 # with or without modification, are permitted. 
 
-from threading import Thread, BoundedSemaphore
+from threading import Thread, BoundedSemaphore, current_thread
 # Queue for python 2, queue for python 3
 try:
     from Queue import Queue
@@ -219,7 +219,8 @@ class IPConnection:
             pass
         self.sock.close()
 
-        self.join_thread()
+        if current_thread() not in [self.thread_recv, self.thread_callback]:
+            self.join_thread()
 
     def data_to_return(self, data, form):
         ret = []
