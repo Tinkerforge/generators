@@ -96,12 +96,6 @@ namespace Tinkerforge
                     byte[] data = new byte[8192];
                     int length = SocketStream.Read(data, 0, data.Length);
 
-                    string str = "";
-                    for (int i = 0; i < length; i++)
-                    {
-                        str += data[i] + " ";
-                    }
-
                     int handled = 0;
                     while (length != handled)
                     {
