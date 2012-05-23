@@ -97,7 +97,7 @@ namespace Tinkerforge
                     int length = SocketStream.Read(data, 0, data.Length);
 
                     int handled = 0;
-                    while (length != handled)
+                    while (length > handled)
                     {
                         byte[] tmp = new byte[length - handled];
                         Array.Copy(data, handled, tmp, 0, length - handled);
