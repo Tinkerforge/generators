@@ -87,67 +87,77 @@ namespace Tinkerforge
 
 		private void RecvLoop() 
 		{
-			try
-			{
-				while(RecvLoopFlag) 
-				{
-					byte[] data = new byte[8192];
-					int length = SocketStream.Read(data, 0, data.Length);
+            try
+            {
+                while (RecvLoopFlag)
+                {
+                    byte[] data = new byte[8192];
+                    int length = SocketStream.Read(data, 0, data.Length);
 
-					string str = "";
-					for(int i = 0; i < length; i++) {
-						str += data[i] + " ";
-					}
+                    string str = "";
+                    for (int i = 0; i < length; i++)
+                    {
+                        str += data[i] + " ";
+                    }
 
-					int handled = 0;
-					while(length != handled)
-					{
-						byte[] tmp = new byte[length-handled];
-						Array.Copy(data, handled, tmp, 0, length - handled);
-						handled += HandleMessage(tmp);
-					}
-				}
-			}
-			catch(Exception)
-			{
-				RecvLoopFlag = false;
-				return;
-			}
+                    int handled = 0;
+                    while (length != handled)
+                    {
+                        byte[] tmp = new byte[length - handled];
+                        Array.Copy(data, handled, tmp, 0, length - handled);
+                        handled += HandleMessage(tmp);
+                    }
+                }
+            }
+            catch (ThreadAbortException)
+            {
+            }
+            catch (IOException e)
+            {
+                Console.Error.WriteLine("unexpected IOException: {0}", e.Message);
+                Destroy();
+            }
 		}
 
 		private void CallbackLoop()
 		{
-			while(RecvLoopFlag)
-			{
-				byte[] data;
-				if(!callbackQueue.TryDequeue(out data, Timeout.Infinite))
-				{
-					return;
-				}
+            try
+            {
+                while (RecvLoopFlag)
+                {
+                    byte[] data;
+                    if (!callbackQueue.TryDequeue(out data, Timeout.Infinite))
+                    {
+                        return;
+                    }
 
-				byte type = GetTypeFromData(data);
+                    byte type = GetTypeFromData(data);
 
-				if(type == FUNCTION_ENUMERATE_CALLBACK)
-				{
-					ulong uid = LEConverter.ULongFrom(4, data);
-					string name = LEConverter.StringFrom(12, data, 40);
-					byte stackID = LEConverter.ByteFrom(52, data);
-					bool isNew = LEConverter.BoolFrom(53, data);
+                    if (type == FUNCTION_ENUMERATE_CALLBACK)
+                    {
+                        ulong uid = LEConverter.ULongFrom(4, data);
+                        string name = LEConverter.StringFrom(12, data, 40);
+                        byte stackID = LEConverter.ByteFrom(52, data);
+                        bool isNew = LEConverter.BoolFrom(53, data);
 
-					enumerateCallback(Base58.Encode(uid), name, stackID, isNew);
-				}
-				else
-				{
-					byte stackID = GetStackIDFromData(data);
-					Device device = devices[stackID];
+                        enumerateCallback(Base58.Encode(uid), name, stackID, isNew);
+                    }
+                    else
+                    {
+                        byte stackID = GetStackIDFromData(data);
+                        Device device = devices[stackID];
 
-					Device.MessageCallback callback = device.messageCallbacks[type];
-					if(callback != null && device.callbacks[type] != null) 
-					{
-						callback(data);
-					}
-				}
-			}
+                        Device.MessageCallback callback = device.messageCallbacks[type];
+                        if (callback != null && device.callbacks[type] != null)
+                        {
+                            callback(data);
+                        }
+                    }
+                }
+            }
+            catch (ThreadAbortException)
+            {
+            }
 		}
 
 		private static byte GetStackIDFromData(byte[] data)
@@ -295,13 +305,9 @@ namespace Tinkerforge
 		public void Destroy() 
 		{
 			RecvLoopFlag = false;
-			try 
-			{
-				SocketStream.Close();
-			}
-			catch(Exception)
-			{
-			}
+            recvThread.Abort();
+            callbackThread.Abort();
+			SocketStream.Close();
 			Socket.Close();
 			callbackQueue.Close();
 		}
