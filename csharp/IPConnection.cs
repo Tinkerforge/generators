@@ -54,8 +54,10 @@ namespace Tinkerforge
             SocketStream = new NetworkStream(Socket);
 
 			callbackThread = new Thread(this.CallbackLoop);
+            callbackThread.Name = "Callback-Processor";
 			callbackThread.Start();
 			recvThread = new Thread(this.RecvLoop);
+            recvThread.Name = "Brickd-Receiver";
 			recvThread.Start();
 		}
 
