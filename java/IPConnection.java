@@ -290,7 +290,7 @@ public class IPConnection {
 			}
 
 			int i = name.lastIndexOf(' ');
-			if (i < 0 || !name.substring(0, i).equals(addDevice.expectedName)) {
+			if (i < 0 || !name.substring(0, i).replace('-', ' ').equals(addDevice.expectedName.replace('-', ' '))) {
 				return length;
 			}
 

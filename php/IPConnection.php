@@ -469,7 +469,7 @@ class IPConnection
         $name = self::implodeUnpackedString($payload, 'name', 40);
         $i = strrpos($name, ' ');
 
-        if ($i === FALSE || substr($name, 0, $i) != $this->pendingAddDevice->expectedName) {
+        if ($i === FALSE || str_replace('-', ' ', substr($name, 0, $i)) != str_replace('-', ' ', $this->pendingAddDevice->expectedName)) {
             return $header['length'];
         }
 

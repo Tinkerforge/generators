@@ -362,7 +362,7 @@ class IPConnection:
                 name = value[7].decode('ascii').replace(chr(0), '')
 
             i = name.rfind(' ')
-            if i < 0 or name[0:i] != self.add_dev.expected_name:
+            if i < 0 or name[0:i].replace('-', ' ') != self.add_dev.expected_name.replace('-', ' '):
                 return length
 
             self.add_dev.firmware_version = [value[4], value[5], value[6]]
