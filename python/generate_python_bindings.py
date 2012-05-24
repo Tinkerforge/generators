@@ -118,7 +118,7 @@ def make_init_method():
         \"\"\"
         Device.__init__(self, uid)
 
-        self.expected_name = '{1} {2}';
+        self.expected_name = '{1} {2}'
 
         self.binding_version = {0}
 

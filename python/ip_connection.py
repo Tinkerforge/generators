@@ -49,7 +49,7 @@ def base58encode(value):
 
 def base58decode(encoded):
     value = 0
-    column_multiplier = 1;
+    column_multiplier = 1
     for c in encoded[::-1]:
         column = BASE58.index(c)
         value += column * column_multiplier
@@ -287,7 +287,7 @@ class IPConnection:
             answer = device.answer_queue.get(True, IPConnection.TIMEOUT_ANSWER)
         except Empty:
             device.sem_write.release()
-            msg = 'Did not receive answer for message' + str(data) +  'in time'
+            msg = 'Did not receive answer for function ' + str(function_id) +  ' in time'
             raise Error(Error.TIMEOUT, msg)
 
         try:
@@ -322,7 +322,7 @@ class IPConnection:
 
         # Message seems to be OK, but can't be handled, most likely
         # a callback without registered function
-        return length;
+        return length
 
     def handle_enumerate(self, data):
         length = get_length_from_data(data)
@@ -363,7 +363,7 @@ class IPConnection:
 
             i = name.rfind(' ')
             if i < 0 or name[0:i] != self.add_dev.expected_name:
-                return length;
+                return length
 
             self.add_dev.firmware_version = [value[4], value[5], value[6]]
             self.add_dev.name = name

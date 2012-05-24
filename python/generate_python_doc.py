@@ -245,7 +245,7 @@ def make_api():
 
  .. code-block:: python
 
-    {0} = {1}("YOUR_DEVICE_UID");
+    {0} = {1}("YOUR_DEVICE_UID")
 
  This object can then be added to the IP connection (see examples 
  :ref:`above <{0}_{2}_python_examples>`).
