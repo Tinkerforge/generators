@@ -54,9 +54,9 @@ def fix_links(text):
         name_false = ':func:`{0}`'.format(packet['name'][0])
         if packet['type'] == 'callback':
             name_upper = packet['name'][1].upper()
-            name_right = ':tcpip:func:`{0}.CALLBACK_{1}`'.format(cls, name_upper)
+            name_right = ':tcpip:func:`CALLBACK_{1} <{0}.CALLBACK_{1}>`'.format(cls, name_upper)
         else:
-            name_right = ':tcpip:func:`{0}.{1}`'.format(cls, packet['name'][1])
+            name_right = ':tcpip:func:`{1} <{0}.{1}>`'.format(cls, packet['name'][1])
         text = text.replace(name_false, name_right)
 
     text = text.replace(":word:`parameter`", "response value")
