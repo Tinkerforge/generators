@@ -92,6 +92,8 @@ def make_examples():
 
 Examples
 --------
+
+The example code below is public domain.
 """
 
     imp = """
