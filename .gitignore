@@ -10,4 +10,6 @@ php/bindings/
 php/doc/
 python/bindings/
 python/doc/
+ruby/bindings/
+ruby/doc/
 tcpip/doc/
