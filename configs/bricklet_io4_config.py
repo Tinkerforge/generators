@@ -22,7 +22,7 @@ com['packets'].append({
 Sets the output value (high or low) with a bit mask. The bit mask
 is 4 bit long, "true" refers to high and "false" refers to low.
 
-For example: The bitstring "1100" will turn the pins 0-1 high and the
+For example: The value 0b0011 will turn the pins 0-1 high and the
 pins 2-3 low.
 
  .. note::
@@ -68,7 +68,7 @@ are "i" and "o" for input and output.
 If the direction is configured as output, the value is either high or low
 (set as true or false).
 
-If the direction is configured as output, the value is either pull up or
+If the direction is configured as input, the value is either pull up or
 default (set as true or false).
 
 For example: 
@@ -95,7 +95,7 @@ com['packets'].append({
 """
 Returns a value bit mask and a direction bit mask.
 
-For example: A return value of the bitstrings "1100" and "1010" for
+For example: A return value of 0b0011 and 0b0101 for
 direction and value means that:
 
  * pin 0 is configured as input pull up, 
