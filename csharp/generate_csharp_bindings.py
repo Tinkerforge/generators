@@ -276,8 +276,9 @@ def make_callbacks():
     cb = """
 \t\tinternal int Callback{0}(byte[] data_)
 \t\t{{
-{1}\t\t\tif({0} != null)
-\t\t\t\t{0}({3});
+{1}\t\t\tvar handler = {0};
+\t\t\tif(handler != null)
+\t\t\t\thandler({3});
 
 \t\t\treturn {4};
 \t\t}}
