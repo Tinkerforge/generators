@@ -2,15 +2,15 @@
 # -*- coding: utf-8 -*-
 
 """
-Python Documentation Generator
+Ruby Documentation Generator
 Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
-generator_python_doc.py: Generator for Python documentation
+generator_ruby_doc.py: Generator for Ruby documentation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -39,7 +39,7 @@ device = None
 lang = 'en'
 file_path = ''
 
-def type_to_pytype(element):
+def type_to_rbtype(element):
     type_dict = {
         'int8': 'int',
         'uint8': 'int',
@@ -50,27 +50,27 @@ def type_to_pytype(element):
         'int64': 'int',
         'uint64': 'int',
         'bool': 'bool',
-        'char': 'chr',
+        'char': 'str',
         'string': 'str',
         'float': 'float'
     }
 
     t = type_dict[element[1]]
-    
+
     if element[2] == 1 or t == 'str':
         return t
 
     return '[' + ', '.join([t]*element[2]) + ']'
 
 def fix_links(text):
-    cls = device.get_camel_case_name()
+    cls = device.get_category() + device.get_camel_case_name()
     for packet in device.get_packets():
         name_false = ':func:`{0}`'.format(packet['name'][0])
         if packet['type'] == 'callback':
             name_upper = packet['name'][1].upper()
-            name_right = ':py:attr:`{0}.CALLBACK_{1}`'.format(cls, name_upper)
+            name_right = ':rb:attr:`::CALLBACK_{1} <{0}::CALLBACK_{1}>`'.format(cls, name_upper)
         else:
-            name_right = ':py:func:`{0}.{1}`'.format(cls, packet['name'][1])
+            name_right = ':rb:func:`#{1} <{0}#{1}>`'.format(cls, packet['name'][1])
         text = text.replace(name_false, name_right)
 
     text = text.replace(":word:`parameter`", "parameter")
@@ -80,17 +80,17 @@ def fix_links(text):
 
 def make_header():
     date = datetime.datetime.now().strftime("%Y-%m-%d")
-    ref = '.. _{0}_{1}_python:\n'.format(device.get_underscore_name(), device.get_category().lower())
-    title = 'Python - {0} {1}'.format(device.get_display_name(), device.get_category())
+    ref = '.. _{0}_{1}_ruby:\n'.format(device.get_underscore_name(), device.get_category().lower())
+    title = 'Ruby - {0} {1}'.format(device.get_display_name(), device.get_category())
     title_under = '='*len(title)
     return '{0}\n{1}\n{2}\n{3}\n'.format(common.gen_text_rst.format(date),
                                          ref,
-                                         title, 
+                                         title,
                                          title_under)
 
 def make_summary():
     su = """
-This is the API site for the Python bindings of the {0} {1}. General information
+This is the API site for the Ruby bindings of the {0} {1}. General information
 on what this device does and the technical specifications can be found
 :ref:`here <{2}>`.
 
@@ -106,7 +106,7 @@ can be found :ref:`here <{3}>`.
 def make_examples():
     def title_from_file(f):
         f = f.replace('example_', '')
-        f = f.replace('.py', '')
+        f = f.replace('.rb', '')
         s = ''
         for l in f.split('_'):
             s += l[0].upper() + l[1:] + ' '
@@ -125,21 +125,21 @@ The example code below is public domain.
 {0}
 {1}
 
-`Download <https://github.com/Tinkerforge/{3}/raw/master/software/examples/python/{4}>`__
+`Download <https://github.com/Tinkerforge/{3}/raw/master/software/examples/ruby/{4}>`__
 
 .. literalinclude:: {2}
- :language: python
+ :language: ruby
  :linenos:
  :tab-width: 4
 """
 
-    ref = '.. _{0}_{1}_python_examples:\n'.format(device.get_underscore_name(),
+    ref = '.. _{0}_{1}_ruby_examples:\n'.format(device.get_underscore_name(),
                                                   device.get_category().lower())
     ex = ex.format(ref)
-    files = common.find_examples(device.com, file_path, 'python', 'example_', '.py')
+    files = common.find_examples(device.com, file_path, 'ruby', 'example_', '.rb')
     copy_files = []
     for f in files:
-        include = '{0}_{1}_Python_{2}'.format(device.get_camel_case_name(), device.get_category(), f[0])
+        include = '{0}_{1}_Ruby_{2}'.format(device.get_camel_case_name(), device.get_category(), f[0])
         copy_files.append((f[1], include))
         title = title_from_file(f[0])
         git_name = device.get_underscore_name().replace('_', '-') + '-' + device.get_category().lower()
@@ -162,64 +162,65 @@ def make_parameter_desc(packet, io):
     for element in packet['elements']:
         if element[3] != io:
             continue
-        t = type_to_pytype(element)
+        t = type_to_rbtype(element)
         desc += param.format(element[0], t)
 
     return desc
 
 def make_return_desc(packet):
-    ret = ' :rtype: {0}\n'
+    ret = ' -> {0}'
     ret_list = []
     for element in packet['elements']:
         if element[3] != 'out':
             continue
-        ret_list.append(type_to_pytype(element))
+        ret_list.append(type_to_rbtype(element))
     if len(ret_list) == 0:
-        return ret.format(None)
+        return ret.format('nil')
     elif len(ret_list) == 1:
         return ret.format(ret_list[0])
-    
-    return ret.format('(' + ', '.join(ret_list) + ')')
+
+    return ret.format('[' + ', '.join(ret_list) + ']')
 
 def make_methods(typ):
     version_method = """
-.. py:function:: {0}.get_version()
+.. rb:function:: {0}#get_version -> [str, [int, int, int], [int, int, int]]
 
- :rtype: (str, [int, int, int], [int, int, int])
-
- Returns the name (including the hardware version), the firmware version 
+ Returns the name (including the hardware version), the firmware version
  and the binding version of the device. The firmware and binding versions are
  given in arrays of size 3 with the syntax [major, minor, revision].
 """
 
     methods = ''
-    func_start = '.. py:function:: '
-    cls = device.get_camel_case_name()
+    func_start = '.. rb:function:: '
+    cls = device.get_category() + device.get_camel_case_name()
     for packet in device.get_packets():
         if packet['type'] != 'function' or packet['doc'][0] != typ:
             continue
         name = packet['name'][1]
         params = make_parameter_list(packet)
+        if len(params) > 0:
+            params = '(' + params + ')'
         pd = make_parameter_desc(packet, 'in')
         r = make_return_desc(packet)
         d = fix_links(common.shift_right(packet['doc'][1][lang], 1))
-        desc = '{0}{1}{2}'.format(pd, r, d)
-        func = '{0}{1}.{2}({3})\n{4}'.format(func_start, 
-                                             cls, 
-                                             name, 
-                                             params, 
-                                             desc)
+        desc = '{0}{1}'.format(pd, d)
+        func = '{0}{1}#{2}{3}{5}\n{4}'.format(func_start,
+                                             cls,
+                                             name,
+                                             params,
+                                             desc,
+                                             r)
         methods += func + '\n'
 
     if typ == 'am':
         methods += version_method.format(cls)
 
-    return methods 
+    return methods
 
 def make_callbacks():
     cbs = ''
-    func_start = '.. py:attribute:: '
-    cls = device.get_camel_case_name()
+    func_start = '.. rb:attribute:: '
+    cls = device.get_category() + device.get_camel_case_name()
     for packet in device.get_packets():
         if packet['type'] != 'callback':
             continue
@@ -227,7 +228,7 @@ def make_callbacks():
         param_desc = make_parameter_desc(packet, 'out')
         desc = fix_links(common.shift_right(packet['doc'][1][lang], 1))
 
-        func = '{0}{1}.CALLBACK_{2}\n{3}\n{4}'.format(func_start,
+        func = '{0}{1}::CALLBACK_{2}\n{3}\n{4}'.format(func_start,
                                                       cls,
                                                       packet['name'][1].upper(),
                                                       param_desc,
@@ -235,32 +236,30 @@ def make_callbacks():
         cbs += func + '\n'
 
     return cbs
-       
+
 
 def make_api():
     create_str = """
-.. py:function:: {1}(uid)
+.. rb:function:: {3}{1}::new(uid) -> {0}
 
  Creates an object with the unique device ID *uid*:
 
- .. code-block:: python
+ .. code-block:: ruby
 
-    {0} = {1}("YOUR_DEVICE_UID")
+    {0} = {3}{1}.new 'YOUR_DEVICE_UID'
 
- This object can then be added to the IP connection (see examples 
- :ref:`above <{0}_{2}_python_examples>`).
+ This object can then be added to the IP connection (see examples
+ :ref:`above <{0}_{2}_ruby_examples>`).
 """
 
     register_str = """
-.. py:function:: {1}.register_callback(cb, func)
+.. rb:function:: {3}{1}#register_callback(cb) {{ |param [, ...]| block }} -> nil
 
  :param cb: int
- :param func: function
- :rtype: None
 
- Registers a callback with ID *cb* to the function *func*. The available
- IDs with corresponding function signatures are listed 
- :ref:`below <{0}_{2}_python_callbacks>`.
+ Registers a callback with ID *cb* to the given block. The available
+ IDs with corresponding function signatures are listed
+ :ref:`below <{0}_{2}_ruby_callbacks>`.
 """
 
     bm_str = """
@@ -289,27 +288,26 @@ Callback Configuration Methods
 """
 
     c_str = """
-.. _{1}_{2}_python_callbacks:
+.. _{1}_{2}_ruby_callbacks:
 
 Callbacks
 ^^^^^^^^^
 
 *Callbacks* can be registered with *callback IDs* to receive
 time critical or recurring data from the device. The registration is done
-with the :py:func:`register_callback <{3}.register_callback>` function of
+with the :rb:func:`#register_callback <{4}{3}#register_callback>` function of
 the device object. The first parameter is the callback ID and the second
-parameter the callback function::
+parameter is a block::
 
-    def my_callback(param):
-        print(param)
+    {1}.register_callback {4}{3}::CALLBACK_EXAMPLE, do |param|
+      puts "#{{param}}"
+    end
 
-    {1}.register_callback({3}.CALLBACK_EXAMPLE, my_callback)
-
-The available constants with inherent number and type of parameters are 
+The available constants with inherent number and type of parameters are
 described below.
 
  .. note::
-  Using callbacks for recurring events is *always* prefered 
+  Using callbacks for recurring events is *always* prefered
   compared to using getters. It will use less USB bandwith and the latency
   will be a lot better, since there is no roundtrip time.
 
@@ -327,10 +325,12 @@ API
 """
     cre = create_str.format(device.get_underscore_name(),
                             device.get_camel_case_name(),
-                            device.get_category().lower())
+                            device.get_category().lower(),
+                            device.get_category())
     reg = register_str.format(device.get_underscore_name(),
                               device.get_camel_case_name(),
-                              device.get_category().lower())
+                              device.get_category().lower(),
+                              device.get_category())
 
     bm = make_methods('bm')
     am = make_methods('am')
@@ -343,10 +343,13 @@ API
         api_str += am_str.format(am)
     if c:
         api_str += ccm_str.format(reg, ccm)
-        api_str += c_str.format(c, device.get_underscore_name(), device.get_category().lower(), device.get_camel_case_name())
+        api_str += c_str.format(c, device.get_underscore_name(),
+                                device.get_category().lower(),
+                                device.get_camel_case_name(),
+                                device.get_category())
 
-    ref = '.. _{0}_{1}_python_api:\n'.format(device.get_underscore_name(),
-                                             device.get_category().lower())
+    ref = '.. _{0}_{1}_ruby_api:\n'.format(device.get_underscore_name(),
+                                           device.get_category().lower())
 
     api_desc = ''
     try:
@@ -354,11 +357,11 @@ API
     except:
         pass
 
-    return api.format(ref, api_desc, api_str) 
-       
+    return api.format(ref, api_desc, api_str)
+
 def copy_examples_for_zip():
-    examples = common.find_examples(device.com, file_path, 'python', 'example_', '.py')
-    dest = os.path.join('/tmp/generator/egg/examples/', 
+    examples = common.find_examples(device.com, file_path, 'ruby', 'example_', '.rb')
+    dest = os.path.join('/tmp/generator/gem/examples/',
                         device.get_category().lower(),
                         device.get_underscore_name())
 
@@ -367,13 +370,13 @@ def copy_examples_for_zip():
 
     for example in examples:
         shutil.copy(example[1], dest)
-  
+
 def make_files(com_new, directory):
     global device
     device = common.Device(com_new)
 
-    file_name = '{0}_{1}_Python'.format(device.get_camel_case_name(), device.get_category())
-    
+    file_name = '{0}_{1}_Ruby'.format(device.get_camel_case_name(), device.get_category())
+
     directory += '/doc'
     if not os.path.exists(directory):
         os.makedirs(directory)
@@ -398,64 +401,76 @@ def generate(path):
     # Make temporary generator directory
     if os.path.exists('/tmp/generator'):
         shutil.rmtree('/tmp/generator/')
-    os.makedirs('/tmp/generator/egg/source/tinkerforge')
+    os.makedirs('/tmp/generator/gem/source/lib/tinkerforge')
     os.chdir('/tmp/generator')
 
     # Make bindings
     for config in configs:
         if config.endswith('_config.py'):
             module = __import__(config[:-3])
-            print(" * {0}".format(config[:-10]))            
+            print(" * {0}".format(config[:-10]))
             make_files(module.com, path)
 
     # Copy bindings and readme
-    for filename in glob.glob(path + '/bindings/*.py'):
-        shutil.copy(filename, '/tmp/generator/egg/source/tinkerforge')
+    for filename in glob.glob(path + '/bindings/*.rb'):
+        shutil.copy(filename, '/tmp/generator/gem/source/lib/tinkerforge')
 
-    shutil.copy(path + '/ip_connection.py', '/tmp/generator/egg/source/tinkerforge')
-    shutil.copy(path + '/changelog.txt', '/tmp/generator/egg')
-    shutil.copy(path + '/readme.txt', '/tmp/generator/egg')
+    shutil.copy(path + '/ip_connection.rb', '/tmp/generator/gem/source/lib/tinkerforge')
+    shutil.copy(path + '/changelog.txt', '/tmp/generator/gem')
+    shutil.copy(path + '/readme.txt', '/tmp/generator/gem')
 
-    # Write setup.py
+    # Write version.rb
     version = common.get_changelog_version(path)
-    file('/tmp/generator/egg/source/setup.py', 'wb').write("""
-#!/usr/bin/env python
-
-from setuptools import setup
-
-setup(
-    name='tinkerforge',
-    version='{0}.{1}.{2}',
-    description='TCP/IP based library for Bricks and Bricklets',
-    author='Tinkerforge GmbH',
-    author_email='olaf@tinkerforge.com',
-    url='http://www.tinkerforge.com',
-    packages=['tinkerforge'])
+    file('/tmp/generator/gem/source/lib/tinkerforge/version.rb', 'wb').write("""
+module Tinkerforge
+  VERSION = '{0}.{1}.{2}'
+end
 """.format(*version))
 
-    # Make egg
-    os.chdir('/tmp/generator/egg/source')
-    args = ['/usr/bin/python',
-            'setup.py',
-            'bdist_egg']
+    # Write tinkerforge.rb
+    file('/tmp/generator/gem/source/lib/tinkerforge.rb', 'wb').write("""
+require 'tinkerforge/version'
+
+module Tinkerforge
+end
+""")
+
+    # Write tinkerforge.gemspec
+    file('/tmp/generator/gem/source/tinkerforge.gemspec', 'wb').write("""
+spec = Gem::Specification.new do |s|
+  s.name = 'tinkerforge'
+  s.version = '{0}.{1}.{2}'
+  s.summary = "Ruby API Bindings for Tinkerforge Bricks and Bricklets"
+  s.files = Dir['lib/*.rb'] + Dir['lib/tinkerforge/*.rb']
+  s.has_rdoc = true
+  s.rdoc_options << '--title' <<  'Tinkerforge'
+  s.author = "Matthias Bolte"
+  s.email = "matthias@tinkerforge.com"
+  s.homepage = "http://www.tinkerforge.com/"
+end
+""".format(*version))
+
+    # Make gem
+    os.chdir('/tmp/generator/gem/source')
+    args = ['/usr/bin/gem',
+            'build',
+            'tinkerforge.gemspec']
     subprocess.call(args)
 
     # Remove build stuff
-    shutil.rmtree('/tmp/generator/egg/source/build')
-    shutil.rmtree('/tmp/generator/egg/source/tinkerforge.egg-info')
-    shutil.copy('/tmp/generator/egg/source/dist/' + 
-                os.listdir('/tmp/generator/egg/source/dist')[0], 
-                '/tmp/generator/egg/tinkerforge.egg')
-    shutil.rmtree('/tmp/generator/egg/source/dist')
-
-    # Make __init__.py
-    f = open('/tmp/generator/egg/source/tinkerforge/__init__.py', 'w')
-    f.write(' ')
-    f.close()
+    os.remove('/tmp/generator/gem/source/tinkerforge.gemspec')
+    shutil.move('/tmp/generator/gem/source/tinkerforge-{0}.{1}.{2}.gem'.format(*version),
+                '/tmp/generator/gem/tinkerforge.gem')
+    shutil.move('/tmp/generator/gem/source/lib/tinkerforge.rb',
+                '/tmp/generator/gem/source/')
+    os.makedirs('/tmp/generator/gem/source/tinkerforge')
+    for filename in glob.glob('/tmp/generator/gem/source/lib/tinkerforge/*.rb'):
+        shutil.move(filename, '/tmp/generator/gem/source/tinkerforge/')
+    shutil.rmtree('/tmp/generator/gem/source/lib/')
 
     # Make zip
-    zipname = 'tinkerforge_python_bindings_{0}_{1}_{2}.zip'.format(*version)
-    os.chdir('/tmp/generator/egg')
+    zipname = 'tinkerforge_ruby_bindings_{0}_{1}_{2}.zip'.format(*version)
+    os.chdir('/tmp/generator/gem')
     args = ['/usr/bin/zip',
             '-r',
             zipname,

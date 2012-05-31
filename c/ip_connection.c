@@ -498,9 +498,21 @@ int ipcon_add_device_handler(IPConnection *ipcon,
 		// Match with expected name
 		int length = p - gsidr->device_name;
 		int expected_length = strlen(ipcon->add_device->expected_name);
-		if (length != expected_length ||
-		    memcmp(gsidr->device_name, ipcon->add_device->expected_name, length) != 0) {
+		if (length != expected_length) {
 			return sizeof(GetStackIDReturn);
+		}
+
+		int i;
+		for (i = 0; i < length; i++) {
+			if (gsidr->device_name[i] != ipcon->add_device->expected_name[i]) {
+				if ((gsidr->device_name[i] == ' ' && ipcon->add_device->expected_name[i] == '-') ||
+				    (gsidr->device_name[i] == '-' && ipcon->add_device->expected_name[i] == ' ')) {
+					// Treat ' ' and '-' as equal for backward compatibility
+					continue;
+				} else {
+					return sizeof(GetStackIDReturn);
+				}
+			}
 		}
 
 		ipcon->add_device->stack_id = gsidr->device_stack_id;

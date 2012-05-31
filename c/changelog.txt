@@ -11,3 +11,4 @@
 1.0.8: Also call the enumerate callback from the callback thread
        Ensure that the answering device matches the expected type in ipcon_add_device
 1.0.9: Don't use strcpy on non-NUL-terminated strings
+1.0.10: Treat '-' and ' ' as equal in device name check for backward compatibility

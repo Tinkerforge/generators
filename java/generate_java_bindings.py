@@ -48,9 +48,15 @@ def fix_links(text):
         if line.strip() == '.. csv-table::':
             in_table_head = True
             replaced_lines.append('\\verbatim')
+        elif line.strip().startswith(':header: ') and in_table_head:
+            replaced_lines.append(line[len(':header: '):])
+        elif line.strip().startswith(':widths:') and in_table_head:
+            pass
         elif len(line.strip()) == 0 and in_table_head:
             in_table_head = False
             in_table_body = True
+
+            replaced_lines.append('')
         elif len(line.strip()) == 0 and in_table_body:
             in_table_body = False
 

@@ -155,7 +155,7 @@ You can go from quaternions to Euler angles with the following formula::
 
  roll  = atan2(2*y*w - 2*x*z, 1 - 2*y*y - 2*z*z)
  pitch = atan2(2*x*w - 2*y*z, 1 - 2*x*x - 2*z*z)
- yaw   = asin(2*x*y + 2*z*w)
+ yaw   =  asin(2*x*y + 2*z*w)
 
 This process is not reversible, because of the 
 `gimbal lock <http://en.wikipedia.org/wiki/Gimbal_lock>`__.
@@ -163,10 +163,10 @@ This process is not reversible, because of the
 Converting the quaternions to an OpenGL translation matrix is
 possible with the following formula::
 
- matrix = [[1 - 2*(y*y + z*z), 2*(x*y - w*z),     2*(x*z + w*y),     0],
-           [2*(x*y + w*z),     1 - 2*(x*x + z*z), 2*(y*z - w*x),     0],
-           [2*(x*z - w*y),     2*(y*z + w*x),     1 - 2*(x*x + y*y), 0],
-           [0,                 0,                 0,                 1]]
+ matrix = [[1 - 2*(y*y + z*z),     2*(x*y - w*z),     2*(x*z + w*y), 0],
+           [    2*(x*y + w*z), 1 - 2*(x*x + z*z),     2*(y*z - w*x), 0],
+           [    2*(x*z - w*y),     2*(y*z + w*x), 1 - 2*(x*x + y*y), 0],
+           [                0,                 0,                 0, 1]]
 
 If you want to get the quaternions periodically, it is recommended 
 to use the callback :func:`Quaternion` and set the period with 
@@ -368,15 +368,15 @@ com['packets'].append({
 There are several different types that can be calibrated:
 
 .. csv-table::
- :header: "Type", "Description", "Values"
+ :header: "Type", "Description",        "Values"
  :widths: 10, 40, 100
 
- "0", "Accelerometer Gain", "[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]" 
- "1", "Accelerometer Bias", "[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]"
- "2", "Magnetometer Gain", "[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]" 
- "3", "Magnetometer Bias", "[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]"
- "4", "Gyroscope Gain", "[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]" 
- "5", "Gyroscope Bias", "[bias xl, bias yl, bias zl, temp l, bias xh, bias yh, bias zh, temp h, 0, 0]"
+ "0",    "Accelerometer Gain", "[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]"
+ "1",    "Accelerometer Bias", "[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]"
+ "2",    "Magnetometer Gain",  "[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]"
+ "3",    "Magnetometer Bias",  "[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]"
+ "4",    "Gyroscope Gain",     "[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]"
+ "5",    "Gyroscope Bias",     "[bias xl, bias yl, bias zl, temp l, bias xh, bias yh, bias zh, temp h, 0, 0]"
 
 The calibration via gain and bias is done with the following formula::
 

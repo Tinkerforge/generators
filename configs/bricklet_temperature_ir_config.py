@@ -44,7 +44,7 @@ com['packets'].append({
 Returns the object temperature of the sensor, i.e. the temperature
 of the surface of the object the sensor is aimed at. The value
 has a range of -700 to 3800 and is given in °C/10,
-e.g. a value of 30001 means that a temperature of 300.01 °C is measured
+e.g. a value of 3001 means that a temperature of 300.1 °C is measured
 on the surface of the object.
 
 The temperature of different materials is dependent on their `emissivity 
@@ -199,11 +199,11 @@ The following options are possible:
  :header: "Option", "Description"
  :widths: 10, 100
 
- "'x'", "Callback is turned off."
- "'o'", "Callback is triggered when the temperature is *outside* the min and max values"
- "'i'", "Callback is triggered when the temperature is *inside* the min and max values"
- "'<'", "Callback is triggered when the temperature is smaller than the min value (max is ignored)"
- "'>'", "Callback is triggered when the temperature is greater than the min value (max is ignored)"
+ "'x'",    "Callback is turned off."
+ "'o'",    "Callback is triggered when the temperature is *outside* the min and max values"
+ "'i'",    "Callback is triggered when the temperature is *inside* the min and max values"
+ "'<'",    "Callback is triggered when the temperature is smaller than the min value (max is ignored)"
+ "'>'",    "Callback is triggered when the temperature is greater than the min value (max is ignored)"
 
 The default value is ('x', 0, 0).
 """,
@@ -247,11 +247,11 @@ The following options are possible:
  :header: "Option", "Description"
  :widths: 10, 100
 
- "'x'", "Callback is turned off."
- "'o'", "Callback is triggered when the temperature is *outside* the min and max values"
- "'i'", "Callback is triggered when the temperature is *inside* the min and max values"
- "'<'", "Callback is triggered when the temperature is smaller than the min value (max is ignored)"
- "'>'", "Callback is triggered when the temperature is greater than the min value (max is ignored)"
+ "'x'",    "Callback is turned off."
+ "'o'",    "Callback is triggered when the temperature is *outside* the min and max values"
+ "'i'",    "Callback is triggered when the temperature is *inside* the min and max values"
+ "'<'",    "Callback is triggered when the temperature is smaller than the min value (max is ignored)"
+ "'>'",    "Callback is triggered when the temperature is greater than the min value (max is ignored)"
 
 The default value is ('x', 0, 0).
 """,

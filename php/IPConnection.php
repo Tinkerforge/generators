@@ -227,9 +227,9 @@ class IPConnection
 
     const BROADCAST_ADDRESS = 0;
 
-    const FUNCTION_ID_GET_STACK_ID = 255;
-    const FUNCTION_ID_ENUMERATE = 254;
-    const FUNCTION_ID_ENUMERATE_CALLBACK = 253;
+    const FUNCTION_GET_STACK_ID = 255;
+    const FUNCTION_ENUMERATE = 254;
+    const FUNCTION_ENUMERATE_CALLBACK = 253;
 
     private $socket = FALSE;
     private $devices = array();
@@ -276,7 +276,7 @@ class IPConnection
     {
         $this->enumerateCallback = $callback;
 
-        $request = pack('CCv', self::BROADCAST_ADDRESS, self::FUNCTION_ID_ENUMERATE, 4);
+        $request = pack('CCv', self::BROADCAST_ADDRESS, self::FUNCTION_ENUMERATE, 4);
 
         $this->send($request);
     }
@@ -284,7 +284,7 @@ class IPConnection
     public function addDevice($device)
     {
         $uid = Base256::encodeAndPack($device->uid, 8);
-        $request = pack('CCv', self::BROADCAST_ADDRESS, self::FUNCTION_ID_GET_STACK_ID, 12) . $uid;
+        $request = pack('CCv', self::BROADCAST_ADDRESS, self::FUNCTION_GET_STACK_ID, 12) . $uid;
 
         $this->pendingAddDevice = $device;
 
@@ -406,9 +406,9 @@ class IPConnection
         $header = unpack('CstackID/CfunctionID/vlength', $data);
         $data = substr($data, 4);
 
-        if ($header['functionID'] == self::FUNCTION_ID_GET_STACK_ID) {
+        if ($header['functionID'] == self::FUNCTION_GET_STACK_ID) {
             return $this->handleAddDevice($header, $data);
-        } else if ($header['functionID'] == self::FUNCTION_ID_ENUMERATE_CALLBACK) {
+        } else if ($header['functionID'] == self::FUNCTION_ENUMERATE_CALLBACK) {
             return $this->handleEnumerate($header, $data);
         }
 
@@ -469,7 +469,7 @@ class IPConnection
         $name = self::implodeUnpackedString($payload, 'name', 40);
         $i = strrpos($name, ' ');
 
-        if ($i === FALSE || substr($name, 0, $i) != $this->pendingAddDevice->expectedName) {
+        if ($i === FALSE || str_replace('-', ' ', substr($name, 0, $i)) != str_replace('-', ' ', $this->pendingAddDevice->expectedName)) {
             return $header['length'];
         }
 

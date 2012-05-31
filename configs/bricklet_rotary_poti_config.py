@@ -148,11 +148,11 @@ The following options are possible:
  :header: "Option", "Description"
  :widths: 10, 100
 
- "'x'", "Callback is turned off."
- "'o'", "Callback is triggered when the position is *outside* the min and max values"
- "'i'", "Callback is triggered when the position is *inside* the min and max values"
- "'<'", "Callback is triggered when the position is smaller than the min value (max is ignored)"
- "'>'", "Callback is triggered when the position is greater than the min value (max is ignored)"
+ "'x'",    "Callback is turned off."
+ "'o'",    "Callback is triggered when the position is *outside* the min and max values"
+ "'i'",    "Callback is triggered when the position is *inside* the min and max values"
+ "'<'",    "Callback is triggered when the position is smaller than the min value (max is ignored)"
+ "'>'",    "Callback is triggered when the position is greater than the min value (max is ignored)"
 
 The default value is ('x', 0, 0).
 """,
@@ -196,11 +196,11 @@ The following options are possible:
  :header: "Option", "Description"
  :widths: 10, 100
 
- "'x'", "Callback is turned off."
- "'o'", "Callback is triggered when the position is *outside* the min and max values"
- "'i'", "Callback is triggered when the position is *inside* the min and max values"
- "'<'", "Callback is triggered when the position is smaller than the min value (max is ignored)"
- "'>'", "Callback is triggered when the position is greater than the min value (max is ignored)"
+ "'x'",    "Callback is turned off."
+ "'o'",    "Callback is triggered when the position is *outside* the min and max values"
+ "'i'",    "Callback is triggered when the position is *inside* the min and max values"
+ "'<'",    "Callback is triggered when the position is smaller than the min value (max is ignored)"
+ "'>'",    "Callback is triggered when the position is greater than the min value (max is ignored)"
 
 The default value is ('x', 0, 0).
 """,

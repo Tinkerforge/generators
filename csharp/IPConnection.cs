@@ -228,7 +228,7 @@ namespace Tinkerforge
 				string name = LEConverter.StringFrom(15, data, 40);
 				int i = name.LastIndexOf(' ');
 
-				if (i < 0 || name.Substring(0, i) != addDev.expectedName) {
+				if (i < 0 || name.Substring(0, i).Replace('-', ' ') != addDev.expectedName.Replace('-', ' ')) {
 					return length;
 				}
 

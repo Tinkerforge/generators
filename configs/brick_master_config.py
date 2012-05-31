@@ -64,8 +64,8 @@ Possible extension types:
  :header: "Type", "Description"
  :widths: 10, 100
 
- "1", "Chibi"
- "2", "RS485"
+ "1",    "Chibi"
+ "2",    "RS485"
 
 The extension type is already set when bought and it can be set with the 
 Brick Viewer, it is unlikely that you need this function.
@@ -271,10 +271,10 @@ Sets the Chibi frequency range for the Chibi Extension. Possible values are:
  :header: "Type", "Description"
  :widths: 10, 100
 
- "0", "OQPSK 868Mhz (Europe)"
- "1", "OQPSK 915Mhz (US)"
- "2", "OQPSK 780Mhz (China)"
- "3", "BPSK40 915Mhz"
+ "0",    "OQPSK 868Mhz (Europe)"
+ "1",    "OQPSK 915Mhz (US)"
+ "2",    "OQPSK 780Mhz (China)"
+ "3",    "BPSK40 915Mhz"
 
 It is possible to set the frequency with the Brick Viewer and it will be 
 saved in the EEPROM of the Chibi Extension, it does not
@@ -312,13 +312,13 @@ Sets the channel used by the Chibi Extension. Possible channels are
 different for different frequencies:
 
 .. csv-table::
- :header: "Frequency", "Possible Channels"
+ :header: "Frequency",             "Possible Channels"
  :widths: 40, 60
 
  "OQPSK 868Mhz (Europe)", "0"
- "OQPSK 915Mhz (US)", "1, 2, 3, 4, 5, 6, 7, 8, 9, 10"
- "OQPSK 780Mhz (China)", "0, 1, 2, 3"
- "BPSK40 915Mhz", "1, 2, 3, 4, 5, 6, 7, 8, 9, 10"
+ "OQPSK 915Mhz (US)",     "1, 2, 3, 4, 5, 6, 7, 8, 9, 10"
+ "OQPSK 780Mhz (China)",  "0, 1, 2, 3"
+ "BPSK40 915Mhz",         "1, 2, 3, 4, 5, 6, 7, 8, 9, 10"
 
 It is possible to set the frequency with the Brick Viewer and it will be 
 saved in the EEPROM of the Chibi Extension, it does not

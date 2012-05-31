@@ -10,3 +10,4 @@
        Don't generate addListener method for devices without callbacks
        Add inline code documentation
 1.0.8: Ensure that the answering device matches the expected type in IPConnection.addDevice
+1.0.9: Treat '-' and ' ' as equal in device name check for backward compatibility
