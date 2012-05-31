@@ -245,15 +245,12 @@ namespace Tinkerforge
 
 		private int HandleEnumerate(byte[] data)
 		{
-			int length = GetLengthFromData(data);
-			if(enumerateCallback == null) 
+			if(enumerateCallback != null) 
 			{
-				return length;
+				callbackQueue.Enqueue(data);
 			}
 
-			callbackQueue.Enqueue(data);
-
-			return length;
+			return GetLengthFromData(data);
 		}
 
         public void Write(byte[] data)
