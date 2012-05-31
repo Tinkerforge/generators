@@ -128,7 +128,8 @@ def make_delegates():
 \t\t/// <summary>
 \t\t///  {2}
 \t\t/// </summary>
-\t\tpublic delegate void {0}({1});
+\t\tpublic event {0}Handler {0};
+\t\tpublic delegate void {0}Handler({1});
 """
     for packet in device.get_packets():
         if packet['type'] != 'callback':
@@ -237,16 +238,14 @@ def make_register_callback():
         return '\t}\n}\n'
 
     typeofs = ''
-    typeof = """\t\t\t{0}if(d.GetType() == typeof({1}))
+    typeof = """\t\t\t{0}if(d is {1}Handler)
 \t\t\t{{
-\t\t\t\tcallbacks[CALLBACK_{2}] = d;
+\t\t\t\t{1} += ({1}Handler)d;
 \t\t\t}}
 """
 
     cb = """
-\t\t/// <summary>
-\t\t///  Registers a callback function.
-\t\t/// </summary>
+\t\t[Obsolete("Register your callbacks by directly adding your handler to the corresponding event. This method WILL NOT unregister old callbacks by adding an empty callback!")]
 \t\tpublic void RegisterCallback(System.Delegate d)
 \t\t{{
 {0}\t\t}}
@@ -277,7 +276,9 @@ def make_callbacks():
     cb = """
 \t\tinternal int Callback{0}(byte[] data_)
 \t\t{{
-{1}\t\t\t(({0})callbacks[CALLBACK_{2}])({3});
+{1}\t\t\tif({0} != null)
+\t\t\t\t{0}({3});
+
 \t\t\treturn {4};
 \t\t}}
 """
