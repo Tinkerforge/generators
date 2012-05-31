@@ -144,7 +144,7 @@ namespace Tinkerforge
                         Device device = devices[stackID];
 
                         Device.MessageCallback callback = device.messageCallbacks[type];
-                        if (callback != null && device.callbacks[type] != null)
+                        if (callback != null)
                         {
                             callback(data);
                         }
@@ -202,13 +202,11 @@ namespace Tinkerforge
 			}
 
 			Device.MessageCallback callback = device.messageCallbacks[type];
-			if(callback != null && device.callbacks[type] != null)
+			if(callback != null)
 			{
 				callbackQueue.Enqueue(data);
 			}
 
-			// Message seems to be OK, but can't be handled, most likely
-			// a callback without registered function
 			return length;
 		}
 
@@ -325,7 +323,6 @@ namespace Tinkerforge
 		internal byte[] bindingVersion = new byte[3];
 		internal ulong uid = 0;
 		internal byte answerType = 0;
-		internal Delegate[] callbacks = new Delegate[256];
 		internal MessageCallback[] messageCallbacks = new MessageCallback[256];
 		internal BlockingQueue answerQueue = new BlockingQueue();
 		internal IPConnection ipcon = null;
