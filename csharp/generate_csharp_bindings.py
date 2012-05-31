@@ -276,11 +276,16 @@ def make_callbacks():
     cb = """
 \t\tinternal int Callback{0}(byte[] data_)
 \t\t{{
-{1}\t\t\tvar handler = {0};
-\t\t\tif(handler != null)
-\t\t\t\thandler({3});
+{1}\t\t\tOn{0}({3});
 
 \t\t\treturn {4};
+\t\t}}
+
+\t\tprotected void On{0}({5})
+\t\t{{
+\t\t\tvar handler = {0};
+\t\t\tif(handler != null)
+\t\t\t\thandler({3});
 \t\t}}
 """
     cls = device.get_camel_case_name()
@@ -294,7 +299,8 @@ def make_callbacks():
         for element in packet['elements']:
             if element[3] == 'out':
                 eles.append(csharp_common.to_camel_case(element[0]))
-        params = ", ".join(eles)
+        callParams = ", ".join(eles)
+        signatureParams = csharp_common.make_parameter_list(packet)
         size = str(get_data_size(packet['elements']))
 
         convs = ''
@@ -322,7 +328,7 @@ def make_callbacks():
         if convs != '':
             convs += '\n'
         
-        cbs += cb.format(name, convs, name_upper, params, pos)
+        cbs += cb.format(name, convs, name_upper, callParams, pos, signatureParams)
 
     return cbs
 
