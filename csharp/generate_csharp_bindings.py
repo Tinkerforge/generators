@@ -128,8 +128,8 @@ def make_delegates():
 \t\t/// <summary>
 \t\t///  {2}
 \t\t/// </summary>
-\t\tpublic event {0}Handler {0};
-\t\tpublic delegate void {0}Handler({1});
+\t\tpublic event {0}EventHandler {0};
+\t\tpublic delegate void {0}EventHandler({1});
 """
     for packet in device.get_packets():
         if packet['type'] != 'callback':
@@ -238,9 +238,9 @@ def make_register_callback():
         return '\t}\n}\n'
 
     typeofs = ''
-    typeof = """\t\t\t{0}if(d is {1}Handler)
+    typeof = """\t\t\t{0}if(d is {1}EventHandler)
 \t\t\t{{
-\t\t\t\t{1} += ({1}Handler)d;
+\t\t\t\t{1} += ({1}EventHandler)d;
 \t\t\t}}
 """
 
