@@ -344,3 +344,114 @@ Returns the channel as set by :func:`SetChibiChannel`.
 """
 }]
 })
+
+com['packets'].append({
+'type': 'method', 
+'name': ('IsRS485Present', 'is_rs485_present'), 
+'elements': [('present', 'bool', 1, 'out')], 
+'doc': ['am', {
+'en':
+"""
+Returns true if a RS485 Extension is available to be used by the Master.
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'method', 
+'name': ('SetRS485Address', 'set_rs485_address'), 
+'elements': [('address', 'uint8', 1, 'in')], 
+'doc': ['am', {
+'en':
+"""
+Sets the address (1-255) belonging to the RS485 Extension.
+
+Set to 0 if the RS485 Extension should be the RS485 Master (i.e.
+connected to a PC via USB).
+
+It is possible to set the address with the Brick Viewer and it will be 
+saved in the EEPROM of the RS485 Extension, it does not
+have to be set on every startup.
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'method', 
+'name': ('GetRS485Address', 'get_rs485_address'), 
+'elements': [('address', 'uint8', 1, 'out')], 
+'doc': ['am', {
+'en':
+"""
+Returns the address as set by :func:`SetRS485Address`.
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'method', 
+'name': ('GetRS485SlaveAddress', 'set_rs485_slave_address'), 
+'elements': [('num', 'uint8', 1, 'in'),
+             ('address', 'uint8', 1, 'in')], 
+'doc': ['am', {
+'en':
+"""
+Sets up to 256 slave addresses. The address numeration has to be used 
+ascending from 0. For example: If you use the RS485 Extension in Master mode
+(i.e. the stack has an USB connection) and you want to talk to three other
+RS485 stacks with the IDs 17, 23, and 42, you should call with "(0, 17),
+(1, 23) and (2, 42)".
+
+It is possible to set the addresses with the Brick Viewer and it will be 
+saved in the EEPROM of the RS485 Extension, they don't
+have to be set on every startup.
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'method', 
+'name': ('GetRS485SlaveAddress', 'get_rs485_slave_address'), 
+'elements': [('num', 'uint8', 1, 'in'),
+             ('address', 'uint8', 1, 'out')], 
+'doc': ['am', {
+'en':
+"""
+Returns the slave address for a given num as set by 
+:func:`SetRS485SlaveAddress`.
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'method', 
+'name': ('GetRS485ErrorLog', 'get_rs485_error_log'), 
+'elements': [('underrun', 'uint16', 1, 'out'),
+             ('crc_error', 'uint16', 1, 'out'),
+             ('no_ack', 'uint16', 1, 'out'),
+             ('overflow', 'uint16', 1, 'out')], 
+'doc': ['am', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+"""
+}]
+})
