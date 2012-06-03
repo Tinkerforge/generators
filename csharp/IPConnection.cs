@@ -12,28 +12,26 @@ using System.Threading;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using System.IO;
 
 namespace Tinkerforge
 {
     public class IPConnection 
     {
 		const byte BROADCAST_ADDRESS = 0;
-		const byte TYPE_GET_STACK_ID = 255;
-		const byte TYPE_ENUMERATE = 254;
-		const byte TYPE_ENUMERATE_CALLBACK = 253;
-		const byte TYPE_STACK_ENUMERATE = 252;
-		const byte TYPE_ADC_CALIBRATE = 251;
-		const byte TYPE_GET_ADC_CALIBRATION = 250;
 
-#if WINDOWS_PHONE
-		IPEndPoint endpoint;
-		Socket socket;
-#else
-		NetworkStream socketStream;
-		TcpClient socket;
+		const byte FUNCTION_GET_STACK_ID = 255;
+		const byte FUNCTION_ENUMERATE = 254;
+		const byte FUNCTION_ENUMERATE_CALLBACK = 253;
+		const byte FUNCTION_STACK_ENUMERATE = 252;
+		const byte FUNCTION_ADC_CALIBRATE = 251;
+		const byte FUNCTION_GET_ADC_CALIBRATION = 250;
+
+        Socket Socket;
+        NetworkStream SocketStream;
 		Thread recvThread;
 		Thread callbackThread;
-#endif
+
 		bool RecvLoopFlag = true;
 		Device addDev = null;
 		Device[] devices = new Device[256];
@@ -50,78 +48,43 @@ namespace Tinkerforge
 
 		public IPConnection(string host, int port) 
 		{
-#if WINDOWS_PHONE
-            IPAddress ipAddress = IPAddress.Parse(host);
-            endpoint = new IPEndPoint(ipAddress, port);
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            ConnectSocket(host, port);
 
-            SocketAsyncEventArgs args = new SocketAsyncEventArgs();
-            args.UserToken = socket;
-            args.RemoteEndPoint = endpoint;
-            args.Completed += new EventHandler<SocketAsyncEventArgs>(IOCompleted);
-
-
-            if(!socket.ConnectAsync(args))
-            {
-                IOCompleted(args.ConnectSocket, args);
-            }
-#else
-			socket = new TcpClient();
-			socket.Connect(host, port);
-
-			socketStream = socket.GetStream();
+            SocketStream = new NetworkStream(Socket);
 
 			callbackThread = new Thread(this.CallbackLoop);
 			callbackThread.Start();
 			recvThread = new Thread(this.RecvLoop);
 			recvThread.Start();
-#endif
 		}
 
-#if WINDOWS_PHONE
-        private void IOCompleted(object sender, SocketAsyncEventArgs e)
+        private void ConnectSocket(string host, int port)
         {
-            if(e.SocketError != SocketError.Success)
-            {
-                return;
-            }
+#if WINDOWS_PHONE
+            IPAddress ipAddress = IPAddress.Parse(host);
+            var endpoint = new IPEndPoint(ipAddress, port);
 
-            switch(e.LastOperation)
-            {
-                case SocketAsyncOperation.Connect:
-					byte[] receiveBuffer = new byte[8192];
-					e.SetBuffer(receiveBuffer, 0, receiveBuffer.Length);
-
-					if(!socket.ReceiveAsync(e))
-					{
-						IOCompleted(e.ConnectSocket, e);
-					}
-
-
-					break;
-                case SocketAsyncOperation.Receive:
-					HandleMessage(e.Buffer);
-
-					if(!socket.ReceiveAsync(e))
-					{
-						IOCompleted(e.ConnectSocket, e);
-					}
-
-					break;
-            }
-        }
-		
-		private void WriteAsync(byte[] data)
-		{
             SocketAsyncEventArgs args = new SocketAsyncEventArgs();
-            args.SetBuffer(data, 0, data.Length);
-            args.UserToken = socket;
             args.RemoteEndPoint = endpoint;
-            args.Completed += new EventHandler<SocketAsyncEventArgs>(IOCompleted);
 
-			socket.SendAsync(args);
-		}
+            AutoResetEvent connectedEvent = new AutoResetEvent(false);
+            args.Completed += new EventHandler<SocketAsyncEventArgs>((o, e) => { connectedEvent.Set(); });
+            bool connectPending = Socket.ConnectAsync(args);
+
+            if(connectPending)
+            {
+                connectedEvent.WaitOne();
+            }
+            if(!connectPending || args.SocketError != SocketError.Success)
+            {
+                throw new IOException(string.Format("Could not connect: {0}", args.SocketError));
+            }
 #else
+            Socket.Connect(host, port);
+#endif
+        }
+
 		private void RecvLoop() 
 		{
 			try
@@ -129,7 +92,7 @@ namespace Tinkerforge
 				while(RecvLoopFlag) 
 				{
 					byte[] data = new byte[8192];
-					int length = socketStream.Read(data, 0, data.Length);
+					int length = SocketStream.Read(data, 0, data.Length);
 
 					string str = "";
 					for(int i = 0; i < length; i++) {
@@ -150,15 +113,13 @@ namespace Tinkerforge
 				RecvLoopFlag = false;
 				return;
 			}
-
 		}
-#endif
 
 		private void CallbackLoop()
 		{
 			while(RecvLoopFlag)
 			{
-				byte[] data;			
+				byte[] data;
 				if(!callbackQueue.TryDequeue(out data, Timeout.Infinite))
 				{
 					return;
@@ -166,7 +127,7 @@ namespace Tinkerforge
 
 				byte type = GetTypeFromData(data);
 
-				if(type == TYPE_ENUMERATE_CALLBACK)
+				if(type == FUNCTION_ENUMERATE_CALLBACK)
 				{
 					ulong uid = LEConverter.ULongFrom(4, data);
 					string name = LEConverter.StringFrom(12, data, 40);
@@ -208,11 +169,11 @@ namespace Tinkerforge
 		private int HandleMessage(byte[] data)
 		{
 			byte type = GetTypeFromData(data);
-			if(type == TYPE_GET_STACK_ID) 
+			if(type == FUNCTION_GET_STACK_ID)
 			{
 				return HandleAddDevice(data);
 			}
-			else if(type == TYPE_ENUMERATE_CALLBACK)
+			else if(type == FUNCTION_ENUMERATE_CALLBACK)
 			{
 				return HandleEnumerate(data);
 			}
@@ -224,8 +185,7 @@ namespace Tinkerforge
 
 			if(device == null)
 			{
-				Console.Error.WriteLine("Message with unknown Stack ID, discarded: "
-				                        + stackID);
+				// Message for an unknown device, ignoring it
 				return length;
 			}
 
@@ -242,7 +202,7 @@ namespace Tinkerforge
 			}
 
 			// Message seems to be OK, but can't be handled, most likely
-			// a signal without registered callback
+			// a callback without registered function
 			return length;
 		}
 
@@ -259,10 +219,17 @@ namespace Tinkerforge
 
 			if(addDev.uid == uid) 
 			{
+				string name = LEConverter.StringFrom(15, data, 40);
+				int i = name.LastIndexOf(' ');
+
+				if (i < 0 || name.Substring(0, i).Replace('-', ' ') != addDev.expectedName.Replace('-', ' ')) {
+					return length;
+				}
+
 				addDev.firmwareVersion[0] = LEConverter.ByteFrom(12, data);
 				addDev.firmwareVersion[1] = LEConverter.ByteFrom(13, data);
 				addDev.firmwareVersion[2] = LEConverter.ByteFrom(14, data);
-				addDev.name = LEConverter.StringFrom(15, data, 40);
+				addDev.name = name;
 				addDev.stackID = LEConverter.ByteFrom(55, data);
 				devices[addDev.stackID] = addDev;
 				addDev.answerQueue.Enqueue(data);
@@ -287,11 +254,7 @@ namespace Tinkerforge
 
         public void Write(byte[] data)
         {
-#if WINDOWS_PHONE
-			WriteAsync(data);
-#else
-            socketStream.Write(data, 0, data.Length);
-#endif
+            SocketStream.Write(data, 0, data.Length);
         }
 
 		public void Enumerate(EnumerateCallback enumerateCallback) 
@@ -299,29 +262,21 @@ namespace Tinkerforge
 			this.enumerateCallback = enumerateCallback;
 			byte[] data = new byte[4];
 			LEConverter.To(BROADCAST_ADDRESS, 0, data);
-			LEConverter.To(TYPE_ENUMERATE, 1, data);
+			LEConverter.To(FUNCTION_ENUMERATE, 1, data);
 			LEConverter.To((ushort)4, 2, data);
-#if WINDOWS_PHONE
-			WriteAsync(data);
-#else
-            socketStream.Write(data, 0, data.Length);
-#endif
+            Write(data);
 		}
 
 		public void AddDevice(Device device) {
 			byte[] data = new byte[12];
 			LEConverter.To(BROADCAST_ADDRESS, 0, data);
-			LEConverter.To(TYPE_GET_STACK_ID, 1, data);
+			LEConverter.To(FUNCTION_GET_STACK_ID, 1, data);
 			LEConverter.To((ushort)12, 2, data);
 			LEConverter.To(device.uid, 4, data);
 
 			addDev = device;
-			
-#if WINDOWS_PHONE
-			WriteAsync(data);
-#else
-            socketStream.Write(data, 0, data.Length);
-#endif
+
+            Write(data);
 
 			byte[] tmp;
 			if(!device.answerQueue.TryDequeue(out tmp, TIMEOUT_ADD_DEVICE))
@@ -334,27 +289,21 @@ namespace Tinkerforge
 
 		public void JoinThread()
 		{
-#if WINDOWS_PHONE
-#else
 			recvThread.Join();
-#endif
 		}
 
 		public void Destroy() 
 		{
-#if WINDOWS_PHONE
-#else
 			RecvLoopFlag = false;
 			try 
 			{
-				socketStream.Close();
+				SocketStream.Close();
 			}
 			catch(Exception)
 			{
 			}
-			socket.Close();
+			Socket.Close();
 			callbackQueue.Close();
-#endif
 		}
     }
 
@@ -368,6 +317,7 @@ namespace Tinkerforge
 	public abstract class Device
 	{
 		internal byte stackID = 0;
+		internal String expectedName;
 		internal String name;
 		internal byte[] firmwareVersion = new byte[3];
 		internal byte[] bindingVersion = new byte[3];
@@ -384,6 +334,18 @@ namespace Tinkerforge
 		public Device(string uid) 
 		{
 			this.uid = Base58.Decode(uid);
+		}
+
+		/// <summary>
+		///  Returns the name (including the hardware version), the firmware version
+		///  and the binding version of the device. The firmware and binding versions are
+		///  given in arrays of size 3 with the syntax [major, minor, revision].
+		/// </summary>
+		public void GetVersion(out string name, out byte[] firmwareVersion, out byte[] bindingVersion)
+		{
+			name = this.name;
+			firmwareVersion = this.firmwareVersion;
+			bindingVersion = this.bindingVersion;
 		}
 
         protected void sendOneWayMessage(byte[] data)
@@ -457,11 +419,16 @@ namespace Tinkerforge
 
 	internal class LEConverter
 	{
-		static public void To(string data, int position, byte[] array)
+		static public void To(string data, int position, int len, byte[] array)
 		{
-			for(int i = 0; i < Math.Min(array.Length, data.Length); i++)
+			for(int i = 0; i < Math.Min(len, data.Length); i++)
 			{
 				array[position + i] = (byte)data[i];
+			}
+
+			for(int i = Math.Min(len, data.Length); i < len; i++)
+			{
+				array[position + i] = 0;
 			}
 		}
 
@@ -477,9 +444,9 @@ namespace Tinkerforge
 			array[position + 7] = (byte)(((ulong)data >> 56) & 0xFF);
 		}
 
-		static public void To(long[] data, int position, byte[] array)
+		static public void To(long[] data, int position, int len, byte[] array)
 		{
-			for(int i = 0; i < data.Length; i++)
+			for(int i = 0; i < len; i++)
 			{
 				To(data[i], position + i, array);
 			}
@@ -497,9 +464,9 @@ namespace Tinkerforge
 			array[position + 7] = (byte)(((ulong)data >> 56) & 0xFF);
 		}
 
-		static public void To(ulong[] data, int position, byte[] array)
+		static public void To(ulong[] data, int position, int len, byte[] array)
 		{
-			for(int i = 0; i < data.Length; i++)
+			for(int i = 0; i < len; i++)
 			{
 				To(data[i], position + i, array);
 			}
@@ -513,9 +480,9 @@ namespace Tinkerforge
 			array[position + 3] = (byte)(((uint)data >> 24) & 0xFF);
 		}
 
-		static public void To(int[] data, int position, byte[] array)
+		static public void To(int[] data, int position, int len, byte[] array)
 		{
-			for(int i = 0; i < data.Length; i++)
+			for(int i = 0; i < len; i++)
 			{
 				To(data[i], position + i, array);
 			}
@@ -529,9 +496,9 @@ namespace Tinkerforge
 			array[position + 3] = (byte)(((uint)data >> 24) & 0xFF);
 		}
 
-		static public void To(uint[] data, int position, byte[] array)
+		static public void To(uint[] data, int position, int len, byte[] array)
 		{
-			for(int i = 0; i < data.Length; i++)
+			for(int i = 0; i < len; i++)
 			{
 				To(data[i], position + i, array);
 			}
@@ -543,9 +510,9 @@ namespace Tinkerforge
 			array[position + 1] = (byte)(((ushort)data >> 8) & 0xFF);
 		}
 
-		static public void To(short[] data, int position, byte[] array)
+		static public void To(short[] data, int position, int len, byte[] array)
 		{
-			for(int i = 0; i < data.Length; i++)
+			for(int i = 0; i < len; i++)
 			{
 				To(data[i], position + i, array);
 			}
@@ -557,9 +524,9 @@ namespace Tinkerforge
 			array[position + 1] = (byte)(((ushort)data >> 8) & 0xFF);
 		}
 
-		static public void To(ushort[] data, int position, byte[] array)
+		static public void To(ushort[] data, int position, int len, byte[] array)
 		{
-			for(int i = 0; i < data.Length; i++)
+			for(int i = 0; i < len; i++)
 			{
 				To(data[i], position + i, array);
 			}
@@ -570,9 +537,9 @@ namespace Tinkerforge
 			array[position + 0] = (byte)data;
 		}
 
-		static public void To(byte[] data, int position, byte[] array)
+		static public void To(byte[] data, int position, int len, byte[] array)
 		{
-			for(int i = 0; i < data.Length; i++)
+			for(int i = 0; i < len; i++)
 			{
 				To(data[i], position + i, array);
 			}
@@ -583,9 +550,9 @@ namespace Tinkerforge
 			array[position + 0] = (byte)data;
 		}
 
-		static public void To(sbyte[] data, int position, byte[] array)
+		static public void To(sbyte[] data, int position, int len, byte[] array)
 		{
-			for(int i = 0; i < data.Length; i++)
+			for(int i = 0; i < len; i++)
 			{
 				To(data[i], position + i, array);
 			}
@@ -596,9 +563,9 @@ namespace Tinkerforge
 			array[position + 0] = (byte)data;
 		}
 
-		static public void To(char[] data, int position, byte[] array)
+		static public void To(char[] data, int position, int len, byte[] array)
 		{
-			for(int i = 0; i < data.Length; i++)
+			for(int i = 0; i < len; i++)
 			{
 				To(data[i], position + i, array);
 			}
@@ -616,9 +583,9 @@ namespace Tinkerforge
 			}
 		}
 
-		static public void To(bool[] data, int position, byte[] array)
+		static public void To(bool[] data, int position, int len, byte[] array)
 		{
-			for(int i = 0; i < data.Length; i++)
+			for(int i = 0; i < len; i++)
 			{
 				To(data[i], position + i, array);
 			}
@@ -867,7 +834,7 @@ namespace Tinkerforge
 
 	// There is no BlockingQueue in c# version <= 2.0, we make our own
 	// to be backward compatible
-	public class BlockingQueue
+	internal class BlockingQueue
 	{
 		private bool closing;
 		private readonly Queue<byte[]> queue = new Queue<byte[]>();
@@ -960,4 +927,147 @@ namespace Tinkerforge
 			}
 		}
 	}
+#if WINDOWS_PHONE
+    class NetworkStream : Stream
+    {
+        private Socket Socket;
+
+        private BlockingQueue ReceiveQueue = new BlockingQueue();
+        private byte[] ImmediateReadBuffer;
+        private int ImmediateReadOffset;
+
+        private object readLock = new object();
+        private object writeLock = new object();
+        private AutoResetEvent WriteCompleteEvent = new AutoResetEvent(false);
+
+        public override bool CanRead
+        {
+            get { return true; }
+        }
+
+        public override bool CanSeek
+        {
+            get { return false; }
+        }
+
+        public override bool CanWrite
+        {
+            get { return true; }
+        }
+
+        public override void Flush()
+        {
+            //stream is always flushed
+        }
+
+        public NetworkStream(Socket socket)
+        {
+            Socket = socket;
+            SocketAsyncEventArgs args = new SocketAsyncEventArgs();
+            byte[] buffer = new byte[8192];
+            args.SetBuffer(buffer, 0, buffer.Length);
+            args.Completed += OnIOCompletion;
+            if (!Socket.ReceiveAsync(args))
+            {
+                throw new IOException(string.Format("Could not initialize NetworkStream: {0}", args.SocketError));
+            }
+        }
+
+        private void OnIOCompletion(object sender, SocketAsyncEventArgs e)
+        {
+            if (e.SocketError != SocketError.Success)
+            {
+                //TODO: error handling
+            }
+
+            switch (e.LastOperation)
+            {
+                case SocketAsyncOperation.Receive:
+                    if (e.BytesTransferred == 0)
+                    {
+                        //TODO: error handling
+                        break;
+                    }
+                    byte[] receiveBuffer = new byte[e.BytesTransferred];
+                    Array.Copy(e.Buffer, receiveBuffer, e.BytesTransferred);
+                    ReceiveQueue.Enqueue(receiveBuffer);
+                    if (!Socket.ReceiveAsync(e))
+                    {
+                        //TODO: error handling
+                    }
+                    break;
+                case SocketAsyncOperation.Send:
+                    WriteCompleteEvent.Set();
+                    break;
+                default:
+                    break; //TODO: error handling
+            }
+        }
+
+        public override int Read(byte[] buffer, int offset, int count)
+        {
+            int readLength;
+            lock (readLock)
+            {
+                if (ImmediateReadBuffer == null)
+                {
+                    ReceiveQueue.TryDequeue(out ImmediateReadBuffer);
+                }
+
+                readLength = Math.Min(count, ImmediateReadBuffer.Length - ImmediateReadOffset);
+                Array.Copy(ImmediateReadBuffer, ImmediateReadOffset, buffer, offset, readLength);
+
+                ImmediateReadOffset += readLength;
+                if (ImmediateReadOffset == ImmediateReadBuffer.Length)
+                {
+                    ImmediateReadBuffer = null;
+                    ImmediateReadOffset = 0;
+                }
+            }
+            return readLength;
+        }
+
+        public override void Write(byte[] buffer, int offset, int count)
+        {
+            lock (writeLock)
+            {
+                SocketAsyncEventArgs args = new SocketAsyncEventArgs();
+                args.SetBuffer(buffer, offset, count);
+                args.Completed += OnIOCompletion;
+                if (!Socket.SendAsync(args))
+                {
+                    throw new IOException(string.Format("Could not write on NetworkStream: {0}", args.SocketError));
+                }
+                WriteCompleteEvent.WaitOne();
+            }
+        }
+
+        public override long Seek(long offset, SeekOrigin origin)
+        {
+            throw new NotSupportedException();
+        }
+
+        public override void SetLength(long value)
+        {
+            throw new NotSupportedException();
+        }
+
+        public override long Position
+        {
+            get
+            {
+                throw new NotSupportedException();
+            }
+            set
+            {
+                throw new NotSupportedException();
+            }
+        }
+
+        public override long Length
+        {
+            get { throw new NotSupportedException(); }
+        }
+    }
+#endif
 }

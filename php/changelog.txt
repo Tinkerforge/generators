@@ -1,0 +1,8 @@
+1.0.0: Initial version
+1.0.1: Silently ignore messages from devices with unknown stack ID
+       Don't generate registerCallback method for devices without callbacks
+       Add inline code documentation
+1.0.2: Fix possible TimeoutException when calling getters in callbacks
+1.0.3: Ensure that the answering device matches the expected type in IPConnection.addDevice
+1.0.4: Ensure to serialize arrays and strings with the correct length
+       Treat '-' and ' ' as equal in device name check for backward compatibility

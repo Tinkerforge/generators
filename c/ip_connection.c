@@ -8,7 +8,9 @@
 
 #include "ip_connection.h"
 
+#include <stddef.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 
 #ifndef _WIN32
@@ -19,8 +21,6 @@
 	#include <sys/select.h>
 	#include <netdb.h> // gethostbyname
 #endif
-
-
 
 #define MAX_BASE58_STR_SIZE 13
 const char BASE58_STR[] = \
@@ -61,23 +61,124 @@ void *ipcon_recv_loop(void *param) {
 #endif
 }
 
+#ifdef _WIN32
+void ipcon_callback_loop(void *param) {
+#else
+void *ipcon_callback_loop(void *param) {
+#endif
+	IPConnection *ipcon = (IPConnection*)param;
+
+	while(ipcon->recv_loop_flag) {
+#ifdef _WIN32
+		if (WaitForSingleObject(ipcon->callback_queue_semaphore, INFINITE) != 0) {
+			continue;
+		}
+#else
+		if (sem_wait(ipcon->callback_queue_semaphore) != 0) {
+			continue;
+		}
+#endif
+
+		if (!ipcon->recv_loop_flag) {
+			break;
+		}
+
+		if (ipcon->callback_queue_head == NULL) {
+			continue;
+		}
+
+#ifdef _WIN32
+		EnterCriticalSection(&ipcon->callback_queue_mutex);
+#else
+		pthread_mutex_lock(&ipcon->callback_queue_mutex);
+#endif
+
+		CallbackQueueNode *node = ipcon->callback_queue_head;
+		ipcon->callback_queue_head = node->next;
+		node->next = NULL;
+
+		if (ipcon->callback_queue_tail == node) {
+			ipcon->callback_queue_head = NULL;
+			ipcon->callback_queue_tail = NULL;
+		}
+
+#ifdef _WIN32
+		LeaveCriticalSection(&ipcon->callback_queue_mutex);
+#else
+		pthread_mutex_unlock(&ipcon->callback_queue_mutex);
+#endif
+
+		uint8_t function_id = ipcon_get_function_id_from_data(node->buffer);
+		if (function_id == FUNCTION_ENUMERATE_CALLBACK) {
+			EnumerateReturn *er = (EnumerateReturn *)node->buffer;
+			char str_uid[MAX_BASE58_STR_SIZE];
+			ipcon_base58encode(er->device_uid, str_uid);
+
+			if (ipcon->enumerate_callback != NULL) {
+				ipcon->enumerate_callback(str_uid,
+				                          er->device_name,
+				                          er->device_stack_id,
+				                          er->is_new);
+			}
+		} else {
+			uint8_t stack_id = ipcon_get_stack_id_from_data(node->buffer);
+			Device *device = ipcon->devices[stack_id];
+
+			device->device_callbacks[function_id](device, node->buffer);
+		}
+
+		free(node);
+	}
+#ifndef _WIN32
+	return NULL;
+#endif
+}
+
 void ipcon_destroy(IPConnection *ipcon) {
 	ipcon->recv_loop_flag = false;
 
 #ifdef _WIN32
+	ReleaseSemaphore(ipcon->callback_queue_semaphore, 1, NULL);
+
 	shutdown(ipcon->s, 2);
 	closesocket(ipcon->s);
+
+	EnterCriticalSection(&ipcon->callback_queue_mutex);
 #else
+	sem_post(ipcon->callback_queue_semaphore);
+
 	shutdown(ipcon->fd, 2);
 	close(ipcon->fd);
+
+	pthread_mutex_lock(&ipcon->callback_queue_mutex);
+#endif
+
+	CallbackQueueNode *node = ipcon->callback_queue_head;
+
+	while (node != NULL) {
+		CallbackQueueNode *next = node->next;
+
+		free(node);
+		node = next;
+	}
+
+	ipcon->callback_queue_head = NULL;
+	ipcon->callback_queue_tail = NULL;
+
+#ifdef _WIN32
+	LeaveCriticalSection(&ipcon->callback_queue_mutex);
+#else
+	pthread_mutex_unlock(&ipcon->callback_queue_mutex);
 #endif
 }
 
 void ipcon_join_thread(IPConnection *ipcon) {
 #ifdef _WIN32
 	WaitForSingleObject(ipcon->handle_recv_loop, INFINITE);
+	WaitForSingleObject(ipcon->handle_callback_loop, INFINITE);
 #else
 	pthread_join(ipcon->thread_recv_loop, NULL);
+	pthread_join(ipcon->thread_callback_loop, NULL);
 #endif
 }
 
@@ -86,7 +187,7 @@ void ipcon_enumerate(IPConnection *ipcon, enumerate_callback_func_t cb) {
 
 	Enumerate e = {
 		BROADCAST_ADDRESS,
-		TYPE_ENUMERATE,
+		FUNCTION_ENUMERATE,
 		sizeof(Enumerate)
 	};
 
@@ -97,6 +198,37 @@ void ipcon_enumerate(IPConnection *ipcon, enumerate_callback_func_t cb) {
 #endif
 }
 
+static void ipcon_callback_queue_enqueue(IPConnection *ipcon, const unsigned char *buffer)
+{
+	uint16_t length = ipcon_get_length_from_data(buffer);
+	CallbackQueueNode *node = (CallbackQueueNode *)malloc(offsetof(CallbackQueueNode, buffer) + length);
+
+	node->next = NULL;
+	memcpy(node->buffer, buffer, length);
+
+#ifdef _WIN32
+	EnterCriticalSection(&ipcon->callback_queue_mutex);
+#else
+	pthread_mutex_lock(&ipcon->callback_queue_mutex);
+#endif
+
+	if (ipcon->callback_queue_tail == NULL) {
+		ipcon->callback_queue_head = node;
+		ipcon->callback_queue_tail = node;
+	} else {
+		ipcon->callback_queue_tail->next = node;
+		ipcon->callback_queue_tail = node;
+	}
+
+#ifdef _WIN32
+	LeaveCriticalSection(&ipcon->callback_queue_mutex);
+	ReleaseSemaphore(ipcon->callback_queue_semaphore, 1, NULL);
+#else
+	pthread_mutex_unlock(&ipcon->callback_queue_mutex);
+	sem_post(ipcon->callback_queue_semaphore);
+#endif
+}
+
 int ipcon_handle_enumerate(IPConnection *ipcon, const unsigned char *buffer) {
 	uint16_t length = ipcon_get_length_from_data(buffer);
 
@@ -104,40 +236,31 @@ int ipcon_handle_enumerate(IPConnection *ipcon, const unsigned char *buffer) {
 		return length;
 	}
 
-	EnumerateReturn *er = (EnumerateReturn *)buffer;
-	char str_uid[MAX_BASE58_STR_SIZE];
-	ipcon_base58encode(er->device_uid, str_uid);
-
-	ipcon->enumerate_callback(str_uid,
-	                          er->device_name,
-	                          er->device_stack_id,
-	                          er->is_new);
+	ipcon_callback_queue_enqueue(ipcon, buffer);
 
 	return length;
 }
 
 int ipcon_handle_message(IPConnection *ipcon, const unsigned char *buffer) {
-	uint8_t type = ipcon_get_type_from_data(buffer);
-	if(type == TYPE_GET_STACK_ID) {
+	uint8_t function_id = ipcon_get_function_id_from_data(buffer);
+	if(function_id == FUNCTION_GET_STACK_ID) {
 		return ipcon_add_device_handler(ipcon, buffer);
-	} else if(type == TYPE_ENUMERATE_CALLBACK) {
+	} else if(function_id == FUNCTION_ENUMERATE_CALLBACK) {
 		return ipcon_handle_enumerate(ipcon, buffer);
 	}
 
 	uint8_t stack_id = ipcon_get_stack_id_from_data(buffer);
 	uint16_t length = ipcon_get_length_from_data(buffer);
 	if(ipcon->devices[stack_id] == NULL) {
-		fprintf(stderr, "Message with unknown Stack ID, discarded %d %d\n",
-		                stack_id,
-		                type);
+		// Message for an unknown device, ignoring it
 		return length;
 	}
 
-	Device *device =  ipcon->devices[stack_id];
+	Device *device = ipcon->devices[stack_id];
 	DeviceAnswer *answer = &device->answer;
 
-	if(answer->type == type) {
-		if(answer->length != 0 && answer->length != length) {
+	if(answer->function_id == function_id) {
+		if(answer->length != length) {
 			fprintf(stderr,
 			        "Received malformed message, discarded: %d\n",
 			        stack_id);
@@ -158,12 +281,14 @@ int ipcon_handle_message(IPConnection *ipcon, const unsigned char *buffer) {
 		return length;
 	}
 
-	if(device->callbacks[type] != NULL) {
-		return device->device_callbacks[type](device, buffer);
+	if(device->callbacks[function_id] != NULL) {
+		ipcon_callback_queue_enqueue(ipcon, buffer);
+
+		return length;
 	}
 
 	// Message seems to be OK, but can't be handled, most likely
-	// a signal without registered callback
+	// a callback without registered function
 	return length;
 }
 
@@ -189,6 +314,8 @@ void ipcon_device_create(Device *device, const char *uid) {
 
 	device->uid = ipcon_base58decode(uid);
 	device->ipcon = NULL;
+	device->answer.function_id = 0;
+	device->answer.length = 0;
 
 #ifdef _WIN32
 	device->sem_write = CreateSemaphore(NULL,1,1,NULL);
@@ -232,7 +359,6 @@ int ipcon_answer_sem_wait_timeout(Device *device) {
 
 	return ret;
 #endif
-
 }
 
 int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
@@ -243,6 +369,8 @@ int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
 	ipcon->add_device = NULL;
 	ipcon->enumerate_callback = NULL;
 	ipcon->recv_loop_flag = true;
+	ipcon->callback_queue_head = NULL;
+	ipcon->callback_queue_tail = NULL;
 
 #ifdef _WIN32
 	WSADATA wsaData;
@@ -287,6 +415,26 @@ int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
 #endif
 
 #ifdef _WIN32
+	InitializeCriticalSection(&ipcon->callback_queue_mutex);
+	ipcon->callback_queue_semaphore = CreateSemaphore(NULL, 0, INT32_MAX, NULL);
+#elif defined __APPLE__
+	pthread_mutex_init(&ipcon->callback_queue_mutex, NULL);
+
+	// Mac OS does not support unnamed semaphores, so we fake them.
+	// Unlink first to ensure that there is no existing semaphore with that name.
+	// Then open the semaphore to create a new one. Finally unlink it again to
+	// avoid leaking the name. The semaphore will just work fine without a name.
+	#define SEMAPHORE_NAME "tinkerforge-ipcon-internal"
+	sem_unlink(SEMAPHORE_NAME);
+	ipcon->callback_queue_semaphore = sem_open(SEMAPHORE_NAME, O_CREAT | O_EXCL, S_IRUSR | S_IWUSR | S_IXUSR, 0);
+	sem_unlink(SEMAPHORE_NAME);
+#else
+	pthread_mutex_init(&ipcon->callback_queue_mutex, NULL);
+	ipcon->callback_queue_semaphore = &ipcon->callback_queue_semaphore_object;
+	sem_init(ipcon->callback_queue_semaphore, 0, 0);
+#endif
+
+#ifdef _WIN32
 	DWORD thread_recv_loop_id;
 	ipcon->handle_recv_loop = CreateThread(NULL,
 	                                       0,
@@ -297,10 +445,26 @@ int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
 	if(ipcon->handle_recv_loop == NULL) {
 		return E_NO_THREAD;
 	}
+	DWORD thread_callback_loop_id;
+	ipcon->handle_callback_loop = CreateThread(NULL,
+	                                           0,
+	                                           (LPTHREAD_START_ROUTINE)ipcon_callback_loop,
+	                                           (void*)ipcon,
+	                                           0,
+	                                           (LPDWORD)&thread_callback_loop_id);
+	if(ipcon->handle_callback_loop == NULL) {
+		return E_NO_THREAD;
+	}
 #else
 	if(pthread_create(&ipcon->thread_recv_loop,
 	                  NULL,
 	                  ipcon_recv_loop,
+	                  (void*)ipcon) < 0) {
+		return E_NO_THREAD;
+	}
+	if(pthread_create(&ipcon->thread_callback_loop,
+	                  NULL,
+	                  ipcon_callback_loop,
 	                  (void*)ipcon) < 0) {
 		return E_NO_THREAD;
 	}
@@ -313,6 +477,44 @@ int ipcon_add_device_handler(IPConnection *ipcon,
 	const GetStackIDReturn *gsidr = (const GetStackIDReturn*)buffer;
 	if(ipcon->add_device != NULL &&
 	   ipcon->add_device->uid == gsidr->device_uid) {
+		const char *p = gsidr->device_name;
+		const char *e = gsidr->device_name + MAX_LENGTH_NAME;
+
+		// Search for a possible NUL-terminator
+		while (p < e && *p != '\0') {
+			++p;
+		}
+
+		// Go back to the previous char if there is any
+		if (p >= gsidr->device_name) {
+			--p;
+		}
+
+		// Go back to the last space if there is any
+		while (p >= gsidr->device_name && *p != ' ') {
+			--p;
+		}
+
+		// Match with expected name
+		int length = p - gsidr->device_name;
+		int expected_length = strlen(ipcon->add_device->expected_name);
+		if (length != expected_length) {
+			return sizeof(GetStackIDReturn);
+		}
+
+		int i;
+		for (i = 0; i < length; i++) {
+			if (gsidr->device_name[i] != ipcon->add_device->expected_name[i]) {
+				if ((gsidr->device_name[i] == ' ' && ipcon->add_device->expected_name[i] == '-') ||
+				    (gsidr->device_name[i] == '-' && ipcon->add_device->expected_name[i] == ' ')) {
+					// Treat ' ' and '-' as equal for backward compatibility
+					continue;
+				} else {
+					return sizeof(GetStackIDReturn);
+				}
+			}
+		}
+
 		ipcon->add_device->stack_id = gsidr->device_stack_id;
 		strncpy(ipcon->add_device->name, gsidr->device_name, MAX_LENGTH_NAME);
 		ipcon->add_device->firmware_version[0] = gsidr->device_firmware_version[0];
@@ -340,7 +542,7 @@ int ipcon_add_device(IPConnection *ipcon, Device *device) {
 
 	GetStackID gsid = {
 		BROADCAST_ADDRESS,
-		TYPE_GET_STACK_ID,
+		FUNCTION_GET_STACK_ID,
 		sizeof(GetStackID),
 		device->uid
 	};
@@ -363,7 +565,7 @@ uint8_t ipcon_get_stack_id_from_data(const unsigned char *data) {
 	return data[0];
 }
 
-uint8_t ipcon_get_type_from_data(const unsigned char *data) {
+uint8_t ipcon_get_function_id_from_data(const unsigned char *data) {
 	return data[1];
 }
 

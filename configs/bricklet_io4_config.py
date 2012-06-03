@@ -5,15 +5,15 @@
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'version': [1, 0, 0],
-    'type': 'Bricklet',
-    'name': ('IO4', 'io4'),
+    'category': 'Bricklet',
+    'name': ('IO4', 'io4', 'IO-4'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling up to 4 general purpose input/output pins',
     'packets': []
 }
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetValue', 'set_value'), 
 'elements': [('value_mask', 'uint8', 1, 'in')],
 'doc': ['bm', {
@@ -22,7 +22,7 @@ com['packets'].append({
 Sets the output value (high or low) with a bit mask. The bit mask
 is 4 bit long, "true" refers to high and "false" refers to low.
 
-For example: The bitstring "1100" will turn the pins 0-1 high and the
+For example: The value 0b0011 will turn the pins 0-1 high and the
 pins 2-3 low.
 
  .. note::
@@ -37,7 +37,7 @@ pins 2-3 low.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetValue', 'get_value'), 
 'elements': [('value_mask', 'uint8', 1, 'out')],
 'doc': ['bm', {
@@ -54,7 +54,7 @@ as well as if it is configured to output.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetConfiguration', 'set_configuration'), 
 'elements': [('pin_mask', 'uint8', 1, 'in'),
              ('direction', 'char', 1, 'in'),
@@ -68,7 +68,7 @@ are "i" and "o" for input and output.
 If the direction is configured as output, the value is either high or low
 (set as true or false).
 
-If the direction is configured as output, the value is either pull up or
+If the direction is configured as input, the value is either pull up or
 default (set as true or false).
 
 For example: 
@@ -86,7 +86,7 @@ For example:
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetConfiguration', 'get_configuration'), 
 'elements': [('direction_mask', 'uint8', 1, 'out'),
              ('value_mask', 'uint8', 1, 'out')],
@@ -95,7 +95,7 @@ com['packets'].append({
 """
 Returns a value bit mask and a direction bit mask.
 
-For example: A return value of the bitstrings "1100" and "1010" for
+For example: A return value of 0b0011 and 0b0101 for
 direction and value means that:
 
  * pin 0 is configured as input pull up, 
@@ -111,7 +111,7 @@ direction and value means that:
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetDebouncePeriod', 'set_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'in')],
 'doc': ['ccm', {
@@ -132,7 +132,7 @@ The default value is 100.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetDebouncePeriod', 'get_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'out')],
 'doc': ['ccm', {
@@ -147,7 +147,7 @@ Returns the debounce period as set by :func:`SetDebouncePeriod`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetInterrupt', 'set_interrupt'), 
 'elements': [('interrupt_mask', 'uint8', 1, 'in')],
 'doc': ['ccm', {
@@ -169,7 +169,7 @@ The interrupt is delivered with the callback :func:`Interrupt`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetInterrupt', 'get_interrupt'), 
 'elements': [('interrupt_mask', 'uint8', 1, 'out')],
 'doc': ['ccm', {
@@ -184,7 +184,7 @@ Returns the interrupt bit mask as set by :func:`SetPortInterrupt`.
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('Interrupt', 'interrupt'), 
 'elements': [('interrupt_mask', 'uint8', 1, 'out'),
              ('value_mask', 'uint8', 1, 'out')],

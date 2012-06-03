@@ -5,15 +5,15 @@
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'version': [1, 0, 0],
-    'type': 'Bricklet',
-    'name': ('LCD16x2', 'lcd_16x2'),
+    'category': 'Bricklet',
+    'name': ('LCD16x2', 'lcd_16x2', 'LCD 16x2'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling a LCD with 2 lines a 16 characters',
     'packets': []
 }
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('WriteLine', 'write_line'), 
 'elements': [('line', 'uint8', 1, 'in'),
              ('position', 'uint8', 1, 'in'),
@@ -26,6 +26,12 @@ Writes text to a specific line (0 to 1) with a specific position
 
 For example: (0, 5, "Hello") will write *Hello* in the middle of the
 first line of the display.
+
+The display uses a special charset that includes all ASCII characters except
+backslash and tilde. The LCD charset also includes several other non-ASCII characters, see
+the `charset specification <https://github.com/Tinkerforge/lcd-16x2-bricklet/raw/master/datasheets/standard_charset.pdf>`__
+for details. The Unicode example above shows how to specify non-ASCII characters
+and how to translate from Unicode to the LCD charset.
 """,
 'de':
 """
@@ -34,7 +40,7 @@ first line of the display.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('ClearDisplay', 'clear_display'), 
 'elements': [],
 'doc': ['bm', {
@@ -49,7 +55,7 @@ Deletes all characters from the display.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('BacklightOn', 'backlight_on'), 
 'elements': [],
 'doc': ['bm', {
@@ -64,7 +70,7 @@ Turns the backlight on.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('BacklightOff', 'backlight_off'), 
 'elements': [],
 'doc': ['bm', {
@@ -79,7 +85,7 @@ Turns the backlight off.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('IsBacklightOn', 'is_backlight_on'), 
 'elements': [('backlight', 'bool', 1, 'out')],
 'doc': ['bm', {
@@ -96,7 +102,7 @@ Returns true if the backlight is on and false otherwise.
 
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetConfig', 'set_config'), 
 'elements': [('cursor', 'bool', 1, 'in'),
              ('blinking', 'bool', 1, 'in')],
@@ -117,7 +123,7 @@ The default is (false, false).
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetConfig', 'get_config'), 
 'elements': [('cursor', 'bool', 1, 'out'),
              ('blinking', 'bool', 1, 'out')],
@@ -133,7 +139,7 @@ Returns the configuration as set by :func:`SetConfig`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('IsButtonPressed', 'is_button_pressed'), 
 'elements': [('button', 'uint8', 1, 'in'),
              ('pressed', 'bool', 1, 'out')],
@@ -151,7 +157,7 @@ on button presses and releases it is recommended to use the
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('ButtonPressed', 'button_pressed'), 
 'elements': [('button', 'uint8', 1, 'out')],
 'doc': ['c', {
@@ -167,7 +173,7 @@ the number of the button (0 to 2).
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('ButtonReleased', 'button_released'), 
 'elements': [('button', 'uint8', 1, 'out')],
 'doc': ['c', {

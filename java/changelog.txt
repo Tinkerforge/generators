@@ -1,0 +1,13 @@
+1.0.0: Initial version
+1.0.1: Add thread for callbacks in IPConnection (allows to call getters in callbacks)
+1.0.2: Remove accidental debug output that was present in 1.0.1
+1.0.3: Add support for IMU Brick, Analog In Bricklet and Analog Out Bricklet
+1.0.4: Add ChibiFreuqency and ChibiChannel methods
+1.0.5: Add sync rect support to Stepper Brick bindings and make Device class public
+1.0.6: Make Device class abstract
+1.0.7: Add version information to manifest of tinkerforge.jar
+       Silently ignore messages from devices with unknown stack ID
+       Don't generate addListener method for devices without callbacks
+       Add inline code documentation
+1.0.8: Ensure that the answering device matches the expected type in IPConnection.addDevice
+1.0.9: Treat '-' and ' ' as equal in device name check for backward compatibility

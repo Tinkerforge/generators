@@ -1,0 +1,19 @@
+1.0.0: Initial version
+1.0.1: Add thread for callbacks in IPConnection (allows to call getters in callbacks)
+1.0.2: Remove accidental debug output that was present in 1.0.1
+1.0.3: Remove trailing '\0' from StringFrom Method (issue #2), clean up if callbackQueue is closed
+1.0.4: Add support for IMU Brick, Analog In Bricklet and Analog Out Bricklet
+1.0.5: Add ChibiChannel and ChibiFrequency Methods
+1.0.6: Add sync rect support to Stepper Brick bindings
+1.0.7: Better locking (thanks to Jan)
+1.1.0: Replaced optional argument with method-overloading to be compatible with older C# versions
+       Callback methods are only internally visible
+       Add version information to Tinkerforge.dll
+       Silently ignore messages from devices with unknown stack ID
+       Single-return methods return their value instead of using out-parameters, old single-out methods stay for compatibility
+1.1.1: Don't generate RegisterCallback method for devices without callbacks
+       Add inline code documentation
+1.1.2: Unify networking for Windows Phone 7 and Rest of .NET (thanks to Jan)
+       Ensure that the answering device matches the expected type in IPConnection.AddDevice
+1.1.3: Ensure to serialize arrays and strings with the correct length
+       Treat '-' and ' ' as equal in device name check for backward compatibility

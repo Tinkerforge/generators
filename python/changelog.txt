@@ -1,0 +1,16 @@
+1.0.0: Initial version
+1.0.1: Add thread for callbacks in IPConnection (allows to call getters in callbacks)
+1.0.2: Add __init__.py to source/tinkerforge/
+1.0.3: Fix thread exception at shutdown
+1.0.4: Add support for IMU Brick, Analog In Bricklet and Analog Out Bricklet
+1.0.5: Remove Python 3.2 bug (no decode function for str in 3.2)
+1.0.6: Add sync rect support to Stepper Brick bindings
+1.0.7: Add version information to tinkerforge.egg
+       Silently ignore messages from devices with unknown stack ID
+       Don't generate register_callback method for devices without callbacks
+       Add inline code documentation
+1.0.8: Fix relative import and str packing problem with Python 3
+1.0.9: Ensure that the answering device matches the expected type in IPConnection.add_device
+1.0.10: Fix device name decoding for add_device handling in Python 3
+1.0.11: Don't let a thread join itself
+1.0.12: Treat '-' and ' ' as equal in device name check for backward compatibility

@@ -5,15 +5,15 @@
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'version': [1, 0, 0],
-    'type': 'Brick',
-    'name': ('DC', 'dc'),
+    'category': 'Brick',
+    'name': ('DC', 'dc', 'DC'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling DC motors',
     'packets': []
 }
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetVelocity', 'set_velocity'), 
 'elements': [('velocity', 'int16', 1, 'in')], 
 'doc': ['bm', {
@@ -38,7 +38,7 @@ The default velocity is 0.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetVelocity', 'get_velocity'), 
 'elements': [('velocity', 'int16', 1, 'out')], 
 'doc': ['bm', {
@@ -53,7 +53,7 @@ Returns the velocity as set by :func:`SetVelocity`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetCurrentVelocity', 'get_current_velocity'), 
 'elements': [('velocity', 'int16', 1, 'out')], 
 'doc': ['bm', {
@@ -70,7 +70,7 @@ to a goal set by :func:`SetVelocity`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetAcceleration', 'set_acceleration'), 
 'elements': [('acceleration', 'uint16', 1, 'in')], 
 'doc': ['bm', {
@@ -96,7 +96,7 @@ The default acceleration is 10000.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetAcceleration', 'get_acceleration'), 
 'elements': [('acceleration', 'uint16', 1, 'out')], 
 'doc': ['bm', {
@@ -111,7 +111,7 @@ Returns the acceleration as set by :func:`SetAcceleration`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetPWMFrequency', 'set_pwm_frequency'), 
 'elements': [('frequency', 'uint16', 1, 'in')], 
 'doc': ['am', {
@@ -135,7 +135,7 @@ The default frequency is 15 kHz.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetPWMFrequency', 'get_pwm_frequency'), 
 'elements': [('frequency', 'uint16', 1, 'out')], 
 'doc': ['am', {
@@ -150,7 +150,7 @@ Returns the PWM frequency (in Hz) as set by :func:`SetPWMFrequency`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('FullBrake', 'full_brake'), 
 'elements': [], 
 'doc': ['bm', {
@@ -172,7 +172,7 @@ Call :func:`SetVelocity` with 0 if you just want to stop the motor.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetStackInputVoltage', 'get_stack_input_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')], 
 'doc': ['am', {
@@ -189,7 +189,7 @@ Step-Down or Step-Up Power Supply.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetExternalInputVoltage', 'get_external_input_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')], 
 'doc': ['am', {
@@ -215,7 +215,7 @@ voltage present, the motor will be driven by this voltage.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetCurrentConsumption', 'get_current_consumption'), 
 'elements': [('voltage', 'uint16', 1, 'out')], 
 'doc': ['am', {
@@ -230,7 +230,7 @@ Returns the current consumption of the motor in mA.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('Enable', 'enable'), 
 'elements': [], 
 'doc': ['bm', {
@@ -246,7 +246,7 @@ acceleration, etc) before it is enabled.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('Disable', 'disable'), 
 'elements': [], 
 'doc': ['bm', {
@@ -262,7 +262,7 @@ acceleration, etc) but the motor is not driven until it is enabled again.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('IsEnabled', 'is_enabled'), 
 'elements': [('enabled', 'bool', 1, 'out')], 
 'doc': ['bm', {
@@ -277,7 +277,7 @@ Returns true if the motor is enabled, false otherwise.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetMinimumVoltage', 'set_minimum_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'in')], 
 'doc': ['ccm', {
@@ -298,7 +298,7 @@ The default value is 5V.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetMinimumVoltage', 'get_minimum_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')], 
 'doc': ['ccm', {
@@ -313,7 +313,7 @@ Returns the minimum voltage as set by :func:`SetMinimumVoltage`
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetDriveMode', 'set_drive_mode'), 
 'elements': [('mode', 'uint8', 1, 'in')], 
 'doc': ['am', {
@@ -342,7 +342,7 @@ The default value is 0 = Drive/Brake.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetDriveMode', 'get_drive_mode'), 
 'elements': [('mode', 'uint8', 1, 'out')], 
 'doc': ['am', {
@@ -357,7 +357,7 @@ Returns the drive mode, as set by :func:`SetDriveMode`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetCurrentVelocityPeriod', 'set_current_velocity_period'), 
 'elements': [('period', 'uint16', 1, 'in')], 
 'doc': ['ccm', {
@@ -375,7 +375,7 @@ The default value is 0.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetCurrentVelocityPeriod', 'get_current_velocity_period'), 
 'elements': [('period', 'uint16', 1, 'out')], 
 'doc': ['ccm', {
@@ -390,7 +390,7 @@ Returns the period as set by :func:`SetCurrentVelocityPeriod`.
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('UnderVoltage', 'under_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')], 
 'doc': ['c', {
@@ -407,7 +407,7 @@ in mV.
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('EmergencyShutdown', 'emergency_shutdown'), 
 'elements': [], 
 'doc': ['c', {
@@ -435,7 +435,7 @@ That means, :func:`Enable` has to be called to drive the motor again.
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('VelocityReached', 'velocity_reached'), 
 'elements': [('velocity', 'int16', 1, 'out')], 
 'doc': ['c', {
@@ -459,7 +459,7 @@ the set velocity is actually reached.
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('CurrentVelocity', 'current_velocity'), 
 'elements': [('velocity', 'int16', 1, 'out')], 
 'doc': ['c', {

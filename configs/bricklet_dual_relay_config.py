@@ -5,15 +5,15 @@
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'version': [1, 0, 0],
-    'type': 'Bricklet',
-    'name': ('DualRelay', 'dual_relay'),
+    'category': 'Bricklet',
+    'name': ('DualRelay', 'dual_relay', 'Dual Relay'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling two relays',
     'packets': []
 }
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetState', 'set_state'), 
 'elements': [('relay1', 'bool', 1, 'in'),
              ('relay2', 'bool', 1, 'in')],
@@ -35,7 +35,7 @@ The default value is (false, false).
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetState', 'get_state'), 
 'elements': [('relay1', 'bool', 1, 'out'),
              ('relay2', 'bool', 1, 'out')],

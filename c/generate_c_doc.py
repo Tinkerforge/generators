@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 """
-C Documentation Generator
+C/C++ Documentation Generator
 Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
-generator_c_doc.py: Generator for C documentation
+generator_c_doc.py: Generator for C/C++ documentation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License 
@@ -30,20 +30,14 @@ import os
 import shutil
 import subprocess
 import glob
+import re
 
-com = None
+sys.path.append(os.path.split(os.getcwd())[0])
+import common
+
+device = None
 lang = 'en'
 file_path = ''
-
-gen_text = """..
- #############################################################
- # This file was automatically generated on {0}.      #
- #                                                           #
- # If you have a bugfix for this file and want to commit it, #
- # please fix the bug in the generator. You can find a link  #
- # to the generator git on tinkerforge.com                   #
- #############################################################
-"""
 
 def get_c_type(py_type):
     if py_type == 'string':
@@ -53,19 +47,16 @@ def get_c_type(py_type):
         return "{0}_t".format(py_type)
     return py_type
 
-def shift_right(text, n):
-    return text.replace('\n', '\n' + ' '*n)
-
 def fix_links(text):
-    for packet in com['packets']:
+    for packet in device.get_packets():
         name_false = ':func:`{0}`'.format(packet['name'][0])
-        if packet['doc'][0] == 'c':
+        if packet['type'] == 'callback':
             name_upper = packet['name'][1].upper()
-            pre_upper = com['name'][1].upper()
+            pre_upper = device.get_underscore_name().upper()
             name_right = ':c:data:`{0}_CALLBACK_{1}`'.format(pre_upper,
                                                              name_upper)
         else:
-            name_right = ':c:func:`{0}_{1}`'.format(com['name'][1],
+            name_right = ':c:func:`{0}_{1}`'.format(device.get_underscore_name(),
                                                     packet['name'][1])
         text = text.replace(name_false, name_right)
 
@@ -73,35 +64,6 @@ def fix_links(text):
     text = text.replace(":word:`parameters`", "parameters")
 
     return text
-
-def find_examples():
-    path = file_path
-    start_path = path.replace('/generators/c', '')
-    board = '{0}-{1}'.format(com['name'][1], com['type'].lower())
-    board = board.replace('_', '-')
-    board_path = os.path.join(start_path, board, 'software/examples/c')
-    files = []
-    for f in os.listdir(board_path):
-        if f.startswith('example_') and f.endswith('.c'):
-            f_dir = '{0}/{1}'.format(board_path, f)
-            lines = 0
-            for line in open(os.path.join(f, f_dir)):
-                lines += 1
-            files.append((f, f_dir, lines))
-
-    files.sort(lambda i, j: cmp(i[2], j[2]))
-
-    return files  
-
-def copy_examples(cf):
-    path = file_path
-    doc_path = '{0}/doc'.format(path)
-    print('  * Copying examples:')
-    for f in cf:
-        doc_dest = '{0}/{1}'.format(doc_path, f[1])
-        doc_src = f[0]
-        shutil.copy(doc_src, doc_dest)
-        print('   - {0}'.format(f[1]))
 
 def make_parameter_list(packet):
     param = ''
@@ -122,10 +84,10 @@ def make_parameter_list(packet):
 
 def make_header():
     date = datetime.datetime.now().strftime("%Y-%m-%d")
-    ref = '.. _{0}_{1}_c:\n'.format(com['name'][1], com['type'].lower())
-    title = 'C/C++ - {0} {1}'.format(com['name'][0], com['type'])
+    ref = '.. _{0}_{1}_c:\n'.format(device.get_underscore_name(), device.get_category().lower())
+    title = 'C/C++ - {0} {1}'.format(device.get_display_name(), device.get_category())
     title_under = '='*len(title)
-    return '{0}\n{1}\n{2}\n{3}\n'.format(gen_text.format(date), 
+    return '{0}\n{1}\n{2}\n{3}\n'.format(common.gen_text_rst.format(date),
                                          ref,
                                          title, 
                                          title_under)
@@ -140,9 +102,9 @@ A tutorial on how to test the {0} {1} and get the first examples running
 can be found :ref:`here <{3}>`.
 """
 
-    hw_link = com['name'][1] + '_' + com['type'].lower()
+    hw_link = device.get_underscore_name() + '_' + device.get_category().lower()
     hw_test = hw_link + '_test'
-    su = su.format(com['name'][0], com['type'], hw_link, hw_test)
+    su = su.format(device.get_display_name(), device.get_category(), hw_link, hw_test)
     return su
 
 def make_examples():
@@ -159,6 +121,8 @@ def make_examples():
 
 Examples
 --------
+
+The example code below is public domain.
 """
 
     imp = """
@@ -173,19 +137,19 @@ Examples
  :tab-width: 4
 """
 
-    ref = '.. _{0}_{1}_c_examples:\n'.format(com['name'][1], 
-                                             com['type'].lower())
+    ref = '.. _{0}_{1}_c_examples:\n'.format(device.get_underscore_name(),
+                                             device.get_category().lower())
     ex = ex.format(ref)
-    files = find_examples()
+    files = common.find_examples(device.com, file_path, 'c', 'example_', '.c')
     copy_files = []
     for f in files:
-        include = '{0}_{1}_C_{2}'.format(com['name'][0], com['type'], f[0])
+        include = '{0}_{1}_C_{2}'.format(device.get_camel_case_name(), device.get_category(), f[0])
         copy_files.append((f[1], include))
         title = title_from_file(f[0])
-        git_name = com['name'][1].replace('_', '-') + '-' + com['type'].lower()
+        git_name = device.get_underscore_name().replace('_', '-') + '-' + device.get_category().lower()
         ex += imp.format(title, '^'*len(title), include, git_name, f[0])
 
-    copy_examples(copy_files)
+    common.copy_examples(copy_files, file_path)
     return ex
 
 def make_methods(typ):
@@ -199,26 +163,26 @@ def make_methods(typ):
 
     methods = ''
     func_start = '.. c:function:: int '
-    for packet in com['packets']:
-        if packet['type'] != 'method' or packet['doc'][0] != typ:
+    for packet in device.get_packets():
+        if packet['type'] != 'function' or packet['doc'][0] != typ:
             continue
-        name = '{0}_{1}'.format(com['name'][1], packet['name'][1])
+        name = '{0}_{1}'.format(device.get_underscore_name(), packet['name'][1])
         plist = make_parameter_list(packet)
-        params = '{0} *{1}{2}'.format(com['name'][0], com['name'][1], plist)
-        desc = fix_links(shift_right(packet['doc'][1][lang], 1))
+        params = '{0} *{1}{2}'.format(device.get_camel_case_name(), device.get_underscore_name(), plist)
+        desc = fix_links(common.shift_right(packet['doc'][1][lang], 1))
         func = '{0}{1}({2})\n{3}'.format(func_start, name, params, desc)
         methods += func + '\n'
 
     if typ == 'am':
-        methods += version_method.format(com['name'][1], com['name'][0])
+        methods += version_method.format(device.get_underscore_name(), device.get_camel_case_name())
 
     return methods
 
 def make_callbacks():
     cbs = ''
     func_start = '.. c:var:: '
-    for packet in com['packets']:
-        if packet['type'] != 'signal':
+    for packet in device.get_packets():
+        if packet['type'] != 'callback':
             continue
 
         plist = make_parameter_list(packet)[2:].replace('*ret_', '')
@@ -228,14 +192,12 @@ def make_callbacks():
  .. c:var:: signature: void callback({0})
     :noindex:
 """.format(plist)
-        #params = ' ´´void callback({0})´´\n'.format(plist[2:])
-
-        desc = fix_links(shift_right(packet['doc'][1][lang], 1))
-        name = '{0}_{1}'.format(com['name'][1].upper(), 
+        desc = fix_links(common.shift_right(packet['doc'][1][lang], 1))
+        name = '{0}_{1}'.format(device.get_underscore_name().upper(),
                                 packet['name'][1].upper())
 
         func = '{0}{1}_CALLBACK_{2}\n{3}\n{4}'.format(func_start,
-                                                      com['name'][1].upper(),
+                                                      device.get_underscore_name().upper(),
                                                       packet['name'][1].upper(),
                                                       params,
                                                       desc)
@@ -258,9 +220,9 @@ def make_api():
 """
 
     register_str = """
-.. c:function:: void {0}_register_callback({1} *{0}, uint8_t cb_id, void *func)
+.. c:function:: void {0}_register_callback({1} *{0}, uint8_t cb, void *func)
 
- Registers a callback with ID *cb_id* to the function *func*. The available
+ Registers a callback with ID *cb* to the function *func*. The available
  IDs with corresponding function signatures are listed 
  :ref:`below <{0}_{2}_c_callbacks>`.
 """
@@ -298,8 +260,8 @@ Callbacks
 
 *Callbacks* can be registered with *callback IDs* to receive
 time critical or recurring data from the device. The registration is done
-with the ``register_callback`` function. The parameters consist of
-the device object, the callback id and the callback function::
+with the :c:func:`{0}_register_callback` function. The parameters consist of
+the device object, the callback ID and the callback function::
 
     void my_callback(int p) {{
         printf("parameter: %d\n", p);
@@ -344,12 +306,12 @@ as defined in :file:`ip_connection.h`.
 
 {2}
 """
-    cre = create_str.format(com['name'][1], 
-                            com['name'][0], 
-                            com['type'].lower())
-    reg = register_str.format(com['name'][1], 
-                              com['name'][0],
-                              com['type'].lower())
+    cre = create_str.format(device.get_underscore_name(),
+                            device.get_camel_case_name(),
+                            device.get_category().lower())
+    reg = register_str.format(device.get_underscore_name(),
+                              device.get_camel_case_name(),
+                              device.get_category().lower())
     bm = make_methods('bm')
     am = make_methods('am')
     ccm = make_methods('ccm')
@@ -361,26 +323,26 @@ as defined in :file:`ip_connection.h`.
         api_str += am_str.format(am)
     if c:
         api_str += ccm_str.format(reg, ccm)
-        api_str += c_str.format(com['name'][1], 
-                                com['name'][0].upper(), 
+        api_str += c_str.format(device.get_underscore_name(),
+                                device.get_underscore_name().upper(),
                                 c,
-                                com['type'].lower())
+                                device.get_category().lower())
 
-    ref = '.. _{0}_{1}_c_api:\n'.format(com['name'][1], 
-                                        com['type'].lower())
+    ref = '.. _{0}_{1}_c_api:\n'.format(device.get_underscore_name(),
+                                        device.get_category().lower())
     api_desc = ''
     try:
-        api_desc = com['api']
+        api_desc = device.com['api']
     except:
         pass
 
     return api.format(ref, api_desc, api_str)
 
 def copy_examples_for_zip():
-    examples = find_examples()
+    examples = common.find_examples(device.com, file_path, 'c', 'example_', '.c')
     dest = os.path.join('/tmp/generator/examples/', 
-                        com['type'].lower(), 
-                        com['name'][1])
+                        device.get_category().lower(),
+                        device.get_underscore_name())
 
     if not os.path.exists(dest):
         os.makedirs(dest)
@@ -389,10 +351,10 @@ def copy_examples_for_zip():
         shutil.copy(example[1], dest)
 
 def make_files(com_new, directory):
-    global com
-    com = com_new
+    global device
+    device = common.Device(com_new)
 
-    file_name = '{0}_{1}_C'.format(com['name'][0], com['type'])
+    file_name = '{0}_{1}_C'.format(device.get_camel_case_name(), device.get_category())
     
     directory += '/doc'
     if not os.path.exists(directory):
@@ -433,18 +395,21 @@ def generate(path):
 
     shutil.copy(path + '/ip_connection.c', '/tmp/generator/bindings')
     shutil.copy(path + '/ip_connection.h', '/tmp/generator/bindings')
+    shutil.copy(path + '/changelog.txt', '/tmp/generator/')
     shutil.copy(path + '/readme.txt', '/tmp/generator/')
 
     # Make zip
+    version = common.get_changelog_version(path)
+    zipname = 'tinkerforge_c_bindings_{0}_{1}_{2}.zip'.format(*version)
     os.chdir('/tmp/generator')
     args = ['/usr/bin/zip',
             '-r',
-            'tinkerforge_c_bindings.zip',
+            zipname,
             '.']
     subprocess.call(args)
 
     # Copy zip
-    shutil.copy('/tmp/generator/tinkerforge_c_bindings.zip', path)
+    shutil.copy(zipname, path)
 
 if __name__ == "__main__":
     generate(os.getcwd())

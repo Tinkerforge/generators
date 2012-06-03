@@ -5,15 +5,15 @@
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'version': [1, 0, 0],
-    'type': 'Bricklet',
-    'name': ('Temperature', 'temperature'),
+    'category': 'Bricklet',
+    'name': ('Temperature', 'temperature', 'Temperature'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing Temperature',
     'packets': []
 }
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetTemperature', 'get_temperature'), 
 'elements': [('temperature', 'int16', 1, 'out')],
 'doc': ['bm', {
@@ -34,7 +34,7 @@ to use the callback :func:`Temperature` and set the period with
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetTemperatureCallbackPeriod', 'set_temperature_callback_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
 'doc': ['ccm', {
@@ -55,7 +55,7 @@ The default value is 0.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetTemperatureCallbackPeriod', 'get_temperature_callback_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
 'doc': ['ccm', {
@@ -70,7 +70,7 @@ Returns the period as set by :func:`SetTemperatureCallbackPeriod`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetTemperatureCallbackThreshold', 'set_temperature_callback_threshold'), 
 'elements': [('option', 'char', 1, 'in'), 
              ('min', 'int16', 1, 'in'),
@@ -86,11 +86,11 @@ The following options are possible:
  :header: "Option", "Description"
  :widths: 10, 100
 
- "'x'", "Callback is turned off."
- "'o'", "Callback is triggered when the temperature is *outside* the min and max values"
- "'i'", "Callback is triggered when the temperature is *inside* the min and max values"
- "'<'", "Callback is triggered when the temperature is smaller than the min value (max is ignored)"
- "'>'", "Callback is triggered when the temperature is greater than the min value (max is ignored)"
+ "'x'",    "Callback is turned off."
+ "'o'",    "Callback is triggered when the temperature is *outside* the min and max values"
+ "'i'",    "Callback is triggered when the temperature is *inside* the min and max values"
+ "'<'",    "Callback is triggered when the temperature is smaller than the min value (max is ignored)"
+ "'>'",    "Callback is triggered when the temperature is greater than the min value (max is ignored)"
 
 The default value is ('x', 0, 0).
 """,
@@ -101,7 +101,7 @@ The default value is ('x', 0, 0).
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetTemperatureCallbackThreshold', 'get_temperature_callback_threshold'), 
 'elements': [('option', 'char', 1, 'out'), 
              ('min', 'int16', 1, 'out'),
@@ -118,7 +118,7 @@ Returns the threshold as set by :func:`SetTemperatureCallbackThreshold`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetDebouncePeriod', 'set_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'in')],
 'doc': ['ccm', {
@@ -143,7 +143,7 @@ The default value is 100.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetDebouncePeriod', 'get_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'out')],
 'doc': ['ccm', {
@@ -158,7 +158,7 @@ Returns the debounce period as set by :func:`SetDebouncePeriod`.
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('Temperature', 'temperature'), 
 'elements': [('temperature', 'int16', 1, 'out')],
 'doc': ['c', {
@@ -178,7 +178,7 @@ last triggering.
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('TemperatureReached', 'temperature_reached'), 
 'elements': [('temperature', 'int16', 1, 'out')],
 'doc': ['c', {

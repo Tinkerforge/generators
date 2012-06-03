@@ -48,19 +48,20 @@
 #define RECV_BUFFER_SIZE 8192
 
 #define BROADCAST_ADDRESS 0
-#define TYPE_GET_STACK_ID 255
-#define TYPE_ENUMERATE 254
-#define TYPE_ENUMERATE_CALLBACK 253
-#define TYPE_STACK_ENUMERATE 252
-#define TYPE_ADC_CALIBRATE 251
-#define TYPE_GET_ADC_CALIBRATION 250
 
-#define TYPE_READ_BRICKLET_UID 249
-#define TYPE_WRITE_BRICKLET_UID 248
-#define TYPE_READ_BRICKLET_PLUGIN 247
-#define TYPE_WRITE_BRICKLET_PLUGIN 246
-#define TYPE_READ_BRICKLET_NAME 245
-#define TYPE_WRITE_BRICKLET_NAME 244
+#define FUNCTION_GET_STACK_ID 255
+#define FUNCTION_ENUMERATE 254
+#define FUNCTION_ENUMERATE_CALLBACK 253
+#define FUNCTION_STACK_ENUMERATE 252
+#define FUNCTION_ADC_CALIBRATE 251
+#define FUNCTION_GET_ADC_CALIBRATION 250
+
+#define FUNCTION_READ_BRICKLET_UID 249
+#define FUNCTION_WRITE_BRICKLET_UID 248
+#define FUNCTION_READ_BRICKLET_PLUGIN 247
+#define FUNCTION_WRITE_BRICKLET_PLUGIN 246
+#define FUNCTION_READ_BRICKLET_NAME 245
+#define FUNCTION_WRITE_BRICKLET_NAME 244
 
 struct IPConnection_;
 struct Device_;
@@ -69,7 +70,7 @@ typedef void (*enumerate_callback_func_t)(char*, char*, uint8_t, bool);
 typedef int (*device_callback_func_t)(struct Device_*, const unsigned char*);
 
 typedef struct {
-	uint8_t type;
+	uint8_t function_id;
 	uint16_t length;
 	char buffer[MAX_PACKET_SIZE];
 } DeviceAnswer;
@@ -78,14 +79,15 @@ typedef struct Device_{
 	uint8_t stack_id;
 	uint64_t uid;
 #ifdef _WIN32
-	HANDLE  sem_write;
-	HANDLE  sem_answer;
+	HANDLE sem_write;
+	HANDLE sem_answer;
 #else
 	pthread_cond_t cond;
 	bool sem_answer_flag;
 	pthread_mutex_t sem_write;
 	pthread_mutex_t sem_answer;
 #endif
+	const char *expected_name;
 	char name[MAX_LENGTH_NAME];
 	uint8_t firmware_version[3];
 	uint8_t binding_version[3];
@@ -95,19 +97,36 @@ typedef struct Device_{
 	struct IPConnection_ *ipcon;
 } Device;
 
+typedef struct CallbackQueueNode_{
+	struct CallbackQueueNode_ *next;
+	unsigned char buffer[1];
+} CallbackQueueNode;
+
 typedef struct IPConnection_{
 #ifdef _WIN32
 	SOCKET s;
 	HANDLE handle_recv_loop;
+	HANDLE handle_callback_loop;
 #else
 	int fd;
 	pthread_t thread_recv_loop;
+	pthread_t thread_callback_loop;
 #endif
 	bool recv_loop_flag;
 	struct sockaddr_in server;
 	Device *devices[MAX_NUM_DEVICES];
 	Device *add_device;
 	enumerate_callback_func_t enumerate_callback;
+	CallbackQueueNode *callback_queue_head;
+	CallbackQueueNode *callback_queue_tail;
+#ifdef _WIN32
+	CRITICAL_SECTION callback_queue_mutex;
+	HANDLE callback_queue_semaphore;
+#else
+	pthread_mutex_t callback_queue_mutex;
+	sem_t callback_queue_semaphore_object;
+	sem_t *callback_queue_semaphore;
+#endif
 } IPConnection;
 
 #if defined _MSC_VER || defined __BORLANDC__
@@ -122,14 +141,14 @@ typedef struct IPConnection_{
 
 typedef struct {
 	uint8_t stack_id;
-	uint8_t type;
+	uint8_t function_id;
 	uint16_t length;
 	uint64_t uid;
 } ATTRIBUTE_PACKED GetStackID;
 
 typedef struct {
 	uint8_t stack_id;
-	uint8_t type;
+	uint8_t function_id;
 	uint16_t length;
 	uint64_t device_uid;
 	uint8_t device_firmware_version[3];
@@ -139,13 +158,13 @@ typedef struct {
 
 typedef struct {
 	uint8_t stack_id;
-	uint8_t type;
+	uint8_t function_id;
 	uint16_t length;
 } ATTRIBUTE_PACKED Enumerate;
 
 typedef struct {
 	uint8_t stack_id;
-	uint8_t type;
+	uint8_t function_id;
 	uint16_t length;
 	uint64_t device_uid;
 	char device_name[MAX_LENGTH_NAME];
@@ -181,7 +200,7 @@ int ipcon_add_device_handler(IPConnection *ipcon,
 int ipcon_answer_sem_wait_timeout(Device *device);
 
 uint8_t ipcon_get_stack_id_from_data(const unsigned char *data);
-uint8_t ipcon_get_type_from_data(const unsigned char *data);
+uint8_t ipcon_get_function_id_from_data(const unsigned char *data);
 uint16_t ipcon_get_length_from_data(const unsigned char *data);
 
 int ipcon_sem_wait_write(Device *device);

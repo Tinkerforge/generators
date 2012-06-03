@@ -5,15 +5,15 @@
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'version': [1, 0, 0],
-    'type': 'Bricklet',
-    'name': ('IO16', 'io16'),
+    'category': 'Bricklet',
+    'name': ('IO16', 'io16', 'IO-16'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling up to 16 general purpose input/output pins',
     'packets': []
 }
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetPort', 'set_port'), 
 'elements': [('port', 'char', 1, 'in'),
              ('value_mask', 'uint8', 1, 'in')],
@@ -23,7 +23,7 @@ com['packets'].append({
 Sets the output value (high or low) for a port ("a" or "b") with a bit mask. 
 The bit mask is 8 bit long, "true" refers to high and "false" refers to low.
 
-For example: The bitstring "11110000" will turn the pins 0-3 high and the
+For example: The bitstring "00001111" will turn the pins 0-3 high and the
 pins 4-7 low for the specified port.
 
  .. note::
@@ -38,7 +38,7 @@ pins 4-7 low for the specified port.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetPort', 'get_port'), 
 'elements': [('port', 'char', 1, 'in'),
              ('value_mask', 'uint8', 1, 'out')],
@@ -56,7 +56,7 @@ as well as if it is configured to output.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetPortConfiguration', 'set_port_configuration'), 
 'elements': [('port', 'char', 1, 'in'),
              ('port_mask', 'uint8', 1, 'in'),
@@ -65,13 +65,13 @@ com['packets'].append({
 'doc': ['bm', {
 'en':
 """
-Configures the value and direction of a specified port. possible directions
+Configures the value and direction of a specified port. Possible directions
 are "i" and "o" for input and output.
 
 If the direction is configured as output, the value is either high or low
 (set as true or false).
 
-If the direction is configured as output, the value is either pull up or
+If the direction is configured as input, the value is either pull up or
 default (set as true or false).
 
 For example: 
@@ -89,7 +89,7 @@ For example:
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetPortConfiguration', 'get_port_configuration'), 
 'elements': [('port', 'char', 1, 'in'),
              ('direction_mask', 'uint8', 1, 'out'),
@@ -97,9 +97,9 @@ com['packets'].append({
 'doc': ['bm', {
 'en':
 """
-Returns a value bit mask and a direction  bit mask for the specified port.
+Returns a value bit mask and a direction bit mask for the specified port.
 
-For example: A return value of the bitstrings "11110000" and "11001100" for
+For example: A return value of the bitstrings "00001111" and "00110011" for
 direction and value means that:
 
  * pins 0 and 1 are configured as input pull up, 
@@ -115,7 +115,7 @@ direction and value means that:
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetDebouncePeriod', 'set_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'in')],
 'doc': ['ccm', {
@@ -136,7 +136,7 @@ The default value is 100.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetDebouncePeriod', 'get_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'out')],
 'doc': ['ccm', {
@@ -151,7 +151,7 @@ Returns the debounce period as set by :func:`SetDebouncePeriod`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetPortInterrupt', 'set_port_interrupt'), 
 'elements': [('port', 'char', 1, 'in'),
              ('interrupt_mask', 'uint8', 1, 'in')],
@@ -174,7 +174,7 @@ The interrupt is delivered with the callback :func:`Interrupt`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetPortInterrupt', 'get_port_interrupt'), 
 'elements': [('port', 'char', 1, 'in'),
              ('interrupt_mask', 'uint8', 1, 'out')],
@@ -191,7 +191,7 @@ Returns the interrupt bit mask for the specified port as set by
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('Interrupt', 'interrupt'), 
 'elements': [('port', 'char', 1, 'out'),
              ('interrupt_mask', 'uint8', 1, 'out'),

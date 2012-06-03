@@ -5,15 +5,15 @@
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'version': [1, 0, 0],
-    'type': 'Bricklet',
-    'name': ('PiezoBuzzer', 'piezo_buzzer'),
+    'category': 'Bricklet',
+    'name': ('PiezoBuzzer', 'piezo_buzzer', 'Piezo Buzzer'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling a piezo buzzer',
     'packets': []
 }
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('Beep', 'beep'), 
 'elements': [('duration', 'uint32', 1, 'in')],
 'doc': ['bm', {
@@ -29,7 +29,7 @@ the piezo buzzer will beep for one second.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('MorseCode', 'morse_code'), 
 'elements': [('morse', 'string', 60, 'in')],
 'doc': ['bm', {
@@ -52,7 +52,7 @@ The maximum string size is 60.
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('BeepFinished', 'beep_finished'), 
 'elements': [],
 'doc': ['c', {
@@ -67,7 +67,7 @@ This callback is triggered if a beep set by :func:`Beep` is finished
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('MorseCodeFinished', 'morse_code_finished'), 
 'elements': [],
 'doc': ['c', {

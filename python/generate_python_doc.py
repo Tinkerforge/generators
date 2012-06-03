@@ -30,20 +30,14 @@ import os
 import shutil
 import subprocess
 import glob
+import re
 
-com = None
+sys.path.append(os.path.split(os.getcwd())[0])
+import common
+
+device = None
 lang = 'en'
 file_path = ''
-
-gen_text = """..
- #############################################################
- # This file was automatically generated on {0}.      #
- #                                                           #
- # If you have a bugfix for this file and want to commit it, #
- # please fix the bug in the generator. You can find a link  #
- # to the generator git on tinkerforge.com                   #
- #############################################################
-"""
 
 def type_to_pytype(element):
     type_dict = {
@@ -68,14 +62,11 @@ def type_to_pytype(element):
 
     return '[' + ', '.join([t]*element[2]) + ']'
 
-def shift_right(text, n):
-    return text.replace('\n', '\n' + ' '*n)
-
 def fix_links(text):
-    cls = com['name'][0]
-    for packet in com['packets']:
+    cls = device.get_camel_case_name()
+    for packet in device.get_packets():
         name_false = ':func:`{0}`'.format(packet['name'][0])
-        if packet['doc'][0] == 'c':
+        if packet['type'] == 'callback':
             name_upper = packet['name'][1].upper()
             name_right = ':py:attr:`{0}.CALLBACK_{1}`'.format(cls, name_upper)
         else:
@@ -87,42 +78,12 @@ def fix_links(text):
 
     return text
 
-def find_examples():
-    path = file_path
-    start_path = path.replace('/generators/python', '')
-    board = '{0}-{1}'.format(com['name'][1], com['type'].lower())
-    board = board.replace('_', '-')
-    board_path = os.path.join(start_path, board, 'software/examples/python')
-    files = []
-    for f in os.listdir(board_path):
-        if f.startswith('example_') and f.endswith('.py'):
-            f_dir = '{0}/{1}'.format(board_path, f)
-            lines = 0
-            for line in open(os.path.join(f, f_dir)):
-                lines += 1
-            files.append((f, f_dir, lines))
-
-    files.sort(lambda i, j: cmp(i[2], j[2]))
-
-    return files
-   
-def copy_examples(cf):
-    path = file_path
-    doc_path = '{0}/doc'.format(path)
-    print('  * Copying examples:')
-    for f in cf:
-        doc_dest = '{0}/{1}'.format(doc_path, f[1])
-        doc_src = f[0]
-        shutil.copy(doc_src, doc_dest)
-        print('   - {0}'.format(f[1]))
-    
-
 def make_header():
     date = datetime.datetime.now().strftime("%Y-%m-%d")
-    ref = '.. _{0}_{1}_python:\n'.format(com['name'][1], com['type'].lower())
-    title = 'Python - {0} {1}'.format(com['name'][0], com['type'])
+    ref = '.. _{0}_{1}_python:\n'.format(device.get_underscore_name(), device.get_category().lower())
+    title = 'Python - {0} {1}'.format(device.get_display_name(), device.get_category())
     title_under = '='*len(title)
-    return '{0}\n{1}\n{2}\n{3}\n'.format(gen_text.format(date), 
+    return '{0}\n{1}\n{2}\n{3}\n'.format(common.gen_text_rst.format(date),
                                          ref,
                                          title, 
                                          title_under)
@@ -137,9 +98,9 @@ A tutorial on how to test the {0} {1} and get the first examples running
 can be found :ref:`here <{3}>`.
 """
 
-    hw_link = com['name'][1] + '_' + com['type'].lower()
+    hw_link = device.get_underscore_name() + '_' + device.get_category().lower()
     hw_test = hw_link + '_test'
-    su = su.format(com['name'][0], com['type'], hw_link, hw_test)
+    su = su.format(device.get_display_name(), device.get_category(), hw_link, hw_test)
     return su
 
 def make_examples():
@@ -156,6 +117,8 @@ def make_examples():
 
 Examples
 --------
+
+The example code below is public domain.
 """
 
     imp = """
@@ -170,19 +133,19 @@ Examples
  :tab-width: 4
 """
 
-    ref = '.. _{0}_{1}_python_examples:\n'.format(com['name'][1], 
-                                                  com['type'].lower())
+    ref = '.. _{0}_{1}_python_examples:\n'.format(device.get_underscore_name(),
+                                                  device.get_category().lower())
     ex = ex.format(ref)
-    files = find_examples()
+    files = common.find_examples(device.com, file_path, 'python', 'example_', '.py')
     copy_files = []
     for f in files:
-        include = '{0}_{1}_Python_{2}'.format(com['name'][0], com['type'], f[0])
+        include = '{0}_{1}_Python_{2}'.format(device.get_camel_case_name(), device.get_category(), f[0])
         copy_files.append((f[1], include))
         title = title_from_file(f[0])
-        git_name = com['name'][1].replace('_', '-') + '-' + com['type'].lower()
+        git_name = device.get_underscore_name().replace('_', '-') + '-' + device.get_category().lower()
         ex += imp.format(title, '^'*len(title), include, git_name, f[0])
 
-    copy_examples(copy_files)
+    common.copy_examples(copy_files, file_path)
     return ex
 
 def make_parameter_list(packet):
@@ -231,15 +194,15 @@ def make_methods(typ):
 
     methods = ''
     func_start = '.. py:function:: '
-    cls = com['name'][0]
-    for packet in com['packets']:
-        if packet['type'] != 'method' or packet['doc'][0] != typ:
+    cls = device.get_camel_case_name()
+    for packet in device.get_packets():
+        if packet['type'] != 'function' or packet['doc'][0] != typ:
             continue
         name = packet['name'][1]
         params = make_parameter_list(packet)
         pd = make_parameter_desc(packet, 'in')
         r = make_return_desc(packet)
-        d = fix_links(shift_right(packet['doc'][1][lang], 1))
+        d = fix_links(common.shift_right(packet['doc'][1][lang], 1))
         desc = '{0}{1}{2}'.format(pd, r, d)
         func = '{0}{1}.{2}({3})\n{4}'.format(func_start, 
                                              cls, 
@@ -256,13 +219,13 @@ def make_methods(typ):
 def make_callbacks():
     cbs = ''
     func_start = '.. py:attribute:: '
-    cls = com['name'][0]
-    for packet in com['packets']:
-        if packet['type'] != 'signal':
+    cls = device.get_camel_case_name()
+    for packet in device.get_packets():
+        if packet['type'] != 'callback':
             continue
 
         param_desc = make_parameter_desc(packet, 'out')
-        desc = fix_links(shift_right(packet['doc'][1][lang], 1))
+        desc = fix_links(common.shift_right(packet['doc'][1][lang], 1))
 
         func = '{0}{1}.CALLBACK_{2}\n{3}\n{4}'.format(func_start,
                                                       cls,
@@ -278,22 +241,24 @@ def make_api():
     create_str = """
 .. py:function:: {1}(uid)
 
- Creates an object with the unique device ID *uid*::
+ Creates an object with the unique device ID *uid*:
 
-    {0} = {1}("YOUR_DEVICE_UID");
+ .. code-block:: python
+
+    {0} = {1}("YOUR_DEVICE_UID")
 
  This object can then be added to the IP connection (see examples 
  :ref:`above <{0}_{2}_python_examples>`).
 """
 
     register_str = """
-.. py:function:: {1}.register_callback(cb_id, func)
+.. py:function:: {1}.register_callback(cb, func)
 
- :param cb_id: int
+ :param cb: int
  :param func: function
  :rtype: None
 
- Registers a callback with ID *cb_id* to the function *func*. The available
+ Registers a callback with ID *cb* to the function *func*. The available
  IDs with corresponding function signatures are listed 
  :ref:`below <{0}_{2}_python_callbacks>`.
 """
@@ -331,14 +296,14 @@ Callbacks
 
 *Callbacks* can be registered with *callback IDs* to receive
 time critical or recurring data from the device. The registration is done
-with the ``register_callback`` function of the device object. The first
-parameter is the callback id and the second parameter the callback
-function::
+with the :py:func:`register_callback <{3}.register_callback>` function of
+the device object. The first parameter is the callback ID and the second
+parameter the callback function::
 
     def my_callback(param):
         print(param)
 
-    {1}.register_callback({1}.CALLBACK_EXAMPLE, my_callback)
+    {1}.register_callback({3}.CALLBACK_EXAMPLE, my_callback)
 
 The available constants with inherent number and type of parameters are 
 described below.
@@ -360,12 +325,12 @@ API
 
 {2}
 """
-    cre = create_str.format(com['name'][1],
-                            com['name'][0], 
-                            com['type'].lower())
-    reg = register_str.format(com['name'][1], 
-                              com['name'][0],
-                              com['type'].lower())
+    cre = create_str.format(device.get_underscore_name(),
+                            device.get_camel_case_name(),
+                            device.get_category().lower())
+    reg = register_str.format(device.get_underscore_name(),
+                              device.get_camel_case_name(),
+                              device.get_category().lower())
 
     bm = make_methods('bm')
     am = make_methods('am')
@@ -378,24 +343,24 @@ API
         api_str += am_str.format(am)
     if c:
         api_str += ccm_str.format(reg, ccm)
-        api_str += c_str.format(c, com['name'][1], com['type'].lower())
+        api_str += c_str.format(c, device.get_underscore_name(), device.get_category().lower(), device.get_camel_case_name())
 
-    ref = '.. _{0}_{1}_python_api:\n'.format(com['name'][1], 
-                                             com['type'].lower())
+    ref = '.. _{0}_{1}_python_api:\n'.format(device.get_underscore_name(),
+                                             device.get_category().lower())
 
     api_desc = ''
     try:
-        api_desc = com['api']
+        api_desc = device.com['api']
     except:
         pass
 
     return api.format(ref, api_desc, api_str) 
        
 def copy_examples_for_zip():
-    examples = find_examples()
+    examples = common.find_examples(device.com, file_path, 'python', 'example_', '.py')
     dest = os.path.join('/tmp/generator/egg/examples/', 
-                        com['type'].lower(), 
-                        com['name'][1])
+                        device.get_category().lower(),
+                        device.get_underscore_name())
 
     if not os.path.exists(dest):
         os.makedirs(dest)
@@ -404,10 +369,10 @@ def copy_examples_for_zip():
         shutil.copy(example[1], dest)
   
 def make_files(com_new, directory):
-    global com
-    com = com_new
+    global device
+    device = common.Device(com_new)
 
-    file_name = '{0}_{1}_Python'.format(com['name'][0], com['type'])
+    file_name = '{0}_{1}_Python'.format(device.get_camel_case_name(), device.get_category())
     
     directory += '/doc'
     if not os.path.exists(directory):
@@ -448,8 +413,25 @@ def generate(path):
         shutil.copy(filename, '/tmp/generator/egg/source/tinkerforge')
 
     shutil.copy(path + '/ip_connection.py', '/tmp/generator/egg/source/tinkerforge')
+    shutil.copy(path + '/changelog.txt', '/tmp/generator/egg')
     shutil.copy(path + '/readme.txt', '/tmp/generator/egg')
-    shutil.copy(path + '/setup.py', '/tmp/generator/egg/source')
+
+    # Write setup.py
+    version = common.get_changelog_version(path)
+    file('/tmp/generator/egg/source/setup.py', 'wb').write("""
+#!/usr/bin/env python
+
+from setuptools import setup
+
+setup(
+    name='tinkerforge',
+    version='{0}.{1}.{2}',
+    description='TCP/IP based library for Bricks and Bricklets',
+    author='Tinkerforge GmbH',
+    author_email='olaf@tinkerforge.com',
+    url='http://www.tinkerforge.com',
+    packages=['tinkerforge'])
+""".format(*version))
 
     # Make egg
     os.chdir('/tmp/generator/egg/source')
@@ -466,19 +448,22 @@ def generate(path):
                 '/tmp/generator/egg/tinkerforge.egg')
     shutil.rmtree('/tmp/generator/egg/source/dist')
 
-    # Make zip
+    # Make __init__.py
     f = open('/tmp/generator/egg/source/tinkerforge/__init__.py', 'w')
     f.write(' ')
     f.close()
+
+    # Make zip
+    zipname = 'tinkerforge_python_bindings_{0}_{1}_{2}.zip'.format(*version)
     os.chdir('/tmp/generator/egg')
     args = ['/usr/bin/zip',
             '-r',
-            'tinkerforge_python_bindings.zip',
+            zipname,
             '.']
     subprocess.call(args)
 
     # Copy zip
-    shutil.copy('/tmp/generator/egg/tinkerforge_python_bindings.zip', path)
+    shutil.copy(zipname, path)
 
 if __name__ == "__main__":
     generate(os.getcwd())

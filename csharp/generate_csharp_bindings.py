@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 """
-Bindings Generator
+C# Bindings Generator
+Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_csharp_bindings.py: Generator for C# bindings
@@ -26,75 +27,140 @@ Boston, MA 02111-1307, USA.
 import datetime
 import sys
 import os
+import csharp_common
+from xml.sax.saxutils import escape
 
-com = None
+sys.path.append(os.path.split(os.getcwd())[0])
+import common
 
-gen_text = """/*************************************************************
- * This file was automatically generated on {0}.      *
- *                                                           *
- * If you have a bugfix for this file and want to commit it, *
- * please fix the bug in the generator. You can find a link  *
- * to the generator git on tinkerforge.com                   *
- *************************************************************/
-"""
+device = None
+lang = 'en'
+
+def fix_links(text):
+    link = '<see cref="Tinkerforge.{0}{1}.{2}"/>'
+
+    # escape XML special chars
+    text = escape(text)
+
+    # handle notes and warnings
+    lines = text.split('\n')
+    replaced_lines = []
+    in_note = False
+    in_warning = False
+    in_table_head = False
+    in_table_body = False
+
+    for line in lines:
+        if line.strip() == '.. note::':
+            in_note = True
+            replaced_lines.append('<note>')
+        elif line.strip() == '.. warning::':
+            in_warning = True
+            replaced_lines.append('<note type="caution">')
+        elif len(line.strip()) == 0 and (in_note or in_warning):
+            if in_note:
+                in_note = False
+            if in_warning:
+                in_warning = False
+
+            replaced_lines.append('</note>')
+            replaced_lines.append('')
+        elif line.strip() == '.. csv-table::':
+            in_table_head = True
+            replaced_lines.append('<code>')
+        elif line.strip().startswith(':header: ') and in_table_head:
+            replaced_lines.append(line[len(':header: '):])
+        elif line.strip().startswith(':widths:') and in_table_head:
+            pass
+        elif len(line.strip()) == 0 and in_table_head:
+            in_table_head = False
+            in_table_body = True
+
+            replaced_lines.append('')
+        elif len(line.strip()) == 0 and in_table_body:
+            in_table_body = False
+
+            replaced_lines.append('</code>')
+            replaced_lines.append('')
+        else:
+            replaced_lines.append(line)
+
+    text = '\n'.join(replaced_lines)
+
+    cls = device.get_camel_case_name()
+    for packet in device.get_packets():
+        name_false = ':func:`{0}`'.format(packet['name'][0])
+        name = packet['name'][0]
+        name_right = link.format(device.get_category(), cls, name)
+
+        text = text.replace(name_false, name_right)
+
+    text = text.replace(":word:`parameter`", "parameter")
+    text = text.replace(":word:`parameters`", "parameters")
+
+    return text
 
 def make_import():
     include = """{0}
+using System;
+
 namespace Tinkerforge
 {{"""
     date = datetime.datetime.now().strftime("%Y-%m-%d")
-    return include.format(gen_text.format(date))
+    return include.format(common.gen_text_star.format(date))
 
 def make_class():
     class_str = """
+\t/// <summary>
+\t///  {2}
+\t/// </summary>
 \tpublic class {0}{1} : Device 
 \t{{
 """
         
-    return class_str.format(com['type'], com['name'][0])
+    return class_str.format(device.get_category(),
+                            device.get_camel_case_name(),
+                            device.get_description())
 
 def make_delegates():
     cbs = '\n'
-    cb = """\t\tpublic delegate void {0}({1});
+    cb = """
+\t\t/// <summary>
+\t\t///  {2}
+\t\t/// </summary>
+\t\tpublic delegate void {0}({1});
 """
-    for packet in com['packets']:
-        if packet['type'] != 'signal':
+    for packet in device.get_packets():
+        if packet['type'] != 'callback':
             continue
 
         name = packet['name'][0]
-        parameter = make_parameter_list(packet)
-        cbs += cb.format(name, parameter)
+        parameter = csharp_common.make_parameter_list(packet)
+        doc = '\n\t\t///  '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
+        cbs += cb.format(name, parameter, doc)
     return cbs
 
-def make_type_definitions():
-    types = ''
-    type = '\t\tprivate static byte TYPE_{0} = {1};\n'
-    for i, packet in zip(range(len(com['packets'])), com['packets']):
-        types += type.format(packet['name'][1].upper(), i+1)
-    return types
-
-def make_parameter_list(packet):
-    param = []
-    for element in packet['elements']:
-        out = ''
-        if element[3] == 'out' and packet['type'] == 'method':
-            out = 'out '
-
-        csharp_type = get_csharp_type(element[1])
-        name = to_camel_case(element[0])
-        arr = ''
-        if element[2] > 1 and element[1] != 'string':
-            arr = '[]'
-       
-        param.append('{0}{1}{2} {3}'.format(out, csharp_type, arr, name))
-    return ', '.join(param)
+def make_function_id_definitions():
+    function_ids = ''
+    function_id = '\t\tprivate static byte {2}_{0} = {1};\n'
+    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
+        if packet['type'] == 'callback':
+            function_ids += function_id.format(packet['name'][1].upper(), i+1, 'CALLBACK')
+        else:
+            function_ids += function_id.format(packet['name'][1].upper(), i+1, 'FUNCTION')
+    return function_ids
 
 def make_constructor():
     cbs = []
-    cb = '\t\t\tmessageCallbacks[TYPE_{0}] = new MessageCallback(Callback{1});'
+    cb = '\t\t\tmessageCallbacks[CALLBACK_{0}] = new MessageCallback(Callback{1});'
     con = """
+\t\t/// <summary>
+\t\t///  Creates an object with the unique device ID <c>uid</c>. This object can
+\t\t///  then be added to the IP connection.
+\t\t/// </summary>
 \t\tpublic {0}{1}(string uid) : base(uid) 
 \t\t{{
+\t\t\tthis.expectedName = "{6} {7}";
 \t\t\tthis.bindingVersion[0] = {3};
 \t\t\tthis.bindingVersion[1] = {4};
 \t\t\tthis.bindingVersion[2] = {5};
@@ -102,16 +168,23 @@ def make_constructor():
 \t\t}}
 """
 
-    for packet in com['packets']:
-        if packet['type'] != 'signal':
+    for packet in device.get_packets():
+        if packet['type'] != 'callback':
             continue
 
         name_upper = packet['name'][1].upper()
         name_pascal = packet['name'][0]
         cbs.append(cb.format(name_upper, name_pascal))
 
-    v = com['version']
-    return con.format(com['type'], com['name'][0], '\n'.join(cbs), v[0], v[1], v[2])
+    v = device.get_version()
+    return con.format(device.get_category(),
+                      device.get_camel_case_name(),
+                      '\n'.join(cbs),
+                      v[0],
+                      v[1],
+                      v[2],
+                      device.get_display_name(),
+                      device.get_category())
 
 def get_from_type(element):
     forms = {
@@ -138,29 +211,6 @@ def get_from_type(element):
 
     return ''
 
-
-def get_csharp_type(typ):
-    forms = {
-        'int8' : 'sbyte',
-        'uint8' : 'byte',
-        'int16' : 'short',
-        'uint16' : 'ushort',
-        'int32' : 'int',
-        'uint32' : 'uint',
-        'int64' : 'long',
-        'uint64' : 'ulong',
-        'float' : 'float',
-        'bool' : 'bool',
-        'string' : 'string',
-        'char' : 'char'
-    }
-
-    if typ in forms:
-        return forms[typ]
-
-    return ''
-
-
 def get_type_size(element):
     forms = {
         'int8' : 1,
@@ -183,14 +233,20 @@ def get_type_size(element):
     return 0
 
 def make_register_callback():
+    if device.get_callback_count() == 0:
+        return '\t}\n}\n'
+
     typeofs = ''
     typeof = """\t\t\t{0}if(d.GetType() == typeof({1}))
 \t\t\t{{
-\t\t\t\tcallbacks[TYPE_{2}] = d;
+\t\t\t\tcallbacks[CALLBACK_{2}] = d;
 \t\t\t}}
 """
 
     cb = """
+\t\t/// <summary>
+\t\t///  Registers a callback function.
+\t\t/// </summary>
 \t\tpublic void RegisterCallback(System.Delegate d)
 \t\t{{
 {0}\t\t}}
@@ -199,8 +255,8 @@ def make_register_callback():
 """
 
     i = 0
-    for packet in com['packets']:
-        if packet['type'] != 'signal':
+    for packet in device.get_packets():
+        if packet['type'] != 'callback':
             continue
 
         els = ''
@@ -221,13 +277,13 @@ def make_callbacks():
     cb = """
 \t\tinternal int Callback{0}(byte[] data_)
 \t\t{{
-{1}\t\t\t(({0})callbacks[TYPE_{2}])({3});
+{1}\t\t\t(({0})callbacks[CALLBACK_{2}])({3});
 \t\t\treturn {4};
 \t\t}}
 """
-    cls = com['name'][0]
-    for packet in com['packets']:
-        if packet['type'] != 'signal':
+    cls = device.get_camel_case_name()
+    for packet in device.get_packets():
+        if packet['type'] != 'callback':
             continue
 
         name = packet['name'][0]
@@ -235,7 +291,7 @@ def make_callbacks():
         eles = []
         for element in packet['elements']:
             if element[3] == 'out':
-                eles.append(to_camel_case(element[0]))
+                eles.append(csharp_common.to_camel_case(element[0]))
         params = ", ".join(eles)
         size = str(get_data_size(packet['elements']))
 
@@ -247,8 +303,8 @@ def make_callbacks():
             if element[3] != 'out':
                 continue
 
-            csharp_type = get_csharp_type(element[1])
-            cname = to_camel_case(element[0])
+            csharp_type = csharp_common.get_csharp_type(element)
+            cname = csharp_common.to_camel_case(element[0])
             from_type = get_from_type(element)
             length = ''
             if element[2] > 1:
@@ -268,89 +324,121 @@ def make_callbacks():
 
     return cbs
 
-def make_version_method():
-    return """
-\t\tpublic void GetVersion(out string name, out byte[] firmwareVersion, out byte[] bindingVersion)
-\t\t{{
-\t\t\tname = this.name;
-\t\t\tfirmwareVersion = this.firmwareVersion;
-\t\t\tbindingVersion = this.bindingVersion;
-\t\t}}
-"""
-
 def make_methods():
     methods = ''
     method = """
-\t\tpublic void {0}({1})
+\t\t/// <summary>
+\t\t///  {5}
+\t\t/// </summary>
+\t\t{0}
 \t\t{{
-\t\t\tbyte[] data_ = new byte[{2}];
+\t\t\tbyte[] data_ = new byte[{1}];
 \t\t\tLEConverter.To(stackID, 0, data_);
-\t\t\tLEConverter.To(TYPE_{3}, 1, data_);
-\t\t\tLEConverter.To((ushort){2}, 2, data_);
+\t\t\tLEConverter.To(FUNCTION_{2}, 1, data_);
+\t\t\tLEConverter.To((ushort){1}, 2, data_);
+{3}
 {4}
-{5}\t\t}}
+\t\t}}
 """
-    method_oneway = """
-\t\t\tsendOneWayMessage(data_);
-"""
-    method_answer = """
-\t\t\tbyte[] answer;
-\t\t\tsendReturningMessage(data_, TYPE_{0}, out answer);
+    method_oneway = "\t\t\tsendOneWayMessage(data_);"
+    method_answer = """\t\t\tbyte[] answer;
+\t\t\tsendReturningMessage(data_, FUNCTION_{0}, out answer);
+{1}"""
 
-{1}
-"""
-
-    cls = com['name'][0]
-    for packet in com['packets']:
-        if packet['type'] != 'method':
+    cls = device.get_camel_case_name()
+    for packet in device.get_packets():
+        if packet['type'] != 'function':
             continue
 
-        name = packet['name'][0]
-        params = make_parameter_list(packet)
+        ret_count = csharp_common.count_return_values(packet['elements'])
         size = str(get_data_size(packet['elements']))
         name_upper = packet['name'][1].upper()
-        has_ret = has_return_value(packet['elements'])
+        doc = '\n\t\t///  '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
 
         write_convs = ''
         write_conv = '\t\t\tLEConverter.To({0}, {1}, data_);\n'
+        write_conv_length = '\t\t\tLEConverter.To({0}, {1}, {2}, data_);\n'
 
         pos = 4
         for element in packet['elements']:
             if element[3] != 'in':
                 continue
-            wname = to_camel_case(element[0])
-            write_convs += write_conv.format(wname, pos)
+            wname = csharp_common.to_camel_case(element[0])
+            if element[2] > 1:
+                write_convs += write_conv_length.format(wname, pos, element[2])
+            else:
+                write_convs += write_conv.format(wname, pos)
             pos += get_type_size(element)
             
         method_tail = ''
-        if has_ret == 'true':
+        if ret_count > 0:
             read_convs = ''
-            read_conv = '\t\t\t{0} = LEConverter.{1}({2}, answer{3});\n'
+            read_conv = '\n\t\t\t{0} = LEConverter.{1}({2}, answer{3});'
 
             pos = 4
             for element in packet['elements']:
                 if element[3] != 'out':
                     continue
 
-                aname = to_camel_case(element[0])
+                aname = csharp_common.to_camel_case(element[0])
                 from_type = get_from_type(element)
                 length = ''
                 if element[2] > 1:
                     length = ', ' + str(element[2])
 
-                read_convs += read_conv.format(aname, from_type, pos, length)
+                if ret_count == 1:
+                    read_convs = '\n\t\t\treturn LEConverter.{0}({1}, answer{2});'.format(from_type, pos, length)
+                else:
+                    read_convs += read_conv.format(aname, from_type, pos, length)
                 pos += get_type_size(element)
 
             method_tail = method_answer.format(name_upper, read_convs)
         else:
             method_tail = method_oneway
 
-        methods += method.format(name,
-                                 params,
+        signature = csharp_common.make_method_signature(packet)
+        methods += method.format(signature,
                                  size,
                                  name_upper,
                                  write_convs,
-                                 method_tail)
+                                 method_tail,
+                                 doc)
+
+    return methods
+
+def make_obsolete_methods():
+    methods = ''
+    method = """
+\t\t/// <summary>
+\t\t///  Obsolete. Use overloaded version instead that returns the result.
+\t\t/// </summary>
+\t\t[Obsolete()]
+\t\tpublic void {0}({1})
+\t\t{{
+\t\t\t{2} = {0}({3});
+\t\t}}
+"""
+
+    cls = device.get_camel_case_name()
+    for packet in device.get_packets():
+        if packet['type'] != 'function':
+            continue
+
+        ret_count = csharp_common.count_return_values(packet['elements'])
+        if ret_count != 1:
+            continue
+
+        name = packet['name'][0]
+        sigParams = csharp_common.make_parameter_list(packet, True)
+        outParam = csharp_common.to_camel_case(filter(lambda e: e[3] == 'out', packet['elements'])[0][0])
+        callParams = ", ".join(map(lambda e: csharp_common.to_camel_case(e[0]), filter(lambda e: e[3] == 'in', packet['elements'])))
+        doc = '\n\t\t///  '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
+
+        methods += method.format(name,
+                                 sigParams,
+                                 outParam,
+                                 callParams,
+                                 doc)
 
     return methods
 
@@ -362,24 +450,11 @@ def get_data_size(elements):
         size += get_type_size(element)
     return size + 4
 
-def has_return_value(elements):
-    for element in elements:
-        if element[3] == 'out':
-            return 'true'
-    return 'false'
-
-def to_camel_case(name):
-    names = name.split('_')
-    ret = names[0]
-    for n in names[1:]:
-        ret += n[0].upper() + n[1:]
-    return ret
-
 def make_files(com_new, directory):
-    global com
-    com = com_new
+    global device
+    device = common.Device(com_new)
 
-    file_name = '{0}{1}'.format(com['type'], com['name'][0])
+    file_name = '{0}{1}'.format(device.get_category(), device.get_camel_case_name())
     
     directory += '/bindings'
     if not os.path.exists(directory):
@@ -388,11 +463,11 @@ def make_files(com_new, directory):
     csharp = file('{0}/{1}.cs'.format(directory, file_name), "w")
     csharp.write(make_import())
     csharp.write(make_class())
-    csharp.write(make_type_definitions())
+    csharp.write(make_function_id_definitions())
     csharp.write(make_delegates())
     csharp.write(make_constructor())
     csharp.write(make_methods())
-    csharp.write(make_version_method())
+    csharp.write(make_obsolete_methods())
     csharp.write(make_callbacks())
     csharp.write(make_register_callback())
 

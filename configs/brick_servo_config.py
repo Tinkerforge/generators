@@ -5,15 +5,15 @@
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'version': [1, 0, 0],
-    'type': 'Brick',
-    'name': ('Servo', 'servo'),
+    'category': 'Brick',
+    'name': ('Servo', 'servo', 'Servo'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling up to seven servos',
     'packets': []
 }
 
 com['api'] = """
-Every method of the Servo Brick API that has a *servo_num* parameter can
+Every function of the Servo Brick API that has a *servo_num* parameter can
 address a servo with the servo number (0 to 6) or with a bitmask for the 
 servos, if the last bit is set. For example: "1" will address servo 1, 
 "(1 << 1) | (1 << 5) | (1 << 8)" will address servos 1 and 5, "0xFF" will
@@ -23,7 +23,7 @@ effect in the same PWM period for all servos you specified in the bitmask.
 """
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('Enable', 'enable'), 
 'elements': [('servo_num', 'uint8', 1, 'in')], 
 'doc': ['bm', {
@@ -39,7 +39,7 @@ velocity, acceleration, etc. are applied immediately.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('Disable', 'disable'), 
 'elements': [('servo_num', 'uint8', 1, 'in')], 
 'doc': ['bm', {
@@ -55,7 +55,7 @@ disabled servo will not hold its position if a load is applied.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('IsEnabled', 'is_enabled'), 
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('enabled', 'bool', 1, 'out')], 
@@ -71,7 +71,7 @@ Returns true if the specified servo is enabled, false otherwise.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetPosition', 'set_position'), 
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('position', 'int16', 1, 'in')], 
@@ -94,7 +94,7 @@ similar with the Servo Brick, you can also define lengths or speeds with
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetPosition', 'get_position'), 
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('position', 'int16', 1, 'out')], 
@@ -110,7 +110,7 @@ Returns the position of the specified servo as set by :func:`SetPosition`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetCurrentPosition', 'get_current_position'), 
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('position', 'int16', 1, 'out')], 
@@ -128,7 +128,7 @@ position goal.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetVelocity', 'set_velocity'), 
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('velocity', 'uint16', 1, 'in')], 
@@ -150,7 +150,7 @@ The default value is 65535.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetVelocity', 'get_velocity'), 
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('velocity', 'uint16', 1, 'out')], 
@@ -166,7 +166,7 @@ Returns the velocity of the specified servo as set by :func:`SetVelocity`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetCurrentVelocity', 'get_current_velocity'), 
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('velocity', 'uint16', 1, 'out')], 
@@ -184,7 +184,7 @@ velocity goal.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetAcceleration', 'set_acceleration'), 
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('acceleration', 'uint16', 1, 'in')], 
@@ -205,7 +205,7 @@ The default value is 65535.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetAcceleration', 'get_acceleration'), 
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('acceleration', 'uint16', 1, 'out')], 
@@ -222,7 +222,7 @@ Returns the acceleration for the specified servo as set by
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetOutputVoltage', 'set_output_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'in')], 
 'doc': ['bm', {
@@ -246,7 +246,7 @@ The default value is 5000.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetOutputVoltage', 'get_output_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')], 
 'doc': ['bm', {
@@ -261,7 +261,7 @@ Returns the output voltage as specified by :func:`SetOutputVoltage`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetPulseWidth', 'set_pulse_width'), 
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('min', 'uint16', 1, 'in'),
@@ -294,7 +294,7 @@ maximum pulse width.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetPulseWidth', 'get_pulse_width'), 
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('min', 'uint16', 1, 'out'),
@@ -312,7 +312,7 @@ Returns the minimum and maximum pulse width for the specified servo as set by
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetDegree', 'set_degree'), 
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('min', 'int16', 1, 'in'),
@@ -349,7 +349,7 @@ The default values are -9000 and 9000 for the minimum and maximum degree.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetDegree', 'get_degree'), 
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('min', 'int16', 1, 'out'),
@@ -367,7 +367,7 @@ Returns the minimum and maximum degree for the specified servo as set by
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetPeriod', 'set_period'), 
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('period', 'uint16', 1, 'in')],
@@ -397,7 +397,7 @@ The default value is 19.5ms (19500µs).
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetPeriod', 'get_period'), 
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('period', 'uint16', 1, 'out')],
@@ -413,7 +413,7 @@ Returns the period for the specified servo as set by :func:`SetPeriod`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetServoCurrent', 'get_servo_current'), 
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('current', 'uint16', 1, 'out')],
@@ -429,7 +429,7 @@ Returns the current consumption of the specified servo in mA.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetOverallCurrent', 'get_overall_current'), 
 'elements': [('current', 'uint16', 1, 'out')],
 'doc': ['bm', {
@@ -444,7 +444,7 @@ Returns the current consumption of all servos together in mA.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetStackInputVoltage', 'get_stack_input_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')],
 'doc': ['bm', {
@@ -461,7 +461,7 @@ Step-Down or Step-Up Power Supply.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetExternalInputVoltage', 'get_external_input_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')],
 'doc': ['bm', {
@@ -487,7 +487,7 @@ voltage present, the motor will be driven by this voltage.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetMinimumVoltage', 'set_minimum_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'in')],
 'doc': ['ccm', {
@@ -508,7 +508,7 @@ The default value is 5V (5000mV).
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetMinimumVoltage', 'get_minimum_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')],
 'doc': ['ccm', {
@@ -523,7 +523,7 @@ Returns the minimum voltage as set by :func:`SetMinimumVoltage`
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('UnderVoltage', 'under_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')],
 'doc': ['c', {
@@ -540,7 +540,7 @@ in mV.
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('PositionReached', 'position_reached'), 
 'elements': [('servo_num', 'uint8', 1, 'out'),
              ('position', 'int16', 1, 'out')], 
@@ -563,7 +563,7 @@ is reached. The :word:`parameters` are the servo and the position that is reache
 })
 
 com['packets'].append({
-'type': 'signal', 
+'type': 'callback',
 'name': ('VelocityReached', 'velocity_reached'), 
 'elements': [('servo_num', 'uint8', 1, 'out'),
              ('velocity', 'int16', 1, 'out')], 

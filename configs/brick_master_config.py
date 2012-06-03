@@ -5,15 +5,15 @@
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'version': [1, 1, 0],
-    'type': 'Brick',
-    'name': ('Master', 'master'),
+    'category': 'Brick',
+    'name': ('Master', 'master', 'Master'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling Stacks and four Bricklets',
     'packets': []
 }
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetStackVoltage', 'get_stack_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')], 
 'doc': ['bm', {
@@ -30,7 +30,7 @@ Step-Down or Step-Up Power Supply.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetStackCurrent', 'get_stack_current'), 
 'elements': [('current', 'uint16', 1, 'out')], 
 'doc': ['bm', {
@@ -47,7 +47,7 @@ Step-Down or Step-Up Power Supply.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetExtensionType', 'set_extension_type'), 
 'elements': [('extension', 'uint8', 1, 'in'),
              ('exttype', 'uint32', 1, 'in')], 
@@ -64,8 +64,8 @@ Possible extension types:
  :header: "Type", "Description"
  :widths: 10, 100
 
- "1", "Chibi"
- "2", "RS485"
+ "1",    "Chibi"
+ "2",    "RS485"
 
 The extension type is already set when bought and it can be set with the 
 Brick Viewer, it is unlikely that you need this function.
@@ -80,7 +80,7 @@ have to be set on every startup.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetExtensionType', 'get_extension_type'), 
 'elements': [('extension', 'uint8', 1, 'in'),
              ('exttype', 'uint32', 1, 'out')], 
@@ -97,7 +97,7 @@ Returns the extension type for a given extension as set by
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('IsChibiPresent', 'is_chibi_present'), 
 'elements': [('present', 'bool', 1, 'out')], 
 'doc': ['am', {
@@ -112,7 +112,7 @@ Returns true if a Chibi Extension is available to be used by the Master.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetChibiAddress', 'set_chibi_address'), 
 'elements': [('address', 'uint8', 1, 'in')], 
 'doc': ['am', {
@@ -131,7 +131,7 @@ have to be set on every startup.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetChibiAddress', 'get_chibi_address'), 
 'elements': [('address', 'uint8', 1, 'out')], 
 'doc': ['am', {
@@ -146,7 +146,7 @@ Returns the address as set by :func:`SetChibiAddress`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetChibiMasterAddress', 'set_chibi_master_address'), 
 'elements': [('address', 'uint8', 1, 'in')], 
 'doc': ['am', {
@@ -166,7 +166,7 @@ have to be set on every startup.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetChibiMasterAddress', 'get_chibi_master_address'), 
 'elements': [('address', 'uint8', 1, 'out')], 
 'doc': ['am', {
@@ -181,7 +181,7 @@ Returns the address as set by :func:`SetChibiMasterAddress`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetChibiSlaveAddress', 'set_chibi_slave_address'), 
 'elements': [('num', 'uint8', 1, 'in'),
              ('address', 'uint8', 1, 'in')], 
@@ -205,7 +205,7 @@ have to be set on every startup.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetChibiSlaveAddress', 'get_chibi_slave_address'), 
 'elements': [('num', 'uint8', 1, 'in'),
              ('address', 'uint8', 1, 'out')], 
@@ -222,7 +222,7 @@ Returns the slave address for a given num as set by
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetChibiSignalStrength', 'get_chibi_signal_strength'), 
 'elements': [('signal_strength', 'uint8', 1, 'out')], 
 'doc': ['am', {
@@ -238,7 +238,7 @@ packet is received.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetChibiErrorLog', 'get_chibi_error_log'), 
 'elements': [('underrun', 'uint16', 1, 'out'),
              ('crc_error', 'uint16', 1, 'out'),
@@ -259,7 +259,7 @@ interferences.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetChibiFrequency', 'set_chibi_frequency'), 
 'elements': [('frequency', 'uint8', 1, 'in')], 
 'doc': ['am', {
@@ -271,10 +271,10 @@ Sets the Chibi frequency range for the Chibi Extension. Possible values are:
  :header: "Type", "Description"
  :widths: 10, 100
 
- "0", "OQPSK 868Mhz (Europe)"
- "1", "OQPSK 915Mhz (US)"
- "2", "OQPSK 780Mhz (China)"
- "3", "BPSK40 915Mhz"
+ "0",    "OQPSK 868Mhz (Europe)"
+ "1",    "OQPSK 915Mhz (US)"
+ "2",    "OQPSK 780Mhz (China)"
+ "3",    "BPSK40 915Mhz"
 
 It is possible to set the frequency with the Brick Viewer and it will be 
 saved in the EEPROM of the Chibi Extension, it does not
@@ -287,7 +287,7 @@ have to be set on every startup.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetChibiFrequency', 'get_chibi_frequency'), 
 'elements': [('frequency', 'uint8', 1, 'out')], 
 'doc': ['am', {
@@ -302,7 +302,7 @@ Returns the frequency value as set by :func:`SetChibiFrequency`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('SetChibiChannel', 'set_chibi_channel'), 
 'elements': [('channel', 'uint8', 1, 'in')], 
 'doc': ['am', {
@@ -312,13 +312,13 @@ Sets the channel used by the Chibi Extension. Possible channels are
 different for different frequencies:
 
 .. csv-table::
- :header: "Frequency", "Possible Channels"
+ :header: "Frequency",             "Possible Channels"
  :widths: 40, 60
 
  "OQPSK 868Mhz (Europe)", "0"
- "OQPSK 915Mhz (US)", "1, 2, 3, 4, 5, 6, 7, 8, 9, 10"
- "OQPSK 780Mhz (China)", "0, 1, 2, 3"
- "BPSK40 915Mhz", "1, 2, 3, 4, 5, 6, 7, 8, 9, 10"
+ "OQPSK 915Mhz (US)",     "1, 2, 3, 4, 5, 6, 7, 8, 9, 10"
+ "OQPSK 780Mhz (China)",  "0, 1, 2, 3"
+ "BPSK40 915Mhz",         "1, 2, 3, 4, 5, 6, 7, 8, 9, 10"
 
 It is possible to set the frequency with the Brick Viewer and it will be 
 saved in the EEPROM of the Chibi Extension, it does not
@@ -331,7 +331,7 @@ have to be set on every startup.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function',
 'name': ('GetChibiChannel', 'get_chibi_channel'), 
 'elements': [('channel', 'uint8', 1, 'out')], 
 'doc': ['am', {

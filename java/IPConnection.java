@@ -88,7 +88,7 @@ class CallbackLoopThread extends Thread {
 
 		
 			byte type = ipcon.getTypeFromData(data);
-			if(type == ipcon.TYPE_ENUMERATE_CALLBACK) {
+			if(type == ipcon.FUNCTION_ENUMERATE_CALLBACK) {
 				int length = ipcon.getLengthFromData(data);
 				ByteBuffer bb = ByteBuffer.wrap(data, 4, length - 4);
 				bb.order(ByteOrder.LITTLE_ENDIAN);
@@ -96,7 +96,7 @@ class CallbackLoopThread extends Thread {
 				
 				String uid = ipcon.base58Encode(uid_num);
 				
-				String name = new String();
+				String name = "";
 				for(int i = 0; i < 40; i++) {
 					name += (char)bb.get();
 				}
@@ -117,13 +117,13 @@ class CallbackLoopThread extends Thread {
 }
 
 public class IPConnection {
-	private final static String BASE58 = new String("123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ");
-    private final static byte TYPE_GET_STACK_ID = (byte)255;
-    private final static byte TYPE_ENUMERATE = (byte)254;
-    protected final static byte TYPE_ENUMERATE_CALLBACK = (byte)253;
-    private final static byte TYPE_STACK_ENUMERATE = (byte)252;
-    private final static byte TYPE_ADC_CALIBRATE = (byte)251;
-    private final static byte TYPE_GET_ADC_CALIBRATION = (byte)250;
+	private final static String BASE58 = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
+    private final static byte FUNCTION_GET_STACK_ID = (byte)255;
+    private final static byte FUNCTION_ENUMERATE = (byte)254;
+    protected final static byte FUNCTION_ENUMERATE_CALLBACK = (byte)253;
+    private final static byte FUNCTION_STACK_ENUMERATE = (byte)252;
+    private final static byte FUNCTION_ADC_CALIBRATE = (byte)251;
+    private final static byte FUNCTION_GET_ADC_CALIBRATION = (byte)250;
 
     private final static byte BROADCAST_ADDRESS = (byte)0;
     private final static short ENUMERATE_LENGTH = (short)4;
@@ -151,11 +151,11 @@ public class IPConnection {
 			super(string);
 		}
 	}
-	
+
 	public interface EnumerateListener {
 		public void enumerate(String uid, String name, short stackID, boolean isNew);
 	}
-	
+
 	public IPConnection(String host, int port) throws java.io.IOException {
 		sock = new Socket(host, port);
 		out = sock.getOutputStream();
@@ -170,9 +170,9 @@ public class IPConnection {
 	int handleMessage(byte[] data) {
 		byte type = getTypeFromData(data);
 		
-		if(type == TYPE_GET_STACK_ID) {
+		if(type == FUNCTION_GET_STACK_ID) {
 			return handleAddDevice(data);
-		} else if(type == TYPE_ENUMERATE_CALLBACK) {
+		} else if(type == FUNCTION_ENUMERATE_CALLBACK) {
 			return handleEnumerate(data);
 		}
 		
@@ -180,7 +180,7 @@ public class IPConnection {
 		int length = getLengthFromData(data);
 		
 		if(devices[stackID] == null) {
-			System.err.println("Message with unknown Stack ID, discarded: " + stackID);
+			// Message for an unknown device, ignoring it
 			return length;
 		}
 		
@@ -203,8 +203,8 @@ public class IPConnection {
 			}
 		}
 
-        // Message seems to be OK, but can't be handled, most likely
-        // a signal without registered callback
+		// Message seems to be OK, but can't be handled, most likely
+		// a callback without registered function
 		return length;
 	}
 	
@@ -284,11 +284,17 @@ public class IPConnection {
 			addDevice.firmwareVersion[1] = IPConnection.unsignedByte(bb.get());
 			addDevice.firmwareVersion[2] = IPConnection.unsignedByte(bb.get());
 
-			addDevice.name = new String("");
+			String name = "";
 			for(int i = 0; i < 40; i++) {
-				addDevice.name += (char)bb.get();
+				name += (char)bb.get();
 			}
 
+			int i = name.lastIndexOf(' ');
+			if (i < 0 || !name.substring(0, i).replace('-', ' ').equals(addDevice.expectedName.replace('-', ' '))) {
+				return length;
+			}
+
+			addDevice.name = name;
 			addDevice.stackID = unsignedByte(bb.get());
 			devices[addDevice.stackID] = addDevice;
 			addDevice.semaphoreAnswer.release();
@@ -349,7 +355,7 @@ public class IPConnection {
 		ByteBuffer bb = ByteBuffer.allocate(4);
 		bb.order(ByteOrder.LITTLE_ENDIAN);
 		bb.put(BROADCAST_ADDRESS);
-		bb.put(TYPE_ENUMERATE);
+		bb.put(FUNCTION_ENUMERATE);
 		bb.putShort(ENUMERATE_LENGTH);
 
 		this.enumerateListener = enumerateListener;
@@ -366,7 +372,7 @@ public class IPConnection {
 		ByteBuffer bb = ByteBuffer.allocate(12);
 		bb.order(ByteOrder.LITTLE_ENDIAN);
 		bb.put(BROADCAST_ADDRESS);
-		bb.put(TYPE_GET_STACK_ID);
+		bb.put(FUNCTION_GET_STACK_ID);
 		bb.putShort(GET_STACK_ID_LENGTH);
 		bb.putLong(device.uid);
 		
@@ -391,7 +397,7 @@ public class IPConnection {
 	}
 	
 	public static String base58Encode(long value) {
-		String encoded = new String("");
+		String encoded = "";
 		while(value >= 58) {
 			long div = value/58;
 			int mod = (int)(value % 58);

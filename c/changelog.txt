@@ -1,0 +1,14 @@
+1.0.0: Initial version
+1.0.1: Add Visual Studio support
+1.0.2: Add support for IMU Brick, Analog In Bricklet and Analog Out Bricklet
+1.0.3: Add ChibiChannel and ChibiFrequency Methods
+1.0.4: Add sync rect support to Stepper Brick bindings
+1.0.5: Ensure precise timeout duration on Linux and enable struct packing for the Borland C compiler
+1.0.6: Silently ignore messages from devices with unknown stack ID
+       Don't generate register_callback function for devices without callbacks
+       Add inline code documentation
+1.0.7: Add thread for callbacks (allows to call getters in callbacks)
+1.0.8: Also call the enumerate callback from the callback thread
+       Ensure that the answering device matches the expected type in ipcon_add_device
+1.0.9: Don't use strcpy on non-NUL-terminated strings
+1.0.10: Treat '-' and ' ' as equal in device name check for backward compatibility

@@ -2,10 +2,11 @@
 # -*- coding: utf-8 -*-
 
 """
-Bindings Generator
+Java Bindings Generator
+Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
-generator_python.py: Generator for Python bindings
+generator_java_bindings.py: Generator for Java bindings
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License 
@@ -27,16 +28,67 @@ import datetime
 import sys
 import os
 
-com = None
+sys.path.append(os.path.split(os.getcwd())[0])
+import common
 
-gen_text = """/*************************************************************
- * This file was automatically generated on {0}.      *
- *                                                           *
- * If you have a bugfix for this file and want to commit it, *
- * please fix the bug in the generator. You can find a link  *
- * to the generator git on tinkerforge.com                   *
- *************************************************************/
-"""
+device = None
+lang = 'en'
+
+def fix_links(text):
+    link = '{{@link com.tinkerforge.{0}{1}.{2}}}'
+    link_c = '{{@link com.tinkerforge.{0}{1}.{2}Listener}}'
+
+    # handle tables
+    lines = text.split('\n')
+    replaced_lines = []
+    in_table_head = False
+    in_table_body = False
+
+    for line in lines:
+        if line.strip() == '.. csv-table::':
+            in_table_head = True
+            replaced_lines.append('\\verbatim')
+        elif line.strip().startswith(':header: ') and in_table_head:
+            replaced_lines.append(line[len(':header: '):])
+        elif line.strip().startswith(':widths:') and in_table_head:
+            pass
+        elif len(line.strip()) == 0 and in_table_head:
+            in_table_head = False
+            in_table_body = True
+
+            replaced_lines.append('')
+        elif len(line.strip()) == 0 and in_table_body:
+            in_table_body = False
+
+            replaced_lines.append('\\endverbatim')
+            replaced_lines.append('')
+        else:
+            replaced_lines.append(line)
+
+    text = '\n'.join(replaced_lines)
+
+    cls = device.get_camel_case_name()
+    for packet in device.get_packets():
+        name_false = ':func:`{0}`'.format(packet['name'][0])
+        if packet['type'] == 'callback':
+            name = packet['name'][0]
+            name_right = link_c.format(device.get_category(), cls, name)
+        else:
+            name = packet['name'][0][0].lower() + packet['name'][0][1:]
+            name_right = link.format(device.get_category(), cls, name)
+
+        text = text.replace(name_false, name_right)
+
+    text = text.replace(":word:`parameter`", "parameter")
+    text = text.replace(":word:`parameters`", "parameters")
+    text = text.replace('Callback ', 'Listener ')
+    text = text.replace(' Callback', ' Listener')
+    text = text.replace('callback ', 'listener ')
+    text = text.replace(' callback', ' listener')
+    text = text.replace('.. note::', '\\note')
+    text = text.replace('.. warning::', '\\warning')
+
+    return text
 
 def make_import():
     include = """{0}
@@ -48,39 +100,32 @@ import java.util.concurrent.TimeUnit;
 
 """
     date = datetime.datetime.now().strftime("%Y-%m-%d")
-    return include.format(gen_text.format(date))
+    return include.format(common.gen_text_star.format(date))
 
 def make_class():
-    class_str = '\npublic class {0}{1} extends Device {{\n'
-        
-    return class_str.format(com['type'], com['name'][0])
-
-def make_return_objects():
-    obj_version = """
-	public class Version {
-		public String name = null;
-		public short[] firmwareVersion = new short[3];
-		public short[] bindingVersion = new short[3];
-
-		public String toString() {
-			 return "[" + "name = " + name + ", " + "firmwareVersion = " + firmwareVersion + ", " + "bindingVersion = " + bindingVersion + "]";
-		}
-	}
+    class_str = """
+/**
+ * {2}
+ */
+public class {0}{1} extends Device {{
 """
 
+    return class_str.format(device.get_category(), device.get_camel_case_name(), device.get_description())
+
+def make_return_objects():
     objs = ''
     obj = """
 \tpublic class {0} {{
 {1}
 
 \t\tpublic String toString() {{
-\t\t\t return "[" + {2} "]";
+\t\t\treturn "[" + {2} "]";
 \t\t}}
 \t}}
 """
     param = '\t\tpublic {0}{1} {2}{3};'
-    for i, packet in zip(range(len(com['packets'])), com['packets']):
-        if packet['type'] == 'signal':
+    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
+        if packet['type'] == 'callback':
             continue
 
         if get_num_return(packet['elements']) < 2:
@@ -108,31 +153,35 @@ def make_return_objects():
                            '\n'.join(params),
                            ' ", " + '.join(tostr))
         
-    return objs + obj_version
+    return objs
 
 def make_listener_definitions():
     cbs = ''
     cb = """
+\t/**
+\t * {3}
+\t */
 \tpublic interface {0}Listener {{
 \t\tpublic void {1}({2});
 \t}}
 """
-    for i, packet in zip(range(len(com['packets'])), com['packets']):
-        if packet['type'] != 'signal':
+    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
+        if packet['type'] != 'callback':
             continue
 
         name = packet['name'][0]
         name_lower = name[0].lower() + name[1:]
         parameter = make_parameter_list(packet)
-        cbs += cb.format(name, name_lower, parameter)
+        doc = '\n\t * '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
+        cbs += cb.format(name, name_lower, parameter, doc)
     return cbs
 
 def make_callback_listener_definitions():
     cbs = ''
     cb = """
-\t\tcallbacks[TYPE_{0}] = new CallbackListener() {{
+\t\tcallbacks[CALLBACK_{0}] = new CallbackListener() {{
 \t\t\tpublic void callback(byte[] data) {{{1}
-\t\t\t\t(({2}Listener)listenerObjects[TYPE_{0}]).{3}({4});
+\t\t\t\t(({2}Listener)listenerObjects[CALLBACK_{0}]).{3}({4});
 \t\t\t}}
 \t\t}};
 """
@@ -143,8 +192,8 @@ def make_callback_listener_definitions():
 
 {1}"""
     cbs_end = '\t}\n'
-    for i, packet in zip(range(len(com['packets'])), com['packets']):
-        if packet['type'] != 'signal':
+    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
+        if packet['type'] != 'callback':
             continue
 
         typ = packet['name'][1].upper()
@@ -170,18 +219,24 @@ def make_callback_listener_definitions():
     return cbs + cbs_end
 
 def make_add_listener():
+    if device.get_callback_count() == 0:
+        return '}'
+
     listeners = """
+\t/**
+\t * Registers a listener object.
+\t */
 \tpublic void addListener(Object o) {{
 \t\t{0}
 \t}}
 }}"""
     listener = """if(o instanceof {0}Listener) {{
-\t\t\tlistenerObjects[TYPE_{1}] = o;
+\t\t\tlistenerObjects[CALLBACK_{1}] = o;
 \t\t}}"""
 
     l = []
-    for i, packet in zip(range(len(com['packets'])), com['packets']):
-        if packet['type'] != 'signal':
+    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
+        if packet['type'] != 'callback':
             continue
 
         name = packet['name'][0]
@@ -189,18 +244,21 @@ def make_add_listener():
         l.append(listener.format(name, name_upper))
     return listeners.format(' else '.join(l))
 
-def make_type_definitions():
-    types = ''
-    type = '\tprivate final static byte TYPE_{0} = (byte){1};\n'
-    for i, packet in zip(range(len(com['packets'])), com['packets']):
-        types += type.format(packet['name'][1].upper(), i+1)
-    return types
+def make_function_id_definitions():
+    function_ids = ''
+    function_id = '\tprivate final static byte {2}_{0} = (byte){1};\n'
+    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
+        if packet['type'] == 'callback':
+            function_ids += function_id.format(packet['name'][1].upper(), i+1, 'CALLBACK')
+        else:
+            function_ids += function_id.format(packet['name'][1].upper(), i+1, 'FUNCTION')
+    return function_ids
 
 
 def make_parameter_list(packet):
     param = []
     for element in packet['elements']:
-        if element[3] == 'out' and packet['type'] == 'method':
+        if element[3] == 'out' and packet['type'] == 'function':
             continue
         java_type = get_java_type(element[1])
         name = to_camel_case(element[0])
@@ -211,35 +269,30 @@ def make_parameter_list(packet):
         param.append('{0}{1} {2}'.format(java_type, arr, name))
     return ', '.join(param)
 
-def make_init_method():
-    return """
-    def __init__(self, uid):
-        Device.__init__(self, uid)
-
-"""
-
-def make_callbacks_format():
-    cbs = ''
-    cb = "        self.callbacks_format[{0}.CALLBACK_{1}] = '{2}'\n"
-    for i, packet in zip(range(len(com['packets'])), com['packets']):
-        if packet['type'] != 'signal':
-            continue
-        form = make_format_list(packet, 'out')
-        cbs += cb.format(com['name'][0], packet['name'][1].upper(), form)
-    return cbs
-
 def make_constructor():
     con = """
+\t/**
+\t * Creates an object with the unique device ID \c uid. This object can
+\t * then be added to the IP connection.
+\t */
 \tpublic {0}{1}(String uid) {{
 \t\tsuper(uid);
+
+\t\texpectedName = "{5} {6}";
 
 \t\tbindingVersion[0] = {2};
 \t\tbindingVersion[1] = {3};
 \t\tbindingVersion[2] = {4};
 """
 
-    v = com['version']
-    return con.format(com['type'], com['name'][0], v[0], v[1], v[2])
+    v = device.get_version()
+    return con.format(device.get_category(),
+                      device.get_camel_case_name(),
+                      v[0],
+                      v[1],
+                      v[2],
+                      device.get_display_name(),
+                      device.get_category())
 
 def get_put_type(typ):
     forms = {
@@ -340,31 +393,19 @@ def make_format_list(packet, io):
     return " ".join(forms)
 
 def make_methods():
-    method_version = """
-	public Version getVersion() {
-		Version version = new Version();
-		version.name = name;
-		version.firmwareVersion[0] = firmwareVersion[0];
-		version.firmwareVersion[1] = firmwareVersion[1];
-		version.firmwareVersion[2] = firmwareVersion[2];
-		version.bindingVersion[0] = bindingVersion[0];
-		version.bindingVersion[1] = bindingVersion[1];
-		version.bindingVersion[2] = bindingVersion[2];
-
-		return version;
-	}
-"""
-
     methods = ''
     method = """
+\t/**
+\t * {9}
+\t */
 \tpublic {0} {1}({2}) {3} {{
 \t\tByteBuffer bb = ByteBuffer.allocate({4});
 \t\tbb.order(ByteOrder.LITTLE_ENDIAN);
 \t\tbb.put((byte)stackID);
-\t\tbb.put((byte)TYPE_{5});
+\t\tbb.put((byte)FUNCTION_{5});
 \t\tbb.putShort((short){4});
 {6}
-\t\tipcon.write(this, bb, TYPE_{5}, {7});{8}
+\t\tipcon.write(this, bb, FUNCTION_{5}, {7});{8}
 \t}}
 """
     method_answer = """
@@ -396,9 +437,9 @@ def make_methods():
 \t\t\t\tbb.put((byte)0);
 \t\t\t}}"""
 
-    cls = com['name'][0]
-    for packet in com['packets']:
-        if packet['type'] != 'method':
+    cls = device.get_camel_case_name()
+    for packet in device.get_packets():
+        if packet['type'] != 'function':
             continue
 
         ret = get_return_value(packet)
@@ -406,7 +447,7 @@ def make_methods():
         parameter = make_parameter_list(packet)
         size = str(get_bb_size(packet['elements']))
         name_upper = packet['name'][1].upper()
-
+        doc = '\n\t * '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
         bbputs = ''
         bbput = '\t\tbb.put{0}(({1}){2});'
         for element in packet['elements']:
@@ -456,9 +497,10 @@ def make_methods():
                                  name_upper,
                                  bbputs,
                                  has_ret,
-                                 answer)
+                                 answer,
+                                 doc)
 
-    return methods + method_version
+    return methods
 
 def make_bbgets(packet, with_obj = False):
     bbgets = ''
@@ -563,10 +605,10 @@ def to_camel_case(name):
     return ret
 
 def make_files(com_new, directory):
-    global com
-    com = com_new
+    global device
+    device = common.Device(com_new)
 
-    file_name = '{0}{1}'.format(com['type'], com['name'][0])
+    file_name = '{0}{1}'.format(device.get_category(), device.get_camel_case_name())
     
     directory += '/bindings'
     if not os.path.exists(directory):
@@ -575,7 +617,7 @@ def make_files(com_new, directory):
     java = file('{0}/{1}.java'.format(directory, file_name), "w")
     java.write(make_import())
     java.write(make_class())
-    java.write(make_type_definitions())
+    java.write(make_function_id_definitions())
     java.write(make_return_objects())
     java.write(make_listener_definitions())
     java.write(make_constructor())

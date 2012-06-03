@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 """
-Bindings Generator
+C/C++ Bindings Generator
 Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
-generator_c_bindings.py: Generator for C bindings
+generator_c_bindings.py: Generator for C/C++ bindings
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License 
@@ -28,17 +28,62 @@ import datetime
 import sys
 import os
 
-com = None
+sys.path.append(os.path.split(os.getcwd())[0])
+import common
 
-gen_text = """\
-/*************************************************************
- * This file was automatically generated on {0}.      *
- *                                                           *
- * If you have a bugfix for this file and want to commit it, *
- * please fix the bug in the generator. You can find a link  *
- * to the generator git on tinkerforge.com                   *
- *************************************************************/
-"""
+device = None
+lang = 'en'
+
+def fix_links(text):
+    link = '{{@link {0}_{1}}}'
+    link_c = '{{@link {0}_CALLBACK_{1}}}'
+
+    # handle tables
+    lines = text.split('\n')
+    replaced_lines = []
+    in_table_head = False
+    in_table_body = False
+
+    for line in lines:
+        if line.strip() == '.. csv-table::':
+            in_table_head = True
+            replaced_lines.append('\\verbatim')
+        elif line.strip().startswith(':header: ') and in_table_head:
+            replaced_lines.append(line[len(':header: '):])
+        elif line.strip().startswith(':widths:') and in_table_head:
+            pass
+        elif len(line.strip()) == 0 and in_table_head:
+            in_table_head = False
+            in_table_body = True
+
+            replaced_lines.append('')
+        elif len(line.strip()) == 0 and in_table_body:
+            in_table_body = False
+
+            replaced_lines.append('\\endverbatim')
+            replaced_lines.append('')
+        else:
+            replaced_lines.append(line)
+
+    text = '\n'.join(replaced_lines)
+
+    for packet in device.get_packets():
+        name_false = ':func:`{0}`'.format(packet['name'][0])
+        if packet['type'] == 'callback':
+            name = packet['name'][1].upper()
+            name_right = link_c.format(device.get_underscore_name().upper(), name)
+        else:
+            name = packet['name'][1]
+            name_right = link.format(device.get_underscore_name(), name)
+
+        text = text.replace(name_false, name_right)
+
+    text = text.replace(":word:`parameter`", "parameter")
+    text = text.replace(":word:`parameters`", "parameters")
+    text = text.replace('.. note::', '\\note')
+    text = text.replace('.. warning::', '\\warning')
+
+    return text
 
 def make_parameter_list(packet):
     param = ''
@@ -84,29 +129,44 @@ def make_include_c():
 
 """
     date = datetime.datetime.now().strftime("%Y-%m-%d")
-    lower_type = com['type'].lower()
 
-    return include.format(gen_text.format(date), lower_type, com['name'][1])
+    return include.format(common.gen_text_star.format(date),
+                          device.get_category().lower(),
+                          device.get_underscore_name())
 
-def make_type_defines():
-    define_temp = '#define TYPE_{0} {1}\n'
+def make_function_id_defines():
+    define_temp = '#define {2}_{0} {1}\n'
 
     defines = ''
-    for i, packet in zip(range(len(com['packets'])), com['packets']):
-        defines += define_temp.format(packet['name'][1].upper(), i+1)
+    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
+        if packet['type'] != 'function':
+            continue
+
+        defines += define_temp.format(packet['name'][1].upper(), i+1, 'FUNCTION')
 
     return defines
 
 def make_callback_defines():
-    define_temp = '#define {0}_CALLBACK_{1} {2}\n'
+    define_temp = """
+/**
+ * \ingroup {5}{4}
+ *
+ * {3}
+ */
+#define {0}_CALLBACK_{1} {2}
+"""
 
     defines = ''
-    for i, packet in zip(range(len(com['packets'])), com['packets']):
-        if packet['type'] != 'signal':
+    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
+        if packet['type'] != 'callback':
             continue
-        defines += define_temp.format(com['name'][1].upper(), 
+        doc = '\n * '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
+        defines += define_temp.format(device.get_underscore_name().upper(),
                                       packet['name'][1].upper(), 
-                                      i+1)
+                                      i+1,
+                                      doc,
+                                      device.get_camel_case_name(),
+                                      device.get_category())
 
     return defines
 
@@ -127,13 +187,13 @@ def make_structs():
     struct_temp = """
 typedef struct {{
 \tuint8_t stack_id;
-\tuint8_t type;
+\tuint8_t function_id;
 \tuint16_t length;
 {0}}} ATTRIBUTE_PACKED {1}{2}_;
 """
 
-    for packet in com['packets']:
-        if packet['type'] == 'signal':
+    for packet in device.get_packets():
+        if packet['type'] == 'callback':
             cb = "Callback"
             struct_body = ''
             for element in packet['elements']:
@@ -190,6 +250,8 @@ def make_create_func():
 void {0}_create({1} *{0}, const char *uid) {{
 \tipcon_device_create({0}, uid);
 
+\t{0}->expected_name = "{6} {7}";
+
 \t{0}->binding_version[0] = {3};
 \t{0}->binding_version[1] = {4};
 \t{0}->binding_version[2] = {5};
@@ -197,18 +259,19 @@ void {0}_create({1} *{0}, const char *uid) {{
 """
 
     cb_temp = """
-\t{0}->device_callbacks[TYPE_{1}] = {0}_callback_{2};"""
+\t{0}->device_callbacks[{3}_CALLBACK_{1}] = {0}_callback_{2};"""
 
     cbs = ''
-    dev_name = com['name'][1]
-    for packet in com['packets']:
-        if packet['type'] != 'signal':
+    dev_name = device.get_underscore_name()
+    for packet in device.get_packets():
+        if packet['type'] != 'callback':
             continue
         type_name = packet['name'][1]
-        cbs += cb_temp.format(dev_name, type_name.upper(), type_name)
+        cbs += cb_temp.format(dev_name, type_name.upper(), type_name, dev_name.upper())
     
-    v = com['version']
-    return func.format(dev_name, com['name'][0], cbs, v[0], v[1], v[2])
+    v = device.get_version()
+    return func.format(dev_name, device.get_camel_case_name(), cbs, v[0], v[1], v[2],
+                       device.get_display_name(), device.get_category())
 
 def make_method_funcs():
     def make_struct_list(packet):
@@ -219,8 +282,8 @@ def make_method_funcs():
             
             sf = make_short_form(packet['name'][1])
             if element[1] == 'string':
-                temp = '\n\tstrcpy({0}.{1}, {1});\n'
-                struct_list += temp.format(sf, element[0])
+                temp = '\n\tstrncpy({0}.{1}, {1}, {2});\n'
+                struct_list += temp.format(sf, element[0], element[2])
             elif element[2] > 1:
                 temp = '\n\tmemcpy({0}.{1}, {1}, {2}*sizeof({3}));'
                 struct_list += temp.format(sf, 
@@ -278,7 +341,7 @@ int {0}_{1}({2} *{0}{3}) {{
 
 {9}\t{5}_ {6};
 \t{6}.stack_id = {0}->stack_id;
-\t{6}.type = {4};
+\t{6}.function_id = {4};
 \t{6}.length = sizeof({5}_);{7}
 
 \tipcon_device_write({0}, (char *)&{6}, sizeof({5}_));
@@ -293,7 +356,7 @@ int {0}_{1}({2} *{0}{3}) {{
 {3}
 """
 
-    sizeof_ret = """\t{0}->answer.type = {1};
+    sizeof_ret = """\t{0}->answer.function_id = {1};
 \t{0}->answer.length = sizeof({2}Return_);
 """
 
@@ -304,17 +367,17 @@ int {0}_{1}({2} *{0}{3}) {{
 
 """
 
-    a = com['name'][1]
-    c = com['name'][0]
+    a = device.get_underscore_name()
+    c = device.get_camel_case_name()
 
     funcs = ''
-    for packet in com['packets']:
-        if packet['type'] != 'method':
+    for packet in device.get_packets():
+        if packet['type'] != 'function':
             continue
 
         b = packet['name'][1]
         d = make_parameter_list(packet)
-        e = 'TYPE_{0}'.format(packet['name'][1].upper())
+        e = 'FUNCTION_{0}'.format(packet['name'][1].upper())
         f = packet['name'][0]
         g = make_short_form(b)
         h = make_struct_list(packet)
@@ -331,49 +394,30 @@ int {0}_{1}({2} *{0}{3}) {{
 
     return funcs + func_version.format(a, c)
 
-def make_set_callback_funcs():
-    func = """
-void {0}_set_callback_{1}({2} *{0}, {1}_func_t func) {{
-\t{0}->callbacks[{3}] = (void*)func;
-}}
-"""
-    
-    funcs = ''       
-    for packet in com['packets']:
-        if packet['type'] != 'signal':
-            continue
-
-
-        funcs += func.format(com['name'][1], 
-                             packet['name'][1], 
-                             com['name'][0],
-                             'TYPE_{0}'.format(packet['name'][1].upper()))
-    return funcs
-
 def make_register_callback_func():
     func = """
 void {0}_register_callback({1} *{0}, uint8_t cb, void *func) {{
     {0}->callbacks[cb] = func;
 }}
 """
-    return func.format(com['name'][1], com['name'][0])
+    return func.format(device.get_underscore_name(), device.get_camel_case_name())
 
 def make_callback_funcs():
     func = """
-int {0}_callback_{1}({2} *{0}, const unsigned char *buffer) {{
+static int {0}_callback_{1}({2} *{0}, const unsigned char *buffer) {{
 \t{3}Callback_ *{4}c = ({3}Callback_ *)buffer;
-\t(({1}_func_t){0}->callbacks[{4}c->type])({5});
+\t(({1}_func_t){0}->callbacks[{4}c->function_id])({5});
 \treturn sizeof({3}Callback_);
 }}
 """
 
     funcs = ''
-    for packet in com['packets']:
-        if packet['type'] != 'signal':
+    for packet in device.get_packets():
+        if packet['type'] != 'callback':
             continue
-        a = com['name'][1]
+        a = device.get_underscore_name()
         b = packet['name'][1]
-        c = com['name'][0]
+        c = device.get_camel_case_name()
         d = packet['name'][0]
         e = make_short_form(b)
         f_list = []
@@ -392,28 +436,40 @@ def make_include_h():
 
 #include "ip_connection.h"
 
-typedef Device {3};
+/**
+ * \defgroup {4}{3} {3} {4}
+ */
 
+/**
+ * \ingroup {4}{3}
+ *
+ * {5}
+ */
+typedef Device {3};
 """
 
     date = datetime.datetime.now().strftime("%Y-%m-%d")
-    upper_type = com['type'].upper()
-    upper_name = com['name'][1].upper()
+    upper_type = device.get_category().upper()
+    upper_name = device.get_underscore_name().upper()
 
-    return include.format(gen_text.format(date), 
+    return include.format(common.gen_text_star.format(date),
                           upper_type, 
                           upper_name, 
-                          com['name'][0])
+                          device.get_camel_case_name(),
+                          device.get_category(),
+                          device.get_description())
 
 def make_end_h():
-    return "\n#endif"
+    return "\n#endif\n"
 
 def make_typedefs():
-    typedef = 'typedef void (*{0}_func_t)({1});\n'
+    typedef = """
+typedef void (*{0}_func_t)({1});
+"""
 
     typedefs = '\n'
-    for packet in com['packets']:
-        if packet['type'] != 'signal':
+    for packet in device.get_packets():
+        if packet['type'] != 'callback':
             continue
 
         name = packet['name'][1]
@@ -426,62 +482,88 @@ def make_typedefs():
     return typedefs
 
 def make_create_declaration():
-    create = '\nvoid {0}_create({1} *{0}, const char *uid);\n\n'
-    return create.format(com['name'][1], com['name'][0])
+    create = """
+/**
+ * \ingroup {2}{1}
+ *
+ * Creates an object with the unique device ID \c uid. This object can then be
+ * added to the IP connection.
+ */
+void {0}_create({1} *{0}, const char *uid);
+"""
+    return create.format(device.get_underscore_name(),
+                         device.get_camel_case_name(),
+                         device.get_category())
 
 def make_method_declarations():
-    func_version = """int {0}_get_version({1} *{0}, char ret_name[40], uint8_t ret_firmware_version[3], uint8_t ret_binding_version[3]);"""
-    func = 'int {0}_{1}({2} *{0}{3});\n'
-    a = com['name'][1]
-    c = com['name'][0]
+    func_version = """
+/**
+ * \ingroup {2}{1}
+ *
+ * Returns the name (including the hardware version), the firmware version
+ * and the binding version of the device. The firmware and binding versions are
+ * given in arrays of size 3 with the syntax [major, minor, revision].
+ */
+int {0}_get_version({1} *{0}, char ret_name[40], uint8_t ret_firmware_version[3], uint8_t ret_binding_version[3]);
+"""
+    func = """
+/**
+ * \ingroup {5}{2}
+ *
+ * {4}
+ */
+int {0}_{1}({2} *{0}{3});
+"""
+
+    a = device.get_underscore_name()
+    c = device.get_camel_case_name()
 
     funcs = ''
-    for packet in com['packets']:
-        b = packet['name'][1]
-        d = make_parameter_list(packet)
-
-        funcs += func.format(a, b, c, d)
-
-    return funcs + func_version.format(a, c)
-
-def make_set_callback_declarations():
-    func = 'void {0}_set_callback_{1}({2} *{0}, {1}_func_t func);\n'
-
-    funcs = '\n'       
-    for packet in com['packets']:
-        if packet['type'] != 'signal':
+    for packet in device.get_packets():
+        if packet['type'] != 'function':
             continue
 
-        funcs += func.format(com['name'][1], 
-                             packet['name'][1],  
-                             com['name'][0])
-    return funcs
+        b = packet['name'][1]
+        d = make_parameter_list(packet)
+        doc = '\n * '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
+
+        funcs += func.format(a, b, c, d, doc, device.get_category())
+
+    return funcs + func_version.format(a, c, device.get_category())
 
 def make_register_callback_declaration():
+    if device.get_callback_count() == 0:
+        return '\n'
+
     func = """
+/**
+ * \ingroup {2}{1}
+ *
+ * Registers a callback with ID \c cb to the function \c func.
+ */
 void {0}_register_callback({1} *{0}, uint8_t cb, void *func);
 """
-    return func.format(com['name'][1], com['name'][0])
+    return func.format(device.get_underscore_name(), device.get_camel_case_name(), device.get_category())
 
 def make_callback_declarations():
     func = 'int {0}_callback_{1}({2} *{0}, const unsigned char *buffer);\n'
 
     funcs = '\n'
-    for packet in com['packets']:
-        if packet['type'] != 'signal':
+    for packet in device.get_packets():
+        if packet['type'] != 'callback':
             continue
 
-        funcs += func.format(com['name'][1], 
+        funcs += func.format(device.get_underscore_name(),
                              packet['name'][1],
-                             com['name'][0])
+                             device.get_camel_case_name())
 
     return funcs
 
 def make_files(com_new, directory):
-    global com
-    com = com_new
+    global device
+    device = common.Device(com_new)
 
-    file_name = '{0}_{1}'.format(com['type'].lower(), com['name'][1])
+    file_name = '{0}_{1}'.format(device.get_category().lower(), device.get_underscore_name())
     
     directory += '/bindings'
     if not os.path.exists(directory):
@@ -489,7 +571,7 @@ def make_files(com_new, directory):
 
     c = file('{0}/{1}.c'.format(directory, file_name), "w")
     c.write(make_include_c())
-    c.write(make_type_defines())
+    c.write(make_function_id_defines())
     c.write(make_typedefs())
     c.write(make_structs())
     c.write(make_method_funcs())
