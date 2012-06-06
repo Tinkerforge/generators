@@ -35,13 +35,14 @@ namespace Tinkerforge
 		bool RecvLoopFlag = true;
 		Device addDev = null;
 		Device[] devices = new Device[256];
-		EnumerateCallback enumerateCallback = null;
 		BlockingQueue callbackQueue = new BlockingQueue();
 
 		internal const int TIMEOUT_ADD_DEVICE = 2500;
 		internal const int TIMEOUT_ANSWER = 2500;
 
-		public delegate void EnumerateCallback(string uid, 
+		public event EnumerateCallbackEventHandler EnumerateCallback;
+		
+		public delegate void EnumerateCallbackEventHandler(string uid, 
 		                                       string name, 
 		                                       byte stackID,
 		                                       bool isNew);
@@ -136,7 +137,7 @@ namespace Tinkerforge
                         byte stackID = LEConverter.ByteFrom(52, data);
                         bool isNew = LEConverter.BoolFrom(53, data);
 
-                        enumerateCallback(Base58.Encode(uid), name, stackID, isNew);
+						OnEnumerateCallback(Base58.Encode(uid), name, stackID, isNew);
                     }
                     else
                     {
@@ -171,6 +172,12 @@ namespace Tinkerforge
 			return data[1];
 		}
 
+		protected void OnEnumerateCallback(string uid, string name, byte stackID, bool isNew)
+		{
+			var handler = EnumerateCallback;
+			if(handler != null)
+				handler(uid, name, stackID, isNew);
+		}
 
 		private int HandleMessage(byte[] data)
 		{
@@ -181,7 +188,8 @@ namespace Tinkerforge
 			}
 			else if(type == FUNCTION_ENUMERATE_CALLBACK)
 			{
-				return HandleEnumerate(data);
+                callbackQueue.Enqueue(data);
+                return GetLengthFromData(data);
 			}
 
 			byte stackID = GetStackIDFromData(data);
@@ -210,63 +218,59 @@ namespace Tinkerforge
 			return length;
 		}
 
-		private int HandleAddDevice(byte[] data)
-		{
-			int length = GetLengthFromData(data);
+        private int HandleAddDevice(byte[] data)
+        {
+            int length = GetLengthFromData(data);
 
-			if(addDev == null) 
-			{
-				return length;
-			}
+            if (addDev == null)
+            {
+                return length;
+            }
 
-			ulong uid = LEConverter.ULongFrom(4, data);
+            ulong uid = LEConverter.ULongFrom(4, data);
 
-			if(addDev.uid == uid) 
-			{
-				string name = LEConverter.StringFrom(15, data, 40);
-				int i = name.LastIndexOf(' ');
+            if (addDev.uid == uid)
+            {
+                string name = LEConverter.StringFrom(15, data, 40);
+                int i = name.LastIndexOf(' ');
 
-				if (i < 0 || name.Substring(0, i).Replace('-', ' ') != addDev.expectedName.Replace('-', ' ')) {
-					return length;
-				}
+                if (i < 0 || name.Substring(0, i).Replace('-', ' ') != addDev.expectedName.Replace('-', ' '))
+                {
+                    return length;
+                }
 
-				addDev.firmwareVersion[0] = LEConverter.ByteFrom(12, data);
-				addDev.firmwareVersion[1] = LEConverter.ByteFrom(13, data);
-				addDev.firmwareVersion[2] = LEConverter.ByteFrom(14, data);
-				addDev.name = name;
-				addDev.stackID = LEConverter.ByteFrom(55, data);
-				devices[addDev.stackID] = addDev;
-				addDev.answerQueue.Enqueue(data);
-				addDev = null;
-			}
+                addDev.firmwareVersion[0] = LEConverter.ByteFrom(12, data);
+                addDev.firmwareVersion[1] = LEConverter.ByteFrom(13, data);
+                addDev.firmwareVersion[2] = LEConverter.ByteFrom(14, data);
+                addDev.name = name;
+                addDev.stackID = LEConverter.ByteFrom(55, data);
+                devices[addDev.stackID] = addDev;
+                addDev.answerQueue.Enqueue(data);
+                addDev = null;
+            }
 
-			return length;
-		}
-
-		private int HandleEnumerate(byte[] data)
-		{
-			if(enumerateCallback != null) 
-			{
-				callbackQueue.Enqueue(data);
-			}
-
-			return GetLengthFromData(data);
-		}
+            return length;
+        }
 
         public void Write(byte[] data)
         {
             SocketStream.Write(data, 0, data.Length);
         }
 
-		public void Enumerate(EnumerateCallback enumerateCallback) 
+		public void Enumerate(EnumerateCallbackEventHandler enumerateCallback) 
 		{
-			this.enumerateCallback = enumerateCallback;
-			byte[] data = new byte[4];
-			LEConverter.To(BROADCAST_ADDRESS, 0, data);
-			LEConverter.To(FUNCTION_ENUMERATE, 1, data);
-			LEConverter.To((ushort)4, 2, data);
-            Write(data);
+			this.EnumerateCallback += enumerateCallback;
+            Enumerate();
 		}
+
+        public void Enumerate()
+        {
+            byte[] data = new byte[4];
+            LEConverter.To(BROADCAST_ADDRESS, 0, data);
+            LEConverter.To(FUNCTION_ENUMERATE, 1, data);
+            LEConverter.To((ushort)4, 2, data);
+            Write(data);
+        }
 
 		public void AddDevice(Device device) {
 			byte[] data = new byte[12];
