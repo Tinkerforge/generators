@@ -79,12 +79,12 @@ typedef struct Device_{
 	uint8_t stack_id;
 	uint64_t uid;
 #ifdef _WIN32
-	HANDLE sem_write;
+	CRITICAL_SECTION write_mutex;
 	HANDLE sem_answer;
 #else
+	pthread_mutex_t write_mutex;
 	pthread_cond_t cond;
 	bool sem_answer_flag;
-	pthread_mutex_t sem_write;
 	pthread_mutex_t sem_answer;
 #endif
 	const char *expected_name;
@@ -177,6 +177,14 @@ typedef struct {
 #endif
 #undef ATTRIBUTE_PACKED
 
+#ifdef _WIN32
+void ipcon_mutex_lock(CRITICAL_SECTION *mutex);
+void ipcon_mutex_unlock(CRITICAL_SECTION *mutex);
+#else
+void ipcon_mutex_lock(pthread_mutex_t *mutex);
+void ipcon_mutex_unlock(pthread_mutex_t *mutex);
+#endif
+
 int ipcon_create(IPConnection *ipcon, const char *host, const int port);
 void ipcon_enumerate(IPConnection *ipcon, enumerate_callback_func_t cb);
 int ipcon_add_device(IPConnection *ipcon, Device *device);
@@ -202,8 +210,5 @@ int ipcon_answer_sem_wait_timeout(Device *device);
 uint8_t ipcon_get_stack_id_from_data(const unsigned char *data);
 uint8_t ipcon_get_function_id_from_data(const unsigned char *data);
 uint16_t ipcon_get_length_from_data(const unsigned char *data);
-
-int ipcon_sem_wait_write(Device *device);
-int ipcon_sem_post_write(Device *device);
 
 #endif

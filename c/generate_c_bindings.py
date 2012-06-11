@@ -337,7 +337,7 @@ int {0}_{1}({2} *{0}{3}) {{
 \t\treturn E_NOT_ADDED;
 \t}}
 
-\tipcon_sem_wait_write({0});
+\tipcon_mutex_lock(&{0}->write_mutex);
 
 {9}\t{5}_ {6};
 \t{6}.stack_id = {0}->stack_id;
@@ -346,7 +346,7 @@ int {0}_{1}({2} *{0}{3}) {{
 
 \tipcon_device_write({0}, (char *)&{6}, sizeof({5}_));
 
-{10}{8}\tipcon_sem_post_write({0});
+{10}{8}\tipcon_mutex_unlock(&{0}->write_mutex);
 
 \treturn E_OK;
 }}
@@ -361,7 +361,7 @@ int {0}_{1}({2} *{0}{3}) {{
 """
 
     answer_sem = """\tif(ipcon_answer_sem_wait_timeout({0}) != 0) {{
-\t\tipcon_sem_post_write({0});
+\t\tipcon_mutex_unlock(&{0}->write_mutex);
 \t\treturn E_TIMEOUT;
 \t}}
 

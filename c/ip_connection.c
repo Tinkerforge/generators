@@ -28,11 +28,11 @@ const char BASE58_STR[] = \
 
 #ifdef _WIN32
 
-static void ipcon_mutex_lock(CRITICAL_SECTION *mutex) {
+void ipcon_mutex_lock(CRITICAL_SECTION *mutex) {
 	EnterCriticalSection(mutex);
 }
 
-static void ipcon_mutex_unlock(CRITICAL_SECTION *mutex) {
+void ipcon_mutex_unlock(CRITICAL_SECTION *mutex) {
 	LeaveCriticalSection(mutex);
 }
 
@@ -49,11 +49,11 @@ static void ipcon_semaphore_release(HANDLE semaphore) {
 
 #else
 
-static void ipcon_mutex_lock(pthread_mutex_t *mutex) {
+void ipcon_mutex_lock(pthread_mutex_t *mutex) {
 	pthread_mutex_lock(mutex);
 }
 
-static void ipcon_mutex_unlock(pthread_mutex_t *mutex) {
+void ipcon_mutex_unlock(pthread_mutex_t *mutex) {
 	pthread_mutex_unlock(mutex);
 }
 
@@ -314,11 +314,11 @@ void ipcon_device_create(Device *device, const char *uid) {
 	device->answer.length = 0;
 
 #ifdef _WIN32
-	device->sem_write = CreateSemaphore(NULL,1,1,NULL);
+	InitializeCriticalSection(&device->write_mutex);
 	// Default state for answer semaphore is locked
 	device->sem_answer = CreateSemaphore(NULL,0,1,NULL);
 #else
-	pthread_mutex_init(&device->sem_write, NULL);
+	pthread_mutex_init(&device->write_mutex, NULL);
 	pthread_mutex_init(&device->sem_answer, NULL);
 	pthread_cond_init(&device->cond, NULL);
 
@@ -567,22 +567,6 @@ uint8_t ipcon_get_function_id_from_data(const unsigned char *data) {
 
 uint16_t ipcon_get_length_from_data(const unsigned char *data) {
 	return *((uint16_t*)(data + 2));
-}
-
-int ipcon_sem_wait_write(Device *device) {
-#ifdef _WIN32
-	return WaitForSingleObject(device->sem_write, INFINITE);
-#else
-	return pthread_mutex_lock(&device->sem_write);
-#endif
-}
-
-int ipcon_sem_post_write(Device *device) {
-#ifdef _WIN32
-	return ReleaseSemaphore(device->sem_write,1,NULL);
-#else
-	return pthread_mutex_unlock(&device->sem_write);
-#endif
 }
 
 void ipcon_base58encode(uint64_t value, char *str) {
