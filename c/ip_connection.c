@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <errno.h>
 
 #ifndef _WIN32
 	#include <unistd.h>
@@ -77,9 +78,28 @@ THREAD_RETURN_TYPE ipcon_recv_loop(void *param) {
 	while(ipcon->recv_loop_flag) {
 #ifdef _WIN32
 		int length = recv(ipcon->s, (char*)buffer, RECV_BUFFER_SIZE, 0);
+		if(length == SOCKET_ERROR) {
+			if (WSAGetLastError() == WSAEINTR) {
+				continue;
+			}
+
+			fprintf(stderr, "A socket error occurred, destroying ipcon\n");
+			ipcon_destroy(ipcon);
+			THREAD_RETURN;
+		}
 #else
 		int length = read(ipcon->fd, buffer, RECV_BUFFER_SIZE);
+		if(length < 0) {
+			if (errno == EINTR) {
+				continue;
+			}
+
+			fprintf(stderr, "A socket error occurred, destroying ipcon\n");
+			ipcon_destroy(ipcon);
+			THREAD_RETURN;
+		}
 #endif
+
 		if(length == 0) {
 			if(ipcon->recv_loop_flag) {
 				fprintf(stderr, "Socket disconnected by Server, destroying ipcon\n");
