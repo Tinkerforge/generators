@@ -18,7 +18,7 @@ public abstract class Device {
 	String name = null;
 	short[] firmwareVersion = new short[3];
 	short[] bindingVersion = new short[3];
-	byte answerType = (byte)0;
+	byte answerFunctionID = (byte)0;
 	Semaphore semaphoreAnswer = new Semaphore(1, true);
 	Semaphore semaphoreWrite = new Semaphore(1, true);
 	SynchronousQueue<byte[]> answerQueue = new SynchronousQueue<byte[]>();

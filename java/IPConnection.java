@@ -86,9 +86,8 @@ class CallbackLoopThread extends Thread {
 				continue;
 			}
 
-		
-			byte type = ipcon.getTypeFromData(data);
-			if(type == ipcon.FUNCTION_ENUMERATE_CALLBACK) {
+			byte functionID = ipcon.getFunctionIDFromData(data);
+			if(functionID == ipcon.FUNCTION_ENUMERATE_CALLBACK) {
 				int length = ipcon.getLengthFromData(data);
 				ByteBuffer bb = ByteBuffer.wrap(data, 4, length - 4);
 				bb.order(ByteOrder.LITTLE_ENDIAN);
@@ -108,8 +107,8 @@ class CallbackLoopThread extends Thread {
 			} else {
 				byte stackID = ipcon.getStackIDFromData(data);
 				Device device = ipcon.devices[stackID];
-				if(device.callbacks[type] != null) {
-					device.callbacks[type].callback(data);
+				if(device.callbacks[functionID] != null) {
+					device.callbacks[functionID].callback(data);
 				}
 			}
 		}
@@ -168,11 +167,11 @@ public class IPConnection {
 	}
 	
 	int handleMessage(byte[] data) {
-		byte type = getTypeFromData(data);
+		byte functionID = getFunctionIDFromData(data);
 		
-		if(type == FUNCTION_GET_STACK_ID) {
+		if(functionID == FUNCTION_GET_STACK_ID) {
 			return handleAddDevice(data);
-		} else if(type == FUNCTION_ENUMERATE_CALLBACK) {
+		} else if(functionID == FUNCTION_ENUMERATE_CALLBACK) {
 			return handleEnumerate(data);
 		}
 		
@@ -186,7 +185,7 @@ public class IPConnection {
 		
 		Device device = devices[stackID];
 		
-		if(device.answerType == type) {
+		if(device.answerFunctionID == functionID) {
 			try {
 				device.answerQueue.put(data);
 			} catch (InterruptedException e) {
@@ -195,7 +194,7 @@ public class IPConnection {
 			return length;
 		}
 		
-		if(device.callbacks[type] != null && device.listenerObjects[type] != null) {
+		if(device.callbacks[functionID] != null && device.listenerObjects[functionID] != null) {
 			try {
 				callbackQueue.put(data);
 			} catch (InterruptedException e) {
@@ -212,7 +211,7 @@ public class IPConnection {
 		return data[0];
 	}
 	
-	protected byte getTypeFromData(byte[] data) {
+	protected byte getFunctionIDFromData(byte[] data) {
 		return data[1];
 	}
 	
@@ -240,7 +239,7 @@ public class IPConnection {
 		}
 	}
 	
-	public void write(Device device, ByteBuffer bb, byte type, boolean hasReturn) {
+	public void write(Device device, ByteBuffer bb, byte functionID, boolean hasReturn) {
 		try {
 			device.semaphoreWrite.acquire();
 		} catch (InterruptedException e) {
@@ -249,7 +248,7 @@ public class IPConnection {
 		}
 		
 		if(hasReturn) {
-			device.answerType = type;
+			device.answerFunctionID = functionID;
 		}
 		
 		try {
@@ -263,7 +262,6 @@ public class IPConnection {
 		if(!hasReturn) {
 			device.semaphoreWrite.release();
 		}
-		
 	}
 	
 	private int handleAddDevice(byte[] data) {
