@@ -234,6 +234,7 @@ public class IPConnection {
 	public void joinThread() {
 		try {
 			recvLoopThread.join();
+			callbackLoopThread.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
