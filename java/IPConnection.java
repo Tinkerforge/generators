@@ -87,6 +87,10 @@ class CallbackLoopThread extends Thread {
 				continue;
 			}
 
+			if (!ipcon.recvLoopFlag) {
+				return;
+			}
+
 			byte functionID = ipcon.getFunctionIDFromData(data);
 			if(functionID == ipcon.FUNCTION_ENUMERATE_CALLBACK) {
 				int length = ipcon.getLengthFromData(data);
@@ -323,6 +327,13 @@ public class IPConnection {
 
 	public void destroy() {
 		recvLoopFlag = false;
+
+		try {
+			callbackQueue.put(new byte[1]);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
 		try {
 			if(in != null) {
 				in.close();
