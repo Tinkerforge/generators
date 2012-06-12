@@ -87,31 +87,35 @@ namespace Tinkerforge
 
 		private void RecvLoop() 
 		{
-			try
+			while(RecvLoopFlag)
 			{
-				while(RecvLoopFlag) 
+				byte[] data = new byte[8192];
+				int length;
+
+				try
 				{
-					byte[] data = new byte[8192];
-					int length = SocketStream.Read(data, 0, data.Length);
-
-					string str = "";
-					for(int i = 0; i < length; i++) {
-						str += data[i] + " ";
-					}
-
-					int handled = 0;
-					while(length != handled)
-					{
-						byte[] tmp = new byte[length-handled];
-						Array.Copy(data, handled, tmp, 0, length - handled);
-						handled += HandleMessage(tmp);
-					}
+					length = SocketStream.Read(data, 0, data.Length);
 				}
-			}
-			catch(Exception)
-			{
-				RecvLoopFlag = false;
-				return;
+				catch(IOException)
+				{
+					if (RecvLoopFlag) {
+						System.Console.Error.WriteLine("Socket disconnected by Server, destroying ipcon");
+						Destroy();
+					}
+					return;
+				}
+				catch(ObjectDisposedException)
+				{
+					return;
+				}
+
+				int handled = 0;
+				while(length != handled)
+				{
+					byte[] tmp = new byte[length-handled];
+					Array.Copy(data, handled, tmp, 0, length - handled);
+					handled += HandleMessage(tmp);
+				}
 			}
 		}
 
@@ -295,17 +299,11 @@ namespace Tinkerforge
 		public void Destroy() 
 		{
 			RecvLoopFlag = false;
-			try 
-			{
-				SocketStream.Close();
-			}
-			catch(Exception)
-			{
-			}
+			SocketStream.Close();
 			Socket.Close();
 			callbackQueue.Close();
 		}
-    }
+	}
 
 	public class TimeoutException : Exception
 	{
