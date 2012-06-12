@@ -27,42 +27,43 @@ class RecvLoopThread extends Thread {
 
 	public void run() {
 		byte[] data = new byte[8192];
-		
+
 		try {
 			ipcon.in = ipcon.sock.getInputStream();
 		}
 		catch(java.io.IOException e) {
 			e.printStackTrace();
+			return;
 		}
 
 		while(ipcon.recvLoopFlag) {
+			int length;
+
 			try {
-				int length = ipcon.in.read(data, 0, 8192);
-				if(length == 0) {
-					if(ipcon.recvLoopFlag) {
-						System.err.println("Socket disconnected by Server, destroying ipcon");
-						ipcon.destroy();
-					}
-					return;
-				} else if(length == -1) {
-					if(ipcon.recvLoopFlag) {
-						System.err.println("Socket disconnected by Server, destroying ipcon");
-						ipcon.destroy();
-					}
-					return;
-				}
-				
-				int handled = 0;
-				while(length != handled) {
-					// Copy data, otherwise callback data might be overwritten
-					byte[] tmp = new byte[length-handled];
-					System.arraycopy(data, handled, tmp, 0, length - handled);
-					
-					handled += ipcon.handleMessage(tmp);
-				}
+				length = ipcon.in.read(data, 0, 8192);
 			} 
 			catch(java.io.IOException e) {
+				if(ipcon.recvLoopFlag) {
+					e.printStackTrace();
+				}
 				return;
+			}
+
+			if(length == 0 || length == -1) {
+				if(ipcon.recvLoopFlag) {
+					System.err.println("Socket disconnected by Server, destroying ipcon");
+					ipcon.destroy();
+				}
+				return;
+			}
+
+			int handled = 0;
+			while(length != handled) {
+				// Copy data, otherwise callback data might be overwritten
+				byte[] tmp = new byte[length - handled];
+				System.arraycopy(data, handled, tmp, 0, length - handled);
+
+				handled += ipcon.handleMessage(tmp);
 			}
 		}
 	}
