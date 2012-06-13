@@ -141,7 +141,7 @@ class {0}{1} extends Device
 def make_callback_wrapper_definitions():
     cbs = ''
     cb = """
-        $this->callbackWrappers[self::CALLBACK_{0}] = 'callback{1}';"""
+        $this->callbackWrappers[self::CALLBACK_{0}] = 'callbackWrapper{1}';"""
     cbs_end = '\n    }\n'
     for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
         if packet['type'] != 'callback':
@@ -464,7 +464,7 @@ def make_callback_wrappers():
      * @internal
      * @param string $data
      */
-    public function callback{0}($data)
+    public function callbackWrapper{0}($data)
     {{
         $result = array();
 {1}

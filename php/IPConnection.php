@@ -203,7 +203,7 @@ abstract class Device
         $this->receivedResponsePayload = NULL;
 
         $this->ipcon->send($request);
-        $this->ipcon->receive(IPConnection::TIMEOUT_RESPONSE, $this, FALSE);
+        $this->ipcon->receive(IPConnection::RESPONSE_TIMEOUT, $this, FALSE);
 
         if ($this->receivedResponsePayload == NULL) {
             throw new TimeoutException('Did not receive response in time');
@@ -222,8 +222,7 @@ abstract class Device
 
 class IPConnection
 {
-    const TIMEOUT_ADD_DEVICE = 2.5;
-    const TIMEOUT_RESPONSE = 2.5;
+    const RESPONSE_TIMEOUT = 2.5;
 
     const BROADCAST_ADDRESS = 0;
 
@@ -245,7 +244,7 @@ class IPConnection
             $address = gethostbyname($host);
 
             if ($address == $host) {
-                throw new \Exception('Unable to connect socket: Unknown host');
+                throw new \Exception('Could not resolve hostname');
             }
         } else {
             $address = $host;
@@ -254,7 +253,7 @@ class IPConnection
         $this->socket = @socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 
         if ($this->socket === FALSE) {
-            throw new \Exception('Unable to create socket: ' .
+            throw new \Exception('Could not create socket: ' .
                                  socket_strerror(socket_last_error()));
         }
 
@@ -264,7 +263,7 @@ class IPConnection
             socket_close($this->socket);
             $this->socket = FALSE;
 
-            throw new \Exception('Unable to connect socket: ' . $error);
+            throw new \Exception('Could not connect socket: ' . $error);
         }
     }
 
@@ -290,11 +289,11 @@ class IPConnection
         $this->pendingAddDevice = $device;
 
         $this->send($request);
-        $this->receive(self::TIMEOUT_ADD_DEVICE, NULL, FALSE);
+        $this->receive(self::RESPONSE_TIMEOUT, NULL, FALSE);
 
         if ($this->pendingAddDevice != NULL) {
             $this->pendingAddDevice = NULL;
-            throw new TimeoutException('Unable to add device ' . Base58::encode($device->uid));
+            throw new TimeoutException('Could not add device ' . Base58::encode($device->uid) . ', timeout');
         }
 
         $device->ipcon = $this;
@@ -309,7 +308,7 @@ class IPConnection
 
         if ($seconds < 0) {
             while (TRUE) {
-                $this->receive(self::TIMEOUT_RESPONSE, NULL, TRUE);
+                $this->receive(self::RESPONSE_TIMEOUT, NULL, TRUE);
 
                 // Dispatch all pending callbacks that were received by getters in the meantime
                 foreach ($this->devices as $device) {
@@ -345,14 +344,14 @@ class IPConnection
             $changed = @socket_select($read, $write, $except, $timeout_sec, $timeout_usec);
 
             if ($changed === FALSE) {
-                throw new \Exception('Unable to receive response: ' .
+                throw new \Exception('Could not receive response: ' .
                                      socket_strerror(socket_last_error($this->socket)));
             } else if ($changed > 0) {
                 $data = '';
                 $length = @socket_recv($this->socket, $data, 8192, 0);
 
                 if ($length === FALSE) {
-                    throw new \Exception('Unable to receive response: ' .
+                    throw new \Exception('Could not receive response: ' .
                                          socket_strerror(socket_last_error($this->socket)));
                 }
 
@@ -376,8 +375,9 @@ class IPConnection
                         break;
                     }
 
-                    $this->handleResponse($this->pendingData, $directCallbackDispatch);
+                    $packet = substr($this->pendingData, 0, $length);
                     $this->pendingData = substr($this->pendingData, $length);
+                    $this->handleResponse($packet, $directCallbackDispatch);
                 }
 
                 $after = microtime(true);
@@ -412,26 +412,26 @@ class IPConnection
     public function send($request)
     {
         if (@socket_send($this->socket, $request, strlen($request), 0) === FALSE) {
-            throw new \Exception('Unable to send request: ' .
+            throw new \Exception('Could not send request: ' .
                                  socket_strerror(socket_last_error($this->socket)));
         }
     }
 
-    private function handleResponse($data, $directCallbackDispatch)
+    private function handleResponse($packet, $directCallbackDispatch)
     {
-        $header = unpack('CstackID/CfunctionID/vlength', $data);
-        $data = substr($data, 4);
+        $header = unpack('CstackID/CfunctionID/vlength', $packet);
+        $payload = substr($packet, 4);
 
         if ($header['functionID'] == self::FUNCTION_GET_STACK_ID) {
-            $this->handleAddDevice($header, $data);
+            $this->handleAddDevice($header, $payload);
             return;
         } else if ($header['functionID'] == self::FUNCTION_ENUMERATE_CALLBACK) {
-            $this->handleEnumerate($header, $data);
+            $this->handleEnumerate($header, $payload);
             return;
         }
 
         if (!array_key_exists($header['stackID'], $this->devices)) {
-            // Message for an unknown device, ignoring it
+            // Response from an unknown device, ignoring it
             return;
         }
 
@@ -439,20 +439,20 @@ class IPConnection
 
         if ($device->expectedResponseFunctionID == $header['functionID']) {
             if ($device->expectedResponseLength != $header['length']) {
-                error_log('Malformed response, discarded: ' .
-                          $header['stackID'] . ' ' . $header['functionID']);
+                error_log('Received malformed packet from ' .
+                          $header['stackID'] . ', ignoring it');
                 return;
             }
 
-            $device->receivedResponsePayload = $data;
+            $device->receivedResponsePayload = $payload;
             return;
         }
 
         if (array_key_exists($header['functionID'], $device->registeredCallbacks)) {
             if ($directCallbackDispatch) {
-                $device->handleCallback($header, $data);
+                $device->handleCallback($header, $payload);
             } else {
-                array_push($device->pendingCallbacks, array($header, $data));
+                array_push($device->pendingCallbacks, array($header, $payload));
             }
 
             return;
@@ -462,13 +462,13 @@ class IPConnection
         // a callback without registered callback function
     }
 
-    private function handleAddDevice($header, $data)
+    private function handleAddDevice($header, $payload)
     {
         if ($this->pendingAddDevice == NULL) {
             return;
         }
 
-        $payload = unpack('C8uid/C3firmwareVersion/c40name/CstackID', $data);
+        $payload = unpack('C8uid/C3firmwareVersion/c40name/CstackID', $payload);
 
         // uid
         $uid = Base256::decode(self::collectUnpackedArray($payload, 'uid', 8));
@@ -498,13 +498,13 @@ class IPConnection
         $this->pendingAddDevice = NULL;
     }
 
-    private function handleEnumerate($header, $data)
+    private function handleEnumerate($header, $payload)
     {
         if ($this->enumerateCallback == NULL) {
             return;
         }
 
-        $payload = unpack('C8uid/c40name/CstackID/CisNew', $data);
+        $payload = unpack('C8uid/c40name/CstackID/CisNew', $payload);
 
         $uid = Base256::decode(self::collectUnpackedArray($payload, 'uid', 8));
         $name = self::implodeUnpackedString($payload, 'name', 40);
