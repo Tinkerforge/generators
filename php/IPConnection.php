@@ -232,6 +232,7 @@ class IPConnection
     const FUNCTION_ENUMERATE_CALLBACK = 253;
 
     private $socket = FALSE;
+    private $pendingData = '';
     private $devices = array();
     private $pendingAddDevice = NULL;
     private $enumerateCallback = NULL;
@@ -359,9 +360,24 @@ class IPConnection
 
                 $before = microtime(true);
 
-                while (strlen($data) > 0) {
-                    $handled = $this->handleResponse($data, $directCallbackDispatch);
-                    $data = substr($data, $handled);
+                $this->pendingData .= $data;
+
+                while (TRUE) {
+                    if (strlen($this->pendingData) < 4) {
+                        // Wait for complete header
+                        break;
+                    }
+
+                    $header = unpack('CstackID/CfunctionID/vlength', $this->pendingData);
+                    $length = $header['length'];
+
+                    if (strlen($this->pendingData) < $length) {
+                        // Wait for complete packet
+                        break;
+                    }
+
+                    $this->handleResponse($this->pendingData, $directCallbackDispatch);
+                    $this->pendingData = substr($this->pendingData, $length);
                 }
 
                 $after = microtime(true);
@@ -407,14 +423,16 @@ class IPConnection
         $data = substr($data, 4);
 
         if ($header['functionID'] == self::FUNCTION_GET_STACK_ID) {
-            return $this->handleAddDevice($header, $data);
+            $this->handleAddDevice($header, $data);
+            return;
         } else if ($header['functionID'] == self::FUNCTION_ENUMERATE_CALLBACK) {
-            return $this->handleEnumerate($header, $data);
+            $this->handleEnumerate($header, $data);
+            return;
         }
 
         if (!array_key_exists($header['stackID'], $this->devices)) {
             // Message for an unknown device, ignoring it
-            return $header['length'];
+            return;
         }
 
         $device = $this->devices[$header['stackID']];
@@ -423,12 +441,11 @@ class IPConnection
             if ($device->expectedResponseLength != $header['length']) {
                 error_log('Malformed response, discarded: ' .
                           $header['stackID'] . ' ' . $header['functionID']);
-                return $header['length'];
+                return;
             }
 
             $device->receivedResponsePayload = $data;
-
-            return $header['length'];
+            return;
         }
 
         if (array_key_exists($header['functionID'], $device->registeredCallbacks)) {
@@ -438,18 +455,17 @@ class IPConnection
                 array_push($device->pendingCallbacks, array($header, $data));
             }
 
-            return $header['length'];
+            return;
         }
 
         // Response seems to be OK, but can't be handled, most likely
         // a callback without registered callback function
-        return $header['length'];
     }
 
     private function handleAddDevice($header, $data)
     {
         if ($this->pendingAddDevice == NULL) {
-            return $header['length'];
+            return;
         }
 
         $payload = unpack('C8uid/C3firmwareVersion/c40name/CstackID', $data);
@@ -458,7 +474,7 @@ class IPConnection
         $uid = Base256::decode(self::collectUnpackedArray($payload, 'uid', 8));
 
         if ($this->pendingAddDevice->uid != $uid) {
-            return $header['length'];
+            return;
         }
 
         // firmware version
@@ -470,7 +486,7 @@ class IPConnection
         $i = strrpos($name, ' ');
 
         if ($i === FALSE || str_replace('-', ' ', substr($name, 0, $i)) != str_replace('-', ' ', $this->pendingAddDevice->expectedName)) {
-            return $header['length'];
+            return;
         }
 
         $this->pendingAddDevice->name = $name;
@@ -480,14 +496,12 @@ class IPConnection
 
         $this->devices[$this->pendingAddDevice->stackID] = $this->pendingAddDevice;
         $this->pendingAddDevice = NULL;
-
-        return $header['length'];
     }
 
     private function handleEnumerate($header, $data)
     {
         if ($this->enumerateCallback == NULL) {
-            return $header['length'];
+            return;
         }
 
         $payload = unpack('C8uid/c40name/CstackID/CisNew', $data);
@@ -499,8 +513,6 @@ class IPConnection
 
         call_user_func_array($this->enumerateCallback,
                              array(Base58::encode($uid), $name, $stackID, $isNew));
-
-        return $header['length'];
     }
 
     static public function fixUnpackedInt16($value)
