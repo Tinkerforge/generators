@@ -163,17 +163,34 @@ class IPConnection:
         self.thread_callback.start()
 
     def recv_loop(self):
+        pending_data = ''
+
         while self.recv_loop_flag:
             data = self.sock.recv(8192)
+
             if len(data) == 0:
                 if self.recv_loop_flag:
                     sys.stderr.write("Socket disconnected by Server, destroying ipcon\n")
                     self.destroy()
                 return
 
-            while len(data) != 0:
-                handled = self.handle_message(data)
-                data = data[handled:]
+            pending_data += data
+
+            while True:
+                if len(pending_data) < 4:
+                    # Wait for complete header
+                    break
+
+                length = get_length_from_data(pending_data)
+
+                if len(pending_data) < length:
+                    # Wait for complete packet
+                    break
+
+                packet = pending_data[0:length]
+                pending_data = pending_data[length:]
+
+                self.handle_packet(packet)
 
     def callback_loop(self):
         while self.recv_loop_flag:
@@ -297,42 +314,35 @@ class IPConnection:
 
         return self.data_to_return(answer, form_ret)
 
-    def handle_message(self, data):
-        function_id = get_function_id_from_data(data)
+    def handle_packet(self, packet):
+        function_id = get_function_id_from_data(packet)
         if function_id == IPConnection.FUNCTION_GET_STACK_ID:
-            return self.handle_add_device(data)
+            self.handle_add_device(packet)
+            return
         if function_id == IPConnection.FUNCTION_ENUMERATE_CALLBACK:
-            return self.handle_enumerate(data)
+            self.handle_enumerate(packet)
+            return
 
-        stack_id = get_stack_id_from_data(data)
-        length = get_length_from_data(data)
-
+        stack_id = get_stack_id_from_data(packet)
         if not stack_id in self.devices:
             # Message for an unknown device, ignoring it
-            return length
+            return
 
         device = self.devices[stack_id]
         if device.answer_function_id == function_id:
-            device.answer_queue.put(data[4:])
-            return length
+            device.answer_queue.put(packet[4:])
+            return
     
         if function_id in device.callbacks:
-            self.callback_queue.put(data)
-            return length
+            self.callback_queue.put(packet)
+            return
 
         # Message seems to be OK, but can't be handled, most likely
         # a callback without registered function
-        return length
 
-    def handle_enumerate(self, data):
-        length = get_length_from_data(data)
-
-        if self.enumerate_callback == None:
-            return length
-
-        self.callback_queue.put(data) 
-        return length
-
+    def handle_enumerate(self, packet):
+        if self.enumerate_callback is not None:
+            self.callback_queue.put(packet)
 
     def enumerate(self, func):
         self.enumerate_callback = func
@@ -347,13 +357,11 @@ class IPConnection:
 
         self.sock.send(msg)
 
-    def handle_add_device(self, data):
-        length = get_length_from_data(data)
-
+    def handle_add_device(self, packet):
         if self.add_dev == None:
-            return length
+            return
 
-        value = struct.unpack('<BBHQ 3B 40s B', data[:length])
+        value = struct.unpack('<BBHQ 3B 40s B', packet)
 
         if self.add_dev.uid == value[3]:
             if sys.hexversion < 0x03000000:
@@ -363,7 +371,7 @@ class IPConnection:
 
             i = name.rfind(' ')
             if i < 0 or name[0:i].replace('-', ' ') != self.add_dev.expected_name.replace('-', ' '):
-                return length
+                return
 
             self.add_dev.firmware_version = [value[4], value[5], value[6]]
             self.add_dev.name = name
@@ -372,22 +380,20 @@ class IPConnection:
             self.add_dev.answer_queue.put(None)
             self.add_dev = None
 
-        return length
-
     def add_device(self, device):
         if sys.hexversion < 0x03000000:
-            msg = chr(IPConnection.BROADCAST_ADDRESS) + \
-                  chr(IPConnection.FUNCTION_GET_STACK_ID) + \
-                  struct.pack('<H', IPConnection.GET_STACK_ID_LENGTH) + \
-                  struct.pack('<Q', device.uid)
+            packet = chr(IPConnection.BROADCAST_ADDRESS) + \
+                     chr(IPConnection.FUNCTION_GET_STACK_ID) + \
+                     struct.pack('<H', IPConnection.GET_STACK_ID_LENGTH) + \
+                     struct.pack('<Q', device.uid)
         else:
-            msg = bytes([IPConnection.BROADCAST_ADDRESS,
-                         IPConnection.FUNCTION_GET_STACK_ID]) + \
-                  struct.pack('<H', IPConnection.GET_STACK_ID_LENGTH) + \
-                  struct.pack('<Q', device.uid)
+            packet = bytes([IPConnection.BROADCAST_ADDRESS,
+                            IPConnection.FUNCTION_GET_STACK_ID]) + \
+                     struct.pack('<H', IPConnection.GET_STACK_ID_LENGTH) + \
+                     struct.pack('<Q', device.uid)
   
         self.add_dev = device
-        self.sock.send(msg)
+        self.sock.send(packet)
     
         try:
             device.answer_queue.get(True, IPConnection.TIMEOUT_ADD_DEVICE)
