@@ -89,14 +89,17 @@ namespace Tinkerforge
 
 		private void RecvLoop() 
 		{
+			byte[] pendingData = new byte[8192];
+			int pendingLength = 0;
+
 			while(RecvLoopFlag)
 			{
-				byte[] data = new byte[8192];
-				int length;
+				int length = 0;
 
 				try
 				{
-					length = SocketStream.Read(data, 0, data.Length);
+					length = SocketStream.Read(pendingData, pendingLength,
+					                           pendingData.Length - pendingLength);
 				}
 				catch(IOException)
 				{
@@ -111,12 +114,30 @@ namespace Tinkerforge
 					return;
 				}
 
-				int handled = 0;
-				while(length != handled)
+				pendingLength += length;
+
+				while(true)
 				{
-					byte[] tmp = new byte[length-handled];
-					Array.Copy(data, handled, tmp, 0, length - handled);
-					handled += HandleMessage(tmp);
+					if(pendingLength < 4)
+					{
+						// Wait for complete header
+						break;
+					}
+
+					length = GetLengthFromData(pendingData);
+
+					if(pendingLength < length)
+					{
+						// Wait for complete packet
+						break;
+					}
+
+					byte[] packet = new byte[length];
+
+					Array.Copy(pendingData, 0, packet, 0, length);
+					HandleMessage(packet);
+					Array.Copy(pendingData, length, pendingData, 0, pendingLength - length);
+					pendingLength -= length;
 				}
 			}
 		}
@@ -161,44 +182,42 @@ namespace Tinkerforge
 			return data[0];
 		}
 
-		private static int GetLengthFromData(byte[] data)
-		{
-			return LEConverter.UShortFrom(2, data);
-		}
-
 		private static byte GetTypeFromData(byte[] data)
 		{
 			return data[1];
 		}
 
+		private static int GetLengthFromData(byte[] data)
+		{
+			return LEConverter.UShortFrom(2, data);
+		}
 
-		private int HandleMessage(byte[] data)
+		private void HandleMessage(byte[] data)
 		{
 			byte type = GetTypeFromData(data);
 			if(type == FUNCTION_GET_STACK_ID)
 			{
-				return HandleAddDevice(data);
+				HandleAddDevice(data);
+				return;
 			}
 			else if(type == FUNCTION_ENUMERATE_CALLBACK)
 			{
-				return HandleEnumerate(data);
+				HandleEnumerate(data);
+				return;
 			}
 
 			byte stackID = GetStackIDFromData(data);
-			int length = GetLengthFromData(data);
-
 			Device device = devices[stackID];
-
 			if(device == null)
 			{
 				// Message for an unknown device, ignoring it
-				return length;
+				return;
 			}
 
 			if(device.answerType == type)
 			{
 				device.answerQueue.Enqueue(data);
-				return length;
+				return;
 			}
 
 			Device.MessageCallback callback = device.messageCallbacks[type];
@@ -209,16 +228,13 @@ namespace Tinkerforge
 
 			// Message seems to be OK, but can't be handled, most likely
 			// a callback without registered function
-			return length;
 		}
 
-		private int HandleAddDevice(byte[] data)
+		private void HandleAddDevice(byte[] data)
 		{
-			int length = GetLengthFromData(data);
-
 			if(addDev == null) 
 			{
-				return length;
+				return;
 			}
 
 			ulong uid = LEConverter.ULongFrom(4, data);
@@ -228,8 +244,9 @@ namespace Tinkerforge
 				string name = LEConverter.StringFrom(15, data, 40);
 				int i = name.LastIndexOf(' ');
 
-				if (i < 0 || name.Substring(0, i).Replace('-', ' ') != addDev.expectedName.Replace('-', ' ')) {
-					return length;
+				if (i < 0 || name.Substring(0, i).Replace('-', ' ') != addDev.expectedName.Replace('-', ' '))
+				{
+					return;
 				}
 
 				addDev.firmwareVersion[0] = LEConverter.ByteFrom(12, data);
@@ -241,21 +258,14 @@ namespace Tinkerforge
 				addDev.answerQueue.Enqueue(data);
 				addDev = null;
 			}
-
-			return length;
 		}
 
-		private int HandleEnumerate(byte[] data)
+		private void HandleEnumerate(byte[] data)
 		{
-			int length = GetLengthFromData(data);
-			if(enumerateCallback == null) 
+			if(enumerateCallback != null)
 			{
-				return length;
+				callbackQueue.Enqueue(data);
 			}
-
-			callbackQueue.Enqueue(data);
-
-			return length;
 		}
 
         public void Write(byte[] data)
@@ -273,7 +283,8 @@ namespace Tinkerforge
             Write(data);
 		}
 
-		public void AddDevice(Device device) {
+		public void AddDevice(Device device)
+		{
 			byte[] data = new byte[12];
 			LEConverter.To(BROADCAST_ADDRESS, 0, data);
 			LEConverter.To(FUNCTION_GET_STACK_ID, 1, data);
