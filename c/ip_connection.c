@@ -73,11 +73,13 @@ static void ipcon_semaphore_release(sem_t *semaphore) {
 
 THREAD_RETURN_TYPE ipcon_recv_loop(void *param) {
 	IPConnection *ipcon = (IPConnection*)param;
-	unsigned char buffer[RECV_BUFFER_SIZE] = { 0 };
+	unsigned char pending_data[RECV_BUFFER_SIZE] = { 0 };
+	int pending_length = 0;
 
 	while(ipcon->recv_loop_flag) {
 #ifdef _WIN32
-		int length = recv(ipcon->s, (char*)buffer, RECV_BUFFER_SIZE, 0);
+		int length = recv(ipcon->s, (char *)(pending_data + pending_length),
+		                  RECV_BUFFER_SIZE - pending_length, 0);
 		if(length == SOCKET_ERROR) {
 			if (WSAGetLastError() == WSAEINTR) {
 				continue;
@@ -88,7 +90,8 @@ THREAD_RETURN_TYPE ipcon_recv_loop(void *param) {
 			THREAD_RETURN;
 		}
 #else
-		int length = read(ipcon->fd, buffer, RECV_BUFFER_SIZE);
+		int length = read(ipcon->fd, pending_data + pending_length,
+		                  RECV_BUFFER_SIZE - pending_length);
 		if(length < 0) {
 			if (errno == EINTR) {
 				continue;
@@ -107,10 +110,26 @@ THREAD_RETURN_TYPE ipcon_recv_loop(void *param) {
 			}
 			THREAD_RETURN;
 		}
-		int handled = 0;
-		do {
-			handled += ipcon_handle_message(ipcon, buffer + handled);
-		} while(handled < length);
+
+		pending_length += length;
+
+		while(true) {
+			if(pending_length < 4) {
+				// Wait for complete header
+				break;
+			}
+
+			length = ipcon_get_length_from_data(pending_data);
+
+			if(pending_length < length) {
+				// Wait for complete packet
+				break;
+			}
+
+			ipcon_handle_message(ipcon, pending_data);
+			memmove(pending_data, pending_data + length, pending_length - length);
+			pending_length -= length;
+		}
 	}
 	THREAD_RETURN;
 }
@@ -245,31 +264,27 @@ static void ipcon_callback_queue_enqueue(IPConnection *ipcon, const unsigned cha
 	ipcon_semaphore_release(ipcon->callback_queue_semaphore);
 }
 
-int ipcon_handle_enumerate(IPConnection *ipcon, const unsigned char *buffer) {
-	uint16_t length = ipcon_get_length_from_data(buffer);
-
-	if(ipcon->enumerate_callback == NULL) {
-		return length;
+void ipcon_handle_enumerate(IPConnection *ipcon, const unsigned char *buffer) {
+	if(ipcon->enumerate_callback != NULL) {
+		ipcon_callback_queue_enqueue(ipcon, buffer);
 	}
-
-	ipcon_callback_queue_enqueue(ipcon, buffer);
-
-	return length;
 }
 
-int ipcon_handle_message(IPConnection *ipcon, const unsigned char *buffer) {
+void ipcon_handle_message(IPConnection *ipcon, const unsigned char *buffer) {
 	uint8_t function_id = ipcon_get_function_id_from_data(buffer);
 	if(function_id == FUNCTION_GET_STACK_ID) {
-		return ipcon_add_device_handler(ipcon, buffer);
+		ipcon_handle_add_device(ipcon, buffer);
+		return;
 	} else if(function_id == FUNCTION_ENUMERATE_CALLBACK) {
-		return ipcon_handle_enumerate(ipcon, buffer);
+		ipcon_handle_enumerate(ipcon, buffer);
+		return;
 	}
 
 	uint8_t stack_id = ipcon_get_stack_id_from_data(buffer);
 	uint16_t length = ipcon_get_length_from_data(buffer);
 	if(ipcon->devices[stack_id] == NULL) {
 		// Message for an unknown device, ignoring it
-		return length;
+		return;
 	}
 
 	Device *device = ipcon->devices[stack_id];
@@ -280,7 +295,7 @@ int ipcon_handle_message(IPConnection *ipcon, const unsigned char *buffer) {
 			fprintf(stderr,
 			        "Received malformed message, discarded: %d\n",
 			        stack_id);
-			return length;
+			return;
 		}
 
 		memcpy(answer->buffer, buffer, length);
@@ -294,18 +309,16 @@ int ipcon_handle_message(IPConnection *ipcon, const unsigned char *buffer) {
 		pthread_cond_signal(&device->cond);
 		pthread_mutex_unlock(&device->sem_answer);
 #endif
-		return length;
+		return;
 	}
 
 	if(device->callbacks[function_id] != NULL) {
 		ipcon_callback_queue_enqueue(ipcon, buffer);
-
-		return length;
+		return;
 	}
 
 	// Message seems to be OK, but can't be handled, most likely
 	// a callback without registered function
-	return length;
 }
 
 void ipcon_device_write(Device *device, const char *buffer, const int length) {
@@ -488,7 +501,7 @@ int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
 	return E_OK;
 }
 
-int ipcon_add_device_handler(IPConnection *ipcon,
+void ipcon_handle_add_device(IPConnection *ipcon,
                              const unsigned char *buffer) {
 	const GetStackIDReturn *gsidr = (const GetStackIDReturn*)buffer;
 	if(ipcon->add_device != NULL &&
@@ -515,7 +528,7 @@ int ipcon_add_device_handler(IPConnection *ipcon,
 		int length = p - gsidr->device_name;
 		int expected_length = strlen(ipcon->add_device->expected_name);
 		if (length != expected_length) {
-			return sizeof(GetStackIDReturn);
+			return;
 		}
 
 		int i;
@@ -526,7 +539,7 @@ int ipcon_add_device_handler(IPConnection *ipcon,
 					// Treat ' ' and '-' as equal for backward compatibility
 					continue;
 				} else {
-					return sizeof(GetStackIDReturn);
+					return;
 				}
 			}
 		}
@@ -549,8 +562,6 @@ int ipcon_add_device_handler(IPConnection *ipcon,
 
 		ipcon->add_device = NULL;
 	}
-
-	return sizeof(GetStackIDReturn);
 }
 
 int ipcon_add_device(IPConnection *ipcon, Device *device) {

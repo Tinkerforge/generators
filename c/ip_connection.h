@@ -199,11 +199,11 @@ void ipcon_recv_loop(void *param);
 #else
 void *ipcon_recv_loop(void *param);
 #endif
-int ipcon_handle_enumerate(IPConnection *ipcon, const unsigned char *buffer);
-int ipcon_handle_message(IPConnection *ipcon, const unsigned char *buffer);
+void ipcon_handle_enumerate(IPConnection *ipcon, const unsigned char *buffer);
+void ipcon_handle_message(IPConnection *ipcon, const unsigned char *buffer);
 void ipcon_device_write(Device *device, const char *buffer, const int length);
 void ipcon_device_create(Device *device, const char *uid);
-int ipcon_add_device_handler(IPConnection *ipcon,
+void ipcon_handle_add_device(IPConnection *ipcon,
                              const unsigned char *buffer);
 int ipcon_answer_sem_wait_timeout(Device *device);
 
