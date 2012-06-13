@@ -26,7 +26,8 @@ class RecvLoopThread extends Thread {
 	}
 
 	public void run() {
-		byte[] data = new byte[8192];
+		byte[] pendingData = new byte[8192];
+		int pendingLength = 0;
 
 		try {
 			ipcon.in = ipcon.sock.getInputStream();
@@ -40,7 +41,8 @@ class RecvLoopThread extends Thread {
 			int length;
 
 			try {
-				length = ipcon.in.read(data, 0, 8192);
+				length = ipcon.in.read(pendingData, pendingLength,
+				                       pendingData.length - pendingLength);
 			} 
 			catch(java.io.IOException e) {
 				if(ipcon.recvLoopFlag) {
@@ -57,13 +59,30 @@ class RecvLoopThread extends Thread {
 				return;
 			}
 
-			int handled = 0;
-			while(length != handled) {
-				// Copy data, otherwise callback data might be overwritten
-				byte[] tmp = new byte[length - handled];
-				System.arraycopy(data, handled, tmp, 0, length - handled);
+			pendingLength += length;
 
-				handled += ipcon.handleMessage(tmp);
+			while(true)
+			{
+				if(pendingLength < 4)
+				{
+					// Wait for complete header
+					break;
+				}
+
+				length = ipcon.getLengthFromData(pendingData);
+
+				if(pendingLength < length)
+				{
+					// Wait for complete packet
+					break;
+				}
+
+				byte[] packet = new byte[length];
+
+				System.arraycopy(pendingData, 0, packet, 0, length);
+				ipcon.handleMessage(packet);
+				System.arraycopy(pendingData, length, pendingData, 0, pendingLength - length);
+				pendingLength -= length;
 			}
 		}
 	}
@@ -171,13 +190,15 @@ public class IPConnection {
 		recvLoopThread.start();
 	}
 	
-	int handleMessage(byte[] data) {
+	void handleMessage(byte[] data) {
 		byte functionID = getFunctionIDFromData(data);
 		
 		if(functionID == FUNCTION_GET_STACK_ID) {
-			return handleAddDevice(data);
+			handleAddDevice(data);
+			return;
 		} else if(functionID == FUNCTION_ENUMERATE_CALLBACK) {
-			return handleEnumerate(data);
+			handleEnumerate(data);
+			return;
 		}
 		
 		byte stackID = getStackIDFromData(data);
@@ -185,7 +206,7 @@ public class IPConnection {
 		
 		if(devices[stackID] == null) {
 			// Message for an unknown device, ignoring it
-			return length;
+			return;
 		}
 		
 		Device device = devices[stackID];
@@ -196,7 +217,7 @@ public class IPConnection {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			return length;
+			return;
 		}
 		
 		if(device.callbacks[functionID] != null && device.listenerObjects[functionID] != null) {
@@ -209,7 +230,6 @@ public class IPConnection {
 
 		// Message seems to be OK, but can't be handled, most likely
 		// a callback without registered function
-		return length;
 	}
 	
 	protected byte getStackIDFromData(byte[] data) {
@@ -270,20 +290,18 @@ public class IPConnection {
 		}
 	}
 	
-	private int handleAddDevice(byte[] data) {
+	private void handleAddDevice(byte[] data) {
 		int length = getLengthFromData(data);
-		
+
 		if(addDevice == null) {
-			return length;
+			return;
 		}
-		
+
 		ByteBuffer bb = ByteBuffer.wrap(data, 4, length - 4);
 		bb.order(ByteOrder.LITTLE_ENDIAN);
 
-
 		long uid = bb.getLong();
 		if(addDevice.uid == uid) {
-
 			addDevice.firmwareVersion[0] = IPConnection.unsignedByte(bb.get());
 			addDevice.firmwareVersion[1] = IPConnection.unsignedByte(bb.get());
 			addDevice.firmwareVersion[2] = IPConnection.unsignedByte(bb.get());
@@ -295,7 +313,7 @@ public class IPConnection {
 
 			int i = name.lastIndexOf(' ');
 			if (i < 0 || !name.substring(0, i).replace('-', ' ').equals(addDevice.expectedName.replace('-', ' '))) {
-				return length;
+				return;
 			}
 
 			addDevice.name = name;
@@ -304,25 +322,16 @@ public class IPConnection {
 			addDevice.semaphoreAnswer.release();
 			addDevice = null;
 		}
-		
-		return length;
 	}
 	
-	private int handleEnumerate(byte[] data) {
-		int length = getLengthFromData(data);
-		
-		if(enumerateListener == null) {
-			return length;
+	private void handleEnumerate(byte[] data) {
+		if(enumerateListener != null) {
+			try {
+				callbackQueue.put(data);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
-
-		try {
-			callbackQueue.put(data);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		
-		return length;
 	}
 
 	public void destroy() {
