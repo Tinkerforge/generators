@@ -303,6 +303,8 @@ module Tinkerforge
 
     private
     def recv_loop
+      pending_data = ''
+
       while @recv_loop_flag
         data = @socket.recv 8192
 
@@ -314,9 +316,23 @@ module Tinkerforge
           return
         end
 
-        while data.length > 0
-          handled = handle_message data
-          data = data[handled..-1]
+        pending_data += data
+
+        while true
+          if pending_data.length < 4
+            # Wait for complete header
+            break
+          end
+
+          length = get_length_from_data pending_data
+
+          if pending_data.length < length
+            # Wait for complete packet
+            break
+          end
+
+          handle_message pending_data
+          pending_data = pending_data[length..-1]
         end
       end
     end
@@ -369,11 +385,13 @@ module Tinkerforge
       function_id = get_function_id_from_data data
 
       if function_id == FUNCTION_GET_STACK_ID
-        return handle_add_device data
+        handle_add_device data
+        return
       end
 
       if function_id == FUNCTION_ENUMERATE_CALLBACK
-        return handle_enumerate data
+        handle_enumerate data
+        return
       end
 
       stack_id = get_stack_id_from_data data
@@ -381,35 +399,34 @@ module Tinkerforge
 
       if !@devices.has_key? stack_id
         # Message for an unknown device, ignoring it
-        return length
+        return
       end
 
       device = @devices[stack_id]
       if function_id == device.expected_response_function_id
         if length != device.expected_response_length
           $stderr.puts "Received malformed message, discarded: #{stack_id}"
-          return length
+          return
         end
 
         device.enqueue_response data
-        return length
+        return
       end
 
       if device.registered_callbacks.has_key? function_id
         @callback_queue.push data
-        return length
+        return
       end
 
       # Message seems to be OK, but can't be handled, most likely
       # a callback without registered function
-      length
     end
 
     def handle_add_device(data)
       length = get_length_from_data data
 
       if @pending_add_device == nil
-        return length
+        return
       end
 
       payload = unpack data[4, length - 4], 'Q C C C Z40 C'
@@ -419,7 +436,7 @@ module Tinkerforge
         i = name.rindex ' '
 
         if i == nil or name[0, i].gsub('-', ' ') != @pending_add_device.expected_name.gsub('-', ' ')
-          return length
+          return
         end
 
         @pending_add_device.firmware_version = [payload[1], payload[2], payload[3]]
@@ -429,20 +446,12 @@ module Tinkerforge
         @pending_add_device.enqueue_response nil
         @pending_add_device = nil
       end
-
-      length
     end
 
     def handle_enumerate(data)
-      length = get_length_from_data data
-
-      if @enumerate_callback == nil
-        return length
+      if @enumerate_callback != nil
+        @callback_queue.push data
       end
-
-      @callback_queue.push data
-
-      length
     end
   end
 end
