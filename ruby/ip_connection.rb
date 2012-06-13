@@ -209,8 +209,8 @@ module Tinkerforge
         @ipcon.send request
 
         if response_length > 0
-          data = wait_for_response
-          response = unpack data[4, data.length - 4], response_format
+          packet = dequeue_response
+          response = unpack packet[4..-1], response_format
 
           if response.length == 1
             response = response[0]
@@ -221,7 +221,14 @@ module Tinkerforge
       response
     end
 
-    def wait_for_response(message = 'Did not receive response in time')
+    def enqueue_response(response)
+      @response_mutex.synchronize {
+        @response_queue.push response
+        @response_condition.signal
+      }
+    end
+
+    def dequeue_response(message = 'Did not receive response in time')
       response = nil
 
       @response_mutex.synchronize {
@@ -233,13 +240,6 @@ module Tinkerforge
       }
 
       response
-    end
-
-    def enqueue_response response
-      @response_mutex.synchronize {
-        @response_queue.push response
-        @response_condition.signal
-      }
     end
   end
 
@@ -259,8 +259,8 @@ module Tinkerforge
       @enumerate_callback = nil
       @callback_queue = Queue.new
 
-      @recv_loop_flag = true
-      @thread_recv = Thread.new { recv_loop }
+      @thread_run_flag = true
+      @thread_receive = Thread.new { receive_loop }
       @thread_callback = Thread.new { callback_loop }
     end
 
@@ -271,7 +271,7 @@ module Tinkerforge
       send request
 
       begin
-        device.wait_for_response "Could not add device #{Base58.encode(device.uid)}, timeout"
+        device.dequeue_response "Could not add device #{Base58.encode(device.uid)}, timeout"
       ensure
         @pending_add_device = nil
       end
@@ -280,12 +280,12 @@ module Tinkerforge
     end
 
     def join_thread
-      @thread_recv.join
+      @thread_receive.join
       @thread_callback.join
     end
 
     def destroy
-      @recv_loop_flag = false
+      @thread_run_flag = false
       @callback_queue.push nil # unblock callback_loop
       @socket.shutdown(Socket::SHUT_RDWR)
       @socket.close
@@ -302,15 +302,15 @@ module Tinkerforge
     end
 
     private
-    def recv_loop
+    def receive_loop
       pending_data = ''
 
-      while @recv_loop_flag
+      while @thread_run_flag
         data = @socket.recv 8192
 
         if data.length == 0
-          if @recv_loop_flag
-            $stderr.puts 'Socket disconnected by Server, destroying ipcon'
+          if @thread_run_flag
+            $stderr.puts 'Socket disconnected by Server, destroying IPConnection'
             destroy
           end
           return
@@ -331,26 +331,26 @@ module Tinkerforge
             break
           end
 
-          handle_message pending_data
+          packet = pending_data[0, length]
           pending_data = pending_data[length..-1]
+          handle_response packet
         end
       end
     end
 
     def callback_loop
-      while @recv_loop_flag
-        data = @callback_queue.pop
+      while @thread_run_flag
+        packet = @callback_queue.pop
 
-        if data == nil
+        if packet == nil
           next
         end
 
-        stack_id = get_stack_id_from_data data
-        function_id = get_function_id_from_data data
-        length = get_length_from_data data
+        stack_id = get_stack_id_from_data packet
+        function_id = get_function_id_from_data packet
 
         if function_id == FUNCTION_ENUMERATE_CALLBACK
-          payload = unpack data[4, length - 4], 'Q Z40 C ?'
+          payload = unpack packet[4..-1], 'Q Z40 C ?'
 
           uid = Base58::encode(payload[0])
           name = payload[1]
@@ -362,7 +362,7 @@ module Tinkerforge
           device = @devices[stack_id]
 
           if device.registered_callbacks.has_key? function_id
-            payload = unpack data[4, length - 4], device.callback_formats[function_id]
+            payload = unpack packet[4..-1], device.callback_formats[function_id]
             device.registered_callbacks[function_id].call(*payload)
           end
         end
@@ -381,55 +381,53 @@ module Tinkerforge
       data[2, 2].unpack('S<')[0]
     end
 
-    def handle_message(data)
-      function_id = get_function_id_from_data data
+    def handle_response(packet)
+      function_id = get_function_id_from_data packet
 
       if function_id == FUNCTION_GET_STACK_ID
-        handle_add_device data
+        handle_add_device packet
         return
       end
 
       if function_id == FUNCTION_ENUMERATE_CALLBACK
-        handle_enumerate data
+        handle_enumerate packet
         return
       end
 
-      stack_id = get_stack_id_from_data data
-      length = get_length_from_data data
+      stack_id = get_stack_id_from_data packet
+      length = get_length_from_data packet
 
       if !@devices.has_key? stack_id
-        # Message for an unknown device, ignoring it
+        # Response from an unknown device, ignoring it
         return
       end
 
       device = @devices[stack_id]
       if function_id == device.expected_response_function_id
         if length != device.expected_response_length
-          $stderr.puts "Received malformed message, discarded: #{stack_id}"
+          $stderr.puts "Received malformed packet from #{stack_id}, ignoring it"
           return
         end
 
-        device.enqueue_response data
+        device.enqueue_response packet
         return
       end
 
       if device.registered_callbacks.has_key? function_id
-        @callback_queue.push data
+        @callback_queue.push packet
         return
       end
 
-      # Message seems to be OK, but can't be handled, most likely
-      # a callback without registered function
+      # Response seems to be OK, but can't be handled, most likely
+      # a callback without registered block
     end
 
-    def handle_add_device(data)
-      length = get_length_from_data data
-
+    def handle_add_device(packet)
       if @pending_add_device == nil
         return
       end
 
-      payload = unpack data[4, length - 4], 'Q C C C Z40 C'
+      payload = unpack packet[4..-1], 'Q C C C Z40 C'
 
       if @pending_add_device.uid == payload[0]
         name = payload[4]
@@ -448,9 +446,9 @@ module Tinkerforge
       end
     end
 
-    def handle_enumerate(data)
+    def handle_enumerate(packet)
       if @enumerate_callback != nil
-        @callback_queue.push data
+        @callback_queue.push packet
       end
     end
   end
