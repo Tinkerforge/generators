@@ -144,8 +144,6 @@ public class IPConnection {
 	private final static byte FUNCTION_GET_ADC_CALIBRATION = (byte)250;
 
 	private final static byte BROADCAST_ADDRESS = (byte)0;
-	private final static short ENUMERATE_LENGTH = (short)4;
-	private final static short GET_STACK_ID_LENGTH = (short)12;
 
 	public final static int RESPONSE_TIMEOUT = 2500;
 
@@ -365,16 +363,12 @@ public class IPConnection {
 	}
 
 	public void enumerate(EnumerateListener enumerateListener) {
-		ByteBuffer bb = ByteBuffer.allocate(4);
-		bb.order(ByteOrder.LITTLE_ENDIAN);
-		bb.put(BROADCAST_ADDRESS);
-		bb.put(FUNCTION_ENUMERATE);
-		bb.putShort(ENUMERATE_LENGTH);
+		ByteBuffer request = createRequestBuffer(BROADCAST_ADDRESS, FUNCTION_ENUMERATE, (short)4);
 
 		this.enumerateListener = enumerateListener;
 
 		try {
-			out.write(bb.array());
+			out.write(request.array());
 		}
 		catch(java.io.IOException e) {
 			e.printStackTrace();
@@ -382,17 +376,13 @@ public class IPConnection {
 	}
 
 	public void addDevice(Device device) throws IPConnection.TimeoutException {
-		ByteBuffer bb = ByteBuffer.allocate(12);
-		bb.order(ByteOrder.LITTLE_ENDIAN);
-		bb.put(BROADCAST_ADDRESS);
-		bb.put(FUNCTION_GET_STACK_ID);
-		bb.putShort(GET_STACK_ID_LENGTH);
-		bb.putLong(device.uid);
-		
+		ByteBuffer request = createRequestBuffer(BROADCAST_ADDRESS, FUNCTION_GET_STACK_ID, (short)12);
+		request.putLong(device.uid);
+
 		pendingAddDevice = device;
-		
+
 		try {
-			out.write(bb.array());
+			out.write(request.array());
 		}
 		catch(java.io.IOException e) {
 			e.printStackTrace();
@@ -405,8 +395,19 @@ public class IPConnection {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
+
 		device.ipcon = this;
+	}
+
+	static ByteBuffer createRequestBuffer(byte stackID, byte functionID, short length) {
+		ByteBuffer buffer = ByteBuffer.allocate(length);
+
+		buffer.order(ByteOrder.LITTLE_ENDIAN);
+		buffer.put(stackID);
+		buffer.put(functionID);
+		buffer.putShort(length);
+
+		return buffer;
 	}
 
 	public static String base58Encode(long value) {
