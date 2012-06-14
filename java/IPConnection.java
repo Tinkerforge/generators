@@ -310,7 +310,11 @@ public class IPConnection {
 			pendingAddDevice.name = name;
 			pendingAddDevice.stackID = unsignedByte(bb.get());
 			devices[pendingAddDevice.stackID] = pendingAddDevice;
-			pendingAddDevice.semaphoreAnswer.release();
+			try {
+				pendingAddDevice.responseQueue.put(packet);
+			} catch(InterruptedException e) {
+				e.printStackTrace();
+			}
 			pendingAddDevice = null;
 		}
 	}
@@ -388,8 +392,10 @@ public class IPConnection {
 			e.printStackTrace();
 		}
 
+		byte[] response = null;
 		try {
-			if(!pendingAddDevice.semaphoreAnswer.tryAcquire(RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS)) {
+			response = pendingAddDevice.responseQueue.poll(IPConnection.RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS);
+			if(response == null) {
 				throw new IPConnection.TimeoutException("Could not add device " + base58Encode(device.uid) + ", timeout");
 			}
 		} catch (InterruptedException e) {

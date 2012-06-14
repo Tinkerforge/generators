@@ -19,7 +19,6 @@ public abstract class Device {
 	short[] firmwareVersion = new short[3];
 	short[] bindingVersion = new short[3];
 	byte expectedResponseFunctionID = (byte)0;
-	Semaphore semaphoreAnswer = new Semaphore(1, true);
 	Semaphore semaphoreWrite = new Semaphore(1, true);
 	SynchronousQueue<byte[]> responseQueue = new SynchronousQueue<byte[]>();
 
@@ -44,12 +43,6 @@ public abstract class Device {
 	}
 
 	public Device(String uid) {
-		try {
-			semaphoreAnswer.acquire();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
 		this.uid = IPConnection.base58Decode(uid);
 	}
 
