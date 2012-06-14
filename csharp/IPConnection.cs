@@ -34,10 +34,10 @@ namespace Tinkerforge
 		bool threadRunFlag = true;
 		Device pendingAddDevice = null;
 		Device[] devices = new Device[256];
-		EnumerateCallback enumerateCallback = null;
 		BlockingQueue callbackQueue = new BlockingQueue();
 
-		public delegate void EnumerateCallback(string uid, 
+		public event EnumerateCallbackEventHandler EnumerateCallback;
+		public delegate void EnumerateCallbackEventHandler(string uid, 
 		                                       string name, 
 		                                       byte stackID,
 		                                       bool isNew);
@@ -158,7 +158,7 @@ namespace Tinkerforge
 					byte stackID = LEConverter.ByteFrom(52, data);
 					bool isNew = LEConverter.BoolFrom(53, data);
 
-					enumerateCallback(Base58.Encode(uid), name, stackID, isNew);
+					OnEnumerateCallback(Base58.Encode(uid), name, stackID, isNew);
 				}
 				else
 				{
@@ -172,6 +172,13 @@ namespace Tinkerforge
 					}
 				}
 			}
+		}
+		
+		protected void OnEnumerateCallback(string uid, string name, byte stackID, bool isNew)
+		{
+			var handler = EnumerateCallback;
+			if(handler != null)
+				handler(uid, name, stackID, isNew);
 		}
 
 		private static byte GetStackIDFromData(byte[] data)
@@ -261,10 +268,7 @@ namespace Tinkerforge
 
 		private void HandleEnumerate(byte[] packet)
 		{
-			if(enumerateCallback != null)
-			{
-				callbackQueue.Enqueue(packet);
-			}
+			callbackQueue.Enqueue(packet);
 		}
 
         public void Write(byte[] data)
@@ -272,9 +276,9 @@ namespace Tinkerforge
             SocketStream.Write(data, 0, data.Length);
         }
 
-		public void Enumerate(EnumerateCallback enumerateCallback) 
+		public void Enumerate(EnumerateCallbackEventHandler enumerateCallback) 
 		{
-			this.enumerateCallback = enumerateCallback;
+			this.EnumerateCallback += enumerateCallback;
 			byte[] data = new byte[4];
 			LEConverter.To(BROADCAST_ADDRESS, 0, data);
 			LEConverter.To(FUNCTION_ENUMERATE, 1, data);
