@@ -37,31 +37,20 @@
 #define E_NO_THREAD -5
 #define E_NOT_ADDED -6
 
-#define TIMEOUT_ADD_DEVICE 2500
-#define TIMEOUT_ANSWER 2500
+#define RESPONSE_TIMEOUT 2500
 
 #define MAX_LENGTH_NAME 40
 
 #define MAX_NUM_DEVICES 256
 #define MAX_NUM_CALLBACKS 256
 #define MAX_PACKET_SIZE 4096
-#define RECV_BUFFER_SIZE 8192
+#define RECV_BUFFER_SIZE (MAX_PACKET_SIZE * 2)
 
 #define BROADCAST_ADDRESS 0
 
 #define FUNCTION_GET_STACK_ID 255
 #define FUNCTION_ENUMERATE 254
 #define FUNCTION_ENUMERATE_CALLBACK 253
-#define FUNCTION_STACK_ENUMERATE 252
-#define FUNCTION_ADC_CALIBRATE 251
-#define FUNCTION_GET_ADC_CALIBRATION 250
-
-#define FUNCTION_READ_BRICKLET_UID 249
-#define FUNCTION_WRITE_BRICKLET_UID 248
-#define FUNCTION_READ_BRICKLET_PLUGIN 247
-#define FUNCTION_WRITE_BRICKLET_PLUGIN 246
-#define FUNCTION_READ_BRICKLET_NAME 245
-#define FUNCTION_WRITE_BRICKLET_NAME 244
 
 struct IPConnection_;
 struct Device_;
@@ -73,27 +62,27 @@ typedef struct {
 	uint8_t function_id;
 	uint16_t length;
 	char buffer[MAX_PACKET_SIZE];
-} DeviceAnswer;
+} DeviceResponse;
 
 typedef struct Device_{
 	uint8_t stack_id;
 	uint64_t uid;
 #ifdef _WIN32
 	CRITICAL_SECTION write_mutex;
-	HANDLE sem_answer;
+	HANDLE response_semaphore;
 #else
 	pthread_mutex_t write_mutex;
-	pthread_cond_t cond;
-	bool sem_answer_flag;
-	pthread_mutex_t sem_answer;
+	pthread_cond_t response_cond;
+	bool response_flag;
+	pthread_mutex_t response_mutex;
 #endif
 	const char *expected_name;
 	char name[MAX_LENGTH_NAME];
 	uint8_t firmware_version[3];
 	uint8_t binding_version[3];
-	DeviceAnswer answer;
-	void *callbacks[MAX_NUM_CALLBACKS];
-	device_callback_func_t device_callbacks[MAX_NUM_CALLBACKS];
+	DeviceResponse response;
+	void *registered_callbacks[MAX_NUM_CALLBACKS];
+	device_callback_func_t callback_wrappers[MAX_NUM_CALLBACKS];
 	struct IPConnection_ *ipcon;
 } Device;
 
@@ -105,17 +94,17 @@ typedef struct CallbackQueueNode_{
 typedef struct IPConnection_{
 #ifdef _WIN32
 	SOCKET s;
-	HANDLE handle_recv_loop;
-	HANDLE handle_callback_loop;
+	HANDLE thread_receive;
+	HANDLE thread_callback;
 #else
 	int fd;
-	pthread_t thread_recv_loop;
-	pthread_t thread_callback_loop;
+	pthread_t thread_receive;
+	pthread_t thread_callback;
 #endif
-	bool recv_loop_flag;
+	bool thread_run_flag;
 	struct sockaddr_in server;
 	Device *devices[MAX_NUM_DEVICES];
-	Device *add_device;
+	Device *pending_add_device;
 	enumerate_callback_func_t enumerate_callback;
 	CallbackQueueNode *callback_queue_head;
 	CallbackQueueNode *callback_queue_tail;
@@ -205,7 +194,7 @@ void ipcon_device_write(Device *device, const char *buffer, const int length);
 void ipcon_device_create(Device *device, const char *uid);
 void ipcon_handle_add_device(IPConnection *ipcon,
                              const unsigned char *buffer);
-int ipcon_answer_sem_wait_timeout(Device *device);
+int ipcon_device_expect_response(Device *device);
 
 uint8_t ipcon_get_stack_id_from_data(const unsigned char *data);
 uint8_t ipcon_get_function_id_from_data(const unsigned char *data);

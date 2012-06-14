@@ -71,12 +71,12 @@ static void ipcon_semaphore_release(sem_t *semaphore) {
 
 #endif
 
-THREAD_RETURN_TYPE ipcon_recv_loop(void *param) {
+THREAD_RETURN_TYPE ipcon_receive_loop(void *param) {
 	IPConnection *ipcon = (IPConnection*)param;
 	unsigned char pending_data[RECV_BUFFER_SIZE] = { 0 };
 	int pending_length = 0;
 
-	while(ipcon->recv_loop_flag) {
+	while(ipcon->thread_run_flag) {
 #ifdef _WIN32
 		int length = recv(ipcon->s, (char *)(pending_data + pending_length),
 		                  RECV_BUFFER_SIZE - pending_length, 0);
@@ -104,7 +104,7 @@ THREAD_RETURN_TYPE ipcon_recv_loop(void *param) {
 #endif
 
 		if(length == 0) {
-			if(ipcon->recv_loop_flag) {
+			if(ipcon->thread_run_flag) {
 				fprintf(stderr, "Socket disconnected by Server, destroying ipcon\n");
 				ipcon_destroy(ipcon);
 			}
@@ -137,12 +137,12 @@ THREAD_RETURN_TYPE ipcon_recv_loop(void *param) {
 THREAD_RETURN_TYPE ipcon_callback_loop(void *param) {
 	IPConnection *ipcon = (IPConnection*)param;
 
-	while(ipcon->recv_loop_flag) {
+	while(ipcon->thread_run_flag) {
 		if (!ipcon_semaphore_request(ipcon->callback_queue_semaphore)) {
 			continue;
 		}
 
-		if (!ipcon->recv_loop_flag) {
+		if (!ipcon->thread_run_flag) {
 			break;
 		}
 
@@ -179,7 +179,7 @@ THREAD_RETURN_TYPE ipcon_callback_loop(void *param) {
 			uint8_t stack_id = ipcon_get_stack_id_from_data(node->buffer);
 			Device *device = ipcon->devices[stack_id];
 
-			device->device_callbacks[function_id](device, node->buffer);
+			device->callback_wrappers[function_id](device, node->buffer);
 		}
 
 		free(node);
@@ -188,7 +188,7 @@ THREAD_RETURN_TYPE ipcon_callback_loop(void *param) {
 }
 
 void ipcon_destroy(IPConnection *ipcon) {
-	ipcon->recv_loop_flag = false;
+	ipcon->thread_run_flag = false;
 
 	ipcon_semaphore_release(ipcon->callback_queue_semaphore);
 
@@ -219,11 +219,11 @@ void ipcon_destroy(IPConnection *ipcon) {
 
 void ipcon_join_thread(IPConnection *ipcon) {
 #ifdef _WIN32
-	WaitForSingleObject(ipcon->handle_recv_loop, INFINITE);
-	WaitForSingleObject(ipcon->handle_callback_loop, INFINITE);
+	WaitForSingleObject(ipcon->thread_receive, INFINITE);
+	WaitForSingleObject(ipcon->thread_callback, INFINITE);
 #else
-	pthread_join(ipcon->thread_recv_loop, NULL);
-	pthread_join(ipcon->thread_callback_loop, NULL);
+	pthread_join(ipcon->thread_receive, NULL);
+	pthread_join(ipcon->thread_callback, NULL);
 #endif
 }
 
@@ -275,7 +275,9 @@ void ipcon_handle_message(IPConnection *ipcon, const unsigned char *buffer) {
 	if(function_id == FUNCTION_GET_STACK_ID) {
 		ipcon_handle_add_device(ipcon, buffer);
 		return;
-	} else if(function_id == FUNCTION_ENUMERATE_CALLBACK) {
+	}
+
+	if(function_id == FUNCTION_ENUMERATE_CALLBACK) {
 		ipcon_handle_enumerate(ipcon, buffer);
 		return;
 	}
@@ -283,36 +285,36 @@ void ipcon_handle_message(IPConnection *ipcon, const unsigned char *buffer) {
 	uint8_t stack_id = ipcon_get_stack_id_from_data(buffer);
 	uint16_t length = ipcon_get_length_from_data(buffer);
 	if(ipcon->devices[stack_id] == NULL) {
-		// Message for an unknown device, ignoring it
+		// Response from an unknown device, ignoring it
 		return;
 	}
 
 	Device *device = ipcon->devices[stack_id];
-	DeviceAnswer *answer = &device->answer;
+	DeviceResponse *response = &device->response;
 
-	if(answer->function_id == function_id) {
-		if(answer->length != length) {
+	if(response->function_id == function_id) {
+		if(response->length != length) {
 			fprintf(stderr,
-			        "Received malformed message, discarded: %d\n",
+			        "Received malformed message from %d, ignoring it\n",
 			        stack_id);
 			return;
 		}
 
-		memcpy(answer->buffer, buffer, length);
-		answer->length = length;
+		memcpy(response->buffer, buffer, length);
+		response->length = length;
 
 #ifdef _WIN32
-		ReleaseSemaphore(device->sem_answer,1,NULL);
+		ReleaseSemaphore(device->response_semaphore, 1, NULL);
 #else
-		pthread_mutex_lock(&device->sem_answer);
-		device->sem_answer_flag = true;
-		pthread_cond_signal(&device->cond);
-		pthread_mutex_unlock(&device->sem_answer);
+		pthread_mutex_lock(&device->response_mutex);
+		device->response_flag = true;
+		pthread_cond_signal(&device->response_cond);
+		pthread_mutex_unlock(&device->response_mutex);
 #endif
 		return;
 	}
 
-	if(device->callbacks[function_id] != NULL) {
+	if(device->registered_callbacks[function_id] != NULL) {
 		ipcon_callback_queue_enqueue(ipcon, buffer);
 		return;
 	}
@@ -337,54 +339,54 @@ void ipcon_device_write(Device *device, const char *buffer, const int length) {
 void ipcon_device_create(Device *device, const char *uid) {
 	int i;
 	for(i = 0; i < MAX_NUM_CALLBACKS; i++) {
-		device->callbacks[i] = NULL;
-		device->device_callbacks[i] = NULL;
+		device->registered_callbacks[i] = NULL;
+		device->callback_wrappers[i] = NULL;
 	}
 
 	device->uid = ipcon_base58decode(uid);
 	device->ipcon = NULL;
-	device->answer.function_id = 0;
-	device->answer.length = 0;
+	device->response.function_id = 0;
+	device->response.length = 0;
 
 #ifdef _WIN32
 	InitializeCriticalSection(&device->write_mutex);
-	// Default state for answer semaphore is locked
-	device->sem_answer = CreateSemaphore(NULL,0,1,NULL);
+	// Default state for response semaphore is empty
+	device->response_semaphore = CreateSemaphore(NULL, 0, 1, NULL);
 #else
 	pthread_mutex_init(&device->write_mutex, NULL);
-	pthread_mutex_init(&device->sem_answer, NULL);
-	pthread_cond_init(&device->cond, NULL);
+	pthread_mutex_init(&device->response_mutex, NULL);
+	pthread_cond_init(&device->response_cond, NULL);
 
-	device->sem_answer_flag = false;
+	device->response_flag = false;
 #endif
 }
 
-int ipcon_answer_sem_wait_timeout(Device *device) {
+int ipcon_device_expect_response(Device *device) {
 #ifdef _WIN32
-	return WaitForSingleObject(device->sem_answer, TIMEOUT_ANSWER);
+	return WaitForSingleObject(device->response_semaphore, RESPONSE_TIMEOUT);
 #else
 	struct timespec ts;
 	struct timeval tp;
 	gettimeofday(&tp, NULL);
-	ts.tv_sec  = tp.tv_sec + TIMEOUT_ANSWER / 1000;
-	ts.tv_nsec = (tp.tv_usec + (TIMEOUT_ANSWER % 1000) * 1000) * 1000;
+	ts.tv_sec  = tp.tv_sec + RESPONSE_TIMEOUT / 1000;
+	ts.tv_nsec = (tp.tv_usec + (RESPONSE_TIMEOUT % 1000) * 1000) * 1000;
 	while (ts.tv_nsec >= 1000000000) {
 		ts.tv_sec  += 1;
 		ts.tv_nsec -= 1000000000;
 	}
-	pthread_mutex_lock(&device->sem_answer);
+	pthread_mutex_lock(&device->response_mutex);
 
 	int ret = 0;
-	while(!device->sem_answer_flag) {
-		ret = pthread_cond_timedwait(&device->cond,
-		                             &device->sem_answer,
+	while(!device->response_flag) {
+		ret = pthread_cond_timedwait(&device->response_cond,
+		                             &device->response_mutex,
 		                             &ts);
 		if(ret != 0) {
 			break;
 		}
 	}
-	device->sem_answer_flag = false;
-	pthread_mutex_unlock(&device->sem_answer);
+	device->response_flag = false;
+	pthread_mutex_unlock(&device->response_mutex);
 
 	return ret;
 #endif
@@ -395,9 +397,9 @@ int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
 	for(i = 0; i < MAX_NUM_DEVICES; i++) {
 		ipcon->devices[i] = NULL;
 	}
-	ipcon->add_device = NULL;
+	ipcon->pending_add_device = NULL;
 	ipcon->enumerate_callback = NULL;
-	ipcon->recv_loop_flag = true;
+	ipcon->thread_run_flag = true;
 	ipcon->callback_queue_head = NULL;
 	ipcon->callback_queue_tail = NULL;
 
@@ -464,34 +466,34 @@ int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
 #endif
 
 #ifdef _WIN32
-	DWORD thread_recv_loop_id;
-	ipcon->handle_recv_loop = CreateThread(NULL,
-	                                       0,
-	                                       (LPTHREAD_START_ROUTINE)ipcon_recv_loop,
-	                                       (void*)ipcon,
-	                                       0,
-	                                       (LPDWORD)&thread_recv_loop_id);
-	if(ipcon->handle_recv_loop == NULL) {
+	DWORD thread_id_receive;
+	ipcon->thread_receive = CreateThread(NULL,
+	                                     0,
+	                                     (LPTHREAD_START_ROUTINE)ipcon_receive_loop,
+	                                     (void*)ipcon,
+	                                     0,
+	                                     (LPDWORD)&thread_id_receive);
+	if(ipcon->thread_receive == NULL) {
 		return E_NO_THREAD;
 	}
-	DWORD thread_callback_loop_id;
-	ipcon->handle_callback_loop = CreateThread(NULL,
-	                                           0,
-	                                           (LPTHREAD_START_ROUTINE)ipcon_callback_loop,
-	                                           (void*)ipcon,
-	                                           0,
-	                                           (LPDWORD)&thread_callback_loop_id);
-	if(ipcon->handle_callback_loop == NULL) {
+	DWORD thread_id_callback;
+	ipcon->thread_callback = CreateThread(NULL,
+	                                      0,
+	                                      (LPTHREAD_START_ROUTINE)ipcon_callback_loop,
+	                                      (void*)ipcon,
+	                                      0,
+	                                      (LPDWORD)&thread_id_callback);
+	if(ipcon->thread_callback == NULL) {
 		return E_NO_THREAD;
 	}
 #else
-	if(pthread_create(&ipcon->thread_recv_loop,
+	if(pthread_create(&ipcon->thread_receive,
 	                  NULL,
-	                  ipcon_recv_loop,
+	                  ipcon_receive_loop,
 	                  (void*)ipcon) < 0) {
 		return E_NO_THREAD;
 	}
-	if(pthread_create(&ipcon->thread_callback_loop,
+	if(pthread_create(&ipcon->thread_callback,
 	                  NULL,
 	                  ipcon_callback_loop,
 	                  (void*)ipcon) < 0) {
@@ -504,8 +506,8 @@ int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
 void ipcon_handle_add_device(IPConnection *ipcon,
                              const unsigned char *buffer) {
 	const GetStackIDReturn *gsidr = (const GetStackIDReturn*)buffer;
-	if(ipcon->add_device != NULL &&
-	   ipcon->add_device->uid == gsidr->device_uid) {
+	if(ipcon->pending_add_device != NULL &&
+	   ipcon->pending_add_device->uid == gsidr->device_uid) {
 		const char *p = gsidr->device_name;
 		const char *e = gsidr->device_name + MAX_LENGTH_NAME;
 
@@ -526,16 +528,16 @@ void ipcon_handle_add_device(IPConnection *ipcon,
 
 		// Match with expected name
 		int length = p - gsidr->device_name;
-		int expected_length = strlen(ipcon->add_device->expected_name);
+		int expected_length = strlen(ipcon->pending_add_device->expected_name);
 		if (length != expected_length) {
 			return;
 		}
 
 		int i;
 		for (i = 0; i < length; i++) {
-			if (gsidr->device_name[i] != ipcon->add_device->expected_name[i]) {
-				if ((gsidr->device_name[i] == ' ' && ipcon->add_device->expected_name[i] == '-') ||
-				    (gsidr->device_name[i] == '-' && ipcon->add_device->expected_name[i] == ' ')) {
+			if (gsidr->device_name[i] != ipcon->pending_add_device->expected_name[i]) {
+				if ((gsidr->device_name[i] == ' ' && ipcon->pending_add_device->expected_name[i] == '-') ||
+				    (gsidr->device_name[i] == '-' && ipcon->pending_add_device->expected_name[i] == ' ')) {
 					// Treat ' ' and '-' as equal for backward compatibility
 					continue;
 				} else {
@@ -544,29 +546,27 @@ void ipcon_handle_add_device(IPConnection *ipcon,
 			}
 		}
 
-		ipcon->add_device->stack_id = gsidr->device_stack_id;
-		strncpy(ipcon->add_device->name, gsidr->device_name, MAX_LENGTH_NAME);
-		ipcon->add_device->firmware_version[0] = gsidr->device_firmware_version[0];
-		ipcon->add_device->firmware_version[1] = gsidr->device_firmware_version[1];
-		ipcon->add_device->firmware_version[2] = gsidr->device_firmware_version[2];
-		ipcon->devices[gsidr->device_stack_id] = ipcon->add_device;
+		ipcon->pending_add_device->stack_id = gsidr->device_stack_id;
+		strncpy(ipcon->pending_add_device->name, gsidr->device_name, MAX_LENGTH_NAME);
+		ipcon->pending_add_device->firmware_version[0] = gsidr->device_firmware_version[0];
+		ipcon->pending_add_device->firmware_version[1] = gsidr->device_firmware_version[1];
+		ipcon->pending_add_device->firmware_version[2] = gsidr->device_firmware_version[2];
+		ipcon->devices[gsidr->device_stack_id] = ipcon->pending_add_device;
 
 #ifdef _WIN32
-		ReleaseSemaphore(ipcon->add_device->sem_answer,1,NULL);
+		ReleaseSemaphore(ipcon->pending_add_device->response_semaphore, 1, NULL);
 #else
-		pthread_mutex_lock(&ipcon->add_device->sem_answer);
-		ipcon->add_device->sem_answer_flag = true;
-		pthread_cond_signal(&ipcon->add_device->cond);
-		pthread_mutex_unlock(&ipcon->add_device->sem_answer);
+		pthread_mutex_lock(&ipcon->pending_add_device->response_mutex);
+		ipcon->pending_add_device->response_flag = true;
+		pthread_cond_signal(&ipcon->pending_add_device->response_cond);
+		pthread_mutex_unlock(&ipcon->pending_add_device->response_mutex);
 #endif
 
-		ipcon->add_device = NULL;
+		ipcon->pending_add_device = NULL;
 	}
 }
 
 int ipcon_add_device(IPConnection *ipcon, Device *device) {
-	device->ipcon = ipcon;
-
 	GetStackID gsid = {
 		BROADCAST_ADDRESS,
 		FUNCTION_GET_STACK_ID,
@@ -574,16 +574,20 @@ int ipcon_add_device(IPConnection *ipcon, Device *device) {
 		device->uid
 	};
 
+	ipcon->pending_add_device = device;
+
 #ifdef _WIN32
 	send(ipcon->s, (const char*) &gsid, sizeof(GetStackID), 0);
 #else
 	write(ipcon->fd, &gsid, sizeof(GetStackID));
 #endif
-	ipcon->add_device = device;
-	// Block until there is an answer, timeout after TIMEOUT_ADD_DEVICE ms
-	if(ipcon_answer_sem_wait_timeout(device) != 0) {
+
+	// Block until there is a response, timeout after RESPONSE_TIMEOUT ms
+	if(ipcon_device_expect_response(device) != 0) {
 		return E_TIMEOUT;
 	}
+
+	device->ipcon = ipcon;
 
 	return E_OK;
 }
