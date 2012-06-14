@@ -127,9 +127,9 @@ def make_init_method():
                            device.get_display_name(),
                            device.get_category())
 
-def make_callbacks_format():
+def make_callback_formats():
     cbs = ''
-    cb = "        self.callbacks_format[{0}.CALLBACK_{1}] = '{2}'\n"
+    cb = "        self.callback_formats[{0}.CALLBACK_{1}] = '{2}'\n"
     for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
         if packet['type'] != 'callback':
             continue
@@ -191,21 +191,21 @@ def make_methods():
         \"\"\"
         {9}
         \"\"\"
-        return {1}(*self.ipcon.write(self, {2}.FUNCTION_{3}, ({4}{8}), '{5}', '{6}'))
+        return {1}(*self.ipcon.send_request(self, {2}.FUNCTION_{3}, ({4}{8}), '{5}', '{6}'))
 """
     m_ret = """
     def {0}(self{6}{3}):
         \"\"\"
         {8}
         \"\"\"
-        return self.ipcon.write(self, {1}.FUNCTION_{2}, ({3}{7}), '{4}', '{5}')
+        return self.ipcon.send_request(self, {1}.FUNCTION_{2}, ({3}{7}), '{4}', '{5}')
 """
     m_nor = """
     def {0}(self{6}{3}):
         \"\"\"
         {8}
         \"\"\"
-        self.ipcon.write(self, {1}.FUNCTION_{2}, ({3}{7}), '{4}', '{5}')
+        self.ipcon.send_request(self, {1}.FUNCTION_{2}, ({3}{7}), '{4}', '{5}')
 """
     methods = ''
 
@@ -248,7 +248,7 @@ def make_register_callback_method():
         \"\"\"
         Registers a callback with ID cb to the function func.
         \"\"\"
-        self.callbacks[cb] = func
+        self.registered_callbacks[cb] = func
 """
 
 def make_files(com_new, directory):
@@ -268,7 +268,7 @@ def make_files(com_new, directory):
     py.write(make_callback_id_definitions())
     py.write(make_function_id_definitions())
     py.write(make_init_method())
-    py.write(make_callbacks_format())
+    py.write(make_callback_formats())
     py.write(make_methods())
     py.write(make_register_callback_method())
 
