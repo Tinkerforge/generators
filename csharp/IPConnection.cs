@@ -166,7 +166,7 @@ namespace Tinkerforge
 					Device device = devices[stackID];
 
 					Device.MessageCallback callback = device.messageCallbacks[type];
-					if(callback != null && device.callbacks[type] != null) 
+					if(callback != null) 
 					{
 						callback(data);
 					}
@@ -220,7 +220,7 @@ namespace Tinkerforge
 			}
 
 			Device.MessageCallback callback = device.messageCallbacks[functionID];
-			if(callback != null && device.callbacks[functionID] != null)
+			if(callback != null)
 			{
 				callbackQueue.Enqueue(packet);
 			}
@@ -334,7 +334,6 @@ namespace Tinkerforge
 		internal byte[] bindingVersion = new byte[3];
 		internal ulong uid = 0;
 		internal byte expectedResponseFunctionID = 0;
-		internal Delegate[] callbacks = new Delegate[256];
 		internal MessageCallback[] messageCallbacks = new MessageCallback[256];
 		internal BlockingQueue responseQueue = new BlockingQueue();
 		internal IPConnection ipcon = null;
