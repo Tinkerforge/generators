@@ -18,10 +18,10 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-class RecvLoopThread extends Thread {
+class ReceiveThread extends Thread {
 	IPConnection ipcon = null;
 
-	RecvLoopThread(IPConnection ipcon) {
+	ReceiveThread(IPConnection ipcon) {
 		this.ipcon = ipcon;
 	}
 
@@ -31,29 +31,27 @@ class RecvLoopThread extends Thread {
 
 		try {
 			ipcon.in = ipcon.sock.getInputStream();
-		}
-		catch(java.io.IOException e) {
+		} catch(java.io.IOException e) {
 			e.printStackTrace();
 			return;
 		}
 
-		while(ipcon.recvLoopFlag) {
+		while(ipcon.threadRunFlag) {
 			int length;
 
 			try {
 				length = ipcon.in.read(pendingData, pendingLength,
 				                       pendingData.length - pendingLength);
-			} 
-			catch(java.io.IOException e) {
-				if(ipcon.recvLoopFlag) {
+			} catch(java.io.IOException e) {
+				if(ipcon.threadRunFlag) {
 					e.printStackTrace();
 				}
 				return;
 			}
 
 			if(length == 0 || length == -1) {
-				if(ipcon.recvLoopFlag) {
-					System.err.println("Socket disconnected by Server, destroying ipcon");
+				if(ipcon.threadRunFlag) {
+					System.err.println("Socket disconnected by Server, destroying IPConnection");
 					ipcon.destroy();
 				}
 				return;
@@ -61,18 +59,15 @@ class RecvLoopThread extends Thread {
 
 			pendingLength += length;
 
-			while(true)
-			{
-				if(pendingLength < 4)
-				{
+			while(true) {
+				if(pendingLength < 4) {
 					// Wait for complete header
 					break;
 				}
 
 				length = ipcon.getLengthFromData(pendingData);
 
-				if(pendingLength < length)
-				{
+				if(pendingLength < length) {
 					// Wait for complete packet
 					break;
 				}
@@ -80,33 +75,33 @@ class RecvLoopThread extends Thread {
 				byte[] packet = new byte[length];
 
 				System.arraycopy(pendingData, 0, packet, 0, length);
-				ipcon.handleMessage(packet);
 				System.arraycopy(pendingData, length, pendingData, 0, pendingLength - length);
 				pendingLength -= length;
+				ipcon.handleResponse(packet);
 			}
 		}
 	}
 }
 
 
-class CallbackLoopThread extends Thread {
+class CallbackThread extends Thread {
 	IPConnection ipcon = null;
 
-	CallbackLoopThread(IPConnection ipcon) {
+	CallbackThread(IPConnection ipcon) {
 		this.ipcon = ipcon;
 	}
 
 	public void run() {
-		while(ipcon.recvLoopFlag) {
+		while(ipcon.threadRunFlag) {
 			byte[] data = null;
 			try {
 				data = ipcon.callbackQueue.take();
-			} catch (InterruptedException e) {
+			} catch(InterruptedException e) {
 				e.printStackTrace();
 				continue;
 			}
 
-			if (!ipcon.recvLoopFlag) {
+			if (!ipcon.threadRunFlag) {
 				return;
 			}
 
@@ -141,35 +136,34 @@ class CallbackLoopThread extends Thread {
 
 public class IPConnection {
 	private final static String BASE58 = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
-    private final static byte FUNCTION_GET_STACK_ID = (byte)255;
-    private final static byte FUNCTION_ENUMERATE = (byte)254;
-    protected final static byte FUNCTION_ENUMERATE_CALLBACK = (byte)253;
-    private final static byte FUNCTION_STACK_ENUMERATE = (byte)252;
-    private final static byte FUNCTION_ADC_CALIBRATE = (byte)251;
-    private final static byte FUNCTION_GET_ADC_CALIBRATION = (byte)250;
+	private final static byte FUNCTION_GET_STACK_ID = (byte)255;
+	private final static byte FUNCTION_ENUMERATE = (byte)254;
+	protected final static byte FUNCTION_ENUMERATE_CALLBACK = (byte)253;
+	private final static byte FUNCTION_STACK_ENUMERATE = (byte)252;
+	private final static byte FUNCTION_ADC_CALIBRATE = (byte)251;
+	private final static byte FUNCTION_GET_ADC_CALIBRATION = (byte)250;
 
-    private final static byte BROADCAST_ADDRESS = (byte)0;
-    private final static short ENUMERATE_LENGTH = (short)4;
-    private final static short GET_STACK_ID_LENGTH = (short)12;
-    
-    public final static int TIMEOUT_ADD_DEVICE = 2500;
-    public final static int TIMEOUT_ANSWER = 2500;
-    
-    protected Device[] devices = new Device[255];
-    private Device addDevice = null;
+	private final static byte BROADCAST_ADDRESS = (byte)0;
+	private final static short ENUMERATE_LENGTH = (short)4;
+	private final static short GET_STACK_ID_LENGTH = (short)12;
+
+	public final static int RESPONSE_TIMEOUT = 2500;
+
+	protected Device[] devices = new Device[255];
+	private Device pendingAddDevice = null;
 	protected LinkedBlockingQueue<byte[]> callbackQueue = new LinkedBlockingQueue<byte[]>();
 
-    boolean recvLoopFlag = true;
+	boolean threadRunFlag = true;
 	Socket sock = null;
 	OutputStream out = null;
 	InputStream in = null;
 	protected EnumerateListener enumerateListener = null;
-	RecvLoopThread recvLoopThread = null;
-	CallbackLoopThread callbackLoopThread = null;
+	ReceiveThread receiveThread = null;
+	CallbackThread callbackThread = null;
 
 	public static class TimeoutException extends Exception {
 		private static final long serialVersionUID = 1L;
-		
+
 		TimeoutException(String string) {
 			super(string);
 		}
@@ -184,37 +178,38 @@ public class IPConnection {
 		out = sock.getOutputStream();
 		out.flush();
 
-		callbackLoopThread = new CallbackLoopThread(this);
-		callbackLoopThread.start();
-		recvLoopThread = new RecvLoopThread(this);
-		recvLoopThread.start();
+		callbackThread = new CallbackThread(this);
+		callbackThread.start();
+		receiveThread = new ReceiveThread(this);
+		receiveThread.start();
 	}
-	
-	void handleMessage(byte[] data) {
-		byte functionID = getFunctionIDFromData(data);
-		
+
+	void handleResponse(byte[] packet) {
+		byte functionID = getFunctionIDFromData(packet);
+
 		if(functionID == FUNCTION_GET_STACK_ID) {
-			handleAddDevice(data);
-			return;
-		} else if(functionID == FUNCTION_ENUMERATE_CALLBACK) {
-			handleEnumerate(data);
+			handleAddDevice(packet);
 			return;
 		}
-		
-		byte stackID = getStackIDFromData(data);
-		int length = getLengthFromData(data);
-		
+
+		if(functionID == FUNCTION_ENUMERATE_CALLBACK) {
+			handleEnumerate(packet);
+			return;
+		}
+
+		byte stackID = getStackIDFromData(packet);
+
 		if(devices[stackID] == null) {
 			// Message for an unknown device, ignoring it
 			return;
 		}
-		
+
 		Device device = devices[stackID];
-		
-		if(device.answerFunctionID == functionID) {
+
+		if(functionID == device.expectedResponseFunctionID) {
 			try {
-				device.answerQueue.put(data);
-			} catch (InterruptedException e) {
+				device.responseQueue.put(packet);
+			} catch(InterruptedException e) {
 				e.printStackTrace();
 			}
 			return;
@@ -222,89 +217,87 @@ public class IPConnection {
 		
 		if(device.callbacks[functionID] != null && device.listenerObjects[functionID] != null) {
 			try {
-				callbackQueue.put(data);
-			} catch (InterruptedException e) {
+				callbackQueue.put(packet);
+			} catch(InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
 
-		// Message seems to be OK, but can't be handled, most likely
-		// a callback without registered function
+		// Response seems to be OK, but can't be handled, most likely
+		// a callback without registered listener
 	}
-	
+
 	protected byte getStackIDFromData(byte[] data) {
 		return data[0];
 	}
-	
+
 	protected byte getFunctionIDFromData(byte[] data) {
 		return data[1];
 	}
-	
+
 	protected int getLengthFromData(byte[] data) {
 		return (data[2] & 0xFF) | ((data[3] & 0xFF) << 8);
 	}
-	
+
 	public static short unsignedByte(byte data) {
 		return (short)(data & 0xFF);
 	}
-	
+
 	public static int unsignedShort(short data) {
 		return (int)(data & 0xFFFF);
 	}
-	
+
 	public static long unsignedInt(int data) {
 		return (long)(((long)data) & 0xFFFFFFFF);
 	}
-	
+
 	public void joinThread() {
 		try {
-			recvLoopThread.join();
-			callbackLoopThread.join();
-		} catch (InterruptedException e) {
+			receiveThread.join();
+			callbackThread.join();
+		} catch(InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void write(Device device, ByteBuffer bb, byte functionID, boolean hasReturn) {
 		try {
 			device.semaphoreWrite.acquire();
-		} catch (InterruptedException e) {
+		} catch(InterruptedException e) {
 			e.printStackTrace();
 			return;
 		}
-		
+
 		if(hasReturn) {
-			device.answerFunctionID = functionID;
+			device.expectedResponseFunctionID = functionID;
 		}
-		
+
 		try {
 			out.write(bb.array());
-		}
-		catch(java.io.IOException e) {
+		} catch(java.io.IOException e) {
 			e.printStackTrace();
 			return;
 		}
-		
+
 		if(!hasReturn) {
 			device.semaphoreWrite.release();
 		}
 	}
-	
-	private void handleAddDevice(byte[] data) {
-		int length = getLengthFromData(data);
 
-		if(addDevice == null) {
+	private void handleAddDevice(byte[] packet) {
+		if(pendingAddDevice == null) {
 			return;
 		}
 
-		ByteBuffer bb = ByteBuffer.wrap(data, 4, length - 4);
+		int length = getLengthFromData(packet);
+		ByteBuffer bb = ByteBuffer.wrap(packet, 4, length - 4);
 		bb.order(ByteOrder.LITTLE_ENDIAN);
 
 		long uid = bb.getLong();
-		if(addDevice.uid == uid) {
-			addDevice.firmwareVersion[0] = IPConnection.unsignedByte(bb.get());
-			addDevice.firmwareVersion[1] = IPConnection.unsignedByte(bb.get());
-			addDevice.firmwareVersion[2] = IPConnection.unsignedByte(bb.get());
+		if(pendingAddDevice.uid == uid) {
+			pendingAddDevice.firmwareVersion[0] = IPConnection.unsignedByte(bb.get());
+			pendingAddDevice.firmwareVersion[1] = IPConnection.unsignedByte(bb.get());
+			pendingAddDevice.firmwareVersion[2] = IPConnection.unsignedByte(bb.get());
 
 			String name = "";
 			for(int i = 0; i < 40; i++) {
@@ -312,22 +305,22 @@ public class IPConnection {
 			}
 
 			int i = name.lastIndexOf(' ');
-			if (i < 0 || !name.substring(0, i).replace('-', ' ').equals(addDevice.expectedName.replace('-', ' '))) {
+			if (i < 0 || !name.substring(0, i).replace('-', ' ').equals(pendingAddDevice.expectedName.replace('-', ' '))) {
 				return;
 			}
 
-			addDevice.name = name;
-			addDevice.stackID = unsignedByte(bb.get());
-			devices[addDevice.stackID] = addDevice;
-			addDevice.semaphoreAnswer.release();
-			addDevice = null;
+			pendingAddDevice.name = name;
+			pendingAddDevice.stackID = unsignedByte(bb.get());
+			devices[pendingAddDevice.stackID] = pendingAddDevice;
+			pendingAddDevice.semaphoreAnswer.release();
+			pendingAddDevice = null;
 		}
 	}
-	
-	private void handleEnumerate(byte[] data) {
+
+	private void handleEnumerate(byte[] packet) {
 		if(enumerateListener != null) {
 			try {
-				callbackQueue.put(data);
+				callbackQueue.put(packet);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -335,7 +328,7 @@ public class IPConnection {
 	}
 
 	public void destroy() {
-		recvLoopFlag = false;
+		threadRunFlag = false;
 
 		try {
 			callbackQueue.put(new byte[1]);
@@ -379,7 +372,7 @@ public class IPConnection {
 		bb.putShort(ENUMERATE_LENGTH);
 
 		this.enumerateListener = enumerateListener;
-		
+
 		try {
 			out.write(bb.array());
 		}
@@ -396,7 +389,7 @@ public class IPConnection {
 		bb.putShort(GET_STACK_ID_LENGTH);
 		bb.putLong(device.uid);
 		
-		addDevice = device;
+		pendingAddDevice = device;
 		
 		try {
 			out.write(bb.array());
@@ -406,8 +399,8 @@ public class IPConnection {
 		}
 
 		try {
-			if(!addDevice.semaphoreAnswer.tryAcquire(TIMEOUT_ADD_DEVICE, TimeUnit.MILLISECONDS)) {
-				throw new IPConnection.TimeoutException("Did not receive answer for addDevice in time");
+			if(!pendingAddDevice.semaphoreAnswer.tryAcquire(RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS)) {
+				throw new IPConnection.TimeoutException("Could not add device " + base58Encode(device.uid) + ", timeout");
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -415,29 +408,30 @@ public class IPConnection {
 		
 		device.ipcon = this;
 	}
-	
+
 	public static String base58Encode(long value) {
 		String encoded = "";
+
 		while(value >= 58) {
-			long div = value/58;
+			long div = value / 58;
 			int mod = (int)(value % 58);
 			encoded = BASE58.charAt(mod) + encoded;
 			value = div;
 		}
-		
-		encoded = BASE58.charAt((int)value) + encoded; 
-		return encoded;
+
+		return BASE58.charAt((int)value) + encoded;
 	}
-	
+
 	public static long base58Decode(String encoded) {
-	    long value = (long)0;
-	    long columnMultiplier = (long)1;
-	    for(int i = encoded.length() - 1; i >= 0; i--) {
-	        int column = BASE58.indexOf(encoded.charAt(i));
-	        value += column * columnMultiplier;
-	        columnMultiplier *= 58;
-	    }
-	    
-	    return value;
+		long value = (long)0;
+		long columnMultiplier = (long)1;
+
+		for(int i = encoded.length() - 1; i >= 0; i--) {
+			int column = BASE58.indexOf(encoded.charAt(i));
+			value += column * columnMultiplier;
+			columnMultiplier *= 58;
+		}
+
+		return value;
 	}
 }

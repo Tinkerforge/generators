@@ -18,10 +18,10 @@ public abstract class Device {
 	String name = null;
 	short[] firmwareVersion = new short[3];
 	short[] bindingVersion = new short[3];
-	byte answerFunctionID = (byte)0;
+	byte expectedResponseFunctionID = (byte)0;
 	Semaphore semaphoreAnswer = new Semaphore(1, true);
 	Semaphore semaphoreWrite = new Semaphore(1, true);
-	SynchronousQueue<byte[]> answerQueue = new SynchronousQueue<byte[]>();
+	SynchronousQueue<byte[]> responseQueue = new SynchronousQueue<byte[]>();
 
 	IPConnection ipcon = null;
 

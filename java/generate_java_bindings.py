@@ -412,7 +412,7 @@ def make_methods():
 
 \t\tbyte[] answer = null;
 \t\ttry {{
-\t\t\tanswer = answerQueue.poll(IPConnection.TIMEOUT_ANSWER, TimeUnit.MILLISECONDS);
+\t\t\tanswer = responseQueue.poll(IPConnection.RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS);
 \t\t\tif(answer == null) {{
 \t\t\t\tthrow new IPConnection.TimeoutException("Did not receive answer for {0} in time");
 \t\t\t}}
