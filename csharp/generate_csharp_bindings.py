@@ -340,9 +340,9 @@ def make_methods():
 {4}
 \t\t}}
 """
-    method_oneway = "\t\t\tsendOneWayMessage(data_);"
+    method_oneway = "\t\t\tSendRequestNoResponse(data_);"
     method_answer = """\t\t\tbyte[] answer;
-\t\t\tsendReturningMessage(data_, FUNCTION_{0}, out answer);
+\t\t\tSendRequestExpectResponse(data_, FUNCTION_{0}, out answer);
 {1}"""
 
     cls = device.get_camel_case_name()

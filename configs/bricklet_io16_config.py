@@ -74,13 +74,12 @@ If the direction is configured as output, the value is either high or low
 If the direction is configured as input, the value is either pull up or
 default (set as true or false).
 
-For example: 
+For example:
 
- * ("a", 0xFF, 'i', true) will set all pins of port a as input pull up. 
- * ("a", 128, 'i', false) will set pin 7 of port a as input default (floating if nothing is connected). 
- * ("b", 3, 'o', false) will set pins 0 and 1 of port b as output low.
- * ("b", 4, 'o', true) will set pin 2 of port b as output high.
-
+* ("a", 0xFF, 'i', true) will set all pins of port a as input pull up.
+* ("a", 128, 'i', false) will set pin 7 of port a as input default (floating if nothing is connected).
+* ("b", 3, 'o', false) will set pins 0 and 1 of port b as output low.
+* ("b", 4, 'o', true) will set pin 2 of port b as output high.
 """,
 'de':
 """
@@ -102,11 +101,10 @@ Returns a value bit mask and a direction bit mask for the specified port.
 For example: A return value of 0b00001111 and 0b00110011 for
 direction and value means that:
 
- * pins 0 and 1 are configured as input pull up, 
- * pins 2 and 3 are configured as input default,
- * pins 4 and 5 are configured as output high
- * and pins 6 and 7 are configured as output low.
-
+* pins 0 and 1 are configured as input pull up,
+* pins 2 and 3 are configured as input default,
+* pins 4 and 5 are configured as output high
+* and pins 6 and 7 are configured as output low.
 """,
 'de':
 """
@@ -207,11 +205,10 @@ and the current value bit mask of the port.
 
 For example:
 
- * ("a", 1, 1) means that on port a an interrupt on pin 0 occurred and
-   currently pin 0 is high and pins 1-7 are low.
- * ("b", 128, 254) means that on port b an interrupt on pins 0 and 7
-   occurred and currently pin 0 is low and pins 1-7 are high.
-
+* ("a", 1, 1) means that on port a an interrupt on pin 0 occurred and
+  currently pin 0 is high and pins 1-7 are low.
+* ("b", 128, 254) means that on port b an interrupt on pins 0 and 7
+  occurred and currently pin 0 is low and pins 1-7 are high.
 """,
 'de':
 """

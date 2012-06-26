@@ -399,11 +399,7 @@ def make_methods():
 \t * {9}
 \t */
 \tpublic {0} {1}({2}) {3} {{
-\t\tByteBuffer bb = ByteBuffer.allocate({4});
-\t\tbb.order(ByteOrder.LITTLE_ENDIAN);
-\t\tbb.put((byte)stackID);
-\t\tbb.put((byte)FUNCTION_{5});
-\t\tbb.putShort((short){4});
+\t\tByteBuffer bb = IPConnection.createRequestBuffer((byte)stackID, FUNCTION_{5}, (short){4});
 {6}
 \t\tipcon.write(this, bb, FUNCTION_{5}, {7});{8}
 \t}}
@@ -412,7 +408,7 @@ def make_methods():
 
 \t\tbyte[] answer = null;
 \t\ttry {{
-\t\t\tanswer = answerQueue.poll(IPConnection.TIMEOUT_ANSWER, TimeUnit.MILLISECONDS);
+\t\t\tanswer = responseQueue.poll(IPConnection.RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS);
 \t\t\tif(answer == null) {{
 \t\t\t\tthrow new IPConnection.TimeoutException("Did not receive answer for {0} in time");
 \t\t\t}}

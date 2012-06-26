@@ -259,7 +259,7 @@ void {0}_create({1} *{0}, const char *uid) {{
 """
 
     cb_temp = """
-\t{0}->device_callbacks[{3}_CALLBACK_{1}] = {0}_callback_{2};"""
+\t{0}->callback_wrappers[{3}_CALLBACK_{1}] = {0}_callback_wrapper_{2};"""
 
     cbs = ''
     dev_name = device.get_underscore_name()
@@ -337,7 +337,7 @@ int {0}_{1}({2} *{0}{3}) {{
 \t\treturn E_NOT_ADDED;
 \t}}
 
-\tipcon_sem_wait_write({0});
+\tipcon_mutex_lock(&{0}->write_mutex);
 
 {9}\t{5}_ {6};
 \t{6}.stack_id = {0}->stack_id;
@@ -346,22 +346,22 @@ int {0}_{1}({2} *{0}{3}) {{
 
 \tipcon_device_write({0}, (char *)&{6}, sizeof({5}_));
 
-{10}{8}\tipcon_sem_post_write({0});
+{10}{8}\tipcon_mutex_unlock(&{0}->write_mutex);
 
 \treturn E_OK;
 }}
 """
 
-    func_ret = """\t{0}Return_ *{1}r = ({0}Return_ *){2}->answer.buffer;
+    func_ret = """\t{0}Return_ *{1}r = ({0}Return_ *){2}->response.buffer;
 {3}
 """
 
-    sizeof_ret = """\t{0}->answer.function_id = {1};
-\t{0}->answer.length = sizeof({2}Return_);
+    sizeof_ret = """\t{0}->response.function_id = {1};
+\t{0}->response.length = sizeof({2}Return_);
 """
 
-    answer_sem = """\tif(ipcon_answer_sem_wait_timeout({0}) != 0) {{
-\t\tipcon_sem_post_write({0});
+    answer_sem = """\tif(ipcon_device_expect_response({0}) != 0) {{
+\t\tipcon_mutex_unlock(&{0}->write_mutex);
 \t\treturn E_TIMEOUT;
 \t}}
 
@@ -397,16 +397,16 @@ int {0}_{1}({2} *{0}{3}) {{
 def make_register_callback_func():
     func = """
 void {0}_register_callback({1} *{0}, uint8_t cb, void *func) {{
-    {0}->callbacks[cb] = func;
+    {0}->registered_callbacks[cb] = func;
 }}
 """
     return func.format(device.get_underscore_name(), device.get_camel_case_name())
 
-def make_callback_funcs():
+def make_callback_wrapper_funcs():
     func = """
-static int {0}_callback_{1}({2} *{0}, const unsigned char *buffer) {{
+static int {0}_callback_wrapper_{1}({2} *{0}, const unsigned char *buffer) {{
 \t{3}Callback_ *{4}c = ({3}Callback_ *)buffer;
-\t(({1}_func_t){0}->callbacks[{4}c->function_id])({5});
+\t(({1}_func_t){0}->registered_callbacks[{4}c->function_id])({5});
 \treturn sizeof({3}Callback_);
 }}
 """
@@ -545,8 +545,8 @@ void {0}_register_callback({1} *{0}, uint8_t cb, void *func);
 """
     return func.format(device.get_underscore_name(), device.get_camel_case_name(), device.get_category())
 
-def make_callback_declarations():
-    func = 'int {0}_callback_{1}({2} *{0}, const unsigned char *buffer);\n'
+def make_callback_wrapper_declarations():
+    func = 'int {0}_callback_wrapper_{1}({2} *{0}, const unsigned char *buffer);\n'
 
     funcs = '\n'
     for packet in device.get_packets():
@@ -575,7 +575,7 @@ def make_files(com_new, directory):
     c.write(make_typedefs())
     c.write(make_structs())
     c.write(make_method_funcs())
-    c.write(make_callback_funcs())
+    c.write(make_callback_wrapper_funcs())
     c.write(make_register_callback_func())
     c.write(make_create_func())
 

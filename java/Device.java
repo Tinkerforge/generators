@@ -18,10 +18,9 @@ public abstract class Device {
 	String name = null;
 	short[] firmwareVersion = new short[3];
 	short[] bindingVersion = new short[3];
-	byte answerType = (byte)0;
-	Semaphore semaphoreAnswer = new Semaphore(1, true);
+	byte expectedResponseFunctionID = (byte)0;
 	Semaphore semaphoreWrite = new Semaphore(1, true);
-	SynchronousQueue<byte[]> answerQueue = new SynchronousQueue<byte[]>();
+	SynchronousQueue<byte[]> responseQueue = new SynchronousQueue<byte[]>();
 
 	IPConnection ipcon = null;
 
@@ -44,12 +43,6 @@ public abstract class Device {
 	}
 
 	public Device(String uid) {
-		try {
-			semaphoreAnswer.acquire();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
 		this.uid = IPConnection.base58Decode(uid);
 	}
 

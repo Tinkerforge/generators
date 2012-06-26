@@ -11,3 +11,6 @@
        Add inline code documentation
 1.0.8: Ensure that the answering device matches the expected type in IPConnection.addDevice
 1.0.9: Treat '-' and ' ' as equal in device name check for backward compatibility
+1.0.10: Improve exception handling in receive thread
+        Ensure to unblock callback thread when destroying the IPConnection
+        Fix handling of fragmented packets
