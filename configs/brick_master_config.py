@@ -399,7 +399,7 @@ Returns the address as set by :func:`SetRS485Address`.
 
 com['packets'].append({
 'type': 'function', 
-'name': ('GetRS485SlaveAddress', 'set_rs485_slave_address'), 
+'name': ('SetRS485SlaveAddress', 'set_rs485_slave_address'),
 'elements': [('num', 'uint8', 1, 'in'),
              ('address', 'uint8', 1, 'in')], 
 'doc': ['am', {
