@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-# Servo Brick communication config
+# Master Brick communication config
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'version': [1, 1, 0],
+    'version': [1, 2, 0],
     'category': 'Brick',
     'name': ('Master', 'master', 'Master'),
     'manufacturer': 'Tinkerforge',
