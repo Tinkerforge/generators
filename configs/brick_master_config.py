@@ -346,7 +346,7 @@ Returns the channel as set by :func:`SetChibiChannel`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function', 
 'name': ('IsRS485Present', 'is_rs485_present'), 
 'elements': [('present', 'bool', 1, 'out')], 
 'doc': ['am', {
@@ -361,7 +361,7 @@ Returns true if a RS485 Extension is available to be used by the Master.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function', 
 'name': ('SetRS485Address', 'set_rs485_address'), 
 'elements': [('address', 'uint8', 1, 'in')], 
 'doc': ['am', {
@@ -383,7 +383,7 @@ have to be set on every startup.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function', 
 'name': ('GetRS485Address', 'get_rs485_address'), 
 'elements': [('address', 'uint8', 1, 'out')], 
 'doc': ['am', {
@@ -398,7 +398,7 @@ Returns the address as set by :func:`SetRS485Address`.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function', 
 'name': ('GetRS485SlaveAddress', 'set_rs485_slave_address'), 
 'elements': [('num', 'uint8', 1, 'in'),
              ('address', 'uint8', 1, 'in')], 
@@ -422,7 +422,7 @@ have to be set on every startup.
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function', 
 'name': ('GetRS485SlaveAddress', 'get_rs485_slave_address'), 
 'elements': [('num', 'uint8', 1, 'in'),
              ('address', 'uint8', 1, 'out')], 
@@ -439,16 +439,57 @@ Returns the slave address for a given num as set by
 })
 
 com['packets'].append({
-'type': 'method', 
+'type': 'function', 
 'name': ('GetRS485ErrorLog', 'get_rs485_error_log'), 
-'elements': [('underrun', 'uint16', 1, 'out'),
-             ('crc_error', 'uint16', 1, 'out'),
-             ('no_ack', 'uint16', 1, 'out'),
-             ('overflow', 'uint16', 1, 'out')], 
+'elements': [('crc_error', 'uint16', 1, 'out')], 
 'doc': ['am', {
 'en':
 """
-TODO
+Returns CRC error counts of the RS485 communication.
+If this counter starts rising, it is likely that the distance
+between the RS485 nodes is too big or there is some kind of
+interference.
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('SetRS485Configuration', 'set_rs485_configuration'), 
+'elements': [('speed', 'uint32', 1, 'in'),
+             ('parity', 'char', 1, 'in'),
+             ('stopbits', 'uint8', 1, 'in')], 
+'doc': ['am', {
+'en':
+"""
+Sets the configuration of the RS485 extension. Speed is given in baud. The
+Master Brick will try to match the given baud rate as exactly as possible.
+The maximum recommended baud rate is 2000000 (2Mbit).
+Possible values for parity are 'n' (none), 'e' (even) and 'o' (odd).
+Possible values for stopbits are 1 and 2.
+
+The values are stored in the EEPROM and only applied on startup. That means
+you have to restart the Master Brick after configuration.
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('GetRS485Configuration', 'get_rs485_configuration'), 
+'elements': [('speed', 'uint32', 1, 'out'),
+             ('parity', 'char', 1, 'out'),
+             ('stopbits', 'uint8', 1, 'out')], 
+'doc': ['am', {
+'en':
+"""
+Returns the configuration as set by :func:`SetRS485SlaveAddress`.
 """,
 'de':
 """
