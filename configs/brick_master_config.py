@@ -471,6 +471,10 @@ The maximum recommended baud rate is 2000000 (2Mbit).
 Possible values for parity are 'n' (none), 'e' (even) and 'o' (odd).
 Possible values for stopbits are 1 and 2.
 
+If your RS485 is unstable (lost messages etc), the first thing you should
+try is to decrease the speed. On very large bus (e.g. 1km), you probably
+should use a value in the range of 100khz.
+
 The values are stored in the EEPROM and only applied on startup. That means
 you have to restart the Master Brick after configuration.
 """,
