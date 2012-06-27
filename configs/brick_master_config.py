@@ -188,7 +188,7 @@ com['packets'].append({
 'doc': ['am', {
 'en':
 """
-Sets up to 256 slave addresses. The address numeration has to be used 
+Sets up to 255 slave addresses. The address numeration has to be used
 ascending from 0. For example: If you use the Chibi Extension in Master mode
 (i.e. the stack has an USB connection) and you want to talk to three other
 Chibi stacks with the IDs 17, 23, and 42, you should call with "(0, 17),
@@ -405,7 +405,7 @@ com['packets'].append({
 'doc': ['am', {
 'en':
 """
-Sets up to 256 slave addresses. The address numeration has to be used 
+Sets up to 255 slave addresses. The address numeration has to be used
 ascending from 0. For example: If you use the RS485 Extension in Master mode
 (i.e. the stack has an USB connection) and you want to talk to three other
 RS485 stacks with the IDs 17, 23, and 42, you should call with "(0, 17),
@@ -489,7 +489,7 @@ com['packets'].append({
 'doc': ['am', {
 'en':
 """
-Returns the configuration as set by :func:`SetRS485SlaveAddress`.
+Returns the configuration as set by :func:`SetRS485Configuration`.
 """,
 'de':
 """
