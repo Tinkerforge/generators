@@ -403,21 +403,29 @@ def make_methods():
         doc = '\n     * '.join(fix_links(packet['doc'][1][lang]).strip().split('\n') + [''] + make_parameter_doc(packet).split('\n'))
 
         if response_payload_elements > 1:
-            methods += method_multi.format(name_lower,
-                                           parameter,
-                                           '\n'.join(pack),
-                                           send,
-                                           final_unpack,
-                                           '\n'.join(collect),
-                                           doc)
+            method = method_multi.format(name_lower,
+                                         parameter,
+                                         '\n'.join(pack),
+                                         send,
+                                         final_unpack,
+                                         '\n'.join(collect),
+                                         doc)
         else:
-            methods += method_single.format(name_lower,
-                                            parameter,
-                                            '\n'.join(pack),
-                                            send,
-                                            final_unpack,
-                                            '\n'.join(collect),
-                                            doc)
+            method = method_single.format(name_lower,
+                                          parameter,
+                                          '\n'.join(pack),
+                                          send,
+                                          final_unpack,
+                                          '\n'.join(collect),
+                                          doc)
+
+        prev = method
+        method = method.replace('\n\n\n', '\n\n').replace('\n\n    }', '\n    }')
+        while prev != method:
+            prev = method
+            method = method.replace('\n\n\n', '\n\n').replace('\n\n    }', '\n    }')
+
+        methods += method
 
     return """
     /**
