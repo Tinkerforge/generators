@@ -120,6 +120,10 @@ class Device:
             else:
                 raise ValueError('Invalid packet type ' + packet['type'])
 
+        for packet in self.all_packets:
+            if packet['name'][0].lower() != packet['name'][1].replace('_', ''):
+                raise ValueError('Name mismatch: ' + packet['name'][0] + ' != ' + packet['name'][1])
+
     def get_version(self):
         return self.com['version']
 
