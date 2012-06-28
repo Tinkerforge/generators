@@ -14,3 +14,4 @@
 1.0.10: Improve exception handling in receive thread
         Ensure to unblock callback thread when destroying the IPConnection
         Fix handling of fragmented packets
+1.0.11: Add RS485 support
