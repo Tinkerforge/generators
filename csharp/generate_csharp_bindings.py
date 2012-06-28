@@ -130,10 +130,7 @@ def make_delegates():
 \t\t/// </summary>
 \t\tpublic delegate void {0}({1});
 """
-    for packet in device.get_packets():
-        if packet['type'] != 'callback':
-            continue
-
+    for packet in device.get_packets('callback'):
         name = packet['name'][0]
         parameter = csharp_common.make_parameter_list(packet)
         doc = '\n\t\t///  '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
@@ -143,11 +140,11 @@ def make_delegates():
 def make_function_id_definitions():
     function_ids = ''
     function_id = '\t\tprivate static byte {2}_{0} = {1};\n'
-    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
+    for packet in device.get_packets():
         if packet['type'] == 'callback':
-            function_ids += function_id.format(packet['name'][1].upper(), i+1, 'CALLBACK')
+            function_ids += function_id.format(packet['name'][1].upper(), packet['function_id'], 'CALLBACK')
         else:
-            function_ids += function_id.format(packet['name'][1].upper(), i+1, 'FUNCTION')
+            function_ids += function_id.format(packet['name'][1].upper(), packet['function_id'], 'FUNCTION')
     return function_ids
 
 def make_constructor():
@@ -168,10 +165,7 @@ def make_constructor():
 \t\t}}
 """
 
-    for packet in device.get_packets():
-        if packet['type'] != 'callback':
-            continue
-
+    for packet in device.get_packets('callback'):
         name_upper = packet['name'][1].upper()
         name_pascal = packet['name'][0]
         cbs.append(cb.format(name_upper, name_pascal))
@@ -255,10 +249,7 @@ def make_register_callback():
 """
 
     i = 0
-    for packet in device.get_packets():
-        if packet['type'] != 'callback':
-            continue
-
+    for packet in device.get_packets('callback'):
         els = ''
         if i > 0:
             els = 'else '
@@ -282,10 +273,7 @@ def make_callbacks():
 \t\t}}
 """
     cls = device.get_camel_case_name()
-    for packet in device.get_packets():
-        if packet['type'] != 'callback':
-            continue
-
+    for packet in device.get_packets('callback'):
         name = packet['name'][0]
         name_upper = packet['name'][1].upper()
         eles = []
@@ -346,10 +334,7 @@ def make_methods():
 {1}"""
 
     cls = device.get_camel_case_name()
-    for packet in device.get_packets():
-        if packet['type'] != 'function':
-            continue
-
+    for packet in device.get_packets('function'):
         ret_count = csharp_common.count_return_values(packet['elements'])
         size = str(get_data_size(packet['elements']))
         name_upper = packet['name'][1].upper()
@@ -420,10 +405,7 @@ def make_obsolete_methods():
 """
 
     cls = device.get_camel_case_name()
-    for packet in device.get_packets():
-        if packet['type'] != 'function':
-            continue
-
+    for packet in device.get_packets('function'):
         ret_count = csharp_common.count_return_values(packet['elements'])
         if ret_count != 1:
             continue

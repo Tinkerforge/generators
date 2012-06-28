@@ -124,8 +124,8 @@ def make_methods(typ):
     methods = ''
     func_start = '.. tcpip:function:: '
     cls = device.get_camel_case_name()
-    for packet in device.get_packets():
-        if packet['type'] != 'function' or packet['doc'][0] != typ:
+    for packet in device.get_packets('function'):
+        if packet['doc'][0] != typ:
             continue
         name = packet['name'][1]
         fid = '\n :functionid: {0}'.format(packet['function_id'])
@@ -145,12 +145,7 @@ def make_callbacks():
     cbs = ''
     func_start = '.. tcpip:function:: '
     cls = device.get_camel_case_name()
-    pt = 1
-    for packet in device.get_packets():
-        pt += 1
-        if packet['type'] != 'callback':
-            continue
-
+    for packet in device.get_packets('callback'):
         fid = '\n :functionid: {0}'.format(packet['function_id'])
         response = make_response_desc(packet)
         desc = fix_links(common.shift_right(packet['doc'][1][lang], 1))
@@ -238,10 +233,6 @@ A general description of the TCP/IP protocol structure can be found
 def make_files(com_new, directory):
     global device
     device = common.Device(com_new)
-
-    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
-        packet['function_id'] = i + 1
-
     file_name = '{0}_{1}_TCPIP'.format(device.get_camel_case_name(), device.get_category())
 
     directory += '/doc'

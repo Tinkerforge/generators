@@ -124,10 +124,7 @@ def make_return_objects():
 \t}}
 """
     param = '\t\tpublic {0}{1} {2}{3};'
-    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
-        if packet['type'] == 'callback':
-            continue
-
+    for packet in device.get_packets('function'):
         if get_num_return(packet['elements']) < 2:
             continue
 
@@ -165,10 +162,7 @@ def make_listener_definitions():
 \t\tpublic void {1}({2});
 \t}}
 """
-    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
-        if packet['type'] != 'callback':
-            continue
-
+    for packet in device.get_packets('callback'):
         name = packet['name'][0]
         name_lower = name[0].lower() + name[1:]
         parameter = make_parameter_list(packet)
@@ -192,10 +186,7 @@ def make_callback_listener_definitions():
 
 {1}"""
     cbs_end = '\t}\n'
-    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
-        if packet['type'] != 'callback':
-            continue
-
+    for packet in device.get_packets('callback'):
         typ = packet['name'][1].upper()
         name = packet['name'][0]
         name_lower = name[0].lower() + name[1:]
@@ -235,10 +226,7 @@ def make_add_listener():
 \t\t}}"""
 
     l = []
-    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
-        if packet['type'] != 'callback':
-            continue
-
+    for packet in device.get_packets('callback'):
         name = packet['name'][0]
         name_upper = packet['name'][1].upper()
         l.append(listener.format(name, name_upper))
@@ -247,11 +235,11 @@ def make_add_listener():
 def make_function_id_definitions():
     function_ids = ''
     function_id = '\tprivate final static byte {2}_{0} = (byte){1};\n'
-    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
+    for packet in device.get_packets():
         if packet['type'] == 'callback':
-            function_ids += function_id.format(packet['name'][1].upper(), i+1, 'CALLBACK')
+            function_ids += function_id.format(packet['name'][1].upper(), packet['function_id'], 'CALLBACK')
         else:
-            function_ids += function_id.format(packet['name'][1].upper(), i+1, 'FUNCTION')
+            function_ids += function_id.format(packet['name'][1].upper(), packet['function_id'], 'FUNCTION')
     return function_ids
 
 
@@ -434,10 +422,7 @@ def make_methods():
 \t\t\t}}"""
 
     cls = device.get_camel_case_name()
-    for packet in device.get_packets():
-        if packet['type'] != 'function':
-            continue
-
+    for packet in device.get_packets('function'):
         ret = get_return_value(packet)
         name_lower = packet['name'][0][0].lower() + packet['name'][0][1:]
         parameter = make_parameter_list(packet)

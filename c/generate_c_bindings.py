@@ -138,11 +138,8 @@ def make_function_id_defines():
     define_temp = '#define {2}_{0} {1}\n'
 
     defines = ''
-    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
-        if packet['type'] != 'function':
-            continue
-
-        defines += define_temp.format(packet['name'][1].upper(), i+1, 'FUNCTION')
+    for packet in device.get_packets('function'):
+        defines += define_temp.format(packet['name'][1].upper(), packet['function_id'], 'FUNCTION')
 
     return defines
 
@@ -157,13 +154,11 @@ def make_callback_defines():
 """
 
     defines = ''
-    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
-        if packet['type'] != 'callback':
-            continue
+    for packet in device.get_packets('callback'):
         doc = '\n * '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
         defines += define_temp.format(device.get_underscore_name().upper(),
                                       packet['name'][1].upper(), 
-                                      i+1,
+                                      packet['function_id'],
                                       doc,
                                       device.get_camel_case_name(),
                                       device.get_category())
@@ -263,9 +258,7 @@ void {0}_create({1} *{0}, const char *uid) {{
 
     cbs = ''
     dev_name = device.get_underscore_name()
-    for packet in device.get_packets():
-        if packet['type'] != 'callback':
-            continue
+    for packet in device.get_packets('callback'):
         type_name = packet['name'][1]
         cbs += cb_temp.format(dev_name, type_name.upper(), type_name, dev_name.upper())
     
@@ -371,10 +364,7 @@ int {0}_{1}({2} *{0}{3}) {{
     c = device.get_camel_case_name()
 
     funcs = ''
-    for packet in device.get_packets():
-        if packet['type'] != 'function':
-            continue
-
+    for packet in device.get_packets('function'):
         b = packet['name'][1]
         d = make_parameter_list(packet)
         e = 'FUNCTION_{0}'.format(packet['name'][1].upper())
@@ -412,9 +402,7 @@ static int {0}_callback_wrapper_{1}({2} *{0}, const unsigned char *buffer) {{
 """
 
     funcs = ''
-    for packet in device.get_packets():
-        if packet['type'] != 'callback':
-            continue
+    for packet in device.get_packets('callback'):
         a = device.get_underscore_name()
         b = packet['name'][1]
         c = device.get_camel_case_name()
@@ -468,10 +456,7 @@ typedef void (*{0}_func_t)({1});
 """
 
     typedefs = '\n'
-    for packet in device.get_packets():
-        if packet['type'] != 'callback':
-            continue
-
+    for packet in device.get_packets('callback'):
         name = packet['name'][1]
         c_type_list = []
         for element in packet['elements']:
@@ -519,10 +504,7 @@ int {0}_{1}({2} *{0}{3});
     c = device.get_camel_case_name()
 
     funcs = ''
-    for packet in device.get_packets():
-        if packet['type'] != 'function':
-            continue
-
+    for packet in device.get_packets('function'):
         b = packet['name'][1]
         d = make_parameter_list(packet)
         doc = '\n * '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
@@ -549,10 +531,7 @@ def make_callback_wrapper_declarations():
     func = 'int {0}_callback_wrapper_{1}({2} *{0}, const unsigned char *buffer);\n'
 
     funcs = '\n'
-    for packet in device.get_packets():
-        if packet['type'] != 'callback':
-            continue
-
+    for packet in device.get_packets('callback'):
         funcs += func.format(device.get_underscore_name(),
                              packet['name'][1],
                              device.get_camel_case_name())

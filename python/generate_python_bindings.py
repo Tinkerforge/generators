@@ -61,13 +61,13 @@ def make_namedtuples():
 """
 
     tups = ''
-    for packet in device.get_packets():
+    for packet in device.get_packets('function'):
         elements_out = 0
         for element in packet['elements']:
             if element[3] == 'out':
                 elements_out += 1
             
-        if elements_out < 2 or packet['type'] != 'function':
+        if elements_out < 2:
             continue
 
         name = packet['name'][0]
@@ -94,19 +94,15 @@ class {0}(Device):
 def make_callback_id_definitions():
     cbs = ''
     cb = '    CALLBACK_{0} = {1}\n'
-    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
-        if packet['type'] != 'callback':
-            continue
-        cbs += cb.format(packet['name'][1].upper(), i+1)
+    for packet in device.get_packets('callback'):
+        cbs += cb.format(packet['name'][1].upper(), packet['function_id'])
     return cbs
 
 def make_function_id_definitions():
     function_ids = '\n'
     function_id = '    FUNCTION_{0} = {1}\n'
-    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
-        if packet['type'] != 'function':
-            continue
-        function_ids += function_id.format(packet['name'][1].upper(), i+1)
+    for packet in device.get_packets('function'):
+        function_ids += function_id.format(packet['name'][1].upper(), packet['function_id'])
     return function_ids
 
 def make_init_method():
@@ -130,9 +126,7 @@ def make_init_method():
 def make_callback_formats():
     cbs = ''
     cb = "        self.callback_formats[{0}.CALLBACK_{1}] = '{2}'\n"
-    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
-        if packet['type'] != 'callback':
-            continue
+    for packet in device.get_packets('callback'):
         form = make_format_list(packet, 'out')
         cbs += cb.format(device.get_camel_case_name(), packet['name'][1].upper(), form)
     return cbs
@@ -210,10 +204,7 @@ def make_methods():
     methods = ''
 
     cls = device.get_camel_case_name()
-    for packet in device.get_packets():
-        if packet['type'] != 'function':
-            continue
-
+    for packet in device.get_packets('function'):
         nb = packet['name'][0]
         ns = packet['name'][1]
         nh = ns.upper()

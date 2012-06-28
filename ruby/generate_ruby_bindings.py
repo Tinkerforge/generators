@@ -103,20 +103,16 @@ def make_callback_id_definitions():
     # {2}
     CALLBACK_{0} = {1}
 """
-    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
-        if packet['type'] != 'callback':
-            continue
+    for packet in device.get_packets('callback'):
         doc = '\n    # '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
-        cbs += cb.format(packet['name'][1].upper(), i+1, doc)
+        cbs += cb.format(packet['name'][1].upper(), packet['function_id'], doc)
     return cbs
 
 def make_function_id_definitions():
     function_ids = '\n'
     function_id = '    FUNCTION_{0} = {1} # :nodoc:\n'
-    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
-        if packet['type'] != 'function':
-            continue
-        function_ids += function_id.format(packet['name'][1].upper(), i+1)
+    for packet in device.get_packets('function'):
+        function_ids += function_id.format(packet['name'][1].upper(), packet['function_id'])
     return function_ids
 
 def make_initialize_method():
@@ -139,9 +135,7 @@ def make_initialize_method():
 def make_callback_formats():
     cbs = ''
     cb = "      @callback_formats[CALLBACK_{0}] = '{1}'\n"
-    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
-        if packet['type'] != 'callback':
-            continue
+    for packet in device.get_packets('callback'):
         form, _ = make_format_list(packet, 'out')
         cbs += cb.format(packet['name'][1].upper(), form)
     return cbs + '    end\n'
@@ -206,10 +200,7 @@ def make_methods():
 """
     methods = ''
 
-    for packet in device.get_packets():
-        if packet['type'] != 'function':
-            continue
-
+    for packet in device.get_packets('function'):
         name = packet['name'][1]
         fid = packet['name'][1].upper()
         parms = make_parameter_list(packet)

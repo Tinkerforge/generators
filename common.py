@@ -104,6 +104,21 @@ def camel_case_to_space(name):
 class Device:
     def __init__(self, com):
         self.com = com
+        self.all_packets = []
+        self.function_packets = []
+        self.callback_packets = []
+
+        for i, packet in zip(range(len(com['packets'])), com['packets']):
+            packet['function_id'] = i + 1
+            self.all_packets.append(packet)
+
+        for packet in self.all_packets:
+            if packet['type'] == 'function':
+                self.function_packets.append(packet)
+            elif packet['type'] == 'callback':
+                self.callback_packets.append(packet)
+            else:
+                raise ValueError('Invalid packet type ' + packet['type'])
 
     def get_version(self):
         return self.com['version']
@@ -128,13 +143,15 @@ class Device:
     def get_description(self):
         return self.com['description']
 
-    def get_packets(self):
-        return self.com['packets']
+    def get_packets(self, typ=None):
+        if typ is None:
+            return self.all_packets
+        elif typ == 'function':
+            return self.function_packets
+        elif typ == 'callback':
+            return self.callback_packets
+        else:
+            raise ValueError('Invalid packet type ' + str(typ))
 
     def get_callback_count(self):
-        callback_count = 0
-        for packet in self.com['packets']:
-            if packet['type'] == 'callback':
-                callback_count += 1
-
-        return callback_count
+        return len(self.callback_packets)

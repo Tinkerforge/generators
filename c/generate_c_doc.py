@@ -163,8 +163,8 @@ def make_methods(typ):
 
     methods = ''
     func_start = '.. c:function:: int '
-    for packet in device.get_packets():
-        if packet['type'] != 'function' or packet['doc'][0] != typ:
+    for packet in device.get_packets('function'):
+        if packet['doc'][0] != typ:
             continue
         name = '{0}_{1}'.format(device.get_underscore_name(), packet['name'][1])
         plist = make_parameter_list(packet)
@@ -181,10 +181,7 @@ def make_methods(typ):
 def make_callbacks():
     cbs = ''
     func_start = '.. c:var:: '
-    for packet in device.get_packets():
-        if packet['type'] != 'callback':
-            continue
-
+    for packet in device.get_packets('callback'):
         plist = make_parameter_list(packet)[2:].replace('*ret_', '')
         if not plist:
             plist = 'void'

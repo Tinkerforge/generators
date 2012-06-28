@@ -150,8 +150,8 @@ def make_methods(typ):
     methods = ''
     func_start = '.. csharp:function:: '
     cls = device.get_category() + device.get_camel_case_name()
-    for packet in device.get_packets():
-        if packet['type'] != 'function' or packet['doc'][0] != typ:
+    for packet in device.get_packets('function'):
+        if packet['doc'][0] != typ:
             continue
 
         signature = csharp_common.make_method_signature(packet, True, device.com)
@@ -178,10 +178,7 @@ def make_callbacks():
 
     cbs = ''
     cls = device.get_camel_case_name()
-    for packet in device.get_packets():
-        if packet['type'] != 'callback':
-            continue
-
+    for packet in device.get_packets('callback'):
         desc = fix_links(common.shift_right(packet['doc'][1][lang], 2))
         params = csharp_common.make_parameter_list(packet)
 

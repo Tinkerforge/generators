@@ -143,10 +143,7 @@ def make_callback_wrapper_definitions():
     cb = """
         $this->callbackWrappers[self::CALLBACK_{0}] = 'callbackWrapper{1}';"""
     cbs_end = '\n    }\n'
-    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
-        if packet['type'] != 'callback':
-            continue
-
+    for packet in device.get_packets('callback'):
         typ = packet['name'][1].upper()
         name = packet['name'][0]
 
@@ -161,11 +158,9 @@ def make_callback_id_definitions():
      */
     const CALLBACK_{0} = {1};
 """
-    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
-        if packet['type'] != 'callback':
-            continue
+    for packet in device.get_packets('callback'):
         doc = '\n     * '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
-        cbs += cb.format(packet['name'][1].upper(), i+1, doc)
+        cbs += cb.format(packet['name'][1].upper(), packet['function_id'], doc)
     return cbs + '\n'
 
 def make_function_id_definitions():
@@ -176,10 +171,8 @@ def make_function_id_definitions():
      */
     const FUNCTION_{0} = {1};
 """
-    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
-        if packet['type'] != 'function':
-            continue
-        function_ids += function_id.format(packet['name'][1].upper(), i+1)
+    for packet in device.get_packets('function'):
+        function_ids += function_id.format(packet['name'][1].upper(), packet['function_id'])
     return function_ids
 
 def make_parameter_list(packet):
@@ -329,10 +322,7 @@ def make_methods():
     }}
 """
 
-    for packet in device.get_packets():
-        if packet['type'] != 'function':
-            continue
-
+    for packet in device.get_packets('function'):
         name_lower = packet['name'][0][0].lower() + packet['name'][0][1:]
         parameter = make_parameter_list(packet)
         pack = []
@@ -475,10 +465,7 @@ def make_callback_wrappers():
     }}
 """
 
-    for packet in device.get_packets():
-        if packet['type'] != 'callback':
-            continue
-
+    for packet in device.get_packets('callback'):
         name = packet['name'][0]
         response_payload_elements = 0;
         response_payload_size = 0;
