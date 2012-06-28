@@ -24,41 +24,39 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-def to_camel_case(name):
-    names = name.split('_')
-    ret = names[0]
-    for n in names[1:]:
-        ret += n[0].upper() + n[1:]
-    return ret
+import os
+import sys
+sys.path.append(os.path.split(os.getcwd())[0])
+import common
 
 def make_parameter_list(packet, useOutParams=True):
     param = []
-    for element in packet['elements']:
+    for element in packet.get_elements():
         if (not useOutParams) and element[3] == 'out':
             continue
         
         out = ''
-        if element[3] == 'out' and packet['type'] == 'function':
+        if element[3] == 'out' and packet.get_type() == 'function':
             out = 'out '
 
         csharp_type = get_csharp_type(element)
-        name = to_camel_case(element[0])
+        name = common.underscore_to_camel_case(element[0])
        
         param.append('{0}{1} {2}'.format(out, csharp_type, name))
     return ', '.join(param)
 
-def make_method_signature(packet, printFullName=False, com=None):
+def make_method_signature(packet, printFullName=False, device=None):
     sig_format = "public {0} {1}{2}({3})"
-    ret_count = count_return_values(packet['elements'])
+    ret_count = len(packet.get_elements('out'))
     params = make_parameter_list(packet, ret_count > 1)
     return_type = 'void'
     if ret_count == 1:
-        return_type = get_csharp_type(filter(lambda e: e[3] == 'out', packet['elements'])[0])
+        return_type = get_csharp_type(packet.get_elements('out')[0])
     classPrefix = ''
     if printFullName:
-        classPrefix = com['category'] + com['name'][0] + '::'
+        classPrefix = device.get_category() + device.get_camel_case_name() + '::'
 
-    return sig_format.format(return_type, classPrefix, packet['name'][0], params)
+    return sig_format.format(return_type, classPrefix, packet.get_camel_case_name(), params)
 
 def get_csharp_type(element):
     forms = {
@@ -85,10 +83,3 @@ def get_csharp_type(element):
     if element[2] > 1 and element[1] != 'string':
         sharpType += '[]'
     return sharpType
-
-def count_return_values(elements):
-    count = 0
-    for element in elements:
-        if element[3] == 'out':
-            count += 1
-    return count

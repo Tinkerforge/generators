@@ -68,12 +68,12 @@ def fix_links(text):
     text = '\n'.join(replaced_lines)
 
     for packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(packet['name'][0])
-        if packet['type'] == 'callback':
-            name = packet['name'][1].upper()
-            name_right = link_c.format(device.get_underscore_name().upper(), name)
+        name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
+        if packet.get_type() == 'callback':
+            name = packet.get_upper_case_name()
+            name_right = link_c.format(device.get_upper_case_name(), name)
         else:
-            name = packet['name'][1]
+            name = packet.get_underscore_name()
             name_right = link.format(device.get_underscore_name(), name)
 
         text = text.replace(name_false, name_right)
@@ -87,7 +87,7 @@ def fix_links(text):
 
 def make_parameter_list(packet):
     param = ''
-    for element in packet['elements']:
+    for element in packet.get_elements():
         c_type = get_c_type(element[1])
         name = element[0]
         pointer = ''
@@ -102,16 +102,12 @@ def make_parameter_list(packet):
         param += ', {0} {1}{2}{3}'.format(c_type, pointer, name, arr)
     return param
 
-
 def make_short_form(name):
     short = ''
     for x in name.split('_'):
         short += x[0].lower()
 
     return short
-
-def has_outgoing(packet):
-    return any(element[3] == 'out' for element in packet['elements'])
 
 def get_c_type(py_type):
     if py_type == 'string':
@@ -135,11 +131,11 @@ def make_include_c():
                           device.get_underscore_name())
 
 def make_function_id_defines():
-    define_temp = '#define {2}_{0} {1}\n'
+    define_temp = '#define FUNCTION_{0} {1}\n'
 
     defines = ''
     for packet in device.get_packets('function'):
-        defines += define_temp.format(packet['name'][1].upper(), packet['function_id'], 'FUNCTION')
+        defines += define_temp.format(packet.get_upper_case_name(), packet.get_function_id())
 
     return defines
 
@@ -155,16 +151,15 @@ def make_callback_defines():
 
     defines = ''
     for packet in device.get_packets('callback'):
-        doc = '\n * '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
-        defines += define_temp.format(device.get_underscore_name().upper(),
-                                      packet['name'][1].upper(), 
-                                      packet['function_id'],
+        doc = '\n * '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n'))
+        defines += define_temp.format(device.get_upper_case_name(),
+                                      packet.get_upper_case_name(),
+                                      packet.get_function_id(),
                                       doc,
                                       device.get_camel_case_name(),
                                       device.get_category())
 
     return defines
-
 
 def make_structs():
     structs = """
@@ -188,10 +183,10 @@ typedef struct {{
 """
 
     for packet in device.get_packets():
-        if packet['type'] == 'callback':
+        if packet.get_type() == 'callback':
             cb = "Callback"
             struct_body = ''
-            for element in packet['elements']:
+            for element in packet.get_elements():
                 c_type = get_c_type(element[1])
                 if element[2] > 1:
                     struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
@@ -200,37 +195,35 @@ typedef struct {{
                 else:
                     struct_body += '\t{0} {1};\n'.format(c_type, element[0])
 
-            structs += struct_temp.format(struct_body, packet['name'][0], cb)
+            structs += struct_temp.format(struct_body, packet.get_camel_case_name(), cb)
             continue
 
         struct_body = ''
-        for element in packet['elements']:
-            if element[3] == 'in':
-                c_type = get_c_type(element[1])
-                if element[2] > 1:
-                    struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
-                                                              element[0],
-                                                              element[2]);
-                else:
-                    struct_body += '\t{0} {1};\n'.format(c_type, element[0])
+        for element in packet.get_elements('in'):
+            c_type = get_c_type(element[1])
+            if element[2] > 1:
+                struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
+                                                          element[0],
+                                                          element[2]);
+            else:
+                struct_body += '\t{0} {1};\n'.format(c_type, element[0])
 
-        structs += struct_temp.format(struct_body, packet['name'][0], '')
+        structs += struct_temp.format(struct_body, packet.get_camel_case_name(), '')
 
-        if not has_outgoing(packet):
+        if len(packet.get_elements('out')) == 0:
             continue
 
         struct_body = ''
-        for element in packet['elements']:
-            if element[3] == 'out':
-                c_type = get_c_type(element[1])
-                if element[2] > 1:
-                    struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
-                                                              element[0],
-                                                              element[2]);
-                else:
-                    struct_body += '\t{0} {1};\n'.format(c_type, element[0])
+        for element in packet.get_elements('out'):
+            c_type = get_c_type(element[1])
+            if element[2] > 1:
+                struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
+                                                          element[0],
+                                                          element[2]);
+            else:
+                struct_body += '\t{0} {1};\n'.format(c_type, element[0])
 
-        structs += struct_temp.format(struct_body, packet['name'][0], 'Return')
+        structs += struct_temp.format(struct_body, packet.get_camel_case_name(), 'Return')
 
     structs += """
 #if defined _MSC_VER || defined __BORLANDC__
@@ -259,7 +252,7 @@ void {0}_create({1} *{0}, const char *uid) {{
     cbs = ''
     dev_name = device.get_underscore_name()
     for packet in device.get_packets('callback'):
-        type_name = packet['name'][1]
+        type_name = packet.get_underscore_name()
         cbs += cb_temp.format(dev_name, type_name.upper(), type_name, dev_name.upper())
     
     v = device.get_version()
@@ -269,11 +262,8 @@ void {0}_create({1} *{0}, const char *uid) {{
 def make_method_funcs():
     def make_struct_list(packet):
         struct_list = ''
-        for element in packet['elements']:
-            if element[3] != 'in':
-                continue
-            
-            sf = make_short_form(packet['name'][1])
+        for element in packet.get_elements('in'):
+            sf = make_short_form(packet.get_underscore_name())
             if element[1] == 'string':
                 temp = '\n\tstrncpy({0}.{1}, {1}, {2});\n'
                 struct_list += temp.format(sf, element[0], element[2])
@@ -289,11 +279,8 @@ def make_method_funcs():
 
     def make_return_list(packet):
         return_list = ''
-        for element in packet['elements']:
-            if element[3] != 'out':
-                continue
-
-            sf = make_short_form(packet['name'][1])
+        for element in packet.get_elements('out'):
+            sf = make_short_form(packet.get_underscore_name())
             if element[1] == 'string':
                 temp = '\tstrcpy(ret_{0}, {1}r->{0});\n'
                 return_list += temp.format(element[0], sf)
@@ -310,17 +297,17 @@ def make_method_funcs():
 
     func_version = """
 int {0}_get_version({1} *{0}, char ret_name[40], uint8_t ret_firmware_version[3], uint8_t ret_binding_version[3]) {{
-	strncpy(ret_name, {0}->name, 40);
+\tstrncpy(ret_name, {0}->name, 40);
 
-	ret_firmware_version[0] = {0}->firmware_version[0];
-	ret_firmware_version[1] = {0}->firmware_version[1];
-	ret_firmware_version[2] = {0}->firmware_version[2];
+\tret_firmware_version[0] = {0}->firmware_version[0];
+\tret_firmware_version[1] = {0}->firmware_version[1];
+\tret_firmware_version[2] = {0}->firmware_version[2];
 
-	ret_binding_version[0] = {0}->binding_version[0];
-	ret_binding_version[1] = {0}->binding_version[1];
-	ret_binding_version[2] = {0}->binding_version[2];
+\tret_binding_version[0] = {0}->binding_version[0];
+\tret_binding_version[1] = {0}->binding_version[1];
+\tret_binding_version[2] = {0}->binding_version[2];
 
-	return E_OK;
+\treturn E_OK;
 }}
 """
 
@@ -365,13 +352,13 @@ int {0}_{1}({2} *{0}{3}) {{
 
     funcs = ''
     for packet in device.get_packets('function'):
-        b = packet['name'][1]
+        b = packet.get_underscore_name()
         d = make_parameter_list(packet)
-        e = 'FUNCTION_{0}'.format(packet['name'][1].upper())
-        f = packet['name'][0]
+        e = 'FUNCTION_{0}'.format(packet.get_upper_case_name())
+        f = packet.get_camel_case_name()
         g = make_short_form(b)
         h = make_struct_list(packet)
-        if has_outgoing(packet):
+        if len(packet.get_elements('out')) > 0:
             i = func_ret.format(f, g, a, make_return_list(packet))
             j = sizeof_ret.format(a, e, f)
             k = answer_sem.format(a)
@@ -404,12 +391,12 @@ static int {0}_callback_wrapper_{1}({2} *{0}, const unsigned char *buffer) {{
     funcs = ''
     for packet in device.get_packets('callback'):
         a = device.get_underscore_name()
-        b = packet['name'][1]
+        b = packet.get_underscore_name()
         c = device.get_camel_case_name()
-        d = packet['name'][0]
+        d = packet.get_camel_case_name()
         e = make_short_form(b)
         f_list = []
-        for element in packet['elements']:
+        for element in packet.get_elements():
             f_list.append("{0}c->{1}".format(e, element[0]))
         f = ', '.join(f_list)
 
@@ -438,7 +425,7 @@ typedef Device {3};
 
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     upper_type = device.get_category().upper()
-    upper_name = device.get_underscore_name().upper()
+    upper_name = device.get_upper_case_name()
 
     return include.format(common.gen_text_star.format(date),
                           upper_type, 
@@ -457,9 +444,9 @@ typedef void (*{0}_func_t)({1});
 
     typedefs = '\n'
     for packet in device.get_packets('callback'):
-        name = packet['name'][1]
+        name = packet.get_underscore_name()
         c_type_list = []
-        for element in packet['elements']:
+        for element in packet.get_elements():
             c_type_list.append(get_c_type(element[1]))
 
         typedefs += typedef.format(name, ', '.join(c_type_list))
@@ -505,9 +492,9 @@ int {0}_{1}({2} *{0}{3});
 
     funcs = ''
     for packet in device.get_packets('function'):
-        b = packet['name'][1]
+        b = packet.get_underscore_name()
         d = make_parameter_list(packet)
-        doc = '\n * '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
+        doc = '\n * '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n'))
 
         funcs += func.format(a, b, c, d, doc, device.get_category())
 
@@ -533,7 +520,7 @@ def make_callback_wrapper_declarations():
     funcs = '\n'
     for packet in device.get_packets('callback'):
         funcs += func.format(device.get_underscore_name(),
-                             packet['name'][1],
+                             packet.get_underscore_name(),
                              device.get_camel_case_name())
 
     return funcs

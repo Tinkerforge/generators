@@ -45,23 +45,14 @@ def get_php_type(typ):
 
     return ''
 
-def get_num_return(elements): 
-    num = 0
-    for element in elements:
-        if element[3] == 'out':
-            num += 1
-
-    return num
-    
 def get_return_type(packet):
-    if get_num_return(packet['elements']) == 0:
+    if len(packet.get_elements('out')) == 0:
         return 'void'
-    if get_num_return(packet['elements']) > 1:
+    if len(packet.get_elements('out')) > 1:
         return 'array'
     
-    for element in packet['elements']:
-        if element[3] == 'out':
-            if element[2] > 1:
-                return 'array'
-            else:
-                return get_php_type(element[1])
+    for element in packet.get_elements('out'):
+        if element[2] > 1:
+            return 'array'
+        else:
+            return get_php_type(element[1])

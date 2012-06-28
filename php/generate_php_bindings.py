@@ -86,12 +86,12 @@ def fix_links(text):
 
     cls = device.get_camel_case_name()
     for packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(packet['name'][0])
-        if packet['type'] == 'callback':
-            name = packet['name'][1].upper()
+        name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
+        if packet.get_type() == 'callback':
+            name = packet.get_upper_case_name()
             name_right = link_c.format(device.get_category(), cls, name)
         else:
-            name = packet['name'][0][0].lower() + packet['name'][0][1:]
+            name = packet.get_headless_camel_case_name()
             name_right = link.format(device.get_category(), cls, name)
 
         text = text.replace(name_false, name_right)
@@ -105,8 +105,8 @@ def fix_links(text):
 
 def make_parameter_doc(packet):
     param = []
-    for element in packet['elements']:
-        if element[3] == 'out' or packet['type'] != 'function':
+    for element in packet.get_elements():
+        if element[3] == 'out' or packet.get_type() != 'function':
             continue
 
         php_type = php_common.get_php_type(element[1])
@@ -144,8 +144,8 @@ def make_callback_wrapper_definitions():
         $this->callbackWrappers[self::CALLBACK_{0}] = 'callbackWrapper{1}';"""
     cbs_end = '\n    }\n'
     for packet in device.get_packets('callback'):
-        typ = packet['name'][1].upper()
-        name = packet['name'][0]
+        typ = packet.get_upper_case_name()
+        name = packet.get_camel_case_name()
 
         cbs += cb.format(typ, name)
     return cbs + cbs_end
@@ -159,8 +159,8 @@ def make_callback_id_definitions():
     const CALLBACK_{0} = {1};
 """
     for packet in device.get_packets('callback'):
-        doc = '\n     * '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
-        cbs += cb.format(packet['name'][1].upper(), packet['function_id'], doc)
+        doc = '\n     * '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n'))
+        cbs += cb.format(packet.get_upper_case_name(), packet.get_function_id(), doc)
     return cbs + '\n'
 
 def make_function_id_definitions():
@@ -172,13 +172,13 @@ def make_function_id_definitions():
     const FUNCTION_{0} = {1};
 """
     for packet in device.get_packets('function'):
-        function_ids += function_id.format(packet['name'][1].upper(), packet['function_id'])
+        function_ids += function_id.format(packet.get_upper_case_name(), packet.get_function_id())
     return function_ids
 
 def make_parameter_list(packet):
     param = []
-    for element in packet['elements']:
-        if element[3] == 'out' and packet['type'] == 'function':
+    for element in packet.get_elements():
+        if element[3] == 'out' and packet.get_type() == 'function':
             continue
         name = element[0]
         param.append('$' + name)
@@ -229,27 +229,6 @@ def get_pack_type(element):
     return forms[element[1]];
 
 get_unpack_type = get_pack_type
-
-def get_type_size(element):
-    forms = {
-        'int8' : 1,
-        'uint8' : 1,
-        'int16' : 2,
-        'uint16' : 2,
-        'int32' : 4,
-        'uint32' : 4,
-        'int64' : 8,
-        'uint64' : 8,
-        'float' : 4,
-        'bool' : 1,
-        'string' : 1,
-        'char' : 1
-    }
-
-    if element[1] in forms:
-        return forms[element[1]]*element[2]
-
-    return 0
 
 def get_unpack_fix(element):
     if element[2] > 1:
@@ -323,13 +302,10 @@ def make_methods():
 """
 
     for packet in device.get_packets('function'):
-        name_lower = packet['name'][0][0].lower() + packet['name'][0][1:]
+        name_lower = packet.get_headless_camel_case_name()
         parameter = make_parameter_list(packet)
         pack = []
-        for element in packet['elements']:
-            if element[3] != 'in':
-                continue
-
+        for element in packet.get_elements('in'):
             if element[1] == 'bool':
                 if element[2] > 1:
                     pack.append('        for ($i = 0; $i < {0}; $i++) {{'.format(element[2]))
@@ -364,17 +340,11 @@ def make_methods():
         unpack = []
         collect = []
 
-        for element in packet['elements']:
-            if element[3] != 'out':
-                continue
-
+        for element in packet.get_elements('out'):
             response_payload_elements += 1;
-            response_payload_size += get_type_size(element)
+            response_payload_size += common.get_element_size(element)
 
-        for element in packet['elements']:
-            if element[3] != 'out':
-                continue
-
+        for element in packet.get_elements('out'):
             unpack.append('{0}{1}{2}'.format(get_unpack_type(element), element[2], element[0]))
 
             unpack_fix = get_unpack_fix(element)
@@ -391,16 +361,16 @@ def make_methods():
                     collect.append('        return {1}$payload[\'{0}\']{2};'.format(element[0], unpack_fix[0], unpack_fix[1]))
 
         if response_payload_size > 0:
-            send = '        $data = $this->sendRequestExpectResponse(self::FUNCTION_{0}, $payload, {1});\n'.format(packet['name'][1].upper(), response_payload_size)
+            send = '        $data = $this->sendRequestExpectResponse(self::FUNCTION_{0}, $payload, {1});\n'.format(packet.get_upper_case_name(), response_payload_size)
         else:
-            send = '        $this->sendRequestNoResponse(self::FUNCTION_{0}, $payload);\n'.format(packet['name'][1].upper())
+            send = '        $this->sendRequestNoResponse(self::FUNCTION_{0}, $payload);\n'.format(packet.get_upper_case_name())
 
         final_unpack = ''
 
         if response_payload_size > 0:
             final_unpack = '        $payload = unpack(\'{0}\', $data);'.format('/'.join(unpack))
 
-        doc = '\n     * '.join(fix_links(packet['doc'][1][lang]).strip().split('\n') + [''] + make_parameter_doc(packet).split('\n'))
+        doc = '\n     * '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n') + [''] + make_parameter_doc(packet).split('\n'))
 
         if response_payload_elements > 1:
             method = method_multi.format(name_lower,
@@ -474,24 +444,18 @@ def make_callback_wrappers():
 """
 
     for packet in device.get_packets('callback'):
-        name = packet['name'][0]
+        name = packet.get_camel_case_name()
         response_payload_elements = 0;
         response_payload_size = 0;
         unpack = []
         collect = []
         result = []
 
-        for element in packet['elements']:
-            if element[3] != 'out':
-                continue
-
+        for element in packet.get_elements('out'):
             response_payload_elements += 1;
-            response_payload_size += get_type_size(element)
+            response_payload_size += common.get_element_size(element)
 
-        for element in packet['elements']:
-            if element[3] != 'out':
-                continue
-
+        for element in packet.get_elements('out'):
             unpack.append('{0}{1}{2}'.format(get_unpack_type(element), element[2], element[0]))
 
             unpack_fix = get_unpack_fix(element)
@@ -511,17 +475,9 @@ def make_callback_wrappers():
         wrappers += wrapper.format(name,
                                  foobar,
                                  '\n'.join(collect),
-                                 packet['name'][1].upper())
+                                 packet.get_upper_case_name())
 
     return wrappers
-
-def get_num_return(elements):
-    num = 0
-    for element in elements:
-        if element[3] == 'out':
-            num += 1
-
-    return num
 
 def make_files(com_new, directory):
     global device

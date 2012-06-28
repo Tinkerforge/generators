@@ -24,7 +24,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import datetime
 import sys
 import os
 import shutil
@@ -65,43 +64,18 @@ def type_to_pytype(element):
 def fix_links(text):
     cls = device.get_camel_case_name()
     for packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(packet['name'][0])
-        if packet['type'] == 'callback':
-            name_upper = packet['name'][1].upper()
+        name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
+        if packet.get_type() == 'callback':
+            name_upper = packet.get_upper_case_name()
             name_right = ':py:attr:`{0}.CALLBACK_{1}`'.format(cls, name_upper)
         else:
-            name_right = ':py:func:`{0}.{1}`'.format(cls, packet['name'][1])
+            name_right = ':py:func:`{0}.{1}`'.format(cls, packet.get_underscore_name())
         text = text.replace(name_false, name_right)
 
     text = text.replace(":word:`parameter`", "parameter")
     text = text.replace(":word:`parameters`", "parameters")
 
     return text
-
-def make_header():
-    date = datetime.datetime.now().strftime("%Y-%m-%d")
-    ref = '.. _{0}_{1}_python:\n'.format(device.get_underscore_name(), device.get_category().lower())
-    title = 'Python - {0} {1}'.format(device.get_display_name(), device.get_category())
-    title_under = '='*len(title)
-    return '{0}\n{1}\n{2}\n{3}\n'.format(common.gen_text_rst.format(date),
-                                         ref,
-                                         title, 
-                                         title_under)
-
-def make_summary():
-    su = """
-This is the API site for the Python bindings of the {0} {1}. General information
-on what this device does and the technical specifications can be found
-:ref:`here <{2}>`.
-
-A tutorial on how to test the {0} {1} and get the first examples running
-can be found :ref:`here <{3}>`.
-"""
-
-    hw_link = device.get_underscore_name() + '_' + device.get_category().lower()
-    hw_test = hw_link + '_test'
-    su = su.format(device.get_display_name(), device.get_category(), hw_link, hw_test)
-    return su
 
 def make_examples():
     def title_from_file(f):
@@ -112,56 +86,19 @@ def make_examples():
             s += l[0].upper() + l[1:] + ' '
         return s[:-1]
 
-    ex = """
-{0}
-
-Examples
---------
-
-The example code below is public domain.
-"""
-
-    imp = """
-{0}
-{1}
-
-`Download <https://github.com/Tinkerforge/{3}/raw/master/software/examples/python/{4}>`__
-
-.. literalinclude:: {2}
- :language: python
- :linenos:
- :tab-width: 4
-"""
-
-    ref = '.. _{0}_{1}_python_examples:\n'.format(device.get_underscore_name(),
-                                                  device.get_category().lower())
-    ex = ex.format(ref)
-    files = common.find_examples(device.com, file_path, 'python', 'example_', '.py')
-    copy_files = []
-    for f in files:
-        include = '{0}_{1}_Python_{2}'.format(device.get_camel_case_name(), device.get_category(), f[0])
-        copy_files.append((f[1], include))
-        title = title_from_file(f[0])
-        git_name = device.get_underscore_name().replace('_', '-') + '-' + device.get_category().lower()
-        ex += imp.format(title, '^'*len(title), include, git_name, f[0])
-
-    common.copy_examples(copy_files, file_path)
-    return ex
+    return common.make_rst_examples(title_from_file, device, file_path,
+                                    'python', 'example_', '.py', 'Python')
 
 def make_parameter_list(packet):
     params = []
-    for element in packet['elements']:
-        if element[3] != 'in':
-            continue
+    for element in packet.get_elements('in'):
         params.append(element[0])
     return ", ".join(params)
 
 def make_parameter_desc(packet, io):
     desc = '\n'
     param = ' :param {0}: {1}\n'
-    for element in packet['elements']:
-        if element[3] != io:
-            continue
+    for element in packet.get_elements(io):
         t = type_to_pytype(element)
         desc += param.format(element[0], t)
 
@@ -170,9 +107,7 @@ def make_parameter_desc(packet, io):
 def make_return_desc(packet):
     ret = ' :rtype: {0}\n'
     ret_list = []
-    for element in packet['elements']:
-        if element[3] != 'out':
-            continue
+    for element in packet.get_elements('out'):
         ret_list.append(type_to_pytype(element))
     if len(ret_list) == 0:
         return ret.format(None)
@@ -196,13 +131,13 @@ def make_methods(typ):
     func_start = '.. py:function:: '
     cls = device.get_camel_case_name()
     for packet in device.get_packets('function'):
-        if packet['doc'][0] != typ:
+        if packet.get_doc()[0] != typ:
             continue
-        name = packet['name'][1]
+        name = packet.get_underscore_name()
         params = make_parameter_list(packet)
         pd = make_parameter_desc(packet, 'in')
         r = make_return_desc(packet)
-        d = fix_links(common.shift_right(packet['doc'][1][lang], 1))
+        d = fix_links(common.shift_right(packet.get_doc()[1][lang], 1))
         desc = '{0}{1}{2}'.format(pd, r, d)
         func = '{0}{1}.{2}({3})\n{4}'.format(func_start, 
                                              cls, 
@@ -222,17 +157,16 @@ def make_callbacks():
     cls = device.get_camel_case_name()
     for packet in device.get_packets('callback'):
         param_desc = make_parameter_desc(packet, 'out')
-        desc = fix_links(common.shift_right(packet['doc'][1][lang], 1))
+        desc = fix_links(common.shift_right(packet.get_doc()[1][lang], 1))
 
         func = '{0}{1}.CALLBACK_{2}\n{3}\n{4}'.format(func_start,
                                                       cls,
-                                                      packet['name'][1].upper(),
+                                                      packet.get_upper_case_name(),
                                                       param_desc,
                                                       desc)
         cbs += func + '\n'
 
     return cbs
-       
 
 def make_api():
     create_str = """
@@ -354,7 +288,7 @@ API
     return api.format(ref, api_desc, api_str) 
        
 def copy_examples_for_zip():
-    examples = common.find_examples(device.com, file_path, 'python', 'example_', '.py')
+    examples = common.find_examples(device, file_path, 'python', 'example_', '.py')
     dest = os.path.join('/tmp/generator/egg/examples/', 
                         device.get_category().lower(),
                         device.get_underscore_name())
@@ -376,8 +310,8 @@ def make_files(com_new, directory):
         os.makedirs(directory)
 
     f = file('{0}/{1}.rst'.format(directory, file_name), "w")
-    f.write(make_header())
-    f.write(make_summary())
+    f.write(common.make_rst_header(device, 'python', 'Python'))
+    f.write(common.make_rst_summary(device, 'Python bindings'))
     f.write(make_examples())
     f.write(make_api())
 
@@ -420,14 +354,13 @@ def generate(path):
 
 from setuptools import setup
 
-setup(
-    name='tinkerforge',
-    version='{0}.{1}.{2}',
-    description='TCP/IP based library for Bricks and Bricklets',
-    author='Tinkerforge GmbH',
-    author_email='olaf@tinkerforge.com',
-    url='http://www.tinkerforge.com',
-    packages=['tinkerforge'])
+setup(name='tinkerforge',
+      version='{0}.{1}.{2}',
+      description='TCP/IP based library for Bricks and Bricklets',
+      author='Tinkerforge GmbH',
+      author_email='olaf@tinkerforge.com',
+      url='http://www.tinkerforge.com',
+      packages=['tinkerforge'])
 """.format(*version))
 
     # Make egg
@@ -451,16 +384,7 @@ setup(
     f.close()
 
     # Make zip
-    zipname = 'tinkerforge_python_bindings_{0}_{1}_{2}.zip'.format(*version)
-    os.chdir('/tmp/generator/egg')
-    args = ['/usr/bin/zip',
-            '-r',
-            zipname,
-            '.']
-    subprocess.call(args)
-
-    # Copy zip
-    shutil.copy(zipname, path)
+    common.make_zip('python', '/tmp/generator/egg', path, version)
 
 if __name__ == "__main__":
     generate(os.getcwd())

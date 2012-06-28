@@ -69,12 +69,12 @@ def fix_links(text):
 
     cls = device.get_camel_case_name()
     for packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(packet['name'][0])
-        if packet['type'] == 'callback':
-            name = packet['name'][0]
+        name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
+        if packet.get_type() == 'callback':
+            name = packet.get_camel_case_name()
             name_right = link_c.format(device.get_category(), cls, name)
         else:
-            name = packet['name'][0][0].lower() + packet['name'][0][1:]
+            name = packet.get_headless_camel_case_name()
             name_right = link.format(device.get_category(), cls, name)
 
         text = text.replace(name_false, name_right)
@@ -125,16 +125,16 @@ def make_return_objects():
 """
     param = '\t\tpublic {0}{1} {2}{3};'
     for packet in device.get_packets('function'):
-        if get_num_return(packet['elements']) < 2:
+        if len(packet.get_elements('out')) < 2:
             continue
 
         name = get_object_name(packet)
 
         params = []
         tostr = []
-        for element in packet['elements']:
+        for element in packet.get_elements():
             typ = get_java_type(element[1])
-            ele_name = to_camel_case(element[0])
+            ele_name = common.underscore_to_camel_case(element[0])
             arr = ''
             new = ''
             if element[2] > 1:
@@ -163,10 +163,10 @@ def make_listener_definitions():
 \t}}
 """
     for packet in device.get_packets('callback'):
-        name = packet['name'][0]
-        name_lower = name[0].lower() + name[1:]
+        name = packet.get_camel_case_name()
+        name_lower = packet.get_headless_camel_case_name()
         parameter = make_parameter_list(packet)
-        doc = '\n\t * '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
+        doc = '\n\t * '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n'))
         cbs += cb.format(name, name_lower, parameter, doc)
     return cbs
 
@@ -187,19 +187,16 @@ def make_callback_listener_definitions():
 {1}"""
     cbs_end = '\t}\n'
     for packet in device.get_packets('callback'):
-        typ = packet['name'][1].upper()
-        name = packet['name'][0]
-        name_lower = name[0].lower() + name[1:]
+        typ = packet.get_upper_case_name()
+        name = packet.get_camel_case_name()
+        name_lower = packet.get_headless_camel_case_name()
         parameter = ''
         parameter_list = []
-        for element in packet['elements']:
-            parameter_list.append(to_camel_case(element[0]))
+        for element in packet.get_elements():
+            parameter_list.append(common.underscore_to_camel_case(element[0]))
         parameter = ', '.join(parameter_list)
-
-        has_ret = has_return_value(packet['elements'])
-
         cbdata = ''
-        if has_ret == 'true':
+        if len(packet.get_elements('out')) > 0:
             bbgets, bbret = make_bbgets(packet)
             bbgets = bbgets.replace('\t\t', '\t\t\t\t')
             cbdata = data.format(name_lower,
@@ -227,8 +224,8 @@ def make_add_listener():
 
     l = []
     for packet in device.get_packets('callback'):
-        name = packet['name'][0]
-        name_upper = packet['name'][1].upper()
+        name = packet.get_camel_case_name()
+        name_upper = packet.get_upper_case_name()
         l.append(listener.format(name, name_upper))
     return listeners.format(' else '.join(l))
 
@@ -236,20 +233,18 @@ def make_function_id_definitions():
     function_ids = ''
     function_id = '\tprivate final static byte {2}_{0} = (byte){1};\n'
     for packet in device.get_packets():
-        if packet['type'] == 'callback':
-            function_ids += function_id.format(packet['name'][1].upper(), packet['function_id'], 'CALLBACK')
-        else:
-            function_ids += function_id.format(packet['name'][1].upper(), packet['function_id'], 'FUNCTION')
+        function_ids += function_id.format(packet.get_upper_case_name(),
+                                           packet.get_function_id(),
+                                           packet.get_type().upper())
     return function_ids
-
 
 def make_parameter_list(packet):
     param = []
-    for element in packet['elements']:
-        if element[3] == 'out' and packet['type'] == 'function':
+    for element in packet.get_elements():
+        if element[3] == 'out' and packet.get_type() == 'function':
             continue
         java_type = get_java_type(element[1])
-        name = to_camel_case(element[0])
+        name = common.underscore_to_camel_case(element[0])
         arr = ''
         if element[2] > 1 and element[1] != 'string':
             arr = '[]'
@@ -346,33 +341,9 @@ def get_java_type(typ):
 
     return ''
 
-
-def get_type_size(element):
-    forms = {
-        'int8' : 1,
-        'uint8' : 1,
-        'int16' : 2,
-        'uint16' : 2,
-        'int32' : 4,
-        'uint32' : 4,
-        'int64' : 8,
-        'uint64' : 8,
-        'float' : 4,
-        'bool' : 1,
-        'string' : 1,
-        'char' : 1
-    }
-
-    if element[1] in forms:
-        return forms[element[1]]*element[2]
-
-    return 0
-
 def make_format_list(packet, io):
     forms = []
-    for element in packet['elements']:
-        if element[3] != io:
-            continue
+    for element in packet.get_elements(io):
         num = ''
         if element[2] > 1:
             num = element[2]
@@ -424,18 +395,15 @@ def make_methods():
     cls = device.get_camel_case_name()
     for packet in device.get_packets('function'):
         ret = get_return_value(packet)
-        name_lower = packet['name'][0][0].lower() + packet['name'][0][1:]
+        name_lower = packet.get_headless_camel_case_name()
         parameter = make_parameter_list(packet)
-        size = str(get_bb_size(packet['elements']))
-        name_upper = packet['name'][1].upper()
-        doc = '\n\t * '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
+        size = str(get_bb_size(packet))
+        name_upper = packet.get_upper_case_name()
+        doc = '\n\t * '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n'))
         bbputs = ''
         bbput = '\t\tbb.put{0}(({1}){2});'
-        for element in packet['elements']:
-            if element[3] != 'in':
-                continue
-
-            name = to_camel_case(element[0])
+        for element in packet.get_elements('in'):
+            name = common.underscore_to_camel_case(element[0])
             if element[1] == 'bool':
                 name = '({0} ? 1 : 0)'.format(name)
 
@@ -453,14 +421,14 @@ def make_methods():
 
             bbputs += bbput_format + '\n'
 
-        has_ret = has_return_value(packet['elements'])
-
         throw = '' 
         answer = ''
-        if has_ret == 'true':
+        has_ret = 'false'
+        if len(packet.get_elements('out')) > 0:
+            has_ret = 'true'
             throw = 'throws IPConnection.TimeoutException'
             bbgets, bbret = make_bbgets(packet, False)
-            if get_num_return(packet['elements']) > 1:
+            if len(packet.get_elements('out')) > 1:
                 bbgets, bbret = make_bbgets(packet, True)
                 obj_name = get_object_name(packet)
                 obj = '\t\t{0} obj = new {0}();\n'.format(obj_name)
@@ -492,98 +460,73 @@ def make_bbgets(packet, with_obj = False):
 {1}
 \t\t}}
 """
-    for element in packet['elements']:
-        if element[3] == 'out':
-            typ = ''
-            if not with_obj:
-                typ = get_java_type(element[1]) + ' '
-            
-            bbret = to_camel_case(element[0])
-            obj = ''
-            if with_obj:
-                obj = 'obj.'
-            cast = ''
-            boolean = ''
-            if element[1] == 'uint8':
-                cast = 'IPConnection.unsignedByte'
-            elif element[1] == 'uint16':
-                cast = 'IPConnection.unsignedShort'
-            elif element[1] == 'uint32':
-                cast = 'IPConnection.unsignedInt'
-            elif element[1] == 'bool':
-                boolean = ' != 0'
-            elif element[1] == 'char':
-                cast = '(char)'
+    for element in packet.get_elements('out'):
+        typ = ''
+        if not with_obj:
+            typ = get_java_type(element[1]) + ' '
 
-            format_typ = ''
-            if not element[2] > 1:
-                format_typ = typ
+        bbret = common.underscore_to_camel_case(element[0])
+        obj = ''
+        if with_obj:
+            obj = 'obj.'
+        cast = ''
+        boolean = ''
+        if element[1] == 'uint8':
+            cast = 'IPConnection.unsignedByte'
+        elif element[1] == 'uint16':
+            cast = 'IPConnection.unsignedShort'
+        elif element[1] == 'uint32':
+            cast = 'IPConnection.unsignedInt'
+        elif element[1] == 'bool':
+            boolean = ' != 0'
+        elif element[1] == 'char':
+            cast = '(char)'
 
-            bbget_format = bbget.format(format_typ,
-                                        obj,
-                                        bbret, 
-                                        cast,
-                                        get_put_type(element[1]),
-                                        boolean)
+        format_typ = ''
+        if not element[2] > 1:
+            format_typ = typ
 
-            if element[2] > 1:
-                arr = new_arr.format(typ.replace(' ', ''), bbret, element[2])
-                bbget_format = bbget_format.replace(' =', '[i] =')
-                bbget_format = loop.format(element[2], '\t' + bbget_format, arr)
+        bbget_format = bbget.format(format_typ,
+                                    obj,
+                                    bbret,
+                                    cast,
+                                    get_put_type(element[1]),
+                                    boolean)
 
-            bbgets += bbget_format + '\n'
+        if element[2] > 1:
+            arr = new_arr.format(typ.replace(' ', ''), bbret, element[2])
+            bbget_format = bbget_format.replace(' =', '[i] =')
+            bbget_format = loop.format(element[2], '\t' + bbget_format, arr)
+
+        bbgets += bbget_format + '\n'
     return bbgets, bbret
 
 def get_object_name(packet):
-    name = packet['name'][0]
+    name = packet.get_camel_case_name()
     if name.startswith('Get'):
         name = name[3:]
 
     return name
 
-def get_num_return(elements): 
-    num = 0
-    for element in elements:
-        if element[3] == 'out':
-            num += 1
-
-    return num
-
 def get_return_value(packet):
     num = 0
     ret = 'void'
-    for element in packet['elements']:
-        if element[3] == 'out':
-            ret = get_java_type(element[1])
-            if element[2] > 1:
-                ret += '[]'
-            num += 1
+    for element in packet.get_elements('out'):
+        ret = get_java_type(element[1])
+        if element[2] > 1:
+            ret += '[]'
+        num += 1
 
     if num > 1:
         return get_object_name(packet)
 
     return ret
 
-def get_bb_size(elements):
+def get_bb_size(packet):
     size = 0
-    for element in elements:
-        if element[3] != 'in':
-            continue
-        size += get_type_size(element)
+    for element in packet.get_elements('in'):
+        size += common.get_element_size(element)
     return size + 4
-
-def has_return_value(elements):
-    for element in elements:
-        if element[3] == 'out':
-            return 'true'
-    return 'false'
-
-def to_camel_case(name):
-    names = name.split('_')
-    ret = names[0]
-    for n in names[1:]:
-        ret += n[0].upper() + n[1:]
-    return ret
 
 def make_files(com_new, directory):
     global device

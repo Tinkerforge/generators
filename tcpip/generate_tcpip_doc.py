@@ -24,7 +24,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import datetime
 import sys
 import os
 import shutil
@@ -51,12 +50,12 @@ def type_to_pytype(element):
 def fix_links(text):
     cls = device.get_camel_case_name()
     for packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(packet['name'][0])
-        if packet['type'] == 'callback':
-            name_upper = packet['name'][1].upper()
+        name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
+        if packet.get_type() == 'callback':
+            name_upper = packet.get_upper_case_name()
             name_right = ':tcpip:func:`CALLBACK_{1} <{0}.CALLBACK_{1}>`'.format(cls, name_upper)
         else:
-            name_right = ':tcpip:func:`{1} <{0}.{1}>`'.format(cls, packet['name'][1])
+            name_right = ':tcpip:func:`{1} <{0}.{1}>`'.format(cls, packet.get_underscore_name())
         text = text.replace(name_false, name_right)
 
     text = text.replace(":word:`parameter`", "response value")
@@ -64,37 +63,10 @@ def fix_links(text):
 
     return text
 
-def make_header():
-    date = datetime.datetime.now().strftime("%Y-%m-%d")
-    ref = '.. _{0}_{1}_tcpip:\n'.format(device.get_underscore_name(), device.get_category().lower())
-    title = 'TCP/IP - {0} {1}'.format(device.get_display_name(), device.get_category())
-    title_under = '='*len(title)
-    return '{0}\n{1}\n{2}\n{3}\n'.format(common.gen_text_rst.format(date),
-                                         ref,
-                                         title,
-                                         title_under)
-
-def make_summary():
-    su = """
-This is the API site for the TCP/IP protocol of the {0} {1}. General information
-on what this device does and the technical specifications can be found
-:ref:`here <{2}>`.
-
-A tutorial on how to test the {0} {1} and get the first examples running
-can be found :ref:`here <{3}>`.
-"""
-
-    hw_link = device.get_underscore_name() + '_' + device.get_category().lower()
-    hw_test = hw_link + '_test'
-    su = su.format(device.get_display_name(), device.get_category(), hw_link, hw_test)
-    return su
-
 def make_request_desc(packet):
     desc = '\n'
     param = ' :request {0}: {1}\n'
-    for element in packet['elements']:
-        if element[3] != 'in':
-            continue
+    for element in packet.get_elements('in'):
         t = type_to_pytype(element)
         desc += param.format(element[0], t)
 
@@ -106,14 +78,12 @@ def make_request_desc(packet):
 def make_response_desc(packet):
     desc = '\n'
     returns = ' :response {0}: {1}\n'
-    for element in packet['elements']:
-        if element[3] != 'out':
-            continue
+    for element in packet.get_elements('out'):
         t = type_to_pytype(element)
         desc += returns.format(element[0], t)
 
     if desc == '\n':
-        if packet['type'] == 'callback':
+        if packet.get_type() == 'callback':
             desc += ' :emptyresponse: empty payload\n'
         else:
             desc += ' :noresponse: no response\n'
@@ -125,13 +95,13 @@ def make_methods(typ):
     func_start = '.. tcpip:function:: '
     cls = device.get_camel_case_name()
     for packet in device.get_packets('function'):
-        if packet['doc'][0] != typ:
+        if packet.get_doc()[0] != typ:
             continue
-        name = packet['name'][1]
-        fid = '\n :functionid: {0}'.format(packet['function_id'])
+        name = packet.get_underscore_name()
+        fid = '\n :functionid: {0}'.format(packet.get_function_id())
         request = make_request_desc(packet)
         response = make_response_desc(packet)
-        d = fix_links(common.shift_right(packet['doc'][1][lang], 1))
+        d = fix_links(common.shift_right(packet.get_doc()[1][lang], 1))
         desc = '{0}{1}{2}{3}'.format(fid, request, response, d)
         func = '{0}{1}.{2}\n{3}'.format(func_start,
                                              cls,
@@ -146,13 +116,13 @@ def make_callbacks():
     func_start = '.. tcpip:function:: '
     cls = device.get_camel_case_name()
     for packet in device.get_packets('callback'):
-        fid = '\n :functionid: {0}'.format(packet['function_id'])
+        fid = '\n :functionid: {0}'.format(packet.get_function_id())
         response = make_response_desc(packet)
-        desc = fix_links(common.shift_right(packet['doc'][1][lang], 1))
+        desc = fix_links(common.shift_right(packet.get_doc()[1][lang], 1))
 
         func = '{0}{1}.CALLBACK_{2}\n{3}\n{4}\n{5}'.format(func_start,
                                                       cls,
-                                                      packet['name'][1].upper(),
+                                                      packet.get_upper_case_name(),
                                                       fid,
                                                       response,
                                                       desc)
@@ -240,8 +210,8 @@ def make_files(com_new, directory):
         os.makedirs(directory)
 
     f = file('{0}/{1}.rst'.format(directory, file_name), "w")
-    f.write(make_header())
-    f.write(make_summary())
+    f.write(common.make_rst_header(device, 'tcpip', 'TCP/IP'))
+    f.write(common.make_rst_summary(device, 'TCP/IP protocol'))
     f.write(make_api())
 
 def generate(path):
