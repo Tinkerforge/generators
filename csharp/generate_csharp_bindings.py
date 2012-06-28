@@ -89,8 +89,8 @@ def fix_links(text):
 
     cls = device.get_camel_case_name()
     for packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(packet['name'][0])
-        name = packet['name'][0]
+        name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
+        name = packet.get_camel_case_name()
         name_right = link.format(device.get_category(), cls, name)
 
         text = text.replace(name_false, name_right)
@@ -130,24 +130,20 @@ def make_delegates():
 \t\t/// </summary>
 \t\tpublic delegate void {0}({1});
 """
-    for packet in device.get_packets():
-        if packet['type'] != 'callback':
-            continue
-
-        name = packet['name'][0]
+    for packet in device.get_packets('callback'):
+        name = packet.get_camel_case_name()
         parameter = csharp_common.make_parameter_list(packet)
-        doc = '\n\t\t///  '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
+        doc = '\n\t\t///  '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n'))
         cbs += cb.format(name, parameter, doc)
     return cbs
 
 def make_function_id_definitions():
     function_ids = ''
     function_id = '\t\tprivate static byte {2}_{0} = {1};\n'
-    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
-        if packet['type'] == 'callback':
-            function_ids += function_id.format(packet['name'][1].upper(), i+1, 'CALLBACK')
-        else:
-            function_ids += function_id.format(packet['name'][1].upper(), i+1, 'FUNCTION')
+    for packet in device.get_packets():
+        function_ids += function_id.format(packet.get_upper_case_name(),
+                                           packet.get_function_id(),
+                                           packet.get_type().upper())
     return function_ids
 
 def make_constructor():
@@ -168,12 +164,9 @@ def make_constructor():
 \t\t}}
 """
 
-    for packet in device.get_packets():
-        if packet['type'] != 'callback':
-            continue
-
-        name_upper = packet['name'][1].upper()
-        name_pascal = packet['name'][0]
+    for packet in device.get_packets('callback'):
+        name_upper = packet.get_upper_case_name()
+        name_pascal = packet.get_camel_case_name()
         cbs.append(cb.format(name_upper, name_pascal))
 
     v = device.get_version()
@@ -211,27 +204,6 @@ def get_from_type(element):
 
     return ''
 
-def get_type_size(element):
-    forms = {
-        'int8' : 1,
-        'uint8' : 1,
-        'int16' : 2,
-        'uint16' : 2,
-        'int32' : 4,
-        'uint32' : 4,
-        'int64' : 8,
-        'uint64' : 8,
-        'float' : 4,
-        'bool' : 1,
-        'string' : 1,
-        'char' : 1
-    }
-
-    if element[1] in forms:
-        return forms[element[1]]*element[2]
-
-    return 0
-
 def make_register_callback():
     if device.get_callback_count() == 0:
         return '\t}\n}\n'
@@ -255,16 +227,13 @@ def make_register_callback():
 """
 
     i = 0
-    for packet in device.get_packets():
-        if packet['type'] != 'callback':
-            continue
-
+    for packet in device.get_packets('callback'):
         els = ''
         if i > 0:
             els = 'else '
 
-        name = packet['name'][0]
-        name_upper = packet['name'][1].upper()
+        name = packet.get_camel_case_name()
+        name_upper = packet.get_upper_case_name()
 
         typeofs += typeof.format(els, name, name_upper)
         
@@ -282,29 +251,22 @@ def make_callbacks():
 \t\t}}
 """
     cls = device.get_camel_case_name()
-    for packet in device.get_packets():
-        if packet['type'] != 'callback':
-            continue
-
-        name = packet['name'][0]
-        name_upper = packet['name'][1].upper()
+    for packet in device.get_packets('callback'):
+        name = packet.get_camel_case_name()
+        name_upper = packet.get_upper_case_name()
         eles = []
-        for element in packet['elements']:
-            if element[3] == 'out':
-                eles.append(csharp_common.to_camel_case(element[0]))
+        for element in packet.get_elements('out'):
+            eles.append(common.underscore_to_camel_case(element[0]))
         params = ", ".join(eles)
-        size = str(get_data_size(packet['elements']))
+        size = str(get_data_size(packet))
 
         convs = ''
         conv = '\t\t\t{0} {1} = LEConverter.{2}({3}, data_{4});\n'
 
         pos = 4
-        for element in packet['elements']:
-            if element[3] != 'out':
-                continue
-
+        for element in packet.get_elements('out'):
             csharp_type = csharp_common.get_csharp_type(element)
-            cname = csharp_common.to_camel_case(element[0])
+            cname = common.underscore_to_camel_case(element[0])
             from_type = get_from_type(element)
             length = ''
             if element[2] > 1:
@@ -315,7 +277,7 @@ def make_callbacks():
                                  pos,
                                  length)
 
-            pos += get_type_size(element)
+            pos += common.get_element_size(element)
 
         if convs != '':
             convs += '\n'
@@ -346,29 +308,24 @@ def make_methods():
 {1}"""
 
     cls = device.get_camel_case_name()
-    for packet in device.get_packets():
-        if packet['type'] != 'function':
-            continue
-
-        ret_count = csharp_common.count_return_values(packet['elements'])
-        size = str(get_data_size(packet['elements']))
-        name_upper = packet['name'][1].upper()
-        doc = '\n\t\t///  '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
+    for packet in device.get_packets('function'):
+        ret_count = len(packet.get_elements('out'))
+        size = str(get_data_size(packet))
+        name_upper = packet.get_upper_case_name()
+        doc = '\n\t\t///  '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n'))
 
         write_convs = ''
         write_conv = '\t\t\tLEConverter.To({0}, {1}, data_);\n'
         write_conv_length = '\t\t\tLEConverter.To({0}, {1}, {2}, data_);\n'
 
         pos = 4
-        for element in packet['elements']:
-            if element[3] != 'in':
-                continue
-            wname = csharp_common.to_camel_case(element[0])
+        for element in packet.get_elements('in'):
+            wname = common.underscore_to_camel_case(element[0])
             if element[2] > 1:
                 write_convs += write_conv_length.format(wname, pos, element[2])
             else:
                 write_convs += write_conv.format(wname, pos)
-            pos += get_type_size(element)
+            pos += common.get_element_size(element)
             
         method_tail = ''
         if ret_count > 0:
@@ -376,11 +333,8 @@ def make_methods():
             read_conv = '\n\t\t\t{0} = LEConverter.{1}({2}, answer{3});'
 
             pos = 4
-            for element in packet['elements']:
-                if element[3] != 'out':
-                    continue
-
-                aname = csharp_common.to_camel_case(element[0])
+            for element in packet.get_elements('out'):
+                aname = common.underscore_to_camel_case(element[0])
                 from_type = get_from_type(element)
                 length = ''
                 if element[2] > 1:
@@ -390,7 +344,7 @@ def make_methods():
                     read_convs = '\n\t\t\treturn LEConverter.{0}({1}, answer{2});'.format(from_type, pos, length)
                 else:
                     read_convs += read_conv.format(aname, from_type, pos, length)
-                pos += get_type_size(element)
+                pos += common.get_element_size(element)
 
             method_tail = method_answer.format(name_upper, read_convs)
         else:
@@ -420,19 +374,16 @@ def make_obsolete_methods():
 """
 
     cls = device.get_camel_case_name()
-    for packet in device.get_packets():
-        if packet['type'] != 'function':
-            continue
-
-        ret_count = csharp_common.count_return_values(packet['elements'])
+    for packet in device.get_packets('function'):
+        ret_count = len(packet.get_elements('out'))
         if ret_count != 1:
             continue
 
-        name = packet['name'][0]
+        name = packet.get_camel_case_name()
         sigParams = csharp_common.make_parameter_list(packet, True)
-        outParam = csharp_common.to_camel_case(filter(lambda e: e[3] == 'out', packet['elements'])[0][0])
-        callParams = ", ".join(map(lambda e: csharp_common.to_camel_case(e[0]), filter(lambda e: e[3] == 'in', packet['elements'])))
-        doc = '\n\t\t///  '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
+        outParam = common.underscore_to_camel_case(packet.get_elements('out')[0][0])
+        callParams = ", ".join(map(lambda e: common.underscore_to_camel_case(e[0]), packet.get_elements('in')))
+        doc = '\n\t\t///  '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n'))
 
         methods += method.format(name,
                                  sigParams,
@@ -442,12 +393,10 @@ def make_obsolete_methods():
 
     return methods
 
-def get_data_size(elements):
+def get_data_size(packet):
     size = 0
-    for element in elements:
-        if element[3] != 'in':
-            continue
-        size += get_type_size(element)
+    for element in packet.get_elements('in'):
+        size += common.get_element_size(element)
     return size + 4
 
 def make_files(com_new, directory):

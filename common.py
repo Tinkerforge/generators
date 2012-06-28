@@ -26,6 +26,8 @@ Boston, MA 02111-1307, USA.
 import os
 import shutil
 import re
+import datetime
+import subprocess
 
 gen_text_star = """/* ***********************************************************
  * This file was automatically generated on {0}.      *
@@ -69,14 +71,98 @@ def get_changelog_version(path):
 
     return last
 
-def find_examples(com, path, dirname, prefix, suffix):
-    start_path = path.replace('/generators/' + dirname, '')
-    board = '{0}-{1}'.format(com['name'][1], com['category'].lower())
+def get_element_size(element):
+    types = {
+        'int8'   : 1,
+        'uint8'  : 1,
+        'int16'  : 2,
+        'uint16' : 2,
+        'int32'  : 4,
+        'uint32' : 4,
+        'int64'  : 8,
+        'uint64' : 8,
+        'float'  : 4,
+        'bool'   : 1,
+        'string' : 1,
+        'char'   : 1
+    }
+
+    if element[1] not in types:
+        raise ValueError('Element with unknown type')
+
+    return types[element[1]] * element[2]
+
+def make_rst_header(device, ref_name, title):
+    date = datetime.datetime.now().strftime("%Y-%m-%d")
+    ref = '.. _{0}_{1}_{2}:\n'.format(device.get_underscore_name(), device.get_category().lower(), ref_name)
+    title = '{0} - {1} {2}'.format(title, device.get_display_name(), device.get_category())
+    title_under = '='*len(title)
+    return '{0}\n{1}\n{2}\n{3}\n'.format(gen_text_rst.format(date),
+                                         ref,
+                                         title,
+                                         title_under)
+
+def make_rst_summary(device, title):
+    su = """
+This is the API site for the {4} of the {0} {1}. General information
+on what this device does and the technical specifications can be found
+:ref:`here <{2}>`.
+
+A tutorial on how to test the {0} {1} and get the first examples running
+can be found :ref:`here <{3}>`.
+"""
+
+    hw_link = device.get_underscore_name() + '_' + device.get_category().lower()
+    hw_test = hw_link + '_test'
+    su = su.format(device.get_display_name(), device.get_category(), hw_link, hw_test, title)
+    return su
+
+def make_rst_examples(title_from_file, device, base_path, dirname, filename_prefix, filename_suffix, include_name):
+    ex = """
+{0}
+
+Examples
+--------
+
+The example code below is public domain.
+"""
+
+    imp = """
+{0}
+{1}
+
+`Download <https://github.com/Tinkerforge/{3}/raw/master/software/examples/{4}/{5}>`__
+
+.. literalinclude:: {2}
+ :language: {4}
+ :linenos:
+ :tab-width: 4
+"""
+
+    ref = '.. _{0}_{1}_{2}_examples:\n'.format(device.get_underscore_name(),
+                                               device.get_category().lower(),
+                                               dirname)
+    ex = ex.format(ref)
+    files = find_examples(device, base_path, dirname, filename_prefix, filename_suffix)
+    copy_files = []
+    for f in files:
+        include = '{0}_{1}_{2}_{3}'.format(device.get_camel_case_name(), device.get_category(), include_name, f[0])
+        copy_files.append((f[1], include))
+        title = title_from_file(f[0])
+        git_name = device.get_underscore_name().replace('_', '-') + '-' + device.get_category().lower()
+        ex += imp.format(title, '^'*len(title), include, git_name, dirname, f[0])
+
+    copy_examples(copy_files, base_path)
+    return ex
+
+def find_examples(device, base_path, dirname, filename_prefix, filename_suffix):
+    start_path = base_path.replace('/generators/' + dirname, '')
+    board = '{0}-{1}'.format(device.get_underscore_name(), device.get_category().lower())
     board = board.replace('_', '-')
     board_path = os.path.join(start_path, board, 'software/examples/' + dirname)
     files = []
     for f in os.listdir(board_path):
-        if f.startswith(prefix) and f.endswith(suffix):
+        if f.startswith(filename_prefix) and f.endswith(filename_suffix):
             f_dir = '{0}/{1}'.format(board_path, f)
             lines = 0
             for line in open(os.path.join(f, f_dir)):
@@ -96,14 +182,96 @@ def copy_examples(copy_files, path):
         shutil.copy(doc_src, doc_dest)
         print('   - {0}'.format(copy_file[1]))
 
+def make_zip(dirname, source_path, dest_path, version):
+    zipname = 'tinkerforge_{0}_bindings_{1}_{2}_{3}.zip'.format(dirname, *version)
+    os.chdir(source_path)
+    args = ['/usr/bin/zip',
+            '-r',
+            zipname,
+            '.']
+    subprocess.call(args)
+    shutil.copy(zipname, dest_path)
+
 re_camel_case_to_space = re.compile('([A-Z][A-Z][a-z])|([a-z][A-Z])')
 
 def camel_case_to_space(name):
     return re_camel_case_to_space.sub(lambda m: m.group()[:1] + " " + m.group()[1:], name)
 
+def underscore_to_camel_case(name):
+    parts = name.split('_')
+    ret = parts[0]
+    for part in parts[1:]:
+        ret += part[0].upper() + part[1:]
+    return ret
+
+class Packet:
+    def __init__(self, packet):
+        self.packet = packet
+        self.all_elements = packet['elements']
+        self.in_elements = []
+        self.out_elements = []
+
+        if packet['name'][0].lower() != packet['name'][1].replace('_', ''):
+            raise ValueError('Name mismatch: ' + packet['name'][0] + ' != ' + packet['name'][1])
+
+        for element in self.all_elements:
+            if element[3] == 'in':
+                self.in_elements.append(element)
+            elif element[3] == 'out':
+                self.out_elements.append(element)
+            else:
+                raise ValueError('Invalid element direction ' + element[3])
+
+    def get_type(self):
+        return self.packet['type']
+
+    def get_camel_case_name(self):
+        return self.packet['name'][0]
+
+    def get_headless_camel_case_name(self):
+        m = re.match('([A-Z]+)(.*)', self.packet['name'][0])
+        return m.group(1).lower() + m.group(2)
+
+    def get_underscore_name(self):
+        return self.packet['name'][1]
+
+    def get_upper_case_name(self):
+        return self.packet['name'][1].upper()
+
+    def get_elements(self, direction=None):
+        if direction is None:
+            return self.all_elements
+        elif direction == 'in':
+            return self.in_elements
+        elif direction == 'out':
+            return self.out_elements
+        else:
+            raise ValueError('Invalid element direction ' + str(direction))
+
+    def get_doc(self):
+        return self.packet['doc']
+
+    def get_function_id(self):
+        return self.packet['function_id']
+
 class Device:
     def __init__(self, com):
         self.com = com
+        self.all_packets = []
+        self.function_packets = []
+        self.callback_packets = []
+
+        for i, packet in zip(range(len(com['packets'])), com['packets']):
+            packet['function_id'] = i + 1
+            self.all_packets.append(Packet(packet))
+
+        for packet in self.all_packets:
+            if packet.get_type() == 'function':
+                self.function_packets.append(packet)
+            elif packet.get_type() == 'callback':
+                self.callback_packets.append(packet)
+            else:
+                raise ValueError('Invalid packet type ' + packet.get_type())
 
     def get_version(self):
         return self.com['version']
@@ -121,6 +289,9 @@ class Device:
     def get_underscore_name(self):
         return self.com['name'][1]
 
+    def get_upper_case_name(self):
+        return self.com['name'][1].upper()
+
     # this is also the name stored in the firmware
     def get_display_name(self):
         return self.com['name'][2]
@@ -128,13 +299,15 @@ class Device:
     def get_description(self):
         return self.com['description']
 
-    def get_packets(self):
-        return self.com['packets']
+    def get_packets(self, typ=None):
+        if typ is None:
+            return self.all_packets
+        elif typ == 'function':
+            return self.function_packets
+        elif typ == 'callback':
+            return self.callback_packets
+        else:
+            raise ValueError('Invalid packet type ' + str(typ))
 
     def get_callback_count(self):
-        callback_count = 0
-        for packet in self.com['packets']:
-            if packet['type'] == 'callback':
-                callback_count += 1
-
-        return callback_count
+        return len(self.callback_packets)

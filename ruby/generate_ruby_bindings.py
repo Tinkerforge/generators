@@ -66,12 +66,12 @@ def fix_links(text):
 
     cls = device.get_camel_case_name()
     for packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(packet['name'][0])
-        if packet['type'] == 'callback':
-            name = packet['name'][1].upper()
+        name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
+        if packet.get_type() == 'callback':
+            name = packet.get_upper_case_name()
             name_right = link_c.format(name)
         else:
-            name = packet['name'][1]
+            name = packet.get_underscore_name()
             name_right = link.format(device.get_category(), cls, name)
 
         text = text.replace(name_false, name_right)
@@ -103,20 +103,16 @@ def make_callback_id_definitions():
     # {2}
     CALLBACK_{0} = {1}
 """
-    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
-        if packet['type'] != 'callback':
-            continue
-        doc = '\n    # '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
-        cbs += cb.format(packet['name'][1].upper(), i+1, doc)
+    for packet in device.get_packets('callback'):
+        doc = '\n    # '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n'))
+        cbs += cb.format(packet.get_upper_case_name(), packet.get_function_id(), doc)
     return cbs
 
 def make_function_id_definitions():
     function_ids = '\n'
     function_id = '    FUNCTION_{0} = {1} # :nodoc:\n'
-    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
-        if packet['type'] != 'function':
-            continue
-        function_ids += function_id.format(packet['name'][1].upper(), i+1)
+    for packet in device.get_packets('function'):
+        function_ids += function_id.format(packet.get_upper_case_name(), packet.get_function_id())
     return function_ids
 
 def make_initialize_method():
@@ -139,11 +135,9 @@ def make_initialize_method():
 def make_callback_formats():
     cbs = ''
     cb = "      @callback_formats[CALLBACK_{0}] = '{1}'\n"
-    for i, packet in zip(range(len(device.get_packets())), device.get_packets()):
-        if packet['type'] != 'callback':
-            continue
+    for packet in device.get_packets('callback'):
         form, _ = make_format_list(packet, 'out')
-        cbs += cb.format(packet['name'][1].upper(), form)
+        cbs += cb.format(packet.get_upper_case_name(), form)
     return cbs + '    end\n'
 
 def make_format_from_element(element):
@@ -170,9 +164,7 @@ def make_format_from_element(element):
 def make_format_list(packet, io):
     forms = []
     total_size = 0
-    for element in packet['elements']:
-        if element[3] != io:
-            continue
+    for element in packet.get_elements(io):
         num_str = ''
         num_int = 1
         if element[2] > 1:
@@ -185,9 +177,7 @@ def make_format_list(packet, io):
 
 def make_parameter_list(packet):
     params = []
-    for element in packet['elements']:
-        if element[3] != 'in':
-            continue
+    for element in packet.get_elements('in'):
         params.append(element[0])
     return ', '.join(params)
 
@@ -206,14 +196,11 @@ def make_methods():
 """
     methods = ''
 
-    for packet in device.get_packets():
-        if packet['type'] != 'function':
-            continue
-
-        name = packet['name'][1]
-        fid = packet['name'][1].upper()
+    for packet in device.get_packets('function'):
+        name = packet.get_underscore_name()
+        fid = packet.get_upper_case_name()
         parms = make_parameter_list(packet)
-        doc = '\n    # '.join(fix_links(packet['doc'][1][lang]).strip().split('\n'))
+        doc = '\n    # '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n'))
 
         in_format, _ = make_format_list(packet, 'in')
         out_format, out_size = make_format_list(packet, 'out')

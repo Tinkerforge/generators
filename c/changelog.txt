@@ -13,3 +13,4 @@
 1.0.9: Don't use strcpy on non-NUL-terminated strings
 1.0.10: Treat '-' and ' ' as equal in device name check for backward compatibility
 1.0.11: Fix handling of fragmented packets
+1.0.12: Add RS485 support

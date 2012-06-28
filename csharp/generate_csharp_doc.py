@@ -24,7 +24,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import datetime
 import sys
 import os
 import shutil
@@ -45,8 +44,8 @@ def fix_links(text):
 
     cls = device.get_camel_case_name()
     for packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(packet['name'][0])
-        name = packet['name'][0] 
+        name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
+        name = packet.get_camel_case_name()
         name_right = link.format(device.get_category(), cls, name)
 
         text = text.replace(name_false, name_right)
@@ -56,87 +55,14 @@ def fix_links(text):
 
     return text
 
-def make_header():
-    date = datetime.datetime.now().strftime("%Y-%m-%d")
-    ref = '.. _{0}_{1}_csharp:\n'.format(device.get_underscore_name(), device.get_category().lower())
-    title = 'C# - {0} {1}'.format(device.get_display_name(), device.get_category())
-    title_under = '='*len(title)
-    return '{0}\n{1}\n{2}\n{3}\n'.format(common.gen_text_rst.format(date),
-                                         ref,
-                                         title, 
-                                         title_under)
-
-def make_summary():
-    su = """
-This is the API site for the C# bindings of the {0} {1}. General information
-on what this device does and the technical specifications can be found
-:ref:`here <{2}>`.
-
-A tutorial on how to test the {0} {1} and get the first examples running
-can be found :ref:`here <{3}>`.
-"""
-
-    hw_link = device.get_underscore_name() + '_' + device.get_category().lower()
-    hw_test = hw_link + '_test'
-    su = su.format(device.get_display_name(), device.get_category(), hw_link, hw_test)
-    return su
-
 def make_examples():
     def title_from_file(f):
         f = f.replace('Example', '')
         f = f.replace('.cs', '')
         return common.camel_case_to_space(f)
 
-    ex = """
-{0}
-
-Examples
---------
-
-The example code below is public domain.
-"""
-
-    imp = """
-{0}
-{1}
-
-`Download <https://github.com/Tinkerforge/{3}/raw/master/software/examples/csharp/{4}>`__
-
-.. literalinclude:: {2}
- :language: csharp
- :linenos:
- :tab-width: 4
-"""
-
-    ref = '.. _{0}_{1}_csharp_examples:\n'.format(device.get_underscore_name(),
-                                                  device.get_category().lower())
-    ex = ex.format(ref)
-    files = common.find_examples(device.com, file_path, 'csharp', 'Example', '.cs')
-    copy_files = []
-    for f in files:
-        include = '{0}_{1}_CSharp_{2}'.format(device.get_camel_case_name(), device.get_category(), f[0])
-        copy_files.append((f[1], include))
-        title = title_from_file(f[0])
-        git_name = device.get_underscore_name().replace('_', '-') + '-' + device.get_category().lower()
-        ex += imp.format(title, '^'*len(title), include, git_name, f[0])
-
-    common.copy_examples(copy_files, file_path)
-    return ex
-
-def to_camel_case(name):
-    names = name.split('_')
-    ret = names[0]
-    for n in names[1:]:
-        ret += n[0].upper() + n[1:]
-    return ret
-
-def get_num_return(elements): 
-    num = 0
-    for element in elements:
-        if element[3] == 'out':
-            num += 1
-
-    return num
+    return common.make_rst_examples(title_from_file, device, file_path,
+                                    'csharp', 'Example', '.cs', 'CSharp')
 
 def make_methods(typ):
     method_version = """
@@ -150,19 +76,19 @@ def make_methods(typ):
     methods = ''
     func_start = '.. csharp:function:: '
     cls = device.get_category() + device.get_camel_case_name()
-    for packet in device.get_packets():
-        if packet['type'] != 'function' or packet['doc'][0] != typ:
+    for packet in device.get_packets('function'):
+        if packet.get_doc()[0] != typ:
             continue
 
-        signature = csharp_common.make_method_signature(packet, True, device.com)
-        desc = fix_links(common.shift_right(packet['doc'][1][lang], 1))
+        signature = csharp_common.make_method_signature(packet, True, device)
+        desc = fix_links(common.shift_right(packet.get_doc()[1][lang], 1))
         func = '{0}{1}\n{2}'.format(func_start, 
                                     signature, 
                                     desc)
         methods += func + '\n'
 
-        if csharp_common.count_return_values(packet['elements']) == 1:
-            methods += '\n .. versionchanged:: 1.1.0\n    Result is returned. Previously it was passed as ``out`` parameter.\n'
+        if len(packet.get_elements('out')) == 1:
+            methods += '\n .. versionchanged:: 1.1.0\n    Result is returned. Previously it was passed as ``out`` parameter.\n\n'
 
     if typ == 'am':
         methods += method_version.format(cls)
@@ -178,20 +104,16 @@ def make_callbacks():
 
     cbs = ''
     cls = device.get_camel_case_name()
-    for packet in device.get_packets():
-        if packet['type'] != 'callback':
-            continue
-
-        desc = fix_links(common.shift_right(packet['doc'][1][lang], 2))
+    for packet in device.get_packets('callback'):
+        desc = fix_links(common.shift_right(packet.get_doc()[1][lang], 2))
         params = csharp_common.make_parameter_list(packet)
 
         cbs += cb.format(device.get_category() + device.get_camel_case_name(),
-                         packet['name'][0],
+                         packet.get_camel_case_name(),
                          params,
                          desc)
 
     return cbs
-       
 
 def make_api():
     create_str = """
@@ -331,7 +253,7 @@ The namespace for all Brick/Bricklet bindings and the IPConnection is
     return api.format(ref, api_desc, api_str) 
         
 def copy_examples_for_zip():
-    examples = common.find_examples(device.com, file_path, 'csharp', 'Example', '.cs')
+    examples = common.find_examples(device, file_path, 'csharp', 'Example', '.cs')
     dest = os.path.join('/tmp/generator/dll/examples/', 
                         device.get_category(),
                         device.get_camel_case_name())
@@ -353,8 +275,8 @@ def make_files(com_new, directory):
         os.makedirs(directory)
 
     f = file('{0}/{1}.rst'.format(directory, file_name), "w")
-    f.write(make_header())
-    f.write(make_summary())
+    f.write(common.make_rst_header(device, 'csharp', 'C#'))
+    f.write(common.make_rst_summary(device, 'C# bindings'))
     f.write(make_examples())
     f.write(make_api())
 
@@ -417,17 +339,7 @@ using System.Runtime.CompilerServices;
     subprocess.call(args)
 
     # Make zip
-    zipname = 'tinkerforge_csharp_bindings_{0}_{1}_{2}.zip'.format(*version)
-    os.chdir('/tmp/generator/dll')
-    args = ['/usr/bin/zip',
-            '-r',
-            zipname,
-            '.']
-    subprocess.call(args)
-
-    # Copy zip
-    shutil.copy(zipname, path)
-
+    common.make_zip('csharp', '/tmp/generator/dll', path, version)
 
 if __name__ == "__main__":
     generate(os.getcwd())
