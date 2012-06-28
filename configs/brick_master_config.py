@@ -104,6 +104,8 @@ com['packets'].append({
 'en':
 """
 Returns true if a Chibi Extension is available to be used by the Master.
+
+.. versionadded:: 1.1.0
 """,
 'de':
 """
@@ -123,6 +125,8 @@ Sets the address (1-255) belonging to the Chibi Extension.
 It is possible to set the address with the Brick Viewer and it will be 
 saved in the EEPROM of the Chibi Extension, it does not
 have to be set on every startup.
+
+.. versionadded:: 1.1.0
 """,
 'de':
 """
@@ -138,6 +142,8 @@ com['packets'].append({
 'en':
 """
 Returns the address as set by :func:`SetChibiAddress`.
+
+.. versionadded:: 1.1.0
 """,
 'de':
 """
@@ -158,6 +164,8 @@ Chibi Extension is used as slave (i.e. it does not have a USB connection).
 It is possible to set the address with the Brick Viewer and it will be 
 saved in the EEPROM of the Chibi Extension, it does not
 have to be set on every startup.
+
+.. versionadded:: 1.1.0
 """,
 'de':
 """
@@ -173,6 +181,8 @@ com['packets'].append({
 'en':
 """
 Returns the address as set by :func:`SetChibiMasterAddress`.
+
+.. versionadded:: 1.1.0
 """,
 'de':
 """
@@ -197,6 +207,8 @@ Chibi stacks with the IDs 17, 23, and 42, you should call with "(0, 17),
 It is possible to set the addresses with the Brick Viewer and it will be 
 saved in the EEPROM of the Chibi Extension, they don't
 have to be set on every startup.
+
+.. versionadded:: 1.1.0
 """,
 'de':
 """
@@ -214,6 +226,8 @@ com['packets'].append({
 """
 Returns the slave address for a given num as set by 
 :func:`SetChibiSlaveAddress`.
+
+.. versionadded:: 1.1.0
 """,
 'de':
 """
@@ -230,6 +244,8 @@ com['packets'].append({
 """
 Returns the signal strength in dBm. The signal strength updates every time a
 packet is received.
+
+.. versionadded:: 1.1.0
 """,
 'de':
 """
@@ -251,6 +267,8 @@ Returns underrun, CRC error, no ACK and overflow error counts of the Chibi
 communication. If these errors start rising, it is likely that either the
 distance between two Chibi stacks is becoming too big or there are
 interferences.
+
+.. versionadded:: 1.1.0
 """,
 'de':
 """
@@ -279,6 +297,8 @@ Sets the Chibi frequency range for the Chibi Extension. Possible values are:
 It is possible to set the frequency with the Brick Viewer and it will be 
 saved in the EEPROM of the Chibi Extension, it does not
 have to be set on every startup.
+
+.. versionadded:: 1.1.0
 """,
 'de':
 """
@@ -294,6 +314,8 @@ com['packets'].append({
 'en':
 """
 Returns the frequency value as set by :func:`SetChibiFrequency`.
+
+.. versionadded:: 1.1.0
 """,
 'de':
 """
@@ -323,6 +345,8 @@ different for different frequencies:
 It is possible to set the frequency with the Brick Viewer and it will be 
 saved in the EEPROM of the Chibi Extension, it does not
 have to be set on every startup.
+
+.. versionadded:: 1.1.0
 """,
 'de':
 """
@@ -338,6 +362,8 @@ com['packets'].append({
 'en':
 """
 Returns the channel as set by :func:`SetChibiChannel`.
+
+.. versionadded:: 1.1.0
 """,
 'de':
 """
@@ -353,6 +379,8 @@ com['packets'].append({
 'en':
 """
 Returns true if a RS485 Extension is available to be used by the Master.
+
+.. versionadded:: 1.2.0
 """,
 'de':
 """
@@ -375,6 +403,8 @@ connected to a PC via USB).
 It is possible to set the address with the Brick Viewer and it will be 
 saved in the EEPROM of the RS485 Extension, it does not
 have to be set on every startup.
+
+.. versionadded:: 1.2.0
 """,
 'de':
 """
@@ -390,6 +420,8 @@ com['packets'].append({
 'en':
 """
 Returns the address as set by :func:`SetRS485Address`.
+
+.. versionadded:: 1.2.0
 """,
 'de':
 """
@@ -414,6 +446,8 @@ RS485 stacks with the IDs 17, 23, and 42, you should call with "(0, 17),
 It is possible to set the addresses with the Brick Viewer and it will be 
 saved in the EEPROM of the RS485 Extension, they don't
 have to be set on every startup.
+
+.. versionadded:: 1.2.0
 """,
 'de':
 """
@@ -431,6 +465,8 @@ com['packets'].append({
 """
 Returns the slave address for a given num as set by 
 :func:`SetRS485SlaveAddress`.
+
+.. versionadded:: 1.2.0
 """,
 'de':
 """
@@ -449,6 +485,8 @@ Returns CRC error counts of the RS485 communication.
 If this counter starts rising, it is likely that the distance
 between the RS485 nodes is too big or there is some kind of
 interference.
+
+.. versionadded:: 1.2.0
 """,
 'de':
 """
@@ -477,6 +515,8 @@ should use a value in the range of 100khz.
 
 The values are stored in the EEPROM and only applied on startup. That means
 you have to restart the Master Brick after configuration.
+
+.. versionadded:: 1.2.0
 """,
 'de':
 """
@@ -494,6 +534,8 @@ com['packets'].append({
 'en':
 """
 Returns the configuration as set by :func:`SetRS485Configuration`.
+
+.. versionadded:: 1.2.0
 """,
 'de':
 """
