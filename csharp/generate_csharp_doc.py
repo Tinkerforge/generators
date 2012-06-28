@@ -88,7 +88,7 @@ def make_methods(typ):
         methods += func + '\n'
 
         if len(packet.get_elements('out')) == 1:
-            methods += '\n .. versionchanged:: 1.1.0\n    Result is returned. Previously it was passed as ``out`` parameter.\n'
+            methods += '\n .. versionchanged:: 1.1.0\n    Result is returned. Previously it was passed as ``out`` parameter.\n\n'
 
     if typ == 'am':
         methods += method_version.format(cls)
