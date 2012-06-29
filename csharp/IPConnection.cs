@@ -376,7 +376,7 @@ namespace Tinkerforge
 				expectedResponseFunctionID = functionID;
 				if (!responseQueue.TryDequeue(out response, IPConnection.RESPONSE_TIMEOUT))
 				{
-					throw new TimeoutException("Did not receive answer in time");
+					throw new TimeoutException("Did not receive response in time");
 				}
 			}
 		}

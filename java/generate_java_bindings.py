@@ -363,19 +363,19 @@ def make_methods():
 \t\tipcon.write(this, bb, FUNCTION_{5}, {7});{8}
 \t}}
 """
-    method_answer = """
+    method_response = """
 
-\t\tbyte[] answer = null;
+\t\tbyte[] response = null;
 \t\ttry {{
-\t\t\tanswer = responseQueue.poll(IPConnection.RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS);
-\t\t\tif(answer == null) {{
-\t\t\t\tthrow new IPConnection.TimeoutException("Did not receive answer for {0} in time");
+\t\t\tresponse = responseQueue.poll(IPConnection.RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS);
+\t\t\tif(response == null) {{
+\t\t\t\tthrow new IPConnection.TimeoutException("Did not receive response for {0} in time");
 \t\t\t}}
 \t\t}} catch (InterruptedException e) {{
 \t\t\te.printStackTrace();
 \t\t}}
 
-\t\tbb = ByteBuffer.wrap(answer, 4, answer.length - 4);
+\t\tbb = ByteBuffer.wrap(response, 4, response.length - 4);
 \t\tbb.order(ByteOrder.LITTLE_ENDIAN);
 
 {1}
@@ -422,7 +422,7 @@ def make_methods():
             bbputs += bbput_format + '\n'
 
         throw = '' 
-        answer = ''
+        response = ''
         has_ret = 'false'
         if len(packet.get_elements('out')) > 0:
             has_ret = 'true'
@@ -435,9 +435,9 @@ def make_methods():
                 bbgets = obj + bbgets
                 bbret = 'obj'
 
-            answer = method_answer.format(name_lower,
-                                          bbgets,
-                                          bbret)
+            response = method_response.format(name_lower,
+                                              bbgets,
+                                              bbret)
         methods += method.format(ret,
                                  name_lower,
                                  parameter,
@@ -446,7 +446,7 @@ def make_methods():
                                  name_upper,
                                  bbputs,
                                  has_ret,
-                                 answer,
+                                 response,
                                  doc)
 
     return methods

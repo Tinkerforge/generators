@@ -123,8 +123,9 @@ def make_callbacks():
         desc = fix_links(common.shift_right(packet.get_doc()[1][lang], 1))
 
         signature = """
- .. php:function:: void callback({0})
-    :noindex:
+ .. code-block:: php
+
+  void callback({0})
 """.format(params)
 
         func = '{0}{1}::CALLBACK_{2}\n{3}{4}'.format(func_start,

@@ -175,7 +175,7 @@ void ipcon_mutex_unlock(pthread_mutex_t *mutex);
 #endif
 
 int ipcon_create(IPConnection *ipcon, const char *host, const int port);
-void ipcon_enumerate(IPConnection *ipcon, enumerate_callback_func_t cb);
+void ipcon_enumerate(IPConnection *ipcon, enumerate_callback_func_t callback);
 int ipcon_add_device(IPConnection *ipcon, Device *device);
 void ipcon_join_thread(IPConnection *ipcon);
 void ipcon_destroy(IPConnection *ipcon);

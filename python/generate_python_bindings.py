@@ -218,11 +218,11 @@ def make_register_callback_method():
         return ''
 
     return """
-    def register_callback(self, cb, func):
+    def register_callback(self, id, callback):
         \"\"\"
-        Registers a callback with ID cb to the function func.
+        Registers a callback with ID id to the function callback.
         \"\"\"
-        self.registered_callbacks[cb] = func
+        self.registered_callbacks[id] = callback
 """
 
 def make_files(com_new, directory):

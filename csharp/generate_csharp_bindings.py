@@ -303,8 +303,8 @@ def make_methods():
 \t\t}}
 """
     method_oneway = "\t\t\tSendRequestNoResponse(data_);"
-    method_answer = """\t\t\tbyte[] answer;
-\t\t\tSendRequestExpectResponse(data_, FUNCTION_{0}, out answer);
+    method_response = """\t\t\tbyte[] response;
+\t\t\tSendRequestExpectResponse(data_, FUNCTION_{0}, out response);
 {1}"""
 
     cls = device.get_camel_case_name()
@@ -330,7 +330,7 @@ def make_methods():
         method_tail = ''
         if ret_count > 0:
             read_convs = ''
-            read_conv = '\n\t\t\t{0} = LEConverter.{1}({2}, answer{3});'
+            read_conv = '\n\t\t\t{0} = LEConverter.{1}({2}, response{3});'
 
             pos = 4
             for element in packet.get_elements('out'):
@@ -341,12 +341,12 @@ def make_methods():
                     length = ', ' + str(element[2])
 
                 if ret_count == 1:
-                    read_convs = '\n\t\t\treturn LEConverter.{0}({1}, answer{2});'.format(from_type, pos, length)
+                    read_convs = '\n\t\t\treturn LEConverter.{0}({1}, response{2});'.format(from_type, pos, length)
                 else:
                     read_convs += read_conv.format(aname, from_type, pos, length)
                 pos += common.get_element_size(element)
 
-            method_tail = method_answer.format(name_upper, read_convs)
+            method_tail = method_response.format(name_upper, read_convs)
         else:
             method_tail = method_oneway
 
