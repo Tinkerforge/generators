@@ -320,8 +320,8 @@ com['packets'].append({
 'en':
 """
 Sets the drive mode. Possible modes are:
- * 0 = Drive/Brake
- * 1 = Drive/Coast
+* 0 = Drive/Brake
+* 1 = Drive/Coast
  
 These modes are different kinds of motor controls.
 

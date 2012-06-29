@@ -73,11 +73,10 @@ default (set as true or false).
 
 For example: 
 
- * (15, 'i', true) will set all pins of as input pull up. 
- * (8, 'i', false) will set pin 3 of as input default (floating if nothing is connected). 
- * (3, 'o', false) will set pins 0 and 1 as output low.
- * (4, 'o', true) will set pin 2 of as output high.
-
+* (15, 'i', true) will set all pins of as input pull up.
+* (8, 'i', false) will set pin 3 of as input default (floating if nothing is connected).
+* (3, 'o', false) will set pins 0 and 1 as output low.
+* (4, 'o', true) will set pin 2 of as output high.
 """,
 'de':
 """
@@ -98,11 +97,10 @@ Returns a value bit mask and a direction bit mask.
 For example: A return value of 0b0011 and 0b0101 for
 direction and value means that:
 
- * pin 0 is configured as input pull up, 
- * pin 1 is configured as input default,
- * pin 2 is configured as output high
- * and pin 3 is are configured as output low.
-
+* pin 0 is configured as input pull up,
+* pin 1 is configured as input default,
+* pin 2 is configured as output high
+* and pin 3 is are configured as output low.
 """,
 'de':
 """
@@ -199,11 +197,10 @@ and the current value bit mask of the port.
 
 For example:
 
- * (1, 1) means that an interrupt on pin 0 occurred and
-   currently pin 0 is high and pins 1-3 are low.
- * (9, 14) means that an interrupt on pins 0 and 3
-   occurred and currently pin 0 is low and pins 1-3 are high.
-
+* (1, 1) means that an interrupt on pin 0 occurred and
+  currently pin 0 is high and pins 1-3 are low.
+* (9, 14) means that an interrupt on pins 0 and 3
+  occurred and currently pin 0 is low and pins 1-3 are high.
 """,
 'de':
 """

@@ -6,3 +6,5 @@
 1.0.3: Ensure that the answering device matches the expected type in IPConnection.addDevice
 1.0.4: Ensure to serialize arrays and strings with the correct length
        Treat '-' and ' ' as equal in device name check for backward compatibility
+1.0.5: Fix handling of fragmented packets
+1.0.6: Add RS485 support

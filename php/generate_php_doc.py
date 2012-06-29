@@ -43,12 +43,12 @@ file_path = ''
 def fix_links(text):
     cls = device.get_category() + device.get_camel_case_name()
     for packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(packet['name'][0])
-        if packet['type'] == 'callback':
-            name_upper = packet['name'][1].upper()
+        name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
+        if packet.get_type() == 'callback':
+            name_upper = packet.get_upper_case_name()
             name_right = ':php:member:`CALLBACK_{1} <{0}::CALLBACK_{1}>`'.format(cls, name_upper)
         else:
-            name = packet['name'][0][0].lower() + packet['name'][0][1:]
+            name = packet.get_headless_camel_case_name()
             name_right = ':php:func:`{1} <{0}::{1}>`'.format(cls, name)
         text = text.replace(name_false, name_right)
 
@@ -57,77 +57,19 @@ def fix_links(text):
 
     return text
 
-def make_header():
-    date = datetime.datetime.now().strftime("%Y-%m-%d")
-    ref = '.. _{0}_{1}_php:\n'.format(device.get_underscore_name(), device.get_category().lower())
-    title = 'PHP - {0} {1}'.format(device.get_display_name(), device.get_category())
-    title_under = '='*len(title)
-    return '{0}\n{1}\n{2}\n{3}\n'.format(common.gen_text_rst.format(date),
-                                         ref,
-                                         title,
-                                         title_under)
-
-def make_summary():
-    su = """
-This is the API site for the PHP bindings of the {0} {1}. General information
-on what this device does and the technical specifications can be found
-:ref:`here <{2}>`.
-
-A tutorial on how to test the {0} {1} and get the first examples running
-can be found :ref:`here <{3}>`.
-"""
-
-    hw_link = device.get_underscore_name() + '_' + device.get_category().lower()
-    hw_test = hw_link + '_test'
-    su = su.format(device.get_display_name(), device.get_category(), hw_link, hw_test)
-    return su
-
 def make_examples():
     def title_from_file(f):
         f = f.replace('Example', '')
         f = f.replace('.php', '')
         return common.camel_case_to_space(f)
 
-    ex = """
-{0}
-
-Examples
---------
-
-The example code below is public domain.
-"""
-
-    imp = """
-{0}
-{1}
-
-`Download <https://github.com/Tinkerforge/{3}/raw/master/software/examples/php/{4}>`__
-
-.. literalinclude:: {2}
- :language: php
- :linenos:
- :tab-width: 4
-"""
-
-    ref = '.. _{0}_{1}_php_examples:\n'.format(device.get_underscore_name(),
-                                               device.get_category().lower())
-    ex = ex.format(ref)
-    files = common.find_examples(device.com, file_path, 'php', 'Example', '.php')
-    copy_files = []
-    for f in files:
-        include = '{0}_{1}_PHP_{2}'.format(device.get_camel_case_name(), device.get_category(), f[0])
-        copy_files.append((f[1], include))
-        title = title_from_file(f[0])
-        git_name = device.get_underscore_name().replace('_', '-') + '-' + device.get_category().lower()
-        ex += imp.format(title, '^'*len(title), include, git_name, f[0])
-
-    common.copy_examples(copy_files, file_path)
-    return ex
+    return common.make_rst_examples(title_from_file, device, file_path,
+                                    'php', 'Example', '.php', 'PHP')
 
 def make_parameter_list(packet):
     param = []
-    for element in packet['elements']:
-        if element[3] == 'out' and packet['type'] == 'function':
+    for element in packet.get_elements():
+        if element[3] == 'out' and packet.get_type() == 'function':
             continue
         php_type = php_common.get_php_type(element[1])
         name = element[0]
@@ -151,14 +93,14 @@ def make_methods(typ):
     methods = ''
     func_start = '.. php:function:: '
     cls = device.get_category() + device.get_camel_case_name()
-    for packet in device.get_packets():
-        if packet['type'] != 'function' or packet['doc'][0] != typ:
+    for packet in device.get_packets('function'):
+        if packet.get_doc()[0] != typ:
             continue
 
         ret_type = php_common.get_return_type(packet)
-        name = packet['name'][0][0].lower() + packet['name'][0][1:]
+        name = packet.get_headless_camel_case_name()
         params = make_parameter_list(packet)
-        desc = fix_links(common.shift_right(packet['doc'][1][lang], 1))
+        desc = fix_links(common.shift_right(packet.get_doc()[1][lang], 1))
         func = '{0}{1} {2}::{3}({4})\n{5}'.format(func_start, 
                                                             ret_type,
                                                             cls, 
@@ -176,12 +118,9 @@ def make_callbacks():
     cbs = ''
     func_start = '.. php:member:: int '
     cls = device.get_category() + device.get_camel_case_name()
-    for packet in device.get_packets():
-        if packet['type'] != 'callback':
-            continue
-
+    for packet in device.get_packets('callback'):
         params = make_parameter_list(packet)
-        desc = fix_links(common.shift_right(packet['doc'][1][lang], 1))
+        desc = fix_links(common.shift_right(packet.get_doc()[1][lang], 1))
 
         signature = """
  .. php:function:: void callback({0})
@@ -189,14 +128,13 @@ def make_callbacks():
 """.format(params)
 
         func = '{0}{1}::CALLBACK_{2}\n{3}{4}'.format(func_start,
-                                                      cls,
-                                                      packet['name'][1].upper(),
-                                                      signature,
-                                                      desc)
+                                                     cls,
+                                                     packet.get_upper_case_name(),
+                                                     signature,
+                                                     desc)
         cbs += func + '\n'
 
     return cbs
-
 
 def make_api():
     create_str = """
@@ -318,7 +256,7 @@ API
     return api.format(ref, api_desc, api_str)
 
 def copy_examples_for_zip():
-    examples = common.find_examples(device.com, file_path, 'php', 'Example', '.php')
+    examples = common.find_examples(device, file_path, 'php', 'Example', '.php')
     dest = os.path.join('/tmp/generator/pear/examples/',
                         device.get_category().lower(),
                         device.get_underscore_name())
@@ -340,8 +278,8 @@ def make_files(com_new, directory):
         os.makedirs(directory)
 
     f = file('{0}/{1}.rst'.format(directory, file_name), "w")
-    f.write(make_header())
-    f.write(make_summary())
+    f.write(common.make_rst_header(device, 'php', 'PHP'))
+    f.write(common.make_rst_summary(device, 'PHP bindings'))
     f.write(make_examples())
     f.write(make_api())
 
@@ -437,16 +375,7 @@ def generate(path):
     os.remove('/tmp/generator/pear/source/package.xml')
 
     # Make zip
-    zipname = 'tinkerforge_php_bindings_{0}_{1}_{2}.zip'.format(*version)
-    os.chdir('/tmp/generator/pear')
-    args = ['/usr/bin/zip',
-            '-r',
-            zipname,
-            '.']
-    subprocess.call(args)
-
-    # Copy zip
-    shutil.copy(zipname, path)
+    common.make_zip('php', '/tmp/generator/pear', path, version)
 
 if __name__ == "__main__":
     generate(os.getcwd())

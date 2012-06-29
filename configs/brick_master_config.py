@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-# Servo Brick communication config
+# Master Brick communication config
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'version': [1, 1, 0],
+    'version': [1, 2, 0],
     'category': 'Brick',
     'name': ('Master', 'master', 'Master'),
     'manufacturer': 'Tinkerforge',
@@ -104,6 +104,8 @@ com['packets'].append({
 'en':
 """
 Returns true if a Chibi Extension is available to be used by the Master.
+
+.. versionadded:: 1.1.0
 """,
 'de':
 """
@@ -123,6 +125,8 @@ Sets the address (1-255) belonging to the Chibi Extension.
 It is possible to set the address with the Brick Viewer and it will be 
 saved in the EEPROM of the Chibi Extension, it does not
 have to be set on every startup.
+
+.. versionadded:: 1.1.0
 """,
 'de':
 """
@@ -138,6 +142,8 @@ com['packets'].append({
 'en':
 """
 Returns the address as set by :func:`SetChibiAddress`.
+
+.. versionadded:: 1.1.0
 """,
 'de':
 """
@@ -158,6 +164,8 @@ Chibi Extension is used as slave (i.e. it does not have a USB connection).
 It is possible to set the address with the Brick Viewer and it will be 
 saved in the EEPROM of the Chibi Extension, it does not
 have to be set on every startup.
+
+.. versionadded:: 1.1.0
 """,
 'de':
 """
@@ -173,6 +181,8 @@ com['packets'].append({
 'en':
 """
 Returns the address as set by :func:`SetChibiMasterAddress`.
+
+.. versionadded:: 1.1.0
 """,
 'de':
 """
@@ -188,7 +198,7 @@ com['packets'].append({
 'doc': ['am', {
 'en':
 """
-Sets up to 256 slave addresses. The address numeration has to be used 
+Sets up to 255 slave addresses. The address numeration has to be used
 ascending from 0. For example: If you use the Chibi Extension in Master mode
 (i.e. the stack has an USB connection) and you want to talk to three other
 Chibi stacks with the IDs 17, 23, and 42, you should call with "(0, 17),
@@ -197,6 +207,8 @@ Chibi stacks with the IDs 17, 23, and 42, you should call with "(0, 17),
 It is possible to set the addresses with the Brick Viewer and it will be 
 saved in the EEPROM of the Chibi Extension, they don't
 have to be set on every startup.
+
+.. versionadded:: 1.1.0
 """,
 'de':
 """
@@ -214,6 +226,8 @@ com['packets'].append({
 """
 Returns the slave address for a given num as set by 
 :func:`SetChibiSlaveAddress`.
+
+.. versionadded:: 1.1.0
 """,
 'de':
 """
@@ -230,6 +244,8 @@ com['packets'].append({
 """
 Returns the signal strength in dBm. The signal strength updates every time a
 packet is received.
+
+.. versionadded:: 1.1.0
 """,
 'de':
 """
@@ -251,6 +267,8 @@ Returns underrun, CRC error, no ACK and overflow error counts of the Chibi
 communication. If these errors start rising, it is likely that either the
 distance between two Chibi stacks is becoming too big or there are
 interferences.
+
+.. versionadded:: 1.1.0
 """,
 'de':
 """
@@ -279,6 +297,8 @@ Sets the Chibi frequency range for the Chibi Extension. Possible values are:
 It is possible to set the frequency with the Brick Viewer and it will be 
 saved in the EEPROM of the Chibi Extension, it does not
 have to be set on every startup.
+
+.. versionadded:: 1.1.0
 """,
 'de':
 """
@@ -294,6 +314,8 @@ com['packets'].append({
 'en':
 """
 Returns the frequency value as set by :func:`SetChibiFrequency`.
+
+.. versionadded:: 1.1.0
 """,
 'de':
 """
@@ -323,6 +345,8 @@ different for different frequencies:
 It is possible to set the frequency with the Brick Viewer and it will be 
 saved in the EEPROM of the Chibi Extension, it does not
 have to be set on every startup.
+
+.. versionadded:: 1.1.0
 """,
 'de':
 """
@@ -338,6 +362,180 @@ com['packets'].append({
 'en':
 """
 Returns the channel as set by :func:`SetChibiChannel`.
+
+.. versionadded:: 1.1.0
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('IsRS485Present', 'is_rs485_present'), 
+'elements': [('present', 'bool', 1, 'out')], 
+'doc': ['am', {
+'en':
+"""
+Returns true if a RS485 Extension is available to be used by the Master.
+
+.. versionadded:: 1.2.0
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('SetRS485Address', 'set_rs485_address'), 
+'elements': [('address', 'uint8', 1, 'in')], 
+'doc': ['am', {
+'en':
+"""
+Sets the address (1-255) belonging to the RS485 Extension.
+
+Set to 0 if the RS485 Extension should be the RS485 Master (i.e.
+connected to a PC via USB).
+
+It is possible to set the address with the Brick Viewer and it will be 
+saved in the EEPROM of the RS485 Extension, it does not
+have to be set on every startup.
+
+.. versionadded:: 1.2.0
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('GetRS485Address', 'get_rs485_address'), 
+'elements': [('address', 'uint8', 1, 'out')], 
+'doc': ['am', {
+'en':
+"""
+Returns the address as set by :func:`SetRS485Address`.
+
+.. versionadded:: 1.2.0
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('SetRS485SlaveAddress', 'set_rs485_slave_address'),
+'elements': [('num', 'uint8', 1, 'in'),
+             ('address', 'uint8', 1, 'in')], 
+'doc': ['am', {
+'en':
+"""
+Sets up to 255 slave addresses. The address numeration has to be used
+ascending from 0. For example: If you use the RS485 Extension in Master mode
+(i.e. the stack has an USB connection) and you want to talk to three other
+RS485 stacks with the IDs 17, 23, and 42, you should call with "(0, 17),
+(1, 23) and (2, 42)".
+
+It is possible to set the addresses with the Brick Viewer and it will be 
+saved in the EEPROM of the RS485 Extension, they don't
+have to be set on every startup.
+
+.. versionadded:: 1.2.0
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('GetRS485SlaveAddress', 'get_rs485_slave_address'), 
+'elements': [('num', 'uint8', 1, 'in'),
+             ('address', 'uint8', 1, 'out')], 
+'doc': ['am', {
+'en':
+"""
+Returns the slave address for a given num as set by 
+:func:`SetRS485SlaveAddress`.
+
+.. versionadded:: 1.2.0
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('GetRS485ErrorLog', 'get_rs485_error_log'), 
+'elements': [('crc_error', 'uint16', 1, 'out')], 
+'doc': ['am', {
+'en':
+"""
+Returns CRC error counts of the RS485 communication.
+If this counter starts rising, it is likely that the distance
+between the RS485 nodes is too big or there is some kind of
+interference.
+
+.. versionadded:: 1.2.0
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('SetRS485Configuration', 'set_rs485_configuration'), 
+'elements': [('speed', 'uint32', 1, 'in'),
+             ('parity', 'char', 1, 'in'),
+             ('stopbits', 'uint8', 1, 'in')], 
+'doc': ['am', {
+'en':
+"""
+Sets the configuration of the RS485 extension. Speed is given in baud. The
+Master Brick will try to match the given baud rate as exactly as possible.
+The maximum recommended baud rate is 2000000 (2Mbit).
+Possible values for parity are 'n' (none), 'e' (even) and 'o' (odd).
+Possible values for stopbits are 1 and 2.
+
+If your RS485 is unstable (lost messages etc), the first thing you should
+try is to decrease the speed. On very large bus (e.g. 1km), you probably
+should use a value in the range of 100khz.
+
+The values are stored in the EEPROM and only applied on startup. That means
+you have to restart the Master Brick after configuration.
+
+.. versionadded:: 1.2.0
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('GetRS485Configuration', 'get_rs485_configuration'), 
+'elements': [('speed', 'uint32', 1, 'out'),
+             ('parity', 'char', 1, 'out'),
+             ('stopbits', 'uint8', 1, 'out')], 
+'doc': ['am', {
+'en':
+"""
+Returns the configuration as set by :func:`SetRS485Configuration`.
+
+.. versionadded:: 1.2.0
 """,
 'de':
 """

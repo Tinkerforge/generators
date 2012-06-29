@@ -85,7 +85,7 @@ THREAD_RETURN_TYPE ipcon_receive_loop(void *param) {
 				continue;
 			}
 
-			fprintf(stderr, "A socket error occurred, destroying ipcon\n");
+			fprintf(stderr, "A socket error occurred, destroying IPConnection\n");
 			ipcon_destroy(ipcon);
 			THREAD_RETURN;
 		}
@@ -97,7 +97,7 @@ THREAD_RETURN_TYPE ipcon_receive_loop(void *param) {
 				continue;
 			}
 
-			fprintf(stderr, "A socket error occurred, destroying ipcon\n");
+			fprintf(stderr, "A socket error occurred, destroying IPConnection\n");
 			ipcon_destroy(ipcon);
 			THREAD_RETURN;
 		}
@@ -105,7 +105,7 @@ THREAD_RETURN_TYPE ipcon_receive_loop(void *param) {
 
 		if(length == 0) {
 			if(ipcon->thread_run_flag) {
-				fprintf(stderr, "Socket disconnected by Server, destroying ipcon\n");
+				fprintf(stderr, "Socket disconnected by Server, destroying IPConnection\n");
 				ipcon_destroy(ipcon);
 			}
 			THREAD_RETURN;
