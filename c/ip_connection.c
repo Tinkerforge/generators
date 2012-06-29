@@ -227,8 +227,8 @@ void ipcon_join_thread(IPConnection *ipcon) {
 #endif
 }
 
-void ipcon_enumerate(IPConnection *ipcon, enumerate_callback_func_t cb) {
-	ipcon->enumerate_callback = cb;
+void ipcon_enumerate(IPConnection *ipcon, enumerate_callback_func_t callback) {
+	ipcon->enumerate_callback = callback;
 
 	Enumerate e = {
 		BROADCAST_ADDRESS,
@@ -324,7 +324,7 @@ void ipcon_handle_message(IPConnection *ipcon, const unsigned char *buffer) {
 }
 
 void ipcon_device_write(Device *device, const char *buffer, const int length) {
-	// Wait for next write until answer is there. This makes the
+	// Wait for next write until response is there. This makes the
 	// IMU API thread safe.
 	// It is in theory possible to allow concurrent writes from different
 	// threads, we would have to use lists of buffers for that.
