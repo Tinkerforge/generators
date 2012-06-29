@@ -28,6 +28,7 @@ import shutil
 import re
 import datetime
 import subprocess
+import sys
 
 gen_text_star = """/* ***********************************************************
  * This file was automatically generated on {0}.      *
@@ -204,6 +205,29 @@ def underscore_to_camel_case(name):
         ret += part[0].upper() + part[1:]
     return ret
 
+def generate(path, make_files):
+    path_list = path.split('/')
+    path_list[-1] = 'configs'
+    path_config = '/'.join(path_list)
+    sys.path.append(path_config)
+    configs = os.listdir(path_config)
+
+    common_packets = []
+    try:
+        configs.remove('brick_commonconfig.py')
+        common_packets = __import__('brick_commonconfig').common_packets
+    except:
+        pass
+    
+    for config in configs:
+        if config.endswith('_config.py'):
+            module = __import__(config[:-3])
+            print(" * {0}".format(config[:-10]))            
+            if 'brick_' in config and not module.com.has_key('common_included'):
+                module.com['packets'].extend(common_packets)
+                module.com['common_included'] = True
+            make_files(module.com, path)
+
 class Packet:
     def __init__(self, packet):
         self.packet = packet
@@ -262,7 +286,8 @@ class Device:
         self.callback_packets = []
 
         for i, packet in zip(range(len(com['packets'])), com['packets']):
-            packet['function_id'] = i + 1
+            if not 'function_id' in packet:
+                packet['function_id'] = i + 1
             self.all_packets.append(Packet(packet))
 
         for packet in self.all_packets:

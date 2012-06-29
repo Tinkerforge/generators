@@ -8,3 +8,4 @@
        Treat '-' and ' ' as equal in device name check for backward compatibility
 1.0.5: Fix handling of fragmented packets
 1.0.6: Add RS485 support
+1.0.7: Add chip temperature and reset functions

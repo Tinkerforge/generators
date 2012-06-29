@@ -515,4 +515,4 @@ def generate(path):
             make_files(module.com, path)
 
 if __name__ == "__main__":
-    generate(os.getcwd())
+    common.generate(os.getcwd(), make_files)

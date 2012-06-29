@@ -19,7 +19,7 @@ for binding in bindings:
     sys.path.append(path_binding)
     module = __import__('generate_{0}_bindings'.format(binding))
     print("\nGenerating bindings for {0}:".format(binding))
-    module.generate(path_binding)
+    module.common.generate(path_binding, module.make_files)
 
 for binding in bindings:
     path_binding = '{0}/{1}'.format(path, binding)

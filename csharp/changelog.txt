@@ -20,3 +20,4 @@
 1.1.4: Improve exception handling in receive thread
        Fix handling of fragmented packets
 1.1.5: Add RS485 support
+1.1.6: Add chip temperature and reset functions
