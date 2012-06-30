@@ -9,3 +9,4 @@
 1.0.5: Fix handling of fragmented packets
 1.0.6: Add RS485 support
 1.0.7: Add chip temperature and reset functions
+1.0.8: Add monoflop functionality to Dual Relay Bricklet bindings
