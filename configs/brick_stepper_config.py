@@ -658,3 +658,41 @@ Returns true if synchronous rectification is enabled, false otherwise.
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetTimeBase', 'set_time_base'), 
+'elements': [('time_base', 'uint32', 1, 'in')],
+'doc': ['am', {
+'en':
+"""
+Sets the time base of the velocity and the acceleration of the stepper brick
+(in seconds).
+
+For example, if you want to make one step every 1.5 seconds, you can set 
+the time base to 15 and the velocity to 10. Now the velocity is 
+10steps/15s = 1steps/1.5s.
+
+The default value is 1.
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetTimeBase', 'get_time_base'), 
+'elements': [('time_base', 'uint32', 1, 'out')],
+'doc': ['am', {
+'en':
+"""
+Returns the time base as set by :func:`SetTimeBase`.
+""",
+'de':
+"""
+"""
+}]
+})
+
