@@ -22,3 +22,4 @@
 1.1.5: Add RS485 support
 1.1.6: Add chip temperature and reset functions
 1.1.7: Add monoflop functionality to Dual Relay Bricklet bindings
+1.1.8: Add time base all data function/callback and state callback to Stepper Brick API
