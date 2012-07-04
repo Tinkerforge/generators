@@ -12,7 +12,7 @@ for d in os.listdir(path):
             bindings.append(d)
 
 for binding in bindings:
-    if binding == 'tcpip':
+    if binding in ('tcpip', 'modbus'):
         continue
 
     path_binding = '{0}/{1}'.format(path, binding)
