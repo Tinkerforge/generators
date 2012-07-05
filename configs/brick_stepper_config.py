@@ -798,12 +798,13 @@ This callback is triggered whenever the Stepper Brick enters a new state.
 It returns the new state as well as the previous state.
 
 Possible states are:
- * Stop = 1
- * Acceleration = 2
- * Run = 3
- * Deceleration = 4
- * Direction change to forward = 5
- * Direction change to backward = 6
+
+* Stop = 1
+* Acceleration = 2
+* Run = 3
+* Deceleration = 4
+* Direction change to forward = 5
+* Direction change to backward = 6
 
 .. versionadded:: 1.1.6
 """,
