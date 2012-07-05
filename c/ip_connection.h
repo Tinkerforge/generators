@@ -6,9 +6,12 @@
  * with or without modification, are permitted.
  */
 
-#ifndef IP_CONNECTION
-#define IP_CONNECTION
+#ifndef IP_CONNECTION_H
+#define IP_CONNECTION_H
 
+#ifndef __STDC_LIMIT_MACROS
+	#define __STDC_LIMIT_MACROS
+#endif
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
