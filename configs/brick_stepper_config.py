@@ -747,7 +747,7 @@ periodically. A value of 0 turns the callback off.
 com['packets'].append({
 'type': 'function',
 'name': ('GetAllDataPeriod', 'get_all_data_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'elements': [('period', 'uint32', 1, 'out')],
 'doc': ['ccm', {
 'en':
 """
