@@ -320,6 +320,7 @@ com['packets'].append({
 'en':
 """
 Sets the drive mode. Possible modes are:
+
 * 0 = Drive/Brake
 * 1 = Drive/Coast
  
