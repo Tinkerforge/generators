@@ -161,7 +161,10 @@ class IPConnection:
         self.thread_callback.start()
 
     def recv_loop(self):
-        pending_data = ''
+        if sys.hexversion < 0x03000000:
+            pending_data = ''
+        else:
+            pending_data = bytes()
 
         while self.thread_run_flag:
             data = self.sock.recv(8192)
