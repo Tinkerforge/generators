@@ -168,7 +168,7 @@ API
 ---
 
 A general description of the Modbus protocol structure can be found
-:ref:`here <ipcon_modbus_protocol>`.
+:ref:`here <llproto_modbus>`.
 
 {1}
 

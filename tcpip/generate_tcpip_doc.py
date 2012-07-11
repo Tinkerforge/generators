@@ -169,7 +169,7 @@ API
 ---
 
 A general description of the TCP/IP protocol structure can be found
-:ref:`here <ipcon_tcpip_protocol>`.
+:ref:`here <llproto_tcpip>`.
 
 {1}
 
