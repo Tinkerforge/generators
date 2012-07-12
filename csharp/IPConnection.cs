@@ -33,6 +33,7 @@ namespace Tinkerforge
 
 		bool threadRunFlag = true;
 		Device pendingAddDevice = null;
+		private object addDeviceLock = new object();
 		Device[] devices = new Device[256];
 		EnumerateCallback enumerateCallback = null;
 		BlockingQueue callbackQueue = new BlockingQueue();
@@ -290,17 +291,19 @@ namespace Tinkerforge
 			LEConverter.To((ushort)12, 2, request);
 			LEConverter.To(device.uid, 4, request);
 
-			pendingAddDevice = device;
+			lock (addDeviceLock) {
+				pendingAddDevice = device;
 
-			Write(request);
+				Write(request);
 
-			byte[] response;
-			if(!device.responseQueue.TryDequeue(out response, RESPONSE_TIMEOUT))
-			{
-				throw new TimeoutException("Could not add device " + Base58.Encode(device.uid) + ", timeout");
+				byte[] response;
+				if(!device.responseQueue.TryDequeue(out response, RESPONSE_TIMEOUT))
+				{
+					throw new TimeoutException("Could not add device " + Base58.Encode(device.uid) + ", timeout");
+				}
+
+				device.ipcon = this;
 			}
-
-			device.ipcon = this;
 		}
 
 		public void JoinThread()
