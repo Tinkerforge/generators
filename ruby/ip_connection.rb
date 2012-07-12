@@ -255,6 +255,7 @@ module Tinkerforge
 
       @devices = {}
       @pending_add_device = nil
+      @add_device_mutex = Mutex.new
 
       @enumerate_callback = nil
       @callback_queue = Queue.new
@@ -265,18 +266,20 @@ module Tinkerforge
     end
 
     def add_device(device)
-      request = pack [BROADCAST_ADDRESS, FUNCTION_GET_STACK_ID, 4 + 8, device.uid], 'C C S Q'
-      @pending_add_device = device
+      @add_device_mutex.synchronize {
+        request = pack [BROADCAST_ADDRESS, FUNCTION_GET_STACK_ID, 4 + 8, device.uid], 'C C S Q'
+        @pending_add_device = device
 
-      send request
+        send request
 
-      begin
-        device.dequeue_response "Could not add device #{Base58.encode(device.uid)}, timeout"
-      ensure
-        @pending_add_device = nil
-      end
+        begin
+          device.dequeue_response "Could not add device #{Base58.encode(device.uid)}, timeout"
+        ensure
+          @pending_add_device = nil
+        end
 
-      device.ipcon = self
+        device.ipcon = self
+      }
     end
 
     def join_thread
