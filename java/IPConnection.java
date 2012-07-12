@@ -149,6 +149,7 @@ public class IPConnection {
 
 	protected Device[] devices = new Device[255];
 	private Device pendingAddDevice = null;
+	private Object addDeviceMutex = new Object();
 	protected LinkedBlockingQueue<byte[]> callbackQueue = new LinkedBlockingQueue<byte[]>();
 
 	boolean threadRunFlag = true;
@@ -383,26 +384,28 @@ public class IPConnection {
 		ByteBuffer request = createRequestBuffer(BROADCAST_ADDRESS, FUNCTION_GET_STACK_ID, (short)12);
 		request.putLong(device.uid);
 
-		pendingAddDevice = device;
+		synchronized(addDeviceMutex) {
+			pendingAddDevice = device;
 
-		try {
-			out.write(request.array());
-		}
-		catch(java.io.IOException e) {
-			e.printStackTrace();
-		}
-
-		byte[] response = null;
-		try {
-			response = pendingAddDevice.responseQueue.poll(IPConnection.RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS);
-			if(response == null) {
-				throw new IPConnection.TimeoutException("Could not add device " + base58Encode(device.uid) + ", timeout");
+			try {
+				out.write(request.array());
 			}
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+			catch(java.io.IOException e) {
+				e.printStackTrace();
+			}
 
-		device.ipcon = this;
+			byte[] response = null;
+			try {
+				response = pendingAddDevice.responseQueue.poll(IPConnection.RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS);
+				if(response == null) {
+					throw new IPConnection.TimeoutException("Could not add device " + base58Encode(device.uid) + ", timeout");
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			device.ipcon = this;
+		}
 	}
 
 	static ByteBuffer createRequestBuffer(byte stackID, byte functionID, short length) {
