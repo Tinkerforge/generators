@@ -66,7 +66,7 @@ class Error(Exception):
         self.description = description
 
     def __str__(self):
-        return str(self.value) + ": " + str(self.description)
+        return str(self.value) + ': ' + str(self.description)
 
 def decorator_ipcon_check(f):
     def func(self, *args, **kwargs):
@@ -145,6 +145,7 @@ class IPConnection:
 
     def __init__(self, host, port):
         self.pending_add_device = None
+        self.add_device_lock = Lock()
         self.devices = {}
         self.enumerate_callback = None
         self.thread_run_flag = True
@@ -392,19 +393,23 @@ class IPConnection:
                              IPConnection.FUNCTION_GET_STACK_ID]) + \
                       struct.pack('<H', IPConnection.GET_STACK_ID_LENGTH) + \
                       struct.pack('<Q', device.uid)
-  
-        self.pending_add_device = device
-        self.sock.send(request)
-    
-        try:
-            device.response_queue.get(True, IPConnection.RESPONSE_TIMEOUT)
-        except Empty:
-            msg = 'Could not add device ' + \
-                  str(base58encode(device.uid)) + \
-                  ', timeout'
-            raise Error(Error.TIMEOUT, msg)
 
-        device.ipcon = self
+        self.add_device_lock.acquire()
+        try:
+            self.pending_add_device = device
+            self.sock.send(request)
+
+            try:
+                device.response_queue.get(True, IPConnection.RESPONSE_TIMEOUT)
+            except Empty:
+                msg = 'Could not add device ' + \
+                      str(base58encode(device.uid)) + \
+                      ', timeout'
+                raise Error(Error.TIMEOUT, msg)
+
+            device.ipcon = self
+        finally:
+            self.add_device_lock.release()
 
     def write_bricklet_plugin(self, device, port, plugin):
         position = 0
