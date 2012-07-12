@@ -446,6 +446,12 @@ int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
 #endif
 
 #ifdef _WIN32
+	InitializeCriticalSection(&ipcon->add_device_mutex);
+#else
+	pthread_mutex_init(&ipcon->add_device_mutex, NULL);
+#endif
+
+#ifdef _WIN32
 	InitializeCriticalSection(&ipcon->callback_queue_mutex);
 	ipcon->callback_queue_semaphore = CreateSemaphore(NULL, 0, INT32_MAX, NULL);
 #elif defined __APPLE__
@@ -574,6 +580,8 @@ int ipcon_add_device(IPConnection *ipcon, Device *device) {
 		device->uid
 	};
 
+	ipcon_mutex_lock(&ipcon->add_device_mutex);
+
 	ipcon->pending_add_device = device;
 
 #ifdef _WIN32
@@ -584,10 +592,13 @@ int ipcon_add_device(IPConnection *ipcon, Device *device) {
 
 	// Block until there is a response, timeout after RESPONSE_TIMEOUT ms
 	if(ipcon_device_expect_response(device) != 0) {
+		ipcon_mutex_unlock(&ipcon->add_device_mutex);
 		return E_TIMEOUT;
 	}
 
 	device->ipcon = ipcon;
+
+	ipcon_mutex_unlock(&ipcon->add_device_mutex);
 
 	return E_OK;
 }

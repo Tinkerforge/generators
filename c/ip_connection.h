@@ -108,6 +108,11 @@ typedef struct IPConnection_{
 	struct sockaddr_in server;
 	Device *devices[MAX_NUM_DEVICES];
 	Device *pending_add_device;
+#ifdef _WIN32
+	CRITICAL_SECTION add_device_mutex;
+#else
+	pthread_mutex_t add_device_mutex;
+#endif
 	enumerate_callback_func_t enumerate_callback;
 	CallbackQueueNode *callback_queue_head;
 	CallbackQueueNode *callback_queue_tail;
