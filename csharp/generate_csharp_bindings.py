@@ -256,7 +256,7 @@ def make_callbacks():
         name_upper = packet.get_upper_case_name()
         eles = []
         for element in packet.get_elements('out'):
-            eles.append(common.underscore_to_camel_case(element[0]))
+            eles.append(common.underscore_to_headless_camel_case(element[0]))
         params = ", ".join(eles)
         size = str(get_data_size(packet))
 
@@ -266,7 +266,7 @@ def make_callbacks():
         pos = 4
         for element in packet.get_elements('out'):
             csharp_type = csharp_common.get_csharp_type(element)
-            cname = common.underscore_to_camel_case(element[0])
+            cname = common.underscore_to_headless_camel_case(element[0])
             from_type = get_from_type(element)
             length = ''
             if element[2] > 1:
@@ -320,7 +320,7 @@ def make_methods():
 
         pos = 4
         for element in packet.get_elements('in'):
-            wname = common.underscore_to_camel_case(element[0])
+            wname = common.underscore_to_headless_camel_case(element[0])
             if element[2] > 1:
                 write_convs += write_conv_length.format(wname, pos, element[2])
             else:
@@ -334,7 +334,7 @@ def make_methods():
 
             pos = 4
             for element in packet.get_elements('out'):
-                aname = common.underscore_to_camel_case(element[0])
+                aname = common.underscore_to_headless_camel_case(element[0])
                 from_type = get_from_type(element)
                 length = ''
                 if element[2] > 1:
@@ -381,8 +381,8 @@ def make_obsolete_methods():
 
         name = packet.get_camel_case_name()
         sigParams = csharp_common.make_parameter_list(packet, True)
-        outParam = common.underscore_to_camel_case(packet.get_elements('out')[0][0])
-        callParams = ", ".join(map(lambda e: common.underscore_to_camel_case(e[0]), packet.get_elements('in')))
+        outParam = common.underscore_to_headless_camel_case(packet.get_elements('out')[0][0])
+        callParams = ", ".join(map(lambda e: common.underscore_to_headless_camel_case(e[0]), packet.get_elements('in')))
         doc = '\n\t\t///  '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n'))
 
         methods += method.format(name,

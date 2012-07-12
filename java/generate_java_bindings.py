@@ -134,7 +134,7 @@ def make_return_objects():
         tostr = []
         for element in packet.get_elements():
             typ = get_java_type(element[1])
-            ele_name = common.underscore_to_camel_case(element[0])
+            ele_name = common.underscore_to_headless_camel_case(element[0])
             arr = ''
             new = ''
             if element[2] > 1:
@@ -193,7 +193,7 @@ def make_callback_listener_definitions():
         parameter = ''
         parameter_list = []
         for element in packet.get_elements():
-            parameter_list.append(common.underscore_to_camel_case(element[0]))
+            parameter_list.append(common.underscore_to_headless_camel_case(element[0]))
         parameter = ', '.join(parameter_list)
         cbdata = ''
         if len(packet.get_elements('out')) > 0:
@@ -244,7 +244,7 @@ def make_parameter_list(packet):
         if element[3] == 'out' and packet.get_type() == 'function':
             continue
         java_type = get_java_type(element[1])
-        name = common.underscore_to_camel_case(element[0])
+        name = common.underscore_to_headless_camel_case(element[0])
         arr = ''
         if element[2] > 1 and element[1] != 'string':
             arr = '[]'
@@ -397,13 +397,13 @@ def make_methods():
         ret = get_return_value(packet)
         name_lower = packet.get_headless_camel_case_name()
         parameter = make_parameter_list(packet)
-        size = str(get_bb_size(packet))
+        size = str(packet.get_request_length())
         name_upper = packet.get_upper_case_name()
         doc = '\n\t * '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n'))
         bbputs = ''
         bbput = '\t\tbb.put{0}(({1}){2});'
         for element in packet.get_elements('in'):
-            name = common.underscore_to_camel_case(element[0])
+            name = common.underscore_to_headless_camel_case(element[0])
             if element[1] == 'bool':
                 name = '({0} ? 1 : 0)'.format(name)
 
@@ -465,7 +465,7 @@ def make_bbgets(packet, with_obj = False):
         if not with_obj:
             typ = get_java_type(element[1]) + ' '
 
-        bbret = common.underscore_to_camel_case(element[0])
+        bbret = common.underscore_to_headless_camel_case(element[0])
         obj = ''
         if with_obj:
             obj = 'obj.'
@@ -521,12 +521,6 @@ def get_return_value(packet):
         return get_object_name(packet)
 
     return ret
-
-def get_bb_size(packet):
-    size = 0
-    for element in packet.get_elements('in'):
-        size += common.get_element_size(element)
-    return size + 4
 
 def make_files(com_new, directory):
     global device

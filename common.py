@@ -72,7 +72,7 @@ def get_changelog_version(path):
 
     return last
 
-def get_element_size(element):
+def get_type_size(typ):
     types = {
         'int8'   : 1,
         'uint8'  : 1,
@@ -88,10 +88,10 @@ def get_element_size(element):
         'char'   : 1
     }
 
-    if element[1] not in types:
-        raise ValueError('Element with unknown type')
+    return types[typ]
 
-    return types[element[1]] * element[2]
+def get_element_size(element):
+    return get_type_size(element[1]) * element[2]
 
 def make_rst_header(device, ref_name, title):
     date = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -198,7 +198,7 @@ re_camel_case_to_space = re.compile('([A-Z][A-Z][a-z])|([a-z][A-Z])')
 def camel_case_to_space(name):
     return re_camel_case_to_space.sub(lambda m: m.group()[:1] + " " + m.group()[1:], name)
 
-def underscore_to_camel_case(name):
+def underscore_to_headless_camel_case(name):
     parts = name.split('_')
     ret = parts[0]
     for part in parts[1:]:
@@ -277,6 +277,18 @@ class Packet:
 
     def get_function_id(self):
         return self.packet['function_id']
+
+    def get_request_length(self):
+        length = 4
+        for element in self.in_elements:
+            length += get_element_size(element)
+        return length
+
+    def get_response_length(self):
+        length = 4
+        for element in self.out_elements:
+            length += get_element_size(element)
+        return length
 
 class Device:
     def __init__(self, com):

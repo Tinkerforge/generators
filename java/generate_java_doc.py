@@ -115,7 +115,7 @@ def make_parameter_list(packet):
         if element[3] == 'out' and packet.get_type() == 'function':
             continue
         java_type = get_java_type(element[1])
-        name = common.underscore_to_camel_case(element[0])
+        name = common.underscore_to_headless_camel_case(element[0])
         arr = ''
         if element[2] > 1 and element[1] != 'string':
             arr = '[]'
@@ -131,7 +131,7 @@ def make_obj_desc(packet):
     var = []
     for element in packet.get_elements('out'):
         var.append('``{0} {1}``'.format(get_java_type(element[1]),
-                                        common.underscore_to_camel_case(element[0])))
+                                        common.underscore_to_headless_camel_case(element[0])))
 
     if len(var) == 1:
         return desc.format(var[0])

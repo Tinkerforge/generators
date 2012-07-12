@@ -40,7 +40,7 @@ def make_parameter_list(packet, useOutParams=True):
             out = 'out '
 
         csharp_type = get_csharp_type(element)
-        name = common.underscore_to_camel_case(element[0])
+        name = common.underscore_to_headless_camel_case(element[0])
        
         param.append('{0}{1} {2}'.format(out, csharp_type, name))
     return ', '.join(param)
