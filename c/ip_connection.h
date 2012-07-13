@@ -95,16 +95,19 @@ typedef struct CallbackQueueNode_{
 } CallbackQueueNode;
 
 typedef struct IPConnection_{
+	bool thread_receive_flag;
+	bool thread_callback_flag;
 #ifdef _WIN32
 	SOCKET s;
 	HANDLE thread_receive;
 	HANDLE thread_callback;
+	DWORD thread_id_receive;
+	DWORD thread_id_callback;
 #else
 	int fd;
 	pthread_t thread_receive;
 	pthread_t thread_callback;
 #endif
-	bool thread_run_flag;
 	struct sockaddr_in server;
 	Device *devices[MAX_NUM_DEVICES];
 	Device *pending_add_device;
