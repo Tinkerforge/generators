@@ -21,5 +21,8 @@
        Fix handling of fragmented packets
 1.1.5: Add RS485 support
 1.1.6: Add chip temperature and reset functions
-1.1.7: Add monoflop functionality to Dual Relay Bricklet bindings
+1.1.7: Add monoflop functionality to Dual Relay Bricklet API
 1.1.8: Add time base all data function/callback and state callback to Stepper Brick API
+1.1.9: Fix direction of GetAllDataPeriod method in Stepper Brick API
+       Make AddDevice thread-safe
+       Ensure correct shutdown order of threads
