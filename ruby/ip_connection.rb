@@ -309,7 +309,21 @@ module Tinkerforge
       pending_data = ''
 
       while @thread_run_flag
-        data = @socket.recv 8192
+        begin
+          result = IO.select [@socket], [], [], 1
+        rescue IOError
+          break
+        end
+
+        if result == nil or result[0].length < 1
+          next
+        end
+
+        begin
+          data = @socket.recv 8192
+        rescue IOError
+          break
+        end
 
         if data.length == 0
           if @thread_run_flag
