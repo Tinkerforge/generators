@@ -30,8 +30,8 @@ namespace Tinkerforge
         NetworkStream SocketStream;
 		Thread receiveThread;
 		Thread callbackThread;
-
-		bool threadRunFlag = true;
+		bool receiveThreadFlag = true;
+		bool callbackThreadFlag = true;
 		Device pendingAddDevice = null;
 		private object addDeviceLock = new object();
 		Device[] devices = new Device[256];
@@ -90,7 +90,7 @@ namespace Tinkerforge
 			byte[] pendingData = new byte[8192];
 			int pendingLength = 0;
 
-			while(threadRunFlag)
+			while(receiveThreadFlag)
 			{
 				int length = 0;
 
@@ -101,7 +101,7 @@ namespace Tinkerforge
 				}
 				catch(IOException)
 				{
-					if (threadRunFlag) {
+					if (receiveThreadFlag) {
 						System.Console.Error.WriteLine("Socket disconnected by Server, destroying IPConnection");
 						Destroy();
 					}
@@ -142,7 +142,7 @@ namespace Tinkerforge
 
 		private void CallbackLoop()
 		{
-			while(threadRunFlag)
+			while(callbackThreadFlag)
 			{
 				byte[] data;
 				if(!callbackQueue.TryDequeue(out data, Timeout.Infinite))
@@ -291,7 +291,8 @@ namespace Tinkerforge
 			LEConverter.To((ushort)12, 2, request);
 			LEConverter.To(device.uid, 4, request);
 
-			lock (addDeviceLock) {
+			lock (addDeviceLock)
+			{
 				pendingAddDevice = device;
 
 				Write(request);
@@ -308,16 +309,30 @@ namespace Tinkerforge
 
 		public void JoinThread()
 		{
-			receiveThread.Join();
 			callbackThread.Join();
+			receiveThread.Join();
 		}
 
 		public void Destroy() 
 		{
-			threadRunFlag = false;
+			// End callback thread
+			callbackThreadFlag = false;
+			callbackQueue.Close();
+
+			if(Thread.CurrentThread != callbackThread)
+			{
+				callbackThread.Join();
+			}
+
+			// End receive thread
+			receiveThreadFlag = false;
 			SocketStream.Close();
 			Socket.Close();
-			callbackQueue.Close();
+
+			if(Thread.CurrentThread != receiveThread)
+			{
+				receiveThread.Join();
+			}
 		}
 	}
 
