@@ -260,7 +260,8 @@ module Tinkerforge
       @enumerate_callback = nil
       @callback_queue = Queue.new
 
-      @thread_run_flag = true
+      @thread_receive_flag = true
+      @thread_callback_flag = true
       @thread_receive = Thread.new { receive_loop }
       @thread_callback = Thread.new { callback_loop }
     end
@@ -283,15 +284,27 @@ module Tinkerforge
     end
 
     def join_thread
-      @thread_receive.join
       @thread_callback.join
+      @thread_receive.join
     end
 
     def destroy
-      @thread_run_flag = false
-      @callback_queue.push nil # unblock callback_loop
+      # End callback thread
+      @thread_callback_flag = false
+      @callback_queue.push nil # Unblock callback_loop
+
+      if Thread.current != @thread_callback
+        @thread_callback.join
+      end
+
+      # End receive thread
+      @thread_receive_flag = false
       @socket.shutdown(Socket::SHUT_RDWR)
       @socket.close
+
+      if Thread.current != @thread_receive
+        @thread_receive.join
+      end
     end
 
     def enumerate(&block)
@@ -308,7 +321,7 @@ module Tinkerforge
     def receive_loop
       pending_data = ''
 
-      while @thread_run_flag
+      while @thread_receive_flag
         begin
           result = IO.select [@socket], [], [], 1
         rescue IOError
@@ -326,11 +339,11 @@ module Tinkerforge
         end
 
         if data.length == 0
-          if @thread_run_flag
+          if @thread_receive_flag
             $stderr.puts 'Socket disconnected by Server, destroying IPConnection'
             destroy
           end
-          return
+          break
         end
 
         pending_data += data
@@ -356,7 +369,7 @@ module Tinkerforge
     end
 
     def callback_loop
-      while @thread_run_flag
+      while @thread_callback_flag
         packet = @callback_queue.pop
 
         if packet == nil
