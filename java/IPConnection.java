@@ -36,21 +36,21 @@ class ReceiveThread extends Thread {
 			return;
 		}
 
-		while(ipcon.threadRunFlag) {
+		while(ipcon.receiveThreadFlag) {
 			int length;
 
 			try {
 				length = ipcon.in.read(pendingData, pendingLength,
 				                       pendingData.length - pendingLength);
 			} catch(java.io.IOException e) {
-				if(ipcon.threadRunFlag) {
+				if(ipcon.receiveThreadFlag) {
 					e.printStackTrace();
 				}
 				return;
 			}
 
 			if(length == 0 || length == -1) {
-				if(ipcon.threadRunFlag) {
+				if(ipcon.receiveThreadFlag) {
 					System.err.println("Socket disconnected by Server, destroying IPConnection");
 					ipcon.destroy();
 				}
@@ -92,7 +92,7 @@ class CallbackThread extends Thread {
 	}
 
 	public void run() {
-		while(ipcon.threadRunFlag) {
+		while(ipcon.callbackThreadFlag) {
 			byte[] data = null;
 			try {
 				data = ipcon.callbackQueue.take();
@@ -101,7 +101,7 @@ class CallbackThread extends Thread {
 				continue;
 			}
 
-			if (!ipcon.threadRunFlag) {
+			if (!ipcon.callbackThreadFlag) {
 				return;
 			}
 
@@ -152,7 +152,8 @@ public class IPConnection {
 	private Object addDeviceMutex = new Object();
 	protected LinkedBlockingQueue<byte[]> callbackQueue = new LinkedBlockingQueue<byte[]>();
 
-	boolean threadRunFlag = true;
+	boolean receiveThreadFlag = true;
+	boolean callbackThreadFlag = true;
 	Socket sock = null;
 	OutputStream out = null;
 	InputStream in = null;
@@ -252,8 +253,8 @@ public class IPConnection {
 
 	public void joinThread() {
 		try {
-			receiveThread.join();
 			callbackThread.join();
+			receiveThread.join();
 		} catch(InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -331,20 +332,31 @@ public class IPConnection {
 	}
 
 	public void destroy() {
-		threadRunFlag = false;
+		// End callback thread
+		callbackThreadFlag = false;
 
 		try {
-			callbackQueue.put(new byte[1]);
+			callbackQueue.put(new byte[1]); // Unblock callback thread
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+
+		if (Thread.currentThread() != callbackThread) {
+			try {
+				callbackThread.join();
+			} catch(InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
+		// End receive thread
+		receiveThreadFlag = false;
 
 		try {
 			if(in != null) {
 				in.close();
 			}
-		}
-		catch(java.io.IOException e) {
+		} catch(java.io.IOException e) {
 			e.printStackTrace();
 		}
 
@@ -352,8 +364,7 @@ public class IPConnection {
 			if(out != null) {
 				out.close();
 			}
-		}
-		catch(java.io.IOException e) {
+		} catch(java.io.IOException e) {
 			e.printStackTrace();
 		}
 
@@ -361,9 +372,16 @@ public class IPConnection {
 			if(sock != null) {
 				sock.close();
 			}
-		}
-		catch(java.io.IOException e) {
+		} catch(java.io.IOException e) {
 			e.printStackTrace();
+		}
+
+		if (Thread.currentThread() != receiveThread) {
+			try {
+				receiveThread.join();
+			} catch(InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
