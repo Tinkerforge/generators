@@ -250,6 +250,10 @@ module Tinkerforge
     FUNCTION_ENUMERATE = 254
     FUNCTION_ENUMERATE_CALLBACK = 253
 
+    # Creates an IP connection to the Brick Daemon with the given *host*
+    # and *port*. With the IP connection itself it is possible to enumerate the
+    # available devices. Other then that it is only used to add Bricks and
+    # Bricklets to the connection.
     def initialize(host, port)
       @socket = TCPSocket.new host, port
 
@@ -266,6 +270,9 @@ module Tinkerforge
       @thread_callback = Thread.new { callback_loop }
     end
 
+    # Adds a device (Brick or Bricklet) to the IP connection. Every device
+    # has to be added to an IP connection before it can be used. Examples for
+    # this can be found in the API documentation for every Brick and Bricklet.
     def add_device(device)
       @add_device_mutex.synchronize {
         request = pack [BROADCAST_ADDRESS, FUNCTION_GET_STACK_ID, 4 + 8, device.uid], 'C C S Q'
@@ -283,11 +290,18 @@ module Tinkerforge
       }
     end
 
+    # Joins the threads of the IP connection. The call will block until the
+    # IP connection is destroyed: IPConnection#destroy.
+    #
+    # This makes sense if you relies solely on callbacks for events or if
+    # the IP connection was created in a threads.
     def join_thread
       @thread_callback.join
       @thread_receive.join
     end
 
+    # Destroys the IP connection. The socket to the Brick Daemon will be closed
+    # and the threads of the IP connection terminated.
     def destroy
       # End callback thread
       @thread_callback_flag = false
@@ -307,6 +321,21 @@ module Tinkerforge
       end
     end
 
+    # This method registers a callback that receives four parameters:
+    #
+    # * *uid* - str: The UID of the device.
+    # * *name* - str: The name of the device (includes "Brick" or "Bricklet" and a version number).
+    # * *stack_id* - int: The stack ID of the device (you can find out the position in a stack with this).
+    # * *is_new* - bool: True if the device is added, false if it is removed.
+    #
+    # There are three different possibilities for the callback to be called.
+    # Firstly, the callback is called with all currently available devices in the
+    # IP connection (with *is_new* true). Secondly, the callback is called if
+    # a new Brick is plugged in via USB (with *is_new* true) and lastly it is
+    # called if a Brick is unplugged (with *is_new* false).
+    #
+    # It should be possible to implement "plug 'n play" functionality with this
+    # (as is done in Brick Viewer).
     def enumerate(&block)
       @enumerate_callback = block
 

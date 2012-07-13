@@ -144,6 +144,13 @@ class IPConnection:
     callback_queue = Queue()
 
     def __init__(self, host, port):
+        """
+        Creates an IP connection to the Brick Daemon with the given *host*
+        and *port*. With the IP connection itself it is possible to enumerate the
+        available devices. Other then that it is only used to add Bricks and
+        Bricklets to the connection.
+        """
+
         self.pending_add_device = None
         self.add_device_lock = Lock()
         self.devices = {}
@@ -232,6 +239,11 @@ class IPConnection:
                     device.registered_callbacks[function_id](*self.data_to_return(data[4:], form))
 
     def destroy(self):
+        """
+        Destroys the IP connection. The socket to the Brick Daemon will be closed
+        and the threads of the IP connection terminated.
+        """
+
         # End callback thread
         self.thread_callback_flag = False
         self.callback_queue.put(None) # unblock callback_loop
@@ -270,6 +282,14 @@ class IPConnection:
         return ret
 
     def join_thread(self):
+        """
+        Joins the threads of the IP connection. The call will block until the
+        IP connection is :py:func:`destroyed <IPConnection.destroy>`.
+
+        This makes sense if you relies solely on callbacks for events or if
+        the IP connection was created in a threads.
+        """
+
         self.thread_callback.join()
         self.thread_receive.join()
 
@@ -356,6 +376,24 @@ class IPConnection:
             self.callback_queue.put(packet)
 
     def enumerate(self, callback):
+        """
+        This method registers a callback that receives four parameters:
+
+        * *uid* - str: The UID of the device.
+        * *name* - str: The name of the device (includes "Brick" or "Bricklet" and a version number).
+        * *stack_id* - int: The stack ID of the device (you can find out the position in a stack with this).
+        * *is_new* - bool: True if the device is added, false if it is removed.
+
+        There are three different possibilities for the callback to be called.
+        Firstly, the callback is called with all currently available devices in the
+        IP connection (with *is_new* true). Secondly, the callback is called if
+        a new Brick is plugged in via USB (with *is_new* true) and lastly it is
+        called if a Brick is unplugged (with *is_new* false).
+
+        It should be possible to implement "plug 'n play" functionality with this
+        (as is done in Brick Viewer).
+        """
+
         self.enumerate_callback = callback
         if sys.hexversion < 0x03000000:
             request = chr(IPConnection.BROADCAST_ADDRESS) + \
@@ -392,6 +430,12 @@ class IPConnection:
             self.pending_add_device = None
 
     def add_device(self, device):
+        """
+        Adds a device (Brick or Bricklet) to the IP connection. Every device
+        has to be added to an IP connection before it can be used. Examples for
+        this can be found in the API documentation for every Brick and Bricklet.
+        """
+
         if sys.hexversion < 0x03000000:
             request = chr(IPConnection.BROADCAST_ADDRESS) + \
                       chr(IPConnection.FUNCTION_GET_STACK_ID) + \
