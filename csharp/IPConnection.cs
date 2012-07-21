@@ -30,9 +30,10 @@ namespace Tinkerforge
         NetworkStream SocketStream;
 		Thread receiveThread;
 		Thread callbackThread;
-
-		bool threadRunFlag = true;
+		bool receiveThreadFlag = true;
+		bool callbackThreadFlag = true;
 		Device pendingAddDevice = null;
+		private object addDeviceLock = new object();
 		Device[] devices = new Device[256];
 		BlockingQueue callbackQueue = new BlockingQueue();
 
@@ -42,6 +43,15 @@ namespace Tinkerforge
 		                                       byte stackID,
 		                                       bool isNew);
 
+		/// <summary>
+		///  Creates an IP connection to the Brick Daemon with the given *host*
+		///  and *port*. With the IP connection itself it is possible to enumerate the
+		///  available devices. Other then that it is only used to add Bricks and
+		///  Bricklets to the connection.
+		///
+		///  The constructor throws an System.Net.Sockets.SocketException if there
+		///  is no Brick Daemon listening at the given host and port.
+		/// </summary>
 		public IPConnection(string host, int port) 
 		{
             Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -89,7 +99,7 @@ namespace Tinkerforge
 			byte[] pendingData = new byte[8192];
 			int pendingLength = 0;
 
-			while(threadRunFlag)
+			while(receiveThreadFlag)
 			{
 				int length = 0;
 
@@ -100,7 +110,7 @@ namespace Tinkerforge
 				}
 				catch(IOException)
 				{
-					if (threadRunFlag) {
+					if (receiveThreadFlag) {
 						System.Console.Error.WriteLine("Socket disconnected by Server, destroying IPConnection");
 						Destroy();
 					}
@@ -141,7 +151,7 @@ namespace Tinkerforge
 
 		private void CallbackLoop()
 		{
-			while(threadRunFlag)
+			while(callbackThreadFlag)
 			{
 				byte[] data;
 				if(!callbackQueue.TryDequeue(out data, Timeout.Infinite))
@@ -276,6 +286,31 @@ namespace Tinkerforge
             SocketStream.Write(data, 0, data.Length);
         }
 
+		/// <summary>
+		///  This method registers the following delegate:
+		///
+		///  <code>
+		///   public delegate void EnumerateCallback(string uid, string name, byte stackID, bool isNew)
+		///  </code>
+		///
+		///  The callback receives four parameters:
+		///
+		///  <code>
+		///   * *uid*: The UID of the device.
+		///   * *name*: The name of the device (includes "Brick" or "Bricklet" and a version number).
+		///   * *stackID*: The stack ID of the device (you can find out the position in a stack with this).
+		///   * *isNew*: True if the device is added, false if it is removed.
+		///  </code>
+		///
+		///  There are three different possibilities for the callback to be called.
+		///  Firstly, the callback is called with all currently available devices in the
+		///  IP connection (with *isNew* true). Secondly, the callback is called if
+		///  a new Brick is plugged in via USB (with *isNew* true) and lastly it is
+		///  called if a Brick is unplugged (with *isNew* false).
+		///
+		///  It should be possible to implement "plug 'n play" functionality with this
+		///  (as is done in Brick Viewer).
+		/// </summary>
 		public void Enumerate(EnumerateCallbackEventHandler enumerateCallback) 
 		{
 			this.EnumerateCallback += enumerateCallback;
@@ -286,6 +321,11 @@ namespace Tinkerforge
             Write(data);
 		}
 
+		/// <summary>
+		///  Adds a device (Brick or Bricklet) to the IP connection. Every device
+		///  has to be added to an IP connection before it can be used. Examples for
+		///  this can be found in the API documentation for every Brick and Bricklet.
+		/// </summary>
 		public void AddDevice(Device device)
 		{
 			byte[] request = new byte[12];
@@ -294,31 +334,62 @@ namespace Tinkerforge
 			LEConverter.To((ushort)12, 2, request);
 			LEConverter.To(device.uid, 4, request);
 
-			pendingAddDevice = device;
-
-			Write(request);
-
-			byte[] response;
-			if(!device.responseQueue.TryDequeue(out response, RESPONSE_TIMEOUT))
+			lock (addDeviceLock)
 			{
-				throw new TimeoutException("Could not add device " + Base58.Encode(device.uid) + ", timeout");
-			}
+				pendingAddDevice = device;
 
-			device.ipcon = this;
+				Write(request);
+
+				byte[] response;
+				if(!device.responseQueue.TryDequeue(out response, RESPONSE_TIMEOUT))
+				{
+					throw new TimeoutException("Could not add device " + Base58.Encode(device.uid) + ", timeout");
+				}
+
+				device.ipcon = this;
+			}
 		}
 
+		/// <summary>
+		///  Joins the threads of the IP connection. The call will block until the
+		///  IP connection is destroyed: <see cref="Tinkerforge.IPConnection.Destroy"/>.
+		///
+		///  This makes sense if you relies solely on callbacks for events or if
+		///  the IP connection was created in a threads.
+		///
+		///  On Windows Phone this function will do nothing (since all sockets are
+		///  asynchronous and there are no threads used).
+		/// </summary>
 		public void JoinThread()
 		{
-			receiveThread.Join();
 			callbackThread.Join();
+			receiveThread.Join();
 		}
 
+		/// <summary>
+		///  Destroys the IP connection. The socket to the Brick Daemon will be closed
+		///  and the threads of the IP connection terminated.
+		/// </summary>
 		public void Destroy() 
 		{
-			threadRunFlag = false;
+			// End callback thread
+			callbackThreadFlag = false;
+			callbackQueue.Close();
+
+			if(Thread.CurrentThread != callbackThread)
+			{
+				callbackThread.Join();
+			}
+
+			// End receive thread
+			receiveThreadFlag = false;
 			SocketStream.Close();
 			Socket.Close();
-			callbackQueue.Close();
+
+			if(Thread.CurrentThread != receiveThread)
+			{
+				receiveThread.Join();
+			}
 		}
 	}
 
@@ -379,7 +450,7 @@ namespace Tinkerforge
 				expectedResponseFunctionID = functionID;
 				if (!responseQueue.TryDequeue(out response, IPConnection.RESPONSE_TIMEOUT))
 				{
-					throw new TimeoutException("Did not receive answer in time");
+					throw new TimeoutException("Did not receive response in time");
 				}
 			}
 		}

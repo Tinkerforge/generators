@@ -36,21 +36,21 @@ class ReceiveThread extends Thread {
 			return;
 		}
 
-		while(ipcon.threadRunFlag) {
+		while(ipcon.receiveThreadFlag) {
 			int length;
 
 			try {
 				length = ipcon.in.read(pendingData, pendingLength,
 				                       pendingData.length - pendingLength);
 			} catch(java.io.IOException e) {
-				if(ipcon.threadRunFlag) {
+				if(ipcon.receiveThreadFlag) {
 					e.printStackTrace();
 				}
 				return;
 			}
 
 			if(length == 0 || length == -1) {
-				if(ipcon.threadRunFlag) {
+				if(ipcon.receiveThreadFlag) {
 					System.err.println("Socket disconnected by Server, destroying IPConnection");
 					ipcon.destroy();
 				}
@@ -92,7 +92,7 @@ class CallbackThread extends Thread {
 	}
 
 	public void run() {
-		while(ipcon.threadRunFlag) {
+		while(ipcon.callbackThreadFlag) {
 			byte[] data = null;
 			try {
 				data = ipcon.callbackQueue.take();
@@ -101,7 +101,7 @@ class CallbackThread extends Thread {
 				continue;
 			}
 
-			if (!ipcon.threadRunFlag) {
+			if (!ipcon.callbackThreadFlag) {
 				return;
 			}
 
@@ -149,9 +149,11 @@ public class IPConnection {
 
 	protected Device[] devices = new Device[255];
 	private Device pendingAddDevice = null;
+	private Object addDeviceMutex = new Object();
 	protected LinkedBlockingQueue<byte[]> callbackQueue = new LinkedBlockingQueue<byte[]>();
 
-	boolean threadRunFlag = true;
+	boolean receiveThreadFlag = true;
+	boolean callbackThreadFlag = true;
 	Socket sock = null;
 	OutputStream out = null;
 	InputStream in = null;
@@ -171,6 +173,15 @@ public class IPConnection {
 		public void enumerate(String uid, String name, short stackID, boolean isNew);
 	}
 
+	/**
+	 * Creates an IP connection to the Brick Daemon with the given \c host
+	 * and \c port. With the IP connection itself it is possible to enumerate the
+	 * available devices. Other then that it is only used to add Bricks and
+	 * Bricklets to the connection.
+	 *
+	 * The constructor throws an IOException if there is no Brick Daemon
+	 * listening at the given host and port.
+	 */
 	public IPConnection(String host, int port) throws java.io.IOException {
 		sock = new Socket(host, port);
 		out = sock.getOutputStream();
@@ -249,10 +260,17 @@ public class IPConnection {
 		return (long)(((long)data) & 0xFFFFFFFF);
 	}
 
+	/**
+	 * Joins the threads of the IP connection. The call will block until the
+	 * IP connection is destroyed: {@link com.tinkerforge.IPConnection.destroy}.
+	 *
+	 * This makes sense if you relies solely on callbacks for events or if
+	 * the IP connection was created in a threads.
+	 */
 	public void joinThread() {
 		try {
-			receiveThread.join();
 			callbackThread.join();
+			receiveThread.join();
 		} catch(InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -329,21 +347,36 @@ public class IPConnection {
 		}
 	}
 
+	/**
+	 * Destroys the IP connection. The socket to the Brick Daemon will be closed
+	 * and the threads of the IP connection terminated.
+	 */
 	public void destroy() {
-		threadRunFlag = false;
+		// End callback thread
+		callbackThreadFlag = false;
 
 		try {
-			callbackQueue.put(new byte[1]);
+			callbackQueue.put(new byte[1]); // Unblock callback thread
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+
+		if (Thread.currentThread() != callbackThread) {
+			try {
+				callbackThread.join();
+			} catch(InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
+		// End receive thread
+		receiveThreadFlag = false;
 
 		try {
 			if(in != null) {
 				in.close();
 			}
-		}
-		catch(java.io.IOException e) {
+		} catch(java.io.IOException e) {
 			e.printStackTrace();
 		}
 
@@ -351,8 +384,7 @@ public class IPConnection {
 			if(out != null) {
 				out.close();
 			}
-		}
-		catch(java.io.IOException e) {
+		} catch(java.io.IOException e) {
 			e.printStackTrace();
 		}
 
@@ -360,12 +392,44 @@ public class IPConnection {
 			if(sock != null) {
 				sock.close();
 			}
-		}
-		catch(java.io.IOException e) {
+		} catch(java.io.IOException e) {
 			e.printStackTrace();
+		}
+
+		if (Thread.currentThread() != receiveThread) {
+			try {
+				receiveThread.join();
+			} catch(InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
+	/**
+	 * This method registers the following listener:
+	 *
+	 * \code
+	 * public class IPConnection.EnumerateListener() {
+	 *   public void enumerate(String uid, String name, short stackID, boolean isNew)
+	 * }
+	 * \endcode
+	 *
+	 * The listener receives four parameters:
+	 *
+	 * - \c uid: The UID of the device.
+	 * - \c name: The name of the device (includes "Brick" or "Bricklet" and a version number).
+	 * - \c stackID: The stack ID of the device (you can find out the position in a stack with this).
+	 * - \c isNew: True if the device is added, false if it is removed.
+	 *
+	 * There are three different possibilities for the listener to be called.
+	 * Firstly, the listener is called with all currently available devices in the
+	 * IP connection (with \c isNew true). Secondly, the listener is called if
+	 * a new Brick is plugged in via USB (with \c isNew true) and lastly it is
+	 * called if a Brick is unplugged (with \c isNew false).
+	 *
+	 * It should be possible to implement "plug 'n play" functionality with this
+	 * (as is done in Brick Viewer).
+	 */
 	public void enumerate(EnumerateListener enumerateListener) {
 		ByteBuffer request = createRequestBuffer(BROADCAST_ADDRESS, FUNCTION_ENUMERATE, (short)4);
 
@@ -379,30 +443,37 @@ public class IPConnection {
 		}
 	}
 
+	/**
+	 * Adds a device (Brick or Bricklet) to the IP connection. Every device
+	 * has to be added to an IP connection before it can be used. Examples for
+	 * this can be found in the API documentation for every Brick and Bricklet.
+	 */
 	public void addDevice(Device device) throws IPConnection.TimeoutException {
 		ByteBuffer request = createRequestBuffer(BROADCAST_ADDRESS, FUNCTION_GET_STACK_ID, (short)12);
 		request.putLong(device.uid);
 
-		pendingAddDevice = device;
+		synchronized(addDeviceMutex) {
+			pendingAddDevice = device;
 
-		try {
-			out.write(request.array());
-		}
-		catch(java.io.IOException e) {
-			e.printStackTrace();
-		}
-
-		byte[] response = null;
-		try {
-			response = pendingAddDevice.responseQueue.poll(IPConnection.RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS);
-			if(response == null) {
-				throw new IPConnection.TimeoutException("Could not add device " + base58Encode(device.uid) + ", timeout");
+			try {
+				out.write(request.array());
 			}
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+			catch(java.io.IOException e) {
+				e.printStackTrace();
+			}
 
-		device.ipcon = this;
+			byte[] response = null;
+			try {
+				response = pendingAddDevice.responseQueue.poll(IPConnection.RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS);
+				if(response == null) {
+					throw new IPConnection.TimeoutException("Could not add device " + base58Encode(device.uid) + ", timeout");
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			device.ipcon = this;
+		}
 	}
 
 	static ByteBuffer createRequestBuffer(byte stackID, byte functionID, short length) {

@@ -250,47 +250,92 @@ module Tinkerforge
     FUNCTION_ENUMERATE = 254
     FUNCTION_ENUMERATE_CALLBACK = 253
 
+    # Creates an IP connection to the Brick Daemon with the given *host*
+    # and *port*. With the IP connection itself it is possible to enumerate the
+    # available devices. Other then that it is only used to add Bricks and
+    # Bricklets to the connection.
     def initialize(host, port)
       @socket = TCPSocket.new host, port
 
       @devices = {}
       @pending_add_device = nil
+      @add_device_mutex = Mutex.new
 
       @enumerate_callback = nil
       @callback_queue = Queue.new
 
-      @thread_run_flag = true
+      @thread_receive_flag = true
+      @thread_callback_flag = true
       @thread_receive = Thread.new { receive_loop }
       @thread_callback = Thread.new { callback_loop }
     end
 
+    # Adds a device (Brick or Bricklet) to the IP connection. Every device
+    # has to be added to an IP connection before it can be used. Examples for
+    # this can be found in the API documentation for every Brick and Bricklet.
     def add_device(device)
-      request = pack [BROADCAST_ADDRESS, FUNCTION_GET_STACK_ID, 4 + 8, device.uid], 'C C S Q'
-      @pending_add_device = device
+      @add_device_mutex.synchronize {
+        request = pack [BROADCAST_ADDRESS, FUNCTION_GET_STACK_ID, 4 + 8, device.uid], 'C C S Q'
+        @pending_add_device = device
 
-      send request
+        send request
 
-      begin
-        device.dequeue_response "Could not add device #{Base58.encode(device.uid)}, timeout"
-      ensure
-        @pending_add_device = nil
+        begin
+          device.dequeue_response "Could not add device #{Base58.encode(device.uid)}, timeout"
+        ensure
+          @pending_add_device = nil
+        end
+
+        device.ipcon = self
+      }
+    end
+
+    # Joins the threads of the IP connection. The call will block until the
+    # IP connection is destroyed: IPConnection#destroy.
+    #
+    # This makes sense if you relies solely on callbacks for events or if
+    # the IP connection was created in a threads.
+    def join_thread
+      @thread_callback.join
+      @thread_receive.join
+    end
+
+    # Destroys the IP connection. The socket to the Brick Daemon will be closed
+    # and the threads of the IP connection terminated.
+    def destroy
+      # End callback thread
+      @thread_callback_flag = false
+      @callback_queue.push nil # Unblock callback_loop
+
+      if Thread.current != @thread_callback
+        @thread_callback.join
       end
 
-      device.ipcon = self
-    end
-
-    def join_thread
-      @thread_receive.join
-      @thread_callback.join
-    end
-
-    def destroy
-      @thread_run_flag = false
-      @callback_queue.push nil # unblock callback_loop
+      # End receive thread
+      @thread_receive_flag = false
       @socket.shutdown(Socket::SHUT_RDWR)
       @socket.close
+
+      if Thread.current != @thread_receive
+        @thread_receive.join
+      end
     end
 
+    # This method registers a callback that receives four parameters:
+    #
+    # * *uid* - str: The UID of the device.
+    # * *name* - str: The name of the device (includes "Brick" or "Bricklet" and a version number).
+    # * *stack_id* - int: The stack ID of the device (you can find out the position in a stack with this).
+    # * *is_new* - bool: True if the device is added, false if it is removed.
+    #
+    # There are three different possibilities for the callback to be called.
+    # Firstly, the callback is called with all currently available devices in the
+    # IP connection (with *is_new* true). Secondly, the callback is called if
+    # a new Brick is plugged in via USB (with *is_new* true) and lastly it is
+    # called if a Brick is unplugged (with *is_new* false).
+    #
+    # It should be possible to implement "plug 'n play" functionality with this
+    # (as is done in Brick Viewer).
     def enumerate(&block)
       @enumerate_callback = block
 
@@ -305,15 +350,29 @@ module Tinkerforge
     def receive_loop
       pending_data = ''
 
-      while @thread_run_flag
-        data = @socket.recv 8192
+      while @thread_receive_flag
+        begin
+          result = IO.select [@socket], [], [], 1
+        rescue IOError
+          break
+        end
+
+        if result == nil or result[0].length < 1
+          next
+        end
+
+        begin
+          data = @socket.recv 8192
+        rescue IOError
+          break
+        end
 
         if data.length == 0
-          if @thread_run_flag
+          if @thread_receive_flag
             $stderr.puts 'Socket disconnected by Server, destroying IPConnection'
             destroy
           end
-          return
+          break
         end
 
         pending_data += data
@@ -339,7 +398,7 @@ module Tinkerforge
     end
 
     def callback_loop
-      while @thread_run_flag
+      while @thread_callback_flag
         packet = @callback_queue.pop
 
         if packet == nil

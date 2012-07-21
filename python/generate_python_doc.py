@@ -183,13 +183,13 @@ def make_api():
 """
 
     register_str = """
-.. py:function:: {1}.register_callback(cb, func)
+.. py:function:: {1}.register_callback(id, callback)
 
- :param cb: int
- :param func: function
+ :param id: int
+ :param callback: callable
  :rtype: None
 
- Registers a callback with ID *cb* to the function *func*. The available
+ Registers a callback with ID *id* to the function *callback*. The available
  IDs with corresponding function signatures are listed 
  :ref:`below <{0}_{2}_python_callbacks>`.
 """

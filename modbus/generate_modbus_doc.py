@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-TCP/IP Documentation Generator
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
-Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Modbus Documentation Generator
+Copyright (C) 2012 Olaf Lüke <olaf@tinkerforge.com>
 
-generator_tcpip_doc.py: Generator for TCP/IP documentation
+generator_modbus_doc.py: Generator for Modbus documentation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -53,9 +52,9 @@ def fix_links(text):
         name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
         if packet.get_type() == 'callback':
             name_upper = packet.get_upper_case_name()
-            name_right = ':tcpip:func:`CALLBACK_{1} <{0}.CALLBACK_{1}>`'.format(cls, name_upper)
+            name_right = ':modbus:func:`CALLBACK_{1} <{0}.CALLBACK_{1}>`'.format(cls, name_upper)
         else:
-            name_right = ':tcpip:func:`{1} <{0}.{1}>`'.format(cls, packet.get_underscore_name())
+            name_right = ':modbus:func:`{1} <{0}.{1}>`'.format(cls, packet.get_underscore_name())
         text = text.replace(name_false, name_right)
 
     text = text.replace(":word:`parameter`", "response value")
@@ -92,7 +91,7 @@ def make_response_desc(packet):
 
 def make_methods(typ):
     methods = ''
-    func_start = '.. tcpip:function:: '
+    func_start = '.. modbus:function:: '
     cls = device.get_camel_case_name()
     for packet in device.get_packets('function'):
         if packet.get_doc()[0] != typ:
@@ -113,7 +112,7 @@ def make_methods(typ):
 
 def make_callbacks():
     cbs = ''
-    func_start = '.. tcpip:function:: '
+    func_start = '.. modbus:function:: '
     cls = device.get_camel_case_name()
     for packet in device.get_packets('callback'):
         fid = '\n :functionid: {0}'.format(packet.get_function_id())
@@ -154,7 +153,7 @@ Callback Configuration Methods
 """
 
     c_str = """
-.. _{1}_{2}_tcpip_callbacks:
+.. _{1}_{2}_modbus_callbacks:
 
 Callbacks
 ^^^^^^^^^
@@ -168,8 +167,8 @@ Callbacks
 API
 ---
 
-A general description of the TCP/IP protocol structure can be found
-:ref:`here <llproto_tcpip>`.
+A general description of the Modbus protocol structure can be found
+:ref:`here <llproto_modbus>`.
 
 {1}
 
@@ -189,7 +188,7 @@ A general description of the TCP/IP protocol structure can be found
         api_str += ccm_str.format(ccm)
         api_str += c_str.format(c, device.get_underscore_name(), device.get_category().lower())
 
-    ref = '.. _{0}_{1}_tcpip_api:\n'.format(device.get_underscore_name(),
+    ref = '.. _{0}_{1}_modbus_api:\n'.format(device.get_underscore_name(),
                                             device.get_category().lower())
 
     api_desc = ''
@@ -203,15 +202,15 @@ A general description of the TCP/IP protocol structure can be found
 def make_files(com_new, directory):
     global device
     device = common.Device(com_new)
-    file_name = '{0}_{1}_TCPIP'.format(device.get_camel_case_name(), device.get_category())
+    file_name = '{0}_{1}_Modbus'.format(device.get_camel_case_name(), device.get_category())
 
     directory += '/doc'
     if not os.path.exists(directory):
         os.makedirs(directory)
 
     f = file('{0}/{1}.rst'.format(directory, file_name), "w")
-    f.write(common.make_rst_header(device, 'tcpip', 'TCP/IP'))
-    f.write(common.make_rst_summary(device, 'TCP/IP protocol'))
+    f.write(common.make_rst_header(device, 'modbus', 'Modbus'))
+    f.write(common.make_rst_summary(device, 'Modbus protocol'))
     f.write(make_api())
 
 def generate(path):

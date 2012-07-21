@@ -340,7 +340,7 @@ int {0}_{1}({2} *{0}{3}) {{
 \t{0}->response.length = sizeof({2}Return_);
 """
 
-    answer_sem = """\tif(ipcon_device_expect_response({0}) != 0) {{
+    expect_response = """\tif(ipcon_device_expect_response({0}) != 0) {{
 \t\tipcon_mutex_unlock(&{0}->write_mutex);
 \t\treturn E_TIMEOUT;
 \t}}
@@ -361,7 +361,7 @@ int {0}_{1}({2} *{0}{3}) {{
         if len(packet.get_elements('out')) > 0:
             i = func_ret.format(f, g, a, make_return_list(packet))
             j = sizeof_ret.format(a, e, f)
-            k = answer_sem.format(a)
+            k = expect_response.format(a)
         else:
             i = ''
             j = ''
@@ -373,8 +373,8 @@ int {0}_{1}({2} *{0}{3}) {{
 
 def make_register_callback_func():
     func = """
-void {0}_register_callback({1} *{0}, uint8_t cb, void *func) {{
-    {0}->registered_callbacks[cb] = func;
+void {0}_register_callback({1} *{0}, uint8_t id, void *callback) {{
+    {0}->registered_callbacks[id] = callback;
 }}
 """
     return func.format(device.get_underscore_name(), device.get_camel_case_name())
@@ -508,9 +508,9 @@ def make_register_callback_declaration():
 /**
  * \ingroup {2}{1}
  *
- * Registers a callback with ID \c cb to the function \c func.
+ * Registers a callback with ID \c id to the function \c callback.
  */
-void {0}_register_callback({1} *{0}, uint8_t cb, void *func);
+void {0}_register_callback({1} *{0}, uint8_t id, void *callback);
 """
     return func.format(device.get_underscore_name(), device.get_camel_case_name(), device.get_category())
 
@@ -553,18 +553,5 @@ def make_files(com_new, directory):
     h.write(make_register_callback_declaration())
     h.write(make_end_h())
 
-def generate(path):
-    path_list = path.split('/')
-    path_list[-1] = 'configs'
-    path_config = '/'.join(path_list)
-    sys.path.append(path_config)
-    configs = os.listdir(path_config)
-
-    for config in configs:
-        if config.endswith('_config.py'):
-            module = __import__(config[:-3])
-            print(" * {0}".format(config[:-10]))
-            make_files(module.com, path)
-
 if __name__ == "__main__":
-    generate(os.getcwd())
+    common.generate(os.getcwd(), make_files)

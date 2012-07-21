@@ -134,7 +134,7 @@ def make_return_objects():
         tostr = []
         for element in packet.get_elements():
             typ = get_java_type(element[1])
-            ele_name = common.underscore_to_camel_case(element[0])
+            ele_name = common.underscore_to_headless_camel_case(element[0])
             arr = ''
             new = ''
             if element[2] > 1:
@@ -193,7 +193,7 @@ def make_callback_listener_definitions():
         parameter = ''
         parameter_list = []
         for element in packet.get_elements():
-            parameter_list.append(common.underscore_to_camel_case(element[0]))
+            parameter_list.append(common.underscore_to_headless_camel_case(element[0]))
         parameter = ', '.join(parameter_list)
         cbdata = ''
         if len(packet.get_elements('out')) > 0:
@@ -244,7 +244,7 @@ def make_parameter_list(packet):
         if element[3] == 'out' and packet.get_type() == 'function':
             continue
         java_type = get_java_type(element[1])
-        name = common.underscore_to_camel_case(element[0])
+        name = common.underscore_to_headless_camel_case(element[0])
         arr = ''
         if element[2] > 1 and element[1] != 'string':
             arr = '[]'
@@ -363,19 +363,19 @@ def make_methods():
 \t\tipcon.write(this, bb, FUNCTION_{5}, {7});{8}
 \t}}
 """
-    method_answer = """
+    method_response = """
 
-\t\tbyte[] answer = null;
+\t\tbyte[] response = null;
 \t\ttry {{
-\t\t\tanswer = responseQueue.poll(IPConnection.RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS);
-\t\t\tif(answer == null) {{
-\t\t\t\tthrow new IPConnection.TimeoutException("Did not receive answer for {0} in time");
+\t\t\tresponse = responseQueue.poll(IPConnection.RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS);
+\t\t\tif(response == null) {{
+\t\t\t\tthrow new IPConnection.TimeoutException("Did not receive response for {0} in time");
 \t\t\t}}
 \t\t}} catch (InterruptedException e) {{
 \t\t\te.printStackTrace();
 \t\t}}
 
-\t\tbb = ByteBuffer.wrap(answer, 4, answer.length - 4);
+\t\tbb = ByteBuffer.wrap(response, 4, response.length - 4);
 \t\tbb.order(ByteOrder.LITTLE_ENDIAN);
 
 {1}
@@ -397,13 +397,13 @@ def make_methods():
         ret = get_return_value(packet)
         name_lower = packet.get_headless_camel_case_name()
         parameter = make_parameter_list(packet)
-        size = str(get_bb_size(packet))
+        size = str(packet.get_request_length())
         name_upper = packet.get_upper_case_name()
         doc = '\n\t * '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n'))
         bbputs = ''
         bbput = '\t\tbb.put{0}(({1}){2});'
         for element in packet.get_elements('in'):
-            name = common.underscore_to_camel_case(element[0])
+            name = common.underscore_to_headless_camel_case(element[0])
             if element[1] == 'bool':
                 name = '({0} ? 1 : 0)'.format(name)
 
@@ -422,7 +422,7 @@ def make_methods():
             bbputs += bbput_format + '\n'
 
         throw = '' 
-        answer = ''
+        response = ''
         has_ret = 'false'
         if len(packet.get_elements('out')) > 0:
             has_ret = 'true'
@@ -435,9 +435,9 @@ def make_methods():
                 bbgets = obj + bbgets
                 bbret = 'obj'
 
-            answer = method_answer.format(name_lower,
-                                          bbgets,
-                                          bbret)
+            response = method_response.format(name_lower,
+                                              bbgets,
+                                              bbret)
         methods += method.format(ret,
                                  name_lower,
                                  parameter,
@@ -446,7 +446,7 @@ def make_methods():
                                  name_upper,
                                  bbputs,
                                  has_ret,
-                                 answer,
+                                 response,
                                  doc)
 
     return methods
@@ -465,7 +465,7 @@ def make_bbgets(packet, with_obj = False):
         if not with_obj:
             typ = get_java_type(element[1]) + ' '
 
-        bbret = common.underscore_to_camel_case(element[0])
+        bbret = common.underscore_to_headless_camel_case(element[0])
         obj = ''
         if with_obj:
             obj = 'obj.'
@@ -522,12 +522,6 @@ def get_return_value(packet):
 
     return ret
 
-def get_bb_size(packet):
-    size = 0
-    for element in packet.get_elements('in'):
-        size += common.get_element_size(element)
-    return size + 4
-
 def make_files(com_new, directory):
     global device
     device = common.Device(com_new)
@@ -549,18 +543,5 @@ def make_files(com_new, directory):
     java.write(make_methods())
     java.write(make_add_listener())
 
-def generate(path):
-    path_list = path.split('/')
-    path_list[-1] = 'configs'
-    path_config = '/'.join(path_list)
-    sys.path.append(path_config)
-    configs = os.listdir(path_config)
-
-    for config in configs:
-        if config.endswith('_config.py'):
-            module = __import__(config[:-3])
-            print(" * {0}".format(config[:-10]))            
-            make_files(module.com, path)
-
 if __name__ == "__main__":
-    generate(os.getcwd())
+    common.generate(os.getcwd(), make_files)

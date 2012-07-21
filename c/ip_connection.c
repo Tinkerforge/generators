@@ -71,15 +71,20 @@ static void ipcon_semaphore_release(sem_t *semaphore) {
 
 #endif
 
-THREAD_RETURN_TYPE ipcon_receive_loop(void *param) {
+static THREAD_RETURN_TYPE ipcon_receive_loop(void *param) {
 	IPConnection *ipcon = (IPConnection*)param;
 	unsigned char pending_data[RECV_BUFFER_SIZE] = { 0 };
 	int pending_length = 0;
 
-	while(ipcon->thread_run_flag) {
+	while(ipcon->thread_receive_flag) {
 #ifdef _WIN32
 		int length = recv(ipcon->s, (char *)(pending_data + pending_length),
 		                  RECV_BUFFER_SIZE - pending_length, 0);
+
+		if(!ipcon->thread_receive_flag) {
+			break;
+		}
+
 		if(length == SOCKET_ERROR) {
 			if (WSAGetLastError() == WSAEINTR) {
 				continue;
@@ -92,6 +97,11 @@ THREAD_RETURN_TYPE ipcon_receive_loop(void *param) {
 #else
 		int length = read(ipcon->fd, pending_data + pending_length,
 		                  RECV_BUFFER_SIZE - pending_length);
+
+		if(!ipcon->thread_receive_flag) {
+			break;
+		}
+
 		if(length < 0) {
 			if (errno == EINTR) {
 				continue;
@@ -104,7 +114,7 @@ THREAD_RETURN_TYPE ipcon_receive_loop(void *param) {
 #endif
 
 		if(length == 0) {
-			if(ipcon->thread_run_flag) {
+			if(ipcon->thread_receive_flag) {
 				fprintf(stderr, "Socket disconnected by Server, destroying IPConnection\n");
 				ipcon_destroy(ipcon);
 			}
@@ -131,22 +141,23 @@ THREAD_RETURN_TYPE ipcon_receive_loop(void *param) {
 			pending_length -= length;
 		}
 	}
+
 	THREAD_RETURN;
 }
 
-THREAD_RETURN_TYPE ipcon_callback_loop(void *param) {
+static THREAD_RETURN_TYPE ipcon_callback_loop(void *param) {
 	IPConnection *ipcon = (IPConnection*)param;
 
-	while(ipcon->thread_run_flag) {
-		if (!ipcon_semaphore_request(ipcon->callback_queue_semaphore)) {
+	while(ipcon->thread_callback_flag) {
+		if(!ipcon_semaphore_request(ipcon->callback_queue_semaphore)) {
 			continue;
 		}
 
-		if (!ipcon->thread_run_flag) {
+		if(!ipcon->thread_callback_flag) {
 			break;
 		}
 
-		if (ipcon->callback_queue_head == NULL) {
+		if(ipcon->callback_queue_head == NULL) {
 			continue;
 		}
 
@@ -156,7 +167,7 @@ THREAD_RETURN_TYPE ipcon_callback_loop(void *param) {
 		ipcon->callback_queue_head = node->next;
 		node->next = NULL;
 
-		if (ipcon->callback_queue_tail == node) {
+		if(ipcon->callback_queue_tail == node) {
 			ipcon->callback_queue_head = NULL;
 			ipcon->callback_queue_tail = NULL;
 		}
@@ -164,12 +175,12 @@ THREAD_RETURN_TYPE ipcon_callback_loop(void *param) {
 		ipcon_mutex_unlock(&ipcon->callback_queue_mutex);
 
 		uint8_t function_id = ipcon_get_function_id_from_data(node->buffer);
-		if (function_id == FUNCTION_ENUMERATE_CALLBACK) {
+		if(function_id == FUNCTION_ENUMERATE_CALLBACK) {
 			EnumerateReturn *er = (EnumerateReturn *)node->buffer;
 			char str_uid[MAX_BASE58_STR_SIZE];
 			ipcon_base58encode(er->device_uid, str_uid);
 
-			if (ipcon->enumerate_callback != NULL) {
+			if(ipcon->enumerate_callback != NULL) {
 				ipcon->enumerate_callback(str_uid,
 				                          er->device_name,
 				                          er->device_stack_id,
@@ -184,13 +195,28 @@ THREAD_RETURN_TYPE ipcon_callback_loop(void *param) {
 
 		free(node);
 	}
+
 	THREAD_RETURN;
 }
 
 void ipcon_destroy(IPConnection *ipcon) {
-	ipcon->thread_run_flag = false;
+	// End callback thread
+	ipcon->thread_callback_flag = false;
 
-	ipcon_semaphore_release(ipcon->callback_queue_semaphore);
+	ipcon_semaphore_release(ipcon->callback_queue_semaphore); // unblock callback_loop
+
+#ifdef _WIN32
+	if(GetCurrentThreadId() != ipcon->thread_id_callback) {
+		WaitForSingleObject(ipcon->thread_callback, INFINITE);
+	}
+#else
+	if(!pthread_equal(pthread_self(), ipcon->thread_callback)) {
+		pthread_join(ipcon->thread_callback, NULL);
+	}
+#endif
+
+	// End receive thread
+	ipcon->thread_receive_flag = false;
 
 #ifdef _WIN32
 	shutdown(ipcon->s, 2);
@@ -200,6 +226,17 @@ void ipcon_destroy(IPConnection *ipcon) {
 	close(ipcon->fd);
 #endif
 
+#ifdef _WIN32
+	if(GetCurrentThreadId() != ipcon->thread_id_receive) {
+		WaitForSingleObject(ipcon->thread_receive, INFINITE);
+	}
+#else
+	if(!pthread_equal(pthread_self(), ipcon->thread_receive)) {
+		pthread_join(ipcon->thread_receive, NULL);
+	}
+#endif
+
+	// Cleanup queued callbacks
 	ipcon_mutex_lock(&ipcon->callback_queue_mutex);
 
 	CallbackQueueNode *node = ipcon->callback_queue_head;
@@ -219,16 +256,16 @@ void ipcon_destroy(IPConnection *ipcon) {
 
 void ipcon_join_thread(IPConnection *ipcon) {
 #ifdef _WIN32
-	WaitForSingleObject(ipcon->thread_receive, INFINITE);
 	WaitForSingleObject(ipcon->thread_callback, INFINITE);
+	WaitForSingleObject(ipcon->thread_receive, INFINITE);
 #else
-	pthread_join(ipcon->thread_receive, NULL);
 	pthread_join(ipcon->thread_callback, NULL);
+	pthread_join(ipcon->thread_receive, NULL);
 #endif
 }
 
-void ipcon_enumerate(IPConnection *ipcon, enumerate_callback_func_t cb) {
-	ipcon->enumerate_callback = cb;
+void ipcon_enumerate(IPConnection *ipcon, enumerate_callback_func_t callback) {
+	ipcon->enumerate_callback = callback;
 
 	Enumerate e = {
 		BROADCAST_ADDRESS,
@@ -324,7 +361,7 @@ void ipcon_handle_message(IPConnection *ipcon, const unsigned char *buffer) {
 }
 
 void ipcon_device_write(Device *device, const char *buffer, const int length) {
-	// Wait for next write until answer is there. This makes the
+	// Wait for next write until response is there. This makes the
 	// IMU API thread safe.
 	// It is in theory possible to allow concurrent writes from different
 	// threads, we would have to use lists of buffers for that.
@@ -399,7 +436,8 @@ int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
 	}
 	ipcon->pending_add_device = NULL;
 	ipcon->enumerate_callback = NULL;
-	ipcon->thread_run_flag = true;
+	ipcon->thread_receive_flag = true;
+	ipcon->thread_callback_flag = true;
 	ipcon->callback_queue_head = NULL;
 	ipcon->callback_queue_tail = NULL;
 
@@ -446,6 +484,12 @@ int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
 #endif
 
 #ifdef _WIN32
+	InitializeCriticalSection(&ipcon->add_device_mutex);
+#else
+	pthread_mutex_init(&ipcon->add_device_mutex, NULL);
+#endif
+
+#ifdef _WIN32
 	InitializeCriticalSection(&ipcon->callback_queue_mutex);
 	ipcon->callback_queue_semaphore = CreateSemaphore(NULL, 0, INT32_MAX, NULL);
 #elif defined __APPLE__
@@ -466,23 +510,21 @@ int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
 #endif
 
 #ifdef _WIN32
-	DWORD thread_id_receive;
 	ipcon->thread_receive = CreateThread(NULL,
 	                                     0,
 	                                     (LPTHREAD_START_ROUTINE)ipcon_receive_loop,
 	                                     (void*)ipcon,
 	                                     0,
-	                                     (LPDWORD)&thread_id_receive);
+	                                     (LPDWORD)&ipcon->thread_id_receive);
 	if(ipcon->thread_receive == NULL) {
 		return E_NO_THREAD;
 	}
-	DWORD thread_id_callback;
 	ipcon->thread_callback = CreateThread(NULL,
 	                                      0,
 	                                      (LPTHREAD_START_ROUTINE)ipcon_callback_loop,
 	                                      (void*)ipcon,
 	                                      0,
-	                                      (LPDWORD)&thread_id_callback);
+	                                      (LPDWORD)&ipcon->thread_id_callback);
 	if(ipcon->thread_callback == NULL) {
 		return E_NO_THREAD;
 	}
@@ -574,6 +616,8 @@ int ipcon_add_device(IPConnection *ipcon, Device *device) {
 		device->uid
 	};
 
+	ipcon_mutex_lock(&ipcon->add_device_mutex);
+
 	ipcon->pending_add_device = device;
 
 #ifdef _WIN32
@@ -584,10 +628,13 @@ int ipcon_add_device(IPConnection *ipcon, Device *device) {
 
 	// Block until there is a response, timeout after RESPONSE_TIMEOUT ms
 	if(ipcon_device_expect_response(device) != 0) {
+		ipcon_mutex_unlock(&ipcon->add_device_mutex);
 		return E_TIMEOUT;
 	}
 
 	device->ipcon = ipcon;
+
+	ipcon_mutex_unlock(&ipcon->add_device_mutex);
 
 	return E_OK;
 }

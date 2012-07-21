@@ -6,9 +6,16 @@
  * with or without modification, are permitted.
  */
 
-#ifndef IP_CONNECTION
-#define IP_CONNECTION
+#ifndef IP_CONNECTION_H
+#define IP_CONNECTION_H
 
+/**
+ * \defgroup IPConnection IP Connection
+ */
+
+#ifndef __STDC_LIMIT_MACROS
+	#define __STDC_LIMIT_MACROS
+#endif
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
@@ -92,19 +99,27 @@ typedef struct CallbackQueueNode_{
 } CallbackQueueNode;
 
 typedef struct IPConnection_{
+	bool thread_receive_flag;
+	bool thread_callback_flag;
 #ifdef _WIN32
 	SOCKET s;
 	HANDLE thread_receive;
 	HANDLE thread_callback;
+	DWORD thread_id_receive;
+	DWORD thread_id_callback;
 #else
 	int fd;
 	pthread_t thread_receive;
 	pthread_t thread_callback;
 #endif
-	bool thread_run_flag;
 	struct sockaddr_in server;
 	Device *devices[MAX_NUM_DEVICES];
 	Device *pending_add_device;
+#ifdef _WIN32
+	CRITICAL_SECTION add_device_mutex;
+#else
+	pthread_mutex_t add_device_mutex;
+#endif
 	enumerate_callback_func_t enumerate_callback;
 	CallbackQueueNode *callback_queue_head;
 	CallbackQueueNode *callback_queue_tail;
@@ -174,10 +189,66 @@ void ipcon_mutex_lock(pthread_mutex_t *mutex);
 void ipcon_mutex_unlock(pthread_mutex_t *mutex);
 #endif
 
+/**
+ * \ingroup IPConnection
+ *
+ * Creates an IP connection to the Brick Daemon with the given \c host
+ * and \c port. With the IP connection itself it is possible to enumerate the
+ * available devices. Other then that it is only used to add Bricks and
+ * Bricklets to the connection.
+ */
 int ipcon_create(IPConnection *ipcon, const char *host, const int port);
-void ipcon_enumerate(IPConnection *ipcon, enumerate_callback_func_t cb);
+
+/**
+ * \ingroup IPConnection
+ *
+ * This function registers a callback with the signature:
+ *
+ * \code
+ * void callback(char *uid, char *name, uint8_t stack_id, bool is_new)
+ * \endcode
+ *
+ * that receives four parameters:
+ *
+ * - \c uid: The UID of the device.
+ * - \c name: The name of the device (includes "Brick" or "Bricklet" and a version number).
+ * - \c stack_id: The stack ID of the device (you can find out the position in a stack with this).
+ * - \c is_new: True if the device is added, false if it is removed.
+ *
+ * There are three different possibilities for the callback to be called.
+ * Firstly, the callback is called with all currently available devices in the
+ * IP connection (with \c is_new true). Secondly, the callback is called if
+ * a new Brick is plugged in via USB (with \c is_new true) and lastly it is
+ * called if a Brick is unplugged (with \c is_new false).
+ *
+ * It should be possible to implement "plug 'n play" functionality with this
+ * (as is done in Brick Viewer).
+ */
+void ipcon_enumerate(IPConnection *ipcon, enumerate_callback_func_t callback);
+
+/**
+ * \ingroup IPConnection
+ *
+ * Adds a device (Brick or Bricklet) to the IP connection. Every device
+ * has to be added to an IP connection before it can be used. Examples for
+ * this can be found in the API documentation for every Brick and Bricklet.
+ */
 int ipcon_add_device(IPConnection *ipcon, Device *device);
+
+/**
+ * \ingroup IPConnection
+ *
+ * Joins the threads of the IP connection. The call will block until the
+ * IP connection is destroyed (see {@link ipcon_destroy}).
+ */
 void ipcon_join_thread(IPConnection *ipcon);
+
+/**
+ * \ingroup IPConnection
+ *
+ * Destroys the IP connection. The socket to the Brick Daemon will be closed
+ * and the threads of the IP connection terminated.
+ */
 void ipcon_destroy(IPConnection *ipcon);
 
 void ipcon_base58encode(uint64_t value, char *str);

@@ -28,6 +28,7 @@ import shutil
 import re
 import datetime
 import subprocess
+import sys
 
 gen_text_star = """/* ***********************************************************
  * This file was automatically generated on {0}.      *
@@ -71,7 +72,7 @@ def get_changelog_version(path):
 
     return last
 
-def get_element_size(element):
+def get_type_size(typ):
     types = {
         'int8'   : 1,
         'uint8'  : 1,
@@ -87,10 +88,10 @@ def get_element_size(element):
         'char'   : 1
     }
 
-    if element[1] not in types:
-        raise ValueError('Element with unknown type')
+    return types[typ]
 
-    return types[element[1]] * element[2]
+def get_element_size(element):
+    return get_type_size(element[1]) * element[2]
 
 def make_rst_header(device, ref_name, title):
     date = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -197,12 +198,35 @@ re_camel_case_to_space = re.compile('([A-Z][A-Z][a-z])|([a-z][A-Z])')
 def camel_case_to_space(name):
     return re_camel_case_to_space.sub(lambda m: m.group()[:1] + " " + m.group()[1:], name)
 
-def underscore_to_camel_case(name):
+def underscore_to_headless_camel_case(name):
     parts = name.split('_')
     ret = parts[0]
     for part in parts[1:]:
         ret += part[0].upper() + part[1:]
     return ret
+
+def generate(path, make_files):
+    path_list = path.split('/')
+    path_list[-1] = 'configs'
+    path_config = '/'.join(path_list)
+    sys.path.append(path_config)
+    configs = os.listdir(path_config)
+
+    common_packets = []
+    try:
+        configs.remove('brick_commonconfig.py')
+        common_packets = __import__('brick_commonconfig').common_packets
+    except:
+        pass
+    
+    for config in configs:
+        if config.endswith('_config.py'):
+            module = __import__(config[:-3])
+            print(" * {0}".format(config[:-10]))            
+            if 'brick_' in config and not module.com.has_key('common_included'):
+                module.com['packets'].extend(common_packets)
+                module.com['common_included'] = True
+            make_files(module.com, path)
 
 class Packet:
     def __init__(self, packet):
@@ -254,6 +278,18 @@ class Packet:
     def get_function_id(self):
         return self.packet['function_id']
 
+    def get_request_length(self):
+        length = 4
+        for element in self.in_elements:
+            length += get_element_size(element)
+        return length
+
+    def get_response_length(self):
+        length = 4
+        for element in self.out_elements:
+            length += get_element_size(element)
+        return length
+
 class Device:
     def __init__(self, com):
         self.com = com
@@ -262,7 +298,8 @@ class Device:
         self.callback_packets = []
 
         for i, packet in zip(range(len(com['packets'])), com['packets']):
-            packet['function_id'] = i + 1
+            if not 'function_id' in packet:
+                packet['function_id'] = i + 1
             self.all_packets.append(Packet(packet))
 
         for packet in self.all_packets:

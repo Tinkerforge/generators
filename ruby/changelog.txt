@@ -2,3 +2,10 @@
 1.0.1: Fix register_callback syntax error in examples on Windows
 1.0.2: Fix handling of fragmented packets
 1.0.3: Add RS485 support
+1.0.4: Add chip temperature and reset functions
+1.0.5: Add monoflop functionality to Dual Relay Bricklet API
+1.0.6: Add time base all data function/callback and state callback to Stepper Brick API
+1.0.7: Fix direction of get_all_data_period method in Stepper Brick API
+       Make add_device thread-safe
+       Ensure that destroy can end the receive thread correctly
+       Ensure correct shutdown order of threads

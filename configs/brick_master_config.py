@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'version': [1, 2, 0],
+    'version': [1, 2, 1],
     'category': 'Brick',
     'name': ('Master', 'master', 'Master'),
     'manufacturer': 'Tinkerforge',

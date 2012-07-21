@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'version': [1, 0, 0],
+    'version': [1, 0, 2],
     'category': 'Brick',
     'name': ('Stepper', 'stepper', 'Stepper'),
     'manufacturer': 'Tinkerforge',
@@ -652,6 +652,161 @@ com['packets'].append({
 'en':
 """
 Returns true if synchronous rectification is enabled, false otherwise.
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetTimeBase', 'set_time_base'), 
+'elements': [('time_base', 'uint32', 1, 'in')],
+'doc': ['am', {
+'en':
+"""
+Sets the time base of the velocity and the acceleration of the stepper brick
+(in seconds).
+
+For example, if you want to make one step every 1.5 seconds, you can set 
+the time base to 15 and the velocity to 10. Now the velocity is 
+10steps/15s = 1steps/1.5s.
+
+The default value is 1.
+
+.. versionadded:: 1.1.6
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetTimeBase', 'get_time_base'), 
+'elements': [('time_base', 'uint32', 1, 'out')],
+'doc': ['am', {
+'en':
+"""
+Returns the time base as set by :func:`SetTimeBase`.
+
+.. versionadded:: 1.1.6
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetAllData', 'get_all_data'), 
+'elements': [('current_velocity', 'uint16', 1, 'out'),
+             ('current_position', 'int32', 1, 'out'),
+             ('remaining_steps', 'int32', 1, 'out'),
+             ('stack_voltage', 'uint16', 1, 'out'),
+             ('external_voltage', 'uint16', 1, 'out'),
+             ('current_consumption', 'uint16', 1, 'out')],
+'doc': ['am', {
+'en':
+"""
+Returns the following :word:`parameters`: The current velocity,
+the current position, the remaining steps, the stack voltage, the external
+voltage and the current consumption of the stepper motor.
+
+There is also a callback for this function, see :func:`AllData`.
+
+.. versionadded:: 1.1.6
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetAllDataPeriod', 'set_all_data_period'), 
+'elements': [('period', 'uint32', 1, 'in')],
+'doc': ['ccm', {
+'en':
+"""
+Sets the period in ms with which the :func:`AllData` callback is triggered
+periodically. A value of 0 turns the callback off.
+
+.. versionadded:: 1.1.6
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetAllDataPeriod', 'get_all_data_period'), 
+'elements': [('period', 'uint32', 1, 'out')],
+'doc': ['ccm', {
+'en':
+"""
+Returns the period as set by :func:`SetAllDataPeriod`.
+
+.. versionadded:: 1.1.6
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('AllData', 'all_data'), 
+'elements': [('current_velocity', 'uint16', 1, 'out'),
+             ('current_position', 'int32', 1, 'out'),
+             ('remaining_steps', 'int32', 1, 'out'),
+             ('stack_voltage', 'uint16', 1, 'out'),
+             ('external_voltage', 'uint16', 1, 'out'),
+             ('current_consumption', 'uint16', 1, 'out')],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered periodically with the period that is set by
+:func:`SetAllDataPeriod`. The :word:`parameters` are: the current velocity,
+the current position, the remaining steps, the stack voltage, the external
+voltage and the current consumption of the stepper motor.
+
+.. versionadded:: 1.1.6
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('NewState', 'new_state'), 
+'elements': [('state_new', 'uint8', 1, 'out'),
+             ('state_previous', 'uint8', 1, 'out')],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered whenever the Stepper Brick enters a new state. 
+It returns the new state as well as the previous state.
+
+Possible states are:
+
+* Stop = 1
+* Acceleration = 2
+* Run = 3
+* Deceleration = 4
+* Direction change to forward = 5
+* Direction change to backward = 6
+
+.. versionadded:: 1.1.6
 """,
 'de':
 """

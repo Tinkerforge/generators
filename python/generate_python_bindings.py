@@ -218,11 +218,11 @@ def make_register_callback_method():
         return ''
 
     return """
-    def register_callback(self, cb, func):
+    def register_callback(self, id, callback):
         \"\"\"
-        Registers a callback with ID cb to the function func.
+        Registers a callback with ID id to the function callback.
         \"\"\"
-        self.registered_callbacks[cb] = func
+        self.registered_callbacks[id] = callback
 """
 
 def make_files(com_new, directory):
@@ -246,18 +246,5 @@ def make_files(com_new, directory):
     py.write(make_methods())
     py.write(make_register_callback_method())
 
-def generate(path):
-    path_list = path.split('/')
-    path_list[-1] = 'configs'
-    path_config = '/'.join(path_list)
-    sys.path.append(path_config)
-    configs = os.listdir(path_config)
-
-    for config in configs:
-        if config.endswith('_config.py'):
-            module = __import__(config[:-3])
-            print(" * {0}".format(config[:-10]))            
-            make_files(module.com, path)
-
 if __name__ == "__main__":
-    generate(os.getcwd())
+    common.generate(os.getcwd(), make_files)

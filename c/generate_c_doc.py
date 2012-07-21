@@ -127,8 +127,9 @@ def make_callbacks():
         if not plist:
             plist = 'void'
         params = """
- .. c:var:: signature: void callback({0})
-    :noindex:
+ .. code-block:: c
+
+  void callback({0})
 """.format(plist)
         desc = fix_links(common.shift_right(packet.get_doc()[1][lang], 1))
         name = '{0}_{1}'.format(device.get_upper_case_name(),
@@ -157,9 +158,9 @@ def make_api():
 """
 
     register_str = """
-.. c:function:: void {0}_register_callback({1} *{0}, uint8_t cb, void *func)
+.. c:function:: void {0}_register_callback({1} *{0}, uint8_t id, void *callback)
 
- Registers a callback with ID *cb* to the function *func*. The available
+ Registers a callback with ID *id* to the function *callback*. The available
  IDs with corresponding function signatures are listed 
  :ref:`below <{0}_{2}_c_callbacks>`.
 """

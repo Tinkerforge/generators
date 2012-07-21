@@ -263,7 +263,7 @@ def make_callbacks():
         name_upper = packet.get_upper_case_name()
         eles = []
         for element in packet.get_elements('out'):
-            eles.append(common.underscore_to_camel_case(element[0]))
+            eles.append(common.underscore_to_headless_camel_case(element[0]))
         callParams = ", ".join(eles)
         signatureParams = csharp_common.make_parameter_list(packet)
         size = str(get_data_size(packet))
@@ -274,7 +274,7 @@ def make_callbacks():
         pos = 4
         for element in packet.get_elements('out'):
             csharp_type = csharp_common.get_csharp_type(element)
-            cname = common.underscore_to_camel_case(element[0])
+            cname = common.underscore_to_headless_camel_case(element[0])
             from_type = get_from_type(element)
             length = ''
             if element[2] > 1:
@@ -311,8 +311,8 @@ def make_methods():
 \t\t}}
 """
     method_oneway = "\t\t\tSendRequestNoResponse(data_);"
-    method_answer = """\t\t\tbyte[] answer;
-\t\t\tSendRequestExpectResponse(data_, FUNCTION_{0}, out answer);
+    method_response = """\t\t\tbyte[] response;
+\t\t\tSendRequestExpectResponse(data_, FUNCTION_{0}, out response);
 {1}"""
 
     cls = device.get_camel_case_name()
@@ -328,7 +328,7 @@ def make_methods():
 
         pos = 4
         for element in packet.get_elements('in'):
-            wname = common.underscore_to_camel_case(element[0])
+            wname = common.underscore_to_headless_camel_case(element[0])
             if element[2] > 1:
                 write_convs += write_conv_length.format(wname, pos, element[2])
             else:
@@ -338,23 +338,23 @@ def make_methods():
         method_tail = ''
         if ret_count > 0:
             read_convs = ''
-            read_conv = '\n\t\t\t{0} = LEConverter.{1}({2}, answer{3});'
+            read_conv = '\n\t\t\t{0} = LEConverter.{1}({2}, response{3});'
 
             pos = 4
             for element in packet.get_elements('out'):
-                aname = common.underscore_to_camel_case(element[0])
+                aname = common.underscore_to_headless_camel_case(element[0])
                 from_type = get_from_type(element)
                 length = ''
                 if element[2] > 1:
                     length = ', ' + str(element[2])
 
                 if ret_count == 1:
-                    read_convs = '\n\t\t\treturn LEConverter.{0}({1}, answer{2});'.format(from_type, pos, length)
+                    read_convs = '\n\t\t\treturn LEConverter.{0}({1}, response{2});'.format(from_type, pos, length)
                 else:
                     read_convs += read_conv.format(aname, from_type, pos, length)
                 pos += common.get_element_size(element)
 
-            method_tail = method_answer.format(name_upper, read_convs)
+            method_tail = method_response.format(name_upper, read_convs)
         else:
             method_tail = method_oneway
 
@@ -389,8 +389,8 @@ def make_obsolete_methods():
 
         name = packet.get_camel_case_name()
         sigParams = csharp_common.make_parameter_list(packet, True)
-        outParam = common.underscore_to_camel_case(packet.get_elements('out')[0][0])
-        callParams = ", ".join(map(lambda e: common.underscore_to_camel_case(e[0]), packet.get_elements('in')))
+        outParam = common.underscore_to_headless_camel_case(packet.get_elements('out')[0][0])
+        callParams = ", ".join(map(lambda e: common.underscore_to_headless_camel_case(e[0]), packet.get_elements('in')))
         doc = '\n\t\t///  '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n'))
 
         methods += method.format(name,
@@ -428,18 +428,5 @@ def make_files(com_new, directory):
     csharp.write(make_callbacks())
     csharp.write(make_register_callback())
 
-def generate(path):
-    path_list = path.split('/')
-    path_list[-1] = 'configs'
-    path_config = '/'.join(path_list)
-    sys.path.append(path_config)
-    configs = os.listdir(path_config)
-
-    for config in configs:
-        if config.endswith('_config.py'):
-            module = __import__(config[:-3])
-            print(" * {0}".format(config[:-10]))            
-            make_files(module.com, path)
-
 if __name__ == "__main__":
-    generate(os.getcwd())
+    common.generate(os.getcwd(), make_files)

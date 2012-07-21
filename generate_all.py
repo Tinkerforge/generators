@@ -12,14 +12,14 @@ for d in os.listdir(path):
             bindings.append(d)
 
 for binding in bindings:
-    if binding == "tcpip":
+    if binding in ('tcpip', 'modbus'):
         continue
 
     path_binding = '{0}/{1}'.format(path, binding)
     sys.path.append(path_binding)
     module = __import__('generate_{0}_bindings'.format(binding))
     print("\nGenerating bindings for {0}:".format(binding))
-    module.generate(path_binding)
+    module.common.generate(path_binding, module.make_files)
 
 for binding in bindings:
     path_binding = '{0}/{1}'.format(path, binding)

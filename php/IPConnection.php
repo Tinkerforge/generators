@@ -172,6 +172,9 @@ abstract class Device
         }
     }
 
+    /**
+     * @internal
+     */
     protected function sendRequestNoResponse($functionID, $payload)
     {
         if ($this->ipcon == NULL) {
@@ -188,6 +191,9 @@ abstract class Device
         $this->ipcon->send($request);
     }
 
+    /**
+     * @internal
+     */
     protected function sendRequestExpectResponse($functionID, $payload,
                                                  $expectedResponsePayloadLength)
     {
@@ -236,6 +242,15 @@ class IPConnection
     private $pendingAddDevice = NULL;
     private $enumerateCallback = NULL;
 
+    /**
+     * Creates an IP connection to the Brick Daemon with the given *$host*
+     * and *$port*. With the IP connection itself it is possible to enumerate the
+     * available devices. Other then that it is only used to add Bricks and
+     * Bricklets to the connection.
+     *
+     * @param string $host
+     * @param int $port
+     */
     public function __construct($host, $port)
     {
         $address = '';
@@ -272,6 +287,34 @@ class IPConnection
         $this->destroy();
     }
 
+    /**
+     * This method registers a callback with the signature:
+     *
+     *  void callback(string $uid, string $name, int $stackID, bool $isNew)
+     *
+     * that receives four parameters:
+     *
+     * - *$uid* - The UID of the device.
+     * - *$name* - The name of the device (includes "Brick" or "Bricklet" and a version number).
+     * - *$stackID* - The stack ID of the device (you can find out the position in a stack with this).
+     * - *$isNew* - True if the device is added, false if it is removed.
+     *
+     * There are three different possibilities for the callback to be called.
+     * Firstly, the callback is called with all currently available devices in the
+     * IP connection (with *$isNew* true). Secondly, the callback is called if
+     * a new Brick is plugged in via USB (with *$isNew* true) and lastly it is
+     * called if a Brick is unplugged (with *$isNew* false).
+     *
+     * It should be possible to implement "plug 'n play" functionality with this
+     * (as is done in Brick Viewer).
+     *
+     * You need to call IPConnection::dispatchCallbacks() in order to receive
+     * the callbacks. The recommended dispatch time is 2.5s.
+     *
+     * @param callable $callback
+     *
+     * @return void
+     */
     public function enumerate($callback)
     {
         $this->enumerateCallback = $callback;
@@ -281,6 +324,15 @@ class IPConnection
         $this->send($request);
     }
 
+    /**
+     * Adds a device (Brick or Bricklet) to the IP connection. Every device
+     * has to be added to an IP connection before it can be used. Examples for
+     * this can be found in the API documentation for every Brick and Bricklet.
+     *
+     * @param Device $device
+     *
+     * @return void
+     */
     public function addDevice($device)
     {
         $uid = Base256::encodeAndPack($device->uid, 8);
@@ -299,6 +351,16 @@ class IPConnection
         $device->ipcon = $this;
     }
 
+    /**
+     * Dispatches incoming callbacks for the given amount of time (negative value
+     * means infinity). Because PHP doesn't support threads you need to call this
+     * method periodically to ensure that incoming callbacks are handled. If you
+     * don't use callbacks you don't need to call this method.
+     *
+     * @param float $seconds
+     *
+     * @return void
+     */
     public function dispatchCallbacks($seconds)
     {
         // Dispatch all pending callbacks
@@ -320,6 +382,9 @@ class IPConnection
         }
     }
 
+    /**
+     * @internal
+     */
     public function receive($seconds, $device, $directCallbackDispatch)
     {
         if ($seconds < 0) {
@@ -397,6 +462,12 @@ class IPConnection
         } while ($now >= $start && $now < $end);
     }
 
+    /**
+     * Destroys the IP connection. The socket to the Brick Daemon will be closed
+     * and the threads of the IP connection terminated.
+     *
+     * @return void
+     */
     public function destroy()
     {
         if ($this->socket === FALSE) {
@@ -409,6 +480,9 @@ class IPConnection
         $this->socket = FALSE;
     }
 
+    /**
+     * @internal
+     */
     public function send($request)
     {
         if (@socket_send($this->socket, $request, strlen($request), 0) === FALSE) {
@@ -417,6 +491,9 @@ class IPConnection
         }
     }
 
+    /**
+     * @internal
+     */
     private function handleResponse($packet, $directCallbackDispatch)
     {
         $header = unpack('CstackID/CfunctionID/vlength', $packet);
@@ -462,6 +539,9 @@ class IPConnection
         // a callback without registered callback function
     }
 
+    /**
+     * @internal
+     */
     private function handleAddDevice($header, $payload)
     {
         if ($this->pendingAddDevice == NULL) {
@@ -498,6 +578,9 @@ class IPConnection
         $this->pendingAddDevice = NULL;
     }
 
+    /**
+     * @internal
+     */
     private function handleEnumerate($header, $payload)
     {
         if ($this->enumerateCallback == NULL) {
@@ -515,6 +598,9 @@ class IPConnection
                              array(Base58::encode($uid), $name, $stackID, $isNew));
     }
 
+    /**
+     * @internal
+     */
     static public function fixUnpackedInt16($value)
     {
         if ($value >= 32768) {
@@ -524,6 +610,9 @@ class IPConnection
         return $value;
     }
 
+    /**
+     * @internal
+     */
     static public function fixUnpackedInt32($value)
     {
         if (bccomp($value, '2147483648') >= 0) {
@@ -533,6 +622,9 @@ class IPConnection
         return $value;
     }
 
+    /**
+     * @internal
+     */
     static public function fixUnpackedUInt32($value)
     {
         if (bccomp($value, 0) < 0) {
@@ -542,6 +634,9 @@ class IPConnection
         return $value;
     }
 
+    /**
+     * @internal
+     */
     static public function collectUnpackedInt16Array($payload, $field, $length)
     {
         $result = array();
@@ -553,6 +648,9 @@ class IPConnection
         return $result;
     }
 
+    /**
+     * @internal
+     */
     static public function collectUnpackedInt32Array($payload, $field, $length)
     {
         $result = array();
@@ -564,6 +662,9 @@ class IPConnection
         return $result;
     }
 
+    /**
+     * @internal
+     */
     static public function collectUnpackedUInt32Array($payload, $field, $length)
     {
         $result = array();
@@ -575,6 +676,9 @@ class IPConnection
         return $result;
     }
 
+    /**
+     * @internal
+     */
     static public function collectUnpackedBoolArray($payload, $field, $length)
     {
         $result = array();
@@ -586,6 +690,9 @@ class IPConnection
         return $result;
     }
 
+    /**
+     * @internal
+     */
     static public function implodeUnpackedString($payload, $field, $length)
     {
         $result = array();
@@ -603,6 +710,9 @@ class IPConnection
         return implode($result);
     }
 
+    /**
+     * @internal
+     */
     static public function collectUnpackedCharArray($payload, $field, $length)
     {
         $result = array();
@@ -614,6 +724,9 @@ class IPConnection
         return $result;
     }
 
+    /**
+     * @internal
+     */
     static public function collectUnpackedArray($payload, $field, $length)
     {
         $result = array();
