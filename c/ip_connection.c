@@ -27,6 +27,234 @@
 const char BASE58_STR[] = \
 	"123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
 
+#define LITTLE_ENDIAN 0x03020100ul
+#define BIG_ENDIAN    0x00010203ul
+
+static const union {
+	unsigned char bytes[4];
+	uint32_t value;
+} native_endian = {
+	{ 0, 1, 2, 3 }
+};
+
+int16_t ipcon_leconvert_int16_to(int16_t native) {
+	int16_t little;
+
+	if (native_endian.value == LITTLE_ENDIAN) {
+		return native;
+	} else {
+		((uint8_t *)&little)[0] = ((uint8_t *)&native)[1];
+		((uint8_t *)&little)[1] = ((uint8_t *)&native)[0];
+	}
+
+	return little;
+}
+
+uint16_t ipcon_leconvert_uint16_to(uint16_t native) {
+	uint16_t little;
+
+	if (native_endian.value == LITTLE_ENDIAN) {
+		little = native;
+	} else {
+		((uint8_t *)&little)[0] = ((uint8_t *)&native)[1];
+		((uint8_t *)&little)[1] = ((uint8_t *)&native)[0];
+	}
+
+	return little;
+}
+
+int32_t ipcon_leconvert_int32_to(int32_t native) {
+	int32_t little;
+
+	if (native_endian.value == LITTLE_ENDIAN) {
+		little = native;
+	} else {
+		((uint8_t *)&little)[0] = ((uint8_t *)&native)[3];
+		((uint8_t *)&little)[1] = ((uint8_t *)&native)[2];
+		((uint8_t *)&little)[2] = ((uint8_t *)&native)[1];
+		((uint8_t *)&little)[3] = ((uint8_t *)&native)[0];
+	}
+
+	return little;
+}
+
+uint32_t ipcon_leconvert_uint32_to(uint32_t native) {
+	uint32_t little;
+
+	if (native_endian.value == LITTLE_ENDIAN) {
+		little = native;
+	} else {
+		((uint8_t *)&little)[0] = ((uint8_t *)&native)[3];
+		((uint8_t *)&little)[1] = ((uint8_t *)&native)[2];
+		((uint8_t *)&little)[2] = ((uint8_t *)&native)[1];
+		((uint8_t *)&little)[3] = ((uint8_t *)&native)[0];
+	}
+
+	return little;
+}
+
+int64_t ipcon_leconvert_int64_to(int64_t native) {
+	int64_t little;
+
+	if (native_endian.value == LITTLE_ENDIAN) {
+		little = native;
+	} else {
+		((uint8_t *)&little)[0] = ((uint8_t *)&native)[7];
+		((uint8_t *)&little)[1] = ((uint8_t *)&native)[6];
+		((uint8_t *)&little)[2] = ((uint8_t *)&native)[5];
+		((uint8_t *)&little)[3] = ((uint8_t *)&native)[4];
+		((uint8_t *)&little)[4] = ((uint8_t *)&native)[3];
+		((uint8_t *)&little)[5] = ((uint8_t *)&native)[2];
+		((uint8_t *)&little)[6] = ((uint8_t *)&native)[1];
+		((uint8_t *)&little)[7] = ((uint8_t *)&native)[0];
+	}
+
+	return little;
+}
+
+uint64_t ipcon_leconvert_uint64_to(uint64_t native) {
+	uint64_t little;
+
+	if (native_endian.value == LITTLE_ENDIAN) {
+		little = native;
+	} else {
+		((uint8_t *)&little)[0] = ((uint8_t *)&native)[7];
+		((uint8_t *)&little)[1] = ((uint8_t *)&native)[6];
+		((uint8_t *)&little)[2] = ((uint8_t *)&native)[5];
+		((uint8_t *)&little)[3] = ((uint8_t *)&native)[4];
+		((uint8_t *)&little)[4] = ((uint8_t *)&native)[3];
+		((uint8_t *)&little)[5] = ((uint8_t *)&native)[2];
+		((uint8_t *)&little)[6] = ((uint8_t *)&native)[1];
+		((uint8_t *)&little)[7] = ((uint8_t *)&native)[0];
+	}
+
+	return little;
+}
+
+float ipcon_leconvert_float_to(float native) {
+	float little;
+
+	if (native_endian.value == LITTLE_ENDIAN) {
+		little = native;
+	} else {
+		((uint8_t *)&little)[0] = ((uint8_t *)&native)[3];
+		((uint8_t *)&little)[1] = ((uint8_t *)&native)[2];
+		((uint8_t *)&little)[2] = ((uint8_t *)&native)[1];
+		((uint8_t *)&little)[3] = ((uint8_t *)&native)[0];
+	}
+
+	return little;
+}
+
+int16_t ipcon_leconvert_int16_from(int16_t little) {
+	int16_t native;
+
+	if (native_endian.value == LITTLE_ENDIAN) {
+		native = little;
+	} else {
+		((uint8_t *)&native)[0] = ((uint8_t *)&little)[1];
+		((uint8_t *)&native)[1] = ((uint8_t *)&little)[0];
+	}
+
+	return native;
+}
+
+uint16_t ipcon_leconvert_uint16_from(uint16_t little) {
+	uint16_t native;
+
+	if (native_endian.value == LITTLE_ENDIAN) {
+		native = little;
+	} else {
+		((uint8_t *)&native)[0] = ((uint8_t *)&little)[1];
+		((uint8_t *)&native)[1] = ((uint8_t *)&little)[0];
+	}
+
+	return native;
+}
+
+int32_t ipcon_leconvert_int32_from(int32_t little) {
+	int32_t native;
+
+	if (native_endian.value == LITTLE_ENDIAN) {
+		native = little;
+	} else {
+		((uint8_t *)&native)[0] = ((uint8_t *)&little)[3];
+		((uint8_t *)&native)[1] = ((uint8_t *)&little)[2];
+		((uint8_t *)&native)[2] = ((uint8_t *)&little)[1];
+		((uint8_t *)&native)[3] = ((uint8_t *)&little)[0];
+	}
+
+	return native;
+}
+
+uint32_t ipcon_leconvert_uint32_from(uint32_t little) {
+	uint32_t native;
+
+	if (native_endian.value == LITTLE_ENDIAN) {
+		native = little;
+	} else {
+		((uint8_t *)&native)[0] = ((uint8_t *)&little)[3];
+		((uint8_t *)&native)[1] = ((uint8_t *)&little)[2];
+		((uint8_t *)&native)[2] = ((uint8_t *)&little)[1];
+		((uint8_t *)&native)[3] = ((uint8_t *)&little)[0];
+	}
+
+	return native;
+}
+
+int64_t ipcon_leconvert_int64_from(int64_t little) {
+	int64_t native;
+
+	if (native_endian.value == LITTLE_ENDIAN) {
+		native = little;
+	} else {
+		((uint8_t *)&native)[0] = ((uint8_t *)&little)[7];
+		((uint8_t *)&native)[1] = ((uint8_t *)&little)[6];
+		((uint8_t *)&native)[2] = ((uint8_t *)&little)[5];
+		((uint8_t *)&native)[3] = ((uint8_t *)&little)[4];
+		((uint8_t *)&native)[4] = ((uint8_t *)&little)[3];
+		((uint8_t *)&native)[5] = ((uint8_t *)&little)[2];
+		((uint8_t *)&native)[6] = ((uint8_t *)&little)[1];
+		((uint8_t *)&native)[7] = ((uint8_t *)&little)[0];
+	}
+
+	return native;
+}
+
+uint64_t ipcon_leconvert_uint64_from(uint64_t little) {
+	uint64_t native;
+
+	if (native_endian.value == LITTLE_ENDIAN) {
+		native = little;
+	} else {
+		((uint8_t *)&native)[0] = ((uint8_t *)&little)[7];
+		((uint8_t *)&native)[1] = ((uint8_t *)&little)[6];
+		((uint8_t *)&native)[2] = ((uint8_t *)&little)[5];
+		((uint8_t *)&native)[3] = ((uint8_t *)&little)[4];
+		((uint8_t *)&native)[4] = ((uint8_t *)&little)[3];
+		((uint8_t *)&native)[5] = ((uint8_t *)&little)[2];
+		((uint8_t *)&native)[6] = ((uint8_t *)&little)[1];
+		((uint8_t *)&native)[7] = ((uint8_t *)&little)[0];
+	}
+
+	return native;
+}
+
+float ipcon_leconvert_float_from(float little) {
+	float native;
+
+	if (native_endian.value == LITTLE_ENDIAN) {
+		native = little;
+	} else {
+		((uint8_t *)&native)[0] = ((uint8_t *)&little)[3];
+		((uint8_t *)&native)[1] = ((uint8_t *)&little)[2];
+		((uint8_t *)&native)[2] = ((uint8_t *)&little)[1];
+		((uint8_t *)&native)[3] = ((uint8_t *)&little)[0];
+	}
+
+	return native;
+}
+
 #ifdef _WIN32
 
 void ipcon_mutex_lock(CRITICAL_SECTION *mutex) {
@@ -177,6 +405,10 @@ static THREAD_RETURN_TYPE ipcon_callback_loop(void *param) {
 		uint8_t function_id = ipcon_get_function_id_from_data(node->buffer);
 		if(function_id == FUNCTION_ENUMERATE_CALLBACK) {
 			EnumerateReturn *er = (EnumerateReturn *)node->buffer;
+
+			er->length = ipcon_leconvert_uint16_from(er->length);
+			er->device_uid = ipcon_leconvert_uint64_from(er->device_uid);
+
 			char str_uid[MAX_BASE58_STR_SIZE];
 			ipcon_base58encode(er->device_uid, str_uid);
 
@@ -270,7 +502,7 @@ void ipcon_enumerate(IPConnection *ipcon, enumerate_callback_func_t callback) {
 	Enumerate e = {
 		BROADCAST_ADDRESS,
 		FUNCTION_ENUMERATE,
-		sizeof(Enumerate)
+		ipcon_leconvert_uint16_to(sizeof(Enumerate))
 	};
 
 #ifdef _WIN32
@@ -547,7 +779,11 @@ int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
 
 void ipcon_handle_add_device(IPConnection *ipcon,
                              const unsigned char *buffer) {
-	const GetStackIDReturn *gsidr = (const GetStackIDReturn*)buffer;
+	GetStackIDReturn *gsidr = (GetStackIDReturn *)buffer;
+
+	gsidr->length = ipcon_leconvert_uint16_from(gsidr->length);
+	gsidr->device_uid = ipcon_leconvert_uint64_from(gsidr->device_uid);
+
 	if(ipcon->pending_add_device != NULL &&
 	   ipcon->pending_add_device->uid == gsidr->device_uid) {
 		const char *p = gsidr->device_name;
@@ -612,8 +848,8 @@ int ipcon_add_device(IPConnection *ipcon, Device *device) {
 	GetStackID gsid = {
 		BROADCAST_ADDRESS,
 		FUNCTION_GET_STACK_ID,
-		sizeof(GetStackID),
-		device->uid
+		ipcon_leconvert_uint16_to(sizeof(GetStackID)),
+		ipcon_leconvert_uint64_to(device->uid)
 	};
 
 	ipcon_mutex_lock(&ipcon->add_device_mutex);
@@ -648,7 +884,7 @@ uint8_t ipcon_get_function_id_from_data(const unsigned char *data) {
 }
 
 uint16_t ipcon_get_length_from_data(const unsigned char *data) {
-	return *((uint16_t*)(data + 2));
+	return ipcon_leconvert_uint16_from(*(uint16_t*)(data + 2));
 }
 
 void ipcon_base58encode(uint64_t value, char *str) {
