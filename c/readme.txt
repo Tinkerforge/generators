@@ -53,4 +53,8 @@ Project -> properties -> Linker -> Input and option "Additional Dependencies" ->
 
 Now we are ready to go!
 
+The Visual Studio compiler can also be used from the command line:
+
+ cl /TP /I. brick_stepper.c ip_connection.c example_configuration.c /link /out:example_configuration.exe ws2_32.lib
+
 Documentation for the API can be found at http://www.tinkerforge.com/doc/index.html
