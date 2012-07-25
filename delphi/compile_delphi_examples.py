@@ -39,6 +39,7 @@ def walker(arg, dirname, names):
         src = os.path.join(dirname, name);
 
         args = ['/usr/bin/fpc',
+                '-Fu/tmp/compiler/bindings',
                 '-l',
                 src]
 
@@ -46,8 +47,6 @@ def walker(arg, dirname, names):
         subprocess.call(args)
 
 def compile(path):
-    return
-
     version = common.get_changelog_version(path)
     zipname = 'tinkerforge_delphi_bindings_{0}_{1}_{2}.zip'.format(*version)
 
@@ -67,7 +66,6 @@ def compile(path):
 
     # compile
     os.path.walk('/tmp/compiler/examples', walker, None)
-    os.path.walk('/tmp/compiler/source', walker, None)
 
 if __name__ == "__main__":
     compile(os.getcwd())
