@@ -6,7 +6,7 @@ are available nearly everywhere, thus making it possible to compile into any
 project hassle-free. We do not offer a pre-compiled library, since it would be
 a pain in the ass to provide them for all combinations of architectures and
 operating systems. This means, the bindings should work on most architectures
-(ARM, x86, etc.) and on most operating systems (Windows and posix systems such
+(ARM, x86, etc.) and on most operating systems (Windows and POSIX systems such
 as Linux and Mac OS, etc.).
 
 As an example we will compile the Stepper Brick configuration example with gcc
