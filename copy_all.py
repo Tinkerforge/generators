@@ -15,8 +15,9 @@ def files_are_not_the_same(src_file, dest_path):
         return True
 
     i = 0
+    example = 'example' in src_file.lower()
     for l1, l2 in map(None, f1, f2):
-        if i > 2:
+        if example or i > 2:
             if l1 != l2:
                 return True
         i += 1
