@@ -210,6 +210,11 @@ The available callback property and their type of parameters are described below
 API
 ---
 
+Since Delphi does not support multiple return values directly, we use the out
+keyword to return multiple values from a function.
+
+All functions and procedures listed below are thread-safe.
+
 {1}
 
 {2}

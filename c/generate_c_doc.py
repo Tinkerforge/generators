@@ -240,6 +240,8 @@ Possible error codes are
 
 as defined in :file:`ip_connection.h`.
 
+All functions listed below are thread-safe.
+
 {1}
 
 {2}

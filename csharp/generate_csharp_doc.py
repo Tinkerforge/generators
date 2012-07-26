@@ -206,10 +206,12 @@ device out). However, if a wireless connection is used, timeouts will occur
 if the distance to the device gets too big.
 
 Since C# does not support multiple return values directly, we use the out
-keyword for all outgoing data that is to be returned. 
+keyword to return multiple values from a mathod.
 
 The namespace for all Brick/Bricklet bindings and the IPConnection is
 ``Tinkerforge.*``
+
+All methods listed below are thread-safe.
 
 {1}
 

@@ -302,6 +302,8 @@ descriptions.
 The package for all Brick/Bricklet bindings and the IPConnection is
 ``com.tinkerforge.*``
 
+All methods listed below are thread-safe.
+
 {1}
 
 {2}

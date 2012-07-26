@@ -250,6 +250,8 @@ described below.
 API
 ---
 
+All methods listed below are thread-safe.
+
 {1}
 
 {2}
