@@ -217,7 +217,7 @@ def make_class():
                                      packet.get_camel_case_name())
 
     callback_wrappers = ''
-    callback_wrapper = '    procedure CallbackWrapper{0}(const packet: TByteArray);\n'
+    callback_wrapper = '    procedure CallbackWrapper{0}(const packet: TByteArray); virtual;\n'
     for packet in device.get_packets('callback'):
         callback_wrappers += callback_wrapper.format(packet.get_camel_case_name())
 
@@ -247,6 +247,7 @@ def make_class():
     return  cls + \
             '  private\n' + \
             callbacks + \
+            '  protected\n' + \
             callback_wrappers + \
             '  public\n' + \
             '    constructor Create(const uid_: string);\n' + \
