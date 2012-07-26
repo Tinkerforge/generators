@@ -5,7 +5,12 @@ unit IPConnection;
 interface
 
 uses
-  {$ifdef FPC}{$ifdef UNIX}CThreads, Errors, NetDB, {$else}WinSock,{$endif}{$endif} Classes, Sockets, SyncObjs, SysUtils, Base58, LEConverter, BlockingQueue, Device;
+  {$ifdef FPC}
+   {$ifdef UNIX}CThreads, Errors, NetDB, {$else}WinSock,{$endif}
+  {$else}
+   {$ifdef MSWINDOWS}Windows,{$endif}
+  {$endif}
+  Classes, Sockets, SyncObjs, SysUtils, Base58, LEConverter, BlockingQueue, Device;
 
 const
   FUNCTION_GET_STACK_ID = 255;
@@ -150,7 +155,7 @@ begin
 {$ifdef FPC}
   if (GetCurrentThreadId <> callbackThread.ThreadID) then begin
 {$else}
-  if (TThread.CurrentThread <> callbackThread) then begin
+  if (Windows.GetCurrentThreadId <> callbackThread.ThreadID) then begin
 {$endif}
     callbackThread.WaitFor;
   end;
@@ -166,7 +171,7 @@ begin
 {$ifdef FPC}
   if (GetCurrentThreadId <> receiveThread.ThreadID) then begin
 {$else}
-  if (TThread.CurrentThread <> receiveThread) then begin
+  if (Windows.GetCurrentThreadId <> receiveThread.ThreadID) then begin
 {$endif}
     receiveThread.WaitFor;
   end;
