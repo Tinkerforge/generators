@@ -21,6 +21,11 @@ undefined behavior!
 """,
 'de':
 """
+Dieser Funktionsaufruf setzt den Brick zurück. Befindet sich der Brick 
+innerhalb eines Stapels wird der gesamte Stapel zurück gesetzt.
+
+Nach dem Zurücksetzen ist es notwendig neue Geräteobjekte zu erzeugen,
+Funktionsaufrufe auf bestehende führt zu undefiniertem Verhalten.
 """
 }]
 })
@@ -41,6 +46,11 @@ an indicator for temperature changes.
 """,
 'de':
 """
+Gibt die Temperatur in °C/10, gemessen im Microcontroller, aus. Der Rückgabewert 
+ist nicht die Umgebungstemperatur.
+
+Die Genauigkeit der Temperatur beträgt +-15%. Daher beschränkt sich der praktische 
+Nutzen auf die Indikation von Temperaturveränderungen.
 """
 }]
 })
