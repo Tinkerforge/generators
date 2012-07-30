@@ -200,7 +200,7 @@ com['packets'].append({
 """
 Executes an active full brake.
 
- .. warning::
+.. warning::
   This function is for emergency purposes,
   where an immediate brake is necessary. Depending on the current velocity and
   the strength of the motor, a full brake can be quite violent.
@@ -211,7 +211,7 @@ Call :func:`SetVelocity` with 0 if you just want to stop the motor.
 """
 Führt eine aktive Vollbremsung aus.
 
- ..Achtung::
+.. warning::
   Diese Funktion dient dem Notsituationen,
   in denen ein unverzüglicher Halt notwendig ist. Abhängig von der aktuellen
   Geschwindigkeit und der Kraft des Motors kann eine Vollbremsung brachial sein.
@@ -255,7 +255,7 @@ If there is an external input voltage and a stack input voltage, the motor
 will be driven by the external input voltage. If there is only a stack
 voltage present, the motor will be driven by this voltage.
 
- .. warning::
+.. warning::
   This means, if you have a high stack voltage and a low external voltage,
   the motor will be driven with the low external voltage. If you then remove
   the external connection, it will immediately be driven by the high
@@ -270,7 +270,7 @@ Sobald eine externe Eingangsspannung und die Spannungsversorgung des Stapels anl
 wird der Motor über die externe Spannung versorgt. Sollte nur die Spannungsversorgung
 des Stapels verfügbar sein, erfolgt die Versorgung des Motors über diese.
 
-.. Warnung::
+.. warning::
  Das bedeutet, bei einer hohen Versorgungsspannung des Stapels und einer geringen
  externen Versorgungsspannung erfolgt die Spannungsversorgung des Motors über die geringere
  externe Versorgungsspannung. Wenn dann die externe Spannungsversorgung getrennt wird,
@@ -548,7 +548,7 @@ Sobald diese callback ausgelöst wird, wird die Treiberstufe deaktiviert.
 Das bedeutet :func:`Enable` muss aufgerufen werden, um den Motor
 erneut zu verfahren.
 
-.. Hinweis::
+.. note::
  Diese callback funktioniert nur im Fahren/Bremsen Modus (siehe :func:`SetDriveMode`).
  Im Fahren/Leerlauf Modus ist es leider nicht möglich das
  Überstrom/Übertemperatur-Signal zuverlässig aus dem Chip der Treiberstufe
@@ -583,7 +583,7 @@ Beschleunigung auf 5000 und die Geschwindigkeit auf 10000 konfiguriert ist,
 wird :func:`VelocityReached` nach ungefähr 2 Sekunden ausgelöst, wenn die
 konfigurierte Geschwindigkeit letztendlich erreicht ist.
 
-..Hinweis::
+.. note::
  Da es nicht möglich ist eine Rückmeldung vom Gleichstrommotor zu erhalten,
  funktioniert dies nur wenn die konfigurierte Beschleunigung (siehe :func:`SetAcceleration`)
  kleiner oder gleich der maximalen Beschleunigung des Motors ist. Andernfalls
