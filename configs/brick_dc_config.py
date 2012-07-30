@@ -275,6 +275,7 @@ des Stapels verfügbar sein, erfolgt die Versorgung des Motors über diese.
  externen Versorgungsspannung erfolgt die Spannungsversorgung des Motors über die geringere
  externe Versorgungsspannung. Wenn dann die externe Spannungsversorgung getrennt wird,
  erfolgt sofort die Versorgung des Motors über die höhere Versorgungsspannung des Stapels.
+"""
 }]
 })
 
