@@ -115,10 +115,10 @@ com['packets'].append({
 """
 Executes an active full brake. 
  
- .. warning::
-  This function is for emergency purposes,
-  where an immediate brake is necessary. Depending on the current velocity and
-  the strength of the motor, a full brake can be quite violent.
+.. warning::
+ This function is for emergency purposes,
+ where an immediate brake is necessary. Depending on the current velocity and
+ the strength of the motor, a full brake can be quite violent.
 
 Call :func:`Stop` if you just want to stop the motor.
 """,
@@ -374,11 +374,11 @@ If there is an external input voltage and a stack input voltage, the motor
 will be driven by the external input voltage. If there is only a stack 
 voltage present, the motor will be driven by this voltage.
 
- .. warning:: 
-  This means, if you have a high stack voltage and a low external voltage,
-  the motor will be driven with the low external voltage. If you then remove
-  the external connection, it will immediately be driven by the high
-  stack voltage
+.. warning::
+ This means, if you have a high stack voltage and a low external voltage,
+ the motor will be driven with the low external voltage. If you then remove
+ the external connection, it will immediately be driven by the high
+ stack voltage
 """,
 'de':
 """
@@ -412,9 +412,9 @@ Sets the current in mA with which the motor will be driven.
 The minimum value is 100mA, the maximum value 2291mA and the 
 default value is 800mA.
 
- .. warning::
-  Do not set this value above the specifications of your stepper motor.
-  Otherwise it may damage your motor.
+.. warning::
+ Do not set this value above the specifications of your stepper motor.
+ Otherwise it may damage your motor.
 """,
 'de':
 """
@@ -512,11 +512,12 @@ Generally, fast decay mode (small value) will be noisier but also
 allow higher motor speeds.
 
 The default value is 10000.
- .. note::
-  There is unfortunately no formula to calculate a perfect decay
-  mode for a given stepper motor. If you have problems with loud noises
-  or the maximum motor speed is too slow, you should try to tinker with
-  the decay value
+
+.. note::
+ There is unfortunately no formula to calculate a perfect decay
+ mode for a given stepper motor. If you have problems with loud noises
+ or the maximum motor speed is too slow, you should try to tinker with
+ the decay value
 """,
 'de':
 """

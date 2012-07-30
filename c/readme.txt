@@ -6,7 +6,7 @@ are available nearly everywhere, thus making it possible to compile into any
 project hassle-free. We do not offer a pre-compiled library, since it would be
 a pain in the ass to provide them for all combinations of architectures and
 operating systems. This means, the bindings should work on most architectures
-(ARM, x86, etc.) and on most operating systems (Windows and posix systems such
+(ARM, x86, etc.) and on most operating systems (Windows and POSIX systems such
 as Linux and Mac OS, etc.).
 
 As an example we will compile the Stepper Brick configuration example with gcc
@@ -52,5 +52,9 @@ Project -> properties -> Linker -> Input and option "Additional Dependencies" ->
  add "ws2_32.lib;"
 
 Now we are ready to go!
+
+The Visual Studio compiler can also be used from the command line:
+
+ cl /TP /I. brick_stepper.c ip_connection.c example_configuration.c /link /out:example_configuration.exe ws2_32.lib
 
 Documentation for the API can be found at http://www.tinkerforge.com/doc/index.html

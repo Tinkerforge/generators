@@ -67,9 +67,8 @@ com['packets'].append({
 """
 Returns true if more than 25A were measured.
 
- .. note::
-  To reset this value you have to power cycle the Bricklet.
-
+.. note::
+ To reset this value you have to power cycle the Bricklet.
 """,
 'de':
 """
@@ -88,11 +87,11 @@ com['packets'].append({
 Returns the value as read by a 12 bit analog to digital converter.
 The value is between 0 and 4095.
 
- .. note::
-  The value returned by :func:`GetCurrent` is averaged over several samples
-  to yield less noise, while :func:`GetAnalogValue` gives back raw
-  unfiltered analog values. The only reason to use :func:`GetAnalogValue` is,
-  if you need the full resolution of the analog to digital converter.
+.. note::
+ The value returned by :func:`GetCurrent` is averaged over several samples
+ to yield less noise, while :func:`GetAnalogValue` gives back raw
+ unfiltered analog values. The only reason to use :func:`GetAnalogValue` is,
+ if you need the full resolution of the analog to digital converter.
 
 If you want the analog value periodically, it is recommended to use the 
 callback :func:`AnalogValue` and set the period with 

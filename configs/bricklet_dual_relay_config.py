@@ -74,6 +74,8 @@ have a RS485 bus and a Dual Relay Bricklet connected to one of the slave
 stacks. You can now call this function every second, with a time parameter
 of two seconds. The relay will be on all the time. If now the RS485 
 connection is lost, the relay will turn off in at most two seconds.
+
+.. versionadded:: 1.1.1
 """,
 'de':
 """
@@ -96,6 +98,8 @@ func:`SetMonoflop` as well as the remaining time until the state flips.
 
 If the timer is not running currently, the remaining time will be returned
 as 0.
+
+.. versionadded:: 1.1.1
 """,
 'de':
 """
@@ -114,6 +118,8 @@ com['packets'].append({
 This callback is triggered whenever a monoflop timer reaches 0. The 
 parameter contain the relay (1 or 2) and the current state of the relay 
 (the state after the monoflop).
+
+.. versionadded:: 1.1.1
 """,
 'de':
 """

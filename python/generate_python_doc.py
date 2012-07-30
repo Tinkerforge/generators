@@ -229,7 +229,9 @@ Callbacks
 time critical or recurring data from the device. The registration is done
 with the :py:func:`register_callback <{3}.register_callback>` function of
 the device object. The first parameter is the callback ID and the second
-parameter the callback function::
+parameter the callback function:
+
+.. code-block:: python
 
     def my_callback(param):
         print(param)
@@ -239,10 +241,10 @@ parameter the callback function::
 The available constants with inherent number and type of parameters are 
 described below.
 
- .. note::
-  Using callbacks for recurring events is *always* prefered 
-  compared to using getters. It will use less USB bandwith and the latency
-  will be a lot better, since there is no roundtrip time.
+.. note::
+ Using callbacks for recurring events is *always* prefered
+ compared to using getters. It will use less USB bandwith and the latency
+ will be a lot better, since there is no roundtrip time.
 
 {0}
 """
@@ -251,6 +253,8 @@ described below.
 {0}
 API
 ---
+
+All methods listed below are thread-safe.
 
 {1}
 

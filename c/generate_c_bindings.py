@@ -268,11 +268,17 @@ def make_method_funcs():
                 temp = '\n\tstrncpy({0}.{1}, {1}, {2});\n'
                 struct_list += temp.format(sf, element[0], element[2])
             elif element[2] > 1:
-                temp = '\n\tmemcpy({0}.{1}, {1}, {2}*sizeof({3}));'
-                struct_list += temp.format(sf, 
-                                           element[0], 
-                                           element[2], 
-                                           get_c_type(element[1]))
+                if common.get_type_size(element[1]) > 1:
+                    struct_list += '\n\tfor (int i = 0; i < {3}; i++) {0}.{1}[i] = ipcon_leconvert_{2}_to({1}[i]);' \
+                                   .format(sf, element[0], element[1], element[2])
+                else:
+                    temp = '\n\tmemcpy({0}.{1}, {1}, {2}*sizeof({3}));'
+                    struct_list += temp.format(sf,
+                                               element[0],
+                                               element[2],
+                                               get_c_type(element[1]))
+            elif common.get_type_size(element[1]) > 1:
+                struct_list += '\n\t{0}.{1} = ipcon_leconvert_{2}_to({1});'.format(sf, element[0], element[1])
             else:
                 struct_list += '\n\t{0}.{1} = {1};'.format(sf, element[0])
         return struct_list
@@ -285,14 +291,19 @@ def make_method_funcs():
                 temp = '\tstrcpy(ret_{0}, {1}r->{0});\n'
                 return_list += temp.format(element[0], sf)
             elif element[2] > 1:
-                temp = '\tmemcpy(ret_{0}, {1}r->{0}, {2}*sizeof({3}));\n'
-                return_list += temp.format(element[0],
-                                           sf, 
-                                           element[2], 
-                                           get_c_type(element[1]))
+                if common.get_type_size(element[1]) > 1:
+                    return_list += '\tfor (int i = 0; i < {3}; i++) ret_{0}[i] = ipcon_leconvert_{2}_from({1}r->{0}[i]);\n' \
+                                   .format(element[0], sf, element[1], element[2])
+                else:
+                    temp = '\tmemcpy(ret_{0}, {1}r->{0}, {2}*sizeof({3}));\n'
+                    return_list += temp.format(element[0],
+                                               sf,
+                                               element[2],
+                                               get_c_type(element[1]))
+            elif common.get_type_size(element[1]) > 1:
+                return_list += '\t*ret_{0} = ipcon_leconvert_{2}_from({1}r->{0});\n'.format(element[0], sf, element[1])
             else:
-                temp = '\t*ret_{0} = {1}r->{0};\n'
-                return_list += temp.format(element[0], sf)
+                return_list += '\t*ret_{0} = {1}r->{0};\n'.format(element[0], sf)
         return return_list
 
     func_version = """
@@ -322,7 +333,7 @@ int {0}_{1}({2} *{0}{3}) {{
 {9}\t{5}_ {6};
 \t{6}.stack_id = {0}->stack_id;
 \t{6}.function_id = {4};
-\t{6}.length = sizeof({5}_);{7}
+\t{6}.length = ipcon_leconvert_uint16_to(sizeof({5}_));{7}
 
 \tipcon_device_write({0}, (char *)&{6}, sizeof({5}_));
 
@@ -374,7 +385,7 @@ int {0}_{1}({2} *{0}{3}) {{
 def make_register_callback_func():
     func = """
 void {0}_register_callback({1} *{0}, uint8_t id, void *callback) {{
-    {0}->registered_callbacks[id] = callback;
+\t{0}->registered_callbacks[id] = callback;
 }}
 """
     return func.format(device.get_underscore_name(), device.get_camel_case_name())
@@ -383,6 +394,7 @@ def make_callback_wrapper_funcs():
     func = """
 static int {0}_callback_wrapper_{1}({2} *{0}, const unsigned char *buffer) {{
 \t{3}Callback_ *{4}c = ({3}Callback_ *)buffer;
+{6}
 \t(({1}_func_t){0}->registered_callbacks[{4}c->function_id])({5});
 \treturn sizeof({3}Callback_);
 }}
@@ -399,8 +411,19 @@ static int {0}_callback_wrapper_{1}({2} *{0}, const unsigned char *buffer) {{
         for element in packet.get_elements():
             f_list.append("{0}c->{1}".format(e, element[0]))
         f = ', '.join(f_list)
+        endian_list = []
+        for element in packet.get_elements():
+            if common.get_type_size(element[1]) > 1:
+                if element[2] > 1:
+                    endian_list.append('\tfor (int i = 0; i < {3}; i++) {0}c->{1}[i] = ipcon_leconvert_{2}_from({0}c->{1}[i]);' \
+                                      .format(e, element[0], element[1], element[2]))
+                else:
+                    endian_list.append('\t{0}c->{1} = ipcon_leconvert_{2}_from({0}c->{1});'.format(e, element[0], element[1]))
+        endian = '\n'.join(endian_list)
+        if len(endian) > 0:
+            endian += ''
 
-        funcs += func.format(a, b, c, d, e, f)
+        funcs += func.format(a, b, c, d, e, f, endian)
 
     return funcs
 

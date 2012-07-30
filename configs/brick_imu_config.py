@@ -398,7 +398,6 @@ temperature for one of the sampling points.
 .. note::
  We highly recommend that you use the Brick Viewer to calibrate your
  IMU Brick.
-
 """,
 'de':
 """

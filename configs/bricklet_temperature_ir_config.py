@@ -81,9 +81,9 @@ The parameter of :func:`SetEmissivity` has to be given with a factor of
 65535 (16 bit). For example: An emissivity of 0.1 can be set with the 
 value 6553, an emissivity of 0.5 with the value 32767 and so on.
 
- .. note::
-  If you need a precise measurement for the object temperature, it is
-  absolutely crucial that you also provide a precise emissivity.
+.. note::
+ If you need a precise measurement for the object temperature, it is
+ absolutely crucial that you also provide a precise emissivity.
 
 The default emissivity is 1.0 (value of 65535) and the minimum emissivity the
 sensor can handle is 0.1 (value of 6553).

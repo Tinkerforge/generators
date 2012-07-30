@@ -228,7 +228,9 @@ Callbacks
 time critical or recurring data from the device. The registration is done
 with the :rb:func:`#register_callback <{4}{3}#register_callback>` function of
 the device object. The first parameter is the callback ID and the second
-parameter is a block::
+parameter is a block:
+
+.. code-block:: ruby
 
     {1}.register_callback {4}{3}::CALLBACK_EXAMPLE, do |param|
       puts "#{{param}}"
@@ -237,10 +239,10 @@ parameter is a block::
 The available constants with inherent number and type of parameters are
 described below.
 
- .. note::
-  Using callbacks for recurring events is *always* prefered
-  compared to using getters. It will use less USB bandwith and the latency
-  will be a lot better, since there is no roundtrip time.
+.. note::
+ Using callbacks for recurring events is *always* prefered
+ compared to using getters. It will use less USB bandwith and the latency
+ will be a lot better, since there is no roundtrip time.
 
 {0}
 """
@@ -249,6 +251,8 @@ described below.
 {0}
 API
 ---
+
+All methods listed below are thread-safe.
 
 {1}
 

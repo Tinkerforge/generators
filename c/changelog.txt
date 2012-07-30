@@ -21,3 +21,4 @@
         Ensure that stdint.h defines INT32_MAX
         Make add_device thread-safe
         Ensure correct shutdown order of threads
+1.0.17: Add support for big endian systems

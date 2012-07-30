@@ -275,18 +275,17 @@ module Tinkerforge
     # this can be found in the API documentation for every Brick and Bricklet.
     def add_device(device)
       @add_device_mutex.synchronize {
-        request = pack [BROADCAST_ADDRESS, FUNCTION_GET_STACK_ID, 4 + 8, device.uid], 'C C S Q'
-        @pending_add_device = device
-
-        send request
-
         begin
+          @pending_add_device = device
+          request = pack [BROADCAST_ADDRESS, FUNCTION_GET_STACK_ID, 4 + 8, device.uid], 'C C S Q'
+
+          send request
           device.dequeue_response "Could not add device #{Base58.encode(device.uid)}, timeout"
+
+          device.ipcon = self
         ensure
           @pending_add_device = nil
         end
-
-        device.ipcon = self
       }
     end
 
@@ -501,7 +500,6 @@ module Tinkerforge
         @pending_add_device.stack_id = payload[5]
         @devices[payload[5]] = @pending_add_device
         @pending_add_device.enqueue_response nil
-        @pending_add_device = nil
       end
     end
 
