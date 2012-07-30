@@ -25,10 +25,9 @@ is 4 bit long, "true" refers to high and "false" refers to low.
 For example: The value 0b0011 will turn the pins 0-1 high and the
 pins 2-3 low.
 
- .. note::
-  This function does nothing for pins that are configured as input.
-  Pull up resistors can be switched on with :func:`SetConfiguration`.
-
+.. note::
+ This function does nothing for pins that are configured as input.
+ Pull up resistors can be switched on with :func:`SetConfiguration`.
 """,
 'de':
 """

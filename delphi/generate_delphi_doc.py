@@ -197,10 +197,10 @@ property of the device object:
 
 The available callback property and their type of parameters are described below.
 
- .. note::
-  Using callbacks for recurring events is *always* prefered
-  compared to using getters. It will use less USB bandwith and the latency
-  will be a lot better, since there is no roundtrip time.
+.. note::
+ Using callbacks for recurring events is *always* prefered
+ compared to using getters. It will use less USB bandwith and the latency
+ will be a lot better, since there is no roundtrip time.
 
 {0}
 """

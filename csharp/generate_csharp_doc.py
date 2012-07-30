@@ -186,7 +186,7 @@ The parameter is a delegate object of the corresponding method, for example:
 The available delegates are described below.
 
 .. note::
- Using callbacks for recurring events is *always* prefered 
+ Using callbacks for recurring events is *always* prefered
  compared to using getters. It will use less USB bandwith and the latency
  will be a lot better, since there is no roundtrip time.
 

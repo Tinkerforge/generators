@@ -232,10 +232,10 @@ Sets the output voltages with which the servos are driven in mV.
 The minimum output voltage is 5000mV and the maximum output voltage is 
 9000mV.
 
- .. note::
-  We recommend that you set this value to the maximum voltage that is
-  specified for your servo, most servos achieve their maximum force only
-  with high voltages.
+.. note::
+ We recommend that you set this value to the maximum voltage that is
+ specified for your servo, most servos achieve their maximum force only
+ with high voltages.
 
 The default value is 5000.
 """,
@@ -474,11 +474,11 @@ If there is an external input voltage and a stack input voltage, the motor
 will be driven by the external input voltage. If there is only a stack 
 voltage present, the motor will be driven by this voltage.
 
- .. warning:: 
-  This means, if you have a high stack voltage and a low external voltage,
-  the motor will be driven with the low external voltage. If you then remove
-  the external connection, it will immediately be driven by the high
-  stack voltage
+.. warning::
+ This means, if you have a high stack voltage and a low external voltage,
+ the motor will be driven with the low external voltage. If you then remove
+ the external connection, it will immediately be driven by the high
+ stack voltage
 """,
 'de':
 """

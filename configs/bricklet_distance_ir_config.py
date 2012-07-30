@@ -45,11 +45,11 @@ com['packets'].append({
 Returns the value as read by a 12 bit analog to digital converter.
 The value is between 0 and 4095.
 
- .. note::
-  The value returned by :func:`GetDistance` is averaged over several samples
-  to yield less noise, while :func:`GetAnalogValue` gives back raw
-  unfiltered analog values. The only reason to use :func:`GetAnalogValue` is,
-  if you need the full resolution of the analog to digital converter.
+.. note::
+ The value returned by :func:`GetDistance` is averaged over several samples
+ to yield less noise, while :func:`GetAnalogValue` gives back raw
+ unfiltered analog values. The only reason to use :func:`GetAnalogValue` is,
+ if you need the full resolution of the analog to digital converter.
 
 If you want the analog value periodically, it is recommended to use the 
 callback :func:`AnalogValue` and set the period with 
@@ -83,11 +83,10 @@ point 64 = 2048/32.
 Sampling points are saved on the EEPROM of the Distance-IR Bricklet and
 loaded again on startup.
 
- .. note::
-  An easy way to calibrate the sampling points of the Distace-IR Bricklet is
-  implemented in brickv. If you want to calibrate your Bricklet it is
-  highly recommended to use this implementation. 
-
+.. note::
+ An easy way to calibrate the sampling points of the Distace-IR Bricklet is
+ implemented in brickv. If you want to calibrate your Bricklet it is
+ highly recommended to use this implementation.
 """,
 'de':
 """

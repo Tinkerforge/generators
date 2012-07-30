@@ -26,10 +26,9 @@ The bit mask is 8 bit long, "true" refers to high and "false" refers to low.
 For example: The value 0b00001111 will turn the pins 0-3 high and the
 pins 4-7 low for the specified port.
 
- .. note::
-  This function does nothing for pins that are configured as input.
-  Pull up resistors can be switched on with :func:`SetPortConfiguration`.
-
+.. note::
+ This function does nothing for pins that are configured as input.
+ Pull up resistors can be switched on with :func:`SetPortConfiguration`.
 """,
 'de':
 """

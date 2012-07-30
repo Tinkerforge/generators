@@ -210,10 +210,10 @@ the device object, the callback ID and the callback function::
 The available constants with corresponding callback function signatures 
 are described below.
 
- .. note::
-  Using callbacks for recurring events is *always* prefered 
-  compared to using getters. It will use less USB bandwith and the latency
-  will be a lot better, since there is no roundtrip time.
+.. note::
+ Using callbacks for recurring events is *always* prefered
+ compared to using getters. It will use less USB bandwith and the latency
+ will be a lot better, since there is no roundtrip time.
 
 {2}
 """

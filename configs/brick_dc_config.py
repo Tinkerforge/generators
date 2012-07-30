@@ -201,9 +201,9 @@ com['packets'].append({
 Executes an active full brake.
 
 .. warning::
-  This function is for emergency purposes,
-  where an immediate brake is necessary. Depending on the current velocity and
-  the strength of the motor, a full brake can be quite violent.
+ This function is for emergency purposes,
+ where an immediate brake is necessary. Depending on the current velocity and
+ the strength of the motor, a full brake can be quite violent.
 
 Call :func:`SetVelocity` with 0 if you just want to stop the motor.
 """,
@@ -212,9 +212,9 @@ Call :func:`SetVelocity` with 0 if you just want to stop the motor.
 Führt eine aktive Vollbremsung aus.
 
 .. warning::
-  Diese Funktion dient dem Notsituationen,
-  in denen ein unverzüglicher Halt notwendig ist. Abhängig von der aktuellen
-  Geschwindigkeit und der Kraft des Motors kann eine Vollbremsung brachial sein.
+ Diese Funktion ist für Notsituationen bestimmt,
+ in denen ein unverzüglicher Halt notwendig ist. Abhängig von der aktuellen
+ Geschwindigkeit und der Kraft des Motors kann eine Vollbremsung brachial sein.
 
 Ein Aufruf von :func:`SetVelocity` mit 0 erlaubt einen normalen Stopp des Motors.
 """
@@ -256,10 +256,10 @@ will be driven by the external input voltage. If there is only a stack
 voltage present, the motor will be driven by this voltage.
 
 .. warning::
-  This means, if you have a high stack voltage and a low external voltage,
-  the motor will be driven with the low external voltage. If you then remove
-  the external connection, it will immediately be driven by the high
-  stack voltage.
+ This means, if you have a high stack voltage and a low external voltage,
+ the motor will be driven with the low external voltage. If you then remove
+ the external connection, it will immediately be driven by the high
+ stack voltage.
 """,
 'de':
 """
