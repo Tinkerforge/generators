@@ -14,7 +14,7 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetValue', 'set_value'), 
+'name': ('SetValue', 'set_value'),
 'elements': [('value_mask', 'uint8', 1, 'in')],
 'doc': ['bm', {
 'en':
@@ -27,7 +27,7 @@ pins 2-3 low.
 
  .. note::
   This function does nothing for pins that are configured as input.
-  Pull up resistors can be switched on with :func:`SetPortConfiguration`.
+  Pull up resistors can be switched on with :func:`SetConfiguration`.
 
 """,
 'de':
@@ -38,7 +38,7 @@ pins 2-3 low.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetValue', 'get_value'), 
+'name': ('GetValue', 'get_value'),
 'elements': [('value_mask', 'uint8', 1, 'out')],
 'doc': ['bm', {
 'en':
@@ -55,7 +55,7 @@ as well as if it is configured to output.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetConfiguration', 'set_configuration'), 
+'name': ('SetConfiguration', 'set_configuration'),
 'elements': [('pin_mask', 'uint8', 1, 'in'),
              ('direction', 'char', 1, 'in'),
              ('value', 'bool', 1, 'in')],
@@ -71,7 +71,7 @@ If the direction is configured as output, the value is either high or low
 If the direction is configured as input, the value is either pull up or
 default (set as true or false).
 
-For example: 
+For example:
 
 * (15, 'i', true) will set all pins of as input pull up.
 * (8, 'i', false) will set pin 3 of as input default (floating if nothing is connected).
@@ -86,7 +86,7 @@ For example:
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetConfiguration', 'get_configuration'), 
+'name': ('GetConfiguration', 'get_configuration'),
 'elements': [('direction_mask', 'uint8', 1, 'out'),
              ('value_mask', 'uint8', 1, 'out')],
 'doc': ['bm', {
@@ -110,7 +110,7 @@ direction and value means that:
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDebouncePeriod', 'set_debounce_period'), 
+'name': ('SetDebouncePeriod', 'set_debounce_period'),
 'elements': [('debounce', 'uint32', 1, 'in')],
 'doc': ['ccm', {
 'en':
@@ -131,7 +131,7 @@ The default value is 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDebouncePeriod', 'get_debounce_period'), 
+'name': ('GetDebouncePeriod', 'get_debounce_period'),
 'elements': [('debounce', 'uint32', 1, 'out')],
 'doc': ['ccm', {
 'en':
@@ -146,16 +146,16 @@ Returns the debounce period as set by :func:`SetDebouncePeriod`.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetInterrupt', 'set_interrupt'), 
+'name': ('SetInterrupt', 'set_interrupt'),
 'elements': [('interrupt_mask', 'uint8', 1, 'in')],
 'doc': ['ccm', {
 'en':
 """
-Sets the pins on which an interrupt is activated with a bit mask. 
+Sets the pins on which an interrupt is activated with a bit mask.
 Interrupts are triggered on changes of the voltage level of the pin,
 i.e. changes from high to low and low to high.
 
-For example: An interrupt bit mask of 9 will enable the interrupt for 
+For example: An interrupt bit mask of 9 will enable the interrupt for
 pins 0 and 3.
 
 The interrupt is delivered with the callback :func:`Interrupt`.
@@ -168,12 +168,12 @@ The interrupt is delivered with the callback :func:`Interrupt`.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetInterrupt', 'get_interrupt'), 
+'name': ('GetInterrupt', 'get_interrupt'),
 'elements': [('interrupt_mask', 'uint8', 1, 'out')],
 'doc': ['ccm', {
 'en':
 """
-Returns the interrupt bit mask as set by :func:`SetPortInterrupt`.
+Returns the interrupt bit mask as set by :func:`SetInterrupt`.
 """,
 'de':
 """
@@ -183,17 +183,17 @@ Returns the interrupt bit mask as set by :func:`SetPortInterrupt`.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Interrupt', 'interrupt'), 
+'name': ('Interrupt', 'interrupt'),
 'elements': [('interrupt_mask', 'uint8', 1, 'out'),
              ('value_mask', 'uint8', 1, 'out')],
 'doc': ['c', {
 'en':
 """
 This callback is triggered whenever a change of the voltage level is detected
-on pins where the interrupt was activated with :func:`SetPortInterrupt`.
+on pins where the interrupt was activated with :func:`SetInterrupt`.
 
 The values are a bit mask that specifies which interrupts occurred
-and the current value bit mask of the port.
+and the current value bit mask.
 
 For example:
 
