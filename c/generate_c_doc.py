@@ -148,7 +148,9 @@ def make_api():
     create_str = """
 .. c:function:: void {0}_create({1} *{0}, const char *uid)
 
- Creates an object with the unique device ID *uid*::
+ Creates an object with the unique device ID *uid*:
+
+ .. code-block:: c
 
     {1} {0};
     {0}_create(&{0}, "YOUR_DEVICE_UID");
@@ -199,7 +201,9 @@ Callbacks
 *Callbacks* can be registered with *callback IDs* to receive
 time critical or recurring data from the device. The registration is done
 with the :c:func:`{0}_register_callback` function. The parameters consist of
-the device object, the callback ID and the callback function::
+the device object, the callback ID and the callback function:
+
+ .. code-block:: c
 
     void my_callback(int p) {{
         printf("parameter: %d\n", p);

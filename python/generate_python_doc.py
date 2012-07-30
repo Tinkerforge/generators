@@ -229,7 +229,9 @@ Callbacks
 time critical or recurring data from the device. The registration is done
 with the :py:func:`register_callback <{3}.register_callback>` function of
 the device object. The first parameter is the callback ID and the second
-parameter the callback function::
+parameter the callback function:
+
+.. code-block:: python
 
     def my_callback(param):
         print(param)

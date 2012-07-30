@@ -228,7 +228,9 @@ Callbacks
 time critical or recurring data from the device. The registration is done
 with the :rb:func:`#register_callback <{4}{3}#register_callback>` function of
 the device object. The first parameter is the callback ID and the second
-parameter is a block::
+parameter is a block:
+
+.. code-block:: ruby
 
     {1}.register_callback {4}{3}::CALLBACK_EXAMPLE, do |param|
       puts "#{{param}}"
