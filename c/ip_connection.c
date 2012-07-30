@@ -839,8 +839,6 @@ void ipcon_handle_add_device(IPConnection *ipcon,
 		pthread_cond_signal(&ipcon->pending_add_device->response_cond);
 		pthread_mutex_unlock(&ipcon->pending_add_device->response_mutex);
 #endif
-
-		ipcon->pending_add_device = NULL;
 	}
 }
 
@@ -864,11 +862,13 @@ int ipcon_add_device(IPConnection *ipcon, Device *device) {
 
 	// Block until there is a response, timeout after RESPONSE_TIMEOUT ms
 	if(ipcon_device_expect_response(device) != 0) {
+		ipcon->pending_add_device = NULL;
 		ipcon_mutex_unlock(&ipcon->add_device_mutex);
 		return E_TIMEOUT;
 	}
 
 	device->ipcon = ipcon;
+	ipcon->pending_add_device = NULL;
 
 	ipcon_mutex_unlock(&ipcon->add_device_mutex);
 

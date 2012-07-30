@@ -427,7 +427,6 @@ class IPConnection:
             self.pending_add_device.stack_id = value[8]
             self.devices[value[8]] = self.pending_add_device
             self.pending_add_device.response_queue.put(None)
-            self.pending_add_device = None
 
     def add_device(self, device):
         """
@@ -462,6 +461,7 @@ class IPConnection:
 
             device.ipcon = self
         finally:
+            self.pending_add_device = None
             self.add_device_lock.release()
 
     def write_bricklet_plugin(self, device, port, plugin):

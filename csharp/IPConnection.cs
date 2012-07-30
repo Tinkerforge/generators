@@ -265,7 +265,6 @@ namespace Tinkerforge
 				pendingAddDevice.stackID = LEConverter.ByteFrom(55, packet);
 				devices[pendingAddDevice.stackID] = pendingAddDevice;
 				pendingAddDevice.responseQueue.Enqueue(packet);
-				pendingAddDevice = null;
 			}
 		}
 
@@ -334,15 +333,22 @@ namespace Tinkerforge
 			{
 				pendingAddDevice = device;
 
-				Write(request);
-
-				byte[] response;
-				if(!device.responseQueue.TryDequeue(out response, RESPONSE_TIMEOUT))
+				try
 				{
-					throw new TimeoutException("Could not add device " + Base58.Encode(device.uid) + ", timeout");
-				}
+					Write(request);
 
-				device.ipcon = this;
+					byte[] response;
+					if(!device.responseQueue.TryDequeue(out response, RESPONSE_TIMEOUT))
+					{
+						throw new TimeoutException("Could not add device " + Base58.Encode(device.uid) + ", timeout");
+					}
+
+					device.ipcon = this;
+				}
+				finally
+				{
+					pendingAddDevice = null;
+				}
 			}
 		}
 

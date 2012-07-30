@@ -336,12 +336,11 @@ begin
     Write(request);
     SetLength(response, 0);
     if (not device.responseQueue.Dequeue(response, RESPONSE_TIMEOUT)) then begin
-      pendingAddDevice := nil;
       raise Exception.Create('Could not add device ' + Base58Encode(device.uid) + ', timeout');
     end;
     device.ipcon := self;
-    pendingAddDevice := nil;
   finally
+    pendingAddDevice := nil;
     addDeviceMutex.Release;
   end;
 end;

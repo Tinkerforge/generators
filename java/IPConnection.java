@@ -333,7 +333,6 @@ public class IPConnection {
 			} catch(InterruptedException e) {
 				e.printStackTrace();
 			}
-			pendingAddDevice = null;
 		}
 	}
 
@@ -456,23 +455,27 @@ public class IPConnection {
 			pendingAddDevice = device;
 
 			try {
-				out.write(request.array());
-			}
-			catch(java.io.IOException e) {
-				e.printStackTrace();
-			}
-
-			byte[] response = null;
-			try {
-				response = pendingAddDevice.responseQueue.poll(IPConnection.RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS);
-				if(response == null) {
-					throw new IPConnection.TimeoutException("Could not add device " + base58Encode(device.uid) + ", timeout");
+				try {
+					out.write(request.array());
 				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+				catch(java.io.IOException e) {
+					e.printStackTrace();
+				}
 
-			device.ipcon = this;
+				byte[] response = null;
+				try {
+					response = pendingAddDevice.responseQueue.poll(IPConnection.RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS);
+					if(response == null) {
+						throw new IPConnection.TimeoutException("Could not add device " + base58Encode(device.uid) + ", timeout");
+					}
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+				device.ipcon = this;
+			} finally {
+				pendingAddDevice = null;
+			}
 		}
 	}
 
