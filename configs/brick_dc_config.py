@@ -365,7 +365,7 @@ The default value is 5V.
 """,
 'de':
 """
-Setzt die minimale Spannung in mV, bei welcher die :func:`UnderVoltage` callback
+Setzt die minimale Spannung in mV, bei welcher der :func:`UnderVoltage` Callback
 ausgelöst wird. Der kleinste mögliche Wertm mit dem der DC Brick noch funktioniert,
 ist 5V. Mit dieser Funktion kann eine Entladung der versorgenden Batterie detektiert
 werden. Beim Einsatz einer Netzstromversorgung wird diese Funktionalität
@@ -469,8 +469,8 @@ The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher die :func:`CurrentVelocity` callback
-ausgelöst wird. Ein Wert von 0 deaktiviert die callback.
+Setzt die Periode in ms mit welcher der :func:`CurrentVelocity` Callback
+ausgelöst wird. Ein Wert von 0 deaktiviert den Callback.
 
 Der Standardwert ist 0.
 """
@@ -506,8 +506,8 @@ in mV.
 """,
 'de':
 """
-Diese callback wird ausgelöst wenn die Eingangsspannung unter den, mittels
-:func:`SetMinimumVoltage` gesetzten, Schwellwert sinkt. Der Rückgabewert
+Dieser Callback wird ausgelöst wenn die Eingangsspannung unter den, mittels
+:func:`SetMinimumVoltage` gesetzten, Schwellwert sinkt. Der :word:`parameter`
 ist die aktuelle Spannung in mV.
 """
 }]
@@ -537,19 +537,19 @@ That means, :func:`Enable` has to be called to drive the motor again.
 """,
 'de':
 """
-Diese callback wird ausgelöst wenn entweder der Stromverbrauch (über 5A)
+Dieser Callback wird ausgelöst wenn entweder der Stromverbrauch (über 5A)
 oder die Temperatur der Treiberstufe zu hoch ist (über 175°C). Beide
 Möglichkeiten sind letztendlich gleichbedeutend, da die Temperatur
 ihren Schwellwert überschreitet sobald der Motor zuviel Strom zieht.
 Im Falle einer Spannung unter 3,3V (Stapel- oder externe
-Spannungsversorgung) wird diese callback auch ausgelöst.
+Spannungsversorgung) wird dieser Callback auch ausgelöst.
 
-Sobald diese callback ausgelöst wird, wird die Treiberstufe deaktiviert.
+Sobald dieser Callback ausgelöst wird, wird die Treiberstufe deaktiviert.
 Das bedeutet :func:`Enable` muss aufgerufen werden, um den Motor
 erneut zu verfahren.
 
 .. note::
- Diese callback funktioniert nur im Fahren/Bremsen Modus (siehe :func:`SetDriveMode`).
+ Dieser Callback funktioniert nur im Fahren/Bremsen Modus (siehe :func:`SetDriveMode`).
  Im Fahren/Leerlauf Modus ist es leider nicht möglich das
  Überstrom/Übertemperatur-Signal zuverlässig aus dem Chip der Treiberstufe
  auszulesen.
@@ -577,7 +577,7 @@ the set velocity is actually reached.
 """,
 'de':
 """
-Diese callback wird ausgelöst immer wenn eine konfigurierte Geschwindigkeit
+Dieser Callback wird ausgelöst immer wenn eine konfigurierte Geschwindigkeit
 erreicht wird. Beispiel: Wenn die aktuelle Geschwindigkeit 0 ist, die
 Beschleunigung auf 5000 und die Geschwindigkeit auf 10000 konfiguriert ist,
 wird :func:`VelocityReached` nach ungefähr 2 Sekunden ausgelöst, wenn die
@@ -587,8 +587,8 @@ konfigurierte Geschwindigkeit letztendlich erreicht ist.
  Da es nicht möglich ist eine Rückmeldung vom Gleichstrommotor zu erhalten,
  funktioniert dies nur wenn die konfigurierte Beschleunigung (siehe :func:`SetAcceleration`)
  kleiner oder gleich der maximalen Beschleunigung des Motors ist. Andernfalls
- wird der Motor hinter dem Vorgabewert zurückbleiben und die callback wird
- zu zeitig ausgelöst.
+ wird der Motor hinter dem Vorgabewert zurückbleiben und der Callback wird
+ zu früh ausgelöst.
 """
 }]
 })
@@ -609,8 +609,8 @@ a change in the velocity.
 """,
 'de':
 """
-Diese callback wird mit der Periode, wie gesetzt mit :func:`SetCurrentVelocityPeriod`,
-ausgelöst. Der Rückgabewert ist die *aktuelle* vom Motor genutzte Geschwindigkeit.
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetCurrentVelocityPeriod`,
+ausgelöst. Der :word:`parameter` ist die *aktuelle* vom Motor genutzte Geschwindigkeit.
 
 :func:`CurrentVelocity` wird nur nach Ablauf der Periode ausgelöst, wenn die
 Geschwindigkeit sich geändert hat.
