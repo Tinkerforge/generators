@@ -366,7 +366,7 @@ The default value is 5V.
 'de':
 """
 Setzt die minimale Spannung in mV, bei welcher der :func:`UnderVoltage` Callback
-ausgelöst wird. Der kleinste mögliche Wertm mit dem der DC Brick noch funktioniert,
+ausgelöst wird. Der kleinste mögliche Wert mit dem der DC Brick noch funktioniert,
 ist 5V. Mit dieser Funktion kann eine Entladung der versorgenden Batterie detektiert
 werden. Beim Einsatz einer Netzstromversorgung wird diese Funktionalität
 höchstwahrscheinlich nicht benötigt.
