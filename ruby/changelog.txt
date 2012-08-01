@@ -9,3 +9,5 @@
        Make add_device thread-safe
        Ensure that destroy can end the receive thread correctly
        Ensure correct shutdown order of threads
+1.0.8: Fix race condition in add_device method
+       Add monoflop functionality to IO-4 and IO-16 Bricklet API
