@@ -255,7 +255,7 @@ com['packets'].append({
 'en':
 """
 Returns (for the given pin) the current value and the time as set by
-func:`SetMonoflop` as well as the remaining time until the value flips.
+:func:`SetMonoflop` as well as the remaining time until the value flips.
 
 If the timer is not running currently, the remaining time will be returned
 as 0.

@@ -94,7 +94,7 @@ com['packets'].append({
 'en':
 """
 Returns (for the given relay) the current state and the time as set by 
-func:`SetMonoflop` as well as the remaining time until the state flips. 
+:func:`SetMonoflop` as well as the remaining time until the state flips.
 
 If the timer is not running currently, the remaining time will be returned
 as 0.
