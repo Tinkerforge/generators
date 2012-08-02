@@ -431,7 +431,7 @@ ein Winkelbereich von -90° bis 90° spezifiziert ist, wird ein Aufruf von
 Anwendungsfälle:
 
 * Das Datenblatt des Servos spezifiziert einen Bereich von 200° mit einer Mittelposition bei 110°. In diesem Fall kann das Minimum auf -9000 und das Maximum auf 11000 gesetzt werden.
-* Es wird ein Bereich von 220° am Server gemessen und eine Mittelposition ist nicht bekannt bzw. wird nicht benötigt. In diesem Fall kann das Minimum auf 0 und das Maximum auf 22000 gesetzt werden.
+* Es wird ein Bereich von 220° am Servo gemessen und eine Mittelposition ist nicht bekannt bzw. wird nicht benötigt. In diesem Fall kann das Minimum auf 0 und das Maximum auf 22000 gesetzt werden.
 * Ein Linearservo mit einer Antriebslänge von 20cm. In diesem Fall kann das Minimum auf 0 und das Maximum auf 20000 gesetzt werden. Jetzt kann die Position mittels :func:`SetPosition` mit einer Auflösung von cm/100 gesetzt werden. Auch die Geschwindigkeit hat eine Auflösung von cm/100s und die Beschleunigung von cm/100s².
 * Die Einheit ist irrelevant und eine möglichst hohe Auflösung ist gewünscht. In diesem Fall kann das Minimum auf -32767 und das Maximum auf 32767 gesetzt werden.
 * Ein Brushless Motor, mit einer maximalen Drehzahl von 1000 U/min, soll mit einem RC Brushless Motor Controller gesteuert werden. In diesem Fall kann das Minimum auf 0 und das Maximum auf 10000 gesetzt werden. :func:`SetPosition` steuert jetzt die Drehzal in U/min.
