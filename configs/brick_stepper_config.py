@@ -30,7 +30,7 @@ either :func:`SetTargetPosition`, :func:`SetSteps`, :func:`DriveForward` or
 """
 Setzt die maximale Geschwindigkeit des Schrittmotors in Schritten je Sekunde.
 Diese Funktion startet *nicht* den Motor, sondern setzt nur die maximale
-Geschwindigkeit auf welche der Schrittmotor beschleunigt wird. Um den Motor zu verfahren
+Geschwindigkeit auf welche der Schrittmotor beschleunigt wird. Um den Motor zu fahren
 können :func:`SetTargetPosition`, :func:`SetSteps`, :func:`DriveForward` oder
 :func:`DriveBackward` verwendet werden.
 """
@@ -77,7 +77,7 @@ com['packets'].append({
 'doc': ['bm', {
 'en':
 """
-Sets the acceleration and deceleration of the stepper motor. The values
+Sets the acceleration and deacceleration of the stepper motor. The values
 are given in *steps/s²*. An acceleration of 1000 means, that
 every second the velocity is increased by 1000 *steps/s*.
 
@@ -85,8 +85,8 @@ For example: If the current velocity is 0 and you want to accelerate to a
 velocity of 8000 *steps/s* in 10 seconds, you should set an acceleration
 of 800 *steps/s²*.
 
-An acceleration/deceleration of 0 means instantaneous 
-acceleration/deceleration (not recommended)
+An acceleration/deacceleration of 0 means instantaneous
+acceleration/deacceleration (not recommended)
 
 The default value is 1000 for both
 """,
@@ -194,7 +194,7 @@ set them to any other desired value with :func:`SetCurrentPosition`.
 """
 Gibt die aktuelle Position des Schrittmotors in Schritten zurück. Nach dem 
 Hochfahren ist die Position 0. Die Schritte werden bei Verwendung aller möglichen
-Verfahrfunktionen gezählt (:func:`SetTargetPosition`, :func:`SetSteps`, :func:`DriveForward` der
+Fahrfunktionen gezählt (:func:`SetTargetPosition`, :func:`SetSteps`, :func:`DriveForward` der
 :func:`DriveBackward`). Es ist auch möglich den Schrittzähler auf 0 oder jeden anderen
 gewünschten Wert zu setzen mit :func:`SetCurrentPosition`.
 """
@@ -264,11 +264,10 @@ The velocity, acceleration and deacceleration as set by
 """,
 'de':
 """
-Setzt die Anzahl der Schritte die der Schrittmotor verfahren soll.
-Positive Werte verfahren den Motor vorwärts und negative rückwärts.
+Setzt die Anzahl der Schritte die der Schrittmotor fahren soll.
+Positive Werte fahren den Motor vorwärts und negative rückwärts.
 Dabei wird die Geschwindigkeit, Beschleunigung und Verzögerung, wie mit 
 :func:`SetMaxVelocity` und :func:`SetSpeedRamping` gesetzt, verwendet.
-
 """
 }]
 })
@@ -305,7 +304,7 @@ it will return 1500.
 """
 Gibt die verbleibenden Schritte des letzten Aufrufs von :func:`SetSteps`
 zurück. Beispiel: Wenn :func:`SetSteps` mit 2000 aufgerufen wird und 
-:func:`GetRemainingSteps` aufgerufen wird wenn der Motor 500 Schritte verfahren
+:func:`GetRemainingSteps` aufgerufen wird wenn der Motor 500 Schritte fahren
 hat, wird 1500 zurückgegeben.
 """
 }]
@@ -376,7 +375,7 @@ set by :func:`SetMaxVelocity` and :func:`SetSpeedRamping` will be used.
 """,
 'de':
 """
-Verfährt den Schrittmotor vorwärts bis :func:`DriveBackward` oder
+Fährt den Schrittmotor vorwärts bis :func:`DriveBackward` oder
 :func:`Stop` aufgerufen wird. Dabei wird die Geschwindigkeit, 
 Beschleunigung und Verzögerung, wie mit :func:`SetMaxVelocity`
 und :func:`SetSpeedRamping` gesetzt, verwendet.
@@ -397,7 +396,7 @@ set by :func:`SetMaxVelocity` and :func:`SetSpeedRamping` will be used.
 """,
 'de':
 """
-Verfährt den Schrittmotor rückwärts bis :func:`DriveForward` oder
+Fährt den Schrittmotor rückwärts bis :func:`DriveForward` oder
 :func:`Stop` aufgerufen wird. Dabei wird die Geschwindigkeit, 
 Beschleunigung und Verzögerung, wie mit :func:`SetMaxVelocity`
 und :func:`SetSpeedRamping` gesetzt, verwendet.
@@ -436,7 +435,7 @@ Step-Down or Step-Up Power Supply.
 """,
 'de':
 """
-Gibt die Eingangsspannung(in mV) des Stapels zurück. Die Eingangsspannung
+Gibt die Eingangsspannung (in mV) des Stapels zurück. Die Eingangsspannung
 des Stapel wird über diesen bereitgestellt und von einer Step-Down oder
 Step-Up Power Supply erzeugt.
 """
@@ -466,7 +465,7 @@ voltage present, the motor will be driven by this voltage.
 'de':
 """
 Gibt die externe Eingangsspannung (in mV) zurück. Die externe Eingangsspannung
-wird über die schwarze Stromversorgungsbuchse, in den DC Brick, eingespeist.
+wird über die schwarze Stromversorgungsbuchse, in den Stepper Brick, eingespeist.
 
 Sobald eine externe Eingangsspannung und die Spannungsversorgung des Stapels anliegt,
 wird der Motor über die externe Spannung versorgt. Sollte nur die Spannungsversorgung
@@ -519,8 +518,8 @@ Der minimale Wert ist 100mA, der maximale Wert ist 2291mA und der
 Standardwert ist 800mA.
 
 .. warning::
-Dieser Wert sollte nicht über die Spezifikation des Schrittmotors gesetzt werden.
-Sonst ist eine Beschädigung des Motors möglich.
+ Dieser Wert sollte nicht über die Spezifikation des Schrittmotors gesetzt werden.
+ Sonst ist eine Beschädigung des Motors möglich.
 """
 }]
 })
@@ -589,7 +588,7 @@ Returns true if the motor is enabled, false otherwise.
 """,
 'de':
 """
-Gibt "true" zurück wenn die Motorfreigabe aktiv ist, sonst "false".
+Gibt true zurück wenn die Motorfreigabe aktiv ist, sonst false.
 """
 }]
 })
@@ -859,7 +858,7 @@ The default value is 1.
 Setzt die Zeitbasis der Geschwindigkeit und Beschleunigung des Stepper Brick
 (in Sekunden).
 
-Beispiel: Wenn aller 1,5 Sekunden ein Schritt verfahren werden soll, kann
+Beispiel: Wenn aller 1,5 Sekunden ein Schritt gefahren werden soll, kann
 die Zeitbasis auf 15 und die Geschwindigkeit auf 10 gesetzt werden. Damit ist die 
 Geschwindigkeit 10Schritte/15s = 1Schritt/1,5s.
 
@@ -1011,7 +1010,7 @@ Possible states are:
 * Stop = 1
 * Acceleration = 2
 * Run = 3
-* Deceleration = 4
+* Deacceleration = 4
 * Direction change to forward = 5
 * Direction change to backward = 6
 
