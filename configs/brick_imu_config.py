@@ -32,6 +32,10 @@ to use the callback :func:`Acceleration` and set the period with
 """
 Gibt die kalibrierten Beschleunigungen des Beschleunigungsmessers für die 
 X, Y und Z-Achse in mG zurück (G/1000, 1G = 9.80605m/s²).
+
+Wenn die kalibrierten Beschleunigunge periodisch abgefragt werden soll, wird empfohlen
+den Callback :func:`Acceleration` zu nutzen und die Periode mit :func:`SetAccelerationPeriod`
+vorzugeben.
 """
 }]
 })
@@ -54,11 +58,11 @@ to use the callback :func:`MagneticField` and set the period with
 """,
 'de':
 """
-Gibt das kalibrierte magnetische Feld des Magnetometers mit den X,Y und
-Z Komponenten in mG zuürck (Milligauss oder Nanotesla).
+Gibt das kalibrierte magnetische Feld des Magnetometers mit den X, Y und
+Z Komponenten in mG zurück (Milligauss oder Nanotesla).
 
 Wenn das magnetische Feld periodisch abgefragt werden soll, wird empfohlen
-der Callback :func:`MagneticField` zu nutzen und die Periode mit :func:`SetMagneticFieldPeriod`
+den Callback :func:`MagneticField` zu nutzen und die Periode mit :func:`SetMagneticFieldPeriod`
 vorzugeben.
 """
 }] 
@@ -83,12 +87,12 @@ to use the callback :func:`AngularVelocity` and set the period with
 """,
 'de':
 """
-Gibt die kalibrierten Winkelgeschwindigkeiten des Gyroskops für die X,Y und
+Gibt die kalibrierten Winkelgeschwindigkeiten des Gyroskops für die X, Y und
 Z-Achse in °/17,5s zurück. (Um den Wert in °/s zu erhalten ist es notwendig
 durch 17,5 zu teilen)
 
 Wenn die Winkelgeschwindigkeiten periodisch abgefragt werden sollen, wird empfohlen
-der Callback :func:`AngularVelocity` zu nutzen und die Periode mit 
+den Callback :func:`AngularVelocity` zu nutzen und die Periode mit
 :func:`SetAngularVelocityPeriod` vorzugeben.
 """
 }] 
@@ -126,7 +130,7 @@ und :func:`GetAngularVelocity` sowie die Temperatur des IMU Brick zurück.
 
 Die Temperatur wird in °C/100 ausgegeben.
 
-Wenn die Daten periodisch abgefragt werden sollen, wird empfohlen der
+Wenn die Daten periodisch abgefragt werden sollen, wird empfohlen den
 Callback :func:`AllData` zu nutzen und die Periode mit :func:`SetAllDataPeriod`
 vorzugeben.
 """
@@ -157,16 +161,16 @@ to use the callback :func:`Orientation` and set the period with
 """,
 'de':
 """
-Gibt die aktuelle Orientierung (Roll, Nick, Gierung) des IMU Brick in Eulerwinkeln
+Gibt die aktuelle Orientierung (Roll-, Nick-, Gierwinkel) des IMU Brick in Eulerwinkeln
 (in 1/100 °) zurück. Zu beachten ist, dass Eulerwinkel immer eine 
 `kardanische Blockade <http://de.wikipedia.org/wiki/Gimbal_Lock>`__ erfahren.
 
 Wir empfehlen die Verwendung von Quaternionen stattdessen.
 
 Die Reihenfolge in denen die Orientierungswerte angewandt werden sollten,
-ist Roll, Nick, Gierung.
+ist Roll-, Nick-, Gierwinkel.
 
-Wenn die Orientierung periodisch abgefragt werden sollen, wird empfohlen der
+Wenn die Orientierung periodisch abgefragt werden sollen, wird empfohlen den
 Callback :func:`Orientation` zu nutzen und die Periode mit :func:`SetOrientationPeriod`
 vorzugeben.
 """
@@ -212,7 +216,7 @@ to use the callback :func:`Quaternion` and set the period with
 Gibt die aktuelle Orientierung (x, y, z, w) des IMU Brick als
 `Quaterinonen <http://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__ zurück.
 
-Die Umrechnung von Quaternionen in Eulerwinkel ist mit folgenden formula:: möglich
+Die Umrechnung von Quaternionen in Eulerwinkel ist mit folgender Formel möglich::
 
  roll  = atan2(2*y*w - 2*x*z, 1 - 2*y*y - 2*z*z)
  pitch = atan2(2*x*w - 2*y*z, 1 - 2*x*x - 2*z*z)
@@ -222,14 +226,14 @@ Diese Umrechnung ist irreversibel aufgrund der
 `kardanischen Blockade <http://de.wikipedia.org/wiki/Gimbal_lock>`__.
 
 Die Umrechnung von Quaternionen in eine OpenGL Translationsmatrix ist
-mit folgenden formula:: möglich
+mit folgender Formel möglich::
 
  matrix = [[1 - 2*(y*y + z*z),     2*(x*y - w*z),     2*(x*z + w*y), 0],
            [    2*(x*y + w*z), 1 - 2*(x*x + z*z),     2*(y*z - w*x), 0],
            [    2*(x*z - w*y),     2*(y*z + w*x), 1 - 2*(x*x + y*y), 0],
            [                0,                 0,                 0, 1]]
 
-Wenn die Quaternionen periodisch abgefragt werden sollen, wird empfohlen der
+Wenn die Quaternionen periodisch abgefragt werden sollen, wird empfohlen den
 Callback :func:`Quaternion` zu nutzen und die Periode mit :func:`SetQuaternionPeriod`
 vorzugeben.
 """
@@ -509,7 +513,7 @@ Es sind folgende verschiendene Kalibrierungen möglich:
  "4",    "Gyroscope Verstärkung",     "[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]"
  "5",    "Gyroscope Versatz",     "[bias xl, bias yl, bias zl, temp l, bias xh, bias yh, bias zh, temp h, 0, 0]"
 
-Die Kalibrierung mittels Verstärkung und Versatz wird über folgende formula:: realisiert
+Die Kalibrierung mittels Verstärkung und Versatz wird über folgende Formel realisiert::
 
  new_value = (bias + orig_value) * gain_mul / gain_div
 
@@ -526,7 +530,7 @@ mindestens 5°C betragen. Die übliche Betriebstemperatur des IMU Brick sollte e
 Kalibrierpunkte sein.
 
 .. note::
-Wir empfehlen dringend den Brick Viewer zur Kalibrierung des IMU Brick zu verwenden. 
+ Wir empfehlen dringend den Brick Viewer zur Kalibrierung des IMU Brick zu verwenden.
 """
 }] 
 })
@@ -867,7 +871,7 @@ This callback is triggered periodically with the period that is set by
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetOrientationPeriod`,
-ausgelöst. Die :word:`parameters` sind die Orientierung (Roll, Nick, Gierung) des
+ausgelöst. Die :word:`parameters` sind die Orientierung (Roll-, Nick-, Gierwinkel) des
 IMU Brick in Eulerwinkeln. Siehe :func:`GetOrientation` für Details.
 """
 }] 
