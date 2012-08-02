@@ -162,7 +162,7 @@ The default frequency is 15 kHz.
 """
 Setzt die Frequenz (in Hz) der PWM, welche den Motor steuert.
 Der Wertebereich der Frequenz ist 1-20000Hz. Oftmals ist eine
-hohe Frequenz rauscharmer und der Motor läuft dadurch ruhiger. Trotzdessen
+hohe Frequenz geräuschärmer und der Motor läuft dadurch ruhiger. Trotzdessen
 führt eine geringe Frequenz zu weniger Schaltvorgängen und somit zu
 weniger Schaltverlusten. Bei einer Vielzahl von Motoren ermöglichen
 geringere Frequenzen höhere Drehmomente.
@@ -234,7 +234,7 @@ Step-Down or Step-Up Power Supply.
 """,
 'de':
 """
-Gibt die Eingangsspannung(in mV) des Stapels zurück. Die Eingangsspannung
+Gibt die Eingangsspannung (in mV) des Stapels zurück. Die Eingangsspannung
 des Stapel wird über diesen bereitgestellt und von einer Step-Down oder
 Step-Up Power Supply erzeugt.
 """
@@ -343,7 +343,7 @@ Returns true if the motor is enabled, false otherwise.
 """,
 'de':
 """
-Gibt "true" zurück wenn die Motorfreigabe aktiv ist, sonst "false".
+Gibt true zurück wenn die Motorfreigabe aktiv ist, sonst false.
 """
 }]
 })
@@ -546,7 +546,7 @@ Spannungsversorgung) wird dieser Callback auch ausgelöst.
 
 Sobald dieser Callback ausgelöst wird, wird die Treiberstufe deaktiviert.
 Das bedeutet :func:`Enable` muss aufgerufen werden, um den Motor
-erneut zu verfahren.
+erneut zu fahren.
 
 .. note::
  Dieser Callback funktioniert nur im Fahren/Bremsen Modus (siehe :func:`SetDriveMode`).
