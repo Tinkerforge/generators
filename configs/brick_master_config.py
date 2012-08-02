@@ -44,11 +44,10 @@ current that is drawn via the stack, i.e. it is given by a
 Step-Down or Step-Up Power Supply.
 """,
 'de':
-"""Gibt den Stromverbrauch des Stapels in mA zurück. Der angegebene Strom
+"""
+Gibt den Stromverbrauch des Stapels in mA zurück. Der angegebene Strom
 bezieht sich auf den Stromverbrauch der am Stapel angeschlossenen Verbraucher.
 Die Speisung kann z.B. über eine Step-Down oder Step-Up Power Supply erfolgen.
-
-
 """
 }]
 })
@@ -92,8 +91,8 @@ Mögliche Erweiterungstypen:
  :header: "Typ", "Beschreibung"
  :widths: 10,100
  
- "1",	"Chibi"
- "2",	"RS485"
+ "1",    "Chibi"
+ "2",    "RS485"
 
 Der Erweiterungstyp ist schon gesetzt beim Erwerb der Erweiterung und kann über den
 Brick Viewer gesetzt werden. Daher ist es unwahrscheinlich, dass diese Funktion benötigt
@@ -244,10 +243,11 @@ com['packets'].append({
 'doc': ['am', {
 'en':
 """
-Sets up to 255 slave addresses. The address numeration has to be used
+Sets up to 254 slave addresses. Valid addresses are in range 1-255.
+The address numeration (via num parameter) has to be used
 ascending from 0. For example: If you use the Chibi Extension in Master mode
 (i.e. the stack has an USB connection) and you want to talk to three other
-Chibi stacks with the IDs 17, 23, and 42, you should call with "(0, 17),
+Chibi stacks with the slave addresses 17, 23, and 42, you should call with "(0, 17),
 (1, 23) and (2, 42)".
 
 It is possible to set the addresses with the Brick Viewer and it will be 
@@ -258,10 +258,11 @@ have to be set on every startup.
 """,
 'de':
 """
-Setzt bis zu 255 Slave Adressen. Die Addressnumerierung muss aufsteigend ab
+Setzt bis zu 254 Slave Adressen. Gültige Addressen sind 1-255.
+Die Addressnumerierung (mittels num Parameter) muss aufsteigend ab
 0 erfolgen. Beispiel: Wenn die Chibi Erweiterung im Master Modus verwendet wird
 (z.B. wenn der Stapel eine USB-Verbindung hat) und es soll mit drei weiteren
-Chibi Stapeln kommuniziert werden, mit den Addressen 17,23 und 42, sollten die 
+Chibi Stapeln kommuniziert werden, mit den Addressen 17, 23 und 42, sollten die
 Aufrufe "(0, 17), (1, 23) und (2, 42)" sein.
 
 Es ist möglich die Addressen mit dem Brick Viewer zu setzen und diese werden
@@ -288,8 +289,8 @@ Returns the slave address for a given num as set by
 """,
 'de':
 """
-Gibt die Slave Addresse eines Teilnehmers zurück, wie von :func:`SetChibiSlaveAddress`
-gesetzt.
+Gibt die Slave Addresse für eine Addressnumerierung (mittels num Parameter) zurück,
+wie von :func:`SetChibiSlaveAddress` gesetzt.
 
 .. versionadded:: 1.1.0
 """
@@ -563,8 +564,9 @@ com['packets'].append({
 'doc': ['am', {
 'en':
 """
-Sets up to 254 slave addresses. The address numeration has to be used
-ascending from 1. For example: If you use the RS485 Extension in Master mode
+Sets up to 255 slave addresses. Valid addresses are in range 1-255.
+The address numeration (via num parameter) has to be used
+ascending from 0. For example: If you use the RS485 Extension in Master mode
 (i.e. the stack has an USB connection) and you want to talk to three other
 RS485 stacks with the IDs 17, 23, and 42, you should call with "(0, 17),
 (1, 23) and (2, 42)".
@@ -577,10 +579,11 @@ have to be set on every startup.
 """,
 'de':
 """
-Setzt bis zu 254 Slave Adressen. Die Addressnumerierung muss aufsteigend ab
-1 erfolgen. Beispiel: Wenn die RS485 Erweiterung im Master Modus verwendet wird
+Setzt bis zu 255 Slave Adressen. Gültige Addressen sind 1-255.
+Die Addressnumerierung (mittels num Parameter) muss aufsteigend ab
+0 erfolgen. Beispiel: Wenn die RS485 Erweiterung im Master Modus verwendet wird
 (z.B. wenn der Stapel eine USB-Verbindung hat) und es soll mit drei weiteren
-RS485 Stapeln kommuniziert werden, mit den Addressen 17,23 und 42, sollten die 
+RS485 Stapeln kommuniziert werden, mit den Addressen 17, 23 und 42, sollten die
 Aufrufe "(0, 17), (1, 23) und (2, 42)" sein.
 
 Es ist möglich die Addressen mit dem Brick Viewer zu setzen und diese werden
@@ -607,8 +610,8 @@ Returns the slave address for a given num as set by
 """,
 'de':
 """
-Gibt die Slave Addresse eines Teilnehmers zurück, wie von :func:`SetRS485SlaveAddress`
-gesetzt.
+Gibt die Slave Addresse für eine Addressnumerierung (mittels num Parameter) zurück,
+wie von :func:`SetRS485SlaveAddress` gesetzt.
 
 .. versionadded:: 1.2.0
 """
