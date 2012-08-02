@@ -194,8 +194,8 @@ A general description of the TCP/IP protocol structure can be found
 
     api_desc = ''
     try:
-        api_desc = device.com['api']
-    except:
+        api_desc = device.com['api'][lang]
+    except KeyError:
         pass
 
     return api.format(ref, api_desc, api_str)

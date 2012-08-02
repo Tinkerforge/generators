@@ -243,8 +243,8 @@ All functions and procedures listed below are thread-safe.
 
     api_desc = ''
     try:
-        api_desc = device.com['api']
-    except:
+        api_desc = device.com['api'][lang]
+    except KeyError:
         pass
 
     return api.format(ref, api_desc, api_str)

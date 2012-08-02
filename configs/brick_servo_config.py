@@ -12,23 +12,29 @@ com = {
     'packets': []
 }
 
-com['api'] = """
+com['api'] = {
+'en':
+"""
 Every function of the Servo Brick API that has a *servo_num* parameter can
-address a servo with the servo number (0 to 6) or with a bitmask for the 
-servos, if the last bit is set. For example: "1" will address servo 1, 
+address a servo with the servo number (0 to 6) or with a bitmask for the
+servos, if the last bit is set. For example: "1" will address servo 1,
 "(1 << 1) | (1 << 5) | (1 << 7)" will address servos 1 and 5, "0xFF" will
 address all seven servos, etc. This allows to set configurations to several
 servos with one function call. It is guaranteed that the changes will take
 effect in the same PWM period for all servos you specified in the bitmask.
+""",
+'de':
 """
-#Jede Funktion der Servo Brick API, welche den *servo_num* Parameter verwendet,
-#kann einen Servo über die Servo Nummer (0 bis 6) addressieren oder mit einer 
-#Bitmaske für alle Servos wenn das höchstwertigste Bit gesetzt ist. Beispiel:
-#"1" addressiert den Server 1, "(1 << 1) | (1 << 5) | (1 << 7)" addressiert die
-#Servos 1 und 5, "0xFF" addressiert alle 7 Servos, und so weiter. Das ermöglicht
-#es Konfigurationen von verschiedenen Servos mit einem Funktionsaufruf durchzuführen.
-#Es ist sichergestellt das die Änderungen in der selben PWM Periode vorgenommen werden,
-#für alle Servos entsprechend der Bitmaske.
+Jede Funktion der Servo Brick API, welche den *servo_num* Parameter verwendet,
+kann einen Servo über die Servo Nummer (0 bis 6) addressieren oder mit einer
+Bitmaske für alle Servos wenn das höchstwertigste Bit gesetzt ist. Beispiel:
+"1" addressiert den Server 1, "(1 << 1) | (1 << 5) | (1 << 7)" addressiert die
+Servos 1 und 5, "0xFF" addressiert alle 7 Servos, und so weiter. Das ermöglicht
+es Konfigurationen von verschiedenen Servos mit einem Funktionsaufruf durchzuführen.
+Es ist sichergestellt das die Änderungen in der selben PWM Periode vorgenommen werden,
+für alle Servos entsprechend der Bitmaske.
+"""
+}
 
 com['packets'].append({
 'type': 'function',
