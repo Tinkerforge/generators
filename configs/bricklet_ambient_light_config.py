@@ -29,6 +29,13 @@ callback :func:`Illuminance` and set the period with
 """,
 'de':
 """
+Gibt die Beleuchtungsstärke des Umgebungslichtsensors zurück. Der Wertbereich
+ist von 0 bis 9000 und ist in Lux/10 angegeben, d.h. bei einem Wert von 
+4500 wurde eine Beleuchtungsstärke von 450 Lux gemessen.
+
+Wenn die Beleuchtungsstärke periodisch abgefragt werden soll, wird empfohlen
+den Callback :func:`Illuminance` zu nutzen und die Periode mit 
+:func:`SetIlluminanceCallbackPeriod` vorzugeben.
 """
 }]
 })
@@ -59,6 +66,22 @@ callback :func:`AnalogValue` and set the period with
 """,
 'de':
 """
+Gibt den Wert, wie vom 12 bit Analog-Digital-Wandler gelesen, zurück. Der 
+Wertebereich ist 0 bis 4095.
+
+.. note::
+ Der von :func:`GetIlluminance` zurückgegebene Wert ist über mehrere
+ Messwerte gemittelt um das Rauschen zu vermindern, während :func:`GetAnalogValue`
+ unverarbeitete Analogwerte zurückgibt. Der einzige Grund :func:`GetAnalogValue`
+ zu nutzen, ist die volle Auflösung des Analog-Digital-Wandlers zu erhalten.
+ 
+ Weiterhin deckt der Analog-Digital-Wandler drei unterschiedliche Bereiche ab,
+ welche dynamisch gewechselt werden abhängig von der Lichtintensität. Es ist
+ nicht möglich, anhand der Analogwerte, zwischen diesen Bereichen zu unterscheiden.
+ 
+Wenn der Analogwert periodisch abgefragt werden soll, wird empfohlen
+den Callback :func:`AnalogValue` zu nutzen und die Periode mit 
+:func:`SetAnalogValueCallbackPeriod` vorzugeben.
 """
 }]
 })
@@ -81,6 +104,13 @@ The default value is 0.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher der :func:`Illuminance` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+:func:`Illuminance` wird nur ausgelöst wenn die Beleuchtungsstärke seit der
+letzten Auslösung sich geändert hat.
+
+Der Standardwert ist 0.
 """
 }]
 })
@@ -96,6 +126,8 @@ Returns the period as set by :func:`SetIlluminanceCallbackPeriod`.
 """,
 'de':
 """
+Gibt die Periode zurück, wie von :func:`SetIlluminanceCallbackPeriod`
+gesetzt.
 """
 }]
 })
@@ -117,6 +149,13 @@ The default value is 0.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher der :func:`AnalogValue` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+:func:`AnalogValue` wird nur ausgelöst wenn der Analogwert seit der
+letzten Auslösung sich geändert hat.
+
+Der Standardwert ist 0.
 """
 }]
 })
@@ -132,6 +171,8 @@ Returns the period as set by :func:`SetAnalogValueCallbackPeriod`.
 """,
 'de':
 """
+Gibt die Periode zurück, wie von :func:`SetAnalogValueCallbackPeriod`
+gesetzt.
 """
 }]
 })
@@ -163,6 +204,19 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
+Setzt den Schwellwert für den :func:`IlluminanceReached` Callback.
+
+Die folgenden Optionen sind möglich:
+
+.. csv-table::
+ :header: "Option", "Beschreibung"
+ :widths: 10, 100
+ 
+ "'x'",    "Callback ist inaktiv"
+ "'o'",    "Callback wird ausgelöst wenn die Beleuchtungsstärke *ausserhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst wenn die Beleuchtungsstärke *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst wenn die Beleuchtungsstärke kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn die Beleuchtungsstärke größer als der min Wert ist (max wird ignoriert)"
 """
 }]
 })
@@ -180,6 +234,8 @@ Returns the threshold as set by :func:`SetIlluminanceCallbackThreshold`.
 """,
 'de':
 """
+Gibt den Schwellwert zurück, wie von :func:`SetIlluminanceCallbackThreshold`
+gesetzt.
 """
 }]
 })
@@ -202,15 +258,30 @@ The following options are possible:
  :widths: 10, 100
 
  "'x'",    "Callback is turned off."
- "'o'",    "Callback is triggered when the illuminance is *outside* the min and max values"
- "'i'",    "Callback is triggered when the illuminance is *inside* the min and max values"
- "'<'",    "Callback is triggered when the illuminance is smaller than the min value (max is ignored)"
- "'>'",    "Callback is triggered when the illuminance is greater than the min value (max is ignored)"
+ "'o'",    "Callback is triggered when the analog value is *outside* the min and max values"
+ "'i'",    "Callback is triggered when the analog value is *inside* the min and max values"
+ "'<'",    "Callback is triggered when the analog value is smaller than the min value (max is ignored)"
+ "'>'",    "Callback is triggered when the analog value is greater than the min value (max is ignored)"
 
 The default value is ('x', 0, 0).
 """,
 'de':
 """
+Setzt den Schwellwert für den :func:`AnalogValueReached` Callback.
+
+Die folgenden Optionen sind möglich:
+
+.. csv-table::
+ :header: "Option", "Beschreibung"
+ :widths: 10, 100
+ 
+ "'x'",    "Callback ist inaktiv"
+ "'o'",    "Callback wird ausgelöst wenn die Analogwert *ausserhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst wenn die Analogwert *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst wenn die Analogwert kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn die Analogwert größer als der min Wert ist (max wird ignoriert)"
+ 
+Der Standardwert ist ('x', 0, 0). 
 """
 }]
 })
@@ -228,6 +299,8 @@ Returns the threshold as set by :func:`SetAnalogValueCallbackThreshold`.
 """,
 'de':
 """
+Gibt den Schwellwert zurück, wie von :func:`SetAnalogValueCallbackThreshold`
+gesetzt.
 """
 }]
 })
@@ -253,6 +326,17 @@ The default value is 100.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher die Schwellwert Callbacks
+
+ :func:`IlluminanceReached`, :func:`AnalogValueReached`
+ 
+ausgelöst werden, wenn die Schwellwerte 
+
+ :func:`SetIlluminanceCallbackThreshold`, :func:`SetAnalogValueCallbackThreshold`
+ 
+weiterhin erreicht bleiben.
+
+Der Standardwert ist 100.
 """
 }]
 })
@@ -268,6 +352,8 @@ Returns the debounce period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
 """
+Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+gesetzt.
 """
 }]
 })
@@ -288,6 +374,11 @@ last triggering.
 """,
 'de':
 """
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetIlluminanceCallbackPeriod`,
+ausgelöst. Der :word:`parameter` ist die Beleuchtungsstärke des Umgebungslichtsensors.
+
+:func:`Illuminance` wird nur ausgelöst wenn die Beleuchtungsstärke sich seit der
+letzten Auslösung geändert hat.
 """
 }]
 })
@@ -303,11 +394,16 @@ This callback is triggered periodically with the period that is set by
 :func:`SetAnalogValueCallbackPeriod`. The :word:`parameter` is the analog value of the
 ambient light sensor.
 
-:func:`AnalogValue` is only triggered if the illuminance has changed since the
+:func:`AnalogValue` is only triggered if the analog value has changed since the
 last triggering.
 """,
 'de':
 """
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAnalogValueCallbackPeriod`,
+ausgelöst. Der :word:`parameter` ist die Analogwert des Umgebungslichtsensors.
+
+:func:`AnalogValue` wird nur ausgelöst wenn der Analogwert sich seit der
+letzten Auslösung geändert hat.
 """
 }]
 })
@@ -328,6 +424,12 @@ with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
 """
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+:func:`SetIlluminanceCallbackThreshold` gesetzt, erreicht wird.
+Der :word:`parameter` ist die Beleuchtungsstärke des Umgebungslichtsensors.
+
+Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
+mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 """
 }]
 })
@@ -348,6 +450,12 @@ with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
 """
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+:func:`SetAnalogValueCallbackThreshold` gesetzt, erreicht wird.
+Der :word:`parameter` ist der Analogwert des Umgebungslichtsensors.
+
+Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
+mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 """
 }]
 })
