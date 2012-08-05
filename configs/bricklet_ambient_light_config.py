@@ -217,6 +217,8 @@ Die folgenden Optionen sind möglich:
  "'i'",    "Callback wird ausgelöst wenn die Beleuchtungsstärke *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn die Beleuchtungsstärke kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn die Beleuchtungsstärke größer als der min Wert ist (max wird ignoriert)"
+ 
+Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
