@@ -67,6 +67,8 @@ gen_text_rst = """..
  #############################################################
 """
 
+lang = 'en'
+
 def shift_right(text, n):
     return text.replace('\n', '\n' + ' '*n)
 
@@ -113,31 +115,39 @@ def make_rst_header(device, ref_name, title):
                                          title_under)
 
 def make_rst_summary(device, title):
-    su = """
+    su = {
+    'en': """
 This is the API site for the {4} of the {0} {1}. General information
 on what this device does and the technical specifications can be found
 :ref:`here <{2}>`.
 
 A tutorial on how to test the {0} {1} and get the first examples running
 can be found :ref:`here <{3}>`.
+""",
+    'de': """
 """
+    }
 
     hw_link = device.get_underscore_name() + '_' + device.get_category().lower()
     hw_test = hw_link + '_test'
-    su = su.format(device.get_display_name(), device.get_category(), hw_link, hw_test, title)
-    return su
+    return su[lang].format(device.get_display_name(), device.get_category(), hw_link, hw_test, title)
 
 def make_rst_examples(title_from_file, device, base_path, dirname, filename_prefix, filename_suffix, include_name):
-    ex = """
+    ex = {
+    'en': """
 {0}
 
 Examples
 --------
 
 The example code below is public domain.
+""",
+    'de': """
 """
+    }
 
-    imp = """
+    imp = {
+    'en': """
 {0}
 {1}
 
@@ -147,12 +157,15 @@ The example code below is public domain.
  :language: {4}
  :linenos:
  :tab-width: 4
+""",
+    'de': """
 """
+    }
 
     ref = '.. _{0}_{1}_{2}_examples:\n'.format(device.get_underscore_name(),
                                                device.get_category().lower(),
                                                dirname)
-    ex = ex.format(ref)
+    examples = ex[lang].format(ref)
     files = find_examples(device, base_path, dirname, filename_prefix, filename_suffix)
     copy_files = []
     for f in files:
@@ -160,10 +173,10 @@ The example code below is public domain.
         copy_files.append((f[1], include))
         title = title_from_file(f[0])
         git_name = device.get_underscore_name().replace('_', '-') + '-' + device.get_category().lower()
-        ex += imp.format(title, '^'*len(title), include, git_name, dirname, f[0])
+        examples += imp[lang].format(title, '^'*len(title), include, git_name, dirname, f[0])
 
     copy_examples(copy_files, base_path)
-    return ex
+    return examples
 
 def find_examples(device, base_path, dirname, filename_prefix, filename_suffix):
     start_path = base_path.replace('/generators/' + dirname, '')

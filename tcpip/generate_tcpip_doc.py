@@ -48,6 +48,15 @@ def type_to_pytype(element):
     return t + '[' + str(element[2]) + ']'
 
 def fix_links(text):
+    parameter = {
+    'en': 'response value',
+    'de': 'Rückgabewert'
+    }
+    parameters = {
+    'en': 'response values',
+    'de': 'Rückgabewerte'
+    }
+
     cls = device.get_camel_case_name()
     for packet in device.get_packets():
         name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
@@ -58,12 +67,16 @@ def fix_links(text):
             name_right = ':tcpip:func:`{1} <{0}.{1}>`'.format(cls, packet.get_underscore_name())
         text = text.replace(name_false, name_right)
 
-    text = text.replace(":word:`parameter`", "response value")
-    text = text.replace(":word:`parameters`", "response values")
+    text = text.replace(":word:`parameter`", parameter[lang])
+    text = text.replace(":word:`parameters`", parameters[lang])
 
     return text
 
 def make_request_desc(packet):
+    empty_payload = {
+    'en': 'empty payload',
+    'de': ''
+    }
     desc = '\n'
     param = ' :request {0}: {1}\n'
     for element in packet.get_elements('in'):
@@ -71,11 +84,19 @@ def make_request_desc(packet):
         desc += param.format(element[0], t)
 
     if desc == '\n':
-        desc += ' :emptyrequest: empty payload\n'
+        desc += ' :emptyrequest: {0}\n'.format(empty_payload[lang])
 
     return desc
 
 def make_response_desc(packet):
+    empty_payload = {
+    'en': 'empty payload',
+    'de': ''
+    }
+    no_response = {
+    'en': 'no response',
+    'de': ''
+    }
     desc = '\n'
     returns = ' :response {0}: {1}\n'
     for element in packet.get_elements('out'):
@@ -84,9 +105,9 @@ def make_response_desc(packet):
 
     if desc == '\n':
         if packet.get_type() == 'callback':
-            desc += ' :emptyresponse: empty payload\n'
+            desc += ' :emptyresponse: {0}\n'.format(empty_payload[lang])
         else:
-            desc += ' :noresponse: no response\n'
+            desc += ' :noresponse: {0}\n'.format(no_response[lang])
 
     return desc
 
@@ -132,37 +153,54 @@ def make_callbacks():
 
 
 def make_api():
-    bm_str = """
+    bm_str = {
+    'en': """
 Basic Methods
 ^^^^^^^^^^^^^
 
 {0}
+""",
+    'de': """
 """
+    }
 
-    am_str = """
+    am_str = {
+    'en': """
 Advanced Methods
 ^^^^^^^^^^^^^^^^
 
 {0}
+""",
+    'de': """
 """
+    }
 
-    ccm_str = """
+    ccm_str = {
+    'en': """
 Callback Configuration Methods
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 {0}
+""",
+    'de': """
 """
+    }
 
-    c_str = """
+    c_str = {
+    'en': """
 .. _{1}_{2}_tcpip_callbacks:
 
 Callbacks
 ^^^^^^^^^
 
 {0}
+""",
+    'de': """
 """
+    }
 
-    api = """
+    api = {
+    'en': """
 {0}
 
 API
@@ -174,7 +212,10 @@ A general description of the TCP/IP protocol structure can be found
 {1}
 
 {2}
+""",
+    'de': """
 """
+    }
 
     bm = make_methods('bm')
     am = make_methods('am')
@@ -182,12 +223,13 @@ A general description of the TCP/IP protocol structure can be found
     c = make_callbacks()
     api_str = ''
     if bm:
-        api_str += bm_str.format(bm)
+        api_str += bm_str[lang].format(bm)
     if am:
-        api_str += am_str.format(am)
+        api_str += am_str[lang].format(am)
     if c:
-        api_str += ccm_str.format(ccm)
-        api_str += c_str.format(c, device.get_underscore_name(), device.get_category().lower())
+        api_str += ccm_str[lang].format(ccm)
+        api_str += c_str[lang].format(c, device.get_underscore_name(),
+                                      device.get_category().lower())
 
     ref = '.. _{0}_{1}_tcpip_api:\n'.format(device.get_underscore_name(),
                                             device.get_category().lower())
@@ -198,12 +240,16 @@ A general description of the TCP/IP protocol structure can be found
     except KeyError:
         pass
 
-    return api.format(ref, api_desc, api_str)
+    return api[lang].format(ref, api_desc, api_str)
 
 def make_files(com_new, directory):
     global device
     device = common.Device(com_new)
     file_name = '{0}_{1}_TCPIP'.format(device.get_camel_case_name(), device.get_category())
+    title = {
+    'en': 'TCP/IP protocol',
+    'de': 'TCP/IP Protokoll'
+    }
 
     directory += '/doc'
     if not os.path.exists(directory):
@@ -211,7 +257,7 @@ def make_files(com_new, directory):
 
     f = file('{0}/{1}.rst'.format(directory, file_name), "w")
     f.write(common.make_rst_header(device, 'tcpip', 'TCP/IP'))
-    f.write(common.make_rst_summary(device, 'TCP/IP protocol'))
+    f.write(common.make_rst_summary(device, title[lang]))
     f.write(make_api())
 
 def generate(path):

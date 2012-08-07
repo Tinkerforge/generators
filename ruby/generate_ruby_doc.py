@@ -62,6 +62,15 @@ def type_to_rbtype(element):
     return '[' + ', '.join([t]*element[2]) + ']'
 
 def fix_links(text):
+    parameter = {
+    'en': 'parameter',
+    'de': 'Parameter'
+    }
+    parameters = {
+    'en': 'parameters',
+    'de': 'Parameter'
+    }
+
     cls = device.get_category() + device.get_camel_case_name()
     for packet in device.get_packets():
         name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
@@ -72,8 +81,8 @@ def fix_links(text):
             name_right = ':rb:func:`#{1} <{0}#{1}>`'.format(cls, packet.get_underscore_name())
         text = text.replace(name_false, name_right)
 
-    text = text.replace(":word:`parameter`", "parameter")
-    text = text.replace(":word:`parameters`", "parameters")
+    text = text.replace(":word:`parameter`", parameter[lang])
+    text = text.replace(":word:`parameters`", parameters[lang])
 
     return text
 
@@ -117,13 +126,17 @@ def make_return_desc(packet):
     return ret.format('[' + ', '.join(ret_list) + ']')
 
 def make_methods(typ):
-    version_method = """
+    version_method = {
+    'en': """
 .. rb:function:: {0}#get_version -> [str, [int, int, int], [int, int, int]]
 
  Returns the name (including the hardware version), the firmware version
  and the binding version of the device. The firmware and binding versions are
  given in arrays of size 3 with the syntax [major, minor, revision].
+""",
+    'de': """
 """
+    }
 
     methods = ''
     func_start = '.. rb:function:: '
@@ -148,7 +161,7 @@ def make_methods(typ):
         methods += func + '\n'
 
     if typ == 'am':
-        methods += version_method.format(cls)
+        methods += version_method[lang].format(cls)
 
     return methods
 
@@ -170,7 +183,8 @@ def make_callbacks():
     return cbs
 
 def make_api():
-    create_str = """
+    create_str = {
+    'en': """
 .. rb:function:: {3}{1}::new(uid) -> {0}
 
  Creates an object with the unique device ID *uid*:
@@ -181,9 +195,13 @@ def make_api():
 
  This object can then be added to the IP connection (see examples
  :ref:`above <{0}_{2}_ruby_examples>`).
+""",
+    'de': """
 """
+    }
 
-    register_str = """
+    register_str = {
+    'en': """
 .. rb:function:: {3}{1}#register_callback(cb) {{ |param [, ...]| block }} -> nil
 
  :param cb: int
@@ -191,34 +209,50 @@ def make_api():
  Registers a callback with ID *cb* to the given block. The available
  IDs with corresponding function signatures are listed
  :ref:`below <{0}_{2}_ruby_callbacks>`.
+""",
+    'de': """
 """
+    }
 
-    bm_str = """
+    bm_str = {
+    'en': """
 Basic Methods
 ^^^^^^^^^^^^^
 
 {0}
 
 {1}
+""",
+    'de': """
 """
+    }
 
-    am_str = """
+    am_str = {
+    'en': """
 Advanced Methods
 ^^^^^^^^^^^^^^^^
 
 {0}
+""",
+    'de': """
 """
+    }
 
-    ccm_str = """
+    ccm_str = {
+    'en': """
 Callback Configuration Methods
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 {0}
 
 {1}
+""",
+    'de': """
 """
+    }
 
-    c_str = """
+    c_str = {
+    'en': """
 .. _{1}_{2}_ruby_callbacks:
 
 Callbacks
@@ -245,9 +279,13 @@ described below.
  will be a lot better, since there is no roundtrip time.
 
 {0}
+""",
+    'de': """
 """
+    }
 
-    api = """
+    api = {
+    'en': """
 {0}
 API
 ---
@@ -257,15 +295,19 @@ All methods listed below are thread-safe.
 {1}
 
 {2}
+""",
+    'de': """
 """
-    cre = create_str.format(device.get_underscore_name(),
-                            device.get_camel_case_name(),
-                            device.get_category().lower(),
-                            device.get_category())
-    reg = register_str.format(device.get_underscore_name(),
-                              device.get_camel_case_name(),
-                              device.get_category().lower(),
-                              device.get_category())
+    }
+
+    cre = create_str[lang].format(device.get_underscore_name(),
+                                  device.get_camel_case_name(),
+                                  device.get_category().lower(),
+                                  device.get_category())
+    reg = register_str[lang].format(device.get_underscore_name(),
+                                    device.get_camel_case_name(),
+                                    device.get_category().lower(),
+                                    device.get_category())
 
     bm = make_methods('bm')
     am = make_methods('am')
@@ -273,15 +315,15 @@ All methods listed below are thread-safe.
     c = make_callbacks()
     api_str = ''
     if bm:
-        api_str += bm_str.format(cre, bm)
+        api_str += bm_str[lang].format(cre, bm)
     if am:
-        api_str += am_str.format(am)
+        api_str += am_str[lang].format(am)
     if c:
-        api_str += ccm_str.format(reg, ccm)
-        api_str += c_str.format(c, device.get_underscore_name(),
-                                device.get_category().lower(),
-                                device.get_camel_case_name(),
-                                device.get_category())
+        api_str += ccm_str[lang].format(reg, ccm)
+        api_str += c_str[lang].format(c, device.get_underscore_name(),
+                                      device.get_category().lower(),
+                                      device.get_camel_case_name(),
+                                      device.get_category())
 
     ref = '.. _{0}_{1}_ruby_api:\n'.format(device.get_underscore_name(),
                                            device.get_category().lower())
@@ -292,7 +334,7 @@ All methods listed below are thread-safe.
     except KeyError:
         pass
 
-    return api.format(ref, api_desc, api_str)
+    return api[lang].format(ref, api_desc, api_str)
 
 def copy_examples_for_zip():
     examples = common.find_examples(device, file_path, 'ruby', 'example_', '.rb')
@@ -309,8 +351,11 @@ def copy_examples_for_zip():
 def make_files(com_new, directory):
     global device
     device = common.Device(com_new)
-
     file_name = '{0}_{1}_Ruby'.format(device.get_camel_case_name(), device.get_category())
+    title = {
+    'en': 'Ruby bindings',
+    'de': 'Ruby Bindings'
+    }
 
     directory += '/doc'
     if not os.path.exists(directory):
@@ -318,7 +363,7 @@ def make_files(com_new, directory):
 
     f = file('{0}/{1}.rst'.format(directory, file_name), "w")
     f.write(common.make_rst_header(device, 'ruby', 'Ruby'))
-    f.write(common.make_rst_summary(device, 'Ruby bindings'))
+    f.write(common.make_rst_summary(device, title[lang]))
     f.write(make_examples())
     f.write(make_api())
 

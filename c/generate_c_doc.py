@@ -47,6 +47,15 @@ def get_c_type(py_type):
     return py_type
 
 def fix_links(text):
+    parameter = {
+    'en': 'parameter',
+    'de': 'Parameter'
+    }
+    parameters = {
+    'en': 'parameters',
+    'de': 'Parameter'
+    }
+
     for packet in device.get_packets():
         name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
         if packet.get_type() == 'callback':
@@ -59,8 +68,8 @@ def fix_links(text):
                                                     packet.get_underscore_name())
         text = text.replace(name_false, name_right)
 
-    text = text.replace(":word:`parameter`", "parameter")
-    text = text.replace(":word:`parameters`", "parameters")
+    text = text.replace(":word:`parameter`", parameter[lang])
+    text = text.replace(":word:`parameters`", parameters[lang])
 
     return text
 
@@ -94,13 +103,17 @@ def make_examples():
                                     'c', 'example_', '.c', 'C')
 
 def make_methods(typ):
-    version_method = """
+    version_method = {
+    'en': """
 .. c:function:: int {0}_get_version({1} *{0}, char ret_name[40], uint8_t ret_firmware_version[3], uint8_t ret_binding_version[3])
 
  Returns the name (including the hardware version), the firmware version 
  and the binding version of the device. The firmware and binding versions are
  given in arrays of size 3 with the syntax [major, minor, revision].
+""",
+    'de': """
 """
+    }
 
     methods = ''
     func_start = '.. c:function:: int '
@@ -115,22 +128,31 @@ def make_methods(typ):
         methods += func + '\n'
 
     if typ == 'am':
-        methods += version_method.format(device.get_underscore_name(), device.get_camel_case_name())
+        methods += version_method[lang].format(device.get_underscore_name(), device.get_camel_case_name())
 
     return methods
 
 def make_callbacks():
+    param_format = {
+    'en': """
+ .. code-block:: c
+
+  void callback({0})
+""",
+    'de': """
+ .. code-block:: c
+
+  void callback({0})
+"""
+    }
+
     cbs = ''
     func_start = '.. c:var:: '
     for packet in device.get_packets('callback'):
         plist = make_parameter_list(packet)[2:].replace('*ret_', '')
         if not plist:
             plist = 'void'
-        params = """
- .. code-block:: c
-
-  void callback({0})
-""".format(plist)
+        params = param_format[lang].format(plist)
         desc = fix_links(common.shift_right(packet.get_doc()[1][lang], 1))
         name = '{0}_{1}'.format(device.get_upper_case_name(),
                                 packet.get_upper_case_name())
@@ -145,7 +167,8 @@ def make_callbacks():
     return cbs
 
 def make_api():
-    create_str = """
+    create_str = {
+    'en': """
 .. c:function:: void {0}_create({1} *{0}, const char *uid)
 
  Creates an object with the unique device ID *uid*:
@@ -157,42 +180,62 @@ def make_api():
 
  This object can then be added to the IP connection (see examples 
  :ref:`above <{0}_{2}_c_examples>`).
+""",
+    'de': """
 """
+    }
 
-    register_str = """
+    register_str = {
+    'en': """
 .. c:function:: void {0}_register_callback({1} *{0}, uint8_t id, void *callback)
 
  Registers a callback with ID *id* to the function *callback*. The available
  IDs with corresponding function signatures are listed 
  :ref:`below <{0}_{2}_c_callbacks>`.
+""",
+    'de': """
 """
+    }
 
-    bm_str = """
+    bm_str = {
+    'en': """
 Basic Methods
 ^^^^^^^^^^^^^
 
 {0}
 
 {1}
+""",
+    'de': """
 """
+    }
 
-    am_str = """
+    am_str = {
+    'en': """
 Advanced Methods
 ^^^^^^^^^^^^^^^^
 
 {0}
+""",
+    'de': """
 """
+    }
 
-    ccm_str = """
+    ccm_str = {
+    'en': """
 Callback Configuration Methods
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 {0}
 
 {1}
+""",
+    'de': """
 """
+    }
 
-    c_str = r"""
+    c_str = {
+    'en': """
 .. _{0}_{3}_c_callbacks:
 
 Callbacks
@@ -206,7 +249,7 @@ the device object, the callback ID and the callback function:
  .. code-block:: c
 
     void my_callback(int p) {{
-        printf("parameter: %d\n", p);
+        printf("parameter: %d\\n", p);
     }}
 
     {0}_register_callback(&{0}, {1}_CALLBACK_EXAMPLE, (void*)my_callback);
@@ -220,9 +263,13 @@ are described below.
  will be a lot better, since there is no roundtrip time.
 
 {2}
+""",
+    'de': """
 """
+    }
 
-    api = """
+    api = {
+    'en': """
 {0}
 API
 ---
@@ -249,28 +296,32 @@ All functions listed below are thread-safe.
 {1}
 
 {2}
+""",
+    'de': """
 """
-    cre = create_str.format(device.get_underscore_name(),
-                            device.get_camel_case_name(),
-                            device.get_category().lower())
-    reg = register_str.format(device.get_underscore_name(),
-                              device.get_camel_case_name(),
-                              device.get_category().lower())
+    }
+
+    cre = create_str[lang].format(device.get_underscore_name(),
+                                  device.get_camel_case_name(),
+                                  device.get_category().lower())
+    reg = register_str[lang].format(device.get_underscore_name(),
+                                    device.get_camel_case_name(),
+                                    device.get_category().lower())
     bm = make_methods('bm')
     am = make_methods('am')
     ccm = make_methods('ccm')
     c = make_callbacks()
     api_str = ''
     if bm:
-        api_str += bm_str.format(cre, bm)
+        api_str += bm_str[lang].format(cre, bm)
     if am:
-        api_str += am_str.format(am)
+        api_str += am_str[lang].format(am)
     if c:
-        api_str += ccm_str.format(reg, ccm)
-        api_str += c_str.format(device.get_underscore_name(),
-                                device.get_upper_case_name(),
-                                c,
-                                device.get_category().lower())
+        api_str += ccm_str[lang].format(reg, ccm)
+        api_str += c_str[lang].format(device.get_underscore_name(),
+                                      device.get_upper_case_name(),
+                                      c,
+                                      device.get_category().lower())
 
     ref = '.. _{0}_{1}_c_api:\n'.format(device.get_underscore_name(),
                                         device.get_category().lower())
@@ -280,7 +331,7 @@ All functions listed below are thread-safe.
     except KeyError:
         pass
 
-    return api.format(ref, api_desc, api_str)
+    return api[lang].format(ref, api_desc, api_str)
 
 def copy_examples_for_zip():
     examples = common.find_examples(device, file_path, 'c', 'example_', '.c')
@@ -297,16 +348,19 @@ def copy_examples_for_zip():
 def make_files(com_new, directory):
     global device
     device = common.Device(com_new)
-
     file_name = '{0}_{1}_C'.format(device.get_camel_case_name(), device.get_category())
-    
+    title = {
+    'en': 'C/C++ bindings',
+    'de': 'C/C++ Bindings'
+    }
+
     directory += '/doc'
     if not os.path.exists(directory):
         os.makedirs(directory)
 
     f = file('{0}/{1}.rst'.format(directory, file_name), "w")
     f.write(common.make_rst_header(device, 'c', 'C/C++'))
-    f.write(common.make_rst_summary(device, 'C/C++ bindings'))
+    f.write(common.make_rst_summary(device, title[lang]))
     f.write(make_examples())
     f.write(make_api())
 
