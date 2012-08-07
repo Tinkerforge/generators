@@ -283,7 +283,7 @@ Die folgenden Optionen sind möglich:
  "'<'",    "Callback wird ausgelöst wenn die Analogwert kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn die Analogwert größer als der min Wert ist (max wird ignoriert)"
  
-Der Standardwert ist ('x', 0, 0). 
+Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
