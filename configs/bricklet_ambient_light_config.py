@@ -107,8 +107,8 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :func:`Illuminance` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Illuminance` wird nur ausgelöst wenn die Beleuchtungsstärke seit der
-letzten Auslösung sich geändert hat.
+:func:`Illuminance` wird nur ausgelöst wenn sich die Beleuchtungsstärke seit der
+letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -152,8 +152,8 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :func:`AnalogValue` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`AnalogValue` wird nur ausgelöst wenn der Analogwert seit der
-letzten Auslösung sich geändert hat.
+:func:`AnalogValue` wird nur ausgelöst wenn sich der Analogwert seit der
+letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -379,7 +379,7 @@ last triggering.
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetIlluminanceCallbackPeriod`,
 ausgelöst. Der :word:`parameter` ist die Beleuchtungsstärke des Umgebungslichtsensors.
 
-:func:`Illuminance` wird nur ausgelöst wenn die Beleuchtungsstärke sich seit der
+:func:`Illuminance` wird nur ausgelöst wenn sich die Beleuchtungsstärke seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -404,7 +404,7 @@ last triggering.
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAnalogValueCallbackPeriod`,
 ausgelöst. Der :word:`parameter` ist die Analogwert des Umgebungslichtsensors.
 
-:func:`AnalogValue` wird nur ausgelöst wenn der Analogwert sich seit der
+:func:`AnalogValue` wird nur ausgelöst wenn sich der Analogwert seit der
 letzten Auslösung geändert hat.
 """
 }]

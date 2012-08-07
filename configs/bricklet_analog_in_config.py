@@ -99,8 +99,8 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :func:`Voltage` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Voltage` wird nur ausgelöst wenn die Spannung seit der
-letzten Auslösung sich geändert hat.
+:func:`Voltage` wird nur ausgelöst wenn sich die Spannung seit der
+letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -144,8 +144,8 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :func:`AnalogValue` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`AnalogValue` wird nur ausgelöst wenn der Analogwert seit der
-letzten Auslösung sich geändert hat.
+:func:`AnalogValue` wird nur ausgelöst wenn sich der Analogwert seit der
+letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -371,7 +371,7 @@ last triggering.
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetVoltageCallbackPeriod`,
 ausgelöst. Der :word:`parameter` ist die gemessene Spannung des Sensors.
 
-:func:`Voltage` wird nur ausgelöst wenn die Spannung sich seit der
+:func:`Voltage` wird nur ausgelöst wenn sich die Spannung seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -396,7 +396,7 @@ last triggering.
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAnalogValueCallbackPeriod`,
 ausgelöst. Der :word:`parameter` ist der Analogwert des Sensors.
 
-:func:`AnalogValue` wird nur ausgelöst wenn der Analogwert sich seit der
+:func:`AnalogValue` wird nur ausgelöst wenn sich der Analogwert seit der
 letzten Auslösung geändert hat.
 """
 }]

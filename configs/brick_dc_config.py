@@ -612,8 +612,8 @@ a change in the velocity.
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetCurrentVelocityPeriod`,
 ausgelöst. Der :word:`parameter` ist die *aktuelle* vom Motor genutzte Geschwindigkeit.
 
-:func:`CurrentVelocity` wird nur nach Ablauf der Periode ausgelöst, wenn die
-Geschwindigkeit sich geändert hat.
+:func:`CurrentVelocity` wird nur nach Ablauf der Periode ausgelöst, wenn sich die
+Geschwindigkeit geändert hat.
 """
 }]
 })
