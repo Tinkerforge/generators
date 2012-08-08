@@ -29,6 +29,13 @@ callback :func:`Distance` and set the period with
 """,
 'de':
 """
+Gibt die gemessene Entfernung des Sensors zurück. Der Wert ist in mm und die möglichen
+Entfernungsbereiche sind 40 bis 300, 100 bis 800 und 200 bis 1500, in Abhängigkeit vom
+gewählten IR Sensor.
+
+Wenn die Entfernung periodisch abgefragt werden soll, wird empfohlen
+den Callback :func:`Distance` zu nutzen und die Periode mit 
+:func:`SetDistanceCallbackPeriod` vorzugeben.
 """
 }]
 })
@@ -57,6 +64,18 @@ callback :func:`AnalogValue` and set the period with
 """,
 'de':
 """
+Gibt den Wert, wie vom 12 bit Analog-Digital-Wandler gelesen, zurück. Der 
+Wertebereich ist 0 bis 4095.
+
+.. note::
+ Der von :func:`GetCurrent` zurückgegebene Wert ist über mehrere
+ Messwerte gemittelt um das Rauschen zu vermindern, während :func:`GetAnalogValue`
+ unverarbeitete Analogwerte zurückgibt. Der einzige Grund :func:`GetAnalogValue`
+ zu nutzen, ist die volle Auflösung des Analog-Digital-Wandlers zu erhalten.
+ 
+Wenn der Analogwert periodisch abgefragt werden soll, wird empfohlen
+den Callback :func:`AnalogValue` zu nutzen und die Periode mit 
+:func:`SetAnalogValueCallbackPeriod` vorzugeben.
 """
 }]
 })
@@ -84,12 +103,28 @@ Sampling points are saved on the EEPROM of the Distance-IR Bricklet and
 loaded again on startup.
 
 .. note::
- An easy way to calibrate the sampling points of the Distace-IR Bricklet is
+ An easy way to calibrate the sampling points of the Distance-IR Bricklet is
  implemented in brickv. If you want to calibrate your Bricklet it is
  highly recommended to use this implementation.
 """,
 'de':
 """
+Setzt einen Messpunkt für eine vorgegebene Position in der Wertetabelle.
+Die Wertetabelle beinhaltet 128 äquidistante Analogwerte welche Entfernungen
+ensprechen. 
+
+Wenn eine Entfernung von 50cm bei einem Analogwert von 2048 gemessen wird, dann sollte
+der Aufruf der Funktion mit (64, 5000) erfolgen. Der verwendete Analog-Digital-Wandler
+hat eine Auflösung von 12 Bit. Mit 128 Messpunkten im gesamten Bereich bedeutet das, dass jeder Messpunkt
+32 Analogwerte umfasst. Daher wird dem Analogwert 2048 der Messpunkt 64 = 2048/32 zugeordnet.
+
+Messpunkte werden im EEPROM des Distance-IR Bricklet gespeichert und werden bei
+jedem Hochfahren geladen.
+
+.. note::
+ Ein einfacher Weg, die Messpunkte des Distance-IR Bricklet zu kalibrieren, ist im Brick Viewer
+ implementiert. Wenn der Bricklet kalibriert werden soll wird dringend empfohlen diese Implementierung
+ zu nutzen.
 """
 }]
 })
@@ -107,6 +142,8 @@ Returns the distance to a sampling point position as set by
 """,
 'de':
 """
+Gibt die Entfernung eines Messpunktes zurück, wie von :func:`SetSamplingPoint`
+gesetzt.
 """
 }]
 })
@@ -128,6 +165,13 @@ The default value is 0.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher der :func:`Distance` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+:func:`Distance` wird nur ausgelöst wenn sich der Strom seit der
+letzten Auslösung geändert hat.
+
+Der Standardwert ist 0.
 """
 }]
 })
@@ -143,6 +187,8 @@ Returns the period as set by :func:`SetDistanceCallbackPeriod`.
 """,
 'de':
 """
+Gibt die Periode zurück, wie von :func:`SetDistanceCallbackPeriod`
+gesetzt.
 """
 }]
 })
@@ -164,6 +210,13 @@ The default value is 0.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher der :func:`AnalogValue` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+:func:`AnalogValue` wird nur ausgelöst wenn sich der Analogwert seit der
+letzten Auslösung geändert hat.
+
+Der Standardwert ist 0.
 """
 }]
 })
@@ -179,6 +232,8 @@ Returns the period as set by :func:`SetAnalogValueCallbackPeriod`.
 """,
 'de':
 """
+Gibt die Periode zurück, wie von :func:`SetAnalogValueCallbackPeriod`
+gesetzt.
 """
 }]
 })
@@ -210,6 +265,21 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
+Setzt den Schwellwert für den :func:`DistanceReached` Callback.
+
+Die folgenden Optionen sind möglich:
+
+.. csv-table::
+ :header: "Option", "Beschreibung"
+ :widths: 10, 100
+ 
+ "'x'",    "Callback ist inaktiv"
+ "'o'",    "Callback wird ausgelöst wenn die Entfernung *ausserhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst wenn die Entfernung *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst wenn die Entfernung kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn die Entfernung größer als der min Wert ist (max wird ignoriert)"
+ 
+Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -227,6 +297,8 @@ Returns the threshold as set by :func:`SetDistanceCallbackThreshold`.
 """,
 'de':
 """
+Gibt den Schwellwert zurück, wie von :func:`SetDistanceCallbackThreshold`
+gesetzt.
 """
 }]
 })
@@ -249,15 +321,30 @@ The following options are possible:
  :widths: 10, 100
 
  "'x'",    "Callback is turned off."
- "'o'",    "Callback is triggered when the distance is *outside* the min and max values"
- "'i'",    "Callback is triggered when the distance is *inside* the min and max values"
- "'<'",    "Callback is triggered when the distance is smaller than the min value (max is ignored)"
- "'>'",    "Callback is triggered when the distance is greater than the min value (max is ignored)"
+ "'o'",    "Callback is triggered when the analog value is *outside* the min and max values"
+ "'i'",    "Callback is triggered when the analog value is *inside* the min and max values"
+ "'<'",    "Callback is triggered when the analog value is smaller than the min value (max is ignored)"
+ "'>'",    "Callback is triggered when the analog value is greater than the min value (max is ignored)"
 
 The default value is ('x', 0, 0).
 """,
 'de':
 """
+Setzt den Schwellwert für den :func:`AnalogValueReached` Callback.
+
+Die folgenden Optionen sind möglich:
+
+.. csv-table::
+ :header: "Option", "Beschreibung"
+ :widths: 10, 100
+ 
+ "'x'",    "Callback ist inaktiv"
+ "'o'",    "Callback wird ausgelöst wenn der Analogwert *ausserhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst wenn der Analogwert *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst wenn der Analogwert kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn der Analogwert größer als der min Wert ist (max wird ignoriert)"
+ 
+Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -275,6 +362,8 @@ Returns the threshold as set by :func:`SetAnalogValueCallbackThreshold`.
 """,
 'de':
 """
+Gibt den Schwellwert zurück, wie von :func:`SetAnalogValueCallbackThreshold`
+gesetzt.
 """
 }]
 })
@@ -300,6 +389,17 @@ The default value is 100.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher die Schwellwert Callbacks
+
+ :func:`DistanceReached`, :func:`AnalogValueReached`
+ 
+ausgelöst werden, wenn die Schwellwerte 
+
+ :func:`SetDistanceCallbackThreshold`, :func:`SetAnalogValueCallbackThreshold`
+ 
+weiterhin erreicht bleiben.
+
+Der Standardwert ist 100.
 """
 }]
 })
@@ -315,6 +415,8 @@ Returns the debounce period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
 """
+Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+gesetzt.
 """
 }]
 })
@@ -335,6 +437,11 @@ last triggering.
 """,
 'de':
 """
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetDistanceCallbackPeriod`,
+ausgelöst. Der :word:`parameter` ist die Entfernung des Sensors.
+
+:func:`Distance` wird nur ausgelöst wenn sich der Strom seit der
+letzten Auslösung geändert hat.
 """
 }]
 })
@@ -355,6 +462,11 @@ last triggering.
 """,
 'de':
 """
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAnalogValueCallbackPeriod`,
+ausgelöst. Der :word:`parameter` ist der Analogwert des Sensors.
+
+:func:`AnalogValue` wird nur ausgelöst wenn sich der Analogwert seit der
+letzten Auslösung geändert hat.
 """
 }]
 })
@@ -375,6 +487,12 @@ with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
 """
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+:func:`SetDistanceCallbackThreshold` gesetzt, erreicht wird.
+Der :word:`parameter` ist die Entfernung des Sensors.
+
+Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
+mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 """
 }]
 })
@@ -395,6 +513,12 @@ with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
 """
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+:func:`SetAnalogValueCallbackThreshold` gesetzt, erreicht wird.
+Der :word:`parameter` ist der Analogwert des Umgebungslichtsensors.
+
+Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
+mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 """
 }]
 })
