@@ -327,10 +327,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
  
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Analogwert *ausserhalb* des min und max Wertes ist"
- "'i'",    "Callback wird ausgelöst wenn die Analogwert *innerhalb* des min und max Wertes ist"
- "'<'",    "Callback wird ausgelöst wenn die Analogwert kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn die Analogwert größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst wenn der Analogwert *ausserhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst wenn der Analogwert *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst wenn der Analogwert kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn der Analogwert größer als der min Wert ist (max wird ignoriert)"
  
 Der Standardwert ist ('x', 0, 0).
 """
@@ -451,7 +451,7 @@ last triggering.
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAnalogValueCallbackPeriod`,
-ausgelöst. Der :word:`parameter` ist die Analogwert des Umgebungslichtsensors.
+ausgelöst. Der :word:`parameter` ist der Analogwert des Umgebungslichtsensors.
 
 :func:`AnalogValue` wird nur ausgelöst wenn sich der Analogwert seit der
 letzten Auslösung geändert hat.
