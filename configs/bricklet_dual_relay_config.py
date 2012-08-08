@@ -32,6 +32,15 @@ The default value is (false, false).
 """,
 'de':
 """
+Setzt den Zustand der Relais, *true* bedeutet ein und *false* aus.
+Beispiel: (true, false) schaltet Relais 1 ein und Relais 2 aus.
+
+Wenn nur eines der Relais gesetzt werden soll und der aktuelle Zustand des anderen Relais
+nicht bekannt ist, dann kann der Zustand mit :func:`GetState` ausgelesen werden.
+
+Laufende Monoflop Timer werden überschrieben wenn diese Funktion aufgerufen wird.
+
+Der Standardwert ist (false, false).
 """
 }]
 })
@@ -48,6 +57,7 @@ Returns the state of the relays, *true* means on and *false* means off.
 """,
 'de':
 """
+Gibt den Zustand der Relais zurück, *true* bedeutet ein und *false* aus.
 """
 }]
 })
@@ -79,6 +89,20 @@ connection is lost, the relay will turn off in at most two seconds.
 """,
 'de':
 """
+Der erste Parameter kann 1 oder 2 sein (Relais 1 oder Relais 2). Der zweite
+Parameter ist der gewünschte Zustand des Relais (*true* bedeutet ein und *false* aus.
+Der dritte Parameter stellt die Zeit (in ms) dar, welche das Relais den Zustand halten soll.
+
+Wenn diese Funktion mit den Parametern (1, true, 1500) aufgerufen wird:
+Relais 1 wird angeschalten und nach 1,5s wieder ausgeschalten.
+
+Ein Monoflop kann als fehlersicherer Mechanismus verwendet werden. Beispiel:
+Angenommen ein RS485 Bus und ein Dual Relay Bricklet ist an ein Slave Stapel verbunden.
+Jetzt kann diese Funktion sekündlich, mit einem Zeitparameter von 2 Sekunden, aufgerufen werden.
+Das Relais wird die gesamte Zeit ein sein. Wenn jetzt die RS485 Verbindung getrennt wird, 
+wird das Relais nach spätestens zwei Sekunden ausschalten.
+
+.. versionadded:: 1.1.1
 """
 }]
 })
@@ -103,6 +127,12 @@ as 0.
 """,
 'de':
 """
+Gibt (für das angegebene Relais) den aktuellen Zustand und die Zeit, wie von 
+:func:`SetMonoflop gesetzt, sowie die noch verbleibende Zeit bis zum Zustandswechsel, zurück.
+
+Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.
+
+.. versionadded:: 1.1.1
 """
 }]
 })
@@ -123,6 +153,11 @@ parameter contain the relay (1 or 2) and the current state of the relay
 """,
 'de':
 """
+Dieser Callback wird ausgelöst wenn ein Monoflop Timer abläuft (0 erreicht).
+Die Parameter enthalten das auslösende Relais (1 oder 2) und den aktuellen Zustand
+des Relais (der Zustand nach dem Monoflop).
+
+.. versionadded:: 1.1.1
 """
 }]
 })
