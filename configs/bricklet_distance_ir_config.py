@@ -515,7 +515,7 @@ with the period as set by :func:`SetDebouncePeriod`.
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
 :func:`SetAnalogValueCallbackThreshold` gesetzt, erreicht wird.
-Der :word:`parameter` ist der Analogwert des Umgebungslichtsensors.
+Der :word:`parameter` ist der Analogwert des Sensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
 mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
