@@ -90,7 +90,7 @@ connection is lost, the relay will turn off in at most two seconds.
 'de':
 """
 Der erste Parameter kann 1 oder 2 sein (Relais 1 oder Relais 2). Der zweite
-Parameter ist der gewünschte Zustand des Relais (*true* bedeutet ein und *false* aus.
+Parameter ist der gewünschte Zustand des Relais (*true* bedeutet ein und *false* aus).
 Der dritte Parameter stellt die Zeit (in ms) dar, welche das Relais den Zustand halten soll.
 
 Wenn diese Funktion mit den Parametern (1, true, 1500) aufgerufen wird:
