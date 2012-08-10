@@ -34,7 +34,7 @@ Gibt die Position des Joystick zurück. Der Wertebereich ist von -100 bis
 100 für beide Achsen. Die Mittelposition des Joysticks ist x=0, y=0.
 Die zurückgegebenen Werte sind gemittelt und kalibriert (siehe :func:`Calibrate`).
 
-Wenn die Positionen periodisch abgefragt werden soll, wird empfohlen
+Wenn die Positionen periodisch abgefragt werden sollen, wird empfohlen
 den Callback :func:`Position` zu nutzen und die Periode mit 
 :func:`SetPositionCallbackPeriod` vorzugeben.
 """
@@ -95,7 +95,7 @@ Wertebereich ist 0 bis 4095.
  unverarbeitete Analogwerte zurückgibt. Der einzige Grund :func:`GetAnalogValue`
  zu nutzen, ist die volle Auflösung des Analog-Digital-Wandlers zu erhalten.
  
-Wenn der Analogwert periodisch abgefragt werden soll, wird empfohlen
+Wenn die Analogwerte periodisch abgefragt werden sollen, wird empfohlen
 den Callback :func:`AnalogValue` zu nutzen und die Periode mit 
 :func:`SetAnalogValueCallbackPeriod` vorzugeben.
 """
@@ -148,7 +148,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :func:`Position` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Position` wird nur ausgelöst wenn sich der Strom seit der
+:func:`Position` wird nur ausgelöst wenn sich die Position seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -183,7 +183,7 @@ com['packets'].append({
 Sets the period in ms with which the :func:`AnalogValue` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`AnalogValue` is only triggered if the analog value has changed since the
+:func:`AnalogValue` is only triggered if the analog values has changed since the
 last triggering.
 
 The default value is 0.
@@ -193,7 +193,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :func:`AnalogValue` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`AnalogValue` wird nur ausgelöst wenn sich der Analogwert seit der
+:func:`AnalogValue` wird nur ausgelöst wenn sich die Analogwerte seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -315,7 +315,8 @@ The following options are possible:
 The default value is ('x', 0, 0, 0, 0).
 """,
 'de':
-"""Setzt den Schwellwert für den :func:`AnalogValueReached` Callback.
+"""
+Setzt den Schwellwert für den :func:`AnalogValueReached` Callback.
 
 Die folgenden Optionen sind möglich:
 
