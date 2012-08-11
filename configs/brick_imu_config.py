@@ -30,6 +30,12 @@ to use the callback :func:`Acceleration` and set the period with
 """,
 'de':
 """
+Gibt die kalibrierten Beschleunigungen des Beschleunigungsmessers für die 
+X, Y und Z-Achse in mG zurück (G/1000, 1G = 9.80605m/s²).
+
+Wenn die kalibrierten Beschleunigunge periodisch abgefragt werden soll, wird empfohlen
+den Callback :func:`Acceleration` zu nutzen und die Periode mit :func:`SetAccelerationPeriod`
+vorzugeben.
 """
 }]
 })
@@ -52,6 +58,12 @@ to use the callback :func:`MagneticField` and set the period with
 """,
 'de':
 """
+Gibt das kalibrierte magnetische Feld des Magnetometers mit den X, Y und
+Z Komponenten in mG zurück (Milligauss oder Nanotesla).
+
+Wenn das magnetische Feld periodisch abgefragt werden soll, wird empfohlen
+den Callback :func:`MagneticField` zu nutzen und die Periode mit :func:`SetMagneticFieldPeriod`
+vorzugeben.
 """
 }] 
 })
@@ -75,6 +87,13 @@ to use the callback :func:`AngularVelocity` and set the period with
 """,
 'de':
 """
+Gibt die kalibrierten Winkelgeschwindigkeiten des Gyroskops für die X, Y und
+Z-Achse in °/17,5s zurück. (Um den Wert in °/s zu erhalten ist es notwendig
+durch 17,5 zu teilen)
+
+Wenn die Winkelgeschwindigkeiten periodisch abgefragt werden sollen, wird empfohlen
+den Callback :func:`AngularVelocity` zu nutzen und die Periode mit
+:func:`SetAngularVelocityPeriod` vorzugeben.
 """
 }] 
 })
@@ -106,6 +125,14 @@ to use the callback :func:`AllData` and set the period with
 """,
 'de':
 """
+Gibt die Daten von :func:`GetAcceleration`, :func:`GetMagneticField` 
+und :func:`GetAngularVelocity` sowie die Temperatur des IMU Brick zurück.
+
+Die Temperatur wird in °C/100 ausgegeben.
+
+Wenn die Daten periodisch abgefragt werden sollen, wird empfohlen den
+Callback :func:`AllData` zu nutzen und die Periode mit :func:`SetAllDataPeriod`
+vorzugeben.
 """
 }] 
 })
@@ -134,6 +161,18 @@ to use the callback :func:`Orientation` and set the period with
 """,
 'de':
 """
+Gibt die aktuelle Orientierung (Roll-, Nick-, Gierwinkel) des IMU Brick in Eulerwinkeln
+(in 1/100 °) zurück. Zu beachten ist, dass Eulerwinkel immer eine 
+`kardanische Blockade <http://de.wikipedia.org/wiki/Gimbal_Lock>`__ erfahren.
+
+Wir empfehlen die Verwendung von Quaternionen stattdessen.
+
+Die Reihenfolge in denen die Orientierungswerte angewandt werden sollten,
+ist Roll-, Nick-, Gierwinkel.
+
+Wenn die Orientierung periodisch abgefragt werden sollen, wird empfohlen den
+Callback :func:`Orientation` zu nutzen und die Periode mit :func:`SetOrientationPeriod`
+vorzugeben.
 """
 }] 
 })
@@ -174,6 +213,29 @@ to use the callback :func:`Quaternion` and set the period with
 """,
 'de':
 """
+Gibt die aktuelle Orientierung (x, y, z, w) des IMU Brick als
+`Quaterinonen <http://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__ zurück.
+
+Die Umrechnung von Quaternionen in Eulerwinkel ist mit folgender Formel möglich::
+
+ roll  = atan2(2*y*w - 2*x*z, 1 - 2*y*y - 2*z*z)
+ pitch = atan2(2*x*w - 2*y*z, 1 - 2*x*x - 2*z*z)
+ yaw   =  asin(2*x*y + 2*z*w)
+ 
+Diese Umrechnung ist irreversibel aufgrund der 
+`kardanischen Blockade <http://de.wikipedia.org/wiki/Gimbal_lock>`__.
+
+Die Umrechnung von Quaternionen in eine OpenGL Translationsmatrix ist
+mit folgender Formel möglich::
+
+ matrix = [[1 - 2*(y*y + z*z),     2*(x*y - w*z),     2*(x*z + w*y), 0],
+           [    2*(x*y + w*z), 1 - 2*(x*x + z*z),     2*(y*z - w*x), 0],
+           [    2*(x*z - w*y),     2*(y*z + w*x), 1 - 2*(x*x + y*y), 0],
+           [                0,                 0,                 0, 1]]
+
+Wenn die Quaternionen periodisch abgefragt werden sollen, wird empfohlen den
+Callback :func:`Quaternion` zu nutzen und die Periode mit :func:`SetQuaternionPeriod`
+vorzugeben.
 """
 }] 
 })
@@ -190,6 +252,7 @@ Returns the temperature of the IMU Brick. The temperature is given in
 """,
 'de':
 """
+Gibt die Temperatur (in °C/100) des IMU Brick zurück.
 """
 }] 
 })
@@ -206,6 +269,7 @@ Turns the orientation and direction LEDs of the IMU Brick on.
 """,
 'de':
 """
+Aktiviert die Orientierungs- und Richtungs-LEDs des IMU Brick.
 """
 }] 
 })
@@ -221,6 +285,7 @@ Turns the orientation and direction LEDs of the IMU Brick off.
 """,
 'de':
 """
+Deaktiviert die Orientierungs- und Richtungs-LEDs des IMU Brick.
 """
 }] 
 })
@@ -237,6 +302,7 @@ are on, false otherwise.
 """,
 'de':
 """
+Gibt zurück ob die Orientierungs- und Richtungs-LEDs des IMU Brick aktiv sind. 
 """
 }] 
 })
@@ -252,6 +318,7 @@ Not implemented yet.
 """,
 'de':
 """
+Bisher nicht implementiert.
 """
 }] 
 })
@@ -267,6 +334,7 @@ Not implemented yet.
 """,
 'de':
 """
+Bisher nicht implementiert.
 """
 }] 
 })
@@ -282,6 +350,7 @@ Not implemented yet.
 """,
 'de':
 """
+Bisher nicht implementiert.
 """
 }] 
 })
@@ -297,6 +366,7 @@ Not implemented yet.
 """,
 'de':
 """
+Bisher nicht implementiert.
 """
 }] 
 })
@@ -338,6 +408,34 @@ The default value is 30.
 """,
 'de':
 """
+Setzt die Konvergenzgeschwindigkeit des IMU Brick in °/s. Die 
+Konvergenzgeschwindigkeit bestimmt wie die unterschiedlichen Sensormessungen
+vereinigt werden.
+
+Wenn die Orientierung des IMU Brick eine Abweichung von 10° hat und die
+Konvergenzgeschwindigkeit auf 20°/s konfiguriert ist, dann dauert es
+0,5s bis die Orientierung korrigiert ist. Bei einer zu hohen Konvergenzgeschwindigkeit
+wird nach Erreichen der korrekten Orientierung, diese um die Fluktuationen des
+Beschleunigungsmessers und des Magnetometers schwanken.
+
+Wenn die Konvergenzgeschwindigkeit auf 0 gesetzt wird, erfolgt die Berechnung der
+Orientierung praktisch nur anhand der Gyroskopdaten. Dies ergibt sehr gleichmäßige
+Bewegungen aber Fehler des Gyroskops werden nicht korrigiert. Wenn die
+Konvergenzgeschwindigkeit über 500 gesetzt wird, erfolgt die Berechnung der
+Orientierung praktisch nur anhand der Beschleunigungsmesser- und Magnetometerdaten.
+In diesem Fall sind die Bewegungen abrupt und die Werte werden schwanken. Es
+treten aber keine akkumultiven Fehler auf.
+
+In Anwendungen mit hohen Winkelgeschwindigkeiten wird eine hohe Konvergenzgeschwindigkeit
+empfohlen, so dass Fehler des Gyroskops schnell korrigiert werden können. In
+Anwendungen mit langsamen Bewegungen wird entsprechend eine geringe
+Konvergenzgeschwindigkeit empfohlen. Es ist möglich die Konvergenzgeschwindigkeit 
+spontan zu ändern. Dadurch ist es möglich (und empfohlen) direkt vor einer abrupten 
+Bewegung die Konvergenzgeschwindigkeit zu erhöhen und im Anschluss wieder zu verringern.
+
+Um ein Gefühl für einen guten Wert, für die Konvergenzgeschwindigkeit,
+in deiner Anwendung zu bekommen ist es ratsam im Brick Viewer verschiedenste Werte
+auszuprobieren.
 """
 }] 
 })
@@ -353,6 +451,7 @@ Returns the convergence speed as set by :func:`SetConvergenceSpeed`.
 """,
 'de':
 """
+Gibt die Konvergenzgeschwindigkeit zurück, wie von :func:`SetConvergenceSpeed` gesetzt.
 """
 }] 
 })
@@ -401,6 +500,37 @@ temperature for one of the sampling points.
 """,
 'de':
 """
+Es sind folgende verschiendene Kalibrierungen möglich:
+
+.. csv-table::
+ :header: "Typ", "Beschreibung",        "Werte"
+ :widths: 10, 40, 100
+ 
+ "0",    "Beschleunigungsmesser Verstärkung", "[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]"
+ "1",    "Beschleunigungsmesser Versatz", "[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]"
+ "2",    "Magnetometer Verstärkung",  "[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]"
+ "3",    "Magnetometer Versatz",  "[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]"
+ "4",    "Gyroscope Verstärkung",     "[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]"
+ "5",    "Gyroscope Versatz",     "[bias xl, bias yl, bias zl, temp l, bias xh, bias yh, bias zh, temp h, 0, 0]"
+
+Die Kalibrierung mittels Verstärkung und Versatz wird über folgende Formel realisiert::
+
+ new_value = (bias + orig_value) * gain_mul / gain_div
+
+Für die Implementierung einer eigenen Kalibriersoftware sollte beachtet werden, dass
+zuerst die bisherige Kalibrierung rückgängig gemacht werden muss (Versatz auf 0 und 
+Verstärkung auf 1/1 setzen) und das über mehrere tausend Werte gemittelt werden sollte
+um ein benutzbares Ergebnis zu erhalten.
+
+Der Versatz des Gyroskops ist sehr temperaturabhängig und daher muss die Kalibrierung des
+Versatzes mit zwei unterschiedlichen Temperaturen erfolgen. Die Werte x1, y1, z1 und temp 1
+sind der Versatz für x, y, z und die zugehörige geringe Temperatur. Die Werte xh, yh, zh 
+und temp h sind entsprechend für eine höhere Temperatur. Die Temperaturdifferenz sollte
+mindestens 5°C betragen. Die übliche Betriebstemperatur des IMU Brick sollte einer der
+Kalibrierpunkte sein.
+
+.. note::
+ Wir empfehlen dringend den Brick Viewer zur Kalibrierung des IMU Brick zu verwenden.
 """
 }] 
 })
@@ -417,6 +547,7 @@ Returns the calibration for a given type as set by :func:`SetCalibration`.
 """,
 'de':
 """
+Gibt die Kalibrierung für den ausgewählten Typ zurück, wie von :func:`SetCalibration` gesetzt.
 """
 }] 
 })
@@ -435,6 +566,10 @@ The default value is 0.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher der :func:`Acceleration` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+Der Standardwert ist 0.
 """
 }] 
 })
@@ -450,6 +585,7 @@ Returns the period as set by :func:`SetAccelerationPeriod`.
 """,
 'de':
 """
+Gibt die Periode zurück, wie von :func:`SetAccelerationPeriod` gesetzt.
 """
 }] 
 })
@@ -466,6 +602,8 @@ periodically. A value of 0 turns the callback off.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher der :func:`MagneticField` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
 """
 }] 
 })
@@ -481,6 +619,7 @@ Returns the period as set by :func:`SetMagneticFieldPeriod`.
 """,
 'de':
 """
+Gibt die Periode zurück, wie von :func:`SetMagneticFieldPeriod` gesetzt.
 """
 }] 
 })
@@ -497,6 +636,8 @@ periodically. A value of 0 turns the callback off.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher der :func:`AngularVelocity` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
 """
 }] 
 })
@@ -512,6 +653,7 @@ Returns the period as set by :func:`SetAngularVelocityPeriod`.
 """,
 'de':
 """
+Gibt die Periode zurück, wie von :func:`SetAngularVelocityPeriod` gesetzt.
 """
 }] 
 })
@@ -528,6 +670,8 @@ periodically. A value of 0 turns the callback off.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher der :func:`AllData` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
 """
 }] 
 })
@@ -543,6 +687,7 @@ Returns the period as set by :func:`SetAllDataPeriod`.
 """,
 'de':
 """
+Gibt die Periode zurück, wie von :func:`SetAllDataPeriod` gesetzt.
 """
 }] 
 })
@@ -559,6 +704,8 @@ periodically. A value of 0 turns the callback off.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher der :func:`Orientation` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
 """
 }] 
 })
@@ -574,6 +721,7 @@ Returns the period as set by :func:`SetOrientationPeriod`.
 """,
 'de':
 """
+Gibt die Periode zurück, wie von :func:`SetOrientationPeriod` gesetzt.
 """
 }] 
 })
@@ -590,6 +738,8 @@ periodically. A value of 0 turns the callback off.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher der :func:`Quaternion` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
 """
 }] 
 })
@@ -605,6 +755,7 @@ Returns the period as set by :func:`SetQuaternionPeriod`.
 """,
 'de':
 """
+Gibt die Periode zurück, wie von :func:`SetQuaternionPeriod` gesetzt.
 """
 }] 
 })
@@ -624,6 +775,8 @@ for the x, y and z axis.
 """,
 'de':
 """
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAccelerationPeriod`,
+ausgelöst. Die :word:`parameters` sind die Beschleunigungen der X, Y und Z-Achse.
 """
 }] 
 })
@@ -643,6 +796,8 @@ for the x, y and z axis.
 """,
 'de':
 """
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetMagneticFieldPeriod`,
+ausgelöst. Die :word:`parameters` sind die Magnetfeldkomponenten der X, Y und Z-Achse.
 """
 }] 
 })
@@ -662,6 +817,8 @@ for the x, y and z axis.
 """,
 'de':
 """
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAngularVelocityPeriod`,
+ausgelöst. Die :word:`parameters` sind die Winkelgewschindigkeiten der X, Y und Z-Achse.
 """
 }] 
 })
@@ -689,6 +846,10 @@ well as the temperature of the IMU Brick.
 """,
 'de':
 """
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAllDataPeriod`,
+ausgelöst. Die :word:`parameters` sind die Beschleunigungen, Magnetfeldkomponenten
+und die Winkelgeschwindigkeiten der X, Y und Z-Achse sowie die Temperatur
+des IMU Brick.
 """
 }] 
 })
@@ -709,6 +870,9 @@ This callback is triggered periodically with the period that is set by
 """,
 'de':
 """
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetOrientationPeriod`,
+ausgelöst. Die :word:`parameters` sind die Orientierung (Roll-, Nick-, Gierwinkel) des
+IMU Brick in Eulerwinkeln. Siehe :func:`GetOrientation` für Details.
 """
 }] 
 })
@@ -730,6 +894,9 @@ for details.
 """,
 'de':
 """
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetQuaternionPeriod`,
+ausgelöst. Die :word:`parameters` sind die Orientierung (x, y, z, w) des
+IMU Brick in Quaternionen. Siehe :func:`GetQuaternion` für Details.
 """
 }] 
 })

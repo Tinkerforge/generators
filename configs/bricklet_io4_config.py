@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'version': [1, 0, 0],
+    'version': [1, 0, 1],
     'category': 'Bricklet',
     'name': ('IO4', 'io4', 'IO-4'),
     'manufacturer': 'Tinkerforge',
@@ -200,6 +200,87 @@ For example:
   currently pin 0 is high and pins 1-3 are low.
 * (9, 14) means that an interrupt on pins 0 and 3
   occurred and currently pin 0 is low and pins 1-3 are high.
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetMonoflop', 'set_monoflop'),
+'elements': [('pin_mask', 'uint8', 1, 'in'),
+             ('value_mask', 'uint8', 1, 'in'),
+             ('time', 'uint32', 1, 'in')],
+'doc': ['am', {
+'en':
+"""
+Configures a monoflop of the pins specified by the first parameter as 4 bit
+long bit mask. The specified pins must be configured for output. Non-output
+pins will be ignored.
+
+The second parameter is a bit mask with the desired value of the specified
+output pins (*true* means high and *false* means low).
+
+The third parameter indicates the time (in ms) that the pins should hold
+the value.
+
+If this function is called with the parameters ((1 << 0) | (1 << 3), (1 << 0), 1500):
+Pin 0 will get high and Pin 3 will get low. In 1.5s Pin 0 will get low and Pin
+3 will get high again.
+
+A monoflop can be used as a failsafe mechanism. For example: Lets assume you
+have a RS485 bus and an IO-4 Bricklet connected to one of the slave
+stacks. You can now call this function every second, with a time parameter
+of two seconds and Pin 0 set to high. Pin 0 will be high all the time. If now
+the RS485 connection is lost, then Pin 0 will get low in at most two seconds.
+
+.. versionadded:: 1.1.1
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetMonoflop', 'get_monoflop'),
+'elements': [('pin', 'uint8', 1, 'in'),
+             ('value', 'uint8', 1, 'out'),
+             ('time', 'uint32', 1, 'out'),
+             ('time_remaining', 'uint32', 1, 'out')],
+'doc': ['am', {
+'en':
+"""
+Returns (for the given pin) the current value and the time as set by
+:func:`SetMonoflop` as well as the remaining time until the value flips.
+
+If the timer is not running currently, the remaining time will be returned
+as 0.
+
+.. versionadded:: 1.1.1
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('MonoflopDone', 'monoflop_done'),
+'elements': [('pin_mask', 'uint8', 1, 'out'),
+             ('value_mask', 'uint8', 1, 'out')],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered whenever a monoflop timer reaches 0. The
+:word:`parameters` contain the pins and the current value of the pins
+(the value after the monoflop).
+
+.. versionadded:: 1.1.1
 """,
 'de':
 """

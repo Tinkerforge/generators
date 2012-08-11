@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'version': [1, 0, 0],
+    'version': [1, 0, 1],
     'category': 'Bricklet',
     'name': ('IO16', 'io16', 'IO-16'),
     'manufacturer': 'Tinkerforge',
@@ -58,7 +58,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetPortConfiguration', 'set_port_configuration'), 
 'elements': [('port', 'char', 1, 'in'),
-             ('port_mask', 'uint8', 1, 'in'),
+             ('pin_mask', 'uint8', 1, 'in'),
              ('direction', 'char', 1, 'in'),
              ('value', 'bool', 1, 'in')],
 'doc': ['bm', {
@@ -208,6 +208,90 @@ For example:
   currently pin 0 is high and pins 1-7 are low.
 * ("b", 128, 254) means that on port b an interrupt on pins 0 and 7
   occurred and currently pin 0 is low and pins 1-7 are high.
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetPortMonoflop', 'set_port_monoflop'),
+'elements': [('port', 'char', 1, 'in'),
+             ('pin_mask', 'uint8', 1, 'in'),
+             ('value_mask', 'uint8', 1, 'in'),
+             ('time', 'uint32', 1, 'in')],
+'doc': ['am', {
+'en':
+"""
+Configures a monoflop of the pins specified by the second parameter as 4 bit
+long bit mask. The specified pins must be configured for output. Non-output
+pins will be ignored.
+
+The third parameter is a bit mask with the desired value of the specified
+output pins (*true* means high and *false* means low).
+
+The forth parameter indicates the time (in ms) that the pins should hold
+the value.
+
+If this function is called with the parameters ('a', (1 << 0) | (1 << 3), (1 << 0), 1500):
+Pin 0 will get high and Pin 3 will get low on port 'a'. In 1.5s Pin 0 will get
+low and Pin 3 will get high again.
+
+A monoflop can be used as a failsafe mechanism. For example: Lets assume you
+have a RS485 bus and an IO-16 Bricklet connected to one of the slave
+stacks. You can now call this function every second, with a time parameter
+of two seconds and Pin 0 set to high. Pin 0 will be high all the time. If now
+the RS485 connection is lost, then Pin 0 will get low in at most two seconds.
+
+.. versionadded:: 1.1.2
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetPortMonoflop', 'get_port_monoflop'),
+'elements': [('port', 'char', 1, 'in'),
+             ('pin', 'uint8', 1, 'in'),
+             ('value', 'uint8', 1, 'out'),
+             ('time', 'uint32', 1, 'out'),
+             ('time_remaining', 'uint32', 1, 'out')],
+'doc': ['am', {
+'en':
+"""
+Returns (for the given pin) the current value and the time as set by
+:func:`SetPortMonoflop` as well as the remaining time until the value flips.
+
+If the timer is not running currently, the remaining time will be returned
+as 0.
+
+.. versionadded:: 1.1.2
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('MonoflopDone', 'monoflop_done'),
+'elements': [('port', 'char', 1, 'out'),
+             ('pin_mask', 'uint8', 1, 'out'),
+             ('value_mask', 'uint8', 1, 'out')],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered whenever a monoflop timer reaches 0. The
+:word:`parameters` contain the port, the pins and the current value of the pins
+(the value after the monoflop).
+
+.. versionadded:: 1.1.2
 """,
 'de':
 """

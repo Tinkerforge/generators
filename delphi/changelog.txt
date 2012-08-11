@@ -1,3 +1,4 @@
 1.0.0: Initial version
 1.0.1: TThread.CurrentThread is not supported in Delphi 2007 use Windows.GetCurrentThreadId instead
        Move callback wrappers from private to protected
+1.0.2: Add monoflop functionality to IO-4 and IO-16 Bricklet API

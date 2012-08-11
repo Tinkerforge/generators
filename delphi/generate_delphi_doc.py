@@ -40,6 +40,15 @@ lang = 'en'
 file_path = ''
 
 def fix_links(text):
+    parameter = {
+    'en': 'parameter',
+    'de': 'Parameter'
+    }
+    parameters = {
+    'en': 'parameters',
+    'de': 'Parameter'
+    }
+
     cls = device.get_category() + device.get_camel_case_name()
     for packet in device.get_packets():
         name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
@@ -50,8 +59,8 @@ def fix_links(text):
             name_right = ':delphi:func:`{1} <T{0}.{1}>`'.format(cls, name)
         text = text.replace(name_false, name_right)
 
-    text = text.replace(":word:`parameter`", "parameter")
-    text = text.replace(":word:`parameters`", "parameters")
+    text = text.replace(":word:`parameter`", parameter[lang])
+    text = text.replace(":word:`parameters`", parameters[lang])
 
     return text
 
@@ -65,7 +74,8 @@ def make_examples():
                                     'delphi', 'Example', '.pas', 'Delphi')
 
 def make_methods(typ):
-    version_method = """
+    version_method = {
+    'en': """
 .. delphi:function:: procedure T{0}.GetVersion(out name: string; out firmwareVersion: TDeviceVersion; out bindingVersion: TDeviceVersion)
 
  Returns the name (including the hardware version), the firmware version
@@ -73,7 +83,10 @@ def make_methods(typ):
  are given in arrays of size 3 with the syntax (major, minor, revision).
 
  The returned array contains name, firmwareVersion and bindingVersion.
+""",
+    'de': """
 """
+    }
 
     methods = ''
     function = '.. delphi:function:: function T{0}.{1}({2}): {3}\n{4}'
@@ -94,13 +107,22 @@ def make_methods(typ):
         methods += method + '\n'
 
     if typ == 'am':
-        methods += version_method.format(cls)
+        methods += version_method[lang].format(cls)
 
     return methods
 
 def make_callbacks():
     cbs = ''
-    cb = """.. delphi:function:: property T{0}.On{1}
+    cb = {
+    'en': """.. delphi:function:: property T{0}.On{1}
+
+ .. code-block:: delphi
+
+  procedure({2}) of object;
+
+{3}
+""",
+    'de': """.. delphi:function:: property T{0}.On{1}
 
  .. code-block:: delphi
 
@@ -108,39 +130,20 @@ def make_callbacks():
 
 {3}
 """
+    }
 
     cls = device.get_category() + device.get_camel_case_name()
     for packet in device.get_packets('callback'):
         name = packet.get_camel_case_name()
         params = delphi_common.make_parameter_list(packet, True)
         desc = fix_links(common.shift_right(packet.get_doc()[1][lang], 1))
-        cbs += cb.format(cls, name, params, desc)
-
-    return cbs
-
-    cbs = ''
-    func_start = '.. delphi:attribute:: int '
-    cls = device.get_category() + device.get_camel_case_name()
-    for packet in device.get_packets('callback'):
-        params = delphi_common.make_parameter_list(packet, True)
-        desc = fix_links(common.shift_right(packet.get_doc()[1][lang], 1))
-
-        signature = """
- .. delphi:function:: void callback({0})
-    :noindex:
-""".format(params)
-
-        func = '{0}{1}.CALLBACK_{2}\n{3}{4}'.format(func_start,
-                                                     cls,
-                                                     packet.get_upper_case_name(),
-                                                     signature,
-                                                     desc)
-        cbs += func + '\n'
+        cbs += cb[lang].format(cls, name, params, desc)
 
     return cbs
 
 def make_api():
-    create_str = """
+    create_str = {
+    'en': """
 .. delphi:function:: constructor T{3}{1}.Create(const uid: string)
 
  Creates an object with the unique device ID *uid*:
@@ -151,32 +154,48 @@ def make_api():
 
  This object can then be added to the IP connection (see examples
  :ref:`above <{0}_{2}_delphi_examples>`).
+""",
+    'de': """
 """
+    }
 
-    bm_str = """
+    bm_str = {
+    'en': """
 Basic Methods
 ^^^^^^^^^^^^^
 
 {0}
 
 {1}
+""",
+    'de': """
 """
+    }
 
-    am_str = """
+    am_str = {
+    'en': """
 Advanced Methods
 ^^^^^^^^^^^^^^^^
 
 {0}
+""",
+    'de': """
 """
+    }
 
-    ccm_str = """
+    ccm_str = {
+    'en': """
 Callback Configuration Methods
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 {0}
+""",
+    'de': """
 """
+    }
 
-    c_str = """
+    c_str = {
+    'en': """
 .. _{1}_{2}_delphi_callbacks:
 
 Callbacks
@@ -203,9 +222,13 @@ The available callback property and their type of parameters are described below
  will be a lot better, since there is no roundtrip time.
 
 {0}
+""",
+    'de': """
 """
+    }
 
-    api = """
+    api = {
+    'en': """
 {0}
 API
 ---
@@ -218,11 +241,15 @@ All functions and procedures listed below are thread-safe.
 {1}
 
 {2}
+""",
+    'de': """
 """
-    cre = create_str.format(device.get_underscore_name(),
-                            device.get_camel_case_name(),
-                            device.get_category().lower(),
-                            device.get_category())
+    }
+
+    cre = create_str[lang].format(device.get_underscore_name(),
+                                  device.get_camel_case_name(),
+                                  device.get_category().lower(),
+                                  device.get_category())
 
     bm = make_methods('bm')
     am = make_methods('am')
@@ -230,24 +257,24 @@ All functions and procedures listed below are thread-safe.
     c = make_callbacks()
     api_str = ''
     if bm:
-        api_str += bm_str.format(cre, bm)
+        api_str += bm_str[lang].format(cre, bm)
     if am:
-        api_str += am_str.format(am)
+        api_str += am_str[lang].format(am)
     if c:
-        api_str += ccm_str.format(ccm)
-        api_str += c_str.format(c, device.get_underscore_name(), device.get_category().lower(),
-                                device.get_category(), device.get_camel_case_name())
+        api_str += ccm_str[lang].format(ccm)
+        api_str += c_str[lang].format(c, device.get_underscore_name(), device.get_category().lower(),
+                                      device.get_category(), device.get_camel_case_name())
 
     ref = '.. _{0}_{1}_delphi_api:\n'.format(device.get_underscore_name(),
-                                          device.get_category().lower())
+                                             device.get_category().lower())
 
     api_desc = ''
     try:
-        api_desc = device.com['api']
-    except:
+        api_desc = device.com['api'][lang]
+    except KeyError:
         pass
 
-    return api.format(ref, api_desc, api_str)
+    return api[lang].format(ref, api_desc, api_str)
 
 def copy_examples_for_zip():
     examples = common.find_examples(device, file_path, 'delphi', 'Example', '.pas')
@@ -264,6 +291,10 @@ def copy_examples_for_zip():
 def make_files(com_new, directory):
     global device
     device = common.Device(com_new)
+    title = {
+    'en': 'Delphi bindings',
+    'de': 'Delphi Bindings'
+    }
 
     file_name = '{0}_{1}_Delphi'.format(device.get_camel_case_name(), device.get_category())
 
@@ -273,7 +304,7 @@ def make_files(com_new, directory):
 
     f = file('{0}/{1}.rst'.format(directory, file_name), "w")
     f.write(common.make_rst_header(device, 'delphi', 'Delphi'))
-    f.write(common.make_rst_summary(device, 'Delphi bindings'))
+    f.write(common.make_rst_summary(device, title[lang]))
     f.write(make_examples())
     f.write(make_api())
 

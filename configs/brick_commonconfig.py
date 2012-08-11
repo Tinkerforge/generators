@@ -21,7 +21,7 @@ undefined behavior!
 """,
 'de':
 """
-Dieser Funktionsaufruf setzt den Brick zurück. Befindet sich der Brick
+Ein Aufruf dieser Funktion setzt den Brick zurück. Befindet sich der Brick
 innerhalb eines Stapels wird der gesamte Stapel zurück gesetzt.
 
 Nach dem Zurücksetzen ist es notwendig neue Geräteobjekte zu erzeugen,

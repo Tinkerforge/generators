@@ -41,6 +41,14 @@ file_path = ''
 def fix_links(text):
     cb_link = ':java:func:`{2}Listener <{0}{1}.{2}Listener>`'
     fu_link = ':java:func:`{2}() <{0}{1}::{2}>`'
+    parameter = {
+    'en': 'parameter',
+    'de': 'Parameter'
+    }
+    parameters = {
+    'en': 'parameters',
+    'de': 'Parameter'
+    }
 
     cls = device.get_camel_case_name()
     for packet in device.get_packets():
@@ -54,8 +62,8 @@ def fix_links(text):
 
         text = text.replace(name_false, name_right)
 
-    text = text.replace(":word:`parameter`", "parameter")
-    text = text.replace(":word:`parameters`", "parameters")
+    text = text.replace(":word:`parameter`", parameter[lang])
+    text = text.replace(":word:`parameters`", parameters[lang])
     text = text.replace('Callback ', 'Listener ')
     text = text.replace(' Callback', ' Listener')
     text = text.replace('callback ', 'listener ')
@@ -126,23 +134,31 @@ def make_parameter_list(packet):
 def make_obj_desc(packet):
     if len(packet.get_elements('out')) < 2:
         return ''
-    
-    desc = '\n The returned object has the public member variables {0}.\n'
+
+    desc = {
+    'en': """
+ The returned object has the public member variables {0}.
+""",
+    'de': """
+"""
+    }
+
     var = []
     for element in packet.get_elements('out'):
         var.append('``{0} {1}``'.format(get_java_type(element[1]),
                                         common.underscore_to_headless_camel_case(element[0])))
 
     if len(var) == 1:
-        return desc.format(var[0])
+        return desc[lang].format(var[0])
 
     if len(var) == 2:
-        return desc.format(var[0] + ' and ' + var[1])
+        return desc[lang].format(var[0] + ' and ' + var[1])
 
-    return desc.format(', '.join(var[:-1]) + ' and ' + var[-1])
+    return desc[lang].format(', '.join(var[:-1]) + ' and ' + var[-1])
 
 def make_methods(typ):
-    version_method = """
+    version_method = {
+    'en': """
 .. java:function:: public {0}.Version {0}::getVersion()
 
  Returns the name (including the hardware version), the firmware version 
@@ -151,7 +167,10 @@ def make_methods(typ):
 
  The returned object has the public member variables ``String name``, 
  ``short[3] firmwareVersion`` and ``short[3] bindingVersion``.
+""",
+    'de': """
 """
+    }
 
     methods = ''
     func_start = '.. java:function:: '
@@ -175,12 +194,21 @@ def make_methods(typ):
         methods += func + '\n'
 
     if typ == 'am':
-        methods += version_method.format(cls)
+        methods += version_method[lang].format(cls)
 
     return methods
 
 def make_callbacks():
-    cb = """
+    cb = {
+    'en': """
+.. java:function:: public class {0}{1}.{2}Listener()
+
+ .. java:function:: public void {3}({4})
+  :noindex:
+
+{5}
+""",
+    'de': """
 .. java:function:: public class {0}{1}.{2}Listener()
 
  .. java:function:: public void {3}({4})
@@ -188,6 +216,7 @@ def make_callbacks():
 
 {5}
 """
+    }
 
     cbs = ''
     cls = device.get_camel_case_name()
@@ -195,17 +224,18 @@ def make_callbacks():
         desc = fix_links(common.shift_right(packet.get_doc()[1][lang], 2))
         params = make_parameter_list(packet)
 
-        cbs += cb.format(device.get_category(),
-                         cls,
-                         packet.get_camel_case_name(),
-                         packet.get_headless_camel_case_name(),
-                         params,
-                         desc)
+        cbs += cb[lang].format(device.get_category(),
+                               cls,
+                               packet.get_camel_case_name(),
+                               packet.get_headless_camel_case_name(),
+                               params,
+                               desc)
 
     return cbs
 
 def make_api():
-    create_str = """
+    create_str = {
+    'en': """
 .. java:function:: class {3}{1}(String uid)
 
  Creates an object with the unique device ID *uid*:
@@ -216,41 +246,61 @@ def make_api():
 
  This object can then be added to the IP connection (see examples 
  :ref:`above <{4}_{2}_java_examples>`).
+""",
+    'de': """
 """
+    }
 
-    register_str = """
+    register_str = {
+    'en': """
 .. java:function:: public void {3}{1}::addListener(Object o)
 
  Registers a listener object. The available listeners are listed 
  :ref:`below <{0}_{2}_java_callbacks>`.
+""",
+    'de': """
 """
+    }
 
-    bm_str = """
+    bm_str = {
+    'en': """
 Basic Methods
 ^^^^^^^^^^^^^
 
 {0}
 
 {1}
+""",
+    'de': """
 """
+    }
 
-    am_str = """
+    am_str = {
+    'en': """
 Advanced Methods
 ^^^^^^^^^^^^^^^^
 
 {0}
+""",
+    'de': """
 """
+    }
 
-    ccm_str = """
+    ccm_str = {
+    'en': """
 Listener Configuration Methods
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 {0}
 
 {1}
+""",
+    'de': """
 """
+    }
 
-    c_str = """
+    c_str = {
+    'en': """
 .. _{1}_{2}_java_callbacks:
 
 Listeners
@@ -279,9 +329,13 @@ are described below.
  will be a lot better, since there is no roundtrip time.
 
 {0}
+""",
+    'de': """
 """
+    }
 
-    api = """
+    api = {
+    'en': """
 {0}
 API
 ---
@@ -307,16 +361,20 @@ All methods listed below are thread-safe.
 {1}
 
 {2}
+""",
+    'de': """
 """
-    cre = create_str.format(device.get_headless_camel_case_name(),
-                            device.get_camel_case_name(),
-                            device.get_category().lower(),
-                            device.get_category(),
-                            device.get_underscore_name())
-    reg = register_str.format(device.get_underscore_name(),
-                              device.get_camel_case_name(),
-                              device.get_category().lower(),
-                              device.get_category())
+    }
+
+    cre = create_str[lang].format(device.get_headless_camel_case_name(),
+                                  device.get_camel_case_name(),
+                                  device.get_category().lower(),
+                                  device.get_category(),
+                                  device.get_underscore_name())
+    reg = register_str[lang].format(device.get_underscore_name(),
+                                    device.get_camel_case_name(),
+                                    device.get_category().lower(),
+                                    device.get_category())
 
     bm = make_methods('bm')
     am = make_methods('am')
@@ -324,26 +382,26 @@ All methods listed below are thread-safe.
     c = make_callbacks()
     api_str = ''
     if bm:
-        api_str += bm_str.format(cre, bm)
+        api_str += bm_str[lang].format(cre, bm)
     if am:
-        api_str += am_str.format(am)
+        api_str += am_str[lang].format(am)
     if c:
-        api_str += ccm_str.format(reg, ccm)
-        api_str += c_str.format(c, device.get_underscore_name(),
-                                device.get_category().lower(),
-                                device.get_category(),
-                                device.get_camel_case_name())
+        api_str += ccm_str[lang].format(reg, ccm)
+        api_str += c_str[lang].format(c, device.get_underscore_name(),
+                                      device.get_category().lower(),
+                                      device.get_category(),
+                                      device.get_camel_case_name())
 
     ref = '.. _{0}_{1}_java_api:\n'.format(device.get_underscore_name(),
                                            device.get_category().lower())
 
     api_desc = ''
     try:
-        api_desc = device.com['api']
-    except:
+        api_desc = device.com['api'][lang]
+    except KeyError:
         pass
 
-    return api.format(ref, api_desc, api_str) 
+    return api[lang].format(ref, api_desc, api_str)
         
 def copy_examples_for_zip():
     examples = common.find_examples(device, file_path, 'java', 'Example', '.java')
@@ -360,8 +418,11 @@ def copy_examples_for_zip():
 def make_files(com_new, directory):
     global device
     device = common.Device(com_new)
-
     file_name = '{0}_{1}_Java'.format(device.get_camel_case_name(), device.get_category())
+    title = {
+    'en': 'Java bindings',
+    'de': 'Java Bindings'
+    }
     
     directory += '/doc'
     if not os.path.exists(directory):
@@ -369,7 +430,7 @@ def make_files(com_new, directory):
 
     f = file('{0}/{1}.rst'.format(directory, file_name), "w")
     f.write(common.make_rst_header(device, 'java', 'Java'))
-    f.write(common.make_rst_summary(device, 'Java bindings'))
+    f.write(common.make_rst_summary(device, title[lang]))
     f.write(make_examples())
     f.write(make_api())
 
