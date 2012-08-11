@@ -63,7 +63,7 @@ com['packets'].append({
 """
 Returns the temperature of the air pressure sensor. The value
 has a range of -4000 to 8500 and is given in °C/100, i.e. a value
-of 2007 means that an illuminance of 20.07 °C is measured.
+of 2007 means that a temperature of 20.07 °C is measured.
 """,
 'de':
 """
