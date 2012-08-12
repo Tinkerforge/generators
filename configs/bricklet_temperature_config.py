@@ -30,7 +30,7 @@ to use the callback :func:`Temperature` and set the period with
 'de':
 """
 Gibt die Temperatur des Sensors zurück. Der Wertebereich ist von
--2500 bis 8500 und wird in %C/100 angegeben, z.B. bedeutet 
+-2500 bis 8500 und wird in °C/100 angegeben, z.B. bedeutet 
 ein Wert von 4223 eine gemessene Temperatur von 42,23 °C.
 
 Wenn die Temperatur periodisch abgefragt werden soll, wird empfohlen
