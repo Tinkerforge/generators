@@ -63,7 +63,7 @@ com['packets'].append({
 """
 Returns the temperature of the air pressure sensor. The value
 has a range of -4000 to 8500 and is given in °C/100, i.e. a value
-of 2007 means that an illuminance of 20.07 °C is measured.
+of 2007 means that a temperature of 20.07 °C is measured.
 """,
 'de':
 """
@@ -81,7 +81,7 @@ com['packets'].append({
 Sets the period in ms with which the :func:`AirPressure` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`AirPressure` is only triggered if the illuminance has changed since the
+:func:`AirPressure` is only triggered if the air pressure has changed since the
 last triggering.
 
 The default value is 0.
@@ -326,7 +326,7 @@ This callback is triggered periodically with the period that is set by
 :func:`SetAltitudeCallbackPeriod`. The :word:`parameter` is the altitude of the
 air pressure sensor.
 
-:func:`Illuminance` is only triggered if the altitude has changed since the
+:func:`Altitude` is only triggered if the altitude has changed since the
 last triggering.
 """,
 'de':
