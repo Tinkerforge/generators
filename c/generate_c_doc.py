@@ -112,6 +112,11 @@ def make_methods(typ):
  given in arrays of size 3 with the syntax [major, minor, revision].
 """,
     'de': """
+	.. c:function:: int {0}_get_version({1} *{0}, char ret_name[40], uint8_t ret_firmware_version[3], uint8_t ret_binding_version[3])
+
+ Gibt den Namen (inklusive Hardwareversion), die Firmwareversion 
+ und die Treiberversion des Gerätes zurück. Die Firmware- und Treiberversionen werden
+ als Feld der Größe 3 mit dem Syntax [major, minor, revision] zurückgegeben.
 """
     }
 
@@ -182,6 +187,17 @@ def make_api():
  :ref:`above <{0}_{2}_c_examples>`).
 """,
     'de': """
+	.. c:function:: void {0}_create({1} *{0}, const char *uid)
+
+ Erzeugt ein Objekt mit der eindeutigen Geräte ID *uid*:
+
+ .. code-block:: c
+
+    {1} {0};
+    {0}_create(&{0}, "YOUR_DEVICE_UID");
+
+ Dieses Objekt kann danach der IP connection hinzugefügt werden (siehe Beispiele 
+ :ref:`oben <{0}_{2}_c_examples>`).
 """
     }
 
@@ -194,6 +210,11 @@ def make_api():
  :ref:`below <{0}_{2}_c_callbacks>`.
 """,
     'de': """
+	.. c:function:: void {0}_register_callback({1} *{0}, uint8_t id, void *callback)
+
+ Registriert ein Callback mit der ID *id* zu der Callback *callback*. Die vefügbaren
+ IDs mit den zugehörigen Funktionssignaturen sind :ref:`unten <{0}_{2}_c_callbacks>`
+ zu finden.
 """
     }
 
@@ -207,6 +228,12 @@ Basic Methods
 {1}
 """,
     'de': """
+Grundmethoden
+^^^^^^^^^^^^^
+
+{0}
+
+{1}
 """
     }
 
@@ -218,12 +245,16 @@ Advanced Methods
 {0}
 """,
     'de': """
+Fortgeschrittene Methoden
+^^^^^^^^^^^^^^^^
+
+{0}
 """
     }
 
     ccm_str = {
     'en': """
-Callback Configuration Methods
+Callback Configuration Methoden
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 {0}
@@ -231,6 +262,12 @@ Callback Configuration Methods
 {1}
 """,
     'de': """
+Callbackkonfigurationsmethoden
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+{0}
+
+{1}
 """
     }
 
@@ -265,6 +302,34 @@ are described below.
 {2}
 """,
     'de': """
+	.. _{0}_{3}_c_callbacks:
+
+Callbacks
+^^^^^^^^^
+
+*Callbacks* können mit *callback IDs* registriert werden um zeitkritische
+oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
+mit der Funktion :c:func:`{0}_register_callback` durchgeführt werden. Die
+Parameter bestehen aus dem Geräteobjekt, der Callback ID und der Callbackfunktion:
+
+ .. code-block:: c
+
+    void my_callback(int p) {{
+        printf("parameter: %d\\n", p);
+    }}
+
+    {0}_register_callback(&{0}, {1}_CALLBACK_EXAMPLE, (void*)my_callback);
+
+Die verfügbaren Konstanten mit den zugehörigen Callback Funktionssignaturen
+werden unterhalb beschrieben.
+
+.. note::
+ Callbacks für wiederkehrende Ereignisse zu verwenden ist 
+ *immer* zu bevorzugen gegenüber der Verwendung von Abfragen.
+ Es wird weniger USB-Bandbreite benutzt und die Latenz ist
+ erheblich geringer, da es keine Paketumlaufzeit gibt.
+
+{2}
 """
     }
 
@@ -298,6 +363,32 @@ All functions listed below are thread-safe.
 {2}
 """,
     'de': """
+	{0}
+API
+---
+
+Jede Funktion der C/C++ Treiber gibt einen Integer zurück, welcher einen 
+Fehlercode beschreibt. Vom Gerät zurückgegebene Daten werden, wenn eine
+Abfrage aufgerufen wurde, über Referenzparameter gehandhabt. Diese Parameter
+sind mit dem ``ret_`` Prefix gekennzeichnet.
+
+Mögliche Fehlercodes sind
+
+* E_OK = 0
+* E_TIMEOUT = -1
+* E_NO_STREAM_SOCKET = -2
+* E_HOSTNAME_INVALID = -3
+* E_NO_CONNECT = -4
+* E_NO_THREAD = -5
+* E_NOT_ADDED = -6
+
+wie in :file:`ip_connection.h` definiert.
+
+Alle folgend aufgelisteten Funktionen sind Thread-sicher.
+
+{1}
+
+{2}
 """
     }
 
@@ -351,7 +442,7 @@ def make_files(com_new, directory):
     file_name = '{0}_{1}_C'.format(device.get_camel_case_name(), device.get_category())
     title = {
     'en': 'C/C++ bindings',
-    'de': 'C/C++ Bindings'
+    'de': 'C/C++ Treiber'
     }
 
     directory += '/doc'
