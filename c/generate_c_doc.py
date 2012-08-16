@@ -254,7 +254,7 @@ Fortgeschrittene Methoden
 
     ccm_str = {
     'en': """
-Callback Configuration Methoden
+Callback Configuration Methods
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 {0}
