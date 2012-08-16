@@ -30,6 +30,13 @@ to use the callback :func:`AmbientTemperature` and set the period with
 """,
 'de':
 """
+Gibt die Umgebungstemperatur des Sensors zurück. Der Wertebereich ist von
+-400 bis 1250 und wird in °C/10 angegeben, z.B. bedeutet 
+ein Wert von 423 eine gemessene Umgebungstemperatur von 42,23 °C.
+
+Wenn die Umgebungstemperatur periodisch abgefragt werden soll, wird empfohlen
+den Callback :func:`AmbientTemperature` zu nutzen und die Periode mit 
+:func:`SetAmbientTemperatureCallbackPeriod` vorzugeben.
 """
 }]
 })
@@ -57,6 +64,19 @@ to use the callback :func:`ObjectTemperature` and set the period with
 """,
 'de':
 """
+Gibt die Objekttemperatur des Sensors zurück, z.B. die Temperatur
+der Oberfläche auf welche der Sensor zielt. Der Wertebereich ist von
+-700 bis 3800 und wird in °C/10 angegeben, z.B. bedeutet 
+ein Wert von 3001 eine gemessene Temperatur von 42,23 °C auf der Oberfläche
+des Objektes.
+
+Die Temperatur von unterschiedlichen Materialien ist abhängig von ihrem `Emmissionsgrad 
+<http://de.wikipedia.org/wiki/Emissionsgrad>`_. Der Emmissionsgrad des Materials kann mit 
+:func:`SetEmissivity` gesetzt werden.
+
+Wenn die Objekttemperatur periodisch abgefragt werden soll, wird empfohlen
+den Callback :func:`ObjectTemperature` zu nutzen und die Periode mit 
+:func:`SetObjectTemperatureCallbackPeriod` vorzugeben.
 """
 }]
 })
@@ -90,6 +110,24 @@ sensor can handle is 0.1 (value of 6553).
 """,
 'de':
 """
+Setzt den `Emmissionsgrad <http://de.wikipedia.org/wiki/Emissionsgrad>`_, 
+welcher zur Berechnung der Oberflächentemperatur benutzt wird, wie von
+:func:`GetObjectTemperature` zurückgegeben.
+
+Der Emmissionsgrad wird normalerweise als Wert zwischen 0,0 und 1,0 angegeben.
+Eine Liste von Emmissionsgraden unterschiedlicher Materialien ist `hier <http://www.infrared-thermography.com/material.htm>`_
+zu finden.
+
+Der Parameter von :func:`SetEmissivity` muss mit eine Faktor von 65535 (16 Bit)
+vorgegeben werden. Beispiel: Ein Emmissionsgrad von 0,1 kann mit dem Wert
+6553 gesetzt werden, En Emmissionsgrad von 0,5 mit dem Wert 32767 und so weiter.
+
+.. note::
+ Wenn eine exakte Messung der Objekttemperatur notwendig ist, ist es entscheidend
+ eine exakten Emmissionsgrad anzugeben.
+ 
+Der Standard Emmissionsgrad ist 1,0 (Wert von 65535) und der minimale
+Emmissionsgrad welcher der Sensor vearbeiten kann ist 0,1 (Wert von 6553).
 """
 }]
 })
@@ -105,6 +143,7 @@ Returns the emissivity as set by :func:`SetEmissivity`.
 """,
 'de':
 """
+Gibt den Emmissionsgrad zurück, wie von :func:`SetEmissivity` gesetzt.
 """
 }]
 })
@@ -126,6 +165,13 @@ The default value is 0.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher der :func:`AmbientTemperature` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+:func:`AmbientTemperature` wird nur ausgelöst wenn sich die Temperatur seit der
+letzten Auslösung geändert hat.
+
+Der Standardwert ist 0.
 """
 }]
 })
@@ -141,6 +187,8 @@ Returns the period as set by :func:`SetAmbientTemperatureCallbackPeriod`.
 """,
 'de':
 """
+Gibt die Periode zurück, wie von :func:`SetAmbientTemperatureCallbackPeriod`
+gesetzt.
 """
 }]
 })
@@ -162,6 +210,13 @@ The default value is 0.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher der :func:`ObjectTemperature` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+:func:`ObjectTemperature` wird nur ausgelöst wenn sich die Temperatur seit der
+letzten Auslösung geändert hat.
+
+Der Standardwert ist 0.
 """
 }]
 })
@@ -177,6 +232,8 @@ Returns the period as set by :func:`SetObjectTemperatureCallbackPeriod`.
 """,
 'de':
 """
+Gibt die Periode zurück, wie von :func:`SetObjectTemperatureCallbackPeriod`
+gesetzt.
 """
 }]
 })
@@ -209,6 +266,21 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
+Setzt den Schwellwert für den :func:`AmbientTemperatureReached` Callback.
+
+Die folgenden Optionen sind möglich:
+
+.. csv-table::
+ :header: "Option", "Beschreibung"
+ :widths: 10, 100
+ 
+ "'x'",    "Callback ist inaktiv"
+ "'o'",    "Callback wird ausgelöst wenn die Temperatur *ausserhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst wenn die Temperatur *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst wenn die Temperatur kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn die Temperatur größer als der min Wert ist (max wird ignoriert)"
+ 
+Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -226,6 +298,8 @@ Returns the threshold as set by :func:`SetAmbientTemperatureCallbackThreshold`.
 """,
 'de':
 """
+Gibt den Schwellwert zurück, wie von :func:`SetAmbientTemperatureCallbackThreshold`
+gesetzt.
 """
 }]
 })
@@ -257,6 +331,21 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
+Setzt den Schwellwert für den :func:`ObjectTemperatureReached` Callback.
+
+Die folgenden Optionen sind möglich:
+
+.. csv-table::
+ :header: "Option", "Beschreibung"
+ :widths: 10, 100
+ 
+ "'x'",    "Callback ist inaktiv"
+ "'o'",    "Callback wird ausgelöst wenn die Temperatur *ausserhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst wenn die Temperatur *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst wenn die Temperatur kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn die Temperatur größer als der min Wert ist (max wird ignoriert)"
+ 
+Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -270,10 +359,12 @@ com['packets'].append({
 'doc': ['ccm', {
 'en':
 """
-Returns the threshold as set by :func:`SetAmbientTemperatureCallbackThreshold`.
+Returns the threshold as set by :func:`SetObjectTemperatureCallbackThreshold`.
 """,
 'de':
 """
+Gibt den Schwellwert zurück, wie von :func:`SetObjectTemperatureCallbackThreshold`
+gesetzt.
 """
 }]
 })
@@ -299,6 +390,17 @@ The default value is 100.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher die Schwellwert Callbacks
+
+ :func:`AmbientTemperatureReached`, :func:`ObjectTemperatureReached`
+ 
+ausgelöst werden, wenn die Schwellwerte 
+
+ :func:`SetAmbientTemperatureCallbackThreshold`, :func:`SetObjectTemperatureCallbackThreshold`
+ 
+weiterhin erreicht bleiben.
+
+Der Standardwert ist 100.
 """
 }]
 })
@@ -314,6 +416,8 @@ Returns the debounce period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
 """
+Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+gesetzt.
 """
 }]
 })
@@ -334,6 +438,11 @@ has changed since the last triggering.
 """,
 'de':
 """
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAmbientTemperatureCallbackPeriod`,
+ausgelöst. Der :word:`parameter` ist die Temperatur des Sensors.
+
+:func:`AmbientTemperature` wird nur ausgelöst wenn sich die Temperatur seit der
+letzten Auslösung geändert hat.
 """
 }]
 })
@@ -349,11 +458,16 @@ This callback is triggered periodically with the period that is set by
 :func:`SetObjectTemperatureCallbackPeriod`. The :word:`parameter` is the object
 temperature of the sensor.
 
-:func:`AmbientTemperature` is only triggered if the object temperature
+:func:`ObjectTemperature` is only triggered if the object temperature
 has changed since the last triggering.
 """,
 'de':
 """
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetObjectTemperatureCallbackPeriod`,
+ausgelöst. Der :word:`parameter` ist die Objekttemperatur des Sensors.
+
+:func:`ObjectTemperature` wird nur ausgelöst wenn sich die Objekttemperatur seit der
+letzten Auslösung geändert hat.
 """
 }]
 })
@@ -374,6 +488,12 @@ with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
 """
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+:func:`SetAmbientTemperatureCallbackThreshold` gesetzt, erreicht wird.
+Der :word:`parameter` ist die Umgebungstemperatur des Sensors.
+
+Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
+mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 """
 }]
 })
@@ -394,6 +514,12 @@ with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
 """
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+:func:`SetObjectTemperatureCallbackThreshold` gesetzt, erreicht wird.
+Der :word:`parameter` ist die Objekttemperatur des Sensors.
+
+Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
+mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 """
 }]
 })

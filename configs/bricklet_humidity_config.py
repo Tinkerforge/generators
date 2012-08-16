@@ -29,6 +29,13 @@ callback :func:`Humidity` and set the period with
 """,
 'de':
 """
+Gibt die Luftfeuchtigkeit des Sensors zurück. Der Wertebereich ist von
+0 bis 1000 und wird in %RH/10 angegeben (relative Luftfeuchtigkeit), z.B. bedeutet 
+ein Wert von 421 eine gemessene Luftfeuchtigkeit von 42,1 %RH.
+
+Wenn die Luftfeuchtigkeit periodisch abgefragt werden soll, wird empfohlen
+den Callback :func:`Humidity` zu nutzen und die Periode mit 
+:func:`SetHumidityCallbackPeriod` vorzugeben.
 """
 }]
 })
@@ -58,6 +65,21 @@ callback :func:`AnalogValue` and set the period with
 """,
 'de':
 """
+Gibt den Wert, wie vom 12 bit Analog-Digital-Wandler gelesen, zurück. Der 
+Wertebereich ist 0 bis 4095.
+
+.. note::
+ Der von :func:`GetHumidity` zurückgegebene Wert ist über mehrere
+ Messwerte gemittelt um das Rauschen zu vermindern, während :func:`GetAnalogValue`
+ unverarbeitete Analogwerte zurückgibt. Der zurückgegebene Luftfeuchtigkeitswert
+ ist auf Raumtemperatur kalibriert, d.h. wenn der Sensor in sehr kalten oder
+ warmen Umgebungen verwendet wird, ist es ratsam den Luftfeuchtigkeitswert
+ direkt aus den Analogwerten zu berechnen. Siehe hierzu das `HIH 5030 Datenblatt
+ <https://github.com/Tinkerforge/humidity-bricklet/raw/master/datasheets/hih-5030.pdf>`__.
+ 
+Wenn der Analogwert periodisch abgefragt werden soll, wird empfohlen
+den Callback :func:`AnalogValue` zu nutzen und die Periode mit 
+:func:`SetAnalogValueCallbackPeriod` vorzugeben.
 """
 }]
 })
@@ -80,6 +102,13 @@ The default value is 0.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher der :func:`Humidity` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+:func:`Humidity` wird nur ausgelöst wenn sich die Luftfeuchtigkeit seit der
+letzten Auslösung geändert hat.
+
+Der Standardwert ist 0.
 """
 }]
 })
@@ -95,6 +124,8 @@ Returns the period as set by :func:`SetHumidityCallbackPeriod`.
 """,
 'de':
 """
+Gibt die Periode zurück, wie von :func:`SetHumidityCallbackPeriod`
+gesetzt.
 """
 }]
 })
@@ -116,6 +147,13 @@ The default value is 0.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher der :func:`AnalogValue` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+:func:`AnalogValue` wird nur ausgelöst wenn sich der Analogwert seit der
+letzten Auslösung geändert hat.
+
+Der Standardwert ist 0.
 """
 }]
 })
@@ -131,6 +169,8 @@ Returns the period as set by :func:`SetAnalogValueCallbackPeriod`.
 """,
 'de':
 """
+Gibt die Periode zurück, wie von :func:`SetAnalogValueCallbackPeriod`
+gesetzt.
 """
 }]
 })
@@ -162,6 +202,21 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
+Setzt den Schwellwert für den :func:`HumidityReached` Callback.
+
+Die folgenden Optionen sind möglich:
+
+.. csv-table::
+ :header: "Option", "Beschreibung"
+ :widths: 10, 100
+ 
+ "'x'",    "Callback ist inaktiv"
+ "'o'",    "Callback wird ausgelöst wenn die Luftfeuchtigkeit *ausserhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst wenn die Luftfeuchtigkeit *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst wenn die Luftfeuchtigkeit kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn die Luftfeuchtigkeit größer als der min Wert ist (max wird ignoriert)"
+ 
+Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -179,6 +234,8 @@ Returns the threshold as set by :func:`SetHumidityCallbackThreshold`.
 """,
 'de':
 """
+Gibt den Schwellwert zurück, wie von :func:`SetHumidityCallbackThreshold`
+gesetzt.
 """
 }]
 })
@@ -201,15 +258,30 @@ The following options are possible:
  :widths: 10, 100
 
  "'x'",    "Callback is turned off."
- "'o'",    "Callback is triggered when the humidity is *outside* the min and max values"
- "'i'",    "Callback is triggered when the humidity is *inside* the min and max values"
- "'<'",    "Callback is triggered when the humidity is smaller than the min value (max is ignored)"
- "'>'",    "Callback is triggered when the humidity is greater than the min value (max is ignored)"
+ "'o'",    "Callback is triggered when the analog value is *outside* the min and max values"
+ "'i'",    "Callback is triggered when the analog value is *inside* the min and max values"
+ "'<'",    "Callback is triggered when the analog value is smaller than the min value (max is ignored)"
+ "'>'",    "Callback is triggered when the analog value is greater than the min value (max is ignored)"
 
 The default value is ('x', 0, 0).
 """,
 'de':
 """
+Setzt den Schwellwert für den :func:`AnalogValueReached` Callback.
+
+Die folgenden Optionen sind möglich:
+
+.. csv-table::
+ :header: "Option", "Beschreibung"
+ :widths: 10, 100
+ 
+ "'x'",    "Callback ist inaktiv"
+ "'o'",    "Callback wird ausgelöst wenn der Analogwert *ausserhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst wenn der Analogwert *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst wenn der Analogwert kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn der Analogwert größer als der min Wert ist (max wird ignoriert)"
+ 
+Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -227,6 +299,8 @@ Returns the threshold as set by :func:`SetAnalogValueCallbackThreshold`.
 """,
 'de':
 """
+Gibt den Schwellwert zurück, wie von :func:`SetAnalogValueCallbackThreshold`
+gesetzt.
 """
 }]
 })
@@ -252,6 +326,17 @@ The default value is 100.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher die Schwellwert Callbacks
+
+ :func:`HumidityReached`, :func:`AnalogValueReached`
+ 
+ausgelöst werden, wenn die Schwellwerte 
+
+ :func:`SetHumidityCallbackThreshold`, :func:`SetAnalogValueCallbackThreshold`
+ 
+weiterhin erreicht bleiben.
+
+Der Standardwert ist 100.
 """
 }]
 })
@@ -267,6 +352,8 @@ Returns the debounce period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
 """
+Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+gesetzt.
 """
 }]
 })
@@ -287,6 +374,11 @@ last triggering.
 """,
 'de':
 """
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetHumidityCallbackPeriod`,
+ausgelöst. Der :word:`parameter` ist die Luftfeuchtigkeit des Sensors.
+
+:func:`Humidity` wird nur ausgelöst wenn sich die Luftfeuchtigkeit seit der
+letzten Auslösung geändert hat.
 """
 }]
 })
@@ -307,6 +399,11 @@ last triggering.
 """,
 'de':
 """
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAnalogValueCallbackPeriod`,
+ausgelöst. Der :word:`parameter` ist der Analogwert des Sensors.
+
+:func:`AnalogValue` wird nur ausgelöst wenn sich der Analogwert seit der
+letzten Auslösung geändert hat.
 """
 }]
 })
@@ -327,6 +424,12 @@ with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
 """
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+:func:`SetHumidityCallbackThreshold` gesetzt, erreicht wird.
+Der :word:`parameter` ist die Luftfeuchtigkeit des Sensors.
+
+Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
+mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 """
 }]
 })
@@ -347,6 +450,12 @@ with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
 """
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+:func:`SetAnalogValueCallbackThreshold` gesetzt, erreicht wird.
+Der :word:`parameter` ist der Analogwert des Sensors.
+
+Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
+mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 """
 }]
 })
