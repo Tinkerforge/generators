@@ -28,6 +28,12 @@ callback :func:`Voltage` and set the period with
 """,
 'de':
 """
+Gibt die gemessene Spannung des Sensors zurück. Der Wert ist in mV und im 
+Bereich von 0mV bis 50000mV.
+
+Wenn die Spannung periodisch abgefragt werden soll, wird empfohlen
+den Callback :func:`Voltage` zu nutzen und die Periode mit 
+:func:`SetVoltageCallbackPeriod` vorzugeben.
 """
 }]
 })
@@ -54,6 +60,18 @@ callback :func:`AnalogValue` and set the period with
 """,
 'de':
 """
+Gibt den Wert, wie vom 12 bit Analog-Digital-Wandler gelesen, zurück. Der 
+Wertebereich ist 0 bis 4095.
+
+.. note::
+ Der von :func:`GetVoltage` zurückgegebene Wert ist über mehrere
+ Messwerte gemittelt um das Rauschen zu vermindern, während :func:`GetAnalogValue`
+ unverarbeitete Analogwerte zurückgibt. Der einzige Grund :func:`GetAnalogValue`
+ zu nutzen, ist die volle Auflösung des Analog-Digital-Wandlers zu erhalten.
+ 
+Wenn der Analogwert periodisch abgefragt werden soll, wird empfohlen
+den Callback :func:`AnalogValue` zu nutzen und die Periode mit 
+:func:`SetAnalogValueCallbackPeriod` vorzugeben.
 """
 }]
 })
@@ -76,6 +94,13 @@ The default value is 0.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher der :func:`Voltage` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+:func:`Voltage` wird nur ausgelöst wenn sich die Spannung seit der
+letzten Auslösung geändert hat.
+
+Der Standardwert ist 0.
 """
 }]
 })
@@ -91,6 +116,8 @@ Returns the period as set by :func:`SetVoltageCallbackPeriod`.
 """,
 'de':
 """
+Gibt die Periode zurück, wie von :func:`SetVoltageCallbackPeriod`
+gesetzt.
 """
 }]
 })
@@ -112,6 +139,13 @@ The default value is 0.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher der :func:`AnalogValue` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+:func:`AnalogValue` wird nur ausgelöst wenn sich der Analogwert seit der
+letzten Auslösung geändert hat.
+
+Der Standardwert ist 0.
 """
 }]
 })
@@ -127,6 +161,8 @@ Returns the period as set by :func:`SetAnalogValueCallbackPeriod`.
 """,
 'de':
 """
+Gibt die Periode zurück, wie von :func:`SetAnalogValueCallbackPeriod`
+gesetzt.
 """
 }]
 })
@@ -158,6 +194,21 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
+Setzt den Schwellwert für den :func:`VoltageReached` Callback.
+
+Die folgenden Optionen sind möglich:
+
+.. csv-table::
+ :header: "Option", "Beschreibung"
+ :widths: 10, 100
+ 
+ "'x'",    "Callback ist inaktiv"
+ "'o'",    "Callback wird ausgelöst wenn die Spannung *ausserhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst wenn die Spannung *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst wenn die Spannung kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn die Spannung größer als der min Wert ist (max wird ignoriert)"
+ 
+Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -175,6 +226,8 @@ Returns the threshold as set by :func:`SetVoltageCallbackThreshold`.
 """,
 'de':
 """
+Gibt den Schwellwert zurück, wie von :func:`SetVoltageCallbackThreshold`
+gesetzt.
 """
 }]
 })
@@ -206,6 +259,21 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
+Setzt den Schwellwert für den :func:`AnalogValueReached` Callback.
+
+Die folgenden Optionen sind möglich:
+
+.. csv-table::
+ :header: "Option", "Beschreibung"
+ :widths: 10, 100
+ 
+ "'x'",    "Callback ist inaktiv"
+ "'o'",    "Callback wird ausgelöst wenn der Analogwert *ausserhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst wenn der Analogwert *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst wenn der Analogwert kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn der Analogwert größer als der min Wert ist (max wird ignoriert)"
+ 
+Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -223,6 +291,8 @@ Returns the threshold as set by :func:`SetAnalogValueCallbackThreshold`.
 """,
 'de':
 """
+Gibt den Schwellwert zurück, wie von :func:`SetAnalogValueCallbackThreshold`
+gesetzt.
 """
 }]
 })
@@ -248,6 +318,17 @@ The default value is 100.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher die Schwellwert Callbacks
+
+ :func:`VoltageReached`, :func:`AnalogValueReached`
+ 
+ausgelöst werden, wenn die Schwellwerte 
+
+ :func:`SetVoltageCallbackThreshold`, :func:`SetAnalogValueCallbackThreshold`
+ 
+weiterhin erreicht bleiben.
+
+Der Standardwert ist 100.
 """
 }]
 })
@@ -263,6 +344,8 @@ Returns the debounce period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
 """
+Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+gesetzt.
 """
 }]
 })
@@ -283,6 +366,11 @@ last triggering.
 """,
 'de':
 """
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetVoltageCallbackPeriod`,
+ausgelöst. Der :word:`parameter` ist die gemessene Spannung des Sensors.
+
+:func:`Voltage` wird nur ausgelöst wenn sich die Spannung seit der
+letzten Auslösung geändert hat.
 """
 }]
 })
@@ -303,6 +391,11 @@ last triggering.
 """,
 'de':
 """
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAnalogValueCallbackPeriod`,
+ausgelöst. Der :word:`parameter` ist der Analogwert des Sensors.
+
+:func:`AnalogValue` wird nur ausgelöst wenn sich der Analogwert seit der
+letzten Auslösung geändert hat.
 """
 }]
 })
@@ -323,6 +416,12 @@ with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
 """
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+:func:`SetVoltageCallbackThreshold` gesetzt, erreicht wird.
+Der :word:`parameter` ist die gemessene Spannung des Sensors.
+
+Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
+mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 """
 }]
 })
@@ -343,6 +442,12 @@ with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
 """
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+:func:`SetAnalogValueCallbackThreshold` gesetzt, erreicht wird.
+Der :word:`parameter` ist der Analogwert des Sensors.
+
+Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
+mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 """
 }]
 })
