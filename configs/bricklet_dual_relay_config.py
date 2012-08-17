@@ -96,7 +96,7 @@ Der dritte Parameter stellt die Zeit (in ms) dar, welche das Relais den Zustand 
 Wenn diese Funktion mit den Parametern (1, true, 1500) aufgerufen wird:
 Relais 1 wird angeschalten und nach 1,5s wieder ausgeschalten.
 
-Ein Monoflop kann als fehlersicherer Mechanismus verwendet werden. Beispiel:
+Ein Monoflop kann als Ausfallsicherung verwendet werden. Beispiel:
 Angenommen ein RS485 Bus und ein Dual Relay Bricklet ist an ein Slave Stapel verbunden.
 Jetzt kann diese Funktion sekündlich, mit einem Zeitparameter von 2 Sekunden, aufgerufen werden.
 Das Relais wird die gesamte Zeit ein sein. Wenn jetzt die RS485 Verbindung getrennt wird, 

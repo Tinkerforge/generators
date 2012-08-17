@@ -29,7 +29,7 @@ callback :func:`Humidity` and set the period with
 """,
 'de':
 """
-Gibt die Luftfeuchtigkeit des Sensors zurück. Der Wertebereich ist von
+Gibt die gemessene Luftfeuchtigkeit des Sensors zurück. Der Wertebereich ist von
 0 bis 1000 und wird in %RH/10 angegeben (relative Luftfeuchtigkeit), z.B. bedeutet 
 ein Wert von 421 eine gemessene Luftfeuchtigkeit von 42,1 %RH.
 
@@ -83,7 +83,6 @@ den Callback :func:`AnalogValue` zu nutzen und die Periode mit
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',

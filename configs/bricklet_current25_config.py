@@ -72,7 +72,6 @@ Die resultierende Kalibrierung wird in den EEPROM des Current Bricklet gespeiche
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': ('IsOverCurrent', 'is_over_current'), 
@@ -95,7 +94,6 @@ Gibt true zurück wenn mehr als 25A gemessen wurden.
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',
@@ -134,7 +132,6 @@ den Callback :func:`AnalogValue` zu nutzen und die Periode mit
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',
