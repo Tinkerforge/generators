@@ -27,7 +27,7 @@ pins 2-3 low.
 
 .. note::
  This function does nothing for pins that are configured as input.
- Pull up resistors can be switched on with :func:`SetConfiguration`.
+ Pull-up resistors can be switched on with :func:`SetConfiguration`.
 """,
 'de':
 """
@@ -78,12 +78,12 @@ are "i" and "o" for input and output.
 If the direction is configured as output, the value is either high or low
 (set as true or false).
 
-If the direction is configured as input, the value is either pull up or
+If the direction is configured as input, the value is either pull-up or
 default (set as true or false).
 
 For example:
 
-* (15, 'i', true) will set all pins of as input pull up.
+* (15, 'i', true) will set all pins of as input pull-up.
 * (8, 'i', false) will set pin 3 of as input default (floating if nothing is connected).
 * (3, 'o', false) will set pins 0 and 1 as output low.
 * (4, 'o', true) will set pin 2 of as output high.
@@ -122,7 +122,7 @@ Returns a value bit mask and a direction bit mask.
 For example: A return value of 0b0011 and 0b0101 for
 direction and value means that:
 
-* pin 0 is configured as input pull up,
+* pin 0 is configured as input pull-up,
 * pin 1 is configured as input default,
 * pin 2 is configured as output high
 * and pin 3 is are configured as output low.
