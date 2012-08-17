@@ -144,7 +144,7 @@ com['packets'].append({
 Sets the period in ms with which the :func:`Altitude` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Altitude` is only triggered if the analog value has changed since the
+:func:`Altitude` is only triggered if the altitude has changed since the
 last triggering.
 
 The default value is 0.
@@ -154,8 +154,8 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :func:`Altitude` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Altitude` wird nur ausgelöst wenn sich der Analogwert seit der
-letzten Auslösung geändert hat.
+:func:`Altitude` wird nur ausgelöst wenn sich Höhe seit der letzten Auslösung
+geändert hat.
 
 Der Standardwert ist 0.
 """
@@ -196,7 +196,7 @@ The following options are possible:
  :header: "Option", "Description"
  :widths: 10, 100
 
- "'x'",    "Callback is turned off."
+ "'x'",    "Callback is turned off"
  "'o'",    "Callback is triggered when the air pressure is *outside* the min and max values"
  "'i'",    "Callback is triggered when the air pressure is *inside* the min and max values"
  "'<'",    "Callback is triggered when the air pressure is smaller than the min value (max is ignored)"
@@ -261,7 +261,7 @@ The following options are possible:
  :header: "Option", "Description"
  :widths: 10, 100
 
- "'x'",    "Callback is turned off."
+ "'x'",    "Callback is turned off"
  "'o'",    "Callback is triggered when the altitude is *outside* the min and max values"
  "'i'",    "Callback is triggered when the altitude is *inside* the min and max values"
  "'<'",    "Callback is triggered when the altitude is smaller than the min value (max is ignored)"

@@ -78,7 +78,6 @@ den Callback :func:`AnalogValue` zu nutzen und die Periode mit
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': ('SetVoltageCallbackPeriod', 'set_voltage_callback_period'), 
@@ -186,7 +185,7 @@ The following options are possible:
  :header: "Option", "Description"
  :widths: 10, 100
 
- "'x'",    "Callback is turned off."
+ "'x'",    "Callback is turned off"
  "'o'",    "Callback is triggered when the voltage is *outside* the min and max values"
  "'i'",    "Callback is triggered when the voltage is *inside* the min and max values"
  "'<'",    "Callback is triggered when the voltage is smaller than the min value (max is ignored)"
@@ -251,7 +250,7 @@ The following options are possible:
  :header: "Option", "Description"
  :widths: 10, 100
 
- "'x'",    "Callback is turned off."
+ "'x'",    "Callback is turned off"
  "'o'",    "Callback is triggered when the analog value is *outside* the min and max values"
  "'i'",    "Callback is triggered when the analog value is *inside* the min and max values"
  "'<'",    "Callback is triggered when the analog value is smaller than the min value (max is ignored)"

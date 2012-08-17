@@ -183,7 +183,7 @@ com['packets'].append({
 Sets the period in ms with which the :func:`AnalogValue` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`AnalogValue` is only triggered if the analog values has changed since the
+:func:`AnalogValue` is only triggered if the analog values have changed since the
 last triggering.
 
 The default value is 0.
@@ -237,7 +237,7 @@ The following options are possible:
  :header: "Option", "Description"
  :widths: 10, 100
 
- "'x'",    "Callback is turned off."
+ "'x'",    "Callback is turned off"
  "'o'",    "Callback is triggered when the position is *outside* the min and max values"
  "'i'",    "Callback is triggered when the position is *inside* the min and max values"
  "'<'",    "Callback is triggered when the position is smaller than the min values (max is ignored)"
@@ -306,7 +306,7 @@ The following options are possible:
  :header: "Option", "Description"
  :widths: 10, 100
 
- "'x'",    "Callback is turned off."
+ "'x'",    "Callback is turned off"
  "'o'",    "Callback is triggered when the analog values are *outside* the min and max values"
  "'i'",    "Callback is triggered when the analog values are *inside* the min and max values"
  "'<'",    "Callback is triggered when the analog values are smaller than the min values (max is ignored)"

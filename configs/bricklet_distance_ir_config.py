@@ -255,7 +255,7 @@ The following options are possible:
  :header: "Option", "Description"
  :widths: 10, 100
 
- "'x'",    "Callback is turned off."
+ "'x'",    "Callback is turned off"
  "'o'",    "Callback is triggered when the distance is *outside* the min and max values"
  "'i'",    "Callback is triggered when the distance is *inside* the min and max values"
  "'<'",    "Callback is triggered when the distance is smaller than the min value (max is ignored)"
@@ -320,7 +320,7 @@ The following options are possible:
  :header: "Option", "Description"
  :widths: 10, 100
 
- "'x'",    "Callback is turned off."
+ "'x'",    "Callback is turned off"
  "'o'",    "Callback is triggered when the analog value is *outside* the min and max values"
  "'i'",    "Callback is triggered when the analog value is *inside* the min and max values"
  "'<'",    "Callback is triggered when the analog value is smaller than the min value (max is ignored)"
@@ -457,7 +457,7 @@ This callback is triggered periodically with the period that is set by
 :func:`SetAnalogValueCallbackPeriod`. The :word:`parameter` is the analog value of the
 sensor.
 
-:func:`AnalogValue` is only triggered if the distance has changed since the
+:func:`AnalogValue` is only triggered if the analog value has changed since the
 last triggering.
 """,
 'de':

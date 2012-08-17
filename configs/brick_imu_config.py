@@ -257,7 +257,6 @@ Gibt die Temperatur (in °C/100) des IMU Brick zurück.
 }] 
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': ('LedsOn', 'leds_on'), 
