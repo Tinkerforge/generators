@@ -31,10 +31,12 @@ pins 2-3 low.
 """,
 'de':
 """
-Setzt den Ausgabewert (ein oder aus) mittels einer Bitmaske. Die Bitmaske
-hat eine Länge von 4 Bit, "true" bedeutet ein und "false" auf aus.
+Setzt den Ausgangszustand (logisch 1 oder logisch 0) mittels einer Bitmaske.
+Die Bitmaske hat eine Länge von 4 Bit, *true* bedeutet logisch 1 und *false*
+logisch 0.
 
-Beispiel: Der Wert 0b0011 setzt die Pins 0-1 auf ein und die Pins 2-3 auf aus.
+Beispiel: Der Wert 0b0011 setzt die Pins 0-1 auf logisch 1 und die Pins 2-3
+auf logisch 0.
 
 .. note::
  Diese Funktion bewirkt keine Änderung an Pins die als Eingang konfiguriert sind.
@@ -56,7 +58,7 @@ as well as if it is configured to output.
 """,
 'de':
 """
-Gibt eine Bitmaske der aktuell gemessenen Werte zurück.
+Gibt eine Bitmaske der aktuell gemessenen Zustände zurück.
 Diese Funktion gibt die Zustände aller Pins zurück, unabhängig ob diese als
 Ein- oder Ausgang konfiguriert sind.
 """
@@ -90,21 +92,21 @@ For example:
 """,
 'de':
 """
-Konfiguriert den Wert und die Richtung eines angegebenen Pins. Mögliche Richtungen
-sind "i" und "o" für Ein- und Ausgang.
+Konfiguriert den Zustand und die Richtung eines angegebenen Pins. Mögliche
+Richtungen sind "i" und "o" für Ein- und Ausgang.
 
-Wenn die Richtung als Ausgang konfiguriert ist, ist der Wert entweder ein oder aus
-(gesetzt als true oder false).
+Wenn die Richtung als Ausgang konfiguriert ist, ist der Zustand entweder
+logisch 1 oder logisch 0 (gesetzt als *true* oder *false*).
 
-Wenn die Richtung als Eingang konfiguriert ist, ist der Wert entweder Pull-Up oder
-Standard (gesetzt als true oder false).
+Wenn die Richtung als Eingang konfiguriert ist, ist der Zustand entweder
+Pull-Up oder Standard (gesetzt als *true* oder *false*).
 
-Beispiel:
+Beispiele:
 
-* (15, 'i', true) Setzt alle Pins als Pull-Up Eingang.
-* (8, 'i', false) Setzt Pin 3 als Standard Eingang (potentialfrei wenn nicht verbunden).
-* (3, 'o', false) Setzt die Pins 0 und 1 als Ausgang im Zustand aus.
-* (4, 'o', true) Setzt Pin 2 als Ausgang im Zustand ein.
+* (15, 'i', true) setzt alle Pins als Eingang mit Pull-Up.
+* (8, 'i', false) setzt Pin 3 als Standard Eingang (potentialfrei wenn nicht verbunden).
+* (3, 'o', false) setzt die Pins 0 und 1 als Ausgang im Zustand logisch 0.
+* (4, 'o', true) setzt Pin 2 als Ausgang im Zustand logisch 1.
 """
 }]
 })
@@ -129,15 +131,16 @@ direction and value means that:
 """,
 'de':
 """
-Gibt eine Bitmaske für den Wert und eine Bitmaske für die Richtung zurück.
+Gibt eine Bitmaske für die Richtung und eine Bitmaske für den Zustand der Pins
+zurück.
 
-Beispiel: Ein Rückgabewert von 0b0011 und 0b0101 für 
-Richtung und Wert bedeutet:
+Beispiel: Ein Rückgabewert von 0b0011 und 0b0101 für Richtung und Zustand
+bedeutet:
 
-* Pin 0 ist konfiguriert als Pull-Up Eingang,
-* Pin 1 ist konfiguriert als Standard Eingang,
-* Pin 2 ist konfiguriert als Ausgang im Zustand ein
-* und Pin 3 ist konfiguriert als Ausgang im Zustand aus.
+* Pin 0 ist als Eingang mit Pull-Up konfiguriert,
+* Pin 1 ist als Standard Eingang konfiguriert,
+* Pin 2 ist als Ausgang im Zustand logisch 1 konfiguriert
+* und Pin 3 ist als Ausgang im Zustand logisch 0 konfiguriert.
 """
 }]
 })
@@ -205,9 +208,9 @@ The interrupt is delivered with the callback :func:`Interrupt`.
 """,
 'de':
 """
-Setzt durch eine Bitmaseke die Pins für welche der Interrupt aktiv ist.
+Setzt durch eine Bitmaske die Pins für welche der Interrupt aktiv ist.
 Interrupts werden ausgelöst bei Änderung des Spannungspegels eines Pins,
-z.B. ein Wechsel von ein zu aus und aus zu ein.
+z.B. ein Wechsel von logisch 1 zu logisch 0 und logisch 0 zu logisch 1.
 
 Beispiel: Eine Interrupt Bitmaske von 9 aktiviert den Interrupt für die
 Pins 0 und 3.
@@ -251,22 +254,24 @@ For example:
 
 * (1, 1) means that an interrupt on pin 0 occurred and
   currently pin 0 is high and pins 1-3 are low.
-* (9, 14) means that an interrupt on pins 0 and 3
+* (9, 14) means that interrupts on pins 0 and 3
   occurred and currently pin 0 is low and pins 1-3 are high.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst sobald eine Änderung des Spannungspegels detektiert wird, an
-Pins für welche der Interrupt mit :func:`SetInterrupt` aktiviert wurde.
+Dieser Callback wird ausgelöst sobald eine Änderung des Spannungspegels
+detektiert wird, an Pins für welche der Interrupt mit :func:`SetInterrupt`
+aktiviert wurde.
 
-Die Werte sind eine Bitmaske der aufgetretenen Interrupts und der aktuellen Werte.
+Die Rückgabewerte sind eine Bitmaske der aufgetretenen Interrupts und der
+aktuellen Zustände.
 
-Beispiel:
+Beispiele:
 
-* (1, 1) Bedeutet ein Interrupt am Pin 0 ist aufgetreten und aktuell ist Pin 0 ein
-  und die Pins 1-3 sind aus.
-* (9, 14) Bedeutet das Interrupts an Pins 0 und 3 augetreten sind und aktuell ist Pin 0
-  aus und die Pins 1-3 sind ein.
+* (1, 1) bedeutet, dass ein Interrupt am Pin 0 ist aufgetreten ist und aktuell
+  Pin 0 logisch 1 ist und die Pins 1-3 logisch 0 sind.
+* (9, 14) bedeutet, dass Interrupts an den Pins 0 und 3 aufgetreten sind und
+  aktuell Pin 0 logisch 0 ist und die Pins 1-3 logisch 1 sind.
 """
 }]
 })
@@ -291,10 +296,10 @@ The third parameter indicates the time (in ms) that the pins should hold
 the value.
 
 If this function is called with the parameters ((1 << 0) | (1 << 3), (1 << 0), 1500):
-Pin 0 will get high and Pin 3 will get low. In 1.5s Pin 0 will get low and Pin
+Pin 0 will get high and pin 3 will get low. In 1.5s pin 0 will get low and pin
 3 will get high again.
 
-A monoflop can be used as a failsafe mechanism. For example: Lets assume you
+A monoflop can be used as a fail-safe mechanism. For example: Lets assume you
 have a RS485 bus and an IO-4 Bricklet connected to one of the slave
 stacks. You can now call this function every second, with a time parameter
 of two seconds and Pin 0 set to high. Pin 0 will be high all the time. If now
@@ -304,24 +309,26 @@ the RS485 connection is lost, then Pin 0 will get low in at most two seconds.
 """,
 'de':
 """
-Konfiguriert einen Monoflop für die Pins, wie mittels der 4 Bit langen Bitmaske 
-des ersten Parameters festgelegt. Die festgelegten Pins müssen als Ausgänge konfiguriert
-sein. Als Eingänge konfigurierte Pins werden ignoriert.
+Konfiguriert einen Monoflop für die Pins, wie mittels der 4 Bit langen Bitmaske
+des ersten Parameters festgelegt. Die festgelegten Pins müssen als Ausgänge
+konfiguriert sein. Als Eingänge konfigurierte Pins werden ignoriert.
 
-Der zweite Parameter ist eine Bitmaske mit den gewünschten Werten der festgelegten
-Ausgangspins (*true* bedeutet ein und *false* aus).
+Der zweite Parameter ist eine Bitmaske mit den gewünschten Zustanden der
+festgelegten Ausgangspins (*true* bedeutet logisch 1 und *false* logisch 0).
 
-Der dritte Parameter stellt die Zeit (in ms) dar, welche das Relais den Zustand halten soll.
+Der dritte Parameter stellt die Zeit (in ms) dar, welche die Pins den Zustand
+halten soll.
 
-Wenn diese Funktion mit den Parametern ((1 << 0) | (1 << 3), (1 << 0), 1500) aufgerufen wird:
-Pin 0 wird eingeschalten und Pin 3 ausgeschalten. Nach 1,5s wird Pin 0 wieder ausgeschalten und 
-Pin 3 eingeschalten.
+Wenn diese Funktion mit den Parametern ((1 << 0) | (1 << 3), (1 << 0), 1500)
+aufgerufen wird: Pin 0 wird auf logisch 1 und Pin 3 auf logisch 0 gesetzt.
+Nach 1,5s wird Pin 0 wieder logisch 0 und Pin 3 logisch 1 gesetzt.
 
-Ein Monoflop kann als fehlersicherer Mechanismus verwendet werden. Beispiel:
+Ein Monoflop kann zur Ausfallsicherung verwendet werden. Beispiel:
 Angenommen ein RS485 Bus und ein IO-4 Bricklet ist an ein Slave Stapel verbunden.
-Jetzt kann diese Funktion sekündlich, mit einem Zeitparameter von 2 Sekunden, aufgerufen werden.
-Das Relais wird die gesamte Zeit ein sein. Wenn jetzt die RS485 Verbindung getrennt wird, 
-wird das Relais nach spätestens zwei Sekunden ausschalten.
+Jetzt kann diese Funktion sekündlich, mit einem Zeitparameter von 2 Sekunden,
+aufgerufen werden. Der Pin wird die gesamte Zeit im Zustand logisch 1 sein.
+Wenn jetzt die RS485 Verbindung getrennt wird, wird der Pin nach spätestens zwei
+Sekunden in den Zustand logisch 0 wechseln.
 
 .. versionadded:: 1.1.1
 """
@@ -349,7 +356,8 @@ as 0.
 'de':
 """
 Gibt (für den angegebenen Pin) den aktuellen Zustand und die Zeit, wie von 
-:func:`SetMonoflop gesetzt, sowie die noch verbleibende Zeit bis zum Zustandswechsel, zurück.
+:func:`SetMonoflop gesetzt, sowie die noch verbleibende Zeit bis zum
+Zustandswechsel, zurück.
 
 Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.
 
@@ -367,7 +375,7 @@ com['packets'].append({
 'en':
 """
 This callback is triggered whenever a monoflop timer reaches 0. The
-:word:`parameters` contain the pins and the current value of the pins
+:word:`parameters` contain the involved pins and the current value of the pins
 (the value after the monoflop).
 
 .. versionadded:: 1.1.1
@@ -375,8 +383,8 @@ This callback is triggered whenever a monoflop timer reaches 0. The
 'de':
 """
 Dieser Callback wird ausgelöst wenn ein Monoflop Timer abläuft (0 erreicht).
-:word:`parameters` enthalten die Pin Bitmaske und den aktuellen Zustand als Bitmaske
-(der Zustand nach dem Monoflop).
+:word:`parameters` enthalten die beteilgten Pins als Bitmaske und den aktuellen
+Zustand als Bitmaske (der Zustand nach dem Monoflop).
 
 .. versionadded:: 1.1.1
 """
