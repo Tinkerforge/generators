@@ -112,11 +112,11 @@ def make_methods(typ):
  given in arrays of size 3 with the syntax [major, minor, revision].
 """,
     'de': """
-	.. c:function:: int {0}_get_version({1} *{0}, char ret_name[40], uint8_t ret_firmware_version[3], uint8_t ret_binding_version[3])
+.. c:function:: int {0}_get_version({1} *{0}, char ret_name[40], uint8_t ret_firmware_version[3], uint8_t ret_binding_version[3])
 
  Gibt den Namen (inklusive Hardwareversion), die Firmwareversion 
- und die Treiberversion des Gerätes zurück. Die Firmware- und Treiberversionen werden
- als Feld der Größe 3 mit dem Syntax [major, minor, revision] zurückgegeben.
+ und die Bindingsversion des Gerätes zurück. Die Firmware- und Bindingsversionen werden
+ als Feld der Größe 3 mit dem Syntax [Major, Minor, Revision] zurückgegeben.
 """
     }
 
@@ -187,7 +187,7 @@ def make_api():
  :ref:`above <{0}_{2}_c_examples>`).
 """,
     'de': """
-	.. c:function:: void {0}_create({1} *{0}, const char *uid)
+.. c:function:: void {0}_create({1} *{0}, const char *uid)
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID *uid*:
 
@@ -196,7 +196,7 @@ def make_api():
     {1} {0};
     {0}_create(&{0}, "YOUR_DEVICE_UID");
 
- Dieses Objekt kann danach der IP connection hinzugefügt werden (siehe Beispiele 
+ Dieses Objekt kann danach der IP Connection hinzugefügt werden (siehe Beispiele
  :ref:`oben <{0}_{2}_c_examples>`).
 """
     }
@@ -210,9 +210,9 @@ def make_api():
  :ref:`below <{0}_{2}_c_callbacks>`.
 """,
     'de': """
-	.. c:function:: void {0}_register_callback({1} *{0}, uint8_t id, void *callback)
+.. c:function:: void {0}_register_callback({1} *{0}, uint8_t id, void *callback)
 
- Registriert ein Callback mit der ID *id* zu der Callback *callback*. Die vefügbaren
+ Registriert einen Callback mit der ID *id* mit der Funktion *callback*. Die vefügbaren
  IDs mit den zugehörigen Funktionssignaturen sind :ref:`unten <{0}_{2}_c_callbacks>`
  zu finden.
 """
@@ -249,7 +249,7 @@ are described below.
 {2}
 """,
     'de': """
-	.. _{0}_{3}_c_callbacks:
+.. _{0}_{3}_c_callbacks:
 
 Callbacks
 ^^^^^^^^^
@@ -291,7 +291,7 @@ error code. Data returned from the device, when a getter is called,
 is handled via call by reference. These parameters are labelled with the
 ``ret_`` prefix.
 
-Possible error codes are
+Possible error codes are:
 
 * E_OK = 0
 * E_TIMEOUT = -1
@@ -310,16 +310,16 @@ All functions listed below are thread-safe.
 {2}
 """,
     'de': """
-	{0}
+{0}
 API
 ---
 
-Jede Funktion der C/C++ Treiber gibt einen Integer zurück, welcher einen 
+Jede Funktion den C/C++ Bindings gibt einen Integer zurück, welcher einen
 Fehlercode beschreibt. Vom Gerät zurückgegebene Daten werden, wenn eine
 Abfrage aufgerufen wurde, über Referenzparameter gehandhabt. Diese Parameter
 sind mit dem ``ret_`` Prefix gekennzeichnet.
 
-Mögliche Fehlercodes sind
+Mögliche Fehlercodes sind:
 
 * E_OK = 0
 * E_TIMEOUT = -1
@@ -389,7 +389,7 @@ def make_files(com_new, directory):
     file_name = '{0}_{1}_C'.format(device.get_camel_case_name(), device.get_category())
     title = {
     'en': 'C/C++ bindings',
-    'de': 'C/C++ Treiber'
+    'de': 'C/C++ Bindings'
     }
 
     directory += '/doc'
