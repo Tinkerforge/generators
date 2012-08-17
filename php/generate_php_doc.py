@@ -122,7 +122,7 @@ def make_methods(typ):
                                                             desc)
         methods += func + '\n'
 
-    if typ == 'am':
+    if typ == 'af':
         methods += version_method[lang].format(cls)
 
     return methods
@@ -187,43 +187,6 @@ def make_api():
 """
     }
 
-    bm_str = {
-    'en': """
-Basic Methods
-^^^^^^^^^^^^^
-
-{0}
-
-{1}
-""",
-    'de': """
-"""
-    }
-
-    am_str = {
-    'en': """
-Advanced Methods
-^^^^^^^^^^^^^^^^
-
-{0}
-""",
-    'de': """
-"""
-    }
-
-    ccm_str = {
-    'en': """
-Callback Configuration Methods
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-{0}
-
-{1}
-""",
-    'de': """
-"""
-    }
-
     c_str = {
     'en': """
 .. _{1}_{2}_php_callbacks:
@@ -283,17 +246,17 @@ API
                                     device.get_category().lower(),
                                     device.get_category())
 
-    bm = make_methods('bm')
-    am = make_methods('am')
-    ccm = make_methods('ccm')
+    bf = make_methods('bf')
+    af = make_methods('af')
+    ccf = make_methods('ccf')
     c = make_callbacks()
     api_str = ''
-    if bm:
-        api_str += bm_str[lang].format(cre, bm)
-    if am:
-        api_str += am_str[lang].format(am)
+    if bf:
+        api_str += common.bf_str[lang].format(cre, bf)
+    if af:
+        api_str += common.af_str[lang].format(af)
     if c:
-        api_str += ccm_str[lang].format(reg, ccm)
+        api_str += common.ccf_str[lang].format(reg, ccf)
         api_str += c_str[lang].format(c, device.get_underscore_name(),
                                       device.get_category().lower(),
                                       device.get_category(),

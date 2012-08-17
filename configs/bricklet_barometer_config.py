@@ -16,7 +16,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAirPressure', 'get_air_pressure'),
 'elements': [('air_pressure', 'int32', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the air pressure of the air pressure sensor. The value
@@ -44,7 +44,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAltitude', 'get_altitude'),
 'elements': [('altitude', 'int32', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the relative altitude of the air pressure sensor. The value is given in
@@ -73,7 +73,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetTemperature', 'get_temperature'),
 'elements': [('temperature', 'int16', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the temperature of the air pressure sensor. The value
@@ -102,7 +102,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetAirPressureCallbackPeriod', 'set_air_pressure_callback_period'),
 'elements': [('period', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the :func:`AirPressure` callback is triggered
@@ -130,7 +130,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAirPressureCallbackPeriod', 'get_air_pressure_callback_period'),
 'elements': [('period', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the period as set by :func:`SetAirPressureCallbackPeriod`.
@@ -147,7 +147,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetAltitudeCallbackPeriod', 'set_altitude_callback_period'),
 'elements': [('period', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the :func:`Altitude` callback is triggered
@@ -175,7 +175,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAltitudeCallbackPeriod', 'get_altitude_callback_period'),
 'elements': [('period', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the period as set by :func:`SetAltitudeCallbackPeriod`.
@@ -194,7 +194,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'in'),
              ('min', 'int32', 1, 'in'),
              ('max', 'int32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the thresholds for the :func:`AirPressureReached` callback.
@@ -240,7 +240,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'out'),
              ('min', 'int32', 1, 'out'),
              ('max', 'int32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the threshold as set by :func:`SetAirPressureCallbackThreshold`.
@@ -259,7 +259,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'in'),
              ('min', 'int32', 1, 'in'),
              ('max', 'int32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the thresholds for the :func:`AltitudeReached` callback.
@@ -305,7 +305,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'out'),
              ('min', 'int32', 1, 'out'),
              ('max', 'int32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the threshold as set by :func:`SetAltitudeCallbackThreshold`.
@@ -322,7 +322,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetDebouncePeriod', 'set_debounce_period'),
 'elements': [('debounce', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the threshold callbacks
@@ -358,7 +358,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetDebouncePeriod', 'get_debounce_period'),
 'elements': [('debounce', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the debounce period as set by :func:`SetDebouncePeriod`.
@@ -375,7 +375,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('CalibrateAltitude', 'calibrate_altitude'),
 'elements': [],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Calibrates the altitude by setting the reference altitude to the current

@@ -18,7 +18,7 @@ com['packets'].append({
 'elements': [('line', 'uint8', 1, 'in'),
              ('position', 'uint8', 1, 'in'),
              ('text', 'string', 20, 'in')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Writes text to a specific line (0 to 3) with a specific position 
@@ -54,7 +54,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('ClearDisplay', 'clear_display'), 
 'elements': [],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Deletes all characters from the display.
@@ -70,7 +70,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('BacklightOn', 'backlight_on'), 
 'elements': [],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Turns the backlight on.
@@ -86,7 +86,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('BacklightOff', 'backlight_off'), 
 'elements': [],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Turns the backlight off.
@@ -102,7 +102,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('IsBacklightOn', 'is_backlight_on'), 
 'elements': [('backlight', 'bool', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns *true* if the backlight is on and *false* otherwise.
@@ -119,7 +119,7 @@ com['packets'].append({
 'name': ('SetConfig', 'set_config'), 
 'elements': [('cursor', 'bool', 1, 'in'),
              ('blinking', 'bool', 1, 'in')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Configures if the cursor (shown as "_") should be visible and if it
@@ -145,7 +145,7 @@ com['packets'].append({
 'name': ('GetConfig', 'get_config'), 
 'elements': [('cursor', 'bool', 1, 'out'),
              ('blinking', 'bool', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the configuration as set by :func:`SetConfig`.
@@ -162,7 +162,7 @@ com['packets'].append({
 'name': ('IsButtonPressed', 'is_button_pressed'), 
 'elements': [('button', 'uint8', 1, 'in'),
              ('pressed', 'bool', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns *true* if the button (0 to 2) is pressed. If you want to react

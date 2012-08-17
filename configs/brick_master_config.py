@@ -16,7 +16,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetStackVoltage', 'get_stack_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')], 
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the stack voltage in mV. The stack voltage is the
@@ -36,7 +36,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetStackCurrent', 'get_stack_current'), 
 'elements': [('current', 'uint16', 1, 'out')], 
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the stack current in mA. The stack current is the
@@ -57,7 +57,7 @@ com['packets'].append({
 'name': ('SetExtensionType', 'set_extension_type'), 
 'elements': [('extension', 'uint8', 1, 'in'),
              ('exttype', 'uint32', 1, 'in')], 
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Writes the extension type to the EEPROM of a specified extension. 
@@ -106,7 +106,7 @@ com['packets'].append({
 'name': ('GetExtensionType', 'get_extension_type'), 
 'elements': [('extension', 'uint8', 1, 'in'),
              ('exttype', 'uint32', 1, 'out')], 
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the extension type for a given extension as set by 
@@ -124,7 +124,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('IsChibiPresent', 'is_chibi_present'), 
 'elements': [('present', 'bool', 1, 'out')], 
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns *true* if a Chibi Extension is available to be used by the Master.
@@ -144,7 +144,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetChibiAddress', 'set_chibi_address'), 
 'elements': [('address', 'uint8', 1, 'in')], 
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Sets the address (1-255) belonging to the Chibi Extension.
@@ -172,7 +172,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetChibiAddress', 'get_chibi_address'), 
 'elements': [('address', 'uint8', 1, 'out')], 
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the address as set by :func:`SetChibiAddress`.
@@ -190,7 +190,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetChibiMasterAddress', 'set_chibi_master_address'), 
 'elements': [('address', 'uint8', 1, 'in')], 
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Sets the address (1-255) of the Chibi Master. This address is used if the
@@ -221,7 +221,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetChibiMasterAddress', 'get_chibi_master_address'), 
 'elements': [('address', 'uint8', 1, 'out')], 
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the address as set by :func:`SetChibiMasterAddress`.
@@ -240,7 +240,7 @@ com['packets'].append({
 'name': ('SetChibiSlaveAddress', 'set_chibi_slave_address'), 
 'elements': [('num', 'uint8', 1, 'in'),
              ('address', 'uint8', 1, 'in')], 
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Sets up to 254 slave addresses. Valid addresses are in range 1-255.
@@ -279,7 +279,7 @@ com['packets'].append({
 'name': ('GetChibiSlaveAddress', 'get_chibi_slave_address'), 
 'elements': [('num', 'uint8', 1, 'in'),
              ('address', 'uint8', 1, 'out')], 
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the slave address for a given num as set by 
@@ -301,7 +301,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetChibiSignalStrength', 'get_chibi_signal_strength'), 
 'elements': [('signal_strength', 'uint8', 1, 'out')], 
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the signal strength in dBm. The signal strength updates every time a
@@ -326,7 +326,7 @@ com['packets'].append({
              ('crc_error', 'uint16', 1, 'out'),
              ('no_ack', 'uint16', 1, 'out'),
              ('overflow', 'uint16', 1, 'out')], 
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns underrun, CRC error, no ACK and overflow error counts of the Chibi
@@ -352,7 +352,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetChibiFrequency', 'set_chibi_frequency'), 
 'elements': [('frequency', 'uint8', 1, 'in')], 
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Sets the Chibi frequency range for the Chibi Extension. Possible values are:
@@ -398,7 +398,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetChibiFrequency', 'get_chibi_frequency'), 
 'elements': [('frequency', 'uint8', 1, 'out')], 
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the frequency value as set by :func:`SetChibiFrequency`.
@@ -418,7 +418,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetChibiChannel', 'set_chibi_channel'), 
 'elements': [('channel', 'uint8', 1, 'in')], 
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Sets the channel used by the Chibi Extension. Possible channels are
@@ -466,7 +466,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetChibiChannel', 'get_chibi_channel'), 
 'elements': [('channel', 'uint8', 1, 'out')], 
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the channel as set by :func:`SetChibiChannel`.
@@ -486,7 +486,7 @@ com['packets'].append({
 'type': 'function', 
 'name': ('IsRS485Present', 'is_rs485_present'), 
 'elements': [('present', 'bool', 1, 'out')], 
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns *true* if a RS485 Extension is available to be used by the Master.
@@ -506,7 +506,7 @@ com['packets'].append({
 'type': 'function', 
 'name': ('SetRS485Address', 'set_rs485_address'), 
 'elements': [('address', 'uint8', 1, 'in')], 
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Sets the address (1-255) belonging to the RS485 Extension.
@@ -540,7 +540,7 @@ com['packets'].append({
 'type': 'function', 
 'name': ('GetRS485Address', 'get_rs485_address'), 
 'elements': [('address', 'uint8', 1, 'out')], 
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the address as set by :func:`SetRS485Address`.
@@ -561,7 +561,7 @@ com['packets'].append({
 'name': ('SetRS485SlaveAddress', 'set_rs485_slave_address'),
 'elements': [('num', 'uint8', 1, 'in'),
              ('address', 'uint8', 1, 'in')], 
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Sets up to 255 slave addresses. Valid addresses are in range 1-255.
@@ -600,7 +600,7 @@ com['packets'].append({
 'name': ('GetRS485SlaveAddress', 'get_rs485_slave_address'), 
 'elements': [('num', 'uint8', 1, 'in'),
              ('address', 'uint8', 1, 'out')], 
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the slave address for a given num as set by 
@@ -622,7 +622,7 @@ com['packets'].append({
 'type': 'function', 
 'name': ('GetRS485ErrorLog', 'get_rs485_error_log'), 
 'elements': [('crc_error', 'uint16', 1, 'out')], 
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns CRC error counts of the RS485 communication.
@@ -649,7 +649,7 @@ com['packets'].append({
 'elements': [('speed', 'uint32', 1, 'in'),
              ('parity', 'char', 1, 'in'),
              ('stopbits', 'uint8', 1, 'in')], 
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Sets the configuration of the RS485 Extension. Speed is given in baud. The
@@ -693,7 +693,7 @@ com['packets'].append({
 'elements': [('speed', 'uint32', 1, 'out'),
              ('parity', 'char', 1, 'out'),
              ('stopbits', 'uint8', 1, 'out')], 
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the configuration as set by :func:`SetRS485Configuration`.

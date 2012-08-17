@@ -16,7 +16,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetVelocity', 'set_velocity'),
 'elements': [('velocity', 'int16', 1, 'in')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Sets the velocity of the motor. Whereas -32767 is full speed backward,
@@ -53,7 +53,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetVelocity', 'get_velocity'),
 'elements': [('velocity', 'int16', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the velocity as set by :func:`SetVelocity`.
@@ -69,7 +69,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetCurrentVelocity', 'get_current_velocity'),
 'elements': [('velocity', 'int16', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the *current* velocity of the motor. This value is different
@@ -89,7 +89,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetAcceleration', 'set_acceleration'),
 'elements': [('acceleration', 'uint16', 1, 'in')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Sets the acceleration of the motor. It is given in *velocity/s*. An
@@ -128,7 +128,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAcceleration', 'get_acceleration'),
 'elements': [('acceleration', 'uint16', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the acceleration as set by :func:`SetAcceleration`.
@@ -144,7 +144,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetPWMFrequency', 'set_pwm_frequency'),
 'elements': [('frequency', 'uint16', 1, 'in')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Sets the frequency (in Hz) of the PWM with which the motor is driven.
@@ -179,7 +179,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetPWMFrequency', 'get_pwm_frequency'),
 'elements': [('frequency', 'uint16', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the PWM frequency (in Hz) as set by :func:`SetPWMFrequency`.
@@ -195,7 +195,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('FullBrake', 'full_brake'),
 'elements': [],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Executes an active full brake.
@@ -225,7 +225,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetStackInputVoltage', 'get_stack_input_voltage'),
 'elements': [('voltage', 'uint16', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the stack input voltage in mV. The stack input voltage is the
@@ -245,7 +245,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetExternalInputVoltage', 'get_external_input_voltage'),
 'elements': [('voltage', 'uint16', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the external input voltage in mV. The external input voltage is
@@ -283,7 +283,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetCurrentConsumption', 'get_current_consumption'),
 'elements': [('voltage', 'uint16', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the current consumption of the motor in mA.
@@ -299,7 +299,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('Enable', 'enable'),
 'elements': [],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Enables the motor. The motor can be configured (velocity,
@@ -317,7 +317,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('Disable', 'disable'),
 'elements': [],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Disables the motor. The configurations are kept (velocity,
@@ -336,7 +336,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('IsEnabled', 'is_enabled'),
 'elements': [('enabled', 'bool', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns *true* if the motor is enabled, *false* otherwise.
@@ -352,7 +352,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetMinimumVoltage', 'set_minimum_voltage'),
 'elements': [('voltage', 'uint16', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the minimum voltage in mV, below which the :func:`UnderVoltage` callback
@@ -380,7 +380,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetMinimumVoltage', 'get_minimum_voltage'),
 'elements': [('voltage', 'uint16', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the minimum voltage as set by :func:`SetMinimumVoltage`
@@ -396,7 +396,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetDriveMode', 'set_drive_mode'),
 'elements': [('mode', 'uint8', 1, 'in')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Sets the drive mode. Possible modes are:
@@ -443,7 +443,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetDriveMode', 'get_drive_mode'),
 'elements': [('mode', 'uint8', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the drive mode, as set by :func:`SetDriveMode`.
@@ -459,7 +459,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetCurrentVelocityPeriod', 'set_current_velocity_period'),
 'elements': [('period', 'uint16', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets a period in ms with which the :func:`CurrentVelocity` callback is triggered.
@@ -481,7 +481,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetCurrentVelocityPeriod', 'get_current_velocity_period'),
 'elements': [('period', 'uint16', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the period as set by :func:`SetCurrentVelocityPeriod`.

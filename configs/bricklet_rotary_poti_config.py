@@ -16,7 +16,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetPosition', 'get_position'), 
 'elements': [('position', 'int16', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the position of the Rotary Potentiometer. The value is in degree 
@@ -42,7 +42,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAnalogValue', 'get_analog_value'), 
 'elements': [('value', 'uint16', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the value as read by a 12 bit analog to digital converter.
@@ -80,7 +80,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetPositionCallbackPeriod', 'set_position_callback_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the :func:`Position` callback is triggered
@@ -108,7 +108,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetPositionCallbackPeriod', 'get_position_callback_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the period as set by :func:`SetPositionCallbackPeriod`.
@@ -125,7 +125,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetAnalogValueCallbackPeriod', 'set_analog_value_callback_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the :func:`AnalogValue` callback is triggered
@@ -153,7 +153,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAnalogValueCallbackPeriod', 'get_analog_value_callback_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the period as set by :func:`SetAnalogValueCallbackPeriod`.
@@ -172,7 +172,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'in'), 
              ('min', 'int16', 1, 'in'),
              ('max', 'int16', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the thresholds for the :func:`PositionReached` callback. 
@@ -218,7 +218,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'out'), 
              ('min', 'int16', 1, 'out'),
              ('max', 'int16', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the threshold as set by :func:`SetPositionCallbackThreshold`.
@@ -237,7 +237,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'in'), 
              ('min', 'uint16', 1, 'in'),
              ('max', 'uint16', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the thresholds for the :func:`AnalogValueReached` callback. 
@@ -283,7 +283,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'out'), 
              ('min', 'uint16', 1, 'out'),
              ('max', 'uint16', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the threshold as set by :func:`SetAnalogValueCallbackThreshold`.
@@ -300,7 +300,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetDebouncePeriod', 'set_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the threshold callbacks
@@ -336,7 +336,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetDebouncePeriod', 'get_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the debounce period as set by :func:`SetDebouncePeriod`.

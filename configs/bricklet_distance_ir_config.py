@@ -16,7 +16,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetDistance', 'get_distance'), 
 'elements': [('distance', 'uint16', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the distance measured by the sensor. The value is in mm and possible
@@ -44,7 +44,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAnalogValue', 'get_analog_value'), 
 'elements': [('value', 'uint16', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the value as read by a 12 bit analog to digital converter.
@@ -83,7 +83,7 @@ com['packets'].append({
 'name': ('SetSamplingPoint', 'set_sampling_point'), 
 'elements': [('position', 'uint8', 1, 'in'),
              ('distance', 'uint16',1, 'in')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Sets a sampling point value to a specific position of the lookup table.
@@ -132,7 +132,7 @@ com['packets'].append({
 'name': ('GetSamplingPoint', 'get_sampling_point'), 
 'elements': [('position', 'uint8', 1, 'in'),
              ('distance', 'uint16',1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the distance to a sampling point position as set by
@@ -150,7 +150,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetDistanceCallbackPeriod', 'set_distance_callback_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the :func:`Distance` callback is triggered
@@ -178,7 +178,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetDistanceCallbackPeriod', 'get_distance_callback_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the period as set by :func:`SetDistanceCallbackPeriod`.
@@ -195,7 +195,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetAnalogValueCallbackPeriod', 'set_analog_value_callback_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the :func:`AnalogValue` callback is triggered
@@ -223,7 +223,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAnalogValueCallbackPeriod', 'get_analog_value_callback_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the period as set by :func:`SetAnalogValueCallbackPeriod`.
@@ -242,7 +242,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'in'), 
              ('min', 'int16', 1, 'in'),
              ('max', 'int16', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the thresholds for the :func:`DistanceReached` callback. 
@@ -288,7 +288,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'out'), 
              ('min', 'int16', 1, 'out'),
              ('max', 'int16', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the threshold as set by :func:`SetDistanceCallbackThreshold`.
@@ -307,7 +307,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'in'), 
              ('min', 'uint16', 1, 'in'),
              ('max', 'uint16', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the thresholds for the :func:`AnalogValueReached` callback. 
@@ -353,7 +353,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'out'), 
              ('min', 'uint16', 1, 'out'),
              ('max', 'uint16', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the threshold as set by :func:`SetAnalogValueCallbackThreshold`.
@@ -370,7 +370,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetDebouncePeriod', 'set_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the threshold callbacks
@@ -406,7 +406,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetDebouncePeriod', 'get_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the debounce period as set by :func:`SetDebouncePeriod`.

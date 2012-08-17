@@ -16,7 +16,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetCurrent', 'get_current'), 
 'elements': [('current', 'int16', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the current of the sensor. The value is in mA
@@ -42,7 +42,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('Calibrate', 'calibrate'), 
 'elements': [],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Calibrates the 0 value of the sensor. You have to call this function
@@ -76,7 +76,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('IsOverCurrent', 'is_over_current'), 
 'elements': [('over', 'bool', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns *true* if more than 12.5A were measured.
@@ -99,7 +99,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAnalogValue', 'get_analog_value'), 
 'elements': [('value', 'uint16', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the value as read by a 12 bit analog to digital converter.
@@ -137,7 +137,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetCurrentCallbackPeriod', 'set_current_callback_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the :func:`Current` callback is triggered
@@ -165,7 +165,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetCurrentCallbackPeriod', 'get_current_callback_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the period as set by :func:`SetCurrentCallbackPeriod`.
@@ -182,7 +182,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetAnalogValueCallbackPeriod', 'set_analog_value_callback_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the :func:`AnalogValue` callback is triggered
@@ -210,7 +210,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAnalogValueCallbackPeriod', 'get_analog_value_callback_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the period as set by :func:`SetAnalogValueCallbackPeriod`.
@@ -229,7 +229,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'in'), 
              ('min', 'int16', 1, 'in'),
              ('max', 'int16', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the thresholds for the :func:`CurrentReached` callback. 
@@ -275,7 +275,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'out'), 
              ('min', 'int16', 1, 'out'),
              ('max', 'int16', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the threshold as set by :func:`SetCurrentCallbackThreshold`.
@@ -294,7 +294,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'in'), 
              ('min', 'uint16', 1, 'in'),
              ('max', 'uint16', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the thresholds for the :func:`AnalogValueReached` callback. 
@@ -340,7 +340,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'out'), 
              ('min', 'uint16', 1, 'out'),
              ('max', 'uint16', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the threshold as set by :func:`SetAnalogValueCallbackThreshold`.
@@ -357,7 +357,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetDebouncePeriod', 'set_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the threshold callbacks
@@ -393,7 +393,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetDebouncePeriod', 'get_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the debounce period as set by :func:`SetDebouncePeriod`.

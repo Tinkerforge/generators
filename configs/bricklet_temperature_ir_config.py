@@ -16,7 +16,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAmbientTemperature', 'get_ambient_temperature'), 
 'elements': [('temperature', 'int16', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the ambient temperature of the sensor. The value
@@ -45,7 +45,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetObjectTemperature', 'get_object_temperature'), 
 'elements': [('temperature', 'int16', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the object temperature of the sensor, i.e. the temperature
@@ -85,7 +85,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetEmissivity', 'set_emissivity'), 
 'elements': [('emissivity', 'uint16', 1, 'in')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Sets the `emissivity <http://en.wikipedia.org/wiki/Emissivity>`_ that is 
@@ -135,7 +135,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetEmissivity', 'get_emissivity'), 
 'elements': [('emissivity', 'uint16', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the emissivity as set by :func:`SetEmissivity`.
@@ -151,7 +151,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetAmbientTemperatureCallbackPeriod', 'set_ambient_temperature_callback_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the :func:`AmbientTemperature` callback is triggered
@@ -179,7 +179,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAmbientTemperatureCallbackPeriod', 'get_ambient_temperature_callback_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the period as set by :func:`SetAmbientTemperatureCallbackPeriod`.
@@ -196,7 +196,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetObjectTemperatureCallbackPeriod', 'set_object_temperature_callback_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the :func:`ObjectTemperature` callback is triggered
@@ -224,7 +224,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetObjectTemperatureCallbackPeriod', 'get_object_temperature_callback_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the period as set by :func:`SetObjectTemperatureCallbackPeriod`.
@@ -243,7 +243,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'in'), 
              ('min', 'int16', 1, 'in'),
              ('max', 'int16', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the thresholds for the :func:`AmbientTemperatureReached` callback. 
@@ -289,7 +289,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'out'), 
              ('min', 'int16', 1, 'out'),
              ('max', 'int16', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the threshold as set by :func:`SetAmbientTemperatureCallbackThreshold`.
@@ -308,7 +308,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'in'), 
              ('min', 'int16', 1, 'in'),
              ('max', 'int16', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the thresholds for the :func:`ObjectTemperatureReached` callback. 
@@ -354,7 +354,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'out'), 
              ('min', 'int16', 1, 'out'),
              ('max', 'int16', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the threshold as set by :func:`SetObjectTemperatureCallbackThreshold`.
@@ -371,7 +371,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetDebouncePeriod', 'set_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the threshold callbacks
@@ -407,7 +407,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetDebouncePeriod', 'get_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the debounce period as set by :func:`SetDebouncePeriod`.

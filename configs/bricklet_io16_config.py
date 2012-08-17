@@ -17,7 +17,7 @@ com['packets'].append({
 'name': ('SetPort', 'set_port'), 
 'elements': [('port', 'char', 1, 'in'),
              ('value_mask', 'uint8', 1, 'in')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Sets the output value (high or low) for a port ("a" or "b") with a bit mask. 
@@ -51,7 +51,7 @@ com['packets'].append({
 'name': ('GetPort', 'get_port'), 
 'elements': [('port', 'char', 1, 'in'),
              ('value_mask', 'uint8', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns a bit mask of the values that are currently measured on the
@@ -74,7 +74,7 @@ com['packets'].append({
              ('pin_mask', 'uint8', 1, 'in'),
              ('direction', 'char', 1, 'in'),
              ('value', 'bool', 1, 'in')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Configures the value and direction of a specified port. Possible directions
@@ -120,7 +120,7 @@ com['packets'].append({
 'elements': [('port', 'char', 1, 'in'),
              ('direction_mask', 'uint8', 1, 'out'),
              ('value_mask', 'uint8', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns a direction bit mask and a value bit mask for the specified port.
@@ -153,7 +153,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetDebouncePeriod', 'set_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the debounce period of the :func:`Interrupt` callback in ms.
@@ -181,7 +181,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetDebouncePeriod', 'get_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the debounce period as set by :func:`SetDebouncePeriod`.
@@ -199,7 +199,7 @@ com['packets'].append({
 'name': ('SetPortInterrupt', 'set_port_interrupt'), 
 'elements': [('port', 'char', 1, 'in'),
              ('interrupt_mask', 'uint8', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the pins on which an interrupt is activated with a bit mask. 
@@ -230,7 +230,7 @@ com['packets'].append({
 'name': ('GetPortInterrupt', 'get_port_interrupt'), 
 'elements': [('port', 'char', 1, 'in'),
              ('interrupt_mask', 'uint8', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the interrupt bit mask for the specified port as set by
@@ -293,7 +293,7 @@ com['packets'].append({
              ('pin_mask', 'uint8', 1, 'in'),
              ('value_mask', 'uint8', 1, 'in'),
              ('time', 'uint32', 1, 'in')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Configures a monoflop of the pins specified by the second parameter as 8 bit
@@ -354,7 +354,7 @@ com['packets'].append({
              ('value', 'uint8', 1, 'out'),
              ('time', 'uint32', 1, 'out'),
              ('time_remaining', 'uint32', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns (for the given pin) the current value and the time as set by

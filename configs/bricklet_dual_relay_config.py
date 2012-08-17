@@ -17,7 +17,7 @@ com['packets'].append({
 'name': ('SetState', 'set_state'), 
 'elements': [('relay1', 'bool', 1, 'in'),
              ('relay2', 'bool', 1, 'in')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Sets the state of the relays, *true* means on and *false* means off. 
@@ -50,7 +50,7 @@ com['packets'].append({
 'name': ('GetState', 'get_state'), 
 'elements': [('relay1', 'bool', 1, 'out'),
              ('relay2', 'bool', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the state of the relays, *true* means on and *false* means off. 
@@ -68,7 +68,7 @@ com['packets'].append({
 'elements': [('relay', 'uint8', 1, 'in'),
              ('state', 'bool', 1, 'in'),
              ('time', 'uint32', 1, 'in')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 The first parameter can be 1 or 2 (relay 1 or relay 2). The second parameter 
@@ -114,7 +114,7 @@ com['packets'].append({
              ('state', 'bool', 1, 'out'),
              ('time', 'uint32', 1, 'out'),
              ('time_remaining', 'uint32', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns (for the given relay) the current state and the time as set by 

@@ -17,7 +17,7 @@ com['packets'].append({
 'name': ('GetPosition', 'get_position'), 
 'elements': [('x', 'int16', 1, 'out'),
              ('y', 'int16', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the position of the Joystick. The value ranges between -100 and
@@ -45,7 +45,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('IsPressed', 'is_pressed'), 
 'elements': [('pressed', 'bool', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns *true* if the button is pressed and *false* otherwise.
@@ -68,7 +68,7 @@ com['packets'].append({
 'name': ('GetAnalogValue', 'get_analog_value'), 
 'elements': [('x', 'uint16', 1, 'out'),
              ('y', 'uint16', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the values as read by a 12 bit analog to digital converter.
@@ -106,7 +106,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('Calibrate', 'calibrate'), 
 'elements': [],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Calibrates the middle position of the Joystick. If your Joystick Bricklet
@@ -132,7 +132,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetPositionCallbackPeriod', 'set_position_callback_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the :func:`Position` callback is triggered
@@ -160,7 +160,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetPositionCallbackPeriod', 'get_position_callback_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the period as set by :func:`SetPositionCallbackPeriod`.
@@ -177,7 +177,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetAnalogValueCallbackPeriod', 'set_analog_value_callback_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the :func:`AnalogValue` callback is triggered
@@ -205,7 +205,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAnalogValueCallbackPeriod', 'get_analog_value_callback_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the period as set by :func:`SetAnalogValueCallbackPeriod`.
@@ -226,7 +226,7 @@ com['packets'].append({
              ('max_x', 'int16', 1, 'in'),
              ('min_y', 'int16', 1, 'in'),
              ('max_y', 'int16', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the thresholds for the :func:`PositionReached` callback. 
@@ -274,7 +274,7 @@ com['packets'].append({
              ('max_x', 'int16', 1, 'out'),
              ('min_y', 'int16', 1, 'out'),
              ('max_y', 'int16', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the threshold as set by :func:`SetPositionCallbackThreshold`.
@@ -295,7 +295,7 @@ com['packets'].append({
              ('max_x', 'uint16', 1, 'in'),
              ('min_y', 'uint16', 1, 'in'),
              ('max_y', 'uint16', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the thresholds for the :func:`AnalogValueReached` callback. 
@@ -343,7 +343,7 @@ com['packets'].append({
              ('max_x', 'uint16', 1, 'out'),
              ('min_y', 'uint16', 1, 'out'),
              ('max_y', 'uint16', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the threshold as set by :func:`SetAnalogValueCallbackThreshold`.
@@ -360,7 +360,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetDebouncePeriod', 'set_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the threshold callbacks
@@ -396,7 +396,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetDebouncePeriod', 'get_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the debounce period as set by :func:`SetDebouncePeriod`.

@@ -67,6 +67,59 @@ gen_text_rst = """..
  #############################################################
 """
 
+bf_str = {
+'en': """
+Basic Functions
+^^^^^^^^^^^^^^^
+
+{0}
+
+{1}
+""",
+'de': """
+Grundfunktionen
+^^^^^^^^^^^^^^^
+
+{0}
+
+{1}
+"""
+}
+
+af_str = {
+'en': """
+Advanced Functions
+^^^^^^^^^^^^^^^^^^
+
+{0}
+""",
+'de': """
+Fortgeschrittene Funktionen
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+{0}
+"""
+}
+
+ccf_str = {
+'en': """
+Callback Configuration Functions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+{0}
+
+{1}
+""",
+'de': """
+Konfigurationsfunktionen für Callbacks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+{0}
+
+{1}
+"""
+}
+
 lang = 'en'
 
 def shift_right(text, n):

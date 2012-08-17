@@ -16,7 +16,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('Beep', 'beep'), 
 'elements': [('duration', 'uint32', 1, 'in')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Beeps with the duration in ms. For example: If you set a value of 1000,
@@ -34,7 +34,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('MorseCode', 'morse_code'), 
 'elements': [('morse', 'string', 60, 'in')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Sets morse code that will be played by the piezo buzzer. The morse code

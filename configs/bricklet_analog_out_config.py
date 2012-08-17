@@ -16,7 +16,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetVoltage', 'set_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'in')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Sets the voltage in mV. The possible range is 0V to 5V (0-5000).
@@ -38,7 +38,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetVoltage', 'get_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the voltage as set by :func:`SetVoltage`.
@@ -55,7 +55,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetMode', 'set_mode'), 
 'elements': [('mode', 'uint8', 1, 'in')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Sets the mode of the analog value. Possible modes:
@@ -91,7 +91,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetMode', 'get_mode'), 
 'elements': [('mode', 'uint8', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the mode as set by :func:`SetMode`.

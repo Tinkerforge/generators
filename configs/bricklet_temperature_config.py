@@ -16,7 +16,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetTemperature', 'get_temperature'), 
 'elements': [('temperature', 'int16', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the temperature of the sensor. The value
@@ -44,7 +44,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetTemperatureCallbackPeriod', 'set_temperature_callback_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the :func:`Temperature` callback is triggered
@@ -72,7 +72,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetTemperatureCallbackPeriod', 'get_temperature_callback_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the period as set by :func:`SetTemperatureCallbackPeriod`.
@@ -91,7 +91,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'in'), 
              ('min', 'int16', 1, 'in'),
              ('max', 'int16', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the thresholds for the :func:`TemperatureReached` callback. 
@@ -137,7 +137,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'out'), 
              ('min', 'int16', 1, 'out'),
              ('max', 'int16', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the threshold as set by :func:`SetTemperatureCallbackThreshold`.
@@ -154,7 +154,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetDebouncePeriod', 'set_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the threshold callback
@@ -190,7 +190,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetDebouncePeriod', 'get_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the debounce period as set by :func:`SetDebouncePeriod`.

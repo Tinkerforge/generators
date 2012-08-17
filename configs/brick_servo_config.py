@@ -40,7 +40,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('Enable', 'enable'), 
 'elements': [('servo_num', 'uint8', 1, 'in')], 
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Enables a servo (0 to 6). If a servo is enabled, the configured position,
@@ -58,7 +58,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('Disable', 'disable'), 
 'elements': [('servo_num', 'uint8', 1, 'in')], 
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Disables a servo (0 to 6). Disabled servos are not driven at all, i.e. a
@@ -77,7 +77,7 @@ com['packets'].append({
 'name': ('IsEnabled', 'is_enabled'), 
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('enabled', 'bool', 1, 'out')], 
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns *true* if the specified servo is enabled, *false* otherwise.
@@ -94,7 +94,7 @@ com['packets'].append({
 'name': ('SetPosition', 'set_position'), 
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('position', 'int16', 1, 'in')], 
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Sets the position in °/100 for the specified servo. 
@@ -125,7 +125,7 @@ com['packets'].append({
 'name': ('GetPosition', 'get_position'), 
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('position', 'int16', 1, 'out')], 
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the position of the specified servo as set by :func:`SetPosition`.
@@ -143,7 +143,7 @@ com['packets'].append({
 'name': ('GetCurrentPosition', 'get_current_position'), 
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('position', 'int16', 1, 'out')], 
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the *current* position of the specified servo. This may not be the
@@ -163,7 +163,7 @@ com['packets'].append({
 'name': ('SetVelocity', 'set_velocity'), 
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('velocity', 'uint16', 1, 'in')], 
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Sets the maximum velocity of the specified servo in °/100s. The velocity
@@ -193,7 +193,7 @@ com['packets'].append({
 'name': ('GetVelocity', 'get_velocity'), 
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('velocity', 'uint16', 1, 'out')], 
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the velocity of the specified servo as set by :func:`SetVelocity`.
@@ -211,7 +211,7 @@ com['packets'].append({
 'name': ('GetCurrentVelocity', 'get_current_velocity'), 
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('velocity', 'uint16', 1, 'out')], 
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the *current* velocity of the specified servo. This may not be the
@@ -231,7 +231,7 @@ com['packets'].append({
 'name': ('SetAcceleration', 'set_acceleration'), 
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('acceleration', 'uint16', 1, 'in')], 
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Sets the acceleration of the specified servo in °/100s².
@@ -258,7 +258,7 @@ com['packets'].append({
 'name': ('GetAcceleration', 'get_acceleration'), 
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('acceleration', 'uint16', 1, 'out')], 
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the acceleration for the specified servo as set by 
@@ -276,7 +276,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetOutputVoltage', 'set_output_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'in')], 
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Sets the output voltages with which the servos are driven in mV.
@@ -309,7 +309,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetOutputVoltage', 'get_output_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')], 
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the output voltage as specified by :func:`SetOutputVoltage`.
@@ -327,7 +327,7 @@ com['packets'].append({
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('min', 'uint16', 1, 'in'),
              ('max', 'uint16', 1, 'in')], 
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Sets the minimum and maximum pulse width of the specified servo in µs.
@@ -378,7 +378,7 @@ com['packets'].append({
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('min', 'uint16', 1, 'out'),
              ('max', 'uint16', 1, 'out')], 
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the minimum and maximum pulse width for the specified servo as set by
@@ -398,7 +398,7 @@ com['packets'].append({
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('min', 'int16', 1, 'in'),
              ('max', 'int16', 1, 'in')], 
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Sets the minimum and maximum degree for the specified servo (by default
@@ -478,7 +478,7 @@ com['packets'].append({
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('min', 'int16', 1, 'out'),
              ('max', 'int16', 1, 'out')], 
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the minimum and maximum degree for the specified servo as set by
@@ -497,7 +497,7 @@ com['packets'].append({
 'name': ('SetPeriod', 'set_period'), 
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('period', 'uint16', 1, 'in')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Sets the period of the specified servo in µs.
@@ -542,7 +542,7 @@ com['packets'].append({
 'name': ('GetPeriod', 'get_period'), 
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('period', 'uint16', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the period for the specified servo as set by :func:`SetPeriod`.
@@ -560,7 +560,7 @@ com['packets'].append({
 'name': ('GetServoCurrent', 'get_servo_current'), 
 'elements': [('servo_num', 'uint8', 1, 'in'),
              ('current', 'uint16', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the current consumption of the specified servo in mA.
@@ -576,7 +576,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetOverallCurrent', 'get_overall_current'), 
 'elements': [('current', 'uint16', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the current consumption of all servos together in mA.
@@ -592,7 +592,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetStackInputVoltage', 'get_stack_input_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the stack input voltage in mV. The stack input voltage is the
@@ -612,7 +612,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetExternalInputVoltage', 'get_external_input_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the external input voltage in mV. The external input voltage is
@@ -650,7 +650,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetMinimumVoltage', 'set_minimum_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the minimum voltage in mV, below which the :func:`UnderVoltage` callback
@@ -678,7 +678,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetMinimumVoltage', 'get_minimum_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the minimum voltage as set by :func:`SetMinimumVoltage`
