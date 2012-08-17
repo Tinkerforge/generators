@@ -35,6 +35,18 @@ and how to translate from Unicode to the LCD charset.
 """,
 'de':
 """
+Schreibt einen Text in die angegebene Zeile (0 bis 3) mit einer vorgegebenen
+Position (0 bis 19). Der Text kann maximal 20 Zeichen lang sein.
+
+Beispiel: (0, 7, "Hello") schreibt *Hello* in die Mitte der ersten Zeile
+des Display.
+
+Das Display nutzt einen speziellen Zeichensatz der alle ASCII Zeichen beinhaltet außer
+Backslash und Tilde. Der Zeichensatz des LCD beinhaltet weiterhin einige Nicht-ASCII Zeichen,
+siehe die `Zeichensatzspezifikation <<https://github.com/Tinkerforge/lcd-20x4-bricklet/raw/master/datasheets/standard_charset.pdf>`__
+für Details. Das gezeigte Unicode Beispiel verdeutlicht die Verwendung von Nicht-ASCII Zeichen
+und wie die Wandlung von Unicode in den LCD Zeichensatz möglich ist.
+
 """
 }]
 })
@@ -50,6 +62,7 @@ Deletes all characters from the display.
 """,
 'de':
 """
+Löscht alle Zeichen auf dem Display.
 """
 }]
 })
@@ -65,6 +78,7 @@ Turns the backlight on.
 """,
 'de':
 """
+Aktiviert die Hintergrundbeleuchtung.
 """
 }]
 })
@@ -80,6 +94,7 @@ Turns the backlight off.
 """,
 'de':
 """
+Deaktiviert die Hintergrundbeleuchtung.
 """
 }]
 })
@@ -95,6 +110,7 @@ Returns true if the backlight is on and false otherwise.
 """,
 'de':
 """
+Gibt true zurück wenn die Hintergrundbeleuchtung aktiv ist, sonst false.
 """
 }]
 })
@@ -118,6 +134,11 @@ The default is (false, false).
 """,
 'de':
 """
+Konfiguriert ob der Cursor (angezeigt als "_") sichtbar ist und ob er 
+blinkt (angezeigt als blinkender Block). Die Cursor Position ist ein 
+Zeichen hinter dem zuletzt mit :func:`WriteLine` geschriebenen Text.
+
+Der Standardwert ist (false, false).
 """
 }]
 })
@@ -134,6 +155,7 @@ Returns the configuration as set by :func:`SetConfig`.
 """,
 'de':
 """
+Gibt die Konfiguration zurück, wie von :func:`SetConfig` gesetzt.
 """
 }]
 })
@@ -152,6 +174,9 @@ on button presses and releases it is recommended to use the
 """,
 'de':
 """
+Gibt true zurück wenn die Taste (0 bis 2) gedrückt ist. Wenn auf Tastendrücken
+und loslassen reagiert werden soll, wird empfohlen die :func:`ButtonPressed`
+und :func:`ButtonReleased` Callbacks zu nutzen.
 """
 }]
 })
@@ -168,6 +193,8 @@ the number of the button (0 to 2).
 """,
 'de':
 """
+Dieser Callback wird ausgelöst wenn eine Taste gedrückt wird. The :word:`parameter`
+ist die Nummer der Taste (0 bis 2).
 """
 }]
 })
@@ -184,6 +211,8 @@ the number of the button (0 to 2).
 """,
 'de':
 """
+Dieser Callback wird ausgelöst wenn eine Taste losgelassen wird. The :word:`parameter`
+ist die Nummer der Taste (0 bis 2).
 """
 }]
 })

@@ -29,6 +29,13 @@ to use the callback :func:`Temperature` and set the period with
 """,
 'de':
 """
+Gibt die Temperatur des Sensors zurück. Der Wertebereich ist von
+-2500 bis 8500 und wird in °C/100 angegeben, z.B. bedeutet 
+ein Wert von 4223 eine gemessene Temperatur von 42,23 °C.
+
+Wenn die Temperatur periodisch abgefragt werden soll, wird empfohlen
+den Callback :func:`Temperature` zu nutzen und die Periode mit 
+:func:`SetTemperatureCallbackPeriod` vorzugeben.
 """
 }]
 })
@@ -50,6 +57,13 @@ The default value is 0.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher der :func:`Temperature` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+:func:`Temperature` wird nur ausgelöst wenn sich die Temperatur seit der
+letzten Auslösung geändert hat.
+
+Der Standardwert ist 0.
 """
 }]
 })
@@ -65,6 +79,8 @@ Returns the period as set by :func:`SetTemperatureCallbackPeriod`.
 """,
 'de':
 """
+Gibt die Periode zurück, wie von :func:`SetTemperatureCallbackPeriod`
+gesetzt.
 """
 }]
 })
@@ -96,6 +112,21 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
+Setzt den Schwellwert für den :func:`TemperatureReached` Callback.
+
+Die folgenden Optionen sind möglich:
+
+.. csv-table::
+ :header: "Option", "Beschreibung"
+ :widths: 10, 100
+ 
+ "'x'",    "Callback ist inaktiv"
+ "'o'",    "Callback wird ausgelöst wenn die Temperatur *ausserhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst wenn die Temperatur *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst wenn die Temperatur kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn die Temperatur größer als der min Wert ist (max wird ignoriert)"
+ 
+Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -113,6 +144,8 @@ Returns the threshold as set by :func:`SetTemperatureCallbackThreshold`.
 """,
 'de':
 """
+Gibt den Schwellwert zurück, wie von :func:`SetTemperatureCallbackThreshold`
+gesetzt.
 """
 }]
 })
@@ -138,6 +171,17 @@ The default value is 100.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher die Schwellwert Callback
+
+ :func:`TemperatureReached`
+ 
+ausgelöst wird, wenn der Schwellwert 
+
+ :func:`SetTemperatureCallbackThreshold`
+ 
+weiterhin erreicht bleibt.
+
+Der Standardwert ist 100.
 """
 }]
 })
@@ -153,6 +197,8 @@ Returns the debounce period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
 """
+Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+gesetzt.
 """
 }]
 })
@@ -173,6 +219,11 @@ last triggering.
 """,
 'de':
 """
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetTemperatureCallbackPeriod`,
+ausgelöst. Der :word:`parameter` ist die Temperatur des Sensors.
+
+:func:`Temperature` wird nur ausgelöst wenn sich die Temperatur seit der
+letzten Auslösung geändert hat.
 """
 }]
 })
@@ -193,6 +244,12 @@ with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
 """
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+:func:`SetTemperatureCallbackThreshold` gesetzt, erreicht wird.
+Der :word:`parameter` ist die Temperatur des Sensors.
+
+Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
+mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 """
 }]
 })
