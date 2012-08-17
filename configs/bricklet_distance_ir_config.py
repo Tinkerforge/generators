@@ -40,8 +40,6 @@ den Callback :func:`Distance` zu nutzen und die Periode mit
 }]
 })
 
-
-
 com['packets'].append({
 'type': 'function',
 'name': ('GetAnalogValue', 'get_analog_value'), 
@@ -68,7 +66,7 @@ Gibt den Wert, wie vom 12 bit Analog-Digital-Wandler gelesen, zurück. Der
 Wertebereich ist 0 bis 4095.
 
 .. note::
- Der von :func:`GetCurrent` zurückgegebene Wert ist über mehrere
+ Der von :func:`GetDistance` zurückgegebene Wert ist über mehrere
  Messwerte gemittelt um das Rauschen zu vermindern, während :func:`GetAnalogValue`
  unverarbeitete Analogwerte zurückgibt. Der einzige Grund :func:`GetAnalogValue`
  zu nutzen, ist die volle Auflösung des Analog-Digital-Wandlers zu erhalten.
@@ -89,7 +87,7 @@ com['packets'].append({
 'en':
 """
 Sets a sampling point value to a specific position of the lookup table.
-The lookup table is comprised of 128 equidistant analog values with
+The lookup table comprises 128 equidistant analog values with
 corresponding distances.
 
 If you measure a distance of 50cm at the analog value 2048, you
@@ -110,8 +108,8 @@ loaded again on startup.
 'de':
 """
 Setzt einen Messpunkt für eine vorgegebene Position in der Wertetabelle.
-Die Wertetabelle beinhaltet 128 äquidistante Analogwerte welche Entfernungen
-ensprechen. 
+Die Wertetabelle beinhaltet 128 äquidistante Analogwerte mit ensprechenden
+Entfernungen.
 
 Wenn eine Entfernung von 50cm bei einem Analogwert von 2048 gemessen wird, dann sollte
 der Aufruf der Funktion mit (64, 5000) erfolgen. Der verwendete Analog-Digital-Wandler
