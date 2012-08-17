@@ -28,10 +28,10 @@ callback :func:`Current` and set the period with
 """,
 'de':
 """
-Gibt den Strom des Sensors zurück. Der Wert ist in mA und im Bereich
-von -12500mA bis 12500mA.
+Gibt die gemessenen Stromstärke des Sensors zurück. Der Wert ist in mA und im
+Bereich von -12500mA bis 12500mA.
 
-Wenn der Strom periodisch abgefragt werden soll, wird empfohlen
+Wenn die Stromstärke periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Current` zu nutzen und die Periode mit 
 :func:`SetCurrentCallbackPeriod` vorzugeben.
 """
@@ -60,7 +60,7 @@ Bricklet.
 'de':
 """
 Kalibriert den Nullwert des Sensors. Diese Funktion muss aufgerufen werden, 
-wenn kein Strom anliegt.
+wenn kein Strom fließt.
 
 Der Nullwert des Stromsensors ist abhängig von den exakten Eigenschaften des
 Analog-Digital-Wandlers, der Länge des Brickletkabels und der Temperatur. Daher ist es,
@@ -71,7 +71,6 @@ Die resultierende Kalibrierung wird in den EEPROM des Current Bricklet gespeiche
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',
@@ -95,7 +94,6 @@ Gibt true zurück wenn mehr als 12,5A gemessen wurden.
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',
@@ -135,7 +133,6 @@ den Callback :func:`AnalogValue` zu nutzen und die Periode mit
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': ('SetCurrentCallbackPeriod', 'set_current_callback_period'), 
@@ -156,7 +153,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :func:`Current` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Current` wird nur ausgelöst wenn sich der Strom seit der
+:func:`Current` wird nur ausgelöst wenn sich die Stromstärke seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0. 
@@ -262,10 +259,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
  
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn der Strom *ausserhalb* des min und max Wertes ist"
- "'i'",    "Callback wird ausgelöst wenn der Strom *innerhalb* des min und max Wertes ist"
- "'<'",    "Callback wird ausgelöst wenn der Strom kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn der Strom größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst wenn die Stromstärke *ausserhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst wenn die Stromstärke *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst wenn die Stromstärke kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn die Stromstärke größer als der min Wert ist (max wird ignoriert)"
  
 Der Standardwert ist ('x', 0, 0).
 """
@@ -426,9 +423,9 @@ last triggering.
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetCurrentCallbackPeriod`,
-ausgelöst. Der :word:`parameter` ist der Strom des Sensors.
+ausgelöst. Der :word:`parameter` ist die Stromstärke des Sensors.
 
-:func:`Current` wird nur ausgelöst wenn sich der Strom seit der
+:func:`Current` wird nur ausgelöst wenn sich die Stromstärke seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -477,7 +474,7 @@ with the period as set by :func:`SetDebouncePeriod`.
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
 :func:`SetCurrentCallbackThreshold` gesetzt, erreicht wird.
-Der :word:`parameter` ist der Strom des Sensors.
+Der :word:`parameter` ist die Stromstärke des Sensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
 mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
