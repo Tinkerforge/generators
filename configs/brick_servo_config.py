@@ -412,11 +412,20 @@ with 0 will result in a pulse width of 1500µs
 
 Possible usage:
 
-* The datasheet of your servo specifies a range of 200° with the middle position at 110°. In this case you can set the minimum to -9000 and the maximum to 11000.
-* You measure a range of 220° on your servo and you don't have or need a middle position. In this case you can set the minimum to 0 and the maximum to 22000.
-* You have a linear servo with a drive length of 20cm, In this case you could set the minimum to 0 and the maximum to 20000. Now you can set the Position with :func:`SetPosition` with a resolution of cm/100. Also the velocity will have a resolution of cm/100s and the acceleration will have a resolution of cm/100s².
-* You don't care about units and just want the highest possible resolution. In this case you should set the minimum to -32767 and the maximum to 32767.
-* You have a brushless motor with a maximum speed of 10000 rpm and want to control it with a RC brushless motor controller. In this case you can set the minimum to 0 and the maximum to 10000. :func:`SetPosition` now controls the rpm.
+* The datasheet of your servo specifies a range of 200° with the middle position
+  at 110°. In this case you can set the minimum to -9000 and the maximum to 11000.
+* You measure a range of 220° on your servo and you don't have or need a middle
+  position. In this case you can set the minimum to 0 and the maximum to 22000.
+* You have a linear servo with a drive length of 20cm, In this case you could
+  set the minimum to 0 and the maximum to 20000. Now you can set the Position
+  with :func:`SetPosition` with a resolution of cm/100. Also the velocity will
+  have a resolution of cm/100s and the acceleration will have a resolution of
+  cm/100s².
+* You don't care about units and just want the highest possible resolution. In
+  this case you should set the minimum to -32767 and the maximum to 32767.
+* You have a brushless motor with a maximum speed of 10000 rpm and want to
+  control it with a RC brushless motor controller. In this case you can set the
+  minimum to 0 and the maximum to 10000. :func:`SetPosition` now controls the rpm.
 
 Both values have a possible range from -32767 to 32767 
 (signed 16 bit integer). The minimum must be smaller than the maximum.
@@ -425,8 +434,8 @@ The default values are -9000 and 9000 for the minimum and maximum degree.
 """,
 'de':
 """
-Setzt den minimalen und maximalen Winkel des angegebenen Servos (Standardmäßig in
-°/100).
+Setzt den minimalen und maximalen Winkel des angegebenen Servos (standardmäßig
+in °/100).
 
 Dies definiert die abstrakten Werte zwischen welchen die minimale und maximale
 Pulsweite skaliert wird. Beispiel: Wenn eine Pulsweite von 1000µs bis 2000µs und
@@ -436,11 +445,24 @@ ein Winkelbereich von -90° bis 90° spezifiziert ist, wird ein Aufruf von
 
 Anwendungsfälle:
 
-* Das Datenblatt des Servos spezifiziert einen Bereich von 200° mit einer Mittelposition bei 110°. In diesem Fall kann das Minimum auf -9000 und das Maximum auf 11000 gesetzt werden.
-* Es wird ein Bereich von 220° am Servo gemessen und eine Mittelposition ist nicht bekannt bzw. wird nicht benötigt. In diesem Fall kann das Minimum auf 0 und das Maximum auf 22000 gesetzt werden.
-* Ein Linearservo mit einer Antriebslänge von 20cm. In diesem Fall kann das Minimum auf 0 und das Maximum auf 20000 gesetzt werden. Jetzt kann die Position mittels :func:`SetPosition` mit einer Auflösung von cm/100 gesetzt werden. Auch die Geschwindigkeit hat eine Auflösung von cm/100s und die Beschleunigung von cm/100s².
-* Die Einheit ist irrelevant und eine möglichst hohe Auflösung ist gewünscht. In diesem Fall kann das Minimum auf -32767 und das Maximum auf 32767 gesetzt werden.
-* Ein Brushless Motor, mit einer maximalen Drehzahl von 1000 U/min, soll mit einem RC Brushless Motor Controller gesteuert werden. In diesem Fall kann das Minimum auf 0 und das Maximum auf 10000 gesetzt werden. :func:`SetPosition` steuert jetzt die Drehzal in U/min.
+* Das Datenblatt des Servos spezifiziert einen Bereich von 200° mit einer
+  Mittelposition bei 110°. In diesem Fall kann das Minimum auf -9000 und das
+  Maximum auf 11000 gesetzt werden.
+* Es wird ein Bereich von 220° am Servo gemessen und eine Mittelposition ist
+  nicht bekannt bzw. wird nicht benötigt. In diesem Fall kann das Minimum auf 0
+  und das Maximum auf 22000 gesetzt werden.
+* Ein Linearservo mit einer Antriebslänge von 20cm. In diesem Fall kann das
+  Minimum auf 0 und das Maximum auf 20000 gesetzt werden. Jetzt kann die
+  Position mittels :func:`SetPosition` mit einer Auflösung von cm/100 gesetzt
+  werden. Auch die Geschwindigkeit hat eine Auflösung von cm/100s und die
+  Beschleunigung von cm/100s².
+* Die Einheit ist irrelevant und eine möglichst hohe Auflösung ist gewünscht.
+  In diesem Fall kann das Minimum auf -32767 und das Maximum auf 32767 gesetzt
+  werden.
+* Ein Brushless Motor, mit einer maximalen Drehzahl von 1000 U/min, soll mit
+  einem RC Brushless Motor Controller gesteuert werden. In diesem Fall kann das
+  Minimum auf 0 und das Maximum auf 10000 gesetzt werden. :func:`SetPosition`
+  steuert jetzt die Drehzal in U/min.
 
 Beide Werte haben einen Wertebereich von -32767 bis 32767 (signed 16 bit integer).
 Der minimale Wert muss kleiner als der maximale sein.
