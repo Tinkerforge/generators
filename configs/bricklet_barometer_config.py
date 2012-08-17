@@ -31,7 +31,7 @@ callback :func:`AirPressure` and set the period with
 """
 Gibt den Luftdruck des Luftdrucksensors zurück. Der Wertbereich
 ist von 1000 bis 120000 und ist in mbar/100 angegeben, d.h. bei einem Wert von 
-100009 wurde ein Luftdruck von 1000,9 mbar gemessen.
+100009 wurde ein Luftdruck von 1000,09 mbar gemessen.
 
 Wenn der Luftdruck periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`AirPressure` zu nutzen und die Periode mit 
@@ -79,12 +79,21 @@ com['packets'].append({
 Returns the temperature of the air pressure sensor. The value
 has a range of -4000 to 8500 and is given in °C/100, i.e. a value
 of 2007 means that a temperature of 20.07 °C is measured.
+
+This temperature is used internally for temperature compensation of the air
+pressure measurement. It is not as accurate as the temperature measured by the
+:ref:`temperature_bricklet` or the :ref:`temperature_ir_bricklet`.
 """,
 'de':
 """
 Gibt die Temperatur des Luftdrucksensors zurück. Der Wertbereich
 ist von -4000 bis 8500 und ist in °C/100 angegeben, d.h. bei einem Wert von 
 2007 wurde eine Temperatur von 20,07 °C gemessen.
+
+Diese Temperatur wird intern zur Temperaturkompensation der Luftdruckmessung
+verwendet. Sie ist nicht so genau wie die Temperatur die vom
+:ref:`temperature_bricklet` oder dem :ref:`temperature_ir_bricklet` gemessen
+wird.
 """
 }]
 })
@@ -318,11 +327,11 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callbacks
 
- :func:`AirPressureReached`, :func:`AltitudeReached`, :func:`TemperatureReached`
+ :func:`AirPressureReached`, :func:`AltitudeReached`
 
 are triggered, if the thresholds
 
- :func:`SetAirPressureCallbackThreshold`, :func:`SetAltitudeCallbackThreshold`, :func:`SetTemperatureCallbackThreshold`
+ :func:`SetAirPressureCallbackThreshold`, :func:`SetAltitudeCallbackThreshold`
 
 keep being reached.
 
@@ -365,8 +374,8 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': ('CalibrateAltitude', 'calibrate_altitude'),
-'elements': [('debounce', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'elements': [],
+'doc': ['bm', {
 'en':
 """
 Calibrates the altitude by setting the reference altitude to the current
