@@ -14,13 +14,13 @@ def files_are_not_the_same(src_file, dest_path):
     except:
         return True
 
-    i = 0
-    example = 'example' in src_file.lower()
+    t = 'This file was automatically generated on'
     for l1, l2 in map(None, f1, f2):
-        if example or i > 2:
-            if l1 != l2:
-                return True
-        i += 1
+        if l1 != l2:
+            if t in l1 and t in l2:
+                continue
+
+            return True
         
     return False
 
