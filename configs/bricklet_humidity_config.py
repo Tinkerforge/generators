@@ -65,13 +65,13 @@ callback :func:`AnalogValue` and set the period with
 """,
 'de':
 """
-Gibt den Wert, wie vom 12 bit Analog-Digital-Wandler gelesen, zurück. Der 
+Gibt den Wert, wie vom 12 Bit Analog-Digital-Wandler gelesen, zurück. Der
 Wertebereich ist 0 bis 4095.
 
 .. note::
  Der von :func:`GetHumidity` zurückgegebene Wert ist über mehrere
  Messwerte gemittelt um das Rauschen zu vermindern, während :func:`GetAnalogValue`
- unverarbeitete Analogwerte zurückgibt. Der zurückgegebene Luftfeuchtigkeitswert
+ unverarbeitete Analogwerte zurück gibt. Der zurückgegebene Luftfeuchtigkeitswert
  ist auf Raumtemperatur kalibriert, d.h. wenn der Sensor in sehr kalten oder
  warmen Umgebungen verwendet wird, ist es ratsam den Luftfeuchtigkeitswert
  direkt aus den Analogwerten zu berechnen. Siehe hierzu das `HIH 5030 Datenblatt
@@ -210,7 +210,7 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
  
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Luftfeuchtigkeit *ausserhalb* des min und max Wertes ist"
+ "'o'",    "Callback wird ausgelöst wenn die Luftfeuchtigkeit *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn die Luftfeuchtigkeit *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn die Luftfeuchtigkeit kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn die Luftfeuchtigkeit größer als der min Wert ist (max wird ignoriert)"
@@ -275,7 +275,7 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
  
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn der Analogwert *ausserhalb* des min und max Wertes ist"
+ "'o'",    "Callback wird ausgelöst wenn der Analogwert *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn der Analogwert *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn der Analogwert kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn der Analogwert größer als der min Wert ist (max wird ignoriert)"

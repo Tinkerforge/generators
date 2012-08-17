@@ -162,7 +162,7 @@ The default frequency is 15 kHz.
 """
 Setzt die Frequenz (in Hz) der PWM, welche den Motor steuert.
 Der Wertebereich der Frequenz ist 1-20000Hz. Oftmals ist eine
-hohe Frequenz geräuschärmer und der Motor läuft dadurch ruhiger. Trotzdessen
+hohe Frequenz geräuschärmer und der Motor läuft dadurch ruhiger. Trotz dessen
 führt eine geringe Frequenz zu weniger Schaltvorgängen und somit zu
 weniger Schaltverlusten. Bei einer Vielzahl von Motoren ermöglichen
 geringere Frequenzen höhere Drehmomente.
@@ -432,7 +432,7 @@ Geschwindigkeiten zu fahren.
 
 Im Fahren/Leerlauf Modus wir der Motor entweder gefahren oder befindet sich
 im Leerlauf. Vorteile sind die geringere Stromaufnahme und geringere
-Belastung des Motors bzw. der Treierstufe.
+Belastung des Motors bzw. der Treiberstufe.
 
 Der Standardwert ist 0 = Fahren/Bremsen.
 """
@@ -540,7 +540,7 @@ That means, :func:`Enable` has to be called to drive the motor again.
 Dieser Callback wird ausgelöst wenn entweder der Stromverbrauch (über 5A)
 oder die Temperatur der Treiberstufe zu hoch ist (über 175°C). Beide
 Möglichkeiten sind letztendlich gleichbedeutend, da die Temperatur
-ihren Schwellwert überschreitet sobald der Motor zuviel Strom zieht.
+ihren Schwellwert überschreitet sobald der Motor zu viel Strom zieht.
 Im Falle einer Spannung unter 3,3V (Stapel- oder externe
 Spannungsversorgung) wird dieser Callback auch ausgelöst.
 

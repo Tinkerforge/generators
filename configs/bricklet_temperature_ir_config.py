@@ -273,7 +273,7 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
  
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Umgebungstemperatur *ausserhalb* des min und max Wertes ist"
+ "'o'",    "Callback wird ausgelöst wenn die Umgebungstemperatur *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn die Umgebungstemperatur *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn die Umgebungstemperatur kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn die Umgebungstemperatur größer als der min Wert ist (max wird ignoriert)"
@@ -338,7 +338,7 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
  
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Objekttemperatur *ausserhalb* des min und max Wertes ist"
+ "'o'",    "Callback wird ausgelöst wenn die Objekttemperatur *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn die Objekttemperatur *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn die Objekttemperatur kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn die Objekttemperatur größer als der min Wert ist (max wird ignoriert)"

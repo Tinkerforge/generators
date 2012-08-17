@@ -86,13 +86,13 @@ callback :func:`AnalogValue` and set the period with
 """,
 'de':
 """
-Gibt den Wert, wie vom 12 bit Analog-Digital-Wandler gelesen, zurück. Der 
+Gibt den Wert, wie vom 12 Bit Analog-Digital-Wandler gelesen, zurück. Der
 Wertebereich ist 0 bis 4095.
 
 .. note::
  Der von :func:`GetPosition` zurückgegebene Wert ist über mehrere
  Messwerte gemittelt um das Rauschen zu vermindern, während :func:`GetAnalogValue`
- unverarbeitete Analogwerte zurückgibt. Der einzige Grund :func:`GetAnalogValue`
+ unverarbeitete Analogwerte zurück gibt. Der einzige Grund :func:`GetAnalogValue`
  zu nutzen, ist die volle Auflösung des Analog-Digital-Wandlers zu erhalten.
  
 Wenn die Analogwerte periodisch abgefragt werden sollen, wird empfohlen
@@ -120,7 +120,7 @@ Bricklet, thus you only have to calibrate it once.
 """
 Kalibriert die Mittelposition des Joysticks. Sollte der Joystick Bricklet
 nicht x=0 und y=0 in der Mittelposition zurückgeben, kann diese Funktion
-aufgerufen werden wenn der Joystick sich unbegewegt in der Mittelposition befindet.
+aufgerufen werden wenn der Joystick sich unbewegt in der Mittelposition befindet.
 
 Die resultierende Kalibrierung wird in den EEPROM des Joystick Bricklet gespeichert,
 somit ist die Kalibrierung nur einmalig notwendig.
@@ -256,7 +256,7 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
  
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Position *ausserhalb* der min und max Werte ist"
+ "'o'",    "Callback wird ausgelöst wenn die Position *außerhalb* der min und max Werte ist"
  "'i'",    "Callback wird ausgelöst wenn die Position *innerhalb* der min und max Werte ist"
  "'<'",    "Callback wird ausgelöst wenn die Position kleiner als die min Werte ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn die Position größer als die min Werte ist (max wird ignoriert)"
@@ -325,7 +325,7 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
  
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Analogwerte *ausserhalb* der min und max Werte ist"
+ "'o'",    "Callback wird ausgelöst wenn die Analogwerte *außerhalb* der min und max Werte ist"
  "'i'",    "Callback wird ausgelöst wenn die Analogwerte *innerhalb* der min und max Werte ist"
  "'<'",    "Callback wird ausgelöst wenn die Analogwerte kleiner als die min Werte ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn die Analogwerte größer als die min Werte ist (max wird ignoriert)"

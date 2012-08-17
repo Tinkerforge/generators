@@ -62,13 +62,13 @@ callback :func:`AnalogValue` and set the period with
 """,
 'de':
 """
-Gibt den Wert, wie vom 12 bit Analog-Digital-Wandler gelesen, zurück. Der 
+Gibt den Wert, wie vom 12 Bit Analog-Digital-Wandler gelesen, zurück. Der
 Wertebereich ist 0 bis 4095.
 
 .. note::
  Der von :func:`GetDistance` zurückgegebene Wert ist über mehrere
  Messwerte gemittelt um das Rauschen zu vermindern, während :func:`GetAnalogValue`
- unverarbeitete Analogwerte zurückgibt. Der einzige Grund :func:`GetAnalogValue`
+ unverarbeitete Analogwerte zurück gibt. Der einzige Grund :func:`GetAnalogValue`
  zu nutzen, ist die volle Auflösung des Analog-Digital-Wandlers zu erhalten.
  
 Wenn der Analogwert periodisch abgefragt werden soll, wird empfohlen
@@ -97,18 +97,18 @@ whole range, this means that every sampling point has a size of 32
 analog values. Thus the analog value 2048 has the corresponding sampling
 point 64 = 2048/32.
 
-Sampling points are saved on the EEPROM of the Distance-IR Bricklet and
+Sampling points are saved on the EEPROM of the Distance IR Bricklet and
 loaded again on startup.
 
 .. note::
- An easy way to calibrate the sampling points of the Distance-IR Bricklet is
- implemented in brickv. If you want to calibrate your Bricklet it is
+ An easy way to calibrate the sampling points of the Distance IR Bricklet is
+ implemented in the Brick Viewer. If you want to calibrate your Bricklet it is
  highly recommended to use this implementation.
 """,
 'de':
 """
 Setzt einen Messpunkt für eine vorgegebene Position in der Wertetabelle.
-Die Wertetabelle beinhaltet 128 äquidistante Analogwerte mit ensprechenden
+Die Wertetabelle beinhaltet 128 äquidistante Analogwerte mit entsprechenden
 Entfernungen.
 
 Wenn eine Entfernung von 50cm bei einem Analogwert von 2048 gemessen wird, dann sollte
@@ -116,11 +116,11 @@ der Aufruf der Funktion mit (64, 5000) erfolgen. Der verwendete Analog-Digital-W
 hat eine Auflösung von 12 Bit. Mit 128 Messpunkten im gesamten Bereich bedeutet das, dass jeder Messpunkt
 32 Analogwerte umfasst. Daher wird dem Analogwert 2048 der Messpunkt 64 = 2048/32 zugeordnet.
 
-Messpunkte werden im EEPROM des Distance-IR Bricklet gespeichert und werden bei
+Messpunkte werden im EEPROM des Distance IR Bricklet gespeichert und werden bei
 jedem Hochfahren geladen.
 
 .. note::
- Ein einfacher Weg, die Messpunkte des Distance-IR Bricklet zu kalibrieren, ist im Brick Viewer
+ Ein einfacher Weg, die Messpunkte des Distance IR Bricklet zu kalibrieren, ist im Brick Viewer
  implementiert. Wenn der Bricklet kalibriert werden soll wird dringend empfohlen diese Implementierung
  zu nutzen.
 """
@@ -272,7 +272,7 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
  
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Entfernung *ausserhalb* des min und max Wertes ist"
+ "'o'",    "Callback wird ausgelöst wenn die Entfernung *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn die Entfernung *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn die Entfernung kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn die Entfernung größer als der min Wert ist (max wird ignoriert)"
@@ -337,7 +337,7 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
  
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn der Analogwert *ausserhalb* des min und max Wertes ist"
+ "'o'",    "Callback wird ausgelöst wenn der Analogwert *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn der Analogwert *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn der Analogwert kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn der Analogwert größer als der min Wert ist (max wird ignoriert)"

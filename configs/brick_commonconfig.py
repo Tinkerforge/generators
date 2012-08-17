@@ -41,7 +41,7 @@ common_packets.append({
 Returns the temperature in °C/10 as measured inside the microcontroller. The
 value returned is not the ambient temperature!
 
-The temperature has an accuracy of +-15%. Practically it is only usefull as
+The temperature has an accuracy of +-15%. Practically it is only useful as
 an indicator for temperature changes.
 """,
 'de':

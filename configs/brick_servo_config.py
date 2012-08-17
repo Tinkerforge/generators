@@ -26,10 +26,10 @@ effect in the same PWM period for all servos you specified in the bitmask.
 'de':
 """
 Jede Funktion der Servo Brick API, welche den *servo_num* Parameter verwendet,
-kann einen Servo über die Servo Nummer (0 bis 6) addressieren oder mit einer
+kann einen Servo über die Servo Nummer (0 bis 6) adressieren oder mit einer
 Bitmaske für alle Servos wenn das höchstwertigste Bit gesetzt ist. Beispiel:
-"1" addressiert den Server 1, "(1 << 1) | (1 << 5) | (1 << 7)" addressiert die
-Servos 1 und 5, "0xFF" addressiert alle 7 Servos, und so weiter. Das ermöglicht
+"1" adressiert den Server 1, "(1 << 1) | (1 << 5) | (1 << 7)" adressiert die
+Servos 1 und 5, "0xFF" adressiert alle 7 Servos, und so weiter. Das ermöglicht
 es Konfigurationen von verschiedenen Servos mit einem Funktionsaufruf durchzuführen.
 Es ist sichergestellt das die Änderungen in der selben PWM Periode vorgenommen werden,
 für alle Servos entsprechend der Bitmaske.
@@ -664,7 +664,7 @@ The default value is 5V (5000mV).
 'de':
 """
 Setzt die minimale Spannung in mV, bei welcher der :func:`UnderVoltage` Callback
-ausgelöst wird. Der kleinste mögliche Wertm mit dem der Servo Brick noch funktioniert,
+ausgelöst wird. Der kleinste mögliche Wert mit dem der Servo Brick noch funktioniert,
 ist 5V. Mit dieser Funktion kann eine Entladung der versorgenden Batterie detektiert
 werden. Beim Einsatz einer Netzstromversorgung wird diese Funktionalität
 höchstwahrscheinlich nicht benötigt.

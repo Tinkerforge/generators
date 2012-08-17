@@ -81,11 +81,11 @@ have to be set on every startup.
 """,
 'de':
 """
-Schreibt den Erweiterungstyp in den EEPROM der angegebenen Erweiterung.
-Die Erweiterung kann entweder 0 oder 1 sein (0 ist an der Unterseite, 1
-auf der Oberseite, wenn nur eine Erweiterung verfügbar ist, ist 0 zu verwenden)
+Schreibt den Typ der Extension in den EEPROM der angegebenen Extension.
+Die Extension kann entweder 0 oder 1 sein (0 ist an der Unterseite, 1
+auf der Oberseite, wenn nur eine Extension verfügbar ist, ist 0 zu verwenden)
 
-Mögliche Erweiterungstypen:
+Mögliche Extensiontypen:
 
 .. csv-table::
  :header: "Typ", "Beschreibung"
@@ -94,7 +94,7 @@ Mögliche Erweiterungstypen:
  "1",    "Chibi"
  "2",    "RS485"
 
-Der Erweiterungstyp ist schon gesetzt beim Erwerb der Erweiterung und kann über den
+Der Typ der Extension ist schon gesetzt beim Erwerb der Extension und kann über den
 Brick Viewer gesetzt werden. Daher ist es unwahrscheinlich, dass diese Funktion benötigt
 wird.
 """
@@ -114,7 +114,7 @@ Returns the extension type for a given extension as set by
 """,
 'de':
 """
-Gibt den Erweiterungstyp der angegebenen Erweiterung zurück,
+Gibt den Extensiontyp der angegebenen Extension zurück,
 wie von :func:`SetExtensionType` gesetzt.
 """
 }]
@@ -133,7 +133,7 @@ Returns *true* if a Chibi Extension is available to be used by the Master.
 """,
 'de':
 """
-Gibt zurück ob eine Chibi Erweiterung zur Nutzung durch den Master verfügbar ist.
+Gibt zurück ob eine Chibi Extension zur Nutzung durch den Master verfügbar ist.
 
 .. versionadded:: 1.1.0
 """
@@ -157,10 +157,10 @@ have to be set on every startup.
 """,
 'de':
 """
-Setzt die zugehörige Addresse (1-255) der Chibi Erweiterung.
+Setzt die zugehörige Adresse (1-255) der Chibi Extension.
 
-Es ist möglich die Addresse mit dem Brick Viewer zu setzen und diese
-wird im EEPROM der Chibi Erweiterung abgespeichert. Ein Setzen bei
+Es ist möglich die Adresse mit dem Brick Viewer zu setzen und diese
+wird im EEPROM der Chibi Extension abgespeichert. Ein Setzen bei
 jedem Hochfahren ist daher nicht notwendig.
 
 .. versionadded:: 1.1.0
@@ -181,7 +181,7 @@ Returns the address as set by :func:`SetChibiAddress`.
 """,
 'de':
 """
-Gibt die Addresse zurück, wie von :func:`SetChibiAddress` gesetzt.
+Gibt die Adresse zurück, wie von :func:`SetChibiAddress` gesetzt.
 """
 }]
 })
@@ -204,12 +204,12 @@ have to be set on every startup.
 """,
 'de':
 """
-Setzt die Addresse (1-255) des Chibi Master. Diese Addresse wird verwendet
-wenn die Chibi Erweiterung als Slave verwendet wird (z.B. wenn keine USB-Verbindung
+Setzt die Adresse (1-255) des Chibi Master. Diese Adresse wird verwendet
+wenn die Chibi Extension als Slave verwendet wird (z.B. wenn keine USB-Verbindung
 besteht).
 
-Es ist möglich die Addresse mit dem Brick Viewer zu setzen und diese wird im
-EEPROM der Chibi Erweiterung abgespeichert. Ein Setzen bei
+Es ist möglich die Adresse mit dem Brick Viewer zu setzen und diese wird im
+EEPROM der Chibi Extension abgespeichert. Ein Setzen bei
 jedem Hochfahren ist daher nicht notwendig.
 
 .. versionadded:: 1.1.0
@@ -230,7 +230,7 @@ Returns the address as set by :func:`SetChibiMasterAddress`.
 """,
 'de':
 """
-Gibt die Addresse zurück, wie von :func:`SetChibiMasterAddress` gesetzt.
+Gibt die Adresse zurück, wie von :func:`SetChibiMasterAddress` gesetzt.
 """
 }]
 })
@@ -258,15 +258,15 @@ have to be set on every startup.
 """,
 'de':
 """
-Setzt bis zu 254 Slave Adressen. Gültige Addressen sind 1-255.
-Die Addressnumerierung (mittels num Parameter) muss aufsteigend ab
-0 erfolgen. Beispiel: Wenn die Chibi Erweiterung im Master Modus verwendet wird
+Setzt bis zu 254 Slave Adressen. Gültige Adressen sind 1-255.
+Die Adressnummerierung (mittels num Parameter) muss aufsteigend ab
+0 erfolgen. Beispiel: Wenn die Chibi Extension im Master Modus verwendet wird
 (z.B. wenn der Stapel eine USB-Verbindung hat) und es soll mit drei weiteren
-Chibi Stapeln kommuniziert werden, mit den Addressen 17, 23 und 42, sollten die
+Chibi Stapeln kommuniziert werden, mit den Adressen 17, 23 und 42, sollten die
 Aufrufe "(0, 17), (1, 23) und (2, 42)" sein.
 
-Es ist möglich die Addressen mit dem Brick Viewer zu setzen und diese werden
-im EEPROM der Chibi Erweiterung abgespeichert. Ein Setzen bei
+Es ist möglich die Adressen mit dem Brick Viewer zu setzen und diese werden
+im EEPROM der Chibi Extension abgespeichert. Ein Setzen bei
 jedem Hochfahren ist daher nicht notwendig.
 
 .. versionadded:: 1.1.0
@@ -289,7 +289,7 @@ Returns the slave address for a given num as set by
 """,
 'de':
 """
-Gibt die Slave Addresse für eine Addressnumerierung (mittels num Parameter) zurück,
+Gibt die Slave Adresse für eine Adressnummerierung (mittels num Parameter) zurück,
 wie von :func:`SetChibiSlaveAddress` gesetzt.
 
 .. versionadded:: 1.1.0
@@ -338,8 +338,8 @@ interferences.
 """,
 'de':
 """
-Gibt folgende Fehlerzähler der Chibi Kommunikation zurück: underrun, CRC error,
-no ACK, overflow. Bei Anstieg dieser Fehlerzähler ist es wahrscheinlich, dass
+Gibt folgende Fehlerzähler der Chibi Kommunikation zurück: Underrun, CRC Fehler,
+kein ACK und Overflow. Bei Anstieg dieser Fehlerzähler ist es wahrscheinlich, dass
 entweder die Entfernung zwischen zwei Chibi Stapeln zu groß wird oder Störungen
 vorliegen.
 
@@ -374,7 +374,7 @@ have to be set on every startup.
 """,
 'de':
 """
-Setzt den Chibi Frequenzbereich der Chibi Erweiterung. Mögliche Werte sind:
+Setzt den Chibi Frequenzbereich der Chibi Extension. Mögliche Werte sind:
 
 .. csv-table::
  :header: "Typ", "Beschreibung"
@@ -386,7 +386,7 @@ Setzt den Chibi Frequenzbereich der Chibi Erweiterung. Mögliche Werte sind:
  "3",    "BPSK40 915Mhz"
  
 Es ist möglich den Frequenzbereich mit dem Brick Viewer zu setzen und dieser wird
-im EEPROM der Chibi Erweiterung abgespeichert. Ein Setzen bei
+im EEPROM der Chibi Extension abgespeichert. Ein Setzen bei
 jedem Hochfahren ist daher nicht notwendig.
 
 .. versionadded:: 1.1.0
@@ -441,7 +441,7 @@ have to be set on every startup.
 """,
 'de':
 """
-Setzt den verwendeten Kanal der Chibi Erweiterung. Die möglichen Kanäle sind
+Setzt den verwendeten Kanal der Chibi Extension. Die möglichen Kanäle sind
 abhängig vom verwendeten Frequenzbereich:
 
 .. csv-table::
@@ -454,7 +454,7 @@ abhängig vom verwendeten Frequenzbereich:
  "BPSK40 915Mhz",         "1, 2, 3, 4, 5, 6, 7, 8, 9, 10"
  
 Es ist möglich den Kanal mit dem Brick Viewer zu setzen und dieser wird
-im EEPROM der Chibi Erweiterung abgespeichert. Ein Setzen bei
+im EEPROM der Chibi Extension abgespeichert. Ein Setzen bei
 jedem Hochfahren ist daher nicht notwendig.
 
 .. versionadded:: 1.1.0
@@ -495,7 +495,7 @@ Returns *true* if a RS485 Extension is available to be used by the Master.
 """,
 'de':
 """
-Gibt zurück ob eine RS485 Erweiterung zur Nutzung durch den Master verfügbar ist.
+Gibt zurück ob eine RS485 Extension zur Nutzung durch den Master verfügbar ist.
 
 .. versionadded:: 1.2.0
 """
@@ -522,13 +522,13 @@ have to be set on every startup.
 """,
 'de':
 """
-Setzt die zugehörige Addresse (1-255) der RS485 Erweiterung.
+Setzt die zugehörige Adresse (1-255) der RS485 Extension.
 
-Um eine RS485 Erweiterung als RS485 Master (z.B. verbunden mit einem PC über
-USB) zu betreiben muss die Addresse auf 0 gesetzt werden.
+Um eine RS485 Extension als RS485 Master (z.B. verbunden mit einem PC über
+USB) zu betreiben muss die Adresse auf 0 gesetzt werden.
 
-Es ist möglich die Addresse mit dem Brick Viewer zu setzen und diese wird im
-EEPROM der RS485 Erweiterung abgespeichert. Ein Setzen bei
+Es ist möglich die Adresse mit dem Brick Viewer zu setzen und diese wird im
+EEPROM der RS485 Extension abgespeichert. Ein Setzen bei
 jedem Hochfahren ist daher nicht notwendig.
 
 .. versionadded:: 1.2.0
@@ -549,7 +549,7 @@ Returns the address as set by :func:`SetRS485Address`.
 """,
 'de':
 """
-Gibt die Addresse zurück, wie von :func:`SetRS485Address` gesetzt.
+Gibt die Adresse zurück, wie von :func:`SetRS485Address` gesetzt.
 
 .. versionadded:: 1.2.0
 """
@@ -579,15 +579,15 @@ have to be set on every startup.
 """,
 'de':
 """
-Setzt bis zu 255 Slave Adressen. Gültige Addressen sind 1-255.
-Die Addressnumerierung (mittels num Parameter) muss aufsteigend ab
-0 erfolgen. Beispiel: Wenn die RS485 Erweiterung im Master Modus verwendet wird
+Setzt bis zu 255 Slave Adressen. Gültige Adressen sind 1-255.
+Die Adressnummerierung (mittels num Parameter) muss aufsteigend ab
+0 erfolgen. Beispiel: Wenn die RS485 Extension im Master Modus verwendet wird
 (z.B. wenn der Stapel eine USB-Verbindung hat) und es soll mit drei weiteren
-RS485 Stapeln kommuniziert werden, mit den Addressen 17, 23 und 42, sollten die
+RS485 Stapeln kommuniziert werden, mit den Adressen 17, 23 und 42, sollten die
 Aufrufe "(0, 17), (1, 23) und (2, 42)" sein.
 
-Es ist möglich die Addressen mit dem Brick Viewer zu setzen und diese werden
-im EEPROM der RS485 Erweiterung abgespeichert. Ein Setzen bei
+Es ist möglich die Adressen mit dem Brick Viewer zu setzen und diese werden
+im EEPROM der RS485 Extension abgespeichert. Ein Setzen bei
 jedem Hochfahren ist daher nicht notwendig.
 
 .. versionadded:: 1.2.0
@@ -610,7 +610,7 @@ Returns the slave address for a given num as set by
 """,
 'de':
 """
-Gibt die Slave Addresse für eine Addressnumerierung (mittels num Parameter) zurück,
+Gibt die Slave Adresse für eine Adressnummerierung (mittels num Parameter) zurück,
 wie von :func:`SetRS485SlaveAddress` gesetzt.
 
 .. versionadded:: 1.2.0
@@ -652,11 +652,11 @@ com['packets'].append({
 'doc': ['am', {
 'en':
 """
-Sets the configuration of the RS485 extension. Speed is given in baud. The
+Sets the configuration of the RS485 Extension. Speed is given in baud. The
 Master Brick will try to match the given baud rate as exactly as possible.
 The maximum recommended baud rate is 2000000 (2Mbit).
 Possible values for parity are 'n' (none), 'e' (even) and 'o' (odd).
-Possible values for stopbits are 1 and 2.
+Possible values for stop bits are 1 and 2.
 
 If your RS485 is unstable (lost messages etc), the first thing you should
 try is to decrease the speed. On very large bus (e.g. 1km), you probably
@@ -669,11 +669,11 @@ you have to restart the Master Brick after configuration.
 """,
 'de':
 """
-Setzt die Schnittstellenkonfiguration der RS485 Erweiterung. Die Geschwindigkeit
-wird in baud angegeben. Der Master Brick versucht die vorgegebene Baudrate so 
+Setzt die Schnittstellenkonfiguration der RS485 Extension. Die Geschwindigkeit
+wird in Baud angegeben. Der Master Brick versucht die vorgegebene Baudrate so
 genau wie möglich zu erreichen. Die maximale empfohlene Baudrate ist 2000000 (2Mbit).
 Mögliche Werte für die Parität sind 'n' (keine), 'e' (gerade) und 'o' (ungerade).
-Mögliche Werte für Stopbits sind 1 und 2.
+Mögliche Werte für Stoppbits sind 1 und 2.
 
 Wenn die RS485 Kommunikation instabil ist (verlorene Nachrichten etc.), sollte zuerst
 die Baudrate verringert werden. Sehr lange Busleitungen (z.B. 1km) sollten möglichst

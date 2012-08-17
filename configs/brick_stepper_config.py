@@ -171,7 +171,7 @@ is reached (e.g. when a CNC machine reaches a corner).
 'de':
 """
 Setzt den aktuellen Schrittwert des internen Schrittzählers. Dies kann 
-benutzt werden um die aktuelle Position zu nullen wenn ein definierter
+benutzt werden um die aktuelle Position auf 0 zu setzen wenn ein definierter
 Startpunkt erreicht wurde (z.B. wenn eine CNC Maschine eine Ecke erreicht).
 """
 }]
@@ -764,7 +764,7 @@ Dieser Callback wird ausgelöst immer wenn eine konfigurierte Position, wie von
 :func:`SetSteps` oder :func:`SetTargetPosition` gesetzt, erreicht wird. 
 
 .. note::
- Da es nicht möglich ist eine Rückmeldung vom Schrittmtor zu erhalten,
+ Da es nicht möglich ist eine Rückmeldung vom Schrittmotor zu erhalten,
  funktioniert dies nur wenn die konfigurierte Beschleunigung (siehe :func:`SetSpeedRamping`)
  kleiner oder gleich der maximalen Beschleunigung des Motors ist. Andernfalls
  wird der Motor hinter dem Vorgabewert zurückbleiben und der Callback wird
@@ -811,7 +811,7 @@ Für eine Erläuterung der Synchrongleichrichtung siehe
 .. warning::
  Wenn hohe Geschwindigkeiten (> 10000 Schritte/s) mit einem großen
  Schrittmotor mit einer hohen Induktivität genutzt werden sollen, wird
- drigend geraten die Synchrongleichrichtung zu deaktivieren. Sonst kann
+ dringend geraten die Synchrongleichrichtung zu deaktivieren. Sonst kann
  es vorkommen, dass der Brick die Last nicht bewältigen kann und überhitzt.
  
 Der Standardwert ist *false*.

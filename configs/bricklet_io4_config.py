@@ -40,7 +40,7 @@ auf logisch 0.
 
 .. note::
  Diese Funktion bewirkt keine Änderung an Pins die als Eingang konfiguriert sind.
- Pull-Up Widerstände können mit :func:`SetConfiguration` zugeschalten werden.
+ Pull-Up Widerstände können mit :func:`SetConfiguration` zugeschaltet werden.
 """
 }]
 })
@@ -383,7 +383,7 @@ This callback is triggered whenever a monoflop timer reaches 0. The
 'de':
 """
 Dieser Callback wird ausgelöst wenn ein Monoflop Timer abläuft (0 erreicht).
-:word:`parameters` enthalten die beteilgten Pins als Bitmaske und den aktuellen
+:word:`parameters` enthalten die beteiligten Pins als Bitmaske und den aktuellen
 Zustand als Bitmaske (der Zustand nach dem Monoflop).
 
 .. versionadded:: 1.1.1

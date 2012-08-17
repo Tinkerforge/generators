@@ -94,7 +94,7 @@ Parameter ist der gewünschte Zustand des Relais (*true* bedeutet ein und *false
 Der dritte Parameter stellt die Zeit (in ms) dar, welche das Relais den Zustand halten soll.
 
 Wenn diese Funktion mit den Parametern (1, true, 1500) aufgerufen wird:
-Relais 1 wird angeschalten und nach 1,5s wieder ausgeschalten.
+Relais 1 wird angeschaltet und nach 1,5s wieder ausgeschaltet.
 
 Ein Monoflop kann als Ausfallsicherung verwendet werden. Beispiel:
 Angenommen ein RS485 Bus und ein Dual Relay Bricklet ist an ein Slave Stapel verbunden.

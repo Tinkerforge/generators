@@ -33,7 +33,7 @@ to use the callback :func:`Acceleration` and set the period with
 Gibt die kalibrierten Beschleunigungen des Beschleunigungsmessers für die 
 X, Y und Z-Achse in mG zurück (G/1000, 1G = 9.80605m/s²).
 
-Wenn die kalibrierten Beschleunigunge periodisch abgefragt werden soll, wird empfohlen
+Wenn die kalibrierten Beschleunigungen periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Acceleration` zu nutzen und die Periode mit :func:`SetAccelerationPeriod`
 vorzugeben.
 """
@@ -199,7 +199,7 @@ You can go from quaternions to Euler angles with the following formula::
 This process is not reversible, because of the 
 `gimbal lock <http://en.wikipedia.org/wiki/Gimbal_lock>`__.
 
-Converting the quaternions to an OpenGL translation matrix is
+Converting the quaternions to an OpenGL transformation matrix is
 possible with the following formula::
 
  matrix = [[1 - 2*(y*y + z*z),     2*(x*y - w*z),     2*(x*z + w*y), 0],
@@ -225,7 +225,7 @@ Die Umrechnung von Quaternionen in Eulerwinkel ist mit folgender Formel möglich
 Diese Umrechnung ist irreversibel aufgrund der 
 `kardanischen Blockade <http://de.wikipedia.org/wiki/Gimbal_lock>`__.
 
-Die Umrechnung von Quaternionen in eine OpenGL Translationsmatrix ist
+Die Umrechnung von Quaternionen in eine OpenGL Transformationsmatrix ist
 mit folgender Formel möglich::
 
  matrix = [[1 - 2*(y*y + z*z),     2*(x*y - w*z),     2*(x*z + w*y), 0],
@@ -499,7 +499,7 @@ temperature for one of the sampling points.
 """,
 'de':
 """
-Es sind folgende verschiendene Kalibrierungen möglich:
+Es sind folgende verschiedene Kalibrierungen möglich:
 
 .. csv-table::
  :header: "Typ", "Beschreibung",        "Werte"
@@ -817,7 +817,7 @@ for the x, y and z axis.
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAngularVelocityPeriod`,
-ausgelöst. Die :word:`parameters` sind die Winkelgewschindigkeiten der X, Y und Z-Achse.
+ausgelöst. Die :word:`parameters` sind die Winkelgeschwindigkeiten der X, Y und Z-Achse.
 """
 }] 
 })

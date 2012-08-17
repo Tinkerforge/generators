@@ -38,7 +38,7 @@ and how to translate from Unicode to the LCD charset.
 Schreibt einen Text in die angegebene Zeile (0 bis 1) mit einer vorgegebenen
 Position (0 bis 15). Der Text kann maximal 16 Zeichen lang sein.
 
-Beispiel: (0, 5, "Hello") schreibt *Hello* in die Mitte der ersten Zeile
+Beispiel: (0, 5, "Hallo") schreibt *Hallo* in die Mitte der ersten Zeile
 des Display.
 
 Das Display nutzt einen speziellen Zeichensatz der alle ASCII Zeichen beinhaltet außer

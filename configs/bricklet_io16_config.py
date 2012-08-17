@@ -41,7 +41,7 @@ Pins 4-7 auf logisch 0.
 
 .. note::
  Diese Funktion bewirkt keine Änderung an Pins die als Eingang konfiguriert sind.
- Pull-Up Widerstände können mit :func:`SetConfiguration` zugeschalten werden.
+ Pull-Up Widerstände können mit :func:`SetConfiguration` zugeschaltet werden.
 """
 }]
 })
@@ -331,8 +331,8 @@ Der vierte Parameter stellt die Zeit (in ms) dar, welche der Pin den Zustand
 halten soll.
 
 Wenn diese Funktion mit den Parametern ('a', (1 << 0) | (1 << 3), (1 << 0), 1500)
-aufgerufen wird: Pin 0 wird auf logisch 1 und Pin 3 auf logsich 0 am Port 'a'
-gesetzt. Nach 1,5s wird Pin 0 wieder logsich 0 und Pin 3 logisch 1 gesetzt.
+aufgerufen wird: Pin 0 wird auf logisch 1 und Pin 3 auf logisch 0 am Port 'a'
+gesetzt. Nach 1,5s wird Pin 0 wieder logisch 0 und Pin 3 logisch 1 gesetzt.
 
 Ein Monoflop kann zur Ausfallsicherung verwendet werden. Beispiel:
 Angenommen ein RS485 Bus und ein IO-16 Bricklet ist an ein Slave Stapel verbunden.
@@ -396,7 +396,7 @@ the pins (the value after the monoflop).
 'de':
 """
 Dieser Callback wird ausgelöst wenn ein Monoflop Timer abläuft (0 erreicht).
-:word:`parameters` enthalten den Port, die beteilgten Pins als Bitmaske und
+:word:`parameters` enthalten den Port, die beteiligten Pins als Bitmaske und
 den aktuellen Zustand als Bitmaske (der Zustand nach dem Monoflop).
 
 .. versionadded:: 1.1.2
