@@ -46,7 +46,6 @@ Backslash und Tilde. Der Zeichensatz des LCD beinhaltet weiterhin einige Nicht-A
 siehe die `Zeichensatzspezifikation <<https://github.com/Tinkerforge/lcd-20x4-bricklet/raw/master/datasheets/standard_charset.pdf>`__
 für Details. Das gezeigte Unicode Beispiel verdeutlicht die Verwendung von Nicht-ASCII Zeichen
 und wie die Wandlung von Unicode in den LCD Zeichensatz möglich ist.
-
 """
 }]
 })
@@ -115,8 +114,6 @@ Gibt *true* zurück wenn die Hintergrundbeleuchtung aktiv ist, sonst *false*.
 }]
 })
 
-
-
 com['packets'].append({
 'type': 'function',
 'name': ('SetConfig', 'set_config'), 
@@ -175,7 +172,7 @@ on button presses and releases it is recommended to use the
 'de':
 """
 Gibt *true* zurück wenn die Taste (0 bis 2) gedrückt ist. Wenn auf Tastendrücken
-und loslassen reagiert werden soll, wird empfohlen die :func:`ButtonPressed`
+und -loslassen reagiert werden soll, wird empfohlen die :func:`ButtonPressed`
 und :func:`ButtonReleased` Callbacks zu nutzen.
 """
 }]

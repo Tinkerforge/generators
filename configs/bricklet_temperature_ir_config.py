@@ -32,7 +32,7 @@ to use the callback :func:`AmbientTemperature` and set the period with
 """
 Gibt die Umgebungstemperatur des Sensors zurück. Der Wertebereich ist von
 -400 bis 1250 und wird in °C/10 angegeben, z.B. bedeutet 
-ein Wert von 423 eine gemessene Umgebungstemperatur von 42,23 °C.
+ein Wert von 423 eine gemessene Umgebungstemperatur von 42,3 °C.
 
 Wenn die Umgebungstemperatur periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`AmbientTemperature` zu nutzen und die Periode mit 
@@ -67,11 +67,11 @@ to use the callback :func:`ObjectTemperature` and set the period with
 Gibt die Objekttemperatur des Sensors zurück, z.B. die Temperatur
 der Oberfläche auf welche der Sensor zielt. Der Wertebereich ist von
 -700 bis 3800 und wird in °C/10 angegeben, z.B. bedeutet 
-ein Wert von 3001 eine gemessene Temperatur von 42,23 °C auf der Oberfläche
+ein Wert von 3001 eine gemessene Temperatur von 300,1 °C auf der Oberfläche
 des Objektes.
 
-Die Temperatur von unterschiedlichen Materialien ist abhängig von ihrem `Emmissionsgrad 
-<http://de.wikipedia.org/wiki/Emissionsgrad>`_. Der Emmissionsgrad des Materials kann mit 
+Die Temperatur von unterschiedlichen Materialien ist abhängig von ihrem `Emissionsgrad
+<http://de.wikipedia.org/wiki/Emissionsgrad>`_. Der Emissionsgrad des Materials kann mit
 :func:`SetEmissivity` gesetzt werden.
 
 Wenn die Objekttemperatur periodisch abgefragt werden soll, wird empfohlen
@@ -80,7 +80,6 @@ den Callback :func:`ObjectTemperature` zu nutzen und die Periode mit
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',
@@ -110,24 +109,24 @@ sensor can handle is 0.1 (value of 6553).
 """,
 'de':
 """
-Setzt den `Emmissionsgrad <http://de.wikipedia.org/wiki/Emissionsgrad>`_, 
+Setzt den `Emissionsgrad <http://de.wikipedia.org/wiki/Emissionsgrad>`_,
 welcher zur Berechnung der Oberflächentemperatur benutzt wird, wie von
 :func:`GetObjectTemperature` zurückgegeben.
 
-Der Emmissionsgrad wird normalerweise als Wert zwischen 0,0 und 1,0 angegeben.
-Eine Liste von Emmissionsgraden unterschiedlicher Materialien ist `hier <http://www.infrared-thermography.com/material.htm>`_
-zu finden.
+Der Emissionsgrad wird normalerweise als Wert zwischen 0,0 und 1,0 angegeben.
+Eine Liste von Emissionsgraden unterschiedlicher Materialien ist
+`hier <http://www.infrared-thermography.com/material.htm>`_ zu finden.
 
 Der Parameter von :func:`SetEmissivity` muss mit eine Faktor von 65535 (16 Bit)
-vorgegeben werden. Beispiel: Ein Emmissionsgrad von 0,1 kann mit dem Wert
-6553 gesetzt werden, En Emmissionsgrad von 0,5 mit dem Wert 32767 und so weiter.
+vorgegeben werden. Beispiel: Ein Emissionsgrad von 0,1 kann mit dem Wert
+6553 gesetzt werden, En Emissionsgrad von 0,5 mit dem Wert 32767 und so weiter.
 
 .. note::
  Wenn eine exakte Messung der Objekttemperatur notwendig ist, ist es entscheidend
- eine exakten Emmissionsgrad anzugeben.
+ eine exakten Emissionsgrad anzugeben.
  
-Der Standard Emmissionsgrad ist 1,0 (Wert von 65535) und der minimale
-Emmissionsgrad welcher der Sensor vearbeiten kann ist 0,1 (Wert von 6553).
+Der Standard Emissionsgrad ist 1,0 (Wert von 65535) und der minimale
+Emissionsgrad welcher der Sensor vearbeiten kann ist 0,1 (Wert von 6553).
 """
 }]
 })
@@ -143,7 +142,7 @@ Returns the emissivity as set by :func:`SetEmissivity`.
 """,
 'de':
 """
-Gibt den Emmissionsgrad zurück, wie von :func:`SetEmissivity` gesetzt.
+Gibt den Emissionsgrad zurück, wie von :func:`SetEmissivity` gesetzt.
 """
 }]
 })
@@ -237,7 +236,6 @@ gesetzt.
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',

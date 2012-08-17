@@ -45,7 +45,7 @@ For example: If you set the string "...---...", the piezo buzzer will beep
 nine times with the durations "short short short long long long short 
 short short".
 
-The maximum string size is 60.
+The maximum morse code size is 60.
 """,
 'de':
 """
@@ -55,9 +55,9 @@ für *kurzes Signale*, *langes Signale* und *Pausen*. Alle anderen Zeichen
 werden ignoriert.
 
 Beispiel: Wenn der String "...---..." gesetzt wird, gibt der Piezosummer neun 
-Pieptöne aus mit den Dauern "kurz kurz kurzs lang lang lang kurz kurz kurz".
+Pieptöne aus mit den Dauern "kurz kurz kurz lang lang lang kurz kurz kurz".
 
-Die maximale Stringlänge ist 60.
+Die maximale Morsecodelänge ist 60.
 """
 }]
 })

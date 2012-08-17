@@ -34,7 +34,7 @@ Gibt die Position des Joystick zurück. Der Wertebereich ist von -100 bis
 100 für beide Achsen. Die Mittelposition des Joysticks ist x=0, y=0.
 Die zurückgegebenen Werte sind gemittelt und kalibriert (siehe :func:`Calibrate`).
 
-Wenn die Positionen periodisch abgefragt werden sollen, wird empfohlen
+Wenn die Position periodisch abgefragt werden sollen, wird empfohlen
 den Callback :func:`Position` zu nutzen und die Periode mit 
 :func:`SetPositionCallbackPeriod` vorzugeben.
 """

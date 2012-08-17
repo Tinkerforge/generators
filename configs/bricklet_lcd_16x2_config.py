@@ -114,8 +114,6 @@ Gibt *true* zurück wenn die Hintergrundbeleuchtung aktiv ist, sonst *false*.
 }]
 })
 
-
-
 com['packets'].append({
 'type': 'function',
 'name': ('SetConfig', 'set_config'), 
@@ -174,7 +172,7 @@ on button presses and releases it is recommended to use the
 'de':
 """
 Gibt *true* zurück wenn die Taste (0 bis 2) gedrückt ist. Wenn auf Tastendrücken
-und loslassen reagiert werden soll, wird empfohlen die :func:`ButtonPressed`
+und -loslassen reagiert werden soll, wird empfohlen die :func:`ButtonPressed`
 und :func:`ButtonReleased` Callbacks zu nutzen.
 """
 }]

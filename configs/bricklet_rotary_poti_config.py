@@ -76,7 +76,6 @@ den Callback :func:`AnalogValue` zu nutzen und die Periode mit
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': ('SetPositionCallbackPeriod', 'set_position_callback_period'), 
