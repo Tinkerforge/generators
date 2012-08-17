@@ -339,11 +339,11 @@ com['packets'].append({
 'doc': ['bm', {
 'en':
 """
-Returns true if the motor is enabled, false otherwise.
+Returns *true* if the motor is enabled, *false* otherwise.
 """,
 'de':
 """
-Gibt true zurück wenn die Motorfreigabe aktiv ist, sonst false.
+Gibt *true* zurück wenn die Motorfreigabe aktiv ist, sonst *false*.
 """
 }]
 })

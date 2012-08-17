@@ -21,7 +21,7 @@ com['packets'].append({
 'en':
 """
 Sets the output value (high or low) for a port ("a" or "b") with a bit mask. 
-The bit mask is 8 bit long, "true" refers to high and "false" refers to low.
+The bit mask is 8 bit long, *true* refers to high and *false* refers to low.
 
 For example: The value 0b00001111 will turn the pins 0-3 high and the
 pins 4-7 low for the specified port.
@@ -79,10 +79,10 @@ Configures the value and direction of a specified port. Possible directions
 are "i" and "o" for input and output.
 
 If the direction is configured as output, the value is either high or low
-(set as true or false).
+(set as *true* or *false*).
 
 If the direction is configured as input, the value is either pull-up or
-default (set as true or false).
+default (set as *true* or *false*).
 
 For example:
 

@@ -296,8 +296,8 @@ com['packets'].append({
 'doc': ['bm', {
 'en':
 """
-Returns true if the orientation and direction LEDs of the IMU Brick
-are on, false otherwise.
+Returns *true* if the orientation and direction LEDs of the IMU Brick
+are on, *false* otherwise.
 """,
 'de':
 """

@@ -584,11 +584,11 @@ com['packets'].append({
 'doc': ['bm', {
 'en':
 """
-Returns true if the motor is enabled, false otherwise.
+Returns *true* if the motor is enabled, *false* otherwise.
 """,
 'de':
 """
-Gibt true zurück wenn die Motorfreigabe aktiv ist, sonst false.
+Gibt *true* zurück wenn die Motorfreigabe aktiv ist, sonst *false*.
 """
 }]
 })
@@ -795,7 +795,7 @@ For an explanation of synchronous rectification see
  suggest that you disable synchronous rectification. Otherwise the
  Brick may not be able to cope with the load and overheat.
 
-The default value is false.
+The default value is *false*.
 """,
 'de':
 """
@@ -814,7 +814,7 @@ Für eine Erläuterung der Synchrongleichrichtung siehe
  drigend geraten die Synchrongleichrichtung zu deaktivieren. Sonst kann
  es vorkommen, dass der Brick die Last nicht bewältigen kann und überhitzt.
  
-Der Standardwert ist deaktivert (false).
+Der Standardwert ist *false*.
 """
 }]
 })
@@ -826,7 +826,7 @@ com['packets'].append({
 'doc': ['am', {
 'en':
 """
-Returns true if synchronous rectification is enabled, false otherwise.
+Returns *true* if synchronous rectification is enabled, *false* otherwise.
 """,
 'de':
 """

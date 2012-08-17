@@ -80,7 +80,7 @@ com['packets'].append({
 'doc': ['bm', {
 'en':
 """
-Returns true if the specified servo is enabled, false otherwise.
+Returns *true* if the specified servo is enabled, *false* otherwise.
 """,
 'de':
 """

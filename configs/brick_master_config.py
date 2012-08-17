@@ -127,7 +127,7 @@ com['packets'].append({
 'doc': ['am', {
 'en':
 """
-Returns true if a Chibi Extension is available to be used by the Master.
+Returns *true* if a Chibi Extension is available to be used by the Master.
 
 .. versionadded:: 1.1.0
 """,
@@ -489,7 +489,7 @@ com['packets'].append({
 'doc': ['am', {
 'en':
 """
-Returns true if a RS485 Extension is available to be used by the Master.
+Returns *true* if a RS485 Extension is available to be used by the Master.
 
 .. versionadded:: 1.2.0
 """,

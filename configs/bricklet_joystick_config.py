@@ -48,14 +48,14 @@ com['packets'].append({
 'doc': ['bm', {
 'en':
 """
-Returns true if the button is pressed and false otherwise.
+Returns *true* if the button is pressed and *false* otherwise.
 
 It is recommended to use the :func:`Pressed` and :func:`Released` callbacks
 to handle the button.
 """,
 'de':
 """
-Gibt true zurück wenn die Taste gedrückt ist und sonst false.
+Gibt *true* zurück wenn die Taste gedrückt ist und sonst *false*.
 
 Es wird empfohlen die :func:`Pressed` und :func:`Released` Callbacks
 zu nutzen, um die Taste programmatisch zu behandeln.

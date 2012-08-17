@@ -79,14 +79,14 @@ com['packets'].append({
 'doc': ['am', {
 'en':
 """
-Returns true if more than 12.5A were measured.
+Returns *true* if more than 12.5A were measured.
 
 .. note::
  To reset this value you have to power cycle the Bricklet.
 """,
 'de':
 """
-Gibt true zurück wenn mehr als 12,5A gemessen wurden.
+Gibt *true* zurück wenn mehr als 12,5A gemessen wurden.
 
 .. note::
  Um diesen Wert zurückzusetzen ist ein aus- und wiedereinschalten des Bricklet 
