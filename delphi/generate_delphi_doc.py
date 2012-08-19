@@ -85,6 +85,13 @@ def make_methods(typ):
  The returned array contains name, firmwareVersion and bindingVersion.
 """,
     'de': """
+.. delphi:function:: procedure T{0}.GetVersion(out name: string; out firmwareVersion: TDeviceVersion; out bindingVersion: TDeviceVersion)
+
+ Gibt den Namen (inklusive Hardwareversion), die Firmwareversion 
+ und die Bindingsversion des Gerätes zurück. Die Firmware- und Bindingsversionen werden
+ als Feld der Größe 3 mit dem Syntax [Major, Minor, Revision] zurückgegeben.
+
+ Das zurückgegebene Feld enthält Name, Firmware Version und Binding Verison.
 """
     }
 
@@ -156,6 +163,16 @@ def make_api():
  :ref:`above <{0}_{2}_delphi_examples>`).
 """,
     'de': """
+.. delphi:function:: constructor T{3}{1}.Create(const uid: string)
+
+ Erzeugt ein Objekt mit der eindeutigen Geräte ID *uid*:
+
+ .. code-block:: delphi
+
+    {0} := T{3}{1}.Create('YOUR_DEVICE_UID');
+
+ Dieses Objekt kann danach der IP Connection hinzugefügt werden(Siehe Beispiele
+ :ref:`oben <{0}_{2}_delphi_examples>`).
 """
     }
 
@@ -189,6 +206,34 @@ The available callback property and their type of parameters are described below
 {0}
 """,
     'de': """
+.. _{1}_{2}_delphi_callbacks:
+
+Callbacks
+^^^^^^^^^
+
+*Callbacks* können registriert werden um zeitkritische oder 
+wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung erfolgt indem
+eine Prozedur einer Callbackeigenschaft des Geräte Objektes zugewiesen wird:
+
+ .. code-block:: delphi
+
+  procedure TExample.MyCallback(const param: word);
+  begin
+    WriteLn(param);
+  end;
+
+  {1}.OnExample := {{$ifdef FPC}}@{{$endif}}example.MyCallback;
+
+Die verfügbaren Callbackeigenschaften und ihre Parametertypen werden unterhalb
+beschrieben.
+
+.. note::
+ Callbacks für wiederkehrende Ereignisse zu verwenden ist 
+ *immer* zu bevorzugen gegenüber der Verwendung von Abfragen.
+ Es wird weniger USB-Bandbreite benutzt und die Latenz ist
+ erheblich geringer, da es keine Paketumlaufzeit gibt.
+
+{0}
 """
     }
 
@@ -208,6 +253,18 @@ All functions and procedures listed below are thread-safe.
 {2}
 """,
     'de': """
+	{0}
+API
+---
+
+Da Delphi nicht mehrere Rückgabewerte direkt unterstütz, wird das out Keyword genutzt
+um mehrere Werte von einer Funktion zurückzugeben.
+
+Alle folgend aufgelisteten Funktionen und Prozeduren sind Thread-sicher.
+
+{1}
+
+{2}
 """
     }
 
