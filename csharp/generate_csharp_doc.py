@@ -82,6 +82,11 @@ def make_methods(typ):
  given in arrays of size 3 with the syntax [major, minor, revision].
 """,
     'de': """
+.. csharp:function:: public void {0}::GetVersion(out string name, out byte[] firmwareVersion, out byte[] bindingVersion)
+
+ Gibt den Namen (inklusive Hardwareversion), die Firmwareversion 
+ und die Bindingsversion des Gerätes zurück. Die Firmware- und Bindingsversionen werden
+ als Feld der Größe 3 mit dem Syntax [Major, Minor, Revision] zurückgegeben.
 """
     }
     version_changed = {
@@ -90,6 +95,8 @@ def make_methods(typ):
     Result is returned. Previously it was passed as ``out`` parameter.
 """,
     'de': """
+ .. versionchanged:: 1.1.0
+    Das Ergebnis wird zurückgegeben. In vorherigen Versionen wurde es als ``out`` Parameter übergeben.
 """
     }
 
@@ -157,6 +164,16 @@ def make_api():
  :ref:`above <{4}_{2}_csharp_examples>`).
 """,
     'de': """
+.. csharp:function:: class {3}{1}(String uid)
+
+ Erzeugt ein Objekt mit der eindeutigen Geräte ID *uid*:
+
+ .. code-block:: csharp
+
+  {3}{1} {0} = new {3}{1}("YOUR_DEVICE_UID");
+
+ Dieses Objekt kann danach der IP Connection hinzugefügt werden (Siehe Beispiele 
+ :ref:`oben <{4}_{2}_csharp_examples>`).
 """
     }
 
@@ -168,6 +185,10 @@ def make_api():
  :ref:`below <{0}_{2}_csharp_callbacks>`.
 """,
     'de': """
+	.. csharp:function:: public void {3}{1}::RegisterCallback(Delegate d)
+
+ Registriert einen Callback. Die verfügbaren Callbacks sind 
+ :ref:`unten <{0}_{2}_csharp_callbacks>` aufgelistet.
 """
     }
 
@@ -204,6 +225,36 @@ The available delegates are described below.
 {0}
 """,
     'de': """
+.. _{1}_{2}_csharp_callbacks:
+
+Callbacks
+^^^^^^^^^
+
+*Callbacks* können registriert werden um zeitkritische
+oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
+mit der Methode :csharp:func:`RegisterCallback <{3}{4}::RegisterCallback>` des Geräteobjekts
+durchgeführt werden.
+
+Der Parameter ist ein Delegate Objekt der zugehörigen Methode, z.B.:
+
+.. code-block:: csharp
+    
+    void Callback(int value)
+    {{
+        System.Console.WriteLine("Value: " + value);
+    }}
+
+    device.RegisterCallback(new BrickDevice.Property(Callback));
+
+Die verfügbaren Delegates werden unterhalb beschrieben.
+
+.. note::
+ Callbacks für wiederkehrende Ereignisse zu verwenden ist 
+ *immer* zu bevorzugen gegenüber der Verwendung von Abfragen.
+ Es wird weniger USB-Bandbreite benutzt und die Latenz ist
+ erheblich geringer, da es keine Paketumlaufzeit gibt.
+
+{0}
 """
     }
 
@@ -221,7 +272,7 @@ device out). However, if a wireless connection is used, timeouts will occur
 if the distance to the device gets too big.
 
 Since C# does not support multiple return values directly, we use the out
-keyword to return multiple values from a mathod.
+keyword to return multiple values from a method.
 
 The namespace for all Brick/Bricklet bindings and the IPConnection is
 ``Tinkerforge.*``
@@ -233,6 +284,29 @@ All methods listed below are thread-safe.
 {2}
 """,
     'de': """
+{0}
+API
+---
+
+Prinzipiell kann jede Funktion der C# Bindings, welche einen Wert zurückgibt
+eine ``Tinkerforge.TimeoutException`` erzeugen. Diese Exception wird
+erzeugt wenn das Gerät nicht antwortet. Wenn eine Kabelverbindung genutzt
+wird, ist es unwahrscheinlich das die Exception erzeugt wird (Unter der
+Annahme, dass das Gerät nicht ausgesteckt wird). Bei einer kabellosen Verbindung
+können Zeitüberschreitungen auftreten, sobald die Entfernung zum Gerät zu
+groß wird.
+
+Da C# nicht mehrere Rückgabewerte direkt unterstützt, wird das out Keyword genutzt
+um mehrere Werte von einer Funktion zurückzugeben.
+
+Der Namensraum für alle Brick/Bricklet Bindings und die IPConnection ist
+``Tinkerforge.*``
+
+Alle folgend aufgelisteten Methoden sind Thread-sicher.
+
+{1}
+
+{2}
 """
     }
 

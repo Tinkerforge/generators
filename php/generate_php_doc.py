@@ -100,6 +100,13 @@ def make_methods(typ):
  The returned array contains name, firmwareVersion and bindingVersion.
 """,
     'de': """
+.. php:function:: array {0}::getVersion()
+
+ Gibt den Namen (inklusive Hardwareversion), die Firmwareversion 
+ und die Bindingsversion des Gerätes zurück. Die Firmware- und Bindingsversionen werden
+ als Feld der Größe 3 mit dem Syntax [Major, Minor, Revision] zurückgegeben.
+
+ Das zurückgegebene Feld enthält Name, Firmware Version und Binding Verison.
 """
     }
 
@@ -172,6 +179,16 @@ def make_api():
  :ref:`above <{0}_{2}_php_examples>`).
 """,
     'de': """
+.. php:function:: class {3}{1}(string $uid)
+
+ Erzeugt ein Objekt mit der eindeutigen Geräte ID *uid*:
+
+ .. code-block:: php
+
+    ${0} = new {3}{1}('YOUR_DEVICE_UID');
+
+ Dieses Objekt kann danach der IP Connection hinzugefügt werden (Siehe Beispiele 
+ :ref:`oben <{0}_{2}_php_examples>`).
 """
     }
 
@@ -184,6 +201,11 @@ def make_api():
  :ref:`below <{0}_{2}_php_callbacks>`.
 """,
     'de': """
+.. php:function:: void {3}{1}::registerCallback(int $id, callable $callback)
+
+ Registriert einen Callback mit der ID *$id* zu der Callable *$callback*. Die vefügbaren
+ IDs mit den zugehörigen Funktionssignaturen sind :ref:`unten <{0}_{2}_php_callbacks>`
+ zu finden.
 """
     }
 
@@ -220,6 +242,36 @@ described below.
 {0}
 """,
     'de': """
+.. _{1}_{2}_php_callbacks:
+
+Callbacks
+^^^^^^^^^
+
+*Callbacks* können mit *callback IDs* registriert werden um zeitkritische
+oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
+mit der Funktion :php:func:`registerCallback <{3}{4}::registerCallback>` des
+Geräte Objektes durchgeführt werden. Der erste Parameter ist der Callback ID
+und der zweite die Callbackfunktion:
+
+.. code-block:: php
+
+    function my_callback($param)
+    {{
+        echo $param . "\\n";
+    }}
+
+    ${1}->registerCallback({3}{4}::CALLBACK_EXAMPLE, 'my_callback');
+
+Die verfügbaren Konstanten mit der vererbten Anzahl und Parametertypen werden
+unterhalb beschrieben.
+
+.. note::
+ Callbacks für wiederkehrende Ereignisse zu verwenden ist 
+ *immer* zu bevorzugen gegenüber der Verwendung von Abfragen.
+ Es wird weniger USB-Bandbreite benutzt und die Latenz ist
+ erheblich geringer, da es keine Paketumlaufzeit gibt.
+
+{0}
 """
     }
 
@@ -234,6 +286,13 @@ API
 {2}
 """,
     'de': """
+{0}
+API
+---
+
+{1}
+
+{2}
 """
     }
 

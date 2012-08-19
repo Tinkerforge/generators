@@ -135,6 +135,11 @@ def make_methods(typ):
  given in arrays of size 3 with the syntax [major, minor, revision].
 """,
     'de': """
+.. rb:function:: {0}#get_version -> [str, [int, int, int], [int, int, int]]
+
+ Gibt den Namen (inklusive Hardwareversion), die Firmwareversion 
+ und die Bindingsversion des Gerätes zurück. Die Firmware- und Bindingsversionen werden
+ als Feld der Größe 3 mit dem Syntax [Major, Minor, Revision] zurückgegeben.
 """
     }
 
@@ -197,6 +202,17 @@ def make_api():
  :ref:`above <{0}_{2}_ruby_examples>`).
 """,
     'de': """
+.. rb:function:: {3}{1}::new(uid) -> {0}
+
+ Erzeugt ein Objekt mit der eindeutigen Geräte ID *uid*:
+
+ .. code-block:: ruby
+
+    {0} = {3}{1}.new 'YOUR_DEVICE_UID'
+
+ Dieses Objekt kann danach der IP Connection hinzugefügt werden (siehe Beispiele
+ :ref:`oben <{0}_{2}_ruby_examples>`).
+
 """
     }
 
@@ -211,6 +227,13 @@ def make_api():
  :ref:`below <{0}_{2}_ruby_callbacks>`.
 """,
     'de': """
+.. rb:function:: {3}{1}#register_callback(cb) {{ |param [, ...]| block }} -> nil
+
+ :param cb: int
+
+ Registriert einen Callback mit der ID *cb* in den gegebenen Block. Die vefügbaren
+ IDs mit den zugehörigen Funktionssignaturen sind :ref:`unten <{0}_{2}_ruby_callbacks>`
+ zu finden.
 """
     }
 
@@ -244,6 +267,33 @@ described below.
 {0}
 """,
     'de': """
+.. _{1}_{2}_ruby_callbacks:
+
+Callbacks
+^^^^^^^^^
+
+*Callbacks* können mit *callback IDs* registriert werden um zeitkritische
+oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
+mit der Funktion :rb:func:`#register_callback <{4}{3}#register_callback>` des 
+Geräte Objektes durchgeführt werden. Der erste Paramter ist der Callback ID
+und der zweite Paramter der Block:
+
+.. code-block:: ruby
+
+    {1}.register_callback {4}{3}::CALLBACK_EXAMPLE, do |param|
+      puts "#{{param}}"
+    end
+
+Die verfügbaren Konstanten mit der vererbten Anzahl und Parametertypen werden
+unterhalb beschrieben.
+
+.. note::
+ Callbacks für wiederkehrende Ereignisse zu verwenden ist 
+ *immer* zu bevorzugen gegenüber der Verwendung von Abfragen.
+ Es wird weniger USB-Bandbreite benutzt und die Latenz ist
+ erheblich geringer, da es keine Paketumlaufzeit gibt.
+
+{0}
 """
     }
 
@@ -260,6 +310,15 @@ All methods listed below are thread-safe.
 {2}
 """,
     'de': """
+{0}
+API
+---
+
+Alle folgend aufgelisteten Methoden sind Thread-sicher.
+
+{1}
+
+{2}
 """
     }
 
