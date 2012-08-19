@@ -232,10 +232,10 @@ Callbacks
 
 *Callbacks* können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
-mit der Funktion :csharp:func:`RegisterCallback <{3}{4}::RegisterCallback>` des Geräteobjekts
+mit der Methode :csharp:func:`RegisterCallback <{3}{4}::RegisterCallback>` des Geräteobjekts
 durchgeführt werden.
 
-Der Parameter ist ein Delegate Objekt der zugehörigen Funktion, z.B.:
+Der Parameter ist ein Delegate Objekt der zugehörigen Methode, z.B.:
 
 .. code-block:: csharp
     
@@ -264,7 +264,7 @@ Die verfügbaren Delegates werden unterhalb beschrieben.
 API
 ---
 
-Generally, every function of the C# bindings that returns a value can
+Generally, every method of the C# bindings that returns a value can
 throw a ``Tinkerforge.TimeoutException``. This exception gets thrown if the
 device didn't respond. If a cable based connection is used, it is
 unlikely that this exception gets thrown (Assuming nobody plugs the 
@@ -272,12 +272,12 @@ device out). However, if a wireless connection is used, timeouts will occur
 if the distance to the device gets too big.
 
 Since C# does not support multiple return values directly, we use the out
-keyword to return multiple values from a function.
+keyword to return multiple values from a method.
 
 The namespace for all Brick/Bricklet bindings and the IPConnection is
 ``Tinkerforge.*``
 
-All funkctions listed below are thread-safe.
+All methods listed below are thread-safe.
 
 {1}
 
@@ -302,7 +302,7 @@ um mehrere Werte von einer Funktion zurückzugeben.
 Der Namensraum für alle Brick/Bricklet Bindings und die IPConnection ist
 ``Tinkerforge.*``
 
-Alle folgend aufgelisteten Funktionen sind Thread-sicher.
+Alle folgend aufgelisteten Methoden sind Thread-sicher.
 
 {1}
 
