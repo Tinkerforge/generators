@@ -171,7 +171,7 @@ def make_api():
 
     {0} := T{3}{1}.Create('YOUR_DEVICE_UID');
 
- Dieses Objekt kann danach der IP Connection hinzugefügt werden(Siehe Beispiele
+ Dieses Objekt kann danach der IP Connection hinzugefügt werden (Siehe Beispiele
  :ref:`oben <{0}_{2}_delphi_examples>`).
 """
     }
@@ -257,7 +257,7 @@ All functions and procedures listed below are thread-safe.
 API
 ---
 
-Da Delphi nicht mehrere Rückgabewerte direkt unterstütz, wird das out Keyword genutzt
+Da Delphi nicht mehrere Rückgabewerte direkt unterstützt, wird das out Keyword genutzt
 um mehrere Werte von einer Funktion zurückzugeben.
 
 Alle folgend aufgelisteten Funktionen und Prozeduren sind Thread-sicher.

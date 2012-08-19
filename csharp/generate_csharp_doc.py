@@ -172,7 +172,7 @@ def make_api():
 
   {3}{1} {0} = new {3}{1}("YOUR_DEVICE_UID");
 
- Dieses Objekt kann danach der IP Connection hinzugefügt werden(Siehe Beispiele 
+ Dieses Objekt kann danach der IP Connection hinzugefügt werden (Siehe Beispiele 
  :ref:`oben <{4}_{2}_csharp_examples>`).
 """
     }
@@ -296,7 +296,7 @@ Annahme, dass das Gerät nicht ausgesteckt wird). Bei einer kabellosen Verbindun
 können Zeitüberschreitungen auftreten, sobald die Entfernung zum Gerät zu
 groß wird.
 
-Da C# nicht mehrere Rückgabewerte direkt unterstütz, wird das out Keyword genutzt
+Da C# nicht mehrere Rückgabewerte direkt unterstützt, wird das out Keyword genutzt
 um mehrere Werte von einer Funktion zurückzugeben.
 
 Der Namensraum für alle Brick/Bricklet Bindings und die IPConnection ist

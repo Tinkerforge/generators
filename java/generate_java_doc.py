@@ -356,7 +356,7 @@ Der Parameter ist ein Listener Klassen Objekt, z.B.:
         }}
     }});
 
-Die verfügbaren Listener Klassen mit Inherenten Methoden welche überschrieben
+Die verfügbaren Listener Klassen mit vererbbaren Methoden welche überschrieben
 werden können werden unterhalb beschrieben.
 
 .. note::
