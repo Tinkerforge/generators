@@ -75,7 +75,7 @@ def fix_links(text):
 def make_request_desc(packet):
     empty_payload = {
     'en': 'empty payload',
-    'de': ''
+    'de': 'keine Nutzdaten'
     }
     desc = '\n'
     param = ' :request {0}: {1}\n'
@@ -91,11 +91,11 @@ def make_request_desc(packet):
 def make_response_desc(packet):
     empty_payload = {
     'en': 'empty payload',
-    'de': ''
+    'de': 'keine Nutzdaten'
     }
     no_response = {
     'en': 'no response',
-    'de': ''
+    'de': 'keine Antwort'
     }
     desc = '\n'
     returns = ' :response {0}: {1}\n'
@@ -163,6 +163,12 @@ Callbacks
 {0}
 """,
     'de': """
+.. _{1}_{2}_tcpip_callbacks:
+
+Callbacks
+^^^^^^^^^
+
+{0}
 """
     }
 
@@ -181,6 +187,17 @@ A general description of the TCP/IP protocol structure can be found
 {2}
 """,
     'de': """
+{0}
+
+API
+---
+
+Eine allgemeine Beschreibung der TCP/IP Protokollstruktur kann
+:ref:`hier <llproto_tcpip>` gefunden werden.
+
+{1}
+
+{2}
 """
     }
 
