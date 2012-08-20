@@ -140,7 +140,7 @@ def make_obj_desc(packet):
  The returned object has the public member variables {0}.
 """,
     'de': """
-Das zurückgegebene Objekt enthält die Public Member Variablen {0}.
+ Das zurückgegebene Objekt enthält die Public Member Variablen {0}.
 """
     }
 
@@ -174,7 +174,7 @@ def make_methods(typ):
 
  Gibt den Namen (inklusive Hardwareversion), die Firmwareversion 
  und die Bindingsversion des Gerätes zurück. Die Firmware- und Bindingsversionen werden
- als Feld der Größe 3 mit dem Syntax [Major, Minor, Revision] zurückgegeben.
+ als Array der Größe 3 mit der Syntax [Major, Minor, Revision] zurückgegeben.
 
  Das zurückgegebene Objekt hat die Public Member Variablen ``String name``, 
  ``short[3] firmwareVersion`` und ``short[3] bindingVersion``.
@@ -265,7 +265,7 @@ def make_api():
 
   {3}{1} {0} = new {3}{1}("YOUR_DEVICE_UID");
 
- Dieses Objekt kann danach der IP Connection hinzugefügt werden (Siehe Beispiele 
+ Dieses Objekt kann danach der IP Connection hinzugefügt werden (siehe Beispiele
  :ref:`oben <{4}_{2}_java_examples>`).
 """
     }
@@ -329,17 +329,17 @@ The available listener classes with inherent methods to be overwritten
 are described below.
 
 .. note::
- Using listeners for recurring events is *always* prefered 
- compared to using getters. It will use less USB bandwith and the latency
- will be a lot better, since there is no roundtrip time.
+ Using listeners for recurring events is *always* preferred
+ compared to using getters. It will use less USB bandwidth and the latency
+ will be a lot better, since there is no round trip time.
 
 {0}
 """,
     'de': """
-	.. _{1}_{2}_java_callbacks:
+.. _{1}_{2}_java_callbacks:
 
 Listener
-^^^^^^^^^
+^^^^^^^^
 
 *Listener* können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
@@ -356,7 +356,7 @@ Der Parameter ist ein Listener Klassen Objekt, z.B.:
         }}
     }});
 
-Die verfügbaren Listener Klassen mit vererbbaren Methoden welche überschrieben
+Die verfügbaren Listener Klassen mit den Methoden welche überschrieben
 werden können werden unterhalb beschrieben.
 
 .. note::
@@ -376,8 +376,8 @@ API
 ---
 
 Generally, every method of the Java bindings that returns a value can
-throw a IPConnection.TimeoutException. This exception gets thrown if the
-device didn't respond. If a cable based connection is used, it is
+throw a ``IPConnection.TimeoutException``. This exception gets thrown if the
+device did not respond. If a cable based connection is used, it is
 unlikely that this exception gets thrown (Assuming nobody plugs the 
 device out). However, if a wireless connection is used, timeouts will occur
 if the distance to the device gets too big.
@@ -403,10 +403,10 @@ API
 ---
 
 Prinzipiell kann jede Methode der Java Bindings, welche einen Wert zurückgibt
-eine IPConnection.TimeoutException erzeugen. Diese Exception wird
-erzeugt wenn das Gerät nicht antwortet. Wenn eine Kabelverbindung genutzt
-wird, ist es unwahrscheinlich das die Exception erzeugt wird (Unter der
-Annahme, dass das Gerät nicht ausgesteckt wird). Bei einer kabellosen Verbindung
+eine ``IPConnection.TimeoutException`` werfen. Diese Exception wird
+geworfen wenn das Gerät nicht antwortet. Wenn eine Kabelverbindung genutzt
+wird, ist es unwahrscheinlich, dass die Exception geworfen wird (unter der
+Annahme, dass das Gerät nicht abgesteckt wird). Bei einer kabellosen Verbindung
 können Zeitüberschreitungen auftreten, sobald die Entfernung zum Gerät zu
 groß wird.
 

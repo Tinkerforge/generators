@@ -80,18 +80,14 @@ def make_methods(typ):
 
  Returns the name (including the hardware version), the firmware version
  and the binding version of the device. The firmware and binding versions
- are given in arrays of size 3 with the syntax (major, minor, revision).
-
- The returned array contains name, firmwareVersion and bindingVersion.
+ are given in arrays of size 3 with the syntax [major, minor, revision].
 """,
     'de': """
 .. delphi:function:: procedure T{0}.GetVersion(out name: string; out firmwareVersion: TDeviceVersion; out bindingVersion: TDeviceVersion)
 
  Gibt den Namen (inklusive Hardwareversion), die Firmwareversion 
  und die Bindingsversion des Gerätes zurück. Die Firmware- und Bindingsversionen werden
- als Feld der Größe 3 mit dem Syntax [Major, Minor, Revision] zurückgegeben.
-
- Das zurückgegebene Feld enthält Name, Firmware Version und Binding Verison.
+ als Array der Größe 3 mit der Syntax [Major, Minor, Revision] zurückgegeben.
 """
     }
 
@@ -171,7 +167,7 @@ def make_api():
 
     {0} := T{3}{1}.Create('YOUR_DEVICE_UID');
 
- Dieses Objekt kann danach der IP Connection hinzugefügt werden (Siehe Beispiele
+ Dieses Objekt kann danach der IP Connection hinzugefügt werden (siehe Beispiele
  :ref:`oben <{0}_{2}_delphi_examples>`).
 """
     }
@@ -199,9 +195,9 @@ property of the device object:
 The available callback property and their type of parameters are described below.
 
 .. note::
- Using callbacks for recurring events is *always* prefered
- compared to using getters. It will use less USB bandwith and the latency
- will be a lot better, since there is no roundtrip time.
+ Using callbacks for recurring events is *always* preferred
+ compared to using getters. It will use less USB bandwidth and the latency
+ will be a lot better, since there is no round trip time.
 
 {0}
 """,
@@ -213,7 +209,7 @@ Callbacks
 
 *Callbacks* können registriert werden um zeitkritische oder 
 wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung erfolgt indem
-eine Prozedur einer Callbackeigenschaft des Geräte Objektes zugewiesen wird:
+eine Prozedur einer Callback Property des Geräte Objektes zugewiesen wird:
 
  .. code-block:: delphi
 
@@ -224,8 +220,8 @@ eine Prozedur einer Callbackeigenschaft des Geräte Objektes zugewiesen wird:
 
   {1}.OnExample := {{$ifdef FPC}}@{{$endif}}example.MyCallback;
 
-Die verfügbaren Callbackeigenschaften und ihre Parametertypen werden unterhalb
-beschrieben.
+Die verfügbaren Callback Properties und ihre Parametertypen werden weiter
+unten beschrieben.
 
 .. note::
  Callbacks für wiederkehrende Ereignisse zu verwenden ist 
@@ -253,12 +249,12 @@ All functions and procedures listed below are thread-safe.
 {2}
 """,
     'de': """
-	{0}
+{0}
 API
 ---
 
-Da Delphi nicht mehrere Rückgabewerte direkt unterstützt, wird das out Keyword genutzt
-um mehrere Werte von einer Funktion zurückzugeben.
+Da Delphi nicht mehrere Rückgabewerte direkt unterstützt, wird das out Keyword
+genutzt um mehrere Werte von einer Funktion zurückzugeben.
 
 Alle folgend aufgelisteten Funktionen und Prozeduren sind Thread-sicher.
 

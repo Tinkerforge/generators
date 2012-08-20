@@ -95,7 +95,7 @@ def make_response_desc(packet):
     }
     no_response = {
     'en': 'no response',
-    'de': 'keine Nutzdaten'
+    'de': 'keine Antwort'
     }
     desc = '\n'
     returns = ' :response {0}: {1}\n'
@@ -192,8 +192,8 @@ A general description of the Modbus protocol structure can be found
 API
 ---
 
-Eine allgemeine Beschreibung der Modbus Protokollstruktur kann
-:ref:`hier <llproto_modbus>` gefunden werden.
+Eine allgemeine Beschreibung der Modbus Protokollstruktur findet sich
+:ref:`hier <llproto_modbus>`.
 
 {1}
 

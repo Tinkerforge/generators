@@ -139,7 +139,7 @@ def make_methods(typ):
 
  Gibt den Namen (inklusive Hardwareversion), die Firmwareversion 
  und die Bindingsversion des Gerätes zurück. Die Firmware- und Bindingsversionen werden
- als Feld der Größe 3 mit dem Syntax [Major, Minor, Revision] zurückgegeben.
+ als Array der Größe 3 mit der Syntax [Major, Minor, Revision] zurückgegeben.
 """
     }
 
@@ -231,7 +231,7 @@ def make_api():
 
  :param cb: int
 
- Registriert einen Callback mit der ID *cb* in den gegebenen Block. Die vefügbaren
+ Registriert einen Callback mit der ID *cb* in den gegebenen Block. Die verfügbaren
  IDs mit den zugehörigen Funktionssignaturen sind :ref:`unten <{0}_{2}_ruby_callbacks>`
  zu finden.
 """
@@ -260,9 +260,9 @@ The available constants with inherent number and type of parameters are
 described below.
 
 .. note::
- Using callbacks for recurring events is *always* prefered
- compared to using getters. It will use less USB bandwith and the latency
- will be a lot better, since there is no roundtrip time.
+ Using callbacks for recurring events is *always* preferred
+ compared to using getters. It will use less USB bandwidth and the latency
+ will be a lot better, since there is no round trip time.
 
 {0}
 """,
@@ -275,8 +275,8 @@ Callbacks
 *Callbacks* können mit *callback IDs* registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
 mit der Funktion :rb:func:`#register_callback <{4}{3}#register_callback>` des 
-Geräte Objektes durchgeführt werden. Der erste Paramter ist der Callback ID
-und der zweite Paramter der Block:
+Geräte Objektes durchgeführt werden. Der erste Parameter ist der Callback ID
+und der zweite Parameter der Block:
 
 .. code-block:: ruby
 
@@ -284,8 +284,8 @@ und der zweite Paramter der Block:
       puts "#{{param}}"
     end
 
-Die verfügbaren Konstanten mit der vererbten Anzahl und Parametertypen werden
-unterhalb beschrieben.
+Die verfügbaren Konstanten mit der dazugehörigen Parameteranzahl und -typen werden
+weiter unten beschrieben.
 
 .. note::
  Callbacks für wiederkehrende Ereignisse zu verwenden ist 

@@ -192,8 +192,8 @@ A general description of the TCP/IP protocol structure can be found
 API
 ---
 
-Eine allgemeine Beschreibung der TCP/IP Protokollstruktur kann
-:ref:`hier <llproto_tcpip>` gefunden werden.
+Eine allgemeine Beschreibung der TCP/IP Protokollstruktur findet sich
+:ref:`hier <llproto_tcpip>`.
 
 {1}
 

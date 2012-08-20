@@ -86,7 +86,7 @@ def make_methods(typ):
 
  Gibt den Namen (inklusive Hardwareversion), die Firmwareversion 
  und die Bindingsversion des Gerätes zurück. Die Firmware- und Bindingsversionen werden
- als Feld der Größe 3 mit dem Syntax [Major, Minor, Revision] zurückgegeben.
+ als Array der Größe 3 mit der Syntax [Major, Minor, Revision] zurückgegeben.
 """
     }
     version_changed = {
@@ -172,7 +172,7 @@ def make_api():
 
   {3}{1} {0} = new {3}{1}("YOUR_DEVICE_UID");
 
- Dieses Objekt kann danach der IP Connection hinzugefügt werden (Siehe Beispiele 
+ Dieses Objekt kann danach der IP Connection hinzugefügt werden (siehe Beispiele
  :ref:`oben <{4}_{2}_csharp_examples>`).
 """
     }
@@ -185,7 +185,7 @@ def make_api():
  :ref:`below <{0}_{2}_csharp_callbacks>`.
 """,
     'de': """
-	.. csharp:function:: public void {3}{1}::RegisterCallback(Delegate d)
+.. csharp:function:: public void {3}{1}::RegisterCallback(Delegate d)
 
  Registriert einen Callback. Die verfügbaren Callbacks sind 
  :ref:`unten <{0}_{2}_csharp_callbacks>` aufgelistet.
@@ -218,9 +218,9 @@ The parameter is a delegate object of the corresponding method, for example:
 The available delegates are described below.
 
 .. note::
- Using callbacks for recurring events is *always* prefered
- compared to using getters. It will use less USB bandwith and the latency
- will be a lot better, since there is no roundtrip time.
+ Using callbacks for recurring events is *always* preferred
+ compared to using getters. It will use less USB bandwidth and the latency
+ will be a lot better, since there is no round trip time.
 
 {0}
 """,
@@ -246,7 +246,7 @@ Der Parameter ist ein Delegate Objekt der zugehörigen Methode, z.B.:
 
     device.RegisterCallback(new BrickDevice.Property(Callback));
 
-Die verfügbaren Delegates werden unterhalb beschrieben.
+Die verfügbaren Delegates werden weiter unten beschrieben.
 
 .. note::
  Callbacks für wiederkehrende Ereignisse zu verwenden ist 
@@ -266,7 +266,7 @@ API
 
 Generally, every method of the C# bindings that returns a value can
 throw a ``Tinkerforge.TimeoutException``. This exception gets thrown if the
-device didn't respond. If a cable based connection is used, it is
+device did not respond. If a cable based connection is used, it is
 unlikely that this exception gets thrown (Assuming nobody plugs the 
 device out). However, if a wireless connection is used, timeouts will occur
 if the distance to the device gets too big.
@@ -288,11 +288,11 @@ All methods listed below are thread-safe.
 API
 ---
 
-Prinzipiell kann jede Funktion der C# Bindings, welche einen Wert zurückgibt
-eine ``Tinkerforge.TimeoutException`` erzeugen. Diese Exception wird
-erzeugt wenn das Gerät nicht antwortet. Wenn eine Kabelverbindung genutzt
-wird, ist es unwahrscheinlich das die Exception erzeugt wird (Unter der
-Annahme, dass das Gerät nicht ausgesteckt wird). Bei einer kabellosen Verbindung
+Prinzipiell kann jede Funktion der C# Bindings, welche einen Wert zurück gibt
+eine ``Tinkerforge.TimeoutException`` werfen. Diese Exception wird
+geworfen wenn das Gerät nicht antwortet. Wenn eine Kabelverbindung genutzt
+wird, ist es unwahrscheinlich, dass die Exception geworfen wird (unter der
+Annahme, dass das Gerät nicht abgesteckt wird). Bei einer kabellosen Verbindung
 können Zeitüberschreitungen auftreten, sobald die Entfernung zum Gerät zu
 groß wird.
 

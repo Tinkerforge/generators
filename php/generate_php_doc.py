@@ -97,16 +97,16 @@ def make_methods(typ):
  and the binding version of the device. The firmware and binding versions
  are given in arrays of size 3 with the syntax (major, minor, revision).
 
- The returned array contains name, firmwareVersion and bindingVersion.
+ The returned array contains ``name``, ``firmwareVersion`` and ``bindingVersion``.
 """,
     'de': """
 .. php:function:: array {0}::getVersion()
 
  Gibt den Namen (inklusive Hardwareversion), die Firmwareversion 
  und die Bindingsversion des Gerätes zurück. Die Firmware- und Bindingsversionen werden
- als Feld der Größe 3 mit dem Syntax [Major, Minor, Revision] zurückgegeben.
+ als Feld der Größe 3 mit der Syntax [Major, Minor, Revision] zurückgegeben.
 
- Das zurückgegebene Feld enthält Name, Firmware Version und Binding Verison.
+ Das zurückgegebene Array enthält ``name``, ``firmwareVersion`` und ``bindingVersion``.
 """
     }
 
@@ -187,7 +187,7 @@ def make_api():
 
     ${0} = new {3}{1}('YOUR_DEVICE_UID');
 
- Dieses Objekt kann danach der IP Connection hinzugefügt werden (Siehe Beispiele 
+ Dieses Objekt kann danach der IP Connection hinzugefügt werden (siehe Beispiele
  :ref:`oben <{0}_{2}_php_examples>`).
 """
     }
@@ -203,7 +203,7 @@ def make_api():
     'de': """
 .. php:function:: void {3}{1}::registerCallback(int $id, callable $callback)
 
- Registriert einen Callback mit der ID *$id* zu der Callable *$callback*. Die vefügbaren
+ Registriert einen Callback mit der ID *$id* zu der Callable *$callback*. Die verfügbaren
  IDs mit den zugehörigen Funktionssignaturen sind :ref:`unten <{0}_{2}_php_callbacks>`
  zu finden.
 """
@@ -235,9 +235,9 @@ The available constants with inherent number and type of parameters are
 described below.
 
 .. note::
- Using callbacks for recurring events is *always* prefered
- compared to using getters. It will use less USB bandwith and the latency
- will be a lot better, since there is no roundtrip time.
+ Using callbacks for recurring events is *always* preferred
+ compared to using getters. It will use less USB bandwidth and the latency
+ will be a lot better, since there is no round trip time.
 
 {0}
 """,
@@ -262,8 +262,8 @@ und der zweite die Callbackfunktion:
 
     ${1}->registerCallback({3}{4}::CALLBACK_EXAMPLE, 'my_callback');
 
-Die verfügbaren Konstanten mit der vererbten Anzahl und Parametertypen werden
-unterhalb beschrieben.
+Die verfügbaren Konstanten mit der dazugehörigen Parameteranzahl und -typen werden
+weiter unten beschrieben.
 
 .. note::
  Callbacks für wiederkehrende Ereignisse zu verwenden ist 

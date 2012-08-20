@@ -116,7 +116,7 @@ def make_methods(typ):
 
  Gibt den Namen (inklusive Hardwareversion), die Firmwareversion 
  und die Bindingsversion des Gerätes zurück. Die Firmware- und Bindingsversionen werden
- als Feld der Größe 3 mit dem Syntax [Major, Minor, Revision] zurückgegeben.
+ als Array der Größe 3 mit der Syntax [Major, Minor, Revision] zurückgegeben.
 """
     }
 
@@ -212,7 +212,7 @@ def make_api():
     'de': """
 .. c:function:: void {0}_register_callback({1} *{0}, uint8_t id, void *callback)
 
- Registriert einen Callback mit der ID *id* mit der Funktion *callback*. Die vefügbaren
+ Registriert einen Callback mit der ID *id* mit der Funktion *callback*. Die verfügbaren
  IDs mit den zugehörigen Funktionssignaturen sind :ref:`unten <{0}_{2}_c_callbacks>`
  zu finden.
 """
@@ -242,9 +242,9 @@ The available constants with corresponding callback function signatures
 are described below.
 
 .. note::
- Using callbacks for recurring events is *always* prefered
- compared to using getters. It will use less USB bandwith and the latency
- will be a lot better, since there is no roundtrip time.
+ Using callbacks for recurring events is *always* preferred
+ compared to using getters. It will use less USB bandwidth and the latency
+ will be a lot better, since there is no round trip time.
 
 {2}
 """,
@@ -268,7 +268,7 @@ Parameter bestehen aus dem Geräteobjekt, der Callback ID und der Callbackfunkti
     {0}_register_callback(&{0}, {1}_CALLBACK_EXAMPLE, (void*)my_callback);
 
 Die verfügbaren Konstanten mit den zugehörigen Callback Funktionssignaturen
-werden unterhalb beschrieben.
+werden weiter unten beschrieben.
 
 .. note::
  Callbacks für wiederkehrende Ereignisse zu verwenden ist 
@@ -288,7 +288,7 @@ API
 
 Every function of the C/C++ bindings returns an integer which describes an
 error code. Data returned from the device, when a getter is called,
-is handled via call by reference. These parameters are labelled with the
+is handled via call by reference. These parameters are labeled with the
 ``ret_`` prefix.
 
 Possible error codes are:
@@ -314,10 +314,10 @@ All functions listed below are thread-safe.
 API
 ---
 
-Jede Funktion den C/C++ Bindings gibt einen Integer zurück, welcher einen
+Jede Funktion der C/C++ Bindings gibt einen Integer zurück, welcher einen
 Fehlercode beschreibt. Vom Gerät zurückgegebene Daten werden, wenn eine
 Abfrage aufgerufen wurde, über Referenzparameter gehandhabt. Diese Parameter
-sind mit dem ``ret_`` Prefix gekennzeichnet.
+sind mit dem ``ret_`` Präfix gekennzeichnet.
 
 Mögliche Fehlercodes sind:
 
