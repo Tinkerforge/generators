@@ -140,6 +140,7 @@ def make_obj_desc(packet):
  The returned object has the public member variables {0}.
 """,
     'de': """
+Das zurückgegebene Objekt enthält die Public Member Variablen {0}.
 """
     }
 
@@ -169,6 +170,14 @@ def make_methods(typ):
  ``short[3] firmwareVersion`` and ``short[3] bindingVersion``.
 """,
     'de': """
+.. java:function:: public {0}.Version {0}::getVersion()
+
+ Gibt den Namen (inklusive Hardwareversion), die Firmwareversion 
+ und die Bindingsversion des Gerätes zurück. Die Firmware- und Bindingsversionen werden
+ als Feld der Größe 3 mit dem Syntax [Major, Minor, Revision] zurückgegeben.
+
+ Das zurückgegebene Objekt hat die Public Member Variablen ``String name``, 
+ ``short[3] firmwareVersion`` und ``short[3] bindingVersion``.
 """
     }
 
@@ -248,6 +257,16 @@ def make_api():
  :ref:`above <{4}_{2}_java_examples>`).
 """,
     'de': """
+.. java:function:: class {3}{1}(String uid)
+
+ Erzeugt ein Objekt mit der eindeutigen Geräte ID *uid*:
+
+ .. code-block:: java
+
+  {3}{1} {0} = new {3}{1}("YOUR_DEVICE_UID");
+
+ Dieses Objekt kann danach der IP Connection hinzugefügt werden (Siehe Beispiele 
+ :ref:`oben <{4}_{2}_java_examples>`).
 """
     }
 
@@ -259,6 +278,10 @@ def make_api():
  :ref:`below <{0}_{2}_java_callbacks>`.
 """,
     'de': """
+.. java:function:: public void {3}{1}::addListener(Object o)
+
+ Registriert ein Listener Objekt. Die verfügbaren Listener werden
+ :ref:`unten <{0}_{2}_java_callbacks>` aufgelistet.
 """
     }
 
@@ -313,6 +336,36 @@ are described below.
 {0}
 """,
     'de': """
+	.. _{1}_{2}_java_callbacks:
+
+Listener
+^^^^^^^^^
+
+*Listener* können registriert werden um zeitkritische
+oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
+mit der Funktion :java:func:`addListener <{3}{4}::addListener>` des Geräte Objekts
+durchgeführt werden.
+
+Der Parameter ist ein Listener Klassen Objekt, z.B.:
+
+.. code-block:: java
+
+    device.addListener(new BrickDevice.PropertyListener() {{
+        public void property(int value) {{
+            System.out.println("Value: " + value);
+        }}
+    }});
+
+Die verfügbaren Listener Klassen mit vererbbaren Methoden welche überschrieben
+werden können werden unterhalb beschrieben.
+
+.. note::
+ Listener für wiederkehrende Ereignisse zu verwenden ist 
+ *immer* zu bevorzugen gegenüber der Verwendung von Abfragen.
+ Es wird weniger USB-Bandbreite benutzt und die Latenz ist
+ erheblich geringer, da es keine Paketumlaufzeit gibt.
+
+{0}
 """
     }
 
@@ -345,6 +398,32 @@ All methods listed below are thread-safe.
 {2}
 """,
     'de': """
+{0}
+API
+---
+
+Prinzipiell kann jede Methode der Java Bindings, welche einen Wert zurückgibt
+eine IPConnection.TimeoutException erzeugen. Diese Exception wird
+erzeugt wenn das Gerät nicht antwortet. Wenn eine Kabelverbindung genutzt
+wird, ist es unwahrscheinlich das die Exception erzeugt wird (Unter der
+Annahme, dass das Gerät nicht ausgesteckt wird). Bei einer kabellosen Verbindung
+können Zeitüberschreitungen auftreten, sobald die Entfernung zum Gerät zu
+groß wird.
+
+Da Java nicht mehrere Rückgabewerte unterstützt und eine Referenzrückgabe
+für elementare Type nicht möglich ist, werden kleine Klassen verwendet, die
+nur aus Member Variablen bestehen (Vergleichbar mit Structs in C). Die Member
+Variablen des zurückgegebenen Objektes werden in der jeweiligen Methodenbeschreibung
+erläutert.
+
+Das Package für alle Brick/Bricklet Bindings und die IPConnection ist
+``com.tinkerforge.*``
+
+Alle folgend aufgelisteten Methoden sind Thread-sicher.
+
+{1}
+
+{2}
 """
     }
 
