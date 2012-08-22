@@ -368,7 +368,7 @@ as 0.
 'de':
 """
 Gibt (für den angegebenen Pin) den aktuellen Zustand und die Zeit, wie von 
-:func:`SetMonoflop gesetzt, sowie die noch verbleibende Zeit bis zum
+:func:`SetMonoflop` gesetzt, sowie die noch verbleibende Zeit bis zum
 Zustandswechsel, zurück.
 
 Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.

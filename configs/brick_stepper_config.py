@@ -639,8 +639,8 @@ Eine Änderung des Decay Modus ist nur möglich wenn die Synchrongleichrichtung
 aktiviert ist (siehe :func:`SetSyncRect`).
 
 Für eine gute Erläuterung der verschiedenen Decay Modi siehe 
-`dieser <http://robot.avayanex.com/?p=86/>`_ Blogeintrag (Englisch) von Avayan oder
-`dieser <http://www.schrittmotor-blog.de/?tag=slow-decay>`_ Blogeintrag (Deutsch) von
+`diesen <http://robot.avayanex.com/?p=86/>`_ Blogeintrag (Englisch) von Avayan oder
+`jenen <http://www.schrittmotor-blog.de/?tag=slow-decay>`_ Blogeintrag (Deutsch) von
 T. Ostermann.
 
 Ein guter Decay Modus ist leider unterschiedlich für jeden Motor. Der beste
@@ -805,8 +805,8 @@ Bei aktiver Synchrongleichrichtung kann der Decay Modus geändert werden
 (Siehe :func:`SetDecay`). Ohne Synchrongleichrichtung wird der Fast
 Decay Modus verwendet.
 
-Für eine Erläuterung der Synchrongleichrichtung siehe 
-`here <http://de.wikipedia.org/wiki/Gleichrichter#Synchrongleichrichter>__.
+Für eine Erläuterung der Synchrongleichrichtung siehe
+`hier <http://de.wikipedia.org/wiki/Gleichrichter#Synchrongleichrichter>`__.
 
 .. warning::
  Wenn hohe Geschwindigkeiten (> 10000 Schritte/s) mit einem großen

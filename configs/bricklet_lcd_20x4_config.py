@@ -43,7 +43,7 @@ des Display.
 
 Das Display nutzt einen speziellen Zeichensatz der alle ASCII Zeichen beinhaltet außer
 Backslash und Tilde. Der Zeichensatz des LCD beinhaltet weiterhin einige Nicht-ASCII Zeichen,
-siehe die `Zeichensatzspezifikation <<https://github.com/Tinkerforge/lcd-20x4-bricklet/raw/master/datasheets/standard_charset.pdf>`__
+siehe die `Zeichensatzspezifikation <https://github.com/Tinkerforge/lcd-20x4-bricklet/raw/master/datasheets/standard_charset.pdf>`__
 für Details. Das gezeigte Unicode Beispiel verdeutlicht die Verwendung von Nicht-ASCII Zeichen
 und wie die Wandlung von Unicode in den LCD Zeichensatz möglich ist.
 """
