@@ -178,6 +178,12 @@ A tutorial on how to test the {0} {1} and get the first examples running
 can be found :ref:`here <{3}>`.
 """,
     'de': """
+Dies ist die API Seite für die {4} des {0} {1}. Allgemeine Informationen
+über die Funktionen des Gerätes und die technischen Spezifikationen sind
+:ref:`hier <{2}>` zu finden.
+
+Eine Anleitung wie der {0} {1} getestet werden kann und die ersten Beispiele
+ausgeführt werden können ist :ref:`hier <{3}>` zu finden.
 """
     }
 
@@ -196,6 +202,12 @@ Examples
 The example code below is public domain.
 """,
     'de': """
+{0}
+
+Beispiele
+--------
+
+Der Beispielcode unten ist Public Domain.
 """
     }
 
@@ -212,6 +224,15 @@ The example code below is public domain.
  :tab-width: 4
 """,
     'de': """
+{0}
+{1}
+
+`Download <https://github.com/Tinkerforge/{3}/raw/master/software/examples/{4}/{5}>`__
+
+.. literalinclude:: {2}
+ :language: {4}
+ :linenos:
+ :tab-width: 4
 """
     }
 
