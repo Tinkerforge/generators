@@ -196,6 +196,12 @@ Examples
 The example code below is public domain.
 """,
     'de': """
+{0}
+
+Beispiele
+---------
+
+Der Beispielcode ist Public Domain.
 """
     }
 
@@ -212,6 +218,15 @@ The example code below is public domain.
  :tab-width: 4
 """,
     'de': """
+{0}
+{1}
+
+`Download <https://github.com/Tinkerforge/{3}/raw/master/software/examples/{4}/{5}>`__
+
+.. literalinclude:: {2}
+ :language: {4}
+ :linenos:
+ :tab-width: 4
 """
     }
 
