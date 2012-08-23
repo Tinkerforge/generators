@@ -170,7 +170,7 @@ def make_rst_header(device, ref_name, title):
 def make_rst_summary(device, title):
     su = {
     'en': """
-This is the API site for the {4} of the {0} {1}. General information
+This is the API description for the {4} of the {0} {1}. General information
 on what this device does and the technical specifications can be found
 :ref:`here <{2}>`.
 
@@ -178,6 +178,12 @@ A tutorial on how to test the {0} {1} and get the first examples running
 can be found :ref:`here <{3}>`.
 """,
     'de': """
+Dies ist die API Beschreibung für die {4} des {0} {1}. Allgemeine Informationen
+über die Funktionen des Gerätes und die technischen Spezifikationen sind
+:ref:`hier <{2}>` zu finden.
+
+Eine Anleitung wie der {0} {1} getestet werden kann und die ersten Beispiele
+ausgeführt werden können ist :ref:`hier <{3}>` zu finden.
 """
     }
 
@@ -201,7 +207,7 @@ The example code below is public domain.
 Beispiele
 ---------
 
-Der Beispielcode ist Public Domain.
+Der Beispielcode unten ist Public Domain.
 """
     }
 
@@ -308,7 +314,7 @@ def generate(path, make_files):
         common_packets = __import__('brick_commonconfig').common_packets
     except:
         pass
-    
+
     for config in configs:
         if config.endswith('_config.py'):
             module = __import__(config[:-3])
