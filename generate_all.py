@@ -11,6 +11,7 @@ for d in os.listdir(path):
         if not d in ('configs', '.git'):
             bindings.append(d)
 
+# bindings
 for binding in bindings:
     if binding in ('tcpip', 'modbus'):
         continue
@@ -21,6 +22,7 @@ for binding in bindings:
     print("\nGenerating bindings for {0}:".format(binding))
     module.common.generate(path_binding, module.make_files)
 
+# doc
 for binding in bindings:
     path_binding = '{0}/{1}'.format(path, binding)
     sys.path.append(path_binding)

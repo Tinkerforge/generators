@@ -191,7 +191,8 @@ ausgeführt werden können ist :ref:`hier <{3}>` zu finden.
     hw_test = hw_link + '_test'
     return su[lang].format(device.get_display_name(), device.get_category(), hw_link, hw_test, title)
 
-def make_rst_examples(title_from_file, device, base_path, dirname, filename_prefix, filename_suffix, include_name):
+def make_rst_examples(title_from_file, device, base_path, dirname,
+                      filename_prefix, filename_suffix, include_name):
     ex = {
     'en': """
 {0}

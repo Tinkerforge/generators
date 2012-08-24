@@ -326,7 +326,7 @@ def make_methods():
             else:
                 write_convs += write_conv.format(wname, pos)
             pos += common.get_element_size(element)
-            
+
         method_tail = ''
         if ret_count > 0:
             read_convs = ''
@@ -404,7 +404,7 @@ def make_files(com_new, directory):
     device = common.Device(com_new)
 
     file_name = '{0}{1}'.format(device.get_category(), device.get_camel_case_name())
-    
+
     directory += '/bindings'
     if not os.path.exists(directory):
         os.makedirs(directory)

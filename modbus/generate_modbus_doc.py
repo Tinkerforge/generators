@@ -142,11 +142,11 @@ def make_callbacks():
         desc = fix_links(common.shift_right(packet.get_doc()[1][lang], 1))
 
         func = '{0}{1}.CALLBACK_{2}\n{3}\n{4}\n{5}'.format(func_start,
-                                                      cls,
-                                                      packet.get_upper_case_name(),
-                                                      fid,
-                                                      response,
-                                                      desc)
+                                                           cls,
+                                                           packet.get_upper_case_name(),
+                                                           fid,
+                                                           response,
+                                                           desc)
         cbs += func + '\n'
 
     return cbs

@@ -158,11 +158,11 @@ def make_methods(typ):
         d = fix_links(common.shift_right(packet.get_doc()[1][lang], 1))
         desc = '{0}{1}'.format(pd, d)
         func = '{0}{1}#{2}{3}{5}\n{4}'.format(func_start,
-                                             cls,
-                                             name,
-                                             params,
-                                             desc,
-                                             r)
+                                              cls,
+                                              name,
+                                              params,
+                                              desc,
+                                              r)
         methods += func + '\n'
 
     if typ == 'af':
@@ -179,10 +179,10 @@ def make_callbacks():
         desc = fix_links(common.shift_right(packet.get_doc()[1][lang], 1))
 
         func = '{0}{1}::CALLBACK_{2}\n{3}\n{4}'.format(func_start,
-                                                      cls,
-                                                      packet.get_upper_case_name(),
-                                                      param_desc,
-                                                      desc)
+                                                       cls,
+                                                       packet.get_upper_case_name(),
+                                                       param_desc,
+                                                       desc)
         cbs += func + '\n'
 
     return cbs

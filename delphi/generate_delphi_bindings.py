@@ -395,7 +395,6 @@ def make_methods():
 
         methods += method
 
-
     return methods
 
 def make_callback_wrappers():

@@ -121,12 +121,12 @@ def make_methods(typ):
         name = packet.get_headless_camel_case_name()
         params = make_parameter_list(packet)
         desc = fix_links(common.shift_right(packet.get_doc()[1][lang], 1))
-        func = '{0}{1} {2}::{3}({4})\n{5}'.format(func_start, 
-                                                            ret_type,
-                                                            cls, 
-                                                            name, 
-                                                            params, 
-                                                            desc)
+        func = '{0}{1} {2}::{3}({4})\n{5}'.format(func_start,
+                                                  ret_type,
+                                                  cls,
+                                                  name,
+                                                  params,
+                                                  desc)
         methods += func + '\n'
 
     if typ == 'af':

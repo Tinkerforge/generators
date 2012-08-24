@@ -124,10 +124,7 @@ def make_methods(typ):
         response = make_response_desc(packet)
         d = fix_links(common.shift_right(packet.get_doc()[1][lang], 1))
         desc = '{0}{1}{2}{3}'.format(fid, request, response, d)
-        func = '{0}{1}.{2}\n{3}'.format(func_start,
-                                             cls,
-                                             name,
-                                             desc)
+        func = '{0}{1}.{2}\n{3}'.format(func_start, cls, name, desc)
         methods += func + '\n'
 
     return methods
@@ -142,11 +139,11 @@ def make_callbacks():
         desc = fix_links(common.shift_right(packet.get_doc()[1][lang], 1))
 
         func = '{0}{1}.CALLBACK_{2}\n{3}\n{4}\n{5}'.format(func_start,
-                                                      cls,
-                                                      packet.get_upper_case_name(),
-                                                      fid,
-                                                      response,
-                                                      desc)
+                                                           cls,
+                                                           packet.get_upper_case_name(),
+                                                           fid,
+                                                           response,
+                                                           desc)
         cbs += func + '\n'
 
     return cbs

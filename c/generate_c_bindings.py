@@ -416,7 +416,7 @@ static int {0}_callback_wrapper_{1}({2} *{0}, const unsigned char *buffer) {{
             if common.get_type_size(element[1]) > 1:
                 if element[2] > 1:
                     endian_list.append('\tfor (int i = 0; i < {3}; i++) {0}c->{1}[i] = ipcon_leconvert_{2}_from({0}c->{1}[i]);' \
-                                      .format(e, element[0], element[1], element[2]))
+                                       .format(e, element[0], element[1], element[2]))
                 else:
                     endian_list.append('\t{0}c->{1} = ipcon_leconvert_{2}_from({0}c->{1});'.format(e, element[0], element[1]))
         endian = '\n'.join(endian_list)

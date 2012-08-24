@@ -473,9 +473,9 @@ def make_callback_wrappers():
             foobar = '        $payload = unpack(\'{0}\', $data);'.format('/'.join(unpack))
 
         wrappers += wrapper.format(name,
-                                 foobar,
-                                 '\n'.join(collect),
-                                 packet.get_upper_case_name())
+                                   foobar,
+                                   '\n'.join(collect),
+                                   packet.get_upper_case_name())
 
     return wrappers
 
