@@ -533,7 +533,7 @@ That means, :func:`Enable` has to be called to drive the motor again.
 .. note::
  This callback only works in Drive/Brake mode (see :func:`SetDriveMode`). In
  Drive/Coast mode it is unfortunately impossible to reliably read the
- over current/over temperature signal from the driver chip.
+ overcurrent/overtemperature signal from the driver chip.
 """,
 'de':
 """

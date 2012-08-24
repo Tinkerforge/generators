@@ -447,7 +447,7 @@ This callback is triggered periodically with the period that is set by
 :func:`SetAnalogValueCallbackPeriod`. The :word:`parameters` are the analog values
 of the Joystick.
 
-:func:`AnalogValue` is only triggered if the values has changed since the
+:func:`AnalogValue` is only triggered if the values have changed since the
 last triggering.
 """,
 'de':
