@@ -97,7 +97,7 @@ emissivities of different materials can be found
 `here <http://www.infrared-thermography.com/material.htm>`_.
 
 The parameter of :func:`SetEmissivity` has to be given with a factor of
-65535 (16 bit). For example: An emissivity of 0.1 can be set with the 
+65535 (16-bit). For example: An emissivity of 0.1 can be set with the
 value 6553, an emissivity of 0.5 with the value 32767 and so on.
 
 .. note::
@@ -117,7 +117,7 @@ Der Emissionsgrad wird normalerweise als Wert zwischen 0,0 und 1,0 angegeben.
 Eine Liste von Emissionsgraden unterschiedlicher Materialien ist
 `hier <http://www.infrared-thermography.com/material.htm>`_ zu finden.
 
-Der Parameter von :func:`SetEmissivity` muss mit eine Faktor von 65535 (16 Bit)
+Der Parameter von :func:`SetEmissivity` muss mit eine Faktor von 65535 (16-Bit)
 vorgegeben werden. Beispiel: Ein Emissionsgrad von 0,1 kann mit dem Wert
 6553 gesetzt werden, En Emissionsgrad von 0,5 mit dem Wert 32767 und so weiter.
 

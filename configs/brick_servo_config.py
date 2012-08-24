@@ -342,7 +342,7 @@ If you have a datasheet for your servo that specifies the minimum and
 maximum pulse width, you should set the values accordingly. If your servo
 comes without any datasheet you have to find the values via trial and error.
 
-Both values have a range from 1 to 65535 (unsigned 16 bit integer). The
+Both values have a range from 1 to 65535 (unsigned 16-bit integer). The
 minimum must be smaller than the maximum.
 
 The default values are 1000µs (1ms) and 2000µs (2ms) for minimum and 
@@ -363,7 +363,7 @@ spezifiziert ist, sollten diese Werte entsprechend gesetzt werden. Sollte
 der Servo ohne ein Datenblatt vorliegen, müssen die Werte durch Ausprobieren
 gefunden werden.
 
-Beide Werte haben einen Wertebereich von 1 bis 65535 (unsigned 16 bit integer).
+Beide Werte haben einen Wertebereich von 1 bis 65535 (unsigned 16-bit integer).
 Der minimale Wert muss kleiner als der maximale sein.
 
 Die Standardwerte sind 1000µs (1ms) und 2000µs (2ms) für minimale und maximale
@@ -428,7 +428,7 @@ Possible usage:
   minimum to 0 and the maximum to 10000. :func:`SetPosition` now controls the rpm.
 
 Both values have a possible range from -32767 to 32767 
-(signed 16 bit integer). The minimum must be smaller than the maximum.
+(signed 16-bit integer). The minimum must be smaller than the maximum.
 
 The default values are -9000 and 9000 for the minimum and maximum degree.
 """,
@@ -464,7 +464,7 @@ Anwendungsfälle:
   Minimum auf 0 und das Maximum auf 10000 gesetzt werden. :func:`SetPosition`
   steuert jetzt die Drehzal in U/min.
 
-Beide Werte haben einen Wertebereich von -32767 bis 32767 (signed 16 bit integer).
+Beide Werte haben einen Wertebereich von -32767 bis 32767 (signed 16-bit integer).
 Der minimale Wert muss kleiner als der maximale sein.
 
 Die Standardwerte sind -9000 und 9000 für den minimalen und maximalen Winkel.

@@ -71,7 +71,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the values as read by a 12 bit analog to digital converter.
+Returns the values as read by a 12-bit analog to digital converter.
 The values are between 0 and 4095 for both axis.
 
 .. note::
@@ -86,7 +86,7 @@ callback :func:`AnalogValue` and set the period with
 """,
 'de':
 """
-Gibt den Wert, wie vom 12 Bit Analog-Digital-Wandler gelesen, zurück. Der
+Gibt den Wert, wie vom 12-Bit Analog-Digital-Wandler gelesen, zurück. Der
 Wertebereich ist 0 bis 4095.
 
 .. note::
