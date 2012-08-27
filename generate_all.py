@@ -3,6 +3,7 @@
 
 import sys
 import os
+import common
 
 path = os.getcwd()
 bindings = []
@@ -20,13 +21,25 @@ for binding in bindings:
     sys.path.append(path_binding)
     module = __import__('generate_{0}_bindings'.format(binding))
     print("\nGenerating bindings for {0}:".format(binding))
-    module.common.generate(path_binding, module.make_files)
+    common.generate(path_binding, 'en', module.make_files)
 
 # doc
 for binding in bindings:
     path_binding = '{0}/{1}'.format(path, binding)
     sys.path.append(path_binding)
     module = __import__('generate_{0}_doc'.format(binding))
-    print("\nGenerating documentation for {0}:".format(binding))
-    module.generate(path_binding)
+    for lang in ['en', 'de']:
+        print("\nGenerating '{0}' documentation for {1}:".format(lang, binding))
+        print path_binding
+        common.generate(path_binding, lang, module.make_files)
 
+# zip
+for binding in bindings:
+    if binding in ('tcpip', 'modbus'):
+        continue
+
+    path_binding = '{0}/{1}'.format(path, binding)
+    sys.path.append(path_binding)
+    module = __import__('generate_{0}_zip'.format(binding))
+    print("\nGenerating ZIP for {0}:".format(binding))
+    module.generate(path_binding)

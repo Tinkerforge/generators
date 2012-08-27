@@ -35,8 +35,6 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 device = None
-lang = 'en'
-file_path = ''
 
 def get_c_type(py_type):
     if py_type == 'string':
@@ -68,8 +66,8 @@ def fix_links(text):
                                                     packet.get_underscore_name())
         text = text.replace(name_false, name_right)
 
-    text = text.replace(":word:`parameter`", parameter[lang])
-    text = text.replace(":word:`parameters`", parameters[lang])
+    text = text.replace(":word:`parameter`", common.select_lang(parameter))
+    text = text.replace(":word:`parameters`", common.select_lang(parameters))
 
     return text
 
@@ -99,7 +97,7 @@ def make_examples():
             s += l[0].upper() + l[1:] + ' '
         return s[:-1]
 
-    return common.make_rst_examples(title_from_file, device, file_path,
+    return common.make_rst_examples(title_from_file, device, common.path_binding,
                                     'c', 'example_', '.c', 'C')
 
 def make_methods(typ):
@@ -128,12 +126,13 @@ def make_methods(typ):
         name = '{0}_{1}'.format(device.get_underscore_name(), packet.get_underscore_name())
         plist = make_parameter_list(packet)
         params = '{0} *{1}{2}'.format(device.get_camel_case_name(), device.get_underscore_name(), plist)
-        desc = fix_links(common.shift_right(packet.get_doc()[1][lang], 1))
+        desc = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 1))
         func = '{0}{1}({2})\n{3}'.format(func_start, name, params, desc)
         methods += func + '\n'
 
     if typ == 'af':
-        methods += version_method[lang].format(device.get_underscore_name(), device.get_camel_case_name())
+        methods += common.select_lang(version_method).format(device.get_underscore_name(),
+                                                             device.get_camel_case_name())
 
     return methods
 
@@ -157,8 +156,8 @@ def make_callbacks():
         plist = make_parameter_list(packet)[2:].replace('*ret_', '')
         if not plist:
             plist = 'void'
-        params = param_format[lang].format(plist)
-        desc = fix_links(common.shift_right(packet.get_doc()[1][lang], 1))
+        params = common.select_lang(param_format).format(plist)
+        desc = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 1))
         name = '{0}_{1}'.format(device.get_upper_case_name(),
                                 packet.get_upper_case_name())
 
@@ -339,49 +338,36 @@ Alle folgend aufgelisteten Funktionen sind Thread-sicher.
 """
     }
 
-    cre = create_str[lang].format(device.get_underscore_name(),
-                                  device.get_camel_case_name(),
-                                  device.get_category().lower())
-    reg = register_str[lang].format(device.get_underscore_name(),
-                                    device.get_camel_case_name(),
-                                    device.get_category().lower())
+    cre = common.select_lang(create_str).format(device.get_underscore_name(),
+                                                device.get_camel_case_name(),
+                                                device.get_category().lower())
+    reg = common.select_lang(register_str).format(device.get_underscore_name(),
+                                                  device.get_camel_case_name(),
+                                                  device.get_category().lower())
     bf = make_methods('bf')
     af = make_methods('af')
     ccf = make_methods('ccf')
     c = make_callbacks()
     api_str = ''
     if bf:
-        api_str += common.bf_str[lang].format(cre, bf)
+        api_str += common.select_lang(common.bf_str).format(cre, bf)
     if af:
-        api_str += common.af_str[lang].format(af)
+        api_str += common.select_lang(common.af_str).format(af)
     if c:
-        api_str += common.ccf_str[lang].format(reg, ccf)
-        api_str += c_str[lang].format(device.get_underscore_name(),
-                                      device.get_upper_case_name(),
-                                      c,
-                                      device.get_category().lower())
+        api_str += common.select_lang(common.ccf_str).format(reg, ccf)
+        api_str += common.select_lang(c_str).format(device.get_underscore_name(),
+                                                    device.get_upper_case_name(),
+                                                    c,
+                                                    device.get_category().lower())
 
     ref = '.. _{0}_{1}_c_api:\n'.format(device.get_underscore_name(),
                                         device.get_category().lower())
+
     api_desc = ''
-    try:
-        api_desc = device.com['api'][lang]
-    except KeyError:
-        pass
+    if 'api' in device.com:
+        api_desc = common.select_lang(device.com['api'])
 
-    return api[lang].format(ref, api_desc, api_str)
-
-def copy_examples_for_zip():
-    examples = common.find_examples(device, file_path, 'c', 'example_', '.c')
-    dest = os.path.join('/tmp/generator/examples/', 
-                        device.get_category().lower(),
-                        device.get_underscore_name())
-
-    if not os.path.exists(dest):
-        os.makedirs(dest)
-
-    for example in examples:
-        shutil.copy(example[1], dest)
+    return common.select_lang(api).format(ref, api_desc, api_str)
 
 def make_files(com_new, directory):
     global device
@@ -392,51 +378,16 @@ def make_files(com_new, directory):
     'de': 'C/C++ Bindings'
     }
 
-    directory += '/doc'
+    directory = os.path.join(directory, 'doc', common.lang)
     if not os.path.exists(directory):
         os.makedirs(directory)
 
     f = file('{0}/{1}.rst'.format(directory, file_name), "w")
     f.write(common.make_rst_header(device, 'c', 'C/C++'))
-    f.write(common.make_rst_summary(device, title[lang]))
+    f.write(common.make_rst_summary(device, common.select_lang(title)))
     f.write(make_examples())
     f.write(make_api())
 
-    copy_examples_for_zip()
-
-def generate(path):
-    global file_path
-    file_path = path
-    path_list = path.split('/')
-    path_list[-1] = 'configs'
-    path_config = '/'.join(path_list)
-    sys.path.append(path_config)
-    configs = os.listdir(path_config)
-
-    # Make temporary generator directory
-    if os.path.exists('/tmp/generator'):
-        shutil.rmtree('/tmp/generator/')
-    os.makedirs('/tmp/generator/bindings')
-    os.chdir('/tmp/generator/bindings')
-
-    for config in configs:
-        if config.endswith('_config.py'):
-            module = __import__(config[:-3])
-            print(" * {0}".format(config[:-10]))            
-            make_files(module.com, path)
-
-    # Copy bindings and readme
-    for filename in glob.glob(path + '/bindings/*.[ch]'):
-        shutil.copy(filename, '/tmp/generator/bindings')
-
-    shutil.copy(path + '/ip_connection.c', '/tmp/generator/bindings')
-    shutil.copy(path + '/ip_connection.h', '/tmp/generator/bindings')
-    shutil.copy(path + '/changelog.txt', '/tmp/generator/')
-    shutil.copy(path + '/readme.txt', '/tmp/generator/')
-
-    # Make zip
-    version = common.get_changelog_version(path)
-    common.make_zip('c', '/tmp/generator', path, version)
-
 if __name__ == "__main__":
-    generate(os.getcwd())
+    for lang in ['en', 'de']:
+        common.generate(os.getcwd(), lang, make_files)

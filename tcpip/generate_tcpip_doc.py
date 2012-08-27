@@ -33,8 +33,6 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 device = None
-lang = 'en'
-file_path = ''
 
 def type_to_pytype(element):
     t = element[1]
@@ -67,8 +65,8 @@ def fix_links(text):
             name_right = ':tcpip:func:`{1} <{0}.{1}>`'.format(cls, packet.get_underscore_name())
         text = text.replace(name_false, name_right)
 
-    text = text.replace(":word:`parameter`", parameter[lang])
-    text = text.replace(":word:`parameters`", parameters[lang])
+    text = text.replace(":word:`parameter`", common.select_lang(parameter))
+    text = text.replace(":word:`parameters`", common.select_lang(parameters))
 
     return text
 
@@ -84,7 +82,7 @@ def make_request_desc(packet):
         desc += param.format(element[0], t)
 
     if desc == '\n':
-        desc += ' :emptyrequest: {0}\n'.format(empty_payload[lang])
+        desc += ' :emptyrequest: {0}\n'.format(common.select_lang(empty_payload))
 
     return desc
 
@@ -105,9 +103,9 @@ def make_response_desc(packet):
 
     if desc == '\n':
         if packet.get_type() == 'callback':
-            desc += ' :emptyresponse: {0}\n'.format(empty_payload[lang])
+            desc += ' :emptyresponse: {0}\n'.format(common.select_lang(empty_payload))
         else:
-            desc += ' :noresponse: {0}\n'.format(no_response[lang])
+            desc += ' :noresponse: {0}\n'.format(common.select_lang(no_response))
 
     return desc
 
@@ -122,7 +120,7 @@ def make_methods(typ):
         fid = '\n :functionid: {0}'.format(packet.get_function_id())
         request = make_request_desc(packet)
         response = make_response_desc(packet)
-        d = fix_links(common.shift_right(packet.get_doc()[1][lang], 1))
+        d = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 1))
         desc = '{0}{1}{2}{3}'.format(fid, request, response, d)
         func = '{0}{1}.{2}\n{3}'.format(func_start, cls, name, desc)
         methods += func + '\n'
@@ -136,7 +134,7 @@ def make_callbacks():
     for packet in device.get_packets('callback'):
         fid = '\n :functionid: {0}'.format(packet.get_function_id())
         response = make_response_desc(packet)
-        desc = fix_links(common.shift_right(packet.get_doc()[1][lang], 1))
+        desc = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 1))
 
         func = '{0}{1}.CALLBACK_{2}\n{3}\n{4}\n{5}'.format(func_start,
                                                            cls,
@@ -204,24 +202,22 @@ Eine allgemeine Beschreibung der TCP/IP Protokollstruktur findet sich
     c = make_callbacks()
     api_str = ''
     if bf:
-        api_str += common.bf_str[lang].format(bf, '')
+        api_str += common.select_lang(common.bf_str).format(bf, '')
     if af:
-        api_str += common.af_str[lang].format(af)
+        api_str += common.select_lang(common.af_str).format(af)
     if c:
-        api_str += common.ccf_str[lang].format(ccf, '')
-        api_str += c_str[lang].format(c, device.get_underscore_name(),
-                                      device.get_category().lower())
+        api_str += common.select_lang(common.ccf_str).format(ccf, '')
+        api_str += common.select_lang(c_str).format(c, device.get_underscore_name(),
+                                                    device.get_category().lower())
 
     ref = '.. _{0}_{1}_tcpip_api:\n'.format(device.get_underscore_name(),
                                             device.get_category().lower())
 
     api_desc = ''
-    try:
-        api_desc = device.com['api'][lang]
-    except KeyError:
-        pass
+    if 'api' in device.com:
+        api_desc = common.select_lang(device.com['api'])
 
-    return api[lang].format(ref, api_desc, api_str)
+    return common.select_lang(api).format(ref, api_desc, api_str)
 
 def make_files(com_new, directory):
     global device
@@ -232,35 +228,15 @@ def make_files(com_new, directory):
     'de': 'TCP/IP Protokoll'
     }
 
-    directory += '/doc'
+    directory = os.path.join(directory, 'doc', common.lang)
     if not os.path.exists(directory):
         os.makedirs(directory)
 
     f = file('{0}/{1}.rst'.format(directory, file_name), "w")
     f.write(common.make_rst_header(device, 'tcpip', 'TCP/IP'))
-    f.write(common.make_rst_summary(device, title[lang]))
+    f.write(common.make_rst_summary(device, common.select_lang(title)))
     f.write(make_api())
 
-def generate(path):
-    global file_path
-    file_path = path
-    path_list = path.split('/')
-    path_list[-1] = 'configs'
-    path_config = '/'.join(path_list)
-    sys.path.append(path_config)
-    configs = os.listdir(path_config)
-
-    # Make temporary generator directory
-    if os.path.exists('/tmp/generator'):
-        shutil.rmtree('/tmp/generator/')
-    os.makedirs('/tmp/generator')
-    os.chdir('/tmp/generator')
-
-    for config in configs:
-        if config.endswith('_config.py'):
-            module = __import__(config[:-3])
-            print(" * {0}".format(config[:-10]))
-            make_files(module.com, path)
-
 if __name__ == "__main__":
-    generate(os.getcwd())
+    for lang in ['en', 'de']:
+        common.generate(os.getcwd(), lang, make_files)

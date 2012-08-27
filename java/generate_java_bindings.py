@@ -32,7 +32,6 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 device = None
-lang = 'en'
 
 def fix_links(text):
     link = '{{@link com.tinkerforge.{0}{1}.{2}}}'
@@ -166,7 +165,7 @@ def make_listener_definitions():
         name = packet.get_camel_case_name()
         name_lower = packet.get_headless_camel_case_name()
         parameter = make_parameter_list(packet)
-        doc = '\n\t * '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n'))
+        doc = '\n\t * '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
         cbs += cb.format(name, name_lower, parameter, doc)
     return cbs
 
@@ -399,7 +398,7 @@ def make_methods():
         parameter = make_parameter_list(packet)
         size = str(packet.get_request_length())
         name_upper = packet.get_upper_case_name()
-        doc = '\n\t * '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n'))
+        doc = '\n\t * '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
         bbputs = ''
         bbput = '\t\tbb.put{0}(({1}){2});'
         for element in packet.get_elements('in'):
@@ -544,4 +543,4 @@ def make_files(com_new, directory):
     java.write(make_add_listener())
 
 if __name__ == "__main__":
-    common.generate(os.getcwd(), make_files)
+    common.generate(os.getcwd(), 'en', make_files)
