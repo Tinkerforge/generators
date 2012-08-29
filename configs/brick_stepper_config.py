@@ -609,7 +609,7 @@ Changing the decay mode is only possible if synchronous rectification
 is enabled (see :func:`SetSyncRect`).
 
 For a good explanation of the different decay modes see 
-`this <http://robot.avayanex.com/?p=86/>`_ blog post by Avayan.
+`this <http://robot.avayanex.com/?p=86/>`__ blog post by Avayan.
 
 A good decay mode is unfortunately different for every motor. The best
 way to work out a good decay mode for your stepper motor, if you can't
@@ -639,8 +639,8 @@ Eine Änderung des Decay Modus ist nur möglich wenn die Synchrongleichrichtung
 aktiviert ist (siehe :func:`SetSyncRect`).
 
 Für eine gute Erläuterung der verschiedenen Decay Modi siehe 
-`diesen <http://robot.avayanex.com/?p=86/>`_ Blogeintrag (Englisch) von Avayan oder
-`jenen <http://www.schrittmotor-blog.de/?tag=slow-decay>`_ Blogeintrag (Deutsch) von
+`diesen <http://robot.avayanex.com/?p=86/>`__ Blogeintrag (Englisch) von Avayan oder
+`diesen <http://www.schrittmotor-blog.de/?tag=slow-decay>`__ Blogeintrag (Deutsch) von
 T. Ostermann.
 
 Ein guter Decay Modus ist leider unterschiedlich für jeden Motor. Der beste

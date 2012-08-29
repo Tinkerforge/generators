@@ -55,7 +55,7 @@ e.g. a value of 3001 means that a temperature of 300.1 °C is measured
 on the surface of the object.
 
 The temperature of different materials is dependent on their `emissivity 
-<http://en.wikipedia.org/wiki/Emissivity>`_. The emissivity of the material
+<http://en.wikipedia.org/wiki/Emissivity>`__. The emissivity of the material
 can be set with :func:`SetEmissivity`.
 
 If you want to get the object temperature periodically, it is recommended 
@@ -71,7 +71,7 @@ ein Wert von 3001 eine gemessene Temperatur von 300,1 °C auf der Oberfläche
 des Objektes.
 
 Die Temperatur von unterschiedlichen Materialien ist abhängig von ihrem `Emissionsgrad
-<http://de.wikipedia.org/wiki/Emissionsgrad>`_. Der Emissionsgrad des Materials kann mit
+<http://de.wikipedia.org/wiki/Emissionsgrad>`__. Der Emissionsgrad des Materials kann mit
 :func:`SetEmissivity` gesetzt werden.
 
 Wenn die Objekttemperatur periodisch abgefragt werden soll, wird empfohlen
@@ -88,13 +88,13 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets the `emissivity <http://en.wikipedia.org/wiki/Emissivity>`_ that is 
+Sets the `emissivity <http://en.wikipedia.org/wiki/Emissivity>`__ that is
 used to calculate the surface temperature as returned by 
 :func:`GetObjectTemperature`. 
 
 The emissivity is usually given as a value between 0.0 and 1.0. A list of
 emissivities of different materials can be found 
-`here <http://www.infrared-thermography.com/material.htm>`_.
+`here <http://www.infrared-thermography.com/material.htm>`__.
 
 The parameter of :func:`SetEmissivity` has to be given with a factor of
 65535 (16-bit). For example: An emissivity of 0.1 can be set with the
@@ -109,13 +109,13 @@ sensor can handle is 0.1 (value of 6553).
 """,
 'de':
 """
-Setzt den `Emissionsgrad <http://de.wikipedia.org/wiki/Emissionsgrad>`_,
+Setzt den `Emissionsgrad <http://de.wikipedia.org/wiki/Emissionsgrad>`__,
 welcher zur Berechnung der Oberflächentemperatur benutzt wird, wie von
 :func:`GetObjectTemperature` zurückgegeben.
 
 Der Emissionsgrad wird normalerweise als Wert zwischen 0,0 und 1,0 angegeben.
 Eine Liste von Emissionsgraden unterschiedlicher Materialien ist
-`hier <http://www.infrared-thermography.com/material.htm>`_ zu finden.
+`hier <http://www.infrared-thermography.com/material.htm>`__ zu finden.
 
 Der Parameter von :func:`SetEmissivity` muss mit eine Faktor von 65535 (16-Bit)
 vorgegeben werden. Beispiel: Ein Emissionsgrad von 0,1 kann mit dem Wert
