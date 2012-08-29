@@ -188,7 +188,7 @@ A tutorial on how to test the {0} {1} and get the first examples running
 can be found :ref:`here <{3}>`.
 """,
     'de': """
-Dies ist die API Beschreibung für die {4} des {0} {1}. Allgemeine Informationen
+Dies ist die API Beschreibung für die {4} des {0} {1}s. Allgemeine Informationen
 über die Funktionen des Gerätes und die technischen Spezifikationen sind
 :ref:`hier <{2}>` zu finden.
 
@@ -218,7 +218,7 @@ The example code below is public domain.
 Beispiele
 ---------
 
-Der Beispielcode unten ist Public Domain.
+Der folgende Beispielcode ist Public Domain.
 """
     }
 
