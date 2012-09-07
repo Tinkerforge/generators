@@ -302,12 +302,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Enables the motor. The motor can be configured (velocity,
+Enables the driver chip. The driver parameters can be configured (velocity,
 acceleration, etc) before it is enabled.
 """,
 'de':
 """
-Erteilt die Motorfreigabe. Der Motor kann vor der Freigabe
+Aktiviert die Treiberstufe. Die Treiberparameter können vor der Aktivierung
 konfiguriert werden (Geschwindigkeit, Beschleunigung, etc.).
 """
 }]
@@ -325,9 +325,9 @@ acceleration, etc) but the motor is not driven until it is enabled again.
 """,
 'de':
 """
-Deaktiviert den Motor. Die Konfiguration (Geschwindigkeit, Beschleunigung,
-etc.) bleibt erhalten aber der Motor wird nicht angesteuert bis die erneute
-Freigabe erfolgt.
+Deaktiviert die Treiberstufe. Die Konfiguration (Geschwindigkeit, Beschleunigung,
+etc.) bleibt erhalten aber der Motor wird nicht angesteuert bis eine erneute
+Aktivierung erfolgt.
 """
 }]
 })
@@ -339,11 +339,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns *true* if the motor is enabled, *false* otherwise.
+Returns *true* if the driver chip is enabled, *false* otherwise.
 """,
 'de':
 """
-Gibt *true* zurück wenn die Motorfreigabe aktiv ist, sonst *false*.
+Gibt *true* zurück wenn die Treiberstufe aktiv ist, sonst *false*.
 """
 }]
 })
@@ -412,7 +412,8 @@ PWM and velocity, more exact accelerations and the possibility to drive
 with slower velocities.
 
 In Drive/Coast mode, the motor is always either driving or freewheeling.
-Advantages are: Less current consumption and less demands on the motor/driver.
+Advantages are: Less current consumption and less demands on the motor and
+driver chip.
 
 The default value is 0 = Drive/Brake.
 """,
@@ -423,7 +424,7 @@ Setzt den Fahrmodus. Verfügbare Modi sind:
 * 0 = Fahren/Bremsen
 * 1 = Fahren/Leerlauf
 
-Diese Modi sind verschiedene Arten der Motorsteuerung.
+Diese Modi sind verschiedene Arten der Motoransteuerung.
 
 Im Fahren/Bremsen Modus wird der Motor entweder gefahren oder gebremst.
 Es gibt keinen Leerlauf. Vorteile sind die lineare Korrelation zwischen PWM und
@@ -432,7 +433,7 @@ Geschwindigkeiten zu fahren.
 
 Im Fahren/Leerlauf Modus wir der Motor entweder gefahren oder befindet sich
 im Leerlauf. Vorteile sind die geringere Stromaufnahme und geringere
-Belastung des Motors bzw. der Treiberstufe.
+Belastung des Motors und der Treiberstufe.
 
 Der Standardwert ist 0 = Fahren/Bremsen.
 """
@@ -521,13 +522,13 @@ com['packets'].append({
 'en':
 """
 This callback is triggered if either the current consumption
-is too high (above 5A) or the temperature of the driver is too high
+is too high (above 5A) or the temperature of the driver chip is too high
 (above 175°C). These two possibilities are essentially the same, since the
-temperature will reach this threshold immediately if the motor draws too
+temperature will reach this threshold immediately if the motor consumes too
 much current. In case of a voltage below 3.3V (external or stack) this
 callback is triggered as well.
 
-If this callback is triggered, the driver gets disabled at the same time.
+If this callback is triggered, the driver chip gets disabled at the same time.
 That means, :func:`Enable` has to be called to drive the motor again.
 
 .. note::
@@ -540,7 +541,7 @@ That means, :func:`Enable` has to be called to drive the motor again.
 Dieser Callback wird ausgelöst wenn entweder der Stromverbrauch (über 5A)
 oder die Temperatur der Treiberstufe zu hoch ist (über 175°C). Beide
 Möglichkeiten sind letztendlich gleichbedeutend, da die Temperatur
-ihren Schwellwert überschreitet sobald der Motor zu viel Strom zieht.
+ihren Schwellwert überschreitet sobald der Motor zu viel Strom verbraucht.
 Im Falle einer Spannung unter 3,3V (Stapel- oder externe
 Spannungsversorgung) wird dieser Callback auch ausgelöst.
 
