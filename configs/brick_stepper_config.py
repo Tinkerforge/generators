@@ -547,13 +547,13 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Enables the motor. The motor can be configured (maximum velocity, 
+Enables the driver chip. The driver parameters can be configured (maximum velocity,
 acceleration, etc) before it is enabled.
 """,
 'de':
 """
-Erteilt die Motorfreigabe. Der Motor kann vor der Freigabe
-konfiguriert werden (Geschwindigkeit, Beschleunigung, etc.).
+Aktiviert die Treiberstufe. Die Treiberparameter können vor der Aktivierung
+konfiguriert werden (maximale Geschwindigkeit, Beschleunigung, etc.).
 """
 }]
 })
@@ -565,14 +565,14 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Disables the motor. The configurations are kept (maximum velocity, 
+Disables the driver chip. The configurations are kept (maximum velocity,
 acceleration, etc) but the motor is not driven until it is enabled again.
 """,
 'de':
 """
-Deaktiviert den Motor. Die Konfiguration (Geschwindigkeit, Beschleunigung,
-etc.) bleibt erhalten aber der Motor wird nicht angesteuert bis die erneute
-Freigabe erfolgt.
+Deaktiviert die Treiberstufe. Die Konfiguration (Geschwindigkeit, Beschleunigung,
+etc.) bleibt erhalten aber der Motor wird nicht angesteuert bis eine erneute
+Aktivierung erfolgt.
 """
 }]
 })
@@ -584,11 +584,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns *true* if the motor is enabled, *false* otherwise.
+Returns *true* if the driver chip is enabled, *false* otherwise.
 """,
 'de':
 """
-Gibt *true* zurück wenn die Motorfreigabe aktiv ist, sonst *false*.
+Gibt *true* zurück wenn die Treiberstufe aktiv ist, sonst *false*.
 """
 }]
 })
@@ -609,7 +609,7 @@ Changing the decay mode is only possible if synchronous rectification
 is enabled (see :func:`SetSyncRect`).
 
 For a good explanation of the different decay modes see 
-`this <http://robot.avayanex.com/?p=86/>`__ blog post by Avayan.
+`this <http://ebldc.com/?p=86/>`__ blog post by Avayan.
 
 A good decay mode is unfortunately different for every motor. The best
 way to work out a good decay mode for your stepper motor, if you can't
@@ -639,8 +639,8 @@ Eine Änderung des Decay Modus ist nur möglich wenn die Synchrongleichrichtung
 aktiviert ist (siehe :func:`SetSyncRect`).
 
 Für eine gute Erläuterung der verschiedenen Decay Modi siehe 
-`diesen <http://robot.avayanex.com/?p=86/>`__ Blogeintrag (Englisch) von Avayan oder
-`diesen <http://www.schrittmotor-blog.de/?tag=slow-decay>`__ Blogeintrag (Deutsch) von
+`diesen <http://ebldc.com/?p=86/>`__ Blogeintrag (Englisch) von Avayan oder
+`diesen <http://www.schrittmotor-blog.de/?p=51>`__ Blogeintrag (Deutsch) von
 T. Ostermann.
 
 Ein guter Decay Modus ist leider unterschiedlich für jeden Motor. Der beste

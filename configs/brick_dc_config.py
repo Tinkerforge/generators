@@ -320,7 +320,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Disables the motor. The configurations are kept (velocity,
+Disables the driver chip. The configurations are kept (velocity,
 acceleration, etc) but the motor is not driven until it is enabled again.
 """,
 'de':
