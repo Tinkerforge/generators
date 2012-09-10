@@ -404,7 +404,7 @@ Prinzipiell kann jede Methode der Java Bindings, welche einen Wert zurückgibt
 eine ``IPConnection.TimeoutException`` werfen. Diese Exception wird
 geworfen wenn das Gerät nicht antwortet. Wenn eine Kabelverbindung genutzt
 wird, ist es unwahrscheinlich, dass die Exception geworfen wird (unter der
-Annahme, dass das Gerät nicht abgesteckt wird). Bei einer kabellosen Verbindung
+Annahme, dass das Gerät nicht abgesteckt wird). Bei einer drahtlosen Verbindung
 können Zeitüberschreitungen auftreten, sobald die Entfernung zum Gerät zu
 groß wird.
 
