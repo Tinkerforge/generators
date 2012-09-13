@@ -47,7 +47,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the value as read by a 12-bit analog to digital converter.
+Returns the value as read by a 12-bit analog-to-digital converter.
 The value is between 0 and 4095.
 
 .. note::

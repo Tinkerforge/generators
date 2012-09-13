@@ -47,14 +47,14 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the value as read by a 12-bit analog to digital converter.
+Returns the value as read by a 12-bit analog-to-digital converter.
 The value is between 0 and 4095.
 
 .. note::
  The value returned by :func:`GetDistance` is averaged over several samples
  to yield less noise, while :func:`GetAnalogValue` gives back raw
  unfiltered analog values. The only reason to use :func:`GetAnalogValue` is,
- if you need the full resolution of the analog to digital converter.
+ if you need the full resolution of the analog-to-digital converter.
 
 If you want the analog value periodically, it is recommended to use the 
 callback :func:`AnalogValue` and set the period with 
@@ -91,7 +91,7 @@ The lookup table comprises 128 equidistant analog values with
 corresponding distances.
 
 If you measure a distance of 50cm at the analog value 2048, you
-should call this function with (64, 5000). The utilized analog to digital
+should call this function with (64, 5000). The utilized analog-to-digital
 converter has a resolution of 12 bit. With 128 sampling points on the
 whole range, this means that every sampling point has a size of 32
 analog values. Thus the analog value 2048 has the corresponding sampling
