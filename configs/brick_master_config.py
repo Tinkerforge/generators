@@ -840,10 +840,10 @@ For WEP it is possible to set the key index (1-4). If you don't know your
 key index, it is likely 1.
 
 If you choose WPA Enterprise as encryption, you have to set eap options and
-the length of the certificate (for other encryption types these paramters
+the length of the certificate (for other encryption types these parameters
 are ignored). The certificate length is given in byte and the certificate
 itself can be set with  :func:`SetWifiCertificate`. Eap options consist of 
-the outer authentification (bits 1-2), inner authentification (bit 3) and 
+the outer authentication (bits 1-2), inner authentication (bit 3) and
 certificate type (bits 4-5):
 
 .. csv-table::
@@ -879,13 +879,13 @@ Typ der Verschlüsselung. Mögliche Werte sind:
 
 Key hat eine maximale Länge von 50 Zeichen und wird benutzt falls
 encryption auf 0 oder 2 (WPA oder WEP) gesetzt ist. Andernfalls wird key
-ignoriert. Für WEP gibt es die möglichkeit den key index zu setzen
+ignoriert. Für WEP gibt es die Möglichkeit den key index zu setzen
 (1-4). Fall der key index unbekannt ist, ist er wahrscheinlich 1.
 
 Wenn WPA Enterprise als encryption gewählt wird, müssen eap options und
 die Länge des Zertifikats gesetzt werden. Die Länge wird in Byte angegeben
 und das Zertifikat selbst kann mit :func:`SetWifiCertificate` übertragen
-werden. Die eap options bestehen aus outer authentification (Bits 1-2), 
+werden. Die eap options bestehen aus outer authentification (Bits 1-2),
 inner authentification (Bit 3) und certificate type (bits 4-5):
 
 .. csv-table::
@@ -951,7 +951,7 @@ com['packets'].append({
 'en':
 """
 Returns the status of the WIFI Extension. The state is updated automatically,
-all of the other parameters are updated on startup and everytime
+all of the other parameters are updated on startup and every time
 :func:`RefreshWifiStatus` is called.
 
 Possible states are:
@@ -971,8 +971,8 @@ Possible states are:
 'de':
 """
 Gibt den Status der WIFI Extension zurück. State wird automatisch aktualisiert,
-alle anderen Parameter werden nur beim Starten und nach jedem aufruf von
-:func:`RefreshWifiStats` aktualsiert.
+alle anderen Parameter werden nur beim Starten und nach jedem Aufruf von
+:func:`RefreshWifiStatus` aktualisiert.
 
 Mögliche Werte für state sind:
 
@@ -1001,7 +1001,7 @@ com['packets'].append({
 """
 Refreshes the WIFI status (see :func:`GetWifiStatus`). To read the status
 of the WIFI module, the Master Brick has to change from data mode to
-command mode and back. This transation and the readout itself is
+command mode and back. This transaction and the readout itself is
 unfortunately time consuming. This means, that it might take some ms
 until the stack with attached WIFI Extensions reacts again after this
 function is called.
@@ -1013,8 +1013,8 @@ function is called.
 Aktualisiert den WIFI Status (siehe :func:`GetWifiStatus`). Um den Status
 vom WIFI Modul zu lesen, muss der Master Brick vom Datenmodus in den
 Kommandomodus und wieder zurück wechseln. Dieser Wechsel und das eigentliche
-auslesen ist leider zeitaufwändig. D.h., es dauert ein paar ms bis der
-Stapel mit aufgesteckerter WIFI Extension wieder reagiert nachdem die
+Auslesen ist leider zeitaufwändig. Dass heißt, es dauert ein paar ms bis der
+Stapel mit aufgesteckter WIFI Extension wieder reagiert nachdem die
 Funktion aufgerufen wurde.
 
 .. versionadded:: 1.3.0
@@ -1055,7 +1055,7 @@ Benutzername und Passwort für WPA Enterprise zu setzen. Für den Benutzernamen
 muss Index 0xFFFF und für das Password Index 0xFFFE genutzt werden.
 Die maximale Länge für beide ist 32.
 
-Das Zertifikat wird in Chunks der größe 32 geschrieben und der Index
+Das Zertifikat wird in Chunks der Größe 32 geschrieben und der Index
 gibt den Index des Chunk an. Data length sollte fast immer auf 32 gesetzt
 werden. Nur beim letzten Chunk ist eine Länge ungleich 32 möglich.
 
@@ -1107,7 +1107,7 @@ Sets the power mode of the WIFI Extension. Possible modes are:
  :widths: 10, 90
 
  "0", "Full Speed (high power consumption, high throughput)"
- "1", "Low Power (low power consuption, low throughput)"
+ "1", "Low Power (low power consumption, low throughput)"
 
 The default value is 0 (Full Speed).
 
@@ -1121,11 +1121,10 @@ Setzt den Stromsparmodus für die WIFI Extension. Mögliche Werte sind:
  :header: "Mode", "Beschreibung"
  :widths: 10, 90
 
- "0", "Full Speed (hoher Stromverbrauch, hocher Durchsatz)"
+ "0", "Full Speed (hoher Stromverbrauch, hoher Durchsatz)"
  "1", "Low Power (geringer Stromverbrauch, geringer Durchsatz)"
 
 Der Standardwert ist 0 (Full Speed).
-
 
 .. versionadded:: 1.3.0
 """
@@ -1145,10 +1144,9 @@ Returns the power mode as set by :func:`SetWifiPowerMode`.
 """,
 'de':
 """
-Gibt den Stromsparmodus  zurück, wie von :func:`SetWifiPowerMode` gesetzt.
+Gibt den Stromsparmodus zurück, wie von :func:`SetWifiPowerMode` gesetzt.
 
 .. versionadded:: 1.3.0
 """
 }]
 })
-
