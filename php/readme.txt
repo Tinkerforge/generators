@@ -24,7 +24,7 @@ example_folder/
  -> BrickStepper.php
  -> ExampleConfiguration.php
 
-we have to remove the Tinkerforge directory from require_once statements in the
+we have to remove the Tinkerforge folder from require_once statements in the
 examples, i.e. instead of "require_once('Tinkerforge/IPConnection.php');" we
 use "require_once('IPConnection.php');". After that, the example can be executed
 again.
