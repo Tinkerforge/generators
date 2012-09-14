@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'version': [1, 2, 1],
+    'version': [1, 3, 0],
     'category': 'Brick',
     'name': ('Master', 'master', 'Master'),
     'manufacturer': 'Tinkerforge',
@@ -709,3 +709,355 @@ gesetzt.
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function', 
+'name': ('IsWifiPresent', 'is_wifi_present'), 
+'elements': [('present', 'bool', 1, 'out')], 
+'doc': ['af', {
+'en':
+"""
+Returns *true* if a WIFI Extension is available to be used by the Master.
+
+.. versionadded:: 1.2.0
+""",
+'de':
+"""
+Gibt zurück ob eine WIFI Extension zur Nutzung durch den Master verfügbar ist.
+
+.. versionadded:: 1.2.0
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('SetWifiConfiguration', 'set_wifi_configuration'), 
+'elements': [('ssid', 'string', 32, 'in'),
+             ('connection', 'uint8', 1, 'in'),
+             ('ip', 'uint8', 4, 'in'),
+             ('subnet_mask', 'uint8', 4, 'in'),
+             ('gateway', 'uint8', 4, 'in'),
+             ('port', 'uint16', 1, 'in')], 
+'doc': ['af', {
+'en':
+"""
+Sets the configuration of the WIFI Extension. The ssid can have a max length
+of 32 characters, the connection is either 0 for DHCP or 1 for static IP.
+
+If you set connection to 1, you have to supply ip, subnet mask and gateway
+as an array of size 4 (first element of the array is the least significant
+byte of the address). If connection is set to 0 ip, subnet mask and gateway
+are ignored, you can set them to 0.
+
+The last parameter is the port that your program later will connect to. The
+default port, that is used by brickd, is 4223.
+
+The values are stored in the EEPROM and only applied on startup. That means
+you have to restart the Master Brick after configuration.
+
+It is recommended to use the Brick Viewer to set the WIFI configuration.
+
+.. versionadded:: 1.3.0
+""",
+'de':
+"""
+Setzt die Konfiguration der WIFI Extension. TODO: ...
+
+Die Werte sind im EEPROM gespeichert und werden nur beim Hochfahren angewandt.
+Das bedeutet der Master Brick muss nach einer Konfiguration neugestartet werden.
+
+.. versionadded:: 1.3.0
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('GetWifiConfiguration', 'get_wifi_configuration'), 
+'elements': [('ssid', 'string', 32, 'out'),
+             ('connection', 'uint8', 1, 'out'),
+             ('ip', 'uint8', 4, 'out'),
+             ('subnet_mask', 'uint8', 4, 'out'),
+             ('gateway', 'uint8', 4, 'out'),
+             ('port', 'uint16', 1, 'out')], 
+'doc': ['af', {
+'en':
+"""
+Returns the configuration as set by :func:`SetWifiConfiguration`.
+
+.. versionadded:: 1.3.0
+""",
+'de':
+"""
+Gibt die Konfiguration zurück, wie von :func:`SetWifiConfiguration`
+gesetzt.
+
+.. versionadded:: 1.3.0
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('SetWifiEncryption', 'set_wifi_encryption'), 
+'elements': [('encryption', 'uint8', 1, 'in'),
+             ('key', 'string', 50, 'in'),
+             ('key_index', 'uint8', 1, 'in'),
+             ('eap_options', 'uint8', 1, 'in'),
+             ('certificate_length', 'uint16', 1, 'in')], 
+'doc': ['af', {
+'en':
+"""
+Sets the encryption of the WIFI Extension. The first parameter is the
+type of the encryption. Possible values are:
+
+.. csv-table::
+ :header: "Value", "Description"
+ :widths: 10, 90
+
+ "0", "WPA/WPA2"
+ "1", "WPA Enterprise (EAP-FAST, EAP-TLS, EAP-TTLS, PEAP)"
+ "2", "WEP"
+ "3", "Open Network"
+
+The key has a max length of 50 characters and is used if encryption
+is set to 0 or 2 (WPA or WEP). Otherwise the value is ignored.
+For WEP it is possible to set the key index (1-4). If you don't know your
+key index it is likely 1.
+
+If you choose WPA Enterprise as encryption, you have to set eap options and
+the length of the certificate (for other encryption types these paramters
+are ignored). The certificate length is given in byte and the certificate
+itself can be set with  :func:`SetWifiCertificate`. Eap options consist of 
+the outer authentification (bits 1-2), inner authentification (bit 3) and 
+certificate type (bits 4-5):
+
+.. csv-table::
+ :header: "Option", "Bits", "Description"
+ :widths: 10, 10, 80
+
+ "outer auth", "1-2", "0=EAP-FAST, 1=EAP-TLS, 2=EAP-TTLS, 3=EAP-PEAP"
+ "inner auth", "3", "0=EAP-MSCHAP, 1=EAP-GTC"
+ "cert type", "4-5", "0=CA Certificate, 1=Client Certificate, 2=Private Key"
+
+Example for EAP-TTLS + EAP-GTC + Private Key: option = 2 | (1 << 2) | (2 << 3).
+
+The values are stored in the EEPROM and only applied on startup. That means
+you have to restart the Master Brick after configuration.
+
+It is recommended to use the Brick Viewer to set the WIFI encryption.
+
+.. versionadded:: 1.3.0
+""",
+'de':
+"""
+Setzt die Verschlüsselung der WIFI Extension. TODO: ...
+
+Die Werte sind im EEPROM gespeichert und werden nur beim Hochfahren angewandt.
+Das bedeutet der Master Brick muss nach einer Konfiguration neugestartet werden.
+
+.. versionadded:: 1.3.0
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('GetWifiEncryption', 'get_wifi_encryption'), 
+'elements': [('encryption', 'uint8', 1, 'out'),
+             ('key', 'string', 50, 'out'),
+             ('key_index', 'uint8', 1, 'out'),
+             ('eap_options', 'uint8', 1, 'out'),
+             ('certificate_length', 'uint16', 1, 'out')], 
+'doc': ['af', {
+'en':
+"""
+Returns the encryption as set by :func:`SetWifiEncryption`.
+
+.. versionadded:: 1.3.0
+""",
+'de':
+"""
+Gibt die Verschlüsselung zurück, wie von :func:`SetWifiEncryption`
+gesetzt.
+
+.. versionadded:: 1.3.0
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('GetWifiStatus', 'get_wifi_status'), 
+'elements': [('mac_address', 'uint8', 6, 'out'),
+             ('bssid', 'uint8', 6, 'out'),
+             ('channel', 'uint8', 1, 'out'),
+             ('rssi', 'int16', 1, 'out'),
+             ('ip', 'uint8', 4, 'out'),
+             ('subnet_mask', 'uint8', 4, 'out'),
+             ('gateway', 'uint8', 4, 'out'),
+             ('rx_count', 'uint32', 1, 'out'),
+             ('tx_count', 'uint32', 1, 'out'),
+             ('state', 'uint8', 1, 'out')],
+'doc': ['af', {
+'en':
+"""
+Returns the status of the WIFI Extension. The state is update automatically,
+all of the other parameters are updated on startup and everytime
+:func:`RefreshWifiStatus` is called.
+
+Possible states are:
+
+.. csv-table::
+ :header: "State", "Description"
+ :widths: 10, 90
+
+ "0", "Disassociated"
+ "1", "Associated"
+ "2", "Associating"
+ "3", "Error"
+ "255", "Not initialized yet"
+
+.. versionadded:: 1.3.0
+""",
+'de':
+"""
+TODO
+
+.. versionadded:: 1.3.0
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('RefreshWifiStatus', 'refresh_wifi_status'), 
+'elements': [],
+'doc': ['af', {
+'en':
+"""
+Refreshes the WIFI status (see :func:`GetWifiStatus`). To read the status
+of the WIFI Extension, the Master Brick has to change from data mode to
+command mode and back. This transation and the readout itself is
+unfortunately time consuming. This means, that it might take some ms
+until the stack with attached WIFI Extensions reacts again after this
+function is called.
+
+.. versionadded:: 1.3.0
+""",
+'de':
+"""
+TODO
+
+.. versionadded:: 1.3.0
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('SetWifiCertificate', 'set_wifi_certificate'), 
+'elements': [('index', 'uint16', 1, 'in'),
+             ('data', 'string', 32, 'in'),
+             ('data_length', 'uint8', 1, 'in')], 
+'doc': ['af', {
+'en':
+"""
+
+This function is used to set the certificate as well as password ans username
+for WPA Enterprise. To set the username use index 0xFFFF,
+to set the password use 0xFFFF. The max length of username and password is 32.
+
+The certificate is written in chunks of size 32 and the index is used as
+the index of the chunk. The data length should nearly always be 32. Only
+the last chunk can have a length that is not equal to 32.
+
+The values are stored in the EEPROM and only applied on startup. That means
+you have to restart the Master Brick after configuration.
+
+It is recommended to use the Brick Viewer to set the certificate, username
+and password.
+
+.. versionadded:: 1.3.0
+""",
+'de':
+"""
+TODO
+
+.. versionadded:: 1.3.0
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('GetWifiCertificate', 'get_wifi_certificate'), 
+'elements': [('index', 'uint16', 1, 'in'),
+             ('data', 'string', 32, 'out'),
+             ('data_length', 'uint8', 1, 'out')], 
+'doc': ['af', {
+'en':
+"""
+Returns the certificate for a given index as set by :func:`SetWifiCertificate`.
+
+.. versionadded:: 1.3.0
+""",
+'de':
+"""
+TODO
+
+.. versionadded:: 1.3.0
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('SetWifiPowerMode', 'set_wifi_power_mode'), 
+'elements': [('mode', 'uint8', 1, 'in')], 
+'doc': ['af', {
+'en':
+"""
+Sets the power mode of the WIFI Extension. Possible modes are:
+
+.. csv-table::
+ :header: "Mode", "Description"
+ :widths: 10, 90
+
+ "0", "Full Speed (high power consumption, high throughput)"
+ "1", "Low Power (low power consuption, low throughput)"
+
+The default value is 0 (Full Speed).
+
+.. versionadded:: 1.3.0
+""",
+'de':
+"""
+TODO
+
+.. versionadded:: 1.3.0
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('GetWifiPowerMode', 'get_wifi_power_mode'), 
+'elements': [('mode', 'uint8', 1, 'out')], 
+'doc': ['af', {
+'en':
+"""
+Returns the power mode as set by :func:`SetWifiPowerMode`.
+
+.. versionadded:: 1.3.0
+""",
+'de':
+"""
+TODO
+
+.. versionadded:: 1.3.0
+"""
+}]
+})
+
