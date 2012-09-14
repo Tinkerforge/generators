@@ -121,6 +121,7 @@ Konfigurationsfunktionen für Callbacks
 }
 
 lang = 'en'
+path_binding = ''
 
 def shift_right(text, n):
     return text.replace('\n', '\n' + ' '*n)
@@ -157,6 +158,15 @@ def get_type_size(typ):
 def get_element_size(element):
     return get_type_size(element[1]) * element[2]
 
+def select_lang(d):
+    return d['en']
+    """if lang in d:
+        return d[lang]
+    elif 'en' in d:
+        return d['en']
+    else:
+        return "Missing '{0}' documentation".format(lang)"""
+
 def make_rst_header(device, ref_name, title):
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     ref = '.. _{0}_{1}_{2}:\n'.format(device.get_underscore_name(), device.get_category().lower(), ref_name)
@@ -178,7 +188,7 @@ A tutorial on how to test the {0} {1} and get the first examples running
 can be found :ref:`here <{3}>`.
 """,
     'de': """
-Dies ist die API Beschreibung für die {4} des {0} {1}. Allgemeine Informationen
+Dies ist die API Beschreibung für die {4} des {0} {1}s. Allgemeine Informationen
 über die Funktionen des Gerätes und die technischen Spezifikationen sind
 :ref:`hier <{2}>` zu finden.
 
@@ -189,7 +199,7 @@ ausgeführt werden können ist :ref:`hier <{3}>` zu finden.
 
     hw_link = device.get_underscore_name() + '_' + device.get_category().lower()
     hw_test = hw_link + '_test'
-    return su[lang].format(device.get_display_name(), device.get_category(), hw_link, hw_test, title)
+    return select_lang(su).format(device.get_display_name(), device.get_category(), hw_link, hw_test, title)
 
 def make_rst_examples(title_from_file, device, base_path, dirname,
                       filename_prefix, filename_suffix, include_name):
@@ -208,7 +218,7 @@ The example code below is public domain.
 Beispiele
 ---------
 
-Der Beispielcode unten ist Public Domain.
+Der folgende Beispielcode ist Public Domain.
 """
     }
 
@@ -240,7 +250,7 @@ Der Beispielcode unten ist Public Domain.
     ref = '.. _{0}_{1}_{2}_examples:\n'.format(device.get_underscore_name(),
                                                device.get_category().lower(),
                                                dirname)
-    examples = ex[lang].format(ref)
+    examples = select_lang(ex).format(ref)
     files = find_examples(device, base_path, dirname, filename_prefix, filename_suffix)
     copy_files = []
     for f in files:
@@ -248,7 +258,7 @@ Der Beispielcode unten ist Public Domain.
         copy_files.append((f[1], include))
         title = title_from_file(f[0])
         git_name = device.get_underscore_name().replace('_', '-') + '-' + device.get_category().lower()
-        examples += imp[lang].format(title, '^'*len(title), include, git_name, dirname, f[0])
+        examples += select_lang(imp).format(title, '^'*len(title), include, git_name, dirname, f[0])
 
     copy_examples(copy_files, base_path)
     return examples
@@ -272,7 +282,7 @@ def find_examples(device, base_path, dirname, filename_prefix, filename_suffix):
     return files
 
 def copy_examples(copy_files, path):
-    doc_path = '{0}/doc'.format(path)
+    doc_path = '{0}/doc/{1}'.format(path, lang)
     print('  * Copying examples:')
     for copy_file in copy_files:
         doc_dest = '{0}/{1}'.format(doc_path, copy_file[1])
@@ -302,7 +312,12 @@ def underscore_to_headless_camel_case(name):
         ret += part[0].upper() + part[1:]
     return ret
 
-def generate(path, make_files):
+def generate(path, language, make_files):
+    global lang
+    global path_binding
+    lang = language
+    path_binding = path
+
     path_list = path.split('/')
     path_list[-1] = 'configs'
     path_config = '/'.join(path_list)

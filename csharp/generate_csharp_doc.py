@@ -36,8 +36,6 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 device = None
-lang = 'en'
-file_path = ''
 
 def fix_links(text):
     parameter = {
@@ -58,8 +56,8 @@ def fix_links(text):
 
         text = text.replace(name_false, name_right)
 
-    text = text.replace(":word:`parameter`", parameter[lang])
-    text = text.replace(":word:`parameters`", parameters[lang])
+    text = text.replace(":word:`parameter`", common.select_lang(parameter))
+    text = text.replace(":word:`parameters`", common.select_lang(parameters))
 
     return text
 
@@ -69,7 +67,7 @@ def make_examples():
         f = f.replace('.cs', '')
         return common.camel_case_to_space(f)
 
-    return common.make_rst_examples(title_from_file, device, file_path,
+    return common.make_rst_examples(title_from_file, device, common.path_binding,
                                     'csharp', 'Example', '.cs', 'CSharp')
 
 def make_methods(typ):
@@ -108,17 +106,17 @@ def make_methods(typ):
             continue
 
         signature = csharp_common.make_method_signature(packet, True, device)
-        desc = fix_links(common.shift_right(packet.get_doc()[1][lang], 1))
+        desc = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 1))
         func = '{0}{1}\n{2}'.format(func_start, 
                                     signature, 
                                     desc)
         methods += func + '\n'
 
         if len(packet.get_elements('out')) == 1:
-            methods += version_changed[lang] + '\n'
+            methods += common.select_lang(version_changed) + '\n'
 
     if typ == 'af':
-        methods += method_version[lang].format(cls)
+        methods += common.select_lang(method_version).format(cls)
 
     return methods
 
@@ -139,13 +137,13 @@ def make_callbacks():
     cbs = ''
     cls = device.get_camel_case_name()
     for packet in device.get_packets('callback'):
-        desc = fix_links(common.shift_right(packet.get_doc()[1][lang], 2))
+        desc = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 2))
         params = csharp_common.make_parameter_list(packet)
 
-        cbs += cb[lang].format(device.get_category() + device.get_camel_case_name(),
-                               packet.get_camel_case_name(),
-                               params,
-                               desc)
+        cbs += common.select_lang(cb).format(device.get_category() + device.get_camel_case_name(),
+                                             packet.get_camel_case_name(),
+                                             params,
+                                             desc)
 
     return cbs
 
@@ -292,7 +290,7 @@ Prinzipiell kann jede Funktion der C# Bindings, welche einen Wert zurück gibt
 eine ``Tinkerforge.TimeoutException`` werfen. Diese Exception wird
 geworfen wenn das Gerät nicht antwortet. Wenn eine Kabelverbindung genutzt
 wird, ist es unwahrscheinlich, dass die Exception geworfen wird (unter der
-Annahme, dass das Gerät nicht abgesteckt wird). Bei einer kabellosen Verbindung
+Annahme, dass das Gerät nicht abgesteckt wird). Bei einer drahtlosen Verbindung
 können Zeitüberschreitungen auftreten, sobald die Entfernung zum Gerät zu
 groß wird.
 
@@ -310,15 +308,15 @@ Alle folgend aufgelisteten Methoden sind Thread-sicher.
 """
     }
 
-    cre = create_str[lang].format(device.get_headless_camel_case_name(),
-                                  device.get_camel_case_name(),
-                                  device.get_category().lower(),
-                                  device.get_category(),
-                                  device.get_underscore_name())
-    reg = register_str[lang].format(device.get_underscore_name(),
-                                    device.get_camel_case_name(),
-                                    device.get_category().lower(),
-                                    device.get_category())
+    cre = common.select_lang(create_str).format(device.get_headless_camel_case_name(),
+                                                device.get_camel_case_name(),
+                                                device.get_category().lower(),
+                                                device.get_category(),
+                                                device.get_underscore_name())
+    reg = common.select_lang(register_str).format(device.get_underscore_name(),
+                                                  device.get_camel_case_name(),
+                                                  device.get_category().lower(),
+                                                  device.get_category())
 
     bf = make_methods('bf')
     af = make_methods('af')
@@ -326,38 +324,24 @@ Alle folgend aufgelisteten Methoden sind Thread-sicher.
     c = make_callbacks()
     api_str = ''
     if bf:
-        api_str += common.bf_str[lang].format(cre, bf)
+        api_str += common.select_lang(common.bf_str).format(cre, bf)
     if af:
-        api_str += common.af_str[lang].format(af)
+        api_str += common.select_lang(common.af_str).format(af)
     if c:
-        api_str += common.ccf_str[lang].format(reg, ccf)
-        api_str += c_str[lang].format(c, device.get_underscore_name(),
-                                      device.get_category().lower(),
-                                      device.get_category(),
-                                      device.get_camel_case_name())
+        api_str += common.select_lang(common.ccf_str).format(reg, ccf)
+        api_str += common.select_lang(c_str).format(c, device.get_underscore_name(),
+                                                    device.get_category().lower(),
+                                                    device.get_category(),
+                                                    device.get_camel_case_name())
 
     ref = '.. _{0}_{1}_csharp_api:\n'.format(device.get_underscore_name(),
                                              device.get_category().lower())
 
     api_desc = ''
-    try:
-        api_desc = device.com['api'][lang]
-    except KeyError:
-        pass
+    if 'api' in device.com:
+        api_desc = common.select_lang(device.com['api'])
 
-    return api[lang].format(ref, api_desc, api_str)
-        
-def copy_examples_for_zip():
-    examples = common.find_examples(device, file_path, 'csharp', 'Example', '.cs')
-    dest = os.path.join('/tmp/generator/dll/examples/', 
-                        device.get_category(),
-                        device.get_camel_case_name())
-
-    if not os.path.exists(dest):
-        os.makedirs(dest)
-
-    for example in examples:
-        shutil.copy(example[1], dest)
+    return common.select_lang(api).format(ref, api_desc, api_str)
 
 def make_files(com_new, directory):
     global device
@@ -368,76 +352,16 @@ def make_files(com_new, directory):
     'de': 'C# Bindings'
     }
     
-    directory += '/doc'
+    directory = os.path.join(directory, 'doc', common.lang)
     if not os.path.exists(directory):
         os.makedirs(directory)
 
     f = file('{0}/{1}.rst'.format(directory, file_name), "w")
     f.write(common.make_rst_header(device, 'csharp', 'C#'))
-    f.write(common.make_rst_summary(device, title[lang]))
+    f.write(common.make_rst_summary(device, common.select_lang(title)))
     f.write(make_examples())
     f.write(make_api())
 
-    copy_examples_for_zip()
-
-def generate(path):
-    global file_path
-    file_path = path
-    path_list = path.split('/')
-    path_list[-1] = 'configs'
-    path_config = '/'.join(path_list)
-    sys.path.append(path_config)
-    configs = os.listdir(path_config)
-
-    # Make temporary generator directory
-    if os.path.exists('/tmp/generator'):
-        shutil.rmtree('/tmp/generator/')
-    os.makedirs('/tmp/generator/dll/source/Tinkerforge')
-    os.chdir('/tmp/generator')
-
-    # Make bindings
-    for config in configs:
-        if config.endswith('_config.py'):
-            module = __import__(config[:-3])
-            print(" * {0}".format(config[:-10]))            
-            make_files(module.com, path)
-               
-    # Copy bindings and readme
-    for filename in glob.glob(path + '/bindings/*.cs'):
-        shutil.copy(filename, '/tmp/generator/dll/source/Tinkerforge')
-
-    shutil.copy(path + '/IPConnection.cs', '/tmp/generator/dll/source/Tinkerforge')
-    shutil.copy(path + '/changelog.txt', '/tmp/generator/dll')
-    shutil.copy(path + '/Readme.txt', '/tmp/generator/dll')
-
-    # Write AssemblyInfo
-    version = common.get_changelog_version(path)
-    file('/tmp/generator/dll/source/Tinkerforge/AssemblyInfo.cs', 'wb').write("""
-using System.Reflection;
-using System.Runtime.CompilerServices;
-
-[assembly: AssemblyTitle("C# API Bindings")]
-[assembly: AssemblyDescription("C# API Bindings for Tinkerforge Bricks and Bricklets")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Tinkerforge GmbH")]
-[assembly: AssemblyProduct("C# API Bindings")]
-[assembly: AssemblyCopyright("Tinkerforge GmbH 2011-2012")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-[assembly: AssemblyVersion("{0}.{1}.{2}.0")]
-""".format(*version))
-
-    # Make dll
-    args = ['/usr/bin/gmcs',
-            '/optimize',
-            '/target:library',
-            '/out:/tmp/generator/dll/Tinkerforge.dll',
-            '/doc:/tmp/generator/dll/Tinkerforge.xml',
-            '/tmp/generator/dll/source/Tinkerforge/*.cs']
-    subprocess.call(args)
-
-    # Make zip
-    common.make_zip('csharp', '/tmp/generator/dll', path, version)
-
 if __name__ == "__main__":
-    generate(os.getcwd())
+    for lang in ['en', 'de']:
+        common.generate(os.getcwd(), lang, make_files)

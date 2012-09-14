@@ -20,8 +20,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the output value (high or low) for a port ("a" or "b") with a bit mask. 
-The bit mask is 8 bit long, *true* refers to high and *false* refers to low.
+Sets the output value (high or low) for a port ("a" or "b") with a bitmask.
+The bitmask is 8 bit long, *true* refers to high and *false* refers to low.
 
 For example: The value 0b00001111 will turn the pins 0-3 high and the
 pins 4-7 low for the specified port.
@@ -54,7 +54,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns a bit mask of the values that are currently measured on the
+Returns a bitmask of the values that are currently measured on the
 specified port. This function works if the pin is configured to input
 as well as if it is configured to output.
 """,
@@ -123,7 +123,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns a direction bit mask and a value bit mask for the specified port.
+Returns a direction bitmask and a value bitmask for the specified port.
 
 For example: A return value of 0b00001111 and 0b00110011 for
 direction and value means that:
@@ -202,7 +202,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the pins on which an interrupt is activated with a bit mask. 
+Sets the pins on which an interrupt is activated with a bitmask.
 Interrupts are triggered on changes of the voltage level of the pin,
 i.e. changes from high to low and low to high.
 
@@ -233,7 +233,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the interrupt bit mask for the specified port as set by
+Returns the interrupt bitmask for the specified port as set by
 :func:`SetPortInterrupt`.
 """,
 'de':
@@ -256,8 +256,8 @@ com['packets'].append({
 This callback is triggered whenever a change of the voltage level is detected
 on pins where the interrupt was activated with :func:`SetPortInterrupt`.
 
-The values are the port, a bit mask that specifies which interrupts occurred
-and the current value bit mask of the port.
+The values are the port, a bitmask that specifies which interrupts occurred
+and the current value bitmask of the port.
 
 For example:
 
@@ -297,10 +297,10 @@ com['packets'].append({
 'en':
 """
 Configures a monoflop of the pins specified by the second parameter as 8 bit
-long bit mask. The specified pins must be configured for output. Non-output
+long bitmask. The specified pins must be configured for output. Non-output
 pins will be ignored.
 
-The third parameter is a bit mask with the desired value of the specified
+The third parameter is a bitmask with the desired value of the specified
 output pins (*true* means high and *false* means low).
 
 The forth parameter indicates the time (in ms) that the pins should hold

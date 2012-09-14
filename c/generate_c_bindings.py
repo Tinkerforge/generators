@@ -32,7 +32,6 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 device = None
-lang = 'en'
 
 def fix_links(text):
     link = '{{@link {0}_{1}}}'
@@ -151,7 +150,7 @@ def make_callback_defines():
 
     defines = ''
     for packet in device.get_packets('callback'):
-        doc = '\n * '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n'))
+        doc = '\n * '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
         defines += define_temp.format(device.get_upper_case_name(),
                                       packet.get_upper_case_name(),
                                       packet.get_function_id(),
@@ -517,7 +516,7 @@ int {0}_{1}({2} *{0}{3});
     for packet in device.get_packets('function'):
         b = packet.get_underscore_name()
         d = make_parameter_list(packet)
-        doc = '\n * '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n'))
+        doc = '\n * '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
 
         funcs += func.format(a, b, c, d, doc, device.get_category())
 
@@ -577,4 +576,4 @@ def make_files(com_new, directory):
     h.write(make_end_h())
 
 if __name__ == "__main__":
-    common.generate(os.getcwd(), make_files)
+    common.generate(os.getcwd(), 'en', make_files)

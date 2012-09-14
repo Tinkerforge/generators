@@ -32,7 +32,6 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 device = None
-lang = 'en'
 
 def fix_links(text):
     link = '{0}{1}#{2}'
@@ -104,7 +103,7 @@ def make_callback_id_definitions():
     CALLBACK_{0} = {1}
 """
     for packet in device.get_packets('callback'):
-        doc = '\n    # '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n'))
+        doc = '\n    # '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
         cbs += cb.format(packet.get_upper_case_name(), packet.get_function_id(), doc)
     return cbs
 
@@ -200,7 +199,7 @@ def make_methods():
         name = packet.get_underscore_name()
         fid = packet.get_upper_case_name()
         parms = make_parameter_list(packet)
-        doc = '\n    # '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n'))
+        doc = '\n    # '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
 
         in_format, _ = make_format_list(packet, 'in')
         out_format, out_size = make_format_list(packet, 'out')
@@ -250,4 +249,4 @@ def make_files(com_new, directory):
     py.write(make_register_callback_method())
 
 if __name__ == "__main__":
-    common.generate(os.getcwd(), make_files)
+    common.generate(os.getcwd(), lang, make_files)

@@ -19,7 +19,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the output value (high or low) with a bit mask. The bit mask
+Sets the output value (high or low) with a bitmask. The bitmask
 is 4 bit long, *true* refers to high and *false* refers to low.
 
 For example: The value 0b0011 will turn the pins 0-1 high and the
@@ -52,7 +52,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns a bit mask of the values that are currently measured.
+Returns a bitmask of the values that are currently measured.
 This function works if the pin is configured to input
 as well as if it is configured to output.
 """,
@@ -119,7 +119,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns a value bit mask and a direction bit mask.
+Returns a value bitmask and a direction bitmask.
 
 For example: A return value of 0b0011 and 0b0101 for
 direction and value means that:
@@ -197,11 +197,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the pins on which an interrupt is activated with a bit mask.
+Sets the pins on which an interrupt is activated with a bitmask.
 Interrupts are triggered on changes of the voltage level of the pin,
 i.e. changes from high to low and low to high.
 
-For example: An interrupt bit mask of 9 will enable the interrupt for
+For example: An interrupt bitmask of 9 will enable the interrupt for
 pins 0 and 3.
 
 The interrupt is delivered with the callback :func:`Interrupt`.
@@ -227,7 +227,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the interrupt bit mask as set by :func:`SetInterrupt`.
+Returns the interrupt bitmask as set by :func:`SetInterrupt`.
 """,
 'de':
 """
@@ -247,8 +247,8 @@ com['packets'].append({
 This callback is triggered whenever a change of the voltage level is detected
 on pins where the interrupt was activated with :func:`SetInterrupt`.
 
-The values are a bit mask that specifies which interrupts occurred
-and the current value bit mask.
+The values are a bitmask that specifies which interrupts occurred
+and the current value bitmask.
 
 For example:
 
@@ -286,10 +286,10 @@ com['packets'].append({
 'en':
 """
 Configures a monoflop of the pins specified by the first parameter as 4 bit
-long bit mask. The specified pins must be configured for output. Non-output
+long bitmask. The specified pins must be configured for output. Non-output
 pins will be ignored.
 
-The second parameter is a bit mask with the desired value of the specified
+The second parameter is a bitmask with the desired value of the specified
 output pins (*true* means high and *false* means low).
 
 The third parameter indicates the time (in ms) that the pins should hold

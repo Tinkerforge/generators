@@ -654,7 +654,7 @@ com['packets'].append({
 """
 Sets the configuration of the RS485 Extension. Speed is given in baud. The
 Master Brick will try to match the given baud rate as exactly as possible.
-The maximum recommended baud rate is 2000000 (2Mbit).
+The maximum recommended baud rate is 2000000 (2Mbit/s).
 Possible values for parity are 'n' (none), 'e' (even) and 'o' (odd).
 Possible values for stop bits are 1 and 2.
 
@@ -671,7 +671,7 @@ you have to restart the Master Brick after configuration.
 """
 Setzt die Schnittstellenkonfiguration der RS485 Extension. Die Geschwindigkeit
 wird in Baud angegeben. Der Master Brick versucht die vorgegebene Baudrate so
-genau wie möglich zu erreichen. Die maximale empfohlene Baudrate ist 2000000 (2Mbit).
+genau wie möglich zu erreichen. Die maximale empfohlene Baudrate ist 2000000 (2Mbit/s).
 Mögliche Werte für die Parität sind 'n' (keine), 'e' (gerade) und 'o' (ungerade).
 Mögliche Werte für Stoppbits sind 1 und 2.
 

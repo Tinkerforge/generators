@@ -47,16 +47,16 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the value as read by a 12 bit analog to digital converter.
+Returns the value as read by a 12-bit analog-to-digital converter.
 The value is between 0 and 4095.
 
 .. note::
  The value returned by :func:`GetIlluminance` is averaged over several samples
  to yield less noise, while :func:`GetAnalogValue` gives back raw
  unfiltered analog values. The only reason to use :func:`GetAnalogValue` is,
- if you need the full resolution of the analog to digital converter.
+ if you need the full resolution of the analog-to-digital converter.
 
- Also, the analog to digital converter covers three different ranges that are
+ Also, the analog-to-digital converter covers three different ranges that are
  set dynamically depending on the light intensity. It is impossible to
  distinguish between these ranges with the analog value.
 
@@ -66,7 +66,7 @@ callback :func:`AnalogValue` and set the period with
 """,
 'de':
 """
-Gibt den Wert, wie vom 12 Bit Analog-Digital-Wandler gelesen, zurück. Der
+Gibt den Wert, wie vom 12-Bit Analog-Digital-Wandler gelesen, zurück. Der
 Wertebereich ist 0 bis 4095.
 
 .. note::
