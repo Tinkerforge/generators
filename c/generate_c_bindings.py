@@ -287,8 +287,8 @@ def make_method_funcs():
         for element in packet.get_elements('out'):
             sf = make_short_form(packet.get_underscore_name())
             if element[1] == 'string':
-                temp = '\tstrcpy(ret_{0}, {1}r->{0});\n'
-                return_list += temp.format(element[0], sf)
+                temp = '\tstrncpy(ret_{0}, {1}r->{0}, {2});\n'
+                return_list += temp.format(element[0], sf, element[2])
             elif element[2] > 1:
                 if common.get_type_size(element[1]) > 1:
                     return_list += '\tfor (int i = 0; i < {3}; i++) ret_{0}[i] = ipcon_leconvert_{2}_from({1}r->{0}[i]);\n' \
