@@ -38,22 +38,24 @@ With Visual Studio we can use our project_folder/ as follows:
 * File
 * New
 * Project From Existing Code
-* Type: Visual C++
+* Choose Type "Visual C++"
 * Choose project_folder/
-* Choose project name
-* Next
-* Choose Console Application
-* Finish
+* Choose a project name
+* Click Next
+* Choose "Console Application"
+* Click Finish
 
 Now we have to tell Visual Studio to use the C++ compiler, since we would need
-C99 but Visual Studio can only compile C89... Also we have to include ws2_32.lib
-by clicking on:
+C99 but Visual Studio can only compile C89. This problem can be avoided by using
+the C++ compiler instead:
 
 * Project
 * Properties
 * C/C++
 * Advanced, option "Compile as"
 * Choose "Compile as C++ Code (/TP)"
+
+Also we have to include ws2_32.lib (WinSock2) by clicking on:
 
 * Project
 * Properties
@@ -65,6 +67,6 @@ Thats it, we are ready to go!
 
 The Visual Studio compiler can also be used from the command line:
 
- cl /TP /I. brick_stepper.c ip_connection.c example_configuration.c /link /out:example_configuration.exe ws2_32.lib
+ cl.exe /TP /I. brick_stepper.c ip_connection.c example_configuration.c /link /out:example_configuration.exe ws2_32.lib
 
 Documentation for the API can be found at http://www.tinkerforge.com/doc/index.html

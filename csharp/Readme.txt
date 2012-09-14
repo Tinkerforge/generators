@@ -1,5 +1,5 @@
-This zip contains a C# library for all Tinkerforge Bricks and Bricklets
-(Tinkerforge.dll), the source of the dll (in source/) and all available C#
+This zip contains a C# library (.dll) for all Tinkerforge Bricks and Bricklets
+(Tinkerforge.dll), the source of the DLL (in source/) and all available C#
 examples (in examples/).
 
 The library has been compiled with:
