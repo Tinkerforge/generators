@@ -383,6 +383,10 @@ def make_methods():
                                                                                                  get_convert_type(element),
                                                                                                  offset,
                                                                                                  common.get_type_size(element[1]))
+            elif element[1] == 'string':
+                method += '  {0} := LEConvertStringFrom({1}, {2}, response);\n'.format(result,
+                                                                                       offset,
+                                                                                       element[2])
             else:
                 method += '  {0} := LEConvert{1}From({2}, response);\n'.format(result,
                                                                                get_convert_type(element),
