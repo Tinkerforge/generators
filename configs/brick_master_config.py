@@ -750,7 +750,7 @@ as an array of size 4 (first element of the array is the least significant
 byte of the address). If connection is set to 0 ip, subnet mask and gateway
 are ignored, you can set them to 0.
 
-The last parameter is the port that your program later will connect to. The
+The last parameter is the port that your program will connect to. The
 default port, that is used by brickd, is 4223.
 
 The values are stored in the EEPROM and only applied on startup. That means
@@ -762,10 +762,23 @@ It is recommended to use the Brick Viewer to set the WIFI configuration.
 """,
 'de':
 """
-Setzt die Konfiguration der WIFI Extension. TODO: ...
+Setzt die Konfiguration der WIFI Extension. Die ssid darf eine maximale
+Länge von 32 Zeichen haben, die connection ist entweder 0 für DHCP oder
+1 für eine statische IP.
+
+Wenn die connection auf 1 gesetzt wird, müssen ip, subnet mask und gateway
+als ein Array der größe 4 angegeben werden. Dabei ist das erste Element
+im Array das niederwertigste Byte. Falls die connection auf 0 gesetzt ist,
+werden ip, subnet mask und gateway ignoriert.
+
+Der letzte Parameter ist der port auf den das Anwendungsprogramm sich
+verbindet. Der Standardport von brickd ist 4223.
 
 Die Werte sind im EEPROM gespeichert und werden nur beim Hochfahren angewandt.
 Das bedeutet der Master Brick muss nach einer Konfiguration neugestartet werden.
+
+Wir empfehlen die Brick Viewer zu nutzen um die WIFI Extension zu
+konfigurieren.
 
 .. versionadded:: 1.3.0
 """
@@ -824,7 +837,7 @@ type of the encryption. Possible values are:
 The key has a max length of 50 characters and is used if encryption
 is set to 0 or 2 (WPA or WEP). Otherwise the value is ignored.
 For WEP it is possible to set the key index (1-4). If you don't know your
-key index it is likely 1.
+key index, it is likely 1.
 
 If you choose WPA Enterprise as encryption, you have to set eap options and
 the length of the certificate (for other encryption types these paramters
@@ -852,10 +865,44 @@ It is recommended to use the Brick Viewer to set the WIFI encryption.
 """,
 'de':
 """
-Setzt die Verschlüsselung der WIFI Extension. TODO: ...
+Setzt die Verschlüsselung der WIFI Extension. Der erste Parameter ist der
+Typ der Verschlüsselung. Mögliche Werte sind:
+
+.. csv-table::
+ :header: "Wert", "Beschreibung"
+ :widths: 10, 90
+
+ "0", "WPA/WPA2"
+ "1", "WPA Enterprise (EAP-FAST, EAP-TLS, EAP-TTLS, PEAP)"
+ "2", "WEP"
+ "3", "Offenes Netzwerk"
+
+Key hat eine maximale Länge von 50 Zeichen und wird benutzt falls
+encryption auf 0 oder 2 (WPA oder WEP) gesetzt ist. Andernfalls wird key
+ignoriert. Für WEP gibt es die möglichkeit den key index zu setzen
+(1-4). Fall der key index unbekannt ist, ist er wahrscheinlich 1.
+
+Wenn WPA Enterprise als encryption gewählt wird, müssen eap options und
+die Länge des Zertifikats gesetzt werden. Die Länge wird in Byte angegeben
+und das Zertifikat selbst kann mit :func:`SetWifiCertificate` übertragen
+werden. Die eap options bestehen aus outer authentification (Bits 1-2), 
+inner authentification (Bit 3) und certificate type (bits 4-5):
+
+.. csv-table::
+ :header: "Option", "Bits", "Beschreibung"
+ :widths: 10, 10, 80
+
+ "outer auth", "1-2", "0=EAP-FAST, 1=EAP-TLS, 2=EAP-TTLS, 3=EAP-PEAP"
+ "inner auth", "3", "0=EAP-MSCHAP, 1=EAP-GTC"
+ "cert type", "4-5", "0=CA Certificate, 1=Client Certificate, 2=Private Key"
+
+Beispiel für EAP-TTLS + EAP-GTC + Private Key: option = 2 | (1 << 2) | (2 << 3).
 
 Die Werte sind im EEPROM gespeichert und werden nur beim Hochfahren angewandt.
 Das bedeutet der Master Brick muss nach einer Konfiguration neugestartet werden.
+
+Wir empfehlen die Brick Viewer zu nutzen um die WIFI Extension Verschlüsselung
+zu konfigurieren.
 
 .. versionadded:: 1.3.0
 """
@@ -879,8 +926,8 @@ Returns the encryption as set by :func:`SetWifiEncryption`.
 """,
 'de':
 """
-Gibt die Verschlüsselung zurück, wie von :func:`SetWifiEncryption`
-gesetzt.
+Gibt die Verschlüsselungseinstellungen zurück, wie von 
+:func:`SetWifiEncryption` gesetzt.
 
 .. versionadded:: 1.3.0
 """
@@ -903,7 +950,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the status of the WIFI Extension. The state is update automatically,
+Returns the status of the WIFI Extension. The state is updated automatically,
 all of the other parameters are updated on startup and everytime
 :func:`RefreshWifiStatus` is called.
 
@@ -923,7 +970,22 @@ Possible states are:
 """,
 'de':
 """
-TODO
+Gibt den Status der WIFI Extension zurück. State wird automatisch aktualisiert,
+alle anderen Parameter werden nur beim Starten und nach jedem aufruf von
+:func:`RefreshWifiStats` aktualsiert.
+
+Mögliche Werte für state sind:
+
+.. csv-table::
+ :header: "State", "Beschreibung"
+ :widths: 10, 90
+
+ "0", "Getrennt"
+ "1", "Verbunden"
+ "2", "Am Verbinden"
+ "3", "Error"
+ "255", "Noch nicht initialisiert"
+
 
 .. versionadded:: 1.3.0
 """
@@ -938,7 +1000,7 @@ com['packets'].append({
 'en':
 """
 Refreshes the WIFI status (see :func:`GetWifiStatus`). To read the status
-of the WIFI Extension, the Master Brick has to change from data mode to
+of the WIFI module, the Master Brick has to change from data mode to
 command mode and back. This transation and the readout itself is
 unfortunately time consuming. This means, that it might take some ms
 until the stack with attached WIFI Extensions reacts again after this
@@ -948,7 +1010,12 @@ function is called.
 """,
 'de':
 """
-TODO
+Aktualisiert den WIFI Status (siehe :func:`GetWifiStatus`). Um den Status
+vom WIFI Modul zu lesen, muss der Master Brick vom Datenmodus in den
+Kommandomodus und wieder zurück wechseln. Dieser Wechsel und das eigentliche
+auslesen ist leider zeitaufwändig. D.h., es dauert ein paar ms bis der
+Stapel mit aufgesteckerter WIFI Extension wieder reagiert nachdem die
+Funktion aufgerufen wurde.
 
 .. versionadded:: 1.3.0
 """
@@ -964,17 +1031,17 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-
-This function is used to set the certificate as well as password ans username
+This function is used to set the certificate as well as password and username
 for WPA Enterprise. To set the username use index 0xFFFF,
-to set the password use 0xFFFF. The max length of username and password is 32.
+to set the password use index 0xFFFE. The max length of username and 
+password is 32.
 
 The certificate is written in chunks of size 32 and the index is used as
 the index of the chunk. The data length should nearly always be 32. Only
 the last chunk can have a length that is not equal to 32.
 
 The values are stored in the EEPROM and only applied on startup. That means
-you have to restart the Master Brick after configuration.
+you have to restart the Master Brick after uploading the certificate.
 
 It is recommended to use the Brick Viewer to set the certificate, username
 and password.
@@ -983,7 +1050,20 @@ and password.
 """,
 'de':
 """
-TODO
+Diese Funktion kann benutzt werden um sowohl das Zertifikat als auch
+Benutzername und Passwort für WPA Enterprise zu setzen. Für den Benutzernamen
+muss Index 0xFFFF und für das Password Index 0xFFFE genutzt werden.
+Die maximale Länge für beide ist 32.
+
+Das Zertifikat wird in Chunks der größe 32 geschrieben und der Index
+gibt den Index des Chunk an. Data length sollte fast immer auf 32 gesetzt
+werden. Nur beim letzten Chunk ist eine Länge ungleich 32 möglich.
+
+Die Werte sind im EEPROM gespeichert und werden nur beim Hochfahren angewandt.
+Das bedeutet der Master Brick muss nach einer Konfiguration neugestartet werden.
+
+Wir empfehlen die Brick Viewer zu nutzen um die WIFI Extension Verschlüsselung
+zu konfigurieren.
 
 .. versionadded:: 1.3.0
 """
@@ -1005,7 +1085,8 @@ Returns the certificate for a given index as set by :func:`SetWifiCertificate`.
 """,
 'de':
 """
-TODO
+Gibt das Zertifikat für einen Index zurück, wie von 
+:func:`SetWifiCertificate` gesetzt.
 
 .. versionadded:: 1.3.0
 """
@@ -1034,7 +1115,17 @@ The default value is 0 (Full Speed).
 """,
 'de':
 """
-TODO
+Setzt den Stromsparmodus für die WIFI Extension. Mögliche Werte sind:
+
+.. csv-table::
+ :header: "Mode", "Beschreibung"
+ :widths: 10, 90
+
+ "0", "Full Speed (hoher Stromverbrauch, hocher Durchsatz)"
+ "1", "Low Power (geringer Stromverbrauch, geringer Durchsatz)"
+
+Der Standardwert ist 0 (Full Speed).
+
 
 .. versionadded:: 1.3.0
 """
@@ -1054,7 +1145,7 @@ Returns the power mode as set by :func:`SetWifiPowerMode`.
 """,
 'de':
 """
-TODO
+Gibt den Stromsparmodus  zurück, wie von :func:`SetWifiPowerMode` gesetzt.
 
 .. versionadded:: 1.3.0
 """
