@@ -27,6 +27,10 @@
 const char BASE58_STR[] = \
 	"123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
 
+// undefine potential defines from /usr/include/endian.h
+#undef LITTLE_ENDIAN
+#undef BIG_ENDIAN
+
 #define LITTLE_ENDIAN 0x03020100ul
 #define BIG_ENDIAN    0x00010203ul
 
