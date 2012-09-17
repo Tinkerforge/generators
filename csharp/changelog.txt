@@ -28,3 +28,4 @@
        Ensure correct shutdown order of threads
 1.1.10: Fix race condition in AddDevice method
         Add monoflop functionality to IO-4 and IO-16 Bricklet API
+1.1.11: Add WIFI support

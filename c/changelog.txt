@@ -24,3 +24,4 @@
 1.0.17: Add support for big endian systems
 1.0.18: Fix race condition in add_device function
         Add monoflop functionality to IO-4 and IO-16 Bricklet API
+1.0.19: Add WIFI support
