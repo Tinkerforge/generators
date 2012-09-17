@@ -818,7 +818,9 @@ com['packets'].append({
              ('key', 'string', 50, 'in'),
              ('key_index', 'uint8', 1, 'in'),
              ('eap_options', 'uint8', 1, 'in'),
-             ('certificate_length', 'uint16', 1, 'in')], 
+             ('ca_certificate_length', 'uint16', 1, 'in'), 
+             ('client_certificate_length', 'uint16', 1, 'in'), 
+             ('private_key_length', 'uint16', 1, 'in')], 
 'doc': ['af', {
 'en':
 """
@@ -840,9 +842,9 @@ For WEP it is possible to set the key index (1-4). If you don't know your
 key index, it is likely 1.
 
 If you choose WPA Enterprise as encryption, you have to set eap options and
-the length of the certificate (for other encryption types these paramters
-are ignored). The certificate length is given in byte and the certificate
-itself can be set with  :func:`SetWifiCertificate`. Eap options consist of 
+the length of the certificates (for other encryption types these paramters
+are ignored). The certificate length are given in byte and the certificates
+themself can be set with  :func:`SetWifiCertificate`. Eap options consist of 
 the outer authentification (bits 1-2), inner authentification (bit 3) and 
 certificate type (bits 4-5):
 
@@ -883,8 +885,8 @@ ignoriert. Für WEP gibt es die möglichkeit den key index zu setzen
 (1-4). Fall der key index unbekannt ist, ist er wahrscheinlich 1.
 
 Wenn WPA Enterprise als encryption gewählt wird, müssen eap options und
-die Länge des Zertifikats gesetzt werden. Die Länge wird in Byte angegeben
-und das Zertifikat selbst kann mit :func:`SetWifiCertificate` übertragen
+die Länge der Zertifikate gesetzt werden. Die Länge wird in Byte angegeben
+und die Zertifikate selbst können mit :func:`SetWifiCertificate` übertragen
 werden. Die eap options bestehen aus outer authentification (Bits 1-2), 
 inner authentification (Bit 3) und certificate type (bits 4-5):
 
@@ -916,7 +918,9 @@ com['packets'].append({
              ('key', 'string', 50, 'out'),
              ('key_index', 'uint8', 1, 'out'),
              ('eap_options', 'uint8', 1, 'out'),
-             ('certificate_length', 'uint16', 1, 'out')], 
+             ('ca_certificate_length', 'uint16', 1, 'out'), 
+             ('client_certificate_length', 'uint16', 1, 'out'), 
+             ('private_key_length', 'uint16', 1, 'out')], 
 'doc': ['af', {
 'en':
 """
@@ -1040,6 +1044,10 @@ The certificate is written in chunks of size 32 and the index is used as
 the index of the chunk. The data length should nearly always be 32. Only
 the last chunk can have a length that is not equal to 32.
 
+The starting index of the CA Certificate is 0, of the Client Certificate
+10000 and for the Private Key 20000. Maximum sizes are 1312, 1312 and
+4320 byte respectively.
+
 The values are stored in the EEPROM and only applied on startup. That means
 you have to restart the Master Brick after uploading the certificate.
 
@@ -1058,6 +1066,10 @@ Die maximale Länge für beide ist 32.
 Das Zertifikat wird in Chunks der größe 32 geschrieben und der Index
 gibt den Index des Chunk an. Data length sollte fast immer auf 32 gesetzt
 werden. Nur beim letzten Chunk ist eine Länge ungleich 32 möglich.
+
+Der Startindex für CA Certificate ist 0, für Client Certificate 10000 und
+für Private Key 20000. Die Maximalen Dateigrößen sind jeweils 1312, 1312 und 
+4320 Byte.
 
 Die Werte sind im EEPROM gespeichert und werden nur beim Hochfahren angewandt.
 Das bedeutet der Master Brick muss nach einer Konfiguration neugestartet werden.
@@ -1121,7 +1133,7 @@ Setzt den Stromsparmodus für die WIFI Extension. Mögliche Werte sind:
  :header: "Mode", "Beschreibung"
  :widths: 10, 90
 
- "0", "Full Speed (hoher Stromverbrauch, hocher Durchsatz)"
+ "0", "Full Speed (hoher Stromverbrauch, hoher Durchsatz)"
  "1", "Low Power (geringer Stromverbrauch, geringer Durchsatz)"
 
 Der Standardwert ist 0 (Full Speed).
