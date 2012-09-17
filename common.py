@@ -159,13 +159,12 @@ def get_element_size(element):
     return get_type_size(element[1]) * element[2]
 
 def select_lang(d):
-    return d['en']
-    """if lang in d:
+    if lang in d:
         return d[lang]
     elif 'en' in d:
         return d['en']
     else:
-        return "Missing '{0}' documentation".format(lang)"""
+        return "Missing '{0}' documentation".format(lang)
 
 def make_rst_header(device, ref_name, title):
     date = datetime.datetime.now().strftime("%Y-%m-%d")

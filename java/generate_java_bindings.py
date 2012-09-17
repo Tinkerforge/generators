@@ -136,7 +136,7 @@ def make_return_objects():
             ele_name = common.underscore_to_headless_camel_case(element[0])
             arr = ''
             new = ''
-            if element[2] > 1:
+            if element[2] > 1 and typ != 'String':
                 arr = '[]'
                 new = ' = new {0}[{1}]'.format(typ, element[2])
 
@@ -426,13 +426,14 @@ def make_methods():
         if len(packet.get_elements('out')) > 0:
             has_ret = 'true'
             throw = 'throws IPConnection.TimeoutException'
-            bbgets, bbret = make_bbgets(packet, False)
             if len(packet.get_elements('out')) > 1:
                 bbgets, bbret = make_bbgets(packet, True)
                 obj_name = get_object_name(packet)
                 obj = '\t\t{0} obj = new {0}();\n'.format(obj_name)
                 bbgets = obj + bbgets
                 bbret = 'obj'
+            else:
+                bbgets, bbret = make_bbgets(packet, False)
 
             response = method_response.format(name_lower,
                                               bbgets,
@@ -453,9 +454,9 @@ def make_methods():
 def make_bbgets(packet, with_obj = False):
     bbgets = ''
     bbget = '\t\t{0}{1}{2} = {3}(bb.get{4}()){5};'
+    bbget_string = '\t\tchar c = (char)(bb.get());\n\t\t\tif(c == 0) break;\n\t\t\t{0}{1}{2} += c;'
     new_arr ='{0}[] {1} = new {0}[{2}];'
-    loop = """\t\t{2}
-\t\tfor(int i = 0; i < {0}; i++) {{
+    loop = """\t\t{2}for(int i = 0; i < {0}; i++) {{
 {1}
 \t\t}}
 """
@@ -478,7 +479,7 @@ def make_bbgets(packet, with_obj = False):
             cast = 'IPConnection.unsignedInt'
         elif element[1] == 'bool':
             boolean = ' != 0'
-        elif element[1] == 'char':
+        elif element[1] == 'char' or element[1] == 'string':
             cast = '(char)'
 
         format_typ = ''
@@ -493,9 +494,18 @@ def make_bbgets(packet, with_obj = False):
                                     boolean)
 
         if element[2] > 1:
-            arr = new_arr.format(typ.replace(' ', ''), bbret, element[2])
-            bbget_format = bbget_format.replace(' =', '[i] =')
-            bbget_format = loop.format(element[2], '\t' + bbget_format, arr)
+            if with_obj:
+                if element[1] == 'string':
+                    bbget_format = bbget_string.format(format_typ,
+                                                       obj,
+                                                       bbret)
+                else:
+                    bbget_format = bbget_format.replace(' =', '[i] =')
+                bbget_format = loop.format(element[2], '\t' + bbget_format, '')
+            else:
+                arr = new_arr.format(typ.replace(' ', ''), bbret, element[2])
+                bbget_format = bbget_format.replace(' =', '[i] =')
+                bbget_format = loop.format(element[2], '\t' + bbget_format, arr + '\n\t\t')
 
         bbgets += bbget_format + '\n'
     return bbgets, bbret
