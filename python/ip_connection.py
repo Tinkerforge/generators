@@ -173,13 +173,14 @@ class IPConnection:
         self.thread_callback.start()
         
     def reconnect(self):
-        while True:
+        while self.thread_receive_flag:
             try:
                 self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self.sock.connect((self.host, self.port))
                 return True
             except:
                 time.sleep(0.1)
+        return False
 
     def receive_loop(self):
         if sys.hexversion < 0x03000000:
@@ -194,6 +195,8 @@ class IPConnection:
                 data = ''
                 if self.reconnect():
                     continue
+                else:
+                    return
 
             if len(data) == 0:
                 if self.thread_receive_flag:
