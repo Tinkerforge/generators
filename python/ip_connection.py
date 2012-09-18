@@ -17,6 +17,7 @@ import struct
 import socket
 import types
 import sys
+import time
 
 # use normal tuples instead of namedtuples in python version below 2.6
 if sys.hexversion < 0x02060000:
@@ -155,6 +156,8 @@ class IPConnection:
         self.add_device_lock = Lock()
         self.devices = {}
         self.enumerate_callback = None
+        self.host = host
+        self.port = port
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect((host, port))
@@ -168,6 +171,15 @@ class IPConnection:
         self.thread_callback = Thread(target=self.callback_loop)
         self.thread_callback.daemon = True
         self.thread_callback.start()
+        
+    def reconnect(self):
+        while True:
+            try:
+                self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self.sock.connect((self.host, self.port))
+                return True
+            except:
+                time.sleep(0.1)
 
     def receive_loop(self):
         if sys.hexversion < 0x03000000:
@@ -176,7 +188,12 @@ class IPConnection:
             pending_data = bytes()
 
         while self.thread_receive_flag:
-            data = self.sock.recv(8192)
+            try:
+                data = self.sock.recv(8192)
+            except socket.error:
+                data = ''
+                if self.reconnect():
+                    continue
 
             if len(data) == 0:
                 if self.thread_receive_flag:
