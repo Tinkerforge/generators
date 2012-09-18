@@ -69,12 +69,8 @@ def generate(path):
     os.makedirs('/tmp/generator/dll/source/Tinkerforge')
     os.chdir('/tmp/generator')
 
-    # Make bindings
-    for config in configs:
-        if config.endswith('_config.py'):
-            module = __import__(config[:-3])
-            print(" * {0}".format(config[:-10]))
-            make_files(module.com, path)
+    # Copy examples
+    common.import_and_make(configs, path, make_files)
 
     # Copy bindings and readme
     for filename in glob.glob(path + '/bindings/*.cs'):

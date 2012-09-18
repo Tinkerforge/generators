@@ -495,13 +495,15 @@ def make_bbgets(packet, with_obj = False):
 
         if element[2] > 1:
             if with_obj:
+                prefix = ''
                 if element[1] == 'string':
+                    prefix = '{0}{1} = "";'.format(obj, bbret)
                     bbget_format = bbget_string.format(format_typ,
                                                        obj,
                                                        bbret)
                 else:
                     bbget_format = bbget_format.replace(' =', '[i] =')
-                bbget_format = loop.format(element[2], '\t' + bbget_format, '')
+                bbget_format = loop.format(element[2], '\t' + bbget_format, prefix)
             else:
                 arr = new_arr.format(typ.replace(' ', ''), bbret, element[2])
                 bbget_format = bbget_format.replace(' =', '[i] =')
