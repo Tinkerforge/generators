@@ -114,15 +114,19 @@ class CallbackThread extends Thread {
 				
 				String uid = ipcon.base58Encode(uid_num);
 				
-				String name = "";
+				StringBuilder nameBuilder = new StringBuilder();
 				for(int i = 0; i < 40; i++) {
-					name += (char)bb.get();
+					byte currentByte = bb.get();
+					if(currentByte == 0) {
+						break;
+					}
+					nameBuilder.append((char)currentByte);
 				}
 				
 				short stackID = ipcon.unsignedByte(bb.get());
 				boolean isNew = bb.get() != 0;
 				
-				ipcon.enumerateListener.enumerate(uid, name, stackID, isNew);
+				ipcon.enumerateListener.enumerate(uid, nameBuilder.toString(), stackID, isNew);
 			} else {
 				byte stackID = ipcon.getStackIDFromData(data);
 				Device device = ipcon.devices[stackID];
