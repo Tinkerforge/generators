@@ -171,7 +171,7 @@ class IPConnection:
         self.thread_callback = Thread(target=self.callback_loop)
         self.thread_callback.daemon = True
         self.thread_callback.start()
-        
+
     def reconnect(self):
         while self.thread_receive_flag:
             try:
@@ -495,7 +495,7 @@ class IPConnection:
         length = len(plugin)
         mod = length % IPConnection.PLUGIN_CHUNK_SIZE
         if mod != 0:
-            plugin += '\x00'*(IPConnection.PLUGIN_CHUNK_SIZE-mod)
+            plugin += [0] * (IPConnection.PLUGIN_CHUNK_SIZE - mod)
 
         while len(plugin) != 0:
             plugin_chunk = plugin[:IPConnection.PLUGIN_CHUNK_SIZE]
@@ -504,20 +504,20 @@ class IPConnection:
             self.send_request(device,
                               IPConnection.FUNCTION_WRITE_BRICKLET_PLUGIN,
                               (port, position, plugin_chunk),
-                              'c B 32s',
+                              'c B 32B',
                               '')
 
             position += 1
 
     def read_bricklet_plugin(self, device, port, length):
-        plugin = ''
+        plugin = []
         position = 0
         while len(plugin) < length:
             plugin += self.send_request(device,
                                         IPConnection.FUNCTION_READ_BRICKLET_PLUGIN,
                                         (port, position),
                                         'c B',
-                                        '32s')
+                                        '32B')
             position += 1
 
         # Remove unnecessary bytes at end
