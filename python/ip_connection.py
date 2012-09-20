@@ -239,13 +239,9 @@ class IPConnection:
             if function_id == IPConnection.FUNCTION_ENUMERATE_CALLBACK:
                 data = data[:length]
                 data = data[4:]
+                uid, name, stack_id, new = self.deserialize_data(data, 'Q 40s B ?')
 
-                uid, name, stack_id, new = self.data_to_return(data, 'Q 40s B ?')
-
-                # Remove \0 from end of string
-                name = name.replace(chr(0), '')
-
-                self.enumerate_callback(base58encode(uid), name.decode(), stack_id, new)
+                self.enumerate_callback(base58encode(uid), name, stack_id, new)
                 continue
 
             device = self.devices[stack_id]
@@ -254,9 +250,9 @@ class IPConnection:
                 if len(form) == 0:
                     device.registered_callbacks[function_id]()
                 elif len(form) == 1:
-                    device.registered_callbacks[function_id](self.data_to_return(data[4:], form))
+                    device.registered_callbacks[function_id](self.deserialize_data(data[4:], form))
                 else:
-                    device.registered_callbacks[function_id](*self.data_to_return(data[4:], form))
+                    device.registered_callbacks[function_id](*self.deserialize_data(data[4:], form))
 
     def destroy(self):
         """
@@ -282,7 +278,7 @@ class IPConnection:
         if current_thread() is not self.thread_receive:
             self.thread_receive.join()
 
-    def data_to_return(self, data, form):
+    def deserialize_data(self, data, form):
         ret = []
         for f in form.split(' '):
             f = '<' + f
@@ -291,6 +287,8 @@ class IPConnection:
             x = struct.unpack(f, data[:length])
             if len(x) > 1:
                 ret.append(x)
+            elif 's' in f:
+                ret.append(self.trim_deserialized_string(x[0]))
             else:
                 ret.append(x[0])
 
@@ -300,6 +298,16 @@ class IPConnection:
             return ret[0] 
 
         return ret
+
+    def trim_deserialized_string(self, s):
+        if sys.hexversion >= 0x03000000:
+            s = s.decode('ascii')
+
+        i = s.find(chr(0))
+        if i >= 0:
+            s = s[:i]
+
+        return s
 
     def join_thread(self):
         """
@@ -363,7 +371,7 @@ class IPConnection:
         except ValueError:
             self.destroy()
 
-        return self.data_to_return(response, form_ret)
+        return self.deserialize_data(response, form_ret)
 
     def handle_response(self, packet):
         function_id = get_function_id_from_data(packet)
@@ -430,22 +438,18 @@ class IPConnection:
         if self.pending_add_device == None:
             return
 
-        value = struct.unpack('<BBHQ 3B 40s B', packet)
+        _, _, _, uid, firmware_version, name, stack_id = self.deserialize_data(packet, 'B B H Q 3B 40s B')
 
-        if self.pending_add_device.uid == value[3]:
-            if sys.hexversion < 0x03000000:
-                name = value[7].replace(chr(0), '').decode()
-            else:
-                name = value[7].decode('ascii').replace(chr(0), '')
-
+        if self.pending_add_device.uid == uid:
+            # Check device name (replace '-' with ' ' for backward compatibility)
             i = name.rfind(' ')
             if i < 0 or name[0:i].replace('-', ' ') != self.pending_add_device.expected_name.replace('-', ' '):
                 return
 
-            self.pending_add_device.firmware_version = [value[4], value[5], value[6]]
+            self.pending_add_device.firmware_version = firmware_version
             self.pending_add_device.name = name
-            self.pending_add_device.stack_id = value[8]
-            self.devices[value[8]] = self.pending_add_device
+            self.pending_add_device.stack_id = stack_id
+            self.devices[stack_id] = self.pending_add_device
             self.pending_add_device.response_queue.put(None)
 
     def add_device(self, device):
