@@ -13,3 +13,4 @@
 1.0.9: Add time base all data function/callback and state callback to Stepper Brick API
 1.0.10: Fix direction of getAllDataPeriod method in Stepper Brick API
 1.0.11: Add monoflop functionality to IO-4 and IO-16 Bricklet API
+1.0.12: Add WIFI support

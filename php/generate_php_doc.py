@@ -37,8 +37,6 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 device = None
-lang = 'en'
-file_path = ''
 
 def fix_links(text):
     parameter = {
@@ -61,8 +59,8 @@ def fix_links(text):
             name_right = ':php:func:`{1} <{0}::{1}>`'.format(cls, name)
         text = text.replace(name_false, name_right)
 
-    text = text.replace(":word:`parameter`", parameter[lang])
-    text = text.replace(":word:`parameters`", parameters[lang])
+    text = text.replace(":word:`parameter`", common.select_lang(parameter))
+    text = text.replace(":word:`parameters`", common.select_lang(parameters))
 
     return text
 
@@ -72,7 +70,7 @@ def make_examples():
         f = f.replace('.php', '')
         return common.camel_case_to_space(f)
 
-    return common.make_rst_examples(title_from_file, device, file_path,
+    return common.make_rst_examples(title_from_file, device, common.path_binding,
                                     'php', 'Example', '.php', 'PHP')
 
 def make_parameter_list(packet):
@@ -97,9 +95,16 @@ def make_methods(typ):
  and the binding version of the device. The firmware and binding versions
  are given in arrays of size 3 with the syntax (major, minor, revision).
 
- The returned array contains name, firmwareVersion and bindingVersion.
+ The returned array contains ``name``, ``firmwareVersion`` and ``bindingVersion``.
 """,
     'de': """
+.. php:function:: array {0}::getVersion()
+
+ Gibt den Namen (inklusive Hardwareversion), die Firmwareversion 
+ und die Bindingsversion des Gerätes zurück. Die Firmware- und Bindingsversionen werden
+ als Feld der Größe 3 mit der Syntax [Major, Minor, Revision] zurückgegeben.
+
+ Das zurückgegebene Array enthält ``name``, ``firmwareVersion`` und ``bindingVersion``.
 """
     }
 
@@ -113,17 +118,17 @@ def make_methods(typ):
         ret_type = php_common.get_return_type(packet)
         name = packet.get_headless_camel_case_name()
         params = make_parameter_list(packet)
-        desc = fix_links(common.shift_right(packet.get_doc()[1][lang], 1))
-        func = '{0}{1} {2}::{3}({4})\n{5}'.format(func_start, 
-                                                            ret_type,
-                                                            cls, 
-                                                            name, 
-                                                            params, 
-                                                            desc)
+        desc = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 1))
+        func = '{0}{1} {2}::{3}({4})\n{5}'.format(func_start,
+                                                  ret_type,
+                                                  cls,
+                                                  name,
+                                                  params,
+                                                  desc)
         methods += func + '\n'
 
-    if typ == 'am':
-        methods += version_method[lang].format(cls)
+    if typ == 'af':
+        methods += common.select_lang(version_method).format(cls)
 
     return methods
 
@@ -146,8 +151,8 @@ def make_callbacks():
     cls = device.get_category() + device.get_camel_case_name()
     for packet in device.get_packets('callback'):
         params = make_parameter_list(packet)
-        desc = fix_links(common.shift_right(packet.get_doc()[1][lang], 1))
-        signature = signature_str[lang].format(params)
+        desc = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 1))
+        signature = common.select_lang(signature_str).format(params)
         func = '{0}{1}::CALLBACK_{2}\n{3}{4}'.format(func_start,
                                                      cls,
                                                      packet.get_upper_case_name(),
@@ -172,6 +177,16 @@ def make_api():
  :ref:`above <{0}_{2}_php_examples>`).
 """,
     'de': """
+.. php:function:: class {3}{1}(string $uid)
+
+ Erzeugt ein Objekt mit der eindeutigen Geräte ID *uid*:
+
+ .. code-block:: php
+
+    ${0} = new {3}{1}('YOUR_DEVICE_UID');
+
+ Dieses Objekt kann danach der IP Connection hinzugefügt werden (siehe Beispiele
+ :ref:`oben <{0}_{2}_php_examples>`).
 """
     }
 
@@ -184,43 +199,11 @@ def make_api():
  :ref:`below <{0}_{2}_php_callbacks>`.
 """,
     'de': """
-"""
-    }
+.. php:function:: void {3}{1}::registerCallback(int $id, callable $callback)
 
-    bm_str = {
-    'en': """
-Basic Methods
-^^^^^^^^^^^^^
-
-{0}
-
-{1}
-""",
-    'de': """
-"""
-    }
-
-    am_str = {
-    'en': """
-Advanced Methods
-^^^^^^^^^^^^^^^^
-
-{0}
-""",
-    'de': """
-"""
-    }
-
-    ccm_str = {
-    'en': """
-Callback Configuration Methods
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-{0}
-
-{1}
-""",
-    'de': """
+ Registriert einen Callback mit der ID *$id* zu der Callable *$callback*. Die verfügbaren
+ IDs mit den zugehörigen Funktionssignaturen sind :ref:`unten <{0}_{2}_php_callbacks>`
+ zu finden.
 """
     }
 
@@ -250,13 +233,43 @@ The available constants with inherent number and type of parameters are
 described below.
 
 .. note::
- Using callbacks for recurring events is *always* prefered
- compared to using getters. It will use less USB bandwith and the latency
- will be a lot better, since there is no roundtrip time.
+ Using callbacks for recurring events is *always* preferred
+ compared to using getters. It will use less USB bandwidth and the latency
+ will be a lot better, since there is no round trip time.
 
 {0}
 """,
     'de': """
+.. _{1}_{2}_php_callbacks:
+
+Callbacks
+^^^^^^^^^
+
+*Callbacks* können mit *callback IDs* registriert werden um zeitkritische
+oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
+mit der Funktion :php:func:`registerCallback <{3}{4}::registerCallback>` des
+Geräte Objektes durchgeführt werden. Der erste Parameter ist der Callback ID
+und der zweite die Callbackfunktion:
+
+.. code-block:: php
+
+    function my_callback($param)
+    {{
+        echo $param . "\\n";
+    }}
+
+    ${1}->registerCallback({3}{4}::CALLBACK_EXAMPLE, 'my_callback');
+
+Die verfügbaren Konstanten mit der dazugehörigen Parameteranzahl und -typen werden
+weiter unten beschrieben.
+
+.. note::
+ Callbacks für wiederkehrende Ereignisse zu verwenden ist 
+ *immer* zu bevorzugen gegenüber der Verwendung von Abfragen.
+ Es wird weniger USB-Bandbreite benutzt und die Latenz ist
+ erheblich geringer, da es keine Paketumlaufzeit gibt.
+
+{0}
 """
     }
 
@@ -271,56 +284,49 @@ API
 {2}
 """,
     'de': """
+{0}
+API
+---
+
+{1}
+
+{2}
 """
     }
 
-    cre = create_str[lang].format(device.get_underscore_name(),
-                                  device.get_camel_case_name(),
-                                  device.get_category().lower(),
-                                  device.get_category())
-    reg = register_str[lang].format(device.get_underscore_name(),
-                                    device.get_camel_case_name(),
-                                    device.get_category().lower(),
-                                    device.get_category())
+    cre = common.select_lang(create_str).format(device.get_underscore_name(),
+                                                device.get_camel_case_name(),
+                                                device.get_category().lower(),
+                                                device.get_category())
+    reg = common.select_lang(register_str).format(device.get_underscore_name(),
+                                                  device.get_camel_case_name(),
+                                                  device.get_category().lower(),
+                                                  device.get_category())
 
-    bm = make_methods('bm')
-    am = make_methods('am')
-    ccm = make_methods('ccm')
+    bf = make_methods('bf')
+    af = make_methods('af')
+    ccf = make_methods('ccf')
     c = make_callbacks()
     api_str = ''
-    if bm:
-        api_str += bm_str[lang].format(cre, bm)
-    if am:
-        api_str += am_str[lang].format(am)
+    if bf:
+        api_str += common.select_lang(common.bf_str).format(cre, bf)
+    if af:
+        api_str += common.select_lang(common.af_str).format(af)
     if c:
-        api_str += ccm_str[lang].format(reg, ccm)
-        api_str += c_str[lang].format(c, device.get_underscore_name(),
-                                      device.get_category().lower(),
-                                      device.get_category(),
-                                      device.get_camel_case_name())
+        api_str += common.select_lang(common.ccf_str).format(reg, ccf)
+        api_str += common.select_lang(c_str).format(c, device.get_underscore_name(),
+                                                    device.get_category().lower(),
+                                                    device.get_category(),
+                                                    device.get_camel_case_name())
 
     ref = '.. _{0}_{1}_php_api:\n'.format(device.get_underscore_name(),
                                           device.get_category().lower())
 
     api_desc = ''
-    try:
-        api_desc = device.com['api'][lang]
-    except KeyError:
-        pass
+    if 'api' in device.com:
+        api_desc = common.select_lang(device.com['api'])
 
-    return api[lang].format(ref, api_desc, api_str)
-
-def copy_examples_for_zip():
-    examples = common.find_examples(device, file_path, 'php', 'Example', '.php')
-    dest = os.path.join('/tmp/generator/pear/examples/',
-                        device.get_category().lower(),
-                        device.get_underscore_name())
-
-    if not os.path.exists(dest):
-        os.makedirs(dest)
-
-    for example in examples:
-        shutil.copy(example[1], dest)
+    return common.select_lang(api).format(ref, api_desc, api_str)
 
 def make_files(com_new, directory):
     global device
@@ -331,109 +337,16 @@ def make_files(com_new, directory):
     'de': 'PHP Bindings'
     }
 
-    directory += '/doc'
+    directory = os.path.join(directory, 'doc', common.lang)
     if not os.path.exists(directory):
         os.makedirs(directory)
 
     f = file('{0}/{1}.rst'.format(directory, file_name), "w")
     f.write(common.make_rst_header(device, 'php', 'PHP'))
-    f.write(common.make_rst_summary(device, title[lang]))
+    f.write(common.make_rst_summary(device, common.select_lang(title)))
     f.write(make_examples())
     f.write(make_api())
 
-    copy_examples_for_zip()
-
-def generate(path):
-    global file_path
-    file_path = path
-    path_list = path.split('/')
-    path_list[-1] = 'configs'
-    path_config = '/'.join(path_list)
-    sys.path.append(path_config)
-    configs = os.listdir(path_config)
-
-    # Make temporary generator directory
-    if os.path.exists('/tmp/generator'):
-        shutil.rmtree('/tmp/generator/')
-    os.makedirs('/tmp/generator/pear/source/Tinkerforge')
-    os.chdir('/tmp/generator')
-
-    # Make bindings
-    for config in configs:
-        if config.endswith('_config.py'):
-            module = __import__(config[:-3])
-            print(" * {0}".format(config[:-10]))
-            make_files(module.com, path)
-
-    # Copy bindings and readme
-    package_files = ['<file name="Tinkerforge/IPConnection.php" role="php" />']
-    for filename in glob.glob(path + '/bindings/*.php'):
-        shutil.copy(filename, '/tmp/generator/pear/source/Tinkerforge')
-        package_files.append('<file name="Tinkerforge/{0}" role="php" />'.format(os.path.basename(filename)))
-
-    shutil.copy(path + '/IPConnection.php', '/tmp/generator/pear/source/Tinkerforge')
-    shutil.copy(path + '/changelog.txt', '/tmp/generator/pear')
-    shutil.copy(path + '/readme.txt', '/tmp/generator/pear')
-
-    # Write package.xml
-    version = common.get_changelog_version(path)
-    date = datetime.datetime.now().strftime("%Y-%m-%d")
-    file('/tmp/generator/pear/source/package.xml', 'wb').write("""<?xml version="1.0" encoding="UTF-8"?>
-<package packagerversion="1.9.0" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0">
- <name>Tinkerforge</name>
- <uri>http://download.tinkerforge.com/bindings/php/pear/Tinkerforge-{2}.{3}.{4}</uri>
- <summary>PHP API Bindings for Tinkerforge Bricks and Bricklets</summary>
- <description>no description</description>
- <lead>
-  <name>Matthias Bolte</name>
-  <user>matthias</user>
-  <email>matthias@tinkerforge.com</email>
-  <active>yes</active>
- </lead>
- <date>{0}</date>
- <version>
-  <release>{2}.{3}.{4}</release>
-  <api>{2}.{3}.{4}</api>
- </version>
- <stability>
-  <release>stable</release>
-  <api>stable</api>
- </stability>
- <license>Public Domain</license>
- <notes>no notes</notes>
- <contents>
-  <dir name="Tinkerforge">
-   {1}
-  </dir>
- </contents>
- <dependencies>
-  <required>
-   <php>
-    <min>5.3.0</min>
-   </php>
-   <pearinstaller>
-    <min>1.9.0</min>
-   </pearinstaller>
-  </required>
- </dependencies>
- <phprelease />
-</package>
-""".format(date, '\n    '.join(package_files), *version))
-
-    # Make PEAR package
-    os.chdir('/tmp/generator/pear/source')
-    args = ['/usr/bin/pear',
-            'package',
-            'package.xml']
-    subprocess.call(args)
-
-    # Remove build stuff
-    shutil.move('/tmp/generator/pear/source/Tinkerforge-{0}.{1}.{2}.tgz'.format(*version),
-                '/tmp/generator/pear/Tinkerforge.tgz')
-    os.remove('/tmp/generator/pear/source/package.xml')
-
-    # Make zip
-    common.make_zip('php', '/tmp/generator/pear', path, version)
-
 if __name__ == "__main__":
-    generate(os.getcwd())
+    for lang in ['en', 'de']:
+        common.generate(os.getcwd(), lang, make_files)

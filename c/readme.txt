@@ -22,39 +22,51 @@ project_folder/
  -> brick_stepper.h
  -> example_configuration.c
 
-The only dependency on Unix-like systems is pthread, therefore a compilation of
-the project with gcc on Linux looks like:
+The only dependency on Unix-like systems is pthreads, therefore a compilation of
+the project with GCC on Linux looks like:
 
 gcc -pthread -o example_configuration brick_stepper.c ip_connection.c example_configuration.c
 
-On Windows Winsock2 is used for threading. Under MinGW we can compile the
-example as following (hint: the library linking must come after the source):
+On Windows Win32 is used for threading and WinSock2 for the network connection.
+Under MinGW we can compile the example as following (the library linking must
+come after the source)::
 
 gcc -o example_configuration.exe brick_stepper.c ip_connection.c example_configuration.c -lws2_32
 
 With Visual Studio we can use our project_folder/ as follows:
 
-File -> New -> Project From Existing Code -> Type: Visual C++ ->
- choose project_folder/, choose project name -> Next ->
- choose Console Application -> Finish
-
-File -> New -> Project From Existing Code -> Type: Visual C++ ->
- choose test_project, choose project name -> Next ->
- choose Console Application -> Finish
+* File
+* New
+* Project From Existing Code
+* Choose Type "Visual C++"
+* Choose project_folder/
+* Choose a project name
+* Click Next
+* Choose "Console Application"
+* Click Finish
 
 Now we have to tell Visual Studio to use the C++ compiler, since we would need
-C99 but Visual Studio can only compile C89... Also we have to include ws2_32.lib:
+C99 but Visual Studio can only compile C89. This problem can be avoided by using
+the C++ compiler instead:
 
-Project -> properties -> C/C++ -> Advanced and option "Compile as" ->
- choose "Compile as C++ Code (/TP)"
+* Project
+* Properties
+* C/C++
+* Advanced, option "Compile as"
+* Choose "Compile as C++ Code (/TP)"
 
-Project -> properties -> Linker -> Input and option "Additional Dependencies" ->
- add "ws2_32.lib;"
+Also we have to include ws2_32.lib (WinSock2) by clicking on:
 
-Now we are ready to go!
+* Project
+* Properties
+* Linker
+* Input, option "Additional Dependencies"
+* Add "ws2_32.lib;"
+
+Thats it, we are ready to go!
 
 The Visual Studio compiler can also be used from the command line:
 
- cl /TP /I. brick_stepper.c ip_connection.c example_configuration.c /link /out:example_configuration.exe ws2_32.lib
+ cl.exe /TP /I. brick_stepper.c ip_connection.c example_configuration.c /link /out:example_configuration.exe ws2_32.lib
 
 Documentation for the API can be found at http://www.tinkerforge.com/doc/index.html

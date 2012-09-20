@@ -34,7 +34,6 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 device = None
-lang = 'en'
 
 def fix_links(text):
     link = '<see cref="Tinkerforge.{0}{1}.{2}"/>'
@@ -134,7 +133,7 @@ def make_delegates():
     for packet in device.get_packets('callback'):
         name = packet.get_camel_case_name()
         parameter = csharp_common.make_parameter_list(packet)
-        doc = '\n\t\t///  '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n'))
+        doc = '\n\t\t///  '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
         cbs += cb.format(name, parameter, doc)
     return cbs
 
@@ -320,7 +319,7 @@ def make_methods():
         ret_count = len(packet.get_elements('out'))
         size = str(get_data_size(packet))
         name_upper = packet.get_upper_case_name()
-        doc = '\n\t\t///  '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n'))
+        doc = '\n\t\t///  '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
 
         write_convs = ''
         write_conv = '\t\t\tLEConverter.To({0}, {1}, data_);\n'
@@ -334,7 +333,7 @@ def make_methods():
             else:
                 write_convs += write_conv.format(wname, pos)
             pos += common.get_element_size(element)
-            
+
         method_tail = ''
         if ret_count > 0:
             read_convs = ''
@@ -391,7 +390,7 @@ def make_obsolete_methods():
         sigParams = csharp_common.make_parameter_list(packet, True)
         outParam = common.underscore_to_headless_camel_case(packet.get_elements('out')[0][0])
         callParams = ", ".join(map(lambda e: common.underscore_to_headless_camel_case(e[0]), packet.get_elements('in')))
-        doc = '\n\t\t///  '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n'))
+        doc = '\n\t\t///  '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
 
         methods += method.format(name,
                                  sigParams,
@@ -412,7 +411,7 @@ def make_files(com_new, directory):
     device = common.Device(com_new)
 
     file_name = '{0}{1}'.format(device.get_category(), device.get_camel_case_name())
-    
+
     directory += '/bindings'
     if not os.path.exists(directory):
         os.makedirs(directory)
@@ -429,4 +428,4 @@ def make_files(com_new, directory):
     csharp.write(make_register_callback())
 
 if __name__ == "__main__":
-    common.generate(os.getcwd(), make_files)
+    common.generate(os.getcwd(), 'en', make_files)

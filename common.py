@@ -67,7 +67,61 @@ gen_text_rst = """..
  #############################################################
 """
 
+bf_str = {
+'en': """
+Basic Functions
+^^^^^^^^^^^^^^^
+
+{0}
+
+{1}
+""",
+'de': """
+Grundfunktionen
+^^^^^^^^^^^^^^^
+
+{0}
+
+{1}
+"""
+}
+
+af_str = {
+'en': """
+Advanced Functions
+^^^^^^^^^^^^^^^^^^
+
+{0}
+""",
+'de': """
+Fortgeschrittene Funktionen
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+{0}
+"""
+}
+
+ccf_str = {
+'en': """
+Callback Configuration Functions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+{0}
+
+{1}
+""",
+'de': """
+Konfigurationsfunktionen für Callbacks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+{0}
+
+{1}
+"""
+}
+
 lang = 'en'
+path_binding = ''
 
 def shift_right(text, n):
     return text.replace('\n', '\n' + ' '*n)
@@ -104,6 +158,14 @@ def get_type_size(typ):
 def get_element_size(element):
     return get_type_size(element[1]) * element[2]
 
+def select_lang(d):
+    if lang in d:
+        return d[lang]
+    elif 'en' in d:
+        return d['en']
+    else:
+        return "Missing '{0}' documentation".format(lang)
+
 def make_rst_header(device, ref_name, title):
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     ref = '.. _{0}_{1}_{2}:\n'.format(device.get_underscore_name(), device.get_category().lower(), ref_name)
@@ -117,7 +179,7 @@ def make_rst_header(device, ref_name, title):
 def make_rst_summary(device, title):
     su = {
     'en': """
-This is the API site for the {4} of the {0} {1}. General information
+This is the API description for the {4} of the {0} {1}. General information
 on what this device does and the technical specifications can be found
 :ref:`here <{2}>`.
 
@@ -125,14 +187,21 @@ A tutorial on how to test the {0} {1} and get the first examples running
 can be found :ref:`here <{3}>`.
 """,
     'de': """
+Dies ist die API Beschreibung für die {4} des {0} {1}s. Allgemeine Informationen
+über die Funktionen des Gerätes und die technischen Spezifikationen sind
+:ref:`hier <{2}>` zu finden.
+
+Eine Anleitung wie der {0} {1} getestet werden kann und die ersten Beispiele
+ausgeführt werden können ist :ref:`hier <{3}>` zu finden.
 """
     }
 
     hw_link = device.get_underscore_name() + '_' + device.get_category().lower()
     hw_test = hw_link + '_test'
-    return su[lang].format(device.get_display_name(), device.get_category(), hw_link, hw_test, title)
+    return select_lang(su).format(device.get_display_name(), device.get_category(), hw_link, hw_test, title)
 
-def make_rst_examples(title_from_file, device, base_path, dirname, filename_prefix, filename_suffix, include_name):
+def make_rst_examples(title_from_file, device, base_path, dirname,
+                      filename_prefix, filename_suffix, include_name):
     ex = {
     'en': """
 {0}
@@ -143,6 +212,12 @@ Examples
 The example code below is public domain.
 """,
     'de': """
+{0}
+
+Beispiele
+---------
+
+Der folgende Beispielcode ist Public Domain.
 """
     }
 
@@ -159,13 +234,22 @@ The example code below is public domain.
  :tab-width: 4
 """,
     'de': """
+{0}
+{1}
+
+`Download <https://github.com/Tinkerforge/{3}/raw/master/software/examples/{4}/{5}>`__
+
+.. literalinclude:: {2}
+ :language: {4}
+ :linenos:
+ :tab-width: 4
 """
     }
 
     ref = '.. _{0}_{1}_{2}_examples:\n'.format(device.get_underscore_name(),
                                                device.get_category().lower(),
                                                dirname)
-    examples = ex[lang].format(ref)
+    examples = select_lang(ex).format(ref)
     files = find_examples(device, base_path, dirname, filename_prefix, filename_suffix)
     copy_files = []
     for f in files:
@@ -173,7 +257,7 @@ The example code below is public domain.
         copy_files.append((f[1], include))
         title = title_from_file(f[0])
         git_name = device.get_underscore_name().replace('_', '-') + '-' + device.get_category().lower()
-        examples += imp[lang].format(title, '^'*len(title), include, git_name, dirname, f[0])
+        examples += select_lang(imp).format(title, '^'*len(title), include, git_name, dirname, f[0])
 
     copy_examples(copy_files, base_path)
     return examples
@@ -197,7 +281,7 @@ def find_examples(device, base_path, dirname, filename_prefix, filename_suffix):
     return files
 
 def copy_examples(copy_files, path):
-    doc_path = '{0}/doc'.format(path)
+    doc_path = '{0}/doc/{1}'.format(path, lang)
     print('  * Copying examples:')
     for copy_file in copy_files:
         doc_dest = '{0}/{1}'.format(doc_path, copy_file[1])
@@ -227,7 +311,12 @@ def underscore_to_headless_camel_case(name):
         ret += part[0].upper() + part[1:]
     return ret
 
-def generate(path, make_files):
+def generate(path, language, make_files):
+    global lang
+    global path_binding
+    lang = language
+    path_binding = path
+
     path_list = path.split('/')
     path_list[-1] = 'configs'
     path_config = '/'.join(path_list)
@@ -240,14 +329,27 @@ def generate(path, make_files):
         common_packets = __import__('brick_commonconfig').common_packets
     except:
         pass
-    
+
     for config in configs:
         if config.endswith('_config.py'):
+            if '_barometer_' in config or '_gps_' in config:
+                continue
+
             module = __import__(config[:-3])
             print(" * {0}".format(config[:-10]))            
             if 'brick_' in config and not module.com.has_key('common_included'):
                 module.com['packets'].extend(common_packets)
                 module.com['common_included'] = True
+            make_files(module.com, path)
+
+def import_and_make(configs, path, make_files):
+    for config in configs:
+        if config.endswith('_config.py'):
+            if '_barometer_' in config or '_gps_' in config:
+                continue
+
+            module = __import__(config[:-3])
+            print(" * {0}".format(config[:-10]))
             make_files(module.com, path)
 
 class Packet:

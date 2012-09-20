@@ -17,7 +17,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetMaxVelocity', 'set_max_velocity'), 
 'elements': [('velocity', 'uint16', 1, 'in')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Sets the maximum velocity of the stepper motor in steps per second.
@@ -41,7 +41,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetMaxVelocity', 'get_max_velocity'), 
 'elements': [('velocity', 'uint16', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the velocity as set by :func:`SetMaxVelocity`.
@@ -57,7 +57,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetCurrentVelocity', 'get_current_velocity'), 
 'elements': [('velocity', 'uint16', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the *current* velocity of the stepper motor in steps per second.
@@ -74,7 +74,7 @@ com['packets'].append({
 'name': ('SetSpeedRamping', 'set_speed_ramping'), 
 'elements': [('acceleration', 'uint16', 1, 'in'),
              ('deacceleration', 'uint16', 1, 'in')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Sets the acceleration and deacceleration of the stepper motor. The values
@@ -113,7 +113,7 @@ com['packets'].append({
 'name': ('GetSpeedRamping', 'get_speed_ramping'), 
 'elements': [('acceleration', 'uint16', 1, 'out'),
              ('deacceleration', 'uint16', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the acceleration and deacceleration as set by 
@@ -131,7 +131,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('FullBrake', 'full_brake'), 
 'elements': [],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Executes an active full brake. 
@@ -161,7 +161,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetCurrentPosition', 'set_current_position'), 
 'elements': [('position', 'int32', 1, 'in')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Sets the current steps of the internal step counter. This can be used to
@@ -171,7 +171,7 @@ is reached (e.g. when a CNC machine reaches a corner).
 'de':
 """
 Setzt den aktuellen Schrittwert des internen Schrittzählers. Dies kann 
-benutzt werden um die aktuelle Position zu nullen wenn ein definierter
+benutzt werden um die aktuelle Position auf 0 zu setzen wenn ein definierter
 Startpunkt erreicht wurde (z.B. wenn eine CNC Maschine eine Ecke erreicht).
 """
 }]
@@ -181,7 +181,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetCurrentPosition', 'get_current_position'), 
 'elements': [('position', 'int32', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the current position of the stepper motor in steps. On startup
@@ -205,7 +205,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetTargetPosition', 'set_target_position'), 
 'elements': [('position', 'int32', 1, 'in')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Sets the target position of the stepper motor in steps. For example,
@@ -237,7 +237,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetTargetPosition', 'get_target_position'), 
 'elements': [('position', 'int32', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the last target position as set by :func:`SetTargetPosition`.
@@ -254,7 +254,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetSteps', 'set_steps'), 
 'elements': [('steps', 'int32', 1, 'in')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Sets the number of steps the stepper motor should run. Positive values
@@ -276,7 +276,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetSteps', 'get_steps'), 
 'elements': [('steps', 'int32', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the last steps as set by :func:`SetSteps`.
@@ -292,7 +292,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetRemainingSteps', 'get_remaining_steps'), 
 'elements': [('steps', 'int32', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the remaining steps of the last call of :func:`SetSteps`.
@@ -314,7 +314,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetStepMode', 'set_step_mode'), 
 'elements': [('mode', 'uint8', 1, 'in')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Sets the step mode of the stepper motor. Possible values are:
@@ -350,7 +350,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetStepMode', 'get_step_mode'), 
 'elements': [('mode', 'uint8', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the step mode as set by :func:`SetStepMode`.
@@ -366,7 +366,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('DriveForward', 'drive_forward'), 
 'elements': [],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Drives the stepper motor forward until :func:`DriveBackward` or
@@ -387,7 +387,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('DriveBackward', 'drive_backward'), 
 'elements': [],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Drives the stepper motor backward until :func:`DriveForward` or
@@ -408,7 +408,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('Stop', 'stop'), 
 'elements': [],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Stops the stepper motor with the deacceleration as set by 
@@ -426,7 +426,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetStackInputVoltage', 'get_stack_input_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the stack input voltage in mV. The stack input voltage is the
@@ -446,7 +446,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetExternalInputVoltage', 'get_external_input_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the external input voltage in mV. The external input voltage is
@@ -484,7 +484,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetCurrentConsumption', 'get_current_consumption'), 
 'elements': [('current', 'uint16', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the current consumption of the motor in mA.
@@ -500,7 +500,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetMotorCurrent', 'set_motor_current'), 
 'elements': [('current', 'uint16', 1, 'in')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Sets the current in mA with which the motor will be driven.
@@ -528,7 +528,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetMotorCurrent', 'get_motor_current'), 
 'elements': [('current', 'uint16', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the current as set by :func:`SetMotorCurrent`.
@@ -544,16 +544,16 @@ com['packets'].append({
 'type': 'function',
 'name': ('Enable', 'enable'), 
 'elements': [],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
-Enables the motor. The motor can be configured (maximum velocity, 
+Enables the driver chip. The driver parameters can be configured (maximum velocity,
 acceleration, etc) before it is enabled.
 """,
 'de':
 """
-Erteilt die Motorfreigabe. Der Motor kann vor der Freigabe
-konfiguriert werden (Geschwindigkeit, Beschleunigung, etc.).
+Aktiviert die Treiberstufe. Die Treiberparameter können vor der Aktivierung
+konfiguriert werden (maximale Geschwindigkeit, Beschleunigung, etc.).
 """
 }]
 })
@@ -562,17 +562,17 @@ com['packets'].append({
 'type': 'function',
 'name': ('Disable', 'disable'), 
 'elements': [],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
-Disables the motor. The configurations are kept (maximum velocity, 
+Disables the driver chip. The configurations are kept (maximum velocity,
 acceleration, etc) but the motor is not driven until it is enabled again.
 """,
 'de':
 """
-Deaktiviert den Motor. Die Konfiguration (Geschwindigkeit, Beschleunigung,
-etc.) bleibt erhalten aber der Motor wird nicht angesteuert bis die erneute
-Freigabe erfolgt.
+Deaktiviert die Treiberstufe. Die Konfiguration (Geschwindigkeit, Beschleunigung,
+etc.) bleibt erhalten aber der Motor wird nicht angesteuert bis eine erneute
+Aktivierung erfolgt.
 """
 }]
 })
@@ -581,14 +581,14 @@ com['packets'].append({
 'type': 'function',
 'name': ('IsEnabled', 'is_enabled'), 
 'elements': [('enabled', 'bool', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
-Returns true if the motor is enabled, false otherwise.
+Returns *true* if the driver chip is enabled, *false* otherwise.
 """,
 'de':
 """
-Gibt true zurück wenn die Motorfreigabe aktiv ist, sonst false.
+Gibt *true* zurück wenn die Treiberstufe aktiv ist, sonst *false*.
 """
 }]
 })
@@ -597,7 +597,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetDecay', 'set_decay'), 
 'elements': [('decay', 'uint16', 1, 'in')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Sets the decay mode of the stepper motor. The possible value range is
@@ -609,7 +609,7 @@ Changing the decay mode is only possible if synchronous rectification
 is enabled (see :func:`SetSyncRect`).
 
 For a good explanation of the different decay modes see 
-`this <http://robot.avayanex.com/?p=86/>`_ blog post by Avayan.
+`this <http://ebldc.com/?p=86/>`__ blog post by Avayan.
 
 A good decay mode is unfortunately different for every motor. The best
 way to work out a good decay mode for your stepper motor, if you can't
@@ -639,8 +639,8 @@ Eine Änderung des Decay Modus ist nur möglich wenn die Synchrongleichrichtung
 aktiviert ist (siehe :func:`SetSyncRect`).
 
 Für eine gute Erläuterung der verschiedenen Decay Modi siehe 
-`dieser <http://robot.avayanex.com/?p=86/>`_ Blogeintrag (Englisch) von Avayan oder
-`dieser <http://www.schrittmotor-blog.de/?tag=slow-decay>`_ Blogeintrag (Deutsch) von
+`diesen <http://ebldc.com/?p=86/>`__ Blogeintrag (Englisch) von Avayan oder
+`diesen <http://www.schrittmotor-blog.de/?p=51>`__ Blogeintrag (Deutsch) von
 T. Ostermann.
 
 Ein guter Decay Modus ist leider unterschiedlich für jeden Motor. Der beste
@@ -666,7 +666,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetDecay', 'get_decay'), 
 'elements': [('decay', 'uint16', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the decay mode as set by :func:`SetDecay`.
@@ -682,7 +682,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetMinimumVoltage', 'set_minimum_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the minimum voltage in mV, below which the :func:`UnderVoltage` callback
@@ -710,7 +710,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetMinimumVoltage', 'get_minimum_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the minimum voltage as set by :func:`SetMinimumVoltage`.
@@ -764,7 +764,7 @@ Dieser Callback wird ausgelöst immer wenn eine konfigurierte Position, wie von
 :func:`SetSteps` oder :func:`SetTargetPosition` gesetzt, erreicht wird. 
 
 .. note::
- Da es nicht möglich ist eine Rückmeldung vom Schrittmtor zu erhalten,
+ Da es nicht möglich ist eine Rückmeldung vom Schrittmotor zu erhalten,
  funktioniert dies nur wenn die konfigurierte Beschleunigung (siehe :func:`SetSpeedRamping`)
  kleiner oder gleich der maximalen Beschleunigung des Motors ist. Andernfalls
  wird der Motor hinter dem Vorgabewert zurückbleiben und der Callback wird
@@ -777,7 +777,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetSyncRect', 'set_sync_rect'), 
 'elements': [('sync_rect', 'bool', 1, 'in')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Turns synchronous rectification on or off (true/false).
@@ -795,7 +795,7 @@ For an explanation of synchronous rectification see
  suggest that you disable synchronous rectification. Otherwise the
  Brick may not be able to cope with the load and overheat.
 
-The default value is false.
+The default value is *false*.
 """,
 'de':
 """
@@ -805,16 +805,16 @@ Bei aktiver Synchrongleichrichtung kann der Decay Modus geändert werden
 (Siehe :func:`SetDecay`). Ohne Synchrongleichrichtung wird der Fast
 Decay Modus verwendet.
 
-Für eine Erläuterung der Synchrongleichrichtung siehe 
-`here <http://de.wikipedia.org/wiki/Gleichrichter#Synchrongleichrichter>__.
+Für eine Erläuterung der Synchrongleichrichtung siehe
+`hier <http://de.wikipedia.org/wiki/Gleichrichter#Synchrongleichrichter>`__.
 
 .. warning::
  Wenn hohe Geschwindigkeiten (> 10000 Schritte/s) mit einem großen
  Schrittmotor mit einer hohen Induktivität genutzt werden sollen, wird
- drigend geraten die Synchrongleichrichtung zu deaktivieren. Sonst kann
+ dringend geraten die Synchrongleichrichtung zu deaktivieren. Sonst kann
  es vorkommen, dass der Brick die Last nicht bewältigen kann und überhitzt.
  
-Der Standardwert ist deaktivert (false).
+Der Standardwert ist *false*.
 """
 }]
 })
@@ -823,10 +823,10 @@ com['packets'].append({
 'type': 'function',
 'name': ('IsSyncRect', 'is_sync_rect'), 
 'elements': [('sync_rect', 'bool', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
-Returns true if synchronous rectification is enabled, false otherwise.
+Returns *true* if synchronous rectification is enabled, *false* otherwise.
 """,
 'de':
 """
@@ -839,7 +839,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetTimeBase', 'set_time_base'), 
 'elements': [('time_base', 'uint32', 1, 'in')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Sets the time base of the velocity and the acceleration of the stepper brick
@@ -873,7 +873,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetTimeBase', 'get_time_base'), 
 'elements': [('time_base', 'uint32', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the time base as set by :func:`SetTimeBase`.
@@ -896,7 +896,7 @@ com['packets'].append({
              ('stack_voltage', 'uint16', 1, 'out'),
              ('external_voltage', 'uint16', 1, 'out'),
              ('current_consumption', 'uint16', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the following :word:`parameters`: The current velocity,
@@ -925,7 +925,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetAllDataPeriod', 'set_all_data_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the :func:`AllData` callback is triggered
@@ -947,7 +947,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAllDataPeriod', 'get_all_data_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the period as set by :func:`SetAllDataPeriod`.

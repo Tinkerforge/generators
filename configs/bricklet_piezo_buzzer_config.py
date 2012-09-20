@@ -16,7 +16,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('Beep', 'beep'), 
 'elements': [('duration', 'uint32', 1, 'in')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Beeps with the duration in ms. For example: If you set a value of 1000,
@@ -24,6 +24,8 @@ the piezo buzzer will beep for one second.
 """,
 'de':
 """
+Erzeugt einen Piepton mit der angegebenen Dauer in ms. Beispiel: Wenn der
+Wert auf 1000 gesetzt wird, erzeugt der Piezosummer einen Piepton für eine Sekunde.
 """
 }]
 })
@@ -32,7 +34,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('MorseCode', 'morse_code'), 
 'elements': [('morse', 'string', 60, 'in')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Sets morse code that will be played by the piezo buzzer. The morse code
@@ -47,6 +49,15 @@ The maximum string size is 60.
 """,
 'de':
 """
+Setzt Morsecode welcher vom Piezosummer abgespielt wird. Der Morsecode wird
+als Zeichenkette, mit den Zeichen "." (Punkt), "-" (Minus) und " " (Leerzeichen)
+für *kurzes Signale*, *langes Signale* und *Pausen*. Alle anderen Zeichen
+werden ignoriert.
+
+Beispiel: Wenn die Zeichenkette "...---..." gesetzt wird, gibt der Piezosummer neun
+Pieptöne aus mit den Dauern "kurz kurz kurz lang lang lang kurz kurz kurz".
+
+Die maximale Zeichenkettenlänge ist 60.
 """
 }]
 })
@@ -62,6 +73,8 @@ This callback is triggered if a beep set by :func:`Beep` is finished
 """,
 'de':
 """
+Dieser Callback wird ausgelöst wenn ein Piepton, wie von :func:`Beep` gesetzt,
+beendet wurde.
 """
 }]
 })
@@ -78,6 +91,8 @@ This callback is triggered if the playback of the morse code set by
 """,
 'de':
 """
+Dieser Callback wird ausgelöst wenn die Wiedergabe des Morsecodes, wie von
+:func:`MorseCode` gesetzt, beendet wurde.
 """
 }]
 })

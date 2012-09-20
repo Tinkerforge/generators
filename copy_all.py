@@ -14,13 +14,13 @@ def files_are_not_the_same(src_file, dest_path):
     except:
         return True
 
-    i = 0
-    example = 'example' in src_file.lower()
+    t = 'This file was automatically generated on'
     for l1, l2 in map(None, f1, f2):
-        if example or i > 2:
-            if l1 != l2:
-                return True
-        i += 1
+        if l1 != l2:
+            if t in l1 and t in l2:
+                continue
+
+            return True
         
     return False
 
@@ -55,28 +55,30 @@ for f in os.listdir(src_file_path):
             print(' * {0}'.format(f))
 
 print('')
-print('Copying documentation and examples:')
 doc_copy = [('_Brick_', 'Bricks'), 
             ('_Bricklet_', 'Bricklets')]
-doc_path = 'doc/source/Software'
+doc_path = 'doc/{0}/source/Software'
 
-for t in doc_copy:
-    dest_dir = '{0}/{1}/{2}'.format(start_path, doc_path, t[1])
-    if not os.path.exists(dest_dir):
-        os.makedirs(dest_dir)
+for lang in ['en', 'de']:
+    print("Copying '{0}' documentation and examples:".format(lang))
 
-for binding in bindings:
-    path_binding = '{0}/{1}'.format(path, binding)
-    src_file_path = '{0}/{1}'.format(path_binding, 'doc')
-    for f in os.listdir(src_file_path):
-        if not f.endswith('.swp'):
-            for t in doc_copy:
-                if t[0] in f:
-                    src_file = '{0}/{1}'.format(src_file_path, f)
-                    dest_path = '{0}/{1}/{2}'.format(start_path,
-                                                     doc_path,
-                                                     t[1])
-                    if files_are_not_the_same(src_file, dest_path):
-                        shutil.copy(src_file, dest_path)
-                        print(' * {0}'.format(f))
+    for t in doc_copy:
+        dest_dir = '{0}/{1}/{2}'.format(start_path, doc_path.format(lang), t[1])
+        if not os.path.exists(dest_dir):
+            os.makedirs(dest_dir)
+
+    for binding in bindings:
+        path_binding = '{0}/{1}'.format(path, binding)
+        src_file_path = '{0}/doc/{1}'.format(path_binding, lang)
+        for f in os.listdir(src_file_path):
+            if not f.endswith('.swp'):
+                for t in doc_copy:
+                    if t[0] in f:
+                        src_file = '{0}/{1}'.format(src_file_path, f)
+                        dest_path = '{0}/{1}/{2}'.format(start_path,
+                                                         doc_path.format(lang),
+                                                         t[1])
+                        if files_are_not_the_same(src_file, dest_path):
+                            shutil.copy(src_file, dest_path)
+                            print(' * {0}'.format(f))
 

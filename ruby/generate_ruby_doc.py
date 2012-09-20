@@ -35,8 +35,6 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 device = None
-lang = 'en'
-file_path = ''
 
 def type_to_rbtype(element):
     type_dict = {
@@ -81,8 +79,8 @@ def fix_links(text):
             name_right = ':rb:func:`#{1} <{0}#{1}>`'.format(cls, packet.get_underscore_name())
         text = text.replace(name_false, name_right)
 
-    text = text.replace(":word:`parameter`", parameter[lang])
-    text = text.replace(":word:`parameters`", parameters[lang])
+    text = text.replace(":word:`parameter`", common.select_lang(parameter))
+    text = text.replace(":word:`parameters`", common.select_lang(parameters))
 
     return text
 
@@ -95,7 +93,7 @@ def make_examples():
             s += l[0].upper() + l[1:] + ' '
         return s[:-1]
 
-    return common.make_rst_examples(title_from_file, device, file_path,
+    return common.make_rst_examples(title_from_file, device, common.path_binding,
                                     'ruby', 'example_', '.rb', 'Ruby')
 
 def make_parameter_list(packet):
@@ -135,6 +133,11 @@ def make_methods(typ):
  given in arrays of size 3 with the syntax [major, minor, revision].
 """,
     'de': """
+.. rb:function:: {0}#get_version -> [str, [int, int, int], [int, int, int]]
+
+ Gibt den Namen (inklusive Hardwareversion), die Firmwareversion 
+ und die Bindingsversion des Gerätes zurück. Die Firmware- und Bindingsversionen werden
+ als Array der Größe 3 mit der Syntax [Major, Minor, Revision] zurückgegeben.
 """
     }
 
@@ -150,18 +153,18 @@ def make_methods(typ):
             params = '(' + params + ')'
         pd = make_parameter_desc(packet, 'in')
         r = make_return_desc(packet)
-        d = fix_links(common.shift_right(packet.get_doc()[1][lang], 1))
+        d = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 1))
         desc = '{0}{1}'.format(pd, d)
         func = '{0}{1}#{2}{3}{5}\n{4}'.format(func_start,
-                                             cls,
-                                             name,
-                                             params,
-                                             desc,
-                                             r)
+                                              cls,
+                                              name,
+                                              params,
+                                              desc,
+                                              r)
         methods += func + '\n'
 
-    if typ == 'am':
-        methods += version_method[lang].format(cls)
+    if typ == 'af':
+        methods += common.select_lang(version_method).format(cls)
 
     return methods
 
@@ -171,13 +174,13 @@ def make_callbacks():
     cls = device.get_category() + device.get_camel_case_name()
     for packet in device.get_packets('callback'):
         param_desc = make_parameter_desc(packet, 'out')
-        desc = fix_links(common.shift_right(packet.get_doc()[1][lang], 1))
+        desc = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 1))
 
         func = '{0}{1}::CALLBACK_{2}\n{3}\n{4}'.format(func_start,
-                                                      cls,
-                                                      packet.get_upper_case_name(),
-                                                      param_desc,
-                                                      desc)
+                                                       cls,
+                                                       packet.get_upper_case_name(),
+                                                       param_desc,
+                                                       desc)
         cbs += func + '\n'
 
     return cbs
@@ -197,6 +200,17 @@ def make_api():
  :ref:`above <{0}_{2}_ruby_examples>`).
 """,
     'de': """
+.. rb:function:: {3}{1}::new(uid) -> {0}
+
+ Erzeugt ein Objekt mit der eindeutigen Geräte ID *uid*:
+
+ .. code-block:: ruby
+
+    {0} = {3}{1}.new 'YOUR_DEVICE_UID'
+
+ Dieses Objekt kann danach der IP Connection hinzugefügt werden (siehe Beispiele
+ :ref:`oben <{0}_{2}_ruby_examples>`).
+
 """
     }
 
@@ -211,43 +225,13 @@ def make_api():
  :ref:`below <{0}_{2}_ruby_callbacks>`.
 """,
     'de': """
-"""
-    }
+.. rb:function:: {3}{1}#register_callback(cb) {{ |param [, ...]| block }} -> nil
 
-    bm_str = {
-    'en': """
-Basic Methods
-^^^^^^^^^^^^^
+ :param cb: int
 
-{0}
-
-{1}
-""",
-    'de': """
-"""
-    }
-
-    am_str = {
-    'en': """
-Advanced Methods
-^^^^^^^^^^^^^^^^
-
-{0}
-""",
-    'de': """
-"""
-    }
-
-    ccm_str = {
-    'en': """
-Callback Configuration Methods
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-{0}
-
-{1}
-""",
-    'de': """
+ Registriert einen Callback mit der ID *cb* in den gegebenen Block. Die verfügbaren
+ IDs mit den zugehörigen Funktionssignaturen sind :ref:`unten <{0}_{2}_ruby_callbacks>`
+ zu finden.
 """
     }
 
@@ -274,13 +258,40 @@ The available constants with inherent number and type of parameters are
 described below.
 
 .. note::
- Using callbacks for recurring events is *always* prefered
- compared to using getters. It will use less USB bandwith and the latency
- will be a lot better, since there is no roundtrip time.
+ Using callbacks for recurring events is *always* preferred
+ compared to using getters. It will use less USB bandwidth and the latency
+ will be a lot better, since there is no round trip time.
 
 {0}
 """,
     'de': """
+.. _{1}_{2}_ruby_callbacks:
+
+Callbacks
+^^^^^^^^^
+
+*Callbacks* können mit *callback IDs* registriert werden um zeitkritische
+oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
+mit der Funktion :rb:func:`#register_callback <{4}{3}#register_callback>` des 
+Geräte Objektes durchgeführt werden. Der erste Parameter ist der Callback ID
+und der zweite Parameter der Block:
+
+.. code-block:: ruby
+
+    {1}.register_callback {4}{3}::CALLBACK_EXAMPLE, do |param|
+      puts "#{{param}}"
+    end
+
+Die verfügbaren Konstanten mit der dazugehörigen Parameteranzahl und -typen werden
+weiter unten beschrieben.
+
+.. note::
+ Callbacks für wiederkehrende Ereignisse zu verwenden ist 
+ *immer* zu bevorzugen gegenüber der Verwendung von Abfragen.
+ Es wird weniger USB-Bandbreite benutzt und die Latenz ist
+ erheblich geringer, da es keine Paketumlaufzeit gibt.
+
+{0}
 """
     }
 
@@ -297,56 +308,51 @@ All methods listed below are thread-safe.
 {2}
 """,
     'de': """
+{0}
+API
+---
+
+Alle folgend aufgelisteten Methoden sind Thread-sicher.
+
+{1}
+
+{2}
 """
     }
 
-    cre = create_str[lang].format(device.get_underscore_name(),
-                                  device.get_camel_case_name(),
-                                  device.get_category().lower(),
-                                  device.get_category())
-    reg = register_str[lang].format(device.get_underscore_name(),
-                                    device.get_camel_case_name(),
-                                    device.get_category().lower(),
-                                    device.get_category())
+    cre = common.select_lang(create_str).format(device.get_underscore_name(),
+                                                device.get_camel_case_name(),
+                                                device.get_category().lower(),
+                                                device.get_category())
+    reg = common.select_lang(register_str).format(device.get_underscore_name(),
+                                                  device.get_camel_case_name(),
+                                                  device.get_category().lower(),
+                                                  device.get_category())
 
-    bm = make_methods('bm')
-    am = make_methods('am')
-    ccm = make_methods('ccm')
+    bf = make_methods('bf')
+    af = make_methods('af')
+    ccf = make_methods('ccf')
     c = make_callbacks()
     api_str = ''
-    if bm:
-        api_str += bm_str[lang].format(cre, bm)
-    if am:
-        api_str += am_str[lang].format(am)
+    if bf:
+        api_str += common.select_lang(common.bf_str).format(cre, bf)
+    if af:
+        api_str += common.select_lang(common.af_str).format(af)
     if c:
-        api_str += ccm_str[lang].format(reg, ccm)
-        api_str += c_str[lang].format(c, device.get_underscore_name(),
-                                      device.get_category().lower(),
-                                      device.get_camel_case_name(),
-                                      device.get_category())
+        api_str += common.select_lang(common.ccf_str).format(reg, ccf)
+        api_str += common.select_lang(c_str).format(c, device.get_underscore_name(),
+                                                    device.get_category().lower(),
+                                                    device.get_camel_case_name(),
+                                                    device.get_category())
 
     ref = '.. _{0}_{1}_ruby_api:\n'.format(device.get_underscore_name(),
                                            device.get_category().lower())
 
     api_desc = ''
-    try:
-        api_desc = device.com['api'][lang]
-    except KeyError:
-        pass
+    if 'api' in device.com:
+        api_desc = common.select_lang(device.com['api'])
 
-    return api[lang].format(ref, api_desc, api_str)
-
-def copy_examples_for_zip():
-    examples = common.find_examples(device, file_path, 'ruby', 'example_', '.rb')
-    dest = os.path.join('/tmp/generator/gem/examples/',
-                        device.get_category().lower(),
-                        device.get_underscore_name())
-
-    if not os.path.exists(dest):
-        os.makedirs(dest)
-
-    for example in examples:
-        shutil.copy(example[1], dest)
+    return common.select_lang(api).format(ref, api_desc, api_str)
 
 def make_files(com_new, directory):
     global device
@@ -357,99 +363,16 @@ def make_files(com_new, directory):
     'de': 'Ruby Bindings'
     }
 
-    directory += '/doc'
+    directory = os.path.join(directory, 'doc', common.lang)
     if not os.path.exists(directory):
         os.makedirs(directory)
 
     f = file('{0}/{1}.rst'.format(directory, file_name), "w")
     f.write(common.make_rst_header(device, 'ruby', 'Ruby'))
-    f.write(common.make_rst_summary(device, title[lang]))
+    f.write(common.make_rst_summary(device, common.select_lang(title)))
     f.write(make_examples())
     f.write(make_api())
 
-    copy_examples_for_zip()
-
-def generate(path):
-    global file_path
-    file_path = path
-    path_list = path.split('/')
-    path_list[-1] = 'configs'
-    path_config = '/'.join(path_list)
-    sys.path.append(path_config)
-    configs = os.listdir(path_config)
-
-    # Make temporary generator directory
-    if os.path.exists('/tmp/generator'):
-        shutil.rmtree('/tmp/generator/')
-    os.makedirs('/tmp/generator/gem/source/lib/tinkerforge')
-    os.chdir('/tmp/generator')
-
-    # Make bindings
-    for config in configs:
-        if config.endswith('_config.py'):
-            module = __import__(config[:-3])
-            print(" * {0}".format(config[:-10]))
-            make_files(module.com, path)
-
-    # Copy bindings and readme
-    for filename in glob.glob(path + '/bindings/*.rb'):
-        shutil.copy(filename, '/tmp/generator/gem/source/lib/tinkerforge')
-
-    shutil.copy(path + '/ip_connection.rb', '/tmp/generator/gem/source/lib/tinkerforge')
-    shutil.copy(path + '/changelog.txt', '/tmp/generator/gem')
-    shutil.copy(path + '/readme.txt', '/tmp/generator/gem')
-
-    # Write version.rb
-    version = common.get_changelog_version(path)
-    file('/tmp/generator/gem/source/lib/tinkerforge/version.rb', 'wb').write("""
-module Tinkerforge
-  VERSION = '{0}.{1}.{2}'
-end
-""".format(*version))
-
-    # Write tinkerforge.rb
-    file('/tmp/generator/gem/source/lib/tinkerforge.rb', 'wb').write("""
-require 'tinkerforge/version'
-
-module Tinkerforge
-end
-""")
-
-    # Write tinkerforge.gemspec
-    file('/tmp/generator/gem/source/tinkerforge.gemspec', 'wb').write("""
-spec = Gem::Specification.new do |s|
-  s.name = 'tinkerforge'
-  s.version = '{0}.{1}.{2}'
-  s.summary = "Ruby API Bindings for Tinkerforge Bricks and Bricklets"
-  s.files = Dir['lib/*.rb'] + Dir['lib/tinkerforge/*.rb']
-  s.has_rdoc = true
-  s.rdoc_options << '--title' <<  'Tinkerforge'
-  s.author = "Matthias Bolte"
-  s.email = "matthias@tinkerforge.com"
-  s.homepage = "http://www.tinkerforge.com/"
-end
-""".format(*version))
-
-    # Make gem
-    os.chdir('/tmp/generator/gem/source')
-    args = ['/usr/bin/gem',
-            'build',
-            'tinkerforge.gemspec']
-    subprocess.call(args)
-
-    # Remove build stuff
-    os.remove('/tmp/generator/gem/source/tinkerforge.gemspec')
-    shutil.move('/tmp/generator/gem/source/tinkerforge-{0}.{1}.{2}.gem'.format(*version),
-                '/tmp/generator/gem/tinkerforge.gem')
-    shutil.move('/tmp/generator/gem/source/lib/tinkerforge.rb',
-                '/tmp/generator/gem/source/')
-    os.makedirs('/tmp/generator/gem/source/tinkerforge')
-    for filename in glob.glob('/tmp/generator/gem/source/lib/tinkerforge/*.rb'):
-        shutil.move(filename, '/tmp/generator/gem/source/tinkerforge/')
-    shutil.rmtree('/tmp/generator/gem/source/lib/')
-
-    # Make zip
-    common.make_zip('ruby', '/tmp/generator/gem', path, version)
-
 if __name__ == "__main__":
-    generate(os.getcwd())
+    for lang in ['en', 'de']:
+        common.generate(os.getcwd(), lang, make_files)

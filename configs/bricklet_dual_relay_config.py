@@ -17,7 +17,7 @@ com['packets'].append({
 'name': ('SetState', 'set_state'), 
 'elements': [('relay1', 'bool', 1, 'in'),
              ('relay2', 'bool', 1, 'in')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Sets the state of the relays, *true* means on and *false* means off. 
@@ -32,6 +32,15 @@ The default value is (false, false).
 """,
 'de':
 """
+Setzt den Zustand der Relais, *true* bedeutet ein und *false* aus.
+Beispiel: (true, false) schaltet Relais 1 ein und Relais 2 aus.
+
+Wenn nur eines der Relais gesetzt werden soll und der aktuelle Zustand des anderen Relais
+nicht bekannt ist, dann kann der Zustand mit :func:`GetState` ausgelesen werden.
+
+Laufende Monoflop Timer werden überschrieben wenn diese Funktion aufgerufen wird.
+
+Der Standardwert ist (false, false).
 """
 }]
 })
@@ -41,13 +50,14 @@ com['packets'].append({
 'name': ('GetState', 'get_state'), 
 'elements': [('relay1', 'bool', 1, 'out'),
              ('relay2', 'bool', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the state of the relays, *true* means on and *false* means off. 
 """,
 'de':
 """
+Gibt den Zustand der Relais zurück, *true* bedeutet ein und *false* aus.
 """
 }]
 })
@@ -58,7 +68,7 @@ com['packets'].append({
 'elements': [('relay', 'uint8', 1, 'in'),
              ('state', 'bool', 1, 'in'),
              ('time', 'uint32', 1, 'in')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 The first parameter can be 1 or 2 (relay 1 or relay 2). The second parameter 
@@ -79,6 +89,20 @@ connection is lost, the relay will turn off in at most two seconds.
 """,
 'de':
 """
+Der erste Parameter kann 1 oder 2 sein (Relais 1 oder Relais 2). Der zweite
+Parameter ist der gewünschte Zustand des Relais (*true* bedeutet ein und *false* aus).
+Der dritte Parameter stellt die Zeit (in ms) dar, welche das Relais den Zustand halten soll.
+
+Wenn diese Funktion mit den Parametern (1, true, 1500) aufgerufen wird:
+Relais 1 wird angeschaltet und nach 1,5s wieder ausgeschaltet.
+
+Ein Monoflop kann als Ausfallsicherung verwendet werden. Beispiel:
+Angenommen ein RS485 Bus und ein Dual Relay Bricklet ist an ein Slave Stapel verbunden.
+Jetzt kann diese Funktion sekündlich, mit einem Zeitparameter von 2 Sekunden, aufgerufen werden.
+Das Relais wird die gesamte Zeit ein sein. Wenn jetzt die RS485 Verbindung getrennt wird, 
+wird das Relais nach spätestens zwei Sekunden ausschalten.
+
+.. versionadded:: 1.1.1
 """
 }]
 })
@@ -90,7 +114,7 @@ com['packets'].append({
              ('state', 'bool', 1, 'out'),
              ('time', 'uint32', 1, 'out'),
              ('time_remaining', 'uint32', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns (for the given relay) the current state and the time as set by 
@@ -103,6 +127,12 @@ as 0.
 """,
 'de':
 """
+Gibt (für das angegebene Relais) den aktuellen Zustand und die Zeit, wie von 
+:func:`SetMonoflop` gesetzt, sowie die noch verbleibende Zeit bis zum Zustandswechsel, zurück.
+
+Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.
+
+.. versionadded:: 1.1.1
 """
 }]
 })
@@ -123,6 +153,11 @@ parameter contain the relay (1 or 2) and the current state of the relay
 """,
 'de':
 """
+Dieser Callback wird ausgelöst wenn ein Monoflop Timer abläuft (0 erreicht).
+Die Parameter enthalten das auslösende Relais (1 oder 2) und den aktuellen Zustand
+des Relais (der Zustand nach dem Monoflop).
+
+.. versionadded:: 1.1.1
 """
 }]
 })

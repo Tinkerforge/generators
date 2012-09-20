@@ -1,5 +1,5 @@
-This zip contains a C# library for all Tinkerforge Bricks and Bricklets
-(Tinkerforge.dll), the source of the dll (in source/) and all available C#
+This zip contains a C# library (.dll) for all Tinkerforge Bricks and Bricklets
+(Tinkerforge.dll), the source of the DLL (in source/) and all available C#
 examples (in examples/).
 
 The library has been compiled with:
@@ -22,7 +22,7 @@ In this folder we can now call the C# compiler with the following parameters
 1.) csc.exe       /target:exe /out:Example.exe /reference:Tinkerforge.dll ExampleConfiguration.cs
 2.) /usr/bin/gmcs /target:exe /out:Example.exe /reference:Tinkerforge.dll ExampleConfiguration.cs
 
-Or, alternatively add the dll and the Example in an C# IDE of your choice
-(such as Visual Studio or Mono Develop).
+Or, alternatively add the DLL and the Example in an C# development environment
+of your choice (such as Visual Studio or Mono Develop).
 
 Documentation for the API can be found at http://www.tinkerforge.com/doc/index.html

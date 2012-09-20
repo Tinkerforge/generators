@@ -33,7 +33,6 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 device = None
-lang = 'en'
 
 def fix_links(text):
     link = '{0}{1}::{2}()'
@@ -384,6 +383,10 @@ def make_methods():
                                                                                                  get_convert_type(element),
                                                                                                  offset,
                                                                                                  common.get_type_size(element[1]))
+            elif element[1] == 'string':
+                method += '  {0} := LEConvertStringFrom({1}, {2}, response);\n'.format(result,
+                                                                                       offset,
+                                                                                       element[2])
             else:
                 method += '  {0} := LEConvert{1}From({2}, response);\n'.format(result,
                                                                                get_convert_type(element),
@@ -394,7 +397,6 @@ def make_methods():
         method += 'end;\n\n'
 
         methods += method
-
 
     return methods
 
@@ -467,18 +469,5 @@ def make_files(com_new, directory):
     pas.write(make_methods())
     pas.write(make_callback_wrappers())
 
-def generate(path):
-    path_list = path.split('/')
-    path_list[-1] = 'configs'
-    path_config = '/'.join(path_list)
-    sys.path.append(path_config)
-    configs = os.listdir(path_config)
-
-    for config in configs:
-        if config.endswith('_config.py'):
-            module = __import__(config[:-3])
-            print(" * {0}".format(config[:-10]))
-            make_files(module.com, path)
-
 if __name__ == "__main__":
-    generate(os.getcwd())
+    common.generate(os.getcwd(), 'en', make_files)

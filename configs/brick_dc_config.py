@@ -16,7 +16,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetVelocity', 'set_velocity'),
 'elements': [('velocity', 'int16', 1, 'in')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Sets the velocity of the motor. Whereas -32767 is full speed backward,
@@ -53,7 +53,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetVelocity', 'get_velocity'),
 'elements': [('velocity', 'int16', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the velocity as set by :func:`SetVelocity`.
@@ -69,7 +69,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetCurrentVelocity', 'get_current_velocity'),
 'elements': [('velocity', 'int16', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the *current* velocity of the motor. This value is different
@@ -89,7 +89,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetAcceleration', 'set_acceleration'),
 'elements': [('acceleration', 'uint16', 1, 'in')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Sets the acceleration of the motor. It is given in *velocity/s*. An
@@ -128,7 +128,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAcceleration', 'get_acceleration'),
 'elements': [('acceleration', 'uint16', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the acceleration as set by :func:`SetAcceleration`.
@@ -144,7 +144,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetPWMFrequency', 'set_pwm_frequency'),
 'elements': [('frequency', 'uint16', 1, 'in')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Sets the frequency (in Hz) of the PWM with which the motor is driven.
@@ -162,7 +162,7 @@ The default frequency is 15 kHz.
 """
 Setzt die Frequenz (in Hz) der PWM, welche den Motor steuert.
 Der Wertebereich der Frequenz ist 1-20000Hz. Oftmals ist eine
-hohe Frequenz geräuschärmer und der Motor läuft dadurch ruhiger. Trotzdessen
+hohe Frequenz geräuschärmer und der Motor läuft dadurch ruhiger. Trotz dessen
 führt eine geringe Frequenz zu weniger Schaltvorgängen und somit zu
 weniger Schaltverlusten. Bei einer Vielzahl von Motoren ermöglichen
 geringere Frequenzen höhere Drehmomente.
@@ -179,7 +179,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetPWMFrequency', 'get_pwm_frequency'),
 'elements': [('frequency', 'uint16', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the PWM frequency (in Hz) as set by :func:`SetPWMFrequency`.
@@ -195,7 +195,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('FullBrake', 'full_brake'),
 'elements': [],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Executes an active full brake.
@@ -225,7 +225,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetStackInputVoltage', 'get_stack_input_voltage'),
 'elements': [('voltage', 'uint16', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the stack input voltage in mV. The stack input voltage is the
@@ -245,7 +245,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetExternalInputVoltage', 'get_external_input_voltage'),
 'elements': [('voltage', 'uint16', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the external input voltage in mV. The external input voltage is
@@ -283,7 +283,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetCurrentConsumption', 'get_current_consumption'),
 'elements': [('voltage', 'uint16', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the current consumption of the motor in mA.
@@ -299,15 +299,15 @@ com['packets'].append({
 'type': 'function',
 'name': ('Enable', 'enable'),
 'elements': [],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
-Enables the motor. The motor can be configured (velocity,
+Enables the driver chip. The driver parameters can be configured (velocity,
 acceleration, etc) before it is enabled.
 """,
 'de':
 """
-Erteilt die Motorfreigabe. Der Motor kann vor der Freigabe
+Aktiviert die Treiberstufe. Die Treiberparameter können vor der Aktivierung
 konfiguriert werden (Geschwindigkeit, Beschleunigung, etc.).
 """
 }]
@@ -317,17 +317,17 @@ com['packets'].append({
 'type': 'function',
 'name': ('Disable', 'disable'),
 'elements': [],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
-Disables the motor. The configurations are kept (velocity,
+Disables the driver chip. The configurations are kept (velocity,
 acceleration, etc) but the motor is not driven until it is enabled again.
 """,
 'de':
 """
-Deaktiviert den Motor. Die Konfiguration (Geschwindigkeit, Beschleunigung,
-etc.) bleibt erhalten aber der Motor wird nicht angesteuert bis die erneute
-Freigabe erfolgt.
+Deaktiviert die Treiberstufe. Die Konfiguration (Geschwindigkeit, Beschleunigung,
+etc.) bleibt erhalten aber der Motor wird nicht angesteuert bis eine erneute
+Aktivierung erfolgt.
 """
 }]
 })
@@ -336,14 +336,14 @@ com['packets'].append({
 'type': 'function',
 'name': ('IsEnabled', 'is_enabled'),
 'elements': [('enabled', 'bool', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
-Returns true if the motor is enabled, false otherwise.
+Returns *true* if the driver chip is enabled, *false* otherwise.
 """,
 'de':
 """
-Gibt true zurück wenn die Motorfreigabe aktiv ist, sonst false.
+Gibt *true* zurück wenn die Treiberstufe aktiv ist, sonst *false*.
 """
 }]
 })
@@ -352,7 +352,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetMinimumVoltage', 'set_minimum_voltage'),
 'elements': [('voltage', 'uint16', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the minimum voltage in mV, below which the :func:`UnderVoltage` callback
@@ -380,7 +380,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetMinimumVoltage', 'get_minimum_voltage'),
 'elements': [('voltage', 'uint16', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the minimum voltage as set by :func:`SetMinimumVoltage`
@@ -396,7 +396,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetDriveMode', 'set_drive_mode'),
 'elements': [('mode', 'uint8', 1, 'in')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Sets the drive mode. Possible modes are:
@@ -412,7 +412,8 @@ PWM and velocity, more exact accelerations and the possibility to drive
 with slower velocities.
 
 In Drive/Coast mode, the motor is always either driving or freewheeling.
-Advantages are: Less current consumption and less demands on the motor/driver.
+Advantages are: Less current consumption and less demands on the motor and
+driver chip.
 
 The default value is 0 = Drive/Brake.
 """,
@@ -423,7 +424,7 @@ Setzt den Fahrmodus. Verfügbare Modi sind:
 * 0 = Fahren/Bremsen
 * 1 = Fahren/Leerlauf
 
-Diese Modi sind verschiedene Arten der Motorsteuerung.
+Diese Modi sind verschiedene Arten der Motoransteuerung.
 
 Im Fahren/Bremsen Modus wird der Motor entweder gefahren oder gebremst.
 Es gibt keinen Leerlauf. Vorteile sind die lineare Korrelation zwischen PWM und
@@ -432,7 +433,7 @@ Geschwindigkeiten zu fahren.
 
 Im Fahren/Leerlauf Modus wir der Motor entweder gefahren oder befindet sich
 im Leerlauf. Vorteile sind die geringere Stromaufnahme und geringere
-Belastung des Motors bzw. der Treierstufe.
+Belastung des Motors und der Treiberstufe.
 
 Der Standardwert ist 0 = Fahren/Bremsen.
 """
@@ -443,7 +444,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetDriveMode', 'get_drive_mode'),
 'elements': [('mode', 'uint8', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the drive mode, as set by :func:`SetDriveMode`.
@@ -459,7 +460,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetCurrentVelocityPeriod', 'set_current_velocity_period'),
 'elements': [('period', 'uint16', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets a period in ms with which the :func:`CurrentVelocity` callback is triggered.
@@ -481,7 +482,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetCurrentVelocityPeriod', 'get_current_velocity_period'),
 'elements': [('period', 'uint16', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the period as set by :func:`SetCurrentVelocityPeriod`.
@@ -521,26 +522,26 @@ com['packets'].append({
 'en':
 """
 This callback is triggered if either the current consumption
-is too high (above 5A) or the temperature of the driver is too high
+is too high (above 5A) or the temperature of the driver chip is too high
 (above 175°C). These two possibilities are essentially the same, since the
-temperature will reach this threshold immediately if the motor draws too
+temperature will reach this threshold immediately if the motor consumes too
 much current. In case of a voltage below 3.3V (external or stack) this
 callback is triggered as well.
 
-If this callback is triggered, the driver gets disabled at the same time.
+If this callback is triggered, the driver chip gets disabled at the same time.
 That means, :func:`Enable` has to be called to drive the motor again.
 
 .. note::
  This callback only works in Drive/Brake mode (see :func:`SetDriveMode`). In
  Drive/Coast mode it is unfortunately impossible to reliably read the
- over current/over temperature signal from the driver chip.
+ overcurrent/overtemperature signal from the driver chip.
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn entweder der Stromverbrauch (über 5A)
 oder die Temperatur der Treiberstufe zu hoch ist (über 175°C). Beide
 Möglichkeiten sind letztendlich gleichbedeutend, da die Temperatur
-ihren Schwellwert überschreitet sobald der Motor zuviel Strom zieht.
+ihren Schwellwert überschreitet sobald der Motor zu viel Strom verbraucht.
 Im Falle einer Spannung unter 3,3V (Stapel- oder externe
 Spannungsversorgung) wird dieser Callback auch ausgelöst.
 

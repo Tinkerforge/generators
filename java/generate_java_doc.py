@@ -35,8 +35,6 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 device = None
-lang = 'en'
-file_path = ''
 
 def fix_links(text):
     cb_link = ':java:func:`{2}Listener <{0}{1}.{2}Listener>`'
@@ -62,8 +60,8 @@ def fix_links(text):
 
         text = text.replace(name_false, name_right)
 
-    text = text.replace(":word:`parameter`", parameter[lang])
-    text = text.replace(":word:`parameters`", parameters[lang])
+    text = text.replace(":word:`parameter`", common.select_lang(parameter))
+    text = text.replace(":word:`parameters`", common.select_lang(parameters))
     text = text.replace('Callback ', 'Listener ')
     text = text.replace(' Callback', ' Listener')
     text = text.replace('callback ', 'listener ')
@@ -77,7 +75,7 @@ def make_examples():
         f = f.replace('.java', '')
         return common.camel_case_to_space(f)
 
-    return common.make_rst_examples(title_from_file, device, file_path,
+    return common.make_rst_examples(title_from_file, device, common.path_binding,
                                     'java', 'Example', '.java', 'Java')
 
 def get_java_type(typ):
@@ -140,6 +138,7 @@ def make_obj_desc(packet):
  The returned object has the public member variables {0}.
 """,
     'de': """
+ Das zurückgegebene Objekt enthält die Public Member Variablen {0}.
 """
     }
 
@@ -149,12 +148,12 @@ def make_obj_desc(packet):
                                         common.underscore_to_headless_camel_case(element[0])))
 
     if len(var) == 1:
-        return desc[lang].format(var[0])
+        return common.select_lang(desc).format(var[0])
 
     if len(var) == 2:
-        return desc[lang].format(var[0] + ' and ' + var[1])
+        return common.select_lang(desc).format(var[0] + ' and ' + var[1])
 
-    return desc[lang].format(', '.join(var[:-1]) + ' and ' + var[-1])
+    return common.select_lang(desc).format(', '.join(var[:-1]) + ' and ' + var[-1])
 
 def make_methods(typ):
     version_method = {
@@ -169,6 +168,14 @@ def make_methods(typ):
  ``short[3] firmwareVersion`` and ``short[3] bindingVersion``.
 """,
     'de': """
+.. java:function:: public {0}.Version {0}::getVersion()
+
+ Gibt den Namen (inklusive Hardwareversion), die Firmwareversion 
+ und die Bindingsversion des Gerätes zurück. Die Firmware- und Bindingsversionen werden
+ als Array der Größe 3 mit der Syntax [Major, Minor, Revision] zurückgegeben.
+
+ Das zurückgegebene Objekt hat die Public Member Variablen ``String name``, 
+ ``short[3] firmwareVersion`` und ``short[3] bindingVersion``.
 """
     }
 
@@ -182,7 +189,7 @@ def make_methods(typ):
         ret_type = get_return_type(packet)
         name = packet.get_headless_camel_case_name()
         params = make_parameter_list(packet)
-        desc = fix_links(common.shift_right(packet.get_doc()[1][lang], 1))
+        desc = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 1))
         obj_desc = make_obj_desc(packet)
         func = '{0}public {1} {2}::{3}({4})\n{5}{6}'.format(func_start, 
                                                             ret_type,
@@ -193,8 +200,8 @@ def make_methods(typ):
                                                             obj_desc)
         methods += func + '\n'
 
-    if typ == 'am':
-        methods += version_method[lang].format(cls)
+    if typ == 'af':
+        methods += common.select_lang(version_method).format(cls)
 
     return methods
 
@@ -221,15 +228,15 @@ def make_callbacks():
     cbs = ''
     cls = device.get_camel_case_name()
     for packet in device.get_packets('callback'):
-        desc = fix_links(common.shift_right(packet.get_doc()[1][lang], 2))
+        desc = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 2))
         params = make_parameter_list(packet)
 
-        cbs += cb[lang].format(device.get_category(),
-                               cls,
-                               packet.get_camel_case_name(),
-                               packet.get_headless_camel_case_name(),
-                               params,
-                               desc)
+        cbs += common.select_lang(cb).format(device.get_category(),
+                                             cls,
+                                             packet.get_camel_case_name(),
+                                             packet.get_headless_camel_case_name(),
+                                             params,
+                                             desc)
 
     return cbs
 
@@ -248,6 +255,16 @@ def make_api():
  :ref:`above <{4}_{2}_java_examples>`).
 """,
     'de': """
+.. java:function:: class {3}{1}(String uid)
+
+ Erzeugt ein Objekt mit der eindeutigen Geräte ID *uid*:
+
+ .. code-block:: java
+
+  {3}{1} {0} = new {3}{1}("YOUR_DEVICE_UID");
+
+ Dieses Objekt kann danach der IP Connection hinzugefügt werden (siehe Beispiele
+ :ref:`oben <{4}_{2}_java_examples>`).
 """
     }
 
@@ -259,43 +276,29 @@ def make_api():
  :ref:`below <{0}_{2}_java_callbacks>`.
 """,
     'de': """
+.. java:function:: public void {3}{1}::addListener(Object o)
+
+ Registriert ein Listener Objekt. Die verfügbaren Listener werden
+ :ref:`unten <{0}_{2}_java_callbacks>` aufgelistet.
 """
     }
 
-    bm_str = {
+    ccf_str = {
     'en': """
-Basic Methods
-^^^^^^^^^^^^^
+Listener Configuration Functions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 {0}
 
 {1}
 """,
     'de': """
-"""
-    }
-
-    am_str = {
-    'en': """
-Advanced Methods
-^^^^^^^^^^^^^^^^
-
-{0}
-""",
-    'de': """
-"""
-    }
-
-    ccm_str = {
-    'en': """
-Listener Configuration Methods
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Konfigurationsfunktionen für Listener
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 {0}
 
 {1}
-""",
-    'de': """
 """
     }
 
@@ -324,13 +327,43 @@ The available listener classes with inherent methods to be overwritten
 are described below.
 
 .. note::
- Using listeners for recurring events is *always* prefered 
- compared to using getters. It will use less USB bandwith and the latency
- will be a lot better, since there is no roundtrip time.
+ Using listeners for recurring events is *always* preferred
+ compared to using getters. It will use less USB bandwidth and the latency
+ will be a lot better, since there is no round trip time.
 
 {0}
 """,
     'de': """
+.. _{1}_{2}_java_callbacks:
+
+Listener
+^^^^^^^^
+
+*Listener* können registriert werden um zeitkritische
+oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
+mit der Funktion :java:func:`addListener <{3}{4}::addListener>` des Geräte Objekts
+durchgeführt werden.
+
+Der Parameter ist ein Listener Klassen Objekt, z.B.:
+
+.. code-block:: java
+
+    device.addListener(new BrickDevice.PropertyListener() {{
+        public void property(int value) {{
+            System.out.println("Value: " + value);
+        }}
+    }});
+
+Die verfügbaren Listener Klassen mit den Methoden welche überschrieben
+werden können werden unterhalb beschrieben.
+
+.. note::
+ Listener für wiederkehrende Ereignisse zu verwenden ist 
+ *immer* zu bevorzugen gegenüber der Verwendung von Abfragen.
+ Es wird weniger USB-Bandbreite benutzt und die Latenz ist
+ erheblich geringer, da es keine Paketumlaufzeit gibt.
+
+{0}
 """
     }
 
@@ -341,8 +374,8 @@ API
 ---
 
 Generally, every method of the Java bindings that returns a value can
-throw a IPConnection.TimeoutException. This exception gets thrown if the
-device didn't respond. If a cable based connection is used, it is
+throw a ``IPConnection.TimeoutException``. This exception gets thrown if the
+device did not respond. If a cable based connection is used, it is
 unlikely that this exception gets thrown (Assuming nobody plugs the 
 device out). However, if a wireless connection is used, timeouts will occur
 if the distance to the device gets too big.
@@ -363,57 +396,69 @@ All methods listed below are thread-safe.
 {2}
 """,
     'de': """
+{0}
+API
+---
+
+Prinzipiell kann jede Methode der Java Bindings, welche einen Wert zurückgibt
+eine ``IPConnection.TimeoutException`` werfen. Diese Exception wird
+geworfen wenn das Gerät nicht antwortet. Wenn eine Kabelverbindung genutzt
+wird, ist es unwahrscheinlich, dass die Exception geworfen wird (unter der
+Annahme, dass das Gerät nicht abgesteckt wird). Bei einer drahtlosen Verbindung
+können Zeitüberschreitungen auftreten, sobald die Entfernung zum Gerät zu
+groß wird.
+
+Da Java nicht mehrere Rückgabewerte unterstützt und eine Referenzrückgabe
+für elementare Type nicht möglich ist, werden kleine Klassen verwendet, die
+nur aus Member Variablen bestehen (Vergleichbar mit Structs in C). Die Member
+Variablen des zurückgegebenen Objektes werden in der jeweiligen Methodenbeschreibung
+erläutert.
+
+Das Package für alle Brick/Bricklet Bindings und die IPConnection ist
+``com.tinkerforge.*``
+
+Alle folgend aufgelisteten Methoden sind Thread-sicher.
+
+{1}
+
+{2}
 """
     }
 
-    cre = create_str[lang].format(device.get_headless_camel_case_name(),
-                                  device.get_camel_case_name(),
-                                  device.get_category().lower(),
-                                  device.get_category(),
-                                  device.get_underscore_name())
-    reg = register_str[lang].format(device.get_underscore_name(),
-                                    device.get_camel_case_name(),
-                                    device.get_category().lower(),
-                                    device.get_category())
+    cre = common.select_lang(create_str).format(device.get_headless_camel_case_name(),
+                                                device.get_camel_case_name(),
+                                                device.get_category().lower(),
+                                                device.get_category(),
+                                                device.get_underscore_name())
+    reg = common.select_lang(register_str).format(device.get_underscore_name(),
+                                                  device.get_camel_case_name(),
+                                                  device.get_category().lower(),
+                                                  device.get_category())
 
-    bm = make_methods('bm')
-    am = make_methods('am')
-    ccm = make_methods('ccm')
+    bf = make_methods('bf')
+    af = make_methods('af')
+    ccf = make_methods('ccf')
     c = make_callbacks()
     api_str = ''
-    if bm:
-        api_str += bm_str[lang].format(cre, bm)
-    if am:
-        api_str += am_str[lang].format(am)
+    if bf:
+        api_str += common.select_lang(common.bf_str).format(cre, bf)
+    if af:
+        api_str += common.select_lang(common.af_str).format(af)
     if c:
-        api_str += ccm_str[lang].format(reg, ccm)
-        api_str += c_str[lang].format(c, device.get_underscore_name(),
-                                      device.get_category().lower(),
-                                      device.get_category(),
-                                      device.get_camel_case_name())
+        api_str += common.select_lang(ccf_str).format(reg, ccf)
+        api_str += common.select_lang(c_str).format(c, device.get_underscore_name(),
+                                                    device.get_category().lower(),
+                                                    device.get_category(),
+                                                    device.get_camel_case_name())
 
     ref = '.. _{0}_{1}_java_api:\n'.format(device.get_underscore_name(),
                                            device.get_category().lower())
 
     api_desc = ''
-    try:
-        api_desc = device.com['api'][lang]
-    except KeyError:
-        pass
+    if 'api' in device.com:
+        api_desc = common.select_lang(device.com['api'])
 
-    return api[lang].format(ref, api_desc, api_str)
-        
-def copy_examples_for_zip():
-    examples = common.find_examples(device, file_path, 'java', 'Example', '.java')
-    dest = os.path.join('/tmp/generator/jar/examples/', 
-                        device.get_category(),
-                        device.get_camel_case_name())
-
-    if not os.path.exists(dest):
-        os.makedirs(dest)
-
-    for example in examples:
-        shutil.copy(example[1], dest)
+    return common.select_lang(api).format(ref, api_desc, api_str)
 
 def make_files(com_new, directory):
     global device
@@ -423,73 +468,17 @@ def make_files(com_new, directory):
     'en': 'Java bindings',
     'de': 'Java Bindings'
     }
-    
-    directory += '/doc'
+
+    directory = os.path.join(directory, 'doc', common.lang)
     if not os.path.exists(directory):
         os.makedirs(directory)
 
     f = file('{0}/{1}.rst'.format(directory, file_name), "w")
     f.write(common.make_rst_header(device, 'java', 'Java'))
-    f.write(common.make_rst_summary(device, title[lang]))
+    f.write(common.make_rst_summary(device, common.select_lang(title)))
     f.write(make_examples())
     f.write(make_api())
 
-    copy_examples_for_zip()
-
-def generate(path):
-    global file_path
-    file_path = path
-    path_list = path.split('/')
-    path_list[-1] = 'configs'
-    path_config = '/'.join(path_list)
-    sys.path.append(path_config)
-    configs = os.listdir(path_config)
-
-    # Make temporary generator directory
-    if os.path.exists('/tmp/generator'):
-        shutil.rmtree('/tmp/generator/')
-    os.makedirs('/tmp/generator/jar/source/com/tinkerforge')
-    os.chdir('/tmp/generator')
-
-    # Make bindings
-    for config in configs:
-        if config.endswith('_config.py'):
-            module = __import__(config[:-3])
-            print(" * {0}".format(config[:-10]))            
-            make_files(module.com, path)
-
-    # Copy bindings and readme
-    for filename in glob.glob(path + '/bindings/*.java'):
-        shutil.copy(filename, '/tmp/generator/jar/source/com/tinkerforge')
-
-    shutil.copy(path + '/Device.java', '/tmp/generator/jar/source/com/tinkerforge')
-    shutil.copy(path + '/IPConnection.java', '/tmp/generator/jar/source/com/tinkerforge')
-    shutil.copy(path + '/changelog.txt', '/tmp/generator/jar')
-    shutil.copy(path + '/Readme.txt', '/tmp/generator/jar')
-
-    # Make Manifest
-    version = common.get_changelog_version(path)
-    file('/tmp/generator/manifest.txt', 'wb').write('Bindings-Version: {0}.{1}.{2}\n'.format(*version))
-
-    # Make jar
-    args = ['/usr/bin/javac /tmp/generator/jar/source/com/tinkerforge/*.java']
-    subprocess.call(args, shell=True)
-
-    os.chdir('/tmp/generator/jar/source')
-    args = ['/usr/bin/jar ' +
-            'cfm ' +
-            '/tmp/generator/jar/Tinkerforge.jar ' +
-            '/tmp/generator/manifest.txt ' +
-            'com']
-    subprocess.call(args, shell=True)
-
-    # Remove class
-    for f in os.listdir('/tmp/generator/jar/source/com/tinkerforge/'):
-        if f.endswith('.class'):
-            os.remove('/tmp/generator/jar/source/com/tinkerforge/' + f)
-
-    # Make zip
-    common.make_zip('java', '/tmp/generator/jar', path, version)
-
 if __name__ == "__main__":
-    generate(os.getcwd())
+    for lang in ['en', 'de']:
+        common.generate(os.getcwd(), lang, make_files)

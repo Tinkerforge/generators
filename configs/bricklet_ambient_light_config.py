@@ -16,7 +16,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetIlluminance', 'get_illuminance'), 
 'elements': [('illuminance', 'uint16', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the illuminance of the ambient light sensor. The value
@@ -44,19 +44,19 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAnalogValue', 'get_analog_value'), 
 'elements': [('value', 'uint16', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
-Returns the value as read by a 12 bit analog to digital converter.
+Returns the value as read by a 12-bit analog-to-digital converter.
 The value is between 0 and 4095.
 
 .. note::
  The value returned by :func:`GetIlluminance` is averaged over several samples
  to yield less noise, while :func:`GetAnalogValue` gives back raw
  unfiltered analog values. The only reason to use :func:`GetAnalogValue` is,
- if you need the full resolution of the analog to digital converter.
+ if you need the full resolution of the analog-to-digital converter.
 
- Also, the analog to digital converter covers three different ranges that are
+ Also, the analog-to-digital converter covers three different ranges that are
  set dynamically depending on the light intensity. It is impossible to
  distinguish between these ranges with the analog value.
 
@@ -66,13 +66,13 @@ callback :func:`AnalogValue` and set the period with
 """,
 'de':
 """
-Gibt den Wert, wie vom 12 bit Analog-Digital-Wandler gelesen, zurück. Der 
+Gibt den Wert, wie vom 12-Bit Analog-Digital-Wandler gelesen, zurück. Der
 Wertebereich ist 0 bis 4095.
 
 .. note::
  Der von :func:`GetIlluminance` zurückgegebene Wert ist über mehrere
  Messwerte gemittelt um das Rauschen zu vermindern, während :func:`GetAnalogValue`
- unverarbeitete Analogwerte zurückgibt. Der einzige Grund :func:`GetAnalogValue`
+ unverarbeitete Analogwerte zurück gibt. Der einzige Grund :func:`GetAnalogValue`
  zu nutzen, ist die volle Auflösung des Analog-Digital-Wandlers zu erhalten.
  
  Weiterhin deckt der Analog-Digital-Wandler drei unterschiedliche Bereiche ab,
@@ -86,12 +86,11 @@ den Callback :func:`AnalogValue` zu nutzen und die Periode mit
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': ('SetIlluminanceCallbackPeriod', 'set_illuminance_callback_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the :func:`Illuminance` callback is triggered
@@ -119,7 +118,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetIlluminanceCallbackPeriod', 'get_illuminance_callback_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the period as set by :func:`SetIlluminanceCallbackPeriod`.
@@ -136,7 +135,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetAnalogValueCallbackPeriod', 'set_analog_value_callback_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the :func:`AnalogValue` callback is triggered
@@ -164,7 +163,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAnalogValueCallbackPeriod', 'get_analog_value_callback_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the period as set by :func:`SetAnalogValueCallbackPeriod`.
@@ -183,7 +182,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'in'), 
              ('min', 'int16', 1, 'in'),
              ('max', 'int16', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the thresholds for the :func:`IlluminanceReached` callback. 
@@ -194,7 +193,7 @@ The following options are possible:
  :header: "Option", "Description"
  :widths: 10, 100
 
- "'x'",    "Callback is turned off."
+ "'x'",    "Callback is turned off"
  "'o'",    "Callback is triggered when the illuminance is *outside* the min and max values"
  "'i'",    "Callback is triggered when the illuminance is *inside* the min and max values"
  "'<'",    "Callback is triggered when the illuminance is smaller than the min value (max is ignored)"
@@ -213,7 +212,7 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
  
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Beleuchtungsstärke *ausserhalb* des min und max Wertes ist"
+ "'o'",    "Callback wird ausgelöst wenn die Beleuchtungsstärke *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn die Beleuchtungsstärke *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn die Beleuchtungsstärke kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn die Beleuchtungsstärke größer als der min Wert ist (max wird ignoriert)"
@@ -229,7 +228,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'out'), 
              ('min', 'int16', 1, 'out'),
              ('max', 'int16', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the threshold as set by :func:`SetIlluminanceCallbackThreshold`.
@@ -248,7 +247,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'in'), 
              ('min', 'uint16', 1, 'in'),
              ('max', 'uint16', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the thresholds for the :func:`AnalogValueReached` callback. 
@@ -259,7 +258,7 @@ The following options are possible:
  :header: "Option", "Description"
  :widths: 10, 100
 
- "'x'",    "Callback is turned off."
+ "'x'",    "Callback is turned off"
  "'o'",    "Callback is triggered when the analog value is *outside* the min and max values"
  "'i'",    "Callback is triggered when the analog value is *inside* the min and max values"
  "'<'",    "Callback is triggered when the analog value is smaller than the min value (max is ignored)"
@@ -278,12 +277,12 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
  
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Analogwert *ausserhalb* des min und max Wertes ist"
- "'i'",    "Callback wird ausgelöst wenn die Analogwert *innerhalb* des min und max Wertes ist"
- "'<'",    "Callback wird ausgelöst wenn die Analogwert kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn die Analogwert größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst wenn der Analogwert *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst wenn der Analogwert *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst wenn der Analogwert kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn der Analogwert größer als der min Wert ist (max wird ignoriert)"
  
-Der Standardwert ist ('x', 0, 0). 
+Der Standardwert ist ('x', 0, 0).
 """
 }]
 })
@@ -294,7 +293,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'out'), 
              ('min', 'uint16', 1, 'out'),
              ('max', 'uint16', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the threshold as set by :func:`SetAnalogValueCallbackThreshold`.
@@ -311,7 +310,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetDebouncePeriod', 'set_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the threshold callbacks
@@ -347,7 +346,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetDebouncePeriod', 'get_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the debounce period as set by :func:`SetDebouncePeriod`.
@@ -402,7 +401,7 @@ last triggering.
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAnalogValueCallbackPeriod`,
-ausgelöst. Der :word:`parameter` ist die Analogwert des Umgebungslichtsensors.
+ausgelöst. Der :word:`parameter` ist der Analogwert des Umgebungslichtsensors.
 
 :func:`AnalogValue` wird nur ausgelöst wenn sich der Analogwert seit der
 letzten Auslösung geändert hat.

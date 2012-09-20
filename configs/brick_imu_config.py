@@ -18,7 +18,7 @@ com['packets'].append({
 'elements': [('x', 'int16', 1, 'out'), 
              ('y', 'int16', 1, 'out'),
              ('z', 'int16', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """ 
 Returns the calibrated acceleration from the accelerometer for the 
@@ -33,7 +33,7 @@ to use the callback :func:`Acceleration` and set the period with
 Gibt die kalibrierten Beschleunigungen des Beschleunigungsmessers für die 
 X, Y und Z-Achse in mG zurück (G/1000, 1G = 9.80605m/s²).
 
-Wenn die kalibrierten Beschleunigunge periodisch abgefragt werden soll, wird empfohlen
+Wenn die kalibrierten Beschleunigungen periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Acceleration` zu nutzen und die Periode mit :func:`SetAccelerationPeriod`
 vorzugeben.
 """
@@ -46,7 +46,7 @@ com['packets'].append({
 'elements': [('x', 'int16', 1, 'out'), 
              ('y', 'int16', 1, 'out'),
              ('z', 'int16', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the calibrated magnetic field from the magnetometer for the 
@@ -74,7 +74,7 @@ com['packets'].append({
 'elements': [('x', 'int16', 1, 'out'), 
              ('y', 'int16', 1, 'out'),
              ('z', 'int16', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the calibrated angular velocity from the gyroscope for the 
@@ -111,7 +111,7 @@ com['packets'].append({
              ('ang_y', 'int16', 1, 'out'),
              ('ang_z', 'int16', 1, 'out'),
              ('temperature', 'int16', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the data from :func:`GetAcceleration`, :func:`GetMagneticField` 
@@ -143,7 +143,7 @@ com['packets'].append({
 'elements': [('roll', 'int16', 1, 'out'), 
              ('pitch', 'int16', 1, 'out'),
              ('yaw', 'int16', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the current orientation (roll, pitch, yaw) of the IMU Brick as Euler
@@ -184,7 +184,7 @@ com['packets'].append({
              ('y', 'float', 1, 'out'), 
              ('z', 'float', 1, 'out'),
              ('w', 'float', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the current orientation (x, y, z, w) of the IMU as 
@@ -199,7 +199,7 @@ You can go from quaternions to Euler angles with the following formula::
 This process is not reversible, because of the 
 `gimbal lock <http://en.wikipedia.org/wiki/Gimbal_lock>`__.
 
-Converting the quaternions to an OpenGL translation matrix is
+Converting the quaternions to an OpenGL transformation matrix is
 possible with the following formula::
 
  matrix = [[1 - 2*(y*y + z*z),     2*(x*y - w*z),     2*(x*z + w*y), 0],
@@ -225,7 +225,7 @@ Die Umrechnung von Quaternionen in Eulerwinkel ist mit folgender Formel möglich
 Diese Umrechnung ist irreversibel aufgrund der 
 `kardanischen Blockade <http://de.wikipedia.org/wiki/Gimbal_lock>`__.
 
-Die Umrechnung von Quaternionen in eine OpenGL Translationsmatrix ist
+Die Umrechnung von Quaternionen in eine OpenGL Transformationsmatrix ist
 mit folgender Formel möglich::
 
  matrix = [[1 - 2*(y*y + z*z),     2*(x*y - w*z),     2*(x*z + w*y), 0],
@@ -244,7 +244,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetIMUTemperature', 'get_imu_temperature'), 
 'elements': [('temperature', 'int16', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the temperature of the IMU Brick. The temperature is given in 
@@ -257,12 +257,11 @@ Gibt die Temperatur (in °C/100) des IMU Brick zurück.
 }] 
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': ('LedsOn', 'leds_on'), 
 'elements': [],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Turns the orientation and direction LEDs of the IMU Brick on.
@@ -278,7 +277,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('LedsOff', 'leds_off'), 
 'elements': [],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Turns the orientation and direction LEDs of the IMU Brick off.
@@ -294,11 +293,11 @@ com['packets'].append({
 'type': 'function',
 'name': ('AreLedsOn', 'are_leds_on'), 
 'elements': [('leds', 'bool', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
-Returns true if the orientation and direction LEDs of the IMU Brick
-are on, false otherwise.
+Returns *true* if the orientation and direction LEDs of the IMU Brick
+are on, *false* otherwise.
 """,
 'de':
 """
@@ -311,7 +310,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetAccelerationRange', 'set_acceleration_range'), 
 'elements': [('range', 'uint8', 1, 'in')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Not implemented yet.
@@ -327,7 +326,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAccelerationRange', 'get_acceleration_range'), 
 'elements': [('range', 'uint8', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Not implemented yet.
@@ -343,7 +342,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetMagnetometerRange', 'set_magnetometer_range'), 
 'elements': [('range', 'uint8', 1, 'in')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Not implemented yet.
@@ -359,7 +358,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetMagnetometerRange', 'get_magnetometer_range'), 
 'elements': [('range', 'uint8', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Not implemented yet.
@@ -375,7 +374,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetConvergenceSpeed', 'set_convergence_speed'), 
 'elements': [('speed', 'uint16', 1, 'in')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Sets the convergence speed of the IMU Brick in °/s. The convergence speed 
@@ -444,7 +443,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetConvergenceSpeed', 'get_convergence_speed'), 
 'elements': [('speed', 'uint16', 1, 'out')],
-'doc': ['bm', {
+'doc': ['bf', {
 'en':
 """
 Returns the convergence speed as set by :func:`SetConvergenceSpeed`.
@@ -461,7 +460,7 @@ com['packets'].append({
 'name': ('SetCalibration', 'set_calibration'), 
 'elements': [('typ', 'uint8', 1, 'in'),
              ('data', 'int16', 10, 'in')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 There are several different types that can be calibrated:
@@ -500,7 +499,7 @@ temperature for one of the sampling points.
 """,
 'de':
 """
-Es sind folgende verschiendene Kalibrierungen möglich:
+Es sind folgende verschiedene Kalibrierungen möglich:
 
 .. csv-table::
  :header: "Typ", "Beschreibung",        "Werte"
@@ -540,7 +539,7 @@ com['packets'].append({
 'name': ('GetCalibration', 'get_calibration'), 
 'elements': [('typ', 'uint8', 1, 'in'),
              ('data', 'int16', 10, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the calibration for a given type as set by :func:`SetCalibration`.
@@ -556,7 +555,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetAccelerationPeriod', 'set_acceleration_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the :func:`Acceleration` callback is triggered
@@ -578,7 +577,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAccelerationPeriod', 'get_acceleration_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the period as set by :func:`SetAccelerationPeriod`.
@@ -594,7 +593,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetMagneticFieldPeriod', 'set_magnetic_field_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the :func:`MagneticField` callback is triggered
@@ -612,7 +611,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetMagneticFieldPeriod', 'get_magnetic_field_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the period as set by :func:`SetMagneticFieldPeriod`.
@@ -628,7 +627,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetAngularVelocityPeriod', 'set_angular_velocity_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the :func:`AngularVelocity` callback is triggered
@@ -646,7 +645,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAngularVelocityPeriod', 'get_angular_velocity_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the period as set by :func:`SetAngularVelocityPeriod`.
@@ -662,7 +661,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetAllDataPeriod', 'set_all_data_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the :func:`AllData` callback is triggered
@@ -680,7 +679,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAllDataPeriod', 'get_all_data_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the period as set by :func:`SetAllDataPeriod`.
@@ -696,7 +695,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetOrientationPeriod', 'set_orientation_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the :func:`Orientation` callback is triggered
@@ -714,7 +713,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetOrientationPeriod', 'get_orientation_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the period as set by :func:`SetOrientationPeriod`.
@@ -730,7 +729,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetQuaternionPeriod', 'set_quaternion_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Sets the period in ms with which the :func:`Quaternion` callback is triggered
@@ -748,7 +747,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetQuaternionPeriod', 'get_quaternion_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
-'doc': ['ccm', {
+'doc': ['ccf', {
 'en':
 """
 Returns the period as set by :func:`SetQuaternionPeriod`.
@@ -818,7 +817,7 @@ for the x, y and z axis.
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAngularVelocityPeriod`,
-ausgelöst. Die :word:`parameters` sind die Winkelgewschindigkeiten der X, Y und Z-Achse.
+ausgelöst. Die :word:`parameters` sind die Winkelgeschwindigkeiten der X, Y und Z-Achse.
 """
 }] 
 })

@@ -9,7 +9,7 @@ common_packets.append({
 'function_id': 243,
 'name': ('Reset', 'reset'),
 'elements': [],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Calling this function will reset the Brick. Calling this function
@@ -35,13 +35,13 @@ common_packets.append({
 'function_id': 242,
 'name': ('GetChipTemperature', 'get_chip_temperature'),
 'elements': [('temperature', 'int16', 1, 'out')],
-'doc': ['am', {
+'doc': ['af', {
 'en':
 """
 Returns the temperature in °C/10 as measured inside the microcontroller. The
 value returned is not the ambient temperature!
 
-The temperature has an accuracy of +-15%. Practically it is only usefull as
+The temperature has an accuracy of +-15%. Practically it is only useful as
 an indicator for temperature changes.
 """,
 'de':

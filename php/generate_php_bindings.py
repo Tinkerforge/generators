@@ -33,7 +33,6 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 device = None
-lang = 'en'
 
 def fix_links(text):
     link = '{0}{1}::{2}()'
@@ -159,7 +158,7 @@ def make_callback_id_definitions():
     const CALLBACK_{0} = {1};
 """
     for packet in device.get_packets('callback'):
-        doc = '\n     * '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n'))
+        doc = '\n     * '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
         cbs += cb.format(packet.get_upper_case_name(), packet.get_function_id(), doc)
     return cbs + '\n'
 
@@ -370,7 +369,7 @@ def make_methods():
         if response_payload_size > 0:
             final_unpack = '        $payload = unpack(\'{0}\', $data);'.format('/'.join(unpack))
 
-        doc = '\n     * '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n') + [''] + make_parameter_doc(packet).split('\n'))
+        doc = '\n     * '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n') + [''] + make_parameter_doc(packet).split('\n'))
 
         if response_payload_elements > 1:
             method = method_multi.format(name_lower,
@@ -473,9 +472,9 @@ def make_callback_wrappers():
             foobar = '        $payload = unpack(\'{0}\', $data);'.format('/'.join(unpack))
 
         wrappers += wrapper.format(name,
-                                 foobar,
-                                 '\n'.join(collect),
-                                 packet.get_upper_case_name())
+                                   foobar,
+                                   '\n'.join(collect),
+                                   packet.get_upper_case_name())
 
     return wrappers
 
@@ -501,18 +500,5 @@ def make_files(com_new, directory):
     php.write(make_callback_wrappers())
     php.write("}\n\n?>\n")
 
-def generate(path):
-    path_list = path.split('/')
-    path_list[-1] = 'configs'
-    path_config = '/'.join(path_list)
-    sys.path.append(path_config)
-    configs = os.listdir(path_config)
-
-    for config in configs:
-        if config.endswith('_config.py'):
-            module = __import__(config[:-3])
-            print(" * {0}".format(config[:-10]))
-            make_files(module.com, path)
-
 if __name__ == "__main__":
-    common.generate(os.getcwd(), make_files)
+    common.generate(os.getcwd(), 'en', make_files)

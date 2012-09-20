@@ -32,7 +32,6 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 device = None
-lang = 'en'
 
 def fix_links(text):
     text = text.replace(":word:`parameter`", "parameter")
@@ -192,7 +191,7 @@ def make_methods():
         ns = packet.get_underscore_name()
         nh = ns.upper()
         par = make_parameter_list(packet)
-        doc = '\n        '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n'))
+        doc = '\n        '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
         cp = ''
         ct = ''
         if par != '':
@@ -247,4 +246,4 @@ def make_files(com_new, directory):
     py.write(make_register_callback_method())
 
 if __name__ == "__main__":
-    common.generate(os.getcwd(), make_files)
+    common.generate(os.getcwd(), 'en', make_files)

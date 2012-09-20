@@ -32,7 +32,6 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 device = None
-lang = 'en'
 
 def fix_links(text):
     link = '{{@link {0}_{1}}}'
@@ -151,7 +150,7 @@ def make_callback_defines():
 
     defines = ''
     for packet in device.get_packets('callback'):
-        doc = '\n * '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n'))
+        doc = '\n * '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
         defines += define_temp.format(device.get_upper_case_name(),
                                       packet.get_upper_case_name(),
                                       packet.get_function_id(),
@@ -288,8 +287,8 @@ def make_method_funcs():
         for element in packet.get_elements('out'):
             sf = make_short_form(packet.get_underscore_name())
             if element[1] == 'string':
-                temp = '\tstrcpy(ret_{0}, {1}r->{0});\n'
-                return_list += temp.format(element[0], sf)
+                temp = '\tstrncpy(ret_{0}, {1}r->{0}, {2});\n'
+                return_list += temp.format(element[0], sf, element[2])
             elif element[2] > 1:
                 if common.get_type_size(element[1]) > 1:
                     return_list += '\tfor (int i = 0; i < {3}; i++) ret_{0}[i] = ipcon_leconvert_{2}_from({1}r->{0}[i]);\n' \
@@ -416,7 +415,7 @@ static int {0}_callback_wrapper_{1}({2} *{0}, const unsigned char *buffer) {{
             if common.get_type_size(element[1]) > 1:
                 if element[2] > 1:
                     endian_list.append('\tfor (int i = 0; i < {3}; i++) {0}c->{1}[i] = ipcon_leconvert_{2}_from({0}c->{1}[i]);' \
-                                      .format(e, element[0], element[1], element[2]))
+                                       .format(e, element[0], element[1], element[2]))
                 else:
                     endian_list.append('\t{0}c->{1} = ipcon_leconvert_{2}_from({0}c->{1});'.format(e, element[0], element[1]))
         endian = '\n'.join(endian_list)
@@ -517,7 +516,7 @@ int {0}_{1}({2} *{0}{3});
     for packet in device.get_packets('function'):
         b = packet.get_underscore_name()
         d = make_parameter_list(packet)
-        doc = '\n * '.join(fix_links(packet.get_doc()[1][lang]).strip().split('\n'))
+        doc = '\n * '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
 
         funcs += func.format(a, b, c, d, doc, device.get_category())
 
@@ -577,4 +576,4 @@ def make_files(com_new, directory):
     h.write(make_end_h())
 
 if __name__ == "__main__":
-    common.generate(os.getcwd(), make_files)
+    common.generate(os.getcwd(), 'en', make_files)

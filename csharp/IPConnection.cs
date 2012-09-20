@@ -13,6 +13,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.IO;
+using System.Text;
 
 namespace Tinkerforge
 {
@@ -908,17 +909,17 @@ namespace Tinkerforge
 
 		static public string StringFrom(int position, byte[] array, int len) 
 		{
-			string s = "";
+			StringBuilder sb = new StringBuilder();
 			for(int i = position; i < position + len; i++) 
 			{
 				if(array[i] == 0)
 				{
 					break;
 				}
-				s += (char)array[i];
+				sb.Append((char)array[i]);
 			}
 
-			return s;
+			return sb.ToString();
 		}
 
 	}
