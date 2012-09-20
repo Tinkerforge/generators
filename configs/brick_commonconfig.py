@@ -41,18 +41,18 @@ common_packets.append({
 Returns the temperature in °C/10 as measured inside the microcontroller. The
 value returned is not the ambient temperature!
 
-The temperature is only proportional to the real temperature and it has an 
-accuracy of +-15%. Practically it is only useful as an indicator for 
+The temperature is only proportional to the real temperature and it has an
+accuracy of +-15%. Practically it is only useful as an indicator for
 temperature changes.
 """,
 'de':
 """
-Gibt die Temperatur in °C/10, gemessen im Microcontroller, aus. Der 
+Gibt die Temperatur in °C/10, gemessen im Mikrocontroller, aus. Der
 Rückgabewert ist nicht die Umgebungstemperatur.
 
-Die Genauigkeit der Temperatur ist proportional zur echten Temperatur
-und hat eine Genauigkeit von +-15%. Daher beschränkt sich der praktische
-Nutzen auf die Indikation von Temperaturveränderungen.
+Die Temperatur ist lediglich proportional zur echten Temperatur und hat eine
+Genauigkeit von +-15%. Daher beschränkt sich der praktische Nutzen auf die
+Indikation von Temperaturveränderungen.
 """
 }]
 })
