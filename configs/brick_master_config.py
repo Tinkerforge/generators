@@ -1030,7 +1030,7 @@ com['packets'].append({
 'type': 'function', 
 'name': ('SetWifiCertificate', 'set_wifi_certificate'), 
 'elements': [('index', 'uint16', 1, 'in'),
-             ('data', 'string', 32, 'in'),
+             ('data', 'uint8', 32, 'in'),
              ('data_length', 'uint8', 1, 'in')], 
 'doc': ['af', {
 'en':
@@ -1086,7 +1086,7 @@ com['packets'].append({
 'type': 'function', 
 'name': ('GetWifiCertificate', 'get_wifi_certificate'), 
 'elements': [('index', 'uint16', 1, 'in'),
-             ('data', 'string', 32, 'out'),
+             ('data', 'uint8', 32, 'out'),
              ('data_length', 'uint8', 1, 'out')], 
 'doc': ['af', {
 'en':
