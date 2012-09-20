@@ -906,7 +906,7 @@ namespace Tinkerforge
 
 		static public string StringFrom(int position, byte[] array, int len) 
 		{
-			StringBuilder sb = new StringBuilder();
+			StringBuilder sb = new StringBuilder(len);
 			for(int i = position; i < position + len; i++) 
 			{
 				if(array[i] == 0)
