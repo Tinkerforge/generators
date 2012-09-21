@@ -110,18 +110,11 @@ class CallbackThread extends Thread {
 				int length = ipcon.getLengthFromData(data);
 				ByteBuffer bb = ByteBuffer.wrap(data, 4, length - 4);
 				bb.order(ByteOrder.LITTLE_ENDIAN);
-				long uid_num = bb.getLong();
-				
-				String uid = ipcon.base58Encode(uid_num);
-				
-				String name = "";
-				for(int i = 0; i < 40; i++) {
-					name += (char)bb.get();
-				}
-				
+				String uid = ipcon.base58Encode(bb.getLong());
+				String name = ipcon.string(bb, 40);
 				short stackID = ipcon.unsignedByte(bb.get());
 				boolean isNew = bb.get() != 0;
-				
+
 				ipcon.enumerateListener.enumerate(uid, name, stackID, isNew);
 			} else {
 				byte stackID = ipcon.getStackIDFromData(data);
@@ -248,6 +241,29 @@ public class IPConnection {
 		return (data[2] & 0xFF) | ((data[3] & 0xFF) << 8);
 	}
 
+	public static String string(ByteBuffer buffer, int length) {
+		StringBuilder builder = new StringBuilder(length);
+		int i = 0;
+
+		while(i < length) {
+			char c = (char)buffer.get();
+			++i;
+
+			if (c == 0) {
+				break;
+			}
+
+			builder.append(c);
+		}
+
+		while(i < length) {
+			buffer.get();
+			++i;
+		}
+
+		return builder.toString();
+	}
+
 	public static short unsignedByte(byte data) {
 		return (short)(data & 0xFF);
 	}
@@ -311,15 +327,11 @@ public class IPConnection {
 
 		long uid = bb.getLong();
 		if(pendingAddDevice.uid == uid) {
-			pendingAddDevice.firmwareVersion[0] = IPConnection.unsignedByte(bb.get());
-			pendingAddDevice.firmwareVersion[1] = IPConnection.unsignedByte(bb.get());
-			pendingAddDevice.firmwareVersion[2] = IPConnection.unsignedByte(bb.get());
+			pendingAddDevice.firmwareVersion[0] = unsignedByte(bb.get());
+			pendingAddDevice.firmwareVersion[1] = unsignedByte(bb.get());
+			pendingAddDevice.firmwareVersion[2] = unsignedByte(bb.get());
 
-			String name = "";
-			for(int i = 0; i < 40; i++) {
-				name += (char)bb.get();
-			}
-
+			String name = string(bb, 40);
 			int i = name.lastIndexOf(' ');
 			if (i < 0 || !name.substring(0, i).replace('-', ' ').equals(pendingAddDevice.expectedName.replace('-', ' '))) {
 				return;
@@ -447,7 +459,7 @@ public class IPConnection {
 	 * has to be added to an IP connection before it can be used. Examples for
 	 * this can be found in the API documentation for every Brick and Bricklet.
 	 */
-	public void addDevice(Device device) throws IPConnection.TimeoutException {
+	public void addDevice(Device device) throws TimeoutException {
 		ByteBuffer request = createRequestBuffer(BROADCAST_ADDRESS, FUNCTION_GET_STACK_ID, (short)12);
 		request.putLong(device.uid);
 
@@ -464,9 +476,9 @@ public class IPConnection {
 
 				byte[] response = null;
 				try {
-					response = pendingAddDevice.responseQueue.poll(IPConnection.RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS);
+					response = pendingAddDevice.responseQueue.poll(RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS);
 					if(response == null) {
-						throw new IPConnection.TimeoutException("Could not add device " + base58Encode(device.uid) + ", timeout");
+						throw new TimeoutException("Could not add device " + base58Encode(device.uid) + ", timeout");
 					}
 				} catch (InterruptedException e) {
 					e.printStackTrace();
