@@ -326,7 +326,7 @@ public class IPConnection {
 		bb.order(ByteOrder.LITTLE_ENDIAN);
 
 		long uid = bb.getLong();
-		if(pendingAddDevice.uid == uid) {
+		if(pendingAddDevice.getUid() == uid) {
 			pendingAddDevice.firmwareVersion[0] = unsignedByte(bb.get());
 			pendingAddDevice.firmwareVersion[1] = unsignedByte(bb.get());
 			pendingAddDevice.firmwareVersion[2] = unsignedByte(bb.get());
@@ -339,7 +339,7 @@ public class IPConnection {
 
 			pendingAddDevice.name = name;
 			pendingAddDevice.stackID = unsignedByte(bb.get());
-			devices[pendingAddDevice.stackID] = pendingAddDevice;
+			devices[pendingAddDevice.getStackID()] = pendingAddDevice;
 			try {
 				pendingAddDevice.responseQueue.put(packet);
 			} catch(InterruptedException e) {
@@ -461,7 +461,7 @@ public class IPConnection {
 	 */
 	public void addDevice(Device device) throws TimeoutException {
 		ByteBuffer request = createRequestBuffer(BROADCAST_ADDRESS, FUNCTION_GET_STACK_ID, (short)12);
-		request.putLong(device.uid);
+		request.putLong(device.getUid());
 
 		synchronized(addDeviceMutex) {
 			pendingAddDevice = device;
@@ -478,7 +478,7 @@ public class IPConnection {
 				try {
 					response = pendingAddDevice.responseQueue.poll(RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS);
 					if(response == null) {
-						throw new TimeoutException("Could not add device " + base58Encode(device.uid) + ", timeout");
+						throw new TimeoutException("Could not add device " + base58Encode(device.getUid()) + ", timeout");
 					}
 				} catch (InterruptedException e) {
 					e.printStackTrace();

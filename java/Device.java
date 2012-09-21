@@ -12,8 +12,8 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.SynchronousQueue;
 
 public abstract class Device {
-	long uid = (long)0;
-	short stackID = (short)0;
+	private long uid = 0L;
+	short stackID = 0;
 	String expectedName = null;
 	String name = null;
 	short[] firmwareVersion = new short[3];
@@ -65,5 +65,17 @@ public abstract class Device {
 		version.bindingVersion[2] = bindingVersion[2];
 
 		return version;
+	}
+	
+	public long getUid() {
+		return uid;
+	}
+
+	public short getStackID() {
+		return stackID;
+	}
+	
+	public String getName() {
+		return name;
 	}
 }
