@@ -302,8 +302,8 @@ Pin 0 will get high and pin 3 will get low. In 1.5s pin 0 will get low and pin
 A monoflop can be used as a fail-safe mechanism. For example: Lets assume you
 have a RS485 bus and an IO-4 Bricklet connected to one of the slave
 stacks. You can now call this function every second, with a time parameter
-of two seconds and Pin 0 set to high. Pin 0 will be high all the time. If now
-the RS485 connection is lost, then Pin 0 will get low in at most two seconds.
+of two seconds and pin 0 set to high. Pin 0 will be high all the time. If now
+the RS485 connection is lost, then pin 0 will get low in at most two seconds.
 
 .. versionadded:: 1.1.1
 """,
@@ -317,7 +317,7 @@ Der zweite Parameter ist eine Bitmaske mit den gewünschten Zustanden der
 festgelegten Ausgangspins (*true* bedeutet logisch 1 und *false* logisch 0).
 
 Der dritte Parameter stellt die Zeit (in ms) dar, welche die Pins den Zustand
-halten soll.
+halten sollen.
 
 Wenn diese Funktion mit den Parametern ((1 << 0) | (1 << 3), (1 << 0), 1500)
 aufgerufen wird: Pin 0 wird auf logisch 1 und Pin 3 auf logisch 0 gesetzt.
