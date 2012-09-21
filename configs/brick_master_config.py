@@ -1162,3 +1162,52 @@ Gibt den Stromsparmodus zurück, wie von :func:`SetWifiPowerMode` gesetzt.
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function', 
+'name': ('GetWifiBufferInfo', 'get_wifi_buffer_info'), 
+'elements': [('overflow', 'uint32', 1, 'out'),
+             ('low_watermark', 'uint16', 1, 'out'),
+             ('used', 'uint16', 1, 'out'),
+], 
+'doc': ['af', {
+'en':
+"""
+Returns informations about the WIFI receive buffer. The WIFI
+receive buffer has a max size of 1500 byte and if data is transfered
+too fast, it might overflow.
+
+The return values are the number of overflows, the low watermark 
+(e.g. the smallest number of bytes that were free in the buffer) and
+the bytes that are currently used.
+
+You should always try to keep the buffer empty, otherwise you will
+have a permanent latency. A good rule of thumb is, that you can transfer
+1000 messages per second without problems.
+
+Try to not send more then 50 messages at a time without any kind of
+break between them. 
+
+.. versionadded:: 1.3.2
+""",
+'de':
+"""
+Gibt Informationen über denn WIFI Empfangsbuffer zurück. Der WIFI
+Empfangsbuffer hat eine maximale Größe von 1500 Byte und falls zuviele
+Daten übertragen werden, kann er überlaufen.
+
+Die Rückgabewerte sind die anzahl der Oveflows, die low watermark
+(d.h. die kleinste Anzahl an Byte die je noch frei waren im Buffer) und
+die Anzahl der im Moment verwendeten Bytes im Buffer.
+
+Es sollte immer versucht werden den Buffer leer zu halten, andernfalls
+ist mit einer permanenten Latenz zu rechnen. Eine gute Daumenregel ist,
+nicht mehr als 1000 Nachrichten pro Sekunde zu verschicken.
+
+Dabei sollten am besten nie mehr als 50 Nachrichten auf einmal ohne 
+Pausen gesendet werden.
+
+.. versionadded:: 1.3.2
+"""
+}]
+})
