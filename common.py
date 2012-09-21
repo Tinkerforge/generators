@@ -268,15 +268,19 @@ def find_examples(device, base_path, dirname, filename_prefix, filename_suffix):
     board = board.replace('_', '-')
     board_path = os.path.join(start_path, board, 'software/examples/' + dirname)
     files = []
-    for f in os.listdir(board_path):
-        if f.startswith(filename_prefix) and f.endswith(filename_suffix):
-            f_dir = '{0}/{1}'.format(board_path, f)
-            lines = 0
-            for line in open(os.path.join(f, f_dir)):
-                lines += 1
-            files.append((f, f_dir, lines))
+    
+    try:
+        for f in os.listdir(board_path):
+            if f.startswith(filename_prefix) and f.endswith(filename_suffix):
+                f_dir = '{0}/{1}'.format(board_path, f)
+                lines = 0
+                for line in open(os.path.join(f, f_dir)):
+                    lines += 1
+                files.append((f, f_dir, lines))
 
-    files.sort(lambda i, j: cmp(i[2], j[2]))
+        files.sort(lambda i, j: cmp(i[2], j[2]))
+    except:
+        return []
 
     return files
 
