@@ -45,7 +45,7 @@ alle anderen öffnen.
 Falls keine Gruppen verwendet werden (siehe :func:`SetGroup`), entsprechen
 die Pins der Beschriftung auf dem Quad Relay Bricklet.
 
-Falls Gruppen verwerndet werden, entsprechen die Pins den Elementen der
+Falls Gruppen verwendet werden, entsprechen die Pins den Elementen der
 Gruppe. Element 1 in der Gruppe bekommt Pins 0-3,
 Element 2 Pins 4-7, Element 3 Pins 8-11 und Element 4 Pins 12-15.
 """
@@ -59,11 +59,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the value mask as set by :func:`SetValue`.
+Returns the bitmask as set by :func:`SetValue`.
 """,
 'de':
 """
-Gibt die Wertemaske zurück, wie von :func:`SetValue` gesetzt.
+Gibt die Bitmaske zurück, wie von :func:`SetValue` gesetzt.
 """
 }]
 })
@@ -81,7 +81,7 @@ Configures a monoflop of the pins specified by the first parameter
 bitmask.
 
 The second parameter is a bitmask with the desired value of the specified
-output pins (*true* means relay closed and *false* means relay open).
+pins (*true* means relay closed and *false* means relay open).
 
 The third parameter indicates the time (in ms) that the pins should hold
 the value.
@@ -94,8 +94,8 @@ Pin 0 will close and pin 3 will open. In 1.5s pin 0 will open and pin
 A monoflop can be used as a fail-safe mechanism. For example: Lets assume you
 have a RS485 bus and a Quad Relay Bricklet connected to one of the slave
 stacks. You can now call this function every second, with a time parameter
-of two seconds and Pin 0 closed. Pin 0 will be closed all the time. If now
-the RS485 connection is lost, then Pin 0 will be opend in at most two seconds.
+of two seconds and pin 0 closed. Pin 0 will be closed all the time. If now
+the RS485 connection is lost, then pin 0 will be opened in at most two seconds.
 """,
 'de':
 """
@@ -103,14 +103,14 @@ Konfiguriert einen Monoflop für die Pins, wie mittels der Bitmaske
 des ersten Parameters festgelegt.
 
 Der zweite Parameter ist eine Bitmaske mit den gewünschten Zuständen der
-festgelegten Ausgangspins (*true* bedeutet Relais geschlossen und 
+festgelegten Pins (*true* bedeutet Relais geschlossen und
 *false* bedeutet Relais offen).
 
 Der dritte Parameter stellt die Zeit (in ms) dar, welche die Pins den Zustand
-halten sollem.
+halten sollen.
 
 Wenn diese Funktion mit den Parametern ((1 << 0) | (1 << 3), (1 << 0), 1500)
-aufgerufen wird: Pin 0 wird auf geschlossen und Pin 3 auf geöffnet.
+aufgerufen wird: Pin 0 wird auf geschlossen und Pin 3 auf geöffnet gesetzt.
 Nach 1,5s wird Pin 0 wieder geöffnet und Pin 3 geschlossen.
 
 Ein Monoflop kann zur Ausfallsicherung verwendet werden. Beispiel:
@@ -183,7 +183,7 @@ gefunden werden.
 Eine Gruppe besteht aus 4 Element. Element 1 in der Gruppe bekommt Pins 0-3,
 Element 2 Pins 4-7, Element 3 Pins 8-11 und Element 4 Pins 12-15.
 
-Jedes Element kann entwederauf einen der Ports ('a' bis 'd') gesetzt werden
+Jedes Element kann entweder auf einen der Ports ('a' bis 'd') gesetzt werden
 oder falls nicht genutzt 'n' gesetzt werden.
 
 Zum Beispiel: Falls zwei Quad Relay Bricklets mit Port A und Port B verbunden
@@ -226,7 +226,7 @@ can be grouped together.
 'de':
 """
 Gibt eine Bitmaske von Ports zurück die für die Gruppierung zur Verfügung
-stehen. Zum Beispiel der Werit 0b0101 bedeutet: Port *A* und Port *C* sind
+stehen. Zum Beispiel bedeutet der Wert 0b0101: Port *A* und Port *C* sind
 mit Bricklets verbunden die zusammen gruppiert werden können.
 """
 }]
