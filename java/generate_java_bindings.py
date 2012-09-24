@@ -95,8 +95,6 @@ package com.tinkerforge;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.concurrent.TimeUnit;
-
 """
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     return include.format(common.gen_text_star.format(date))
@@ -354,31 +352,21 @@ def make_methods():
     methods = ''
     method = """
 \t/**
-\t * {9}
+\t * {8}
 \t */
 \tpublic {0} {1}({2}) {3} {{
 \t\tByteBuffer bb = IPConnection.createRequestBuffer((byte)stackID, FUNCTION_{5}, (short){4});
 {6}
-\t\tipcon.write(this, bb, FUNCTION_{5}, {7});{8}
+{7}
 \t}}
 """
-    method_response = """
-
-\t\tbyte[] response = null;
-\t\ttry {{
-\t\t\tresponse = responseQueue.poll(IPConnection.RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS);
-\t\t\tif(response == null) {{
-\t\t\t\tthrow new IPConnection.TimeoutException("Did not receive response for {0} in time");
-\t\t\t}}
-\t\t}} catch (InterruptedException e) {{
-\t\t\te.printStackTrace();
-\t\t}}
+    method_no_response = """\t\tsendRequestNoResponse(bb.array());"""
+    method_response = """\t\tbyte[] response = sendRequestExpectResponse(bb.array(), FUNCTION_{0});
 
 \t\tbb = ByteBuffer.wrap(response, 4, response.length - 4);
 \t\tbb.order(ByteOrder.LITTLE_ENDIAN);
 
 {1}
-\t\tsemaphoreWrite.release();
 \t\treturn {2};"""
 
     loop = """\t\tfor(int i = 0; i < {0}; i++) {{
@@ -421,10 +409,8 @@ def make_methods():
             bbputs += bbput_format + '\n'
 
         throw = '' 
-        response = ''
-        has_ret = 'false'
+        response = method_no_response
         if len(packet.get_elements('out')) > 0:
-            has_ret = 'true'
             throw = 'throws IPConnection.TimeoutException'
             if len(packet.get_elements('out')) > 1:
                 bbgets, bbret = make_bbgets(packet, True)
@@ -435,7 +421,7 @@ def make_methods():
             else:
                 bbgets, bbret = make_bbgets(packet, False)
 
-            response = method_response.format(name_lower,
+            response = method_response.format(name_upper,
                                               bbgets,
                                               bbret)
         methods += method.format(ret,
@@ -445,7 +431,6 @@ def make_methods():
                                  size,
                                  name_upper,
                                  bbputs,
-                                 has_ret,
                                  response,
                                  doc)
 

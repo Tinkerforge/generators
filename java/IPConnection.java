@@ -292,27 +292,12 @@ public class IPConnection {
 		}
 	}
 
-	public void write(Device device, ByteBuffer bb, byte functionID, boolean hasReturn) {
+	public void write(byte[] data) {
 		try {
-			device.semaphoreWrite.acquire();
-		} catch(InterruptedException e) {
-			e.printStackTrace();
-			return;
-		}
-
-		if(hasReturn) {
-			device.expectedResponseFunctionID = functionID;
-		}
-
-		try {
-			out.write(bb.array());
+			out.write(data);
 		} catch(java.io.IOException e) {
 			e.printStackTrace();
 			return;
-		}
-
-		if(!hasReturn) {
-			device.semaphoreWrite.release();
 		}
 	}
 
