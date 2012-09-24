@@ -42,6 +42,12 @@ class ReceiveThread extends Thread {
 			try {
 				length = ipcon.in.read(pendingData, pendingLength,
 				                       pendingData.length - pendingLength);
+			} catch(java.net.SocketException e) {
+				if(ipcon.reconnect()) {
+					continue;
+				} else {
+					return;
+				}
 			} catch(java.io.IOException e) {
 				if(ipcon.receiveThreadFlag) {
 					e.printStackTrace();
@@ -145,6 +151,9 @@ public class IPConnection {
 	private Object addDeviceMutex = new Object();
 	protected LinkedBlockingQueue<byte[]> callbackQueue = new LinkedBlockingQueue<byte[]>();
 
+	private String host;
+	private int port;
+
 	boolean receiveThreadFlag = true;
 	boolean callbackThreadFlag = true;
 	Socket sock = null;
@@ -176,6 +185,9 @@ public class IPConnection {
 	 * listening at the given host and port.
 	 */
 	public IPConnection(String host, int port) throws java.io.IOException {
+		this.host = host;
+		this.port = port;
+
 		sock = new Socket(host, port);
 		out = sock.getOutputStream();
 		out.flush();
@@ -184,6 +196,55 @@ public class IPConnection {
 		callbackThread.start();
 		receiveThread = new ReceiveThread(this);
 		receiveThread.start();
+	}
+
+	void disconnect() {
+		try {
+			if(in != null) {
+				in.close();
+				in = null;
+			}
+		} catch(java.io.IOException e) {
+			e.printStackTrace();
+		}
+
+		try {
+			if(out != null) {
+				out.close();
+				out = null;
+			}
+		} catch(java.io.IOException e) {
+			e.printStackTrace();
+		}
+
+		try {
+			if(sock != null) {
+				sock.close();
+				sock = null;
+			}
+		} catch(java.io.IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	boolean reconnect() {
+		disconnect();
+
+		while(receiveThreadFlag) {
+			try {
+				sock = new Socket(this.host, this.port);
+				out = sock.getOutputStream();
+				out.flush();
+				in = sock.getInputStream();
+			} catch(java.io.IOException e) {
+				disconnect();
+				continue;
+			}
+
+			return true;
+		}
+
+		return false;
 	}
 
 	void handleResponse(byte[] packet) {
@@ -368,29 +429,7 @@ public class IPConnection {
 		// End receive thread
 		receiveThreadFlag = false;
 
-		try {
-			if(in != null) {
-				in.close();
-			}
-		} catch(java.io.IOException e) {
-			e.printStackTrace();
-		}
-
-		try {
-			if(out != null) {
-				out.close();
-			}
-		} catch(java.io.IOException e) {
-			e.printStackTrace();
-		}
-
-		try {
-			if(sock != null) {
-				sock.close();
-			}
-		} catch(java.io.IOException e) {
-			e.printStackTrace();
-		}
+		disconnect();
 
 		if (Thread.currentThread() != receiveThread) {
 			try {
