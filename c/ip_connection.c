@@ -330,6 +330,7 @@ static int ipcon_reconnect(IPConnection *ipcon) {
 		           (struct sockaddr *)&ipcon->server,
 		           sizeof(ipcon->server)) == SOCKET_ERROR) {
 			closesocket(ipcon->socket);
+			ipcon->socket = INVALID_SOCKET;
 			Sleep(1000);
 			continue;
 		}
@@ -338,6 +339,7 @@ static int ipcon_reconnect(IPConnection *ipcon) {
 		           (struct sockaddr *)&ipcon->server,
 		           sizeof(ipcon->server)) < 0) {
 			close(ipcon->socket);
+			ipcon->socket = -1;
 			sleep(1);
 			continue;
 		}
@@ -516,11 +518,18 @@ void ipcon_destroy(IPConnection *ipcon) {
 	// End receive thread
 	ipcon->thread_receive_flag = false;
 
-	shutdown(ipcon->socket, 2);
 #ifdef _WIN32
-	closesocket(ipcon->socket);
+	if(ipcon->socket != INVALID_SOCKET) {
+		shutdown(ipcon->socket, 2);
+		closesocket(ipcon->socket);
+		ipcon->socket = INVALID_SOCKET;
+	}
 #else
-	close(ipcon->socket);
+	if(ipcon->socket >= 0) {
+		shutdown(ipcon->socket, 2);
+		close(ipcon->socket);
+		ipcon->socket = -1;
+	}
 #endif
 
 #ifdef _WIN32
