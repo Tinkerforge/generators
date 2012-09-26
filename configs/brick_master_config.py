@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'version': [1, 3, 0],
+    'version': [1, 3, 2],
     'category': 'Brick',
     'name': ('Master', 'master', 'Master'),
     'manufacturer': 'Tinkerforge',
@@ -1178,7 +1178,7 @@ receive buffer has a max size of 1500 byte and if data is transfered
 too fast, it might overflow.
 
 The return values are the number of overflows, the low watermark 
-(e.g. the smallest number of bytes that were free in the buffer) and
+(i.e. the smallest number of bytes that were free in the buffer) and
 the bytes that are currently used.
 
 You should always try to keep the buffer empty, otherwise you will
@@ -1208,6 +1208,66 @@ Dabei sollten am besten nie mehr als 50 Nachrichten auf einmal ohne
 Pausen gesendet werden.
 
 .. versionadded:: 1.3.2
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('SetWifiRegulatoryDomain', 'set_wifi_regulatory_domain'), 
+'elements': [('domain', 'uint8', 1, 'in')], 
+'doc': ['af', {
+'en':
+"""
+Sets the regulatory domain of the WIFI Extension. Possible modes are:
+
+.. csv-table::
+ :header: "Mode", "Description"
+ :widths: 10, 90
+
+ "0", "FCC: Channel 1-11 (N/S America, Australia, New Zealand)"
+ "1", "ETSI: Channel 1-13 (Europe, Middle East, Africa)"
+ "2", "TELEC: Channel 1-14 (Japan)"
+
+The default value is 1 (ETSI).
+
+.. versionadded:: 1.3.4
+""",
+'de':
+"""
+Setzt den Geltungsbereich der WIFI Extension. Mögliche Werte sind:
+
+.. csv-table::
+ :header: "Mode", "Beschreibung"
+ :widths: 10, 90
+
+ "0", "FCC: Kanal 1-11 (N/S Amerika, Australien, Neuseeland)"
+ "1", "ETSI: Kanal 1-13 (Europa, Mittlerer Osten, Afrika)"
+ "2", "TELEC: Kanal 1-14 (Japan)"
+
+Der Standardwert ist 1 (ETSI).
+
+.. versionadded:: 1.3.4
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('GetWifiRegulatoryDomain', 'get_wifi_regulatory_domain'), 
+'elements': [('mode', 'uint8', 1, 'out')], 
+'doc': ['af', {
+'en':
+"""
+Returns the regulatory domain as set by :func:`SetWifiRegulatoryDomain`.
+
+.. versionadded:: 1.3.4
+""",
+'de':
+"""
+Gibt den Geltungsbereich zurück, wie von :func:`SetWifiRegulatoryDomain` gesetzt.
+
+.. versionadded:: 1.3.4
 """
 }]
 })
