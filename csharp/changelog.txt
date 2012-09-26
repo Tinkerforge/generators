@@ -29,3 +29,10 @@
 1.1.10: Fix race condition in AddDevice method
         Add monoflop functionality to IO-4 and IO-16 Bricklet API
 1.1.11: Add WIFI support
+1.1.12: Add getter for WIFI buffer status information
+        Change WIFI certificate getter/setter to transfer bytes instead of a string
+        Add API for setting of WIFI regulatory domain
+        Add reconnect functionality to IPConnection (for WIFI Extension)
+        Add API for Industrial Bricklets: Digital In 4, Digital Out 4 and Quad Relay
+        Use StringBuilder when deserializing strings
+        Avoid a race condition in expectedResponseFunctionID handling
