@@ -112,6 +112,7 @@ namespace Tinkerforge
 
 					socketStream = new NetworkStream(socket);
 				} catch {
+					Thread.Sleep(500);
 					continue;
 				}
 
@@ -138,12 +139,19 @@ namespace Tinkerforge
 				catch(IOException e)
 				{
 					if (e.InnerException != null &&
-					    e.InnerException is SocketException &&
-					    ((SocketException)e.InnerException).ErrorCode == 10054) { // WSAECONNRESET
-						if (Reconnect()) {
+					    e.InnerException is SocketException) {
+						int errorCode = ((SocketException)e.InnerException).ErrorCode;
+
+						if (errorCode == 10004) { // WSAEINTR
 							continue;
-						} else {
-							return;
+						}
+
+						if (errorCode == 10054) { // WSAECONNRESET
+							if (Reconnect()) {
+								continue;
+							} else {
+								return;
+							}
 						}
 					}
 
@@ -151,6 +159,7 @@ namespace Tinkerforge
 						System.Console.Error.WriteLine("Socket disconnected by Server, destroying IPConnection");
 						Destroy();
 					}
+
 					return;
 				}
 				catch(ObjectDisposedException)
