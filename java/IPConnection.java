@@ -238,6 +238,7 @@ public class IPConnection {
 				in = sock.getInputStream();
 			} catch(java.io.IOException e) {
 				disconnect();
+				Thread.sleep(500);
 				continue;
 			}
 
