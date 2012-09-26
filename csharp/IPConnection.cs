@@ -494,13 +494,17 @@ namespace Tinkerforge
 		{
 			lock (writeLock)
 			{
+				expectedResponseFunctionID = functionID;
+
 				ipcon.Write(request);
 
-				expectedResponseFunctionID = functionID;
 				if (!responseQueue.TryDequeue(out response, IPConnection.RESPONSE_TIMEOUT))
 				{
+					expectedResponseFunctionID = 0;
 					throw new TimeoutException("Did not receive response in time");
 				}
+
+				expectedResponseFunctionID = 0;
 			}
 		}
 	}
