@@ -267,7 +267,7 @@ def make_class():
             '    ///  Creates an object with the unique device ID <c>uid</c>. This object can\n' + \
             '    ///  then be added to the IP connection.\n' + \
             '    /// </summary>\n' + \
-            '    constructor Create(const uid_: string);\n' + \
+            '    constructor Create(const uid_: string);\n\n' + \
             '\n\n'.join(methods + props) + '\n' + \
             '  end;\n\n'
 
