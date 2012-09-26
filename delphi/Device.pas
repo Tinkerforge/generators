@@ -28,7 +28,15 @@ type
 
     constructor Create(const uid_: string);
     destructor Destroy; override;
+
+    /// <summary>
+    ///  Returns the name (including the hardware version), the firmware
+    ///  version and the binding version of the device. The firmware and
+    ///  binding versions are given in arrays of size 3 with the syntax
+    ///  [major, minor, revision].
+    /// </summary>
     procedure GetVersion(out name_: string; out firmwareVersion_: TVersionNumber; out bindingVersion_: TVersionNumber);
+
     procedure SendRequestNoResponse(const request: TByteArray);
     procedure SendRequestExpectResponse(const request: TByteArray; const functionID: byte; out response: TByteArray);
   end;
