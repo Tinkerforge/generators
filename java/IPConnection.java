@@ -236,9 +236,13 @@ public class IPConnection {
 				out = sock.getOutputStream();
 				out.flush();
 				in = sock.getInputStream();
-			} catch(java.io.IOException e) {
+			} catch(java.io.IOException e1) {
 				disconnect();
-				Thread.sleep(500);
+				try {
+					Thread.sleep(500);
+				} catch(InterruptedException e2) {
+					e2.printStackTrace();
+				}
 				continue;
 			}
 
