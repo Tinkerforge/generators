@@ -336,7 +336,7 @@ def generate(path, language, make_files):
 
     for config in configs:
         if config.endswith('_config.py'):
-            if '_barometer_' in config or '_gps_' in config:
+            if '_gps_' in config:
                 continue
 
             module = __import__(config[:-3])
@@ -349,7 +349,7 @@ def generate(path, language, make_files):
 def import_and_make(configs, path, make_files):
     for config in configs:
         if config.endswith('_config.py'):
-            if '_barometer_' in config or '_gps_' in config:
+            if '_gps_' in config:
                 continue
 
             module = __import__(config[:-3])

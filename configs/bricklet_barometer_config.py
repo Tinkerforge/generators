@@ -20,8 +20,8 @@ com['packets'].append({
 'en':
 """
 Returns the air pressure of the air pressure sensor. The value
-has a range of 1000 to 120000 and is given in mbar/100, i.e. a value
-of 100009 means that an air pressure of 1000.09 mbar is measured.
+has a range of 10000 to 1200000 and is given in mbar/1000, i.e. a value
+of 1001092 means that an air pressure of 1001.092 mbar is measured.
 
 If you want to get the air pressure periodically, it is recommended to use the
 callback :func:`AirPressure` and set the period with
@@ -30,8 +30,8 @@ callback :func:`AirPressure` and set the period with
 'de':
 """
 Gibt den Luftdruck des Luftdrucksensors zurück. Der Wertbereich
-ist von 1000 bis 120000 und ist in mbar/100 angegeben, d.h. bei einem Wert von 
-100009 wurde ein Luftdruck von 1000,09 mbar gemessen.
+ist von 10000 bis 1200000 und ist in mbar/1000 angegeben, d.h. bei einem Wert von
+1001092 wurde ein Luftdruck von 1001,092 mbar gemessen.
 
 Wenn der Luftdruck periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`AirPressure` zu nutzen und die Periode mit 
@@ -71,7 +71,7 @@ den Callback :func:`Altitude` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetTemperature', 'get_temperature'),
+'name': ('GetChipTemperature', 'get_chip_temperature'),
 'elements': [('temperature', 'int16', 1, 'out')],
 'doc': ['bf', {
 'en':
