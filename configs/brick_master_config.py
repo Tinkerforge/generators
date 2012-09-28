@@ -72,6 +72,7 @@ Possible extension types:
 
  "1",    "Chibi"
  "2",    "RS485"
+ "3",    "WIFI"
 
 The extension type is already set when bought and it can be set with the 
 Brick Viewer, it is unlikely that you need this function.
@@ -93,6 +94,7 @@ Mögliche Extensiontypen:
  
  "1",    "Chibi"
  "2",    "RS485"
+ "3",    "WIFI"
 
 Der Typ der Extension ist schon gesetzt beim Erwerb der Extension und kann über den
 Brick Viewer gesetzt werden. Daher ist es unwahrscheinlich, dass diese Funktion benötigt
