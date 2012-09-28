@@ -81,9 +81,9 @@ public abstract class Device {
 
 		synchronized(writeMutex)
 		{
-			ipcon.write(request);
-
 			expectedResponseFunctionID = functionID;
+
+			ipcon.write(request);
 
 			try {
 				response = responseQueue.poll(IPConnection.RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS);
@@ -92,6 +92,8 @@ public abstract class Device {
 				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
+			} finally {
+				expectedResponseFunctionID = 0;
 			}
 		}
 

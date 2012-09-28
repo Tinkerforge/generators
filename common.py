@@ -336,9 +336,6 @@ def generate(path, language, make_files):
 
     for config in configs:
         if config.endswith('_config.py'):
-            if '_barometer_' in config or '_gps_' in config:
-                continue
-
             module = __import__(config[:-3])
             print(" * {0}".format(config[:-10]))            
             if 'brick_' in config and not module.com.has_key('common_included'):
@@ -349,9 +346,6 @@ def generate(path, language, make_files):
 def import_and_make(configs, path, make_files):
     for config in configs:
         if config.endswith('_config.py'):
-            if '_barometer_' in config or '_gps_' in config:
-                continue
-
             module = __import__(config[:-3])
             print(" * {0}".format(config[:-10]))
             make_files(module.com, path)
