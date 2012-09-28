@@ -18,3 +18,4 @@
         Change WIFI certificate getter/setter to transfer bytes instead of a string
         Add API for setting of WIFI regulatory domain
         Add API for Industrial Bricklets: Digital In 4, Digital Out 4 and Quad Relay
+1.0.14: Add API for Barometer Bricklet

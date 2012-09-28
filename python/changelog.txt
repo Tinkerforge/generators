@@ -31,3 +31,4 @@
         Add reconnect functionality to IPConnection (for WIFI Extension)
         Add API for Industrial Bricklets: Digital In 4, Digital Out 4 and Quad Relay
         Trim NUL characters from strings properly
+1.0.22: Add API for Barometer Bricklet

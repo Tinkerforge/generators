@@ -32,3 +32,4 @@
         Use StringBuilder when deserializing strings and strip NUL characters
         Avoid a race condition in expectedResponseFunctionID handling
         Fix semaphore deadlock on timeout
+1.0.19: Add API for Barometer Bricklet

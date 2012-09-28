@@ -10,3 +10,4 @@
        Add API for Industrial Bricklets: Digital In 4, Digital Out 4 and Quad Relay
        Make TDevice.GetVersion work as documented
        Add inline code documentation
+1.0.5: Add API for Barometer Bricklet
