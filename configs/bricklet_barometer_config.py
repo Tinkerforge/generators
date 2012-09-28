@@ -71,35 +71,6 @@ den Callback :func:`Altitude` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetChipTemperature', 'get_chip_temperature'),
-'elements': [('temperature', 'int16', 1, 'out')],
-'doc': ['bf', {
-'en':
-"""
-Returns the temperature of the air pressure sensor. The value
-has a range of -4000 to 8500 and is given in °C/100, i.e. a value
-of 2007 means that a temperature of 20.07 °C is measured.
-
-This temperature is used internally for temperature compensation of the air
-pressure measurement. It is not as accurate as the temperature measured by the
-:ref:`temperature_bricklet` or the :ref:`temperature_ir_bricklet`.
-""",
-'de':
-"""
-Gibt die Temperatur des Luftdrucksensors zurück. Der Wertbereich
-ist von -4000 bis 8500 und ist in °C/100 angegeben, d.h. bei einem Wert von 
-2007 wurde eine Temperatur von 20,07 °C gemessen.
-
-Diese Temperatur wird intern zur Temperaturkompensation der Luftdruckmessung
-verwendet. Sie ist nicht so genau wie die Temperatur die vom
-:ref:`temperature_bricklet` oder dem :ref:`temperature_ir_bricklet` gemessen
-wird.
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
 'name': ('SetAirPressureCallbackPeriod', 'set_air_pressure_callback_period'),
 'elements': [('period', 'uint32', 1, 'in')],
 'doc': ['ccf', {
@@ -384,6 +355,35 @@ altitude.
 'de':
 """
 Kalibriert die Höhe indem die Referenzhöhe auf den aktuellen Wert der Höhe gesetzt wird.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetChipTemperature', 'get_chip_temperature'),
+'elements': [('temperature', 'int16', 1, 'out')],
+'doc': ['bf', {
+'en':
+"""
+Returns the temperature of the air pressure sensor. The value
+has a range of -4000 to 8500 and is given in °C/100, i.e. a value
+of 2007 means that a temperature of 20.07 °C is measured.
+
+This temperature is used internally for temperature compensation of the air
+pressure measurement. It is not as accurate as the temperature measured by the
+:ref:`temperature_bricklet` or the :ref:`temperature_ir_bricklet`.
+""",
+'de':
+"""
+Gibt die Temperatur des Luftdrucksensors zurück. Der Wertbereich
+ist von -4000 bis 8500 und ist in °C/100 angegeben, d.h. bei einem Wert von
+2007 wurde eine Temperatur von 20,07 °C gemessen.
+
+Diese Temperatur wird intern zur Temperaturkompensation der Luftdruckmessung
+verwendet. Sie ist nicht so genau wie die Temperatur die vom
+:ref:`temperature_bricklet` oder dem :ref:`temperature_ir_bricklet` gemessen
+wird.
 """
 }]
 })
