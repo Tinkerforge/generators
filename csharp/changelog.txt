@@ -37,3 +37,4 @@
         Use StringBuilder when deserializing strings
         Avoid a race condition in expectedResponseFunctionID handling
 1.1.13: Add API for Barometer Bricklet
+1.0.14: Replace Barometer Bricklet calibate function with getter/setter for reference air pressure
