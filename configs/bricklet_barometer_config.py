@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
-    'version': [1, 0, 0],
+    'version': [1, 1, 0],
     'category': 'Bricklet',
     'name': ('Barometer', 'barometer', 'Barometer'),
     'manufacturer': 'Tinkerforge',
@@ -30,7 +30,7 @@ callback :func:`AirPressure` and set the period with
 'de':
 """
 Gibt den Luftdruck des Luftdrucksensors zurück. Der Wertbereich
-ist von 10000 bis 1200000 und ist in mbar/1000 angegeben, d.h. bei einem Wert von
+geht von 10000 bis 1200000 und ist in mbar/1000 angegeben, d.h. bei einem Wert von
 1001092 wurde ein Luftdruck von 1001,092 mbar gemessen.
 
 Wenn der Luftdruck periodisch abgefragt werden soll, wird empfohlen
@@ -48,8 +48,8 @@ com['packets'].append({
 'en':
 """
 Returns the relative altitude of the air pressure sensor. The value is given in
-cm and represents the difference between the current altitude and the reference
-altitude that can be set with :func:`CalibrateAltitude`.
+cm and is caluclated based on the difference between the current air pressure
+and the reference air pressure that can be set with :func:`SetReferenceAirPressure`.
 
 If you want to get the altitude periodically, it is recommended to use the
 callback :func:`Altitude` and set the period with
@@ -57,14 +57,14 @@ callback :func:`Altitude` and set the period with
 """,
 'de':
 """
-Gibt die relative Höhe des Luftdrucksensors zurück. Der Wert
-ist in cm angegeben und entspricht der Differenz zwischen der aktuellen
-Höhe und der Referenzhöhe, welche mit :func:`CalibrateAltitude` gesetzt werden
-kann.
+Gibt die relative Höhe des Luftdrucksensors zurück. Der Wert ist in cm angegeben
+und wird auf Basis der Differenz zwischen dem aktuellen Luftdruck und dem
+Referenzluftdruck berechnet, welcher mit :func:`SetReferenceAirPressure` gesetzt
+werden kann.
 
-Wenn die Höhe periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`Altitude` zu nutzen und die Periode mit 
-:func:`SetAltitudeCallbackPeriod` vorzugeben.
+Wenn die Höhe periodisch abgefragt werden soll, wird empfohlen den Callback
+:func:`Altitude` zu nutzen und die Periode mit :func:`SetAltitudeCallbackPeriod`
+vorzugeben.
 """
 }]
 })
@@ -344,17 +344,40 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('CalibrateAltitude', 'calibrate_altitude'),
-'elements': [],
+'name': ('SetReferenceAirPressure', 'set_reference_air_pressure'),
+'elements': [('air_pressure', 'int32', 1, 'in')],
 'doc': ['bf', {
 'en':
 """
-Calibrates the altitude by setting the reference altitude to the current
-altitude.
+Sets the reference air pressure in mbar/1000 for the altitude calculation.
+Setting the reference to the current air pressure results in a calculated
+altitude of 0cm. Passing 0 is a shortcut for passing the current air pressure as
+reference.
+
+Well known reference values are the Q codes
+`QNH <http://en.wikipedia.org/wiki/QNH>`__ and
+`QFE <http://en.wikipedia.org/wiki/Mean_sea_level_pressure#Mean_sea_level_pressure>`__
+used in aviation.
+
+The default value is 1013.25mbar.
+
+.. versionadded:: 1.1.0
 """,
 'de':
 """
-Kalibriert die Höhe indem die Referenzhöhe auf den aktuellen Wert der Höhe gesetzt wird.
+Setzt den Referenzluftdruck in mbar/1000 für die Höhenberechnung. Wenn der
+aktuelle Luftdruckwert als Referenz übergeben wird dann gibt die Höhenberechnung
+0cm aus. Als Abkürzung kann auch 0 übergeben werden, dadurch wird der
+Referenzluftdruck intern auf den aktuellen Luftdruckwert gesetzt.
+
+Wohl bekannte Referenzluftdruckwerte, die in der Luftfahrt verwendet werden, sind
+`QNH <http://de.wikipedia.org/wiki/Barometrische_H%C3%B6henmessung_in_der_Luftfahrt#QNH>`__ und
+`QFE <http://de.wikipedia.org/wiki/Barometrische_H%C3%B6henmessung_in_der_Luftfahrt#QFE>`__
+aus dem Q-Schlüssel.
+
+Der Standardwert ist 1013,25mbar.
+
+.. versionadded:: 1.1.0
 """
 }]
 })
@@ -486,6 +509,27 @@ Der :word:`parameter` ist die Höhe des Luftdrucksensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
 mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetReferenceAirPressure', 'get_reference_air_pressure'),
+'elements': [('air_pressure', 'int32', 1, 'out')],
+'doc': ['bf', {
+'en':
+"""
+Returns the reference air pressure as set by :func:`SetReferenceAirPressure`.
+
+.. versionadded:: 1.1.0
+""",
+'de':
+"""
+Gibt den Referenzluftdruckwert zurück, wie von :func:`SetReferenceAirPressure`
+gesetzt.
+
+.. versionadded:: 1.1.0
 """
 }]
 })
