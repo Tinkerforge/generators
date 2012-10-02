@@ -21,7 +21,7 @@ for binding in bindings:
     sys.path.append(path_binding)
     module = __import__('generate_{0}_bindings'.format(binding))
     print("\nGenerating bindings for {0}:".format(binding))
-    common.generate(path_binding, 'en', module.make_files, common.prepare_bindings)
+    common.generate(path_binding, 'en', module.make_files, common.prepare_bindings, False)
 
 # doc
 for binding in bindings:
@@ -31,7 +31,7 @@ for binding in bindings:
     for lang in ['en', 'de']:
         print("\nGenerating '{0}' documentation for {1}:".format(lang, binding))
         print path_binding
-        common.generate(path_binding, lang, module.make_files, common.prepare_doc)
+        common.generate(path_binding, lang, module.make_files, common.prepare_doc, True)
 
 # zip
 for binding in bindings:

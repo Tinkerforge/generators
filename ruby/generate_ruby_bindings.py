@@ -244,4 +244,4 @@ def make_files(com_new, directory):
     py.write(make_register_callback_method())
 
 if __name__ == "__main__":
-    common.generate(os.getcwd(), lang, make_files, common.prepare_bindings)
+    common.generate(os.getcwd(), lang, make_files, common.prepare_bindings, False)

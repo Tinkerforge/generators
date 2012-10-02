@@ -415,4 +415,4 @@ def make_files(com_new, directory):
     csharp.write(make_register_callback())
 
 if __name__ == "__main__":
-    common.generate(os.getcwd(), 'en', make_files, common.prepare_bindings)
+    common.generate(os.getcwd(), 'en', make_files, common.prepare_bindings, False)
