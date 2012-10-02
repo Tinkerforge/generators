@@ -89,11 +89,11 @@ def make_methods(typ):
     }
     version_changed = {
     'en': """
- .. versionchanged:: 1.1.0
+ .. versionchanged:: 1.1.0~(Bindings)
     Result is returned. Previously it was passed as ``out`` parameter.
 """,
     'de': """
- .. versionchanged:: 1.1.0
+ .. versionchanged:: 1.1.0~(Bindings)
     Das Ergebnis wird zurückgegeben. In vorherigen Versionen wurde es als ``out`` Parameter übergeben.
 """
     }

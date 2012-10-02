@@ -361,7 +361,7 @@ used in aviation.
 
 The default value is 1013.25mbar.
 
-.. versionadded:: 1.1.0
+.. versionadded:: 1.1.0~(Plugin)
 """,
 'de':
 """
@@ -377,7 +377,7 @@ aus dem Q-Schlüssel.
 
 Der Standardwert ist 1013,25mbar.
 
-.. versionadded:: 1.1.0
+.. versionadded:: 1.1.0~(Plugin)
 """
 }]
 })
@@ -522,14 +522,14 @@ com['packets'].append({
 """
 Returns the reference air pressure as set by :func:`SetReferenceAirPressure`.
 
-.. versionadded:: 1.1.0
+.. versionadded:: 1.1.0~(Plugin)
 """,
 'de':
 """
 Gibt den Referenzluftdruckwert zurück, wie von :func:`SetReferenceAirPressure`
 gesetzt.
 
-.. versionadded:: 1.1.0
+.. versionadded:: 1.1.0~(Plugin)
 """
 }]
 })

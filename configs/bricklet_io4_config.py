@@ -305,7 +305,7 @@ stacks. You can now call this function every second, with a time parameter
 of two seconds and pin 0 set to high. Pin 0 will be high all the time. If now
 the RS485 connection is lost, then pin 0 will get low in at most two seconds.
 
-.. versionadded:: 1.1.1
+.. versionadded:: 1.1.1~(Plugin)
 """,
 'de':
 """
@@ -330,7 +330,7 @@ aufgerufen werden. Der Pin wird die gesamte Zeit im Zustand logisch 1 sein.
 Wenn jetzt die RS485 Verbindung getrennt wird, wird der Pin nach spätestens zwei
 Sekunden in den Zustand logisch 0 wechseln.
 
-.. versionadded:: 1.1.1
+.. versionadded:: 1.1.1~(Plugin)
 """
 }]
 })
@@ -351,7 +351,7 @@ Returns (for the given pin) the current value and the time as set by
 If the timer is not running currently, the remaining time will be returned
 as 0.
 
-.. versionadded:: 1.1.1
+.. versionadded:: 1.1.1~(Plugin)
 """,
 'de':
 """
@@ -361,7 +361,7 @@ Zustandswechsel, zurück.
 
 Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.
 
-.. versionadded:: 1.1.1
+.. versionadded:: 1.1.1~(Plugin)
 """
 }]
 })
@@ -378,7 +378,7 @@ This callback is triggered whenever a monoflop timer reaches 0. The
 :word:`parameters` contain the involved pins and the current value of the pins
 (the value after the monoflop).
 
-.. versionadded:: 1.1.1
+.. versionadded:: 1.1.1~(Plugin)
 """,
 'de':
 """
@@ -386,7 +386,7 @@ Dieser Callback wird ausgelöst wenn ein Monoflop Timer abläuft (0 erreicht).
 :word:`parameters` enthalten die beteiligten Pins als Bitmaske und den aktuellen
 Zustand als Bitmaske (der Zustand nach dem Monoflop).
 
-.. versionadded:: 1.1.1
+.. versionadded:: 1.1.1~(Plugin)
 """
 }]
 })
