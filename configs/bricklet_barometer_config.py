@@ -386,7 +386,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetChipTemperature', 'get_chip_temperature'),
 'elements': [('temperature', 'int16', 1, 'out')],
-'doc': ['bf', {
+'doc': ['af', {
 'en':
 """
 Returns the temperature of the air pressure sensor. The value
