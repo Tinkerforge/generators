@@ -469,7 +469,10 @@ typedef void (*{0}_func_t)({1});
         name = packet.get_underscore_name()
         c_type_list = []
         for element in packet.get_elements():
-            c_type_list.append(get_c_type(element[1]))
+            if element[2] > 1:
+                c_type_list.append('{0}[{1}]'.format(get_c_type(element[1]), element[2]))
+            else:
+                c_type_list.append(get_c_type(element[1]))
 
         typedefs += typedef.format(name, ', '.join(c_type_list))
 
