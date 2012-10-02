@@ -467,13 +467,8 @@ def make_callback_wrappers():
 def make_files(com_new, directory):
     global device
     device = common.Device(com_new)
-
     file_name = '{0}{1}'.format(device.get_category(), device.get_camel_case_name())
-
     directory += '/bindings'
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
     pas = file('{0}/{1}.pas'.format(directory, file_name), 'w')
     pas.write(make_unit_header())
     pas.write(make_function_id_definitions())
@@ -487,4 +482,4 @@ def make_files(com_new, directory):
     pas.write(make_callback_wrappers())
 
 if __name__ == "__main__":
-    common.generate(os.getcwd(), 'en', make_files)
+    common.generate(os.getcwd(), 'en', make_files, common.prepare_bindings)

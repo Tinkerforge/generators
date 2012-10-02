@@ -315,7 +315,19 @@ def underscore_to_headless_camel_case(name):
         ret += part[0].upper() + part[1:]
     return ret
 
-def generate(path, language, make_files):
+def prepare_doc(directory):
+    directory = os.path.join(directory, 'doc', lang)
+    if os.path.exists(directory):
+        shutil.rmtree(directory)
+    os.makedirs(directory)
+
+def prepare_bindings(directory):
+    directory += '/bindings'
+    if os.path.exists(directory):
+        shutil.rmtree(directory)
+    os.makedirs(directory)
+
+def generate(path, language, make_files, prepare):
     global lang
     global path_binding
     lang = language
@@ -326,6 +338,8 @@ def generate(path, language, make_files):
     path_config = '/'.join(path_list)
     sys.path.append(path_config)
     configs = os.listdir(path_config)
+
+    prepare(path)
 
     common_packets = []
     try:

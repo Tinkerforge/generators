@@ -553,12 +553,8 @@ def make_callback_wrapper_declarations():
 def make_files(com_new, directory):
     global device
     device = common.Device(com_new)
-
     file_name = '{0}_{1}'.format(device.get_category().lower(), device.get_underscore_name())
-    
     directory += '/bindings'
-    if not os.path.exists(directory):
-        os.makedirs(directory)
 
     c = file('{0}/{1}.c'.format(directory, file_name), "w")
     c.write(make_include_c())
@@ -579,4 +575,4 @@ def make_files(com_new, directory):
     h.write(make_end_h())
 
 if __name__ == "__main__":
-    common.generate(os.getcwd(), 'en', make_files)
+    common.generate(os.getcwd(), 'en', make_files, common.prepare_bindings)

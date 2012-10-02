@@ -231,13 +231,8 @@ end
 def make_files(com_new, directory):
     global device
     device = common.Device(com_new)
-
     file_name = '{0}_{1}'.format(device.get_category().lower(), device.get_underscore_name())
-
     directory += '/bindings'
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
     py = file('{0}/{1}.rb'.format(directory, file_name), "w")
     py.write(make_header())
     py.write(make_class())
@@ -249,4 +244,4 @@ def make_files(com_new, directory):
     py.write(make_register_callback_method())
 
 if __name__ == "__main__":
-    common.generate(os.getcwd(), lang, make_files)
+    common.generate(os.getcwd(), lang, make_files, common.prepare_bindings)
