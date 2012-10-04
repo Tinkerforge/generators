@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Rotary Poti Bricklet communication config
+# Current25 Bricklet communication config
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',

@@ -1271,3 +1271,19 @@ Gibt den Geltungsbereich zurück, wie von :func:`SetWifiRegulatoryDomain` gesetz
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetUSBVoltage', 'get_usb_voltage'), 
+'elements': [('voltage', 'uint16', 1, 'out')], 
+'doc': ['af', {
+'en':
+"""
+Returns the USB voltage in mV. 
+""",
+'de':
+"""
+Gibt die USB Spannung in mV zurück.
+"""
+}]
+})
