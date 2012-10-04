@@ -350,8 +350,8 @@ def generate(path, language, make_files, prepare, is_doc):
 
     for config in configs:
         if config.endswith('_config.py'):
-            if not is_doc and '_gps_' in config:
-                continue
+            #if not is_doc and '_gps_' in config:
+            #    continue
 
             module = __import__(config[:-3])
             print(" * {0}".format(config[:-10]))            
@@ -363,8 +363,8 @@ def generate(path, language, make_files, prepare, is_doc):
 def import_and_make(configs, path, make_files):
     for config in configs:
         if config.endswith('_config.py'):
-            if '_gps_' in config:
-                continue
+            #if '_gps_' in config:
+            #    continue
 
             module = __import__(config[:-3])
             print(" * {0}".format(config[:-10]))
