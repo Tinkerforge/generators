@@ -468,11 +468,7 @@ def make_files(com_new, directory):
     'en': 'Java bindings',
     'de': 'Java Bindings'
     }
-
     directory = os.path.join(directory, 'doc', common.lang)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
     f = file('{0}/{1}.rst'.format(directory, file_name), "w")
     f.write(common.make_rst_header(device, 'java', 'Java'))
     f.write(common.make_rst_summary(device, common.select_lang(title)))
@@ -481,4 +477,4 @@ def make_files(com_new, directory):
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:
-        common.generate(os.getcwd(), lang, make_files)
+        common.generate(os.getcwd(), lang, make_files, common.prepare_doc, True)

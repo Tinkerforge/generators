@@ -16,9 +16,9 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetCoordinates', 'get_coordinates'), 
 'elements': [('ns', 'char', 1, 'out'),
-             ('latitude', 'uint16', 2, 'out'),
+             ('latitude', 'uint32', 1, 'out'),
              ('ew', 'char', 1, 'out'),
-             ('longitude', 'uint16', 2, 'out'),
+             ('longitude', 'uint32', 1, 'out'),
              ('pdop', 'uint16', 1, 'out'),
              ('hdop', 'uint16', 1, 'out'),
              ('vdop', 'uint16', 1, 'out')],
@@ -43,7 +43,7 @@ com['packets'].append({
              ('date', 'uint32', 1, 'out'),
              ('time', 'uint32', 1, 'out'),
              ('altitude', 'int16', 1, 'out'),
-             ('altitude_accuracy', 'int16', 1, 'out')],
+             ('geoidal_separation', 'int16', 1, 'out')],
 'doc': ['bf', {
 'en':
 """
@@ -134,9 +134,9 @@ com['packets'].append({
 'type': 'callback',
 'name': ('Coordinates', 'coordinates'), 
 'elements': [('ns', 'char', 1, 'out'),
-             ('latitude', 'uint16', 2, 'out'),
+             ('latitude', 'uint32', 1, 'out'),
              ('ew', 'char', 1, 'out'),
-             ('longitude', 'uint16', 2, 'out'),
+             ('longitude', 'uint32', 1, 'out'),
              ('pdop', 'uint16', 1, 'out'),
              ('hdop', 'uint16', 1, 'out'),
              ('vdop', 'uint16', 1, 'out')],

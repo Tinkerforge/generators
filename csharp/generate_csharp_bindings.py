@@ -401,13 +401,8 @@ def get_data_size(packet):
 def make_files(com_new, directory):
     global device
     device = common.Device(com_new)
-
     file_name = '{0}{1}'.format(device.get_category(), device.get_camel_case_name())
-
     directory += '/bindings'
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
     csharp = file('{0}/{1}.cs'.format(directory, file_name), "w")
     csharp.write(make_import())
     csharp.write(make_class())
@@ -420,4 +415,4 @@ def make_files(com_new, directory):
     csharp.write(make_register_callback())
 
 if __name__ == "__main__":
-    common.generate(os.getcwd(), 'en', make_files)
+    common.generate(os.getcwd(), 'en', make_files, common.prepare_bindings, False)

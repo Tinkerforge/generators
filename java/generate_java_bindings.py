@@ -524,13 +524,8 @@ def get_return_value(packet):
 def make_files(com_new, directory):
     global device
     device = common.Device(com_new)
-
     file_name = '{0}{1}'.format(device.get_category(), device.get_camel_case_name())
-    
     directory += '/bindings'
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
     java = file('{0}/{1}.java'.format(directory, file_name), "w")
     java.write(make_import())
     java.write(make_class())
@@ -543,4 +538,4 @@ def make_files(com_new, directory):
     java.write(make_add_listener())
 
 if __name__ == "__main__":
-    common.generate(os.getcwd(), 'en', make_files)
+    common.generate(os.getcwd(), 'en', make_files, common.prepare_bindings, False)

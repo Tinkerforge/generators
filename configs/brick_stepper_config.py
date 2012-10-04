@@ -851,7 +851,7 @@ the time base to 15 and the velocity to 10. Now the velocity is
 
 The default value is 1.
 
-.. versionadded:: 1.1.6
+.. versionadded:: 1.1.6~(Firmware)
 """,
 'de':
 """
@@ -864,7 +864,7 @@ Geschwindigkeit 10Schritte/15s = 1Schritt/1,5s.
 
 Der Standardwert ist 1.
 
-.. versionadded:: 1.1.6
+.. versionadded:: 1.1.6~(Firmware)
 """
 }]
 })
@@ -878,7 +878,7 @@ com['packets'].append({
 """
 Returns the time base as set by :func:`SetTimeBase`.
 
-.. versionadded:: 1.1.6
+.. versionadded:: 1.1.6~(Firmware)
 """,
 'de':
 """
@@ -905,7 +905,7 @@ voltage and the current consumption of the stepper motor.
 
 There is also a callback for this function, see :func:`AllData`.
 
-.. versionadded:: 1.1.6
+.. versionadded:: 1.1.6~(Firmware)
 """,
 'de':
 """
@@ -916,7 +916,7 @@ des Schrittmotors.
 
 Es existiert auch ein Callback für diese Funktion, siehe :func:`AllData`.
 
-.. versionadded:: 1.1.6
+.. versionadded:: 1.1.6~(Firmware)
 """
 }]
 })
@@ -931,14 +931,14 @@ com['packets'].append({
 Sets the period in ms with which the :func:`AllData` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-.. versionadded:: 1.1.6
+.. versionadded:: 1.1.6~(Firmware)
 """,
 'de':
 """
 Setzt die Periode in ms mit welcher der :func:`AllData` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-.. versionadded:: 1.1.6
+.. versionadded:: 1.1.6~(Firmware)
 """
 }]
 })
@@ -952,13 +952,13 @@ com['packets'].append({
 """
 Returns the period as set by :func:`SetAllDataPeriod`.
 
-.. versionadded:: 1.1.6
+.. versionadded:: 1.1.6~(Firmware)
 """,
 'de':
 """
 Gibt die Periode zurück, wie von :func:`SetAllDataPeriod` gesetzt.
 
-.. versionadded:: 1.1.6
+.. versionadded:: 1.1.6~(Firmware)
 """
 }]
 })
@@ -980,7 +980,7 @@ This callback is triggered periodically with the period that is set by
 the current position, the remaining steps, the stack voltage, the external
 voltage and the current consumption of the stepper motor.
 
-.. versionadded:: 1.1.6
+.. versionadded:: 1.1.6~(Firmware)
 """,
 'de':
 """
@@ -989,7 +989,7 @@ ausgelöst. Die :word:`parameters` sind die aktuelle Geschwindigkeit,
 die aktuelle Position, die verbleibenden Schritte, die Spannung des Stapels, die
 externe Spannung und der aktuelle Stromverbrauch des Schrittmotors.
 
-.. versionadded:: 1.1.6
+.. versionadded:: 1.1.6~(Firmware)
 """
 }]
 })
@@ -1014,7 +1014,7 @@ Possible states are:
 * Direction change to forward = 5
 * Direction change to backward = 6
 
-.. versionadded:: 1.1.6
+.. versionadded:: 1.1.6~(Firmware)
 """,
 'de':
 """
@@ -1031,7 +1031,7 @@ Mögliche Zustände sind:
 * Richtungswechsel auf Vorwärts = 5
 * Richtungswechsel auf Rückwärts = 6
 
-.. versionadded:: 1.1.6
+.. versionadded:: 1.1.6~(Firmware)
 """
 }]
 })

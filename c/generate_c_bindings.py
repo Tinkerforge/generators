@@ -469,7 +469,10 @@ typedef void (*{0}_func_t)({1});
         name = packet.get_underscore_name()
         c_type_list = []
         for element in packet.get_elements():
-            c_type_list.append(get_c_type(element[1]))
+            if element[2] > 1:
+                c_type_list.append('{0}[{1}]'.format(get_c_type(element[1]), element[2]))
+            else:
+                c_type_list.append(get_c_type(element[1]))
 
         typedefs += typedef.format(name, ', '.join(c_type_list))
 
@@ -550,12 +553,8 @@ def make_callback_wrapper_declarations():
 def make_files(com_new, directory):
     global device
     device = common.Device(com_new)
-
     file_name = '{0}_{1}'.format(device.get_category().lower(), device.get_underscore_name())
-    
     directory += '/bindings'
-    if not os.path.exists(directory):
-        os.makedirs(directory)
 
     c = file('{0}/{1}.c'.format(directory, file_name), "w")
     c.write(make_include_c())
@@ -576,4 +575,4 @@ def make_files(com_new, directory):
     h.write(make_end_h())
 
 if __name__ == "__main__":
-    common.generate(os.getcwd(), 'en', make_files)
+    common.generate(os.getcwd(), 'en', make_files, common.prepare_bindings, False)

@@ -315,7 +315,19 @@ def underscore_to_headless_camel_case(name):
         ret += part[0].upper() + part[1:]
     return ret
 
-def generate(path, language, make_files):
+def prepare_doc(directory):
+    directory = os.path.join(directory, 'doc', lang)
+    if os.path.exists(directory):
+        shutil.rmtree(directory)
+    os.makedirs(directory)
+
+def prepare_bindings(directory):
+    directory += '/bindings'
+    if os.path.exists(directory):
+        shutil.rmtree(directory)
+    os.makedirs(directory)
+
+def generate(path, language, make_files, prepare, is_doc):
     global lang
     global path_binding
     lang = language
@@ -327,6 +339,8 @@ def generate(path, language, make_files):
     sys.path.append(path_config)
     configs = os.listdir(path_config)
 
+    prepare(path)
+
     common_packets = []
     try:
         configs.remove('brick_commonconfig.py')
@@ -336,6 +350,9 @@ def generate(path, language, make_files):
 
     for config in configs:
         if config.endswith('_config.py'):
+            #if not is_doc and '_gps_' in config:
+            #    continue
+
             module = __import__(config[:-3])
             print(" * {0}".format(config[:-10]))            
             if 'brick_' in config and not module.com.has_key('common_included'):
@@ -346,6 +363,9 @@ def generate(path, language, make_files):
 def import_and_make(configs, path, make_files):
     for config in configs:
         if config.endswith('_config.py'):
+            #if '_gps_' in config:
+            #    continue
+
             module = __import__(config[:-3])
             print(" * {0}".format(config[:-10]))
             make_files(module.com, path)

@@ -30,3 +30,5 @@
         Add API for setting of WIFI regulatory domain
         Add reconnect functionality to IPConnection (for WIFI Extension)
         Add API for Industrial Bricklets: Digital In 4, Digital Out 4 and Quad Relay
+1.0.21: Add API for Barometer Bricklet
+1.0.22: Replace Barometer Bricklet calibate function with getter/setter for reference air pressure

@@ -85,7 +85,7 @@ stacks. You can now call this function every second, with a time parameter
 of two seconds. The relay will be on all the time. If now the RS485 
 connection is lost, the relay will turn off in at most two seconds.
 
-.. versionadded:: 1.1.1
+.. versionadded:: 1.1.1~(Plugin)
 """,
 'de':
 """
@@ -102,7 +102,7 @@ Jetzt kann diese Funktion sekündlich, mit einem Zeitparameter von 2 Sekunden, a
 Das Relais wird die gesamte Zeit ein sein. Wenn jetzt die RS485 Verbindung getrennt wird, 
 wird das Relais nach spätestens zwei Sekunden ausschalten.
 
-.. versionadded:: 1.1.1
+.. versionadded:: 1.1.1~(Plugin)
 """
 }]
 })
@@ -123,7 +123,7 @@ Returns (for the given relay) the current state and the time as set by
 If the timer is not running currently, the remaining time will be returned
 as 0.
 
-.. versionadded:: 1.1.1
+.. versionadded:: 1.1.1~(Plugin)
 """,
 'de':
 """
@@ -132,7 +132,7 @@ Gibt (für das angegebene Relais) den aktuellen Zustand und die Zeit, wie von
 
 Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.
 
-.. versionadded:: 1.1.1
+.. versionadded:: 1.1.1~(Plugin)
 """
 }]
 })
@@ -149,7 +149,7 @@ This callback is triggered whenever a monoflop timer reaches 0. The
 parameter contain the relay (1 or 2) and the current state of the relay 
 (the state after the monoflop).
 
-.. versionadded:: 1.1.1
+.. versionadded:: 1.1.1~(Plugin)
 """,
 'de':
 """
@@ -157,7 +157,7 @@ Dieser Callback wird ausgelöst wenn ein Monoflop Timer abläuft (0 erreicht).
 Die Parameter enthalten das auslösende Relais (1 oder 2) und den aktuellen Zustand
 des Relais (der Zustand nach dem Monoflop).
 
-.. versionadded:: 1.1.1
+.. versionadded:: 1.1.1~(Plugin)
 """
 }]
 })
