@@ -836,7 +836,7 @@ type of the encryption. Possible values are:
  "0", "WPA/WPA2"
  "1", "WPA Enterprise (EAP-FAST, EAP-TLS, EAP-TTLS, PEAP)"
  "2", "WEP"
- "3", "Open Network"
+ "3", "No Encryption"
 
 The key has a max length of 50 characters and is used if encryption
 is set to 0 or 2 (WPA or WEP). Otherwise the value is ignored.
@@ -879,7 +879,7 @@ Typ der Verschlüsselung. Mögliche Werte sind:
  "0", "WPA/WPA2"
  "1", "WPA Enterprise (EAP-FAST, EAP-TLS, EAP-TTLS, PEAP)"
  "2", "WEP"
- "3", "Offenes Netzwerk"
+ "3", "Keine Verschlüsselung"
 
 Key hat eine maximale Länge von 50 Zeichen und wird benutzt falls
 encryption auf 0 oder 2 (WPA oder WEP) gesetzt ist. Andernfalls wird key
@@ -1286,6 +1286,8 @@ Returns the USB voltage in mV.
 'de':
 """
 Gibt die USB Spannung in mV zurück.
+
+.. versionadded:: 1.3.5~(Firmware)
 """
 }]
 })
