@@ -150,7 +150,6 @@ class IPConnection:
 
     PLUGIN_CHUNK_SIZE = 32
 
-    callback_queue = Queue()
 
     def __init__(self, host, port):
         """
@@ -160,6 +159,7 @@ class IPConnection:
         Bricklets to the connection.
         """
 
+        self.callback_queue = Queue()
         self.pending_add_device = None
         self.add_device_lock = Lock()
         self.devices = {}
