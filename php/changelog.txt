@@ -19,4 +19,4 @@
         Add API for setting of WIFI regulatory domain
         Add API for Industrial Bricklets: Digital In 4, Digital Out 4 and Quad Relay
 1.0.14: Add API for Barometer Bricklet
-1.0.15: Replace Barometer Bricklet calibate function with getter/setter for reference air pressure
+1.0.15: Replace Barometer Bricklet calibrate function with getter/setter for reference air pressure

@@ -33,4 +33,4 @@
         Avoid a race condition in expectedResponseFunctionID handling
         Fix semaphore deadlock on timeout
 1.0.19: Add API for Barometer Bricklet
-1.0.20: Replace Barometer Bricklet calibate function with getter/setter for reference air pressure
+1.0.20: Replace Barometer Bricklet calibrate function with getter/setter for reference air pressure
