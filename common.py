@@ -268,7 +268,7 @@ def find_examples(device, base_path, dirname, filename_prefix, filename_suffix):
     board = board.replace('_', '-')
     board_path = os.path.join(start_path, board, 'software/examples/' + dirname)
     files = []
-    
+
     try:
         for f in os.listdir(board_path):
             if f.startswith(filename_prefix) and f.endswith(filename_suffix):
@@ -307,6 +307,32 @@ re_camel_case_to_space = re.compile('([A-Z][A-Z][a-z])|([a-z][A-Z])')
 
 def camel_case_to_space(name):
     return re_camel_case_to_space.sub(lambda m: m.group()[:1] + " " + m.group()[1:], name)
+
+def handle_rst_if(text, device):
+    lines = []
+
+    for line in text.split('\n'):
+        if ':if:' in line:
+            m = re.match('(.*):if:([^:]+):`([^`]+)`(.*)', line)
+
+            if m is None:
+                raise 'invalid if: ' + line
+
+            prefix = m.group(1)
+            condition = m.group(2)
+            body = m.group(3)
+            suffix = m.group(4)
+
+            name = device.get_underscore_name() + '-' + device.get_category().lower()
+
+            if name == condition:
+                lines.append(prefix + body + suffix)
+            elif len(prefix + suffix) > 0:
+                lines.append(prefix + suffix)
+        else:
+            lines.append(line)
+
+    return '\n'.join(lines)
 
 def underscore_to_headless_camel_case(name):
     parts = name.split('_')
@@ -354,7 +380,7 @@ def generate(path, language, make_files, prepare, is_doc):
             #    continue
 
             module = __import__(config[:-3])
-            print(" * {0}".format(config[:-10]))            
+            print(" * {0}".format(config[:-10]))
             if 'brick_' in config and not module.com.has_key('common_included'):
                 module.com['packets'].extend(common_packets)
                 module.com['common_included'] = True

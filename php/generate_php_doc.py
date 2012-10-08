@@ -62,6 +62,8 @@ def fix_links(text):
     text = text.replace(":word:`parameter`", common.select_lang(parameter))
     text = text.replace(":word:`parameters`", common.select_lang(parameters))
 
+    text = common.handle_rst_if(text, device)
+
     return text
 
 def make_examples():
@@ -118,7 +120,7 @@ def make_methods(typ):
         ret_type = php_common.get_return_type(packet)
         name = packet.get_headless_camel_case_name()
         params = make_parameter_list(packet)
-        desc = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 1))
+        desc = common.shift_right(fix_links(common.select_lang(packet.get_doc()[1])), 1)
         func = '{0}{1} {2}::{3}({4})\n{5}'.format(func_start,
                                                   ret_type,
                                                   cls,
@@ -151,7 +153,7 @@ def make_callbacks():
     cls = device.get_category() + device.get_camel_case_name()
     for packet in device.get_packets('callback'):
         params = make_parameter_list(packet)
-        desc = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 1))
+        desc = common.shift_right(fix_links(common.select_lang(packet.get_doc()[1])), 1)
         signature = common.select_lang(signature_str).format(params)
         func = '{0}{1}::CALLBACK_{2}\n{3}{4}'.format(func_start,
                                                      cls,

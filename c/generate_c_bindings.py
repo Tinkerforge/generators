@@ -82,6 +82,8 @@ def fix_links(text):
     text = text.replace('.. note::', '\\note')
     text = text.replace('.. warning::', '\\warning')
 
+    text = common.handle_rst_if(text, device)
+
     return text
 
 def make_parameter_list(packet):

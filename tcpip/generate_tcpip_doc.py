@@ -68,6 +68,8 @@ def fix_links(text):
     text = text.replace(":word:`parameter`", common.select_lang(parameter))
     text = text.replace(":word:`parameters`", common.select_lang(parameters))
 
+    text = common.handle_rst_if(text, device)
+
     return text
 
 def make_request_desc(packet):
@@ -120,7 +122,7 @@ def make_methods(typ):
         fid = '\n :functionid: {0}'.format(packet.get_function_id())
         request = make_request_desc(packet)
         response = make_response_desc(packet)
-        d = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 1))
+        d = common.shift_right(fix_links(common.select_lang(packet.get_doc()[1])), 1)
         desc = '{0}{1}{2}{3}'.format(fid, request, response, d)
         func = '{0}{1}.{2}\n{3}'.format(func_start, cls, name, desc)
         methods += func + '\n'
@@ -134,7 +136,7 @@ def make_callbacks():
     for packet in device.get_packets('callback'):
         fid = '\n :functionid: {0}'.format(packet.get_function_id())
         response = make_response_desc(packet)
-        desc = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 1))
+        desc = common.shift_right(fix_links(common.select_lang(packet.get_doc()[1])), 1)
 
         func = '{0}{1}.CALLBACK_{2}\n{3}\n{4}\n{5}'.format(func_start,
                                                            cls,

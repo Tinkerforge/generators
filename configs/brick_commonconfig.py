@@ -18,6 +18,12 @@ on a Brick inside of a stack will reset the whole stack.
 After a reset you have to create new device objects,
 calling functions on the existing ones will result in
 undefined behavior!
+
+:if:dc-brick:`.. versionadded:: 1.1.3~(Firmware)`
+:if:imu-brick:`.. versionadded:: 1.0.7~(Firmware)`
+:if:master-brick:`.. versionadded:: 1.2.1~(Firmware)`
+:if:servo-brick:`.. versionadded:: 1.1.3~(Firmware)`
+:if:stepper-brick:`.. versionadded:: 1.1.4~(Firmware)`
 """,
 'de':
 """
@@ -26,6 +32,12 @@ innerhalb eines Stapels wird der gesamte Stapel zurück gesetzt.
 
 Nach dem Zurücksetzen ist es notwendig neue Geräteobjekte zu erzeugen,
 Funktionsaufrufe auf bestehende führt zu undefiniertem Verhalten.
+
+:if:dc-brick:`.. versionadded:: 1.1.3~(Firmware)`
+:if:imu-brick:`.. versionadded:: 1.0.7~(Firmware)`
+:if:master-brick:`.. versionadded:: 1.2.1~(Firmware)`
+:if:servo-brick:`.. versionadded:: 1.1.3~(Firmware)`
+:if:stepper-brick:`.. versionadded:: 1.1.4~(Firmware)`
 """
 }]
 })
@@ -44,6 +56,12 @@ value returned is not the ambient temperature!
 The temperature is only proportional to the real temperature and it has an
 accuracy of +-15%. Practically it is only useful as an indicator for
 temperature changes.
+
+:if:dc-brick:`.. versionadded:: 1.1.3~(Firmware)`
+:if:imu-brick:`.. versionadded:: 1.0.7~(Firmware)`
+:if:master-brick:`.. versionadded:: 1.2.1~(Firmware)`
+:if:servo-brick:`.. versionadded:: 1.1.3~(Firmware)`
+:if:stepper-brick:`.. versionadded:: 1.1.4~(Firmware)`
 """,
 'de':
 """
@@ -53,6 +71,12 @@ Rückgabewert ist nicht die Umgebungstemperatur.
 Die Temperatur ist lediglich proportional zur echten Temperatur und hat eine
 Genauigkeit von +-15%. Daher beschränkt sich der praktische Nutzen auf die
 Indikation von Temperaturveränderungen.
+
+:if:dc-brick:`.. versionadded:: 1.1.3~(Firmware)`
+:if:imu-brick:`.. versionadded:: 1.0.7~(Firmware)`
+:if:master-brick:`.. versionadded:: 1.2.1~(Firmware)`
+:if:servo-brick:`.. versionadded:: 1.1.3~(Firmware)`
+:if:stepper-brick:`.. versionadded:: 1.1.4~(Firmware)`
 """
 }]
 })

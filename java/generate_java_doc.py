@@ -67,6 +67,8 @@ def fix_links(text):
     text = text.replace('callback ', 'listener ')
     text = text.replace(' callback', ' listener')
 
+    text = common.handle_rst_if(text, device)
+
     return text
 
 def make_examples():
@@ -189,7 +191,7 @@ def make_methods(typ):
         ret_type = get_return_type(packet)
         name = packet.get_headless_camel_case_name()
         params = make_parameter_list(packet)
-        desc = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 1))
+        desc = common.shift_right(fix_links(common.select_lang(packet.get_doc()[1])), 1)
         obj_desc = make_obj_desc(packet)
         func = '{0}public {1} {2}::{3}({4})\n{5}{6}'.format(func_start, 
                                                             ret_type,
@@ -228,7 +230,7 @@ def make_callbacks():
     cbs = ''
     cls = device.get_camel_case_name()
     for packet in device.get_packets('callback'):
-        desc = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 2))
+        desc = common.shift_right(fix_links(common.select_lang(packet.get_doc()[1])), 2)
         params = make_parameter_list(packet)
 
         cbs += common.select_lang(cb).format(device.get_category(),

@@ -60,6 +60,8 @@ def fix_links(text):
     text = text.replace(":word:`parameter`", common.select_lang(parameter))
     text = text.replace(":word:`parameters`", common.select_lang(parameters))
 
+    text = common.handle_rst_if(text, device)
+
     return text
 
 def make_examples():
@@ -100,7 +102,7 @@ def make_methods(typ):
         ret_type = delphi_common.get_return_type(packet, True)
         name = packet.get_camel_case_name()
         params = delphi_common.make_parameter_list(packet, True)
-        desc = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 1))
+        desc = common.shift_right(fix_links(common.select_lang(packet.get_doc()[1])), 1)
         if len(ret_type) > 0:
             method = function.format(cls, name, params, ret_type, desc)
         else:
@@ -137,7 +139,7 @@ def make_callbacks():
     for packet in device.get_packets('callback'):
         name = packet.get_camel_case_name()
         params = delphi_common.make_parameter_list(packet, True)
-        desc = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 1))
+        desc = common.shift_right(fix_links(common.select_lang(packet.get_doc()[1])), 1)
         cbs += common.select_lang(cb).format(cls, name, params, desc)
 
     return cbs

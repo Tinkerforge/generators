@@ -59,6 +59,8 @@ def fix_links(text):
     text = text.replace(":word:`parameter`", common.select_lang(parameter))
     text = text.replace(":word:`parameters`", common.select_lang(parameters))
 
+    text = common.handle_rst_if(text, device)
+
     return text
 
 def make_examples():
@@ -106,7 +108,7 @@ def make_methods(typ):
             continue
 
         signature = csharp_common.make_method_signature(packet, True, device)
-        desc = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 1))
+        desc = common.shift_right(fix_links(common.select_lang(packet.get_doc()[1])), 1)
         func = '{0}{1}\n{2}'.format(func_start, 
                                     signature, 
                                     desc)
@@ -137,7 +139,7 @@ def make_callbacks():
     cbs = ''
     cls = device.get_camel_case_name()
     for packet in device.get_packets('callback'):
-        desc = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 2))
+        desc = common.shift_right(fix_links(common.select_lang(packet.get_doc()[1])), 2)
         params = csharp_common.make_parameter_list(packet)
 
         cbs += common.select_lang(cb).format(device.get_category() + device.get_camel_case_name(),

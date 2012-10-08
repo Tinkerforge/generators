@@ -82,6 +82,8 @@ def fix_links(text):
     text = text.replace(":word:`parameter`", common.select_lang(parameter))
     text = text.replace(":word:`parameters`", common.select_lang(parameters))
 
+    text = common.handle_rst_if(text, device)
+
     return text
 
 def make_examples():
@@ -153,7 +155,7 @@ def make_methods(typ):
             params = '(' + params + ')'
         pd = make_parameter_desc(packet, 'in')
         r = make_return_desc(packet)
-        d = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 1))
+        d = common.shift_right(fix_links(common.select_lang(packet.get_doc()[1])), 1)
         desc = '{0}{1}'.format(pd, d)
         func = '{0}{1}#{2}{3}{5}\n{4}'.format(func_start,
                                               cls,
@@ -174,7 +176,7 @@ def make_callbacks():
     cls = device.get_category() + device.get_camel_case_name()
     for packet in device.get_packets('callback'):
         param_desc = make_parameter_desc(packet, 'out')
-        desc = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 1))
+        desc = common.shift_right(fix_links(common.select_lang(packet.get_doc()[1])), 1)
 
         func = '{0}{1}::CALLBACK_{2}\n{3}\n{4}'.format(func_start,
                                                        cls,

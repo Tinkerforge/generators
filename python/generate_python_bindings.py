@@ -37,6 +37,8 @@ def fix_links(text):
     text = text.replace(":word:`parameter`", "parameter")
     text = text.replace(":word:`parameters`", "parameters")
 
+    text = common.handle_rst_if(text, device)
+
     return text
 
 def make_import():
