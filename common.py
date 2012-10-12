@@ -129,7 +129,7 @@ def shift_right(text, n):
 def get_changelog_version(path):
     r = re.compile('^(\d+)\.(\d+)\.(\d+):')
     last = None
-    for line in file(path + '/changelog.txt').readlines():
+    for line in file(path + '/changelog.txt', 'rb').readlines():
         m = r.match(line)
 
         if m is not None:

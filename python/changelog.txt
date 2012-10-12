@@ -33,3 +33,7 @@
         Trim NUL characters from strings properly
 1.0.22: Add API for Barometer Bricklet
 1.0.23: Replace Barometer Bricklet calibrate function with getter/setter for reference air pressure
+1.0.24: Add get_usb_voltage function to Master Brick API
+        Add Barometer Bricklet examples
+        Handle difference between currentThread and current_thread to support Python 2.5
+        Changed callback_queue from class variable to instance variable

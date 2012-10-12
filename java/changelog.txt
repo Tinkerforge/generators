@@ -34,3 +34,5 @@
         Fix semaphore deadlock on timeout
 1.0.19: Add API for Barometer Bricklet
 1.0.20: Replace Barometer Bricklet calibrate function with getter/setter for reference air pressure
+1.0.21: Add get_usb_voltage function to Master Brick API
+        Add Barometer Bricklet examples
