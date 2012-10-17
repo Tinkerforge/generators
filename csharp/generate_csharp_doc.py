@@ -37,7 +37,8 @@ import common
 
 device = None
 
-def fix_links(text):
+def format_doc(packet, shift_right):
+    text = common.select_lang(packet.get_doc()[1])
     parameter = {
     'en': 'parameter',
     'de': 'Parameter'
@@ -46,12 +47,12 @@ def fix_links(text):
     'en': 'parameters',
     'de': 'Parameter'
     }
-    link = ':csharp:func:`{2}() <{0}{1}::{2}>`' 
+    link = ':csharp:func:`{2}() <{0}{1}::{2}>`'
 
     cls = device.get_camel_case_name()
-    for packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
-        name = packet.get_camel_case_name()
+    for other_packet in device.get_packets():
+        name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+        name = other_packet.get_camel_case_name()
         name_right = link.format(device.get_category(), cls, name)
 
         text = text.replace(name_false, name_right)
@@ -60,8 +61,9 @@ def fix_links(text):
     text = text.replace(":word:`parameters`", common.select_lang(parameters))
 
     text = common.handle_rst_if(text, device)
+    text = common.handle_since_firmware(text, device, packet)
 
-    return text
+    return common.shift_right(text, shift_right)
 
 def make_examples():
     def title_from_file(f):
@@ -108,7 +110,7 @@ def make_methods(typ):
             continue
 
         signature = csharp_common.make_method_signature(packet, True, device)
-        desc = common.shift_right(fix_links(common.select_lang(packet.get_doc()[1])), 1)
+        desc = format_doc(packet, 1)
         func = '{0}{1}\n{2}'.format(func_start, 
                                     signature, 
                                     desc)
@@ -139,7 +141,7 @@ def make_callbacks():
     cbs = ''
     cls = device.get_camel_case_name()
     for packet in device.get_packets('callback'):
-        desc = common.shift_right(fix_links(common.select_lang(packet.get_doc()[1])), 2)
+        desc = format_doc(packet, 2)
         params = csharp_common.make_parameter_list(packet)
 
         cbs += common.select_lang(cb).format(device.get_category() + device.get_camel_case_name(),

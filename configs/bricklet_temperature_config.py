@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'version': [1, 0, 0],
+    'binding_version': [1, 0, 0],
     'category': 'Bricklet',
     'name': ('Temperature', 'temperature', 'Temperature'),
     'manufacturer': 'Tinkerforge',
@@ -16,6 +16,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetTemperature', 'get_temperature'), 
 'elements': [('temperature', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -44,6 +45,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetTemperatureCallbackPeriod', 'set_temperature_callback_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -72,6 +74,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetTemperatureCallbackPeriod', 'get_temperature_callback_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -91,6 +94,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'in'), 
              ('min', 'int16', 1, 'in'),
              ('max', 'int16', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -137,6 +141,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'out'), 
              ('min', 'int16', 1, 'out'),
              ('max', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -154,6 +159,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetDebouncePeriod', 'set_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -190,6 +196,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetDebouncePeriod', 'get_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -207,6 +214,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('Temperature', 'temperature'), 
 'elements': [('temperature', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -232,6 +240,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('TemperatureReached', 'temperature_reached'), 
 'elements': [('temperature', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """

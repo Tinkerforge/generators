@@ -35,7 +35,8 @@ import common
 
 device = None
 
-def fix_links(text):
+def format_doc(packet):
+    text = common.select_lang(packet.get_doc()[1])
     link = '<see cref="{0}{1}.T{0}{1}.{2}"/>'
 
     # escape XML special chars
@@ -87,9 +88,9 @@ def fix_links(text):
     text = '\n'.join(replaced_lines)
 
     cls = device.get_camel_case_name()
-    for packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
-        name = packet.get_camel_case_name()
+    for other_packet in device.get_packets():
+        name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+        name = other_packet.get_camel_case_name()
         name_right = link.format(device.get_category(), cls, name)
 
         text = text.replace(name_false, name_right)
@@ -98,8 +99,9 @@ def fix_links(text):
     text = text.replace(":word:`parameters`", "parameters")
 
     text = common.handle_rst_if(text, device)
+    text = common.handle_since_firmware(text, device, packet)
 
-    return text
+    return '\n    ///  '.join(text.strip().split('\n'))
 
 def make_parameter_doc(packet):
     param = []
@@ -236,7 +238,7 @@ def make_class():
     for packet in device.get_packets('function'):
         ret_type = delphi_common.get_return_type(packet, False)
         name = packet.get_camel_case_name()
-        doc = '\n    ///  '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
+        doc = format_doc(packet)
         params = delphi_common.make_parameter_list(packet, False)
         if len(params) > 0:
             params = '(' + params + ')'
@@ -252,7 +254,7 @@ def make_class():
     /// </summary>
     property On{0}: T{1}{2}Notify{0} read {3}Callback write {3}Callback;"""
     for packet in device.get_packets('callback'):
-        doc = '\n    ///  '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
+        doc = format_doc(packet)
         props.append(prop.format(packet.get_camel_case_name(),
                                  device.get_category(),
                                  device.get_camel_case_name(),
@@ -289,7 +291,7 @@ begin
                       device.get_camel_case_name(),
                       device.get_display_name(),
                       device.get_category(),
-                      *device.get_version())
+                      *device.get_binding_version())
 
 def make_callback_wrapper_definitions():
     cbs = ''

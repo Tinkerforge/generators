@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'version': [1, 0, 1],
+    'binding_version': [1, 0, 1],
     'category': 'Bricklet',
     'name': ('DualRelay', 'dual_relay', 'Dual Relay'),
     'manufacturer': 'Tinkerforge',
@@ -17,6 +17,7 @@ com['packets'].append({
 'name': ('SetState', 'set_state'), 
 'elements': [('relay1', 'bool', 1, 'in'),
              ('relay2', 'bool', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -28,7 +29,7 @@ of the other relay, you can get the state with :func:`GetState`.
 
 Running monoflop timers will be overwritten if this function is called.
 
-The default value is (false, false).
+The default value is (*false*, *false*).
 """,
 'de':
 """
@@ -40,7 +41,7 @@ nicht bekannt ist, dann kann der Zustand mit :func:`GetState` ausgelesen werden.
 
 Laufende Monoflop Timer werden überschrieben wenn diese Funktion aufgerufen wird.
 
-Der Standardwert ist (false, false).
+Der Standardwert ist (*false*, *false*).
 """
 }]
 })
@@ -50,6 +51,7 @@ com['packets'].append({
 'name': ('GetState', 'get_state'), 
 'elements': [('relay1', 'bool', 1, 'out'),
              ('relay2', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -68,6 +70,7 @@ com['packets'].append({
 'elements': [('relay', 'uint8', 1, 'in'),
              ('state', 'bool', 1, 'in'),
              ('time', 'uint32', 1, 'in')],
+'since_firmware': [1, 1, 1],
 'doc': ['af', {
 'en':
 """
@@ -84,8 +87,6 @@ have a RS485 bus and a Dual Relay Bricklet connected to one of the slave
 stacks. You can now call this function every second, with a time parameter
 of two seconds. The relay will be on all the time. If now the RS485 
 connection is lost, the relay will turn off in at most two seconds.
-
-.. versionadded:: 1.1.1~(Plugin)
 """,
 'de':
 """
@@ -101,8 +102,6 @@ Angenommen ein RS485 Bus und ein Dual Relay Bricklet ist an ein Slave Stapel ver
 Jetzt kann diese Funktion sekündlich, mit einem Zeitparameter von 2 Sekunden, aufgerufen werden.
 Das Relais wird die gesamte Zeit ein sein. Wenn jetzt die RS485 Verbindung getrennt wird, 
 wird das Relais nach spätestens zwei Sekunden ausschalten.
-
-.. versionadded:: 1.1.1~(Plugin)
 """
 }]
 })
@@ -114,6 +113,7 @@ com['packets'].append({
              ('state', 'bool', 1, 'out'),
              ('time', 'uint32', 1, 'out'),
              ('time_remaining', 'uint32', 1, 'out')],
+'since_firmware': [1, 1, 1],
 'doc': ['af', {
 'en':
 """
@@ -122,8 +122,6 @@ Returns (for the given relay) the current state and the time as set by
 
 If the timer is not running currently, the remaining time will be returned
 as 0.
-
-.. versionadded:: 1.1.1~(Plugin)
 """,
 'de':
 """
@@ -131,8 +129,6 @@ Gibt (für das angegebene Relais) den aktuellen Zustand und die Zeit, wie von
 :func:`SetMonoflop` gesetzt, sowie die noch verbleibende Zeit bis zum Zustandswechsel, zurück.
 
 Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.
-
-.. versionadded:: 1.1.1~(Plugin)
 """
 }]
 })
@@ -142,22 +138,19 @@ com['packets'].append({
 'name': ('MonoflopDone', 'monoflop_done'), 
 'elements': [('relay', 'uint8', 1, 'out'),
              ('state', 'bool', 1, 'out')],
+'since_firmware': [1, 1, 1],
 'doc': ['c', {
 'en':
 """
 This callback is triggered whenever a monoflop timer reaches 0. The 
 parameter contain the relay (1 or 2) and the current state of the relay 
 (the state after the monoflop).
-
-.. versionadded:: 1.1.1~(Plugin)
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn ein Monoflop Timer abläuft (0 erreicht).
 Die Parameter enthalten das auslösende Relais (1 oder 2) und den aktuellen Zustand
 des Relais (der Zustand nach dem Monoflop).
-
-.. versionadded:: 1.1.1~(Plugin)
 """
 }]
 })

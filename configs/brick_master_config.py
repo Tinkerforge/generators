@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'version': [1, 3, 2],
+    'binding_version': [1, 3, 2],
     'category': 'Brick',
     'name': ('Master', 'master', 'Master'),
     'manufacturer': 'Tinkerforge',
@@ -16,6 +16,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetStackVoltage', 'get_stack_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')], 
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -36,6 +37,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetStackCurrent', 'get_stack_current'), 
 'elements': [('current', 'uint16', 1, 'out')], 
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -57,6 +59,7 @@ com['packets'].append({
 'name': ('SetExtensionType', 'set_extension_type'), 
 'elements': [('extension', 'uint8', 1, 'in'),
              ('exttype', 'uint32', 1, 'in')], 
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -73,6 +76,7 @@ Possible extension types:
  "1",    "Chibi"
  "2",    "RS485"
  "3",    "WIFI"
+ "4",    "Ethernet"
 
 The extension type is already set when bought and it can be set with the 
 Brick Viewer, it is unlikely that you need this function.
@@ -90,11 +94,12 @@ Mögliche Extensiontypen:
 
 .. csv-table::
  :header: "Typ", "Beschreibung"
- :widths: 10,100
+ :widths: 10, 100
  
  "1",    "Chibi"
  "2",    "RS485"
  "3",    "WIFI"
+ "4",    "Ethernet"
 
 Der Typ der Extension ist schon gesetzt beim Erwerb der Extension und kann über den
 Brick Viewer gesetzt werden. Daher ist es unwahrscheinlich, dass diese Funktion benötigt
@@ -108,6 +113,7 @@ com['packets'].append({
 'name': ('GetExtensionType', 'get_extension_type'), 
 'elements': [('extension', 'uint8', 1, 'in'),
              ('exttype', 'uint32', 1, 'out')], 
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -126,18 +132,15 @@ com['packets'].append({
 'type': 'function',
 'name': ('IsChibiPresent', 'is_chibi_present'), 
 'elements': [('present', 'bool', 1, 'out')], 
+'since_firmware': [1, 1, 0],
 'doc': ['af', {
 'en':
 """
 Returns *true* if a Chibi Extension is available to be used by the Master.
-
-.. versionadded:: 1.1.0~(Firmware)
 """,
 'de':
 """
 Gibt zurück ob eine Chibi Extension zur Nutzung durch den Master verfügbar ist.
-
-.. versionadded:: 1.1.0~(Firmware)
 """
 }]
 })
@@ -146,6 +149,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetChibiAddress', 'set_chibi_address'), 
 'elements': [('address', 'uint8', 1, 'in')], 
+'since_firmware': [1, 1, 0],
 'doc': ['af', {
 'en':
 """
@@ -154,8 +158,6 @@ Sets the address (1-255) belonging to the Chibi Extension.
 It is possible to set the address with the Brick Viewer and it will be 
 saved in the EEPROM of the Chibi Extension, it does not
 have to be set on every startup.
-
-.. versionadded:: 1.1.0~(Firmware)
 """,
 'de':
 """
@@ -164,8 +166,6 @@ Setzt die zugehörige Adresse (1-255) der Chibi Extension.
 Es ist möglich die Adresse mit dem Brick Viewer zu setzen und diese
 wird im EEPROM der Chibi Extension abgespeichert. Ein Setzen bei
 jedem Hochfahren ist daher nicht notwendig.
-
-.. versionadded:: 1.1.0~(Firmware)
 """
 }]
 })
@@ -174,12 +174,11 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetChibiAddress', 'get_chibi_address'), 
 'elements': [('address', 'uint8', 1, 'out')], 
+'since_firmware': [1, 1, 0],
 'doc': ['af', {
 'en':
 """
 Returns the address as set by :func:`SetChibiAddress`.
-
-.. versionadded:: 1.1.0~(Firmware)
 """,
 'de':
 """
@@ -192,6 +191,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetChibiMasterAddress', 'set_chibi_master_address'), 
 'elements': [('address', 'uint8', 1, 'in')], 
+'since_firmware': [1, 1, 0],
 'doc': ['af', {
 'en':
 """
@@ -201,8 +201,6 @@ Chibi Extension is used as slave (i.e. it does not have a USB connection).
 It is possible to set the address with the Brick Viewer and it will be 
 saved in the EEPROM of the Chibi Extension, it does not
 have to be set on every startup.
-
-.. versionadded:: 1.1.0~(Firmware)
 """,
 'de':
 """
@@ -213,8 +211,6 @@ besteht).
 Es ist möglich die Adresse mit dem Brick Viewer zu setzen und diese wird im
 EEPROM der Chibi Extension abgespeichert. Ein Setzen bei
 jedem Hochfahren ist daher nicht notwendig.
-
-.. versionadded:: 1.1.0~(Firmware)
 """
 }]
 })
@@ -223,12 +219,11 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetChibiMasterAddress', 'get_chibi_master_address'), 
 'elements': [('address', 'uint8', 1, 'out')], 
+'since_firmware': [1, 1, 0],
 'doc': ['af', {
 'en':
 """
 Returns the address as set by :func:`SetChibiMasterAddress`.
-
-.. versionadded:: 1.1.0~(Firmware)
 """,
 'de':
 """
@@ -242,6 +237,7 @@ com['packets'].append({
 'name': ('SetChibiSlaveAddress', 'set_chibi_slave_address'), 
 'elements': [('num', 'uint8', 1, 'in'),
              ('address', 'uint8', 1, 'in')], 
+'since_firmware': [1, 1, 0],
 'doc': ['af', {
 'en':
 """
@@ -255,8 +251,6 @@ Chibi stacks with the slave addresses 17, 23, and 42, you should call with "(0, 
 It is possible to set the addresses with the Brick Viewer and it will be 
 saved in the EEPROM of the Chibi Extension, they don't
 have to be set on every startup.
-
-.. versionadded:: 1.1.0~(Firmware)
 """,
 'de':
 """
@@ -270,8 +264,6 @@ Aufrufe "(0, 17), (1, 23) und (2, 42)" sein.
 Es ist möglich die Adressen mit dem Brick Viewer zu setzen und diese werden
 im EEPROM der Chibi Extension abgespeichert. Ein Setzen bei
 jedem Hochfahren ist daher nicht notwendig.
-
-.. versionadded:: 1.1.0~(Firmware)
 """
 }]
 })
@@ -281,20 +273,17 @@ com['packets'].append({
 'name': ('GetChibiSlaveAddress', 'get_chibi_slave_address'), 
 'elements': [('num', 'uint8', 1, 'in'),
              ('address', 'uint8', 1, 'out')], 
+'since_firmware': [1, 1, 0],
 'doc': ['af', {
 'en':
 """
 Returns the slave address for a given num as set by 
 :func:`SetChibiSlaveAddress`.
-
-.. versionadded:: 1.1.0~(Firmware)
 """,
 'de':
 """
 Gibt die Slave Adresse für eine Adressnummerierung (mittels num Parameter) zurück,
 wie von :func:`SetChibiSlaveAddress` gesetzt.
-
-.. versionadded:: 1.1.0~(Firmware)
 """
 }]
 })
@@ -303,20 +292,17 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetChibiSignalStrength', 'get_chibi_signal_strength'), 
 'elements': [('signal_strength', 'uint8', 1, 'out')], 
+'since_firmware': [1, 1, 0],
 'doc': ['af', {
 'en':
 """
 Returns the signal strength in dBm. The signal strength updates every time a
 packet is received.
-
-.. versionadded:: 1.1.0~(Firmware)
 """,
 'de':
 """
 Gibt die Signalstärke in dBm zurück. Die Aktualisierung der Signalstärke
 wird bei jedem Empfang eines Paketes durchgeführt.
-
-.. versionadded:: 1.1.0~(Firmware)
 """
 }]
 })
@@ -328,6 +314,7 @@ com['packets'].append({
              ('crc_error', 'uint16', 1, 'out'),
              ('no_ack', 'uint16', 1, 'out'),
              ('overflow', 'uint16', 1, 'out')], 
+'since_firmware': [1, 1, 0],
 'doc': ['af', {
 'en':
 """
@@ -335,8 +322,6 @@ Returns underrun, CRC error, no ACK and overflow error counts of the Chibi
 communication. If these errors start rising, it is likely that either the
 distance between two Chibi stacks is becoming too big or there are
 interferences.
-
-.. versionadded:: 1.1.0~(Firmware)
 """,
 'de':
 """
@@ -344,8 +329,6 @@ Gibt folgende Fehlerzähler der Chibi Kommunikation zurück: Underrun, CRC Fehle
 kein ACK und Overflow. Bei Anstieg dieser Fehlerzähler ist es wahrscheinlich, dass
 entweder die Entfernung zwischen zwei Chibi Stapeln zu groß wird oder Störungen
 vorliegen.
-
-.. versionadded:: 1.1.0~(Firmware)
 """
 }]
 })
@@ -354,6 +337,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetChibiFrequency', 'set_chibi_frequency'), 
 'elements': [('frequency', 'uint8', 1, 'in')], 
+'since_firmware': [1, 1, 0],
 'doc': ['af', {
 'en':
 """
@@ -371,8 +355,6 @@ Sets the Chibi frequency range for the Chibi Extension. Possible values are:
 It is possible to set the frequency with the Brick Viewer and it will be 
 saved in the EEPROM of the Chibi Extension, it does not
 have to be set on every startup.
-
-.. versionadded:: 1.1.0~(Firmware)
 """,
 'de':
 """
@@ -390,8 +372,6 @@ Setzt den Chibi Frequenzbereich der Chibi Extension. Mögliche Werte sind:
 Es ist möglich den Frequenzbereich mit dem Brick Viewer zu setzen und dieser wird
 im EEPROM der Chibi Extension abgespeichert. Ein Setzen bei
 jedem Hochfahren ist daher nicht notwendig.
-
-.. versionadded:: 1.1.0~(Firmware)
 """
 }]
 })
@@ -400,18 +380,15 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetChibiFrequency', 'get_chibi_frequency'), 
 'elements': [('frequency', 'uint8', 1, 'out')], 
+'since_firmware': [1, 1, 0],
 'doc': ['af', {
 'en':
 """
 Returns the frequency value as set by :func:`SetChibiFrequency`.
-
-.. versionadded:: 1.1.0~(Firmware)
 """,
 'de':
 """
 Gibt den Frequenzbereich zurück, wie von :func:`SetChibiFrequency` gesetzt.
-
-.. versionadded:: 1.1.0~(Firmware)
 """
 }]
 })
@@ -420,6 +397,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetChibiChannel', 'set_chibi_channel'), 
 'elements': [('channel', 'uint8', 1, 'in')], 
+'since_firmware': [1, 1, 0],
 'doc': ['af', {
 'en':
 """
@@ -438,8 +416,6 @@ different for different frequencies:
 It is possible to set the channel with the Brick Viewer and it will be 
 saved in the EEPROM of the Chibi Extension, it does not
 have to be set on every startup.
-
-.. versionadded:: 1.1.0~(Firmware)
 """,
 'de':
 """
@@ -458,8 +434,6 @@ abhängig vom verwendeten Frequenzbereich:
 Es ist möglich den Kanal mit dem Brick Viewer zu setzen und dieser wird
 im EEPROM der Chibi Extension abgespeichert. Ein Setzen bei
 jedem Hochfahren ist daher nicht notwendig.
-
-.. versionadded:: 1.1.0~(Firmware)
 """
 }]
 })
@@ -468,18 +442,15 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetChibiChannel', 'get_chibi_channel'), 
 'elements': [('channel', 'uint8', 1, 'out')], 
+'since_firmware': [1, 1, 0],
 'doc': ['af', {
 'en':
 """
 Returns the channel as set by :func:`SetChibiChannel`.
-
-.. versionadded:: 1.1.0~(Firmware)
 """,
 'de':
 """
 Gibt den Kanal zurück, wie von :func:`SetChibiChannel` gesetzt.
-
-.. versionadded:: 1.1.0~(Firmware)
 """
 }]
 })
@@ -488,18 +459,15 @@ com['packets'].append({
 'type': 'function', 
 'name': ('IsRS485Present', 'is_rs485_present'), 
 'elements': [('present', 'bool', 1, 'out')], 
+'since_firmware': [1, 2, 0],
 'doc': ['af', {
 'en':
 """
 Returns *true* if a RS485 Extension is available to be used by the Master.
-
-.. versionadded:: 1.2.0~(Firmware)
 """,
 'de':
 """
 Gibt zurück ob eine RS485 Extension zur Nutzung durch den Master verfügbar ist.
-
-.. versionadded:: 1.2.0~(Firmware)
 """
 }]
 })
@@ -508,6 +476,7 @@ com['packets'].append({
 'type': 'function', 
 'name': ('SetRS485Address', 'set_rs485_address'), 
 'elements': [('address', 'uint8', 1, 'in')], 
+'since_firmware': [1, 2, 0],
 'doc': ['af', {
 'en':
 """
@@ -519,8 +488,6 @@ connected to a PC via USB).
 It is possible to set the address with the Brick Viewer and it will be 
 saved in the EEPROM of the RS485 Extension, it does not
 have to be set on every startup.
-
-.. versionadded:: 1.2.0~(Firmware)
 """,
 'de':
 """
@@ -532,8 +499,6 @@ USB) zu betreiben muss die Adresse auf 0 gesetzt werden.
 Es ist möglich die Adresse mit dem Brick Viewer zu setzen und diese wird im
 EEPROM der RS485 Extension abgespeichert. Ein Setzen bei
 jedem Hochfahren ist daher nicht notwendig.
-
-.. versionadded:: 1.2.0~(Firmware)
 """
 }]
 })
@@ -542,18 +507,15 @@ com['packets'].append({
 'type': 'function', 
 'name': ('GetRS485Address', 'get_rs485_address'), 
 'elements': [('address', 'uint8', 1, 'out')], 
+'since_firmware': [1, 2, 0],
 'doc': ['af', {
 'en':
 """
 Returns the address as set by :func:`SetRS485Address`.
-
-.. versionadded:: 1.2.0~(Firmware)
 """,
 'de':
 """
 Gibt die Adresse zurück, wie von :func:`SetRS485Address` gesetzt.
-
-.. versionadded:: 1.2.0~(Firmware)
 """
 }]
 })
@@ -563,6 +525,7 @@ com['packets'].append({
 'name': ('SetRS485SlaveAddress', 'set_rs485_slave_address'),
 'elements': [('num', 'uint8', 1, 'in'),
              ('address', 'uint8', 1, 'in')], 
+'since_firmware': [1, 2, 0],
 'doc': ['af', {
 'en':
 """
@@ -576,8 +539,6 @@ RS485 stacks with the IDs 17, 23, and 42, you should call with "(0, 17),
 It is possible to set the addresses with the Brick Viewer and it will be 
 saved in the EEPROM of the RS485 Extension, they don't
 have to be set on every startup.
-
-.. versionadded:: 1.2.0~(Firmware)
 """,
 'de':
 """
@@ -591,8 +552,6 @@ Aufrufe "(0, 17), (1, 23) und (2, 42)" sein.
 Es ist möglich die Adressen mit dem Brick Viewer zu setzen und diese werden
 im EEPROM der RS485 Extension abgespeichert. Ein Setzen bei
 jedem Hochfahren ist daher nicht notwendig.
-
-.. versionadded:: 1.2.0~(Firmware)
 """
 }]
 })
@@ -602,20 +561,17 @@ com['packets'].append({
 'name': ('GetRS485SlaveAddress', 'get_rs485_slave_address'), 
 'elements': [('num', 'uint8', 1, 'in'),
              ('address', 'uint8', 1, 'out')], 
+'since_firmware': [1, 2, 0],
 'doc': ['af', {
 'en':
 """
 Returns the slave address for a given num as set by 
 :func:`SetRS485SlaveAddress`.
-
-.. versionadded:: 1.2.0~(Firmware)
 """,
 'de':
 """
 Gibt die Slave Adresse für eine Adressnummerierung (mittels num Parameter) zurück,
 wie von :func:`SetRS485SlaveAddress` gesetzt.
-
-.. versionadded:: 1.2.0~(Firmware)
 """
 }]
 })
@@ -624,6 +580,7 @@ com['packets'].append({
 'type': 'function', 
 'name': ('GetRS485ErrorLog', 'get_rs485_error_log'), 
 'elements': [('crc_error', 'uint16', 1, 'out')], 
+'since_firmware': [1, 2, 0],
 'doc': ['af', {
 'en':
 """
@@ -631,16 +588,12 @@ Returns CRC error counts of the RS485 communication.
 If this counter starts rising, it is likely that the distance
 between the RS485 nodes is too big or there is some kind of
 interference.
-
-.. versionadded:: 1.2.0~(Firmware)
 """,
 'de':
 """
 Gibt den CRC Fehlerzähler der RS485 Kommunikation zurück. Wenn dieser Zähler
 ansteigt ist es wahrscheinlich, dass der Abstand zwischen zwei RS485-Teilnehmern
 zu groß ist oder es Störungen gibt.
-
-.. versionadded:: 1.2.0~(Firmware)
 """
 }]
 })
@@ -651,6 +604,7 @@ com['packets'].append({
 'elements': [('speed', 'uint32', 1, 'in'),
              ('parity', 'char', 1, 'in'),
              ('stopbits', 'uint8', 1, 'in')], 
+'since_firmware': [1, 2, 0],
 'doc': ['af', {
 'en':
 """
@@ -666,8 +620,6 @@ should use a value in the range of 100khz.
 
 The values are stored in the EEPROM and only applied on startup. That means
 you have to restart the Master Brick after configuration.
-
-.. versionadded:: 1.2.0~(Firmware)
 """,
 'de':
 """
@@ -683,8 +635,6 @@ Werte im Bereich von 100000 verwenden.
 
 Die Werte sind im EEPROM gespeichert und werden nur beim Hochfahren angewandt.
 Das bedeutet der Master Brick muss nach einer Konfiguration neugestartet werden.
-
-.. versionadded:: 1.2.0~(Firmware)
 """
 }]
 })
@@ -695,19 +645,16 @@ com['packets'].append({
 'elements': [('speed', 'uint32', 1, 'out'),
              ('parity', 'char', 1, 'out'),
              ('stopbits', 'uint8', 1, 'out')], 
+'since_firmware': [1, 2, 0],
 'doc': ['af', {
 'en':
 """
 Returns the configuration as set by :func:`SetRS485Configuration`.
-
-.. versionadded:: 1.2.0~(Firmware)
 """,
 'de':
 """
 Gibt die Schnittstellenkonfiguration zurück, wie von :func:`SetRS485Configuration`
 gesetzt.
-
-.. versionadded:: 1.2.0~(Firmware)
 """
 }]
 })
@@ -716,18 +663,15 @@ com['packets'].append({
 'type': 'function', 
 'name': ('IsWifiPresent', 'is_wifi_present'), 
 'elements': [('present', 'bool', 1, 'out')], 
+'since_firmware': [1, 2, 0],
 'doc': ['af', {
 'en':
 """
 Returns *true* if a WIFI Extension is available to be used by the Master.
-
-.. versionadded:: 1.2.0~(Firmware)
 """,
 'de':
 """
 Gibt zurück ob eine WIFI Extension zur Nutzung durch den Master verfügbar ist.
-
-.. versionadded:: 1.2.0~(Firmware)
 """
 }]
 })
@@ -741,6 +685,7 @@ com['packets'].append({
              ('subnet_mask', 'uint8', 4, 'in'),
              ('gateway', 'uint8', 4, 'in'),
              ('port', 'uint16', 1, 'in')], 
+'since_firmware': [1, 3, 0],
 'doc': ['af', {
 'en':
 """
@@ -759,8 +704,6 @@ The values are stored in the EEPROM and only applied on startup. That means
 you have to restart the Master Brick after configuration.
 
 It is recommended to use the Brick Viewer to set the WIFI configuration.
-
-.. versionadded:: 1.3.0~(Firmware)
 """,
 'de':
 """
@@ -781,8 +724,6 @@ Das bedeutet der Master Brick muss nach einer Konfiguration neugestartet werden.
 
 Wir empfehlen die Brick Viewer zu nutzen um die WIFI Extension zu
 konfigurieren.
-
-.. versionadded:: 1.3.0~(Firmware)
 """
 }]
 })
@@ -796,19 +737,16 @@ com['packets'].append({
              ('subnet_mask', 'uint8', 4, 'out'),
              ('gateway', 'uint8', 4, 'out'),
              ('port', 'uint16', 1, 'out')], 
+'since_firmware': [1, 3, 0],
 'doc': ['af', {
 'en':
 """
 Returns the configuration as set by :func:`SetWifiConfiguration`.
-
-.. versionadded:: 1.3.0~(Firmware)
 """,
 'de':
 """
 Gibt die Konfiguration zurück, wie von :func:`SetWifiConfiguration`
 gesetzt.
-
-.. versionadded:: 1.3.0~(Firmware)
 """
 }]
 })
@@ -823,6 +761,7 @@ com['packets'].append({
              ('ca_certificate_length', 'uint16', 1, 'in'), 
              ('client_certificate_length', 'uint16', 1, 'in'), 
              ('private_key_length', 'uint16', 1, 'in')], 
+'since_firmware': [1, 3, 0],
 'doc': ['af', {
 'en':
 """
@@ -864,8 +803,6 @@ The values are stored in the EEPROM and only applied on startup. That means
 you have to restart the Master Brick after configuration.
 
 It is recommended to use the Brick Viewer to set the WIFI encryption.
-
-.. versionadded:: 1.3.0~(Firmware)
 """,
 'de':
 """
@@ -907,8 +844,6 @@ Das bedeutet der Master Brick muss nach einer Konfiguration neugestartet werden.
 
 Wir empfehlen die Brick Viewer zu nutzen um die WIFI Extension Verschlüsselung
 zu konfigurieren.
-
-.. versionadded:: 1.3.0~(Firmware)
 """
 }]
 })
@@ -923,19 +858,16 @@ com['packets'].append({
              ('ca_certificate_length', 'uint16', 1, 'out'), 
              ('client_certificate_length', 'uint16', 1, 'out'), 
              ('private_key_length', 'uint16', 1, 'out')], 
+'since_firmware': [1, 3, 0],
 'doc': ['af', {
 'en':
 """
 Returns the encryption as set by :func:`SetWifiEncryption`.
-
-.. versionadded:: 1.3.0~(Firmware)
 """,
 'de':
 """
 Gibt die Verschlüsselungseinstellungen zurück, wie von 
 :func:`SetWifiEncryption` gesetzt.
-
-.. versionadded:: 1.3.0~(Firmware)
 """
 }]
 })
@@ -953,6 +885,7 @@ com['packets'].append({
              ('rx_count', 'uint32', 1, 'out'),
              ('tx_count', 'uint32', 1, 'out'),
              ('state', 'uint8', 1, 'out')],
+'since_firmware': [1, 3, 0],
 'doc': ['af', {
 'en':
 """
@@ -971,8 +904,6 @@ Possible states are:
  "2", "Associating"
  "3", "Error"
  "255", "Not initialized yet"
-
-.. versionadded:: 1.3.0~(Firmware)
 """,
 'de':
 """
@@ -988,12 +919,9 @@ Mögliche Werte für state sind:
 
  "0", "Getrennt"
  "1", "Verbunden"
- "2", "Am Verbinden"
- "3", "Error"
+ "2", "Verbindung wird aufgebaut"
+ "3", "Fehler"
  "255", "Noch nicht initialisiert"
-
-
-.. versionadded:: 1.3.0~(Firmware)
 """
 }]
 })
@@ -1002,6 +930,7 @@ com['packets'].append({
 'type': 'function', 
 'name': ('RefreshWifiStatus', 'refresh_wifi_status'), 
 'elements': [],
+'since_firmware': [1, 3, 0],
 'doc': ['af', {
 'en':
 """
@@ -1011,8 +940,6 @@ command mode and back. This transaction and the readout itself is
 unfortunately time consuming. This means, that it might take some ms
 until the stack with attached WIFI Extensions reacts again after this
 function is called.
-
-.. versionadded:: 1.3.0~(Firmware)
 """,
 'de':
 """
@@ -1022,8 +949,6 @@ Kommandomodus und wieder zurück wechseln. Dieser Wechsel und das eigentliche
 Auslesen ist leider zeitaufwändig. Dass heißt, es dauert ein paar ms bis der
 Stapel mit aufgesteckter WIFI Extension wieder reagiert nachdem die
 Funktion aufgerufen wurde.
-
-.. versionadded:: 1.3.0~(Firmware)
 """
 }]
 })
@@ -1034,6 +959,7 @@ com['packets'].append({
 'elements': [('index', 'uint16', 1, 'in'),
              ('data', 'uint8', 32, 'in'),
              ('data_length', 'uint8', 1, 'in')], 
+'since_firmware': [1, 3, 0],
 'doc': ['af', {
 'en':
 """
@@ -1055,8 +981,6 @@ you have to restart the Master Brick after uploading the certificate.
 
 It is recommended to use the Brick Viewer to set the certificate, username
 and password.
-
-.. versionadded:: 1.3.0~(Firmware)
 """,
 'de':
 """
@@ -1078,8 +1002,6 @@ Das bedeutet der Master Brick muss nach einer Konfiguration neugestartet werden.
 
 Wir empfehlen die Brick Viewer zu nutzen um die WIFI Extension Verschlüsselung
 zu konfigurieren.
-
-.. versionadded:: 1.3.0~(Firmware)
 """
 }]
 })
@@ -1090,19 +1012,16 @@ com['packets'].append({
 'elements': [('index', 'uint16', 1, 'in'),
              ('data', 'uint8', 32, 'out'),
              ('data_length', 'uint8', 1, 'out')], 
+'since_firmware': [1, 3, 0],
 'doc': ['af', {
 'en':
 """
 Returns the certificate for a given index as set by :func:`SetWifiCertificate`.
-
-.. versionadded:: 1.3.0~(Firmware)
 """,
 'de':
 """
 Gibt das Zertifikat für einen Index zurück, wie von 
 :func:`SetWifiCertificate` gesetzt.
-
-.. versionadded:: 1.3.0~(Firmware)
 """
 }]
 })
@@ -1111,6 +1030,7 @@ com['packets'].append({
 'type': 'function', 
 'name': ('SetWifiPowerMode', 'set_wifi_power_mode'), 
 'elements': [('mode', 'uint8', 1, 'in')], 
+'since_firmware': [1, 3, 0],
 'doc': ['af', {
 'en':
 """
@@ -1124,8 +1044,6 @@ Sets the power mode of the WIFI Extension. Possible modes are:
  "1", "Low Power (low power consumption, low throughput)"
 
 The default value is 0 (Full Speed).
-
-.. versionadded:: 1.3.0~(Firmware)
 """,
 'de':
 """
@@ -1139,8 +1057,6 @@ Setzt den Stromsparmodus für die WIFI Extension. Mögliche Werte sind:
  "1", "Low Power (geringer Stromverbrauch, geringer Durchsatz)"
 
 Der Standardwert ist 0 (Full Speed).
-
-.. versionadded:: 1.3.0~(Firmware)
 """
 }]
 })
@@ -1149,18 +1065,15 @@ com['packets'].append({
 'type': 'function', 
 'name': ('GetWifiPowerMode', 'get_wifi_power_mode'), 
 'elements': [('mode', 'uint8', 1, 'out')], 
+'since_firmware': [1, 3, 0],
 'doc': ['af', {
 'en':
 """
 Returns the power mode as set by :func:`SetWifiPowerMode`.
-
-.. versionadded:: 1.3.0~(Firmware)
 """,
 'de':
 """
 Gibt den Stromsparmodus zurück, wie von :func:`SetWifiPowerMode` gesetzt.
-
-.. versionadded:: 1.3.0~(Firmware)
 """
 }]
 })
@@ -1170,8 +1083,8 @@ com['packets'].append({
 'name': ('GetWifiBufferInfo', 'get_wifi_buffer_info'), 
 'elements': [('overflow', 'uint32', 1, 'out'),
              ('low_watermark', 'uint16', 1, 'out'),
-             ('used', 'uint16', 1, 'out'),
-], 
+             ('used', 'uint16', 1, 'out')],
+'since_firmware': [1, 3, 2],
 'doc': ['af', {
 'en':
 """
@@ -1188,9 +1101,7 @@ have a permanent latency. A good rule of thumb is, that you can transfer
 1000 messages per second without problems.
 
 Try to not send more then 50 messages at a time without any kind of
-break between them. 
-
-.. versionadded:: 1.3.2~(Firmware)
+break between them.
 """,
 'de':
 """
@@ -1208,8 +1119,6 @@ nicht mehr als 1000 Nachrichten pro Sekunde zu verschicken.
 
 Dabei sollten am besten nie mehr als 50 Nachrichten auf einmal ohne 
 Pausen gesendet werden.
-
-.. versionadded:: 1.3.2~(Firmware)
 """
 }]
 })
@@ -1218,6 +1127,7 @@ com['packets'].append({
 'type': 'function', 
 'name': ('SetWifiRegulatoryDomain', 'set_wifi_regulatory_domain'), 
 'elements': [('domain', 'uint8', 1, 'in')], 
+'since_firmware': [1, 3, 4],
 'doc': ['af', {
 'en':
 """
@@ -1232,8 +1142,6 @@ Sets the regulatory domain of the WIFI Extension. Possible modes are:
  "2", "TELEC: Channel 1-14 (Japan)"
 
 The default value is 1 (ETSI).
-
-.. versionadded:: 1.3.4~(Firmware)
 """,
 'de':
 """
@@ -1248,8 +1156,6 @@ Setzt den Geltungsbereich der WIFI Extension. Mögliche Werte sind:
  "2", "TELEC: Kanal 1-14 (Japan)"
 
 Der Standardwert ist 1 (ETSI).
-
-.. versionadded:: 1.3.4~(Firmware)
 """
 }]
 })
@@ -1258,18 +1164,15 @@ com['packets'].append({
 'type': 'function', 
 'name': ('GetWifiRegulatoryDomain', 'get_wifi_regulatory_domain'), 
 'elements': [('mode', 'uint8', 1, 'out')], 
+'since_firmware': [1, 3, 4],
 'doc': ['af', {
 'en':
 """
 Returns the regulatory domain as set by :func:`SetWifiRegulatoryDomain`.
-
-.. versionadded:: 1.3.4~(Firmware)
 """,
 'de':
 """
 Gibt den Geltungsbereich zurück, wie von :func:`SetWifiRegulatoryDomain` gesetzt.
-
-.. versionadded:: 1.3.4~(Firmware)
 """
 }]
 })
@@ -1278,16 +1181,15 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetUSBVoltage', 'get_usb_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')], 
+'since_firmware': [1, 3, 5],
 'doc': ['af', {
 'en':
 """
-Returns the USB voltage in mV. 
+Returns the USB voltage in mV.
 """,
 'de':
 """
 Gibt die USB Spannung in mV zurück.
-
-.. versionadded:: 1.3.5~(Firmware)
 """
 }]
 })

@@ -29,6 +29,7 @@ import re
 import datetime
 import subprocess
 import sys
+import copy
 
 gen_text_star = """/* ***********************************************************
  * This file was automatically generated on {0}.      *
@@ -308,6 +309,19 @@ re_camel_case_to_space = re.compile('([A-Z][A-Z][a-z])|([a-z][A-Z])')
 def camel_case_to_space(name):
     return re_camel_case_to_space.sub(lambda m: m.group()[:1] + " " + m.group()[1:], name)
 
+def handle_since_firmware(text, device, packet):
+    since = packet.get_since_firmware()
+
+    if since != [1, 0, 0]:
+        if device.get_category() == 'Brick':
+            suffix = 'Firmware'
+        else:
+            suffix = 'Plugin'
+
+        text += '\n.. versionadded:: {1}.{2}.{3}~({0})\n'.format(suffix, *since)
+
+    return text
+
 def handle_rst_if(text, device):
     lines = []
 
@@ -382,7 +396,11 @@ def generate(path, language, make_files, prepare, is_doc):
             module = __import__(config[:-3])
             print(" * {0}".format(config[:-10]))
             if 'brick_' in config and not module.com.has_key('common_included'):
-                module.com['packets'].extend(common_packets)
+                specified_common_packets = copy.deepcopy(common_packets)
+                for specified_common_packet in specified_common_packets:
+                    specified_common_packet['since_firmware'] = \
+                      specified_common_packet['since_firmware'][module.com['name'][1]]
+                module.com['packets'].extend(specified_common_packets)
                 module.com['common_included'] = True
             make_files(module.com, path)
 
@@ -440,6 +458,9 @@ class Packet:
         else:
             raise ValueError('Invalid element direction ' + str(direction))
 
+    def get_since_firmware(self):
+        return self.packet['since_firmware']
+
     def get_doc(self):
         return self.packet['doc']
 
@@ -478,8 +499,8 @@ class Device:
             else:
                 raise ValueError('Invalid packet type ' + packet.get_type())
 
-    def get_version(self):
-        return self.com['version']
+    def get_binding_version(self):
+        return self.com['binding_version']
 
     def get_category(self):
         return self.com['category']

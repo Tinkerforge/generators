@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'version': [1, 0, 0],
+    'binding_version': [1, 0, 0],
     'category': 'Bricklet',
     'name': ('GPS', 'gps', 'GPS'),
     'manufacturer': 'Tinkerforge',
@@ -23,6 +23,7 @@ com['packets'].append({
              ('hdop', 'uint16', 1, 'out'),
              ('vdop', 'uint16', 1, 'out'),
              ('epe', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -39,6 +40,7 @@ com['packets'].append({
 'elements': [('fix', 'uint8', 1, 'out'),
              ('satellites_view', 'uint8', 1, 'out'),
              ('satellites_used', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -54,6 +56,7 @@ com['packets'].append({
 'name': ('GetAltitude', 'get_altitude'),
 'elements': [('altitude', 'uint32', 1, 'out'),
              ('geoidal_separation', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -69,6 +72,7 @@ com['packets'].append({
 'name': ('GetMotion', 'get_motion'),
 'elements': [('course', 'uint32', 1, 'out'),
              ('speed', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -84,6 +88,7 @@ com['packets'].append({
 'name': ('GetDateTime', 'get_date_time'),
 'elements': [('date', 'uint32', 1, 'out'),
              ('time', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -98,6 +103,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('Restart', 'restart'),
 'elements': [('restart_type', 'uint8', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -112,6 +118,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetCoordinatesCallbackPeriod', 'set_coordinates_callback_period'),
 'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -126,6 +133,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetCoordinatesCallbackPeriod', 'get_coordinates_callback_period'),
 'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -143,6 +151,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetStatusCallbackPeriod', 'set_status_callback_period'),
 'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -157,6 +166,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetStatusCallbackPeriod', 'get_status_callback_period'),
 'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -174,6 +184,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetAltitudeCallbackPeriod', 'set_altitude_callback_period'),
 'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -188,6 +199,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAltitudeCallbackPeriod', 'get_altitude_callback_period'),
 'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -205,6 +217,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetDateTimeCallbackPeriod', 'set_date_time_callback_period'),
 'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -219,6 +232,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetDateTimeCallbackPeriod', 'get_date_time_callback_period'),
 'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -236,6 +250,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetMotionCallbackPeriod', 'set_motion_callback_period'),
 'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -250,6 +265,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetMotionCallbackPeriod', 'get_motion_callback_period'),
 'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -274,6 +290,7 @@ com['packets'].append({
              ('hdop', 'uint16', 1, 'out'),
              ('vdop', 'uint16', 1, 'out'),
              ('epe', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -290,6 +307,7 @@ com['packets'].append({
 'elements': [('fix', 'uint8', 1, 'out'),
              ('satellites_view', 'uint8', 1, 'out'),
              ('satellites_used', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -305,6 +323,7 @@ com['packets'].append({
 'name': ('Altitude', 'altitude'),
 'elements': [('altitude', 'uint32', 1, 'out'),
              ('geoidal_separation', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -320,6 +339,7 @@ com['packets'].append({
 'name': ('Motion', 'motion'),
 'elements': [('course', 'uint32', 1, 'out'),
              ('speed', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -335,6 +355,7 @@ com['packets'].append({
 'name': ('DateTime', 'date_time'),
 'elements': [('date', 'uint32', 1, 'out'),
              ('time', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """

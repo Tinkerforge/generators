@@ -35,7 +35,8 @@ import common
 
 device = None
 
-def fix_links(text):
+def format_doc(packet):
+    text = common.select_lang(packet.get_doc()[1])
     link = '<see cref="Tinkerforge.{0}{1}.{2}"/>'
 
     # escape XML special chars
@@ -87,9 +88,9 @@ def fix_links(text):
     text = '\n'.join(replaced_lines)
 
     cls = device.get_camel_case_name()
-    for packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
-        name = packet.get_camel_case_name()
+    for other_packet in device.get_packets():
+        name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+        name = other_packet.get_camel_case_name()
         name_right = link.format(device.get_category(), cls, name)
 
         text = text.replace(name_false, name_right)
@@ -98,8 +99,9 @@ def fix_links(text):
     text = text.replace(":word:`parameters`", "parameters")
 
     text = common.handle_rst_if(text, device)
+    text = common.handle_since_firmware(text, device, packet)
 
-    return text
+    return '\n\t\t///  '.join(text.strip().split('\n'))
 
 def make_import():
     include = """{0}
@@ -134,7 +136,7 @@ def make_delegates():
     for packet in device.get_packets('callback'):
         name = packet.get_camel_case_name()
         parameter = csharp_common.make_parameter_list(packet)
-        doc = '\n\t\t///  '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
+        doc = format_doc(packet)
         cbs += cb.format(name, parameter, doc)
     return cbs
 
@@ -170,13 +172,11 @@ def make_constructor():
         name_pascal = packet.get_camel_case_name()
         cbs.append(cb.format(name_upper, name_pascal))
 
-    v = device.get_version()
+    v = device.get_binding_version()
     return con.format(device.get_category(),
                       device.get_camel_case_name(),
                       '\n'.join(cbs),
-                      v[0],
-                      v[1],
-                      v[2],
+                      v[0], v[1], v[2],
                       device.get_display_name(),
                       device.get_category())
 
@@ -313,7 +313,7 @@ def make_methods():
         ret_count = len(packet.get_elements('out'))
         size = str(get_data_size(packet))
         name_upper = packet.get_upper_case_name()
-        doc = '\n\t\t///  '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
+        doc = format_doc(packet)
 
         write_convs = ''
         write_conv = '\t\t\tLEConverter.To({0}, {1}, data_);\n'
@@ -384,7 +384,7 @@ def make_obsolete_methods():
         sigParams = csharp_common.make_parameter_list(packet, True)
         outParam = common.underscore_to_headless_camel_case(packet.get_elements('out')[0][0])
         callParams = ", ".join(map(lambda e: common.underscore_to_headless_camel_case(e[0]), packet.get_elements('in')))
-        doc = '\n\t\t///  '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
+        doc = format_doc(packet)
 
         methods += method.format(name,
                                  sigParams,

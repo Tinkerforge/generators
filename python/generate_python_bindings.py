@@ -33,13 +33,16 @@ import common
 
 device = None
 
-def fix_links(text):
+def format_doc(packet):
+    text = common.select_lang(packet.get_doc()[1])
+
     text = text.replace(":word:`parameter`", "parameter")
     text = text.replace(":word:`parameters`", "parameters")
 
     text = common.handle_rst_if(text, device)
+    text = common.handle_since_firmware(text, device, packet)
 
-    return text
+    return '\n        '.join(text.strip().split('\n'))
 
 def make_import():
     include = """# -*- coding: utf-8 -*-
@@ -56,6 +59,7 @@ try:
     from .ip_connection import Device, IPConnection, Error
 except ImportError:
     from ip_connection import Device, IPConnection, Error
+
 """
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     lower_type = device.get_category().lower()
@@ -120,7 +124,7 @@ def make_init_method():
         self.binding_version = {0}
 
 """
-    return dev_init.format(str(device.get_version()),
+    return dev_init.format(str(device.get_binding_version()),
                            device.get_display_name(),
                            device.get_category())
 
@@ -199,7 +203,7 @@ def make_methods():
         ns = packet.get_underscore_name()
         nh = ns.upper()
         par = make_parameter_list(packet)
-        doc = '\n        '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
+        doc = format_doc(packet)
         cp = ''
         ct = ''
         if par != '':

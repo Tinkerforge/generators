@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'version': [1, 0, 0],
+    'binding_version': [1, 0, 0],
     'category': 'Bricklet',
     'name': ('PiezoBuzzer', 'piezo_buzzer', 'Piezo Buzzer'),
     'manufacturer': 'Tinkerforge',
@@ -16,6 +16,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('Beep', 'beep'), 
 'elements': [('duration', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -34,6 +35,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('MorseCode', 'morse_code'), 
 'elements': [('morse', 'string', 60, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -66,6 +68,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('BeepFinished', 'beep_finished'), 
 'elements': [],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -83,6 +86,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('MorseCodeFinished', 'morse_code_finished'), 
 'elements': [],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """

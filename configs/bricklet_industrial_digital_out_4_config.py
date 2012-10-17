@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'version': [1, 0, 0],
+    'binding_version': [1, 0, 0],
     'category': 'Bricklet',
     'name': ('IndustrialDigitalOut4', 'industrial_digital_out_4', 'Industrial Digital Out 4'),
     'manufacturer': 'Tinkerforge',
@@ -16,6 +16,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetValue', 'set_value'),
 'elements': [('value_mask', 'uint16', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -55,6 +56,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetValue', 'get_value'),
 'elements': [('value_mask', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -73,6 +75,7 @@ com['packets'].append({
 'elements': [('pin_mask', 'uint16', 1, 'in'),
              ('value_mask', 'uint16', 1, 'in'),
              ('time', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -129,6 +132,7 @@ com['packets'].append({
              ('value', 'uint16', 1, 'out'),
              ('time', 'uint32', 1, 'out'),
              ('time_remaining', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -153,6 +157,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetGroup', 'set_group'),
 'elements': [('group', 'char', 4, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -198,6 +203,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetGroup', 'get_group'),
 'elements': [('group', 'char', 4, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -214,6 +220,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAvailableForGroup', 'get_available_for_group'),
 'elements': [('available', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -235,6 +242,7 @@ com['packets'].append({
 'name': ('MonoflopDone', 'monoflop_done'),
 'elements': [('pin_mask', 'uint16', 1, 'out'),
              ('value_mask', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """

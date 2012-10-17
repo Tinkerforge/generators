@@ -34,7 +34,8 @@ import common
 
 device = None
 
-def fix_links(text):
+def format_doc(packet, suffix):
+    text = common.select_lang(packet.get_doc()[1])
     link = '{0}{1}::{2}()'
     link_c = '{0}{1}::CALLBACK_{2}'
 
@@ -84,13 +85,13 @@ def fix_links(text):
     text = '\n'.join(replaced_lines)
 
     cls = device.get_camel_case_name()
-    for packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
-        if packet.get_type() == 'callback':
-            name = packet.get_upper_case_name()
+    for other_packet in device.get_packets():
+        name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+        if other_packet.get_type() == 'callback':
+            name = other_packet.get_upper_case_name()
             name_right = link_c.format(device.get_category(), cls, name)
         else:
-            name = packet.get_headless_camel_case_name()
+            name = other_packet.get_headless_camel_case_name()
             name_right = link.format(device.get_category(), cls, name)
 
         text = text.replace(name_false, name_right)
@@ -101,8 +102,9 @@ def fix_links(text):
     text = text.replace('.. warning::', '\\warning')
 
     text = common.handle_rst_if(text, device)
+    text = common.handle_since_firmware(text, device, packet)
 
-    return text
+    return '\n     * '.join(text.strip().split('\n') + suffix)
 
 def make_parameter_doc(packet):
     param = []
@@ -160,7 +162,7 @@ def make_callback_id_definitions():
     const CALLBACK_{0} = {1};
 """
     for packet in device.get_packets('callback'):
-        doc = '\n     * '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
+        doc = format_doc(packet, [])
         cbs += cb.format(packet.get_upper_case_name(), packet.get_function_id(), doc)
     return cbs + '\n'
 
@@ -202,12 +204,10 @@ def make_constructor():
         $this->bindingVersion = array({2}, {3}, {4});
 """
 
-    v = device.get_version()
+    v = device.get_binding_version()
     return con.format(device.get_category(),
                       device.get_camel_case_name(),
-                      v[0],
-                      v[1],
-                      v[2],
+                      v[0], v[1], v[2],
                       device.get_display_name(),
                       device.get_category())
 
@@ -371,7 +371,7 @@ def make_methods():
         if response_payload_size > 0:
             final_unpack = '        $payload = unpack(\'{0}\', $data);'.format('/'.join(unpack))
 
-        doc = '\n     * '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n') + [''] + make_parameter_doc(packet).split('\n'))
+        doc = format_doc(packet, [''] + make_parameter_doc(packet).split('\n'))
 
         if response_payload_elements > 1:
             method = method_multi.format(name_lower,

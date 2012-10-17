@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'version': [1, 0, 1],
+    'binding_version': [1, 0, 1],
     'category': 'Brick',
     'name': ('DC', 'dc', 'DC'),
     'manufacturer': 'Tinkerforge',
@@ -16,6 +16,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetVelocity', 'set_velocity'),
 'elements': [('velocity', 'int16', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -53,6 +54,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetVelocity', 'get_velocity'),
 'elements': [('velocity', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -69,6 +71,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetCurrentVelocity', 'get_current_velocity'),
 'elements': [('velocity', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -89,6 +92,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetAcceleration', 'set_acceleration'),
 'elements': [('acceleration', 'uint16', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -128,6 +132,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAcceleration', 'get_acceleration'),
 'elements': [('acceleration', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -144,6 +149,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetPWMFrequency', 'set_pwm_frequency'),
 'elements': [('frequency', 'uint16', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -179,6 +185,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetPWMFrequency', 'get_pwm_frequency'),
 'elements': [('frequency', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -195,6 +202,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('FullBrake', 'full_brake'),
 'elements': [],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -225,6 +233,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetStackInputVoltage', 'get_stack_input_voltage'),
 'elements': [('voltage', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -245,6 +254,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetExternalInputVoltage', 'get_external_input_voltage'),
 'elements': [('voltage', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -283,6 +293,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetCurrentConsumption', 'get_current_consumption'),
 'elements': [('voltage', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -299,6 +310,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('Enable', 'enable'),
 'elements': [],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -317,6 +329,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('Disable', 'disable'),
 'elements': [],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -336,6 +349,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('IsEnabled', 'is_enabled'),
 'elements': [('enabled', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -352,6 +366,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetMinimumVoltage', 'set_minimum_voltage'),
 'elements': [('voltage', 'uint16', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -380,6 +395,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetMinimumVoltage', 'get_minimum_voltage'),
 'elements': [('voltage', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -396,6 +412,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetDriveMode', 'set_drive_mode'),
 'elements': [('mode', 'uint8', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -444,6 +461,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetDriveMode', 'get_drive_mode'),
 'elements': [('mode', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -460,6 +478,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetCurrentVelocityPeriod', 'set_current_velocity_period'),
 'elements': [('period', 'uint16', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -482,6 +501,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetCurrentVelocityPeriod', 'get_current_velocity_period'),
 'elements': [('period', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -498,6 +518,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('UnderVoltage', 'under_voltage'),
 'elements': [('voltage', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -518,6 +539,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('EmergencyShutdown', 'emergency_shutdown'),
 'elements': [],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -562,6 +584,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('VelocityReached', 'velocity_reached'),
 'elements': [('velocity', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -598,6 +621,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('CurrentVelocity', 'current_velocity'),
 'elements': [('velocity', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """

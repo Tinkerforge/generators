@@ -38,7 +38,8 @@ import common
 
 device = None
 
-def fix_links(text):
+def format_doc(packet):
+    text = common.select_lang(packet.get_doc()[1])
     parameter = {
     'en': 'parameter',
     'de': 'Parameter'
@@ -49,13 +50,13 @@ def fix_links(text):
     }
 
     cls = device.get_category() + device.get_camel_case_name()
-    for packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
-        if packet.get_type() == 'callback':
-            name_upper = packet.get_upper_case_name()
+    for other_packet in device.get_packets():
+        name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+        if other_packet.get_type() == 'callback':
+            name_upper = other_packet.get_upper_case_name()
             name_right = ':php:member:`CALLBACK_{1} <{0}::CALLBACK_{1}>`'.format(cls, name_upper)
         else:
-            name = packet.get_headless_camel_case_name()
+            name = other_packet.get_headless_camel_case_name()
             name_right = ':php:func:`{1} <{0}::{1}>`'.format(cls, name)
         text = text.replace(name_false, name_right)
 
@@ -63,8 +64,9 @@ def fix_links(text):
     text = text.replace(":word:`parameters`", common.select_lang(parameters))
 
     text = common.handle_rst_if(text, device)
+    text = common.handle_since_firmware(text, device, packet)
 
-    return text
+    return common.shift_right(text, 1)
 
 def make_examples():
     def title_from_file(f):
@@ -120,7 +122,7 @@ def make_methods(typ):
         ret_type = php_common.get_return_type(packet)
         name = packet.get_headless_camel_case_name()
         params = make_parameter_list(packet)
-        desc = common.shift_right(fix_links(common.select_lang(packet.get_doc()[1])), 1)
+        desc = format_doc(packet)
         func = '{0}{1} {2}::{3}({4})\n{5}'.format(func_start,
                                                   ret_type,
                                                   cls,
@@ -153,7 +155,7 @@ def make_callbacks():
     cls = device.get_category() + device.get_camel_case_name()
     for packet in device.get_packets('callback'):
         params = make_parameter_list(packet)
-        desc = common.shift_right(fix_links(common.select_lang(packet.get_doc()[1])), 1)
+        desc = format_doc(packet)
         signature = common.select_lang(signature_str).format(params)
         func = '{0}{1}::CALLBACK_{2}\n{3}{4}'.format(func_start,
                                                      cls,

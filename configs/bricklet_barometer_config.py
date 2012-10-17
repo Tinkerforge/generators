@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
-    'version': [1, 1, 0],
+    'binding_version': [1, 1, 0],
     'category': 'Bricklet',
     'name': ('Barometer', 'barometer', 'Barometer'),
     'manufacturer': 'Tinkerforge',
@@ -16,6 +16,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAirPressure', 'get_air_pressure'),
 'elements': [('air_pressure', 'int32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -44,6 +45,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAltitude', 'get_altitude'),
 'elements': [('altitude', 'int32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -73,6 +75,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetAirPressureCallbackPeriod', 'set_air_pressure_callback_period'),
 'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -101,6 +104,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAirPressureCallbackPeriod', 'get_air_pressure_callback_period'),
 'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -118,6 +122,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetAltitudeCallbackPeriod', 'set_altitude_callback_period'),
 'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -146,6 +151,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAltitudeCallbackPeriod', 'get_altitude_callback_period'),
 'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -165,6 +171,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'in'),
              ('min', 'int32', 1, 'in'),
              ('max', 'int32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -211,6 +218,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'out'),
              ('min', 'int32', 1, 'out'),
              ('max', 'int32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -230,6 +238,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'in'),
              ('min', 'int32', 1, 'in'),
              ('max', 'int32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -276,6 +285,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'out'),
              ('min', 'int32', 1, 'out'),
              ('max', 'int32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -293,6 +303,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetDebouncePeriod', 'set_debounce_period'),
 'elements': [('debounce', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -329,6 +340,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetDebouncePeriod', 'get_debounce_period'),
 'elements': [('debounce', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -346,6 +358,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetReferenceAirPressure', 'set_reference_air_pressure'),
 'elements': [('air_pressure', 'int32', 1, 'in')],
+'since_firmware': [1, 1, 0],
 'doc': ['bf', {
 'en':
 """
@@ -360,8 +373,6 @@ Well known reference values are the Q codes
 used in aviation.
 
 The default value is 1013.25mbar.
-
-.. versionadded:: 1.1.0~(Plugin)
 """,
 'de':
 """
@@ -376,8 +387,6 @@ Wohl bekannte Referenzluftdruckwerte, die in der Luftfahrt verwendet werden, sin
 aus dem Q-Schlüssel.
 
 Der Standardwert ist 1013,25mbar.
-
-.. versionadded:: 1.1.0~(Plugin)
 """
 }]
 })
@@ -386,6 +395,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetChipTemperature', 'get_chip_temperature'),
 'elements': [('temperature', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -415,6 +425,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('AirPressure', 'air_pressure'),
 'elements': [('air_pressure', 'int32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -440,6 +451,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('Altitude', 'altitude'),
 'elements': [('altitude', 'int32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -465,6 +477,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('AirPressureReached', 'air_pressure_reached'),
 'elements': [('air_pressure', 'int32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -491,6 +504,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('AltitudeReached', 'altitude_reached'),
 'elements': [('altitude', 'int32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -517,19 +531,16 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetReferenceAirPressure', 'get_reference_air_pressure'),
 'elements': [('air_pressure', 'int32', 1, 'out')],
+'since_firmware': [1, 1, 0],
 'doc': ['bf', {
 'en':
 """
 Returns the reference air pressure as set by :func:`SetReferenceAirPressure`.
-
-.. versionadded:: 1.1.0~(Plugin)
 """,
 'de':
 """
 Gibt den Referenzluftdruckwert zurück, wie von :func:`SetReferenceAirPressure`
 gesetzt.
-
-.. versionadded:: 1.1.0~(Plugin)
 """
 }]
 })

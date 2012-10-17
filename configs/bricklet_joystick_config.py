@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'version': [1, 0, 0],
+    'binding_version': [1, 0, 0],
     'category': 'Bricklet',
     'name': ('Joystick', 'joystick', 'Joystick'),
     'manufacturer': 'Tinkerforge',
@@ -17,6 +17,7 @@ com['packets'].append({
 'name': ('GetPosition', 'get_position'), 
 'elements': [('x', 'int16', 1, 'out'),
              ('y', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -45,6 +46,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('IsPressed', 'is_pressed'), 
 'elements': [('pressed', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -68,6 +70,7 @@ com['packets'].append({
 'name': ('GetAnalogValue', 'get_analog_value'), 
 'elements': [('x', 'uint16', 1, 'out'),
              ('y', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -106,6 +109,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('Calibrate', 'calibrate'), 
 'elements': [],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -132,6 +136,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetPositionCallbackPeriod', 'set_position_callback_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -160,6 +165,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetPositionCallbackPeriod', 'get_position_callback_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -177,6 +183,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetAnalogValueCallbackPeriod', 'set_analog_value_callback_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -205,6 +212,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAnalogValueCallbackPeriod', 'get_analog_value_callback_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -226,6 +234,7 @@ com['packets'].append({
              ('max_x', 'int16', 1, 'in'),
              ('min_y', 'int16', 1, 'in'),
              ('max_y', 'int16', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -274,6 +283,7 @@ com['packets'].append({
              ('max_x', 'int16', 1, 'out'),
              ('min_y', 'int16', 1, 'out'),
              ('max_y', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -295,6 +305,7 @@ com['packets'].append({
              ('max_x', 'uint16', 1, 'in'),
              ('min_y', 'uint16', 1, 'in'),
              ('max_y', 'uint16', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -343,6 +354,7 @@ com['packets'].append({
              ('max_x', 'uint16', 1, 'out'),
              ('min_y', 'uint16', 1, 'out'),
              ('max_y', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -360,6 +372,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetDebouncePeriod', 'set_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -396,6 +409,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetDebouncePeriod', 'get_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -414,6 +428,7 @@ com['packets'].append({
 'name': ('Position', 'position'), 
 'elements': [('x', 'int16', 1, 'out'),
              ('y', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -440,6 +455,7 @@ com['packets'].append({
 'name': ('AnalogValue', 'analog_value'), 
 'elements': [('x', 'uint16', 1, 'out'),
              ('y', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -466,6 +482,7 @@ com['packets'].append({
 'name': ('PositionReached', 'position_reached'), 
 'elements': [('x', 'int16', 1, 'out'),
              ('y', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -493,6 +510,7 @@ com['packets'].append({
 'name': ('AnalogValueReached', 'analog_value_reached'), 
 'elements': [('x', 'uint16', 1, 'out'),
              ('y', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -519,6 +537,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('Pressed', 'pressed'), 
 'elements': [],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -535,6 +554,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('Released', 'released'), 
 'elements': [],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """

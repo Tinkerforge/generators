@@ -44,7 +44,8 @@ def get_c_type(py_type):
         return "{0}_t".format(py_type)
     return py_type
 
-def fix_links(text):
+def format_doc(packet):
+    text = common.select_lang(packet.get_doc()[1])
     parameter = {
     'en': 'parameter',
     'de': 'Parameter'
@@ -54,24 +55,25 @@ def fix_links(text):
     'de': 'Parameter'
     }
 
-    for packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
-        if packet.get_type() == 'callback':
-            name_upper = packet.get_upper_case_name()
+    for other_packet in device.get_packets():
+        name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+        if other_packet.get_type() == 'callback':
+            name_upper = other_packet.get_upper_case_name()
             pre_upper = device.get_upper_case_name()
             name_right = ':c:data:`{0}_CALLBACK_{1}`'.format(pre_upper,
                                                              name_upper)
         else:
             name_right = ':c:func:`{0}_{1}`'.format(device.get_underscore_name(),
-                                                    packet.get_underscore_name())
+                                                    other_packet.get_underscore_name())
         text = text.replace(name_false, name_right)
 
     text = text.replace(":word:`parameter`", common.select_lang(parameter))
     text = text.replace(":word:`parameters`", common.select_lang(parameters))
 
     text = common.handle_rst_if(text, device)
+    text = common.handle_since_firmware(text, device, packet)
 
-    return text
+    return common.shift_right(text, 1)
 
 def make_parameter_list(packet):
     param = ''
@@ -128,7 +130,7 @@ def make_methods(typ):
         name = '{0}_{1}'.format(device.get_underscore_name(), packet.get_underscore_name())
         plist = make_parameter_list(packet)
         params = '{0} *{1}{2}'.format(device.get_camel_case_name(), device.get_underscore_name(), plist)
-        desc = common.shift_right(fix_links(common.select_lang(packet.get_doc()[1])), 1)
+        desc = format_doc(packet)
         func = '{0}{1}({2})\n{3}'.format(func_start, name, params, desc)
         methods += func + '\n'
 
@@ -159,7 +161,7 @@ def make_callbacks():
         if not plist:
             plist = 'void'
         params = common.select_lang(param_format).format(plist)
-        desc = common.shift_right(fix_links(common.select_lang(packet.get_doc()[1])), 1)
+        desc = format_doc(packet)
         name = '{0}_{1}'.format(device.get_upper_case_name(),
                                 packet.get_upper_case_name())
 

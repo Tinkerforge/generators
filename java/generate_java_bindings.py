@@ -33,7 +33,8 @@ import common
 
 device = None
 
-def fix_links(text):
+def format_doc(packet):
+    text = common.select_lang(packet.get_doc()[1])
     link = '{{@link com.tinkerforge.{0}{1}.{2}}}'
     link_c = '{{@link com.tinkerforge.{0}{1}.{2}Listener}}'
 
@@ -67,13 +68,13 @@ def fix_links(text):
     text = '\n'.join(replaced_lines)
 
     cls = device.get_camel_case_name()
-    for packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
-        if packet.get_type() == 'callback':
-            name = packet.get_camel_case_name()
+    for other_packet in device.get_packets():
+        name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+        if other_packet.get_type() == 'callback':
+            name = other_packet.get_camel_case_name()
             name_right = link_c.format(device.get_category(), cls, name)
         else:
-            name = packet.get_headless_camel_case_name()
+            name = other_packet.get_headless_camel_case_name()
             name_right = link.format(device.get_category(), cls, name)
 
         text = text.replace(name_false, name_right)
@@ -88,8 +89,9 @@ def fix_links(text):
     text = text.replace('.. warning::', '\\warning')
 
     text = common.handle_rst_if(text, device)
+    text = common.handle_since_firmware(text, device, packet)
 
-    return text
+    return '\n\t * '.join(text.strip().split('\n'))
 
 def make_import():
     include = """{0}
@@ -165,7 +167,7 @@ def make_listener_definitions():
         name = packet.get_camel_case_name()
         name_lower = packet.get_headless_camel_case_name()
         parameter = make_parameter_list(packet)
-        doc = '\n\t * '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
+        doc = format_doc(packet)
         cbs += cb.format(name, name_lower, parameter, doc)
     return cbs
 
@@ -267,12 +269,10 @@ def make_constructor():
 \t\tbindingVersion[2] = {4};
 """
 
-    v = device.get_version()
+    v = device.get_binding_version()
     return con.format(device.get_category(),
                       device.get_camel_case_name(),
-                      v[0],
-                      v[1],
-                      v[2],
+                      v[0], v[1], v[2],
                       device.get_display_name(),
                       device.get_category())
 
@@ -388,7 +388,7 @@ def make_methods():
         parameter = make_parameter_list(packet)
         size = str(packet.get_request_length())
         name_upper = packet.get_upper_case_name()
-        doc = '\n\t * '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
+        doc = format_doc(packet)
         bbputs = ''
         bbput = '\t\tbb.put{0}(({1}){2});'
         for element in packet.get_elements('in'):
