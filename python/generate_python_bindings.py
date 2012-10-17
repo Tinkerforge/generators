@@ -47,9 +47,15 @@ def make_import():
 try:
     from collections import namedtuple
 except ImportError:
-    from .ip_connection import namedtuple
-from .ip_connection import Device, IPConnection, Error
+    try:
+        from .ip_connection import namedtuple
+    except ImportError:
+        from ip_connection import namedtuple
 
+try:
+    from .ip_connection import Device, IPConnection, Error
+except ImportError:
+    from ip_connection import Device, IPConnection, Error
 """
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     lower_type = device.get_category().lower()
