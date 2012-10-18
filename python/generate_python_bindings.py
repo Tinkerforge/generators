@@ -52,12 +52,12 @@ try:
 except ImportError:
     try:
         from .ip_connection import namedtuple
-    except ImportError:
+    except ValueError:
         from ip_connection import namedtuple
 
 try:
     from .ip_connection import Device, IPConnection, Error
-except ImportError:
+except ValueError:
     from ip_connection import Device, IPConnection, Error
 
 """
