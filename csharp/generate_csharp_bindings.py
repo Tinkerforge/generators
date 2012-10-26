@@ -213,12 +213,17 @@ def make_register_callback():
     typeofs = ''
     typeof = """\t\t\t{0}if(d is {1}EventHandler)
 \t\t\t{{
+\t\t\t\tforeach (var handler in {1}.GetInvocationList())
+\t\t\t\t{{
+\t\t\t\t\t{1} -= ({1}EventHandler)handler;
+\t\t\t\t}}
+\t\t\t\t
 \t\t\t\t{1} += ({1}EventHandler)d;
 \t\t\t}}
 """
 
     cb = """
-\t\t[Obsolete("Register your callbacks by directly adding your handler to the corresponding event. This method WILL NOT unregister old callbacks by adding an empty callback!")]
+\t\t[Obsolete("Register/unregister your callbacks by directly adding your handler to the corresponding event using += and -= operators")]
 \t\tpublic void RegisterCallback(System.Delegate d)
 \t\t{{
 {0}\t\t}}
