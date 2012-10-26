@@ -8,8 +8,8 @@
 
 package com.tinkerforge;
 
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.TimeUnit;
 
 public abstract class Device {
 	long uid = (long)0;
@@ -19,7 +19,7 @@ public abstract class Device {
 	short[] firmwareVersion = new short[3];
 	short[] bindingVersion = new short[3];
 	byte expectedResponseFunctionID = (byte)0;
-	Semaphore semaphoreWrite = new Semaphore(1, true);
+	private Object writeMutex = new Object();
 	SynchronousQueue<byte[]> responseQueue = new SynchronousQueue<byte[]>();
 
 	IPConnection ipcon = null;
@@ -65,5 +65,38 @@ public abstract class Device {
 		version.bindingVersion[2] = bindingVersion[2];
 
 		return version;
+	}
+
+	void sendRequestNoResponse(byte[] request)
+	{
+		synchronized(writeMutex)
+		{
+			ipcon.write(request);
+		}
+	}
+
+	byte[] sendRequestExpectResponse(byte[] request, byte functionID) throws IPConnection.TimeoutException
+	{
+		byte[] response = null;
+
+		synchronized(writeMutex)
+		{
+			expectedResponseFunctionID = functionID;
+
+			ipcon.write(request);
+
+			try {
+				response = responseQueue.poll(IPConnection.RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS);
+				if(response == null) {
+					throw new IPConnection.TimeoutException("Did not receive response in time");
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} finally {
+				expectedResponseFunctionID = 0;
+			}
+		}
+
+		return response;
 	}
 }

@@ -36,7 +36,8 @@ import common
 
 device = None
 
-def fix_links(text):
+def format_doc(packet, shift_right):
+    text = common.select_lang(packet.get_doc()[1])
     cb_link = ':java:func:`{2}Listener <{0}{1}.{2}Listener>`'
     fu_link = ':java:func:`{2}() <{0}{1}::{2}>`'
     parameter = {
@@ -49,13 +50,13 @@ def fix_links(text):
     }
 
     cls = device.get_camel_case_name()
-    for packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
-        if packet.get_type() == 'callback':
-            name = packet.get_camel_case_name()
+    for other_packet in device.get_packets():
+        name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+        if other_packet.get_type() == 'callback':
+            name = other_packet.get_camel_case_name()
             name_right = cb_link.format(device.get_category(), cls, name)
         else:
-            name = packet.get_headless_camel_case_name()
+            name = other_packet.get_headless_camel_case_name()
             name_right = fu_link.format(device.get_category(), cls, name)
 
         text = text.replace(name_false, name_right)
@@ -67,7 +68,10 @@ def fix_links(text):
     text = text.replace('callback ', 'listener ')
     text = text.replace(' callback', ' listener')
 
-    return text
+    text = common.handle_rst_if(text, device)
+    text = common.handle_since_firmware(text, device, packet)
+
+    return common.shift_right(text, shift_right)
 
 def make_examples():
     def title_from_file(f):
@@ -189,7 +193,7 @@ def make_methods(typ):
         ret_type = get_return_type(packet)
         name = packet.get_headless_camel_case_name()
         params = make_parameter_list(packet)
-        desc = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 1))
+        desc = format_doc(packet, 1)
         obj_desc = make_obj_desc(packet)
         func = '{0}public {1} {2}::{3}({4})\n{5}{6}'.format(func_start, 
                                                             ret_type,
@@ -228,7 +232,7 @@ def make_callbacks():
     cbs = ''
     cls = device.get_camel_case_name()
     for packet in device.get_packets('callback'):
-        desc = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 2))
+        desc = format_doc(packet, 2)
         params = make_parameter_list(packet)
 
         cbs += common.select_lang(cb).format(device.get_category(),
@@ -468,11 +472,7 @@ def make_files(com_new, directory):
     'en': 'Java bindings',
     'de': 'Java Bindings'
     }
-
     directory = os.path.join(directory, 'doc', common.lang)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
     f = file('{0}/{1}.rst'.format(directory, file_name), "w")
     f.write(common.make_rst_header(device, 'java', 'Java'))
     f.write(common.make_rst_summary(device, common.select_lang(title)))
@@ -481,4 +481,4 @@ def make_files(com_new, directory):
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:
-        common.generate(os.getcwd(), lang, make_files)
+        common.generate(os.getcwd(), lang, make_files, common.prepare_doc, True)

@@ -6,7 +6,7 @@ interface
 
 uses
   {$ifdef FPC}
-   {$ifdef UNIX}CThreads, Errors, NetDB, {$else}WinSock,{$endif}
+   {$ifdef UNIX}CThreads, Errors, NetDB, BaseUnix, {$else}WinSock,{$endif}
   {$else}
    {$ifdef MSWINDOWS}Windows,{$endif}
   {$endif}
@@ -18,6 +18,16 @@ const
   FUNCTION_ENUMERATE_CALLBACK = 253;
   BROADCAST_ADDRESS = 0;
   RESPONSE_TIMEOUT = 2500;
+
+{$ifdef FPC}
+ {$ifdef MSWINDOWS}
+  ESysEINTR = WSAEINTR;
+  ESysECONNRESET = WSAECONNRESET;
+ {$endif}
+{$else}
+  ESysEINTR = 10004;
+  ESysECONNRESET = 10054;
+{$endif}
 
 type
   { TWrapperThread }
@@ -44,13 +54,21 @@ type
     addDeviceMutex: TCriticalSection;
     devices: array [0..255] of TDevice;
 {$ifdef FPC}
+    address: TInetSockAddr;
     socket: TSocket;
 {$else}
+    remoteHost: TSocketHost;
+    remotePort: TSocketPort;
     socket: TTcpClient;
+    lastSocketError: integer;
 {$endif}
     callbackQueue: TBlockingQueue;
     enumerateCallback: TIPConnectionNotifyEnumerate;
 
+{$ifndef FPC}
+    procedure SocketErrorOccurred(sender: TObject; socketError: integer);
+{$endif}
+    function Reconnect: boolean;
     procedure ReceiveLoop;
     procedure CallbackLoop;
     procedure HandleResponse(const packet: TByteArray);
@@ -88,11 +106,10 @@ end;
 { TIPConnection }
 constructor TIPConnection.Create(const host: string; const port: word);
 {$ifdef FPC}
-var address: TInetSockAddr;
  {$ifdef MSWINDOWS}
-    entry: PHostEnt;
+var entry: PHostEnt;
  {$else}
-    entry: THostEntry;
+var entry: THostEntry;
  {$endif}
     resolved: TInAddr;
 {$endif}
@@ -132,10 +149,13 @@ begin
     raise Exception.Create('Could not connect socket: ' + {$ifdef UNIX}strerror(socketerror){$else}SysErrorMessage(socketerror){$endif});
   end;
 {$else}
+  remoteHost := TSocketHost(host);
+  remotePort := TSocketPort(IntToStr(port));
   socket := TTcpClient.Create(nil);
-  socket.RemoteHost := TSocketHost(host);
-  socket.RemotePort := TSocketPort(IntToStr(port));
+  socket.RemoteHost := remoteHost;
+  socket.RemotePort := remotePort;
   socket.BlockMode := bmBlocking;
+  socket.OnError := self.SocketErrorOccurred;
   socket.Open;
   if (not socket.Connected) then begin
     raise Exception.Create('Could not connect socket');
@@ -163,8 +183,11 @@ begin
   { End receive thread }
   receiveThreadFlag := false;
 {$ifdef FPC}
-  fpshutdown(socket, 2);
-  closesocket(socket);
+  if (socket >= 0) then begin
+    fpshutdown(socket, 2);
+    closesocket(socket);
+    socket := -1;
+  end;
 {$else}
   socket.Close;
 {$endif}
@@ -185,6 +208,53 @@ begin
   receiveThread.WaitFor;
 end;
 
+{$ifndef FPC}
+procedure TIPConnection.SocketErrorOccurred(sender: TObject; socketError: integer);
+begin
+  lastSocketError := socketError;
+end;
+{$endif}
+
+function TIPConnection.Reconnect: boolean;
+begin
+  result := false;
+{$ifdef FPC}
+  closesocket(socket);
+  socket := -1;
+{$else}
+  socket.Close;
+{$endif}
+  while (receiveThreadFlag) do begin
+{$ifdef FPC}
+    socket := fpsocket(AF_INET, SOCK_STREAM, 0);
+    if (socket < 0) then begin
+      sleep(1000);
+      continue;
+    end;
+    if (fpconnect(socket, @address, sizeof(address)) < 0) then begin
+      closesocket(socket);
+      socket := -1;
+      sleep(1000);
+      continue;
+    end;
+{$else}
+    socket := TTcpClient.Create(nil);
+    socket.RemoteHost := remoteHost;
+    socket.RemotePort := remotePort;
+    socket.BlockMode := bmBlocking;
+    socket.OnError := self.SocketErrorOccurred;
+    socket.Open;
+    if (not socket.Connected) then begin
+      socket.Close;
+      sleep(1000);
+      continue;
+    end;
+{$endif}
+    result := true;
+    break;
+  end;
+end;
+
 procedure TIPConnection.ReceiveLoop;
 var data: array [0..8191] of byte; len, pendingLen: longint; packet: TByteArray;
 begin
@@ -193,9 +263,40 @@ begin
 {$ifdef FPC}
       len := fprecv(socket, @data[0], Length(data), 0);
 {$else}
+      lastSocketError := 0;
       len := socket.ReceiveBuf(data, Length(data));
 {$endif}
-      if (len <= 0) then begin
+      if (not receiveThreadFlag) then begin
+        exit;
+      end;
+      if (len < 0) then begin
+{$ifdef FPC}
+        if (socketerror = ESysEINTR) then begin
+          continue;
+        end;
+        if (socketerror = ESysECONNRESET) then begin
+          if (not Reconnect) then begin
+            exit;
+          end;
+          continue;
+        end;
+{$else}
+        if (lastSocketError = ESysEINTR) then begin
+          continue;
+        end;
+        if (lastSocketError = ESysECONNRESET) then begin
+          if (not Reconnect) then begin
+            exit;
+          end;
+          continue;
+        end;
+{$endif}
+        if (receiveThreadFlag) then begin
+          WriteLn(ErrOutput, 'A socket error occurred, destroying IPConnection');
+        end;
+        exit;
+      end;
+      if (len = 0) then begin
         if (receiveThreadFlag) then begin
           WriteLn(ErrOutput, 'Socket disconnected by Server, destroying IPConnection');
         end;

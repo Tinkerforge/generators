@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'version': [1, 0, 0],
+    'binding_version': [1, 0, 0],
     'category': 'Bricklet',
     'name': ('LCD16x2', 'lcd_16x2', 'LCD 16x2'),
     'manufacturer': 'Tinkerforge',
@@ -18,6 +18,7 @@ com['packets'].append({
 'elements': [('line', 'uint8', 1, 'in'),
              ('position', 'uint8', 1, 'in'),
              ('text', 'string', 16, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -54,6 +55,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('ClearDisplay', 'clear_display'), 
 'elements': [],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -70,6 +72,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('BacklightOn', 'backlight_on'), 
 'elements': [],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -86,6 +89,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('BacklightOff', 'backlight_off'), 
 'elements': [],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -102,6 +106,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('IsBacklightOn', 'is_backlight_on'), 
 'elements': [('backlight', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -119,6 +124,7 @@ com['packets'].append({
 'name': ('SetConfig', 'set_config'), 
 'elements': [('cursor', 'bool', 1, 'in'),
              ('blinking', 'bool', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -145,6 +151,7 @@ com['packets'].append({
 'name': ('GetConfig', 'get_config'), 
 'elements': [('cursor', 'bool', 1, 'out'),
              ('blinking', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -162,6 +169,7 @@ com['packets'].append({
 'name': ('IsButtonPressed', 'is_button_pressed'), 
 'elements': [('button', 'uint8', 1, 'in'),
              ('pressed', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -182,6 +190,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('ButtonPressed', 'button_pressed'), 
 'elements': [('button', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -200,6 +209,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('ButtonReleased', 'button_released'), 
 'elements': [('button', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """

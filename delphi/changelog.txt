@@ -3,3 +3,14 @@
        Move callback wrappers from private to protected
 1.0.2: Add monoflop functionality to IO-4 and IO-16 Bricklet API
 1.0.3: Add WIFI support
+1.0.4: Add getter for WIFI buffer status information
+       Change WIFI certificate getter/setter to transfer bytes instead of a string
+       Add API for setting of WIFI regulatory domain
+       Add reconnect functionality to IPConnection (for WIFI Extension)
+       Add API for Industrial Bricklets: Digital In 4, Digital Out 4 and Quad Relay
+       Make TDevice.GetVersion work as documented
+       Add inline code documentation
+1.0.5: Add API for Barometer Bricklet
+1.0.6: Replace Barometer Bricklet calibrate function with getter/setter for reference air pressure
+1.0.7: Add get_usb_voltage function to Master Brick API
+       Add Barometer Bricklet examples

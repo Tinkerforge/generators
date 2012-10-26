@@ -33,7 +33,8 @@ import common
 
 device = None
 
-def fix_links(text):
+def format_doc(packet):
+    text = common.select_lang(packet.get_doc()[1])
     link = '{0}{1}#{2}'
     link_c = 'CALLBACK_{0}'
 
@@ -64,13 +65,13 @@ def fix_links(text):
     text = '\n'.join(replaced_lines)
 
     cls = device.get_camel_case_name()
-    for packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
-        if packet.get_type() == 'callback':
-            name = packet.get_upper_case_name()
+    for other_packet in device.get_packets():
+        name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+        if other_packet.get_type() == 'callback':
+            name = other_packet.get_upper_case_name()
             name_right = link_c.format(name)
         else:
-            name = packet.get_underscore_name()
+            name = other_packet.get_underscore_name()
             name_right = link.format(device.get_category(), cls, name)
 
         text = text.replace(name_false, name_right)
@@ -78,7 +79,10 @@ def fix_links(text):
     text = text.replace(":word:`parameter`", "parameter")
     text = text.replace(":word:`parameters`", "parameters")
 
-    return text
+    text = common.handle_rst_if(text, device)
+    text = common.handle_since_firmware(text, device, packet)
+
+    return '\n    # '.join(text.strip().split('\n'))
 
 def make_header():
     include = """# -*- ruby encoding: utf-8 -*-
@@ -103,7 +107,7 @@ def make_callback_id_definitions():
     CALLBACK_{0} = {1}
 """
     for packet in device.get_packets('callback'):
-        doc = '\n    # '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
+        doc = format_doc(packet)
         cbs += cb.format(packet.get_upper_case_name(), packet.get_function_id(), doc)
     return cbs
 
@@ -126,7 +130,7 @@ def make_initialize_method():
       @binding_version = [{0}, {1}, {2}]
 
 """
-    v = device.get_version()
+    v = device.get_binding_version()
     return dev_init.format(v[0], v[1], v[2],
                            device.get_display_name(),
                            device.get_category())
@@ -199,7 +203,7 @@ def make_methods():
         name = packet.get_underscore_name()
         fid = packet.get_upper_case_name()
         parms = make_parameter_list(packet)
-        doc = '\n    # '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
+        doc = format_doc(packet)
 
         in_format, _ = make_format_list(packet, 'in')
         out_format, out_size = make_format_list(packet, 'out')
@@ -231,13 +235,8 @@ end
 def make_files(com_new, directory):
     global device
     device = common.Device(com_new)
-
     file_name = '{0}_{1}'.format(device.get_category().lower(), device.get_underscore_name())
-
     directory += '/bindings'
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
     py = file('{0}/{1}.rb'.format(directory, file_name), "w")
     py.write(make_header())
     py.write(make_class())
@@ -249,4 +248,4 @@ def make_files(com_new, directory):
     py.write(make_register_callback_method())
 
 if __name__ == "__main__":
-    common.generate(os.getcwd(), lang, make_files)
+    common.generate(os.getcwd(), lang, make_files, common.prepare_bindings, False)

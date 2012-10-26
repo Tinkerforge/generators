@@ -33,7 +33,8 @@ import common
 
 device = None
 
-def fix_links(text):
+def format_doc(packet):
+    text = common.select_lang(packet.get_doc()[1])
     link = '{{@link com.tinkerforge.{0}{1}.{2}}}'
     link_c = '{{@link com.tinkerforge.{0}{1}.{2}Listener}}'
 
@@ -67,13 +68,13 @@ def fix_links(text):
     text = '\n'.join(replaced_lines)
 
     cls = device.get_camel_case_name()
-    for packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
-        if packet.get_type() == 'callback':
-            name = packet.get_camel_case_name()
+    for other_packet in device.get_packets():
+        name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+        if other_packet.get_type() == 'callback':
+            name = other_packet.get_camel_case_name()
             name_right = link_c.format(device.get_category(), cls, name)
         else:
-            name = packet.get_headless_camel_case_name()
+            name = other_packet.get_headless_camel_case_name()
             name_right = link.format(device.get_category(), cls, name)
 
         text = text.replace(name_false, name_right)
@@ -87,7 +88,10 @@ def fix_links(text):
     text = text.replace('.. note::', '\\note')
     text = text.replace('.. warning::', '\\warning')
 
-    return text
+    text = common.handle_rst_if(text, device)
+    text = common.handle_since_firmware(text, device, packet)
+
+    return '\n\t * '.join(text.strip().split('\n'))
 
 def make_import():
     include = """{0}
@@ -95,8 +99,6 @@ package com.tinkerforge;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.concurrent.TimeUnit;
-
 """
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     return include.format(common.gen_text_star.format(date))
@@ -165,7 +167,7 @@ def make_listener_definitions():
         name = packet.get_camel_case_name()
         name_lower = packet.get_headless_camel_case_name()
         parameter = make_parameter_list(packet)
-        doc = '\n\t * '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
+        doc = format_doc(packet)
         cbs += cb.format(name, name_lower, parameter, doc)
     return cbs
 
@@ -267,12 +269,10 @@ def make_constructor():
 \t\tbindingVersion[2] = {4};
 """
 
-    v = device.get_version()
+    v = device.get_binding_version()
     return con.format(device.get_category(),
                       device.get_camel_case_name(),
-                      v[0],
-                      v[1],
-                      v[2],
+                      v[0], v[1], v[2],
                       device.get_display_name(),
                       device.get_category())
 
@@ -354,31 +354,21 @@ def make_methods():
     methods = ''
     method = """
 \t/**
-\t * {9}
+\t * {8}
 \t */
 \tpublic {0} {1}({2}) {3} {{
 \t\tByteBuffer bb = IPConnection.createRequestBuffer((byte)stackID, FUNCTION_{5}, (short){4});
 {6}
-\t\tipcon.write(this, bb, FUNCTION_{5}, {7});{8}
+{7}
 \t}}
 """
-    method_response = """
-
-\t\tbyte[] response = null;
-\t\ttry {{
-\t\t\tresponse = responseQueue.poll(IPConnection.RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS);
-\t\t\tif(response == null) {{
-\t\t\t\tthrow new IPConnection.TimeoutException("Did not receive response for {0} in time");
-\t\t\t}}
-\t\t}} catch (InterruptedException e) {{
-\t\t\te.printStackTrace();
-\t\t}}
+    method_no_response = """\t\tsendRequestNoResponse(bb.array());"""
+    method_response = """\t\tbyte[] response = sendRequestExpectResponse(bb.array(), FUNCTION_{0});
 
 \t\tbb = ByteBuffer.wrap(response, 4, response.length - 4);
 \t\tbb.order(ByteOrder.LITTLE_ENDIAN);
 
 {1}
-\t\tsemaphoreWrite.release();
 \t\treturn {2};"""
 
     loop = """\t\tfor(int i = 0; i < {0}; i++) {{
@@ -398,7 +388,7 @@ def make_methods():
         parameter = make_parameter_list(packet)
         size = str(packet.get_request_length())
         name_upper = packet.get_upper_case_name()
-        doc = '\n\t * '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
+        doc = format_doc(packet)
         bbputs = ''
         bbput = '\t\tbb.put{0}(({1}){2});'
         for element in packet.get_elements('in'):
@@ -421,10 +411,8 @@ def make_methods():
             bbputs += bbput_format + '\n'
 
         throw = '' 
-        response = ''
-        has_ret = 'false'
+        response = method_no_response
         if len(packet.get_elements('out')) > 0:
-            has_ret = 'true'
             throw = 'throws IPConnection.TimeoutException'
             if len(packet.get_elements('out')) > 1:
                 bbgets, bbret = make_bbgets(packet, True)
@@ -435,7 +423,7 @@ def make_methods():
             else:
                 bbgets, bbret = make_bbgets(packet, False)
 
-            response = method_response.format(name_lower,
+            response = method_response.format(name_upper,
                                               bbgets,
                                               bbret)
         methods += method.format(ret,
@@ -445,7 +433,6 @@ def make_methods():
                                  size,
                                  name_upper,
                                  bbputs,
-                                 has_ret,
                                  response,
                                  doc)
 
@@ -453,8 +440,8 @@ def make_methods():
 
 def make_bbgets(packet, with_obj = False):
     bbgets = ''
-    bbget = '\t\t{0}{1}{2} = {3}(bb.get{4}()){5};'
-    bbget_string = '\t\tchar c = (char)(bb.get());\n\t\t\tif(c == 0) break;\n\t\t\t{0}{1}{2} += c;'
+    bbget_other = '\t\t{0}{1}{2} = {3}(bb.get{4}(){5}){6};'
+    bbget_string = '\t\t{0}{1}{2} = {3}(bb{4}{5}){6};'
     new_arr ='{0}[] {1} = new {0}[{2}];'
     loop = """\t\t{2}for(int i = 0; i < {0}; i++) {{
 {1}
@@ -470,6 +457,7 @@ def make_bbgets(packet, with_obj = False):
         if with_obj:
             obj = 'obj.'
         cast = ''
+        cast_extra = ''
         boolean = ''
         if element[1] == 'uint8':
             cast = 'IPConnection.unsignedByte'
@@ -479,31 +467,33 @@ def make_bbgets(packet, with_obj = False):
             cast = 'IPConnection.unsignedInt'
         elif element[1] == 'bool':
             boolean = ' != 0'
-        elif element[1] == 'char' or element[1] == 'string':
+        elif element[1] == 'char':
             cast = '(char)'
+        elif element[1] == 'string':
+            cast = 'IPConnection.string'
+            cast_extra = ', {0}'.format(element[2])
 
         format_typ = ''
-        if not element[2] > 1:
+        if not element[2] > 1 or (element[1] == 'string' and not with_obj):
             format_typ = typ
+
+        if element[1] == 'string':
+            bbget = bbget_string
+        else:
+            bbget = bbget_other
 
         bbget_format = bbget.format(format_typ,
                                     obj,
                                     bbret,
                                     cast,
                                     get_put_type(element[1]),
+                                    cast_extra,
                                     boolean)
 
-        if element[2] > 1:
+        if element[2] > 1 and element[1] != 'string':
             if with_obj:
-                prefix = ''
-                if element[1] == 'string':
-                    prefix = '{0}{1} = "";'.format(obj, bbret)
-                    bbget_format = bbget_string.format(format_typ,
-                                                       obj,
-                                                       bbret)
-                else:
-                    bbget_format = bbget_format.replace(' =', '[i] =')
-                bbget_format = loop.format(element[2], '\t' + bbget_format, prefix)
+                bbget_format = bbget_format.replace(' =', '[i] =')
+                bbget_format = loop.format(element[2], '\t' + bbget_format, '')
             else:
                 arr = new_arr.format(typ.replace(' ', ''), bbret, element[2])
                 bbget_format = bbget_format.replace(' =', '[i] =')
@@ -536,13 +526,8 @@ def get_return_value(packet):
 def make_files(com_new, directory):
     global device
     device = common.Device(com_new)
-
     file_name = '{0}{1}'.format(device.get_category(), device.get_camel_case_name())
-    
     directory += '/bindings'
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
     java = file('{0}/{1}.java'.format(directory, file_name), "w")
     java.write(make_import())
     java.write(make_class())
@@ -555,4 +540,4 @@ def make_files(com_new, directory):
     java.write(make_add_listener())
 
 if __name__ == "__main__":
-    common.generate(os.getcwd(), 'en', make_files)
+    common.generate(os.getcwd(), 'en', make_files, common.prepare_bindings, False)

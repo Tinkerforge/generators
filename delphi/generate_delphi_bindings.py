@@ -28,15 +28,19 @@ import datetime
 import sys
 import os
 import delphi_common
+from xml.sax.saxutils import escape
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 device = None
 
-def fix_links(text):
-    link = '{0}{1}::{2}()'
-    link_c = '{0}{1}::CALLBACK_{2}'
+def format_doc(packet):
+    text = common.select_lang(packet.get_doc()[1])
+    link = '<see cref="{0}{1}.T{0}{1}.{2}"/>'
+
+    # escape XML special chars
+    text = escape(text)
 
     # handle notes and warnings
     lines = text.split('\n')
@@ -52,14 +56,14 @@ def fix_links(text):
             replaced_lines.append('<note>')
         elif line.strip() == '.. warning::':
             in_warning = True
-            replaced_lines.append('<warning>')
-        elif len(line.strip()) == 0 and in_note:
-            in_note = False
+            replaced_lines.append('<note type="caution">')
+        elif len(line.strip()) == 0 and (in_note or in_warning):
+            if in_note:
+                in_note = False
+            if in_warning:
+                in_warning = False
+
             replaced_lines.append('</note>')
-            replaced_lines.append('')
-        elif len(line.strip()) == 0 and in_warning:
-            in_warning = False
-            replaced_lines.append('</warning>')
             replaced_lines.append('')
         elif line.strip() == '.. csv-table::':
             in_table_head = True
@@ -84,23 +88,20 @@ def fix_links(text):
     text = '\n'.join(replaced_lines)
 
     cls = device.get_camel_case_name()
-    for packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
-        if packet.get_type() == 'callback':
-            name = packet.get_upper_case_name()
-            name_right = link_c.format(device.get_category(), cls, name)
-        else:
-            name = packet.get_headless_camel_case_name()
-            name_right = link.format(device.get_category(), cls, name)
+    for other_packet in device.get_packets():
+        name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+        name = other_packet.get_camel_case_name()
+        name_right = link.format(device.get_category(), cls, name)
 
         text = text.replace(name_false, name_right)
 
     text = text.replace(":word:`parameter`", "parameter")
     text = text.replace(":word:`parameters`", "parameters")
-    text = text.replace('.. note::', '\\note')
-    text = text.replace('.. warning::', '\\warning')
 
-    return text
+    text = common.handle_rst_if(text, device)
+    text = common.handle_since_firmware(text, device, packet)
+
+    return '\n    ///  '.join(text.strip().split('\n'))
 
 def make_parameter_doc(packet):
     param = []
@@ -204,8 +205,13 @@ def make_callback_prototypes():
     return prototypes
 
 def make_class():
-    cls = '  T{0}{1} = class(TDevice)\n'.format(device.get_category(),
-                                                device.get_camel_case_name())
+    cls = """  /// <summary>
+  ///  {2}
+  /// </summary>
+  T{0}{1} = class(TDevice)
+""".format(device.get_category(),
+           device.get_camel_case_name(),
+           device.get_description())
 
     callbacks = ''
     callback = '    {0}Callback: T{1}{2}Notify{3};\n'
@@ -220,28 +226,40 @@ def make_class():
     for packet in device.get_packets('callback'):
         callback_wrappers += callback_wrapper.format(packet.get_camel_case_name())
 
-    methods = ''
-    function = '    function {0}{1}: {2}; virtual;'
-    procedure = '    procedure {0}{1}; virtual;'
+    methods = []
+    function = """    /// <summary>
+    ///  {3}
+    /// </summary>
+    function {0}{1}: {2}; virtual;"""
+    procedure = """    /// <summary>
+    ///  {2}
+    /// </summary>
+    procedure {0}{1}; virtual;"""
     for packet in device.get_packets('function'):
         ret_type = delphi_common.get_return_type(packet, False)
         name = packet.get_camel_case_name()
+        doc = format_doc(packet)
         params = delphi_common.make_parameter_list(packet, False)
         if len(params) > 0:
             params = '(' + params + ')'
         if len(ret_type) > 0:
-            method = function.format(name, params, ret_type)
+            method = function.format(name, params, ret_type, doc)
         else:
-            method = procedure.format(name, params)
-        methods += method + '\n'
+            method = procedure.format(name, params, doc)
+        methods.append(method)
 
-    props = ''
-    prop = '    property On{0}: T{1}{2}Notify{0} read {3}Callback write {3}Callback;\n'
+    props = []
+    prop = """    /// <summary>
+    ///  {4}
+    /// </summary>
+    property On{0}: T{1}{2}Notify{0} read {3}Callback write {3}Callback;"""
     for packet in device.get_packets('callback'):
-        props += prop.format(packet.get_camel_case_name(),
-                             device.get_category(),
-                             device.get_camel_case_name(),
-                             packet.get_headless_camel_case_name())
+        doc = format_doc(packet)
+        props.append(prop.format(packet.get_camel_case_name(),
+                                 device.get_category(),
+                                 device.get_camel_case_name(),
+                                 packet.get_headless_camel_case_name(),
+                                 doc))
 
     return  cls + \
             '  private\n' + \
@@ -249,9 +267,12 @@ def make_class():
             '  protected\n' + \
             callback_wrappers + \
             '  public\n' + \
-            '    constructor Create(const uid_: string);\n' + \
-            methods + \
-            props + \
+            '    /// <summary>\n' + \
+            '    ///  Creates an object with the unique device ID <c>uid</c>. This object can\n' + \
+            '    ///  then be added to the IP connection.\n' + \
+            '    /// </summary>\n' + \
+            '    constructor Create(const uid_: string);\n\n' + \
+            '\n\n'.join(methods + props) + '\n' + \
             '  end;\n\n'
 
 def make_constructor():
@@ -270,7 +291,7 @@ begin
                       device.get_camel_case_name(),
                       device.get_display_name(),
                       device.get_category(),
-                      *device.get_version())
+                      *device.get_binding_version())
 
 def make_callback_wrapper_definitions():
     cbs = ''
@@ -450,13 +471,8 @@ def make_callback_wrappers():
 def make_files(com_new, directory):
     global device
     device = common.Device(com_new)
-
     file_name = '{0}{1}'.format(device.get_category(), device.get_camel_case_name())
-
     directory += '/bindings'
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
     pas = file('{0}/{1}.pas'.format(directory, file_name), 'w')
     pas.write(make_unit_header())
     pas.write(make_function_id_definitions())
@@ -470,4 +486,4 @@ def make_files(com_new, directory):
     pas.write(make_callback_wrappers())
 
 if __name__ == "__main__":
-    common.generate(os.getcwd(), 'en', make_files)
+    common.generate(os.getcwd(), 'en', make_files, common.prepare_bindings, False)

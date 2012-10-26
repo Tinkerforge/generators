@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
-    'version': [1, 0, 0],
+    'binding_version': [1, 1, 0],
     'category': 'Bricklet',
     'name': ('Barometer', 'barometer', 'Barometer'),
     'manufacturer': 'Tinkerforge',
@@ -16,12 +16,13 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAirPressure', 'get_air_pressure'),
 'elements': [('air_pressure', 'int32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Returns the air pressure of the air pressure sensor. The value
-has a range of 1000 to 120000 and is given in mbar/100, i.e. a value
-of 100009 means that an air pressure of 1000.09 mbar is measured.
+has a range of 10000 to 1200000 and is given in mbar/1000, i.e. a value
+of 1001092 means that an air pressure of 1001.092 mbar is measured.
 
 If you want to get the air pressure periodically, it is recommended to use the
 callback :func:`AirPressure` and set the period with
@@ -30,8 +31,8 @@ callback :func:`AirPressure` and set the period with
 'de':
 """
 Gibt den Luftdruck des Luftdrucksensors zurück. Der Wertbereich
-ist von 1000 bis 120000 und ist in mbar/100 angegeben, d.h. bei einem Wert von 
-100009 wurde ein Luftdruck von 1000,09 mbar gemessen.
+geht von 10000 bis 1200000 und ist in mbar/1000 angegeben, d.h. bei einem Wert von
+1001092 wurde ein Luftdruck von 1001,092 mbar gemessen.
 
 Wenn der Luftdruck periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`AirPressure` zu nutzen und die Periode mit 
@@ -44,12 +45,13 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAltitude', 'get_altitude'),
 'elements': [('altitude', 'int32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Returns the relative altitude of the air pressure sensor. The value is given in
-cm and represents the difference between the current altitude and the reference
-altitude that can be set with :func:`CalibrateAltitude`.
+cm and is caluclated based on the difference between the current air pressure
+and the reference air pressure that can be set with :func:`SetReferenceAirPressure`.
 
 If you want to get the altitude periodically, it is recommended to use the
 callback :func:`Altitude` and set the period with
@@ -57,43 +59,14 @@ callback :func:`Altitude` and set the period with
 """,
 'de':
 """
-Gibt die relative Höhe des Luftdrucksensors zurück. Der Wert
-ist in cm angegeben und entspricht der Differenz zwischen der aktuellen
-Höhe und der Referenzhöhe, welche mit :func:`CalibrateAltitude` gesetzt werden
-kann.
+Gibt die relative Höhe des Luftdrucksensors zurück. Der Wert ist in cm angegeben
+und wird auf Basis der Differenz zwischen dem aktuellen Luftdruck und dem
+Referenzluftdruck berechnet, welcher mit :func:`SetReferenceAirPressure` gesetzt
+werden kann.
 
-Wenn die Höhe periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`Altitude` zu nutzen und die Periode mit 
-:func:`SetAltitudeCallbackPeriod` vorzugeben.
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('GetTemperature', 'get_temperature'),
-'elements': [('temperature', 'int16', 1, 'out')],
-'doc': ['bf', {
-'en':
-"""
-Returns the temperature of the air pressure sensor. The value
-has a range of -4000 to 8500 and is given in °C/100, i.e. a value
-of 2007 means that a temperature of 20.07 °C is measured.
-
-This temperature is used internally for temperature compensation of the air
-pressure measurement. It is not as accurate as the temperature measured by the
-:ref:`temperature_bricklet` or the :ref:`temperature_ir_bricklet`.
-""",
-'de':
-"""
-Gibt die Temperatur des Luftdrucksensors zurück. Der Wertbereich
-ist von -4000 bis 8500 und ist in °C/100 angegeben, d.h. bei einem Wert von 
-2007 wurde eine Temperatur von 20,07 °C gemessen.
-
-Diese Temperatur wird intern zur Temperaturkompensation der Luftdruckmessung
-verwendet. Sie ist nicht so genau wie die Temperatur die vom
-:ref:`temperature_bricklet` oder dem :ref:`temperature_ir_bricklet` gemessen
-wird.
+Wenn die Höhe periodisch abgefragt werden soll, wird empfohlen den Callback
+:func:`Altitude` zu nutzen und die Periode mit :func:`SetAltitudeCallbackPeriod`
+vorzugeben.
 """
 }]
 })
@@ -102,6 +75,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetAirPressureCallbackPeriod', 'set_air_pressure_callback_period'),
 'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -130,6 +104,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAirPressureCallbackPeriod', 'get_air_pressure_callback_period'),
 'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -147,6 +122,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetAltitudeCallbackPeriod', 'set_altitude_callback_period'),
 'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -175,6 +151,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAltitudeCallbackPeriod', 'get_altitude_callback_period'),
 'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -194,6 +171,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'in'),
              ('min', 'int32', 1, 'in'),
              ('max', 'int32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -240,6 +218,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'out'),
              ('min', 'int32', 1, 'out'),
              ('max', 'int32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -259,6 +238,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'in'),
              ('min', 'int32', 1, 'in'),
              ('max', 'int32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -305,6 +285,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'out'),
              ('min', 'int32', 1, 'out'),
              ('max', 'int32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -322,6 +303,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetDebouncePeriod', 'set_debounce_period'),
 'elements': [('debounce', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -358,6 +340,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetDebouncePeriod', 'get_debounce_period'),
 'elements': [('debounce', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -373,17 +356,67 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('CalibrateAltitude', 'calibrate_altitude'),
-'elements': [],
+'name': ('SetReferenceAirPressure', 'set_reference_air_pressure'),
+'elements': [('air_pressure', 'int32', 1, 'in')],
+'since_firmware': [1, 1, 0],
 'doc': ['bf', {
 'en':
 """
-Calibrates the altitude by setting the reference altitude to the current
-altitude.
+Sets the reference air pressure in mbar/1000 for the altitude calculation.
+Setting the reference to the current air pressure results in a calculated
+altitude of 0cm. Passing 0 is a shortcut for passing the current air pressure as
+reference.
+
+Well known reference values are the Q codes
+`QNH <http://en.wikipedia.org/wiki/QNH>`__ and
+`QFE <http://en.wikipedia.org/wiki/Mean_sea_level_pressure#Mean_sea_level_pressure>`__
+used in aviation.
+
+The default value is 1013.25mbar.
 """,
 'de':
 """
-Kalibriert die Höhe indem die Referenzhöhe auf den aktuellen Wert der Höhe gesetzt wird.
+Setzt den Referenzluftdruck in mbar/1000 für die Höhenberechnung. Wenn der
+aktuelle Luftdruckwert als Referenz übergeben wird dann gibt die Höhenberechnung
+0cm aus. Als Abkürzung kann auch 0 übergeben werden, dadurch wird der
+Referenzluftdruck intern auf den aktuellen Luftdruckwert gesetzt.
+
+Wohl bekannte Referenzluftdruckwerte, die in der Luftfahrt verwendet werden, sind
+`QNH <http://de.wikipedia.org/wiki/Barometrische_H%C3%B6henmessung_in_der_Luftfahrt#QNH>`__ und
+`QFE <http://de.wikipedia.org/wiki/Barometrische_H%C3%B6henmessung_in_der_Luftfahrt#QFE>`__
+aus dem Q-Schlüssel.
+
+Der Standardwert ist 1013,25mbar.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetChipTemperature', 'get_chip_temperature'),
+'elements': [('temperature', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Returns the temperature of the air pressure sensor. The value
+has a range of -4000 to 8500 and is given in °C/100, i.e. a value
+of 2007 means that a temperature of 20.07 °C is measured.
+
+This temperature is used internally for temperature compensation of the air
+pressure measurement. It is not as accurate as the temperature measured by the
+:ref:`temperature_bricklet` or the :ref:`temperature_ir_bricklet`.
+""",
+'de':
+"""
+Gibt die Temperatur des Luftdrucksensors zurück. Der Wertbereich
+ist von -4000 bis 8500 und ist in °C/100 angegeben, d.h. bei einem Wert von
+2007 wurde eine Temperatur von 20,07 °C gemessen.
+
+Diese Temperatur wird intern zur Temperaturkompensation der Luftdruckmessung
+verwendet. Sie ist nicht so genau wie die Temperatur die vom
+:ref:`temperature_bricklet` oder dem :ref:`temperature_ir_bricklet` gemessen
+wird.
 """
 }]
 })
@@ -392,6 +425,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('AirPressure', 'air_pressure'),
 'elements': [('air_pressure', 'int32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -417,6 +451,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('Altitude', 'altitude'),
 'elements': [('altitude', 'int32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -442,6 +477,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('AirPressureReached', 'air_pressure_reached'),
 'elements': [('air_pressure', 'int32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -468,6 +504,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('AltitudeReached', 'altitude_reached'),
 'elements': [('altitude', 'int32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -486,6 +523,24 @@ Der :word:`parameter` ist die Höhe des Luftdrucksensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
 mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetReferenceAirPressure', 'get_reference_air_pressure'),
+'elements': [('air_pressure', 'int32', 1, 'out')],
+'since_firmware': [1, 1, 0],
+'doc': ['bf', {
+'en':
+"""
+Returns the reference air pressure as set by :func:`SetReferenceAirPressure`.
+""",
+'de':
+"""
+Gibt den Referenzluftdruckwert zurück, wie von :func:`SetReferenceAirPressure`
+gesetzt.
 """
 }]
 })

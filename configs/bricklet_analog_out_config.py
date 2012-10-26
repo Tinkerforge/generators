@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'version': [1, 0, 0],
+    'binding_version': [1, 0, 0],
     'category': 'Bricklet',
     'name': ('AnalogOut', 'analog_out', 'Analog Out'),
     'manufacturer': 'Tinkerforge',
@@ -16,6 +16,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetVoltage', 'set_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -38,6 +39,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetVoltage', 'get_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -55,6 +57,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetMode', 'set_mode'), 
 'elements': [('mode', 'uint8', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -91,6 +94,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetMode', 'get_mode'), 
 'elements': [('mode', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """

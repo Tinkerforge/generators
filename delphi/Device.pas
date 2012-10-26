@@ -11,11 +11,6 @@ type
   { TDevice }
   TCallbackWrapper = procedure(const packet: TByteArray) of object;
   TVersionNumber = array [0..2] of byte;
-  TDeviceVersion = record
-    name: string;
-    firmwareVersion: TVersionNumber;
-    bindingVersion: TVersionNumber;
-  end;
   TDevice = class
   private
     writeMutex: TCriticalSection;
@@ -33,9 +28,17 @@ type
 
     constructor Create(const uid_: string);
     destructor Destroy; override;
+
+    /// <summary>
+    ///  Returns the name (including the hardware version), the firmware
+    ///  version and the binding version of the device. The firmware and
+    ///  binding versions are given in arrays of size 3 with the syntax
+    ///  [major, minor, revision].
+    /// </summary>
+    procedure GetVersion(out name_: string; out firmwareVersion_: TVersionNumber; out bindingVersion_: TVersionNumber);
+
     procedure SendRequestNoResponse(const request: TByteArray);
     procedure SendRequestExpectResponse(const request: TByteArray; const functionID: byte; out response: TByteArray);
-    function GetVersion: TDeviceVersion;
   end;
 
 implementation
@@ -58,11 +61,11 @@ begin
   inherited Destroy;
 end;
 
-function TDevice.GetVersion: TDeviceVersion;
+procedure TDevice.GetVersion(out name_: string; out firmwareVersion_: TVersionNumber; out bindingVersion_: TVersionNumber);
 begin
-  result.name := name;
-  result.firmwareVersion := firmwareVersion;
-  result.bindingVersion := bindingVersion;
+  name_ := name;
+  firmwareVersion_ := firmwareVersion;
+  bindingVersion_ := bindingVersion;
 end;
 
 procedure TDevice.SendRequestNoResponse(const request: TByteArray);

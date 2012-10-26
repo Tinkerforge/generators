@@ -33,11 +33,16 @@ import common
 
 device = None
 
-def fix_links(text):
+def format_doc(packet):
+    text = common.select_lang(packet.get_doc()[1])
+
     text = text.replace(":word:`parameter`", "parameter")
     text = text.replace(":word:`parameters`", "parameters")
 
-    return text
+    text = common.handle_rst_if(text, device)
+    text = common.handle_since_firmware(text, device, packet)
+
+    return '\n        '.join(text.strip().split('\n'))
 
 def make_import():
     include = """# -*- coding: utf-8 -*-
@@ -45,8 +50,15 @@ def make_import():
 try:
     from collections import namedtuple
 except ImportError:
-    from .ip_connection import namedtuple
-from .ip_connection import Device, IPConnection, Error
+    try:
+        from .ip_connection import namedtuple
+    except ValueError:
+        from ip_connection import namedtuple
+
+try:
+    from .ip_connection import Device, IPConnection, Error
+except ValueError:
+    from ip_connection import Device, IPConnection, Error
 
 """
     date = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -112,7 +124,7 @@ def make_init_method():
         self.binding_version = {0}
 
 """
-    return dev_init.format(str(device.get_version()),
+    return dev_init.format(str(device.get_binding_version()),
                            device.get_display_name(),
                            device.get_category())
 
@@ -191,7 +203,7 @@ def make_methods():
         ns = packet.get_underscore_name()
         nh = ns.upper()
         par = make_parameter_list(packet)
-        doc = '\n        '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
+        doc = format_doc(packet)
         cp = ''
         ct = ''
         if par != '':
@@ -227,13 +239,8 @@ def make_register_callback_method():
 def make_files(com_new, directory):
     global device
     device = common.Device(com_new)
-
     file_name = '{0}_{1}'.format(device.get_category().lower(), device.get_underscore_name())
-    
     directory += '/bindings'
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
     py = file('{0}/{1}.py'.format(directory, file_name), "w")
     py.write(make_import())
     py.write(make_namedtuples())
@@ -246,4 +253,4 @@ def make_files(com_new, directory):
     py.write(make_register_callback_method())
 
 if __name__ == "__main__":
-    common.generate(os.getcwd(), 'en', make_files)
+    common.generate(os.getcwd(), 'en', make_files, common.prepare_bindings, False)

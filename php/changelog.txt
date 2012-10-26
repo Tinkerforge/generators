@@ -14,3 +14,11 @@
 1.0.10: Fix direction of getAllDataPeriod method in Stepper Brick API
 1.0.11: Add monoflop functionality to IO-4 and IO-16 Bricklet API
 1.0.12: Add WIFI support
+1.0.13: Add getter for WIFI buffer status information
+        Change WIFI certificate getter/setter to transfer bytes instead of a string
+        Add API for setting of WIFI regulatory domain
+        Add API for Industrial Bricklets: Digital In 4, Digital Out 4 and Quad Relay
+1.0.14: Add API for Barometer Bricklet
+1.0.15: Replace Barometer Bricklet calibrate function with getter/setter for reference air pressure
+1.0.16: Add get_usb_voltage function to Master Brick API
+        Add Barometer Bricklet examples

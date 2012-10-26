@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-# Rotary Poti Bricklet communication config
+# Current25 Bricklet communication config
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'version': [1, 0, 0],
+    'binding_version': [1, 0, 0],
     'category': 'Bricklet',
     'name': ('Current25', 'current25', 'Current25'),
     'manufacturer': 'Tinkerforge',
@@ -16,6 +16,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetCurrent', 'get_current'), 
 'elements': [('current', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -42,6 +43,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('Calibrate', 'calibrate'), 
 'elements': [],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -76,6 +78,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('IsOverCurrent', 'is_over_current'), 
 'elements': [('over', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -99,6 +102,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAnalogValue', 'get_analog_value'), 
 'elements': [('value', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -137,6 +141,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetCurrentCallbackPeriod', 'set_current_callback_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -165,6 +170,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetCurrentCallbackPeriod', 'get_current_callback_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -182,6 +188,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetAnalogValueCallbackPeriod', 'set_analog_value_callback_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -210,6 +217,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAnalogValueCallbackPeriod', 'get_analog_value_callback_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -229,6 +237,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'in'), 
              ('min', 'int16', 1, 'in'),
              ('max', 'int16', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -275,6 +284,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'out'), 
              ('min', 'int16', 1, 'out'),
              ('max', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -294,6 +304,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'in'), 
              ('min', 'uint16', 1, 'in'),
              ('max', 'uint16', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -340,6 +351,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'out'), 
              ('min', 'uint16', 1, 'out'),
              ('max', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -357,6 +369,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetDebouncePeriod', 'set_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -393,6 +406,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetDebouncePeriod', 'get_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -410,6 +424,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('Current', 'current'), 
 'elements': [('current', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -435,6 +450,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('AnalogValue', 'analog_value'), 
 'elements': [('value', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -460,6 +476,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('CurrentReached', 'current_reached'), 
 'elements': [('current', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -486,6 +503,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('AnalogValueReached', 'analog_value_reached'), 
 'elements': [('value', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -512,6 +530,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('OverCurrent', 'over_current'), 
 'elements': [],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """

@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'version': [1, 0, 1],
+    'binding_version': [1, 0, 1],
     'category': 'Brick',
     'name': ('IMU', 'imu', 'IMU'),
     'manufacturer': 'Tinkerforge',
@@ -18,6 +18,7 @@ com['packets'].append({
 'elements': [('x', 'int16', 1, 'out'), 
              ('y', 'int16', 1, 'out'),
              ('z', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """ 
@@ -46,6 +47,7 @@ com['packets'].append({
 'elements': [('x', 'int16', 1, 'out'), 
              ('y', 'int16', 1, 'out'),
              ('z', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -74,6 +76,7 @@ com['packets'].append({
 'elements': [('x', 'int16', 1, 'out'), 
              ('y', 'int16', 1, 'out'),
              ('z', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -111,6 +114,7 @@ com['packets'].append({
              ('ang_y', 'int16', 1, 'out'),
              ('ang_z', 'int16', 1, 'out'),
              ('temperature', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -143,6 +147,7 @@ com['packets'].append({
 'elements': [('roll', 'int16', 1, 'out'), 
              ('pitch', 'int16', 1, 'out'),
              ('yaw', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -184,6 +189,7 @@ com['packets'].append({
              ('y', 'float', 1, 'out'), 
              ('z', 'float', 1, 'out'),
              ('w', 'float', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -244,6 +250,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetIMUTemperature', 'get_imu_temperature'), 
 'elements': [('temperature', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -261,6 +268,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('LedsOn', 'leds_on'), 
 'elements': [],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -277,6 +285,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('LedsOff', 'leds_off'), 
 'elements': [],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -293,6 +302,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('AreLedsOn', 'are_leds_on'), 
 'elements': [('leds', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -310,6 +320,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetAccelerationRange', 'set_acceleration_range'), 
 'elements': [('range', 'uint8', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -326,6 +337,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAccelerationRange', 'get_acceleration_range'), 
 'elements': [('range', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -342,6 +354,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetMagnetometerRange', 'set_magnetometer_range'), 
 'elements': [('range', 'uint8', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -358,6 +371,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetMagnetometerRange', 'get_magnetometer_range'), 
 'elements': [('range', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -374,6 +388,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetConvergenceSpeed', 'set_convergence_speed'), 
 'elements': [('speed', 'uint16', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -443,6 +458,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetConvergenceSpeed', 'get_convergence_speed'), 
 'elements': [('speed', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -460,6 +476,7 @@ com['packets'].append({
 'name': ('SetCalibration', 'set_calibration'), 
 'elements': [('typ', 'uint8', 1, 'in'),
              ('data', 'int16', 10, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -539,6 +556,7 @@ com['packets'].append({
 'name': ('GetCalibration', 'get_calibration'), 
 'elements': [('typ', 'uint8', 1, 'in'),
              ('data', 'int16', 10, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -555,6 +573,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetAccelerationPeriod', 'set_acceleration_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -577,6 +596,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAccelerationPeriod', 'get_acceleration_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -593,6 +613,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetMagneticFieldPeriod', 'set_magnetic_field_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -611,6 +632,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetMagneticFieldPeriod', 'get_magnetic_field_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -627,6 +649,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetAngularVelocityPeriod', 'set_angular_velocity_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -645,6 +668,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAngularVelocityPeriod', 'get_angular_velocity_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -661,6 +685,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetAllDataPeriod', 'set_all_data_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -679,6 +704,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAllDataPeriod', 'get_all_data_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -695,6 +721,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetOrientationPeriod', 'set_orientation_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -713,6 +740,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetOrientationPeriod', 'get_orientation_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -729,6 +757,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetQuaternionPeriod', 'set_quaternion_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -747,6 +776,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetQuaternionPeriod', 'get_quaternion_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -765,6 +795,7 @@ com['packets'].append({
 'elements': [('x', 'int16', 1, 'out'),
              ('y', 'int16', 1, 'out'),
              ('z', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -786,6 +817,7 @@ com['packets'].append({
 'elements': [('x', 'int16', 1, 'out'),
              ('y', 'int16', 1, 'out'),
              ('z', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -807,6 +839,7 @@ com['packets'].append({
 'elements': [('x', 'int16', 1, 'out'),
              ('y', 'int16', 1, 'out'),
              ('z', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -835,6 +868,7 @@ com['packets'].append({
              ('ang_y', 'int16', 1, 'out'),
              ('ang_z', 'int16', 1, 'out'),
              ('temperature', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -859,6 +893,7 @@ com['packets'].append({
 'elements': [('roll', 'int16', 1, 'out'),
              ('pitch', 'int16', 1, 'out'),
              ('yaw', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -883,6 +918,7 @@ com['packets'].append({
              ('y', 'float', 1, 'out'),
              ('z', 'float', 1, 'out'),
              ('w', 'float', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """

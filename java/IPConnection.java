@@ -42,6 +42,12 @@ class ReceiveThread extends Thread {
 			try {
 				length = ipcon.in.read(pendingData, pendingLength,
 				                       pendingData.length - pendingLength);
+			} catch(java.net.SocketException e) {
+				if(ipcon.reconnect()) {
+					continue;
+				} else {
+					return;
+				}
 			} catch(java.io.IOException e) {
 				if(ipcon.receiveThreadFlag) {
 					e.printStackTrace();
@@ -110,18 +116,11 @@ class CallbackThread extends Thread {
 				int length = ipcon.getLengthFromData(data);
 				ByteBuffer bb = ByteBuffer.wrap(data, 4, length - 4);
 				bb.order(ByteOrder.LITTLE_ENDIAN);
-				long uid_num = bb.getLong();
-				
-				String uid = ipcon.base58Encode(uid_num);
-				
-				String name = "";
-				for(int i = 0; i < 40; i++) {
-					name += (char)bb.get();
-				}
-				
+				String uid = ipcon.base58Encode(bb.getLong());
+				String name = ipcon.string(bb, 40);
 				short stackID = ipcon.unsignedByte(bb.get());
 				boolean isNew = bb.get() != 0;
-				
+
 				ipcon.enumerateListener.enumerate(uid, name, stackID, isNew);
 			} else {
 				byte stackID = ipcon.getStackIDFromData(data);
@@ -151,6 +150,9 @@ public class IPConnection {
 	private Device pendingAddDevice = null;
 	private Object addDeviceMutex = new Object();
 	protected LinkedBlockingQueue<byte[]> callbackQueue = new LinkedBlockingQueue<byte[]>();
+
+	private String host;
+	private int port;
 
 	boolean receiveThreadFlag = true;
 	boolean callbackThreadFlag = true;
@@ -183,6 +185,9 @@ public class IPConnection {
 	 * listening at the given host and port.
 	 */
 	public IPConnection(String host, int port) throws java.io.IOException {
+		this.host = host;
+		this.port = port;
+
 		sock = new Socket(host, port);
 		out = sock.getOutputStream();
 		out.flush();
@@ -191,6 +196,60 @@ public class IPConnection {
 		callbackThread.start();
 		receiveThread = new ReceiveThread(this);
 		receiveThread.start();
+	}
+
+	void disconnect() {
+		try {
+			if(in != null) {
+				in.close();
+				in = null;
+			}
+		} catch(java.io.IOException e) {
+			e.printStackTrace();
+		}
+
+		try {
+			if(out != null) {
+				out.close();
+				out = null;
+			}
+		} catch(java.io.IOException e) {
+			e.printStackTrace();
+		}
+
+		try {
+			if(sock != null) {
+				sock.close();
+				sock = null;
+			}
+		} catch(java.io.IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	boolean reconnect() {
+		disconnect();
+
+		while(receiveThreadFlag) {
+			try {
+				sock = new Socket(this.host, this.port);
+				out = sock.getOutputStream();
+				out.flush();
+				in = sock.getInputStream();
+			} catch(java.io.IOException e1) {
+				disconnect();
+				try {
+					Thread.sleep(500);
+				} catch(InterruptedException e2) {
+					e2.printStackTrace();
+				}
+				continue;
+			}
+
+			return true;
+		}
+
+		return false;
 	}
 
 	void handleResponse(byte[] packet) {
@@ -248,6 +307,29 @@ public class IPConnection {
 		return (data[2] & 0xFF) | ((data[3] & 0xFF) << 8);
 	}
 
+	public static String string(ByteBuffer buffer, int length) {
+		StringBuilder builder = new StringBuilder(length);
+		int i = 0;
+
+		while(i < length) {
+			char c = (char)buffer.get();
+			++i;
+
+			if (c == 0) {
+				break;
+			}
+
+			builder.append(c);
+		}
+
+		while(i < length) {
+			buffer.get();
+			++i;
+		}
+
+		return builder.toString();
+	}
+
 	public static short unsignedByte(byte data) {
 		return (short)(data & 0xFF);
 	}
@@ -276,27 +358,12 @@ public class IPConnection {
 		}
 	}
 
-	public void write(Device device, ByteBuffer bb, byte functionID, boolean hasReturn) {
+	public void write(byte[] data) {
 		try {
-			device.semaphoreWrite.acquire();
-		} catch(InterruptedException e) {
-			e.printStackTrace();
-			return;
-		}
-
-		if(hasReturn) {
-			device.expectedResponseFunctionID = functionID;
-		}
-
-		try {
-			out.write(bb.array());
+			out.write(data);
 		} catch(java.io.IOException e) {
 			e.printStackTrace();
 			return;
-		}
-
-		if(!hasReturn) {
-			device.semaphoreWrite.release();
 		}
 	}
 
@@ -311,15 +378,11 @@ public class IPConnection {
 
 		long uid = bb.getLong();
 		if(pendingAddDevice.uid == uid) {
-			pendingAddDevice.firmwareVersion[0] = IPConnection.unsignedByte(bb.get());
-			pendingAddDevice.firmwareVersion[1] = IPConnection.unsignedByte(bb.get());
-			pendingAddDevice.firmwareVersion[2] = IPConnection.unsignedByte(bb.get());
+			pendingAddDevice.firmwareVersion[0] = unsignedByte(bb.get());
+			pendingAddDevice.firmwareVersion[1] = unsignedByte(bb.get());
+			pendingAddDevice.firmwareVersion[2] = unsignedByte(bb.get());
 
-			String name = "";
-			for(int i = 0; i < 40; i++) {
-				name += (char)bb.get();
-			}
-
+			String name = string(bb, 40);
 			int i = name.lastIndexOf(' ');
 			if (i < 0 || !name.substring(0, i).replace('-', ' ').equals(pendingAddDevice.expectedName.replace('-', ' '))) {
 				return;
@@ -371,29 +434,7 @@ public class IPConnection {
 		// End receive thread
 		receiveThreadFlag = false;
 
-		try {
-			if(in != null) {
-				in.close();
-			}
-		} catch(java.io.IOException e) {
-			e.printStackTrace();
-		}
-
-		try {
-			if(out != null) {
-				out.close();
-			}
-		} catch(java.io.IOException e) {
-			e.printStackTrace();
-		}
-
-		try {
-			if(sock != null) {
-				sock.close();
-			}
-		} catch(java.io.IOException e) {
-			e.printStackTrace();
-		}
+		disconnect();
 
 		if (Thread.currentThread() != receiveThread) {
 			try {
@@ -447,7 +488,7 @@ public class IPConnection {
 	 * has to be added to an IP connection before it can be used. Examples for
 	 * this can be found in the API documentation for every Brick and Bricklet.
 	 */
-	public void addDevice(Device device) throws IPConnection.TimeoutException {
+	public void addDevice(Device device) throws TimeoutException {
 		ByteBuffer request = createRequestBuffer(BROADCAST_ADDRESS, FUNCTION_GET_STACK_ID, (short)12);
 		request.putLong(device.uid);
 
@@ -464,9 +505,9 @@ public class IPConnection {
 
 				byte[] response = null;
 				try {
-					response = pendingAddDevice.responseQueue.poll(IPConnection.RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS);
+					response = pendingAddDevice.responseQueue.poll(RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS);
 					if(response == null) {
-						throw new IPConnection.TimeoutException("Could not add device " + base58Encode(device.uid) + ", timeout");
+						throw new TimeoutException("Could not add device " + base58Encode(device.uid) + ", timeout");
 					}
 				} catch (InterruptedException e) {
 					e.printStackTrace();

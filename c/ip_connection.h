@@ -102,13 +102,13 @@ typedef struct IPConnection_{
 	bool thread_receive_flag;
 	bool thread_callback_flag;
 #ifdef _WIN32
-	SOCKET s;
+	SOCKET socket;
 	HANDLE thread_receive;
 	HANDLE thread_callback;
 	DWORD thread_id_receive;
 	DWORD thread_id_callback;
 #else
-	int fd;
+	int socket;
 	pthread_t thread_receive;
 	pthread_t thread_callback;
 #endif

@@ -29,6 +29,7 @@ import re
 import datetime
 import subprocess
 import sys
+import copy
 
 gen_text_star = """/* ***********************************************************
  * This file was automatically generated on {0}.      *
@@ -129,7 +130,7 @@ def shift_right(text, n):
 def get_changelog_version(path):
     r = re.compile('^(\d+)\.(\d+)\.(\d+):')
     last = None
-    for line in file(path + '/changelog.txt').readlines():
+    for line in file(path + '/changelog.txt', 'rb').readlines():
         m = r.match(line)
 
         if m is not None:
@@ -268,15 +269,19 @@ def find_examples(device, base_path, dirname, filename_prefix, filename_suffix):
     board = board.replace('_', '-')
     board_path = os.path.join(start_path, board, 'software/examples/' + dirname)
     files = []
-    for f in os.listdir(board_path):
-        if f.startswith(filename_prefix) and f.endswith(filename_suffix):
-            f_dir = '{0}/{1}'.format(board_path, f)
-            lines = 0
-            for line in open(os.path.join(f, f_dir)):
-                lines += 1
-            files.append((f, f_dir, lines))
 
-    files.sort(lambda i, j: cmp(i[2], j[2]))
+    try:
+        for f in os.listdir(board_path):
+            if f.startswith(filename_prefix) and f.endswith(filename_suffix):
+                f_dir = '{0}/{1}'.format(board_path, f)
+                lines = 0
+                for line in open(os.path.join(f, f_dir)):
+                    lines += 1
+                files.append((f, f_dir, lines))
+
+        files.sort(lambda i, j: cmp(i[2], j[2]))
+    except:
+        return []
 
     return files
 
@@ -304,6 +309,45 @@ re_camel_case_to_space = re.compile('([A-Z][A-Z][a-z])|([a-z][A-Z])')
 def camel_case_to_space(name):
     return re_camel_case_to_space.sub(lambda m: m.group()[:1] + " " + m.group()[1:], name)
 
+def handle_since_firmware(text, device, packet):
+    since = packet.get_since_firmware()
+
+    if since != [1, 0, 0]:
+        if device.get_category() == 'Brick':
+            suffix = 'Firmware'
+        else:
+            suffix = 'Plugin'
+
+        text += '\n.. versionadded:: {1}.{2}.{3}~({0})\n'.format(suffix, *since)
+
+    return text
+
+def handle_rst_if(text, device):
+    lines = []
+
+    for line in text.split('\n'):
+        if ':if:' in line:
+            m = re.match('(.*):if:([^:]+):`([^`]+)`(.*)', line)
+
+            if m is None:
+                raise 'invalid if: ' + line
+
+            prefix = m.group(1)
+            condition = m.group(2)
+            body = m.group(3)
+            suffix = m.group(4)
+
+            name = device.get_underscore_name() + '-' + device.get_category().lower()
+
+            if name == condition:
+                lines.append(prefix + body + suffix)
+            elif len(prefix + suffix) > 0:
+                lines.append(prefix + suffix)
+        else:
+            lines.append(line)
+
+    return '\n'.join(lines)
+
 def underscore_to_headless_camel_case(name):
     parts = name.split('_')
     ret = parts[0]
@@ -311,7 +355,19 @@ def underscore_to_headless_camel_case(name):
         ret += part[0].upper() + part[1:]
     return ret
 
-def generate(path, language, make_files):
+def prepare_doc(directory):
+    directory = os.path.join(directory, 'doc', lang)
+    if os.path.exists(directory):
+        shutil.rmtree(directory)
+    os.makedirs(directory)
+
+def prepare_bindings(directory):
+    directory += '/bindings'
+    if os.path.exists(directory):
+        shutil.rmtree(directory)
+    os.makedirs(directory)
+
+def generate(path, language, make_files, prepare, is_doc):
     global lang
     global path_binding
     lang = language
@@ -323,6 +379,8 @@ def generate(path, language, make_files):
     sys.path.append(path_config)
     configs = os.listdir(path_config)
 
+    prepare(path)
+
     common_packets = []
     try:
         configs.remove('brick_commonconfig.py')
@@ -332,21 +390,25 @@ def generate(path, language, make_files):
 
     for config in configs:
         if config.endswith('_config.py'):
-            if '_barometer_' in config or '_gps_' in config:
-                continue
+            #if not is_doc and '_gps_' in config:
+            #    continue
 
             module = __import__(config[:-3])
-            print(" * {0}".format(config[:-10]))            
+            print(" * {0}".format(config[:-10]))
             if 'brick_' in config and not module.com.has_key('common_included'):
-                module.com['packets'].extend(common_packets)
+                specified_common_packets = copy.deepcopy(common_packets)
+                for specified_common_packet in specified_common_packets:
+                    specified_common_packet['since_firmware'] = \
+                      specified_common_packet['since_firmware'][module.com['name'][1]]
+                module.com['packets'].extend(specified_common_packets)
                 module.com['common_included'] = True
             make_files(module.com, path)
 
 def import_and_make(configs, path, make_files):
     for config in configs:
         if config.endswith('_config.py'):
-            if '_barometer_' in config or '_gps_' in config:
-                continue
+            #if '_gps_' in config:
+            #    continue
 
             module = __import__(config[:-3])
             print(" * {0}".format(config[:-10]))
@@ -396,6 +458,9 @@ class Packet:
         else:
             raise ValueError('Invalid element direction ' + str(direction))
 
+    def get_since_firmware(self):
+        return self.packet['since_firmware']
+
     def get_doc(self):
         return self.packet['doc']
 
@@ -434,8 +499,8 @@ class Device:
             else:
                 raise ValueError('Invalid packet type ' + packet.get_type())
 
-    def get_version(self):
-        return self.com['version']
+    def get_binding_version(self):
+        return self.com['binding_version']
 
     def get_category(self):
         return self.com['category']

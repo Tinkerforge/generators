@@ -37,7 +37,8 @@ import common
 
 device = None
 
-def fix_links(text):
+def format_doc(packet, shift_right):
+    text = common.select_lang(packet.get_doc()[1])
     parameter = {
     'en': 'parameter',
     'de': 'Parameter'
@@ -46,12 +47,12 @@ def fix_links(text):
     'en': 'parameters',
     'de': 'Parameter'
     }
-    link = ':csharp:func:`{2}() <{0}{1}::{2}>`' 
+    link = ':csharp:func:`{2}() <{0}{1}::{2}>`'
 
     cls = device.get_camel_case_name()
-    for packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
-        name = packet.get_camel_case_name()
+    for other_packet in device.get_packets():
+        name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+        name = other_packet.get_camel_case_name()
         name_right = link.format(device.get_category(), cls, name)
 
         text = text.replace(name_false, name_right)
@@ -59,7 +60,10 @@ def fix_links(text):
     text = text.replace(":word:`parameter`", common.select_lang(parameter))
     text = text.replace(":word:`parameters`", common.select_lang(parameters))
 
-    return text
+    text = common.handle_rst_if(text, device)
+    text = common.handle_since_firmware(text, device, packet)
+
+    return common.shift_right(text, shift_right)
 
 def make_examples():
     def title_from_file(f):
@@ -89,11 +93,11 @@ def make_methods(typ):
     }
     version_changed = {
     'en': """
- .. versionchanged:: 1.1.0
+ .. versionchanged:: 1.1.0~(Bindings)
     Result is returned. Previously it was passed as ``out`` parameter.
 """,
     'de': """
- .. versionchanged:: 1.1.0
+ .. versionchanged:: 1.1.0~(Bindings)
     Das Ergebnis wird zurückgegeben. In vorherigen Versionen wurde es als ``out`` Parameter übergeben.
 """
     }
@@ -106,7 +110,7 @@ def make_methods(typ):
             continue
 
         signature = csharp_common.make_method_signature(packet, True, device)
-        desc = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 1))
+        desc = format_doc(packet, 1)
         func = '{0}{1}\n{2}'.format(func_start, 
                                     signature, 
                                     desc)
@@ -137,7 +141,7 @@ def make_callbacks():
     cbs = ''
     cls = device.get_camel_case_name()
     for packet in device.get_packets('callback'):
-        desc = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 2))
+        desc = format_doc(packet, 2)
         params = csharp_common.make_parameter_list(packet)
 
         cbs += common.select_lang(cb).format(device.get_category() + device.get_camel_case_name(),
@@ -348,11 +352,7 @@ def make_files(com_new, directory):
     'en': 'C# bindings',
     'de': 'C# Bindings'
     }
-    
     directory = os.path.join(directory, 'doc', common.lang)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
     f = file('{0}/{1}.rst'.format(directory, file_name), "w")
     f.write(common.make_rst_header(device, 'csharp', 'C#'))
     f.write(common.make_rst_summary(device, common.select_lang(title)))
@@ -361,4 +361,4 @@ def make_files(com_new, directory):
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:
-        common.generate(os.getcwd(), lang, make_files)
+        common.generate(os.getcwd(), lang, make_files, common.prepare_doc, True)

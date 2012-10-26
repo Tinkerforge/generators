@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'version': [1, 0, 0],
+    'binding_version': [1, 0, 0],
     'category': 'Bricklet',
     'name': ('Humidity', 'humidity', 'Humidity'),
     'manufacturer': 'Tinkerforge',
@@ -16,6 +16,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetHumidity', 'get_humidity'), 
 'elements': [('humidity', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -44,6 +45,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAnalogValue', 'get_analog_value'), 
 'elements': [('value', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -88,6 +90,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetHumidityCallbackPeriod', 'set_humidity_callback_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -116,6 +119,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetHumidityCallbackPeriod', 'get_humidity_callback_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -133,6 +137,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetAnalogValueCallbackPeriod', 'set_analog_value_callback_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -161,6 +166,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetAnalogValueCallbackPeriod', 'get_analog_value_callback_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -180,6 +186,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'in'), 
              ('min', 'int16', 1, 'in'),
              ('max', 'int16', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -226,6 +233,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'out'), 
              ('min', 'int16', 1, 'out'),
              ('max', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -245,6 +253,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'in'), 
              ('min', 'uint16', 1, 'in'),
              ('max', 'uint16', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -291,6 +300,7 @@ com['packets'].append({
 'elements': [('option', 'char', 1, 'out'), 
              ('min', 'uint16', 1, 'out'),
              ('max', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -308,6 +318,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetDebouncePeriod', 'set_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -344,6 +355,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetDebouncePeriod', 'get_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -361,6 +373,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('Humidity', 'humidity'), 
 'elements': [('humidity', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -386,6 +399,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('AnalogValue', 'analog_value'), 
 'elements': [('value', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -411,6 +425,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('HumidityReached', 'humidity_reached'), 
 'elements': [('humidity', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -437,6 +452,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('AnalogValueReached', 'analog_value_reached'), 
 'elements': [('value', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """

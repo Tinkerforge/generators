@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'version': [1, 0, 1],
+    'binding_version': [1, 0, 1],
     'category': 'Bricklet',
     'name': ('IO16', 'io16', 'IO-16'),
     'manufacturer': 'Tinkerforge',
@@ -17,6 +17,7 @@ com['packets'].append({
 'name': ('SetPort', 'set_port'), 
 'elements': [('port', 'char', 1, 'in'),
              ('value_mask', 'uint8', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -51,6 +52,7 @@ com['packets'].append({
 'name': ('GetPort', 'get_port'), 
 'elements': [('port', 'char', 1, 'in'),
              ('value_mask', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -74,6 +76,7 @@ com['packets'].append({
              ('pin_mask', 'uint8', 1, 'in'),
              ('direction', 'char', 1, 'in'),
              ('value', 'bool', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -120,6 +123,7 @@ com['packets'].append({
 'elements': [('port', 'char', 1, 'in'),
              ('direction_mask', 'uint8', 1, 'out'),
              ('value_mask', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -153,6 +157,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetDebouncePeriod', 'set_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -181,6 +186,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetDebouncePeriod', 'get_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -199,6 +205,7 @@ com['packets'].append({
 'name': ('SetPortInterrupt', 'set_port_interrupt'), 
 'elements': [('port', 'char', 1, 'in'),
              ('interrupt_mask', 'uint8', 1, 'in')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -230,6 +237,7 @@ com['packets'].append({
 'name': ('GetPortInterrupt', 'get_port_interrupt'), 
 'elements': [('port', 'char', 1, 'in'),
              ('interrupt_mask', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
@@ -250,6 +258,7 @@ com['packets'].append({
 'elements': [('port', 'char', 1, 'out'),
              ('interrupt_mask', 'uint8', 1, 'out'),
              ('value_mask', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
 """
@@ -293,6 +302,7 @@ com['packets'].append({
              ('pin_mask', 'uint8', 1, 'in'),
              ('value_mask', 'uint8', 1, 'in'),
              ('time', 'uint32', 1, 'in')],
+'since_firmware': [1, 1, 2],
 'doc': ['af', {
 'en':
 """
@@ -313,10 +323,8 @@ low and pin 3 will get high again.
 A monoflop can be used as a fail-safe mechanism. For example: Lets assume you
 have a RS485 bus and an IO-16 Bricklet connected to one of the slave
 stacks. You can now call this function every second, with a time parameter
-of two seconds and Pin 0 set to high. Pin 0 will be high all the time. If now
-the RS485 connection is lost, then Pin 0 will get low in at most two seconds.
-
-.. versionadded:: 1.1.2
+of two seconds and pin 0 set to high. Pin 0 will be high all the time. If now
+the RS485 connection is lost, then pin 0 will get low in at most two seconds.
 """,
 'de':
 """
@@ -327,8 +335,8 @@ konfiguriert sein. Als Eingänge konfigurierte Pins werden ignoriert.
 Der dritte Parameter ist eine Bitmaske mit den gewünschten Zuständen der festgelegten
 Ausgangspins (*true* bedeutet logisch 1 und *false* logisch 0).
 
-Der vierte Parameter stellt die Zeit (in ms) dar, welche der Pin den Zustand
-halten soll.
+Der vierte Parameter stellt die Zeit (in ms) dar, welche die Pins den Zustand
+halten sollen.
 
 Wenn diese Funktion mit den Parametern ('a', (1 << 0) | (1 << 3), (1 << 0), 1500)
 aufgerufen wird: Pin 0 wird auf logisch 1 und Pin 3 auf logisch 0 am Port 'a'
@@ -340,8 +348,6 @@ Jetzt kann diese Funktion sekündlich, mit einem Zeitparameter von 2 Sekunden,
 aufgerufen werden. Der Pin wird die gesamte Zeit im Zustand logisch 1 sein. Wenn
 jetzt die RS485 Verbindung getrennt wird, wird der Pin nach spätestens zwei
 Sekunden in den Zustand logisch 0 wechseln.
-
-.. versionadded:: 1.1.2
 """
 }]
 })
@@ -354,6 +360,7 @@ com['packets'].append({
              ('value', 'uint8', 1, 'out'),
              ('time', 'uint32', 1, 'out'),
              ('time_remaining', 'uint32', 1, 'out')],
+'since_firmware': [1, 1, 2],
 'doc': ['af', {
 'en':
 """
@@ -362,8 +369,6 @@ Returns (for the given pin) the current value and the time as set by
 
 If the timer is not running currently, the remaining time will be returned
 as 0.
-
-.. versionadded:: 1.1.2
 """,
 'de':
 """
@@ -372,8 +377,6 @@ Gibt (für den angegebenen Pin) den aktuellen Zustand und die Zeit, wie von
 Zustandswechsel, zurück.
 
 Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.
-
-.. versionadded:: 1.1.2
 """
 }]
 })
@@ -384,22 +387,19 @@ com['packets'].append({
 'elements': [('port', 'char', 1, 'out'),
              ('pin_mask', 'uint8', 1, 'out'),
              ('value_mask', 'uint8', 1, 'out')],
+'since_firmware': [1, 1, 2],
 'doc': ['c', {
 'en':
 """
 This callback is triggered whenever a monoflop timer reaches 0. The
 :word:`parameters` contain the port, the involved pins and the current value of
 the pins (the value after the monoflop).
-
-.. versionadded:: 1.1.2
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn ein Monoflop Timer abläuft (0 erreicht).
 :word:`parameters` enthalten den Port, die beteiligten Pins als Bitmaske und
 den aktuellen Zustand als Bitmaske (der Zustand nach dem Monoflop).
-
-.. versionadded:: 1.1.2
 """
 }]
 })

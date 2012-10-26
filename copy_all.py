@@ -9,13 +9,16 @@ import filecmp
 def files_are_not_the_same(src_file, dest_path):
     dest_file = os.path.join(dest_path, src_file.split('/')[-1])
     try:
-        f1 = file(src_file)
-        f2 = file(dest_file)
+        lines1 = file(src_file, 'rb').readlines()
+        lines2 = file(dest_file, 'rb').readlines()
     except:
         return True
 
+    if len(lines1) != len(lines2):
+        return True
+
     t = 'This file was automatically generated on'
-    for l1, l2 in map(None, f1, f2):
+    for l1, l2 in zip(lines1, lines2):
         if l1 != l2:
             if t in l1 and t in l2:
                 continue

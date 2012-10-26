@@ -37,7 +37,8 @@ import common
 
 device = None
 
-def fix_links(text):
+def format_doc(packet):
+    text = common.select_lang(packet.get_doc()[1])
     parameter = {
     'en': 'parameter',
     'de': 'Parameter'
@@ -48,10 +49,10 @@ def fix_links(text):
     }
 
     cls = device.get_category() + device.get_camel_case_name()
-    for packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
-        name = packet.get_camel_case_name()
-        if packet.get_type() == 'callback':
+    for other_packet in device.get_packets():
+        name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+        name = other_packet.get_camel_case_name()
+        if other_packet.get_type() == 'callback':
             name_right = ':delphi:func:`On{1} <T{0}.On{1}>`'.format(cls, name)
         else:
             name_right = ':delphi:func:`{1} <T{0}.{1}>`'.format(cls, name)
@@ -60,7 +61,10 @@ def fix_links(text):
     text = text.replace(":word:`parameter`", common.select_lang(parameter))
     text = text.replace(":word:`parameters`", common.select_lang(parameters))
 
-    return text
+    text = common.handle_rst_if(text, device)
+    text = common.handle_since_firmware(text, device, packet)
+
+    return common.shift_right(text, 1)
 
 def make_examples():
     def title_from_file(f):
@@ -100,7 +104,7 @@ def make_methods(typ):
         ret_type = delphi_common.get_return_type(packet, True)
         name = packet.get_camel_case_name()
         params = delphi_common.make_parameter_list(packet, True)
-        desc = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 1))
+        desc = format_doc(packet)
         if len(ret_type) > 0:
             method = function.format(cls, name, params, ret_type, desc)
         else:
@@ -137,7 +141,7 @@ def make_callbacks():
     for packet in device.get_packets('callback'):
         name = packet.get_camel_case_name()
         params = delphi_common.make_parameter_list(packet, True)
-        desc = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 1))
+        desc = format_doc(packet)
         cbs += common.select_lang(cb).format(cls, name, params, desc)
 
     return cbs
@@ -301,11 +305,7 @@ def make_files(com_new, directory):
     'en': 'Delphi bindings',
     'de': 'Delphi Bindings'
     }
-
     directory = os.path.join(directory, 'doc', common.lang)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
     f = file('{0}/{1}.rst'.format(directory, file_name), "w")
     f.write(common.make_rst_header(device, 'delphi', 'Delphi'))
     f.write(common.make_rst_summary(device, common.select_lang(title)))
@@ -314,4 +314,4 @@ def make_files(com_new, directory):
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:
-        common.generate(os.getcwd(), lang, make_files)
+        common.generate(os.getcwd(), lang, make_files, common.prepare_doc, True)

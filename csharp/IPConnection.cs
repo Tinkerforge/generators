@@ -27,8 +27,10 @@ namespace Tinkerforge
 		const byte FUNCTION_ENUMERATE = 254;
 		const byte FUNCTION_ENUMERATE_CALLBACK = 253;
 
-        Socket Socket;
-        NetworkStream SocketStream;
+		string host;
+		int port;
+		Socket socket;
+		NetworkStream socketStream;
 		Thread receiveThread;
 		Thread callbackThread;
 		bool receiveThreadFlag = true;
@@ -55,10 +57,12 @@ namespace Tinkerforge
 		/// </summary>
 		public IPConnection(string host, int port) 
 		{
-            Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            ConnectSocket(host, port);
+			this.host = host;
+			this.port = port;
+			socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			ConnectSocket(host, port);
 
-            SocketStream = new NetworkStream(Socket);
+			socketStream = new NetworkStream(socket);
 
 			callbackThread = new Thread(this.CallbackLoop);
 			callbackThread.Name = "Callback-Processor";
@@ -91,9 +95,32 @@ namespace Tinkerforge
                 throw new IOException(string.Format("Could not connect: {0}", args.SocketError));
             }
 #else
-            Socket.Connect(host, port);
+            socket.Connect(host, port);
 #endif
         }
+
+		private bool Reconnect()
+		{
+			while(receiveThreadFlag)
+			{
+				try {
+					socketStream.Close();
+					socket.Close();
+
+					socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+					ConnectSocket(host, port);
+
+					socketStream = new NetworkStream(socket);
+				} catch {
+					Thread.Sleep(500);
+					continue;
+				}
+
+				return true;
+			}
+
+			return false;
+		}
 
 		private void ReceiveLoop()
 		{
@@ -106,15 +133,33 @@ namespace Tinkerforge
 
 				try
 				{
-					length = SocketStream.Read(pendingData, pendingLength,
+					length = socketStream.Read(pendingData, pendingLength,
 					                           pendingData.Length - pendingLength);
 				}
-				catch(IOException)
+				catch(IOException e)
 				{
+					if (e.InnerException != null &&
+					    e.InnerException is SocketException) {
+						int errorCode = ((SocketException)e.InnerException).ErrorCode;
+
+						if (errorCode == 10004) { // WSAEINTR
+							continue;
+						}
+
+						if (errorCode == 10054) { // WSAECONNRESET
+							if (Reconnect()) {
+								continue;
+							} else {
+								return;
+							}
+						}
+					}
+
 					if (receiveThreadFlag) {
 						System.Console.Error.WriteLine("Socket disconnected by Server, destroying IPConnection");
 						Destroy();
 					}
+
 					return;
 				}
 				catch(ObjectDisposedException)
@@ -281,10 +326,10 @@ namespace Tinkerforge
 			callbackQueue.Enqueue(packet);
 		}
 
-        public void Write(byte[] data)
-        {
-            SocketStream.Write(data, 0, data.Length);
-        }
+		public void Write(byte[] data)
+		{
+			socketStream.Write(data, 0, data.Length);
+		}
 
 		/// <summary>
 		///  This method registers the following delegate:
@@ -390,8 +435,8 @@ namespace Tinkerforge
 
 			// End receive thread
 			receiveThreadFlag = false;
-			SocketStream.Close();
-			Socket.Close();
+			socketStream.Close();
+			socket.Close();
 
 			if(Thread.CurrentThread != receiveThread)
 			{
@@ -452,13 +497,17 @@ namespace Tinkerforge
 		{
 			lock (writeLock)
 			{
+				expectedResponseFunctionID = functionID;
+
 				ipcon.Write(request);
 
-				expectedResponseFunctionID = functionID;
 				if (!responseQueue.TryDequeue(out response, IPConnection.RESPONSE_TIMEOUT))
 				{
+					expectedResponseFunctionID = 0;
 					throw new TimeoutException("Did not receive response in time");
 				}
+
+				expectedResponseFunctionID = 0;
 			}
 		}
 	}
@@ -909,7 +958,7 @@ namespace Tinkerforge
 
 		static public string StringFrom(int position, byte[] array, int len) 
 		{
-			StringBuilder sb = new StringBuilder();
+			StringBuilder sb = new StringBuilder(len);
 			for(int i = position; i < position + len; i++) 
 			{
 				if(array[i] == 0)
@@ -1022,7 +1071,7 @@ namespace Tinkerforge
 #if WINDOWS_PHONE
     class NetworkStream : Stream
     {
-        private Socket Socket;
+        private Socket socket;
 
         private BlockingQueue ReceiveQueue = new BlockingQueue();
         private byte[] ImmediateReadBuffer;
@@ -1052,14 +1101,14 @@ namespace Tinkerforge
             //stream is always flushed
         }
 
-        public NetworkStream(Socket socket)
+        public NetworkStream(Socket sock)
         {
-            Socket = socket;
+            socket = sock;
             SocketAsyncEventArgs args = new SocketAsyncEventArgs();
             byte[] buffer = new byte[8192];
             args.SetBuffer(buffer, 0, buffer.Length);
             args.Completed += OnIOCompletion;
-            if (!Socket.ReceiveAsync(args))
+            if (!socket.ReceiveAsync(args))
             {
                 throw new IOException(string.Format("Could not initialize NetworkStream: {0}", args.SocketError));
             }
@@ -1083,7 +1132,7 @@ namespace Tinkerforge
                     byte[] receiveBuffer = new byte[e.BytesTransferred];
                     Array.Copy(e.Buffer, receiveBuffer, e.BytesTransferred);
                     ReceiveQueue.Enqueue(receiveBuffer);
-                    if (!Socket.ReceiveAsync(e))
+                    if (!socket.ReceiveAsync(e))
                     {
                         //TODO: error handling
                     }
@@ -1126,7 +1175,7 @@ namespace Tinkerforge
                 SocketAsyncEventArgs args = new SocketAsyncEventArgs();
                 args.SetBuffer(buffer, offset, count);
                 args.Completed += OnIOCompletion;
-                if (!Socket.SendAsync(args))
+                if (!socket.SendAsync(args))
                 {
                     throw new IOException(string.Format("Could not write on NetworkStream: {0}", args.SocketError));
                 }

@@ -9,6 +9,11 @@ common_packets.append({
 'function_id': 243,
 'name': ('Reset', 'reset'),
 'elements': [],
+'since_firmware': {'dc': [1, 1, 3],
+                   'imu': [1, 0, 7],
+                   'master': [1, 2, 1],
+                   'servo': [1, 1, 3],
+                   'stepper': [1, 1, 4]},
 'doc': ['af', {
 'en':
 """
@@ -35,22 +40,29 @@ common_packets.append({
 'function_id': 242,
 'name': ('GetChipTemperature', 'get_chip_temperature'),
 'elements': [('temperature', 'int16', 1, 'out')],
+'since_firmware': {'dc': [1, 1, 3],
+                   'imu': [1, 0, 7],
+                   'master': [1, 2, 1],
+                   'servo': [1, 1, 3],
+                   'stepper': [1, 1, 4]},
 'doc': ['af', {
 'en':
 """
 Returns the temperature in °C/10 as measured inside the microcontroller. The
 value returned is not the ambient temperature!
 
-The temperature has an accuracy of +-15%. Practically it is only useful as
-an indicator for temperature changes.
+The temperature is only proportional to the real temperature and it has an
+accuracy of +-15%. Practically it is only useful as an indicator for
+temperature changes.
 """,
 'de':
 """
-Gibt die Temperatur in °C/10, gemessen im Microcontroller, aus. Der Rückgabewert
-ist nicht die Umgebungstemperatur.
+Gibt die Temperatur in °C/10, gemessen im Mikrocontroller, aus. Der
+Rückgabewert ist nicht die Umgebungstemperatur.
 
-Die Genauigkeit der Temperatur beträgt +-15%. Daher beschränkt sich der praktische
-Nutzen auf die Indikation von Temperaturveränderungen.
+Die Temperatur ist lediglich proportional zur echten Temperatur und hat eine
+Genauigkeit von +-15%. Daher beschränkt sich der praktische Nutzen auf die
+Indikation von Temperaturveränderungen.
 """
 }]
 })

@@ -45,7 +45,8 @@ def type_to_pytype(element):
 
     return t + '[' + str(element[2]) + ']'
 
-def fix_links(text):
+def format_doc(packet):
+    text = common.select_lang(packet.get_doc()[1])
     parameter = {
     'en': 'response value',
     'de': 'Rückgabewert'
@@ -56,19 +57,22 @@ def fix_links(text):
     }
 
     cls = device.get_camel_case_name()
-    for packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
-        if packet.get_type() == 'callback':
-            name_upper = packet.get_upper_case_name()
+    for other_packet in device.get_packets():
+        name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+        if other_packet.get_type() == 'callback':
+            name_upper = other_packet.get_upper_case_name()
             name_right = ':modbus:func:`CALLBACK_{1} <{0}.CALLBACK_{1}>`'.format(cls, name_upper)
         else:
-            name_right = ':modbus:func:`{1} <{0}.{1}>`'.format(cls, packet.get_underscore_name())
+            name_right = ':modbus:func:`{1} <{0}.{1}>`'.format(cls, other_packet.get_underscore_name())
         text = text.replace(name_false, name_right)
 
     text = text.replace(":word:`parameter`", common.select_lang(parameter))
     text = text.replace(":word:`parameters`", common.select_lang(parameters))
 
-    return text
+    text = common.handle_rst_if(text, device)
+    text = common.handle_since_firmware(text, device, packet)
+
+    return common.shift_right(text, 1)
 
 def make_request_desc(packet):
     empty_payload = {
@@ -120,7 +124,7 @@ def make_methods(typ):
         fid = '\n :functionid: {0}'.format(packet.get_function_id())
         request = make_request_desc(packet)
         response = make_response_desc(packet)
-        d = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 1))
+        d = format_doc(packet)
         desc = '{0}{1}{2}{3}'.format(fid, request, response, d)
         func = '{0}{1}.{2}\n{3}'.format(func_start, cls, name, desc)
         methods += func + '\n'
@@ -134,7 +138,7 @@ def make_callbacks():
     for packet in device.get_packets('callback'):
         fid = '\n :functionid: {0}'.format(packet.get_function_id())
         response = make_response_desc(packet)
-        desc = fix_links(common.shift_right(common.select_lang(packet.get_doc()[1]), 1))
+        desc = format_doc(packet)
 
         func = '{0}{1}.CALLBACK_{2}\n{3}\n{4}\n{5}'.format(func_start,
                                                            cls,
@@ -227,11 +231,7 @@ def make_files(com_new, directory):
     'en': 'Modbus protocol',
     'de': 'Modbus Protokoll'
     }
-
     directory = os.path.join(directory, 'doc', common.lang)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
     f = file('{0}/{1}.rst'.format(directory, file_name), "w")
     f.write(common.make_rst_header(device, 'modbus', 'Modbus'))
     f.write(common.make_rst_summary(device, common.select_lang(title)))
@@ -239,4 +239,4 @@ def make_files(com_new, directory):
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:
-        common.generate(os.getcwd(), lang, make_files)
+        common.generate(os.getcwd(), lang, make_files, common.prepare_doc, True)

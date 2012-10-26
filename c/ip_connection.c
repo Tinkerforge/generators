@@ -303,6 +303,54 @@ static void ipcon_semaphore_release(sem_t *semaphore) {
 
 #endif
 
+static int ipcon_reconnect(IPConnection *ipcon) {
+#ifdef _WIN32
+	closesocket(ipcon->socket);
+#else
+	close(ipcon->socket);
+#endif
+
+	while(ipcon->thread_receive_flag) {
+		ipcon->socket = socket(AF_INET, SOCK_STREAM, 0);
+
+#ifdef _WIN32
+		if(ipcon->socket == INVALID_SOCKET) {
+			Sleep(1000);
+			continue;
+		}
+#else
+		if(ipcon->socket < 0) {
+			sleep(1);
+			continue;
+		}
+#endif
+
+#ifdef _WIN32
+		if(connect(ipcon->socket,
+		           (struct sockaddr *)&ipcon->server,
+		           sizeof(ipcon->server)) == SOCKET_ERROR) {
+			closesocket(ipcon->socket);
+			ipcon->socket = INVALID_SOCKET;
+			Sleep(1000);
+			continue;
+		}
+#else
+		if(connect(ipcon->socket,
+		           (struct sockaddr *)&ipcon->server,
+		           sizeof(ipcon->server)) < 0) {
+			close(ipcon->socket);
+			ipcon->socket = -1;
+			sleep(1);
+			continue;
+		}
+#endif
+
+		return E_OK;
+	}
+
+	return E_NO_CONNECT;
+}
+
 static THREAD_RETURN_TYPE ipcon_receive_loop(void *param) {
 	IPConnection *ipcon = (IPConnection*)param;
 	unsigned char pending_data[RECV_BUFFER_SIZE] = { 0 };
@@ -310,7 +358,7 @@ static THREAD_RETURN_TYPE ipcon_receive_loop(void *param) {
 
 	while(ipcon->thread_receive_flag) {
 #ifdef _WIN32
-		int length = recv(ipcon->s, (char *)(pending_data + pending_length),
+		int length = recv(ipcon->socket, (char *)(pending_data + pending_length),
 		                  RECV_BUFFER_SIZE - pending_length, 0);
 
 		if(!ipcon->thread_receive_flag) {
@@ -318,7 +366,16 @@ static THREAD_RETURN_TYPE ipcon_receive_loop(void *param) {
 		}
 
 		if(length == SOCKET_ERROR) {
-			if (WSAGetLastError() == WSAEINTR) {
+			int error = WSAGetLastError();
+
+			if (error == WSAEINTR) {
+				continue;
+			}
+
+			if (error == WSAECONNRESET) {
+				if (ipcon_reconnect(ipcon) < 0) {
+					THREAD_RETURN;
+				}
 				continue;
 			}
 
@@ -327,8 +384,8 @@ static THREAD_RETURN_TYPE ipcon_receive_loop(void *param) {
 			THREAD_RETURN;
 		}
 #else
-		int length = read(ipcon->fd, pending_data + pending_length,
-		                  RECV_BUFFER_SIZE - pending_length);
+		int length = recv(ipcon->socket, pending_data + pending_length,
+		                  RECV_BUFFER_SIZE - pending_length, 0);
 
 		if(!ipcon->thread_receive_flag) {
 			break;
@@ -336,6 +393,13 @@ static THREAD_RETURN_TYPE ipcon_receive_loop(void *param) {
 
 		if(length < 0) {
 			if (errno == EINTR) {
+				continue;
+			}
+
+			if (errno == ECONNRESET) {
+				if (ipcon_reconnect(ipcon) < 0) {
+					THREAD_RETURN;
+				}
 				continue;
 			}
 
@@ -455,11 +519,17 @@ void ipcon_destroy(IPConnection *ipcon) {
 	ipcon->thread_receive_flag = false;
 
 #ifdef _WIN32
-	shutdown(ipcon->s, 2);
-	closesocket(ipcon->s);
+	if(ipcon->socket != INVALID_SOCKET) {
+		shutdown(ipcon->socket, 2);
+		closesocket(ipcon->socket);
+		ipcon->socket = INVALID_SOCKET;
+	}
 #else
-	shutdown(ipcon->fd, 2);
-	close(ipcon->fd);
+	if(ipcon->socket >= 0) {
+		shutdown(ipcon->socket, 2);
+		close(ipcon->socket);
+		ipcon->socket = -1;
+	}
 #endif
 
 #ifdef _WIN32
@@ -509,11 +579,7 @@ void ipcon_enumerate(IPConnection *ipcon, enumerate_callback_func_t callback) {
 		ipcon_leconvert_uint16_to(sizeof(Enumerate))
 	};
 
-#ifdef _WIN32
-	send(ipcon->s, (const char*)&e, sizeof(Enumerate), 0);
-#else
-	write(ipcon->fd, &e, sizeof(Enumerate));
-#endif
+	send(ipcon->socket, (const char *)&e, sizeof(Enumerate), 0);
 }
 
 static void ipcon_callback_queue_enqueue(IPConnection *ipcon, const unsigned char *buffer) {
@@ -602,11 +668,7 @@ void ipcon_device_write(Device *device, const char *buffer, const int length) {
 	// It is in theory possible to allow concurrent writes from different
 	// threads, we would have to use lists of buffers for that.
 	// Perhaps someone will implement that in the future.
-#ifdef _WIN32
-	send(device->ipcon->s, buffer, length, 0);
-#else
-	write(device->ipcon->fd, buffer, length);
-#endif
+	send(device->ipcon->socket, buffer, length, 0);
 }
 
 void ipcon_device_create(Device *device, const char *uid) {
@@ -685,13 +747,13 @@ int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
 		return E_NO_STREAM_SOCKET;
 	}
 
-	ipcon->s = socket(AF_INET, SOCK_STREAM, 0);
-	if(ipcon->s == INVALID_SOCKET) {
+	ipcon->socket = socket(AF_INET, SOCK_STREAM, 0);
+	if(ipcon->socket == INVALID_SOCKET) {
 		return E_NO_STREAM_SOCKET;
 	}
 #else
-	ipcon->fd = socket(AF_INET, SOCK_STREAM, 0);
-	if(ipcon->fd < 0) {
+	ipcon->socket = socket(AF_INET, SOCK_STREAM, 0);
+	if(ipcon->socket < 0) {
 		return E_NO_STREAM_SOCKET;
 	}
 #endif
@@ -706,13 +768,13 @@ int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
 	ipcon->server.sin_family = AF_INET;
 	ipcon->server.sin_port = htons(port);
 #ifdef _WIN32
-	if(connect(ipcon->s,
+	if(connect(ipcon->socket,
 	           (struct sockaddr *)&ipcon->server,
 	           sizeof(ipcon->server)) == SOCKET_ERROR) {
 		return E_NO_CONNECT;
 	}
 #else
-	if(connect(ipcon->fd,
+	if(connect(ipcon->socket,
 	           (struct sockaddr *)&ipcon->server,
 	           sizeof(ipcon->server)) < 0) {
 		return E_NO_CONNECT;
@@ -858,11 +920,7 @@ int ipcon_add_device(IPConnection *ipcon, Device *device) {
 
 	ipcon->pending_add_device = device;
 
-#ifdef _WIN32
-	send(ipcon->s, (const char*) &gsid, sizeof(GetStackID), 0);
-#else
-	write(ipcon->fd, &gsid, sizeof(GetStackID));
-#endif
+	send(ipcon->socket, (const char*)&gsid, sizeof(GetStackID), 0);
 
 	// Block until there is a response, timeout after RESPONSE_TIMEOUT ms
 	if(ipcon_device_expect_response(device) != 0) {

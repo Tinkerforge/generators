@@ -33,7 +33,8 @@ import common
 
 device = None
 
-def fix_links(text):
+def format_doc(packet):
+    text = common.select_lang(packet.get_doc()[1])
     link = '{{@link {0}_{1}}}'
     link_c = '{{@link {0}_CALLBACK_{1}}}'
 
@@ -66,13 +67,13 @@ def fix_links(text):
 
     text = '\n'.join(replaced_lines)
 
-    for packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(packet.get_camel_case_name())
-        if packet.get_type() == 'callback':
-            name = packet.get_upper_case_name()
+    for other_packet in device.get_packets():
+        name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+        if other_packet.get_type() == 'callback':
+            name = other_packet.get_upper_case_name()
             name_right = link_c.format(device.get_upper_case_name(), name)
         else:
-            name = packet.get_underscore_name()
+            name = other_packet.get_underscore_name()
             name_right = link.format(device.get_underscore_name(), name)
 
         text = text.replace(name_false, name_right)
@@ -82,7 +83,10 @@ def fix_links(text):
     text = text.replace('.. note::', '\\note')
     text = text.replace('.. warning::', '\\warning')
 
-    return text
+    text = common.handle_rst_if(text, device)
+    text = common.handle_since_firmware(text, device, packet)
+
+    return '\n * '.join(text.strip().split('\n'))
 
 def make_parameter_list(packet):
     param = ''
@@ -150,7 +154,7 @@ def make_callback_defines():
 
     defines = ''
     for packet in device.get_packets('callback'):
-        doc = '\n * '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
+        doc = format_doc(packet)
         defines += define_temp.format(device.get_upper_case_name(),
                                       packet.get_upper_case_name(),
                                       packet.get_function_id(),
@@ -254,7 +258,7 @@ void {0}_create({1} *{0}, const char *uid) {{
         type_name = packet.get_underscore_name()
         cbs += cb_temp.format(dev_name, type_name.upper(), type_name, dev_name.upper())
     
-    v = device.get_version()
+    v = device.get_binding_version()
     return func.format(dev_name, device.get_camel_case_name(), cbs, v[0], v[1], v[2],
                        device.get_display_name(), device.get_category())
 
@@ -469,7 +473,10 @@ typedef void (*{0}_func_t)({1});
         name = packet.get_underscore_name()
         c_type_list = []
         for element in packet.get_elements():
-            c_type_list.append(get_c_type(element[1]))
+            if element[2] > 1:
+                c_type_list.append('{0}[{1}]'.format(get_c_type(element[1]), element[2]))
+            else:
+                c_type_list.append(get_c_type(element[1]))
 
         typedefs += typedef.format(name, ', '.join(c_type_list))
 
@@ -516,7 +523,7 @@ int {0}_{1}({2} *{0}{3});
     for packet in device.get_packets('function'):
         b = packet.get_underscore_name()
         d = make_parameter_list(packet)
-        doc = '\n * '.join(fix_links(common.select_lang(packet.get_doc()[1])).strip().split('\n'))
+        doc = format_doc(packet)
 
         funcs += func.format(a, b, c, d, doc, device.get_category())
 
@@ -550,12 +557,8 @@ def make_callback_wrapper_declarations():
 def make_files(com_new, directory):
     global device
     device = common.Device(com_new)
-
     file_name = '{0}_{1}'.format(device.get_category().lower(), device.get_underscore_name())
-    
     directory += '/bindings'
-    if not os.path.exists(directory):
-        os.makedirs(directory)
 
     c = file('{0}/{1}.c'.format(directory, file_name), "w")
     c.write(make_include_c())
@@ -576,4 +579,4 @@ def make_files(com_new, directory):
     h.write(make_end_h())
 
 if __name__ == "__main__":
-    common.generate(os.getcwd(), 'en', make_files)
+    common.generate(os.getcwd(), 'en', make_files, common.prepare_bindings, False)
