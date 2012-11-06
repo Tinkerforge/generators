@@ -15,11 +15,9 @@ except ImportError:
 
 # Queue for python 2, queue for python 3
 try:
-    from Queue import Queue
-    from Queue import Empty
+    from Queue import Queue, Empty
 except ImportError:
-    from queue import Queue
-    from queue import Empty
+    from queue import Queue, Empty
 
 import struct
 import socket

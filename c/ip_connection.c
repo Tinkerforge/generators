@@ -733,6 +733,7 @@ int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
 		ipcon->devices[i] = NULL;
 	}
 	ipcon->pending_add_device = NULL;
+	ipcon->pending_add_device_handled = false;
 	ipcon->enumerate_callback = NULL;
 	ipcon->thread_receive_flag = true;
 	ipcon->thread_callback_flag = true;
@@ -845,13 +846,16 @@ int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
 
 void ipcon_handle_add_device(IPConnection *ipcon,
                              const unsigned char *buffer) {
+	if(ipcon->pending_add_device == NULL || ipcon->pending_add_device_handled) {
+		return;
+	}
+
 	GetStackIDReturn *gsidr = (GetStackIDReturn *)buffer;
 
 	gsidr->length = ipcon_leconvert_uint16_from(gsidr->length);
 	gsidr->device_uid = ipcon_leconvert_uint64_from(gsidr->device_uid);
 
-	if(ipcon->pending_add_device != NULL &&
-	   ipcon->pending_add_device->uid == gsidr->device_uid) {
+	if(ipcon->pending_add_device->uid == gsidr->device_uid) {
 		const char *p = gsidr->device_name;
 		const char *e = gsidr->device_name + MAX_LENGTH_NAME;
 
@@ -895,6 +899,7 @@ void ipcon_handle_add_device(IPConnection *ipcon,
 		ipcon->pending_add_device->firmware_version[0] = gsidr->device_firmware_version[0];
 		ipcon->pending_add_device->firmware_version[1] = gsidr->device_firmware_version[1];
 		ipcon->pending_add_device->firmware_version[2] = gsidr->device_firmware_version[2];
+		ipcon->pending_add_device_handled = true;
 		ipcon->devices[gsidr->device_stack_id] = ipcon->pending_add_device;
 
 #ifdef _WIN32
@@ -918,6 +923,7 @@ int ipcon_add_device(IPConnection *ipcon, Device *device) {
 
 	ipcon_mutex_lock(&ipcon->add_device_mutex);
 
+	ipcon->pending_add_device_handled = false;
 	ipcon->pending_add_device = device;
 
 	send(ipcon->socket, (const char*)&gsid, sizeof(GetStackID), 0);

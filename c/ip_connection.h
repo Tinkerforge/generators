@@ -115,6 +115,7 @@ typedef struct IPConnection_{
 	struct sockaddr_in server;
 	Device *devices[MAX_NUM_DEVICES];
 	Device *pending_add_device;
+	bool pending_add_device_handled;
 #ifdef _WIN32
 	CRITICAL_SECTION add_device_mutex;
 #else
