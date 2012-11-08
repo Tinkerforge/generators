@@ -277,8 +277,8 @@ static void ipcon_semaphore_release(HANDLE semaphore) {
 	ReleaseSemaphore(semaphore, 1, NULL);
 }
 
-#define THREAD_RETURN_TYPE void
-#define THREAD_RETURN return
+#define THREAD_RETURN_TYPE DWORD WINAPI
+#define THREAD_RETURN return 0
 
 #else
 
@@ -811,19 +811,19 @@ int ipcon_create(IPConnection *ipcon, const char *host, const int port) {
 #ifdef _WIN32
 	ipcon->thread_receive = CreateThread(NULL,
 	                                     0,
-	                                     (LPTHREAD_START_ROUTINE)ipcon_receive_loop,
+	                                     ipcon_receive_loop,
 	                                     (void*)ipcon,
 	                                     0,
-	                                     (LPDWORD)&ipcon->thread_id_receive);
+	                                     &ipcon->thread_id_receive);
 	if(ipcon->thread_receive == NULL) {
 		return E_NO_THREAD;
 	}
 	ipcon->thread_callback = CreateThread(NULL,
 	                                      0,
-	                                      (LPTHREAD_START_ROUTINE)ipcon_callback_loop,
+	                                      ipcon_callback_loop,
 	                                      (void*)ipcon,
 	                                      0,
-	                                      (LPDWORD)&ipcon->thread_id_callback);
+	                                      &ipcon->thread_id_callback);
 	if(ipcon->thread_callback == NULL) {
 		return E_NO_THREAD;
 	}
