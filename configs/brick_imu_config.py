@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'binding_version': [1, 0, 1],
+    'api_version': [1, 0, 1],
     'category': 'Brick',
     'device_identifier': 16,
     'name': ('IMU', 'imu', 'IMU'),

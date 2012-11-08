@@ -172,7 +172,7 @@ def make_constructor():
         name_pascal = packet.get_camel_case_name()
         cbs.append(cb.format(name_upper, name_pascal))
 
-    v = device.get_binding_version()
+    v = device.get_api_version()
     return con.format(device.get_category(),
                       device.get_camel_case_name(),
                       '\n'.join(cbs),

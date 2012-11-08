@@ -9,8 +9,8 @@ Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 generator_python.py: Generator for Python bindings
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -86,15 +86,19 @@ def make_namedtuples():
 
         tups += tup.format(name, name_tup, ", ".join(params))
     return tups
-       
+
 def make_class():
     return """
-class {0}(Device):
+class {0}{1}(Device):
     \"\"\"
-    {1}
+    {2}
     \"\"\"
 
-""".format(device.get_camel_case_name(), device.get_description())
+    DEVICE_IDENTIFIER = {3}
+
+""".format(device.get_category(), device.get_camel_case_name(),
+           device.get_description(), device.get_device_identifier(),
+           device.get_device_identifier())
 
 def make_callback_id_definitions():
     cbs = ''
@@ -112,21 +116,17 @@ def make_function_id_definitions():
 
 def make_init_method():
     dev_init = """
-    def __init__(self, uid):
+    def __init__(self, uid, ipcon):
         \"\"\"
-        Creates an object with the unique device ID *uid*. This object can
-        then be added to the IP connection.
+        Creates an object with the unique device ID *uid* and adds it to
+        the IP Connection *ipcon*.
         \"\"\"
-        Device.__init__(self, uid)
+        Device.__init__(self, uid, ipcon)
 
-        self.expected_name = '{1} {2}'
-
-        self.binding_version = {0}
+        self.api_version = ({0}, {1}, {2})
 
 """
-    return dev_init.format(str(device.get_binding_version()),
-                           device.get_display_name(),
-                           device.get_category())
+    return dev_init.format(*device.get_api_version())
 
 def make_callback_formats():
     cbs = ''

@@ -499,8 +499,8 @@ class Device:
             else:
                 raise ValueError('Invalid packet type ' + packet.get_type())
 
-    def get_binding_version(self):
-        return self.com['binding_version']
+    def get_api_version(self):
+        return self.com['api_version']
 
     def get_category(self):
         return self.com['category']

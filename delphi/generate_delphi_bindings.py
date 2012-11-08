@@ -291,7 +291,7 @@ begin
                       device.get_camel_case_name(),
                       device.get_display_name(),
                       device.get_category(),
-                      *device.get_binding_version())
+                      *device.get_api_version())
 
 def make_callback_wrapper_definitions():
     cbs = ''

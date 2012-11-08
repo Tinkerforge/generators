@@ -256,25 +256,20 @@ def make_parameter_list(packet):
 def make_constructor():
     con = """
 \t/**
-\t * Creates an object with the unique device ID \c uid. This object can
-\t * then be added to the IP connection.
+\t * Creates an object with the unique device ID \c uid. and adds it to
+\t * the IP Connection \c ipcon.
 \t */
-\tpublic {0}{1}(String uid) {{
-\t\tsuper(uid);
+\tpublic {0}{1}(String uid, IPConnection ipcon) {{
+\t\tsuper(uid, ipcon);
 
-\t\texpectedName = "{5} {6}";
-
-\t\tbindingVersion[0] = {2};
-\t\tbindingVersion[1] = {3};
-\t\tbindingVersion[2] = {4};
+\t\tapiVersion[0] = {2};
+\t\tapiVersion[1] = {3};
+\t\tapiVersion[2] = {4};
 """
 
-    v = device.get_binding_version()
     return con.format(device.get_category(),
                       device.get_camel_case_name(),
-                      v[0], v[1], v[2],
-                      device.get_display_name(),
-                      device.get_category())
+                      *device.get_api_version())
 
 def get_put_type(typ):
     forms = {

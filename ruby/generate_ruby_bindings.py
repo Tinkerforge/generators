@@ -120,20 +120,15 @@ def make_function_id_definitions():
 
 def make_initialize_method():
     dev_init = """
-    # Creates an object with the unique device ID <tt>uid</tt>. This object can
-    # then be added to the IP connection.
-    def initialize(uid)
-      super uid
+    # Creates an object with the unique device ID <tt>uid</tt> and adds it to
+    # the IP Connection <tt>ipcon</tt>.
+    def initialize(uid, ipcon)
+      super uid, ipcon
 
-      @expected_name = '{3} {4}'
-
-      @binding_version = [{0}, {1}, {2}]
+      @api_version = [{0}, {1}, {2}]
 
 """
-    v = device.get_binding_version()
-    return dev_init.format(v[0], v[1], v[2],
-                           device.get_display_name(),
-                           device.get_category())
+    return dev_init.format(*device.get_api_version())
 
 def make_callback_formats():
     cbs = ''
