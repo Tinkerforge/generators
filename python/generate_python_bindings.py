@@ -236,6 +236,11 @@ def make_register_callback_method():
         self.registered_callbacks[id] = callback
 """
 
+def make_old_name():
+    return """
+{1} = {0}{1} # for backward compatibility
+""".format(device.get_category(), device.get_camel_case_name())
+
 def make_files(com_new, directory):
     global device
     device = common.Device(com_new)
@@ -251,6 +256,7 @@ def make_files(com_new, directory):
     py.write(make_callback_formats())
     py.write(make_methods())
     py.write(make_register_callback_method())
+    py.write(make_old_name())
 
 if __name__ == "__main__":
     common.generate(os.getcwd(), 'en', make_files, common.prepare_bindings, False)

@@ -361,39 +361,6 @@ def make_methods():
 
     return methods
 
-def make_obsolete_methods():
-    methods = ''
-    method = """
-\t\t/// <summary>
-\t\t///  Obsolete. Use overloaded version instead that returns the result.
-\t\t/// </summary>
-\t\t[Obsolete()]
-\t\tpublic void {0}({1})
-\t\t{{
-\t\t\t{2} = {0}({3});
-\t\t}}
-"""
-
-    cls = device.get_camel_case_name()
-    for packet in device.get_packets('function'):
-        ret_count = len(packet.get_elements('out'))
-        if ret_count != 1:
-            continue
-
-        name = packet.get_camel_case_name()
-        sigParams = csharp_common.make_parameter_list(packet, True)
-        outParam = common.underscore_to_headless_camel_case(packet.get_elements('out')[0][0])
-        callParams = ", ".join(map(lambda e: common.underscore_to_headless_camel_case(e[0]), packet.get_elements('in')))
-        doc = format_doc(packet)
-
-        methods += method.format(name,
-                                 sigParams,
-                                 outParam,
-                                 callParams,
-                                 doc)
-
-    return methods
-
 def get_data_size(packet):
     size = 0
     for element in packet.get_elements('in'):
@@ -412,7 +379,6 @@ def make_files(com_new, directory):
     csharp.write(make_delegates())
     csharp.write(make_constructor())
     csharp.write(make_methods())
-    csharp.write(make_obsolete_methods())
     csharp.write(make_callbacks())
     csharp.write(make_register_callback())
 

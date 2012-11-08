@@ -10,8 +10,8 @@ package com.tinkerforge;
 
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.Hashtable;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -66,7 +66,7 @@ class ReceiveThread extends Thread {
 			pendingLength += length;
 
 			while(true) {
-				if(pendingLength < 4) {
+				if(pendingLength < 8) {
 					// Wait for complete header
 					break;
 				}
@@ -112,7 +112,7 @@ class CallbackThread extends Thread {
 			}
 
 			byte functionID = ipcon.getFunctionIDFromData(data);
-			if(functionID == ipcon.FUNCTION_ENUMERATE_CALLBACK) {
+			if(functionID == ipcon.CALLBACK_ENUMERATE) {
 				int length = ipcon.getLengthFromData(data);
 				ByteBuffer bb = ByteBuffer.wrap(data, 4, length - 4);
 				bb.order(ByteOrder.LITTLE_ENDIAN);
@@ -123,8 +123,8 @@ class CallbackThread extends Thread {
 
 				ipcon.enumerateListener.enumerate(uid, name, stackID, isNew);
 			} else {
-				byte stackID = ipcon.getStackIDFromData(data);
-				Device device = ipcon.devices[stackID];
+				long uid = ipcon.getUIDFromData(data);
+				Device device = ipcon.devices.get(uid);
 				if(device.callbacks[functionID] != null) {
 					device.callbacks[functionID].callback(data);
 				}
@@ -135,20 +135,15 @@ class CallbackThread extends Thread {
 
 public class IPConnection {
 	private final static String BASE58 = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
-	private final static byte FUNCTION_GET_STACK_ID = (byte)255;
+	private final static byte FUNCTION_GET_IDENTITY = (byte)255;
 	private final static byte FUNCTION_ENUMERATE = (byte)254;
-	protected final static byte FUNCTION_ENUMERATE_CALLBACK = (byte)253;
-	private final static byte FUNCTION_STACK_ENUMERATE = (byte)252;
-	private final static byte FUNCTION_ADC_CALIBRATE = (byte)251;
-	private final static byte FUNCTION_GET_ADC_CALIBRATION = (byte)250;
+	protected final static byte CALLBACK_ENUMERATE = (byte)253;
 
-	private final static byte BROADCAST_ADDRESS = (byte)0;
+	private final static long BROADCAST_UID = (long)0;
 
 	public final static int RESPONSE_TIMEOUT = 2500;
 
-	protected Device[] devices = new Device[255];
-	private Device pendingAddDevice = null;
-	private Object addDeviceMutex = new Object();
+	protected Hashtable<Long, Device> devices = new Hashtable<Long, Device>();
 	protected LinkedBlockingQueue<byte[]> callbackQueue = new LinkedBlockingQueue<byte[]>();
 
 	private String host;
@@ -255,24 +250,19 @@ public class IPConnection {
 	void handleResponse(byte[] packet) {
 		byte functionID = getFunctionIDFromData(packet);
 
-		if(functionID == FUNCTION_GET_STACK_ID) {
-			handleAddDevice(packet);
-			return;
-		}
-
-		if(functionID == FUNCTION_ENUMERATE_CALLBACK) {
+		if(functionID == CALLBACK_ENUMERATE) {
 			handleEnumerate(packet);
 			return;
 		}
 
-		byte stackID = getStackIDFromData(packet);
+		long uid = getUIDFromData(packet);
 
-		if(devices[stackID] == null) {
+		if(!devices.contains(uid)) {
 			// Message for an unknown device, ignoring it
 			return;
 		}
 
-		Device device = devices[stackID];
+		Device device = devices.get(uid);
 
 		if(functionID == device.expectedResponseFunctionID) {
 			try {
@@ -295,16 +285,16 @@ public class IPConnection {
 		// a callback without registered listener
 	}
 
-	protected byte getStackIDFromData(byte[] data) {
-		return data[0];
+	protected long getUIDFromData(byte[] data) {
+		return (long)(data[0] & 0xFF) | (long)((data[1] & 0xFF) << 8) | (long)((data[2] & 0xFF) << 16) | (long)((data[3] & 0xFF) << 24);
+	}
+
+	protected byte getLengthFromData(byte[] data) {
+		return data[4];
 	}
 
 	protected byte getFunctionIDFromData(byte[] data) {
-		return data[1];
-	}
-
-	protected int getLengthFromData(byte[] data) {
-		return (data[2] & 0xFF) | ((data[3] & 0xFF) << 8);
+		return data[5];
 	}
 
 	public static String string(ByteBuffer buffer, int length) {
@@ -364,38 +354,6 @@ public class IPConnection {
 		} catch(java.io.IOException e) {
 			e.printStackTrace();
 			return;
-		}
-	}
-
-	private void handleAddDevice(byte[] packet) {
-		if(pendingAddDevice == null) {
-			return;
-		}
-
-		int length = getLengthFromData(packet);
-		ByteBuffer bb = ByteBuffer.wrap(packet, 4, length - 4);
-		bb.order(ByteOrder.LITTLE_ENDIAN);
-
-		long uid = bb.getLong();
-		if(pendingAddDevice.uid == uid) {
-			pendingAddDevice.firmwareVersion[0] = unsignedByte(bb.get());
-			pendingAddDevice.firmwareVersion[1] = unsignedByte(bb.get());
-			pendingAddDevice.firmwareVersion[2] = unsignedByte(bb.get());
-
-			String name = string(bb, 40);
-			int i = name.lastIndexOf(' ');
-			if (i < 0 || !name.substring(0, i).replace('-', ' ').equals(pendingAddDevice.expectedName.replace('-', ' '))) {
-				return;
-			}
-
-			pendingAddDevice.name = name;
-			pendingAddDevice.stackID = unsignedByte(bb.get());
-			devices[pendingAddDevice.stackID] = pendingAddDevice;
-			try {
-				pendingAddDevice.responseQueue.put(packet);
-			} catch(InterruptedException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 
@@ -471,7 +429,7 @@ public class IPConnection {
 	 * (as is done in Brick Viewer).
 	 */
 	public void enumerate(EnumerateListener enumerateListener) {
-		ByteBuffer request = createRequestBuffer(BROADCAST_ADDRESS, FUNCTION_ENUMERATE, (short)4);
+		ByteBuffer request = createRequestBuffer(BROADCAST_UID, (byte)8, FUNCTION_ENUMERATE);
 
 		this.enumerateListener = enumerateListener;
 
@@ -483,50 +441,13 @@ public class IPConnection {
 		}
 	}
 
-	/**
-	 * Adds a device (Brick or Bricklet) to the IP connection. Every device
-	 * has to be added to an IP connection before it can be used. Examples for
-	 * this can be found in the API documentation for every Brick and Bricklet.
-	 */
-	public void addDevice(Device device) throws TimeoutException {
-		ByteBuffer request = createRequestBuffer(BROADCAST_ADDRESS, FUNCTION_GET_STACK_ID, (short)12);
-		request.putLong(device.uid);
-
-		synchronized(addDeviceMutex) {
-			pendingAddDevice = device;
-
-			try {
-				try {
-					out.write(request.array());
-				}
-				catch(java.io.IOException e) {
-					e.printStackTrace();
-				}
-
-				byte[] response = null;
-				try {
-					response = pendingAddDevice.responseQueue.poll(RESPONSE_TIMEOUT, TimeUnit.MILLISECONDS);
-					if(response == null) {
-						throw new TimeoutException("Could not add device " + base58Encode(device.uid) + ", timeout");
-					}
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-
-				device.ipcon = this;
-			} finally {
-				pendingAddDevice = null;
-			}
-		}
-	}
-
-	static ByteBuffer createRequestBuffer(byte stackID, byte functionID, short length) {
+	static ByteBuffer createRequestBuffer(long uid, byte length, byte functionID) {
 		ByteBuffer buffer = ByteBuffer.allocate(length);
 
 		buffer.order(ByteOrder.LITTLE_ENDIAN);
-		buffer.put(stackID);
+		buffer.putInt((int)uid);
+		buffer.put(length);
 		buffer.put(functionID);
-		buffer.putShort(length);
 
 		return buffer;
 	}

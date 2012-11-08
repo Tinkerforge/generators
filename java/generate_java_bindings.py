@@ -352,7 +352,7 @@ def make_methods():
 \t * {8}
 \t */
 \tpublic {0} {1}({2}) {3} {{
-\t\tByteBuffer bb = IPConnection.createRequestBuffer((byte)stackID, FUNCTION_{5}, (short){4});
+\t\tByteBuffer bb = IPConnection.createRequestBuffer(uid, (byte){4}, FUNCTION_{5});
 {6}
 {7}
 \t}}
@@ -360,7 +360,7 @@ def make_methods():
     method_no_response = """\t\tsendRequestNoResponse(bb.array());"""
     method_response = """\t\tbyte[] response = sendRequestExpectResponse(bb.array(), FUNCTION_{0});
 
-\t\tbb = ByteBuffer.wrap(response, 4, response.length - 4);
+\t\tbb = ByteBuffer.wrap(response, 8, response.length - 8);
 \t\tbb.order(ByteOrder.LITTLE_ENDIAN);
 
 {1}

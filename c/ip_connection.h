@@ -42,27 +42,27 @@
 #define E_HOSTNAME_INVALID -3
 #define E_NO_CONNECT -4
 #define E_NO_THREAD -5
-#define E_NOT_ADDED -6
+#define E_NOT_ADDED -6 // unused since v2.0
+#define E_AUTH_MISMATCH -7
+#define E_AUTH_DISABLED -8
+#define E_AUTH_REQUIRED -9
 
 #define RESPONSE_TIMEOUT 2500
-
-#define MAX_LENGTH_NAME 40
 
 #define MAX_NUM_DEVICES 256
 #define MAX_NUM_CALLBACKS 256
 #define MAX_PACKET_SIZE 4096
 #define RECV_BUFFER_SIZE (MAX_PACKET_SIZE * 2)
 
-#define BROADCAST_ADDRESS 0
+#define BROADCAST_UID 0
 
-#define FUNCTION_GET_STACK_ID 255
+#define FUNCTION_GET_IDENTITY 255
 #define FUNCTION_ENUMERATE 254
-#define FUNCTION_ENUMERATE_CALLBACK 253
 
 struct IPConnection_;
 struct Device_;
 
-typedef void (*enumerate_callback_func_t)(char*, char*, uint8_t, bool);
+typedef void (*enumerate_callback_func_t)(char*, char*, char, uint8_t[3], uint8_t[3], uint16_t, uint8_t);
 typedef int (*device_callback_func_t)(struct Device_*, const unsigned char*);
 
 typedef struct {
@@ -145,37 +145,38 @@ typedef struct IPConnection_{
 #endif
 
 typedef struct {
-	uint8_t stack_id;
+	uint32_t uid;
+	uint8_t length;
 	uint8_t function_id;
-	uint16_t length;
-	uint64_t uid;
-} ATTRIBUTE_PACKED GetStackID;
+	uint8_t sequence_number : 4;
+
+	// options
+	uint8_t return_expected : 1;
+	uint8_t authentication : 1;
+	uint8_t other_options : 2;
+
+	// flags
+	uint8_t error : 2;
+	uint8_t future_use : 6;
+} ATTRIBUTE_PACKED PacketHeader;
 
 typedef struct {
-	uint8_t stack_id;
-	uint8_t function_id;
-	uint16_t length;
-	uint64_t device_uid;
-	uint8_t device_firmware_version[3];
-	char device_name[MAX_LENGTH_NAME];
-	uint8_t device_stack_id;
-} ATTRIBUTE_PACKED GetStackIDReturn;
-
-typedef struct {
-	uint8_t stack_id;
-	uint8_t function_id;
-	uint16_t length;
+	PacketHeader header;
 } ATTRIBUTE_PACKED Enumerate;
 
 typedef struct {
-	uint8_t stack_id;
-	uint8_t function_id;
-	uint16_t length;
-	uint64_t device_uid;
-	char device_name[MAX_LENGTH_NAME];
-	uint8_t device_stack_id;
-	bool is_new;
-} ATTRIBUTE_PACKED EnumerateReturn;
+	// header
+	PacketHeader header;
+
+	// payload
+	char uid[8];
+	char connected_uid[8];
+	char position;
+	uint8_t hardware_version[3];
+	uint8_t firmware_version[3];
+	uint16_t device_identifier;
+	uint8_t enumeration_type;
+} ATTRIBUTE_PACKED EnumerateCallback;
 
 #if defined _MSC_VER || defined __BORLANDC__
 	#pragma pack(pop)
@@ -241,16 +242,7 @@ int ipcon_create(IPConnection *ipcon, const char *host, const int port);
  * It should be possible to implement "plug 'n play" functionality with this
  * (as is done in Brick Viewer).
  */
-void ipcon_enumerate(IPConnection *ipcon, enumerate_callback_func_t callback);
-
-/**
- * \ingroup IPConnection
- *
- * Adds a device (Brick or Bricklet) to the IP connection. Every device
- * has to be added to an IP connection before it can be used. Examples for
- * this can be found in the API documentation for every Brick and Bricklet.
- */
-int ipcon_add_device(IPConnection *ipcon, Device *device);
+void ipcon_enumerate(IPConnection *ipcon);
 
 /**
  * \ingroup IPConnection
@@ -267,6 +259,11 @@ void ipcon_join_thread(IPConnection *ipcon);
  * and the threads of the IP connection terminated.
  */
 void ipcon_destroy(IPConnection *ipcon);
+
+#define IPCON_CALLBACK_ENUMERATE 253
+#define IPCON_CALLBACK_AUTHENTICATION_ERROR 241
+
+void ipcon_register_callback(IPConnection *ipcon, uint8_t id, void *callback);
 
 void ipcon_base58encode(uint64_t value, char *str);
 uint64_t ipcon_base58decode(const char *str);
