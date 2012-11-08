@@ -6,6 +6,7 @@ com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'binding_version': [1, 0, 0],
     'category': 'Bricklet',
+    'device_identifier': 222,
     'name': ('GPS', 'gps', 'GPS'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for receiving GPS position',

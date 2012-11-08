@@ -6,6 +6,7 @@ com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'binding_version': [1, 0, 0],
     'category': 'Bricklet',
+    'device_identifier': 220,
     'name': ('AnalogOut', 'analog_out', 'Analog Out'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for output of voltage between 0 and 5V',

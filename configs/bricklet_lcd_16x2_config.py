@@ -6,6 +6,7 @@ com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'binding_version': [1, 0, 0],
     'category': 'Bricklet',
+    'device_identifier': 211,
     'name': ('LCD16x2', 'lcd_16x2', 'LCD 16x2'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling a LCD with 2 lines a 16 characters',

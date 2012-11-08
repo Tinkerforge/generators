@@ -6,6 +6,7 @@ com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'binding_version': [1, 0, 0],
     'category': 'Bricklet',
+    'device_identifier': 219,
     'name': ('AnalogIn', 'analog_in', 'Analog In'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing Voltages between 0 and 45V',

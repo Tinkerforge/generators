@@ -6,6 +6,7 @@ com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'binding_version': [1, 0, 0],
     'category': 'Bricklet',
+    'device_identifier': 218,
     'name': ('Voltage', 'voltage', 'Voltage'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing Voltages between 0 and 50V',

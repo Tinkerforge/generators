@@ -6,6 +6,7 @@ com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'binding_version': [1, 0, 0],
     'category': 'Bricklet',
+    'device_identifier': 225,
     'name': ('IndustrialQuadRelay', 'industrial_quad_relay', 'Industrial Quad Relay'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling up to 4 Solid State Relays',

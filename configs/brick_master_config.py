@@ -6,6 +6,7 @@ com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'binding_version': [1, 3, 2],
     'category': 'Brick',
+    'device_identifier': 13,
     'name': ('Master', 'master', 'Master'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling Stacks and four Bricklets',

@@ -6,6 +6,7 @@ com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'binding_version': [1, 0, 1],
     'category': 'Brick',
+    'device_identifier': 16,
     'name': ('IMU', 'imu', 'IMU'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing acceleration, magnetic field and angular velocity',

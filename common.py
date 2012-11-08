@@ -505,6 +505,9 @@ class Device:
     def get_category(self):
         return self.com['category']
 
+    def get_device_identifier(self):
+        return self.com['device_identifier']
+
     def get_camel_case_name(self):
         return self.com['name'][0]
 

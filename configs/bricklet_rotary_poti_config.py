@@ -6,6 +6,7 @@ com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'binding_version': [1, 0, 0],
     'category': 'Bricklet',
+    'device_identifier': 215,
     'name': ('RotaryPoti', 'rotary_poti', 'Rotary Poti'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing Rotary Potentiometer input',

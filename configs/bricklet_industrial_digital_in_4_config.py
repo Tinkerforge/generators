@@ -6,6 +6,7 @@ com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'binding_version': [1, 0, 0],
     'category': 'Bricklet',
+    'device_identifier': 223,
     'name': ('IndustrialDigitalIn4', 'industrial_digital_in_4', 'Industrial Digital In 4'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling up to 4 optically coupled digital inputs',

@@ -6,6 +6,7 @@ com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
     'binding_version': [1, 1, 0],
     'category': 'Bricklet',
+    'device_identifier': 221,
     'name': ('Barometer', 'barometer', 'Barometer'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing air pressure and altitude changes',

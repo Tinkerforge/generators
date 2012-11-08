@@ -6,6 +6,7 @@ com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'binding_version': [1, 0, 1],
     'category': 'Brick',
+    'device_identifier': 14,
     'name': ('Servo', 'servo', 'Servo'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling up to seven servos',

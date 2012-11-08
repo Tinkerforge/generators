@@ -6,6 +6,7 @@ com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'binding_version': [1, 0, 0],
     'category': 'Bricklet',
+    'device_identifier': 217,
     'name': ('TemperatureIR', 'temperature_ir', 'Temperature IR'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for non-contact temperature sensing',

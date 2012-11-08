@@ -6,6 +6,7 @@ com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'binding_version': [1, 0, 0],
     'category': 'Bricklet',
+    'device_identifier': 23,
     'name': ('Current12', 'current12', 'Current12'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing current of up to 12.5A',

@@ -6,12 +6,12 @@ com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'binding_version': [1, 0, 2],
     'category': 'Brick',
+    'device_identifier': 15,
     'name': ('Stepper', 'stepper', 'Stepper'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling stepper motors',
     'packets': []
 }
-
 
 com['packets'].append({
 'type': 'function',

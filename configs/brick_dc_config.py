@@ -6,6 +6,7 @@ com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'binding_version': [1, 0, 1],
     'category': 'Brick',
+    'device_identifier': 11,
     'name': ('DC', 'dc', 'DC'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling DC motors',

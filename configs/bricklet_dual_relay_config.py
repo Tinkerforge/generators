@@ -6,6 +6,7 @@ com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'binding_version': [1, 0, 1],
     'category': 'Bricklet',
+    'device_identifier': 26,
     'name': ('DualRelay', 'dual_relay', 'Dual Relay'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling two relays',
