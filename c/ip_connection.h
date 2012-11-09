@@ -148,16 +148,12 @@ typedef struct {
 	uint32_t uid;
 	uint8_t length;
 	uint8_t function_id;
-	uint8_t sequence_number : 4;
-
-	// options
-	uint8_t return_expected : 1;
-	uint8_t authentication : 1;
 	uint8_t other_options : 2;
-
-	// flags
-	uint8_t error : 2;
-	uint8_t future_use : 6;
+	        authentication : 1;
+	        response_expected : 1;
+	        sequence_number : 4;
+	uint8_t error_code : 2,
+	        future_use : 6;
 } ATTRIBUTE_PACKED PacketHeader;
 
 typedef struct {
@@ -165,10 +161,7 @@ typedef struct {
 } ATTRIBUTE_PACKED Enumerate;
 
 typedef struct {
-	// header
 	PacketHeader header;
-
-	// payload
 	char uid[8];
 	char connected_uid[8];
 	char position;
