@@ -102,6 +102,21 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
+'name': ('GetBatteryVoltage', 'get_battery_voltage'),
+'elements': [('voltage', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
 'name': ('Restart', 'restart'),
 'elements': [('restart_type', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
