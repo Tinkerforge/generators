@@ -381,12 +381,11 @@ def generate(path, language, make_files, prepare, is_doc):
 
     prepare(path)
 
-    common_packets = []
-    try:
-        configs.remove('brick_commonconfig.py')
-        common_packets = __import__('brick_commonconfig').common_packets
-    except:
-        pass
+    configs.remove('brick_commonconfig.py')
+    configs.remove('bricklet_commonconfig.py')
+
+    common_brick_packets = __import__('brick_commonconfig').common_packets
+    common_bricklet_packets = __import__('bricklet_commonconfig').common_packets
 
     for config in configs:
         if config.endswith('_config.py'):
@@ -395,13 +394,35 @@ def generate(path, language, make_files, prepare, is_doc):
 
             module = __import__(config[:-3])
             print(" * {0}".format(config[:-10]))
+
             if 'brick_' in config and not module.com.has_key('common_included'):
-                specified_common_packets = copy.deepcopy(common_packets)
+                specified_common_packets = copy.deepcopy(common_brick_packets)
+
                 for specified_common_packet in specified_common_packets:
-                    specified_common_packet['since_firmware'] = \
-                      specified_common_packet['since_firmware'][module.com['name'][1]]
+                    if module.com['name'][1] in specified_common_packet['since_firmware']:
+                        specified_common_packet['since_firmware'] = \
+                            specified_common_packet['since_firmware'][module.com['name'][1]]
+                    else:
+                        specified_common_packet['since_firmware'] = \
+                            specified_common_packet['since_firmware']['*']
+
                 module.com['packets'].extend(specified_common_packets)
                 module.com['common_included'] = True
+
+            if 'bricklet_' in config and not module.com.has_key('common_included'):
+                specified_common_packets = copy.deepcopy(common_bricklet_packets)
+
+                for specified_common_packet in specified_common_packets:
+                    if module.com['name'][1] in specified_common_packet['since_firmware']:
+                        specified_common_packet['since_firmware'] = \
+                            specified_common_packet['since_firmware'][module.com['name'][1]]
+                    else:
+                        specified_common_packet['since_firmware'] = \
+                            specified_common_packet['since_firmware']['*']
+
+                module.com['packets'].extend(specified_common_packets)
+                module.com['common_included'] = True
+
             make_files(module.com, path)
 
 def import_and_make(configs, path, make_files):

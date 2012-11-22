@@ -112,7 +112,6 @@ class Device:
         return self.api_version
 
 class IPConnection:
-    FUNCTION_GET_IDENTITY = 255
     FUNCTION_ENUMERATE = 254
     FUNCTION_ADC_CALIBRATE = 251
     FUNCTION_GET_ADC_CALIBRATION = 250

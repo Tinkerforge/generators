@@ -231,7 +231,7 @@ def make_register_callback_method():
     return """
     def register_callback(self, id, callback):
         \"\"\"
-        Registers a callback with ID id to the function callback.
+        Registers a callback with ID *id* to the function *callback*.
         \"\"\"
         self.registered_callbacks[id] = callback
 """
