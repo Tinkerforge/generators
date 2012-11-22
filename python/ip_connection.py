@@ -127,8 +127,6 @@ class IPConnection:
 
     BROADCAST_UID = 0
 
-    RESPONSE_TIMEOUT = 2.5
-
     PLUGIN_CHUNK_SIZE = 32
 
     ENUMERATION_AVAILABLE = 0
@@ -153,6 +151,7 @@ class IPConnection:
 
         self.host = host
         self.port = port
+        self.timeout = 2.5
         self.next_seqnum = 0
         self.auth_key = None
         self.devices = {}
@@ -287,6 +286,23 @@ class IPConnection:
         Registers a callback with ID *id* to the function *callback*.
         """
         self.registered_callbacks[id] = callback
+
+    def set_timeout(self, timeout):
+        """
+        Sets the response timeout in seconds as float.
+        """
+        timeout = float(timeout)
+
+        if timeout < 0:
+            raise ValueError('Timeout cannot be negative')
+
+        self.timeout = timeout
+
+    def get_timeout(self):
+        """
+        Returns the response timeout in seconds as float.
+        """
+        return self.timeout
 
     def receive_loop(self):
         if sys.hexversion < 0x03000000:
@@ -449,7 +465,7 @@ class IPConnection:
             return
 
         try:
-            response = device.response_queue.get(True, IPConnection.RESPONSE_TIMEOUT)
+            response = device.response_queue.get(True, self.timeout)
         except Empty:
             device.write_lock.release()
             msg = 'Did not receive response for function ' + str(function_id) +  ' in time'
