@@ -80,8 +80,21 @@ class Error(Exception):
         return str(self.value) + ': ' + str(self.description)
 
 class Device:
-    def __init__(self, uid, ipcon):
-        self.uid = base58decode(uid)
+    def __init__(self, uid_str, ipcon):
+        uid = base58decode(uid_str)
+
+        if uid > 0xFFFFFFFF:
+            # convert from 64bit to 32bit
+            value1 = uid & 0xFFFFFFFF
+            value2 = (uid >> 32) & 0xFFFFFFFF
+
+            uid  = (value1 & 0x3F000000) << 2
+            uid |= (value1 & 0x000F0000) << 6
+            uid |= (value1 & 0x0000003F) << 16
+            uid |= (value2 & 0x0F000000) >> 12
+            uid |= (value2 & 0x00000FFF)
+
+        self.uid = uid
         self.ipcon = ipcon
         self.api_version = (0, 0, 0)
         self.registered_callbacks = {}
