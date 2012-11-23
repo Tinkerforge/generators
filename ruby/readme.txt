@@ -14,7 +14,7 @@ example_folder/
  -> tinkerforge/
  -> example_configuration.rb
 
-You need to tell ruby to look in the current folder for required modules:
+You need to tell Ruby to look in the current folder for required modules:
 
 ruby -I. example_configuration.rb
 
