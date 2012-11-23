@@ -223,9 +223,7 @@ class IPConnection:
                 cleanup()
                 raise
 
-        # do this outside the socket_lock to ensure that the callback will
-        # not be executed while the socket_lock is held
-        self.callback_queue.put((IPConnection.QUEUE_META, (IPConnection.CALLBACK_CONNECTED, None)))
+            self.callback_queue.put((IPConnection.QUEUE_META, (IPConnection.CALLBACK_CONNECTED, None)))
 
     def disconnect(self):
         with self.socket_lock:
