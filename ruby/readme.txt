@@ -14,6 +14,10 @@ example_folder/
  -> tinkerforge/
  -> example_configuration.rb
 
+You need to tell ruby to look in the current folder for required modules:
+
+ruby -I. example_configuration.rb
+
 If you just want to use a few Bricks or Bricklets and you don't want to have
 this many files in you project, you can also copy the files as they are needed.
 For the Stepper Brick examples we need ip_connection.rb and brick_stepper.rb.
