@@ -21,14 +21,14 @@ com['packets'].append({
 'en':
 """
 Sets the voltage in mV. The possible range is 0V to 5V (0-5000).
-Calling this function will set the mode to 0 (see `:func:SetMode`).
+Calling this function will set the mode to 0 (see :func:`SetMode`).
 
 The default value is 0 (with mode 1).
 """,
 'de':
 """
 Setzt die Spannung in mV. Der mögliche Bereich ist 0V bis 5V (0-5000).
-Dieser Funktionsaufruf setzt den Modus auf 0 (siehe `:func:SetMode`).
+Dieser Funktionsaufruf setzt den Modus auf 0 (siehe :func:`SetMode`).
 
 Der Standardwert ist 0 (im Modus 1).
 """
