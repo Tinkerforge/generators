@@ -126,14 +126,37 @@ def make_init_method():
         self.api_version = ({0}, {1}, {2})
 
 """
-    return dev_init.format(*device.get_api_version())
+    response_expected = ''
+
+    for packet in device.get_packets():
+        if packet.get_type() == 'callback':
+            prefix = 'CALLBACK_'
+            flag = 2
+        elif len(packet.get_elements('out')) > 0:
+            prefix = 'FUNCTION_'
+            flag = 1
+        else:
+            prefix = 'FUNCTION_'
+            flag = 4
+
+        response_expected += '        self.response_expected[{0}{1}.{2}{3}] = {4}\n' \
+            .format(device.get_category(), device.get_camel_case_name(), prefix, packet.get_upper_case_name(), flag)
+
+    if len(response_expected) > 0:
+        response_expected += '\n'
+
+    return dev_init.format(*device.get_api_version()) + response_expected
 
 def make_callback_formats():
     cbs = ''
-    cb = "        self.callback_formats[{0}.CALLBACK_{1}] = '{2}'\n"
+    cb = "        self.callback_formats[{0}{1}.CALLBACK_{2}] = '{3}'\n"
+
     for packet in device.get_packets('callback'):
-        form = make_format_list(packet, 'out')
-        cbs += cb.format(device.get_camel_case_name(), packet.get_upper_case_name(), form)
+        cbs += cb.format(device.get_category(),
+                         device.get_camel_case_name(),
+                         packet.get_upper_case_name(),
+                         make_format_list(packet, 'out'))
+
     return cbs
 
 def make_format_from_element(element):
@@ -197,7 +220,7 @@ def make_methods():
 """
     methods = ''
 
-    cls = device.get_camel_case_name()
+    cls = device.get_category() + device.get_camel_case_name()
     for packet in device.get_packets('function'):
         nb = packet.get_camel_case_name()
         ns = packet.get_underscore_name()
