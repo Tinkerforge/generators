@@ -124,6 +124,9 @@ Konfigurationsfunktionen für Callbacks
 lang = 'en'
 path_binding = ''
 
+OPTION_RETURN_EXPECTED = 1 << 3
+OPTION_AUTHENTICATION  = 1 << 2
+
 def shift_right(text, n):
     return text.replace('\n', '\n' + ' '*n)
 
@@ -489,7 +492,7 @@ class Packet:
         return self.packet['function_id']
 
     def get_request_length(self):
-        length = 4
+        length = 8
         for element in self.in_elements:
             length += get_element_size(element)
         return length

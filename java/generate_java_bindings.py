@@ -182,7 +182,7 @@ def make_callback_listener_definitions():
 """
 
     data = """
-\t\t\t\tByteBuffer bb = ByteBuffer.wrap(data, 4, data.length - 4);
+\t\t\t\tByteBuffer bb = ByteBuffer.wrap(data, 8, data.length - 8);
 \t\t\t\tbb.order(ByteOrder.LITTLE_ENDIAN);
 
 {1}"""
@@ -349,15 +349,18 @@ def make_methods():
     methods = ''
     method = """
 \t/**
-\t * {8}
+\t * {9}
 \t */
 \tpublic {0} {1}({2}) {3} {{
-\t\tByteBuffer bb = IPConnection.createRequestBuffer(uid, (byte){4}, FUNCTION_{5});
-{6}
+\t\tbyte options = 0;
+\t\tif(responseExpected[FUNCTION_{5}] == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE || responseExpected[FUNCTION_{5}] == RESPONSE_EXPECTED_FLAG_TRUE) {{
+\t\t\toptions = 8;
+\t\t}}
+\t\tByteBuffer bb = ipcon.createRequestBuffer(uid, (byte){4}, FUNCTION_{5}, options, (byte)({6}));
 {7}
+{8}
 \t}}
 """
-    method_no_response = """\t\tsendRequestNoResponse(bb.array());"""
     method_response = """\t\tbyte[] response = sendRequestExpectResponse(bb.array(), FUNCTION_{0});
 
 \t\tbb = ByteBuffer.wrap(response, 8, response.length - 8);
@@ -365,6 +368,15 @@ def make_methods():
 
 {1}
 \t\treturn {2};"""
+
+    method_noresponse = """\t\tif(responseExpected[FUNCTION_{0}] == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE || responseExpected[FUNCTION_{0}] == RESPONSE_EXPECTED_FLAG_TRUE) {{
+\t\t\tbyte[] response = sendRequestExpectResponse(bb.array(), FUNCTION_{0});
+
+\t\t\tbb = ByteBuffer.wrap(response, 8, response.length - 8);
+\t\t\tbb.order(ByteOrder.LITTLE_ENDIAN);
+\t\t}} else {{
+\t\t\tsendRequestNoResponse(bb.array());
+\t\t}}"""
 
     loop = """\t\tfor(int i = 0; i < {0}; i++) {{
 {1}
@@ -378,6 +390,8 @@ def make_methods():
 
     cls = device.get_camel_case_name()
     for packet in device.get_packets('function'):
+        options = 0
+        flags = 0
         ret = get_return_value(packet)
         name_lower = packet.get_headless_camel_case_name()
         parameter = make_parameter_list(packet)
@@ -405,28 +419,33 @@ def make_methods():
 
             bbputs += bbput_format + '\n'
 
-        throw = '' 
-        response = method_no_response
-        if len(packet.get_elements('out')) > 0:
-            throw = 'throws IPConnection.TimeoutException'
-            if len(packet.get_elements('out')) > 1:
-                bbgets, bbret = make_bbgets(packet, True)
-                obj_name = get_object_name(packet)
-                obj = '\t\t{0} obj = new {0}();\n'.format(obj_name)
-                bbgets = obj + bbgets
-                bbret = 'obj'
-            else:
-                bbgets, bbret = make_bbgets(packet, False)
+        throw = 'throws IPConnection.TimeoutException'
+        if len(packet.get_elements('out')) == 0:
+            bbgets = ''
+            bbret = ''
+        elif len(packet.get_elements('out')) > 1:
+            bbgets, bbret = make_bbgets(packet, True)
+            obj_name = get_object_name(packet)
+            obj = '\t\t{0} obj = new {0}();\n'.format(obj_name)
+            bbgets = obj + bbgets
+            bbret = 'obj'
+        else:
+            bbgets, bbret = make_bbgets(packet, False)
 
+        if len(packet.get_elements('out')) == 0:
+            response = method_noresponse.format(name_upper)
+        else:
             response = method_response.format(name_upper,
                                               bbgets,
                                               bbret)
+
         methods += method.format(ret,
                                  name_lower,
                                  parameter,
                                  throw,
                                  size,
                                  name_upper,
+                                 flags,
                                  bbputs,
                                  response,
                                  doc)
