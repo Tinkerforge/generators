@@ -23,6 +23,8 @@ copy_all.py:
 Usage
 -----
 
-To use the generators you have to clone **all** Brick gits and **all**
+If you only want to generate the bindings it is sufficient to clone this repository.
+
+If you want to generate the documentation as well, you have to clone **all** Brick gits and **all**
 Bricklet gits in parallel to the generators git. Otherwise the generate_all and
 copy_all scripts can't find the examples that are used in the documentation.
