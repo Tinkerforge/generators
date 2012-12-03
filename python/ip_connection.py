@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
-# Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+# Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 #
 # Redistribution and use in source and binary forms of this file,
 # with or without modification, are permitted.
@@ -138,18 +138,16 @@ class Device:
         return self.api_version
 
     def set_response_expected(self, function_id, response_expected):
-        if bool(response_expected):
-            flag = 3
-        else:
-            flag = 4
-
-        if self.response_expected[function_id] == 0:
+        if self.response_expected[function_id] == 0 or function_id >= len(self.response_expected):
             raise ValueError('Invalid function ID {0}'.format(function_id))
 
         if self.response_expected[function_id] not in [3, 4]:
             raise ValueError('Response Expected flag cannot be changed for function ID {0}'.format(function_id))
 
-        self.response_expected[function_id] = new_flag
+        if bool(response_expected):
+            self.response_expected[function_id] = 3
+        else:
+            self.response_expected[function_id] = 4
 
     def get_response_expected(self, function_id):
         if self.response_expected[function_id] == 0:
@@ -163,7 +161,7 @@ class Device:
         else:
             flag = 4
 
-        for i in range(256):
+        for i in range(len(self.response_expected)):
             if self.response_expected[i] in [3, 4]:
                 self.response_expected[i] = flag
 
