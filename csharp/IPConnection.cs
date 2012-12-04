@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
- * Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+ * Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
  * with or without modification, are permitted.
@@ -55,7 +55,11 @@ namespace Tinkerforge
 		///  The constructor throws an System.Net.Sockets.SocketException if there
 		///  is no Brick Daemon listening at the given host and port.
 		/// </summary>
-		public IPConnection(string host, int port) 
+		public IPConnection() 
+		{
+		}
+
+		public void connect(string host, int port)
 		{
 			this.host = host;
 			this.port = port;

@@ -157,9 +157,10 @@ def make_constructor():
 \t\t///  Creates an object with the unique device ID <c>uid</c>. This object can
 \t\t///  then be added to the IP connection.
 \t\t/// </summary>
-\t\tpublic {0}{1}(string uid) : base(uid) 
+\t\tpublic {0}{1}(string uid, IPConnection ipcon) : base(uid) 
 \t\t{{
-\t\t\tthis.expectedName = "{6} {7}";
+\t\t\tthis.ipcon             = ipcon;
+\t\t\tthis.expectedName      = "{6} {7}";
 \t\t\tthis.bindingVersion[0] = {3};
 \t\t\tthis.bindingVersion[1] = {4};
 \t\t\tthis.bindingVersion[2] = {5};
