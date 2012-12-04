@@ -674,7 +674,7 @@ class IPConnection:
         if device is not None:
             uid = device.uid
 
-            if device.response_expected[function_id] in [1, 3]:
+            if device.get_response_expected(function_id):
                 r_bit = 1
 
             if device.auth_key is not None:
