@@ -282,18 +282,18 @@ public class IPConnection {
     public final static short ENUMERATION_TYPE_DISCONNECTED = 2;
 
     // connect_reason parameter to the connected callback
-    protected final static int CONNECT_REASON_REQUEST = 0;
-    protected final static int CONNECT_REASON_AUTO_RECONNECT = 1;
+    public final static int CONNECT_REASON_REQUEST = 0;
+    public final static int CONNECT_REASON_AUTO_RECONNECT = 1;
 
     // disconnect_reason parameter to the disconnected callback
-    protected final static int DISCONNECT_REASON_REQUEST = 0;
-    protected final static int DISCONNECT_REASON_ERROR = 1;
-    protected final static int DISCONNECT_REASON_SHUTDOWN = 2;
+    public final static int DISCONNECT_REASON_REQUEST = 0;
+    public final static int DISCONNECT_REASON_ERROR = 1;
+    public final static int DISCONNECT_REASON_SHUTDOWN = 2;
 
     // returned by get_connection_state
-    protected final static int CONNECTION_STATE_DISCONNECTED = 0;
-    protected final static int CONNECTION_STATE_CONNECTED = 1;
-    protected final static int CONNECTION_STATE_PENDING = 2; // auto-reconnect in process
+    public final static int CONNECTION_STATE_DISCONNECTED = 0;
+    public final static int CONNECTION_STATE_CONNECTED = 1;
+    public final static int CONNECTION_STATE_PENDING = 2; // auto-reconnect in process
 
     protected final static int QUEUE_EXIT = 0;
     protected final static int QUEUE_META = 1;
