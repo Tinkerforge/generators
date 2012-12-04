@@ -127,12 +127,12 @@ def make_methods(typ):
 def make_callbacks():
     cb = {
     'en': """
-.. csharp:function:: public delegate void {0}::{1}({2})
+.. csharp:function:: public event {0}EventHandler {0}::{1}({2})
 
 {3}
 """,
     'de': """
-.. csharp:function:: public delegate void {0}::{1}({2})
+.. csharp:function:: public event {0}EventHandler {0}::{1}({2})
 
 {3}
 """
@@ -203,10 +203,7 @@ Callbacks
 
 *Callbacks* can be registered to receive
 time critical or recurring data from the device. The registration is done
-with the :csharp:func:`RegisterCallback <{3}{4}::RegisterCallback>` function
-of the device object.
-
-The parameter is a delegate object of the corresponding method, for example:
+by appending your Callback-Handler to the corresponding event:
 
 .. code-block:: csharp
     
@@ -215,9 +212,9 @@ The parameter is a delegate object of the corresponding method, for example:
         System.Console.WriteLine("Value: " + value);
     }}
 
-    device.RegisterCallback(new BrickDevice.Property(Callback));
+    device.Event += Callback;
 
-The available delegates are described below.
+The available events are described below.
 
 .. note::
  Using callbacks for recurring events is *always* preferred
