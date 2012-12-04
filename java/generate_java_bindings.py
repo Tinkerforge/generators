@@ -252,7 +252,7 @@ def make_add_listener():
 
 def make_function_id_definitions():
     function_ids = ''
-    function_id = '\tpublic final static int {2}_{0} = {1};\n'
+    function_id = '\tpublic final static byte {2}_{0} = (byte){1};\n'
     for packet in device.get_packets():
         function_ids += function_id.format(packet.get_upper_case_name(),
                                            packet.get_function_id(),
