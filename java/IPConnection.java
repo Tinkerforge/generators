@@ -70,7 +70,12 @@ class ReceiveThread extends Thread {
 					ipcon.receiveFlag = false;
 					ByteBuffer bb = ByteBuffer.allocate(8);
 					bb.putInt(ipcon.CALLBACK_DISCONNECTED);
-					bb.putInt(ipcon.DISCONNECT_REASON_SHUTDOWN);
+
+					if(length == 0) {
+						bb.putInt(ipcon.DISCONNECT_REASON_SHUTDOWN);
+					} else {
+						bb.putInt(ipcon.DISCONNECT_REASON_ERROR);
+					}
 
 					try {
 						ipcon.callbackQueue.put(new IPConnection.CallbackQueueObject(ipcon.QUEUE_META, bb.array()));
@@ -150,16 +155,16 @@ class CallbackThread extends Thread {
 							break;
 
 						case IPConnection.CALLBACK_DISCONNECTED:
-							ipcon.socketLock.lock();
-							try {
-								if(ipcon.socket != null) {
-									ipcon.socket.close();
-									ipcon.socket = null;
+							synchronized(ipcon.socketMutex) {
+								try {
+									if(ipcon.socket != null) {
+										ipcon.socket.close();
+										ipcon.socket = null;
+									}
+								} catch(java.io.IOException e) {
+									e.printStackTrace();
 								}
-							} catch(java.io.IOException e) {
-								e.printStackTrace();
 							}
-							ipcon.socketLock.unlock();
 
 							try {
 								Thread.sleep(100);
@@ -176,24 +181,26 @@ class CallbackThread extends Thread {
 								boolean retry = true;
 
 								while(retry) {
-									ipcon.socketLock.lock();
-									if(ipcon.autoReconnectAllowed && ipcon.socket == null) {
-										try {
-											ipcon.connectUnlocked(true);
-										} catch(Exception e) {
-											retry = true;
-										}
-									} else {
-										ipcon.autoReconnectPending = true;
-									}
-									ipcon.socketLock.unlock();
-								}
+									retry = false;
 
-								if(retry) {
-									try {
-										Thread.sleep(100);
-									} catch(java.lang.InterruptedException e) {
-										e.printStackTrace();
+									synchronized(ipcon.socketMutex) {
+										if(ipcon.autoReconnectAllowed && ipcon.socket == null) {
+											try {
+												ipcon.connectUnlocked(true);
+											} catch(Exception e) {
+												retry = true;
+											}
+										} else {
+											ipcon.autoReconnectPending = true;
+										}
+									}
+
+									if(retry) {
+										try {
+											Thread.sleep(100);
+										} catch(java.lang.InterruptedException e) {
+											e.printStackTrace();
+										}
 									}
 								}
 							}
@@ -300,7 +307,8 @@ public class IPConnection {
 	protected Hashtable<Long, Device> devices = new Hashtable<Long, Device>();
 	protected LinkedBlockingQueue<CallbackQueueObject> callbackQueue = null;
 
-	protected ReentrantLock socketLock = new ReentrantLock();
+	protected Object socketMutex = new Object();
+	private Object sequenceNumberMutex = new Object();
 
 	private String host;
 	private int port;
@@ -377,19 +385,16 @@ public class IPConnection {
 	}
 
 	public void connect(String host, int port) throws java.net.UnknownHostException, java.io.IOException {
-		socketLock.lock();
-		this.host = host;
-		this.port = port;
+		synchronized(socketMutex) {
+			this.host = host;
+			this.port = port;
 
-		try {
-			connectUnlocked(false);
-		} catch(java.io.IOException e) {
-			if(socketLock.isLocked()) {
-				socketLock.unlock();
-				}
-			throw(e);
+			try {
+				connectUnlocked(false);
+			} catch(java.io.IOException e) {
+				throw(e);
+			}
 		}
-		socketLock.unlock();
 	}
 
 	void connectUnlocked(boolean isAutoReconnect) throws java.net.UnknownHostException, java.io.IOException {
@@ -408,8 +413,7 @@ public class IPConnection {
 			} catch(java.io.IOException e) {
 				socket = null;
 				out = null;
-				socketLock.unlock();
-				throw(e);	
+				throw(e);
 			}
 		}
 
@@ -438,84 +442,88 @@ public class IPConnection {
 	}
 
 	public void disconnect() {
-		socketLock.lock();
+		CallbackThread callbackThreadTmp = null;
+		LinkedBlockingQueue<CallbackQueueObject> callbackQueueTmp = null;
 
-		autoReconnectAllowed = false;
-		if(autoReconnectPending) {
-			autoReconnectPending = false;
-		} else {
-			if(socket == null) {
-				socketLock.unlock();
-				return;
-			}
+		synchronized(socketMutex) {
+			autoReconnectAllowed = false;
 
-			receiveFlag = false;
-
-			try {
-				if(in != null) {
-					in.close();
-					in = null;
+			if(autoReconnectPending) {
+				autoReconnectPending = false;
+			} else {
+				if(socket == null) {
+					// FIXME: throw not-connected exception
+					return;
 				}
-			} catch(java.io.IOException e) {
-				e.printStackTrace();
-			}
 
-			try {
-				if(out != null) {
-					out.close();
-					out = null;
-				}
-			} catch(java.io.IOException e) {
-				e.printStackTrace();
-			}
+				receiveFlag = false;
 
-			try {
-				if(socket != null) {
-					socket.close();
-					socket = null;
-				}
-			} catch(java.io.IOException e) {
-				e.printStackTrace();
-			}
-
-			if(receiveThread != null) {
 				try {
-					receiveThread.join();
-				} catch(java.lang.InterruptedException e) {
+					if(in != null) {
+						in.close();
+						in = null;
+					}
+				} catch(java.io.IOException e) {
 					e.printStackTrace();
 				}
-			}
-			
-			receiveThread = null;
 
-			CallbackThread callbackThreadTmp = callbackThread;
-			LinkedBlockingQueue<CallbackQueueObject> callbackQueueTmp = callbackQueue;
+				try {
+					if(out != null) {
+						out.close();
+						out = null;
+					}
+				} catch(java.io.IOException e) {
+					e.printStackTrace();
+				}
+
+				try {
+					if(socket != null) {
+						socket.close();
+						socket = null;
+					}
+				} catch(java.io.IOException e) {
+					e.printStackTrace();
+				}
+
+				if(receiveThread != null) {
+					try {
+						receiveThread.join();
+					} catch(java.lang.InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+
+				receiveThread = null;
+			}
+
+			callbackThreadTmp = callbackThread;
+			callbackQueueTmp = callbackQueue;
+
 			callbackThread = null;
 			callbackQueue = null;
-				
-			socketLock.unlock();
+		}
 
-			ByteBuffer bb = ByteBuffer.allocate(8);
-			bb.putInt(CALLBACK_DISCONNECTED);
-			bb.putInt(DISCONNECT_REASON_REQUEST);
+		ByteBuffer bb = ByteBuffer.allocate(8);
+		bb.putInt(CALLBACK_DISCONNECTED);
+		bb.putInt(DISCONNECT_REASON_REQUEST);
+
+		try {
+			callbackQueueTmp.put(new CallbackQueueObject(QUEUE_META, bb.array()));
+		} catch(InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		try {
+			callbackQueueTmp.put(new CallbackQueueObject(QUEUE_EXIT, null));
+		} catch(InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		if(Thread.currentThread() != callbackThreadTmp) {
 			try {
-				callbackQueueTmp.put(new CallbackQueueObject(QUEUE_META, bb.array()));
+				callbackThreadTmp.join();
 			} catch(InterruptedException e) {
 				e.printStackTrace();
-			}
-
-			try {
-				callbackQueueTmp.put(new CallbackQueueObject(QUEUE_EXIT, null));
-			} catch(InterruptedException e) {
-				e.printStackTrace();
-			}
-
-			if(Thread.currentThread() != callbackThreadTmp) {
-				try {
-					callbackThreadTmp.join();
-				} catch(InterruptedException e) {
-					e.printStackTrace();
-				}
 			}
 		}
 	}
@@ -686,15 +694,15 @@ public class IPConnection {
 	}
 
 	private void handleEnumerate(byte[] packet) {
-		socketLock.lock();
-		if(enumerateListener != null) {
-			try {
-				callbackQueue.put(new IPConnection.CallbackQueueObject(QUEUE_PACKET, packet));
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+		synchronized(socketMutex) {
+			if(enumerateListener != null) {
+				try {
+					callbackQueue.put(new IPConnection.CallbackQueueObject(QUEUE_PACKET, packet));
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-		socketLock.unlock();
 	}
 
 	/**
@@ -726,22 +734,25 @@ public class IPConnection {
 	 * (as is done in Brick Viewer).
 	 */
 	public void enumerate() {
-		ByteBuffer request = createRequestBuffer(BROADCAST_UID, (byte)8, FUNCTION_ENUMERATE, (byte)0, (byte)0);
+		synchronized(socketMutex) {
+			ByteBuffer request = createRequestBuffer(BROADCAST_UID, (byte)8, FUNCTION_ENUMERATE, (byte)0, (byte)0);
 
-		try {
-			out.write(request.array());
-		} catch(java.io.IOException e) {
-			e.printStackTrace();
+			try {
+				out.write(request.array());
+			} catch(java.io.IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
 	ByteBuffer createRequestBuffer(long uid, byte length, int functionID, byte options, byte flags) {
-		socketLock.lock();
-		options |= nextSequenceNumber << SEQENCE_NUMBER_POS;
+		synchronized(sequenceNumberMutex) {
+			options |= nextSequenceNumber << SEQENCE_NUMBER_POS;
 
-		nextSequenceNumber++;
-		if(nextSequenceNumber == 0 || nextSequenceNumber > 15) {
-			nextSequenceNumber = 1;
+			nextSequenceNumber++;
+			if(nextSequenceNumber == 0 || nextSequenceNumber > 15) {
+				nextSequenceNumber = 1;
+			}
 		}
 
 		ByteBuffer buffer = ByteBuffer.allocate(length);
@@ -752,7 +763,6 @@ public class IPConnection {
 		buffer.put((byte)functionID);
 		buffer.put(options);
 		buffer.put(flags);
-		socketLock.unlock();
 
 		return buffer;
 	}

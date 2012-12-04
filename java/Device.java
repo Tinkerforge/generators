@@ -15,8 +15,8 @@ public abstract class Device {
 	long uid = (long)0;
 	short[] apiVersion = new short[3];
 	byte[] responseExpected = new byte[259];
-	int expectedResponseFunctionID = (byte)0;
-	byte expectedResponseSequenceNumber = (byte)0;
+	int expectedResponseFunctionID = -1;
+	int expectedResponseSequenceNumber = -1;
 	private Object writeMutex = new Object();
 	SynchronousQueue<byte[]> responseQueue = new SynchronousQueue<byte[]>();
 	IPConnection ipcon = null;
@@ -138,7 +138,8 @@ public abstract class Device {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} finally {
-				expectedResponseFunctionID = 0;
+				expectedResponseFunctionID = -1;
+				expectedResponseSequenceNumber = -1;
 			}
 		}
 
