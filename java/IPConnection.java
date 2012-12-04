@@ -8,9 +8,6 @@
 
 package com.tinkerforge;
 
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.Hashtable;
 import java.io.InputStream;
