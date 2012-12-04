@@ -209,15 +209,27 @@ class CallbackThread extends Thread {
 						return;
 					}
 
-					byte functionID = ipcon.getFunctionIDFromData(cqo.data);
-					if(functionID == ipcon.CALLBACK_ENUMERATE) {
+					short functionID = ipcon.unsignedByte(ipcon.getFunctionIDFromData(cqo.data));
+					if(functionID == IPConnection.CALLBACK_ENUMERATE) {
 						if(ipcon.enumerateListener != null) {
 							int length = ipcon.getLengthFromData(cqo.data);
 							ByteBuffer bb = ByteBuffer.wrap(cqo.data, 8, length - 8);
 							bb.order(ByteOrder.LITTLE_ENDIAN);
-							String UID = ipcon.base58Encode(bb.getLong());
-							String connectedUID = ipcon.base58Encode(bb.getLong());
-							char position = bb.getChar();
+							String UID = "";
+							for(int i = 0; i < 8; i++) {
+								char c = (char)bb.get();
+								if(c != '\0') {
+									UID += c;
+								}
+							}
+							String connectedUID = "";
+							for(int i = 0; i < 8; i++) {
+								char c = (char)bb.get();
+								if(c != '\0') {
+									connectedUID += c;
+								}
+							}
+							char position = (char)bb.get();
 							short[] hardwareVersion = new short[3];
 							hardwareVersion[0] = ipcon.unsignedByte(bb.get());
 							hardwareVersion[1] = ipcon.unsignedByte(bb.get());
@@ -234,7 +246,7 @@ class CallbackThread extends Thread {
 					} else {
 						long uid = ipcon.getUIDFromData(cqo.data);
 						Device device = ipcon.devices.get(uid);
-						if(device.callbacks[functionID] != null) {
+						if(device.callbacks != null && device.callbacks[functionID] != null) {
 							device.callbacks[functionID].callback(cqo.data);
 						}
 					}
@@ -329,7 +341,7 @@ public class IPConnection {
 	}
 
 	public interface EnumerateListener {
-		public void enumerate(String UID, String connectedUID, char position, short[] hardwareVersion, short[] firmwareVersion, int device_identifier, short enumerationType);
+		public void enumerate(String UID, String connectedUID, char position, short[] hardwareVersion, short[] firmwareVersion, int deviceIdentifier, short enumerationType);
 	}
 
 	public interface ConnectedListener {
@@ -354,16 +366,27 @@ public class IPConnection {
 
 	}
 
+	public void addListener(Object o) {
+		if(o instanceof EnumerateListener) {
+			enumerateListener = (EnumerateListener)o;
+		} else if(o instanceof ConnectedListener) {
+			connectedListener = (ConnectedListener)o;
+		} else if(o instanceof DisconnectedListener) {
+			disconnectedListener = (DisconnectedListener)o;
+		}
+	}
+
 	public void connect(String host, int port) throws java.net.UnknownHostException, java.io.IOException {
 		socketLock.lock();
-		// TODO: socket lock
 		this.host = host;
 		this.port = port;
 
 		try {
 			connectUnlocked(false);
 		} catch(java.io.IOException e) {
-			socketLock.unlock();
+			if(socketLock.isLocked()) {
+				socketLock.unlock();
+				}
 			throw(e);
 		}
 		socketLock.unlock();
@@ -559,8 +582,8 @@ public class IPConnection {
 	}
 
 	void handleResponse(byte[] packet) {
-		byte functionID = getFunctionIDFromData(packet);
-		byte sequenceNumber = getSequenceNumberFromData(packet);
+		short functionID = unsignedByte(getFunctionIDFromData(packet));
+		short sequenceNumber = unsignedByte(getSequenceNumberFromData(packet));
 
 		if(functionID == CALLBACK_ENUMERATE && sequenceNumber == 0) {
 			handleEnumerate(packet);
@@ -703,7 +726,7 @@ public class IPConnection {
 	 * (as is done in Brick Viewer).
 	 */
 	public void enumerate() {
-		ByteBuffer request = createRequestBuffer(BROADCAST_UID, (byte)8, (byte)FUNCTION_ENUMERATE, (byte)0, (byte)0);
+		ByteBuffer request = createRequestBuffer(BROADCAST_UID, (byte)8, FUNCTION_ENUMERATE, (byte)0, (byte)0);
 
 		try {
 			out.write(request.array());
@@ -712,7 +735,7 @@ public class IPConnection {
 		}
 	}
 
-	ByteBuffer createRequestBuffer(long uid, byte length, byte functionID, byte options, byte flags) {
+	ByteBuffer createRequestBuffer(long uid, byte length, int functionID, byte options, byte flags) {
 		socketLock.lock();
 		options |= nextSequenceNumber << SEQENCE_NUMBER_POS;
 
@@ -726,7 +749,7 @@ public class IPConnection {
 		buffer.order(ByteOrder.LITTLE_ENDIAN);
 		buffer.putInt((int)uid);
 		buffer.put(length);
-		buffer.put(functionID);
+		buffer.put((byte)functionID);
 		buffer.put(options);
 		buffer.put(flags);
 		socketLock.unlock();

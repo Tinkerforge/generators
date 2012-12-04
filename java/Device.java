@@ -15,7 +15,7 @@ public abstract class Device {
 	long uid = (long)0;
 	short[] apiVersion = new short[3];
 	byte[] responseExpected = new byte[259];
-	byte expectedResponseFunctionID = (byte)0;
+	int expectedResponseFunctionID = (byte)0;
 	byte expectedResponseSequenceNumber = (byte)0;
 	private Object writeMutex = new Object();
 	SynchronousQueue<byte[]> responseQueue = new SynchronousQueue<byte[]>();
@@ -72,7 +72,7 @@ public abstract class Device {
 		return apiVersion;
 	}
 
-	public void setResponseExpected(byte functionId, boolean responseExpected) {
+	public void setResponseExpected(int functionId, boolean responseExpected) {
 		if(this.responseExpected[functionId] == RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID ||
 		   functionId >= this.responseExpected.length) {
 			throw new IllegalArgumentException("Invalid function ID " + functionId);
@@ -121,7 +121,7 @@ public abstract class Device {
 		}
 	}
 
-	byte[] sendRequestExpectResponse(byte[] request, byte functionID) throws IPConnection.TimeoutException {
+	byte[] sendRequestExpectResponse(byte[] request, int functionID) throws IPConnection.TimeoutException {
 		byte[] response = null;
 
 		synchronized(writeMutex) {

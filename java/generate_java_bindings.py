@@ -171,6 +171,26 @@ def make_listener_definitions():
         cbs += cb.format(name, name_lower, parameter, doc)
     return cbs
 
+ 
+def make_response_expected():
+    res = ''
+    re = "\t\tresponseExpected[{0}] = {1}\n"
+
+    for packet in device.get_packets('function'):
+        name_upper = 'FUNCTION_' + packet.get_upper_case_name()
+        setto = 'RESPONSE_EXPECTED_FLAG_FALSE;'
+        if len(packet.get_elements('out')) > 0:
+            setto = 'RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE;'
+            
+        res += re.format(name_upper, setto)
+
+    for packet in device.get_packets('callback'):
+        name_upper = 'CALLBACK_' + packet.get_upper_case_name()
+        setto = 'RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;'
+        res += re.format(name_upper, setto)
+
+    return res
+
 def make_callback_listener_definitions():
     cbs = ''
     cb = """
@@ -232,7 +252,7 @@ def make_add_listener():
 
 def make_function_id_definitions():
     function_ids = ''
-    function_id = '\tprivate final static byte {2}_{0} = (byte){1};\n'
+    function_id = '\tpublic final static int {2}_{0} = {1};\n'
     for packet in device.get_packets():
         function_ids += function_id.format(packet.get_upper_case_name(),
                                            packet.get_function_id(),
@@ -549,6 +569,7 @@ def make_files(com_new, directory):
     java.write(make_return_objects())
     java.write(make_listener_definitions())
     java.write(make_constructor())
+    java.write(make_response_expected())
     java.write(make_callback_listener_definitions())
     java.write(make_methods())
     java.write(make_add_listener())
