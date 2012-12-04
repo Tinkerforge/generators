@@ -38,10 +38,10 @@ namespace Tinkerforge
 		Device pendingAddDevice = null;
 		private object addDeviceLock = new object();
 		Device[] devices = new Device[256];
-		EnumerateCallback enumerateCallback = null;
 		BlockingQueue callbackQueue = new BlockingQueue();
 
-		public delegate void EnumerateCallback(string uid, 
+		public event EnumerateCallbackEventHandler EnumerateCallback;
+		public delegate void EnumerateCallbackEventHandler(string uid, 
 		                                       string name, 
 		                                       byte stackID,
 		                                       bool isNew);
@@ -214,7 +214,7 @@ namespace Tinkerforge
 					byte stackID = LEConverter.ByteFrom(52, data);
 					bool isNew = LEConverter.BoolFrom(53, data);
 
-					enumerateCallback(Base58.Encode(uid), name, stackID, isNew);
+					OnEnumerateCallback(Base58.Encode(uid), name, stackID, isNew);
 				}
 				else
 				{
@@ -222,12 +222,19 @@ namespace Tinkerforge
 					Device device = devices[stackID];
 
 					Device.MessageCallback callback = device.messageCallbacks[type];
-					if(callback != null && device.callbacks[type] != null) 
+					if(callback != null) 
 					{
 						callback(data);
 					}
 				}
 			}
+		}
+		
+		protected void OnEnumerateCallback(string uid, string name, byte stackID, bool isNew)
+		{
+			var handler = EnumerateCallback;
+			if(handler != null)
+				handler(uid, name, stackID, isNew);
 		}
 
 		private static byte GetStackIDFromData(byte[] data)
@@ -276,7 +283,7 @@ namespace Tinkerforge
 			}
 
 			Device.MessageCallback callback = device.messageCallbacks[functionID];
-			if(callback != null && device.callbacks[functionID] != null)
+			if(callback != null)
 			{
 				callbackQueue.Enqueue(packet);
 			}
@@ -316,10 +323,7 @@ namespace Tinkerforge
 
 		private void HandleEnumerate(byte[] packet)
 		{
-			if(enumerateCallback != null)
-			{
-				callbackQueue.Enqueue(packet);
-			}
+			callbackQueue.Enqueue(packet);
 		}
 
 		public void Write(byte[] data)
@@ -352,9 +356,9 @@ namespace Tinkerforge
 		///  It should be possible to implement "plug 'n play" functionality with this
 		///  (as is done in Brick Viewer).
 		/// </summary>
-		public void Enumerate(EnumerateCallback enumerateCallback) 
+		public void Enumerate(EnumerateCallbackEventHandler enumerateCallback) 
 		{
-			this.enumerateCallback = enumerateCallback;
+			this.EnumerateCallback += enumerateCallback;
 			byte[] data = new byte[4];
 			LEConverter.To(BROADCAST_ADDRESS, 0, data);
 			LEConverter.To(FUNCTION_ENUMERATE, 1, data);
@@ -457,7 +461,6 @@ namespace Tinkerforge
 		internal byte[] bindingVersion = new byte[3];
 		internal ulong uid = 0;
 		internal byte expectedResponseFunctionID = 0;
-		internal Delegate[] callbacks = new Delegate[256];
 		internal MessageCallback[] messageCallbacks = new MessageCallback[256];
 		internal BlockingQueue responseQueue = new BlockingQueue();
 		internal IPConnection ipcon = null;

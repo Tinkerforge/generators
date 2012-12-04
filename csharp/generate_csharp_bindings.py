@@ -131,7 +131,8 @@ def make_delegates():
 \t\t/// <summary>
 \t\t///  {2}
 \t\t/// </summary>
-\t\tpublic delegate void {0}({1});
+\t\tpublic event {0}EventHandler {0};
+\t\tpublic delegate void {0}EventHandler({1});
 """
     for packet in device.get_packets('callback'):
         name = packet.get_camel_case_name()
@@ -210,16 +211,19 @@ def make_register_callback():
         return '\t}\n}\n'
 
     typeofs = ''
-    typeof = """\t\t\t{0}if(d.GetType() == typeof({1}))
+    typeof = """\t\t\t{0}if(d is {1}EventHandler)
 \t\t\t{{
-\t\t\t\tcallbacks[CALLBACK_{2}] = d;
+\t\t\t\tforeach (var handler in {1}.GetInvocationList())
+\t\t\t\t{{
+\t\t\t\t\t{1} -= ({1}EventHandler)handler;
+\t\t\t\t}}
+\t\t\t\t
+\t\t\t\t{1} += ({1}EventHandler)d;
 \t\t\t}}
 """
 
     cb = """
-\t\t/// <summary>
-\t\t///  Registers a callback function.
-\t\t/// </summary>
+\t\t[Obsolete("Register/unregister your callbacks by directly adding your handler to the corresponding event using += and -= operators")]
 \t\tpublic void RegisterCallback(System.Delegate d)
 \t\t{{
 {0}\t\t}}
@@ -247,8 +251,16 @@ def make_callbacks():
     cb = """
 \t\tinternal int Callback{0}(byte[] data_)
 \t\t{{
-{1}\t\t\t(({0})callbacks[CALLBACK_{2}])({3});
+{1}\t\t\tOn{0}({3});
+
 \t\t\treturn {4};
+\t\t}}
+
+\t\tprotected void On{0}({5})
+\t\t{{
+\t\t\tvar handler = {0};
+\t\t\tif(handler != null)
+\t\t\t\thandler({3});
 \t\t}}
 """
     cls = device.get_camel_case_name()
@@ -258,7 +270,8 @@ def make_callbacks():
         eles = []
         for element in packet.get_elements('out'):
             eles.append(common.underscore_to_headless_camel_case(element[0]))
-        params = ", ".join(eles)
+        callParams = ", ".join(eles)
+        signatureParams = csharp_common.make_parameter_list(packet)
         size = str(get_data_size(packet))
 
         convs = ''
@@ -283,7 +296,7 @@ def make_callbacks():
         if convs != '':
             convs += '\n'
         
-        cbs += cb.format(name, convs, name_upper, params, pos)
+        cbs += cb.format(name, convs, name_upper, callParams, pos, signatureParams)
 
     return cbs
 
