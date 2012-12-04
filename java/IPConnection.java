@@ -622,22 +622,22 @@ public class IPConnection {
 	}
 
 	protected static long getUIDFromData(byte[] data) {
-		return (long)(data[0] & 0xFF) | (long)((data[1] & 0xFF) << 8) | (long)((data[2] & 0xFF) << 16) | (long)((data[3] & 0xFF) << 24);
+		return (long)(data[0] & 0xFF) | ((long)(data[1] & 0xFF) << 8) | ((long)(data[2] & 0xFF) << 16) | ((long)(data[3] & 0xFF) << 24);
 	}
 
-	protected static  byte getLengthFromData(byte[] data) {
+	protected static byte getLengthFromData(byte[] data) {
 		return data[4];
 	}
 
-	protected static  byte getFunctionIDFromData(byte[] data) {
+	protected static byte getFunctionIDFromData(byte[] data) {
 		return data[5];
 	}
 
-	protected static  byte getSequenceNumberFromData(byte[] data) {
+	protected static byte getSequenceNumberFromData(byte[] data) {
 		return (byte)((((int)data[6]) >> 4) & 0x0F);
 	}
 
-	protected static  byte getErrorCodeFromData(byte[] data) {
+	protected static byte getErrorCodeFromData(byte[] data) {
 		return (byte)(((int)(data[7] >> 6)) & 0x03);
 	}
 
