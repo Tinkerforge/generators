@@ -116,7 +116,7 @@ class Device:
         # 2 = always false (callback)
         # 3 = true (setter)
         # 4 = false (setter, default)
-        self.response_expected = [0] * 259
+        self.response_expected = [0] * 256
         self.response_expected[IPConnection.FUNCTION_ENUMERATE] = 4
         self.response_expected[IPConnection.FUNCTION_ADC_CALIBRATE] = 4
         self.response_expected[IPConnection.FUNCTION_GET_ADC_CALIBRATION] = 1
@@ -125,9 +125,6 @@ class Device:
         self.response_expected[IPConnection.FUNCTION_READ_BRICKLET_PLUGIN] = 1
         self.response_expected[IPConnection.FUNCTION_WRITE_BRICKLET_PLUGIN] = 4
         self.response_expected[IPConnection.CALLBACK_ENUMERATE] = 2
-        self.response_expected[IPConnection.CALLBACK_CONNECTED] = 2
-        self.response_expected[IPConnection.CALLBACK_DISCONNECTED] = 2
-        self.response_expected[IPConnection.CALLBACK_AUTHENTICATION_ERROR] = 2
 
         ipcon.devices[self.uid] = self
 
@@ -173,11 +170,11 @@ class IPConnection:
     FUNCTION_WRITE_BRICKLET_UID = 248
     FUNCTION_READ_BRICKLET_PLUGIN = 247
     FUNCTION_WRITE_BRICKLET_PLUGIN = 246
-
     CALLBACK_ENUMERATE = 253
-    CALLBACK_CONNECTED = 256
-    CALLBACK_DISCONNECTED = 257
-    CALLBACK_AUTHENTICATION_ERROR = 258
+
+    CALLBACK_CONNECTED = 0
+    CALLBACK_DISCONNECTED = 1
+    CALLBACK_AUTHENTICATION_ERROR = 2
 
     BROADCAST_UID = 0
 
