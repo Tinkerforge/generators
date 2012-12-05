@@ -15,36 +15,88 @@ using System.Runtime.InteropServices;
 using System.IO;
 using System.Text;
 
+[assembly:CLSCompliant(true)] 
 namespace Tinkerforge
 {
 	public class IPConnection
 	{
-		internal const int RESPONSE_TIMEOUT = 2500;
+		public int response_timeout = 2500;
 
 		const byte BROADCAST_ADDRESS = 0;
 
-		const byte FUNCTION_GET_STACK_ID = 255;
-		const byte FUNCTION_ENUMERATE = 254;
-		const byte FUNCTION_ENUMERATE_CALLBACK = 253;
+		public const byte FUNCTION_ENUMERATE = 254;
+		public const byte FUNCTION_ADC_CALIBRATE = 251;
+		public const byte FUNCTION_GET_ADC_CALIBRATION = 250;
+
+		public const byte CALLBACK_ENUMERATE = 253;
+
+		internal const int CALLBACK_CONNECTED = 0;
+		internal const int CALLBACK_DISCONNECTED = 1;
+		internal const int CALLBACK_AUTHENTICATION_ERROR = 2;
+
+		private const long BROADCAST_UID = (long)0;
+
+		// enumeration_type parameter to the enumerate callback
+		public const short ENUMERATION_TYPE_AVAILABLE = 0;
+		public const short ENUMERATION_TYPE_CONNECTED = 1;
+		public const short ENUMERATION_TYPE_DISCONNECTED = 2;
+
+		// connect_reason parameter to the connected callback
+		internal const int CONNECT_REASON_REQUEST = 0;
+		internal const int CONNECT_REASON_AUTO_RECONNECT = 1;
+
+		// disconnect_reason parameter to the disconnected callback
+		internal const int DISCONNECT_REASON_REQUEST = 0;
+		internal const int DISCONNECT_REASON_ERROR = 1;
+		internal const int DISCONNECT_REASON_SHUTDOWN = 2;
+
+		// returned by get_connection_state
+		internal const int CONNECTION_STATE_DISCONNECTED = 0;
+		internal const int CONNECTION_STATE_CONNECTED = 1;
+		internal const int CONNECTION_STATE_PENDING = 2; // auto-reconnect in process
+
+		internal const int QUEUE_EXIT = 0;
+	    internal const int QUEUE_META = 1;
+    	internal const int QUEUE_PACKET = 2;
+
+		internal int nextSequenceMumber = 1;
+
+		internal readonly object socketLock = new object();
+
+		internal bool autoReconnectAllowed = false;
+		internal bool autoReconnectPending = false;
+		internal bool autoReconnect = true;
 
 		string host;
 		int port;
 		Socket socket;
 		NetworkStream socketStream;
+		BinaryWriter socketWriter;
+		BinaryReader socketReader;
 		Thread receiveThread;
 		Thread callbackThread;
-		bool receiveThreadFlag = true;
+		bool receiveFlag = true;
 		bool callbackThreadFlag = true;
-		Device pendingAddDevice = null;
-		private object addDeviceLock = new object();
-		Device[] devices = new Device[256];
-		BlockingQueue callbackQueue = new BlockingQueue();
+		internal Dictionary<long, Device> devices = new Dictionary<long, Device>();
+		BlockingQueue<CallbackQueueObject> callbackQueue = null;
 
-		public event EnumerateCallbackEventHandler EnumerateCallback;
-		public delegate void EnumerateCallbackEventHandler(string uid, 
-		                                       string name, 
-		                                       byte stackID,
-		                                       bool isNew);
+		public event EnumerateEventHandler EnumerateCallback;
+		public delegate void EnumerateEventHandler(object sender, string UID, string connectedUID, char position, short[] hardwareVersion, short[] firmwareVersion, int deviceIdentifier, short enumerationType);
+		public event ConnectedEventHandler Connected;
+		public delegate void ConnectedEventHandler(object sender, int reason);
+		public event DisconnectedEventHandler Disconnected;
+		public delegate void DisconnectedEventHandler(object sender, int reason);
+
+		public class CallbackQueueObject 
+		{
+			public int kind; 
+			public byte[] data; 
+			public CallbackQueueObject(int kind, byte[] data) 
+			{ 
+				this.kind = kind; 
+				this.data = data; 
+			} 
+		}
 
 		/// <summary>
 		///  Creates an IP connection to the Brick Daemon with the given *host*
@@ -59,22 +111,166 @@ namespace Tinkerforge
 		{
 		}
 
-		public void connect(string host, int port)
+		public void Connect(string host, int port)
 		{
-			this.host = host;
-			this.port = port;
+			lock(socketLock)
+			{
+				this.host = host;
+				this.port = port;
+
+				ConnectUnlocked(false);
+			}
+		}
+
+		void ConnectUnlocked(bool isAutoReconnect)
+		{
+			if(callbackThread == null)
+			{
+				callbackThread = new Thread(this.CallbackLoop);
+				callbackQueue = new BlockingQueue<CallbackQueueObject>();
+				callbackThread.IsBackground = true;
+				callbackThread.Name = "Callback-Processor";
+				callbackThread.Start();
+			}
+
 			socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			ConnectSocket(host, port);
 
 			socketStream = new NetworkStream(socket);
+			socketWriter = new BinaryWriter(socketStream);
+			socketReader = new BinaryReader(socketStream);
 
-			callbackThread = new Thread(this.CallbackLoop);
-			callbackThread.Name = "Callback-Processor";
-			callbackThread.Start();
+			if(receiveThread == null)
+			{
+				receiveThread = new Thread(this.ReceiveLoop);
+				receiveThread.IsBackground = true;
+				receiveThread.Name = "Brickd-Receiver";
+				receiveThread.Start();
+			}
 
-			receiveThread = new Thread(this.ReceiveLoop);
-			receiveThread.Name = "Brickd-Receiver";
-			receiveThread.Start();
+			int connectReason = IPConnection.CONNECT_REASON_REQUEST;
+			if(isAutoReconnect) 
+			{
+				connectReason = CONNECT_REASON_AUTO_RECONNECT;
+			}
+			
+			autoReconnectAllowed = false;
+			autoReconnectPending = false;
+
+			byte[] data_ = new byte[8];
+			LEConverter.To((int)CALLBACK_CONNECTED, 0, data_);
+			LEConverter.To((int)connectReason, 4, data_);
+
+			callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_META, data_));
+		}
+
+		public void Disconnect() 
+		{
+			Thread callbackThreadTmp = null;
+			BlockingQueue<CallbackQueueObject> callbackQueueTmp = null;
+
+			lock(socketLock) 
+			{
+				autoReconnectAllowed = false;
+
+				if(autoReconnectPending) 
+				{
+					autoReconnectPending = false;
+				} else 
+				{
+					if(socket == null) 
+					{
+						// FIXME: throw not-connected exception
+						return;
+					}
+
+					receiveFlag = false;
+
+					if(socket != null) 
+					{
+						socket.Close();
+						socket = null;
+					}
+
+					if(receiveThread != null) 
+					{
+						receiveThread.Join();
+					}
+
+					receiveThread = null;
+				}
+
+				callbackThreadTmp = callbackThread;
+				callbackQueueTmp = callbackQueue;
+
+				callbackThread = null;
+				callbackQueue = null;
+			}
+
+			byte[] data_ = new byte[8];
+			LEConverter.To((int)CALLBACK_DISCONNECTED, 0, data_);
+			LEConverter.To((int)DISCONNECT_REASON_REQUEST, 4, data_);
+
+			callbackQueueTmp.Enqueue(new CallbackQueueObject(QUEUE_META, data_));
+			callbackQueueTmp.Enqueue(new CallbackQueueObject(QUEUE_EXIT, null));
+
+			if(Thread.CurrentThread != callbackThreadTmp) 
+			{
+				callbackThreadTmp.Join();
+			}
+		}
+
+		public byte GetConnectionState() 
+		{
+			if(socket != null) 
+			{
+				return CONNECTION_STATE_CONNECTED;
+			}
+
+			if(autoReconnectPending) 
+			{
+				return IPConnection.CONNECTION_STATE_PENDING;
+			}
+
+			return IPConnection.CONNECTION_STATE_DISCONNECTED;
+		}
+
+		public void SetAutoReconnect(bool autoReconnect) 
+		{
+			this.autoReconnect = autoReconnect;
+
+			if(!autoReconnect) 
+			{
+				autoReconnectAllowed = false;
+			}
+		}
+
+		public bool GetAutoReconnect() 
+		{
+			return autoReconnect;
+		}
+
+		public void SetTimeout(int timeout) 
+		{
+			if(timeout < 0) 
+			{
+				throw new ArgumentOutOfRangeException("Timeout cannot be negative");
+			}
+
+			response_timeout = timeout;
+		}
+
+		public int GetTimeout() 
+		{
+			return response_timeout;
+		}
+
+		
+		internal int GetNextSequenceNumber()
+		{
+			int sequenceNumber = nextSequenceMumber;
+			nextSequenceMumber = (nextSequenceMumber + 1) % 15;
+			return sequenceNumber + 1;
 		}
 
         private void ConnectSocket(string host, int port)
@@ -105,9 +301,10 @@ namespace Tinkerforge
 
 		private bool Reconnect()
 		{
-			while(receiveThreadFlag)
+			while(receiveFlag)
 			{
-				try {
+				try 
+				{
 					socketStream.Close();
 					socket.Close();
 
@@ -115,7 +312,11 @@ namespace Tinkerforge
 					ConnectSocket(host, port);
 
 					socketStream = new NetworkStream(socket);
-				} catch {
+					socketWriter = new BinaryWriter(socketStream);
+					socketReader = new BinaryReader(socketStream);
+				} 
+				catch 
+				{
 					Thread.Sleep(500);
 					continue;
 				}
@@ -131,51 +332,62 @@ namespace Tinkerforge
 			byte[] pendingData = new byte[8192];
 			int pendingLength = 0;
 
-			while(receiveThreadFlag)
+			while(receiveFlag)
 			{
 				int length = 0;
 
 				try
 				{
-					length = socketStream.Read(pendingData, pendingLength,
+					length = socketReader.Read(pendingData, pendingLength,
 					                           pendingData.Length - pendingLength);
 				}
 				catch(IOException e)
 				{
-					if (e.InnerException != null &&
-					    e.InnerException is SocketException) {
+					if(e.InnerException != null &&
+					   e.InnerException is SocketException) 
+					{
 						int errorCode = ((SocketException)e.InnerException).ErrorCode;
 
-						if (errorCode == 10004) { // WSAEINTR
-							continue;
-						}
+						byte[] data_ = new byte[8];
+						LEConverter.To((int)CALLBACK_DISCONNECTED, 0, data_);
+						LEConverter.To((int)DISCONNECT_REASON_ERROR, 4, data_);
 
-						if (errorCode == 10054) { // WSAECONNRESET
-							if (Reconnect()) {
-								continue;
-							} else {
-								return;
-							}
-						}
+						callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_META, data_));
+
 					}
-
-					if (receiveThreadFlag) {
-						System.Console.Error.WriteLine("Socket disconnected by Server, destroying IPConnection");
-						Destroy();
+					else
+					{
+						receiveFlag = false;
 					}
 
 					return;
 				}
 				catch(ObjectDisposedException)
 				{
+					receiveFlag = false;
 					return;
+				}
+
+				if(length == 0)
+				{
+					if(receiveFlag)
+					{
+						autoReconnectAllowed = true;
+						receiveFlag = false;
+
+						byte[] data_ = new byte[8];
+						LEConverter.To((int)CALLBACK_DISCONNECTED, 0, data_);
+						LEConverter.To((int)DISCONNECT_REASON_SHUTDOWN, 4, data_);
+
+						callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_META, data_));
+					}
 				}
 
 				pendingLength += length;
 
 				while(true)
 				{
-					if(pendingLength < 4)
+					if(pendingLength < 8)
 					{
 						// Wait for complete header
 						break;
@@ -203,84 +415,185 @@ namespace Tinkerforge
 		{
 			while(callbackThreadFlag)
 			{
-				byte[] data;
-				if(!callbackQueue.TryDequeue(out data, Timeout.Infinite))
+				CallbackQueueObject cqo;
+				if(!callbackQueue.TryDequeue(out cqo, Timeout.Infinite))
 				{
-					return;
+					continue;
 				}
 
-				byte type = GetTypeFromData(data);
-
-				if(type == FUNCTION_ENUMERATE_CALLBACK)
+				if(cqo == null)
 				{
-					ulong uid = LEConverter.ULongFrom(4, data);
-					string name = LEConverter.StringFrom(12, data, 40);
-					byte stackID = LEConverter.ByteFrom(52, data);
-					bool isNew = LEConverter.BoolFrom(53, data);
-
-					OnEnumerateCallback(Base58.Encode(uid), name, stackID, isNew);
+					continue;
 				}
-				else
-				{
-					byte stackID = GetStackIDFromData(data);
-					Device device = devices[stackID];
 
-					Device.MessageCallback callback = device.messageCallbacks[type];
-					if(callback != null) 
-					{
-						callback(data);
-					}
+				byte fid = GetFunctionIdFromData(cqo.data);
+				long uid = GetUIDFromData(cqo.data);
+
+				switch(cqo.kind)
+				{
+					case IPConnection.QUEUE_EXIT:
+						return;
+
+					case IPConnection.QUEUE_META:
+						int mid = LEConverter.IntFrom(0, cqo.data);
+						int parameter = LEConverter.IntFrom(4, cqo.data);
+				
+						switch(mid)
+						{
+							case IPConnection.CALLBACK_CONNECTED:
+								var handler = Connected;
+								if(handler != null)
+								{
+									handler(this, parameter);
+								}
+								break;
+
+							case IPConnection.CALLBACK_DISCONNECTED:
+								lock(socketLock)
+								{
+									if(socket != null)
+									{
+										socket.Close();
+									}
+								}
+
+								Thread.Sleep(100);
+
+								var disconHandler = Disconnected;
+								if(disconHandler != null)
+								{
+									disconHandler(this, parameter);
+								}
+
+								if(parameter != DISCONNECT_REASON_REQUEST && autoReconnect && autoReconnectAllowed)
+								{
+									autoReconnectPending = true;
+									bool retry = true;
+									while(retry)
+									{
+										retry = false;
+										lock(socketLock)
+										{
+											if(autoReconnectAllowed && socket == null)
+											{
+												try
+												{
+													ConnectUnlocked(true);
+												}
+												catch(Exception e)
+												{
+													retry = true;
+												}
+											}
+											else
+											{
+												autoReconnectPending = true;
+											}
+										}
+
+										if(retry)
+										{
+											Thread.Sleep(100);
+										}
+									}
+								}
+
+								break;
+						}
+						break;
+
+
+					case IPConnection.QUEUE_PACKET:
+						if (!callbackThreadFlag) {
+							return;
+						}
+
+						if(fid == CALLBACK_ENUMERATE)
+						{
+							var enumHandler = EnumerateCallback;
+							if(enumHandler != null)
+							{
+								string UID = LEConverter.StringFrom(8, cqo.data, 8);
+								string connectedUID = LEConverter.StringFrom(16, cqo.data, 8);
+								char position = (char)LEConverter.CharFrom(24, cqo.data);
+								short[] hardwareVersion = new short[3];
+								hardwareVersion[0] = LEConverter.ByteFrom(25, cqo.data);
+								hardwareVersion[1] = LEConverter.ByteFrom(26, cqo.data);
+								hardwareVersion[2] = LEConverter.ByteFrom(27, cqo.data);
+								short[] firmwareVersion = new short[3];
+								firmwareVersion[0] = LEConverter.ByteFrom(28, cqo.data);
+								firmwareVersion[1] = LEConverter.ByteFrom(29, cqo.data);
+								firmwareVersion[2] = LEConverter.ByteFrom(30, cqo.data);
+								int deviceIdentifier = LEConverter.ShortFrom(31, cqo.data);
+								short enumerationType = LEConverter.ByteFrom(33, cqo.data);
+
+								enumHandler(this, UID, connectedUID, position, hardwareVersion, firmwareVersion, deviceIdentifier, enumerationType);
+							}
+						}
+						else
+						{
+							if(devices.ContainsKey(uid))
+							{
+								Device device = devices[uid];
+								Device.MessageCallback callback = device.messageCallbacks[fid];
+								if(callback != null) 
+								{
+									callback(cqo.data);
+								}
+							}
+						}
+						break;
 				}
 			}
 		}
-		
-		protected void OnEnumerateCallback(string uid, string name, byte stackID, bool isNew)
-		{
-			var handler = EnumerateCallback;
-			if(handler != null)
-				handler(uid, name, stackID, isNew);
-		}
 
-		private static byte GetStackIDFromData(byte[] data)
-		{
-			return data[0];
-		}
 
-		private static byte GetTypeFromData(byte[] data)
+		private static byte GetFunctionIdFromData(byte[] data)
 		{
-			return data[1];
+			return data[5];
 		}
 
 		private static int GetLengthFromData(byte[] data)
 		{
-			return LEConverter.UShortFrom(2, data);
+			return data[4];
+		}
+
+		internal static long GetUIDFromData(byte[] data)
+		{
+			return (long)(((long)data[0]) & 0xFF) | (long)((((long)data[1]) & 0xFF) << 8) | (long)((((long)data[2]) & 0xFF) << 16) | (long)((((long)data[3]) & 0xFF) << 24);
+		}
+
+		private static byte GetSequenceNumberFromData(byte[] data) {
+			return (byte)((((int)data[6]) >> 4) & 0x0F);
+		}
+
+		private static byte GetErrorCodeFromData(byte[] data) {
+			return (byte)(((int)(data[7] >> 6)) & 0x03);
 		}
 
 		private void HandleResponse(byte[] packet)
 		{
-			byte functionID = GetTypeFromData(packet);
+			byte functionID = GetFunctionIdFromData(packet);
 
-			if(functionID == FUNCTION_GET_STACK_ID)
-			{
-				HandleAddDevice(packet);
-				return;
-			}
-
-			if(functionID == FUNCTION_ENUMERATE_CALLBACK)
+			if(functionID == CALLBACK_ENUMERATE)
 			{
 				HandleEnumerate(packet);
 				return;
 			}
 
-			byte stackID = GetStackIDFromData(packet);
-			Device device = devices[stackID];
-			if(device == null)
+			long uid = GetUIDFromData(packet);
+
+			if(!devices.ContainsKey(uid))
 			{
 				// Response from an unknown device, ignoring it
 				return;
 			}
 
-			if(functionID == device.expectedResponseFunctionID)
+			Device device = devices[uid];
+
+			byte sequenceNumber = GetSequenceNumberFromData(packet);
+
+			if(functionID == device.expectedResponseFunctionID && sequenceNumber == device.expectedResponseSequenceNumber)
 			{
 				device.responseQueue.Enqueue(packet);
 				return;
@@ -289,163 +602,32 @@ namespace Tinkerforge
 			Device.MessageCallback callback = device.messageCallbacks[functionID];
 			if(callback != null)
 			{
-				callbackQueue.Enqueue(packet);
+				callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_PACKET, packet));
 			}
 
 			// Response seems to be OK, but can't be handled, most likely
 			// a callback without registered function
 		}
 
-		private void HandleAddDevice(byte[] packet)
-		{
-			if(pendingAddDevice == null)
-			{
-				return;
-			}
-
-			ulong uid = LEConverter.ULongFrom(4, packet);
-
-			if(pendingAddDevice.uid == uid)
-			{
-				string name = LEConverter.StringFrom(15, packet, 40);
-				int i = name.LastIndexOf(' ');
-
-				if (i < 0 || name.Substring(0, i).Replace('-', ' ') != pendingAddDevice.expectedName.Replace('-', ' '))
-				{
-					return;
-				}
-
-				pendingAddDevice.firmwareVersion[0] = LEConverter.ByteFrom(12, packet);
-				pendingAddDevice.firmwareVersion[1] = LEConverter.ByteFrom(13, packet);
-				pendingAddDevice.firmwareVersion[2] = LEConverter.ByteFrom(14, packet);
-				pendingAddDevice.name = name;
-				pendingAddDevice.stackID = LEConverter.ByteFrom(55, packet);
-				devices[pendingAddDevice.stackID] = pendingAddDevice;
-				pendingAddDevice.responseQueue.Enqueue(packet);
-			}
-		}
-
 		private void HandleEnumerate(byte[] packet)
 		{
-			callbackQueue.Enqueue(packet);
+			callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_PACKET, packet));
 		}
 
 		public void Write(byte[] data)
 		{
-			socketStream.Write(data, 0, data.Length);
+			socketWriter.Write(data, 0, data.Length);
 		}
 
-		/// <summary>
-		///  This method registers the following delegate:
-		///
-		///  <code>
-		///   public delegate void EnumerateCallback(string uid, string name, byte stackID, bool isNew)
-		///  </code>
-		///
-		///  The callback receives four parameters:
-		///
-		///  <code>
-		///   * *uid*: The UID of the device.
-		///   * *name*: The name of the device (includes "Brick" or "Bricklet" and a version number).
-		///   * *stackID*: The stack ID of the device (you can find out the position in a stack with this).
-		///   * *isNew*: True if the device is added, false if it is removed.
-		///  </code>
-		///
-		///  There are three different possibilities for the callback to be called.
-		///  Firstly, the callback is called with all currently available devices in the
-		///  IP connection (with *isNew* true). Secondly, the callback is called if
-		///  a new Brick is plugged in via USB (with *isNew* true) and lastly it is
-		///  called if a Brick is unplugged (with *isNew* false).
-		///
-		///  It should be possible to implement "plug 'n play" functionality with this
-		///  (as is done in Brick Viewer).
-		/// </summary>
-		public void Enumerate(EnumerateCallbackEventHandler enumerateCallback) 
+		public void Enumerate() 
 		{
-			this.EnumerateCallback += enumerateCallback;
-			byte[] data = new byte[4];
-			LEConverter.To(BROADCAST_ADDRESS, 0, data);
-			LEConverter.To(FUNCTION_ENUMERATE, 1, data);
-			LEConverter.To((ushort)4, 2, data);
-            Write(data);
-		}
-
-		/// <summary>
-		///  Adds a device (Brick or Bricklet) to the IP connection. Every device
-		///  has to be added to an IP connection before it can be used. Examples for
-		///  this can be found in the API documentation for every Brick and Bricklet.
-		/// </summary>
-		public void AddDevice(Device device)
-		{
-			byte[] request = new byte[12];
-			LEConverter.To(BROADCAST_ADDRESS, 0, request);
-			LEConverter.To(FUNCTION_GET_STACK_ID, 1, request);
-			LEConverter.To((ushort)12, 2, request);
-			LEConverter.To(device.uid, 4, request);
-
-			lock (addDeviceLock)
-			{
-				pendingAddDevice = device;
-
-				try
-				{
-					Write(request);
-
-					byte[] response;
-					if(!device.responseQueue.TryDequeue(out response, RESPONSE_TIMEOUT))
-					{
-						throw new TimeoutException("Could not add device " + Base58.Encode(device.uid) + ", timeout");
-					}
-
-					device.ipcon = this;
-				}
-				finally
-				{
-					pendingAddDevice = null;
-				}
-			}
-		}
-
-		/// <summary>
-		///  Joins the threads of the IP connection. The call will block until the
-		///  IP connection is destroyed: <see cref="Tinkerforge.IPConnection.Destroy"/>.
-		///
-		///  This makes sense if you relies solely on callbacks for events or if
-		///  the IP connection was created in a threads.
-		///
-		///  On Windows Phone this function will do nothing (since all sockets are
-		///  asynchronous and there are no threads used).
-		/// </summary>
-		public void JoinThread()
-		{
-			callbackThread.Join();
-			receiveThread.Join();
-		}
-
-		/// <summary>
-		///  Destroys the IP connection. The socket to the Brick Daemon will be closed
-		///  and the threads of the IP connection terminated.
-		/// </summary>
-		public void Destroy() 
-		{
-			// End callback thread
-			callbackThreadFlag = false;
-			callbackQueue.Close();
-
-			if(Thread.CurrentThread != callbackThread)
-			{
-				callbackThread.Join();
-			}
-
-			// End receive thread
-			receiveThreadFlag = false;
-			socketStream.Close();
-			socket.Close();
-
-			if(Thread.CurrentThread != receiveThread)
-			{
-				receiveThread.Join();
-			}
+			byte[] data_ = new byte[8];
+			LEConverter.To((byte)0, 0, data_);
+			LEConverter.To((byte)8, 4, data_);
+			LEConverter.To(CALLBACK_ENUMERATE, 5, data_);
+			LEConverter.To((byte)((GetNextSequenceNumber() << 4)), 6, data_);
+			LEConverter.To((byte)0, 7, data_);
+            Write(data_);
 		}
 	}
 
@@ -462,19 +644,59 @@ namespace Tinkerforge
 		internal String expectedName;
 		internal String name;
 		internal byte[] firmwareVersion = new byte[3];
-		internal byte[] bindingVersion = new byte[3];
-		internal ulong uid = 0;
+		internal short[] bindingVersion = new short[3];
+		internal byte[] responseExpected = new byte[259];
+		internal long uid = 0;
 		internal byte expectedResponseFunctionID = 0;
+		internal byte expectedResponseSequenceNumber = 0;
 		internal MessageCallback[] messageCallbacks = new MessageCallback[256];
-		internal BlockingQueue responseQueue = new BlockingQueue();
+		internal BlockingQueue<byte[]> responseQueue = new BlockingQueue<byte[]>();
 		internal IPConnection ipcon = null;
+
+		internal const byte RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID = 0;
+		internal const byte RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE         = 1;
+		internal const byte RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE        = 2;
+		internal const byte RESPONSE_EXPECTED_FLAG_TRUE                = 3;
+		internal const byte RESPONSE_EXPECTED_FLAG_FALSE               = 4;
+
 		private object writeLock = new object();
 
-		internal delegate int MessageCallback(byte[] data);
+		internal delegate void MessageCallback(byte[] data);
 
-		public Device(string uid) 
+		public Device(string uid, IPConnection ipcon) 
 		{
-			this.uid = Base58.Decode(uid);
+			long uidTmp = Base58.Decode(uid);
+			if(uidTmp > 0xFFFFFFFFL) 
+			{
+				// convert from 64bit to 32bit
+				long value1 = uidTmp & 0xFFFFFFFFL;
+				long value2 = (uidTmp >> 32) & 0xFFFFFFFFL;
+
+				uidTmp  = (value1 & 0x3F000000L) << 2;
+				uidTmp |= (value1 & 0x000F0000L) << 6;
+				uidTmp |= (value1 & 0x0000003FL) << 16;
+				uidTmp |= (value2 & 0x0F000000L) >> 12;
+				uidTmp |= (value2 & 0x00000FFFL);
+			}
+
+			this.uid = uidTmp;
+			this.ipcon = ipcon;
+
+
+			for(int i = 0; i < responseExpected.Length; i++) 
+			{
+				responseExpected[i] = RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID;
+			}
+
+			responseExpected[IPConnection.FUNCTION_ENUMERATE]            = RESPONSE_EXPECTED_FLAG_FALSE;
+			responseExpected[IPConnection.FUNCTION_ADC_CALIBRATE]        = RESPONSE_EXPECTED_FLAG_FALSE;
+			responseExpected[IPConnection.FUNCTION_GET_ADC_CALIBRATION]  = RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE;
+			responseExpected[IPConnection.CALLBACK_ENUMERATE]            = RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;
+			responseExpected[IPConnection.CALLBACK_CONNECTED]            = RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;
+			responseExpected[IPConnection.CALLBACK_DISCONNECTED]         = RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;
+			responseExpected[IPConnection.CALLBACK_AUTHENTICATION_ERROR] = RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;
+
+			ipcon.devices[this.uid] = this;
 		}
 
 		/// <summary>
@@ -482,11 +704,62 @@ namespace Tinkerforge
 		///  and the binding version of the device. The firmware and binding versions are
 		///  given in arrays of size 3 with the syntax [major, minor, revision].
 		/// </summary>
-		public void GetVersion(out string name, out byte[] firmwareVersion, out byte[] bindingVersion)
+		public short[] GetAPIVersion()
 		{
-			name = this.name;
-			firmwareVersion = this.firmwareVersion;
-			bindingVersion = this.bindingVersion;
+			return bindingVersion;
+		}
+
+		public void SetResponseExpected(int functionId, bool responseExpected) 
+		{
+			if(this.responseExpected[functionId] == RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID ||
+			   functionId >= this.responseExpected.Length) 
+			{
+				throw new ArgumentOutOfRangeException("Invalid function ID " + functionId);
+			}
+
+			if(this.responseExpected[functionId] == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE ||
+			   this.responseExpected[functionId] == RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE) 
+			{
+				throw new ArgumentOutOfRangeException("Response Expected flag cannot be changed for function ID " + functionId);
+			}
+
+			if(responseExpected)
+			{
+				this.responseExpected[functionId] = RESPONSE_EXPECTED_FLAG_TRUE;
+			} else
+			{
+				this.responseExpected[functionId] = RESPONSE_EXPECTED_FLAG_FALSE;
+			}
+		}
+
+		public bool GetResponseExpected(byte functionId)
+		{
+			if(this.responseExpected[functionId] != RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID &&
+			   functionId < this.responseExpected.Length)
+			{
+				return this.responseExpected[functionId] == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE || 
+					   this.responseExpected[functionId] == RESPONSE_EXPECTED_FLAG_TRUE;
+			}
+				
+			throw new ArgumentOutOfRangeException("Invalid function ID " + functionId);
+		}
+
+		public void SetResponseExpectedAll(bool responseExpected)
+		{
+			byte flag = RESPONSE_EXPECTED_FLAG_TRUE;
+			if(responseExpected)
+			{
+				flag = RESPONSE_EXPECTED_FLAG_FALSE;
+			}
+
+			for(int i = 0; i < this.responseExpected.Length; i++)
+			{
+				if(this.responseExpected[i] != RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID &&
+				   this.responseExpected[i] != RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE &&
+				   this.responseExpected[i] != RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE) {
+					this.responseExpected[i] = flag;
+				}
+			}
 		}
 
 		protected void SendRequestNoResponse(byte[] request)
@@ -502,10 +775,11 @@ namespace Tinkerforge
 			lock (writeLock)
 			{
 				expectedResponseFunctionID = functionID;
+				expectedResponseSequenceNumber = (byte)((request[6] >> 4) & 0xF);
 
 				ipcon.Write(request);
 
-				if (!responseQueue.TryDequeue(out response, IPConnection.RESPONSE_TIMEOUT))
+				if (!responseQueue.TryDequeue(out response, ipcon.response_timeout))
 				{
 					expectedResponseFunctionID = 0;
 					throw new TimeoutException("Did not receive response in time");
@@ -519,25 +793,25 @@ namespace Tinkerforge
 	public class Base58 {
 		private const string BASE58 = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
 
-		public static uint IndexOf(char c, string s)
+		public static int IndexOf(char c, string s)
 		{
 			for(int i = 0; i < s.Length; i++) 
 			{
 				if(s[i] == c) 
 				{
-					return (uint)i;
+					return i;
 				}
 			}
 
 			return 0;
 		}
 
-		public static string Encode(ulong value) 
+		public static string Encode(long value) 
 		{
 			string encoded = "";
 			while(value >= 58) 
 			{
-				ulong div = value/58;
+				long div = value/58;
 				int mod = (int)(value % 58);
 				encoded = BASE58[mod] + encoded;
 				value = div;
@@ -547,13 +821,13 @@ namespace Tinkerforge
 			return encoded;
 		}
 		
-		public static ulong Decode(string encoded) 
+		public static long Decode(string encoded) 
 		{
-			ulong value = 0;
-			ulong columnMultiplier = 1;
+			long value = 0;
+			long columnMultiplier = 1;
 			for(int i = encoded.Length - 1; i >= 0; i--) 
 			{
-				uint column = IndexOf(encoded[i], BASE58);
+				int column = IndexOf(encoded[i], BASE58);
 				value += column * columnMultiplier;
 				columnMultiplier *= 58;
 			}
@@ -597,26 +871,6 @@ namespace Tinkerforge
 			}
 		}
 
-		static public void To(ulong data, int position, byte[] array)
-		{
-			array[position + 0] = (byte)data;
-			array[position + 1] = (byte)(((ulong)data >> 8) & 0xFF);
-			array[position + 2] = (byte)(((ulong)data >> 16) & 0xFF);
-			array[position + 3] = (byte)(((ulong)data >> 24) & 0xFF);
-			array[position + 4] = (byte)(((ulong)data >> 32) & 0xFF);
-			array[position + 5] = (byte)(((ulong)data >> 40) & 0xFF);
-			array[position + 6] = (byte)(((ulong)data >> 48) & 0xFF);
-			array[position + 7] = (byte)(((ulong)data >> 56) & 0xFF);
-		}
-
-		static public void To(ulong[] data, int position, int len, byte[] array)
-		{
-			for(int i = 0; i < len; i++)
-			{
-				To(data[i], position + i, array);
-			}
-		}
-
 		static public void To(int data, int position, byte[] array)
 		{
 			array[position + 0] = (byte)data;
@@ -626,22 +880,6 @@ namespace Tinkerforge
 		}
 
 		static public void To(int[] data, int position, int len, byte[] array)
-		{
-			for(int i = 0; i < len; i++)
-			{
-				To(data[i], position + i, array);
-			}
-		}
-
-		static public void To(uint data, int position, byte[] array)
-		{
-			array[position + 0] = (byte)data;
-			array[position + 1] = (byte)(((uint)data >> 8) & 0xFF);
-			array[position + 2] = (byte)(((uint)data >> 16) & 0xFF);
-			array[position + 3] = (byte)(((uint)data >> 24) & 0xFF);
-		}
-
-		static public void To(uint[] data, int position, int len, byte[] array)
 		{
 			for(int i = 0; i < len; i++)
 			{
@@ -663,39 +901,12 @@ namespace Tinkerforge
 			}
 		}
 
-		static public void To(ushort data, int position, byte[] array)
-		{
-			array[position + 0] = (byte)data;
-			array[position + 1] = (byte)(((ushort)data >> 8) & 0xFF);
-		}
-
-		static public void To(ushort[] data, int position, int len, byte[] array)
-		{
-			for(int i = 0; i < len; i++)
-			{
-				To(data[i], position + i, array);
-			}
-		}
-
 		static public void To(byte data, int position, byte[] array)
 		{
 			array[position + 0] = (byte)data;
 		}
 
 		static public void To(byte[] data, int position, int len, byte[] array)
-		{
-			for(int i = 0; i < len; i++)
-			{
-				To(data[i], position + i, array);
-			}
-		}
-
-		static public void To(sbyte data, int position, byte[] array)
-		{
-			array[position + 0] = (byte)data;
-		}
-
-		static public void To(sbyte[] data, int position, int len, byte[] array)
 		{
 			for(int i = 0; i < len; i++)
 			{
@@ -772,14 +983,14 @@ namespace Tinkerforge
 			return ret;
 		}
 
-		static public sbyte SByteFrom(int position, byte[] array)
+		static public short SByteFrom(int position, byte[] array)
 		{
-			return (sbyte)array[position];
+			return (short)array[position];
 		}
 
-		static public sbyte[] SByteArrayFrom(int position, byte[] array, int len) 
+		static public short[] SByteArrayFrom(int position, byte[] array, int len) 
 		{
-			sbyte[] ret = new sbyte[len];
+			short[] ret = new short[len];
 
 			for(int i = 0; i < len; i++) 
 			{
@@ -824,15 +1035,15 @@ namespace Tinkerforge
 			return ret;
 		}
 
-		static public ushort UShortFrom(int position, byte[] array)
+		static public int UShortFrom(int position, byte[] array)
 		{
-			return (ushort)((ushort)array[position + 0] << 0 | 
-					        (ushort)array[position + 1] << 8 );
+			return (int)((int)array[position + 0] << 0 | 
+					     (int)array[position + 1] << 8 );
 		}
 
-		static public ushort[] UShortArrayFrom(int position, byte[] array, int len) 
+		static public int[] UShortArrayFrom(int position, byte[] array, int len) 
 		{
-			ushort[] ret = new ushort[len];
+			int[] ret = new int[len];
 
 			for(int i = 0; i < len; i++) 
 			{
@@ -844,10 +1055,10 @@ namespace Tinkerforge
 
 		static public int IntFrom(int position, byte[] array) 
 		{
-			return (int)((uint)array[position + 0] << 0 | 
-					     (uint)array[position + 1] << 8 |
-					     (uint)array[position + 2] << 16 |
-					     (uint)array[position + 3] << 24);
+			return (int)((int)array[position + 0] << 0 | 
+					     (int)array[position + 1] << 8 |
+					     (int)array[position + 2] << 16 |
+					     (int)array[position + 3] << 24);
 		}
 
 		static public int[] IntArrayFrom(int position, byte[] array, int len) 
@@ -862,17 +1073,17 @@ namespace Tinkerforge
 			return ret;
 		}
 
-		static public uint UIntFrom(int position, byte[] array) 
+		static public long UIntFrom(int position, byte[] array) 
 		{
-			return (uint)((uint)array[position + 0] << 0 | 
-					      (uint)array[position + 1] << 8 |
-					      (uint)array[position + 2] << 16 |
-					      (uint)array[position + 3] << 24);
+			return (long)((long)array[position + 0] << 0 | 
+					      (long)array[position + 1] << 8 |
+					      (long)array[position + 2] << 16 |
+					      (long)array[position + 3] << 24);
 		}
 
-		static public uint[] UIntArrayFrom(int position, byte[] array, int len) 
+		static public long[] UIntArrayFrom(int position, byte[] array, int len) 
 		{
-			uint[] ret = new uint[len];
+			long[] ret = new long[len];
 
 			for(int i = 0; i < len; i++) 
 			{
@@ -884,14 +1095,14 @@ namespace Tinkerforge
 
 		static public long LongFrom(int position, byte[] array) 
 		{
-			return (long)((ulong)array[position + 0] << 0 | 
-					      (ulong)array[position + 1] << 8 |
-					      (ulong)array[position + 2] << 16 |
-					      (ulong)array[position + 3] << 24 |
-					      (ulong)array[position + 4] << 32 |
-					      (ulong)array[position + 5] << 40 |
-					      (ulong)array[position + 6] << 48 |
-					      (ulong)array[position + 7] << 56);
+			return (long)((long)array[position + 0] << 0 | 
+					      (long)array[position + 1] << 8 |
+					      (long)array[position + 2] << 16 |
+					      (long)array[position + 3] << 24 |
+					      (long)array[position + 4] << 32 |
+					      (long)array[position + 5] << 40 |
+					      (long)array[position + 6] << 48 |
+					      (long)array[position + 7] << 56);
 		}
 
 		static public long[] LongArrayFrom(int position, byte[] array, int len) 
@@ -906,21 +1117,21 @@ namespace Tinkerforge
 			return ret;
 		}
 
-		static public ulong ULongFrom(int position, byte[] array) 
+		static public long ULongFrom(int position, byte[] array) 
 		{
-			return (ulong)((ulong)array[position + 0] << 0 | 
-					       (ulong)array[position + 1] << 8 |
-					       (ulong)array[position + 2] << 16 |
-					       (ulong)array[position + 3] << 24 |
-					       (ulong)array[position + 4] << 32 |
-					       (ulong)array[position + 5] << 40 |
-					       (ulong)array[position + 6] << 48 |
-					       (ulong)array[position + 7] << 56);
+			return (long)((long)array[position + 0] << 0 | 
+					      (long)array[position + 1] << 8 |
+					      (long)array[position + 2] << 16 |
+					      (long)array[position + 3] << 24 |
+					      (long)array[position + 4] << 32 |
+					      (long)array[position + 5] << 40 |
+					      (long)array[position + 6] << 48 |
+					      (long)array[position + 7] << 56);
 		}
 
-		static public ulong[] ULongArrayFrom(int position, byte[] array, int len) 
+		static public long[] ULongArrayFrom(int position, byte[] array, int len) 
 		{
-			ulong[] ret = new ulong[len];
+			long[] ret = new long[len];
 
 			for(int i = 0; i < len; i++) 
 			{
@@ -979,10 +1190,10 @@ namespace Tinkerforge
 
 	// There is no BlockingQueue in c# version <= 2.0, we make our own
 	// to be backward compatible
-	internal class BlockingQueue
+	internal class BlockingQueue<T>
 	{
 		private bool closing;
-		private readonly Queue<byte[]> queue = new Queue<byte[]>();
+		private readonly Queue<T> queue = new Queue<T>();
 
 		public int Count
 		{
@@ -1004,7 +1215,7 @@ namespace Tinkerforge
 			}
 		}
 
-		public bool Enqueue(byte[] item)
+		public bool Enqueue(T item)
 		{
 			lock (queue)
 			{
@@ -1038,12 +1249,12 @@ namespace Tinkerforge
 			}
 		}
 
-		public bool TryDequeue(out byte[] value)
+		public bool TryDequeue(out T value)
 		{
 			return TryDequeue(out value, Timeout.Infinite);
 		}
 		
-		public bool TryDequeue(out byte[] value, int timeout)
+		public bool TryDequeue(out T value, int timeout)
 		{
 			lock(queue)
 			{
@@ -1053,12 +1264,12 @@ namespace Tinkerforge
 					   (timeout < Timeout.Infinite) || 
 					   !Monitor.Wait(queue, timeout))
 					{
-						value = null;
+						value = default (T);
 						return false;
 					}
 				}
 
-				value = (byte[])queue.Dequeue();
+				value = (T)queue.Dequeue();
 				return true;
 			}
 		}

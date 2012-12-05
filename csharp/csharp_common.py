@@ -60,14 +60,40 @@ def make_method_signature(packet, printFullName=False, device=None):
 
 def get_csharp_type(element):
     forms = {
-        'int8' : 'sbyte',
+        'int8' : 'short',
         'uint8' : 'byte',
         'int16' : 'short',
-        'uint16' : 'ushort',
+        'uint16' : 'int',
         'int32' : 'int',
-        'uint32' : 'uint',
+        'uint32' : 'long',
         'int64' : 'long',
-        'uint64' : 'ulong',
+        'uint64' : 'long',
+        'float' : 'float',
+        'bool' : 'bool',
+        'string' : 'string',
+        'char' : 'char'
+    }
+    
+    sharpType = ''
+    if element[1] in forms:
+        sharpType = forms[element[1]]
+    else:
+        return ''
+
+    if element[2] > 1 and element[1] != 'string':
+        sharpType += '[]'
+    return sharpType
+
+def get_csharp_type_for_to_convert(element):
+    forms = {
+        'int8' : 'byte',
+        'uint8' : 'byte',
+        'int16' : 'short',
+        'uint16' : 'short',
+        'int32' : 'int',
+        'uint32' : 'int',
+        'int64' : 'long',
+        'uint64' : 'long',
         'float' : 'float',
         'bool' : 'bool',
         'string' : 'string',

@@ -132,18 +132,20 @@ def make_delegates():
 \t\t///  {2}
 \t\t/// </summary>
 \t\tpublic event {0}EventHandler {0};
-\t\tpublic delegate void {0}EventHandler({1});
+\t\tpublic delegate void {0}EventHandler(object sender{1});
 """
     for packet in device.get_packets('callback'):
         name = packet.get_camel_case_name()
         parameter = csharp_common.make_parameter_list(packet)
         doc = format_doc(packet)
+        if parameter != '':
+            parameter = ', ' + parameter
         cbs += cb.format(name, parameter, doc)
     return cbs
 
 def make_function_id_definitions():
     function_ids = ''
-    function_id = '\t\tprivate static byte {2}_{0} = {1};\n'
+    function_id = '\t\tpublic static byte {2}_{0} = {1};\n'
     for packet in device.get_packets():
         function_ids += function_id.format(packet.get_upper_case_name(),
                                            packet.get_function_id(),
@@ -152,15 +154,14 @@ def make_function_id_definitions():
 
 def make_constructor():
     cbs = []
-    cb = '\t\t\tmessageCallbacks[CALLBACK_{0}] = new MessageCallback(Callback{1});'
+    cb = '\t\t\tmessageCallbacks[CALLBACK_{0}] = new MessageCallback(On{1});'
     con = """
 \t\t/// <summary>
 \t\t///  Creates an object with the unique device ID <c>uid</c>. This object can
 \t\t///  then be added to the IP connection.
 \t\t/// </summary>
-\t\tpublic {0}{1}(string uid, IPConnection ipcon) : base(uid) 
+\t\tpublic {0}{1}(string uid, IPConnection ipcon) : base(uid, ipcon) 
 \t\t{{
-\t\t\tthis.ipcon             = ipcon;
 \t\t\tthis.expectedName      = "{6} {7}";
 \t\t\tthis.bindingVersion[0] = {3};
 \t\t\tthis.bindingVersion[1] = {4};
@@ -207,61 +208,16 @@ def get_from_type(element):
 
     return ''
 
-def make_register_callback():
-    if device.get_callback_count() == 0:
-        return '\t}\n}\n'
-
-    typeofs = ''
-    typeof = """\t\t\t{0}if(d is {1}EventHandler)
-\t\t\t{{
-\t\t\t\tforeach (var handler in {1}.GetInvocationList())
-\t\t\t\t{{
-\t\t\t\t\t{1} -= ({1}EventHandler)handler;
-\t\t\t\t}}
-\t\t\t\t
-\t\t\t\t{1} += ({1}EventHandler)d;
-\t\t\t}}
-"""
-
-    cb = """
-\t\t[Obsolete("Register/unregister your callbacks by directly adding your handler to the corresponding event using += and -= operators")]
-\t\tpublic void RegisterCallback(System.Delegate d)
-\t\t{{
-{0}\t\t}}
-\t}}
-}}
-"""
-
-    i = 0
-    for packet in device.get_packets('callback'):
-        els = ''
-        if i > 0:
-            els = 'else '
-
-        name = packet.get_camel_case_name()
-        name_upper = packet.get_upper_case_name()
-
-        typeofs += typeof.format(els, name, name_upper)
-        
-        i += 1
-
-    return cb.format(typeofs)
-
 def make_callbacks():
     cbs = ''
     cb = """
-\t\tinternal int Callback{0}(byte[] data_)
+\t\tprotected void On{0}(byte[] data_)
 \t\t{{
-{1}\t\t\tOn{0}({3});
-
-\t\t\treturn {4};
-\t\t}}
-
-\t\tprotected void On{0}({5})
-\t\t{{
-\t\t\tvar handler = {0};
+{1}\t\t\tvar handler = {0};
 \t\t\tif(handler != null)
-\t\t\t\thandler({3});
+\t\t\t{{
+\t\t\t\thandler(this{3});
+\t\t\t}}
 \t\t}}
 """
     cls = device.get_camel_case_name()
@@ -278,7 +234,7 @@ def make_callbacks():
         convs = ''
         conv = '\t\t\t{0} {1} = LEConverter.{2}({3}, data_{4});\n'
 
-        pos = 4
+        pos = 8
         for element in packet.get_elements('out'):
             csharp_type = csharp_common.get_csharp_type(element)
             cname = common.underscore_to_headless_camel_case(element[0])
@@ -296,10 +252,13 @@ def make_callbacks():
 
         if convs != '':
             convs += '\n'
+
+        if callParams != '':
+            callParams = ', ' + callParams
         
         cbs += cb.format(name, convs, name_upper, callParams, pos, signatureParams)
 
-    return cbs
+    return cbs + "\t}\n}"
 
 def make_methods():
     methods = ''
@@ -310,14 +269,31 @@ def make_methods():
 \t\t{0}
 \t\t{{
 \t\t\tbyte[] data_ = new byte[{1}];
-\t\t\tLEConverter.To(stackID, 0, data_);
-\t\t\tLEConverter.To(FUNCTION_{2}, 1, data_);
-\t\t\tLEConverter.To((ushort){1}, 2, data_);
+\t\t\tLEConverter.To((long)this.uid, 0, data_);
+\t\t\tLEConverter.To((byte){1}, 4, data_);
+\t\t\tLEConverter.To((byte)FUNCTION_{2}, 5, data_);
+\t\t\tif(responseExpected[FUNCTION_{2}] == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE || responseExpected[FUNCTION_{2}] == RESPONSE_EXPECTED_FLAG_TRUE) 
+\t\t\t{{
+\t\t\t\tLEConverter.To((byte)((1 << 3) | (ipcon.GetNextSequenceNumber() << 4)), 6, data_);
+\t\t\t}} 
+\t\t\telse 
+\t\t\t{{
+\t\t\t\tLEConverter.To((byte)((ipcon.GetNextSequenceNumber() << 4)), 6, data_);
+\t\t\t}}
+\t\t\tLEConverter.To((byte)0, 7, data_);
 {3}
 {4}
 \t\t}}
 """
-    method_oneway = "\t\t\tSendRequestNoResponse(data_);"
+    method_oneway = """\t\t\tif(responseExpected[FUNCTION_{0}] == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE || responseExpected[FUNCTION_{0}] == RESPONSE_EXPECTED_FLAG_TRUE) 
+\t\t\t{{
+\t\t\t\tbyte[] response;
+\t\t\t\tSendRequestExpectResponse(data_, FUNCTION_{0}, out response);
+\t\t\t}}
+\t\t\telse
+\t\t\t{{
+\t\t\t\tSendRequestNoResponse(data_);
+\t\t\t}}"""
     method_response = """\t\t\tbyte[] response;
 \t\t\tSendRequestExpectResponse(data_, FUNCTION_{0}, out response);
 {1}"""
@@ -330,40 +306,41 @@ def make_methods():
         doc = format_doc(packet)
 
         write_convs = ''
-        write_conv = '\t\t\tLEConverter.To({0}, {1}, data_);\n'
-        write_conv_length = '\t\t\tLEConverter.To({0}, {1}, {2}, data_);\n'
+        write_conv = '\t\t\tLEConverter.To(({2}){0}, {1}, data_);\n'
+        write_conv_length = '\t\t\tLEConverter.To(({3}){0}, {1}, {2}, data_);\n'
 
-        pos = 4
+        pos = 8
         for element in packet.get_elements('in'):
             wname = common.underscore_to_headless_camel_case(element[0])
+            csharp_type = csharp_common.get_csharp_type_for_to_convert(element)
             if element[2] > 1:
-                write_convs += write_conv_length.format(wname, pos, element[2])
+                write_convs += write_conv_length.format(wname, pos, element[2], csharp_type)
             else:
-                write_convs += write_conv.format(wname, pos)
+                write_convs += write_conv.format(wname, pos, csharp_type)
             pos += common.get_element_size(element)
 
         method_tail = ''
+        read_convs = ''
+        read_conv = '\n\t\t\t{0} = LEConverter.{1}({2}, response{3});'
+
+        pos = 8
+        for element in packet.get_elements('out'):
+            aname = common.underscore_to_headless_camel_case(element[0])
+            from_type = get_from_type(element)
+            length = ''
+            if element[2] > 1:
+                length = ', ' + str(element[2])
+
+            if ret_count == 1:
+                read_convs = '\n\t\t\treturn LEConverter.{0}({1}, response{2});'.format(from_type, pos, length)
+            else:
+                read_convs += read_conv.format(aname, from_type, pos, length)
+            pos += common.get_element_size(element)
+
         if ret_count > 0:
-            read_convs = ''
-            read_conv = '\n\t\t\t{0} = LEConverter.{1}({2}, response{3});'
-
-            pos = 4
-            for element in packet.get_elements('out'):
-                aname = common.underscore_to_headless_camel_case(element[0])
-                from_type = get_from_type(element)
-                length = ''
-                if element[2] > 1:
-                    length = ', ' + str(element[2])
-
-                if ret_count == 1:
-                    read_convs = '\n\t\t\treturn LEConverter.{0}({1}, response{2});'.format(from_type, pos, length)
-                else:
-                    read_convs += read_conv.format(aname, from_type, pos, length)
-                pos += common.get_element_size(element)
-
             method_tail = method_response.format(name_upper, read_convs)
         else:
-            method_tail = method_oneway
+            method_tail = method_oneway.format(name_upper)
 
         signature = csharp_common.make_method_signature(packet)
         methods += method.format(signature,
@@ -379,7 +356,7 @@ def get_data_size(packet):
     size = 0
     for element in packet.get_elements('in'):
         size += common.get_element_size(element)
-    return size + 4
+    return size + 8
 
 def make_files(com_new, directory):
     global device
@@ -394,7 +371,6 @@ def make_files(com_new, directory):
     csharp.write(make_constructor())
     csharp.write(make_methods())
     csharp.write(make_callbacks())
-    csharp.write(make_register_callback())
 
 if __name__ == "__main__":
     common.generate(os.getcwd(), 'en', make_files, common.prepare_bindings, False)
