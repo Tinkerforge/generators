@@ -14,20 +14,20 @@ import java.util.concurrent.TimeUnit;
 public abstract class Device {
 	long uid = (long)0;
 	short[] apiVersion = new short[3];
-	byte[] responseExpected = new byte[259];
-	int expectedResponseFunctionID = -1;
-	int expectedResponseSequenceNumber = -1;
+	byte[] responseExpected = new byte[256];
+	byte expectedResponseFunctionID = 0;
+	byte expectedResponseSequenceNumber = 0;
 	private Object writeMutex = new Object();
 	SynchronousQueue<byte[]> responseQueue = new SynchronousQueue<byte[]>();
 	IPConnection ipcon = null;
-	CallbackListener[] callbacks = new CallbackListener[255];
-	Object[] listenerObjects = new Object[255];
+	CallbackListener[] callbacks = new CallbackListener[256];
+	Object[] listenerObjects = new Object[256];
 
-	final byte RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID = 0;
-	final byte RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE         = 1;
-	final byte RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE        = 2;
-	final byte RESPONSE_EXPECTED_FLAG_TRUE                = 3;
-	final byte RESPONSE_EXPECTED_FLAG_FALSE               = 4;
+	final static byte RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID = 0;
+	final static byte RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE = 1;
+	final static byte RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE = 2;
+	final static byte RESPONSE_EXPECTED_FLAG_TRUE = 3;
+	final static byte RESPONSE_EXPECTED_FLAG_FALSE = 4;
 
 	interface CallbackListener {
 		public void callback(byte data[]);
@@ -54,13 +54,10 @@ public abstract class Device {
 			responseExpected[i] = RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID;
 		}
 
-        responseExpected[IPConnection.FUNCTION_ENUMERATE]            = RESPONSE_EXPECTED_FLAG_FALSE;
-        responseExpected[IPConnection.FUNCTION_ADC_CALIBRATE]        = RESPONSE_EXPECTED_FLAG_FALSE;
-        responseExpected[IPConnection.FUNCTION_GET_ADC_CALIBRATION]  = RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE;
-        responseExpected[IPConnection.CALLBACK_ENUMERATE]            = RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;
-        responseExpected[IPConnection.CALLBACK_CONNECTED]            = RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;
-        responseExpected[IPConnection.CALLBACK_DISCONNECTED]         = RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;
-        responseExpected[IPConnection.CALLBACK_AUTHENTICATION_ERROR] = RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;
+		responseExpected[IPConnection.FUNCTION_ENUMERATE] = RESPONSE_EXPECTED_FLAG_FALSE;
+		responseExpected[IPConnection.FUNCTION_ADC_CALIBRATE] = RESPONSE_EXPECTED_FLAG_FALSE;
+		responseExpected[IPConnection.FUNCTION_GET_ADC_CALIBRATION] = RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE;
+		responseExpected[IPConnection.CALLBACK_ENUMERATE] = RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;
 
 		ipcon.devices.put(this.uid, this);
 	}
@@ -72,7 +69,7 @@ public abstract class Device {
 		return apiVersion;
 	}
 
-	public void setResponseExpected(int functionId, boolean responseExpected) {
+	public void setResponseExpected(byte functionId, boolean responseExpected) {
 		if(this.responseExpected[functionId] == RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID ||
 		   functionId >= this.responseExpected.length) {
 			throw new IllegalArgumentException("Invalid function ID " + functionId);
@@ -96,7 +93,7 @@ public abstract class Device {
 			return this.responseExpected[functionId] == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE || 
 			       this.responseExpected[functionId] == RESPONSE_EXPECTED_FLAG_TRUE;
 		}
-			
+
 		throw new IllegalArgumentException("Invalid function ID " + functionId);
 	}
 
@@ -121,7 +118,7 @@ public abstract class Device {
 		}
 	}
 
-	byte[] sendRequestExpectResponse(byte[] request, int functionID) throws IPConnection.TimeoutException {
+	byte[] sendRequestExpectResponse(byte[] request, byte functionID) throws IPConnection.TimeoutException {
 		byte[] response = null;
 
 		synchronized(writeMutex) {
@@ -138,8 +135,8 @@ public abstract class Device {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} finally {
-				expectedResponseFunctionID = -1;
-				expectedResponseSequenceNumber = -1;
+				expectedResponseFunctionID = 0;
+				expectedResponseSequenceNumber = 0;
 			}
 		}
 

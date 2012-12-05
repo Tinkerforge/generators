@@ -252,7 +252,7 @@ def make_add_listener():
 
 def make_function_id_definitions():
     function_ids = ''
-    function_id = '\tpublic final static int {2}_{0} = {1};\n'
+    function_id = '\tpublic final static byte {2}_{0} = (byte){1};\n'
     for packet in device.get_packets():
         function_ids += function_id.format(packet.get_upper_case_name(),
                                            packet.get_function_id(),
@@ -373,7 +373,8 @@ def make_methods():
 \t */
 \tpublic {0} {1}({2}) {3} {{
 \t\tbyte options = 0;
-\t\tif(responseExpected[FUNCTION_{5}] == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE || responseExpected[FUNCTION_{5}] == RESPONSE_EXPECTED_FLAG_TRUE) {{
+\t\tboolean isResponseExpected = getResponseExpected(FUNCTION_{5});
+\t\tif(isResponseExpected) {{
 \t\t\toptions = 8;
 \t\t}}
 \t\tByteBuffer bb = ipcon.createRequestBuffer(uid, (byte){4}, FUNCTION_{5}, options, (byte)({6}));
@@ -389,7 +390,7 @@ def make_methods():
 {1}
 \t\treturn {2};"""
 
-    method_noresponse = """\t\tif(responseExpected[FUNCTION_{0}] == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE || responseExpected[FUNCTION_{0}] == RESPONSE_EXPECTED_FLAG_TRUE) {{
+    method_noresponse = """\t\tif(isResponseExpected) {{
 \t\t\tbyte[] response = sendRequestExpectResponse(bb.array(), FUNCTION_{0});
 
 \t\t\tbb = ByteBuffer.wrap(response, 8, response.length - 8);

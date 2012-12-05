@@ -1,5 +1,6 @@
 *.pyc
 *.zip
+*/tinkerforge_*
 c/bindings/
 c/doc/
 csharp/bindings/

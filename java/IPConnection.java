@@ -213,7 +213,7 @@ class CallbackThread extends Thread {
 						return;
 					}
 
-					short functionID = ipcon.unsignedByte(ipcon.getFunctionIDFromData(cqo.data));
+					byte functionID = ipcon.getFunctionIDFromData(cqo.data);
 					if(functionID == IPConnection.CALLBACK_ENUMERATE) {
 						if(ipcon.enumerateListener != null) {
 							int length = ipcon.getLengthFromData(cqo.data);
@@ -250,7 +250,7 @@ class CallbackThread extends Thread {
 					} else {
 						long uid = ipcon.getUIDFromData(cqo.data);
 						Device device = ipcon.devices.get(uid);
-						if(device.callbacks != null && device.callbacks[functionID] != null) {
+						if(device.callbacks[functionID] != null) {
 							device.callbacks[functionID].callback(cqo.data);
 						}
 					}
@@ -265,14 +265,14 @@ class CallbackThread extends Thread {
 public class IPConnection {
 	private final static String BASE58 = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
 
-    public final static int FUNCTION_ENUMERATE = 254;
-    public final static int FUNCTION_ADC_CALIBRATE = 251;
-    public final static int FUNCTION_GET_ADC_CALIBRATION = 250;
+	public final static byte FUNCTION_ENUMERATE = (byte)254;
+	public final static byte FUNCTION_ADC_CALIBRATE = (byte)251;
+	public final static byte FUNCTION_GET_ADC_CALIBRATION = (byte)250;
+	public final static byte CALLBACK_ENUMERATE = (byte)253;
 
-    public final static int CALLBACK_ENUMERATE = 253;
-    protected final static int CALLBACK_CONNECTED = 256;
-    protected final static int CALLBACK_DISCONNECTED = 257;
-    protected final static int CALLBACK_AUTHENTICATION_ERROR = 258;
+	public final static byte CALLBACK_CONNECTED = (byte)0;
+	public final static byte CALLBACK_DISCONNECTED = (byte)1;
+	public final static byte CALLBACK_AUTHENTICATION_ERROR = (byte)2;
 
 	private final static long BROADCAST_UID = (long)0;
 
@@ -282,18 +282,18 @@ public class IPConnection {
     public final static short ENUMERATION_TYPE_DISCONNECTED = 2;
 
     // connect_reason parameter to the connected callback
-    protected final static int CONNECT_REASON_REQUEST = 0;
-    protected final static int CONNECT_REASON_AUTO_RECONNECT = 1;
+    public final static int CONNECT_REASON_REQUEST = 0;
+    public final static int CONNECT_REASON_AUTO_RECONNECT = 1;
 
     // disconnect_reason parameter to the disconnected callback
-    protected final static int DISCONNECT_REASON_REQUEST = 0;
-    protected final static int DISCONNECT_REASON_ERROR = 1;
-    protected final static int DISCONNECT_REASON_SHUTDOWN = 2;
+    public final static int DISCONNECT_REASON_REQUEST = 0;
+    public final static int DISCONNECT_REASON_ERROR = 1;
+    public final static int DISCONNECT_REASON_SHUTDOWN = 2;
 
     // returned by get_connection_state
-    protected final static int CONNECTION_STATE_DISCONNECTED = 0;
-    protected final static int CONNECTION_STATE_CONNECTED = 1;
-    protected final static int CONNECTION_STATE_PENDING = 2; // auto-reconnect in process
+    public final static int CONNECTION_STATE_DISCONNECTED = 0;
+    public final static int CONNECTION_STATE_CONNECTED = 1;
+    public final static int CONNECTION_STATE_PENDING = 2; // auto-reconnect in process
 
     protected final static int QUEUE_EXIT = 0;
     protected final static int QUEUE_META = 1;
@@ -587,7 +587,7 @@ public class IPConnection {
 	}
 
 	void handleResponse(byte[] packet) {
-		short functionID = unsignedByte(getFunctionIDFromData(packet));
+		byte functionID = getFunctionIDFromData(packet);
 		short sequenceNumber = unsignedByte(getSequenceNumberFromData(packet));
 
 		if(functionID == CALLBACK_ENUMERATE && sequenceNumber == 0) {
