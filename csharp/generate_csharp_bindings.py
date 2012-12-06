@@ -4,7 +4,7 @@
 """
 C# Bindings Generator
 Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
-Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_csharp_bindings.py: Generator for C# bindings
 
@@ -162,12 +162,10 @@ def make_constructor():
 \t\t/// </summary>
 \t\tpublic {0}{1}(string uid, IPConnection ipcon) : base(uid, ipcon) 
 \t\t{{
-\t\t\tthis.expectedName      = "{6} {7}";
 \t\t\tthis.bindingVersion[0] = {3};
 \t\t\tthis.bindingVersion[1] = {4};
 \t\t\tthis.bindingVersion[2] = {5};
 {2}
-\t\t}}
 """
 
     for packet in device.get_packets('callback'):
@@ -176,12 +174,32 @@ def make_constructor():
         cbs.append(cb.format(name_upper, name_pascal))
 
     v = device.get_api_version()
+
     return con.format(device.get_category(),
                       device.get_camel_case_name(),
                       '\n'.join(cbs),
                       v[0], v[1], v[2],
                       device.get_display_name(),
                       device.get_category())
+
+def make_response_expected():
+    res = '\n'
+    re = "\t\t\tresponseExpected[{0}] = {1}\n"
+
+    for packet in device.get_packets('function'):
+        name_upper = 'FUNCTION_' + packet.get_upper_case_name()
+        setto = 'ResponseExpectedFlag.FALSE;'
+        if len(packet.get_elements('out')) > 0:
+            setto = 'ResponseExpectedFlag.ALWAYS_TRUE;'
+            
+        res += re.format(name_upper, setto)
+
+    for packet in device.get_packets('callback'):
+        name_upper = 'CALLBACK_' + packet.get_upper_case_name()
+        setto = 'ResponseExpectedFlag.ALWAYS_FALSE;'
+        res += re.format(name_upper, setto)
+
+    return res + '\t\t}\n'
 
 def get_from_type(element):
     forms = {
@@ -272,7 +290,7 @@ def make_methods():
 \t\t\tLEConverter.To((long)this.uid, 0, data_);
 \t\t\tLEConverter.To((byte){1}, 4, data_);
 \t\t\tLEConverter.To((byte)FUNCTION_{2}, 5, data_);
-\t\t\tif(responseExpected[FUNCTION_{2}] == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE || responseExpected[FUNCTION_{2}] == RESPONSE_EXPECTED_FLAG_TRUE) 
+\t\t\tif(responseExpected[FUNCTION_{2}] == ResponseExpectedFlag.ALWAYS_TRUE || responseExpected[FUNCTION_{2}] == ResponseExpectedFlag.TRUE) 
 \t\t\t{{
 \t\t\t\tLEConverter.To((byte)((1 << 3) | (ipcon.GetNextSequenceNumber() << 4)), 6, data_);
 \t\t\t}} 
@@ -285,7 +303,7 @@ def make_methods():
 {4}
 \t\t}}
 """
-    method_oneway = """\t\t\tif(responseExpected[FUNCTION_{0}] == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE || responseExpected[FUNCTION_{0}] == RESPONSE_EXPECTED_FLAG_TRUE) 
+    method_oneway = """\t\t\tif(responseExpected[FUNCTION_{0}] == ResponseExpectedFlag.ALWAYS_TRUE || responseExpected[FUNCTION_{0}] == ResponseExpectedFlag.TRUE) 
 \t\t\t{{
 \t\t\t\tbyte[] response;
 \t\t\t\tSendRequestExpectResponse(data_, FUNCTION_{0}, out response);
@@ -369,6 +387,7 @@ def make_files(com_new, directory):
     csharp.write(make_function_id_definitions())
     csharp.write(make_delegates())
     csharp.write(make_constructor())
+    csharp.write(make_response_expected())
     csharp.write(make_methods())
     csharp.write(make_callbacks())
 

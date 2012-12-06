@@ -649,7 +649,7 @@ namespace Tinkerforge
 		internal String name;
 		internal byte[] firmwareVersion = new byte[3];
 		internal short[] bindingVersion = new short[3];
-		internal byte[] responseExpected = new byte[259];
+		internal ResponseExpectedFlag[] responseExpected = new ResponseExpectedFlag[256];
 		internal long uid = 0;
 		internal byte expectedResponseFunctionID = 0;
 		internal byte expectedResponseSequenceNumber = 0;
@@ -657,11 +657,14 @@ namespace Tinkerforge
 		internal BlockingQueue<byte[]> responseQueue = new BlockingQueue<byte[]>();
 		internal IPConnection ipcon = null;
 
-		internal const byte RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID = 0;
-		internal const byte RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE         = 1;
-		internal const byte RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE        = 2;
-		internal const byte RESPONSE_EXPECTED_FLAG_TRUE                = 3;
-		internal const byte RESPONSE_EXPECTED_FLAG_FALSE               = 4;
+		internal enum ResponseExpectedFlag 
+		{
+			INVALID_FUNCTION_ID = 0,
+			ALWAYS_TRUE = 1,
+			ALWAYS_FALSE = 2,
+			TRUE = 3,
+			FALSE = 4
+		}
 
 		private object writeLock = new object();
 
@@ -689,16 +692,16 @@ namespace Tinkerforge
 
 			for(int i = 0; i < responseExpected.Length; i++) 
 			{
-				responseExpected[i] = RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID;
+				responseExpected[i] = ResponseExpectedFlag.INVALID_FUNCTION_ID;
 			}
 
-			responseExpected[IPConnection.FUNCTION_ENUMERATE]            = RESPONSE_EXPECTED_FLAG_FALSE;
-			responseExpected[IPConnection.FUNCTION_ADC_CALIBRATE]        = RESPONSE_EXPECTED_FLAG_FALSE;
-			responseExpected[IPConnection.FUNCTION_GET_ADC_CALIBRATION]  = RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE;
-			responseExpected[IPConnection.CALLBACK_ENUMERATE]            = RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;
-			responseExpected[IPConnection.CALLBACK_CONNECTED]            = RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;
-			responseExpected[IPConnection.CALLBACK_DISCONNECTED]         = RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;
-			responseExpected[IPConnection.CALLBACK_AUTHENTICATION_ERROR] = RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;
+			responseExpected[IPConnection.FUNCTION_ENUMERATE]            = ResponseExpectedFlag.FALSE;
+			responseExpected[IPConnection.FUNCTION_ADC_CALIBRATE]        = ResponseExpectedFlag.FALSE;
+			responseExpected[IPConnection.FUNCTION_GET_ADC_CALIBRATION]  = ResponseExpectedFlag.ALWAYS_TRUE;
+			responseExpected[IPConnection.CALLBACK_ENUMERATE]            = ResponseExpectedFlag.ALWAYS_FALSE;
+			responseExpected[IPConnection.CALLBACK_CONNECTED]            = ResponseExpectedFlag.ALWAYS_FALSE;
+			responseExpected[IPConnection.CALLBACK_DISCONNECTED]         = ResponseExpectedFlag.ALWAYS_FALSE;
+			responseExpected[IPConnection.CALLBACK_AUTHENTICATION_ERROR] = ResponseExpectedFlag.ALWAYS_FALSE;
 
 			ipcon.devices[this.uid] = this;
 		}
@@ -715,34 +718,34 @@ namespace Tinkerforge
 
 		public void SetResponseExpected(int functionId, bool responseExpected) 
 		{
-			if(this.responseExpected[functionId] == RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID ||
+			if(this.responseExpected[functionId] == ResponseExpectedFlag.INVALID_FUNCTION_ID ||
 			   functionId >= this.responseExpected.Length) 
 			{
 				throw new ArgumentOutOfRangeException("Invalid function ID " + functionId);
 			}
 
-			if(this.responseExpected[functionId] == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE ||
-			   this.responseExpected[functionId] == RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE) 
+			if(this.responseExpected[functionId] == ResponseExpectedFlag.ALWAYS_TRUE ||
+			   this.responseExpected[functionId] == ResponseExpectedFlag.ALWAYS_FALSE) 
 			{
 				throw new ArgumentOutOfRangeException("Response Expected flag cannot be changed for function ID " + functionId);
 			}
 
 			if(responseExpected)
 			{
-				this.responseExpected[functionId] = RESPONSE_EXPECTED_FLAG_TRUE;
+				this.responseExpected[functionId] = ResponseExpectedFlag.TRUE;
 			} else
 			{
-				this.responseExpected[functionId] = RESPONSE_EXPECTED_FLAG_FALSE;
+				this.responseExpected[functionId] = ResponseExpectedFlag.FALSE;
 			}
 		}
 
 		public bool GetResponseExpected(byte functionId)
 		{
-			if(this.responseExpected[functionId] != RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID &&
+			if(this.responseExpected[functionId] != ResponseExpectedFlag.INVALID_FUNCTION_ID &&
 			   functionId < this.responseExpected.Length)
 			{
-				return this.responseExpected[functionId] == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE || 
-					   this.responseExpected[functionId] == RESPONSE_EXPECTED_FLAG_TRUE;
+				return this.responseExpected[functionId] == ResponseExpectedFlag.ALWAYS_TRUE || 
+					   this.responseExpected[functionId] == ResponseExpectedFlag.TRUE;
 			}
 				
 			throw new ArgumentOutOfRangeException("Invalid function ID " + functionId);
@@ -750,17 +753,17 @@ namespace Tinkerforge
 
 		public void SetResponseExpectedAll(bool responseExpected)
 		{
-			byte flag = RESPONSE_EXPECTED_FLAG_TRUE;
+			ResponseExpectedFlag flag = ResponseExpectedFlag.TRUE;
 			if(responseExpected)
 			{
-				flag = RESPONSE_EXPECTED_FLAG_FALSE;
+				flag = ResponseExpectedFlag.FALSE;
 			}
 
 			for(int i = 0; i < this.responseExpected.Length; i++)
 			{
-				if(this.responseExpected[i] != RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID &&
-				   this.responseExpected[i] != RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE &&
-				   this.responseExpected[i] != RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE) {
+				if(this.responseExpected[i] != ResponseExpectedFlag.INVALID_FUNCTION_ID &&
+				   this.responseExpected[i] != ResponseExpectedFlag.ALWAYS_TRUE &&
+				   this.responseExpected[i] != ResponseExpectedFlag.ALWAYS_FALSE) {
 					this.responseExpected[i] = flag;
 				}
 			}
