@@ -347,8 +347,6 @@ namespace Tinkerforge
 					if(e.InnerException != null &&
 					   e.InnerException is SocketException) 
 					{
-						int errorCode = ((SocketException)e.InnerException).ErrorCode;
-
 						byte[] data_ = new byte[8];
 						LEConverter.To((int)CALLBACK_DISCONNECTED, 0, data_);
 						LEConverter.To((int)DISCONNECT_REASON_ERROR, 4, data_);
@@ -481,7 +479,7 @@ namespace Tinkerforge
 												{
 													ConnectUnlocked(true);
 												}
-												catch(Exception e)
+												catch(Exception)
 												{
 													retry = true;
 												}
@@ -822,10 +820,8 @@ namespace Tinkerforge
 						break;
 					case 1:
 						throw new NotSupportedException("Got invalid parameter for function " + functionID);
-						break;
 					case 2:
 						throw new NotSupportedException("Function " + functionID + " is not supported");
-						break;
 					default:
 						throw new NotSupportedException("Function " + functionID + " returned an unknown error");
 				}
