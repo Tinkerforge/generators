@@ -20,7 +20,7 @@ namespace Tinkerforge
 {
 	public class IPConnection
 	{
-		public int response_timeout = 2500;
+		public int responseTimeout = 2500;
 
 		const byte BROADCAST_ADDRESS = 0;
 
@@ -258,12 +258,12 @@ namespace Tinkerforge
 				throw new ArgumentOutOfRangeException("Timeout cannot be negative");
 			}
 
-			response_timeout = timeout;
+			responseTimeout = timeout;
 		}
 
 		public int GetTimeout() 
 		{
-			return response_timeout;
+			return responseTimeout;
 		}
 
 		
@@ -568,7 +568,7 @@ namespace Tinkerforge
 			return (byte)((((int)data[6]) >> 4) & 0x0F);
 		}
 
-		private static byte GetErrorCodeFromData(byte[] data) {
+		internal static byte GetErrorCodeFromData(byte[] data) {
 			return (byte)(((int)(data[7] >> 6)) & 0x03);
 		}
 
@@ -806,13 +806,29 @@ namespace Tinkerforge
 
 				ipcon.Write(request);
 
-				if (!responseQueue.TryDequeue(out response, ipcon.response_timeout))
+				if (!responseQueue.TryDequeue(out response, ipcon.responseTimeout))
 				{
 					expectedResponseFunctionID = 0;
 					throw new TimeoutException("Did not receive response in time");
 				}
 
 				expectedResponseFunctionID = 0;
+				expectedResponseSequenceNumber = 0;
+
+				byte errorCode = IPConnection.GetErrorCodeFromData(response);
+				switch(errorCode)
+				{
+					case 0:
+						break;
+					case 1:
+						throw new NotSupportedException("Got invalid parameter for function " + functionID);
+						break;
+					case 2:
+						throw new NotSupportedException("Function " + functionID + " is not supported");
+						break;
+					default:
+						throw new NotSupportedException("Function " + functionID + " returned an unknown error");
+				}
 			}
 		}
 	}

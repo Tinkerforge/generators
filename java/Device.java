@@ -54,10 +54,10 @@ public abstract class Device {
 			responseExpected[i] = RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID;
 		}
 
-		responseExpected[IPConnection.FUNCTION_ENUMERATE] = RESPONSE_EXPECTED_FLAG_FALSE;
-		responseExpected[IPConnection.FUNCTION_ADC_CALIBRATE] = RESPONSE_EXPECTED_FLAG_FALSE;
-		responseExpected[IPConnection.FUNCTION_GET_ADC_CALIBRATION] = RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE;
-		responseExpected[IPConnection.CALLBACK_ENUMERATE] = RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;
+		responseExpected[IPConnection.unsignedByte(IPConnection.FUNCTION_ENUMERATE)] = RESPONSE_EXPECTED_FLAG_FALSE;
+		responseExpected[IPConnection.unsignedByte(IPConnection.FUNCTION_ADC_CALIBRATE)] = RESPONSE_EXPECTED_FLAG_FALSE;
+		responseExpected[IPConnection.unsignedByte(IPConnection.FUNCTION_GET_ADC_CALIBRATION)] = RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE;
+		responseExpected[IPConnection.unsignedByte(IPConnection.CALLBACK_ENUMERATE)] = RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;
 
 		ipcon.devices.put(this.uid, this);
 	}
@@ -70,28 +70,28 @@ public abstract class Device {
 	}
 
 	public void setResponseExpected(byte functionId, boolean responseExpected) {
-		if(this.responseExpected[functionId] == RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID ||
+		if(this.responseExpected[IPConnection.unsignedByte(functionId)] == RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID ||
 		   functionId >= this.responseExpected.length) {
 			throw new IllegalArgumentException("Invalid function ID " + functionId);
 		}
 
-		if(this.responseExpected[functionId] == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE ||
-		   this.responseExpected[functionId] == RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE) {
+		if(this.responseExpected[IPConnection.unsignedByte(functionId)] == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE ||
+		   this.responseExpected[IPConnection.unsignedByte(functionId)] == RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE) {
 			throw new IllegalArgumentException("Response Expected flag cannot be changed for function ID " + functionId);
 		}
 
 		if(responseExpected) {
-			this.responseExpected[functionId] = RESPONSE_EXPECTED_FLAG_TRUE;
+			this.responseExpected[IPConnection.unsignedByte(functionId)] = RESPONSE_EXPECTED_FLAG_TRUE;
 		} else {
-			this.responseExpected[functionId] = RESPONSE_EXPECTED_FLAG_FALSE;
+			this.responseExpected[IPConnection.unsignedByte(functionId)] = RESPONSE_EXPECTED_FLAG_FALSE;
 		}
 	}
 
 	public boolean getResponseExpected(byte functionId) {
-		if(this.responseExpected[functionId] != RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID &&
+		if(this.responseExpected[IPConnection.unsignedByte(functionId)] != RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID &&
 		   functionId < this.responseExpected.length) {
-			return this.responseExpected[functionId] == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE || 
-			       this.responseExpected[functionId] == RESPONSE_EXPECTED_FLAG_TRUE;
+			return this.responseExpected[IPConnection.unsignedByte(functionId)] == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE || 
+			       this.responseExpected[IPConnection.unsignedByte(functionId)] == RESPONSE_EXPECTED_FLAG_TRUE;
 		}
 
 		throw new IllegalArgumentException("Invalid function ID " + functionId);
@@ -137,6 +137,19 @@ public abstract class Device {
 			} finally {
 				expectedResponseFunctionID = 0;
 				expectedResponseSequenceNumber = 0;
+			}
+
+			byte errorCode = IPConnection.getErrorCodeFromData(response);
+			switch(errorCode)
+			{
+				case 0:
+					break;
+				case 1:
+					throw new java.lang.UnsupportedOperationException("Got invalid parameter for function " + functionID);
+				case 2:
+					throw new java.lang.UnsupportedOperationException("Function " + functionID + " is not supported");
+				default:
+					throw new java.lang.UnsupportedOperationException("Function " + functionID + " returned an unknown error");
 			}
 		}
 

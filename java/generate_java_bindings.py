@@ -4,7 +4,7 @@
 """
 Java Bindings Generator
 Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
-Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_java_bindings.py: Generator for Java bindings
 
@@ -174,7 +174,7 @@ def make_listener_definitions():
  
 def make_response_expected():
     res = ''
-    re = "\t\tresponseExpected[{0}] = {1}\n"
+    re = "\t\tresponseExpected[IPConnection.unsignedByte({0})] = {1}\n"
 
     for packet in device.get_packets('function'):
         name_upper = 'FUNCTION_' + packet.get_upper_case_name()
