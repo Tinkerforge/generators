@@ -769,6 +769,26 @@ namespace Tinkerforge
 			}
 		}
 
+
+		protected byte[] MakePacketHeader(byte length, byte fid)
+		{
+			byte[] packet = new byte[length];
+			LEConverter.To((long)this.uid, 0, packet);
+			LEConverter.To((byte)length, 4, packet);
+			LEConverter.To((byte)fid, 5, packet);
+			if(responseExpected[fid] == ResponseExpectedFlag.ALWAYS_TRUE || responseExpected[fid] == ResponseExpectedFlag.TRUE) 
+			{
+				LEConverter.To((byte)((1 << 3) | (ipcon.GetNextSequenceNumber() << 4)), 6, packet);
+			} 
+			else 
+			{
+				LEConverter.To((byte)((ipcon.GetNextSequenceNumber() << 4)), 6, packet);
+			}
+			LEConverter.To((byte)0, 7, packet);
+
+			return packet;
+		}
+
 		protected void SendRequestNoResponse(byte[] request)
 		{
 			lock (writeLock)

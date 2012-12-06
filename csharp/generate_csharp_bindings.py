@@ -286,19 +286,7 @@ def make_methods():
 \t\t/// </summary>
 \t\t{0}
 \t\t{{
-\t\t\tbyte[] data_ = new byte[{1}];
-\t\t\tLEConverter.To((long)this.uid, 0, data_);
-\t\t\tLEConverter.To((byte){1}, 4, data_);
-\t\t\tLEConverter.To((byte)FUNCTION_{2}, 5, data_);
-\t\t\tif(responseExpected[FUNCTION_{2}] == ResponseExpectedFlag.ALWAYS_TRUE || responseExpected[FUNCTION_{2}] == ResponseExpectedFlag.TRUE) 
-\t\t\t{{
-\t\t\t\tLEConverter.To((byte)((1 << 3) | (ipcon.GetNextSequenceNumber() << 4)), 6, data_);
-\t\t\t}} 
-\t\t\telse 
-\t\t\t{{
-\t\t\t\tLEConverter.To((byte)((ipcon.GetNextSequenceNumber() << 4)), 6, data_);
-\t\t\t}}
-\t\t\tLEConverter.To((byte)0, 7, data_);
+\t\t\tbyte[] data_ = MakePacketHeader({1}, FUNCTION_{2});
 {3}
 {4}
 \t\t}}
