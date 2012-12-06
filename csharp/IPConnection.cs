@@ -352,7 +352,6 @@ namespace Tinkerforge
 						LEConverter.To((int)DISCONNECT_REASON_ERROR, 4, data_);
 
 						callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_META, data_));
-
 					}
 					else
 					{
@@ -486,7 +485,7 @@ namespace Tinkerforge
 											}
 											else
 											{
-												autoReconnectPending = true;
+												autoReconnectPending = false;
 											}
 										}
 
