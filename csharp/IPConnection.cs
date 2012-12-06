@@ -62,6 +62,7 @@ namespace Tinkerforge
 		internal int nextSequenceMumber = 1;
 
 		internal readonly object socketLock = new object();
+		private object writeLock = new object();
 
 		internal bool autoReconnectAllowed = false;
 		internal bool autoReconnectPending = false;
@@ -616,7 +617,10 @@ namespace Tinkerforge
 
 		public void Write(byte[] data)
 		{
-			socketWriter.Write(data, 0, data.Length);
+			lock(writeLock)
+			{
+				socketWriter.Write(data, 0, data.Length);
+			}
 		}
 
 		public void Enumerate() 
