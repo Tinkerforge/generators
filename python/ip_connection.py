@@ -604,10 +604,10 @@ class IPConnection:
                 device.expected_response_function_id = function_id
                 device.expected_response_sequence_number = sequence_number
 
-        try:
-            self.socket.send(request)
-        except socket.error:
-            pass
+            try:
+                self.socket.send(request)
+            except socket.error:
+                pass
 
         if not response_expected:
             device.write_lock.release()
