@@ -1266,17 +1266,21 @@ int ipcon_connect(IPConnection *ipcon, const char *host, uint16_t port) {
 	int ret;
 #ifdef _WIN32
 	WSADATA wsa_data;
+#endif
 
+	mutex_lock(&ipcon->socket_mutex);
+
+#ifdef _WIN32
 	if (!ipcon->wsa_startup_done) {
 		if (WSAStartup(MAKEWORD(2, 2), &wsa_data) != 0) {
+			mutex_unlock(&ipcon->socket_mutex);
+
 			return E_NO_STREAM_SOCKET;
 		}
 
 		ipcon->wsa_startup_done = true;
 	}
 #endif
-
-	mutex_lock(&ipcon->socket_mutex);
 
 	if (ipcon->socket != NULL) {
 		mutex_unlock(&ipcon->socket_mutex);
