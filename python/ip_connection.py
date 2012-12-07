@@ -634,6 +634,7 @@ class IPConnection:
 
         if error_code == 0:
             # no error
+            pass
         elif error_code == 1:
             msg = 'Got invalid parameter for function {0}'.format(function_id)
             raise Error(Error.INVALID_PARAMETER, msg)
