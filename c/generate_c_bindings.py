@@ -169,6 +169,21 @@ def make_callback_defines():
 
     return defines
 
+def make_device_identifier_define():
+    define_temp = """
+/**
+ * \ingroup {3}{2}
+ *
+ * The device identifier is used to identify a device in the enumerate callback
+ * of the IPConnection.
+ */
+#define {0}_DEVICE_IDENTIFIER {1}
+"""
+    return define_temp.format(device.get_upper_case_name(),
+                              device.get_device_identifier(),
+                              device.get_camel_case_name(),
+                              device.get_category())
+
 def make_structs():
     structs = """
 #if defined _MSC_VER || defined __BORLANDC__
@@ -664,6 +679,7 @@ def make_files(com_new, directory):
     h.write(make_include_h())
     h.write(make_function_id_defines())
     h.write(make_callback_defines())
+    h.write(make_device_identifier_define())
     h.write(make_create_declaration())
     h.write(make_destroy_declaration())
     h.write(make_response_expected_declarations())
