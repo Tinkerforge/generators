@@ -118,7 +118,7 @@ class CallbackThread extends Thread {
 	}
 
 	public void run() {
-		while(ipcon.callbackThreadFlag) {
+		while(true) {
 			IPConnection.CallbackQueueObject cqo = null;
 			try {
 				cqo = ipcon.callbackQueue.take();
@@ -209,8 +209,9 @@ class CallbackThread extends Thread {
 				}
 
 				case IPConnection.QUEUE_PACKET: {
-					if (!ipcon.callbackThreadFlag) {
-						return;
+					if (!ipcon.receiveFlag) {
+						// don't dispatch callbacks when the receive thread isn't running
+						continue;
 					}
 
 					byte functionID = ipcon.getFunctionIDFromData(cqo.data);
@@ -314,7 +315,6 @@ public class IPConnection {
 	protected byte nextSequenceNumber = 1;
 
 	boolean receiveFlag = false;
-	boolean callbackThreadFlag = false;
 
 	boolean autoReconnect = true;
 	boolean autoReconnectAllowed = false;
@@ -398,7 +398,6 @@ public class IPConnection {
 		if(callbackThread == null) {
 			callbackQueue = new LinkedBlockingQueue<CallbackQueueObject>();
 			callbackThread = new CallbackThread(this);
-			callbackThreadFlag = true;
 			callbackThread.start();
 		}
 
