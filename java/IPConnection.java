@@ -564,7 +564,7 @@ public class IPConnection {
 		byte functionID = getFunctionIDFromData(packet);
 		short sequenceNumber = unsignedByte(getSequenceNumberFromData(packet));
 
-		if(functionID == CALLBACK_ENUMERATE && sequenceNumber == 0) {
+		if(sequenceNumber == 0 && functionID == CALLBACK_ENUMERATE) {
 			handleEnumerate(packet);
 			return;
 		}
@@ -578,6 +578,18 @@ public class IPConnection {
 
 		Device device = devices.get(uid);
 
+		if(sequenceNumber == 0) {
+			if(device.callbacks[functionID] != null && device.listenerObjects[functionID] != null) {
+				try {
+					callbackQueue.put(new CallbackQueueObject(QUEUE_PACKET, packet));
+				} catch(InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+
+			return;
+		}
+
 		if(functionID == device.expectedResponseFunctionID &&
 		   sequenceNumber == device.expectedResponseSequenceNumber) {
 			try {
@@ -586,14 +598,6 @@ public class IPConnection {
 				e.printStackTrace();
 			}
 			return;
-		}
-		
-		if(device.callbacks[functionID] != null && sequenceNumber == 0 && device.listenerObjects[functionID] != null) {
-			try {
-				callbackQueue.put(new CallbackQueueObject(QUEUE_PACKET, packet));
-			} catch(InterruptedException e) {
-				e.printStackTrace();
-			}
 		}
 
 		// Response seems to be OK, but can't be handled, most likely
