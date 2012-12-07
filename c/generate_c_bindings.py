@@ -250,23 +250,6 @@ void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
 {2}
 }}
 """
-    func2 = """
-void {0}_destroy({1} *{0}) {{
-\tdevice_destroy({0});
-}}
-
-int {0}_get_response_expected({1} *{0}, uint8_t function_id) {{
-\treturn device_get_response_expected({0}, function_id);
-}}
-
-void {0}_set_response_expected({1} *{0}, uint8_t function_id, bool response_expected) {{
-\tdevice_set_response_expected({0}, function_id, response_expected);
-}}
-
-void {0}_set_response_expected_all({1} *{0}, bool response_expected) {{
-\tdevice_set_response_expected_all({0}, response_expected);
-}}
-"""
 
     cb_temp = """
 \t{0}->callback_wrappers[{3}_CALLBACK_{1}] = {0}_callback_wrapper_{2};"""
@@ -296,9 +279,37 @@ void {0}_set_response_expected_all({1} *{0}, bool response_expected) {{
     if len(response_expected) > 0:
         response_expected = '\n' + response_expected
 
-    return func.format(dev_name, device.get_camel_case_name(), response_expected + cbs,
-                       *device.get_api_version()) + \
-           func2.format(dev_name, device.get_camel_case_name())
+    return func.format(dev_name,
+                       device.get_camel_case_name(),
+                       response_expected + cbs,
+                       *device.get_api_version())
+
+def make_destroy_func():
+    func = """
+void {0}_destroy({1} *{0}) {{
+\tdevice_destroy({0});
+}}
+"""
+    return func.format(device.get_underscore_name(),
+                       device.get_camel_case_name())
+
+def make_response_expected_funcs():
+    func = """
+
+int {0}_get_response_expected({1} *{0}, uint8_t function_id) {{
+\treturn device_get_response_expected({0}, function_id);
+}}
+
+void {0}_set_response_expected({1} *{0}, uint8_t function_id, bool response_expected) {{
+\tdevice_set_response_expected({0}, function_id, response_expected);
+}}
+
+void {0}_set_response_expected_all({1} *{0}, bool response_expected) {{
+\tdevice_set_response_expected_all({0}, response_expected);
+}}
+"""
+    return func.format(device.get_underscore_name(),
+                       device.get_camel_case_name())
 
 def make_method_funcs():
     def make_struct_list(packet):
@@ -539,32 +550,40 @@ def make_create_declaration():
 /**
  * \ingroup {2}{1}
  *
- * Creates an object with the unique device ID \c uid. This object can then be
- * added to the IP connection.
+ * Creates the device object \u {0} with the unique device ID \c uid and adds
+ * it to the IPConnection \c ipcon.
  */
 void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon);
 """
+    return create.format(device.get_underscore_name(),
+                         device.get_camel_case_name(),
+                         device.get_category())
+
+def make_destroy_declaration():
     destroy = """
 /**
  * \ingroup {2}{1}
  *
- * Creates an object with the unique device ID \c uid. This object can then be
- * added to the IP connection.
+ * Removes the device object \u {0} from its IPConnection and destroys it.
+ * The device object cannot be used anymore afterwards.
  */
 void {0}_destroy({1} *{0});
+"""
+    return destroy.format(device.get_underscore_name(),
+                          device.get_camel_case_name(),
+                          device.get_category())
 
+def make_response_expected_declarations():
+    response_expected = """
 int {0}_get_response_expected({1} *{0}, uint8_t function_id);
 
 void {0}_set_response_expected({1} *{0}, uint8_t function_id, bool response_expected);
 
 void {0}_set_response_expected_all({1} *{0}, bool response_expected);
 """
-    return create.format(device.get_underscore_name(),
-                         device.get_camel_case_name(),
-                         device.get_category()) + \
-           destroy.format(device.get_underscore_name(),
-                          device.get_camel_case_name(),
-                          device.get_category())
+    return response_expected.format(device.get_underscore_name(),
+                                    device.get_camel_case_name(),
+                                    device.get_category())
 
 def make_method_declarations():
     func_version = """
@@ -636,14 +655,18 @@ def make_files(com_new, directory):
     c.write(make_structs())
     c.write(make_callback_wrapper_funcs())
     c.write(make_create_func())
-    c.write(make_method_funcs())
+    c.write(make_destroy_func())
+    c.write(make_response_expected_funcs())
     c.write(make_register_callback_func())
+    c.write(make_method_funcs())
 
     h = file('{0}/{1}.h'.format(directory, file_name), "w")
     h.write(make_include_h())
     h.write(make_function_id_defines())
     h.write(make_callback_defines())
     h.write(make_create_declaration())
+    h.write(make_destroy_declaration())
+    h.write(make_response_expected_declarations())
     h.write(make_register_callback_declaration())
     h.write(make_method_declarations())
     h.write(make_end_h())
