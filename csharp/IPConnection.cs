@@ -300,34 +300,6 @@ namespace Tinkerforge
 #endif
         }
 
-		private bool Reconnect()
-		{
-			while(receiveFlag)
-			{
-				try 
-				{
-					socketStream.Close();
-					socket.Close();
-
-					socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-					ConnectSocket(host, port);
-
-					socketStream = new NetworkStream(socket);
-					socketWriter = new BinaryWriter(socketStream);
-					socketReader = new BinaryReader(socketStream);
-				} 
-				catch 
-				{
-					Thread.Sleep(500);
-					continue;
-				}
-
-				return true;
-			}
-
-			return false;
-		}
-
 		private void ReceiveLoop()
 		{
 			byte[] pendingData = new byte[8192];
