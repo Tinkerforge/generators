@@ -586,7 +586,7 @@ enum {
 
 typedef struct {
 	uint8_t id;
-	int parameter;
+	uint8_t parameter;
 } Meta;
 
 static void queue_create(Queue *queue) {
@@ -1098,7 +1098,7 @@ static void ipcon_receive_loop(void *opaque) {
 static int ipcon_connect_unlocked(IPConnection *ipcon, bool is_auto_reconnect) {
 	CallbackContext *context;
 	struct hostent *entity;
-	int connect_reason;
+	uint8_t connect_reason;
 	Meta meta;
 
 	// create callback queue and thread

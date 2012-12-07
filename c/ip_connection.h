@@ -172,8 +172,8 @@ typedef void (*EnumerateCallbackFunction)(const char *uid,
                                           uint16_t device_identifier,
                                           uint8_t enumeration_type,
                                           void *user_data);
-typedef void (*ConnectedCallbackFunction)(int connect_reason, void *user_data);
-typedef void (*DisconnectedCallbackFunction)(int disconnect_reason, void *user_data);
+typedef void (*ConnectedCallbackFunction)(uint8_t connect_reason, void *user_data);
+typedef void (*DisconnectedCallbackFunction)(uint8_t disconnect_reason, void *user_data);
 
 #define DEVICE_NUM_FUNCTION_IDS 256
 
