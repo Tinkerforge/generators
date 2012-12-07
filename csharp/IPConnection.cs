@@ -544,10 +544,11 @@ namespace Tinkerforge
 		private void HandleResponse(byte[] packet)
 		{
 			byte functionID = GetFunctionIdFromData(packet);
+			byte sequenceNumber = GetSequenceNumberFromData(packet);
 
-			if(functionID == CALLBACK_ENUMERATE)
+			if(sequenceNumber == 0 && functionID == CALLBACK_ENUMERATE)
 			{
-				HandleEnumerate(packet);
+				callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_PACKET, packet));
 				return;
 			}
 
@@ -561,27 +562,26 @@ namespace Tinkerforge
 
 			Device device = devices[uid];
 
-			byte sequenceNumber = GetSequenceNumberFromData(packet);
+			if(sequenceNumber == 0) {
+				Device.MessageCallback callback = device.messageCallbacks[functionID];
 
-			if(functionID == device.expectedResponseFunctionID && sequenceNumber == device.expectedResponseSequenceNumber)
+				if(callback != null)
+				{
+					callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_PACKET, packet));
+				}
+
+				return;
+			}
+
+			if(functionID == device.expectedResponseFunctionID &&
+			   sequenceNumber == device.expectedResponseSequenceNumber)
 			{
 				device.responseQueue.Enqueue(packet);
 				return;
 			}
 
-			Device.MessageCallback callback = device.messageCallbacks[functionID];
-			if(callback != null)
-			{
-				callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_PACKET, packet));
-			}
-
 			// Response seems to be OK, but can't be handled, most likely
 			// a callback without registered function
-		}
-
-		private void HandleEnumerate(byte[] packet)
-		{
-			callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_PACKET, packet));
 		}
 
 		public void Write(byte[] data)
