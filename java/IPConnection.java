@@ -669,13 +669,11 @@ public class IPConnection {
 	}
 
 	private void handleEnumerate(byte[] packet) {
-		synchronized(socketMutex) {
-			if(enumerateListener != null) {
-				try {
-					callbackQueue.put(new IPConnection.CallbackQueueObject(QUEUE_PACKET, packet));
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+		if(enumerateListener != null) {
+			try {
+				callbackQueue.put(new IPConnection.CallbackQueueObject(QUEUE_PACKET, packet));
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
 	}
