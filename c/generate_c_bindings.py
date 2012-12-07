@@ -254,6 +254,18 @@ void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
 void {0}_destroy({1} *{0}) {{
 \tdevice_destroy({0});
 }}
+
+int {0}_get_response_expected({1} *{0}, uint8_t function_id) {{
+\treturn device_get_response_expected({0}, function_id);
+}}
+
+void {0}_set_response_expected({1} *{0}, uint8_t function_id, bool response_expected) {{
+\tdevice_set_response_expected({0}, function_id, response_expected);
+}}
+
+void {0}_set_response_expected_all({1} *{0}, bool response_expected) {{
+\tdevice_set_response_expected_all({0}, response_expected);
+}}
 """
 
     cb_temp = """
@@ -410,7 +422,7 @@ int {0}_{1}({2} *{0}{3}) {{
 
         funcs += func.format(device_name, packet_name, c, d, fid, f, g, h, i, k)
 
-    return funcs + func_version.format(device_name, c)
+    return func_version.format(device_name, c) + funcs
 
 def make_register_callback_func():
     func = """
@@ -540,6 +552,12 @@ void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon);
  * added to the IP connection.
  */
 void {0}_destroy({1} *{0});
+
+int {0}_get_response_expected({1} *{0}, uint8_t function_id);
+
+void {0}_set_response_expected({1} *{0}, uint8_t function_id, bool response_expected);
+
+void {0}_set_response_expected_all({1} *{0}, bool response_expected);
 """
     return create.format(device.get_underscore_name(),
                          device.get_camel_case_name(),
