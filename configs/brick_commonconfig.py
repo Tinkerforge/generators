@@ -6,6 +6,35 @@ common_packets = []
 
 common_packets.append({
 'type': 'function',
+'function_id': 241,
+'name': ('GetProtocol1BrickletName', 'get_protocol1_bricklet_name'), 
+'elements': [('port', 'char', 1, 'in'),
+             ('protocol_version', 'uint8', 1, 'out'),
+             ('firmware_version', 'uint8', 3, 'out'),
+             ('name', 'string', 40, 'out')], 
+'since_firmware': {'dc': [2, 0, 0],
+                   'imu': [2, 0, 0],
+                   'master': [2, 0, 0],
+                   'servo': [2, 0, 0],
+                   'stepper': [2, 0, 0]},
+'doc': ['af', {
+'en':
+"""
+Returns the firmware and protocol version and the name of the Bricklet for a given port.
+
+This functions sole purpose is to allow automatic flashing of v1.x.y Bricklet plugins.
+""",
+'de':
+"""
+Gibt die Firmware und Protokoll Version un den Namen des Bricklets für einen gegebenen Port zurück.
+
+Der einzige Zweck dieser Funktion ist es, automatischen Flashen von Bricklet v1.x.y Plugins zu ermöglichen.
+"""
+}]
+})
+
+common_packets.append({
+'type': 'function',
 'function_id': 242,
 'name': ('GetChipTemperature', 'get_chip_temperature'),
 'elements': [('temperature', 'int16', 1, 'out')],
