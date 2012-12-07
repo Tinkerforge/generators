@@ -979,7 +979,10 @@ static void ipcon_callback_loop(void *opaque) {
 		} else if (kind == QUEUE_KIND_META) {
 			ipcon_dispatch_meta(context->ipcon, (Meta *)data);
 		} else if (kind == QUEUE_KIND_PACKET) {
-			ipcon_dispatch_packet(context->ipcon, (Packet *)data);
+			// don't dispatch callbacks when the receive thread isn't running
+			if (context->ipcon->receive_flag) {
+				ipcon_dispatch_packet(context->ipcon, (Packet *)data);
+			}
 		}
 
 		free(data);
