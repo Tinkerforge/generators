@@ -561,31 +561,6 @@ public class IPConnection {
 		return response_timeout;
 	}
 
-	boolean reconnect() {
-		disconnect();
-
-		while(receiveFlag) {
-			try {
-				socket = new Socket(this.host, this.port);
-				out = socket.getOutputStream();
-				out.flush();
-				in = socket.getInputStream();
-			} catch(java.io.IOException e1) {
-				disconnect();
-				try {
-					Thread.sleep(500);
-				} catch(InterruptedException e2) {
-					e2.printStackTrace();
-				}
-				continue;
-			}
-
-			return true;
-		}
-
-		return false;
-	}
-
 	void handleResponse(byte[] packet) {
 		byte functionID = getFunctionIDFromData(packet);
 		short sequenceNumber = unsignedByte(getSequenceNumberFromData(packet));
