@@ -1005,7 +1005,7 @@ static void ipcon_handle_response(IPConnection *ipcon, Packet *response) {
 
 	if (response->header.sequence_number == 0 &&
 	    response->header.function_id == IPCON_CALLBACK_ENUMERATE) {
-		if (ipcon->registered_callbacks[IPCON_CALLBACK_CONNECTED] != NULL) {
+		if (ipcon->registered_callbacks[IPCON_CALLBACK_ENUMERATE] != NULL) {
 			queue_put(ipcon->callback_queue, QUEUE_KIND_PACKET, response,
 			          response->header.length);
 		}
@@ -1022,17 +1022,19 @@ static void ipcon_handle_response(IPConnection *ipcon, Packet *response) {
 		return;
 	}
 
+	if (response->header.sequence_number == 0) {
+		if (device->registered_callbacks[response->header.function_id] != NULL) {
+			queue_put(ipcon->callback_queue, QUEUE_KIND_PACKET, response,
+			          response->header.length);
+		}
+
+		return;
+	}
+
 	if (device->expected_response_function_id == response->header.function_id &&
 	    device->expected_response_sequence_number == response->header.sequence_number) {
 		memcpy(&device->response_packet, response, response->header.length);
 		event_set(&device->response_event);
-		return;
-	}
-
-	if (response->header.sequence_number == 0 &&
-	    device->registered_callbacks[response->header.function_id] != NULL) {
-		queue_put(ipcon->callback_queue, QUEUE_KIND_PACKET, response,
-		          response->header.length);
 		return;
 	}
 
@@ -1234,7 +1236,7 @@ void ipcon_create(IPConnection *ipcon) {
 	mutex_create(&ipcon->devices_mutex);
 	table_create(&ipcon->devices);
 
-	for (i = 0; i < DEVICE_NUM_FUNCTION_IDS; ++i) {
+	for (i = 0; i < IPCON_NUM_CALLBACK_IDS; ++i) {
 		ipcon->registered_callbacks[i] = NULL;
 		ipcon->registered_callback_user_data[i] = NULL;
 	}

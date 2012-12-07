@@ -256,6 +256,8 @@ enum {
 	IPCON_CONNECTION_STATE_PENDING = 2 // auto-reconnect in progress
 };
 
+#define IPCON_NUM_CALLBACK_IDS 256
+
 struct IPConnection_ {
 #ifdef _WIN32
 	bool wsa_startup_done;
@@ -277,8 +279,8 @@ struct IPConnection_ {
 	Mutex devices_mutex;
 	Table devices;
 
-	void *registered_callbacks[DEVICE_NUM_FUNCTION_IDS];
-	void *registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS];
+	void *registered_callbacks[IPCON_NUM_CALLBACK_IDS];
+	void *registered_callback_user_data[IPCON_NUM_CALLBACK_IDS];
 
 	Mutex socket_mutex;
 	Socket *socket;
