@@ -819,21 +819,14 @@ int device_send_request(Device *device, Packet *request) {
 		event_reset(&device->response_event);
 
 		if (ret == E_OK) {
-			switch (device->response_packet.header.error_code) {
-			case 1:
+			if (device->response_packet.header.error_code == 0) {
+				// no error
+			} else if (device->response_packet.header.error_code == 1) {
 				ret = E_INVALID_PARAMETER;
-				break;
-
-			case 2:
+			} else if (device->response_packet.header.error_code == 2) {
 				ret = E_NOT_SUPPORTED;
-				break;
-
-			case 3:
+			} else {
 				ret = E_UNKNOWN_ERROR_CODE;
-				break;
-
-			default:
-				break;
 			}
 		}
 	}
@@ -1197,6 +1190,7 @@ static int ipcon_connect_unlocked(IPConnection *ipcon, bool is_auto_reconnect) {
 		return E_NO_THREAD;
 	}
 
+	// trigger connected callback
 	if (is_auto_reconnect) {
 		connect_reason = IPCON_CONNECT_REASON_AUTO_RECONNECT;
 	} else {
@@ -1229,7 +1223,7 @@ void ipcon_create(IPConnection *ipcon) {
 
 	ipcon->auto_reconnect = true;
 	ipcon->auto_reconnect_allowed = false;
-	ipcon->auto_reconnect_pending = true;
+	ipcon->auto_reconnect_pending = false;
 
 	mutex_create(&ipcon->sequence_number_mutex);
 	ipcon->next_sequence_number = 0;
