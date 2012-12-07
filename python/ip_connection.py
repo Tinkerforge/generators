@@ -657,23 +657,28 @@ class IPConnection:
     def handle_response(self, packet):
         function_id = get_function_id_from_data(packet)
         sequence_number = get_sequence_number_from_data(packet)
-        if function_id == IPConnection.CALLBACK_ENUMERATE and sequence_number == 0:
-            self.handle_enumerate(packet)
+
+        if sequence_number == 0 and function_id == IPConnection.CALLBACK_ENUMERATE:
+            if IPConnection.CALLBACK_ENUMERATE in self.registered_callbacks:
+                self.callback_queue.put((IPConnection.QUEUE_PACKET, packet))
             return
 
         uid = get_uid_from_data(packet)
+
         if not uid in self.devices:
             # Response from an unknown device, ignoring it
             return
 
         device = self.devices[uid]
+
+        if sequence_number == 0:
+            if function_id in device.registered_callbacks:
+                self.callback_queue.put((IPConnection.QUEUE_PACKET, packet))
+            return
+
         if device.expected_response_function_id == function_id and \
            device.expected_response_sequence_number == sequence_number:
             device.response_queue.put(packet)
-            return
-
-        if function_id in device.registered_callbacks and sequence_number == 0:
-            self.callback_queue.put((IPConnection.QUEUE_PACKET, packet))
             return
 
         # Response seems to be OK, but can't be handled, most likely
@@ -704,10 +709,6 @@ class IPConnection:
                             sequence_number_and_options, 0),
                 bool(r_bit),
                 sequence_number)
-
-    def handle_enumerate(self, packet):
-        if IPConnection.CALLBACK_ENUMERATE in self.registered_callbacks:
-            self.callback_queue.put((IPConnection.QUEUE_PACKET, packet))
 
     def write_bricklet_plugin(self, device, port, position, plugin_chunk):
         self.send_request(device,
