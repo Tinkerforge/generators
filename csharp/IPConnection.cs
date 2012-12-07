@@ -778,6 +778,7 @@ namespace Tinkerforge
 				if (!responseQueue.TryDequeue(out response, ipcon.responseTimeout))
 				{
 					expectedResponseFunctionID = 0;
+					expectedResponseSequenceNumber = 0;
 					throw new TimeoutException("Did not receive response in time");
 				}
 
