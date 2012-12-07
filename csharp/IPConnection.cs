@@ -77,7 +77,6 @@ namespace Tinkerforge
 		Thread receiveThread;
 		Thread callbackThread;
 		bool receiveFlag = true;
-		bool callbackThreadFlag = true;
 		internal Dictionary<long, Device> devices = new Dictionary<long, Device>();
 		BlockingQueue<CallbackQueueObject> callbackQueue = null;
 
@@ -383,7 +382,7 @@ namespace Tinkerforge
 
 		private void CallbackLoop()
 		{
-			while(callbackThreadFlag)
+			while(true)
 			{
 				CallbackQueueObject cqo;
 				if(!callbackQueue.TryDequeue(out cqo, Timeout.Infinite))
@@ -474,8 +473,9 @@ namespace Tinkerforge
 
 
 					case IPConnection.QUEUE_PACKET:
-						if (!callbackThreadFlag) {
-							return;
+						if (!receiveFlag) {
+							// don't dispatch callbacks when the receive thread isn't running
+							continue;
 						}
 
 						if(fid == CALLBACK_ENUMERATE)
