@@ -67,9 +67,13 @@ typedef struct {
 #endif
 } Mutex;
 
+#ifdef IPCON_EXPOSE_INTERNALS
+
 void mutex_lock(Mutex *mutex);
 
 void mutex_unlock(Mutex *mutex);
+
+#endif
 
 typedef struct {
 #ifdef _WIN32
@@ -160,6 +164,71 @@ typedef struct {
 typedef struct IPConnection_ IPConnection;
 typedef struct Device_ Device;
 
+typedef void (*EnumerateCallbackFunction)(const char *uid,
+                                          const char *connected_uid,
+                                          char position,
+                                          uint8_t hardware_version[3],
+                                          uint8_t firmware_version[3],
+                                          uint16_t device_identifier,
+                                          uint8_t enumeration_type,
+                                          void *user_data);
+typedef void (*ConnectedCallbackFunction)(int connect_reason, void *user_data);
+typedef void (*DisconnectedCallbackFunction)(int disconnect_reason, void *user_data);
+
+#define DEVICE_NUM_FUNCTION_IDS 256
+
+struct Device_ {
+	uint32_t uid;
+
+	IPConnection *ipcon;
+
+	uint8_t api_version[3];
+
+	Mutex request_mutex;
+
+	uint8_t expected_response_function_id;
+	uint8_t expected_response_sequence_number;
+	Packet response_packet;
+	Event response_event;
+	int response_expected[DEVICE_NUM_FUNCTION_IDS];
+
+	void *registered_callbacks[DEVICE_NUM_FUNCTION_IDS];
+	void *registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS];
+	void *callback_wrappers[DEVICE_NUM_FUNCTION_IDS];
+};
+
+#ifdef IPCON_EXPOSE_INTERNALS
+
+// internal
+enum {
+	DEVICE_RESPONSE_EXPECTED_INVALID_FUNCTION_ID = 0,
+	DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE, // getter
+	DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE, // callback
+	DEVICE_RESPONSE_EXPECTED_TRUE, // setter
+	DEVICE_RESPONSE_EXPECTED_FALSE // setter, default
+};
+
+// internal
+void device_create(Device *device, const char *uid, IPConnection *ipcon);
+
+// internal
+void device_destroy(Device *device);
+
+// internal
+int device_get_response_expected(Device *device, uint8_t function_id);
+
+// internal
+void device_set_response_expected(Device *device, uint8_t function_id,
+                                  bool response_expected);
+
+// internal
+void device_set_response_expected_all(Device *device, bool response_expected);
+
+// internal
+int device_send_request(Device *device, Packet *request);
+
+#endif
+
 // enumeration_type parameter of the EnumerateCallback
 enum {
 	IPCON_ENUMERATION_TYPE_AVAILABLE = 0,
@@ -186,67 +255,6 @@ enum {
 	IPCON_CONNECTION_STATE_CONNECTED = 1,
 	IPCON_CONNECTION_STATE_PENDING = 2 // auto-reconnect in progress
 };
-
-typedef void (*EnumerateCallbackFunction)(const char *uid,
-                                          const char *connected_uid,
-                                          char position,
-                                          uint8_t hardware_version[3],
-                                          uint8_t firmware_version[3],
-                                          uint16_t device_identifier,
-                                          uint8_t enumeration_type,
-                                          void *user_data);
-typedef void (*ConnectedCallbackFunction)(int connect_reason, void *user_data);
-typedef void (*DisconnectedCallbackFunction)(int disconnect_reason, void *user_data);
-
-#define DEVICE_NUM_FUNCTION_IDS 256
-
-// internal
-enum {
-	DEVICE_RESPONSE_EXPECTED_INVALID_FUNCTION_ID = 0,
-	DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE, // getter
-	DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE, // callback
-	DEVICE_RESPONSE_EXPECTED_TRUE, // setter
-	DEVICE_RESPONSE_EXPECTED_FALSE // setter, default
-};
-
-struct Device_ {
-	uint32_t uid;
-
-	IPConnection *ipcon;
-
-	uint8_t api_version[3];
-
-	Mutex request_mutex;
-
-	uint8_t expected_response_function_id;
-	uint8_t expected_response_sequence_number;
-	Packet response_packet;
-	Event response_event;
-	int response_expected[DEVICE_NUM_FUNCTION_IDS];
-
-	void *registered_callbacks[DEVICE_NUM_FUNCTION_IDS];
-	void *registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS];
-	void *callback_wrappers[DEVICE_NUM_FUNCTION_IDS];
-};
-
-// internal
-void device_create(Device *device, const char *uid, IPConnection *ipcon);
-
-// internal
-void device_destroy(Device *device);
-
-// internal
-void device_set_response_expected(Device *device, uint8_t function_id,
-                                  bool response_expected);
-
-// internal
-int device_get_response_expected(Device *device, uint8_t function_id);
-
-// internal
-void device_set_response_expected_all(Device *device, bool response_expected);
-
-// internal
-int device_send_request(Device *device, Packet *request);
 
 struct IPConnection_ {
 #ifdef _WIN32
@@ -341,15 +349,19 @@ uint32_t ipcon_get_timeout(IPConnection *ipcon); // in msec
  */
 int ipcon_enumerate(IPConnection *ipcon);
 
-#define IPCON_FUNCTION_ENUMERATE 254
-#define IPCON_CALLBACK_ENUMERATE 253
+enum {
+	IPCON_FUNCTION_ENUMERATE = 254,
+	IPCON_CALLBACK_ENUMERATE = 253,
 
-#define IPCON_CALLBACK_CONNECTED 0
-#define IPCON_CALLBACK_DISCONNECTED 1
-#define IPCON_CALLBACK_AUTHENTICATION_ERROR 2
+	IPCON_CALLBACK_CONNECTED = 0,
+	IPCON_CALLBACK_DISCONNECTED = 1,
+	IPCON_CALLBACK_AUTHENTICATION_ERROR = 2
+};
 
 void ipcon_register_callback(IPConnection *ipcon, uint8_t id,
                              void *callback, void *user_data);
+
+#ifdef IPCON_EXPOSE_INTERNALS
 
 // internal
 void packet_header_create(PacketHeader *header, uint8_t length,
@@ -373,5 +385,7 @@ uint32_t leconvert_uint32_from(uint32_t little);
 int64_t leconvert_int64_from(int64_t little);
 uint64_t leconvert_uint64_from(uint64_t little);
 float leconvert_float_from(float little);
+
+#endif
 
 #endif

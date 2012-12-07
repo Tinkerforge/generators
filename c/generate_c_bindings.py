@@ -115,6 +115,9 @@ def get_c_type(py_type):
 
 def make_include_c():
     include = """{0}
+
+#define IPCON_EXPOSE_INTERNALS
+
 #include "{1}_{2}.h"
 
 #include <string.h>

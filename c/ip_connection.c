@@ -10,6 +10,8 @@
 	#define _BSD_SOURCE // for usleep from unistd.h
 #endif
 
+#define IPCON_EXPOSE_INTERNALS
+
 #include "ip_connection.h"
 
 #include <errno.h>
@@ -749,16 +751,6 @@ void device_destroy(Device *device) {
 	mutex_destroy(&device->request_mutex);
 }
 
-void device_set_response_expected(Device *device, uint8_t function_id, bool response_expected) {
-	if (device->response_expected[function_id] != DEVICE_RESPONSE_EXPECTED_TRUE &&
-	    device->response_expected[function_id] != DEVICE_RESPONSE_EXPECTED_FALSE) {
-		return;
-	}
-
-	device->response_expected[function_id] = response_expected ? DEVICE_RESPONSE_EXPECTED_TRUE
-	                                                           : DEVICE_RESPONSE_EXPECTED_FALSE;
-}
-
 int device_get_response_expected(Device *device, uint8_t function_id) {
 	if (device->response_expected[function_id] == DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE ||
 	    device->response_expected[function_id] == DEVICE_RESPONSE_EXPECTED_TRUE) {
@@ -769,6 +761,16 @@ int device_get_response_expected(Device *device, uint8_t function_id) {
 	} else {
 		return -1;
 	}
+}
+
+void device_set_response_expected(Device *device, uint8_t function_id, bool response_expected) {
+	if (device->response_expected[function_id] != DEVICE_RESPONSE_EXPECTED_TRUE &&
+	    device->response_expected[function_id] != DEVICE_RESPONSE_EXPECTED_FALSE) {
+		return;
+	}
+
+	device->response_expected[function_id] = response_expected ? DEVICE_RESPONSE_EXPECTED_TRUE
+	                                                           : DEVICE_RESPONSE_EXPECTED_FALSE;
 }
 
 void device_set_response_expected_all(Device *device, bool response_expected) {
