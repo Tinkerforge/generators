@@ -130,6 +130,25 @@ def make_initialize_method():
 """
     return dev_init.format(*device.get_api_version())
 
+def make_response_expected():
+    response_expected = ''
+
+    for packet in device.get_packets():
+        if packet.get_type() == 'callback':
+            prefix = 'CALLBACK'
+            flag = 'RESPONSE_EXPECTED_ALWAYS_FALSE'
+        elif len(packet.get_elements('out')) > 0:
+            prefix = 'FUNCTION'
+            flag = 'RESPONSE_EXPECTED_ALWAYS_TRUE'
+        else:
+            prefix = 'FUNCTION'
+            flag = 'RESPONSE_EXPECTED_FALSE'
+
+        response_expected += '      @response_expected[{0}_{1}] = {2}\n' \
+            .format(prefix, packet.get_upper_case_name(), flag)
+
+    return response_expected + '\n'
+
 def make_callback_formats():
     cbs = ''
     cb = "      @callback_formats[CALLBACK_{0}] = '{1}'\n"
@@ -218,10 +237,10 @@ end
 """
 
     return """
-    # Registers a callback with ID <tt>cb</tt> to the block <tt>block</tt>.
-    def register_callback(cb, &block)
+    # Registers a callback with ID <tt>id</tt> to the block <tt>block</tt>.
+    def register_callback(id, &block)
       callback = block
-      @registered_callbacks[cb] = callback
+      @registered_callbacks[id] = callback
     end
   end
 end
@@ -232,15 +251,16 @@ def make_files(com_new, directory):
     device = common.Device(com_new)
     file_name = '{0}_{1}'.format(device.get_category().lower(), device.get_underscore_name())
     directory += '/bindings'
-    py = file('{0}/{1}.rb'.format(directory, file_name), "w")
-    py.write(make_header())
-    py.write(make_class())
-    py.write(make_callback_id_definitions())
-    py.write(make_function_id_definitions())
-    py.write(make_initialize_method())
-    py.write(make_callback_formats())
-    py.write(make_methods())
-    py.write(make_register_callback_method())
+    rb = file('{0}/{1}.rb'.format(directory, file_name), "w")
+    rb.write(make_header())
+    rb.write(make_class())
+    rb.write(make_callback_id_definitions())
+    rb.write(make_function_id_definitions())
+    rb.write(make_initialize_method())
+    rb.write(make_response_expected())
+    rb.write(make_callback_formats())
+    rb.write(make_methods())
+    rb.write(make_register_callback_method())
 
 if __name__ == "__main__":
     common.generate(os.getcwd(), lang, make_files, common.prepare_bindings, False)

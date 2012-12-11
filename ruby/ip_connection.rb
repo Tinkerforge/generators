@@ -36,6 +36,9 @@ module Tinkerforge
   class TimeoutException < RuntimeError
   end
 
+  class NotSupportedException < RuntimeError
+  end
+
   def pack(unpacked, format)
     data = ''
     format.split(' ').each do |f|
@@ -144,35 +147,66 @@ module Tinkerforge
     unpacked
   end
 
+  def get_uid_from_data(data)
+    data[0, 4].unpack('L<')[0]
+  end
+
+  def get_length_from_data(data)
+    data[4, 1].unpack('C<')[0]
+  end
+
+  def get_function_id_from_data(data)
+    data[5, 1].unpack('C<')[0]
+  end
+
+  def get_sequence_number_from_data(data)
+    (data[6, 1].unpack('C<')[0] >> 4) & 0x0F
+  end
+
+  def get_error_code_from_data(data)
+    (data[7, 1].unpack('C<')[0] >> 6) & 0x03
+  end
+
   class Device
-    RESPONSE_TIMEOUT = 2.5
+    RESPONSE_EXPECTED_INVALID_FUNCTION_ID = 0
+    RESPONSE_EXPECTED_ALWAYS_TRUE = 1 # getter
+    RESPONSE_EXPECTED_ALWAYS_FALSE = 2 # callback
+    RESPONSE_EXPECTED_TRUE = 3 # setter
+    RESPONSE_EXPECTED_FALSE = 4 # setter, default
 
     attr_accessor :uid
-    attr_accessor :stack_id
-    attr_accessor :expected_name
-    attr_accessor :name
-    attr_accessor :firmware_version
-    attr_accessor :ipcon
     attr_accessor :expected_response_function_id
-    attr_accessor :expected_response_length
+    attr_accessor :expected_response_sequence_number
     attr_accessor :callback_formats
     attr_accessor :registered_callbacks
 
-    def initialize(uid)
+    def initialize(uid, ipcon)
       @uid = Base58.decode uid
-      @stack_id = 0
-      @expected_name = ''
-      @name = ''
 
-      @firmware_version = [0, 0, 0]
-      @binding_version = [0, 0, 0]
+      if @uid > 0xFFFFFFFF
+        # convert from 64bit to 32bit
+        value1 = @uid & 0xFFFFFFFF
+        value2 = (@uid >> 32) & 0xFFFFFFFF
 
-      @ipcon = nil
+        @uid  = (value1 & 0x3F000000) << 2
+        @uid |= (value1 & 0x000F0000) << 6
+        @uid |= (value1 & 0x0000003F) << 16
+        @uid |= (value2 & 0x0F000000) >> 12
+        @uid |= (value2 & 0x00000FFF)
+      end
+
+      @api_version = [0, 0, 0]
+
+      @ipcon = ipcon
 
       @request_mutex = Mutex.new
 
+      @response_expected = Array.new(256, RESPONSE_EXPECTED_INVALID_FUNCTION_ID)
+      @response_expected[IPConnection::FUNCTION_ENUMERATE] = RESPONSE_EXPECTED_FALSE
+      @response_expected[IPConnection::CALLBACK_ENUMERATE] = RESPONSE_EXPECTED_ALWAYS_FALSE
+
       @expected_response_function_id = 0
-      @expected_response_length = 0
+      @expected_response_sequence_number = 0
 
       @response_mutex = Mutex.new
       @response_condition = ConditionVariable.new
@@ -180,40 +214,116 @@ module Tinkerforge
 
       @callback_formats = {}
       @registered_callbacks = {}
+
+      @ipcon.devices[@uid] = self # FIXME: should use a weakref here
+    end
+
+    def get_response_expected(function_id)
+      if function_id < 0 or function_id > 255
+        raise ArgumentError, "Invalid function ID #{function_id}"
+      end
+
+      if @response_expected[function_id] == RESPONSE_EXPECTED_ALWAYS_TRUE or \
+         @response_expected[function_id] == RESPONSE_EXPECTED_TRUE
+        true
+      elsif @response_expected[function_id] == RESPONSE_EXPECTED_ALWAYS_FALSE or \
+            @response_expected[function_id] == RESPONSE_EXPECTED_FALSE
+        false
+      else
+        raise ArgumentError, "Invalid function ID #{function_id}"
+      end
+    end
+
+    def set_response_expected(function_id, response_expected)
+      if function_id < 0 or function_id > 255
+        raise ArgumentError, "Invalid function ID #{function_id}"
+      end
+
+      if @response_expected[function_id] == RESPONSE_EXPECTED_TRUE or \
+         @response_expected[function_id] == RESPONSE_EXPECTED_FALSE
+        if response_expected
+          @response_expected[function_id] = RESPONSE_EXPECTED_TRUE
+        else
+          @response_expected[function_id] = RESPONSE_EXPECTED_FALSE
+        end
+      elsif @response_expected[function_id] == RESPONSE_EXPECTED_ALWAYS_TRUE or \
+            @response_expected[function_id] == RESPONSE_EXPECTED_ALWAYS_FALSE
+        raise ArgumentError, "Response Expected flag cannot be changed for function ID #{function_id}"
+      else
+        raise ArgumentError, "Invalid function ID #{function_id}"
+      end
+    end
+
+    def set_response_expected_all(response_expected)
+      for function_id in 0..255
+        if @response_expected[function_id] == RESPONSE_EXPECTED_TRUE or \
+           @response_expected[function_id] == RESPONSE_EXPECTED_FALSE
+          if response_expected
+            @response_expected[function_id] = RESPONSE_EXPECTED_TRUE
+          else
+            @response_expected[function_id] = RESPONSE_EXPECTED_FALSE
+          end
+        end
+      end
+    end
+
+    def get_api_version
+      @api_version
     end
 
     def send_request(function_id, request_data, request_format,
                      response_length, response_format)
-      if @ipcon == nil
-        raise Exception, 'Not added to IPConnection'
-      end
-
-      payload = ''
       response = nil
 
-      if request_data.length > 0
-        payload = pack request_data, request_format
-      end
-
-      request = pack([@stack_id, function_id, 4 + payload.length], 'C C S') + payload
-
       @request_mutex.synchronize {
-        if response_length > 0
-          @expected_response_function_id = function_id
-          @expected_response_length = 4 + response_length
-        else
-          @expected_response_function_id = 0
-          @expected_response_length = 0
-        end
+        response_expected = false
 
-        @ipcon.send request
+        @ipcon.socket_mutex.synchronize {
+          if @ipcon.socket == nil
+            raise Exception, 'Not connected'
+          end
 
-        if response_length > 0
+          if request_data.length > 0
+            payload = pack request_data, request_format
+          else
+            payload = ''
+          end
+
+          header, response_expected, sequence_number = \
+            @ipcon.create_packet_header self, 8 + payload.length, function_id
+          request = header + payload
+
+          if response_expected
+            @expected_response_function_id = function_id
+            @expected_response_sequence_number = sequence_number
+          end
+
+          @ipcon.socket.send request, 0
+        }
+
+        if response_expected
           packet = dequeue_response
-          response = unpack packet[4..-1], response_format
+          error_code = get_error_code_from_data(packet)
 
-          if response.length == 1
-            response = response[0]
+          @expected_response_function_id = 0
+          @expected_response_sequence_number = 0
+
+          if error_code == 0
+            # no error
+          elsif error_code == 1
+            raise NotSupportedException, "Got invalid parameter for function #{function_id}"
+          elsif error_code == 2
+            raise NotSupportedException, "Function #{function_id} is not supported"
+          else
+            raise NotSupportedException, "Function #{function_id} returned an unknown error"
+          end
+
+          if response_length > 0
+            response = unpack packet[8..-1], response_format
+
+            if response.length == 1
+              response = response[0]
+            end
           end
         end
       }
@@ -232,10 +342,12 @@ module Tinkerforge
       response = nil
 
       @response_mutex.synchronize {
-        @response_condition.wait @response_mutex, RESPONSE_TIMEOUT
+        @response_condition.wait @response_mutex, @ipcon.timeout
+
         if @response_queue.empty?
           raise TimeoutException, message
         end
+
         response = @response_queue.pop
       }
 
@@ -244,80 +356,158 @@ module Tinkerforge
   end
 
   class IPConnection
-    BROADCAST_ADDRESS = 0
+    attr_accessor :socket
+    attr_accessor :socket_mutex
+    attr_accessor :devices
+    attr_accessor :timeout
 
-    FUNCTION_GET_STACK_ID = 255
     FUNCTION_ENUMERATE = 254
-    FUNCTION_ENUMERATE_CALLBACK = 253
+    CALLBACK_ENUMERATE = 253
+
+    CALLBACK_CONNECTED = 0
+    CALLBACK_DISCONNECTED = 1
+    CALLBACK_AUTHENTICATION_ERROR = 2
+
+    # enumeration_type parameter for CALLBACK_ENUMERATE
+    ENUMERATION_TYPE_AVAILABLE = 0
+    ENUMERATION_TYPE_CONNECTED = 1
+    ENUMERATION_TYPE_DISCONNECTED = 2
+
+    # connect_reason parameter for CALLBACK_CONNECTED
+    CONNECT_REASON_REQUEST = 0,
+    CONNECT_REASON_AUTO_RECONNECT = 1
+
+    # disconnect_reason parameter for CALLBACK_DISCONNECTED
+    DISCONNECT_REASON_REQUEST = 0
+    DISCONNECT_REASON_ERROR = 1
+    DISCONNECT_REASON_SHUTDOWN = 2
+
+    # returned by get_connection_state
+    CONNECTION_STATE_DISCONNECTED = 0
+    CONNECTION_STATE_CONNECTED = 1
+    CONNECTION_STATE_PENDING = 2 # auto-reconnect in progress
 
     # Creates an IP connection to the Brick Daemon with the given *host*
     # and *port*. With the IP connection itself it is possible to enumerate the
     # available devices. Other then that it is only used to add Bricks and
     # Bricklets to the connection.
-    def initialize(host, port)
-      @socket = TCPSocket.new host, port
+    def initialize
+      @host = nil
+      @port = 0
+
+      @timeout = 2500
+
+      @auto_reconnect = true
+      @auto_reconnect_allowed = false
+      @auto_reconnect_pending = false
+
+      @next_sequence_number = 0
 
       @devices = {}
-      @pending_add_device = nil
-      @add_device_mutex = Mutex.new
 
-      @enumerate_callback = nil
-      @callback_queue = Queue.new
+      @registered_callbacks = {}
 
-      @thread_receive_flag = true
-      @thread_callback_flag = true
-      @thread_receive = Thread.new { receive_loop }
-      @thread_callback = Thread.new { callback_loop }
+      @socket_mutex = Mutex.new
+      @socket = nil
+
+      @receive_flag = false
+      @receive_thread = nil
+
+      @callback_queue = nil
+      @callback_thread = nil
     end
 
-    # Adds a device (Brick or Bricklet) to the IP connection. Every device
-    # has to be added to an IP connection before it can be used. Examples for
-    # this can be found in the API documentation for every Brick and Bricklet.
-    def add_device(device)
-      @add_device_mutex.synchronize {
-        begin
-          @pending_add_device = device
-          request = pack [BROADCAST_ADDRESS, FUNCTION_GET_STACK_ID, 4 + 8, device.uid], 'C C S Q'
-
-          send request
-          device.dequeue_response "Could not add device #{Base58.encode(device.uid)}, timeout"
-
-          device.ipcon = self
-        ensure
-          @pending_add_device = nil
+    def connect(host, port)
+      @socket_mutex.synchronize {
+        if @socket != nil
+          raise Exception, 'Already connected'
         end
+
+        @host = host
+        @port = port
+
+        connect_unlocked false
       }
     end
 
-    # Joins the threads of the IP connection. The call will block until the
-    # IP connection is destroyed: IPConnection#destroy.
-    #
-    # This makes sense if you relies solely on callbacks for events or if
-    # the IP connection was created in a threads.
-    def join_thread
-      @thread_callback.join
-      @thread_receive.join
+    def disconnect
+      callback_queue = nil
+      callback_thread = nil
+
+      @socket_mutex.synchronize {
+        @auto_reconnect_allowed = false
+
+        if @auto_reconnect_pending
+          # Abort pending auto reconnect
+          @auto_reconnect_pending = false
+        else
+          if @socket == nil
+            raise Exception, 'Not connected'
+          end
+
+          # Destroy receive thread
+          @receive_flag = false
+
+          @socket.shutdown(Socket::SHUT_RDWR)
+
+          if Thread.current != @receive_thread
+            @receive_thread.join
+          end
+
+          @receive_thread = nil
+
+          # Destroy socket
+          @socket.close
+          @socket = nil
+        end
+
+        # Destroy callback thread
+        callback_queue = @callback_queue
+        callback_thread = @callback_thread
+
+        @callback_queue = nil
+        @callback_thread = nil
+      }
+
+      # Do this outside of socket_mutex to allow calling (dis-)connect from
+      # the callbacks while blocking on the join call here
+      callback_queue.push [QUEUE_KIND_META, [CALLBACK_DISCONNECTED, DISCONNECT_REASON_REQUEST]]
+      callback_queue.push [QUEUE_KIND_EXIT, nil]
+
+      if Thread.current != callback_thread
+        callback_thread.join
+      end
     end
 
-    # Destroys the IP connection. The socket to the Brick Daemon will be closed
-    # and the threads of the IP connection terminated.
-    def destroy
-      # End callback thread
-      @thread_callback_flag = false
-      @callback_queue.push nil # Unblock callback_loop
-
-      if Thread.current != @thread_callback
-        @thread_callback.join
+    def get_connection_state
+      if @socket != nil
+        CONNECTION_STATE_CONNECTED
+      elsif @auto_reconnect_pending
+        CONNECTION_STATE_PENDING
+      else
+        CONNECTION_STATE_DISCONNECTED
       end
+    end
 
-      # End receive thread
-      @thread_receive_flag = false
-      @socket.shutdown(Socket::SHUT_RDWR)
-      @socket.close
+    def set_auto_reconnect(auto_reconnect)
+      @auto_reconnect = auto_reconnect
 
-      if Thread.current != @thread_receive
-        @thread_receive.join
+      if not @auto_reconnect
+        # Abort potentially pending auto reconnect
+        @auto_reconnect_allowed = false
       end
+    end
+
+    def get_auto_reconnect
+      @auto_reconnect
+    end
+
+    def set_timeout(timeout)
+      @timeout = timeout
+    end
+
+    def get_timeout
+      @timeout
     end
 
     # This method registers a callback that receives four parameters:
@@ -335,21 +525,96 @@ module Tinkerforge
     #
     # It should be possible to implement "plug 'n play" functionality with this
     # (as is done in Brick Viewer).
-    def enumerate(&block)
-      @enumerate_callback = block
+    def enumerate
+      @socket_mutex.synchronize {
+        if @socket == nil
+          raise Exception, 'Not connected'
+        end
 
-      send pack([BROADCAST_ADDRESS, FUNCTION_ENUMERATE, 4], 'C C S')
+        request, _, _ = create_packet_header nil, 8, FUNCTION_ENUMERATE
+
+        @socket.send request, 0
+      }
     end
 
-    def send(request)
-      @socket.send request, 0
+    # Registers a callback with ID <tt>id</tt> to the block <tt>block</tt>.
+    def register_callback(id, &block)
+      callback = block
+      @registered_callbacks[id] = callback
+    end
+
+    def get_next_sequence_number
+      # NOTE: Assumes that the socket mutex is locked
+      sequence_number = @next_sequence_number
+      @next_sequence_number = (@next_sequence_number + 1) % 15
+
+      sequence_number + 1
+    end
+
+    def create_packet_header(device, length, function_id)
+      uid = 0
+      sequence_number = get_next_sequence_number
+      response_expected = false
+      r_bit = 0
+
+      if device != nil
+        uid = device.uid
+        response_expected = device.get_response_expected function_id
+      end
+
+      if response_expected
+        r_bit = 1
+      end
+
+      sequence_number_and_options = (sequence_number << 4) | (r_bit << 3)
+      header = pack [uid, length, function_id, sequence_number_and_options, 0], 'L C C C C'
+
+      [header, response_expected, sequence_number]
     end
 
     private
+
+    QUEUE_KIND_EXIT = 0
+    QUEUE_KIND_META = 1
+    QUEUE_KIND_PACKET = 2
+
+    def connect_unlocked(is_auto_reconnect)
+      # NOTE: Assumes that the socket mutex is locked
+
+      # Create callback queue and thread
+      if @callback_thread == nil
+        @callback_queue = Queue.new
+        @callback_thread = Thread.new(@callback_queue) do |queue|
+          callback_loop queue
+        end
+        @callback_thread.abort_on_exception = true
+      end
+
+      # Create socket
+      @socket = TCPSocket.new @host, @port
+
+      # Create receive thread
+      @receive_flag = true
+      @receive_thread = Thread.new { receive_loop }
+      @receive_thread.abort_on_exception = true
+
+      # Trigger connected callback
+      if is_auto_reconnect
+        connect_reason = CONNECT_REASON_AUTO_RECONNECT
+      else
+        connect_reason = CONNECT_REASON_REQUEST
+      end
+
+      @auto_reconnect_allowed = false;
+      @auto_reconnect_pending = false;
+
+      @callback_queue.push [QUEUE_KIND_META, [CALLBACK_CONNECTED, connect_reason]]
+    end
+
     def receive_loop
       pending_data = ''
 
-      while @thread_receive_flag
+      while @receive_flag
         begin
           result = IO.select [@socket], [], [], 1
         rescue IOError
@@ -363,13 +628,17 @@ module Tinkerforge
         begin
           data = @socket.recv 8192
         rescue IOError
+          @auto_reconnect_allowed = true
+          @receive_flag = false
+          @callback_queue.push [QUEUE_KIND_META, [CALLBACK_DISCONNECTED, DISCONNECT_REASON_ERROR]]
           break
         end
 
         if data.length == 0
-          if @thread_receive_flag
-            $stderr.puts 'Socket disconnected by Server, destroying IPConnection'
-            destroy
+          if @receive_flag
+            @auto_reconnect_allowed = true
+            @receive_flag = false
+            @callback_queue.push [QUEUE_KIND_META, [CALLBACK_DISCONNECTED, DISCONNECT_REASON_SHUTDOWN]]
           end
           break
         end
@@ -377,7 +646,7 @@ module Tinkerforge
         pending_data += data
 
         while true
-          if pending_data.length < 4
+          if pending_data.length < 8
             # Wait for complete header
             break
           end
@@ -391,121 +660,125 @@ module Tinkerforge
 
           packet = pending_data[0, length]
           pending_data = pending_data[length..-1]
+
           handle_response packet
         end
       end
     end
 
-    def callback_loop
-      while @thread_callback_flag
-        packet = @callback_queue.pop
+    def dispatch_meta(function_id, parameter)
+      if function_id == CALLBACK_CONNECTED
+        if @registered_callbacks.has_key? CALLBACK_CONNECTED
+          @registered_callbacks[CALLBACK_CONNECTED].call parameter
+        end
+      elsif function_id == CALLBACK_DISCONNECTED
+        # need to do this here, the receive_loop is not allowed to
+        # hold the socket_lock because this could cause a deadlock
+        # with a concurrent call to the (dis-)connect function
+        @socket_mutex.synchronize {
+          if @socket != nil
+            @socket.close
+            @socket = nil
+          end
+        }
 
-        if packet == nil
-          next
+        # FIXME: wait a moment here, otherwise the next connect
+        # attempt will succeed, even if there is no open server
+        # socket. the first receive will then fail directly
+        sleep 0.1
+
+        if @registered_callbacks.has_key? CALLBACK_DISCONNECTED
+          @registered_callbacks[CALLBACK_DISCONNECTED].call parameter
         end
 
-        stack_id = get_stack_id_from_data packet
-        function_id = get_function_id_from_data packet
+        if parameter != DISCONNECT_REASON_REQUEST and @auto_reconnect and @auto_reconnect_allowed
+          @auto_reconnect_pending = true
+          retry_connect = true
 
-        if function_id == FUNCTION_ENUMERATE_CALLBACK
-          payload = unpack packet[4..-1], 'Q Z40 C ?'
+          # block here until reconnect. this is okay, there is no
+          # callback to deliver when there is no connection
+          while retry_connect
+            retry_connect = false
 
-          uid = Base58::encode(payload[0])
-          name = payload[1]
-          stack_id = payload[2]
-          is_new = payload[3]
+            @socket_mutex.synchronize {
+              if @auto_reconnect_allowed and @socket == nil
+                begin
+                  connect_unlocked true
+                rescue
+                  retry_connect = true
+                end
+              else
+                @auto_reconnect_pending = false
+              end
+            }
 
-          @enumerate_callback.call uid, name, stack_id, is_new
-        else
-          device = @devices[stack_id]
-
-          if device.registered_callbacks.has_key? function_id
-            payload = unpack packet[4..-1], device.callback_formats[function_id]
-            device.registered_callbacks[function_id].call(*payload)
+            if retry_connect
+              sleep 0.1
+            end
           end
         end
       end
     end
 
-    def get_stack_id_from_data data
-      data[0, 1].ord
+    def dispatch_packet(packet)
+      uid = get_uid_from_data packet
+      length = get_length_from_data packet
+      function_id = get_function_id_from_data packet
+
+      if function_id == CALLBACK_ENUMERATE and \
+         @registered_callbacks.has_key? CALLBACK_ENUMERATE
+        payload = unpack packet[8..-1], 'Z8 Z8 k C3 C3 S C'
+        @registered_callbacks[CALLBACK_ENUMERATE].call(*payload)
+      elsif @devices.has_key? uid
+        device = @devices[uid]
+
+        if device.registered_callbacks.has_key? function_id
+          payload = unpack packet[8..-1], device.callback_formats[function_id]
+          device.registered_callbacks[function_id].call(*payload)
+        end
+      end
     end
 
-    def get_function_id_from_data data
-      data[1, 1].ord
-    end
+    def callback_loop(callback_queue)
+      while true
+        kind, data = callback_queue.pop
 
-    def get_length_from_data data
-      data[2, 2].unpack('S<')[0]
+        if kind == QUEUE_KIND_EXIT
+          break
+        elsif kind == QUEUE_KIND_META
+          function_id, parameter = data
+
+          dispatch_meta function_id, parameter
+        elsif kind == QUEUE_KIND_PACKET
+          # don't dispatch callbacks when the receive thread isn't running
+          if @receive_flag
+            dispatch_packet data
+          end
+        end
+      end
     end
 
     def handle_response(packet)
+      uid = get_uid_from_data packet
       function_id = get_function_id_from_data packet
+      sequence_number = get_sequence_number_from_data packet
 
-      if function_id == FUNCTION_GET_STACK_ID
-        handle_add_device packet
-        return
-      end
-
-      if function_id == FUNCTION_ENUMERATE_CALLBACK
-        handle_enumerate packet
-        return
-      end
-
-      stack_id = get_stack_id_from_data packet
-      length = get_length_from_data packet
-
-      if !@devices.has_key? stack_id
-        # Response from an unknown device, ignoring it
-        return
-      end
-
-      device = @devices[stack_id]
-      if function_id == device.expected_response_function_id
-        if length != device.expected_response_length
-          $stderr.puts "Received malformed packet from #{stack_id}, ignoring it"
-          return
+      if sequence_number == 0 and function_id == CALLBACK_ENUMERATE
+        if @registered_callbacks.has_key? CALLBACK_ENUMERATE
+          @callback_queue.push [QUEUE_KIND_PACKET, packet]
         end
+      elsif @devices.has_key? uid
+        device = @devices[uid]
 
-        device.enqueue_response packet
-        return
-      end
-
-      if device.registered_callbacks.has_key? function_id
-        @callback_queue.push packet
-        return
-      end
-
-      # Response seems to be OK, but can't be handled, most likely
-      # a callback without registered block
-    end
-
-    def handle_add_device(packet)
-      if @pending_add_device == nil
-        return
-      end
-
-      payload = unpack packet[4..-1], 'Q C C C Z40 C'
-
-      if @pending_add_device.uid == payload[0]
-        name = payload[4]
-        i = name.rindex ' '
-
-        if i == nil or name[0, i].gsub('-', ' ') != @pending_add_device.expected_name.gsub('-', ' ')
-          return
+        if sequence_number == 0
+          if device.registered_callbacks.has_key? function_id
+            @callback_queue.push [QUEUE_KIND_PACKET, packet]
+          end
+        elsif device.expected_response_function_id == function_id and \
+              device.expected_response_sequence_number == sequence_number
+          device.enqueue_response packet
+        else
         end
-
-        @pending_add_device.firmware_version = [payload[1], payload[2], payload[3]]
-        @pending_add_device.name = name
-        @pending_add_device.stack_id = payload[5]
-        @devices[payload[5]] = @pending_add_device
-        @pending_add_device.enqueue_response nil
-      end
-    end
-
-    def handle_enumerate(packet)
-      if @enumerate_callback != nil
-        @callback_queue.push packet
       end
     end
   end
