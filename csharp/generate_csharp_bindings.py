@@ -145,11 +145,21 @@ def make_delegates():
 
 def make_function_id_definitions():
     function_ids = ''
-    function_id = '\t\tpublic static byte {2}_{0} = {1};\n'
+    function_id = """
+\t\t/// <summary>
+\t\t///  Function ID to be used with
+\t\t///  <see cref="Tinkerforge.{3}{4}.GetResponseExpected"/>,
+\t\t///  <see cref="Tinkerforge.{3}{4}.SetResponseExpected"/> and
+\t\t///  <see cref="Tinkerforge.{3}{4}.SetResponseExpectedAll"/>.
+\t\t/// </summary>
+\t\tpublic static byte {2}_{0} = {1};
+"""
     for packet in device.get_packets():
         function_ids += function_id.format(packet.get_upper_case_name(),
                                            packet.get_function_id(),
-                                           packet.get_type().upper())
+                                           packet.get_type().upper(),
+                                           device.get_category(),
+                                           device.get_camel_case_name())
     return function_ids
 
 def make_constructor():
@@ -229,6 +239,8 @@ def get_from_type(element):
 def make_callbacks():
     cbs = ''
     cb = """
+\t\t/// <summary>
+\t\t/// </summary>
 \t\tprotected void On{0}(byte[] data_)
 \t\t{{
 {1}\t\t\tvar handler = {0};
