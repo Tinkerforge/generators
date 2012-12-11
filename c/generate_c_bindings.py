@@ -647,17 +647,6 @@ void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data
 """
     return func.format(device.get_underscore_name(), device.get_camel_case_name(), device.get_category())
 
-def make_callback_wrapper_declarations():
-    func = 'int {0}_callback_wrapper_{1}({2} *{0}, const unsigned char *buffer);\n'
-
-    funcs = '\n'
-    for packet in device.get_packets('callback'):
-        funcs += func.format(device.get_underscore_name(),
-                             packet.get_underscore_name(),
-                             device.get_camel_case_name())
-
-    return funcs
-
 def make_files(com_new, directory):
     global device
     device = common.Device(com_new)
