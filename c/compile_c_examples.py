@@ -52,7 +52,21 @@ def walker(arg, dirname, names):
                 '/tmp/compiler/bindings/{0}.c'.format(device),
                 src]
 
-        print 'compiling ' + src
+        print 'compiling (gcc) ' + src
+        subprocess.call(args)
+
+        args = ['/usr/bin/g++',
+                '-Wall',
+                '-Wextra',
+                '-pthread',
+                '-I/tmp/compiler/bindings',
+                '-o',
+                dest,
+                '/tmp/compiler/bindings/ip_connection.c',
+                '/tmp/compiler/bindings/{0}.c'.format(device),
+                src]
+
+        print 'compiling (g++) ' + src
         subprocess.call(args)
 
 def compile(path):
