@@ -267,7 +267,7 @@ void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
 """
 
     cb_temp = """
-\t{0}->callback_wrappers[{3}_CALLBACK_{1}] = {0}_callback_wrapper_{2};"""
+\t{0}->callback_wrappers[{3}_CALLBACK_{1}] = (void *){0}_callback_wrapper_{2};"""
 
     cbs = ''
     dev_name = device.get_underscore_name()

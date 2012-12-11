@@ -468,7 +468,7 @@ static void thread_sleep(int msec) {
 #else
 
 static void *thread_wrapper(void *opaque) {
-	Thread *thread = opaque;
+	Thread *thread = (Thread *)opaque;
 
 	thread->function(thread->opaque);
 
