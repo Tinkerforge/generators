@@ -148,14 +148,14 @@ namespace Tinkerforge
 				receiveThread.Start();
 			}
 
+			autoReconnectAllowed = false;
+			autoReconnectPending = false;
+
 			int connectReason = IPConnection.CONNECT_REASON_REQUEST;
 			if(isAutoReconnect) 
 			{
 				connectReason = CONNECT_REASON_AUTO_RECONNECT;
 			}
-			
-			autoReconnectAllowed = false;
-			autoReconnectPending = false;
 
 			byte[] data_ = new byte[8];
 			LEConverter.To((int)CALLBACK_CONNECTED, 0, data_);

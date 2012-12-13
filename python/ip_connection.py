@@ -398,13 +398,13 @@ class IPConnection:
             cleanup()
             raise
 
+        self.auto_reconnect_allowed = False
+        self.auto_reconnect_pending = False
+
         if is_auto_reconnect:
             connect_reason = IPConnection.CONNECT_REASON_AUTO_RECONNECT
         else:
             connect_reason = IPConnection.CONNECT_REASON_REQUEST
-
-        self.auto_reconnect_allowed = False
-        self.auto_reconnect_pending = False
 
         self.callback_queue.put((IPConnection.QUEUE_META,
                                 (IPConnection.CALLBACK_CONNECTED,

@@ -760,7 +760,7 @@ int device_get_response_expected(Device *device, uint8_t function_id) {
 	    device->response_expected[function_id] == DEVICE_RESPONSE_EXPECTED_TRUE) {
 		return 1;
 	} else if (device->response_expected[function_id] == DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE ||
-	    device->response_expected[function_id] == DEVICE_RESPONSE_EXPECTED_FALSE) {
+	           device->response_expected[function_id] == DEVICE_RESPONSE_EXPECTED_FALSE) {
 		return 0;
 	} else {
 		return -1;
@@ -1199,15 +1199,15 @@ static int ipcon_connect_unlocked(IPConnection *ipcon, bool is_auto_reconnect) {
 		return E_NO_THREAD;
 	}
 
+	ipcon->auto_reconnect_allowed = false;
+	ipcon->auto_reconnect_pending = false;
+
 	// trigger connected callback
 	if (is_auto_reconnect) {
 		connect_reason = IPCON_CONNECT_REASON_AUTO_RECONNECT;
 	} else {
 		connect_reason = IPCON_CONNECT_REASON_REQUEST;
 	}
-
-	ipcon->auto_reconnect_allowed = false;
-	ipcon->auto_reconnect_pending = false;
 
 	meta.id = IPCON_CALLBACK_CONNECTED;
 	meta.parameter = connect_reason;

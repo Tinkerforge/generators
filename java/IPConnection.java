@@ -419,13 +419,13 @@ public class IPConnection {
 			receiveThread.start();
 		}
 
+		autoReconnectAllowed = false;
+		autoReconnectPending = false;
+
 		int connectReason = IPConnection.CONNECT_REASON_REQUEST;
 		if(isAutoReconnect) {
 			connectReason = CONNECT_REASON_AUTO_RECONNECT;
 		}
-		
-		autoReconnectAllowed = false;
-		autoReconnectPending = false;
 
 		ByteBuffer bb = ByteBuffer.allocate(8);
 		bb.putInt(CALLBACK_CONNECTED);
