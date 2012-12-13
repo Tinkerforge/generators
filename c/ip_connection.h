@@ -303,59 +303,75 @@ struct IPConnection_ {
 /**
  * \ingroup IPConnection
  *
- * Creates an IP connection to the Brick Daemon with the given \c host
- * and \c port. With the IP connection itself it is possible to enumerate the
- * available devices. Other then that it is only used to add Bricks and
- * Bricklets to the connection.
+ * Creates an IP Connection object that can be used to enumerate the available
+ * devices. Other then that it is only used to add Bricks and Bricklets to the
+ * connection.
  */
 void ipcon_create(IPConnection *ipcon);
 
 /**
  * \ingroup IPConnection
  *
- * Destroys the IP connection. The socket to the Brick Daemon will be closed
- * and the threads of the IP connection terminated.
+ * Destroys the IP Connection. The socket to the Brick Daemon will be closed
+ * and the threads of the IP Connection are terminated.
  */
 void ipcon_destroy(IPConnection *ipcon);
 
+/**
+ * \ingroup IPConnection
+ *
+ * Connect to the Brick Daemon with the given \c host and \c port.
+ */
 int ipcon_connect(IPConnection *ipcon, const char *host, uint16_t port);
 
+/**
+ * \ingroup IPConnection
+ *
+ * Disconnect from the Brick Daemon.
+ */
 int ipcon_disconnect(IPConnection *ipcon);
 
+/**
+ * \ingroup IPConnection
+ *
+ * Returns the state of the connection to the Brick Daemon.
+ */
 int ipcon_get_connection_state(IPConnection *ipcon);
 
+/**
+ * \ingroup IPConnection
+ *
+ * Enables or disables auto-reconnect. If enabled the IP Connection
+ * automatically tries to reconnect when the connection is lost.
+ */
 void ipcon_set_auto_reconnect(IPConnection *ipcon, bool auto_reconnect);
 
+/**
+ * \ingroup IPConnection
+ *
+ * Returns true if auto-reconnect is enabled.
+ */
 bool ipcon_get_auto_reconnect(IPConnection *ipcon);
 
+/**
+ * \ingroup IPConnection
+ *
+ * Set the response timeout in milliseconds. The default value is 2500ms.
+ */
 void ipcon_set_timeout(IPConnection *ipcon, uint32_t timeout); // in msec
 
+/**
+ * \ingroup IPConnection
+ *
+ * Returns the response timeout in milliseconds.
+ */
 uint32_t ipcon_get_timeout(IPConnection *ipcon); // in msec
 
 /**
  * \ingroup IPConnection
  *
- * This function registers a callback with the signature:
- *
- * \code
- * void callback(char *uid, char *name, uint8_t stack_id, bool is_new)
- * \endcode
- *
- * that receives four parameters:
- *
- * - \c uid: The UID of the device.
- * - \c name: The name of the device (includes "Brick" or "Bricklet" and a version number).
- * - \c stack_id: The stack ID of the device (you can find out the position in a stack with this).
- * - \c is_new: True if the device is added, false if it is removed.
- *
- * There are three different possibilities for the callback to be called.
- * Firstly, the callback is called with all currently available devices in the
- * IP connection (with \c is_new true). Secondly, the callback is called if
- * a new Brick is plugged in via USB (with \c is_new true) and lastly it is
- * called if a Brick is unplugged (with \c is_new false).
- *
- * It should be possible to implement "plug 'n play" functionality with this
- * (as is done in Brick Viewer).
+ * Broadcasts an enumerate request. All devices will response with an enumerate
+ * callback.
  */
 int ipcon_enumerate(IPConnection *ipcon);
 
