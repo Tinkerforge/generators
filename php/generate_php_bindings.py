@@ -195,16 +195,34 @@ def make_constructor():
      *
      * @param string $uid
      */
-    public function __construct($uid)
+    public function __construct($uid, $ipcon)
     {{
-        parent::__construct($uid);
+        parent::__construct($uid, $ipcon);
 
-        $this->bindingVersion = array({2}, {3}, {4});
+        $this->apiVersion = array({2}, {3}, {4});
 """
+    response_expected = ''
+
+    for packet in device.get_packets():
+        if packet.get_type() == 'callback':
+            prefix = 'CALLBACK'
+            flag = 'self::RESPONSE_EXPECTED_ALWAYS_FALSE'
+        elif len(packet.get_elements('out')) > 0:
+            prefix = 'FUNCTION'
+            flag = 'self::RESPONSE_EXPECTED_ALWAYS_TRUE'
+        else:
+            prefix = 'FUNCTION'
+            flag = 'self::RESPONSE_EXPECTED_FALSE'
+
+        response_expected += '        $this->responseExpected[self::{1}_{2}] = {3};\n' \
+            .format(device.get_upper_case_name(), prefix, packet.get_upper_case_name(), flag)
+
+    if len(response_expected) > 0:
+        response_expected = '\n' + response_expected
 
     return con.format(device.get_category(),
                       device.get_camel_case_name(),
-                      *device.get_api_version())
+                      *device.get_api_version()) + response_expected
 
 def get_pack_type(element):
     forms = {
@@ -331,21 +349,16 @@ def make_methods():
                 else:
                     pack.append('        $payload .= pack(\'{0}\', ${1});'.format(get_pack_type(element), element[0]))
 
-        response_payload_elements = 0;
-        response_payload_size = 0;
-        unpack = []
+        has_multi_return_value = len(packet.get_elements('out')) > 1
+        unpack_format = []
         collect = []
 
         for element in packet.get_elements('out'):
-            response_payload_elements += 1;
-            response_payload_size += common.get_element_size(element)
-
-        for element in packet.get_elements('out'):
-            unpack.append('{0}{1}{2}'.format(get_unpack_type(element), element[2], element[0]))
+            unpack_format.append('{0}{1}{2}'.format(get_unpack_type(element), element[2], element[0]))
 
             unpack_fix = get_unpack_fix(element)
 
-            if response_payload_elements > 1:
+            if has_multi_return_value:
                 if element[2] > 1:
                     collect.append('        $result[\'{0}\'] = {2}$payload, \'{0}\', {1}{3};'.format(element[0], element[2], unpack_fix[0], unpack_fix[1]))
                 else:
@@ -356,19 +369,19 @@ def make_methods():
                 else:
                     collect.append('        return {1}$payload[\'{0}\']{2};'.format(element[0], unpack_fix[0], unpack_fix[1]))
 
-        if response_payload_size > 0:
-            send = '        $data = $this->sendRequestExpectResponse(self::FUNCTION_{0}, $payload, {1});\n'.format(packet.get_upper_case_name(), response_payload_size)
+        if len(unpack_format) > 0:
+            send = '        $data = $this->sendRequest(self::FUNCTION_{0}, $payload);\n'.format(packet.get_upper_case_name())
         else:
-            send = '        $this->sendRequestNoResponse(self::FUNCTION_{0}, $payload);\n'.format(packet.get_upper_case_name())
+            send = '        $this->sendRequest(self::FUNCTION_{0}, $payload);\n'.format(packet.get_upper_case_name())
 
         final_unpack = ''
 
-        if response_payload_size > 0:
-            final_unpack = '        $payload = unpack(\'{0}\', $data);'.format('/'.join(unpack))
+        if len(unpack_format) > 0:
+            final_unpack = '        $payload = unpack(\'{0}\', $data);'.format('/'.join(unpack_format))
 
         doc = format_doc(packet, [''] + make_parameter_doc(packet).split('\n'))
 
-        if response_payload_elements > 1:
+        if has_multi_return_value:
             method = method_multi.format(name_lower,
                                          parameter,
                                          '\n'.join(pack),
@@ -415,12 +428,14 @@ def make_callback_wrappers():
      *
      * @param int $id
      * @param callable $callback
+     * @param mixed $userData
      *
      * @return void
      */
-    public function registerCallback($id, $callback)
+    public function registerCallback($id, $callback, $userData = NULL)
     {
         $this->registeredCallbacks[$id] = $callback;
+        $this->registeredCallbackUserData[$id] = $userData;
     }
 """
     wrapper = """
@@ -441,18 +456,12 @@ def make_callback_wrappers():
 
     for packet in device.get_packets('callback'):
         name = packet.get_camel_case_name()
-        response_payload_elements = 0;
-        response_payload_size = 0;
-        unpack = []
+        unpack_format = []
         collect = []
         result = []
 
         for element in packet.get_elements('out'):
-            response_payload_elements += 1;
-            response_payload_size += common.get_element_size(element)
-
-        for element in packet.get_elements('out'):
-            unpack.append('{0}{1}{2}'.format(get_unpack_type(element), element[2], element[0]))
+            unpack_format.append('{0}{1}{2}'.format(get_unpack_type(element), element[2], element[0]))
 
             unpack_fix = get_unpack_fix(element)
 
@@ -463,13 +472,13 @@ def make_callback_wrappers():
 
             result.append('$payload[\'{0}\']'.format(element[0]))
 
-        foobar = ''
+        final_unpack = ''
 
-        if response_payload_size > 0:
-            foobar = '        $payload = unpack(\'{0}\', $data);'.format('/'.join(unpack))
+        if len(unpack_format) > 0:
+            final_unpack = '        $payload = unpack(\'{0}\', $data);'.format('/'.join(unpack_format))
 
         wrappers += wrapper.format(name,
-                                   foobar,
+                                   final_unpack,
                                    '\n'.join(collect),
                                    packet.get_upper_case_name())
 
