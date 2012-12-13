@@ -187,6 +187,11 @@ def make_parameter_list(packet):
         param.append('$' + name)
     return ', '.join(param)
 
+def make_device_identifier():
+    return """
+    const DEVICE_IDENTIFIER = {0};
+""".format(device.get_device_identifier())
+
 def make_constructor():
     con = """
     /**
@@ -495,6 +500,7 @@ def make_files(com_new, directory):
     php.write(make_class())
     php.write(make_callback_id_definitions())
     php.write(make_function_id_definitions())
+    php.write(make_device_identifier())
     php.write(make_constructor())
     php.write(make_callback_wrapper_definitions())
     php.write(make_methods())
