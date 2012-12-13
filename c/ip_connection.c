@@ -682,6 +682,10 @@ static int queue_get(Queue *queue, int *kind, void **data, int *length) {
  *
  *****************************************************************************/
 
+enum {
+	IPCON_FUNCTION_ENUMERATE = 254
+};
+
 void device_create(Device *device, const char *uid_str, IPConnection *ipcon) {
 	uint64_t uid;
 	uint32_t value1;

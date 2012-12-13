@@ -229,6 +229,14 @@ int device_send_request(Device *device, Packet *request);
 
 #endif
 
+// IDs for ipcon_register_callback
+enum {
+	IPCON_CALLBACK_ENUMERATE = 253,
+	IPCON_CALLBACK_CONNECTED = 0,
+	IPCON_CALLBACK_DISCONNECTED = 1,
+	IPCON_CALLBACK_AUTHENTICATION_ERROR = 2
+};
+
 // enumeration_type parameter of the EnumerateCallback
 enum {
 	IPCON_ENUMERATION_TYPE_AVAILABLE = 0,
@@ -350,15 +358,6 @@ uint32_t ipcon_get_timeout(IPConnection *ipcon); // in msec
  * (as is done in Brick Viewer).
  */
 int ipcon_enumerate(IPConnection *ipcon);
-
-enum {
-	IPCON_FUNCTION_ENUMERATE = 254,
-	IPCON_CALLBACK_ENUMERATE = 253,
-
-	IPCON_CALLBACK_CONNECTED = 0,
-	IPCON_CALLBACK_DISCONNECTED = 1,
-	IPCON_CALLBACK_AUTHENTICATION_ERROR = 2
-};
 
 void ipcon_register_callback(IPConnection *ipcon, uint8_t id,
                              void *callback, void *user_data);
