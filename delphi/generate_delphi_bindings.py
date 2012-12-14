@@ -178,7 +178,7 @@ def make_arrays():
 
     if len(types) > 0:
         for left in types:
-            arrays += '  {0} = {1};\n'.format(left, right)
+            arrays += '  {0} = {1};\n'.format(left, types[left])
 
         arrays += '\n'
 
@@ -186,13 +186,15 @@ def make_arrays():
 
 def make_callback_prototypes():
     prototypes = ''
-    prototype = '  T{0}{1}Notify{2} = procedure{3} of object;\n'
+    prototype = '  T{0}{1}Notify{2} = procedure({3}) of object;\n'
 
     for packet in device.get_packets('callback'):
         params = delphi_common.make_parameter_list(packet, False)
 
         if len(params) > 0:
-            params = '(' + params + ')'
+            params = 'sender: TObject; ' + params
+        else:
+            params = 'sender: TObject'
 
         prototypes += prototype.format(device.get_category(),
                                        device.get_camel_case_name(),
@@ -271,27 +273,47 @@ def make_class():
             '    ///  Creates an object with the unique device ID <c>uid</c>. This object can\n' + \
             '    ///  then be added to the IP connection.\n' + \
             '    /// </summary>\n' + \
-            '    constructor Create(const uid_: string);\n\n' + \
+            '    constructor Create(const uid__: string; ipcon_: TIPConnection);\n\n' + \
             '\n\n'.join(methods + props) + '\n' + \
             '  end;\n\n'
 
 def make_constructor():
     con = """implementation
 
-constructor T{0}{1}.Create(const uid_: string);
+constructor T{0}{1}.Create(const uid__: string; ipcon_: TIPConnection);
 begin
-  inherited Create(uid_);
-  expectedName := '{2} {3}';
-  bindingVersion[0] := {4};
-  bindingVersion[1] := {5};
-  bindingVersion[2] := {6};
+  inherited Create(uid__, ipcon_);
+  apiVersion[0] := {2};
+  apiVersion[1] := {3};
+  apiVersion[2] := {4};
+
 """
+    response_expected = ''
+
+    for packet in device.get_packets():
+        if packet.get_type() == 'callback':
+            prefix = 'CALLBACK_'
+            flag = 'RESPONSE_EXPECTED_ALWAYS_FALSE'
+        elif len(packet.get_elements('out')) > 0:
+            prefix = 'FUNCTION_'
+            flag = 'RESPONSE_EXPECTED_ALWAYS_TRUE'
+        else:
+            prefix = 'FUNCTION_'
+            flag = 'RESPONSE_EXPECTED_FALSE'
+
+        response_expected += '  responseExpected[{0}_{1}_{2}{3}] := {4};\n' \
+            .format(device.get_category().upper(),
+                    device.get_upper_case_name(),
+                    prefix,
+                    packet.get_upper_case_name(),
+                    flag)
+
+    if len(response_expected) > 0:
+        response_expected += '\n'
 
     return con.format(device.get_category(),
                       device.get_camel_case_name(),
-                      device.get_display_name(),
-                      device.get_category(),
-                      *device.get_api_version())
+                      *device.get_api_version()) + response_expected
 
 def make_callback_wrapper_definitions():
     cbs = ''
@@ -360,10 +382,10 @@ def make_methods():
 
         method += '\n'
         method += 'begin\n'
-        method += '  request := CreateRequestPacket(stackID, {0}, {1});\n'.format(function_id, packet.get_request_length())
+        method += '  request := (ipcon as TIPConnection).CreatePacket(self, {0}, {1});\n'.format(function_id, packet.get_request_length())
 
         # Serialize request
-        offset = 4
+        offset = 8
         for element in packet.get_elements('in'):
             if element[1] != 'string' and element[2] > 1:
                 prefix = 'for i := 0 to Length({0}) - 1 do '.format(common.underscore_to_headless_camel_case(element[0]))
@@ -384,13 +406,12 @@ def make_methods():
             offset += common.get_element_size(element)
 
         if out_count > 0:
-            method += '  SetLength(response, 0);\n'
-            method += '  SendRequestExpectResponse(request, {0}, response);\n'.format(function_id)
+            method += '  response := SendRequest(request);\n'
         else:
-            method += '  SendRequestNoResponse(request);\n'
+            method += '  SendRequest(request);\n'
 
         # Deserialize response
-        offset = 4
+        offset = 8
         for element in packet.get_elements('out'):
             if out_count > 1:
                 result = common.underscore_to_headless_camel_case(element[0])
@@ -439,7 +460,7 @@ def make_callback_wrappers():
 
         wrapper += '  if (Assigned({0}Callback)) then begin\n'.format(packet.get_headless_camel_case_name())
 
-        offset = 4
+        offset = 8
         parameter_names = []
         for element in packet.get_elements('out'):
             parameter_names.append(common.underscore_to_headless_camel_case(element[0]))
@@ -460,7 +481,7 @@ def make_callback_wrappers():
 
 
 
-        wrapper += '    {0}Callback({1});\n'.format(packet.get_headless_camel_case_name(), ', '.join(parameter_names))
+        wrapper += '    {0}Callback({1});\n'.format(packet.get_headless_camel_case_name(), ', '.join(['self'] + parameter_names))
         wrapper += '  end;\n'
         wrapper += 'end;\n\n'
 

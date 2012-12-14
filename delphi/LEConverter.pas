@@ -7,6 +7,7 @@ interface
 type
   TByteArray = array of byte;
   PByteArray = ^TByteArray;
+  PByte = ^byte;
 
   TFloatAsBytes = record
     case boolean of
@@ -194,7 +195,7 @@ function LEConvertStringFrom(const offset: longint; const len: longint; const da
 var i: longint;
 begin
   result := '';
-  for i := offset to (offset + len - 1) do begin
+  for i := offset to offset + len - 1 do begin
     if (data[i] = 0) then begin
       break;
     end;

@@ -13,111 +13,331 @@ uses
   Classes, Sockets, SyncObjs, SysUtils, Base58, LEConverter, BlockingQueue, Device;
 
 const
-  FUNCTION_GET_STACK_ID = 255;
   FUNCTION_ENUMERATE = 254;
-  FUNCTION_ENUMERATE_CALLBACK = 253;
-  BROADCAST_ADDRESS = 0;
-  RESPONSE_TIMEOUT = 2500;
+
+  CALLBACK_ENUMERATE = 253;
+  CALLBACK_CONNECTED = 0;
+  CALLBACK_DISCONNECTED = 1;
+  CALLBACK_AUTHENTICATION_ERROR = 2;
+
+  QUEUE_KIND_EXIT = 0;
+  QUEUE_KIND_META = 1;
+  QUEUE_KIND_PACKET = 2;
+
+  { enumerationType parameter of the TIPConnectionNotifyEnumerate }
+  ENUMERATION_TYPE_AVAILABLE = 0;
+  ENUMERATION_TYPE_CONNECTED = 1;
+  ENUMERATION_TYPE_DISCONNECTED = 2;
+
+  { connectReason parameter of the TIPConnectionNotifyConnected }
+  CONNECT_REASON_REQUEST = 0;
+  CONNECT_REASON_AUTO_RECONNECT = 1;
+
+  { disconnectReason parameter of the TIPConnectionNotifyDisconnected }
+  DISCONNECT_REASON_REQUEST = 0;
+  DISCONNECT_REASON_ERROR = 1;
+  DISCONNECT_REASON_SHUTDOWN = 2;
+
+  { returned by GetConnectionState }
+  CONNECTION_STATE_DISCONNECTED = 0;
+  CONNECTION_STATE_CONNECTED = 1;
+  CONNECTION_STATE_PENDING = 2; { auto-reconnect in progress }
 
 {$ifdef FPC}
  {$ifdef MSWINDOWS}
   ESysEINTR = WSAEINTR;
-  ESysECONNRESET = WSAECONNRESET;
  {$endif}
 {$else}
   ESysEINTR = 10004;
-  ESysECONNRESET = 10054;
 {$endif}
 
 type
   { TWrapperThread }
-  TThreadProcedure = procedure of object;
+  TThreadProcedure = procedure(opaque1: TObject; opaque2: TObject) of object;
   TWrapperThread = class(TThread)
   private
-      proc: TThreadProcedure;
+    proc: TThreadProcedure;
+    opaque1: TObject;
+    opaque2: TObject;
   public
-      constructor Create(const proc_: TThreadProcedure);
-      procedure Execute; override;
+    constructor Create(const proc_: TThreadProcedure; opaque1_: TObject; opaque2_: TObject);
+    procedure Execute; override;
+    function IsCurrent: boolean;
   end;
 
   { TIPConnection }
-  TIPConnectionNotifyEnumerate = procedure(const uid: string; const name: string; const stackID: byte; const isNew: boolean) of object;
+  TIPConnectionNotifyEnumerate = procedure(sender: TObject; const uid: string; const connectedUid: string;
+                                           const position: char; const hardwareVersion: TVersionNumber;
+                                           const firmwareVersion: TVersionNumber; const deviceIdentifier: word;
+                                           const enumerationType: byte) of object;
+  TIPConnectionNotifyConnected = procedure(sender: TObject; const connectReason: byte) of object;
+  TIPConnectionNotifyDisconnected = procedure(sender: TObject; const disconnectReason: byte) of object;
   TIPConnection = class
-  protected
-    receiveThreadFlag: boolean;
-    callbackThreadFlag: boolean;
-    receiveThread: TWrapperThread;
-    callbackThread: TWrapperThread;
+  public
+    socketMutex: TCriticalSection;
+    timeout: longint;
+    devices: TDeviceTable;
   private
+    host: string;
+    port: word;
+    autoReconnect: boolean;
+    autoReconnectAllowed: boolean;
+    autoReconnectPending: boolean;
+    receiveFlag: boolean;
+    receiveThread: TWrapperThread;
+    callbackQueue: TBlockingQueue;
+    callbackThread: TWrapperThread;
+    sequenceNumberMutex: TCriticalSection;
+    nextSequenceNumber: byte;
     pendingData: TByteArray;
-    pendingAddDevice: TDevice;
-    addDeviceMutex: TCriticalSection;
-    devices: array [0..255] of TDevice;
 {$ifdef FPC}
-    address: TInetSockAddr;
     socket: TSocket;
 {$else}
-    remoteHost: TSocketHost;
-    remotePort: TSocketPort;
     socket: TTcpClient;
     lastSocketError: integer;
 {$endif}
-    callbackQueue: TBlockingQueue;
     enumerateCallback: TIPConnectionNotifyEnumerate;
+    connectedCallback: TIPConnectionNotifyConnected;
+    disconnectedCallback: TIPConnectionNotifyDisconnected;
 
+    procedure ConnectUnlocked(const isAutoReconnect: boolean);
 {$ifndef FPC}
     procedure SocketErrorOccurred(sender: TObject; socketError: integer);
 {$endif}
-    function Reconnect: boolean;
-    procedure ReceiveLoop;
-    procedure CallbackLoop;
+    procedure ReceiveLoop(opaque1: TObject; opaque2: TObject);
+    procedure CallbackLoop(opaque1: TObject; opaque2: TObject);
     procedure HandleResponse(const packet: TByteArray);
-    procedure HandleAddDevice(const packet: TByteArray);
-    procedure HandleEnumerate(const packet: TByteArray);
+    procedure DispatchMeta(const meta: TByteArray);
+    procedure DispatchPacket(const packet: TByteArray);
   public
-    constructor Create(const host: string; const port: word);
+    constructor Create;
     destructor Destroy; override;
-    procedure JoinThread;
-    procedure AddDevice(device: TDevice);
-    procedure Enumerate(const enumerateCallback_: TIPConnectionNotifyEnumerate);
+    procedure Connect(const host_: string; const port_: word);
+    procedure Disconnect;
+    function GetConnectionState: byte;
+    procedure SetAutoReconnect(const autoReconnect_: boolean);
+    function GetAutoReconnect: boolean;
+    procedure SetTimeout(const timeout_: longword);
+    function GetTimeout: longword;
+    procedure Enumerate;
 
-    procedure Write(const data: TByteArray);
+    property OnEnumerate: TIPConnectionNotifyEnumerate read enumerateCallback write enumerateCallback;
+    property OnConnected: TIPConnectionNotifyConnected read connectedCallback write connectedCallback;
+    property OnDisconnected: TIPConnectionNotifyDisconnected read disconnectedCallback write disconnectedCallback;
+
+    { Internal }
+    function IsConnected: boolean;
+    function CreatePacket(const device: TDevice; const functionID: byte; const len: byte): TByteArray;
+    procedure Send(const data: TByteArray);
   end;
 
-  function CreateRequestPacket(const stackID: byte; const functionID: byte; const len: word): TByteArray;
-  function GetStackIDFromData(const data: TByteArray): byte;
+  function GetUIDFromData(const data: TByteArray): longword;
+  function GetLengthFromData(const data: TByteArray): byte;
   function GetFunctionIDFromData(const data: TByteArray): byte;
-  function GetLengthFromData(const data: TByteArray): word;
+  function GetSequenceNumberFromData(const data: TByteArray): byte;
+  function GetResponseExpectedFromData(const data: TByteArray): boolean;
+  function GetErrorCodeFromData(const data: TByteArray): byte;
 
 implementation
 
 { TWrapperThread }
-constructor TWrapperThread.Create(const proc_: TThreadProcedure);
+constructor TWrapperThread.Create(const proc_: TThreadProcedure; opaque1_: TObject; opaque2_: TObject);
 begin
   proc := proc_;
+  opaque1 := opaque1_;
+  opaque2 := opaque2_;
   inherited Create(false);
 end;
 
 procedure TWrapperThread.Execute;
 begin
-  proc;
+  proc(opaque1, opaque2);
+end;
+
+function TWrapperThread.IsCurrent: boolean;
+begin
+{$ifdef FPC}
+  result := GetCurrentThreadId = ThreadID;
+{$else}
+  result := Windows.GetCurrentThreadId = ThreadID;
+{$endif}
 end;
 
 { TIPConnection }
-constructor TIPConnection.Create(const host: string; const port: word);
+constructor TIPConnection.Create;
+begin
+  host := '';
+  port := 0;
+  timeout := 2500;
+  autoReconnect := true;
+  autoReconnectAllowed := false;
+  autoReconnectPending := false;
+  receiveFlag := false;
+  receiveThread := nil;
+  callbackQueue := nil;
+  callbackThread := nil;
+  sequenceNumberMutex := TCriticalSection.Create;
+  nextSequenceNumber := 0;
+  SetLength(pendingData, 0);
+  devices := TDeviceTable.Create;
+  socketMutex := TCriticalSection.Create;
 {$ifdef FPC}
+  socket := -1;
+{$else}
+  socket := nil;
+{$endif}
+end;
+
+destructor TIPConnection.Destroy;
+begin
+  if (IsConnected) then begin
+    Disconnect;
+  end;
+  sequenceNumberMutex.Destroy;
+  devices.Destroy;
+  socketMutex.Destroy;
+  inherited Destroy;
+end;
+
+procedure TIPConnection.Connect(const host_: string; const port_: word);
+begin
+  socketMutex.Acquire;
+  try
+    if (IsConnected) then begin
+      raise Exception.Create('Already connected');
+    end;
+    host := host_;
+    port := port_;
+    ConnectUnlocked(false);
+  finally
+    socketMutex.Release;
+  end;
+end;
+
+procedure TIPConnection.Disconnect;
+var callbackQueue_: TBlockingQueue; callbackThread_: TWrapperThread; meta: TByteArray;
+begin
+  socketMutex.Acquire;
+  try
+    autoReconnectAllowed := false;
+    if (autoReconnectPending) then begin
+      { Abort pending auto-reconnect }
+      autoReconnectPending := false;
+    end
+    else begin
+      if (not IsConnected) then begin
+        raise Exception.Create('Not connected');
+      end;
+      { Destroy receive thread }
+      receiveFlag := false;
+{$ifdef FPC}
+      fpshutdown(socket, 2);
+{$else}
+      socket.Close;
+{$endif}
+      if (not receiveThread.IsCurrent) then begin
+        receiveThread.WaitFor;
+      end;
+      receiveThread.Destroy;
+      receiveThread := nil;
+      { Destroy socket }
+{$ifdef FPC}
+      closesocket(socket);
+      socket := -1;
+{$else}
+      socket := nil;
+{$endif}
+    end;
+    { Destroy callback thread }
+    callbackQueue_ := callbackQueue;
+    callbackThread_ := callbackThread;
+    callbackQueue := nil;
+    callbackThread := nil;
+  finally
+    socketMutex.Release;
+  end;
+  { Do this outside of socketMutex to allow calling (dis-)connect from
+    the callbacks while blocking on the WaitFor call here }
+  SetLength(meta, 2);
+  meta[0] := CALLBACK_DISCONNECTED;
+  meta[1] := DISCONNECT_REASON_REQUEST;
+  callbackQueue_.Enqueue(QUEUE_KIND_META, meta);
+  callbackQueue_.Enqueue(QUEUE_KIND_EXIT, nil);
+  if (not callbackThread_.IsCurrent) then begin
+    callbackThread_.WaitFor;
+  end;
+end;
+
+function TIPConnection.GetConnectionState: byte;
+begin
+  if (IsConnected) then begin
+    result := CONNECTION_STATE_CONNECTED;
+  end
+  else if (autoReconnectPending) then begin
+    result := CONNECTION_STATE_PENDING;
+  end
+  else begin
+    result := CONNECTION_STATE_DISCONNECTED;
+  end;
+end;
+
+procedure TIPConnection.SetAutoReconnect(const autoReconnect_: boolean);
+begin
+  autoReconnect := autoReconnect_;
+  if (not autoReconnect) then begin
+    { Abort potentially pending auto-reconnect }
+    autoReconnectAllowed := false;
+  end;
+end;
+
+function TIPConnection.GetAutoReconnect: boolean;
+begin
+  result := autoReconnect;
+end;
+
+procedure TIPConnection.SetTimeout(const timeout_: longword);
+begin
+  timeout := timeout_;
+end;
+
+function TIPConnection.GetTimeout: longword;
+begin
+  result := timeout;
+end;
+
+procedure TIPConnection.Enumerate;
+var request: TByteArray;
+begin
+  socketMutex.Acquire;
+  try
+    request := CreatePacket(nil, FUNCTION_ENUMERATE, 8);
+    Send(request);
+  finally
+    socketMutex.Release;
+  end;
+end;
+
+{ NOTE: Assumes that socketMutex is locked }
+procedure TIPConnection.ConnectUnlocked(const isAutoReconnect: boolean);
+{$ifdef FPC}
+var address: TInetSockAddr;
  {$ifdef MSWINDOWS}
-var entry: PHostEnt;
+    entry: PHostEnt;
  {$else}
-var entry: THostEntry;
+    entry: THostEntry;
  {$endif}
     resolved: TInAddr;
 {$endif}
+    connectReason: word;
+    meta: TByteArray;
 begin
-  receiveThreadFlag := true;
-  callbackThreadFlag := true;
-  addDeviceMutex := TCriticalSection.Create;
-  callbackQueue := TBlockingQueue.Create;
+  { Create callback queue and thread }
+  if (callbackThread = nil) then begin
+    callbackQueue := TBlockingQueue.Create;
+    callbackThread := TWrapperThread.Create({$ifdef FPC}@{$endif}self.CallbackLoop,
+                                            callbackQueue, callbackThread);
+  end;
+  { Create and connect socket }
 {$ifdef FPC}
   socket := fpsocket(AF_INET, SOCK_STREAM, 0);
   if (socket < 0) then begin
@@ -128,12 +348,16 @@ begin
  {$ifdef MSWINDOWS}
     entry := gethostbyname(PChar(host));
     if (entry = nil) then begin
+      closesocket(socket);
+      socket := -1;
       raise Exception.Create('Could not resolve host: ' + host);
     end;
     resolved.s_addr := longint(pointer(entry^.h_addr_list^)^);
  {$else}
     entry.Name := '';
     if (not ResolveHostByName(host, entry)) then begin
+      closesocket(socket);
+      socket := -1;
       raise Exception.Create('Could not resolve host: ' + host);
     end;
     resolved := entry.Addr;
@@ -146,66 +370,38 @@ begin
   address.sin_port := htons(port);
   address.sin_addr := resolved;
   if (fpconnect(socket, @address, sizeof(address)) < 0) then begin
+    closesocket(socket);
+    socket := -1;
     raise Exception.Create('Could not connect socket: ' + {$ifdef UNIX}strerror(socketerror){$else}SysErrorMessage(socketerror){$endif});
   end;
 {$else}
-  remoteHost := TSocketHost(host);
-  remotePort := TSocketPort(IntToStr(port));
   socket := TTcpClient.Create(nil);
-  socket.RemoteHost := remoteHost;
-  socket.RemotePort := remotePort;
+  socket.RemoteHost := TSocketHost(host);
+  socket.RemotePort := TSocketPort(IntToStr(port));
   socket.BlockMode := bmBlocking;
   socket.OnError := self.SocketErrorOccurred;
   socket.Open;
   if (not socket.Connected) then begin
+    socket := nil
     raise Exception.Create('Could not connect socket');
   end;
 {$endif}
-  receiveThread := TWrapperThread.Create({$ifdef FPC}@{$endif}self.ReceiveLoop);
-  callbackThread := TWrapperThread.Create({$ifdef FPC}@{$endif}self.CallbackLoop);
-end;
-
-destructor TIPConnection.Destroy;
-var packet: TByteArray;
-begin
-  { End callback thread }
-  callbackThreadFlag := false;
-  SetLength(packet, 0);
-  callbackQueue.Enqueue(packet);
-{$ifdef FPC}
-  if (GetCurrentThreadId <> callbackThread.ThreadID) then begin
-{$else}
-  if (Windows.GetCurrentThreadId <> callbackThread.ThreadID) then begin
-{$endif}
-    callbackThread.WaitFor;
+  { Create receive thread }
+  receiveFlag := true;
+  receiveThread := TWrapperThread.Create({$ifdef FPC}@{$endif}self.ReceiveLoop, nil, nil);
+  autoReconnectAllowed := false;
+  autoReconnectPending := false;
+  { Trigger connected callback }
+  if (isAutoReconnect) then begin
+    connectReason := CONNECT_REASON_AUTO_RECONNECT;
+  end
+  else begin
+    connectReason := CONNECT_REASON_REQUEST;
   end;
-  callbackQueue.Destroy;
-  { End receive thread }
-  receiveThreadFlag := false;
-{$ifdef FPC}
-  if (socket >= 0) then begin
-    fpshutdown(socket, 2);
-    closesocket(socket);
-    socket := -1;
-  end;
-{$else}
-  socket.Close;
-{$endif}
-{$ifdef FPC}
-  if (GetCurrentThreadId <> receiveThread.ThreadID) then begin
-{$else}
-  if (Windows.GetCurrentThreadId <> receiveThread.ThreadID) then begin
-{$endif}
-    receiveThread.WaitFor;
-  end;
-  addDeviceMutex.Destroy;
-  inherited Destroy;
-end;
-
-procedure TIPConnection.JoinThread;
-begin
-  callbackThread.WaitFor;
-  receiveThread.WaitFor;
+  SetLength(meta, 2);
+  meta[0] := CALLBACK_CONNECTED;
+  meta[1] := connectReason;
+  callbackQueue.Enqueue(QUEUE_KIND_META, meta);
 end;
 
 {$ifndef FPC}
@@ -215,238 +411,256 @@ begin
 end;
 {$endif}
 
-function TIPConnection.Reconnect: boolean;
+procedure TIPConnection.ReceiveLoop(opaque1: TObject; opaque2: TObject);
+var data: array [0..8191] of byte; len, pendingLen: longint; packet, meta: TByteArray;
 begin
-  result := false;
+  while (receiveFlag) do begin
 {$ifdef FPC}
-  closesocket(socket);
-  socket := -1;
+    len := fprecv(socket, @data[0], Length(data), 0);
 {$else}
-  socket.Close;
+    lastSocketError := 0;
+    len := socket.ReceiveBuf(data, Length(data));
 {$endif}
-  while (receiveThreadFlag) do begin
+    if (not receiveFlag) then begin
+      exit;
+    end;
+    if ((len < 0) or (len = 0)) then begin
 {$ifdef FPC}
-    socket := fpsocket(AF_INET, SOCK_STREAM, 0);
-    if (socket < 0) then begin
-      sleep(1000);
-      continue;
-    end;
-    if (fpconnect(socket, @address, sizeof(address)) < 0) then begin
-      closesocket(socket);
-      socket := -1;
-      sleep(1000);
-      continue;
-    end;
+      if ((len < 0) and (socketerror = ESysEINTR)) then begin
 {$else}
-    socket := TTcpClient.Create(nil);
-    socket.RemoteHost := remoteHost;
-    socket.RemotePort := remotePort;
-    socket.BlockMode := bmBlocking;
-    socket.OnError := self.SocketErrorOccurred;
-    socket.Open;
-    if (not socket.Connected) then begin
-      socket.Close;
-      sleep(1000);
-      continue;
-    end;
+      if ((len < 0) and (lastSocketError = ESysEINTR)) then begin
 {$endif}
-    result := true;
-    break;
-  end;
-end;
-
-procedure TIPConnection.ReceiveLoop;
-var data: array [0..8191] of byte; len, pendingLen: longint; packet: TByteArray;
-begin
-  try
-    while (receiveThreadFlag) and (not receiveThread.Terminated) do begin
-{$ifdef FPC}
-      len := fprecv(socket, @data[0], Length(data), 0);
-{$else}
-      lastSocketError := 0;
-      len := socket.ReceiveBuf(data, Length(data));
-{$endif}
-      if (not receiveThreadFlag) then begin
-        exit;
+        continue;
       end;
-      if (len < 0) then begin
-{$ifdef FPC}
-        if (socketerror = ESysEINTR) then begin
-          continue;
-        end;
-        if (socketerror = ESysECONNRESET) then begin
-          if (not Reconnect) then begin
-            exit;
-          end;
-          continue;
-        end;
-{$else}
-        if (lastSocketError = ESysEINTR) then begin
-          continue;
-        end;
-        if (lastSocketError = ESysECONNRESET) then begin
-          if (not Reconnect) then begin
-            exit;
-          end;
-          continue;
-        end;
-{$endif}
-        if (receiveThreadFlag) then begin
-          WriteLn(ErrOutput, 'A socket error occurred, destroying IPConnection');
-        end;
-        exit;
-      end;
+      autoReconnectAllowed := true;
+      receiveFlag := false;
+      SetLength(meta, 2);
+      meta[0] := CALLBACK_DISCONNECTED;
       if (len = 0) then begin
-        if (receiveThreadFlag) then begin
-          WriteLn(ErrOutput, 'Socket disconnected by Server, destroying IPConnection');
-        end;
-        exit;
+        meta[1] := DISCONNECT_REASON_SHUTDOWN;
+      end
+      else begin
+        meta[1] := DISCONNECT_REASON_ERROR;
       end;
-      pendingLen := Length(pendingData);
-      SetLength(pendingData, pendingLen + len);
-      Move(data[0], pendingData[pendingLen], len);
-      while (true) do begin
-        if (Length(pendingData) < 4) then begin
-          { Wait for complete header }
-          break;
-        end;
-        len := GetLengthFromData(pendingData);
-        if (Length(pendingData) < len) then begin
-          { Wait for complete packet }
-          break;
-        end;
-        SetLength(packet, len);
-        Move(pendingData[0], packet[0], len);
-        Move(pendingData[len], pendingData[0], Length(pendingData) - len);
-        SetLength(pendingData, Length(pendingData) - len);
-        HandleResponse(packet);
-      end;
+      callbackQueue.Enqueue(QUEUE_KIND_META, meta);
+      exit;
     end;
-  except
+    pendingLen := Length(pendingData);
+    SetLength(pendingData, pendingLen + len);
+    Move(data[0], pendingData[pendingLen], len);
+    while (true) do begin
+      if (Length(pendingData) < 8) then begin
+        { Wait for complete header }
+        break;
+      end;
+      len := GetLengthFromData(pendingData);
+      if (Length(pendingData) < len) then begin
+        { Wait for complete packet }
+        break;
+      end;
+      SetLength(packet, len);
+      Move(pendingData[0], packet[0], len);
+      Move(pendingData[len], pendingData[0], Length(pendingData) - len);
+      SetLength(pendingData, Length(pendingData) - len);
+      HandleResponse(packet);
+    end;
   end;
 end;
 
-procedure TIPConnection.CallbackLoop;
-var packet: TByteArray; functionID: byte; stackID: byte; device: TDevice; callbackWrapper: TCallbackWrapper;
+procedure TIPConnection.CallbackLoop(opaque1: TObject; opaque2: TObject);
+var callbackQueue_: TBlockingQueue; callbackThread_: TWrapperThread; kind: byte; data: TByteArray;
 begin
-  while (callbackThreadFlag) and (not callbackThread.Terminated) do begin
-    SetLength(packet, 0);
-    if (not callbackQueue.Dequeue(packet, -1)) then begin
-      exit;
+  callbackQueue_ := opaque1 as TBlockingQueue;
+  callbackThread_ := opaque2 as TWrapperThread;
+  while (true) do begin
+    SetLength(data, 0);
+    if (not callbackQueue_.Dequeue(kind, data, -1)) then begin
+      break;
     end;
-    if (not callbackThreadFlag) then begin
-      exit;
-    end;
-    functionID := GetFunctionIDFromData(packet);
-    if (functionID = FUNCTION_ENUMERATE_CALLBACK) then begin
-      if (Assigned(enumerateCallback)) then begin
-        enumerateCallback(Base58Encode(LEConvertUInt64From(4, packet)),
-                          LEConvertStringFrom(12, 40, packet),
-                          packet[52],
-                          LEConvertBooleanFrom(53, packet));
-      end;
+    if (kind = QUEUE_KIND_EXIT) then begin
+      break;
     end
-    else begin
-      stackID := GetStackIDFromData(packet);
-      device := devices[stackID];
-      callbackWrapper := device.callbackWrappers[functionID];
-      if (Assigned(callbackWrapper)) then begin
-        callbackWrapper(packet);
+    else if (kind = QUEUE_KIND_META) then begin
+      DispatchMeta(data);
+    end
+    else if (kind = QUEUE_KIND_PACKET) then begin
+      { Don't dispatch callbacks when the receive thread isn't running }
+      if (receiveFlag) then begin
+        DispatchPacket(data);
       end;
     end;
   end;
+  callbackQueue_.Destroy;
+  callbackThread_.Destroy;
 end;
 
 procedure TIPConnection.HandleResponse(const packet: TByteArray);
-var functionID, stackID: byte; device: TDevice; callbackWrapper: TCallbackWrapper;
+var sequenceNumber, functionID: byte; device: TDevice;
 begin
   functionID := GetFunctionIDFromData(packet);
-  if (functionID = FUNCTION_GET_STACK_ID) then begin
-    HandleAddDevice(packet);
-    exit;
-  end
-  else if (functionID = FUNCTION_ENUMERATE_CALLBACK) then begin
-    HandleEnumerate(packet);
+  sequenceNumber := GetSequenceNumberFromData(packet);
+  if ((sequenceNumber = 0) and (functionID = CALLBACK_ENUMERATE)) then begin
+    if (Assigned(enumerateCallback)) then begin
+      callbackQueue.Enqueue(QUEUE_KIND_PACKET, packet);
+    end;
     exit;
   end;
-  stackID := GetStackIDFromData(packet);
-  device := devices[stackID];
+  device := devices.Get(GetUIDFromData(packet));
   if (device = nil) then begin
     { Response from an unknown device, ignoring it }
     exit;
   end;
-  if (device.expectedResponseFunctionID = functionID) then begin
-    device.responseQueue.Enqueue(packet);
+  if (sequenceNumber = 0) then begin
+    if (Assigned(device.callbackWrappers[functionID])) then begin
+      callbackQueue.Enqueue(QUEUE_KIND_PACKET, packet);
+    end;
     exit;
   end;
-  callbackWrapper := device.callbackWrappers[functionID];
-  if (Assigned(callbackWrapper)) then begin
-    callbackQueue.Enqueue(packet);
+  if ((device.expectedResponseFunctionID = functionID) and
+      (device.expectedResponseSequenceNumber = sequenceNumber)) then begin
+    device.responseQueue.Enqueue(0, packet);
+    exit;
   end;
 end;
 
-procedure TIPConnection.HandleAddDevice(const packet: TByteArray);
-var uid: uint64; name, tmp1, tmp2: string; i: longint;
+procedure TIPConnection.DispatchMeta(const meta: TByteArray);
+var retry: boolean;
 begin
-  if (not Assigned(pendingAddDevice)) then begin
-    exit;
-  end;
-  uid := LEConvertUInt64From(4, packet);
-  if (pendingAddDevice.uid = uid) then begin
-    name := LEConvertStringFrom(15, 40, packet);
-    i := LastDelimiter(' ', name);
-    if (i < 1) then begin
-      exit;
+  if (meta[0] = CALLBACK_CONNECTED) then begin
+    if (Assigned(connectedCallback)) then begin
+      connectedCallback(self, meta[1]);
     end;
-    tmp1 := StringReplace(Copy(name, 0, i - 1), '-', ' ', [rfReplaceAll]);
-    tmp2 := StringReplace(pendingAddDevice.expectedName, '-', ' ', [rfReplaceAll]);
-    if (CompareStr(tmp1, tmp2) <> 0) then begin
-      exit;
-    end;
-    pendingAddDevice.firmwareVersion[0] := packet[12];
-    pendingAddDevice.firmwareVersion[1] := packet[13];
-    pendingAddDevice.firmwareVersion[2] := packet[14];
-    pendingAddDevice.name := name;
-    pendingAddDevice.stackID := packet[55];
-    devices[pendingAddDevice.stackID] := pendingAddDevice;
-    pendingAddDevice.responseQueue.Enqueue(packet);
-  end;
-end;
-
-procedure TIPConnection.HandleEnumerate(const packet: TByteArray);
-begin
-  if (Assigned(enumerateCallback)) then begin
-    callbackQueue.Enqueue(packet);
   end
-end;
-procedure TIPConnection.Enumerate(const enumerateCallback_: TIPConnectionNotifyEnumerate);
-var request: TByteArray;
-begin
-  enumerateCallback := enumerateCallback_;
-  request := CreateRequestPacket(BROADCAST_ADDRESS, FUNCTION_ENUMERATE, 4);
-  Write(request);end;
-
-procedure TIPConnection.AddDevice(device: TDevice);
-var request, response: TByteArray;
-begin
-  addDeviceMutex.Acquire;
-  try
-    request := CreateRequestPacket(BROADCAST_ADDRESS, FUNCTION_GET_STACK_ID, 12);
-    LEConvertUInt64To(device.uid, 4, request);
-    pendingAddDevice := device;
-    Write(request);
-    SetLength(response, 0);
-    if (not device.responseQueue.Dequeue(response, RESPONSE_TIMEOUT)) then begin
-      raise Exception.Create('Could not add device ' + Base58Encode(device.uid) + ', timeout');
+  else if (meta[0] = CALLBACK_DISCONNECTED) then begin
+    { Need to do this here, the receive loop is not allowed to hold the socket
+      mutex because this could cause a deadlock with a concurrent call to the
+      (dis-)connect function }
+    socketMutex.Acquire;
+    try
+      if (IsConnected) then begin
+{$ifdef FPC}
+        closesocket(socket);
+        socket := -1;
+{$else}
+        socket.Close;
+        socket := nil;
+{$endif}
+      end;
+    finally
+      socketMutex.Release;
     end;
-    device.ipcon := self;
-  finally
-    pendingAddDevice := nil;
-    addDeviceMutex.Release;
+    { FIXME: Wait a moment here, otherwise the next connect attempt will
+      succeed, even if there is no open server socket. the first receive will
+      then fail directly }
+    Sleep(100);
+    if (Assigned(disconnectedCallback)) then begin
+      disconnectedCallback(self, meta[1]);
+    end;
+    if ((meta[1] <> DISCONNECT_REASON_REQUEST) and autoReconnect and
+        autoReconnectAllowed) then begin
+      autoReconnectPending := true;
+      retry := true;
+      { Block here until reconnect. this is okay, there is no callback to
+        deliver when there is no connection }
+      while (retry) do begin
+        retry := false;
+        socketMutex.Acquire;
+        try
+          if (autoReconnectAllowed and (not IsConnected)) then begin
+            try
+              ConnectUnlocked(true);
+            except
+              retry := true;
+            end;
+          end
+          else begin
+            autoReconnectPending := false;
+          end;
+        finally
+          socketMutex.Release;
+        end;
+        if (retry) then begin
+          { Wait a moment to give another thread a chance to interrupt the
+            auto-reconnect }
+          Sleep(100);
+        end;
+      end;
+    end;
   end;
 end;
 
-procedure TIPConnection.Write(const data: TByteArray);
+procedure TIPConnection.DispatchPacket(const packet: TByteArray);
+var functionID: byte; uid, connectedUid: string; position: char;
+    hardwareVersion, firmwareVersion: TVersionNumber;
+    deviceIdentifier: word; enumerationType: byte;
+    device: TDevice; callbackWrapper: TCallbackWrapper;
+begin
+  functionID := GetFunctionIDFromData(packet);
+  if (functionID = CALLBACK_ENUMERATE) then begin
+    if (Assigned(enumerateCallback)) then begin
+      uid := LEConvertStringFrom(8, 8, packet);
+      connectedUid := LEConvertStringFrom(16, 8, packet);
+      position := LEConvertCharFrom(24, packet);
+      hardwareVersion[0] := LEConvertUInt8From(25, packet);
+      hardwareVersion[1] := LEConvertUInt8From(26, packet);
+      hardwareVersion[2] := LEConvertUInt8From(27, packet);
+      firmwareVersion[0] := LEConvertUInt8From(28, packet);
+      firmwareVersion[1] := LEConvertUInt8From(29, packet);
+      firmwareVersion[2] := LEConvertUInt8From(30, packet);
+      deviceIdentifier := LEConvertUInt16From(31, packet);
+      enumerationType := LEConvertUInt8From(33, packet);
+      enumerateCallback(self, uid, connectedUid, position,
+                        hardwareVersion, firmwareVersion,
+                        deviceIdentifier, enumerationType);
+    end
+  end
+  else begin
+    device := devices.Get(GetUIDFromData(packet));
+    if (device = nil) then begin
+      exit;
+    end;
+    callbackWrapper := device.callbackWrappers[functionID];
+    if (Assigned(callbackWrapper)) then begin
+      callbackWrapper(packet);
+    end;
+  end;
+end;
+
+function TIPConnection.IsConnected: boolean;
+begin
+{$ifdef FPC}
+  result := socket >= 0;
+{$else}
+  result := socket <> nil;
+{$endif}
+end;
+
+function TIPConnection.CreatePacket(const device: TDevice; const functionID: byte; const len: byte): TByteArray;
+var sequenceNumber, responseExpected: byte;
+begin
+  SetLength(result, len);
+  FillChar(result[0], len, 0);
+  sequenceNumberMutex.Acquire;
+  try
+    sequenceNumber := nextSequenceNumber + 1;
+    nextSequenceNumber := (nextSequenceNumber + 1) mod 15;
+  finally
+    sequenceNumberMutex.Release;
+  end;
+  responseExpected := 0;
+  if (device <> nil) then begin
+    LEConvertUInt32To(device.uid_, 0, result);
+    if (device.GetResponseExpected(functionID)) then begin
+      responseExpected := 1;
+    end;
+  end;
+  result[4] := len;
+  result[5] := functionID;
+  result[6] := (sequenceNumber shl 4) or (responseExpected shl 3);
+end;
+
+{ NOTE: Assumes that socketMutex is locked }
+procedure TIPConnection.Send(const data: TByteArray);
 begin
 {$ifdef FPC}
   fpsend(socket, @data[0], Length(data), 0);
@@ -455,28 +669,39 @@ begin
 {$endif}
 end;
 
-function CreateRequestPacket(const stackID: byte; const functionID: byte; const len: word): TByteArray;
+function GetUIDFromData(const data: TByteArray): longword;
 begin
-  SetLength(result, len);
-  FillChar(result[0], len, 0);
-  result[0] := stackID;
-  result[1] := functionID;
-  LEConvertUInt16To(len, 2, result);
+  result := LEConvertUInt32From(0, data);
 end;
 
-function GetStackIDFromData(const data: TByteArray): byte;
+function GetLengthFromData(const data: TByteArray): byte;
 begin
-  result := data[0];
+  result := data[4];
 end;
 
 function GetFunctionIDFromData(const data: TByteArray): byte;
 begin
-  result := data[1];
+  result := data[5];
 end;
 
-function GetLengthFromData(const data: TByteArray): word;
+function GetSequenceNumberFromData(const data: TByteArray): byte;
 begin
-  result := LEConvertUInt16From(2, data);
+  result := (data[6] shr 4) and $0F;
+end;
+
+function GetResponseExpectedFromData(const data: TByteArray): boolean;
+begin
+  if (((data[6] shr 3) and $01) = 1) then begin
+    result := true;
+  end
+  else begin
+    result := false;
+  end;
+end;
+
+function GetErrorCodeFromData(const data: TByteArray): byte;
+begin
+  result := (data[7] shr 6) and $03;
 end;
 
 end.

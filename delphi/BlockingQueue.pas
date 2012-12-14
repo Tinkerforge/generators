@@ -12,12 +12,13 @@ type
   private
     mutex: TCriticalSection;
     semaphore: TTimedSemaphore;
-    queue: TQueue;
+    kinds: TQueue;
+    items: TQueue;
   public
     constructor Create;
     destructor Destroy; override;
-    procedure Enqueue(const item: TByteArray);
-    function Dequeue(out item: TByteArray; const timeout: longint): boolean;
+    procedure Enqueue(const kind: byte; const item: TByteArray);
+    function Dequeue(out kind: byte; out item: TByteArray; const timeout: longint): boolean;
   end;
 
 implementation
@@ -26,51 +27,63 @@ constructor TBlockingQueue.Create;
 begin
   mutex := TCriticalSection.Create;
   semaphore := TTimedSemaphore.Create;
-  queue := TQueue.Create;
+  kinds := TQueue.Create;
+  items := TQueue.Create;
 end;
 
 destructor TBlockingQueue.Destroy;
-var p: PByteArray;
+var pkind: PByte; pitem: PByteArray;
 begin
   mutex.Acquire;
   try
-    while (queue.Count > 0) do begin
-      p := queue.Pop;
-      Dispose(p);
+    while (kinds.Count > 0) do begin
+      pkind := kinds.Pop;
+      Dispose(pkind);
+    end;
+    while (items.Count > 0) do begin
+      pitem := items.Pop;
+      Dispose(pitem);
     end;
   finally
     mutex.Release;
   end;
   mutex.Destroy;
   semaphore.Destroy;
-  queue.Destroy;
+  kinds.Destroy;
+  items.Destroy;
   inherited Destroy;
 end;
 
-procedure TBlockingQueue.Enqueue(const item: TByteArray);
-var p: PByteArray;
+procedure TBlockingQueue.Enqueue(const kind: byte; const item: TByteArray);
+var pkind: PByte; pitem: PByteArray;
 begin
   mutex.Acquire;
   try
-    New(p);
-    p^ := item;
-    queue.Push(p);
+    New(pkind);
+    pkind^ := kind;
+    kinds.Push(pkind);
+    New(pitem);
+    pitem^ := item;
+    items.Push(pitem);
     semaphore.Release;
   finally
     mutex.Release;
   end;
 end;
 
-function TBlockingQueue.Dequeue(out item: TByteArray; const timeout: longint): boolean;
-var p: PByteArray;
+function TBlockingQueue.Dequeue(out kind: byte; out item: TByteArray; const timeout: longint): boolean;
+var pkind: PByte; pitem: PByteArray;
 begin
   result := false;
   if (semaphore.Acquire(timeout)) then begin
     mutex.Acquire;
     try
-      p := queue.Pop;
-      item := p^;
-      Dispose(p);
+      pkind := kinds.Pop;
+      kind := pkind^;
+      Dispose(pkind);
+      pitem := items.Pop;
+      item := pitem^;
+      Dispose(pitem);
       result := true;
     finally
       mutex.Release;
