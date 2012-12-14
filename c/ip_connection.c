@@ -1253,6 +1253,8 @@ void ipcon_create(IPConnection *ipcon) {
 
 	ipcon->callback_queue = NULL;
 	ipcon->callback_thread = NULL;
+
+	semaphore_create(&ipcon->wait);
 }
 
 void ipcon_destroy(IPConnection *ipcon) {
@@ -1264,6 +1266,8 @@ void ipcon_destroy(IPConnection *ipcon) {
 	table_destroy(&ipcon->devices);
 
 	mutex_destroy(&ipcon->socket_mutex);
+
+	semaphore_destroy(&ipcon->wait);
 
 	free(ipcon->host);
 }
@@ -1316,7 +1320,7 @@ int ipcon_disconnect(IPConnection *ipcon) {
 	ipcon->auto_reconnect_allowed = false;
 
 	if (ipcon->auto_reconnect_pending) {
-		// abort pending auto reconnect
+		// abort pending auto-reconnect
 		ipcon->auto_reconnect_pending = false;
 	} else {
 		if (ipcon->socket == NULL) {
@@ -1427,6 +1431,14 @@ void ipcon_register_callback(IPConnection *ipcon, uint8_t id, void *callback,
                              void *user_data) {
 	ipcon->registered_callbacks[id] = callback;
 	ipcon->registered_callback_user_data[id] = user_data;
+}
+
+void ipcon_wait(IPConnection *ipcon) {
+	semaphore_acquire(&ipcon->wait);
+}
+
+void ipcon_unwait(IPConnection *ipcon) {
+	semaphore_release(&ipcon->wait);
 }
 
 void packet_header_create(PacketHeader *header, uint8_t length,

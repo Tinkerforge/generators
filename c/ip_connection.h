@@ -298,6 +298,8 @@ struct IPConnection_ {
 
 	Queue *callback_queue;
 	Thread *callback_thread;
+
+	Semaphore wait;
 };
 
 /**
@@ -377,6 +379,10 @@ int ipcon_enumerate(IPConnection *ipcon);
 
 void ipcon_register_callback(IPConnection *ipcon, uint8_t id,
                              void *callback, void *user_data);
+
+void ipcon_wait(IPConnection *ipcon);
+
+void ipcon_unwait(IPConnection *ipcon);
 
 #ifdef IPCON_EXPOSE_INTERNALS
 
