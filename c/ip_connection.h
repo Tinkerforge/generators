@@ -108,6 +108,7 @@ typedef struct {
 } Thread;
 
 typedef struct {
+	Mutex mutex;
 	int used;
 	int allocated;
 	uint32_t *keys;
@@ -275,7 +276,7 @@ struct IPConnection_ {
 	uint16_t port;
 	struct sockaddr_in address;
 
-	uint32_t timeout;
+	uint32_t timeout; // in msec
 
 	bool auto_reconnect;
 	bool auto_reconnect_allowed;
@@ -284,7 +285,6 @@ struct IPConnection_ {
 	Mutex sequence_number_mutex;
 	int next_sequence_number;
 
-	Mutex devices_mutex;
 	Table devices;
 
 	void *registered_callbacks[IPCON_NUM_CALLBACK_IDS];

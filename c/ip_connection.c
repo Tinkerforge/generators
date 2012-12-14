@@ -507,6 +507,8 @@ static void thread_sleep(int msec) {
  *****************************************************************************/
 
 static void table_create(Table *table) {
+	mutex_create(&table->mutex);
+
 	table->used = 0;
 	table->allocated = 16;
 	table->keys = (uint32_t *)malloc(sizeof(uint32_t) * table->allocated);
@@ -516,14 +518,21 @@ static void table_create(Table *table) {
 static void table_destroy(Table *table) {
 	free(table->keys);
 	free(table->values);
+
+	mutex_destroy(&table->mutex);
 }
 
 static void table_insert(Table *table, uint32_t key, void *value) {
 	int i;
 
+	mutex_lock(&table->mutex);
+
 	for (i = 0; i < table->used; ++i) {
 		if (table->keys[i] == key) {
 			table->values[i] = value;
+
+			mutex_unlock(&table->mutex);
+
 			return;
 		}
 	}
@@ -538,11 +547,15 @@ static void table_insert(Table *table, uint32_t key, void *value) {
 	table->values[table->used] = value;
 
 	++table->used;
+
+	mutex_unlock(&table->mutex);
 }
 
 static void table_remove(Table *table, uint32_t key) {
 	int i;
 	int tail;
+
+	mutex_lock(&table->mutex);
 
 	for (i = 0; i < table->used; ++i) {
 		if (table->keys[i] == key) {
@@ -555,21 +568,30 @@ static void table_remove(Table *table, uint32_t key) {
 
 			--table->used;
 
-			return;
+			break;
 		}
 	}
+
+	mutex_unlock(&table->mutex);
 }
 
 static void *table_get(Table *table, uint32_t key) {
 	int i;
+	void *value = NULL;
+
+	mutex_lock(&table->mutex);
 
 	for (i = 0; i < table->used; ++i) {
 		if (table->keys[i] == key) {
-			return table->values[i];
+			value = table->values[i];
+
+			break;
 		}
 	}
 
-	return NULL;
+	mutex_unlock(&table->mutex);
+
+	return value;
 }
 
 /*****************************************************************************
@@ -740,15 +762,11 @@ void device_create(Device *device, const char *uid_str, IPConnection *ipcon) {
 	}
 
 	// add to IPConnection
-	mutex_lock(&ipcon->devices_mutex);
 	table_insert(&ipcon->devices, device->uid, device);
-	mutex_unlock(&ipcon->devices_mutex);
 }
 
 void device_destroy(Device *device) {
-	mutex_lock(&device->ipcon->devices_mutex);
 	table_remove(&device->ipcon->devices, device->uid);
-	mutex_unlock(&device->ipcon->devices_mutex);
 
 	event_destroy(&device->response_event);
 
@@ -948,9 +966,7 @@ static void ipcon_dispatch_packet(IPConnection *ipcon, Packet *packet) {
 			                            user_data);
 		}
 	} else {
-		mutex_lock(&ipcon->devices_mutex);
 		device = (Device *)table_get(&ipcon->devices, packet->header.uid);
-		mutex_unlock(&ipcon->devices_mutex);
 
 		if (device == NULL) {
 			return;
@@ -1017,9 +1033,7 @@ static void ipcon_handle_response(IPConnection *ipcon, Packet *response) {
 		return;
 	}
 
-	mutex_lock(&ipcon->devices_mutex);
 	device = (Device *)table_get(&ipcon->devices, response->header.uid);
-	mutex_unlock(&ipcon->devices_mutex);
 
 	if (device == NULL) {
 		// ignoring response for an unknown device
@@ -1058,7 +1072,7 @@ static void ipcon_receive_loop(void *opaque) {
 		                        sizeof(pending_data) - pending_length);
 
 		if (!ipcon->receive_flag) {
-			break;
+			return;
 		}
 
 		if (length <= 0) {
@@ -1074,7 +1088,7 @@ static void ipcon_receive_loop(void *opaque) {
 			                             : IPCON_DISCONNECT_REASON_ERROR;
 
 			queue_put(ipcon->callback_queue, QUEUE_KIND_META, &meta, sizeof(meta));
-			break;
+			return;
 		}
 
 		pending_length += length;
@@ -1237,7 +1251,6 @@ void ipcon_create(IPConnection *ipcon) {
 	mutex_create(&ipcon->sequence_number_mutex);
 	ipcon->next_sequence_number = 0;
 
-	mutex_create(&ipcon->devices_mutex);
 	table_create(&ipcon->devices);
 
 	for (i = 0; i < IPCON_NUM_CALLBACK_IDS; ++i) {
@@ -1262,7 +1275,6 @@ void ipcon_destroy(IPConnection *ipcon) {
 
 	mutex_destroy(&ipcon->sequence_number_mutex);
 
-	mutex_destroy(&ipcon->devices_mutex);
 	table_destroy(&ipcon->devices);
 
 	mutex_destroy(&ipcon->socket_mutex);
