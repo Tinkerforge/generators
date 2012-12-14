@@ -160,7 +160,7 @@ def make_api():
   {3}{1} {0} = new {3}{1}("YOUR_DEVICE_UID", ipcon);
 
  This object can then be used after the IP connection is connected 
- (see examples :ref:`above <{0}_{2}_csharp_examples>`).
+ (see examples :ref:`above <{4}_{2}_csharp_examples>`).
 """,
     'de': """
 .. csharp:function:: class {3}{1}(String uid, IPConnection ipcon)
@@ -172,7 +172,7 @@ def make_api():
   {3}{1} {0} = new {3}{1}("YOUR_DEVICE_UID", ipcon);
 
  Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
- (siehe Beispiele :ref:`oben <{0}_{2}_csharp_examples>`).
+ (siehe Beispiele :ref:`oben <{4}_{2}_csharp_examples>`).
 """
     }
 
