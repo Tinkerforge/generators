@@ -78,18 +78,15 @@ def make_examples():
 def make_methods(typ):
     version_method = {
     'en': """
-.. delphi:function:: procedure T{0}.GetVersion(out name: string; out firmwareVersion: TDeviceVersion; out bindingVersion: TDeviceVersion)
+.. delphi:function:: procedure T{0}.GetVersion(out apiVersion: TDeviceVersion)
 
- Returns the name (including the hardware version), the firmware version
- and the binding version of the device. The firmware and binding versions
- are given in arrays of size 3 with the syntax [major, minor, revision].
+ Returns API version [major, minor, revision] used for this device.
 """,
     'de': """
-.. delphi:function:: procedure T{0}.GetVersion(out name: string; out firmwareVersion: TDeviceVersion; out bindingVersion: TDeviceVersion)
+.. delphi:function:: procedure T{0}.GetVersion(out apiVersion: TDeviceVersion)
 
- Gibt den Namen (inklusive Hardwareversion), die Firmwareversion 
- und die Bindingsversion des Gerätes zurück. Die Firmware- und Bindingsversionen werden
- als Array der Größe 3 mit der Syntax [Major, Minor, Revision] zurückgegeben.
+ Gibt die API Version [major, minor, revision] die benutzt
+ wird zurück.
 """
     }
 
@@ -149,28 +146,28 @@ def make_callbacks():
 def make_api():
     create_str = {
     'en': """
-.. delphi:function:: constructor T{3}{1}.Create(const uid: string)
+.. delphi:function:: constructor T{3}{1}.Create(const uid: string; ipcon: TIPConnection)
 
  Creates an object with the unique device ID *uid*:
 
  .. code-block:: delphi
 
-    {0} := T{3}{1}.Create('YOUR_DEVICE_UID');
+    {0} := T{3}{1}.Create('YOUR_DEVICE_UID', ipcon);
 
- This object can then be added to the IP connection (see examples
- :ref:`above <{0}_{2}_delphi_examples>`).
+ This object can then be used after the IP connection is connected 
+ (see examples :ref:`above <{0}_{2}_delphi_examples>`).
 """,
     'de': """
-.. delphi:function:: constructor T{3}{1}.Create(const uid: string)
+.. delphi:function:: constructor T{3}{1}.Create(const uid: string; ipcon: TIPConnection)
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID *uid*:
 
  .. code-block:: delphi
 
-    {0} := T{3}{1}.Create('YOUR_DEVICE_UID');
+    {0} := T{3}{1}.Create('YOUR_DEVICE_UID', ipcon);
 
- Dieses Objekt kann danach der IP Connection hinzugefügt werden (siehe Beispiele
- :ref:`oben <{0}_{2}_delphi_examples>`).
+ Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
+ (siehe Beispiele :ref:`oben <{0}_{2}_delphi_examples>`).
 """
     }
 

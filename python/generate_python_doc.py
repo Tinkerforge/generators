@@ -130,22 +130,19 @@ def make_return_desc(packet):
 def make_methods(typ):
     version_method = {
     'en': """
-.. py:function:: {0}.get_version()
+.. py:function:: {0}.get_api_version()
 
- :rtype: (str, [int, int, int], [int, int, int])
+ :rtype: ([int, int, int])
 
- Returns the name (including the hardware version), the firmware version 
- and the binding version of the device. The firmware and binding versions are
- given in arrays of size 3 with the syntax [major, minor, revision].
+ Returns API version [major, minor, revision] used for this device.
 """,
     'de': """
-.. py:function:: {0}.get_version()
+.. py:function:: {0}.get_api_version()
 
- :rtype: (str, [int, int, int], [int, int, int])
+ :rtype: ([int, int, int])
  
- Gibt den Namen (inklusive Hardwareversion), die Firmwareversion 
- und die Bindingsversion des Gerätes zurück. Die Firmware- und Bindingsversionen werden
- als Array der Größe 3 mit der Syntax [Major, Minor, Revision] zurückgegeben.
+ Gibt die API Version [major, minor, revision] die benutzt
+ wird zurück.
 """
     }
 
@@ -193,28 +190,28 @@ def make_callbacks():
 def make_api():
     create_str = {
     'en': """
-.. py:function:: {1}(uid)
+.. py:function:: {1}(uid, ipcon)
 
  Creates an object with the unique device ID *uid*:
 
  .. code-block:: python
 
-    {0} = {1}("YOUR_DEVICE_UID")
+    {0} = {1}("YOUR_DEVICE_UID", ipcon)
 
- This object can then be added to the IP connection (see examples 
- :ref:`above <{0}_{2}_python_examples>`).
+ This object can then be used after the IP connection is connected 
+ (see examples :ref:`above <{0}_{2}_python_examples>`).
 """,
     'de': """
-.. py:function:: {1}(uid)
+.. py:function:: {1}(uid, ipcon)
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID *uid*:
 
  .. code-block:: python
 
-    {0} = {1}("YOUR_DEVICE_UID")
+    {0} = {1}("YOUR_DEVICE_UID", ipcon)
 
- Dieses Objekt kann danach der IP Connection hinzugefügt werden (siehe Beispiele
- :ref:`oben <{0}_{2}_python_examples>`).
+ Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
+ (siehe Beispiele :ref:`oben <{0}_{2}_python_examples>`).
 """
     }
 
@@ -282,7 +279,7 @@ Callbacks
 *Callbacks* können mit *callback IDs* registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
 mit der Funktion :py:func:`register_callback <{3}.register_callback>` des 
-Geräte Objektes durchgeführt werden. Der erste Parameter ist der Callback ID
+Geräte Objektes durchgeführt werden. Der erste Parameter ist die Callback ID
 und der zweite Parameter die Callbackfunktion:
 
 .. code-block:: python

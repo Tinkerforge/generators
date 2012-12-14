@@ -77,18 +77,15 @@ def make_examples():
 def make_methods(typ):
     method_version = {
     'en': """
-.. csharp:function:: public void {0}::GetVersion(out string name, out byte[] firmwareVersion, out byte[] bindingVersion)
+.. csharp:function:: public short[] {0}::GetVersion()
 
- Returns the name (including the hardware version), the firmware version 
- and the binding version of the device. The firmware and binding versions are
- given in arrays of size 3 with the syntax [major, minor, revision].
+ Returns API version [major, minor, revision] used for this device.
 """,
     'de': """
-.. csharp:function:: public void {0}::GetVersion(out string name, out byte[] firmwareVersion, out byte[] bindingVersion)
+.. csharp:function:: public short[] {0}::GetVersion()
 
- Gibt den Namen (inklusive Hardwareversion), die Firmwareversion 
- und die Bindingsversion des Gerätes zurück. Die Firmware- und Bindingsversionen werden
- als Array der Größe 3 mit der Syntax [Major, Minor, Revision] zurückgegeben.
+ Gibt die API Version [major, minor, revision] die benutzt
+ wird zurück.
 """
     }
     version_changed = {
@@ -127,12 +124,12 @@ def make_methods(typ):
 def make_callbacks():
     cb = {
     'en': """
-.. csharp:function:: public event {0}EventHandler {0}::{1}({2})
+.. csharp:function:: public event {0}::{1}({2})
 
 {3}
 """,
     'de': """
-.. csharp:function:: public event {0}EventHandler {0}::{1}({2})
+.. csharp:function:: public event {0}::{1}({2})
 
 {3}
 """
@@ -154,44 +151,34 @@ def make_callbacks():
 def make_api():
     create_str = {
     'en': """
-.. csharp:function:: class {3}{1}(String uid)
+.. csharp:function:: class {3}{1}(String uid, IPConnection ipcon)
 
  Creates an object with the unique device ID *uid*:
 
  .. code-block:: csharp
 
-  {3}{1} {0} = new {3}{1}("YOUR_DEVICE_UID");
+  {3}{1} {0} = new {3}{1}("YOUR_DEVICE_UID", ipcon);
 
- This object can then be added to the IP connection (see examples 
- :ref:`above <{4}_{2}_csharp_examples>`).
+ This object can then be used after the IP connection is connected 
+ (see examples :ref:`above <{0}_{2}_csharp_examples>`).
 """,
     'de': """
-.. csharp:function:: class {3}{1}(String uid)
+.. csharp:function:: class {3}{1}(String uid, IPConnection ipcon)
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID *uid*:
 
  .. code-block:: csharp
 
-  {3}{1} {0} = new {3}{1}("YOUR_DEVICE_UID");
+  {3}{1} {0} = new {3}{1}("YOUR_DEVICE_UID", ipcon);
 
- Dieses Objekt kann danach der IP Connection hinzugefügt werden (siehe Beispiele
- :ref:`oben <{4}_{2}_csharp_examples>`).
+ Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
+ (siehe Beispiele :ref:`oben <{0}_{2}_csharp_examples>`).
 """
     }
 
     register_str = {
-    'en': """
-.. csharp:function:: public void {3}{1}::RegisterCallback(Delegate d)
-
- Registers a callback function. The available callbacks are listed 
- :ref:`below <{0}_{2}_csharp_callbacks>`.
-""",
-    'de': """
-.. csharp:function:: public void {3}{1}::RegisterCallback(Delegate d)
-
- Registriert einen Callback. Die verfügbaren Callbacks sind 
- :ref:`unten <{0}_{2}_csharp_callbacks>` aufgelistet.
-"""
+    'en': '',
+    'de': ''
     }
 
     c_str = {
@@ -207,12 +194,12 @@ by appending your Callback-Handler to the corresponding event:
 
 .. code-block:: csharp
     
-    void Callback(int value)
+    void Callback(object sender, int value)
     {{
         System.Console.WriteLine("Value: " + value);
     }}
 
-    device.Event += Callback;
+    device.ExampleCallback += Callback;
 
 The available events are described below.
 
@@ -231,21 +218,18 @@ Callbacks
 
 *Callbacks* können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
-mit der Methode :csharp:func:`RegisterCallback <{3}{4}::RegisterCallback>` des Geräteobjekts
-durchgeführt werden.
-
-Der Parameter ist ein Delegate Objekt der zugehörigen Methode, z.B.:
+durch die anhängen des Callback-Handlers zum passenden Event geschehen:
 
 .. code-block:: csharp
     
-    void Callback(int value)
+    void Callback(object sender, int value)
     {{
         System.Console.WriteLine("Value: " + value);
     }}
 
-    device.RegisterCallback(new BrickDevice.Property(Callback));
+    device.ExampleCallback += Callback;
 
-Die verfügbaren Delegates werden weiter unten beschrieben.
+Die verfügbaren Events werden weiter unten beschrieben.
 
 .. note::
  Callbacks für wiederkehrende Ereignisse zu verwenden ist 

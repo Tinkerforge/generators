@@ -130,18 +130,15 @@ def make_return_desc(packet):
 def make_methods(typ):
     version_method = {
     'en': """
-.. rb:function:: {0}#get_version -> [str, [int, int, int], [int, int, int]]
+.. rb:function:: {0}#get_version -> [int, int, int]
 
- Returns the name (including the hardware version), the firmware version
- and the binding version of the device. The firmware and binding versions are
- given in arrays of size 3 with the syntax [major, minor, revision].
+ Returns API version [major, minor, revision] used for this device.
 """,
     'de': """
-.. rb:function:: {0}#get_version -> [str, [int, int, int], [int, int, int]]
+.. rb:function:: {0}#get_version -> [int, int, int]
 
- Gibt den Namen (inklusive Hardwareversion), die Firmwareversion 
- und die Bindingsversion des Gerätes zurück. Die Firmware- und Bindingsversionen werden
- als Array der Größe 3 mit der Syntax [Major, Minor, Revision] zurückgegeben.
+ Gibt die API Version [major, minor, revision] die benutzt
+ wird zurück.
 """
     }
 
@@ -192,29 +189,28 @@ def make_callbacks():
 def make_api():
     create_str = {
     'en': """
-.. rb:function:: {3}{1}::new(uid) -> {0}
+.. rb:function:: {3}{1}::new(uid, ipcon) -> {0}
 
  Creates an object with the unique device ID *uid*:
 
  .. code-block:: ruby
 
-    {0} = {3}{1}.new 'YOUR_DEVICE_UID'
+    {0} = {3}{1}.new 'YOUR_DEVICE_UID', ipcon
 
- This object can then be added to the IP connection (see examples
- :ref:`above <{0}_{2}_ruby_examples>`).
+ This object can then be used after the IP connection is connected 
+ (see examples :ref:`above <{0}_{2}_ruby_examples>`).
 """,
     'de': """
-.. rb:function:: {3}{1}::new(uid) -> {0}
+.. rb:function:: {3}{1}::new(uid, ipcon) -> {0}
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID *uid*:
 
  .. code-block:: ruby
 
-    {0} = {3}{1}.new 'YOUR_DEVICE_UID'
+    {0} = {3}{1}.new 'YOUR_DEVICE_UID', ipcon
 
- Dieses Objekt kann danach der IP Connection hinzugefügt werden (siehe Beispiele
- :ref:`oben <{0}_{2}_ruby_examples>`).
-
+ Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
+ (siehe Beispiele :ref:`oben <{0}_{2}_ruby_examples>`).
 """
     }
 

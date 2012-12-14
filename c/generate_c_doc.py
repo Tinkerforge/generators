@@ -107,18 +107,15 @@ def make_examples():
 def make_methods(typ):
     version_method = {
     'en': """
-.. c:function:: int {0}_get_version({1} *{0}, char ret_name[40], uint8_t ret_firmware_version[3], uint8_t ret_binding_version[3])
+.. c:function:: int {0}_get_version({1} *{0}, uint8_t ret_api_version[3])
 
- Returns the name (including the hardware version), the firmware version 
- and the binding version of the device. The firmware and binding versions are
- given in arrays of size 3 with the syntax [major, minor, revision].
+ Returns API version [major, minor, revision] used for this device.
 """,
     'de': """
-.. c:function:: int {0}_get_version({1} *{0}, char ret_name[40], uint8_t ret_firmware_version[3], uint8_t ret_binding_version[3])
+.. c:function:: int {0}_get_version({1} *{0}, uint8_t ret_api_version[3])
 
- Gibt den Namen (inklusive Hardwareversion), die Firmwareversion 
- und die Bindingsversion des Gerätes zurück. Die Firmware- und Bindingsversionen werden
- als Array der Größe 3 mit der Syntax [Major, Minor, Revision] zurückgegeben.
+ Gibt die API Version (major, minor, revision) die benutzt
+ wird zurück.
 """
     }
 
@@ -177,47 +174,51 @@ def make_callbacks():
 def make_api():
     create_str = {
     'en': """
-.. c:function:: void {0}_create({1} *{0}, const char *uid)
+.. c:function:: void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon)
 
  Creates an object with the unique device ID *uid*:
 
  .. code-block:: c
 
     {1} {0};
-    {0}_create(&{0}, "YOUR_DEVICE_UID");
+    {0}_create(&{0}, "YOUR_DEVICE_UID", &ipcon);
 
- This object can then be added to the IP connection (see examples 
- :ref:`above <{0}_{2}_c_examples>`).
+ This object can then be used after the IP connection is connected 
+ (see examples :ref:`above <{0}_{2}_c_examples>`).
 """,
     'de': """
-.. c:function:: void {0}_create({1} *{0}, const char *uid)
+.. c:function:: void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon)
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID *uid*:
 
  .. code-block:: c
 
     {1} {0};
-    {0}_create(&{0}, "YOUR_DEVICE_UID");
+    {0}_create(&{0}, "YOUR_DEVICE_UID", &ipcon);
 
- Dieses Objekt kann danach der IP Connection hinzugefügt werden (siehe Beispiele
- :ref:`oben <{0}_{2}_c_examples>`).
+ Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
+ (siehe Beispiele :ref:`oben <{0}_{2}_c_examples>`).
 """
     }
 
     register_str = {
     'en': """
-.. c:function:: void {0}_register_callback({1} *{0}, uint8_t id, void *callback)
+.. c:function:: void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data)
 
- Registers a callback with ID *id* to the function *callback*. The available
- IDs with corresponding function signatures are listed 
+ Registers a callback with ID *id* to the function *callback*. The *user_data*
+ will be given as a parameter of the callback. 
+ 
+ The available IDs with corresponding function signatures are listed 
  :ref:`below <{0}_{2}_c_callbacks>`.
 """,
     'de': """
-.. c:function:: void {0}_register_callback({1} *{0}, uint8_t id, void *callback)
+.. c:function:: void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data)
 
- Registriert einen Callback mit der ID *id* mit der Funktion *callback*. Die verfügbaren
- IDs mit den zugehörigen Funktionssignaturen sind :ref:`unten <{0}_{2}_c_callbacks>`
- zu finden.
+ Registriert einen Callback mit der ID *id* mit der Funktion *callback*.
+ Der Parameter *user_data* wird bei jedem Callback wieder mit übergeben.
+ 
+ Die verfügbaren IDs mit den zugehörigen Funktionssignaturen sind 
+ :ref:`unten <{0}_{2}_c_callbacks>` zu finden.
 """
     }
 
@@ -235,11 +236,11 @@ the device object, the callback ID and the callback function:
 
  .. code-block:: c
 
-    void my_callback(int p) {{
+    void my_callback(int p, void *user_data) {{
         printf("parameter: %d\\n", p);
     }}
 
-    {0}_register_callback(&{0}, {1}_CALLBACK_EXAMPLE, (void*)my_callback);
+    {0}_register_callback(&{0}, {1}_CALLBACK_EXAMPLE, (void*)my_callback, NULL);
 
 The available constants with corresponding callback function signatures 
 are described below.
@@ -264,11 +265,11 @@ Parameter bestehen aus dem Geräteobjekt, der Callback ID und der Callbackfunkti
 
  .. code-block:: c
 
-    void my_callback(int p) {{
+    void my_callback(int p, void *user_data) {{
         printf("parameter: %d\\n", p);
     }}
 
-    {0}_register_callback(&{0}, {1}_CALLBACK_EXAMPLE, (void*)my_callback);
+    {0}_register_callback(&{0}, {1}_CALLBACK_EXAMPLE, (void*)my_callback, NULL);
 
 Die verfügbaren Konstanten mit den zugehörigen Callback Funktionssignaturen
 werden weiter unten beschrieben.

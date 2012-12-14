@@ -95,20 +95,13 @@ def make_methods(typ):
     'en': """
 .. php:function:: array {0}::getVersion()
 
- Returns the name (including the hardware version), the firmware version
- and the binding version of the device. The firmware and binding versions
- are given in arrays of size 3 with the syntax (major, minor, revision).
-
- The returned array contains ``name``, ``firmwareVersion`` and ``bindingVersion``.
+ Returns API version [major, minor, revision] used for this device.
 """,
     'de': """
 .. php:function:: array {0}::getVersion()
 
- Gibt den Namen (inklusive Hardwareversion), die Firmwareversion 
- und die Bindingsversion des Gerätes zurück. Die Firmware- und Bindingsversionen werden
- als Feld der Größe 3 mit der Syntax [Major, Minor, Revision] zurückgegeben.
-
- Das zurückgegebene Array enthält ``name``, ``firmwareVersion`` und ``bindingVersion``.
+ Gibt die API Version [major, minor, revision] die benutzt
+ wird zurück.
 """
     }
 
@@ -169,44 +162,48 @@ def make_callbacks():
 def make_api():
     create_str = {
     'en': """
-.. php:function:: class {3}{1}(string $uid)
+.. php:function:: class {3}{1}(string $uid, IPConnection $ipcon)
 
  Creates an object with the unique device ID *$uid*:
 
  .. code-block:: php
 
-    ${0} = new {3}{1}('YOUR_DEVICE_UID');
+    ${0} = new {3}{1}('YOUR_DEVICE_UID', $ipcon);
 
- This object can then be added to the IP connection (see examples
- :ref:`above <{0}_{2}_php_examples>`).
+ This object can then be used after the IP connection is connected 
+ (see examples :ref:`above <{0}_{2}_php_examples>`).
 """,
     'de': """
-.. php:function:: class {3}{1}(string $uid)
+.. php:function:: class {3}{1}(string $uid, IPConnection $ipcon)
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID *uid*:
 
  .. code-block:: php
 
-    ${0} = new {3}{1}('YOUR_DEVICE_UID');
+    ${0} = new {3}{1}('YOUR_DEVICE_UID', $ipcon);
 
- Dieses Objekt kann danach der IP Connection hinzugefügt werden (siehe Beispiele
- :ref:`oben <{0}_{2}_php_examples>`).
+ Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
+ (siehe Beispiele :ref:`oben <{0}_{2}_php_examples>`).
 """
     }
 
     register_str = {
     'en': """
-.. php:function:: void {3}{1}::registerCallback(int $id, callable $callback)
+.. php:function:: void {3}{1}::registerCallback(int $id, callable $callback, $userData = NULL)
 
- Registers a callback with ID *$id* to the callable *$callback*. The available
- IDs with corresponding function signatures are listed
+ Registers a callback with ID *$id* to the callable *$callback*.
+ The *$userData*  will be given as a parameter of the callback.
+
+ The available  IDs with corresponding function signatures are listed
  :ref:`below <{0}_{2}_php_callbacks>`.
 """,
     'de': """
-.. php:function:: void {3}{1}::registerCallback(int $id, callable $callback)
+.. php:function:: void {3}{1}::registerCallback(int $id, callable $callback, $userData = NULL)
 
- Registriert einen Callback mit der ID *$id* zu der Callable *$callback*. Die verfügbaren
- IDs mit den zugehörigen Funktionssignaturen sind :ref:`unten <{0}_{2}_php_callbacks>`
+ Registriert einen Callback mit der ID *$id* zu der Callable *$callback*.
+ Der Parameter *$userData* wird bei jedem Callback wieder mit übergeben.
+ 
+ Die verfügbaren IDs mit den zugehörigen Funktionssignaturen sind :ref:`unten <{0}_{2}_php_callbacks>`
  zu finden.
 """
     }
