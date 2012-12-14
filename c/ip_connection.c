@@ -1118,6 +1118,7 @@ static void ipcon_receive_loop(void *opaque) {
 static int ipcon_connect_unlocked(IPConnection *ipcon, bool is_auto_reconnect) {
 	CallbackContext *context;
 	struct hostent *entity;
+	struct sockaddr_in address;
 	uint8_t connect_reason;
 	Meta meta;
 
@@ -1155,11 +1156,11 @@ static int ipcon_connect_unlocked(IPConnection *ipcon, bool is_auto_reconnect) {
 		return E_HOSTNAME_INVALID;
 	}
 
-	memset(&ipcon->address, 0, sizeof(struct sockaddr_in));
-	memcpy(&ipcon->address.sin_addr, entity->h_addr_list[0], entity->h_length);
+	memset(&address, 0, sizeof(struct sockaddr_in));
+	memcpy(&address.sin_addr, entity->h_addr_list[0], entity->h_length);
 
-	ipcon->address.sin_family = AF_INET;
-	ipcon->address.sin_port = htons(ipcon->port);
+	address.sin_family = AF_INET;
+	address.sin_port = htons(ipcon->port);
 
 	ipcon->socket = (Socket *)malloc(sizeof(Socket));
 
@@ -1170,7 +1171,7 @@ static int ipcon_connect_unlocked(IPConnection *ipcon, bool is_auto_reconnect) {
 		return E_NO_STREAM_SOCKET;
 	}
 
-	if (socket_connect(ipcon->socket, &ipcon->address, sizeof(ipcon->address)) < 0) {
+	if (socket_connect(ipcon->socket, &address, sizeof(address)) < 0) {
 		socket_destroy(ipcon->socket);
 
 		free(ipcon->socket);
@@ -1240,7 +1241,6 @@ void ipcon_create(IPConnection *ipcon) {
 
 	ipcon->host = NULL;
 	ipcon->port = 0;
-	memset(&ipcon->address, 0, sizeof(struct sockaddr_in));
 
 	ipcon->timeout = 2500;
 

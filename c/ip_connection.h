@@ -274,7 +274,6 @@ struct IPConnection_ {
 
 	char *host;
 	uint16_t port;
-	struct sockaddr_in address;
 
 	uint32_t timeout; // in msec
 
