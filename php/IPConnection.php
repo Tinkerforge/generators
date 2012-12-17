@@ -231,6 +231,8 @@ abstract class Device
 
 class IPConnection
 {
+	const FUNCTION_ENUMERATE = 254;
+
     // IDs for registerCallback
     const CALLBACK_ENUMERATE = 253;
     const CALLBACK_CONNECTED = 0;
