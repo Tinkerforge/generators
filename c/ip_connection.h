@@ -108,6 +108,7 @@ typedef struct {
 } Thread;
 
 typedef struct {
+	Mutex mutex;
 	int used;
 	int allocated;
 	uint32_t *keys;
@@ -273,9 +274,8 @@ struct IPConnection_ {
 
 	char *host;
 	uint16_t port;
-	struct sockaddr_in address;
 
-	uint32_t timeout;
+	uint32_t timeout; // in msec
 
 	bool auto_reconnect;
 	bool auto_reconnect_allowed;
@@ -284,7 +284,6 @@ struct IPConnection_ {
 	Mutex sequence_number_mutex;
 	int next_sequence_number;
 
-	Mutex devices_mutex;
 	Table devices;
 
 	void *registered_callbacks[IPCON_NUM_CALLBACK_IDS];
@@ -298,6 +297,8 @@ struct IPConnection_ {
 
 	Queue *callback_queue;
 	Thread *callback_thread;
+
+	Semaphore wait;
 };
 
 /**
@@ -377,6 +378,10 @@ int ipcon_enumerate(IPConnection *ipcon);
 
 void ipcon_register_callback(IPConnection *ipcon, uint8_t id,
                              void *callback, void *user_data);
+
+void ipcon_wait(IPConnection *ipcon);
+
+void ipcon_unwait(IPConnection *ipcon);
 
 #ifdef IPCON_EXPOSE_INTERNALS
 
