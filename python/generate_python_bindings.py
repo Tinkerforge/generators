@@ -131,15 +131,15 @@ def make_init_method():
     for packet in device.get_packets():
         if packet.get_type() == 'callback':
             prefix = 'CALLBACK_'
-            flag = 2
+            flag = 'RESPONSE_EXPECTED_ALWAYS_FALSE'
         elif len(packet.get_elements('out')) > 0:
             prefix = 'FUNCTION_'
-            flag = 1
+            flag = 'RESPONSE_EXPECTED_ALWAYS_TRUE'
         else:
             prefix = 'FUNCTION_'
-            flag = 4
+            flag = 'RESPONSE_EXPECTED_FALSE'
 
-        response_expected += '        self.response_expected[{0}{1}.{2}{3}] = {4}\n' \
+        response_expected += '        self.response_expected[{0}{1}.{2}{3}] = {0}{1}.{4}\n' \
             .format(device.get_category(), device.get_camel_case_name(), prefix, packet.get_upper_case_name(), flag)
 
     if len(response_expected) > 0:
