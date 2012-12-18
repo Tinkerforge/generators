@@ -66,3 +66,34 @@ Indikation von Temperaturveränderungen.
 """
 }]
 })
+
+common_packets.append({
+'type': 'function',
+'function_id': 243,
+'name': ('Reset', 'reset'),
+'elements': [],
+'since_firmware': {'dc': [1, 1, 3],
+                   'imu': [1, 0, 7],
+                   'master': [1, 2, 1],
+                   'servo': [1, 1, 3],
+                   'stepper': [1, 1, 4]},
+'doc': ['af', {
+'en':
+"""
+Calling this function will reset the Brick. Calling this function
+on a Brick inside of a stack will reset the whole stack.
+
+After a reset you have to create new device objects,
+calling functions on the existing ones will result in
+undefined behavior!
+""",
+'de':
+"""
+Ein Aufruf dieser Funktion setzt den Brick zurück. Befindet sich der Brick
+innerhalb eines Stapels wird der gesamte Stapel zurück gesetzt.
+
+Nach dem Zurücksetzen ist es notwendig neue Geräteobjekte zu erzeugen,
+Funktionsaufrufe auf bestehende führt zu undefiniertem Verhalten.
+"""
+}]
+})
