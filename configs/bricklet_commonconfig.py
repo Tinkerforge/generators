@@ -63,6 +63,7 @@ The device identifiers are:
  "224", "Bricklet Industrial Digital Out 4"
  "225", "Bricklet Industrial Quad Relay"
  "226", "Bricklet PTC"
+ "227", "Bricklet GPS"
 """,
 'de':
 """

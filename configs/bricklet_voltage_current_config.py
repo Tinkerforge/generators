@@ -644,7 +644,7 @@ Setzt die Periode in ms mit welcher die Schwellwert Callbacks
  
 ausgelöst werden, wenn die Schwellwerte 
 
- :func:`SetCurrentCallbackThreshold`, :func:`SetVoltageCallbackThreshold`, :func:`SetPowerCallbackThreshold
+ :func:`SetCurrentCallbackThreshold`, :func:`SetVoltageCallbackThreshold`, :func:`SetPowerCallbackThreshold`
  
 weiterhin erreicht bleiben.
 

@@ -28,9 +28,38 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the GPS coordinates. Latitude and longitude are given in the
+DD.dddddd° format. The parameter ns and ew are the cardinal directions for
+latitude and logitude. Possible values for ns and ew are 'N', 'S', 'E'
+and 'W' (north, south, east and west).
+
+PDOP, HDOP and VDOP are the dilution of precision (DOP) values. They specify
+the additional multiplicative effect of GPS satellite geometry on GPS 
+precision. See 
+`here <http://en.wikipedia.org/wiki/Dilution_of_precision_(GPS)>`__
+for more information. The values are give in hundreths.
+
+EPE is the "Estimated Position Error". The EPE is given in cm. This is not the
+absolute maximum error, it is the error with a specific confidence. See
+`here <http://www.nps.gov/gis/gps/WhatisEPE.html>`__ for more information.
 """,
 'de':
 """
+Gibt die GPS Koordinaten zurück. Breitengrad und Längengrad werden im Format
+DD.dddddd° gegeben. Die Parameter ns und ew sind Himmelsrichtungen für
+Breiten- und Längengrad. Mögliche Werte für ns und ew sind 'N', 'S', 'E'
+und 'W' (Nord, Süd, Ost, West).
+
+PDOP, HDOP und VDOP sind die "dilution of precision" (DOP) Werte. Sie
+spezifizieren die zusätzlichen multiplikativen Effekte von der GPS
+Satellitengeometrie auf die GPS-Präzision.
+`hier <http://en.wikipedia.org/wiki/Dilution_of_precision_(GPS)>`__ gibt
+es mehr Informationen dazu. Die Werte werden in Hunderstel gegeben.
+
+EPE ist der "Estimated Position Error". Der EPE wird in cm gegeben.
+Dies ist nicht der absolut maximale Fehler, es ist der Fehler mit einer
+spezifischen Konfidenz. Siehe 
+`hier <http://www.nps.gov/gis/gps/WhatisEPE.html>`__ für mehr Informationen.
 """
 }]
 })
@@ -45,9 +74,33 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the current fix status, the number of satellites that are in view and
+the number of satellites that are currently used.
+
+Possible fix status values can be:
+
+.. csv-table::
+ :header: "Value", "Description"
+ :widths: 10, 100
+
+ "1", "No Fix"
+ "2", "2D Fix"
+ "3", "3D Fix"
 """,
 'de':
 """
+Gibt den aktuellen Fix-Status, die Anzahl der sichtbaren Satelliten und die
+Anzahl der im Moment benutzten Satelliten zurück.
+
+Mögliche Fix-Status Werte sind:
+
+.. csv-table::
+ :header: "Wert", "Beschreibung"
+ :widths: 10, 100
+
+ "1", "Kein Fix"
+ "2", "2D Fix"
+ "3", "3D Fix"
 """
 }]
 })
@@ -61,9 +114,16 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the current altitude and corresponding geoidal separation.
+
+Both values are given in cm. 
 """,
 'de':
 """
+Gibt die aktuelle Höhe und die dazu gehörige "Geoidal Seperation"
+zurück.
+
+Beide Werte werden in cm gegeben.
 """
 }]
 })
@@ -77,9 +137,19 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the current course and speed. Course is given in hundreths degree
+and speed is given in hundreths km/h.
+
+Please note that this only returns useful values if an actual movement
+is present.
 """,
 'de':
 """
+Gibt die aktuelle Richtung und Geschwindigkeit zurück. Die Richtung wird
+in hundestel Grad und die Geschwindigkeit in hunderstel km/h gegben.
+
+Dabei ist zu beachten: Diese Funktion liefert nur nützlich Werte wenn
+auch tatsächlich eine Bewegung stattfindet.
 """
 }]
 })
@@ -93,9 +163,14 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the current date and time. The date is
+given in the format ddmmyy and the time is given
+in the format hhmmss.sss
 """,
 'de':
 """
+Gibt das aktuelle Datum un die Aktuelle Zeit zurück. Das Datum ist
+im Format ddmmyy und die Zeit im Format hhmmss.sss gegeben.
 """
 }]
 })
@@ -108,9 +183,16 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the current battery voltage in mV. If no battery is connected,
+this returns the internal voltage of the GPS module that is derived from
+the 3.3V rail of the Brick where the GPS Bricklet is connected to.
 """,
 'de':
 """
+Gibt die aktuelle Batteriespannung in mV zurück. Falls keine Batterie
+angeschlossen ist, wird die interne Spannung des GPS Moduls zurückgegeben.
+Diese wird von der 3,3V Schiene des Bricks an dem das GPS Bricklet angeschlossen
+ist hergeleitet.
 """
 }]
 })
@@ -123,9 +205,31 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Restarts the GPS Bricklet, the following restart types are available:
+
+.. csv-table::
+ :header: "Value", "Description"
+ :widths: 10, 100
+
+ "0", "Hot start (use all available data in the nv store)"
+ "1", "Warm start (don't use ephemeris at restart)"
+ "2", "Cold start (don't use time, position, almanacs and ephemeris at restart)"
+ "3", "Factory reset (clear all system/user configurations at restart)"
 """,
 'de':
 """
+Startet das GPS Bricklet neu. Die folgenden Neustart-Typen stehen zur
+Verfügung:
+
+.. csv-table::
+ :header: "Wert", "Beschreibung"
+ :widths: 10, 100
+
+ "0", "Hot start (use all available data in the nv store)"
+ "1", "Warm start (don't use ephemeris at restart)"
+ "2", "Cold start (don't use time, position, almanacs and ephemeris at restart)"
+ "3", "Factory reset (clear all system/user configurations at restart)"
+
 """
 }]
 })
@@ -138,9 +242,23 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
+Sets the period in ms with which the :func:`Coordinates` callback is triggered
+periodically. A value of 0 turns the callback off.
+
+:func:`Coordinates` is only triggered if the coordinates changed since the
+last triggering.
+
+The default value is 0.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher der :func:`Coordinates` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+:func:`Coordinates` wird nur ausgelöst wenn sich die Koordinaten seit der
+letzten Auslösung geändert haben.
+
+Der Standardwert ist 0.
 """
 }]
 })
@@ -171,9 +289,23 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
+Sets the period in ms with which the :func:`Status` callback is triggered
+periodically. A value of 0 turns the callback off.
+
+:func:`Status` is only triggered if the status changed since the
+last triggering.
+
+The default value is 0.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher der :func:`Status` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+:func:`Status` wird nur ausgelöst wenn sich der Status seit der
+letzten Auslösung geändert hat.
+
+Der Standardwert ist 0.
 """
 }]
 })
@@ -204,9 +336,23 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
+Sets the period in ms with which the :func:`Altitude` callback is triggered
+periodically. A value of 0 turns the callback off.
+
+:func:`Altitude` is only triggered if the altitude changed since the
+last triggering.
+
+The default value is 0.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher der :func:`Altitude` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+:func:`Altitude` wird nur ausgelöst wenn sich die Höhe seit der
+letzten Auslösung geändert hat.
+
+Der Standardwert ist 0.
 """
 }]
 })
@@ -237,9 +383,23 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
+Sets the period in ms with which the :func:`DateTime` callback is triggered
+periodically. A value of 0 turns the callback off.
+
+:func:`DateTime` is only triggered if the date or time changed since the
+last triggering.
+
+The default value is 0.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher der :func:`DateTime` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+:func:`DateTime` wird nur ausgelöst wenn sich das Datum oder die Zeit seit der
+letzten Auslösung geändert haben.
+
+Der Standardwert ist 0.
 """
 }]
 })
@@ -270,9 +430,23 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
+Sets the period in ms with which the :func:`Motion` callback is triggered
+periodically. A value of 0 turns the callback off.
+
+:func:`Motion` is only triggered if the motion changed since the
+last triggering.
+
+The default value is 0.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher der :func:`Motion` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+:func:`Motion` wird nur ausgelöst wenn sich die Bewegung seit der
+letzten Auslösung geändert hat.
+
+Der Standardwert ist 0.
 """
 }]
 })
@@ -310,9 +484,21 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
+This callback is triggered periodically with the period that is set by
+:func:`SetCoordinatesCallbackPeriod`. The parameters are the same
+as for :func:`GetCoordinates`.
+
+:func:`Coordinates` is only triggered if the coordinates changed since the
+last triggering.
 """,
 'de':
 """
+Dieser Callback wird mit der Periode, wie gesetzt mit 
+:func:`SetCoordinatesCallbackPeriod`, ausgelöst. Die Parameter sind die 
+gleichen wie die von :func:`GetCoordinates`.
+
+:func:`SetCoordinatesCallbackPeriod` wird nur ausgelöst wenn sich die 
+Koordinaten seit der letzten Auslösung geändert haben.
 """
 }]
 })
@@ -327,9 +513,21 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
+This callback is triggered periodically with the period that is set by
+:func:`SetStatusCallbackPeriod`. The parameters are the same
+as for :func:`GetStatus`.
+
+:func:`Status` is only triggered if the status changed since the
+last triggering.
 """,
 'de':
 """
+Dieser Callback wird mit der Periode, wie gesetzt mit 
+:func:`SetStatusCallbackPeriod`, ausgelöst. Die Parameter sind die 
+gleichen wie die von :func:`GetStatus`.
+
+:func:`Status` wird nur ausgelöst wenn sich der 
+Status seit der letzten Auslösung geändert hat.
 """
 }]
 })
@@ -343,9 +541,21 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
+This callback is triggered periodically with the period that is set by
+:func:`SetAltitudeCallbackPeriod`. The parameters are the same
+as for :func:`GetAltitude`.
+
+:func:`Altitude` is only triggered if the altitude changed since the
+last triggering.
 """,
 'de':
 """
+Dieser Callback wird mit der Periode, wie gesetzt mit 
+:func:`SetAltitudeCallbackPeriod`, ausgelöst. Die Parameter sind die 
+gleichen wie die von :func:`GetAltitude`.
+
+:func:`Altitude` wird nur ausgelöst wenn sich die 
+Höhe seit der letzten Auslösung geändert hat.
 """
 }]
 })
@@ -359,9 +569,21 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
+This callback is triggered periodically with the period that is set by
+:func:`SetMotionCallbackPeriod`. The parameters are the same
+as for :func:`GetMotion`.
+
+:func:`Motion` is only triggered if the motion changed since the
+last triggering.
 """,
 'de':
 """
+Dieser Callback wird mit der Periode, wie gesetzt mit 
+:func:`SetMotionCallbackPeriod`, ausgelöst. Die Parameter sind die 
+gleichen wie die von :func:`GetMotion`.
+
+:func:`Motion` wird nur ausgelöst wenn sich die 
+Bewegung seit der letzten Auslösung geändert hat.
 """
 }]
 })
@@ -375,9 +597,21 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
+This callback is triggered periodically with the period that is set by
+:func:`SetDateTimeCallbackPeriod`. The parameters are the same
+as for :func:`GetDateTime`.
+
+:func:`DateTime` is only triggered if the date or time changed since the
+last triggering.
 """,
 'de':
 """
+Dieser Callback wird mit der Periode, wie gesetzt mit 
+:func:`SetDateTimeCallbackPeriod`, ausgelöst. Die Parameter sind die 
+gleichen wie die von :func:`GetDateTime`.
+
+:func:`DateTime` wird nur ausgelöst wenn sich das Datum oder die Zeit 
+seit der letzten Auslösung geändert haben.
 """
 }]
 })
