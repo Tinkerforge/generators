@@ -155,14 +155,15 @@ The device identifiers are:
  "224", "Bricklet Industrial Digital Out 4"
  "225", "Bricklet Industrial Quad Relay"
  "226", "Bricklet PTC"
+ "227", "Bricklet Voltage/Current"
 """,
 'de':
 """
-Gibt die UID, die UID wo das Brick/Bricklet mit verbunden ist, die 
+Gibt die UID, die UID zu der der Brick verbunden ist, die
 Position, die Hard- und Firmware Version sowie den Device Identifier
 zurück.
 
-Die Position kann '0'-'8' (Stack Position)sein.
+Die Position kann '0'-'8' (Stack Position) sein.
 
 Die Device Identifiers sind:
 
@@ -203,7 +204,7 @@ Die Device Identifiers sind:
  "224", "Bricklet Industrial Digital Out 4"
  "225", "Bricklet Industrial Quad Relay"
  "226", "Bricklet PTC"
- "227", "Bricklet GPS"
+ "227", "Bricklet Voltage/Current"
 """
 }]
 })
