@@ -79,6 +79,7 @@ namespace Tinkerforge
 		bool receiveFlag = true;
 		internal Dictionary<long, Device> devices = new Dictionary<long, Device>();
 		BlockingQueue<CallbackQueueObject> callbackQueue = null;
+		Semaphore waiter = new Semaphore(0, Int32.MaxValue);
 
 		public event EnumerateEventHandler EnumerateCallback;
 		public delegate void EnumerateEventHandler(object sender, string UID, string connectedUID, char position, short[] hardwareVersion, short[] firmwareVersion, int deviceIdentifier, short enumerationType);
@@ -265,7 +266,16 @@ namespace Tinkerforge
 			return responseTimeout;
 		}
 
-		
+		public void Wait()
+		{
+			waiter.WaitOne();
+		}
+
+		public void Unwait()
+		{
+			waiter.Release();
+		}
+
 		internal int GetNextSequenceNumber()
 		{
 			int sequenceNumber = nextSequenceMumber;

@@ -10,7 +10,7 @@ uses
   {$else}
    {$ifdef MSWINDOWS}Windows,{$endif}
   {$endif}
-  Classes, Sockets, SyncObjs, SysUtils, Base58, LEConverter, BlockingQueue, Device;
+  Classes, Sockets, SyncObjs, SysUtils, Base58, LEConverter, BlockingQueue, Device, TimedSemaphore;
 
 const
   FUNCTION_ENUMERATE = 254;
@@ -96,6 +96,7 @@ type
     socket: TTcpClient;
     lastSocketError: integer;
 {$endif}
+    waiter: TTimedSemaphore;
     enumerateCallback: TIPConnectionNotifyEnumerate;
     connectedCallback: TIPConnectionNotifyConnected;
     disconnectedCallback: TIPConnectionNotifyDisconnected;
@@ -120,6 +121,8 @@ type
     procedure SetTimeout(const timeout_: longword);
     function GetTimeout: longword;
     procedure Enumerate;
+    procedure Wait;
+    procedure Unwait;
 
     property OnEnumerate: TIPConnectionNotifyEnumerate read enumerateCallback write enumerateCallback;
     property OnConnected: TIPConnectionNotifyConnected read connectedCallback write connectedCallback;
@@ -186,6 +189,7 @@ begin
 {$else}
   socket := nil;
 {$endif}
+  waiter := TTimedSemaphore.Create;
 end;
 
 destructor TIPConnection.Destroy;
@@ -196,6 +200,7 @@ begin
   sequenceNumberMutex.Destroy;
   devices.Destroy;
   socketMutex.Destroy;
+  waiter.Destroy;
   inherited Destroy;
 end;
 
@@ -315,6 +320,16 @@ begin
   finally
     socketMutex.Release;
   end;
+end;
+
+procedure TIPConnection.Wait;
+begin
+  waiter.Acquire(-1);
+end;
+
+procedure TIPConnection.Unwait;
+begin
+  waiter.Release;
 end;
 
 { NOTE: Assumes that socketMutex is locked }

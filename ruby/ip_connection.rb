@@ -415,6 +415,8 @@ module Tinkerforge
 
       @callback_queue = nil
       @callback_thread = nil
+
+      @waiter_queue = Queue.new
     end
 
     def connect(host, port)
@@ -535,6 +537,14 @@ module Tinkerforge
 
         @socket.send request, 0
       }
+    end
+
+    def wait
+      @waiter_queue.pop
+    end
+
+    def unwait
+      @waiter_queue.push nil
     end
 
     # Registers a callback with ID <tt>id</tt> to the block <tt>block</tt>.
