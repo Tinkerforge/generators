@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [1, 0, 0],
+    'binding_version': [1, 0, 0],
     'category': 'Bricklet',
     'name': ('VoltageCurrent', 'voltage_current', 'Voltage/Current'),
     'manufacturer': 'Tinkerforge',
