@@ -34,3 +34,5 @@
 1.0.22: Replace Barometer Bricklet calibrate function with getter/setter for reference air pressure
 1.0.23: Add get_usb_voltage function to Master Brick API
         Add Barometer Bricklet examples
+1.0.24: Add API for Voltage/Current Bricklet
+        Add API for GPS Bricklet

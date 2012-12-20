@@ -37,3 +37,5 @@
         Add Barometer Bricklet examples
         Handle difference between currentThread and current_thread to support Python 2.5
         Changed callback_queue from class variable to instance variable
+1.0.25: Add API for Voltage/Current Bricklet
+        Add API for GPS Bricklet
