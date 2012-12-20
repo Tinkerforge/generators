@@ -176,28 +176,6 @@ im Format ddmmyy und die Zeit im Format hhmmss.sss gegeben.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetBatteryVoltage', 'get_battery_voltage'),
-'elements': [('voltage', 'uint16', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Returns the current battery voltage in mV. If no battery is connected,
-this returns the internal voltage of the GPS module that is derived from
-the 3.3V rail of the Brick where the GPS Bricklet is connected to.
-""",
-'de':
-"""
-Gibt die aktuelle Batteriespannung in mV zurück. Falls keine Batterie
-angeschlossen ist, wird die interne Spannung des GPS Moduls zurückgegeben.
-Diese wird von der 3,3V Schiene des Bricks an dem das GPS Bricklet angeschlossen
-ist hergeleitet.
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
 'name': ('Restart', 'restart'),
 'elements': [('restart_type', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
