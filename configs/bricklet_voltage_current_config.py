@@ -154,7 +154,7 @@ conversion and current conversion.
 """
 Setzt die Konfiguration des Voltage/Current Bricklet. Es ist
 möglich die Anzahl für die Durchschnittsbildung, und die 
-Konvertierungszeit für Spannung und Stromstärke zu definieren.
+Wandlungszeit für Spannung und Stromstärke zu definieren.
 
 Durchschnittsbildung:
 
@@ -171,10 +171,10 @@ Durchschnittsbildung:
  "6",    "512"
  ">=7",  "1024"
 
-Konvertierungszeit für Spannung/Stromstärke:
+Wandlungszeit für Spannung/Stromstärke:
 
 .. csv-table::
- :header: "Wert", "Konvertierungszeit"
+ :header: "Wert", "Wandlungszeit"
  :widths: 20, 20
 
  "0",    "140µs"
@@ -187,7 +187,7 @@ Konvertierungszeit für Spannung/Stromstärke:
  ">=7",  "8.244ms"
 
 Die Standardwerite sind 3, 4 und 4 (64, 1.1ms, 1.1ms) für die
-Durchschnittsbildung und die Spannungs/Stromstärken Konvertierungszeit.
+Durchschnittsbildung und die Spannungs/Stromstärken Wandlungszeit.
 """
 }]
 })
