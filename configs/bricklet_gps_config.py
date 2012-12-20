@@ -210,7 +210,7 @@ Restarts the GPS Bricklet, the following restart types are available:
  :header: "Value", "Description"
  :widths: 10, 100
 
- "0", "Hot start (use all available data in the nv store)"
+ "0", "Hot start (use all available data in the NV store)"
  "1", "Warm start (don't use ephemeris at restart)"
  "2", "Cold start (don't use time, position, almanacs and ephemeris at restart)"
  "3", "Factory reset (clear all system/user configurations at restart)"
@@ -224,11 +224,10 @@ Verfügung:
  :header: "Wert", "Beschreibung"
  :widths: 10, 100
 
- "0", "Hot start (use all available data in the nv store)"
- "1", "Warm start (don't use ephemeris at restart)"
- "2", "Cold start (don't use time, position, almanacs and ephemeris at restart)"
- "3", "Factory reset (clear all system/user configurations at restart)"
-
+ "0", "Hot Start (all verfügbaren Daten im NV-Speicher werdn weiter genutzt)"
+ "1", "Warm Start (Ephemerisdaten werden verworfen)"
+ "2", "Cold Start (Zeit-, Position-, Almanach- und Ephemerisdaten werden verworfen)"
+ "3", "Factory Reset (Alle System/User Einstellungen werden verworfen)"
 """
 }]
 })
