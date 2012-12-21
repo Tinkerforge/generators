@@ -39,3 +39,4 @@
         Changed callback_queue from class variable to instance variable
 1.0.25: Add API for Voltage/Current Bricklet
         Add API for GPS Bricklet
+2.0.0: Add compatability for Protocol 2.0

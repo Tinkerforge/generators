@@ -16,3 +16,4 @@
        Add Barometer Bricklet examples
 1.0.8: Add API for Voltage/Current Bricklet
        Add API for GPS Bricklet
+2.0.0: Add compatability for Protocol 2.0
