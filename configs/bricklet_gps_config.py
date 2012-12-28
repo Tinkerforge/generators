@@ -202,7 +202,7 @@ Verfügung:
  :header: "Wert", "Beschreibung"
  :widths: 10, 100
 
- "0", "Hot Start (all verfügbaren Daten im NV-Speicher werdn weiter genutzt)"
+ "0", "Hot Start (all verfügbaren Daten im NV-Speicher werden weiter genutzt)"
  "1", "Warm Start (Ephemerisdaten werden verworfen)"
  "2", "Cold Start (Zeit-, Position-, Almanach- und Ephemerisdaten werden verworfen)"
  "3", "Factory Reset (Alle System/User Einstellungen werden verworfen)"
