@@ -98,9 +98,9 @@ public abstract class Device {
 	}
 
 	public void setResponseExpectedAll(boolean responseExpected) {
-		byte flag = RESPONSE_EXPECTED_FLAG_TRUE;
+		byte flag = RESPONSE_EXPECTED_FLAG_FALSE;
 		if(responseExpected) {
-			flag = RESPONSE_EXPECTED_FLAG_FALSE;
+			flag = RESPONSE_EXPECTED_FLAG_TRUE;
 		}
 
 		for(int i = 0; i < this.responseExpected.length; i++) {

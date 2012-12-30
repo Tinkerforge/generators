@@ -732,10 +732,10 @@ namespace Tinkerforge
 
 		public void SetResponseExpectedAll(bool responseExpected)
 		{
-			ResponseExpectedFlag flag = ResponseExpectedFlag.TRUE;
+			ResponseExpectedFlag flag = ResponseExpectedFlag.FALSE;
 			if(responseExpected)
 			{
-				flag = ResponseExpectedFlag.FALSE;
+				flag = ResponseExpectedFlag.TRUE;
 			}
 
 			for(int i = 0; i < this.responseExpected.Length; i++)
