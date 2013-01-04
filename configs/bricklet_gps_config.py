@@ -29,7 +29,8 @@ com['packets'].append({
 'en':
 """
 Returns the GPS coordinates. Latitude and longitude are given in the
-DD.dddddd° format. The parameter ns and ew are the cardinal directions for
+DD.dddddd° format, the value 57123468 means 57.123468°.
+The parameter ns and ew are the cardinal directions for
 latitude and logitude. Possible values for ns and ew are 'N', 'S', 'E'
 and 'W' (north, south, east and west).
 
@@ -42,11 +43,15 @@ for more information. The values are give in hundreths.
 EPE is the "Estimated Position Error". The EPE is given in cm. This is not the
 absolute maximum error, it is the error with a specific confidence. See
 `here <http://www.nps.gov/gis/gps/WhatisEPE.html>`__ for more information.
+
+This data is only valid if there is currently a fix as indicated by
+:func:`GetStatus`.
 """,
 'de':
 """
 Gibt die GPS Koordinaten zurück. Breitengrad und Längengrad werden im Format
-DD.dddddd° gegeben. Die Parameter ns und ew sind Himmelsrichtungen für
+DD.dddddd° ausgegeben, der Wert 57123468 bedeutet 57,123468°.
+Die Parameter ns und ew sind Himmelsrichtungen für
 Breiten- und Längengrad. Mögliche Werte für ns und ew sind 'N', 'S', 'E'
 und 'W' (Nord, Süd, Ost, West).
 
@@ -60,6 +65,8 @@ EPE ist der "Estimated Position Error". Der EPE wird in cm gegeben.
 Dies ist nicht der absolut maximale Fehler, es ist der Fehler mit einer
 spezifischen Konfidenz. Siehe 
 `hier <http://www.nps.gov/gis/gps/WhatisEPE.html>`__ für mehr Informationen.
+
+Diese Daten sind nur gültig wenn ein Fix vorhanden ist (siehe :func:`GetStatus`).
 """
 }]
 })
@@ -116,14 +123,19 @@ com['packets'].append({
 """
 Returns the current altitude and corresponding geoidal separation.
 
-Both values are given in cm. 
+Both values are given in cm.
+
+This data is only valid if there is currently a fix as indicated by
+:func:`GetStatus`.
 """,
 'de':
 """
 Gibt die aktuelle Höhe und die dazu gehörige "Geoidal Seperation"
 zurück.
 
-Beide Werte werden in cm gegeben.
+Beide Werte werden in cm angegeben.
+
+Diese Daten sind nur gültig wenn ein Fix vorhanden ist (siehe :func:`GetStatus`).
 """
 }]
 })
@@ -142,6 +154,9 @@ and speed is given in hundreths km/h.
 
 Please note that this only returns useful values if an actual movement
 is present.
+
+This data is only valid if there is currently a fix as indicated by
+:func:`GetStatus`.
 """,
 'de':
 """
@@ -150,6 +165,8 @@ in hundestel Grad und die Geschwindigkeit in hunderstel km/h gegben.
 
 Dabei ist zu beachten: Diese Funktion liefert nur nützlich Werte wenn
 auch tatsächlich eine Bewegung stattfindet.
+
+Diese Daten sind nur gültig wenn ein Fix vorhanden ist (siehe :func:`GetStatus`).
 """
 }]
 })
