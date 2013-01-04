@@ -27,12 +27,12 @@ The position can be 'a', 'b', 'c' or 'd'.
 The device identifiers are:
 
 .. csv-table::
- :header: "Device Identifier", "Device"
- :widths: 10, 100
+ :header: "Device Identifier", "Device Name"
+ :widths: 30, 100
 
  "11", "Brick DC"
  "12", "Brick Debug"
- "13", "Brick Master 2.0"
+ "13", "Brick Master"
  "14", "Brick Servo"
  "15", "Brick Stepper"
  "16", "Brick IMU"
@@ -76,18 +76,16 @@ Die Position kann 'a', 'b', 'c' oder 'd' sein.
 Die Device Identifiers sind:
 
 .. csv-table::
- :header: "Device Identifier", "Device"
- :widths: 10, 100
+ :header: "Device Identifier", "Device Name"
+ :widths: 30, 100
 
  "11", "Brick DC"
- "12", "Brick Debug"
- "13", "Brick Master 2.0"
+ "13", "Brick Master"
  "14", "Brick Servo"
  "15", "Brick Stepper"
  "16", "Brick IMU"
  "", ""
  "21", "Bricklet Ambient Light"
- "22", "Bricklet Breakout"
  "23", "Bricklet Current12"
  "24", "Bricklet Current25"
  "25", "Bricklet Distance IR"
