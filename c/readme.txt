@@ -63,6 +63,10 @@ Also we have to include ws2_32.lib (WinSock2) by clicking on:
 * Input, option "Additional Dependencies"
 * Add "ws2_32.lib;"
 
+Older version of Visual Studio don't come with stdint.h. A compatible version
+can be found at http://msinttypes.googlecode.com/svn/trunk/stdint.h. If necessary
+download it to the project_folder/.
+
 Thats it, we are ready to go!
 
 The Visual Studio compiler can also be used from the command line:
