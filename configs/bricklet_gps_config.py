@@ -150,7 +150,8 @@ com['packets'].append({
 'en':
 """
 Returns the current course and speed. Course is given in hundreths degree
-and speed is given in hundreths km/h.
+and speed is given in hundreths km/h. A course of 0° means the Bricklet is
+traveling north bound and 90° means it is traveling east bound.
 
 Please note that this only returns useful values if an actual movement
 is present.
@@ -161,7 +162,9 @@ This data is only valid if there is currently a fix as indicated by
 'de':
 """
 Gibt die aktuelle Richtung und Geschwindigkeit zurück. Die Richtung wird
-in hundestel Grad und die Geschwindigkeit in hunderstel km/h gegben.
+in hundestel Grad und die Geschwindigkeit in hunderstel km/h gegben. Eine
+Richtung von 0° bedeutet eine Bewegung des Bricklets nach Norden und 90°
+einer Bewegung nach Osten.
 
 Dabei ist zu beachten: Diese Funktion liefert nur nützlich Werte wenn
 auch tatsächlich eine Bewegung stattfindet.
