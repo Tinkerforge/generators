@@ -31,14 +31,14 @@ com['packets'].append({
 Returns the GPS coordinates. Latitude and longitude are given in the
 DD.dddddd° format, the value 57123468 means 57.123468°.
 The parameter ns and ew are the cardinal directions for
-latitude and logitude. Possible values for ns and ew are 'N', 'S', 'E'
+latitude and longitude. Possible values for ns and ew are 'N', 'S', 'E'
 and 'W' (north, south, east and west).
 
 PDOP, HDOP and VDOP are the dilution of precision (DOP) values. They specify
 the additional multiplicative effect of GPS satellite geometry on GPS 
 precision. See 
 `here <http://en.wikipedia.org/wiki/Dilution_of_precision_(GPS)>`__
-for more information. The values are give in hundreths.
+for more information. The values are give in hundredths.
 
 EPE is the "Estimated Position Error". The EPE is given in cm. This is not the
 absolute maximum error, it is the error with a specific confidence. See
@@ -50,16 +50,16 @@ This data is only valid if there is currently a fix as indicated by
 'de':
 """
 Gibt die GPS Koordinaten zurück. Breitengrad und Längengrad werden im Format
-DD.dddddd° ausgegeben, der Wert 57123468 bedeutet 57,123468°.
+DD.dddddd° angegeben, der Wert 57123468 bedeutet 57,123468°.
 Die Parameter ns und ew sind Himmelsrichtungen für
 Breiten- und Längengrad. Mögliche Werte für ns und ew sind 'N', 'S', 'E'
 und 'W' (Nord, Süd, Ost, West).
 
-PDOP, HDOP und VDOP sind die "dilution of precision" (DOP) Werte. Sie
+PDOP, HDOP und VDOP sind die "Dilution Of Precision" (DOP) Werte. Sie
 spezifizieren die zusätzlichen multiplikativen Effekte von der GPS
 Satellitengeometrie auf die GPS-Präzision.
 `hier <http://en.wikipedia.org/wiki/Dilution_of_precision_(GPS)>`__ gibt
-es mehr Informationen dazu. Die Werte werden in Hunderstel gegeben.
+es mehr Informationen dazu. Die Werte werden in Hundertstel gegeben.
 
 EPE ist der "Estimated Position Error". Der EPE wird in cm gegeben.
 Dies ist nicht der absolut maximale Fehler, es ist der Fehler mit einer
@@ -130,7 +130,7 @@ This data is only valid if there is currently a fix as indicated by
 """,
 'de':
 """
-Gibt die aktuelle Höhe und die dazu gehörige "Geoidal Seperation"
+Gibt die aktuelle Höhe und die dazu gehörige "Geoidal Separation"
 zurück.
 
 Beide Werte werden in cm angegeben.
@@ -149,8 +149,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the current course and speed. Course is given in hundreths degree
-and speed is given in hundreths km/h. A course of 0° means the Bricklet is
+Returns the current course and speed. Course is given in hundredths degree
+and speed is given in hundredths km/h. A course of 0° means the Bricklet is
 traveling north bound and 90° means it is traveling east bound.
 
 Please note that this only returns useful values if an actual movement
@@ -162,7 +162,7 @@ This data is only valid if there is currently a fix as indicated by
 'de':
 """
 Gibt die aktuelle Richtung und Geschwindigkeit zurück. Die Richtung wird
-in hundestel Grad und die Geschwindigkeit in hunderstel km/h gegben. Eine
+in hundertstel Grad und die Geschwindigkeit in hundertstel km/h angegeben. Eine
 Richtung von 0° bedeutet eine Bewegung des Bricklets nach Norden und 90°
 einer Bewegung nach Osten.
 
@@ -185,12 +185,14 @@ com['packets'].append({
 """
 Returns the current date and time. The date is
 given in the format ddmmyy and the time is given
-in the format hhmmss.sss
+in the format hhmmss.sss. For example, 140713 means
+14.05.13 as date and 195923568 means 19:59:23.568 as time.
 """,
 'de':
 """
-Gibt das aktuelle Datum un die Aktuelle Zeit zurück. Das Datum ist
-im Format ddmmyy und die Zeit im Format hhmmss.sss gegeben.
+Gibt das aktuelle Datum und die aktuelle Zeit zurück. Das Datum ist
+im Format ddmmyy und die Zeit im Format hhmmss.sss angegeben. Zum Beispiel,
+140713 bedeutet 14.05.13 als Datum und 195923568 bedeutet 19:59:23.568 als Zeit.
 """
 }]
 })
