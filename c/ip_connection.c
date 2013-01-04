@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
@@ -10,10 +10,6 @@
 	#define _BSD_SOURCE // for usleep from unistd.h
 #endif
 
-#define IPCON_EXPOSE_INTERNALS
-
-#include "ip_connection.h"
-
 #include <errno.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -21,14 +17,21 @@
 #include <string.h>
 #include <time.h>
 
-#ifndef _WIN32
+#ifdef _WIN32
+	#include <winsock2.h>
+#else
 	#include <unistd.h>
 	#include <sys/types.h>
 	#include <sys/time.h> // gettimeofday
 	#include <sys/socket.h> // connect
 	#include <sys/select.h>
 	#include <netdb.h> // gethostbyname
+	#include <netinet/in.h> // struct sockaddr_in
 #endif
+
+#define IPCON_EXPOSE_INTERNALS
+
+#include "ip_connection.h"
 
 #if defined _MSC_VER || defined __BORLANDC__
 	#pragma pack(push)
@@ -134,6 +137,14 @@ static uint64_t base58_decode(const char *str) {
  *                                 Socket
  *
  *****************************************************************************/
+
+struct _Socket {
+#ifdef _WIN32
+	SOCKET handle;
+#else
+	int handle;
+#endif
+};
 
 #ifdef _WIN32
 

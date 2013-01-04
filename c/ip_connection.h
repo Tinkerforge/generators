@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
@@ -29,9 +29,7 @@
 		#define WIN32_LEAN_AND_MEAN
 	#endif
 	#include <windows.h>
-	#include <winsock2.h>
 #else
-	#include <netinet/in.h> // struct sockaddr_in
 	#include <pthread.h>
 	#include <semaphore.h>
 #endif
@@ -51,13 +49,7 @@ enum {
 	E_UNKNOWN_ERROR_CODE = -11 // error response from device
 };
 
-typedef struct {
-#ifdef _WIN32
-	SOCKET handle;
-#else
-	int handle;
-#endif
-} Socket;
+typedef struct _Socket Socket;
 
 typedef struct {
 #ifdef _WIN32
