@@ -3,7 +3,7 @@
 
 """
 C# Bindings Generator
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_csharp_bindings.py: Generator for C# bindings
@@ -201,7 +201,9 @@ def make_response_expected():
         setto = 'ResponseExpectedFlag.FALSE;'
         if len(packet.get_elements('out')) > 0:
             setto = 'ResponseExpectedFlag.ALWAYS_TRUE;'
-            
+        elif packet.get_doc()[0] == 'ccf':
+            setto = 'ResponseExpectedFlag.TRUE;'
+
         res += re.format(name_upper, setto)
 
     for packet in device.get_packets('callback'):

@@ -3,7 +3,7 @@
 
 """
 C/C++ Bindings Generator
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_c_bindings.py: Generator for C/C++ bindings
@@ -284,6 +284,9 @@ void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
         elif len(packet.get_elements('out')) > 0:
             prefix = 'FUNCTION'
             flag = 'DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE'
+        elif packet.get_doc()[0] == 'ccf':
+            prefix = 'FUNCTION'
+            flag = 'DEVICE_RESPONSE_EXPECTED_TRUE'
         else:
             prefix = 'FUNCTION'
             flag = 'DEVICE_RESPONSE_EXPECTED_FALSE'
