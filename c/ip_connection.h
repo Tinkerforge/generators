@@ -208,14 +208,15 @@ void device_create(Device *device, const char *uid, IPConnection *ipcon);
 void device_destroy(Device *device);
 
 // internal
-int device_get_response_expected(Device *device, uint8_t function_id);
+int device_get_response_expected(Device *device, uint8_t function_id,
+                                 bool *ret_response_expected);
 
 // internal
-void device_set_response_expected(Device *device, uint8_t function_id,
-                                  bool response_expected);
+int device_set_response_expected(Device *device, uint8_t function_id,
+                                 bool response_expected);
 
 // internal
-void device_set_response_expected_all(Device *device, bool response_expected);
+int device_set_response_expected_all(Device *device, bool response_expected);
 
 // internal
 int device_send_request(Device *device, Packet *request);
@@ -378,9 +379,9 @@ void ipcon_unwait(IPConnection *ipcon);
 #ifdef IPCON_EXPOSE_INTERNALS
 
 // internal
-void packet_header_create(PacketHeader *header, uint8_t length,
-                          uint8_t function_id, IPConnection *ipcon,
-                          Device *device);
+int packet_header_create(PacketHeader *header, uint8_t length,
+                         uint8_t function_id, IPConnection *ipcon,
+                         Device *device);
 
 // internal
 int16_t leconvert_int16_to(int16_t native);

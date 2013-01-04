@@ -314,16 +314,16 @@ void {0}_destroy({1} *{0}) {{
 def make_response_expected_funcs():
     func = """
 
-int {0}_get_response_expected({1} *{0}, uint8_t function_id) {{
-\treturn device_get_response_expected({0}, function_id);
+int {0}_get_response_expected({1} *{0}, uint8_t function_id, bool *ret_response_expected) {{
+\treturn device_get_response_expected({0}, function_id, ret_response_expected);
 }}
 
-void {0}_set_response_expected({1} *{0}, uint8_t function_id, bool response_expected) {{
-\tdevice_set_response_expected({0}, function_id, response_expected);
+int {0}_set_response_expected({1} *{0}, uint8_t function_id, bool response_expected) {{
+\treturn device_set_response_expected({0}, function_id, response_expected);
 }}
 
-void {0}_set_response_expected_all({1} *{0}, bool response_expected) {{
-\tdevice_set_response_expected_all({0}, response_expected);
+int {0}_set_response_expected_all({1} *{0}, bool response_expected) {{
+\treturn device_set_response_expected_all({0}, response_expected);
 }}
 """
     return func.format(device.get_underscore_name(),
@@ -397,7 +397,13 @@ int {0}_{1}({2} *{0}{3}) {{
 
 \tmutex_lock(&{0}->request_mutex);
 
-\tpacket_header_create(&request.header, sizeof(request), {4}, {0}->ipcon, {0});
+\tret = packet_header_create(&request.header, sizeof(request), {4}, {0}->ipcon, {0});
+
+\tif(ret < 0) {{
+\t\tmutex_unlock(&{0}->request_mutex);
+
+\t\treturn ret;
+\t}}
 {7}
 
 \tret = device_send_request({0}, (Packet *)&request);
@@ -593,11 +599,11 @@ void {0}_destroy({1} *{0});
 
 def make_response_expected_declarations():
     response_expected = """
-int {0}_get_response_expected({1} *{0}, uint8_t function_id);
+int {0}_get_response_expected({1} *{0}, uint8_t function_id, bool *ret_response_expected);
 
-void {0}_set_response_expected({1} *{0}, uint8_t function_id, bool response_expected);
+int {0}_set_response_expected({1} *{0}, uint8_t function_id, bool response_expected);
 
-void {0}_set_response_expected_all({1} *{0}, bool response_expected);
+int {0}_set_response_expected_all({1} *{0}, bool response_expected);
 """
     return response_expected.format(device.get_underscore_name(),
                                     device.get_camel_case_name(),
