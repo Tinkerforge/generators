@@ -3,7 +3,7 @@
 
 """
 C# Documentation Generator
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_csharp_doc.py: Generator for C# documentation
@@ -75,19 +75,6 @@ def make_examples():
                                     'csharp', 'Example', '.cs', 'CSharp')
 
 def make_methods(typ):
-    method_version = {
-    'en': """
-.. csharp:function:: public short[] {0}::GetVersion()
-
- Returns API version [major, minor, revision] used for this device.
-""",
-    'de': """
-.. csharp:function:: public short[] {0}::GetVersion()
-
- Gibt die API Version [major, minor, revision] die benutzt
- wird zurück.
-"""
-    }
     version_changed = {
     'en': """
  .. versionchanged:: 1.1.0~(Bindings)
@@ -115,9 +102,6 @@ def make_methods(typ):
 
         if len(packet.get_elements('out')) == 1:
             methods += common.select_lang(version_changed) + '\n'
-
-    if typ == 'af':
-        methods += common.select_lang(method_version).format(cls)
 
     return methods
 
@@ -345,4 +329,5 @@ def make_files(com_new, directory):
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:
+        print "=== Generating %s ===" % lang
         common.generate(os.getcwd(), lang, make_files, common.prepare_doc, True)

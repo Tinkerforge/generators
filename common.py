@@ -123,6 +123,7 @@ Konfigurationsfunktionen für Callbacks
 
 lang = 'en'
 path_binding = ''
+is_doc = False
 
 OPTION_RETURN_EXPECTED = 1 << 3
 OPTION_AUTHENTICATION  = 1 << 2
@@ -315,7 +316,7 @@ def camel_case_to_space(name):
 def handle_since_firmware(text, device, packet):
     since = packet.get_since_firmware()
 
-    if since != [1, 0, 0]:
+    if since is not None and since != [1, 0, 0]:
         if device.get_category() == 'Brick':
             suffix = 'Firmware'
         else:
@@ -370,11 +371,13 @@ def prepare_bindings(directory):
         shutil.rmtree(directory)
     os.makedirs(directory)
 
-def generate(path, language, make_files, prepare, is_doc):
+def generate(path, language, make_files, prepare, is_doc_):
     global lang
     global path_binding
+    global is_doc
     lang = language
     path_binding = path
+    is_doc = is_doc_
 
     path_list = path.split('/')
     path_list[-1] = 'configs'
@@ -384,56 +387,51 @@ def generate(path, language, make_files, prepare, is_doc):
 
     prepare(path)
 
+    configs.remove('device_commonconfig.py')
     configs.remove('brick_commonconfig.py')
     configs.remove('bricklet_commonconfig.py')
 
+    common_device_packets = __import__('device_commonconfig').common_packets
     common_brick_packets = __import__('brick_commonconfig').common_packets
     common_bricklet_packets = __import__('bricklet_commonconfig').common_packets
 
     for config in configs:
         if config.endswith('_config.py'):
-            #if not is_doc and '_gps_' in config:
-            #    continue
-
             module = __import__(config[:-3])
             print(" * {0}".format(config[:-10]))
 
-            if 'brick_' in config and not module.com.has_key('common_included'):
-                specified_common_packets = copy.deepcopy(common_brick_packets)
+            def prepare_common_packets(common_packets):
+                for common_packet in common_packets:
+                    if common_packet['since_firmware'] is None:
+                        continue
 
-                for specified_common_packet in specified_common_packets:
-                    if module.com['name'][1] in specified_common_packet['since_firmware']:
-                        specified_common_packet['since_firmware'] = \
-                            specified_common_packet['since_firmware'][module.com['name'][1]]
+                    if module.com['name'][1] in common_packet['since_firmware']:
+                        common_packet['since_firmware'] = \
+                            common_packet['since_firmware'][module.com['name'][1]]
                     else:
-                        specified_common_packet['since_firmware'] = \
-                            specified_common_packet['since_firmware']['*']
+                        common_packet['since_firmware'] = \
+                            common_packet['since_firmware']['*']
 
-                module.com['packets'].extend(specified_common_packets)
+                return common_packets
+
+            if 'brick_' in config and not module.com.has_key('common_included'):
+                common_packets = copy.deepcopy(common_device_packets) + copy.deepcopy(common_brick_packets)
+                module.com['packets'].extend(prepare_common_packets(common_packets))
                 module.com['common_included'] = True
 
             if 'bricklet_' in config and not module.com.has_key('common_included'):
-                specified_common_packets = copy.deepcopy(common_bricklet_packets)
-
-                for specified_common_packet in specified_common_packets:
-                    if module.com['name'][1] in specified_common_packet['since_firmware']:
-                        specified_common_packet['since_firmware'] = \
-                            specified_common_packet['since_firmware'][module.com['name'][1]]
-                    else:
-                        specified_common_packet['since_firmware'] = \
-                            specified_common_packet['since_firmware']['*']
-
-                module.com['packets'].extend(specified_common_packets)
+                common_packets = copy.deepcopy(common_device_packets) + copy.deepcopy(common_bricklet_packets)
+                module.com['packets'].extend(prepare_common_packets(common_packets))
                 module.com['common_included'] = True
+
+                for x in module.com['packets']:
+                    print x['name'][0]
 
             make_files(module.com, path)
 
 def import_and_make(configs, path, make_files):
     for config in configs:
         if config.endswith('_config.py'):
-            #if '_gps_' in config:
-            #    continue
-
             module = __import__(config[:-3])
             print(" * {0}".format(config[:-10]))
             make_files(module.com, path)
@@ -507,17 +505,28 @@ class Device:
     def __init__(self, com):
         self.com = com
         self.all_packets = []
-        self.function_packets = []
+        self.all_packets_without_doc_only = []
+        self.all_function_packets = []
+        self.all_function_packets_without_doc_only = []
         self.callback_packets = []
 
-        for i, packet in zip(range(len(com['packets'])), com['packets']):
-            if not 'function_id' in packet:
-                packet['function_id'] = i + 1
-            self.all_packets.append(Packet(packet))
+        for i, p in zip(range(len(com['packets'])), com['packets']):
+            if not 'function_id' in p:
+                p['function_id'] = i + 1
+
+            packet = Packet(p)
+
+            self.all_packets.append(packet)
+
+            if packet.get_function_id() >= 0:
+                self.all_packets_without_doc_only.append(packet)
 
         for packet in self.all_packets:
             if packet.get_type() == 'function':
-                self.function_packets.append(packet)
+                self.all_function_packets.append(packet)
+
+                if packet.get_function_id() >= 0:
+                    self.all_function_packets_without_doc_only.append(packet)
             elif packet.get_type() == 'callback':
                 self.callback_packets.append(packet)
             else:
@@ -554,9 +563,15 @@ class Device:
 
     def get_packets(self, typ=None):
         if typ is None:
-            return self.all_packets
+            if is_doc:
+                return self.all_packets
+            else:
+                return self.all_packets_without_doc_only
         elif typ == 'function':
-            return self.function_packets
+            if is_doc:
+                return self.all_function_packets
+            else:
+                return self.all_function_packets_without_doc_only
         elif typ == 'callback':
             return self.callback_packets
         else:

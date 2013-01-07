@@ -493,8 +493,8 @@ namespace Tinkerforge
 							var enumHandler = EnumerateCallback;
 							if(enumHandler != null)
 							{
-								string UID = LEConverter.StringFrom(8, cqo.data, 8);
-								string connectedUID = LEConverter.StringFrom(16, cqo.data, 8);
+								string uid_str = LEConverter.StringFrom(8, cqo.data, 8);
+								string connectedUid_str = LEConverter.StringFrom(16, cqo.data, 8);
 								char position = (char)LEConverter.CharFrom(24, cqo.data);
 								short[] hardwareVersion = new short[3];
 								hardwareVersion[0] = LEConverter.ByteFrom(25, cqo.data);
@@ -507,7 +507,7 @@ namespace Tinkerforge
 								int deviceIdentifier = LEConverter.ShortFrom(31, cqo.data);
 								short enumerationType = LEConverter.ByteFrom(33, cqo.data);
 
-								enumHandler(this, UID, connectedUID, position, hardwareVersion, firmwareVersion, deviceIdentifier, enumerationType);
+								enumHandler(this, uid_str, connectedUid_str, position, hardwareVersion, firmwareVersion, deviceIdentifier, enumerationType);
 							}
 						}
 						else
@@ -626,8 +626,7 @@ namespace Tinkerforge
 		internal byte stackID = 0;
 		internal String expectedName;
 		internal String name;
-		internal byte[] firmwareVersion = new byte[3];
-		internal short[] bindingVersion = new short[3];
+		internal short[] apiVersion = new short[3];
 		internal ResponseExpectedFlag[] responseExpected = new ResponseExpectedFlag[256];
 		internal long uid = 0;
 		internal byte expectedResponseFunctionID = 0;
@@ -692,7 +691,7 @@ namespace Tinkerforge
 		/// </summary>
 		public short[] GetAPIVersion()
 		{
-			return bindingVersion;
+			return apiVersion;
 		}
 
 		public void SetResponseExpected(int functionId, bool responseExpected) 

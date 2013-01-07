@@ -3,7 +3,7 @@
 
 """
 PHP Documentation Generator
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_php_doc.py: Generator for PHP documentation
@@ -91,20 +91,6 @@ def make_parameter_list(packet):
     return ', '.join(param)
 
 def make_methods(typ):
-    version_method = {
-    'en': """
-.. php:function:: array {0}::getVersion()
-
- Returns API version [major, minor, revision] used for this device.
-""",
-    'de': """
-.. php:function:: array {0}::getVersion()
-
- Gibt die API Version [major, minor, revision] die benutzt
- wird zurück.
-"""
-    }
-
     methods = ''
     func_start = '.. php:function:: '
     cls = device.get_category() + device.get_camel_case_name()
@@ -123,9 +109,6 @@ def make_methods(typ):
                                                   params,
                                                   desc)
         methods += func + '\n'
-
-    if typ == 'af':
-        methods += common.select_lang(version_method).format(cls)
 
     return methods
 
@@ -189,7 +172,7 @@ def make_api():
 
     register_str = {
     'en': """
-.. php:function:: void {3}{1}::registerCallback(int $id, callable $callback, $userData = NULL)
+.. php:function:: void {3}{1}::registerCallback(int $id, callable $callback, mixed $userData = NULL)
 
  Registers a callback with ID *$id* to the callable *$callback*.
  The *$userData*  will be given as a parameter of the callback.
@@ -198,7 +181,7 @@ def make_api():
  :ref:`below <{0}_{2}_php_callbacks>`.
 """,
     'de': """
-.. php:function:: void {3}{1}::registerCallback(int $id, callable $callback, $userData = NULL)
+.. php:function:: void {3}{1}::registerCallback(int $id, callable $callback, mixed $userData = NULL)
 
  Registriert einen Callback mit der ID *$id* zu der Callable *$callback*.
  Der Parameter *$userData* wird bei jedem Callback wieder mit übergeben.
@@ -346,4 +329,5 @@ def make_files(com_new, directory):
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:
+        print "=== Generating %s ===" % lang
         common.generate(os.getcwd(), lang, make_files, common.prepare_doc, True)

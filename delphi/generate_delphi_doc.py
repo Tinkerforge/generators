@@ -3,7 +3,7 @@
 
 """
 Delphi Documentation Generator
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_delphi_doc.py: Generator for Delphi documentation
@@ -76,20 +76,6 @@ def make_examples():
                                     'delphi', 'Example', '.pas', 'Delphi')
 
 def make_methods(typ):
-    version_method = {
-    'en': """
-.. delphi:function:: procedure T{0}.GetVersion(out apiVersion: TDeviceVersion)
-
- Returns API version [major, minor, revision] used for this device.
-""",
-    'de': """
-.. delphi:function:: procedure T{0}.GetVersion(out apiVersion: TDeviceVersion)
-
- Gibt die API Version [major, minor, revision] die benutzt
- wird zurück.
-"""
-    }
-
     methods = ''
     function = '.. delphi:function:: function T{0}.{1}({2}): {3}\n{4}'
     procedure = '.. delphi:function:: procedure T{0}.{1}({2})\n{3}'
@@ -107,9 +93,6 @@ def make_methods(typ):
         else:
             method = procedure.format(cls, name, params, desc)
         methods += method + '\n'
-
-    if typ == 'af':
-        methods += common.select_lang(version_method).format(cls)
 
     return methods
 
@@ -311,4 +294,5 @@ def make_files(com_new, directory):
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:
+        print "=== Generating %s ===" % lang
         common.generate(os.getcwd(), lang, make_files, common.prepare_doc, True)

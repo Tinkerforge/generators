@@ -84,4 +84,3 @@ for lang in ['en', 'de']:
                         if files_are_not_the_same(src_file, dest_path):
                             shutil.copy(src_file, dest_path)
                             print(' * {0}'.format(f))
-

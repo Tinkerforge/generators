@@ -172,9 +172,9 @@ def make_constructor():
 \t\t/// </summary>
 \t\tpublic {0}{1}(string uid, IPConnection ipcon) : base(uid, ipcon) 
 \t\t{{
-\t\t\tthis.bindingVersion[0] = {3};
-\t\t\tthis.bindingVersion[1] = {4};
-\t\t\tthis.bindingVersion[2] = {5};
+\t\t\tthis.apiVersion[0] = {3};
+\t\t\tthis.apiVersion[1] = {4};
+\t\t\tthis.apiVersion[2] = {5};
 {2}
 """
 

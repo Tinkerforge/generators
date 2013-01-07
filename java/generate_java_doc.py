@@ -3,7 +3,7 @@
 
 """
 Java Documentation Generator
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_java_doc.py: Generator for Java documentation
@@ -160,20 +160,6 @@ def make_obj_desc(packet):
     return common.select_lang(desc).format(', '.join(var[:-1]) + ' and ' + var[-1])
 
 def make_methods(typ):
-    version_method = {
-    'en': """
-.. java:function:: public short[] {0}::getAPIVersion()
-
- Returns API version [major, minor, revision] used for this device.
-""",
-    'de': """
-.. java:function:: public short[] {0}::getAPIVersion()
-
- Gibt die API Version [major, minor, revision] die benutzt
- wird zurück.
-"""
-    }
-
     methods = ''
     func_start = '.. java:function:: '
     cls = device.get_category() + device.get_camel_case_name()
@@ -194,9 +180,6 @@ def make_methods(typ):
                                                             desc,
                                                             obj_desc)
         methods += func + '\n'
-
-    if typ == 'af':
-        methods += common.select_lang(version_method).format(cls)
 
     return methods
 
@@ -472,4 +455,5 @@ def make_files(com_new, directory):
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:
+        print "=== Generating %s ===" % lang
         common.generate(os.getcwd(), lang, make_files, common.prepare_doc, True)
