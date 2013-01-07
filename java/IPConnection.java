@@ -146,7 +146,7 @@ class CallbackThread extends Thread {
 					switch(functionId) {
 						case IPConnection.CALLBACK_CONNECTED:
 							if(ipcon.connectedListener != null) {
-								ipcon.connectedListener.connected(parameter);
+								ipcon.connectedListener.connected((short)parameter);
 							}
 
 							break;
@@ -170,7 +170,7 @@ class CallbackThread extends Thread {
 							}
 
 							if(ipcon.disconnectedListener != null) {
-								ipcon.disconnectedListener.disconnected(parameter);
+								ipcon.disconnectedListener.disconnected((short)parameter);
 							}
 
 							if(parameter != IPConnection.DISCONNECT_REASON_REQUEST && ipcon.autoReconnect && ipcon.autoReconnectAllowed) {
@@ -283,18 +283,18 @@ public class IPConnection {
     public final static short ENUMERATION_TYPE_DISCONNECTED = 2;
 
     // connect_reason parameter to the connected callback
-    public final static int CONNECT_REASON_REQUEST = 0;
-    public final static int CONNECT_REASON_AUTO_RECONNECT = 1;
+    public final static short CONNECT_REASON_REQUEST = 0;
+    public final static short CONNECT_REASON_AUTO_RECONNECT = 1;
 
     // disconnect_reason parameter to the disconnected callback
-    public final static int DISCONNECT_REASON_REQUEST = 0;
-    public final static int DISCONNECT_REASON_ERROR = 1;
-    public final static int DISCONNECT_REASON_SHUTDOWN = 2;
+    public final static short DISCONNECT_REASON_REQUEST = 0;
+    public final static short DISCONNECT_REASON_ERROR = 1;
+    public final static short DISCONNECT_REASON_SHUTDOWN = 2;
 
     // returned by get_connection_state
-    public final static int CONNECTION_STATE_DISCONNECTED = 0;
-    public final static int CONNECTION_STATE_CONNECTED = 1;
-    public final static int CONNECTION_STATE_PENDING = 2; // auto-reconnect in process
+    public final static short CONNECTION_STATE_DISCONNECTED = 0;
+    public final static short CONNECTION_STATE_CONNECTED = 1;
+    public final static short CONNECTION_STATE_PENDING = 2; // auto-reconnect in process
 
     protected final static int QUEUE_EXIT = 0;
     protected final static int QUEUE_META = 1;
@@ -346,15 +346,17 @@ public class IPConnection {
 	}
 
 	public interface EnumerateListener {
-		public void enumerate(String UID, String connectedUID, char position, short[] hardwareVersion, short[] firmwareVersion, int deviceIdentifier, short enumerationType);
+		public void enumerate(String uid, String connectedUid, char position,
+		                      short[] hardwareVersion, short[] firmwareVersion,
+		                      int deviceIdentifier, short enumerationType);
 	}
 
 	public interface ConnectedListener {
-		public void connected(int reason);
+		public void connected(short disconnectReason);
 	}
 
 	public interface DisconnectedListener {
-		public void disconnected(int reason);
+		public void disconnected(short disconnectReason);
 	}
 
 
@@ -524,7 +526,7 @@ public class IPConnection {
 		}
 	}
 
-	public byte getConnectionState() {
+	public short getConnectionState() {
 		if(socket != null) {
 			return CONNECTION_STATE_CONNECTED;
 		}
@@ -683,14 +685,14 @@ public class IPConnection {
 	 *
 	 * \code
 	 * public class IPConnection.EnumerateListener() {
-	 *   public void enumerate(String UID, String connectedUID, char position, short[3] hardwareVersion, short[3] firmwareVersion, int device_identifier, short enumerationType)
+	 *   public void enumerate(String uid, String connectedUid, char position, short[3] hardwareVersion, short[3] firmwareVersion, int device_identifier, short enumerationType)
 	 * }
 	 * \endcode
 	 *
 	 * The listener receives four parameters:
 	 *
 	 * - \c uid: The UID of the device.
-	 * - \c connectedUID: UID where the device is connected to. For a Bricklet this will be a UID of the Brick where it is connected to. For a Brick it will be the UID of the bottom Master Brick in the stack. For the bottom Master Brick in a Stack this will be “1”. With this information it is possible to reconstruct the complete network topology. 
+	 * - \c connectedUid: UID where the device is connected to. For a Bricklet this will be a UID of the Brick where it is connected to. For a Brick it will be the UID of the bottom Master Brick in the stack. For the bottom Master Brick in a Stack this will be “1”. With this information it is possible to reconstruct the complete network topology. 
 	 * - \c position: Position in stack. For Bricks: ‘0’ - ‘8’ (position in stack). For Bricklets: ‘a’ - ‘d’ (position on Brick).
 	 * - \c hardwareVersion: Major, minor and release number for hardware version.
 	 * - \c firmwareVersion: Major, minor and release number for firmware version.
