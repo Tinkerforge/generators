@@ -102,18 +102,26 @@ namespace Tinkerforge
 		}
 
 		/// <summary>
-		///  Creates an IP connection to the Brick Daemon with the given *host*
-		///  and *port*. With the IP connection itself it is possible to enumerate the
-		///  available devices. Other then that it is only used to add Bricks and
-		///  Bricklets to the connection.
-		///
-		///  The constructor throws an System.Net.Sockets.SocketException if there
-		///  is no Brick Daemon listening at the given host and port.
+		///  Creates an IP Connection object that can be used to enumerate the
+		///  available devices. It is also required for the constructor of
+		///  Bricks and Bricklets.
 		/// </summary>
 		public IPConnection()
 		{
 		}
 
+		/// <summary>
+		///  Creates a TCP/IP connection to the given *host* and *port*.
+		///  The host and port can point to a Brick Daemon or to a WIFI/Ethernet
+		///  Extension.
+		///
+		///  Devices can only be controlled when the connection was established
+		///  successfully.
+		///
+		///  Blocks until the connection is established and throws an exception
+		///  if there is no Brick Daemon or WIFI/Ethernet Extension listening
+		///  at the given host and port.
+		/// </summary>
 		public void Connect(string host, int port)
 		{
 			lock(socketLock)
@@ -167,6 +175,10 @@ namespace Tinkerforge
 			callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_META, data_));
 		}
 
+		/// <summary>
+		///  Disconnects the TCP/IP connection from the Brick Daemon or the
+		///  WIFI/Ethernet Extension.
+		/// </summary>
 		public void Disconnect()
 		{
 			Thread callbackThreadTmp = null;
@@ -223,6 +235,15 @@ namespace Tinkerforge
 			}
 		}
 
+		/// <summary>
+		///  Can return the following states:
+		///
+		///  - CONNECTION_STATE_DISCONNECTED: No connection is established.
+		///  - CONNECTION_STATE_CONNECTED: A connection to the Brick Daemon or
+		///    the WIFI/Ethernet Extension  is established.
+		///  - CONNECTION_STATE_PENDING: IP Connection is currently trying to
+		///    connect.
+		/// </summary>
 		public short GetConnectionState()
 		{
 			if(socket != null)
@@ -238,6 +259,13 @@ namespace Tinkerforge
 			return IPConnection.CONNECTION_STATE_DISCONNECTED;
 		}
 
+		/// <summary>
+		///  Enables or disables auto-reconnect. If auto-reconnect is enabled,
+		///  the IP Connection will try to reconnect to the previously given
+		///  host and port, if the connection is lost.
+		///
+		///  Default value is *true*.
+		/// </summary>
 		public void SetAutoReconnect(bool autoReconnect)
 		{
 			this.autoReconnect = autoReconnect;
@@ -248,11 +276,20 @@ namespace Tinkerforge
 			}
 		}
 
+		/// <summary>
+		///  Returns *true* if auto-reconnect is enabled, *false* otherwise.
+		/// </summary>
 		public bool GetAutoReconnect()
 		{
 			return autoReconnect;
 		}
 
+		/// <summary>
+		///  Sets the timeout in milliseconds for getters and for setters for
+		///  which the response expected flag is activated.
+		///
+		///  Default timeout is 2500.
+		/// </summary>
 		public void SetTimeout(int timeout)
 		{
 			if(timeout < 0)
@@ -263,16 +300,50 @@ namespace Tinkerforge
 			responseTimeout = timeout;
 		}
 
+		/// <summary>
+		///  Returns the timeout as set by SetTimeout.
+		/// </summary>
 		public int GetTimeout()
 		{
 			return responseTimeout;
 		}
 
+		/// <summary>
+		///  Broadcasts an enumerate request. All devices will respond with an
+		///  enumerate callback.
+		/// </summary>
+		public void Enumerate()
+		{
+			byte[] data_ = new byte[8];
+			LEConverter.To((byte)0, 0, data_);
+			LEConverter.To((byte)8, 4, data_);
+			LEConverter.To(CALLBACK_ENUMERATE, 5, data_);
+			LEConverter.To((byte)((GetNextSequenceNumber() << 4)), 6, data_);
+			LEConverter.To((byte)0, 7, data_);
+			Write(data_);
+		}
+
+		/// <summary>
+		///  Stops the current thread until Unwait is called.
+		///
+		///  This is useful if you rely solely on callbacks for events, if you
+		///  want to wait for a specific callback or if the IP Connection was
+		///  created in a thread.
+		///
+		///  Wait and Unwait act in the same way as "acquire" and "release" of
+		///  a semaphore.
+		/// </summary>
 		public void Wait()
 		{
 			waiter.WaitOne();
 		}
 
+		/// <summary>
+		///  Unwaits the thread previously stopped by Wait.
+		///
+		///  Wait and Unwait act in the same way as "acquire" and "release" of
+		///  a semaphore.
+		/// </summary>
 		public void Unwait()
 		{
 			waiter.Release();
@@ -603,17 +674,6 @@ namespace Tinkerforge
 				socketWriter.Write(data, 0, data.Length);
 			}
 		}
-
-		public void Enumerate()
-		{
-			byte[] data_ = new byte[8];
-			LEConverter.To((byte)0, 0, data_);
-			LEConverter.To((byte)8, 4, data_);
-			LEConverter.To(CALLBACK_ENUMERATE, 5, data_);
-			LEConverter.To((byte)((GetNextSequenceNumber() << 4)), 6, data_);
-			LEConverter.To((byte)0, 7, data_);
-            Write(data_);
-		}
 	}
 
 	public class TimeoutException : Exception
@@ -650,6 +710,10 @@ namespace Tinkerforge
 
 		internal delegate void MessageCallback(byte[] data);
 
+		/// <summary>
+		///  Creates the device objectwith the unique device ID *uid* and adds
+		///  it to the IPConnection *ipcon*.
+		/// </summary>
 		public Device(string uid, IPConnection ipcon)
 		{
 			long uidTmp = Base58.Decode(uid);
@@ -687,15 +751,58 @@ namespace Tinkerforge
 		}
 
 		/// <summary>
-		///  Returns the name (including the hardware version), the firmware version
-		///  and the binding version of the device. The firmware and binding versions are
-		///  given in arrays of size 3 with the syntax [major, minor, revision].
+		///  Returns the API version (major, minor, revision) of the bindings
+		///  for this device.
 		/// </summary>
 		public short[] GetAPIVersion()
 		{
 			return apiVersion;
 		}
 
+		/// <summary>
+		///  Returns the response expected flag for the function specified
+		///  by the *functionId* parameter. It is *true* if the function is
+		///  expected to send a response, *false* otherwise.
+		///
+		///  For getter functions this is enabled by default and cannot be
+		///  disabled, because those functions will always send a response.
+		///  For callback configuration functions it is enabled by default
+		///  too, but can be disabled via the setResponseExpected function.
+		///  For setter functions it is disabled by default and can be enabled.
+		///
+		///  Enabling the response expected flag for a setter function allows
+		///  to detect timeouts and other error conditions calls of this setter
+		///  as well. The device will then send a response for this purpose.
+		///  If this flag is disabled for a setter function then no response
+		///  is send and errors are silently ignored, because they cannot be
+		///  detected.
+		/// </summary>
+		public bool GetResponseExpected(byte functionId)
+		{
+			if(this.responseExpected[functionId] != ResponseExpectedFlag.INVALID_FUNCTION_ID &&
+			   functionId < this.responseExpected.Length)
+			{
+				return this.responseExpected[functionId] == ResponseExpectedFlag.ALWAYS_TRUE ||
+				       this.responseExpected[functionId] == ResponseExpectedFlag.TRUE;
+			}
+
+			throw new ArgumentOutOfRangeException("Invalid function ID " + functionId);
+		}
+
+		/// <summary>
+		///  Changes the response expected flag of the function specified
+		///  by the function ID parameter. This flag can only be changed
+		///  for setter (default value: *false*) and callback configuration
+		///  functions (default value: *true*). For getter functions it is
+		///  always enabled and callbacks it is always disabled.
+		///
+		///  Enabling the response expected flag for a setter function allows
+		///  to detect timeouts and other error conditions calls of this setter
+		///  as well. The device will then send a response for this purpose.
+		///  If this flag is disabled for a setter function then no response
+		///  is send and errors are silently ignored, because they cannot be
+		///  detected.
+		/// </summary>
 		public void SetResponseExpected(int functionId, bool responseExpected)
 		{
 			if(this.responseExpected[functionId] == ResponseExpectedFlag.INVALID_FUNCTION_ID ||
@@ -719,18 +826,10 @@ namespace Tinkerforge
 			}
 		}
 
-		public bool GetResponseExpected(byte functionId)
-		{
-			if(this.responseExpected[functionId] != ResponseExpectedFlag.INVALID_FUNCTION_ID &&
-			   functionId < this.responseExpected.Length)
-			{
-				return this.responseExpected[functionId] == ResponseExpectedFlag.ALWAYS_TRUE ||
-					   this.responseExpected[functionId] == ResponseExpectedFlag.TRUE;
-			}
-
-			throw new ArgumentOutOfRangeException("Invalid function ID " + functionId);
-		}
-
+		/// <summary>
+		///  Changes the response expected flag for all setter and callback
+		///  configuration functions of this device at once.
+		/// </summary>
 		public void SetResponseExpectedAll(bool responseExpected)
 		{
 			ResponseExpectedFlag flag = ResponseExpectedFlag.FALSE;

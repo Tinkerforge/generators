@@ -2,7 +2,7 @@
  * Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
  *
- * Redistribution and use in source and binary forms of this file, 
+ * Redistribution and use in source and binary forms of this file,
  * with or without modification, are permitted.
  */
 
@@ -142,7 +142,7 @@ class CallbackThread extends Thread {
 
 					int functionId = bb.getInt();
 					int parameter = bb.getInt();
-					
+
 					switch(functionId) {
 						case IPConnection.CALLBACK_CONNECTED:
 							if(ipcon.connectedListener != null) {
@@ -255,7 +255,7 @@ class CallbackThread extends Thread {
 							device.callbacks[functionID].callback(cqo.data);
 						}
 					}
-					
+
 					break;
 				}
 			}
@@ -359,30 +359,24 @@ public class IPConnection {
 		public void disconnected(short disconnectReason);
 	}
 
-
 	/**
-	 * Creates an IP connection to the Brick Daemon with the given \c host
-	 * and \c port. With the IP connection itself it is possible to enumerate the
-	 * available devices. Other then that it is only used to add Bricks and
-	 * Bricklets to the connection.
-	 *
-	 * The constructor throws an IOException if there is no Brick Daemon
-	 * listening at the given host and port.
+	 * Creates an IP Connection object that can be used to enumerate the available
+	 * devices. It is also required for the constructor of Bricks and Bricklets.
 	 */
 	public IPConnection() {
-
 	}
 
-	public void addListener(Object o) {
-		if(o instanceof EnumerateListener) {
-			enumerateListener = (EnumerateListener)o;
-		} else if(o instanceof ConnectedListener) {
-			connectedListener = (ConnectedListener)o;
-		} else if(o instanceof DisconnectedListener) {
-			disconnectedListener = (DisconnectedListener)o;
-		}
-	}
-
+	/**
+	 * Creates a TCP/IP connection to the given \c host and \c port. The host
+	 * and port can point to a Brick Daemon or to a WIFI/Ethernet Extension.
+	 *
+	 * Devices can only be controlled when the connection was established
+	 * successfully.
+	 *
+	 * Blocks until the connection is established and throws an exception if
+	 * there is no Brick Daemon or WIFI/Ethernet Extension listening at the
+	 * given host and port.
+	 */
 	public void connect(String host, int port) throws java.net.UnknownHostException, java.io.IOException {
 		synchronized(socketMutex) {
 			this.host = host;
@@ -439,6 +433,10 @@ public class IPConnection {
 		}
 	}
 
+	/**
+	 * Disconnects the TCP/IP connection from the Brick Daemon or the
+	 * WIFI/Ethernet Extension.
+	 */
 	public void disconnect() {
 		CallbackThread callbackThreadTmp = null;
 		LinkedBlockingQueue<CallbackQueueObject> callbackQueueTmp = null;
@@ -526,18 +524,34 @@ public class IPConnection {
 		}
 	}
 
+	/**
+	 * Can return the following states:
+	 *
+	 * - CONNECTION_STATE_DISCONNECTED: No connection is established.
+	 * - CONNECTION_STATE_CONNECTED: A connection to the Brick Daemon or
+	 *   the WIFI/Ethernet Extension is established.
+	 * - CONNECTION_STATE_PENDING: IP Connection is currently trying to
+	 *   connect.
+	 */
 	public short getConnectionState() {
 		if(socket != null) {
 			return CONNECTION_STATE_CONNECTED;
 		}
 
 		if(autoReconnectPending) {
-			return IPConnection.CONNECTION_STATE_PENDING;
+			return CONNECTION_STATE_PENDING;
 		}
 
-		return IPConnection.CONNECTION_STATE_DISCONNECTED;
+		return CONNECTION_STATE_DISCONNECTED;
 	}
 
+	/**
+	 * Enables or disables auto-reconnect. If auto-reconnect is enabled,
+	 * the IP Connection will try to reconnect to the previously given
+	 * host and port, if the connection is lost.
+	 *
+	 * Default value is *true*.
+	 */
 	public void setAutoReconnect(boolean autoReconnect) {
 		this.autoReconnect = autoReconnect;
 
@@ -546,10 +560,19 @@ public class IPConnection {
 		}
 	}
 
+	/**
+	 * Returns *true* if auto-reconnect is enabled, *false* otherwise.
+	 */
 	public boolean getAutoReconnect() {
 		return autoReconnect;
 	}
 
+	/**
+	 * Sets the timeout in milliseconds for getters and for setters for which the
+	 * response expected flag is activated.
+	 *
+	 * Default timeout is 2500.
+	 */
 	public void setTimeout(int timeout) {
 		if(timeout < 0) {
 			throw new IllegalArgumentException("Timeout cannot be negative");
@@ -558,8 +581,44 @@ public class IPConnection {
 		response_timeout = timeout;
 	}
 
+	/**
+	 * Returns the timeout as set by setTimeout.
+	 */
 	public int getTimeout() {
 		return response_timeout;
+	}
+
+	/**
+	 * Broadcasts an enumerate request. All devices will respond with an enumerate
+	 * callback.
+	 */
+	public void enumerate() {
+		synchronized(socketMutex) {
+			// FIXME: check connection status and raise not connected exception
+
+			ByteBuffer request = createRequestBuffer(BROADCAST_UID, (byte)8, FUNCTION_ENUMERATE, (byte)0, (byte)0);
+
+			try {
+				out.write(request.array());
+			} catch(java.io.IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * Registers a listener object.
+	 */
+	public void addListener(Object object) {
+		if(object instanceof EnumerateListener) {
+			enumerateListener = (EnumerateListener)object;
+		} else if(object instanceof ConnectedListener) {
+			connectedListener = (ConnectedListener)object;
+		} else if(object instanceof DisconnectedListener) {
+			disconnectedListener = (DisconnectedListener)object;
+		} else {
+			throw new IllegalArgumentException("Unknown listener type");
+		}
 	}
 
 	void handleResponse(byte[] packet) {
@@ -675,46 +734,6 @@ public class IPConnection {
 			try {
 				callbackQueue.put(new IPConnection.CallbackQueueObject(QUEUE_PACKET, packet));
 			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	/**
-	 * This method registers the following listener:
-	 *
-	 * \code
-	 * public class IPConnection.EnumerateListener() {
-	 *   public void enumerate(String uid, String connectedUid, char position, short[3] hardwareVersion, short[3] firmwareVersion, int device_identifier, short enumerationType)
-	 * }
-	 * \endcode
-	 *
-	 * The listener receives four parameters:
-	 *
-	 * - \c uid: The UID of the device.
-	 * - \c connectedUid: UID where the device is connected to. For a Bricklet this will be a UID of the Brick where it is connected to. For a Brick it will be the UID of the bottom Master Brick in the stack. For the bottom Master Brick in a Stack this will be “1”. With this information it is possible to reconstruct the complete network topology. 
-	 * - \c position: Position in stack. For Bricks: ‘0’ - ‘8’ (position in stack). For Bricklets: ‘a’ - ‘d’ (position on Brick).
-	 * - \c hardwareVersion: Major, minor and release number for hardware version.
-	 * - \c firmwareVersion: Major, minor and release number for firmware version.
-	 * - \c device_identifier: A number that represents the Brick, instead of the name of the Brick (easier to parse).
-	 * - \c enumerationType: Type of enumeration
-	 *
-	 * Possible enumerate types:
-     *
-	 * ENUMERATION_TYPE_AVAILABLE (0): Device is available (enumeration triggered by user).
-     * ENUMERATION_TYPE_CONNECTED (1): Device is newly connected (automatically send by Brick after establishing a communication connection). This indicates that the device has potentially lost its previous configuration and needs to be reconfigured.
-     * ENUMERATION_TYPE_DISCONNECTED (2): Device is disconnected (only possible for USB connection).
-	 *
-	 * It should be possible to implement "plug 'n play" functionality with this
-	 * (as is done in Brick Viewer).
-	 */
-	public void enumerate() {
-		synchronized(socketMutex) {
-			ByteBuffer request = createRequestBuffer(BROADCAST_UID, (byte)8, FUNCTION_ENUMERATE, (byte)0, (byte)0);
-
-			try {
-				out.write(request.array());
-			} catch(java.io.IOException e) {
 				e.printStackTrace();
 			}
 		}

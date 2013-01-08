@@ -33,18 +33,22 @@ public abstract class Device {
 		public void callback(byte data[]);
 	}
 
+	/**
+	 * Creates the device object with the unique device ID \c uid and adds
+	 * it to the IPConnection \c ipcon.
+	 */
 	public Device(String uid, IPConnection ipcon) {
 		long uidTmp = IPConnection.base58Decode(uid);
-        if(uidTmp > 0xFFFFFFFFL) {
-            // convert from 64bit to 32bit
-            long value1 = uidTmp & 0xFFFFFFFFL;
-            long value2 = (uidTmp >> 32) & 0xFFFFFFFFL;
+		if(uidTmp > 0xFFFFFFFFL) {
+			// convert from 64bit to 32bit
+			long value1 = uidTmp & 0xFFFFFFFFL;
+			long value2 = (uidTmp >> 32) & 0xFFFFFFFFL;
 
-            uidTmp  = (value1 & 0x3F000000L) << 2;
-            uidTmp |= (value1 & 0x000F0000L) << 6;
-            uidTmp |= (value1 & 0x0000003FL) << 16;
-            uidTmp |= (value2 & 0x0F000000L) >> 12;
-            uidTmp |= (value2 & 0x00000FFFL);
+			uidTmp  = (value1 & 0x3F000000L) << 2;
+			uidTmp |= (value1 & 0x000F0000L) << 6;
+			uidTmp |= (value1 & 0x0000003FL) << 16;
+			uidTmp |= (value2 & 0x0F000000L) >> 12;
+			uidTmp |= (value2 & 0x00000FFFL);
 		}
 
 		this.uid   = uidTmp;
@@ -63,12 +67,53 @@ public abstract class Device {
 	}
 
 	/**
-	 * Returns API version [major, minor, revision] used for this device.
+	 * Returns the API version (major, minor, revision) of the bindings for
+	 * this device.
 	 */
 	public short[] getAPIVersion() {
 		return apiVersion;
 	}
 
+	/**
+	 * Returns the response expected flag for the function specified by the
+	 * \c functionId parameter. It is *true* if the function is expected to
+	 * send a response, *false* otherwise.
+	 *
+	 * For getter functions this is enabled by default and cannot be disabled,
+	 * because those functions will always send a response. For callback
+	 * configuration functions it is enabled by default too, but can be
+	 * disabled via the SetResponseExpected function. For setter functions it
+	 * is disabled by default and can be enabled.
+	 *
+	 * Enabling the response expected flag for a setter function allows to
+	 * detect timeouts and other error conditions calls of this setter as well.
+	 * The device will then send a response for this purpose. If this flag is
+	 * disabled for a setter function then no response is send and errors are
+	 * silently ignored, because they cannot be detected.
+	 */
+	public boolean getResponseExpected(byte functionId) {
+		if(this.responseExpected[IPConnection.unsignedByte(functionId)] != RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID &&
+		   functionId < this.responseExpected.length) {
+			return this.responseExpected[IPConnection.unsignedByte(functionId)] == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE ||
+			       this.responseExpected[IPConnection.unsignedByte(functionId)] == RESPONSE_EXPECTED_FLAG_TRUE;
+		}
+
+		throw new IllegalArgumentException("Invalid function ID " + functionId);
+	}
+
+	/**
+	 * Changes the response expected flag of the function specified by
+	 * the \c functionId parameter. This flag can only be changed for setter
+	 * (default value: *false*) and callback configuration functions
+	 * (default value: *true*). For getter functions it is always enabled
+	 * and callbacks it is always disabled.
+	 *
+	 * Enabling the response expected flag for a setter function allows to
+	 * detect timeouts and other error conditions calls of this setter as
+	 * well. The device will then send a response for this purpose. If this
+	 * flag is disabled for a setter function then no response is send and
+	 * errors are silently ignored, because they cannot be detected.
+	 */
 	public void setResponseExpected(byte functionId, boolean responseExpected) {
 		if(this.responseExpected[IPConnection.unsignedByte(functionId)] == RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID ||
 		   functionId >= this.responseExpected.length) {
@@ -87,16 +132,10 @@ public abstract class Device {
 		}
 	}
 
-	public boolean getResponseExpected(byte functionId) {
-		if(this.responseExpected[IPConnection.unsignedByte(functionId)] != RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID &&
-		   functionId < this.responseExpected.length) {
-			return this.responseExpected[IPConnection.unsignedByte(functionId)] == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE || 
-			       this.responseExpected[IPConnection.unsignedByte(functionId)] == RESPONSE_EXPECTED_FLAG_TRUE;
-		}
-
-		throw new IllegalArgumentException("Invalid function ID " + functionId);
-	}
-
+	/**
+	 * Changes the response expected flag for all setter and callback
+	 * configuration functions of this device at once.
+	 */
 	public void setResponseExpectedAll(boolean responseExpected) {
 		byte flag = RESPONSE_EXPECTED_FLAG_FALSE;
 		if(responseExpected) {

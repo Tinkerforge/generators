@@ -1460,18 +1460,18 @@ int ipcon_enumerate(IPConnection *ipcon) {
 	return ret;
 }
 
-void ipcon_register_callback(IPConnection *ipcon, uint8_t id, void *callback,
-                             void *user_data) {
-	ipcon->registered_callbacks[id] = callback;
-	ipcon->registered_callback_user_data[id] = user_data;
-}
-
 void ipcon_wait(IPConnection *ipcon) {
 	semaphore_acquire(&ipcon->wait);
 }
 
 void ipcon_unwait(IPConnection *ipcon) {
 	semaphore_release(&ipcon->wait);
+}
+
+void ipcon_register_callback(IPConnection *ipcon, uint8_t id, void *callback,
+                             void *user_data) {
+	ipcon->registered_callbacks[id] = callback;
+	ipcon->registered_callback_user_data[id] = user_data;
 }
 
 int packet_header_create(PacketHeader *header, uint8_t length,

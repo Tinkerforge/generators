@@ -39,19 +39,62 @@ type
     responseExpected: array [0..255] of byte;
     callbackWrappers: array [0..255] of TCallbackWrapper;
 
+    /// <summary>
+    ///  Creates the device objectwith the unique device ID *uid* and adds
+    ///  it to the IPConnection *ipcon*.
+    /// </summary>
     constructor Create(const uid__: string; ipcon_: TObject);
+
+    /// <summary>
+    ///  Removes the device object from its IPConnection and destroys it.
+    ///  The device object cannot be used anymore afterwards.
+    /// </summary>
     destructor Destroy; override;
 
     /// <summary>
-    ///  Returns the name (including the hardware version), the firmware
-    ///  version and the binding version of the device. The firmware and
-    ///  binding versions are given in arrays of size 3 with the syntax
-    ///  [major, minor, revision].
+    ///  Returns the API version (major, minor, revision) of the bindings for
+    ///  this device.
     /// </summary>
     function GetAPIVersion: TVersionNumber;
 
-    function GetResponseExpected(const functionID: byte): boolean;
-    procedure SetResponseExpected(const functionID: byte; const responseExpected_: boolean);
+    /// <summary>
+    ///  Returns the response expected flag for the function specified by the
+    ///  *functionId* parameter. It is *true* if the function is expected to
+    ///  send a response, *false* otherwise.
+    ///
+    ///  For getter functions this is enabled by default and cannot be disabled,
+    ///  because those functions will always send a response. For callback
+    ///  configuration functions it is enabled by default too, but can be
+    ///  disabled via the setResponseExpected function. For setter functions it
+    ///  is disabled by default and can be enabled.
+    ///
+    ///  Enabling the response expected flag for a setter function allows to
+    ///  detect timeouts and other error conditions calls of this setter as
+    ///  well. The device will then send a response for this purpose. If this
+    ///  flag is disabled for a setter function then no response is send and
+    ///  errors are silently ignored, because they cannot be detected.
+    /// </summary>
+    function GetResponseExpected(const functionId: byte): boolean;
+
+    /// <summary>
+    ///  Changes the response expected flag of the function specified by
+    ///  the function ID parameter. This flag can only be changed for setter
+    ///  (default value: *false*) and callback configuration functions
+    ///  (default value: *true*). For getter functions it is always enabled
+    ///  and callbacks it is always disabled.
+    ///
+    ///  Enabling the response expected flag for a setter function allows to
+    ///  detect timeouts and other error conditions calls of this setter as
+    ///  well. The device will then send a response for this purpose. If this
+    ///  flag is disabled for a setter function then no response is send and
+    ///  errors are silently ignored, because they cannot be detected.
+    /// </summary>
+    procedure SetResponseExpected(const functionId: byte; const responseExpected_: boolean);
+
+    /// <summary>
+    ///  Changes the response expected flag for all setter and callback
+    ///  configuration functions of this device at once.
+    /// </summary>
     procedure SetResponseExpectedAll(const responseExpected_: boolean);
 
     { Internal }

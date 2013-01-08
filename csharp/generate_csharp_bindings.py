@@ -9,8 +9,8 @@ Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 generate_csharp_bindings.py: Generator for C# bindings
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -117,10 +117,10 @@ def make_class():
 \t/// <summary>
 \t///  {2}
 \t/// </summary>
-\tpublic class {0}{1} : Device 
+\tpublic class {0}{1} : Device
 \t{{
 """
-        
+
     return class_str.format(device.get_category(),
                             device.get_camel_case_name(),
                             device.get_description())
@@ -167,10 +167,10 @@ def make_constructor():
     cb = '\t\t\tmessageCallbacks[CALLBACK_{0}] = new MessageCallback(On{1});'
     con = """
 \t\t/// <summary>
-\t\t///  Creates an object with the unique device ID <c>uid</c>. This object can
-\t\t///  then be added to the IP connection.
+\t\t///  Creates an object with the unique device ID <c>uid</c> and adds  it to
+\t\t///  the IPConnection <c>ipcon</c>.
 \t\t/// </summary>
-\t\tpublic {0}{1}(string uid, IPConnection ipcon) : base(uid, ipcon) 
+\t\tpublic {0}{1}(string uid, IPConnection ipcon) : base(uid, ipcon)
 \t\t{{
 \t\t\tthis.apiVersion[0] = {3};
 \t\t\tthis.apiVersion[1] = {4};
@@ -287,7 +287,7 @@ def make_callbacks():
 
         if callParams != '':
             callParams = ', ' + callParams
-        
+
         cbs += cb.format(name, convs, name_upper, callParams, pos, signatureParams)
 
     return cbs + "\t}\n}"
