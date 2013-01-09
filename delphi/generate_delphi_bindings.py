@@ -186,15 +186,13 @@ def make_arrays():
 
 def make_callback_prototypes():
     prototypes = ''
-    prototype = '  T{0}{1}Notify{2} = procedure({3}) of object;\n'
+    prototype = '  T{0}{1}Notify{2} = procedure(sender: T{0}{1}{3}) of object;\n'
 
     for packet in device.get_packets('callback'):
         params = delphi_common.make_parameter_list(packet, False)
 
         if len(params) > 0:
-            params = 'sender: TObject; ' + params
-        else:
-            params = 'sender: TObject'
+            params = '; ' + params
 
         prototypes += prototype.format(device.get_category(),
                                        device.get_camel_case_name(),
@@ -202,7 +200,9 @@ def make_callback_prototypes():
                                        params)
 
     if len(prototypes) > 0:
-        prototypes += '\n'
+        forward = 'T{0}{1} = class;\n'.format(device.get_category(),
+                                              device.get_camel_case_name())
+        prototypes = forward + prototypes + '\n'
 
     return prototypes
 

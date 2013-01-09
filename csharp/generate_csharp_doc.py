@@ -108,12 +108,12 @@ def make_methods(typ):
 def make_callbacks():
     cb = {
     'en': """
-.. csharp:function:: public event {0}::{1}({2})
+.. csharp:function:: public event {0}::{1}({0} sender{2})
 
 {3}
 """,
     'de': """
-.. csharp:function:: public event {0}::{1}({2})
+.. csharp:function:: public event {0}::{1}({0} sender{2})
 
 {3}
 """
@@ -124,6 +124,8 @@ def make_callbacks():
     for packet in device.get_packets('callback'):
         desc = format_doc(packet, 2)
         params = csharp_common.make_parameter_list(packet)
+        if len(params) > 0:
+            params = ', ' + params
 
         cbs += common.select_lang(cb).format(device.get_category() + device.get_camel_case_name(),
                                              packet.get_camel_case_name(),
@@ -178,12 +180,12 @@ by appending your Callback-Handler to the corresponding event:
 
 .. code-block:: csharp
     
-    void Callback(object sender, int value)
+    void Callback({3}{4} sender, int value)
     {{
         System.Console.WriteLine("Value: " + value);
     }}
 
-    device.ExampleCallback += Callback;
+    {1}.ExampleCallback += Callback;
 
 The available events are described below.
 
@@ -206,12 +208,12 @@ durch die anhängen des Callback-Handlers zum passenden Event geschehen:
 
 .. code-block:: csharp
     
-    void Callback(object sender, int value)
+    void Callback({3}{4} sender, int value)
     {{
         System.Console.WriteLine("Value: " + value);
     }}
 
-    device.ExampleCallback += Callback;
+    {1}.ExampleCallback += Callback;
 
 Die verfügbaren Events werden weiter unten beschrieben.
 

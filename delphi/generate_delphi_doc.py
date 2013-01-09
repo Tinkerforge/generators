@@ -167,7 +167,7 @@ property of the device object:
 
  .. code-block:: delphi
 
-  procedure TExample.MyCallback(const param: word);
+  procedure TExample.MyCallback(sender: T{3}{4}; const param: word);
   begin
     WriteLn(param);
   end;
@@ -195,7 +195,7 @@ eine Prozedur einer Callback Property des Geräte Objektes zugewiesen wird:
 
  .. code-block:: delphi
 
-  procedure TExample.MyCallback(const param: word);
+  procedure TExample.MyCallback(sender: T{3}{4}; const param: word);
   begin
     WriteLn(param);
   end;

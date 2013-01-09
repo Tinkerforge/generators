@@ -132,7 +132,9 @@ def make_delegates():
 \t\t///  {2}
 \t\t/// </summary>
 \t\tpublic event {0}EventHandler {0};
-\t\tpublic delegate void {0}EventHandler(object sender{1});
+\t\t/// <summary>
+\t\t/// </summary>
+\t\tpublic delegate void {0}EventHandler({3}{4} sender{1});
 """
     for packet in device.get_packets('callback'):
         name = packet.get_camel_case_name()
@@ -140,7 +142,8 @@ def make_delegates():
         doc = format_doc(packet)
         if parameter != '':
             parameter = ', ' + parameter
-        cbs += cb.format(name, parameter, doc)
+        cbs += cb.format(name, parameter, doc, device.get_category(),
+                         device.get_camel_case_name())
     return cbs
 
 def make_function_id_definitions():
@@ -274,8 +277,8 @@ def make_callbacks():
             length = ''
             if element[2] > 1:
                 length = ', ' + str(element[2])
-            convs += conv.format(csharp_type, 
-                                 cname, 
+            convs += conv.format(csharp_type,
+                                 cname,
                                  from_type,
                                  pos,
                                  length)
