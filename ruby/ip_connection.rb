@@ -188,11 +188,11 @@ module Tinkerforge
         value1 = @uid & 0xFFFFFFFF
         value2 = (@uid >> 32) & 0xFFFFFFFF
 
-        @uid  = (value1 & 0x3F000000) << 2
-        @uid |= (value1 & 0x000F0000) << 6
-        @uid |= (value1 & 0x0000003F) << 16
-        @uid |= (value2 & 0x0F000000) >> 12
-        @uid |= (value2 & 0x00000FFF)
+        @uid  = (value1 & 0x00000FFF)
+        @uid |= (value1 & 0x0F000000) >> 12
+        @uid |= (value2 & 0x0000003F) << 16
+        @uid |= (value2 & 0x000F0000) << 6
+        @uid |= (value2 & 0x3F000000) << 2
       end
 
       @api_version = [0, 0, 0]
