@@ -167,7 +167,7 @@ public abstract class Device {
 			ipcon.write(request);
 
 			try {
-				response = responseQueue.poll(ipcon.response_timeout, TimeUnit.MILLISECONDS);
+				response = responseQueue.poll(ipcon.responseTimeout, TimeUnit.MILLISECONDS);
 				if(response == null) {
 					throw new IPConnection.TimeoutException("Did not receive response in time");
 				}

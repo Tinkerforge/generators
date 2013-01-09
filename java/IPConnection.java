@@ -220,18 +220,18 @@ class CallbackThread extends Thread {
 							int length = ipcon.getLengthFromData(cqo.data);
 							ByteBuffer bb = ByteBuffer.wrap(cqo.data, 8, length - 8);
 							bb.order(ByteOrder.LITTLE_ENDIAN);
-							String UID = "";
+							String uid_str = "";
 							for(int i = 0; i < 8; i++) {
 								char c = (char)bb.get();
 								if(c != '\0') {
-									UID += c;
+									uid_str += c;
 								}
 							}
-							String connectedUID = "";
+							String connectedUid_str = "";
 							for(int i = 0; i < 8; i++) {
 								char c = (char)bb.get();
 								if(c != '\0') {
-									connectedUID += c;
+									connectedUid_str += c;
 								}
 							}
 							char position = (char)bb.get();
@@ -246,7 +246,9 @@ class CallbackThread extends Thread {
 							int deviceIdentifier = ipcon.unsignedShort(bb.getShort());
 							short enumerationType = ipcon.unsignedByte(bb.get());
 
-							ipcon.enumerateListener.enumerate(UID, connectedUID, position, hardwareVersion, firmwareVersion, deviceIdentifier, enumerationType);
+							ipcon.enumerateListener.enumerate(uid_str, connectedUid_str, position,
+							                                  hardwareVersion, firmwareVersion,
+							                                  deviceIdentifier, enumerationType);
 						}
 					} else {
 						long uid = ipcon.getUIDFromData(cqo.data);
@@ -278,41 +280,41 @@ public class IPConnection {
 	private final static long BROADCAST_UID = (long)0;
 
 	// enumeration_type parameter to the enumerate callback
-    public final static short ENUMERATION_TYPE_AVAILABLE = 0;
-    public final static short ENUMERATION_TYPE_CONNECTED = 1;
-    public final static short ENUMERATION_TYPE_DISCONNECTED = 2;
+	public final static short ENUMERATION_TYPE_AVAILABLE = 0;
+	public final static short ENUMERATION_TYPE_CONNECTED = 1;
+	public final static short ENUMERATION_TYPE_DISCONNECTED = 2;
 
-    // connect_reason parameter to the connected callback
-    public final static short CONNECT_REASON_REQUEST = 0;
-    public final static short CONNECT_REASON_AUTO_RECONNECT = 1;
+	// connect_reason parameter to the connected callback
+	public final static short CONNECT_REASON_REQUEST = 0;
+	public final static short CONNECT_REASON_AUTO_RECONNECT = 1;
 
-    // disconnect_reason parameter to the disconnected callback
-    public final static short DISCONNECT_REASON_REQUEST = 0;
-    public final static short DISCONNECT_REASON_ERROR = 1;
-    public final static short DISCONNECT_REASON_SHUTDOWN = 2;
+	// disconnect_reason parameter to the disconnected callback
+	public final static short DISCONNECT_REASON_REQUEST = 0;
+	public final static short DISCONNECT_REASON_ERROR = 1;
+	public final static short DISCONNECT_REASON_SHUTDOWN = 2;
 
-    // returned by get_connection_state
-    public final static short CONNECTION_STATE_DISCONNECTED = 0;
-    public final static short CONNECTION_STATE_CONNECTED = 1;
-    public final static short CONNECTION_STATE_PENDING = 2; // auto-reconnect in process
+	// returned by get_connection_state
+	public final static short CONNECTION_STATE_DISCONNECTED = 0;
+	public final static short CONNECTION_STATE_CONNECTED = 1;
+	public final static short CONNECTION_STATE_PENDING = 2; // auto-reconnect in process
 
-    protected final static int QUEUE_EXIT = 0;
-    protected final static int QUEUE_META = 1;
-    protected final static int QUEUE_PACKET = 2;
+	final static int QUEUE_EXIT = 0;
+	final static int QUEUE_META = 1;
+	final static int QUEUE_PACKET = 2;
 
-	protected int response_timeout = 2500;
+	int responseTimeout = 2500;
 
-	protected Hashtable<Long, Device> devices = new Hashtable<Long, Device>();
-	protected LinkedBlockingQueue<CallbackQueueObject> callbackQueue = null;
+	Hashtable<Long, Device> devices = new Hashtable<Long, Device>();
+	LinkedBlockingQueue<CallbackQueueObject> callbackQueue = null;
 
-	protected Object socketMutex = new Object();
+	Object socketMutex = new Object();
 	private Object sequenceNumberMutex = new Object();
 
 	private String host;
 	private int port;
 
-	protected final static int SEQENCE_NUMBER_POS = 4;
-	protected byte nextSequenceNumber = 1;
+	private final static int SEQENCE_NUMBER_POS = 4;
+	private byte nextSequenceNumber = 1;
 
 	boolean receiveFlag = false;
 
@@ -322,19 +324,19 @@ public class IPConnection {
 	Socket socket = null;
 	OutputStream out = null;
 	InputStream in = null;
-	protected EnumerateListener enumerateListener = null;
-	protected ConnectedListener connectedListener = null;
-	protected DisconnectedListener disconnectedListener = null;
+	EnumerateListener enumerateListener = null;
+	ConnectedListener connectedListener = null;
+	DisconnectedListener disconnectedListener = null;
 	ReceiveThread receiveThread = null;
 	CallbackThread callbackThread = null;
 
-	public static class CallbackQueueObject {
- 		public final int kind; 
-  		public final byte[] data; 
-  		public CallbackQueueObject(int kind, byte[] data) { 
-    		this.kind = kind; 
-    		this.data = data; 
-  		} 
+	static class CallbackQueueObject {
+		public final int kind;
+		public final byte[] data;
+		public CallbackQueueObject(int kind, byte[] data) {
+			this.kind = kind;
+			this.data = data;
+		}
 	}
 
 	public static class TimeoutException extends Exception {
@@ -578,14 +580,14 @@ public class IPConnection {
 			throw new IllegalArgumentException("Timeout cannot be negative");
 		}
 
-		response_timeout = timeout;
+		responseTimeout = timeout;
 	}
 
 	/**
 	 * Returns the timeout as set by setTimeout.
 	 */
 	public int getTimeout() {
-		return response_timeout;
+		return responseTimeout;
 	}
 
 	/**
