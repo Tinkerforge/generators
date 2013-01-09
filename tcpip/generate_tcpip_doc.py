@@ -3,7 +3,7 @@
 
 """
 TCP/IP Documentation Generator
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_tcpip_doc.py: Generator for TCP/IP documentation
@@ -118,7 +118,7 @@ def make_methods(typ):
     func_start = '.. tcpip:function:: '
     cls = device.get_camel_case_name()
     for packet in device.get_packets('function'):
-        if packet.get_doc()[0] != typ:
+        if packet.get_doc()[0] != typ or packet.get_function_id() < 0:
             continue
         name = packet.get_underscore_name()
         fid = '\n :functionid: {0}'.format(packet.get_function_id())
@@ -239,4 +239,5 @@ def make_files(com_new, directory):
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:
+        print "=== Generating %s ===" % lang
         common.generate(os.getcwd(), lang, make_files, common.prepare_doc, True)

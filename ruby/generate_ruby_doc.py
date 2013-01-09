@@ -3,7 +3,7 @@
 
 """
 Ruby Documentation Generator
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_ruby_doc.py: Generator for Ruby documentation
@@ -128,20 +128,6 @@ def make_return_desc(packet):
     return ret.format('[' + ', '.join(ret_list) + ']')
 
 def make_methods(typ):
-    version_method = {
-    'en': """
-.. rb:function:: {0}#get_version -> [int, int, int]
-
- Returns API version [major, minor, revision] used for this device.
-""",
-    'de': """
-.. rb:function:: {0}#get_version -> [int, int, int]
-
- Gibt die API Version [major, minor, revision] die benutzt
- wird zurück.
-"""
-    }
-
     methods = ''
     func_start = '.. rb:function:: '
     cls = device.get_category() + device.get_camel_case_name()
@@ -163,9 +149,6 @@ def make_methods(typ):
                                               desc,
                                               r)
         methods += func + '\n'
-
-    if typ == 'af':
-        methods += common.select_lang(version_method).format(cls)
 
     return methods
 
@@ -371,4 +354,5 @@ def make_files(com_new, directory):
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:
+        print "=== Generating %s ===" % lang
         common.generate(os.getcwd(), lang, make_files, common.prepare_doc, True)

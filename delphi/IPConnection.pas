@@ -111,17 +111,100 @@ type
     procedure DispatchMeta(const meta: TByteArray);
     procedure DispatchPacket(const packet: TByteArray);
   public
+    /// <summary>
+    ///  Creates an IP Connection object that can be used to enumerate the
+    ///  available devices. It is also required for the constructor of Bricks
+    ///  and Bricklets.
+    /// </summary>
     constructor Create;
+
+    /// <summary>
+    ///  Destroys the IP Connection object. The connection to the Brick Daemon
+    ///  gets closed and the threads of the IP Connection are terminated.
+    /// </summary>
     destructor Destroy; override;
+
+    /// <summary>
+    ///  Creates a TCP/IP connection to the given *host* and *port*. The host
+    ///  and port can point to a Brick Daemon or to a WIFI/Ethernet Extension.
+    ///
+    ///  Devices can only be controlled when the connection was established
+    ///  successfully.
+    ///
+    ///  Blocks until the connection is established and throws an exception
+    ///  if there is no Brick Daemon or WIFI/Ethernet Extension listening at
+    ///  the given host and port.
+    /// </summary>
     procedure Connect(const host_: string; const port_: word);
+
+    /// <summary>
+    ///  Disconnects the TCP/IP connection from the Brick Daemon or the
+    ///  WIFI/Ethernet Extension.
+    /// </summary>
     procedure Disconnect;
+
+    /// <summary>
+    ///  Can return the following states:
+    ///
+    ///  - CONNECTION_STATE_DISCONNECTED: No connection is established.
+    ///  - CONNECTION_STATE_CONNECTED: A connection to the Brick Daemon or
+    ///    the WIFI/Ethernet Extension  is established.
+    ///  - CONNECTION_STATE_PENDING: IP Connection is currently trying to
+    ///    connect.
+    /// </summary>
     function GetConnectionState: byte;
+
+    /// <summary>
+    ///  Enables or disables auto-reconnect. If auto-reconnect is enabled,
+    ///  the IP Connection will try to reconnect to the previously given
+    ///  host and port, if the connection is lost.
+    ///
+    ///  Default value is *true*.
+    /// </summary>
     procedure SetAutoReconnect(const autoReconnect_: boolean);
+
+    /// <summary>
+    ///  Returns *true* if auto-reconnect is enabled, *false* otherwise.
+    /// </summary>
     function GetAutoReconnect: boolean;
+
+    /// <summary>
+    ///  Sets the timeout in milliseconds for getters and for setters for
+    ///  which the response expected flag is activated.
+    ///
+    ///  Default timeout is 2500.
+    /// </summary>
     procedure SetTimeout(const timeout_: longword);
+
+    /// <summary>
+    ///  Returns the timeout as set by SetTimeout.
+    /// </summary>
     function GetTimeout: longword;
+
+    /// <summary>
+    ///  Broadcasts an enumerate request. All devices will respond with an
+    ///  enumerate callback.
+    /// </summary>
     procedure Enumerate;
+
+    /// <summary>
+    ///  Stops the current thread until Unwait is called.
+    ///
+    ///  This is useful if you rely solely on callbacks for events, if you want
+    ///  to wait for a specific callback or if the IP Connection was created in
+    ///  a thread.
+    ///
+    ///  Wait and Unwait act in the same way as "acquire" and "release" of a
+    ///  semaphore.
+    /// </summary>
     procedure Wait;
+
+    /// <summary>
+    ///  Unwaits the thread previously stopped by Wait.
+    ///
+    ///  Wait and Unwait act in the same way as "acquire" and "release" of
+    ///  a semaphore.
+    /// </summary>
     procedure Unwait;
 
     property OnEnumerate: TIPConnectionNotifyEnumerate read enumerateCallback write enumerateCallback;

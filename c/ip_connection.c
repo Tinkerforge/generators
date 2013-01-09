@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
@@ -10,10 +10,6 @@
 	#define _BSD_SOURCE // for usleep from unistd.h
 #endif
 
-#define IPCON_EXPOSE_INTERNALS
-
-#include "ip_connection.h"
-
 #include <errno.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -21,14 +17,21 @@
 #include <string.h>
 #include <time.h>
 
-#ifndef _WIN32
+#ifdef _WIN32
+	#include <winsock2.h>
+#else
 	#include <unistd.h>
 	#include <sys/types.h>
 	#include <sys/time.h> // gettimeofday
 	#include <sys/socket.h> // connect
 	#include <sys/select.h>
 	#include <netdb.h> // gethostbyname
+	#include <netinet/in.h> // struct sockaddr_in
 #endif
+
+#define IPCON_EXPOSE_INTERNALS
+
+#include "ip_connection.h"
 
 #if defined _MSC_VER || defined __BORLANDC__
 	#pragma pack(push)
@@ -134,6 +137,14 @@ static uint64_t base58_decode(const char *str) {
  *                                 Socket
  *
  *****************************************************************************/
+
+struct _Socket {
+#ifdef _WIN32
+	SOCKET handle;
+#else
+	int handle;
+#endif
+};
 
 #ifdef _WIN32
 
@@ -773,29 +784,34 @@ void device_destroy(Device *device) {
 	mutex_destroy(&device->request_mutex);
 }
 
-int device_get_response_expected(Device *device, uint8_t function_id) {
+int device_get_response_expected(Device *device, uint8_t function_id,
+                                 bool *ret_response_expected) {
 	if (device->response_expected[function_id] == DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE ||
 	    device->response_expected[function_id] == DEVICE_RESPONSE_EXPECTED_TRUE) {
-		return 1;
+		*ret_response_expected = true;
 	} else if (device->response_expected[function_id] == DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE ||
 	           device->response_expected[function_id] == DEVICE_RESPONSE_EXPECTED_FALSE) {
-		return 0;
+		*ret_response_expected = false;
 	} else {
-		return -1;
+		return E_INVALID_PARAMETER;
 	}
+
+	return E_OK;
 }
 
-void device_set_response_expected(Device *device, uint8_t function_id, bool response_expected) {
+int device_set_response_expected(Device *device, uint8_t function_id, bool response_expected) {
 	if (device->response_expected[function_id] != DEVICE_RESPONSE_EXPECTED_TRUE &&
 	    device->response_expected[function_id] != DEVICE_RESPONSE_EXPECTED_FALSE) {
-		return;
+		return E_INVALID_PARAMETER;
 	}
 
 	device->response_expected[function_id] = response_expected ? DEVICE_RESPONSE_EXPECTED_TRUE
 	                                                           : DEVICE_RESPONSE_EXPECTED_FALSE;
+
+	return E_OK;
 }
 
-void device_set_response_expected_all(Device *device, bool response_expected) {
+int device_set_response_expected_all(Device *device, bool response_expected) {
 	int flag = response_expected ? DEVICE_RESPONSE_EXPECTED_TRUE : DEVICE_RESPONSE_EXPECTED_FALSE;
 	int i;
 
@@ -805,6 +821,8 @@ void device_set_response_expected_all(Device *device, bool response_expected) {
 			device->response_expected[i] = flag;
 		}
 	}
+
+	return E_OK;
 }
 
 // NOTE: assumes that request mutex is locked
@@ -1420,6 +1438,7 @@ uint32_t ipcon_get_timeout(IPConnection *ipcon) { // in msec
 
 int ipcon_enumerate(IPConnection *ipcon) {
 	Enumerate enumerate;
+	int ret;
 
 	mutex_lock(&ipcon->socket_mutex);
 
@@ -1429,20 +1448,16 @@ int ipcon_enumerate(IPConnection *ipcon) {
 		return E_NOT_CONNECTED;
 	}
 
-	packet_header_create(&enumerate.header, sizeof(Enumerate),
-	                     IPCON_FUNCTION_ENUMERATE, ipcon, NULL);
+	ret = packet_header_create(&enumerate.header, sizeof(Enumerate),
+	                           IPCON_FUNCTION_ENUMERATE, ipcon, NULL);
 
-	socket_send(ipcon->socket, &enumerate, sizeof(Enumerate));
+	if (ret == E_OK) {
+		socket_send(ipcon->socket, &enumerate, sizeof(Enumerate));
+	}
 
 	mutex_unlock(&ipcon->socket_mutex);
 
-	return E_OK;
-}
-
-void ipcon_register_callback(IPConnection *ipcon, uint8_t id, void *callback,
-                             void *user_data) {
-	ipcon->registered_callbacks[id] = callback;
-	ipcon->registered_callback_user_data[id] = user_data;
+	return ret;
 }
 
 void ipcon_wait(IPConnection *ipcon) {
@@ -1453,10 +1468,18 @@ void ipcon_unwait(IPConnection *ipcon) {
 	semaphore_release(&ipcon->wait);
 }
 
-void packet_header_create(PacketHeader *header, uint8_t length,
-                          uint8_t function_id, IPConnection *ipcon,
-                          Device *device) {
+void ipcon_register_callback(IPConnection *ipcon, uint8_t id, void *callback,
+                             void *user_data) {
+	ipcon->registered_callbacks[id] = callback;
+	ipcon->registered_callback_user_data[id] = user_data;
+}
+
+int packet_header_create(PacketHeader *header, uint8_t length,
+                         uint8_t function_id, IPConnection *ipcon,
+                         Device *device) {
 	int sequence_number;
+	bool response_expected = false;
+	int ret = E_OK;
 
 	mutex_lock(&ipcon->sequence_number_mutex);
 
@@ -1476,8 +1499,11 @@ void packet_header_create(PacketHeader *header, uint8_t length,
 	header->sequence_number = sequence_number;
 
 	if (device != NULL) {
-		header->response_expected = device_get_response_expected(device, function_id);
+		ret = device_get_response_expected(device, function_id, &response_expected);
+		header->response_expected = response_expected ? 1 : 0;
 	}
+
+	return ret;
 }
 
 // undefine potential defines from /usr/include/endian.h

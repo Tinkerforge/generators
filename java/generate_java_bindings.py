@@ -3,7 +3,7 @@
 
 """
 Java Bindings Generator
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_java_bindings.py: Generator for Java bindings
@@ -181,7 +181,9 @@ def make_response_expected():
         setto = 'RESPONSE_EXPECTED_FLAG_FALSE;'
         if len(packet.get_elements('out')) > 0:
             setto = 'RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE;'
-            
+        elif packet.get_doc()[0] == 'ccf':
+            setto = 'RESPONSE_EXPECTED_FLAG_TRUE;'
+
         res += re.format(name_upper, setto)
 
     for packet in device.get_packets('callback'):

@@ -3,14 +3,14 @@
 
 """
 C/C++ Bindings Generator
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_c_bindings.py: Generator for C/C++ bindings
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -101,7 +101,7 @@ def make_parameter_list(packet):
         if element[2] > 1:
             arr = '[{0}]'.format(element[2])
             pointer = ''
-       
+
         param += ', {0} {1}{2}{3}'.format(c_type, pointer, name, arr)
     return param
 
@@ -251,7 +251,7 @@ typedef struct {{
 \t#pragma pack(pop)
 #endif
 #undef ATTRIBUTE_PACKED
-"""    
+"""
     return structs
 
 def make_create_func():
@@ -284,6 +284,9 @@ void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
         elif len(packet.get_elements('out')) > 0:
             prefix = 'FUNCTION'
             flag = 'DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE'
+        elif packet.get_doc()[0] == 'ccf':
+            prefix = 'FUNCTION'
+            flag = 'DEVICE_RESPONSE_EXPECTED_TRUE'
         else:
             prefix = 'FUNCTION'
             flag = 'DEVICE_RESPONSE_EXPECTED_FALSE'
@@ -311,16 +314,16 @@ void {0}_destroy({1} *{0}) {{
 def make_response_expected_funcs():
     func = """
 
-int {0}_get_response_expected({1} *{0}, uint8_t function_id) {{
-\treturn device_get_response_expected({0}, function_id);
+int {0}_get_response_expected({1} *{0}, uint8_t function_id, bool *ret_response_expected) {{
+\treturn device_get_response_expected({0}, function_id, ret_response_expected);
 }}
 
-void {0}_set_response_expected({1} *{0}, uint8_t function_id, bool response_expected) {{
-\tdevice_set_response_expected({0}, function_id, response_expected);
+int {0}_set_response_expected({1} *{0}, uint8_t function_id, bool response_expected) {{
+\treturn device_set_response_expected({0}, function_id, response_expected);
 }}
 
-void {0}_set_response_expected_all({1} *{0}, bool response_expected) {{
-\tdevice_set_response_expected_all({0}, response_expected);
+int {0}_set_response_expected_all({1} *{0}, bool response_expected) {{
+\treturn device_set_response_expected_all({0}, response_expected);
 }}
 """
     return func.format(device.get_underscore_name(),
@@ -394,7 +397,13 @@ int {0}_{1}({2} *{0}{3}) {{
 
 \tmutex_lock(&{0}->request_mutex);
 
-\tpacket_header_create(&request.header, sizeof(request), {4}, {0}->ipcon, {0});
+\tret = packet_header_create(&request.header, sizeof(request), {4}, {0}->ipcon, {0});
+
+\tif(ret < 0) {{
+\t\tmutex_unlock(&{0}->request_mutex);
+
+\t\treturn ret;
+\t}}
 {7}
 
 \tret = device_send_request({0}, (Packet *)&request);
@@ -532,8 +541,8 @@ typedef Device {3};
     upper_name = device.get_upper_case_name()
 
     return include.format(common.gen_text_star.format(date),
-                          upper_type, 
-                          upper_name, 
+                          upper_type,
+                          upper_name,
                           device.get_camel_case_name(),
                           device.get_category(),
                           device.get_description())
@@ -590,11 +599,51 @@ void {0}_destroy({1} *{0});
 
 def make_response_expected_declarations():
     response_expected = """
-int {0}_get_response_expected({1} *{0}, uint8_t function_id);
+/**
+ * \ingroup {2}{1}
+ *
+ * Returns the response expected flag for the function specified by the
+ * \c function_id parameter. It is *true* if the function is expected to
+ * send a response, *false* otherwise.
+ *
+ * For getter functions this is enabled by default and cannot be disabled,
+ * because those functions will always send a response. For callback
+ * configuration functions it is enabled by default too, but can be disabled
+ * via the {0}_set_response_expected function. For setter functions it is
+ * disabled by default and can be enabled.
+ *
+ * Enabling the response expected flag for a setter function allows to
+ * detect timeouts and other error conditions calls of this setter as well.
+ * The device will then send a response for this purpose. If this flag is
+ * disabled for a setter function then no response is send and errors are
+ * silently ignored, because they cannot be detected.
+ */
+int {0}_get_response_expected({1} *{0}, uint8_t function_id, bool *ret_response_expected);
 
-void {0}_set_response_expected({1} *{0}, uint8_t function_id, bool response_expected);
+/**
+ * \ingroup {2}{1}
+ *
+ * Changes the response expected flag of the function specified by the
+ * \c function_id parameter. This flag can only be changed for setter
+ * (default value: *false*) and callback configuration functions
+ * (default value: *true*). For getter functions it is always enabled and
+ * callbacks it is always disabled.
+ *
+ * Enabling the response expected flag for a setter function allows to detect
+ * timeouts and other error conditions calls of this setter as well. The device
+ * will then send a response for this purpose. If this flag is disabled for a
+ * setter function then no response is send and errors are silently ignored,
+ * because they cannot be detected.
+ */
+int {0}_set_response_expected({1} *{0}, uint8_t function_id, bool response_expected);
 
-void {0}_set_response_expected_all({1} *{0}, bool response_expected);
+/**
+ * \ingroup {2}{1}
+ *
+ * Changes the response expected flag for all setter and callback configuration
+ * functions of this device at once.
+ */
+int {0}_set_response_expected_all({1} *{0}, bool response_expected);
 """
     return response_expected.format(device.get_underscore_name(),
                                     device.get_camel_case_name(),
@@ -605,9 +654,8 @@ def make_method_declarations():
 /**
  * \ingroup {2}{1}
  *
- * Returns the name (including the hardware version), the firmware version
- * and the binding version of the device. The firmware and binding versions are
- * given in arrays of size 3 with the syntax [major, minor, revision].
+ * Returns the API version (major, minor, release) of the bindings for this
+ * device.
  */
 int {0}_get_api_version({1} *{0}, uint8_t ret_api_version[3]);
 """
@@ -641,7 +689,8 @@ def make_register_callback_declaration():
 /**
  * \ingroup {2}{1}
  *
- * Registers a callback with ID \c id to the function \c callback.
+ * Registers a callback with ID \c id to the function \c callback. The
+ * \c user_data will be given as a parameter of the callback.
  */
 void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data);
 """

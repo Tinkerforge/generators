@@ -3,7 +3,7 @@
 
 """
 Ruby Bindings Generator
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_ruby.py: Generator for Ruby bindings
@@ -140,6 +140,9 @@ def make_response_expected():
         elif len(packet.get_elements('out')) > 0:
             prefix = 'FUNCTION'
             flag = 'RESPONSE_EXPECTED_ALWAYS_TRUE'
+        elif packet.get_doc()[0] == 'ccf':
+            prefix = 'FUNCTION'
+            flag = 'RESPONSE_EXPECTED_TRUE'
         else:
             prefix = 'FUNCTION'
             flag = 'RESPONSE_EXPECTED_FALSE'

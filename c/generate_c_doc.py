@@ -3,14 +3,14 @@
 
 """
 C/C++ Documentation Generator
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_c_doc.py: Generator for C/C++ documentation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -88,7 +88,7 @@ def make_parameter_list(packet):
         if element[2] > 1:
             arr = '[{0}]'.format(element[2])
             pointer = ''
-       
+
         param += ', {0} {1}{2}{3}'.format(c_type, pointer, name, arr)
     return param
 
@@ -105,20 +105,6 @@ def make_examples():
                                     'c', 'example_', '.c', 'C')
 
 def make_methods(typ):
-    version_method = {
-    'en': """
-.. c:function:: int {0}_get_version({1} *{0}, uint8_t ret_api_version[3])
-
- Returns API version [major, minor, revision] used for this device.
-""",
-    'de': """
-.. c:function:: int {0}_get_version({1} *{0}, uint8_t ret_api_version[3])
-
- Gibt die API Version (major, minor, revision) die benutzt
- wird zurück.
-"""
-    }
-
     methods = ''
     func_start = '.. c:function:: int '
     for packet in device.get_packets('function'):
@@ -130,10 +116,6 @@ def make_methods(typ):
         desc = format_doc(packet)
         func = '{0}{1}({2})\n{3}'.format(func_start, name, params, desc)
         methods += func + '\n'
-
-    if typ == 'af':
-        methods += common.select_lang(version_method).format(device.get_underscore_name(),
-                                                             device.get_camel_case_name())
 
     return methods
 
@@ -242,7 +224,7 @@ the device object, the callback ID and the callback function:
 
     {0}_register_callback(&{0}, {1}_CALLBACK_EXAMPLE, (void*)my_callback, NULL);
 
-The available constants with corresponding callback function signatures 
+The available constants with corresponding callback function signatures
 are described below.
 
 .. note::
@@ -275,7 +257,7 @@ Die verfügbaren Konstanten mit den zugehörigen Callback Funktionssignaturen
 werden weiter unten beschrieben.
 
 .. note::
- Callbacks für wiederkehrende Ereignisse zu verwenden ist 
+ Callbacks für wiederkehrende Ereignisse zu verwenden ist
  *immer* zu bevorzugen gegenüber der Verwendung von Abfragen.
  Es wird weniger USB-Bandbreite benutzt und die Latenz ist
  erheblich geringer, da es keine Paketumlaufzeit gibt.
@@ -391,4 +373,5 @@ def make_files(com_new, directory):
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:
+        print "=== Generating %s ===" % lang
         common.generate(os.getcwd(), lang, make_files, common.prepare_doc, True)

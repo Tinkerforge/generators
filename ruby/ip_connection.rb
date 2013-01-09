@@ -180,6 +180,8 @@ module Tinkerforge
     attr_accessor :callback_formats
     attr_accessor :registered_callbacks
 
+    # Creates the device object with the unique device ID <tt>uid</tt> and adds
+    # it to the IPConnection <tt>ipcon</tt>.
     def initialize(uid, ipcon)
       @uid = Base58.decode uid
 
@@ -215,9 +217,30 @@ module Tinkerforge
       @callback_formats = {}
       @registered_callbacks = {}
 
-      @ipcon.devices[@uid] = self # FIXME: should use a weakref here
+      @ipcon.devices[@uid] = self # FIXME: use a weakref here
     end
 
+    # Returns the API version (major, minor, revision) of the bindings for
+    # this device.
+    def get_api_version
+      @api_version
+    end
+
+    # Returns the response expected flag for the function specified by the
+    # <tt>function_id</tt> parameter. It is <tt>true</tt> if the function is
+    # expected to send a response, <tt>false</tt> otherwise.
+    #
+    # For getter functions this is enabled by default and cannot be disabled,
+    # because those functions will always send a response. For callback
+    # configuration functions it is enabled by default too, but can be
+    # disabled via the set_response_expected function. For setter functions it
+    # is disabled by default and can be enabled.
+    #
+    # Enabling the response expected flag for a setter function allows to
+    # detect timeouts and other error conditions calls of this setter as
+    # well. The device will then send a response for this purpose. If this
+    # flag is disabled for a setter function then no response is send and
+    # errors are silently ignored, because they cannot be detected.
     def get_response_expected(function_id)
       if function_id < 0 or function_id > 255
         raise ArgumentError, "Invalid function ID #{function_id}"
@@ -234,6 +257,17 @@ module Tinkerforge
       end
     end
 
+    # Changes the response expected flag of the function specified by the
+    # <tt>function_id</tt> parameter. This flag can only be changed for setter
+    # (default value: <tt>false</tt>) and callback configuration functions
+    # (default value: <tt>true</tt>). For getter functions it is always enabled
+    # and callbacks it is always disabled.
+    #
+    # Enabling the response expected flag for a setter function allows to
+    # detect timeouts and other error conditions calls of this setter as
+    # well. The device will then send a response for this purpose. If this
+    # flag is disabled for a setter function then no response is send and
+    # errors are silently ignored, because they cannot be detected.
     def set_response_expected(function_id, response_expected)
       if function_id < 0 or function_id > 255
         raise ArgumentError, "Invalid function ID #{function_id}"
@@ -254,6 +288,8 @@ module Tinkerforge
       end
     end
 
+    # Changes the response expected flag for all setter and callback
+    # configuration functions of this device at once.
     def set_response_expected_all(response_expected)
       for function_id in 0..255
         if @response_expected[function_id] == RESPONSE_EXPECTED_TRUE or \
@@ -267,10 +303,7 @@ module Tinkerforge
       end
     end
 
-    def get_api_version
-      @api_version
-    end
-
+    # internal
     def send_request(function_id, request_data, request_format,
                      response_length, response_format)
       response = nil
@@ -331,6 +364,7 @@ module Tinkerforge
       response
     end
 
+    # internal
     def enqueue_response(response)
       @response_mutex.synchronize {
         @response_queue.push response
@@ -338,6 +372,7 @@ module Tinkerforge
       }
     end
 
+    # internal
     def dequeue_response(message = 'Did not receive response in time')
       response = nil
 
@@ -387,10 +422,9 @@ module Tinkerforge
     CONNECTION_STATE_CONNECTED = 1
     CONNECTION_STATE_PENDING = 2 # auto-reconnect in progress
 
-    # Creates an IP connection to the Brick Daemon with the given *host*
-    # and *port*. With the IP connection itself it is possible to enumerate the
-    # available devices. Other then that it is only used to add Bricks and
-    # Bricklets to the connection.
+    # Creates an IP Connection object that can be used to enumerate the
+    # available devices. It is also required for the constructor of Bricks
+    # and Bricklets.
     def initialize
       @host = nil
       @port = 0
@@ -419,6 +453,16 @@ module Tinkerforge
       @waiter_queue = Queue.new
     end
 
+    # Creates a TCP/IP connection to the given <tt>host</tt> and <tt>port</tt>.
+    # The host and port can point to a Brick Daemon or to a WIFI/Ethernet
+    # Extension.
+    #
+    # Devices can only be controlled when the connection was established
+    # successfully.
+    #
+    # Blocks until the connection is established and throws an exception if
+    # there is no Brick Daemon or WIFI/Ethernet Extension listening at the
+    # given host and port.
     def connect(host, port)
       @socket_mutex.synchronize {
         if @socket != nil
@@ -432,6 +476,8 @@ module Tinkerforge
       }
     end
 
+    # Disconnects the TCP/IP connection from the Brick Daemon or the
+    # WIFI/Ethernet Extension.
     def disconnect
       callback_queue = nil
       callback_thread = nil
@@ -473,7 +519,8 @@ module Tinkerforge
 
       # Do this outside of socket_mutex to allow calling (dis-)connect from
       # the callbacks while blocking on the join call here
-      callback_queue.push [QUEUE_KIND_META, [CALLBACK_DISCONNECTED, DISCONNECT_REASON_REQUEST]]
+      callback_queue.push [QUEUE_KIND_META, [CALLBACK_DISCONNECTED,
+                                             DISCONNECT_REASON_REQUEST]]
       callback_queue.push [QUEUE_KIND_EXIT, nil]
 
       if Thread.current != callback_thread
@@ -481,6 +528,13 @@ module Tinkerforge
       end
     end
 
+    # Can return the following states:
+    #
+    # - CONNECTION_STATE_DISCONNECTED: No connection is established.
+    # - CONNECTION_STATE_CONNECTED: A connection to the Brick Daemon or
+    #   the WIFI/Ethernet Extension is established.
+    # - CONNECTION_STATE_PENDING: IP Connection is currently trying to
+    #   connect.
     def get_connection_state
       if @socket != nil
         CONNECTION_STATE_CONNECTED
@@ -491,6 +545,11 @@ module Tinkerforge
       end
     end
 
+    # Enables or disables auto-reconnect. If auto-reconnect is enabled,
+    # the IP Connection will try to reconnect to the previously given
+    # host and port, if the connection is lost.
+    #
+    # Default value is *true*.
     def set_auto_reconnect(auto_reconnect)
       @auto_reconnect = auto_reconnect
 
@@ -500,33 +559,27 @@ module Tinkerforge
       end
     end
 
+    # Returns <tt>true</tt> if auto-reconnect is enabled, <tt>false</tt>
+    # otherwise.
     def get_auto_reconnect
       @auto_reconnect
     end
 
+    # Sets the timeout in milliseconds for getters and for setters for which
+    # the response expected flag is activated.
+    #
+    # Default timeout is 2500.
     def set_timeout(timeout)
       @timeout = timeout
     end
 
+    # Returns the timeout as set by set_timeout.
     def get_timeout
       @timeout
     end
 
-    # This method registers a callback that receives four parameters:
-    #
-    # * *uid* - str: The UID of the device.
-    # * *name* - str: The name of the device (includes "Brick" or "Bricklet" and a version number).
-    # * *stack_id* - int: The stack ID of the device (you can find out the position in a stack with this).
-    # * *is_new* - bool: True if the device is added, false if it is removed.
-    #
-    # There are three different possibilities for the callback to be called.
-    # Firstly, the callback is called with all currently available devices in the
-    # IP connection (with *is_new* true). Secondly, the callback is called if
-    # a new Brick is plugged in via USB (with *is_new* true) and lastly it is
-    # called if a Brick is unplugged (with *is_new* false).
-    #
-    # It should be possible to implement "plug 'n play" functionality with this
-    # (as is done in Brick Viewer).
+    # Broadcasts an enumerate request. All devices will respond with an
+    # enumerate callback.
     def enumerate
       @socket_mutex.synchronize {
         if @socket == nil
@@ -539,10 +592,22 @@ module Tinkerforge
       }
     end
 
+    # Stops the current thread until unwait is called.
+    #
+    # This is useful if you rely solely on callbacks for events, if you want
+    # to wait for a specific callback or if the IP Connection was created in
+    # a thread.
+    #
+    # Wait and unwait act in the same way as "acquire" and "release" of a
+    # semaphore.
     def wait
       @waiter_queue.pop
     end
 
+    # Unwaits the thread previously stopped by wait.
+    #
+    # Wait and unwait act in the same way as "acquire" and "release" of a
+    # semaphore.
     def unwait
       @waiter_queue.push nil
     end
@@ -553,6 +618,7 @@ module Tinkerforge
       @registered_callbacks[id] = callback
     end
 
+    # internal
     def get_next_sequence_number
       # NOTE: Assumes that the socket mutex is locked
       sequence_number = @next_sequence_number
@@ -561,6 +627,7 @@ module Tinkerforge
       sequence_number + 1
     end
 
+    # internal
     def create_packet_header(device, length, function_id)
       uid = 0
       sequence_number = get_next_sequence_number
@@ -588,6 +655,7 @@ module Tinkerforge
     QUEUE_KIND_META = 1
     QUEUE_KIND_PACKET = 2
 
+    # internal
     def connect_unlocked(is_auto_reconnect)
       # NOTE: Assumes that the socket mutex is locked
 
@@ -621,6 +689,7 @@ module Tinkerforge
       @callback_queue.push [QUEUE_KIND_META, [CALLBACK_CONNECTED, connect_reason]]
     end
 
+    # internal
     def receive_loop
       pending_data = ''
 
@@ -676,6 +745,7 @@ module Tinkerforge
       end
     end
 
+    # internal
     def dispatch_meta(function_id, parameter)
       if function_id == CALLBACK_CONNECTED
         if @registered_callbacks.has_key? CALLBACK_CONNECTED
@@ -730,6 +800,7 @@ module Tinkerforge
       end
     end
 
+    # internal
     def dispatch_packet(packet)
       uid = get_uid_from_data packet
       length = get_length_from_data packet
@@ -749,6 +820,7 @@ module Tinkerforge
       end
     end
 
+    # internal
     def callback_loop(callback_queue)
       while true
         kind, data = callback_queue.pop
@@ -768,6 +840,7 @@ module Tinkerforge
       end
     end
 
+    # internal
     def handle_response(packet)
       uid = get_uid_from_data packet
       function_id = get_function_id_from_data packet

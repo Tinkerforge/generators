@@ -3,7 +3,7 @@
 
 """
 PHP Bindings Generator
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_php_bindings.py: Generator for PHP bindings
@@ -215,6 +215,9 @@ def make_constructor():
         elif len(packet.get_elements('out')) > 0:
             prefix = 'FUNCTION'
             flag = 'self::RESPONSE_EXPECTED_ALWAYS_TRUE'
+        elif packet.get_doc()[0] == 'ccf':
+            prefix = 'FUNCTION'
+            flag = 'self::RESPONSE_EXPECTED_TRUE'
         else:
             prefix = 'FUNCTION'
             flag = 'self::RESPONSE_EXPECTED_FALSE'

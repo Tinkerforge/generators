@@ -3,7 +3,7 @@
 
 """
 Python Bindings Generator
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_python.py: Generator for Python bindings
@@ -135,6 +135,9 @@ def make_init_method():
         elif len(packet.get_elements('out')) > 0:
             prefix = 'FUNCTION_'
             flag = 'RESPONSE_EXPECTED_ALWAYS_TRUE'
+        elif packet.get_doc()[0] == 'ccf':
+            prefix = 'FUNCTION_'
+            flag = 'RESPONSE_EXPECTED_TRUE'
         else:
             prefix = 'FUNCTION_'
             flag = 'RESPONSE_EXPECTED_FALSE'

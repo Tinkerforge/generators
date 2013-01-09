@@ -97,31 +97,57 @@ abstract class Device
     public $callbackWrappers = array();
     public $pendingCallbacks = array();
 
-    public function __construct($uid_str, $ipcon)
+    /**
+     * Creates the device object with the unique device ID *$uid* and adds
+     * it to the IPConnection *$ipcon*.
+     *
+     * @param string $uid
+     * @param IPConnection $ipcon
+     */
+    public function __construct($uid, $ipcon)
     {
-        $this->uid = Base58::decode($uid_str);
-
+        $this->uid = Base58::decode($uid);
         $this->ipcon = $ipcon;
 
         for ($i = 0; $i < 256; ++$i) {
             $this->responseExpected[$i] = self::RESPONSE_EXPECTED_INVALID_FUNCTION_ID;
         }
 
-        $ipcon->devices[$this->uid] = $this;
+        $ipcon->devices[$this->uid] = $this; // FIXME: use a weakref here
     }
 
     /**
-     * Returns the name (including the hardware version), the firmware version
-     * and the binding version of the device. The firmware and binding versions
-     * are given in arrays of size 3 with the syntax (major, minor, revision).
+     * Returns the API version (major, minor, revision) of the bindings for
+     * this device.
      *
-     * The returned array contains name, firmwareVersion and bindingVersion.
+     * @return array
      */
     public function getAPIVersion()
     {
         return $this->apiVersion;
     }
 
+    /**
+     * Returns the response expected flag for the function specified by the
+     * *$functionId* parameter. It is *true* if the function is expected to
+     * send a response, *false* otherwise.
+     *
+     * For getter functions this is enabled by default and cannot be disabled,
+     * because those functions will always send a response. For callback
+     * configuration functions it is enabled by default too, but can be
+     * disabled via the setResponseExpected function. For setter functions it
+     * is disabled by default and can be enabled.
+     *
+     * Enabling the response expected flag for a setter function allows to
+     * detect timeouts and other error conditions calls of this setter as well.
+     * The device will then send a response for this purpose. If this flag is
+     * disabled for a setter function then no response is send and errors are
+     * silently ignored, because they cannot be detected.
+     *
+     * @param int $functionId
+     *
+     * @return boolean
+     */
     public function getResponseExpected($functionID) {
         if ($functionID < 0 || $functionID > 255) {
             throw new \Exception('Invalid function ID');
@@ -138,6 +164,24 @@ abstract class Device
         }
     }
 
+    /**
+     * Changes the response expected flag of the function specified by the
+     * *$functionId* parameter. This flag can only be changed for setter
+     * (default value: *false*) and callback configuration functions
+     * (default value: *true*). For getter functions it is always enabled
+     * and callbacks it is always disabled.
+     *
+     * Enabling the response expected flag for a setter function allows to
+     * detect timeouts and other error conditions calls of this setter as
+     * well. The device will then send a response for this purpose. If this
+     * flag is disabled for a setter function then no response is send and
+     * errors are silently ignored, because they cannot be detected.
+     *
+     * @param int $functionId
+     * @param boolean $responseExpected
+     *
+     * @return void
+     */
     public function setResponseExpected($functionID, $responseExpected) {
         if ($this->responseExpected[$functionID] != self::RESPONSE_EXPECTED_TRUE &&
             $this->responseExpected[$functionID] != self::RESPONSE_EXPECTED_FALSE) {
@@ -148,6 +192,14 @@ abstract class Device
                                                                  : self::RESPONSE_EXPECTED_FALSE;
     }
 
+    /**
+     * Changes the response expected flag for all setter and callback
+     * configuration functions of this device at once.
+     *
+     * @param boolean $responseExpected
+     *
+     * @return void
+     */
     public function setResponseExpectedAll($responseExpected) {
         $flag = $responseExpected ? self::RESPONSE_EXPECTED_TRUE : self::RESPONSE_EXPECTED_FALSE;
 
@@ -231,7 +283,7 @@ abstract class Device
 
 class IPConnection
 {
-	const FUNCTION_ENUMERATE = 254;
+    const FUNCTION_ENUMERATE = 254;
 
     // IDs for registerCallback
     const CALLBACK_ENUMERATE = 253;
@@ -270,13 +322,8 @@ class IPConnection
     private $pendingData = '';
 
     /**
-     * Creates an IP connection to the Brick Daemon with the given *$host*
-     * and *$port*. With the IP connection itself it is possible to enumerate the
-     * available devices. Other then that it is only used to add Bricks and
-     * Bricklets to the connection.
-     *
-     * @param string $host
-     * @param int $port
+     * Creates an IP Connection object that can be used to enumerate the available
+     * devices. It is also required for the constructor of Bricks and Bricklets.
      */
     public function __construct()
     {
@@ -289,6 +336,22 @@ class IPConnection
         }
     }
 
+    /**
+     * Creates a TCP/IP connection to the given *$host* and *$port*. The host
+     * and port can point to a Brick Daemon or to a WIFI/Ethernet Extension.
+     *
+     * Devices can only be controlled when the connection was established
+     * successfully.
+     *
+     * Blocks until the connection is established and throws an exception if
+     * there is no Brick Daemon or WIFI/Ethernet Extension listening at the
+     * given host and port.
+     *
+     * @param string $host
+     * @param int $port
+     *
+     * @return void
+     */
     public function connect($host, $port)
     {
         if ($this->socket !== FALSE) {
@@ -330,6 +393,12 @@ class IPConnection
         }
     }
 
+    /**
+     * Disconnects the TCP/IP connection from the Brick Daemon or the
+     * WIFI/Ethernet Extension.
+     *
+     * @return void
+     */
     public function disconnect()
     {
         if ($this->socket === FALSE) {
@@ -347,6 +416,17 @@ class IPConnection
         }
     }
 
+    /**
+     * Can return the following states:
+     *
+     * - CONNECTION_STATE_DISCONNECTED: No connection is established.
+     * - CONNECTION_STATE_CONNECTED: A connection to the Brick Daemon or
+     *   the WIFI/Ethernet Extension is established.
+     * - CONNECTION_STATE_PENDING: IP Connection is currently trying to
+     *   connect.
+     *
+     * @return int
+     */
     public function getConnectionState()
     {
         if ($this->socket !== FALSE) {
@@ -356,6 +436,16 @@ class IPConnection
         }
     }
 
+    /**
+     * Sets the timeout in seconds for getters and for setters for which the
+     * response expected flag is activated.
+     *
+     * Default timeout is 2.5.
+     *
+     * @param float $seconds
+     *
+     * @return void
+     */
     public function setTimeout($seconds)
     {
         if ($timeout < 0) {
@@ -365,34 +455,19 @@ class IPConnection
         $this->timeout = $seconds;
     }
 
-    public function getTimeout() // in msec
+    /**
+     * Returns the timeout as set by setTimeout.
+     *
+     * @return float
+     */
+    public function getTimeout()
     {
         return $this->timeout;
     }
 
     /**
-     * This method registers a callback with the signature:
-     *
-     *  void callback(string $uid, string $name, int $stackID, bool $isNew)
-     *
-     * that receives four parameters:
-     *
-     * - *$uid* - The UID of the device.
-     * - *$name* - The name of the device (includes "Brick" or "Bricklet" and a version number).
-     * - *$stackID* - The stack ID of the device (you can find out the position in a stack with this).
-     * - *$isNew* - True if the device is added, false if it is removed.
-     *
-     * There are three different possibilities for the callback to be called.
-     * Firstly, the callback is called with all currently available devices in the
-     * IP connection (with *$isNew* true). Secondly, the callback is called if
-     * a new Brick is plugged in via USB (with *$isNew* true) and lastly it is
-     * called if a Brick is unplugged (with *$isNew* false).
-     *
-     * It should be possible to implement "plug 'n play" functionality with this
-     * (as is done in Brick Viewer).
-     *
-     * You need to call IPConnection::dispatchCallbacks() in order to receive
-     * the callbacks. The recommended dispatch time is 2.5s.
+     * Broadcasts an enumerate request. All devices will respond with an
+     * enumerate callback.
      *
      * @return void
      */
@@ -405,21 +480,15 @@ class IPConnection
         $this->send($request);
     }
 
-    public function registerCallback($id, $callback, $userData = NULL)
-    {
-        if (!is_callable($callback)) {
-            throw new \Exception('Callback function is not callable');
-        }
-
-        $this->registeredCallbacks[$id] = $callback;
-        $this->registeredCallbackUserData[$id] = $userData;
-    }
-
     /**
-     * Dispatches incoming callbacks for the given amount of time (negative value
-     * means infinity). Because PHP doesn't support threads you need to call this
-     * method periodically to ensure that incoming callbacks are handled. If you
-     * don't use callbacks you don't need to call this method.
+     * Dispatches incoming callbacks for the given amount of time in seconds
+     * (negative value means infinity). Because PHP doesn't support threads
+     * you need to call this method periodically to ensure that incoming
+     * callbacks are handled. If you don't use callbacks you don't need to
+     * call this method.
+     *
+     * The recommended dispatch time 0. This will just dispatch all pending
+     * callbacks without waiting for further callbacks.
      *
      * @param float $seconds
      *
@@ -445,7 +514,8 @@ class IPConnection
             while (TRUE) {
                 $this->receive($this->timeout, NULL, TRUE);
 
-                // Dispatch all pending callbacks that were received by getters in the meantime
+                // Dispatch all pending callbacks that were received by
+                // getters in the meantime
                 foreach ($this->devices as $device) {
                     $device->dispatchCallbacks();
                 }
@@ -453,6 +523,25 @@ class IPConnection
         } else {
             $this->receive($seconds, NULL, TRUE);
         }
+    }
+
+    /**
+     * Registers a callback for a given ID.
+     *
+     * @param int $id
+     * @param callable $callback
+     * @param mixed $userData
+     *
+     * @return void
+     */
+    public function registerCallback($id, $callback, $userData = NULL)
+    {
+        if (!is_callable($callback)) {
+            throw new \Exception('Callback function is not callable');
+        }
+
+        $this->registeredCallbacks[$id] = $callback;
+        $this->registeredCallbackUserData[$id] = $userData;
     }
 
     /**
