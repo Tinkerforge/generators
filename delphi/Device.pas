@@ -124,9 +124,22 @@ uses
 
 { TDevice }
 constructor TDevice.Create(const uid__: string; ipcon_: TObject);
-var i: longint;
+var longUid: uint64; value1, value2, i: longint;
 begin
-  uid_ := Base58Decode(uid__);
+  longUid := Base58Decode(uid__);
+  if (longUid > $FFFFFFFF) then begin
+    { Convert from 64bit to 32bit }
+    value1 := longUid and $FFFFFFFF;
+    value2 := (longUid shr 32) and $FFFFFFFF;
+    uid_ := (value1 and $00000FFF);
+    uid_ := uid_ or ((value1 and $0F000000) shr 12);
+    uid_ := uid_ or ((value2 and $0000003F) shl 16);
+    uid_ := uid_ or ((value2 and $000F0000) shl 6);
+    uid_ := uid_ or ((value2 and $3F000000) shl 2);
+  end
+  else begin
+    uid_ := longUid and $FFFFFFFF;
+  end;
   ipcon := ipcon_;
   apiVersion[0] := 0;
   apiVersion[1] := 0;
