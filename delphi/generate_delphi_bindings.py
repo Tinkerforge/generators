@@ -200,7 +200,7 @@ def make_callback_prototypes():
                                        params)
 
     if len(prototypes) > 0:
-        forward = 'T{0}{1} = class;\n'.format(device.get_category(),
+        forward = '  T{0}{1} = class;\n'.format(device.get_category(),
                                               device.get_camel_case_name())
         prototypes = forward + prototypes + '\n'
 
