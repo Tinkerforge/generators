@@ -143,6 +143,7 @@ end;
 
 destructor TDevice.Destroy;
 begin
+  (ipcon as TIPConnection).devices.Remove(uid_);
   requestMutex.Destroy;
   responseQueue.Destroy;
   inherited Destroy;
