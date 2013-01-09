@@ -721,11 +721,11 @@ namespace Tinkerforge
 				long value1 = uidTmp & 0xFFFFFFFFL;
 				long value2 = (uidTmp >> 32) & 0xFFFFFFFFL;
 
-				uidTmp  = (value1 & 0x00000FFFL)
-				uidTmp |= (value1 & 0x0F000000L) >> 12
-				uidTmp |= (value2 & 0x0000003FL) << 16
-				uidTmp |= (value2 & 0x000F0000L) << 6
-				uidTmp |= (value2 & 0x3F000000L) << 2
+				uidTmp  = (value1 & 0x00000FFFL);
+				uidTmp |= (value1 & 0x0F000000L) >> 12;
+				uidTmp |= (value2 & 0x0000003FL) << 16;
+				uidTmp |= (value2 & 0x000F0000L) << 6;
+				uidTmp |= (value2 & 0x3F000000L) << 2;
 			}
 
 			this.uid = uidTmp;
