@@ -248,13 +248,13 @@ def make_api():
 
     register_str = {
     'en': """
-.. java:function:: public void {3}{1}::addListener(Object o)
+.. java:function:: public void {3}{1}::addListener(Object object)
 
  Registers a listener object. The available listeners are listed 
  :ref:`below <{0}_{2}_java_callbacks>`.
 """,
     'de': """
-.. java:function:: public void {3}{1}::addListener(Object o)
+.. java:function:: public void {3}{1}::addListener(Object object)
 
  Registriert ein Listener Objekt. Die verfügbaren Listener werden
  :ref:`unten <{0}_{2}_java_callbacks>` aufgelistet.
@@ -287,7 +287,7 @@ Konfigurationsfunktionen für Listener
 Listeners
 ^^^^^^^^^
 
-*Listeners* can be registered to receive
+Listeners can be registered to receive
 time critical or recurring data from the device. The registration is done
 with the :java:func:`addListener <{3}{4}::addListener>` function of the device object.
 
@@ -295,7 +295,7 @@ The parameter is a listener class object, for example:
 
 .. code-block:: java
 
-    device.addListener(new BrickDevice.PropertyListener() {{
+    device.addListener(new {3}{4}.ExampleListener() {{
         public void property(int value) {{
             System.out.println("Value: " + value);
         }}
@@ -309,6 +309,7 @@ are described below.
  compared to using getters. It will use less USB bandwidth and the latency
  will be a lot better, since there is no round trip time.
 
+
 {0}
 """,
     'de': """
@@ -317,7 +318,7 @@ are described below.
 Listener
 ^^^^^^^^
 
-*Listener* können registriert werden um zeitkritische
+Listener können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
 mit der Funktion :java:func:`addListener <{3}{4}::addListener>` des Geräte Objekts
 durchgeführt werden.
@@ -326,7 +327,7 @@ Der Parameter ist ein Listener Klassen Objekt, z.B.:
 
 .. code-block:: java
 
-    device.addListener(new BrickDevice.PropertyListener() {{
+    device.addListener(new {3}{4}.ExampleListener() {{
         public void property(int value) {{
             System.out.println("Value: " + value);
         }}

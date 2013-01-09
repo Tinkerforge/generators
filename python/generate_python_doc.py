@@ -213,9 +213,9 @@ def make_api():
  :param callback: callable
  :rtype: None
 
- Registriert einen Callback mit der ID *id* mit der Funktion *callback*. Die verfügbaren
- IDs mit den zugehörigen Funktionssignaturen sind :ref:`unten <{0}_{2}_python_callbacks>`
- zu finden.
+ Registriert einen Callback mit der ID *id* mit der Funktion *callback*. Die
+ verfügbaren IDs mit den zugehörigen Funktionssignaturen sind
+ :ref:`unten <{0}_{2}_python_callbacks>` zu finden.
 """
     }
 
@@ -226,7 +226,7 @@ def make_api():
 Callbacks
 ^^^^^^^^^
 
-*Callbacks* can be registered with *callback IDs* to receive
+Callbacks can be registered to receive
 time critical or recurring data from the device. The registration is done
 with the :py:func:`register_callback <{3}.register_callback>` function of
 the device object. The first parameter is the callback ID and the second
@@ -255,7 +255,7 @@ described below.
 Callbacks
 ^^^^^^^^^
 
-*Callbacks* können mit *callback IDs* registriert werden um zeitkritische
+Callbacks können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
 mit der Funktion :py:func:`register_callback <{3}.register_callback>` des 
 Geräte Objektes durchgeführt werden. Der erste Parameter ist die Callback ID

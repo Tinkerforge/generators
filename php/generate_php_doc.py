@@ -131,6 +131,10 @@ def make_callbacks():
     cls = device.get_category() + device.get_camel_case_name()
     for packet in device.get_packets('callback'):
         params = make_parameter_list(packet)
+        if len(params) > 0:
+            params += " [, mixed $userData]"
+        else:
+            params += "[mixed $userData]"
         desc = format_doc(packet)
         signature = common.select_lang(signature_str).format(params)
         func = '{0}{1}::CALLBACK_{2}\n{3}{4}'.format(func_start,
@@ -198,7 +202,7 @@ def make_api():
 Callbacks
 ^^^^^^^^^
 
-*Callbacks* can be registered with *callback IDs* to receive
+Callbacks can be registered to receive
 time critical or recurring data from the device. The registration is done
 with the :php:func:`registerCallback <{3}{4}::registerCallback>` function of
 the device object. The first parameter is the callback ID and the second
@@ -213,7 +217,7 @@ parameter the callback function:
 
     ${1}->registerCallback({3}{4}::CALLBACK_EXAMPLE, 'my_callback');
 
-The available constants with inherent number and type of parameters are
+The available constants with corresponsing function signatures are
 described below.
 
 .. note::
@@ -229,7 +233,7 @@ described below.
 Callbacks
 ^^^^^^^^^
 
-*Callbacks* können mit *callback IDs* registriert werden um zeitkritische
+Callbacks können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
 mit der Funktion :php:func:`registerCallback <{3}{4}::registerCallback>` des
 Geräte Objektes durchgeführt werden. Der erste Parameter ist der Callback ID
@@ -244,7 +248,7 @@ und der zweite die Callbackfunktion:
 
     ${1}->registerCallback({3}{4}::CALLBACK_EXAMPLE, 'my_callback');
 
-Die verfügbaren Konstanten mit der dazugehörigen Parameteranzahl und -typen werden
+Die verfügbaren Konstanten mit der dazugehörigen Funktionssignature werden
 weiter unten beschrieben.
 
 .. note::
@@ -263,6 +267,8 @@ weiter unten beschrieben.
 API
 ---
 
+Functions that return multiple values return them in an associative array.
+
 {1}
 
 {2}
@@ -271,6 +277,9 @@ API
 {0}
 API
 ---
+
+Funktion die mehrere Werte zurückgeben geben diese in einem assoziativen Array
+zurück.
 
 {1}
 

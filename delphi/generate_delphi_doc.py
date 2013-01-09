@@ -137,7 +137,7 @@ def make_api():
 
     {0} := T{3}{1}.Create('YOUR_DEVICE_UID', ipcon);
 
- This object can then be used after the IP connection is connected 
+ This object can then be used after the IP Connection is connected
  (see examples :ref:`above <{0}_{2}_delphi_examples>`).
 """,
     'de': """
@@ -161,7 +161,7 @@ def make_api():
 Callbacks
 ^^^^^^^^^
 
-*Callbacks* can be registered to receive time critical or recurring data from
+Callbacks can be registered to receive time critical or recurring data from
 the device. The registration is done by assigning a procedure to an callback
 property of the device object:
 
@@ -189,9 +189,9 @@ The available callback property and their type of parameters are described below
 Callbacks
 ^^^^^^^^^
 
-*Callbacks* können registriert werden um zeitkritische oder 
+Callbacks können registriert werden um zeitkritische oder
 wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung erfolgt indem
-eine Prozedur einer Callback Property des Geräte Objektes zugewiesen wird:
+eine Prozedur einem Callback Property des Geräte Objektes zugewiesen wird:
 
  .. code-block:: delphi
 
@@ -206,7 +206,7 @@ Die verfügbaren Callback Properties und ihre Parametertypen werden weiter
 unten beschrieben.
 
 .. note::
- Callbacks für wiederkehrende Ereignisse zu verwenden ist 
+ Callbacks für wiederkehrende Ereignisse zu verwenden ist
  *immer* zu bevorzugen gegenüber der Verwendung von Abfragen.
  Es wird weniger USB-Bandbreite benutzt und die Latenz ist
  erheblich geringer, da es keine Paketumlaufzeit gibt.
@@ -221,8 +221,8 @@ unten beschrieben.
 API
 ---
 
-Since Delphi does not support multiple return values directly, we use the out
-keyword to return multiple values from a function.
+Since Delphi does not support multiple return values directly, we use the
+``out`` keyword to return multiple values from a function.
 
 All functions and procedures listed below are thread-safe.
 
@@ -235,8 +235,8 @@ All functions and procedures listed below are thread-safe.
 API
 ---
 
-Da Delphi nicht mehrere Rückgabewerte direkt unterstützt, wird das out Keyword
-genutzt um mehrere Werte von einer Funktion zurückzugeben.
+Da Delphi nicht mehrere Rückgabewerte direkt unterstützt, wird das ``out``
+Keyword genutzt um mehrere Werte von einer Funktion zurückzugeben.
 
 Alle folgend aufgelisteten Funktionen und Prozeduren sind Thread-sicher.
 

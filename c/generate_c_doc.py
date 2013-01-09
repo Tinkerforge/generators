@@ -138,7 +138,9 @@ def make_callbacks():
     for packet in device.get_packets('callback'):
         plist = make_parameter_list(packet)[2:].replace('*ret_', '')
         if not plist:
-            plist = 'void'
+            plist = 'void *user_data'
+        else:
+            plist += ', void *user_data'
         params = common.select_lang(param_format).format(plist)
         desc = format_doc(packet)
         name = '{0}_{1}'.format(device.get_upper_case_name(),
@@ -158,28 +160,45 @@ def make_api():
     'en': """
 .. c:function:: void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon)
 
- Creates an object with the unique device ID *uid*:
+ Creates the device object *{0}* with the unique device ID *uid* and adds
+ it to the IPConnection *ipcon*:
 
  .. code-block:: c
 
     {1} {0};
     {0}_create(&{0}, "YOUR_DEVICE_UID", &ipcon);
 
- This object can then be used after the IP connection is connected 
+ This device object can be used after the IP connection has been connected
  (see examples :ref:`above <{0}_{2}_c_examples>`).
 """,
     'de': """
 .. c:function:: void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon)
 
- Erzeugt ein Objekt mit der eindeutigen Geräte ID *uid*:
+ Erzeugt ein Gerätobjekt *{0}* mit der eindeutigen Geräte ID *uid* und fügt es
+ der IP Connection *ipcon* hinzu:
 
  .. code-block:: c
 
     {1} {0};
     {0}_create(&{0}, "YOUR_DEVICE_UID", &ipcon);
 
- Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
- (siehe Beispiele :ref:`oben <{0}_{2}_c_examples>`).
+ Dieses Gerätobjekt kann benutzt werden, nachdem die IP Connection verbunden
+ wurde (siehe Beispiele :ref:`oben <{0}_{2}_c_examples>`).
+"""
+    }
+
+    destroy_str = {
+    'en': """
+.. c:function:: void {0}_destroy({1} *{0})
+
+ Removes the device object *{0}* from its IPConnection and destroys it.
+ The device object cannot be used anymore afterwards.
+""",
+    'de': """
+.. c:function:: void {0}_destroy({1} *{0})
+
+ Entfernt das Gerätobjekt *{0}* von dessen IP Connection un zerstört es.
+ Das Gerätobjekt kann hiernach nicht mehr verwendet werden.
 """
     }
 
@@ -188,9 +207,9 @@ def make_api():
 .. c:function:: void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data)
 
  Registers a callback with ID *id* to the function *callback*. The *user_data*
- will be given as a parameter of the callback. 
- 
- The available IDs with corresponding function signatures are listed 
+ will be given as a parameter of the callback.
+
+ The available IDs with corresponding function signatures are listed
  :ref:`below <{0}_{2}_c_callbacks>`.
 """,
     'de': """
@@ -198,8 +217,8 @@ def make_api():
 
  Registriert einen Callback mit der ID *id* mit der Funktion *callback*.
  Der Parameter *user_data* wird bei jedem Callback wieder mit übergeben.
- 
- Die verfügbaren IDs mit den zugehörigen Funktionssignaturen sind 
+
+ Die verfügbaren IDs mit den zugehörigen Funktionssignaturen sind
  :ref:`unten <{0}_{2}_c_callbacks>` zu finden.
 """
     }
@@ -211,10 +230,11 @@ def make_api():
 Callbacks
 ^^^^^^^^^
 
-*Callbacks* can be registered with *callback IDs* to receive
+Callbacks can be registered to receive
 time critical or recurring data from the device. The registration is done
 with the :c:func:`{0}_register_callback` function. The parameters consist of
-the device object, the callback ID and the callback function:
+the device object, the callback ID, the callback function and optional
+user data:
 
  .. code-block:: c
 
@@ -240,10 +260,11 @@ are described below.
 Callbacks
 ^^^^^^^^^
 
-*Callbacks* können mit *callback IDs* registriert werden um zeitkritische
+Callbacks können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
 mit der Funktion :c:func:`{0}_register_callback` durchgeführt werden. Die
-Parameter bestehen aus dem Geräteobjekt, der Callback ID und der Callbackfunktion:
+Parameter bestehen aus dem Geräteobjekt, der Callback ID, der Callback Funktion
+und optionalen Benutzer Daten:
 
  .. code-block:: c
 
@@ -285,7 +306,12 @@ Possible error codes are:
 * E_HOSTNAME_INVALID = -3
 * E_NO_CONNECT = -4
 * E_NO_THREAD = -5
-* E_NOT_ADDED = -6
+* E_NOT_ADDED = -6 (unused since bindings version 2.0.0)
+* E_ALREADY_CONNECTED = -7
+* E_NOT_CONNECTED = -8
+* E_INVALID_PARAMETER = -9
+* E_NOT_SUPPORTED = -10
+* E_UNKNOWN_ERROR_CODE = -11
 
 as defined in :file:`ip_connection.h`.
 
@@ -313,7 +339,12 @@ Mögliche Fehlercodes sind:
 * E_HOSTNAME_INVALID = -3
 * E_NO_CONNECT = -4
 * E_NO_THREAD = -5
-* E_NOT_ADDED = -6
+* E_NOT_ADDED = -6 (wird seit Bindings Version 2.0.0 nicht mehr verwendet)
+* E_ALREADY_CONNECTED = -7
+* E_NOT_CONNECTED = -8
+* E_INVALID_PARAMETER = -9
+* E_NOT_SUPPORTED = -10
+* E_UNKNOWN_ERROR_CODE = -11
 
 wie in :file:`ip_connection.h` definiert.
 
@@ -328,6 +359,9 @@ Alle folgend aufgelisteten Funktionen sind Thread-sicher.
     cre = common.select_lang(create_str).format(device.get_underscore_name(),
                                                 device.get_camel_case_name(),
                                                 device.get_category().lower())
+    des = common.select_lang(destroy_str).format(device.get_underscore_name(),
+                                                 device.get_camel_case_name(),
+                                                 device.get_category().lower())
     reg = common.select_lang(register_str).format(device.get_underscore_name(),
                                                   device.get_camel_case_name(),
                                                   device.get_category().lower())
@@ -337,7 +371,7 @@ Alle folgend aufgelisteten Funktionen sind Thread-sicher.
     c = make_callbacks()
     api_str = ''
     if bf:
-        api_str += common.select_lang(common.bf_str).format(cre, bf)
+        api_str += common.select_lang(common.bf_str).format(cre + des, bf)
     if af:
         api_str += common.select_lang(common.af_str).format(af)
     if c:

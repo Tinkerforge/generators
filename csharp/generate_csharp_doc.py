@@ -174,9 +174,9 @@ def make_api():
 Callbacks
 ^^^^^^^^^
 
-*Callbacks* can be registered to receive
-time critical or recurring data from the device. The registration is done
-by appending your Callback-Handler to the corresponding event:
+Callbacks can be registered to receive time critical or recurring data from
+the device. The registration is done by appending your callback handler to
+the corresponding event:
 
 .. code-block:: csharp
     
@@ -202,9 +202,9 @@ The available events are described below.
 Callbacks
 ^^^^^^^^^
 
-*Callbacks* können registriert werden um zeitkritische
-oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
-durch die anhängen des Callback-Handlers zum passenden Event geschehen:
+Callbacks können registriert werden um zeitkritische oder wiederkehrende Daten
+vom Gerät zu erhalten. Die Registrierung geschieht durch Anhängen des Callback
+Handlers an den passenden Event:
 
 .. code-block:: csharp
     

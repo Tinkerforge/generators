@@ -225,9 +225,9 @@ def make_api():
 Callbacks
 ^^^^^^^^^
 
-*Callbacks* can be registered with *callback IDs* to receive
-time critical or recurring data from the device. The registration is done
-with the :rb:func:`#register_callback <{4}{3}#register_callback>` function of
+Callbacks can be registered to receive time critical or recurring data from
+the device. The registration is done with the
+:rb:func:`#register_callback <{4}{3}#register_callback>` function of
 the device object. The first parameter is the callback ID and the second
 parameter is a block:
 
@@ -253,7 +253,7 @@ described below.
 Callbacks
 ^^^^^^^^^
 
-*Callbacks* können mit *callback IDs* registriert werden um zeitkritische
+Callbacks können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
 mit der Funktion :rb:func:`#register_callback <{4}{3}#register_callback>` des 
 Geräte Objektes durchgeführt werden. Der erste Parameter ist der Callback ID
