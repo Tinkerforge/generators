@@ -20,21 +20,19 @@ namespace Tinkerforge
 {
 	public class IPConnection
 	{
-		public int responseTimeout = 2500;
+		internal int responseTimeout = 2500;
 
-		const byte BROADCAST_ADDRESS = 0;
+		internal const byte FUNCTION_ENUMERATE = 254;
+		internal const byte FUNCTION_ADC_CALIBRATE = 251;
+		internal const byte FUNCTION_GET_ADC_CALIBRATION = 250;
 
-		public const byte FUNCTION_ENUMERATE = 254;
-		public const byte FUNCTION_ADC_CALIBRATE = 251;
-		public const byte FUNCTION_GET_ADC_CALIBRATION = 250;
-
-		public const byte CALLBACK_ENUMERATE = 253;
+		internal const byte CALLBACK_ENUMERATE = 253;
 
 		internal const int CALLBACK_CONNECTED = 0;
 		internal const int CALLBACK_DISCONNECTED = 1;
 		internal const int CALLBACK_AUTHENTICATION_ERROR = 2;
 
-		private const long BROADCAST_UID = (long)0;
+		internal const long BROADCAST_UID = (long)0;
 
 		// enumeration_type parameter to the enumerate callback
 		public const short ENUMERATION_TYPE_AVAILABLE = 0;
@@ -42,22 +40,22 @@ namespace Tinkerforge
 		public const short ENUMERATION_TYPE_DISCONNECTED = 2;
 
 		// connect_reason parameter to the connected callback
-		internal const short CONNECT_REASON_REQUEST = 0;
-		internal const short CONNECT_REASON_AUTO_RECONNECT = 1;
+		public const short CONNECT_REASON_REQUEST = 0;
+		public const short CONNECT_REASON_AUTO_RECONNECT = 1;
 
 		// disconnect_reason parameter to the disconnected callback
-		internal const short DISCONNECT_REASON_REQUEST = 0;
-		internal const short DISCONNECT_REASON_ERROR = 1;
-		internal const short DISCONNECT_REASON_SHUTDOWN = 2;
+		public const short DISCONNECT_REASON_REQUEST = 0;
+		public const short DISCONNECT_REASON_ERROR = 1;
+		public const short DISCONNECT_REASON_SHUTDOWN = 2;
 
 		// returned by get_connection_state
-		internal const short CONNECTION_STATE_DISCONNECTED = 0;
-		internal const short CONNECTION_STATE_CONNECTED = 1;
-		internal const short CONNECTION_STATE_PENDING = 2; // auto-reconnect in process
+		public const short CONNECTION_STATE_DISCONNECTED = 0;
+		public const short CONNECTION_STATE_CONNECTED = 1;
+		public const short CONNECTION_STATE_PENDING = 2; // auto-reconnect in process
 
 		internal const int QUEUE_EXIT = 0;
-	    internal const int QUEUE_META = 1;
-    	internal const int QUEUE_PACKET = 2;
+		internal const int QUEUE_META = 1;
+		internal const int QUEUE_PACKET = 2;
 
 		internal int nextSequenceMumber = 1;
 
@@ -90,7 +88,7 @@ namespace Tinkerforge
 		public event DisconnectedEventHandler Disconnected;
 		public delegate void DisconnectedEventHandler(IPConnection sender, short disconnectReason);
 
-		public class CallbackQueueObject
+		class CallbackQueueObject
 		{
 			public int kind;
 			public byte[] data;
@@ -588,10 +586,10 @@ namespace Tinkerforge
 							if(devices.ContainsKey(uid))
 							{
 								Device device = devices[uid];
-								Device.MessageCallback callback = device.messageCallbacks[fid];
-								if(callback != null)
+								Device.CallbackWrapper wrapper = device.callbackWrappers[fid];
+								if(wrapper != null)
 								{
-									callback(cqo.data);
+									wrapper(cqo.data);
 								}
 							}
 						}
@@ -646,9 +644,9 @@ namespace Tinkerforge
 			Device device = devices[uid];
 
 			if(sequenceNumber == 0) {
-				Device.MessageCallback callback = device.messageCallbacks[functionID];
+				Device.CallbackWrapper wrapper = device.callbackWrappers[functionID];
 
-				if(callback != null)
+				if(wrapper != null)
 				{
 					callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_PACKET, packet));
 				}
@@ -693,7 +691,7 @@ namespace Tinkerforge
 		internal long uid = 0;
 		internal byte expectedResponseFunctionID = 0;
 		internal byte expectedResponseSequenceNumber = 0;
-		internal MessageCallback[] messageCallbacks = new MessageCallback[256];
+		internal CallbackWrapper[] callbackWrappers = new CallbackWrapper[256];
 		internal BlockingQueue<byte[]> responseQueue = new BlockingQueue<byte[]>();
 		internal IPConnection ipcon = null;
 
@@ -708,7 +706,7 @@ namespace Tinkerforge
 
 		private object writeLock = new object();
 
-		internal delegate void MessageCallback(byte[] data);
+		internal delegate void CallbackWrapper(byte[] data);
 
 		/// <summary>
 		///  Creates the device objectwith the unique device ID *uid* and adds
@@ -732,7 +730,6 @@ namespace Tinkerforge
 
 			this.uid = uidTmp;
 			this.ipcon = ipcon;
-
 
 			for(int i = 0; i < responseExpected.Length; i++)
 			{
@@ -855,7 +852,7 @@ namespace Tinkerforge
 			LEConverter.To((long)this.uid, 0, packet);
 			LEConverter.To((byte)length, 4, packet);
 			LEConverter.To((byte)fid, 5, packet);
-			if(responseExpected[fid] == ResponseExpectedFlag.ALWAYS_TRUE || responseExpected[fid] == ResponseExpectedFlag.TRUE)
+			if(GetResponseExpected(fid))
 			{
 				LEConverter.To((byte)((1 << 3) | (ipcon.GetNextSequenceNumber() << 4)), 6, packet);
 			}

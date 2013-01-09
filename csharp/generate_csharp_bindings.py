@@ -164,7 +164,7 @@ def make_function_id_definitions():
 
 def make_constructor():
     cbs = []
-    cb = '\t\t\tmessageCallbacks[CALLBACK_{0}] = new MessageCallback(On{1});'
+    cb = '\t\t\tcallbackWrappers[CALLBACK_{0}] = new CallbackWrapper(On{1});'
     con = """
 \t\t/// <summary>
 \t\t///  Creates an object with the unique device ID <c>uid</c> and adds  it to
@@ -305,7 +305,7 @@ def make_methods():
 {4}
 \t\t}}
 """
-    method_oneway = """\t\t\tif(responseExpected[FUNCTION_{0}] == ResponseExpectedFlag.ALWAYS_TRUE || responseExpected[FUNCTION_{0}] == ResponseExpectedFlag.TRUE) 
+    method_oneway = """\t\t\tif(GetResponseExpected(FUNCTION_{0}))
 \t\t\t{{
 \t\t\t\tbyte[] response;
 \t\t\t\tSendRequestExpectResponse(data_, FUNCTION_{0}, out response);
