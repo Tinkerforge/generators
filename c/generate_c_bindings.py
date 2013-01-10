@@ -113,7 +113,7 @@ def get_c_type(py_type):
         return "{0}_t".format(py_type)
     return py_type
 
-def make_include_c():
+def make_include_c(version):
     include = """{0}
 
 #define IPCON_EXPOSE_INTERNALS
@@ -125,7 +125,7 @@ def make_include_c():
 """
     date = datetime.datetime.now().strftime("%Y-%m-%d")
 
-    return include.format(common.gen_text_star.format(date),
+    return include.format(common.gen_text_star.format(date, *version),
                           device.get_category().lower(),
                           device.get_underscore_name())
 
@@ -517,7 +517,7 @@ static void {0}_callback_wrapper_{1}({2} *{0}, Packet *packet) {{
 
     return funcs
 
-def make_include_h():
+def make_include_h(version):
     include = """{0}
 #ifndef {1}_{2}_H
 #define {1}_{2}_H
@@ -540,7 +540,7 @@ typedef Device {3};
     upper_type = device.get_category().upper()
     upper_name = device.get_upper_case_name()
 
-    return include.format(common.gen_text_star.format(date),
+    return include.format(common.gen_text_star.format(date, *version),
                           upper_type,
                           upper_name,
                           device.get_camel_case_name(),
@@ -700,10 +700,11 @@ def make_files(com_new, directory):
     global device
     device = common.Device(com_new)
     file_name = '{0}_{1}'.format(device.get_category().lower(), device.get_underscore_name())
+    version = common.get_changelog_version(directory)
     directory += '/bindings'
 
     c = file('{0}/{1}.c'.format(directory, file_name), "w")
-    c.write(make_include_c())
+    c.write(make_include_c(version))
     c.write(make_typedefs())
     c.write(make_structs())
     c.write(make_callback_wrapper_funcs())
@@ -714,7 +715,7 @@ def make_files(com_new, directory):
     c.write(make_method_funcs())
 
     h = file('{0}/{1}.h'.format(directory, file_name), "w")
-    h.write(make_include_h())
+    h.write(make_include_h(version))
     h.write(make_function_id_defines())
     h.write(make_callback_defines())
     h.write(make_device_identifier_define())

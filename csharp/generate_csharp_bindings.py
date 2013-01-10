@@ -103,14 +103,15 @@ def format_doc(packet):
 
     return '\n\t\t///  '.join(text.strip().split('\n'))
 
-def make_import():
+def make_import(version):
     include = """{0}
 using System;
 
 namespace Tinkerforge
 {{"""
     date = datetime.datetime.now().strftime("%Y-%m-%d")
-    return include.format(common.gen_text_star.format(date))
+
+    return include.format(common.gen_text_star.format(date, *version))
 
 def make_class():
     class_str = """
@@ -385,9 +386,11 @@ def make_files(com_new, directory):
     global device
     device = common.Device(com_new)
     file_name = '{0}{1}'.format(device.get_category(), device.get_camel_case_name())
+    version = common.get_changelog_version(directory)
     directory += '/bindings'
+
     csharp = file('{0}/{1}.cs'.format(directory, file_name), "w")
-    csharp.write(make_import())
+    csharp.write(make_import(version))
     csharp.write(make_class())
     csharp.write(make_function_id_definitions())
     csharp.write(make_delegates())

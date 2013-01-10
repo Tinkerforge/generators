@@ -121,14 +121,15 @@ def make_parameter_doc(packet):
     param.append('\n@return ' + php_common.get_return_type(packet))
     return '\n'.join(param)
 
-def make_import():
+def make_import(version):
     include = """{0}
 namespace Tinkerforge;
 
 require_once(__DIR__ . '/IPConnection.php');
 """
     date = datetime.datetime.now().strftime("%Y-%m-%d")
-    return include.format(common.gen_text_star.format(date))
+
+    return include.format(common.gen_text_star.format(date, *version))
 
 def make_class():
     class_str = """
@@ -496,10 +497,12 @@ def make_files(com_new, directory):
     global device
     device = common.Device(com_new)
     file_name = '{0}{1}'.format(device.get_category(), device.get_camel_case_name())
+    version = common.get_changelog_version(directory)
     directory += '/bindings'
-    php = file('{0}/{1}.php'.format(directory, file_name), "w")
+
+    php = file('{0}/{1}.php'.format(directory , file_name), "w")
     php.write("<?php\n\n")
-    php.write(make_import())
+    php.write(make_import(version))
     php.write(make_class())
     php.write(make_callback_id_definitions())
     php.write(make_function_id_definitions())

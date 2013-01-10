@@ -34,6 +34,8 @@ import copy
 gen_text_star = """/* ***********************************************************
  * This file was automatically generated on {0}.      *
  *                                                           *
+ * Bindings Version {1}.{2}.{3}                                    *
+ *                                                           *
  * If you have a bugfix for this file and want to commit it, *
  * please fix the bug in the generator. You can find a link  *
  * to the generator git on tinkerforge.com                   *
@@ -43,6 +45,8 @@ gen_text_star = """/* **********************************************************
 gen_text_hash = """#############################################################
 # This file was automatically generated on {0}.      #
 #                                                           #
+# Bindings Version {1}.{2}.{3}                                    #
+#                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generator git on tinkerforge.com                   #
@@ -51,6 +55,8 @@ gen_text_hash = """#############################################################
 
 gen_text_curly = """{{
   This file was automatically generated on {0}.
+
+  Bindings Version {1}.{2}.{3}
 
   If you have a bugfix for this file and want to commit it,
   please fix the bug in the generator. You can find a link

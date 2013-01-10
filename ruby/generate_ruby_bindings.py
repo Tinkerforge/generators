@@ -84,14 +84,14 @@ def format_doc(packet):
 
     return '\n    # '.join(text.strip().split('\n'))
 
-def make_header():
+def make_header(version):
     include = """# -*- ruby encoding: utf-8 -*-
 {0}
 """
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     lower_type = device.get_category().lower()
 
-    return include.format(common.gen_text_hash.format(date),
+    return include.format(common.gen_text_hash.format(date, *version),
                           lower_type, device.get_underscore_name())
 
 def make_class():
@@ -253,9 +253,11 @@ def make_files(com_new, directory):
     global device
     device = common.Device(com_new)
     file_name = '{0}_{1}'.format(device.get_category().lower(), device.get_underscore_name())
+    version = common.get_changelog_version(directory)
     directory += '/bindings'
+
     rb = file('{0}/{1}.rb'.format(directory, file_name), "w")
-    rb.write(make_header())
+    rb.write(make_header(version))
     rb.write(make_class())
     rb.write(make_callback_id_definitions())
     rb.write(make_function_id_definitions())

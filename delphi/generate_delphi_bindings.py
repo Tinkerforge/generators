@@ -118,7 +118,7 @@ def make_parameter_doc(packet):
     param.append('\n@return ' + delphi_common.get_return_type(packet, True))
     return '\n'.join(param)
 
-def make_unit_header():
+def make_unit_header(version):
     include = """{0}
 unit {1}{2};
 
@@ -131,7 +131,8 @@ uses
 
 """
     date = datetime.datetime.now().strftime("%Y-%m-%d")
-    return include.format(common.gen_text_curly.format(date),
+
+    return include.format(common.gen_text_curly.format(date, *version),
                           device.get_category(),
                           device.get_camel_case_name())
 
@@ -496,9 +497,11 @@ def make_files(com_new, directory):
     global device
     device = common.Device(com_new)
     file_name = '{0}{1}'.format(device.get_category(), device.get_camel_case_name())
+    version = common.get_changelog_version(directory)
     directory += '/bindings'
+
     pas = file('{0}/{1}.pas'.format(directory, file_name), 'w')
-    pas.write(make_unit_header())
+    pas.write(make_unit_header(version))
     pas.write(make_function_id_definitions())
     pas.write(make_callback_id_definitions())
     pas.write(make_arrays())
