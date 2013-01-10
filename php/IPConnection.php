@@ -106,7 +106,27 @@ abstract class Device
      */
     public function __construct($uid, $ipcon)
     {
-        $this->uid = Base58::decode($uid);
+        $longUid = Base58::decode($uid);
+
+        if (bccomp($longUid, '4294967295' /* 0xFFFFFFFF */) > 0) {
+            // Convert from 64bit to 32bit
+            $value1a = (int)bcmod($longUid, '65536' /* 0x10000 */);
+            $value1b = (int)bcmod(bcdiv($longUid, '65536' /* 0x10000 */), '65536' /* 0x10000 */);
+            $value2a = (int)bcmod(bcdiv($longUid, '4294967296' /* 0x100000000 */), '65536' /* 0x10000 */);
+            $value2b = (int)bcmod(bcdiv($longUid, '281474976710656' /* 0x10000000000 */), '65536' /* 0x10000 */);
+
+            $shortUid1  = ($value1a & 0x0FFF);
+            $shortUid1 |= ($value1b & 0x0F00) << 4;
+
+            $shortUid2  =  $value2a & 0x003F;
+            $shortUid2 |= ($value2b & 0x000F) << 6;
+            $shortUid2 |= ($value2b & 0x3F00) << 2;
+
+            $this->uid = bcadd(bcmul($shortUid2, '65536' /* 0x10000 */), $shortUid1);
+        } else {
+            $this->uid = $longUid;
+        }
+
         $this->ipcon = $ipcon;
 
         for ($i = 0; $i < 256; ++$i) {
