@@ -201,11 +201,14 @@ namespace Tinkerforge
 
 					if(socket != null)
 					{
+						socketStream.Close();
+						socketStream = null;
+						socketWriter.Close();
+						socketWriter = null;
+						socketReader.Close();
+						socketReader = null;
 						socket.Close();
 						socket = null;
-						socketStream = null;
-						socketWriter = null;
-						socketReader = null;
 					}
 
 					if(receiveThread != null)
@@ -514,7 +517,14 @@ namespace Tinkerforge
 								{
 									if(socket != null)
 									{
+										socketStream.Close();
+										socketStream = null;
+										socketWriter.Close();
+										socketWriter = null;
+										socketReader.Close();
+										socketReader = null;
 										socket.Close();
+										socket = null;
 									}
 								}
 
