@@ -162,7 +162,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetSelectedState', 'set_selected_state'), 
 'elements': [('relay', 'uint8', 1, 'in'),
-             ('relay_value', 'bool', 1, 'in')],
+             ('state', 'bool', 1, 'in')],
 'since_firmware': [2, 0, 0],
 'doc': ['af', {
 'en':
