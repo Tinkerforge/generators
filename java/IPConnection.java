@@ -347,6 +347,21 @@ public class IPConnection {
 		}
 	}
 
+	public static class AlreadyConnectedException extends Exception {
+		private static final long serialVersionUID = 1L;
+
+		AlreadyConnectedException(String string) {
+			super(string);
+		}
+	}
+
+	public static class NotConnectedException extends Exception {
+		private static final long serialVersionUID = 1L;
+
+		NotConnectedException() {
+		}
+	}
+
 	public interface EnumerateListener {
 		public void enumerate(String uid, String connectedUid, char position,
 		                      short[] hardwareVersion, short[] firmwareVersion,
@@ -379,8 +394,12 @@ public class IPConnection {
 	 * there is no Brick Daemon or WIFI/Ethernet Extension listening at the
 	 * given host and port.
 	 */
-	public void connect(String host, int port) throws java.net.UnknownHostException, java.io.IOException {
+	public void connect(String host, int port) throws java.net.UnknownHostException, java.io.IOException, AlreadyConnectedException {
 		synchronized(socketMutex) {
+			if (socket != null) {
+				throw new AlreadyConnectedException("Already connected to " + this.host + ":" + this.port);
+			}
+
 			this.host = host;
 			this.port = port;
 
@@ -411,11 +430,9 @@ public class IPConnection {
 			}
 		}
 
-		if(receiveThread == null) {
-			receiveThread = new ReceiveThread(this);
-			receiveFlag = true;
-			receiveThread.start();
-		}
+		receiveFlag = true;
+		receiveThread = new ReceiveThread(this);
+		receiveThread.start();
 
 		autoReconnectAllowed = false;
 		autoReconnectPending = false;
@@ -439,7 +456,7 @@ public class IPConnection {
 	 * Disconnects the TCP/IP connection from the Brick Daemon or the
 	 * WIFI/Ethernet Extension.
 	 */
-	public void disconnect() {
+	public void disconnect() throws NotConnectedException {
 		CallbackThread callbackThreadTmp = null;
 		LinkedBlockingQueue<CallbackQueueObject> callbackQueueTmp = null;
 
@@ -450,8 +467,7 @@ public class IPConnection {
 				autoReconnectPending = false;
 			} else {
 				if(socket == null) {
-					// FIXME: throw not-connected exception
-					return;
+					throw new NotConnectedException();
 				}
 
 				receiveFlag = false;
@@ -594,9 +610,11 @@ public class IPConnection {
 	 * Broadcasts an enumerate request. All devices will respond with an enumerate
 	 * callback.
 	 */
-	public void enumerate() {
+	public void enumerate() throws NotConnectedException {
 		synchronized(socketMutex) {
-			// FIXME: check connection status and raise not connected exception
+			if(socket == null) {
+				throw new NotConnectedException();
+			}
 
 			ByteBuffer request = createRequestBuffer(BROADCAST_UID, (byte)8, FUNCTION_ENUMERATE, (byte)0, (byte)0);
 

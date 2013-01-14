@@ -443,7 +443,7 @@ def make_methods():
 
             bbputs += bbput_format + '\n'
 
-        throw = 'throws IPConnection.TimeoutException'
+        throw = 'throws IPConnection.TimeoutException, IPConnection.NotConnectedException'
         if len(packet.get_elements('out')) == 0:
             bbgets = ''
             bbret = ''
