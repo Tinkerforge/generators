@@ -70,6 +70,8 @@ def generate(path):
 
     # Copy examples
     common.import_and_make(configs, path, make_files)
+    shutil.copy(common.path_binding.replace('/generators/c', '/doc/en/source/Software/example.c'),
+                '/tmp/generator/examples/example_enumerate.c')
 
     # Copy bindings and readme
     for filename in glob.glob(path + '/bindings/*.[ch]'):

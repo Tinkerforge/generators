@@ -70,6 +70,8 @@ def generate(path):
 
     # Copy examples
     common.import_and_make(configs, path, make_files)
+    shutil.copy(common.path_binding.replace('/generators/java', '/doc/en/source/Software/Example.java'),
+                '/tmp/generator/jar/examples/ExampleEnumerate.java')
 
     # Copy bindings and readme
     for filename in glob.glob(path + '/bindings/*.java'):

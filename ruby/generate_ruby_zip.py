@@ -70,6 +70,8 @@ def generate(path):
 
     # Copy examples
     common.import_and_make(configs, path, make_files)
+    shutil.copy(common.path_binding.replace('/generators/ruby', '/doc/en/source/Software/example.rb'),
+                '/tmp/generator/gem/examples/example_enumerate.rb')
 
     # Copy bindings and readme
     for filename in glob.glob(path + '/bindings/*.rb'):

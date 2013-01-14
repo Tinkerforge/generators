@@ -72,6 +72,8 @@ def generate(path):
 
     # Copy examples
     common.import_and_make(configs, path, make_files)
+    shutil.copy(common.path_binding.replace('/generators/php', '/doc/en/source/Software/Example.php'),
+                '/tmp/generator/pear/examples/ExampleEnumerate.php')
 
     # Copy bindings and readme
     package_files = ['<file name="Tinkerforge/IPConnection.php" role="php" />']

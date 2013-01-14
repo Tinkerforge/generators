@@ -71,6 +71,8 @@ def generate(path):
 
     # Copy examples
     common.import_and_make(configs, path, make_files)
+    shutil.copy(common.path_binding.replace('/generators/csharp', '/doc/en/source/Software/Example.cs'),
+                '/tmp/generator/dll/examples/ExampleEnumerate.cs')
 
     # Copy bindings and readme
     for filename in glob.glob(path + '/bindings/*.cs'):
