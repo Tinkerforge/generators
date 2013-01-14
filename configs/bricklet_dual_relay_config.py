@@ -26,7 +26,8 @@ Sets the state of the relays, *true* means on and *false* means off.
 For example: (true, false) turns relay 1 on and relay 2 off.
 
 If you just want to set one of the relays and don't know the current state
-of the other relay, you can get the state with :func:`GetState`.
+of the other relay, you can get the state with :func:`GetState` or you
+can use :func:`SetSelectedState`.
 
 Running monoflop timers will be overwritten if this function is called.
 
@@ -38,7 +39,8 @@ Setzt den Zustand der Relais, *true* bedeutet ein und *false* aus.
 Beispiel: (true, false) schaltet Relais 1 ein und Relais 2 aus.
 
 Wenn nur eines der Relais gesetzt werden soll und der aktuelle Zustand des anderen Relais
-nicht bekannt ist, dann kann der Zustand mit :func:`GetState` ausgelesen werden.
+nicht bekannt ist, dann kann der Zustand mit :func:`GetState` ausgelesen werden oder
+es kann :func:`SetSelectedState` genutzt werden.
 
 Laufende Monoflop Timer werden überschrieben wenn diese Funktion aufgerufen wird.
 
@@ -152,6 +154,28 @@ parameter contain the relay (1 or 2) and the current state of the relay
 Dieser Callback wird ausgelöst wenn ein Monoflop Timer abläuft (0 erreicht).
 Die Parameter enthalten das auslösende Relais (1 oder 2) und den aktuellen Zustand
 des Relais (der Zustand nach dem Monoflop).
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetSelectedState', 'set_selected_state'), 
+'elements': [('relay', 'uint8', 1, 'in'),
+             ('relay_value', 'bool', 1, 'in')],
+'since_firmware': [2, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Sets the state of the selected relay (1 or 2), *true* means on and *false* means off. 
+
+The other relay remains untouched.
+""",
+'de':
+"""
+Setzt den Zustand des selektierten Relais (1 oder 2), *true* bedeutet ein und *false* aus.
+
+Das andere Relais bleibt unangetastet.
 """
 }]
 })

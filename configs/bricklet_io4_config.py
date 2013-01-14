@@ -71,7 +71,7 @@ Ein- oder Ausgang konfiguriert sind.
 com['packets'].append({
 'type': 'function',
 'name': ('SetConfiguration', 'set_configuration'),
-'elements': [('pin_mask', 'uint8', 1, 'in'),
+'elements': [('selection_mask', 'uint8', 1, 'in'),
              ('direction', 'char', 1, 'in'),
              ('value', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -289,7 +289,7 @@ Beispiele:
 com['packets'].append({
 'type': 'function',
 'name': ('SetMonoflop', 'set_monoflop'),
-'elements': [('pin_mask', 'uint8', 1, 'in'),
+'elements': [('selection_mask', 'uint8', 1, 'in'),
              ('value_mask', 'uint8', 1, 'in'),
              ('time', 'uint32', 1, 'in')],
 'since_firmware': [1, 1, 1],
@@ -373,7 +373,7 @@ Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.
 com['packets'].append({
 'type': 'callback',
 'name': ('MonoflopDone', 'monoflop_done'),
-'elements': [('pin_mask', 'uint8', 1, 'out'),
+'elements': [('selection_mask', 'uint8', 1, 'out'),
              ('value_mask', 'uint8', 1, 'out')],
 'since_firmware': [1, 1, 1],
 'doc': ['c', {
@@ -391,3 +391,41 @@ Zustand als Bitmaske (der Zustand nach dem Monoflop).
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetSelectedValues', 'set_selected_values'),
+'elements': [('selection_mask', 'uint8', 1, 'in'),
+             ('value_mask', 'uint8', 1, 'in')],
+'since_firmware': [2, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Sets the output value (high or low) with a bitmask, according to
+the selction mask. The bitmask is 4 bit long, *true* refers to high 
+and *false* refers to low.
+
+For example: The values 0b0110, 0b0011 will turn pin 2 high and
+pin 1 low, pin 0 and 3 will remain untouched.
+
+.. note::
+ This function does nothing for pins that are configured as input.
+ Pull-up resistors can be switched on with :func:`SetConfiguration`.
+""",
+'de':
+"""
+Setzt den Ausgangszustand (logisch 1 oder logisch 0) mittels einer Bitmaske,
+entsprechend der Selktionsmaske. Die Bitmaske hat eine Länge von 4 Bit, 
+*true* bedeutet logisch 1 und *false*
+logisch 0.
+
+Beispiel: Die Werte 0b0110, 0b0011 setzen den Pin 2 auf logisch 1 und den Pin 1
+auf logisch 0. Die Pins 0 und 3 bleiben unangetastet.
+
+.. note::
+ Diese Funktion bewirkt keine Änderung an Pins die als Eingang konfiguriert sind.
+ Pull-Up Widerstände können mit :func:`SetConfiguration` zugeschaltet werden.
+"""
+}]
+})
+

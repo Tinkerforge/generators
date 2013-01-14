@@ -74,7 +74,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetPortConfiguration', 'set_port_configuration'), 
 'elements': [('port', 'char', 1, 'in'),
-             ('pin_mask', 'uint8', 1, 'in'),
+             ('selection_mask', 'uint8', 1, 'in'),
              ('direction', 'char', 1, 'in'),
              ('value', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -300,7 +300,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetPortMonoflop', 'set_port_monoflop'),
 'elements': [('port', 'char', 1, 'in'),
-             ('pin_mask', 'uint8', 1, 'in'),
+             ('selection_mask', 'uint8', 1, 'in'),
              ('value_mask', 'uint8', 1, 'in'),
              ('time', 'uint32', 1, 'in')],
 'since_firmware': [1, 1, 2],
@@ -386,7 +386,7 @@ com['packets'].append({
 'type': 'callback',
 'name': ('MonoflopDone', 'monoflop_done'),
 'elements': [('port', 'char', 1, 'out'),
-             ('pin_mask', 'uint8', 1, 'out'),
+             ('selection_mask', 'uint8', 1, 'out'),
              ('value_mask', 'uint8', 1, 'out')],
 'since_firmware': [1, 1, 2],
 'doc': ['c', {
@@ -401,6 +401,44 @@ the pins (the value after the monoflop).
 Dieser Callback wird ausgelöst wenn ein Monoflop Timer abläuft (0 erreicht).
 :word:`parameters` enthalten den Port, die beteiligten Pins als Bitmaske und
 den aktuellen Zustand als Bitmaske (der Zustand nach dem Monoflop).
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetSelectedValues', 'set_selected_values'),
+'elements': [('port', 'char', 1, 'in')
+             ('selection_mask', 'uint16', 1, 'in'),
+             ('value_mask', 'uint16', 1, 'in')],
+'since_firmware': [2, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Sets the output value (high or low) for a port ("a" or "b" with a bitmask, 
+according to the selction mask. The bitmask is 4 bit long, *true* refers 
+to high and *false* refers to low.
+
+For example: The values 0b11000000, 0b10000000 will turn pin 7 high and
+pin 6 low, pins 0-6 will remain untouched.
+
+.. note::
+ This function does nothing for pins that are configured as input.
+ Pull-up resistors can be switched on with :func:`SetConfiguration`.
+""",
+'de':
+"""
+Setzt den Ausgangszustand (logisch 1 oder logisch 0) mittels einer Bitmaske,
+entsprechend der Selktionsmaske. Die Bitmaske hat eine Länge von 4 Bit, 
+*true* bedeutet logisch 1 und *false*
+logisch 0.
+
+Beispiel: Die Werte 0b11000000, 0b10000000 setzen den Pin 7 auf logisch 1 und den Pin 6
+auf logisch 0. Die Pins 0-6 bleiben unangetastet.
+
+.. note::
+ Diese Funktion bewirkt keine Änderung an Pins die als Eingang konfiguriert sind.
+ Pull-Up Widerstände können mit :func:`SetConfiguration` zugeschaltet werden.
 """
 }]
 })

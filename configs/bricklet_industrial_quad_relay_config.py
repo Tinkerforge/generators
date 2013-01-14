@@ -74,7 +74,7 @@ Gibt die Bitmaske zurück, wie von :func:`SetValue` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': ('SetMonoflop', 'set_monoflop'),
-'elements': [('pin_mask', 'uint16', 1, 'in'),
+'elements': [('selection_mask', 'uint16', 1, 'in'),
              ('value_mask', 'uint16', 1, 'in'),
              ('time', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -243,7 +243,7 @@ mit Bricklets verbunden die zusammen gruppiert werden können.
 com['packets'].append({
 'type': 'callback',
 'name': ('MonoflopDone', 'monoflop_done'),
-'elements': [('pin_mask', 'uint16', 1, 'out'),
+'elements': [('selection_mask', 'uint16', 1, 'out'),
              ('value_mask', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -258,6 +258,49 @@ This callback is triggered whenever a monoflop timer reaches 0. The
 Dieser Callback wird ausgelöst wenn ein Monoflop Timer abläuft (0 erreicht).
 :word:`parameters` enthalten die beteiligten Pins als Bitmaske und den aktuellen
 Zustand als Bitmaske (der Zustand nach dem Monoflop).
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetSelectedValues', 'set_selected_values'),
+'elements': [('selection_mask', 'uint16', 1, 'in'),
+             ('value_mask', 'uint16', 1, 'in')],
+'since_firmware': [2, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Sets the output value with a bitmask, according to the selction mask. 
+The bitmask is 16 bit long, *true* refers to a closed relay and 
+*false* refers to an open relay.
+
+For example: The values 00b0000000000000011, b0000000000000001 will close 
+the relay of pin 0, open the relay of pin 1 and leave the others untouched.
+
+If no groups are used (see :func:`SetGroup`), the pins correspond to the
+markings on the Quad Relay Bricklet.
+
+If groups are used, the pins correspond to the element in the group.
+Element 1 in the group will get pins 0-3, element 2 pins 4-7, element 3
+pins 8-11 and element 4 pins 12-15.
+""",
+'de':
+"""
+Setzt die Ausgabewerte mit einer Bitmaske, entsprechend der Selektionsmaske. 
+Die Bitmaske ist 16 Bit lang.
+*true* steht für ein geschlossenes Relais und *false* für ein offenes
+Relay.
+
+Zum Beispiel: Die Werte 0b0000000000000011, b0000000000000001 werden das 
+Relais 0 schließen, das Relais 1 öffnen und alle anderen unangetastet lassen.
+
+Falls keine Gruppen verwendet werden (siehe :func:`SetGroup`), entsprechen
+die Pins der Beschriftung auf dem Quad Relay Bricklet.
+
+Falls Gruppen verwendet werden, entsprechen die Pins den Elementen der
+Gruppe. Element 1 in der Gruppe bekommt Pins 0-3,
+Element 2 Pins 4-7, Element 3 Pins 8-11 und Element 4 Pins 12-15.
 """
 }]
 })

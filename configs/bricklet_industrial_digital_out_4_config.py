@@ -73,7 +73,7 @@ Gibt die Bitmaske zurück, wie von :func:`SetValue` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': ('SetMonoflop', 'set_monoflop'),
-'elements': [('pin_mask', 'uint16', 1, 'in'),
+'elements': [('selection_mask', 'uint16', 1, 'in'),
              ('value_mask', 'uint16', 1, 'in'),
              ('time', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -241,7 +241,7 @@ mit Bricklets verbunden die zusammen gruppiert werden können.
 com['packets'].append({
 'type': 'callback',
 'name': ('MonoflopDone', 'monoflop_done'),
-'elements': [('pin_mask', 'uint16', 1, 'out'),
+'elements': [('selection_mask', 'uint16', 1, 'out'),
              ('value_mask', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -256,6 +256,48 @@ This callback is triggered whenever a monoflop timer reaches 0. The
 Dieser Callback wird ausgelöst wenn ein Monoflop Timer abläuft (0 erreicht).
 :word:`parameters` enthalten die beteiligten Pins als Bitmaske und den aktuellen
 Zustand als Bitmaske (der Zustand nach dem Monoflop).
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetSelectedValues', 'set_selected_values'),
+'elements': [('selection_mask', 'uint16', 1, 'in'),
+             ('value_mask', 'uint16', 1, 'in')],
+'since_firmware': [2, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Sets the output value with a bitmask, according to the selction mask.
+The bitmask is 16 bit long, *true* refers to high and *false* refers to 
+low.
+
+For example: The values 0b0000000000000011, b0000000000000001 will turn 
+pin 0 high, pin 1 low the other pins remain untouched.
+
+If no groups are used (see :func:`SetGroup`), the pins correspond to the
+markings on the Digital Out 4 Bricklet.
+
+If groups are used, the pins correspond to the element in the group.
+Element 1 in the group will get pins 0-3, element 2 pins 4-7, element 3
+pins 8-11 and element 4 pins 12-15.
+""",
+'de':
+"""
+Setzt die Ausgabewerte mit einer Bitmaske, entsprechend der Selektionsmaske.
+Die Bitmaske ist 16 Bit lang. *true* bedeutet logisch 1 und *false* logisch 0.
+
+Zum Beispiel: Die Werte 0b0000000000000011, b0000000000000001 werden den 
+Pin 0 auf logisch 1 und den Pin 1 auf logisch 0 setzen. Alle anderen
+Pins bleiben unangetastet.
+
+Falls keine Gruppen verwendet werden (siehe :func:`SetGroup`), entsprechen
+die Pins der Beschriftung auf dem Digital Out 4 Bricklet.
+
+Falls Gruppen verwendet werden, entsprechen die Pins den Elementen der
+Gruppe. Element 1 in der Gruppe bekommt Pins 0-3,
+Element 2 Pins 4-7, Element 3 Pins 8-11 und Element 4 Pins 12-15.
 """
 }]
 })
