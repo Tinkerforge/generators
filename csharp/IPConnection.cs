@@ -23,14 +23,11 @@ namespace Tinkerforge
 		internal int responseTimeout = 2500;
 
 		internal const byte FUNCTION_ENUMERATE = 254;
-		internal const byte FUNCTION_ADC_CALIBRATE = 251;
-		internal const byte FUNCTION_GET_ADC_CALIBRATION = 250;
 
 		internal const byte CALLBACK_ENUMERATE = 253;
 
 		internal const int CALLBACK_CONNECTED = 0;
 		internal const int CALLBACK_DISCONNECTED = 1;
-		internal const int CALLBACK_AUTHENTICATION_ERROR = 2;
 
 		internal const long BROADCAST_UID = (long)0;
 
@@ -60,7 +57,7 @@ namespace Tinkerforge
 		internal int nextSequenceMumber = 1;
 
 		internal readonly object socketLock = new object();
-		private object writeLock = new object();
+		private object socketWriterLock = new object();
 
 		internal bool autoReconnectAllowed = false;
 		internal bool autoReconnectPending = false;
@@ -124,6 +121,10 @@ namespace Tinkerforge
 		{
 			lock(socketLock)
 			{
+				if (socket != null) {
+					throw new AlreadyConnectedException("Already connected to " + this.host + ":" + this.port);
+				}
+
 				this.host = host;
 				this.port = port;
 
@@ -149,13 +150,12 @@ namespace Tinkerforge
 			socketWriter = new BinaryWriter(socketStream);
 			socketReader = new BinaryReader(socketStream);
 
-			if(receiveThread == null)
-			{
-				receiveThread = new Thread(this.ReceiveLoop);
-				receiveThread.IsBackground = true;
-				receiveThread.Name = "Brickd-Receiver";
-				receiveThread.Start();
-			}
+			receiveFlag = true;
+
+			receiveThread = new Thread(this.ReceiveLoop);
+			receiveThread.IsBackground = true;
+			receiveThread.Name = "Brickd-Receiver";
+			receiveThread.Start();
 
 			autoReconnectAllowed = false;
 			autoReconnectPending = false;
@@ -189,12 +189,12 @@ namespace Tinkerforge
 				if(autoReconnectPending)
 				{
 					autoReconnectPending = false;
-				} else
+				}
+				else
 				{
 					if(socket == null)
 					{
-						// FIXME: throw not-connected exception
-						return;
+						throw new NotConnectedException();
 					}
 
 					receiveFlag = false;
@@ -203,6 +203,9 @@ namespace Tinkerforge
 					{
 						socket.Close();
 						socket = null;
+						socketStream = null;
+						socketWriter = null;
+						socketReader = null;
 					}
 
 					if(receiveThread != null)
@@ -251,10 +254,10 @@ namespace Tinkerforge
 
 			if(autoReconnectPending)
 			{
-				return IPConnection.CONNECTION_STATE_PENDING;
+				return CONNECTION_STATE_PENDING;
 			}
 
-			return IPConnection.CONNECTION_STATE_DISCONNECTED;
+			return CONNECTION_STATE_DISCONNECTED;
 		}
 
 		/// <summary>
@@ -312,13 +315,21 @@ namespace Tinkerforge
 		/// </summary>
 		public void Enumerate()
 		{
-			byte[] data_ = new byte[8];
-			LEConverter.To((byte)0, 0, data_);
-			LEConverter.To((byte)8, 4, data_);
-			LEConverter.To(CALLBACK_ENUMERATE, 5, data_);
-			LEConverter.To((byte)((GetNextSequenceNumber() << 4)), 6, data_);
-			LEConverter.To((byte)0, 7, data_);
-			Write(data_);
+			lock(socketLock)
+			{
+				if (socket == null)
+				{
+					throw new NotConnectedException();
+				}
+
+				byte[] data_ = new byte[8];
+				LEConverter.To((byte)0, 0, data_);
+				LEConverter.To((byte)8, 4, data_);
+				LEConverter.To(CALLBACK_ENUMERATE, 5, data_);
+				LEConverter.To((byte)((GetNextSequenceNumber() << 4)), 6, data_);
+				LEConverter.To((byte)0, 7, data_);
+				Write(data_);
+			}
 		}
 
 		/// <summary>
@@ -667,7 +678,7 @@ namespace Tinkerforge
 
 		public void Write(byte[] data)
 		{
-			lock(writeLock)
+			lock(socketWriterLock)
 			{
 				socketWriter.Write(data, 0, data.Length);
 			}
@@ -677,6 +688,20 @@ namespace Tinkerforge
 	public class TimeoutException : Exception
 	{
 		public TimeoutException(string message) : base(message)
+		{
+		}
+	}
+
+	public class AlreadyConnectedException : Exception
+	{
+		public AlreadyConnectedException(string message) : base(message)
+		{
+		}
+	}
+
+	public class NotConnectedException : Exception
+	{
+		public NotConnectedException()
 		{
 		}
 	}
@@ -704,7 +729,7 @@ namespace Tinkerforge
 			FALSE = 4
 		}
 
-		private object writeLock = new object();
+		private object requestLock = new object();
 
 		internal delegate void CallbackWrapper(byte[] data);
 
@@ -736,13 +761,10 @@ namespace Tinkerforge
 				responseExpected[i] = ResponseExpectedFlag.INVALID_FUNCTION_ID;
 			}
 
-			responseExpected[IPConnection.FUNCTION_ENUMERATE]            = ResponseExpectedFlag.FALSE;
-			responseExpected[IPConnection.FUNCTION_ADC_CALIBRATE]        = ResponseExpectedFlag.FALSE;
-			responseExpected[IPConnection.FUNCTION_GET_ADC_CALIBRATION]  = ResponseExpectedFlag.ALWAYS_TRUE;
-			responseExpected[IPConnection.CALLBACK_ENUMERATE]            = ResponseExpectedFlag.ALWAYS_FALSE;
-			responseExpected[IPConnection.CALLBACK_CONNECTED]            = ResponseExpectedFlag.ALWAYS_FALSE;
-			responseExpected[IPConnection.CALLBACK_DISCONNECTED]         = ResponseExpectedFlag.ALWAYS_FALSE;
-			responseExpected[IPConnection.CALLBACK_AUTHENTICATION_ERROR] = ResponseExpectedFlag.ALWAYS_FALSE;
+			responseExpected[IPConnection.FUNCTION_ENUMERATE]    = ResponseExpectedFlag.FALSE;
+			responseExpected[IPConnection.CALLBACK_ENUMERATE]    = ResponseExpectedFlag.ALWAYS_FALSE;
+			responseExpected[IPConnection.CALLBACK_CONNECTED]    = ResponseExpectedFlag.ALWAYS_FALSE;
+			responseExpected[IPConnection.CALLBACK_DISCONNECTED] = ResponseExpectedFlag.ALWAYS_FALSE;
 
 			ipcon.devices[this.uid] = this;
 		}
@@ -867,16 +889,24 @@ namespace Tinkerforge
 
 		protected void SendRequestNoResponse(byte[] request)
 		{
-			lock (writeLock)
+			lock (requestLock) lock (ipcon.socketLock)
 			{
+				if (ipcon.GetConnectionState() != IPConnection.CONNECTION_STATE_CONNECTED) {
+					throw new NotConnectedException();
+				}
+
 				ipcon.Write(request);
 			}
 		}
 
 		protected void SendRequestExpectResponse(byte[] request, byte functionID, out byte[] response)
 		{
-			lock (writeLock)
+			lock (requestLock) lock (ipcon.socketLock)
 			{
+				if (ipcon.GetConnectionState() != IPConnection.CONNECTION_STATE_CONNECTED) {
+					throw new NotConnectedException();
+				}
+
 				expectedResponseFunctionID = functionID;
 				expectedResponseSequenceNumber = (byte)((request[6] >> 4) & 0xF);
 
