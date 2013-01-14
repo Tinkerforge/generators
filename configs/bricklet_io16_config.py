@@ -409,8 +409,8 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetSelectedValues', 'set_selected_values'),
 'elements': [('port', 'char', 1, 'in')
-             ('selection_mask', 'uint16', 1, 'in'),
-             ('value_mask', 'uint16', 1, 'in')],
+             ('selection_mask', 'uint8', 1, 'in'),
+             ('value_mask', 'uint8', 1, 'in')],
 'since_firmware': [2, 0, 0],
 'doc': ['af', {
 'en':
