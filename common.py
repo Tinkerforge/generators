@@ -430,9 +430,6 @@ def generate(path, language, make_files, prepare, is_doc_):
                 module.com['packets'].extend(prepare_common_packets(common_packets))
                 module.com['common_included'] = True
 
-                for x in module.com['packets']:
-                    print x['name'][0]
-
             make_files(module.com, path)
 
 def import_and_make(configs, path, make_files):
