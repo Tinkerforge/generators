@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [1, 3, 2],
+    'api_version': [2, 0, 0],
     'category': 'Brick',
     'device_identifier': 13,
     'name': ('Master', 'master', 'Master'),

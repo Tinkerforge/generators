@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [1, 0, 0],
+    'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 225,
     'name': ('IndustrialQuadRelay', 'industrial_quad_relay', 'Industrial Quad Relay'),

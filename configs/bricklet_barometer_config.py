@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
-    'api_version': [1, 1, 0],
+    'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 221,
     'name': ('Barometer', 'barometer', 'Barometer'),

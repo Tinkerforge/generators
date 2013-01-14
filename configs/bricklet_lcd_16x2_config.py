@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [1, 0, 0],
+    'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 211,
     'name': ('LCD16x2', 'lcd_16x2', 'LCD 16x2'),

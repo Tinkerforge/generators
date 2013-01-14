@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [1, 0, 0],
+    'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 224,
     'name': ('IndustrialDigitalOut4', 'industrial_digital_out_4', 'Industrial Digital Out 4'),

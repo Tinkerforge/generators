@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [1, 0, 1],
+    'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 29,
     'name': ('IO4', 'io4', 'IO-4'),
