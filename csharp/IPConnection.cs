@@ -325,7 +325,7 @@ namespace Tinkerforge
 				byte[] data_ = new byte[8];
 				LEConverter.To((byte)0, 0, data_);
 				LEConverter.To((byte)8, 4, data_);
-				LEConverter.To(CALLBACK_ENUMERATE, 5, data_);
+				LEConverter.To(FUNCTION_ENUMERATE, 5, data_);
 				LEConverter.To((byte)((GetNextSequenceNumber() << 4)), 6, data_);
 				LEConverter.To((byte)0, 7, data_);
 				Write(data_);
