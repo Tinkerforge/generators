@@ -143,8 +143,16 @@ namespace Tinkerforge
 				callbackThread.Start();
 			}
 
-			socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-			ConnectSocket(host, port);
+			try {
+				socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+				ConnectSocket(host, port);
+			} catch (Exception) {
+				if (socket != null) {
+					socket.Close();
+					socket = null;
+				}
+				throw;
+			}
 
 			socketStream = new NetworkStream(socket);
 			socketWriter = new BinaryWriter(socketStream);
