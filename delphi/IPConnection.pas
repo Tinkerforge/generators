@@ -21,8 +21,9 @@ const
   CALLBACK_AUTHENTICATION_ERROR = 2;
 
   QUEUE_KIND_EXIT = 0;
-  QUEUE_KIND_META = 1;
-  QUEUE_KIND_PACKET = 2;
+  QUEUE_KIND_DESTROY_AND_EXIT = 1;
+  QUEUE_KIND_META = 2;
+  QUEUE_KIND_PACKET = 3;
 
   { enumerationType parameter of the TIPConnectionNotifyEnumerate }
   ENUMERATION_TYPE_AVAILABLE = 0;
@@ -53,14 +54,14 @@ const
 
 type
   { TWrapperThread }
-  TThreadProcedure = procedure(opaque1: TObject; opaque2: TObject) of object;
+  TWrapperThread = class;
+  TThreadProcedure = procedure(thread: TWrapperThread; opaque: TObject) of object;
   TWrapperThread = class(TThread)
   private
     proc: TThreadProcedure;
-    opaque1: TObject;
-    opaque2: TObject;
+    opaque: TObject;
   public
-    constructor Create(const proc_: TThreadProcedure; opaque1_: TObject; opaque2_: TObject);
+    constructor Create(const proc_: TThreadProcedure; opaque_: TObject);
     procedure Execute; override;
     function IsCurrent: boolean;
   end;
@@ -105,8 +106,8 @@ type
 {$ifndef FPC}
     procedure SocketErrorOccurred(sender: TObject; socketError: integer);
 {$endif}
-    procedure ReceiveLoop(opaque1: TObject; opaque2: TObject);
-    procedure CallbackLoop(opaque1: TObject; opaque2: TObject);
+    procedure ReceiveLoop(thread: TWrapperThread; opaque: TObject);
+    procedure CallbackLoop(thread: TWrapperThread; opaque: TObject);
     procedure HandleResponse(const packet: TByteArray);
     procedure DispatchMeta(const meta: TByteArray);
     procedure DispatchPacket(const packet: TByteArray);
@@ -227,17 +228,16 @@ type
 implementation
 
 { TWrapperThread }
-constructor TWrapperThread.Create(const proc_: TThreadProcedure; opaque1_: TObject; opaque2_: TObject);
+constructor TWrapperThread.Create(const proc_: TThreadProcedure; opaque_: TObject);
 begin
   proc := proc_;
-  opaque1 := opaque1_;
-  opaque2 := opaque2_;
+  opaque := opaque_;
   inherited Create(false);
 end;
 
 procedure TWrapperThread.Execute;
 begin
-  proc(opaque1, opaque2);
+  proc(self, opaque);
 end;
 
 function TWrapperThread.IsCurrent: boolean;
@@ -305,6 +305,8 @@ end;
 procedure TIPConnection.Disconnect;
 var callbackQueue_: TBlockingQueue; callbackThread_: TWrapperThread; meta: TByteArray;
 begin
+  callbackQueue_ := nil;
+  callbackThread_ := nil;
   socketMutex.Acquire;
   try
     autoReconnectAllowed := false;
@@ -344,15 +346,21 @@ begin
   finally
     socketMutex.Release;
   end;
-  { Do this outside of socketMutex to allow calling (dis-)connect from
-    the callbacks while blocking on the WaitFor call here }
-  SetLength(meta, 2);
-  meta[0] := CALLBACK_DISCONNECTED;
-  meta[1] := DISCONNECT_REASON_REQUEST;
-  callbackQueue_.Enqueue(QUEUE_KIND_META, meta);
-  callbackQueue_.Enqueue(QUEUE_KIND_EXIT, nil);
-  if (not callbackThread_.IsCurrent) then begin
-    callbackThread_.WaitFor;
+  if ((callbackQueue_ <> nil) and (callbackThread_ <> nil)) then begin
+    { Do this outside of socketMutex to allow calling (dis-)connect from
+     the callbacks while blocking on the WaitFor call here }
+    SetLength(meta, 2);
+    meta[0] := CALLBACK_DISCONNECTED;
+    meta[1] := DISCONNECT_REASON_REQUEST;
+    callbackQueue_.Enqueue(QUEUE_KIND_META, meta);
+    if (not callbackThread_.IsCurrent) then begin
+      callbackQueue_.Enqueue(QUEUE_KIND_EXIT, nil);
+      callbackThread_.WaitFor;
+      callbackThread_.Destroy;
+    end
+    else begin
+      callbackQueue_.Enqueue(QUEUE_KIND_DESTROY_AND_EXIT, nil);
+    end;
   end;
 end;
 
@@ -417,8 +425,9 @@ end;
 
 { NOTE: Assumes that socketMutex is locked }
 procedure TIPConnection.ConnectUnlocked(const isAutoReconnect: boolean);
+var
 {$ifdef FPC}
-var address: TInetSockAddr;
+    address: TInetSockAddr;
  {$ifdef MSWINDOWS}
     entry: PHostEnt;
  {$else}
@@ -433,7 +442,7 @@ begin
   if (callbackThread = nil) then begin
     callbackQueue := TBlockingQueue.Create;
     callbackThread := TWrapperThread.Create({$ifdef FPC}@{$endif}self.CallbackLoop,
-                                            callbackQueue, callbackThread);
+                                            callbackQueue);
   end;
   { Create and connect socket }
 {$ifdef FPC}
@@ -480,13 +489,13 @@ begin
   socket.OnError := self.SocketErrorOccurred;
   socket.Open;
   if (not socket.Connected) then begin
-    socket := nil
+    socket := nil;
     raise Exception.Create('Could not connect socket');
   end;
 {$endif}
   { Create receive thread }
   receiveFlag := true;
-  receiveThread := TWrapperThread.Create({$ifdef FPC}@{$endif}self.ReceiveLoop, nil, nil);
+  receiveThread := TWrapperThread.Create({$ifdef FPC}@{$endif}self.ReceiveLoop, nil);
   autoReconnectAllowed := false;
   autoReconnectPending := false;
   { Trigger connected callback }
@@ -509,7 +518,7 @@ begin
 end;
 {$endif}
 
-procedure TIPConnection.ReceiveLoop(opaque1: TObject; opaque2: TObject);
+procedure TIPConnection.ReceiveLoop(thread: TWrapperThread; opaque: TObject);
 var data: array [0..8191] of byte; len, pendingLen: longint; packet, meta: TByteArray;
 begin
   while (receiveFlag) do begin
@@ -565,17 +574,20 @@ begin
   end;
 end;
 
-procedure TIPConnection.CallbackLoop(opaque1: TObject; opaque2: TObject);
-var callbackQueue_: TBlockingQueue; callbackThread_: TWrapperThread; kind: byte; data: TByteArray;
+procedure TIPConnection.CallbackLoop(thread: TWrapperThread; opaque: TObject);
+var callbackQueue_: TBlockingQueue; kind: byte; data: TByteArray;
 begin
-  callbackQueue_ := opaque1 as TBlockingQueue;
-  callbackThread_ := opaque2 as TWrapperThread;
+  callbackQueue_ := opaque as TBlockingQueue;
   while (true) do begin
     SetLength(data, 0);
     if (not callbackQueue_.Dequeue(kind, data, -1)) then begin
       break;
     end;
     if (kind = QUEUE_KIND_EXIT) then begin
+      break;
+    end
+    else if (kind = QUEUE_KIND_DESTROY_AND_EXIT) then begin
+      thread.Destroy;
       break;
     end
     else if (kind = QUEUE_KIND_META) then begin
@@ -589,7 +601,6 @@ begin
     end;
   end;
   callbackQueue_.Destroy;
-  callbackThread_.Destroy;
 end;
 
 procedure TIPConnection.HandleResponse(const packet: TByteArray);
