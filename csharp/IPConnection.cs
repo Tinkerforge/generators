@@ -418,11 +418,14 @@ namespace Tinkerforge
 					if(e.InnerException != null &&
 					   e.InnerException is SocketException)
 					{
-						byte[] data_ = new byte[8];
-						LEConverter.To((int)CALLBACK_DISCONNECTED, 0, data_);
-						LEConverter.To((int)DISCONNECT_REASON_ERROR, 4, data_);
+						if(receiveFlag)
+						{
+							byte[] data_ = new byte[8];
+							LEConverter.To((int)CALLBACK_DISCONNECTED, 0, data_);
+							LEConverter.To((int)DISCONNECT_REASON_ERROR, 4, data_);
 
-						callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_META, data_));
+							callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_META, data_));
+						}
 					}
 					else
 					{
