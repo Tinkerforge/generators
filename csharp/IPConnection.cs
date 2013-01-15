@@ -498,9 +498,6 @@ namespace Tinkerforge
 					continue;
 				}
 
-				byte fid = GetFunctionIdFromData(cqo.data);
-				long uid = GetUIDFromData(cqo.data);
-
 				switch(cqo.kind)
 				{
 					case IPConnection.QUEUE_EXIT:
@@ -587,6 +584,9 @@ namespace Tinkerforge
 							// don't dispatch callbacks when the receive thread isn't running
 							continue;
 						}
+
+						byte fid = GetFunctionIdFromData(cqo.data);
+						long uid = GetUIDFromData(cqo.data);
 
 						if(fid == CALLBACK_ENUMERATE)
 						{
