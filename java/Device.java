@@ -17,7 +17,7 @@ public abstract class Device {
 	byte[] responseExpected = new byte[256];
 	byte expectedResponseFunctionID = 0;
 	byte expectedResponseSequenceNumber = 0;
-	private Object writeMutex = new Object();
+	private Object requestMutex = new Object();
 	SynchronousQueue<byte[]> responseQueue = new SynchronousQueue<byte[]>();
 	IPConnection ipcon = null;
 	CallbackListener[] callbacks = new CallbackListener[256];
@@ -151,16 +151,24 @@ public abstract class Device {
 		}
 	}
 
-	void sendRequestNoResponse(byte[] request) {
-		synchronized(writeMutex) {
+	void sendRequestNoResponse(byte[] request) throws IPConnection.NotConnectedException {
+		synchronized(requestMutex) { synchronized(ipcon.socketMutex) {
+			if (ipcon.getConnectionState() != IPConnection.CONNECTION_STATE_CONNECTED) {
+				throw new IPConnection.NotConnectedException();
+			}
+
 			ipcon.write(request);
-		}
+		}}
 	}
 
-	byte[] sendRequestExpectResponse(byte[] request, byte functionID) throws IPConnection.TimeoutException {
+	byte[] sendRequestExpectResponse(byte[] request, byte functionID) throws IPConnection.TimeoutException, IPConnection.NotConnectedException {
 		byte[] response = null;
 
-		synchronized(writeMutex) {
+		synchronized(requestMutex) { synchronized(ipcon.socketMutex) {
+			if (ipcon.getConnectionState() != IPConnection.CONNECTION_STATE_CONNECTED) {
+				throw new IPConnection.NotConnectedException();
+			}
+
 			expectedResponseFunctionID = functionID;
 			expectedResponseSequenceNumber = IPConnection.getSequenceNumberFromData(request);
 
@@ -190,7 +198,7 @@ public abstract class Device {
 				default:
 					throw new java.lang.UnsupportedOperationException("Function " + functionID + " returned an unknown error");
 			}
-		}
+		}}
 
 		return response;
 	}
