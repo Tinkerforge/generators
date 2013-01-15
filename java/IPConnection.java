@@ -103,17 +103,20 @@ class ReceiveThread extends Thread {
 
 class CallbackThread extends Thread {
 	IPConnection ipcon = null;
+	LinkedBlockingQueue<IPConnection.CallbackQueueObject> callbackQueue = null;
 
-	CallbackThread(IPConnection ipcon) {
+	CallbackThread(IPConnection ipcon,
+	               LinkedBlockingQueue<IPConnection.CallbackQueueObject> callbackQueue) {
 		setDaemon(true);
 		this.ipcon = ipcon;
+		this.callbackQueue = callbackQueue;
 	}
 
 	public void run() {
 		while(true) {
 			IPConnection.CallbackQueueObject cqo = null;
 			try {
-				cqo = ipcon.callbackQueue.take();
+				cqo = callbackQueue.take();
 			} catch(InterruptedException e) {
 				e.printStackTrace();
 				continue;
@@ -406,7 +409,7 @@ public class IPConnection {
 	void connectUnlocked(boolean isAutoReconnect) throws java.net.UnknownHostException, java.io.IOException {
 		if(callbackThread == null) {
 			callbackQueue = new LinkedBlockingQueue<CallbackQueueObject>();
-			callbackThread = new CallbackThread(this);
+			callbackThread = new CallbackThread(this, callbackQueue);
 			callbackThread.start();
 		}
 
