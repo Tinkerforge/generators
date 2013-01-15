@@ -136,8 +136,8 @@ namespace Tinkerforge
 		{
 			if(callbackThread == null)
 			{
-				callbackThread = new Thread(this.CallbackLoop);
 				callbackQueue = new BlockingQueue<CallbackQueueObject>();
+				callbackThread = new Thread(delegate() { this.CallbackLoop(callbackQueue); });
 				callbackThread.IsBackground = true;
 				callbackThread.Name = "Callback-Processor";
 				callbackThread.Start();
@@ -483,12 +483,12 @@ namespace Tinkerforge
 			}
 		}
 
-		private void CallbackLoop()
+		private void CallbackLoop(BlockingQueue<CallbackQueueObject> localCallbackQueue)
 		{
 			while(true)
 			{
 				CallbackQueueObject cqo;
-				if(!callbackQueue.TryDequeue(out cqo, Timeout.Infinite))
+				if(!localCallbackQueue.TryDequeue(out cqo, Timeout.Infinite))
 				{
 					continue;
 				}
