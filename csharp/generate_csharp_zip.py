@@ -93,7 +93,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Tinkerforge GmbH")]
 [assembly: AssemblyProduct("C# API Bindings")]
-[assembly: AssemblyCopyright("Tinkerforge GmbH 2011-2012")]
+[assembly: AssemblyCopyright("Tinkerforge GmbH 2011-2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyVersion("{0}.{1}.{2}.0")]
