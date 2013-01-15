@@ -28,13 +28,6 @@ class ReceiveThread extends Thread {
 		byte[] pendingData = new byte[8192];
 		int pendingLength = 0;
 
-		try {
-			ipcon.in = ipcon.socket.getInputStream();
-		} catch(java.io.IOException e) {
-			e.printStackTrace();
-			return;
-		}
-
 		while(ipcon.receiveFlag) {
 			int length;
 
@@ -418,16 +411,21 @@ public class IPConnection {
 			callbackThread.start();
 		}
 
-		if(socket == null) {
-			try {
-				socket = new Socket(host, port);
-				out = socket.getOutputStream();
-				out.flush();
-			} catch(java.io.IOException e) {
-				socket = null;
-				out = null;
-				throw(e);
-			}
+		try {
+			socket = new Socket(host, port);
+			in = socket.getInputStream();
+			out = socket.getOutputStream();
+			out.flush();
+		} catch(java.net.UnknownHostException e) {
+			socket = null;
+			in = null;
+			out = null;
+			throw(e);
+		} catch(java.io.IOException e) {
+			socket = null;
+			in = null;
+			out = null;
+			throw(e);
 		}
 
 		receiveFlag = true;
