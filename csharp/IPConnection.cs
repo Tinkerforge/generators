@@ -207,17 +207,14 @@ namespace Tinkerforge
 
 					receiveFlag = false;
 
-					if(socket != null)
-					{
-						socketStream.Close();
-						socketStream = null;
-						socketWriter.Close();
-						socketWriter = null;
-						socketReader.Close();
-						socketReader = null;
-						socket.Close();
-						socket = null;
-					}
+					socketStream.Close();
+					socketStream = null;
+					socketWriter.Close();
+					socketWriter = null;
+					socketReader.Close();
+					socketReader = null;
+					socket.Close();
+					socket = null;
 
 					if(receiveThread != null)
 					{
