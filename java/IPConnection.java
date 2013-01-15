@@ -35,15 +35,18 @@ class ReceiveThread extends Thread {
 				length = ipcon.in.read(pendingData, pendingLength,
 				                       pendingData.length - pendingLength);
 			} catch(java.net.SocketException e) {
-				ipcon.autoReconnectAllowed = true;
-				ipcon.receiveFlag = false;
-				ByteBuffer bb = ByteBuffer.allocate(8);
-				bb.putInt(ipcon.CALLBACK_DISCONNECTED);
-				bb.putInt(ipcon.DISCONNECT_REASON_ERROR);
+				if(ipcon.receiveFlag) {
+					ipcon.autoReconnectAllowed = true;
+					ipcon.receiveFlag = false;
+					ByteBuffer bb = ByteBuffer.allocate(3);
+					bb.order(ByteOrder.LITTLE_ENDIAN);
+					bb.put(IPConnection.CALLBACK_DISCONNECTED);
+					bb.putShort(IPConnection.DISCONNECT_REASON_ERROR);
 
-				try {
-					ipcon.callbackQueue.put(new IPConnection.CallbackQueueObject(ipcon.QUEUE_META, bb.array()));
-				} catch(java.lang.InterruptedException e2) {
+					try {
+						ipcon.callbackQueue.put(new IPConnection.CallbackQueueObject(ipcon.QUEUE_META, bb.array()));
+					} catch(java.lang.InterruptedException e2) {
+					}
 				}
 				return;
 			} catch(java.io.IOException e) {
@@ -54,18 +57,14 @@ class ReceiveThread extends Thread {
 				return;
 			}
 
-			if(length == 0 || length == -1) {
+			if(length <= 0) {
 				if(ipcon.receiveFlag) {
 					ipcon.autoReconnectAllowed = true;
 					ipcon.receiveFlag = false;
 					ByteBuffer bb = ByteBuffer.allocate(8);
-					bb.putInt(ipcon.CALLBACK_DISCONNECTED);
-
-					if(length == 0) {
-						bb.putInt(ipcon.DISCONNECT_REASON_SHUTDOWN);
-					} else {
-						bb.putInt(ipcon.DISCONNECT_REASON_ERROR);
-					}
+					bb.order(ByteOrder.LITTLE_ENDIAN);
+					bb.put(IPConnection.CALLBACK_DISCONNECTED);
+					bb.putShort(IPConnection.DISCONNECT_REASON_SHUTDOWN);
 
 					try {
 						ipcon.callbackQueue.put(new IPConnection.CallbackQueueObject(ipcon.QUEUE_META, bb.array()));
@@ -130,16 +129,16 @@ class CallbackThread extends Thread {
 				}
 
 				case IPConnection.QUEUE_META: {
-					ByteBuffer bb = ByteBuffer.wrap(cqo.data, 0, 8);
+					ByteBuffer bb = ByteBuffer.wrap(cqo.data, 0, 3);
 					bb.order(ByteOrder.LITTLE_ENDIAN);
 
-					int functionId = bb.getInt();
-					int parameter = bb.getInt();
+					byte id = bb.get();
+					short parameter = bb.getShort();
 
-					switch(functionId) {
+					switch(id) {
 						case IPConnection.CALLBACK_CONNECTED:
 							if(ipcon.connectedListener != null) {
-								ipcon.connectedListener.connected((short)parameter);
+								ipcon.connectedListener.connected(parameter);
 							}
 
 							break;
@@ -435,14 +434,15 @@ public class IPConnection {
 		autoReconnectAllowed = false;
 		autoReconnectPending = false;
 
-		int connectReason = IPConnection.CONNECT_REASON_REQUEST;
+		short connectReason = IPConnection.CONNECT_REASON_REQUEST;
 		if(isAutoReconnect) {
 			connectReason = CONNECT_REASON_AUTO_RECONNECT;
 		}
 
-		ByteBuffer bb = ByteBuffer.allocate(8);
-		bb.putInt(CALLBACK_CONNECTED);
-		bb.putInt(connectReason);
+		ByteBuffer bb = ByteBuffer.allocate(3);
+		bb.order(ByteOrder.LITTLE_ENDIAN);
+		bb.put(CALLBACK_CONNECTED);
+		bb.putShort(connectReason);
 
 		try {
 			callbackQueue.put(new CallbackQueueObject(QUEUE_META, bb.array()));
@@ -515,9 +515,10 @@ public class IPConnection {
 			callbackQueue = null;
 		}
 
-		ByteBuffer bb = ByteBuffer.allocate(8);
-		bb.putInt(CALLBACK_DISCONNECTED);
-		bb.putInt(DISCONNECT_REASON_REQUEST);
+		ByteBuffer bb = ByteBuffer.allocate(3);
+		bb.order(ByteOrder.LITTLE_ENDIAN);
+		bb.put(CALLBACK_DISCONNECTED);
+		bb.putShort(DISCONNECT_REASON_REQUEST);
 
 		try {
 			callbackQueueTmp.put(new CallbackQueueObject(QUEUE_META, bb.array()));
