@@ -29,6 +29,19 @@ public abstract class Device {
 	final static byte RESPONSE_EXPECTED_FLAG_TRUE = 3;
 	final static byte RESPONSE_EXPECTED_FLAG_FALSE = 4;
 
+	public class Identity {
+		public String uid;
+		public String connectedUid;
+		public char position;
+		public short[] hardwareVersion = new short[3];
+		public short[] firmwareVersion = new short[3];
+		public int deviceIdentifier;
+
+		public String toString() {
+			return "[" + "uid = " + uid + ", " + "connectedUid = " + connectedUid + ", " + "position = " + position + ", " + "hardwareVersion = " + hardwareVersion + ", " + "firmwareVersion = " + firmwareVersion + ", " + "deviceIdentifier = " + deviceIdentifier + "]";
+		}
+	}
+
 	interface CallbackListener {
 		public void callback(byte data[]);
 	}
@@ -64,6 +77,10 @@ public abstract class Device {
 		responseExpected[IPConnection.unsignedByte(IPConnection.CALLBACK_ENUMERATE)] = RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;
 
 		ipcon.devices.put(this.uid, this);
+	}
+
+	public Identity getIdentity() throws IPConnection.TimeoutException, IPConnection.NotConnectedException {
+		return null;	
 	}
 
 	/**

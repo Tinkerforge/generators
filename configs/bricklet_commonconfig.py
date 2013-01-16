@@ -15,6 +15,7 @@ common_packets.append({
              ('firmware_version', 'uint8', 3, 'out'),
              ('device_identifier', 'uint16', 1, 'out')],
 'since_firmware': {'*': [2, 0, 0]},
+'prototype_in_device': True,
 'doc': ['af', {
 'en':
 """
