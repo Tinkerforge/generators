@@ -209,11 +209,11 @@ public abstract class Device {
 				case 0:
 					break;
 				case 1:
-					throw new java.lang.UnsupportedOperationException("Got invalid parameter for function " + functionID);
+					throw new UnsupportedOperationException("Got invalid parameter for function " + functionID);
 				case 2:
-					throw new java.lang.UnsupportedOperationException("Function " + functionID + " is not supported");
+					throw new UnsupportedOperationException("Function " + functionID + " is not supported");
 				default:
-					throw new java.lang.UnsupportedOperationException("Function " + functionID + " returned an unknown error");
+					throw new UnsupportedOperationException("Function " + functionID + " returned an unknown error");
 			}
 		}}
 
