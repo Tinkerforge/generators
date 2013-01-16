@@ -82,6 +82,9 @@ def generate(path):
 
     shutil.copy(path + '/Device.java', '/tmp/generator/jar/source/com/tinkerforge')
     shutil.copy(path + '/IPConnection.java', '/tmp/generator/jar/source/com/tinkerforge')
+    shutil.copy(path + '/TimeoutException.java', '/tmp/generator/jar/source/com/tinkerforge')
+    shutil.copy(path + '/AlreadyConnectedException.java', '/tmp/generator/jar/source/com/tinkerforge')
+    shutil.copy(path + '/NotConnectedException.java', '/tmp/generator/jar/source/com/tinkerforge')
     shutil.copy(path + '/changelog.txt', '/tmp/generator/jar')
     shutil.copy(path + '/Readme.txt', '/tmp/generator/jar')
 

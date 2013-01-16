@@ -80,8 +80,8 @@ public abstract class Device {
 		ipcon.devices.put(this.uid, this);
 	}
 
-	public Identity getIdentity() throws IPConnection.TimeoutException, IPConnection.NotConnectedException {
-		return null;	
+	public Identity getIdentity() throws TimeoutException, NotConnectedException {
+		return null;
 	}
 
 	/**
@@ -169,22 +169,22 @@ public abstract class Device {
 		}
 	}
 
-	void sendRequestNoResponse(byte[] request) throws IPConnection.NotConnectedException {
+	void sendRequestNoResponse(byte[] request) throws NotConnectedException {
 		synchronized(requestMutex) { synchronized(ipcon.socketMutex) {
 			if (ipcon.getConnectionState() != IPConnection.CONNECTION_STATE_CONNECTED) {
-				throw new IPConnection.NotConnectedException();
+				throw new NotConnectedException();
 			}
 
 			ipcon.write(request);
 		}}
 	}
 
-	byte[] sendRequestExpectResponse(byte[] request, byte functionID) throws IPConnection.TimeoutException, IPConnection.NotConnectedException {
+	byte[] sendRequestExpectResponse(byte[] request, byte functionID) throws TimeoutException, NotConnectedException {
 		byte[] response = null;
 
 		synchronized(requestMutex) { synchronized(ipcon.socketMutex) {
 			if (ipcon.getConnectionState() != IPConnection.CONNECTION_STATE_CONNECTED) {
-				throw new IPConnection.NotConnectedException();
+				throw new NotConnectedException();
 			}
 
 			expectedResponseFunctionID = functionID;
@@ -195,7 +195,7 @@ public abstract class Device {
 			try {
 				response = responseQueue.poll(ipcon.responseTimeout, TimeUnit.MILLISECONDS);
 				if(response == null) {
-					throw new IPConnection.TimeoutException("Did not receive response in time");
+					throw new TimeoutException("Did not receive response in time");
 				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();

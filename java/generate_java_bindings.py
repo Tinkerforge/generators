@@ -447,7 +447,7 @@ def make_methods():
 
             bbputs += bbput_format + '\n'
 
-        throw = 'throws IPConnection.TimeoutException, IPConnection.NotConnectedException'
+        throw = 'throws TimeoutException, NotConnectedException'
         if len(packet.get_elements('out')) == 0:
             bbgets = ''
             bbret = ''

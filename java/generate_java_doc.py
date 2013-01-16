@@ -353,11 +353,15 @@ API
 ---
 
 Generally, every method of the Java bindings that returns a value can
-throw a ``IPConnection.TimeoutException``. This exception gets thrown if the
+throw a ``TimeoutException``. This exception gets thrown if the
 device did not respond. If a cable based connection is used, it is
 unlikely that this exception gets thrown (Assuming nobody plugs the 
 device out). However, if a wireless connection is used, timeouts will occur
 if the distance to the device gets too big.
+
+Beside the ``TimeoutException`` there is also a ``NotConnectedException`` that
+is thrown if a method needs to communicate with the device while the
+IP Connection is not connected.
 
 Since Java does not support multiple return values and return by reference
 is not possible for primitive types, we use small classes that 
@@ -379,13 +383,17 @@ All methods listed below are thread-safe.
 API
 ---
 
-Prinzipiell kann jede Methode der Java Bindings, welche einen Wert zurückgibt
-eine ``IPConnection.TimeoutException`` werfen. Diese Exception wird
+Prinzipiell kann jede Methode der Java Bindings eine ``TimeoutException``
+werfen. Diese Exception wird
 geworfen wenn das Gerät nicht antwortet. Wenn eine Kabelverbindung genutzt
 wird, ist es unwahrscheinlich, dass die Exception geworfen wird (unter der
 Annahme, dass das Gerät nicht abgesteckt wird). Bei einer drahtlosen Verbindung
 können Zeitüberschreitungen auftreten, sobald die Entfernung zum Gerät zu
 groß wird.
+
+Neben der ``TimeoutException`` kann auch noch eine ``NotConnectedException``
+geworfen werden, wenn versucht wird mit einem Brick oder Bricklet zu
+kommunizieren, aber die IP Connection nicht verbunden ist.
 
 Da Java nicht mehrere Rückgabewerte unterstützt und eine Referenzrückgabe
 für elementare Type nicht möglich ist, werden kleine Klassen verwendet, die
