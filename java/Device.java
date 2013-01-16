@@ -8,6 +8,7 @@
 
 package com.tinkerforge;
 
+import java.util.Arrays;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -38,7 +39,7 @@ public abstract class Device {
 		public int deviceIdentifier;
 
 		public String toString() {
-			return "[" + "uid = " + uid + ", " + "connectedUid = " + connectedUid + ", " + "position = " + position + ", " + "hardwareVersion = " + hardwareVersion + ", " + "firmwareVersion = " + firmwareVersion + ", " + "deviceIdentifier = " + deviceIdentifier + "]";
+			return "[" + "uid = " + uid + ", " + "connectedUid = " + connectedUid + ", " + "position = " + position + ", " + "hardwareVersion = " + Arrays.toString(hardwareVersion) + ", " + "firmwareVersion = " + Arrays.toString(firmwareVersion) + ", " + "deviceIdentifier = " + deviceIdentifier + "]";
 		}
 	}
 
@@ -209,11 +210,11 @@ public abstract class Device {
 				case 0:
 					break;
 				case 1:
-					throw new java.lang.UnsupportedOperationException("Got invalid parameter for function " + functionID);
+					throw new UnsupportedOperationException("Got invalid parameter for function " + functionID);
 				case 2:
-					throw new java.lang.UnsupportedOperationException("Function " + functionID + " is not supported");
+					throw new UnsupportedOperationException("Function " + functionID + " is not supported");
 				default:
-					throw new java.lang.UnsupportedOperationException("Function " + functionID + " returned an unknown error");
+					throw new UnsupportedOperationException("Function " + functionID + " returned an unknown error");
 			}
 		}}
 
