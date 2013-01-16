@@ -620,11 +620,7 @@ public class IPConnection {
 
 			ByteBuffer request = createRequestBuffer(BROADCAST_UID, (byte)8, FUNCTION_ENUMERATE, (byte)0, (byte)0);
 
-			try {
-				out.write(request.array());
-			} catch(java.io.IOException e) {
-				e.printStackTrace();
-			}
+			write(request.array());
 		}
 	}
 
@@ -687,27 +683,27 @@ public class IPConnection {
 		// a callback without registered listener
 	}
 
-	protected static long getUIDFromData(byte[] data) {
+	static long getUIDFromData(byte[] data) {
 		return (long)(data[0] & 0xFF) | ((long)(data[1] & 0xFF) << 8) | ((long)(data[2] & 0xFF) << 16) | ((long)(data[3] & 0xFF) << 24);
 	}
 
-	protected static byte getLengthFromData(byte[] data) {
+	static byte getLengthFromData(byte[] data) {
 		return data[4];
 	}
 
-	protected static byte getFunctionIDFromData(byte[] data) {
+	static byte getFunctionIDFromData(byte[] data) {
 		return data[5];
 	}
 
-	protected static byte getSequenceNumberFromData(byte[] data) {
+	static byte getSequenceNumberFromData(byte[] data) {
 		return (byte)((((int)data[6]) >> 4) & 0x0F);
 	}
 
-	protected static byte getErrorCodeFromData(byte[] data) {
+	static byte getErrorCodeFromData(byte[] data) {
 		return (byte)(((int)(data[7] >> 6)) & 0x03);
 	}
 
-	public static String string(ByteBuffer buffer, int length) {
+	static String string(ByteBuffer buffer, int length) {
 		StringBuilder builder = new StringBuilder(length);
 		int i = 0;
 
@@ -730,19 +726,19 @@ public class IPConnection {
 		return builder.toString();
 	}
 
-	public static short unsignedByte(byte data) {
+	static short unsignedByte(byte data) {
 		return (short)(data & 0xFF);
 	}
 
-	public static int unsignedShort(short data) {
+	static int unsignedShort(short data) {
 		return (int)(data & 0xFFFF);
 	}
 
-	public static long unsignedInt(int data) {
+	static long unsignedInt(int data) {
 		return (long)(((long)data) & 0xFFFFFFFF);
 	}
 
-	public void write(byte[] data) {
+	void write(byte[] data) {
 		try {
 			out.write(data);
 		} catch(java.io.IOException e) {
@@ -783,7 +779,7 @@ public class IPConnection {
 		return buffer;
 	}
 
-	public static String base58Encode(long value) {
+	static String base58Encode(long value) {
 		String encoded = "";
 
 		while(value >= 58) {
@@ -796,7 +792,7 @@ public class IPConnection {
 		return BASE58.charAt((int)value) + encoded;
 	}
 
-	public static long base58Decode(String encoded) {
+	static long base58Decode(String encoded) {
 		long value = (long)0;
 		long columnMultiplier = (long)1;
 
