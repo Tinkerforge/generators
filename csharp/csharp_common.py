@@ -45,8 +45,8 @@ def make_parameter_list(packet, useOutParams=True):
         param.append('{0}{1} {2}'.format(out, csharp_type, name))
     return ', '.join(param)
 
-def make_method_signature(packet, printFullName=False, device=None):
-    sig_format = "public {0} {1}{2}({3})"
+def make_method_signature(packet, printFullName=False, device=None, is_doc=False):
+    sig_format = "public {4}{0} {1}{2}({3})"
     ret_count = len(packet.get_elements('out'))
     params = make_parameter_list(packet, ret_count > 1)
     return_type = 'void'
@@ -55,8 +55,11 @@ def make_method_signature(packet, printFullName=False, device=None):
     classPrefix = ''
     if printFullName:
         classPrefix = device.get_category() + device.get_camel_case_name() + '::'
+    override = ''
+    if not is_doc and packet.has_prototype_in_device():
+        override = 'override '
 
-    return sig_format.format(return_type, classPrefix, packet.get_camel_case_name(), params)
+    return sig_format.format(return_type, classPrefix, packet.get_camel_case_name(), params, override)
 
 def get_csharp_type(element):
     forms = {

@@ -93,7 +93,7 @@ def make_methods(typ):
         if packet.get_doc()[0] != typ:
             continue
 
-        signature = csharp_common.make_method_signature(packet, True, device)
+        signature = csharp_common.make_method_signature(packet, True, device, True)
         desc = format_doc(packet, 1)
         func = '{0}{1}\n{2}'.format(func_start, 
                                     signature, 

@@ -885,6 +885,7 @@ namespace Tinkerforge
 			}
 		}
 
+		public abstract void GetIdentity(out string uid, out string connectedUid, out char position, out byte[] hardwareVersion, out byte[] firmwareVersion, out int deviceIdentifier);
 
 		protected byte[] MakePacketHeader(byte length, byte fid)
 		{
