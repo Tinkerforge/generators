@@ -99,6 +99,7 @@ package com.tinkerforge;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 """
     date = datetime.datetime.now().strftime("%Y-%m-%d")
 
@@ -139,13 +140,14 @@ def make_return_objects():
         for element in packet.get_elements():
             typ = get_java_type(element[1])
             ele_name = common.underscore_to_headless_camel_case(element[0])
-            arr = ''
-            new = ''
             if element[2] > 1 and typ != 'String':
                 arr = '[]'
                 new = ' = new {0}[{1}]'.format(typ, element[2])
-
-            to = '"{0} = " + {0} +'.format(ele_name)
+                to = '"{0} = " + Arrays.toString({0}) +'.format(ele_name)
+            else:
+                arr = ''
+                new = ''
+                to = '"{0} = " + {0} +'.format(ele_name)
 
             tostr.append(to)
             params.append(param.format(typ, arr, ele_name, new))

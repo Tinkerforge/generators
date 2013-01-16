@@ -8,6 +8,7 @@
 
 package com.tinkerforge;
 
+import java.util.Arrays;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -38,7 +39,7 @@ public abstract class Device {
 		public int deviceIdentifier;
 
 		public String toString() {
-			return "[" + "uid = " + uid + ", " + "connectedUid = " + connectedUid + ", " + "position = " + position + ", " + "hardwareVersion = " + hardwareVersion + ", " + "firmwareVersion = " + firmwareVersion + ", " + "deviceIdentifier = " + deviceIdentifier + "]";
+			return "[" + "uid = " + uid + ", " + "connectedUid = " + connectedUid + ", " + "position = " + position + ", " + "hardwareVersion = " + Arrays.toString(hardwareVersion) + ", " + "firmwareVersion = " + Arrays.toString(firmwareVersion) + ", " + "deviceIdentifier = " + deviceIdentifier + "]";
 		}
 	}
 
