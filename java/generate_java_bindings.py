@@ -127,9 +127,8 @@ def make_return_objects():
 """
     param = '\t\tpublic {0}{1} {2}{3};'
     for packet in device.get_packets('function'):
-        if packet.packet.has_key('prototype_in_device'):
-            if packet.packet['prototype_in_device'] == True:
-                continue
+        if packet.is_prototype_in_device():
+            continue
         if len(packet.get_elements('out')) < 2:
             continue
 

@@ -504,6 +504,12 @@ class Packet:
             length += get_element_size(element)
         return length
 
+    def is_prototype_in_device(self):
+        if self.packet.has_key('prototype_in_device'):
+            if self.packet['prototype_in_device'] == True:
+                return True
+        return False
+
 class Device:
     def __init__(self, com):
         self.com = com
