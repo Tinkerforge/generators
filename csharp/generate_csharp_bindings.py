@@ -120,11 +120,14 @@ def make_class():
 \t/// </summary>
 \tpublic class {0}{1} : Device
 \t{{
+
+\t\tpublic static int DEVICE_IDENTIFIER = {3};
 """
 
     return class_str.format(device.get_category(),
                             device.get_camel_case_name(),
-                            device.get_description())
+                            device.get_description(),
+                            device.get_device_identifier())
 
 def make_delegates():
     cbs = '\n'
