@@ -38,7 +38,10 @@ def walker(arg, dirname, names):
 
         src = os.path.join(dirname, name);
         dest = src[:-2];
-        device = '{0}_{1}'.format(os.path.split(os.path.split(dirname)[0])[-1], os.path.split(dirname)[-1])
+        if 'brick' in dirname:
+            device = '/tmp/compiler/bindings/{0}_{1}.c'.format(os.path.split(os.path.split(dirname)[0])[-1], os.path.split(dirname)[-1])
+        else:
+            device = ''
 
         args = ['/usr/bin/gcc',
                 '-std=c99',
@@ -48,9 +51,12 @@ def walker(arg, dirname, names):
                 '-I/tmp/compiler/bindings',
                 '-o',
                 dest,
-                '/tmp/compiler/bindings/ip_connection.c',
-                '/tmp/compiler/bindings/{0}.c'.format(device),
-                src]
+                '/tmp/compiler/bindings/ip_connection.c']
+
+        if len(device) > 0:
+            args.append(device)
+
+        args.append(src)
 
         print 'compiling (gcc) ' + src
         subprocess.call(args)
@@ -62,9 +68,12 @@ def walker(arg, dirname, names):
                 '-I/tmp/compiler/bindings',
                 '-o',
                 dest,
-                '/tmp/compiler/bindings/ip_connection.c',
-                '/tmp/compiler/bindings/{0}.c'.format(device),
-                src]
+                '/tmp/compiler/bindings/ip_connection.c']
+
+        if len(device) > 0:
+            args.append(device)
+
+        args.append(src)
 
         print 'compiling (g++) ' + src
         subprocess.call(args)
