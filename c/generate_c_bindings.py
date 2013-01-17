@@ -257,11 +257,7 @@ typedef struct {{
 def make_create_func():
     func = """
 void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
-\tdevice_create({0}, uid, ipcon);
-
-\t{0}->api_version[0] = {3};
-\t{0}->api_version[1] = {4};
-\t{0}->api_version[2] = {5};
+\tdevice_create({0}, uid, ipcon, (uint8_t[]){{ {3}, {4}, {5} }});
 {2}
 }}
 """
@@ -313,7 +309,6 @@ void {0}_destroy({1} *{0}) {{
 
 def make_response_expected_funcs():
     func = """
-
 int {0}_get_response_expected({1} *{0}, uint8_t function_id, bool *ret_response_expected) {{
 \treturn device_get_response_expected({0}, function_id, ret_response_expected);
 }}
@@ -382,11 +377,7 @@ def make_method_funcs():
 
     func_version = """
 int {0}_get_api_version({1} *{0}, uint8_t ret_api_version[3]) {{
-\tret_api_version[0] = {0}->api_version[0];
-\tret_api_version[1] = {0}->api_version[1];
-\tret_api_version[2] = {0}->api_version[2];
-
-\treturn E_OK;
+\treturn device_get_api_version({0}, ret_api_version);
 }}
 """
 
@@ -399,7 +390,7 @@ int {0}_{1}({2} *{0}{3}) {{
 
 \tret = packet_header_create(&request.header, sizeof(request), {4}, {0}->ipcon, {0});
 
-\tif(ret < 0) {{
+\tif (ret < 0) {{
 \t\tmutex_unlock(&{0}->request_mutex);
 
 \t\treturn ret;
@@ -462,8 +453,7 @@ int {0}_{1}({2} *{0}{3}) {{
 def make_register_callback_func():
     func = """
 void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data) {{
-\t{0}->registered_callbacks[id] = callback;
-\t{0}->registered_callback_user_data[id] = user_data;
+\tdevice_register_callback({0}, id, callback, user_data);
 }}
 """
     return func.format(device.get_underscore_name(), device.get_camel_case_name())

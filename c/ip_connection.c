@@ -719,7 +719,8 @@ enum {
 	IPCON_FUNCTION_ENUMERATE = 254
 };
 
-void device_create(Device *device, const char *uid_str, IPConnection *ipcon) {
+void device_create(Device *device, const char *uid_str, IPConnection *ipcon,
+                   uint8_t api_version[3]) {
 	uint64_t uid;
 	uint32_t value1;
 	uint32_t value2;
@@ -743,9 +744,9 @@ void device_create(Device *device, const char *uid_str, IPConnection *ipcon) {
 
 	device->ipcon = ipcon;
 
-	device->api_version[0] = 0;
-	device->api_version[1] = 0;
-	device->api_version[2] = 0;
+	device->api_version[0] = api_version[0];
+	device->api_version[1] = api_version[1];
+	device->api_version[2] = api_version[2];
 
 	// request
 	mutex_create(&device->request_mutex);
@@ -821,6 +822,20 @@ int device_set_response_expected_all(Device *device, bool response_expected) {
 			device->response_expected[i] = flag;
 		}
 	}
+
+	return E_OK;
+}
+
+void device_register_callback(Device *device, uint8_t id, void *callback,
+                              void *user_data) {
+	device->registered_callbacks[id] = callback;
+	device->registered_callback_user_data[id] = user_data;
+}
+
+int device_get_api_version(Device *device, uint8_t ret_api_version[3]) {
+	ret_api_version[0] = device->api_version[0];
+	ret_api_version[1] = device->api_version[1];
+	ret_api_version[2] = device->api_version[2];
 
 	return E_OK;
 }

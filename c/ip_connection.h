@@ -217,7 +217,8 @@ enum {
 /**
  * \internal
  */
-void device_create(Device *device, const char *uid, IPConnection *ipcon);
+void device_create(Device *device, const char *uid, IPConnection *ipcon,
+                   uint8_t api_version[3]);
 
 /**
  * \internal
@@ -240,6 +241,17 @@ int device_set_response_expected(Device *device, uint8_t function_id,
  * \internal
  */
 int device_set_response_expected_all(Device *device, bool response_expected);
+
+/**
+ * \internal
+ */
+void device_register_callback(Device *device, uint8_t id, void *callback,
+                              void *user_data);
+
+/**
+ * \internal
+ */
+int device_get_api_version(Device *device, uint8_t ret_api_version[3]);
 
 /**
  * \internal
