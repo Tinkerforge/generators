@@ -192,6 +192,9 @@ def make_callbacks():
   :noindex:
 
 {5}
+
+  This listener can be added with the **{0}{1}.add{2}Listener** function.
+  An added listener can be removed with the **{0}{1}.remove{2}Listener** function.
 """,
     'de': """
 .. java:function:: public class {0}{1}.{2}Listener()
@@ -200,6 +203,9 @@ def make_callbacks():
   :noindex:
 
 {5}
+
+  Dieser Listener kann mit der Funktion **{0}{1}.add{2}Listener** hinzugefügt werde.
+  Ein hinzugefügter Listener kann mit der Funktion **{0}{1}.remove{2}Listener** wieder entfernt werden.
 """
     }
 
@@ -289,20 +295,21 @@ Listeners
 
 Listeners can be registered to receive
 time critical or recurring data from the device. The registration is done
-with the :java:func:`addListener <{3}{4}::addListener>` function of the device object.
+with "addListener" functions of the device object.
 
 The parameter is a listener class object, for example:
 
 .. code-block:: java
 
-    device.addListener(new {3}{4}.ExampleListener() {{
+    device.addExampleListener(new {3}{4}.ExampleListener() {{
         public void property(int value) {{
             System.out.println("Value: " + value);
         }}
     }});
 
 The available listener classes with inherent methods to be overwritten
-are described below.
+are described below. It is possible to add several listeners and
+to remove them with the corresponding "removeExampleListener" function.
 
 .. note::
  Using listeners for recurring events is *always* preferred
@@ -320,21 +327,22 @@ Listener
 
 Listener können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
-mit der Funktion :java:func:`addListener <{3}{4}::addListener>` des Geräte Objekts
-durchgeführt werden.
+mit "addListener" Funktionen eines Geräteobjekts durchgeführt werden.
 
 Der Parameter ist ein Listener Klassen Objekt, z.B.:
 
 .. code-block:: java
 
-    device.addListener(new {3}{4}.ExampleListener() {{
+    device.addExampleListener(new {3}{4}.ExampleListener() {{
         public void property(int value) {{
             System.out.println("Value: " + value);
         }}
     }});
 
 Die verfügbaren Listener Klassen mit den Methoden welche überschrieben
-werden können werden unterhalb beschrieben.
+werden können werden unterhalb beschrieben. Es ist möglich mehrere
+Listener hinzuzufügen und auch mit einem korrespondierenden
+"removeExampleListener" wieder zu entfernen.
 
 .. note::
  Listener für wiederkehrende Ereignisse zu verwenden ist 

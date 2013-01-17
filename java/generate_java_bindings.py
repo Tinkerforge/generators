@@ -100,6 +100,8 @@ package com.tinkerforge;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 """
     date = datetime.datetime.now().strftime("%Y-%m-%d")
 
@@ -203,7 +205,9 @@ def make_callback_listener_definitions():
     cb = """
 \t\tcallbacks[CALLBACK_{0}] = new CallbackListener() {{
 \t\t\tpublic void callback(byte[] data) {{{1}
-\t\t\t\t(({2}Listener)listenerObjects[CALLBACK_{0}]).{3}({4});
+\t\t\t\tfor({2}Listener listener: listener{2}) {{
+\t\t\t\t\tlistener.{3}({4});
+\t\t\t\t}}
 \t\t\t}}
 \t\t}};
 """
@@ -238,24 +242,28 @@ def make_add_listener():
     if device.get_callback_count() == 0:
         return '}'
 
-    listeners = """
+    listeners = ''
+    listener = """
 \t/**
-\t * Registers a listener object.
+\t * Adds a {0} listener.
 \t */
-\tpublic void addListener(Object o) {{
-\t\t{0}
+\tpublic void add{0}Listener({0}Listener listener) {{
+\t\tlistener{0}.add(listener);
 \t}}
-}}"""
-    listener = """if(o instanceof {0}Listener) {{
-\t\t\tlistenerObjects[CALLBACK_{1}] = o;
-\t\t}}"""
+
+\t/**
+\t * Removes a {0} listener.
+\t */
+\tpublic void remove{0}Listener({0}Listener listener) {{
+\t\tlistener{0}.remove(listener);
+\t}}
+"""
 
     l = []
     for packet in device.get_packets('callback'):
         name = packet.get_camel_case_name()
-        name_upper = packet.get_upper_case_name()
-        l.append(listener.format(name, name_upper))
-    return listeners.format(' else '.join(l))
+        listeners += listener.format(name)
+    return listeners + '}'
 
 def make_function_id_definitions():
     function_ids = ''
@@ -265,6 +273,15 @@ def make_function_id_definitions():
                                            packet.get_function_id(),
                                            packet.get_type().upper())
     return function_ids
+
+def make_listener_lists():
+    llists = '\n'
+    llist = '\tprivate List<{0}Listener> listener{0} = new ArrayList<{0}Listener>();\n'
+    for packet in device.get_packets('callback'):
+        name = packet.get_camel_case_name()
+        llists += llist.format(name)
+
+    return llists
 
 def make_parameter_list(packet):
     param = []
@@ -576,6 +593,7 @@ def make_files(com_new, directory):
     java.write(make_import(directory))
     java.write(make_class())
     java.write(make_function_id_definitions())
+    java.write(make_listener_lists())
     java.write(make_return_objects())
     java.write(make_listener_definitions())
     java.write(make_constructor())

@@ -658,7 +658,7 @@ public class IPConnection {
 		Device device = devices.get(uid);
 
 		if(sequenceNumber == 0) {
-			if(device.callbacks[functionID] != null && device.listenerObjects[functionID] != null) {
+			if(device.callbacks[functionID] != null) {
 				try {
 					callbackQueue.put(new CallbackQueueObject(QUEUE_PACKET, packet));
 				} catch(InterruptedException e) {

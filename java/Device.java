@@ -22,7 +22,6 @@ public abstract class Device {
 	SynchronousQueue<byte[]> responseQueue = new SynchronousQueue<byte[]>();
 	IPConnection ipcon = null;
 	CallbackListener[] callbacks = new CallbackListener[256];
-	Object[] listenerObjects = new Object[256];
 
 	final static byte RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID = 0;
 	final static byte RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE = 1;
