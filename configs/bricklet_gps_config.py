@@ -74,7 +74,9 @@ Diese Daten sind nur gültig wenn ein Fix vorhanden ist (siehe :func:`GetStatus`
 com['packets'].append({
 'type': 'function',
 'name': ('GetStatus', 'get_status'),
-'elements': [('fix', 'uint8', 1, 'out'),
+'elements': [('fix', 'uint8', 1, 'out', ('Fix', 'fix', [('NoFix', 'no_fix', 1),
+                                                        ('2DFix', '2d_fix', 2),
+                                                        ('3DFix', '3d_fix', 3)])),
              ('satellites_view', 'uint8', 1, 'out'),
              ('satellites_used', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -505,7 +507,9 @@ Koordinaten seit der letzten Auslösung geändert haben.
 com['packets'].append({
 'type': 'callback',
 'name': ('Status', 'status'),
-'elements': [('fix', 'uint8', 1, 'out'),
+'elements': [('fix', 'uint8', 1, 'out', ('Fix', 'fix', [('NoFix', 'no_fix', 1),
+                                                        ('2DFix', '2d_fix', 2),
+                                                        ('3DFix', '3d_fix', 3)])),
              ('satellites_view', 'uint8', 1, 'out'),
              ('satellites_used', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],

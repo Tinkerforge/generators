@@ -326,7 +326,10 @@ hat, wird 1500 zurückgegeben.
 com['packets'].append({
 'type': 'function',
 'name': ('SetStepMode', 'set_step_mode'), 
-'elements': [('mode', 'uint8', 1, 'in')],
+'elements': [('mode', 'uint8', 1, 'in', ('StepMode', 'step_mode', [('FullStep', 'full_step', 1),
+                                                                   ('HalfStep', 'half_step', 2),
+                                                                   ('QuarterStep', 'quarter_step', 4),
+                                                                   ('EighthStep', 'eighth_step', 8)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -363,7 +366,10 @@ Der Standardwert ist 8 (Achtelschritt).
 com['packets'].append({
 'type': 'function',
 'name': ('GetStepMode', 'get_step_mode'), 
-'elements': [('mode', 'uint8', 1, 'out')],
+'elements': [('mode', 'uint8', 1, 'out', ('StepMode', 'step_mode', [('FullStep', 'full_step', 1),
+                                                                    ('HalfStep', 'half_step', 2),
+                                                                    ('QuarterStep', 'quarter_step', 4),
+                                                                    ('EighthStep', 'eighth_step', 8)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1015,8 +1021,18 @@ externe Spannung und der aktuelle Stromverbrauch des Schrittmotors.
 com['packets'].append({
 'type': 'callback',
 'name': ('NewState', 'new_state'), 
-'elements': [('state_new', 'uint8', 1, 'out'),
-             ('state_previous', 'uint8', 1, 'out')],
+'elements': [('state_new',      'uint8', 1, 'out', ('State', 'state', [('Stop', 'stop', 1),
+                                                                       ('Acceleration', 'acceleration', 2),
+                                                                       ('Run', 'run', 3),
+                                                                       ('Deacceleration', 'deacceleration', 4),
+                                                                       ('DirectionChangeToForward', 'direction_change_to_forward', 5),
+                                                                       ('DirectionChangeToBackward', 'direction_change_to_backward', 6)])),
+             ('state_previous', 'uint8', 1, 'out', ('State', 'state', [('Stop', 'stop', 1),
+                                                                       ('Acceleration', 'acceleration', 2),
+                                                                       ('Run', 'run', 3),
+                                                                       ('Deacceleration', 'deacceleration', 4),
+                                                                       ('DirectionChangeToForward', 'direction_change_to_forward', 5),
+                                                                       ('DirectionChangeToBackward', 'direction_change_to_backward', 6)]))],
 'since_firmware': [1, 1, 6],
 'doc': ['c', {
 'en':

@@ -57,7 +57,10 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': ('SetMode', 'set_mode'), 
-'elements': [('mode', 'uint8', 1, 'in')],
+'elements': [('mode', 'uint8', 1, 'in', ('Mode', 'mode', [('AnalogValue', 'analog_value', 0),
+                                                          ('1KToGround', '1k_to_ground', 1),
+                                                          ('100KToGround', '100k_to_ground', 2),
+                                                          ('500KToGround', '500k_to_ground', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -94,7 +97,10 @@ Der Standardmodus ist 1.
 com['packets'].append({
 'type': 'function',
 'name': ('GetMode', 'get_mode'), 
-'elements': [('mode', 'uint8', 1, 'out')],
+'elements': [('mode', 'uint8', 1, 'out', ('Mode', 'mode', [('AnalogValue', 'analog_value', 0),
+                                                           ('1KToGround', '1k_to_ground', 1),
+                                                           ('100KToGround', '100k_to_ground', 2),
+                                                           ('500KToGround', '500k_to_ground', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

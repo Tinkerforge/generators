@@ -439,7 +439,7 @@ Bewegungen aber Fehler des Gyroskops werden nicht korrigiert. Wenn die
 Konvergenzgeschwindigkeit über 500 gesetzt wird, erfolgt die Berechnung der
 Orientierung praktisch nur anhand der Beschleunigungsmesser- und Magnetometerdaten.
 In diesem Fall sind die Bewegungen abrupt und die Werte werden schwanken. Es
-treten aber keine akkumultiven Fehler auf.
+treten aber keine akkumulativen Fehler auf.
 
 In Anwendungen mit hohen Winkelgeschwindigkeiten wird eine hohe Konvergenzgeschwindigkeit
 empfohlen, so dass Fehler des Gyroskops schnell korrigiert werden können. In
@@ -475,7 +475,12 @@ Gibt die Konvergenzgeschwindigkeit zurück, wie von :func:`SetConvergenceSpeed` 
 com['packets'].append({
 'type': 'function',
 'name': ('SetCalibration', 'set_calibration'), 
-'elements': [('typ', 'uint8', 1, 'in'),
+'elements': [('typ', 'uint8', 1, 'in', ('CalibrationType', 'calibration_type', [('AccelerometerGain', 'accelerometer_gain', 1),
+                                                                                ('AccelerometerBias', 'accelerometer_bias', 2),
+                                                                                ('MagnetometerGain', 'magnetometer_gain', 3),
+                                                                                ('MagnetometerBias', 'magnetometer_bias', 4),
+                                                                                ('GyroscopeGain', 'gyroscope_gain', 5),
+                                                                                ('GyroscopeBias', 'gyroscope_bias', 6)])),
              ('data', 'int16', 10, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -555,7 +560,12 @@ Kalibrierpunkte sein.
 com['packets'].append({
 'type': 'function',
 'name': ('GetCalibration', 'get_calibration'), 
-'elements': [('typ', 'uint8', 1, 'in'),
+'elements': [('typ', 'uint8', 1, 'in', ('CalibrationType', 'calibration_type', [('AccelerometerGain', 'accelerometer_gain', 1),
+                                                                                ('AccelerometerBias', 'accelerometer_bias', 2),
+                                                                                ('MagnetometerGain', 'magnetometer_gain', 3),
+                                                                                ('MagnetometerBias', 'magnetometer_bias', 4),
+                                                                                ('GyroscopeGain', 'gyroscope_gain', 5),
+                                                                                ('GyroscopeBias', 'gyroscope_bias', 6)])),
              ('data', 'int16', 10, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {

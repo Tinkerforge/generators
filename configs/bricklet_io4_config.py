@@ -72,7 +72,8 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetConfiguration', 'set_configuration'),
 'elements': [('selection_mask', 'uint8', 1, 'in'),
-             ('direction', 'char', 1, 'in'),
+             ('direction', 'char', 1, 'in', ('Direction', 'direction', [('In', 'in', 'i'),
+                                                                        ('Out', 'out', 'o')])),
              ('value', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {

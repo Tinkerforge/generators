@@ -59,7 +59,10 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetExtensionType', 'set_extension_type'), 
 'elements': [('extension', 'uint8', 1, 'in'),
-             ('exttype', 'uint32', 1, 'in')], 
+             ('exttype', 'uint32', 1, 'in', ('ExtensionType', 'extension_type', [('Chibi', 'chibi', 1),
+                                                                                 ('RS485', 'rs485', 2),
+                                                                                 ('Wifi', 'wifi', 3),
+                                                                                 ('Ethernet', 'ethernet', 4)]))], 
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -113,7 +116,10 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetExtensionType', 'get_extension_type'), 
 'elements': [('extension', 'uint8', 1, 'in'),
-             ('exttype', 'uint32', 1, 'out')], 
+             ('exttype', 'uint32', 1, 'out', ('ExtensionType', 'extension_type', [('Chibi', 'chibi', 1),
+                                                                                 ('RS485', 'rs485', 2),
+                                                                                 ('Wifi', 'wifi', 3),
+                                                                                 ('Ethernet', 'ethernet', 4)]))], 
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -337,7 +343,10 @@ vorliegen.
 com['packets'].append({
 'type': 'function',
 'name': ('SetChibiFrequency', 'set_chibi_frequency'), 
-'elements': [('frequency', 'uint8', 1, 'in')], 
+'elements': [('frequency', 'uint8', 1, 'in', ('ChibiFrequency', 'chibi_frequency', [('OQPSK868MHZ', 'oqpsk_868_mhz', 0),
+                                                                                    ('OQPSK915MHZ', 'oqpsk_915_mhz', 1),
+                                                                                    ('OQPSK780MHZ', 'oqpsk_780_mhz', 2),
+                                                                                    ('BPSK40915MHZ', 'bpsk40_915_mhz', 3)]))], 
 'since_firmware': [1, 1, 0],
 'doc': ['af', {
 'en':
@@ -380,7 +389,10 @@ jedem Hochfahren ist daher nicht notwendig.
 com['packets'].append({
 'type': 'function',
 'name': ('GetChibiFrequency', 'get_chibi_frequency'), 
-'elements': [('frequency', 'uint8', 1, 'out')], 
+'elements': [('frequency', 'uint8', 1, 'out', ('ChibiFrequency', 'chibi_frequency', [('OQPSK868MHZ', 'oqpsk_868_mhz', 0),
+                                                                                     ('OQPSK915MHZ', 'oqpsk_915_mhz', 1),
+                                                                                     ('OQPSK780MHZ', 'oqpsk_780_mhz', 2),
+                                                                                     ('BPSK40915MHZ', 'bpsk40_915_mhz', 3)]))], 
 'since_firmware': [1, 1, 0],
 'doc': ['af', {
 'en':
@@ -603,7 +615,9 @@ com['packets'].append({
 'type': 'function', 
 'name': ('SetRS485Configuration', 'set_rs485_configuration'), 
 'elements': [('speed', 'uint32', 1, 'in'),
-             ('parity', 'char', 1, 'in'),
+             ('parity', 'char', 1, 'in', ('RS485Parity', 'rs485_parity', [('None', 'none', 'n'),
+                                                                          ('Even', 'even', 'e'),
+                                                                          ('Odd', 'odd', 'o')])),
              ('stopbits', 'uint8', 1, 'in')], 
 'since_firmware': [1, 2, 0],
 'doc': ['af', {
@@ -644,7 +658,9 @@ com['packets'].append({
 'type': 'function', 
 'name': ('GetRS485Configuration', 'get_rs485_configuration'), 
 'elements': [('speed', 'uint32', 1, 'out'),
-             ('parity', 'char', 1, 'out'),
+             ('parity', 'char', 1, 'out', ('RS485Parity', 'rs485_parity', [('None', 'none', 'n'),
+                                                                          ('Even', 'even', 'e'),
+                                                                          ('Odd', 'odd', 'o')])),
              ('stopbits', 'uint8', 1, 'out')], 
 'since_firmware': [1, 2, 0],
 'doc': ['af', {
@@ -681,7 +697,12 @@ com['packets'].append({
 'type': 'function', 
 'name': ('SetWifiConfiguration', 'set_wifi_configuration'), 
 'elements': [('ssid', 'string', 32, 'in'),
-             ('connection', 'uint8', 1, 'in'),
+             ('connection', 'uint8', 1, 'in', ('WifiConnection', 'wifi_connection', [('DHCP', 'dhcp', 0),
+                                                                                     ('StaticIP', 'static_ip', 1),
+                                                                                     ('AccessPointDHCP', 'access_point_dhcp', 2),
+                                                                                     ('AccessPointStaticIP', 'access_point_static_ip', 3),
+                                                                                     ('AdHocDHCP', 'ad_hoc_dhcp', 4),
+                                                                                     ('AdHocStaticIP', 'ad_hoc_static_ip', 5)])),
              ('ip', 'uint8', 4, 'in'),
              ('subnet_mask', 'uint8', 4, 'in'),
              ('gateway', 'uint8', 4, 'in'),
@@ -756,7 +777,12 @@ com['packets'].append({
 'type': 'function', 
 'name': ('GetWifiConfiguration', 'get_wifi_configuration'), 
 'elements': [('ssid', 'string', 32, 'out'),
-             ('connection', 'uint8', 1, 'out'),
+             ('connection', 'uint8', 1, 'out', ('WifiConnection', 'wifi_connection', [('DHCP', 'dhcp', 0),
+                                                                                      ('StaticIP', 'static_ip', 1),
+                                                                                      ('AccessPointDHCP', 'access_point_dhcp', 2),
+                                                                                      ('AccessPointStaticIP', 'access_point_static_ip', 3),
+                                                                                      ('AdHocDHCP', 'ad_hoc_dhcp', 4),
+                                                                                      ('AdHocStaticIP', 'ad_hoc_static_ip', 5)])),
              ('ip', 'uint8', 4, 'out'),
              ('subnet_mask', 'uint8', 4, 'out'),
              ('gateway', 'uint8', 4, 'out'),
@@ -778,10 +804,21 @@ gesetzt.
 com['packets'].append({
 'type': 'function', 
 'name': ('SetWifiEncryption', 'set_wifi_encryption'), 
-'elements': [('encryption', 'uint8', 1, 'in'),
+'elements': [('encryption', 'uint8', 1, 'in', ('WifiEncryption', 'wifi_encryption', [('WPAWPA2', 'wpa_wpa2', 0),
+                                                                                     ('WPAEnterprise', 'wpa_enterprise', 1),
+                                                                                     ('WEP', 'wep', 2),
+                                                                                     ('NoEncryption', 'no_encryption', 3)])),
              ('key', 'string', 50, 'in'),
              ('key_index', 'uint8', 1, 'in'),
-             ('eap_options', 'uint8', 1, 'in'),
+             ('eap_options', 'uint8', 1, 'in', ('WifiEAPOption', 'wifi_eap_option', [('OuterAuthEAPFAST', 'outer_auth_eap_fast', 0),
+                                                                                     ('OuterAuthEAPTLS', 'outer_auth_eap_tls', 1),
+                                                                                     ('OuterAuthEAPTTLS', 'outer_auth_eap_ttls', 2),
+                                                                                     ('OuterAuthEAPPEAP', 'outer_auth_eap_peap', 3),
+                                                                                     ('InnerAuthEAPMSCHAP', 'inner_auth_eap_mschap', 0),
+                                                                                     ('InnerAuthEAPGTC', 'inner_auth_eap_gtc', 4),
+                                                                                     ('CertTypeCACert', 'cert_type_ca_cert', 0),
+                                                                                     ('CertTypeClientCert', 'cert_type_client_cert', 8),
+                                                                                     ('CertTypePrivateKey', 'cert_type_private_key', 16)])),
              ('ca_certificate_length', 'uint16', 1, 'in'), 
              ('client_certificate_length', 'uint16', 1, 'in'), 
              ('private_key_length', 'uint16', 1, 'in')], 
@@ -875,10 +912,21 @@ zu konfigurieren.
 com['packets'].append({
 'type': 'function', 
 'name': ('GetWifiEncryption', 'get_wifi_encryption'), 
-'elements': [('encryption', 'uint8', 1, 'out'),
+'elements': [('encryption', 'uint8', 1, 'out', ('WifiEncryption', 'wifi_encryption', [('WPAWPA2', 'wpa_wpa2', 0),
+                                                                                     ('WPAEnterprise', 'wpa_enterprise', 1),
+                                                                                     ('WEP', 'wep', 2),
+                                                                                     ('NoEncryption', 'no_encryption', 3)])),
              ('key', 'string', 50, 'out'),
              ('key_index', 'uint8', 1, 'out'),
-             ('eap_options', 'uint8', 1, 'out'),
+             ('eap_options', 'uint8', 1, 'out', ('WifiEAPOption', 'wifi_eap_option', [('OuterAuthEAPFAST', 'outer_auth_eap_fast', 0),
+                                                                                      ('OuterAuthEAPTLS', 'outer_auth_eap_tls', 1),
+                                                                                      ('OuterAuthEAPTTLS', 'outer_auth_eap_ttls', 2),
+                                                                                      ('OuterAuthEAPPEAP', 'outer_auth_eap_peap', 3),
+                                                                                      ('InnerAuthEAPMSCHAP', 'inner_auth_eap_mschap', 0),
+                                                                                      ('InnerAuthEAPGTC', 'inner_auth_eap_gtc', 4),
+                                                                                      ('CertTypeCACert', 'cert_type_ca_cert', 0),
+                                                                                      ('CertTypeClientCert', 'cert_type_client_cert', 8),
+                                                                                      ('CertTypePrivateKey', 'cert_type_private_key', 16)])),
              ('ca_certificate_length', 'uint16', 1, 'out'), 
              ('client_certificate_length', 'uint16', 1, 'out'), 
              ('private_key_length', 'uint16', 1, 'out')], 
@@ -908,7 +956,11 @@ com['packets'].append({
              ('gateway', 'uint8', 4, 'out'),
              ('rx_count', 'uint32', 1, 'out'),
              ('tx_count', 'uint32', 1, 'out'),
-             ('state', 'uint8', 1, 'out')],
+             ('state', 'uint8', 1, 'out', ('WifiState', 'wifi_state', [('Disassociated', 'disassociated', 0),
+                                                                       ('Associated', 'associated', 1),
+                                                                       ('Associating', 'associating', 2),
+                                                                       ('Error', 'error', 3),
+                                                                       ('NotInitializedYet', 'not_initialized_yet', 255)]))],
 'since_firmware': [1, 3, 0],
 'doc': ['af', {
 'en':
@@ -1052,7 +1104,8 @@ Gibt das Zertifikat für einen Index zurück, wie von
 
 com['packets'].append({
 'type': 'function', 
-'name': ('SetWifiPowerMode', 'set_wifi_power_mode'), 
+'name': ('SetWifiPowerMode', 'set_wifi_power_mode', ('WifiPowerMode', 'wifi_power_mode', [('FullSpeed', 'full_speed', 0),
+                                                                                          ('LowPower', 'low_power', 1)])), 
 'elements': [('mode', 'uint8', 1, 'in')], 
 'since_firmware': [1, 3, 0],
 'doc': ['af', {
@@ -1150,7 +1203,9 @@ Pausen gesendet werden.
 com['packets'].append({
 'type': 'function', 
 'name': ('SetWifiRegulatoryDomain', 'set_wifi_regulatory_domain'), 
-'elements': [('domain', 'uint8', 1, 'in')], 
+'elements': [('domain', 'uint8', 1, 'in', ('WifiState', 'wifi_state', [('Channel1To11', 'channel_1to11', 0),
+                                                                       ('Channel1To13', 'channel_1to13', 1),
+                                                                       ('Channel1To14', 'channel_1to14', 2)]))], 
 'since_firmware': [1, 3, 4],
 'doc': ['af', {
 'en':
@@ -1187,7 +1242,9 @@ Der Standardwert ist 1 (ETSI).
 com['packets'].append({
 'type': 'function', 
 'name': ('GetWifiRegulatoryDomain', 'get_wifi_regulatory_domain'), 
-'elements': [('mode', 'uint8', 1, 'out')], 
+'elements': [('domain', 'uint8', 1, 'out', ('WifiState', 'wifi_state', [('Channel1To11', 'channel_1to11', 0),
+                                                                        ('Channel1To13', 'channel_1to13', 1),
+                                                                        ('Channel1To14', 'channel_1to14', 2)]))], 
 'since_firmware': [1, 3, 4],
 'doc': ['af', {
 'en':
