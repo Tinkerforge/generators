@@ -118,6 +118,22 @@ def make_function_id_definitions():
         function_ids += function_id.format(packet.get_upper_case_name(), packet.get_function_id())
     return function_ids
 
+def make_constants():
+    str_constants = '\n'
+    str_constant = '    {0}_{1} = {2} # :nodoc:\n'
+    constants = device.get_constants()
+    for constant in constants:
+        for definition in constant.definitions:
+            if constant.type == 'char':
+                value = "'{0}'".format(definition.value)
+            else:
+                value = str(definition.value)
+
+            str_constants += str_constant.format(constant.name_uppercase,
+                                                 definition.name_uppercase,
+                                                 value)
+    return str_constants
+
 def make_initialize_method():
     dev_init = """
     # Creates an object with the unique device ID <tt>uid</tt> and adds it to
@@ -261,6 +277,7 @@ def make_files(com_new, directory):
     rb.write(make_class())
     rb.write(make_callback_id_definitions())
     rb.write(make_function_id_definitions())
+    rb.write(make_constants())
     rb.write(make_initialize_method())
     rb.write(make_response_expected())
     rb.write(make_callback_formats())
@@ -268,4 +285,4 @@ def make_files(com_new, directory):
     rb.write(make_register_callback_method())
 
 if __name__ == "__main__":
-    common.generate(os.getcwd(), lang, make_files, common.prepare_bindings, False)
+    common.generate(os.getcwd(), 'en', make_files, common.prepare_bindings, False)

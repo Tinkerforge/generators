@@ -146,6 +146,24 @@ def make_function_id_definitions():
                                            packet.get_function_id())
     return function_ids
 
+def make_constants():
+    str_constants = '\n'
+    str_constant = '  {0}_{1}_{2}_{3} = {4};\n'
+    constants = device.get_constants()
+    for constant in constants:
+        for definition in constant.definitions:
+            if constant.type == 'char':
+                value = "'{0}'".format(definition.value)
+            else:
+                value = str(definition.value)
+
+            str_constants += str_constant.format(device.get_category().upper(),
+                                                 device.get_upper_case_name(),
+                                                 constant.name_uppercase,
+                                                 definition.name_uppercase,
+                                                 value)
+    return str_constants
+
 def make_callback_id_definitions():
     cbs = ''
     cb = '  {0}_{1}_CALLBACK_{2} = {3};\n'
@@ -503,6 +521,7 @@ def make_files(com_new, directory):
     pas = file('{0}/{1}.pas'.format(directory, file_name), 'w')
     pas.write(make_unit_header(version))
     pas.write(make_function_id_definitions())
+    pas.write(make_constants())
     pas.write(make_callback_id_definitions())
     pas.write(make_arrays())
     pas.write(make_callback_prototypes())

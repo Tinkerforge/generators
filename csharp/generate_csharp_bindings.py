@@ -169,6 +169,23 @@ def make_function_id_definitions():
                                            device.get_camel_case_name())
     return function_ids
 
+def make_constants():
+    str_constants = '\n'
+    str_constant = '\t\tpublic static {0} {1}_{2} = {3};\n'
+    constants = device.get_constants()
+    for constant in constants:
+        for definition in constant.definitions:
+            if constant.type == 'char':
+                value = "'{0}'".format(definition.value)
+            else:
+                value = str(definition.value)
+
+            str_constants += str_constant.format(csharp_common.get_csharp_type([None, constant.type, 0]),
+                                                 constant.name_uppercase,
+                                                 definition.name_uppercase,
+                                                 value)
+    return str_constants
+
 def make_constructor():
     cbs = []
     cb = '\t\t\tcallbackWrappers[CALLBACK_{0}] = new CallbackWrapper(On{1});'
@@ -396,6 +413,7 @@ def make_files(com_new, directory):
     csharp.write(make_import(version))
     csharp.write(make_class())
     csharp.write(make_function_id_definitions())
+    csharp.write(make_constants())
     csharp.write(make_delegates())
     csharp.write(make_constructor())
     csharp.write(make_response_expected())

@@ -179,6 +179,23 @@ def make_function_id_definitions():
         function_ids += function_id.format(packet.get_upper_case_name(), packet.get_function_id())
     return function_ids
 
+
+def make_constants():
+    str_constants = '\n'
+    str_constant = '\tconst {0}_{1} = {2};\n'
+    constants = device.get_constants()
+    for constant in constants:
+        for definition in constant.definitions:
+            if constant.type == 'char':
+                value = "'{0}'".format(definition.value)
+            else:
+                value = str(definition.value)
+
+            str_constants += str_constant.format(constant.name_uppercase,
+                                                 definition.name_uppercase,
+                                                 value)
+    return str_constants
+
 def make_parameter_list(packet):
     param = []
     for element in packet.get_elements():
@@ -506,6 +523,7 @@ def make_files(com_new, directory):
     php.write(make_class())
     php.write(make_callback_id_definitions())
     php.write(make_function_id_definitions())
+    php.write(make_constants())
     php.write(make_device_identifier())
     php.write(make_constructor())
     php.write(make_callback_wrapper_definitions())

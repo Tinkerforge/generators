@@ -333,20 +333,21 @@ def handle_since_firmware(text, device, packet):
 
     return text
 
-def handle_constants(text, prefix, packet):
+def handle_constants(text, prefix, packet, constants_name = {'en': 'constants', 
+                                                             'de': 'Konstanten'}):
     str_constants = { 
 'en': """
-The following constants are available for this function:
+The following {0} are available for this function:
 
 """,
 'de': """
-Die folgenden Konstanten sind für diese Funktion verfügbar:
+Die folgenden {0} sind für diese Funktion verfügbar:
 
 """ 
 }
     has_constant = False
     str_constant = '* {0}{1}_{2} = {3}\n'
-    str_constants = select_lang(str_constants)
+    str_constants = select_lang(str_constants).format(select_lang(constants_name))
     constants = packet.get_constants()
     for constant in constants:
         for definition in constant.definitions:

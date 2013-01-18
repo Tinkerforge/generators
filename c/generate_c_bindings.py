@@ -169,6 +169,30 @@ def make_callback_defines():
 
     return defines
 
+def make_constants():
+    str_constants = '\n'
+    str_constant = """
+/**
+ * \ingroup {4}{3}
+ */
+#define {5}_{0}_{1} {2}
+"""
+    constants = device.get_constants()
+    for constant in constants:
+        for definition in constant.definitions:
+            if constant.type == 'char':
+                value = "'{0}'".format(definition.value)
+            else:
+                value = str(definition.value)
+
+            str_constants += str_constant.format(constant.name_uppercase,
+                                                 definition.name_uppercase,
+                                                 value,
+                                                 device.get_camel_case_name(),
+                                                 device.get_category(),
+                                                 device.get_upper_case_name())
+    return str_constants
+
 def make_device_identifier_define():
     define_temp = """
 /**
@@ -708,6 +732,7 @@ def make_files(com_new, directory):
     h.write(make_include_h(version))
     h.write(make_function_id_defines())
     h.write(make_callback_defines())
+    h.write(make_constants())
     h.write(make_device_identifier_define())
     h.write(make_create_declaration())
     h.write(make_destroy_declaration())

@@ -114,6 +114,22 @@ def make_function_id_definitions():
         function_ids += function_id.format(packet.get_upper_case_name(), packet.get_function_id())
     return function_ids
 
+def make_constants():
+    str_constants = '\n'
+    str_constant = '    {0}_{1} = {2};\n'
+    constants = device.get_constants()
+    for constant in constants:
+        for definition in constant.definitions:
+            if constant.type == 'char':
+                value = "'{0}'".format(definition.value)
+            else:
+                value = str(definition.value)
+
+            str_constants += str_constant.format(constant.name_uppercase,
+                                                 definition.name_uppercase,
+                                                 value)
+    return str_constants
+
 def make_init_method():
     dev_init = """
     def __init__(self, uid, ipcon):
@@ -280,6 +296,7 @@ def make_files(com_new, directory):
     py.write(make_class())
     py.write(make_callback_id_definitions())
     py.write(make_function_id_definitions())
+    py.write(make_constants())
     py.write(make_init_method())
     py.write(make_callback_formats())
     py.write(make_methods())
