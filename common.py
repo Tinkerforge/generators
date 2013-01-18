@@ -3,7 +3,7 @@
 """
 Common Generator Library
 Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
-Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2012-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 common.py: Common Library for generation of bindings and documentation
 
@@ -30,6 +30,7 @@ import datetime
 import subprocess
 import sys
 import copy
+from collections import namedtuple
 
 gen_text_star = """/* ***********************************************************
  * This file was automatically generated on {0}.      *
@@ -332,6 +333,38 @@ def handle_since_firmware(text, device, packet):
 
     return text
 
+def handle_constants(text, prefix, packet):
+    str_constants = { 
+'en': """
+The following constants are available for this function:
+
+""",
+'de': """
+Die folgenden Konstanten sind für diese Funktion verfügbar:
+
+""" 
+}
+    has_constant = False
+    str_constant = '* {0}{1}_{2} = {3}\n'
+    str_constants = select_lang(str_constants)
+    constants = packet.get_constants()
+    for constant in constants:
+        for definition in constant.definitions:
+            if constant.type == 'char':
+                value = "'{0}'".format(definition.value)
+            else:
+                value = str(definition.value)
+
+            has_constant = True
+            str_constants += str_constant.format(prefix,
+                                                 constant.name_uppercase,
+                                                 definition.name_uppercase,
+                                                 value)
+    if has_constant:
+        return text + str_constants
+
+    return text
+
 def handle_rst_if(text, device):
     lines = []
 
@@ -504,6 +537,30 @@ class Packet:
             length += get_element_size(element)
         return length
 
+    def get_constants(self):
+        ConstantDefinitionTuple = namedtuple('ConstantValues', ['name_camelcase', 'name_underscore', 'name_uppercase', 'value'])
+        ConstantTuple = namedtuple('Constant', ['type', 'name_camelcase', 'name_underscore', 'name_uppercase', 'definitions'])
+
+        def is_in_constants(constants, new_constant):
+            for constant in constants:
+                if constant.name_camelcase == new_constant[0]:
+                    return True
+            return False
+
+        constants = []
+
+        for element in self.all_elements:
+            if len(element) > 4:
+                c = element[4]
+                if not is_in_constants(constants, c):
+                    definitions = []
+                    vs = c[2]
+                    for v in vs:
+                        definitions.append(ConstantDefinitionTuple(v[0], v[1], v[1].upper(), v[2]))
+                    constants.append(ConstantTuple(element[1], c[0], c[1], c[1].upper(), definitions))
+
+        return constants
+
     def has_prototype_in_device(self):
         if self.packet.has_key('prototype_in_device'):
             if self.packet['prototype_in_device'] == True:
@@ -588,3 +645,29 @@ class Device:
 
     def get_callback_count(self):
         return len(self.callback_packets)
+
+
+    def get_constants(self):
+        ConstantDefinitionTuple = namedtuple('ConstantValues', ['name_camelcase', 'name_underscore', 'name_uppercase', 'value'])
+        ConstantTuple = namedtuple('Constant', ['type', 'name_camelcase', 'name_underscore', 'name_uppercase', 'definitions'])
+
+        def is_in_constants(constants, new_constant):
+            for constant in constants:
+                if constant.name_camelcase == new_constant[0]:
+                    return True
+            return False
+
+        constants = []
+
+        for packet in self.all_packets:
+            for element in packet.all_elements:
+                if len(element) > 4:
+                    c = element[4]
+                    if not is_in_constants(constants, c):
+                        definitions = []
+                        vs = c[2]
+                        for v in vs:
+                            definitions.append(ConstantDefinitionTuple(v[0], v[1], v[1].upper(), v[2]))
+                        constants.append(ConstantTuple(element[1], c[0], c[1], c[1].upper(), definitions))
+
+        return constants

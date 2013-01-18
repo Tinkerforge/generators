@@ -4,7 +4,7 @@
 """
 Java Bindings Generator
 Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
-Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_java_bindings.py: Generator for Java bindings
 
@@ -273,6 +273,23 @@ def make_function_id_definitions():
                                            packet.get_function_id(),
                                            packet.get_type().upper())
     return function_ids
+
+def make_constants():
+    str_constants = '\n'
+    str_constant = '\tpublic final static {0} {1}_{2} = ({0}){3};\n'
+    constants = device.get_constants()
+    for constant in constants:
+        for definition in constant.definitions:
+            if constant.type == 'char':
+                value = "'{0}'".format(definition.value)
+            else:
+                value = str(definition.value)
+
+            str_constants += str_constant.format(get_java_type(constant.type),
+                                                 constant.name_uppercase,
+                                                 definition.name_uppercase,
+                                                 value)
+    return str_constants
 
 def make_listener_lists():
     llists = '\n'
@@ -590,9 +607,10 @@ def make_files(com_new, directory):
     directory += '/bindings'
 
     java = file('{0}/{1}.java'.format(directory, file_name), "w")
-    java.write(make_import(directory))
+    java.write(make_import(version))
     java.write(make_class())
     java.write(make_function_id_definitions())
+    java.write(make_constants())
     java.write(make_listener_lists())
     java.write(make_return_objects())
     java.write(make_listener_definitions())

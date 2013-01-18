@@ -4,7 +4,7 @@
 """
 Java Documentation Generator
 Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
-Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_java_doc.py: Generator for Java documentation
 
@@ -69,6 +69,9 @@ def format_doc(packet, shift_right):
     text = text.replace(' callback', ' listener')
 
     text = common.handle_rst_if(text, device)
+    text = common.handle_constants(text, 
+                                   device.get_category() + device.get_camel_case_name() + '.', 
+                                   packet)
     text = common.handle_since_firmware(text, device, packet)
 
     return common.shift_right(text, shift_right)
