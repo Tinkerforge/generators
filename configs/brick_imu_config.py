@@ -475,12 +475,12 @@ Gibt die Konvergenzgeschwindigkeit zurück, wie von :func:`SetConvergenceSpeed` 
 com['packets'].append({
 'type': 'function',
 'name': ('SetCalibration', 'set_calibration'), 
-'elements': [('typ', 'uint8', 1, 'in', ('CalibrationType', 'calibration_type', [('AccelerometerGain', 'accelerometer_gain', 1),
-                                                                                ('AccelerometerBias', 'accelerometer_bias', 2),
-                                                                                ('MagnetometerGain', 'magnetometer_gain', 3),
-                                                                                ('MagnetometerBias', 'magnetometer_bias', 4),
-                                                                                ('GyroscopeGain', 'gyroscope_gain', 5),
-                                                                                ('GyroscopeBias', 'gyroscope_bias', 6)])),
+'elements': [('typ', 'uint8', 1, 'in', ('CalibrationType', 'calibration_type', [('AccelerometerGain', 'accelerometer_gain', 0),
+                                                                                ('AccelerometerBias', 'accelerometer_bias', 1),
+                                                                                ('MagnetometerGain', 'magnetometer_gain', 2),
+                                                                                ('MagnetometerBias', 'magnetometer_bias', 3),
+                                                                                ('GyroscopeGain', 'gyroscope_gain', 4),
+                                                                                ('GyroscopeBias', 'gyroscope_bias', 5)])),
              ('data', 'int16', 10, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {

@@ -67,7 +67,7 @@ com['packets'].append({
 """
 Sets the mode of the analog value. Possible modes:
 
-* 0: Normal Mode (Analog value as set by :func:`SetVoltage` is applied
+* 0: Normal Mode (Analog value as set by :func:`SetVoltage` is applied)
 * 1: 1k Ohm resistor to ground
 * 2: 100k Ohm resistor to ground
 * 3: 500k Ohm resistor to ground

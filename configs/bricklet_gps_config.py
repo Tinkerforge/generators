@@ -202,7 +202,10 @@ im Format ddmmyy und die Zeit im Format hhmmss.sss angegeben. Zum Beispiel,
 com['packets'].append({
 'type': 'function',
 'name': ('Restart', 'restart'),
-'elements': [('restart_type', 'uint8', 1, 'in')],
+'elements': [('restart_type', 'uint8', 1, 'in', ('RestartType', 'restart_type', [('HotStart', 'hot_start', 0),
+                                                                                 ('WarmStart', 'warm_start', 1),
+                                                                                 ('ColdStart', 'cold_start', 2),
+                                                                                 ('FactoryReset', 'factory_reset', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

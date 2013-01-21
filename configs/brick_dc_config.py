@@ -412,8 +412,8 @@ Gibt die minimale Spannung zurück, wie von :func:`SetMinimumVoltage` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': ('SetDriveMode', 'set_drive_mode'),
-'elements': [('mode', 'uint8', 1, 'in', ('DriveMode', 'drive_mode', [('DriveBrake', 'drive_brake', 1),
-                                                                      ('DriveCoast', 'drive_coast', 2)]))],
+'elements': [('mode', 'uint8', 1, 'in', ('DriveMode', 'drive_mode', [('DriveBrake', 'drive_brake', 0),
+                                                                     ('DriveCoast', 'drive_coast', 1)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -462,8 +462,8 @@ Der Standardwert ist 0 = Fahren/Bremsen.
 com['packets'].append({
 'type': 'function',
 'name': ('GetDriveMode', 'get_drive_mode'),
-'elements': [('mode', 'uint8', 1, 'out', ('DriveMode', 'drive_mode', [('DriveBrake', 'drive_brake', 1),
-                                                                       ('DriveCoast', 'drive_coast', 2)]))],
+'elements': [('mode', 'uint8', 1, 'out', ('DriveMode', 'drive_mode', [('DriveBrake', 'drive_brake', 0),
+                                                                      ('DriveCoast', 'drive_coast', 1)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

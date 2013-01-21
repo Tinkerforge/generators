@@ -117,9 +117,9 @@ com['packets'].append({
 'name': ('GetExtensionType', 'get_extension_type'), 
 'elements': [('extension', 'uint8', 1, 'in'),
              ('exttype', 'uint32', 1, 'out', ('ExtensionType', 'extension_type', [('Chibi', 'chibi', 1),
-                                                                                 ('RS485', 'rs485', 2),
-                                                                                 ('Wifi', 'wifi', 3),
-                                                                                 ('Ethernet', 'ethernet', 4)]))], 
+                                                                                  ('RS485', 'rs485', 2),
+                                                                                  ('Wifi', 'wifi', 3),
+                                                                                  ('Ethernet', 'ethernet', 4)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -343,10 +343,10 @@ vorliegen.
 com['packets'].append({
 'type': 'function',
 'name': ('SetChibiFrequency', 'set_chibi_frequency'), 
-'elements': [('frequency', 'uint8', 1, 'in', ('ChibiFrequency', 'chibi_frequency', [('OQPSK868MHZ', 'oqpsk_868_mhz', 0),
-                                                                                    ('OQPSK915MHZ', 'oqpsk_915_mhz', 1),
-                                                                                    ('OQPSK780MHZ', 'oqpsk_780_mhz', 2),
-                                                                                    ('BPSK40915MHZ', 'bpsk40_915_mhz', 3)]))], 
+'elements': [('frequency', 'uint8', 1, 'in', ('ChibiFrequency', 'chibi_frequency', [('OQPSK868MHz', 'oqpsk_868_mhz', 0),
+                                                                                    ('OQPSK915MHz', 'oqpsk_915_mhz', 1),
+                                                                                    ('OQPSK780MHz', 'oqpsk_780_mhz', 2),
+                                                                                    ('BPSK40915MHz', 'bpsk40_915_mhz', 3)]))],
 'since_firmware': [1, 1, 0],
 'doc': ['af', {
 'en':
@@ -357,10 +357,10 @@ Sets the Chibi frequency range for the Chibi Extension. Possible values are:
  :header: "Type", "Description"
  :widths: 10, 100
 
- "0",    "OQPSK 868Mhz (Europe)"
- "1",    "OQPSK 915Mhz (US)"
- "2",    "OQPSK 780Mhz (China)"
- "3",    "BPSK40 915Mhz"
+ "0",    "OQPSK 868MHz (Europe)"
+ "1",    "OQPSK 915MHz (US)"
+ "2",    "OQPSK 780MHz (China)"
+ "3",    "BPSK40 915MHz"
 
 It is possible to set the frequency with the Brick Viewer and it will be 
 saved in the EEPROM of the Chibi Extension, it does not
@@ -374,10 +374,10 @@ Setzt den Chibi Frequenzbereich der Chibi Extension. Mögliche Werte sind:
  :header: "Typ", "Beschreibung"
  :widths: 10, 100
 
- "0",    "OQPSK 868Mhz (Europe)"
- "1",    "OQPSK 915Mhz (US)"
- "2",    "OQPSK 780Mhz (China)"
- "3",    "BPSK40 915Mhz"
+ "0",    "OQPSK 868MHz (Europe)"
+ "1",    "OQPSK 915MHz (US)"
+ "2",    "OQPSK 780MHz (China)"
+ "3",    "BPSK40 915MHz"
  
 Es ist möglich den Frequenzbereich mit dem Brick Viewer zu setzen und dieser wird
 im EEPROM der Chibi Extension abgespeichert. Ein Setzen bei
@@ -389,10 +389,10 @@ jedem Hochfahren ist daher nicht notwendig.
 com['packets'].append({
 'type': 'function',
 'name': ('GetChibiFrequency', 'get_chibi_frequency'), 
-'elements': [('frequency', 'uint8', 1, 'out', ('ChibiFrequency', 'chibi_frequency', [('OQPSK868MHZ', 'oqpsk_868_mhz', 0),
-                                                                                     ('OQPSK915MHZ', 'oqpsk_915_mhz', 1),
-                                                                                     ('OQPSK780MHZ', 'oqpsk_780_mhz', 2),
-                                                                                     ('BPSK40915MHZ', 'bpsk40_915_mhz', 3)]))], 
+'elements': [('frequency', 'uint8', 1, 'out', ('ChibiFrequency', 'chibi_frequency', [('OQPSK868MHz', 'oqpsk_868_mhz', 0),
+                                                                                     ('OQPSK915MHz', 'oqpsk_915_mhz', 1),
+                                                                                     ('OQPSK780MHz', 'oqpsk_780_mhz', 2),
+                                                                                     ('BPSK40915MHz', 'bpsk40_915_mhz', 3)]))],
 'since_firmware': [1, 1, 0],
 'doc': ['af', {
 'en':
@@ -659,8 +659,8 @@ com['packets'].append({
 'name': ('GetRS485Configuration', 'get_rs485_configuration'), 
 'elements': [('speed', 'uint32', 1, 'out'),
              ('parity', 'char', 1, 'out', ('RS485Parity', 'rs485_parity', [('None', 'none', 'n'),
-                                                                          ('Even', 'even', 'e'),
-                                                                          ('Odd', 'odd', 'o')])),
+                                                                           ('Even', 'even', 'e'),
+                                                                           ('Odd', 'odd', 'o')])),
              ('stopbits', 'uint8', 1, 'out')], 
 'since_firmware': [1, 2, 0],
 'doc': ['af', {
@@ -913,9 +913,9 @@ com['packets'].append({
 'type': 'function', 
 'name': ('GetWifiEncryption', 'get_wifi_encryption'), 
 'elements': [('encryption', 'uint8', 1, 'out', ('WifiEncryption', 'wifi_encryption', [('WPAWPA2', 'wpa_wpa2', 0),
-                                                                                     ('WPAEnterprise', 'wpa_enterprise', 1),
-                                                                                     ('WEP', 'wep', 2),
-                                                                                     ('NoEncryption', 'no_encryption', 3)])),
+                                                                                      ('WPAEnterprise', 'wpa_enterprise', 1),
+                                                                                      ('WEP', 'wep', 2),
+                                                                                      ('NoEncryption', 'no_encryption', 3)])),
              ('key', 'string', 50, 'out'),
              ('key_index', 'uint8', 1, 'out'),
              ('eap_options', 'uint8', 1, 'out', ('WifiEAPOption', 'wifi_eap_option', [('OuterAuthEAPFAST', 'outer_auth_eap_fast', 0),
@@ -1104,9 +1104,9 @@ Gibt das Zertifikat für einen Index zurück, wie von
 
 com['packets'].append({
 'type': 'function', 
-'name': ('SetWifiPowerMode', 'set_wifi_power_mode', ('WifiPowerMode', 'wifi_power_mode', [('FullSpeed', 'full_speed', 0),
-                                                                                          ('LowPower', 'low_power', 1)])), 
-'elements': [('mode', 'uint8', 1, 'in')], 
+'name': ('SetWifiPowerMode', 'set_wifi_power_mode'),
+'elements': [('mode', 'uint8', 1, 'in', ('WifiPowerMode', 'wifi_power_mode', [('FullSpeed', 'full_speed', 0),
+                                                                              ('LowPower', 'low_power', 1)]))],
 'since_firmware': [1, 3, 0],
 'doc': ['af', {
 'en':
@@ -1141,7 +1141,8 @@ Der Standardwert ist 0 (Full Speed).
 com['packets'].append({
 'type': 'function', 
 'name': ('GetWifiPowerMode', 'get_wifi_power_mode'), 
-'elements': [('mode', 'uint8', 1, 'out')], 
+'elements': [('mode', 'uint8', 1, 'out', ('WifiPowerMode', 'wifi_power_mode', [('FullSpeed', 'full_speed', 0),
+                                                                               ('LowPower', 'low_power', 1)]))],
 'since_firmware': [1, 3, 0],
 'doc': ['af', {
 'en':
@@ -1203,9 +1204,9 @@ Pausen gesendet werden.
 com['packets'].append({
 'type': 'function', 
 'name': ('SetWifiRegulatoryDomain', 'set_wifi_regulatory_domain'), 
-'elements': [('domain', 'uint8', 1, 'in', ('WifiState', 'wifi_state', [('Channel1To11', 'channel_1to11', 0),
-                                                                       ('Channel1To13', 'channel_1to13', 1),
-                                                                       ('Channel1To14', 'channel_1to14', 2)]))], 
+'elements': [('domain', 'uint8', 1, 'in', ('WifiDoamin', 'wifi_domain', [('Channel1To11', 'channel_1to11', 0),
+                                                                         ('Channel1To13', 'channel_1to13', 1),
+                                                                         ('Channel1To14', 'channel_1to14', 2)]))],
 'since_firmware': [1, 3, 4],
 'doc': ['af', {
 'en':
@@ -1242,9 +1243,9 @@ Der Standardwert ist 1 (ETSI).
 com['packets'].append({
 'type': 'function', 
 'name': ('GetWifiRegulatoryDomain', 'get_wifi_regulatory_domain'), 
-'elements': [('domain', 'uint8', 1, 'out', ('WifiState', 'wifi_state', [('Channel1To11', 'channel_1to11', 0),
-                                                                        ('Channel1To13', 'channel_1to13', 1),
-                                                                        ('Channel1To14', 'channel_1to14', 2)]))], 
+'elements': [('domain', 'uint8', 1, 'out', ('WifiDoamin', 'wifi_domain', [('Channel1To11', 'channel_1to11', 0),
+                                                                          ('Channel1To13', 'channel_1to13', 1),
+                                                                          ('Channel1To14', 'channel_1to14', 2)]))],
 'since_firmware': [1, 3, 4],
 'doc': ['af', {
 'en':
