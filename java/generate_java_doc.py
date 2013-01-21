@@ -191,24 +191,25 @@ def make_callbacks():
     'en': """
 .. java:function:: public class {0}{1}.{2}Listener()
 
+ This listener can be added with the ``add{2}Listener()`` function.
+ An added listener can be removed with the ``remove{2}Listener()`` function.
+
  .. java:function:: public void {3}({4})
   :noindex:
 
 {5}
-
-  This listener can be added with the **{0}{1}.add{2}Listener** function.
-  An added listener can be removed with the **{0}{1}.remove{2}Listener** function.
 """,
     'de': """
 .. java:function:: public class {0}{1}.{2}Listener()
 
+ Dieser Listener kann mit der Funktion ``add{2}Listener()`` hinzugefügt werde.
+ Ein hinzugefügter Listener kann mit der Funktion ``remove{2}Listener()`` wieder
+ entfernt werden.
+
  .. java:function:: public void {3}({4})
   :noindex:
 
 {5}
-
-  Dieser Listener kann mit der Funktion **{0}{1}.add{2}Listener** hinzugefügt werde.
-  Ein hinzugefügter Listener kann mit der Funktion **{0}{1}.remove{2}Listener** wieder entfernt werden.
 """
     }
 
@@ -255,37 +256,18 @@ def make_api():
 """
     }
 
-    register_str = {
-    'en': """
-.. java:function:: public void {3}{1}::addListener(Object object)
-
- Registers a listener object. The available listeners are listed 
- :ref:`below <{0}_{2}_java_callbacks>`.
-""",
-    'de': """
-.. java:function:: public void {3}{1}::addListener(Object object)
-
- Registriert ein Listener Objekt. Die verfügbaren Listener werden
- :ref:`unten <{0}_{2}_java_callbacks>` aufgelistet.
-"""
-    }
-
     ccf_str = {
     'en': """
 Listener Configuration Functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 {0}
-
-{1}
 """,
     'de': """
 Konfigurationsfunktionen für Listener
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 {0}
-
-{1}
 """
     }
 
@@ -428,10 +410,6 @@ Alle folgend aufgelisteten Methoden sind Thread-sicher.
                                                 device.get_category().lower(),
                                                 device.get_category(),
                                                 device.get_underscore_name())
-    reg = common.select_lang(register_str).format(device.get_underscore_name(),
-                                                  device.get_camel_case_name(),
-                                                  device.get_category().lower(),
-                                                  device.get_category())
 
     bf = make_methods('bf')
     af = make_methods('af')
@@ -443,7 +421,7 @@ Alle folgend aufgelisteten Methoden sind Thread-sicher.
     if af:
         api_str += common.select_lang(common.af_str).format(af)
     if c:
-        api_str += common.select_lang(ccf_str).format(reg, ccf)
+        api_str += common.select_lang(ccf_str).format(ccf)
         api_str += common.select_lang(c_str).format(c, device.get_underscore_name(),
                                                     device.get_category().lower(),
                                                     device.get_category(),
