@@ -113,7 +113,7 @@ def make_class():
  * {2}
  */
 public class {0}{1} extends Device {{
-\tpublic final static DEVICE_IDENTIFIER = {3};
+\tpublic final static int DEVICE_IDENTIFIER = {3};
 
 """
 
