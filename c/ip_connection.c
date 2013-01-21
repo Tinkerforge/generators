@@ -150,10 +150,10 @@ struct _Socket {
 #ifdef _WIN32
 
 static int socket_create(Socket *socket_, int domain, int type, int protocol) {
-	int flag = 1;
+	BOOL flag = 1;
 	socket_->handle = socket(domain, type, protocol);
 	if(socket_->handle != INVALID_SOCKET) {
-		if(setsockopt(socket_->handle, IPPROTO_TCP, TCP_NODELAY, (void *)&flag, sizeof(flag)) >= 0) {
+		if(setsockopt(socket_->handle, IPPROTO_TCP, TCP_NODELAY, (const char *)&flag, sizeof(flag)) >= 0) {
 			return 0;
 		}
 	}
