@@ -401,7 +401,6 @@ module Tinkerforge
 
     CALLBACK_CONNECTED = 0
     CALLBACK_DISCONNECTED = 1
-    CALLBACK_AUTHENTICATION_ERROR = 2
 
     # enumeration_type parameter for CALLBACK_ENUMERATE
     ENUMERATION_TYPE_AVAILABLE = 0
@@ -409,7 +408,7 @@ module Tinkerforge
     ENUMERATION_TYPE_DISCONNECTED = 2
 
     # connect_reason parameter for CALLBACK_CONNECTED
-    CONNECT_REASON_REQUEST = 0,
+    CONNECT_REASON_REQUEST = 0
     CONNECT_REASON_AUTO_RECONNECT = 1
 
     # disconnect_reason parameter for CALLBACK_DISCONNECTED
