@@ -66,12 +66,13 @@ type
   end;
 
   { TIPConnection }
-  TIPConnectionNotifyEnumerate = procedure(sender: TObject; const uid: string; const connectedUid: string;
+  TIPConnection = class;
+  TIPConnectionNotifyEnumerate = procedure(sender: TIPConnection; const uid: string; const connectedUid: string;
                                            const position: char; const hardwareVersion: TVersionNumber;
                                            const firmwareVersion: TVersionNumber; const deviceIdentifier: word;
                                            const enumerationType: byte) of object;
-  TIPConnectionNotifyConnected = procedure(sender: TObject; const connectReason: byte) of object;
-  TIPConnectionNotifyDisconnected = procedure(sender: TObject; const disconnectReason: byte) of object;
+  TIPConnectionNotifyConnected = procedure(sender: TIPConnection; const connectReason: byte) of object;
+  TIPConnectionNotifyDisconnected = procedure(sender: TIPConnection; const disconnectReason: byte) of object;
   TIPConnection = class
   public
     socketMutex: TCriticalSection;
