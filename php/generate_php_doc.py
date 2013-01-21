@@ -93,6 +93,31 @@ def make_parameter_list(packet):
         param.append('{0} ${1}'.format(php_type, name))
     return ', '.join(param)
 
+def make_obj_desc(packet):
+    if len(packet.get_elements('out')) < 2:
+        return ''
+
+    desc = {
+    'en': """
+ The returned array has the keys {0}.
+""",
+    'de': """
+ Das zurückgegebene Array enthält die Keys {0}.
+"""
+    }
+
+    var = []
+    for element in packet.get_elements('out'):
+        var.append('``{0}``'.format(element[0]))
+
+    if len(var) == 1:
+        return common.select_lang(desc).format(var[0])
+
+    if len(var) == 2:
+        return common.select_lang(desc).format(var[0] + ' and ' + var[1])
+
+    return common.select_lang(desc).format(', '.join(var[:-1]) + ' and ' + var[-1])
+
 def make_methods(typ):
     methods = ''
     func_start = '.. php:function:: '
@@ -105,12 +130,14 @@ def make_methods(typ):
         name = packet.get_headless_camel_case_name()
         params = make_parameter_list(packet)
         desc = format_doc(packet)
-        func = '{0}{1} {2}::{3}({4})\n{5}'.format(func_start,
-                                                  ret_type,
-                                                  cls,
-                                                  name,
-                                                  params,
-                                                  desc)
+        obj_desc = make_obj_desc(packet)
+        func = '{0}{1} {2}::{3}({4})\n{5}{6}'.format(func_start,
+                                                     ret_type,
+                                                     cls,
+                                                     name,
+                                                     params,
+                                                     desc,
+                                                     obj_desc)
         methods += func + '\n'
 
     return methods

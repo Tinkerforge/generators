@@ -130,6 +130,31 @@ def make_return_desc(packet):
 
     return ret.format('[' + ', '.join(ret_list) + ']')
 
+def make_obj_desc(packet):
+    if len(packet.get_elements('out')) < 2:
+        return ''
+
+    desc = {
+    'en': """
+ The returned tuple has the values {0}.
+""",
+    'de': """
+ Das zurückgegebene Tupel enthält die Werte {0}.
+"""
+    }
+
+    var = []
+    for element in packet.get_elements('out'):
+        var.append('``{0}``'.format(element[0]))
+
+    if len(var) == 1:
+        return common.select_lang(desc).format(var[0])
+
+    if len(var) == 2:
+        return common.select_lang(desc).format(var[0] + ' and ' + var[1])
+
+    return common.select_lang(desc).format(', '.join(var[:-1]) + ' and ' + var[-1])
+
 def make_methods(typ):
     methods = ''
     func_start = '.. rb:function:: '
@@ -144,7 +169,8 @@ def make_methods(typ):
         pd = make_parameter_desc(packet, 'in')
         r = make_return_desc(packet)
         d = format_doc(packet)
-        desc = '{0}{1}'.format(pd, d)
+        obj_desc = make_obj_desc(packet)
+        desc = '{0}{1}{2}'.format(pd, d, obj_desc)
         func = '{0}{1}#{2}{3}{5}\n{4}'.format(func_start,
                                               cls,
                                               name,
