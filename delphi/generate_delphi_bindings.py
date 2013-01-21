@@ -253,30 +253,39 @@ def make_class():
                                      packet.get_camel_case_name())
 
     callback_wrappers = ''
-    callback_wrapper = '    procedure CallbackWrapper{0}(const packet: TByteArray); virtual;\n'
+    callback_wrapper = '    procedure CallbackWrapper{0}(const packet: TByteArray); {1};\n'
     for packet in device.get_packets('callback'):
-        callback_wrappers += callback_wrapper.format(packet.get_camel_case_name())
+        if packet.has_prototype_in_device():
+            modifier = 'override'
+        else:
+            modifier = 'virtual'
+
+        callback_wrappers += callback_wrapper.format(packet.get_camel_case_name(), modifier)
 
     methods = []
     function = """    /// <summary>
     ///  {3}
     /// </summary>
-    function {0}{1}: {2}; virtual;"""
+    function {0}{1}: {2}; {4};"""
     procedure = """    /// <summary>
     ///  {2}
     /// </summary>
-    procedure {0}{1}; virtual;"""
+    procedure {0}{1}; {3};"""
     for packet in device.get_packets('function'):
         ret_type = delphi_common.get_return_type(packet, False)
         name = packet.get_camel_case_name()
         doc = format_doc(packet)
         params = delphi_common.make_parameter_list(packet, False)
+        if packet.has_prototype_in_device():
+            modifier = 'override'
+        else:
+            modifier = 'virtual'
         if len(params) > 0:
             params = '(' + params + ')'
         if len(ret_type) > 0:
-            method = function.format(name, params, ret_type, doc)
+            method = function.format(name, params, ret_type, doc, modifier)
         else:
-            method = procedure.format(name, params, doc)
+            method = procedure.format(name, params, doc, modifier)
         methods.append(method)
 
     props = []

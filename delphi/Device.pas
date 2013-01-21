@@ -26,6 +26,7 @@ type
   { TDevice }
   TCallbackWrapper = procedure(const packet: TByteArray) of object;
   TVersionNumber = array [0..2] of byte;
+  TArray0To2OfUInt8 = array [0..2] of byte;
   TDevice = class
   private
     requestMutex: TCriticalSection;
@@ -55,7 +56,7 @@ type
     ///  Returns the API version (major, minor, revision) of the bindings for
     ///  this device.
     /// </summary>
-    function GetAPIVersion: TVersionNumber;
+    function GetAPIVersion: TVersionNumber; virtual;
 
     /// <summary>
     ///  Returns the response expected flag for the function specified by the
@@ -74,7 +75,7 @@ type
     ///  flag is disabled for a setter function then no response is send and
     ///  errors are silently ignored, because they cannot be detected.
     /// </summary>
-    function GetResponseExpected(const functionId: byte): boolean;
+    function GetResponseExpected(const functionId: byte): boolean; virtual;
 
     /// <summary>
     ///  Changes the response expected flag of the function specified by
@@ -89,13 +90,17 @@ type
     ///  flag is disabled for a setter function then no response is send and
     ///  errors are silently ignored, because they cannot be detected.
     /// </summary>
-    procedure SetResponseExpected(const functionId: byte; const responseExpected_: boolean);
+    procedure SetResponseExpected(const functionId: byte; const responseExpected_: boolean); virtual;
 
     /// <summary>
     ///  Changes the response expected flag for all setter and callback
     ///  configuration functions of this device at once.
     /// </summary>
-    procedure SetResponseExpectedAll(const responseExpected_: boolean);
+    procedure SetResponseExpectedAll(const responseExpected_: boolean); virtual;
+
+    procedure GetIdentity(out uid: string; out connectedUid: string; out position: char;
+                          out hardwareVersion: TArray0To2OfUInt8; out firmwareVersion: TArray0To2OfUInt8;
+                          out deviceIdentifier: word); virtual; abstract;
 
     { Internal }
     function SendRequest(const request: TByteArray): TByteArray;
