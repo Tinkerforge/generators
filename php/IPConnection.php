@@ -613,6 +613,10 @@ class IPConnection
         $end = $start + $seconds;
 
         do {
+            if ($this->socket === FALSE) {
+                return;
+            }
+
             $read = array($this->socket);
             $write = NULL;
             $except = array($this->socket);
