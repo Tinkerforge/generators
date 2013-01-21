@@ -145,6 +145,7 @@ namespace Tinkerforge
 
 			try {
 				socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+				socket.NoDelay = true;
 				ConnectSocket(host, port);
 			} catch (Exception) {
 				if (socket != null) {

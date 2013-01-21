@@ -670,6 +670,7 @@ module Tinkerforge
 
       # Create socket
       @socket = TCPSocket.new @host, @port
+	  @socket.setsockopt(Socket::IPPROTO_TCP, Socket::TCP_NODELAY, 1)
 
       # Create receive thread
       @receive_flag = true

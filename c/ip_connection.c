@@ -25,6 +25,7 @@
 	#include <sys/time.h> // gettimeofday
 	#include <sys/socket.h> // connect
 	#include <sys/select.h>
+	#include <netinet/tcp.h> // TCP_NO_DELAY
 	#include <netdb.h> // gethostbyname
 	#include <netinet/in.h> // struct sockaddr_in
 #endif
@@ -149,13 +150,15 @@ struct _Socket {
 #ifdef _WIN32
 
 static int socket_create(Socket *socket_, int domain, int type, int protocol) {
+	int flag = 1;
 	socket_->handle = socket(domain, type, protocol);
-
-	if (socket_->handle == INVALID_SOCKET) {
-		return -1;
+	if(socket_->handle != INVALID_SOCKET) {
+		if(setsockopt(socket_->handle, IPPROTO_TCP, TCP_NODELAY, (void *)&flag, sizeof(flag)) >= 0) {
+			return 0;
+		}
 	}
 
-	return 0;
+	return -1;
 }
 
 static void socket_destroy(Socket *socket) {
@@ -199,9 +202,15 @@ static int socket_send(Socket *socket, void *buffer, int length) {
 #else
 
 static int socket_create(Socket *socket_, int domain, int type, int protocol) {
+	int flag = 1;
 	socket_->handle = socket(domain, type, protocol);
+	if(socket_->handle >= 0) {
+		if(setsockopt(socket_->handle, IPPROTO_TCP, TCP_NODELAY, (void *)&flag, sizeof(flag)) >= 0) {
+			return 0;
+		}
+	}
 
-	return socket_->handle < 0 ? -1 : 0;
+	return -1;
 }
 
 static void socket_destroy(Socket *socket) {

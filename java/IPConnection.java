@@ -415,6 +415,7 @@ public class IPConnection {
 
 		try {
 			socket = new Socket(host, port);
+			socket.setTcpNoDelay(true);
 			in = socket.getInputStream();
 			out = socket.getOutputStream();
 			out.flush();
