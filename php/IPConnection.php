@@ -391,12 +391,13 @@ class IPConnection
         }
 
         $this->socket = @socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-		socket_set_option($this->socket, SOL_TCP, TCP_NODELAY, 1);
 
         if ($this->socket === FALSE) {
             throw new \Exception('Could not create socket: ' .
                                  socket_strerror(socket_last_error()));
         }
+
+        @socket_set_option($this->socket, SOL_TCP, TCP_NODELAY, 1);
 
         if (!@socket_connect($this->socket, $address, $port)) {
             $error = socket_strerror(socket_last_error($this->socket));
