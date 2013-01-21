@@ -120,7 +120,10 @@ def make_class():
 \t/// </summary>
 \tpublic class {0}{1} : Device
 \t{{
-
+\t\t/// <summary>
+\t\t///  Used to identify this device type in
+\t\t///  <see cref="Tinkerforge.IPConnection.EnumerateCallback"/>
+\t\t/// </summary>
 \t\tpublic static int DEVICE_IDENTIFIER = {3};
 """
 
@@ -171,7 +174,11 @@ def make_function_id_definitions():
 
 def make_constants():
     str_constants = '\n'
-    str_constant = '\t\tpublic static {0} {1}_{2} = {3};\n'
+    str_constant = """
+\t\t/// <summary>
+\t\t/// </summary>
+\t\tpublic static {0} {1}_{2} = {3};
+"""
     constants = device.get_constants()
     for constant in constants:
         for definition in constant.definitions:

@@ -182,7 +182,7 @@ def make_function_id_definitions():
 
 def make_constants():
     str_constants = '\n'
-    str_constant = '\tconst {0}_{1} = {2};\n'
+    str_constant = '    const {0}_{1} = {2};\n'
     constants = device.get_constants()
     for constant in constants:
         for definition in constant.definitions:

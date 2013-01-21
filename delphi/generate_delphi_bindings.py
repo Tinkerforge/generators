@@ -136,18 +136,28 @@ uses
                           device.get_category(),
                           device.get_camel_case_name())
 
+def make_device_identifier():
+    did = """const
+  {0}_{1}_DEVICE_IDENTIFIER = {2};
+
+"""
+
+    return did.format(device.get_category().upper(),
+                      device.get_upper_case_name(),
+                      device.get_device_identifier())
+
 def make_function_id_definitions():
-    function_ids = 'const\n'
+    function_ids = ''
     function_id = '  {0}_{1}_FUNCTION_{2} = {3};\n'
     for packet in device.get_packets('function'):
         function_ids += function_id.format(device.get_category().upper(),
                                            device.get_upper_case_name(),
                                            packet.get_upper_case_name(),
                                            packet.get_function_id())
-    return function_ids
+    return function_ids + '\n'
 
 def make_constants():
-    str_constants = '\n'
+    str_constants = ''
     str_constant = '  {0}_{1}_{2}_{3} = {4};\n'
     constants = device.get_constants()
     for constant in constants:
@@ -162,7 +172,7 @@ def make_constants():
                                                  constant.name_uppercase,
                                                  definition.name_uppercase,
                                                  value)
-    return str_constants
+    return str_constants + '\n'
 
 def make_callback_id_definitions():
     cbs = ''
@@ -520,9 +530,10 @@ def make_files(com_new, directory):
 
     pas = file('{0}/{1}.pas'.format(directory, file_name), 'w')
     pas.write(make_unit_header(version))
+    pas.write(make_device_identifier())
     pas.write(make_function_id_definitions())
-    pas.write(make_constants())
     pas.write(make_callback_id_definitions())
+    pas.write(make_constants())
     pas.write(make_arrays())
     pas.write(make_callback_prototypes())
     pas.write(make_class())

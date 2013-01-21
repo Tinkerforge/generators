@@ -113,9 +113,14 @@ def make_class():
  * {2}
  */
 public class {0}{1} extends Device {{
+\tpublic final static DEVICE_IDENTIFIER = {3};
+
 """
 
-    return class_str.format(device.get_category(), device.get_camel_case_name(), device.get_description())
+    return class_str.format(device.get_category(),
+                            device.get_camel_case_name(),
+                            device.get_description(),
+                            device.get_device_identifier())
 
 def make_return_objects():
     objs = ''

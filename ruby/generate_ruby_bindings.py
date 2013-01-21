@@ -98,7 +98,9 @@ def make_class():
     return """module Tinkerforge
   # {2}
   class {0}{1} < Device
-""".format(device.get_category(), device.get_camel_case_name(), device.get_description())
+    DEVICE_IDENTIFIER = {3} # :nodoc:
+""".format(device.get_category(), device.get_camel_case_name(),
+           device.get_description(), device.get_device_identifier())
 
 def make_callback_id_definitions():
     cbs = ''

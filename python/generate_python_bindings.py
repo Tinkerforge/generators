@@ -96,8 +96,9 @@ class {0}{1}(Device):
 
     DEVICE_IDENTIFIER = {3}
 
-""".format(device.get_category(), device.get_camel_case_name(),
-           device.get_description(), device.get_device_identifier(),
+""".format(device.get_category(),
+           device.get_camel_case_name(),
+           device.get_description(),
            device.get_device_identifier())
 
 def make_callback_id_definitions():
@@ -116,7 +117,7 @@ def make_function_id_definitions():
 
 def make_constants():
     str_constants = '\n'
-    str_constant = '    {0}_{1} = {2};\n'
+    str_constant = '    {0}_{1} = {2}\n'
     constants = device.get_constants()
     for constant in constants:
         for definition in constant.definitions:
