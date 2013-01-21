@@ -428,7 +428,7 @@ module Tinkerforge
       @host = nil
       @port = 0
 
-      @timeout = 2500
+      @timeout = 2.5
 
       @auto_reconnect = true
       @auto_reconnect_allowed = false
@@ -564,10 +564,10 @@ module Tinkerforge
       @auto_reconnect
     end
 
-    # Sets the timeout in milliseconds for getters and for setters for which
+    # Sets the timeout in seconds for getters and for setters for which
     # the response expected flag is activated.
     #
-    # Default timeout is 2500.
+    # Default timeout is 2.5.
     def set_timeout(timeout)
       @timeout = timeout
     end
