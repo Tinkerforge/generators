@@ -281,7 +281,7 @@ typedef struct {{
 def make_create_func():
     func = """
 void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
-\tdevice_create({0}, uid, ipcon, (uint8_t[]){{ {3}, {4}, {5} }});
+\tdevice_create({0}, uid, ipcon, {3}, {4}, {5});
 {2}
 }}
 """

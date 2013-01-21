@@ -218,7 +218,8 @@ enum {
  * \internal
  */
 void device_create(Device *device, const char *uid, IPConnection *ipcon,
-                   uint8_t api_version[3]);
+                   uint8_t api_version_major, uint8_t api_version_minor,
+                   uint8_t api_version_release);
 
 /**
  * \internal

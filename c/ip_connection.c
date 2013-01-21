@@ -729,7 +729,8 @@ enum {
 };
 
 void device_create(Device *device, const char *uid_str, IPConnection *ipcon,
-                   uint8_t api_version[3]) {
+                   uint8_t api_version_major, uint8_t api_version_minor,
+                   uint8_t api_version_release) {
 	uint64_t uid;
 	uint32_t value1;
 	uint32_t value2;
@@ -753,9 +754,9 @@ void device_create(Device *device, const char *uid_str, IPConnection *ipcon,
 
 	device->ipcon = ipcon;
 
-	device->api_version[0] = api_version[0];
-	device->api_version[1] = api_version[1];
-	device->api_version[2] = api_version[2];
+	device->api_version[0] = api_version_major;
+	device->api_version[1] = api_version_minor;
+	device->api_version[2] = api_version_release;
 
 	// request
 	mutex_create(&device->request_mutex);

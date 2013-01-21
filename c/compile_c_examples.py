@@ -62,6 +62,7 @@ def walker(arg, dirname, names):
         subprocess.call(args)
 
         args = ['/usr/bin/g++',
+                '-std=c++98',
                 '-Wall',
                 '-Wextra',
                 '-pthread',
