@@ -13,36 +13,35 @@ uses
   Classes, Sockets, SyncObjs, SysUtils, Base58, LEConverter, BlockingQueue, Device, TimedSemaphore;
 
 const
-  FUNCTION_ENUMERATE = 254;
+  IPCON_FUNCTION_ENUMERATE = 254;
 
-  CALLBACK_ENUMERATE = 253;
-  CALLBACK_CONNECTED = 0;
-  CALLBACK_DISCONNECTED = 1;
-  CALLBACK_AUTHENTICATION_ERROR = 2;
+  IPCON_CALLBACK_ENUMERATE = 253;
+  IPCON_CALLBACK_CONNECTED = 0;
+  IPCON_CALLBACK_DISCONNECTED = 1;
 
-  QUEUE_KIND_EXIT = 0;
-  QUEUE_KIND_DESTROY_AND_EXIT = 1;
-  QUEUE_KIND_META = 2;
-  QUEUE_KIND_PACKET = 3;
+  IPCON_QUEUE_KIND_EXIT = 0;
+  IPCON_QUEUE_KIND_DESTROY_AND_EXIT = 1;
+  IPCON_QUEUE_KIND_META = 2;
+  IPCON_QUEUE_KIND_PACKET = 3;
 
   { enumerationType parameter of the TIPConnectionNotifyEnumerate }
-  ENUMERATION_TYPE_AVAILABLE = 0;
-  ENUMERATION_TYPE_CONNECTED = 1;
-  ENUMERATION_TYPE_DISCONNECTED = 2;
+  IPCON_ENUMERATION_TYPE_AVAILABLE = 0;
+  IPCON_ENUMERATION_TYPE_CONNECTED = 1;
+  IPCON_ENUMERATION_TYPE_DISCONNECTED = 2;
 
   { connectReason parameter of the TIPConnectionNotifyConnected }
-  CONNECT_REASON_REQUEST = 0;
-  CONNECT_REASON_AUTO_RECONNECT = 1;
+  IPCON_CONNECT_REASON_REQUEST = 0;
+  IPCON_CONNECT_REASON_AUTO_RECONNECT = 1;
 
   { disconnectReason parameter of the TIPConnectionNotifyDisconnected }
-  DISCONNECT_REASON_REQUEST = 0;
-  DISCONNECT_REASON_ERROR = 1;
-  DISCONNECT_REASON_SHUTDOWN = 2;
+  IPCON_DISCONNECT_REASON_REQUEST = 0;
+  IPCON_DISCONNECT_REASON_ERROR = 1;
+  IPCON_DISCONNECT_REASON_SHUTDOWN = 2;
 
   { returned by GetConnectionState }
-  CONNECTION_STATE_DISCONNECTED = 0;
-  CONNECTION_STATE_CONNECTED = 1;
-  CONNECTION_STATE_PENDING = 2; { auto-reconnect in progress }
+  IPCON_CONNECTION_STATE_DISCONNECTED = 0;
+  IPCON_CONNECTION_STATE_CONNECTED = 1;
+  IPCON_CONNECTION_STATE_PENDING = 2; { auto-reconnect in progress }
 
 {$ifdef FPC}
  {$ifdef MSWINDOWS}
@@ -147,10 +146,10 @@ type
     /// <summary>
     ///  Can return the following states:
     ///
-    ///  - CONNECTION_STATE_DISCONNECTED: No connection is established.
-    ///  - CONNECTION_STATE_CONNECTED: A connection to the Brick Daemon or
+    ///  - IPCON_CONNECTION_STATE_DISCONNECTED: No connection is established.
+    ///  - IPCON_CONNECTION_STATE_CONNECTED: A connection to the Brick Daemon or
     ///    the WIFI/Ethernet Extension  is established.
-    ///  - CONNECTION_STATE_PENDING: IP Connection is currently trying to
+    ///  - IPCON_CONNECTION_STATE_PENDING: IP Connection is currently trying to
     ///    connect.
     /// </summary>
     function GetConnectionState: byte;
@@ -350,16 +349,16 @@ begin
     { Do this outside of socketMutex to allow calling (dis-)connect from
      the callbacks while blocking on the WaitFor call here }
     SetLength(meta, 2);
-    meta[0] := CALLBACK_DISCONNECTED;
-    meta[1] := DISCONNECT_REASON_REQUEST;
-    callbackQueue_.Enqueue(QUEUE_KIND_META, meta);
+    meta[0] := IPCON_CALLBACK_DISCONNECTED;
+    meta[1] := IPCON_DISCONNECT_REASON_REQUEST;
+    callbackQueue_.Enqueue(IPCON_QUEUE_KIND_META, meta);
     if (not callbackThread_.IsCurrent) then begin
-      callbackQueue_.Enqueue(QUEUE_KIND_EXIT, nil);
+      callbackQueue_.Enqueue(IPCON_QUEUE_KIND_EXIT, nil);
       callbackThread_.WaitFor;
       callbackThread_.Destroy;
     end
     else begin
-      callbackQueue_.Enqueue(QUEUE_KIND_DESTROY_AND_EXIT, nil);
+      callbackQueue_.Enqueue(IPCON_QUEUE_KIND_DESTROY_AND_EXIT, nil);
     end;
   end;
 end;
@@ -367,13 +366,13 @@ end;
 function TIPConnection.GetConnectionState: byte;
 begin
   if (IsConnected) then begin
-    result := CONNECTION_STATE_CONNECTED;
+    result := IPCON_CONNECTION_STATE_CONNECTED;
   end
   else if (autoReconnectPending) then begin
-    result := CONNECTION_STATE_PENDING;
+    result := IPCON_CONNECTION_STATE_PENDING;
   end
   else begin
-    result := CONNECTION_STATE_DISCONNECTED;
+    result := IPCON_CONNECTION_STATE_DISCONNECTED;
   end;
 end;
 
@@ -406,7 +405,7 @@ var request: TByteArray;
 begin
   socketMutex.Acquire;
   try
-    request := CreatePacket(nil, FUNCTION_ENUMERATE, 8);
+    request := CreatePacket(nil, IPCON_FUNCTION_ENUMERATE, 8);
     Send(request);
   finally
     socketMutex.Release;
@@ -500,15 +499,15 @@ begin
   autoReconnectPending := false;
   { Trigger connected callback }
   if (isAutoReconnect) then begin
-    connectReason := CONNECT_REASON_AUTO_RECONNECT;
+    connectReason := IPCON_CONNECT_REASON_AUTO_RECONNECT;
   end
   else begin
-    connectReason := CONNECT_REASON_REQUEST;
+    connectReason := IPCON_CONNECT_REASON_REQUEST;
   end;
   SetLength(meta, 2);
-  meta[0] := CALLBACK_CONNECTED;
+  meta[0] := IPCON_CALLBACK_CONNECTED;
   meta[1] := connectReason;
-  callbackQueue.Enqueue(QUEUE_KIND_META, meta);
+  callbackQueue.Enqueue(IPCON_QUEUE_KIND_META, meta);
 end;
 
 {$ifndef FPC}
@@ -542,14 +541,14 @@ begin
       autoReconnectAllowed := true;
       receiveFlag := false;
       SetLength(meta, 2);
-      meta[0] := CALLBACK_DISCONNECTED;
+      meta[0] := IPCON_CALLBACK_DISCONNECTED;
       if (len = 0) then begin
-        meta[1] := DISCONNECT_REASON_SHUTDOWN;
+        meta[1] := IPCON_DISCONNECT_REASON_SHUTDOWN;
       end
       else begin
-        meta[1] := DISCONNECT_REASON_ERROR;
+        meta[1] := IPCON_DISCONNECT_REASON_ERROR;
       end;
-      callbackQueue.Enqueue(QUEUE_KIND_META, meta);
+      callbackQueue.Enqueue(IPCON_QUEUE_KIND_META, meta);
       exit;
     end;
     pendingLen := Length(pendingData);
@@ -583,17 +582,17 @@ begin
     if (not callbackQueue_.Dequeue(kind, data, -1)) then begin
       break;
     end;
-    if (kind = QUEUE_KIND_EXIT) then begin
+    if (kind = IPCON_QUEUE_KIND_EXIT) then begin
       break;
     end
-    else if (kind = QUEUE_KIND_DESTROY_AND_EXIT) then begin
+    else if (kind = IPCON_QUEUE_KIND_DESTROY_AND_EXIT) then begin
       thread.Destroy;
       break;
     end
-    else if (kind = QUEUE_KIND_META) then begin
+    else if (kind = IPCON_QUEUE_KIND_META) then begin
       DispatchMeta(data);
     end
-    else if (kind = QUEUE_KIND_PACKET) then begin
+    else if (kind = IPCON_QUEUE_KIND_PACKET) then begin
       { Don't dispatch callbacks when the receive thread isn't running }
       if (receiveFlag) then begin
         DispatchPacket(data);
@@ -608,9 +607,9 @@ var sequenceNumber, functionID: byte; device: TDevice;
 begin
   functionID := GetFunctionIDFromData(packet);
   sequenceNumber := GetSequenceNumberFromData(packet);
-  if ((sequenceNumber = 0) and (functionID = CALLBACK_ENUMERATE)) then begin
+  if ((sequenceNumber = 0) and (functionID = IPCON_CALLBACK_ENUMERATE)) then begin
     if (Assigned(enumerateCallback)) then begin
-      callbackQueue.Enqueue(QUEUE_KIND_PACKET, packet);
+      callbackQueue.Enqueue(IPCON_QUEUE_KIND_PACKET, packet);
     end;
     exit;
   end;
@@ -621,7 +620,7 @@ begin
   end;
   if (sequenceNumber = 0) then begin
     if (Assigned(device.callbackWrappers[functionID])) then begin
-      callbackQueue.Enqueue(QUEUE_KIND_PACKET, packet);
+      callbackQueue.Enqueue(IPCON_QUEUE_KIND_PACKET, packet);
     end;
     exit;
   end;
@@ -635,12 +634,12 @@ end;
 procedure TIPConnection.DispatchMeta(const meta: TByteArray);
 var retry: boolean;
 begin
-  if (meta[0] = CALLBACK_CONNECTED) then begin
+  if (meta[0] = IPCON_CALLBACK_CONNECTED) then begin
     if (Assigned(connectedCallback)) then begin
       connectedCallback(self, meta[1]);
     end;
   end
-  else if (meta[0] = CALLBACK_DISCONNECTED) then begin
+  else if (meta[0] = IPCON_CALLBACK_DISCONNECTED) then begin
     { Need to do this here, the receive loop is not allowed to hold the socket
       mutex because this could cause a deadlock with a concurrent call to the
       (dis-)connect function }
@@ -665,7 +664,7 @@ begin
     if (Assigned(disconnectedCallback)) then begin
       disconnectedCallback(self, meta[1]);
     end;
-    if ((meta[1] <> DISCONNECT_REASON_REQUEST) and autoReconnect and
+    if ((meta[1] <> IPCON_DISCONNECT_REASON_REQUEST) and autoReconnect and
         autoReconnectAllowed) then begin
       autoReconnectPending := true;
       retry := true;
@@ -705,7 +704,7 @@ var functionID: byte; uid, connectedUid: string; position: char;
     device: TDevice; callbackWrapper: TCallbackWrapper;
 begin
   functionID := GetFunctionIDFromData(packet);
-  if (functionID = CALLBACK_ENUMERATE) then begin
+  if (functionID = IPCON_CALLBACK_ENUMERATE) then begin
     if (Assigned(enumerateCallback)) then begin
       uid := LEConvertStringFrom(8, 8, packet);
       connectedUid := LEConvertStringFrom(16, 8, packet);
