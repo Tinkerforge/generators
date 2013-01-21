@@ -427,6 +427,7 @@ end;
 procedure TIPConnection.ConnectUnlocked(const isAutoReconnect: boolean);
 var
 {$ifdef FPC}
+    nodelay: longint;
     address: TInetSockAddr;
  {$ifdef MSWINDOWS}
     entry: PHostEnt;
@@ -449,6 +450,12 @@ begin
   socket := fpsocket(AF_INET, SOCK_STREAM, 0);
   if (socket < 0) then begin
     raise Exception.Create('Could not create socket: ' + {$ifdef UNIX}strerror(socketerror){$else}SysErrorMessage(socketerror){$endif});
+  end;
+  nodelay := 1;
+  if (fpsetsockopt(socket, IPPROTO_TCP, TCP_NODELAY, @nodelay, sizeof(nodelay)) < 0) then begin
+    closesocket(socket);
+    socket := -1;
+    raise Exception.Create('Could not set socket option: ' + {$ifdef UNIX}strerror(socketerror){$else}SysErrorMessage(socketerror){$endif});
   end;
   resolved := StrToHostAddr(host);
   if (HostAddrToStr(resolved) <> host) then begin
@@ -488,6 +495,7 @@ begin
   socket.BlockMode := bmBlocking;
   socket.OnError := self.SocketErrorOccurred;
   socket.Open;
+  { FIXME: Set TCP_NODELAY option on socket }
   if (not socket.Connected) then begin
     socket := nil;
     raise Exception.Create('Could not connect socket');
