@@ -91,7 +91,7 @@ def format_doc(packet):
 def make_parameter_list(packet):
     param = ''
     for element in packet.get_elements():
-        c_type = get_c_type(element[1])
+        c_type = get_c_type(element[1], element[3], True)
         name = element[0]
         pointer = ''
         arr = ''
@@ -105,9 +105,12 @@ def make_parameter_list(packet):
         param += ', {0} {1}{2}{3}'.format(c_type, pointer, name, arr)
     return param
 
-def get_c_type(py_type):
+def get_c_type(py_type, direction, is_in_signature):
     if py_type == 'string':
-        return 'char'
+        if direction == 'in' and is_in_signature:
+            return 'const char'
+        else:
+            return 'char'
     if py_type in ( 'int8',  'int16',  'int32' , 'int64', \
                    'uint8', 'uint16', 'uint32', 'uint64'):
         return "{0}_t".format(py_type)
@@ -232,7 +235,7 @@ typedef struct {{
             cb = "Callback"
             struct_body = ''
             for element in packet.get_elements():
-                c_type = get_c_type(element[1])
+                c_type = get_c_type(element[1], 'out', False)
                 if element[2] > 1:
                     struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
                                                               element[0],
@@ -245,7 +248,7 @@ typedef struct {{
 
         struct_body = ''
         for element in packet.get_elements('in'):
-            c_type = get_c_type(element[1])
+            c_type = get_c_type(element[1], 'in', False)
             if element[2] > 1:
                 struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
                                                           element[0],
@@ -260,7 +263,7 @@ typedef struct {{
 
         struct_body = ''
         for element in packet.get_elements('out'):
-            c_type = get_c_type(element[1])
+            c_type = get_c_type(element[1], 'out', False)
             if element[2] > 1:
                 struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
                                                           element[0],
@@ -363,11 +366,11 @@ def make_method_funcs():
                     struct_list += '\n\tfor (i = 0; i < {3}; i++) {0}.{1}[i] = leconvert_{2}_to({1}[i]);' \
                                    .format(sf, element[0], element[1], element[2])
                 else:
-                    temp = '\n\tmemcpy({0}.{1}, {1}, {2}*sizeof({3}));'
+                    temp = '\n\tmemcpy({0}.{1}, {1}, {2} * sizeof({3}));'
                     struct_list += temp.format(sf,
                                                element[0],
                                                element[2],
-                                               get_c_type(element[1]))
+                                               get_c_type(element[1], 'in', False))
             elif common.get_type_size(element[1]) > 1:
                 struct_list += '\n\t{0}.{1} = leconvert_{2}_to({1});'.format(sf, element[0], element[1])
             else:
@@ -392,7 +395,7 @@ def make_method_funcs():
                     return_list += temp.format(element[0],
                                                sf,
                                                element[2],
-                                               get_c_type(element[1]))
+                                               get_c_type(element[1], 'out', False))
             elif common.get_type_size(element[1]) > 1:
                 return_list += '\t*ret_{0} = leconvert_{2}_from({1}->{0});\n'.format(element[0], sf, element[1])
             else:
@@ -575,9 +578,9 @@ typedef void (*{0}CallbackFunction)({1});
         c_type_list = []
         for element in packet.get_elements():
             if element[2] > 1:
-                c_type_list.append('{0}[{1}]'.format(get_c_type(element[1]), element[2]))
+                c_type_list.append('{0}[{1}]'.format(get_c_type(element[1], 'out', True), element[2]))
             else:
-                c_type_list.append(get_c_type(element[1]))
+                c_type_list.append(get_c_type(element[1], 'out', True))
 
         typedefs += typedef.format(name, ', '.join(c_type_list + ['void *']))
 
