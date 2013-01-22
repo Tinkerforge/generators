@@ -76,7 +76,7 @@ public abstract class Device {
 		responseExpected[IPConnection.unsignedByte(IPConnection.FUNCTION_GET_ADC_CALIBRATION)] = RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE;
 		responseExpected[IPConnection.unsignedByte(IPConnection.CALLBACK_ENUMERATE)] = RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;
 
-		ipcon.devices.put(this.uid, this);
+		ipcon.devices.put(this.uid, this); // FIXME: use weakref here
 	}
 
 	public Identity getIdentity() throws TimeoutException, NotConnectedException {

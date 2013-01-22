@@ -785,7 +785,7 @@ namespace Tinkerforge
 			responseExpected[IPConnection.CALLBACK_CONNECTED]    = ResponseExpectedFlag.ALWAYS_FALSE;
 			responseExpected[IPConnection.CALLBACK_DISCONNECTED] = ResponseExpectedFlag.ALWAYS_FALSE;
 
-			ipcon.devices[this.uid] = this;
+			ipcon.devices[this.uid] = this; // FIXME: use weakref here
 		}
 
 		/// <summary>
