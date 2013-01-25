@@ -703,9 +703,9 @@ namespace Tinkerforge
 			}
 		}
 
-        internal void AddDevice(long uid, Device device)
+        internal void AddDevice(Device device)
         {
-            devices[uid] = device; // FIXME: use weakref here
+            devices[(long)device.UID] = device; // TODO: Dictionary might use UID directly as key; FIXME: might use weakref here
         }
     }
 
@@ -816,7 +816,7 @@ namespace Tinkerforge
 			responseExpected[IPConnection.CALLBACK_CONNECTED]    = ResponseExpectedFlag.ALWAYS_FALSE;
 			responseExpected[IPConnection.CALLBACK_DISCONNECTED] = ResponseExpectedFlag.ALWAYS_FALSE;
 
-			ipcon.AddDevice((long)UID, this);
+			ipcon.AddDevice(this);
 		}
 
 		/// <summary>
