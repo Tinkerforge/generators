@@ -702,7 +702,12 @@ namespace Tinkerforge
 				socketWriter.Write(data, 0, data.Length);
 			}
 		}
-	}
+
+        internal void AddDevice(long uid, Device device)
+        {
+            devices[uid] = device; // FIXME: use weakref here
+        }
+    }
 
 	public class TimeoutException : Exception
 	{
@@ -786,7 +791,7 @@ namespace Tinkerforge
 			responseExpected[IPConnection.CALLBACK_CONNECTED]    = ResponseExpectedFlag.ALWAYS_FALSE;
 			responseExpected[IPConnection.CALLBACK_DISCONNECTED] = ResponseExpectedFlag.ALWAYS_FALSE;
 
-			ipcon.devices[this.internalUID] = this; // FIXME: use weakref here
+			ipcon.AddDevice(this.internalUID, this);
 		}
 
 		/// <summary>
