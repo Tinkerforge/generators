@@ -728,8 +728,6 @@ namespace Tinkerforge
 	public abstract class Device
 	{
 		internal byte stackID = 0;
-		internal String expectedName;
-		internal String name;
 		internal short[] apiVersion = new short[3];
 		internal ResponseExpectedFlag[] responseExpected = new ResponseExpectedFlag[256];
 		internal long uid = 0;
