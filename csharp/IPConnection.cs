@@ -739,6 +739,8 @@ namespace Tinkerforge
 		internal BlockingQueue<byte[]> responseQueue = new BlockingQueue<byte[]>();
 		internal IPConnection ipcon = null;
 
+		public string UIDString { get; private set;}
+		
 		internal enum ResponseExpectedFlag
 		{
 			INVALID_FUNCTION_ID = 0,
@@ -758,6 +760,7 @@ namespace Tinkerforge
 		/// </summary>
 		public Device(string uid, IPConnection ipcon)
 		{
+			UIDString = uid;
 			long uidTmp = Base58.Decode(uid);
 			if(uidTmp > 0xFFFFFFFFL)
 			{
