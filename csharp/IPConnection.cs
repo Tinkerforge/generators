@@ -730,14 +730,14 @@ namespace Tinkerforge
 		internal byte stackID = 0;
 		internal short[] apiVersion = new short[3];
 		internal ResponseExpectedFlag[] responseExpected = new ResponseExpectedFlag[256];
-		internal long uid = 0;
+		internal long internalUID = 0;
 		internal byte expectedResponseFunctionID = 0;
 		internal byte expectedResponseSequenceNumber = 0;
 		internal CallbackWrapper[] callbackWrappers = new CallbackWrapper[256];
 		internal BlockingQueue<byte[]> responseQueue = new BlockingQueue<byte[]>();
 		internal IPConnection ipcon = null;
 
-		public string UIDString { get; private set;}
+		public string UID { get; private set;}
 		
 		internal enum ResponseExpectedFlag
 		{
@@ -758,7 +758,7 @@ namespace Tinkerforge
 		/// </summary>
 		public Device(string uid, IPConnection ipcon)
 		{
-			UIDString = uid;
+			UID = uid;
 			long uidTmp = Base58.Decode(uid);
 			if(uidTmp > 0xFFFFFFFFL)
 			{
@@ -773,7 +773,7 @@ namespace Tinkerforge
 				uidTmp |= (value2 & 0x3F000000L) << 2;
 			}
 
-			this.uid = uidTmp;
+			this.internalUID = uidTmp;
 			this.ipcon = ipcon;
 
 			for(int i = 0; i < responseExpected.Length; i++)
@@ -786,7 +786,7 @@ namespace Tinkerforge
 			responseExpected[IPConnection.CALLBACK_CONNECTED]    = ResponseExpectedFlag.ALWAYS_FALSE;
 			responseExpected[IPConnection.CALLBACK_DISCONNECTED] = ResponseExpectedFlag.ALWAYS_FALSE;
 
-			ipcon.devices[this.uid] = this; // FIXME: use weakref here
+			ipcon.devices[this.internalUID] = this; // FIXME: use weakref here
 		}
 
 		/// <summary>
@@ -892,7 +892,7 @@ namespace Tinkerforge
 		protected byte[] MakePacketHeader(byte length, byte fid)
 		{
 			byte[] packet = new byte[length];
-			LEConverter.To((long)this.uid, 0, packet);
+			LEConverter.To((long)this.internalUID, 0, packet);
 			LEConverter.To((byte)length, 4, packet);
 			LEConverter.To((byte)fid, 5, packet);
 			if(GetResponseExpected(fid))
