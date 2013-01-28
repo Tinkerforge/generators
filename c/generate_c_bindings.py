@@ -591,7 +591,7 @@ def make_create_declaration():
 /**
  * \ingroup {2}{1}
  *
- * Creates the device object \u {0} with the unique device ID \c uid and adds
+ * Creates the device object \c {0} with the unique device ID \c uid and adds
  * it to the IPConnection \c ipcon.
  */
 void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon);
@@ -605,7 +605,7 @@ def make_destroy_declaration():
 /**
  * \ingroup {2}{1}
  *
- * Removes the device object \u {0} from its IPConnection and destroys it.
+ * Removes the device object \c {0} from its IPConnection and destroys it.
  * The device object cannot be used anymore afterwards.
  */
 void {0}_destroy({1} *{0});
