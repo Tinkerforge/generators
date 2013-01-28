@@ -152,19 +152,19 @@ module Tinkerforge
   end
 
   def get_length_from_data(data)
-    data[4, 1].unpack('C<')[0]
+    data[4, 1].unpack('C')[0]
   end
 
   def get_function_id_from_data(data)
-    data[5, 1].unpack('C<')[0]
+    data[5, 1].unpack('C')[0]
   end
 
   def get_sequence_number_from_data(data)
-    (data[6, 1].unpack('C<')[0] >> 4) & 0x0F
+    (data[6, 1].unpack('C')[0] >> 4) & 0x0F
   end
 
   def get_error_code_from_data(data)
-    (data[7, 1].unpack('C<')[0] >> 6) & 0x03
+    (data[7, 1].unpack('C')[0] >> 6) & 0x03
   end
 
   class Device

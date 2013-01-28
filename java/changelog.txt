@@ -39,3 +39,5 @@
 1.0.22: Add API for Voltage/Current Bricklet
         Add API for GPS Bricklet
 2.0.0: Add compatability for Protocol 2.0
+2.0.1: Add support for custom characters in LCD20x4 Bricklet
+2.0.2: Remove unused IPConnection.*Exception classes
