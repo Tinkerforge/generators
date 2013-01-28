@@ -334,29 +334,6 @@ public class IPConnection {
 		}
 	}
 
-	public static class TimeoutException extends Exception {
-		private static final long serialVersionUID = 1L;
-
-		TimeoutException(String string) {
-			super(string);
-		}
-	}
-
-	public static class AlreadyConnectedException extends Exception {
-		private static final long serialVersionUID = 1L;
-
-		AlreadyConnectedException(String string) {
-			super(string);
-		}
-	}
-
-	public static class NotConnectedException extends Exception {
-		private static final long serialVersionUID = 1L;
-
-		NotConnectedException() {
-		}
-	}
-
 	public interface EnumerateListener {
 		public void enumerate(String uid, String connectedUid, char position,
 		                      short[] hardwareVersion, short[] firmwareVersion,
