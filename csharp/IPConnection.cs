@@ -705,7 +705,7 @@ namespace Tinkerforge
 
         internal void AddDevice(Device device)
         {
-            devices[(long)device.UID] = device; // TODO: Dictionary might use UID directly as key; FIXME: might use weakref here
+            devices[(long)device.internalUID] = device; // TODO: Dictionary might use UID directly as key; FIXME: might use weakref here
         }
     }
 
@@ -782,7 +782,15 @@ namespace Tinkerforge
 		internal BlockingQueue<byte[]> responseQueue = new BlockingQueue<byte[]>();
 		internal IPConnection ipcon = null;
 
-		public UID UID { get; private set;}
+        internal UID internalUID;
+
+        public string UID
+        {
+            get
+            {
+                return internalUID.ToString();
+            }
+        }
 		
 		internal enum ResponseExpectedFlag
 		{
@@ -803,7 +811,7 @@ namespace Tinkerforge
 		/// </summary>
 		public Device(string uid, IPConnection ipcon)
 		{
-            UID = new UID(uid);
+            internalUID = new UID(uid);
 			this.ipcon = ipcon;
 
 			for(int i = 0; i < responseExpected.Length; i++)
@@ -922,7 +930,7 @@ namespace Tinkerforge
 		protected byte[] MakePacketHeader(byte length, byte fid)
 		{
 			byte[] packet = new byte[length];
-			LEConverter.To((long)this.UID, 0, packet);
+			LEConverter.To((long)this.internalUID, 0, packet);
 			LEConverter.To((byte)length, 4, packet);
 			LEConverter.To((byte)fid, 5, packet);
 			if(GetResponseExpected(fid))
