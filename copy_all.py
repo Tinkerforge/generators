@@ -34,7 +34,7 @@ brickv_path_bindings = '{0}/{1}'.format(start_path, 'brickv/src/brickv/bindings'
 bindings = []
 for d in os.listdir(path):
     if os.path.isdir(d):
-        if not d in ('configs', '.git'):
+        if not d in ('configs', '.git', '__pycache__'):
             bindings.append(d)
 
 print('')

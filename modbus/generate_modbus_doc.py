@@ -4,7 +4,7 @@
 """
 Modbus Documentation Generator
 Copyright (C) 2012-2013 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 
 generator_modbus_doc.py: Generator for Modbus documentation
 
@@ -239,5 +239,5 @@ def make_files(com_new, directory):
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:
-        print "=== Generating %s ===" % lang
+        print("=== Generating %s ===" % lang)
         common.generate(os.getcwd(), lang, make_files, common.prepare_doc, True)

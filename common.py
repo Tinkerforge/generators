@@ -2,7 +2,7 @@
 
 """
 Common Generator Library
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2012-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 common.py: Common Library for generation of bindings and documentation
@@ -454,12 +454,12 @@ def generate(path, language, make_files, prepare, is_doc_):
 
                 return common_packets
 
-            if 'brick_' in config and not module.com.has_key('common_included'):
+            if 'brick_' in config and 'common_included' not in module.com:
                 common_packets = copy.deepcopy(common_device_packets) + copy.deepcopy(common_brick_packets)
                 module.com['packets'].extend(prepare_common_packets(common_packets))
                 module.com['common_included'] = True
 
-            if 'bricklet_' in config and not module.com.has_key('common_included'):
+            if 'bricklet_' in config and 'common_included' not in module.com:
                 common_packets = copy.deepcopy(common_device_packets) + copy.deepcopy(common_bricklet_packets)
                 module.com['packets'].extend(prepare_common_packets(common_packets))
                 module.com['common_included'] = True
@@ -563,7 +563,7 @@ class Packet:
         return constants
 
     def has_prototype_in_device(self):
-        if self.packet.has_key('prototype_in_device'):
+        if 'prototype_in_device' in self.packet:
             if self.packet['prototype_in_device'] == True:
                 return True
         return False

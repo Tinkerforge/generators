@@ -4,7 +4,7 @@
 """
 C# Documentation Generator
 Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
-Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2011 Olaf LÃ¼ke <olaf@tinkerforge.com>
 
 csharp_common.py: Common Library for generation of C# bindings and documentation
 

@@ -3,7 +3,7 @@
 
 """
 Ruby Examples Compiler
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 
 compile_ruby_examples.py: Compile all examples for the Ruby bindings
 
@@ -39,7 +39,7 @@ def walker(arg, dirname, names):
 
         src = os.path.join(dirname, name);
 
-        print 'compiling ' + src
+        print('compiling ' + src)
         args = ['/usr/bin/ruby',
                 '-wc',
                 src]
@@ -58,7 +58,7 @@ def compile(path):
     shutil.copy(os.path.join(path, zipname), '/tmp/compiler/')
 
     # unzip
-    print 'unpacking ' + zipname
+    print('unpacking ' + zipname)
     args = ['/usr/bin/unzip',
             os.path.join('/tmp/compiler', zipname)]
     subprocess.call(args)

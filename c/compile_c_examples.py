@@ -3,7 +3,7 @@
 
 """
 C/C++ Examples Compiler
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 
 compile_c_examples.py: Compile all examples for the C/C++ bindings
 
@@ -58,7 +58,7 @@ def walker(arg, dirname, names):
 
         args.append(src)
 
-        print 'compiling (gcc) ' + src
+        print('compiling (gcc) ' + src)
         subprocess.call(args)
 
         args = ['/usr/bin/g++',
@@ -76,7 +76,7 @@ def walker(arg, dirname, names):
 
         args.append(src)
 
-        print 'compiling (g++) ' + src
+        print('compiling (g++) ' + src)
         subprocess.call(args)
 
 def compile(path):
@@ -92,7 +92,7 @@ def compile(path):
     shutil.copy(os.path.join(path, zipname), '/tmp/compiler/')
 
     # unzip
-    print 'unpacking ' + zipname
+    print('unpacking ' + zipname)
     args = ['/usr/bin/unzip',
             os.path.join('/tmp/compiler', zipname)]
     subprocess.call(args)

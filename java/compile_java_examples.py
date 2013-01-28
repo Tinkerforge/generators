@@ -3,7 +3,7 @@
 
 """
 Java Examples Compiler
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 
 compile_java_examples.py: Compile all examples for the Java bindings
 
@@ -44,7 +44,7 @@ def walker(arg, dirname, names):
                 '-Xlint',
                 src]
 
-        print 'compiling ' + src
+        print('compiling ' + src)
         subprocess.call(args)
 
 def compile(path):
@@ -60,7 +60,7 @@ def compile(path):
     shutil.copy(os.path.join(path, zipname), '/tmp/compiler/')
 
     # unzip
-    print 'unpacking ' + zipname
+    print('unpacking ' + zipname)
     args = ['/usr/bin/unzip',
             os.path.join('/tmp/compiler', zipname)]
     subprocess.call(args)

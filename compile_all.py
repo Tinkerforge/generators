@@ -8,7 +8,7 @@ path = os.getcwd()
 bindings = []
 for d in os.listdir(path):
     if os.path.isdir(d):
-        if not d in ('configs', '.git'):
+        if not d in ('configs', '.git', '__pycache__'):
             bindings.append(d)
 
 for binding in bindings:
