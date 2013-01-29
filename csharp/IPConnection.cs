@@ -702,7 +702,12 @@ namespace Tinkerforge
 				socketWriter.Write(data, 0, data.Length);
 			}
 		}
-	}
+
+        internal void AddDevice(Device device)
+        {
+            devices[(long)device.internalUID] = device; // TODO: Dictionary might use UID directly as key; FIXME: might use weakref here
+        }
+    }
 
 	public class TimeoutException : Exception
 	{
@@ -725,20 +730,68 @@ namespace Tinkerforge
 		}
 	}
 
+    public struct UID
+    {
+        private string StringRepresentation;
+        private long LongRepresentation;
+
+        public UID(string uid)
+        {
+            StringRepresentation = uid;
+            long uidTmp = Base58.Decode(uid);
+            if (uidTmp > 0xFFFFFFFFL)
+            {
+                // convert from 64bit to 32bit
+                long value1 = uidTmp & 0xFFFFFFFFL;
+                long value2 = (uidTmp >> 32) & 0xFFFFFFFFL;
+
+                uidTmp = (value1 & 0x00000FFFL);
+                uidTmp |= (value1 & 0x0F000000L) >> 12;
+                uidTmp |= (value2 & 0x0000003FL) << 16;
+                uidTmp |= (value2 & 0x000F0000L) << 6;
+                uidTmp |= (value2 & 0x3F000000L) << 2;
+            }
+
+            LongRepresentation = uidTmp;
+        }
+
+        public long ToLong()
+        {
+            return LongRepresentation;
+        }
+
+        public static explicit operator long(UID uid)
+        {
+            return uid.ToLong();
+        }
+
+        public override string ToString()
+        {
+            return StringRepresentation;
+        }
+    }
+
 	public abstract class Device
 	{
 		internal byte stackID = 0;
-		internal String expectedName;
-		internal String name;
 		internal short[] apiVersion = new short[3];
 		internal ResponseExpectedFlag[] responseExpected = new ResponseExpectedFlag[256];
-		internal long uid = 0;
 		internal byte expectedResponseFunctionID = 0;
 		internal byte expectedResponseSequenceNumber = 0;
 		internal CallbackWrapper[] callbackWrappers = new CallbackWrapper[256];
 		internal BlockingQueue<byte[]> responseQueue = new BlockingQueue<byte[]>();
 		internal IPConnection ipcon = null;
 
+        internal UID internalUID;
+
+        public string UID
+        {
+            get
+            {
+                return internalUID.ToString();
+            }
+        }
+		
 		internal enum ResponseExpectedFlag
 		{
 			INVALID_FUNCTION_ID = 0,
@@ -758,21 +811,7 @@ namespace Tinkerforge
 		/// </summary>
 		public Device(string uid, IPConnection ipcon)
 		{
-			long uidTmp = Base58.Decode(uid);
-			if(uidTmp > 0xFFFFFFFFL)
-			{
-				// convert from 64bit to 32bit
-				long value1 = uidTmp & 0xFFFFFFFFL;
-				long value2 = (uidTmp >> 32) & 0xFFFFFFFFL;
-
-				uidTmp  = (value1 & 0x00000FFFL);
-				uidTmp |= (value1 & 0x0F000000L) >> 12;
-				uidTmp |= (value2 & 0x0000003FL) << 16;
-				uidTmp |= (value2 & 0x000F0000L) << 6;
-				uidTmp |= (value2 & 0x3F000000L) << 2;
-			}
-
-			this.uid = uidTmp;
+            internalUID = new UID(uid);
 			this.ipcon = ipcon;
 
 			for(int i = 0; i < responseExpected.Length; i++)
@@ -785,7 +824,7 @@ namespace Tinkerforge
 			responseExpected[IPConnection.CALLBACK_CONNECTED]    = ResponseExpectedFlag.ALWAYS_FALSE;
 			responseExpected[IPConnection.CALLBACK_DISCONNECTED] = ResponseExpectedFlag.ALWAYS_FALSE;
 
-			ipcon.devices[this.uid] = this; // FIXME: use weakref here
+			ipcon.AddDevice(this);
 		}
 
 		/// <summary>
@@ -891,7 +930,7 @@ namespace Tinkerforge
 		protected byte[] MakePacketHeader(byte length, byte fid)
 		{
 			byte[] packet = new byte[length];
-			LEConverter.To((long)this.uid, 0, packet);
+			LEConverter.To((long)this.internalUID, 0, packet);
 			LEConverter.To((byte)length, 4, packet);
 			LEConverter.To((byte)fid, 5, packet);
 			if(GetResponseExpected(fid))
