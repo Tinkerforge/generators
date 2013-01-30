@@ -57,7 +57,6 @@ namespace Tinkerforge
 		internal int nextSequenceMumber = 1;
 
 		internal readonly object socketLock = new object();
-		private object socketWriterLock = new object();
 
 		internal bool autoReconnectAllowed = false;
 		internal bool autoReconnectPending = false;
@@ -697,10 +696,7 @@ namespace Tinkerforge
                     throw new NotConnectedException();
                 }
 
-                lock (socketWriterLock)
-                {
-                    socketWriter.Write(data, 0, data.Length);
-                }
+                socketWriter.Write(data, 0, data.Length);
             }
 		}
 
