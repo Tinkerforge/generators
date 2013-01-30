@@ -964,17 +964,19 @@ namespace Tinkerforge
 				expectedResponseFunctionID = functionID;
 				expectedResponseSequenceNumber = (byte)((request[6] >> 4) & 0xF);
 
-				ipcon.Write(request);
-
-				if (!responseQueue.TryDequeue(out response, ipcon.responseTimeout))
-				{
-					expectedResponseFunctionID = 0;
-					expectedResponseSequenceNumber = 0;
-					throw new TimeoutException("Did not receive response in time");
-				}
-
-				expectedResponseFunctionID = 0;
-				expectedResponseSequenceNumber = 0;
+                try
+                {
+                    ipcon.Write(request);
+                    if (!responseQueue.TryDequeue(out response, ipcon.responseTimeout))
+                    {
+                        throw new TimeoutException("Did not receive response in time");
+                    }
+                }
+                finally
+                {
+                    expectedResponseFunctionID = 0;
+                    expectedResponseSequenceNumber = 0;
+                }
 
 				byte errorCode = IPConnection.GetErrorCodeFromData(response);
 				switch(errorCode)
