@@ -639,7 +639,7 @@ namespace Tinkerforge
 
 		internal static int GetUIDFromData(byte[] data)
 		{
-			return (int)(((int)data[0]) & 0xFF) | (int)((((int)data[1]) & 0xFF) << 8) | (int)((((int)data[2]) & 0xFF) << 16) | (int)((((int)data[3]) & 0xFF) << 24);
+			return LEConverter.IntFrom(0, data);
 		}
 
 		private static byte GetSequenceNumberFromData(byte[] data) {
