@@ -435,6 +435,7 @@ module Tinkerforge
       @auto_reconnect_pending = false
 
       @next_sequence_number = 0
+      @sequence_number_mutex = Mutex.new
 
       @devices = {}
 
@@ -619,11 +620,11 @@ module Tinkerforge
 
     # internal
     def get_next_sequence_number
-      # NOTE: Assumes that the socket mutex is locked
-      sequence_number = @next_sequence_number
-      @next_sequence_number = (@next_sequence_number + 1) % 15
-
-      sequence_number + 1
+      @sequence_number_mutex.synchronize {
+        sequence_number = @next_sequence_number
+        @next_sequence_number = (@next_sequence_number + 1) % 15
+        sequence_number + 1
+      }
     end
 
     # internal
