@@ -8,7 +8,7 @@ uses
   {$ifdef FPC}
    {$ifdef UNIX}CThreads, Errors, NetDB, BaseUnix, {$else}WinSock,{$endif}
   {$else}
-   {$ifdef MSWINDOWS}Windows,{$endif}
+   {$ifdef MSWINDOWS}Windows, WinSock,{$endif}
   {$endif}
   Classes, Sockets, SyncObjs, SysUtils, Base58, LEConverter, BlockingQueue, Device, TimedSemaphore;
 
@@ -44,11 +44,12 @@ const
   IPCON_CONNECTION_STATE_PENDING = 2; { auto-reconnect in progress }
 
 {$ifdef FPC}
+  INVALID_SOCKET = -1;
  {$ifdef MSWINDOWS}
   ESysEINTR = WSAEINTR;
  {$endif}
 {$else}
-  ESysEINTR = 10004;
+  ESysEINTR = WSAEINTR;
 {$endif}
 
 type
@@ -91,21 +92,14 @@ type
     sequenceNumberMutex: TCriticalSection;
     nextSequenceNumber: byte;
     pendingData: TByteArray;
-{$ifdef FPC}
     socket: TSocket;
-{$else}
-    socket: TTcpClient;
-    lastSocketError: integer;
-{$endif}
     waiter: TTimedSemaphore;
     enumerateCallback: TIPConnectionNotifyEnumerate;
     connectedCallback: TIPConnectionNotifyConnected;
     disconnectedCallback: TIPConnectionNotifyDisconnected;
 
     procedure ConnectUnlocked(const isAutoReconnect: boolean);
-{$ifndef FPC}
-    procedure SocketErrorOccurred(sender: TObject; socketError: integer);
-{$endif}
+    function GetLastSocketError: string;
     procedure ReceiveLoop(thread: TWrapperThread; opaque: TObject);
     procedure CallbackLoop(thread: TWrapperThread; opaque: TObject);
     procedure HandleResponse(const packet: TByteArray);
@@ -267,11 +261,7 @@ begin
   SetLength(pendingData, 0);
   devices := TDeviceTable.Create;
   socketMutex := TCriticalSection.Create;
-{$ifdef FPC}
-  socket := -1;
-{$else}
-  socket := nil;
-{$endif}
+  socket := INVALID_SOCKET;
   waiter := TTimedSemaphore.Create;
 end;
 
@@ -323,7 +313,7 @@ begin
 {$ifdef FPC}
       fpshutdown(socket, 2);
 {$else}
-      socket.Close;
+      shutdown(socket, SD_BOTH);
 {$endif}
       if (not receiveThread.IsCurrent) then begin
         receiveThread.WaitFor;
@@ -331,12 +321,8 @@ begin
       receiveThread.Destroy;
       receiveThread := nil;
       { Destroy socket }
-{$ifdef FPC}
       closesocket(socket);
-      socket := -1;
-{$else}
-      socket := nil;
-{$endif}
+      socket := INVALID_SOCKET;
     end;
     { Destroy callback thread }
     callbackQueue_ := callbackQueue;
@@ -426,16 +412,21 @@ end;
 { NOTE: Assumes that socketMutex is locked }
 procedure TIPConnection.ConnectUnlocked(const isAutoReconnect: boolean);
 var
-{$ifdef FPC}
-    nodelay: longint;
-    address: TInetSockAddr;
- {$ifdef MSWINDOWS}
-    entry: PHostEnt;
- {$else}
-    entry: THostEntry;
- {$endif}
-    resolved: TInAddr;
+{$ifndef FPC}
+    data: WSAData;
 {$endif}
+    nodelay: longint;
+{$ifdef MSWINDOWS}
+    entry: PHostEnt;
+{$else}
+    entry: THostEntry;
+{$endif}
+{$ifdef FPC}
+    address: TInetSockAddr;
+{$else}
+    address: TSockAddrIn;
+{$endif}
+    resolved: TInAddr;
     connectReason: word;
     meta: TByteArray;
 begin
@@ -446,61 +437,57 @@ begin
                                             callbackQueue);
   end;
   { Create and connect socket }
+{$ifndef FPC}
+  if (WSAStartup(MakeWord(2, 2), data) <> 0) then begin
+    raise Exception.Create('Could not initialize Windows Sockets 2.2: ' + GetLastSocketError);
+  end;
+{$endif}
 {$ifdef FPC}
   socket := fpsocket(AF_INET, SOCK_STREAM, 0);
   if (socket < 0) then begin
-    raise Exception.Create('Could not create socket: ' + {$ifdef UNIX}strerror(socketerror){$else}SysErrorMessage(socketerror){$endif});
+{$else}
+  socket := WinSock.socket(AF_INET, SOCK_STREAM, 0);
+  if (socket = INVALID_SOCKET) then begin
+{$endif}
+    raise Exception.Create('Could not create socket: ' + GetLastSocketError);
   end;
   nodelay := 1;
+{$ifdef FPC}
   if (fpsetsockopt(socket, IPPROTO_TCP, TCP_NODELAY, @nodelay, sizeof(nodelay)) < 0) then begin
+{$else}
+  if (setsockopt(socket, IPPROTO_TCP, TCP_NODELAY, @nodelay, sizeof(nodelay)) = SOCKET_ERROR) then begin
+{$endif}
+    raise Exception.Create('Could not set TCP_NODELAY socket option: ' + GetLastSocketError);
+  end;
+{$ifdef MSWINDOWS}
+  entry := gethostbyname(PAnsiChar(AnsiString(host)));
+  if (entry = nil) then begin
     closesocket(socket);
-    socket := -1;
-    raise Exception.Create('Could not set socket option: ' + {$ifdef UNIX}strerror(socketerror){$else}SysErrorMessage(socketerror){$endif});
+    socket := INVALID_SOCKET;
+    raise Exception.Create('Could not resolve host: ' + host);
   end;
-  resolved := StrToHostAddr(host);
-  if (HostAddrToStr(resolved) <> host) then begin
- {$ifdef MSWINDOWS}
-    entry := gethostbyname(PChar(host));
-    if (entry = nil) then begin
-      closesocket(socket);
-      socket := -1;
-      raise Exception.Create('Could not resolve host: ' + host);
-    end;
-    resolved.s_addr := longint(pointer(entry^.h_addr_list^)^);
- {$else}
-    entry.Name := '';
-    if (not ResolveHostByName(host, entry)) then begin
-      closesocket(socket);
-      socket := -1;
-      raise Exception.Create('Could not resolve host: ' + host);
-    end;
-    resolved := entry.Addr;
- {$endif}
-  end
-  else begin
-    resolved := HostToNet(resolved);
+  resolved.s_addr := longint(pointer(entry^.h_addr_list^)^);
+{$else}
+  entry.Name := '';
+  if (not ResolveHostByName(host, entry)) then begin
+    closesocket(socket);
+    socket := INVALID_SOCKET;
+    raise Exception.Create('Could not resolve host: ' + host);
   end;
+  resolved := entry.Addr;
+{$endif}
   address.sin_family := AF_INET;
   address.sin_port := htons(port);
   address.sin_addr := resolved;
+{$ifdef FPC}
   if (fpconnect(socket, @address, sizeof(address)) < 0) then begin
-    closesocket(socket);
-    socket := -1;
-    raise Exception.Create('Could not connect socket: ' + {$ifdef UNIX}strerror(socketerror){$else}SysErrorMessage(socketerror){$endif});
-  end;
 {$else}
-  socket := TTcpClient.Create(nil);
-  socket.RemoteHost := TSocketHost(host);
-  socket.RemotePort := TSocketPort(IntToStr(port));
-  socket.BlockMode := bmBlocking;
-  socket.OnError := self.SocketErrorOccurred;
-  socket.Open;
-  { FIXME: Set TCP_NODELAY option on socket }
-  if (not socket.Connected) then begin
-    socket := nil;
-    raise Exception.Create('Could not connect socket');
-  end;
+  if (WinSock.connect(socket, address, sizeof(address)) = SOCKET_ERROR) then begin
 {$endif}
+    closesocket(socket);
+    socket := INVALID_SOCKET;
+    raise Exception.Create('Could not connect socket: ' + GetLastSocketError);
+  end;
   { Create receive thread }
   receiveFlag := true;
   receiveThread := TWrapperThread.Create({$ifdef FPC}@{$endif}self.ReceiveLoop, nil);
@@ -519,12 +506,18 @@ begin
   callbackQueue.Enqueue(IPCON_QUEUE_KIND_META, meta);
 end;
 
-{$ifndef FPC}
-procedure TIPConnection.SocketErrorOccurred(sender: TObject; socketError: integer);
+function TIPConnection.GetLastSocketError: string;
 begin
-  lastSocketError := socketError;
-end;
+{$ifdef FPC}
+ {$ifdef UNIX}
+  result := strerror(socketerror);
+ {$else}
+  result := SysErrorMessage(socketerror);
+ {$endif}
+{$else}
+  result := SysErrorMessage(WSAGetLastError);
 {$endif}
+end;
 
 procedure TIPConnection.ReceiveLoop(thread: TWrapperThread; opaque: TObject);
 var data: array [0..8191] of byte; len, pendingLen: longint; packet, meta: TByteArray;
@@ -533,18 +526,13 @@ begin
 {$ifdef FPC}
     len := fprecv(socket, @data[0], Length(data), 0);
 {$else}
-    lastSocketError := 0;
-    len := socket.ReceiveBuf(data, Length(data));
+    len := Recv(socket, data, Length(data), 0);
 {$endif}
     if (not receiveFlag) then begin
       exit;
     end;
     if ((len < 0) or (len = 0)) then begin
-{$ifdef FPC}
-      if ((len < 0) and (socketerror = ESysEINTR)) then begin
-{$else}
-      if ((len < 0) and (lastSocketError = ESysEINTR)) then begin
-{$endif}
+      if ((len < 0) and ({$ifdef FPC}socketerror{$else}WSAGetLastError{$endif} = ESysEINTR)) then begin
         continue;
       end;
       autoReconnectAllowed := true;
@@ -655,13 +643,8 @@ begin
     socketMutex.Acquire;
     try
       if (IsConnected) then begin
-{$ifdef FPC}
         closesocket(socket);
-        socket := -1;
-{$else}
-        socket.Close;
-        socket := nil;
-{$endif}
+        socket := INVALID_SOCKET;
       end;
     finally
       socketMutex.Release;
@@ -745,11 +728,7 @@ end;
 
 function TIPConnection.IsConnected: boolean;
 begin
-{$ifdef FPC}
-  result := socket >= 0;
-{$else}
-  result := socket <> nil;
-{$endif}
+  result := socket <> INVALID_SOCKET;
 end;
 
 function TIPConnection.CreatePacket(const device: TDevice; const functionID: byte; const len: byte): TByteArray;
@@ -782,7 +761,7 @@ begin
 {$ifdef FPC}
   fpsend(socket, @data[0], Length(data), 0);
 {$else}
-  socket.SendBuf(data[0], Length(data));
+  WinSock.Send(socket, data[0], Length(data), 0);
 {$endif}
 end;
 
