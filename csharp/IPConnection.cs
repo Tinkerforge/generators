@@ -72,7 +72,7 @@ namespace Tinkerforge
 		Thread receiveThread;
 		Thread callbackThread;
 		bool receiveFlag = true;
-		internal Dictionary<long, Device> devices = new Dictionary<long, Device>();
+		internal Dictionary<int, Device> devices = new Dictionary<int, Device>();
 		BlockingQueue<CallbackQueueObject> callbackQueue = null;
 		Semaphore waiter = new Semaphore(0, Int32.MaxValue);
 
@@ -587,7 +587,7 @@ namespace Tinkerforge
 						}
 
 						byte fid = GetFunctionIdFromData(cqo.data);
-						long uid = GetUIDFromData(cqo.data);
+						int uid = GetUIDFromData(cqo.data);
 
 						if(fid == CALLBACK_ENUMERATE)
 						{
@@ -639,9 +639,9 @@ namespace Tinkerforge
 			return data[4];
 		}
 
-		internal static long GetUIDFromData(byte[] data)
+		internal static int GetUIDFromData(byte[] data)
 		{
-			return (long)(((long)data[0]) & 0xFF) | (long)((((long)data[1]) & 0xFF) << 8) | (long)((((long)data[2]) & 0xFF) << 16) | (long)((((long)data[3]) & 0xFF) << 24);
+			return (int)(((int)data[0]) & 0xFF) | (int)((((int)data[1]) & 0xFF) << 8) | (int)((((int)data[2]) & 0xFF) << 16) | (int)((((int)data[3]) & 0xFF) << 24);
 		}
 
 		private static byte GetSequenceNumberFromData(byte[] data) {
@@ -663,7 +663,7 @@ namespace Tinkerforge
 				return;
 			}
 
-			long uid = GetUIDFromData(packet);
+			int uid = GetUIDFromData(packet);
 
 			if(!devices.ContainsKey(uid))
 			{
@@ -705,7 +705,7 @@ namespace Tinkerforge
 
         internal void AddDevice(Device device)
         {
-            devices[(long)device.internalUID] = device; // TODO: Dictionary might use UID directly as key; FIXME: might use weakref here
+            devices[(int)device.internalUID] = device; // TODO: Dictionary might use UID directly as key; FIXME: might use weakref here
         }
     }
 
@@ -733,7 +733,7 @@ namespace Tinkerforge
     public struct UID
     {
         private string StringRepresentation;
-        private long LongRepresentation;
+        private int IntRepresentation;
 
         public UID(string uid)
         {
@@ -752,17 +752,17 @@ namespace Tinkerforge
                 uidTmp |= (value2 & 0x3F000000L) << 2;
             }
 
-            LongRepresentation = uidTmp;
+            IntRepresentation = (int)uidTmp;
         }
 
-        public long ToLong()
+        public int ToInt()
         {
-            return LongRepresentation;
+            return IntRepresentation;
         }
 
-        public static explicit operator long(UID uid)
+        public static explicit operator int(UID uid)
         {
-            return uid.ToLong();
+            return uid.ToInt();
         }
 
         public override string ToString()
@@ -930,7 +930,7 @@ namespace Tinkerforge
 		protected byte[] MakePacketHeader(byte length, byte fid)
 		{
 			byte[] packet = new byte[length];
-			LEConverter.To((long)this.internalUID, 0, packet);
+			LEConverter.To((int)this.internalUID, 0, packet);
 			LEConverter.To((byte)length, 4, packet);
 			LEConverter.To((byte)fid, 5, packet);
 			if(GetResponseExpected(fid))
