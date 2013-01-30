@@ -266,6 +266,7 @@ class IPConnection:
         self.auto_reconnect = True
         self.auto_reconnect_allowed = False
         self.auto_reconnect_pending = False
+        self.sequence_number_lock = Lock()
         self.next_sequence_number = 0
         self.auth_key = None
         self.devices = {}
@@ -769,10 +770,10 @@ class IPConnection:
             return self.deserialize_data(response[8:], form_ret)
 
     def get_next_sequence_number(self):
-        # NOTE: assumes that socket lock is held
-        sequence_number = self.next_sequence_number
-        self.next_sequence_number = (self.next_sequence_number + 1) % 15
-        return sequence_number + 1
+        with self.sequence_number_lock:
+            sequence_number = self.next_sequence_number
+            self.next_sequence_number = (self.next_sequence_number + 1) % 15
+            return sequence_number + 1
 
     def handle_response(self, packet):
         function_id = get_function_id_from_data(packet)
