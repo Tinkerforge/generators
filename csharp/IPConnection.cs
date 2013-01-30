@@ -54,7 +54,7 @@ namespace Tinkerforge
 		internal const int QUEUE_META = 1;
 		internal const int QUEUE_PACKET = 2;
 
-		internal int nextSequenceMumber = 1;
+		internal int nextSequenceNumber = 1;
 
 		internal readonly object socketLock = new object();
 
@@ -359,11 +359,17 @@ namespace Tinkerforge
 			waiter.Release();
 		}
 
+        private object sequenceNumberLock = new object();
+
 		internal int GetNextSequenceNumber()
 		{
-			int sequenceNumber = nextSequenceMumber;
-			nextSequenceMumber = (nextSequenceMumber + 1) % 15;
-			return sequenceNumber + 1;
+            int sequenceNumber;
+            lock (sequenceNumberLock)
+            {
+                sequenceNumber = nextSequenceNumber + 1;
+                nextSequenceNumber = (nextSequenceNumber + 1) % 15;
+            }
+            return sequenceNumber;
 		}
 
         private void ConnectSocket(string host, int port)
