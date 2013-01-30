@@ -58,6 +58,63 @@ class Base58
 }
 
 
+class Base256
+{
+    /**
+     * Encode from Base10 string to Base256 array.
+     *
+     * \param $value Base10 encoded string
+     * \returns array of bytes (little endian)
+     */
+    public static function encode($value, $length)
+    {
+        $bytes = array();
+
+        while (bccomp($value, '256') >= 0) {
+            $div = bcdiv($value, '256');
+            $mod = bcmod($value, '256');
+            array_push($bytes, intval($mod));
+            $value = $div;
+        }
+
+        array_push($bytes, intval($value));
+
+        return array_pad($bytes, $length, 0);
+    }
+
+    public static function encodeAndPack($value, $length)
+    {
+        $bytes = self::encode($value, $length);
+        $packed = '';
+
+        foreach ($bytes as $byte) {
+            $packed .= pack('C', $byte);
+        }
+
+        return $packed;
+    }
+
+    /**
+     * Decode from Base256 array to Base10 string.
+     *
+     * \param $bytes array of bytes (little endian)
+     * \returns Base10 encoded string
+     */
+    public static function decode($bytes)
+    {
+        $value = '0';
+        $base = '1';
+
+        foreach ($bytes as $byte) {
+            $value = bcadd($value, bcmul(strval($byte), $base));
+            $base = bcmul($base, '256');
+        }
+
+        return $value;
+    }
+}
+
+
 class TimeoutException extends \Exception
 {
 
@@ -585,7 +642,7 @@ class IPConnection
         }
 
         $sequenceNumberAndOptions = ($sequenceNumber << 4) | ($responseExpected << 3);
-        $header = pack('VCCCC', $uid, $length, $functionID, $sequenceNumberAndOptions, 0);
+        $header = Base256::encodeAndPack($uid, 4) . pack('CCCC', $length, $functionID, $sequenceNumberAndOptions, 0);
 
         return array($header, $sequenceNumber, $responseExpected);
     }
@@ -680,8 +737,8 @@ class IPConnection
                         break;
                     }
 
-                    $header = unpack('Vuid/Clength', $this->pendingData);
-                    $length = $header['length'];
+                    $tmp = unpack('C', substr($this->pendingData, 4));
+                    $length = $tmp[1];
 
                     if (strlen($this->pendingData) < $length) {
                         // Wait for complete packet
@@ -714,8 +771,9 @@ class IPConnection
      */
     private function handleResponse($packet, $directCallbackDispatch)
     {
-        $header = unpack('Vuid/Clength/CfunctionID/CsequenceNumberAndOptions/CerrorCodeAndFutureUse', $packet);
-        $uid = $header['uid'];
+        $uid = Base256::decode(self::collectUnpackedArray(unpack('C4uid', $packet), 'uid', 4));
+        $header = unpack('Clength/CfunctionID/CsequenceNumberAndOptions/CerrorCodeAndFutureUse', substr($packet, 4));
+        $header['uid'] = $uid;
         $functionID = $header['functionID'];
         $sequenceNumber = ($header['sequenceNumberAndOptions'] >> 4) & 0x0F;
         $payload = substr($packet, 8);
