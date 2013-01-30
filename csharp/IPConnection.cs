@@ -324,21 +324,14 @@ namespace Tinkerforge
 		/// </summary>
 		public void Enumerate()
 		{
-			lock(socketLock)
-			{
-				if (socket == null)
-				{
-					throw new NotConnectedException();
-				}
-
 				byte[] data_ = new byte[8];
 				LEConverter.To((byte)0, 0, data_);
 				LEConverter.To((byte)8, 4, data_);
 				LEConverter.To(FUNCTION_ENUMERATE, 5, data_);
 				LEConverter.To((byte)((GetNextSequenceNumber() << 4)), 6, data_);
 				LEConverter.To((byte)0, 7, data_);
+
 				Write(data_);
-			}
 		}
 
 		/// <summary>
@@ -697,10 +690,18 @@ namespace Tinkerforge
 
 		public void Write(byte[] data)
 		{
-			lock(socketWriterLock)
-			{
-				socketWriter.Write(data, 0, data.Length);
-			}
+            lock (socketLock)
+            {
+                if (GetConnectionState() != IPConnection.CONNECTION_STATE_CONNECTED)
+                {
+                    throw new NotConnectedException();
+                }
+
+                lock (socketWriterLock)
+                {
+                    socketWriter.Write(data, 0, data.Length);
+                }
+            }
 		}
 
         internal void AddDevice(Device device)
@@ -948,24 +949,16 @@ namespace Tinkerforge
 
 		protected void SendRequestNoResponse(byte[] request)
 		{
-			lock (requestLock) lock (ipcon.socketLock)
+			lock (requestLock)
 			{
-				if (ipcon.GetConnectionState() != IPConnection.CONNECTION_STATE_CONNECTED) {
-					throw new NotConnectedException();
-				}
-
 				ipcon.Write(request);
 			}
 		}
 
 		protected void SendRequestExpectResponse(byte[] request, byte functionID, out byte[] response)
 		{
-			lock (requestLock) lock (ipcon.socketLock)
+			lock (requestLock)
 			{
-				if (ipcon.GetConnectionState() != IPConnection.CONNECTION_STATE_CONNECTED) {
-					throw new NotConnectedException();
-				}
-
 				expectedResponseFunctionID = functionID;
 				expectedResponseSequenceNumber = (byte)((request[6] >> 4) & 0xF);
 
