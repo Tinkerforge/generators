@@ -114,13 +114,18 @@ def get_object_name(packet):
     return name
 
 def get_return_type(packet):
-    if len(packet.get_elements('out')) == 0:
+    elements = packet.get_elements('out')
+
+    if len(elements) == 0:
         return 'void'
-    if len(packet.get_elements('out')) > 1:
+
+    if len(elements) > 1:
         return device.get_category() + device.get_camel_case_name() + '.' + get_object_name(packet)
-    
-    for element in packet.get_elements('out'):
-        return get_java_type(element[1])
+
+    if elements[0][2] > 1:
+        return get_java_type(elements[0][1]) + '[]'
+
+    return get_java_type(elements[0][1])
 
 def make_parameter_list(packet):
     param = []
