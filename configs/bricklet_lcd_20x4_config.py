@@ -297,7 +297,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the custon character for a given index, as set with 
+Returns the custom character for a given index, as set with
 :func:`SetCustomCharacter`.
 """,
 'de':
