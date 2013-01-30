@@ -363,13 +363,13 @@ namespace Tinkerforge
 
 		internal int GetNextSequenceNumber()
 		{
-            int sequenceNumber;
+            int currentSequenceNumber;
             lock (sequenceNumberLock)
             {
-                sequenceNumber = nextSequenceNumber + 1;
-                nextSequenceNumber = (nextSequenceNumber + 1) % 15;
+                currentSequenceNumber = nextSequenceNumber + 1;
+                nextSequenceNumber = currentSequenceNumber % 15;
             }
-            return sequenceNumber;
+            return currentSequenceNumber;
 		}
 
         private void ConnectSocket(string host, int port)
