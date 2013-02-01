@@ -25,18 +25,16 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
-import shutil
 import subprocess
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-def walker(arg, dirname, names):
-    for name in names:
-        if not name.endswith('.cs'):
-            continue
+class CSharpExamplesCompiler(common.ExamplesCompiler):
+    def __init__(self, path):
+        common.ExamplesCompiler.__init__(self, 'csharp', '.cs', path)
 
-        src = os.path.join(dirname, name);
+    def compile(self, src):
         dest = src[:-3] + '.exe';
 
         args = ['/usr/bin/gmcs',
@@ -47,29 +45,10 @@ def walker(arg, dirname, names):
                 '/reference:/tmp/compiler/Tinkerforge.dll',
                 src]
 
-        print 'compiling ' + src
-        subprocess.call(args)
+        return subprocess.call(args) == 0
 
-def compile(path):
-    version = common.get_changelog_version(path)
-    zipname = 'tinkerforge_csharp_bindings_{0}_{1}_{2}.zip'.format(*version)
-
-    # Make temporary examples directory
-    if os.path.exists('/tmp/compiler'):
-        shutil.rmtree('/tmp/compiler/')
-    os.makedirs('/tmp/compiler')
-    os.chdir('/tmp/compiler')
-
-    shutil.copy(os.path.join(path, zipname), '/tmp/compiler/')
-
-    # unzip
-    print('unpacking ' + zipname)
-    args = ['/usr/bin/unzip',
-            os.path.join('/tmp/compiler', zipname)]
-    subprocess.call(args)
-
-    # compile
-    os.path.walk('/tmp/compiler/examples', walker, None)
+def run(path):
+    return CSharpExamplesCompiler(path).run()
 
 if __name__ == "__main__":
-    compile(os.getcwd())
+    sys.exit(run(os.getcwd()))

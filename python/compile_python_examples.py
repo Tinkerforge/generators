@@ -25,44 +25,25 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
-import shutil
-import subprocess
 import py_compile
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-def walker(arg, dirname, names):
-    for name in names:
-        if not name.endswith('.py'):
-            continue
+class PythonExamplesCompiler(common.ExamplesCompiler):
+    def __init__(self, path):
+        common.ExamplesCompiler.__init__(self, 'python', '.py', path, subdirs=['examples', 'source'])
 
-        src = os.path.join(dirname, name)
+    def compile(self, src):
+        try:
+            py_compile.compile(src, doraise=True)
+            return True
+        except Exception as e:
+            print(str(e))
+            return False
 
-        print('compiling ' + src)
-        py_compile.compile(src)
-
-def compile(path):
-    version = common.get_changelog_version(path)
-    zipname = 'tinkerforge_python_bindings_{0}_{1}_{2}.zip'.format(*version)
-
-    # Make temporary examples directory
-    if os.path.exists('/tmp/compiler'):
-        shutil.rmtree('/tmp/compiler/')
-    os.makedirs('/tmp/compiler')
-    os.chdir('/tmp/compiler')
-
-    shutil.copy(os.path.join(path, zipname), '/tmp/compiler/')
-
-    # unzip
-    print('unpacking ' + zipname)
-    args = ['/usr/bin/unzip',
-            os.path.join('/tmp/compiler', zipname)]
-    subprocess.call(args)
-
-    # compile
-    os.path.walk('/tmp/compiler/examples', walker, None)
-    os.path.walk('/tmp/compiler/source', walker, None)
+def run(path):
+    return PythonExamplesCompiler(path).run()
 
 if __name__ == "__main__":
-    compile(os.getcwd())
+    sys.exit(run(os.getcwd()))
