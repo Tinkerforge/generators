@@ -45,7 +45,7 @@ implementation
 
 procedure LEConvertInt8To(const value: shortint; const offset: longint; var data: TByteArray);
 begin
-  LEConvertUInt8To(value, offset, data);
+  LEConvertUInt8To(byte(value), offset, data);
 end;
 
 procedure LEConvertUInt8To(const value: byte; const offset: longint; var data: TByteArray);
@@ -55,7 +55,7 @@ end;
 
 procedure LEConvertInt16To(const value: smallint; const offset: longint; var data: TByteArray);
 begin
-  LEConvertUInt16To(value, offset, data);
+  LEConvertUInt16To(word(value), offset, data);
 end;
 
 procedure LEConvertUInt16To(const value: word; const offset: longint; var data: TByteArray);
@@ -66,7 +66,7 @@ end;
 
 procedure LEConvertInt32To(const value: longint; const offset: longint; var data: TByteArray);
 begin
-  LEConvertUInt32To(value, offset, data);
+  LEConvertUInt32To(longword(value), offset, data);
 end;
 
 procedure LEConvertUInt32To(const value: longword; const offset: longint; var data: TByteArray);
@@ -79,7 +79,7 @@ end;
 
 procedure LEConvertInt64To(const value: int64; const offset: longint; var data: TByteArray);
 begin
-  LEConvertUInt64To(value, offset, data);
+  LEConvertUInt64To(uint64(value), offset, data);
 end;
 
 procedure LEConvertUInt64To(const value: uint64; const offset: longint; var data: TByteArray);
@@ -130,7 +130,7 @@ end;
 
 function LEConvertInt8From(const offset: longint; const data: TByteArray): shortint;
 begin
-  result := LEConvertUInt8From(offset, data);
+  result := shortint(LEConvertUInt8From(offset, data));
 end;
 
 function LEConvertUInt8From(const offset: longint; const data: TByteArray): byte;
@@ -140,7 +140,7 @@ end;
 
 function LEConvertInt16From(const offset: longint; const data: TByteArray): smallint;
 begin
-  result := LEConvertUInt16From(offset, data);
+  result := smallint(LEConvertUInt16From(offset, data));
 end;
 
 function LEConvertUInt16From(const offset: longint; const data: TByteArray): word;
@@ -151,7 +151,7 @@ end;
 
 function LEConvertInt32From(const offset: longint; const data: TByteArray): longint;
 begin
-  result := LEConvertUInt32From(offset, data);
+  result := longint(LEConvertUInt32From(offset, data));
 end;
 
 function LEConvertUInt32From(const offset: longint; const data: TByteArray): longword;
@@ -165,7 +165,7 @@ end;
 
 function LEConvertInt64From(const offset: longint; const data: TByteArray): int64;
 begin
-  result := LEConvertUInt64From(offset, data);
+  result := int64(LEConvertUInt64From(offset, data));
 end;
 
 function LEConvertUInt64From(const offset: longint; const data: TByteArray): uint64;

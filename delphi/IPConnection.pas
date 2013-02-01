@@ -563,7 +563,11 @@ begin
       end;
       SetLength(packet, len);
       Move(pendingData[0], packet[0], len);
-      Move(pendingData[len], pendingData[0], Length(pendingData) - len);
+      if ((Length(pendingData) - len) > 0) then begin
+        { Don't call Move with 0 bytes to move, because this triggers an
+          ERangeCheck runtime error }
+        Move(pendingData[len], pendingData[0], Length(pendingData) - len);
+      end;
       SetLength(pendingData, Length(pendingData) - len);
       HandleResponse(packet);
     end;
