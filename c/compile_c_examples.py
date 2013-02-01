@@ -25,80 +25,55 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
-import shutil
 import subprocess
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-def walker(arg, dirname, names):
-    for name in names:
-        if not name.endswith('.c'):
-            continue
+class CExamplesCompiler(common.ExamplesCompiler):
+    def __init__(self, path, compiler):
+        common.ExamplesCompiler.__init__(self, 'c', '.c', path, comment=compiler)
 
-        src = os.path.join(dirname, name);
-        dest = src[:-2];
-        if 'brick' in dirname:
+        self.compiler = compiler
+
+    def compile(self, src):
+        dest = src[:-2]
+
+        if '/brick' in src:
+            dirname = os.path.split(src)[0]
             device = '/tmp/compiler/bindings/{0}_{1}.c'.format(os.path.split(os.path.split(dirname)[0])[-1], os.path.split(dirname)[-1])
         else:
             device = ''
 
-        args = ['/usr/bin/gcc',
-                '-std=c99',
-                '-Wall',
-                '-Wextra',
-                '-pthread',
-                '-I/tmp/compiler/bindings',
-                '-o',
-                dest,
-                '/tmp/compiler/bindings/ip_connection.c']
+        args = []
+
+        if self.compiler == 'gcc':
+            args += ['/usr/bin/gcc', '-std=c99']
+        else:
+            args += ['/usr/bin/g++', '-std=c++98']
+
+        args += ['-Wall',
+                 '-Wextra',
+                 '-pthread',
+                 '-I/tmp/compiler/bindings',
+                 '-o',
+                 dest,
+                 '/tmp/compiler/bindings/ip_connection.c']
 
         if len(device) > 0:
             args.append(device)
 
         args.append(src)
 
-        print('compiling (gcc) ' + src)
-        subprocess.call(args)
+        return subprocess.call(args) == 0
 
-        args = ['/usr/bin/g++',
-                '-std=c++98',
-                '-Wall',
-                '-Wextra',
-                '-pthread',
-                '-I/tmp/compiler/bindings',
-                '-o',
-                dest,
-                '/tmp/compiler/bindings/ip_connection.c']
+def run(path):
+    rc = CExamplesCompiler(path, 'gcc').run()
 
-        if len(device) > 0:
-            args.append(device)
+    if rc != 0:
+        return rc
 
-        args.append(src)
-
-        print('compiling (g++) ' + src)
-        subprocess.call(args)
-
-def compile(path):
-    version = common.get_changelog_version(path)
-    zipname = 'tinkerforge_c_bindings_{0}_{1}_{2}.zip'.format(*version)
-
-    # Make temporary examples directory
-    if os.path.exists('/tmp/compiler'):
-        shutil.rmtree('/tmp/compiler/')
-    os.makedirs('/tmp/compiler')
-    os.chdir('/tmp/compiler')
-
-    shutil.copy(os.path.join(path, zipname), '/tmp/compiler/')
-
-    # unzip
-    print('unpacking ' + zipname)
-    args = ['/usr/bin/unzip',
-            os.path.join('/tmp/compiler', zipname)]
-    subprocess.call(args)
-
-    # compile
-    os.path.walk('/tmp/compiler/examples', walker, None)
+    return CExamplesCompiler(path, 'g++').run()
 
 if __name__ == "__main__":
-    compile(os.getcwd())
+    sys.exit(run(os.getcwd()))
