@@ -87,6 +87,10 @@ def make_parameter_list(packet, for_doc, with_modifiers=True):
                     final_type = 'array [0..{0}] of {1}'.format(element[2] - 1, delphi_type[0])
                 else:
                     final_type = 'TArray0To{0}Of{1}'.format(element[2] - 1, delphi_type[1])
+
+                    # special case for GetIdentity to avoid redefinition of TArray0To2OfUInt8 and signature mismatch
+                    if packet.get_camel_case_name() == 'GetIdentity' and final_type == 'TArray0To2OfUInt8':
+                        final_type = 'TVersionNumber'
             else:
                 final_type = delphi_type[0]
 
