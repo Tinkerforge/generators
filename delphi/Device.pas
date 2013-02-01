@@ -26,7 +26,6 @@ type
   { TDevice }
   TCallbackWrapper = procedure(const packet: TByteArray) of object;
   TVersionNumber = array [0..2] of byte;
-  TArray0To2OfUInt8 = array [0..2] of byte;
   TDevice = class
   private
     requestMutex: TCriticalSection;
@@ -90,7 +89,8 @@ type
     ///  flag is disabled for a setter function then no response is send and
     ///  errors are silently ignored, because they cannot be detected.
     /// </summary>
-    procedure SetResponseExpected(const functionId: byte; const responseExpected_: boolean); virtual;
+    procedure SetResponseExpected(const functionId: byte;
+                                  const responseExpected_: boolean); virtual;
 
     /// <summary>
     ///  Changes the response expected flag for all setter and callback
@@ -99,7 +99,7 @@ type
     procedure SetResponseExpectedAll(const responseExpected_: boolean); virtual;
 
     procedure GetIdentity(out uid: string; out connectedUid: string; out position: char;
-                          out hardwareVersion: TArray0To2OfUInt8; out firmwareVersion: TArray0To2OfUInt8;
+                          out hardwareVersion: TVersionNumber; out firmwareVersion: TVersionNumber;
                           out deviceIdentifier: word); virtual; abstract;
 
     { Internal }
