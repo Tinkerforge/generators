@@ -24,6 +24,7 @@ class ReceiveThread extends Thread {
 		this.ipcon = ipcon;
 	}
 
+	@Override
 	public void run() {
 		byte[] pendingData = new byte[8192];
 		int pendingLength = 0;
@@ -44,7 +45,7 @@ class ReceiveThread extends Thread {
 					bb.putShort(IPConnection.DISCONNECT_REASON_ERROR);
 
 					try {
-						ipcon.callbackQueue.put(new IPConnection.CallbackQueueObject(ipcon.QUEUE_META, bb.array()));
+						ipcon.callbackQueue.put(new IPConnection.CallbackQueueObject(IPConnection.QUEUE_META, bb.array()));
 					} catch(java.lang.InterruptedException e2) {
 					}
 				}
@@ -67,7 +68,7 @@ class ReceiveThread extends Thread {
 					bb.putShort(IPConnection.DISCONNECT_REASON_SHUTDOWN);
 
 					try {
-						ipcon.callbackQueue.put(new IPConnection.CallbackQueueObject(ipcon.QUEUE_META, bb.array()));
+						ipcon.callbackQueue.put(new IPConnection.CallbackQueueObject(IPConnection.QUEUE_META, bb.array()));
 					} catch(java.lang.InterruptedException e2) {
 					}
 				}
@@ -82,7 +83,7 @@ class ReceiveThread extends Thread {
 					break;
 				}
 
-				length = ipcon.getLengthFromData(pendingData);
+				length = IPConnection.getLengthFromData(pendingData);
 
 				if(pendingLength < length) {
 					// Wait for complete packet
@@ -112,6 +113,7 @@ class CallbackThread extends Thread {
 		this.callbackQueue = callbackQueue;
 	}
 
+	@Override
 	public void run() {
 		while(true) {
 			IPConnection.CallbackQueueObject cqo = null;
@@ -209,10 +211,10 @@ class CallbackThread extends Thread {
 						continue;
 					}
 
-					byte functionID = ipcon.getFunctionIDFromData(cqo.data);
+					byte functionID = IPConnection.getFunctionIDFromData(cqo.data);
 					if(functionID == IPConnection.CALLBACK_ENUMERATE) {
 						if(ipcon.enumerateListener != null) {
-							int length = ipcon.getLengthFromData(cqo.data);
+							int length = IPConnection.getLengthFromData(cqo.data);
 							ByteBuffer bb = ByteBuffer.wrap(cqo.data, 8, length - 8);
 							bb.order(ByteOrder.LITTLE_ENDIAN);
 							String uid_str = "";
@@ -231,22 +233,22 @@ class CallbackThread extends Thread {
 							}
 							char position = (char)bb.get();
 							short[] hardwareVersion = new short[3];
-							hardwareVersion[0] = ipcon.unsignedByte(bb.get());
-							hardwareVersion[1] = ipcon.unsignedByte(bb.get());
-							hardwareVersion[2] = ipcon.unsignedByte(bb.get());
+							hardwareVersion[0] = IPConnection.unsignedByte(bb.get());
+							hardwareVersion[1] = IPConnection.unsignedByte(bb.get());
+							hardwareVersion[2] = IPConnection.unsignedByte(bb.get());
 							short[] firmwareVersion = new short[3];
-							firmwareVersion[0] = ipcon.unsignedByte(bb.get());
-							firmwareVersion[1] = ipcon.unsignedByte(bb.get());
-							firmwareVersion[2] = ipcon.unsignedByte(bb.get());
-							int deviceIdentifier = ipcon.unsignedShort(bb.getShort());
-							short enumerationType = ipcon.unsignedByte(bb.get());
+							firmwareVersion[0] = IPConnection.unsignedByte(bb.get());
+							firmwareVersion[1] = IPConnection.unsignedByte(bb.get());
+							firmwareVersion[2] = IPConnection.unsignedByte(bb.get());
+							int deviceIdentifier = IPConnection.unsignedShort(bb.getShort());
+							short enumerationType = IPConnection.unsignedByte(bb.get());
 
 							ipcon.enumerateListener.enumerate(uid_str, connectedUid_str, position,
 							                                  hardwareVersion, firmwareVersion,
 							                                  deviceIdentifier, enumerationType);
 						}
 					} else {
-						long uid = ipcon.getUIDFromData(cqo.data);
+						long uid = IPConnection.getUIDFromData(cqo.data);
 						Device device = ipcon.devices.get(uid);
 						if(device.callbacks[functionID] != null) {
 							device.callbacks[functionID].callback(cqo.data);
