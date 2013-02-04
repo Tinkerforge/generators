@@ -469,14 +469,19 @@ def make_methods():
         name_upper = packet.get_upper_case_name()
         doc = format_doc(packet)
         bbputs = ''
-        bbput = '\t\tbb.put{0}(({1}){2});'
+        bbput = '\t\tbb.put{0}({1}{2});'
         for element in packet.get_elements('in'):
             name = common.underscore_to_headless_camel_case(element[0])
             if element[1] == 'bool':
                 name = '({0} ? 1 : 0)'.format(name)
 
+            cast = ''
+            put_java_type = get_put_java_type(element[1])
+            if put_java_type != get_java_type(element[1]):
+                cast = '({0})'.format(put_java_type)
+
             bbput_format = bbput.format(get_put_type(element[1]),
-                                        get_put_java_type(element[1]),
+                                        cast,
                                         name)
 
             if element[2] > 1:

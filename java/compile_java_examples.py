@@ -36,9 +36,9 @@ class JavaExamplesCompiler(common.ExamplesCompiler):
 
     def compile(self, src):
         args = ['/usr/bin/javac',
+                '-Xlint',
                 '-cp',
                 '/tmp/compiler/Tinkerforge.jar:.',
-                '-Xlint',
                 src]
 
         return subprocess.call(args) == 0
