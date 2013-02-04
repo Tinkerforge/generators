@@ -167,7 +167,7 @@ class CallbackThread extends Thread {
 							}
 
 							if(ipcon.disconnectedListener != null) {
-								ipcon.disconnectedListener.disconnected((short)parameter);
+								ipcon.disconnectedListener.disconnected(parameter);
 							}
 
 							if(parameter != IPConnection.DISCONNECT_REASON_REQUEST && ipcon.autoReconnect && ipcon.autoReconnectAllowed) {
@@ -270,11 +270,11 @@ public class IPConnection {
 	public final static byte FUNCTION_GET_ADC_CALIBRATION = (byte)250;
 	public final static byte CALLBACK_ENUMERATE = (byte)253;
 
-	public final static byte CALLBACK_CONNECTED = (byte)0;
-	public final static byte CALLBACK_DISCONNECTED = (byte)1;
-	public final static byte CALLBACK_AUTHENTICATION_ERROR = (byte)2;
+	public final static byte CALLBACK_CONNECTED = 0;
+	public final static byte CALLBACK_DISCONNECTED = 1;
+	public final static byte CALLBACK_AUTHENTICATION_ERROR = 2;
 
-	private final static long BROADCAST_UID = (long)0;
+	private final static long BROADCAST_UID = 0;
 
 	// enumeration_type parameter to the enumerate callback
 	public final static short ENUMERATION_TYPE_AVAILABLE = 0;
@@ -773,8 +773,8 @@ public class IPConnection {
 	}
 
 	static long base58Decode(String encoded) {
-		long value = (long)0;
-		long columnMultiplier = (long)1;
+		long value = 0;
+		long columnMultiplier = 1;
 
 		for(int i = encoded.length() - 1; i >= 0; i--) {
 			int column = BASE58.indexOf(encoded.charAt(i));
