@@ -520,7 +520,7 @@ begin
 end;
 
 procedure TIPConnection.ReceiveLoop(thread: TWrapperThread; opaque: TObject);
-var data: array [0..8191] of byte; len, pendingLen: longint; packet, meta: TByteArray;
+var data: array [0..8191] of byte; len, pendingLen, remainingLen: longint; packet, meta: TByteArray;
 begin
   while (receiveFlag) do begin
 {$ifdef FPC}
@@ -563,12 +563,14 @@ begin
       end;
       SetLength(packet, len);
       Move(pendingData[0], packet[0], len);
-      if ((Length(pendingData) - len) > 0) then begin
-        { Don't call Move with 0 bytes to move, because this triggers an
-          ERangeCheck runtime error }
-        Move(pendingData[len], pendingData[0], Length(pendingData) - len);
+      remainingLen := Length(pendingData) - len;
+      if (remainingLen > 0) then begin
+        { Don't call Move with remainingLen of 0, because in this case len is
+          outside the bounds of pendingData. This would trigger an ERangeCheck
+          error at runtime }
+        Move(pendingData[len], pendingData[0], remainingLen);
       end;
-      SetLength(pendingData, Length(pendingData) - len);
+      SetLength(pendingData, remainingLen);
       HandleResponse(packet);
     end;
   end;
