@@ -9,8 +9,8 @@ Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 generator_java_bindings.py: Generator for Java bindings
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -35,8 +35,8 @@ device = None
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
-    link = '{{@link com.tinkerforge.{0}{1}.{2}}}'
-    link_c = '{{@link com.tinkerforge.{0}{1}.{2}Listener}}'
+    link = '{{@link {0}{1}#{2}({3})}}'
+    link_c = '{{@link {0}{1}.{2}Listener}}'
 
     # handle tables
     lines = text.split('\n')
@@ -75,7 +75,7 @@ def format_doc(packet):
             name_right = link_c.format(device.get_category(), cls, name)
         else:
             name = other_packet.get_headless_camel_case_name()
-            name_right = link.format(device.get_category(), cls, name)
+            name_right = link.format(device.get_category(), cls, name, make_parameter_list(other_packet, True))
 
         text = text.replace(name_false, name_right)
 
@@ -158,11 +158,11 @@ def make_return_objects():
 
             tostr.append(to)
             params.append(param.format(typ, arr, ele_name, new))
-            
-        objs += obj.format(name, 
+
+        objs += obj.format(name,
                            '\n'.join(params),
                            ' ", " + '.join(tostr))
-        
+
     return objs
 
 def make_listener_definitions():
@@ -183,7 +183,7 @@ def make_listener_definitions():
         cbs += cb.format(name, name_lower, parameter, doc)
     return cbs
 
- 
+
 def make_response_expected():
     res = ''
     re = "\t\tresponseExpected[IPConnection.unsignedByte({0})] = {1}\n"
@@ -305,7 +305,7 @@ def make_listener_lists():
 
     return llists
 
-def make_parameter_list(packet):
+def make_parameter_list(packet, just_types=False):
     param = []
     for element in packet.get_elements():
         if element[3] == 'out' and packet.get_type() == 'function':
@@ -315,8 +315,11 @@ def make_parameter_list(packet):
         arr = ''
         if element[2] > 1 and element[1] != 'string':
             arr = '[]'
-       
-        param.append('{0}{1} {2}'.format(java_type, arr, name))
+
+        if just_types:
+            param.append('{0}{1}'.format(java_type, arr))
+        else:
+            param.append('{0}{1} {2}'.format(java_type, arr, name))
     return ', '.join(param)
 
 def make_constructor():
@@ -473,7 +476,7 @@ def make_methods():
                 name = '({0} ? 1 : 0)'.format(name)
 
             bbput_format = bbput.format(get_put_type(element[1]),
-                                        get_put_java_type(element[1]), 
+                                        get_put_java_type(element[1]),
                                         name)
 
             if element[2] > 1:
