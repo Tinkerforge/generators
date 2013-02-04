@@ -54,7 +54,8 @@ namespace Tinkerforge
 		internal const int QUEUE_META = 1;
 		internal const int QUEUE_PACKET = 2;
 
-		internal int nextSequenceNumber = 1;
+		internal int nextSequenceNumber = 0;
+		private object sequenceNumberLock = new object();
 
 		internal readonly object socketLock = new object();
 
@@ -358,8 +359,6 @@ namespace Tinkerforge
 		{
 			waiter.Release();
 		}
-
-        private object sequenceNumberLock = new object();
 
 		internal int GetNextSequenceNumber()
 		{
