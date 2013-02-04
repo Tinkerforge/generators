@@ -54,10 +54,9 @@ namespace Tinkerforge
 		internal const int QUEUE_META = 1;
 		internal const int QUEUE_PACKET = 2;
 
-		internal int nextSequenceMumber = 1;
+		internal int nextSequenceNumber = 1;
 
 		internal readonly object socketLock = new object();
-		private object socketWriterLock = new object();
 
 		internal bool autoReconnectAllowed = false;
 		internal bool autoReconnectPending = false;
@@ -324,21 +323,14 @@ namespace Tinkerforge
 		/// </summary>
 		public void Enumerate()
 		{
-			lock(socketLock)
-			{
-				if (socket == null)
-				{
-					throw new NotConnectedException();
-				}
-
 				byte[] data_ = new byte[8];
 				LEConverter.To((byte)0, 0, data_);
 				LEConverter.To((byte)8, 4, data_);
 				LEConverter.To(FUNCTION_ENUMERATE, 5, data_);
 				LEConverter.To((byte)((GetNextSequenceNumber() << 4)), 6, data_);
 				LEConverter.To((byte)0, 7, data_);
+
 				Write(data_);
-			}
 		}
 
 		/// <summary>
@@ -367,11 +359,17 @@ namespace Tinkerforge
 			waiter.Release();
 		}
 
+        private object sequenceNumberLock = new object();
+
 		internal int GetNextSequenceNumber()
 		{
-			int sequenceNumber = nextSequenceMumber;
-			nextSequenceMumber = (nextSequenceMumber + 1) % 15;
-			return sequenceNumber + 1;
+            int currentSequenceNumber;
+            lock (sequenceNumberLock)
+            {
+                currentSequenceNumber = nextSequenceNumber + 1;
+                nextSequenceNumber = currentSequenceNumber % 15;
+            }
+            return currentSequenceNumber;
 		}
 
         private void ConnectSocket(string host, int port)
@@ -697,10 +695,15 @@ namespace Tinkerforge
 
 		public void Write(byte[] data)
 		{
-			lock(socketWriterLock)
-			{
-				socketWriter.Write(data, 0, data.Length);
-			}
+            lock (socketLock)
+            {
+                if (GetConnectionState() != IPConnection.CONNECTION_STATE_CONNECTED)
+                {
+                    throw new NotConnectedException();
+                }
+
+                socketWriter.Write(data, 0, data.Length);
+            }
 		}
 
         internal void AddDevice(Device device)
@@ -948,38 +951,32 @@ namespace Tinkerforge
 
 		protected void SendRequestNoResponse(byte[] request)
 		{
-			lock (requestLock) lock (ipcon.socketLock)
+			lock (requestLock)
 			{
-				if (ipcon.GetConnectionState() != IPConnection.CONNECTION_STATE_CONNECTED) {
-					throw new NotConnectedException();
-				}
-
 				ipcon.Write(request);
 			}
 		}
 
 		protected void SendRequestExpectResponse(byte[] request, byte functionID, out byte[] response)
 		{
-			lock (requestLock) lock (ipcon.socketLock)
+			lock (requestLock)
 			{
-				if (ipcon.GetConnectionState() != IPConnection.CONNECTION_STATE_CONNECTED) {
-					throw new NotConnectedException();
-				}
-
 				expectedResponseFunctionID = functionID;
 				expectedResponseSequenceNumber = (byte)((request[6] >> 4) & 0xF);
 
-				ipcon.Write(request);
-
-				if (!responseQueue.TryDequeue(out response, ipcon.responseTimeout))
-				{
-					expectedResponseFunctionID = 0;
-					expectedResponseSequenceNumber = 0;
-					throw new TimeoutException("Did not receive response in time");
-				}
-
-				expectedResponseFunctionID = 0;
-				expectedResponseSequenceNumber = 0;
+                try
+                {
+                    ipcon.Write(request);
+                    if (!responseQueue.TryDequeue(out response, ipcon.responseTimeout))
+                    {
+                        throw new TimeoutException("Did not receive response in time");
+                    }
+                }
+                finally
+                {
+                    expectedResponseFunctionID = 0;
+                    expectedResponseSequenceNumber = 0;
+                }
 
 				byte errorCode = IPConnection.GetErrorCodeFromData(response);
 				switch(errorCode)
