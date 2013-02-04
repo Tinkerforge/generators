@@ -151,13 +151,31 @@ class CallbackThread extends Thread {
 						case IPConnection.CALLBACK_DISCONNECTED:
 							synchronized(ipcon.socketMutex) {
 								try {
-									if(ipcon.socket != null) {
-										ipcon.socket.close();
-										ipcon.socket = null;
+									if(ipcon.in != null) {
+										ipcon.in.close();
 									}
 								} catch(java.io.IOException e) {
 									e.printStackTrace();
 								}
+								ipcon.in = null;
+
+								try {
+									if(ipcon.out != null) {
+										ipcon.out.close();
+									}
+								} catch(java.io.IOException e) {
+									e.printStackTrace();
+								}
+								ipcon.out = null;
+
+								try {
+									if(ipcon.socket != null) {
+										ipcon.socket.close();
+									}
+								} catch(java.io.IOException e) {
+									e.printStackTrace();
+								}
+								ipcon.socket = null;
 							}
 
 							try {
@@ -456,29 +474,29 @@ public class IPConnection {
 				try {
 					if(in != null) {
 						in.close();
-						in = null;
 					}
 				} catch(java.io.IOException e) {
 					e.printStackTrace();
 				}
+				in = null;
 
 				try {
 					if(out != null) {
 						out.close();
-						out = null;
 					}
 				} catch(java.io.IOException e) {
 					e.printStackTrace();
 				}
+				out = null;
 
 				try {
 					if(socket != null) {
 						socket.close();
-						socket = null;
 					}
 				} catch(java.io.IOException e) {
 					e.printStackTrace();
 				}
+				socket = null;
 
 				if(receiveThread != null) {
 					try {
