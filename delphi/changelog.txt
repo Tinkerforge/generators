@@ -19,3 +19,6 @@
 2.0.0: Add compatability for Protocol 2.0
 2.0.1: Add support for custom characters in LCD20x4 Bricklet
 2.0.2: Rewrite socket code to use WinSock on Windows, allows to set TCP_NODELAY
+2.0.3: Avoid signature mismatch for GetIdentity procedure
+       Avoid a potential out-of-bounds array access
+       Make expected integer overflows explicit
