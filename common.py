@@ -729,9 +729,8 @@ class ExamplesCompiler:
 
         rc = subprocess.call(args)
 
-        os.chdir(cwd)
-
         if rc != 0:
+            os.chdir(cwd)
             print('### could not unpack {0}'.format(self.zipname))
             return 1
 
@@ -744,6 +743,8 @@ class ExamplesCompiler:
             print('### [{0}] {1} files compiled, {2} failure(s) occurred'.format(self.comment, self.compile_count, self.failure_count))
         else:
             print('### {0} files compiled, {1} failure(s) occurred'.format(self.compile_count, self.failure_count))
+
+        os.chdir(cwd)
 
         if self.failure_count > 0:
             return 1
