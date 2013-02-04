@@ -281,18 +281,21 @@ def make_function_id_definitions():
 
 def make_constants():
     str_constants = '\n'
-    str_constant = '\tpublic final static {0} {1}_{2} = ({0}){3};\n'
+    str_constant = '\tpublic final static {0} {1}_{2} = {3}{4};\n'
     constants = device.get_constants()
     for constant in constants:
         for definition in constant.definitions:
             if constant.type == 'char':
+                cast = ''
                 value = "'{0}'".format(definition.value)
             else:
+                cast = '({0})'.format(get_java_type(constant.type))
                 value = str(definition.value)
 
             str_constants += str_constant.format(get_java_type(constant.type),
                                                  constant.name_uppercase,
                                                  definition.name_uppercase,
+                                                 cast,
                                                  value)
     return str_constants
 
