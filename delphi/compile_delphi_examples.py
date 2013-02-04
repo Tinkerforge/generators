@@ -36,6 +36,7 @@ class DelphiExamplesCompiler(common.ExamplesCompiler):
 
     def compile(self, src):
         args = ['/usr/bin/fpc',
+                '-vw',
                 '-Fu/tmp/compiler/bindings',
                 '-l',
                 src]
