@@ -1287,17 +1287,16 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets a long wifi key (up to 64 chars) for WPA encryption. This key will be used
+Sets a long WIFI key (up to 64 chars) for WPA encryption. This key will be used
 if the key in :func:`SetWifiEncryption` is set to "-". In the old protocol,
 a payload of size 64 was not possible, so the maximum key length was 50 chars.
-
 
 With the new protocol this is possible, since we didn't want to break API,
 this function was added additionally.
 """,
 'de':
 """
-Setzts einen langen WIFI Schlüssel (bis zu 64 Buchstaben) für WPA
+Setzt einen langen WIFI Schlüssel (bis zu 64 Zeichen) für WPA
 Verschlüsselung. Dieser Schlüssel wird genutzt, wenn der Schlüssel in
 :func:`SetWifiEncryption` auf "-" gesetzt wird. Im alten Protokoll war
 ein Payload der Größe 64 nicht möglich, dadurch wurde die maximale
@@ -1328,4 +1327,3 @@ Gibt den Verschlüsselungsschlüssel zurück, wie von
 """
 }]
 })
-
