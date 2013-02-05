@@ -18,6 +18,10 @@ for binding in bindings:
     path_binding = '{0}/{1}'.format(path, binding)
     sys.path.append(path_binding)
     module = __import__('compile_{0}_examples'.format(binding))
-    print("\nCompiling examples for {0}:".format(binding))
-    module.compile(path_binding)
 
+    print(">>> compiling examples for {0}:".format(binding))
+
+    rc = module.run(path_binding)
+
+    if rc != 0:
+        sys.exit(rc)

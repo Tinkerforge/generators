@@ -54,10 +54,10 @@ namespace Tinkerforge
 		internal const int QUEUE_META = 1;
 		internal const int QUEUE_PACKET = 2;
 
-		internal int nextSequenceMumber = 1;
+		internal int nextSequenceNumber = 0;
+		private object sequenceNumberLock = new object();
 
 		internal readonly object socketLock = new object();
-		private object socketWriterLock = new object();
 
 		internal bool autoReconnectAllowed = false;
 		internal bool autoReconnectPending = false;
@@ -72,7 +72,7 @@ namespace Tinkerforge
 		Thread receiveThread;
 		Thread callbackThread;
 		bool receiveFlag = true;
-		internal Dictionary<long, Device> devices = new Dictionary<long, Device>();
+		internal Dictionary<int, Device> devices = new Dictionary<int, Device>();
 		BlockingQueue<CallbackQueueObject> callbackQueue = null;
 		Semaphore waiter = new Semaphore(0, Int32.MaxValue);
 
@@ -324,21 +324,14 @@ namespace Tinkerforge
 		/// </summary>
 		public void Enumerate()
 		{
-			lock(socketLock)
-			{
-				if (socket == null)
-				{
-					throw new NotConnectedException();
-				}
-
 				byte[] data_ = new byte[8];
 				LEConverter.To((byte)0, 0, data_);
 				LEConverter.To((byte)8, 4, data_);
 				LEConverter.To(FUNCTION_ENUMERATE, 5, data_);
 				LEConverter.To((byte)((GetNextSequenceNumber() << 4)), 6, data_);
 				LEConverter.To((byte)0, 7, data_);
+
 				Write(data_);
-			}
 		}
 
 		/// <summary>
@@ -369,9 +362,13 @@ namespace Tinkerforge
 
 		internal int GetNextSequenceNumber()
 		{
-			int sequenceNumber = nextSequenceMumber;
-			nextSequenceMumber = (nextSequenceMumber + 1) % 15;
-			return sequenceNumber + 1;
+            int currentSequenceNumber;
+            lock (sequenceNumberLock)
+            {
+                currentSequenceNumber = nextSequenceNumber + 1;
+                nextSequenceNumber = currentSequenceNumber % 15;
+            }
+            return currentSequenceNumber;
 		}
 
         private void ConnectSocket(string host, int port)
@@ -587,7 +584,7 @@ namespace Tinkerforge
 						}
 
 						byte fid = GetFunctionIdFromData(cqo.data);
-						long uid = GetUIDFromData(cqo.data);
+						int uid = GetUIDFromData(cqo.data);
 
 						if(fid == CALLBACK_ENUMERATE)
 						{
@@ -639,9 +636,9 @@ namespace Tinkerforge
 			return data[4];
 		}
 
-		internal static long GetUIDFromData(byte[] data)
+		internal static int GetUIDFromData(byte[] data)
 		{
-			return (long)(((long)data[0]) & 0xFF) | (long)((((long)data[1]) & 0xFF) << 8) | (long)((((long)data[2]) & 0xFF) << 16) | (long)((((long)data[3]) & 0xFF) << 24);
+			return LEConverter.IntFrom(0, data);
 		}
 
 		private static byte GetSequenceNumberFromData(byte[] data) {
@@ -663,7 +660,7 @@ namespace Tinkerforge
 				return;
 			}
 
-			long uid = GetUIDFromData(packet);
+			int uid = GetUIDFromData(packet);
 
 			if(!devices.ContainsKey(uid))
 			{
@@ -697,15 +694,20 @@ namespace Tinkerforge
 
 		public void Write(byte[] data)
 		{
-			lock(socketWriterLock)
-			{
-				socketWriter.Write(data, 0, data.Length);
-			}
+            lock (socketLock)
+            {
+                if (GetConnectionState() != IPConnection.CONNECTION_STATE_CONNECTED)
+                {
+                    throw new NotConnectedException();
+                }
+
+                socketWriter.Write(data, 0, data.Length);
+            }
 		}
 
         internal void AddDevice(Device device)
         {
-            devices[(long)device.internalUID] = device; // TODO: Dictionary might use UID directly as key; FIXME: might use weakref here
+            devices[(int)device.internalUID] = device; // TODO: Dictionary might use UID directly as key; FIXME: might use weakref here
         }
     }
 
@@ -733,7 +735,7 @@ namespace Tinkerforge
     public struct UID
     {
         private string StringRepresentation;
-        private long LongRepresentation;
+        private int IntRepresentation;
 
         public UID(string uid)
         {
@@ -752,17 +754,17 @@ namespace Tinkerforge
                 uidTmp |= (value2 & 0x3F000000L) << 2;
             }
 
-            LongRepresentation = uidTmp;
+            IntRepresentation = (int)uidTmp;
         }
 
-        public long ToLong()
+        public int ToInt()
         {
-            return LongRepresentation;
+            return IntRepresentation;
         }
 
-        public static explicit operator long(UID uid)
+        public static explicit operator int(UID uid)
         {
-            return uid.ToLong();
+            return uid.ToInt();
         }
 
         public override string ToString()
@@ -930,7 +932,7 @@ namespace Tinkerforge
 		protected byte[] MakePacketHeader(byte length, byte fid)
 		{
 			byte[] packet = new byte[length];
-			LEConverter.To((long)this.internalUID, 0, packet);
+			LEConverter.To((int)this.internalUID, 0, packet);
 			LEConverter.To((byte)length, 4, packet);
 			LEConverter.To((byte)fid, 5, packet);
 			if(GetResponseExpected(fid))
@@ -948,38 +950,32 @@ namespace Tinkerforge
 
 		protected void SendRequestNoResponse(byte[] request)
 		{
-			lock (requestLock) lock (ipcon.socketLock)
+			lock (requestLock)
 			{
-				if (ipcon.GetConnectionState() != IPConnection.CONNECTION_STATE_CONNECTED) {
-					throw new NotConnectedException();
-				}
-
 				ipcon.Write(request);
 			}
 		}
 
 		protected void SendRequestExpectResponse(byte[] request, byte functionID, out byte[] response)
 		{
-			lock (requestLock) lock (ipcon.socketLock)
+			lock (requestLock)
 			{
-				if (ipcon.GetConnectionState() != IPConnection.CONNECTION_STATE_CONNECTED) {
-					throw new NotConnectedException();
-				}
-
 				expectedResponseFunctionID = functionID;
 				expectedResponseSequenceNumber = (byte)((request[6] >> 4) & 0xF);
 
-				ipcon.Write(request);
-
-				if (!responseQueue.TryDequeue(out response, ipcon.responseTimeout))
-				{
-					expectedResponseFunctionID = 0;
-					expectedResponseSequenceNumber = 0;
-					throw new TimeoutException("Did not receive response in time");
-				}
-
-				expectedResponseFunctionID = 0;
-				expectedResponseSequenceNumber = 0;
+                try
+                {
+                    ipcon.Write(request);
+                    if (!responseQueue.TryDequeue(out response, ipcon.responseTimeout))
+                    {
+                        throw new TimeoutException("Did not receive response in time");
+                    }
+                }
+                finally
+                {
+                    expectedResponseFunctionID = 0;
+                    expectedResponseSequenceNumber = 0;
+                }
 
 				byte errorCode = IPConnection.GetErrorCodeFromData(response);
 				switch(errorCode)

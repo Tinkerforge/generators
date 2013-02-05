@@ -93,7 +93,9 @@ def generate(path):
     file('/tmp/generator/manifest.txt', 'wb').write('Bindings-Version: {0}.{1}.{2}\n'.format(*version))
 
     # Make jar
-    args = ['/usr/bin/javac /tmp/generator/jar/source/com/tinkerforge/*.java']
+    args = ['/usr/bin/javac ' +
+            '-Xlint ' +
+            '/tmp/generator/jar/source/com/tinkerforge/*.java']
     subprocess.call(args, shell=True)
 
     os.chdir('/tmp/generator/jar/source')

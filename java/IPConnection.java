@@ -24,6 +24,7 @@ class ReceiveThread extends Thread {
 		this.ipcon = ipcon;
 	}
 
+	@Override
 	public void run() {
 		byte[] pendingData = new byte[8192];
 		int pendingLength = 0;
@@ -44,7 +45,7 @@ class ReceiveThread extends Thread {
 					bb.putShort(IPConnection.DISCONNECT_REASON_ERROR);
 
 					try {
-						ipcon.callbackQueue.put(new IPConnection.CallbackQueueObject(ipcon.QUEUE_META, bb.array()));
+						ipcon.callbackQueue.put(new IPConnection.CallbackQueueObject(IPConnection.QUEUE_META, bb.array()));
 					} catch(java.lang.InterruptedException e2) {
 					}
 				}
@@ -67,7 +68,7 @@ class ReceiveThread extends Thread {
 					bb.putShort(IPConnection.DISCONNECT_REASON_SHUTDOWN);
 
 					try {
-						ipcon.callbackQueue.put(new IPConnection.CallbackQueueObject(ipcon.QUEUE_META, bb.array()));
+						ipcon.callbackQueue.put(new IPConnection.CallbackQueueObject(IPConnection.QUEUE_META, bb.array()));
 					} catch(java.lang.InterruptedException e2) {
 					}
 				}
@@ -82,7 +83,7 @@ class ReceiveThread extends Thread {
 					break;
 				}
 
-				length = ipcon.getLengthFromData(pendingData);
+				length = IPConnection.getLengthFromData(pendingData);
 
 				if(pendingLength < length) {
 					// Wait for complete packet
@@ -112,6 +113,7 @@ class CallbackThread extends Thread {
 		this.callbackQueue = callbackQueue;
 	}
 
+	@Override
 	public void run() {
 		while(true) {
 			IPConnection.CallbackQueueObject cqo = null;
@@ -149,13 +151,31 @@ class CallbackThread extends Thread {
 						case IPConnection.CALLBACK_DISCONNECTED:
 							synchronized(ipcon.socketMutex) {
 								try {
-									if(ipcon.socket != null) {
-										ipcon.socket.close();
-										ipcon.socket = null;
+									if(ipcon.in != null) {
+										ipcon.in.close();
 									}
 								} catch(java.io.IOException e) {
 									e.printStackTrace();
 								}
+								ipcon.in = null;
+
+								try {
+									if(ipcon.out != null) {
+										ipcon.out.close();
+									}
+								} catch(java.io.IOException e) {
+									e.printStackTrace();
+								}
+								ipcon.out = null;
+
+								try {
+									if(ipcon.socket != null) {
+										ipcon.socket.close();
+									}
+								} catch(java.io.IOException e) {
+									e.printStackTrace();
+								}
+								ipcon.socket = null;
 							}
 
 							try {
@@ -165,7 +185,7 @@ class CallbackThread extends Thread {
 							}
 
 							if(ipcon.disconnectedListener != null) {
-								ipcon.disconnectedListener.disconnected((short)parameter);
+								ipcon.disconnectedListener.disconnected(parameter);
 							}
 
 							if(parameter != IPConnection.DISCONNECT_REASON_REQUEST && ipcon.autoReconnect && ipcon.autoReconnectAllowed) {
@@ -209,10 +229,10 @@ class CallbackThread extends Thread {
 						continue;
 					}
 
-					byte functionID = ipcon.getFunctionIDFromData(cqo.data);
+					byte functionID = IPConnection.getFunctionIDFromData(cqo.data);
 					if(functionID == IPConnection.CALLBACK_ENUMERATE) {
 						if(ipcon.enumerateListener != null) {
-							int length = ipcon.getLengthFromData(cqo.data);
+							int length = IPConnection.getLengthFromData(cqo.data);
 							ByteBuffer bb = ByteBuffer.wrap(cqo.data, 8, length - 8);
 							bb.order(ByteOrder.LITTLE_ENDIAN);
 							String uid_str = "";
@@ -231,22 +251,22 @@ class CallbackThread extends Thread {
 							}
 							char position = (char)bb.get();
 							short[] hardwareVersion = new short[3];
-							hardwareVersion[0] = ipcon.unsignedByte(bb.get());
-							hardwareVersion[1] = ipcon.unsignedByte(bb.get());
-							hardwareVersion[2] = ipcon.unsignedByte(bb.get());
+							hardwareVersion[0] = IPConnection.unsignedByte(bb.get());
+							hardwareVersion[1] = IPConnection.unsignedByte(bb.get());
+							hardwareVersion[2] = IPConnection.unsignedByte(bb.get());
 							short[] firmwareVersion = new short[3];
-							firmwareVersion[0] = ipcon.unsignedByte(bb.get());
-							firmwareVersion[1] = ipcon.unsignedByte(bb.get());
-							firmwareVersion[2] = ipcon.unsignedByte(bb.get());
-							int deviceIdentifier = ipcon.unsignedShort(bb.getShort());
-							short enumerationType = ipcon.unsignedByte(bb.get());
+							firmwareVersion[0] = IPConnection.unsignedByte(bb.get());
+							firmwareVersion[1] = IPConnection.unsignedByte(bb.get());
+							firmwareVersion[2] = IPConnection.unsignedByte(bb.get());
+							int deviceIdentifier = IPConnection.unsignedShort(bb.getShort());
+							short enumerationType = IPConnection.unsignedByte(bb.get());
 
 							ipcon.enumerateListener.enumerate(uid_str, connectedUid_str, position,
 							                                  hardwareVersion, firmwareVersion,
 							                                  deviceIdentifier, enumerationType);
 						}
 					} else {
-						long uid = ipcon.getUIDFromData(cqo.data);
+						long uid = IPConnection.getUIDFromData(cqo.data);
 						Device device = ipcon.devices.get(uid);
 						if(device.callbacks[functionID] != null) {
 							device.callbacks[functionID].callback(cqo.data);
@@ -268,11 +288,11 @@ public class IPConnection {
 	public final static byte FUNCTION_GET_ADC_CALIBRATION = (byte)250;
 	public final static byte CALLBACK_ENUMERATE = (byte)253;
 
-	public final static byte CALLBACK_CONNECTED = (byte)0;
-	public final static byte CALLBACK_DISCONNECTED = (byte)1;
-	public final static byte CALLBACK_AUTHENTICATION_ERROR = (byte)2;
+	public final static byte CALLBACK_CONNECTED = 0;
+	public final static byte CALLBACK_DISCONNECTED = 1;
+	public final static byte CALLBACK_AUTHENTICATION_ERROR = 2;
 
-	private final static long BROADCAST_UID = (long)0;
+	private final static long BROADCAST_UID = 0;
 
 	// enumeration_type parameter to the enumerate callback
 	public final static short ENUMERATION_TYPE_AVAILABLE = 0;
@@ -454,29 +474,29 @@ public class IPConnection {
 				try {
 					if(in != null) {
 						in.close();
-						in = null;
 					}
 				} catch(java.io.IOException e) {
 					e.printStackTrace();
 				}
+				in = null;
 
 				try {
 					if(out != null) {
 						out.close();
-						out = null;
 					}
 				} catch(java.io.IOException e) {
 					e.printStackTrace();
 				}
+				out = null;
 
 				try {
 					if(socket != null) {
 						socket.close();
-						socket = null;
 					}
 				} catch(java.io.IOException e) {
 					e.printStackTrace();
 				}
+				socket = null;
 
 				if(receiveThread != null) {
 					try {
@@ -771,8 +791,8 @@ public class IPConnection {
 	}
 
 	static long base58Decode(String encoded) {
-		long value = (long)0;
-		long columnMultiplier = (long)1;
+		long value = 0;
+		long columnMultiplier = 1;
 
 		for(int i = encoded.length() - 1; i >= 0; i--) {
 			int column = BASE58.indexOf(encoded.charAt(i));

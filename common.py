@@ -333,9 +333,9 @@ def handle_since_firmware(text, device, packet):
 
     return text
 
-def handle_constants(text, prefix, packet, constants_name = {'en': 'constants', 
+def handle_constants(text, prefix, packet, constants_name = {'en': 'constants',
                                                              'de': 'Konstanten'}):
-    str_constants = { 
+    str_constants = {
 'en': """
 The following {0} are available for this function:
 
@@ -343,7 +343,7 @@ The following {0} are available for this function:
 'de': """
 Die folgenden {0} sind für diese Funktion verfügbar:
 
-""" 
+"""
 }
     has_constant = False
     str_constant = '* {0}{1}_{2} = {3}\n'
@@ -672,3 +672,81 @@ class Device:
                         constants.append(ConstantTuple(element[1], c[0], c[1], c[1].upper(), definitions))
 
         return constants
+
+class ExamplesCompiler:
+    def __init__(self, name, extension, path, subdirs=['examples'], comment=None):
+        version = get_changelog_version(path)
+
+        self.extension = extension
+        self.path = path
+        self.subdirs = subdirs
+        self.comment = comment
+        self.zipname = 'tinkerforge_{0}_bindings_{1}_{2}_{3}.zip'.format(name, *version)
+        self.compile_count = 0
+        self.failure_count = 0
+
+    def walker(self, arg, dirname, names):
+        for name in names:
+            if not name.endswith(self.extension):
+                continue
+
+            src = os.path.join(dirname, name)
+
+            self.compile_count += 1
+
+            if self.comment is not None:
+                print('>>> [{0}] compiling {1}'.format(self.comment, src))
+            else:
+                print('>>> compiling {0}'.format(src))
+
+            if not self.compile(os.path.join(dirname, name)):
+                self.failure_count += 1
+
+                print('>>> compilation failed\n')
+            else:
+                print('>>> compilation succeded\n')
+
+    def compile(self, src):
+        return False
+
+    def run(self):
+        cwd = os.getcwd()
+
+        # Make temporary examples directory
+        if os.path.exists('/tmp/compiler'):
+            shutil.rmtree('/tmp/compiler/')
+
+        os.makedirs('/tmp/compiler')
+        os.chdir('/tmp/compiler')
+
+        shutil.copy(os.path.join(self.path, self.zipname), '/tmp/compiler/')
+
+        # unzip
+        print('>>> unpacking {0}'.format(self.zipname))
+
+        args = ['/usr/bin/unzip',
+                os.path.join('/tmp/compiler', self.zipname)]
+
+        rc = subprocess.call(args)
+
+        if rc != 0:
+            os.chdir(cwd)
+            print('### could not unpack {0}'.format(self.zipname))
+            return 1
+
+        # compile
+        for subdir in self.subdirs:
+            os.path.walk(os.path.join('/tmp/compiler', subdir), self.walker, None)
+
+        # report
+        if self.comment is not None:
+            print('### [{0}] {1} files compiled, {2} failure(s) occurred'.format(self.comment, self.compile_count, self.failure_count))
+        else:
+            print('### {0} files compiled, {1} failure(s) occurred'.format(self.compile_count, self.failure_count))
+
+        os.chdir(cwd)
+
+        if self.failure_count > 0:
+            return 1
+        else:
+            return 0
