@@ -52,7 +52,7 @@ def get_return_type(packet):
         return 'array'
     
     for element in packet.get_elements('out'):
-        if element[2] > 1:
+        if element[2] > 1 and element[1] != 'string':
             return 'array'
         else:
             return get_php_type(element[1])
