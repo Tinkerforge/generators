@@ -309,6 +309,7 @@ def make_zip(dirname, source_path, dest_path, version):
     zipname = 'tinkerforge_{0}_bindings_{1}_{2}_{3}.zip'.format(dirname, *version)
     os.chdir(source_path)
     args = ['/usr/bin/zip',
+            '-q',
             '-r',
             zipname,
             '.']
@@ -725,6 +726,7 @@ class ExamplesCompiler:
         print('>>> unpacking {0}'.format(self.zipname))
 
         args = ['/usr/bin/unzip',
+                '-q',
                 os.path.join('/tmp/compiler', self.zipname)]
 
         rc = subprocess.call(args)
