@@ -27,11 +27,11 @@ Boston, MA 02111-1307, USA.
 import datetime
 import sys
 import os
-import csharp_common
 from xml.sax.saxutils import escape
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import csharp_common
 
 device = None
 

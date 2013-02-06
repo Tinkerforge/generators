@@ -31,10 +31,10 @@ import shutil
 import subprocess
 import glob
 import re
-import php_common
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import php_common
 
 device = None
 
@@ -80,20 +80,7 @@ def make_examples():
     return common.make_rst_examples(title_from_file, device, common.path_binding,
                                     'php', 'Example', '.php', 'PHP')
 
-def make_parameter_list(packet):
-    param = []
-    for element in packet.get_elements():
-        if element[3] == 'out' and packet.get_type() == 'function':
-            continue
-        php_type = php_common.get_php_type(element[1])
-        name = element[0]
-        if element[2] > 1 and element[1] != 'string':
-            php_type = 'array'
-       
-        param.append('{0} ${1}'.format(php_type, name))
-    return ', '.join(param)
-
-def make_obj_desc(packet):
+def make_object_desc(packet):
     if len(packet.get_elements('out')) < 2:
         return ''
 
@@ -128,9 +115,9 @@ def make_methods(typ):
 
         ret_type = php_common.get_return_type(packet)
         name = packet.get_headless_camel_case_name()
-        params = make_parameter_list(packet)
+        params = php_common.make_parameter_list(packet, True)
         desc = format_doc(packet)
-        obj_desc = make_obj_desc(packet)
+        obj_desc = make_object_desc(packet)
         func = '{0}{1} {2}::{3}({4})\n{5}{6}'.format(func_start,
                                                      ret_type,
                                                      cls,
@@ -160,7 +147,7 @@ def make_callbacks():
     func_start = '.. php:member:: int '
     cls = device.get_category() + device.get_camel_case_name()
     for packet in device.get_packets('callback'):
-        params = make_parameter_list(packet)
+        params = php_common.make_parameter_list(packet, True)
         if len(params) > 0:
             params += " [, mixed $userData]"
         else:

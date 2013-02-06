@@ -33,6 +33,7 @@ import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import python_common
 
 device = None
 
@@ -103,12 +104,6 @@ def make_examples():
     return common.make_rst_examples(title_from_file, device, common.path_binding,
                                     'python', 'example_', '.py', 'Python')
 
-def make_parameter_list(packet):
-    params = []
-    for element in packet.get_elements('in'):
-        params.append(element[0])
-    return ", ".join(params)
-
 def make_parameter_desc(packet, io):
     desc = '\n'
     param = ' :param {0}: {1}\n'
@@ -130,7 +125,7 @@ def make_return_desc(packet):
     
     return ret.format('(' + ', '.join(ret_list) + ')')
 
-def make_obj_desc(packet):
+def make_object_desc(packet):
     if len(packet.get_elements('out')) < 2:
         return ''
 
@@ -163,11 +158,11 @@ def make_methods(typ):
         if packet.get_doc()[0] != typ:
             continue
         name = packet.get_underscore_name()
-        params = make_parameter_list(packet)
+        params = python_common.make_parameter_list(packet)
         pd = make_parameter_desc(packet, 'in')
         r = make_return_desc(packet)
         d = format_doc(packet)
-        obj_desc = make_obj_desc(packet)
+        obj_desc = make_object_desc(packet)
         desc = '{0}{1}{2}{3}'.format(pd, r, d, obj_desc)
         func = '{0}{1}.{2}({3})\n{4}'.format(func_start, 
                                              cls, 

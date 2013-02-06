@@ -33,31 +33,9 @@ import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import ruby_common
 
 device = None
-
-def type_to_rbtype(element):
-    type_dict = {
-        'int8': 'int',
-        'uint8': 'int',
-        'int16': 'int',
-        'uint16': 'int',
-        'int32': 'int',
-        'uint32': 'int',
-        'int64': 'int',
-        'uint64': 'int',
-        'bool': 'bool',
-        'char': 'str',
-        'string': 'str',
-        'float': 'float'
-    }
-
-    t = type_dict[element[1]]
-
-    if element[2] == 1 or t == 'str':
-        return t
-
-    return '[' + ', '.join([t]*element[2]) + ']'
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
@@ -84,12 +62,35 @@ def format_doc(packet):
     text = text.replace(":word:`parameters`", common.select_lang(parameters))
 
     text = common.handle_rst_if(text, device)
-    text = common.handle_constants(text, 
-                                   device.get_category() + device.get_camel_case_name() + '.', 
+    text = common.handle_constants(text,
+                                   device.get_category() + device.get_camel_case_name() + '.',
                                    packet)
     text = common.handle_since_firmware(text, device, packet)
 
     return common.shift_right(text, 1)
+
+def get_ruby_type(element):
+    type_dict = {
+        'int8': 'int',
+        'uint8': 'int',
+        'int16': 'int',
+        'uint16': 'int',
+        'int32': 'int',
+        'uint32': 'int',
+        'int64': 'int',
+        'uint64': 'int',
+        'bool': 'bool',
+        'char': 'str',
+        'string': 'str',
+        'float': 'float'
+    }
+
+    t = type_dict[element[1]]
+
+    if element[2] == 1 or t == 'str':
+        return t
+
+    return '[' + ', '.join([t]*element[2]) + ']'
 
 def make_examples():
     def title_from_file(f):
@@ -103,17 +104,11 @@ def make_examples():
     return common.make_rst_examples(title_from_file, device, common.path_binding,
                                     'ruby', 'example_', '.rb', 'Ruby')
 
-def make_parameter_list(packet):
-    params = []
-    for element in packet.get_elements('in'):
-        params.append(element[0])
-    return ", ".join(params)
-
 def make_parameter_desc(packet, io):
     desc = '\n'
     param = ' :param {0}: {1}\n'
     for element in packet.get_elements(io):
-        t = type_to_rbtype(element)
+        t = get_ruby_type(element)
         desc += param.format(element[0], t)
 
     return desc
@@ -122,7 +117,7 @@ def make_return_desc(packet):
     ret = ' -> {0}'
     ret_list = []
     for element in packet.get_elements('out'):
-        ret_list.append(type_to_rbtype(element))
+        ret_list.append(get_ruby_type(element))
     if len(ret_list) == 0:
         return ret.format('nil')
     elif len(ret_list) == 1:
@@ -130,7 +125,7 @@ def make_return_desc(packet):
 
     return ret.format('[' + ', '.join(ret_list) + ']')
 
-def make_obj_desc(packet):
+def make_object_desc(packet):
     if len(packet.get_elements('out')) < 2:
         return ''
 
@@ -163,13 +158,13 @@ def make_methods(typ):
         if packet.get_doc()[0] != typ:
             continue
         name = packet.get_underscore_name()
-        params = make_parameter_list(packet)
+        params = ruby_common.make_parameter_list(packet)
         if len(params) > 0:
             params = '(' + params + ')'
         pd = make_parameter_desc(packet, 'in')
         r = make_return_desc(packet)
         d = format_doc(packet)
-        obj_desc = make_obj_desc(packet)
+        obj_desc = make_object_desc(packet)
         desc = '{0}{1}{2}'.format(pd, d, obj_desc)
         func = '{0}{1}#{2}{3}{5}\n{4}'.format(func_start,
                                               cls,
@@ -209,7 +204,7 @@ def make_api():
 
     {0} = {3}{1}.new 'YOUR_DEVICE_UID', ipcon
 
- This object can then be used after the IP connection is connected 
+ This object can then be used after the IP connection is connected
  (see examples :ref:`above <{0}_{2}_ruby_examples>`).
 """,
     'de': """
@@ -284,7 +279,7 @@ Callbacks
 
 Callbacks können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
-mit der Funktion :rb:func:`#register_callback <{4}{3}#register_callback>` des 
+mit der Funktion :rb:func:`#register_callback <{4}{3}#register_callback>` des
 Geräte Objektes durchgeführt werden. Der erste Parameter ist der Callback ID
 und der zweite Parameter der Block:
 
@@ -298,7 +293,7 @@ Die verfügbaren Konstanten mit der dazugehörigen Parameteranzahl und -typen we
 weiter unten beschrieben.
 
 .. note::
- Callbacks für wiederkehrende Ereignisse zu verwenden ist 
+ Callbacks für wiederkehrende Ereignisse zu verwenden ist
  *immer* zu bevorzugen gegenüber der Verwendung von Abfragen.
  Es wird weniger USB-Bandbreite benutzt und die Latenz ist
  erheblich geringer, da es keine Paketumlaufzeit gibt.

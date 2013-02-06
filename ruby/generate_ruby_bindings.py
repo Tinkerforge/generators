@@ -30,6 +30,7 @@ import os
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import ruby_common
 
 device = None
 
@@ -213,12 +214,6 @@ def make_format_list(packet, io):
         total_size += size * num_int
     return " ".join(forms), total_size
 
-def make_parameter_list(packet):
-    params = []
-    for element in packet.get_elements('in'):
-        params.append(element[0])
-    return ', '.join(params)
-
 def make_methods():
     method0 = """
     # {4}
@@ -237,7 +232,7 @@ def make_methods():
     for packet in device.get_packets('function'):
         name = packet.get_underscore_name()
         fid = packet.get_upper_case_name()
-        parms = make_parameter_list(packet)
+        parms = ruby_common.make_parameter_list(packet)
         doc = format_doc(packet)
 
         in_format, _ = make_format_list(packet, 'in')

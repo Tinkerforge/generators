@@ -50,9 +50,25 @@ def get_return_type(packet):
         return 'void'
     if len(packet.get_elements('out')) > 1:
         return 'array'
-    
+
     for element in packet.get_elements('out'):
         if element[2] > 1 and element[1] != 'string':
             return 'array'
         else:
             return get_php_type(element[1])
+
+def make_parameter_list(packet, for_doc=False):
+    param = []
+    for element in packet.get_elements():
+        if element[3] == 'out' and packet.get_type() == 'function':
+            continue
+        name = element[0]
+        if for_doc:
+            php_type = get_php_type(element[1])
+            if element[2] > 1 and element[1] != 'string':
+                php_type = 'array'
+
+            param.append('{0} ${1}'.format(php_type, name))
+        else:
+            param.append('${0}'.format(name))
+    return ', '.join(param)
