@@ -606,7 +606,7 @@ def get_return_value(packet):
     ret = 'void'
     for element in packet.get_elements('out'):
         ret = get_java_type(element[1])
-        if element[2] > 1:
+        if element[2] > 1 and element[1] != 'string':
             ret += '[]'
         num += 1
 
