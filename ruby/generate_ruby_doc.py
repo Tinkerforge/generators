@@ -63,7 +63,7 @@ def format_doc(packet):
 
     text = common.handle_rst_if(text, device)
     text = common.handle_constants(text,
-                                   device.get_category() + device.get_camel_case_name() + '.',
+                                   device.get_category() + device.get_camel_case_name() + '::',
                                    packet)
     text = common.handle_since_firmware(text, device, packet)
 
@@ -198,6 +198,9 @@ def make_api():
     'en': """
 .. rb:function:: {3}{1}::new(uid, ipcon) -> {0}
 
+ :param uid: str
+ :param ipcon: IPConnection
+
  Creates an object with the unique device ID *uid*:
 
  .. code-block:: ruby
@@ -209,6 +212,9 @@ def make_api():
 """,
     'de': """
 .. rb:function:: {3}{1}::new(uid, ipcon) -> {0}
+
+ :param uid: str
+ :param ipcon: IPConnection
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID *uid*:
 
@@ -223,20 +229,20 @@ def make_api():
 
     register_str = {
     'en': """
-.. rb:function:: {3}{1}#register_callback(cb) {{ |param [, ...]| block }} -> nil
+.. rb:function:: {3}{1}#register_callback(id) {{ |param [, ...]| block }} -> nil
 
- :param cb: int
+ :param id: int
 
- Registers a callback with ID *cb* to the given block. The available
+ Registers a callback with ID *id* to the given block. The available
  IDs with corresponding function signatures are listed
  :ref:`below <{0}_{2}_ruby_callbacks>`.
 """,
     'de': """
-.. rb:function:: {3}{1}#register_callback(cb) {{ |param [, ...]| block }} -> nil
+.. rb:function:: {3}{1}#register_callback(id) {{ |param [, ...]| block }} -> nil
 
- :param cb: int
+ :param id: int
 
- Registriert einen Callback mit der ID *cb* in den gegebenen Block. Die verfügbaren
+ Registriert einen Callback mit der ID *id* in den gegebenen Block. Die verfügbaren
  IDs mit den zugehörigen Funktionssignaturen sind :ref:`unten <{0}_{2}_ruby_callbacks>`
  zu finden.
 """
