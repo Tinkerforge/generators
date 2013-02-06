@@ -56,7 +56,7 @@ def get_return_type(packet, for_doc):
         for element in packet.get_elements('out'):
             delphi_type = get_delphi_type(element[1])
 
-            if element[2] > 1:
+            if element[2] > 1 and element[1] != 'string':
                 if for_doc:
                     final_type = 'array [0..{0}] of {1}'.format(element[2] - 1, delphi_type[0])
                 else:
