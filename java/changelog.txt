@@ -34,10 +34,14 @@
         Fix semaphore deadlock on timeout
 1.0.19: Add API for Barometer Bricklet
 1.0.20: Replace Barometer Bricklet calibrate function with getter/setter for reference air pressure
-1.0.21: Add get_usb_voltage function to Master Brick API
+1.0.21: Add getUSBVoltage function to Master Brick API
         Add Barometer Bricklet examples
 1.0.22: Add API for Voltage/Current Bricklet
         Add API for GPS Bricklet
 2.0.0: Add compatability for Protocol 2.0
-2.0.1: Add support for custom characters in LCD20x4 Bricklet
+2.0.1: Add support for custom characters in LCD Bricklets
 2.0.2: Remove unused IPConnection.*Exception classes
+2.0.3: Ensure to set socket and stream to null even if close() throws an IOException
+       Use a shorter format for JavaDoc links
+       Don't let the callback thread die silently on exception in user code
+       Add get/setLongWifiKey functions to Master Brick API
