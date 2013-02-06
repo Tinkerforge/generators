@@ -20,6 +20,8 @@ class ReceiveThread extends Thread {
 	IPConnection ipcon = null;
 
 	ReceiveThread(IPConnection ipcon) {
+		super("Brickd-Receiver");
+
 		setDaemon(true);
 		this.ipcon = ipcon;
 	}
@@ -101,6 +103,22 @@ class ReceiveThread extends Thread {
 	}
 }
 
+class CallbackThreadRestarter implements Thread.UncaughtExceptionHandler {
+	IPConnection ipcon = null;
+
+	CallbackThreadRestarter(IPConnection ipcon) {
+		this.ipcon = ipcon;
+	}
+
+	@Override
+	public void uncaughtException(Thread thread, Throwable exception) {
+		System.err.print("Exception in thread \"" + thread.getName() + "\" ");
+		exception.printStackTrace();
+
+		ipcon.callbackThread = new CallbackThread(ipcon, ((CallbackThread)thread).callbackQueue);
+		ipcon.callbackThread.start();
+	}
+}
 
 class CallbackThread extends Thread {
 	IPConnection ipcon = null;
@@ -108,9 +126,12 @@ class CallbackThread extends Thread {
 
 	CallbackThread(IPConnection ipcon,
 	               LinkedBlockingQueue<IPConnection.CallbackQueueObject> callbackQueue) {
+		super("Callback-Processor");
+
 		setDaemon(true);
 		this.ipcon = ipcon;
 		this.callbackQueue = callbackQueue;
+		this.setUncaughtExceptionHandler(new CallbackThreadRestarter(ipcon));
 	}
 
 	@Override
