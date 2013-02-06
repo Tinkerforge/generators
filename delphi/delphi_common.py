@@ -82,7 +82,7 @@ def make_parameter_list(packet, for_doc, with_modifiers=True):
             else:
                 modifier = ''
 
-            if element[1] != 'string' and element[2] > 1:
+            if element[2] > 1 and element[1] != 'string':
                 if for_doc:
                     final_type = 'array [0..{0}] of {1}'.format(element[2] - 1, delphi_type[0])
                 else:
@@ -106,7 +106,7 @@ def make_parameter_list(packet, for_doc, with_modifiers=True):
             else:
                 modifier = ''
 
-            if element[1] != 'string' and element[2] > 1:
+            if element[2] > 1 and element[1] != 'string':
                 if for_doc:
                     final_type = 'array [0..{0}] of {1}'.format(element[2] - 1, delphi_type[0])
                 else:

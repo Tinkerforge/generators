@@ -414,7 +414,7 @@ def make_methods():
 
         has_array = False
         for element in packet.get_elements():
-            if element[1] != 'string' and element[2] > 1:
+            if element[2] > 1 and element[1] != 'string':
                 has_array = True
                 break
 
@@ -428,7 +428,7 @@ def make_methods():
         # Serialize request
         offset = 8
         for element in packet.get_elements('in'):
-            if element[1] != 'string' and element[2] > 1:
+            if element[2] > 1 and element[1] != 'string':
                 prefix = 'for i := 0 to Length({0}) - 1 do '.format(common.underscore_to_headless_camel_case(element[0]))
                 method += '  {0}LEConvert{1}To({2}[i], {3} + (i * {4}), request);\n'.format(prefix,
                                                                                             get_convert_type(element),
@@ -459,7 +459,7 @@ def make_methods():
             else:
                 result = 'result'
 
-            if element[1] != 'string' and element[2] > 1:
+            if element[2] > 1 and element[1] != 'string':
                 prefix = 'for i := 0 to {0} do '.format(element[2] - 1)
                 method += '  {0}{1}[i] := LEConvert{2}From({3} + (i * {4}), response);\n'.format(prefix,
                                                                                                  result,
@@ -506,7 +506,7 @@ def make_callback_wrappers():
         for element in packet.get_elements('out'):
             parameter_names.append(common.underscore_to_headless_camel_case(element[0]))
 
-            if element[1] != 'string' and element[2] > 1:
+            if element[2] > 1 and element[1] != 'string':
                 prefix = 'for i := 0 to {0} do '.format(element[2] - 1)
                 wrapper += '    {0}{1}[i] := LEConvert{2}From({3} + (i * {4}), packet);\n'.format(prefix,
                                                                                                   common.underscore_to_headless_camel_case(element[0]),
