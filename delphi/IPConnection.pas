@@ -639,7 +639,11 @@ var retry: boolean;
 begin
   if (meta[0] = IPCON_CALLBACK_CONNECTED) then begin
     if (Assigned(connectedCallback)) then begin
-      connectedCallback(self, meta[1]);
+      try
+        connectedCallback(self, meta[1]);
+      except
+        { Ignore exceptions in user code }
+      end;
     end;
   end
   else if (meta[0] = IPCON_CALLBACK_DISCONNECTED) then begin
@@ -656,11 +660,15 @@ begin
       socketMutex.Release;
     end;
     { FIXME: Wait a moment here, otherwise the next connect attempt will
-      succeed, even if there is no open server socket. the first receive will
+      succeed, even if there is no open server socket. The first receive will
       then fail directly }
     Sleep(100);
     if (Assigned(disconnectedCallback)) then begin
-      disconnectedCallback(self, meta[1]);
+      try
+        disconnectedCallback(self, meta[1]);
+      except
+        { Ignore exceptions in user code }
+      end;
     end;
     if ((meta[1] <> IPCON_DISCONNECT_REASON_REQUEST) and autoReconnect and
         autoReconnectAllowed) then begin
@@ -715,9 +723,13 @@ begin
       firmwareVersion[2] := LEConvertUInt8From(30, packet);
       deviceIdentifier := LEConvertUInt16From(31, packet);
       enumerationType := LEConvertUInt8From(33, packet);
-      enumerateCallback(self, uid, connectedUid, position,
-                        hardwareVersion, firmwareVersion,
-                        deviceIdentifier, enumerationType);
+      try
+        enumerateCallback(self, uid, connectedUid, position,
+                          hardwareVersion, firmwareVersion,
+                          deviceIdentifier, enumerationType);
+      except
+        { Ignore exceptions in user code }
+      end;
     end
   end
   else begin
@@ -727,7 +739,11 @@ begin
     end;
     callbackWrapper := device.callbackWrappers[functionID];
     if (Assigned(callbackWrapper)) then begin
-      callbackWrapper(packet);
+      try
+        callbackWrapper(packet);
+      except
+        { Ignore exceptions in user code }
+      end;
     end;
   end;
 end;
