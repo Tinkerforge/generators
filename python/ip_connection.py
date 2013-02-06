@@ -466,7 +466,9 @@ class IPConnection:
         if self.callback_thread is None:
             try:
                 self.callback_queue = Queue()
-                self.callback_thread = Thread(target=self.callback_loop, args=(self.callback_queue, ))
+                self.callback_thread = Thread(name='Callback-Processor',
+                                              target=self.callback_loop,
+                                              args=(self.callback_queue, ))
                 self.callback_thread.daemon = True
                 self.callback_thread.start()
             except:
@@ -484,7 +486,8 @@ class IPConnection:
 
         try:
             self.receive_flag = True
-            self.receive_thread = Thread(target=self.receive_loop)
+            self.receive_thread = Thread(name='Brickd-Receiver',
+                                         target=self.receive_loop)
             self.receive_thread.daemon = True
             self.receive_thread.start()
         except:
