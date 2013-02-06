@@ -27,3 +27,4 @@
 2.0.0: Add compatability for Protocol 2.0
 2.0.1: Add support for custom characters in LCD Bricklets
 2.0.2: Fix UID encoding/decoding on 32bit systems
+2.0.3: Add get/setLongWifiKey functions to Master Brick API

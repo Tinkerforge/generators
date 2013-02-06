@@ -38,7 +38,7 @@
         Avoid a race condition in expectedResponseFunctionID handling
 1.1.13: Add API for Barometer Bricklet
 1.1.14: Replace Barometer Bricklet calibrate function with getter/setter for reference air pressure
-1.1.15: Add get_usb_voltage function to Master Brick API
+1.1.15: Add GetUSBVoltage function to Master Brick API
         Add Barometer Bricklet examples
 1.1.16: Add API for Voltage/Current Bricklet
         Add API for GPS Bricklet
@@ -46,3 +46,4 @@
 2.0.1: Add support for custom characters in LCD Bricklets
 2.0.2: Improve internal UID handling and simplify internal locking
        Make sequence number generation thread-safe
+2.0.3: Add Get/SetLongWifiKey functions to Master Brick API

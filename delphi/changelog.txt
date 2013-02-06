@@ -22,3 +22,5 @@
 2.0.3: Avoid signature mismatch for GetIdentity procedure
        Avoid a potential out-of-bounds array access
        Make expected integer overflows explicit
+2.0.4: Ignore exceptions in user code so that the callback thread doesn't die silently
+       Add Get/SetLongWifiKey functions to Master Brick API
