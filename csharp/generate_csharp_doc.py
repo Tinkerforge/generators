@@ -30,10 +30,10 @@ import shutil
 import subprocess
 import glob
 import re
-import csharp_common
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import csharp_common
 
 device = None
 

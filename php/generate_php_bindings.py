@@ -27,10 +27,10 @@ Boston, MA 02111-1307, USA.
 import datetime
 import sys
 import os
-import php_common
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import php_common
 
 device = None
 
@@ -196,15 +196,6 @@ def make_constants():
                                                  value)
     return str_constants
 
-def make_parameter_list(packet):
-    param = []
-    for element in packet.get_elements():
-        if element[3] == 'out' and packet.get_type() == 'function':
-            continue
-        name = element[0]
-        param.append('$' + name)
-    return ', '.join(param)
-
 def make_device_identifier():
     return """
     const DEVICE_IDENTIFIER = {0};
@@ -343,7 +334,7 @@ def make_methods():
 
     for packet in device.get_packets('function'):
         name_lower = packet.get_headless_camel_case_name()
-        parameter = make_parameter_list(packet)
+        parameter = php_common.make_parameter_list(packet)
         pack = []
         for element in packet.get_elements('in'):
             if element[1] == 'bool':

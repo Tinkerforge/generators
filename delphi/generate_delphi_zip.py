@@ -30,10 +30,10 @@ import shutil
 import subprocess
 import glob
 import re
-import delphi_common
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import delphi_common
 
 device = None
 
