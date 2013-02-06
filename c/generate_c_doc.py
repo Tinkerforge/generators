@@ -71,8 +71,7 @@ def format_doc(packet):
     text = text.replace(":word:`parameters`", common.select_lang(parameters))
 
     text = common.handle_rst_if(text, device)
-    prefix = '{0}_{1}_'.format(device.get_category().upper(), 
-                               device.get_upper_case_name())
+    prefix = '{0}_'.format(device.get_upper_case_name())
     text = common.handle_constants(text, 
                                    prefix, 
                                    packet,
