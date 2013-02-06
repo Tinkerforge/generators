@@ -33,6 +33,7 @@ import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import java_common
 
 device = None
 
@@ -85,63 +86,7 @@ def make_examples():
     return common.make_rst_examples(title_from_file, device, common.path_binding,
                                     'java', 'Example', '.java', 'Java')
 
-def get_java_type(typ):
-    forms = {
-        'int8' : 'byte',
-        'uint8' : 'short',
-        'int16' : 'short',
-        'uint16' : 'int',
-        'int32' : 'int',
-        'uint32' : 'long',
-        'int64' : 'long',
-        'uint64' : 'long',
-        'float' : 'float',
-        'bool' : 'boolean',
-        'string' : 'String',
-        'char' : 'char'
-    }
-
-    if typ in forms:
-        return forms[typ]
-
-    return ''
-
-def get_object_name(packet):
-    name = packet.get_camel_case_name()
-    if name.startswith('Get'):
-        name = name[3:]
-
-    return name
-
-def get_return_type(packet):
-    elements = packet.get_elements('out')
-
-    if len(elements) == 0:
-        return 'void'
-
-    if len(elements) > 1:
-        return device.get_category() + device.get_camel_case_name() + '.' + get_object_name(packet)
-
-    if elements[0][2] > 1:
-        return get_java_type(elements[0][1]) + '[]'
-
-    return get_java_type(elements[0][1])
-
-def make_parameter_list(packet):
-    param = []
-    for element in packet.get_elements():
-        if element[3] == 'out' and packet.get_type() == 'function':
-            continue
-        java_type = get_java_type(element[1])
-        name = common.underscore_to_headless_camel_case(element[0])
-        arr = ''
-        if element[2] > 1 and element[1] != 'string':
-            arr = '[]'
-       
-        param.append('{0}{1} {2}'.format(java_type, arr, name))
-    return ', '.join(param)
-
-def make_obj_desc(packet):
+def make_object_desc(packet):
     if len(packet.get_elements('out')) < 2:
         return ''
 
@@ -156,7 +101,7 @@ def make_obj_desc(packet):
 
     var = []
     for element in packet.get_elements('out'):
-        var.append('``{0} {1}``'.format(get_java_type(element[1]),
+        var.append('``{0} {1}``'.format(java_common.get_java_type(element[1]),
                                         common.underscore_to_headless_camel_case(element[0])))
 
     if len(var) == 1:
@@ -175,11 +120,11 @@ def make_methods(typ):
         if packet.get_doc()[0] != typ:
             continue
 
-        ret_type = get_return_type(packet)
+        ret_type = java_common.get_return_type(packet, True)
         name = packet.get_headless_camel_case_name()
-        params = make_parameter_list(packet)
+        params = java_common.make_parameter_list(packet)
         desc = format_doc(packet, 1)
-        obj_desc = make_obj_desc(packet)
+        obj_desc = make_object_desc(packet)
         func = '{0}public {1} {2}::{3}({4})\n{5}{6}'.format(func_start, 
                                                             ret_type,
                                                             cls, 
@@ -222,7 +167,7 @@ def make_callbacks():
     cls = device.get_camel_case_name()
     for packet in device.get_packets('callback'):
         desc = format_doc(packet, 2)
-        params = make_parameter_list(packet)
+        params = java_common.make_parameter_list(packet)
 
         cbs += common.select_lang(cb).format(device.get_category(),
                                              cls,

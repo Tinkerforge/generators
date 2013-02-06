@@ -475,7 +475,8 @@ def import_and_make(configs, path, make_files):
             make_files(module.com, path)
 
 class Packet:
-    def __init__(self, packet):
+    def __init__(self, device, packet):
+        self.device = device
         self.packet = packet
         self.all_elements = packet['elements']
         self.in_elements = []
@@ -491,6 +492,9 @@ class Packet:
                 self.out_elements.append(element)
             else:
                 raise ValueError('Invalid element direction ' + element[3])
+
+    def get_device(self):
+        return self.device
 
     def get_type(self):
         return self.packet['type']
@@ -582,7 +586,7 @@ class Device:
             if not 'function_id' in p:
                 p['function_id'] = i + 1
 
-            packet = Packet(p)
+            packet = Packet(self, p)
 
             self.all_packets.append(packet)
 
