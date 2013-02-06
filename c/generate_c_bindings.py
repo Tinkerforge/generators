@@ -30,6 +30,7 @@ import os
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import c_common
 
 device = None
 
@@ -87,34 +88,6 @@ def format_doc(packet):
     text = common.handle_since_firmware(text, device, packet)
 
     return '\n * '.join(text.strip().split('\n'))
-
-def make_parameter_list(packet):
-    param = ''
-    for element in packet.get_elements():
-        c_type = get_c_type(element[1], element[3], True)
-        name = element[0]
-        pointer = ''
-        arr = ''
-        if element[3] == 'out':
-            pointer = '*'
-            name = "ret_{0}".format(name)
-        if element[2] > 1:
-            arr = '[{0}]'.format(element[2])
-            pointer = ''
-
-        param += ', {0} {1}{2}{3}'.format(c_type, pointer, name, arr)
-    return param
-
-def get_c_type(py_type, direction, is_in_signature):
-    if py_type == 'string':
-        if direction == 'in' and is_in_signature:
-            return 'const char'
-        else:
-            return 'char'
-    if py_type in ( 'int8',  'int16',  'int32' , 'int64', \
-                   'uint8', 'uint16', 'uint32', 'uint64'):
-        return "{0}_t".format(py_type)
-    return py_type
 
 def make_include_c(version):
     include = """{0}
@@ -235,7 +208,7 @@ typedef struct {{
             cb = "Callback"
             struct_body = ''
             for element in packet.get_elements():
-                c_type = get_c_type(element[1], 'out', False)
+                c_type = c_common.get_c_type(element[1], 'out', False)
                 if element[2] > 1:
                     struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
                                                               element[0],
@@ -248,7 +221,7 @@ typedef struct {{
 
         struct_body = ''
         for element in packet.get_elements('in'):
-            c_type = get_c_type(element[1], 'in', False)
+            c_type = c_common.get_c_type(element[1], 'in', False)
             if element[2] > 1:
                 struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
                                                           element[0],
@@ -263,7 +236,7 @@ typedef struct {{
 
         struct_body = ''
         for element in packet.get_elements('out'):
-            c_type = get_c_type(element[1], 'out', False)
+            c_type = c_common.get_c_type(element[1], 'out', False)
             if element[2] > 1:
                 struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
                                                           element[0],
@@ -370,7 +343,7 @@ def make_method_funcs():
                     struct_list += temp.format(sf,
                                                element[0],
                                                element[2],
-                                               get_c_type(element[1], 'in', False))
+                                               c_common.get_c_type(element[1], 'in', False))
             elif common.get_type_size(element[1]) > 1:
                 struct_list += '\n\t{0}.{1} = leconvert_{2}_to({1});'.format(sf, element[0], element[1])
             else:
@@ -395,7 +368,7 @@ def make_method_funcs():
                     return_list += temp.format(element[0],
                                                sf,
                                                element[2],
-                                               get_c_type(element[1], 'out', False))
+                                               c_common.get_c_type(element[1], 'out', False))
             elif common.get_type_size(element[1]) > 1:
                 return_list += '\t*ret_{0} = leconvert_{2}_from({1}->{0});\n'.format(element[0], sf, element[1])
             else:
@@ -453,7 +426,7 @@ int {0}_{1}({2} *{0}{3}) {{
     funcs = ''
     for packet in device.get_packets('function'):
         packet_name = packet.get_underscore_name()
-        d = make_parameter_list(packet)
+        d = c_common.make_parameter_list(packet)
         fid = '{0}_FUNCTION_{1}'.format(device.get_upper_case_name(),
                                         packet.get_upper_case_name())
         f = packet.get_camel_case_name()
@@ -578,9 +551,9 @@ typedef void (*{0}CallbackFunction)({1});
         c_type_list = []
         for element in packet.get_elements():
             if element[2] > 1:
-                c_type_list.append('{0}[{1}]'.format(get_c_type(element[1], 'out', True), element[2]))
+                c_type_list.append('{0}[{1}]'.format(c_common.get_c_type(element[1], 'out', True), element[2]))
             else:
-                c_type_list.append(get_c_type(element[1], 'out', True))
+                c_type_list.append(c_common.get_c_type(element[1], 'out', True))
 
         typedefs += typedef.format(name, ', '.join(c_type_list + ['void *']))
 
@@ -691,7 +664,7 @@ int {0}_{1}({2} *{0}{3});
     funcs = ''
     for packet in device.get_packets('function'):
         b = packet.get_underscore_name()
-        d = make_parameter_list(packet)
+        d = c_common.make_parameter_list(packet)
         doc = format_doc(packet)
 
         funcs += func.format(a, b, c, d, doc, device.get_category())
