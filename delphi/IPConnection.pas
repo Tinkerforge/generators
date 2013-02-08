@@ -114,8 +114,9 @@ type
     constructor Create;
 
     /// <summary>
-    ///  Destroys the IP Connection object. The connection to the Brick Daemon
-    ///  gets closed and the threads of the IP Connection are terminated.
+    ///  Destroys the IP Connection object. Calls Disconnect internally. The
+    ///  connection to the Brick Daemon gets closed and the threads of the
+    ///  IP Connection are terminated.
     /// </summary>
     destructor Destroy; override;
 

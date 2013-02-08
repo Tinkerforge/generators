@@ -365,8 +365,9 @@ void ipcon_create(IPConnection *ipcon);
 /**
  * \ingroup IPConnection
  *
- * Destroys the IP Connection object. The connection to the Brick Daemon gets
- * closed and the threads of the IP Connection are terminated.
+ * Destroys the IP Connection object. Calls ipcon_disconnect internally.
+ * The connection to the Brick Daemon gets closed and the threads of the
+ * IP Connection are terminated.
  */
 void ipcon_destroy(IPConnection *ipcon);
 
