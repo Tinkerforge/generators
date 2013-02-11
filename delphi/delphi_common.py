@@ -3,7 +3,7 @@
 
 """
 Delphi Documentation Generator
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 delphi_common.py: Common Library for generation of Delphi bindings and documentation
@@ -46,27 +46,26 @@ def get_delphi_type(typ):
         'char'   : ('char',     'Char')
     }
 
-    if typ in types:
-        return types[typ]
-
-    return ''
+    return types[typ]
 
 def get_return_type(packet, for_doc):
-    if len(packet.get_elements('out')) == 1:
-        for element in packet.get_elements('out'):
-            delphi_type = get_delphi_type(element[1])
+    elements = packet.get_elements('out')
 
-            if element[2] > 1 and element[1] != 'string':
-                if for_doc:
-                    final_type = 'array [0..{0}] of {1}'.format(element[2] - 1, delphi_type[0])
-                else:
-                    final_type = 'TArray0To{0}Of{1}'.format(element[2] - 1, delphi_type[1])
-            else:
-                final_type = delphi_type[0]
-
-            return final_type
-    else:
+    if len(elements) != 1:
         return ''
+
+    first = elements[0]
+    delphi_type = get_delphi_type(first[1])
+
+    if first[2] > 1 and first[1] != 'string':
+        if for_doc:
+            final_type = 'array [0..{0}] of {1}'.format(first[2] - 1, delphi_type[0])
+        else:
+            final_type = 'TArray0To{0}Of{1}'.format(first[2] - 1, delphi_type[1])
+    else:
+        final_type = delphi_type[0]
+
+    return final_type
 
 def make_parameter_list(packet, for_doc, with_modifiers=True):
     param = []
