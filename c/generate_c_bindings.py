@@ -356,23 +356,23 @@ def make_method_funcs():
         for element in packet.get_elements('out'):
             sf = 'response'
             if element[1] == 'string':
-                temp = '\tstrncpy(ret_{0}, {1}->{0}, {2});\n'
+                temp = '\tstrncpy(ret_{0}, {1}.{0}, {2});\n'
                 return_list += temp.format(element[0], sf, element[2])
             elif element[2] > 1:
                 if common.get_type_size(element[1]) > 1:
                     needs_i = True
-                    return_list += '\tfor (i = 0; i < {3}; i++) ret_{0}[i] = leconvert_{2}_from({1}->{0}[i]);\n' \
+                    return_list += '\tfor (i = 0; i < {3}; i++) ret_{0}[i] = leconvert_{2}_from({1}.{0}[i]);\n' \
                                    .format(element[0], sf, element[1], element[2])
                 else:
-                    temp = '\tmemcpy(ret_{0}, {1}->{0}, {2} * sizeof({3}));\n'
+                    temp = '\tmemcpy(ret_{0}, {1}.{0}, {2} * sizeof({3}));\n'
                     return_list += temp.format(element[0],
                                                sf,
                                                element[2],
                                                c_common.get_c_type(element[1], 'out', False))
             elif common.get_type_size(element[1]) > 1:
-                return_list += '\t*ret_{0} = leconvert_{2}_from({1}->{0});\n'.format(element[0], sf, element[1])
+                return_list += '\t*ret_{0} = leconvert_{2}_from({1}.{0});\n'.format(element[0], sf, element[1])
             else:
-                return_list += '\t*ret_{0} = {1}->{0};\n'.format(element[0], sf)
+                return_list += '\t*ret_{0} = {1}.{0};\n'.format(element[0], sf)
         return return_list, needs_i
 
     func_version = """
@@ -386,20 +386,15 @@ int {0}_{1}({2} *{0}{3}) {{
 \t{5}_ request;{6}
 \tint ret;{9}
 
-\tmutex_lock(&{0}->request_mutex);
-
 \tret = packet_header_create(&request.header, sizeof(request), {4}, {0}->ipcon, {0});
 
 \tif (ret < 0) {{
-\t\tmutex_unlock(&{0}->request_mutex);
-
 \t\treturn ret;
 \t}}
 {7}
 
-\tret = device_send_request({0}, (Packet *)&request);
+\tret = device_send_request({0}, (Packet *)&request, {10});
 {8}
-\tmutex_unlock(&{0}->request_mutex);
 
 \treturn ret;
 }}
@@ -407,17 +402,9 @@ int {0}_{1}({2} *{0}{3}) {{
 
     func_ret = """
 \tif (ret < 0) {{
-\t\tmutex_unlock(&{1}->request_mutex);
-
 \t\treturn ret;
 \t}}
-
-\tresponse = ({0}Response_ *)&{1}->response_packet;
 {2}
-"""
-
-    sizeof_ret = """\t{0}->response.function_id = {1};
-\t{0}->response.length = sizeof({2}Response_);
 """
 
     device_name = device.get_underscore_name()
@@ -426,27 +413,27 @@ int {0}_{1}({2} *{0}{3}) {{
     funcs = ''
     for packet in device.get_packets('function'):
         packet_name = packet.get_underscore_name()
-        d = c_common.make_parameter_list(packet)
+        params = c_common.make_parameter_list(packet)
         fid = '{0}_FUNCTION_{1}'.format(device.get_upper_case_name(),
                                         packet.get_upper_case_name())
         f = packet.get_camel_case_name()
         h, needs_i = make_struct_list(packet)
         if len(packet.get_elements('out')) > 0:
-            g = '\n\t' + f + 'Response_ *response;'
+            g = '\n\t' + f + 'Response_ response;'
             rl, needs_i2 = make_return_list(packet)
             i = func_ret.format(f, device_name, rl)
-            j = sizeof_ret.format(device_name, fid, f)
+            r = '(Packet *)&response'
         else:
             g = ''
             i = ''
             needs_i2 = False
-            j = ''
+            r = 'NULL'
         if needs_i or needs_i2:
             k = '\n\tint i;'
         else:
             k = ''
 
-        funcs += func.format(device_name, packet_name, c, d, fid, f, g, h, i, k)
+        funcs += func.format(device_name, packet_name, c, params, fid, f, g, h, i, k, r)
 
     return func_version.format(device_name, c) + funcs
 

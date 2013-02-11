@@ -257,7 +257,7 @@ int device_get_api_version(Device *device, uint8_t ret_api_version[3]);
 /**
  * \internal
  */
-int device_send_request(Device *device, Packet *request);
+int device_send_request(Device *device, Packet *request, Packet *response);
 
 #endif
 
