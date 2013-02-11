@@ -140,7 +140,7 @@ def make_api():
 
  .. code-block:: delphi
 
-    {0} := T{3}{1}.Create('YOUR_DEVICE_UID', ipcon);
+    {4} := T{3}{1}.Create('YOUR_DEVICE_UID', ipcon);
 
  This object can then be used after the IP Connection is connected
  (see examples :ref:`above <{0}_{2}_delphi_examples>`).
@@ -152,7 +152,7 @@ def make_api():
 
  .. code-block:: delphi
 
-    {0} := T{3}{1}.Create('YOUR_DEVICE_UID', ipcon);
+    {4} := T{3}{1}.Create('YOUR_DEVICE_UID', ipcon);
 
  Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
  (siehe Beispiele :ref:`oben <{0}_{2}_delphi_examples>`).
@@ -205,7 +205,7 @@ eine Prozedur einem Callback Property des Geräte Objektes zugewiesen wird:
     WriteLn(param);
   end;
 
-  {1}.OnExample := {{$ifdef FPC}}@{{$endif}}example.MyCallback;
+  {5}.OnExample := {{$ifdef FPC}}@{{$endif}}example.MyCallback;
 
 Die verfügbaren Callback Properties und ihre Parametertypen werden weiter
 unten beschrieben.
@@ -254,7 +254,8 @@ Alle folgend aufgelisteten Funktionen und Prozeduren sind Thread-sicher.
     cre = common.select_lang(create_str).format(device.get_underscore_name(),
                                                 device.get_camel_case_name(),
                                                 device.get_category().lower(),
-                                                device.get_category())
+                                                device.get_category(),
+                                                device.get_headless_camel_case_name())
 
     bf = make_methods('bf')
     af = make_methods('af')
@@ -270,7 +271,8 @@ Alle folgend aufgelisteten Funktionen und Prozeduren sind Thread-sicher.
         api_str += common.select_lang(c_str).format(c, device.get_underscore_name(),
                                                     device.get_category().lower(),
                                                     device.get_category(),
-                                                    device.get_camel_case_name())
+                                                    device.get_camel_case_name(),
+                                                    device.get_headless_camel_case_name())
 
     ref = '.. _{0}_{1}_delphi_api:\n'.format(device.get_underscore_name(),
                                              device.get_category().lower())
