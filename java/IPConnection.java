@@ -382,7 +382,7 @@ public class IPConnection {
 	}
 
 	public interface ConnectedListener {
-		public void connected(short disconnectReason);
+		public void connected(short connectReason);
 	}
 
 	public interface DisconnectedListener {
