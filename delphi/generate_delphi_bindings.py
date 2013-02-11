@@ -423,7 +423,7 @@ def make_methods():
 
         method += '\n'
         method += 'begin\n'
-        method += '  request := (ipcon as TIPConnection).CreatePacket(self, {0}, {1});\n'.format(function_id, packet.get_request_length())
+        method += '  request := (ipcon as TIPConnection).CreateRequestPacket(self, {0}, {1});\n'.format(function_id, packet.get_request_length())
 
         # Serialize request
         offset = 8

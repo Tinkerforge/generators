@@ -76,7 +76,6 @@ type
   TIPConnectionNotifyDisconnected = procedure(sender: TIPConnection; const disconnectReason: byte) of object;
   TIPConnection = class
   public
-    socketMutex: TCriticalSection;
     timeout: longint;
     devices: TDeviceTable;
   private
@@ -92,6 +91,7 @@ type
     sequenceNumberMutex: TCriticalSection;
     nextSequenceNumber: byte;
     pendingData: TByteArray;
+    socketMutex: TCriticalSection;
     socket: TSocket;
     waiter: TTimedSemaphore;
     enumerateCallback: TIPConnectionNotifyEnumerate;
@@ -209,8 +209,8 @@ type
 
     { Internal }
     function IsConnected: boolean;
-    function CreatePacket(const device: TDevice; const functionID: byte; const len: byte): TByteArray;
-    procedure Send(const data: TByteArray);
+    function CreateRequestPacket(const device: TDevice; const functionID: byte; const len: byte): TByteArray;
+    procedure SendRequest(const request: TByteArray);
   end;
 
   function GetUIDFromData(const data: TByteArray): longword;
@@ -391,13 +391,8 @@ end;
 procedure TIPConnection.Enumerate;
 var request: TByteArray;
 begin
-  socketMutex.Acquire;
-  try
-    request := CreatePacket(nil, IPCON_FUNCTION_ENUMERATE, 8);
-    Send(request);
-  finally
-    socketMutex.Release;
-  end;
+  request := CreateRequestPacket(nil, IPCON_FUNCTION_ENUMERATE, 8);
+  SendRequest(request);
 end;
 
 procedure TIPConnection.Wait;
@@ -754,7 +749,7 @@ begin
   result := socket <> INVALID_SOCKET;
 end;
 
-function TIPConnection.CreatePacket(const device: TDevice; const functionID: byte; const len: byte): TByteArray;
+function TIPConnection.CreateRequestPacket(const device: TDevice; const functionID: byte; const len: byte): TByteArray;
 var sequenceNumber, responseExpected: byte;
 begin
   SetLength(result, len);
@@ -762,7 +757,7 @@ begin
   sequenceNumberMutex.Acquire;
   try
     sequenceNumber := nextSequenceNumber + 1;
-    nextSequenceNumber := (nextSequenceNumber + 1) mod 15;
+    nextSequenceNumber := sequenceNumber mod 15;
   finally
     sequenceNumberMutex.Release;
   end;
@@ -778,14 +773,21 @@ begin
   result[6] := (sequenceNumber shl 4) or (responseExpected shl 3);
 end;
 
-{ NOTE: Assumes that socketMutex is locked }
-procedure TIPConnection.Send(const data: TByteArray);
+procedure TIPConnection.SendRequest(const request: TByteArray);
 begin
+  socketMutex.Acquire;
+  try
+    if (not IsConnected) then begin
+      raise Exception.Create('Not connected');
+    end;
 {$ifdef FPC}
-  fpsend(socket, @data[0], Length(data), 0);
+    fpsend(socket, @request[0], Length(request), 0);
 {$else}
-  WinSock.Send(socket, data[0], Length(data), 0);
+    WinSock.Send(socket, request[0], Length(request), 0);
 {$endif}
+  finally
+    socketMutex.Release;
+  end;
 end;
 
 function GetUIDFromData(const data: TByteArray): longword;

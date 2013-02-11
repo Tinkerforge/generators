@@ -217,51 +217,47 @@ begin
   end;
 end;
 
-{ NOTE: Assumes that requestMutex is locked }
 function TDevice.SendRequest(const request: TByteArray): TByteArray;
-var ipcon_: TIPConnection; responseExpected_: boolean; kind, errorCode, functionID: byte;
+var ipcon_: TIPConnection; kind, errorCode, functionID: byte;
 begin
   SetLength(result, 0);
-  responseExpected_ := false;
   ipcon_ := ipcon as TIPConnection;
-  ipcon_.socketMutex.Acquire;
-  try
-    if (not ipcon_.IsConnected) then begin
-      raise Exception.Create('Not connected');
-    end;
-    responseExpected_ := GetResponseExpectedFromData(request);
-    if (responseExpected_) then begin
-      expectedResponseFunctionID := GetFunctionIDFromData(request);
+  if (GetResponseExpectedFromData(request)) then begin
+    requestMutex.Acquire;
+    try
+      functionID := GetFunctionIDFromData(request);
+      expectedResponseFunctionID := functionID;
       expectedResponseSequenceNumber := GetSequenceNumberFromData(request);
-    end;
-    ipcon_.Send(request);
-  finally
-    ipcon_.socketMutex.Release;
-  end;
-  if (responseExpected_) then begin
-    functionID := GetFunctionIDFromData(request);
-    if (not responseQueue.Dequeue(kind, result, ipcon_.timeout)) then begin
-      expectedResponseFunctionID := 0;
-      expectedResponseSequenceNumber := 0;
-      raise TimeoutException.Create('Did not receive response in time for function ID ' + IntToStr(functionID));
-    end;
-    expectedResponseFunctionID := 0;
-    expectedResponseSequenceNumber := 0;
-    errorCode := GetErrorCodeFromData(result);
-    if (errorCode = 0) then begin
-      { No error }
-    end
-    else begin
-      if (errorCode = 1) then begin
-        raise NotSupportedException.Create('Got invalid parameter for function ' + IntToStr(functionID));
-      end
-      else if (errorCode = 2) then begin
-        raise NotSupportedException.Create('Function ' + IntToStr(functionID) + ' is not supported');
+      try
+        ipcon_.SendRequest(request);
+        if (not responseQueue.Dequeue(kind, result, ipcon_.timeout)) then begin
+          raise TimeoutException.Create('Did not receive response in time for function ID ' + IntToStr(functionID));
+        end;
+      finally
+        expectedResponseFunctionID := 0;
+        expectedResponseSequenceNumber := 0;
+      end;
+      errorCode := GetErrorCodeFromData(result);
+      if (errorCode = 0) then begin
+        { No error }
       end
       else begin
-        raise NotSupportedException.Create('Function ' + IntToStr(functionID) + ' returned an unknown error');
+        if (errorCode = 1) then begin
+          raise NotSupportedException.Create('Got invalid parameter for function ' + IntToStr(functionID));
+        end
+        else if (errorCode = 2) then begin
+          raise NotSupportedException.Create('Function ' + IntToStr(functionID) + ' is not supported');
+        end
+        else begin
+          raise NotSupportedException.Create('Function ' + IntToStr(functionID) + ' returned an unknown error');
+        end;
       end;
+    finally
+      requestMutex.Release;
     end;
+  end
+  else begin
+    ipcon_.SendRequest(request);
   end;
 end;
 
