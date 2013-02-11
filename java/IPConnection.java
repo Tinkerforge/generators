@@ -10,6 +10,8 @@ package com.tinkerforge;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.List;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -163,8 +165,8 @@ class CallbackThread extends Thread {
 
 					switch(id) {
 						case IPConnection.CALLBACK_CONNECTED:
-							if(ipcon.connectedListener != null) {
-								ipcon.connectedListener.connected(parameter);
+							for(IPConnection.ConnectedListener listener: ipcon.listenerConnected) {
+								listener.connected(parameter);
 							}
 
 							break;
@@ -205,8 +207,8 @@ class CallbackThread extends Thread {
 								e.printStackTrace();
 							}
 
-							if(ipcon.disconnectedListener != null) {
-								ipcon.disconnectedListener.disconnected(parameter);
+							for(IPConnection.DisconnectedListener listener: ipcon.listenerDisconnected) {
+								listener.disconnected(parameter);
 							}
 
 							if(parameter != IPConnection.DISCONNECT_REASON_REQUEST && ipcon.autoReconnect && ipcon.autoReconnectAllowed) {
@@ -252,7 +254,7 @@ class CallbackThread extends Thread {
 
 					byte functionID = IPConnection.getFunctionIDFromData(cqo.data);
 					if(functionID == IPConnection.CALLBACK_ENUMERATE) {
-						if(ipcon.enumerateListener != null) {
+						if(!ipcon.listenerEnumerate.isEmpty()) {
 							int length = IPConnection.getLengthFromData(cqo.data);
 							ByteBuffer bb = ByteBuffer.wrap(cqo.data, 8, length - 8);
 							bb.order(ByteOrder.LITTLE_ENDIAN);
@@ -282,9 +284,11 @@ class CallbackThread extends Thread {
 							int deviceIdentifier = IPConnection.unsignedShort(bb.getShort());
 							short enumerationType = IPConnection.unsignedByte(bb.get());
 
-							ipcon.enumerateListener.enumerate(uid_str, connectedUid_str, position,
-							                                  hardwareVersion, firmwareVersion,
-							                                  deviceIdentifier, enumerationType);
+							for(IPConnection.EnumerateListener listener: ipcon.listenerEnumerate) {
+								listener.enumerate(uid_str, connectedUid_str, position,
+								                   hardwareVersion, firmwareVersion,
+								                   deviceIdentifier, enumerationType);
+							}
 						}
 					} else {
 						long uid = IPConnection.getUIDFromData(cqo.data);
@@ -360,9 +364,9 @@ public class IPConnection {
 	Socket socket = null;
 	OutputStream out = null;
 	InputStream in = null;
-	EnumerateListener enumerateListener = null;
-	ConnectedListener connectedListener = null;
-	DisconnectedListener disconnectedListener = null;
+	List<EnumerateListener> listenerEnumerate = new ArrayList<EnumerateListener>();
+	List<ConnectedListener> listenerConnected = new ArrayList<ConnectedListener>();
+	List<DisconnectedListener> listenerDisconnected = new ArrayList<DisconnectedListener>();
 	ReceiveThread receiveThread = null;
 	CallbackThread callbackThread = null;
 
@@ -644,16 +648,82 @@ public class IPConnection {
 	}
 
 	/**
-	 * Registers a listener object.
+	 * Adds a Enumerate listener.
 	 */
+	public void addEnumerateListener(EnumerateListener listener) {
+		listenerEnumerate.add(listener);
+	}
+
+	/**
+	 * Removes a Enumerate listener.
+	 */
+	public void removeEnumerateListener(EnumerateListener listener) {
+		listenerEnumerate.remove(listener);
+	}
+
+	/**
+	 * Adds a Connected listener.
+	 */
+	public void addConnectedListener(ConnectedListener listener) {
+		listenerConnected.add(listener);
+	}
+
+	/**
+	 * Removes a Connected listener.
+	 */
+	public void removeConnectedListener(ConnectedListener listener) {
+		listenerConnected.remove(listener);
+	}
+
+	/**
+	 * Adds a Disconnected listener.
+	 */
+	public void addDisconnectedListener(DisconnectedListener listener) {
+		listenerDisconnected.add(listener);
+	}
+
+	/**
+	 * Removes a Disconnected listener.
+	 */
+	public void removeDisconnectedListener(DisconnectedListener listener) {
+		listenerDisconnected.remove(listener);
+	}
+
+	/**
+	 * Registers a listener object.
+	 *
+	 * @deprecated
+	 * Use the add and remove listener function per listener type instead.
+	 */
+	@Deprecated
 	public void addListener(Object object) {
+		boolean knownListener = false;
+
 		if(object instanceof EnumerateListener) {
-			enumerateListener = (EnumerateListener)object;
-		} else if(object instanceof ConnectedListener) {
-			connectedListener = (ConnectedListener)object;
-		} else if(object instanceof DisconnectedListener) {
-			disconnectedListener = (DisconnectedListener)object;
-		} else {
+			knownListener = true;
+
+			if (!listenerEnumerate.contains((EnumerateListener)object)) {
+				listenerEnumerate.add((EnumerateListener)object);
+			}
+		}
+
+		if(object instanceof ConnectedListener) {
+			knownListener = true;
+
+			if (!listenerConnected.contains((ConnectedListener)object)) {
+				listenerConnected.add((ConnectedListener)object);
+			}
+		}
+
+		if(object instanceof DisconnectedListener) {
+			knownListener = true;
+
+			if (!listenerDisconnected.contains((DisconnectedListener)object)) {
+				listenerDisconnected.add((DisconnectedListener)object);
+			}
+		}
+
+		if(!knownListener) {
 			throw new IllegalArgumentException("Unknown listener type");
 		}
 	}
@@ -767,7 +837,7 @@ public class IPConnection {
 	}
 
 	private void handleEnumerate(byte[] packet) {
-		if(enumerateListener != null) {
+		if(!listenerEnumerate.isEmpty()) {
 			try {
 				callbackQueue.put(new IPConnection.CallbackQueueObject(QUEUE_PACKET, packet));
 			} catch (InterruptedException e) {
