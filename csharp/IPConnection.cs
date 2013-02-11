@@ -57,7 +57,6 @@ namespace Tinkerforge
 		internal int nextSequenceNumber = 0;
 		private object sequenceNumberLock = new object();
 
-		internal readonly object socketLock = new object();
 
 		internal bool autoReconnectAllowed = false;
 		internal bool autoReconnectPending = false;
@@ -65,12 +64,13 @@ namespace Tinkerforge
 
 		string host;
 		int port;
-		Socket socket;
-		NetworkStream socketStream;
-		BinaryWriter socketWriter;
-		BinaryReader socketReader;
-		Thread receiveThread;
-		Thread callbackThread;
+		Socket socket = null;
+		internal object socketLock = new object();
+		NetworkStream socketStream = null;
+		BinaryWriter socketWriter = null;
+		BinaryReader socketReader = null;
+		Thread receiveThread = null;
+		Thread callbackThread = null;
 		bool receiveFlag = true;
 		internal Dictionary<int, Device> devices = new Dictionary<int, Device>();
 		BlockingQueue<CallbackQueueObject> callbackQueue = null;
@@ -324,14 +324,14 @@ namespace Tinkerforge
 		/// </summary>
 		public void Enumerate()
 		{
-				byte[] data_ = new byte[8];
-				LEConverter.To((byte)0, 0, data_);
-				LEConverter.To((byte)8, 4, data_);
-				LEConverter.To(FUNCTION_ENUMERATE, 5, data_);
-				LEConverter.To((byte)((GetNextSequenceNumber() << 4)), 6, data_);
-				LEConverter.To((byte)0, 7, data_);
+			byte[] request = new byte[8];
+			LEConverter.To((byte)0, 0, request);
+			LEConverter.To((byte)8, 4, request);
+			LEConverter.To(FUNCTION_ENUMERATE, 5, request);
+			LEConverter.To((byte)((GetNextSequenceNumber() << 4)), 6, request);
+			LEConverter.To((byte)0, 7, request);
 
-				Write(data_);
+			SendRequest(request);
 		}
 
 		/// <summary>
@@ -625,13 +625,12 @@ namespace Tinkerforge
 			}
 		}
 
-
-		private static byte GetFunctionIdFromData(byte[] data)
+		internal static byte GetFunctionIdFromData(byte[] data)
 		{
 			return data[5];
 		}
 
-		private static int GetLengthFromData(byte[] data)
+		internal static int GetLengthFromData(byte[] data)
 		{
 			return data[4];
 		}
@@ -641,8 +640,12 @@ namespace Tinkerforge
 			return LEConverter.IntFrom(0, data);
 		}
 
-		private static byte GetSequenceNumberFromData(byte[] data) {
+		internal static byte GetSequenceNumberFromData(byte[] data) {
 			return (byte)((((int)data[6]) >> 4) & 0x0F);
+		}
+
+		internal static bool GetResponseExpectedFromData(byte[] data) {
+			return (((int)(data[6]) >> 3) & 0x01) == 0x01;
 		}
 
 		internal static byte GetErrorCodeFromData(byte[] data) {
@@ -692,7 +695,7 @@ namespace Tinkerforge
 			// a callback without registered function
 		}
 
-		public void Write(byte[] data)
+		public void SendRequest(byte[] request)
 		{
             lock (socketLock)
             {
@@ -701,7 +704,7 @@ namespace Tinkerforge
                     throw new NotConnectedException();
                 }
 
-                socketWriter.Write(data, 0, data.Length);
+                socketWriter.Write(request, 0, request.Length);
             }
 		}
 
@@ -709,7 +712,7 @@ namespace Tinkerforge
         {
             devices[(int)device.internalUID] = device; // TODO: Dictionary might use UID directly as key; FIXME: might use weakref here
         }
-    }
+	}
 
 	public class TimeoutException : Exception
 	{
@@ -929,7 +932,7 @@ namespace Tinkerforge
 
 		public abstract void GetIdentity(out string uid, out string connectedUid, out char position, out byte[] hardwareVersion, out byte[] firmwareVersion, out int deviceIdentifier);
 
-		protected byte[] MakePacketHeader(byte length, byte fid)
+		protected byte[] CreateRequestPacket(byte length, byte fid)
 		{
 			byte[] packet = new byte[length];
 			LEConverter.To((int)this.internalUID, 0, packet);
@@ -948,48 +951,55 @@ namespace Tinkerforge
 			return packet;
 		}
 
-		protected void SendRequestNoResponse(byte[] request)
+		protected byte[] SendRequest(byte[] request)
 		{
-			lock (requestLock)
+			byte[] response = null;
+
+			if (IPConnection.GetResponseExpectedFromData(request))
 			{
-				ipcon.Write(request);
-			}
-		}
-
-		protected void SendRequestExpectResponse(byte[] request, byte functionID, out byte[] response)
-		{
-			lock (requestLock)
-			{
-				expectedResponseFunctionID = functionID;
-				expectedResponseSequenceNumber = (byte)((request[6] >> 4) & 0xF);
-
-                try
-                {
-                    ipcon.Write(request);
-                    if (!responseQueue.TryDequeue(out response, ipcon.responseTimeout))
-                    {
-                        throw new TimeoutException("Did not receive response in time");
-                    }
-                }
-                finally
-                {
-                    expectedResponseFunctionID = 0;
-                    expectedResponseSequenceNumber = 0;
-                }
-
-				byte errorCode = IPConnection.GetErrorCodeFromData(response);
-				switch(errorCode)
+				lock (requestLock)
 				{
-					case 0:
-						break;
-					case 1:
-						throw new NotSupportedException("Got invalid parameter for function " + functionID);
-					case 2:
-						throw new NotSupportedException("Function " + functionID + " is not supported");
-					default:
-						throw new NotSupportedException("Function " + functionID + " returned an unknown error");
+					byte functionID = IPConnection.GetFunctionIdFromData(request);
+
+					expectedResponseFunctionID = functionID;
+					expectedResponseSequenceNumber = IPConnection.GetSequenceNumberFromData(request);
+
+					try
+					{
+						ipcon.SendRequest(request);
+
+						if (!responseQueue.TryDequeue(out response, ipcon.responseTimeout))
+						{
+							throw new TimeoutException("Did not receive response in time");
+						}
+					}
+					finally
+					{
+						expectedResponseFunctionID = 0;
+						expectedResponseSequenceNumber = 0;
+					}
+
+					byte errorCode = IPConnection.GetErrorCodeFromData(response);
+
+					switch(errorCode)
+					{
+						case 0:
+							break;
+						case 1:
+							throw new NotSupportedException("Got invalid parameter for function " + functionID);
+						case 2:
+							throw new NotSupportedException("Function " + functionID + " is not supported");
+						default:
+							throw new NotSupportedException("Function " + functionID + " returned an unknown error");
+					}
 				}
 			}
+			else
+			{
+				ipcon.SendRequest(request);
+			}
+
+			return response;
 		}
 	}
 
