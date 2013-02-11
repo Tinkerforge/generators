@@ -508,11 +508,7 @@ namespace Tinkerforge
 						switch(mid)
 						{
 							case IPConnection.CALLBACK_CONNECTED:
-								var handler = Connected;
-								if(handler != null)
-								{
-									handler(this, (short)parameter);
-								}
+                                RaiseConnectedCallback((short)parameter);
 								break;
 
 							case IPConnection.CALLBACK_DISCONNECTED:
@@ -533,11 +529,7 @@ namespace Tinkerforge
 
 								Thread.Sleep(100);
 
-								var disconHandler = Disconnected;
-								if(disconHandler != null)
-								{
-									disconHandler(this, (short)parameter);
-								}
+                                RaiseDisconnectedCallback((short)parameter);
 
 								if(parameter != DISCONNECT_REASON_REQUEST && autoReconnect && autoReconnectAllowed)
 								{
@@ -588,36 +580,27 @@ namespace Tinkerforge
 
 						if(fid == CALLBACK_ENUMERATE)
 						{
-							var enumHandler = EnumerateCallback;
-							if(enumHandler != null)
-							{
-								string uid_str = LEConverter.StringFrom(8, cqo.data, 8);
-								string connectedUid_str = LEConverter.StringFrom(16, cqo.data, 8);
-								char position = (char)LEConverter.CharFrom(24, cqo.data);
-								short[] hardwareVersion = new short[3];
-								hardwareVersion[0] = LEConverter.ByteFrom(25, cqo.data);
-								hardwareVersion[1] = LEConverter.ByteFrom(26, cqo.data);
-								hardwareVersion[2] = LEConverter.ByteFrom(27, cqo.data);
-								short[] firmwareVersion = new short[3];
-								firmwareVersion[0] = LEConverter.ByteFrom(28, cqo.data);
-								firmwareVersion[1] = LEConverter.ByteFrom(29, cqo.data);
-								firmwareVersion[2] = LEConverter.ByteFrom(30, cqo.data);
-								int deviceIdentifier = LEConverter.ShortFrom(31, cqo.data);
-								short enumerationType = LEConverter.ByteFrom(33, cqo.data);
+                            string uid_str = LEConverter.StringFrom(8, cqo.data, 8);
+                            string connectedUid_str = LEConverter.StringFrom(16, cqo.data, 8);
+                            char position = (char)LEConverter.CharFrom(24, cqo.data);
+                            short[] hardwareVersion = new short[3];
+                            hardwareVersion[0] = LEConverter.ByteFrom(25, cqo.data);
+                            hardwareVersion[1] = LEConverter.ByteFrom(26, cqo.data);
+                            hardwareVersion[2] = LEConverter.ByteFrom(27, cqo.data);
+                            short[] firmwareVersion = new short[3];
+                            firmwareVersion[0] = LEConverter.ByteFrom(28, cqo.data);
+                            firmwareVersion[1] = LEConverter.ByteFrom(29, cqo.data);
+                            firmwareVersion[2] = LEConverter.ByteFrom(30, cqo.data);
+                            int deviceIdentifier = LEConverter.ShortFrom(31, cqo.data);
+                            short enumerationType = LEConverter.ByteFrom(33, cqo.data);
 
-								enumHandler(this, uid_str, connectedUid_str, position, hardwareVersion, firmwareVersion, deviceIdentifier, enumerationType);
-							}
+                            RaiseEnumerateCallback(uid_str, connectedUid_str, position, hardwareVersion, firmwareVersion, deviceIdentifier, enumerationType);
 						}
 						else
 						{
 							if(devices.ContainsKey(uid))
 							{
-								Device device = devices[uid];
-								Device.CallbackWrapper wrapper = device.callbackWrappers[fid];
-								if(wrapper != null)
-								{
-									wrapper(cqo.data);
-								}
+                                DispatchCallback(uid, fid, cqo.data);
 							}
 						}
 						break;
@@ -625,6 +608,75 @@ namespace Tinkerforge
 			}
 		}
 
+        private void RaiseConnectedCallback(short parameter)
+        {
+            var handler = Connected;
+            if (handler != null)
+            {
+                try
+                {
+                    handler(this, parameter);
+                }
+                catch (Exception e)
+                {
+                    OnHandlerException(e);
+                }
+            }
+        }
+
+        private void RaiseDisconnectedCallback(short parameter)
+        {
+            var handler = Disconnected;
+            if (handler != null)
+            {
+                try
+                {
+                    handler(this, parameter);
+                }
+                catch (Exception e)
+                {
+                    OnHandlerException(e);
+                }
+            }
+        }
+
+        private void RaiseEnumerateCallback(string uid_str, string connectedUid_str, char position, short[] hardwareVersion, short[] firmwareVersion, int deviceIdentifier, short enumerationType)
+        {
+            var handler = EnumerateCallback;
+            if (handler != null)
+            {
+                try
+                {
+                    handler(this, uid_str, connectedUid_str, position, hardwareVersion, firmwareVersion, deviceIdentifier, enumerationType);
+                }
+                catch (Exception e)
+                {
+                    OnHandlerException(e);
+                }
+            }
+        }
+
+        private void DispatchCallback(int targetUID, byte functionId, byte[] data)
+        {
+            Device device = devices[targetUID];
+            Device.CallbackWrapper wrapper = device.callbackWrappers[functionId];
+            if (wrapper != null)
+            {
+                try
+                {
+                    wrapper(data);
+                }
+                catch (Exception e)
+                {
+                    OnHandlerException(e);
+                }
+            }
+        }
+
+        private static void OnHandlerException(Exception e)
+        {
+            Console.Error.WriteLine("Uncaught exception in event handler: {0}", e);
+        }
 
 		private static byte GetFunctionIdFromData(byte[] data)
 		{
