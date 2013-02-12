@@ -317,7 +317,7 @@ public class IPConnection {
 	public final static byte CALLBACK_DISCONNECTED = 1;
 	public final static byte CALLBACK_AUTHENTICATION_ERROR = 2;
 
-	private final static long BROADCAST_UID = 0;
+	private final static int BROADCAST_UID = 0;
 
 	// enumeration_type parameter to the enumerate callback
 	public final static short ENUMERATION_TYPE_AVAILABLE = 0;
@@ -353,8 +353,8 @@ public class IPConnection {
 	private String host;
 	private int port;
 
-	private final static int SEQENCE_NUMBER_POS = 4;
-	private byte nextSequenceNumber = 1;
+	private final static int SEQUENCE_NUMBER_POS = 4;
+	private int nextSequenceNumber = 0;
 
 	boolean receiveFlag = false;
 
@@ -636,15 +636,9 @@ public class IPConnection {
 	 * callback.
 	 */
 	public void enumerate() throws NotConnectedException {
-		synchronized(socketMutex) {
-			if(socket == null) {
-				throw new NotConnectedException();
-			}
+		ByteBuffer request = createRequestPacket((byte)8, FUNCTION_ENUMERATE, null);
 
-			ByteBuffer request = createRequestBuffer(BROADCAST_UID, (byte)8, FUNCTION_ENUMERATE, (byte)0, (byte)0);
-
-			write(request.array());
-		}
+		sendRequest(request.array());
 	}
 
 	/**
@@ -788,6 +782,10 @@ public class IPConnection {
 		return (byte)((((int)data[6]) >> 4) & 0x0F);
 	}
 
+	static boolean getResponseExpectedFromData(byte[] data) {
+		return (((int)(data[6]) >> 3) & 0x01) == 0x01;
+	}
+
 	static byte getErrorCodeFromData(byte[] data) {
 		return (byte)(((int)(data[7] >> 6)) & 0x03);
 	}
@@ -827,45 +825,64 @@ public class IPConnection {
 		return (long)(((long)data) & 0xFFFFFFFF);
 	}
 
-	void write(byte[] data) {
-		try {
-			out.write(data);
-		} catch(java.io.IOException e) {
-			e.printStackTrace();
-			return;
+	void sendRequest(byte[] request) throws NotConnectedException {
+		synchronized(socketMutex) {
+			if (getConnectionState() != CONNECTION_STATE_CONNECTED) {
+				throw new NotConnectedException();
+			}
+
+			try {
+				out.write(request);
+			} catch(java.io.IOException e) {
+				e.printStackTrace();
+				return;
+			}
 		}
 	}
 
 	private void handleEnumerate(byte[] packet) {
 		if(!listenerEnumerate.isEmpty()) {
 			try {
-				callbackQueue.put(new IPConnection.CallbackQueueObject(QUEUE_PACKET, packet));
+				callbackQueue.put(new CallbackQueueObject(QUEUE_PACKET, packet));
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
-	ByteBuffer createRequestBuffer(long uid, byte length, int functionID, byte options, byte flags) {
+	byte getNextSequenceNumber() {
 		synchronized(sequenceNumberMutex) {
-			options |= nextSequenceNumber << SEQENCE_NUMBER_POS;
+			int sequenceNumber = nextSequenceNumber + 1;
+			nextSequenceNumber = sequenceNumber % 15;
+			return (byte)sequenceNumber;
+		}
+	}
 
-			nextSequenceNumber++;
-			if(nextSequenceNumber == 0 || nextSequenceNumber > 15) {
-				nextSequenceNumber = 1;
+	ByteBuffer createRequestPacket(byte length, byte functionID, Device device) {
+		int uid = BROADCAST_UID;
+		byte options = 0;
+		byte flags = 0;
+
+		if (device != null) {
+			uid = (int)device.uid;
+
+			if (device.getResponseExpected(functionID)) {
+				options = 8;
 			}
 		}
 
-		ByteBuffer buffer = ByteBuffer.allocate(length);
+		options |= getNextSequenceNumber() << SEQUENCE_NUMBER_POS;
 
-		buffer.order(ByteOrder.LITTLE_ENDIAN);
-		buffer.putInt((int)uid);
-		buffer.put(length);
-		buffer.put((byte)functionID);
-		buffer.put(options);
-		buffer.put(flags);
+		ByteBuffer packet = ByteBuffer.allocate(length);
 
-		return buffer;
+		packet.order(ByteOrder.LITTLE_ENDIAN);
+		packet.putInt(uid);
+		packet.put(length);
+		packet.put(functionID);
+		packet.put(options);
+		packet.put(flags);
+
+		return packet;
 	}
 
 	static String base58Encode(long value) {

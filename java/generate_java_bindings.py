@@ -374,20 +374,15 @@ def make_methods():
     methods = ''
     method = """
 \t/**
-\t * {9}
+\t * {8}
 \t */
 \tpublic {0} {1}({2}) {3} {{
-\t\tbyte options = 0;
-\t\tboolean isResponseExpected = getResponseExpected(FUNCTION_{5});
-\t\tif(isResponseExpected) {{
-\t\t\toptions = 8;
-\t\t}}
-\t\tByteBuffer bb = ipcon.createRequestBuffer(uid, (byte){4}, FUNCTION_{5}, options, (byte)({6}));
+\t\tByteBuffer bb = ipcon.createRequestPacket((byte){4}, FUNCTION_{5}, this);
+{6}
 {7}
-{8}
 \t}}
 """
-    method_response = """\t\tbyte[] response = sendRequestExpectResponse(bb.array(), FUNCTION_{0});
+    method_response = """\t\tbyte[] response = sendRequest(bb.array());
 
 \t\tbb = ByteBuffer.wrap(response, 8, response.length - 8);
 \t\tbb.order(ByteOrder.LITTLE_ENDIAN);
@@ -395,14 +390,7 @@ def make_methods():
 {1}
 \t\treturn {2};"""
 
-    method_noresponse = """\t\tif(isResponseExpected) {{
-\t\t\tbyte[] response = sendRequestExpectResponse(bb.array(), FUNCTION_{0});
-
-\t\t\tbb = ByteBuffer.wrap(response, 8, response.length - 8);
-\t\t\tbb.order(ByteOrder.LITTLE_ENDIAN);
-\t\t}} else {{
-\t\t\tsendRequestNoResponse(bb.array());
-\t\t}}"""
+    method_noresponse = """\t\tsendRequest(bb.array());"""
 
     loop = """\t\tfor(int i = 0; i < {0}; i++) {{
 {1}
@@ -417,7 +405,6 @@ def make_methods():
     cls = device.get_camel_case_name()
     for packet in device.get_packets('function'):
         options = 0
-        flags = 0
         ret = java_common.get_return_type(packet)
         name_lower = packet.get_headless_camel_case_name()
         parameter = java_common.make_parameter_list(packet)
@@ -476,7 +463,6 @@ def make_methods():
                                  throw,
                                  size,
                                  name_upper,
-                                 flags,
                                  bbputs,
                                  response,
                                  doc)

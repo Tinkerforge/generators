@@ -168,54 +168,45 @@ public abstract class Device {
 		}
 	}
 
-	void sendRequestNoResponse(byte[] request) throws NotConnectedException {
-		synchronized(requestMutex) { synchronized(ipcon.socketMutex) {
-			if (ipcon.getConnectionState() != IPConnection.CONNECTION_STATE_CONNECTED) {
-				throw new NotConnectedException();
-			}
-
-			ipcon.write(request);
-		}}
-	}
-
-	byte[] sendRequestExpectResponse(byte[] request, byte functionID) throws TimeoutException, NotConnectedException {
+	byte[] sendRequest(byte[] request) throws TimeoutException, NotConnectedException {
 		byte[] response = null;
 
-		synchronized(requestMutex) { synchronized(ipcon.socketMutex) {
-			if (ipcon.getConnectionState() != IPConnection.CONNECTION_STATE_CONNECTED) {
-				throw new NotConnectedException();
-			}
+		if (IPConnection.getResponseExpectedFromData(request)) {
+			synchronized(requestMutex) {
+				byte functionID = IPConnection.getFunctionIDFromData(request);
 
-			expectedResponseFunctionID = functionID;
-			expectedResponseSequenceNumber = IPConnection.getSequenceNumberFromData(request);
+				expectedResponseFunctionID = functionID;
+				expectedResponseSequenceNumber = IPConnection.getSequenceNumberFromData(request);
 
-			ipcon.write(request);
+				try {
+					ipcon.sendRequest(request);
 
-			try {
-				response = responseQueue.poll(ipcon.responseTimeout, TimeUnit.MILLISECONDS);
-				if(response == null) {
-					throw new TimeoutException("Did not receive response in time");
+					response = responseQueue.poll(ipcon.responseTimeout, TimeUnit.MILLISECONDS);
+					if(response == null) {
+						throw new TimeoutException("Did not receive response in time");
+					}
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} finally {
+					expectedResponseFunctionID = 0;
+					expectedResponseSequenceNumber = 0;
 				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} finally {
-				expectedResponseFunctionID = 0;
-				expectedResponseSequenceNumber = 0;
-			}
 
-			byte errorCode = IPConnection.getErrorCodeFromData(response);
-			switch(errorCode)
-			{
-				case 0:
-					break;
-				case 1:
-					throw new UnsupportedOperationException("Got invalid parameter for function " + functionID);
-				case 2:
-					throw new UnsupportedOperationException("Function " + functionID + " is not supported");
-				default:
-					throw new UnsupportedOperationException("Function " + functionID + " returned an unknown error");
+				byte errorCode = IPConnection.getErrorCodeFromData(response);
+				switch(errorCode) {
+					case 0:
+						break;
+					case 1:
+						throw new UnsupportedOperationException("Got invalid parameter for function " + functionID);
+					case 2:
+						throw new UnsupportedOperationException("Function " + functionID + " is not supported");
+					default:
+						throw new UnsupportedOperationException("Function " + functionID + " returned an unknown error");
+				}
 			}
-		}}
+		} else {
+			ipcon.sendRequest(request);
+		}
 
 		return response;
 	}
