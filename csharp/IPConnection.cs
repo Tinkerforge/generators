@@ -613,14 +613,7 @@ namespace Tinkerforge
             var handler = Connected;
             if (handler != null)
             {
-                try
-                {
-                    handler(this, parameter);
-                }
-                catch (Exception e)
-                {
-                    OnHandlerException(e);
-                }
+                SafelyExecuteHandler(() => handler(this, parameter));
             }
         }
 
@@ -629,14 +622,7 @@ namespace Tinkerforge
             var handler = Disconnected;
             if (handler != null)
             {
-                try
-                {
-                    handler(this, parameter);
-                }
-                catch (Exception e)
-                {
-                    OnHandlerException(e);
-                }
+                SafelyExecuteHandler(() => handler(this, parameter));
             }
         }
 
@@ -645,14 +631,10 @@ namespace Tinkerforge
             var handler = EnumerateCallback;
             if (handler != null)
             {
-                try
+                SafelyExecuteHandler(() =>
                 {
                     handler(this, uid_str, connectedUid_str, position, hardwareVersion, firmwareVersion, deviceIdentifier, enumerationType);
-                }
-                catch (Exception e)
-                {
-                    OnHandlerException(e);
-                }
+                });
             }
         }
 
@@ -662,14 +644,21 @@ namespace Tinkerforge
             Device.CallbackWrapper wrapper = device.callbackWrappers[functionId];
             if (wrapper != null)
             {
-                try
-                {
-                    wrapper(data);
-                }
-                catch (Exception e)
-                {
-                    OnHandlerException(e);
-                }
+                SafelyExecuteHandler(() => wrapper(data));
+            }
+        }
+
+        private delegate void Action(); //first introduced in .NET 3.5
+
+        private void SafelyExecuteHandler(Action handlerAction)
+        {
+            try
+            {
+                handlerAction();
+            }
+            catch (Exception e)
+            {
+                OnHandlerException(e);
             }
         }
 
