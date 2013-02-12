@@ -630,7 +630,7 @@ class IPConnection
     {
         $uid = '0';
         $sequenceNumber = $this->nextSequenceNumber + 1;
-        $this->nextSequenceNumber = ($this->nextSequenceNumber + 1) % 15;
+        $this->nextSequenceNumber = $sequenceNumber % 15;
         $responseExpected = 0;
 
         if ($device != NULL) {

@@ -33,8 +33,8 @@ type
     uid_: longword;
     ipcon: TObject;
     apiVersion: TVersionNumber;
-    expectedResponseFunctionID: byte;
-    expectedResponseSequenceNumber: byte;
+    expectedResponseFunctionID: byte; { protected by requestMutex }
+    expectedResponseSequenceNumber: byte; { protected by requestMutex }
     responseQueue: TBlockingQueue;
     responseExpected: array [0..255] of byte;
     callbackWrappers: array [0..255] of TCallbackWrapper;
@@ -223,9 +223,9 @@ begin
   SetLength(result, 0);
   ipcon_ := ipcon as TIPConnection;
   if (GetResponseExpectedFromData(request)) then begin
+    functionID := GetFunctionIDFromData(request);
     requestMutex.Acquire;
     try
-      functionID := GetFunctionIDFromData(request);
       expectedResponseFunctionID := functionID;
       expectedResponseSequenceNumber := GetSequenceNumberFromData(request);
       try
@@ -237,23 +237,23 @@ begin
         expectedResponseFunctionID := 0;
         expectedResponseSequenceNumber := 0;
       end;
-      errorCode := GetErrorCodeFromData(result);
-      if (errorCode = 0) then begin
-        { No error }
-      end
-      else begin
-        if (errorCode = 1) then begin
-          raise NotSupportedException.Create('Got invalid parameter for function ' + IntToStr(functionID));
-        end
-        else if (errorCode = 2) then begin
-          raise NotSupportedException.Create('Function ' + IntToStr(functionID) + ' is not supported');
-        end
-        else begin
-          raise NotSupportedException.Create('Function ' + IntToStr(functionID) + ' returned an unknown error');
-        end;
-      end;
     finally
       requestMutex.Release;
+    end;
+    errorCode := GetErrorCodeFromData(result);
+    if (errorCode = 0) then begin
+      { No error }
+    end
+    else begin
+      if (errorCode = 1) then begin
+        raise NotSupportedException.Create('Got invalid parameter for function ' + IntToStr(functionID));
+      end
+      else if (errorCode = 2) then begin
+        raise NotSupportedException.Create('Function ' + IntToStr(functionID) + ' is not supported');
+      end
+      else begin
+        raise NotSupportedException.Create('Function ' + IntToStr(functionID) + ' returned an unknown error');
+      end;
     end;
   end
   else begin

@@ -781,11 +781,12 @@ namespace Tinkerforge
 		internal byte stackID = 0;
 		internal short[] apiVersion = new short[3];
 		internal ResponseExpectedFlag[] responseExpected = new ResponseExpectedFlag[256];
-		internal byte expectedResponseFunctionID = 0;
-		internal byte expectedResponseSequenceNumber = 0;
+		internal byte expectedResponseFunctionID = 0; // protected by requestLock
+		internal byte expectedResponseSequenceNumber = 0; // protected by requestLock
 		internal CallbackWrapper[] callbackWrappers = new CallbackWrapper[256];
 		internal BlockingQueue<byte[]> responseQueue = new BlockingQueue<byte[]>();
 		internal IPConnection ipcon = null;
+		private object requestLock = new object();
 
         internal UID internalUID;
 
@@ -805,8 +806,6 @@ namespace Tinkerforge
 			TRUE = 3,
 			FALSE = 4
 		}
-
-		private object requestLock = new object();
 
 		internal delegate void CallbackWrapper(byte[] data);
 
@@ -957,10 +956,10 @@ namespace Tinkerforge
 
 			if (IPConnection.GetResponseExpectedFromData(request))
 			{
+				byte functionID = IPConnection.GetFunctionIdFromData(request);
+
 				lock (requestLock)
 				{
-					byte functionID = IPConnection.GetFunctionIdFromData(request);
-
 					expectedResponseFunctionID = functionID;
 					expectedResponseSequenceNumber = IPConnection.GetSequenceNumberFromData(request);
 
@@ -978,20 +977,20 @@ namespace Tinkerforge
 						expectedResponseFunctionID = 0;
 						expectedResponseSequenceNumber = 0;
 					}
+				}
 
-					byte errorCode = IPConnection.GetErrorCodeFromData(response);
+				byte errorCode = IPConnection.GetErrorCodeFromData(response);
 
-					switch(errorCode)
-					{
-						case 0:
-							break;
-						case 1:
-							throw new NotSupportedException("Got invalid parameter for function " + functionID);
-						case 2:
-							throw new NotSupportedException("Function " + functionID + " is not supported");
-						default:
-							throw new NotSupportedException("Function " + functionID + " returned an unknown error");
-					}
+				switch(errorCode)
+				{
+					case 0:
+						break;
+					case 1:
+						throw new NotSupportedException("Got invalid parameter for function " + functionID);
+					case 2:
+						throw new NotSupportedException("Function " + functionID + " is not supported");
+					default:
+						throw new NotSupportedException("Function " + functionID + " returned an unknown error");
 				}
 			}
 			else

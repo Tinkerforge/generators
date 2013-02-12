@@ -16,8 +16,8 @@ public abstract class Device {
 	long uid = (long)0;
 	short[] apiVersion = new short[3];
 	byte[] responseExpected = new byte[256];
-	byte expectedResponseFunctionID = 0;
-	byte expectedResponseSequenceNumber = 0;
+	byte expectedResponseFunctionID = 0; // protected by requestMutex
+	byte expectedResponseSequenceNumber = 0; // protected by requestMutex
 	private Object requestMutex = new Object();
 	SynchronousQueue<byte[]> responseQueue = new SynchronousQueue<byte[]>();
 	IPConnection ipcon = null;
@@ -172,9 +172,9 @@ public abstract class Device {
 		byte[] response = null;
 
 		if (IPConnection.getResponseExpectedFromData(request)) {
-			synchronized(requestMutex) {
-				byte functionID = IPConnection.getFunctionIDFromData(request);
+			byte functionID = IPConnection.getFunctionIDFromData(request);
 
+			synchronized(requestMutex) {
 				expectedResponseFunctionID = functionID;
 				expectedResponseSequenceNumber = IPConnection.getSequenceNumberFromData(request);
 
@@ -191,18 +191,18 @@ public abstract class Device {
 					expectedResponseFunctionID = 0;
 					expectedResponseSequenceNumber = 0;
 				}
+			}
 
-				byte errorCode = IPConnection.getErrorCodeFromData(response);
-				switch(errorCode) {
-					case 0:
-						break;
-					case 1:
-						throw new UnsupportedOperationException("Got invalid parameter for function " + functionID);
-					case 2:
-						throw new UnsupportedOperationException("Function " + functionID + " is not supported");
-					default:
-						throw new UnsupportedOperationException("Function " + functionID + " returned an unknown error");
-				}
+			byte errorCode = IPConnection.getErrorCodeFromData(response);
+			switch(errorCode) {
+				case 0:
+					break;
+				case 1:
+					throw new UnsupportedOperationException("Got invalid parameter for function " + functionID);
+				case 2:
+					throw new UnsupportedOperationException("Function " + functionID + " is not supported");
+				default:
+					throw new UnsupportedOperationException("Function " + functionID + " returned an unknown error");
 			}
 		} else {
 			ipcon.sendRequest(request);
