@@ -849,10 +849,14 @@ type of the encryption. Possible values are:
  "3", "No Encryption"
 
 The key has a max length of 50 characters and is used if encryption
-is set to 0 or 2 (WPA or WEP). Otherwise the value is ignored.
-For WEP it is possible to set the key index (1-4). If you don't know your
-key index, it is likely 1. If you want to set a key with more than
-50 characters, see :func:`SetLongWifiKey`.
+is set to 0 or 2 (WPA/WPA2 or WEP). Otherwise the value is ignored.
+
+For WPA/WPA2 the key has to be at least 8 characters long. If you want to set
+a key with more than 50 characters, see :func:`SetLongWifiKey`.
+
+For WEP the key has to be either 10 or 26 hexdecimal digits long. It is
+possible to set the WEP key index (1-4). If you don't know your key index,
+it is likely 1.
 
 If you choose WPA Enterprise as encryption, you have to set eap options and
 the length of the certificates (for other encryption types these paramters
@@ -891,11 +895,16 @@ Typ der Verschlüsselung. Mögliche Werte sind:
  "3", "Keine Verschlüsselung"
 
 Key hat eine maximale Länge von 50 Zeichen und wird benutzt falls
-encryption auf 0 oder 2 (WPA oder WEP) gesetzt ist. Andernfalls wird key
-ignoriert. Für WEP gibt es die Möglichkeit den key index zu setzen
-(1-4). Fall der key index unbekannt ist, ist er wahrscheinlich 1.
-Wenn ein Schlüssel mit mehr als 50 Zeichen gesetzt werden soll, kann
-:func:`SetLongWifiKey` genutzt werden.
+encryption auf 0 oder 2 (WPA/WPA2 oder WEP) gesetzt ist. Andernfalls wird key
+ignoriert.
+
+Für WPA/WPA2 muss der Schlüssel mindestens 8 Zeichen lang sein. Wenn ein Schlüssel
+mit mehr als 50 Zeichen gesetzt werden soll, kann :func:`SetLongWifiKey`
+genutzt werden.
+
+Für WEP muss der Schlüssel entweder 10 oder 26 hexadezimale Zeichen lang sein.
+Es ist möglich den key index zu setzen (1-4). Fall der key index unbekannt ist,
+ist er wahrscheinlich 1.
 
 Wenn WPA Enterprise als encryption gewählt wird, müssen eap options und
 die Länge der Zertifikate gesetzt werden. Die Länge wird in Byte angegeben
@@ -1297,19 +1306,20 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets a long WIFI key (up to 64 chars) for WPA encryption. This key will be used
+Sets a long WIFI key (up to 63 chars, at least 8 chars) for WPA encryption.
+This key will be used
 if the key in :func:`SetWifiEncryption` is set to "-". In the old protocol,
-a payload of size 64 was not possible, so the maximum key length was 50 chars.
+a payload of size 63 was not possible, so the maximum key length was 50 chars.
 
 With the new protocol this is possible, since we didn't want to break API,
 this function was added additionally.
 """,
 'de':
 """
-Setzt einen langen WIFI Schlüssel (bis zu 64 Zeichen) für WPA
-Verschlüsselung. Dieser Schlüssel wird genutzt, wenn der Schlüssel in
+Setzt einen langen WIFI Schlüssel (bis zu 63 Zeichen, mindestens 8 Zeichen) für
+WPA Verschlüsselung. Dieser Schlüssel wird genutzt, wenn der Schlüssel in
 :func:`SetWifiEncryption` auf "-" gesetzt wird. Im alten Protokoll war
-ein Payload der Größe 64 nicht möglich, dadurch wurde die maximale
+ein Payload der Größe 63 nicht möglich, dadurch wurde die maximale
 Schlüssellänge auf 50 gesetzt. 
 
 Mit dem neuen Protokoll ist die volle
