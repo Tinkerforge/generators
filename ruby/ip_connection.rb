@@ -308,58 +308,55 @@ module Tinkerforge
                      response_length, response_format)
       response = nil
 
-      @request_mutex.synchronize {
-        response_expected = false
+      if request_data.length > 0
+        payload = pack request_data, request_format
+      else
+        payload = ''
+      end
 
-        @ipcon.socket_mutex.synchronize {
-          if @ipcon.socket == nil
-            raise Exception, 'Not connected'
+      header, response_expected, sequence_number = \
+        @ipcon.create_packet_header self, 8 + payload.length, function_id
+      request = header + payload
+
+      if response_expected
+        packet = nil
+
+        @request_mutex.synchronize {
+          @expected_response_function_id = function_id
+          @expected_response_sequence_number = sequence_number
+
+          begin
+            @ipcon.send_request request
+
+            packet = dequeue_response
+          ensure
+            @expected_response_function_id = 0
+            @expected_response_sequence_number = 0
           end
-
-          if request_data.length > 0
-            payload = pack request_data, request_format
-          else
-            payload = ''
-          end
-
-          header, response_expected, sequence_number = \
-            @ipcon.create_packet_header self, 8 + payload.length, function_id
-          request = header + payload
-
-          if response_expected
-            @expected_response_function_id = function_id
-            @expected_response_sequence_number = sequence_number
-          end
-
-          @ipcon.socket.send request, 0
         }
 
-        if response_expected
-          packet = dequeue_response
-          error_code = get_error_code_from_data(packet)
+        error_code = get_error_code_from_data(packet)
 
-          @expected_response_function_id = 0
-          @expected_response_sequence_number = 0
+        if error_code == 0
+          # no error
+        elsif error_code == 1
+          raise NotSupportedException, "Got invalid parameter for function #{function_id}"
+        elsif error_code == 2
+          raise NotSupportedException, "Function #{function_id} is not supported"
+        else
+          raise NotSupportedException, "Function #{function_id} returned an unknown error"
+        end
 
-          if error_code == 0
-            # no error
-          elsif error_code == 1
-            raise NotSupportedException, "Got invalid parameter for function #{function_id}"
-          elsif error_code == 2
-            raise NotSupportedException, "Function #{function_id} is not supported"
-          else
-            raise NotSupportedException, "Function #{function_id} returned an unknown error"
-          end
+        if response_length > 0
+          response = unpack packet[8..-1], response_format
 
-          if response_length > 0
-            response = unpack packet[8..-1], response_format
-
-            if response.length == 1
-              response = response[0]
-            end
+          if response.length == 1
+            response = response[0]
           end
         end
-      }
+      else
+        @ipcon.send_request request
+      end
 
       response
     end
@@ -391,8 +388,6 @@ module Tinkerforge
   end
 
   class IPConnection
-    attr_accessor :socket
-    attr_accessor :socket_mutex
     attr_accessor :devices
     attr_accessor :timeout
 
@@ -581,15 +576,9 @@ module Tinkerforge
     # Broadcasts an enumerate request. All devices will respond with an
     # enumerate callback.
     def enumerate
-      @socket_mutex.synchronize {
-        if @socket == nil
-          raise Exception, 'Not connected'
-        end
+      request, _, _ = create_packet_header nil, 8, FUNCTION_ENUMERATE
 
-        request, _, _ = create_packet_header nil, 8, FUNCTION_ENUMERATE
-
-        @socket.send request, 0
-      }
+      send_request request
     end
 
     # Stops the current thread until unwait is called.
@@ -621,9 +610,9 @@ module Tinkerforge
     # internal
     def get_next_sequence_number
       @sequence_number_mutex.synchronize {
-        sequence_number = @next_sequence_number
-        @next_sequence_number = (@next_sequence_number + 1) % 15
-        sequence_number + 1
+        sequence_number = @next_sequence_number + 1
+        @next_sequence_number = sequence_number % 15
+        sequence_number
       }
     end
 
@@ -647,6 +636,16 @@ module Tinkerforge
       header = pack [uid, length, function_id, sequence_number_and_options, 0], 'L C C C C'
 
       [header, response_expected, sequence_number]
+    end
+
+    def send_request(request)
+      @socket_mutex.synchronize {
+        if @socket == nil
+          raise Exception, 'Not connected'
+        end
+
+        @socket.send request, 0
+      }
     end
 
     private
@@ -754,7 +753,7 @@ module Tinkerforge
         end
       elsif function_id == CALLBACK_DISCONNECTED
         # need to do this here, the receive_loop is not allowed to
-        # hold the socket_lock because this could cause a deadlock
+        # hold the socket_mutex because this could cause a deadlock
         # with a concurrent call to the (dis-)connect function
         @socket_mutex.synchronize {
           if @socket != nil
