@@ -76,9 +76,9 @@ def format_doc(packet):
         name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
         if other_packet.get_type() == 'callback':
             name_upper = other_packet.get_upper_case_name()
-            name_right = ':py:attr:`{0}.CALLBACK_{1}`'.format(cls, name_upper)
+            name_right = ':py:attr:`CALLBACK_{1} <{0}.CALLBACK_{1}>`'.format(cls, name_upper)
         else:
-            name_right = ':py:func:`{0}.{1}`'.format(cls, other_packet.get_underscore_name())
+            name_right = ':py:func:`{1}() <{0}.{1}>`'.format(cls, other_packet.get_underscore_name())
         text = text.replace(name_false, name_right)
 
     text = text.replace(":word:`parameter`", common.select_lang(parameter))
@@ -258,7 +258,7 @@ Callbacks
 
 Callbacks can be registered to receive
 time critical or recurring data from the device. The registration is done
-with the :py:func:`register_callback <{3}.register_callback>` function of
+with the :py:func:`register_callback() <{3}.register_callback>` function of
 the device object. The first parameter is the callback ID and the second
 parameter the callback function:
 
@@ -287,7 +287,7 @@ Callbacks
 
 Callbacks können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
-mit der Funktion :py:func:`register_callback <{3}.register_callback>` des 
+mit der Funktion :py:func:`register_callback() <{3}.register_callback>` des
 Geräte Objektes durchgeführt werden. Der erste Parameter ist die Callback ID
 und der zweite Parameter die Callbackfunktion:
 

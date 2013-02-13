@@ -57,7 +57,7 @@ def format_doc(packet):
             name_right = ':php:member:`CALLBACK_{1} <{0}::CALLBACK_{1}>`'.format(cls, name_upper)
         else:
             name = other_packet.get_headless_camel_case_name()
-            name_right = ':php:func:`{1} <{0}::{1}>`'.format(cls, name)
+            name_right = ':php:func:`{1}() <{0}::{1}>`'.format(cls, name)
         text = text.replace(name_false, name_right)
 
     text = text.replace(":word:`parameter`", common.select_lang(parameter))
@@ -221,7 +221,7 @@ Callbacks
 
 Callbacks can be registered to receive
 time critical or recurring data from the device. The registration is done
-with the :php:func:`registerCallback <{3}{4}::registerCallback>` function of
+with the :php:func:`registerCallback() <{3}{4}::registerCallback>` function of
 the device object. The first parameter is the callback ID and the second
 parameter the callback function:
 
@@ -252,7 +252,7 @@ Callbacks
 
 Callbacks können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
-mit der Funktion :php:func:`registerCallback <{3}{4}::registerCallback>` des
+mit der Funktion :php:func:`registerCallback() <{3}{4}::registerCallback>` des
 Geräte Objektes durchgeführt werden. Der erste Parameter ist der Callback ID
 und der zweite die Callbackfunktion:
 
