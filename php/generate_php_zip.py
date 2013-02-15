@@ -128,7 +128,8 @@ def generate(path):
     args = ['/usr/bin/pear',
             'package',
             'package.xml']
-    subprocess.call(args)
+    if subprocess.call(args) != 0:
+        raise Exception("Command '{0}' failed".format(' '.join(args)))
 
     # Remove build stuff
     shutil.move('/tmp/generator/pear/source/Tinkerforge-{0}.{1}.{2}.tgz'.format(*version),

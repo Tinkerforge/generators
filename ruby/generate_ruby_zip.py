@@ -110,7 +110,8 @@ end
     args = ['/usr/bin/gem',
             'build',
             'tinkerforge.gemspec']
-    subprocess.call(args)
+    if subprocess.call(args) != 0:
+        raise Exception("Command '{0}' failed".format(' '.join(args)))
 
     # Remove build stuff
     os.remove('/tmp/generator/gem/source/tinkerforge.gemspec')

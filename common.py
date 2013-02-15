@@ -313,7 +313,8 @@ def make_zip(dirname, source_path, dest_path, version):
             '-r',
             zipname,
             '.']
-    subprocess.call(args)
+    if subprocess.call(args) != 0:
+        raise Exception("Command '{0}' failed".format(' '.join(args)))
     shutil.copy(zipname, dest_path)
 
 re_camel_case_to_space = re.compile('([A-Z][A-Z][a-z])|([a-z][A-Z])')

@@ -89,7 +89,8 @@ def generate(path):
     args = ['/usr/bin/javac ' +
             '-Xlint ' +
             '/tmp/generator/jar/source/com/tinkerforge/*.java']
-    subprocess.call(args, shell=True)
+    if subprocess.call(args, shell=True) != 0:
+        raise Exception("Command '{0}' failed".format(' '.join(args)))
 
     os.chdir('/tmp/generator/jar/source')
     args = ['/usr/bin/jar ' +
@@ -97,7 +98,8 @@ def generate(path):
             '/tmp/generator/jar/Tinkerforge.jar ' +
             '/tmp/generator/manifest.txt ' +
             'com']
-    subprocess.call(args, shell=True)
+    if subprocess.call(args, shell=True) != 0:
+        raise Exception("Command '{0}' failed".format(' '.join(args)))
 
     # Remove class
     for f in os.listdir('/tmp/generator/jar/source/com/tinkerforge/'):

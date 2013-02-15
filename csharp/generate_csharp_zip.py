@@ -98,7 +98,8 @@ using System.Runtime.CompilerServices;
             '/out:/tmp/generator/dll/Tinkerforge.dll',
             '/doc:/tmp/generator/dll/Tinkerforge.xml',
             '/tmp/generator/dll/source/Tinkerforge/*.cs']
-    subprocess.call(args)
+    if subprocess.call(args) != 0:
+        raise Exception("Command '{0}' failed".format(' '.join(args)))
 
     # Make zip
     common.make_zip('csharp', '/tmp/generator/dll', path, version)

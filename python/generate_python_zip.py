@@ -95,7 +95,8 @@ setup(name='tinkerforge',
     args = ['/usr/bin/python',
             'setup.py',
             'bdist_egg']
-    subprocess.call(args)
+    if subprocess.call(args) != 0:
+        raise Exception("Command '{0}' failed".format(' '.join(args)))
 
     # Remove build stuff
     shutil.rmtree('/tmp/generator/egg/source/build')
