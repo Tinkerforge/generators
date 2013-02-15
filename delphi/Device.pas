@@ -156,6 +156,8 @@ begin
   for i := 0 to Length(responseExpected) - 1 do begin
     responseExpected[i] := RESPONSE_EXPECTED_INVALID_FUNCTION_ID;
   end;
+  responseExpected[IPCON_FUNCTION_ENUMERATE] := RESPONSE_EXPECTED_ALWAYS_FALSE;
+  responseExpected[IPCON_CALLBACK_ENUMERATE] := RESPONSE_EXPECTED_ALWAYS_FALSE;
   (ipcon as TIPConnection).devices.Insert(uid_, self);
 end;
 

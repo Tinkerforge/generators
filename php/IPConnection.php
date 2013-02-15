@@ -190,6 +190,9 @@ abstract class Device
             $this->responseExpected[$i] = self::RESPONSE_EXPECTED_INVALID_FUNCTION_ID;
         }
 
+        $this->responseExpected[IPConnection::FUNCTION_ENUMERATE] = self::RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;
+        $this->responseExpected[IPConnection::CALLBACK_ENUMERATE] = self::RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;
+
         $ipcon->devices[$this->uid] = $this; // FIXME: use a weakref here
     }
 

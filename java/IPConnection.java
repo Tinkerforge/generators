@@ -309,8 +309,6 @@ public class IPConnection {
 	private final static String BASE58 = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
 
 	public final static byte FUNCTION_ENUMERATE = (byte)254;
-	public final static byte FUNCTION_ADC_CALIBRATE = (byte)251;
-	public final static byte FUNCTION_GET_ADC_CALIBRATION = (byte)250;
 	public final static byte CALLBACK_ENUMERATE = (byte)253;
 
 	public final static byte CALLBACK_CONNECTED = 0;

@@ -823,10 +823,8 @@ namespace Tinkerforge
 				responseExpected[i] = ResponseExpectedFlag.INVALID_FUNCTION_ID;
 			}
 
-			responseExpected[IPConnection.FUNCTION_ENUMERATE]    = ResponseExpectedFlag.FALSE;
-			responseExpected[IPConnection.CALLBACK_ENUMERATE]    = ResponseExpectedFlag.ALWAYS_FALSE;
-			responseExpected[IPConnection.CALLBACK_CONNECTED]    = ResponseExpectedFlag.ALWAYS_FALSE;
-			responseExpected[IPConnection.CALLBACK_DISCONNECTED] = ResponseExpectedFlag.ALWAYS_FALSE;
+			responseExpected[IPConnection.FUNCTION_ENUMERATE] = ResponseExpectedFlag.ALWAYS_FALSE;
+			responseExpected[IPConnection.CALLBACK_ENUMERATE] = ResponseExpectedFlag.ALWAYS_FALSE;
 
 			ipcon.AddDevice(this);
 		}

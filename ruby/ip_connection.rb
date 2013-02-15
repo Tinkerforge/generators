@@ -204,7 +204,7 @@ module Tinkerforge
       @request_mutex = Mutex.new
 
       @response_expected = Array.new(256, RESPONSE_EXPECTED_INVALID_FUNCTION_ID)
-      @response_expected[IPConnection::FUNCTION_ENUMERATE] = RESPONSE_EXPECTED_FALSE
+      @response_expected[IPConnection::FUNCTION_ENUMERATE] = RESPONSE_EXPECTED_ALWAYS_FALSE
       @response_expected[IPConnection::CALLBACK_ENUMERATE] = RESPONSE_EXPECTED_ALWAYS_FALSE
 
       @expected_response_function_id = 0

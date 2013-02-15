@@ -789,7 +789,7 @@ void device_create(Device *device, const char *uid_str, IPConnection *ipcon,
 		device->response_expected[i] = DEVICE_RESPONSE_EXPECTED_INVALID_FUNCTION_ID;
 	}
 
-	device->response_expected[IPCON_FUNCTION_ENUMERATE] = DEVICE_RESPONSE_EXPECTED_FALSE;
+	device->response_expected[IPCON_FUNCTION_ENUMERATE] = DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE;
 	device->response_expected[IPCON_CALLBACK_ENUMERATE] = DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE;
 
 	// callbacks

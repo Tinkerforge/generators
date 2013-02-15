@@ -71,9 +71,7 @@ public abstract class Device {
 			responseExpected[i] = RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID;
 		}
 
-		responseExpected[IPConnection.unsignedByte(IPConnection.FUNCTION_ENUMERATE)] = RESPONSE_EXPECTED_FLAG_FALSE;
-		responseExpected[IPConnection.unsignedByte(IPConnection.FUNCTION_ADC_CALIBRATE)] = RESPONSE_EXPECTED_FLAG_FALSE;
-		responseExpected[IPConnection.unsignedByte(IPConnection.FUNCTION_GET_ADC_CALIBRATION)] = RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE;
+		responseExpected[IPConnection.unsignedByte(IPConnection.FUNCTION_ENUMERATE)] = RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;
 		responseExpected[IPConnection.unsignedByte(IPConnection.CALLBACK_ENUMERATE)] = RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;
 
 		ipcon.devices.put(this.uid, this); // FIXME: use weakref here

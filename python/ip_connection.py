@@ -127,13 +127,13 @@ class Device:
         self.auth_key = None
 
         self.response_expected = [Device.RESPONSE_EXPECTED_INVALID_FUNCTION_ID] * 256
-        self.response_expected[IPConnection.FUNCTION_ENUMERATE] = Device.RESPONSE_EXPECTED_FALSE
-        self.response_expected[IPConnection.FUNCTION_ADC_CALIBRATE] = Device.RESPONSE_EXPECTED_TRUE
+        self.response_expected[IPConnection.FUNCTION_ENUMERATE] = Device.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[IPConnection.FUNCTION_ADC_CALIBRATE] = Device.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[IPConnection.FUNCTION_GET_ADC_CALIBRATION] = Device.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[IPConnection.FUNCTION_READ_BRICKLET_UID] = Device.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[IPConnection.FUNCTION_WRITE_BRICKLET_UID] = Device.RESPONSE_EXPECTED_TRUE
+        self.response_expected[IPConnection.FUNCTION_WRITE_BRICKLET_UID] = Device.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[IPConnection.FUNCTION_READ_BRICKLET_PLUGIN] = Device.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[IPConnection.FUNCTION_WRITE_BRICKLET_PLUGIN] = Device.RESPONSE_EXPECTED_TRUE
+        self.response_expected[IPConnection.FUNCTION_WRITE_BRICKLET_PLUGIN] = Device.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[IPConnection.CALLBACK_ENUMERATE] = Device.RESPONSE_EXPECTED_ALWAYS_FALSE
 
         ipcon.devices[self.uid] = self # FIXME: maybe use a weakref here
@@ -221,11 +221,10 @@ class IPConnection:
     FUNCTION_WRITE_BRICKLET_UID = 248
     FUNCTION_READ_BRICKLET_PLUGIN = 247
     FUNCTION_WRITE_BRICKLET_PLUGIN = 246
-    CALLBACK_ENUMERATE = 253
 
+    CALLBACK_ENUMERATE = 253
     CALLBACK_CONNECTED = 0
     CALLBACK_DISCONNECTED = 1
-    CALLBACK_AUTHENTICATION_ERROR = 2
 
     BROADCAST_UID = 0
 
