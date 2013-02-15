@@ -1,3 +1,10 @@
+{
+  Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+
+  Redistribution and use in source and binary forms of this file,
+  with or without modification, are permitted.
+}
+
 unit IPConnection;
 
 {$ifdef FPC}{$mode OBJFPC}{$H+}{$endif}
