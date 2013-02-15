@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
@@ -858,14 +858,14 @@ namespace Tinkerforge
 		/// </summary>
 		public bool GetResponseExpected(byte functionId)
 		{
-			if(this.responseExpected[functionId] != ResponseExpectedFlag.INVALID_FUNCTION_ID &&
-			   functionId < this.responseExpected.Length)
-			{
-				return this.responseExpected[functionId] == ResponseExpectedFlag.ALWAYS_TRUE ||
-				       this.responseExpected[functionId] == ResponseExpectedFlag.TRUE;
+			ResponseExpectedFlag flag = this.responseExpected[functionId];
+
+			if(flag == ResponseExpectedFlag.INVALID_FUNCTION_ID) {
+				throw new ArgumentException("Invalid function ID " + functionId);
 			}
 
-			throw new ArgumentOutOfRangeException("Invalid function ID " + functionId);
+			return flag == ResponseExpectedFlag.ALWAYS_TRUE ||
+			       flag == ResponseExpectedFlag.TRUE;
 		}
 
 		/// <summary>
@@ -882,24 +882,26 @@ namespace Tinkerforge
 		///  is send and errors are silently ignored, because they cannot be
 		///  detected.
 		/// </summary>
-		public void SetResponseExpected(int functionId, bool responseExpected)
+		public void SetResponseExpected(byte functionId, bool responseExpected)
 		{
-			if(this.responseExpected[functionId] == ResponseExpectedFlag.INVALID_FUNCTION_ID ||
-			   functionId >= this.responseExpected.Length)
+			ResponseExpectedFlag flag = this.responseExpected[functionId];
+
+			if(flag == ResponseExpectedFlag.INVALID_FUNCTION_ID)
 			{
-				throw new ArgumentOutOfRangeException("Invalid function ID " + functionId);
+				throw new ArgumentException("Invalid function ID " + functionId);
 			}
 
-			if(this.responseExpected[functionId] == ResponseExpectedFlag.ALWAYS_TRUE ||
-			   this.responseExpected[functionId] == ResponseExpectedFlag.ALWAYS_FALSE)
+			if(flag == ResponseExpectedFlag.ALWAYS_TRUE ||
+			   flag == ResponseExpectedFlag.ALWAYS_FALSE)
 			{
-				throw new ArgumentOutOfRangeException("Response Expected flag cannot be changed for function ID " + functionId);
+				throw new ArgumentException("Response Expected flag cannot be changed for function ID " + functionId);
 			}
 
 			if(responseExpected)
 			{
 				this.responseExpected[functionId] = ResponseExpectedFlag.TRUE;
-			} else
+			}
+			else
 			{
 				this.responseExpected[functionId] = ResponseExpectedFlag.FALSE;
 			}
@@ -912,6 +914,7 @@ namespace Tinkerforge
 		public void SetResponseExpectedAll(bool responseExpected)
 		{
 			ResponseExpectedFlag flag = ResponseExpectedFlag.FALSE;
+
 			if(responseExpected)
 			{
 				flag = ResponseExpectedFlag.TRUE;
@@ -919,15 +922,17 @@ namespace Tinkerforge
 
 			for(int i = 0; i < this.responseExpected.Length; i++)
 			{
-				if(this.responseExpected[i] != ResponseExpectedFlag.INVALID_FUNCTION_ID &&
-				   this.responseExpected[i] != ResponseExpectedFlag.ALWAYS_TRUE &&
-				   this.responseExpected[i] != ResponseExpectedFlag.ALWAYS_FALSE) {
+				if(this.responseExpected[i] == ResponseExpectedFlag.TRUE ||
+				   this.responseExpected[i] == ResponseExpectedFlag.FALSE)
+				{
 					this.responseExpected[i] = flag;
 				}
 			}
 		}
 
-		public abstract void GetIdentity(out string uid, out string connectedUid, out char position, out byte[] hardwareVersion, out byte[] firmwareVersion, out int deviceIdentifier);
+		public abstract void GetIdentity(out string uid, out string connectedUid, out char position,
+		                                 out byte[] hardwareVersion, out byte[] firmwareVersion,
+		                                 out int deviceIdentifier);
 
 		protected byte[] CreateRequestPacket(byte length, byte fid)
 		{

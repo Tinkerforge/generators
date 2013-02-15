@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
@@ -38,7 +38,10 @@ public abstract class Device {
 		public int deviceIdentifier;
 
 		public String toString() {
-			return "[" + "uid = " + uid + ", " + "connectedUid = " + connectedUid + ", " + "position = " + position + ", " + "hardwareVersion = " + Arrays.toString(hardwareVersion) + ", " + "firmwareVersion = " + Arrays.toString(firmwareVersion) + ", " + "deviceIdentifier = " + deviceIdentifier + "]";
+			return "[" + "uid = " + uid + ", " + "connectedUid = " + connectedUid + ", " +
+			       "position = " + position + ", " + "hardwareVersion = " + Arrays.toString(hardwareVersion) + ", " +
+			       "firmwareVersion = " + Arrays.toString(firmwareVersion) + ", " +
+			       "deviceIdentifier = " + deviceIdentifier + "]";
 		}
 	}
 
@@ -107,13 +110,14 @@ public abstract class Device {
 	 * silently ignored, because they cannot be detected.
 	 */
 	public boolean getResponseExpected(byte functionId) {
-		if(this.responseExpected[IPConnection.unsignedByte(functionId)] != RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID &&
-		   functionId < this.responseExpected.length) {
-			return this.responseExpected[IPConnection.unsignedByte(functionId)] == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE ||
-			       this.responseExpected[IPConnection.unsignedByte(functionId)] == RESPONSE_EXPECTED_FLAG_TRUE;
+		byte flag = responseExpected[IPConnection.unsignedByte(functionId)];
+
+		if(flag == RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID) {
+			throw new IllegalArgumentException("Invalid function ID " + functionId);
 		}
 
-		throw new IllegalArgumentException("Invalid function ID " + functionId);
+		return flag == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE ||
+		       flag == RESPONSE_EXPECTED_FLAG_TRUE;
 	}
 
 	/**
@@ -130,20 +134,22 @@ public abstract class Device {
 	 * errors are silently ignored, because they cannot be detected.
 	 */
 	public void setResponseExpected(byte functionId, boolean responseExpected) {
-		if(this.responseExpected[IPConnection.unsignedByte(functionId)] == RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID ||
-		   functionId >= this.responseExpected.length) {
+		int index = IPConnection.unsignedByte(functionId);
+		byte flag = this.responseExpected[index];
+
+		if(flag == RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID) {
 			throw new IllegalArgumentException("Invalid function ID " + functionId);
 		}
 
-		if(this.responseExpected[IPConnection.unsignedByte(functionId)] == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE ||
-		   this.responseExpected[IPConnection.unsignedByte(functionId)] == RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE) {
+		if(flag == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE ||
+		   flag == RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE) {
 			throw new IllegalArgumentException("Response Expected flag cannot be changed for function ID " + functionId);
 		}
 
 		if(responseExpected) {
-			this.responseExpected[IPConnection.unsignedByte(functionId)] = RESPONSE_EXPECTED_FLAG_TRUE;
+			this.responseExpected[index] = RESPONSE_EXPECTED_FLAG_TRUE;
 		} else {
-			this.responseExpected[IPConnection.unsignedByte(functionId)] = RESPONSE_EXPECTED_FLAG_FALSE;
+			this.responseExpected[index] = RESPONSE_EXPECTED_FLAG_FALSE;
 		}
 	}
 
@@ -158,9 +164,8 @@ public abstract class Device {
 		}
 
 		for(int i = 0; i < this.responseExpected.length; i++) {
-			if(this.responseExpected[i] != RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID &&
-		       this.responseExpected[i] != RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE &&
-		       this.responseExpected[i] != RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE) {
+			if(this.responseExpected[i] == RESPONSE_EXPECTED_FLAG_TRUE ||
+			   this.responseExpected[i] == RESPONSE_EXPECTED_FLAG_FALSE) {
 				this.responseExpected[i] = flag;
 			}
 		}

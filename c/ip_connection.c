@@ -813,33 +813,41 @@ void device_destroy(Device *device) {
 
 int device_get_response_expected(Device *device, uint8_t function_id,
                                  bool *ret_response_expected) {
-	if (device->response_expected[function_id] == DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE ||
-	    device->response_expected[function_id] == DEVICE_RESPONSE_EXPECTED_TRUE) {
-		*ret_response_expected = true;
-	} else if (device->response_expected[function_id] == DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE ||
-	           device->response_expected[function_id] == DEVICE_RESPONSE_EXPECTED_FALSE) {
-		*ret_response_expected = false;
-	} else {
+	int flag = device->response_expected[function_id];
+
+	if (flag == DEVICE_RESPONSE_EXPECTED_INVALID_FUNCTION_ID) {
 		return E_INVALID_PARAMETER;
+	}
+
+	if (flag == DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE ||
+	    flag == DEVICE_RESPONSE_EXPECTED_TRUE) {
+		*ret_response_expected = true;
+	} else {
+		*ret_response_expected = false;
 	}
 
 	return E_OK;
 }
 
-int device_set_response_expected(Device *device, uint8_t function_id, bool response_expected) {
-	if (device->response_expected[function_id] != DEVICE_RESPONSE_EXPECTED_TRUE &&
-	    device->response_expected[function_id] != DEVICE_RESPONSE_EXPECTED_FALSE) {
+int device_set_response_expected(Device *device, uint8_t function_id,
+                                 bool response_expected) {
+	int current_flag = device->response_expected[function_id];
+
+	if (current_flag != DEVICE_RESPONSE_EXPECTED_TRUE &&
+	    current_flag != DEVICE_RESPONSE_EXPECTED_FALSE) {
 		return E_INVALID_PARAMETER;
 	}
 
-	device->response_expected[function_id] = response_expected ? DEVICE_RESPONSE_EXPECTED_TRUE
-	                                                           : DEVICE_RESPONSE_EXPECTED_FALSE;
+	device->response_expected[function_id] =
+	    response_expected ? DEVICE_RESPONSE_EXPECTED_TRUE
+	                      : DEVICE_RESPONSE_EXPECTED_FALSE;
 
 	return E_OK;
 }
 
 int device_set_response_expected_all(Device *device, bool response_expected) {
-	int flag = response_expected ? DEVICE_RESPONSE_EXPECTED_TRUE : DEVICE_RESPONSE_EXPECTED_FALSE;
+	int flag = response_expected ? DEVICE_RESPONSE_EXPECTED_TRUE
+	                             : DEVICE_RESPONSE_EXPECTED_FALSE;
 	int i;
 
 	for (i = 0; i < DEVICE_NUM_FUNCTION_IDS; ++i) {
@@ -944,7 +952,8 @@ static void ipcon_dispatch_meta(IPConnection *ipcon, Meta *meta) {
 
 	if (meta->id == IPCON_CALLBACK_CONNECTED) {
 		if (ipcon->registered_callbacks[IPCON_CALLBACK_CONNECTED] != NULL) {
-			connected_callback_function = (ConnectedCallbackFunction)ipcon->registered_callbacks[IPCON_CALLBACK_CONNECTED];
+			connected_callback_function =
+			    (ConnectedCallbackFunction)ipcon->registered_callbacks[IPCON_CALLBACK_CONNECTED];
 			user_data = ipcon->registered_callback_user_data[IPCON_CALLBACK_CONNECTED];
 
 			connected_callback_function(meta->parameter, user_data);
@@ -969,7 +978,8 @@ static void ipcon_dispatch_meta(IPConnection *ipcon, Meta *meta) {
 		thread_sleep(100);
 
 		if (ipcon->registered_callbacks[IPCON_CALLBACK_DISCONNECTED] != NULL) {
-			disconnected_callback_function = (DisconnectedCallbackFunction)ipcon->registered_callbacks[IPCON_CALLBACK_DISCONNECTED];
+			disconnected_callback_function =
+			    (DisconnectedCallbackFunction)ipcon->registered_callbacks[IPCON_CALLBACK_DISCONNECTED];
 			user_data = ipcon->registered_callback_user_data[IPCON_CALLBACK_DISCONNECTED];
 
 			disconnected_callback_function(meta->parameter, user_data);
@@ -1016,7 +1026,8 @@ static void ipcon_dispatch_packet(IPConnection *ipcon, Packet *packet) {
 
 	if (packet->header.function_id == IPCON_CALLBACK_ENUMERATE) {
 		if (ipcon->registered_callbacks[IPCON_CALLBACK_ENUMERATE] != NULL) {
-			enumerate_callback_function = (EnumerateCallbackFunction)ipcon->registered_callbacks[IPCON_CALLBACK_ENUMERATE];
+			enumerate_callback_function =
+			    (EnumerateCallbackFunction)ipcon->registered_callbacks[IPCON_CALLBACK_ENUMERATE];
 			user_data = ipcon->registered_callback_user_data[IPCON_CALLBACK_ENUMERATE];
 			enumerate_callback = (EnumerateCallback *)packet;
 
@@ -1036,7 +1047,8 @@ static void ipcon_dispatch_packet(IPConnection *ipcon, Packet *packet) {
 			return;
 		}
 
-		callback_wrapper_function = (CallbackWrapperFunction)device->callback_wrappers[packet->header.function_id];
+		callback_wrapper_function =
+		    (CallbackWrapperFunction)device->callback_wrappers[packet->header.function_id];
 
 		if (callback_wrapper_function == NULL) {
 			return;

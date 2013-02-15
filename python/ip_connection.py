@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+# Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 # Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 #
 # Redistribution and use in source and binary forms of this file,
@@ -165,11 +165,15 @@ class Device:
         errors are silently ignored, because they cannot be detected.
         """
 
-        if self.response_expected[function_id] == Device.RESPONSE_EXPECTED_INVALID_FUNCTION_ID or \
-           function_id >= len(self.response_expected):
+        if function_id < 0 or function_id >= len(self.response_expected):
+            raise ValueError('Function ID {0} out of range'.format(function_id))
+
+        flag = self.response_expected[function_id]
+
+        if flag == Device.RESPONSE_EXPECTED_INVALID_FUNCTION_ID:
             raise ValueError('Invalid function ID {0}'.format(function_id))
 
-        return self.response_expected[function_id] in [Device.RESPONSE_EXPECTED_ALWAYS_TRUE, Device.RESPONSE_EXPECTED_TRUE]
+        return flag in [Device.RESPONSE_EXPECTED_ALWAYS_TRUE, Device.RESPONSE_EXPECTED_TRUE]
 
     def set_response_expected(self, function_id, response_expected):
         """
@@ -186,11 +190,15 @@ class Device:
         errors are silently ignored, because they cannot be detected.
         """
 
-        if self.response_expected[function_id] == Device.RESPONSE_EXPECTED_INVALID_FUNCTION_ID or \
-           function_id >= len(self.response_expected):
+        if function_id < 0 or function_id >= len(self.response_expected):
+            raise ValueError('Function ID {0} out of range'.format(function_id))
+
+        flag = self.response_expected[function_id]
+
+        if flag == Device.RESPONSE_EXPECTED_INVALID_FUNCTION_ID:
             raise ValueError('Invalid function ID {0}'.format(function_id))
 
-        if self.response_expected[function_id] not in [Device.RESPONSE_EXPECTED_TRUE, Device.RESPONSE_EXPECTED_FALSE]:
+        if flag in [Device.RESPONSE_EXPECTED_ALWAYS_TRUE, Device.RESPONSE_EXPECTED_ALWAYS_FALSE]:
             raise ValueError('Response Expected flag cannot be changed for function ID {0}'.format(function_id))
 
         if bool(response_expected):

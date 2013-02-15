@@ -190,8 +190,8 @@ abstract class Device
             $this->responseExpected[$i] = self::RESPONSE_EXPECTED_INVALID_FUNCTION_ID;
         }
 
-        $this->responseExpected[IPConnection::FUNCTION_ENUMERATE] = self::RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;
-        $this->responseExpected[IPConnection::CALLBACK_ENUMERATE] = self::RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;
+        $this->responseExpected[IPConnection::FUNCTION_ENUMERATE] = self::RESPONSE_EXPECTED_ALWAYS_FALSE;
+        $this->responseExpected[IPConnection::CALLBACK_ENUMERATE] = self::RESPONSE_EXPECTED_ALWAYS_FALSE;
 
         $ipcon->devices[$this->uid] = $this; // FIXME: use a weakref here
     }
@@ -230,17 +230,20 @@ abstract class Device
      */
     public function getResponseExpected($functionID) {
         if ($functionID < 0 || $functionID > 255) {
-            throw new \Exception('Invalid function ID');
+            throw new \InvalidArgumentException('Function ID ' . $functionID . ' out of range');
         }
 
-        if ($this->responseExpected[$functionID] == self::RESPONSE_EXPECTED_ALWAYS_TRUE ||
-            $this->responseExpected[$functionID] == self::RESPONSE_EXPECTED_TRUE) {
+        $flag = $this->responseExpected[$functionID];
+
+        if ($flag == self::RESPONSE_EXPECTED_INVALID_FUNCTION_ID) {
+            throw new \InvalidArgumentException('Invalid function ID ' . $functionID);
+        }
+
+        if ($flag == self::RESPONSE_EXPECTED_ALWAYS_TRUE ||
+            $flag == self::RESPONSE_EXPECTED_TRUE) {
             return TRUE;
-        } else if ($this->responseExpected[$functionID] == self::RESPONSE_EXPECTED_ALWAYS_FALSE ||
-                   $this->responseExpected[$functionID] == self::RESPONSE_EXPECTED_FALSE) {
-            return FALSE;
         } else {
-            throw new \Exception('Invalid function ID');
+            return FALSE;
         }
     }
 
@@ -263,13 +266,24 @@ abstract class Device
      * @return void
      */
     public function setResponseExpected($functionID, $responseExpected) {
-        if ($this->responseExpected[$functionID] != self::RESPONSE_EXPECTED_TRUE &&
-            $this->responseExpected[$functionID] != self::RESPONSE_EXPECTED_FALSE) {
-            return;
+        if ($functionID < 0 || $functionID > 255) {
+            throw new \InvalidArgumentException('Function ID ' . $functionID . ' out of range');
         }
 
-        $this->responseExpected[$functionID] = $responseExpected ? self::RESPONSE_EXPECTED_TRUE
-                                                                 : self::RESPONSE_EXPECTED_FALSE;
+        $flag = $this->responseExpected[$functionID];
+
+        if ($flag == self::RESPONSE_EXPECTED_INVALID_FUNCTION_ID) {
+            throw new \InvalidArgumentException('Invalid function ID ' . $functionID);
+        }
+
+        if ($flag == self::RESPONSE_EXPECTED_ALWAYS_TRUE ||
+            $flag == self::RESPONSE_EXPECTED_ALWAYS_FALSE) {
+            throw new \InvalidArgumentException('Response Expected flag cannot be changed for function ID ' . $functionID);
+        }
+
+        $this->responseExpected[$functionID] =
+            $responseExpected ? self::RESPONSE_EXPECTED_TRUE
+                              : self::RESPONSE_EXPECTED_FALSE;
     }
 
     /**
@@ -281,7 +295,8 @@ abstract class Device
      * @return void
      */
     public function setResponseExpectedAll($responseExpected) {
-        $flag = $responseExpected ? self::RESPONSE_EXPECTED_TRUE : self::RESPONSE_EXPECTED_FALSE;
+        $flag = $responseExpected ? self::RESPONSE_EXPECTED_TRUE
+                                  : self::RESPONSE_EXPECTED_FALSE;
 
         for ($i = 0; $i < 256; ++$i) {
             if ($this->responseExpected[$i] == self::RESPONSE_EXPECTED_TRUE ||

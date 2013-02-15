@@ -1,5 +1,5 @@
 # -*- ruby encoding: utf-8 -*-
-# Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+# Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 #
 # Redistribution and use in source and binary forms of this file,
 # with or without modification, are permitted.
@@ -243,17 +243,20 @@ module Tinkerforge
     # errors are silently ignored, because they cannot be detected.
     def get_response_expected(function_id)
       if function_id < 0 or function_id > 255
+        raise ArgumentError, "Function ID #{function_id} out of range"
+      end
+
+      flag = @response_expected[function_id]
+
+      if flag == RESPONSE_EXPECTED_INVALID_FUNCTION_ID
         raise ArgumentError, "Invalid function ID #{function_id}"
       end
 
-      if @response_expected[function_id] == RESPONSE_EXPECTED_ALWAYS_TRUE or \
-         @response_expected[function_id] == RESPONSE_EXPECTED_TRUE
+      if flag == RESPONSE_EXPECTED_ALWAYS_TRUE or \
+         flag == RESPONSE_EXPECTED_TRUE
         true
-      elsif @response_expected[function_id] == RESPONSE_EXPECTED_ALWAYS_FALSE or \
-            @response_expected[function_id] == RESPONSE_EXPECTED_FALSE
-        false
       else
-        raise ArgumentError, "Invalid function ID #{function_id}"
+        false
       end
     end
 
@@ -270,35 +273,40 @@ module Tinkerforge
     # errors are silently ignored, because they cannot be detected.
     def set_response_expected(function_id, response_expected)
       if function_id < 0 or function_id > 255
+        raise ArgumentError, "Function ID #{function_id} out of range"
+      end
+
+      flag = @response_expected[function_id]
+
+      if flag == RESPONSE_EXPECTED_INVALID_FUNCTION_ID
         raise ArgumentError, "Invalid function ID #{function_id}"
       end
 
-      if @response_expected[function_id] == RESPONSE_EXPECTED_TRUE or \
-         @response_expected[function_id] == RESPONSE_EXPECTED_FALSE
-        if response_expected
-          @response_expected[function_id] = RESPONSE_EXPECTED_TRUE
-        else
-          @response_expected[function_id] = RESPONSE_EXPECTED_FALSE
-        end
-      elsif @response_expected[function_id] == RESPONSE_EXPECTED_ALWAYS_TRUE or \
-            @response_expected[function_id] == RESPONSE_EXPECTED_ALWAYS_FALSE
+      if flag == RESPONSE_EXPECTED_ALWAYS_TRUE or \
+         flag == RESPONSE_EXPECTED_ALWAYS_FALSE
         raise ArgumentError, "Response Expected flag cannot be changed for function ID #{function_id}"
+      end
+
+      if response_expected
+        @response_expected[function_id] = RESPONSE_EXPECTED_TRUE
       else
-        raise ArgumentError, "Invalid function ID #{function_id}"
+        @response_expected[function_id] = RESPONSE_EXPECTED_FALSE
       end
     end
 
     # Changes the response expected flag for all setter and callback
     # configuration functions of this device at once.
     def set_response_expected_all(response_expected)
+      if response_expected
+        flag = RESPONSE_EXPECTED_TRUE
+      else
+        flag = RESPONSE_EXPECTED_FALSE
+      end
+
       for function_id in 0..255
         if @response_expected[function_id] == RESPONSE_EXPECTED_TRUE or \
            @response_expected[function_id] == RESPONSE_EXPECTED_FALSE
-          if response_expected
-            @response_expected[function_id] = RESPONSE_EXPECTED_TRUE
-          else
-            @response_expected[function_id] = RESPONSE_EXPECTED_FALSE
-          end
+          @response_expected[function_id] = flag
         end
       end
     end

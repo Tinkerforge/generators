@@ -331,16 +331,16 @@ begin
     for packet in device.get_packets():
         if packet.get_type() == 'callback':
             prefix = 'CALLBACK_'
-            flag = 'RESPONSE_EXPECTED_ALWAYS_FALSE'
+            flag = 'DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE'
         elif len(packet.get_elements('out')) > 0:
             prefix = 'FUNCTION_'
-            flag = 'RESPONSE_EXPECTED_ALWAYS_TRUE'
+            flag = 'DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE'
         elif packet.get_doc()[0] == 'ccf':
             prefix = 'FUNCTION_'
-            flag = 'RESPONSE_EXPECTED_TRUE'
+            flag = 'DEVICE_RESPONSE_EXPECTED_TRUE'
         else:
             prefix = 'FUNCTION_'
-            flag = 'RESPONSE_EXPECTED_FALSE'
+            flag = 'DEVICE_RESPONSE_EXPECTED_FALSE'
 
         response_expected += '  responseExpected[{0}_{1}_{2}{3}] := {4};\n' \
             .format(device.get_category().upper(),

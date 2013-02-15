@@ -15,11 +15,11 @@ uses
   {$ifdef UNIX}CThreads,{$endif} SyncObjs, SysUtils, Base58, BlockingQueue, LEConverter;
 
 const
-  RESPONSE_EXPECTED_INVALID_FUNCTION_ID = 0;
-  RESPONSE_EXPECTED_ALWAYS_TRUE = 1; { Getter }
-  RESPONSE_EXPECTED_ALWAYS_FALSE = 2; { Callback }
-  RESPONSE_EXPECTED_TRUE = 3; { Setter }
-  RESPONSE_EXPECTED_FALSE = 4; { Setter, default }
+  DEVICE_RESPONSE_EXPECTED_INVALID_FUNCTION_ID = 0;
+  DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE = 1; { Getter }
+  DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE = 2; { Callback }
+  DEVICE_RESPONSE_EXPECTED_TRUE = 3; { Setter }
+  DEVICE_RESPONSE_EXPECTED_FALSE = 4; { Setter, default }
 
 type
   { TimeoutException }
@@ -161,10 +161,10 @@ begin
   requestMutex := TCriticalSection.Create;
   responseQueue := TBlockingQueue.Create;
   for i := 0 to Length(responseExpected) - 1 do begin
-    responseExpected[i] := RESPONSE_EXPECTED_INVALID_FUNCTION_ID;
+    responseExpected[i] := DEVICE_RESPONSE_EXPECTED_INVALID_FUNCTION_ID;
   end;
-  responseExpected[IPCON_FUNCTION_ENUMERATE] := RESPONSE_EXPECTED_ALWAYS_FALSE;
-  responseExpected[IPCON_CALLBACK_ENUMERATE] := RESPONSE_EXPECTED_ALWAYS_FALSE;
+  responseExpected[IPCON_FUNCTION_ENUMERATE] := DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE;
+  responseExpected[IPCON_CALLBACK_ENUMERATE] := DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE;
   (ipcon as TIPConnection).devices.Insert(uid_, self);
 end;
 
@@ -182,46 +182,53 @@ begin
 end;
 
 function TDevice.GetResponseExpected(const functionID: byte): boolean;
+var flag: byte;
 begin
-  if ((responseExpected[functionID] = RESPONSE_EXPECTED_ALWAYS_TRUE) or
-      (responseExpected[functionID] = RESPONSE_EXPECTED_TRUE)) then begin
+  flag := responseExpected[functionID];
+  if (flag = DEVICE_RESPONSE_EXPECTED_INVALID_FUNCTION_ID) then begin
+    raise Exception.Create('Invalid function ID ' + IntToStr(functionID));
+  end;
+  if ((flag = DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE) or
+      (flag = DEVICE_RESPONSE_EXPECTED_TRUE)) then begin
     result := true;
   end
-  else if ((responseExpected[functionID] = RESPONSE_EXPECTED_ALWAYS_FALSE) or
-           (responseExpected[functionID] = RESPONSE_EXPECTED_FALSE)) then begin
-    result := false;
-  end
   else begin
-    raise Exception.Create('Invalid function ID');
+    result := false;
   end;
 end;
 
 procedure TDevice.SetResponseExpected(const functionID: byte; const responseExpected_: boolean);
+var flag: byte;
 begin
-  if ((responseExpected[functionID] <> RESPONSE_EXPECTED_TRUE) and
-      (responseExpected[functionID] <> RESPONSE_EXPECTED_FALSE)) then begin
-    raise Exception.Create('Invalid function ID');
-  end
-  else if (responseExpected_) then begin
-    responseExpected[functionID] := RESPONSE_EXPECTED_TRUE;
+  flag := responseExpected[functionID];
+  if (flag = DEVICE_RESPONSE_EXPECTED_INVALID_FUNCTION_ID) then begin
+    raise Exception.Create('Invalid function ID ' + IntToStr(functionID));
+  end;
+  if ((flag = DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE) or
+      (flag = DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE)) then begin
+    raise Exception.Create('Response Expected flag cannot be changed for function ID ' + IntToStr(functionID));
+  end;
+  if (responseExpected_) then begin
+    responseExpected[functionID] := DEVICE_RESPONSE_EXPECTED_TRUE;
   end
   else begin
-    responseExpected[functionID] := RESPONSE_EXPECTED_FALSE;
+    responseExpected[functionID] := DEVICE_RESPONSE_EXPECTED_FALSE;
   end;
 end;
 
 procedure TDevice.SetResponseExpectedAll(const responseExpected_: boolean);
-var i: longint;
+var flag: byte; i: longint;
 begin
+  if (responseExpected_) then begin
+    flag := DEVICE_RESPONSE_EXPECTED_TRUE;
+  end
+  else begin
+    flag := DEVICE_RESPONSE_EXPECTED_FALSE;
+  end;
   for i := 0 to Length(responseExpected) - 1 do begin
-    if ((responseExpected[i] = RESPONSE_EXPECTED_TRUE) or
-        (responseExpected[i] = RESPONSE_EXPECTED_FALSE)) then begin
-      if (responseExpected_) then begin
-        responseExpected[i] := RESPONSE_EXPECTED_TRUE;
-      end
-      else begin
-        responseExpected[i] := RESPONSE_EXPECTED_FALSE;
-      end;
+    if ((responseExpected[i] = DEVICE_RESPONSE_EXPECTED_TRUE) or
+        (responseExpected[i] = DEVICE_RESPONSE_EXPECTED_FALSE)) then begin
+      responseExpected[i] := flag;
     end;
   end;
 end;
