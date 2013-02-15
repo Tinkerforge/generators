@@ -423,10 +423,12 @@ def generate(path, language, make_files, prepare, is_doc_):
     path_list = path.split('/')
     path_list[-1] = 'configs'
     path_config = '/'.join(path_list)
-    sys.path.append(path_config)
+    if path_config not in sys.path:
+        sys.path.append(path_config)
     configs = os.listdir(path_config)
 
-    prepare(path)
+    if prepare is not None:
+        prepare(path)
 
     configs.remove('device_commonconfig.py')
     configs.remove('brick_commonconfig.py')
@@ -465,13 +467,6 @@ def generate(path, language, make_files, prepare, is_doc_):
                 module.com['packets'].extend(prepare_common_packets(common_packets))
                 module.com['common_included'] = True
 
-            make_files(module.com, path)
-
-def import_and_make(configs, path, make_files):
-    for config in configs:
-        if config.endswith('_config.py'):
-            module = __import__(config[:-3])
-            print(" * {0}".format(config[:-10]))
             make_files(module.com, path)
 
 class Packet:
@@ -626,7 +621,6 @@ class Device:
     def get_upper_case_name(self):
         return self.com['name'][1].upper()
 
-    # this is also the name stored in the firmware
     def get_display_name(self):
         return self.com['name'][2]
 

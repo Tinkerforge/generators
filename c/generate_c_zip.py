@@ -55,13 +55,6 @@ def make_files(com_new, directory):
     copy_examples_for_zip()
 
 def generate(path):
-    common.path_binding = path
-    path_list = path.split('/')
-    path_list[-1] = 'configs'
-    path_config = '/'.join(path_list)
-    sys.path.append(path_config)
-    configs = os.listdir(path_config)
-
     # Make temporary generator directory
     if os.path.exists('/tmp/generator'):
         shutil.rmtree('/tmp/generator/')
@@ -69,7 +62,7 @@ def generate(path):
     os.chdir('/tmp/generator/bindings')
 
     # Copy examples
-    common.import_and_make(configs, path, make_files)
+    common.generate(path, 'en', make_files, None, False)
     shutil.copy(common.path_binding.replace('/generators/c', '/doc/en/source/Software/example.c'),
                 '/tmp/generator/examples/example_enumerate.c')
 
