@@ -3,6 +3,7 @@
 
 import sys
 import os
+import socket
 import common
 
 path = os.getcwd()
@@ -34,12 +35,13 @@ for binding in bindings:
         common.generate(path_binding, lang, module.make_files, common.prepare_doc, True)
 
 # zip
-for binding in bindings:
-    if binding in ('tcpip', 'modbus'):
-        continue
+if socket.gethostname() != 'tinkerforge.com':
+    for binding in bindings:
+        if binding in ('tcpip', 'modbus'):
+            continue
 
-    path_binding = '{0}/{1}'.format(path, binding)
-    sys.path.append(path_binding)
-    module = __import__('generate_{0}_zip'.format(binding))
-    print("\nGenerating ZIP for {0}:".format(binding))
-    module.generate(path_binding)
+        path_binding = '{0}/{1}'.format(path, binding)
+        sys.path.append(path_binding)
+        module = __import__('generate_{0}_zip'.format(binding))
+        print("\nGenerating ZIP for {0}:".format(binding))
+        module.generate(path_binding)
