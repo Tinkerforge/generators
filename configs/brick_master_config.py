@@ -1386,26 +1386,26 @@ Gibt den Hostnamen zurück, wie von :func:`GetWifiHostname` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetCurrentCallbackPeriod', 'set_current_callback_period'), 
+'name': ('SetStackCurrentCallbackPeriod', 'set_stack_current_callback_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
 'since_firmware': [2, 0, 5],
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Current` callback is triggered
+Sets the period in ms with which the :func:`StackCurrent` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Current` is only triggered if the current has changed since the
+:func:`StackCurrent` is only triggered if the current has changed since the
 last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Current` Callback ausgelöst wird.
+Setzt die Periode in ms mit welcher der :func:`StackCurrent` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Current` wird nur ausgelöst wenn sich die Stromstärke seit der
+:func:`StackCurrent` wird nur ausgelöst wenn sich die Stromstärke seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -1415,7 +1415,7 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCurrentCallbackPeriod', 'get_current_callback_period'), 
+'name': ('GetStackCurrentCallbackPeriod', 'get_stack_current_callback_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
 'since_firmware': [2, 0, 5],
 'doc': ['ccf', {
@@ -1433,26 +1433,26 @@ gesetzt
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetVoltageCallbackPeriod', 'set_voltage_callback_period'), 
+'name': ('SetStackVoltageCallbackPeriod', 'set_stack_voltage_callback_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
 'since_firmware': [2, 0, 5],
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`Voltage` callback is triggered
+Sets the period in ms with which the :func:`StackVoltage` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Voltage` is only triggered if the voltage has changed since the
+:func:`StackVoltage` is only triggered if the voltage has changed since the
 last triggering.
 
 The default value is 0.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`Voltage` Callback ausgelöst wird.
+Setzt die Periode in ms mit welcher der :func:`StackVoltage` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Voltage` wird nur ausgelöst wenn sich die Spannung seit der
+:func:`StackVoltage` wird nur ausgelöst wenn sich die Spannung seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -1462,17 +1462,17 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetVoltageCallbackPeriod', 'get_voltage_callback_period'), 
+'name': ('GetStackVoltageCallbackPeriod', 'get_stack_voltage_callback_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
 'since_firmware': [2, 0, 5],
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetVoltageCallbackPeriod`.
+Returns the period as set by :func:`SetStackVoltageCallbackPeriod`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetVoltageCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`SetStackVoltageCallbackPeriod`
 gesetzt
 """
 }]
@@ -1530,7 +1530,7 @@ gesetzt
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetCurrentCallbackThreshold', 'set_current_callback_threshold'), 
+'name': ('SetStackCurrentCallbackThreshold', 'set_stack_current_callback_threshold'), 
 'elements': [('option', 'char', 1, 'in', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
                                                                                   ('Outside', 'outside', 'o'),
                                                                                   ('Inside', 'inside', 'i'),
@@ -1542,7 +1542,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`CurrentReached` callback. 
+Sets the thresholds for the :func:`StackCurrentReached` callback. 
 
 The following options are possible:
 
@@ -1560,7 +1560,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`CurrentReached` Callback.
+Setzt den Schwellwert für den :func:`StackCurrentReached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -1581,7 +1581,7 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCurrentCallbackThreshold', 'get_current_callback_threshold'), 
+'name': ('GetStackCurrentCallbackThreshold', 'get_stack_current_callback_threshold'), 
 'elements': [('option', 'char', 1, 'out', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
                                                                                    ('Outside', 'outside', 'o'),
                                                                                    ('Inside', 'inside', 'i'),
@@ -1593,11 +1593,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetCurrentCallbackThreshold`.
+Returns the threshold as set by :func:`SetStackCurrentCallbackThreshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetCurrentCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`SetStackCurrentCallbackThreshold`
 gesetzt.
 """
 }]
@@ -1605,7 +1605,7 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetVoltageCallbackThreshold', 'set_voltage_callback_threshold'), 
+'name': ('SetStackVoltageCallbackThreshold', 'set_stack_voltage_callback_threshold'), 
 'elements': [('option', 'char', 1, 'in', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
                                                                                   ('Outside', 'outside', 'o'),
                                                                                   ('Inside', 'inside', 'i'),
@@ -1617,7 +1617,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`VoltageReached` callback. 
+Sets the thresholds for the :func:`StackStackVoltageReached` callback. 
 
 The following options are possible:
 
@@ -1635,7 +1635,7 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert für den :func:`VoltageReached` Callback.
+Setzt den Schwellwert für den :func:`StackVoltageReached` Callback.
 
 Die folgenden Optionen sind möglich:
 
@@ -1656,7 +1656,7 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetVoltageCallbackThreshold', 'get_voltage_callback_threshold'), 
+'name': ('GetStackVoltageCallbackThreshold', 'get_stack_voltage_callback_threshold'), 
 'elements': [('option', 'char', 1, 'out', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
                                                                                    ('Outside', 'outside', 'o'),
                                                                                    ('Inside', 'inside', 'i'),
@@ -1668,11 +1668,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the threshold as set by :func:`SetVoltageCallbackThreshold`.
+Returns the threshold as set by :func:`SetStackVoltageCallbackThreshold`.
 """,
 'de':
 """
-Gibt den Schwellwert zurück, wie von :func:`SetVoltageCallbackThreshold`
+Gibt den Schwellwert zurück, wie von :func:`SetStackVoltageCallbackThreshold`
 gesetzt.
 """
 }]
@@ -1766,11 +1766,11 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callbacks
 
- :func:`CurrentReached`, :func:`VoltageReached`, :func:`USBVoltageReached`
+ :func:`StackCurrentReached`, :func:`StackVoltageReached`, :func:`USBVoltageReached`
 
 are triggered, if the thresholds
 
- :func:`SetCurrentCallbackThreshold`, :func:`SetVoltageCallbackThreshold`, :func:`SetUSBVoltageCallbackThreshold`
+ :func:`SetStackCurrentCallbackThreshold`, :func:`SetStackVoltageCallbackThreshold`, :func:`SetUSBVoltageCallbackThreshold`
 
 keep being reached.
 
@@ -1780,11 +1780,11 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
- :func:`CurrentReached`, :func:`VoltageReached`, :func:`USBVoltageReached`
+ :func:`StackCurrentReached`, :func:`StackVoltageReached`, :func:`USBVoltageReached`
  
 ausgelöst werden, wenn die Schwellwerte 
 
- :func:`SetCurrentCallbackThreshold`, :func:`SetVoltageCallbackThreshold`, :func:`SetUSBVoltageCallbackThreshold`
+ :func:`SetStackCurrentCallbackThreshold`, :func:`SetStackVoltageCallbackThreshold`, :func:`SetUSBVoltageCallbackThreshold`
  
 weiterhin erreicht bleiben.
 
@@ -1813,25 +1813,25 @@ gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Current', 'current'), 
+'name': ('StackCurrent', 'stack_current'), 
 'elements': [('current', 'uint16', 1, 'out')],
 'since_firmware': [2, 0, 5],
 'doc': ['c', {
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetCurrentCallbackPeriod`. The :word:`parameter` is the current of the
+:func:`SetStackCurrentCallbackPeriod`. The :word:`parameter` is the current of the
 sensor.
 
-:func:`Current` is only triggered if the current has changed since the
+:func:`StackCurrent` is only triggered if the current has changed since the
 last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetCurrentCallbackPeriod`,
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetStackCurrentCallbackPeriod`,
 ausgelöst. Der :word:`parameter` ist die Stromstärke des Sensors.
 
-:func:`Current` wird nur ausgelöst wenn sich die Stromstärke seit der
+:func:`StackCurrent` wird nur ausgelöst wenn sich die Stromstärke seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -1839,25 +1839,25 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Voltage', 'voltage'), 
+'name': ('StackVoltage', 'stack_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'out')],
 'since_firmware': [2, 0, 5],
 'doc': ['c', {
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetVoltageCallbackPeriod`. The :word:`parameter` is the voltage of the
+:func:`SetStackVoltageCallbackPeriod`. The :word:`parameter` is the voltage of the
 sensor.
 
-:func:`Voltage` is only triggered if the voltage has changed since the
+:func:`StackVoltage` is only triggered if the voltage has changed since the
 last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetVoltageCallbackPeriod`,
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetStackVoltageCallbackPeriod`,
 ausgelöst. Der :word:`parameter` ist die Spannung des Sensors.
 
-:func:`Voltage` wird nur ausgelöst wenn sich die Spannung seit der
+:func:`StackVoltage` wird nur ausgelöst wenn sich die Spannung seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -1891,14 +1891,14 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('CurrentReached', 'current_reached'), 
+'name': ('StackCurrentReached', 'stack_current_reached'), 
 'elements': [('current', 'uint16', 1, 'out')],
 'since_firmware': [2, 0, 5],
 'doc': ['c', {
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetCurrentCallbackThreshold` is reached.
+:func:`SetStackCurrentCallbackThreshold` is reached.
 The :word:`parameter` is the current of the sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
@@ -1907,7 +1907,7 @@ with the period as set by :func:`SetDebouncePeriod`.
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetCurrentCallbackThreshold` gesetzt, erreicht wird.
+:func:`SetStackCurrentCallbackThreshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Stromstärke des Sensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
@@ -1918,14 +1918,14 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('VoltageReached', 'voltage_reached'), 
+'name': ('StackVoltageReached', 'stack_voltage_reached'), 
 'elements': [('voltage', 'uint16', 1, 'out')],
 'since_firmware': [2, 0, 5],
 'doc': ['c', {
 'en':
 """
 This callback is triggered when the threshold as set by
-:func:`SetVoltageCallbackThreshold` is reached.
+:func:`SetStackVoltageCallbackThreshold` is reached.
 The :word:`parameter` is the voltage of the sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
@@ -1934,7 +1934,7 @@ with the period as set by :func:`SetDebouncePeriod`.
 'de':
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetVoltageCallbackThreshold` gesetzt, erreicht wird.
+:func:`SetStackVoltageCallbackThreshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Spannung des Sensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
