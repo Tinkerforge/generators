@@ -31,10 +31,10 @@ import shutil
 import subprocess
 import glob
 import re
-import php_common
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import php_common
 
 device = None
 
@@ -57,13 +57,6 @@ def make_files(com_new, directory):
     copy_examples_for_zip()
 
 def generate(path):
-    common.path_binding = path
-    path_list = path.split('/')
-    path_list[-1] = 'configs'
-    path_config = '/'.join(path_list)
-    sys.path.append(path_config)
-    configs = os.listdir(path_config)
-
     # Make temporary generator directory
     if os.path.exists('/tmp/generator'):
         shutil.rmtree('/tmp/generator/')
@@ -71,7 +64,7 @@ def generate(path):
     os.chdir('/tmp/generator')
 
     # Copy examples
-    common.import_and_make(configs, path, make_files)
+    common.generate(path, 'en', make_files, None, False)
     shutil.copy(common.path_binding.replace('/generators/php', '/doc/en/source/Software/Example.php'),
                 '/tmp/generator/pear/examples/ExampleEnumerate.php')
 
@@ -135,7 +128,8 @@ def generate(path):
     args = ['/usr/bin/pear',
             'package',
             'package.xml']
-    subprocess.call(args)
+    if subprocess.call(args) != 0:
+        raise Exception("Command '{0}' failed".format(' '.join(args)))
 
     # Remove build stuff
     shutil.move('/tmp/generator/pear/source/Tinkerforge-{0}.{1}.{2}.tgz'.format(*version),

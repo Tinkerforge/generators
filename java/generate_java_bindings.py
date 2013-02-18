@@ -30,6 +30,7 @@ import os
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import java_common
 
 device = None
 
@@ -75,7 +76,8 @@ def format_doc(packet):
             name_right = link_c.format(device.get_category(), cls, name)
         else:
             name = other_packet.get_headless_camel_case_name()
-            name_right = link.format(device.get_category(), cls, name, make_parameter_list(other_packet, True))
+            name_right = link.format(device.get_category(), cls, name,
+                                     java_common.make_parameter_list(other_packet, True))
 
         text = text.replace(name_false, name_right)
 
@@ -140,14 +142,14 @@ def make_return_objects():
         if len(packet.get_elements('out')) < 2:
             continue
 
-        name = get_object_name(packet)
+        name = java_common.get_object_name(packet)
 
         params = []
         tostr = []
         for element in packet.get_elements():
-            typ = get_java_type(element[1])
+            typ = java_common.get_java_type(element[1])
             ele_name = common.underscore_to_headless_camel_case(element[0])
-            if element[2] > 1 and typ != 'String':
+            if element[2] > 1 and element[1] != 'string':
                 arr = '[]'
                 new = ' = new {0}[{1}]'.format(typ, element[2])
                 to = '"{0} = " + Arrays.toString({0}) +'.format(ele_name)
@@ -178,7 +180,7 @@ def make_listener_definitions():
     for packet in device.get_packets('callback'):
         name = packet.get_camel_case_name()
         name_lower = packet.get_headless_camel_case_name()
-        parameter = make_parameter_list(packet)
+        parameter = java_common.make_parameter_list(packet)
         doc = format_doc(packet)
         cbs += cb.format(name, name_lower, parameter, doc)
     return cbs
@@ -289,10 +291,10 @@ def make_constants():
                 cast = ''
                 value = "'{0}'".format(definition.value)
             else:
-                cast = '({0})'.format(get_java_type(constant.type))
+                cast = '({0})'.format(java_common.get_java_type(constant.type))
                 value = str(definition.value)
 
-            str_constants += str_constant.format(get_java_type(constant.type),
+            str_constants += str_constant.format(java_common.get_java_type(constant.type),
                                                  constant.name_uppercase,
                                                  definition.name_uppercase,
                                                  cast,
@@ -307,23 +309,6 @@ def make_listener_lists():
         llists += llist.format(name)
 
     return llists
-
-def make_parameter_list(packet, just_types=False):
-    param = []
-    for element in packet.get_elements():
-        if element[3] == 'out' and packet.get_type() == 'function':
-            continue
-        java_type = get_java_type(element[1])
-        name = common.underscore_to_headless_camel_case(element[0])
-        arr = ''
-        if element[2] > 1 and element[1] != 'string':
-            arr = '[]'
-
-        if just_types:
-            param.append('{0}{1}'.format(java_type, arr))
-        else:
-            param.append('{0}{1} {2}'.format(java_type, arr, name))
-    return ', '.join(param)
 
 def make_constructor():
     con = """
@@ -385,56 +370,19 @@ def get_put_java_type(typ):
 
     return ''
 
-
-def get_java_type(typ):
-    forms = {
-        'int8' : 'byte',
-        'uint8' : 'short',
-        'int16' : 'short',
-        'uint16' : 'int',
-        'int32' : 'int',
-        'uint32' : 'long',
-        'int64' : 'long',
-        'uint64' : 'long',
-        'float' : 'float',
-        'bool' : 'boolean',
-        'string' : 'String',
-        'char' : 'char'
-    }
-
-    if typ in forms:
-        return forms[typ]
-
-    return ''
-
-def make_format_list(packet, io):
-    forms = []
-    for element in packet.get_elements(io):
-        num = ''
-        if element[2] > 1:
-            num = element[2]
-        form = make_format_from_element(element)
-        forms.append('{0}{1}'.format(num, form))
-    return " ".join(forms)
-
 def make_methods():
     methods = ''
     method = """
 \t/**
-\t * {9}
+\t * {8}
 \t */
 \tpublic {0} {1}({2}) {3} {{
-\t\tbyte options = 0;
-\t\tboolean isResponseExpected = getResponseExpected(FUNCTION_{5});
-\t\tif(isResponseExpected) {{
-\t\t\toptions = 8;
-\t\t}}
-\t\tByteBuffer bb = ipcon.createRequestBuffer(uid, (byte){4}, FUNCTION_{5}, options, (byte)({6}));
+\t\tByteBuffer bb = ipcon.createRequestPacket((byte){4}, FUNCTION_{5}, this);
+{6}
 {7}
-{8}
 \t}}
 """
-    method_response = """\t\tbyte[] response = sendRequestExpectResponse(bb.array(), FUNCTION_{0});
+    method_response = """\t\tbyte[] response = sendRequest(bb.array());
 
 \t\tbb = ByteBuffer.wrap(response, 8, response.length - 8);
 \t\tbb.order(ByteOrder.LITTLE_ENDIAN);
@@ -442,14 +390,7 @@ def make_methods():
 {1}
 \t\treturn {2};"""
 
-    method_noresponse = """\t\tif(isResponseExpected) {{
-\t\t\tbyte[] response = sendRequestExpectResponse(bb.array(), FUNCTION_{0});
-
-\t\t\tbb = ByteBuffer.wrap(response, 8, response.length - 8);
-\t\t\tbb.order(ByteOrder.LITTLE_ENDIAN);
-\t\t}} else {{
-\t\t\tsendRequestNoResponse(bb.array());
-\t\t}}"""
+    method_noresponse = """\t\tsendRequest(bb.array());"""
 
     loop = """\t\tfor(int i = 0; i < {0}; i++) {{
 {1}
@@ -464,10 +405,9 @@ def make_methods():
     cls = device.get_camel_case_name()
     for packet in device.get_packets('function'):
         options = 0
-        flags = 0
-        ret = get_return_value(packet)
+        ret = java_common.get_return_type(packet)
         name_lower = packet.get_headless_camel_case_name()
-        parameter = make_parameter_list(packet)
+        parameter = java_common.make_parameter_list(packet)
         size = str(packet.get_request_length())
         name_upper = packet.get_upper_case_name()
         doc = format_doc(packet)
@@ -480,7 +420,7 @@ def make_methods():
 
             cast = ''
             put_java_type = get_put_java_type(element[1])
-            if put_java_type != get_java_type(element[1]):
+            if put_java_type != java_common.get_java_type(element[1]):
                 cast = '({0})'.format(put_java_type)
 
             bbput_format = bbput.format(get_put_type(element[1]),
@@ -503,7 +443,7 @@ def make_methods():
             bbret = ''
         elif len(packet.get_elements('out')) > 1:
             bbgets, bbret = make_bbgets(packet, True)
-            obj_name = get_object_name(packet)
+            obj_name = java_common.get_object_name(packet)
             obj = '\t\t{0} obj = new {0}();\n'.format(obj_name)
             bbgets = obj + bbgets
             bbret = 'obj'
@@ -523,7 +463,6 @@ def make_methods():
                                  throw,
                                  size,
                                  name_upper,
-                                 flags,
                                  bbputs,
                                  response,
                                  doc)
@@ -542,7 +481,7 @@ def make_bbgets(packet, with_obj = False):
     for element in packet.get_elements('out'):
         typ = ''
         if not with_obj:
-            typ = get_java_type(element[1]) + ' '
+            typ = java_common.get_java_type(element[1]) + ' '
 
         bbret = common.underscore_to_headless_camel_case(element[0])
         obj = ''
@@ -593,27 +532,6 @@ def make_bbgets(packet, with_obj = False):
 
         bbgets += bbget_format + '\n'
     return bbgets, bbret
-
-def get_object_name(packet):
-    name = packet.get_camel_case_name()
-    if name.startswith('Get'):
-        name = name[3:]
-
-    return name
-
-def get_return_value(packet):
-    num = 0
-    ret = 'void'
-    for element in packet.get_elements('out'):
-        ret = get_java_type(element[1])
-        if element[2] > 1:
-            ret += '[]'
-        num += 1
-
-    if num > 1:
-        return get_object_name(packet)
-
-    return ret
 
 def make_files(com_new, directory):
     global device

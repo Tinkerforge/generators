@@ -10,6 +10,8 @@ package com.tinkerforge;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.List;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -20,6 +22,8 @@ class ReceiveThread extends Thread {
 	IPConnection ipcon = null;
 
 	ReceiveThread(IPConnection ipcon) {
+		super("Brickd-Receiver");
+
 		setDaemon(true);
 		this.ipcon = ipcon;
 	}
@@ -101,6 +105,22 @@ class ReceiveThread extends Thread {
 	}
 }
 
+class CallbackThreadRestarter implements Thread.UncaughtExceptionHandler {
+	IPConnection ipcon = null;
+
+	CallbackThreadRestarter(IPConnection ipcon) {
+		this.ipcon = ipcon;
+	}
+
+	@Override
+	public void uncaughtException(Thread thread, Throwable exception) {
+		System.err.print("Exception in thread \"" + thread.getName() + "\" ");
+		exception.printStackTrace();
+
+		ipcon.callbackThread = new CallbackThread(ipcon, ((CallbackThread)thread).callbackQueue);
+		ipcon.callbackThread.start();
+	}
+}
 
 class CallbackThread extends Thread {
 	IPConnection ipcon = null;
@@ -108,9 +128,12 @@ class CallbackThread extends Thread {
 
 	CallbackThread(IPConnection ipcon,
 	               LinkedBlockingQueue<IPConnection.CallbackQueueObject> callbackQueue) {
+		super("Callback-Processor");
+
 		setDaemon(true);
 		this.ipcon = ipcon;
 		this.callbackQueue = callbackQueue;
+		this.setUncaughtExceptionHandler(new CallbackThreadRestarter(ipcon));
 	}
 
 	@Override
@@ -142,8 +165,8 @@ class CallbackThread extends Thread {
 
 					switch(id) {
 						case IPConnection.CALLBACK_CONNECTED:
-							if(ipcon.connectedListener != null) {
-								ipcon.connectedListener.connected(parameter);
+							for(IPConnection.ConnectedListener listener: ipcon.listenerConnected) {
+								listener.connected(parameter);
 							}
 
 							break;
@@ -184,8 +207,8 @@ class CallbackThread extends Thread {
 								e.printStackTrace();
 							}
 
-							if(ipcon.disconnectedListener != null) {
-								ipcon.disconnectedListener.disconnected(parameter);
+							for(IPConnection.DisconnectedListener listener: ipcon.listenerDisconnected) {
+								listener.disconnected(parameter);
 							}
 
 							if(parameter != IPConnection.DISCONNECT_REASON_REQUEST && ipcon.autoReconnect && ipcon.autoReconnectAllowed) {
@@ -231,7 +254,7 @@ class CallbackThread extends Thread {
 
 					byte functionID = IPConnection.getFunctionIDFromData(cqo.data);
 					if(functionID == IPConnection.CALLBACK_ENUMERATE) {
-						if(ipcon.enumerateListener != null) {
+						if(!ipcon.listenerEnumerate.isEmpty()) {
 							int length = IPConnection.getLengthFromData(cqo.data);
 							ByteBuffer bb = ByteBuffer.wrap(cqo.data, 8, length - 8);
 							bb.order(ByteOrder.LITTLE_ENDIAN);
@@ -261,9 +284,11 @@ class CallbackThread extends Thread {
 							int deviceIdentifier = IPConnection.unsignedShort(bb.getShort());
 							short enumerationType = IPConnection.unsignedByte(bb.get());
 
-							ipcon.enumerateListener.enumerate(uid_str, connectedUid_str, position,
-							                                  hardwareVersion, firmwareVersion,
-							                                  deviceIdentifier, enumerationType);
+							for(IPConnection.EnumerateListener listener: ipcon.listenerEnumerate) {
+								listener.enumerate(uid_str, connectedUid_str, position,
+								                   hardwareVersion, firmwareVersion,
+								                   deviceIdentifier, enumerationType);
+							}
 						}
 					} else {
 						long uid = IPConnection.getUIDFromData(cqo.data);
@@ -284,15 +309,13 @@ public class IPConnection {
 	private final static String BASE58 = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
 
 	public final static byte FUNCTION_ENUMERATE = (byte)254;
-	public final static byte FUNCTION_ADC_CALIBRATE = (byte)251;
-	public final static byte FUNCTION_GET_ADC_CALIBRATION = (byte)250;
 	public final static byte CALLBACK_ENUMERATE = (byte)253;
 
 	public final static byte CALLBACK_CONNECTED = 0;
 	public final static byte CALLBACK_DISCONNECTED = 1;
 	public final static byte CALLBACK_AUTHENTICATION_ERROR = 2;
 
-	private final static long BROADCAST_UID = 0;
+	private final static int BROADCAST_UID = 0;
 
 	// enumeration_type parameter to the enumerate callback
 	public final static short ENUMERATION_TYPE_AVAILABLE = 0;
@@ -328,8 +351,8 @@ public class IPConnection {
 	private String host;
 	private int port;
 
-	private final static int SEQENCE_NUMBER_POS = 4;
-	private byte nextSequenceNumber = 1;
+	private final static int SEQUENCE_NUMBER_POS = 4;
+	private int nextSequenceNumber = 0;
 
 	boolean receiveFlag = false;
 
@@ -339,9 +362,9 @@ public class IPConnection {
 	Socket socket = null;
 	OutputStream out = null;
 	InputStream in = null;
-	EnumerateListener enumerateListener = null;
-	ConnectedListener connectedListener = null;
-	DisconnectedListener disconnectedListener = null;
+	List<EnumerateListener> listenerEnumerate = new ArrayList<EnumerateListener>();
+	List<ConnectedListener> listenerConnected = new ArrayList<ConnectedListener>();
+	List<DisconnectedListener> listenerDisconnected = new ArrayList<DisconnectedListener>();
 	ReceiveThread receiveThread = null;
 	CallbackThread callbackThread = null;
 
@@ -361,7 +384,7 @@ public class IPConnection {
 	}
 
 	public interface ConnectedListener {
-		public void connected(short disconnectReason);
+		public void connected(short connectReason);
 	}
 
 	public interface DisconnectedListener {
@@ -611,28 +634,88 @@ public class IPConnection {
 	 * callback.
 	 */
 	public void enumerate() throws NotConnectedException {
-		synchronized(socketMutex) {
-			if(socket == null) {
-				throw new NotConnectedException();
-			}
+		ByteBuffer request = createRequestPacket((byte)8, FUNCTION_ENUMERATE, null);
 
-			ByteBuffer request = createRequestBuffer(BROADCAST_UID, (byte)8, FUNCTION_ENUMERATE, (byte)0, (byte)0);
+		sendRequest(request.array());
+	}
 
-			write(request.array());
-		}
+	/**
+	 * Adds a Enumerate listener.
+	 */
+	public void addEnumerateListener(EnumerateListener listener) {
+		listenerEnumerate.add(listener);
+	}
+
+	/**
+	 * Removes a Enumerate listener.
+	 */
+	public void removeEnumerateListener(EnumerateListener listener) {
+		listenerEnumerate.remove(listener);
+	}
+
+	/**
+	 * Adds a Connected listener.
+	 */
+	public void addConnectedListener(ConnectedListener listener) {
+		listenerConnected.add(listener);
+	}
+
+	/**
+	 * Removes a Connected listener.
+	 */
+	public void removeConnectedListener(ConnectedListener listener) {
+		listenerConnected.remove(listener);
+	}
+
+	/**
+	 * Adds a Disconnected listener.
+	 */
+	public void addDisconnectedListener(DisconnectedListener listener) {
+		listenerDisconnected.add(listener);
+	}
+
+	/**
+	 * Removes a Disconnected listener.
+	 */
+	public void removeDisconnectedListener(DisconnectedListener listener) {
+		listenerDisconnected.remove(listener);
 	}
 
 	/**
 	 * Registers a listener object.
+	 *
+	 * @deprecated
+	 * Use the add and remove listener function per listener type instead.
 	 */
+	@Deprecated
 	public void addListener(Object object) {
+		boolean knownListener = false;
+
 		if(object instanceof EnumerateListener) {
-			enumerateListener = (EnumerateListener)object;
-		} else if(object instanceof ConnectedListener) {
-			connectedListener = (ConnectedListener)object;
-		} else if(object instanceof DisconnectedListener) {
-			disconnectedListener = (DisconnectedListener)object;
-		} else {
+			knownListener = true;
+
+			if (!listenerEnumerate.contains((EnumerateListener)object)) {
+				listenerEnumerate.add((EnumerateListener)object);
+			}
+		}
+
+		if(object instanceof ConnectedListener) {
+			knownListener = true;
+
+			if (!listenerConnected.contains((ConnectedListener)object)) {
+				listenerConnected.add((ConnectedListener)object);
+			}
+		}
+
+		if(object instanceof DisconnectedListener) {
+			knownListener = true;
+
+			if (!listenerDisconnected.contains((DisconnectedListener)object)) {
+				listenerDisconnected.add((DisconnectedListener)object);
+			}
+		}
+
+		if(!knownListener) {
 			throw new IllegalArgumentException("Unknown listener type");
 		}
 	}
@@ -697,6 +780,10 @@ public class IPConnection {
 		return (byte)((((int)data[6]) >> 4) & 0x0F);
 	}
 
+	static boolean getResponseExpectedFromData(byte[] data) {
+		return (((int)(data[6]) >> 3) & 0x01) == 0x01;
+	}
+
 	static byte getErrorCodeFromData(byte[] data) {
 		return (byte)(((int)(data[7] >> 6)) & 0x03);
 	}
@@ -736,45 +823,64 @@ public class IPConnection {
 		return (long)(((long)data) & 0xFFFFFFFF);
 	}
 
-	void write(byte[] data) {
-		try {
-			out.write(data);
-		} catch(java.io.IOException e) {
-			e.printStackTrace();
-			return;
+	void sendRequest(byte[] request) throws NotConnectedException {
+		synchronized(socketMutex) {
+			if (getConnectionState() != CONNECTION_STATE_CONNECTED) {
+				throw new NotConnectedException();
+			}
+
+			try {
+				out.write(request);
+			} catch(java.io.IOException e) {
+				e.printStackTrace();
+				return;
+			}
 		}
 	}
 
 	private void handleEnumerate(byte[] packet) {
-		if(enumerateListener != null) {
+		if(!listenerEnumerate.isEmpty()) {
 			try {
-				callbackQueue.put(new IPConnection.CallbackQueueObject(QUEUE_PACKET, packet));
+				callbackQueue.put(new CallbackQueueObject(QUEUE_PACKET, packet));
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
-	ByteBuffer createRequestBuffer(long uid, byte length, int functionID, byte options, byte flags) {
+	byte getNextSequenceNumber() {
 		synchronized(sequenceNumberMutex) {
-			options |= nextSequenceNumber << SEQENCE_NUMBER_POS;
+			int sequenceNumber = nextSequenceNumber + 1;
+			nextSequenceNumber = sequenceNumber % 15;
+			return (byte)sequenceNumber;
+		}
+	}
 
-			nextSequenceNumber++;
-			if(nextSequenceNumber == 0 || nextSequenceNumber > 15) {
-				nextSequenceNumber = 1;
+	ByteBuffer createRequestPacket(byte length, byte functionID, Device device) {
+		int uid = BROADCAST_UID;
+		byte options = 0;
+		byte flags = 0;
+
+		if (device != null) {
+			uid = (int)device.uid;
+
+			if (device.getResponseExpected(functionID)) {
+				options = 8;
 			}
 		}
 
-		ByteBuffer buffer = ByteBuffer.allocate(length);
+		options |= getNextSequenceNumber() << SEQUENCE_NUMBER_POS;
 
-		buffer.order(ByteOrder.LITTLE_ENDIAN);
-		buffer.putInt((int)uid);
-		buffer.put(length);
-		buffer.put((byte)functionID);
-		buffer.put(options);
-		buffer.put(flags);
+		ByteBuffer packet = ByteBuffer.allocate(length);
 
-		return buffer;
+		packet.order(ByteOrder.LITTLE_ENDIAN);
+		packet.putInt(uid);
+		packet.put(length);
+		packet.put(functionID);
+		packet.put(options);
+		packet.put(flags);
+
+		return packet;
 	}
 
 	static String base58Encode(long value) {

@@ -31,10 +31,10 @@ import shutil
 import subprocess
 import glob
 import re
-import php_common
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import php_common
 
 device = None
 
@@ -57,7 +57,7 @@ def format_doc(packet):
             name_right = ':php:member:`CALLBACK_{1} <{0}::CALLBACK_{1}>`'.format(cls, name_upper)
         else:
             name = other_packet.get_headless_camel_case_name()
-            name_right = ':php:func:`{1} <{0}::{1}>`'.format(cls, name)
+            name_right = ':php:func:`{1}() <{0}::{1}>`'.format(cls, name)
         text = text.replace(name_false, name_right)
 
     text = text.replace(":word:`parameter`", common.select_lang(parameter))
@@ -80,20 +80,7 @@ def make_examples():
     return common.make_rst_examples(title_from_file, device, common.path_binding,
                                     'php', 'Example', '.php', 'PHP')
 
-def make_parameter_list(packet):
-    param = []
-    for element in packet.get_elements():
-        if element[3] == 'out' and packet.get_type() == 'function':
-            continue
-        php_type = php_common.get_php_type(element[1])
-        name = element[0]
-        if element[2] > 1 and element[1] != 'string':
-            php_type = 'array'
-       
-        param.append('{0} ${1}'.format(php_type, name))
-    return ', '.join(param)
-
-def make_obj_desc(packet):
+def make_object_desc(packet):
     if len(packet.get_elements('out')) < 2:
         return ''
 
@@ -128,9 +115,9 @@ def make_methods(typ):
 
         ret_type = php_common.get_return_type(packet)
         name = packet.get_headless_camel_case_name()
-        params = make_parameter_list(packet)
+        params = php_common.make_parameter_list(packet, True)
         desc = format_doc(packet)
-        obj_desc = make_obj_desc(packet)
+        obj_desc = make_object_desc(packet)
         func = '{0}{1} {2}::{3}({4})\n{5}{6}'.format(func_start,
                                                      ret_type,
                                                      cls,
@@ -160,7 +147,7 @@ def make_callbacks():
     func_start = '.. php:member:: int '
     cls = device.get_category() + device.get_camel_case_name()
     for packet in device.get_packets('callback'):
-        params = make_parameter_list(packet)
+        params = php_common.make_parameter_list(packet, True)
         if len(params) > 0:
             params += " [, mixed $userData]"
         else:
@@ -234,7 +221,7 @@ Callbacks
 
 Callbacks can be registered to receive
 time critical or recurring data from the device. The registration is done
-with the :php:func:`registerCallback <{3}{4}::registerCallback>` function of
+with the :php:func:`registerCallback() <{3}{4}::registerCallback>` function of
 the device object. The first parameter is the callback ID and the second
 parameter the callback function:
 
@@ -265,7 +252,7 @@ Callbacks
 
 Callbacks können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
-mit der Funktion :php:func:`registerCallback <{3}{4}::registerCallback>` des
+mit der Funktion :php:func:`registerCallback() <{3}{4}::registerCallback>` des
 Geräte Objektes durchgeführt werden. Der erste Parameter ist der Callback ID
 und der zweite die Callbackfunktion:
 

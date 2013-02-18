@@ -1,5 +1,5 @@
 # -*- ruby encoding: utf-8 -*-
-# Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+# Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 #
 # Redistribution and use in source and binary forms of this file,
 # with or without modification, are permitted.
@@ -204,7 +204,7 @@ module Tinkerforge
       @request_mutex = Mutex.new
 
       @response_expected = Array.new(256, RESPONSE_EXPECTED_INVALID_FUNCTION_ID)
-      @response_expected[IPConnection::FUNCTION_ENUMERATE] = RESPONSE_EXPECTED_FALSE
+      @response_expected[IPConnection::FUNCTION_ENUMERATE] = RESPONSE_EXPECTED_ALWAYS_FALSE
       @response_expected[IPConnection::CALLBACK_ENUMERATE] = RESPONSE_EXPECTED_ALWAYS_FALSE
 
       @expected_response_function_id = 0
@@ -243,17 +243,20 @@ module Tinkerforge
     # errors are silently ignored, because they cannot be detected.
     def get_response_expected(function_id)
       if function_id < 0 or function_id > 255
+        raise ArgumentError, "Function ID #{function_id} out of range"
+      end
+
+      flag = @response_expected[function_id]
+
+      if flag == RESPONSE_EXPECTED_INVALID_FUNCTION_ID
         raise ArgumentError, "Invalid function ID #{function_id}"
       end
 
-      if @response_expected[function_id] == RESPONSE_EXPECTED_ALWAYS_TRUE or \
-         @response_expected[function_id] == RESPONSE_EXPECTED_TRUE
+      if flag == RESPONSE_EXPECTED_ALWAYS_TRUE or \
+         flag == RESPONSE_EXPECTED_TRUE
         true
-      elsif @response_expected[function_id] == RESPONSE_EXPECTED_ALWAYS_FALSE or \
-            @response_expected[function_id] == RESPONSE_EXPECTED_FALSE
-        false
       else
-        raise ArgumentError, "Invalid function ID #{function_id}"
+        false
       end
     end
 
@@ -270,35 +273,40 @@ module Tinkerforge
     # errors are silently ignored, because they cannot be detected.
     def set_response_expected(function_id, response_expected)
       if function_id < 0 or function_id > 255
+        raise ArgumentError, "Function ID #{function_id} out of range"
+      end
+
+      flag = @response_expected[function_id]
+
+      if flag == RESPONSE_EXPECTED_INVALID_FUNCTION_ID
         raise ArgumentError, "Invalid function ID #{function_id}"
       end
 
-      if @response_expected[function_id] == RESPONSE_EXPECTED_TRUE or \
-         @response_expected[function_id] == RESPONSE_EXPECTED_FALSE
-        if response_expected
-          @response_expected[function_id] = RESPONSE_EXPECTED_TRUE
-        else
-          @response_expected[function_id] = RESPONSE_EXPECTED_FALSE
-        end
-      elsif @response_expected[function_id] == RESPONSE_EXPECTED_ALWAYS_TRUE or \
-            @response_expected[function_id] == RESPONSE_EXPECTED_ALWAYS_FALSE
+      if flag == RESPONSE_EXPECTED_ALWAYS_TRUE or \
+         flag == RESPONSE_EXPECTED_ALWAYS_FALSE
         raise ArgumentError, "Response Expected flag cannot be changed for function ID #{function_id}"
+      end
+
+      if response_expected
+        @response_expected[function_id] = RESPONSE_EXPECTED_TRUE
       else
-        raise ArgumentError, "Invalid function ID #{function_id}"
+        @response_expected[function_id] = RESPONSE_EXPECTED_FALSE
       end
     end
 
     # Changes the response expected flag for all setter and callback
     # configuration functions of this device at once.
     def set_response_expected_all(response_expected)
+      if response_expected
+        flag = RESPONSE_EXPECTED_TRUE
+      else
+        flag = RESPONSE_EXPECTED_FALSE
+      end
+
       for function_id in 0..255
         if @response_expected[function_id] == RESPONSE_EXPECTED_TRUE or \
            @response_expected[function_id] == RESPONSE_EXPECTED_FALSE
-          if response_expected
-            @response_expected[function_id] = RESPONSE_EXPECTED_TRUE
-          else
-            @response_expected[function_id] = RESPONSE_EXPECTED_FALSE
-          end
+          @response_expected[function_id] = flag
         end
       end
     end
@@ -308,58 +316,55 @@ module Tinkerforge
                      response_length, response_format)
       response = nil
 
-      @request_mutex.synchronize {
-        response_expected = false
+      if request_data.length > 0
+        payload = pack request_data, request_format
+      else
+        payload = ''
+      end
 
-        @ipcon.socket_mutex.synchronize {
-          if @ipcon.socket == nil
-            raise Exception, 'Not connected'
+      header, response_expected, sequence_number = \
+        @ipcon.create_packet_header self, 8 + payload.length, function_id
+      request = header + payload
+
+      if response_expected
+        packet = nil
+
+        @request_mutex.synchronize {
+          @expected_response_function_id = function_id
+          @expected_response_sequence_number = sequence_number
+
+          begin
+            @ipcon.send_request request
+
+            packet = dequeue_response
+          ensure
+            @expected_response_function_id = 0
+            @expected_response_sequence_number = 0
           end
-
-          if request_data.length > 0
-            payload = pack request_data, request_format
-          else
-            payload = ''
-          end
-
-          header, response_expected, sequence_number = \
-            @ipcon.create_packet_header self, 8 + payload.length, function_id
-          request = header + payload
-
-          if response_expected
-            @expected_response_function_id = function_id
-            @expected_response_sequence_number = sequence_number
-          end
-
-          @ipcon.socket.send request, 0
         }
 
-        if response_expected
-          packet = dequeue_response
-          error_code = get_error_code_from_data(packet)
+        error_code = get_error_code_from_data(packet)
 
-          @expected_response_function_id = 0
-          @expected_response_sequence_number = 0
+        if error_code == 0
+          # no error
+        elsif error_code == 1
+          raise NotSupportedException, "Got invalid parameter for function #{function_id}"
+        elsif error_code == 2
+          raise NotSupportedException, "Function #{function_id} is not supported"
+        else
+          raise NotSupportedException, "Function #{function_id} returned an unknown error"
+        end
 
-          if error_code == 0
-            # no error
-          elsif error_code == 1
-            raise NotSupportedException, "Got invalid parameter for function #{function_id}"
-          elsif error_code == 2
-            raise NotSupportedException, "Function #{function_id} is not supported"
-          else
-            raise NotSupportedException, "Function #{function_id} returned an unknown error"
-          end
+        if response_length > 0
+          response = unpack packet[8..-1], response_format
 
-          if response_length > 0
-            response = unpack packet[8..-1], response_format
-
-            if response.length == 1
-              response = response[0]
-            end
+          if response.length == 1
+            response = response[0]
           end
         end
-      }
+      else
+        @ipcon.send_request request
+      end
 
       response
     end
@@ -391,8 +396,6 @@ module Tinkerforge
   end
 
   class IPConnection
-    attr_accessor :socket
-    attr_accessor :socket_mutex
     attr_accessor :devices
     attr_accessor :timeout
 
@@ -581,15 +584,9 @@ module Tinkerforge
     # Broadcasts an enumerate request. All devices will respond with an
     # enumerate callback.
     def enumerate
-      @socket_mutex.synchronize {
-        if @socket == nil
-          raise Exception, 'Not connected'
-        end
+      request, _, _ = create_packet_header nil, 8, FUNCTION_ENUMERATE
 
-        request, _, _ = create_packet_header nil, 8, FUNCTION_ENUMERATE
-
-        @socket.send request, 0
-      }
+      send_request request
     end
 
     # Stops the current thread until unwait is called.
@@ -621,9 +618,9 @@ module Tinkerforge
     # internal
     def get_next_sequence_number
       @sequence_number_mutex.synchronize {
-        sequence_number = @next_sequence_number
-        @next_sequence_number = (@next_sequence_number + 1) % 15
-        sequence_number + 1
+        sequence_number = @next_sequence_number + 1
+        @next_sequence_number = sequence_number % 15
+        sequence_number
       }
     end
 
@@ -647,6 +644,16 @@ module Tinkerforge
       header = pack [uid, length, function_id, sequence_number_and_options, 0], 'L C C C C'
 
       [header, response_expected, sequence_number]
+    end
+
+    def send_request(request)
+      @socket_mutex.synchronize {
+        if @socket == nil
+          raise Exception, 'Not connected'
+        end
+
+        @socket.send request, 0
+      }
     end
 
     private
@@ -754,7 +761,7 @@ module Tinkerforge
         end
       elsif function_id == CALLBACK_DISCONNECTED
         # need to do this here, the receive_loop is not allowed to
-        # hold the socket_lock because this could cause a deadlock
+        # hold the socket_mutex because this could cause a deadlock
         # with a concurrent call to the (dis-)connect function
         @socket_mutex.synchronize {
           if @socket != nil

@@ -190,9 +190,9 @@ struct Device_ {
 
 	Mutex request_mutex;
 
-	uint8_t expected_response_function_id;
-	uint8_t expected_response_sequence_number;
-	Packet response_packet;
+	uint8_t expected_response_function_id; // protected by request_mutex
+	uint8_t expected_response_sequence_number; // protected by request_mutex
+	Packet response_packet; // protected by request_mutex
 	Event response_event;
 	int response_expected[DEVICE_NUM_FUNCTION_IDS];
 
@@ -257,7 +257,7 @@ int device_get_api_version(Device *device, uint8_t ret_api_version[3]);
 /**
  * \internal
  */
-int device_send_request(Device *device, Packet *request);
+int device_send_request(Device *device, Packet *request, Packet *response);
 
 #endif
 
@@ -365,8 +365,9 @@ void ipcon_create(IPConnection *ipcon);
 /**
  * \ingroup IPConnection
  *
- * Destroys the IP Connection object. The connection to the Brick Daemon gets
- * closed and the threads of the IP Connection are terminated.
+ * Destroys the IP Connection object. Calls ipcon_disconnect internally.
+ * The connection to the Brick Daemon gets closed and the threads of the
+ * IP Connection are terminated.
  */
 void ipcon_destroy(IPConnection *ipcon);
 

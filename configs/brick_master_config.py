@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
     'category': 'Brick',
     'device_identifier': 13,
     'name': ('Master', 'master', 'Master'),
@@ -248,12 +248,14 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets up to 254 slave addresses. Valid addresses are in range 1-255.
+Sets up to 254 slave addresses. Valid addresses are in range 1-255. 0 has a
+special meaning and is used as list terminator.
 The address numeration (via num parameter) has to be used
 ascending from 0. For example: If you use the Chibi Extension in Master mode
 (i.e. the stack has an USB connection) and you want to talk to three other
-Chibi stacks with the slave addresses 17, 23, and 42, you should call with "(0, 17),
-(1, 23) and (2, 42)".
+Chibi stacks with the slave addresses 17, 23, and 42, you should call with
+"(0, 17), (1, 23), (2, 42) and (3, 0)". The last call with "(3, 0)" indicates
+that the RS485 slave address list contains 3 addresses in this case.
 
 It is possible to set the addresses with the Brick Viewer and it will be 
 saved in the EEPROM of the Chibi Extension, they don't
@@ -261,12 +263,15 @@ have to be set on every startup.
 """,
 'de':
 """
-Setzt bis zu 254 Slave Adressen. Gültige Adressen sind 1-255.
+Setzt bis zu 254 Slave Adressen. Gültige Adressen sind 1-255. 0 hat eine
+besondere Bedeutung und wird zur Terminierung der Liste verwendet.
 Die Adressnummerierung (mittels num Parameter) muss aufsteigend ab
 0 erfolgen. Beispiel: Wenn die Chibi Extension im Master Modus verwendet wird
 (z.B. wenn der Stapel eine USB-Verbindung hat) und es soll mit drei weiteren
 Chibi Stapeln kommuniziert werden, mit den Adressen 17, 23 und 42, sollten die
-Aufrufe "(0, 17), (1, 23) und (2, 42)" sein.
+Aufrufe "(0, 17), (1, 23), (2, 42) und (3, 0)" sein. Der letzte Aufruf mit
+"(3, 0)" zeigt an, dass die RS485 Slave Adressliste in diesem Fall 3 Einträge
+beinhaltet.
 
 Es ist möglich die Adressen mit dem Brick Viewer zu setzen und diese werden
 im EEPROM der Chibi Extension abgespeichert. Ein Setzen bei
@@ -493,7 +498,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets the address (1-255) belonging to the RS485 Extension.
+Sets the address (0-255) belonging to the RS485 Extension.
 
 Set to 0 if the RS485 Extension should be the RS485 Master (i.e.
 connected to a PC via USB).
@@ -504,7 +509,7 @@ have to be set on every startup.
 """,
 'de':
 """
-Setzt die zugehörige Adresse (1-255) der RS485 Extension.
+Setzt die zugehörige Adresse (0-255) der RS485 Extension.
 
 Um eine RS485 Extension als RS485 Master (z.B. verbunden mit einem PC über
 USB) zu betreiben muss die Adresse auf 0 gesetzt werden.
@@ -542,12 +547,14 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets up to 255 slave addresses. Valid addresses are in range 1-255.
+Sets up to 255 slave addresses. Valid addresses are in range 1-255. 0 has a
+special meaning and is used as list terminator.
 The address numeration (via num parameter) has to be used
 ascending from 0. For example: If you use the RS485 Extension in Master mode
 (i.e. the stack has an USB connection) and you want to talk to three other
 RS485 stacks with the IDs 17, 23, and 42, you should call with "(0, 17),
-(1, 23) and (2, 42)".
+(1, 23), (2, 42) and (3, 0)". The last call with "(3, 0)" indicates that the
+RS485 slave address list contains 3 addresses in this case.
 
 It is possible to set the addresses with the Brick Viewer and it will be 
 saved in the EEPROM of the RS485 Extension, they don't
@@ -555,12 +562,15 @@ have to be set on every startup.
 """,
 'de':
 """
-Setzt bis zu 255 Slave Adressen. Gültige Adressen sind 1-255.
+Setzt bis zu 255 Slave Adressen. Gültige Adressen sind 1-255. 0 hat eine
+besondere Bedeutung und wird zur Terminierung der Liste verwendet.
 Die Adressnummerierung (mittels num Parameter) muss aufsteigend ab
 0 erfolgen. Beispiel: Wenn die RS485 Extension im Master Modus verwendet wird
 (z.B. wenn der Stapel eine USB-Verbindung hat) und es soll mit drei weiteren
 RS485 Stapeln kommuniziert werden, mit den Adressen 17, 23 und 42, sollten die
-Aufrufe "(0, 17), (1, 23) und (2, 42)" sein.
+Aufrufe "(0, 17), (1, 23), (2, 42) und (3, 0)" sein. Der letzte Aufruf mit
+"(3, 0)" zeigt an, dass die RS485 Slave Adressliste in diesem Fall 3 Einträge
+beinhaltet.
 
 Es ist möglich die Adressen mit dem Brick Viewer zu setzen und diese werden
 im EEPROM der RS485 Extension abgespeichert. Ein Setzen bei
@@ -839,10 +849,14 @@ type of the encryption. Possible values are:
  "3", "No Encryption"
 
 The key has a max length of 50 characters and is used if encryption
-is set to 0 or 2 (WPA or WEP). Otherwise the value is ignored.
-For WEP it is possible to set the key index (1-4). If you don't know your
-key index, it is likely 1. If you want to set a key with more than
-50 characters, see :func:`SetLongWifiKey`.
+is set to 0 or 2 (WPA/WPA2 or WEP). Otherwise the value is ignored.
+
+For WPA/WPA2 the key has to be at least 8 characters long. If you want to set
+a key with more than 50 characters, see :func:`SetLongWifiKey`.
+
+For WEP the key has to be either 10 or 26 hexdecimal digits long. It is
+possible to set the WEP key index (1-4). If you don't know your key index,
+it is likely 1.
 
 If you choose WPA Enterprise as encryption, you have to set eap options and
 the length of the certificates (for other encryption types these paramters
@@ -881,11 +895,16 @@ Typ der Verschlüsselung. Mögliche Werte sind:
  "3", "Keine Verschlüsselung"
 
 Key hat eine maximale Länge von 50 Zeichen und wird benutzt falls
-encryption auf 0 oder 2 (WPA oder WEP) gesetzt ist. Andernfalls wird key
-ignoriert. Für WEP gibt es die Möglichkeit den key index zu setzen
-(1-4). Fall der key index unbekannt ist, ist er wahrscheinlich 1.
-Wenn ein Schlüssel mit mehr als 50 Zeichen gesetzt werden soll, kann
-:func:`SetLongWifiKey` genutzt werden.
+encryption auf 0 oder 2 (WPA/WPA2 oder WEP) gesetzt ist. Andernfalls wird key
+ignoriert.
+
+Für WPA/WPA2 muss der Schlüssel mindestens 8 Zeichen lang sein. Wenn ein Schlüssel
+mit mehr als 50 Zeichen gesetzt werden soll, kann :func:`SetLongWifiKey`
+genutzt werden.
+
+Für WEP muss der Schlüssel entweder 10 oder 26 hexadezimale Zeichen lang sein.
+Es ist möglich den key index zu setzen (1-4). Fall der key index unbekannt ist,
+ist er wahrscheinlich 1.
 
 Wenn WPA Enterprise als encryption gewählt wird, müssen eap options und
 die Länge der Zertifikate gesetzt werden. Die Länge wird in Byte angegeben
@@ -1287,20 +1306,20 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets a long wifi key (up to 64 chars) for WPA encryption. This key will be used
+Sets a long WIFI key (up to 63 chars, at least 8 chars) for WPA encryption.
+This key will be used
 if the key in :func:`SetWifiEncryption` is set to "-". In the old protocol,
-a payload of size 64 was not possible, so the maximum key length was 50 chars.
-
+a payload of size 63 was not possible, so the maximum key length was 50 chars.
 
 With the new protocol this is possible, since we didn't want to break API,
 this function was added additionally.
 """,
 'de':
 """
-Setzts einen langen WIFI Schlüssel (bis zu 64 Buchstaben) für WPA
-Verschlüsselung. Dieser Schlüssel wird genutzt, wenn der Schlüssel in
+Setzt einen langen WIFI Schlüssel (bis zu 63 Zeichen, mindestens 8 Zeichen) für
+WPA Verschlüsselung. Dieser Schlüssel wird genutzt, wenn der Schlüssel in
 :func:`SetWifiEncryption` auf "-" gesetzt wird. Im alten Protokoll war
-ein Payload der Größe 64 nicht möglich, dadurch wurde die maximale
+ein Payload der Größe 63 nicht möglich, dadurch wurde die maximale
 Schlüssellänge auf 50 gesetzt. 
 
 Mit dem neuen Protokoll ist die volle

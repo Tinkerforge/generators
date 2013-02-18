@@ -33,16 +33,9 @@ import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import c_common
 
 device = None
-
-def get_c_type(py_type):
-    if py_type == 'string':
-        return 'char'
-    if py_type in ( 'int8',  'int16',  'int32' , 'int64', \
-                   'uint8', 'uint16', 'uint32', 'uint64'):
-        return "{0}_t".format(py_type)
-    return py_type
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
@@ -71,8 +64,7 @@ def format_doc(packet):
     text = text.replace(":word:`parameters`", common.select_lang(parameters))
 
     text = common.handle_rst_if(text, device)
-    prefix = '{0}_{1}_'.format(device.get_category().upper(), 
-                               device.get_upper_case_name())
+    prefix = '{0}_'.format(device.get_upper_case_name())
     text = common.handle_constants(text, 
                                    prefix, 
                                    packet,
@@ -80,23 +72,6 @@ def format_doc(packet):
     text = common.handle_since_firmware(text, device, packet)
 
     return common.shift_right(text, 1)
-
-def make_parameter_list(packet):
-    param = ''
-    for element in packet.get_elements():
-        c_type = get_c_type(element[1])
-        name = element[0]
-        pointer = ''
-        arr = ''
-        if element[3] == 'out':
-            pointer = '*'
-            name = "ret_{0}".format(name)
-        if element[2] > 1:
-            arr = '[{0}]'.format(element[2])
-            pointer = ''
-
-        param += ', {0} {1}{2}{3}'.format(c_type, pointer, name, arr)
-    return param
 
 def make_examples():
     def title_from_file(f):
@@ -117,7 +92,7 @@ def make_methods(typ):
         if packet.get_doc()[0] != typ:
             continue
         name = '{0}_{1}'.format(device.get_underscore_name(), packet.get_underscore_name())
-        plist = make_parameter_list(packet)
+        plist = c_common.make_parameter_list(packet)
         params = '{0} *{1}{2}'.format(device.get_camel_case_name(), device.get_underscore_name(), plist)
         desc = format_doc(packet)
         func = '{0}{1}({2})\n{3}'.format(func_start, name, params, desc)
@@ -142,7 +117,7 @@ def make_callbacks():
     cbs = ''
     func_start = '.. c:var:: '
     for packet in device.get_packets('callback'):
-        plist = make_parameter_list(packet)[2:].replace('*ret_', '')
+        plist = c_common.make_parameter_list(packet)[2:].replace('*ret_', '')
         if not plist:
             plist = 'void *user_data'
         else:

@@ -1,3 +1,10 @@
+{
+  Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+
+  Redistribution and use in source and binary forms of this file,
+  with or without modification, are permitted.
+}
+
 unit IPConnection;
 
 {$ifdef FPC}{$mode OBJFPC}{$H+}{$endif}
@@ -76,7 +83,6 @@ type
   TIPConnectionNotifyDisconnected = procedure(sender: TIPConnection; const disconnectReason: byte) of object;
   TIPConnection = class
   public
-    socketMutex: TCriticalSection;
     timeout: longint;
     devices: TDeviceTable;
   private
@@ -92,6 +98,7 @@ type
     sequenceNumberMutex: TCriticalSection;
     nextSequenceNumber: byte;
     pendingData: TByteArray;
+    socketMutex: TCriticalSection;
     socket: TSocket;
     waiter: TTimedSemaphore;
     enumerateCallback: TIPConnectionNotifyEnumerate;
@@ -114,8 +121,9 @@ type
     constructor Create;
 
     /// <summary>
-    ///  Destroys the IP Connection object. The connection to the Brick Daemon
-    ///  gets closed and the threads of the IP Connection are terminated.
+    ///  Destroys the IP Connection object. Calls Disconnect internally. The
+    ///  connection to the Brick Daemon gets closed and the threads of the
+    ///  IP Connection are terminated.
     /// </summary>
     destructor Destroy; override;
 
@@ -208,8 +216,8 @@ type
 
     { Internal }
     function IsConnected: boolean;
-    function CreatePacket(const device: TDevice; const functionID: byte; const len: byte): TByteArray;
-    procedure Send(const data: TByteArray);
+    function CreateRequestPacket(const device: TDevice; const functionID: byte; const len: byte): TByteArray;
+    procedure SendRequest(const request: TByteArray);
   end;
 
   function GetUIDFromData(const data: TByteArray): longword;
@@ -390,13 +398,8 @@ end;
 procedure TIPConnection.Enumerate;
 var request: TByteArray;
 begin
-  socketMutex.Acquire;
-  try
-    request := CreatePacket(nil, IPCON_FUNCTION_ENUMERATE, 8);
-    Send(request);
-  finally
-    socketMutex.Release;
-  end;
+  request := CreateRequestPacket(nil, IPCON_FUNCTION_ENUMERATE, 8);
+  SendRequest(request);
 end;
 
 procedure TIPConnection.Wait;
@@ -639,7 +642,11 @@ var retry: boolean;
 begin
   if (meta[0] = IPCON_CALLBACK_CONNECTED) then begin
     if (Assigned(connectedCallback)) then begin
-      connectedCallback(self, meta[1]);
+      try
+        connectedCallback(self, meta[1]);
+      except
+        { Ignore exceptions in user code }
+      end;
     end;
   end
   else if (meta[0] = IPCON_CALLBACK_DISCONNECTED) then begin
@@ -656,11 +663,15 @@ begin
       socketMutex.Release;
     end;
     { FIXME: Wait a moment here, otherwise the next connect attempt will
-      succeed, even if there is no open server socket. the first receive will
+      succeed, even if there is no open server socket. The first receive will
       then fail directly }
     Sleep(100);
     if (Assigned(disconnectedCallback)) then begin
-      disconnectedCallback(self, meta[1]);
+      try
+        disconnectedCallback(self, meta[1]);
+      except
+        { Ignore exceptions in user code }
+      end;
     end;
     if ((meta[1] <> IPCON_DISCONNECT_REASON_REQUEST) and autoReconnect and
         autoReconnectAllowed) then begin
@@ -715,9 +726,13 @@ begin
       firmwareVersion[2] := LEConvertUInt8From(30, packet);
       deviceIdentifier := LEConvertUInt16From(31, packet);
       enumerationType := LEConvertUInt8From(33, packet);
-      enumerateCallback(self, uid, connectedUid, position,
-                        hardwareVersion, firmwareVersion,
-                        deviceIdentifier, enumerationType);
+      try
+        enumerateCallback(self, uid, connectedUid, position,
+                          hardwareVersion, firmwareVersion,
+                          deviceIdentifier, enumerationType);
+      except
+        { Ignore exceptions in user code }
+      end;
     end
   end
   else begin
@@ -727,7 +742,11 @@ begin
     end;
     callbackWrapper := device.callbackWrappers[functionID];
     if (Assigned(callbackWrapper)) then begin
-      callbackWrapper(packet);
+      try
+        callbackWrapper(packet);
+      except
+        { Ignore exceptions in user code }
+      end;
     end;
   end;
 end;
@@ -737,7 +756,7 @@ begin
   result := socket <> INVALID_SOCKET;
 end;
 
-function TIPConnection.CreatePacket(const device: TDevice; const functionID: byte; const len: byte): TByteArray;
+function TIPConnection.CreateRequestPacket(const device: TDevice; const functionID: byte; const len: byte): TByteArray;
 var sequenceNumber, responseExpected: byte;
 begin
   SetLength(result, len);
@@ -745,7 +764,7 @@ begin
   sequenceNumberMutex.Acquire;
   try
     sequenceNumber := nextSequenceNumber + 1;
-    nextSequenceNumber := (nextSequenceNumber + 1) mod 15;
+    nextSequenceNumber := sequenceNumber mod 15;
   finally
     sequenceNumberMutex.Release;
   end;
@@ -761,14 +780,21 @@ begin
   result[6] := (sequenceNumber shl 4) or (responseExpected shl 3);
 end;
 
-{ NOTE: Assumes that socketMutex is locked }
-procedure TIPConnection.Send(const data: TByteArray);
+procedure TIPConnection.SendRequest(const request: TByteArray);
 begin
+  socketMutex.Acquire;
+  try
+    if (not IsConnected) then begin
+      raise Exception.Create('Not connected');
+    end;
 {$ifdef FPC}
-  fpsend(socket, @data[0], Length(data), 0);
+    fpsend(socket, @request[0], Length(request), 0);
 {$else}
-  WinSock.Send(socket, data[0], Length(data), 0);
+    WinSock.Send(socket, request[0], Length(request), 0);
 {$endif}
+  finally
+    socketMutex.Release;
+  end;
 end;
 
 function GetUIDFromData(const data: TByteArray): longword;

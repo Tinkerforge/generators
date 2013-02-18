@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 """
-Delphi Documentation Generator
+Visual Basic .NET Documentation Generator
 Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
-generator_delphi_doc.py: Generator for Delphi documentation
+generator_vbnet_doc.py: Generator for Visual Basic .NET documentation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -33,7 +33,6 @@ import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
-import delphi_common
 
 device = None
 
@@ -53,68 +52,125 @@ def format_doc(packet):
         name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
         name = other_packet.get_camel_case_name()
         if other_packet.get_type() == 'callback':
-            name_right = ':delphi:func:`On{1} <T{0}.On{1}>`'.format(cls, name)
+            name_right = ':vbnet:func:`{1} <{0}.{1}>`'.format(cls, name)
         else:
-            name_right = ':delphi:func:`{1} <T{0}.{1}>`'.format(cls, name)
+            name_right = ':vbnet:func:`{1}() <{0}.{1}>`'.format(cls, name)
         text = text.replace(name_false, name_right)
 
     text = text.replace(":word:`parameter`", common.select_lang(parameter))
     text = text.replace(":word:`parameters`", common.select_lang(parameters))
 
     text = common.handle_rst_if(text, device)
-    prefix = '{0}_{1}_'.format(device.get_category().upper(), 
-                               device.get_upper_case_name())
-    text = common.handle_constants(text, 
-                                   prefix, 
-                                   packet)
+    prefix = '{0}{1}.'.format(device.get_category(),
+                              device.get_camel_case_name())
+    text = common.handle_constants(text, prefix, packet)
     text = common.handle_since_firmware(text, device, packet)
 
     return common.shift_right(text, 1)
 
+def get_vbnet_type(element):
+    types = {
+        'int8'   : 'Short',
+        'uint8'  : 'Byte',
+        'int16'  : 'Short',
+        'uint16' : 'Integer',
+        'int32'  : 'Integer',
+        'uint32' : 'Long',
+        'int64'  : 'Long',
+        'uint64' : 'Long',
+        'float'  : 'Single',
+        'bool'   : 'Boolean',
+        'string' : 'String',
+        'char'   : 'Char',
+    }
+
+    return types[element[1]]
+
+def get_return_type(packet):
+    elements = packet.get_elements('out')
+
+    if len(elements) == 1:
+        vbnet_type = get_vbnet_type(elements[0])
+
+        if elements[0][2] > 1 and elements[0][1] != 'string':
+            vbnet_type += '[]'
+
+        return vbnet_type
+    else:
+        return ''
+
+def make_parameter_list(packet):
+    param = []
+    if len(packet.get_elements('out')) > 1 or packet.get_type() == 'callback':
+        for element in packet.get_elements():
+            vbnet_type = get_vbnet_type(element)
+
+            if element[3] == 'in' or packet.get_type() == 'callback':
+                modifier = 'ByVal '
+            else:
+                modifier = 'ByRef '
+
+            name = common.underscore_to_headless_camel_case(element[0])
+
+            if element[2] > 1 and element[1] != 'string':
+                name += '[]'
+
+            param.append('{0}{1} As {2}'.format(modifier, name, vbnet_type))
+    else:
+        for element in packet.get_elements('in'):
+            vbnet_type = get_vbnet_type(element)
+            name = common.underscore_to_headless_camel_case(element[0])
+
+            if element[2] > 1 and element[1] != 'string':
+                name += '[]'
+
+            param.append('ByVal {0} As {1}'.format(name, vbnet_type))
+    return ', '.join(param)
+
 def make_examples():
     def title_from_file(f):
         f = f.replace('Example', '')
-        f = f.replace('.pas', '')
+        f = f.replace('.vb', '')
         return common.camel_case_to_space(f)
 
     return common.make_rst_examples(title_from_file, device, common.path_binding,
-                                    'delphi', 'Example', '.pas', 'Delphi')
+                                    'vbnet', 'Example', '.vb', 'VBNET')
 
 def make_methods(typ):
     methods = ''
-    function = '.. delphi:function:: function T{0}.{1}({2}): {3}\n{4}'
-    procedure = '.. delphi:function:: procedure T{0}.{1}({2})\n{3}'
+    function = '.. vbnet:function:: Function {0}.{1}({2}) As {3}\n{4}'
+    sub = '.. vbnet:function:: Sub {0}.{1}({2})\n{3}'
     cls = device.get_category() + device.get_camel_case_name()
     for packet in device.get_packets('function'):
         if packet.get_doc()[0] != typ:
             continue
 
-        ret_type = delphi_common.get_return_type(packet, True)
+        ret_type = get_return_type(packet)
         name = packet.get_camel_case_name()
-        params = delphi_common.make_parameter_list(packet, True)
+        params = make_parameter_list(packet)
         desc = format_doc(packet)
         if len(ret_type) > 0:
             method = function.format(cls, name, params, ret_type, desc)
         else:
-            method = procedure.format(cls, name, params, desc)
+            method = sub.format(cls, name, params, desc)
         methods += method + '\n'
 
     return methods
 
-def make_callbacks():
+def make_callbacks_x():
     cbs = ''
     cb = {
-    'en': """.. delphi:function:: property T{0}.On{1}
+    'en': """.. vbnet:function:: event {0}.On{1}
 
- .. code-block:: delphi
+ .. code-block:: vbnet
 
   procedure({2}) of object;
 
 {3}
 """,
-    'de': """.. delphi:function:: property T{0}.On{1}
+    'de': """.. vbnet:function:: event {0}.On{1}
 
- .. code-block:: delphi
+ .. code-block:: vbnet
 
   procedure({2}) of object;
 
@@ -125,43 +181,71 @@ def make_callbacks():
     cls = device.get_category() + device.get_camel_case_name()
     for packet in device.get_packets('callback'):
         name = packet.get_camel_case_name()
-        params = delphi_common.make_parameter_list(packet, True)
+        params = make_parameter_list(packet)
         desc = format_doc(packet)
         cbs += common.select_lang(cb).format(cls, name, params, desc)
+
+    return cbs
+
+def make_callbacks():
+    cb = {
+    'en': """
+.. vbnet:function:: Event {0}.{1}(ByVal sender As {0}{2})
+
+{3}
+""",
+    'de': """
+.. vbnet:function:: Event {0}.{1}(ByVal sender As {0}{2})
+
+{3}
+"""
+    }
+
+    cbs = ''
+    for packet in device.get_packets('callback'):
+        desc = format_doc(packet)
+        params = make_parameter_list(packet)
+        if len(params) > 0:
+            params = ', ' + params
+
+        cbs += common.select_lang(cb).format(device.get_category() + device.get_camel_case_name(),
+                                             packet.get_camel_case_name(),
+                                             params,
+                                             desc)
 
     return cbs
 
 def make_api():
     create_str = {
     'en': """
-.. delphi:function:: constructor T{3}{1}.Create(const uid: string; ipcon: TIPConnection)
+.. vbnet:function:: Class {3}{1}(ByVal uid As String, ByVal ipcon As IPConnection)
 
  Creates an object with the unique device ID *uid*:
 
- .. code-block:: delphi
+ .. code-block:: vbnet
 
-    {4} := T{3}{1}.Create('YOUR_DEVICE_UID', ipcon);
+    Dim {4} As New {3}{1}("YOUR_DEVICE_UID", ipcon)
 
  This object can then be used after the IP Connection is connected
- (see examples :ref:`above <{0}_{2}_delphi_examples>`).
+ (see examples :ref:`above <{0}_{2}_vbnet_examples>`).
 """,
     'de': """
-.. delphi:function:: constructor T{3}{1}.Create(const uid: string; ipcon: TIPConnection)
+.. vbnet:function:: Class {3}{1}(ByVal uid As String, ByVal ipcon As IPConnection)
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID *uid*:
 
- .. code-block:: delphi
+ .. code-block:: vbnet
 
-    {4} := T{3}{1}.Create('YOUR_DEVICE_UID', ipcon);
+    Dim {4} As New {3}{1}("YOUR_DEVICE_UID", ipcon)
 
  Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
- (siehe Beispiele :ref:`oben <{0}_{2}_delphi_examples>`).
+ (siehe Beispiele :ref:`oben <{0}_{2}_vbnet_examples>`).
 """
     }
 
     c_str = {
     'en': """
-.. _{1}_{2}_delphi_callbacks:
+.. _{1}_{2}_vbnet_callbacks:
 
 Callbacks
 ^^^^^^^^^
@@ -170,14 +254,13 @@ Callbacks can be registered to receive time critical or recurring data from
 the device. The registration is done by assigning a procedure to an callback
 property of the device object:
 
- .. code-block:: delphi
+ .. code-block:: vbnet
 
-  procedure TExample.MyCallback(sender: T{3}{4}; const param: word);
-  begin
-    WriteLn(param);
-  end;
+    Sub Callback(ByVal sender As {3}{4}, ByVal value As Short)
+        Console.WriteLine("Value: {{0}}", value)
+    End Sub
 
-  {1}.OnExample := {{$ifdef FPC}}@{{$endif}}example.MyCallback;
+    AddHandler {5}.Example, AddressOf Callback
 
 The available callback property and their type of parameters are described below.
 
@@ -189,7 +272,7 @@ The available callback property and their type of parameters are described below
 {0}
 """,
     'de': """
-.. _{1}_{2}_delphi_callbacks:
+.. _{1}_{2}_vbnet_callbacks:
 
 Callbacks
 ^^^^^^^^^
@@ -198,14 +281,13 @@ Callbacks können registriert werden um zeitkritische oder
 wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung erfolgt indem
 eine Prozedur einem Callback Property des Geräte Objektes zugewiesen wird:
 
- .. code-block:: delphi
+ .. code-block:: vbnet
 
-  procedure TExample.MyCallback(sender: T{3}{4}; const param: word);
-  begin
-    WriteLn(param);
-  end;
+    Sub Callback(ByVal sender As {3}{4}, ByVal value As Short)
+        Console.WriteLine("Value: {{0}}", value)
+    End Sub
 
-  {5}.OnExample := {{$ifdef FPC}}@{{$endif}}example.MyCallback;
+    AddHandler {5}.Example, AddressOf Callback
 
 Die verfügbaren Callback Properties und ihre Parametertypen werden weiter
 unten beschrieben.
@@ -226,8 +308,8 @@ unten beschrieben.
 API
 ---
 
-Since Delphi does not support multiple return values directly, we use the
-``out`` keyword to return multiple values from a function.
+Since Visual Basic .NET does not support multiple return values directly, we
+use the ``ByRef`` keyword to return multiple values from a function.
 
 All functions and procedures listed below are thread-safe.
 
@@ -240,8 +322,8 @@ All functions and procedures listed below are thread-safe.
 API
 ---
 
-Da Delphi nicht mehrere Rückgabewerte direkt unterstützt, wird das ``out``
-Keyword genutzt um mehrere Werte von einer Funktion zurückzugeben.
+Da Visual Basic .NET nicht mehrere Rückgabewerte direkt unterstützt, wird das
+``ByRef`` Keyword genutzt um mehrere Werte von einer Funktion zurückzugeben.
 
 Alle folgend aufgelisteten Funktionen und Prozeduren sind Thread-sicher.
 
@@ -274,7 +356,7 @@ Alle folgend aufgelisteten Funktionen und Prozeduren sind Thread-sicher.
                                                     device.get_camel_case_name(),
                                                     device.get_headless_camel_case_name())
 
-    ref = '.. _{0}_{1}_delphi_api:\n'.format(device.get_underscore_name(),
+    ref = '.. _{0}_{1}_vbnet_api:\n'.format(device.get_underscore_name(),
                                              device.get_category().lower())
 
     api_desc = ''
@@ -286,15 +368,15 @@ Alle folgend aufgelisteten Funktionen und Prozeduren sind Thread-sicher.
 def make_files(com_new, directory):
     global device
     device = common.Device(com_new)
-    file_name = '{0}_{1}_Delphi'.format(device.get_camel_case_name(),
+    file_name = '{0}_{1}_VBNET'.format(device.get_camel_case_name(),
                                         device.get_category())
     title = {
-    'en': 'Delphi bindings',
-    'de': 'Delphi Bindings'
+    'en': 'Visual Basic .NET bindings',
+    'de': 'Visual Basic .NET Bindings'
     }
     directory = os.path.join(directory, 'doc', common.lang)
     f = file('{0}/{1}.rst'.format(directory, file_name), "w")
-    f.write(common.make_rst_header(device, 'delphi', 'Delphi'))
+    f.write(common.make_rst_header(device, 'vbnet', 'Visual Basic .NET'))
     f.write(common.make_rst_summary(device, common.select_lang(title)))
     f.write(make_examples())
     f.write(make_api())

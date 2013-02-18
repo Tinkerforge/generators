@@ -30,6 +30,7 @@ import os
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import python_common
 
 device = None
 
@@ -210,12 +211,6 @@ def make_format_list(packet, io):
         forms.append('{0}{1}'.format(num, form))
     return " ".join(forms)
 
-def make_parameter_list(packet):
-    params = []
-    for element in packet.get_elements('in'):
-        params.append(element[0])
-    return ", ".join(params)
-
 def make_methods():
     m_tup = """
     def {0}(self{7}{4}):
@@ -245,7 +240,7 @@ def make_methods():
         nb = packet.get_camel_case_name()
         ns = packet.get_underscore_name()
         nh = ns.upper()
-        par = make_parameter_list(packet)
+        par = python_common.make_parameter_list(packet)
         doc = format_doc(packet)
         cp = ''
         ct = ''

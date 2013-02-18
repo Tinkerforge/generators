@@ -33,6 +33,7 @@ import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import python_common
 
 device = None
 
@@ -75,9 +76,9 @@ def format_doc(packet):
         name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
         if other_packet.get_type() == 'callback':
             name_upper = other_packet.get_upper_case_name()
-            name_right = ':py:attr:`{0}.CALLBACK_{1}`'.format(cls, name_upper)
+            name_right = ':py:attr:`CALLBACK_{1} <{0}.CALLBACK_{1}>`'.format(cls, name_upper)
         else:
-            name_right = ':py:func:`{0}.{1}`'.format(cls, other_packet.get_underscore_name())
+            name_right = ':py:func:`{1}() <{0}.{1}>`'.format(cls, other_packet.get_underscore_name())
         text = text.replace(name_false, name_right)
 
     text = text.replace(":word:`parameter`", common.select_lang(parameter))
@@ -103,12 +104,6 @@ def make_examples():
     return common.make_rst_examples(title_from_file, device, common.path_binding,
                                     'python', 'example_', '.py', 'Python')
 
-def make_parameter_list(packet):
-    params = []
-    for element in packet.get_elements('in'):
-        params.append(element[0])
-    return ", ".join(params)
-
 def make_parameter_desc(packet, io):
     desc = '\n'
     param = ' :param {0}: {1}\n'
@@ -130,7 +125,7 @@ def make_return_desc(packet):
     
     return ret.format('(' + ', '.join(ret_list) + ')')
 
-def make_obj_desc(packet):
+def make_object_desc(packet):
     if len(packet.get_elements('out')) < 2:
         return ''
 
@@ -163,11 +158,11 @@ def make_methods(typ):
         if packet.get_doc()[0] != typ:
             continue
         name = packet.get_underscore_name()
-        params = make_parameter_list(packet)
+        params = python_common.make_parameter_list(packet)
         pd = make_parameter_desc(packet, 'in')
         r = make_return_desc(packet)
         d = format_doc(packet)
-        obj_desc = make_obj_desc(packet)
+        obj_desc = make_object_desc(packet)
         desc = '{0}{1}{2}{3}'.format(pd, r, d, obj_desc)
         func = '{0}{1}.{2}({3})\n{4}'.format(func_start, 
                                              cls, 
@@ -200,6 +195,9 @@ def make_api():
     'en': """
 .. py:function:: {1}(uid, ipcon)
 
+ :param uid: string
+ :param ipcon: IPConnection
+
  Creates an object with the unique device ID *uid*:
 
  .. code-block:: python
@@ -211,6 +209,9 @@ def make_api():
 """,
     'de': """
 .. py:function:: {1}(uid, ipcon)
+
+ :param uid: string
+ :param ipcon: IPConnection
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID *uid*:
 
@@ -257,7 +258,7 @@ Callbacks
 
 Callbacks can be registered to receive
 time critical or recurring data from the device. The registration is done
-with the :py:func:`register_callback <{3}.register_callback>` function of
+with the :py:func:`register_callback() <{3}.register_callback>` function of
 the device object. The first parameter is the callback ID and the second
 parameter the callback function:
 
@@ -286,7 +287,7 @@ Callbacks
 
 Callbacks können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
-mit der Funktion :py:func:`register_callback <{3}.register_callback>` des 
+mit der Funktion :py:func:`register_callback() <{3}.register_callback>` des
 Geräte Objektes durchgeführt werden. Der erste Parameter ist die Callback ID
 und der zweite Parameter die Callbackfunktion:
 

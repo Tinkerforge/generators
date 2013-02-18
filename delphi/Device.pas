@@ -1,3 +1,10 @@
+{
+  Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+
+  Redistribution and use in source and binary forms of this file,
+  with or without modification, are permitted.
+}
+
 unit Device;
 
 {$ifdef FPC}{$mode OBJFPC}{$H+}{$endif}
@@ -8,11 +15,11 @@ uses
   {$ifdef UNIX}CThreads,{$endif} SyncObjs, SysUtils, Base58, BlockingQueue, LEConverter;
 
 const
-  RESPONSE_EXPECTED_INVALID_FUNCTION_ID = 0;
-  RESPONSE_EXPECTED_ALWAYS_TRUE = 1; { Getter }
-  RESPONSE_EXPECTED_ALWAYS_FALSE = 2; { Callback }
-  RESPONSE_EXPECTED_TRUE = 3; { Setter }
-  RESPONSE_EXPECTED_FALSE = 4; { Setter, default }
+  DEVICE_RESPONSE_EXPECTED_INVALID_FUNCTION_ID = 0;
+  DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE = 1; { Getter }
+  DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE = 2; { Callback }
+  DEVICE_RESPONSE_EXPECTED_TRUE = 3; { Setter }
+  DEVICE_RESPONSE_EXPECTED_FALSE = 4; { Setter, default }
 
 type
   { TimeoutException }
@@ -33,8 +40,8 @@ type
     uid_: longword;
     ipcon: TObject;
     apiVersion: TVersionNumber;
-    expectedResponseFunctionID: byte;
-    expectedResponseSequenceNumber: byte;
+    expectedResponseFunctionID: byte; { protected by requestMutex }
+    expectedResponseSequenceNumber: byte; { protected by requestMutex }
     responseQueue: TBlockingQueue;
     responseExpected: array [0..255] of byte;
     callbackWrappers: array [0..255] of TCallbackWrapper;
@@ -154,8 +161,10 @@ begin
   requestMutex := TCriticalSection.Create;
   responseQueue := TBlockingQueue.Create;
   for i := 0 to Length(responseExpected) - 1 do begin
-    responseExpected[i] := RESPONSE_EXPECTED_INVALID_FUNCTION_ID;
+    responseExpected[i] := DEVICE_RESPONSE_EXPECTED_INVALID_FUNCTION_ID;
   end;
+  responseExpected[IPCON_FUNCTION_ENUMERATE] := DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE;
+  responseExpected[IPCON_CALLBACK_ENUMERATE] := DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE;
   (ipcon as TIPConnection).devices.Insert(uid_, self);
 end;
 
@@ -173,80 +182,80 @@ begin
 end;
 
 function TDevice.GetResponseExpected(const functionID: byte): boolean;
+var flag: byte;
 begin
-  if ((responseExpected[functionID] = RESPONSE_EXPECTED_ALWAYS_TRUE) or
-      (responseExpected[functionID] = RESPONSE_EXPECTED_TRUE)) then begin
+  flag := responseExpected[functionID];
+  if (flag = DEVICE_RESPONSE_EXPECTED_INVALID_FUNCTION_ID) then begin
+    raise Exception.Create('Invalid function ID ' + IntToStr(functionID));
+  end;
+  if ((flag = DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE) or
+      (flag = DEVICE_RESPONSE_EXPECTED_TRUE)) then begin
     result := true;
   end
-  else if ((responseExpected[functionID] = RESPONSE_EXPECTED_ALWAYS_FALSE) or
-           (responseExpected[functionID] = RESPONSE_EXPECTED_FALSE)) then begin
-    result := false;
-  end
   else begin
-    raise Exception.Create('Invalid function ID');
+    result := false;
   end;
 end;
 
 procedure TDevice.SetResponseExpected(const functionID: byte; const responseExpected_: boolean);
+var flag: byte;
 begin
-  if ((responseExpected[functionID] <> RESPONSE_EXPECTED_TRUE) and
-      (responseExpected[functionID] <> RESPONSE_EXPECTED_FALSE)) then begin
-    raise Exception.Create('Invalid function ID');
-  end
-  else if (responseExpected_) then begin
-    responseExpected[functionID] := RESPONSE_EXPECTED_TRUE;
+  flag := responseExpected[functionID];
+  if (flag = DEVICE_RESPONSE_EXPECTED_INVALID_FUNCTION_ID) then begin
+    raise Exception.Create('Invalid function ID ' + IntToStr(functionID));
+  end;
+  if ((flag = DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE) or
+      (flag = DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE)) then begin
+    raise Exception.Create('Response Expected flag cannot be changed for function ID ' + IntToStr(functionID));
+  end;
+  if (responseExpected_) then begin
+    responseExpected[functionID] := DEVICE_RESPONSE_EXPECTED_TRUE;
   end
   else begin
-    responseExpected[functionID] := RESPONSE_EXPECTED_FALSE;
+    responseExpected[functionID] := DEVICE_RESPONSE_EXPECTED_FALSE;
   end;
 end;
 
 procedure TDevice.SetResponseExpectedAll(const responseExpected_: boolean);
-var i: longint;
+var flag: byte; i: longint;
 begin
+  if (responseExpected_) then begin
+    flag := DEVICE_RESPONSE_EXPECTED_TRUE;
+  end
+  else begin
+    flag := DEVICE_RESPONSE_EXPECTED_FALSE;
+  end;
   for i := 0 to Length(responseExpected) - 1 do begin
-    if ((responseExpected[i] = RESPONSE_EXPECTED_TRUE) or
-        (responseExpected[i] = RESPONSE_EXPECTED_FALSE)) then begin
-      if (responseExpected_) then begin
-        responseExpected[i] := RESPONSE_EXPECTED_TRUE;
-      end
-      else begin
-        responseExpected[i] := RESPONSE_EXPECTED_FALSE;
-      end;
+    if ((responseExpected[i] = DEVICE_RESPONSE_EXPECTED_TRUE) or
+        (responseExpected[i] = DEVICE_RESPONSE_EXPECTED_FALSE)) then begin
+      responseExpected[i] := flag;
     end;
   end;
 end;
 
-{ NOTE: Assumes that requestMutex is locked }
 function TDevice.SendRequest(const request: TByteArray): TByteArray;
-var ipcon_: TIPConnection; responseExpected_: boolean; kind, errorCode, functionID: byte;
+var ipcon_: TIPConnection; kind, errorCode, functionID: byte;
 begin
   SetLength(result, 0);
-  responseExpected_ := false;
   ipcon_ := ipcon as TIPConnection;
-  ipcon_.socketMutex.Acquire;
-  try
-    if (not ipcon_.IsConnected) then begin
-      raise Exception.Create('Not connected');
-    end;
-    responseExpected_ := GetResponseExpectedFromData(request);
-    if (responseExpected_) then begin
-      expectedResponseFunctionID := GetFunctionIDFromData(request);
-      expectedResponseSequenceNumber := GetSequenceNumberFromData(request);
-    end;
-    ipcon_.Send(request);
-  finally
-    ipcon_.socketMutex.Release;
-  end;
-  if (responseExpected_) then begin
+  if (GetResponseExpectedFromData(request)) then begin
     functionID := GetFunctionIDFromData(request);
-    if (not responseQueue.Dequeue(kind, result, ipcon_.timeout)) then begin
-      expectedResponseFunctionID := 0;
-      expectedResponseSequenceNumber := 0;
-      raise TimeoutException.Create('Did not receive response in time for function ID ' + IntToStr(functionID));
+    requestMutex.Acquire;
+    try
+      expectedResponseFunctionID := functionID;
+      expectedResponseSequenceNumber := GetSequenceNumberFromData(request);
+      try
+        ipcon_.SendRequest(request);
+        if (not responseQueue.Dequeue(kind, result, ipcon_.timeout)) then begin
+          raise TimeoutException.Create('Did not receive response in time for function ID ' + IntToStr(functionID));
+        end;
+      finally
+        expectedResponseFunctionID := 0;
+        expectedResponseSequenceNumber := 0;
+      end;
+    finally
+      requestMutex.Release;
     end;
-    expectedResponseFunctionID := 0;
-    expectedResponseSequenceNumber := 0;
     errorCode := GetErrorCodeFromData(result);
     if (errorCode = 0) then begin
       { No error }
@@ -262,6 +271,9 @@ begin
         raise NotSupportedException.Create('Function ' + IntToStr(functionID) + ' returned an unknown error');
       end;
     end;
+  end
+  else begin
+    ipcon_.SendRequest(request);
   end;
 end;
 

@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 """
-C# ZIP Generator
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Visual Basic .NET ZIP Generator
+Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
-generator_csharp_zip.py: Generator for C# ZIP
+generator_vbnet_zip.py: Generator for Visual Basic .NET ZIP
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -37,7 +37,7 @@ import common
 device = None
 
 def copy_examples_for_zip():
-    examples = common.find_examples(device, common.path_binding, 'csharp', 'Example', '.cs')
+    examples = common.find_examples(device, common.path_binding, 'vbnet', 'Example', '.vb')
     dest = os.path.join('/tmp/generator/dll/examples/',
                         device.get_category(),
                         device.get_camel_case_name())
@@ -63,16 +63,21 @@ def generate(path):
 
     # Copy examples
     common.generate(path, 'en', make_files, None, False)
-    shutil.copy(common.path_binding.replace('/generators/csharp', '/doc/en/source/Software/Example.cs'),
-                '/tmp/generator/dll/examples/ExampleEnumerate.cs')
+    shutil.copy(common.path_binding.replace('/generators/vbnet', '/doc/en/source/Software/Example.vb'),
+                '/tmp/generator/dll/examples/ExampleEnumerate.vb')
+
+    lines = []
+    for line in file(common.path_binding.replace('/generators/vbnet', '/doc/en/source/Software/Example.vb'), 'rb'):
+        lines.append(line.replace('Module Example', 'Module ExampleEnumerate'))
+    file('/tmp/generator/dll/examples/ExampleEnumerate.vb', 'wb').writelines(lines)
 
     # Copy bindings and readme
     for filename in glob.glob(path + '/bindings/*.cs'):
         shutil.copy(filename, '/tmp/generator/dll/source/Tinkerforge')
 
-    shutil.copy(path + '/IPConnection.cs', '/tmp/generator/dll/source/Tinkerforge')
+    shutil.copy(path + '/../csharp/IPConnection.cs', '/tmp/generator/dll/source/Tinkerforge')
     shutil.copy(path + '/changelog.txt', '/tmp/generator/dll')
-    shutil.copy(path + '/Readme.txt', '/tmp/generator/dll')
+    shutil.copy(path + '/readme.txt', '/tmp/generator/dll')
 
     # Write AssemblyInfo
     version = common.get_changelog_version(path)
@@ -80,11 +85,11 @@ def generate(path):
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle("C# API Bindings")]
-[assembly: AssemblyDescription("C# API Bindings for Tinkerforge Bricks and Bricklets")]
+[assembly: AssemblyTitle("Visual Basic .NET API Bindings")]
+[assembly: AssemblyDescription("Visual Basic .NET API Bindings for Tinkerforge Bricks and Bricklets")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Tinkerforge GmbH")]
-[assembly: AssemblyProduct("C# API Bindings")]
+[assembly: AssemblyProduct("Visual Basic .NET API Bindings")]
 [assembly: AssemblyCopyright("Tinkerforge GmbH 2011-2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -102,7 +107,7 @@ using System.Runtime.CompilerServices;
         raise Exception("Command '{0}' failed".format(' '.join(args)))
 
     # Make zip
-    common.make_zip('csharp', '/tmp/generator/dll', path, version)
+    common.make_zip('vbnet', '/tmp/generator/dll', path, version)
 
 if __name__ == "__main__":
     generate(os.getcwd())

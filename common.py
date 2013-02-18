@@ -309,10 +309,12 @@ def make_zip(dirname, source_path, dest_path, version):
     zipname = 'tinkerforge_{0}_bindings_{1}_{2}_{3}.zip'.format(dirname, *version)
     os.chdir(source_path)
     args = ['/usr/bin/zip',
+            '-q',
             '-r',
             zipname,
             '.']
-    subprocess.call(args)
+    if subprocess.call(args) != 0:
+        raise Exception("Command '{0}' failed".format(' '.join(args)))
     shutil.copy(zipname, dest_path)
 
 re_camel_case_to_space = re.compile('([A-Z][A-Z][a-z])|([a-z][A-Z])')
@@ -422,10 +424,12 @@ def generate(path, language, make_files, prepare, is_doc_):
     path_list = path.split('/')
     path_list[-1] = 'configs'
     path_config = '/'.join(path_list)
-    sys.path.append(path_config)
+    if path_config not in sys.path:
+        sys.path.append(path_config)
     configs = os.listdir(path_config)
 
-    prepare(path)
+    if prepare is not None:
+        prepare(path)
 
     configs.remove('device_commonconfig.py')
     configs.remove('brick_commonconfig.py')
@@ -466,15 +470,9 @@ def generate(path, language, make_files, prepare, is_doc_):
 
             make_files(module.com, path)
 
-def import_and_make(configs, path, make_files):
-    for config in configs:
-        if config.endswith('_config.py'):
-            module = __import__(config[:-3])
-            print(" * {0}".format(config[:-10]))
-            make_files(module.com, path)
-
 class Packet:
-    def __init__(self, packet):
+    def __init__(self, device, packet):
+        self.device = device
         self.packet = packet
         self.all_elements = packet['elements']
         self.in_elements = []
@@ -490,6 +488,9 @@ class Packet:
                 self.out_elements.append(element)
             else:
                 raise ValueError('Invalid element direction ' + element[3])
+
+    def get_device(self):
+        return self.device
 
     def get_type(self):
         return self.packet['type']
@@ -581,7 +582,7 @@ class Device:
             if not 'function_id' in p:
                 p['function_id'] = i + 1
 
-            packet = Packet(p)
+            packet = Packet(self, p)
 
             self.all_packets.append(packet)
 
@@ -621,7 +622,6 @@ class Device:
     def get_upper_case_name(self):
         return self.com['name'][1].upper()
 
-    # this is also the name stored in the firmware
     def get_display_name(self):
         return self.com['name'][2]
 
@@ -725,6 +725,7 @@ class ExamplesCompiler:
         print('>>> unpacking {0}'.format(self.zipname))
 
         args = ['/usr/bin/unzip',
+                '-q',
                 os.path.join('/tmp/compiler', self.zipname)]
 
         rc = subprocess.call(args)

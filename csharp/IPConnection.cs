@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
@@ -57,7 +57,6 @@ namespace Tinkerforge
 		internal int nextSequenceNumber = 0;
 		private object sequenceNumberLock = new object();
 
-		internal readonly object socketLock = new object();
 
 		internal bool autoReconnectAllowed = false;
 		internal bool autoReconnectPending = false;
@@ -65,12 +64,13 @@ namespace Tinkerforge
 
 		string host;
 		int port;
-		Socket socket;
-		NetworkStream socketStream;
-		BinaryWriter socketWriter;
-		BinaryReader socketReader;
-		Thread receiveThread;
-		Thread callbackThread;
+		Socket socket = null;
+		internal object socketLock = new object();
+		NetworkStream socketStream = null;
+		BinaryWriter socketWriter = null;
+		BinaryReader socketReader = null;
+		Thread receiveThread = null;
+		Thread callbackThread = null;
 		bool receiveFlag = true;
 		internal Dictionary<int, Device> devices = new Dictionary<int, Device>();
 		BlockingQueue<CallbackQueueObject> callbackQueue = null;
@@ -324,14 +324,14 @@ namespace Tinkerforge
 		/// </summary>
 		public void Enumerate()
 		{
-				byte[] data_ = new byte[8];
-				LEConverter.To((byte)0, 0, data_);
-				LEConverter.To((byte)8, 4, data_);
-				LEConverter.To(FUNCTION_ENUMERATE, 5, data_);
-				LEConverter.To((byte)((GetNextSequenceNumber() << 4)), 6, data_);
-				LEConverter.To((byte)0, 7, data_);
+			byte[] request = new byte[8];
+			LEConverter.To((byte)0, 0, request);
+			LEConverter.To((byte)8, 4, request);
+			LEConverter.To(FUNCTION_ENUMERATE, 5, request);
+			LEConverter.To((byte)((GetNextSequenceNumber() << 4)), 6, request);
+			LEConverter.To((byte)0, 7, request);
 
-				Write(data_);
+			SendRequest(request);
 		}
 
 		/// <summary>
@@ -625,13 +625,12 @@ namespace Tinkerforge
 			}
 		}
 
-
-		private static byte GetFunctionIdFromData(byte[] data)
+		internal static byte GetFunctionIdFromData(byte[] data)
 		{
 			return data[5];
 		}
 
-		private static int GetLengthFromData(byte[] data)
+		internal static int GetLengthFromData(byte[] data)
 		{
 			return data[4];
 		}
@@ -641,8 +640,12 @@ namespace Tinkerforge
 			return LEConverter.IntFrom(0, data);
 		}
 
-		private static byte GetSequenceNumberFromData(byte[] data) {
+		internal static byte GetSequenceNumberFromData(byte[] data) {
 			return (byte)((((int)data[6]) >> 4) & 0x0F);
+		}
+
+		internal static bool GetResponseExpectedFromData(byte[] data) {
+			return (((int)(data[6]) >> 3) & 0x01) == 0x01;
 		}
 
 		internal static byte GetErrorCodeFromData(byte[] data) {
@@ -692,7 +695,7 @@ namespace Tinkerforge
 			// a callback without registered function
 		}
 
-		public void Write(byte[] data)
+		public void SendRequest(byte[] request)
 		{
             lock (socketLock)
             {
@@ -701,7 +704,7 @@ namespace Tinkerforge
                     throw new NotConnectedException();
                 }
 
-                socketWriter.Write(data, 0, data.Length);
+                socketWriter.Write(request, 0, request.Length);
             }
 		}
 
@@ -709,7 +712,7 @@ namespace Tinkerforge
         {
             devices[(int)device.internalUID] = device; // TODO: Dictionary might use UID directly as key; FIXME: might use weakref here
         }
-    }
+	}
 
 	public class TimeoutException : Exception
 	{
@@ -778,11 +781,12 @@ namespace Tinkerforge
 		internal byte stackID = 0;
 		internal short[] apiVersion = new short[3];
 		internal ResponseExpectedFlag[] responseExpected = new ResponseExpectedFlag[256];
-		internal byte expectedResponseFunctionID = 0;
-		internal byte expectedResponseSequenceNumber = 0;
+		internal byte expectedResponseFunctionID = 0; // protected by requestLock
+		internal byte expectedResponseSequenceNumber = 0; // protected by requestLock
 		internal CallbackWrapper[] callbackWrappers = new CallbackWrapper[256];
 		internal BlockingQueue<byte[]> responseQueue = new BlockingQueue<byte[]>();
 		internal IPConnection ipcon = null;
+		private object requestLock = new object();
 
         internal UID internalUID;
 
@@ -803,8 +807,6 @@ namespace Tinkerforge
 			FALSE = 4
 		}
 
-		private object requestLock = new object();
-
 		internal delegate void CallbackWrapper(byte[] data);
 
 		/// <summary>
@@ -821,10 +823,8 @@ namespace Tinkerforge
 				responseExpected[i] = ResponseExpectedFlag.INVALID_FUNCTION_ID;
 			}
 
-			responseExpected[IPConnection.FUNCTION_ENUMERATE]    = ResponseExpectedFlag.FALSE;
-			responseExpected[IPConnection.CALLBACK_ENUMERATE]    = ResponseExpectedFlag.ALWAYS_FALSE;
-			responseExpected[IPConnection.CALLBACK_CONNECTED]    = ResponseExpectedFlag.ALWAYS_FALSE;
-			responseExpected[IPConnection.CALLBACK_DISCONNECTED] = ResponseExpectedFlag.ALWAYS_FALSE;
+			responseExpected[IPConnection.FUNCTION_ENUMERATE] = ResponseExpectedFlag.ALWAYS_FALSE;
+			responseExpected[IPConnection.CALLBACK_ENUMERATE] = ResponseExpectedFlag.ALWAYS_FALSE;
 
 			ipcon.AddDevice(this);
 		}
@@ -858,14 +858,14 @@ namespace Tinkerforge
 		/// </summary>
 		public bool GetResponseExpected(byte functionId)
 		{
-			if(this.responseExpected[functionId] != ResponseExpectedFlag.INVALID_FUNCTION_ID &&
-			   functionId < this.responseExpected.Length)
-			{
-				return this.responseExpected[functionId] == ResponseExpectedFlag.ALWAYS_TRUE ||
-				       this.responseExpected[functionId] == ResponseExpectedFlag.TRUE;
+			ResponseExpectedFlag flag = this.responseExpected[functionId];
+
+			if(flag == ResponseExpectedFlag.INVALID_FUNCTION_ID) {
+				throw new ArgumentException("Invalid function ID " + functionId);
 			}
 
-			throw new ArgumentOutOfRangeException("Invalid function ID " + functionId);
+			return flag == ResponseExpectedFlag.ALWAYS_TRUE ||
+			       flag == ResponseExpectedFlag.TRUE;
 		}
 
 		/// <summary>
@@ -882,24 +882,26 @@ namespace Tinkerforge
 		///  is send and errors are silently ignored, because they cannot be
 		///  detected.
 		/// </summary>
-		public void SetResponseExpected(int functionId, bool responseExpected)
+		public void SetResponseExpected(byte functionId, bool responseExpected)
 		{
-			if(this.responseExpected[functionId] == ResponseExpectedFlag.INVALID_FUNCTION_ID ||
-			   functionId >= this.responseExpected.Length)
+			ResponseExpectedFlag flag = this.responseExpected[functionId];
+
+			if(flag == ResponseExpectedFlag.INVALID_FUNCTION_ID)
 			{
-				throw new ArgumentOutOfRangeException("Invalid function ID " + functionId);
+				throw new ArgumentException("Invalid function ID " + functionId);
 			}
 
-			if(this.responseExpected[functionId] == ResponseExpectedFlag.ALWAYS_TRUE ||
-			   this.responseExpected[functionId] == ResponseExpectedFlag.ALWAYS_FALSE)
+			if(flag == ResponseExpectedFlag.ALWAYS_TRUE ||
+			   flag == ResponseExpectedFlag.ALWAYS_FALSE)
 			{
-				throw new ArgumentOutOfRangeException("Response Expected flag cannot be changed for function ID " + functionId);
+				throw new ArgumentException("Response Expected flag cannot be changed for function ID " + functionId);
 			}
 
 			if(responseExpected)
 			{
 				this.responseExpected[functionId] = ResponseExpectedFlag.TRUE;
-			} else
+			}
+			else
 			{
 				this.responseExpected[functionId] = ResponseExpectedFlag.FALSE;
 			}
@@ -912,6 +914,7 @@ namespace Tinkerforge
 		public void SetResponseExpectedAll(bool responseExpected)
 		{
 			ResponseExpectedFlag flag = ResponseExpectedFlag.FALSE;
+
 			if(responseExpected)
 			{
 				flag = ResponseExpectedFlag.TRUE;
@@ -919,17 +922,19 @@ namespace Tinkerforge
 
 			for(int i = 0; i < this.responseExpected.Length; i++)
 			{
-				if(this.responseExpected[i] != ResponseExpectedFlag.INVALID_FUNCTION_ID &&
-				   this.responseExpected[i] != ResponseExpectedFlag.ALWAYS_TRUE &&
-				   this.responseExpected[i] != ResponseExpectedFlag.ALWAYS_FALSE) {
+				if(this.responseExpected[i] == ResponseExpectedFlag.TRUE ||
+				   this.responseExpected[i] == ResponseExpectedFlag.FALSE)
+				{
 					this.responseExpected[i] = flag;
 				}
 			}
 		}
 
-		public abstract void GetIdentity(out string uid, out string connectedUid, out char position, out byte[] hardwareVersion, out byte[] firmwareVersion, out int deviceIdentifier);
+		public abstract void GetIdentity(out string uid, out string connectedUid, out char position,
+		                                 out byte[] hardwareVersion, out byte[] firmwareVersion,
+		                                 out int deviceIdentifier);
 
-		protected byte[] MakePacketHeader(byte length, byte fid)
+		protected byte[] CreateRequestPacket(byte length, byte fid)
 		{
 			byte[] packet = new byte[length];
 			LEConverter.To((int)this.internalUID, 0, packet);
@@ -948,36 +953,37 @@ namespace Tinkerforge
 			return packet;
 		}
 
-		protected void SendRequestNoResponse(byte[] request)
+		protected byte[] SendRequest(byte[] request)
 		{
-			lock (requestLock)
-			{
-				ipcon.Write(request);
-			}
-		}
+			byte[] response = null;
 
-		protected void SendRequestExpectResponse(byte[] request, byte functionID, out byte[] response)
-		{
-			lock (requestLock)
+			if (IPConnection.GetResponseExpectedFromData(request))
 			{
-				expectedResponseFunctionID = functionID;
-				expectedResponseSequenceNumber = (byte)((request[6] >> 4) & 0xF);
+				byte functionID = IPConnection.GetFunctionIdFromData(request);
 
-                try
-                {
-                    ipcon.Write(request);
-                    if (!responseQueue.TryDequeue(out response, ipcon.responseTimeout))
-                    {
-                        throw new TimeoutException("Did not receive response in time");
-                    }
-                }
-                finally
-                {
-                    expectedResponseFunctionID = 0;
-                    expectedResponseSequenceNumber = 0;
-                }
+				lock (requestLock)
+				{
+					expectedResponseFunctionID = functionID;
+					expectedResponseSequenceNumber = IPConnection.GetSequenceNumberFromData(request);
+
+					try
+					{
+						ipcon.SendRequest(request);
+
+						if (!responseQueue.TryDequeue(out response, ipcon.responseTimeout))
+						{
+							throw new TimeoutException("Did not receive response in time");
+						}
+					}
+					finally
+					{
+						expectedResponseFunctionID = 0;
+						expectedResponseSequenceNumber = 0;
+					}
+				}
 
 				byte errorCode = IPConnection.GetErrorCodeFromData(response);
+
 				switch(errorCode)
 				{
 					case 0:
@@ -990,6 +996,12 @@ namespace Tinkerforge
 						throw new NotSupportedException("Function " + functionID + " returned an unknown error");
 				}
 			}
+			else
+			{
+				ipcon.SendRequest(request);
+			}
+
+			return response;
 		}
 	}
 

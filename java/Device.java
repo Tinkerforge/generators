@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
@@ -16,8 +16,8 @@ public abstract class Device {
 	long uid = (long)0;
 	short[] apiVersion = new short[3];
 	byte[] responseExpected = new byte[256];
-	byte expectedResponseFunctionID = 0;
-	byte expectedResponseSequenceNumber = 0;
+	byte expectedResponseFunctionID = 0; // protected by requestMutex
+	byte expectedResponseSequenceNumber = 0; // protected by requestMutex
 	private Object requestMutex = new Object();
 	SynchronousQueue<byte[]> responseQueue = new SynchronousQueue<byte[]>();
 	IPConnection ipcon = null;
@@ -38,7 +38,10 @@ public abstract class Device {
 		public int deviceIdentifier;
 
 		public String toString() {
-			return "[" + "uid = " + uid + ", " + "connectedUid = " + connectedUid + ", " + "position = " + position + ", " + "hardwareVersion = " + Arrays.toString(hardwareVersion) + ", " + "firmwareVersion = " + Arrays.toString(firmwareVersion) + ", " + "deviceIdentifier = " + deviceIdentifier + "]";
+			return "[" + "uid = " + uid + ", " + "connectedUid = " + connectedUid + ", " +
+			       "position = " + position + ", " + "hardwareVersion = " + Arrays.toString(hardwareVersion) + ", " +
+			       "firmwareVersion = " + Arrays.toString(firmwareVersion) + ", " +
+			       "deviceIdentifier = " + deviceIdentifier + "]";
 		}
 	}
 
@@ -71,9 +74,7 @@ public abstract class Device {
 			responseExpected[i] = RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID;
 		}
 
-		responseExpected[IPConnection.unsignedByte(IPConnection.FUNCTION_ENUMERATE)] = RESPONSE_EXPECTED_FLAG_FALSE;
-		responseExpected[IPConnection.unsignedByte(IPConnection.FUNCTION_ADC_CALIBRATE)] = RESPONSE_EXPECTED_FLAG_FALSE;
-		responseExpected[IPConnection.unsignedByte(IPConnection.FUNCTION_GET_ADC_CALIBRATION)] = RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE;
+		responseExpected[IPConnection.unsignedByte(IPConnection.FUNCTION_ENUMERATE)] = RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;
 		responseExpected[IPConnection.unsignedByte(IPConnection.CALLBACK_ENUMERATE)] = RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;
 
 		ipcon.devices.put(this.uid, this); // FIXME: use weakref here
@@ -109,13 +110,14 @@ public abstract class Device {
 	 * silently ignored, because they cannot be detected.
 	 */
 	public boolean getResponseExpected(byte functionId) {
-		if(this.responseExpected[IPConnection.unsignedByte(functionId)] != RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID &&
-		   functionId < this.responseExpected.length) {
-			return this.responseExpected[IPConnection.unsignedByte(functionId)] == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE ||
-			       this.responseExpected[IPConnection.unsignedByte(functionId)] == RESPONSE_EXPECTED_FLAG_TRUE;
+		byte flag = responseExpected[IPConnection.unsignedByte(functionId)];
+
+		if(flag == RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID) {
+			throw new IllegalArgumentException("Invalid function ID " + functionId);
 		}
 
-		throw new IllegalArgumentException("Invalid function ID " + functionId);
+		return flag == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE ||
+		       flag == RESPONSE_EXPECTED_FLAG_TRUE;
 	}
 
 	/**
@@ -132,20 +134,22 @@ public abstract class Device {
 	 * errors are silently ignored, because they cannot be detected.
 	 */
 	public void setResponseExpected(byte functionId, boolean responseExpected) {
-		if(this.responseExpected[IPConnection.unsignedByte(functionId)] == RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID ||
-		   functionId >= this.responseExpected.length) {
+		int index = IPConnection.unsignedByte(functionId);
+		byte flag = this.responseExpected[index];
+
+		if(flag == RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID) {
 			throw new IllegalArgumentException("Invalid function ID " + functionId);
 		}
 
-		if(this.responseExpected[IPConnection.unsignedByte(functionId)] == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE ||
-		   this.responseExpected[IPConnection.unsignedByte(functionId)] == RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE) {
+		if(flag == RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE ||
+		   flag == RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE) {
 			throw new IllegalArgumentException("Response Expected flag cannot be changed for function ID " + functionId);
 		}
 
 		if(responseExpected) {
-			this.responseExpected[IPConnection.unsignedByte(functionId)] = RESPONSE_EXPECTED_FLAG_TRUE;
+			this.responseExpected[index] = RESPONSE_EXPECTED_FLAG_TRUE;
 		} else {
-			this.responseExpected[IPConnection.unsignedByte(functionId)] = RESPONSE_EXPECTED_FLAG_FALSE;
+			this.responseExpected[index] = RESPONSE_EXPECTED_FLAG_FALSE;
 		}
 	}
 
@@ -160,52 +164,40 @@ public abstract class Device {
 		}
 
 		for(int i = 0; i < this.responseExpected.length; i++) {
-			if(this.responseExpected[i] != RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID &&
-		       this.responseExpected[i] != RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE &&
-		       this.responseExpected[i] != RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE) {
+			if(this.responseExpected[i] == RESPONSE_EXPECTED_FLAG_TRUE ||
+			   this.responseExpected[i] == RESPONSE_EXPECTED_FLAG_FALSE) {
 				this.responseExpected[i] = flag;
 			}
 		}
 	}
 
-	void sendRequestNoResponse(byte[] request) throws NotConnectedException {
-		synchronized(requestMutex) { synchronized(ipcon.socketMutex) {
-			if (ipcon.getConnectionState() != IPConnection.CONNECTION_STATE_CONNECTED) {
-				throw new NotConnectedException();
-			}
-
-			ipcon.write(request);
-		}}
-	}
-
-	byte[] sendRequestExpectResponse(byte[] request, byte functionID) throws TimeoutException, NotConnectedException {
+	byte[] sendRequest(byte[] request) throws TimeoutException, NotConnectedException {
 		byte[] response = null;
 
-		synchronized(requestMutex) { synchronized(ipcon.socketMutex) {
-			if (ipcon.getConnectionState() != IPConnection.CONNECTION_STATE_CONNECTED) {
-				throw new NotConnectedException();
-			}
+		if (IPConnection.getResponseExpectedFromData(request)) {
+			byte functionID = IPConnection.getFunctionIDFromData(request);
 
-			expectedResponseFunctionID = functionID;
-			expectedResponseSequenceNumber = IPConnection.getSequenceNumberFromData(request);
+			synchronized(requestMutex) {
+				expectedResponseFunctionID = functionID;
+				expectedResponseSequenceNumber = IPConnection.getSequenceNumberFromData(request);
 
-			ipcon.write(request);
+				try {
+					ipcon.sendRequest(request);
 
-			try {
-				response = responseQueue.poll(ipcon.responseTimeout, TimeUnit.MILLISECONDS);
-				if(response == null) {
-					throw new TimeoutException("Did not receive response in time");
+					response = responseQueue.poll(ipcon.responseTimeout, TimeUnit.MILLISECONDS);
+					if(response == null) {
+						throw new TimeoutException("Did not receive response in time");
+					}
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} finally {
+					expectedResponseFunctionID = 0;
+					expectedResponseSequenceNumber = 0;
 				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} finally {
-				expectedResponseFunctionID = 0;
-				expectedResponseSequenceNumber = 0;
 			}
 
 			byte errorCode = IPConnection.getErrorCodeFromData(response);
-			switch(errorCode)
-			{
+			switch(errorCode) {
 				case 0:
 					break;
 				case 1:
@@ -215,7 +207,9 @@ public abstract class Device {
 				default:
 					throw new UnsupportedOperationException("Function " + functionID + " returned an unknown error");
 			}
-		}}
+		} else {
+			ipcon.sendRequest(request);
+		}
 
 		return response;
 	}

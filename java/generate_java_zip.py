@@ -55,13 +55,6 @@ def make_files(com_new, directory):
     copy_examples_for_zip()
 
 def generate(path):
-    common.path_binding = path
-    path_list = path.split('/')
-    path_list[-1] = 'configs'
-    path_config = '/'.join(path_list)
-    sys.path.append(path_config)
-    configs = os.listdir(path_config)
-
     # Make temporary generator directory
     if os.path.exists('/tmp/generator'):
         shutil.rmtree('/tmp/generator/')
@@ -69,7 +62,7 @@ def generate(path):
     os.chdir('/tmp/generator')
 
     # Copy examples
-    common.import_and_make(configs, path, make_files)
+    common.generate(path, 'en', make_files, None, False)
 
     lines = []
     for line in file(common.path_binding.replace('/generators/java', '/doc/en/source/Software/Example.java'), 'rb'):
@@ -96,7 +89,8 @@ def generate(path):
     args = ['/usr/bin/javac ' +
             '-Xlint ' +
             '/tmp/generator/jar/source/com/tinkerforge/*.java']
-    subprocess.call(args, shell=True)
+    if subprocess.call(args, shell=True) != 0:
+        raise Exception("Command '{0}' failed".format(' '.join(args)))
 
     os.chdir('/tmp/generator/jar/source')
     args = ['/usr/bin/jar ' +
@@ -104,7 +98,8 @@ def generate(path):
             '/tmp/generator/jar/Tinkerforge.jar ' +
             '/tmp/generator/manifest.txt ' +
             'com']
-    subprocess.call(args, shell=True)
+    if subprocess.call(args, shell=True) != 0:
+        raise Exception("Command '{0}' failed".format(' '.join(args)))
 
     # Remove class
     for f in os.listdir('/tmp/generator/jar/source/com/tinkerforge/'):

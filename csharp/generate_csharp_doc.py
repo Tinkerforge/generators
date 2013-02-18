@@ -30,10 +30,10 @@ import shutil
 import subprocess
 import glob
 import re
-import csharp_common
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import csharp_common
 
 device = None
 
@@ -48,12 +48,16 @@ def format_doc(packet, shift_right):
     'de': 'Parameter'
     }
     link = ':csharp:func:`{2}() <{0}{1}::{2}>`'
+    link_c = ':csharp:func:`{2} <{0}{1}::{2}>`'
 
     cls = device.get_camel_case_name()
     for other_packet in device.get_packets():
         name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
         name = other_packet.get_camel_case_name()
-        name_right = link.format(device.get_category(), cls, name)
+        if other_packet.get_type() == 'callback':
+            name_right = link_c.format(device.get_category(), cls, name)
+        else:
+            name_right = link.format(device.get_category(), cls, name)
 
         text = text.replace(name_false, name_right)
 

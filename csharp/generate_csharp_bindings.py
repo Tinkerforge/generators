@@ -27,11 +27,11 @@ Boston, MA 02111-1307, USA.
 import datetime
 import sys
 import os
-import csharp_common
 from xml.sax.saxutils import escape
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import csharp_common
 
 device = None
 
@@ -274,7 +274,7 @@ def make_callbacks():
     cb = """
 \t\t/// <summary>
 \t\t/// </summary>
-\t\tprotected void On{0}(byte[] data_)
+\t\tprotected void On{0}(byte[] response)
 \t\t{{
 {1}\t\t\tvar handler = {0};
 \t\t\tif(handler != null)
@@ -295,7 +295,7 @@ def make_callbacks():
         size = str(get_data_size(packet))
 
         convs = ''
-        conv = '\t\t\t{0} {1} = LEConverter.{2}({3}, data_{4});\n'
+        conv = '\t\t\t{0} {1} = LEConverter.{2}({3}, response{4});\n'
 
         pos = 8
         for element in packet.get_elements('out'):
@@ -331,22 +331,16 @@ def make_methods():
 \t\t/// </summary>
 \t\t{0}
 \t\t{{
-\t\t\tbyte[] data_ = MakePacketHeader({1}, FUNCTION_{2});
+\t\t\tbyte[] request = CreateRequestPacket({1}, FUNCTION_{2});
 {3}
 {4}
 \t\t}}
 """
-    method_oneway = """\t\t\tif(GetResponseExpected(FUNCTION_{0}))
-\t\t\t{{
-\t\t\t\tbyte[] response;
-\t\t\t\tSendRequestExpectResponse(data_, FUNCTION_{0}, out response);
-\t\t\t}}
-\t\t\telse
-\t\t\t{{
-\t\t\t\tSendRequestNoResponse(data_);
-\t\t\t}}"""
-    method_response = """\t\t\tbyte[] response;
-\t\t\tSendRequestExpectResponse(data_, FUNCTION_{0}, out response);
+
+    method_oneway = """\t\t\tSendRequest(request);
+"""
+
+    method_response = """\t\t\tbyte[] response = SendRequest(request);
 {1}"""
 
     cls = device.get_camel_case_name()
@@ -357,8 +351,8 @@ def make_methods():
         doc = format_doc(packet)
 
         write_convs = ''
-        write_conv = '\t\t\tLEConverter.To(({2}){0}, {1}, data_);\n'
-        write_conv_length = '\t\t\tLEConverter.To(({3}){0}, {1}, {2}, data_);\n'
+        write_conv = '\t\t\tLEConverter.To(({2}){0}, {1}, request);\n'
+        write_conv_length = '\t\t\tLEConverter.To(({3}){0}, {1}, {2}, request);\n'
 
         pos = 8
         for element in packet.get_elements('in'):

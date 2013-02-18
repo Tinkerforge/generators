@@ -26,6 +26,7 @@ Boston, MA 02111-1307, USA.
 
 import os
 import sys
+
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
@@ -62,53 +63,47 @@ def make_method_signature(packet, printFullName=False, device=None, is_doc=False
     return sig_format.format(return_type, classPrefix, packet.get_camel_case_name(), params, override)
 
 def get_csharp_type(element):
-    forms = {
-        'int8' : 'short',
-        'uint8' : 'byte',
-        'int16' : 'short',
+    types = {
+        'int8'   : 'short',
+        'uint8'  : 'byte',
+        'int16'  : 'short',
         'uint16' : 'int',
-        'int32' : 'int',
+        'int32'  : 'int',
         'uint32' : 'long',
-        'int64' : 'long',
+        'int64'  : 'long',
         'uint64' : 'long',
-        'float' : 'float',
-        'bool' : 'bool',
+        'float'  : 'float',
+        'bool'   : 'bool',
         'string' : 'string',
-        'char' : 'char'
+        'char'   : 'char'
     }
-    
-    sharpType = ''
-    if element[1] in forms:
-        sharpType = forms[element[1]]
-    else:
-        return ''
+
+    csharp_type = types[element[1]]
 
     if element[2] > 1 and element[1] != 'string':
-        sharpType += '[]'
-    return sharpType
+        csharp_type += '[]'
+
+    return csharp_type
 
 def get_csharp_type_for_to_convert(element):
-    forms = {
-        'int8' : 'byte',
-        'uint8' : 'byte',
-        'int16' : 'short',
+    types = {
+        'int8'   : 'byte',
+        'uint8'  : 'byte',
+        'int16'  : 'short',
         'uint16' : 'short',
-        'int32' : 'int',
+        'int32'  : 'int',
         'uint32' : 'int',
-        'int64' : 'long',
+        'int64'  : 'long',
         'uint64' : 'long',
-        'float' : 'float',
-        'bool' : 'bool',
+        'float'  : 'float',
+        'bool'   : 'bool',
         'string' : 'string',
-        'char' : 'char'
+        'char'   : 'char'
     }
-    
-    sharpType = ''
-    if element[1] in forms:
-        sharpType = forms[element[1]]
-    else:
-        return ''
+
+    csharp_type = types[element[1]]
 
     if element[2] > 1 and element[1] != 'string':
-        sharpType += '[]'
-    return sharpType
+        csharp_type += '[]'
+
+    return csharp_type

@@ -742,6 +742,8 @@ enum {
 	IPCON_FUNCTION_ENUMERATE = 254
 };
 
+static int ipcon_send_request(IPConnection *ipcon, Packet *request);
+
 void device_create(Device *device, const char *uid_str, IPConnection *ipcon,
                    uint8_t api_version_major, uint8_t api_version_minor,
                    uint8_t api_version_release) {
@@ -787,7 +789,7 @@ void device_create(Device *device, const char *uid_str, IPConnection *ipcon,
 		device->response_expected[i] = DEVICE_RESPONSE_EXPECTED_INVALID_FUNCTION_ID;
 	}
 
-	device->response_expected[IPCON_FUNCTION_ENUMERATE] = DEVICE_RESPONSE_EXPECTED_FALSE;
+	device->response_expected[IPCON_FUNCTION_ENUMERATE] = DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE;
 	device->response_expected[IPCON_CALLBACK_ENUMERATE] = DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE;
 
 	// callbacks
@@ -811,33 +813,41 @@ void device_destroy(Device *device) {
 
 int device_get_response_expected(Device *device, uint8_t function_id,
                                  bool *ret_response_expected) {
-	if (device->response_expected[function_id] == DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE ||
-	    device->response_expected[function_id] == DEVICE_RESPONSE_EXPECTED_TRUE) {
-		*ret_response_expected = true;
-	} else if (device->response_expected[function_id] == DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE ||
-	           device->response_expected[function_id] == DEVICE_RESPONSE_EXPECTED_FALSE) {
-		*ret_response_expected = false;
-	} else {
+	int flag = device->response_expected[function_id];
+
+	if (flag == DEVICE_RESPONSE_EXPECTED_INVALID_FUNCTION_ID) {
 		return E_INVALID_PARAMETER;
+	}
+
+	if (flag == DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE ||
+	    flag == DEVICE_RESPONSE_EXPECTED_TRUE) {
+		*ret_response_expected = true;
+	} else {
+		*ret_response_expected = false;
 	}
 
 	return E_OK;
 }
 
-int device_set_response_expected(Device *device, uint8_t function_id, bool response_expected) {
-	if (device->response_expected[function_id] != DEVICE_RESPONSE_EXPECTED_TRUE &&
-	    device->response_expected[function_id] != DEVICE_RESPONSE_EXPECTED_FALSE) {
+int device_set_response_expected(Device *device, uint8_t function_id,
+                                 bool response_expected) {
+	int current_flag = device->response_expected[function_id];
+
+	if (current_flag != DEVICE_RESPONSE_EXPECTED_TRUE &&
+	    current_flag != DEVICE_RESPONSE_EXPECTED_FALSE) {
 		return E_INVALID_PARAMETER;
 	}
 
-	device->response_expected[function_id] = response_expected ? DEVICE_RESPONSE_EXPECTED_TRUE
-	                                                           : DEVICE_RESPONSE_EXPECTED_FALSE;
+	device->response_expected[function_id] =
+	    response_expected ? DEVICE_RESPONSE_EXPECTED_TRUE
+	                      : DEVICE_RESPONSE_EXPECTED_FALSE;
 
 	return E_OK;
 }
 
 int device_set_response_expected_all(Device *device, bool response_expected) {
-	int flag = response_expected ? DEVICE_RESPONSE_EXPECTED_TRUE : DEVICE_RESPONSE_EXPECTED_FALSE;
+	int flag = response_expected ? DEVICE_RESPONSE_EXPECTED_TRUE
+	                             : DEVICE_RESPONSE_EXPECTED_FALSE;
 	int i;
 
 	for (i = 0; i < DEVICE_NUM_FUNCTION_IDS; ++i) {
@@ -864,28 +874,27 @@ int device_get_api_version(Device *device, uint8_t ret_api_version[3]) {
 	return E_OK;
 }
 
-// NOTE: assumes that request mutex is locked
-int device_send_request(Device *device, Packet *request) {
+int device_send_request(Device *device, Packet *request, Packet *response) {
 	int ret = E_OK;
 
-	mutex_lock(&device->ipcon->socket_mutex);
-
-	if (device->ipcon->socket == NULL) {
-		mutex_unlock(&device->ipcon->socket_mutex);
-
-		return E_NOT_CONNECTED;
-	}
-
 	if (request->header.response_expected) {
+		mutex_lock(&device->request_mutex);
+
 		event_reset(&device->response_event);
 
 		device->expected_response_function_id = request->header.function_id;
 		device->expected_response_sequence_number = request->header.sequence_number;
 	}
 
-	socket_send(device->ipcon->socket, request, request->header.length);
+	ret = ipcon_send_request(device->ipcon, request);
 
-	mutex_unlock(&device->ipcon->socket_mutex);
+	if (ret != E_OK) {
+		if (request->header.response_expected) {
+			mutex_unlock(&device->request_mutex);
+		}
+
+		return ret;
+	}
 
 	if (request->header.response_expected) {
 		if (event_wait(&device->response_event, device->ipcon->timeout) < 0) {
@@ -900,6 +909,10 @@ int device_send_request(Device *device, Packet *request) {
 		if (ret == E_OK) {
 			if (device->response_packet.header.error_code == 0) {
 				// no error
+				if (response != NULL) {
+					memcpy(response, &device->response_packet,
+					       device->response_packet.header.length);
+				}
 			} else if (device->response_packet.header.error_code == 1) {
 				ret = E_INVALID_PARAMETER;
 			} else if (device->response_packet.header.error_code == 2) {
@@ -908,6 +921,8 @@ int device_send_request(Device *device, Packet *request) {
 				ret = E_UNKNOWN_ERROR_CODE;
 			}
 		}
+
+		mutex_unlock(&device->request_mutex);
 	}
 
 	return ret;
@@ -937,7 +952,8 @@ static void ipcon_dispatch_meta(IPConnection *ipcon, Meta *meta) {
 
 	if (meta->id == IPCON_CALLBACK_CONNECTED) {
 		if (ipcon->registered_callbacks[IPCON_CALLBACK_CONNECTED] != NULL) {
-			connected_callback_function = (ConnectedCallbackFunction)ipcon->registered_callbacks[IPCON_CALLBACK_CONNECTED];
+			connected_callback_function =
+			    (ConnectedCallbackFunction)ipcon->registered_callbacks[IPCON_CALLBACK_CONNECTED];
 			user_data = ipcon->registered_callback_user_data[IPCON_CALLBACK_CONNECTED];
 
 			connected_callback_function(meta->parameter, user_data);
@@ -962,7 +978,8 @@ static void ipcon_dispatch_meta(IPConnection *ipcon, Meta *meta) {
 		thread_sleep(100);
 
 		if (ipcon->registered_callbacks[IPCON_CALLBACK_DISCONNECTED] != NULL) {
-			disconnected_callback_function = (DisconnectedCallbackFunction)ipcon->registered_callbacks[IPCON_CALLBACK_DISCONNECTED];
+			disconnected_callback_function =
+			    (DisconnectedCallbackFunction)ipcon->registered_callbacks[IPCON_CALLBACK_DISCONNECTED];
 			user_data = ipcon->registered_callback_user_data[IPCON_CALLBACK_DISCONNECTED];
 
 			disconnected_callback_function(meta->parameter, user_data);
@@ -1009,7 +1026,8 @@ static void ipcon_dispatch_packet(IPConnection *ipcon, Packet *packet) {
 
 	if (packet->header.function_id == IPCON_CALLBACK_ENUMERATE) {
 		if (ipcon->registered_callbacks[IPCON_CALLBACK_ENUMERATE] != NULL) {
-			enumerate_callback_function = (EnumerateCallbackFunction)ipcon->registered_callbacks[IPCON_CALLBACK_ENUMERATE];
+			enumerate_callback_function =
+			    (EnumerateCallbackFunction)ipcon->registered_callbacks[IPCON_CALLBACK_ENUMERATE];
 			user_data = ipcon->registered_callback_user_data[IPCON_CALLBACK_ENUMERATE];
 			enumerate_callback = (EnumerateCallback *)packet;
 
@@ -1029,7 +1047,8 @@ static void ipcon_dispatch_packet(IPConnection *ipcon, Packet *packet) {
 			return;
 		}
 
-		callback_wrapper_function = (CallbackWrapperFunction)device->callback_wrappers[packet->header.function_id];
+		callback_wrapper_function =
+		    (CallbackWrapperFunction)device->callback_wrappers[packet->header.function_id];
 
 		if (callback_wrapper_function == NULL) {
 			return;
@@ -1289,6 +1308,22 @@ static int ipcon_connect_unlocked(IPConnection *ipcon, bool is_auto_reconnect) {
 	return E_OK;
 }
 
+static int ipcon_send_request(IPConnection *ipcon, Packet *request) {
+	mutex_lock(&ipcon->socket_mutex);
+
+	if (ipcon->socket == NULL) {
+		mutex_unlock(&ipcon->socket_mutex);
+
+		return E_NOT_CONNECTED;
+	}
+
+	socket_send(ipcon->socket, request, request->header.length);
+
+	mutex_unlock(&ipcon->socket_mutex);
+
+	return E_OK;
+}
+
 void ipcon_create(IPConnection *ipcon) {
 	int i;
 
@@ -1479,24 +1514,14 @@ int ipcon_enumerate(IPConnection *ipcon) {
 	Enumerate enumerate;
 	int ret;
 
-	mutex_lock(&ipcon->socket_mutex);
-
-	if (ipcon->socket == NULL) {
-		mutex_unlock(&ipcon->socket_mutex);
-
-		return E_NOT_CONNECTED;
-	}
-
 	ret = packet_header_create(&enumerate.header, sizeof(Enumerate),
 	                           IPCON_FUNCTION_ENUMERATE, ipcon, NULL);
 
-	if (ret == E_OK) {
-		socket_send(ipcon->socket, &enumerate, sizeof(Enumerate));
+	if (ret < 0) {
+		return ret;
 	}
 
-	mutex_unlock(&ipcon->socket_mutex);
-
-	return ret;
+	return ipcon_send_request(ipcon, (Packet *)&enumerate);
 }
 
 void ipcon_wait(IPConnection *ipcon) {
@@ -1523,7 +1548,7 @@ int packet_header_create(PacketHeader *header, uint8_t length,
 	mutex_lock(&ipcon->sequence_number_mutex);
 
 	sequence_number = ipcon->next_sequence_number + 1;
-	ipcon->next_sequence_number = (ipcon->next_sequence_number + 1) % 15;
+	ipcon->next_sequence_number = sequence_number % 15;
 
 	mutex_unlock(&ipcon->sequence_number_mutex);
 
