@@ -341,16 +341,6 @@ The default value is 0.
 """,
 'de':
 """
-Sets the period in ms with which the :func:`Current` callback is triggered
-periodically. A value of 0 turns the callback off.
-
-:func:`Current` is only triggered if the current has changed since the
-last triggering.
-
-The default value is 0.
-""",
-'de':
-"""
 Setzt die Periode in ms mit welcher der :func:`Voltage` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
@@ -755,7 +745,7 @@ last triggering.
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetVoltageCallbackPeriod`,
 ausgelöst. Der :word:`parameter` ist die Spannung des Sensors.
 
-:func:`Current` wird nur ausgelöst wenn sich die Spannung seit der
+:func:`Voltage` wird nur ausgelöst wenn sich die Spannung seit der
 letzten Auslösung geändert hat.
 """
 }]
