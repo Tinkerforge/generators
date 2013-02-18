@@ -1329,3 +1329,624 @@ Gibt den Verschlüsselungsschlüssel zurück, wie von
 }]
 })
 
+com['packets'].append({
+'type': 'function', 
+'name': ('SetWifiHostname', 'set_wifi_hostname'), 
+'elements': [('hostname', 'string', 16, 'in')],
+'since_firmware': [2, 0, 5],
+'doc': ['af', {
+'en':
+"""
+Sets the hostname of the WIFI Extension. The hostname will be displayed 
+by access points as the hostname in the DHCP clients table.
+""",
+'de':
+"""
+Setzt den Hostnamen der WIFI Extension. Der Hostname wird von
+Access Points als Hostname in der DHCP-Client Tabelle angezeigt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('GetWifiHostname', 'get_wifi_hostname'), 
+'elements': [('hostname', 'string', 16, 'out')],
+'since_firmware': [2, 0, 5],
+'doc': ['af', {
+'en':
+"""
+Returns the hostname as set by :func:`GetWifiHostname`.
+""",
+'de':
+"""
+Gibt den Hostnamen zurück, wie von :func:`GetWifiHostname` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetCurrentCallbackPeriod', 'set_current_callback_period'), 
+'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [2, 0, 5],
+'doc': ['ccf', {
+'en':
+"""
+Sets the period in ms with which the :func:`Current` callback is triggered
+periodically. A value of 0 turns the callback off.
+
+:func:`Current` is only triggered if the current has changed since the
+last triggering.
+
+The default value is 0.
+""",
+'de':
+"""
+Setzt die Periode in ms mit welcher der :func:`Current` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+:func:`Current` wird nur ausgelöst wenn sich die Stromstärke seit der
+letzten Auslösung geändert hat.
+
+Der Standardwert ist 0.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetCurrentCallbackPeriod', 'get_current_callback_period'), 
+'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [2, 0, 5],
+'doc': ['ccf', {
+'en':
+"""
+Returns the period as set by :func:`SetCurrentCallbackPeriod`.
+""",
+'de':
+"""
+Gibt die Periode zurück, wie von :func:`SetCurrentCallbackPeriod`
+gesetzt
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetVoltageCallbackPeriod', 'set_voltage_callback_period'), 
+'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [2, 0, 5],
+'doc': ['ccf', {
+'en':
+"""
+Sets the period in ms with which the :func:`Voltage` callback is triggered
+periodically. A value of 0 turns the callback off.
+
+:func:`Voltage` is only triggered if the voltage has changed since the
+last triggering.
+
+The default value is 0.
+""",
+'de':
+"""
+Setzt die Periode in ms mit welcher der :func:`Voltage` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+:func:`Voltage` wird nur ausgelöst wenn sich die Spannung seit der
+letzten Auslösung geändert hat.
+
+Der Standardwert ist 0.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetVoltageCallbackPeriod', 'get_voltage_callback_period'), 
+'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [2, 0, 5],
+'doc': ['ccf', {
+'en':
+"""
+Returns the period as set by :func:`SetVoltageCallbackPeriod`.
+""",
+'de':
+"""
+Gibt die Periode zurück, wie von :func:`SetVoltageCallbackPeriod`
+gesetzt
+"""
+}]
+})
+
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetUSBVoltageCallbackPeriod', 'set_usb_voltage_callback_period'), 
+'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [2, 0, 5],
+'doc': ['ccf', {
+'en':
+"""
+Sets the period in ms with which the :func:`USBVoltage` callback is triggered
+periodically. A value of 0 turns the callback off.
+
+:func:`USBVoltage` is only triggered if the voltage has changed since the
+last triggering.
+
+The default value is 0.
+""",
+'de':
+"""
+Setzt die Periode in ms mit welcher der :func:`USBVoltage` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+:func:`USBVoltage` wird nur ausgelöst wenn sich die Spannung seit der
+letzten Auslösung geändert hat.
+
+Der Standardwert ist 0.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetUSBVoltageCallbackPeriod', 'get_usb_voltage_callback_period'), 
+'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [2, 0, 5],
+'doc': ['ccf', {
+'en':
+"""
+Returns the period as set by :func:`SetUSBVoltageCallbackPeriod`.
+""",
+'de':
+"""
+Gibt die Periode zurück, wie von :func:`SetUSBVoltageCallbackPeriod`
+gesetzt
+"""
+}]
+})
+
+
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetCurrentCallbackThreshold', 'set_current_callback_threshold'), 
+'elements': [('option', 'char', 1, 'in', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
+                                                                                  ('Outside', 'outside', 'o'),
+                                                                                  ('Inside', 'inside', 'i'),
+                                                                                  ('Smaller', 'smaller', '<'),
+                                                                                  ('Greater', 'greater', '>')])), 
+             ('min', 'uint16', 1, 'in'),
+             ('max', 'uint16', 1, 'in')],
+'since_firmware': [2, 0, 5],
+'doc': ['ccf', {
+'en':
+"""
+Sets the thresholds for the :func:`CurrentReached` callback. 
+
+The following options are possible:
+
+.. csv-table::
+ :header: "Option", "Description"
+ :widths: 10, 100
+
+ "'x'",    "Callback is turned off"
+ "'o'",    "Callback is triggered when the current is *outside* the min and max values"
+ "'i'",    "Callback is triggered when the current is *inside* the min and max values"
+ "'<'",    "Callback is triggered when the current is smaller than the min value (max is ignored)"
+ "'>'",    "Callback is triggered when the current is greater than the min value (max is ignored)"
+
+The default value is ('x', 0, 0).
+""",
+'de':
+"""
+Setzt den Schwellwert für den :func:`CurrentReached` Callback.
+
+Die folgenden Optionen sind möglich:
+
+.. csv-table::
+ :header: "Option", "Beschreibung"
+ :widths: 10, 100
+ 
+ "'x'",    "Callback ist inaktiv"
+ "'o'",    "Callback wird ausgelöst wenn die Stromstärke *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst wenn die Stromstärke *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst wenn die Stromstärke kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn die Stromstärke größer als der min Wert ist (max wird ignoriert)"
+ 
+Der Standardwert ist ('x', 0, 0).
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetCurrentCallbackThreshold', 'get_current_callback_threshold'), 
+'elements': [('option', 'char', 1, 'out', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
+                                                                                   ('Outside', 'outside', 'o'),
+                                                                                   ('Inside', 'inside', 'i'),
+                                                                                   ('Smaller', 'smaller', '<'),
+                                                                                   ('Greater', 'greater', '>')])), 
+             ('min', 'uint16', 1, 'out'),
+             ('max', 'uint16', 1, 'out')],
+'since_firmware': [2, 0, 5],
+'doc': ['ccf', {
+'en':
+"""
+Returns the threshold as set by :func:`SetCurrentCallbackThreshold`.
+""",
+'de':
+"""
+Gibt den Schwellwert zurück, wie von :func:`SetCurrentCallbackThreshold`
+gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetVoltageCallbackThreshold', 'set_voltage_callback_threshold'), 
+'elements': [('option', 'char', 1, 'in', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
+                                                                                  ('Outside', 'outside', 'o'),
+                                                                                  ('Inside', 'inside', 'i'),
+                                                                                  ('Smaller', 'smaller', '<'),
+                                                                                  ('Greater', 'greater', '>')])), 
+             ('min', 'uint16', 1, 'in'),
+             ('max', 'uint16', 1, 'in')],
+'since_firmware': [2, 0, 5],
+'doc': ['ccf', {
+'en':
+"""
+Sets the thresholds for the :func:`VoltageReached` callback. 
+
+The following options are possible:
+
+.. csv-table::
+ :header: "Option", "Description"
+ :widths: 10, 100
+
+ "'x'",    "Callback is turned off"
+ "'o'",    "Callback is triggered when the voltage is *outside* the min and max values"
+ "'i'",    "Callback is triggered when the voltage is *inside* the min and max values"
+ "'<'",    "Callback is triggered when the voltage is smaller than the min value (max is ignored)"
+ "'>'",    "Callback is triggered when the voltage is greater than the min value (max is ignored)"
+
+The default value is ('x', 0, 0).
+""",
+'de':
+"""
+Setzt den Schwellwert für den :func:`VoltageReached` Callback.
+
+Die folgenden Optionen sind möglich:
+
+.. csv-table::
+ :header: "Option", "Beschreibung"
+ :widths: 10, 100
+ 
+ "'x'",    "Callback ist inaktiv"
+ "'o'",    "Callback wird ausgelöst wenn die Spannung *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst wenn die Spannung *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst wenn die Spannung kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn die Spannung größer als der min Wert ist (max wird ignoriert)"
+ 
+Der Standardwert ist ('x', 0, 0).
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetVoltageCallbackThreshold', 'get_voltage_callback_threshold'), 
+'elements': [('option', 'char', 1, 'out', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
+                                                                                   ('Outside', 'outside', 'o'),
+                                                                                   ('Inside', 'inside', 'i'),
+                                                                                   ('Smaller', 'smaller', '<'),
+                                                                                   ('Greater', 'greater', '>')])), 
+             ('min', 'uint16', 1, 'out'),
+             ('max', 'uint16', 1, 'out')],
+'since_firmware': [2, 0, 5],
+'doc': ['ccf', {
+'en':
+"""
+Returns the threshold as set by :func:`SetVoltageCallbackThreshold`.
+""",
+'de':
+"""
+Gibt den Schwellwert zurück, wie von :func:`SetVoltageCallbackThreshold`
+gesetzt.
+"""
+}]
+})
+
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetUSBVoltageCallbackThreshold', 'set_usb_voltage_callback_threshold'), 
+'elements': [('option', 'char', 1, 'in', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
+                                                                                  ('Outside', 'outside', 'o'),
+                                                                                  ('Inside', 'inside', 'i'),
+                                                                                  ('Smaller', 'smaller', '<'),
+                                                                                  ('Greater', 'greater', '>')])), 
+             ('min', 'uint16', 1, 'in'),
+             ('max', 'uint16', 1, 'in')],
+'since_firmware': [2, 0, 5],
+'doc': ['ccf', {
+'en':
+"""
+Sets the thresholds for the :func:`USBVoltageReached` callback. 
+
+The following options are possible:
+
+.. csv-table::
+ :header: "Option", "Description"
+ :widths: 10, 100
+
+ "'x'",    "Callback is turned off"
+ "'o'",    "Callback is triggered when the voltage is *outside* the min and max values"
+ "'i'",    "Callback is triggered when the voltage is *inside* the min and max values"
+ "'<'",    "Callback is triggered when the voltage is smaller than the min value (max is ignored)"
+ "'>'",    "Callback is triggered when the voltage is greater than the min value (max is ignored)"
+
+The default value is ('x', 0, 0).
+""",
+'de':
+"""
+Setzt den Schwellwert für den :func:`USBVoltageReached` Callback.
+
+Die folgenden Optionen sind möglich:
+
+.. csv-table::
+ :header: "Option", "Beschreibung"
+ :widths: 10, 100
+ 
+ "'x'",    "Callback ist inaktiv"
+ "'o'",    "Callback wird ausgelöst wenn die Spannung *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst wenn die Spannung *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst wenn die Spannung kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn die Spannung größer als der min Wert ist (max wird ignoriert)"
+ 
+Der Standardwert ist ('x', 0, 0).
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetUSBVoltageCallbackThreshold', 'get_usb_voltage_callback_threshold'), 
+'elements': [('option', 'char', 1, 'out', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
+                                                                                   ('Outside', 'outside', 'o'),
+                                                                                   ('Inside', 'inside', 'i'),
+                                                                                   ('Smaller', 'smaller', '<'),
+                                                                                   ('Greater', 'greater', '>')])), 
+             ('min', 'uint16', 1, 'out'),
+             ('max', 'uint16', 1, 'out')],
+'since_firmware': [2, 0, 5],
+'doc': ['ccf', {
+'en':
+"""
+Returns the threshold as set by :func:`SetUSBVoltageCallbackThreshold`.
+""",
+'de':
+"""
+Gibt den Schwellwert zurück, wie von :func:`SetUSBVoltageCallbackThreshold`
+gesetzt.
+"""
+}]
+})
+
+
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetDebouncePeriod', 'set_debounce_period'), 
+'elements': [('debounce', 'uint32', 1, 'in')],
+'since_firmware': [2, 0, 5],
+'doc': ['ccf', {
+'en':
+"""
+Sets the period in ms with which the threshold callbacks
+
+ :func:`CurrentReached`, :func:`VoltageReached`, :func:`USBVoltageReached`
+
+are triggered, if the thresholds
+
+ :func:`SetCurrentCallbackThreshold`, :func:`SetVoltageCallbackThreshold`, :func:`SetUSBVoltageCallbackThreshold`
+
+keep being reached.
+
+The default value is 100.
+""",
+'de':
+"""
+Setzt die Periode in ms mit welcher die Schwellwert Callbacks
+
+ :func:`CurrentReached`, :func:`VoltageReached`, :func:`USBVoltageReached`
+ 
+ausgelöst werden, wenn die Schwellwerte 
+
+ :func:`SetCurrentCallbackThreshold`, :func:`SetVoltageCallbackThreshold`, :func:`SetUSBVoltageCallbackThreshold`
+ 
+weiterhin erreicht bleiben.
+
+Der Standardwert ist 100.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetDebouncePeriod', 'get_debounce_period'), 
+'elements': [('debounce', 'uint32', 1, 'out')],
+'since_firmware': [2, 0, 5],
+'doc': ['ccf', {
+'en':
+"""
+Returns the debounce period as set by :func:`SetDebouncePeriod`.
+""",
+'de':
+"""
+Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('Current', 'current'), 
+'elements': [('current', 'uint16', 1, 'out')],
+'since_firmware': [2, 0, 5],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered periodically with the period that is set by
+:func:`SetCurrentCallbackPeriod`. The :word:`parameter` is the current of the
+sensor.
+
+:func:`Current` is only triggered if the current has changed since the
+last triggering.
+""",
+'de':
+"""
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetCurrentCallbackPeriod`,
+ausgelöst. Der :word:`parameter` ist die Stromstärke des Sensors.
+
+:func:`Current` wird nur ausgelöst wenn sich die Stromstärke seit der
+letzten Auslösung geändert hat.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('Voltage', 'voltage'), 
+'elements': [('voltage', 'uint16', 1, 'out')],
+'since_firmware': [2, 0, 5],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered periodically with the period that is set by
+:func:`SetVoltageCallbackPeriod`. The :word:`parameter` is the voltage of the
+sensor.
+
+:func:`Voltage` is only triggered if the voltage has changed since the
+last triggering.
+""",
+'de':
+"""
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetVoltageCallbackPeriod`,
+ausgelöst. Der :word:`parameter` ist die Spannung des Sensors.
+
+:func:`Voltage` wird nur ausgelöst wenn sich die Spannung seit der
+letzten Auslösung geändert hat.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('USBVoltage', 'usb_voltage'), 
+'elements': [('voltage', 'uint16', 1, 'out')],
+'since_firmware': [2, 0, 5],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered periodically with the period that is set by
+:func:`SetUSBVoltageCallbackPeriod`. The :word:`parameter` is the voltage of the
+sensor.
+
+:func:`USBVoltage` is only triggered if the voltage has changed since the
+last triggering.
+""",
+'de':
+"""
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetUSBVoltageCallbackPeriod`,
+ausgelöst. Der :word:`parameter` ist die Spannung des Sensors.
+
+:func:`USBVoltage` wird nur ausgelöst wenn sich die Spannung seit der
+letzten Auslösung geändert hat.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('CurrentReached', 'current_reached'), 
+'elements': [('current', 'uint16', 1, 'out')],
+'since_firmware': [2, 0, 5],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered when the threshold as set by
+:func:`SetCurrentCallbackThreshold` is reached.
+The :word:`parameter` is the current of the sensor.
+
+If the threshold keeps being reached, the callback is triggered periodically
+with the period as set by :func:`SetDebouncePeriod`.
+""",
+'de':
+"""
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+:func:`SetCurrentCallbackThreshold` gesetzt, erreicht wird.
+Der :word:`parameter` ist die Stromstärke des Sensors.
+
+Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
+mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('VoltageReached', 'voltage_reached'), 
+'elements': [('voltage', 'uint16', 1, 'out')],
+'since_firmware': [2, 0, 5],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered when the threshold as set by
+:func:`SetVoltageCallbackThreshold` is reached.
+The :word:`parameter` is the voltage of the sensor.
+
+If the threshold keeps being reached, the callback is triggered periodically
+with the period as set by :func:`SetDebouncePeriod`.
+""",
+'de':
+"""
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+:func:`SetVoltageCallbackThreshold` gesetzt, erreicht wird.
+Der :word:`parameter` ist die Spannung des Sensors.
+
+Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
+mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('USBVoltageReached', 'usb_voltage_reached'), 
+'elements': [('voltage', 'uint16', 1, 'out')],
+'since_firmware': [2, 0, 5],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered when the threshold as set by
+:func:`SetUSBVoltageCallbackThreshold` is reached.
+The :word:`parameter` is the voltage of the sensor.
+
+If the threshold keeps being reached, the callback is triggered periodically
+with the period as set by :func:`SetDebouncePeriod`.
+""",
+'de':
+"""
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+:func:`SetUSBVoltageCallbackThreshold` gesetzt, erreicht wird.
+Der :word:`parameter` ist die Spannung des Sensors.
+
+Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
+mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+"""
+}]
+})
