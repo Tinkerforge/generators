@@ -26,3 +26,6 @@
 2.0.1: Add support for custom characters in LCD20x4 Bricklet
 2.0.2: Remove "C<" from unpack (not allowed in Ruby 1.9.3)
 2.0.3: Add get/set_long_wifi_key functions to Master Brick API
+2.0.4: Reduce scope of request and socket mutex to improve concurrency
+       Improve and unify code for response expected flag handling
+       Add get/set_wifi_hostname functions and callbacks for stack/USB voltage and stack current to Master Brick API
