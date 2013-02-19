@@ -24,3 +24,6 @@
        Make expected integer overflows explicit
 2.0.4: Ignore exceptions in user code so that the callback thread doesn't die silently
        Add Get/SetLongWifiKey functions to Master Brick API
+2.0.5: Reduce scope of request mutex and socket mutex to improve concurrency
+       Improve and unify code for response expected flag handling
+       Add Get/SetWifiHostname functions and callbacks for stack/USB voltage and stack current to Master Brick API

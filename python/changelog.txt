@@ -43,3 +43,6 @@
 2.0.1: Add support for custom characters in LCD Bricklets
 2.0.2: Fix char list packing in Python3
 2.0.3: Add get/set_long_wifi_key functions to Master Brick API
+2.0.4: Reduce scope of request and socket lock to improve concurrency
+       Improve and unify code for response expected flag handling
+       Add get/set_wifi_hostname functions and callbacks for stack/USB voltage and stack current to Master Brick API

@@ -47,3 +47,6 @@
 2.0.2: Improve internal UID handling and simplify internal locking
        Make sequence number generation thread-safe
 2.0.3: Add Get/SetLongWifiKey functions to Master Brick API
+2.0.4: Reduce scope of request lock to improve concurrency
+       Improve and unify code for response expected flag handling
+       Add Get/SetWifiHostname functions and callbacks for stack/USB voltage and stack current to Master Brick API

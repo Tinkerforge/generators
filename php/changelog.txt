@@ -28,3 +28,5 @@
 2.0.1: Add support for custom characters in LCD Bricklets
 2.0.2: Fix UID encoding/decoding on 32bit systems
 2.0.3: Add get/setLongWifiKey functions to Master Brick API
+2.0.4: Improve and unify code for response expected flag handling
+       Add get/setWifiHostname functions and callbacks for stack/USB voltage and stack current to Master Brick API
