@@ -249,33 +249,39 @@ com['packets'].append({
 'en':
 """
 Sets up to 254 slave addresses. Valid addresses are in range 1-255. 0 has a
-special meaning and is used as list terminator.
-The address numeration (via num parameter) has to be used
+special meaning, it is used as list terminator and not allowed as normal slave
+address. The address numeration (via num parameter) has to be used
 ascending from 0. For example: If you use the Chibi Extension in Master mode
 (i.e. the stack has an USB connection) and you want to talk to three other
 Chibi stacks with the slave addresses 17, 23, and 42, you should call with
-"(0, 17), (1, 23), (2, 42) and (3, 0)". The last call with "(3, 0)" indicates
-that the RS485 slave address list contains 3 addresses in this case.
+"(0, 17), (1, 23), (2, 42) and (3, 0)". The last call with "(3, 0)" is a list
+terminator and indicates that the Chibi slave address list contains 3 addresses
+in this case.
 
-It is possible to set the addresses with the Brick Viewer and it will be 
-saved in the EEPROM of the Chibi Extension, they don't
-have to be set on every startup.
+It is possible to set the addresses with the Brick Viewer, that will take care
+of correct address numeration and list termination.
+
+The slave addresses will be saved in the EEPROM of the Chibi Extension, they
+don't have to be set on every startup.
 """,
 'de':
 """
 Setzt bis zu 254 Slave Adressen. Gültige Adressen sind 1-255. 0 hat eine
-besondere Bedeutung und wird zur Terminierung der Liste verwendet.
+besondere Bedeutung, sie wird zur Terminierung der Liste verwendet und ist nicht
+als normale Slave Adresse erlaubt.
 Die Adressnummerierung (mittels num Parameter) muss aufsteigend ab
 0 erfolgen. Beispiel: Wenn die Chibi Extension im Master Modus verwendet wird
 (z.B. wenn der Stapel eine USB-Verbindung hat) und es soll mit drei weiteren
 Chibi Stapeln kommuniziert werden, mit den Adressen 17, 23 und 42, sollten die
 Aufrufe "(0, 17), (1, 23), (2, 42) und (3, 0)" sein. Der letzte Aufruf mit
-"(3, 0)" zeigt an, dass die RS485 Slave Adressliste in diesem Fall 3 Einträge
-beinhaltet.
+"(3, 0)" dient der Terminierung der Liste und zeigt an, dass die Chibi Slave
+Adressliste in diesem Fall 3 Einträge beinhaltet.
 
-Es ist möglich die Adressen mit dem Brick Viewer zu setzen und diese werden
-im EEPROM der Chibi Extension abgespeichert. Ein Setzen bei
-jedem Hochfahren ist daher nicht notwendig.
+Es ist möglich die Adressen mit dem Brick Viewer zu setzen, dieser kümmert sich
+dann um korrekte Adressnummerierung und Terminierung der Liste.
+
+Die Slave Adresse werden im EEPROM der RS485 Extension abgespeichert. Ein
+Setzen bei jedem Hochfahren ist daher nicht notwendig.
 """
 }]
 })
@@ -548,33 +554,39 @@ com['packets'].append({
 'en':
 """
 Sets up to 255 slave addresses. Valid addresses are in range 1-255. 0 has a
-special meaning and is used as list terminator.
-The address numeration (via num parameter) has to be used
+special meaning, it is used as list terminator and not allowed as normal slave
+address. The address numeration (via num parameter) has to be used
 ascending from 0. For example: If you use the RS485 Extension in Master mode
 (i.e. the stack has an USB connection) and you want to talk to three other
-RS485 stacks with the IDs 17, 23, and 42, you should call with "(0, 17),
-(1, 23), (2, 42) and (3, 0)". The last call with "(3, 0)" indicates that the
-RS485 slave address list contains 3 addresses in this case.
+RS485 stacks with the addresses 17, 23, and 42, you should call with "(0, 17),
+(1, 23), (2, 42) and (3, 0)". The last call with "(3, 0)" is a list terminator
+and indicates that the RS485 slave address list contains 3 addresses in this
+case.
 
-It is possible to set the addresses with the Brick Viewer and it will be 
-saved in the EEPROM of the RS485 Extension, they don't
-have to be set on every startup.
+It is possible to set the addresses with the Brick Viewer, that will take care
+of correct address numeration and list termination.
+
+The slave addresses will be saved in the EEPROM of the Chibi Extension, they
+don't have to be set on every startup.
 """,
 'de':
 """
 Setzt bis zu 255 Slave Adressen. Gültige Adressen sind 1-255. 0 hat eine
-besondere Bedeutung und wird zur Terminierung der Liste verwendet.
+besondere Bedeutung, sie wird zur Terminierung der Liste verwendet und ist nicht
+als normale Slave Adresse erlaubt.
 Die Adressnummerierung (mittels num Parameter) muss aufsteigend ab
 0 erfolgen. Beispiel: Wenn die RS485 Extension im Master Modus verwendet wird
 (z.B. wenn der Stapel eine USB-Verbindung hat) und es soll mit drei weiteren
 RS485 Stapeln kommuniziert werden, mit den Adressen 17, 23 und 42, sollten die
 Aufrufe "(0, 17), (1, 23), (2, 42) und (3, 0)" sein. Der letzte Aufruf mit
-"(3, 0)" zeigt an, dass die RS485 Slave Adressliste in diesem Fall 3 Einträge
-beinhaltet.
+"(3, 0)" dient der Terminierung der Liste und zeigt an, dass die RS485 Slave
+Adressliste in diesem Fall 3 Einträge beinhaltet.
 
-Es ist möglich die Adressen mit dem Brick Viewer zu setzen und diese werden
-im EEPROM der RS485 Extension abgespeichert. Ein Setzen bei
-jedem Hochfahren ist daher nicht notwendig.
+Es ist möglich die Adressen mit dem Brick Viewer zu setzen, dieser kümmert sich
+dann um korrekte Adressnummerierung und Terminierung der Liste.
+
+Die Slave Adresse werden im EEPROM der RS485 Extension abgespeichert. Ein
+Setzen bei jedem Hochfahren ist daher nicht notwendig.
 """
 }]
 })
