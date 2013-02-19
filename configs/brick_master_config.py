@@ -1358,11 +1358,16 @@ com['packets'].append({
 """
 Sets the hostname of the WIFI Extension. The hostname will be displayed 
 by access points as the hostname in the DHCP clients table.
+
+Setting an empty String will restore the default hostname.
 """,
 'de':
 """
 Setzt den Hostnamen der WIFI Extension. Der Hostname wird von
 Access Points als Hostname in der DHCP-Client Tabelle angezeigt.
+
+Das setzen eines leeren Strings stellt den voreingestellten Hostnamen
+wieder her.
 """
 }]
 })
@@ -1376,10 +1381,15 @@ com['packets'].append({
 'en':
 """
 Returns the hostname as set by :func:`GetWifiHostname`.
+
+An empty String means, that the default hostname is used.
 """,
 'de':
 """
 Gibt den Hostnamen zurück, wie von :func:`GetWifiHostname` gesetzt.
+
+Ein leerer String bedeutet, dass der voreingestellte Hostname
+genutzt wird.
 """
 }]
 })
