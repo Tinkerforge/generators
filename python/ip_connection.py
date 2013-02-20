@@ -721,12 +721,14 @@ class IPConnection:
         def pack_string(f, d):
             if sys.hexversion < 0x03000000:
                 if type(d) == types.UnicodeType:
-                    return struct.pack('<' + f, d.encode('ascii'))
+                    f = f.replace('s', 'B')
+                    return struct.pack('<' + f, *map(ord, d))
+
                 else:
                     return struct.pack('<' + f, d)
             else:
                 if isinstance(d, str):
-                    return struct.pack('<' + f, bytes(d, 'ascii'))
+                    return struct.pack('<' + f, bytes(map(ord, d)))
                 else:
                     return struct.pack('<' + f, d)
 
