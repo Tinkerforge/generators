@@ -45,6 +45,7 @@
        Use a shorter format for JavaDoc links
        Don't let the callback thread die silently on exception in user code
        Add get/setLongWifiKey functions to Master Brick API
-2.0.4: Reduce scope of request and socket mutex to improve concurrency
+2.0.4: Split IPConnection.addListener into per-Listener add functions
+       Reduce scope of request and socket mutex to improve concurrency
        Improve and unify code for response expected flag handling
        Add get/set_wifi_hostname functions and callbacks for stack/USB voltage and stack current to Master Brick API
