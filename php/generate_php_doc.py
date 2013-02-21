@@ -234,7 +234,7 @@ parameter the callback function:
 
     ${1}->registerCallback({3}{4}::CALLBACK_EXAMPLE, 'my_callback');
 
-The available constants with corresponsing function signatures are
+The available constants with corresponding function signatures are
 described below.
 
 .. note::

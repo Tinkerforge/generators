@@ -403,7 +403,7 @@ com['packets'].append({
 'en':
 """
 Sets the output value (high or low) with a bitmask, according to
-the selction mask. The bitmask is 4 bit long, *true* refers to high 
+the selection mask. The bitmask is 4 bit long, *true* refers to high 
 and *false* refers to low.
 
 For example: The values 0b0110, 0b0011 will turn pin 2 high and
