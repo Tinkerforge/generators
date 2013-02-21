@@ -269,7 +269,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the output value with a bitmask, according to the selction mask.
+Sets the output value with a bitmask, according to the selection mask.
 The bitmask is 16 bit long, *true* refers to high and *false* refers to 
 low.
 
