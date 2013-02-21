@@ -309,7 +309,7 @@ abstract class Device
     /**
      * @internal
      */
-    public function dispatchCallbacks()
+    public function dispatchPendingCallbacks()
     {
         $pendingCallbacks = $this->pendingCallbacks;
         $this->pendingCallbacks = array();
@@ -384,7 +384,6 @@ class IPConnection
     const CALLBACK_ENUMERATE = 253;
     const CALLBACK_CONNECTED = 0;
     const CALLBACK_DISCONNECTED = 1;
-    const CALLBACK_AUTHENTICATION_ERROR = 2;
 
     // enumerationType parameter of CALLBACK_ENUMERATE
     const ENUMERATION_TYPE_AVAILABLE = 0;
@@ -594,18 +593,7 @@ class IPConnection
     public function dispatchCallbacks($seconds)
     {
         // Dispatch all pending callbacks
-        $pendingCallbacks = $this->pendingCallbacks;
-        $this->pendingCallbacks = array();
-
-        foreach ($pendingCallbacks as $pendingCallback) {
-            if ($pendingCallback[0]['functionID'] == self::CALLBACK_ENUMERATE) {
-                $this->handleEnumerate($pendingCallback[0], $pendingCallback[1]);
-            }
-        }
-
-        foreach ($this->devices as $device) {
-            $device->dispatchCallbacks();
-        }
+        $this->dispatchPendingCallbacks();
 
         if ($seconds < 0) {
             while (TRUE) {
@@ -613,9 +601,7 @@ class IPConnection
 
                 // Dispatch all pending callbacks that were received by
                 // getters in the meantime
-                foreach ($this->devices as $device) {
-                    $device->dispatchCallbacks();
-                }
+                $this->dispatchPendingCallbacks();
             }
         } else {
             $this->receive($seconds, NULL, TRUE);
@@ -639,6 +625,25 @@ class IPConnection
 
         $this->registeredCallbacks[$id] = $callback;
         $this->registeredCallbackUserData[$id] = $userData;
+    }
+
+    /**
+     * @internal
+     */
+    function dispatchPendingCallbacks()
+    {
+        $pendingCallbacks = $this->pendingCallbacks;
+        $this->pendingCallbacks = array();
+
+        foreach ($pendingCallbacks as $pendingCallback) {
+            if ($pendingCallback[0]['functionID'] == self::CALLBACK_ENUMERATE) {
+                $this->handleEnumerate($pendingCallback[0], $pendingCallback[1]);
+            }
+        }
+
+        foreach ($this->devices as $device) {
+            $device->dispatchPendingCallbacks();
+        }
     }
 
     /**
