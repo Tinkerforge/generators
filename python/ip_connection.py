@@ -722,7 +722,9 @@ class IPConnection:
             if sys.hexversion < 0x03000000:
                 if type(d) == types.UnicodeType:
                     f = f.replace('s', 'B')
-                    return struct.pack('<' + f, *map(ord, d))
+                    l = map(ord, d)
+                    l += [0] * (int(f.replace('B', '')) - len(l))
+                    return struct.pack('<' + f, *l)
 
                 else:
                     return struct.pack('<' + f, d)
