@@ -583,7 +583,7 @@ namespace Tinkerforge
 							continue;
 						}
 
-						byte fid = GetFunctionIdFromData(cqo.data);
+						byte fid = GetFunctionIDFromData(cqo.data);
 						int uid = GetUIDFromData(cqo.data);
 
 						if(fid == CALLBACK_ENUMERATE)
@@ -625,7 +625,7 @@ namespace Tinkerforge
 			}
 		}
 
-		internal static byte GetFunctionIdFromData(byte[] data)
+		internal static byte GetFunctionIDFromData(byte[] data)
 		{
 			return data[5];
 		}
@@ -654,7 +654,7 @@ namespace Tinkerforge
 
 		private void HandleResponse(byte[] packet)
 		{
-			byte functionID = GetFunctionIdFromData(packet);
+			byte functionID = GetFunctionIDFromData(packet);
 			byte sequenceNumber = GetSequenceNumberFromData(packet);
 
 			if(sequenceNumber == 0 && functionID == CALLBACK_ENUMERATE)
@@ -970,7 +970,7 @@ namespace Tinkerforge
 
 			if (IPConnection.GetResponseExpectedFromData(request))
 			{
-				byte functionID = IPConnection.GetFunctionIdFromData(request);
+				byte functionID = IPConnection.GetFunctionIDFromData(request);
 
 				lock (requestLock)
 				{
@@ -981,9 +981,20 @@ namespace Tinkerforge
 					{
 						ipcon.SendRequest(request);
 
-						if (!responseQueue.TryDequeue(out response, ipcon.responseTimeout))
+						while(true)
 						{
-							throw new TimeoutException("Did not receive response in time for function ID " + functionID);
+							if (!responseQueue.TryDequeue(out response, ipcon.responseTimeout))
+							{
+								throw new TimeoutException("Did not receive response in time for function ID " + functionID);
+							}
+
+							if(expectedResponseFunctionID == IPConnection.GetFunctionIDFromData(response) &&
+							   expectedResponseSequenceNumber == IPConnection.GetSequenceNumberFromData(response))
+							{
+								// ignore old responses that arrived after the timeout expired, but before setting
+								// expectedResponseFunctionID and expectedResponseSequenceNumber back to 0
+								break;
+							}
 						}
 					}
 					finally
