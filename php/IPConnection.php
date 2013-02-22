@@ -115,13 +115,31 @@ class Base256
 }
 
 
-class TimeoutException extends \Exception
+class TinkerforgeException extends \Exception
 {
 
 }
 
 
-class NotSupportedException extends \Exception
+class TimeoutException extends TinkerforgeException
+{
+
+}
+
+
+class AlreadyConnectedException extends TinkerforgeException
+{
+
+}
+
+
+class NotConnectedException extends TinkerforgeException
+{
+
+}
+
+
+class NotSupportedException extends TinkerforgeException
 {
 
 }
@@ -325,7 +343,7 @@ abstract class Device
     protected function sendRequest($functionID, $payload)
     {
         if ($this->ipcon->socket === FALSE) {
-            throw new \Exception('Not connected');
+            throw new NotConnectedException('Not connected');
         }
 
         $header = $this->ipcon->createPacketHeader($this, 8 + strlen($payload), $functionID);
@@ -348,7 +366,7 @@ abstract class Device
             $this->expectedResponseSequenceNumber = 0;
 
             if ($this->receivedResponse == NULL) {
-                throw new TimeoutException('Did not receive response in time');
+                throw new TimeoutException("Did not receive response in time for function ID $functionID");
             }
 
             $response = $this->receivedResponse;
@@ -359,11 +377,11 @@ abstract class Device
             if ($errorCode == 0) {
                 // no error
             } else if ($errorCode == 1) {
-                throw new NotSupportedException("Got invalid parameter for function $functionID");
+                throw new NotSupportedException("Got invalid parameter for function ID $functionID");
             } else if ($errorCode == 2) {
-                throw new NotSupportedException("Function $functionID is not supported");
+                throw new NotSupportedException("Function ID $functionID is not supported");
             } else {
-                throw new NotSupportedException("Function $functionID returned an unknown error");
+                throw new NotSupportedException("Function ID $functionID returned an unknown error");
             }
 
             $payload = $response[1];
@@ -412,6 +430,9 @@ class IPConnection
     private $registeredCallbackUserData = array();
     private $pendingCallbacks = array();
 
+    private $host = "";
+    private $port = 0;
+
     public $socket = FALSE;
     private $pendingData = '';
 
@@ -449,8 +470,12 @@ class IPConnection
     public function connect($host, $port)
     {
         if ($this->socket !== FALSE) {
-            throw new \Exception('Already connected');
+            $hp = $this->host . ':' . $this->port;
+            throw new AlreadyConnectedException("Already connected to $hp");
         }
+
+        $this->host = $host;
+        $this->port = $port;
 
         $address = '';
 
@@ -498,7 +523,7 @@ class IPConnection
     public function disconnect()
     {
         if ($this->socket === FALSE) {
-            throw new \Exception('Not connected');
+            throw new NotConnectedException('Not connected');
         }
 
         @socket_shutdown($this->socket, 2);
@@ -653,8 +678,8 @@ class IPConnection
         if (@socket_send($this->socket, $request, strlen($request), 0) === FALSE) {
             $this->disconnectInternal(self::DISCONNECT_REASON_ERROR);
 
-            throw new \Exception('Could not send request: ' .
-                                 socket_strerror(socket_last_error($this->socket)));
+            throw new NotConnectedException('Could not send request: ' .
+                                            socket_strerror(socket_last_error($this->socket)));
         }
     }
 
@@ -694,7 +719,6 @@ class IPConnection
             } else if ($changed > 0) {
                 if (in_array($this->socket, $except)) {
                     $this->disconnectInternal(self::DISCONNECT_REASON_ERROR);
-
                     return;
                 }
 
