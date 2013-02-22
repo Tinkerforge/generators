@@ -48,4 +48,7 @@
 2.0.4: Split IPConnection.addListener into per-Listener add functions
        Reduce scope of request and socket mutex to improve concurrency
        Improve and unify code for response expected flag handling
-       Add get/set_wifi_hostname functions and callbacks for stack/USB voltage and stack current to Master Brick API
+       Add get/setWifiHostname functions and callbacks for stack/USB voltage and stack current to Master Brick API
+2.0.5: Add get/setRange functions to Analog In Bricklet API
+       Fix unlikely race condition in response packet handling
+       Add TinkerforgeException as basis for all other exceptions
