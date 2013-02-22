@@ -781,6 +781,8 @@ void device_create(Device *device, const char *uid_str, IPConnection *ipcon,
 	device->expected_response_function_id = 0;
 	device->expected_response_sequence_number = 0;
 
+	mutex_create(&device->response_mutex);
+
 	memset(&device->response_packet, 0, sizeof(Packet));
 
 	event_create(&device->response_event);
@@ -807,6 +809,8 @@ void device_destroy(Device *device) {
 	table_remove(&device->ipcon->devices, device->uid);
 
 	event_destroy(&device->response_event);
+
+	mutex_destroy(&device->response_mutex);
 
 	mutex_destroy(&device->request_mutex);
 }
@@ -907,7 +911,12 @@ int device_send_request(Device *device, Packet *request, Packet *response) {
 		event_reset(&device->response_event);
 
 		if (ret == E_OK) {
-			if (device->response_packet.header.error_code == 0) {
+			mutex_lock(&device->response_mutex);
+
+			if (device->response_packet.header.function_id != request->header.function_id ||
+			    device->response_packet.header.sequence_number != request->header.sequence_number) {
+				ret = E_TIMEOUT;
+			} else if (device->response_packet.header.error_code == 0) {
 				// no error
 				if (response != NULL) {
 					memcpy(response, &device->response_packet,
@@ -920,6 +929,8 @@ int device_send_request(Device *device, Packet *request, Packet *response) {
 			} else {
 				ret = E_UNKNOWN_ERROR_CODE;
 			}
+
+			mutex_unlock(&device->response_mutex);
 		}
 
 		mutex_unlock(&device->request_mutex);
@@ -1127,7 +1138,10 @@ static void ipcon_handle_response(IPConnection *ipcon, Packet *response) {
 
 	if (device->expected_response_function_id == response->header.function_id &&
 	    device->expected_response_sequence_number == response->header.sequence_number) {
+		mutex_lock(&device->response_mutex);
 		memcpy(&device->response_packet, response, response->header.length);
+		mutex_unlock(&device->response_mutex);
+
 		event_set(&device->response_event);
 		return;
 	}
