@@ -866,7 +866,7 @@ is set to 0 or 2 (WPA/WPA2 or WEP). Otherwise the value is ignored.
 For WPA/WPA2 the key has to be at least 8 characters long. If you want to set
 a key with more than 50 characters, see :func:`SetLongWifiKey`.
 
-For WEP the key has to be either 10 or 26 hexdecimal digits long. It is
+For WEP the key has to be either 10 or 26 hexadecimal digits long. It is
 possible to set the WEP key index (1-4). If you don't know your key index,
 it is likely 1.
 
