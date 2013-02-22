@@ -8,10 +8,10 @@
 
 package com.tinkerforge;
 
-public class TimeoutException extends Exception {
+public class TimeoutException extends TinkerforgeException {
 	private static final long serialVersionUID = 1L;
 
-	TimeoutException(String string) {
-		super(string);
+	TimeoutException(String message) {
+		super(message);
 	}
 }

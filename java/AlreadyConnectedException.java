@@ -8,10 +8,10 @@
 
 package com.tinkerforge;
 
-public class AlreadyConnectedException extends Exception {
+public class AlreadyConnectedException extends TinkerforgeException {
 	private static final long serialVersionUID = 1L;
 
-	AlreadyConnectedException(String string) {
-		super(string);
+	AlreadyConnectedException(String message) {
+		super(message);
 	}
 }

@@ -22,14 +22,6 @@ const
   DEVICE_RESPONSE_EXPECTED_FALSE = 4; { Setter, default }
 
 type
-  { TimeoutException }
-  TimeoutException = class(Exception)
-  end;
-
-  { NotSupportedException }
-  NotSupportedException = class(Exception)
-  end;
-
   { TDevice }
   TCallbackWrapper = procedure(const packet: TByteArray) of object;
   TVersionNumber = array [0..2] of byte;
@@ -247,7 +239,7 @@ begin
       try
         ipcon_.SendRequest(request);
         if (not responseQueue.Dequeue(kind, result, ipcon_.timeout)) then begin
-          raise TimeoutException.Create('Did not receive response in time for function ID ' + IntToStr(functionID));
+          raise ETimeoutException.Create('Did not receive response in time for function ID ' + IntToStr(functionID));
         end;
       finally
         expectedResponseFunctionID := 0;
@@ -262,13 +254,13 @@ begin
     end
     else begin
       if (errorCode = 1) then begin
-        raise NotSupportedException.Create('Got invalid parameter for function ' + IntToStr(functionID));
+        raise ENotSupportedException.Create('Got invalid parameter for function ID ' + IntToStr(functionID));
       end
       else if (errorCode = 2) then begin
-        raise NotSupportedException.Create('Function ' + IntToStr(functionID) + ' is not supported');
+        raise ENotSupportedException.Create('Function ID ' + IntToStr(functionID) + ' is not supported');
       end
       else begin
-        raise NotSupportedException.Create('Function ' + IntToStr(functionID) + ' returned an unknown error');
+        raise ENotSupportedException.Create('Function ID ' + IntToStr(functionID) + ' returned an unknown error');
       end;
     end;
   end

@@ -33,10 +33,19 @@ module Tinkerforge
     end
   end
 
-  class TimeoutException < RuntimeError
+  class TinkerforgeException < RuntimeError
   end
 
-  class NotSupportedException < RuntimeError
+  class TimeoutException < TinkerforgeException
+  end
+
+  class AlreadyConnectedException < TinkerforgeException
+  end
+
+  class NotConnectedException < TinkerforgeException
+  end
+
+  class NotSupportedException < TinkerforgeException
   end
 
   def pack(unpacked, format)
@@ -336,7 +345,7 @@ module Tinkerforge
           begin
             @ipcon.send_request request
 
-            packet = dequeue_response
+            packet = dequeue_response "Did not receive response in time for function ID #{function_id}"
           ensure
             @expected_response_function_id = 0
             @expected_response_sequence_number = 0
@@ -348,11 +357,11 @@ module Tinkerforge
         if error_code == 0
           # no error
         elsif error_code == 1
-          raise NotSupportedException, "Got invalid parameter for function #{function_id}"
+          raise NotSupportedException, "Got invalid parameter for function ID #{function_id}"
         elsif error_code == 2
-          raise NotSupportedException, "Function #{function_id} is not supported"
+          raise NotSupportedException, "Function ID #{function_id} is not supported"
         else
-          raise NotSupportedException, "Function #{function_id} returned an unknown error"
+          raise NotSupportedException, "Function ID #{function_id} returned an unknown error"
         end
 
         if response_length > 0
@@ -378,7 +387,7 @@ module Tinkerforge
     end
 
     # internal
-    def dequeue_response(message = 'Did not receive response in time')
+    def dequeue_response(message)
       response = nil
 
       @response_mutex.synchronize {
@@ -469,7 +478,7 @@ module Tinkerforge
     def connect(host, port)
       @socket_mutex.synchronize {
         if @socket != nil
-          raise Exception, 'Already connected'
+          raise AlreadyConnectedException, "Already connected to #{@host}:#{@port}"
         end
 
         @host = host
@@ -493,7 +502,7 @@ module Tinkerforge
           @auto_reconnect_pending = false
         else
           if @socket == nil
-            raise Exception, 'Not connected'
+            raise NotConnectedException, 'Not connected'
           end
 
           # Destroy receive thread
@@ -649,7 +658,7 @@ module Tinkerforge
     def send_request(request)
       @socket_mutex.synchronize {
         if @socket == nil
-          raise Exception, 'Not connected'
+          raise NotConnectedException, 'Not connected'
         end
 
         @socket.send request, 0

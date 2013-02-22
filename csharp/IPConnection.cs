@@ -714,21 +714,32 @@ namespace Tinkerforge
         }
 	}
 
-	public class TimeoutException : Exception
+	public class TinkerforgeException : Exception
+	{
+		public TinkerforgeException()
+		{
+		}
+
+		public TinkerforgeException(string message) : base(message)
+		{
+		}
+	}
+
+	public class TimeoutException : TinkerforgeException
 	{
 		public TimeoutException(string message) : base(message)
 		{
 		}
 	}
 
-	public class AlreadyConnectedException : Exception
+	public class AlreadyConnectedException : TinkerforgeException
 	{
 		public AlreadyConnectedException(string message) : base(message)
 		{
 		}
 	}
 
-	public class NotConnectedException : Exception
+	public class NotConnectedException : TinkerforgeException
 	{
 		public NotConnectedException()
 		{
@@ -972,7 +983,7 @@ namespace Tinkerforge
 
 						if (!responseQueue.TryDequeue(out response, ipcon.responseTimeout))
 						{
-							throw new TimeoutException("Did not receive response in time");
+							throw new TimeoutException("Did not receive response in time for function ID " + functionID);
 						}
 					}
 					finally
@@ -989,11 +1000,11 @@ namespace Tinkerforge
 					case 0:
 						break;
 					case 1:
-						throw new NotSupportedException("Got invalid parameter for function " + functionID);
+						throw new NotSupportedException("Got invalid parameter for function ID " + functionID);
 					case 2:
-						throw new NotSupportedException("Function " + functionID + " is not supported");
+						throw new NotSupportedException("Function ID " + functionID + " is not supported");
 					default:
-						throw new NotSupportedException("Function " + functionID + " returned an unknown error");
+						throw new NotSupportedException("Function ID " + functionID + " returned an unknown error");
 				}
 			}
 			else

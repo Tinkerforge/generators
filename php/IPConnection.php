@@ -115,13 +115,31 @@ class Base256
 }
 
 
-class TimeoutException extends \Exception
+class TinkerforgeException extends \Exception
 {
 
 }
 
 
-class NotSupportedException extends \Exception
+class TimeoutException extends TinkerforgeException
+{
+
+}
+
+
+class AlreadyConnectedException extends TinkerforgeException
+{
+
+}
+
+
+class NotConnectedException extends TinkerforgeException
+{
+
+}
+
+
+class NotSupportedException extends TinkerforgeException
 {
 
 }
@@ -325,7 +343,7 @@ abstract class Device
     protected function sendRequest($functionID, $payload)
     {
         if ($this->ipcon->socket === FALSE) {
-            throw new \Exception('Not connected');
+            throw new NotConnectedException('Not connected');
         }
 
         $header = $this->ipcon->createPacketHeader($this, 8 + strlen($payload), $functionID);
@@ -348,7 +366,7 @@ abstract class Device
             $this->expectedResponseSequenceNumber = 0;
 
             if ($this->receivedResponse == NULL) {
-                throw new TimeoutException('Did not receive response in time');
+                throw new TimeoutException("Did not receive response in time for function ID $functionID");
             }
 
             $response = $this->receivedResponse;
@@ -359,11 +377,11 @@ abstract class Device
             if ($errorCode == 0) {
                 // no error
             } else if ($errorCode == 1) {
-                throw new NotSupportedException("Got invalid parameter for function $functionID");
+                throw new NotSupportedException("Got invalid parameter for function ID $functionID");
             } else if ($errorCode == 2) {
-                throw new NotSupportedException("Function $functionID is not supported");
+                throw new NotSupportedException("Function ID $functionID is not supported");
             } else {
-                throw new NotSupportedException("Function $functionID returned an unknown error");
+                throw new NotSupportedException("Function ID $functionID returned an unknown error");
             }
 
             $payload = $response[1];
@@ -412,6 +430,9 @@ class IPConnection
     private $registeredCallbackUserData = array();
     private $pendingCallbacks = array();
 
+    private $host = "";
+    private $port = 0;
+
     public $socket = FALSE;
     private $pendingData = '';
 
@@ -449,8 +470,12 @@ class IPConnection
     public function connect($host, $port)
     {
         if ($this->socket !== FALSE) {
-            throw new \Exception('Already connected');
+            $hp = $this->host . ':' . $this->port;
+            throw new AlreadyConnectedException("Already connected to $hp");
         }
+
+        $this->host = $host;
+        $this->port = $port;
 
         $address = '';
 
@@ -498,18 +523,12 @@ class IPConnection
     public function disconnect()
     {
         if ($this->socket === FALSE) {
-            throw new \Exception('Not connected');
+            throw new NotConnectedException('Not connected');
         }
 
         @socket_shutdown($this->socket, 2);
-        @socket_close($this->socket);
-        $this->socket = FALSE;
 
-        if (array_key_exists(self::CALLBACK_DISCONNECTED, $this->registeredCallbacks)) {
-            call_user_func_array($this->registeredCallbacks[self::CALLBACK_DISCONNECTED],
-                                 array(self::DISCONNECT_REASON_REQUEST,
-                                       $this->registeredCallbackUserData[self::CALLBACK_DISCONNECTED]));
-        }
+        $this->disconnectInternal(self::DISCONNECT_REASON_REQUEST);
     }
 
     /**
@@ -630,25 +649,6 @@ class IPConnection
     /**
      * @internal
      */
-    function dispatchPendingCallbacks()
-    {
-        $pendingCallbacks = $this->pendingCallbacks;
-        $this->pendingCallbacks = array();
-
-        foreach ($pendingCallbacks as $pendingCallback) {
-            if ($pendingCallback[0]['functionID'] == self::CALLBACK_ENUMERATE) {
-                $this->handleEnumerate($pendingCallback[0], $pendingCallback[1]);
-            }
-        }
-
-        foreach ($this->devices as $device) {
-            $device->dispatchPendingCallbacks();
-        }
-    }
-
-    /**
-     * @internal
-     */
     public function createPacketHeader($device, $length, $functionID)
     {
         $uid = '0';
@@ -676,8 +676,10 @@ class IPConnection
     public function send($request)
     {
         if (@socket_send($this->socket, $request, strlen($request), 0) === FALSE) {
-            throw new \Exception('Could not send request: ' .
-                                 socket_strerror(socket_last_error($this->socket)));
+            $this->disconnectInternal(self::DISCONNECT_REASON_ERROR);
+
+            throw new NotConnectedException('Could not send request: ' .
+                                            socket_strerror(socket_last_error($this->socket)));
         }
     }
 
@@ -716,15 +718,7 @@ class IPConnection
                                      socket_strerror(socket_last_error($this->socket)));
             } else if ($changed > 0) {
                 if (in_array($this->socket, $except)) {
-                    @socket_close($this->socket);
-                    $this->socket = FALSE;
-
-                    if (array_key_exists(self::CALLBACK_DISCONNECTED, $this->registeredCallbacks)) {
-                        call_user_func_array($this->registeredCallbacks[self::CALLBACK_DISCONNECTED],
-                                             array(self::DISCONNECT_REASON_ERROR,
-                                                   $this->registeredCallbackUserData[self::CALLBACK_DISCONNECTED]));
-                    }
-
+                    $this->disconnectInternal(self::DISCONNECT_REASON_ERROR);
                     return;
                 }
 
@@ -732,20 +726,13 @@ class IPConnection
                 $length = @socket_recv($this->socket, $data, 8192, 0);
 
                 if ($length === FALSE || $length == 0) {
-                    @socket_close($this->socket);
-                    $this->socket = FALSE;
-
                     if ($length === FALSE) {
                         $disconnectReason = self::DISCONNECT_REASON_ERROR;
                     } else {
                         $disconnectReason = self::DISCONNECT_REASON_SHUTDOWN;
                     }
 
-                    if (array_key_exists(self::CALLBACK_DISCONNECTED, $this->registeredCallbacks)) {
-                        call_user_func_array($this->registeredCallbacks[self::CALLBACK_DISCONNECTED],
-                                             array($disconnectReason,
-                                                   $this->registeredCallbackUserData[self::CALLBACK_DISCONNECTED]));
-                    }
+                    $this->disconnectInternal($disconnectReason);
 
                     return;
                 }
@@ -787,6 +774,21 @@ class IPConnection
 
             $now = microtime(true);
         } while ($now >= $start && $now < $end);
+    }
+
+    /**
+     * @internal
+     */
+    private function disconnectInternal($disconnectReason)
+    {
+        @socket_close($this->socket);
+        $this->socket = FALSE;
+
+        if (array_key_exists(self::CALLBACK_DISCONNECTED, $this->registeredCallbacks)) {
+            call_user_func_array($this->registeredCallbacks[self::CALLBACK_DISCONNECTED],
+                                 array($disconnectReason,
+                                       $this->registeredCallbackUserData[self::CALLBACK_DISCONNECTED]));
+        }
     }
 
     /**
@@ -865,6 +867,25 @@ class IPConnection
                              array($uid, $connectedUid, $position, $hardwareVersion,
                                    $firmwareVersion, $deviceIdentifier, $enumerationType,
                                    $this->registeredCallbackUserData[self::CALLBACK_ENUMERATE]));
+    }
+
+    /**
+     * @internal
+     */
+    private function dispatchPendingCallbacks()
+    {
+        $pendingCallbacks = $this->pendingCallbacks;
+        $this->pendingCallbacks = array();
+
+        foreach ($pendingCallbacks as $pendingCallback) {
+            if ($pendingCallback[0]['functionID'] == self::CALLBACK_ENUMERATE) {
+                $this->handleEnumerate($pendingCallback[0], $pendingCallback[1]);
+            }
+        }
+
+        foreach ($this->devices as $device) {
+            $device->dispatchPendingCallbacks();
+        }
     }
 
     /**

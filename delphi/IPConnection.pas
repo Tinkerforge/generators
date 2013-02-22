@@ -60,6 +60,28 @@ const
 {$endif}
 
 type
+  { ETinkerforgeException }
+  ETinkerforgeException = class(Exception)
+  end;
+
+  { ETimeoutException }
+  ETimeoutException = class(ETinkerforgeException)
+  end;
+  TimeoutException = ETimeoutException; { for backward compatibility }
+
+  { EAlreadyConnectedException }
+  EAlreadyConnectedException = class(ETinkerforgeException)
+  end;
+
+  { ENotConnectedException }
+  ENotConnectedException = class(ETinkerforgeException)
+  end;
+
+  { ENotSupportedException }
+  ENotSupportedException = class(ETinkerforgeException)
+  end;
+  NotSupportedException = ENotSupportedException; { for backward compatibility }
+
   { TWrapperThread }
   TWrapperThread = class;
   TThreadProcedure = procedure(thread: TWrapperThread; opaque: TObject) of object;
@@ -290,7 +312,7 @@ begin
   socketMutex.Acquire;
   try
     if (IsConnected) then begin
-      raise Exception.Create('Already connected');
+      raise EAlreadyConnectedException.Create('Already connected to ' + host + ':' + IntToStr(port));
     end;
     host := host_;
     port := port_;
@@ -314,7 +336,7 @@ begin
     end
     else begin
       if (not IsConnected) then begin
-        raise Exception.Create('Not connected');
+        raise ENotConnectedException.Create('Not connected');
       end;
       { Destroy receive thread }
       receiveFlag := false;
@@ -785,7 +807,7 @@ begin
   socketMutex.Acquire;
   try
     if (not IsConnected) then begin
-      raise Exception.Create('Not connected');
+      raise ENotConnectedException.Create('Not connected');
     end;
 {$ifdef FPC}
     fpsend(socket, @request[0], Length(request), 0);

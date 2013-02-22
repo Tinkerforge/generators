@@ -8,9 +8,13 @@
 
 package com.tinkerforge;
 
-public class NotConnectedException extends Exception {
+public class NotConnectedException extends TinkerforgeException {
 	private static final long serialVersionUID = 1L;
 
 	NotConnectedException() {
+	}
+
+	NotConnectedException(Throwable cause) {
+		super(cause);
 	}
 }

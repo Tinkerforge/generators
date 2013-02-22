@@ -79,7 +79,7 @@ The default mode is 1.
 """,
 'de':
 """
-Setzt die Modus des Analogwertes. Mögliche Modi:
+Setzt den Modus des Analogwertes. Mögliche Modi:
 
 * 0: normaler Modus (Analogwert, wie von :func:`SetVoltage` gesetzt, wird ausgegeben.)
 * 1: 1k Ohm Widerstand gegen Masse
