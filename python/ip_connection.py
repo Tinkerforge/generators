@@ -757,7 +757,15 @@ class IPConnection:
 
                 try:
                     self.send(request)
-                    response = device.response_queue.get(True, self.timeout)
+
+                    while True:
+                        response = device.response_queue.get(True, self.timeout)
+
+                        if function_id == get_function_id_from_data(response) and \
+                           sequence_number == get_sequence_number_from_data(response):
+                            # ignore old responses that arrived after the timeout expired, but before setting
+                            # expected_response_function_id and expected_response_sequence_number back to None
+                            break
                 except Empty:
                     msg = 'Did not receive response for function {0} in time'.format(function_id)
                     raise Error(Error.TIMEOUT, msg)
