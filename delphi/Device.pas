@@ -238,8 +238,16 @@ begin
       expectedResponseSequenceNumber := GetSequenceNumberFromData(request);
       try
         ipcon_.SendRequest(request);
-        if (not responseQueue.Dequeue(kind, result, ipcon_.timeout)) then begin
-          raise ETimeoutException.Create('Did not receive response in time for function ID ' + IntToStr(functionID));
+        while true do begin
+          if (not responseQueue.Dequeue(kind, result, ipcon_.timeout)) then begin
+            raise ETimeoutException.Create('Did not receive response in time for function ID ' + IntToStr(functionID));
+          end;
+          if ((expectedResponseFunctionID = GetFunctionIDFromData(result)) and
+              (expectedResponseSequenceNumber = GetSequenceNumberFromData(result))) then begin
+            { Ignore old responses that arrived after the timeout expired, but before setting
+              expectedResponseFunctionID and expectedResponseSequenceNumber back to 0 }
+            break;
+          end;
         end;
       finally
         expectedResponseFunctionID := 0;
