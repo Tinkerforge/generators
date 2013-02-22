@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 219,
     'name': ('AnalogIn', 'analog_in', 'Analog In'),
@@ -482,6 +482,64 @@ Der :word:`parameter` ist der Analogwert des Sensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
 mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetRange', 'set_range'),
+'elements': [('range', 'uint8', 1, 'in', ('Range', 'range', [('Automatic', 'automatic', 0),
+                                                             ('UpTo6V', 'up_to_6v', 1),
+                                                             ('UpTo10V', 'up_to_10v', 2),
+                                                             ('UpTo36V', 'up_to_36v', 3),
+                                                             ('UpTo45V', 'up_to_45v', 3)]))],
+'since_firmware': [2, 0, 1],
+'doc': ['bf', {
+'en':
+"""
+Sets the measurement range. Possible ranges:
+
+* 0: Automatically switched
+* 1: 0V - 6.05V, ~1.48mV resolution
+* 2: 0V - 10.32V, ~2.52mV resolution
+* 3: 0V - 36.30V, ~8.86mV resolution
+* 3: 0V - 45.00V, ~11.25mV resolution
+
+The default measurement range is 0.
+""",
+'de':
+"""
+Setzt den Messbereich. Mögliche Bereiche:
+
+* 0: Automatisch geschaltet
+* 1: 0V - 6,05V, ~1,48mV Auflösung
+* 2: 0V - 10,32V, ~2,52mV Auflösung
+* 3: 0V - 36,30V, ~8,86mV Auflösung
+* 3: 0V - 45,00V, ~11,25mV Auflösung
+
+Der Standardbereich ist 0.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetRange', 'get_range'),
+'elements': [('range', 'uint8', 1, 'out', ('Range', 'range', [('Automatic', 'automatic', 0),
+                                                              ('UpTo6V', 'up_to_6v', 1),
+                                                              ('UpTo10V', 'up_to_10v', 2),
+                                                              ('UpTo36V', 'up_to_36v', 3),
+                                                              ('UpTo45V', 'up_to_45v', 3)]))],
+'since_firmware': [2, 0, 1],
+'doc': ['bf', {
+'en':
+"""
+Returns the measurement range as set by :func:`SetRange`.
+""",
+'de':
+"""
+Gibt den Messbereich zurück, wie von :func:`SetRange` gesetzt.
 """
 }]
 })
