@@ -345,7 +345,16 @@ module Tinkerforge
           begin
             @ipcon.send_request request
 
-            packet = dequeue_response "Did not receive response in time for function ID #{function_id}"
+            while true
+              packet = dequeue_response "Did not receive response in time for function ID #{function_id}"
+
+              if function_id == get_function_id_from_data(packet) and \
+                 sequence_number == get_sequence_number_from_data(packet)
+                # ignore old responses that arrived after the timeout expired, but before setting
+                # expected_response_function_id and expected_response_sequence_number back to None
+                break
+              end
+            end
           ensure
             @expected_response_function_id = 0
             @expected_response_sequence_number = 0

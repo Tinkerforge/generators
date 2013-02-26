@@ -192,7 +192,8 @@ struct Device_ {
 
 	uint8_t expected_response_function_id; // protected by request_mutex
 	uint8_t expected_response_sequence_number; // protected by request_mutex
-	Packet response_packet; // protected by request_mutex
+	Mutex response_mutex;
+	Packet response_packet; // protected by response_mutex
 	Event response_event;
 	int response_expected[DEVICE_NUM_FUNCTION_IDS];
 

@@ -42,3 +42,5 @@
 2.0.3: Reduce scope of request and socket mutex to improve concurrency
        Improve and unify code for response expected flag handling
        Add get/set_wifi_hostname functions and callbacks for stack/USB voltage and stack current to Master Brick API
+2.0.4: Add get/set_range functions to Analog In Bricklet API
+       Fix unlikely race condition in response packet handling

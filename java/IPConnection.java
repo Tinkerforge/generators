@@ -54,7 +54,7 @@ class ReceiveThread extends Thread {
 					}
 				}
 				return;
-			} catch(java.io.IOException e) {
+			} catch(Exception e) {
 				if(ipcon.receiveFlag) {
 					ipcon.receiveFlag = false;
 					e.printStackTrace();
@@ -173,37 +173,12 @@ class CallbackThread extends Thread {
 
 						case IPConnection.CALLBACK_DISCONNECTED:
 							synchronized(ipcon.socketMutex) {
-								try {
-									if(ipcon.in != null) {
-										ipcon.in.close();
-									}
-								} catch(java.io.IOException e) {
-									e.printStackTrace();
-								}
-								ipcon.in = null;
-
-								try {
-									if(ipcon.out != null) {
-										ipcon.out.close();
-									}
-								} catch(java.io.IOException e) {
-									e.printStackTrace();
-								}
-								ipcon.out = null;
-
-								try {
-									if(ipcon.socket != null) {
-										ipcon.socket.close();
-									}
-								} catch(java.io.IOException e) {
-									e.printStackTrace();
-								}
-								ipcon.socket = null;
+								ipcon.closeSocket();
 							}
 
 							try {
 								Thread.sleep(100);
-							} catch(java.lang.InterruptedException e) {
+							} catch(InterruptedException e) {
 								e.printStackTrace();
 							}
 
@@ -233,7 +208,7 @@ class CallbackThread extends Thread {
 									if(retry) {
 										try {
 											Thread.sleep(100);
-										} catch(java.lang.InterruptedException e) {
+										} catch(InterruptedException e) {
 											e.printStackTrace();
 										}
 									}
@@ -418,14 +393,11 @@ public class IPConnection {
 			this.host = host;
 			this.port = port;
 
-			try {
-				connectUnlocked(false);
-			} catch(java.io.IOException e) {
-				throw(e);
-			}
+			connectUnlocked(false);
 		}
 	}
 
+	// NOTE: Assumes that socketMutex is locked
 	void connectUnlocked(boolean isAutoReconnect) throws java.net.UnknownHostException, java.io.IOException {
 		if(callbackThread == null) {
 			callbackQueue = new LinkedBlockingQueue<CallbackQueueObject>();
@@ -470,7 +442,8 @@ public class IPConnection {
 
 		try {
 			callbackQueue.put(new CallbackQueueObject(QUEUE_META, bb.array()));
-		} catch(java.lang.InterruptedException e) {
+		} catch(InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -492,44 +465,7 @@ public class IPConnection {
 					throw new NotConnectedException();
 				}
 
-				receiveFlag = false;
-
-				try {
-					if(in != null) {
-						in.close();
-					}
-				} catch(java.io.IOException e) {
-					e.printStackTrace();
-				}
-				in = null;
-
-				try {
-					if(out != null) {
-						out.close();
-					}
-				} catch(java.io.IOException e) {
-					e.printStackTrace();
-				}
-				out = null;
-
-				try {
-					if(socket != null) {
-						socket.close();
-					}
-				} catch(java.io.IOException e) {
-					e.printStackTrace();
-				}
-				socket = null;
-
-				if(receiveThread != null) {
-					try {
-						receiveThread.join();
-					} catch(java.lang.InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-
-				receiveThread = null;
+				disconnectUnlocked();
 			}
 
 			callbackThreadTmp = callbackThread;
@@ -562,6 +498,22 @@ public class IPConnection {
 			} catch(InterruptedException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	void disconnectUnlocked() {
+		receiveFlag = false;
+
+		closeSocket();
+
+		if(receiveThread != null) {
+			try {
+				receiveThread.join();
+			} catch(InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			receiveThread = null;
 		}
 	}
 
@@ -764,8 +716,40 @@ public class IPConnection {
 		// a callback without registered listener
 	}
 
+
+	// NOTE: Assumes that socketMutex is locked
+	void closeSocket() {
+		if(in != null) {
+			try {
+				in.close();
+			} catch(java.io.IOException e) {
+				e.printStackTrace();
+			}
+			in = null;
+		}
+
+		if(out != null) {
+			try {
+				out.close();
+			} catch(java.io.IOException e) {
+				e.printStackTrace();
+			}
+			out = null;
+		}
+
+		if(socket != null) {
+			try {
+				socket.close();
+			} catch(java.io.IOException e) {
+				e.printStackTrace();
+			}
+			socket = null;
+		}
+	}
+
 	static long getUIDFromData(byte[] data) {
-		return (long)(data[0] & 0xFF) | ((long)(data[1] & 0xFF) << 8) | ((long)(data[2] & 0xFF) << 16) | ((long)(data[3] & 0xFF) << 24);
+		return (long)(data[0] & 0xFF)        | ((long)(data[1] & 0xFF) << 8) |
+		      ((long)(data[2] & 0xFF) << 16) | ((long)(data[3] & 0xFF) << 24);
 	}
 
 	static byte getLengthFromData(byte[] data) {
@@ -833,7 +817,6 @@ public class IPConnection {
 				out.write(request);
 			} catch(java.io.IOException e) {
 				e.printStackTrace();
-				return;
 			}
 		}
 	}

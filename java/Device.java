@@ -184,12 +184,26 @@ public abstract class Device {
 				try {
 					ipcon.sendRequest(request);
 
-					response = responseQueue.poll(ipcon.responseTimeout, TimeUnit.MILLISECONDS);
-					if(response == null) {
-						throw new TimeoutException("Did not receive response in time");
+					while(true) {
+						response = null;
+
+						try {
+							response = responseQueue.poll(ipcon.responseTimeout, TimeUnit.MILLISECONDS);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+
+						if(response == null) {
+							throw new TimeoutException("Did not receive response in time for function ID " + functionID);
+						}
+
+						if(expectedResponseFunctionID == IPConnection.getFunctionIDFromData(response) &&
+						   expectedResponseSequenceNumber == IPConnection.getSequenceNumberFromData(response)) {
+							// ignore old responses that arrived after the timeout expired, but before setting
+							// expectedResponseFunctionID and expectedResponseSequenceNumber back to 0
+							break;
+						}
 					}
-				} catch (InterruptedException e) {
-					e.printStackTrace();
 				} finally {
 					expectedResponseFunctionID = 0;
 					expectedResponseSequenceNumber = 0;
@@ -201,11 +215,11 @@ public abstract class Device {
 				case 0:
 					break;
 				case 1:
-					throw new UnsupportedOperationException("Got invalid parameter for function " + functionID);
+					throw new UnsupportedOperationException("Got invalid parameter for function ID " + functionID);
 				case 2:
-					throw new UnsupportedOperationException("Function " + functionID + " is not supported");
+					throw new UnsupportedOperationException("Function ID " + functionID + " is not supported");
 				default:
-					throw new UnsupportedOperationException("Function " + functionID + " returned an unknown error");
+					throw new UnsupportedOperationException("Function ID " + functionID + " returned an unknown error");
 			}
 		} else {
 			ipcon.sendRequest(request);
