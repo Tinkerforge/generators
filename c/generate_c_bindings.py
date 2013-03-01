@@ -79,6 +79,10 @@ def format_doc(packet):
 
         text = text.replace(name_false, name_right)
 
+    if packet.get_type() == 'callback':
+        plist = c_common.make_parameter_list(packet)[2:].replace('*ret_', '')
+        text = 'Signature: \code void callback({0}) \endcode\n'.format(plist) + text
+
     text = text.replace(":word:`parameter`", "parameter")
     text = text.replace(":word:`parameters`", "parameters")
     text = text.replace('.. note::', '\\note')
