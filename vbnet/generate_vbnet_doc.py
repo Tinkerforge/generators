@@ -333,6 +333,35 @@ Alle folgend aufgelisteten Funktionen und Prozeduren sind Thread-sicher.
 """
     }
 
+    const_str = {
+    'en' : """
+Constants
+^^^^^^^^^
+
+.. vbnet:attribute:: Const {1}{0}.DEVICE_IDENTIFIER
+
+ This constant is used to identify a {0} {1}.
+
+ The :vbnet:func:`GetIdentity() <{1}{0}.GetIdentity>` function and the
+ :vbnet:func:`EnumerateCallback <IPConnection.EnumerateCallback>`
+ callback of the IP Connection have a ``deviceIdentifier`` parameter to specify
+ the Brick's or Bricklet's type.
+""",
+    'de' : """
+Konstanten
+^^^^^^^^^^
+
+.. vbnet:attribute:: Const {1}{0}.DEVICE_IDENTIFIER
+
+ Diese Konstante wird verwendet um {2} {0} {1} zu identifizieren.
+
+ Die :vbnet:func:`GetIdentity() <{1}{0}.GetIdentity>` Funktion und der
+ :vbnet:func:`EnumerateCallback <IPConnection.EnumerateCallback>`
+ Callback der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
+ des Bricks oder Bricklets anzugeben.
+"""
+    }
+
     cre = common.select_lang(create_str).format(device.get_underscore_name(),
                                                 device.get_camel_case_name(),
                                                 device.get_category().lower(),
@@ -355,6 +384,13 @@ Alle folgend aufgelisteten Funktionen und Prozeduren sind Thread-sicher.
                                                     device.get_category(),
                                                     device.get_camel_case_name(),
                                                     device.get_headless_camel_case_name())
+
+    article = 'ein'
+    if device.get_category() == 'Brick':
+        article = 'einen'
+    api_str += common.select_lang(const_str).format(device.get_camel_case_name(),
+                                                    device.get_category(),
+                                                    article)
 
     ref = '.. _{0}_{1}_vbnet_api:\n'.format(device.get_underscore_name(),
                                              device.get_category().lower())

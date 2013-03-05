@@ -304,6 +304,35 @@ zurück.
 """
     }
 
+    const_str = {
+    'en' : """
+Constants
+^^^^^^^^^
+
+.. php:member:: int {1}{0}::DEVICE_IDENTIFIER
+
+ This constant is used to identify a {3} {4}.
+
+ The :php:func:`getIdentity() <{4}{3}::getIdentity>` function and the
+ :php:member:`CALLBACK_ENUMERATE <IPConnection::CALLBACK_ENUMERATE>`
+ callback of the IP Connection have a ``deviceIdentifier`` parameter to specify
+ the Brick's or Bricklet's type.
+""",
+    'de' : """
+Konstanten
+^^^^^^^^^^
+
+.. php:member:: int {1}{0}::DEVICE_IDENTIFIER
+
+ Diese Konstante wird verwendet um {2} {3} {4} zu identifizieren.
+
+ Die :php:func:`getIdentity() <{4}{3}::getIdentity>` Funktion und der
+ :php:func:`CALLBACK_ENUMERATE <IPConnection::CALLBACK_ENUMERATE>`
+ Callback der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
+ des Bricks oder Bricklets anzugeben.
+"""
+    }
+
     cre = common.select_lang(create_str).format(device.get_underscore_name(),
                                                 device.get_camel_case_name(),
                                                 device.get_category().lower(),
@@ -328,6 +357,15 @@ zurück.
                                                     device.get_category().lower(),
                                                     device.get_category(),
                                                     device.get_camel_case_name())
+
+    article = 'ein'
+    if device.get_category() == 'Brick':
+        article = 'einen'
+    api_str += common.select_lang(const_str).format(device.get_camel_case_name(),
+                                                    device.get_category(),
+                                                    article,
+                                                    device.get_camel_case_name(),
+                                                    device.get_category())
 
     ref = '.. _{0}_{1}_php_api:\n'.format(device.get_underscore_name(),
                                           device.get_category().lower())

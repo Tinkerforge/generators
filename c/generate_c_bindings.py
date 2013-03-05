@@ -178,15 +178,19 @@ def make_device_identifier_define():
 /**
  * \ingroup {3}{2}
  *
- * The device identifier is used to identify a device in the enumerate callback
- * of the IPConnection.
+ * This constant is used to identify a {2} {3}.
+ *
+ * The {{@link {4}_get_identity}} function and the
+ * {{@link IPCON_CALLBACK_ENUMERATE}} callback of the IP Connection have a
+ * \c device_identifier parameter to specify the Brick's or Bricklet's type.
  */
 #define {0}_DEVICE_IDENTIFIER {1}
 """
     return define_temp.format(device.get_upper_case_name(),
                               device.get_device_identifier(),
                               device.get_camel_case_name(),
-                              device.get_category())
+                              device.get_category(),
+                              device.get_underscore_name())
 
 def make_structs():
     structs = """

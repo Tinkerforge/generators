@@ -337,6 +337,33 @@ Alle folgend aufgelisteten Funktionen sind Thread-sicher.
 """
     }
 
+    const_str = {
+    'en' : """
+Constants
+^^^^^^^^^
+
+.. c:var:: {0}_DEVICE_IDENTIFIER
+
+ This constant is used to identify a {3} {4}.
+
+ The :c:func:`{1}_get_identity` function and the :c:data:`IPCON_CALLBACK_ENUMERATE`
+ callback of the IP Connection have a ``device_identifier`` parameter to specify
+ the Brick's or Bricklet's type.
+""",
+    'de' : """
+Konstanten
+^^^^^^^^^^
+
+.. c:var:: {0}_DEVICE_IDENTIFIER
+
+ Diese Konstante wird verwendet um {2} {3} {4} zu identifizieren.
+
+ Die :c:func:`{1}_get_identity` Funktion und der :c:data:`IPCON_CALLBACK_ENUMERATE`
+ Callback der IP Connection haben ein ``device_identifier`` Parameter um den Typ
+ des Bricks oder Bricklets anzugeben.
+"""
+    }
+
     cre = common.select_lang(create_str).format(device.get_underscore_name(),
                                                 device.get_camel_case_name(),
                                                 device.get_category().lower())
@@ -361,6 +388,15 @@ Alle folgend aufgelisteten Funktionen sind Thread-sicher.
                                                     device.get_upper_case_name(),
                                                     c,
                                                     device.get_category().lower())
+
+    article = 'ein'
+    if device.get_category() == 'Brick':
+        article = 'einen'
+    api_str += common.select_lang(const_str).format(device.get_upper_case_name(),
+                                                    device.get_underscore_name(),
+                                                    article,
+                                                    device.get_camel_case_name(),
+                                                    device.get_category())
 
     ref = '.. _{0}_{1}_c_api:\n'.format(device.get_underscore_name(),
                                         device.get_category().lower())
