@@ -51,7 +51,7 @@ com['packets'].append({
 'en':
 """
 Returns the relative altitude of the air pressure sensor. The value is given in
-cm and is caluclated based on the difference between the current air pressure
+cm and is calculated based on the difference between the current air pressure
 and the reference air pressure that can be set with :func:`SetReferenceAirPressure`.
 
 If you want to get the altitude periodically, it is recommended to use the
