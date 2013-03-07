@@ -79,7 +79,7 @@ namespace Tinkerforge
 		public event EnumerateEventHandler EnumerateCallback;
 		public delegate void EnumerateEventHandler(IPConnection sender, string uid, string connectedUid,
 		                                           char position, short[] hardwareVersion, short[] firmwareVersion,
-		                                           int deviceIdentifier, short enumerationType);
+		                                           DeviceIdentifier deviceIdentifier, short enumerationType);
 		public event ConnectedEventHandler Connected;
 		public delegate void ConnectedEventHandler(IPConnection sender, short connectReason);
 		public event DisconnectedEventHandler Disconnected;
@@ -602,7 +602,7 @@ namespace Tinkerforge
 								firmwareVersion[0] = LEConverter.ByteFrom(28, cqo.data);
 								firmwareVersion[1] = LEConverter.ByteFrom(29, cqo.data);
 								firmwareVersion[2] = LEConverter.ByteFrom(30, cqo.data);
-								int deviceIdentifier = LEConverter.ShortFrom(31, cqo.data);
+								DeviceIdentifier deviceIdentifier = (DeviceIdentifier)LEConverter.ShortFrom(31, cqo.data);
 								short enumerationType = LEConverter.ByteFrom(33, cqo.data);
 
 								enumHandler(this, uid_str, connectedUid_str, position, hardwareVersion, firmwareVersion, deviceIdentifier, enumerationType);
@@ -941,6 +941,7 @@ namespace Tinkerforge
 			}
 		}
 
+        //FIXME: can't use DeviceIdentifier enum here because of generators
 		public abstract void GetIdentity(out string uid, out string connectedUid, out char position,
 		                                 out byte[] hardwareVersion, out byte[] firmwareVersion,
 		                                 out int deviceIdentifier);
