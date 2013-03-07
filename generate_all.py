@@ -23,6 +23,9 @@ for binding in bindings:
     module = __import__('generate_{0}_bindings'.format(binding))
     print("\nGenerating bindings for {0}:".format(binding))
     common.generate(path_binding, 'en', module.make_files, common.prepare_bindings, False)
+    if("generate_additional_files" in dir(module)):
+        print(" * Additional Files:")
+        module.generate_additional_files(path_binding)
 
 # doc
 for binding in bindings:

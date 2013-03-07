@@ -34,6 +34,7 @@ import common
 import csharp_common
 
 device = None
+enum_devices = []
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
@@ -397,6 +398,22 @@ def make_methods():
 
     return methods
 
+def make_enum_content():
+    enum_content = """
+public enum DeviceIdentifier
+{{
+{0}
+}}
+"""
+    enum_string = ''
+    for device in enum_devices:
+        enum_string += '\t{0} = {1},\n'.format(device[0], device[1])
+        
+    """quick and dirty: strip away last comma and line-breaks"""
+    enum_string = enum_string[:-2]
+    
+    return enum_content.format(enum_string)
+    
 def get_data_size(packet):
     size = 0
     for element in packet.get_elements('in'):
@@ -405,8 +422,10 @@ def get_data_size(packet):
 
 def make_files(com_new, directory):
     global device
+    global enum_devices
     device = common.Device(com_new)
     file_name = '{0}{1}'.format(device.get_category(), device.get_camel_case_name())
+    enum_devices += [(file_name, device.get_device_identifier())]
     version = common.get_changelog_version(directory)
     directory += '/bindings'
 
@@ -421,5 +440,16 @@ def make_files(com_new, directory):
     csharp.write(make_methods())
     csharp.write(make_callbacks())
 
+def generate_additional_files(directory):
+    directory += '/bindings'
+    generate_enum_file(directory)
+
+def generate_enum_file(directory):
+    print("  * DeviceIdentifier.cs")
+    enum_file = file('{0}/DeviceIdentifier.cs'.format(directory), "w")
+    enum_file.write(make_enum_content())
+    enum_file.flush()
+    
 if __name__ == "__main__":
     common.generate(os.getcwd(), 'en', make_files, common.prepare_bindings, False)
+    generate_additional_files(os.getcwd())
