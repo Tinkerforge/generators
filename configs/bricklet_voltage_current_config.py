@@ -241,7 +241,7 @@ divisor if a very precise reading is needed.
 
 For example, if you are expecting a measurement of 1000mA and you
 are measuring 1023mA, you can calibrate the Voltage/Current Bricklet 
-by setting the multiplier to 1000 and the divisior to 1023.
+by setting the multiplier to 1000 and the divisor to 1023.
 """,
 'de':
 """

@@ -871,9 +871,9 @@ possible to set the WEP key index (1-4). If you don't know your key index,
 it is likely 1.
 
 If you choose WPA Enterprise as encryption, you have to set eap options and
-the length of the certificates (for other encryption types these paramters
+the length of the certificates (for other encryption types these parameters
 are ignored). The certificate length are given in byte and the certificates
-themself can be set with  :func:`SetWifiCertificate`. Eap options consist of 
+themselves can be set with :func:`SetWifiCertificate`. Eap options consist of
 the outer authentication (bits 1-2), inner authentication (bit 3) and 
 certificate type (bits 4-5):
 

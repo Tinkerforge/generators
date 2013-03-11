@@ -251,6 +251,35 @@ Alle folgend aufgelisteten Funktionen und Prozeduren sind Thread-sicher.
 """
     }
 
+    const_str = {
+    'en' : """
+Constants
+^^^^^^^^^
+
+.. delphi:function:: const {1}_{0}_DEVICE_IDENTIFIER
+
+ This constant is used to identify a {3} {4}.
+
+ The :delphi:func:`GetIdentity <T{4}{3}.GetIdentity>` function and the
+ :delphi:func:`OnEnumerate <TIPConnection.OnEnumerate>`
+ callback of the IP Connection have a ``deviceIdentifier`` parameter to specify
+ the Brick's or Bricklet's type.
+""",
+    'de' : """
+Konstanten
+^^^^^^^^^^
+
+.. delphi:function:: const {1}_{0}_DEVICE_IDENTIFIER
+
+ Diese Konstante wird verwendet um {2} {3} {4} zu identifizieren.
+
+ Die :delphi:func:`GetIdentity <T{4}{3}.GetIdentity>` Funktion und der
+ :delphi:func:`OnEnumerate <TIPConnection.OnEnumerate>`
+ Callback der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
+ des Bricks oder Bricklets anzugeben.
+"""
+    }
+
     cre = common.select_lang(create_str).format(device.get_underscore_name(),
                                                 device.get_camel_case_name(),
                                                 device.get_category().lower(),
@@ -273,6 +302,15 @@ Alle folgend aufgelisteten Funktionen und Prozeduren sind Thread-sicher.
                                                     device.get_category(),
                                                     device.get_camel_case_name(),
                                                     device.get_headless_camel_case_name())
+
+    article = 'ein'
+    if device.get_category() == 'Brick':
+        article = 'einen'
+    api_str += common.select_lang(const_str).format(device.get_upper_case_name(),
+                                                    device.get_category().upper(),
+                                                    article,
+                                                    device.get_camel_case_name(),
+                                                    device.get_category())
 
     ref = '.. _{0}_{1}_delphi_api:\n'.format(device.get_underscore_name(),
                                              device.get_category().lower())
