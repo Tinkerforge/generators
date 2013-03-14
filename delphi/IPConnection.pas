@@ -13,7 +13,7 @@ interface
 
 uses
   {$ifdef FPC}
-   {$ifdef UNIX}CThreads, Errors, NetDB, BaseUnix, {$else}WinSock,{$endif}
+   {$ifdef UNIX}CThreads, Errors, CNetDB, BaseUnix, {$else}WinSock,{$endif}
   {$else}
    {$ifdef MSWINDOWS}Windows, WinSock,{$endif}
   {$endif}
@@ -441,11 +441,7 @@ var
     data: WSAData;
 {$endif}
     nodelay: longint;
-{$ifdef MSWINDOWS}
     entry: PHostEnt;
-{$else}
-    entry: THostEntry;
-{$endif}
 {$ifdef FPC}
     address: TInetSockAddr;
 {$else}
@@ -484,7 +480,6 @@ begin
 {$endif}
     raise Exception.Create('Could not set TCP_NODELAY socket option: ' + GetLastSocketError);
   end;
-{$ifdef MSWINDOWS}
   entry := gethostbyname(PAnsiChar(AnsiString(host)));
   if (entry = nil) then begin
     closesocket(socket);
@@ -492,15 +487,6 @@ begin
     raise Exception.Create('Could not resolve host: ' + host);
   end;
   resolved.s_addr := longint(pointer(entry^.h_addr_list^)^);
-{$else}
-  entry.Name := '';
-  if (not ResolveHostByName(host, entry)) then begin
-    closesocket(socket);
-    socket := INVALID_SOCKET;
-    raise Exception.Create('Could not resolve host: ' + host);
-  end;
-  resolved := entry.Addr;
-{$endif}
   address.sin_family := AF_INET;
   address.sin_port := htons(port);
   address.sin_addr := resolved;
