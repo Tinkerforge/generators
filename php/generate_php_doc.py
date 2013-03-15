@@ -394,4 +394,4 @@ def make_files(com_new, directory):
 if __name__ == "__main__":
     for lang in ['en', 'de']:
         print("=== Generating %s ===" % lang)
-        common.generate(os.getcwd(), lang, make_files, common.prepare_doc, True)
+        common.generate(os.getcwd(), lang, make_files, common.prepare_doc, None, True)

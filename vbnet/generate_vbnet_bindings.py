@@ -31,4 +31,4 @@ import common
 from csharp.generate_csharp_bindings import make_files
 
 if __name__ == "__main__":
-    common.generate(os.getcwd(), 'en', make_files, common.prepare_bindings, False)
+    common.generate(os.getcwd(), 'en', make_files, common.prepare_bindings, None, False)
