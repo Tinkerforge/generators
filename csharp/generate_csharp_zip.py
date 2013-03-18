@@ -62,7 +62,7 @@ def generate(path):
     os.chdir('/tmp/generator')
 
     # Copy examples
-    common.generate(path, 'en', make_files, None, False)
+    common.generate(path, 'en', make_files, None, None, False)
     shutil.copy(common.path_binding.replace('/generators/csharp', '/doc/en/source/Software/Example.cs'),
                 '/tmp/generator/dll/examples/ExampleEnumerate.cs')
 

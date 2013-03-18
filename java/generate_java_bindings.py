@@ -555,4 +555,4 @@ def make_files(com_new, directory):
     java.write(make_add_listener())
 
 if __name__ == "__main__":
-    common.generate(os.getcwd(), 'en', make_files, common.prepare_bindings, False)
+    common.generate(os.getcwd(), 'en', make_files, common.prepare_bindings, None, False)

@@ -408,12 +408,12 @@ def prepare_doc(directory):
     os.makedirs(directory)
 
 def prepare_bindings(directory):
-    directory += '/bindings'
+    directory = os.path.join(directory, 'bindings')
     if os.path.exists(directory):
         shutil.rmtree(directory)
     os.makedirs(directory)
 
-def generate(path, language, make_files, prepare, is_doc_):
+def generate(path, language, make_files, prepare, finish, is_doc_):
     global lang
     global path_binding
     global is_doc
@@ -421,9 +421,7 @@ def generate(path, language, make_files, prepare, is_doc_):
     path_binding = path
     is_doc = is_doc_
 
-    path_list = path.split('/')
-    path_list[-1] = 'configs'
-    path_config = '/'.join(path_list)
+    path_config = os.path.join(os.path.split(path)[0], 'configs')
     if path_config not in sys.path:
         sys.path.append(path_config)
     configs = os.listdir(path_config)
@@ -469,6 +467,9 @@ def generate(path, language, make_files, prepare, is_doc_):
                 module.com['common_included'] = True
 
             make_files(module.com, path)
+
+    if finish is not None:
+        finish(path)
 
 class Packet:
     def __init__(self, device, packet):

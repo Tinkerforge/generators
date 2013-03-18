@@ -62,7 +62,7 @@ def generate(path):
     os.chdir('/tmp/generator')
 
     # Copy examples
-    common.generate(path, 'en', make_files, None, False)
+    common.generate(path, 'en', make_files, None, None, False)
     shutil.copy(common.path_binding.replace('/generators/python', '/doc/en/source/Software/example.py'),
                 '/tmp/generator/egg/examples/example_enumerate.py')
 
