@@ -128,6 +128,13 @@ Konfigurationsfunktionen für Callbacks
 """
 }
 
+breadcrumbs_str = {
+'en': """:breadcrumbs: <a href="../../index.html">Home</a> / <a href="../../index.html#{0}s">{1}s</a> / {2}
+""",
+'de': """:breadcrumbs: <a href="../../index.html">Startseite</a> / <a href="../../index.html#{0}s">{1}s</a> / {2}
+"""
+}
+
 lang = 'en'
 path_binding = ''
 is_doc = False
@@ -179,14 +186,17 @@ def select_lang(d):
         return "Missing '{0}' documentation".format(lang)
 
 def make_rst_header(device, ref_name, title):
+    category = device.get_category()
     date = datetime.datetime.now().strftime("%Y-%m-%d")
-    ref = '.. _{0}_{1}_{2}:\n'.format(device.get_underscore_name(), device.get_category().lower(), ref_name)
-    title = '{0} - {1} {2}'.format(title, device.get_display_name(), device.get_category())
-    title_under = '='*len(title)
-    return '{0}\n{1}\n{2}\n{3}\n'.format(gen_text_rst.format(date),
-                                         ref,
-                                         title,
-                                         title_under)
+    full_title = '{0} - {1} {2}'.format(title, device.get_display_name(), category)
+    full_title_underline = '='*len(full_title)
+    breadcrumbs = select_lang(breadcrumbs_str).format(category.lower(), category, full_title)
+    ref = '.. _{0}_{1}_{2}:\n'.format(device.get_underscore_name(),category.lower(), ref_name)
+    return '{0}\n{1}\n{2}\n{3}\n{4}\n'.format(gen_text_rst.format(date),
+                                              breadcrumbs,
+                                              ref,
+                                              full_title,
+                                              full_title_underline)
 
 def make_rst_summary(device, title):
     su = {
