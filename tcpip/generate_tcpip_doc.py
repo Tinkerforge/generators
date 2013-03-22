@@ -242,8 +242,9 @@ Konstanten
         api_str += common.select_lang(common.bf_str).format(bf, '')
     if af:
         api_str += common.select_lang(common.af_str).format(af)
-    if c:
+    if ccf:
         api_str += common.select_lang(common.ccf_str).format(ccf, '')
+    if c:
         api_str += common.select_lang(c_str).format(c, device.get_underscore_name(),
                                                     device.get_category().lower())
 
