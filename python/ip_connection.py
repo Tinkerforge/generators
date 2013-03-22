@@ -365,7 +365,7 @@ class IPConnection:
         # the callbacks while blocking on the join call here
         callback.queue.put((IPConnection.QUEUE_META,
                             (IPConnection.CALLBACK_DISCONNECTED,
-                             IPConnection.DISCONNECT_REASON_REQUEST)))
+                             IPConnection.DISCONNECT_REASON_REQUEST, None)))
         callback.queue.put((IPConnection.QUEUE_EXIT, None))
 
         if current_thread() is not callback.thread:
@@ -554,7 +554,7 @@ class IPConnection:
 
         self.callback.queue.put((IPConnection.QUEUE_META,
                                 (IPConnection.CALLBACK_CONNECTED,
-                                 connect_reason)))
+                                 connect_reason, None)))
 
     def receive_loop(self):
         if sys.hexversion < 0x03000000:
@@ -570,7 +570,8 @@ class IPConnection:
                 self.receive_flag = False
                 self.callback.queue.put((IPConnection.QUEUE_META,
                                          (IPConnection.CALLBACK_DISCONNECTED,
-                                          IPConnection.DISCONNECT_REASON_ERROR)))
+                                          IPConnection.DISCONNECT_REASON_ERROR,
+                                          self.socket)))
                 break
 
             if len(data) == 0:
@@ -579,7 +580,8 @@ class IPConnection:
                     self.receive_flag = False
                     self.callback.queue.put((IPConnection.QUEUE_META,
                                              (IPConnection.CALLBACK_DISCONNECTED,
-                                              IPConnection.DISCONNECT_REASON_SHUTDOWN)))
+                                              IPConnection.DISCONNECT_REASON_SHUTDOWN,
+                                              self.socket)))
                 break
 
             pending_data += data
@@ -600,19 +602,21 @@ class IPConnection:
 
                 self.handle_response(packet)
 
-    def dispatch_meta(self, function_id, parameter):
+    def dispatch_meta(self, function_id, parameter, socket):
         if function_id == IPConnection.CALLBACK_CONNECTED:
             if IPConnection.CALLBACK_CONNECTED in self.registered_callbacks and \
                self.registered_callbacks[IPConnection.CALLBACK_CONNECTED] is not None:
                 self.registered_callbacks[IPConnection.CALLBACK_CONNECTED](parameter)
         elif function_id == IPConnection.CALLBACK_DISCONNECTED:
-            # need to do this here, the receive_loop is not allowed to
-            # hold the socket_lock because this could cause a deadlock
-            # with a concurrent call to the (dis-)connect function
-            with self.socket_lock:
-                if self.socket is not None:
-                    self.socket.close()
-                    self.socket = None
+            if parameter != IPConnection.DISCONNECT_REASON_REQUEST and socket is not None:
+                # need to do this here, the receive_loop is not allowed to
+                # hold the socket_lock because this could cause a deadlock
+                # with a concurrent call to the (dis-)connect function
+                with self.socket_lock:
+                    socket.close()
+
+                    if self.socket == socket:
+                        self.socket = None
 
             # FIXME: wait a moment here, otherwise the next connect
             # attempt will succeed, even if there is no open server
