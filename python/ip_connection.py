@@ -261,6 +261,13 @@ class IPConnection:
     QUEUE_META = 1
     QUEUE_PACKET = 2
 
+    class CallbackContext:
+        def __init__(self):
+            self.queue = None
+            self.thread = None
+            self.flag = False
+            self.lock = None
+
     def __init__(self):
         """
         Creates an IP Connection object that can be used to enumerate the available
@@ -282,8 +289,7 @@ class IPConnection:
         self.socket_lock = Lock()
         self.receive_flag = False
         self.receive_thread = None
-        self.callback_queue = None
-        self.callback_thread = None
+        self.callback = None
         self.waiter = Semaphore()
 
     def connect(self, host, port):
@@ -325,6 +331,15 @@ class IPConnection:
                 if self.socket is None:
                     raise Error(Error.NOT_CONNECTED, 'Not connected')
 
+                # stop dispatching packet callbacks before ending the receive
+                # thread to avoid timeout exceptions due to callback functions
+                # trying to call getters
+                if current_thread() is not self.callback.thread:
+                    with self.callback.lock:
+                        self.callback.flag = False
+                else:
+                    self.callback.flag = False
+
                 # end receive thread
                 self.receive_flag = False
 
@@ -343,21 +358,18 @@ class IPConnection:
                 self.socket = None
 
             # end callback thread
-            callback_queue = self.callback_queue
-            callback_thread = self.callback_thread
-
-            self.callback_queue = None
-            self.callback_thread = None
+            callback = self.callback
+            self.callback = None
 
         # do this outside of socket_lock to allow calling (dis-)connect from
         # the callbacks while blocking on the join call here
-        callback_queue.put((IPConnection.QUEUE_META,
+        callback.queue.put((IPConnection.QUEUE_META,
                             (IPConnection.CALLBACK_DISCONNECTED,
                              IPConnection.DISCONNECT_REASON_REQUEST)))
-        callback_queue.put((IPConnection.QUEUE_EXIT, None))
+        callback.queue.put((IPConnection.QUEUE_EXIT, None))
 
-        if current_thread() is not callback_thread:
-            callback_thread.join()
+        if current_thread() is not callback.thread:
+            callback.thread.join()
 
     def get_connection_state(self):
         """
@@ -463,17 +475,19 @@ class IPConnection:
     def connect_unlocked(self, is_auto_reconnect):
         # NOTE: assumes that socket_lock is locked
 
-        if self.callback_thread is None:
+        if self.callback is None:
             try:
-                self.callback_queue = Queue()
-                self.callback_thread = Thread(name='Callback-Processor',
+                self.callback = IPConnection.CallbackContext()
+                self.callback.queue = Queue()
+                self.callback.flag = True
+                self.callback.lock = Lock()
+                self.callback.thread = Thread(name='Callback-Processor',
                                               target=self.callback_loop,
-                                              args=(self.callback_queue, ))
-                self.callback_thread.daemon = True
-                self.callback_thread.start()
+                                              args=(self.callback, ))
+                self.callback.thread.daemon = True
+                self.callback.thread.start()
             except:
-                self.callback_queue = None
-                self.callback_thread = None
+                self.callback = None
                 raise
 
         try:
@@ -492,6 +506,15 @@ class IPConnection:
             self.receive_thread.start()
         except:
             def cleanup():
+                # stop dispatching packet callbacks before ending the receive
+                # thread to avoid timeout exceptions due to callback functions
+                # trying to call getters
+                if current_thread() is not self.callback.thread:
+                    with self.callback.lock:
+                        self.callback.flag = False
+                else:
+                    self.callback.flag = False
+
                 # end receive thread
                 self.receive_flag = False
 
@@ -511,13 +534,12 @@ class IPConnection:
 
                 # end callback thread
                 if not is_auto_reconnect:
-                    self.callback_queue.put((IPConnection.QUEUE_EXIT, None))
+                    self.callback.queue.put((IPConnection.QUEUE_EXIT, None))
 
                     if current_thread() is not self.callback_thread:
-                        self.callback_thread.join()
+                        self.callback.thread.join()
 
-                    self.callback_queue = None
-                    self.callback_thread = None
+                    self.callback = None
 
             cleanup()
             raise
@@ -530,7 +552,7 @@ class IPConnection:
         else:
             connect_reason = IPConnection.CONNECT_REASON_REQUEST
 
-        self.callback_queue.put((IPConnection.QUEUE_META,
+        self.callback.queue.put((IPConnection.QUEUE_META,
                                 (IPConnection.CALLBACK_CONNECTED,
                                  connect_reason)))
 
@@ -546,19 +568,19 @@ class IPConnection:
             except socket.error:
                 self.auto_reconnect_allowed = True
                 self.receive_flag = False
-                self.callback_queue.put((IPConnection.QUEUE_META,
+                self.callback.queue.put((IPConnection.QUEUE_META,
                                          (IPConnection.CALLBACK_DISCONNECTED,
                                           IPConnection.DISCONNECT_REASON_ERROR)))
-                return
+                break
 
             if len(data) == 0:
                 if self.receive_flag:
                     self.auto_reconnect_allowed = True
                     self.receive_flag = False
-                    self.callback_queue.put((IPConnection.QUEUE_META,
+                    self.callback.queue.put((IPConnection.QUEUE_META,
                                              (IPConnection.CALLBACK_DISCONNECTED,
                                               IPConnection.DISCONNECT_REASON_SHUTDOWN)))
-                return
+                break
 
             pending_data += data
 
@@ -657,20 +679,20 @@ class IPConnection:
             else:
                 cb(*self.deserialize_data(payload, form))
 
-    def callback_loop(self, callback_queue):
+    def callback_loop(self, callback):
         while True:
-            kind, data = callback_queue.get()
+            kind, data = callback.queue.get()
 
-            if kind == IPConnection.QUEUE_EXIT:
-                return
-            elif kind == IPConnection.QUEUE_META:
-                self.dispatch_meta(*data)
-            elif kind == IPConnection.QUEUE_PACKET:
-                if not self.receive_flag:
-                    # don't dispatch callbacks when the receive thread isn't running
-                    continue
+            with callback.lock:
+                if kind == IPConnection.QUEUE_EXIT:
+                    break
+                elif kind == IPConnection.QUEUE_META:
+                    self.dispatch_meta(*data)
+                elif kind == IPConnection.QUEUE_PACKET:
+                    if not callback.flag:
+                        continue
 
-                self.dispatch_packet(data)
+                    self.dispatch_packet(data)
 
     def deserialize_data(self, data, form):
         ret = []
@@ -805,7 +827,7 @@ class IPConnection:
 
         if sequence_number == 0 and function_id == IPConnection.CALLBACK_ENUMERATE:
             if IPConnection.CALLBACK_ENUMERATE in self.registered_callbacks:
-                self.callback_queue.put((IPConnection.QUEUE_PACKET, packet))
+                self.callback.queue.put((IPConnection.QUEUE_PACKET, packet))
             return
 
         uid = get_uid_from_data(packet)
@@ -818,7 +840,7 @@ class IPConnection:
 
         if sequence_number == 0:
             if function_id in device.registered_callbacks:
-                self.callback_queue.put((IPConnection.QUEUE_PACKET, packet))
+                self.callback.queue.put((IPConnection.QUEUE_PACKET, packet))
             return
 
         if device.expected_response_function_id == function_id and \
