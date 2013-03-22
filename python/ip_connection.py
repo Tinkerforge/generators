@@ -331,31 +331,7 @@ class IPConnection:
                 if self.socket is None:
                     raise Error(Error.NOT_CONNECTED, 'Not connected')
 
-                # stop dispatching packet callbacks before ending the receive
-                # thread to avoid timeout exceptions due to callback functions
-                # trying to call getters
-                if current_thread() is not self.callback.thread:
-                    with self.callback.lock:
-                        self.callback.flag = False
-                else:
-                    self.callback.flag = False
-
-                # end receive thread
-                self.receive_flag = False
-
-                try:
-                    self.socket.shutdown(socket.SHUT_RDWR)
-                except socket.error:
-                    pass
-
-                if self.receive_thread is not None:
-                    self.receive_thread.join() # FIXME: use a timeout?
-
-                self.receive_thread = None
-
-                # close socket
-                self.socket.close()
-                self.socket = None
+                self.disconnect_unlocked()
 
             # end callback thread
             callback = self.callback
@@ -479,7 +455,6 @@ class IPConnection:
             try:
                 self.callback = IPConnection.CallbackContext()
                 self.callback.queue = Queue()
-                self.callback.flag = True
                 self.callback.lock = Lock()
                 self.callback.thread = Thread(name='Callback-Processor',
                                               target=self.callback_loop,
@@ -498,6 +473,8 @@ class IPConnection:
             self.socket = None
             raise
 
+        self.callback.flag = True
+
         try:
             self.receive_flag = True
             self.receive_thread = Thread(name='Brickd-Receiver',
@@ -506,31 +483,7 @@ class IPConnection:
             self.receive_thread.start()
         except:
             def cleanup():
-                # stop dispatching packet callbacks before ending the receive
-                # thread to avoid timeout exceptions due to callback functions
-                # trying to call getters
-                if current_thread() is not self.callback.thread:
-                    with self.callback.lock:
-                        self.callback.flag = False
-                else:
-                    self.callback.flag = False
-
-                # end receive thread
-                self.receive_flag = False
-
-                try:
-                    self.socket.shutdown(socket.SHUT_RDWR)
-                except socket.error:
-                    pass
-
-                if self.receive_thread is not None:
-                    self.receive_thread.join() # FIXME: use a timeout?
-
-                self.receive_thread = None
-
-                # close socket
-                self.socket.close()
-                self.socket = None
+                self.disconnect_unlocked()
 
                 # end callback thread
                 if not is_auto_reconnect:
@@ -556,6 +509,35 @@ class IPConnection:
                                 (IPConnection.CALLBACK_CONNECTED,
                                  connect_reason, None)))
 
+    def disconnect_unlocked(self):
+        # NOTE: assumes that socket_lock is locked
+
+        # stop dispatching packet callbacks before ending the receive
+        # thread to avoid timeout exceptions due to callback functions
+        # trying to call getters
+        if current_thread() is not self.callback.thread:
+            with self.callback.lock:
+                self.callback.flag = False
+        else:
+            self.callback.flag = False
+
+        # end receive thread
+        self.receive_flag = False
+
+        try:
+            self.socket.shutdown(socket.SHUT_RDWR)
+        except socket.error:
+            pass
+
+        if self.receive_thread is not None:
+            self.receive_thread.join() # FIXME: use a timeout?
+
+        self.receive_thread = None
+
+        # close socket
+        self.socket.close()
+        self.socket = None
+
     def receive_loop(self):
         if sys.hexversion < 0x03000000:
             pending_data = ''
@@ -566,22 +548,13 @@ class IPConnection:
             try:
                 data = self.socket.recv(8192)
             except socket.error:
-                self.auto_reconnect_allowed = True
-                self.receive_flag = False
-                self.callback.queue.put((IPConnection.QUEUE_META,
-                                         (IPConnection.CALLBACK_DISCONNECTED,
-                                          IPConnection.DISCONNECT_REASON_ERROR,
-                                          self.socket)))
+                if self.receive_flag:
+                    self.handle_disconnect_by_peer(IPConnection.DISCONNECT_REASON_ERROR, False)
                 break
 
             if len(data) == 0:
                 if self.receive_flag:
-                    self.auto_reconnect_allowed = True
-                    self.receive_flag = False
-                    self.callback.queue.put((IPConnection.QUEUE_META,
-                                             (IPConnection.CALLBACK_DISCONNECTED,
-                                              IPConnection.DISCONNECT_REASON_SHUTDOWN,
-                                              self.socket)))
+                    self.handle_disconnect_by_peer(IPConnection.DISCONNECT_REASON_SHUTDOWN, False)
                 break
 
             pending_data += data
@@ -737,7 +710,8 @@ class IPConnection:
             try:
                 self.socket.send(packet)
             except socket.error:
-                pass
+                self.handle_disconnect_by_peer(IPConnection.DISCONNECT_REASON_ERROR, True)
+                raise Error(Error.NOT_CONNECTED, 'Not connected')
 
     def send_request(self, device, function_id, data, form, form_ret):
         length = 8 + struct.calcsize('<' + form)
@@ -854,6 +828,18 @@ class IPConnection:
 
         # Response seems to be OK, but can't be handled, most likely
         # a callback without registered function
+
+    def handle_disconnect_by_peer(self, disconnect_reason, disconnect_immediately):
+        # NOTE: assumes that socket_lock is locked if disconnect_immediately is true
+
+        self.auto_reconnect_allowed = True
+
+        if disconnect_immediately:
+            self.disconnect_unlocked()
+
+        self.callback.queue.put((IPConnection.QUEUE_META,
+                                 (IPConnection.CALLBACK_DISCONNECTED,
+                                  disconnect_reason, self.socket)))
 
     def create_packet_header(self, device, length, function_id):
         uid = IPConnection.BROADCAST_UID
