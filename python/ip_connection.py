@@ -551,12 +551,12 @@ class IPConnection:
                 data = self.socket.recv(8192)
             except socket.error:
                 if self.receive_flag:
-                    self.handle_disconnect_by_peer(IPConnection.DISCONNECT_REASON_ERROR, False, socket_id)
+                    self.handle_disconnect_by_peer(IPConnection.DISCONNECT_REASON_ERROR, socket_id, False)
                 break
 
             if len(data) == 0:
                 if self.receive_flag:
-                    self.handle_disconnect_by_peer(IPConnection.DISCONNECT_REASON_SHUTDOWN, False, socket_id)
+                    self.handle_disconnect_by_peer(IPConnection.DISCONNECT_REASON_SHUTDOWN, socket_id, False)
                 break
 
             pending_data += data
@@ -714,7 +714,7 @@ class IPConnection:
             try:
                 self.socket.send(packet)
             except socket.error:
-                self.handle_disconnect_by_peer(IPConnection.DISCONNECT_REASON_ERROR, True, None)
+                self.handle_disconnect_by_peer(IPConnection.DISCONNECT_REASON_ERROR, None, True)
                 raise Error(Error.NOT_CONNECTED, 'Not connected')
 
     def send_request(self, device, function_id, data, form, form_ret):
@@ -833,7 +833,7 @@ class IPConnection:
         # Response seems to be OK, but can't be handled, most likely
         # a callback without registered function
 
-    def handle_disconnect_by_peer(self, disconnect_reason, disconnect_immediately, socket_id):
+    def handle_disconnect_by_peer(self, disconnect_reason, socket_id, disconnect_immediately):
         # NOTE: assumes that socket_lock is locked if disconnect_immediately is true
 
         self.auto_reconnect_allowed = True
