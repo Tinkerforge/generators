@@ -136,6 +136,120 @@ class CallbackThread extends Thread {
 		this.setUncaughtExceptionHandler(new CallbackThreadRestarter(ipcon));
 	}
 
+	void dispatchMeta(IPConnection.CallbackQueueObject cqo) {
+		ByteBuffer bb = ByteBuffer.wrap(cqo.data, 0, 3);
+		bb.order(ByteOrder.LITTLE_ENDIAN);
+
+		byte id = bb.get();
+		short parameter = bb.getShort();
+
+		switch(id) {
+			case IPConnection.CALLBACK_CONNECTED:
+				for(IPConnection.ConnectedListener listener: ipcon.listenerConnected) {
+					listener.connected(parameter);
+				}
+
+				break;
+
+			case IPConnection.CALLBACK_DISCONNECTED:
+				if(parameter != IPConnection.DISCONNECT_REASON_REQUEST) {
+					synchronized(ipcon.socketMutex) {
+						ipcon.closeSocket();
+					}
+				}
+
+				try {
+					Thread.sleep(100);
+				} catch(InterruptedException e) {
+					e.printStackTrace();
+				}
+
+				for(IPConnection.DisconnectedListener listener: ipcon.listenerDisconnected) {
+					listener.disconnected(parameter);
+				}
+
+				if(parameter != IPConnection.DISCONNECT_REASON_REQUEST && ipcon.autoReconnect && ipcon.autoReconnectAllowed) {
+					ipcon.autoReconnectPending = true;
+					boolean retry = true;
+
+					while(retry) {
+						retry = false;
+
+						synchronized(ipcon.socketMutex) {
+							if(ipcon.autoReconnectAllowed && ipcon.socket == null) {
+								try {
+									ipcon.connectUnlocked(true);
+								} catch(Exception e) {
+									retry = true;
+								}
+							} else {
+								ipcon.autoReconnectPending = true;
+							}
+						}
+
+						if(retry) {
+							try {
+								Thread.sleep(100);
+							} catch(InterruptedException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+				}
+
+				break;
+		}
+	}
+
+	void dispatchPacket(IPConnection.CallbackQueueObject cqo) {
+		byte functionID = IPConnection.getFunctionIDFromData(cqo.data);
+
+		if(functionID == IPConnection.CALLBACK_ENUMERATE) {
+			if(!ipcon.listenerEnumerate.isEmpty()) {
+				int length = IPConnection.getLengthFromData(cqo.data);
+				ByteBuffer bb = ByteBuffer.wrap(cqo.data, 8, length - 8);
+				bb.order(ByteOrder.LITTLE_ENDIAN);
+				String uid_str = "";
+				for(int i = 0; i < 8; i++) {
+					char c = (char)bb.get();
+					if(c != '\0') {
+						uid_str += c;
+					}
+				}
+				String connectedUid_str = "";
+				for(int i = 0; i < 8; i++) {
+					char c = (char)bb.get();
+					if(c != '\0') {
+						connectedUid_str += c;
+					}
+				}
+				char position = (char)bb.get();
+				short[] hardwareVersion = new short[3];
+				hardwareVersion[0] = IPConnection.unsignedByte(bb.get());
+				hardwareVersion[1] = IPConnection.unsignedByte(bb.get());
+				hardwareVersion[2] = IPConnection.unsignedByte(bb.get());
+				short[] firmwareVersion = new short[3];
+				firmwareVersion[0] = IPConnection.unsignedByte(bb.get());
+				firmwareVersion[1] = IPConnection.unsignedByte(bb.get());
+				firmwareVersion[2] = IPConnection.unsignedByte(bb.get());
+				int deviceIdentifier = IPConnection.unsignedShort(bb.getShort());
+				short enumerationType = IPConnection.unsignedByte(bb.get());
+
+				for(IPConnection.EnumerateListener listener: ipcon.listenerEnumerate) {
+					listener.enumerate(uid_str, connectedUid_str, position,
+					                   hardwareVersion, firmwareVersion,
+					                   deviceIdentifier, enumerationType);
+				}
+			}
+		} else {
+			long uid = IPConnection.getUIDFromData(cqo.data);
+			Device device = ipcon.devices.get(uid);
+			if(device.callbacks[functionID] != null) {
+				device.callbacks[functionID].callback(cqo.data);
+			}
+		}
+	}
+
 	@Override
 	public void run() {
 		while(true) {
@@ -157,67 +271,7 @@ class CallbackThread extends Thread {
 				}
 
 				case IPConnection.QUEUE_META: {
-					ByteBuffer bb = ByteBuffer.wrap(cqo.data, 0, 3);
-					bb.order(ByteOrder.LITTLE_ENDIAN);
-
-					byte id = bb.get();
-					short parameter = bb.getShort();
-
-					switch(id) {
-						case IPConnection.CALLBACK_CONNECTED:
-							for(IPConnection.ConnectedListener listener: ipcon.listenerConnected) {
-								listener.connected(parameter);
-							}
-
-							break;
-
-						case IPConnection.CALLBACK_DISCONNECTED:
-							synchronized(ipcon.socketMutex) {
-								ipcon.closeSocket();
-							}
-
-							try {
-								Thread.sleep(100);
-							} catch(InterruptedException e) {
-								e.printStackTrace();
-							}
-
-							for(IPConnection.DisconnectedListener listener: ipcon.listenerDisconnected) {
-								listener.disconnected(parameter);
-							}
-
-							if(parameter != IPConnection.DISCONNECT_REASON_REQUEST && ipcon.autoReconnect && ipcon.autoReconnectAllowed) {
-								ipcon.autoReconnectPending = true;
-								boolean retry = true;
-
-								while(retry) {
-									retry = false;
-
-									synchronized(ipcon.socketMutex) {
-										if(ipcon.autoReconnectAllowed && ipcon.socket == null) {
-											try {
-												ipcon.connectUnlocked(true);
-											} catch(Exception e) {
-												retry = true;
-											}
-										} else {
-											ipcon.autoReconnectPending = true;
-										}
-									}
-
-									if(retry) {
-										try {
-											Thread.sleep(100);
-										} catch(InterruptedException e) {
-											e.printStackTrace();
-										}
-									}
-								}
-							}
-
-							break;
-					}
-
+					dispatchMeta(cqo);
 					break;
 				}
 
@@ -227,52 +281,7 @@ class CallbackThread extends Thread {
 						continue;
 					}
 
-					byte functionID = IPConnection.getFunctionIDFromData(cqo.data);
-					if(functionID == IPConnection.CALLBACK_ENUMERATE) {
-						if(!ipcon.listenerEnumerate.isEmpty()) {
-							int length = IPConnection.getLengthFromData(cqo.data);
-							ByteBuffer bb = ByteBuffer.wrap(cqo.data, 8, length - 8);
-							bb.order(ByteOrder.LITTLE_ENDIAN);
-							String uid_str = "";
-							for(int i = 0; i < 8; i++) {
-								char c = (char)bb.get();
-								if(c != '\0') {
-									uid_str += c;
-								}
-							}
-							String connectedUid_str = "";
-							for(int i = 0; i < 8; i++) {
-								char c = (char)bb.get();
-								if(c != '\0') {
-									connectedUid_str += c;
-								}
-							}
-							char position = (char)bb.get();
-							short[] hardwareVersion = new short[3];
-							hardwareVersion[0] = IPConnection.unsignedByte(bb.get());
-							hardwareVersion[1] = IPConnection.unsignedByte(bb.get());
-							hardwareVersion[2] = IPConnection.unsignedByte(bb.get());
-							short[] firmwareVersion = new short[3];
-							firmwareVersion[0] = IPConnection.unsignedByte(bb.get());
-							firmwareVersion[1] = IPConnection.unsignedByte(bb.get());
-							firmwareVersion[2] = IPConnection.unsignedByte(bb.get());
-							int deviceIdentifier = IPConnection.unsignedShort(bb.getShort());
-							short enumerationType = IPConnection.unsignedByte(bb.get());
-
-							for(IPConnection.EnumerateListener listener: ipcon.listenerEnumerate) {
-								listener.enumerate(uid_str, connectedUid_str, position,
-								                   hardwareVersion, firmwareVersion,
-								                   deviceIdentifier, enumerationType);
-							}
-						}
-					} else {
-						long uid = IPConnection.getUIDFromData(cqo.data);
-						Device device = ipcon.devices.get(uid);
-						if(device.callbacks[functionID] != null) {
-							device.callbacks[functionID].callback(cqo.data);
-						}
-					}
-
+					dispatchPacket(cqo);
 					break;
 				}
 			}
