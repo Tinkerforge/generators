@@ -641,7 +641,7 @@ enum {
 };
 
 typedef struct {
-	uint8_t id;
+	uint8_t function_id;
 	uint8_t parameter;
 	uint64_t socket_id;
 } Meta;
@@ -965,7 +965,7 @@ static void ipcon_dispatch_meta(IPConnection *ipcon, Meta *meta) {
 	void *user_data;
 	bool retry;
 
-	if (meta->id == IPCON_CALLBACK_CONNECTED) {
+	if (meta->function_id == IPCON_CALLBACK_CONNECTED) {
 		if (ipcon->registered_callbacks[IPCON_CALLBACK_CONNECTED] != NULL) {
 			connected_callback_function =
 			    (ConnectedCallbackFunction)ipcon->registered_callbacks[IPCON_CALLBACK_CONNECTED];
@@ -973,7 +973,7 @@ static void ipcon_dispatch_meta(IPConnection *ipcon, Meta *meta) {
 
 			connected_callback_function(meta->parameter, user_data);
 		}
-	} else if (meta->id == IPCON_CALLBACK_DISCONNECTED) {
+	} else if (meta->function_id == IPCON_CALLBACK_DISCONNECTED) {
 		// need to do this here, the receive loop is not allowed to
 		// hold the socket mutex because this could cause a deadlock
 		// with a concurrent call to the (dis-)connect function
@@ -1174,7 +1174,7 @@ static void ipcon_handle_disconnect_by_peer(IPConnection *ipcon,
 		ipcon_disconnect_unlocked(ipcon);
 	}
 
-	meta.id = IPCON_CALLBACK_DISCONNECTED;
+	meta.function_id = IPCON_CALLBACK_DISCONNECTED;
 	meta.parameter = disconnect_reason;
 	meta.socket_id = socket_id;
 
@@ -1352,7 +1352,7 @@ static int ipcon_connect_unlocked(IPConnection *ipcon, bool is_auto_reconnect) {
 		connect_reason = IPCON_CONNECT_REASON_REQUEST;
 	}
 
-	meta.id = IPCON_CALLBACK_CONNECTED;
+	meta.function_id = IPCON_CALLBACK_CONNECTED;
 	meta.parameter = connect_reason;
 	meta.socket_id = 0;
 
@@ -1536,7 +1536,7 @@ int ipcon_disconnect(IPConnection *ipcon) {
 
 	// do this outside of socket_mutex to allow calling (dis-)connect from
 	// the callbacks while blocking on the join call here
-	meta.id = IPCON_CALLBACK_DISCONNECTED;
+	meta.function_id = IPCON_CALLBACK_DISCONNECTED;
 	meta.parameter = IPCON_DISCONNECT_REASON_REQUEST;
 	meta.socket_id = 0;
 
