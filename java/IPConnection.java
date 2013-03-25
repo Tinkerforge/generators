@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
@@ -137,22 +137,16 @@ class CallbackThread extends Thread {
 	}
 
 	void dispatchMeta(IPConnection.CallbackQueueObject cqo) {
-		ByteBuffer bb = ByteBuffer.wrap(cqo.data, 0, 3);
-		bb.order(ByteOrder.LITTLE_ENDIAN);
-
-		byte id = bb.get();
-		short parameter = bb.getShort();
-
-		switch(id) {
+		switch(cqo.functionID) {
 			case IPConnection.CALLBACK_CONNECTED:
 				for(IPConnection.ConnectedListener listener: ipcon.listenerConnected) {
-					listener.connected(parameter);
+					listener.connected(cqo.parameter);
 				}
 
 				break;
 
 			case IPConnection.CALLBACK_DISCONNECTED:
-				if(parameter != IPConnection.DISCONNECT_REASON_REQUEST) {
+				if(cqo.parameter != IPConnection.DISCONNECT_REASON_REQUEST) {
 					synchronized(ipcon.socketMutex) {
 						ipcon.closeSocket();
 					}
@@ -165,10 +159,11 @@ class CallbackThread extends Thread {
 				}
 
 				for(IPConnection.DisconnectedListener listener: ipcon.listenerDisconnected) {
-					listener.disconnected(parameter);
+					listener.disconnected(cqo.parameter);
 				}
 
-				if(parameter != IPConnection.DISCONNECT_REASON_REQUEST && ipcon.autoReconnect && ipcon.autoReconnectAllowed) {
+				if(cqo.parameter != IPConnection.DISCONNECT_REASON_REQUEST &&
+				   ipcon.autoReconnect && ipcon.autoReconnectAllowed) {
 					ipcon.autoReconnectPending = true;
 					boolean retry = true;
 
@@ -202,12 +197,12 @@ class CallbackThread extends Thread {
 	}
 
 	void dispatchPacket(IPConnection.CallbackQueueObject cqo) {
-		byte functionID = IPConnection.getFunctionIDFromData(cqo.data);
+		byte functionID = IPConnection.getFunctionIDFromData(cqo.packet);
 
 		if(functionID == IPConnection.CALLBACK_ENUMERATE) {
 			if(!ipcon.listenerEnumerate.isEmpty()) {
-				int length = IPConnection.getLengthFromData(cqo.data);
-				ByteBuffer bb = ByteBuffer.wrap(cqo.data, 8, length - 8);
+				int length = IPConnection.getLengthFromData(cqo.packet);
+				ByteBuffer bb = ByteBuffer.wrap(cqo.packet, 8, length - 8);
 				bb.order(ByteOrder.LITTLE_ENDIAN);
 				String uid_str = "";
 				for(int i = 0; i < 8; i++) {
@@ -242,10 +237,10 @@ class CallbackThread extends Thread {
 				}
 			}
 		} else {
-			long uid = IPConnection.getUIDFromData(cqo.data);
+			long uid = IPConnection.getUIDFromData(cqo.packet);
 			Device device = ipcon.devices.get(uid);
 			if(device.callbacks[functionID] != null) {
-				device.callbacks[functionID].callback(cqo.data);
+				device.callbacks[functionID].callback(cqo.packet);
 			}
 		}
 	}
@@ -353,11 +348,16 @@ public class IPConnection {
 	CallbackThread callbackThread = null;
 
 	static class CallbackQueueObject {
-		public final int kind;
-		public final byte[] data;
-		public CallbackQueueObject(int kind, byte[] data) {
+		final int kind;
+		final byte functionID;
+		final short parameter;
+		final byte[] packet;
+
+		public CallbackQueueObject(int kind, byte functionID, short parameter, byte[] packet) {
 			this.kind = kind;
-			this.data = data;
+			this.functionID = functionID;
+			this.parameter = parameter;
+			this.packet = packet;
 		}
 	}
 
@@ -393,7 +393,9 @@ public class IPConnection {
 	 * there is no Brick Daemon or WIFI/Ethernet Extension listening at the
 	 * given host and port.
 	 */
-	public void connect(String host, int port) throws java.net.UnknownHostException, java.io.IOException, AlreadyConnectedException {
+	public void connect(String host, int port) throws java.net.UnknownHostException,
+	                                                  java.io.IOException,
+	                                                  AlreadyConnectedException {
 		synchronized(socketMutex) {
 			if (socket != null) {
 				throw new AlreadyConnectedException("Already connected to " + this.host + ":" + this.port);
@@ -407,7 +409,8 @@ public class IPConnection {
 	}
 
 	// NOTE: Assumes that socketMutex is locked
-	void connectUnlocked(boolean isAutoReconnect) throws java.net.UnknownHostException, java.io.IOException {
+	void connectUnlocked(boolean isAutoReconnect) throws java.net.UnknownHostException,
+	                                                     java.io.IOException {
 		if(callbackThread == null) {
 			callbackQueue = new LinkedBlockingQueue<CallbackQueueObject>();
 			callbackThread = new CallbackThread(this, callbackQueue);
@@ -444,13 +447,9 @@ public class IPConnection {
 			connectReason = CONNECT_REASON_AUTO_RECONNECT;
 		}
 
-		ByteBuffer bb = ByteBuffer.allocate(3);
-		bb.order(ByteOrder.LITTLE_ENDIAN);
-		bb.put(CALLBACK_CONNECTED);
-		bb.putShort(connectReason);
-
 		try {
-			callbackQueue.put(new CallbackQueueObject(QUEUE_META, bb.array()));
+			callbackQueue.put(new CallbackQueueObject(QUEUE_META, CALLBACK_CONNECTED,
+			                                          connectReason, null));
 		} catch(InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -484,19 +483,16 @@ public class IPConnection {
 			callbackQueue = null;
 		}
 
-		ByteBuffer bb = ByteBuffer.allocate(3);
-		bb.order(ByteOrder.LITTLE_ENDIAN);
-		bb.put(CALLBACK_DISCONNECTED);
-		bb.putShort(DISCONNECT_REASON_REQUEST);
-
 		try {
-			callbackQueueTmp.put(new CallbackQueueObject(QUEUE_META, bb.array()));
+			callbackQueueTmp.put(new CallbackQueueObject(QUEUE_META, CALLBACK_DISCONNECTED,
+			                                             DISCONNECT_REASON_REQUEST, null));
 		} catch(InterruptedException e) {
 			e.printStackTrace();
 		}
 
 		try {
-			callbackQueueTmp.put(new CallbackQueueObject(QUEUE_EXIT, null));
+			callbackQueueTmp.put(new CallbackQueueObject(QUEUE_EXIT, (byte)0,
+			                                             (short)0, null));
 		} catch(InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -702,7 +698,8 @@ public class IPConnection {
 		if(sequenceNumber == 0) {
 			if(device.callbacks[functionID] != null) {
 				try {
-					callbackQueue.put(new CallbackQueueObject(QUEUE_PACKET, packet));
+					callbackQueue.put(new CallbackQueueObject(QUEUE_PACKET, (byte)0,
+					                                          (short)0, packet));
 				} catch(InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -833,7 +830,8 @@ public class IPConnection {
 	private void handleEnumerate(byte[] packet) {
 		if(!listenerEnumerate.isEmpty()) {
 			try {
-				callbackQueue.put(new CallbackQueueObject(QUEUE_PACKET, packet));
+				callbackQueue.put(new CallbackQueueObject(QUEUE_PACKET, (byte)0,
+				                                          (short)0, packet));
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
