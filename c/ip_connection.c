@@ -945,11 +945,13 @@ int device_send_request(Device *device, Packet *request, Packet *response) {
  *
  *****************************************************************************/
 
-typedef struct {
+struct _CallbackContext {
 	IPConnection *ipcon;
-	Queue *queue;
-	Thread *thread;
-} CallbackContext;
+	Queue queue;
+	Thread thread;
+	Mutex mutex;
+	bool flag;
+};
 
 typedef int (*CallbackWrapperFunction)(Device *device, Packet *packet);
 
@@ -1070,39 +1072,42 @@ static void ipcon_dispatch_packet(IPConnection *ipcon, Packet *packet) {
 }
 
 static void ipcon_callback_loop(void *opaque) {
-	CallbackContext *context = (CallbackContext *)opaque;
+	CallbackContext *callback = (CallbackContext *)opaque;
 	int kind;
 	void *data;
 	int length;
 
 	while (1) {
-		if (queue_get(context->queue, &kind, &data, &length) < 0) {
+		if (queue_get(&callback->queue, &kind, &data, &length) < 0) {
 			// FIXME: what to do here? try again? exit?
 			break;
 		}
 
+		mutex_lock(&callback->mutex);
+
 		if (kind == QUEUE_KIND_EXIT) {
+			mutex_unlock(&callback->mutex);
 			break;
 		} else if (kind == QUEUE_KIND_META) {
-			ipcon_dispatch_meta(context->ipcon, (Meta *)data);
+			ipcon_dispatch_meta(callback->ipcon, (Meta *)data);
 		} else if (kind == QUEUE_KIND_PACKET) {
 			// don't dispatch callbacks when the receive thread isn't running
-			if (context->ipcon->receive_flag) {
-				ipcon_dispatch_packet(context->ipcon, (Packet *)data);
+			if (callback->flag) {
+				ipcon_dispatch_packet(callback->ipcon, (Packet *)data);
 			}
 		}
+
+		mutex_unlock(&callback->mutex);
 
 		free(data);
 	}
 
 	// cleanup
-	queue_destroy(context->queue);
-	free(context->queue);
+	mutex_destroy(&callback->mutex);
+	queue_destroy(&callback->queue);
+	thread_destroy(&callback->thread);
 
-	thread_destroy(context->thread);
-	free(context->thread);
-
-	free(context);
+	free(callback);
 }
 
 static void ipcon_handle_response(IPConnection *ipcon, Packet *response) {
@@ -1113,7 +1118,7 @@ static void ipcon_handle_response(IPConnection *ipcon, Packet *response) {
 	if (response->header.sequence_number == 0 &&
 	    response->header.function_id == IPCON_CALLBACK_ENUMERATE) {
 		if (ipcon->registered_callbacks[IPCON_CALLBACK_ENUMERATE] != NULL) {
-			queue_put(ipcon->callback_queue, QUEUE_KIND_PACKET, response,
+			queue_put(&ipcon->callback->queue, QUEUE_KIND_PACKET, response,
 			          response->header.length);
 		}
 
@@ -1129,7 +1134,7 @@ static void ipcon_handle_response(IPConnection *ipcon, Packet *response) {
 
 	if (response->header.sequence_number == 0) {
 		if (device->registered_callbacks[response->header.function_id] != NULL) {
-			queue_put(ipcon->callback_queue, QUEUE_KIND_PACKET, response,
+			queue_put(&ipcon->callback->queue, QUEUE_KIND_PACKET, response,
 			          response->header.length);
 		}
 
@@ -1177,7 +1182,7 @@ static void ipcon_receive_loop(void *opaque) {
 			meta.parameter = length == 0 ? IPCON_DISCONNECT_REASON_SHUTDOWN
 			                             : IPCON_DISCONNECT_REASON_ERROR;
 
-			queue_put(ipcon->callback_queue, QUEUE_KIND_META, &meta, sizeof(meta));
+			queue_put(&ipcon->callback->queue, QUEUE_KIND_META, &meta, sizeof(meta));
 			return;
 		}
 
@@ -1206,34 +1211,28 @@ static void ipcon_receive_loop(void *opaque) {
 
 // NOTE: assumes that socket_mutex is locked
 static int ipcon_connect_unlocked(IPConnection *ipcon, bool is_auto_reconnect) {
-	CallbackContext *context;
 	struct hostent *entity;
 	struct sockaddr_in address;
 	uint8_t connect_reason;
 	Meta meta;
 
 	// create callback queue and thread
-	if (ipcon->callback_thread == NULL) {
-		ipcon->callback_queue = (Queue *)malloc(sizeof(Queue));
-		ipcon->callback_thread = (Thread *)malloc(sizeof(Thread));
+	if (ipcon->callback == NULL) {
+		ipcon->callback = (CallbackContext *)malloc(sizeof(CallbackContext));
 
-		queue_create(ipcon->callback_queue);
+		ipcon->callback->ipcon = ipcon;
+		ipcon->callback->flag = false;
 
-		context = (CallbackContext *)malloc(sizeof(CallbackContext));
+		queue_create(&ipcon->callback->queue);
+		mutex_create(&ipcon->callback->mutex);
 
-		context->ipcon = ipcon;
-		context->queue = ipcon->callback_queue;
-		context->thread = ipcon->callback_thread;
+		if (thread_create(&ipcon->callback->thread, ipcon_callback_loop,
+		                  ipcon->callback) < 0) {
+			mutex_destroy(&ipcon->callback->mutex);
+			queue_destroy(&ipcon->callback->queue);
 
-		if (thread_create(ipcon->callback_thread, ipcon_callback_loop, context) < 0) {
-			free(context);
-
-			queue_destroy(ipcon->callback_queue);
-			free(ipcon->callback_queue);
-			ipcon->callback_queue = NULL;
-
-			free(ipcon->callback_thread);
-			ipcon->callback_thread = NULL;
+			free(ipcon->callback);
+			ipcon->callback = NULL;
 
 			return E_NO_THREAD;
 		}
@@ -1274,31 +1273,42 @@ static int ipcon_connect_unlocked(IPConnection *ipcon, bool is_auto_reconnect) {
 	ipcon->receive_flag = true;
 	ipcon->receive_thread = (Thread *)malloc(sizeof(Thread));
 
+	ipcon->callback->flag = true;
+
 	if (thread_create(ipcon->receive_thread, ipcon_receive_loop, ipcon) < 0) {
+		// stop dispatching packet callbacks before ending the receive
+		// thread to avoid timeout exceptions due to callback functions
+		// trying to call getters
+		if (!thread_is_current(&ipcon->callback->thread)) {
+			mutex_lock(&ipcon->callback->mutex);
+
+			ipcon->callback->flag = false;
+
+			mutex_unlock(&ipcon->callback->mutex);
+		} else {
+			ipcon->callback->flag = false;
+		}
+
+		// cleanup receive thread
 		ipcon->receive_flag = false;
 
 		free(ipcon->receive_thread);
 		ipcon->receive_thread = NULL;
 
+		// destroy socket
 		socket_destroy(ipcon->socket);
-
 		free(ipcon->socket);
 		ipcon->socket = NULL;
 
+		// destroy callback thread
 		if (!is_auto_reconnect) {
-			queue_put(ipcon->callback_queue, QUEUE_KIND_EXIT, NULL, 0);
+			queue_put(&ipcon->callback->queue, QUEUE_KIND_EXIT, NULL, 0);
 
-			if (!thread_is_current(ipcon->callback_thread)) {
-				thread_join(ipcon->callback_thread);
+			if (!thread_is_current(&ipcon->callback->thread)) {
+				thread_join(&ipcon->callback->thread);
 			}
 
-			queue_destroy(ipcon->callback_queue);
-			free(ipcon->callback_queue);
-			ipcon->callback_queue = NULL;
-
-			thread_destroy(ipcon->callback_thread);
-			free(ipcon->callback_thread);
-			ipcon->callback_thread = NULL;
+			ipcon->callback = NULL;
 		}
 
 		return E_NO_THREAD;
@@ -1317,7 +1327,7 @@ static int ipcon_connect_unlocked(IPConnection *ipcon, bool is_auto_reconnect) {
 	meta.id = IPCON_CALLBACK_CONNECTED;
 	meta.parameter = connect_reason;
 
-	queue_put(ipcon->callback_queue, QUEUE_KIND_META, &meta, sizeof(meta));
+	queue_put(&ipcon->callback->queue, QUEUE_KIND_META, &meta, sizeof(meta));
 
 	return E_OK;
 }
@@ -1370,8 +1380,7 @@ void ipcon_create(IPConnection *ipcon) {
 	ipcon->receive_flag = false;
 	ipcon->receive_thread = NULL;
 
-	ipcon->callback_queue = NULL;
-	ipcon->callback_thread = NULL;
+	ipcon->callback = NULL;
 
 	semaphore_create(&ipcon->wait);
 }
@@ -1429,8 +1438,7 @@ int ipcon_connect(IPConnection *ipcon, const char *host, uint16_t port) {
 }
 
 int ipcon_disconnect(IPConnection *ipcon) {
-	Queue *callback_queue;
-	Thread *callback_thread;
+	CallbackContext *callback;
 	Meta meta;
 
 	mutex_lock(&ipcon->socket_mutex);
@@ -1445,6 +1453,19 @@ int ipcon_disconnect(IPConnection *ipcon) {
 			mutex_unlock(&ipcon->socket_mutex);
 
 			return E_NOT_CONNECTED;
+		}
+
+		// stop dispatching packet callbacks before ending the receive
+		// thread to avoid timeout exceptions due to callback functions
+		// trying to call getters
+		if (!thread_is_current(&ipcon->callback->thread)) {
+			mutex_lock(&ipcon->callback->mutex);
+
+			ipcon->callback->flag = false;
+
+			mutex_unlock(&ipcon->callback->mutex);
+		} else {
+			ipcon->callback->flag = false;
 		}
 
 		// destroy receive thread
@@ -1467,11 +1488,8 @@ int ipcon_disconnect(IPConnection *ipcon) {
 	}
 
 	// destroy callback thread
-	callback_queue = ipcon->callback_queue;
-	callback_thread = ipcon->callback_thread;
-
-	ipcon->callback_queue = NULL;
-	ipcon->callback_thread = NULL;
+	callback = ipcon->callback;
+	ipcon->callback = NULL;
 
 	mutex_unlock(&ipcon->socket_mutex);
 
@@ -1480,15 +1498,15 @@ int ipcon_disconnect(IPConnection *ipcon) {
 	meta.id = IPCON_CALLBACK_DISCONNECTED;
 	meta.parameter = IPCON_DISCONNECT_REASON_REQUEST;
 
-	queue_put(callback_queue, QUEUE_KIND_META, &meta, sizeof(meta));
-	queue_put(callback_queue, QUEUE_KIND_EXIT, NULL, 0);
+	queue_put(&callback->queue, QUEUE_KIND_META, &meta, sizeof(meta));
+	queue_put(&callback->queue, QUEUE_KIND_EXIT, NULL, 0);
 
-	if (!thread_is_current(callback_thread)) {
-		thread_join(callback_thread);
+	if (!thread_is_current(&callback->thread)) {
+		thread_join(&callback->thread);
 	}
 
 	// NOTE: no further cleanup of the callback queue and thread here, the
-	// callback thread is doing this when it exits
+	// callback thread is doing this on exit
 
 	return E_OK;
 }

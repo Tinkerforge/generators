@@ -107,8 +107,8 @@ typedef struct {
 	void **values;
 } Table;
 
-typedef struct QueueItem_ {
-	struct QueueItem_ *next;
+typedef struct _QueueItem {
+	struct _QueueItem *next;
 	int kind;
 	void *data;
 	int length;
@@ -160,8 +160,8 @@ typedef struct {
 #endif
 #undef ATTRIBUTE_PACKED
 
-typedef struct IPConnection_ IPConnection;
-typedef struct Device_ Device;
+typedef struct _IPConnection IPConnection;
+typedef struct _Device Device;
 
 typedef void (*EnumerateCallbackFunction)(const char *uid,
                                           const char *connected_uid,
@@ -181,7 +181,7 @@ typedef void (*DisconnectedCallbackFunction)(uint8_t disconnect_reason,
 /**
  * \internal
  */
-struct Device_ {
+struct _Device {
 	uint32_t uid;
 
 	IPConnection *ipcon;
@@ -318,10 +318,12 @@ enum {
 
 #define IPCON_NUM_CALLBACK_IDS 256
 
+typedef struct _CallbackContext CallbackContext;
+
 /**
  * \internal
  */
-struct IPConnection_ {
+struct _IPConnection {
 #ifdef _WIN32
 	bool wsa_startup_done;
 #endif
@@ -349,8 +351,7 @@ struct IPConnection_ {
 	bool receive_flag;
 	Thread *receive_thread;
 
-	Queue *callback_queue;
-	Thread *callback_thread;
+	CallbackContext *callback;
 
 	Semaphore wait;
 };
