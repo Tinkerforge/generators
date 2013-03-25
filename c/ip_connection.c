@@ -643,6 +643,7 @@ enum {
 typedef struct {
 	uint8_t id;
 	uint8_t parameter;
+	uint64_t socket_id;
 } Meta;
 
 static void queue_create(Queue *queue) {
@@ -975,15 +976,19 @@ static void ipcon_dispatch_meta(IPConnection *ipcon, Meta *meta) {
 		// need to do this here, the receive loop is not allowed to
 		// hold the socket mutex because this could cause a deadlock
 		// with a concurrent call to the (dis-)connect function
-		mutex_lock(&ipcon->socket_mutex);
+		if (meta->parameter != IPCON_DISCONNECT_REASON_REQUEST) {
+			mutex_lock(&ipcon->socket_mutex);
 
-		if (ipcon->socket != NULL) {
-			socket_destroy(ipcon->socket);
-			free(ipcon->socket);
-			ipcon->socket = NULL;
+			// don't close the socket if it got disconnected or
+			// reconnected in the meantime
+			if (ipcon->socket != NULL && ipcon->socket_id == meta->socket_id) {
+				socket_destroy(ipcon->socket);
+				free(ipcon->socket);
+				ipcon->socket = NULL;
+			}
+
+			mutex_unlock(&ipcon->socket_mutex);
 		}
-
-		mutex_unlock(&ipcon->socket_mutex);
 
 		// FIXME: wait a moment here, otherwise the next connect
 		// attempt will succeed, even if there is no open server
@@ -1157,6 +1162,7 @@ static void ipcon_handle_response(IPConnection *ipcon, Packet *response) {
 
 static void ipcon_receive_loop(void *opaque) {
 	IPConnection *ipcon = (IPConnection *)opaque;
+	uint64_t socket_id = ipcon->socket_id;
 	uint8_t pending_data[sizeof(Packet) * 10] = { 0 };
 	int pending_length = 0;
 	int length;
@@ -1181,6 +1187,7 @@ static void ipcon_receive_loop(void *opaque) {
 			meta.id = IPCON_CALLBACK_DISCONNECTED;
 			meta.parameter = length == 0 ? IPCON_DISCONNECT_REASON_SHUTDOWN
 			                             : IPCON_DISCONNECT_REASON_ERROR;
+			meta.socket_id = socket_id;
 
 			queue_put(&ipcon->callback->queue, QUEUE_KIND_META, &meta, sizeof(meta));
 			return;
@@ -1269,6 +1276,8 @@ static int ipcon_connect_unlocked(IPConnection *ipcon, bool is_auto_reconnect) {
 		return E_NO_CONNECT;
 	}
 
+	++ipcon->socket_id;
+
 	// create receive thread
 	ipcon->receive_flag = true;
 	ipcon->receive_thread = (Thread *)malloc(sizeof(Thread));
@@ -1326,6 +1335,7 @@ static int ipcon_connect_unlocked(IPConnection *ipcon, bool is_auto_reconnect) {
 
 	meta.id = IPCON_CALLBACK_CONNECTED;
 	meta.parameter = connect_reason;
+	meta.socket_id = 0;
 
 	queue_put(&ipcon->callback->queue, QUEUE_KIND_META, &meta, sizeof(meta));
 
@@ -1376,6 +1386,7 @@ void ipcon_create(IPConnection *ipcon) {
 
 	mutex_create(&ipcon->socket_mutex);
 	ipcon->socket = NULL;
+	ipcon->socket_id = 0;
 
 	ipcon->receive_flag = false;
 	ipcon->receive_thread = NULL;
@@ -1497,6 +1508,7 @@ int ipcon_disconnect(IPConnection *ipcon) {
 	// the callbacks while blocking on the join call here
 	meta.id = IPCON_CALLBACK_DISCONNECTED;
 	meta.parameter = IPCON_DISCONNECT_REASON_REQUEST;
+	meta.socket_id = 0;
 
 	queue_put(&callback->queue, QUEUE_KIND_META, &meta, sizeof(meta));
 	queue_put(&callback->queue, QUEUE_KIND_EXIT, NULL, 0);

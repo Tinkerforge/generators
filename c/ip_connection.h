@@ -347,6 +347,7 @@ struct _IPConnection {
 
 	Mutex socket_mutex;
 	Socket *socket;
+	uint64_t socket_id;
 
 	bool receive_flag;
 	Thread *receive_thread;
