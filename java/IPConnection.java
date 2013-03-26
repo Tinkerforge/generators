@@ -125,6 +125,8 @@ class CallbackThreadRestarter implements Thread.UncaughtExceptionHandler {
 class CallbackThread extends Thread {
 	IPConnection ipcon = null;
 	LinkedBlockingQueue<IPConnection.CallbackQueueObject> callbackQueue = null;
+	Object dispatchMutex = new Object();
+	boolean packetFlag = false;
 
 	CallbackThread(IPConnection ipcon,
 	               LinkedBlockingQueue<IPConnection.CallbackQueueObject> callbackQueue) {
@@ -134,6 +136,20 @@ class CallbackThread extends Thread {
 		this.ipcon = ipcon;
 		this.callbackQueue = callbackQueue;
 		this.setUncaughtExceptionHandler(new CallbackThreadRestarter(ipcon));
+	}
+
+	void setPacketDispatchEnabled(boolean enable) {
+		if (enable) {
+			packetFlag = true;
+		} else {
+			if (Thread.currentThread() != this) {
+				synchronized(dispatchMutex) {
+					packetFlag = false;
+				}
+			} else {
+				packetFlag = false;
+			}
+		}
 	}
 
 	void dispatchMeta(IPConnection.CallbackQueueObject cqo) {
@@ -260,24 +276,26 @@ class CallbackThread extends Thread {
 				continue;
 			}
 
-			switch(cqo.kind) {
-				case IPConnection.QUEUE_EXIT: {
-					return;
-				}
-
-				case IPConnection.QUEUE_META: {
-					dispatchMeta(cqo);
-					break;
-				}
-
-				case IPConnection.QUEUE_PACKET: {
-					if (!ipcon.receiveFlag) {
-						// don't dispatch callbacks when the receive thread isn't running
-						continue;
+			synchronized(dispatchMutex) {
+				switch(cqo.kind) {
+					case IPConnection.QUEUE_EXIT: {
+						return;
 					}
 
-					dispatchPacket(cqo);
-					break;
+					case IPConnection.QUEUE_META: {
+						dispatchMeta(cqo);
+						break;
+					}
+
+					case IPConnection.QUEUE_PACKET: {
+						if (!packetFlag) {
+							// don't dispatch callbacks when the receive thread isn't running
+							continue;
+						}
+
+						dispatchPacket(cqo);
+						break;
+					}
 				}
 			}
 		}
@@ -435,6 +453,8 @@ public class IPConnection {
 			throw(e);
 		}
 
+		callbackThread.setPacketDispatchEnabled(true);
+
 		receiveFlag = true;
 		receiveThread = new ReceiveThread(this);
 		receiveThread.start();
@@ -507,6 +527,11 @@ public class IPConnection {
 	}
 
 	void disconnectUnlocked() {
+		// stop dispatching packet callbacks before ending the receive
+		// thread to avoid timeout exceptions due to callback functions
+		// trying to call getters
+		callbackThread.setPacketDispatchEnabled(false);
+
 		receiveFlag = false;
 
 		closeSocket();
