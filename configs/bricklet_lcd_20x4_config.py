@@ -307,3 +307,112 @@ Index zurück, wie von :func:`GetCustomCharacter` gesetzt.
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetDefaultText', 'set_default_text'), 
+'elements': [('line', 'uint8', 1, 'in'),
+             ('text', 'string', 20, 'in')],
+'since_firmware': [2, 0, 2],
+'doc': ['af', {
+'en':
+"""
+Sets the default text for lines 0-3. The max number of characters
+per line is 20.
+
+The default text is shown on the LCD, if the default text counter
+expires, see :func:`SetDefaultTextCounter`.
+""",
+'de':
+"""
+Setzt den Default Text für die Zeilen 0-3. Die maximale Anzahl an
+Buchstaben pro Zeile ist 20.
+
+Der Default Text wird auf dem LCD angezeigt, wenn der Default Text
+Zähler ausläuft, siehe :func:`SetDefaultTextCounter`.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetDefaultText', 'get_default_text'), 
+'elements': [('line', 'uint8', 1, 'in'),
+             ('text', 'string', 20, 'out')],
+'since_firmware': [2, 0, 2],
+'doc': ['af', {
+'en':
+"""
+Returns the default text for a given line (0-3) as set by
+:func:`SetDefaultText`.
+""",
+'de':
+"""
+Gibt den Default Text für die Zeilen 0-3 zurück, wie von
+:func:`SetDefaultText` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetDefaultTextCounter', 'set_default_text_counter'), 
+'elements': [('counter', 'int32', 1, 'in')],
+'since_firmware': [2, 0, 2],
+'doc': ['af', {
+'en':
+"""
+Sets the default text counter in ms. This counter is decremented each
+ms by the LCD firmware. If the counter reaches 0, the default text
+(see :func:`SetDefaultText`) is shown on the LCD.
+
+This functionality can be used to show a default text if the controlling
+program crashes or the connection is interrupted.
+
+A possible approach is to call :func:`SetDefaultTextCounter` every
+minute with the parameter 1000*60*2 (2 minutes). In this case the
+default text will be shown no later than 2 minutes after the
+controlling program crashes.
+
+A negative counter turns the default text functionality off.
+
+The default counter is -1.
+""",
+'de':
+"""
+Setzt den Default Text Zähler in ms. Der Zähler wird von der LCD
+firmware einmal pro ms dekrementiert. Wenn der Zähler 0 erreicht
+wird der Default Text auf dem LCD angezeigt (siehe :func:`SetDefaultText`).
+
+Diese Funktionalität kann genutzt werden um auf dem LCD einen Text
+anzuzeigen falls das kontrollierende Programm abstürzt oder die Verbindung
+unterbrochen wird.
+
+Ein möglicher Ansatz dafür ist :func:`SetDefaultTextCounter` einmal
+pro Minute aufzurufen mit dem Parameter 1000*60*2 (zwei Minuten) aufzurufen.
+In diesem Fall wird dann der Default Text nach spätestens zwei Minuten
+angezeigt wenn das kontrollierende Programm abstürzt.
+
+Ein negativer Zählerwert stellt die Default Text funktionalität aus.
+
+Der Default Zählerwert ist -1.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetDefaultTextCounter', 'get_default_text_counter'), 
+'elements': [('counter', 'int32', 1, 'out')],
+'since_firmware': [2, 0, 2],
+'doc': ['af', {
+'en':
+"""
+Returns the current value of the default text counter.
+""",
+'de':
+"""
+Gibt den aktuellen Wert des Default Text Zählers zurück.
+"""
+}]
+})
