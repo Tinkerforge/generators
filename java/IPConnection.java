@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
@@ -136,6 +136,115 @@ class CallbackThread extends Thread {
 		this.setUncaughtExceptionHandler(new CallbackThreadRestarter(ipcon));
 	}
 
+	void dispatchMeta(IPConnection.CallbackQueueObject cqo) {
+		switch(cqo.functionID) {
+			case IPConnection.CALLBACK_CONNECTED:
+				for(IPConnection.ConnectedListener listener: ipcon.listenerConnected) {
+					listener.connected(cqo.parameter);
+				}
+
+				break;
+
+			case IPConnection.CALLBACK_DISCONNECTED:
+				if(cqo.parameter != IPConnection.DISCONNECT_REASON_REQUEST) {
+					synchronized(ipcon.socketMutex) {
+						ipcon.closeSocket();
+					}
+				}
+
+				try {
+					Thread.sleep(100);
+				} catch(InterruptedException e) {
+					e.printStackTrace();
+				}
+
+				for(IPConnection.DisconnectedListener listener: ipcon.listenerDisconnected) {
+					listener.disconnected(cqo.parameter);
+				}
+
+				if(cqo.parameter != IPConnection.DISCONNECT_REASON_REQUEST &&
+				   ipcon.autoReconnect && ipcon.autoReconnectAllowed) {
+					ipcon.autoReconnectPending = true;
+					boolean retry = true;
+
+					while(retry) {
+						retry = false;
+
+						synchronized(ipcon.socketMutex) {
+							if(ipcon.autoReconnectAllowed && ipcon.socket == null) {
+								try {
+									ipcon.connectUnlocked(true);
+								} catch(Exception e) {
+									retry = true;
+								}
+							} else {
+								ipcon.autoReconnectPending = true;
+							}
+						}
+
+						if(retry) {
+							try {
+								Thread.sleep(100);
+							} catch(InterruptedException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+				}
+
+				break;
+		}
+	}
+
+	void dispatchPacket(IPConnection.CallbackQueueObject cqo) {
+		byte functionID = IPConnection.getFunctionIDFromData(cqo.packet);
+
+		if(functionID == IPConnection.CALLBACK_ENUMERATE) {
+			if(!ipcon.listenerEnumerate.isEmpty()) {
+				int length = IPConnection.getLengthFromData(cqo.packet);
+				ByteBuffer bb = ByteBuffer.wrap(cqo.packet, 8, length - 8);
+				bb.order(ByteOrder.LITTLE_ENDIAN);
+				String uid_str = "";
+				for(int i = 0; i < 8; i++) {
+					char c = (char)bb.get();
+					if(c != '\0') {
+						uid_str += c;
+					}
+				}
+				String connectedUid_str = "";
+				for(int i = 0; i < 8; i++) {
+					char c = (char)bb.get();
+					if(c != '\0') {
+						connectedUid_str += c;
+					}
+				}
+				char position = (char)bb.get();
+				short[] hardwareVersion = new short[3];
+				hardwareVersion[0] = IPConnection.unsignedByte(bb.get());
+				hardwareVersion[1] = IPConnection.unsignedByte(bb.get());
+				hardwareVersion[2] = IPConnection.unsignedByte(bb.get());
+				short[] firmwareVersion = new short[3];
+				firmwareVersion[0] = IPConnection.unsignedByte(bb.get());
+				firmwareVersion[1] = IPConnection.unsignedByte(bb.get());
+				firmwareVersion[2] = IPConnection.unsignedByte(bb.get());
+				int deviceIdentifier = IPConnection.unsignedShort(bb.getShort());
+				short enumerationType = IPConnection.unsignedByte(bb.get());
+
+				for(IPConnection.EnumerateListener listener: ipcon.listenerEnumerate) {
+					listener.enumerate(uid_str, connectedUid_str, position,
+					                   hardwareVersion, firmwareVersion,
+					                   deviceIdentifier, enumerationType);
+				}
+			}
+		} else {
+			long uid = IPConnection.getUIDFromData(cqo.packet);
+			Device device = ipcon.devices.get(uid);
+			if(device.callbacks[functionID] != null) {
+				device.callbacks[functionID].callback(cqo.packet);
+			}
+		}
+	}
+
 	@Override
 	public void run() {
 		while(true) {
@@ -157,67 +266,7 @@ class CallbackThread extends Thread {
 				}
 
 				case IPConnection.QUEUE_META: {
-					ByteBuffer bb = ByteBuffer.wrap(cqo.data, 0, 3);
-					bb.order(ByteOrder.LITTLE_ENDIAN);
-
-					byte id = bb.get();
-					short parameter = bb.getShort();
-
-					switch(id) {
-						case IPConnection.CALLBACK_CONNECTED:
-							for(IPConnection.ConnectedListener listener: ipcon.listenerConnected) {
-								listener.connected(parameter);
-							}
-
-							break;
-
-						case IPConnection.CALLBACK_DISCONNECTED:
-							synchronized(ipcon.socketMutex) {
-								ipcon.closeSocket();
-							}
-
-							try {
-								Thread.sleep(100);
-							} catch(InterruptedException e) {
-								e.printStackTrace();
-							}
-
-							for(IPConnection.DisconnectedListener listener: ipcon.listenerDisconnected) {
-								listener.disconnected(parameter);
-							}
-
-							if(parameter != IPConnection.DISCONNECT_REASON_REQUEST && ipcon.autoReconnect && ipcon.autoReconnectAllowed) {
-								ipcon.autoReconnectPending = true;
-								boolean retry = true;
-
-								while(retry) {
-									retry = false;
-
-									synchronized(ipcon.socketMutex) {
-										if(ipcon.autoReconnectAllowed && ipcon.socket == null) {
-											try {
-												ipcon.connectUnlocked(true);
-											} catch(Exception e) {
-												retry = true;
-											}
-										} else {
-											ipcon.autoReconnectPending = true;
-										}
-									}
-
-									if(retry) {
-										try {
-											Thread.sleep(100);
-										} catch(InterruptedException e) {
-											e.printStackTrace();
-										}
-									}
-								}
-							}
-
-							break;
-					}
-
+					dispatchMeta(cqo);
 					break;
 				}
 
@@ -227,52 +276,7 @@ class CallbackThread extends Thread {
 						continue;
 					}
 
-					byte functionID = IPConnection.getFunctionIDFromData(cqo.data);
-					if(functionID == IPConnection.CALLBACK_ENUMERATE) {
-						if(!ipcon.listenerEnumerate.isEmpty()) {
-							int length = IPConnection.getLengthFromData(cqo.data);
-							ByteBuffer bb = ByteBuffer.wrap(cqo.data, 8, length - 8);
-							bb.order(ByteOrder.LITTLE_ENDIAN);
-							String uid_str = "";
-							for(int i = 0; i < 8; i++) {
-								char c = (char)bb.get();
-								if(c != '\0') {
-									uid_str += c;
-								}
-							}
-							String connectedUid_str = "";
-							for(int i = 0; i < 8; i++) {
-								char c = (char)bb.get();
-								if(c != '\0') {
-									connectedUid_str += c;
-								}
-							}
-							char position = (char)bb.get();
-							short[] hardwareVersion = new short[3];
-							hardwareVersion[0] = IPConnection.unsignedByte(bb.get());
-							hardwareVersion[1] = IPConnection.unsignedByte(bb.get());
-							hardwareVersion[2] = IPConnection.unsignedByte(bb.get());
-							short[] firmwareVersion = new short[3];
-							firmwareVersion[0] = IPConnection.unsignedByte(bb.get());
-							firmwareVersion[1] = IPConnection.unsignedByte(bb.get());
-							firmwareVersion[2] = IPConnection.unsignedByte(bb.get());
-							int deviceIdentifier = IPConnection.unsignedShort(bb.getShort());
-							short enumerationType = IPConnection.unsignedByte(bb.get());
-
-							for(IPConnection.EnumerateListener listener: ipcon.listenerEnumerate) {
-								listener.enumerate(uid_str, connectedUid_str, position,
-								                   hardwareVersion, firmwareVersion,
-								                   deviceIdentifier, enumerationType);
-							}
-						}
-					} else {
-						long uid = IPConnection.getUIDFromData(cqo.data);
-						Device device = ipcon.devices.get(uid);
-						if(device.callbacks[functionID] != null) {
-							device.callbacks[functionID].callback(cqo.data);
-						}
-					}
-
+					dispatchPacket(cqo);
 					break;
 				}
 			}
@@ -344,11 +348,16 @@ public class IPConnection {
 	CallbackThread callbackThread = null;
 
 	static class CallbackQueueObject {
-		public final int kind;
-		public final byte[] data;
-		public CallbackQueueObject(int kind, byte[] data) {
+		final int kind;
+		final byte functionID;
+		final short parameter;
+		final byte[] packet;
+
+		public CallbackQueueObject(int kind, byte functionID, short parameter, byte[] packet) {
 			this.kind = kind;
-			this.data = data;
+			this.functionID = functionID;
+			this.parameter = parameter;
+			this.packet = packet;
 		}
 	}
 
@@ -384,7 +393,9 @@ public class IPConnection {
 	 * there is no Brick Daemon or WIFI/Ethernet Extension listening at the
 	 * given host and port.
 	 */
-	public void connect(String host, int port) throws java.net.UnknownHostException, java.io.IOException, AlreadyConnectedException {
+	public void connect(String host, int port) throws java.net.UnknownHostException,
+	                                                  java.io.IOException,
+	                                                  AlreadyConnectedException {
 		synchronized(socketMutex) {
 			if (socket != null) {
 				throw new AlreadyConnectedException("Already connected to " + this.host + ":" + this.port);
@@ -398,7 +409,8 @@ public class IPConnection {
 	}
 
 	// NOTE: Assumes that socketMutex is locked
-	void connectUnlocked(boolean isAutoReconnect) throws java.net.UnknownHostException, java.io.IOException {
+	void connectUnlocked(boolean isAutoReconnect) throws java.net.UnknownHostException,
+	                                                     java.io.IOException {
 		if(callbackThread == null) {
 			callbackQueue = new LinkedBlockingQueue<CallbackQueueObject>();
 			callbackThread = new CallbackThread(this, callbackQueue);
@@ -435,13 +447,9 @@ public class IPConnection {
 			connectReason = CONNECT_REASON_AUTO_RECONNECT;
 		}
 
-		ByteBuffer bb = ByteBuffer.allocate(3);
-		bb.order(ByteOrder.LITTLE_ENDIAN);
-		bb.put(CALLBACK_CONNECTED);
-		bb.putShort(connectReason);
-
 		try {
-			callbackQueue.put(new CallbackQueueObject(QUEUE_META, bb.array()));
+			callbackQueue.put(new CallbackQueueObject(QUEUE_META, CALLBACK_CONNECTED,
+			                                          connectReason, null));
 		} catch(InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -475,19 +483,16 @@ public class IPConnection {
 			callbackQueue = null;
 		}
 
-		ByteBuffer bb = ByteBuffer.allocate(3);
-		bb.order(ByteOrder.LITTLE_ENDIAN);
-		bb.put(CALLBACK_DISCONNECTED);
-		bb.putShort(DISCONNECT_REASON_REQUEST);
-
 		try {
-			callbackQueueTmp.put(new CallbackQueueObject(QUEUE_META, bb.array()));
+			callbackQueueTmp.put(new CallbackQueueObject(QUEUE_META, CALLBACK_DISCONNECTED,
+			                                             DISCONNECT_REASON_REQUEST, null));
 		} catch(InterruptedException e) {
 			e.printStackTrace();
 		}
 
 		try {
-			callbackQueueTmp.put(new CallbackQueueObject(QUEUE_EXIT, null));
+			callbackQueueTmp.put(new CallbackQueueObject(QUEUE_EXIT, (byte)0,
+			                                             (short)0, null));
 		} catch(InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -693,7 +698,8 @@ public class IPConnection {
 		if(sequenceNumber == 0) {
 			if(device.callbacks[functionID] != null) {
 				try {
-					callbackQueue.put(new CallbackQueueObject(QUEUE_PACKET, packet));
+					callbackQueue.put(new CallbackQueueObject(QUEUE_PACKET, (byte)0,
+					                                          (short)0, packet));
 				} catch(InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -824,7 +830,8 @@ public class IPConnection {
 	private void handleEnumerate(byte[] packet) {
 		if(!listenerEnumerate.isEmpty()) {
 			try {
-				callbackQueue.put(new CallbackQueueObject(QUEUE_PACKET, packet));
+				callbackQueue.put(new CallbackQueueObject(QUEUE_PACKET, (byte)0,
+				                                          (short)0, packet));
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
