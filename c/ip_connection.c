@@ -1343,6 +1343,17 @@ static int ipcon_connect_unlocked(IPConnection *ipcon, bool is_auto_reconnect) {
 
 	if (thread_create(&ipcon->disconnect_probe_thread,
 	                  ipcon_disconnect_probe_loop, ipcon) < 0) {
+		// destroy callback thread
+		if (!is_auto_reconnect) {
+			queue_put(&ipcon->callback->queue, QUEUE_KIND_EXIT, NULL, 0);
+
+			if (!thread_is_current(&ipcon->callback->thread)) {
+				thread_join(&ipcon->callback->thread);
+			}
+
+			ipcon->callback = NULL;
+		}
+
 		// destroy socket
 		socket_destroy(ipcon->socket);
 		free(ipcon->socket);
