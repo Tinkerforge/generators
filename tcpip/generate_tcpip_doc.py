@@ -200,6 +200,39 @@ Eine allgemeine Beschreibung der TCP/IP Protokollstruktur findet sich
 """
     }
 
+    const_str = {
+    'en' : """
+Constants
+^^^^^^^^^
+
+.. tcpip:attribute:: {0}.DEVICE_IDENTIFIER
+
+ :value: {3}
+
+ This constant is used to identify a {0} {1}.
+
+ The :tcpip:func:`get_identity <{0}.get_identity>` function and the
+ :tcpip:func:`CALLBACK_ENUMERATE <CALLBACK_ENUMERATE>`
+ callback of the IP Connection have a ``device_identifier`` parameter to specify
+ the Brick's or Bricklet's type.
+""",
+    'de' : """
+Konstanten
+^^^^^^^^^^
+
+.. tcpip:attribute:: {0}.DEVICE_IDENTIFIER
+
+ :value: {3}
+
+ Diese Konstante wird verwendet um {2} {0} {1} zu identifizieren.
+
+ Die :tcpip:func:`get_identity <{0}.get_identity>` Funktion und der
+ :tcpip:func:`CALLBACK_ENUMERATE <CALLBACK_ENUMERATE>`
+ Callback der IP Connection haben ein ``device_identifier`` Parameter um den Typ
+ des Bricks oder Bricklets anzugeben.
+"""
+    }
+
     bf = make_methods('bf')
     af = make_methods('af')
     ccf = make_methods('ccf')
@@ -209,10 +242,19 @@ Eine allgemeine Beschreibung der TCP/IP Protokollstruktur findet sich
         api_str += common.select_lang(common.bf_str).format(bf, '')
     if af:
         api_str += common.select_lang(common.af_str).format(af)
-    if c:
+    if ccf:
         api_str += common.select_lang(common.ccf_str).format(ccf, '')
+    if c:
         api_str += common.select_lang(c_str).format(c, device.get_underscore_name(),
                                                     device.get_category().lower())
+
+    article = 'ein'
+    if device.get_category() == 'Brick':
+        article = 'einen'
+    api_str += common.select_lang(const_str).format(device.get_camel_case_name(),
+                                                    device.get_category(),
+                                                    article,
+                                                    device.get_device_identifier())
 
     ref = '.. _{0}_{1}_tcpip_api:\n'.format(device.get_underscore_name(),
                                             device.get_category().lower())
@@ -240,4 +282,4 @@ def make_files(com_new, directory):
 if __name__ == "__main__":
     for lang in ['en', 'de']:
         print("=== Generating %s ===" % lang)
-        common.generate(os.getcwd(), lang, make_files, common.prepare_doc, True)
+        common.generate(os.getcwd(), lang, make_files, common.prepare_doc, None, True)

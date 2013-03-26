@@ -286,6 +286,35 @@ Alle folgend aufgelisteten Methoden sind Thread-sicher.
 """
     }
 
+    const_str = {
+    'en' : """
+Constants
+^^^^^^^^^
+
+.. csharp:member:: public int {1}{0}::DEVICE_IDENTIFIER
+
+ This constant is used to identify a {0} {1}.
+
+ The :csharp:func:`GetIdentity() <{1}{0}::GetIdentity>` function and the
+ :csharp:func:`EnumerateCallback <IPConnection::EnumerateCallback>`
+ callback of the IP Connection have a ``deviceIdentifier`` parameter to specify
+ the Brick's or Bricklet's type.
+""",
+    'de' : """
+Konstanten
+^^^^^^^^^^
+
+.. csharp:member:: public int {1}{0}::DEVICE_IDENTIFIER
+
+ Diese Konstante wird verwendet um {2} {0} {1} zu identifizieren.
+
+ Die :csharp:func:`GetIdentity() <{1}{0}::GetIdentity>` Funktion und der
+ :csharp:func:`EnumerateCallback <IPConnection::EnumerateCallback>`
+ Callback der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
+ des Bricks oder Bricklets anzugeben.
+"""
+    }
+
     cre = common.select_lang(create_str).format(device.get_headless_camel_case_name(),
                                                 device.get_camel_case_name(),
                                                 device.get_category().lower(),
@@ -311,6 +340,13 @@ Alle folgend aufgelisteten Methoden sind Thread-sicher.
                                                     device.get_category().lower(),
                                                     device.get_category(),
                                                     device.get_camel_case_name())
+
+    article = 'ein'
+    if device.get_category() == 'Brick':
+        article = 'einen'
+    api_str += common.select_lang(const_str).format(device.get_camel_case_name(),
+                                                    device.get_category(),
+                                                    article)
 
     ref = '.. _{0}_{1}_csharp_api:\n'.format(device.get_underscore_name(),
                                              device.get_category().lower())
@@ -339,4 +375,4 @@ def make_files(com_new, directory):
 if __name__ == "__main__":
     for lang in ['en', 'de']:
         print("=== Generating %s ===" % lang)
-        common.generate(os.getcwd(), lang, make_files, common.prepare_doc, True)
+        common.generate(os.getcwd(), lang, make_files, common.prepare_doc, None, True)

@@ -336,6 +336,35 @@ Alle folgend aufgelisteten Funktionen sind Thread-sicher.
 """
     }
 
+    const_str = {
+    'en' : """
+Constants
+^^^^^^^^^
+
+.. py:attribute:: {0}.DEVICE_IDENTIFIER
+
+ This constant is used to identify a {3} {4}.
+
+ The :py:func:`get_identity() <{3}.get_identity>` function and the
+ :py:attr:`CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
+ callback of the IP Connection have a ``device_identifier`` parameter to specify
+ the Brick's or Bricklet's type.
+""",
+    'de' : """
+Konstanten
+^^^^^^^^^^
+
+.. py:attribute:: {0}.DEVICE_IDENTIFIER
+
+ Diese Konstante wird verwendet um {2} {3} {4} zu identifizieren.
+
+ Die :py:func:`get_identity() <{3}.get_identity>` Funktion und der
+ :py:attr:`CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
+ Callback der IP Connection haben ein ``device_identifier`` Parameter um den Typ
+ des Bricks oder Bricklets anzugeben.
+"""
+    }
+
     cre = common.select_lang(create_str).format(device.get_underscore_name(),
                                                 device.get_camel_case_name(),
                                                 device.get_category().lower())
@@ -357,6 +386,15 @@ Alle folgend aufgelisteten Funktionen sind Thread-sicher.
         api_str += common.select_lang(c_str).format(c, device.get_underscore_name(),
                                                     device.get_category().lower(),
                                                     device.get_camel_case_name())
+
+    article = 'ein'
+    if device.get_category() == 'Brick':
+        article = 'einen'
+    api_str += common.select_lang(const_str).format(device.get_camel_case_name(),
+                                                    device.get_category(),
+                                                    article,
+                                                    device.get_camel_case_name(),
+                                                    device.get_category())
 
     ref = '.. _{0}_{1}_python_api:\n'.format(device.get_underscore_name(),
                                              device.get_category().lower())
@@ -385,4 +423,4 @@ def make_files(com_new, directory):
 if __name__ == "__main__":
     for lang in ['en', 'de']:
         print("=== Generating %s ===" % lang)
-        common.generate(os.getcwd(), lang, make_files, common.prepare_doc, True)
+        common.generate(os.getcwd(), lang, make_files, common.prepare_doc, None, True)

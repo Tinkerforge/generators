@@ -333,6 +333,35 @@ Alle folgend aufgelisteten Methoden sind Thread-sicher.
 """
     }
 
+    const_str = {
+    'en' : """
+Constants
+^^^^^^^^^
+
+.. rb:attribute:: {1}{0}::DEVICE_IDENTIFIER
+
+ This constant is used to identify a {3} {4}.
+
+ The :rb:func:`#get_identity() <{4}{3}#get_identity>` function and the
+ :rb:attr:`::CALLBACK_ENUMERATE <IPConnection::CALLBACK_ENUMERATE>`
+ callback of the IP Connection have a ``device_identifier`` parameter to specify
+ the Brick's or Bricklet's type.
+""",
+    'de' : """
+Konstanten
+^^^^^^^^^^
+
+.. rb:attribute:: {1}{0}::DEVICE_IDENTIFIER
+
+ Diese Konstante wird verwendet um {2} {3} {4} zu identifizieren.
+
+ Die :rb:func:`#get_identity() <{4}{3}#get_identity>` Funktion und der
+ :rb:attr:`::CALLBACK_ENUMERATE <IPConnection::CALLBACK_ENUMERATE>`
+ Callback der IP Connection haben ein ``device_identifier`` Parameter um den Typ
+ des Bricks oder Bricklets anzugeben.
+"""
+    }
+
     cre = common.select_lang(create_str).format(device.get_underscore_name(),
                                                 device.get_camel_case_name(),
                                                 device.get_category().lower(),
@@ -355,6 +384,15 @@ Alle folgend aufgelisteten Methoden sind Thread-sicher.
         api_str += common.select_lang(common.ccf_str).format(reg, ccf)
         api_str += common.select_lang(c_str).format(c, device.get_underscore_name(),
                                                     device.get_category().lower(),
+                                                    device.get_camel_case_name(),
+                                                    device.get_category())
+
+    article = 'ein'
+    if device.get_category() == 'Brick':
+        article = 'einen'
+    api_str += common.select_lang(const_str).format(device.get_camel_case_name(),
+                                                    device.get_category(),
+                                                    article,
                                                     device.get_camel_case_name(),
                                                     device.get_category())
 
@@ -385,4 +423,4 @@ def make_files(com_new, directory):
 if __name__ == "__main__":
     for lang in ['en', 'de']:
         print("=== Generating %s ===" % lang)
-        common.generate(os.getcwd(), lang, make_files, common.prepare_doc, True)
+        common.generate(os.getcwd(), lang, make_files, common.prepare_doc, None, True)
