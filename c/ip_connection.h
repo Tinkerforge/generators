@@ -325,7 +325,7 @@ typedef struct _CallbackContext CallbackContext;
  */
 struct _IPConnection {
 #ifdef _WIN32
-	bool wsa_startup_done;
+	bool wsa_startup_done; // protected by socket_mutex
 #endif
 
 	char *host;
@@ -338,7 +338,7 @@ struct _IPConnection {
 	bool auto_reconnect_pending;
 
 	Mutex sequence_number_mutex;
-	int next_sequence_number;
+	int next_sequence_number; // protected by sequence_number_mutex
 
 	Table devices;
 
@@ -346,11 +346,11 @@ struct _IPConnection {
 	void *registered_callback_user_data[IPCON_NUM_CALLBACK_IDS];
 
 	Mutex socket_mutex;
-	Socket *socket;
-	uint64_t socket_id;
+	Socket *socket; // protected by socket_mutex
+	uint64_t socket_id; // protected by socket_mutex
 
 	bool receive_flag;
-	Thread *receive_thread;
+	Thread receive_thread; // protected by socket_mutex
 
 	CallbackContext *callback;
 

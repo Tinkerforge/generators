@@ -1083,7 +1083,7 @@ static void ipcon_callback_loop(void *opaque) {
 	void *data;
 	int length;
 
-	while (1) {
+	while (true) {
 		if (queue_get(&callback->queue, &kind, &data, &length) < 0) {
 			// FIXME: what to do here? try again? exit?
 			break;
@@ -1214,7 +1214,7 @@ static void ipcon_receive_loop(void *opaque) {
 
 		pending_length += length;
 
-		while (1) {
+		while (true) {
 			if (pending_length < 8) {
 				// wait for complete header
 				break;
@@ -1288,7 +1288,6 @@ static int ipcon_connect_unlocked(IPConnection *ipcon, bool is_auto_reconnect) {
 
 	if (socket_connect(ipcon->socket, &address, sizeof(address)) < 0) {
 		socket_destroy(ipcon->socket);
-
 		free(ipcon->socket);
 		ipcon->socket = NULL;
 
@@ -1299,34 +1298,12 @@ static int ipcon_connect_unlocked(IPConnection *ipcon, bool is_auto_reconnect) {
 
 	// create receive thread
 	ipcon->receive_flag = true;
-	ipcon->receive_thread = (Thread *)malloc(sizeof(Thread));
-
 	ipcon->callback->flag = true;
 
-	if (thread_create(ipcon->receive_thread, ipcon_receive_loop, ipcon) < 0) {
-		// stop dispatching packet callbacks before ending the receive
-		// thread to avoid timeout exceptions due to callback functions
-		// trying to call getters
-		if (!thread_is_current(&ipcon->callback->thread)) {
-			mutex_lock(&ipcon->callback->mutex);
-
-			ipcon->callback->flag = false;
-
-			mutex_unlock(&ipcon->callback->mutex);
-		} else {
-			ipcon->callback->flag = false;
-		}
-
-		// cleanup receive thread
+	if (thread_create(&ipcon->receive_thread, ipcon_receive_loop, ipcon) < 0) {
 		ipcon->receive_flag = false;
 
-		free(ipcon->receive_thread);
-		ipcon->receive_thread = NULL;
-
-		// destroy socket
-		socket_destroy(ipcon->socket);
-		free(ipcon->socket);
-		ipcon->socket = NULL;
+		ipcon_disconnect_unlocked(ipcon);
 
 		// destroy callback thread
 		if (!is_auto_reconnect) {
@@ -1377,17 +1354,14 @@ static void ipcon_disconnect_unlocked(IPConnection *ipcon) {
 	}
 
 	// destroy receive thread
-	ipcon->receive_flag = false;
+	if (ipcon->receive_flag) {
+		ipcon->receive_flag = false;
 
-	socket_shutdown(ipcon->socket);
+		socket_shutdown(ipcon->socket);
 
-	if (!thread_is_current(ipcon->receive_thread)) {
-		thread_join(ipcon->receive_thread);
+		thread_join(&ipcon->receive_thread);
+		thread_destroy(&ipcon->receive_thread);
 	}
-
-	thread_destroy(ipcon->receive_thread);
-	free(ipcon->receive_thread);
-	ipcon->receive_thread = NULL;
 
 	// destroy socket
 	socket_destroy(ipcon->socket);
@@ -1448,7 +1422,6 @@ void ipcon_create(IPConnection *ipcon) {
 	ipcon->socket_id = 0;
 
 	ipcon->receive_flag = false;
-	ipcon->receive_thread = NULL;
 
 	ipcon->callback = NULL;
 
