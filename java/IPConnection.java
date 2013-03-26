@@ -32,6 +32,7 @@ class ReceiveThread extends Thread {
 	public void run() {
 		byte[] pendingData = new byte[8192];
 		int pendingLength = 0;
+		long socketID = ipcon.socketID;
 
 		while(ipcon.receiveFlag) {
 			int length;
@@ -41,22 +42,12 @@ class ReceiveThread extends Thread {
 				                       pendingData.length - pendingLength);
 			} catch(java.net.SocketException e) {
 				if(ipcon.receiveFlag) {
-					ipcon.autoReconnectAllowed = true;
-					ipcon.receiveFlag = false;
-					ByteBuffer bb = ByteBuffer.allocate(3);
-					bb.order(ByteOrder.LITTLE_ENDIAN);
-					bb.put(IPConnection.CALLBACK_DISCONNECTED);
-					bb.putShort(IPConnection.DISCONNECT_REASON_ERROR);
-
-					try {
-						ipcon.callbackQueue.put(new IPConnection.CallbackQueueObject(IPConnection.QUEUE_META, bb.array()));
-					} catch(java.lang.InterruptedException e2) {
-					}
+					ipcon.handleDisconnectByPeer(IPConnection.DISCONNECT_REASON_ERROR,
+					                             socketID, false);
 				}
 				return;
 			} catch(Exception e) {
 				if(ipcon.receiveFlag) {
-					ipcon.receiveFlag = false;
 					e.printStackTrace();
 				}
 				return;
@@ -64,17 +55,8 @@ class ReceiveThread extends Thread {
 
 			if(length <= 0) {
 				if(ipcon.receiveFlag) {
-					ipcon.autoReconnectAllowed = true;
-					ipcon.receiveFlag = false;
-					ByteBuffer bb = ByteBuffer.allocate(8);
-					bb.order(ByteOrder.LITTLE_ENDIAN);
-					bb.put(IPConnection.CALLBACK_DISCONNECTED);
-					bb.putShort(IPConnection.DISCONNECT_REASON_SHUTDOWN);
-
-					try {
-						ipcon.callbackQueue.put(new IPConnection.CallbackQueueObject(IPConnection.QUEUE_META, bb.array()));
-					} catch(java.lang.InterruptedException e2) {
-					}
+					ipcon.handleDisconnectByPeer(IPConnection.DISCONNECT_REASON_SHUTDOWN,
+					                             socketID, false);
 				}
 				return;
 			}
@@ -162,9 +144,16 @@ class CallbackThread extends Thread {
 				break;
 
 			case IPConnection.CALLBACK_DISCONNECTED:
+				// need to do this here, the receive loop is not allowed to
+				// hold the socket mutex because this could cause a deadlock
+				// with a concurrent call to the (dis-)connect function
 				if(cqo.parameter != IPConnection.DISCONNECT_REASON_REQUEST) {
 					synchronized(ipcon.socketMutex) {
-						ipcon.closeSocket();
+						// don't close the socket if it got disconnected or
+						// reconnected in the meantime
+						if (ipcon.socket != null && ipcon.socketID == cqo.socketID) {
+							ipcon.closeSocket();
+						}
 					}
 				}
 
@@ -310,7 +299,6 @@ public class IPConnection {
 
 	public final static byte CALLBACK_CONNECTED = 0;
 	public final static byte CALLBACK_DISCONNECTED = 1;
-	public final static byte CALLBACK_AUTHENTICATION_ERROR = 2;
 
 	private final static int BROADCAST_UID = 0;
 
@@ -357,6 +345,7 @@ public class IPConnection {
 	boolean autoReconnectAllowed = false;
 	boolean autoReconnectPending = false;
 	Socket socket = null;
+	long socketID = 0;
 	OutputStream out = null;
 	InputStream in = null;
 	List<EnumerateListener> listenerEnumerate = new ArrayList<EnumerateListener>();
@@ -369,12 +358,15 @@ public class IPConnection {
 		final int kind;
 		final byte functionID;
 		final short parameter;
+		final long socketID;
 		final byte[] packet;
 
-		public CallbackQueueObject(int kind, byte functionID, short parameter, byte[] packet) {
+		public CallbackQueueObject(int kind, byte functionID, short parameter,
+		                           long socketID, byte[] packet) {
 			this.kind = kind;
 			this.functionID = functionID;
 			this.parameter = parameter;
+			this.socketID = socketID;
 			this.packet = packet;
 		}
 	}
@@ -453,6 +445,8 @@ public class IPConnection {
 			throw(e);
 		}
 
+		++socketID;
+
 		callbackThread.setPacketDispatchEnabled(true);
 
 		receiveFlag = true;
@@ -469,7 +463,7 @@ public class IPConnection {
 
 		try {
 			callbackQueue.put(new CallbackQueueObject(QUEUE_META, CALLBACK_CONNECTED,
-			                                          connectReason, null));
+			                                          connectReason, 0, null));
 		} catch(InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -505,14 +499,14 @@ public class IPConnection {
 
 		try {
 			callbackQueueTmp.put(new CallbackQueueObject(QUEUE_META, CALLBACK_DISCONNECTED,
-			                                             DISCONNECT_REASON_REQUEST, null));
+			                                             DISCONNECT_REASON_REQUEST, 0, null));
 		} catch(InterruptedException e) {
 			e.printStackTrace();
 		}
 
 		try {
 			callbackQueueTmp.put(new CallbackQueueObject(QUEUE_EXIT, (byte)0,
-			                                             (short)0, null));
+			                                             (short)0, 0, null));
 		} catch(InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -724,7 +718,7 @@ public class IPConnection {
 			if(device.callbacks[functionID] != null) {
 				try {
 					callbackQueue.put(new CallbackQueueObject(QUEUE_PACKET, (byte)0,
-					                                          (short)0, packet));
+					                                          (short)0, 0, packet));
 				} catch(InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -747,6 +741,21 @@ public class IPConnection {
 		// a callback without registered listener
 	}
 
+	// NOTE: Assumes that socketMutex is locked, if disconnectImmediately is true
+	void handleDisconnectByPeer(short disconnectReason, long socketID, boolean disconnectImmediately) {
+		autoReconnectAllowed = true;
+
+		if(disconnectImmediately) {
+			disconnectUnlocked();
+		}
+
+		try {
+			callbackQueue.put(new CallbackQueueObject(QUEUE_META, CALLBACK_DISCONNECTED,
+			                                          disconnectReason, socketID, null));
+		} catch(InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
 
 	// NOTE: Assumes that socketMutex is locked
 	void closeSocket() {
@@ -846,7 +855,10 @@ public class IPConnection {
 
 			try {
 				out.write(request);
-			} catch(java.io.IOException e) {
+			} catch(java.net.SocketException e) {
+				handleDisconnectByPeer(DISCONNECT_REASON_ERROR, 0, true);
+				throw new NotConnectedException(e);
+			} catch(Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -856,7 +868,7 @@ public class IPConnection {
 		if(!listenerEnumerate.isEmpty()) {
 			try {
 				callbackQueue.put(new CallbackQueueObject(QUEUE_PACKET, (byte)0,
-				                                          (short)0, packet));
+				                                          (short)0, 0, packet));
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
