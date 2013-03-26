@@ -9,6 +9,8 @@
 package com.tinkerforge;
 
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.Hashtable;
 import java.util.ArrayList;
 import java.util.List;
@@ -152,6 +154,13 @@ class CallbackThread extends Thread {
 						// don't close the socket if it got disconnected or
 						// reconnected in the meantime
 						if (ipcon.socket != null && ipcon.socketID == cqo.socketID) {
+							ipcon.disconnectProbeThread.shutdown();
+							try {
+								ipcon.disconnectProbeThread.join();
+							} catch(InterruptedException e) {
+								e.printStackTrace();
+							}
+
 							ipcon.closeSocket();
 						}
 					}
@@ -291,6 +300,64 @@ class CallbackThread extends Thread {
 	}
 }
 
+class DisconnectProbeThread extends Thread {
+	IPConnection ipcon = null;
+	byte[] request = null;
+	SynchronousQueue<Boolean> queue = new SynchronousQueue<Boolean>();
+
+	final static byte FUNCTION_DISCONNECT_PROBE = (byte)128;
+	final static int DISCONNECT_PROBE_INTERVAL = 5000;
+
+	DisconnectProbeThread(IPConnection ipcon) {
+		super("Disconnect-Prober");
+		this.ipcon = ipcon;
+		request = ipcon.createRequestPacket((byte)8, FUNCTION_DISCONNECT_PROBE, null).array();
+	}
+
+	void shutdown() {
+		try {
+			queue.put(new Boolean(true));
+		} catch(InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void run() {
+		Boolean item = null;
+
+				System.out.println("DisconnectProbeThread 1");
+		while (true) {
+			try {
+				System.out.println("DisconnectProbeThread 2");
+				item = queue.poll(DISCONNECT_PROBE_INTERVAL, TimeUnit.MILLISECONDS);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			if (item != null) {
+				break;
+			}
+
+			if (ipcon.disconnectProbeFlag) {
+				try {
+					System.out.println("DisconnectProbeThread...");
+					ipcon.out.write(request);
+					System.out.println("DisconnectProbeThread...done");
+				} catch(java.net.SocketException e) {
+					ipcon.handleDisconnectByPeer(IPConnection.DISCONNECT_REASON_ERROR,
+					                             ipcon.socketID, false);
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			} else {
+				ipcon.disconnectProbeFlag = true;
+			}
+		}
+				System.out.println("DisconnectProbeThread 3");
+	}
+}
+
 public class IPConnection {
 	private final static String BASE58 = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
 
@@ -353,6 +420,8 @@ public class IPConnection {
 	List<DisconnectedListener> listenerDisconnected = new ArrayList<DisconnectedListener>();
 	ReceiveThread receiveThread = null;
 	CallbackThread callbackThread = null;
+	DisconnectProbeThread disconnectProbeThread = null;
+	boolean disconnectProbeFlag = false;
 
 	static class CallbackQueueObject {
 		final int kind;
@@ -447,6 +516,11 @@ public class IPConnection {
 
 		++socketID;
 
+		// create disconnect probe thread
+		disconnectProbeFlag = true;
+		disconnectProbeThread = new DisconnectProbeThread(this);
+		disconnectProbeThread.start();
+
 		callbackThread.setPacketDispatchEnabled(true);
 
 		receiveFlag = true;
@@ -521,6 +595,13 @@ public class IPConnection {
 	}
 
 	void disconnectUnlocked() {
+		disconnectProbeThread.shutdown();
+		try {
+			disconnectProbeThread.join();
+		} catch(InterruptedException e) {
+			e.printStackTrace();
+		}
+
 		// stop dispatching packet callbacks before ending the receive
 		// thread to avoid timeout exceptions due to callback functions
 		// trying to call getters
@@ -861,6 +942,8 @@ public class IPConnection {
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
+
+			disconnectProbeFlag = false;
 		}
 	}
 
