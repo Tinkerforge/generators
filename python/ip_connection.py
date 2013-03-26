@@ -770,6 +770,8 @@ class IPConnection:
                 self.handle_disconnect_by_peer(IPConnection.DISCONNECT_REASON_ERROR, None, True)
                 raise Error(Error.NOT_CONNECTED, 'Not connected')
 
+            self.disconnect_probe_flag = False
+
     def send_request(self, device, function_id, data, form, form_ret):
         length = 8 + struct.calcsize('<' + form)
         request, response_expected, sequence_number = \
