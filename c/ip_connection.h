@@ -354,6 +354,10 @@ struct _IPConnection {
 
 	CallbackContext *callback;
 
+	bool disconnect_probe_flag;
+	Thread disconnect_probe_thread; // protected by socket_mutex
+	Event disconnect_probe_event;
+
 	Semaphore wait;
 };
 
