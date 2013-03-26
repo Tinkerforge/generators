@@ -533,8 +533,9 @@ class IPConnection:
         except socket.error:
             pass
 
-        self.receive_thread.join() # FIXME: use a timeout?
-        self.receive_thread = None
+        if self.receive_thread is not None:
+            self.receive_thread.join() # FIXME: use a timeout?
+            self.receive_thread = None
 
         # close socket
         self.socket.close()
