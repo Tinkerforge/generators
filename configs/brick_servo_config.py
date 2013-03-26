@@ -752,6 +752,8 @@ com['packets'].append({
 This callback is triggered when a position set by :func:`SetPosition`
 is reached. The :word:`parameters` are the servo and the position that is reached.
 
+You can enable this callback with :func:`EnablePositionReachedCallback`.
+
 .. note::
  Since we can't get any feedback from the servo, this only works if the
  velocity (see :func:`SetVelocity`) is set smaller or equal to the
@@ -763,6 +765,8 @@ is reached. The :word:`parameters` are the servo and the position that is reache
 Dieser Callback wird ausgelöst immer wenn eine konfigurierte Position, wie von
 :func:`SetPosition` gesetzt, erreicht wird. Die :word:`parameters` sind der
 Servo und die Position die erreicht wurde.
+
+Dieser Callback kann mit :func:`EnablePositionReachedCallback` aktiviert werden.
 
 .. note::
  Da es nicht möglich ist eine Rückmeldung vom Servo zu erhalten,
@@ -786,6 +790,8 @@ com['packets'].append({
 This callback is triggered when a velocity set by :func:`SetVelocity`
 is reached. The :word:`parameters` are the servo and the velocity that is reached.
 
+You can enable this callback with :func:`EnableVelocityReachedCallback`.
+
 .. note::
  Since we can't get any feedback from the servo, this only works if the
  acceleration (see :func:`SetAcceleration`) is set smaller or equal to the
@@ -798,12 +804,132 @@ Dieser Callback wird ausgelöst immer wenn eine konfigurierte Geschwindigkeit, w
 :func:`SetVelocity` gesetzt, erreicht wird. Die :word:`parameters` sind der
 Servo und die Geschwindigkeit die erreicht wurde.
 
+Dieser Callback kann mit :func:`EnableVelocityReachedCallback` aktiviert werden.
+
 .. note::
  Da es nicht möglich ist eine Rückmeldung vom Servo zu erhalten,
  funktioniert dies nur wenn die konfigurierte Beschleunigung (siehe :func:`SetAcceleration`)
  kleiner oder gleich der maximalen Beschleunigung des Motors ist. Andernfalls
  wird der Motor hinter dem Vorgabewert zurückbleiben und der Callback wird
  zu früh ausgelöst.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('EnablePositionReachedCallback', 'enable_position_reached_callback'), 
+'elements': [],
+'since_firmware': [2, 0, 1],
+'doc': ['ccf', {
+'en':
+"""
+Enables the :func:`PositionReached` callback.
+
+Default is disabled.
+""",
+'de':
+"""
+Aktiviert den :func:`PositionReached` Callback.
+
+Voreinstellung ist deaktiviert.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('DisablePositionReachedCallback', 'disable_position_reached_callback'), 
+'elements': [],
+'since_firmware': [2, 0, 1],
+'doc': ['ccf', {
+'en':
+"""
+Disables the :func:`PositionReached` callback.
+
+Default is disabled.
+""",
+'de':
+"""
+Deaktiviert den :func:`PositionReached` Callback.
+
+Voreinstellung ist deaktiviert.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('IsPositionReachedCallbackEnabled', 'is_position_reached_callback_enabled'), 
+'elements': [('enabled', 'uint8', 1, 'out')],
+'since_firmware': [2, 0, 1],
+'doc': ['ccf', {
+'en':
+"""
+Returns *true* if :func:`PositionReached` callback is enabled, *false* otherwise.
+""",
+'de':
+"""
+Gibt *true* zurück wenn :func:`PositionReached` callback aktiviert ist, *false* sonst.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('EnableVelocityReachedCallback', 'enable_velocity_reached_callback'), 
+'elements': [],
+'since_firmware': [2, 0, 1],
+'doc': ['ccf', {
+'en':
+"""
+Enables the :func:`VelocityReached` callback.
+
+Default is disabled.
+""",
+'de':
+"""
+Aktiviert den :func:`VelocityReached` Callback.
+
+Voreinstellung ist deaktiviert.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('DisableVelocityReachedCallback', 'disable_velocity_reached_callback'), 
+'elements': [],
+'since_firmware': [2, 0, 1],
+'doc': ['ccf', {
+'en':
+"""
+Disables the :func:`VelocityReached` callback.
+
+Default is disabled.
+""",
+'de':
+"""
+Deaktiviert den :func:`VelocityReached` Callback.
+
+Voreinstellung ist deaktiviert.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('IsVelocityReachedCallbackEnabled', 'is_velocity_reached_callback_enabled'), 
+'elements': [('enabled', 'uint8', 1, 'out')],
+'since_firmware': [2, 0, 1],
+'doc': ['ccf', {
+'en':
+"""
+Returns *true* if :func:`VelocityReached` callback is enabled, *false* otherwise.
+""",
+'de':
+"""
+Gibt *true* zurück wenn :func:`VelocityReached` Callback aktiviert ist, *false* sonst.
 """
 }]
 })

@@ -271,3 +271,59 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetI2CMode', 'set_i2c_mode'), 
+'elements': [('mode', 'uint8', 1, 'in')],
+'since_firmware': [2, 0, 1],
+'doc': ['af', {
+'en':
+"""
+Sets the I2C mode. Possible modes are:
+
+* 0: Fast Mode (400KHz, default)
+* 1: Slow Mode (100KHz)
+
+If you have problems with obvious outliers in the
+Temperature Bricklet measurements, they may be caused by EMI issues.
+In this case it may be helpfull to lower the I2C speed.
+
+It is however not recommended to lower the I2C speed in applications where
+a high throughput needs to be achieved.
+""",
+'de':
+"""
+Setzt den I2C Modus. Mögliche Modi sind:
+
+* 0: Fast Mode (400KHz, default)
+* 1: Slow Mode (100KHz)
+
+Wenn Probleme mit offensichtlichen Ausreißern in den
+Temperature Bricklet Messungen auftreten, können diese evtl. aufgrund
+von elektromagnetischen Störungen sein. In diesem Fall kann es helfen
+die I2C Geschwindigkeit zu verringern.
+
+Falls in einem System ein hoher Durchsatz an Nachrichten erwünscht ist,
+sollte die I2C Geschwindigkeit allerdings nicht verringert werden.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetI2CMode', 'get_i2c_mode'), 
+'elements': [('mode', 'uint8', 1, 'out')],
+'since_firmware': [2, 0, 1],
+'doc': ['af', {
+'en':
+"""
+Returns the I2C mode as set by :func:`SetI2CMode`.
+""",
+'de':
+"""
+Gibt den I2C Modus zurück, wie von :func:`SetI2CMode` gesetzt.
+"""
+}]
+})
+
