@@ -127,7 +127,9 @@ class CallbackThread extends Thread {
 			packetFlag = true;
 		} else {
 			if (Thread.currentThread() != this) {
-				synchronized(dispatchMutex) {
+				// FIXME: cannot lock callback mutex here because this can
+				//        deadlock due to an ordering problem with the socket mutex
+				/*synchronized(dispatchMutex)*/ {
 					packetFlag = false;
 				}
 			} else {
@@ -274,7 +276,9 @@ class CallbackThread extends Thread {
 				continue;
 			}
 
-			synchronized(dispatchMutex) {
+			// FIXME: cannot lock callback mutex here because this can
+			//        deadlock due to an ordering problem with the socket mutex
+			/*synchronized(dispatchMutex)*/ {
 				switch(cqo.kind) {
 					case IPConnection.QUEUE_EXIT: {
 						return;
