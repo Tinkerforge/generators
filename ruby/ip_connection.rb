@@ -413,6 +413,21 @@ module Tinkerforge
     end
   end
 
+  # internal
+  class CallbackContext
+    attr_accessor :queue
+    attr_accessor :thread
+    attr_accessor :mutex
+    attr_accessor :flag
+
+    def initialize
+      @queue = nil
+      @thread = nil
+      @mutex = nil
+      @flag = nil
+    end
+  end
+
   class IPConnection
     attr_accessor :devices
     attr_accessor :timeout
@@ -468,8 +483,7 @@ module Tinkerforge
       @receive_flag = false
       @receive_thread = nil
 
-      @callback_queue = nil
-      @callback_thread = nil
+      @callback = nil
 
       @waiter_queue = Queue.new
     end
@@ -500,8 +514,7 @@ module Tinkerforge
     # Disconnects the TCP/IP connection from the Brick Daemon or the
     # WIFI/Ethernet Extension.
     def disconnect
-      callback_queue = nil
-      callback_thread = nil
+      callback = nil
 
       @socket_mutex.synchronize {
         @auto_reconnect_allowed = false
@@ -512,6 +525,19 @@ module Tinkerforge
         else
           if @socket == nil
             raise NotConnectedException, 'Not connected'
+          end
+
+          # Stop dispatching packet callbacks before ending the receive
+          # thread to avoid timeout exceptions due to callback functions
+          # trying to call getters
+          if Thread.current != @callback.thread
+            # FIXME: Cannot lock callback mutex here because this can
+            #        deadlock due to an ordering problem with the socket mutex
+            #@callback.mutex.synchronize {
+              @callback.flag = false
+            #}
+          else
+            @callback.flag = false
           end
 
           # Destroy receive thread
@@ -531,21 +557,18 @@ module Tinkerforge
         end
 
         # Destroy callback thread
-        callback_queue = @callback_queue
-        callback_thread = @callback_thread
-
-        @callback_queue = nil
-        @callback_thread = nil
+        callback = @callback
+        @callback = nil
       }
 
       # Do this outside of socket_mutex to allow calling (dis-)connect from
       # the callbacks while blocking on the join call here
-      callback_queue.push [QUEUE_KIND_META, [CALLBACK_DISCONNECTED,
+      callback.queue.push [QUEUE_KIND_META, [CALLBACK_DISCONNECTED,
                                              DISCONNECT_REASON_REQUEST]]
-      callback_queue.push [QUEUE_KIND_EXIT, nil]
+      callback.queue.push [QUEUE_KIND_EXIT, nil]
 
-      if Thread.current != callback_thread
-        callback_thread.join
+      if Thread.current != callback.thread
+        callback.thread.join
       end
     end
 
@@ -685,17 +708,22 @@ module Tinkerforge
       # NOTE: Assumes that the socket mutex is locked
 
       # Create callback queue and thread
-      if @callback_thread == nil
-        @callback_queue = Queue.new
-        @callback_thread = Thread.new(@callback_queue) do |queue|
-          callback_loop queue
+      if @callback == nil
+        @callback = CallbackContext.new
+        @callback.queue = Queue.new
+        @callback.mutex = Mutex.new
+        @callback.flag = false
+        @callback.thread = Thread.new(@callback) do |callback|
+          callback_loop callback
         end
-        @callback_thread.abort_on_exception = true
+        @callback.thread.abort_on_exception = true
       end
 
       # Create socket
       @socket = TCPSocket.new @host, @port
       @socket.setsockopt(Socket::IPPROTO_TCP, Socket::TCP_NODELAY, 1)
+
+      @callback.flag = true
 
       # Create receive thread
       @receive_flag = true
@@ -712,7 +740,7 @@ module Tinkerforge
       @auto_reconnect_allowed = false;
       @auto_reconnect_pending = false;
 
-      @callback_queue.push [QUEUE_KIND_META, [CALLBACK_CONNECTED, connect_reason]]
+      @callback.queue.push [QUEUE_KIND_META, [CALLBACK_CONNECTED, connect_reason]]
     end
 
     # internal
@@ -734,16 +762,14 @@ module Tinkerforge
           data = @socket.recv 8192
         rescue IOError
           @auto_reconnect_allowed = true
-          @receive_flag = false
-          @callback_queue.push [QUEUE_KIND_META, [CALLBACK_DISCONNECTED, DISCONNECT_REASON_ERROR]]
+          @callback.queue.push [QUEUE_KIND_META, [CALLBACK_DISCONNECTED, DISCONNECT_REASON_ERROR]]
           break
         end
 
         if data.length == 0
           if @receive_flag
             @auto_reconnect_allowed = true
-            @receive_flag = false
-            @callback_queue.push [QUEUE_KIND_META, [CALLBACK_DISCONNECTED, DISCONNECT_REASON_SHUTDOWN]]
+            @callback.queue.push [QUEUE_KIND_META, [CALLBACK_DISCONNECTED, DISCONNECT_REASON_SHUTDOWN]]
           end
           break
         end
@@ -778,17 +804,19 @@ module Tinkerforge
           @registered_callbacks[CALLBACK_CONNECTED].call parameter
         end
       elsif function_id == CALLBACK_DISCONNECTED
-        # need to do this here, the receive_loop is not allowed to
-        # hold the socket_mutex because this could cause a deadlock
-        # with a concurrent call to the (dis-)connect function
-        @socket_mutex.synchronize {
-          if @socket != nil
-            @socket.close
-            @socket = nil
-          end
-        }
+        if parameter != DISCONNECT_REASON_REQUEST
+          # Need to do this here, the receive_loop is not allowed to
+          # hold the socket_mutex because this could cause a deadlock
+          # with a concurrent call to the (dis-)connect function
+          @socket_mutex.synchronize {
+            if @socket != nil
+              @socket.close
+              @socket = nil
+            end
+          }
+        end
 
-        # FIXME: wait a moment here, otherwise the next connect
+        # FIXME: Wait a moment here, otherwise the next connect
         # attempt will succeed, even if there is no open server
         # socket. the first receive will then fail directly
         sleep 0.1
@@ -801,7 +829,7 @@ module Tinkerforge
           @auto_reconnect_pending = true
           retry_connect = true
 
-          # block here until reconnect. this is okay, there is no
+          # Block here until reconnect. this is okay, there is no
           # callback to deliver when there is no connection
           while retry_connect
             retry_connect = false
@@ -847,22 +875,28 @@ module Tinkerforge
     end
 
     # internal
-    def callback_loop(callback_queue)
-      while true
-        kind, data = callback_queue.pop
+    def callback_loop(callback)
+      alive = true
 
-        if kind == QUEUE_KIND_EXIT
-          break
-        elsif kind == QUEUE_KIND_META
-          function_id, parameter = data
+      while alive
+        kind, data = callback.queue.pop
 
-          dispatch_meta function_id, parameter
-        elsif kind == QUEUE_KIND_PACKET
-          # don't dispatch callbacks when the receive thread isn't running
-          if @receive_flag
-            dispatch_packet data
+        # FIXME: Cannot lock callback mutex here because this can
+        #        deadlock due to an ordering problem with the socket mutex
+        # callback.mutex.synchronize {
+          if kind == QUEUE_KIND_EXIT
+            alive = false
+          elsif kind == QUEUE_KIND_META
+            function_id, parameter = data
+
+            dispatch_meta function_id, parameter
+          elsif kind == QUEUE_KIND_PACKET
+            # don't dispatch callbacks when the receive thread isn't running
+            if callback.flag
+              dispatch_packet data
+            end
           end
-        end
+        #}
       end
     end
 
@@ -874,14 +908,14 @@ module Tinkerforge
 
       if sequence_number == 0 and function_id == CALLBACK_ENUMERATE
         if @registered_callbacks.has_key? CALLBACK_ENUMERATE
-          @callback_queue.push [QUEUE_KIND_PACKET, packet]
+          @callback.queue.push [QUEUE_KIND_PACKET, packet]
         end
       elsif @devices.has_key? uid
         device = @devices[uid]
 
         if sequence_number == 0
           if device.registered_callbacks.has_key? function_id
-            @callback_queue.push [QUEUE_KIND_PACKET, packet]
+            @callback.queue.push [QUEUE_KIND_PACKET, packet]
           end
         elsif device.expected_response_function_id == function_id and \
               device.expected_response_sequence_number == sequence_number
