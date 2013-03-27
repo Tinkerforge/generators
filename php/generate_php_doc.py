@@ -93,6 +93,11 @@ def make_object_desc(packet):
 """
     }
 
+    and_ = {
+    'en': ' and ',
+    'de': ' und '
+    }
+
     var = []
     for element in packet.get_elements('out'):
         var.append('``{0}``'.format(element[0]))
@@ -101,9 +106,9 @@ def make_object_desc(packet):
         return common.select_lang(desc).format(var[0])
 
     if len(var) == 2:
-        return common.select_lang(desc).format(var[0] + ' and ' + var[1])
+        return common.select_lang(desc).format(var[0] + common.select_lang(and_) + var[1])
 
-    return common.select_lang(desc).format(', '.join(var[:-1]) + ' and ' + var[-1])
+    return common.select_lang(desc).format(', '.join(var[:-1]) + common.select_lang(and_) + var[-1])
 
 def make_methods(typ):
     methods = ''
@@ -254,7 +259,7 @@ Callbacks können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
 mit der Funktion :php:func:`registerCallback() <{3}{4}::registerCallback>` des
 Geräte Objektes durchgeführt werden. Der erste Parameter ist der Callback ID
-und der zweite die Callbackfunktion:
+und der zweite die Callback-Funktion:
 
 .. code-block:: php
 
@@ -265,7 +270,7 @@ und der zweite die Callbackfunktion:
 
     ${1}->registerCallback({3}{4}::CALLBACK_EXAMPLE, 'my_callback');
 
-Die verfügbaren Konstanten mit der dazugehörigen Funktionssignature werden
+Die verfügbaren Konstanten mit den dazugehörigen Funktionssignaturen werden
 weiter unten beschrieben.
 
 .. note::

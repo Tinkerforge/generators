@@ -30,7 +30,7 @@ callback :func:`Position` and set the period with
 """,
 'de':
 """
-Gibt die Position des Linearpotentionmeters zurück. Der Wertebereich
+Gibt die Position des Linearpotentiometers zurück. Der Wertebereich
 ist von 0 (Schieberegler unten) und 100 (Schieberegler oben).
 
 Wenn die Position periodisch abgefragt werden soll, wird empfohlen
@@ -450,7 +450,7 @@ with the period as set by :func:`SetDebouncePeriod`.
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
 :func:`SetPositionCallbackThreshold` gesetzt, erreicht wird.
-Der :word:`parameter` ist die Position des Linearpotentionmeters.
+Der :word:`parameter` ist die Position des Linearpotentiometers.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
 mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.

@@ -368,7 +368,7 @@ maximum pulse width.
 """,
 'de':
 """
-Setzt die minimale und maximale Pulsbreite des angegebenen Servos in µs.
+Setzt die minimale und maximale Pulsweite des angegebenen Servos in µs.
 
 Normalerweise werden Servos mit einer
 `PWM <http://de.wikipedia.org/wiki/Pulsweitenmodulation>`__ angesteuert,
@@ -482,7 +482,7 @@ Anwendungsfälle:
 * Ein Brushless Motor, mit einer maximalen Drehzahl von 1000 U/min, soll mit
   einem RC Brushless Motor Controller gesteuert werden. In diesem Fall kann das
   Minimum auf 0 und das Maximum auf 10000 gesetzt werden. :func:`SetPosition`
-  steuert jetzt die Drehzal in U/min.
+  steuert jetzt die Drehzahl in U/min.
 
 Beide Werte haben einen Wertebereich von -32767 bis 32767 (signed 16-bit integer).
 Der minimale Wert muss kleiner als der maximale sein.
@@ -608,7 +608,7 @@ Returns the current consumption of all servos together in mA.
 """,
 'de':
 """
-Gibt die Summe aller Stromverbräuche der Servos in mA zurück.
+Gibt den Stromverbrauch aller Servos zusammen in mA zurück.
 """
 }] 
 })
@@ -870,7 +870,7 @@ Returns *true* if :func:`PositionReached` callback is enabled, *false* otherwise
 """,
 'de':
 """
-Gibt *true* zurück wenn :func:`PositionReached` callback aktiviert ist, *false* sonst.
+Gibt *true* zurück wenn der :func:`PositionReached` Callback aktiviert ist, *false* sonst.
 """
 }]
 })
@@ -929,7 +929,7 @@ Returns *true* if :func:`VelocityReached` callback is enabled, *false* otherwise
 """,
 'de':
 """
-Gibt *true* zurück wenn :func:`VelocityReached` Callback aktiviert ist, *false* sonst.
+Gibt *true* zurück wenn der :func:`VelocityReached` Callback aktiviert ist, *false* sonst.
 """
 }]
 })

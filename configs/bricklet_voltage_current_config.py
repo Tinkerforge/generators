@@ -193,8 +193,8 @@ Wandlungszeit für Spannung/Stromstärke:
  "6",    "4.156ms"
  ">=7",  "8.244ms"
 
-Die Standardwerite sind 3, 4 und 4 (64, 1.1ms, 1.1ms) für die
-Durchschnittsbildung und die Spannungs/Stromstärken Wandlungszeit.
+Die Standardwerte sind 3, 4 und 4 (64, 1.1ms, 1.1ms) für die
+Durchschnittsbildung und die Spannungs/Stromstärkenwandlungszeit.
 """
 }]
 })
@@ -251,7 +251,7 @@ einen Divisor zu setzen falls sehr genaue Messwerte nötig sind.
 
 Zum Beispiel: Wenn eine Messung von 1000mA erwartet wird, das
 Voltage/Current Bricklet aber 1023mA zurück gibt, sollte 
-der Multiplikator auf 1000 und der Vidisor auf 1023 gesetzt
+der Multiplikator auf 1000 und der Divisor auf 1023 gesetzt
 werden.
 """
 }]

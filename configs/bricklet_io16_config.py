@@ -430,7 +430,7 @@ pin 6 low, pins 0-6 will remain untouched.
 'de':
 """
 Setzt den Ausgangszustand (logisch 1 oder logisch 0) mittels einer Bitmaske,
-entsprechend der Selktionsmaske. Die Bitmaske hat eine Länge von 8 Bit, 
+entsprechend der Selektionsmaske. Die Bitmaske hat eine Länge von 8 Bit,
 *true* bedeutet logisch 1 und *false*
 logisch 0.
 

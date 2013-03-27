@@ -272,8 +272,8 @@ Annahme, dass das Gerät nicht abgesteckt wird). Bei einer drahtlosen Verbindung
 können Zeitüberschreitungen auftreten, sobald die Entfernung zum Gerät zu
 groß wird.
 
-Da C# nicht mehrere Rückgabewerte direkt unterstützt, wird das out Keyword genutzt
-um mehrere Werte von einer Funktion zurückzugeben.
+Da C# nicht mehrere Rückgabewerte direkt unterstützt, wird das ``out`` Schlüsselwort
+genutzt, um mehrere Werte aus einer Funktion zurückzugeben.
 
 Der Namensraum für alle Brick/Bricklet Bindings und die IPConnection ist
 ``Tinkerforge.*``

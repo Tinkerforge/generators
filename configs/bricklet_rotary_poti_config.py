@@ -30,7 +30,7 @@ callback :func:`Position` and set the period with
 """,
 'de':
 """
-Gibt die Position des Drehpotentionmeters zurück. Der Wertebereich ist in Grad
+Gibt die Position des Drehpotentiometers zurück. Der Wertebereich ist in Grad
 und ist von -150° (links gedreht) und 150° (rechts gedreht).
 
 Wenn die Position periodisch abgefragt werden soll, wird empfohlen
@@ -449,7 +449,7 @@ with the period as set by :func:`SetDebouncePeriod`.
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
 :func:`SetPositionCallbackThreshold` gesetzt, erreicht wird.
-Der :word:`parameter` ist die Position des Drehpotentionmeters.
+Der :word:`parameter` ist die Position des Drehpotentiometers.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
 mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.

@@ -99,6 +99,11 @@ def make_object_desc(packet):
 """
     }
 
+    and_ = {
+    'en': ' and ',
+    'de': ' und '
+    }
+
     var = []
     for element in packet.get_elements('out'):
         var.append('``{0} {1}``'.format(java_common.get_java_type(element[1]),
@@ -108,9 +113,9 @@ def make_object_desc(packet):
         return common.select_lang(desc).format(var[0])
 
     if len(var) == 2:
-        return common.select_lang(desc).format(var[0] + ' and ' + var[1])
+        return common.select_lang(desc).format(var[0] + common.select_lang(and_) + var[1])
 
-    return common.select_lang(desc).format(', '.join(var[:-1]) + ' and ' + var[-1])
+    return common.select_lang(desc).format(', '.join(var[:-1]) + common.select_lang(and_) + var[-1])
 
 def make_methods(typ):
     methods = ''
@@ -244,7 +249,7 @@ The parameter is a listener class object, for example:
 
 The available listener classes with inherent methods to be overwritten
 are described below. It is possible to add several listeners and
-to remove them with the corresponding "removeExampleListener" function.
+to remove them with the corresponding "removeListener" function.
 
 .. note::
  Using listeners for recurring events is *always* preferred
@@ -277,7 +282,7 @@ Der Parameter ist ein Listener Klassen Objekt, z.B.:
 Die verfügbaren Listener Klassen mit den Methoden welche überschrieben
 werden können werden unterhalb beschrieben. Es ist möglich mehrere
 Listener hinzuzufügen und auch mit einem korrespondierenden
-"removeExampleListener" wieder zu entfernen.
+"removeListener" wieder zu entfernen.
 
 .. note::
  Listener für wiederkehrende Ereignisse zu verwenden ist 

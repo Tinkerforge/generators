@@ -66,7 +66,7 @@ Kalibriert den Nullwert des Sensors. Diese Funktion muss aufgerufen werden,
 wenn kein Strom fließt.
 
 Der Nullwert des Stromsensors ist abhängig von den exakten Eigenschaften des
-Analog-Digital-Wandlers, der Länge des Brickletkabels und der Temperatur. Daher ist es,
+Analog-Digital-Wandlers, der Länge des Bricklet Kabels und der Temperatur. Daher ist es,
 bei Wechsel des Brick oder bei Veränderung der Umgebung in welcher das Bricklet genutzt wird,
 ratsam erneut zu kalibrieren.
 

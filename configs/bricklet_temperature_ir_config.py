@@ -123,14 +123,14 @@ Eine Liste von Emissionsgraden unterschiedlicher Materialien ist
 
 Der Parameter von :func:`SetEmissivity` muss mit eine Faktor von 65535 (16-Bit)
 vorgegeben werden. Beispiel: Ein Emissionsgrad von 0,1 kann mit dem Wert
-6553 gesetzt werden, En Emissionsgrad von 0,5 mit dem Wert 32767 und so weiter.
+6553 gesetzt werden, ein Emissionsgrad von 0,5 mit dem Wert 32767 und so weiter.
 
 .. note::
  Wenn eine exakte Messung der Objekttemperatur notwendig ist, ist es entscheidend
  eine exakten Emissionsgrad anzugeben.
  
 Der Standard Emissionsgrad ist 1,0 (Wert von 65535) und der minimale
-Emissionsgrad welcher der Sensor vearbeiten kann ist 0,1 (Wert von 6553).
+Emissionsgrad welcher der Sensor verarbeiten kann ist 0,1 (Wert von 6553).
 """
 }]
 })
