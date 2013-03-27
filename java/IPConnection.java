@@ -326,10 +326,8 @@ class DisconnectProbeThread extends Thread {
 	public void run() {
 		Boolean item = null;
 
-				System.out.println("DisconnectProbeThread 1");
 		while (true) {
 			try {
-				System.out.println("DisconnectProbeThread 2");
 				item = queue.poll(DISCONNECT_PROBE_INTERVAL, TimeUnit.MILLISECONDS);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -341,9 +339,7 @@ class DisconnectProbeThread extends Thread {
 
 			if (ipcon.disconnectProbeFlag) {
 				try {
-					System.out.println("DisconnectProbeThread...");
 					ipcon.out.write(request);
-					System.out.println("DisconnectProbeThread...done");
 				} catch(java.net.SocketException e) {
 					ipcon.handleDisconnectByPeer(IPConnection.DISCONNECT_REASON_ERROR,
 					                             ipcon.socketID, false);
@@ -354,7 +350,6 @@ class DisconnectProbeThread extends Thread {
 				ipcon.disconnectProbeFlag = true;
 			}
 		}
-				System.out.println("DisconnectProbeThread 3");
 	}
 }
 
