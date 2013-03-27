@@ -283,14 +283,14 @@ class IPConnection:
         self.auto_reconnect = True
         self.auto_reconnect_allowed = False
         self.auto_reconnect_pending = False
-        self.sequence_number_lock = Lock() # protects next_sequence_number
-        self.next_sequence_number = 0
+        self.sequence_number_lock = Lock()
+        self.next_sequence_number = 0 # protected by sequence_number_lock
         self.auth_key = None
         self.devices = {}
         self.registered_callbacks = {}
-        self.socket = None
-        self.socket_id = 0
-        self.socket_lock = Lock() # protects socket and socket_id
+        self.socket = None # protected by socket_lock
+        self.socket_id = 0 # protected by socket_lock
+        self.socket_lock = Lock()
         self.receive_flag = False
         self.receive_thread = None
         self.callback = None
@@ -549,7 +549,10 @@ class IPConnection:
         # thread to avoid timeout exceptions due to callback functions
         # trying to call getters
         if current_thread() is not self.callback.thread:
-            with self.callback.lock:
+            # FIXME: cannot hold callback lock here because this can
+            #        deadlock due to an ordering problem with the socket lock
+            #with self.callback.lock:
+            if True:
                 self.callback.flag = False
         else:
             self.callback.flag = False
@@ -699,7 +702,10 @@ class IPConnection:
         while True:
             kind, data = callback.queue.get()
 
-            with callback.lock:
+            # FIXME: cannot hold callback lock here because this can
+            #        deadlock due to an ordering problem with the socket lock
+            #with callback.lock:
+            if True:
                 if kind == IPConnection.QUEUE_EXIT:
                     break
                 elif kind == IPConnection.QUEUE_META:
