@@ -1095,10 +1095,12 @@ static void ipcon_callback_loop(void *opaque) {
 			break;
 		}
 
-		mutex_lock(&callback->mutex);
+		// FIXME: cannot lock callback mutex here because this can
+		//        deadlock due to an ordering problem with the socket mutex
+		//mutex_lock(&callback->mutex);
 
 		if (kind == QUEUE_KIND_EXIT) {
-			mutex_unlock(&callback->mutex);
+			//mutex_unlock(&callback->mutex);
 			break;
 		} else if (kind == QUEUE_KIND_META) {
 			ipcon_dispatch_meta(callback->ipcon, (Meta *)data);
@@ -1109,7 +1111,7 @@ static void ipcon_callback_loop(void *opaque) {
 			}
 		}
 
-		mutex_unlock(&callback->mutex);
+		//mutex_unlock(&callback->mutex);
 
 		free(data);
 	}
@@ -1439,11 +1441,13 @@ static void ipcon_disconnect_unlocked(IPConnection *ipcon) {
 	// thread to avoid timeout exceptions due to callback functions
 	// trying to call getters
 	if (!thread_is_current(&ipcon->callback->thread)) {
-		mutex_lock(&ipcon->callback->mutex);
+		// FIXME: cannot lock callback mutex here because this can
+		//        deadlock due to an ordering problem with the socket mutex
+		//mutex_lock(&ipcon->callback->mutex);
 
 		ipcon->callback->flag = false;
 
-		mutex_unlock(&ipcon->callback->mutex);
+		//mutex_unlock(&ipcon->callback->mutex);
 	} else {
 		ipcon->callback->flag = false;
 	}
