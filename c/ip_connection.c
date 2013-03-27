@@ -1320,6 +1320,18 @@ static int ipcon_connect_unlocked(IPConnection *ipcon, bool is_auto_reconnect) {
 	ipcon->socket = (Socket *)malloc(sizeof(Socket));
 
 	if (socket_create(ipcon->socket, AF_INET, SOCK_STREAM, 0) < 0) {
+		// destroy callback thread
+		if (!is_auto_reconnect) {
+			queue_put(&ipcon->callback->queue, QUEUE_KIND_EXIT, NULL, 0);
+
+			if (!thread_is_current(&ipcon->callback->thread)) {
+				thread_join(&ipcon->callback->thread);
+			}
+
+			ipcon->callback = NULL;
+		}
+
+		// destroy socket
 		free(ipcon->socket);
 		ipcon->socket = NULL;
 
@@ -1327,6 +1339,18 @@ static int ipcon_connect_unlocked(IPConnection *ipcon, bool is_auto_reconnect) {
 	}
 
 	if (socket_connect(ipcon->socket, &address, sizeof(address)) < 0) {
+		// destroy callback thread
+		if (!is_auto_reconnect) {
+			queue_put(&ipcon->callback->queue, QUEUE_KIND_EXIT, NULL, 0);
+
+			if (!thread_is_current(&ipcon->callback->thread)) {
+				thread_join(&ipcon->callback->thread);
+			}
+
+			ipcon->callback = NULL;
+		}
+
+		// destroy socket
 		socket_destroy(ipcon->socket);
 		free(ipcon->socket);
 		ipcon->socket = NULL;
