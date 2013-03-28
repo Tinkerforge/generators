@@ -479,6 +479,7 @@ module Tinkerforge
 
       @socket_mutex = Mutex.new
       @socket = nil
+      @socket_id = 0
 
       @receive_flag = false
       @receive_thread = nil
@@ -564,7 +565,7 @@ module Tinkerforge
       # Do this outside of socket_mutex to allow calling (dis-)connect from
       # the callbacks while blocking on the join call here
       callback.queue.push [QUEUE_KIND_META, [CALLBACK_DISCONNECTED,
-                                             DISCONNECT_REASON_REQUEST]]
+                                             DISCONNECT_REASON_REQUEST, nil]]
       callback.queue.push [QUEUE_KIND_EXIT, nil]
 
       if Thread.current != callback.thread
@@ -722,12 +723,15 @@ module Tinkerforge
       # Create socket
       @socket = TCPSocket.new @host, @port
       @socket.setsockopt(Socket::IPPROTO_TCP, Socket::TCP_NODELAY, 1)
+      @socket_id += 1
 
       @callback.flag = true
 
       # Create receive thread
       @receive_flag = true
-      @receive_thread = Thread.new { receive_loop }
+      @receive_thread = Thread.new(@socket_id) do |socket_id|
+        receive_loop socket_id
+      end
       @receive_thread.abort_on_exception = true
 
       # Trigger connected callback
@@ -740,17 +744,19 @@ module Tinkerforge
       @auto_reconnect_allowed = false;
       @auto_reconnect_pending = false;
 
-      @callback.queue.push [QUEUE_KIND_META, [CALLBACK_CONNECTED, connect_reason]]
+      @callback.queue.push [QUEUE_KIND_META, [CALLBACK_CONNECTED,
+                                              connect_reason, nil]]
     end
 
     # internal
-    def receive_loop
+    def receive_loop(socket_id)
       pending_data = ''
 
       while @receive_flag
         begin
           result = IO.select [@socket], [], [], 1
         rescue IOError
+          # FIXME: handle this error?
           break
         end
 
@@ -762,14 +768,24 @@ module Tinkerforge
           data = @socket.recv 8192
         rescue IOError
           @auto_reconnect_allowed = true
-          @callback.queue.push [QUEUE_KIND_META, [CALLBACK_DISCONNECTED, DISCONNECT_REASON_ERROR]]
+          @callback.queue.push [QUEUE_KIND_META, [CALLBACK_DISCONNECTED,
+                                                  DISCONNECT_REASON_ERROR,
+                                                  socket_id]]
+          break
+        rescue Errno::ECONNRESET
+          @auto_reconnect_allowed = true
+          @callback.queue.push [QUEUE_KIND_META, [CALLBACK_DISCONNECTED,
+                                                  DISCONNECT_REASON_SHUTDOWN,
+                                                  socket_id]]
           break
         end
 
         if data.length == 0
           if @receive_flag
             @auto_reconnect_allowed = true
-            @callback.queue.push [QUEUE_KIND_META, [CALLBACK_DISCONNECTED, DISCONNECT_REASON_SHUTDOWN]]
+            @callback.queue.push [QUEUE_KIND_META, [CALLBACK_DISCONNECTED,
+                                                    DISCONNECT_REASON_SHUTDOWN,
+                                                    socket_id]]
           end
           break
         end
@@ -798,7 +814,7 @@ module Tinkerforge
     end
 
     # internal
-    def dispatch_meta(function_id, parameter)
+    def dispatch_meta(function_id, parameter, socket_id)
       if function_id == CALLBACK_CONNECTED
         if @registered_callbacks.has_key? CALLBACK_CONNECTED
           @registered_callbacks[CALLBACK_CONNECTED].call parameter
@@ -809,7 +825,9 @@ module Tinkerforge
           # hold the socket_mutex because this could cause a deadlock
           # with a concurrent call to the (dis-)connect function
           @socket_mutex.synchronize {
-            if @socket != nil
+            # Don't close the socket if it got disconnected or
+            # reconnected in the meantime
+            if @socket != nil and @socket_id == socket_id
               @socket.close
               @socket = nil
             end
@@ -887,9 +905,9 @@ module Tinkerforge
           if kind == QUEUE_KIND_EXIT
             alive = false
           elsif kind == QUEUE_KIND_META
-            function_id, parameter = data
+            function_id, parameter, socket_id = data
 
-            dispatch_meta function_id, parameter
+            dispatch_meta function_id, parameter, socket_id
           elsif kind == QUEUE_KIND_PACKET
             # don't dispatch callbacks when the receive thread isn't running
             if callback.flag
