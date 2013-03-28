@@ -153,7 +153,8 @@ namespace Tinkerforge
 			}
 		}
 
-		void ConnectUnlocked(bool isAutoReconnect)
+		// NOTE: assumes that socketLock is locked
+		private void ConnectUnlocked(bool isAutoReconnect)
 		{
 			if(callback == null)
 			{
@@ -237,44 +238,7 @@ namespace Tinkerforge
 						throw new NotConnectedException();
 					}
 
-					// destroy disconnect probe thread
-					disconnectProbeQueue.Enqueue(true);
-					disconnectProbeThread.Join();
-					disconnectProbeThread = null;
-
-					// stop dispatching packet callbacks before ending the receive
-					// thread to avoid timeout exceptions due to callback functions
-					// trying to call getters
-					if (Thread.CurrentThread != callback.thread)
-					{
-						// FIXME: cannot lock callback lock here because this can
-						//        deadlock due to an ordering problem with the socket lock
-						//lock (callback.lock_)
-						{
-							callback.flag = false;
-						}
-					}
-					else
-					{
-						callback.flag = false;
-					}
-
-					receiveFlag = false;
-
-					socketWriter.Close();
-					socketWriter = null;
-					socketReader.Close();
-					socketReader = null;
-					socketStream.Close();
-					socketStream = null;
-					socket.Close();
-					socket = null;
-
-					if(receiveThread != null)
-					{
-						receiveThread.Join();
-						receiveThread = null;
-					}
+					DisconnectUnlocked();
 				}
 
 				localCallback = callback;
@@ -288,6 +252,48 @@ namespace Tinkerforge
 			if(Thread.CurrentThread != localCallback.thread)
 			{
 				localCallback.thread.Join();
+			}
+		}
+
+		// NOTE: assumes that socketLock is locked
+		private void DisconnectUnlocked() {
+			// destroy disconnect probe thread
+			disconnectProbeQueue.Enqueue(true);
+			disconnectProbeThread.Join();
+			disconnectProbeThread = null;
+
+			// stop dispatching packet callbacks before ending the receive
+			// thread to avoid timeout exceptions due to callback functions
+			// trying to call getters
+			if (Thread.CurrentThread != callback.thread)
+			{
+				// FIXME: cannot lock callback lock here because this can
+				//        deadlock due to an ordering problem with the socket lock
+				//lock (callback.lock_)
+				{
+					callback.flag = false;
+				}
+			}
+			else
+			{
+				callback.flag = false;
+			}
+
+			receiveFlag = false;
+
+			socketWriter.Close();
+			socketWriter = null;
+			socketReader.Close();
+			socketReader = null;
+			socketStream.Close();
+			socketStream = null;
+			socket.Close();
+			socket = null;
+
+			if(receiveThread != null)
+			{
+				receiveThread.Join();
+				receiveThread = null;
 			}
 		}
 
@@ -464,10 +470,7 @@ namespace Tinkerforge
 					{
 						if(receiveFlag)
 						{
-							autoReconnectAllowed = true;
-							callback.queue.Enqueue(new CallbackQueueObject(QUEUE_META, CALLBACK_DISCONNECTED,
-							                                               DISCONNECT_REASON_ERROR,
-							                                               localSocketID, null));
+							HandleDisconnectByPeer(DISCONNECT_REASON_ERROR, localSocketID, false);
 						}
 					}
 
@@ -482,10 +485,7 @@ namespace Tinkerforge
 				{
 					if(receiveFlag)
 					{
-						autoReconnectAllowed = true;
-						callback.queue.Enqueue(new CallbackQueueObject(QUEUE_META, CALLBACK_DISCONNECTED,
-						                                               DISCONNECT_REASON_SHUTDOWN,
-						                                               localSocketID, null));
+						HandleDisconnectByPeer(DISCONNECT_REASON_SHUTDOWN, localSocketID, false);
 					}
 				}
 
@@ -706,7 +706,18 @@ namespace Tinkerforge
 				if (disconnectProbeFlag) {
 					lock (socketLock)
 					{
-						socketWriter.Write(request, 0, request.Length);
+						try
+						{
+							socketWriter.Write(request, 0, request.Length);
+						}
+						catch(IOException e)
+						{
+							if(e.InnerException != null &&
+							   e.InnerException is SocketException)
+							{
+								HandleDisconnectByPeer(DISCONNECT_REASON_ERROR, socketID, false);
+							}
+						}
 					}
 				}
 				else
@@ -741,6 +752,20 @@ namespace Tinkerforge
 
 		internal static byte GetErrorCodeFromData(byte[] data) {
 			return (byte)(((int)(data[7] >> 6)) & 0x03);
+		}
+
+		// NOTE: assumes that socketLock is locked if disconnectImmediately is true
+		private void HandleDisconnectByPeer(short disconnectReason, long socketID,
+		                                    bool disconnectImmediately)
+		{
+			autoReconnectAllowed = true;
+
+			if (disconnectImmediately) {
+				DisconnectUnlocked();
+			}
+
+			callback.queue.Enqueue(new CallbackQueueObject(QUEUE_META, CALLBACK_DISCONNECTED,
+			                                               disconnectReason, socketID, null));
 		}
 
 		private void HandleResponse(byte[] packet)
@@ -788,23 +813,35 @@ namespace Tinkerforge
 
 		public void SendRequest(byte[] request)
 		{
-            lock (socketLock)
-            {
-                if (GetConnectionState() != IPConnection.CONNECTION_STATE_CONNECTED)
-                {
-                    throw new NotConnectedException();
-                }
+			lock (socketLock)
+			{
+				if (GetConnectionState() != IPConnection.CONNECTION_STATE_CONNECTED)
+				{
+					throw new NotConnectedException();
+				}
 
-                socketWriter.Write(request, 0, request.Length);
+				try
+				{
+					socketWriter.Write(request, 0, request.Length);
+				}
+				catch(IOException e)
+				{
+					if(e.InnerException != null &&
+					   e.InnerException is SocketException)
+					{
+						HandleDisconnectByPeer(DISCONNECT_REASON_ERROR, socketID, true);
+						throw new NotConnectedException();
+					}
+				}
 
 				disconnectProbeFlag = false;
-            }
+			}
 		}
 
-        internal void AddDevice(Device device)
-        {
-            devices[(int)device.internalUID] = device; // TODO: Dictionary might use UID directly as key; FIXME: might use weakref here
-        }
+		internal void AddDevice(Device device)
+		{
+			devices[(int)device.internalUID] = device; // TODO: Dictionary might use UID directly as key; FIXME: might use weakref here
+		}
 	}
 
 	public class TinkerforgeException : Exception
