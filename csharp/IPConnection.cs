@@ -445,6 +445,7 @@ namespace Tinkerforge
 					{
 						if(receiveFlag)
 						{
+							autoReconnectAllowed = true;
 							callback.queue.Enqueue(new CallbackQueueObject(QUEUE_META, CALLBACK_DISCONNECTED,
 							                                               DISCONNECT_REASON_ERROR,
 							                                               localSocketID, null));
