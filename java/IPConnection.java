@@ -342,13 +342,15 @@ class DisconnectProbeThread extends Thread {
 			}
 
 			if (ipcon.disconnectProbeFlag) {
-				try {
-					ipcon.out.write(request);
-				} catch(java.net.SocketException e) {
-					ipcon.handleDisconnectByPeer(IPConnection.DISCONNECT_REASON_ERROR,
-					                             ipcon.socketID, false);
-				} catch(Exception e) {
-					e.printStackTrace();
+				synchronized(socketMutex) {
+					try {
+						ipcon.out.write(request);
+					} catch(java.net.SocketException e) {
+						ipcon.handleDisconnectByPeer(IPConnection.DISCONNECT_REASON_ERROR,
+						                             ipcon.socketID, false);
+					} catch(Exception e) {
+						e.printStackTrace();
+					}
 				}
 			} else {
 				ipcon.disconnectProbeFlag = true;
