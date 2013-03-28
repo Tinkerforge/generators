@@ -433,10 +433,7 @@ module Tinkerforge
     attr_accessor :devices
     attr_accessor :timeout
 
-    FUNCTION_DISCONNECT_PROBE = 128
-    FUNCTION_ENUMERATE = 254
     CALLBACK_ENUMERATE = 253
-
     CALLBACK_CONNECTED = 0
     CALLBACK_DISCONNECTED = 1
 
@@ -458,8 +455,6 @@ module Tinkerforge
     CONNECTION_STATE_DISCONNECTED = 0
     CONNECTION_STATE_CONNECTED = 1
     CONNECTION_STATE_PENDING = 2 # auto-reconnect in progress
-
-    DISCONNECT_PROBE_INTERVAL = 5
 
     # Creates an IP Connection object that can be used to enumerate the
     # available devices. It is also required for the constructor of Bricks
@@ -536,38 +531,7 @@ module Tinkerforge
             raise NotConnectedException, 'Not connected'
           end
 
-          # Destroy disconnect probe thread
-          @disconnect_probe_queue.push true
-          @disconnect_probe_thread.join
-          @disconnect_probe_thread = nil
-
-          # Stop dispatching packet callbacks before ending the receive
-          # thread to avoid timeout exceptions due to callback functions
-          # trying to call getters
-          if Thread.current != @callback.thread
-            # FIXME: Cannot lock callback mutex here because this can
-            #        deadlock due to an ordering problem with the socket mutex
-            #@callback.mutex.synchronize {
-              @callback.flag = false
-            #}
-          else
-            @callback.flag = false
-          end
-
-          # Destroy receive thread
-          @receive_flag = false
-
-          @socket.shutdown(Socket::SHUT_RDWR)
-
-          if Thread.current != @receive_thread
-            @receive_thread.join
-          end
-
-          @receive_thread = nil
-
-          # Destroy socket
-          @socket.close
-          @socket = nil
+          disconnect_unlocked
         end
 
         # Destroy callback thread
@@ -707,15 +671,28 @@ module Tinkerforge
           raise NotConnectedException, 'Not connected'
         end
 
-        @socket.send request, 0
+        begin
+          @socket.send request, 0
+        rescue IOError
+          handle_disconnect_by_peer DISCONNECT_REASON_ERROR, @socket_id, true
+          raise NotConnectedException, 'Not connected'
+        rescue Errno::ECONNRESET
+          handle_disconnect_by_peer DISCONNECT_REASON_SHUTDOWN, @socket_id, true
+          raise NotConnectedException, 'Not connected'
+        end
       }
     end
 
     private
 
+    FUNCTION_DISCONNECT_PROBE = 128
+    FUNCTION_ENUMERATE = 254
+
     QUEUE_KIND_EXIT = 0
     QUEUE_KIND_META = 1
     QUEUE_KIND_PACKET = 2
+
+    DISCONNECT_PROBE_INTERVAL = 5
 
     # internal
     def connect_unlocked(is_auto_reconnect)
@@ -770,6 +747,44 @@ module Tinkerforge
     end
 
     # internal
+    def disconnect_unlocked
+      # NOTE: Assumes that the socket mutex is locked
+
+      # Destroy disconnect probe thread
+      @disconnect_probe_queue.push true
+      @disconnect_probe_thread.join
+      @disconnect_probe_thread = nil
+
+      # Stop dispatching packet callbacks before ending the receive
+      # thread to avoid timeout exceptions due to callback functions
+      # trying to call getters
+      if Thread.current != @callback.thread
+        # FIXME: Cannot lock callback mutex here because this can
+        #        deadlock due to an ordering problem with the socket mutex
+        #@callback.mutex.synchronize {
+          @callback.flag = false
+        #}
+      else
+        @callback.flag = false
+      end
+
+      # Destroy receive thread
+      @receive_flag = false
+
+      @socket.shutdown(Socket::SHUT_RDWR)
+
+      if Thread.current != @receive_thread
+        @receive_thread.join
+      end
+
+      @receive_thread = nil
+
+      # Destroy socket
+      @socket.close
+      @socket = nil
+    end
+
+    # internal
     def receive_loop(socket_id)
       pending_data = ''
 
@@ -788,25 +803,16 @@ module Tinkerforge
         begin
           data = @socket.recv 8192
         rescue IOError
-          @auto_reconnect_allowed = true
-          @callback.queue.push [QUEUE_KIND_META, [CALLBACK_DISCONNECTED,
-                                                  DISCONNECT_REASON_ERROR,
-                                                  socket_id]]
+          handle_disconnect_by_peer DISCONNECT_REASON_ERROR, socket_id, false
           break
         rescue Errno::ECONNRESET
-          @auto_reconnect_allowed = true
-          @callback.queue.push [QUEUE_KIND_META, [CALLBACK_DISCONNECTED,
-                                                  DISCONNECT_REASON_SHUTDOWN,
-                                                  socket_id]]
+          handle_disconnect_by_peer DISCONNECT_REASON_SHUTDOWN, socket_id, false
           break
         end
 
         if data.length == 0
           if @receive_flag
-            @auto_reconnect_allowed = true
-            @callback.queue.push [QUEUE_KIND_META, [CALLBACK_DISCONNECTED,
-                                                    DISCONNECT_REASON_SHUTDOWN,
-                                                    socket_id]]
+            handle_disconnect_by_peer DISCONNECT_REASON_SHUTDOWN, socket_id, false
           end
           break
         end
@@ -956,12 +962,32 @@ module Tinkerforge
           }
         rescue Timeout::Error
           @socket_mutex.synchronize {
-            @socket.send request, 0
+            begin
+              @socket.send request, 0
+            rescue IOError
+              handle_disconnect_by_peer DISCONNECT_REASON_ERROR, @socket_id, false
+            rescue Errno::ECONNRESET
+              handle_disconnect_by_peer DISCONNECT_REASON_SHUTDOWN, @socket_id, false
+            end
           }
           next
         end
         break
       end
+    end
+
+    # internal
+    def handle_disconnect_by_peer(disconnect_reason, socket_id, disconnect_immediately)
+      # NOTE: assumes that socket_mutex is locked if disconnect_immediately is true
+
+      @auto_reconnect_allowed = true
+
+      if disconnect_immediately
+        disconnect_unlocked
+      end
+
+      @callback.queue.push [QUEUE_KIND_META, [CALLBACK_DISCONNECTED,
+                                              disconnect_reason, socket_id]]
     end
 
     # internal
