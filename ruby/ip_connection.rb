@@ -775,11 +775,10 @@ module Tinkerforge
 
       @socket.shutdown(Socket::SHUT_RDWR)
 
-      if Thread.current != @receive_thread
+      if @receive_thread != nil
         @receive_thread.join
+        @receive_thread = nil
       end
-
-      @receive_thread = nil
 
       # Destroy socket
       @socket.close
