@@ -477,8 +477,8 @@ module Tinkerforge
       @registered_callbacks = {}
 
       @socket_mutex = Mutex.new
-      @socket = nil
-      @socket_id = 0
+      @socket = nil # protected by socket_mutex
+      @socket_id = 0 # protected by socket_mutex
 
       @receive_flag = false
       @receive_thread = nil
@@ -487,7 +487,7 @@ module Tinkerforge
 
       @disconnect_probe_flag = false
       @disconnect_probe_queue = nil
-      @disconnect_probe_thread = nil
+      @disconnect_probe_thread = nil # protected by socket_mutex
 
       @waiter_queue = Queue.new
     end
@@ -680,6 +680,8 @@ module Tinkerforge
           handle_disconnect_by_peer DISCONNECT_REASON_SHUTDOWN, @socket_id, true
           raise NotConnectedException, 'Not connected'
         end
+
+        @disconnect_probe_flag = false
       }
     end
 
@@ -961,15 +963,19 @@ module Tinkerforge
             disconnect_probe_queue.pop
           }
         rescue Timeout::Error
-          @socket_mutex.synchronize {
-            begin
-              @socket.send request, 0
-            rescue IOError
-              handle_disconnect_by_peer DISCONNECT_REASON_ERROR, @socket_id, false
-            rescue Errno::ECONNRESET
-              handle_disconnect_by_peer DISCONNECT_REASON_SHUTDOWN, @socket_id, false
-            end
-          }
+          if @disconnect_probe_flag
+            @socket_mutex.synchronize {
+              begin
+                @socket.send request, 0
+              rescue IOError
+                handle_disconnect_by_peer DISCONNECT_REASON_ERROR, @socket_id, false
+              rescue Errno::ECONNRESET
+                handle_disconnect_by_peer DISCONNECT_REASON_SHUTDOWN, @socket_id, false
+              end
+            }
+          else
+            @disconnect_probe_flag = true
+          end
           next
         end
         break
