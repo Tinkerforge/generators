@@ -70,10 +70,9 @@ namespace Tinkerforge
 		BinaryWriter socketWriter = null;
 		BinaryReader socketReader = null;
 		Thread receiveThread = null;
-		Thread callbackThread = null;
 		bool receiveFlag = true;
+		CallbackContext callback = null;
 		internal Dictionary<int, Device> devices = new Dictionary<int, Device>();
-		BlockingQueue<CallbackQueueObject> callbackQueue = null;
 		Semaphore waiter = new Semaphore(0, Int32.MaxValue);
 
 		public event EnumerateEventHandler EnumerateCallback;
@@ -99,6 +98,14 @@ namespace Tinkerforge
 				this.parameter = parameter;
 				this.packet = packet;
 			}
+		}
+
+		class CallbackContext
+		{
+			public Thread thread = null;
+			public BlockingQueue<CallbackQueueObject> queue = null;
+			public object lock_ = null;
+			public bool flag = false;
 		}
 
 		/// <summary>
@@ -139,13 +146,16 @@ namespace Tinkerforge
 
 		void ConnectUnlocked(bool isAutoReconnect)
 		{
-			if(callbackThread == null)
+			if(callback == null)
 			{
-				callbackQueue = new BlockingQueue<CallbackQueueObject>();
-				callbackThread = new Thread(delegate() { this.CallbackLoop(callbackQueue); });
-				callbackThread.IsBackground = true;
-				callbackThread.Name = "Callback-Processor";
-				callbackThread.Start();
+				callback = new CallbackContext();
+				callback.flag = false;
+				callback.queue = new BlockingQueue<CallbackQueueObject>();
+				callback.lock_ = new object();
+				callback.thread = new Thread(delegate() { this.CallbackLoop(callback); });
+				callback.thread.IsBackground = true;
+				callback.thread.Name = "Callback-Processor";
+				callback.thread.Start();
 			}
 
 			try {
@@ -164,6 +174,8 @@ namespace Tinkerforge
 			socketWriter = new BinaryWriter(socketStream);
 			socketReader = new BinaryReader(socketStream);
 
+			callback.flag = true;
+
 			receiveFlag = true;
 
 			receiveThread = new Thread(this.ReceiveLoop);
@@ -180,8 +192,8 @@ namespace Tinkerforge
 				connectReason = CONNECT_REASON_AUTO_RECONNECT;
 			}
 
-			callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_META, CALLBACK_CONNECTED,
-			                                              connectReason, null));
+			callback.queue.Enqueue(new CallbackQueueObject(QUEUE_META, CALLBACK_CONNECTED,
+			                                               connectReason, null));
 		}
 
 		/// <summary>
@@ -190,8 +202,7 @@ namespace Tinkerforge
 		/// </summary>
 		public void Disconnect()
 		{
-			Thread callbackThreadTmp = null;
-			BlockingQueue<CallbackQueueObject> callbackQueueTmp = null;
+			CallbackContext localCallback = null;
 
 			lock(socketLock)
 			{
@@ -206,6 +217,23 @@ namespace Tinkerforge
 					if(socket == null)
 					{
 						throw new NotConnectedException();
+					}
+
+					// stop dispatching packet callbacks before ending the receive
+					// thread to avoid timeout exceptions due to callback functions
+					// trying to call getters
+					if (Thread.CurrentThread != callback.thread)
+					{
+						// FIXME: cannot lock callback lock here because this can
+						//        deadlock due to an ordering problem with the socket lock
+						//lock (callback.lock_)
+						{
+							callback.flag = false;
+						}
+					}
+					else
+					{
+						callback.flag = false;
 					}
 
 					receiveFlag = false;
@@ -227,20 +255,17 @@ namespace Tinkerforge
 					receiveThread = null;
 				}
 
-				callbackThreadTmp = callbackThread;
-				callbackQueueTmp = callbackQueue;
-
-				callbackThread = null;
-				callbackQueue = null;
+				localCallback = callback;
+				callback = null;
 			}
 
-			callbackQueueTmp.Enqueue(new CallbackQueueObject(QUEUE_META, CALLBACK_DISCONNECTED,
-			                                                 DISCONNECT_REASON_REQUEST, null));
-			callbackQueueTmp.Enqueue(new CallbackQueueObject(QUEUE_EXIT, 0, 0, null));
+			localCallback.queue.Enqueue(new CallbackQueueObject(QUEUE_META, CALLBACK_DISCONNECTED,
+			                                                    DISCONNECT_REASON_REQUEST, null));
+			localCallback.queue.Enqueue(new CallbackQueueObject(QUEUE_EXIT, 0, 0, null));
 
-			if(Thread.CurrentThread != callbackThreadTmp)
+			if(Thread.CurrentThread != localCallback.thread)
 			{
-				callbackThreadTmp.Join();
+				localCallback.thread.Join();
 			}
 		}
 
@@ -417,20 +442,15 @@ namespace Tinkerforge
 					{
 						if(receiveFlag)
 						{
-							callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_META, CALLBACK_DISCONNECTED,
-							                                              DISCONNECT_REASON_ERROR, null));
+							callback.queue.Enqueue(new CallbackQueueObject(QUEUE_META, CALLBACK_DISCONNECTED,
+							                                               DISCONNECT_REASON_ERROR, null));
 						}
-					}
-					else
-					{
-						receiveFlag = false;
 					}
 
 					return;
 				}
 				catch(ObjectDisposedException)
 				{
-					receiveFlag = false;
 					return;
 				}
 
@@ -439,10 +459,9 @@ namespace Tinkerforge
 					if(receiveFlag)
 					{
 						autoReconnectAllowed = true;
-						receiveFlag = false;
 
-						callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_META, CALLBACK_DISCONNECTED,
-						                                              DISCONNECT_REASON_SHUTDOWN, null));
+						callback.queue.Enqueue(new CallbackQueueObject(QUEUE_META, CALLBACK_DISCONNECTED,
+						                                               DISCONNECT_REASON_SHUTDOWN, null));
 					}
 				}
 
@@ -590,12 +609,12 @@ namespace Tinkerforge
 			}
 		}
 
-		private void CallbackLoop(BlockingQueue<CallbackQueueObject> localCallbackQueue)
+		private void CallbackLoop(CallbackContext localCallback)
 		{
 			while(true)
 			{
 				CallbackQueueObject cqo;
-				if(!localCallbackQueue.TryDequeue(out cqo, Timeout.Infinite))
+				if(!localCallback.queue.TryDequeue(out cqo, Timeout.Infinite))
 				{
 					continue;
 				}
@@ -605,22 +624,27 @@ namespace Tinkerforge
 					continue;
 				}
 
-				switch(cqo.kind)
+				// FIXME: cannot lock callback lock here because this can
+				//        deadlock due to an ordering problem with the socket lock
+				//lock (localCallback.lock_)
 				{
-					case IPConnection.QUEUE_EXIT:
-						return;
+					switch(cqo.kind)
+					{
+						case IPConnection.QUEUE_EXIT:
+							return;
 
-					case IPConnection.QUEUE_META:
-						DispatchMeta(cqo);
-						break;
+						case IPConnection.QUEUE_META:
+							DispatchMeta(cqo);
+							break;
 
-					case IPConnection.QUEUE_PACKET:
-						// don't dispatch callbacks when the receive thread isn't running
-						if (receiveFlag) {
-							DispatchPacket(cqo);
-						}
+						case IPConnection.QUEUE_PACKET:
+							// don't dispatch callbacks when the receive thread isn't running
+							if (localCallback.flag) {
+								DispatchPacket(cqo);
+							}
 
-						break;
+							break;
+					}
 				}
 			}
 		}
@@ -659,7 +683,7 @@ namespace Tinkerforge
 
 			if(sequenceNumber == 0 && functionID == CALLBACK_ENUMERATE)
 			{
-				callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_PACKET, 0, 0, packet));
+				callback.queue.Enqueue(new CallbackQueueObject(QUEUE_PACKET, 0, 0, packet));
 				return;
 			}
 
@@ -678,7 +702,7 @@ namespace Tinkerforge
 
 				if(wrapper != null)
 				{
-					callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_PACKET, 0, 0, packet));
+					callback.queue.Enqueue(new CallbackQueueObject(QUEUE_PACKET, 0, 0, packet));
 				}
 
 				return;
