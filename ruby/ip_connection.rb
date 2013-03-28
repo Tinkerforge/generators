@@ -6,6 +6,7 @@
 
 require 'socket'
 require 'thread'
+require 'timeout'
 
 module Tinkerforge
   class Base58
@@ -432,6 +433,7 @@ module Tinkerforge
     attr_accessor :devices
     attr_accessor :timeout
 
+    FUNCTION_DISCONNECT_PROBE = 128
     FUNCTION_ENUMERATE = 254
     CALLBACK_ENUMERATE = 253
 
@@ -456,6 +458,8 @@ module Tinkerforge
     CONNECTION_STATE_DISCONNECTED = 0
     CONNECTION_STATE_CONNECTED = 1
     CONNECTION_STATE_PENDING = 2 # auto-reconnect in progress
+
+    DISCONNECT_PROBE_INTERVAL = 5
 
     # Creates an IP Connection object that can be used to enumerate the
     # available devices. It is also required for the constructor of Bricks
@@ -485,6 +489,10 @@ module Tinkerforge
       @receive_thread = nil
 
       @callback = nil
+
+      @disconnect_probe_flag = false
+      @disconnect_probe_queue = nil
+      @disconnect_probe_thread = nil
 
       @waiter_queue = Queue.new
     end
@@ -527,6 +535,11 @@ module Tinkerforge
           if @socket == nil
             raise NotConnectedException, 'Not connected'
           end
+
+          # Destroy disconnect probe thread
+          @disconnect_probe_queue.push true
+          @disconnect_probe_thread.join
+          @disconnect_probe_thread = nil
 
           # Stop dispatching packet callbacks before ending the receive
           # thread to avoid timeout exceptions due to callback functions
@@ -725,9 +738,17 @@ module Tinkerforge
       @socket.setsockopt(Socket::IPPROTO_TCP, Socket::TCP_NODELAY, 1)
       @socket_id += 1
 
-      @callback.flag = true
+      # Create disconnect probe thread
+      @disconnect_probe_flag = true
+      @disconnect_probe_queue = Queue.new
+      @disconnect_probe_thread = Thread.new(@disconnect_probe_queue) do |disconnect_probe_queue|
+        disconnect_probe_loop disconnect_probe_queue
+      end
+      @disconnect_probe_thread.abort_on_exception = true
 
       # Create receive thread
+      @callback.flag = true
+
       @receive_flag = true
       @receive_thread = Thread.new(@socket_id) do |socket_id|
         receive_loop socket_id
@@ -828,6 +849,12 @@ module Tinkerforge
             # Don't close the socket if it got disconnected or
             # reconnected in the meantime
             if @socket != nil and @socket_id == socket_id
+              # Destroy disconnect probe thread
+              @disconnect_probe_queue.push true
+              @disconnect_probe_thread.join
+              @disconnect_probe_thread = nil
+
+              # Destroy socket
               @socket.close
               @socket = nil
             end
@@ -915,6 +942,25 @@ module Tinkerforge
             end
           end
         #}
+      end
+    end
+
+    # internal
+    def disconnect_probe_loop(disconnect_probe_queue)
+      request, _, _ = create_packet_header nil, 8, FUNCTION_DISCONNECT_PROBE
+
+      while true
+        begin
+          Timeout::timeout(DISCONNECT_PROBE_INTERVAL) {
+            disconnect_probe_queue.pop
+          }
+        rescue Timeout::Error
+          @socket_mutex.synchronize {
+            @socket.send request, 0
+          }
+          next
+        end
+        break
       end
     end
 
