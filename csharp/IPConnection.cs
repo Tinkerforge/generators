@@ -54,9 +54,8 @@ namespace Tinkerforge
 		internal const int QUEUE_META = 1;
 		internal const int QUEUE_PACKET = 2;
 
-		internal int nextSequenceNumber = 0;
+		internal int nextSequenceNumber = 0; // protected by sequenceNumberLock
 		private object sequenceNumberLock = new object();
-
 
 		internal bool autoReconnectAllowed = false;
 		internal bool autoReconnectPending = false;
@@ -66,9 +65,10 @@ namespace Tinkerforge
 		int port;
 		Socket socket = null;
 		internal object socketLock = new object();
-		NetworkStream socketStream = null;
-		BinaryWriter socketWriter = null;
-		BinaryReader socketReader = null;
+		NetworkStream socketStream = null; // protected by socketLock
+		BinaryWriter socketWriter = null; // protected by socketLock
+		BinaryReader socketReader = null; // protected by socketLock
+		long socketID = 0; // protected by socketLock
 		Thread receiveThread = null;
 		bool receiveFlag = true;
 		CallbackContext callback = null;
@@ -89,13 +89,15 @@ namespace Tinkerforge
 			public int kind;
 			public byte functionID;
 			public short parameter;
+			public long socketID;
 			public byte[] packet;
 
-			public CallbackQueueObject(int kind, byte functionID, short parameter, byte[] packet)
+			public CallbackQueueObject(int kind, byte functionID, short parameter, long socketID, byte[] packet)
 			{
 				this.kind = kind;
 				this.functionID = functionID;
 				this.parameter = parameter;
+				this.socketID = socketID;
 				this.packet = packet;
 			}
 		}
@@ -173,12 +175,13 @@ namespace Tinkerforge
 			socketStream = new NetworkStream(socket);
 			socketWriter = new BinaryWriter(socketStream);
 			socketReader = new BinaryReader(socketStream);
+			++socketID;
 
 			callback.flag = true;
 
 			receiveFlag = true;
 
-			receiveThread = new Thread(this.ReceiveLoop);
+			receiveThread = new Thread(delegate() { this.ReceiveLoop(socketID); });
 			receiveThread.IsBackground = true;
 			receiveThread.Name = "Brickd-Receiver";
 			receiveThread.Start();
@@ -193,7 +196,7 @@ namespace Tinkerforge
 			}
 
 			callback.queue.Enqueue(new CallbackQueueObject(QUEUE_META, CALLBACK_CONNECTED,
-			                                               connectReason, null));
+			                                               connectReason, 0, null));
 		}
 
 		/// <summary>
@@ -238,12 +241,12 @@ namespace Tinkerforge
 
 					receiveFlag = false;
 
-					socketStream.Close();
-					socketStream = null;
 					socketWriter.Close();
 					socketWriter = null;
 					socketReader.Close();
 					socketReader = null;
+					socketStream.Close();
+					socketStream = null;
 					socket.Close();
 					socket = null;
 
@@ -260,8 +263,8 @@ namespace Tinkerforge
 			}
 
 			localCallback.queue.Enqueue(new CallbackQueueObject(QUEUE_META, CALLBACK_DISCONNECTED,
-			                                                    DISCONNECT_REASON_REQUEST, null));
-			localCallback.queue.Enqueue(new CallbackQueueObject(QUEUE_EXIT, 0, 0, null));
+			                                                    DISCONNECT_REASON_REQUEST, 0, null));
+			localCallback.queue.Enqueue(new CallbackQueueObject(QUEUE_EXIT, 0, 0, 0, null));
 
 			if(Thread.CurrentThread != localCallback.thread)
 			{
@@ -421,7 +424,7 @@ namespace Tinkerforge
 #endif
         }
 
-		private void ReceiveLoop()
+		private void ReceiveLoop(long localSocketID)
 		{
 			byte[] pendingData = new byte[8192];
 			int pendingLength = 0;
@@ -443,7 +446,8 @@ namespace Tinkerforge
 						if(receiveFlag)
 						{
 							callback.queue.Enqueue(new CallbackQueueObject(QUEUE_META, CALLBACK_DISCONNECTED,
-							                                               DISCONNECT_REASON_ERROR, null));
+							                                               DISCONNECT_REASON_ERROR,
+							                                               localSocketID, null));
 						}
 					}
 
@@ -461,7 +465,8 @@ namespace Tinkerforge
 						autoReconnectAllowed = true;
 
 						callback.queue.Enqueue(new CallbackQueueObject(QUEUE_META, CALLBACK_DISCONNECTED,
-						                                               DISCONNECT_REASON_SHUTDOWN, null));
+						                                               DISCONNECT_REASON_SHUTDOWN,
+						                                               localSocketID, null));
 					}
 				}
 
@@ -506,18 +511,25 @@ namespace Tinkerforge
 					break;
 
 				case IPConnection.CALLBACK_DISCONNECTED:
-					lock(socketLock)
-					{
-						if(socket != null)
+					if(cqo.parameter != DISCONNECT_REASON_REQUEST) {
+						// need to do this here, the receive loop is not allowed to
+						// hold the socket lock because this could cause a deadlock
+						// with a concurrent call to the (dis-)connect function
+						lock(socketLock)
 						{
-							socketStream.Close();
-							socketStream = null;
-							socketWriter.Close();
-							socketWriter = null;
-							socketReader.Close();
-							socketReader = null;
-							socket.Close();
-							socket = null;
+							// don't close the socket if it got disconnected or
+							// reconnected in the meantime
+							if(socket != null && socketID == cqo.socketID)
+							{
+								socketWriter.Close();
+								socketWriter = null;
+								socketReader.Close();
+								socketReader = null;
+								socketStream.Close();
+								socketStream = null;
+								socket.Close();
+								socket = null;
+							}
 						}
 					}
 
@@ -529,7 +541,8 @@ namespace Tinkerforge
 						disconHandler(this, cqo.parameter);
 					}
 
-					if(cqo.parameter != DISCONNECT_REASON_REQUEST && autoReconnect && autoReconnectAllowed)
+					if(cqo.parameter != DISCONNECT_REASON_REQUEST &&
+					   autoReconnect && autoReconnectAllowed)
 					{
 						autoReconnectPending = true;
 						bool retry = true;
@@ -683,7 +696,7 @@ namespace Tinkerforge
 
 			if(sequenceNumber == 0 && functionID == CALLBACK_ENUMERATE)
 			{
-				callback.queue.Enqueue(new CallbackQueueObject(QUEUE_PACKET, 0, 0, packet));
+				callback.queue.Enqueue(new CallbackQueueObject(QUEUE_PACKET, 0, 0, 0, packet));
 				return;
 			}
 
@@ -702,7 +715,7 @@ namespace Tinkerforge
 
 				if(wrapper != null)
 				{
-					callback.queue.Enqueue(new CallbackQueueObject(QUEUE_PACKET, 0, 0, packet));
+					callback.queue.Enqueue(new CallbackQueueObject(QUEUE_PACKET, 0, 0, 0, packet));
 				}
 
 				return;
