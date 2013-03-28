@@ -425,7 +425,7 @@ module Tinkerforge
       @queue = nil
       @thread = nil
       @mutex = nil
-      @flag = nil
+      @flag = false
     end
   end
 
