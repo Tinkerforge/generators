@@ -727,12 +727,15 @@ class IPConnection:
             except Empty:
                 pass
 
-            with self.socket_lock:
-                try:
-                    self.socket.send(request)
-                except socket.error:
-                    self.handle_disconnect_by_peer(IPConnection.DISCONNECT_REASON_ERROR,
-                                                   self.socket_id, False)
+            if self.disconnect_probe_flag:
+                with self.socket_lock:
+                    try:
+                        self.socket.send(request)
+                    except socket.error:
+                        self.handle_disconnect_by_peer(IPConnection.DISCONNECT_REASON_ERROR,
+                                                       self.socket_id, False)
+            else:
+                self.disconnect_probe_flag = True
 
     def deserialize_data(self, data, form):
         ret = []
