@@ -342,7 +342,7 @@ class DisconnectProbeThread extends Thread {
 			}
 
 			if (ipcon.disconnectProbeFlag) {
-				synchronized(socketMutex) {
+				synchronized(ipcon.socketMutex) {
 					try {
 						ipcon.out.write(request);
 					} catch(java.net.SocketException e) {
