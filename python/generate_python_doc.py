@@ -138,6 +138,11 @@ def make_object_desc(packet):
 """
     }
 
+    and_ = {
+    'en': ' and ',
+    'de': ' und '
+    }
+
     var = []
     for element in packet.get_elements('out'):
         var.append('``{0}``'.format(element[0]))
@@ -146,9 +151,9 @@ def make_object_desc(packet):
         return common.select_lang(desc).format(var[0])
 
     if len(var) == 2:
-        return common.select_lang(desc).format(var[0] + ' and ' + var[1])
+        return common.select_lang(desc).format(var[0] + common.select_lang(and_) + var[1])
 
-    return common.select_lang(desc).format(', '.join(var[:-1]) + ' and ' + var[-1])
+    return common.select_lang(desc).format(', '.join(var[:-1]) + common.select_lang(and_) + var[-1])
 
 def make_methods(typ):
     methods = ''
@@ -289,7 +294,7 @@ Callbacks können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
 mit der Funktion :py:func:`register_callback() <{3}.register_callback>` des
 Geräte Objektes durchgeführt werden. Der erste Parameter ist die Callback ID
-und der zweite Parameter die Callbackfunktion:
+und der zweite Parameter die Callback-Funktion:
 
 .. code-block:: python
 

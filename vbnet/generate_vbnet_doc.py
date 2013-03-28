@@ -323,7 +323,7 @@ API
 ---
 
 Da Visual Basic .NET nicht mehrere Rückgabewerte direkt unterstützt, wird das
-``ByRef`` Keyword genutzt um mehrere Werte von einer Funktion zurückzugeben.
+``ByRef`` Schlüsselwort genutzt um mehrere Werte von einer Funktion zurückzugeben.
 
 Alle folgend aufgelisteten Funktionen und Prozeduren sind Thread-sicher.
 

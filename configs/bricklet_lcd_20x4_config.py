@@ -202,7 +202,7 @@ the number of the button (0 to 2 or 0 to 3 with hardware version >= 1.2).
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn eine Taste gedrückt wird. The :word:`parameter`
+Dieser Callback wird ausgelöst wenn eine Taste gedrückt wird. Der :word:`parameter`
 ist die Nummer der Taste (0 bis 2 oder 0 bis 3 mit Hardware Version >= 1.2).
 """
 }]
@@ -221,7 +221,7 @@ the number of the button (0 to 2 or 0 to 3 with hardware version >= 1.2).
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn eine Taste losgelassen wird. The :word:`parameter`
+Dieser Callback wird ausgelöst wenn eine Taste losgelassen wird. Der :word:`parameter`
 ist die Nummer der Taste (0 bis 2 oder 0 bis 3 mit Hardware Version >= 1.2).
 """
 }]
@@ -263,7 +263,7 @@ after each startup.
 """
 Das LCD 20x4 Bricklet kann bis zu 8 Benutzerdefinierte Buchstaben speichern.
 Die Buchstaben bestehen aus 5x8 Pixel und sie können über den Index 0-7
-addressiert werden. Um die Pixel zu beschreiben, werden die ersten 5 Bit
+adressiert werden. Um die Pixel zu beschreiben, werden die ersten 5 Bit
 von 8 Bytes verwenden. Zum Beispiel, um den Buchstaben "H" zu erzeugen,
 sollte das folgende Array gesendet werden:
 
@@ -304,6 +304,115 @@ Returns the custom character for a given index, as set with
 """
 Gibt den Benutzerdefinierten Buchstaben für den gegebenen
 Index zurück, wie von :func:`GetCustomCharacter` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetDefaultText', 'set_default_text'), 
+'elements': [('line', 'uint8', 1, 'in'),
+             ('text', 'string', 20, 'in')],
+'since_firmware': [2, 0, 2],
+'doc': ['af', {
+'en':
+"""
+Sets the default text for lines 0-3. The max number of characters
+per line is 20.
+
+The default text is shown on the LCD, if the default text counter
+expires, see :func:`SetDefaultTextCounter`.
+""",
+'de':
+"""
+Setzt den Default Text für die Zeilen 0-3. Die maximale Anzahl an
+Buchstaben pro Zeile ist 20.
+
+Der Default Text wird auf dem LCD angezeigt, wenn der Default Text
+Zähler ausläuft, siehe :func:`SetDefaultTextCounter`.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetDefaultText', 'get_default_text'), 
+'elements': [('line', 'uint8', 1, 'in'),
+             ('text', 'string', 20, 'out')],
+'since_firmware': [2, 0, 2],
+'doc': ['af', {
+'en':
+"""
+Returns the default text for a given line (0-3) as set by
+:func:`SetDefaultText`.
+""",
+'de':
+"""
+Gibt den Default Text für die Zeilen 0-3 zurück, wie von
+:func:`SetDefaultText` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetDefaultTextCounter', 'set_default_text_counter'), 
+'elements': [('counter', 'int32', 1, 'in')],
+'since_firmware': [2, 0, 2],
+'doc': ['af', {
+'en':
+"""
+Sets the default text counter in ms. This counter is decremented each
+ms by the LCD firmware. If the counter reaches 0, the default text
+(see :func:`SetDefaultText`) is shown on the LCD.
+
+This functionality can be used to show a default text if the controlling
+program crashes or the connection is interrupted.
+
+A possible approach is to call :func:`SetDefaultTextCounter` every
+minute with the parameter 1000*60*2 (2 minutes). In this case the
+default text will be shown no later than 2 minutes after the
+controlling program crashes.
+
+A negative counter turns the default text functionality off.
+
+The default is -1.
+""",
+'de':
+"""
+Setzt den Default Text Zähler in ms. Der Zähler wird von der LCD
+Firmware einmal pro ms dekrementiert. Wenn der Zähler 0 erreicht
+wird der Default Text auf dem LCD angezeigt (siehe :func:`SetDefaultText`).
+
+Diese Funktionalität kann genutzt werden um auf dem LCD einen Text
+anzuzeigen falls das kontrollierende Programm abstürzt oder die Verbindung
+unterbrochen wird.
+
+Ein möglicher Ansatz dafür ist :func:`SetDefaultTextCounter` einmal
+pro Minute aufzurufen mit dem Parameter 1000*60*2 (zwei Minuten) aufzurufen.
+In diesem Fall wird dann der Default Text nach spätestens zwei Minuten
+angezeigt wenn das kontrollierende Programm abstürzt.
+
+Ein negativer Zählerwert stellt die Default Text Funktionalität aus.
+
+Der Standardwert ist -1.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetDefaultTextCounter', 'get_default_text_counter'), 
+'elements': [('counter', 'int32', 1, 'out')],
+'since_firmware': [2, 0, 2],
+'doc': ['af', {
+'en':
+"""
+Returns the current value of the default text counter.
+""",
+'de':
+"""
+Gibt den aktuellen Wert des Default Text Zählers zurück.
 """
 }]
 })

@@ -88,11 +88,16 @@ namespace Tinkerforge
 		class CallbackQueueObject
 		{
 			public int kind;
-			public byte[] data;
-			public CallbackQueueObject(int kind, byte[] data)
+			public byte functionID;
+			public short parameter;
+			public byte[] packet;
+
+			public CallbackQueueObject(int kind, byte functionID, short parameter, byte[] packet)
 			{
 				this.kind = kind;
-				this.data = data;
+				this.functionID = functionID;
+				this.parameter = parameter;
+				this.packet = packet;
 			}
 		}
 
@@ -169,17 +174,14 @@ namespace Tinkerforge
 			autoReconnectAllowed = false;
 			autoReconnectPending = false;
 
-			int connectReason = IPConnection.CONNECT_REASON_REQUEST;
+			short connectReason = IPConnection.CONNECT_REASON_REQUEST;
 			if(isAutoReconnect)
 			{
 				connectReason = CONNECT_REASON_AUTO_RECONNECT;
 			}
 
-			byte[] data_ = new byte[8];
-			LEConverter.To((int)CALLBACK_CONNECTED, 0, data_);
-			LEConverter.To((int)connectReason, 4, data_);
-
-			callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_META, data_));
+			callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_META, CALLBACK_CONNECTED,
+			                                              connectReason, null));
 		}
 
 		/// <summary>
@@ -232,12 +234,9 @@ namespace Tinkerforge
 				callbackQueue = null;
 			}
 
-			byte[] data_ = new byte[8];
-			LEConverter.To((int)CALLBACK_DISCONNECTED, 0, data_);
-			LEConverter.To((int)DISCONNECT_REASON_REQUEST, 4, data_);
-
-			callbackQueueTmp.Enqueue(new CallbackQueueObject(QUEUE_META, data_));
-			callbackQueueTmp.Enqueue(new CallbackQueueObject(QUEUE_EXIT, null));
+			callbackQueueTmp.Enqueue(new CallbackQueueObject(QUEUE_META, CALLBACK_DISCONNECTED,
+			                                                 DISCONNECT_REASON_REQUEST, null));
+			callbackQueueTmp.Enqueue(new CallbackQueueObject(QUEUE_EXIT, 0, 0, null));
 
 			if(Thread.CurrentThread != callbackThreadTmp)
 			{
@@ -418,11 +417,8 @@ namespace Tinkerforge
 					{
 						if(receiveFlag)
 						{
-							byte[] data_ = new byte[8];
-							LEConverter.To((int)CALLBACK_DISCONNECTED, 0, data_);
-							LEConverter.To((int)DISCONNECT_REASON_ERROR, 4, data_);
-
-							callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_META, data_));
+							callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_META, CALLBACK_DISCONNECTED,
+							                                              DISCONNECT_REASON_ERROR, null));
 						}
 					}
 					else
@@ -445,11 +441,8 @@ namespace Tinkerforge
 						autoReconnectAllowed = true;
 						receiveFlag = false;
 
-						byte[] data_ = new byte[8];
-						LEConverter.To((int)CALLBACK_DISCONNECTED, 0, data_);
-						LEConverter.To((int)DISCONNECT_REASON_SHUTDOWN, 4, data_);
-
-						callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_META, data_));
+						callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_META, CALLBACK_DISCONNECTED,
+						                                              DISCONNECT_REASON_SHUTDOWN, null));
 					}
 				}
 
@@ -481,6 +474,122 @@ namespace Tinkerforge
 			}
 		}
 
+		private void DispatchMeta(CallbackQueueObject cqo)
+		{
+			switch(cqo.functionID)
+			{
+				case IPConnection.CALLBACK_CONNECTED:
+					var handler = Connected;
+					if(handler != null)
+					{
+						handler(this, cqo.parameter);
+					}
+					break;
+
+				case IPConnection.CALLBACK_DISCONNECTED:
+					lock(socketLock)
+					{
+						if(socket != null)
+						{
+							socketStream.Close();
+							socketStream = null;
+							socketWriter.Close();
+							socketWriter = null;
+							socketReader.Close();
+							socketReader = null;
+							socket.Close();
+							socket = null;
+						}
+					}
+
+					Thread.Sleep(100);
+
+					var disconHandler = Disconnected;
+					if(disconHandler != null)
+					{
+						disconHandler(this, cqo.parameter);
+					}
+
+					if(cqo.parameter != DISCONNECT_REASON_REQUEST && autoReconnect && autoReconnectAllowed)
+					{
+						autoReconnectPending = true;
+						bool retry = true;
+						while(retry)
+						{
+							retry = false;
+							lock(socketLock)
+							{
+								if(autoReconnectAllowed && socket == null)
+								{
+									try
+									{
+										ConnectUnlocked(true);
+									}
+									catch(Exception)
+									{
+										retry = true;
+									}
+								}
+								else
+								{
+									autoReconnectPending = false;
+								}
+							}
+
+							if(retry)
+							{
+								Thread.Sleep(100);
+							}
+						}
+					}
+
+					break;
+			}
+		}
+
+		private void DispatchPacket(CallbackQueueObject cqo)
+		{
+			byte fid = GetFunctionIDFromData(cqo.packet);
+
+			if(fid == CALLBACK_ENUMERATE)
+			{
+				var enumHandler = EnumerateCallback;
+				if(enumHandler != null)
+				{
+					string uid_str = LEConverter.StringFrom(8, cqo.packet, 8);
+					string connectedUid_str = LEConverter.StringFrom(16, cqo.packet, 8);
+					char position = (char)LEConverter.CharFrom(24, cqo.packet);
+					short[] hardwareVersion = new short[3];
+					hardwareVersion[0] = LEConverter.ByteFrom(25, cqo.packet);
+					hardwareVersion[1] = LEConverter.ByteFrom(26, cqo.packet);
+					hardwareVersion[2] = LEConverter.ByteFrom(27, cqo.packet);
+					short[] firmwareVersion = new short[3];
+					firmwareVersion[0] = LEConverter.ByteFrom(28, cqo.packet);
+					firmwareVersion[1] = LEConverter.ByteFrom(29, cqo.packet);
+					firmwareVersion[2] = LEConverter.ByteFrom(30, cqo.packet);
+					int deviceIdentifier = LEConverter.ShortFrom(31, cqo.packet);
+					short enumerationType = LEConverter.ByteFrom(33, cqo.packet);
+
+					enumHandler(this, uid_str, connectedUid_str, position, hardwareVersion,
+					            firmwareVersion, deviceIdentifier, enumerationType);
+				}
+			}
+			else
+			{
+				int uid = GetUIDFromData(cqo.packet);
+
+				if(devices.ContainsKey(uid))
+				{
+					Device device = devices[uid];
+					Device.CallbackWrapper wrapper = device.callbackWrappers[fid];
+					if(wrapper != null)
+					{
+						wrapper(cqo.packet);
+					}
+				}
+			}
+		}
+
 		private void CallbackLoop(BlockingQueue<CallbackQueueObject> localCallbackQueue)
 		{
 			while(true)
@@ -502,124 +611,15 @@ namespace Tinkerforge
 						return;
 
 					case IPConnection.QUEUE_META:
-						int mid = LEConverter.IntFrom(0, cqo.data);
-						int parameter = LEConverter.IntFrom(4, cqo.data);
-
-						switch(mid)
-						{
-							case IPConnection.CALLBACK_CONNECTED:
-								var handler = Connected;
-								if(handler != null)
-								{
-									handler(this, (short)parameter);
-								}
-								break;
-
-							case IPConnection.CALLBACK_DISCONNECTED:
-								lock(socketLock)
-								{
-									if(socket != null)
-									{
-										socketStream.Close();
-										socketStream = null;
-										socketWriter.Close();
-										socketWriter = null;
-										socketReader.Close();
-										socketReader = null;
-										socket.Close();
-										socket = null;
-									}
-								}
-
-								Thread.Sleep(100);
-
-								var disconHandler = Disconnected;
-								if(disconHandler != null)
-								{
-									disconHandler(this, (short)parameter);
-								}
-
-								if(parameter != DISCONNECT_REASON_REQUEST && autoReconnect && autoReconnectAllowed)
-								{
-									autoReconnectPending = true;
-									bool retry = true;
-									while(retry)
-									{
-										retry = false;
-										lock(socketLock)
-										{
-											if(autoReconnectAllowed && socket == null)
-											{
-												try
-												{
-													ConnectUnlocked(true);
-												}
-												catch(Exception)
-												{
-													retry = true;
-												}
-											}
-											else
-											{
-												autoReconnectPending = false;
-											}
-										}
-
-										if(retry)
-										{
-											Thread.Sleep(100);
-										}
-									}
-								}
-
-								break;
-						}
+						DispatchMeta(cqo);
 						break;
 
-
 					case IPConnection.QUEUE_PACKET:
-						if (!receiveFlag) {
-							// don't dispatch callbacks when the receive thread isn't running
-							continue;
+						// don't dispatch callbacks when the receive thread isn't running
+						if (receiveFlag) {
+							DispatchPacket(cqo);
 						}
 
-						byte fid = GetFunctionIDFromData(cqo.data);
-						int uid = GetUIDFromData(cqo.data);
-
-						if(fid == CALLBACK_ENUMERATE)
-						{
-							var enumHandler = EnumerateCallback;
-							if(enumHandler != null)
-							{
-								string uid_str = LEConverter.StringFrom(8, cqo.data, 8);
-								string connectedUid_str = LEConverter.StringFrom(16, cqo.data, 8);
-								char position = (char)LEConverter.CharFrom(24, cqo.data);
-								short[] hardwareVersion = new short[3];
-								hardwareVersion[0] = LEConverter.ByteFrom(25, cqo.data);
-								hardwareVersion[1] = LEConverter.ByteFrom(26, cqo.data);
-								hardwareVersion[2] = LEConverter.ByteFrom(27, cqo.data);
-								short[] firmwareVersion = new short[3];
-								firmwareVersion[0] = LEConverter.ByteFrom(28, cqo.data);
-								firmwareVersion[1] = LEConverter.ByteFrom(29, cqo.data);
-								firmwareVersion[2] = LEConverter.ByteFrom(30, cqo.data);
-								int deviceIdentifier = LEConverter.ShortFrom(31, cqo.data);
-								short enumerationType = LEConverter.ByteFrom(33, cqo.data);
-
-								enumHandler(this, uid_str, connectedUid_str, position, hardwareVersion, firmwareVersion, deviceIdentifier, enumerationType);
-							}
-						}
-						else
-						{
-							if(devices.ContainsKey(uid))
-							{
-								Device device = devices[uid];
-								Device.CallbackWrapper wrapper = device.callbackWrappers[fid];
-								if(wrapper != null)
-								{
-									wrapper(cqo.data);
-								}
-							}
-						}
 						break;
 				}
 			}
@@ -659,7 +659,7 @@ namespace Tinkerforge
 
 			if(sequenceNumber == 0 && functionID == CALLBACK_ENUMERATE)
 			{
-				callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_PACKET, packet));
+				callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_PACKET, 0, 0, packet));
 				return;
 			}
 
@@ -678,7 +678,7 @@ namespace Tinkerforge
 
 				if(wrapper != null)
 				{
-					callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_PACKET, packet));
+					callbackQueue.Enqueue(new CallbackQueueObject(QUEUE_PACKET, 0, 0, packet));
 				}
 
 				return;

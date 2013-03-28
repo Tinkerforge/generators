@@ -155,7 +155,7 @@ def make_api():
     'de': """
 .. c:function:: void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon)
 
- Erzeugt ein Gerätobjekt *{0}* mit der eindeutigen Geräte ID *uid* und fügt es
+ Erzeugt ein Geräteobjekt *{0}* mit der eindeutigen Geräte ID *uid* und fügt es
  der IP Connection *ipcon* hinzu:
 
  .. code-block:: c
@@ -163,7 +163,7 @@ def make_api():
     {1} {0};
     {0}_create(&{0}, "YOUR_DEVICE_UID", &ipcon);
 
- Dieses Gerätobjekt kann benutzt werden, nachdem die IP Connection verbunden
+ Dieses Geräteobjekt kann benutzt werden, nachdem die IP Connection verbunden
  wurde (siehe Beispiele :ref:`oben <{0}_{2}_c_examples>`).
 """
     }
@@ -178,8 +178,8 @@ def make_api():
     'de': """
 .. c:function:: void {0}_destroy({1} *{0})
 
- Entfernt das Gerätobjekt *{0}* von dessen IP Connection un zerstört es.
- Das Gerätobjekt kann hiernach nicht mehr verwendet werden.
+ Entfernt das Geräteobjekt *{0}* von dessen IP Connection und zerstört es.
+ Das Geräteobjekt kann hiernach nicht mehr verwendet werden.
 """
     }
 

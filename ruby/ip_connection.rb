@@ -6,6 +6,7 @@
 
 require 'socket'
 require 'thread'
+require 'timeout'
 
 module Tinkerforge
   class Base58
@@ -413,13 +414,26 @@ module Tinkerforge
     end
   end
 
+  # internal
+  class CallbackContext
+    attr_accessor :queue
+    attr_accessor :thread
+    attr_accessor :mutex
+    attr_accessor :flag
+
+    def initialize
+      @queue = nil
+      @thread = nil
+      @mutex = nil
+      @flag = nil
+    end
+  end
+
   class IPConnection
     attr_accessor :devices
     attr_accessor :timeout
 
-    FUNCTION_ENUMERATE = 254
     CALLBACK_ENUMERATE = 253
-
     CALLBACK_CONNECTED = 0
     CALLBACK_DISCONNECTED = 1
 
@@ -463,13 +477,17 @@ module Tinkerforge
       @registered_callbacks = {}
 
       @socket_mutex = Mutex.new
-      @socket = nil
+      @socket = nil # protected by socket_mutex
+      @socket_id = 0 # protected by socket_mutex
 
       @receive_flag = false
       @receive_thread = nil
 
-      @callback_queue = nil
-      @callback_thread = nil
+      @callback = nil
+
+      @disconnect_probe_flag = false
+      @disconnect_probe_queue = nil
+      @disconnect_probe_thread = nil # protected by socket_mutex
 
       @waiter_queue = Queue.new
     end
@@ -500,8 +518,7 @@ module Tinkerforge
     # Disconnects the TCP/IP connection from the Brick Daemon or the
     # WIFI/Ethernet Extension.
     def disconnect
-      callback_queue = nil
-      callback_thread = nil
+      callback = nil
 
       @socket_mutex.synchronize {
         @auto_reconnect_allowed = false
@@ -514,38 +531,22 @@ module Tinkerforge
             raise NotConnectedException, 'Not connected'
           end
 
-          # Destroy receive thread
-          @receive_flag = false
-
-          @socket.shutdown(Socket::SHUT_RDWR)
-
-          if Thread.current != @receive_thread
-            @receive_thread.join
-          end
-
-          @receive_thread = nil
-
-          # Destroy socket
-          @socket.close
-          @socket = nil
+          disconnect_unlocked
         end
 
         # Destroy callback thread
-        callback_queue = @callback_queue
-        callback_thread = @callback_thread
-
-        @callback_queue = nil
-        @callback_thread = nil
+        callback = @callback
+        @callback = nil
       }
 
       # Do this outside of socket_mutex to allow calling (dis-)connect from
       # the callbacks while blocking on the join call here
-      callback_queue.push [QUEUE_KIND_META, [CALLBACK_DISCONNECTED,
-                                             DISCONNECT_REASON_REQUEST]]
-      callback_queue.push [QUEUE_KIND_EXIT, nil]
+      callback.queue.push [QUEUE_KIND_META, [CALLBACK_DISCONNECTED,
+                                             DISCONNECT_REASON_REQUEST, nil]]
+      callback.queue.push [QUEUE_KIND_EXIT, nil]
 
-      if Thread.current != callback_thread
-        callback_thread.join
+      if Thread.current != callback.thread
+        callback.thread.join
       end
     end
 
@@ -670,36 +671,67 @@ module Tinkerforge
           raise NotConnectedException, 'Not connected'
         end
 
-        @socket.send request, 0
+        begin
+          @socket.send request, 0
+        rescue IOError
+          handle_disconnect_by_peer DISCONNECT_REASON_ERROR, @socket_id, true
+          raise NotConnectedException, 'Not connected'
+        rescue Errno::ECONNRESET
+          handle_disconnect_by_peer DISCONNECT_REASON_SHUTDOWN, @socket_id, true
+          raise NotConnectedException, 'Not connected'
+        end
+
+        @disconnect_probe_flag = false
       }
     end
 
     private
 
+    FUNCTION_DISCONNECT_PROBE = 128
+    FUNCTION_ENUMERATE = 254
+
     QUEUE_KIND_EXIT = 0
     QUEUE_KIND_META = 1
     QUEUE_KIND_PACKET = 2
+
+    DISCONNECT_PROBE_INTERVAL = 5
 
     # internal
     def connect_unlocked(is_auto_reconnect)
       # NOTE: Assumes that the socket mutex is locked
 
       # Create callback queue and thread
-      if @callback_thread == nil
-        @callback_queue = Queue.new
-        @callback_thread = Thread.new(@callback_queue) do |queue|
-          callback_loop queue
+      if @callback == nil
+        @callback = CallbackContext.new
+        @callback.queue = Queue.new
+        @callback.mutex = Mutex.new
+        @callback.flag = false
+        @callback.thread = Thread.new(@callback) do |callback|
+          callback_loop callback
         end
-        @callback_thread.abort_on_exception = true
+        @callback.thread.abort_on_exception = true
       end
 
       # Create socket
       @socket = TCPSocket.new @host, @port
       @socket.setsockopt(Socket::IPPROTO_TCP, Socket::TCP_NODELAY, 1)
+      @socket_id += 1
+
+      # Create disconnect probe thread
+      @disconnect_probe_flag = true
+      @disconnect_probe_queue = Queue.new
+      @disconnect_probe_thread = Thread.new(@disconnect_probe_queue) do |disconnect_probe_queue|
+        disconnect_probe_loop disconnect_probe_queue
+      end
+      @disconnect_probe_thread.abort_on_exception = true
 
       # Create receive thread
+      @callback.flag = true
+
       @receive_flag = true
-      @receive_thread = Thread.new { receive_loop }
+      @receive_thread = Thread.new(@socket_id) do |socket_id|
+        receive_loop socket_id
+      end
       @receive_thread.abort_on_exception = true
 
       # Trigger connected callback
@@ -712,17 +744,57 @@ module Tinkerforge
       @auto_reconnect_allowed = false;
       @auto_reconnect_pending = false;
 
-      @callback_queue.push [QUEUE_KIND_META, [CALLBACK_CONNECTED, connect_reason]]
+      @callback.queue.push [QUEUE_KIND_META, [CALLBACK_CONNECTED,
+                                              connect_reason, nil]]
     end
 
     # internal
-    def receive_loop
+    def disconnect_unlocked
+      # NOTE: Assumes that the socket mutex is locked
+
+      # Destroy disconnect probe thread
+      @disconnect_probe_queue.push true
+      @disconnect_probe_thread.join
+      @disconnect_probe_thread = nil
+
+      # Stop dispatching packet callbacks before ending the receive
+      # thread to avoid timeout exceptions due to callback functions
+      # trying to call getters
+      if Thread.current != @callback.thread
+        # FIXME: Cannot lock callback mutex here because this can
+        #        deadlock due to an ordering problem with the socket mutex
+        #@callback.mutex.synchronize {
+          @callback.flag = false
+        #}
+      else
+        @callback.flag = false
+      end
+
+      # Destroy receive thread
+      @receive_flag = false
+
+      @socket.shutdown(Socket::SHUT_RDWR)
+
+      if Thread.current != @receive_thread
+        @receive_thread.join
+      end
+
+      @receive_thread = nil
+
+      # Destroy socket
+      @socket.close
+      @socket = nil
+    end
+
+    # internal
+    def receive_loop(socket_id)
       pending_data = ''
 
       while @receive_flag
         begin
           result = IO.select [@socket], [], [], 1
         rescue IOError
+          # FIXME: handle this error?
           break
         end
 
@@ -733,17 +805,16 @@ module Tinkerforge
         begin
           data = @socket.recv 8192
         rescue IOError
-          @auto_reconnect_allowed = true
-          @receive_flag = false
-          @callback_queue.push [QUEUE_KIND_META, [CALLBACK_DISCONNECTED, DISCONNECT_REASON_ERROR]]
+          handle_disconnect_by_peer DISCONNECT_REASON_ERROR, socket_id, false
+          break
+        rescue Errno::ECONNRESET
+          handle_disconnect_by_peer DISCONNECT_REASON_SHUTDOWN, socket_id, false
           break
         end
 
         if data.length == 0
           if @receive_flag
-            @auto_reconnect_allowed = true
-            @receive_flag = false
-            @callback_queue.push [QUEUE_KIND_META, [CALLBACK_DISCONNECTED, DISCONNECT_REASON_SHUTDOWN]]
+            handle_disconnect_by_peer DISCONNECT_REASON_SHUTDOWN, socket_id, false
           end
           break
         end
@@ -772,23 +843,33 @@ module Tinkerforge
     end
 
     # internal
-    def dispatch_meta(function_id, parameter)
+    def dispatch_meta(function_id, parameter, socket_id)
       if function_id == CALLBACK_CONNECTED
         if @registered_callbacks.has_key? CALLBACK_CONNECTED
           @registered_callbacks[CALLBACK_CONNECTED].call parameter
         end
       elsif function_id == CALLBACK_DISCONNECTED
-        # need to do this here, the receive_loop is not allowed to
-        # hold the socket_mutex because this could cause a deadlock
-        # with a concurrent call to the (dis-)connect function
-        @socket_mutex.synchronize {
-          if @socket != nil
-            @socket.close
-            @socket = nil
-          end
-        }
+        if parameter != DISCONNECT_REASON_REQUEST
+          # Need to do this here, the receive_loop is not allowed to
+          # hold the socket_mutex because this could cause a deadlock
+          # with a concurrent call to the (dis-)connect function
+          @socket_mutex.synchronize {
+            # Don't close the socket if it got disconnected or
+            # reconnected in the meantime
+            if @socket != nil and @socket_id == socket_id
+              # Destroy disconnect probe thread
+              @disconnect_probe_queue.push true
+              @disconnect_probe_thread.join
+              @disconnect_probe_thread = nil
 
-        # FIXME: wait a moment here, otherwise the next connect
+              # Destroy socket
+              @socket.close
+              @socket = nil
+            end
+          }
+        end
+
+        # FIXME: Wait a moment here, otherwise the next connect
         # attempt will succeed, even if there is no open server
         # socket. the first receive will then fail directly
         sleep 0.1
@@ -801,7 +882,7 @@ module Tinkerforge
           @auto_reconnect_pending = true
           retry_connect = true
 
-          # block here until reconnect. this is okay, there is no
+          # Block here until reconnect. this is okay, there is no
           # callback to deliver when there is no connection
           while retry_connect
             retry_connect = false
@@ -847,23 +928,72 @@ module Tinkerforge
     end
 
     # internal
-    def callback_loop(callback_queue)
-      while true
-        kind, data = callback_queue.pop
+    def callback_loop(callback)
+      alive = true
 
-        if kind == QUEUE_KIND_EXIT
-          break
-        elsif kind == QUEUE_KIND_META
-          function_id, parameter = data
+      while alive
+        kind, data = callback.queue.pop
 
-          dispatch_meta function_id, parameter
-        elsif kind == QUEUE_KIND_PACKET
-          # don't dispatch callbacks when the receive thread isn't running
-          if @receive_flag
-            dispatch_packet data
+        # FIXME: Cannot lock callback mutex here because this can
+        #        deadlock due to an ordering problem with the socket mutex
+        # callback.mutex.synchronize {
+          if kind == QUEUE_KIND_EXIT
+            alive = false
+          elsif kind == QUEUE_KIND_META
+            function_id, parameter, socket_id = data
+
+            dispatch_meta function_id, parameter, socket_id
+          elsif kind == QUEUE_KIND_PACKET
+            # don't dispatch callbacks when the receive thread isn't running
+            if callback.flag
+              dispatch_packet data
+            end
           end
-        end
+        #}
       end
+    end
+
+    # internal
+    def disconnect_probe_loop(disconnect_probe_queue)
+      request, _, _ = create_packet_header nil, 8, FUNCTION_DISCONNECT_PROBE
+
+      while true
+        begin
+          Timeout::timeout(DISCONNECT_PROBE_INTERVAL) {
+            disconnect_probe_queue.pop
+          }
+        rescue Timeout::Error
+          if @disconnect_probe_flag
+            @socket_mutex.synchronize {
+              begin
+                @socket.send request, 0
+              rescue IOError
+                handle_disconnect_by_peer DISCONNECT_REASON_ERROR, @socket_id, false
+              rescue Errno::ECONNRESET
+                handle_disconnect_by_peer DISCONNECT_REASON_SHUTDOWN, @socket_id, false
+              end
+            }
+          else
+            @disconnect_probe_flag = true
+          end
+          next
+        end
+        break
+      end
+    end
+
+    # internal
+    def handle_disconnect_by_peer(disconnect_reason, socket_id, disconnect_immediately)
+      # NOTE: assumes that socket_mutex is locked if disconnect_immediately is true
+
+      @auto_reconnect_allowed = true
+
+      if disconnect_immediately
+        disconnect_unlocked
+      end
+
+      @callback.queue.push [QUEUE_KIND_META, [CALLBACK_DISCONNECTED,
+                                              disconnect_reason, socket_id]]
     end
 
     # internal
@@ -874,14 +1004,14 @@ module Tinkerforge
 
       if sequence_number == 0 and function_id == CALLBACK_ENUMERATE
         if @registered_callbacks.has_key? CALLBACK_ENUMERATE
-          @callback_queue.push [QUEUE_KIND_PACKET, packet]
+          @callback.queue.push [QUEUE_KIND_PACKET, packet]
         end
       elsif @devices.has_key? uid
         device = @devices[uid]
 
         if sequence_number == 0
           if device.registered_callbacks.has_key? function_id
-            @callback_queue.push [QUEUE_KIND_PACKET, packet]
+            @callback.queue.push [QUEUE_KIND_PACKET, packet]
           end
         elsif device.expected_response_function_id == function_id and \
               device.expected_response_sequence_number == sequence_number
