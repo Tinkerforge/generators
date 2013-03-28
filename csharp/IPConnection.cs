@@ -22,6 +22,7 @@ namespace Tinkerforge
 	{
 		internal int responseTimeout = 2500;
 
+		internal const byte FUNCTION_DISCONNECT_PROBE = 128;
 		internal const byte FUNCTION_ENUMERATE = 254;
 
 		internal const byte CALLBACK_ENUMERATE = 253;
@@ -30,6 +31,8 @@ namespace Tinkerforge
 		internal const int CALLBACK_DISCONNECTED = 1;
 
 		internal const long BROADCAST_UID = (long)0;
+
+		internal const int DISCONNECT_PROBE_INTERVAL = 5000;
 
 		// enumeration_type parameter to the enumerate callback
 		public const short ENUMERATION_TYPE_AVAILABLE = 0;
@@ -74,6 +77,10 @@ namespace Tinkerforge
 		CallbackContext callback = null;
 		internal Dictionary<int, Device> devices = new Dictionary<int, Device>();
 		Semaphore waiter = new Semaphore(0, Int32.MaxValue);
+
+		bool disconnectProbeFlag = false;
+		BlockingQueue<bool> disconnectProbeQueue = null;
+		Thread disconnectProbeThread = null;
 
 		public event EnumerateEventHandler EnumerateCallback;
 		public delegate void EnumerateEventHandler(IPConnection sender, string uid, string connectedUid,
@@ -177,6 +184,14 @@ namespace Tinkerforge
 			socketReader = new BinaryReader(socketStream);
 			++socketID;
 
+			// create disconnect probe thread
+			disconnectProbeFlag = true;
+			disconnectProbeQueue = new BlockingQueue<bool>();
+			disconnectProbeThread = new Thread(delegate() { this.DisconnectProbeLoop(disconnectProbeQueue); });
+			disconnectProbeThread.IsBackground = true;
+			disconnectProbeThread.Name = "Disconnect-Prober";
+			disconnectProbeThread.Start();
+
 			callback.flag = true;
 
 			receiveFlag = true;
@@ -222,6 +237,11 @@ namespace Tinkerforge
 						throw new NotConnectedException();
 					}
 
+					// destroy disconnect probe thread
+					disconnectProbeQueue.Enqueue(true);
+					disconnectProbeThread.Join();
+					disconnectProbeThread = null;
+
 					// stop dispatching packet callbacks before ending the receive
 					// thread to avoid timeout exceptions due to callback functions
 					// trying to call getters
@@ -253,9 +273,8 @@ namespace Tinkerforge
 					if(receiveThread != null)
 					{
 						receiveThread.Join();
+						receiveThread = null;
 					}
-
-					receiveThread = null;
 				}
 
 				localCallback = callback;
@@ -464,7 +483,6 @@ namespace Tinkerforge
 					if(receiveFlag)
 					{
 						autoReconnectAllowed = true;
-
 						callback.queue.Enqueue(new CallbackQueueObject(QUEUE_META, CALLBACK_DISCONNECTED,
 						                                               DISCONNECT_REASON_SHUTDOWN,
 						                                               localSocketID, null));
@@ -522,6 +540,12 @@ namespace Tinkerforge
 							// reconnected in the meantime
 							if(socket != null && socketID == cqo.socketID)
 							{
+								// destroy disconnect probe thread
+								disconnectProbeQueue.Enqueue(true);
+								disconnectProbeThread.Join();
+								disconnectProbeThread = null;
+
+								// destroy socket
 								socketWriter.Close();
 								socketWriter = null;
 								socketReader.Close();
@@ -663,6 +687,35 @@ namespace Tinkerforge
 			}
 		}
 
+		private void DisconnectProbeLoop(BlockingQueue<bool> localDisconnectProbeQueue)
+		{
+			byte[] request = new byte[8];
+			LEConverter.To((byte)0, 0, request);
+			LEConverter.To((byte)8, 4, request);
+			LEConverter.To(FUNCTION_DISCONNECT_PROBE, 5, request);
+			LEConverter.To((byte)((GetNextSequenceNumber() << 4)), 6, request);
+			LEConverter.To((byte)0, 7, request);
+
+			bool response;
+			while (true) {
+				if (localDisconnectProbeQueue.TryDequeue(out response, DISCONNECT_PROBE_INTERVAL))
+				{
+					break;
+				}
+
+				if (disconnectProbeFlag) {
+					lock (socketLock)
+					{
+						socketWriter.Write(request, 0, request.Length);
+					}
+				}
+				else
+				{
+					disconnectProbeFlag = true;
+				}
+			}
+		}
+
 		internal static byte GetFunctionIDFromData(byte[] data)
 		{
 			return data[5];
@@ -743,6 +796,8 @@ namespace Tinkerforge
                 }
 
                 socketWriter.Write(request, 0, request.Length);
+
+				disconnectProbeFlag = false;
             }
 		}
 
