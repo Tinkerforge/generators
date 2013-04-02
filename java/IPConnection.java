@@ -348,6 +348,7 @@ class DisconnectProbeThread extends Thread {
 					} catch(java.net.SocketException e) {
 						ipcon.handleDisconnectByPeer(IPConnection.DISCONNECT_REASON_ERROR,
 						                             ipcon.socketID, false);
+						break;
 					} catch(Exception e) {
 						e.printStackTrace();
 					}
