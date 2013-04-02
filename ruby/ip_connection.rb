@@ -968,8 +968,10 @@ module Tinkerforge
                 @socket.send request, 0
               rescue IOError
                 handle_disconnect_by_peer DISCONNECT_REASON_ERROR, @socket_id, false
+                break
               rescue Errno::ECONNRESET
                 handle_disconnect_by_peer DISCONNECT_REASON_SHUTDOWN, @socket_id, false
+                break
               end
             }
           else
