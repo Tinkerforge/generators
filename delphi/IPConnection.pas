@@ -20,6 +20,7 @@ uses
   Classes, Sockets, SyncObjs, SysUtils, Base58, LEConverter, BlockingQueue, Device, TimedSemaphore;
 
 const
+  IPCON_FUNCTION_DISCONNECT_PROBE = 128;
   IPCON_FUNCTION_ENUMERATE = 254;
 
   IPCON_CALLBACK_ENUMERATE = 253;
@@ -30,6 +31,8 @@ const
   IPCON_QUEUE_KIND_DESTROY_AND_EXIT = 1;
   IPCON_QUEUE_KIND_META = 2;
   IPCON_QUEUE_KIND_PACKET = 3;
+
+  IPCON_DISCONNECT_PROBE_INTERVAL = 5000;
 
   { enumerationType parameter of the TIPConnectionNotifyEnumerate }
   IPCON_ENUMERATION_TYPE_AVAILABLE = 0;
@@ -125,6 +128,9 @@ type
     receiveFlag: boolean;
     receiveThread: TWrapperThread;
     callback: PCallbackContext;
+    disconnectProbeFlag: boolean;
+    disconnectProbeQueue: TBlockingQueue;
+    disconnectProbeThread: TWrapperThread;
     sequenceNumberMutex: TCriticalSection;
     nextSequenceNumber: byte;
     pendingData: TByteArray;
@@ -141,6 +147,7 @@ type
     function GetLastSocketError: string;
     procedure ReceiveLoop(thread: TWrapperThread; opaque: pointer);
     procedure CallbackLoop(thread: TWrapperThread; opaque: pointer);
+    procedure DisconnectProbeLoop(thread: TWrapperThread; opaque: pointer);
     procedure HandleDisconnectByPeer(const disconnectReason: byte;
                                      const socketID_: longword;
                                      const disconnectImmediately: boolean);
@@ -298,6 +305,9 @@ begin
   receiveFlag := false;
   receiveThread := nil;
   callback := nil;
+  disconnectProbeFlag := false;
+  disconnectProbeQueue := nil;
+  disconnectProbeThread := nil;
   sequenceNumberMutex := TCriticalSection.Create;
   nextSequenceNumber := 0;
   SetLength(pendingData, 0);
@@ -498,6 +508,10 @@ begin
     raise Exception.Create('Could not connect socket: ' + GetLastSocketError);
   end;
   socketID := socketID + 1;
+  { Create disconnect probe thread }
+  disconnectProbeFlag := true;
+  disconnectProbeQueue := TBlockingQueue.Create;
+  disconnectProbeThread := TWrapperThread.Create({$ifdef FPC}@{$endif}self.DisconnectProbeLoop, nil);
   { Create receive thread }
   callback^.flag := true;
   receiveFlag := true;
@@ -520,6 +534,13 @@ end;
 { NOTE: Assumes that socketMutex is locked }
 procedure TIPConnection.DisconnectUnlocked;
 begin
+  { Destroy disconnect probe thread }
+  disconnectProbeQueue.Enqueue(0, nil);
+  disconnectProbeThread.WaitFor;
+  disconnectProbeThread.Destroy;
+  disconnectProbeThread := nil;
+  disconnectProbeQueue.Destroy;
+  disconnectProbeQueue := nil;
   { Stop dispatching packet callbacks before ending the receive
     thread to avoid timeout exceptions due to callback function
     trying to call getters }
@@ -661,6 +682,33 @@ begin
   Dispose(callback_);
 end;
 
+procedure TIPConnection.DisconnectProbeLoop(thread: TWrapperThread; opaque: pointer);
+var kind: byte; data, request: TByteArray;
+begin
+  SetLength(data, 0);
+  request := CreateRequestPacket(nil, IPCON_FUNCTION_DISCONNECT_PROBE, 8);
+  while (not disconnectProbeQueue.Dequeue(kind, data, IPCON_DISCONNECT_PROBE_INTERVAL)) do begin
+    if (disconnectProbeFlag) then begin
+      socketMutex.Acquire;
+      try
+{$ifdef FPC}
+        if (fpsend(socket, @request[0], Length(request), 0) < 0) then begin
+{$else}
+        if (WinSock.Send(socket, request[0], Length(request), 0) = SOCKET_ERROR) then begin
+{$endif}
+          HandleDisconnectByPeer(IPCON_DISCONNECT_REASON_ERROR, socketID, false);
+          break;
+        end;
+      finally
+        socketMutex.Release;
+      end;
+    end
+    else begin
+      disconnectProbeFlag := true;
+    end;
+  end;
+end;
+
 { NOTE: Assumes that socketMutex is locked if disconnectImmediately is true }
 procedure TIPConnection.HandleDisconnectByPeer(const disconnectReason: byte;
                                                const socketID_: longword;
@@ -729,6 +777,14 @@ begin
         { Don't close the socket if it got disconnected or reconnected
           in the meantime }
         if (IsConnected and (socketID = LEConvertUInt32From(2, meta))) then begin
+          { Destroy disconnect probe thread }
+          disconnectProbeQueue.Enqueue(0, nil);
+          disconnectProbeThread.WaitFor;
+          disconnectProbeThread.Destroy;
+          disconnectProbeThread := nil;
+          disconnectProbeQueue.Destroy;
+          disconnectProbeQueue := nil;
+          { Destroy socket }
           closesocket(socket);
           socket := INVALID_SOCKET;
         end;
@@ -869,6 +925,7 @@ begin
       HandleDisconnectByPeer(IPCON_DISCONNECT_REASON_ERROR, 0, true);
       raise ENotConnectedException.Create('Not connected');
     end;
+    disconnectProbeFlag := false;
   finally
     socketMutex.Release;
   end;
