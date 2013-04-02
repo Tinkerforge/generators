@@ -137,9 +137,13 @@ type
     disconnectedCallback: TIPConnectionNotifyDisconnected;
 
     procedure ConnectUnlocked(const isAutoReconnect: boolean);
+    procedure DisconnectUnlocked;
     function GetLastSocketError: string;
     procedure ReceiveLoop(thread: TWrapperThread; opaque: pointer);
     procedure CallbackLoop(thread: TWrapperThread; opaque: pointer);
+    procedure HandleDisconnectByPeer(const disconnectReason: byte;
+                                     const socketID_: longword;
+                                     const disconnectImmediately: boolean);
     procedure HandleResponse(const packet: TByteArray);
     procedure DispatchMeta(const meta: TByteArray);
     procedure DispatchPacket(const packet: TByteArray);
@@ -345,37 +349,7 @@ begin
       if (not IsConnected) then begin
         raise ENotConnectedException.Create('Not connected');
       end;
-      { Stop dispatching packet callbacks before ending the receive
-        thread to avoid timeout exceptions due to callback function
-        trying to call getters }
-      if (not callback^.thread.IsCurrent) then begin
-        { FIXME: Cannot lock callback mutex here because this can
-                 deadlock due to an ordering problem with the socket mutex }
-        //callback^.mutex.Acquire;
-        //try
-          callback^.flag := false;
-        //finally
-        //  callback^.mutex.Release;
-        //end;
-      end
-      else begin
-        callback^.flag := false;
-      end;
-      { Destroy receive thread }
-      receiveFlag := false;
-{$ifdef FPC}
-      fpshutdown(socket, 2);
-{$else}
-      shutdown(socket, SD_BOTH);
-{$endif}
-      if (not receiveThread.IsCurrent) then begin
-        receiveThread.WaitFor;
-      end;
-      receiveThread.Destroy;
-      receiveThread := nil;
-      { Destroy socket }
-      closesocket(socket);
-      socket := INVALID_SOCKET;
+      DisconnectUnlocked;
     end;
     { Destroy callback thread }
     callback_ := callback;
@@ -543,6 +517,42 @@ begin
   callback^.queue.Enqueue(IPCON_QUEUE_KIND_META, meta);
 end;
 
+{ NOTE: Assumes that socketMutex is locked }
+procedure TIPConnection.DisconnectUnlocked;
+begin
+  { Stop dispatching packet callbacks before ending the receive
+    thread to avoid timeout exceptions due to callback function
+    trying to call getters }
+  if (not callback^.thread.IsCurrent) then begin
+    { FIXME: Cannot lock callback mutex here because this can
+             deadlock due to an ordering problem with the socket mutex }
+    //callback^.mutex.Acquire;
+    //try
+      callback^.flag := false;
+    //finally
+    //  callback^.mutex.Release;
+    //end;
+  end
+  else begin
+    callback^.flag := false;
+  end;
+  { Destroy receive thread }
+  receiveFlag := false;
+{$ifdef FPC}
+  fpshutdown(socket, 2);
+{$else}
+  shutdown(socket, SD_BOTH);
+{$endif}
+  if (not receiveThread.IsCurrent) then begin
+    receiveThread.WaitFor;
+  end;
+  receiveThread.Destroy;
+  receiveThread := nil;
+  { Destroy socket }
+  closesocket(socket);
+  socket := INVALID_SOCKET;
+end;
+
 function TIPConnection.GetLastSocketError: string;
 begin
 {$ifdef FPC}
@@ -558,9 +568,11 @@ end;
 
 procedure TIPConnection.ReceiveLoop(thread: TWrapperThread; opaque: pointer);
 var socketID_: longword; data: array [0..8191] of byte;
-    len, pendingLen, remainingLen: longint; packet, meta: TByteArray;
+    len, pendingLen, remainingLen: longint; packet: TByteArray;
+    disconnectReason: byte;
 begin
   socketID_ := socketID;
+  disconnectReason := IPCON_DISCONNECT_REASON_ERROR;
   while (receiveFlag) do begin
 {$ifdef FPC}
     len := fprecv(socket, @data[0], Length(data), 0);
@@ -571,20 +583,16 @@ begin
       exit;
     end;
     if ((len < 0) or (len = 0)) then begin
-      if ((len < 0) and ({$ifdef FPC}socketerror{$else}WSAGetLastError{$endif} = ESysEINTR)) then begin
-        continue;
-      end;
-      autoReconnectAllowed := true;
-      SetLength(meta, 6);
-      meta[0] := IPCON_CALLBACK_DISCONNECTED;
-      if (len = 0) then begin
-        meta[1] := IPCON_DISCONNECT_REASON_SHUTDOWN;
+      if (len < 0) then begin
+        if ({$ifdef FPC}socketerror{$else}WSAGetLastError{$endif} = ESysEINTR) then begin
+          continue;
+        end;
+        disconnectReason := IPCON_DISCONNECT_REASON_ERROR;
       end
       else begin
-        meta[1] := IPCON_DISCONNECT_REASON_ERROR;
+        disconnectReason := IPCON_DISCONNECT_REASON_SHUTDOWN;
       end;
-      LEConvertUInt32To(socketID_, 2, meta);
-      callback^.queue.Enqueue(IPCON_QUEUE_KIND_META, meta);
+      HandleDisconnectByPeer(disconnectReason, socketID_, false);
       exit;
     end;
     pendingLen := Length(pendingData);
@@ -651,6 +659,23 @@ begin
   callback_^.queue.Destroy;
   callback_^.mutex.Destroy;
   Dispose(callback_);
+end;
+
+{ NOTE: Assumes that socketMutex is locked if disconnectImmediately is true }
+procedure TIPConnection.HandleDisconnectByPeer(const disconnectReason: byte;
+                                               const socketID_: longword;
+                                               const disconnectImmediately: boolean);
+var meta: TByteArray;
+begin
+  autoReconnectAllowed := true;
+  if (disconnectImmediately) then begin
+    DisconnectUnlocked;
+  end;
+  SetLength(meta, 6);
+  meta[0] := IPCON_CALLBACK_DISCONNECTED;
+  meta[1] := disconnectReason;
+  LEConvertUInt32To(socketID_, 2, meta);
+  callback^.queue.Enqueue(IPCON_QUEUE_KIND_META, meta);
 end;
 
 procedure TIPConnection.HandleResponse(const packet: TByteArray);
@@ -837,10 +862,13 @@ begin
       raise ENotConnectedException.Create('Not connected');
     end;
 {$ifdef FPC}
-    fpsend(socket, @request[0], Length(request), 0);
+    if (fpsend(socket, @request[0], Length(request), 0) < 0) then begin
 {$else}
-    WinSock.Send(socket, request[0], Length(request), 0);
+    if (WinSock.Send(socket, request[0], Length(request), 0) = SOCKET_ERROR) then begin
 {$endif}
+      HandleDisconnectByPeer(IPCON_DISCONNECT_REASON_ERROR, 0, true);
+      raise ENotConnectedException.Create('Not connected');
+    end;
   finally
     socketMutex.Release;
   end;
