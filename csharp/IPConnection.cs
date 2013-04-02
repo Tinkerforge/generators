@@ -716,6 +716,7 @@ namespace Tinkerforge
 							   e.InnerException is SocketException)
 							{
 								HandleDisconnectByPeer(DISCONNECT_REASON_ERROR, socketID, false);
+								break;
 							}
 						}
 					}
