@@ -241,7 +241,7 @@ API
 ---
 
 Da Delphi nicht mehrere Rückgabewerte direkt unterstützt, wird das ``out``
-Keyword genutzt um mehrere Werte von einer Funktion zurückzugeben.
+Schlüsselwort genutzt um mehrere Werte von einer Funktion zurückzugeben.
 
 Alle folgend aufgelisteten Funktionen und Prozeduren sind Thread-sicher.
 

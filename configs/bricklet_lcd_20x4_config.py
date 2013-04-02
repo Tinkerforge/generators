@@ -202,7 +202,7 @@ the number of the button (0 to 2 or 0 to 3 with hardware version >= 1.2).
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn eine Taste gedrückt wird. The :word:`parameter`
+Dieser Callback wird ausgelöst wenn eine Taste gedrückt wird. Der :word:`parameter`
 ist die Nummer der Taste (0 bis 2 oder 0 bis 3 mit Hardware Version >= 1.2).
 """
 }]
@@ -221,7 +221,7 @@ the number of the button (0 to 2 or 0 to 3 with hardware version >= 1.2).
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn eine Taste losgelassen wird. The :word:`parameter`
+Dieser Callback wird ausgelöst wenn eine Taste losgelassen wird. Der :word:`parameter`
 ist die Nummer der Taste (0 bis 2 oder 0 bis 3 mit Hardware Version >= 1.2).
 """
 }]
@@ -263,7 +263,7 @@ after each startup.
 """
 Das LCD 20x4 Bricklet kann bis zu 8 Benutzerdefinierte Buchstaben speichern.
 Die Buchstaben bestehen aus 5x8 Pixel und sie können über den Index 0-7
-addressiert werden. Um die Pixel zu beschreiben, werden die ersten 5 Bit
+adressiert werden. Um die Pixel zu beschreiben, werden die ersten 5 Bit
 von 8 Bytes verwenden. Zum Beispiel, um den Buchstaben "H" zu erzeugen,
 sollte das folgende Array gesendet werden:
 
@@ -376,12 +376,12 @@ controlling program crashes.
 
 A negative counter turns the default text functionality off.
 
-The default counter is -1.
+The default is -1.
 """,
 'de':
 """
 Setzt den Default Text Zähler in ms. Der Zähler wird von der LCD
-firmware einmal pro ms dekrementiert. Wenn der Zähler 0 erreicht
+Firmware einmal pro ms dekrementiert. Wenn der Zähler 0 erreicht
 wird der Default Text auf dem LCD angezeigt (siehe :func:`SetDefaultText`).
 
 Diese Funktionalität kann genutzt werden um auf dem LCD einen Text
@@ -393,9 +393,9 @@ pro Minute mit dem Parameter 1000*60*2 (zwei Minuten) aufzurufen.
 In diesem Fall wird dann der Default Text nach spätestens zwei Minuten
 angezeigt wenn das kontrollierende Programm abstürzt.
 
-Ein negativer Zählerwert stellt die Default Text funktionalität aus.
+Ein negativer Zählerwert stellt die Default Text Funktionalität aus.
 
-Der Default Zählerwert ist -1.
+Der Standardwert ist -1.
 """
 }]
 })

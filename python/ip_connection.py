@@ -229,6 +229,7 @@ class IPConnection:
     FUNCTION_WRITE_BRICKLET_UID = 248
     FUNCTION_READ_BRICKLET_PLUGIN = 247
     FUNCTION_WRITE_BRICKLET_PLUGIN = 246
+    FUNCTION_DISCONNECT_PROBE = 128
 
     CALLBACK_ENUMERATE = 253
     CALLBACK_CONNECTED = 0
@@ -261,6 +262,8 @@ class IPConnection:
     QUEUE_META = 1
     QUEUE_PACKET = 2
 
+    DISCONNECT_PROBE_INTERVAL = 5
+
     class CallbackContext:
         def __init__(self):
             self.queue = None
@@ -280,17 +283,20 @@ class IPConnection:
         self.auto_reconnect = True
         self.auto_reconnect_allowed = False
         self.auto_reconnect_pending = False
-        self.sequence_number_lock = Lock() # protects next_sequence_number
-        self.next_sequence_number = 0
+        self.sequence_number_lock = Lock()
+        self.next_sequence_number = 0 # protected by sequence_number_lock
         self.auth_key = None
         self.devices = {}
         self.registered_callbacks = {}
-        self.socket = None
-        self.socket_id = 0
-        self.socket_lock = Lock() # protects socket and socket_id
+        self.socket = None # protected by socket_lock
+        self.socket_id = 0 # protected by socket_lock
+        self.socket_lock = Lock()
         self.receive_flag = False
         self.receive_thread = None
         self.callback = None
+        self.disconnect_probe_flag = False
+        self.disconnect_probe_queue = None
+        self.disconnect_probe_thread = None
         self.waiter = Semaphore()
 
     def connect(self, host, port):
@@ -452,6 +458,7 @@ class IPConnection:
     def connect_unlocked(self, is_auto_reconnect):
         # NOTE: assumes that socket_lock is locked
 
+        # create callback thread and queue
         if self.callback is None:
             try:
                 self.callback = IPConnection.CallbackContext()
@@ -467,15 +474,32 @@ class IPConnection:
                 self.callback = None
                 raise
 
+        # create and connect socket
         try:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
             self.socket.connect((self.host, self.port))
             self.socket_id += 1
         except:
+            # FIXME: cleanup
             self.socket = None
             raise
 
+        # create disconnect probe thread
+        try:
+            self.disconnect_probe_flag = True
+            self.disconnect_probe_queue = Queue()
+            self.disconnect_probe_thread = Thread(name='Disconnect-Prober',
+                                                  target=self.disconnect_probe_loop,
+                                                  args=(self.disconnect_probe_queue, ))
+            self.disconnect_probe_thread.daemon = True
+            self.disconnect_probe_thread.start()
+        except:
+            # FIXME: cleanup
+            self.disconnect_probe_thread = None
+            raise
+
+        # create receive thread
         self.callback.flag = True
 
         try:
@@ -516,11 +540,19 @@ class IPConnection:
     def disconnect_unlocked(self):
         # NOTE: assumes that socket_lock is locked
 
+        # end disconnect probe thread
+        self.disconnect_probe_queue.put(True)
+        self.disconnect_probe_thread.join() # FIXME: use a timeout?
+        self.disconnect_probe_thread = None
+
         # stop dispatching packet callbacks before ending the receive
         # thread to avoid timeout exceptions due to callback functions
         # trying to call getters
         if current_thread() is not self.callback.thread:
-            with self.callback.lock:
+            # FIXME: cannot hold callback lock here because this can
+            #        deadlock due to an ordering problem with the socket lock
+            #with self.callback.lock:
+            if True:
                 self.callback.flag = False
         else:
             self.callback.flag = False
@@ -533,8 +565,9 @@ class IPConnection:
         except socket.error:
             pass
 
-        self.receive_thread.join() # FIXME: use a timeout?
-        self.receive_thread = None
+        if self.receive_thread is not None:
+            self.receive_thread.join() # FIXME: use a timeout?
+            self.receive_thread = None
 
         # close socket
         self.socket.close()
@@ -591,6 +624,12 @@ class IPConnection:
                     # don't close the socket if it got disconnected or
                     # reconnected in the meantime
                     if self.socket is not None and self.socket_id == socket_id:
+                        # end disconnect probe thread
+                        self.disconnect_probe_queue.put(True)
+                        self.disconnect_probe_thread.join() # FIXME: use a timeout?
+                        self.disconnect_probe_thread = None
+
+                        # close socket
                         self.socket.close()
                         self.socket = None
 
@@ -663,7 +702,10 @@ class IPConnection:
         while True:
             kind, data = callback.queue.get()
 
-            with callback.lock:
+            # FIXME: cannot hold callback lock here because this can
+            #        deadlock due to an ordering problem with the socket lock
+            #with callback.lock:
+            if True:
                 if kind == IPConnection.QUEUE_EXIT:
                     break
                 elif kind == IPConnection.QUEUE_META:
@@ -674,6 +716,26 @@ class IPConnection:
                         continue
 
                     self.dispatch_packet(data)
+
+    def disconnect_probe_loop(self, disconnect_probe_queue):
+        request, _, _ = self.create_packet_header(None, 8, IPConnection.FUNCTION_DISCONNECT_PROBE)
+
+        while True:
+            try:
+                disconnect_probe_queue.get(True, IPConnection.DISCONNECT_PROBE_INTERVAL)
+                break
+            except Empty:
+                pass
+
+            if self.disconnect_probe_flag:
+                with self.socket_lock:
+                    try:
+                        self.socket.send(request)
+                    except socket.error:
+                        self.handle_disconnect_by_peer(IPConnection.DISCONNECT_REASON_ERROR,
+                                                       self.socket_id, False)
+            else:
+                self.disconnect_probe_flag = True
 
     def deserialize_data(self, data, form):
         ret = []
@@ -716,6 +778,8 @@ class IPConnection:
             except socket.error:
                 self.handle_disconnect_by_peer(IPConnection.DISCONNECT_REASON_ERROR, None, True)
                 raise Error(Error.NOT_CONNECTED, 'Not connected')
+
+            self.disconnect_probe_flag = False
 
     def send_request(self, device, function_id, data, form, form_ret):
         length = 8 + struct.calcsize('<' + form)

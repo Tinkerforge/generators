@@ -26,7 +26,7 @@ This functions sole purpose is to allow automatic flashing of v1.x.y Bricklet pl
 """,
 'de':
 """
-Gibt die Firmware und Protokoll Version un den Namen des Bricklets für einen gegebenen Port zurück.
+Gibt die Firmware und Protokoll Version und den Namen des Bricklets für einen gegebenen Port zurück.
 
 Der einzige Zweck dieser Funktion ist es, automatischen Flashen von Bricklet v1.x.y Plugins zu ermöglichen.
 """

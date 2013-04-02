@@ -838,7 +838,7 @@ The default value is *false*.
 """,
 'de':
 """
-Aktiviert oder deaktiviert (*true* or *false*) die Synchrongleichrichtung.
+Aktiviert oder deaktiviert (*true* oder *false*) die Synchrongleichrichtung.
 
 Bei aktiver Synchrongleichrichtung kann der Decay Modus geändert werden
 (Siehe :func:`SetDecay`). Ohne Synchrongleichrichtung wird der Fast

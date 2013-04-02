@@ -1221,7 +1221,7 @@ Gibt Informationen über denn WIFI Empfangsbuffer zurück. Der WIFI
 Empfangsbuffer hat eine maximale Größe von 1500 Byte und falls zuviele
 Daten übertragen werden, kann er überlaufen.
 
-Die Rückgabewerte sind die anzahl der Oveflows, die low watermark
+Die Rückgabewerte sind die Anzahl der Oveflows, die low watermark
 (d.h. die kleinste Anzahl an Byte die je noch frei waren im Buffer) und
 die Anzahl der im Moment verwendeten Bytes im Buffer.
 
