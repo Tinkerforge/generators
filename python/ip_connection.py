@@ -734,6 +734,7 @@ class IPConnection:
                     except socket.error:
                         self.handle_disconnect_by_peer(IPConnection.DISCONNECT_REASON_ERROR,
                                                        self.socket_id, False)
+                        break
             else:
                 self.disconnect_probe_flag = True
 
