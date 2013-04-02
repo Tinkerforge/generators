@@ -1169,6 +1169,8 @@ static void ipcon_disconnect_probe_loop(void *opaque) {
 			                disconnect_probe.length) < 0) {
 				ipcon_handle_disconnect_by_peer(ipcon, IPCON_DISCONNECT_REASON_ERROR,
 				                                ipcon->socket_id, false);
+				mutex_unlock(&ipcon->socket_mutex);
+				break;
 			}
 
 			mutex_unlock(&ipcon->socket_mutex);
