@@ -190,7 +190,7 @@ abstract class Device
             $value2a = (int)bcmod(bcdiv($longUid, '4294967296' /* 0x100000000 */), '65536' /* 0x10000 */);
             $value2b = (int)bcmod(bcdiv($longUid, '281474976710656' /* 0x10000000000 */), '65536' /* 0x10000 */);
 
-            $shortUid1  = ($value1a & 0x0FFF);
+            $shortUid1  =  $value1a & 0x0FFF;
             $shortUid1 |= ($value1b & 0x0F00) << 4;
 
             $shortUid2  =  $value2a & 0x003F;
@@ -333,6 +333,10 @@ abstract class Device
         $this->pendingCallbacks = array();
 
         foreach ($pendingCallbacks as $pendingCallback) {
+            if ($this->ipcon->socket === FALSE) {
+                break;
+            }
+
             $this->handleCallback($pendingCallback[0], $pendingCallback[1]);
         }
     }
@@ -733,7 +737,6 @@ class IPConnection
                     }
 
                     $this->disconnectInternal($disconnectReason);
-
                     return;
                 }
 
@@ -806,6 +809,10 @@ class IPConnection
         if ($sequenceNumber == 0 && $functionID == self::CALLBACK_ENUMERATE) {
             if (array_key_exists(self::CALLBACK_ENUMERATE, $this->registeredCallbacks)) {
                 if ($directCallbackDispatch) {
+                    if ($this->socket === FALSE) {
+                        return;
+                    }
+
                     $this->handleEnumerate($header, $payload);
                 } else {
                     array_push($this->pendingCallbacks, array($header, $payload));
@@ -825,6 +832,10 @@ class IPConnection
         if ($sequenceNumber == 0) {
             if (array_key_exists($functionID, $device->registeredCallbacks)) {
                 if ($directCallbackDispatch) {
+                    if ($this->socket === FALSE) {
+                        return;
+                    }
+
                     $device->handleCallback($header, $payload);
                 } else {
                     array_push($device->pendingCallbacks, array($header, $payload));
@@ -878,6 +889,10 @@ class IPConnection
         $this->pendingCallbacks = array();
 
         foreach ($pendingCallbacks as $pendingCallback) {
+            if ($this->socket === FALSE) {
+                break;
+            }
+
             if ($pendingCallback[0]['functionID'] == self::CALLBACK_ENUMERATE) {
                 $this->handleEnumerate($pendingCallback[0], $pendingCallback[1]);
             }
