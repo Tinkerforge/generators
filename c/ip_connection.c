@@ -951,7 +951,7 @@ struct _CallbackContext {
 	Queue queue;
 	Thread thread;
 	Mutex mutex;
-	bool flag;
+	bool packet_dispatch_allowed;
 };
 
 typedef int (*CallbackWrapperFunction)(Device *device, Packet *packet);
@@ -1106,7 +1106,7 @@ static void ipcon_callback_loop(void *opaque) {
 			ipcon_dispatch_meta(callback->ipcon, (Meta *)data);
 		} else if (kind == QUEUE_KIND_PACKET) {
 			// don't dispatch callbacks when the receive thread isn't running
-			if (callback->flag) {
+			if (callback->packet_dispatch_allowed) {
 				ipcon_dispatch_packet(callback->ipcon, (Packet *)data);
 			}
 		}
@@ -1291,7 +1291,7 @@ static int ipcon_connect_unlocked(IPConnection *ipcon, bool is_auto_reconnect) {
 		ipcon->callback = (CallbackContext *)malloc(sizeof(CallbackContext));
 
 		ipcon->callback->ipcon = ipcon;
-		ipcon->callback->flag = false;
+		ipcon->callback->packet_dispatch_allowed = false;
 
 		queue_create(&ipcon->callback->queue);
 		mutex_create(&ipcon->callback->mutex);
@@ -1392,7 +1392,7 @@ static int ipcon_connect_unlocked(IPConnection *ipcon, bool is_auto_reconnect) {
 
 	// create receive thread
 	ipcon->receive_flag = true;
-	ipcon->callback->flag = true;
+	ipcon->callback->packet_dispatch_allowed = true;
 
 	if (thread_create(&ipcon->receive_thread, ipcon_receive_loop, ipcon) < 0) {
 		ipcon->receive_flag = false;
@@ -1447,11 +1447,11 @@ static void ipcon_disconnect_unlocked(IPConnection *ipcon) {
 		//        deadlock due to an ordering problem with the socket mutex
 		//mutex_lock(&ipcon->callback->mutex);
 
-		ipcon->callback->flag = false;
+		ipcon->callback->packet_dispatch_allowed = false;
 
 		//mutex_unlock(&ipcon->callback->mutex);
 	} else {
-		ipcon->callback->flag = false;
+		ipcon->callback->packet_dispatch_allowed = false;
 	}
 
 	// destroy receive thread
