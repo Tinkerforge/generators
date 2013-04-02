@@ -533,6 +533,8 @@ class IPConnection
         @socket_shutdown($this->socket, 2);
 
         $this->disconnectInternal(self::DISCONNECT_REASON_REQUEST);
+
+        $this->pendingData = '';
     }
 
     /**
