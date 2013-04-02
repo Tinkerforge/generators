@@ -101,7 +101,7 @@ type
   type TCallbackContext = record
     queue: TBlockingQueue;
     mutex: TCriticalSection;
-    flag: boolean;
+    packetDispatchAllowed: boolean;
     thread: TWrapperThread;
   end;
 
@@ -461,7 +461,7 @@ begin
   if (callback = nil) then begin
     New(callback);
     callback^.mutex := TCriticalSection.Create;
-    callback^.flag := false;
+    callback^.packetDispatchAllowed := false;
     callback^.queue := TBlockingQueue.Create;
     callback^.thread := TWrapperThread.Create({$ifdef FPC}@{$endif}self.CallbackLoop,
                                               callback);
@@ -514,7 +514,7 @@ begin
   disconnectProbeQueue := TBlockingQueue.Create;
   disconnectProbeThread := TWrapperThread.Create({$ifdef FPC}@{$endif}self.DisconnectProbeLoop, nil);
   { Create receive thread }
-  callback^.flag := true;
+  callback^.packetDispatchAllowed := true;
   receiveFlag := true;
   receiveThread := TWrapperThread.Create({$ifdef FPC}@{$endif}self.ReceiveLoop, nil);
   autoReconnectAllowed := false;
@@ -550,13 +550,13 @@ begin
              deadlock due to an ordering problem with the socket mutex }
     //callback^.mutex.Acquire;
     //try
-      callback^.flag := false;
+      callback^.packetDispatchAllowed := false;
     //finally
     //  callback^.mutex.Release;
     //end;
   end
   else begin
-    callback^.flag := false;
+    callback^.packetDispatchAllowed := false;
   end;
   { Destroy receive thread }
   receiveFlag := false;
@@ -670,7 +670,7 @@ begin
       end
       else if (kind = IPCON_QUEUE_KIND_PACKET) then begin
         { Don't dispatch callbacks when the receive thread isn't running }
-        if (callback_^.flag) then begin
+        if (callback_^.packetDispatchAllowed) then begin
           DispatchPacket(data);
         end;
       end;
