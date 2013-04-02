@@ -268,7 +268,7 @@ class IPConnection:
         def __init__(self):
             self.queue = None
             self.thread = None
-            self.flag = False
+            self.packet_dispatch_allowed = False
             self.lock = None
 
     def __init__(self):
@@ -463,7 +463,7 @@ class IPConnection:
             try:
                 self.callback = IPConnection.CallbackContext()
                 self.callback.queue = Queue()
-                self.callback.flag = False
+                self.callback.packet_dispatch_allowed = False
                 self.callback.lock = Lock()
                 self.callback.thread = Thread(name='Callback-Processor',
                                               target=self.callback_loop,
@@ -500,7 +500,7 @@ class IPConnection:
             raise
 
         # create receive thread
-        self.callback.flag = True
+        self.callback.packet_dispatch_allowed = True
 
         try:
             self.receive_flag = True
@@ -553,9 +553,9 @@ class IPConnection:
             #        deadlock due to an ordering problem with the socket lock
             #with self.callback.lock:
             if True:
-                self.callback.flag = False
+                self.callback.packet_dispatch_allowed = False
         else:
-            self.callback.flag = False
+            self.callback.packet_dispatch_allowed = False
 
         # end receive thread
         self.receive_flag = False
@@ -712,10 +712,8 @@ class IPConnection:
                     self.dispatch_meta(*data)
                 elif kind == IPConnection.QUEUE_PACKET:
                     # don't dispatch callbacks when the receive thread isn't running
-                    if not callback.flag:
-                        continue
-
-                    self.dispatch_packet(data)
+                    if callback.packet_dispatch_allowed:
+                        self.dispatch_packet(data)
 
     def disconnect_probe_loop(self, disconnect_probe_queue):
         request, _, _ = self.create_packet_header(None, 8, IPConnection.FUNCTION_DISCONNECT_PROBE)
