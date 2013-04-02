@@ -130,6 +130,7 @@ type
     pendingData: TByteArray;
     socketMutex: TCriticalSection;
     socket: TSocket;
+    socketID: longword;
     waiter: TTimedSemaphore;
     enumerateCallback: TIPConnectionNotifyEnumerate;
     connectedCallback: TIPConnectionNotifyConnected;
@@ -522,6 +523,7 @@ begin
     socket := INVALID_SOCKET;
     raise Exception.Create('Could not connect socket: ' + GetLastSocketError);
   end;
+  socketID := socketID + 1;
   { Create receive thread }
   callback^.flag := true;
   receiveFlag := true;
@@ -555,8 +557,10 @@ begin
 end;
 
 procedure TIPConnection.ReceiveLoop(thread: TWrapperThread; opaque: pointer);
-var data: array [0..8191] of byte; len, pendingLen, remainingLen: longint; packet, meta: TByteArray;
+var socketID_: longword; data: array [0..8191] of byte;
+    len, pendingLen, remainingLen: longint; packet, meta: TByteArray;
 begin
+  socketID_ := socketID;
   while (receiveFlag) do begin
 {$ifdef FPC}
     len := fprecv(socket, @data[0], Length(data), 0);
@@ -571,7 +575,7 @@ begin
         continue;
       end;
       autoReconnectAllowed := true;
-      SetLength(meta, 2);
+      SetLength(meta, 6);
       meta[0] := IPCON_CALLBACK_DISCONNECTED;
       if (len = 0) then begin
         meta[1] := IPCON_DISCONNECT_REASON_SHUTDOWN;
@@ -579,6 +583,7 @@ begin
       else begin
         meta[1] := IPCON_DISCONNECT_REASON_ERROR;
       end;
+      LEConvertUInt32To(socketID_, 2, meta);
       callback^.queue.Enqueue(IPCON_QUEUE_KIND_META, meta);
       exit;
     end;
@@ -693,14 +698,18 @@ begin
     { Need to do this here, the receive loop is not allowed to hold the socket
       mutex because this could cause a deadlock with a concurrent call to the
       (dis-)connect function }
-    socketMutex.Acquire;
-    try
-      if (IsConnected) then begin
-        closesocket(socket);
-        socket := INVALID_SOCKET;
+    if (meta[1] <> IPCON_DISCONNECT_REASON_REQUEST) then begin
+      socketMutex.Acquire;
+      try
+        { Don't close the socket if it got disconnected or reconnected
+          in the meantime }
+        if (IsConnected and (socketID = LEConvertUInt32From(2, meta))) then begin
+          closesocket(socket);
+          socket := INVALID_SOCKET;
+        end;
+      finally
+        socketMutex.Release;
       end;
-    finally
-      socketMutex.Release;
     end;
     { FIXME: Wait a moment here, otherwise the next connect attempt will
       succeed, even if there is no open server socket. The first receive will
