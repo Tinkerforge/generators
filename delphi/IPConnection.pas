@@ -360,6 +360,7 @@ begin
         raise ENotConnectedException.Create('Not connected');
       end;
       DisconnectUnlocked;
+      SetLength(pendingData, 0);
     end;
     { Destroy callback thread }
     callback_ := callback;
