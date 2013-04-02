@@ -400,6 +400,9 @@ abstract class Device
 
 class IPConnection
 {
+    const DISCONNECT_PROBE_INTERVAL = 5.0;
+
+    const FUNCTION_DISCONNECT_PROBE = 128;
     const FUNCTION_ENUMERATE = 254;
 
     // IDs for registerCallback
@@ -440,12 +443,18 @@ class IPConnection
     public $socket = FALSE;
     private $pendingData = '';
 
+    private $disconnectProbeRequest = '';
+    private $lastDisconnectProbe = 0.0;
+
     /**
      * Creates an IP Connection object that can be used to enumerate the available
      * devices. It is also required for the constructor of Bricks and Bricklets.
      */
     public function __construct()
     {
+        $result = $this->createPacketHeader(NULL, 8, self::FUNCTION_DISCONNECT_PROBE);
+        $this->disconnectProbeRequest = $result[0];
+        $this->lastDisconnectProbe = microtime(true);
     }
 
     function __destruct()
@@ -516,6 +525,8 @@ class IPConnection
                                  array(self::CONNECT_REASON_REQUEST,
                                        $this->registeredCallbackUserData[self::CALLBACK_CONNECTED]));
         }
+
+        $this->lastDisconnectProbe = microtime(true);
     }
 
     /**
@@ -595,7 +606,6 @@ class IPConnection
     public function enumerate()
     {
         $result = $this->createPacketHeader(NULL, 8, self::FUNCTION_ENUMERATE);
-
         $request = $result[0];
 
         $this->send($request);
@@ -687,6 +697,8 @@ class IPConnection
             throw new NotConnectedException('Could not send request: ' .
                                             socket_strerror(socket_last_error($this->socket)));
         }
+
+        $this->lastDisconnectProbe = microtime(true);
     }
 
     /**
@@ -706,10 +718,26 @@ class IPConnection
                 return;
             }
 
+            $now = microtime(true);
+
+            // FIXME: this works for timeout < DISCONNECT_PROBE_INTERVAL only
+            if ($this->lastDisconnectProbe > $now ||
+                ($now - $this->lastDisconnectProbe) > self::DISCONNECT_PROBE_INTERVAL) {
+
+                if (@socket_send($this->socket, $this->disconnectProbeRequest,
+                                 strlen($this->disconnectProbeRequest), 0) === FALSE) {
+                    $this->disconnectInternal(self::DISCONNECT_REASON_ERROR);
+                    return;
+                }
+
+                $now = microtime(true);
+                $this->lastDisconnectProbe = $now;
+            }
+
             $read = array($this->socket);
             $write = NULL;
             $except = array($this->socket);
-            $timeout = $end - microtime(true);
+            $timeout = $end - $now;
 
             if ($timeout < 0) {
                 $timeout = 0;
