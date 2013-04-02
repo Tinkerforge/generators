@@ -44,3 +44,11 @@
        Add get/set_wifi_hostname functions and callbacks for stack/USB voltage and stack current to Master Brick API
 2.0.4: Add get/set_range functions to Analog In Bricklet API
        Fix unlikely race condition in response packet handling
+2.0.5: Add enable/disable functions for PositionReached and VelocityReached callbacks to Servo Brick API
+       Add get/set_i2c_mode (100kHz/400kHz) functions to Temperature Bricklet API
+       Add default text functions to LCD 20x4 Bricklet API
+       Add callback signature to inline code documentation
+       Don't dispatching callbacks after disconnect
+       Fix race condition in callback handling that could result in closing the wrong socket
+       Don't ignore socket errors when sending request packets
+       Send a request packet at least every 10sec to improve WIFI disconnect detection
