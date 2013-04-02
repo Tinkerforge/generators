@@ -114,7 +114,7 @@ namespace Tinkerforge
 			public Thread thread = null;
 			public BlockingQueue<CallbackQueueObject> queue = null;
 			public object lock_ = null;
-			public bool flag = false;
+			public bool packetDispatchAllowed = false;
 		}
 
 		/// <summary>
@@ -159,7 +159,7 @@ namespace Tinkerforge
 			if(callback == null)
 			{
 				callback = new CallbackContext();
-				callback.flag = false;
+				callback.packetDispatchAllowed = false;
 				callback.queue = new BlockingQueue<CallbackQueueObject>();
 				callback.lock_ = new object();
 				callback.thread = new Thread(delegate() { this.CallbackLoop(callback); });
@@ -193,7 +193,7 @@ namespace Tinkerforge
 			disconnectProbeThread.Name = "Disconnect-Prober";
 			disconnectProbeThread.Start();
 
-			callback.flag = true;
+			callback.packetDispatchAllowed = true;
 
 			receiveFlag = true;
 
@@ -271,12 +271,12 @@ namespace Tinkerforge
 				//        deadlock due to an ordering problem with the socket lock
 				//lock (callback.lock_)
 				{
-					callback.flag = false;
+					callback.packetDispatchAllowed = false;
 				}
 			}
 			else
 			{
-				callback.flag = false;
+				callback.packetDispatchAllowed = false;
 			}
 
 			receiveFlag = false;
@@ -677,7 +677,7 @@ namespace Tinkerforge
 
 						case IPConnection.QUEUE_PACKET:
 							// don't dispatch callbacks when the receive thread isn't running
-							if (localCallback.flag) {
+							if (localCallback.packetDispatchAllowed) {
 								DispatchPacket(cqo);
 							}
 
