@@ -31,6 +31,10 @@ The project is now ready for a test, click:
 * Run
 * Run
 
+The Visual Basic .NET Compiler can also be used from the command line:
+
+/usr/bin/vbnc /target:exe /out:ExampleConfiguration.exe /reference:Tinkerforge.dll ExampleConfiguration.vb
+
 As an example we will compile the Stepper Brick configuration example with
 Microsoft Visual Basic 2010. Create a new Visual Basic project by clicking:
 
