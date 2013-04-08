@@ -419,13 +419,13 @@ module Tinkerforge
     attr_accessor :queue
     attr_accessor :thread
     attr_accessor :mutex
-    attr_accessor :flag
+    attr_accessor :packet_dispatch_allowed
 
     def initialize
       @queue = nil
       @thread = nil
       @mutex = nil
-      @flag = nil
+      @packet_dispatch_allowed = false
     end
   end
 
@@ -705,7 +705,7 @@ module Tinkerforge
         @callback = CallbackContext.new
         @callback.queue = Queue.new
         @callback.mutex = Mutex.new
-        @callback.flag = false
+        @callback.packet_dispatch_allowed = false
         @callback.thread = Thread.new(@callback) do |callback|
           callback_loop callback
         end
@@ -726,7 +726,7 @@ module Tinkerforge
       @disconnect_probe_thread.abort_on_exception = true
 
       # Create receive thread
-      @callback.flag = true
+      @callback.packet_dispatch_allowed = true
 
       @receive_flag = true
       @receive_thread = Thread.new(@socket_id) do |socket_id|
@@ -764,10 +764,10 @@ module Tinkerforge
         # FIXME: Cannot lock callback mutex here because this can
         #        deadlock due to an ordering problem with the socket mutex
         #@callback.mutex.synchronize {
-          @callback.flag = false
+          @callback.packet_dispatch_allowed = false
         #}
       else
-        @callback.flag = false
+        @callback.packet_dispatch_allowed = false
       end
 
       # Destroy receive thread
@@ -775,11 +775,10 @@ module Tinkerforge
 
       @socket.shutdown(Socket::SHUT_RDWR)
 
-      if Thread.current != @receive_thread
+      if @receive_thread != nil
         @receive_thread.join
+        @receive_thread = nil
       end
-
-      @receive_thread = nil
 
       # Destroy socket
       @socket.close
@@ -945,7 +944,7 @@ module Tinkerforge
             dispatch_meta function_id, parameter, socket_id
           elsif kind == QUEUE_KIND_PACKET
             # don't dispatch callbacks when the receive thread isn't running
-            if callback.flag
+            if callback.packet_dispatch_allowed
               dispatch_packet data
             end
           end
@@ -969,8 +968,10 @@ module Tinkerforge
                 @socket.send request, 0
               rescue IOError
                 handle_disconnect_by_peer DISCONNECT_REASON_ERROR, @socket_id, false
+                break
               rescue Errno::ECONNRESET
                 handle_disconnect_by_peer DISCONNECT_REASON_SHUTDOWN, @socket_id, false
+                break
               end
             }
           else

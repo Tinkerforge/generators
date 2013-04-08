@@ -52,3 +52,10 @@
 2.0.5: Add get/setRange functions to Analog In Bricklet API
        Fix unlikely race condition in response packet handling
        Add TinkerforgeException as basis for all other exceptions
+2.0.6: Add enable/disable functions for PositionReached and VelocityReached callbacks to Servo Brick API
+       Add get/set_i2c_mode (100kHz/400kHz) functions to Temperature Bricklet API
+       Add default text functions to LCD 20x4 Bricklet API
+       Don't dispatch callbacks after disconnect
+       Fix race condition in callback handling that could result in closing the wrong socket
+       Don't ignore socket errors when sending request packets
+       Send a request packet at least every 10sec to improve WIFI disconnect detection

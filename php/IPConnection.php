@@ -190,7 +190,7 @@ abstract class Device
             $value2a = (int)bcmod(bcdiv($longUid, '4294967296' /* 0x100000000 */), '65536' /* 0x10000 */);
             $value2b = (int)bcmod(bcdiv($longUid, '281474976710656' /* 0x10000000000 */), '65536' /* 0x10000 */);
 
-            $shortUid1  = ($value1a & 0x0FFF);
+            $shortUid1  =  $value1a & 0x0FFF;
             $shortUid1 |= ($value1b & 0x0F00) << 4;
 
             $shortUid2  =  $value2a & 0x003F;
@@ -333,6 +333,10 @@ abstract class Device
         $this->pendingCallbacks = array();
 
         foreach ($pendingCallbacks as $pendingCallback) {
+            if ($this->ipcon->socket === FALSE) {
+                break;
+            }
+
             $this->handleCallback($pendingCallback[0], $pendingCallback[1]);
         }
     }
@@ -396,6 +400,9 @@ abstract class Device
 
 class IPConnection
 {
+    const DISCONNECT_PROBE_INTERVAL = 5.0;
+
+    const FUNCTION_DISCONNECT_PROBE = 128;
     const FUNCTION_ENUMERATE = 254;
 
     // IDs for registerCallback
@@ -436,12 +443,18 @@ class IPConnection
     public $socket = FALSE;
     private $pendingData = '';
 
+    private $disconnectProbeRequest = '';
+    private $lastDisconnectProbe = 0.0;
+
     /**
      * Creates an IP Connection object that can be used to enumerate the available
      * devices. It is also required for the constructor of Bricks and Bricklets.
      */
     public function __construct()
     {
+        $result = $this->createPacketHeader(NULL, 8, self::FUNCTION_DISCONNECT_PROBE);
+        $this->disconnectProbeRequest = $result[0];
+        $this->lastDisconnectProbe = microtime(true);
     }
 
     function __destruct()
@@ -512,6 +525,8 @@ class IPConnection
                                  array(self::CONNECT_REASON_REQUEST,
                                        $this->registeredCallbackUserData[self::CALLBACK_CONNECTED]));
         }
+
+        $this->lastDisconnectProbe = microtime(true);
     }
 
     /**
@@ -529,6 +544,8 @@ class IPConnection
         @socket_shutdown($this->socket, 2);
 
         $this->disconnectInternal(self::DISCONNECT_REASON_REQUEST);
+
+        $this->pendingData = '';
     }
 
     /**
@@ -589,7 +606,6 @@ class IPConnection
     public function enumerate()
     {
         $result = $this->createPacketHeader(NULL, 8, self::FUNCTION_ENUMERATE);
-
         $request = $result[0];
 
         $this->send($request);
@@ -681,6 +697,8 @@ class IPConnection
             throw new NotConnectedException('Could not send request: ' .
                                             socket_strerror(socket_last_error($this->socket)));
         }
+
+        $this->lastDisconnectProbe = microtime(true);
     }
 
     /**
@@ -700,10 +718,26 @@ class IPConnection
                 return;
             }
 
+            $now = microtime(true);
+
+            // FIXME: this works for timeout < DISCONNECT_PROBE_INTERVAL only
+            if ($this->lastDisconnectProbe > $now ||
+                ($now - $this->lastDisconnectProbe) > self::DISCONNECT_PROBE_INTERVAL) {
+
+                if (@socket_send($this->socket, $this->disconnectProbeRequest,
+                                 strlen($this->disconnectProbeRequest), 0) === FALSE) {
+                    $this->disconnectInternal(self::DISCONNECT_REASON_ERROR);
+                    return;
+                }
+
+                $now = microtime(true);
+                $this->lastDisconnectProbe = $now;
+            }
+
             $read = array($this->socket);
             $write = NULL;
             $except = array($this->socket);
-            $timeout = $end - microtime(true);
+            $timeout = $end - $now;
 
             if ($timeout < 0) {
                 $timeout = 0;
@@ -733,7 +767,6 @@ class IPConnection
                     }
 
                     $this->disconnectInternal($disconnectReason);
-
                     return;
                 }
 
@@ -806,6 +839,10 @@ class IPConnection
         if ($sequenceNumber == 0 && $functionID == self::CALLBACK_ENUMERATE) {
             if (array_key_exists(self::CALLBACK_ENUMERATE, $this->registeredCallbacks)) {
                 if ($directCallbackDispatch) {
+                    if ($this->socket === FALSE) {
+                        return;
+                    }
+
                     $this->handleEnumerate($header, $payload);
                 } else {
                     array_push($this->pendingCallbacks, array($header, $payload));
@@ -825,6 +862,10 @@ class IPConnection
         if ($sequenceNumber == 0) {
             if (array_key_exists($functionID, $device->registeredCallbacks)) {
                 if ($directCallbackDispatch) {
+                    if ($this->socket === FALSE) {
+                        return;
+                    }
+
                     $device->handleCallback($header, $payload);
                 } else {
                     array_push($device->pendingCallbacks, array($header, $payload));
@@ -878,6 +919,10 @@ class IPConnection
         $this->pendingCallbacks = array();
 
         foreach ($pendingCallbacks as $pendingCallback) {
+            if ($this->socket === FALSE) {
+                break;
+            }
+
             if ($pendingCallback[0]['functionID'] == self::CALLBACK_ENUMERATE) {
                 $this->handleEnumerate($pendingCallback[0], $pendingCallback[1]);
             }

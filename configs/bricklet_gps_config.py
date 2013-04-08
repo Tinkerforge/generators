@@ -493,7 +493,8 @@ This callback is triggered periodically with the period that is set by
 as for :func:`GetCoordinates`.
 
 :func:`Coordinates` is only triggered if the coordinates changed since the
-last triggering.
+last triggering and if there is currently a fix as indicated by
+:func:`GetStatus`.
 """,
 'de':
 """
@@ -501,8 +502,9 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`SetCoordinatesCallbackPeriod`, ausgelöst. Die Parameter sind die 
 gleichen wie die von :func:`GetCoordinates`.
 
-:func:`SetCoordinatesCallbackPeriod` wird nur ausgelöst wenn sich die 
-Koordinaten seit der letzten Auslösung geändert haben.
+:func:`Coordinates` wird nur ausgelöst wenn sich die
+Koordinaten seit der letzten Auslösung geändert haben und ein Fix vorhanden
+ist (siehe :func:`GetStatus`).
 """
 }]
 })
@@ -552,7 +554,8 @@ This callback is triggered periodically with the period that is set by
 as for :func:`GetAltitude`.
 
 :func:`Altitude` is only triggered if the altitude changed since the
-last triggering.
+last triggering and if there is currently a fix as indicated by
+:func:`GetStatus`.
 """,
 'de':
 """
@@ -561,7 +564,8 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 gleichen wie die von :func:`GetAltitude`.
 
 :func:`Altitude` wird nur ausgelöst wenn sich die 
-Höhe seit der letzten Auslösung geändert hat.
+Höhe seit der letzten Auslösung geändert hat und ein Fix vorhanden
+ist (siehe :func:`GetStatus`).
 """
 }]
 })
@@ -580,7 +584,8 @@ This callback is triggered periodically with the period that is set by
 as for :func:`GetMotion`.
 
 :func:`Motion` is only triggered if the motion changed since the
-last triggering.
+last triggering and if there is currently a fix as indicated by
+:func:`GetStatus`.
 """,
 'de':
 """
@@ -589,7 +594,8 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 gleichen wie die von :func:`GetMotion`.
 
 :func:`Motion` wird nur ausgelöst wenn sich die 
-Bewegung seit der letzten Auslösung geändert hat.
+Bewegung seit der letzten Auslösung geändert hat und ein Fix vorhanden
+ist (siehe :func:`GetStatus`).
 """
 }]
 })

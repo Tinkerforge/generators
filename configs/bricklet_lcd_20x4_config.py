@@ -389,7 +389,7 @@ anzuzeigen falls das kontrollierende Programm abstürzt oder die Verbindung
 unterbrochen wird.
 
 Ein möglicher Ansatz dafür ist :func:`SetDefaultTextCounter` einmal
-pro Minute aufzurufen mit dem Parameter 1000*60*2 (zwei Minuten) aufzurufen.
+pro Minute mit dem Parameter 1000*60*2 (zwei Minuten) aufzurufen.
 In diesem Fall wird dann der Default Text nach spätestens zwei Minuten
 angezeigt wenn das kontrollierende Programm abstürzt.
 

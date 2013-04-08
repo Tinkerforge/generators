@@ -109,8 +109,8 @@ class CallbackThreadRestarter implements Thread.UncaughtExceptionHandler {
 class CallbackThread extends Thread {
 	IPConnection ipcon = null;
 	LinkedBlockingQueue<IPConnection.CallbackQueueObject> callbackQueue = null;
-	Object dispatchMutex = new Object();
-	boolean packetFlag = false;
+	Object mutex = new Object();
+	boolean packetDispatchAllowed = false;
 
 	CallbackThread(IPConnection ipcon,
 	               LinkedBlockingQueue<IPConnection.CallbackQueueObject> callbackQueue) {
@@ -122,18 +122,18 @@ class CallbackThread extends Thread {
 		this.setUncaughtExceptionHandler(new CallbackThreadRestarter(ipcon));
 	}
 
-	void setPacketDispatchEnabled(boolean enable) {
-		if (enable) {
-			packetFlag = true;
+	void setPacketDispatchAllowed(boolean allowed) {
+		if (allowed) {
+			packetDispatchAllowed = true;
 		} else {
 			if (Thread.currentThread() != this) {
 				// FIXME: cannot lock callback mutex here because this can
 				//        deadlock due to an ordering problem with the socket mutex
-				/*synchronized(dispatchMutex)*/ {
-					packetFlag = false;
+				/*synchronized(mutex)*/ {
+					packetDispatchAllowed = false;
 				}
 			} else {
-				packetFlag = false;
+				packetDispatchAllowed = false;
 			}
 		}
 	}
@@ -278,26 +278,22 @@ class CallbackThread extends Thread {
 
 			// FIXME: cannot lock callback mutex here because this can
 			//        deadlock due to an ordering problem with the socket mutex
-			/*synchronized(dispatchMutex)*/ {
+			/*synchronized(mutex)*/ {
 				switch(cqo.kind) {
-					case IPConnection.QUEUE_EXIT: {
+					case IPConnection.QUEUE_EXIT:
 						return;
-					}
 
-					case IPConnection.QUEUE_META: {
+					case IPConnection.QUEUE_META:
 						dispatchMeta(cqo);
 						break;
-					}
 
-					case IPConnection.QUEUE_PACKET: {
-						if (!packetFlag) {
-							// don't dispatch callbacks when the receive thread isn't running
-							continue;
+					case IPConnection.QUEUE_PACKET:
+						// don't dispatch callbacks when the receive thread isn't running
+						if (packetDispatchAllowed) {
+							dispatchPacket(cqo);
 						}
 
-						dispatchPacket(cqo);
 						break;
-					}
 				}
 			}
 		}
@@ -342,12 +338,13 @@ class DisconnectProbeThread extends Thread {
 			}
 
 			if (ipcon.disconnectProbeFlag) {
-				synchronized(socketMutex) {
+				synchronized(ipcon.socketMutex) {
 					try {
 						ipcon.out.write(request);
 					} catch(java.net.SocketException e) {
 						ipcon.handleDisconnectByPeer(IPConnection.DISCONNECT_REASON_ERROR,
 						                             ipcon.socketID, false);
+						break;
 					} catch(Exception e) {
 						e.printStackTrace();
 					}
@@ -522,7 +519,7 @@ public class IPConnection {
 		disconnectProbeThread = new DisconnectProbeThread(this);
 		disconnectProbeThread.start();
 
-		callbackThread.setPacketDispatchEnabled(true);
+		callbackThread.setPacketDispatchAllowed(true);
 
 		receiveFlag = true;
 		receiveThread = new ReceiveThread(this);
@@ -606,7 +603,7 @@ public class IPConnection {
 		// stop dispatching packet callbacks before ending the receive
 		// thread to avoid timeout exceptions due to callback functions
 		// trying to call getters
-		callbackThread.setPacketDispatchEnabled(false);
+		callbackThread.setPacketDispatchAllowed(false);
 
 		receiveFlag = false;
 

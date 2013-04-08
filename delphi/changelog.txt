@@ -31,3 +31,7 @@
        Fix unlikely race condition in response packet handling
        Add ETinkerforgeException as basis for all other exceptions
 2.0.7: Fix IP address lookup on Linux if host is already in dotted decimal format
+2.0.8: Don't dispatching callbacks after disconnect
+       Fix race condition in callback handling that could result in closing the wrong socket
+       Don't ignore socket errors when sending request packets
+       Send a request packet at least every 10sec to improve WIFI disconnect detection
