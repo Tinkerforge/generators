@@ -246,7 +246,8 @@ abstract class Device
      *
      * @return boolean
      */
-    public function getResponseExpected($functionID) {
+    public function getResponseExpected($functionID)
+    {
         if ($functionID < 0 || $functionID > 255) {
             throw new \InvalidArgumentException('Function ID ' . $functionID . ' out of range');
         }
@@ -283,7 +284,8 @@ abstract class Device
      *
      * @return void
      */
-    public function setResponseExpected($functionID, $responseExpected) {
+    public function setResponseExpected($functionID, $responseExpected)
+    {
         if ($functionID < 0 || $functionID > 255) {
             throw new \InvalidArgumentException('Function ID ' . $functionID . ' out of range');
         }
@@ -312,7 +314,8 @@ abstract class Device
      *
      * @return void
      */
-    public function setResponseExpectedAll($responseExpected) {
+    public function setResponseExpectedAll($responseExpected)
+    {
         $flag = $responseExpected ? self::RESPONSE_EXPECTED_TRUE
                                   : self::RESPONSE_EXPECTED_FALSE;
 
