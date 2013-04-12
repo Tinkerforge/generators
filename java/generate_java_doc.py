@@ -429,9 +429,9 @@ Konstanten
 
     return common.select_lang(api).format(ref, api_desc, api_str)
 
-def make_files(com_new, directory):
+def make_files(device_, directory):
     global device
-    device = common.Device(com_new)
+    device = device_
     file_name = '{0}_{1}_Java'.format(device.get_camel_case_name(), device.get_category())
     title = {
     'en': 'Java bindings',

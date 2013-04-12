@@ -403,9 +403,9 @@ def get_data_size(packet):
         size += common.get_element_size(element)
     return size + 8
 
-def make_files(com_new, directory):
+def make_files(device_, directory):
     global device
-    device = common.Device(com_new)
+    device = device_
     file_name = '{0}{1}'.format(device.get_category(), device.get_camel_case_name())
     version = common.get_changelog_version(directory)
     directory += '/bindings'
