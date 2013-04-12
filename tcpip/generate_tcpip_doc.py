@@ -66,9 +66,7 @@ def format_doc(packet):
             name_right = ':tcpip:func:`{1} <{0}.{1}>`'.format(cls, other_packet.get_underscore_name())
         text = text.replace(name_false, name_right)
 
-    text = text.replace(":word:`parameter`", common.select_lang(parameter))
-    text = text.replace(":word:`parameters`", common.select_lang(parameters))
-
+    text = common.handle_rst_word(text, parameter, parameters)
     text = common.handle_rst_if(text, device)
     text += common.format_since_firmware(device, packet)
 

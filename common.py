@@ -346,7 +346,9 @@ def format_since_firmware(device, packet):
     else:
         return ''
 
-def format_constants(prefix, packet, constants_name={'en': 'constants', 'de': 'Konstanten'}, char_format="'{0}'"):
+def format_constants(prefix, packet,
+                     constants_name={'en': 'constants', 'de': 'Konstanten'},
+                     char_format="'{0}'"):
     str_constants = {
 'en': """
 The following {0} are available for this function:
@@ -378,6 +380,16 @@ Die folgenden {0} sind für diese Funktion verfügbar:
     else:
         return ''
 
+
+def handle_rst_word(text,
+                    parameter={'en': 'parameter', 'de': 'Parameter'},
+                    parameters={'en': 'parameters', 'de': 'Parameter'},
+                    constants={'en': 'constants', 'de': 'Konstanten'}):
+    text = text.replace(":word:`parameter`", select_lang(parameter))
+    text = text.replace(":word:`parameters`", select_lang(parameters))
+    text = text.replace(":word:`constants`", select_lang(constants))
+
+    return text
 
 def handle_rst_if(text, device):
     lines = []

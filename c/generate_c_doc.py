@@ -39,14 +39,7 @@ device = None
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
-    parameter = {
-    'en': 'parameter',
-    'de': 'Parameter'
-    }
-    parameters = {
-    'en': 'parameters',
-    'de': 'Parameter'
-    }
+    constants = {'en': 'defines', 'de': 'Defines'}
 
     for other_packet in device.get_packets():
         name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
@@ -60,12 +53,10 @@ def format_doc(packet):
                                                     other_packet.get_underscore_name())
         text = text.replace(name_false, name_right)
 
-    text = text.replace(":word:`parameter`", common.select_lang(parameter))
-    text = text.replace(":word:`parameters`", common.select_lang(parameters))
-
+    text = common.handle_rst_word(text, constants=constants)
     text = common.handle_rst_if(text, device)
     prefix = device.get_upper_case_name() + '_'
-    text += common.format_constants(prefix, packet, {'en': 'defines', 'de': 'Defines'})
+    text += common.format_constants(prefix, packet, constants)
     text += common.format_since_firmware(device, packet)
 
     return common.shift_right(text, 1)

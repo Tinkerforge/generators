@@ -83,11 +83,10 @@ def format_doc(packet):
         plist = c_common.make_parameter_list(packet)[2:].replace('*ret_', '')
         text = 'Signature: \code void callback({0}) \endcode\n'.format(plist) + text
 
-    text = text.replace(":word:`parameter`", "parameter")
-    text = text.replace(":word:`parameters`", "parameters")
     text = text.replace('.. note::', '\\note')
     text = text.replace('.. warning::', '\\warning')
 
+    text = common.handle_rst_word(text)
     text = common.handle_rst_if(text, device)
     text += common.format_since_firmware(device, packet)
 

@@ -77,9 +77,7 @@ def format_doc(packet):
 
         text = text.replace(name_false, name_right)
 
-    text = text.replace(":word:`parameter`", "parameter")
-    text = text.replace(":word:`parameters`", "parameters")
-
+    text = common.handle_rst_word(text)
     text = common.handle_rst_if(text, device)
     text += common.format_since_firmware(device, packet)
 

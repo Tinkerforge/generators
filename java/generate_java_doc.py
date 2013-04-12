@@ -41,14 +41,6 @@ def format_doc(packet, shift_right):
     text = common.select_lang(packet.get_doc()[1])
     cb_link = ':java:func:`{2}Listener <{0}{1}.{2}Listener>`'
     fu_link = ':java:func:`{2}() <{0}{1}::{2}>`'
-    parameter = {
-    'en': 'parameter',
-    'de': 'Parameter'
-    }
-    parameters = {
-    'en': 'parameters',
-    'de': 'Parameter'
-    }
 
     cls = device.get_camel_case_name()
     for other_packet in device.get_packets():
@@ -62,13 +54,12 @@ def format_doc(packet, shift_right):
 
         text = text.replace(name_false, name_right)
 
-    text = text.replace(":word:`parameter`", common.select_lang(parameter))
-    text = text.replace(":word:`parameters`", common.select_lang(parameters))
     text = text.replace('Callback ', 'Listener ')
     text = text.replace(' Callback', ' Listener')
     text = text.replace('callback ', 'listener ')
     text = text.replace(' callback', ' listener')
 
+    text = common.handle_rst_word(text)
     text = common.handle_rst_if(text, device)
     prefix = device.get_category() + device.get_camel_case_name() + '.'
     text += common.format_constants(prefix, packet)

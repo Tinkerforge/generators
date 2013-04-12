@@ -39,14 +39,6 @@ device = None
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
-    parameter = {
-    'en': 'parameter',
-    'de': 'Parameter'
-    }
-    parameters = {
-    'en': 'parameters',
-    'de': 'Parameter'
-    }
 
     cls = device.get_category() + device.get_camel_case_name()
     for other_packet in device.get_packets():
@@ -58,9 +50,7 @@ def format_doc(packet):
             name_right = ':delphi:func:`{1} <T{0}.{1}>`'.format(cls, name)
         text = text.replace(name_false, name_right)
 
-    text = text.replace(":word:`parameter`", common.select_lang(parameter))
-    text = text.replace(":word:`parameters`", common.select_lang(parameters))
-
+    text = common.handle_rst_word(text)
     text = common.handle_rst_if(text, device)
     prefix = '{0}_{1}_'.format(device.get_category().upper(), 
                                device.get_upper_case_name())

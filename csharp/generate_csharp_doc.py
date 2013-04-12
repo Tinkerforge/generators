@@ -39,14 +39,6 @@ device = None
 
 def format_doc(packet, shift_right):
     text = common.select_lang(packet.get_doc()[1])
-    parameter = {
-    'en': 'parameter',
-    'de': 'Parameter'
-    }
-    parameters = {
-    'en': 'parameters',
-    'de': 'Parameter'
-    }
     link = ':csharp:func:`{2}() <{0}{1}::{2}>`'
     link_c = ':csharp:func:`{2} <{0}{1}::{2}>`'
 
@@ -61,9 +53,7 @@ def format_doc(packet, shift_right):
 
         text = text.replace(name_false, name_right)
 
-    text = text.replace(":word:`parameter`", common.select_lang(parameter))
-    text = text.replace(":word:`parameters`", common.select_lang(parameters))
-
+    text = common.handle_rst_word(text)
     text = common.handle_rst_if(text, device)
     prefix = device.get_category() + device.get_camel_case_name() + '.'
     text += common.format_constants(prefix, packet)
