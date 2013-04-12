@@ -1991,3 +1991,187 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 """
 }]
 })
+
+
+com['packets'].append({
+'type': 'function', 
+'name': ('IsEthernetPresent', 'is_ethernet_present'), 
+'elements': [('present', 'bool', 1, 'out')], 
+'since_firmware': [2, 1, 0],
+'doc': ['af', {
+'en':
+"""
+Returns *true* if a Ethernet Extension is available to be used by the Master.
+""",
+'de':
+"""
+Gibt zurück ob eine Ethernet Extension zur Nutzung durch den Master verfügbar ist.
+"""
+}]
+})
+
+
+com['packets'].append({
+'type': 'function', 
+'name': ('SetEthernetConfiguration', 'set_ethernet_configuration'), 
+'elements': [('connection', 'uint8', 1, 'in', ('EthernetConnection', 'ethernet_connection', [('DHCP', 'dhcp', 0),
+                                                                                             ('StaticIP', 'static_ip', 1)])),
+             ('ip', 'uint8', 4, 'in'),
+             ('subnet_mask', 'uint8', 4, 'in'),
+             ('gateway', 'uint8', 4, 'in'),
+             ('port', 'uint16', 1, 'in')], 
+'since_firmware': [2, 1, 0],
+'doc': ['af', {
+'en':
+"""
+Sets the configuration of the WIFI Extension. Possible values for *connection* are:
+
+.. csv-table::
+ :header: "Value", "Description"
+ :widths: 10, 90
+
+ "0", "DHCP"
+ "1", "Static IP"
+
+If you set *connection* to static IP options then you have to supply
+*ip*, *subnet_mask* and *gateway* as an array of size 4 (first element of the
+array is the least significant byte of the address). If *connection* is set to
+the DHCP options then *ip*, *subnet_mask* and *gateway* are ignored, you
+can set them to 0.
+
+The last parameter is the port that your program will connect to. The
+default port, that is used by brickd, is 4223.
+
+The values are stored in the EEPROM and only applied on startup. That means
+you have to restart the Master Brick after configuration.
+
+It is recommended to use the Brick Viewer to set the Ethernet configuration.
+""",
+'de':
+"""
+Setzt die Konfiguration der WIFI Extension. Mögliche Werte für *connection* sind:
+
+.. csv-table::
+ :header: "Wert", "Beschreibung"
+ :widths: 10, 90
+
+ "0", "DHCP"
+ "1", "Statische IP"
+
+Wenn *connection* auf die statische IP Option gesetzt wird, dann müssen
+*ip*, *subnet_mask* und *gateway* als ein Array der größe 4 angegeben werden.
+Dabei ist das erste Element im Array das niederwertigste Byte. Falls
+*connection* auf die DHCP Option gesetzt ist, werden *ip*, *subnet_mask*
+und *gateway* ignoriert.
+
+Der letzte Parameter ist der port auf den das Anwendungsprogramm sich
+verbindet. Der Standardport von brickd ist 4223.
+
+Die Werte sind im EEPROM gespeichert und werden nur beim Hochfahren angewandt.
+Das bedeutet der Master Brick muss nach einer Konfiguration neugestartet werden.
+
+Wir empfehlen die Brick Viewer zu nutzen um die Ethernet Extension zu
+konfigurieren.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('GetEthernetConfiguration', 'get_ethernet_configuration'), 
+'elements': [('connection', 'uint8', 1, 'out', ('EthernetConnection', 'ethernet_connection', [('DHCP', 'dhcp', 0),
+                                                                                             ('StaticIP', 'static_ip', 1)])),
+             ('ip', 'uint8', 4, 'out'),
+             ('subnet_mask', 'uint8', 4, 'out'),
+             ('gateway', 'uint8', 4, 'out'),
+             ('port', 'uint16', 1, 'out')], 
+'since_firmware': [2, 1, 0],
+'doc': ['af', {
+'en':
+"""
+Returns the configuration as set by :func:`SetEthernetConfiguration`.
+""",
+'de':
+"""
+Gibt die Konfiguration zurück, wie von :func:`SetEthernetConfiguration`
+gesetzt.
+"""
+}]
+})
+
+
+com['packets'].append({
+'type': 'function', 
+'name': ('GetEthernetStatus', 'get_ethernet_status'), 
+'elements': [('mac_address', 'uint8', 6, 'out'),
+             ('ip', 'uint8', 4, 'out'),
+             ('subnet_mask', 'uint8', 4, 'out'),
+             ('gateway', 'uint8', 4, 'out'),
+             ('rx_count', 'uint32', 1, 'out'),
+             ('tx_count', 'uint32', 1, 'out'),
+             ('hostname', 'string', 32, 'out')],
+'since_firmware': [2, 1, 0],
+'doc': ['af', {
+'en':
+"""
+Returns the status of the Ethernet Extension. 
+""",
+'de':
+"""
+Gibt den Status der Ethernet Extension zurück.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('SetEthernetHostname', 'set_ethernet_hostname'), 
+'elements': [('hostname', 'string', 32, 'in')],
+'since_firmware': [2, 1, 0],
+'doc': ['af', {
+'en':
+"""
+Sets the hostname of the Ethernet Extension. The hostname will be displayed 
+by access points as the hostname in the DHCP clients table.
+
+Setting an empty String will restore the default hostname.
+
+The current hostname can be discovered with :func:`GetEthernetStatus`.
+""",
+'de':
+"""
+Setzt den Hostnamen der Ethernet Extension. Der Hostname wird von
+Access Points als Hostname in der DHCP-Client Tabelle angezeigt.
+
+Das setzen eines leeren Strings stellt den voreingestellten Hostnamen
+wieder her.
+
+Der aktuelle Hostname kann mit :func:`GetEthernetStatus` herausgefunden werden.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('SetEthernetMAC', 'set_ethernet_mac'), 
+'elements': [('mac_address', 'uint8', 6, 'in')],
+'since_firmware': [2, 1, 0],
+'doc': ['af', {
+'en':
+"""
+Sets the MAC address of the Ethernet Extension. The Ethernet Extension should
+come configured with a valid MAC address, that is also written on a
+sticker of the extension itself.
+
+The MAC address can be read out again with :func:`GetEthernetStatus`.
+""",
+'de':
+"""
+Setzt die MAC Adresse der Ethernet Extension. Die Ethernet Extension sollte
+mit einer vorkonfigurierten MAC Adresse kommen. Diese MAC Adresse ist steht auch
+auf einem Aufkleber auf der Ethernet Extension.
+
+The MAC Adresse kann mit :func:`GetEthernetStatus` wieder ausgelesen werden.
+"""
+}]
+})
