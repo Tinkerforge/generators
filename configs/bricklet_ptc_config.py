@@ -1,0 +1,568 @@
+# -*- coding: utf-8 -*-
+
+# PTC Bricklet communication config
+
+com = {
+    'author': 'Olaf Lüke <olaf@tinkerforge.com>',
+    'api_version': [2, 0, 0],
+    'category': 'Bricklet',
+    'device_identifier': 226,
+    'name': ('PTC', 'ptc', 'PTC'),
+    'manufacturer': 'Tinkerforge',
+    'description': 'Device for reading temperatures from Pt100 or Pt1000 sensors',
+    'packets': []
+}
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetTemperature', 'get_temperature'), 
+'elements': [('temperature', 'int32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+
+If you want to get the temperature periodically, it is recommended 
+to use the callback :func:`Temperature` and set the period with 
+:func:`SetTemperatureCallbackPeriod`.
+""",
+'de':
+"""
+TODO
+
+Wenn die Temperatur periodisch abgefragt werden soll, wird empfohlen
+den Callback :func:`Temperature` zu nutzen und die Periode mit 
+:func:`SetTemperatureCallbackPeriod` vorzugeben.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetResistance', 'get_resistance'), 
+'elements': [('resistance', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+TODO
+
+If you want to get the resistance periodically, it is recommended 
+to use the callback :func:`Resistance` and set the period with 
+:func:`SetResistanceCallbackPeriod`.
+""",
+'de':
+"""
+TODO
+
+Wenn der Widerstand periodisch abgefragt werden soll, wird empfohlen
+den Callback :func:`Resistance` zu nutzen und die Periode mit 
+:func:`SetResistanceCallbackPeriod` vorzugeben.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetTemperatureCallbackPeriod', 'set_temperature_callback_period'), 
+'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Sets the period in ms with which the :func:`Temperature` callback is triggered
+periodically. A value of 0 turns the callback off.
+
+:func:`Temperature` is only triggered if the temperature has changed since the
+last triggering.
+
+The default value is 0.
+""",
+'de':
+"""
+Setzt die Periode in ms mit welcher der :func:`Temperature` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+:func:`Temperature` wird nur ausgelöst wenn sich die Temperatur seit der
+letzten Auslösung geändert hat.
+
+Der Standardwert ist 0.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetTemperatureCallbackPeriod', 'get_temperature_callback_period'), 
+'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Returns the period as set by :func:`SetTemperatureCallbackPeriod`.
+""",
+'de':
+"""
+Gibt die Periode zurück, wie von :func:`SetTemperatureCallbackPeriod`
+gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetResistanceCallbackPeriod', 'set_resistance_callback_period'), 
+'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Sets the period in ms with which the :func:`Resistance` callback is triggered
+periodically. A value of 0 turns the callback off.
+
+:func:`Resistance` is only triggered if the resistance has changed since the
+last triggering.
+
+The default value is 0.
+""",
+'de':
+"""
+Setzt die Periode in ms mit welcher der :func:`Resistance` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+:func:`Resistance` wird nur ausgelöst wenn sich der Widerstand seit der
+letzten Auslösung geändert hat.
+
+Der Standardwert ist 0.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetResistanceCallbackPeriod', 'get_resistance_callback_period'), 
+'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Returns the period as set by :func:`SetResistanceCallbackPeriod`.
+""",
+'de':
+"""
+Gibt die Periode zurück, wie von :func:`SetResistanceCallbackPeriod`
+gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetTemperatureCallbackThreshold', 'set_temperature_callback_threshold'), 
+'elements': [('option', 'char', 1, 'in', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
+                                                                                  ('Outside', 'outside', 'o'),
+                                                                                  ('Inside', 'inside', 'i'),
+                                                                                  ('Smaller', 'smaller', '<'),
+                                                                                  ('Greater', 'greater', '>')])), 
+             ('min', 'int32', 1, 'in'),
+             ('max', 'int32', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Sets the thresholds for the :func:`TemperatureReached` callback. 
+
+The following options are possible:
+
+.. csv-table::
+ :header: "Option", "Description"
+ :widths: 10, 100
+
+ "'x'",    "Callback is turned off"
+ "'o'",    "Callback is triggered when the temperature is *outside* the min and max values"
+ "'i'",    "Callback is triggered when the temperature is *inside* the min and max values"
+ "'<'",    "Callback is triggered when the temperature is smaller than the min value (max is ignored)"
+ "'>'",    "Callback is triggered when the temperature is greater than the min value (max is ignored)"
+
+The default value is ('x', 0, 0).
+""",
+'de':
+"""
+Setzt den Schwellwert für den :func:`TemperatureReached` Callback.
+
+Die folgenden Optionen sind möglich:
+
+.. csv-table::
+ :header: "Option", "Beschreibung"
+ :widths: 10, 100
+ 
+ "'x'",    "Callback ist inaktiv"
+ "'o'",    "Callback wird ausgelöst wenn die Temperatur *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst wenn die Temperatur *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst wenn die Temperatur kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn die Temperatur größer als der min Wert ist (max wird ignoriert)"
+ 
+Der Standardwert ist ('x', 0, 0).
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetTemperatureCallbackThreshold', 'get_temperature_callback_threshold'), 
+'elements': [('option', 'char', 1, 'out', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
+                                                                                   ('Outside', 'outside', 'o'),
+                                                                                   ('Inside', 'inside', 'i'),
+                                                                                   ('Smaller', 'smaller', '<'),
+                                                                                   ('Greater', 'greater', '>')])), 
+             ('min', 'int32', 1, 'out'),
+             ('max', 'int32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Returns the threshold as set by :func:`SetTemperatureCallbackThreshold`.
+""",
+'de':
+"""
+Gibt den Schwellwert zurück, wie von :func:`SetTemperatureCallbackThreshold`
+gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetResistanceCallbackThreshold', 'set_resistance_callback_threshold'), 
+'elements': [('option', 'char', 1, 'in', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
+                                                                                  ('Outside', 'outside', 'o'),
+                                                                                  ('Inside', 'inside', 'i'),
+                                                                                  ('Smaller', 'smaller', '<'),
+                                                                                  ('Greater', 'greater', '>')])), 
+             ('min', 'uint16', 1, 'in'),
+             ('max', 'uint16', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Sets the thresholds for the :func:`ResistanceReached` callback. 
+
+The following options are possible:
+
+.. csv-table::
+ :header: "Option", "Description"
+ :widths: 10, 100
+
+ "'x'",    "Callback is turned off"
+ "'o'",    "Callback is triggered when the temperature is *outside* the min and max values"
+ "'i'",    "Callback is triggered when the temperature is *inside* the min and max values"
+ "'<'",    "Callback is triggered when the temperature is smaller than the min value (max is ignored)"
+ "'>'",    "Callback is triggered when the temperature is greater than the min value (max is ignored)"
+
+The default value is ('x', 0, 0).
+""",
+'de':
+"""
+Setzt den Schwellwert für den :func:`ResistanceReached` Callback.
+
+Die folgenden Optionen sind möglich:
+
+.. csv-table::
+ :header: "Option", "Beschreibung"
+ :widths: 10, 100
+ 
+ "'x'",    "Callback ist inaktiv"
+ "'o'",    "Callback wird ausgelöst wenn die Temperatur *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst wenn die Temperatur *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst wenn die Temperatur kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn die Temperatur größer als der min Wert ist (max wird ignoriert)"
+ 
+Der Standardwert ist ('x', 0, 0).
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetResistanceCallbackThreshold', 'get_resistance_callback_threshold'), 
+'elements': [('option', 'char', 1, 'out', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
+                                                                                   ('Outside', 'outside', 'o'),
+                                                                                   ('Inside', 'inside', 'i'),
+                                                                                   ('Smaller', 'smaller', '<'),
+                                                                                   ('Greater', 'greater', '>')])), 
+             ('min', 'uint16', 1, 'out'),
+             ('max', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Returns the threshold as set by :func:`SetResistanceCallbackThreshold`.
+""",
+'de':
+"""
+Gibt den Schwellwert zurück, wie von :func:`SetResistanceCallbackThreshold`
+gesetzt.
+"""
+}]
+})
+
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetDebouncePeriod', 'set_debounce_period'), 
+'elements': [('debounce', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Sets the period in ms with which the threshold callback
+
+ :func:`TemperatureReached`, :func:`ResistanceReached`
+
+is triggered, if the threshold
+
+ :func:`SetTemperatureCallbackThreshold`, :func:`SetResistanceCallbackThreshold`
+
+keeps being reached.
+
+The default value is 100.
+""",
+'de':
+"""
+Setzt die Periode in ms mit welcher die Schwellwert Callback
+
+ :func:`TemperatureReached`, :func:`ResistanceReached`
+ 
+ausgelöst wird, wenn der Schwellwert 
+
+ :func:`SetTemperatureCallbackThreshold`, :func:`SetResistanceCallbackThreshold`
+ 
+weiterhin erreicht bleibt.
+
+Der Standardwert ist 100.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetDebouncePeriod', 'get_debounce_period'), 
+'elements': [('debounce', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Returns the debounce period as set by :func:`SetDebouncePeriod`.
+""",
+'de':
+"""
+Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('Temperature', 'temperature'), 
+'elements': [('temperature', 'int32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered periodically with the period that is set by
+:func:`SetTemperatureCallbackPeriod`. The :word:`parameter` is the temperature
+of the sensor.
+
+:func:`Temperature` is only triggered if the temperature has changed since the
+last triggering.
+""",
+'de':
+"""
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetTemperatureCallbackPeriod`,
+ausgelöst. Der :word:`parameter` ist die Temperatur des Sensors.
+
+:func:`Temperature` wird nur ausgelöst wenn sich die Temperatur seit der
+letzten Auslösung geändert hat.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('TemperatureReached', 'temperature_reached'), 
+'elements': [('temperature', 'int32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered when the threshold as set by
+:func:`SetTemperatureCallbackThreshold` is reached.
+The :word:`parameter` is the temperature of the sensor.
+
+If the threshold keeps being reached, the callback is triggered periodically
+with the period as set by :func:`SetDebouncePeriod`.
+""",
+'de':
+"""
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+:func:`SetTemperatureCallbackThreshold` gesetzt, erreicht wird.
+Der :word:`parameter` ist die Temperatur des Sensors.
+
+Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
+mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('Resistance', 'resistance'), 
+'elements': [('resistance', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered periodically with the period that is set by
+:func:`SetResistanceCallbackPeriod`. The :word:`parameter` is the resistance
+of the sensor.
+
+:func:`Resistance` is only triggered if the resistance has changed since the
+last triggering.
+""",
+'de':
+"""
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetResistanceCallbackPeriod`,
+ausgelöst. Der :word:`parameter` ist der Widerstand des Sensors.
+
+:func:`Resistance` wird nur ausgelöst wenn sich der Widerstand seit der
+letzten Auslösung geändert hat.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('ResistanceReached', 'resistance_reached'), 
+'elements': [('resistance', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered when the threshold as set by
+:func:`SetResistanceCallbackThreshold` is reached.
+The :word:`parameter` is the resistance of the sensor.
+
+If the threshold keeps being reached, the callback is triggered periodically
+with the period as set by :func:`SetDebouncePeriod`.
+""",
+'de':
+"""
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+:func:`SetResistanceCallbackThreshold` gesetzt, erreicht wird.
+Der :word:`parameter` ist der Widerstand des Sensors.
+
+Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
+mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetNoiseRejectionFilter', 'set_noise_rejection_filter'), 
+'elements': [('filter', 'uint8', 1, 'in', ('FilterOption', 'filter_option', [('50Hz', '50hz', 0),
+                                                                             ('60Hz', '60hz', 1))],
+'since_firmware': [1, 0, 0], 
+'doc': ['af', {
+'en':
+"""
+TODO: Setting noise rejection filter frequency (50 or 60hz), default 50hz).
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetNoiseRejectionFilter', 'get_noise_rejection_filter'), 
+'elements': [('filter', 'uint8', 1, 'out', ('FilterOption', 'filter_option', [('50Hz', '50hz', 0),
+                                                                              ('60Hz', '60hz', 1))],
+'since_firmware': [1, 0, 0], 
+'doc': ['af', {
+'en':
+"""
+Returns the noise rejection filter option as set by 
+:func:`SetNoiseRejectionFilter`
+""",
+'de':
+"""
+Gibt die "Noise Rejection Filter"-Option zurück, wie von 
+:func:`SetNoiseRejectionFilter` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('IsSensorConnected', 'is_sensor_connected'), 
+'elements': [('connected', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0], 
+'doc': ['bf', {
+'en':
+"""
+Returns *true* if the sensor is connected correctly. 
+
+If this function
+returns *false*, there is either no pt100 or pt1000 sensor connected, 
+the sensor is connect incorrectly or the sensor itself is faulty.
+""",
+'de':
+"""
+Gibt *true* zurück wenn ein Sensor korrekt verbunden ist.
+
+Falls diese Funktion *false* zurück gibt, ist entweder kein
+pt100 oder pt1000 Sensor verbunden, der Sensor ist inkorrekt
+verbunden oder der Sensor selbst ist fehlerhaft.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetWireMode', 'set_wire_mode'), 
+'elements': [('mode', 'uint8', 1, 'in', ('WireMode', 'wire_mode', [('2Or4', '2or4', 0),
+                                                                   ('3', '3', 1))],
+'since_firmware': [1, 0, 0], 
+'doc': ['bf', {
+'en':
+"""
+TODO: Default: 1 (3 wire)
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetWireMode', 'get_wire_mode'), 
+'elements': [('mode', 'uint8', 1, 'out', ('WireMode', 'wire_mode', [('2Or4', '2or4', 0),
+                                                                    ('3', '3', 1))],
+'since_firmware': [1, 0, 0], 
+'doc': ['bf', {
+'en':
+"""
+Returns the wire mode as set by :func:`SetWireMode`
+""",
+'de':
+"""
+Gibt den "Wire Mode zurück, wie von :func:`SetWireMode` gesetzt.
+"""
+}]
+})
