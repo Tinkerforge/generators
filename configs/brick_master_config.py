@@ -2115,10 +2115,26 @@ com['packets'].append({
 'en':
 """
 Returns the status of the Ethernet Extension. 
+
+*mac_address*, *ip*, *subnet_mask* and *gateway* are given as an array
+(first element of the array is the least significant byte of the address). 
+
+*rx_count* and *tx_count* are the number of bytes that have been received/send
+since last restart
+
+*hostname* is the currently used hostname.
 """,
 'de':
 """
 Gibt den Status der Ethernet Extension zurück.
+
+*mac_address*, *ip*, *subnet_mask* und *gateway* werden als Array übergeben
+(Das erste Element des Arrays ist das niederwertigste Byte).
+
+*rx_count* und *tx_count* sind die Anzahl der Bytes doe seit dem letzten
+neustart empfangen/gesendet wurden.
+
+*hostname* ist der aktuell genutzte Hostname.
 """
 }]
 })
@@ -2171,7 +2187,7 @@ Setzt die MAC Adresse der Ethernet Extension. Die Ethernet Extension sollte
 mit einer vorkonfigurierten MAC Adresse kommen. Diese MAC Adresse ist steht auch
 auf einem Aufkleber auf der Ethernet Extension.
 
-The MAC Adresse kann mit :func:`GetEthernetStatus` wieder ausgelesen werden.
+Die MAC Adresse kann mit :func:`GetEthernetStatus` wieder ausgelesen werden.
 """
 }]
 })
