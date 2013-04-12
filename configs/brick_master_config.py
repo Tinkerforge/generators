@@ -2169,7 +2169,7 @@ Der aktuelle Hostname kann mit :func:`GetEthernetStatus` herausgefunden werden.
 
 com['packets'].append({
 'type': 'function', 
-'name': ('SetEthernetMAC', 'set_ethernet_mac'), 
+'name': ('SetEthernetMACAddress', 'set_ethernet_mac_address'), 
 'elements': [('mac_address', 'uint8', 6, 'in')],
 'since_firmware': [2, 1, 0],
 'doc': ['af', {
