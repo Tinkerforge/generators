@@ -52,9 +52,14 @@ def format_doc(packet):
 
     text = common.handle_rst_word(text)
     text = common.handle_rst_if(text, device)
+
     prefix = '{0}_{1}_'.format(device.get_category().upper(), 
                                device.get_upper_case_name())
-    text += common.format_constants(prefix,  packet)
+    if packet.get_underscore_name() == 'set_response_expected':
+        text += common.format_function_id_constants(prefix, device)
+    else:
+        text += common.format_constants(prefix, packet)
+
     text += common.format_since_firmware(device, packet)
 
     return common.shift_right(text, 1)

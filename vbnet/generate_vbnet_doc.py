@@ -51,8 +51,13 @@ def format_doc(packet):
 
     text = common.handle_rst_word(text)
     text = common.handle_rst_if(text, device)
+
     prefix = '{0}{1}.'.format(device.get_category(), device.get_camel_case_name())
-    text += common.format_constants(prefix, packet, char_format='"{0}"C')
+    if packet.get_underscore_name() == 'set_response_expected':
+        text += common.format_function_id_constants(prefix, device)
+    else:
+        text += common.format_constants(prefix, packet, char_format='"{0}"C')
+
     text += common.format_since_firmware(device, packet)
 
     return common.shift_right(text, 1)

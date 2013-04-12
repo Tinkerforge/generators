@@ -380,6 +380,27 @@ Die folgenden {0} sind für diese Funktion verfügbar:
     else:
         return ''
 
+def format_function_id_constants(prefix, device,
+                                 constants_name={'en': 'constants', 'de': 'Konstanten'}):
+    str_constants = {
+'en': """
+The following function ID {0} are available for this function:
+
+""",
+'de': """
+Die folgenden Funktions ID {0} sind für diese Funktion verfügbar:
+
+"""
+}
+    str_constant = '* {0}FUNCTION_{1} = {2}\n'
+    str_constants = select_lang(str_constants).format(select_lang(constants_name))
+    for packet in device.get_packets('function'):
+        if len(packet.get_elements('out')) == 0 and packet.get_function_id() >= 0:
+            str_constants += str_constant.format(prefix,
+                                                 packet.get_upper_case_name(),
+                                                 packet.get_function_id())
+
+    return str_constants
 
 def handle_rst_word(text,
                     parameter={'en': 'parameter', 'de': 'Parameter'},
