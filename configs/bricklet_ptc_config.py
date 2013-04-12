@@ -473,7 +473,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetNoiseRejectionFilter', 'set_noise_rejection_filter'), 
 'elements': [('filter', 'uint8', 1, 'in', ('FilterOption', 'filter_option', [('50Hz', '50hz', 0),
-                                                                             ('60Hz', '60hz', 1))],
+                                                                             ('60Hz', '60hz', 1)]))],
 'since_firmware': [1, 0, 0], 
 'doc': ['af', {
 'en':
@@ -490,7 +490,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetNoiseRejectionFilter', 'get_noise_rejection_filter'), 
 'elements': [('filter', 'uint8', 1, 'out', ('FilterOption', 'filter_option', [('50Hz', '50hz', 0),
-                                                                              ('60Hz', '60hz', 1))],
+                                                                              ('60Hz', '60hz', 1)]))],
 'since_firmware': [1, 0, 0], 
 'doc': ['af', {
 'en':
@@ -535,7 +535,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetWireMode', 'set_wire_mode'), 
 'elements': [('mode', 'uint8', 1, 'in', ('WireMode', 'wire_mode', [('2Or4', '2or4', 0),
-                                                                   ('3', '3', 1))],
+                                                                   ('3', '3', 1)]))],
 'since_firmware': [1, 0, 0], 
 'doc': ['bf', {
 'en':
@@ -553,7 +553,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetWireMode', 'get_wire_mode'), 
 'elements': [('mode', 'uint8', 1, 'out', ('WireMode', 'wire_mode', [('2Or4', '2or4', 0),
-                                                                    ('3', '3', 1))],
+                                                                    ('3', '3', 1)]))],
 'since_firmware': [1, 0, 0], 
 'doc': ['bf', {
 'en':

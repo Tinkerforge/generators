@@ -6,10 +6,10 @@ com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
+    'device_identifier': 227,
     'name': ('VoltageCurrent', 'voltage_current', 'Voltage/Current'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for high precision sensing of voltage and current',
-    'device_identifier': 227,
     'packets': []
 }
 
