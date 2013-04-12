@@ -333,7 +333,7 @@ re_camel_case_to_space = re.compile('([A-Z][A-Z][a-z])|([a-z][A-Z])')
 def camel_case_to_space(name):
     return re_camel_case_to_space.sub(lambda m: m.group()[:1] + " " + m.group()[1:], name)
 
-def handle_since_firmware(text, device, packet):
+def format_since_firmware(device, packet):
     since = packet.get_since_firmware()
 
     if since is not None and since != [1, 0, 0]:
@@ -342,12 +342,11 @@ def handle_since_firmware(text, device, packet):
         else:
             suffix = 'Plugin'
 
-        text += '\n.. versionadded:: {1}.{2}.{3}~({0})\n'.format(suffix, *since)
+        return '\n.. versionadded:: {1}.{2}.{3}~({0})\n'.format(suffix, *since)
+    else:
+        return ''
 
-    return text
-
-def handle_constants(text, prefix, packet, constants_name = {'en': 'constants',
-                                                             'de': 'Konstanten'}):
+def format_constants(prefix, packet, constants_name={'en': 'constants', 'de': 'Konstanten'}, char_format="'{0}'"):
     str_constants = {
 'en': """
 The following {0} are available for this function:
@@ -365,7 +364,7 @@ Die folgenden {0} sind für diese Funktion verfügbar:
     for constant in constants:
         for definition in constant.definitions:
             if constant.type == 'char':
-                value = "'{0}'".format(definition.value)
+                value = char_format.format(definition.value)
             else:
                 value = str(definition.value)
 
@@ -375,9 +374,10 @@ Die folgenden {0} sind für diese Funktion verfügbar:
                                                  definition.name_uppercase,
                                                  value)
     if has_constant:
-        return text + str_constants
+        return str_constants
+    else:
+        return ''
 
-    return text
 
 def handle_rst_if(text, device):
     lines = []

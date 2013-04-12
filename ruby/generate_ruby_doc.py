@@ -62,10 +62,9 @@ def format_doc(packet):
     text = text.replace(":word:`parameters`", common.select_lang(parameters))
 
     text = common.handle_rst_if(text, device)
-    text = common.handle_constants(text,
-                                   device.get_category() + device.get_camel_case_name() + '::',
-                                   packet)
-    text = common.handle_since_firmware(text, device, packet)
+    prefix = device.get_category() + device.get_camel_case_name() + '::'
+    text += common.format_constants(prefix, packet)
+    text += common.format_since_firmware(device, packet)
 
     return common.shift_right(text, 1)
 

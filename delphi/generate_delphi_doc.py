@@ -64,10 +64,8 @@ def format_doc(packet):
     text = common.handle_rst_if(text, device)
     prefix = '{0}_{1}_'.format(device.get_category().upper(), 
                                device.get_upper_case_name())
-    text = common.handle_constants(text, 
-                                   prefix, 
-                                   packet)
-    text = common.handle_since_firmware(text, device, packet)
+    text += common.format_constants(prefix,  packet)
+    text += common.format_since_firmware(device, packet)
 
     return common.shift_right(text, 1)
 

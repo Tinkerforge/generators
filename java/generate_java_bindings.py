@@ -91,7 +91,7 @@ def format_doc(packet):
     text = text.replace('.. warning::', '\\warning')
 
     text = common.handle_rst_if(text, device)
-    text = common.handle_since_firmware(text, device, packet)
+    text += common.format_since_firmware(device, packet)
 
     return '\n\t * '.join(text.strip().split('\n'))
 

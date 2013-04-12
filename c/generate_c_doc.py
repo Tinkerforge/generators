@@ -64,12 +64,9 @@ def format_doc(packet):
     text = text.replace(":word:`parameters`", common.select_lang(parameters))
 
     text = common.handle_rst_if(text, device)
-    prefix = '{0}_'.format(device.get_upper_case_name())
-    text = common.handle_constants(text, 
-                                   prefix, 
-                                   packet,
-                                   {'en': 'defines', 'de': 'Defines'})
-    text = common.handle_since_firmware(text, device, packet)
+    prefix = device.get_upper_case_name() + '_'
+    text += common.format_constants(prefix, packet, {'en': 'defines', 'de': 'Defines'})
+    text += common.format_since_firmware(device, packet)
 
     return common.shift_right(text, 1)
 
