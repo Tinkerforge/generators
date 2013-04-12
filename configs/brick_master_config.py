@@ -671,7 +671,7 @@ die Baudrate verringert werden. Sehr lange Busleitungen (z.B. 1km) sollten mögl
 Werte im Bereich von 100000 (100kbit/s) verwenden.
 
 Die Werte sind im EEPROM gespeichert und werden nur beim Hochfahren angewandt.
-Das bedeutet der Master Brick muss nach einer Konfiguration neugestartet werden.
+Das bedeutet der Master Brick muss nach einer Konfiguration neu gestartet werden.
 """
 }]
 })
@@ -787,7 +787,7 @@ Der letzte Parameter ist der port auf den das Anwendungsprogramm sich
 verbindet. Der Standardport von brickd ist 4223.
 
 Die Werte sind im EEPROM gespeichert und werden nur beim Hochfahren angewandt.
-Das bedeutet der Master Brick muss nach einer Konfiguration neugestartet werden.
+Das bedeutet der Master Brick muss nach einer Konfiguration neu gestartet werden.
 
 Wir empfehlen die Brick Viewer zu nutzen um die WIFI Extension zu
 konfigurieren.
@@ -935,7 +935,7 @@ inner authentication (Bit 3) und certificate type (bits 4-5):
 Beispiel für EAP-TTLS + EAP-GTC + Private Key: option = 2 | (1 << 2) | (2 << 3).
 
 Die Werte sind im EEPROM gespeichert und werden nur beim Hochfahren angewandt.
-Das bedeutet der Master Brick muss nach einer Konfiguration neugestartet werden.
+Das bedeutet der Master Brick muss nach einer Konfiguration neu gestartet werden.
 
 Wir empfehlen die Brick Viewer zu nutzen um die WIFI Extension Verschlüsselung
 zu konfigurieren.
@@ -1108,7 +1108,7 @@ für Private Key 20000. Die Maximalen Dateigrößen sind jeweils 1312, 1312 und
 4320 Byte.
 
 Die Werte sind im EEPROM gespeichert und werden nur beim Hochfahren angewandt.
-Das bedeutet der Master Brick muss nach einer Konfiguration neugestartet werden.
+Das bedeutet der Master Brick muss nach einer Konfiguration neu gestartet werden.
 
 Wir empfehlen die Brick Viewer zu nutzen um die WIFI Extension Verschlüsselung
 zu konfigurieren.
@@ -2068,7 +2068,7 @@ Der letzte Parameter ist der port auf den das Anwendungsprogramm sich
 verbindet. Der Standardport von brickd ist 4223.
 
 Die Werte sind im EEPROM gespeichert und werden nur beim Hochfahren angewandt.
-Das bedeutet der Master Brick muss nach einer Konfiguration neugestartet werden.
+Das bedeutet der Master Brick muss nach einer Konfiguration neu gestartet werden.
 
 Wir empfehlen die Brick Viewer zu nutzen um die Ethernet Extension zu
 konfigurieren.
@@ -2131,8 +2131,8 @@ Gibt den Status der Ethernet Extension zurück.
 *mac_address*, *ip*, *subnet_mask* und *gateway* werden als Array übergeben
 (Das erste Element des Arrays ist das niederwertigste Byte).
 
-*rx_count* und *tx_count* sind die Anzahl der Bytes doe seit dem letzten
-neustart empfangen/gesendet wurden.
+*rx_count* und *tx_count* sind die Anzahl der Bytes die seit dem letzten
+Neustart empfangen/gesendet wurden.
 
 *hostname* ist der aktuell genutzte Hostname.
 """
