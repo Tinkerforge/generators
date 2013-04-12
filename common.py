@@ -31,6 +31,7 @@ import subprocess
 import sys
 import copy
 from collections import namedtuple
+from pprint import pprint
 
 gen_text_star = """/* ***********************************************************
  * This file was automatically generated on {0}.      *
@@ -431,7 +432,7 @@ def generate(path, language, make_files, prepare, finish, is_doc_):
     path_binding = path
     is_doc = is_doc_
 
-    path_config = os.path.join(os.path.split(path)[0], 'configs')
+    path_config = os.path.join(path, '..', 'configs')
     if path_config not in sys.path:
         sys.path.append(path_config)
     configs = os.listdir(path_config)
@@ -446,6 +447,8 @@ def generate(path, language, make_files, prepare, finish, is_doc_):
     common_device_packets = __import__('device_commonconfig').common_packets
     common_brick_packets = __import__('brick_commonconfig').common_packets
     common_bricklet_packets = __import__('bricklet_commonconfig').common_packets
+
+    device_identifiers = []
 
     for config in configs:
         if config.endswith('_config.py'):
@@ -476,10 +479,19 @@ def generate(path, language, make_files, prepare, finish, is_doc_):
                 module.com['packets'].extend(prepare_common_packets(common_packets))
                 module.com['common_included'] = True
 
-            make_files(module.com, path)
+            device = Device(module.com)
+
+            device_identifiers.append((device.get_device_identifier(), device.get_category() + ' ' + device.get_display_name()))
+
+            make_files(device, path)
 
     if finish is not None:
         finish(path)
+
+    f = open(os.path.join(path, '..', 'device_identifiers.py'), 'wb')
+    f.write('device_identifiers = ')
+    pprint(sorted(device_identifiers),  f)
+    f.close()
 
 class Packet:
     def __init__(self, device, packet):

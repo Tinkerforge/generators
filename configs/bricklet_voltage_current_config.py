@@ -9,7 +9,7 @@ com = {
     'name': ('VoltageCurrent', 'voltage_current', 'Voltage/Current'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for high precision sensing of voltage and current',
-    'device_identifier': '227',
+    'device_identifier': 227,
     'packets': []
 }
 

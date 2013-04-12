@@ -681,9 +681,9 @@ void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data
 """
     return func.format(device.get_underscore_name(), device.get_camel_case_name(), device.get_category())
 
-def make_files(com_new, directory):
+def make_files(device_, directory):
     global device
-    device = common.Device(com_new)
+    device = device_
     file_name = '{0}_{1}'.format(device.get_category().lower(), device.get_underscore_name())
     version = common.get_changelog_version(directory)
     directory += '/bindings'
