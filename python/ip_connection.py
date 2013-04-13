@@ -483,6 +483,7 @@ class IPConnection:
         except:
             # FIXME: cleanup
             self.socket = None
+            callback.queue.put((IPConnection.QUEUE_EXIT, None))
             raise
 
         # create disconnect probe thread
