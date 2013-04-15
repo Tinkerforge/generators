@@ -138,12 +138,8 @@ typedef struct {
 	uint32_t uid;
 	uint8_t length;
 	uint8_t function_id;
-	uint8_t other_options : 2,
-	        authentication : 1,
-	        response_expected : 1,
-	        sequence_number : 4;
-	uint8_t future_use : 6,
-	        error_code : 2;
+	uint8_t sequence_number_and_options;
+	uint8_t error_code_and_future_use;
 } ATTRIBUTE_PACKED PacketHeader;
 
 /**
@@ -497,6 +493,33 @@ void ipcon_register_callback(IPConnection *ipcon, uint8_t id,
 int packet_header_create(PacketHeader *header, uint8_t length,
                          uint8_t function_id, IPConnection *ipcon,
                          Device *device);
+
+/**
+ * \internal
+ */
+uint8_t packet_header_get_sequence_number(PacketHeader *header);
+
+/**
+ * \internal
+ */
+void packet_header_set_sequence_number(PacketHeader *header,
+                                       uint8_t sequence_number);
+
+/**
+ * \internal
+ */
+uint8_t packet_header_get_response_expected(PacketHeader *header);
+
+/**
+ * \internal
+ */
+void packet_header_set_response_expected(PacketHeader *header,
+                                         uint8_t response_expected);
+
+/**
+ * \internal
+ */
+uint8_t packet_header_get_error_code(PacketHeader *header);
 
 /**
  * \internal
