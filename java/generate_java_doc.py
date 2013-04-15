@@ -41,14 +41,6 @@ def format_doc(packet, shift_right):
     text = common.select_lang(packet.get_doc()[1])
     cb_link = ':java:func:`{2}Listener <{0}{1}.{2}Listener>`'
     fu_link = ':java:func:`{2}() <{0}{1}::{2}>`'
-    parameter = {
-    'en': 'parameter',
-    'de': 'Parameter'
-    }
-    parameters = {
-    'en': 'parameters',
-    'de': 'Parameter'
-    }
 
     cls = device.get_camel_case_name()
     for other_packet in device.get_packets():
@@ -62,18 +54,21 @@ def format_doc(packet, shift_right):
 
         text = text.replace(name_false, name_right)
 
-    text = text.replace(":word:`parameter`", common.select_lang(parameter))
-    text = text.replace(":word:`parameters`", common.select_lang(parameters))
     text = text.replace('Callback ', 'Listener ')
     text = text.replace(' Callback', ' Listener')
     text = text.replace('callback ', 'listener ')
     text = text.replace(' callback', ' listener')
 
+    text = common.handle_rst_word(text)
     text = common.handle_rst_if(text, device)
-    text = common.handle_constants(text, 
-                                   device.get_category() + device.get_camel_case_name() + '.', 
-                                   packet)
-    text = common.handle_since_firmware(text, device, packet)
+
+    prefix = device.get_category() + device.get_camel_case_name() + '.'
+    if packet.get_underscore_name() == 'set_response_expected':
+        text += common.format_function_id_constants(prefix, device)
+    else:
+        text += common.format_constants(prefix, packet)
+
+    text += common.format_since_firmware(device, packet)
 
     return common.shift_right(text, shift_right)
 
@@ -194,7 +189,7 @@ def make_api():
 
   {3}{1} {0} = new {3}{1}("YOUR_DEVICE_UID", ipcon);
 
- This object can then be used after the IP connection is connected 
+ This object can then be used after the IP Connection is connected
  (see examples :ref:`above <{4}_{2}_java_examples>`).
 """,
     'de': """
@@ -429,9 +424,9 @@ Konstanten
 
     return common.select_lang(api).format(ref, api_desc, api_str)
 
-def make_files(com_new, directory):
+def make_files(device_, directory):
     global device
-    device = common.Device(com_new)
+    device = device_
     file_name = '{0}_{1}_Java'.format(device.get_camel_case_name(), device.get_category())
     title = {
     'en': 'Java bindings',

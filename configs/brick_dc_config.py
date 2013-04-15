@@ -645,3 +645,130 @@ Geschwindigkeit geändert hat.
 """
 }]
 })
+
+#com['packets'].append({
+#'type': 'function',
+#'name': ('EnableEncoder', 'enable_encoder'),
+#'elements': [],
+#'since_firmware': [2, 0, 1],
+#'doc': ['af', {
+#'en':
+#"""
+#""",
+#'de':
+#"""
+#"""
+#}]
+#})
+#
+#com['packets'].append({
+#'type': 'function',
+#'name': ('DisableEncoder', 'disable_encoder'),
+#'elements': [],
+#'since_firmware': [2, 0, 1],
+#'doc': ['af', {
+#'en':
+#"""
+#""",
+#'de':
+#"""
+#"""
+#}]
+#})
+#
+#com['packets'].append({
+#'type': 'function',
+#'name': ('IsEncoderEnabled', 'is_encoder_enabled'),
+#'elements': [('enabled', 'bool', 1, 'out')],
+#'since_firmware': [2, 0, 1],
+#'doc': ['af', {
+#'en':
+#"""
+#""",
+#'de':
+#"""
+#"""
+#}]
+#})
+#
+#com['packets'].append({
+#'type': 'function',
+#'name': ('GetEncoderCount', 'get_encoder_count'),
+#'elements': [('reset', 'bool', 1, 'in'),
+#             ('count', 'int32', 1, 'out')],
+#'since_firmware': [2, 0, 1],
+#'doc': ['af', {
+#'en':
+#"""
+#""",
+#'de':
+#"""
+#"""
+#}]
+#})
+#
+#com['packets'].append({
+#'type': 'function',
+#'name': ('SetEncoderConfig', 'set_encoder_config'),
+#'elements': [('counts_per_revolution', 'uint16', 1, 'in')],
+#'since_firmware': [2, 0, 1],
+#'doc': ['af', {
+#'en':
+#"""
+#""",
+#'de':
+#"""
+#"""
+#}]
+#})
+#
+#com['packets'].append({
+#'type': 'function',
+#'name': ('GetEncoderConfig', 'get_encoder_config'),
+#'elements': [('counts_per_revolution', 'uint16', 1, 'out')],
+#'since_firmware': [2, 0, 1],
+#'doc': ['af', {
+#'en':
+#"""
+#""",
+#'de':
+#"""
+#"""
+#}]
+#})
+#
+#com['packets'].append({
+#'type': 'function',
+#'name': ('SetEncoderPIDConfig', 'set_encoder_pid_config'),
+#'elements': [('p', 'float', 1, 'in'),
+#             ('i', 'float', 1, 'in'),
+#             ('d', 'float', 1, 'in'),
+#             ('sample_time', 'uint8', 1, 'in')],
+#'since_firmware': [2, 0, 1],
+#'doc': ['af', {
+#'en':
+#"""
+#""",
+#'de':
+#"""
+#"""
+#}]
+#})
+#
+#com['packets'].append({
+#'type': 'function',
+#'name': ('GetEncoderPIDConfig', 'get_encoder_pid_config'),
+#'elements': [('p', 'float', 1, 'out'),
+#             ('i', 'float', 1, 'out'),
+#             ('d', 'float', 1, 'out'),
+#             ('sample_time', 'uint8', 1, 'out')],
+#'since_firmware': [2, 0, 1],
+#'doc': ['af', {
+#'en':
+#"""
+#""",
+#'de':
+#"""
+#"""
+#}]
+#})

@@ -31,6 +31,7 @@ import subprocess
 import sys
 import copy
 from collections import namedtuple
+from pprint import pprint
 
 gen_text_star = """/* ***********************************************************
  * This file was automatically generated on {0}.      *
@@ -332,7 +333,7 @@ re_camel_case_to_space = re.compile('([A-Z][A-Z][a-z])|([a-z][A-Z])')
 def camel_case_to_space(name):
     return re_camel_case_to_space.sub(lambda m: m.group()[:1] + " " + m.group()[1:], name)
 
-def handle_since_firmware(text, device, packet):
+def format_since_firmware(device, packet):
     since = packet.get_since_firmware()
 
     if since is not None and since != [1, 0, 0]:
@@ -341,12 +342,13 @@ def handle_since_firmware(text, device, packet):
         else:
             suffix = 'Plugin'
 
-        text += '\n.. versionadded:: {1}.{2}.{3}~({0})\n'.format(suffix, *since)
+        return '\n.. versionadded:: {1}.{2}.{3}~({0})\n'.format(suffix, *since)
+    else:
+        return ''
 
-    return text
-
-def handle_constants(text, prefix, packet, constants_name = {'en': 'constants',
-                                                             'de': 'Konstanten'}):
+def format_constants(prefix, packet,
+                     constants_name={'en': 'constants', 'de': 'Konstanten'},
+                     char_format="'{0}'"):
     str_constants = {
 'en': """
 The following {0} are available for this function:
@@ -364,7 +366,7 @@ Die folgenden {0} sind für diese Funktion verfügbar:
     for constant in constants:
         for definition in constant.definitions:
             if constant.type == 'char':
-                value = "'{0}'".format(definition.value)
+                value = char_format.format(definition.value)
             else:
                 value = str(definition.value)
 
@@ -374,7 +376,39 @@ Die folgenden {0} sind für diese Funktion verfügbar:
                                                  definition.name_uppercase,
                                                  value)
     if has_constant:
-        return text + str_constants
+        return str_constants
+    else:
+        return ''
+
+def format_function_id_constants(prefix, device,
+                                 constants_name={'en': 'constants', 'de': 'Konstanten'}):
+    str_constants = {
+'en': """
+The following function ID {0} are available for this function:
+
+""",
+'de': """
+Die folgenden Funktions ID {0} sind für diese Funktion verfügbar:
+
+"""
+}
+    str_constant = '* {0}FUNCTION_{1} = {2}\n'
+    str_constants = select_lang(str_constants).format(select_lang(constants_name))
+    for packet in device.get_packets('function'):
+        if len(packet.get_elements('out')) == 0 and packet.get_function_id() >= 0:
+            str_constants += str_constant.format(prefix,
+                                                 packet.get_upper_case_name(),
+                                                 packet.get_function_id())
+
+    return str_constants
+
+def handle_rst_word(text,
+                    parameter={'en': 'parameter', 'de': 'Parameter'},
+                    parameters={'en': 'parameters', 'de': 'Parameter'},
+                    constants={'en': 'constants', 'de': 'Konstanten'}):
+    text = text.replace(":word:`parameter`", select_lang(parameter))
+    text = text.replace(":word:`parameters`", select_lang(parameters))
+    text = text.replace(":word:`constants`", select_lang(constants))
 
     return text
 
@@ -431,7 +465,7 @@ def generate(path, language, make_files, prepare, finish, is_doc_):
     path_binding = path
     is_doc = is_doc_
 
-    path_config = os.path.join(os.path.split(path)[0], 'configs')
+    path_config = os.path.join(path, '..', 'configs')
     if path_config not in sys.path:
         sys.path.append(path_config)
     configs = os.listdir(path_config)
@@ -446,6 +480,8 @@ def generate(path, language, make_files, prepare, finish, is_doc_):
     common_device_packets = __import__('device_commonconfig').common_packets
     common_brick_packets = __import__('brick_commonconfig').common_packets
     common_bricklet_packets = __import__('bricklet_commonconfig').common_packets
+
+    device_identifiers = []
 
     for config in configs:
         if config.endswith('_config.py'):
@@ -476,10 +512,19 @@ def generate(path, language, make_files, prepare, finish, is_doc_):
                 module.com['packets'].extend(prepare_common_packets(common_packets))
                 module.com['common_included'] = True
 
-            make_files(module.com, path)
+            device = Device(module.com)
+
+            device_identifiers.append((device.get_device_identifier(), device.get_category() + ' ' + device.get_display_name()))
+
+            make_files(device, path)
 
     if finish is not None:
         finish(path)
+
+    f = open(os.path.join(path, '..', 'device_identifiers.py'), 'wb')
+    f.write('device_identifiers = ')
+    pprint(sorted(device_identifiers),  f)
+    f.close()
 
 class Packet:
     def __init__(self, device, packet):

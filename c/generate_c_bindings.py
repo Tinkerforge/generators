@@ -83,13 +83,12 @@ def format_doc(packet):
         plist = c_common.make_parameter_list(packet)[2:].replace('*ret_', '')
         text = 'Signature: \code void callback({0}) \endcode\n'.format(plist) + text
 
-    text = text.replace(":word:`parameter`", "parameter")
-    text = text.replace(":word:`parameters`", "parameters")
     text = text.replace('.. note::', '\\note')
     text = text.replace('.. warning::', '\\warning')
 
+    text = common.handle_rst_word(text)
     text = common.handle_rst_if(text, device)
-    text = common.handle_since_firmware(text, device, packet)
+    text += common.format_since_firmware(device, packet)
 
     return '\n * '.join(text.strip().split('\n'))
 
@@ -681,9 +680,9 @@ void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data
 """
     return func.format(device.get_underscore_name(), device.get_camel_case_name(), device.get_category())
 
-def make_files(com_new, directory):
+def make_files(device_, directory):
     global device
-    device = common.Device(com_new)
+    device = device_
     file_name = '{0}_{1}'.format(device.get_category().lower(), device.get_underscore_name())
     version = common.get_changelog_version(directory)
     directory += '/bindings'

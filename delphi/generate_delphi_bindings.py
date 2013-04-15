@@ -95,11 +95,9 @@ def format_doc(packet):
 
         text = text.replace(name_false, name_right)
 
-    text = text.replace(":word:`parameter`", "parameter")
-    text = text.replace(":word:`parameters`", "parameters")
-
+    text = common.handle_rst_word(text)
     text = common.handle_rst_if(text, device)
-    text = common.handle_since_firmware(text, device, packet)
+    text += common.format_since_firmware(device, packet)
 
     return '\n    ///  '.join(text.strip().split('\n'))
 
@@ -530,9 +528,9 @@ def make_callback_wrappers():
 
     return wrappers + 'end.\n'
 
-def make_files(com_new, directory):
+def make_files(device_, directory):
     global device
-    device = common.Device(com_new)
+    device = device_
     file_name = '{0}{1}'.format(device.get_category(), device.get_camel_case_name())
     version = common.get_changelog_version(directory)
     directory += '/bindings'

@@ -881,27 +881,30 @@ int device_get_api_version(Device *device, uint8_t ret_api_version[3]) {
 
 int device_send_request(Device *device, Packet *request, Packet *response) {
 	int ret = E_OK;
+	uint8_t sequence_number = packet_header_get_sequence_number(&request->header);
+	uint8_t response_expected = packet_header_get_response_expected(&request->header);
+	uint8_t error_code;
 
-	if (request->header.response_expected) {
+	if (response_expected) {
 		mutex_lock(&device->request_mutex);
 
 		event_reset(&device->response_event);
 
 		device->expected_response_function_id = request->header.function_id;
-		device->expected_response_sequence_number = request->header.sequence_number;
+		device->expected_response_sequence_number = sequence_number;
 	}
 
 	ret = ipcon_send_request(device->ipcon, request);
 
 	if (ret != E_OK) {
-		if (request->header.response_expected) {
+		if (response_expected) {
 			mutex_unlock(&device->request_mutex);
 		}
 
 		return ret;
 	}
 
-	if (request->header.response_expected) {
+	if (response_expected) {
 		if (event_wait(&device->response_event, device->ipcon->timeout) < 0) {
 			ret = E_TIMEOUT;
 		}
@@ -914,18 +917,20 @@ int device_send_request(Device *device, Packet *request, Packet *response) {
 		if (ret == E_OK) {
 			mutex_lock(&device->response_mutex);
 
+			error_code = packet_header_get_error_code(&device->response_packet.header);
+
 			if (device->response_packet.header.function_id != request->header.function_id ||
-			    device->response_packet.header.sequence_number != request->header.sequence_number) {
+			    packet_header_get_sequence_number(&device->response_packet.header) != sequence_number) {
 				ret = E_TIMEOUT;
-			} else if (device->response_packet.header.error_code == 0) {
+			} else if (error_code == 0) {
 				// no error
 				if (response != NULL) {
 					memcpy(response, &device->response_packet,
 					       device->response_packet.header.length);
 				}
-			} else if (device->response_packet.header.error_code == 1) {
+			} else if (error_code == 1) {
 				ret = E_INVALID_PARAMETER;
-			} else if (device->response_packet.header.error_code == 2) {
+			} else if (error_code == 2) {
 				ret = E_NOT_SUPPORTED;
 			} else {
 				ret = E_UNKNOWN_ERROR_CODE;
@@ -1182,10 +1187,11 @@ static void ipcon_disconnect_probe_loop(void *opaque) {
 
 static void ipcon_handle_response(IPConnection *ipcon, Packet *response) {
 	Device *device;
+	uint8_t sequence_number = packet_header_get_sequence_number(&response->header);
 
 	response->header.uid = leconvert_uint32_from(response->header.uid);
 
-	if (response->header.sequence_number == 0 &&
+	if (sequence_number == 0 &&
 	    response->header.function_id == IPCON_CALLBACK_ENUMERATE) {
 		if (ipcon->registered_callbacks[IPCON_CALLBACK_ENUMERATE] != NULL) {
 			queue_put(&ipcon->callback->queue, QUEUE_KIND_PACKET, response,
@@ -1202,7 +1208,7 @@ static void ipcon_handle_response(IPConnection *ipcon, Packet *response) {
 		return;
 	}
 
-	if (response->header.sequence_number == 0) {
+	if (sequence_number == 0) {
 		if (device->registered_callbacks[response->header.function_id] != NULL) {
 			queue_put(&ipcon->callback->queue, QUEUE_KIND_PACKET, response,
 			          response->header.length);
@@ -1212,7 +1218,7 @@ static void ipcon_handle_response(IPConnection *ipcon, Packet *response) {
 	}
 
 	if (device->expected_response_function_id == response->header.function_id &&
-	    device->expected_response_sequence_number == response->header.sequence_number) {
+	    device->expected_response_sequence_number == sequence_number) {
 		mutex_lock(&device->response_mutex);
 		memcpy(&device->response_packet, response, response->header.length);
 		mutex_unlock(&device->response_mutex);
@@ -1312,6 +1318,17 @@ static int ipcon_connect_unlocked(IPConnection *ipcon, bool is_auto_reconnect) {
 	entity = gethostbyname(ipcon->host);
 
 	if (entity == NULL) {
+		// destroy callback thread
+		if (!is_auto_reconnect) {
+			queue_put(&ipcon->callback->queue, QUEUE_KIND_EXIT, NULL, 0);
+
+			if (!thread_is_current(&ipcon->callback->thread)) {
+				thread_join(&ipcon->callback->thread);
+			}
+
+			ipcon->callback = NULL;
+		}
+
 		return E_HOSTNAME_INVALID;
 	}
 
@@ -1716,14 +1733,36 @@ int packet_header_create(PacketHeader *header, uint8_t length,
 
 	header->length = length;
 	header->function_id = function_id;
-	header->sequence_number = sequence_number;
+	packet_header_set_sequence_number(header, sequence_number);
 
 	if (device != NULL) {
 		ret = device_get_response_expected(device, function_id, &response_expected);
-		header->response_expected = response_expected ? 1 : 0;
+		packet_header_set_response_expected(header, response_expected ? 1 : 0);
 	}
 
 	return ret;
+}
+
+uint8_t packet_header_get_sequence_number(PacketHeader *header) {
+	return (header->sequence_number_and_options >> 4) & 0x0F;
+}
+
+void packet_header_set_sequence_number(PacketHeader *header,
+                                       uint8_t sequence_number) {
+	header->sequence_number_and_options |= (sequence_number << 4) & 0xF0;
+}
+
+uint8_t packet_header_get_response_expected(PacketHeader *header) {
+	return (header->sequence_number_and_options >> 3) & 0x01;
+}
+
+void packet_header_set_response_expected(PacketHeader *header,
+                                         uint8_t response_expected) {
+	header->sequence_number_and_options |= (response_expected << 3) & 0x08;
+}
+
+uint8_t packet_header_get_error_code(PacketHeader *header) {
+	return (header->error_code_and_future_use >> 6) & 0x03;
 }
 
 // undefine potential defines from /usr/include/endian.h

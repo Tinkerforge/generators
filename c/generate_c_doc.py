@@ -39,14 +39,7 @@ device = None
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
-    parameter = {
-    'en': 'parameter',
-    'de': 'Parameter'
-    }
-    parameters = {
-    'en': 'parameters',
-    'de': 'Parameter'
-    }
+    constants = {'en': 'defines', 'de': 'Defines'}
 
     for other_packet in device.get_packets():
         name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
@@ -60,16 +53,16 @@ def format_doc(packet):
                                                     other_packet.get_underscore_name())
         text = text.replace(name_false, name_right)
 
-    text = text.replace(":word:`parameter`", common.select_lang(parameter))
-    text = text.replace(":word:`parameters`", common.select_lang(parameters))
-
+    text = common.handle_rst_word(text, constants=constants)
     text = common.handle_rst_if(text, device)
-    prefix = '{0}_'.format(device.get_upper_case_name())
-    text = common.handle_constants(text, 
-                                   prefix, 
-                                   packet,
-                                   {'en': 'defines', 'de': 'Defines'})
-    text = common.handle_since_firmware(text, device, packet)
+
+    prefix = device.get_upper_case_name() + '_'
+    if packet.get_underscore_name() == 'set_response_expected':
+        text += common.format_function_id_constants(prefix, device, constants)
+    else:
+        text += common.format_constants(prefix, packet, constants)
+
+    text += common.format_since_firmware(device, packet)
 
     return common.shift_right(text, 1)
 
@@ -407,9 +400,9 @@ Konstanten
 
     return common.select_lang(api).format(ref, api_desc, api_str)
 
-def make_files(com_new, directory):
+def make_files(device_, directory):
     global device
-    device = common.Device(com_new)
+    device = device_
     file_name = '{0}_{1}_C'.format(device.get_camel_case_name(), device.get_category())
     title = {
     'en': 'C/C++ bindings',

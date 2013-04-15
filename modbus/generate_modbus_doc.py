@@ -66,11 +66,9 @@ def format_doc(packet):
             name_right = ':modbus:func:`{1} <{0}.{1}>`'.format(cls, other_packet.get_underscore_name())
         text = text.replace(name_false, name_right)
 
-    text = text.replace(":word:`parameter`", common.select_lang(parameter))
-    text = text.replace(":word:`parameters`", common.select_lang(parameters))
-
+    text = common.handle_rst_word(text, parameter, parameters)
     text = common.handle_rst_if(text, device)
-    text = common.handle_since_firmware(text, device, packet)
+    text += common.format_since_firmware(device, packet)
 
     return common.shift_right(text, 1)
 
@@ -265,9 +263,9 @@ Konstanten
 
     return common.select_lang(api).format(ref, api_desc, api_str)
 
-def make_files(com_new, directory):
+def make_files(device_, directory):
     global device
-    device = common.Device(com_new)
+    device = device_
     file_name = '{0}_{1}_Modbus'.format(device.get_camel_case_name(), device.get_category())
     title = {
     'en': 'Modbus protocol',

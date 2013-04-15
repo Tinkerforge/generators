@@ -48,9 +48,9 @@ def copy_examples_for_zip():
     for example in examples:
         shutil.copy(example[1], dest)
   
-def make_files(com_new, directory):
+def make_files(device_, directory):
     global device
-    device = common.Device(com_new)
+    device = device_
 
     copy_examples_for_zip()
 

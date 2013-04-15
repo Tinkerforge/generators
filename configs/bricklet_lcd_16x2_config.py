@@ -261,7 +261,7 @@ after each startup.
 """
 Das LCD 16x2 Bricklet kann bis zu 8 Benutzerdefinierte Buchstaben speichern.
 Die Buchstaben bestehen aus 5x8 Pixel und sie können über den Index 0-7
-addressiert werden. Um die Pixel zu beschreiben, werden die ersten 5 Bit
+adressiert werden. Um die Pixel zu beschreiben, werden die ersten 5 Bit
 von 8 Bytes verwenden. Zum Beispiel, um den Buchstaben "H" zu erzeugen,
 sollte das folgende Array gesendet werden:
 

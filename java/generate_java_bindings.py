@@ -81,8 +81,6 @@ def format_doc(packet):
 
         text = text.replace(name_false, name_right)
 
-    text = text.replace(":word:`parameter`", "parameter")
-    text = text.replace(":word:`parameters`", "parameters")
     text = text.replace('Callback ', 'Listener ')
     text = text.replace(' Callback', ' Listener')
     text = text.replace('callback ', 'listener ')
@@ -90,8 +88,9 @@ def format_doc(packet):
     text = text.replace('.. note::', '\\note')
     text = text.replace('.. warning::', '\\warning')
 
+    text = common.handle_rst_word(text)
     text = common.handle_rst_if(text, device)
-    text = common.handle_since_firmware(text, device, packet)
+    text += common.format_since_firmware(device, packet)
 
     return '\n\t * '.join(text.strip().split('\n'))
 
@@ -533,9 +532,9 @@ def make_bbgets(packet, with_obj = False):
         bbgets += bbget_format + '\n'
     return bbgets, bbret
 
-def make_files(com_new, directory):
+def make_files(device_, directory):
     global device
-    device = common.Device(com_new)
+    device = device_
     file_name = '{0}{1}'.format(device.get_category(), device.get_camel_case_name())
     version = common.get_changelog_version(directory)
     directory += '/bindings'

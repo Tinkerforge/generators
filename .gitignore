@@ -1,6 +1,7 @@
 *.pyc
 *.zip
 */tinkerforge_*
+device_identifiers.py
 c/bindings/
 c/doc/
 csharp/bindings/

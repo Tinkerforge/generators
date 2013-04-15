@@ -38,14 +38,6 @@ device = None
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
-    parameter = {
-    'en': 'parameter',
-    'de': 'Parameter'
-    }
-    parameters = {
-    'en': 'parameters',
-    'de': 'Parameter'
-    }
 
     cls = device.get_category() + device.get_camel_case_name()
     for other_packet in device.get_packets():
@@ -57,14 +49,16 @@ def format_doc(packet):
             name_right = ':vbnet:func:`{1}() <{0}.{1}>`'.format(cls, name)
         text = text.replace(name_false, name_right)
 
-    text = text.replace(":word:`parameter`", common.select_lang(parameter))
-    text = text.replace(":word:`parameters`", common.select_lang(parameters))
-
+    text = common.handle_rst_word(text)
     text = common.handle_rst_if(text, device)
-    prefix = '{0}{1}.'.format(device.get_category(),
-                              device.get_camel_case_name())
-    text = common.handle_constants(text, prefix, packet)
-    text = common.handle_since_firmware(text, device, packet)
+
+    prefix = '{0}{1}.'.format(device.get_category(), device.get_camel_case_name())
+    if packet.get_underscore_name() == 'set_response_expected':
+        text += common.format_function_id_constants(prefix, device)
+    else:
+        text += common.format_constants(prefix, packet, char_format='"{0}"C')
+
+    text += common.format_since_firmware(device, packet)
 
     return common.shift_right(text, 1)
 
@@ -401,9 +395,9 @@ Konstanten
 
     return common.select_lang(api).format(ref, api_desc, api_str)
 
-def make_files(com_new, directory):
+def make_files(device_, directory):
     global device
-    device = common.Device(com_new)
+    device = device_
     file_name = '{0}_{1}_VBNET'.format(device.get_camel_case_name(),
                                         device.get_category())
     title = {

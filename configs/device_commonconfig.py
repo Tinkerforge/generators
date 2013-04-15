@@ -49,10 +49,13 @@ timeouts and other error conditions calls of this setter as well. The
 device will then send a response for this purpose. If this flag is disabled for
 a setter function then no response is send and errors are silently ignored,
 because they cannot be detected.
+
+See :func:`SetResponseExpected`
+for the list of function ID :word:`constants` available for this function.
 """,
 'de':
 """
-Gibt das Response-Expected-Flag für die Funktion mit der angegebenen Funktion
+Gibt das Response-Expected-Flag für die Funktion mit der angegebenen Funktions
 IDs zurück. Es ist *true* falls für die Funktion beim Aufruf eine Antwort
 erwartet wird, *false* andernfalls.
 
@@ -68,6 +71,9 @@ detektiert werden. Das Gerät sendet dann eine Antwort extra für diesen Zweck.
 Wenn das Flag für eine Setter-Funktion nicht gesetzt ist, dann wird keine
 Antwort vom Gerät gesendet und Fehler werden stillschweigend ignoriert, da sie
 nicht detektiert werden können.
+
+Siehe :func:`SetResponseExpected`
+für die Liste der verfügbaren Funktions ID :word:`constants` für diese Funktion.
 """
 }]
 })
