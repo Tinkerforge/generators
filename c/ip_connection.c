@@ -1318,6 +1318,17 @@ static int ipcon_connect_unlocked(IPConnection *ipcon, bool is_auto_reconnect) {
 	entity = gethostbyname(ipcon->host);
 
 	if (entity == NULL) {
+		// destroy callback thread
+		if (!is_auto_reconnect) {
+			queue_put(&ipcon->callback->queue, QUEUE_KIND_EXIT, NULL, 0);
+
+			if (!thread_is_current(&ipcon->callback->thread)) {
+				thread_join(&ipcon->callback->thread);
+			}
+
+			ipcon->callback = NULL;
+		}
+
 		return E_HOSTNAME_INVALID;
 	}
 
