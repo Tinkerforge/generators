@@ -1189,6 +1189,8 @@ static void ipcon_handle_response(IPConnection *ipcon, Packet *response) {
 	Device *device;
 	uint8_t sequence_number = packet_header_get_sequence_number(&response->header);
 
+	ipcon->disconnect_probe_flag = false;
+
 	response->header.uid = leconvert_uint32_from(response->header.uid);
 
 	if (sequence_number == 0 &&

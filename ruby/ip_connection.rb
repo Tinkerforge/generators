@@ -999,6 +999,8 @@ module Tinkerforge
 
     # internal
     def handle_response(packet)
+      @disconnect_probe_flag = false
+
       uid = get_uid_from_data packet
       function_id = get_function_id_from_data packet
       sequence_number = get_sequence_number_from_data packet

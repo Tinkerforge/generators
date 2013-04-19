@@ -730,6 +730,7 @@ end;
 procedure TIPConnection.HandleResponse(const packet: TByteArray);
 var sequenceNumber, functionID: byte; device: TDevice;
 begin
+  disconnectProbeFlag := false;
   functionID := GetFunctionIDFromData(packet);
   sequenceNumber := GetSequenceNumberFromData(packet);
   if ((sequenceNumber = 0) and (functionID = IPCON_CALLBACK_ENUMERATE)) then begin
