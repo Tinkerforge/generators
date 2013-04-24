@@ -893,6 +893,8 @@ class IPConnection:
             return sequence_number
 
     def handle_response(self, packet):
+        self.disconnect_probe_flag = False
+
         function_id = get_function_id_from_data(packet)
         sequence_number = get_sequence_number_from_data(packet)
 

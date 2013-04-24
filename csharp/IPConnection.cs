@@ -774,6 +774,8 @@ namespace Tinkerforge
 			byte functionID = GetFunctionIDFromData(packet);
 			byte sequenceNumber = GetSequenceNumberFromData(packet);
 
+			disconnectProbeFlag = false;
+
 			if(sequenceNumber == 0 && functionID == CALLBACK_ENUMERATE)
 			{
 				callback.queue.Enqueue(new CallbackQueueObject(QUEUE_PACKET, 0, 0, 0, packet));

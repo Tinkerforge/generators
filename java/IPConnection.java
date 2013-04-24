@@ -779,6 +779,8 @@ public class IPConnection {
 		byte functionID = getFunctionIDFromData(packet);
 		short sequenceNumber = unsignedByte(getSequenceNumberFromData(packet));
 
+		disconnectProbeFlag = false;
+
 		if(sequenceNumber == 0 && functionID == CALLBACK_ENUMERATE) {
 			handleEnumerate(packet);
 			return;

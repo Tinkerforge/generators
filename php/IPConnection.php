@@ -447,7 +447,7 @@ class IPConnection
     private $pendingData = '';
 
     private $disconnectProbeRequest = '';
-    private $lastDisconnectProbe = 0.0;
+    private $nextDisconnectProbe = 0.0;
 
     /**
      * Creates an IP Connection object that can be used to enumerate the available
@@ -457,7 +457,7 @@ class IPConnection
     {
         $result = $this->createPacketHeader(NULL, 8, self::FUNCTION_DISCONNECT_PROBE);
         $this->disconnectProbeRequest = $result[0];
-        $this->lastDisconnectProbe = microtime(true);
+        $this->nextDisconnectProbe = microtime(true) + self::DISCONNECT_PROBE_INTERVAL;
     }
 
     function __destruct()
@@ -529,7 +529,7 @@ class IPConnection
                                        $this->registeredCallbackUserData[self::CALLBACK_CONNECTED]));
         }
 
-        $this->lastDisconnectProbe = microtime(true);
+        $this->nextDisconnectProbe = microtime(true) + self::DISCONNECT_PROBE_INTERVAL;
     }
 
     /**
@@ -701,7 +701,7 @@ class IPConnection
                                             socket_strerror(socket_last_error($this->socket)));
         }
 
-        $this->lastDisconnectProbe = microtime(true);
+        $this->nextDisconnectProbe = microtime(true) + self::DISCONNECT_PROBE_INTERVAL;
     }
 
     /**
@@ -724,9 +724,8 @@ class IPConnection
             $now = microtime(true);
 
             // FIXME: this works for timeout < DISCONNECT_PROBE_INTERVAL only
-            if ($this->lastDisconnectProbe > $now ||
-                ($now - $this->lastDisconnectProbe) > self::DISCONNECT_PROBE_INTERVAL) {
-
+            if ($this->nextDisconnectProbe < $now ||
+                ($this->nextDisconnectProbe - $now) > self::DISCONNECT_PROBE_INTERVAL) {
                 if (@socket_send($this->socket, $this->disconnectProbeRequest,
                                  strlen($this->disconnectProbeRequest), 0) === FALSE) {
                     $this->disconnectInternal(self::DISCONNECT_REASON_ERROR);
@@ -734,7 +733,7 @@ class IPConnection
                 }
 
                 $now = microtime(true);
-                $this->lastDisconnectProbe = $now;
+                $this->nextDisconnectProbe = $now + self::DISCONNECT_PROBE_INTERVAL;
             }
 
             $read = array($this->socket);
@@ -838,6 +837,8 @@ class IPConnection
         $functionID = $header['functionID'];
         $sequenceNumber = ($header['sequenceNumberAndOptions'] >> 4) & 0x0F;
         $payload = substr($packet, 8);
+
+        $this->nextDisconnectProbe = microtime(true) + self::DISCONNECT_PROBE_INTERVAL;
 
         if ($sequenceNumber == 0 && $functionID == self::CALLBACK_ENUMERATE) {
             if (array_key_exists(self::CALLBACK_ENUMERATE, $this->registeredCallbacks)) {
