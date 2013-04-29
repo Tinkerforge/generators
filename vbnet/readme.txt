@@ -69,3 +69,5 @@ The project is now ready for a test, click:
 
 * Debug
 * Start Debugging
+
+Documentation for the API can be found at http://www.tinkerforge.com/en/doc/index.html

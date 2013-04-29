@@ -50,4 +50,4 @@ Project -> Add Existing Project... ->
 
 Now we are ready to go again!
 
-Documentation for the API can be found at http://www.tinkerforge.com/doc/index.html
+Documentation for the API can be found at http://www.tinkerforge.com/en/doc/index.html
