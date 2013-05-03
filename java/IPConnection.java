@@ -310,8 +310,10 @@ class DisconnectProbeThread extends Thread {
 
 	DisconnectProbeThread(IPConnection ipcon) {
 		super("Disconnect-Prober");
+
+		setDaemon(true);
 		this.ipcon = ipcon;
-		request = ipcon.createRequestPacket((byte)8, FUNCTION_DISCONNECT_PROBE, null).array();
+		this.request = ipcon.createRequestPacket((byte)8, FUNCTION_DISCONNECT_PROBE, null).array();
 	}
 
 	void shutdown() {

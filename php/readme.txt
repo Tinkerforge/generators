@@ -29,4 +29,4 @@ examples, i.e. instead of "require_once('Tinkerforge/IPConnection.php');" we
 use "require_once('IPConnection.php');". After that, the example can be executed
 again.
 
-Documentation for the API can be found at http://www.tinkerforge.com/doc/index.html
+Documentation for the API can be found at http://www.tinkerforge.com/en/doc/index.html

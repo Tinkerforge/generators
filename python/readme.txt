@@ -29,4 +29,4 @@ we have to remove the tinkerforge package from the examples, i.e. instead of
 "from ip_connection" and "from brick_stepper". After that, the example can be
 executed again.
 
-Documentation for the API can be found at http://www.tinkerforge.com/doc/index.html
+Documentation for the API can be found at http://www.tinkerforge.com/en/doc/index.html

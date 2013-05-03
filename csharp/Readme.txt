@@ -25,4 +25,4 @@ In this folder we can now call the C# compiler with the following parameters
 Or, alternatively add the DLL and the Example in an C# development environment
 of your choice (such as Visual Studio or Mono Develop).
 
-Documentation for the API can be found at http://www.tinkerforge.com/doc/index.html
+Documentation for the API can be found at http://www.tinkerforge.com/en/doc/index.html

@@ -28,4 +28,4 @@ and run it with the following parameters (1. Windows and 2. Linux/Mac OS)
 Or, alternatively add the JAR and the Example in an Java development environment
 of your choice (such as Eclipse or NetBeans).
 
-Documentation for the API can be found at http://www.tinkerforge.com/doc/index.html
+Documentation for the API can be found at http://www.tinkerforge.com/en/doc/index.html
