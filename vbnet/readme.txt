@@ -56,7 +56,7 @@ Now add Tinkerforge.dll as a reference to the project:
 * Select Tinkerforge.dll
 * Click OK
 
-Before the project can be tested Visual Studio needs to know th correct start
+Before the project can be tested Visual Studio needs to know the correct start
 object:
 
 * Right click on the project in Solution Explorer
