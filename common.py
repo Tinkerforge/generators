@@ -224,7 +224,11 @@ ausgeführt werden können ist :ref:`hier <{3}>` zu finden.
     return select_lang(su).format(device.get_display_name(), device.get_category(), hw_link, hw_test, title)
 
 def make_rst_examples(title_from_file, device, base_path, dirname,
-                      filename_prefix, filename_suffix, include_name):
+                      filename_prefix, filename_suffix, include_name,
+                      language=None):
+    if language is None:
+       language = dirname
+
     ex = {
     'en': """
 {0}
