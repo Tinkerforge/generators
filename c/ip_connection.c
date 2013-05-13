@@ -39,7 +39,7 @@
 	#pragma pack(1)
 	#define ATTRIBUTE_PACKED
 #elif defined __GNUC__
-	#define ATTRIBUTE_PACKED __attribute__((packed))
+	#define ATTRIBUTE_PACKED __attribute__((gcc_struct, packed))
 #else
 	#error unknown compiler, do not know how to enable struct packing
 #endif
