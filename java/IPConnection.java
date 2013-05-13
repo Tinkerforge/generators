@@ -848,7 +848,6 @@ public class IPConnection {
 			} catch(java.io.IOException e) {
 				e.printStackTrace();
 			}
-			in = null;
 		}
 
 		if(out != null) {
@@ -857,7 +856,6 @@ public class IPConnection {
 			} catch(java.io.IOException e) {
 				e.printStackTrace();
 			}
-			out = null;
 		}
 
 		if(socket != null) {
@@ -866,8 +864,11 @@ public class IPConnection {
 			} catch(java.io.IOException e) {
 				e.printStackTrace();
 			}
-			socket = null;
 		}
+
+		in = null;
+		out = null;
+		socket = null;
 	}
 
 	static long getUIDFromData(byte[] data) {
