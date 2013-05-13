@@ -282,12 +282,13 @@ namespace Tinkerforge
 			receiveFlag = false;
 
 			socketWriter.Close();
-			socketWriter = null;
 			socketReader.Close();
-			socketReader = null;
 			socketStream.Close();
-			socketStream = null;
 			socket.Close();
+
+			socketWriter = null;
+			socketReader = null;
+			socketStream = null;
 			socket = null;
 
 			if(receiveThread != null)
@@ -480,6 +481,10 @@ namespace Tinkerforge
 				{
 					return;
 				}
+				catch(NullReferenceException)
+				{
+					return;
+				}
 
 				if(length == 0)
 				{
@@ -547,12 +552,13 @@ namespace Tinkerforge
 
 								// destroy socket
 								socketWriter.Close();
-								socketWriter = null;
 								socketReader.Close();
-								socketReader = null;
 								socketStream.Close();
-								socketStream = null;
 								socket.Close();
+
+								socketWriter = null;
+								socketReader = null;
+								socketStream = null;
 								socket = null;
 							}
 						}
