@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 221,
     'name': ('Barometer', 'barometer', 'Barometer'),
@@ -561,3 +561,79 @@ gesetzt.
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetAveraging', 'set_averaging'),
+'elements': [('moving_average_pressure', 'uint8', 1, 'in'),
+             ('average_pressure', 'uint8', 1, 'in'),
+             ('average_temperature', 'uint8', 1, 'in')],
+'since_firmware': [2, 0, 1],
+'doc': ['af', {
+'en':
+"""
+Sets the different averaging parameters. It is possible to set
+the length of a normal averaging for the temperature and pressure,
+as well as an additional length of a 
+`moving average <http://en.wikipedia.org/wiki/Moving_average>`__ 
+for the pressure. The moving average is calculated from the normal 
+averages.  There is no moving average for the temperature.
+
+The maximum length for the pressure average is 10, for the
+temperature average is 255 and for the moving average is 25.
+
+Setting the all three parameters to 0 will turn the averaging
+completely off. If the averaging is off, there is lots of noise
+on the data, but the data is without delay. Thus we recommend
+to turn the averaging off if the Barometer Bricklet data is
+to be used for sensor fusion with other sensors.
+
+The default values are 10 for the normal averages and 25 for the
+moving average.
+""",
+'de':
+"""
+Setzt die unterschiedlichen Averaging-Parameter (Mittelwertbildung).
+Es ist möglich die Länge des Mittelwerts für Temperatur und
+Luftdruck anzugeben. Zusätzlich gibt kann die Länge für
+einen 
+`gleitenden Mittelwert <http://de.wikipedia.org/wiki/Gleitender_Mittelwert>`__ 
+für den Luftdruck angegeben werden. Der gleitende Mittelwert wird
+mit den Werten des normalen Mittelwerts berechnet. Es gibt keinen
+gleitenden Mittelwert für die Temperatur.
+
+Die maximale länge des Luftdruckmittelwerts ist 10, des
+Temperaturmittelwerts 255 und des gleitenden Mittelwertes 25.
+
+Wenn alle drei Parameter auf 0 gesetzt werden, ist das Averaging
+komplett aus. In diesem Fall gibt es viel Rauschen auf den Daten,
+allerdings sind die Daten dann ohne Verzögerung. Wir empfehlen
+das Averaging auszustellen wenn die Daten des Barometer Bricklets
+zusammen mit anderen Sensordaten fusioniert werden sollen.
+
+Der Standardwert ist 10 für die normalen Mittelwerte und 25 für
+den gleitenden Mittelwert
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetAveraging', 'get_averaging'),
+'elements': [('moving_average_pressure', 'uint8', 1, 'out'),
+             ('average_pressure', 'uint8', 1, 'out'),
+             ('average_temperature', 'uint8', 1, 'out')],
+'since_firmware': [2, 0, 1],
+'doc': ['af', {
+'en':
+"""
+Returns the averaging configuration as set by :func:`SetAveraging`.
+""",
+'de':
+"""
+Gibt die Averaging-Konfiguration zurück, wie von :func:`SetAveraging`
+gesetzt.
+"""
+}]
+})
+
