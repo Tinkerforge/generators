@@ -56,3 +56,7 @@
        Fix race condition in callback handling that could result in closing the wrong socket
        Don't ignore socket errors when sending request packets
        Send a request packet at least every 10sec to improve WIFI disconnect detection
+2.0.7: Add Ethernet Extension support to Master Brick API
+       Only send disconnect probe if there was no packet send or received for 5s
+       Fix deserialization of chars in Python 3
+       Add IMU orientation and Barometer averaging API
