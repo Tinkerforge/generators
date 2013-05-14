@@ -39,7 +39,7 @@
 	#pragma pack(1)
 	#define ATTRIBUTE_PACKED
 #elif defined __GNUC__
-	#define ATTRIBUTE_PACKED __attribute__((packed))
+	#define ATTRIBUTE_PACKED __attribute__((gcc_struct, packed))
 #else
 	#error unknown compiler, do not know how to enable struct packing
 #endif
@@ -1896,7 +1896,7 @@ int16_t leconvert_int16_from(int16_t little) {
 	if (native_endian.value == LITTLE_ENDIAN) {
 		return little;
 	} else {
-		return *(int16_t *)leconvert_swap32(&little);
+		return *(int16_t *)leconvert_swap16(&little);
 	}
 }
 
@@ -1904,7 +1904,7 @@ uint16_t leconvert_uint16_from(uint16_t little) {
 	if (native_endian.value == LITTLE_ENDIAN) {
 		return little;
 	} else {
-		return *(uint16_t *)leconvert_swap32(&little);
+		return *(uint16_t *)leconvert_swap16(&little);
 	}
 }
 
