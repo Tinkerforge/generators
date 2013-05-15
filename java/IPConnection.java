@@ -9,7 +9,6 @@
 package com.tinkerforge;
 
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.Hashtable;
 import java.util.ArrayList;
@@ -303,7 +302,7 @@ class CallbackThread extends Thread {
 class DisconnectProbeThread extends Thread {
 	IPConnection ipcon = null;
 	byte[] request = null;
-	SynchronousQueue<Boolean> queue = new SynchronousQueue<Boolean>();
+	LinkedBlockingQueue<Boolean> queue = new LinkedBlockingQueue<Boolean>();
 
 	final static byte FUNCTION_DISCONNECT_PROBE = (byte)128;
 	final static int DISCONNECT_PROBE_INTERVAL = 5000;

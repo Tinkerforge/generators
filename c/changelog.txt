@@ -52,3 +52,9 @@
        Fix race condition in callback handling that could result in closing the wrong socket
        Don't ignore socket errors when sending request packets
        Send a request packet at least every 10sec to improve WIFI disconnect detection
+2.0.6: Add Ethernet Extension support to Master Brick API
+       Avoid non-portable usage of bit fields
+       Only send disconnect probe if there was no packet send or received for 5s
+       Fix [u]int16 big endian handling
+       Workaround struct packing bug in GCC 4.7
+       Add IMU orientation and Barometer averaging API

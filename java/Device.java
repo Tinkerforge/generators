@@ -9,7 +9,7 @@
 package com.tinkerforge;
 
 import java.util.Arrays;
-import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 public abstract class Device {
@@ -19,7 +19,7 @@ public abstract class Device {
 	byte expectedResponseFunctionID = 0; // protected by requestMutex
 	byte expectedResponseSequenceNumber = 0; // protected by requestMutex
 	private Object requestMutex = new Object();
-	SynchronousQueue<byte[]> responseQueue = new SynchronousQueue<byte[]>();
+	LinkedBlockingQueue<byte[]> responseQueue = new LinkedBlockingQueue<byte[]>();
 	IPConnection ipcon = null;
 	CallbackListener[] callbacks = new CallbackListener[256];
 

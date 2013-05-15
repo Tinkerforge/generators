@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
     'category': 'Brick',
     'device_identifier': 16,
     'name': ('IMU', 'imu', 'IMU'),
@@ -943,6 +943,83 @@ for details.
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetQuaternionPeriod`,
 ausgelöst. Die :word:`parameters` sind die Orientierung (x, y, z, w) des
 IMU Brick in Quaternionen. Siehe :func:`GetQuaternion` für Details.
+"""
+}] 
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('OrientationCalculationOn', 'orientation_calculation_on'), 
+'elements': [],
+'since_firmware': [2, 0, 2],
+'doc': ['af', {
+'en':
+"""
+Turns the orientation calculation of the IMU Brick on.
+
+As default the calculation is on.
+""",
+'de':
+"""
+Aktiviert die Orientierungsberechnungen des IMU Brick.
+
+Standardmäßig sind die Berechnungen an.
+"""
+}] 
+})
+    
+com['packets'].append({
+'type': 'function',
+'name': ('OrientationCalculationOff', 'orientation_calculation_off'), 
+'elements': [],
+'since_firmware': [2, 0, 2],
+'doc': ['af', {
+'en':
+"""
+Turns the orientation calculation of the IMU Brick off.
+
+If the calculation is off, :func:`GetOrientation` will return
+the last calculated value until the calculation is turned on again.
+
+The trigonometric functions that are needed to calculate the orientation 
+are very expensive. We recommend to turn the orientation calculation
+off if the orientation is not needed, to free calculation time for the
+sensor fusion algorithm.
+
+As default the calculation is on.
+""",
+'de':
+"""
+Deaktiviert die Orientierungsberechnungen des IMU Brick.
+
+Wenn die Berechnungen deaktiviert sind, gibt :func:`GetOrientation` solange
+den letzten berechneten Wer zurück bis die Berechnungen wieder
+aktiviert werden.
+
+Die trigonometrischen Funktionen die zur Brechnung der Orientierung
+benötigt werden sind sehr teuer. Wir empfehlen die Orientierungsberechnungen
+zu deaktivieren wenn sie nicht benötigt werden. Dadurch wird mehr
+Rechenzeit für den Sensorfusions-Algorithmus freigegeben.
+
+Standardmäßig sind die Berechnungen an.
+"""
+}] 
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('IsOrientationCalculationOn', 'is_orientation_calculation_on'), 
+'elements': [('orientation_calculation_on', 'bool', 1, 'out')],
+'since_firmware': [2, 0, 2],
+'doc': ['af', {
+'en':
+"""
+Returns *true* if the orientation calculation of the IMU Brick
+is on, *false* otherwise.
+""",
+'de':
+"""
+Gibt zurück ob die Orientierungsberechnungen des IMU Brick aktiv sind. 
 """
 }] 
 })

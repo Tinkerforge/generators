@@ -1894,18 +1894,18 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetUSBVoltageCallbackPeriod`. The :word:`parameter` is the voltage of the
-sensor.
+:func:`SetUSBVoltageCallbackPeriod`. The :word:`parameter` is the USB voltage
+in mV.
 
-:func:`USBVoltage` is only triggered if the voltage has changed since the
+:func:`USBVoltage` is only triggered if the USB voltage has changed since the
 last triggering.
 """,
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetUSBVoltageCallbackPeriod`,
-ausgelöst. Der :word:`parameter` ist die Spannung des Sensors.
+ausgelöst. Der :word:`parameter` ist die USB Spannung in mV.
 
-:func:`USBVoltage` wird nur ausgelöst wenn sich die Spannung seit der
+:func:`USBVoltage` wird nur ausgelöst wenn sich die USB Spannung seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -1921,7 +1921,7 @@ com['packets'].append({
 """
 This callback is triggered when the threshold as set by
 :func:`SetStackCurrentCallbackThreshold` is reached.
-The :word:`parameter` is the current of the sensor.
+The :word:`parameter` is the stack current in mA.
 
 If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
@@ -1930,7 +1930,7 @@ with the period as set by :func:`SetDebouncePeriod`.
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
 :func:`SetStackCurrentCallbackThreshold` gesetzt, erreicht wird.
-Der :word:`parameter` ist die Stromstärke des Sensors.
+Der :word:`parameter` ist der Stromverbrauch des Stapels in mA.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
 mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
@@ -1948,7 +1948,7 @@ com['packets'].append({
 """
 This callback is triggered when the threshold as set by
 :func:`SetStackVoltageCallbackThreshold` is reached.
-The :word:`parameter` is the voltage of the sensor.
+The :word:`parameter` is the stack voltage in mV.
 
 If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
@@ -1957,7 +1957,7 @@ with the period as set by :func:`SetDebouncePeriod`.
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
 :func:`SetStackVoltageCallbackThreshold` gesetzt, erreicht wird.
-Der :word:`parameter` ist die Spannung des Sensors.
+Der :word:`parameter` ist die Spannung des Stapels in mV.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
 mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
