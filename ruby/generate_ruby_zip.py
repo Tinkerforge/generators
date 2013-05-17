@@ -99,6 +99,7 @@ spec = Gem::Specification.new do |s|
   s.files = Dir['lib/*.rb'] + Dir['lib/tinkerforge/*.rb']
   s.has_rdoc = true
   s.rdoc_options << '--title' <<  'Tinkerforge'
+  s.license = 'Public Domain'
   s.author = "Matthias Bolte"
   s.email = "matthias@tinkerforge.com"
   s.homepage = "http://www.tinkerforge.com/"
@@ -115,6 +116,7 @@ end
 
     # Remove build stuff
     os.remove('/tmp/generator/gem/source/tinkerforge.gemspec')
+    shutil.copy('/tmp/generator/gem/source/tinkerforge-{0}.{1}.{2}.gem'.format(*version), path)
     shutil.move('/tmp/generator/gem/source/tinkerforge-{0}.{1}.{2}.gem'.format(*version),
                 '/tmp/generator/gem/tinkerforge.gem')
     shutil.move('/tmp/generator/gem/source/lib/tinkerforge.rb',
