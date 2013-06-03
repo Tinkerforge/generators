@@ -70,6 +70,27 @@ typedef struct {
 #endif
 #undef ATTRIBUTE_PACKED
 
+#ifndef __cplusplus
+	#ifdef __GNUC__
+		#ifndef __GNUC_PREREQ
+			#define __GNUC_PREREQ(major, minor) \
+				((((__GNUC__) << 16) + (__GNUC_MINOR__)) >= (((major) << 16) + (minor)))
+		#endif
+		#if __GNUC_PREREQ(4, 6)
+			#define STATIC_ASSERT(condition, message) \
+				_Static_assert(condition, message)
+		#else
+			#define STATIC_ASSERT(condition, message) // FIXME
+		#endif
+	#else
+		#define STATIC_ASSERT(condition, message) // FIXME
+	#endif
+
+	STATIC_ASSERT(sizeof(PacketHeader) == 8, "PacketHeader has invalid size");
+	STATIC_ASSERT(sizeof(Packet) == 80, "Packet has invalid size");
+	STATIC_ASSERT(sizeof(EnumerateCallback) == 34, "EnumerateCallback has invalid size");
+#endif
+
 /*****************************************************************************
  *
  *                                 BASE58
