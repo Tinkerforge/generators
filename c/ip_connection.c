@@ -1263,13 +1263,13 @@ static void ipcon_handle_response(IPConnection *ipcon, Packet *response) {
 static void ipcon_receive_loop(void *opaque) {
 	IPConnection *ipcon = (IPConnection *)opaque;
 	uint64_t socket_id = ipcon->socket_id;
-	uint8_t pending_data[sizeof(Packet) * 10] = { 0 };
+	Packet pending_data[10];
 	int pending_length = 0;
 	int length;
 	uint8_t disconnect_reason;
 
 	while (ipcon->receive_flag) {
-		length = socket_receive(ipcon->socket, pending_data + pending_length,
+		length = socket_receive(ipcon->socket, (uint8_t *)pending_data + pending_length,
 		                        sizeof(pending_data) - pending_length);
 
 		if (!ipcon->receive_flag) {
@@ -1299,14 +1299,14 @@ static void ipcon_receive_loop(void *opaque) {
 				break;
 			}
 
-			length = ((PacketHeader *)pending_data)->length;
+			length = pending_data[0].header.length;
 
 			if (pending_length < length) {
 				// wait for complete packet
 				break;
 			}
 
-			ipcon_handle_response(ipcon, (Packet *)pending_data);
+			ipcon_handle_response(ipcon, pending_data);
 
 			memmove(pending_data, pending_data + length, pending_length - length);
 			pending_length -= length;
