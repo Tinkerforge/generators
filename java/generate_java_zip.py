@@ -80,7 +80,7 @@ def generate(path):
     shutil.copy(path + '/AlreadyConnectedException.java', '/tmp/generator/jar/source/com/tinkerforge')
     shutil.copy(path + '/NotConnectedException.java', '/tmp/generator/jar/source/com/tinkerforge')
     shutil.copy(path + '/changelog.txt', '/tmp/generator/jar')
-    shutil.copy(path + '/Readme.txt', '/tmp/generator/jar')
+    shutil.copy(path + '/readme.txt', '/tmp/generator/jar')
 
     # Make Manifest
     version = common.get_changelog_version(path)
