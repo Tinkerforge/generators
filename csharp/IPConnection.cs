@@ -436,7 +436,7 @@ namespace Tinkerforge
 
 			AutoResetEvent connectedEvent = new AutoResetEvent(false);
 			args.Completed += new EventHandler<SocketAsyncEventArgs>((o, e) => { connectedEvent.Set(); });
-			bool connectPending = Socket.ConnectAsync(args);
+			bool connectPending = socket.ConnectAsync(args);
 
 			if (connectPending)
 			{
@@ -1667,11 +1667,11 @@ namespace Tinkerforge
 		}
 	}
 #if WINDOWS_PHONE
-	class NetworkStream : Stream
+	internal class NetworkStream : Stream
 	{
 		private Socket socket;
 
-		private BlockingQueue ReceiveQueue = new BlockingQueue();
+		private BlockingQueue<byte[]> ReceiveQueue = new BlockingQueue<byte[]>();
 		private byte[] ImmediateReadBuffer;
 		private int ImmediateReadOffset;
 
