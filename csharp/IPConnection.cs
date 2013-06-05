@@ -69,8 +69,6 @@ namespace Tinkerforge
 		Socket socket = null;
 		internal object socketLock = new object();
 		NetworkStream socketStream = null; // protected by socketLock
-		BinaryWriter socketWriter = null; // protected by socketLock
-		BinaryReader socketReader = null; // protected by socketLock
 		long socketID = 0; // protected by socketLock
 		Thread receiveThread = null;
 		bool receiveFlag = true;
@@ -186,8 +184,6 @@ namespace Tinkerforge
 			}
 
 			socketStream = new NetworkStream(socket);
-			socketWriter = new BinaryWriter(socketStream);
-			socketReader = new BinaryReader(socketStream);
 			++socketID;
 
 			// create disconnect probe thread
@@ -287,13 +283,10 @@ namespace Tinkerforge
 
 			receiveFlag = false;
 
-			socketWriter.Close();
-			socketReader.Close();
 			socketStream.Close();
+			socket.Shutdown(SocketShutdown.Both);
 			socket.Close();
 
-			socketWriter = null;
-			socketReader = null;
 			socketStream = null;
 			socket = null;
 
@@ -467,7 +460,7 @@ namespace Tinkerforge
 
 				try
 				{
-					length = socketReader.Read(pendingData, pendingLength,
+					length = socketStream.Read(pendingData, pendingLength,
 					                           pendingData.Length - pendingLength);
 				}
 				catch (IOException e)
@@ -558,13 +551,9 @@ namespace Tinkerforge
 								disconnectProbeThread = null;
 
 								// destroy socket
-								socketWriter.Close();
-								socketReader.Close();
 								socketStream.Close();
 								socket.Close();
 
-								socketWriter = null;
-								socketReader = null;
 								socketStream = null;
 								socket = null;
 							}
@@ -724,7 +713,7 @@ namespace Tinkerforge
 					{
 						try
 						{
-							socketWriter.Write(request, 0, request.Length);
+							socketStream.Write(request, 0, request.Length);
 						}
 						catch (IOException e)
 						{
@@ -846,7 +835,7 @@ namespace Tinkerforge
 
 				try
 				{
-					socketWriter.Write(request, 0, request.Length);
+					socketStream.Write(request, 0, request.Length);
 				}
 				catch (IOException e)
 				{
