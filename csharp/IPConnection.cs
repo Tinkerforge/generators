@@ -74,7 +74,7 @@ namespace Tinkerforge
 		bool receiveFlag = true;
 		CallbackContext callback = null;
 		internal Dictionary<int, Device> devices = new Dictionary<int, Device>();
-		Semaphore waiter = new Semaphore(0, Int32.MaxValue);
+		BlockingQueue<bool> waiter = new BlockingQueue<bool>();
 
 		bool disconnectProbeFlag = false;
 		BlockingQueue<bool> disconnectProbeQueue = null;
@@ -398,7 +398,9 @@ namespace Tinkerforge
 		/// </summary>
 		public void Wait()
 		{
-			waiter.WaitOne();
+			bool value;
+
+			waiter.TryDequeue(out value);
 		}
 
 		/// <summary>
@@ -409,7 +411,7 @@ namespace Tinkerforge
 		/// </summary>
 		public void Unwait()
 		{
-			waiter.Release();
+			waiter.Enqueue(true);
 		}
 
 		internal int GetNextSequenceNumber()
