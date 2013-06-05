@@ -1714,7 +1714,14 @@ namespace Tinkerforge
 
 		private void OnIOCompletion(object sender, SocketAsyncEventArgs e)
 		{
-			if (e.SocketError != SocketError.Success)
+			if (e.SocketError == SocketError.OperationAborted)
+			{
+				// make Read() report an socket error
+				byte[] buffer = new byte[0];
+				ReceiveQueue.Enqueue(buffer);
+				return;
+			}
+			else if (e.SocketError != SocketError.Success)
 			{
 				//TODO: error handling
 			}
@@ -1743,6 +1750,15 @@ namespace Tinkerforge
 			}
 		}
 
+		public override void Close()
+		{
+			base.Close();
+
+			// make Read() report an socket error
+			byte[] buffer = new byte[0];
+			ReceiveQueue.Enqueue(buffer);
+		}
+
 		public override int Read(byte[] buffer, int offset, int count)
 		{
 			int readLength;
@@ -1751,6 +1767,11 @@ namespace Tinkerforge
 				if (ImmediateReadBuffer == null)
 				{
 					ReceiveQueue.TryDequeue(out ImmediateReadBuffer);
+
+					if (ImmediateReadBuffer.Length == 0)
+					{
+						throw new IOException("Read failure", new SocketException(10004 /* WSAEINTR */));
+					}
 				}
 
 				readLength = Math.Min(count, ImmediateReadBuffer.Length - ImmediateReadOffset);
