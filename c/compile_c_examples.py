@@ -55,6 +55,7 @@ class CExamplesCompiler(common.ExamplesCompiler):
         args += ['-Wall',
                  '-Wextra',
                  '-Werror',
+                 '-O2',
                  '-pthread',
                  '-I/tmp/compiler/bindings',
                  '-o',
