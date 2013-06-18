@@ -72,7 +72,7 @@ def generate(path):
 
     shutil.copy(path + '/IPConnection.cs', '/tmp/generator/dll/source/Tinkerforge')
     shutil.copy(path + '/changelog.txt', '/tmp/generator/dll')
-    shutil.copy(path + '/Readme.txt', '/tmp/generator/dll')
+    shutil.copy(path + '/readme.txt', '/tmp/generator/dll')
 
     # Write AssemblyInfo
     version = common.get_changelog_version(path)

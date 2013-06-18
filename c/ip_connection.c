@@ -39,7 +39,13 @@
 	#pragma pack(1)
 	#define ATTRIBUTE_PACKED
 #elif defined __GNUC__
-	#define ATTRIBUTE_PACKED __attribute__((gcc_struct, packed))
+	#ifdef _WIN32
+		// workaround struct packing bug in GCC 4.7 on Windows
+		// http://gcc.gnu.org/bugzilla/show_bug.cgi?id=52991
+		#define ATTRIBUTE_PACKED __attribute__((gcc_struct, packed))
+	#else
+		#define ATTRIBUTE_PACKED __attribute__((packed))
+	#endif
 #else
 	#error unknown compiler, do not know how to enable struct packing
 #endif
@@ -63,6 +69,27 @@ typedef struct {
 	#pragma pack(pop)
 #endif
 #undef ATTRIBUTE_PACKED
+
+#ifndef __cplusplus
+	#ifdef __GNUC__
+		#ifndef __GNUC_PREREQ
+			#define __GNUC_PREREQ(major, minor) \
+				((((__GNUC__) << 16) + (__GNUC_MINOR__)) >= (((major) << 16) + (minor)))
+		#endif
+		#if __GNUC_PREREQ(4, 6)
+			#define STATIC_ASSERT(condition, message) \
+				_Static_assert(condition, message)
+		#else
+			#define STATIC_ASSERT(condition, message) // FIXME
+		#endif
+	#else
+		#define STATIC_ASSERT(condition, message) // FIXME
+	#endif
+
+	STATIC_ASSERT(sizeof(PacketHeader) == 8, "PacketHeader has invalid size");
+	STATIC_ASSERT(sizeof(Packet) == 80, "Packet has invalid size");
+	STATIC_ASSERT(sizeof(EnumerateCallback) == 34, "EnumerateCallback has invalid size");
+#endif
 
 /*****************************************************************************
  *
@@ -1236,13 +1263,13 @@ static void ipcon_handle_response(IPConnection *ipcon, Packet *response) {
 static void ipcon_receive_loop(void *opaque) {
 	IPConnection *ipcon = (IPConnection *)opaque;
 	uint64_t socket_id = ipcon->socket_id;
-	uint8_t pending_data[sizeof(Packet) * 10] = { 0 };
+	Packet pending_data[10];
 	int pending_length = 0;
 	int length;
 	uint8_t disconnect_reason;
 
 	while (ipcon->receive_flag) {
-		length = socket_receive(ipcon->socket, pending_data + pending_length,
+		length = socket_receive(ipcon->socket, (uint8_t *)pending_data + pending_length,
 		                        sizeof(pending_data) - pending_length);
 
 		if (!ipcon->receive_flag) {
@@ -1272,14 +1299,14 @@ static void ipcon_receive_loop(void *opaque) {
 				break;
 			}
 
-			length = ((PacketHeader *)pending_data)->length;
+			length = pending_data[0].header.length;
 
 			if (pending_length < length) {
 				// wait for complete packet
 				break;
 			}
 
-			ipcon_handle_response(ipcon, (Packet *)pending_data);
+			ipcon_handle_response(ipcon, pending_data);
 
 			memmove(pending_data, pending_data + length, pending_length - length);
 			pending_length -= length;

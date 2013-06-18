@@ -2,8 +2,10 @@ This zip contains a Ruby GEM with the bindings for all Tinkerforge Bricks and
 Bricklets (tinkerforge.gem), the source of the GEM (in source/) and all available
 Ruby examples (in examples/).
 
-You can install the GEM with the gem tool ("gem install tinkerforge.egg").
-After that you can use the examples as they are.
+You can install the GEM with the gem tool ("gem install tinkerforge.gem").
+The GEM is also hosted on https://rubygems.org/gems/tinkerforge. So you can
+alternatively install it from there ("gem install tinkerforge"). After that you
+can use the examples as they are.
 
 If you can't or don't want to use the GEM, you can also use the source directly,
 just create a folder for your project and copy the tinkerforge folder from
