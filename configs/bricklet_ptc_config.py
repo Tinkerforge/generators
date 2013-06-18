@@ -21,7 +21,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the temperature of connected sensor. The value
+has a range of -246 to 849 °C and is given in °C/100,
+e.g. a value of 4223 means that a temperature of 42.23 °C is measured.
 
 If you want to get the temperature periodically, it is recommended 
 to use the callback :func:`Temperature` and set the period with 
@@ -29,7 +31,9 @@ to use the callback :func:`Temperature` and set the period with
 """,
 'de':
 """
-TODO
+Gibt die Temperatur des verbundenen Sensors zurück. Der Wertebereich ist von
+-246 bis 849 °C und wird in °C/100 angegeben, z.B. bedeutet 
+ein Wert von 4223 eine gemessene Temperatur von 42,23 °C.
 
 Wenn die Temperatur periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Temperature` zu nutzen und die Periode mit 
@@ -46,7 +50,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-TODO
+Returns the value as measured by the MAX31865 precision delta-sigma ADC.
+
+The value can be converted with the following formulas:
+
+* pt100:  resistance = value*390/32768
+* pt1000: resistance = value*3900/32768
 
 If you want to get the resistance periodically, it is recommended 
 to use the callback :func:`Resistance` and set the period with 
@@ -54,7 +63,12 @@ to use the callback :func:`Resistance` and set the period with
 """,
 'de':
 """
-TODO
+Gibt den Wert zurück, wie vom "MAX31865 precision delta-sigma ADC" berechnet.
+
+Der Wert kann mit den folgenden Formeln in einen Widerstand konvertiert werden:
+
+* pt100:  Wiederstand = Wert*390/32768
+* pt1000: Wiederstand = Wert*3900/32768
 
 Wenn der Widerstand periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Resistance` zu nutzen und die Periode mit 
@@ -373,7 +387,7 @@ com['packets'].append({
 """
 This callback is triggered periodically with the period that is set by
 :func:`SetTemperatureCallbackPeriod`. The :word:`parameter` is the temperature
-of the sensor.
+of the commected sensor.
 
 :func:`Temperature` is only triggered if the temperature has changed since the
 last triggering.
@@ -381,7 +395,7 @@ last triggering.
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetTemperatureCallbackPeriod`,
-ausgelöst. Der :word:`parameter` ist die Temperatur des Sensors.
+ausgelöst. Der :word:`parameter` ist die Temperatur des verbundenen Sensors.
 
 :func:`Temperature` wird nur ausgelöst wenn sich die Temperatur seit der
 letzten Auslösung geändert hat.
@@ -399,7 +413,7 @@ com['packets'].append({
 """
 This callback is triggered when the threshold as set by
 :func:`SetTemperatureCallbackThreshold` is reached.
-The :word:`parameter` is the temperature of the sensor.
+The :word:`parameter` is the temperature of the connected sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
@@ -408,7 +422,7 @@ with the period as set by :func:`SetDebouncePeriod`.
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
 :func:`SetTemperatureCallbackThreshold` gesetzt, erreicht wird.
-Der :word:`parameter` ist die Temperatur des Sensors.
+Der :word:`parameter` ist die Temperatur des verbundenen Sensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
 mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
@@ -426,7 +440,7 @@ com['packets'].append({
 """
 This callback is triggered periodically with the period that is set by
 :func:`SetResistanceCallbackPeriod`. The :word:`parameter` is the resistance
-of the sensor.
+of the connected sensor.
 
 :func:`Resistance` is only triggered if the resistance has changed since the
 last triggering.
@@ -434,7 +448,7 @@ last triggering.
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetResistanceCallbackPeriod`,
-ausgelöst. Der :word:`parameter` ist der Widerstand des Sensors.
+ausgelöst. Der :word:`parameter` ist der Widerstand des verbundenen Sensors.
 
 :func:`Resistance` wird nur ausgelöst wenn sich der Widerstand seit der
 letzten Auslösung geändert hat.
@@ -452,7 +466,7 @@ com['packets'].append({
 """
 This callback is triggered when the threshold as set by
 :func:`SetResistanceCallbackThreshold` is reached.
-The :word:`parameter` is the resistance of the sensor.
+The :word:`parameter` is the resistance of the connected sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
@@ -461,7 +475,7 @@ with the period as set by :func:`SetDebouncePeriod`.
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
 :func:`SetResistanceCallbackThreshold` gesetzt, erreicht wird.
-Der :word:`parameter` ist der Widerstand des Sensors.
+Der :word:`parameter` ist der Widerstand des verbundenen Sensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
 mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
@@ -478,10 +492,21 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-TODO: Setting noise rejection filter frequency (50 or 60hz), default 50hz).
+Sets the noise rejection filter to either 50Hz (0) or 60Hz (1).
+Noise from 50Hz or 60Hz power sources (including
+harmonics of the ac power’s fundamental frequency) is
+attenuated by 82dB.
+
+Default value is 0 = 50Hz.
 """,
 'de':
 """
+Setzt den Störungsfilter auf entweder 50Hz (0) oder 60Hz (1).
+Störungen von 50Hz oder 60Hz Stromquellen (inklusive
+Oberwellen der Stromquellen-Grundfrequenz) werden
+um 82dB abgeschwächt.
+
+Der Standardwert ist 0 = 50Hz.
 """
 }]
 })
@@ -518,7 +543,7 @@ Returns *true* if the sensor is connected correctly.
 
 If this function
 returns *false*, there is either no pt100 or pt1000 sensor connected, 
-the sensor is connect incorrectly or the sensor itself is faulty.
+the sensor is connected incorrectly or the sensor itself is faulty.
 """,
 'de':
 """
@@ -540,11 +565,24 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO: Default: 1 (3 wire)
+Sets the wire mode. Possible values are 2- or 4-wire (0) and
+3-wire (1).
+
+Set this to 0 if you have a 2-wire or 4-wire sensor. Set this
+to 1 if you have a 3-wire sensor.
+
+The default value is 1 = 3-wire.
 """,
 'de':
 """
-TODO
+Setzt den "wire mode". Mögliche Werte sind 2- oder 4-Leiter (0) und
+3-Leiter (1).
+
+Der "wirde mode" muss auf 0 gesetzt werden wenn ein 2-Leiter oder
+4-Leiter Sensor verwendet wird. Er muss auf 1 gesetzt werden wenn
+ein 3-Leiter Sensor genutzt wird.
+
+Der Standardwert ist 1 = 3-Leiter.
 """
 }]
 })
