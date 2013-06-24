@@ -559,30 +559,26 @@ verbunden oder der Sensor selbst ist fehlerhaft.
 com['packets'].append({
 'type': 'function',
 'name': ('SetWireMode', 'set_wire_mode'), 
-'elements': [('mode', 'uint8', 1, 'in', ('WireMode', 'wire_mode', [('2Or4', '2or4', 0),
-                                                                   ('3', '3', 1)]))],
+'elements': [('mode', 'uint8', 1, 'in', ('WireMode', 'wire_mode', [('2', '2', 2),
+                                                                   ('3', '3', 3),
+                                                                   ('4', '4', 4)]))],
 'since_firmware': [1, 0, 0], 
 'doc': ['bf', {
 'en':
 """
-Sets the wire mode. Possible values are 2- or 4-wire (0) and
-3-wire (1).
+Sets the wire mode. Possible values are 2, 3 und 4.
 
-Set this to 0 if you have a 2-wire or 4-wire sensor. Set this
-to 1 if you have a 3-wire sensor.
+The values correspond to 2-, 3- and 4-wire sensors.
 
-The default value is 1 = 3-wire.
+The default value is 2 = 2-wire.
 """,
 'de':
 """
-Setzt den "wire mode". Mögliche Werte sind 2- oder 4-Leiter (0) und
-3-Leiter (1).
+Setzt den "wire mode". Mögliche Werte sind 2, 3 und 4
 
-Der "wirde mode" muss auf 0 gesetzt werden wenn ein 2-Leiter oder
-4-Leiter Sensor verwendet wird. Er muss auf 1 gesetzt werden wenn
-ein 3-Leiter Sensor genutzt wird.
+Der Wert entspricht 2-, 3- und 4-Leiter-Sensoren.
 
-Der Standardwert ist 1 = 3-Leiter.
+Der Standardwert ist 2 = 2-Leiter.
 """
 }]
 })
@@ -590,8 +586,9 @@ Der Standardwert ist 1 = 3-Leiter.
 com['packets'].append({
 'type': 'function',
 'name': ('GetWireMode', 'get_wire_mode'), 
-'elements': [('mode', 'uint8', 1, 'out', ('WireMode', 'wire_mode', [('2Or4', '2or4', 0),
-                                                                    ('3', '3', 1)]))],
+'elements': [('mode', 'uint8', 1, 'out', ('WireMode', 'wire_mode', [('2', '2', 2),
+                                                                    ('3', '3', 3),
+                                                                    ('4', '4', 4)]))],
 'since_firmware': [1, 0, 0], 
 'doc': ['bf', {
 'en':
