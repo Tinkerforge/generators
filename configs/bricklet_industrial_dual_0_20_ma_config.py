@@ -1,0 +1,359 @@
+# -*- coding: utf-8 -*-
+
+# Industrial Dual 0-20mA Bricklet communication config
+
+com = {
+    'author': 'Olaf Lüke <olaf@tinkerforge.com>',
+    'api_version': [2, 0, 0],
+    'category': 'Bricklet',
+    'device_identifier': 228,
+    'name': ('IndustrialDual020mA', 'industrial_dual_0_20_ma', 'Industrial Dual 0-20mA'), 
+    'manufacturer': 'Tinkerforge',
+    'description': 'Device for sensing two currents between 0 and 20mA (IEC 60381-1)',
+    'packets': []
+}
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetCurrent', 'get_current'), 
+'elements': [('sensor', 'uint8', 1, 'in'),
+             ('current', 'int32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Returns the current of the sensor. The value is in nA
+and between 0nA and 22505322nA (22.5mA).
+
+It is possible to detect if an IEC 60381-1 compatible sensor is connected
+and if it works probably.
+
+If the returned current is below 4mA, there is likely no sensor connected
+or the sensor may be defect. If the returned current is over 20mA, there might
+be a short circuit or the sensor may be defect.
+
+If you want to get the current periodically, it is recommended to use the
+callback :func:`Current` and set the period with 
+:func:`SetCurrentCallbackPeriod`.
+""",
+'de':
+"""
+Gibt die gemessenen Stromstärke des Sensors zurück. Der Wert ist in nA und im
+Bereich von 0nA bis 22505322nA (22.5mA).
+
+Es ist möglich zu erkennen ob ein 60381-1-kompatibler Sensor angschlossen
+ist und ob er funktionsfähig ist.
+
+Falls die zurückgegebene Stromstärke kleiner als 4mA ist, ist wahrscheinlich
+kein Sensor angeschlossen oder der Sensor ist defekt. Falls die zurückgegebene
+Stromstärke über 20mA ist, besteht entweder ein Kurzschluss oder der Sensor
+ist defekt. Somit ist erkennbar ob ein Sensor angeschlossen und funktionsfähig ist.
+
+Wenn die Stromstärke periodisch abgefragt werden soll, wird empfohlen
+den Callback :func:`Current` zu nutzen und die Periode mit 
+:func:`SetCurrentCallbackPeriod` vorzugeben.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetCurrentCallbackPeriod', 'set_current_callback_period'), 
+'elements': [('sensor', 'uint8', 1, 'in'),
+             ('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Sets the period in ms with which the :func:`Current` callback is triggered
+periodically for the given sensor. A value of 0 turns the callback off.
+
+:func:`Current` is only triggered if the current has changed since the
+last triggering.
+
+The default value is 0.
+""",
+'de':
+"""
+Setzt die Periode in ms mit welcher der :func:`Current` Callback für den
+übergebenen Sensor ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+:func:`Current` wird nur ausgelöst wenn sich die Stromstärke seit der
+letzten Auslösung geändert hat.
+
+Der Standardwert ist 0. 
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetCurrentCallbackPeriod', 'get_current_callback_period'), 
+'elements': [('sensor', 'uint8', 1, 'in'),
+             ('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Returns the period as set by :func:`SetCurrentCallbackPeriod`.
+""",
+'de':
+"""
+Gibt die Periode zurück, wie von :func:`SetCurrentCallbackPeriod`
+gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetCurrentCallbackThreshold', 'set_current_callback_threshold'), 
+'elements': [('sensor', 'uint8', 1, 'in'),
+             ('option', 'char', 1, 'in', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
+                                                                                  ('Outside', 'outside', 'o'),
+                                                                                  ('Inside', 'inside', 'i'),
+                                                                                  ('Smaller', 'smaller', '<'),
+                                                                                  ('Greater', 'greater', '>')])), 
+             ('min', 'int32', 1, 'in'),
+             ('max', 'int32', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Sets the thresholds for the :func:`CurrentReached` callback for the given sensor. 
+
+The following options are possible:
+
+.. csv-table::
+ :header: "Option", "Description"
+ :widths: 10, 100
+
+ "'x'",    "Callback is turned off"
+ "'o'",    "Callback is triggered when the current is *outside* the min and max values"
+ "'i'",    "Callback is triggered when the current is *inside* the min and max values"
+ "'<'",    "Callback is triggered when the current is smaller than the min value (max is ignored)"
+ "'>'",    "Callback is triggered when the current is greater than the min value (max is ignored)"
+
+The default value is ('x', 0, 0).
+""",
+'de':
+"""
+Setzt den Schwellwert des :func:`CurrentReached` Callbacks für den übergebenen Sensor.
+
+Die folgenden Optionen sind möglich:
+
+.. csv-table::
+ :header: "Option", "Beschreibung"
+ :widths: 10, 100
+ 
+ "'x'",    "Callback ist inaktiv"
+ "'o'",    "Callback wird ausgelöst wenn die Stromstärke *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst wenn die Stromstärke *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst wenn die Stromstärke kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn die Stromstärke größer als der min Wert ist (max wird ignoriert)"
+ 
+Der Standardwert ist ('x', 0, 0).
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetCurrentCallbackThreshold', 'get_current_callback_threshold'), 
+'elements': [('sensor', 'uint8', 1, 'in'),
+             ('option', 'char', 1, 'out', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
+                                                                                   ('Outside', 'outside', 'o'),
+                                                                                   ('Inside', 'inside', 'i'),
+                                                                                   ('Smaller', 'smaller', '<'),
+                                                                                   ('Greater', 'greater', '>')])), 
+             ('min', 'int32', 1, 'out'),
+             ('max', 'int32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Returns the threshold as set by :func:`SetCurrentCallbackThreshold`.
+""",
+'de':
+"""
+Gibt den Schwellwert zurück, wie von :func:`SetCurrentCallbackThreshold`
+gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetDebouncePeriod', 'set_debounce_period'), 
+'elements': [('debounce', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Sets the period in ms with which the threshold callback
+
+ :func:`CurrentReached`
+
+is triggered, if the threshold
+
+ :func:`SetCurrentCallbackThreshold`
+
+keeps being reached.
+
+The default value is 100.
+""",
+'de':
+"""
+Setzt die Periode in ms mit welcher der Schwellwert Callback
+
+ :func:`CurrentReached`
+ 
+ausgelöst werden, wenn der Schwellwert
+
+ :func:`SetCurrentCallbackThreshold`
+ 
+weiterhin erreicht bleibt.
+
+Der Standardwert ist 100.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetDebouncePeriod', 'get_debounce_period'), 
+'elements': [('debounce', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Returns the debounce period as set by :func:`SetDebouncePeriod`.
+""",
+'de':
+"""
+Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetSampleRate', 'set_sample_rate'), 
+'elements': [('rate', 'uint8', 1, 'in', ('SampleRate', 'sample_rate', [('240SPS', '240_sps', 0),
+                                                                       ('60SPS', '60_sps', 1),
+                                                                       ('15SPS', '15_sps', 2),
+                                                                       ('4SPS', '4_sps', 3)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Sets the sample rate to either 240, 60, 15 or 4 samples per second.
+The resolution for the rates is 12, 14, 16 and 18 bit respectively.
+
+.. csv-table::
+ :header: "Value", "Description"
+ :widths: 10, 100
+
+ "0",    "240 samples per second, 12 bit resolution"
+ "1",    "60 samples per second, 14 bit resolution"
+ "2",    "15 samples per second, 16 bit resolution"
+ "3",    "4 samples per second, 18 bit resolution"
+
+The default value is 3: 4 samples per second with 18 bit resolution.
+""",
+'de':
+"""
+Setzt die Samplerate auf 240, 60, 15 oder 4 Samples pro Sekunde.
+Die Auflösung für die Raten sind 12, 14, 16 und 18 Bit respektive.
+
+.. csv-table::
+ :header: "Wert", "Beschreibung"
+ :widths: 10, 100
+
+ "0",    "240 Samples pro Sekunde, 12 Bit Auflösung"
+ "1",    "60 Samples pro Sekunde, 14 Bit Auflösung"
+ "2",    "15 Samples pro Sekunde, 16 Bit Auflösung"
+ "3",    "4 Samples pro Sekunde, 18 Bit Auflösung"
+
+Der Standardwert ist 3: 4 Samples pro Sekunde mit 18 Bit Auflösung.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetSampleRate', 'get_sample_rate'), 
+'elements': [('rate', 'uint8', 1, 'out', ('SampleRate', 'sample_rate', [('240SPS', '240_sps', 0),
+                                                                        ('60SPS', '60_sps', 1),
+                                                                        ('15SPS', '15_sps', 2),
+                                                                        ('4SPS', '4_sps', 3)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Returns the sample rate as set by :func:`SetSampleRate`.
+""",
+'de':
+"""
+Gibt die Samplerate zurück, wie von :func:`SetSampleRate`
+gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('Current', 'current'), 
+'elements': [('sensor', 'uint8', 1, 'out'),
+             ('current', 'int32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered periodically with the period that is set by
+:func:`SetCurrentCallbackPeriod`. The :word:`parameter` is the current of the
+sensor.
+
+:func:`Current` is only triggered if the current has changed since the
+last triggering.
+""",
+'de':
+"""
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetCurrentCallbackPeriod`,
+ausgelöst. Der :word:`parameter` ist die Stromstärke des Sensors.
+
+:func:`Current` wird nur ausgelöst wenn sich die Stromstärke seit der
+letzten Auslösung geändert hat.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('CurrentReached', 'current_reached'), 
+'elements': [('sensor', 'uint8', 1, 'out'),
+             ('current', 'int32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered when the threshold as set by
+:func:`SetCurrentCallbackThreshold` is reached.
+The :word:`parameter` is the current of the sensor.
+
+If the threshold keeps being reached, the callback is triggered periodically
+with the period as set by :func:`SetDebouncePeriod`.
+""",
+'de':
+"""
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+:func:`SetCurrentCallbackThreshold` gesetzt, erreicht wird.
+Der :word:`parameter` ist die Stromstärke des Sensors.
+
+Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
+mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+"""
+}]
+})
