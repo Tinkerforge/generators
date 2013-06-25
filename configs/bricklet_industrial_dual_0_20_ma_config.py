@@ -41,7 +41,7 @@ callback :func:`Current` and set the period with
 Gibt die gemessenen Stromstärke des Sensors zurück. Der Wert ist in nA und im
 Bereich von 0nA bis 22505322nA (22.5mA).
 
-Es ist möglich zu erkennen ob ein 60381-1-kompatibler Sensor angschlossen
+Es ist möglich zu erkennen ob ein IEC 60381-1-kompatibler Sensor angeschlossen
 ist und ob er funktionsfähig ist.
 
 Falls die zurückgegebene Stromstärke kleiner als 4mA ist, ist wahrscheinlich
