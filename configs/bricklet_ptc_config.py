@@ -54,8 +54,8 @@ Returns the value as measured by the MAX31865 precision delta-sigma ADC.
 
 The value can be converted with the following formulas:
 
-* pt100:  resistance = value*390/32768
-* pt1000: resistance = value*3900/32768
+* Pt100:  resistance = (value * 390) / 32768
+* Pt1000: resistance = (value * 3900) / 32768
 
 If you want to get the resistance periodically, it is recommended 
 to use the callback :func:`Resistance` and set the period with 
@@ -67,8 +67,8 @@ Gibt den Wert zurück, wie vom "MAX31865 precision delta-sigma ADC" berechnet.
 
 Der Wert kann mit den folgenden Formeln in einen Widerstand konvertiert werden:
 
-* pt100:  Wiederstand = Wert*390/32768
-* pt1000: Wiederstand = Wert*3900/32768
+* Pt100:  Widerstand = (Wert * 390) / 32768
+* Pt1000: Widerstand = (Wert * 3900) / 32768
 
 Wenn der Widerstand periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Resistance` zu nutzen und die Periode mit 
@@ -387,7 +387,7 @@ com['packets'].append({
 """
 This callback is triggered periodically with the period that is set by
 :func:`SetTemperatureCallbackPeriod`. The :word:`parameter` is the temperature
-of the commected sensor.
+of the connected sensor.
 
 :func:`Temperature` is only triggered if the temperature has changed since the
 last triggering.
@@ -494,7 +494,7 @@ com['packets'].append({
 """
 Sets the noise rejection filter to either 50Hz (0) or 60Hz (1).
 Noise from 50Hz or 60Hz power sources (including
-harmonics of the ac power’s fundamental frequency) is
+harmonics of the AC power's fundamental frequency) is
 attenuated by 82dB.
 
 Default value is 0 = 50Hz.
@@ -542,7 +542,7 @@ com['packets'].append({
 Returns *true* if the sensor is connected correctly. 
 
 If this function
-returns *false*, there is either no pt100 or pt1000 sensor connected, 
+returns *false*, there is either no Pt100 or Pt1000 sensor connected,
 the sensor is connected incorrectly or the sensor itself is faulty.
 """,
 'de':
@@ -550,7 +550,7 @@ the sensor is connected incorrectly or the sensor itself is faulty.
 Gibt *true* zurück wenn ein Sensor korrekt verbunden ist.
 
 Falls diese Funktion *false* zurück gibt, ist entweder kein
-pt100 oder pt1000 Sensor verbunden, der Sensor ist inkorrekt
+Pt100 oder Pt1000 Sensor verbunden, der Sensor ist inkorrekt
 verbunden oder der Sensor selbst ist fehlerhaft.
 """
 }]
@@ -566,7 +566,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the wire mode. Possible values are 2, 3 und 4.
+Sets the wire mode. Possible values are 2, 3 and 4.
 
 The values correspond to 2-, 3- and 4-wire sensors.
 

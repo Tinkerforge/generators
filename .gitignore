@@ -17,6 +17,8 @@ python/bindings/
 python/doc/
 ruby/bindings/
 ruby/doc/
+shell/bindings/
+shell/doc/
 tcpip/doc/
 vbnet/bindings/
 vbnet/doc/
