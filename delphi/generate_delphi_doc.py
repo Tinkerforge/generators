@@ -101,7 +101,7 @@ def make_callbacks():
 
  .. code-block:: delphi
 
-  procedure({2}) of object;
+  procedure(sender: T{0}{4}{2}) of object;
 
 {3}
 """,
@@ -109,7 +109,7 @@ def make_callbacks():
 
  .. code-block:: delphi
 
-  procedure({2}) of object;
+  procedure(sender: T{0}{4}{2}) of object;
 
 {3}
 """
@@ -120,7 +120,10 @@ def make_callbacks():
         name = packet.get_camel_case_name()
         params = delphi_common.make_parameter_list(packet, True)
         desc = format_doc(packet)
-        cbs += common.select_lang(cb).format(cls, name, params, desc)
+        semi = ''
+        if len(params) > 0:
+            semi = '; '
+        cbs += common.select_lang(cb).format(cls, name, params, desc, semi)
 
     return cbs
 
