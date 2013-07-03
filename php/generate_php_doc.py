@@ -133,12 +133,12 @@ def make_callbacks():
     'en':  """
  .. code-block:: php
 
-  void callback({0})
+  <?php   void callback({0})   ?>
 """,
     'de':  """
  .. code-block:: php
 
-  void callback({0})
+  <?php   void callback({0})   ?>
 """
     }
 
@@ -171,7 +171,7 @@ def make_api():
 
  .. code-block:: php
 
-    ${0} = new {3}{1}('YOUR_DEVICE_UID', $ipcon);
+    <?php   ${0} = new {3}{1}('YOUR_DEVICE_UID', $ipcon);   ?>
 
  This object can then be used after the IP Connection is connected
  (see examples :ref:`above <{0}_{2}_php_examples>`).
@@ -183,7 +183,7 @@ def make_api():
 
  .. code-block:: php
 
-    ${0} = new {3}{1}('YOUR_DEVICE_UID', $ipcon);
+    <?php   ${0} = new {3}{1}('YOUR_DEVICE_UID', $ipcon);   ?>
 
  Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
  (siehe Beispiele :ref:`oben <{0}_{2}_php_examples>`).
@@ -226,12 +226,16 @@ parameter the callback function:
 
 .. code-block:: php
 
-    function my_callback($param)
+    <?php
+
+    function myCallback($param)
     {{
         echo $param . "\\n";
     }}
 
-    ${1}->registerCallback({3}{4}::CALLBACK_EXAMPLE, 'my_callback');
+    ${1}->registerCallback({3}{4}::CALLBACK_EXAMPLE, 'myCallback');
+
+    ?>
 
 The available constants with corresponding function signatures are
 described below.
@@ -257,12 +261,16 @@ und der zweite die Callback-Funktion:
 
 .. code-block:: php
 
-    function my_callback($param)
+    <?php
+
+    function myCallback($param)
     {{
         echo $param . "\\n";
     }}
 
-    ${1}->registerCallback({3}{4}::CALLBACK_EXAMPLE, 'my_callback');
+    ${1}->registerCallback({3}{4}::CALLBACK_EXAMPLE, 'myCallback');
+
+    ?>
 
 Die verfügbaren Konstanten mit den dazugehörigen Funktionssignaturen werden
 weiter unten beschrieben.
