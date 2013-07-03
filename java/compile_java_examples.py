@@ -31,10 +31,10 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class JavaExamplesCompiler(common.ExamplesCompiler):
-    def __init__(self, path):
-        common.ExamplesCompiler.__init__(self, 'java', '.java', path)
+    def __init__(self, path, extra_examples):
+        common.ExamplesCompiler.__init__(self, 'java', '.java', path, extra_examples=extra_examples)
 
-    def compile(self, src):
+    def compile(self, src, is_extra_example):
         args = ['/usr/bin/javac',
                 '-Xlint',
                 '-cp',
@@ -44,7 +44,12 @@ class JavaExamplesCompiler(common.ExamplesCompiler):
         return subprocess.call(args) == 0
 
 def run(path):
-    return JavaExamplesCompiler(path).run()
+    extra_examples = [os.path.join(path, '../../weather-station/examples/GuitarStation.java'),
+                      os.path.join(path, '../../weather-station/write_to_lcd/java/WeatherStation.java'),
+                      os.path.join(path, '../../hardware-hacking/remote_switch/java/RemoteSwitch.java'),
+                      os.path.join(path, '../../hardware-hacking/smoke_detector/java/SmokeDetector.java')]
+
+    return JavaExamplesCompiler(path, extra_examples).run()
 
 if __name__ == "__main__":
     sys.exit(run(os.getcwd()))

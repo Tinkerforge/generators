@@ -31,10 +31,10 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class DelphiExamplesCompiler(common.ExamplesCompiler):
-    def __init__(self, path):
-        common.ExamplesCompiler.__init__(self, 'delphi', '.pas', path)
+    def __init__(self, path, extra_examples):
+        common.ExamplesCompiler.__init__(self, 'delphi', '.pas', path, extra_examples=extra_examples)
 
-    def compile(self, src):
+    def compile(self, src, is_extra_example):
         args = ['/usr/bin/fpc',
                 '-vw',
                 '-Fu/tmp/compiler/bindings',
@@ -44,7 +44,11 @@ class DelphiExamplesCompiler(common.ExamplesCompiler):
         return subprocess.call(args) == 0
 
 def run(path):
-    return DelphiExamplesCompiler(path).run()
+    extra_examples = [os.path.join(path, '../../weather-station/write_to_lcd/delphi/WeatherStation.pas'),
+                      os.path.join(path, '../../hardware-hacking/remote_switch/delphi/RemoteSwitch.pas'),
+                      os.path.join(path, '../../hardware-hacking/smoke_detector/delphi/SmokeDetector.pas')]
+
+    return DelphiExamplesCompiler(path, extra_examples).run()
 
 if __name__ == "__main__":
     sys.exit(run(os.getcwd()))

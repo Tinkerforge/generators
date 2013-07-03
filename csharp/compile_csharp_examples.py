@@ -31,10 +31,10 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class CSharpExamplesCompiler(common.ExamplesCompiler):
-    def __init__(self, path):
-        common.ExamplesCompiler.__init__(self, 'csharp', '.cs', path)
+    def __init__(self, path, extra_examples):
+        common.ExamplesCompiler.__init__(self, 'csharp', '.cs', path, extra_examples=extra_examples)
 
-    def compile(self, src):
+    def compile(self, src, is_extra_example):
         dest = src[:-3] + '.exe';
 
         args = ['/usr/bin/gmcs',
@@ -48,7 +48,12 @@ class CSharpExamplesCompiler(common.ExamplesCompiler):
         return subprocess.call(args) == 0
 
 def run(path):
-    return CSharpExamplesCompiler(path).run()
+    extra_examples = [os.path.join(path, '../../weather-station/button_control/csharp/WeatherStationButton.cs'),
+                      os.path.join(path, '../../weather-station/write_to_lcd/csharp/WeatherStation.cs'),
+                      os.path.join(path, '../../hardware-hacking/remote_switch/csharp/RemoteSwitch.cs'),
+                      os.path.join(path, '../../hardware-hacking/smoke_detector/csharp/SmokeDetector.cs')]
+
+    return CSharpExamplesCompiler(path, extra_examples).run()
 
 if __name__ == "__main__":
     sys.exit(run(os.getcwd()))

@@ -31,10 +31,10 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class VBNETExamplesCompiler(common.ExamplesCompiler):
-    def __init__(self, path):
-        common.ExamplesCompiler.__init__(self, 'vbnet', '.vb', path)
+    def __init__(self, path, extra_examples):
+        common.ExamplesCompiler.__init__(self, 'vbnet', '.vb', path, extra_examples=extra_examples)
 
-    def compile(self, src):
+    def compile(self, src, is_extra_example):
         dest = src[:-3] + '.exe';
 
         args = ['/usr/bin/vbnc2',
@@ -50,7 +50,11 @@ class VBNETExamplesCompiler(common.ExamplesCompiler):
         return subprocess.call(args) == 0
 
 def run(path):
-    return VBNETExamplesCompiler(path).run()
+    extra_examples = [os.path.join(path, '../../weather-station/write_to_lcd/vbnet/WeatherStation.vb'),
+                      os.path.join(path, '../../hardware-hacking/remote_switch/vbnet/RemoteSwitch.vb'),
+                      os.path.join(path, '../../hardware-hacking/smoke_detector/vbnet/SmokeDetector.vb')]
+
+    return VBNETExamplesCompiler(path, extra_examples).run()
 
 if __name__ == "__main__":
     sys.exit(run(os.getcwd()))

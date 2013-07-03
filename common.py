@@ -734,13 +734,14 @@ class Device:
         return constants
 
 class ExamplesCompiler:
-    def __init__(self, name, extension, path, subdirs=['examples'], comment=None):
+    def __init__(self, name, extension, path, subdirs=['examples'], comment=None, extra_examples=[]):
         version = get_changelog_version(path)
 
         self.extension = extension
         self.path = path
-        self.subdirs = subdirs
+        self.subdirs = subdirs[:]
         self.comment = comment
+        self.extra_examples = extra_examples[:]
         self.zipname = 'tinkerforge_{0}_bindings_{1}_{2}_{3}.zip'.format(name, *version)
         self.compile_count = 0
         self.failure_count = 0
@@ -750,23 +751,24 @@ class ExamplesCompiler:
             if not name.endswith(self.extension):
                 continue
 
-            src = os.path.join(dirname, name)
+            self.handle_source(os.path.join(dirname, name), False)
 
-            self.compile_count += 1
+    def handle_source(self, src, is_extra_example):
+        self.compile_count += 1
 
-            if self.comment is not None:
-                print('>>> [{0}] compiling {1}'.format(self.comment, src))
-            else:
-                print('>>> compiling {0}'.format(src))
+        if self.comment is not None:
+            print('>>> [{0}] compiling {1}'.format(self.comment, src))
+        else:
+            print('>>> compiling {0}'.format(src))
 
-            if not self.compile(os.path.join(dirname, name)):
-                self.failure_count += 1
+        if not self.compile(src, is_extra_example):
+            self.failure_count += 1
 
-                print('>>> compilation failed\n')
-            else:
-                print('>>> compilation succeded\n')
+            print('>>> compilation failed\n')
+        else:
+            print('>>> compilation succeded\n')
 
-    def compile(self, src):
+    def compile(self, src, is_extra_example):
         return False
 
     def run(self):
@@ -798,6 +800,9 @@ class ExamplesCompiler:
         # compile
         for subdir in self.subdirs:
             os.path.walk(os.path.join('/tmp/compiler', subdir), self.walker, None)
+
+        for extra_example in self.extra_examples:
+            self.handle_source(extra_example, True)
 
         # report
         if self.comment is not None:

@@ -31,10 +31,10 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class PHPExamplesCompiler(common.ExamplesCompiler):
-    def __init__(self, path):
-        common.ExamplesCompiler.__init__(self, 'php', '.php', path, subdirs=['examples', 'source'])
+    def __init__(self, path, extra_examples):
+        common.ExamplesCompiler.__init__(self, 'php', '.php', path, subdirs=['examples', 'source'], extra_examples=extra_examples)
 
-    def compile(self, src):
+    def compile(self, src, is_extra_example):
         args = ['/usr/bin/php',
                 '-l',
                 src]
@@ -42,7 +42,12 @@ class PHPExamplesCompiler(common.ExamplesCompiler):
         return subprocess.call(args) == 0
 
 def run(path):
-    return PHPExamplesCompiler(path).run()
+    extra_examples = [os.path.join(path, '../../weather-station/website/php/WeatherStationWebsite.php'),
+                      os.path.join(path, '../../weather-station/write_to_lcd/php/WeatherStation.php'),
+                      os.path.join(path, '../../hardware-hacking/remote_switch/php/RemoteSwitch.php'),
+                      os.path.join(path, '../../hardware-hacking/smoke_detector/php/SmokeDetector.php')]
+
+    return PHPExamplesCompiler(path, extra_examples).run()
 
 if __name__ == "__main__":
     sys.exit(run(os.getcwd()))
