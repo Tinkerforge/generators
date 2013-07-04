@@ -27,6 +27,7 @@ import sys
 import os
 import subprocess
 import glob
+import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -38,6 +39,10 @@ class CExamplesCompiler(common.ExamplesCompiler):
         self.compiler = compiler
 
     def compile(self, src, is_extra_example):
+        if is_extra_example:
+            shutil.copy(src, '/tmp/compiler/')
+            src = os.path.join('/tmp/compiler/', os.path.split(src)[1])
+
         dest = src[:-2]
 
         if not is_extra_example and '/brick' in src:
