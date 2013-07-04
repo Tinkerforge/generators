@@ -496,8 +496,8 @@ There are several different types that can be calibrated:
  "1",    "Accelerometer Bias", "[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]"
  "2",    "Magnetometer Gain",  "[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]"
  "3",    "Magnetometer Bias",  "[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]"
- "4",    "Gyroscope Gain",     "[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]"
- "5",    "Gyroscope Bias",     "[bias xl, bias yl, bias zl, temp l, bias xh, bias yh, bias zh, temp h, 0, 0]"
+ "4",    "Gyroskop Gain",     "[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]"
+ "5",    "Gyroskop Bias",     "[bias xl, bias yl, bias zl, temp l, bias xh, bias yh, bias zh, temp h, 0, 0]"
 
 The calibration via gain and bias is done with the following formula::
 
@@ -532,8 +532,8 @@ Es sind folgende verschiedene Kalibrierungen möglich:
  "1",    "Beschleunigungsmesser Versatz", "[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]"
  "2",    "Magnetometer Verstärkung",  "[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]"
  "3",    "Magnetometer Versatz",  "[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]"
- "4",    "Gyroscope Verstärkung",     "[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]"
- "5",    "Gyroscope Versatz",     "[bias xl, bias yl, bias zl, temp l, bias xh, bias yh, bias zh, temp h, 0, 0]"
+ "4",    "Gyroskop Verstärkung",     "[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]"
+ "5",    "Gyroskop Versatz",     "[bias xl, bias yl, bias zl, temp l, bias xh, bias yh, bias zh, temp h, 0, 0]"
 
 Die Kalibrierung mittels Verstärkung und Versatz wird über folgende Formel realisiert::
 
@@ -996,7 +996,7 @@ Wenn die Berechnungen deaktiviert sind, gibt :func:`GetOrientation` solange
 den letzten berechneten Wer zurück bis die Berechnungen wieder
 aktiviert werden.
 
-Die trigonometrischen Funktionen die zur Brechnung der Orientierung
+Die trigonometrischen Funktionen die zur Berechnung der Orientierung
 benötigt werden sind sehr teuer. Wir empfehlen die Orientierungsberechnungen
 zu deaktivieren wenn sie nicht benötigt werden. Dadurch wird mehr
 Rechenzeit für den Sensorfusions-Algorithmus freigegeben.
