@@ -95,14 +95,15 @@ end
 spec = Gem::Specification.new do |s|
   s.name = 'tinkerforge'
   s.version = '{0}.{1}.{2}'
-  s.summary = "Ruby API Bindings for Tinkerforge Bricks and Bricklets"
+  s.summary = 'Ruby API Bindings for Tinkerforge Bricks and Bricklets'
   s.files = Dir['lib/*.rb'] + Dir['lib/tinkerforge/*.rb']
   s.has_rdoc = true
   s.rdoc_options << '--title' <<  'Tinkerforge'
+  s.required_ruby_version = '>= 1.9.0'
   s.license = 'Public Domain'
-  s.author = "Matthias Bolte"
-  s.email = "matthias@tinkerforge.com"
-  s.homepage = "http://www.tinkerforge.com/"
+  s.author = 'Matthias Bolte'
+  s.email = 'matthias@tinkerforge.com'
+  s.homepage = 'http://www.tinkerforge.com/'
 end
 """.format(*version))
 
