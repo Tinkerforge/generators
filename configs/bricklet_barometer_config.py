@@ -602,7 +602,7 @@ für den Luftdruck angegeben werden. Der gleitende Mittelwert wird
 mit den Werten des normalen Mittelwerts berechnet. Es gibt keinen
 gleitenden Mittelwert für die Temperatur.
 
-Die maximale länge des Luftdruckmittelwerts ist 10, des
+Die maximale Länge des Luftdruckmittelwerts ist 10, des
 Temperaturmittelwerts 255 und des gleitenden Mittelwertes 25.
 
 Wenn alle drei Parameter auf 0 gesetzt werden, ist das Averaging
