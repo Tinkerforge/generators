@@ -58,3 +58,6 @@
        Fix [u]int16 big endian handling
        Workaround struct packing bug in GCC 4.7
        Add IMU orientation and Barometer averaging API
+2.0.7: Add support for PTC Bricklet and Industrial Dual 0-20mA Bricklet
+       Workaround for GCC 4.7 struct packing bug is only necessary on Windows
+       Avoid breaking strict-aliasing rules
