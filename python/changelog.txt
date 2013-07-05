@@ -60,3 +60,4 @@
        Only send disconnect probe if there was no packet send or received for 5s
        Fix deserialization of chars in Python 3
        Add IMU orientation and Barometer averaging API
+2.0.8: Add support for PTC Bricklet and Industrial Dual 0-20mA Bricklet

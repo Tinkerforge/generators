@@ -64,3 +64,4 @@
        Avoid race condition during socket closing
        Add IMU orientation and Barometer averaging API
        Fix locking for disconnect probe thread detecting a socket error
+2.0.8: Add support for PTC Bricklet and Industrial Dual 0-20mA Bricklet

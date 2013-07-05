@@ -63,7 +63,7 @@ to use the callback :func:`Resistance` and set the period with
 """,
 'de':
 """
-Gibt den Wert zurück, wie vom "MAX31865 precision delta-sigma ADC" berechnet.
+Gibt den Wert zurück, wie vom "MAX31865 Präzisions Delta-Sigma ADC" berechnet.
 
 Der Wert kann mit den folgenden Formeln in einen Widerstand konvertiert werden:
 
