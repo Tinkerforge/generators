@@ -56,6 +56,7 @@ def run(path):
     extra_examples = [os.path.join(path, '../../weather-station/button_control/csharp/WeatherStationButton.cs'),
                       os.path.join(path, '../../weather-station/write_to_lcd/csharp/WeatherStation.cs'),
                       os.path.join(path, '../../hardware-hacking/remote_switch/csharp/RemoteSwitch.cs'),
+                      os.path.join(path, '../../hardware-hacking/remote_switch_gui/csharp/RemoteSwitchGUI.cs'),
                       os.path.join(path, '../../hardware-hacking/smoke_detector/csharp/SmokeDetector.cs')]
 
     return CSharpExamplesCompiler(path, extra_examples).run()
