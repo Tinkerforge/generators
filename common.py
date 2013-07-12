@@ -130,9 +130,9 @@ Konfigurationsfunktionen für Callbacks
 }
 
 breadcrumbs_str = {
-'en': """:breadcrumbs: <a href="../../index.html">Home</a> / <a href="../../index.html#{0}s">{1}s</a> / {2}
+'en': """:breadcrumbs: <a href="../../index.html">Home</a> / <a href="../../Product_Overview.html#{0}s">{1}s</a> / {2}
 """,
-'de': """:breadcrumbs: <a href="../../index.html">Startseite</a> / <a href="../../index.html#{0}s">{1}s</a> / {2}
+'de': """:breadcrumbs: <a href="../../index.html">Startseite</a> / <a href="../../Product_Overview.html#{0}s">{1}s</a> / {2}
 """
 }
 
