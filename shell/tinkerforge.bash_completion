@@ -1,0 +1,108 @@
+_tinkerforge_device()
+{
+	local prev
+
+	for (( i=$1; i > 0; i-- )); do
+		prev="${COMP_WORDS[i-1]}"
+
+		case "${prev}" in
+		call)
+			local functions=$(tinkerforge call $2 --list-functions)
+			COMPREPLY=($(compgen -W "--help --uid ${functions}" -- ${cur}))
+			break
+			;;
+		dispatch)
+			local callbacks=$(tinkerforge dispatch $2 --list-callbacks)
+			COMPREPLY=($(compgen -W "--help --uid ${callbacks}" -- ${cur}))
+			break
+			;;
+		*)
+			;;
+		esac
+	done
+}
+
+_tinkerforge() 
+{
+	COMPREPLY=()
+	local prev cur
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	cur="${COMP_WORDS[COMP_CWORD]}"
+
+	case "${prev}" in
+	--help)
+		return 0
+		;;
+	--version)
+		return 0
+		;;
+	--host)
+		_known_hosts
+		return 0
+		;;
+	--port)
+		return 0
+		;;
+	--array-separator)
+		return 0
+		;;
+	--duration)
+		return 0
+		;;
+	--timeout)
+		return 0
+		;;
+	--list-devices)
+		return 0
+		;;
+	--list-functions)
+		return 0
+		;;
+	--list-callbacks)
+		return 0
+		;;
+	--uid)
+		# FIXME: call enumerate?
+		return 0
+		;;
+	--execute)
+		return 0
+		;;
+	--replace)
+		return 0
+		;;
+	*)
+		;;
+	esac
+
+	for (( i=${COMP_CWORD}; i > 0; i-- )); do
+		prev="${COMP_WORDS[i-1]}"
+
+		case "${prev}" in
+		tinkerforge)
+			COMPREPLY=($(compgen -W "--help --host --port --array-separator call dispatch enumerate" -- ${cur}))
+			break
+			;;
+		call)
+			local devices=$(tinkerforge call --list-devices)
+			COMPREPLY=($(compgen -W "--help --list-devices --timeout ${devices}" -- ${cur}))
+			break
+			;;
+		dispatch)
+			local devices=$(tinkerforge dispatch --list-devices)
+			COMPREPLY=($(compgen -W "--help --list-devices --duration ${devices}" -- ${cur}))
+			break
+			;;
+		ambient-light-bricklet|analog-in-bricklet|analog-out-bricklet|barometer-bricklet|current12-bricklet|current25-bricklet|dc-brick|distance-ir-bricklet|dual-relay-bricklet|gps-bricklet|humidity-bricklet|imu-brick|industrial-digital-in-4-bricklet|industrial-digital-out-4-bricklet|industrial-quad-relay-bricklet|io16-bricklet|io4-bricklet|joystick-bricklet|lcd-16x2-bricklet|lcd-20x4-bricklet|linear-poti-bricklet|master-brick|piezo-buzzer-bricklet|ptc-bricklet|rotary-poti-bricklet|servo-brick|stepper-brick|temperature-bricklet|temperature-ir-bricklet|voltage-bricklet|voltage-current-bricklet)
+			_tinkerforge_device ${i} ${prev}
+			break
+			;;
+		*)
+			;;
+		esac
+	done
+
+	return 0
+}
+
+complete -F _tinkerforge tinkerforge

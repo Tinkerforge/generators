@@ -1,0 +1,157 @@
+
+def command_call(argv):
+	parser = Parser('tinkerforge call')
+	device_choices = sorted(call_devices.keys())
+
+	class ListDevicesAction(argparse.Action):
+		def __call__(self, parser, namespace, values, option_string=None):
+			print('\n'.join(device_choices))
+			parser.exit()
+
+	parser.add_argument('--list-devices', action=ListDevicesAction, nargs=0, help='show list of devices and exit')
+	parser.add_argument('--timeout', default=2500, type=int, help='maximum time (msec) to wait for response, default: 2500', metavar='<timeout>')
+	parser.add_argument('device', choices=device_choices, help='{%s}' % ', '.join(device_choices), metavar='<device>')
+	parser.add_argument('args', nargs=argparse.REMAINDER, help='device specific arguments', metavar='<args>')
+
+	args = parser.parse_args(argv)
+
+	global timeout
+	timeout = args.timeout
+
+	call_devices[args.device](args.args)
+
+def command_dispatch(argv):
+	parser = Parser('tinkerforge dispatch')
+	device_choices = sorted(dispatch_devices.keys())
+
+	class ListDevicesAction(argparse.Action):
+		def __call__(self, parser, namespace, values, option_string=None):
+			print('\n'.join(device_choices))
+			parser.exit()
+
+	parser.add_argument('--list-devices', action=ListDevicesAction, nargs=0, help='show list of devices and exit')
+	parser.add_argument('--duration', default=-1, type=int, help='time (msec) to dispatch incoming callbacks (0: exit after first, -1: forever), default: -1', metavar='<duration>')
+	parser.add_argument('device', choices=device_choices, help='{%s}' % ', '.join(device_choices), metavar='<device>')
+	parser.add_argument('args', nargs=argparse.REMAINDER, help='device specific arguments', metavar='<args>')
+
+	args = parser.parse_args(argv)
+
+	global duration
+	duration = args.duration
+
+	dispatch_devices[args.device](args.args)
+
+def command_enumerate(argv):
+	parser = Parser('tinkerforge enumerate')
+
+	parser.add_argument('--duration', default=250, type=int, help='time (msec) to dispatch incoming responses (0: exit after first, -1: forever), default: 250', metavar='<duration>')
+	parser.add_argument('--execute', type=str, metavar='<command>')
+	parser.add_argument('--replace', action='store_true')
+
+	args = parser.parse_args(argv)
+
+	names = ['uid', 'connected-uid', 'position', 'hardware-version', 'firmware-version', 'device-identifier']
+	is_first_callback = [True]
+
+	def translate_device_identifier(values):
+		values = list(values)
+
+		try:
+			values[5] = devices_identifiers[values[5]]
+		except KeyError:
+			values[5] = 'unknown-device-{0}'.format(values[5])
+
+		return tuple(values)
+
+	if args.execute is not None:
+		def callback(*values):
+			if values[6] == IPConnection.ENUMERATION_TYPE_AVAILABLE:
+				values = translate_device_identifier(values[:6])
+				execute_result(args.execute, args.replace, names, values)
+				return True
+	else:
+		def callback(*values):
+			if values[6] == IPConnection.ENUMERATION_TYPE_AVAILABLE:
+				if is_first_callback[0]:
+					is_first_callback[0] = False
+				else:
+					print('')
+
+				values = translate_device_identifier(values[:6])
+				print_result(names, values)
+				return True
+
+	try:
+		ipcon = IPConnection()
+		ipcon.connect(host, port)
+
+		if args.duration == 0:
+			exit_flag = [False]
+
+			def callback_wapper(*args, **kwargs):
+				if not exit_flag[0] and callback(*args, **kwargs):
+					exit_flag[0] = True
+
+			ipcon.register_callback(IPConnection.CALLBACK_ENUMERATE, callback_wapper)
+			ipcon.enumerate()
+
+			while not exit_flag[0]:
+				time.sleep(0.1)
+		elif args.duration < 0:
+			ipcon.register_callback(IPConnection.CALLBACK_ENUMERATE, callback)
+			ipcon.enumerate()
+
+			while True:
+				time.sleep(1)
+		else:
+			ipcon.register_callback(IPConnection.CALLBACK_ENUMERATE, callback)
+			ipcon.enumerate()
+
+			time.sleep(args.duration / 1000.0)
+	except Error as e:
+		fatal(e.description.lower())
+	except socket.error as e:
+		fatal(str(e).lower())
+	except Exception as e:
+		fatal(str(e).lower())
+	finally:
+		try:
+			ipcon.disconnect()
+		except:
+			pass
+
+def parse(argv):
+	parser = Parser('tinkerforge')
+	command_choices = ['call', 'dispatch', 'enumerate']
+
+	parser.add_argument('--version', action='version', version='2.0.0')
+	parser.add_argument('--host', default='localhost', type=str, help='IP address or hostname, default: localhost', metavar='<host>')
+	parser.add_argument('--port', default=4223, type=int, help='port number, default: 4223', metavar='<port>')
+	parser.add_argument('--array-separator', default=',', type=str, help='separator for arrays, default: , (comma)', metavar='<array-separator>')
+
+	parser.add_argument('command', choices=command_choices, help='{%s}' % ', '.join(command_choices), metavar='<command>')
+	parser.add_argument('args', nargs=argparse.REMAINDER, help='command specific arguments', metavar='<args>')
+
+	args = parser.parse_args(argv)
+
+	global host
+	host = args.host
+
+	global port
+	port = args.port
+
+	global array_separator
+	array_separator = args.array_separator
+
+	commands = {
+	'call': command_call,
+	'dispatch': command_dispatch,
+	'enumerate': command_enumerate
+	}
+
+	commands[args.command](args.args)
+
+try:
+	parse(sys.argv[1:])
+except KeyboardInterrupt:
+	sys.exit(3)
