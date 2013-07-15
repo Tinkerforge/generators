@@ -64,7 +64,7 @@ class ReceiveThread extends Thread {
 
 			pendingLength += length;
 
-			while(true) {
+			while(ipcon.receiveFlag) {
 				if(pendingLength < 8) {
 					// Wait for complete header
 					break;

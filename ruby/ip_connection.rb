@@ -820,7 +820,7 @@ module Tinkerforge
 
         pending_data += data
 
-        while true
+        while @receive_flag
           if pending_data.length < 8
             # Wait for complete header
             break

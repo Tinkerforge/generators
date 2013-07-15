@@ -620,7 +620,7 @@ begin
     pendingLen := Length(pendingData);
     SetLength(pendingData, pendingLen + len);
     Move(data[0], pendingData[pendingLen], len);
-    while (true) do begin
+    while (receiveFlag) do begin
       if (Length(pendingData) < 8) then begin
         { Wait for complete header }
         break;

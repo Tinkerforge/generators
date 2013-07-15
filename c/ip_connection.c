@@ -1293,7 +1293,7 @@ static void ipcon_receive_loop(void *opaque) {
 
 		pending_length += length;
 
-		while (true) {
+		while (ipcon->receive_flag) {
 			if (pending_length < 8) {
 				// wait for complete header
 				break;
