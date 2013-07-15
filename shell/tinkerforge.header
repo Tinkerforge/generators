@@ -10,13 +10,16 @@ import os
 import time
 
 def fatal(message, exit_code=1):
-	sys.stderr.write('error: %s\n' % message)
-	sys.exit(1)
+	sys.stderr.write('tinkerforge: error: {0}\n'.format(message))
+	sys.exit(exit_code)
+
+if sys.hexversion < 0x02060000:
+	fatal('requiring python 2.6 or newer', 4)
 
 try:
 	import argparse
 except ImportError:
-	fatal('requiring python argparse module', 4)
+	fatal('requiring python argparse module', 5)
 
 host = None
 port = None
@@ -31,6 +34,13 @@ class Parser(argparse.ArgumentParser):
 
 		self.add_argument('--help', action='help', help='show this help message and exit')
 
+class ParserWithExecute(Parser):
+	def __init__(self, prog):
+		Parser.__init__(self, prog)
+
+		self.add_argument('--execute', type=str, metavar='<command>')
+		self.add_argument('--replace', action='store_true')
+
 def call_generic(name, functions, argv):
 	parser = Parser('tinkerforge call ' + name)
 	function_choices = sorted(functions.keys())
@@ -42,7 +52,7 @@ def call_generic(name, functions, argv):
 
 	parser.add_argument('--list-functions', action=ListFunctionsAction, nargs=0, help='show of functions of {0} and exit'.format(name))
 	parser.add_argument('--uid', type=str, required=True, metavar='<uid>')
-	parser.add_argument('function', choices=function_choices, help='{%s}' % ', '.join(function_choices), metavar='<function>')
+	parser.add_argument('function', choices=function_choices, help='{' + ', '.join(function_choices) + '}', metavar='<function>')
 	parser.add_argument('args', nargs=argparse.REMAINDER, help='function specific arguments', metavar='<args>')
 
 	args = parser.parse_args(argv)
@@ -63,7 +73,7 @@ def dispatch_generic(name, callbacks, argv):
 
 	parser.add_argument('--list-callbacks', action=ListCallbacksAction, nargs=0, help='show of callbacks of {0} and exit'.format(name))
 	parser.add_argument('--uid', type=str, required=True, metavar='<uid>')
-	parser.add_argument('callback', choices=callback_choices, help='{%s}' % ', '.join(callback_choices), metavar='<callback>')
+	parser.add_argument('callback', choices=callback_choices, help='{' + ', '.join(callback_choices) + '}', metavar='<callback>')
 	parser.add_argument('args', nargs=argparse.REMAINDER, help='callback specific arguments', metavar='<args>')
 
 	args = parser.parse_args(argv)
@@ -72,6 +82,16 @@ def dispatch_generic(name, callbacks, argv):
 	uid = args.uid
 
 	callbacks[args.callback](args.args)
+
+def translate_device_identifier(values):
+	values = list(values)
+
+	try:
+		values[5] = devices_identifiers[values[5]]
+	except KeyError:
+		values[5] = 'unknown-device-{0}'.format(values[5])
+
+	return tuple(values)
 
 def device_send_request(device_class, function_id, request_data, format_in, format_out, command, replace, names):
 	if command is not None:
@@ -92,6 +112,9 @@ def device_send_request(device_class, function_id, request_data, format_in, form
 		if result is not None:
 			if len(names) == 1:
 				result = (result,)
+
+			if function_id == 255: # get_identity
+				result = translate_device_identifier(result)
 
 			handle_result(result)
 	except Error as e:
@@ -233,3 +256,10 @@ def print_result(names, values):
 			print('{0}={1}'.format(name, array_separator.join(map(str, value))))
 		else:
 			print('{0}={1}'.format(name, value))
+
+def common_get_identity(prog_prefix, klass, argv):
+	parser = ParserWithExecute(prog_prefix + ' get-identity')
+
+	args = parser.parse_args(argv)
+
+	device_send_request(klass, 255, (), '', '8s 8s c 3B 3B H', args.execute, args.replace, ['uid', 'connected-uid', 'position', 'hardware-version', 'firmware-version', 'device-identifier'])

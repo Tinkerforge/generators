@@ -53,16 +53,6 @@ def command_enumerate(argv):
 	names = ['uid', 'connected-uid', 'position', 'hardware-version', 'firmware-version', 'device-identifier']
 	is_first_callback = [True]
 
-	def translate_device_identifier(values):
-		values = list(values)
-
-		try:
-			values[5] = devices_identifiers[values[5]]
-		except KeyError:
-			values[5] = 'unknown-device-{0}'.format(values[5])
-
-		return tuple(values)
-
 	if args.execute is not None:
 		def callback(*values):
 			if values[6] == IPConnection.ENUMERATION_TYPE_AVAILABLE:
@@ -129,7 +119,7 @@ def parse(argv):
 	parser.add_argument('--port', default=4223, type=int, help='port number, default: 4223', metavar='<port>')
 	parser.add_argument('--array-separator', default=',', type=str, help='separator for arrays, default: , (comma)', metavar='<array-separator>')
 
-	parser.add_argument('command', choices=command_choices, help='{%s}' % ', '.join(command_choices), metavar='<command>')
+	parser.add_argument('command', choices=command_choices, help='{' + ', '.join(command_choices) + '}', metavar='<command>')
 	parser.add_argument('args', nargs=argparse.REMAINDER, help='command specific arguments', metavar='<args>')
 
 	args = parser.parse_args(argv)

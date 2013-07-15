@@ -60,7 +60,7 @@ def get_argparse_type_converter(element):
 
 def get_element_help(element):
     if element[2] == 1 or type == 'str':
-        return 'one {0} value'.format(element[1])
+        return '{0} value'.format(element[1])
     else:
         return 'array of {0} {1} values'.format(element[2], element[1])
 
@@ -159,74 +159,78 @@ def make_call_functions():
 \t\tdevice_send_request({7}{8}, {3}, ({4}), '{5}', '{6}', None, False, [])
 """
     getter = """\tdef {0}(argv):
-\t\tparser = Parser(prog_prefix + ' {1}')
-
-\t\tparser.add_argument('--execute', type=str, metavar='<command>')
-\t\tparser.add_argument('--replace', action='store_true')
+\t\tparser = ParserWithExecute(prog_prefix + ' {1}')
 {2}
 \t\targs = parser.parse_args(argv)
 
 \t\tdevice_send_request({7}{8}, {3}, ({4}), '{5}', '{6}', args.execute, args.replace, [{9}])
+"""
+    get_identity = """\tdef get_identity(argv):
+\t\tcommon_get_identity(prog_prefix, {0}{1}, argv)
 """
 
     functions = []
     entries = []
 
     for packet in device.get_packets('function'):
-        params = []
-        request_data = []
-
-        for element in packet.get_elements('in'):
-            name = element[0]
-            type, length = get_argparse_type_converter(element)
-            help = get_element_help(element)
-            metavar = "'<{0}>'".format(name.replace('_', '-'))
-
-            if length > 1:
-                params.append("\t\tparser.add_argument('{0}', type=create_array_converter({1}, {2}), help='{3}', metavar={4})".format(name, type, length, help, metavar))
-            else:
-                params.append("\t\tparser.add_argument('{0}', type={1}, help='{2}', metavar={3})".format(name, type, help, metavar))
-
-            request_data.append('args.{0}'.format(element[0]))
-
-        comma = ''
-        if len(request_data) == 1:
-            comma = ','
-
-        if len(params) > 0:
-            params = [''] + params + ['']
-
-        output = []
-
-        for element in packet.get_elements('out'):
-            output.append("'{0}'".format(element[0].replace('_', '-')))
-
-        if len(output) > 0:
-            function = getter.format(packet.get_underscore_name(),
-                                     packet.get_underscore_name().replace('_', '-'),
-                                     '\n'.join(params),
-                                     packet.get_function_id(),
-                                     ', '.join(request_data) + comma,
-                                     make_format_list(packet, 'in'),
-                                     make_format_list(packet, 'out'),
-                                     device.get_camel_case_name(),
-                                     device.get_category(),
-                                     ', '.join(output))
+        if packet.get_function_id() == 255:
+            function = get_identity.format(device.get_camel_case_name(),
+                                           device.get_category())
         else:
-            function = setter.format(packet.get_underscore_name(),
-                                     packet.get_underscore_name().replace('_', '-'),
-                                     '\n'.join(params),
-                                     packet.get_function_id(),
-                                     ', '.join(request_data) + comma,
-                                     make_format_list(packet, 'in'),
-                                     make_format_list(packet, 'out'),
-                                     device.get_camel_case_name(),
-                                     device.get_category())
+            params = []
+            request_data = []
+
+            for element in packet.get_elements('in'):
+                name = element[0]
+                type, length = get_argparse_type_converter(element)
+                help = get_element_help(element)
+                metavar = "'<{0}>'".format(name.replace('_', '-'))
+
+                if length > 1:
+                    params.append("\t\tparser.add_argument('{0}', type=create_array_converter({1}, {2}), help='{3}', metavar={4})".format(name, type, length, help, metavar))
+                else:
+                    params.append("\t\tparser.add_argument('{0}', type={1}, help='{2}', metavar={3})".format(name, type, help, metavar))
+
+                request_data.append('args.{0}'.format(element[0]))
+
+            comma = ''
+            if len(request_data) == 1:
+                comma = ','
+
+            if len(params) > 0:
+                params = [''] + params + ['']
+
+            output = []
+
+            for element in packet.get_elements('out'):
+                output.append("'{0}'".format(element[0].replace('_', '-')))
+
+            if len(output) > 0:
+                function = getter.format(packet.get_underscore_name(),
+                                         packet.get_underscore_name().replace('_', '-'),
+                                         '\n'.join(params),
+                                         packet.get_function_id(),
+                                         ', '.join(request_data) + comma,
+                                         make_format_list(packet, 'in'),
+                                         make_format_list(packet, 'out'),
+                                         device.get_camel_case_name(),
+                                         device.get_category(),
+                                         ', '.join(output))
+            else:
+                function = setter.format(packet.get_underscore_name(),
+                                         packet.get_underscore_name().replace('_', '-'),
+                                         '\n'.join(params),
+                                         packet.get_function_id(),
+                                         ', '.join(request_data) + comma,
+                                         make_format_list(packet, 'in'),
+                                         make_format_list(packet, 'out'),
+                                         device.get_camel_case_name(),
+                                         device.get_category())
+
+        functions.append(function)
 
         entries.append("'{0}': {1}".format(packet.get_underscore_name().replace('_', '-'),
                                            packet.get_underscore_name()))
-
-        functions.append(function)
 
     return '\n'.join(functions) + '\n\tfunctions = {\n\t' + ',\n\t'.join(entries) + '\n\t}'
 
@@ -252,10 +256,7 @@ def dispatch_{0}_{2}(argv):
 
 def make_dispatch_functions():
     func = """\tdef {0}(argv):
-\t\tparser = Parser(prog_prefix + ' {1}')
-
-\t\tparser.add_argument('--execute', type=str, metavar='<command>')
-\t\tparser.add_argument('--replace', action='store_true')
+\t\tparser = ParserWithExecute(prog_prefix + ' {1}')
 
 \t\targs = parser.parse_args(argv)
 
