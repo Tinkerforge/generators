@@ -1,0 +1,265 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# Copyright (C) 2013 Matthias Bolte <matthias@tinkerforge.com>
+#
+# Redistribution and use in source and binary forms of this file,
+# with or without modification, are permitted.
+
+import sys
+import os
+import time
+
+def fatal(message, exit_code=1):
+	sys.stderr.write('tinkerforge: error: {0}\n'.format(message))
+	sys.exit(exit_code)
+
+if sys.hexversion < 0x02060000:
+	fatal('requiring python 2.6 or newer', 4)
+
+try:
+	import argparse
+except ImportError:
+	fatal('requiring python argparse module', 5)
+
+host = None
+port = None
+timeout = None
+uid = None
+array_separator = None
+duration = None
+
+class Parser(argparse.ArgumentParser):
+	def __init__(self, prog):
+		argparse.ArgumentParser.__init__(self, prog=prog, add_help=False)
+
+		self.add_argument('--help', action='help', help='show this help message and exit')
+
+class ParserWithExecute(Parser):
+	def __init__(self, prog):
+		Parser.__init__(self, prog)
+
+		self.add_argument('--execute', type=str, metavar='<command>')
+		self.add_argument('--replace', action='store_true')
+
+def call_generic(name, functions, argv):
+	parser = Parser('tinkerforge call ' + name)
+	function_choices = sorted(functions.keys())
+
+	class ListFunctionsAction(argparse.Action):
+		def __call__(self, parser, namespace, values, option_string=None):
+			print('\n'.join(function_choices))
+			parser.exit()
+
+	parser.add_argument('--list-functions', action=ListFunctionsAction, nargs=0, help='show of functions of {0} and exit'.format(name))
+	parser.add_argument('--uid', type=str, required=True, metavar='<uid>')
+	parser.add_argument('function', choices=function_choices, help='{' + ', '.join(function_choices) + '}', metavar='<function>')
+	parser.add_argument('args', nargs=argparse.REMAINDER, help='function specific arguments', metavar='<args>')
+
+	args = parser.parse_args(argv)
+
+	global uid
+	uid = args.uid
+
+	functions[args.function](args.args)
+
+def dispatch_generic(name, callbacks, argv):
+	parser = Parser('tinkerforge dispatch ' + name)
+	callback_choices = sorted(callbacks.keys())
+
+	class ListCallbacksAction(argparse.Action):
+		def __call__(self, parser, namespace, values, option_string=None):
+			print('\n'.join(callback_choices))
+			parser.exit()
+
+	parser.add_argument('--list-callbacks', action=ListCallbacksAction, nargs=0, help='show of callbacks of {0} and exit'.format(name))
+	parser.add_argument('--uid', type=str, required=True, metavar='<uid>')
+	parser.add_argument('callback', choices=callback_choices, help='{' + ', '.join(callback_choices) + '}', metavar='<callback>')
+	parser.add_argument('args', nargs=argparse.REMAINDER, help='callback specific arguments', metavar='<args>')
+
+	args = parser.parse_args(argv)
+
+	global uid
+	uid = args.uid
+
+	callbacks[args.callback](args.args)
+
+def translate_device_identifier(values):
+	values = list(values)
+
+	try:
+		values[5] = devices_identifiers[values[5]]
+	except KeyError:
+		values[5] = 'unknown-device-{0}'.format(values[5])
+
+	return tuple(values)
+
+def device_send_request(device_class, function_id, request_data, format_in, format_out, command, replace, names):
+	if command is not None:
+		def handle_result(values):
+			execute_result(command, replace, names, values)
+	else:
+		def handle_result(values):
+			print_result(names, values)
+
+	try:
+		ipcon = IPConnection()
+		ipcon.set_timeout(timeout / 1000.0)
+		ipcon.connect(host, port)
+
+		device = device_class(uid, ipcon)
+		result = ipcon.send_request(device, function_id, request_data, format_in, format_out)
+
+		if result is not None:
+			if len(names) == 1:
+				result = (result,)
+
+			if function_id == 255: # get_identity
+				result = translate_device_identifier(result)
+
+			handle_result(result)
+	except Error as e:
+		fatal(e.description.lower())
+	except socket.error as e:
+		fatal(str(e).lower())
+	except Exception as e:
+		fatal(str(e).lower())
+	finally:
+		try:
+			ipcon.disconnect()
+		except:
+			pass
+
+def device_callback(device_class, function_id, command, replace, names):
+	if command is not None:
+		def callback(*values):
+			execute_result(command, replace, names, values)
+	else:
+		def callback(*values):
+			print_result(names, values)
+
+	try:
+		ipcon = IPConnection()
+		ipcon.connect(host, port)
+
+		device = device_class(uid, ipcon)
+
+		if duration == 0:
+			exit_flag = [False]
+
+			def callback_wapper(*args, **kwargs):
+				if not exit_flag[0]:
+					callback(*args, **kwargs)
+					exit_flag[0] = True
+
+			device.registered_callbacks[function_id] = callback_wapper
+
+			while not exit_flag[0]:
+				time.sleep(0.1)
+		elif duration < 0:
+			device.registered_callbacks[function_id] = callback
+
+			while True:
+				time.sleep(1)
+		else:
+			device.registered_callbacks[function_id] = callback
+
+			time.sleep(duration / 1000.0)
+	except Error as e:
+		fatal(e.description.lower())
+	except socket.error as e:
+		fatal(str(e).lower())
+	except Exception as e:
+		fatal(str(e).lower())
+	finally:
+		try:
+			ipcon.disconnect()
+		except:
+			pass
+
+def convert_char(string):
+	if len(string) != 1:
+		msg = 'invalid char value: %r' % string
+		raise argparse.ArgumentTypeError(msg)
+
+	return string
+
+def convert_bool(string):
+	value = string.lower()
+	if value == 'true':
+		value = True
+	elif value == 'false':
+		value = False
+	else:
+		msg = 'invalid bool value: %r' % string
+		raise argparse.ArgumentTypeError(msg)
+
+	return value
+
+def create_array_converter(type, length):
+	def convert_array(string):
+		array = []
+
+		for item in string.split(array_separator):
+			array.append(type(item))
+
+		if len(array) != length:
+			name = getattr(type, '__name__', repr(type))
+			msg = 'invalid %s[%d] value: %r' % (name, length, string)
+			raise argparse.ArgumentTypeError(msg)
+
+		return array
+
+	name = getattr(type, '__name__', repr(type))
+	convert_array.__name__ = '%s[%d]' % (name, length)
+
+	return convert_array
+
+def execute_result(command, replace, names, values):
+	if replace:
+		result = {}
+
+		class Tuple(tuple):
+			def __init__(self, *args):
+				tuple.__init__(self, *args)
+
+			def __str__(self):
+				return array_separator.join(map(str, self))
+
+		for name, value in zip(names, values):
+			if type(value) == tuple:
+				result[name] = Tuple(value)
+			else:
+				result[name] = value
+
+		try:
+			replaced_command = command.format(**result)
+		except KeyError as e:
+			fatal('invalid placeholder %s in format: %s' % (str(e).lower(), command))
+		except Exception as e:
+			fatal('%s: %s' % (str(e).lower(), command))
+
+		os.system(replaced_command)
+	else:
+		result = []
+
+		for value in values:
+			if type(value) == tuple:
+				result.append(array_separator.join(map(str, value)))
+			else:
+				result.append(str(value))
+
+		os.system(command + ' ' + ' '.join(result))
+
+def print_result(names, values):
+	for name, value in zip(names, values):
+		if type(value) == tuple:
+			print('{0}={1}'.format(name, array_separator.join(map(str, value))))
+		else:
+			print('{0}={1}'.format(name, value))
+
+def common_get_identity(prog_prefix, klass, argv):
+	parser = ParserWithExecute(prog_prefix + ' get-identity')
+
+	args = parser.parse_args(argv)
+
+	device_send_request(klass, 255, (), '', '8s 8s c 3B 3B H', args.execute, args.replace, ['uid', 'connected-uid', 'position', 'hardware-version', 'firmware-version', 'device-identifier'])

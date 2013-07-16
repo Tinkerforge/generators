@@ -497,7 +497,7 @@ namespace Tinkerforge
 
 				pendingLength += length;
 
-				while (true)
+				while (receiveFlag)
 				{
 					if (pendingLength < 8)
 					{
