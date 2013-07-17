@@ -2,9 +2,12 @@
 
 # Common Device communication config
 
+# is_virtual is set to True for functions without a corresponding TCP/IP packet
+
 common_packets = []
 
 common_packets.append({
+'is_virtual': True,
 'type': 'function',
 'function_id': -1,
 'name': ('GetAPIVersion', 'get_api_version'),
@@ -25,6 +28,7 @@ zurück.
 })
 
 common_packets.append({
+'is_virtual': True,
 'type': 'function',
 'function_id': -1,
 'name': ('GetResponseExpected', 'get_response_expected'),
@@ -79,6 +83,7 @@ für die Liste der verfügbaren Funktions ID :word:`constants` für diese Funkti
 })
 
 common_packets.append({
+'is_virtual': True,
 'type': 'function',
 'function_id': -1,
 'name': ('SetResponseExpected', 'set_response_expected'),
@@ -117,6 +122,7 @@ nicht detektiert werden können.
 })
 
 common_packets.append({
+'is_virtual': True,
 'type': 'function',
 'function_id': -1,
 'name': ('SetResponseExpectedAll', 'set_response_expected_all'),
