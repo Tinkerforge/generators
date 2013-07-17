@@ -39,16 +39,16 @@ device = None
 
 def get_element_type(element):
     types = {
-        'int8': 'integer',
-        'uint8': 'unsigned integer',
-        'int16': 'integer',
-        'uint16': 'unsigned integer',
-        'int32': 'integer',
-        'uint32': 'unsigned integer',
-        'int64': 'integer',
-        'uint64': 'unsigned integer',
+        'int8': 'int',
+        'uint8': 'int',
+        'int16': 'int',
+        'uint16': 'int',
+        'int32': 'int',
+        'uint32': 'int',
+        'int64': 'int',
+        'uint64': 'int',
         'bool': 'bool',
-        'char': 'character',
+        'char': 'char',
         'string': 'string',
         'float': 'float'
     }
@@ -58,7 +58,7 @@ def get_element_type(element):
     if element[2] == 1 or element[1] == 'string':
         return t
     else:
-        return '{0}[{1}]'.format(t, element[2])
+        return ','.join([t] * element[2])
 
 def get_device_name(device):
     return device.get_underscore_name().replace('_', '-') + '-' + device.get_category().lower()
@@ -111,7 +111,10 @@ def make_return_desc(packet):
 
     ret = '\n'
     for element in elements:
-        t = get_element_type(element)
+        if packet.get_function_id() == 255 and element[0] == 'device_identifier':
+            t = 'string'
+        else:
+            t = get_element_type(element)
         ret += ' :returns {0}: {1}\n'.format(element[0].replace('_', '-'), t)
 
     return ret
