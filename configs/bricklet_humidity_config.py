@@ -341,11 +341,13 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callbacks
 
- :func:`HumidityReached`, :func:`AnalogValueReached`
+* :func:`HumidityReached`,
+* :func:`AnalogValueReached`
 
 are triggered, if the thresholds
 
- :func:`SetHumidityCallbackThreshold`, :func:`SetAnalogValueCallbackThreshold`
+* :func:`SetHumidityCallbackThreshold`,
+* :func:`SetAnalogValueCallbackThreshold`
 
 keep being reached.
 
@@ -355,11 +357,13 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
- :func:`HumidityReached`, :func:`AnalogValueReached`
+* :func:`HumidityReached`,
+* :func:`AnalogValueReached`
  
 ausgelöst werden, wenn die Schwellwerte 
 
- :func:`SetHumidityCallbackThreshold`, :func:`SetAnalogValueCallbackThreshold`
+* :func:`SetHumidityCallbackThreshold`,
+* :func:`SetAnalogValueCallbackThreshold`
  
 weiterhin erreicht bleiben.
 

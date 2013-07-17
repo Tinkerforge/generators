@@ -208,11 +208,11 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callback
 
- :func:`CurrentReached`
+* :func:`CurrentReached`
 
 is triggered, if the threshold
 
- :func:`SetCurrentCallbackThreshold`
+* :func:`SetCurrentCallbackThreshold`
 
 keeps being reached.
 
@@ -222,11 +222,11 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher der Schwellwert Callback
 
- :func:`CurrentReached`
+* :func:`CurrentReached`
  
 ausgelöst werden, wenn der Schwellwert
 
- :func:`SetCurrentCallbackThreshold`
+* :func:`SetCurrentCallbackThreshold`
  
 weiterhin erreicht bleibt.
 
