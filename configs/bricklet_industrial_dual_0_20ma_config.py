@@ -13,6 +13,21 @@ com = {
     'packets': []
 }
 
+com['api'] = {
+'en':
+"""
+Two sensors can be connected to the Bricklet. Functions that are related
+directly to a sensor have a sensor parameter to specify one of the two sensors.
+Valid values for the sensor parameter are 0 and 1.
+""",
+'de':
+"""
+Es können zwei Sensoren an das Bricklet angeschlossen werden. Funktionen die
+sich direkt auf einen der Sensoren beziehen haben einen sensor Parameter, den
+Sensor anzugeben. Gültige Werte für den sensor Parameter sind 0 und 1.
+"""
+}
+
 com['packets'].append({
 'type': 'function',
 'name': ('GetCurrent', 'get_current'), 
@@ -22,7 +37,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the current of the sensor. The value is in nA
+Returns the current of the specified sensor (0 or 1). The value is in nA
 and between 0nA and 22505322nA (22.5mA).
 
 It is possible to detect if an IEC 60381-1 compatible sensor is connected
@@ -38,8 +53,8 @@ callback :func:`Current` and set the period with
 """,
 'de':
 """
-Gibt die gemessenen Stromstärke des Sensors zurück. Der Wert ist in nA und im
-Bereich von 0nA bis 22505322nA (22.5mA).
+Gibt die gemessenen Stromstärke des angegebenen Sensors (0 oder 1) zurück. Der
+Wert ist in nA und im Bereich von 0nA bis 22505322nA (22.5mA).
 
 Es ist möglich zu erkennen ob ein IEC 60381-1-kompatibler Sensor angeschlossen
 ist und ob er funktionsfähig ist.
