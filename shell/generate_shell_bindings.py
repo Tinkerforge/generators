@@ -34,6 +34,7 @@ device = None
 call_devices = []
 dispatch_devices = []
 devices_identifiers = []
+completion_devices = []
 
 def get_argparse_type_converter(element):
     types = {
@@ -334,6 +335,10 @@ def make_files(device_, directory):
                                                        device.get_underscore_name().replace('_', '-'),
                                                        device.get_category().lower()))
 
+    global completion_devices
+    completion_devices.append('{0}-{1}'.format(device.get_underscore_name().replace('_', '-'),
+                                               device.get_category().lower()))
+
     shell = file('{0}/{1}.part'.format(directory, file_name), 'wb')
     shell.write(make_class())
     shell.write(make_init_method())
@@ -364,6 +369,10 @@ def finish(directory):
     shell.write('\ndevices_identifiers = {\n' + ',\n'.join(devices_identifiers) + '\n}\n')
     shell.write(footer)
     shell.close()
+
+    template = file('{0}/../tinkerforge-bash-completion.template'.format(directory), 'rb').read()
+    template = template.replace('<<DEVICES>>', '|'.join(sorted(completion_devices)))
+    file('{0}/../tinkerforge-bash-completion.sh'.format(directory), 'wb').write(template)
 
 if __name__ == "__main__":
     common.generate(os.getcwd(), 'en', make_files, common.prepare_bindings, finish, False)
