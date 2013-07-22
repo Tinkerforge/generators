@@ -51,18 +51,35 @@ def get_argparse_type_converter(element):
         'float':  'float'
     }
 
-    type = types[element[1]]
+    t = types[element[1]]
 
-    if element[2] == 1 or type == 'str':
-        return type, 1
+    if element[2] == 1 or t == 'str':
+        return t, 1
     else:
-        return type, element[2]
+        return t, element[2]
 
 def get_element_help(element):
-    if element[2] == 1 or type == 'str':
-        return '{0} value'.format(element[1])
+    types = {
+        'int8': 'int',
+        'uint8': 'int',
+        'int16': 'int',
+        'uint16': 'int',
+        'int32': 'int',
+        'uint32': 'int',
+        'int64': 'int',
+        'uint64': 'int',
+        'bool': 'bool',
+        'char': 'char',
+        'string': 'string',
+        'float': 'float'
+    }
+
+    t = types[element[1]]
+
+    if element[2] == 1 or t == 'string':
+        return t
     else:
-        return 'array of {0} {1} values'.format(element[2], element[1])
+        return ','.join([t] * element[2])
 
 def get_format(element):
     formats = {

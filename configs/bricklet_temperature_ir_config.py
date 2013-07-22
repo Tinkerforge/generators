@@ -406,11 +406,13 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callbacks
 
- :func:`AmbientTemperatureReached`, :func:`ObjectTemperatureReached`
+* :func:`AmbientTemperatureReached`,
+* :func:`ObjectTemperatureReached`
 
 are triggered, if the thresholds
 
- :func:`SetAmbientTemperatureCallbackThreshold`, :func:`SetObjectTemperatureCallbackThreshold`
+* :func:`SetAmbientTemperatureCallbackThreshold`,
+* :func:`SetObjectTemperatureCallbackThreshold`
 
 keep being reached.
 
@@ -420,11 +422,13 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
- :func:`AmbientTemperatureReached`, :func:`ObjectTemperatureReached`
+* :func:`AmbientTemperatureReached`,
+* :func:`ObjectTemperatureReached`
  
 ausgelöst werden, wenn die Schwellwerte 
 
- :func:`SetAmbientTemperatureCallbackThreshold`, :func:`SetObjectTemperatureCallbackThreshold`
+* :func:`SetAmbientTemperatureCallbackThreshold`,
+* :func:`SetObjectTemperatureCallbackThreshold`
  
 weiterhin erreicht bleiben.
 

@@ -1308,7 +1308,8 @@ static void ipcon_receive_loop(void *opaque) {
 
 			ipcon_handle_response(ipcon, pending_data);
 
-			memmove(pending_data, pending_data + length, pending_length - length);
+			memmove(pending_data, (uint8_t *)pending_data + length,
+			        pending_length - length);
 			pending_length -= length;
 		}
 	}

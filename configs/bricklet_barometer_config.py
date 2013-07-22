@@ -326,11 +326,13 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callbacks
 
- :func:`AirPressureReached`, :func:`AltitudeReached`
+* :func:`AirPressureReached`,
+* :func:`AltitudeReached`
 
 are triggered, if the thresholds
 
- :func:`SetAirPressureCallbackThreshold`, :func:`SetAltitudeCallbackThreshold`
+* :func:`SetAirPressureCallbackThreshold`,
+* :func:`SetAltitudeCallbackThreshold`
 
 keep being reached.
 
@@ -340,11 +342,13 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
- :func:`AirPressureReached`, :func:`AltitudeReached`
+* :func:`AirPressureReached`,
+* :func:`AltitudeReached`
  
 ausgelöst werden, wenn die Schwellwerte 
 
- :func:`SetAirPressureCallbackThreshold`, :func:`SetAltitudeCallbackThreshold`
+* :func:`SetAirPressureCallbackThreshold`,
+* :func:`SetAltitudeCallbackThreshold`
  
 weiterhin erreicht bleiben.
 
