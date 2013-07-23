@@ -351,9 +351,10 @@ def make_files(device_, directory):
     shell.write(make_dispatch_footer())
 
 def finish(directory):
+    version = common.get_changelog_version(directory)
     shell = file('{0}/tinkerforge'.format(directory), 'wb')
     header = file('{0}/tinkerforge.header'.format(directory), 'rb').read()
-    footer = file('{0}/tinkerforge.footer'.format(directory), 'rb').read()
+    footer = file('{0}/tinkerforge.footer'.format(directory), 'rb').read().replace('<<VERSION>>', '.'.join(version))
     directory += '/bindings'
 
     shell.write(header)
