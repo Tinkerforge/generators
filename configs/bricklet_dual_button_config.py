@@ -78,7 +78,7 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'callback',
-'name': ('ButtonStatusChanged', 'button_status_changed'), 
+'name': ('StateChanged', 'state_changed'), 
 'elements': [('button1', 'uint8', 1, 'out', ('ButtonState', 'button_state', [('Pressed', 'pressed', 0),
                                                                              ('Released', 'released', 1)])),
              ('button2', 'uint8', 1, 'out', ('ButtonState', 'button_state', [('Pressed', 'pressed', 0),
