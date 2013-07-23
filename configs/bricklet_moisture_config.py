@@ -21,14 +21,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-
 If you want to get the moisture value periodically, it is recommended 
 to use the callback :func:`Moisture` and set the period with 
 :func:`SetMoistureCallbackPeriod`.
 """,
 'de':
 """
-
 Wenn der Feuchtigkeitswert periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Moisture` zu nutzen und die Periode mit 
 :func:`SetMoistureCallbackPeriod` vorzugeben.
@@ -168,11 +166,11 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callback
 
- :func:`MoistureReached`
+* :func:`MoistureReached`
 
 is triggered, if the threshold
 
- :func:`SetMoistureCallbackThreshold`
+* :func:`SetMoistureCallbackThreshold`
 
 keeps being reached.
 
@@ -182,11 +180,11 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callback
 
- :func:`MoistureReached`
+* :func:`MoistureReached`
  
 ausgelöst wird, wenn der Schwellwert 
 
- :func:`SetMoistureCallbackThreshold`
+* :func:`SetMoistureCallbackThreshold`
  
 weiterhin erreicht bleibt.
 
