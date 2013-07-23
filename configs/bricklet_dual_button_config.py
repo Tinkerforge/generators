@@ -45,7 +45,7 @@ com['packets'].append({
              ('led2', 'uint8', 1, 'out', ('LEDState', 'led_state', [('AutoToggleOn', 'auto_toggle_on', 0),
                                                                     ('AutoToggleOff', 'auto_toggle_off', 1),
                                                                     ('On', 'on', 3),
-                                                                    ('Off', 'off', 4)])],
+                                                                    ('Off', 'off', 4)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -83,10 +83,14 @@ com['packets'].append({
                                                                              ('Released', 'released', 1)])),
              ('button2', 'uint8', 1, 'out', ('ButtonState', 'button_state', [('Pressed', 'pressed', 0),
                                                                              ('Released', 'released', 1)])),
-             ('led1', 'uint8', 1, 'out', ('LEDCurrentState', 'led_current_state', [('On', 'on', 1),
-                                                                                   ('Off', 'off', 2)])),
-             ('led2', 'uint8', 1, 'out', ('LEDCurrentState', 'led_current_state', [('On', 'on', 1),
-                                                                                   ('Off', 'off', 2)]))],
+             ('led1', 'uint8', 1, 'out', ('LEDState', 'led_state', [('AutoToggleOn', 'auto_toggle_on', 0),
+                                                                    ('AutoToggleOff', 'auto_toggle_off', 1),
+                                                                    ('On', 'on', 3),
+                                                                    ('Off', 'off', 4)])),
+             ('led2', 'uint8', 1, 'out', ('LEDState', 'led_state', [('AutoToggleOn', 'auto_toggle_on', 0),
+                                                                    ('AutoToggleOff', 'auto_toggle_off', 1),
+                                                                    ('On', 'on', 3),
+                                                                    ('Off', 'off', 4)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
