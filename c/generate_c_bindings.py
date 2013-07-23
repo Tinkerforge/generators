@@ -713,5 +713,8 @@ def make_files(device_, directory):
     h.write(make_method_declarations())
     h.write(make_end_h())
 
+def generate(path):
+    common.generate(path, 'en', make_files, common.prepare_bindings, None, False)
+
 if __name__ == "__main__":
-    common.generate(os.getcwd(), 'en', make_files, common.prepare_bindings, None, False)
+    generate(os.getcwd())

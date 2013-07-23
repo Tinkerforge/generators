@@ -419,7 +419,10 @@ def make_files(device_, directory):
     f.write(make_examples())
     f.write(make_api())
 
+def generate(path, lang):
+    common.generate(path, lang, make_files, common.prepare_doc, None, True)
+
 if __name__ == "__main__":
     for lang in ['en', 'de']:
         print("=== Generating %s ===" % lang)
-        common.generate(os.getcwd(), lang, make_files, common.prepare_doc, None, True)
+        generate(os.getcwd(), lang)

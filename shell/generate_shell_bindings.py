@@ -369,10 +369,14 @@ def finish(directory):
     shell.write('\ndevices_identifiers = {\n' + ',\n'.join(devices_identifiers) + '\n}\n')
     shell.write(footer)
     shell.close()
+    os.system('chmod +x tinkerforge')
 
     template = file('{0}/../tinkerforge-bash-completion.template'.format(directory), 'rb').read()
     template = template.replace('<<DEVICES>>', '|'.join(sorted(completion_devices)))
     file('{0}/../tinkerforge-bash-completion.sh'.format(directory), 'wb').write(template)
 
+def generate(path):
+    common.generate(path, 'en', make_files, common.prepare_bindings, finish, False)
+
 if __name__ == "__main__":
-    common.generate(os.getcwd(), 'en', make_files, common.prepare_bindings, finish, False)
+    generate(os.getcwd())

@@ -28,7 +28,7 @@ import sys
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
-from csharp.generate_csharp_bindings import make_files
+from csharp.generate_csharp_bindings import generate
 
 if __name__ == "__main__":
-    common.generate(os.getcwd(), 'en', make_files, common.prepare_bindings, None, False)
+    generate(os.getcwd())
