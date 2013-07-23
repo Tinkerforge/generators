@@ -263,3 +263,36 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetMovingAverage', 'set_moving_average'), 
+'elements': [('average', 'uint8', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+TODO
+
+Max value: 100
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetMovingAverage', 'get_moving_average'), 
+'elements': [('average', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
