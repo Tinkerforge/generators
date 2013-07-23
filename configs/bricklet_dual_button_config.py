@@ -16,12 +16,14 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': ('SetLEDState', 'set_led_state'), 
-'elements': [('led1', 'uint8', 1, 'in', ('LEDState', 'led_state', [('AutoToggle', 'auto_toggle', 0),
-                                                                   ('On', 'on', 1),
-                                                                   ('Off', 'off', 2)])),
-             ('led2', 'uint8', 1, 'in', ('LEDState', 'led_state', [('AutoToggle', 'auto_toggle', 0),
-                                                                   ('On', 'on', 1),
-                                                                   ('Off', 'off', 2)]))],
+'elements': [('led1', 'uint8', 1, 'in', ('LEDState', 'led_state', [('AutoToggleOn', 'auto_toggle_on', 0),
+                                                                   ('AutoToggleOff', 'auto_toggle_off', 1),
+                                                                   ('On', 'on', 3),
+                                                                   ('Off', 'off', 4)])),
+             ('led2', 'uint8', 1, 'in', ('LEDState', 'led_state', [('AutoToggleOn', 'auto_toggle_on', 0),
+                                                                   ('AutoToggleOff', 'auto_toggle_off', 1),
+                                                                   ('On', 'on', 3),
+                                                                   ('Off', 'off', 4)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -36,12 +38,14 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': ('GetLEDState', 'get_led_state'), 
-'elements': [('led1', 'uint8', 1, 'out', ('LEDState', 'led_state', [('AutoToggle', 'auto_toggle', 0),
-                                                                    ('On', 'on', 1),
-                                                                    ('Off', 'off', 2)])),
-             ('led2', 'uint8', 1, 'out', ('LEDState', 'led_state', [('AutoToggle', 'auto_toggle', 0),
-                                                                    ('On', 'on', 1),
-                                                                    ('Off', 'off', 2)]))],
+'elements': [('led1', 'uint8', 1, 'out', ('LEDState', 'led_state', [('AutoToggleOn', 'auto_toggle_on', 0),
+                                                                    ('AutoToggleOff', 'auto_toggle_off', 1),
+                                                                    ('On', 'on', 3),
+                                                                    ('Off', 'off', 4)])),
+             ('led2', 'uint8', 1, 'out', ('LEDState', 'led_state', [('AutoToggleOn', 'auto_toggle_on', 0),
+                                                                    ('AutoToggleOff', 'auto_toggle_off', 1),
+                                                                    ('On', 'on', 3),
+                                                                    ('Off', 'off', 4)])],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
