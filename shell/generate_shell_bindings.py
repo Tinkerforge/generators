@@ -160,7 +160,7 @@ def make_callback_formats():
 def make_call_header():
     header = """
 def call_{0}_{2}(argv):
-\tprog_prefix = 'tinkerforge call {1}-{2}'
+\tprog_prefix = 'tinkerforge call {1}-{2} <uid>'
 
 """
 
@@ -264,7 +264,7 @@ def make_call_footer():
 def make_dispatch_header():
     header = """
 def dispatch_{0}_{2}(argv):
-\tprog_prefix = 'tinkerforge dispatch {1}-{2}'
+\tprog_prefix = 'tinkerforge dispatch {1}-{2} <uid>'
 
 """
 
@@ -351,9 +351,10 @@ def make_files(device_, directory):
     shell.write(make_dispatch_footer())
 
 def finish(directory):
+    version = common.get_changelog_version(directory)
     shell = file('{0}/tinkerforge'.format(directory), 'wb')
     header = file('{0}/tinkerforge.header'.format(directory), 'rb').read()
-    footer = file('{0}/tinkerforge.footer'.format(directory), 'rb').read()
+    footer = file('{0}/tinkerforge.footer'.format(directory), 'rb').read().replace('<<VERSION>>', '.'.join(version))
     directory += '/bindings'
 
     shell.write(header)

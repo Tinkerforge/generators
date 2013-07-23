@@ -26,6 +26,7 @@ Boston, MA 02111-1307, USA.
 import sys
 import os
 import py_compile
+import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -35,6 +36,10 @@ class PythonExamplesCompiler(common.ExamplesCompiler):
         common.ExamplesCompiler.__init__(self, 'python', '.py', path, subdirs=['examples', 'source'], extra_examples=extra_examples)
 
     def compile(self, src, is_extra_example):
+        if is_extra_example:
+            shutil.copy(src, '/tmp/compiler/')
+            src = os.path.join('/tmp/compiler/', os.path.split(src)[1])
+
         try:
             py_compile.compile(src, doraise=True)
             return True
