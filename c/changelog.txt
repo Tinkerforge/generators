@@ -61,3 +61,5 @@
 2.0.7: Add support for PTC Bricklet and Industrial Dual 0-20mA Bricklet
        Workaround for GCC 4.7 struct packing bug is only necessary on Windows
        Avoid breaking strict-aliasing rules
+2.0.8: Avoid potential infinite loop in receive thread
+       Handle incoming data correctly if multiple packets are received at once

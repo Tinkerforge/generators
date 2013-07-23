@@ -1788,11 +1788,15 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callbacks
 
- :func:`StackCurrentReached`, :func:`StackVoltageReached`, :func:`USBVoltageReached`
+* :func:`StackCurrentReached`,
+* :func:`StackVoltageReached`,
+* :func:`USBVoltageReached`
 
 are triggered, if the thresholds
 
- :func:`SetStackCurrentCallbackThreshold`, :func:`SetStackVoltageCallbackThreshold`, :func:`SetUSBVoltageCallbackThreshold`
+* :func:`SetStackCurrentCallbackThreshold`,
+* :func:`SetStackVoltageCallbackThreshold`,
+* :func:`SetUSBVoltageCallbackThreshold`
 
 keep being reached.
 
@@ -1802,11 +1806,15 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
- :func:`StackCurrentReached`, :func:`StackVoltageReached`, :func:`USBVoltageReached`
+* :func:`StackCurrentReached`,
+* :func:`StackVoltageReached`,
+* :func:`USBVoltageReached`
  
 ausgelöst werden, wenn die Schwellwerte 
 
- :func:`SetStackCurrentCallbackThreshold`, :func:`SetStackVoltageCallbackThreshold`, :func:`SetUSBVoltageCallbackThreshold`
+* :func:`SetStackCurrentCallbackThreshold`,
+* :func:`SetStackVoltageCallbackThreshold`,
+* :func:`SetUSBVoltageCallbackThreshold`
  
 weiterhin erreicht bleiben.
 

@@ -335,11 +335,13 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callbacks
 
- :func:`VoltageReached`, :func:`AnalogValueReached`
+* :func:`VoltageReached`,
+* :func:`AnalogValueReached`
 
 are triggered, if the thresholds
 
- :func:`SetVoltageCallbackThreshold`, :func:`SetAnalogValueCallbackThreshold`
+* :func:`SetVoltageCallbackThreshold`,
+* :func:`SetAnalogValueCallbackThreshold`
 
 keep being reached.
 
@@ -349,11 +351,13 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
- :func:`VoltageReached`, :func:`AnalogValueReached`
+* :func:`VoltageReached`,
+* :func:`AnalogValueReached`
  
 ausgelöst werden, wenn die Schwellwerte 
 
- :func:`SetVoltageCallbackThreshold`, :func:`SetAnalogValueCallbackThreshold`
+* :func:`SetVoltageCallbackThreshold`,
+* :func:`SetAnalogValueCallbackThreshold`
  
 weiterhin erreicht bleiben.
 

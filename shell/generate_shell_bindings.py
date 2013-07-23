@@ -34,6 +34,7 @@ device = None
 call_devices = []
 dispatch_devices = []
 devices_identifiers = []
+completion_devices = []
 
 def get_argparse_type_converter(element):
     types = {
@@ -51,18 +52,35 @@ def get_argparse_type_converter(element):
         'float':  'float'
     }
 
-    type = types[element[1]]
+    t = types[element[1]]
 
-    if element[2] == 1 or type == 'str':
-        return type, 1
+    if element[2] == 1 or t == 'str':
+        return t, 1
     else:
-        return type, element[2]
+        return t, element[2]
 
 def get_element_help(element):
-    if element[2] == 1 or type == 'str':
-        return '{0} value'.format(element[1])
+    types = {
+        'int8': 'int',
+        'uint8': 'int',
+        'int16': 'int',
+        'uint16': 'int',
+        'int32': 'int',
+        'uint32': 'int',
+        'int64': 'int',
+        'uint64': 'int',
+        'bool': 'bool',
+        'char': 'char',
+        'string': 'string',
+        'float': 'float'
+    }
+
+    t = types[element[1]]
+
+    if element[2] == 1 or t == 'string':
+        return t
     else:
-        return 'array of {0} {1} values'.format(element[2], element[1])
+        return ','.join([t] * element[2])
 
 def get_format(element):
     formats = {
@@ -317,6 +335,10 @@ def make_files(device_, directory):
                                                        device.get_underscore_name().replace('_', '-'),
                                                        device.get_category().lower()))
 
+    global completion_devices
+    completion_devices.append('{0}-{1}'.format(device.get_underscore_name().replace('_', '-'),
+                                               device.get_category().lower()))
+
     shell = file('{0}/{1}.part'.format(directory, file_name), 'wb')
     shell.write(make_class())
     shell.write(make_init_method())
@@ -347,6 +369,10 @@ def finish(directory):
     shell.write('\ndevices_identifiers = {\n' + ',\n'.join(devices_identifiers) + '\n}\n')
     shell.write(footer)
     shell.close()
+
+    template = file('{0}/../tinkerforge-bash-completion.template'.format(directory), 'rb').read()
+    template = template.replace('<<DEVICES>>', '|'.join(sorted(completion_devices)))
+    file('{0}/../tinkerforge-bash-completion.sh'.format(directory), 'wb').write(template)
 
 if __name__ == "__main__":
     common.generate(os.getcwd(), 'en', make_files, common.prepare_bindings, finish, False)

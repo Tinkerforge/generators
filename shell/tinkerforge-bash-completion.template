@@ -22,7 +22,7 @@ _tinkerforge_device()
 	done
 }
 
-_tinkerforge() 
+_tinkerforge()
 {
 	COMPREPLY=()
 	local prev cur
@@ -43,7 +43,10 @@ _tinkerforge()
 	--port)
 		return 0
 		;;
-	--array-separator)
+	--item-separator)
+		return 0
+		;;
+	--group-separator)
 		return 0
 		;;
 	--duration)
@@ -62,7 +65,39 @@ _tinkerforge()
 		return 0
 		;;
 	--uid)
-		# FIXME: call enumerate?
+		local host port
+		host=""
+		port=""
+
+		for (( i=${COMP_CWORD}; i > 0; i-- )); do
+			case "${COMP_WORDS[i]}" in
+			--host)
+				case "${COMP_WORDS[i+1]}" in
+				=)
+					host="--host ${COMP_WORDS[i+2]}"
+					;;
+				*)
+					host="--host ${COMP_WORDS[i+1]}"
+					;;
+				esac
+				;;
+			--port)
+				case "${COMP_WORDS[i+1]}" in
+				=)
+					port="--port ${COMP_WORDS[i+2]}"
+					;;
+				*)
+					port="--port ${COMP_WORDS[i+1]}"
+					;;
+				esac
+				;;
+			*)
+				;;
+			esac
+		done
+
+		local uids=$(tinkerforge ${host} ${port} enumerate --duration 100 --execute "if [ {device-identifier} = '${COMP_WORDS[COMP_CWORD-2]}' ]; then echo {uid}; fi" --replace 2> /dev/null)
+		COMPREPLY=($(compgen -W "${uids}" -- ${cur}))
 		return 0
 		;;
 	--execute)
@@ -80,7 +115,7 @@ _tinkerforge()
 
 		case "${prev}" in
 		tinkerforge)
-			COMPREPLY=($(compgen -W "--help --host --port --array-separator call dispatch enumerate" -- ${cur}))
+			COMPREPLY=($(compgen -W "--help --host --port --item-separator --group-separator call dispatch enumerate" -- ${cur}))
 			break
 			;;
 		call)
@@ -93,7 +128,7 @@ _tinkerforge()
 			COMPREPLY=($(compgen -W "--help --list-devices --duration ${devices}" -- ${cur}))
 			break
 			;;
-		ambient-light-bricklet|analog-in-bricklet|analog-out-bricklet|barometer-bricklet|current12-bricklet|current25-bricklet|dc-brick|distance-ir-bricklet|dual-relay-bricklet|gps-bricklet|humidity-bricklet|imu-brick|industrial-digital-in-4-bricklet|industrial-digital-out-4-bricklet|industrial-quad-relay-bricklet|io16-bricklet|io4-bricklet|joystick-bricklet|lcd-16x2-bricklet|lcd-20x4-bricklet|linear-poti-bricklet|master-brick|piezo-buzzer-bricklet|ptc-bricklet|rotary-poti-bricklet|servo-brick|stepper-brick|temperature-bricklet|temperature-ir-bricklet|voltage-bricklet|voltage-current-bricklet)
+		<<DEVICES>>)
 			_tinkerforge_device ${i} ${prev}
 			break
 			;;

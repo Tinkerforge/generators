@@ -343,11 +343,13 @@ com['packets'].append({
 """
 Sets the period in ms with which the threshold callbacks
 
- :func:`IlluminanceReached`, :func:`AnalogValueReached`
+* :func:`IlluminanceReached`,
+* :func:`AnalogValueReached`
 
 are triggered, if the thresholds
 
- :func:`SetIlluminanceCallbackThreshold`, :func:`SetAnalogValueCallbackThreshold`
+* :func:`SetIlluminanceCallbackThreshold`,
+* :func:`SetAnalogValueCallbackThreshold`
 
 keep being reached.
 
@@ -357,11 +359,13 @@ The default value is 100.
 """
 Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
- :func:`IlluminanceReached`, :func:`AnalogValueReached`
+* :func:`IlluminanceReached`,
+* :func:`AnalogValueReached`
  
 ausgelöst werden, wenn die Schwellwerte 
 
- :func:`SetIlluminanceCallbackThreshold`, :func:`SetAnalogValueCallbackThreshold`
+* :func:`SetIlluminanceCallbackThreshold`,
+* :func:`SetAnalogValueCallbackThreshold`
  
 weiterhin erreicht bleiben.
 

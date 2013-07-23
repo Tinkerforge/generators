@@ -140,9 +140,6 @@ lang = 'en'
 path_binding = ''
 is_doc = False
 
-OPTION_RETURN_EXPECTED = 1 << 3
-OPTION_AUTHENTICATION  = 1 << 2
-
 def shift_right(text, n):
     return text.replace('\n', '\n' + ' '*n)
 
@@ -626,6 +623,12 @@ class Packet:
     def has_prototype_in_device(self):
         if 'prototype_in_device' in self.packet:
             if self.packet['prototype_in_device'] == True:
+                return True
+        return False
+
+    def is_virtual(self):
+        if 'is_virtual' in self.packet:
+            if self.packet['is_virtual'] == True:
                 return True
         return False
 

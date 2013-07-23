@@ -25,7 +25,8 @@ host = None
 port = None
 timeout = None
 uid = None
-array_separator = None
+item_separator = None
+group_separator = None
 duration = None
 
 class Parser(argparse.ArgumentParser):
@@ -134,7 +135,16 @@ def device_callback(device_class, function_id, command, replace, names):
 		def callback(*values):
 			execute_result(command, replace, names, values)
 	else:
+		is_first_callback = [True]
+
 		def callback(*values):
+			if len(names) > 1:
+				if is_first_callback[0]:
+					is_first_callback[0] = False
+				else:
+					sys.stdout.write(group_separator)
+					sys.stdout.flush()
+
 			print_result(names, values)
 
 	try:
@@ -199,7 +209,7 @@ def create_array_converter(type, length):
 	def convert_array(string):
 		array = []
 
-		for item in string.split(array_separator):
+		for item in string.split(item_separator):
 			array.append(type(item))
 
 		if len(array) != length:
@@ -223,11 +233,13 @@ def execute_result(command, replace, names, values):
 				tuple.__init__(self, *args)
 
 			def __str__(self):
-				return array_separator.join(map(str, self))
+				return item_separator.join(map(str, self))
 
 		for name, value in zip(names, values):
 			if type(value) == tuple:
 				result[name] = Tuple(value)
+			elif type(value) == bool:
+				result[name] = str(value).lower()
 			else:
 				result[name] = value
 
@@ -244,7 +256,9 @@ def execute_result(command, replace, names, values):
 
 		for value in values:
 			if type(value) == tuple:
-				result.append(array_separator.join(map(str, value)))
+				result.append(item_separator.join(map(str, value)))
+			elif type(value) == bool:
+				result.append(str(value).lower())
 			else:
 				result.append(str(value))
 
@@ -253,7 +267,9 @@ def execute_result(command, replace, names, values):
 def print_result(names, values):
 	for name, value in zip(names, values):
 		if type(value) == tuple:
-			print('{0}={1}'.format(name, array_separator.join(map(str, value))))
+			print('{0}={1}'.format(name, item_separator.join(map(str, value))))
+		elif type(value) == bool:
+			print('{0}={1}'.format(name, str(value).lower()))
 		else:
 			print('{0}={1}'.format(name, value))
 
