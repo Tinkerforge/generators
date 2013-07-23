@@ -8,12 +8,12 @@ _tinkerforge_device()
 		case "${prev}" in
 		call)
 			local functions=$(tinkerforge call $2 --list-functions)
-			COMPREPLY=($(compgen -W "--help --uid ${functions}" -- ${cur}))
+			COMPREPLY=($(compgen -W "--help ${functions}" -- ${cur}))
 			break
 			;;
 		dispatch)
 			local callbacks=$(tinkerforge dispatch $2 --list-callbacks)
-			COMPREPLY=($(compgen -W "--help --uid ${callbacks}" -- ${cur}))
+			COMPREPLY=($(compgen -W "--help ${callbacks}" -- ${cur}))
 			break
 			;;
 		*)
@@ -64,7 +64,7 @@ _tinkerforge()
 	--list-callbacks)
 		return 0
 		;;
-	--uid)
+	<<DEVICES>>)
 		local host port
 		host=""
 		port=""
@@ -96,7 +96,7 @@ _tinkerforge()
 			esac
 		done
 
-		local uids=$(tinkerforge ${host} ${port} enumerate --duration 100 --execute "if [ {device-identifier} = '${COMP_WORDS[COMP_CWORD-2]}' ]; then echo {uid}; fi" --replace 2> /dev/null)
+		local uids=$(tinkerforge ${host} ${port} enumerate --duration 100 --execute "if [ {device-identifier} = '${COMP_WORDS[COMP_CWORD-1]}' ]; then echo {uid}; fi" --replace 2> /dev/null)
 		COMPREPLY=($(compgen -W "${uids}" -- ${cur}))
 		return 0
 		;;

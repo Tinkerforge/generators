@@ -160,7 +160,7 @@ def make_callback_formats():
 def make_call_header():
     header = """
 def call_{0}_{2}(argv):
-\tprog_prefix = 'tinkerforge call {1}-{2}'
+\tprog_prefix = 'tinkerforge call {1}-{2} <uid>'
 
 """
 
@@ -264,7 +264,7 @@ def make_call_footer():
 def make_dispatch_header():
     header = """
 def dispatch_{0}_{2}(argv):
-\tprog_prefix = 'tinkerforge dispatch {1}-{2}'
+\tprog_prefix = 'tinkerforge dispatch {1}-{2} <uid>'
 
 """
 

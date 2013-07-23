@@ -51,8 +51,8 @@ def call_generic(name, functions, argv):
 			print('\n'.join(function_choices))
 			parser.exit()
 
-	parser.add_argument('--list-functions', action=ListFunctionsAction, nargs=0, help='show of functions of {0} and exit'.format(name))
-	parser.add_argument('--uid', type=str, required=True, metavar='<uid>')
+	parser.add_argument('--list-functions', action=ListFunctionsAction, nargs=0, help='show functions of {0} and exit'.format(name))
+	parser.add_argument('uid', type=str, help='uid of a ' + name, metavar='<uid>')
 	parser.add_argument('function', choices=function_choices, help='{' + ', '.join(function_choices) + '}', metavar='<function>')
 	parser.add_argument('args', nargs=argparse.REMAINDER, help='function specific arguments', metavar='<args>')
 
@@ -72,8 +72,8 @@ def dispatch_generic(name, callbacks, argv):
 			print('\n'.join(callback_choices))
 			parser.exit()
 
-	parser.add_argument('--list-callbacks', action=ListCallbacksAction, nargs=0, help='show of callbacks of {0} and exit'.format(name))
-	parser.add_argument('--uid', type=str, required=True, metavar='<uid>')
+	parser.add_argument('--list-callbacks', action=ListCallbacksAction, nargs=0, help='show callbacks of {0} and exit'.format(name))
+	parser.add_argument('uid', type=str, help='uid of a ' + name, metavar='<uid>')
 	parser.add_argument('callback', choices=callback_choices, help='{' + ', '.join(callback_choices) + '}', metavar='<callback>')
 	parser.add_argument('args', nargs=argparse.REMAINDER, help='callback specific arguments', metavar='<args>')
 
