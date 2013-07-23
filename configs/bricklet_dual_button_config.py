@@ -18,10 +18,10 @@ com['packets'].append({
 'name': ('SetLEDState', 'set_led_state'), 
 'elements': [('led1', 'uint8', 1, 'in', ('LEDState', 'led_state', [('AutoToggle', 'auto_toggle', 0),
                                                                    ('On', 'on', 1),
-                                                                   ('Off', 'off', 2))),
+                                                                   ('Off', 'off', 2)])),
              ('led2', 'uint8', 1, 'in', ('LEDState', 'led_state', [('AutoToggle', 'auto_toggle', 0),
                                                                    ('On', 'on', 1),
-                                                                   ('Off', 'off', 2)))],
+                                                                   ('Off', 'off', 2)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -38,10 +38,10 @@ com['packets'].append({
 'name': ('GetLEDState', 'get_led_state'), 
 'elements': [('led1', 'uint8', 1, 'out', ('LEDState', 'led_state', [('AutoToggle', 'auto_toggle', 0),
                                                                     ('On', 'on', 1),
-                                                                    ('Off', 'off', 2))),
+                                                                    ('Off', 'off', 2)])),
              ('led2', 'uint8', 1, 'out', ('LEDState', 'led_state', [('AutoToggle', 'auto_toggle', 0),
                                                                     ('On', 'on', 1),
-                                                                    ('Off', 'off', 2)))],
+                                                                    ('Off', 'off', 2)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -74,16 +74,15 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'callback',
-'name': ('ButtonStatusChanged', 'ButtonStatusChanged'), 
+'name': ('ButtonStatusChanged', 'button_status_changed'), 
 'elements': [('button1', 'uint8', 1, 'out', ('ButtonState', 'button_state', [('Pressed', 'pressed', 0),
                                                                              ('Released', 'released', 1)])),
              ('button2', 'uint8', 1, 'out', ('ButtonState', 'button_state', [('Pressed', 'pressed', 0),
                                                                              ('Released', 'released', 1)])),
              ('led1', 'uint8', 1, 'out', ('LEDCurrentState', 'led_current_state', [('On', 'on', 1),
-                                                                                   ('Off', 'off', 2))),
+                                                                                   ('Off', 'off', 2)])),
              ('led2', 'uint8', 1, 'out', ('LEDCurrentState', 'led_current_state', [('On', 'on', 1),
-                                                                                   ('Off', 'off', 2)))],
-             ],
+                                                                                   ('Off', 'off', 2)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
