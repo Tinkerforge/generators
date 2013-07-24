@@ -68,7 +68,7 @@ def generate(path):
 
     # Copy bindings and readme
     shutil.copy(path + '/tinkerforge', '/tmp/generator')
-    shutil.copy(path + '/tinkerforge.bash_completion', '/tmp/generator')
+    shutil.copy(path + '/tinkerforge-bash-completion.sh', '/tmp/generator')
     shutil.copy(path + '/changelog.txt', '/tmp/generator')
     shutil.copy(path + '/readme.txt', '/tmp/generator')
 

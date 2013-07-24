@@ -25,7 +25,8 @@ host = None
 port = None
 timeout = None
 uid = None
-array_separator = None
+item_separator = None
+group_separator = None
 duration = None
 
 class Parser(argparse.ArgumentParser):
@@ -50,8 +51,8 @@ def call_generic(name, functions, argv):
 			print('\n'.join(function_choices))
 			parser.exit()
 
-	parser.add_argument('--list-functions', action=ListFunctionsAction, nargs=0, help='show of functions of {0} and exit'.format(name))
-	parser.add_argument('--uid', type=str, required=True, metavar='<uid>')
+	parser.add_argument('--list-functions', action=ListFunctionsAction, nargs=0, help='show functions of {0} and exit'.format(name))
+	parser.add_argument('uid', type=str, help='uid of a ' + name, metavar='<uid>')
 	parser.add_argument('function', choices=function_choices, help='{' + ', '.join(function_choices) + '}', metavar='<function>')
 	parser.add_argument('args', nargs=argparse.REMAINDER, help='function specific arguments', metavar='<args>')
 
@@ -71,8 +72,8 @@ def dispatch_generic(name, callbacks, argv):
 			print('\n'.join(callback_choices))
 			parser.exit()
 
-	parser.add_argument('--list-callbacks', action=ListCallbacksAction, nargs=0, help='show of callbacks of {0} and exit'.format(name))
-	parser.add_argument('--uid', type=str, required=True, metavar='<uid>')
+	parser.add_argument('--list-callbacks', action=ListCallbacksAction, nargs=0, help='show callbacks of {0} and exit'.format(name))
+	parser.add_argument('uid', type=str, help='uid of a ' + name, metavar='<uid>')
 	parser.add_argument('callback', choices=callback_choices, help='{' + ', '.join(callback_choices) + '}', metavar='<callback>')
 	parser.add_argument('args', nargs=argparse.REMAINDER, help='callback specific arguments', metavar='<args>')
 
@@ -134,7 +135,16 @@ def device_callback(device_class, function_id, command, replace, names):
 		def callback(*values):
 			execute_result(command, replace, names, values)
 	else:
+		is_first_callback = [True]
+
 		def callback(*values):
+			if len(names) > 1:
+				if is_first_callback[0]:
+					is_first_callback[0] = False
+				else:
+					sys.stdout.write(group_separator)
+					sys.stdout.flush()
+
 			print_result(names, values)
 
 	try:
@@ -199,7 +209,7 @@ def create_array_converter(type, length):
 	def convert_array(string):
 		array = []
 
-		for item in string.split(array_separator):
+		for item in string.split(item_separator):
 			array.append(type(item))
 
 		if len(array) != length:
@@ -223,7 +233,7 @@ def execute_result(command, replace, names, values):
 				tuple.__init__(self, *args)
 
 			def __str__(self):
-				return array_separator.join(map(str, self))
+				return item_separator.join(map(str, self))
 
 		for name, value in zip(names, values):
 			if type(value) == tuple:
@@ -246,7 +256,7 @@ def execute_result(command, replace, names, values):
 
 		for value in values:
 			if type(value) == tuple:
-				result.append(array_separator.join(map(str, value)))
+				result.append(item_separator.join(map(str, value)))
 			elif type(value) == bool:
 				result.append(str(value).lower())
 			else:
@@ -257,7 +267,7 @@ def execute_result(command, replace, names, values):
 def print_result(names, values):
 	for name, value in zip(names, values):
 		if type(value) == tuple:
-			print('{0}={1}'.format(name, array_separator.join(map(str, value))))
+			print('{0}={1}'.format(name, item_separator.join(map(str, value))))
 		elif type(value) == bool:
 			print('{0}={1}'.format(name, str(value).lower()))
 		else:

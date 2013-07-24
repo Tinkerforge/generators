@@ -65,7 +65,8 @@ def command_enumerate(argv):
 				if is_first_callback[0]:
 					is_first_callback[0] = False
 				else:
-					print('')
+					sys.stdout.write(group_separator)
+					sys.stdout.flush()
 
 				values = translate_device_identifier(values[:6])
 				print_result(names, values)
@@ -114,10 +115,11 @@ def parse(argv):
 	parser = Parser('tinkerforge')
 	command_choices = ['call', 'dispatch', 'enumerate']
 
-	parser.add_argument('--version', action='version', version='2.0.0')
+	parser.add_argument('--version', action='version', version='<<VERSION>>')
 	parser.add_argument('--host', default='localhost', type=str, help='IP address or hostname, default: localhost', metavar='<host>')
 	parser.add_argument('--port', default=4223, type=int, help='port number, default: 4223', metavar='<port>')
-	parser.add_argument('--array-separator', default=',', type=str, help='separator for arrays, default: , (comma)', metavar='<array-separator>')
+	parser.add_argument('--item-separator', default=',', type=str, help='separator for array items, default: , (comma)', metavar='<item-separator>')
+	parser.add_argument('--group-separator', default='\n', type=str, help='separator for output groups, default: \\n (newline)', metavar='<group-separator>')
 
 	parser.add_argument('command', choices=command_choices, help='{' + ', '.join(command_choices) + '}', metavar='<command>')
 	parser.add_argument('args', nargs=argparse.REMAINDER, help='command specific arguments', metavar='<args>')
@@ -130,8 +132,15 @@ def parse(argv):
 	global port
 	port = args.port
 
-	global array_separator
-	array_separator = args.array_separator
+	global item_separator
+	item_separator = args.item_separator
+
+	global group_separator
+	group_separator = args.group_separator
+	group_separator = group_separator.replace('\\t', '\t')
+	group_separator = group_separator.replace('\\r', '\r')
+	group_separator = group_separator.replace('\\n', '\n')
+	group_separator = group_separator.replace('\\\\', '\\')
 
 	commands = {
 	'call': command_call,

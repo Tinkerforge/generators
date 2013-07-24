@@ -34,6 +34,7 @@ device = None
 call_devices = []
 dispatch_devices = []
 devices_identifiers = []
+completion_devices = []
 
 def get_argparse_type_converter(element):
     types = {
@@ -159,7 +160,7 @@ def make_callback_formats():
 def make_call_header():
     header = """
 def call_{0}_{2}(argv):
-\tprog_prefix = 'tinkerforge call {1}-{2}'
+\tprog_prefix = 'tinkerforge call {1}-{2} <uid>'
 
 """
 
@@ -263,7 +264,7 @@ def make_call_footer():
 def make_dispatch_header():
     header = """
 def dispatch_{0}_{2}(argv):
-\tprog_prefix = 'tinkerforge dispatch {1}-{2}'
+\tprog_prefix = 'tinkerforge dispatch {1}-{2} <uid>'
 
 """
 
@@ -334,6 +335,10 @@ def make_files(device_, directory):
                                                        device.get_underscore_name().replace('_', '-'),
                                                        device.get_category().lower()))
 
+    global completion_devices
+    completion_devices.append('{0}-{1}'.format(device.get_underscore_name().replace('_', '-'),
+                                               device.get_category().lower()))
+
     shell = file('{0}/{1}.part'.format(directory, file_name), 'wb')
     shell.write(make_class())
     shell.write(make_init_method())
@@ -346,9 +351,10 @@ def make_files(device_, directory):
     shell.write(make_dispatch_footer())
 
 def finish(directory):
+    version = common.get_changelog_version(directory)
     shell = file('{0}/tinkerforge'.format(directory), 'wb')
     header = file('{0}/tinkerforge.header'.format(directory), 'rb').read()
-    footer = file('{0}/tinkerforge.footer'.format(directory), 'rb').read()
+    footer = file('{0}/tinkerforge.footer'.format(directory), 'rb').read().replace('<<VERSION>>', '.'.join(version))
     directory += '/bindings'
 
     shell.write(header)
@@ -364,6 +370,14 @@ def finish(directory):
     shell.write('\ndevices_identifiers = {\n' + ',\n'.join(devices_identifiers) + '\n}\n')
     shell.write(footer)
     shell.close()
+    os.system('chmod +x tinkerforge')
+
+    template = file('{0}/../tinkerforge-bash-completion.template'.format(directory), 'rb').read()
+    template = template.replace('<<DEVICES>>', '|'.join(sorted(completion_devices)))
+    file('{0}/../tinkerforge-bash-completion.sh'.format(directory), 'wb').write(template)
+
+def generate(path):
+    common.generate(path, 'en', make_files, common.prepare_bindings, finish, False)
 
 if __name__ == "__main__":
-    common.generate(os.getcwd(), 'en', make_files, common.prepare_bindings, finish, False)
+    generate(os.getcwd())

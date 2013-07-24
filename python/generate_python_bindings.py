@@ -297,5 +297,8 @@ def make_files(device_, directory):
     py.write(make_register_callback_method())
     py.write(make_old_name())
 
+def generate(path):
+    common.generate(path, 'en', make_files, common.prepare_bindings, None, False)
+
 if __name__ == "__main__":
-    common.generate(os.getcwd(), 'en', make_files, common.prepare_bindings, None, False)
+    generate(os.getcwd())
