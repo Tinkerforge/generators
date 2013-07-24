@@ -9,8 +9,15 @@ import sys
 import os
 import time
 
+current_parser = None
+
 def fatal(message, exit_code=1):
-	sys.stderr.write('tinkerforge: error: {0}\n'.format(message))
+	if current_parser is not None:
+		prog = current_parser.prog
+	else:
+		prog = 'tinkerforge'
+
+	sys.stderr.write('{0}: error: {1}\n'.format(prog, message))
 	sys.exit(exit_code)
 
 if sys.hexversion < 0x02060000:
@@ -32,6 +39,9 @@ duration = None
 class Parser(argparse.ArgumentParser):
 	def __init__(self, prog):
 		argparse.ArgumentParser.__init__(self, prog=prog, add_help=False)
+
+		global current_parser
+		current_parser = self
 
 		self.add_argument('--help', action='help', help='show this help message and exit')
 
