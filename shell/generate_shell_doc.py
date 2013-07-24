@@ -60,15 +60,15 @@ def get_element_type(element):
     else:
         return ','.join([t] * element[2])
 
-def get_device_name(device):
+def get_shell_device_name(device):
     return device.get_underscore_name().replace('_', '-') + '-' + device.get_category().lower()
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
-    cls = get_device_name(device)
+    device_name = get_shell_device_name(device)
     for other_packet in device.get_packets():
         name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-        name_right = ':sh:func:`{1} <{0} {1}>`'.format(cls, other_packet.get_underscore_name().replace('_', '-'))
+        name_right = ':sh:func:`{1} <{0} {1}>`'.format(device_name, other_packet.get_underscore_name().replace('_', '-'))
         text = text.replace(name_false, name_right)
 
     text = common.handle_rst_word(text)
@@ -122,7 +122,7 @@ def make_return_desc(packet):
 def make_methods(typ):
     methods = ''
     func_start = '.. sh:function:: '
-    cls = get_device_name(device)
+    device_name = get_shell_device_name(device)
     for packet in device.get_packets('function'):
         if packet.is_virtual():
             continue
@@ -135,11 +135,11 @@ def make_methods(typ):
         r = make_return_desc(packet)
         d = format_doc(packet)
         desc = '{0}{1}{2}'.format(pd, r, d)
-        func = '{0}tinkerforge call {1} {2} {3} \n{4}'.format(func_start,
-                                                              cls,
-                                                              name,
-                                                              params,
-                                                              desc)
+        func = '{0}tinkerforge call {1} <uid> {2} {3} \n{4}'.format(func_start,
+                                                                    device_name,
+                                                                    name,
+                                                                    params,
+                                                                    desc)
         methods += func + '\n'
 
     return methods
@@ -147,7 +147,7 @@ def make_methods(typ):
 def make_callbacks():
     cbs = ''
     func_start = '.. sh:function:: '
-    cls = get_device_name(device)
+    device_name = get_shell_device_name(device)
     for packet in device.get_packets('callback'):
         if packet.is_virtual():
             continue
@@ -155,11 +155,11 @@ def make_callbacks():
         param_desc = make_return_desc(packet)
         desc = format_doc(packet)
 
-        func = '{0} tinkerforge dispatch {1} {2}\n{3}\n{4}'.format(func_start,
-                                                                   cls,
-                                                                   packet.get_underscore_name().replace('_', '-'),
-                                                                   param_desc,
-                                                                   desc)
+        func = '{0} tinkerforge dispatch {1} <uid> {2}\n{3}\n{4}'.format(func_start,
+                                                                         device_name,
+                                                                         packet.get_underscore_name().replace('_', '-'),
+                                                                         param_desc,
+                                                                         desc)
         cbs += func + '\n'
 
     return cbs
@@ -177,7 +177,7 @@ device:
 
 .. code-block:: bash
 
-    tinkerforge dispatch {3} example
+    tinkerforge dispatch {3} <uid> example
 
 The available callbacks are described below.
 
@@ -199,7 +199,7 @@ vom Gerät zu erhalten:
 
 .. code-block:: bash
 
-    tinkerforge dispatch {3} example
+    tinkerforge dispatch {3} <uid> example
 
 Die verfügbaren Callbacks werden weiter unten beschrieben.
 
@@ -247,7 +247,7 @@ API
         api_str += common.select_lang(common.ccf_str).format('', ccf)
         api_str += common.select_lang(c_str).format(c, device.get_underscore_name(),
                                                     device.get_category().lower(),
-                                                    get_device_name(device))
+                                                    get_shell_device_name(device))
 
     ref = '.. _{0}_{1}_shell_api:\n'.format(device.get_underscore_name(),
                                             device.get_category().lower())
