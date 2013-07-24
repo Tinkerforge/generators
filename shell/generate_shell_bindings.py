@@ -78,12 +78,26 @@ def get_element_help(element):
         'float': 'float'
     }
 
+    constant_doc = ''
+    if len(element) > 4:
+        constants = []
+
+        for constant in element[4][2]:
+            constants.append('{0}: {1}'.format(constant[1].replace('_', '-'), constant[2]))
+
+        constant_doc = ' (' + ', '.join(constants) + ')'
+
     t = types[element[1]]
 
     if element[2] == 1 or t == 'string':
-        return t
+        help = "'{0}{1}'".format(t, constant_doc)
     else:
-        return ','.join([t] * element[2])
+        help = "get_array_type_name('{0}', {1})".format(t, element[2])
+
+        if len(constant_doc) > 0:
+            help += "+ '{0}'".format(constant_doc)
+
+    return help
 
 def get_format(element):
     formats = {
@@ -208,9 +222,9 @@ def make_call_functions():
                 metavar = "'<{0}>'".format(name.replace('_', '-'))
 
                 if length > 1:
-                    params.append("\t\tparser.add_argument('{0}', type=create_array_converter({1}, {2}), help='{3}', metavar={4})".format(name, type, length, help, metavar))
+                    params.append("\t\tparser.add_argument('{0}', type=create_array_converter({1}, {2}), help={3}, metavar={4})".format(name, type, length, help, metavar))
                 else:
-                    params.append("\t\tparser.add_argument('{0}', type={1}, help='{2}', metavar={3})".format(name, type, help, metavar))
+                    params.append("\t\tparser.add_argument('{0}', type={1}, help={2}, metavar={3})".format(name, type, help, metavar))
 
                 request_data.append('args.{0}'.format(element[0]))
 

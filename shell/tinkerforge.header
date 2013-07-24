@@ -52,6 +52,12 @@ class ParserWithExecute(Parser):
 		self.add_argument('--execute', type=str, metavar='<command>')
 		self.add_argument('--replace', action='store_true')
 
+def get_array_type_name(name, length):
+	if length < 7:
+		return item_separator.join([name]*length)
+	else:
+		return '{0}{1}{0}{1}..{2}x..{1}{0}{1}{0}'.format(name, item_separator, length - 4)
+
 def call_generic(name, functions, argv):
 	parser = Parser('tinkerforge call ' + name)
 	function_choices = sorted(functions.keys())
@@ -224,13 +230,13 @@ def create_array_converter(type, length):
 
 		if len(array) != length:
 			name = getattr(type, '__name__', repr(type))
-			msg = 'invalid %s[%d] value: %r' % (name, length, string)
+			msg = 'invalid %s value: %r' % (get_array_type_name(name, length), string)
 			raise argparse.ArgumentTypeError(msg)
 
 		return array
 
 	name = getattr(type, '__name__', repr(type))
-	convert_array.__name__ = '%s[%d]' % (name, length)
+	convert_array.__name__ = get_array_type_name(name, length)
 
 	return convert_array
 
