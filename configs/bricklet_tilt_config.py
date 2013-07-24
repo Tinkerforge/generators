@@ -15,9 +15,9 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetTiltState', 'GetTiltState'), 
+'name': ('GetTiltState', 'get_tilt_state'),
 'elements': [('state', 'uint8', 1, 'out', ('TiltState', 'tilt_state', [('Closed', 'closed', 0),
-                                                                       ('Open', 'open', 1)]))]
+                                                                       ('Open', 'open', 1)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
