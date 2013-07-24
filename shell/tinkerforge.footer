@@ -45,8 +45,8 @@ def command_enumerate(argv):
 	parser = Parser('tinkerforge enumerate')
 
 	parser.add_argument('--duration', default=250, type=int, help='time (msec) to dispatch incoming responses (0: exit after first, -1: forever), default: 250', metavar='<duration>')
-	parser.add_argument('--execute', type=str, metavar='<command>')
-	parser.add_argument('--replace', action='store_true')
+	parser.add_argument('--execute', type=str, help='command to execute with response', metavar='<command>')
+	parser.add_argument('--is-format', action='store_true', help='command is format string')
 
 	args = parser.parse_args(argv)
 
@@ -57,7 +57,7 @@ def command_enumerate(argv):
 		def callback(*values):
 			if values[6] == IPConnection.ENUMERATION_TYPE_AVAILABLE:
 				values = translate_device_identifier(values[:6])
-				execute_result(args.execute, args.replace, names, values)
+				execute_result(args.execute, args.is_format, names, values)
 				return True
 	else:
 		def callback(*values):
