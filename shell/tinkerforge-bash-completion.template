@@ -6,14 +6,22 @@ _tinkerforge_device()
 		prev="${COMP_WORDS[i-1]}"
 
 		case "${prev}" in
+		get-*|is-*|are-*<<GETTER>><<CALLBACK>>)
+			COMPREPLY=($(compgen -W "--help --execute --is-format" -- ${cur}))
+			break
+			;;
+		set-*<<SETTER>>)
+			COMPREPLY=($(compgen -W "--help --expect-response" -- ${cur}))
+			break
+			;;
 		call)
 			local functions=$(tinkerforge call $2 --list-functions)
-			COMPREPLY=($(compgen -W "--help ${functions}" -- ${cur}))
+			COMPREPLY=($(compgen -W "--help --list-functions ${functions}" -- ${cur}))
 			break
 			;;
 		dispatch)
 			local callbacks=$(tinkerforge dispatch $2 --list-callbacks)
-			COMPREPLY=($(compgen -W "--help ${callbacks}" -- ${cur}))
+			COMPREPLY=($(compgen -W "--help --list-callbacks ${callbacks}" -- ${cur}))
 			break
 			;;
 		*)
@@ -65,9 +73,10 @@ _tinkerforge()
 		return 0
 		;;
 	<<DEVICES>>)
-		local host port
+		local host port options
 		host=""
 		port=""
+		options=""
 
 		for (( i=${COMP_CWORD}; i > 0; i-- )); do
 			case "${COMP_WORDS[i]}" in
@@ -91,19 +100,28 @@ _tinkerforge()
 					;;
 				esac
 				;;
+			call)
+				options="--list-functions"
+				;;
+			dispatch)
+				options="--list-callbacks"
+				;;
 			*)
 				;;
 			esac
 		done
 
-		local uids=$(tinkerforge ${host} ${port} enumerate --duration 100 --execute "if [ {device-identifier} = '${COMP_WORDS[COMP_CWORD-1]}' ]; then echo {uid}; fi" --replace 2> /dev/null)
-		COMPREPLY=($(compgen -W "${uids}" -- ${cur}))
+		local uids=$(tinkerforge ${host} ${port} enumerate --duration 100 --execute "if [ {device-identifier} = '${COMP_WORDS[COMP_CWORD-1]}' ]; then echo {uid}; fi" --is-format 2> /dev/null)
+		COMPREPLY=($(compgen -W "--help ${options} ${uids}" -- ${cur}))
 		return 0
 		;;
 	--execute)
 		return 0
 		;;
-	--replace)
+	--is-format)
+		return 0
+		;;
+	--expect-response)
 		return 0
 		;;
 	*)
@@ -129,7 +147,7 @@ _tinkerforge()
 			break
 			;;
 		<<DEVICES>>)
-			_tinkerforge_device ${i} ${prev}
+			_tinkerforge_device ${COMP_CWORD} ${prev}
 			break
 			;;
 		*)

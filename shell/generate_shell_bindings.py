@@ -35,6 +35,9 @@ call_devices = []
 dispatch_devices = []
 devices_identifiers = []
 completion_devices = []
+getter_patterns = []
+setter_patterns = []
+callback_patterns = []
 
 def get_argparse_type_converter(element):
     types = {
@@ -75,12 +78,26 @@ def get_element_help(element):
         'float': 'float'
     }
 
+    constant_doc = ''
+    if len(element) > 4:
+        constants = []
+
+        for constant in element[4][2]:
+            constants.append('{0}: {1}'.format(constant[1].replace('_', '-'), constant[2]))
+
+        constant_doc = ' (' + ', '.join(constants) + ')'
+
     t = types[element[1]]
 
     if element[2] == 1 or t == 'string':
-        return t
+        help = "'{0}{1}'".format(t, constant_doc)
     else:
-        return ','.join([t] * element[2])
+        help = "get_array_type_name('{0}', {1})".format(t, element[2])
+
+        if len(constant_doc) > 0:
+            help += "+ '{0}'".format(constant_doc)
+
+    return help
 
 def get_format(element):
     formats = {
@@ -170,18 +187,18 @@ def call_{0}_{2}(argv):
 
 def make_call_functions():
     setter = """\tdef {0}(argv):
-\t\tparser = Parser(prog_prefix + ' {1}')
+\t\tparser = ParserWithExpectResponse(prog_prefix + ' {1}')
 {2}
 \t\targs = parser.parse_args(argv)
 
-\t\tdevice_send_request({7}{8}, {3}, ({4}), '{5}', '{6}', None, False, [])
+\t\tdevice_send_request({7}{8}, {3}, ({4}), '{5}', '{6}', None, False, args.expect_response, [])
 """
     getter = """\tdef {0}(argv):
 \t\tparser = ParserWithExecute(prog_prefix + ' {1}')
 {2}
 \t\targs = parser.parse_args(argv)
 
-\t\tdevice_send_request({7}{8}, {3}, ({4}), '{5}', '{6}', args.execute, args.replace, [{9}])
+\t\tdevice_send_request({7}{8}, {3}, ({4}), '{5}', '{6}', args.execute, args.is_format, False, [{9}])
 """
     get_identity = """\tdef get_identity(argv):
 \t\tcommon_get_identity(prog_prefix, {0}{1}, argv)
@@ -205,9 +222,9 @@ def make_call_functions():
                 metavar = "'<{0}>'".format(name.replace('_', '-'))
 
                 if length > 1:
-                    params.append("\t\tparser.add_argument('{0}', type=create_array_converter({1}, {2}), help='{3}', metavar={4})".format(name, type, length, help, metavar))
+                    params.append("\t\tparser.add_argument('{0}', type=create_array_converter({1}, {2}), help={3}, metavar={4})".format(name, type, length, help, metavar))
                 else:
-                    params.append("\t\tparser.add_argument('{0}', type={1}, help='{2}', metavar={3})".format(name, type, help, metavar))
+                    params.append("\t\tparser.add_argument('{0}', type={1}, help={2}, metavar={3})".format(name, type, help, metavar))
 
                 request_data.append('args.{0}'.format(element[0]))
 
@@ -223,9 +240,16 @@ def make_call_functions():
             for element in packet.get_elements('out'):
                 output.append("'{0}'".format(element[0].replace('_', '-')))
 
+            underscore_name = packet.get_underscore_name()
+
             if len(output) > 0:
-                function = getter.format(packet.get_underscore_name(),
-                                         packet.get_underscore_name().replace('_', '-'),
+                if not underscore_name.startswith('get_') and \
+                   not underscore_name.startswith('is_') and \
+                   not underscore_name.startswith('are_'):
+                    getter_patterns.append(underscore_name.replace('_', '-'))
+
+                function = getter.format(underscore_name,
+                                         underscore_name.replace('_', '-'),
                                          '\n'.join(params),
                                          packet.get_function_id(),
                                          ', '.join(request_data) + comma,
@@ -235,8 +259,11 @@ def make_call_functions():
                                          device.get_category(),
                                          ', '.join(output))
             else:
-                function = setter.format(packet.get_underscore_name(),
-                                         packet.get_underscore_name().replace('_', '-'),
+                if not underscore_name.startswith('set_'):
+                    setter_patterns.append(underscore_name.replace('_', '-'))
+
+                function = setter.format(underscore_name,
+                                         underscore_name.replace('_', '-'),
                                          '\n'.join(params),
                                          packet.get_function_id(),
                                          ', '.join(request_data) + comma,
@@ -278,7 +305,7 @@ def make_dispatch_functions():
 
 \t\targs = parser.parse_args(argv)
 
-\t\tdevice_callback({2}{3}, {4}, args.execute, args.replace, [{5}])
+\t\tdevice_callback({2}{3}, {4}, args.execute, args.is_format, [{5}])
 """
 
     functions = []
@@ -290,15 +317,19 @@ def make_dispatch_functions():
         for element in packet.get_elements('out'):
             output.append("'{0}'".format(element[0].replace('_', '-')))
 
-        function = func.format(packet.get_underscore_name(),
-                               packet.get_underscore_name().replace('_', '-'),
+        underscore_name = packet.get_underscore_name()
+
+        function = func.format(underscore_name,
+                               underscore_name.replace('_', '-'),
                                device.get_camel_case_name(),
                                device.get_category(),
                                packet.get_function_id(),
                                ', '.join(output))
 
-        entries.append("'{0}': {1}".format(packet.get_underscore_name().replace('_', '-'),
-                                           packet.get_underscore_name()))
+        entries.append("'{0}': {1}".format(underscore_name.replace('_', '-'),
+                                           underscore_name))
+
+        callback_patterns.append(underscore_name.replace('_', '-'))
 
         functions.append(function)
 
@@ -374,6 +405,22 @@ def finish(directory):
 
     template = file('{0}/../tinkerforge-bash-completion.template'.format(directory), 'rb').read()
     template = template.replace('<<DEVICES>>', '|'.join(sorted(completion_devices)))
+
+    if len(getter_patterns) > 0:
+        template = template.replace('<<GETTER>>', '|' + '|'.join(sorted(list(set(getter_patterns)))))
+    else:
+        template = template.replace('<<GETTER>>', '')
+
+    if len(setter_patterns) > 0:
+        template = template.replace('<<SETTER>>', '|' + '|'.join(sorted(list(set(setter_patterns)))))
+    else:
+        template = template.replace('<<SETTER>>', '')
+
+    if len(callback_patterns) > 0:
+        template = template.replace('<<CALLBACK>>', '|' + '|'.join(sorted(list(set(callback_patterns)))))
+    else:
+        template = template.replace('<<CALLBACK>>', '')
+
     file('{0}/../tinkerforge-bash-completion.sh'.format(directory), 'wb').write(template)
 
 def generate(path):

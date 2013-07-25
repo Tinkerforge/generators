@@ -9,8 +9,15 @@ import sys
 import os
 import time
 
+current_parser = None
+
 def fatal(message, exit_code=1):
-	sys.stderr.write('tinkerforge: error: {0}\n'.format(message))
+	if current_parser is not None:
+		prog = current_parser.prog
+	else:
+		prog = 'tinkerforge'
+
+	sys.stderr.write('{0}: error: {1}\n'.format(prog, message))
 	sys.exit(exit_code)
 
 if sys.hexversion < 0x02060000:
@@ -33,14 +40,29 @@ class Parser(argparse.ArgumentParser):
 	def __init__(self, prog):
 		argparse.ArgumentParser.__init__(self, prog=prog, add_help=False)
 
+		global current_parser
+		current_parser = self
+
 		self.add_argument('--help', action='help', help='show this help message and exit')
 
 class ParserWithExecute(Parser):
 	def __init__(self, prog):
 		Parser.__init__(self, prog)
 
-		self.add_argument('--execute', type=str, metavar='<command>')
-		self.add_argument('--replace', action='store_true')
+		self.add_argument('--execute', type=str, help='command to execute with response', metavar='<command>')
+		self.add_argument('--is-format', action='store_true', help='command is format string')
+
+class ParserWithExpectResponse(Parser):
+	def __init__(self, prog):
+		Parser.__init__(self, prog)
+
+		self.add_argument('--expect-response', action='store_true', help='request response and wait for it')
+
+def get_array_type_name(name, length):
+	if length < 7:
+		return item_separator.join([name]*length)
+	else:
+		return '{0}{1}{0}{1}..{2}x..{1}{0}{1}{0}'.format(name, item_separator, length - 4)
 
 def call_generic(name, functions, argv):
 	parser = Parser('tinkerforge call ' + name)
@@ -94,10 +116,11 @@ def translate_device_identifier(values):
 
 	return tuple(values)
 
-def device_send_request(device_class, function_id, request_data, format_in, format_out, command, replace, names):
+def device_send_request(device_class, function_id, request_data, format_in, format_out,
+                        command, is_format, expect_response, names):
 	if command is not None:
 		def handle_result(values):
-			execute_result(command, replace, names, values)
+			execute_result(command, is_format, names, values)
 	else:
 		def handle_result(values):
 			print_result(names, values)
@@ -108,6 +131,10 @@ def device_send_request(device_class, function_id, request_data, format_in, form
 		ipcon.connect(host, port)
 
 		device = device_class(uid, ipcon)
+
+		if expect_response:
+			device.set_response_expected(function_id, True)
+
 		result = ipcon.send_request(device, function_id, request_data, format_in, format_out)
 
 		if result is not None:
@@ -130,10 +157,10 @@ def device_send_request(device_class, function_id, request_data, format_in, form
 		except:
 			pass
 
-def device_callback(device_class, function_id, command, replace, names):
+def device_callback(device_class, function_id, command, is_format, names):
 	if command is not None:
 		def callback(*values):
-			execute_result(command, replace, names, values)
+			execute_result(command, is_format, names, values)
 	else:
 		is_first_callback = [True]
 
@@ -214,18 +241,18 @@ def create_array_converter(type, length):
 
 		if len(array) != length:
 			name = getattr(type, '__name__', repr(type))
-			msg = 'invalid %s[%d] value: %r' % (name, length, string)
+			msg = 'invalid %s value: %r' % (get_array_type_name(name, length), string)
 			raise argparse.ArgumentTypeError(msg)
 
 		return array
 
 	name = getattr(type, '__name__', repr(type))
-	convert_array.__name__ = '%s[%d]' % (name, length)
+	convert_array.__name__ = get_array_type_name(name, length)
 
 	return convert_array
 
-def execute_result(command, replace, names, values):
-	if replace:
+def execute_result(command, is_format, names, values):
+	if is_format:
 		result = {}
 
 		class Tuple(tuple):
@@ -244,13 +271,13 @@ def execute_result(command, replace, names, values):
 				result[name] = value
 
 		try:
-			replaced_command = command.format(**result)
+			formatted_command = command.format(**result)
 		except KeyError as e:
 			fatal('invalid placeholder %s in format: %s' % (str(e).lower(), command))
 		except Exception as e:
 			fatal('%s: %s' % (str(e).lower(), command))
 
-		os.system(replaced_command)
+		os.system(formatted_command)
 	else:
 		result = []
 
@@ -278,4 +305,5 @@ def common_get_identity(prog_prefix, klass, argv):
 
 	args = parser.parse_args(argv)
 
-	device_send_request(klass, 255, (), '', '8s 8s c 3B 3B H', args.execute, args.replace, ['uid', 'connected-uid', 'position', 'hardware-version', 'firmware-version', 'device-identifier'])
+	device_send_request(klass, 255, (), '', '8s 8s c 3B 3B H', args.execute, args.is_format, False,
+	                    ['uid', 'connected-uid', 'position', 'hardware-version', 'firmware-version', 'device-identifier'])
