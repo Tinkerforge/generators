@@ -44,9 +44,8 @@ def command_dispatch(argv):
 def command_enumerate(argv):
 	parser = Parser('tinkerforge enumerate')
 
-	parser.add_argument('--duration', default=250, type=int, help='time (msec) to dispatch incoming responses (0: exit after first, -1: forever), default: 250', metavar='<duration>')
-	parser.add_argument('--execute', type=str, help='command to execute with response', metavar='<command>')
-	parser.add_argument('--is-format', action='store_true', help='command is format string')
+	parser.add_argument('--duration', default=250, type=int, help='time (msec) to dispatch incoming enumerate responses (0: exit after first, -1: forever), default: 250', metavar='<duration>')
+	parser.add_argument('--execute', type=str, help='shell command to execute for each incoming response', metavar='<command>')
 
 	args = parser.parse_args(argv)
 
@@ -57,7 +56,7 @@ def command_enumerate(argv):
 		def callback(*values):
 			if values[6] == IPConnection.ENUMERATION_TYPE_AVAILABLE:
 				values = translate_device_identifier(values[:6])
-				execute_result(args.execute, args.is_format, names, values)
+				execute_result(args.execute, names, values)
 				return True
 	else:
 		def callback(*values):
@@ -66,7 +65,6 @@ def command_enumerate(argv):
 					is_first_callback[0] = False
 				else:
 					sys.stdout.write(group_separator)
-					sys.stdout.flush()
 
 				values = translate_device_identifier(values[:6])
 				print_result(names, values)
