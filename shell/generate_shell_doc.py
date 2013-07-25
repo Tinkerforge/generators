@@ -219,6 +219,70 @@ Die verfügbaren Callbacks werden weiter unten beschrieben.
 API
 ---
 
+At first some information about the general command structure:
+
+.. sh:function:: X Stinkerforge Pcall N{3} A[<option>..] L<uid> L<function> L[<argument>..]
+
+ :param <uid>: string
+ :param <function>: string
+
+ The ``call`` command is used to call a function of the {4}. It can take several
+ options:
+
+ * ``--help`` shows help for the specific ``call`` command and exits
+ * ``--list-functions`` shows a list of known functions of the {4} and exits
+
+
+.. sh:function:: X Stinkerforge Pdispatch N{3} A[<option>..] L<uid> L<callback>
+
+ :param <uid>: string
+ :param <callback>: string
+
+ The ``dispatch`` command is used to dispatch a callback of the {4}. It can
+ take several options:
+
+ * ``--help`` shows help for the specific ``dispatch`` command and exits
+ * ``--list-callbacks`` shows a list of known callbacks of the {4} and exits
+
+
+.. sh:function:: X Stinkerforge Scall P{3} L<uid> N<function> A[<option>..] L[<argument>..]
+
+ :param <uid>: string
+ :param <function>: string
+
+ The ``<function>`` to be called can take different options depending of its
+ kind. All functions can take the following options:
+
+ * ``--help`` shows help for the specific function and exits
+
+ Getter functions can take the following options:
+
+ * ``--execute <command>`` shell command to execute for each incoming response
+   (see section about :ref:`output formatting <ipcon_shell_output>` for details)
+
+ Setter functions can take the following options:
+
+ * ``--expect-response`` requests response and waits for it
+
+ The ``--expect-response`` option for setter functions allows to detect
+ timeouts and other error conditions calls of setters as well. The device will
+ then send a response for this purpose. If this option is not given for a
+ setter function then no response is send and errors are silently ignored,
+ because they cannot be detected.
+
+
+.. sh:function:: X Stinkerforge Sdispatch P{3} L<uid> N<callback> A[<option>..]
+
+ :param <uid>: string
+ :param <callback>: string
+
+ The ``<callback>`` to be dispatched can take several options:
+
+ * ``--help`` shows help for the specific callback and exits
+ * ``--execute <command>`` shell command to execute for each incoming response
+   (see section about :ref:`output formatting <ipcon_shell_output>` for details)
+
+
 {1}
 
 {2}
@@ -227,6 +291,74 @@ API
 {0}
 API
 ---
+
+Als erstes einige Information über die allgemeine Struktur der Befehle:
+
+.. sh:function:: X Stinkerforge Pcall N{3} A[<option>..] L<uid> L<function> L[<argument>..]
+
+ :param <uid>: string
+ :param <function>: string
+
+ Der ``call`` Befehl wird verwendet um eine Funktion des {4}s aufzurufen. Der
+ Befehl kennt mehrere Optionen:
+
+ * ``--help`` zeigt Hilfe für den spezifischen ``call`` Befehl an und endet dann
+ * ``--list-functions`` zeigt eine Liste der bekannten Funktionen des {4}s an
+   und endet dann
+
+
+.. sh:function:: X Stinkerforge Pdispatch N{3} A[<option>..] L<uid> L<callback>
+
+ :param <uid>: string
+ :param <callback>: string
+
+ Der ``dispatch`` Befehl wird verwendet um eingehende Callbacks des {4}s
+ abzufertigen. Der Befehl kennt mehrere Optionen:
+
+ * ``--help`` zeigt Hilfe für den spezifischen ``dispatch`` Befehl an und endet
+   dann
+ * ``--list-callbacks`` zeigt eine Liste der bekannten Callbacks des {4}s an
+   und endet dann
+
+
+.. sh:function:: X Stinkerforge Scall P{3} L<uid> N<function> A[<option>..] L[<argument>..]
+
+ :param <uid>: string
+ :param <function>: string
+
+ Abhängig von der Art der aufzurufenden ``<function>`` kennt diese verschiedene
+ Optionen. Alle Funktionen kennen die folgenden Optionen:
+
+ * ``--help`` zeigt Hilfe für die spezifische ``<function>`` an und endet dann
+
+ Getter-Funktionen kennen zusätzlich die folgenden Optionen:
+
+ * ``--execute <command>`` Shell-Befehl der für jede eingehende Antwort
+   ausgeführt wird (siehe den Abschnitt über :ref:`Ausgabeformatierung
+   <ipcon_shell_output>` für Details)
+
+ Setter-Funktions kennen zusätzlich die folgenden Optionen:
+
+ * ``--expect-response`` requests response and waits for it
+
+ Mit der ``--expect-response`` Option für Setter-Funktionen können Timeouts und
+ andere Fehlerfälle auch für Aufrufe von Setter-Funktionen detektiert werden.
+ Das Gerät sendet dann eine Antwort extra für diesen Zweck. Wenn diese Option
+ für eine Setter-Funktion nicht angegeben ist, dann wird keine Antwort vom
+ Gerät gesendet und Fehler werden stillschweigend ignoriert, da sie nicht
+ detektiert werden können.
+
+
+.. sh:function:: X Stinkerforge Sdispatch P{3} L<uid> N<callback> A[<option>..]
+
+ :param <uid>: string
+ :param <callback>: string
+
+ The ``<callback>`` to be dispatched can take several options:
+
+ * ``--help`` shows help for the specific callback and exits
+ * ``--execute <command>`` shell command to execute for each incoming response
+   (see section about :ref:`output formatting <ipcon_shell_output>` for details)
 
 {1}
 
@@ -256,7 +388,8 @@ API
     if 'api' in device.com:
         api_desc = common.select_lang(device.com['api'])
 
-    return common.select_lang(api).format(ref, api_desc, api_str)
+    return common.select_lang(api).format(ref, api_desc, api_str, get_shell_device_name(device),
+                                          device.get_display_name() + ' ' + device.get_category())
 
 def make_files(device_, directory):
     global device
