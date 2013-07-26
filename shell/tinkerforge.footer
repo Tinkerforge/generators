@@ -45,7 +45,7 @@ def command_enumerate(argv):
 	parser = Parser('tinkerforge enumerate')
 
 	parser.add_argument('--duration', default=250, type=int, help='time (msec) to dispatch incoming enumerate responses (0: exit after first, -1: forever), default: 250', metavar='<duration>')
-	parser.add_argument('--execute', type=str, help='shell command to execute for each incoming response', metavar='<command>')
+	parser.add_argument('--execute', type=str, help='shell command line to execute for each incoming response', metavar='<command>')
 
 	args = parser.parse_args(argv)
 

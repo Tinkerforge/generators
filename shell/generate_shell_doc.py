@@ -257,8 +257,9 @@ At first some information about the general command structure:
 
  Getter functions can take the following options:
 
- * ``--execute <command>`` shell command to execute for each incoming response
-   (see section about :ref:`output formatting <ipcon_shell_output>` for details)
+ * ``--execute <command>`` shell command line to execute for each incoming
+   response (see section about :ref:`output formatting <ipcon_shell_output>`
+   for details)
 
  Setter functions can take the following options:
 
@@ -279,8 +280,9 @@ At first some information about the general command structure:
  The ``<callback>`` to be dispatched can take several options:
 
  * ``--help`` shows help for the specific callback and exits
- * ``--execute <command>`` shell command to execute for each incoming response
-   (see section about :ref:`output formatting <ipcon_shell_output>` for details)
+ * ``--execute <command>`` shell command line to execute for each incoming
+   response (see section about :ref:`output formatting <ipcon_shell_output>`
+   for details)
 
 
 {1}
@@ -337,9 +339,9 @@ Als erstes einige Information über die allgemeine Struktur der Befehle:
    ausgeführt wird (siehe den Abschnitt über :ref:`Ausgabeformatierung
    <ipcon_shell_output>` für Details)
 
- Setter-Funktions kennen zusätzlich die folgenden Optionen:
+ Setter-Funktionen kennen zusätzlich die folgenden Optionen:
 
- * ``--expect-response`` requests response and waits for it
+ * ``--expect-response`` fragt Antwort an und wartet auf diese
 
  Mit der ``--expect-response`` Option für Setter-Funktionen können Timeouts und
  andere Fehlerfälle auch für Aufrufe von Setter-Funktionen detektiert werden.
@@ -354,11 +356,12 @@ Als erstes einige Information über die allgemeine Struktur der Befehle:
  :param <uid>: string
  :param <callback>: string
 
- The ``<callback>`` to be dispatched can take several options:
+ Der abzufertigende ``<callback>`` kennt mehrere Optionen:
 
- * ``--help`` shows help for the specific callback and exits
- * ``--execute <command>`` shell command to execute for each incoming response
-   (see section about :ref:`output formatting <ipcon_shell_output>` for details)
+ * ``--help`` zeigt Hilfe für den spezifische ``<callback>`` an und endet dann
+ * ``--execute <command>`` Shell-Befehlszeile der für jede eingehende Antwort
+   ausgeführt wird (siehe den Abschnitt über :ref:`Ausgabeformatierung
+   <ipcon_shell_output>` für Details)
 
 {1}
 

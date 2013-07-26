@@ -49,7 +49,7 @@ class ParserWithExecute(Parser):
 	def __init__(self, prog):
 		Parser.__init__(self, prog)
 
-		self.add_argument('--execute', type=str, help='shell command to execute for each incoming response', metavar='<command>')
+		self.add_argument('--execute', type=str, help='shell command line to execute for each incoming response', metavar='<command>')
 
 class ParserWithExpectResponse(Parser):
 	def __init__(self, prog):
