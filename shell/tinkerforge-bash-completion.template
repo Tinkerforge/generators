@@ -7,7 +7,7 @@ _tinkerforge_device()
 
 		case "${prev}" in
 		get-*|is-*|are-*<<GETTER>><<CALLBACK>>)
-			COMPREPLY=($(compgen -W "--help --execute --is-format" -- ${cur}))
+			COMPREPLY=($(compgen -W "--help --execute" -- ${cur}))
 			break
 			;;
 		set-*<<SETTER>>)
@@ -111,14 +111,11 @@ _tinkerforge()
 			esac
 		done
 
-		local uids=$(tinkerforge ${host} ${port} enumerate --duration 100 --execute "if [ {device-identifier} = '${COMP_WORDS[COMP_CWORD-1]}' ]; then echo {uid}; fi" --is-format 2> /dev/null)
+		local uids=$(tinkerforge ${host} ${port} enumerate --duration 100 --execute "if [ {device-identifier} = '${COMP_WORDS[COMP_CWORD-1]}' ]; then echo {uid}; fi" 2> /dev/null)
 		COMPREPLY=($(compgen -W "--help ${options} ${uids}" -- ${cur}))
 		return 0
 		;;
 	--execute)
-		return 0
-		;;
-	--is-format)
 		return 0
 		;;
 	--expect-response)

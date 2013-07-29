@@ -191,14 +191,14 @@ def make_call_functions():
 {2}
 \t\targs = parser.parse_args(argv)
 
-\t\tdevice_send_request({7}{8}, {3}, ({4}), '{5}', '{6}', None, False, args.expect_response, [])
+\t\tdevice_send_request({7}{8}, {3}, ({4}), '{5}', '{6}', None, args.expect_response, [])
 """
     getter = """\tdef {0}(argv):
 \t\tparser = ParserWithExecute(prog_prefix + ' {1}')
 {2}
 \t\targs = parser.parse_args(argv)
 
-\t\tdevice_send_request({7}{8}, {3}, ({4}), '{5}', '{6}', args.execute, args.is_format, False, [{9}])
+\t\tdevice_send_request({7}{8}, {3}, ({4}), '{5}', '{6}', args.execute, False, [{9}])
 """
     get_identity = """\tdef get_identity(argv):
 \t\tcommon_get_identity(prog_prefix, {0}{1}, argv)
@@ -305,7 +305,7 @@ def make_dispatch_functions():
 
 \t\targs = parser.parse_args(argv)
 
-\t\tdevice_callback({2}{3}, {4}, args.execute, args.is_format, [{5}])
+\t\tdevice_callback({2}{3}, {4}, args.execute, [{5}])
 """
 
     functions = []
