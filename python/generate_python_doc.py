@@ -196,7 +196,7 @@ def make_api():
  :param uid: string
  :param ipcon: IPConnection
 
- Creates an object with the unique device ID *uid*:
+ Creates an object with the unique device ID ``uid``:
 
  .. code-block:: python
 
@@ -211,7 +211,7 @@ def make_api():
  :param uid: string
  :param ipcon: IPConnection
 
- Erzeugt ein Objekt mit der eindeutigen Geräte ID *uid*:
+ Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``:
 
  .. code-block:: python
 

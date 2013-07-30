@@ -134,8 +134,8 @@ def make_api():
     'en': """
 .. c:function:: void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon)
 
- Creates the device object *{0}* with the unique device ID *uid* and adds
- it to the IPConnection *ipcon*:
+ Creates the device object ``{0}`` with the unique device ID ``uid`` and adds
+ it to the IPConnection ``ipcon``:
 
  .. code-block:: c
 
@@ -148,8 +148,8 @@ def make_api():
     'de': """
 .. c:function:: void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon)
 
- Erzeugt ein Geräteobjekt *{0}* mit der eindeutigen Geräte ID *uid* und fügt es
- der IP Connection *ipcon* hinzu:
+ Erzeugt ein Geräteobjekt ``{0}`` mit der eindeutigen Geräte ID ``uid`` und
+ fügt es der IP Connection ``ipcon`` hinzu:
 
  .. code-block:: c
 
@@ -165,13 +165,13 @@ def make_api():
     'en': """
 .. c:function:: void {0}_destroy({1} *{0})
 
- Removes the device object *{0}* from its IPConnection and destroys it.
+ Removes the device object ``{0}`` from its IPConnection and destroys it.
  The device object cannot be used anymore afterwards.
 """,
     'de': """
 .. c:function:: void {0}_destroy({1} *{0})
 
- Entfernt das Geräteobjekt *{0}* von dessen IP Connection und zerstört es.
+ Entfernt das Geräteobjekt ``{0}`` von dessen IP Connection und zerstört es.
  Das Geräteobjekt kann hiernach nicht mehr verwendet werden.
 """
     }
@@ -180,8 +180,8 @@ def make_api():
     'en': """
 .. c:function:: void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data)
 
- Registers a callback with ID *id* to the function *callback*. The *user_data*
- will be given as a parameter of the callback.
+ Registers a callback with ID ``id`` to the function ``callback``. The
+ ``user_data`` will be given as a parameter of the callback.
 
  The available IDs with corresponding function signatures are listed
  :ref:`below <{0}_{2}_c_callbacks>`.
@@ -189,8 +189,8 @@ def make_api():
     'de': """
 .. c:function:: void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data)
 
- Registriert einen Callback mit der ID *id* mit der Funktion *callback*.
- Der Parameter *user_data* wird bei jedem Callback wieder mit übergeben.
+ Registriert einen Callback mit der ID ``id`` mit der Funktion ``callback``.
+ Der Parameter ``user_data`` wird bei jedem Callback wieder mit übergeben.
 
  Die verfügbaren IDs mit den zugehörigen Funktionssignaturen sind
  :ref:`unten <{0}_{2}_c_callbacks>` zu finden.

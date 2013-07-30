@@ -183,7 +183,7 @@ def make_api():
     'en': """
 .. java:function:: class {3}{1}(String uid, IPConnection ipcon)
 
- Creates an object with the unique device ID *uid*:
+ Creates an object with the unique device ID ``uid``:
 
  .. code-block:: java
 
@@ -195,7 +195,7 @@ def make_api():
     'de': """
 .. java:function:: class {3}{1}(String uid, IPConnection ipcon)
 
- Erzeugt ein Objekt mit der eindeutigen Geräte ID *uid*:
+ Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``:
 
  .. code-block:: java
 

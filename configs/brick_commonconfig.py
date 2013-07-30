@@ -20,15 +20,19 @@ common_packets.append({
 'doc': ['af', {
 'en':
 """
-Returns the firmware and protocol version and the name of the Bricklet for a given port.
+Returns the firmware and protocol version and the name of the Bricklet for a
+given port.
 
-This functions sole purpose is to allow automatic flashing of v1.x.y Bricklet plugins.
+This functions sole purpose is to allow automatic flashing of v1.x.y Bricklet
+plugins.
 """,
 'de':
 """
-Gibt die Firmware und Protokoll Version und den Namen des Bricklets für einen gegebenen Port zurück.
+Gibt die Firmware und Protokoll Version und den Namen des Bricklets für einen
+gegebenen Port zurück.
 
-Der einzige Zweck dieser Funktion ist es, automatischen Flashen von Bricklet v1.x.y Plugins zu ermöglichen.
+Der einzige Zweck dieser Funktion ist es, automatischen Flashen von Bricklet
+v1.x.y Plugins zu ermöglichen.
 """
 }]
 })

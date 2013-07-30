@@ -30,7 +30,7 @@ callback :func:`Distance` and set the period with
 'de':
 """
 Gibt die gemessene Entfernung des Sensors zurück. Der Wert wird in mm 
-zurückgegebenund.
+zurückgegeben.
 
 Wenn die Entfernung periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Distance` zu nutzen und die Periode mit 

@@ -200,7 +200,7 @@ the number of the button (0 to 2).
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn eine Taste gedrückt wird. The :word:`parameter`
+Dieser Callback wird ausgelöst wenn eine Taste gedrückt wird. Der :word:`parameter`
 ist die Nummer der Taste (0 bis 2).
 """
 }]
@@ -219,7 +219,7 @@ the number of the button (0 to 2).
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn eine Taste losgelassen wird. The :word:`parameter`
+Dieser Callback wird ausgelöst wenn eine Taste losgelassen wird. Der :word:`parameter`
 ist die Nummer der Taste (0 bis 2).
 """
 }]
@@ -239,45 +239,45 @@ consist of 5x8 pixels and can be addressed with the index 0-7. To describe
 the pixels, the first 5 bits of 8 bytes are used. For example, to make
 a custom character "H", you should transfer the following:
 
-* character[0] = 0b00010001 (decimal value 17)
-* character[1] = 0b00010001 (decimal value 17)
-* character[2] = 0b00010001 (decimal value 17)
-* character[3] = 0b00011111 (decimal value 31)
-* character[4] = 0b00010001 (decimal value 17)
-* character[5] = 0b00010001 (decimal value 17)
-* character[6] = 0b00010001 (decimal value 17)
-* character[7] = 0b00000000 (decimal value 0)
+* ``character[0] = 0b00010001`` (decimal value 17)
+* ``character[1] = 0b00010001`` (decimal value 17)
+* ``character[2] = 0b00010001`` (decimal value 17)
+* ``character[3] = 0b00011111`` (decimal value 31)
+* ``character[4] = 0b00010001`` (decimal value 17)
+* ``character[5] = 0b00010001`` (decimal value 17)
+* ``character[6] = 0b00010001`` (decimal value 17)
+* ``character[7] = 0b00000000`` (decimal value 0)
 
 The characters can later be written with :func:`WriteLine` by using the
 characters with the byte representation 8 to 15.
 
-You can play around with the custom characters in Brick Viewer version
->= 2.0.1.
+You can play around with the custom characters in Brick Viewer since
+version 2.0.1.
 
 Custom characters are stored by the LCD in RAM, so they have to be set
 after each startup.
 """,
 'de':
 """
-Das LCD 16x2 Bricklet kann bis zu 8 Benutzerdefinierte Buchstaben speichern.
+Das LCD 16x2 Bricklet kann bis zu 8 benutzerdefinierte Buchstaben speichern.
 Die Buchstaben bestehen aus 5x8 Pixel und sie können über den Index 0-7
 adressiert werden. Um die Pixel zu beschreiben, werden die ersten 5 Bit
 von 8 Bytes verwenden. Zum Beispiel, um den Buchstaben "H" zu erzeugen,
 sollte das folgende Array gesendet werden:
 
-* character[0] = 0b00010001 (Dezimalwert 17)
-* character[1] = 0b00010001 (Dezimalwert 17)
-* character[2] = 0b00010001 (Dezimalwert 17)
-* character[3] = 0b00011111 (Dezimalwert 31)
-* character[4] = 0b00010001 (Dezimalwert 17)
-* character[5] = 0b00010001 (Dezimalwert 17)
-* character[6] = 0b00010001 (Dezimalwert 17)
-* character[7] = 0b00000000 (Dezimalwert 0)
+* ``character[0] = 0b00010001`` (Dezimalwert 17)
+* ``character[1] = 0b00010001`` (Dezimalwert 17)
+* ``character[2] = 0b00010001`` (Dezimalwert 17)
+* ``character[3] = 0b00011111`` (Dezimalwert 31)
+* ``character[4] = 0b00010001`` (Dezimalwert 17)
+* ``character[5] = 0b00010001`` (Dezimalwert 17)
+* ``character[6] = 0b00010001`` (Dezimalwert 17)
+* ``character[7] = 0b00000000`` (Dezimalwert 0)
 
 Die Buchstaben können später mit :func:`WriteLine` mit den chars mit
 den Byterepräsentationen 8 bis 15 geschrieben werden.
 
-Es ist möglich die Benutzerdefinierten Buchstaben im Brick Viewer ab
+Es ist möglich die benutzerdefinierten Buchstaben im Brick Viewer ab
 Version 2.0.1 einzustellen.
 
 Benutzerdefinierte Buchstaben werden vom LCD im RAM gespeichert, daher
@@ -300,7 +300,7 @@ Returns the custom character for a given index, as set with
 """,
 'de':
 """
-Gibt den Benutzerdefinierten Buchstaben für den gegebenen
+Gibt den benutzerdefinierten Buchstaben für den gegebenen
 Index zurück, wie von :func:`GetCustomCharacter` gesetzt.
 """
 }]

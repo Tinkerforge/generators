@@ -132,7 +132,7 @@ def make_api():
     'en': """
 .. delphi:function:: constructor T{3}{1}.Create(const uid: string; ipcon: TIPConnection)
 
- Creates an object with the unique device ID *uid*:
+ Creates an object with the unique device ID ``uid``:
 
  .. code-block:: delphi
 
@@ -144,7 +144,7 @@ def make_api():
     'de': """
 .. delphi:function:: constructor T{3}{1}.Create(const uid: string; ipcon: TIPConnection)
 
- Erzeugt ein Objekt mit der eindeutigen Geräte ID *uid*:
+ Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``:
 
  .. code-block:: delphi
 
