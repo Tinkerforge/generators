@@ -77,7 +77,7 @@ def format_doc(packet):
     text = common.handle_rst_if(text, device)
 
     def constant_format(prefix, constant, definition, value):
-        c = '* {0} = {1}, '.format(definition.name_underscore.replace('_', '-'), value)
+        c = '* ``{0}`` = {1}, '.format(definition.name_underscore.replace('_', '-'), value)
 
         for_ = {
         'en': 'for',
@@ -127,10 +127,20 @@ def make_examples():
 
 def make_parameter_desc(packet):
     desc = '\n'
-    param = ' :param <{0}>: {1}\n'
+    param = ' :param <{0}>: {1}'
+    has_symbols = {
+    'en': 'has symbols',
+    'de': 'hat Symbole'
+    }
+
     for element in packet.get_elements('in'):
         t = get_element_type(element)
         desc += param.format(element[0].replace('_', '-'), t)
+
+        if len(element) > 4:
+            desc += ' ({0})'.format(common.select_lang(has_symbols))
+
+        desc += '\n'
 
     return desc
 
@@ -139,6 +149,10 @@ def make_return_desc(packet):
     'en': 'no output',
     'de': 'keine Ausgabe'
     }
+    has_symbols = {
+    'en': 'has symbols',
+    'de': 'hat Symbole'
+    }
     elements = packet.get_elements('out')
 
     if len(elements) == 0:
@@ -146,11 +160,14 @@ def make_return_desc(packet):
 
     ret = '\n'
     for element in elements:
-        if packet.get_function_id() == 255 and element[0] == 'device_identifier':
-            t = 'string'
-        else:
-            t = get_element_type(element)
-        ret += ' :returns {0}: {1}\n'.format(element[0].replace('_', '-'), t)
+        t = get_element_type(element)
+        ret += ' :returns {0}: {1}'.format(element[0].replace('_', '-'), t)
+
+        if len(element) > 4 or \
+           packet.get_function_id() == 255 and element[0] == 'device_identifier':
+            ret += ' ({0})'.format(common.select_lang(has_symbols))
+
+        ret += '\n'
 
     return ret
 
