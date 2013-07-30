@@ -66,6 +66,8 @@ def get_shell_device_name(device):
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
     device_name = get_shell_device_name(device)
+    constants = {'en': 'symbols', 'de': 'Symbole'}
+
     for other_packet in device.get_packets():
         name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
         name_right = ':sh:func:`{1} <{0} {1}>`'.format(device_name, other_packet.get_underscore_name().replace('_', '-'))
@@ -73,6 +75,39 @@ def format_doc(packet):
 
     text = common.handle_rst_word(text)
     text = common.handle_rst_if(text, device)
+
+    def constant_format(prefix, constant, definition, value):
+        c = '* {0} = {1}, '.format(definition.name_underscore.replace('_', '-'), value)
+
+        for_ = {
+        'en': 'for',
+        'de': 'für'
+        }
+
+        c += common.select_lang(for_) + ' '
+
+        e = []
+        for element in constant.elements:
+            if element[3] == 'in':
+                e.append('<{0}>'.format(element[0].replace('_', '-')))
+            else:
+                e.append(element[0].replace('_', '-'))
+
+        if len(e) > 1:
+            and_ = {
+            'en': 'and',
+            'de': 'und'
+            }
+
+            c += ', '.join(e[:-1]) + ' ' + common.select_lang(and_) + ' ' + e[-1]
+        else:
+            c += e[0]
+
+        return c + '\n'
+
+    text += common.format_constants('', packet, constants_name=constants,
+                                    char_format='{0}',
+                                    constant_format_func=constant_format)
 
     text += common.format_since_firmware(device, packet)
 

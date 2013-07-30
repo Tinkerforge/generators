@@ -347,9 +347,14 @@ def format_since_firmware(device, packet):
     else:
         return ''
 
+def default_constant_format(prefix, constant, definition, value):
+    return '* {0}{1}_{2} = {3}\n'.format(prefix, constant.name_uppercase,
+                                         definition.name_uppercase, value)
+
 def format_constants(prefix, packet,
                      constants_name={'en': 'constants', 'de': 'Konstanten'},
-                     char_format="'{0}'"):
+                     char_format="'{0}'",
+                     constant_format_func=default_constant_format):
     str_constants = {
 'en': """
 The following {0} are available for this function:
@@ -361,7 +366,6 @@ Die folgenden {0} sind für diese Funktion verfügbar:
 """
 }
     has_constant = False
-    str_constant = '* {0}{1}_{2} = {3}\n'
     str_constants = select_lang(str_constants).format(select_lang(constants_name))
     constants = packet.get_constants()
     for constant in constants:
@@ -372,10 +376,7 @@ Die folgenden {0} sind für diese Funktion verfügbar:
                 value = str(definition.value)
 
             has_constant = True
-            str_constants += str_constant.format(prefix,
-                                                 constant.name_uppercase,
-                                                 definition.name_uppercase,
-                                                 value)
+            str_constants += constant_format_func(prefix, constant, definition, value)
     if has_constant:
         return str_constants
     else:
@@ -732,25 +733,29 @@ class Packet:
 
     def get_constants(self):
         ConstantDefinitionTuple = namedtuple('ConstantValues', ['name_camelcase', 'name_underscore', 'name_uppercase', 'value'])
-        ConstantTuple = namedtuple('Constant', ['type', 'name_camelcase', 'name_underscore', 'name_uppercase', 'definitions'])
+        ConstantTuple = namedtuple('Constant', ['type', 'name_camelcase', 'name_underscore', 'name_uppercase', 'definitions', 'elements'])
 
-        def is_in_constants(constants, new_constant):
+        def get_existing_constants(constants, new_constant):
             for constant in constants:
                 if constant.name_camelcase == new_constant[0]:
-                    return True
-            return False
+                    return constant
+            return None
 
         constants = []
 
         for element in self.all_elements:
             if len(element) > 4:
                 c = element[4]
-                if not is_in_constants(constants, c):
+                ec = get_existing_constants(constants, c)
+
+                if not ec:
                     definitions = []
                     vs = c[2]
                     for v in vs:
                         definitions.append(ConstantDefinitionTuple(v[0], v[1], v[1].upper(), v[2]))
-                    constants.append(ConstantTuple(element[1], c[0], c[1], c[1].upper(), definitions))
+                    constants.append(ConstantTuple(element[1], c[0], c[1], c[1].upper(), definitions, [element]))
+                else:
+                    ec.elements.append(element)
 
         return constants
 
