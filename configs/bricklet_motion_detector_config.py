@@ -16,7 +16,7 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': ('GetMotionDetected', 'get_motion_detected'), 
-'elements': [('motion', 'uint8', 1, 'out', ('Motion', 'Motion', [('Detected', 'detected', 0),
+'elements': [('motion', 'uint8', 1, 'out', ('Motion', 'motion', [('Detected', 'detected', 0),
                                                                  ('NotDetected', 'not_detected', 1)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
