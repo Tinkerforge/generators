@@ -17,14 +17,15 @@ com['api'] = {
 'en':
 """
 Two sensors can be connected to the Bricklet. Functions that are related
-directly to a sensor have a sensor parameter to specify one of the two sensors.
-Valid values for the sensor parameter are 0 and 1.
+directly to a sensor have a ``sensor`` parameter to specify one of the two
+sensors. Valid values for the ``sensor`` parameter are 0 and 1.
 """,
 'de':
 """
 Es können zwei Sensoren an das Bricklet angeschlossen werden. Funktionen die
-sich direkt auf einen der Sensoren beziehen haben einen sensor Parameter, den
-Sensor anzugeben. Gültige Werte für den sensor Parameter sind 0 und 1.
+sich direkt auf einen der Sensoren beziehen haben einen ``sensor`` Parameter,
+um den Sensor anzugeben. Gültige Werte für den ``sensor`` Parameter sind 0
+und 1.
 """
 }
 
@@ -54,7 +55,7 @@ callback :func:`Current` and set the period with
 'de':
 """
 Gibt die gemessenen Stromstärke des angegebenen Sensors (0 oder 1) zurück. Der
-Wert ist in nA und im Bereich von 0nA bis 22505322nA (22.5mA).
+Wert ist in nA und im Bereich von 0nA bis 22505322nA (22,5mA).
 
 Es ist möglich zu erkennen ob ein IEC 60381-1-kompatibler Sensor angeschlossen
 ist und ob er funktionsfähig ist.
@@ -62,7 +63,8 @@ ist und ob er funktionsfähig ist.
 Falls die zurückgegebene Stromstärke kleiner als 4mA ist, ist wahrscheinlich
 kein Sensor angeschlossen oder der Sensor ist defekt. Falls die zurückgegebene
 Stromstärke über 20mA ist, besteht entweder ein Kurzschluss oder der Sensor
-ist defekt. Somit ist erkennbar ob ein Sensor angeschlossen und funktionsfähig ist.
+ist defekt. Somit ist erkennbar ob ein Sensor angeschlossen und funktionsfähig
+ist.
 
 Wenn die Stromstärke periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Current` zu nutzen und die Periode mit 
@@ -136,7 +138,8 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`CurrentReached` callback for the given sensor. 
+Sets the thresholds for the :func:`CurrentReached` callback for the given
+sensor.
 
 The following options are possible:
 
@@ -154,7 +157,8 @@ The default value is ('x', 0, 0).
 """,
 'de':
 """
-Setzt den Schwellwert des :func:`CurrentReached` Callbacks für den übergebenen Sensor.
+Setzt den Schwellwert des :func:`CurrentReached` Callbacks für den übergebenen
+Sensor.
 
 Die folgenden Optionen sind möglich:
 
@@ -280,7 +284,7 @@ The default value is 3: 4 samples per second with 18 bit resolution.
 """,
 'de':
 """
-Setzt die Samplerate auf 240, 60, 15 oder 4 Samples pro Sekunde.
+Setzt die Abtastrate auf 240, 60, 15 oder 4 Samples pro Sekunde.
 Die Auflösung für die Raten sind 12, 14, 16 und 18 Bit respektive.
 
 .. csv-table::
@@ -312,7 +316,7 @@ Returns the sample rate as set by :func:`SetSampleRate`.
 """,
 'de':
 """
-Gibt die Samplerate zurück, wie von :func:`SetSampleRate`
+Gibt die Abtastrate zurück, wie von :func:`SetSampleRate`
 gesetzt.
 """
 }]

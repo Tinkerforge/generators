@@ -84,9 +84,6 @@ Possible extension types:
 
 The extension type is already set when bought and it can be set with the 
 Brick Viewer, it is unlikely that you need this function.
-
-The value will be saved in the EEPROM of the Chibi Extension, it does not
-have to be set on every startup.
 """,
 'de':
 """
@@ -105,9 +102,9 @@ Mögliche Extensiontypen:
  "3",    "WIFI"
  "4",    "Ethernet"
 
-Der Typ der Extension ist schon gesetzt beim Erwerb der Extension und kann über den
-Brick Viewer gesetzt werden. Daher ist es unwahrscheinlich, dass diese Funktion benötigt
-wird.
+Der Typ der Extension ist schon gesetzt beim Erwerb der Extension und kann
+über den Brick Viewer gesetzt werden. Daher ist es unwahrscheinlich, dass
+diese Funktion benötigt wird.
 """
 }]
 })
@@ -124,13 +121,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the extension type for a given extension as set by 
-:func:`SetExtensionType`.
+Returns the type for a given extension as set by :func:`SetExtensionType`.
 """,
 'de':
 """
-Gibt den Extensiontyp der angegebenen Extension zurück,
-wie von :func:`SetExtensionType` gesetzt.
+Gibt den Typ der angegebenen Extension zurück, wie von :func:`SetExtensionType`
+gesetzt.
 """
 }]
 })
@@ -143,11 +139,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns *true* if a Chibi Extension is available to be used by the Master.
+Returns *true* if a Chibi Extension is available to be used by the Master Brick.
 """,
 'de':
 """
-Gibt zurück ob eine Chibi Extension zur Nutzung durch den Master verfügbar ist.
+Gibt zurück ob eine Chibi Extension zur Nutzung durch den Master Brick
+verfügbar ist.
 """
 }]
 })
@@ -172,7 +169,7 @@ Setzt die zugehörige Adresse (1-255) der Chibi Extension.
 
 Es ist möglich die Adresse mit dem Brick Viewer zu setzen und diese
 wird im EEPROM der Chibi Extension abgespeichert. Ein Setzen bei
-jedem Hochfahren ist daher nicht notwendig.
+jedem Start ist daher nicht notwendig.
 """
 }]
 })
@@ -217,7 +214,7 @@ besteht).
 
 Es ist möglich die Adresse mit dem Brick Viewer zu setzen und diese wird im
 EEPROM der Chibi Extension abgespeichert. Ein Setzen bei
-jedem Hochfahren ist daher nicht notwendig.
+jedem Start ist daher nicht notwendig.
 """
 }]
 })
@@ -250,13 +247,13 @@ com['packets'].append({
 """
 Sets up to 254 slave addresses. Valid addresses are in range 1-255. 0 has a
 special meaning, it is used as list terminator and not allowed as normal slave
-address. The address numeration (via num parameter) has to be used
+address. The address numeration (via ``num`` parameter) has to be used
 ascending from 0. For example: If you use the Chibi Extension in Master mode
 (i.e. the stack has an USB connection) and you want to talk to three other
 Chibi stacks with the slave addresses 17, 23, and 42, you should call with
-"(0, 17), (1, 23), (2, 42) and (3, 0)". The last call with "(3, 0)" is a list
-terminator and indicates that the Chibi slave address list contains 3 addresses
-in this case.
+``(0, 17)``, ``(1, 23)``, ``(2, 42)`` and ``(3, 0)``. The last call with
+``(3, 0)`` is a list terminator and indicates that the Chibi slave address
+list contains 3 addresses in this case.
 
 It is possible to set the addresses with the Brick Viewer, that will take care
 of correct address numeration and list termination.
@@ -269,19 +266,19 @@ don't have to be set on every startup.
 Setzt bis zu 254 Slave Adressen. Gültige Adressen sind 1-255. 0 hat eine
 besondere Bedeutung, sie wird zur Terminierung der Liste verwendet und ist nicht
 als normale Slave Adresse erlaubt.
-Die Adressnummerierung (mittels num Parameter) muss aufsteigend ab
+Die Adressnummerierung (mittels ``num`` Parameter) muss aufsteigend ab
 0 erfolgen. Beispiel: Wenn die Chibi Extension im Master Modus verwendet wird
 (z.B. wenn der Stapel eine USB-Verbindung hat) und es soll mit drei weiteren
 Chibi Stapeln kommuniziert werden, mit den Adressen 17, 23 und 42, sollten die
-Aufrufe "(0, 17), (1, 23), (2, 42) und (3, 0)" sein. Der letzte Aufruf mit
-"(3, 0)" dient der Terminierung der Liste und zeigt an, dass die Chibi Slave
-Adressliste in diesem Fall 3 Einträge beinhaltet.
+Aufrufe ``(0, 17)``, ``(1, 23)``, ``(2, 42)`` und ``(3, 0)`` sein. Der letzte
+Aufruf mit ``(3, 0)`` dient der Terminierung der Liste und zeigt an, dass die
+Chibi Slave Adressliste in diesem Fall 3 Einträge beinhaltet.
 
 Es ist möglich die Adressen mit dem Brick Viewer zu setzen, dieser kümmert sich
 dann um korrekte Adressnummerierung und Terminierung der Liste.
 
 Die Slave Adresse werden im EEPROM der RS485 Extension abgespeichert. Ein
-Setzen bei jedem Hochfahren ist daher nicht notwendig.
+Setzen bei jedem Start ist daher nicht notwendig.
 """
 }]
 })
@@ -295,13 +292,13 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the slave address for a given num as set by 
+Returns the slave address for a given ``num`` as set by
 :func:`SetChibiSlaveAddress`.
 """,
 'de':
 """
-Gibt die Slave Adresse für eine Adressnummerierung (mittels num Parameter) zurück,
-wie von :func:`SetChibiSlaveAddress` gesetzt.
+Gibt die Slave Adresse für eine Adressnummerierung (mittels ``num`` Parameter)
+zurück, wie von :func:`SetChibiSlaveAddress` gesetzt.
 """
 }]
 })
@@ -392,7 +389,7 @@ Setzt den Chibi Frequenzbereich der Chibi Extension. Mögliche Werte sind:
  
 Es ist möglich den Frequenzbereich mit dem Brick Viewer zu setzen und dieser wird
 im EEPROM der Chibi Extension abgespeichert. Ein Setzen bei
-jedem Hochfahren ist daher nicht notwendig.
+jedem Start ist daher nicht notwendig.
 """
 }]
 })
@@ -457,7 +454,7 @@ abhängig vom verwendeten Frequenzbereich:
  
 Es ist möglich den Kanal mit dem Brick Viewer zu setzen und dieser wird
 im EEPROM der Chibi Extension abgespeichert. Ein Setzen bei
-jedem Hochfahren ist daher nicht notwendig.
+jedem Start ist daher nicht notwendig.
 """
 }]
 })
@@ -487,11 +484,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns *true* if a RS485 Extension is available to be used by the Master.
+Returns *true* if a RS485 Extension is available to be used by the Master Brick.
 """,
 'de':
 """
-Gibt zurück ob eine RS485 Extension zur Nutzung durch den Master verfügbar ist.
+Gibt zurück ob eine RS485 Extension zur Nutzung durch den Master Brick
+verfügbar ist.
 """
 }]
 })
@@ -522,7 +520,7 @@ USB) zu betreiben muss die Adresse auf 0 gesetzt werden.
 
 Es ist möglich die Adresse mit dem Brick Viewer zu setzen und diese wird im
 EEPROM der RS485 Extension abgespeichert. Ein Setzen bei
-jedem Hochfahren ist daher nicht notwendig.
+jedem Start ist daher nicht notwendig.
 """
 }]
 })
@@ -555,13 +553,13 @@ com['packets'].append({
 """
 Sets up to 255 slave addresses. Valid addresses are in range 1-255. 0 has a
 special meaning, it is used as list terminator and not allowed as normal slave
-address. The address numeration (via num parameter) has to be used
+address. The address numeration (via ``num`` parameter) has to be used
 ascending from 0. For example: If you use the RS485 Extension in Master mode
 (i.e. the stack has an USB connection) and you want to talk to three other
-RS485 stacks with the addresses 17, 23, and 42, you should call with "(0, 17),
-(1, 23), (2, 42) and (3, 0)". The last call with "(3, 0)" is a list terminator
-and indicates that the RS485 slave address list contains 3 addresses in this
-case.
+RS485 stacks with the addresses 17, 23, and 42, you should call with
+``(0, 17)``, ``(1, 23)``, ``(2, 42)`` and ``(3, 0)``. The last call with
+``(3, 0)`` is a list terminator and indicates that the RS485 slave address list
+contains 3 addresses in this case.
 
 It is possible to set the addresses with the Brick Viewer, that will take care
 of correct address numeration and list termination.
@@ -574,19 +572,19 @@ don't have to be set on every startup.
 Setzt bis zu 255 Slave Adressen. Gültige Adressen sind 1-255. 0 hat eine
 besondere Bedeutung, sie wird zur Terminierung der Liste verwendet und ist nicht
 als normale Slave Adresse erlaubt.
-Die Adressnummerierung (mittels num Parameter) muss aufsteigend ab
+Die Adressnummerierung (mittels ``num`` Parameter) muss aufsteigend ab
 0 erfolgen. Beispiel: Wenn die RS485 Extension im Master Modus verwendet wird
 (z.B. wenn der Stapel eine USB-Verbindung hat) und es soll mit drei weiteren
 RS485 Stapeln kommuniziert werden, mit den Adressen 17, 23 und 42, sollten die
-Aufrufe "(0, 17), (1, 23), (2, 42) und (3, 0)" sein. Der letzte Aufruf mit
-"(3, 0)" dient der Terminierung der Liste und zeigt an, dass die RS485 Slave
-Adressliste in diesem Fall 3 Einträge beinhaltet.
+Aufrufe ``(0, 17)``, ``(1, 23)``, ``(2, 42)`` und ``(3, 0)`` sein. Der letzte
+Aufruf mit ``(3, 0)`` dient der Terminierung der Liste und zeigt an, dass die
+RS485 Slave Adressliste in diesem Fall 3 Einträge beinhaltet.
 
 Es ist möglich die Adressen mit dem Brick Viewer zu setzen, dieser kümmert sich
 dann um korrekte Adressnummerierung und Terminierung der Liste.
 
 Die Slave Adresse werden im EEPROM der RS485 Extension abgespeichert. Ein
-Setzen bei jedem Hochfahren ist daher nicht notwendig.
+Setzen bei jedem Start ist daher nicht notwendig.
 """
 }]
 })
@@ -600,13 +598,13 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the slave address for a given num as set by 
+Returns the slave address for a given ``num`` as set by
 :func:`SetRS485SlaveAddress`.
 """,
 'de':
 """
-Gibt die Slave Adresse für eine Adressnummerierung (mittels num Parameter) zurück,
-wie von :func:`SetRS485SlaveAddress` gesetzt.
+Gibt die Slave Adresse für eine Adressnummerierung (mittels ``num`` Parameter)
+zurück, wie von :func:`SetRS485SlaveAddress` gesetzt.
 """
 }]
 })
@@ -662,16 +660,16 @@ you have to restart the Master Brick after configuration.
 """
 Setzt die Schnittstellenkonfiguration der RS485 Extension. Die Geschwindigkeit
 wird in Baud angegeben. Der Master Brick versucht die vorgegebene Baudrate so
-genau wie möglich zu erreichen. Die maximale empfohlene Baudrate ist 2000000 (2Mbit/s).
-Mögliche Werte für die Parität sind 'n' (keine), 'e' (gerade) und 'o' (ungerade).
-Mögliche Werte für Stoppbits sind 1 und 2.
+genau wie möglich zu erreichen. Die maximale empfohlene Baudrate ist 2000000
+(2Mbit/s). Mögliche Werte für die Parität sind 'n' (keine), 'e' (gerade) und
+'o' (ungerade). Mögliche Werte für Stoppbits sind 1 und 2.
 
-Wenn die RS485 Kommunikation instabil ist (verlorene Nachrichten etc.), sollte zuerst
-die Baudrate verringert werden. Sehr lange Busleitungen (z.B. 1km) sollten möglichst
-Werte im Bereich von 100000 (100kbit/s) verwenden.
+Wenn die RS485 Kommunikation instabil ist (verlorene Nachrichten etc.), sollte
+zuerst die Baudrate verringert werden. Sehr lange Busleitungen (z.B. 1km)
+sollten möglichst Werte im Bereich von 100000 (100kbit/s) verwenden.
 
-Die Werte sind im EEPROM gespeichert und werden nur beim Hochfahren angewandt.
-Das bedeutet der Master Brick muss nach einer Konfiguration neu gestartet werden.
+Die Werte sind im EEPROM gespeichert und werden nur beim Start angewandt. Dass
+bedeutet, der Master Brick muss nach einer Konfiguration neu gestartet werden.
 """
 }]
 })
@@ -706,11 +704,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns *true* if a WIFI Extension is available to be used by the Master.
+Returns *true* if a WIFI Extension is available to be used by the Master Brick.
 """,
 'de':
 """
-Gibt zurück ob eine WIFI Extension zur Nutzung durch den Master verfügbar ist.
+Gibt zurück ob eine WIFI Extension zur Nutzung durch den Master Brick verfügbar
+ist.
 """
 }]
 })
@@ -733,8 +732,8 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets the configuration of the WIFI Extension. The *ssid* can have a max length
-of 32 characters. Possible values for *connection* are:
+Sets the configuration of the WIFI Extension. The ``ssid`` can have a max length
+of 32 characters. Possible values for ``connection`` are:
 
 .. csv-table::
  :header: "Value", "Description"
@@ -747,11 +746,11 @@ of 32 characters. Possible values for *connection* are:
  "4", "Ad Hoc: DHCP"
  "5", "Ad Hoc: Static IP"
 
-If you set *connection* to one of the static IP options then you have to supply
-*ip*, *subnet_mask* and *gateway* as an array of size 4 (first element of the
-array is the least significant byte of the address). If *connection* is set to
-one of the DHCP options then *ip*, *subnet_mask* and *gateway* are ignored, you
-can set them to 0.
+If you set ``connection`` to one of the static IP options then you have to
+supply ``ip``, ``subnet_mask`` and ``gateway`` as an array of size 4 (first
+element of the array is the least significant byte of the address). If
+``connection`` is set to one of the DHCP options then ``ip``, ``subnet_mask``
+and ``gateway`` are ignored, you can set them to 0.
 
 The last parameter is the port that your program will connect to. The
 default port, that is used by brickd, is 4223.
@@ -763,8 +762,8 @@ It is recommended to use the Brick Viewer to set the WIFI configuration.
 """,
 'de':
 """
-Setzt die Konfiguration der WIFI Extension. Die *ssid* darf eine maximale
-Länge von 32 Zeichen haben. Mögliche Werte für *connection* sind:
+Setzt die Konfiguration der WIFI Extension. Die ``ssid`` darf eine maximale
+Länge von 32 Zeichen haben. Mögliche Werte für ``connection`` sind:
 
 .. csv-table::
  :header: "Wert", "Beschreibung"
@@ -777,17 +776,17 @@ Länge von 32 Zeichen haben. Mögliche Werte für *connection* sind:
  "4", "Ad Hoc: DHCP"
  "5", "Ad Hoc: Statische IP"
 
-Wenn *connection* auf eine der statische IP Optionen gesetzt wird, dann müssen
-*ip*, *subnet_mask* und *gateway* als ein Array der größe 4 angegeben werden.
-Dabei ist das erste Element im Array das niederwertigste Byte. Falls
-*connection* auf eine der DHCP Optionen gesetzt ist, werden *ip*, *subnet_mask*
-und *gateway* ignoriert.
+Wenn ``connection`` auf eine der statische IP Optionen gesetzt wird, dann müssen
+``ip``, ``subnet_mask`` und ``gateway`` als ein Array der Größe 4 angegeben
+werden. Dabei ist das erste Element im Array das niederwertigste Byte. Falls
+``connection`` auf eine der DHCP Optionen gesetzt ist, werden ``ip``,
+``subnet_mask`` und ``gateway`` ignoriert.
 
-Der letzte Parameter ist der port auf den das Anwendungsprogramm sich
+Der letzte Parameter ist der Port auf den das Anwendungsprogramm sich
 verbindet. Der Standardport von brickd ist 4223.
 
-Die Werte sind im EEPROM gespeichert und werden nur beim Hochfahren angewandt.
-Das bedeutet der Master Brick muss nach einer Konfiguration neu gestartet werden.
+Die Werte sind im EEPROM gespeichert und werden nur beim Start angewandt. Dass
+bedeutet, der Master Brick muss nach einer Konfiguration neu gestartet werden.
 
 Wir empfehlen die Brick Viewer zu nutzen um die WIFI Extension zu
 konfigurieren.
@@ -860,32 +859,32 @@ type of the encryption. Possible values are:
  "2", "WEP"
  "3", "No Encryption"
 
-The key has a max length of 50 characters and is used if encryption
+The ``key`` has a max length of 50 characters and is used if ``encryption``
 is set to 0 or 2 (WPA/WPA2 or WEP). Otherwise the value is ignored.
 
 For WPA/WPA2 the key has to be at least 8 characters long. If you want to set
 a key with more than 50 characters, see :func:`SetLongWifiKey`.
 
 For WEP the key has to be either 10 or 26 hexadecimal digits long. It is
-possible to set the WEP key index (1-4). If you don't know your key index,
-it is likely 1.
+possible to set the WEP ``key_index`` (1-4). If you don't know your
+``key_index``, it is likely 1.
 
-If you choose WPA Enterprise as encryption, you have to set eap options and
+If you choose WPA Enterprise as encryption, you have to set ``eap_options`` and
 the length of the certificates (for other encryption types these parameters
 are ignored). The certificate length are given in byte and the certificates
-themselves can be set with :func:`SetWifiCertificate`. Eap options consist of
-the outer authentication (bits 1-2), inner authentication (bit 3) and 
+themselves can be set with :func:`SetWifiCertificate`. ``eap_options`` consist
+of the outer authentication (bits 1-2), inner authentication (bit 3) and
 certificate type (bits 4-5):
 
 .. csv-table::
  :header: "Option", "Bits", "Description"
- :widths: 10, 10, 80
+ :widths: 20, 10, 70
 
- "outer auth", "1-2", "0=EAP-FAST, 1=EAP-TLS, 2=EAP-TTLS, 3=EAP-PEAP"
- "inner auth", "3", "0=EAP-MSCHAP, 1=EAP-GTC"
- "cert type", "4-5", "0=CA Certificate, 1=Client Certificate, 2=Private Key"
+ "outer authentication", "1-2", "0=EAP-FAST, 1=EAP-TLS, 2=EAP-TTLS, 3=EAP-PEAP"
+ "inner authentication", "3", "0=EAP-MSCHAP, 1=EAP-GTC"
+ "certificate type", "4-5", "0=CA Certificate, 1=Client Certificate, 2=Private Key"
 
-Example for EAP-TTLS + EAP-GTC + Private Key: option = 2 | (1 << 2) | (2 << 3).
+Example for EAP-TTLS + EAP-GTC + Private Key: ``option = 2 | (1 << 2) | (2 << 3)``.
 
 The values are stored in the EEPROM and only applied on startup. That means
 you have to restart the Master Brick after configuration.
@@ -906,35 +905,35 @@ Typ der Verschlüsselung. Mögliche Werte sind:
  "2", "WEP"
  "3", "Keine Verschlüsselung"
 
-Key hat eine maximale Länge von 50 Zeichen und wird benutzt falls
-encryption auf 0 oder 2 (WPA/WPA2 oder WEP) gesetzt ist. Andernfalls wird key
-ignoriert.
+Der ``key`` hat eine maximale Länge von 50 Zeichen und wird benutzt
+falls ``encryption`` auf 0 oder 2 (WPA/WPA2 oder WEP) gesetzt ist. Andernfalls
+wird dieser Parameter ignoriert.
 
-Für WPA/WPA2 muss der Schlüssel mindestens 8 Zeichen lang sein. Wenn ein Schlüssel
-mit mehr als 50 Zeichen gesetzt werden soll, kann :func:`SetLongWifiKey`
-genutzt werden.
+Für WPA/WPA2 muss der Schlüssel mindestens 8 Zeichen lang sein. Wenn ein
+Schlüssel mit mehr als 50 Zeichen gesetzt werden soll, kann
+:func:`SetLongWifiKey` genutzt werden.
 
 Für WEP muss der Schlüssel entweder 10 oder 26 hexadezimale Zeichen lang sein.
-Es ist möglich den key index zu setzen (1-4). Fall der key index unbekannt ist,
-ist er wahrscheinlich 1.
+Es ist möglich den ``key_index`` zu setzen (1-4). Fall der ``key_index``
+unbekannt ist, ist er wahrscheinlich 1.
 
-Wenn WPA Enterprise als encryption gewählt wird, müssen eap options und
+Wenn WPA Enterprise als ``encryption`` gewählt wird, müssen ``eap_options`` und
 die Länge der Zertifikate gesetzt werden. Die Länge wird in Byte angegeben
 und die Zertifikate selbst können mit :func:`SetWifiCertificate` übertragen
-werden. Die eap options bestehen aus outer authentication (Bits 1-2), 
-inner authentication (Bit 3) und certificate type (bits 4-5):
+werden. Die ``eap_options`` bestehen aus Outer Authentication (Bits 1-2),
+Inner Authentication (Bit 3) und Certificate Type (Bits 4-5):
 
 .. csv-table::
  :header: "Option", "Bits", "Beschreibung"
  :widths: 10, 10, 80
 
- "outer auth", "1-2", "0=EAP-FAST, 1=EAP-TLS, 2=EAP-TTLS, 3=EAP-PEAP"
- "inner auth", "3", "0=EAP-MSCHAP, 1=EAP-GTC"
- "cert type", "4-5", "0=CA Certificate, 1=Client Certificate, 2=Private Key"
+ "Outer Authentication", "1-2", "0=EAP-FAST, 1=EAP-TLS, 2=EAP-TTLS, 3=EAP-PEAP"
+ "Inner Authentication", "3", "0=EAP-MSCHAP, 1=EAP-GTC"
+ "Certificate Type", "4-5", "0=CA Certificate, 1=Client Certificate, 2=Private Key"
 
-Beispiel für EAP-TTLS + EAP-GTC + Private Key: option = 2 | (1 << 2) | (2 << 3).
+Beispiel für EAP-TTLS + EAP-GTC + Private Key: ``option = 2 | (1 << 2) | (2 << 3)``.
 
-Die Werte sind im EEPROM gespeichert und werden nur beim Hochfahren angewandt.
+Die Werte sind im EEPROM gespeichert und werden nur beim Start angewandt.
 Das bedeutet der Master Brick muss nach einer Konfiguration neu gestartet werden.
 
 Wir empfehlen die Brick Viewer zu nutzen um die WIFI Extension Verschlüsselung
@@ -999,7 +998,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the status of the WIFI Extension. The state is updated automatically,
+Returns the status of the WIFI Extension. The ``state`` is updated automatically,
 all of the other parameters are updated on startup and every time
 :func:`RefreshWifiStatus` is called.
 
@@ -1017,9 +1016,9 @@ Possible states are:
 """,
 'de':
 """
-Gibt den Status der WIFI Extension zurück. State wird automatisch aktualisiert,
-alle anderen Parameter werden nur beim Starten und nach jedem Aufruf von
-:func:`RefreshWifiStatus` aktualisiert.
+Gibt den Status der WIFI Extension zurück. ``state`` wird automatisch
+aktualisiert, alle anderen Parameter werden nur beim Starten und nach jedem
+Aufruf von :func:`RefreshWifiStatus` aktualisiert.
 
 Mögliche Werte für *state* sind:
 
@@ -1048,7 +1047,7 @@ Refreshes the WIFI status (see :func:`GetWifiStatus`). To read the status
 of the WIFI module, the Master Brick has to change from data mode to
 command mode and back. This transaction and the readout itself is
 unfortunately time consuming. This means, that it might take some ms
-until the stack with attached WIFI Extensions reacts again after this
+until the stack with attached WIFI Extension reacts again after this
 function is called.
 """,
 'de':
@@ -1079,7 +1078,7 @@ to set the password use index 0xFFFE. The max length of username and
 password is 32.
 
 The certificate is written in chunks of size 32 and the index is used as
-the index of the chunk. The data length should nearly always be 32. Only
+the index of the chunk. ``data_length`` should nearly always be 32. Only
 the last chunk can have a length that is not equal to 32.
 
 The starting index of the CA Certificate is 0, of the Client Certificate
@@ -1100,14 +1099,14 @@ muss Index 0xFFFF und für das Password Index 0xFFFE genutzt werden.
 Die maximale Länge für beide ist 32.
 
 Das Zertifikat wird in Chunks der Größe 32 geschrieben und der Index
-gibt den Index des Chunk an. Data length sollte fast immer auf 32 gesetzt
+gibt den Index des Chunk an. ``data_length`` sollte fast immer auf 32 gesetzt
 werden. Nur beim letzten Chunk ist eine Länge ungleich 32 möglich.
 
 Der Startindex für CA Certificate ist 0, für Client Certificate 10000 und
 für Private Key 20000. Die Maximalen Dateigrößen sind jeweils 1312, 1312 und 
 4320 Byte.
 
-Die Werte sind im EEPROM gespeichert und werden nur beim Hochfahren angewandt.
+Die Werte sind im EEPROM gespeichert und werden nur beim Start angewandt.
 Das bedeutet der Master Brick muss nach einer Konfiguration neu gestartet werden.
 
 Wir empfehlen die Brick Viewer zu nutzen um die WIFI Extension Verschlüsselung
@@ -1221,7 +1220,7 @@ Gibt Informationen über denn WIFI Empfangsbuffer zurück. Der WIFI
 Empfangsbuffer hat eine maximale Größe von 1500 Byte und falls zu viele
 Daten übertragen werden, kann er überlaufen.
 
-Die Rückgabewerte sind die Anzahl der Overflows, die low watermark
+Die Rückgabewerte sind die Anzahl der Overflows, die Low-Watermark
 (d.h. die kleinste Anzahl an Byte die je noch frei waren im Buffer) und
 die Anzahl der im Moment verwendeten Bytes im Buffer.
 
@@ -1340,7 +1339,6 @@ Funktion zusätzlich hinzugefügt.
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function', 
@@ -2000,7 +1998,6 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function', 
 'name': ('IsEthernetPresent', 'is_ethernet_present'), 
@@ -2009,15 +2006,16 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns *true* if a Ethernet Extension is available to be used by the Master.
+Returns *true* if a Ethernet Extension is available to be used by the Master
+Brick.
 """,
 'de':
 """
-Gibt zurück ob eine Ethernet Extension zur Nutzung durch den Master verfügbar ist.
+Gibt zurück ob eine Ethernet Extension zur Nutzung durch den Master Brick
+verfügbar ist.
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function', 
@@ -2032,7 +2030,8 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets the configuration of the WIFI Extension. Possible values for *connection* are:
+Sets the configuration of the Ethernet Extension. Possible values for
+``connection`` are:
 
 .. csv-table::
  :header: "Value", "Description"
@@ -2041,11 +2040,11 @@ Sets the configuration of the WIFI Extension. Possible values for *connection* a
  "0", "DHCP"
  "1", "Static IP"
 
-If you set *connection* to static IP options then you have to supply
-*ip*, *subnet_mask* and *gateway* as an array of size 4 (first element of the
-array is the least significant byte of the address). If *connection* is set to
-the DHCP options then *ip*, *subnet_mask* and *gateway* are ignored, you
-can set them to 0.
+If you set ``connection`` to static IP options then you have to supply ``ip``,
+``subnet_mask`` and ``gateway`` as an array of size 4 (first element of the
+array is the least significant byte of the address). If ``connection`` is set
+to the DHCP options then ``ip``, ``subnet_mask`` and ``gateway`` are ignored,
+you can set them to 0.
 
 The last parameter is the port that your program will connect to. The
 default port, that is used by brickd, is 4223.
@@ -2057,7 +2056,8 @@ It is recommended to use the Brick Viewer to set the Ethernet configuration.
 """,
 'de':
 """
-Setzt die Konfiguration der WIFI Extension. Mögliche Werte für *connection* sind:
+Setzt die Konfiguration der Ethernet Extension. Mögliche Werte für
+``connection`` sind:
 
 .. csv-table::
  :header: "Wert", "Beschreibung"
@@ -2066,17 +2066,18 @@ Setzt die Konfiguration der WIFI Extension. Mögliche Werte für *connection* si
  "0", "DHCP"
  "1", "Statische IP"
 
-Wenn *connection* auf die statische IP Option gesetzt wird, dann müssen
-*ip*, *subnet_mask* und *gateway* als ein Array der größe 4 angegeben werden.
-Dabei ist das erste Element im Array das niederwertigste Byte. Falls
-*connection* auf die DHCP Option gesetzt ist, werden *ip*, *subnet_mask*
-und *gateway* ignoriert.
+Wenn ``connection`` auf die statische IP Option gesetzt wird, dann müssen
+``ip``, ``subnet_mask`` und ``gateway`` als ein Array der Größe 4 angegeben
+werden. Dabei ist das erste Element im Array das niederwertigste Byte. Falls
+``connection`` auf die DHCP Option gesetzt ist, werden ``ip``, ``subnet_mask``
+und ``gateway`` ignoriert.
 
-Der letzte Parameter ist der port auf den das Anwendungsprogramm sich
+Der letzte Parameter ist der Port auf den das Anwendungsprogramm sich
 verbindet. Der Standardport von brickd ist 4223.
 
-Die Werte sind im EEPROM gespeichert und werden nur beim Hochfahren angewandt.
-Das bedeutet der Master Brick muss nach einer Konfiguration neu gestartet werden.
+Die Werte sind im EEPROM gespeichert und werden nur beim Start angewandt.
+Das bedeutet der Master Brick muss nach einer Konfiguration neu gestartet
+werden.
 
 Wir empfehlen die Brick Viewer zu nutzen um die Ethernet Extension zu
 konfigurieren.
@@ -2088,7 +2089,7 @@ com['packets'].append({
 'type': 'function', 
 'name': ('GetEthernetConfiguration', 'get_ethernet_configuration'), 
 'elements': [('connection', 'uint8', 1, 'out', ('EthernetConnection', 'ethernet_connection', [('DHCP', 'dhcp', 0),
-                                                                                             ('StaticIP', 'static_ip', 1)])),
+                                                                                              ('StaticIP', 'static_ip', 1)])),
              ('ip', 'uint8', 4, 'out'),
              ('subnet_mask', 'uint8', 4, 'out'),
              ('gateway', 'uint8', 4, 'out'),
@@ -2122,27 +2123,27 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the status of the Ethernet Extension. 
+Returns the status of the Ethernet Extension.
 
-*mac_address*, *ip*, *subnet_mask* and *gateway* are given as an array
-(first element of the array is the least significant byte of the address). 
+``mac_address``, ``ip``, ``subnet_mask`` and ``gateway`` are given as an array.
+Tthe first element of the array is the least significant byte of the address.
 
-*rx_count* and *tx_count* are the number of bytes that have been received/send
-since last restart
+``rx_count`` and ``tx_count`` are the number of bytes that have been
+received/send since last restart.
 
-*hostname* is the currently used hostname.
+``hostname`` is the currently used hostname.
 """,
 'de':
 """
 Gibt den Status der Ethernet Extension zurück.
 
-*mac_address*, *ip*, *subnet_mask* und *gateway* werden als Array übergeben
-(Das erste Element des Arrays ist das niederwertigste Byte).
+``mac_address``, ``ip``, ``subnet_mask`` und ``gateway`` werden als Array
+übergeben. Das erste Element des Arrays ist das niederwertigste Byte.
 
-*rx_count* und *tx_count* sind die Anzahl der Bytes die seit dem letzten
+``rx_count`` und ``tx_count`` sind die Anzahl der Bytes die seit dem letzten
 Neustart empfangen/gesendet wurden.
 
-*hostname* ist der aktuell genutzte Hostname.
+``hostname`` ist der aktuell genutzte Hostname.
 """
 }]
 })
@@ -2192,8 +2193,8 @@ The MAC address can be read out again with :func:`GetEthernetStatus`.
 'de':
 """
 Setzt die MAC Adresse der Ethernet Extension. Die Ethernet Extension sollte
-mit einer vorkonfigurierten MAC Adresse kommen. Diese MAC Adresse ist steht auch
-auf einem Aufkleber auf der Ethernet Extension.
+mit einer vorkonfigurierten MAC Adresse ausgeliefert werden. Diese MAC Adresse
+steht auch auf einem Aufkleber auf der Ethernet Extension.
 
 Die MAC Adresse kann mit :func:`GetEthernetStatus` wieder ausgelesen werden.
 """
