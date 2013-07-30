@@ -1237,7 +1237,7 @@ Pausen gesendet werden.
 com['packets'].append({
 'type': 'function', 
 'name': ('SetWifiRegulatoryDomain', 'set_wifi_regulatory_domain'), 
-'elements': [('domain', 'uint8', 1, 'in', ('WifiDoamin', 'wifi_domain', [('Channel1To11', 'channel_1to11', 0),
+'elements': [('domain', 'uint8', 1, 'in', ('WifiDomain', 'wifi_domain', [('Channel1To11', 'channel_1to11', 0),
                                                                          ('Channel1To13', 'channel_1to13', 1),
                                                                          ('Channel1To14', 'channel_1to14', 2)]))],
 'since_firmware': [1, 3, 4],
@@ -1276,7 +1276,7 @@ Der Standardwert ist 1 (ETSI).
 com['packets'].append({
 'type': 'function', 
 'name': ('GetWifiRegulatoryDomain', 'get_wifi_regulatory_domain'), 
-'elements': [('domain', 'uint8', 1, 'out', ('WifiDoamin', 'wifi_domain', [('Channel1To11', 'channel_1to11', 0),
+'elements': [('domain', 'uint8', 1, 'out', ('WifiDomain', 'wifi_domain', [('Channel1To11', 'channel_1to11', 0),
                                                                           ('Channel1To13', 'channel_1to13', 1),
                                                                           ('Channel1To14', 'channel_1to14', 2)]))],
 'since_firmware': [1, 3, 4],

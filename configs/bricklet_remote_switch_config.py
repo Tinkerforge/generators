@@ -34,8 +34,8 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': ('GetSwitchingState', 'get_switching_state'), 
-'elements': [('state', 'uint8', 1, 'out', ('SwitchingState', 'SwitchingState', [('Ready', 'ready', 0),
-                                                                                ('Busy', 'busy', 1)]))],
+'elements': [('state', 'uint8', 1, 'out', ('SwitchingState', 'switching_state', [('Ready', 'ready', 0),
+                                                                                 ('Busy', 'busy', 1)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
