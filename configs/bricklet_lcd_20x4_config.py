@@ -134,7 +134,7 @@ should be blinking (shown as a blinking block). The cursor position
 is one character behind the the last text written with 
 :func:`WriteLine`.
 
-The default is (false, false).
+The default is (*false*, *false*).
 """,
 'de':
 """
@@ -142,7 +142,7 @@ Konfiguriert ob der Cursor (angezeigt als "_") sichtbar ist und ob er
 blinkt (angezeigt als blinkender Block). Die Cursor Position ist ein 
 Zeichen hinter dem zuletzt mit :func:`WriteLine` geschriebenen Text.
 
-Der Standardwert ist (false, false).
+Der Standardwert ist (*false*, *false*).
 """
 }]
 })
@@ -241,45 +241,45 @@ consist of 5x8 pixels and can be addressed with the index 0-7. To describe
 the pixels, the first 5 bits of 8 bytes are used. For example, to make
 a custom character "H", you should transfer the following:
 
-* character[0] = 0b00010001 (decimal value 17)
-* character[1] = 0b00010001 (decimal value 17)
-* character[2] = 0b00010001 (decimal value 17)
-* character[3] = 0b00011111 (decimal value 31)
-* character[4] = 0b00010001 (decimal value 17)
-* character[5] = 0b00010001 (decimal value 17)
-* character[6] = 0b00010001 (decimal value 17)
-* character[7] = 0b00000000 (decimal value 0)
+* ``character[0] = 0b00010001`` (decimal value 17)
+* ``character[1] = 0b00010001`` (decimal value 17)
+* ``character[2] = 0b00010001`` (decimal value 17)
+* ``character[3] = 0b00011111`` (decimal value 31)
+* ``character[4] = 0b00010001`` (decimal value 17)
+* ``character[5] = 0b00010001`` (decimal value 17)
+* ``character[6] = 0b00010001`` (decimal value 17)
+* ``character[7] = 0b00000000`` (decimal value 0)
 
 The characters can later be written with :func:`WriteLine` by using the
 characters with the byte representation 8 to 15.
 
 You can play around with the custom characters in Brick Viewer version
->= 2.0.1.
+since 2.0.1.
 
 Custom characters are stored by the LCD in RAM, so they have to be set
 after each startup.
 """,
 'de':
 """
-Das LCD 20x4 Bricklet kann bis zu 8 Benutzerdefinierte Buchstaben speichern.
+Das LCD 20x4 Bricklet kann bis zu 8 benutzerdefinierte Buchstaben speichern.
 Die Buchstaben bestehen aus 5x8 Pixel und sie können über den Index 0-7
 adressiert werden. Um die Pixel zu beschreiben, werden die ersten 5 Bit
 von 8 Bytes verwenden. Zum Beispiel, um den Buchstaben "H" zu erzeugen,
 sollte das folgende Array gesendet werden:
 
-* character[0] = 0b00010001 (Dezimalwert 17)
-* character[1] = 0b00010001 (Dezimalwert 17)
-* character[2] = 0b00010001 (Dezimalwert 17)
-* character[3] = 0b00011111 (Dezimalwert 31)
-* character[4] = 0b00010001 (Dezimalwert 17)
-* character[5] = 0b00010001 (Dezimalwert 17)
-* character[6] = 0b00010001 (Dezimalwert 17)
-* character[7] = 0b00000000 (Dezimalwert 0)
+* ``character[0] = 0b00010001`` (Dezimalwert 17)
+* ``character[1] = 0b00010001`` (Dezimalwert 17)
+* ``character[2] = 0b00010001`` (Dezimalwert 17)
+* ``character[3] = 0b00011111`` (Dezimalwert 31)
+* ``character[4] = 0b00010001`` (Dezimalwert 17)
+* ``character[5] = 0b00010001`` (Dezimalwert 17)
+* ``character[6] = 0b00010001`` (Dezimalwert 17)
+* ``character[7] = 0b00000000`` (Dezimalwert 0)
 
 Die Buchstaben können später mit :func:`WriteLine` mit den chars mit
 den Byterepräsentationen 8 bis 15 geschrieben werden.
 
-Es ist möglich die Benutzerdefinierten Buchstaben im Brick Viewer ab
+Es ist möglich die benutzerdefinierten Buchstaben im Brick Viewer ab
 Version 2.0.1 einzustellen.
 
 Benutzerdefinierte Buchstaben werden vom LCD im RAM gespeichert, daher
@@ -302,7 +302,7 @@ Returns the custom character for a given index, as set with
 """,
 'de':
 """
-Gibt den Benutzerdefinierten Buchstaben für den gegebenen
+Gibt den benutzerdefinierten Buchstaben für den gegebenen
 Index zurück, wie von :func:`GetCustomCharacter` gesetzt.
 """
 }]
@@ -325,11 +325,11 @@ expires, see :func:`SetDefaultTextCounter`.
 """,
 'de':
 """
-Setzt den Default Text für die Zeilen 0-3. Die maximale Anzahl an
+Setzt den Standard-Text für die Zeilen 0-3. Die maximale Anzahl an
 Buchstaben pro Zeile ist 20.
 
-Der Default Text wird auf dem LCD angezeigt, wenn der Default Text
-Zähler ausläuft, siehe :func:`SetDefaultTextCounter`.
+Der Standard-Text wird auf dem LCD angezeigt, wenn der Standard-Text-Zähler
+ausläuft, siehe :func:`SetDefaultTextCounter`.
 """
 }]
 })
@@ -348,7 +348,7 @@ Returns the default text for a given line (0-3) as set by
 """,
 'de':
 """
-Gibt den Default Text für die Zeilen 0-3 zurück, wie von
+Gibt den Standard-Text für die Zeilen 0-3 zurück, wie von
 :func:`SetDefaultText` gesetzt.
 """
 }]
@@ -380,9 +380,9 @@ The default is -1.
 """,
 'de':
 """
-Setzt den Default Text Zähler in ms. Der Zähler wird von der LCD
+Setzt den Standard-Text-Zähler in ms. Der Zähler wird von der LCD
 Firmware einmal pro ms dekrementiert. Wenn der Zähler 0 erreicht
-wird der Default Text auf dem LCD angezeigt (siehe :func:`SetDefaultText`).
+wird der Standard-Text auf dem LCD angezeigt (siehe :func:`SetDefaultText`).
 
 Diese Funktionalität kann genutzt werden um auf dem LCD einen Text
 anzuzeigen falls das kontrollierende Programm abstürzt oder die Verbindung
@@ -390,10 +390,10 @@ unterbrochen wird.
 
 Ein möglicher Ansatz dafür ist :func:`SetDefaultTextCounter` einmal
 pro Minute mit dem Parameter 1000*60*2 (zwei Minuten) aufzurufen.
-In diesem Fall wird dann der Default Text nach spätestens zwei Minuten
+In diesem Fall wird dann der Standard-Text nach spätestens zwei Minuten
 angezeigt wenn das kontrollierende Programm abstürzt.
 
-Ein negativer Zählerwert stellt die Default Text Funktionalität aus.
+Ein negativer Zählerwert stellt die Standard-Text Funktionalität aus.
 
 Der Standardwert ist -1.
 """
@@ -412,7 +412,7 @@ Returns the current value of the default text counter.
 """,
 'de':
 """
-Gibt den aktuellen Wert des Default Text Zählers zurück.
+Gibt den aktuellen Wert des Standard-Text-Zählers zurück.
 """
 }]
 })

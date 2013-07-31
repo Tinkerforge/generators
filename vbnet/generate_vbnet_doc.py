@@ -214,7 +214,7 @@ def make_api():
     'en': """
 .. vbnet:function:: Class {3}{1}(ByVal uid As String, ByVal ipcon As IPConnection)
 
- Creates an object with the unique device ID *uid*:
+ Creates an object with the unique device ID ``uid``:
 
  .. code-block:: vbnet
 
@@ -226,7 +226,7 @@ def make_api():
     'de': """
 .. vbnet:function:: Class {3}{1}(ByVal uid As String, ByVal ipcon As IPConnection)
 
- Erzeugt ein Objekt mit der eindeutigen Geräte ID *uid*:
+ Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``:
 
  .. code-block:: vbnet
 

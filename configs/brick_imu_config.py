@@ -489,15 +489,15 @@ com['packets'].append({
 There are several different types that can be calibrated:
 
 .. csv-table::
- :header: "Type", "Description",        "Values"
+ :header: "Type", "Description", "Values"
  :widths: 10, 40, 100
 
- "0",    "Accelerometer Gain", "[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]"
- "1",    "Accelerometer Bias", "[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]"
- "2",    "Magnetometer Gain",  "[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]"
- "3",    "Magnetometer Bias",  "[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]"
- "4",    "Gyroscope Gain",     "[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]"
- "5",    "Gyroscope Bias",     "[bias xl, bias yl, bias zl, temp l, bias xh, bias yh, bias zh, temp h, 0, 0]"
+ "0",    "Accelerometer Gain", "``[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]``"
+ "1",    "Accelerometer Bias", "``[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]``"
+ "2",    "Magnetometer Gain",  "``[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]``"
+ "3",    "Magnetometer Bias",  "``[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]``"
+ "4",    "Gyroscope Gain",     "``[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]``"
+ "5",    "Gyroscope Bias",     "``[bias xl, bias yl, bias zl, temp l, bias xh, bias yh, bias zh, temp h, 0, 0]``"
 
 The calibration via gain and bias is done with the following formula::
 
@@ -509,12 +509,13 @@ gain to 1/1) and that you have to average over several thousand values
 to obtain a usable result in the end.
 
 The gyroscope bias is highly dependent on the temperature, so you have to
-calibrate the bias two times with different temperatures. The values xl, yl, zl 
-and temp l are the bias for x, y, z and the corresponding temperature for a 
-low temperature. The values xh, yh, zh and temp h are the same for a high 
-temperatures. The temperature difference should be at least 5°C. If you have 
-a temperature where the IMU Brick is mostly used, you should use this 
-temperature for one of the sampling points.
+calibrate the bias two times with different temperatures. The values ``xl``,
+``yl``, ``zl `` and ``temp l`` are the bias for ``x``, ``y``, ``z`` and the
+corresponding temperature for a low temperature. The values ``xh``, ``yh``,
+``zh`` and ``temp h`` are the same for a high temperatures. The temperature
+difference should be at least 5°C. If you have a temperature where the
+IMU Brick is mostly used, you should use this temperature for one of the
+sampling points.
 
 .. note::
  We highly recommend that you use the Brick Viewer to calibrate your
@@ -525,31 +526,32 @@ temperature for one of the sampling points.
 Es sind folgende verschiedene Kalibrierungen möglich:
 
 .. csv-table::
- :header: "Typ", "Beschreibung",        "Werte"
+ :header: "Typ", "Beschreibung", "Werte"
  :widths: 10, 40, 100
  
- "0",    "Beschleunigungsmesser Verstärkung", "[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]"
- "1",    "Beschleunigungsmesser Versatz", "[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]"
- "2",    "Magnetometer Verstärkung",  "[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]"
- "3",    "Magnetometer Versatz",  "[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]"
- "4",    "Gyroskop Verstärkung",     "[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]"
- "5",    "Gyroskop Versatz",     "[bias xl, bias yl, bias zl, temp l, bias xh, bias yh, bias zh, temp h, 0, 0]"
+ "0",    "Beschleunigungsmesser Verstärkung", "``[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]``"
+ "1",    "Beschleunigungsmesser Versatz",     "``[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]``"
+ "2",    "Magnetometer Verstärkung",          "``[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]``"
+ "3",    "Magnetometer Versatz",              "``[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]``"
+ "4",    "Gyroskop Verstärkung",              "``[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]``"
+ "5",    "Gyroskop Versatz",                  "``[bias xl, bias yl, bias zl, temp l, bias xh, bias yh, bias zh, temp h, 0, 0]``"
 
 Die Kalibrierung mittels Verstärkung und Versatz wird über folgende Formel realisiert::
 
  new_value = (bias + orig_value) * gain_mul / gain_div
 
-Für die Implementierung einer eigenen Kalibriersoftware sollte beachtet werden, dass
-zuerst die bisherige Kalibrierung rückgängig gemacht werden muss (Versatz auf 0 und 
-Verstärkung auf 1/1 setzen) und das über mehrere tausend Werte gemittelt werden sollte
-um ein benutzbares Ergebnis zu erhalten.
+Für die Implementierung einer eigenen Kalibriersoftware sollte beachtet werden,
+dass zuerst die bisherige Kalibrierung rückgängig gemacht werden muss (Versatz
+auf 0 und Verstärkung auf 1/1 setzen) und das über mehrere tausend Werte
+gemittelt werden sollte um ein benutzbares Ergebnis zu erhalten.
 
-Der Versatz des Gyroskops ist sehr temperaturabhängig und daher muss die Kalibrierung des
-Versatzes mit zwei unterschiedlichen Temperaturen erfolgen. Die Werte x1, y1, z1 und temp 1
-sind der Versatz für x, y, z und die zugehörige geringe Temperatur. Die Werte xh, yh, zh 
-und temp h sind entsprechend für eine höhere Temperatur. Die Temperaturdifferenz sollte
-mindestens 5°C betragen. Die übliche Betriebstemperatur des IMU Brick sollte einer der
-Kalibrierpunkte sein.
+Der Versatz des Gyroskops ist sehr temperaturabhängig und daher muss die
+Kalibrierung des Versatzes mit zwei unterschiedlichen Temperaturen erfolgen.
+Die Werte ``xl``, ``yl``, ``zl`` und ``temp l`` sind der Versatz für ``x``,
+``y``, ``z`` und die zugehörige geringe Temperatur. Die Werte ``xh``, ``yh``,
+``zh`` und ``temp h`` sind entsprechend für eine höhere Temperatur. Die
+Temperaturdifferenz sollte mindestens 5°C betragen. Die übliche
+Betriebstemperatur des IMU Brick sollte einer der Kalibrierpunkte sein.
 
 .. note::
  Wir empfehlen dringend den Brick Viewer zur Kalibrierung des IMU Brick zu verwenden.

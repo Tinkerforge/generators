@@ -9,7 +9,7 @@ com = {
     'device_identifier': 239,
     'name': ('Tilt', 'tilt', 'Tilt'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for sensing inclination',
+    'description': 'Device for sensing inclination changes',
     'packets': []
 }
 

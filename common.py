@@ -329,7 +329,7 @@ def make_zip(dirname, source_path, dest_path, version):
         raise Exception("Command '{0}' failed".format(' '.join(args)))
     shutil.copy(zipname, dest_path)
 
-re_camel_case_to_space = re.compile('([A-Z][A-Z][a-z])|([a-z][A-Z])')
+re_camel_case_to_space = re.compile('([A-Z][A-Z][a-z])|([a-z][A-Z])|([a-zA-Z][0-9])')
 
 def camel_case_to_space(name):
     return re_camel_case_to_space.sub(lambda m: m.group()[:1] + " " + m.group()[1:], name)
@@ -347,9 +347,14 @@ def format_since_firmware(device, packet):
     else:
         return ''
 
+def default_constant_format(prefix, constant, definition, value):
+    return '* {0}{1}_{2} = {3}\n'.format(prefix, constant.name_uppercase,
+                                         definition.name_uppercase, value)
+
 def format_constants(prefix, packet,
                      constants_name={'en': 'constants', 'de': 'Konstanten'},
-                     char_format="'{0}'"):
+                     char_format="'{0}'",
+                     constant_format_func=default_constant_format):
     str_constants = {
 'en': """
 The following {0} are available for this function:
@@ -361,7 +366,6 @@ Die folgenden {0} sind für diese Funktion verfügbar:
 """
 }
     has_constant = False
-    str_constant = '* {0}{1}_{2} = {3}\n'
     str_constants = select_lang(str_constants).format(select_lang(constants_name))
     constants = packet.get_constants()
     for constant in constants:
@@ -372,10 +376,7 @@ Die folgenden {0} sind für diese Funktion verfügbar:
                 value = str(definition.value)
 
             has_constant = True
-            str_constants += str_constant.format(prefix,
-                                                 constant.name_uppercase,
-                                                 definition.name_uppercase,
-                                                 value)
+            str_constants += constant_format_func(prefix, constant, definition, value)
     if has_constant:
         return str_constants
     else:
@@ -527,6 +528,125 @@ def generate(path, language, make_files, prepare, finish, is_doc_):
     pprint(sorted(device_identifiers),  f)
     f.close()
 
+cn_valid_camel_case_chars = re.compile('^[A-Z][A-Za-z0-9]*$')
+cn_valid_underscore_chars = re.compile('^[a-z][a-z0-9_]*$')
+cn_valid_display_chars = re.compile('^[A-Z][A-Za-z0-9/ -]*$')
+cn_valid_constant_camel_case_chars = re.compile('^[A-Za-z0-9]+$')
+cn_valid_constant_underscore_chars = re.compile('^[a-z0-9_]+$')
+
+cn_all_uppercase = ['api', 'ir', 'us', 'lcd', 'dc', 'imu', 'pwm', 'gps', 'io4',
+                    'io16', 'led', 'i2c', 'ptc', 'rs485', 'eap', 'usb', 'mac',
+                    '2d', '3d', '1k', '100k', '500k', '6v', '10v', '36v', '45v',
+                    'sps', 'oqpsk', 'bpsk40', 'dhcp', 'ip', 'wpa', 'wpa2', 'ca',
+                    'wep']
+
+cn_eap_suffix = ['fast', 'tls', 'ttls', 'peap', 'mschap', 'gtc']
+
+cn_special_camel_case = {'mhz':   'MHz',
+                         '20ma':  '20mA',
+                         '50hz':  '50Hz',
+                         '60hz':  '60Hz',
+                         '1to11': '1To11',
+                         '1to13': '1To13',
+                         '1to14': '1To14'}
+
+def check_name(camel_case, underscore, display, is_constant=False):
+    if camel_case is not None:
+        if is_constant:
+            r = cn_valid_constant_camel_case_chars
+        else:
+            r = cn_valid_camel_case_chars
+
+        if r.match(camel_case) is None:
+            raise ValueError("camel case name '{0}' contains invalid chars".format(camel_case))
+
+    if underscore is not None:
+        if is_constant:
+            r = cn_valid_constant_underscore_chars
+        else:
+            r = cn_valid_underscore_chars
+
+        if r.match(underscore) is None:
+            raise ValueError("underscore name '{0}' contains invalid chars".format(underscore))
+
+    if display is not None:
+        if cn_valid_display_chars.match(display) is None:
+            raise ValueError("display name '{0}' contains invalid chars".format(display))
+
+    if camel_case is not None and underscore is not None:
+        # test 1
+        camel_case_to_check = camel_case.lower()
+        underscore_to_check = underscore.replace('_', '')
+
+        if camel_case_to_check != underscore_to_check:
+            raise ValueError("camel case name '{0}' ({1}) and underscore name '{2}' ({3}) mismatch (test 1)" \
+                             .format(camel_case, camel_case_to_check, underscore, underscore_to_check))
+
+        # test 2
+        parts = []
+        for part in underscore.split('_'):
+            if part in cn_all_uppercase:
+                parts.append(part.upper())
+            elif part in cn_special_camel_case:
+                parts.append(cn_special_camel_case[part])
+            elif part in cn_eap_suffix and len(parts) > 0 and parts[-1] == 'EAP':
+                parts.append(part.upper())
+            else:
+                parts.append(part[0].upper() + part[1:])
+
+        underscore_to_check = ''.join(parts)
+
+        if camel_case != underscore_to_check:
+            raise ValueError("camel case name '{0}' and underscore name '{1}' ({2}) mismatch (test 2)" \
+                             .format(camel_case, underscore, underscore_to_check))
+
+    if camel_case is not None and display is not None:
+        # test 1
+        display_to_check = display.replace(' ', '').replace('-', '').replace('/', '')
+
+        if camel_case != display_to_check:
+            raise ValueError("camel case name '{0}' and display name '{1}' ({2}) mismatch (test 1)" \
+                             .format(camel_case, display, display_to_check))
+
+        # test 2
+        camel_case_to_check = camel_case_to_space(camel_case)
+
+        if camel_case in ['IO4', 'IO16']:
+            camel_case_to_check = camel_case_to_check.replace(' ', '-')
+        elif camel_case in ['Current12', 'Current25']:
+            camel_case_to_check = camel_case_to_check.replace(' ', '')
+        elif camel_case == 'VoltageCurrent':
+            camel_case_to_check = camel_case_to_check.replace(' ', '/')
+        elif camel_case.endswith('16x2'):
+            camel_case_to_check = camel_case_to_check.replace('16x 2', '16x2')
+        elif camel_case.endswith('20x4'):
+            camel_case_to_check = camel_case_to_check.replace('20x 4', '20x4')
+        elif camel_case.endswith('4x7'):
+            camel_case_to_check = camel_case_to_check.replace('4x 7', '4x7')
+        elif camel_case.endswith('020mA'):
+            camel_case_to_check = camel_case_to_check.replace('020m A', '0-20mA')
+
+        if camel_case_to_check != display:
+            raise ValueError("camel case name '{0}' ({1}) and display name '{2}' mismatch (test 2)" \
+                             .format(camel_case, camel_case_to_check, display))
+
+    if underscore is not None and display is not None:
+        display_to_check = display.replace(' ', '_').replace('/', '_')
+
+        if display in ['IO-4', 'IO-16']:
+            display_to_check = display_to_check.replace('-', '')
+        else:
+            display_to_check = display_to_check.replace('-', '_')
+
+        display_to_check = display_to_check.lower()
+
+        if underscore != display_to_check.lower():
+            raise ValueError("underscore name '{0}' and display name '{1}' ({2}) mismatch" \
+                             .format(underscore, display, display_to_check))
+
+valid_types = set(['int8', 'uint8', 'int16', 'uint16', 'int32', 'uint32',
+                   'int64', 'uint64', 'bool', 'char', 'string', 'float'])
+
 class Packet:
     def __init__(self, device, packet):
         self.device = device
@@ -535,16 +655,31 @@ class Packet:
         self.in_elements = []
         self.out_elements = []
 
-        if packet['name'][0].lower() != packet['name'][1].replace('_', ''):
-            raise ValueError('Name mismatch: ' + packet['name'][0] + ' != ' + packet['name'][1])
+        check_name(packet['name'][0], packet['name'][1], None)
 
         for element in self.all_elements:
+            check_name(None, element[0], None)
+
+            if element[1] not in valid_types:
+                raise ValueError('Invalid element type ' + element[1])
+
+            if element[2] < 1:
+                raise ValueError('Invalid element size ' + element[2])
+
             if element[3] == 'in':
                 self.in_elements.append(element)
             elif element[3] == 'out':
                 self.out_elements.append(element)
             else:
                 raise ValueError('Invalid element direction ' + element[3])
+
+            if len(element) > 4:
+                constant = element[4]
+
+                check_name(constant[0], constant[1], None)
+
+                for value in constant[2]:
+                    check_name(value[0], value[1], None, True)
 
     def get_device(self):
         return self.device
@@ -598,25 +733,29 @@ class Packet:
 
     def get_constants(self):
         ConstantDefinitionTuple = namedtuple('ConstantValues', ['name_camelcase', 'name_underscore', 'name_uppercase', 'value'])
-        ConstantTuple = namedtuple('Constant', ['type', 'name_camelcase', 'name_underscore', 'name_uppercase', 'definitions'])
+        ConstantTuple = namedtuple('Constant', ['type', 'name_camelcase', 'name_underscore', 'name_uppercase', 'definitions', 'elements'])
 
-        def is_in_constants(constants, new_constant):
+        def get_existing_constants(constants, new_constant):
             for constant in constants:
                 if constant.name_camelcase == new_constant[0]:
-                    return True
-            return False
+                    return constant
+            return None
 
         constants = []
 
         for element in self.all_elements:
             if len(element) > 4:
                 c = element[4]
-                if not is_in_constants(constants, c):
+                ec = get_existing_constants(constants, c)
+
+                if not ec:
                     definitions = []
                     vs = c[2]
                     for v in vs:
                         definitions.append(ConstantDefinitionTuple(v[0], v[1], v[1].upper(), v[2]))
-                    constants.append(ConstantTuple(element[1], c[0], c[1], c[1].upper(), definitions))
+                    constants.append(ConstantTuple(element[1], c[0], c[1], c[1].upper(), definitions, [element]))
+                else:
+                    ec.elements.append(element)
 
         return constants
 
@@ -640,6 +779,8 @@ class Device:
         self.all_function_packets = []
         self.all_function_packets_without_doc_only = []
         self.callback_packets = []
+
+        check_name(com['name'][0], com['name'][1], com['name'][2])
 
         for i, p in zip(range(len(com['packets'])), com['packets']):
             if not 'function_id' in p:

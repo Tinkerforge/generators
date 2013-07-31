@@ -93,7 +93,7 @@ default (set as *true* or *false*).
 
 For example:
 
-* ("a", 0xFF, 'i', true) will set all pins of port a as input pull-up.
+* ("a", 255, 'i', true) will set all pins of port a as input pull-up.
 * ("a", 128, 'i', false) will set pin 7 of port a as input default (floating if nothing is connected).
 * ("b", 3, 'o', false) will set pins 0 and 1 of port b as output low.
 * ("b", 4, 'o', true) will set pin 2 of port b as output high.
@@ -111,7 +111,7 @@ Pull-Up oder Standard (gesetzt als *true* oder *false*).
 
 Beispiele:
 
-* ("a", 0xFF, 'i', true) setzt alle Pins des Ports a als Eingang mit Pull-Up.
+* ("a", 255, 'i', true) setzt alle Pins des Ports a als Eingang mit Pull-Up.
 * ("a", 128, 'i', false) setzt Pin 7 des Ports a als Standard Eingang (potentialfrei wenn nicht verbunden).
 * ("b", 3, 'o', false) setzt die Pins 0 und 1 des Ports b als Ausgang im Zustand logisch 0.
 * ("b", 4, 'o', true) setzt Pin 2 des Ports b als Ausgang im Zustand logisch 1.

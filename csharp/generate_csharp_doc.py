@@ -140,7 +140,7 @@ def make_api():
     'en': """
 .. csharp:function:: class {3}{1}(String uid, IPConnection ipcon)
 
- Creates an object with the unique device ID *uid*:
+ Creates an object with the unique device ID ``uid``:
 
  .. code-block:: csharp
 
@@ -152,7 +152,7 @@ def make_api():
     'de': """
 .. csharp:function:: class {3}{1}(String uid, IPConnection ipcon)
 
- Erzeugt ein Objekt mit der eindeutigen Geräte ID *uid*:
+ Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``:
 
  .. code-block:: csharp
 

@@ -29,9 +29,9 @@ com['packets'].append({
 'en':
 """
 Returns the GPS coordinates. Latitude and longitude are given in the
-DD.dddddd° format, the value 57123468 means 57.123468°.
-The parameter ns and ew are the cardinal directions for
-latitude and longitude. Possible values for ns and ew are 'N', 'S', 'E'
+``DD.dddddd°`` format, the value 57123468 means 57.123468°.
+The parameter ``ns`` and ``ew`` are the cardinal directions for
+latitude and longitude. Possible values for ``ns`` and ``ew`` are 'N', 'S', 'E'
 and 'W' (north, south, east and west).
 
 PDOP, HDOP and VDOP are the dilution of precision (DOP) values. They specify
@@ -50,9 +50,9 @@ This data is only valid if there is currently a fix as indicated by
 'de':
 """
 Gibt die GPS Koordinaten zurück. Breitengrad und Längengrad werden im Format
-DD.dddddd° angegeben, der Wert 57123468 bedeutet 57,123468°.
-Die Parameter ns und ew sind Himmelsrichtungen für
-Breiten- und Längengrad. Mögliche Werte für ns und ew sind 'N', 'S', 'E'
+``DD.dddddd°`` angegeben, der Wert 57123468 bedeutet 57,123468°.
+Die Parameter ``ns`` und ``ew`` sind Himmelsrichtungen für
+Breiten- und Längengrad. Mögliche Werte für ``ns`` und ``ew`` sind 'N', 'S', 'E'
 und 'W' (Nord, Süd, Ost, West).
 
 PDOP, HDOP und VDOP sind die "Dilution Of Precision" (DOP) Werte. Sie
@@ -186,15 +186,16 @@ com['packets'].append({
 'en':
 """
 Returns the current date and time. The date is
-given in the format ddmmyy and the time is given
-in the format hhmmss.sss. For example, 140713 means
+given in the format ``ddmmyy`` and the time is given
+in the format ``hhmmss.sss``. For example, 140713 means
 14.05.13 as date and 195923568 means 19:59:23.568 as time.
 """,
 'de':
 """
 Gibt das aktuelle Datum und die aktuelle Zeit zurück. Das Datum ist
-im Format ddmmyy und die Zeit im Format hhmmss.sss angegeben. Zum Beispiel,
-140713 bedeutet 14.05.13 als Datum und 195923568 bedeutet 19:59:23.568 als Zeit.
+im Format ``ddmmyy`` und die Zeit im Format ``hhmmss.sss`` angegeben. Zum
+Beispiel, 140713 bedeutet 14.05.13 als Datum und 195923568 bedeutet
+19:59:23.568 als Zeit.
 """
 }]
 })

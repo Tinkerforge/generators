@@ -497,7 +497,7 @@ com['packets'].append({
                                                              ('UpTo6V', 'up_to_6v', 1),
                                                              ('UpTo10V', 'up_to_10v', 2),
                                                              ('UpTo36V', 'up_to_36v', 3),
-                                                             ('UpTo45V', 'up_to_45v', 3)]))],
+                                                             ('UpTo45V', 'up_to_45v', 4)]))],
 'since_firmware': [2, 0, 1],
 'doc': ['bf', {
 'en':
@@ -508,7 +508,7 @@ Sets the measurement range. Possible ranges:
 * 1: 0V - 6.05V, ~1.48mV resolution
 * 2: 0V - 10.32V, ~2.52mV resolution
 * 3: 0V - 36.30V, ~8.86mV resolution
-* 3: 0V - 45.00V, ~11.25mV resolution
+* 4: 0V - 45.00V, ~11.25mV resolution
 
 The default measurement range is 0.
 """,
@@ -520,7 +520,7 @@ Setzt den Messbereich. Mögliche Bereiche:
 * 1: 0V - 6,05V, ~1,48mV Auflösung
 * 2: 0V - 10,32V, ~2,52mV Auflösung
 * 3: 0V - 36,30V, ~8,86mV Auflösung
-* 3: 0V - 45,00V, ~11,25mV Auflösung
+* 4: 0V - 45,00V, ~11,25mV Auflösung
 
 Der Standardbereich ist 0.
 """
@@ -534,7 +534,7 @@ com['packets'].append({
                                                               ('UpTo6V', 'up_to_6v', 1),
                                                               ('UpTo10V', 'up_to_10v', 2),
                                                               ('UpTo36V', 'up_to_36v', 3),
-                                                              ('UpTo45V', 'up_to_45v', 3)]))],
+                                                              ('UpTo45V', 'up_to_45v', 4)]))],
 'since_firmware': [2, 0, 1],
 'doc': ['bf', {
 'en':

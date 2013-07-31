@@ -505,7 +505,7 @@ Default value is 0 = 50Hz.
 """,
 'de':
 """
-Setzt den Störungsfilter auf entweder 50Hz (0) oder 60Hz (1).
+Setzt den Entstörfilter auf 50Hz (0) oder 60Hz (1).
 Störungen von 50Hz oder 60Hz Stromquellen (inklusive
 Oberwellen der Stromquellen-Grundfrequenz) werden
 um 82dB abgeschwächt.
@@ -529,7 +529,7 @@ Returns the noise rejection filter option as set by
 """,
 'de':
 """
-Gibt die "Noise Rejection Filter"-Option zurück, wie von 
+Gibt die Einstellung des Entstörfilters zurück, wie von
 :func:`SetNoiseRejectionFilter` gesetzt.
 """
 }]
@@ -570,17 +570,17 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the wire mode. Possible values are 2, 3 and 4.
-
-The values correspond to 2-, 3- and 4-wire sensors.
+Sets the wire mode of the sensor. Possible values are 2, 3 and 4 which
+correspond to 2-, 3- and 4-wire sensors. The value has to match the jumper
+configuration on the Bricklet.
 
 The default value is 2 = 2-wire.
 """,
 'de':
 """
-Setzt den "wire mode". Mögliche Werte sind 2, 3 und 4
-
-Der Wert entspricht 2-, 3- und 4-Leiter-Sensoren.
+Stellt die Leiter-Konfiguration des Sensors ein. Mögliche Werte sind 2, 3 und
+4, dies entspricht 2-, 3- und 4-Leiter-Sensoren. Der Wert muss er
+Jumper-Konfiguration am Bricklet entsprechen.
 
 Der Standardwert ist 2 = 2-Leiter.
 """
@@ -601,7 +601,7 @@ Returns the wire mode as set by :func:`SetWireMode`
 """,
 'de':
 """
-Gibt den "Wire Mode zurück, wie von :func:`SetWireMode` gesetzt.
+Gibt die Leiter-Konfiguration zurück, wie von :func:`SetWireMode` gesetzt.
 """
 }]
 })
