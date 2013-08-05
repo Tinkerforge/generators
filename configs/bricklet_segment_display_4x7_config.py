@@ -13,4 +13,36 @@ com = {
     'packets': []
 }
 
+com['packets'].append({
+'type': 'function',
+'name': ('SetSegments', 'set_segments'), 
+'elements': [('segments', 'uint8', 4, 'in'),
+             ('brightness', 'uint8', 1, 'in'),
+             ('clock_points', 'bool', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
 
+com['packets'].append({
+'type': 'function',
+'name': ('GetSegments', 'get_segments'), 
+'elements': [('segments', 'uint8', 4, 'out'),
+             ('brightness', 'uint8', 1, 'out'),
+             ('clock_points', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
