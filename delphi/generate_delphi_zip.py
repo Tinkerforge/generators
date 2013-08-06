@@ -28,16 +28,19 @@ import sys
 import os
 import shutil
 import subprocess
-import glob
 import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 import delphi_common
+from delphi_released_files import released_files
 
 device = None
 
 def copy_examples_for_zip():
+    if not device.is_released():
+        return
+
     examples = common.find_examples(device, common.path_binding, 'delphi', 'Example', '.pas')
     dest = os.path.join('/tmp/generator/examples/',
                         device.get_category(),
@@ -68,8 +71,8 @@ def generate(path):
                 '/tmp/generator/examples/ExampleEnumerate.pas')
 
     # Copy bindings and readme
-    for filename in glob.glob(path + '/bindings/*.pas'):
-        shutil.copy(filename, '/tmp/generator/bindings')
+    for filename in released_files:
+        shutil.copy(os.path.join(path, 'bindings', filename), '/tmp/generator/bindings')
 
     shutil.copy(path + '/Base58.pas', '/tmp/generator/bindings')
     shutil.copy(path + '/BlockingQueue.pas', '/tmp/generator/bindings')

@@ -33,6 +33,7 @@ import common
 import python_common
 
 device = None
+released_files = []
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
@@ -277,14 +278,19 @@ def make_old_name():
 {1} = {0}{1} # for backward compatibility
 """.format(device.get_category(), device.get_camel_case_name())
 
+def finish(directory):
+    r = open(os.path.join(directory, 'python_released_files.py'), 'wb')
+    r.write('released_files = ' + repr(released_files))
+    r.close()
+
 def make_files(device_, directory):
     global device
     device = device_
-    file_name = '{0}_{1}'.format(device.get_category().lower(), device.get_underscore_name())
+    file_name = '{0}_{1}.py'.format(device.get_category().lower(), device.get_underscore_name())
     version = common.get_changelog_version(directory)
     directory += '/bindings'
 
-    py = file('{0}/{1}.py'.format(directory, file_name), "w")
+    py = file('{0}/{1}'.format(directory, file_name), "w")
     py.write(make_import(version))
     py.write(make_namedtuples())
     py.write(make_class())
@@ -297,8 +303,12 @@ def make_files(device_, directory):
     py.write(make_register_callback_method())
     py.write(make_old_name())
 
+    if device.is_released():
+        global released_files
+        released_files.append(file_name)
+
 def generate(path):
-    common.generate(path, 'en', make_files, common.prepare_bindings, None, False)
+    common.generate(path, 'en', make_files, common.prepare_bindings, finish, False)
 
 if __name__ == "__main__":
     generate(os.getcwd())

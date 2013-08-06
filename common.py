@@ -488,7 +488,10 @@ def generate(path, language, make_files, prepare, finish, is_doc_):
     for config in configs:
         if config.endswith('_config.py'):
             module = __import__(config[:-3])
-            print(" * {0}".format(config[:-10]))
+            if module.com['released']:
+                print(' * {0}'.format(config[:-10]))
+            else:
+                print(' * {0} (not released)'.format(config[:-10]))
 
             def prepare_common_packets(common_packets):
                 for common_packet in common_packets:
@@ -803,6 +806,9 @@ class Device:
                 self.callback_packets.append(packet)
             else:
                 raise ValueError('Invalid packet type ' + packet.get_type())
+
+    def is_released(self):
+        return self.com['released']
 
     def get_api_version(self):
         return self.com['api_version']

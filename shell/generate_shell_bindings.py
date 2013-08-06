@@ -345,6 +345,9 @@ def make_dispatch_footer():
                          device.get_category().lower())
 
 def make_files(device_, directory):
+    if not device_.is_released():
+        return
+
     global device
     device = device_
     file_name = '{0}-{1}'.format(device.get_underscore_name().replace('_', '-'),
@@ -401,7 +404,7 @@ def finish(directory):
     shell.write('\ndevices_identifiers = {\n' + ',\n'.join(devices_identifiers) + '\n}\n')
     shell.write(footer)
     shell.close()
-    os.system('chmod +x tinkerforge')
+    os.system('chmod +x {0}/../tinkerforge'.format(directory))
 
     template = file('{0}/../tinkerforge-bash-completion.template'.format(directory), 'rb').read()
     template = template.replace('<<DEVICES>>', '|'.join(sorted(completion_devices)))

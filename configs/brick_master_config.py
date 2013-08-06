@@ -10,6 +10,7 @@ com = {
     'name': ('Master', 'master', 'Master'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling Stacks and four Bricklets',
+    'released': True,
     'packets': []
 }
 

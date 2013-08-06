@@ -10,6 +10,7 @@ com = {
     'name': ('GPS', 'gps', 'GPS'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for receiving GPS position',
+    'released': True,
     'packets': []
 }
 

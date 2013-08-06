@@ -29,16 +29,19 @@ import sys
 import os
 import shutil
 import subprocess
-import glob
 import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 import php_common
+from php_released_files import released_files
 
 device = None
 
 def copy_examples_for_zip():
+    if not device.is_released():
+        return
+
     examples = common.find_examples(device, common.path_binding, 'php', 'Example', '.php')
     dest = os.path.join('/tmp/generator/pear/examples/',
                         device.get_category().lower(),
@@ -70,8 +73,8 @@ def generate(path):
 
     # Copy bindings and readme
     package_files = ['<file name="Tinkerforge/IPConnection.php" role="php" />']
-    for filename in glob.glob(path + '/bindings/*.php'):
-        shutil.copy(filename, '/tmp/generator/pear/source/Tinkerforge')
+    for filename in released_files:
+        shutil.copy(os.path.join(path, 'bindings', filename), '/tmp/generator/pear/source/Tinkerforge')
         package_files.append('<file name="Tinkerforge/{0}" role="php" />'.format(os.path.basename(filename)))
 
     shutil.copy(path + '/IPConnection.php', '/tmp/generator/pear/source/Tinkerforge')

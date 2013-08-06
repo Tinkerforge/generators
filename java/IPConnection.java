@@ -10,8 +10,8 @@ package com.tinkerforge;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.Hashtable;
-import java.util.ArrayList;
 import java.util.List;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -414,9 +414,9 @@ public class IPConnection {
 	long socketID = 0;
 	OutputStream out = null;
 	InputStream in = null;
-	List<EnumerateListener> listenerEnumerate = new ArrayList<EnumerateListener>();
-	List<ConnectedListener> listenerConnected = new ArrayList<ConnectedListener>();
-	List<DisconnectedListener> listenerDisconnected = new ArrayList<DisconnectedListener>();
+	List<EnumerateListener> listenerEnumerate = new CopyOnWriteArrayList<EnumerateListener>();
+	List<ConnectedListener> listenerConnected = new CopyOnWriteArrayList<ConnectedListener>();
+	List<DisconnectedListener> listenerDisconnected = new CopyOnWriteArrayList<DisconnectedListener>();
 	ReceiveThread receiveThread = null;
 	CallbackThread callbackThread = null;
 	DisconnectProbeThread disconnectProbeThread = null;

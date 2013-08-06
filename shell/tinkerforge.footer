@@ -132,6 +132,10 @@ def parse(argv):
 
 	global item_separator
 	item_separator = args.item_separator
+	item_separator = item_separator.replace('\\t', '\t')
+	item_separator = item_separator.replace('\\r', '\r')
+	item_separator = item_separator.replace('\\n', '\n')
+	item_separator = item_separator.replace('\\\\', '\\')
 
 	global group_separator
 	group_separator = args.group_separator

@@ -10,6 +10,7 @@ com = {
     'name': ('Servo', 'servo', 'Servo'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling up to seven servos',
+    'released': True,
     'packets': []
 }
 

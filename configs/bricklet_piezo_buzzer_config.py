@@ -10,6 +10,7 @@ com = {
     'name': ('PiezoBuzzer', 'piezo_buzzer', 'Piezo Buzzer'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling a piezo buzzer',
+    'released': True,
     'packets': []
 }
 

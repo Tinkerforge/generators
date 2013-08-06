@@ -10,6 +10,7 @@ com = {
     'name': ('PTC', 'ptc', 'PTC'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for reading temperatures from Pt100 or Pt1000 sensors',
+    'released': True,
     'packets': []
 }
 

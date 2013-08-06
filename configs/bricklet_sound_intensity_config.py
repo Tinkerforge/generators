@@ -10,6 +10,7 @@ com = {
     'name': ('SoundIntensity', 'sound_intensity', 'Sound Intensity'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing sound intensity',
+    'released': False,
     'packets': []
 }
 

@@ -10,6 +10,7 @@ com = {
     'name': ('IndustrialQuadRelay', 'industrial_quad_relay', 'Industrial Quad Relay'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling up to 4 Solid State Relays',
+    'released': True,
     'packets': []
 }
 

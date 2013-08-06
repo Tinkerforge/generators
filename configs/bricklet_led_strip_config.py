@@ -10,6 +10,7 @@ com = {
     'name': ('LEDStrip', 'led_strip', 'LED Strip'),
     'manufacturer': 'Tinkerforge',
     'description': 'TODO',
+    'released': False,
     'packets': []
 }
 

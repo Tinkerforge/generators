@@ -10,6 +10,7 @@ com = {
     'name': ('DistanceIR', 'distance_ir', 'Distance IR'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing distance via infrared',
+    'released': True,
     'packets': []
 }
 

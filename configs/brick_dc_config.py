@@ -10,6 +10,7 @@ com = {
     'name': ('DC', 'dc', 'DC'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling DC motors',
+    'released': True,
     'packets': []
 }
 
