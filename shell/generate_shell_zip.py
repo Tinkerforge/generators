@@ -37,6 +37,9 @@ import common
 device = None
 
 def copy_examples_for_zip():
+    if not device.is_released():
+        return
+
     examples = common.find_examples(device, common.path_binding, 'shell', 'example_', '.sh')
     dest = os.path.join('/tmp/generator/examples/',
                         device.get_category().lower(),

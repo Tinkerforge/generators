@@ -33,6 +33,7 @@ import common
 import java_common
 
 device = None
+released_files = []
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
@@ -532,14 +533,19 @@ def make_bbgets(packet, with_obj = False):
         bbgets += bbget_format + '\n'
     return bbgets, bbret
 
+def finish(directory):
+    r = open(os.path.join(directory, 'java_released_files.py'), 'wb')
+    r.write('released_files = ' + repr(released_files))
+    r.close()
+
 def make_files(device_, directory):
     global device
     device = device_
-    file_name = '{0}{1}'.format(device.get_category(), device.get_camel_case_name())
+    file_name = '{0}{1}.java'.format(device.get_category(), device.get_camel_case_name())
     version = common.get_changelog_version(directory)
     directory += '/bindings'
 
-    java = file('{0}/{1}.java'.format(directory, file_name), "w")
+    java = file('{0}/{1}'.format(directory, file_name), "w")
     java.write(make_import(version))
     java.write(make_class())
     java.write(make_function_id_definitions())
@@ -553,8 +559,12 @@ def make_files(device_, directory):
     java.write(make_methods())
     java.write(make_add_listener())
 
+    if device.is_released():
+        global released_files
+        released_files.append(file_name)
+
 def generate(path):
-    common.generate(path, 'en', make_files, common.prepare_bindings, None, False)
+    common.generate(path, 'en', make_files, common.prepare_bindings, finish, False)
 
 if __name__ == "__main__":
     generate(os.getcwd())

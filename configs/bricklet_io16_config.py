@@ -10,6 +10,7 @@ com = {
     'name': ('IO16', 'io16', 'IO-16'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling up to 16 general purpose input/output pins',
+    'released': True,
     'packets': []
 }
 

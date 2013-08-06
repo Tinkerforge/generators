@@ -10,6 +10,7 @@ com = {
     'name': ('Barometer', 'barometer', 'Barometer'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing air pressure and altitude changes',
+    'released': True,
     'packets': []
 }
 

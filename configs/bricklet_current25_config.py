@@ -10,6 +10,7 @@ com = {
     'name': ('Current25', 'current25', 'Current25'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing current of up to 25A',
+    'released': True,
     'packets': []
 }
 

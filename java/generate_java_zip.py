@@ -28,15 +28,18 @@ import sys
 import os
 import shutil
 import subprocess
-import glob
 import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+from java_released_files import released_files
 
 device = None
 
 def copy_examples_for_zip():
+    if not device.is_released():
+        return
+
     examples = common.find_examples(device, common.path_binding, 'java', 'Example', '.java')
     dest = os.path.join('/tmp/generator/jar/examples/',
                         device.get_category(),
@@ -70,8 +73,8 @@ def generate(path):
     file('/tmp/generator/jar/examples/ExampleEnumerate.java', 'wb').writelines(lines)
 
     # Copy bindings and readme
-    for filename in glob.glob(path + '/bindings/*.java'):
-        shutil.copy(filename, '/tmp/generator/jar/source/com/tinkerforge')
+    for filename in released_files:
+        shutil.copy(os.path.join(path, 'bindings', filename), '/tmp/generator/jar/source/com/tinkerforge')
 
     shutil.copy(path + '/Device.java', '/tmp/generator/jar/source/com/tinkerforge')
     shutil.copy(path + '/IPConnection.java', '/tmp/generator/jar/source/com/tinkerforge')

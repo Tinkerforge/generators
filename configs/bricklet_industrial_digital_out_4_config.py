@@ -10,6 +10,7 @@ com = {
     'name': ('IndustrialDigitalOut4', 'industrial_digital_out_4', 'Industrial Digital Out 4'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling up to 4 optically coupled digital outputs',
+    'released': True,
     'packets': []
 }
 

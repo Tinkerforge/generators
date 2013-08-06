@@ -345,6 +345,9 @@ def make_dispatch_footer():
                          device.get_category().lower())
 
 def make_files(device_, directory):
+    if not device_.is_released():
+        return
+
     global device
     device = device_
     file_name = '{0}-{1}'.format(device.get_underscore_name().replace('_', '-'),

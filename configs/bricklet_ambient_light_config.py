@@ -10,6 +10,7 @@ com = {
     'name': ('AmbientLight', 'ambient_light', 'Ambient Light'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing Ambient Light',
+    'released': True,
     'packets': []
 }
 

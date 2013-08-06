@@ -10,6 +10,7 @@ com = {
     'name': ('MultiTouch', 'multi_touch', 'Multi Touch'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device with 12 touch sensors',
+    'released': False,
     'packets': []
 }
 
