@@ -101,8 +101,8 @@ package com.tinkerforge;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.Arrays;
-import java.util.ArrayList;
 import java.util.List;
 """
     date = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -303,7 +303,7 @@ def make_constants():
 
 def make_listener_lists():
     llists = '\n'
-    llist = '\tprivate List<{0}Listener> listener{0} = new ArrayList<{0}Listener>();\n'
+    llist = '\tprivate List<{0}Listener> listener{0} = new CopyOnWriteArrayList<{0}Listener>();\n'
     for packet in device.get_packets('callback'):
         name = packet.get_camel_case_name()
         llists += llist.format(name)
