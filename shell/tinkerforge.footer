@@ -10,7 +10,7 @@ def command_call(argv):
 
 	parser.add_argument('--list-devices', action=ListDevicesAction, nargs=0, help='show list of devices and exit')
 	parser.add_argument('--timeout', default=2500, type=int, help='maximum time (msec) to wait for response, default: 2500', metavar='<timeout>')
-	parser.add_argument('device', choices=device_choices, help='{%s}' % ', '.join(device_choices), metavar='<device>')
+	parser.add_argument('device', choices=device_choices, help='{' + ', '.join(device_choices) + '}', metavar='<device>')
 	parser.add_argument('args', nargs=argparse.REMAINDER, help='device specific arguments', metavar='<args>')
 
 	args = parser.parse_args(argv)
@@ -30,8 +30,8 @@ def command_dispatch(argv):
 			parser.exit()
 
 	parser.add_argument('--list-devices', action=ListDevicesAction, nargs=0, help='show list of devices and exit')
-	parser.add_argument('--duration', default=-1, type=int, help='time (msec) to dispatch incoming callbacks (0: exit after first, -1: forever), default: -1', metavar='<duration>')
-	parser.add_argument('device', choices=device_choices, help='{%s}' % ', '.join(device_choices), metavar='<device>')
+	parser.add_argument('--duration', default=-1, type=create_symbol_converter(int, {'exit-after-first': 0, 'forever': -1}), help='time (msec) to dispatch incoming enumerate callbacks (exit-after-first: 0, forever: -1), default: forever', metavar='<duration>')
+	parser.add_argument('device', choices=device_choices, help='{' + ', '.join(device_choices) + '}', metavar='<device>')
 	parser.add_argument('args', nargs=argparse.REMAINDER, help='device specific arguments', metavar='<args>')
 
 	args = parser.parse_args(argv)
@@ -44,29 +44,44 @@ def command_dispatch(argv):
 def command_enumerate(argv):
 	parser = Parser('tinkerforge enumerate')
 
-	parser.add_argument('--duration', default=250, type=int, help='time (msec) to dispatch incoming enumerate responses (0: exit after first, -1: forever), default: 250', metavar='<duration>')
+	enumeration_type_symbols = {
+	'available': IPConnection.ENUMERATION_TYPE_AVAILABLE,
+	'connected': IPConnection.ENUMERATION_TYPE_CONNECTED,
+	'disconnected': IPConnection.ENUMERATION_TYPE_DISCONNECTED
+	}
+
+	parser.add_argument('--duration', default=250, type=create_symbol_converter(int, {'exit-after-first': 0, 'forever': -1}), help='time (msec) to dispatch incoming enumerate responses (exit-after-first: 0, forever: -1), default: 250', metavar='<duration>')
+	parser.add_argument('--types', default=[IPConnection.ENUMERATION_TYPE_AVAILABLE], type=create_array_converter(create_symbol_converter(int, enumeration_type_symbols, True), 3, False), help='array of enumeration types to dispatch (available: 0, connected: 1, disconnected: 2), default: available', metavar='<types>')
 	parser.add_argument('--execute', type=str, help='shell command line to execute for each incoming response', metavar='<command>')
 
 	args = parser.parse_args(argv)
 
-	names = ['uid', 'connected-uid', 'position', 'hardware-version', 'firmware-version', 'device-identifier']
+	names = ['uid', 'connected-uid', 'position', 'hardware-version', 'firmware-version', 'device-identifier', 'enumeration-type']
+	enumeration_type_symbols = {
+	IPConnection.ENUMERATION_TYPE_AVAILABLE: 'available',
+	IPConnection.ENUMERATION_TYPE_CONNECTED: 'connected',
+	IPConnection.ENUMERATION_TYPE_DISCONNECTED: 'disconnected'
+	}
+	symbols = [None, None, None, None, None, device_identifier_symbols, enumeration_type_symbols]
 	is_first_callback = [True]
 
 	if args.execute is not None:
 		def callback(*values):
-			if values[6] == IPConnection.ENUMERATION_TYPE_AVAILABLE:
-				values = translate_device_identifier(values[:6])
+			if values[6] in args.types:
+				values = format_symbolic_output(values, symbols)
+
 				execute_result(args.execute, names, values)
 				return True
 	else:
 		def callback(*values):
-			if values[6] == IPConnection.ENUMERATION_TYPE_AVAILABLE:
+			if values[6] in args.types:
 				if is_first_callback[0]:
 					is_first_callback[0] = False
 				else:
 					sys.stdout.write(group_separator)
 
-				values = translate_device_identifier(values[:6])
+				values = format_symbolic_output(values, symbols)
+
 				print_result(names, values)
 				return True
 
@@ -118,6 +133,8 @@ def parse(argv):
 	parser.add_argument('--port', default=4223, type=int, help='port number, default: 4223', metavar='<port>')
 	parser.add_argument('--item-separator', default=',', type=str, help='separator for array items, default: , (comma)', metavar='<item-separator>')
 	parser.add_argument('--group-separator', default='\n', type=str, help='separator for output groups, default: \\n (newline)', metavar='<group-separator>')
+	parser.add_argument('--no-symbolic-input', action='store_true', help='disable symbolic input of values')
+	parser.add_argument('--no-symbolic-output', action='store_true', help='disable symbolic output of values')
 
 	parser.add_argument('command', choices=command_choices, help='{' + ', '.join(command_choices) + '}', metavar='<command>')
 	parser.add_argument('args', nargs=argparse.REMAINDER, help='command specific arguments', metavar='<args>')
@@ -143,6 +160,12 @@ def parse(argv):
 	group_separator = group_separator.replace('\\r', '\r')
 	group_separator = group_separator.replace('\\n', '\n')
 	group_separator = group_separator.replace('\\\\', '\\')
+
+	global no_symbolic_input
+	no_symbolic_input = args.no_symbolic_input
+
+	global no_symbolic_output
+	no_symbolic_output = args.no_symbolic_output
 
 	commands = {
 	'call': command_call,

@@ -57,6 +57,12 @@ _tinkerforge()
 	--group-separator)
 		return 0
 		;;
+	--no-symbolic-input)
+		return 0
+		;;
+	--no-symbolic-output)
+		return 0
+		;;
 	--duration)
 		return 0
 		;;
@@ -130,7 +136,7 @@ _tinkerforge()
 
 		case "${prev}" in
 		tinkerforge)
-			COMPREPLY=($(compgen -W "--help --host --port --item-separator --group-separator call dispatch enumerate" -- ${cur}))
+			COMPREPLY=($(compgen -W "--help --host --port --item-separator --group-separator --no-symbolic-input --no-symbolic-output call dispatch enumerate" -- ${cur}))
 			break
 			;;
 		call)
@@ -141,6 +147,10 @@ _tinkerforge()
 		dispatch)
 			local devices=$(tinkerforge dispatch --list-devices)
 			COMPREPLY=($(compgen -W "--help --list-devices --duration ${devices}" -- ${cur}))
+			break
+			;;
+		enumerate)
+			COMPREPLY=($(compgen -W "--help --duration --types --execute" -- ${cur}))
 			break
 			;;
 		<<DEVICES>>)

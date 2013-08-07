@@ -31,10 +31,12 @@ except ImportError:
 host = None
 port = None
 timeout = None
+duration = None
 uid = None
 item_separator = None
 group_separator = None
-duration = None
+no_symbolic_input = None
+no_symbolic_output = None
 
 class Parser(argparse.ArgumentParser):
 	def __init__(self, prog):
@@ -57,12 +59,6 @@ class ParserWithExpectResponse(Parser):
 
 		self.add_argument('--expect-response', action='store_true', help='request response and wait for it')
 
-def get_array_type_name(name, length):
-	if length < 7:
-		return item_separator.join([name]*length)
-	else:
-		return '{0}{1}{0}{1}..{2}x..{1}{0}{1}{0}'.format(name, item_separator, length - 4)
-
 def call_generic(name, functions, argv):
 	parser = Parser('tinkerforge call ' + name)
 	function_choices = sorted(functions.keys())
@@ -73,7 +69,7 @@ def call_generic(name, functions, argv):
 			parser.exit()
 
 	parser.add_argument('--list-functions', action=ListFunctionsAction, nargs=0, help='show functions of {0} and exit'.format(name))
-	parser.add_argument('uid', type=str, help='uid of a ' + name, metavar='<uid>')
+	parser.add_argument('uid', type=check_base58, help='uid of a ' + name, metavar='<uid>')
 	parser.add_argument('function', choices=function_choices, help='{' + ', '.join(function_choices) + '}', metavar='<function>')
 	parser.add_argument('args', nargs=argparse.REMAINDER, help='function specific arguments', metavar='<args>')
 
@@ -94,7 +90,7 @@ def dispatch_generic(name, callbacks, argv):
 			parser.exit()
 
 	parser.add_argument('--list-callbacks', action=ListCallbacksAction, nargs=0, help='show callbacks of {0} and exit'.format(name))
-	parser.add_argument('uid', type=str, help='uid of a ' + name, metavar='<uid>')
+	parser.add_argument('uid', type=check_base58, help='uid of a ' + name, metavar='<uid>')
 	parser.add_argument('callback', choices=callback_choices, help='{' + ', '.join(callback_choices) + '}', metavar='<callback>')
 	parser.add_argument('args', nargs=argparse.REMAINDER, help='callback specific arguments', metavar='<args>')
 
@@ -105,18 +101,8 @@ def dispatch_generic(name, callbacks, argv):
 
 	callbacks[args.callback](args.args)
 
-def translate_device_identifier(values):
-	values = list(values)
-
-	try:
-		values[5] = devices_identifiers[values[5]]
-	except KeyError:
-		values[5] = 'unknown-device-{0}'.format(values[5])
-
-	return tuple(values)
-
 def device_send_request(device_class, function_id, request_data, format_in,
-                        format_out, command, expect_response, names):
+                        format_out, command, expect_response, names, symbols):
 	if command is not None:
 		def handle_result(values):
 			execute_result(command, names, values)
@@ -140,8 +126,7 @@ def device_send_request(device_class, function_id, request_data, format_in,
 			if len(names) == 1:
 				result = (result,)
 
-			if function_id == 255: # get_identity
-				result = translate_device_identifier(result)
+			result = format_symbolic_output(result, symbols)
 
 			handle_result(result)
 	except Error as e:
@@ -211,41 +196,117 @@ def device_callback(device_class, function_id, command, names):
 		except:
 			pass
 
-def convert_char(string):
+# length_is_fixed = False means length is maximum length
+def get_array_type_name(name, length, length_is_fixed=True):
+	if length_is_fixed:
+		if length < 7:
+			return item_separator.join([name]*length)
+		else:
+			return '{0}{1}{0}{1}..{2}x..{1}{0}{1}{0}'.format(name, item_separator, length - 4)
+	else:
+		return ('[' + item_separator).join([name]*length) + ']'*(length - 1)
+
+def format_symbolic_output(values, symbols):
+	if no_symbolic_output:
+		return values
+
+	translated_values = []
+
+	for vs in zip(values, symbols):
+		if vs[1] is not None:
+			try:
+				translated_values.append(vs[1][vs[0]])
+			except KeyError:
+				translated_values.append(vs[0])
+		else:
+			translated_values.append(vs[0])
+
+	return tuple(translated_values)
+
+def check_base58(string):
+	try:
+		base58decode(string)
+	except:
+		msg = 'invalid base58 value: %r' % string
+		raise argparse.ArgumentTypeError(msg)
+
+	return string
+
+check_base58.__name__ = 'base58'
+
+def check_char(string):
 	if len(string) != 1:
 		msg = 'invalid char value: %r' % string
 		raise argparse.ArgumentTypeError(msg)
 
 	return string
 
+check_char.__name__ = 'char'
+
 def convert_bool(string):
 	value = string.lower()
+
 	if value == 'true':
-		value = True
+		return True
 	elif value == 'false':
-		value = False
+		return False
 	else:
 		msg = 'invalid bool value: %r' % string
 		raise argparse.ArgumentTypeError(msg)
 
-	return value
+convert_bool.__name__ = 'bool'
 
-def create_array_converter(type, length):
+def create_symbol_converter(type, symbols, strict=False):
+	def convert_symbol(string):
+		if not no_symbolic_input:
+			try:
+				return symbols[string]
+			except KeyError:
+				pass
+
+		try:
+			value = type(string)
+		except (ValueError, TypeError):
+			name = getattr(type, '__name__', repr(type))
+			msg = 'invalid %s value: %r' % (name, string)
+			raise argparse.ArgumentTypeError(msg)
+
+		if strict and value not in symbols.values():
+			name = getattr(type, '__name__', repr(type))
+			msg = '%s value is out-of-range: %r' % (name, string)
+			raise argparse.ArgumentTypeError(msg)
+
+		return value
+
+	convert_symbol.__name__ = getattr(type, '__name__', repr(type))
+
+	return convert_symbol
+
+# length_is_fixed = False means length is maximum length
+def create_array_converter(type, length, length_is_fixed=True):
 	def convert_array(string):
 		array = []
 
 		for item in string.split(item_separator):
-			array.append(type(item))
+			try:
+				value = type(item)
+			except (ValueError, TypeError, argparse.ArgumentTypeError):
+				name = getattr(type, '__name__', repr(type))
+				msg = 'invalid %s value: %r' % (get_array_type_name(name, length, length_is_fixed), string)
+				raise argparse.ArgumentTypeError(msg)
 
-		if len(array) != length:
+			array.append(value)
+
+		if (length_is_fixed and len(array) != length) or \
+		   (not length_is_fixed and (len(array) < 1 or len(array) > length)):
 			name = getattr(type, '__name__', repr(type))
-			msg = 'invalid %s value: %r' % (get_array_type_name(name, length), string)
+			msg = 'invalid %s value: %r' % (get_array_type_name(name, length, length_is_fixed), string)
 			raise argparse.ArgumentTypeError(msg)
 
 		return array
 
 	name = getattr(type, '__name__', repr(type))
-	convert_array.__name__ = get_array_type_name(name, length)
+	convert_array.__name__ = get_array_type_name(name, length, length_is_fixed)
 
 	return convert_array
 
@@ -291,4 +352,5 @@ def common_get_identity(prog_prefix, klass, argv):
 	args = parser.parse_args(argv)
 
 	device_send_request(klass, 255, (), '', '8s 8s c 3B 3B H', args.execute, False,
-	                    ['uid', 'connected-uid', 'position', 'hardware-version', 'firmware-version', 'device-identifier'])
+	                    ['uid', 'connected-uid', 'position', 'hardware-version', 'firmware-version', 'device-identifier'],
+	                    [None, None, None, None, None, device_identifier_symbols])
