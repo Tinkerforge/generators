@@ -10,6 +10,7 @@ com = {
     'name': ('Water', 'water', 'Water'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing water amount (rainfall etc)',
+    'released': False,
     'packets': []
 }
 

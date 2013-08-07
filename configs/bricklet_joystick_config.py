@@ -10,6 +10,7 @@ com = {
     'name': ('Joystick', 'joystick', 'Joystick'),
     'manufacturer': 'Tinkerforge',
     'description': 'Dual-Axis Joystick with Button',
+    'released': True,
     'packets': []
 }
 

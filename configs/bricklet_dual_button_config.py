@@ -10,6 +10,7 @@ com = {
     'name': ('DualButton', 'dual_button', 'Dual Button'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device with two buttons and two LEDs',
+    'released': False,
     'packets': []
 }
 

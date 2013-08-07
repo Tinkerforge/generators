@@ -34,6 +34,7 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 device = None
+released_files = []
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
@@ -528,14 +529,19 @@ def make_callback_wrappers():
 
     return wrappers + 'end.\n'
 
+def finish(directory):
+    r = open(os.path.join(directory, 'delphi_released_files.py'), 'wb')
+    r.write('released_files = ' + repr(released_files))
+    r.close()
+
 def make_files(device_, directory):
     global device
     device = device_
-    file_name = '{0}{1}'.format(device.get_category(), device.get_camel_case_name())
+    file_name = '{0}{1}.pas'.format(device.get_category(), device.get_camel_case_name())
     version = common.get_changelog_version(directory)
     directory += '/bindings'
 
-    pas = file('{0}/{1}.pas'.format(directory, file_name), 'w')
+    pas = file('{0}/{1}'.format(directory, file_name), 'w')
     pas.write(make_unit_header(version))
     pas.write(make_device_identifier())
     pas.write(make_function_id_definitions())
@@ -549,8 +555,12 @@ def make_files(device_, directory):
     pas.write(make_methods())
     pas.write(make_callback_wrappers())
 
+    if device.is_released():
+        global released_files
+        released_files.append(file_name)
+
 def generate(path):
-    common.generate(path, 'en', make_files, common.prepare_bindings, None, False)
+    common.generate(path, 'en', make_files, common.prepare_bindings, finish, False)
 
 if __name__ == "__main__":
     generate(os.getcwd())

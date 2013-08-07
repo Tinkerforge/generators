@@ -10,6 +10,7 @@ com = {
     'name': ('Temperature', 'temperature', 'Temperature'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing Temperature',
+    'released': True,
     'packets': []
 }
 

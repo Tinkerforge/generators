@@ -33,6 +33,7 @@ import common
 import ruby_common
 
 device = None
+released_files = []
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
@@ -260,14 +261,19 @@ end
 end
 """
 
+def finish(directory):
+    r = open(os.path.join(directory, 'ruby_released_files.py'), 'wb')
+    r.write('released_files = ' + repr(released_files))
+    r.close()
+
 def make_files(device_, directory):
     global device
     device = device_
-    file_name = '{0}_{1}'.format(device.get_category().lower(), device.get_underscore_name())
+    file_name = '{0}_{1}.rb'.format(device.get_category().lower(), device.get_underscore_name())
     version = common.get_changelog_version(directory)
     directory += '/bindings'
 
-    rb = file('{0}/{1}.rb'.format(directory, file_name), "w")
+    rb = file('{0}/{1}'.format(directory, file_name), "w")
     rb.write(make_header(version))
     rb.write(make_class())
     rb.write(make_callback_id_definitions())
@@ -279,8 +285,12 @@ def make_files(device_, directory):
     rb.write(make_methods())
     rb.write(make_register_callback_method())
 
+    if device.is_released():
+        global released_files
+        released_files.append(file_name)
+
 def generate(path):
-    common.generate(path, 'en', make_files, common.prepare_bindings, None, False)
+    common.generate(path, 'en', make_files, common.prepare_bindings, finish, False)
 
 if __name__ == "__main__":
     generate(os.getcwd())

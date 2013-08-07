@@ -10,6 +10,7 @@ com = {
     'name': ('Voltage', 'voltage', 'Voltage'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing Voltages between 0 and 50V',
+    'released': True,
     'packets': []
 }
 

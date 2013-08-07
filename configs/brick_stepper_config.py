@@ -10,6 +10,7 @@ com = {
     'name': ('Stepper', 'stepper', 'Stepper'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling stepper motors',
+    'released': True,
     'packets': []
 }
 

@@ -10,6 +10,7 @@ com = {
     'name': ('TemperatureIR', 'temperature_ir', 'Temperature IR'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for non-contact temperature sensing',
+    'released': True,
     'packets': []
 }
 

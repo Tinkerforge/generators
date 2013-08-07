@@ -10,6 +10,7 @@ com = {
     'name': ('DistanceUS', 'distance_us', 'Distance US'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing distance via ultrasound',
+    'released': False,
     'packets': []
 }
 
@@ -74,76 +75,6 @@ Wertebereich ist 0 bis 4095.
 Wenn der Analogwert periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`AnalogValue` zu nutzen und die Periode mit 
 :func:`SetAnalogValueCallbackPeriod` vorzugeben.
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('SetSamplingPoint', 'set_sampling_point'), 
-'elements': [('position', 'uint8', 1, 'in'),
-             ('distance', 'uint16',1, 'in')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Sets a sampling point value to a specific position of the lookup table.
-The lookup table comprises 128 equidistant analog values with
-corresponding distances.
-
-If you measure a distance of 50cm at the analog value 2048, you
-should call this function with (64, 5000). The utilized analog-to-digital
-converter has a resolution of 12 bit. With 128 sampling points on the
-whole range, this means that every sampling point has a size of 32
-analog values. Thus the analog value 2048 has the corresponding sampling
-point 64 = 2048/32.
-
-Sampling points are saved on the EEPROM of the Distance IR Bricklet and
-loaded again on startup.
-
-.. note::
- An easy way to calibrate the sampling points of the Distance IR Bricklet is
- implemented in the Brick Viewer. If you want to calibrate your Bricklet it is
- highly recommended to use this implementation.
-""",
-'de':
-"""
-Setzt einen Messpunkt für eine vorgegebene Position in der Wertetabelle.
-Die Wertetabelle beinhaltet 128 äquidistante Analogwerte mit entsprechenden
-Entfernungen.
-
-Wenn eine Entfernung von 50cm bei einem Analogwert von 2048 gemessen wird, dann sollte
-der Aufruf der Funktion mit (64, 5000) erfolgen. Der verwendete Analog-Digital-Wandler
-hat eine Auflösung von 12 Bit. Mit 128 Messpunkten im gesamten Bereich bedeutet das, dass jeder Messpunkt
-32 Analogwerte umfasst. Daher wird dem Analogwert 2048 der Messpunkt 64 = 2048/32 zugeordnet.
-
-Messpunkte werden im EEPROM des Distance IR Bricklet gespeichert und werden bei
-jedem Hochfahren geladen.
-
-.. note::
- Ein einfacher Weg, die Messpunkte des Distance IR Bricklet zu kalibrieren, ist im Brick Viewer
- implementiert. Wenn der Bricklet kalibriert werden soll wird dringend empfohlen diese Implementierung
- zu nutzen.
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('GetSamplingPoint', 'get_sampling_point'), 
-'elements': [('position', 'uint8', 1, 'in'),
-             ('distance', 'uint16',1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Returns the distance to a sampling point position as set by
-:func:`SetSamplingPoint`.
-""",
-'de':
-"""
-Gibt die Entfernung eines Messpunktes zurück, wie von :func:`SetSamplingPoint`
-gesetzt.
 """
 }]
 })

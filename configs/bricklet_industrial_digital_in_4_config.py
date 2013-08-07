@@ -10,6 +10,7 @@ com = {
     'name': ('IndustrialDigitalIn4', 'industrial_digital_in_4', 'Industrial Digital In 4'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling up to 4 optically coupled digital inputs',
+    'released': True,
     'packets': []
 }
 

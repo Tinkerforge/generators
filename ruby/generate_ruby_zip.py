@@ -33,10 +33,14 @@ import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+from ruby_released_files import released_files
 
 device = None
 
 def copy_examples_for_zip():
+    if not device.is_released():
+        return
+
     examples = common.find_examples(device, common.path_binding, 'ruby', 'example_', '.rb')
     dest = os.path.join('/tmp/generator/gem/examples/',
                         device.get_category().lower(),
@@ -67,8 +71,8 @@ def generate(path):
                 '/tmp/generator/gem/examples/example_enumerate.rb')
 
     # Copy bindings and readme
-    for filename in glob.glob(path + '/bindings/*.rb'):
-        shutil.copy(filename, '/tmp/generator/gem/source/lib/tinkerforge')
+    for filename in released_files:
+        shutil.copy(os.path.join(path, 'bindings', filename), '/tmp/generator/gem/source/lib/tinkerforge')
 
     shutil.copy(path + '/ip_connection.rb', '/tmp/generator/gem/source/lib/tinkerforge')
     shutil.copy(path + '/changelog.txt', '/tmp/generator/gem')

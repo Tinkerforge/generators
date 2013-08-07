@@ -10,6 +10,7 @@ com = {
     'name': ('DualRelay', 'dual_relay', 'Dual Relay'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling two relays',
+    'released': True,
     'packets': []
 }
 

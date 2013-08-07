@@ -10,6 +10,7 @@ com = {
     'name': ('AnalogIn', 'analog_in', 'Analog In'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing Voltages between 0 and 45V',
+    'released': True,
     'packets': []
 }
 

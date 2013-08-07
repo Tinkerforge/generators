@@ -10,6 +10,7 @@ com = {
     'name': ('LinearPoti', 'linear_poti', 'Linear Poti'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing Linear Potentiometer input',
+    'released': True,
     'packets': []
 }
 

@@ -28,15 +28,18 @@ import sys
 import os
 import shutil
 import subprocess
-import glob
 import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+from c_released_files import released_files
 
 device = None
 
 def copy_examples_for_zip():
+    if not device.is_released():
+        return
+
     examples = common.find_examples(device, common.path_binding, 'c', 'example_', '.c')
     dest = os.path.join('/tmp/generator/examples/',
                         device.get_category().lower(),
@@ -67,8 +70,8 @@ def generate(path):
                 '/tmp/generator/examples/example_enumerate.c')
 
     # Copy bindings and readme
-    for filename in glob.glob(path + '/bindings/*.[ch]'):
-        shutil.copy(filename, '/tmp/generator/bindings')
+    for filename in released_files:
+        shutil.copy(os.path.join(path, 'bindings', filename), '/tmp/generator/bindings')
 
     shutil.copy(path + '/ip_connection.c', '/tmp/generator/bindings')
     shutil.copy(path + '/ip_connection.h', '/tmp/generator/bindings')

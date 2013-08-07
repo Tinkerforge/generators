@@ -28,15 +28,18 @@ import sys
 import os
 import shutil
 import subprocess
-import glob
 import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+from csharp_released_files import released_files
 
 device = None
 
 def copy_examples_for_zip():
+    if not device.is_released():
+        return
+
     examples = common.find_examples(device, common.path_binding, 'vbnet', 'Example', '.vb')
     dest = os.path.join('/tmp/generator/dll/examples/',
                         device.get_category(),
@@ -72,8 +75,8 @@ def generate(path):
     file('/tmp/generator/dll/examples/ExampleEnumerate.vb', 'wb').writelines(lines)
 
     # Copy bindings and readme
-    for filename in glob.glob(path + '/bindings/*.cs'):
-        shutil.copy(filename, '/tmp/generator/dll/source/Tinkerforge')
+    for filename in released_files:
+        shutil.copy(os.path.join(path, 'bindings', filename), '/tmp/generator/dll/source/Tinkerforge')
 
     shutil.copy(path + '/../csharp/IPConnection.cs', '/tmp/generator/dll/source/Tinkerforge')
     shutil.copy(path + '/changelog.txt', '/tmp/generator/dll')

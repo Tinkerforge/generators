@@ -10,6 +10,7 @@ com = {
     'name': ('RotaryPoti', 'rotary_poti', 'Rotary Poti'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing Rotary Potentiometer input',
+    'released': True,
     'packets': []
 }
 

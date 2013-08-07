@@ -10,6 +10,7 @@ com = {
     'name': ('IMU', 'imu', 'IMU'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing acceleration, magnetic field and angular velocity',
+    'released': True,
     'packets': []
 }
 

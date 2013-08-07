@@ -10,6 +10,7 @@ com = {
     'name': ('IndustrialDual020mA', 'industrial_dual_0_20ma', 'Industrial Dual 0-20mA'), 
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing two currents between 0 and 20mA (IEC 60381-1)',
+    'released': True,
     'packets': []
 }
 
