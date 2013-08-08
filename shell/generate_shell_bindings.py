@@ -33,13 +33,13 @@ import common
 device = None
 call_devices = []
 dispatch_devices = []
-devices_identifiers = []
+device_identifier_symbols = []
 completion_devices = []
 getter_patterns = []
 setter_patterns = []
 callback_patterns = []
 
-def get_argparse_type_converter(element):
+def get_type_converter(element):
     types = {
         'int8':   'int',
         'uint8':  'int',
@@ -50,52 +50,63 @@ def get_argparse_type_converter(element):
         'int64':  'int',
         'uint64': 'int',
         'bool':   'convert_bool',
-        'char':   'convert_char',
+        'char':   'check_char',
         'string': 'str',
         'float':  'float'
     }
 
     t = types[element[1]]
 
-    if element[2] == 1 or t == 'str':
-        return t, 1
+    if len(element) > 4:
+        symbols = {}
+
+        for symbol in element[4][2]:
+            symbols[symbol[1].replace('_', '-')] = symbol[2]
+
+        if element[2] > 1 and t != 'str':
+            return 'create_array_converter(create_symbol_converter({0}, {1}), {2})'.format(t, symbols, element[2])
+        else:
+            return 'create_symbol_converter({0}, {1})'.format(t, symbols)
     else:
-        return t, element[2]
+        if element[2] > 1:
+            return 'create_array_converter({0}, {1})'.format(t, element[2])
+        else:
+            return t
 
 def get_element_help(element):
     types = {
-        'int8': 'int',
-        'uint8': 'int',
-        'int16': 'int',
+        'int8':   'int',
+        'uint8':  'int',
+        'int16':  'int',
         'uint16': 'int',
-        'int32': 'int',
+        'int32':  'int',
         'uint32': 'int',
-        'int64': 'int',
+        'int64':  'int',
         'uint64': 'int',
-        'bool': 'bool',
-        'char': 'char',
-        'string': 'string',
-        'float': 'float'
+        'bool':   'bool',
+        'char':   'char',
+        'string': 'str',
+        'float':  'float'
     }
 
-    constant_doc = ''
+    symbols_doc = ''
     if len(element) > 4:
-        constants = []
+        symbols = []
 
-        for constant in element[4][2]:
-            constants.append('{0}: {1}'.format(constant[1].replace('_', '-'), constant[2]))
+        for symbol in element[4][2]:
+            symbols.append('{0}: {1}'.format(symbol[1].replace('_', '-'), symbol[2]))
 
-        constant_doc = ' (' + ', '.join(constants) + ')'
+        symbols_doc = ' (' + ', '.join(symbols) + ')'
 
     t = types[element[1]]
 
     if element[2] == 1 or t == 'string':
-        help = "'{0}{1}'".format(t, constant_doc)
+        help = "'{0}{1}'".format(t, symbols_doc)
     else:
         help = "get_array_type_name('{0}', {1})".format(t, element[2])
 
-        if len(constant_doc) > 0:
-            help += "+ '{0}'".format(constant_doc)
+        if len(symbols_doc) > 0:
+            help += "+ '{0}'".format(symbols_doc)
 
     return help
 
@@ -191,14 +202,14 @@ def make_call_functions():
 {2}
 \t\targs = parser.parse_args(argv)
 
-\t\tdevice_send_request({7}{8}, {3}, ({4}), '{5}', '{6}', None, args.expect_response, [])
+\t\tdevice_send_request({7}{8}, {3}, ({4}), '{5}', '{6}', None, args.expect_response, [], [])
 """
     getter = """\tdef {0}(argv):
 \t\tparser = ParserWithExecute(prog_prefix + ' {1}')
 {2}
 \t\targs = parser.parse_args(argv)
 
-\t\tdevice_send_request({7}{8}, {3}, ({4}), '{5}', '{6}', args.execute, False, [{9}])
+\t\tdevice_send_request({7}{8}, {3}, ({4}), '{5}', '{6}', args.execute, False, [{9}], [{10}])
 """
     get_identity = """\tdef get_identity(argv):
 \t\tcommon_get_identity(prog_prefix, {0}{1}, argv)
@@ -217,15 +228,11 @@ def make_call_functions():
 
             for element in packet.get_elements('in'):
                 name = element[0]
-                type, length = get_argparse_type_converter(element)
+                type_converter = get_type_converter(element)
                 help = get_element_help(element)
                 metavar = "'<{0}>'".format(name.replace('_', '-'))
 
-                if length > 1:
-                    params.append("\t\tparser.add_argument('{0}', type=create_array_converter({1}, {2}), help={3}, metavar={4})".format(name, type, length, help, metavar))
-                else:
-                    params.append("\t\tparser.add_argument('{0}', type={1}, help={2}, metavar={3})".format(name, type, help, metavar))
-
+                params.append("\t\tparser.add_argument('{0}', type={1}, help={2}, metavar={3})".format(name, type_converter, help, metavar))
                 request_data.append('args.{0}'.format(element[0]))
 
             comma = ''
@@ -235,14 +242,25 @@ def make_call_functions():
             if len(params) > 0:
                 params = [''] + params + ['']
 
-            output = []
+            output_names = []
+            output_symbols = []
 
             for element in packet.get_elements('out'):
-                output.append("'{0}'".format(element[0].replace('_', '-')))
+                output_names.append("'{0}'".format(element[0].replace('_', '-')))
+
+                if len(element) > 4:
+                    symbols = {}
+
+                    for symbol in element[4][2]:
+                        symbols[symbol[2]] = symbol[1].replace('_', '-')
+
+                    output_symbols.append(str(symbols))
+                else:
+                    output_symbols.append('None')
 
             underscore_name = packet.get_underscore_name()
 
-            if len(output) > 0:
+            if len(output_names) > 0:
                 if not underscore_name.startswith('get_') and \
                    not underscore_name.startswith('is_') and \
                    not underscore_name.startswith('are_'):
@@ -257,7 +275,8 @@ def make_call_functions():
                                          make_format_list(packet, 'out'),
                                          device.get_camel_case_name(),
                                          device.get_category(),
-                                         ', '.join(output))
+                                         ', '.join(output_names),
+                                         ', '.join(output_symbols))
             else:
                 if not underscore_name.startswith('set_'):
                     setter_patterns.append(underscore_name.replace('_', '-'))
@@ -364,10 +383,10 @@ def make_files(device_, directory):
                                                                  device.get_category().lower(),
                                                                  device.get_underscore_name()))
 
-    global devices_identifiers
-    devices_identifiers.append("{0}: '{1}-{2}'".format(device.get_device_identifier(),
-                                                       device.get_underscore_name().replace('_', '-'),
-                                                       device.get_category().lower()))
+    global device_identifier_symbols
+    device_identifier_symbols.append("{0}: '{1}-{2}'".format(device.get_device_identifier(),
+                                                             device.get_underscore_name().replace('_', '-'),
+                                                             device.get_category().lower()))
 
     global completion_devices
     completion_devices.append('{0}-{1}'.format(device.get_underscore_name().replace('_', '-'),
@@ -401,7 +420,7 @@ def finish(directory):
 
     shell.write('\ncall_devices = {\n' + ',\n'.join(call_devices) + '\n}\n')
     shell.write('\ndispatch_devices = {\n' + ',\n'.join(dispatch_devices) + '\n}\n')
-    shell.write('\ndevices_identifiers = {\n' + ',\n'.join(devices_identifiers) + '\n}\n')
+    shell.write('\ndevice_identifier_symbols = {\n' + ',\n'.join(device_identifier_symbols) + '\n}\n')
     shell.write(footer)
     shell.close()
     os.system('chmod +x {0}/../tinkerforge'.format(directory))
