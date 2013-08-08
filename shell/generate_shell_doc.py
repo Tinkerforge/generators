@@ -115,7 +115,7 @@ def format_doc(packet):
 
 def make_examples():
     def title_from_file(f):
-        f = f.replace('example_', '')
+        f = f.replace('example-', '')
         f = f.replace('.sh', '')
         s = ''
         for l in f.split('_'):
@@ -123,7 +123,7 @@ def make_examples():
         return s[:-1]
 
     return common.make_rst_examples(title_from_file, device, common.path_binding,
-                                    'shell', 'example_', '.sh', 'Shell', 'bash')
+                                    'shell', 'example-', '.sh', 'Shell', 'bash')
 
 def make_parameter_desc(packet):
     desc = '\n'
