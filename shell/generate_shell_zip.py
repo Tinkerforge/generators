@@ -40,7 +40,7 @@ def copy_examples_for_zip():
     if not device.is_released():
         return
 
-    examples = common.find_examples(device, common.path_binding, 'shell', 'example_', '.sh')
+    examples = common.find_examples(device, common.path_binding, 'shell', 'example-', '.sh')
     dest = os.path.join('/tmp/generator/examples/',
                         device.get_category().lower(),
                         device.get_underscore_name())

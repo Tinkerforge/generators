@@ -253,7 +253,7 @@ Der folgende Beispielcode ist Public Domain.
 `Download <https://github.com/Tinkerforge/{3}/raw/master/software/examples/{4}/{5}>`__
 
 .. literalinclude:: {2}
- :language: {4}
+ :language: {6}
  :linenos:
  :tab-width: 4
 """,
@@ -264,7 +264,7 @@ Der folgende Beispielcode ist Public Domain.
 `Download <https://github.com/Tinkerforge/{3}/raw/master/software/examples/{4}/{5}>`__
 
 .. literalinclude:: {2}
- :language: {4}
+ :language: {6}
  :linenos:
  :tab-width: 4
 """
@@ -281,7 +281,7 @@ Der folgende Beispielcode ist Public Domain.
         copy_files.append((f[1], include))
         title = title_from_file(f[0])
         git_name = device.get_underscore_name().replace('_', '-') + '-' + device.get_category().lower()
-        examples += select_lang(imp).format(title, '^'*len(title), include, git_name, dirname, f[0])
+        examples += select_lang(imp).format(title, '^'*len(title), include, git_name, dirname, f[0], language)
 
     copy_examples(copy_files, base_path)
     return examples
