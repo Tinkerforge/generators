@@ -61,6 +61,10 @@ typedef struct {
 
 #ifdef IPCON_EXPOSE_INTERNALS
 
+void mutex_create(Mutex *mutex);
+
+void mutex_destroy(Mutex *mutex);
+
 void mutex_lock(Mutex *mutex);
 
 void mutex_unlock(Mutex *mutex);
