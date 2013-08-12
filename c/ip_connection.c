@@ -172,6 +172,7 @@ struct _Socket {
 #else
 	int handle;
 #endif
+	Mutex send_mutex; // used to serialize socket_send calls
 };
 
 #ifdef _WIN32
@@ -192,10 +193,14 @@ static int socket_create(Socket *socket_, int domain, int type, int protocol) {
 		return -1;
 	}
 
+	mutex_create(&socket_->send_mutex);
+
 	return 0;
 }
 
 static void socket_destroy(Socket *socket) {
+	mutex_destroy(&socket->send_mutex);
+
 	closesocket(socket->handle);
 }
 
@@ -224,7 +229,11 @@ static int socket_receive(Socket *socket, void *buffer, int length) {
 }
 
 static int socket_send(Socket *socket, void *buffer, int length) {
+	mutex_lock(&socket->send_mutex);
+
 	length = send(socket->handle, (const char *)buffer, length, 0);
+
+	mutex_unlock(&socket->send_mutex);
 
 	if (length == SOCKET_ERROR) {
 		length = -1;
@@ -251,10 +260,14 @@ static int socket_create(Socket *socket_, int domain, int type, int protocol) {
 		return -1;
 	}
 
+	mutex_create(&socket_->send_mutex);
+
 	return 0;
 }
 
 static void socket_destroy(Socket *socket) {
+	mutex_destroy(&socket->send_mutex);
+
 	close(socket->handle);
 }
 
@@ -271,7 +284,15 @@ static int socket_receive(Socket *socket, void *buffer, int length) {
 }
 
 static int socket_send(Socket *socket, void *buffer, int length) {
-	return send(socket->handle, buffer, length, 0);
+	int rc;
+
+	mutex_lock(&socket->send_mutex);
+
+	rc = send(socket->handle, buffer, length, 0);
+
+	mutex_unlock(&socket->send_mutex);
+
+	return rc;
 }
 
 #endif
@@ -284,11 +305,11 @@ static int socket_send(Socket *socket, void *buffer, int length) {
 
 #ifdef _WIN32
 
-static void mutex_create(Mutex *mutex) {
+void mutex_create(Mutex *mutex) {
 	InitializeCriticalSection(&mutex->handle);
 }
 
-static void mutex_destroy(Mutex *mutex) {
+void mutex_destroy(Mutex *mutex) {
 	DeleteCriticalSection(&mutex->handle);
 }
 
@@ -302,11 +323,11 @@ void mutex_unlock(Mutex *mutex) {
 
 #else
 
-static void mutex_create(Mutex *mutex) {
+void mutex_create(Mutex *mutex) {
 	pthread_mutex_init(&mutex->handle, NULL);
 }
 
-static void mutex_destroy(Mutex *mutex) {
+void mutex_destroy(Mutex *mutex) {
 	pthread_mutex_destroy(&mutex->handle);
 }
 
@@ -1184,6 +1205,8 @@ enum {
 	IPCON_FUNCTION_DISCONNECT_PROBE = 128
 };
 
+// NOTE: the disconnect probe loop is now allowed to hold the socket_mutex at any
+//       time because it is created and joined while the socket_mutex is locked
 static void ipcon_disconnect_probe_loop(void *opaque) {
 	IPConnection *ipcon = (IPConnection *)opaque;
 	PacketHeader disconnect_probe;
@@ -1194,18 +1217,13 @@ static void ipcon_disconnect_probe_loop(void *opaque) {
 	while (event_wait(&ipcon->disconnect_probe_event,
 	                  IPCON_DISCONNECT_PROBE_INTERVAL) < 0) {
 		if (ipcon->disconnect_probe_flag) {
-			mutex_lock(&ipcon->socket_mutex);
-
 			// FIXME: this might block
 			if (socket_send(ipcon->socket, &disconnect_probe,
 			                disconnect_probe.length) < 0) {
 				ipcon_handle_disconnect_by_peer(ipcon, IPCON_DISCONNECT_REASON_ERROR,
 				                                ipcon->socket_id, false);
-				mutex_unlock(&ipcon->socket_mutex);
 				break;
 			}
-
-			mutex_unlock(&ipcon->socket_mutex);
 		} else {
 			ipcon->disconnect_probe_flag = true;
 		}
@@ -1260,6 +1278,8 @@ static void ipcon_handle_response(IPConnection *ipcon, Packet *response) {
 	// a callback without registered function
 }
 
+// NOTE: the receive loop is now allowed to hold the socket_mutex at any time
+//       because it is created and joined while the socket_mutex is locked
 static void ipcon_receive_loop(void *opaque) {
 	IPConnection *ipcon = (IPConnection *)opaque;
 	uint64_t socket_id = ipcon->socket_id;
@@ -1442,8 +1462,6 @@ static int ipcon_connect_unlocked(IPConnection *ipcon, bool is_auto_reconnect) {
 	ipcon->callback->packet_dispatch_allowed = true;
 
 	if (thread_create(&ipcon->receive_thread, ipcon_receive_loop, ipcon) < 0) {
-		ipcon->receive_flag = false;
-
 		ipcon_disconnect_unlocked(ipcon);
 
 		// destroy callback thread

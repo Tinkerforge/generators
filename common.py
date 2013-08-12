@@ -197,7 +197,22 @@ def make_rst_header(device, ref_name, title):
                                               full_title_underline)
 
 def make_rst_summary(device, title):
-    su = {
+    not_released = {
+    'en': """
+.. note::
+ {0} is currently in the prototype stage and the software/hardware
+ as well as the documentation is in an incomplete state.
+
+""",
+    'de': """
+.. note::
+ {0} ist im Moment in der Prototyp-Phase und die Software/Hardware
+ sowie die Dokumentation sind in einem unfertigen Zustand.
+
+"""
+    }
+
+    summary = {
     'en': """
 This is the API description for the {4} of the {0} {1}. General information
 on what this device does and the technical specifications can be found
@@ -216,9 +231,29 @@ ausgeführt werden können ist :ref:`hier <{3}>` zu finden.
 """
     }
 
+    brick = {
+    'en': 'This Brick',
+    'de': 'Dieser Brick'
+    }
+
+    bricklet = {
+    'en': 'This Bricklet',
+    'de': 'Dieses Bricklet'
+    }
+
     hw_link = device.get_underscore_name() + '_' + device.get_category().lower()
     hw_test = hw_link + '_test'
-    return select_lang(su).format(device.get_display_name(), device.get_category(), hw_link, hw_test, title)
+    s = select_lang(summary).format(device.get_display_name(), device.get_category(), hw_link, hw_test, title)
+
+    if not device.is_released():
+        if device.get_category() == 'Brick':
+            d = brick
+        else:
+            d = bricklet
+
+        s = select_lang(not_released).format(select_lang(d)) + s
+
+    return s
 
 def make_rst_examples(title_from_file, device, base_path, dirname,
                       filename_prefix, filename_suffix, include_name,
