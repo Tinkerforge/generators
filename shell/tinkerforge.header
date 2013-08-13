@@ -256,6 +256,25 @@ def convert_bool(string):
 
 convert_bool.__name__ = 'bool'
 
+def create_string_checker(type, length):
+	def check_string(string):
+		try:
+			value = type(string)
+		except (ValueError, TypeError):
+			name = getattr(type, '__name__', repr(type))
+			msg = 'invalid %s value: %r' % (name, string)
+			raise argparse.ArgumentTypeError(msg)
+
+		if len(value) > length:
+			msg = 'string value is too long: %r' % value
+			raise argparse.ArgumentTypeError(msg)
+
+		return value
+
+	check_string.__name__ = 'string'
+
+	return check_string
+
 def create_symbol_converter(type, symbols, strict=False):
 	def convert_symbol(string):
 		if not no_symbolic_input:

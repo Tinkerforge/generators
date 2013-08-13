@@ -51,7 +51,7 @@ def get_type_converter(element):
         'uint64': 'int',
         'bool':   'convert_bool',
         'char':   'check_char',
-        'string': 'str',
+        'string': 'string',
         'float':  'float'
     }
 
@@ -63,13 +63,17 @@ def get_type_converter(element):
         for symbol in element[4][2]:
             symbols[symbol[1].replace('_', '-')] = symbol[2]
 
-        if element[2] > 1 and t != 'str':
+        if element[2] > 1 and t != 'string':
             return 'create_array_converter(create_symbol_converter({0}, {1}), {2})'.format(t, symbols, element[2])
+        elif t == 'string':
+            return 'create_string_checker(create_symbol_converter(str, {0}), {1})'.format(symbols, element[2])
         else:
             return 'create_symbol_converter({0}, {1})'.format(t, symbols)
     else:
-        if element[2] > 1:
+        if element[2] > 1 and t != 'string':
             return 'create_array_converter({0}, {1})'.format(t, element[2])
+        elif t == 'string':
+            return 'create_string_checker(str, {0})'.format(element[2])
         else:
             return t
 
@@ -85,7 +89,7 @@ def get_element_help(element):
         'uint64': 'int',
         'bool':   'bool',
         'char':   'char',
-        'string': 'str',
+        'string': 'string',
         'float':  'float'
     }
 
