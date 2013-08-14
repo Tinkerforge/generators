@@ -284,7 +284,10 @@ Possible exit codes for all ``tinkerforge`` commands are:
 * 210: function is not supported
 * 211: unknown error
 
-Some information about the general command structure:
+{1}
+
+Command Structure
+^^^^^^^^^^^^^^^^^
 
 .. sh:function:: X Stinkerforge Pcall N{3} A[<option>..] L<uid> L<function> L[<argument>..]
 
@@ -350,8 +353,6 @@ Some information about the general command structure:
    for details)
 
 
-{1}
-
 {2}
 """,
     'de': """
@@ -372,7 +373,10 @@ Mögliche Exit Codes für alle ``tinkerforge`` Befehle sind:
 * 210: Funktion wird nicht unterstützt
 * 211: Unbekannter Fehler
 
-Einige Information über die allgemeine Struktur der Befehle:
+{1}
+
+Befehlsstruktur
+^^^^^^^^^^^^^^^
 
 .. sh:function:: X Stinkerforge Pcall N{3} A[<option>..] L<uid> L<function> L[<argument>..]
 
@@ -440,8 +444,6 @@ Einige Information über die allgemeine Struktur der Befehle:
  * ``--execute <command>`` Shell-Befehlszeile der für jede eingehende Antwort
    ausgeführt wird (siehe den Abschnitt über :ref:`Ausgabeformatierung
    <ipcon_shell_output>` für Details)
-
-{1}
 
 {2}
 """
