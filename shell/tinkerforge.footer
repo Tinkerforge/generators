@@ -125,7 +125,7 @@ def command_enumerate(argv):
 			pass
 
 def parse(argv):
-	parser = Parser('tinkerforge')
+	parser = Parser('tinkerforge', epilog="Try 'tinkerforge <command> --help' for command specific help.")
 	command_choices = ['call', 'dispatch', 'enumerate']
 
 	parser.add_argument('--version', action='version', version='<<VERSION>>')
