@@ -113,11 +113,11 @@ def command_enumerate(argv):
 
 			time.sleep(args.duration / 1000.0)
 	except Error as e:
-		fatal(e.description.lower())
+		fatal(e.description.lower(), 200 - e.value)
 	except socket.error as e:
-		fatal(str(e).lower())
+		fatal(str(e).lower(), 23)
 	except Exception as e:
-		fatal(str(e).lower())
+		fatal(str(e).lower(), 24)
 	finally:
 		try:
 			ipcon.disconnect()

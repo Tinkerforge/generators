@@ -118,7 +118,7 @@ def make_examples():
         f = f.replace('example-', '')
         f = f.replace('.sh', '')
         s = ''
-        for l in f.split('_'):
+        for l in f.split('-'):
             s += l[0].upper() + l[1:] + ' '
         return s[:-1]
 
@@ -271,7 +271,20 @@ Die verfügbaren Callbacks werden weiter unten beschrieben.
 API
 ---
 
-At first some information about the general command structure:
+Possible exit codes for all ``tinkerforge`` commands are:
+
+* 2: syntax error
+* 21: Python 2.5 or newer is required
+* 22: Python ``argparse`` module is missing
+* 23: socket error
+* 24: other exception
+* 25: invalid placeholder in format string
+* 201: timeout occurred
+* 209: invalid argument value
+* 210: function is not supported
+* 211: unknown error
+
+Some information about the general command structure:
 
 .. sh:function:: X Stinkerforge Pcall N{3} A[<option>..] L<uid> L<function> L[<argument>..]
 
@@ -346,7 +359,20 @@ At first some information about the general command structure:
 API
 ---
 
-Als erstes einige Information über die allgemeine Struktur der Befehle:
+Mögliche Exit Codes für alle ``tinkerforge`` Befehle sind:
+
+* 2: Syntaxfehler
+* 21: Python 2.5 oder neuer wird benötigt
+* 22: Python ``argparse`` Modul fehlt
+* 23: Socket-Fehler
+* 24: Andere Exception
+* 25: Ungültiger Platzhalter in Format-String
+* 201: Timeout ist aufgetreten
+* 209: Ungültiger Argumentwert
+* 210: Funktion wird nicht unterstützt
+* 211: Unbekannter Fehler
+
+Einige Information über die allgemeine Struktur der Befehle:
 
 .. sh:function:: X Stinkerforge Pcall N{3} A[<option>..] L<uid> L<function> L[<argument>..]
 
