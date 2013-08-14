@@ -20,8 +20,8 @@ def fatal(message, exit_code=1):
 	sys.stderr.write('{0}: error: {1}\n'.format(prog, message))
 	sys.exit(exit_code)
 
-if sys.hexversion < 0x02060000:
-	fatal('requiring python 2.6 or newer', 21)
+if sys.hexversion < 0x02050000:
+	fatal('requiring python 2.5 or newer', 21)
 
 try:
 	import argparse

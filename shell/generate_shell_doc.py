@@ -274,7 +274,7 @@ API
 Possible exit codes for all ``tinkerforge`` commands are:
 
 * 2: syntax error
-* 21: Python 2.6 or newer is required
+* 21: Python 2.5 or newer is required
 * 22: Python ``argparse`` module is missing
 * 23: socket error
 * 24: other exception
@@ -362,7 +362,7 @@ API
 Mögliche Exit Codes für alle ``tinkerforge`` Befehle sind:
 
 * 2: Syntaxfehler
-* 21: Python 2.6 oder neuer wird benötigt
+* 21: Python 2.5 oder neuer wird benötigt
 * 22: Python ``argparse`` Modul fehlt
 * 23: Socket-Fehler
 * 24: Andere Exception
