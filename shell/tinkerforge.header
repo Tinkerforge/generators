@@ -39,8 +39,8 @@ no_symbolic_input = None
 no_symbolic_output = None
 
 class Parser(argparse.ArgumentParser):
-	def __init__(self, prog):
-		argparse.ArgumentParser.__init__(self, prog=prog, add_help=False)
+	def __init__(self, prog, description=None, epilog=None):
+		argparse.ArgumentParser.__init__(self, prog=prog, add_help=False, description=description, epilog=epilog)
 
 		global current_parser
 		current_parser = self
