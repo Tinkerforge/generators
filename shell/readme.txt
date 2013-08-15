@@ -3,9 +3,10 @@ Bricklets (tinkerforge), a corresponding Bash Completion script
 (tinkerforge-bash-completion.sh) and all available Shell examples (in
 examples/).
 
-To get Bash Completion to work the tinkerforge script has to be in PATH and
-the Bash Completion Script tinkerforge-bash-completion.sh has to be in
-/etc/bash_completion.d/. Bash completion can now be reloaded by:
+To get Bash Completion to work the tinkerforge script has to be in PATH. For
+example by copying it to /usr/local/bin/. The Bash Completion script
+tinkerforge-bash-completion.sh has to be in /etc/bash_completion.d/. Bash
+Completion can then be reloaded by:
 
 . /etc/bash_completion
 
