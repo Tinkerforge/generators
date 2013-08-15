@@ -5,7 +5,9 @@ examples/).
 
 To get Bash Completion to work the tinkerforge script has to be in PATH and
 the Bash Completion Script tinkerforge-bash-completion.sh has to be in
-/etc/bash_completion.d/.
+/etc/bash_completion.d/. Bash completion can now be reloaded by:
+
+. /etc/bash_completion
 
 All examples are meant for typical Unix shells such as Bash. They will work
 on Linux and Mac OS X as they are. There are Bash ports for Windows that allow
