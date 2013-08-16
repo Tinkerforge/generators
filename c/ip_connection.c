@@ -1205,7 +1205,7 @@ enum {
 	IPCON_FUNCTION_DISCONNECT_PROBE = 128
 };
 
-// NOTE: the disconnect probe loop is now allowed to hold the socket_mutex at any
+// NOTE: the disconnect probe loop is not allowed to hold the socket_mutex at any
 //       time because it is created and joined while the socket_mutex is locked
 static void ipcon_disconnect_probe_loop(void *opaque) {
 	IPConnection *ipcon = (IPConnection *)opaque;
