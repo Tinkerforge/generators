@@ -181,7 +181,8 @@ def parse(argv):
 
 	commands[args.command](args.args)
 
-try:
-	parse(sys.argv[1:])
-except KeyboardInterrupt:
-	sys.exit(3)
+if __name__ == '__main__':
+	try:
+		parse(sys.argv[1:])
+	except KeyboardInterrupt:
+		sys.exit(1)

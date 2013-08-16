@@ -273,6 +273,7 @@ API
 
 Possible exit codes for all ``tinkerforge`` commands are:
 
+* 1: interrupted (ctrl+c)
 * 2: syntax error
 * 21: Python 2.5 or newer is required
 * 22: Python ``argparse`` module is missing
@@ -362,6 +363,7 @@ API
 
 Mögliche Exit Codes für alle ``tinkerforge`` Befehle sind:
 
+* 1: Unterbrochen (Ctrl+C)
 * 2: Syntaxfehler
 * 21: Python 2.5 oder neuer wird benötigt
 * 22: Python ``argparse`` Modul fehlt
