@@ -69,6 +69,7 @@ namespace Tinkerforge
 		Socket socket = null;
 		internal object socketLock = new object();
 		NetworkStream socketStream = null; // protected by socketLock
+		internal object socketStreamSendLock = new object(); // used to synchronize send access to socketStream
 		long socketID = 0; // protected by socketLock
 		Thread receiveThread = null;
 		bool receiveFlag = true;
@@ -692,6 +693,8 @@ namespace Tinkerforge
 			}
 		}
 
+		// NOTE: the disconnect probe loop is not allowed to hold the socketLock at any
+		//       time because it is created and joined while the socketLock is locked
 		private void DisconnectProbeLoop(BlockingQueue<bool> localDisconnectProbeQueue)
 		{
 			byte[] request = new byte[8];
@@ -711,20 +714,20 @@ namespace Tinkerforge
 
 				if (disconnectProbeFlag)
 				{
-					lock (socketLock)
+					try
 					{
-						try
+						lock (socketStreamSendLock)
 						{
 							socketStream.Write(request, 0, request.Length);
 						}
-						catch (IOException e)
+					}
+					catch (IOException e)
+					{
+						if (e.InnerException != null &&
+						    e.InnerException is SocketException)
 						{
-							if (e.InnerException != null &&
-							    e.InnerException is SocketException)
-							{
-								HandleDisconnectByPeer(DISCONNECT_REASON_ERROR, socketID, false);
-								break;
-							}
+							HandleDisconnectByPeer(DISCONNECT_REASON_ERROR, socketID, false);
+							break;
 						}
 					}
 				}
@@ -837,7 +840,10 @@ namespace Tinkerforge
 
 				try
 				{
-					socketStream.Write(request, 0, request.Length);
+					lock (socketStreamSendLock)
+					{
+						socketStream.Write(request, 0, request.Length);
+					}
 				}
 				catch (IOException e)
 				{
