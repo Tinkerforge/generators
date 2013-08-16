@@ -56,6 +56,9 @@ def command_enumerate(argv):
 
 	args = parser.parse_args(argv)
 
+	if dry_run:
+		return
+
 	names = ['uid', 'connected-uid', 'position', 'hardware-version', 'firmware-version', 'device-identifier', 'enumeration-type']
 	enumeration_type_symbols = {
 	IPConnection.ENUMERATION_TYPE_AVAILABLE: 'available',
@@ -125,6 +128,9 @@ def command_enumerate(argv):
 			pass
 
 def parse(argv):
+	global dry_run
+	dry_run = os.getenv('TINKERFORGE_SHELL_BINDINGS_DRY_RUN', 0) != 0
+
 	parser = Parser('tinkerforge', epilog="Try 'tinkerforge <command> --help' for command specific help.")
 	command_choices = ['call', 'dispatch', 'enumerate']
 

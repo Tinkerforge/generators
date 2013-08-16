@@ -25,25 +25,20 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
-import py_compile
+import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
-"""
-class PythonExamplesCompiler(common.ExamplesCompiler):
-    def __init__(self, path):
-        common.ExamplesCompiler.__init__(self, 'python', '.py', path, subdirs=['examples', 'source'])
+
+class ShellExamplesCompiler(common.ExamplesCompiler):
+    def __init__(self, path, extra_examples):
+        common.ExamplesCompiler.__init__(self, 'shell', '.sh', path, extra_examples=extra_examples)
 
     def compile(self, src, is_extra_example):
-        try:
-            py_compile.compile(src, doraise=True)
-            return True
-        except Exception as e:
-            print(str(e))
-            return False
-"""
+        return os.system('TINKERFORGE_SHELL_BINDINGS_DRY_RUN=1 PATH=/tmp/compiler:${PATH} ' + src) == 0
+
 def run(path):
-    return 0#PythonExamplesCompiler(path).run()
+    return ShellExamplesCompiler(path, []).run()
 
 if __name__ == "__main__":
     sys.exit(run(os.getcwd()))

@@ -28,6 +28,8 @@ try:
 except ImportError:
 	fatal('requiring python argparse module', 22)
 
+dry_run = False
+
 host = None
 port = None
 timeout = None
@@ -103,6 +105,9 @@ def dispatch_generic(name, callbacks, argv):
 
 def device_send_request(device_class, function_id, request_data, format_in,
                         format_out, command, expect_response, names, symbols):
+	if dry_run:
+		return
+
 	if command is not None:
 		def handle_result(values):
 			execute_result(command, names, values)
@@ -142,6 +147,9 @@ def device_send_request(device_class, function_id, request_data, format_in,
 			pass
 
 def device_callback(device_class, function_id, command, names):
+	if dry_run:
+		return
+
 	if command is not None:
 		def callback(*values):
 			execute_result(command, names, values)
