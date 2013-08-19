@@ -299,6 +299,8 @@ class CallbackThread extends Thread {
 	}
 }
 
+// NOTE: the disconnect probe thread is not allowed to hold the socketMutex at any
+//       time because it is created and joined while the socketMutex is locked
 class DisconnectProbeThread extends Thread {
 	IPConnection ipcon = null;
 	byte[] request = null;
@@ -339,16 +341,16 @@ class DisconnectProbeThread extends Thread {
 			}
 
 			if (ipcon.disconnectProbeFlag) {
-				synchronized(ipcon.socketMutex) {
-					try {
+				try {
+					synchronized(ipcon.socketSendMutex) {
 						ipcon.out.write(request);
-					} catch(java.net.SocketException e) {
-						ipcon.handleDisconnectByPeer(IPConnection.DISCONNECT_REASON_ERROR,
-						                             ipcon.socketID, false);
-						break;
-					} catch(Exception e) {
-						e.printStackTrace();
 					}
+				} catch(java.net.SocketException e) {
+					ipcon.handleDisconnectByPeer(IPConnection.DISCONNECT_REASON_ERROR,
+					                             ipcon.socketID, false);
+					break;
+				} catch(Exception e) {
+					e.printStackTrace();
 				}
 			} else {
 				ipcon.disconnectProbeFlag = true;
@@ -397,6 +399,7 @@ public class IPConnection {
 	LinkedBlockingQueue<CallbackQueueObject> callbackQueue = null;
 
 	Object socketMutex = new Object();
+	Object socketSendMutex = new Object();
 	private Object sequenceNumberMutex = new Object();
 
 	private String host;
@@ -936,7 +939,9 @@ public class IPConnection {
 			}
 
 			try {
-				out.write(request);
+				synchronized(socketSendMutex) {
+					out.write(request);
+				}
 			} catch(java.net.SocketException e) {
 				handleDisconnectByPeer(DISCONNECT_REASON_ERROR, 0, true);
 				throw new NotConnectedException(e);
