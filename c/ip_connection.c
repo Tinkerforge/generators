@@ -791,15 +791,19 @@ enum {
 	IPCON_FUNCTION_ENUMERATE = 254
 };
 
-static int ipcon_send_request(IPConnection *ipcon, Packet *request);
+static int ipcon_send_request(IPConnectionPrivate *ipcon_p, Packet *request);
 
-void device_create(Device *device, const char *uid_str, IPConnection *ipcon,
-                   uint8_t api_version_major, uint8_t api_version_minor,
-                   uint8_t api_version_release) {
+void device_create(Device *device, const char *uid_str,
+                   IPConnectionPrivate *ipcon_p, uint8_t api_version_major,
+                   uint8_t api_version_minor, uint8_t api_version_release) {
+	DevicePrivate *device_p;
 	uint64_t uid;
 	uint32_t value1;
 	uint32_t value2;
 	int i;
+
+	device_p = (DevicePrivate *)malloc(sizeof(DevicePrivate));
+	device->p = device_p;
 
 	uid = base58_decode(uid_str);
 
@@ -815,58 +819,62 @@ void device_create(Device *device, const char *uid_str, IPConnection *ipcon,
 		uid |= (value2 & 0x3F000000) << 2;
 	}
 
-	device->uid = uid & 0xFFFFFFFF;
+	device_p->uid = uid & 0xFFFFFFFF;
 
-	device->ipcon = ipcon;
+	device_p->ipcon_p = ipcon_p;
 
-	device->api_version[0] = api_version_major;
-	device->api_version[1] = api_version_minor;
-	device->api_version[2] = api_version_release;
+	device_p->api_version[0] = api_version_major;
+	device_p->api_version[1] = api_version_minor;
+	device_p->api_version[2] = api_version_release;
 
 	// request
-	mutex_create(&device->request_mutex);
+	mutex_create(&device_p->request_mutex);
 
 	// response
-	device->expected_response_function_id = 0;
-	device->expected_response_sequence_number = 0;
+	device_p->expected_response_function_id = 0;
+	device_p->expected_response_sequence_number = 0;
 
-	mutex_create(&device->response_mutex);
+	mutex_create(&device_p->response_mutex);
 
-	memset(&device->response_packet, 0, sizeof(Packet));
+	memset(&device_p->response_packet, 0, sizeof(Packet));
 
-	event_create(&device->response_event);
+	event_create(&device_p->response_event);
 
 	for (i = 0; i < DEVICE_NUM_FUNCTION_IDS; i++) {
-		device->response_expected[i] = DEVICE_RESPONSE_EXPECTED_INVALID_FUNCTION_ID;
+		device_p->response_expected[i] = DEVICE_RESPONSE_EXPECTED_INVALID_FUNCTION_ID;
 	}
 
-	device->response_expected[IPCON_FUNCTION_ENUMERATE] = DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE;
-	device->response_expected[IPCON_CALLBACK_ENUMERATE] = DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE;
+	device_p->response_expected[IPCON_FUNCTION_ENUMERATE] = DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE;
+	device_p->response_expected[IPCON_CALLBACK_ENUMERATE] = DEVICE_RESPONSE_EXPECTED_ALWAYS_FALSE;
 
 	// callbacks
 	for (i = 0; i < DEVICE_NUM_FUNCTION_IDS; i++) {
-		device->registered_callbacks[i] = NULL;
-		device->registered_callback_user_data[i] = NULL;
-		device->callback_wrappers[i] = NULL;
+		device_p->registered_callbacks[i] = NULL;
+		device_p->registered_callback_user_data[i] = NULL;
+		device_p->callback_wrappers[i] = NULL;
 	}
 
 	// add to IPConnection
-	table_insert(&ipcon->devices, device->uid, device);
+	table_insert(&ipcon_p->devices, device_p->uid, device_p);
 }
 
 void device_destroy(Device *device) {
-	table_remove(&device->ipcon->devices, device->uid);
+	DevicePrivate *device_p = device->p;
 
-	event_destroy(&device->response_event);
+	table_remove(&device_p->ipcon_p->devices, device_p->uid);
 
-	mutex_destroy(&device->response_mutex);
+	event_destroy(&device_p->response_event);
 
-	mutex_destroy(&device->request_mutex);
+	mutex_destroy(&device_p->response_mutex);
+
+	mutex_destroy(&device_p->request_mutex);
+
+	free(device_p);
 }
 
-int device_get_response_expected(Device *device, uint8_t function_id,
+int device_get_response_expected(DevicePrivate *device_p, uint8_t function_id,
                                  bool *ret_response_expected) {
-	int flag = device->response_expected[function_id];
+	int flag = device_p->response_expected[function_id];
 
 	if (flag == DEVICE_RESPONSE_EXPECTED_INVALID_FUNCTION_ID) {
 		return E_INVALID_PARAMETER;
@@ -882,99 +890,99 @@ int device_get_response_expected(Device *device, uint8_t function_id,
 	return E_OK;
 }
 
-int device_set_response_expected(Device *device, uint8_t function_id,
+int device_set_response_expected(DevicePrivate *device_p, uint8_t function_id,
                                  bool response_expected) {
-	int current_flag = device->response_expected[function_id];
+	int current_flag = device_p->response_expected[function_id];
 
 	if (current_flag != DEVICE_RESPONSE_EXPECTED_TRUE &&
 	    current_flag != DEVICE_RESPONSE_EXPECTED_FALSE) {
 		return E_INVALID_PARAMETER;
 	}
 
-	device->response_expected[function_id] =
+	device_p->response_expected[function_id] =
 	    response_expected ? DEVICE_RESPONSE_EXPECTED_TRUE
 	                      : DEVICE_RESPONSE_EXPECTED_FALSE;
 
 	return E_OK;
 }
 
-int device_set_response_expected_all(Device *device, bool response_expected) {
+int device_set_response_expected_all(DevicePrivate *device_p, bool response_expected) {
 	int flag = response_expected ? DEVICE_RESPONSE_EXPECTED_TRUE
 	                             : DEVICE_RESPONSE_EXPECTED_FALSE;
 	int i;
 
 	for (i = 0; i < DEVICE_NUM_FUNCTION_IDS; ++i) {
-		if (device->response_expected[i] == DEVICE_RESPONSE_EXPECTED_TRUE ||
-		    device->response_expected[i] == DEVICE_RESPONSE_EXPECTED_FALSE) {
-			device->response_expected[i] = flag;
+		if (device_p->response_expected[i] == DEVICE_RESPONSE_EXPECTED_TRUE ||
+		    device_p->response_expected[i] == DEVICE_RESPONSE_EXPECTED_FALSE) {
+			device_p->response_expected[i] = flag;
 		}
 	}
 
 	return E_OK;
 }
 
-void device_register_callback(Device *device, uint8_t id, void *callback,
+void device_register_callback(DevicePrivate *device_p, uint8_t id, void *callback,
                               void *user_data) {
-	device->registered_callbacks[id] = callback;
-	device->registered_callback_user_data[id] = user_data;
+	device_p->registered_callbacks[id] = callback;
+	device_p->registered_callback_user_data[id] = user_data;
 }
 
-int device_get_api_version(Device *device, uint8_t ret_api_version[3]) {
-	ret_api_version[0] = device->api_version[0];
-	ret_api_version[1] = device->api_version[1];
-	ret_api_version[2] = device->api_version[2];
+int device_get_api_version(DevicePrivate *device_p, uint8_t ret_api_version[3]) {
+	ret_api_version[0] = device_p->api_version[0];
+	ret_api_version[1] = device_p->api_version[1];
+	ret_api_version[2] = device_p->api_version[2];
 
 	return E_OK;
 }
 
-int device_send_request(Device *device, Packet *request, Packet *response) {
+int device_send_request(DevicePrivate *device_p, Packet *request, Packet *response) {
 	int ret = E_OK;
 	uint8_t sequence_number = packet_header_get_sequence_number(&request->header);
 	uint8_t response_expected = packet_header_get_response_expected(&request->header);
 	uint8_t error_code;
 
 	if (response_expected) {
-		mutex_lock(&device->request_mutex);
+		mutex_lock(&device_p->request_mutex);
 
-		event_reset(&device->response_event);
+		event_reset(&device_p->response_event);
 
-		device->expected_response_function_id = request->header.function_id;
-		device->expected_response_sequence_number = sequence_number;
+		device_p->expected_response_function_id = request->header.function_id;
+		device_p->expected_response_sequence_number = sequence_number;
 	}
 
-	ret = ipcon_send_request(device->ipcon, request);
+	ret = ipcon_send_request(device_p->ipcon_p, request);
 
 	if (ret != E_OK) {
 		if (response_expected) {
-			mutex_unlock(&device->request_mutex);
+			mutex_unlock(&device_p->request_mutex);
 		}
 
 		return ret;
 	}
 
 	if (response_expected) {
-		if (event_wait(&device->response_event, device->ipcon->timeout) < 0) {
+		if (event_wait(&device_p->response_event, device_p->ipcon_p->timeout) < 0) {
 			ret = E_TIMEOUT;
 		}
 
-		device->expected_response_function_id = 0;
-		device->expected_response_sequence_number = 0;
+		device_p->expected_response_function_id = 0;
+		device_p->expected_response_sequence_number = 0;
 
-		event_reset(&device->response_event);
+		event_reset(&device_p->response_event);
 
 		if (ret == E_OK) {
-			mutex_lock(&device->response_mutex);
+			mutex_lock(&device_p->response_mutex);
 
-			error_code = packet_header_get_error_code(&device->response_packet.header);
+			error_code = packet_header_get_error_code(&device_p->response_packet.header);
 
-			if (device->response_packet.header.function_id != request->header.function_id ||
-			    packet_header_get_sequence_number(&device->response_packet.header) != sequence_number) {
+			if (device_p->response_packet.header.function_id != request->header.function_id ||
+			    packet_header_get_sequence_number(&device_p->response_packet.header) != sequence_number) {
 				ret = E_TIMEOUT;
 			} else if (error_code == 0) {
 				// no error
 				if (response != NULL) {
-					memcpy(response, &device->response_packet,
-					       device->response_packet.header.length);
+					memcpy(response, &device_p->response_packet,
+					       device_p->response_packet.header.length);
 				}
 			} else if (error_code == 1) {
 				ret = E_INVALID_PARAMETER;
@@ -984,10 +992,10 @@ int device_send_request(Device *device, Packet *request, Packet *response) {
 				ret = E_UNKNOWN_ERROR_CODE;
 			}
 
-			mutex_unlock(&device->response_mutex);
+			mutex_unlock(&device_p->response_mutex);
 		}
 
-		mutex_unlock(&device->request_mutex);
+		mutex_unlock(&device_p->request_mutex);
 	}
 
 	return ret;
@@ -1000,29 +1008,27 @@ int device_send_request(Device *device, Packet *request, Packet *response) {
  *****************************************************************************/
 
 struct _CallbackContext {
-	IPConnection *ipcon;
+	IPConnectionPrivate *ipcon_p;
 	Queue queue;
 	Thread thread;
 	Mutex mutex;
 	bool packet_dispatch_allowed;
 };
 
-typedef int (*CallbackWrapperFunction)(Device *device, Packet *packet);
+static int ipcon_connect_unlocked(IPConnectionPrivate *ipcon_p, bool is_auto_reconnect);
+static void ipcon_disconnect_unlocked(IPConnectionPrivate *ipcon_p);
 
-static int ipcon_connect_unlocked(IPConnection *ipcon, bool is_auto_reconnect);
-static void ipcon_disconnect_unlocked(IPConnection *ipcon);
-
-static void ipcon_dispatch_meta(IPConnection *ipcon, Meta *meta) {
+static void ipcon_dispatch_meta(IPConnectionPrivate *ipcon_p, Meta *meta) {
 	ConnectedCallbackFunction connected_callback_function;
 	DisconnectedCallbackFunction disconnected_callback_function;
 	void *user_data;
 	bool retry;
 
 	if (meta->function_id == IPCON_CALLBACK_CONNECTED) {
-		if (ipcon->registered_callbacks[IPCON_CALLBACK_CONNECTED] != NULL) {
+		if (ipcon_p->registered_callbacks[IPCON_CALLBACK_CONNECTED] != NULL) {
 			connected_callback_function =
-			    (ConnectedCallbackFunction)ipcon->registered_callbacks[IPCON_CALLBACK_CONNECTED];
-			user_data = ipcon->registered_callback_user_data[IPCON_CALLBACK_CONNECTED];
+			    (ConnectedCallbackFunction)ipcon_p->registered_callbacks[IPCON_CALLBACK_CONNECTED];
+			user_data = ipcon_p->registered_callback_user_data[IPCON_CALLBACK_CONNECTED];
 
 			connected_callback_function(meta->parameter, user_data);
 		}
@@ -1031,23 +1037,23 @@ static void ipcon_dispatch_meta(IPConnection *ipcon, Meta *meta) {
 		// hold the socket mutex because this could cause a deadlock
 		// with a concurrent call to the (dis-)connect function
 		if (meta->parameter != IPCON_DISCONNECT_REASON_REQUEST) {
-			mutex_lock(&ipcon->socket_mutex);
+			mutex_lock(&ipcon_p->socket_mutex);
 
 			// don't close the socket if it got disconnected or
 			// reconnected in the meantime
-			if (ipcon->socket != NULL && ipcon->socket_id == meta->socket_id) {
+			if (ipcon_p->socket != NULL && ipcon_p->socket_id == meta->socket_id) {
 				// destroy disconnect probe thread
-				event_set(&ipcon->disconnect_probe_event);
-				thread_join(&ipcon->disconnect_probe_thread);
-				thread_destroy(&ipcon->disconnect_probe_thread);
+				event_set(&ipcon_p->disconnect_probe_event);
+				thread_join(&ipcon_p->disconnect_probe_thread);
+				thread_destroy(&ipcon_p->disconnect_probe_thread);
 
 				// destroy socket
-				socket_destroy(ipcon->socket);
-				free(ipcon->socket);
-				ipcon->socket = NULL;
+				socket_destroy(ipcon_p->socket);
+				free(ipcon_p->socket);
+				ipcon_p->socket = NULL;
 			}
 
-			mutex_unlock(&ipcon->socket_mutex);
+			mutex_unlock(&ipcon_p->socket_mutex);
 		}
 
 		// FIXME: wait a moment here, otherwise the next connect
@@ -1055,17 +1061,17 @@ static void ipcon_dispatch_meta(IPConnection *ipcon, Meta *meta) {
 		// socket. the first receive will then fail directly
 		thread_sleep(100);
 
-		if (ipcon->registered_callbacks[IPCON_CALLBACK_DISCONNECTED] != NULL) {
+		if (ipcon_p->registered_callbacks[IPCON_CALLBACK_DISCONNECTED] != NULL) {
 			disconnected_callback_function =
-			    (DisconnectedCallbackFunction)ipcon->registered_callbacks[IPCON_CALLBACK_DISCONNECTED];
-			user_data = ipcon->registered_callback_user_data[IPCON_CALLBACK_DISCONNECTED];
+			    (DisconnectedCallbackFunction)ipcon_p->registered_callbacks[IPCON_CALLBACK_DISCONNECTED];
+			user_data = ipcon_p->registered_callback_user_data[IPCON_CALLBACK_DISCONNECTED];
 
 			disconnected_callback_function(meta->parameter, user_data);
 		}
 
 		if (meta->parameter != IPCON_DISCONNECT_REASON_REQUEST &&
-			ipcon->auto_reconnect && ipcon->auto_reconnect_allowed) {
-			ipcon->auto_reconnect_pending = true;
+			ipcon_p->auto_reconnect && ipcon_p->auto_reconnect_allowed) {
+			ipcon_p->auto_reconnect_pending = true;
 			retry = true;
 
 			// block here until reconnect. this is okay, there is no
@@ -1073,17 +1079,17 @@ static void ipcon_dispatch_meta(IPConnection *ipcon, Meta *meta) {
 			while (retry) {
 				retry = false;
 
-				mutex_lock(&ipcon->socket_mutex);
+				mutex_lock(&ipcon_p->socket_mutex);
 
-				if (ipcon->auto_reconnect_allowed && ipcon->socket == NULL) {
-					if (ipcon_connect_unlocked(ipcon, true) < 0) {
+				if (ipcon_p->auto_reconnect_allowed && ipcon_p->socket == NULL) {
+					if (ipcon_connect_unlocked(ipcon_p, true) < 0) {
 						retry = true;
 					}
 				} else {
-					ipcon->auto_reconnect_pending = false;
+					ipcon_p->auto_reconnect_pending = false;
 				}
 
-				mutex_unlock(&ipcon->socket_mutex);
+				mutex_unlock(&ipcon_p->socket_mutex);
 
 				if (retry) {
 					// wait a moment to give another thread a chance to
@@ -1095,18 +1101,18 @@ static void ipcon_dispatch_meta(IPConnection *ipcon, Meta *meta) {
 	}
 }
 
-static void ipcon_dispatch_packet(IPConnection *ipcon, Packet *packet) {
+static void ipcon_dispatch_packet(IPConnectionPrivate *ipcon_p, Packet *packet) {
 	EnumerateCallbackFunction enumerate_callback_function;
 	void *user_data;
 	EnumerateCallback *enumerate_callback;
-	Device *device;
+	DevicePrivate *device_p;
 	CallbackWrapperFunction callback_wrapper_function;
 
 	if (packet->header.function_id == IPCON_CALLBACK_ENUMERATE) {
-		if (ipcon->registered_callbacks[IPCON_CALLBACK_ENUMERATE] != NULL) {
+		if (ipcon_p->registered_callbacks[IPCON_CALLBACK_ENUMERATE] != NULL) {
 			enumerate_callback_function =
-			    (EnumerateCallbackFunction)ipcon->registered_callbacks[IPCON_CALLBACK_ENUMERATE];
-			user_data = ipcon->registered_callback_user_data[IPCON_CALLBACK_ENUMERATE];
+			    (EnumerateCallbackFunction)ipcon_p->registered_callbacks[IPCON_CALLBACK_ENUMERATE];
+			user_data = ipcon_p->registered_callback_user_data[IPCON_CALLBACK_ENUMERATE];
 			enumerate_callback = (EnumerateCallback *)packet;
 
 			enumerate_callback_function(enumerate_callback->uid,
@@ -1119,20 +1125,19 @@ static void ipcon_dispatch_packet(IPConnection *ipcon, Packet *packet) {
 			                            user_data);
 		}
 	} else {
-		device = (Device *)table_get(&ipcon->devices, packet->header.uid);
+		device_p = (DevicePrivate *)table_get(&ipcon_p->devices, packet->header.uid);
 
-		if (device == NULL) {
+		if (device_p == NULL) {
 			return;
 		}
 
-		callback_wrapper_function =
-		    (CallbackWrapperFunction)device->callback_wrappers[packet->header.function_id];
+		callback_wrapper_function = device_p->callback_wrappers[packet->header.function_id];
 
 		if (callback_wrapper_function == NULL) {
 			return;
 		}
 
-		callback_wrapper_function(device, packet);
+		callback_wrapper_function(device_p, packet);
 	}
 }
 
@@ -1156,11 +1161,11 @@ static void ipcon_callback_loop(void *opaque) {
 			//mutex_unlock(&callback->mutex);
 			break;
 		} else if (kind == QUEUE_KIND_META) {
-			ipcon_dispatch_meta(callback->ipcon, (Meta *)data);
+			ipcon_dispatch_meta(callback->ipcon_p, (Meta *)data);
 		} else if (kind == QUEUE_KIND_PACKET) {
 			// don't dispatch callbacks when the receive thread isn't running
 			if (callback->packet_dispatch_allowed) {
-				ipcon_dispatch_packet(callback->ipcon, (Packet *)data);
+				ipcon_dispatch_packet(callback->ipcon_p, (Packet *)data);
 			}
 		}
 
@@ -1178,23 +1183,23 @@ static void ipcon_callback_loop(void *opaque) {
 }
 
 // NOTE: assumes that socket_mutex is locked if disconnect_immediately is true
-static void ipcon_handle_disconnect_by_peer(IPConnection *ipcon,
+static void ipcon_handle_disconnect_by_peer(IPConnectionPrivate *ipcon_p,
                                             uint8_t disconnect_reason,
                                             uint64_t socket_id,
                                             bool disconnect_immediately) {
 	Meta meta;
 
-	ipcon->auto_reconnect_allowed = true;
+	ipcon_p->auto_reconnect_allowed = true;
 
 	if (disconnect_immediately) {
-		ipcon_disconnect_unlocked(ipcon);
+		ipcon_disconnect_unlocked(ipcon_p);
 	}
 
 	meta.function_id = IPCON_CALLBACK_DISCONNECTED;
 	meta.parameter = disconnect_reason;
 	meta.socket_id = socket_id;
 
-	queue_put(&ipcon->callback->queue, QUEUE_KIND_META, &meta, sizeof(meta));
+	queue_put(&ipcon_p->callback->queue, QUEUE_KIND_META, &meta, sizeof(meta));
 }
 
 enum {
@@ -1208,91 +1213,90 @@ enum {
 // NOTE: the disconnect probe loop is not allowed to hold the socket_mutex at any
 //       time because it is created and joined while the socket_mutex is locked
 static void ipcon_disconnect_probe_loop(void *opaque) {
-	IPConnection *ipcon = (IPConnection *)opaque;
+	IPConnectionPrivate *ipcon_p = (IPConnectionPrivate *)opaque;
 	PacketHeader disconnect_probe;
 
 	packet_header_create(&disconnect_probe, sizeof(PacketHeader),
-	                     IPCON_FUNCTION_DISCONNECT_PROBE, ipcon, NULL);
+	                     IPCON_FUNCTION_DISCONNECT_PROBE, ipcon_p, NULL);
 
-	while (event_wait(&ipcon->disconnect_probe_event,
+	while (event_wait(&ipcon_p->disconnect_probe_event,
 	                  IPCON_DISCONNECT_PROBE_INTERVAL) < 0) {
-		if (ipcon->disconnect_probe_flag) {
+		if (ipcon_p->disconnect_probe_flag) {
 			// FIXME: this might block
-			if (socket_send(ipcon->socket, &disconnect_probe,
+			if (socket_send(ipcon_p->socket, &disconnect_probe,
 			                disconnect_probe.length) < 0) {
-				ipcon_handle_disconnect_by_peer(ipcon, IPCON_DISCONNECT_REASON_ERROR,
-				                                ipcon->socket_id, false);
+				ipcon_handle_disconnect_by_peer(ipcon_p, IPCON_DISCONNECT_REASON_ERROR,
+				                                ipcon_p->socket_id, false);
 				break;
 			}
 		} else {
-			ipcon->disconnect_probe_flag = true;
+			ipcon_p->disconnect_probe_flag = true;
 		}
 	}
 }
 
-static void ipcon_handle_response(IPConnection *ipcon, Packet *response) {
-	Device *device;
+static void ipcon_handle_response(IPConnectionPrivate *ipcon_p, Packet *response) {
+	DevicePrivate *device_p;
 	uint8_t sequence_number = packet_header_get_sequence_number(&response->header);
 
-	ipcon->disconnect_probe_flag = false;
+	ipcon_p->disconnect_probe_flag = false;
 
 	response->header.uid = leconvert_uint32_from(response->header.uid);
 
 	if (sequence_number == 0 &&
 	    response->header.function_id == IPCON_CALLBACK_ENUMERATE) {
-		if (ipcon->registered_callbacks[IPCON_CALLBACK_ENUMERATE] != NULL) {
-			queue_put(&ipcon->callback->queue, QUEUE_KIND_PACKET, response,
+		if (ipcon_p->registered_callbacks[IPCON_CALLBACK_ENUMERATE] != NULL) {
+			queue_put(&ipcon_p->callback->queue, QUEUE_KIND_PACKET, response,
 			          response->header.length);
 		}
 
 		return;
 	}
 
-	device = (Device *)table_get(&ipcon->devices, response->header.uid);
+	device_p = (DevicePrivate *)table_get(&ipcon_p->devices, response->header.uid);
 
-	if (device == NULL) {
+	if (device_p == NULL) {
 		// ignoring response for an unknown device
 		return;
 	}
 
 	if (sequence_number == 0) {
-		if (device->registered_callbacks[response->header.function_id] != NULL) {
-			queue_put(&ipcon->callback->queue, QUEUE_KIND_PACKET, response,
+		if (device_p->registered_callbacks[response->header.function_id] != NULL) {
+			queue_put(&ipcon_p->callback->queue, QUEUE_KIND_PACKET, response,
 			          response->header.length);
 		}
 
 		return;
 	}
 
-	if (device->expected_response_function_id == response->header.function_id &&
-	    device->expected_response_sequence_number == sequence_number) {
-		mutex_lock(&device->response_mutex);
-		memcpy(&device->response_packet, response, response->header.length);
-		mutex_unlock(&device->response_mutex);
+	if (device_p->expected_response_function_id == response->header.function_id &&
+	    device_p->expected_response_sequence_number == sequence_number) {
+		mutex_lock(&device_p->response_mutex);
+		memcpy(&device_p->response_packet, response, response->header.length);
+		mutex_unlock(&device_p->response_mutex);
 
-		event_set(&device->response_event);
+		event_set(&device_p->response_event);
 		return;
 	}
 
-	// response seems to be OK, but can't be handled, most likely
-	// a callback without registered function
+	// response seems to be OK, but can't be handled
 }
 
 // NOTE: the receive loop is now allowed to hold the socket_mutex at any time
 //       because it is created and joined while the socket_mutex is locked
 static void ipcon_receive_loop(void *opaque) {
-	IPConnection *ipcon = (IPConnection *)opaque;
-	uint64_t socket_id = ipcon->socket_id;
+	IPConnectionPrivate *ipcon_p = (IPConnectionPrivate *)opaque;
+	uint64_t socket_id = ipcon_p->socket_id;
 	Packet pending_data[10];
 	int pending_length = 0;
 	int length;
 	uint8_t disconnect_reason;
 
-	while (ipcon->receive_flag) {
-		length = socket_receive(ipcon->socket, (uint8_t *)pending_data + pending_length,
+	while (ipcon_p->receive_flag) {
+		length = socket_receive(ipcon_p->socket, (uint8_t *)pending_data + pending_length,
 		                        sizeof(pending_data) - pending_length);
 
-		if (!ipcon->receive_flag) {
+		if (!ipcon_p->receive_flag) {
 			return;
 		}
 
@@ -1307,13 +1311,13 @@ static void ipcon_receive_loop(void *opaque) {
 				disconnect_reason = IPCON_DISCONNECT_REASON_ERROR;
 			}
 
-			ipcon_handle_disconnect_by_peer(ipcon, disconnect_reason, socket_id, false);
+			ipcon_handle_disconnect_by_peer(ipcon_p, disconnect_reason, socket_id, false);
 			return;
 		}
 
 		pending_length += length;
 
-		while (ipcon->receive_flag) {
+		while (ipcon_p->receive_flag) {
 			if (pending_length < 8) {
 				// wait for complete header
 				break;
@@ -1326,7 +1330,7 @@ static void ipcon_receive_loop(void *opaque) {
 				break;
 			}
 
-			ipcon_handle_response(ipcon, pending_data);
+			ipcon_handle_response(ipcon_p, pending_data);
 
 			memmove(pending_data, (uint8_t *)pending_data + length,
 			        pending_length - length);
@@ -1336,47 +1340,47 @@ static void ipcon_receive_loop(void *opaque) {
 }
 
 // NOTE: assumes that socket_mutex is locked
-static int ipcon_connect_unlocked(IPConnection *ipcon, bool is_auto_reconnect) {
+static int ipcon_connect_unlocked(IPConnectionPrivate *ipcon_p, bool is_auto_reconnect) {
 	struct hostent *entity;
 	struct sockaddr_in address;
 	uint8_t connect_reason;
 	Meta meta;
 
 	// create callback queue and thread
-	if (ipcon->callback == NULL) {
-		ipcon->callback = (CallbackContext *)malloc(sizeof(CallbackContext));
+	if (ipcon_p->callback == NULL) {
+		ipcon_p->callback = (CallbackContext *)malloc(sizeof(CallbackContext));
 
-		ipcon->callback->ipcon = ipcon;
-		ipcon->callback->packet_dispatch_allowed = false;
+		ipcon_p->callback->ipcon_p = ipcon_p;
+		ipcon_p->callback->packet_dispatch_allowed = false;
 
-		queue_create(&ipcon->callback->queue);
-		mutex_create(&ipcon->callback->mutex);
+		queue_create(&ipcon_p->callback->queue);
+		mutex_create(&ipcon_p->callback->mutex);
 
-		if (thread_create(&ipcon->callback->thread, ipcon_callback_loop,
-		                  ipcon->callback) < 0) {
-			mutex_destroy(&ipcon->callback->mutex);
-			queue_destroy(&ipcon->callback->queue);
+		if (thread_create(&ipcon_p->callback->thread, ipcon_callback_loop,
+		                  ipcon_p->callback) < 0) {
+			mutex_destroy(&ipcon_p->callback->mutex);
+			queue_destroy(&ipcon_p->callback->queue);
 
-			free(ipcon->callback);
-			ipcon->callback = NULL;
+			free(ipcon_p->callback);
+			ipcon_p->callback = NULL;
 
 			return E_NO_THREAD;
 		}
 	}
 
 	// create and connect socket
-	entity = gethostbyname(ipcon->host);
+	entity = gethostbyname(ipcon_p->host);
 
 	if (entity == NULL) {
 		// destroy callback thread
 		if (!is_auto_reconnect) {
-			queue_put(&ipcon->callback->queue, QUEUE_KIND_EXIT, NULL, 0);
+			queue_put(&ipcon_p->callback->queue, QUEUE_KIND_EXIT, NULL, 0);
 
-			if (!thread_is_current(&ipcon->callback->thread)) {
-				thread_join(&ipcon->callback->thread);
+			if (!thread_is_current(&ipcon_p->callback->thread)) {
+				thread_join(&ipcon_p->callback->thread);
 			}
 
-			ipcon->callback = NULL;
+			ipcon_p->callback = NULL;
 		}
 
 		return E_HOSTNAME_INVALID;
@@ -1386,100 +1390,100 @@ static int ipcon_connect_unlocked(IPConnection *ipcon, bool is_auto_reconnect) {
 	memcpy(&address.sin_addr, entity->h_addr_list[0], entity->h_length);
 
 	address.sin_family = AF_INET;
-	address.sin_port = htons(ipcon->port);
+	address.sin_port = htons(ipcon_p->port);
 
-	ipcon->socket = (Socket *)malloc(sizeof(Socket));
+	ipcon_p->socket = (Socket *)malloc(sizeof(Socket));
 
-	if (socket_create(ipcon->socket, AF_INET, SOCK_STREAM, 0) < 0) {
+	if (socket_create(ipcon_p->socket, AF_INET, SOCK_STREAM, 0) < 0) {
 		// destroy callback thread
 		if (!is_auto_reconnect) {
-			queue_put(&ipcon->callback->queue, QUEUE_KIND_EXIT, NULL, 0);
+			queue_put(&ipcon_p->callback->queue, QUEUE_KIND_EXIT, NULL, 0);
 
-			if (!thread_is_current(&ipcon->callback->thread)) {
-				thread_join(&ipcon->callback->thread);
+			if (!thread_is_current(&ipcon_p->callback->thread)) {
+				thread_join(&ipcon_p->callback->thread);
 			}
 
-			ipcon->callback = NULL;
+			ipcon_p->callback = NULL;
 		}
 
 		// destroy socket
-		free(ipcon->socket);
-		ipcon->socket = NULL;
+		free(ipcon_p->socket);
+		ipcon_p->socket = NULL;
 
 		return E_NO_STREAM_SOCKET;
 	}
 
-	if (socket_connect(ipcon->socket, &address, sizeof(address)) < 0) {
+	if (socket_connect(ipcon_p->socket, &address, sizeof(address)) < 0) {
 		// destroy callback thread
 		if (!is_auto_reconnect) {
-			queue_put(&ipcon->callback->queue, QUEUE_KIND_EXIT, NULL, 0);
+			queue_put(&ipcon_p->callback->queue, QUEUE_KIND_EXIT, NULL, 0);
 
-			if (!thread_is_current(&ipcon->callback->thread)) {
-				thread_join(&ipcon->callback->thread);
+			if (!thread_is_current(&ipcon_p->callback->thread)) {
+				thread_join(&ipcon_p->callback->thread);
 			}
 
-			ipcon->callback = NULL;
+			ipcon_p->callback = NULL;
 		}
 
 		// destroy socket
-		socket_destroy(ipcon->socket);
-		free(ipcon->socket);
-		ipcon->socket = NULL;
+		socket_destroy(ipcon_p->socket);
+		free(ipcon_p->socket);
+		ipcon_p->socket = NULL;
 
 		return E_NO_CONNECT;
 	}
 
-	++ipcon->socket_id;
+	++ipcon_p->socket_id;
 
 	// create disconnect probe thread
-	ipcon->disconnect_probe_flag = true;
+	ipcon_p->disconnect_probe_flag = true;
 
-	event_reset(&ipcon->disconnect_probe_event);
+	event_reset(&ipcon_p->disconnect_probe_event);
 
-	if (thread_create(&ipcon->disconnect_probe_thread,
-	                  ipcon_disconnect_probe_loop, ipcon) < 0) {
+	if (thread_create(&ipcon_p->disconnect_probe_thread,
+	                  ipcon_disconnect_probe_loop, ipcon_p) < 0) {
 		// destroy callback thread
 		if (!is_auto_reconnect) {
-			queue_put(&ipcon->callback->queue, QUEUE_KIND_EXIT, NULL, 0);
+			queue_put(&ipcon_p->callback->queue, QUEUE_KIND_EXIT, NULL, 0);
 
-			if (!thread_is_current(&ipcon->callback->thread)) {
-				thread_join(&ipcon->callback->thread);
+			if (!thread_is_current(&ipcon_p->callback->thread)) {
+				thread_join(&ipcon_p->callback->thread);
 			}
 
-			ipcon->callback = NULL;
+			ipcon_p->callback = NULL;
 		}
 
 		// destroy socket
-		socket_destroy(ipcon->socket);
-		free(ipcon->socket);
-		ipcon->socket = NULL;
+		socket_destroy(ipcon_p->socket);
+		free(ipcon_p->socket);
+		ipcon_p->socket = NULL;
 
 		return E_NO_THREAD;
 	}
 
 	// create receive thread
-	ipcon->receive_flag = true;
-	ipcon->callback->packet_dispatch_allowed = true;
+	ipcon_p->receive_flag = true;
+	ipcon_p->callback->packet_dispatch_allowed = true;
 
-	if (thread_create(&ipcon->receive_thread, ipcon_receive_loop, ipcon) < 0) {
-		ipcon_disconnect_unlocked(ipcon);
+	if (thread_create(&ipcon_p->receive_thread, ipcon_receive_loop, ipcon_p) < 0) {
+		ipcon_disconnect_unlocked(ipcon_p);
 
 		// destroy callback thread
 		if (!is_auto_reconnect) {
-			queue_put(&ipcon->callback->queue, QUEUE_KIND_EXIT, NULL, 0);
+			queue_put(&ipcon_p->callback->queue, QUEUE_KIND_EXIT, NULL, 0);
 
-			if (!thread_is_current(&ipcon->callback->thread)) {
-				thread_join(&ipcon->callback->thread);
+			if (!thread_is_current(&ipcon_p->callback->thread)) {
+				thread_join(&ipcon_p->callback->thread);
 			}
 
-			ipcon->callback = NULL;
+			ipcon_p->callback = NULL;
 		}
 
 		return E_NO_THREAD;
 	}
 
-	ipcon->auto_reconnect_allowed = false;
-	ipcon->auto_reconnect_pending = false;
+	ipcon_p->auto_reconnect_allowed = false;
+	ipcon_p->auto_reconnect_pending = false;
 
 	// trigger connected callback
 	if (is_auto_reconnect) {
@@ -1492,194 +1496,204 @@ static int ipcon_connect_unlocked(IPConnection *ipcon, bool is_auto_reconnect) {
 	meta.parameter = connect_reason;
 	meta.socket_id = 0;
 
-	queue_put(&ipcon->callback->queue, QUEUE_KIND_META, &meta, sizeof(meta));
+	queue_put(&ipcon_p->callback->queue, QUEUE_KIND_META, &meta, sizeof(meta));
 
 	return E_OK;
 }
 
 // NOTE: assumes that socket_mutex is locked
-static void ipcon_disconnect_unlocked(IPConnection *ipcon) {
+static void ipcon_disconnect_unlocked(IPConnectionPrivate *ipcon_p) {
 	// destroy disconnect probe thread
-	event_set(&ipcon->disconnect_probe_event);
-	thread_join(&ipcon->disconnect_probe_thread);
-	thread_destroy(&ipcon->disconnect_probe_thread);
+	event_set(&ipcon_p->disconnect_probe_event);
+	thread_join(&ipcon_p->disconnect_probe_thread);
+	thread_destroy(&ipcon_p->disconnect_probe_thread);
 
 	// stop dispatching packet callbacks before ending the receive
 	// thread to avoid timeout exceptions due to callback functions
 	// trying to call getters
-	if (!thread_is_current(&ipcon->callback->thread)) {
+	if (!thread_is_current(&ipcon_p->callback->thread)) {
 		// FIXME: cannot lock callback mutex here because this can
 		//        deadlock due to an ordering problem with the socket mutex
 		//mutex_lock(&ipcon->callback->mutex);
 
-		ipcon->callback->packet_dispatch_allowed = false;
+		ipcon_p->callback->packet_dispatch_allowed = false;
 
 		//mutex_unlock(&ipcon->callback->mutex);
 	} else {
-		ipcon->callback->packet_dispatch_allowed = false;
+		ipcon_p->callback->packet_dispatch_allowed = false;
 	}
 
 	// destroy receive thread
-	if (ipcon->receive_flag) {
-		ipcon->receive_flag = false;
+	if (ipcon_p->receive_flag) {
+		ipcon_p->receive_flag = false;
 
-		socket_shutdown(ipcon->socket);
+		socket_shutdown(ipcon_p->socket);
 
-		thread_join(&ipcon->receive_thread);
-		thread_destroy(&ipcon->receive_thread);
+		thread_join(&ipcon_p->receive_thread);
+		thread_destroy(&ipcon_p->receive_thread);
 	}
 
 	// destroy socket
-	socket_destroy(ipcon->socket);
-	free(ipcon->socket);
-	ipcon->socket = NULL;
+	socket_destroy(ipcon_p->socket);
+	free(ipcon_p->socket);
+	ipcon_p->socket = NULL;
 }
 
-static int ipcon_send_request(IPConnection *ipcon, Packet *request) {
+static int ipcon_send_request(IPConnectionPrivate *ipcon_p, Packet *request) {
 	int ret = E_OK;
 
-	mutex_lock(&ipcon->socket_mutex);
+	mutex_lock(&ipcon_p->socket_mutex);
 
-	if (ipcon->socket == NULL) {
+	if (ipcon_p->socket == NULL) {
 		ret = E_NOT_CONNECTED;
 	}
 
 	if (ret == E_OK) {
-		if (socket_send(ipcon->socket, request, request->header.length) < 0) {
-			ipcon_handle_disconnect_by_peer(ipcon, IPCON_DISCONNECT_REASON_ERROR,
+		if (socket_send(ipcon_p->socket, request, request->header.length) < 0) {
+			ipcon_handle_disconnect_by_peer(ipcon_p, IPCON_DISCONNECT_REASON_ERROR,
 			                                0, true);
 
 			ret = E_NOT_CONNECTED;
 		} else {
-			ipcon->disconnect_probe_flag = false;
+			ipcon_p->disconnect_probe_flag = false;
 		}
 	}
 
-	mutex_unlock(&ipcon->socket_mutex);
+	mutex_unlock(&ipcon_p->socket_mutex);
 
 	return ret;
 }
 
 void ipcon_create(IPConnection *ipcon) {
+	IPConnectionPrivate *ipcon_p;
 	int i;
 
+	ipcon_p = (IPConnectionPrivate *)malloc(sizeof(IPConnectionPrivate));
+	ipcon->p = ipcon_p;
+
 #ifdef _WIN32
-	ipcon->wsa_startup_done = false;
+	ipcon_p->wsa_startup_done = false;
 #endif
 
-	ipcon->host = NULL;
-	ipcon->port = 0;
+	ipcon_p->host = NULL;
+	ipcon_p->port = 0;
 
-	ipcon->timeout = 2500;
+	ipcon_p->timeout = 2500;
 
-	ipcon->auto_reconnect = true;
-	ipcon->auto_reconnect_allowed = false;
-	ipcon->auto_reconnect_pending = false;
+	ipcon_p->auto_reconnect = true;
+	ipcon_p->auto_reconnect_allowed = false;
+	ipcon_p->auto_reconnect_pending = false;
 
-	mutex_create(&ipcon->sequence_number_mutex);
-	ipcon->next_sequence_number = 0;
+	mutex_create(&ipcon_p->sequence_number_mutex);
+	ipcon_p->next_sequence_number = 0;
 
-	table_create(&ipcon->devices);
+	table_create(&ipcon_p->devices);
 
 	for (i = 0; i < IPCON_NUM_CALLBACK_IDS; ++i) {
-		ipcon->registered_callbacks[i] = NULL;
-		ipcon->registered_callback_user_data[i] = NULL;
+		ipcon_p->registered_callbacks[i] = NULL;
+		ipcon_p->registered_callback_user_data[i] = NULL;
 	}
 
-	mutex_create(&ipcon->socket_mutex);
-	ipcon->socket = NULL;
-	ipcon->socket_id = 0;
+	mutex_create(&ipcon_p->socket_mutex);
+	ipcon_p->socket = NULL;
+	ipcon_p->socket_id = 0;
 
-	ipcon->receive_flag = false;
+	ipcon_p->receive_flag = false;
 
-	ipcon->callback = NULL;
+	ipcon_p->callback = NULL;
 
-	ipcon->disconnect_probe_flag = false;
-	event_create(&ipcon->disconnect_probe_event);
+	ipcon_p->disconnect_probe_flag = false;
+	event_create(&ipcon_p->disconnect_probe_event);
 
-	semaphore_create(&ipcon->wait);
+	semaphore_create(&ipcon_p->wait);
 }
 
 void ipcon_destroy(IPConnection *ipcon) {
+	IPConnectionPrivate *ipcon_p = ipcon->p;
+
 	ipcon_disconnect(ipcon); // FIXME: disable disconnected callback before?
 
-	mutex_destroy(&ipcon->sequence_number_mutex);
+	mutex_destroy(&ipcon_p->sequence_number_mutex);
 
-	table_destroy(&ipcon->devices);
+	table_destroy(&ipcon_p->devices);
 
-	mutex_destroy(&ipcon->socket_mutex);
+	mutex_destroy(&ipcon_p->socket_mutex);
 
-	event_destroy(&ipcon->disconnect_probe_event);
+	event_destroy(&ipcon_p->disconnect_probe_event);
 
-	semaphore_destroy(&ipcon->wait);
+	semaphore_destroy(&ipcon_p->wait);
 
-	free(ipcon->host);
+	free(ipcon_p->host);
+
+	free(ipcon_p);
 }
 
 int ipcon_connect(IPConnection *ipcon, const char *host, uint16_t port) {
+	IPConnectionPrivate *ipcon_p = ipcon->p;
 	int ret;
 #ifdef _WIN32
 	WSADATA wsa_data;
 #endif
 
-	mutex_lock(&ipcon->socket_mutex);
+	mutex_lock(&ipcon_p->socket_mutex);
 
 #ifdef _WIN32
-	if (!ipcon->wsa_startup_done) {
+	if (!ipcon_p->wsa_startup_done) {
 		if (WSAStartup(MAKEWORD(2, 2), &wsa_data) != 0) {
-			mutex_unlock(&ipcon->socket_mutex);
+			mutex_unlock(&ipcon_p->socket_mutex);
 
 			return E_NO_STREAM_SOCKET;
 		}
 
-		ipcon->wsa_startup_done = true;
+		ipcon_p->wsa_startup_done = true;
 	}
 #endif
 
-	if (ipcon->socket != NULL) {
-		mutex_unlock(&ipcon->socket_mutex);
+	if (ipcon_p->socket != NULL) {
+		mutex_unlock(&ipcon_p->socket_mutex);
 
 		return E_ALREADY_CONNECTED;
 	}
 
-	free(ipcon->host);
+	free(ipcon_p->host);
 
-	ipcon->host = strdup(host);
-	ipcon->port = port;
+	ipcon_p->host = strdup(host);
+	ipcon_p->port = port;
 
-	ret = ipcon_connect_unlocked(ipcon, false);
+	ret = ipcon_connect_unlocked(ipcon_p, false);
 
-	mutex_unlock(&ipcon->socket_mutex);
+	mutex_unlock(&ipcon_p->socket_mutex);
 
 	return ret;
 }
 
 int ipcon_disconnect(IPConnection *ipcon) {
+	IPConnectionPrivate *ipcon_p = ipcon->p;
 	CallbackContext *callback;
 	Meta meta;
 
-	mutex_lock(&ipcon->socket_mutex);
+	mutex_lock(&ipcon_p->socket_mutex);
 
-	ipcon->auto_reconnect_allowed = false;
+	ipcon_p->auto_reconnect_allowed = false;
 
-	if (ipcon->auto_reconnect_pending) {
+	if (ipcon_p->auto_reconnect_pending) {
 		// abort pending auto-reconnect
-		ipcon->auto_reconnect_pending = false;
+		ipcon_p->auto_reconnect_pending = false;
 	} else {
-		if (ipcon->socket == NULL) {
-			mutex_unlock(&ipcon->socket_mutex);
+		if (ipcon_p->socket == NULL) {
+			mutex_unlock(&ipcon_p->socket_mutex);
 
 			return E_NOT_CONNECTED;
 		}
 
-		ipcon_disconnect_unlocked(ipcon);
+		ipcon_disconnect_unlocked(ipcon_p);
 	}
 
 	// destroy callback thread
-	callback = ipcon->callback;
-	ipcon->callback = NULL;
+	callback = ipcon_p->callback;
+	ipcon_p->callback = NULL;
 
-	mutex_unlock(&ipcon->socket_mutex);
+	mutex_unlock(&ipcon_p->socket_mutex);
 
 	// do this outside of socket_mutex to allow calling (dis-)connect from
 	// the callbacks while blocking on the join call here
@@ -1701,9 +1715,11 @@ int ipcon_disconnect(IPConnection *ipcon) {
 }
 
 int ipcon_get_connection_state(IPConnection *ipcon) {
-	if (ipcon->socket != NULL) {
+	IPConnectionPrivate *ipcon_p = ipcon->p;
+
+	if (ipcon_p->socket != NULL) {
 		return IPCON_CONNECTION_STATE_CONNECTED;
-	} else if (ipcon->auto_reconnect_pending) {
+	} else if (ipcon_p->auto_reconnect_pending) {
 		return IPCON_CONNECTION_STATE_PENDING;
 	} else {
 		return IPCON_CONNECTION_STATE_DISCONNECTED;
@@ -1711,80 +1727,85 @@ int ipcon_get_connection_state(IPConnection *ipcon) {
 }
 
 void ipcon_set_auto_reconnect(IPConnection *ipcon, bool auto_reconnect) {
-	ipcon->auto_reconnect = auto_reconnect;
+	IPConnectionPrivate *ipcon_p = ipcon->p;
 
-	if (!ipcon->auto_reconnect) {
+	ipcon_p->auto_reconnect = auto_reconnect;
+
+	if (!ipcon_p->auto_reconnect) {
 		// abort potentially pending auto reconnect
-		ipcon->auto_reconnect_allowed = false;
+		ipcon_p->auto_reconnect_allowed = false;
 	}
 }
 
 bool ipcon_get_auto_reconnect(IPConnection *ipcon) {
-	return ipcon->auto_reconnect;
+	return ipcon->p->auto_reconnect;
 }
 
 void ipcon_set_timeout(IPConnection *ipcon, uint32_t timeout) { // in msec
-	ipcon->timeout = timeout;
+	ipcon->p->timeout = timeout;
 }
 
 uint32_t ipcon_get_timeout(IPConnection *ipcon) { // in msec
-	return ipcon->timeout;
+	return ipcon->p->timeout;
 }
 
 int ipcon_enumerate(IPConnection *ipcon) {
+	IPConnectionPrivate *ipcon_p = ipcon->p;
 	Enumerate enumerate;
 	int ret;
 
 	ret = packet_header_create(&enumerate.header, sizeof(Enumerate),
-	                           IPCON_FUNCTION_ENUMERATE, ipcon, NULL);
+	                           IPCON_FUNCTION_ENUMERATE, ipcon_p, NULL);
 
 	if (ret < 0) {
 		return ret;
 	}
 
-	return ipcon_send_request(ipcon, (Packet *)&enumerate);
+	return ipcon_send_request(ipcon_p, (Packet *)&enumerate);
 }
 
 void ipcon_wait(IPConnection *ipcon) {
-	semaphore_acquire(&ipcon->wait);
+	semaphore_acquire(&ipcon->p->wait);
 }
 
 void ipcon_unwait(IPConnection *ipcon) {
-	semaphore_release(&ipcon->wait);
+	semaphore_release(&ipcon->p->wait);
 }
 
 void ipcon_register_callback(IPConnection *ipcon, uint8_t id, void *callback,
                              void *user_data) {
-	ipcon->registered_callbacks[id] = callback;
-	ipcon->registered_callback_user_data[id] = user_data;
+	IPConnectionPrivate *ipcon_p = ipcon->p;
+
+	ipcon_p->registered_callbacks[id] = callback;
+	ipcon_p->registered_callback_user_data[id] = user_data;
 }
 
 int packet_header_create(PacketHeader *header, uint8_t length,
-                         uint8_t function_id, IPConnection *ipcon,
-                         Device *device) {
+                         uint8_t function_id, IPConnectionPrivate *ipcon_p,
+                         DevicePrivate *device_p) {
 	int sequence_number;
 	bool response_expected = false;
 	int ret = E_OK;
 
-	mutex_lock(&ipcon->sequence_number_mutex);
+	mutex_lock(&ipcon_p->sequence_number_mutex);
 
-	sequence_number = ipcon->next_sequence_number + 1;
-	ipcon->next_sequence_number = sequence_number % 15;
+	sequence_number = ipcon_p->next_sequence_number + 1;
+	ipcon_p->next_sequence_number = sequence_number % 15;
 
-	mutex_unlock(&ipcon->sequence_number_mutex);
+	mutex_unlock(&ipcon_p->sequence_number_mutex);
 
 	memset(header, 0, sizeof(PacketHeader));
 
-	if (device != NULL) {
-		header->uid = leconvert_uint32_to(device->uid);
+	if (device_p != NULL) {
+		header->uid = leconvert_uint32_to(device_p->uid);
 	}
 
 	header->length = length;
 	header->function_id = function_id;
 	packet_header_set_sequence_number(header, sequence_number);
 
-	if (device != NULL) {
-		ret = device_get_response_expected(device, function_id, &response_expected);
+	if (device_p != NULL) {
+		ret = device_get_response_expected(device_p, function_id, &response_expected);
 		packet_header_set_response_expected(header, response_expected ? 1 : 0);
 	}
 
