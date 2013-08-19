@@ -135,6 +135,7 @@ type
     nextSequenceNumber: byte;
     pendingData: TByteArray;
     socketMutex: TCriticalSection;
+    socketSendMutex: TCriticalSection;
     socket: TSocket;
     socketID: longword;
     waiter: TTimedSemaphore;
@@ -313,6 +314,7 @@ begin
   SetLength(pendingData, 0);
   devices := TDeviceTable.Create;
   socketMutex := TCriticalSection.Create;
+  socketSendMutex := TCriticalSection.Create;
   socket := INVALID_SOCKET;
   waiter := TTimedSemaphore.Create;
 end;
@@ -325,6 +327,7 @@ begin
   sequenceNumberMutex.Destroy;
   devices.Destroy;
   socketMutex.Destroy;
+  socketSendMutex.Destroy;
   waiter.Destroy;
   inherited Destroy;
 end;
@@ -683,25 +686,28 @@ begin
   Dispose(callback_);
 end;
 
+{ NOTE: The disconnect probe loop is not allowed to hold the socketMutex at any
+        time because it is created and joined while the socketMutex is locked }
 procedure TIPConnection.DisconnectProbeLoop(thread: TWrapperThread; opaque: pointer);
-var kind: byte; data, request: TByteArray;
+var kind: byte; data, request: TByteArray; error: boolean;
 begin
   SetLength(data, 0);
   request := CreateRequestPacket(nil, IPCON_FUNCTION_DISCONNECT_PROBE, 8);
   while (not disconnectProbeQueue.Dequeue(kind, data, IPCON_DISCONNECT_PROBE_INTERVAL)) do begin
     if (disconnectProbeFlag) then begin
-      socketMutex.Acquire;
+      socketSendMutex.Acquire;
       try
 {$ifdef FPC}
-        if (fpsend(socket, @request[0], Length(request), 0) < 0) then begin
+        error := fpsend(socket, @request[0], Length(request), 0) < 0;
 {$else}
-        if (WinSock.Send(socket, request[0], Length(request), 0) = SOCKET_ERROR) then begin
+        error := WinSock.Send(socket, request[0], Length(request), 0) = SOCKET_ERROR;
 {$endif}
-          HandleDisconnectByPeer(IPCON_DISCONNECT_REASON_ERROR, socketID, false);
-          break;
-        end;
       finally
-        socketMutex.Release;
+        socketSendMutex.Release;
+      end;
+      if (error) then begin
+        HandleDisconnectByPeer(IPCON_DISCONNECT_REASON_ERROR, socketID, false);
+        break;
       end;
     end
     else begin
@@ -913,17 +919,24 @@ begin
 end;
 
 procedure TIPConnection.SendRequest(const request: TByteArray);
+var error: boolean;
 begin
   socketMutex.Acquire;
   try
     if (not IsConnected) then begin
       raise ENotConnectedException.Create('Not connected');
     end;
+    socketSendMutex.Acquire;
+    try
 {$ifdef FPC}
-    if (fpsend(socket, @request[0], Length(request), 0) < 0) then begin
+      error := fpsend(socket, @request[0], Length(request), 0) < 0;
 {$else}
-    if (WinSock.Send(socket, request[0], Length(request), 0) = SOCKET_ERROR) then begin
+      error := WinSock.Send(socket, request[0], Length(request), 0) = SOCKET_ERROR;
 {$endif}
+    finally
+      socketSendMutex.Release;
+    end;
+    if (error) then begin
       HandleDisconnectByPeer(IPCON_DISCONNECT_REASON_ERROR, 0, true);
       raise ENotConnectedException.Create('Not connected');
     end;
