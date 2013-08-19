@@ -819,8 +819,7 @@ public class IPConnection {
 			return;
 		}
 
-		// Response seems to be OK, but can't be handled, most likely
-		// a callback without registered listener
+		// Response seems to be OK, but can't be handled
 	}
 
 	// NOTE: Assumes that socketMutex is locked, if disconnectImmediately is true

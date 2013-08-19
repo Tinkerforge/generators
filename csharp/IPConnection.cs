@@ -825,8 +825,7 @@ namespace Tinkerforge
 				return;
 			}
 
-			// Response seems to be OK, but can't be handled, most likely
-			// a callback without registered function
+			// Response seems to be OK, but can't be handled
 		}
 
 		public void SendRequest(byte[] request)
