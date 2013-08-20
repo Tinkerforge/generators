@@ -43,7 +43,7 @@ com['packets'].append({
 Sets the period in ms with which the :func:`Count` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Count` is only triggered if the position has changed since the
+:func:`Count` is only triggered if the count has changed since the
 last triggering.
 
 The default value is 0.
@@ -53,7 +53,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :func:`Count` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Count` wird nur ausgelöst wenn sich die Position seit der
+:func:`Count` wird nur ausgelöst wenn sich der Zählerwert seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -102,10 +102,10 @@ The following options are possible:
  :widths: 10, 100
 
  "'x'",    "Callback is turned off"
- "'o'",    "Callback is triggered when the position is *outside* the min and max values"
- "'i'",    "Callback is triggered when the position is *inside* the min and max values"
- "'<'",    "Callback is triggered when the position is smaller than the min value (max is ignored)"
- "'>'",    "Callback is triggered when the position is greater than the min value (max is ignored)"
+ "'o'",    "Callback is triggered when the count is *outside* the min and max values"
+ "'i'",    "Callback is triggered when the count is *inside* the min and max values"
+ "'<'",    "Callback is triggered when the count is smaller than the min value (max is ignored)"
+ "'>'",    "Callback is triggered when the count is greater than the min value (max is ignored)"
 
 The default value is ('x', 0, 0).
 """,
@@ -120,10 +120,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
  
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Position *außerhalb* der min und max Werte ist"
- "'i'",    "Callback wird ausgelöst wenn die Position *innerhalb* der min und max Werte ist"
- "'<'",    "Callback wird ausgelöst wenn die Position kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn die Position größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst wenn der Zählerwert *außerhalb* der min und max Werte ist"
+ "'i'",    "Callback wird ausgelöst wenn die Zählerwert *innerhalb* der min und max Werte ist"
+ "'<'",    "Callback wird ausgelöst wenn die Zählerwert kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn die Zählerwert größer als der min Wert ist (max wird ignoriert)"
  
 Der Standardwert ist ('x', 0, 0).
 """
