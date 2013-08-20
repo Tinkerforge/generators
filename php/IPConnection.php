@@ -885,8 +885,7 @@ class IPConnection
             return;
         }
 
-        // Response seems to be OK, but can't be handled, most likely
-        // a callback without registered callback function
+        // Response seems to be OK, but can't be handled
     }
 
     /**

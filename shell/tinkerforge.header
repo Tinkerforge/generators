@@ -20,13 +20,15 @@ def fatal(message, exit_code=1):
 	sys.stderr.write('{0}: error: {1}\n'.format(prog, message))
 	sys.exit(exit_code)
 
-if sys.hexversion < 0x02060000:
-	fatal('requiring python 2.6 or newer', 4)
+if sys.hexversion < 0x02050000:
+	fatal('requiring python 2.5 or newer', 21)
 
 try:
 	import argparse
 except ImportError:
-	fatal('requiring python argparse module', 5)
+	fatal('requiring python argparse module', 22)
+
+dry_run = False
 
 host = None
 port = None
@@ -39,8 +41,8 @@ no_symbolic_input = None
 no_symbolic_output = None
 
 class Parser(argparse.ArgumentParser):
-	def __init__(self, prog):
-		argparse.ArgumentParser.__init__(self, prog=prog, add_help=False)
+	def __init__(self, prog, description=None, epilog=None):
+		argparse.ArgumentParser.__init__(self, prog=prog, add_help=False, description=description, epilog=epilog)
 
 		global current_parser
 		current_parser = self
@@ -103,6 +105,9 @@ def dispatch_generic(name, callbacks, argv):
 
 def device_send_request(device_class, function_id, request_data, format_in,
                         format_out, command, expect_response, names, symbols):
+	if dry_run:
+		return
+
 	if command is not None:
 		def handle_result(values):
 			execute_result(command, names, values)
@@ -130,11 +135,11 @@ def device_send_request(device_class, function_id, request_data, format_in,
 
 			handle_result(result)
 	except Error as e:
-		fatal(e.description.lower())
+		fatal(e.description.lower(), 200 - e.value)
 	except socket.error as e:
-		fatal(str(e).lower())
+		fatal(str(e).lower(), 23)
 	except Exception as e:
-		fatal(str(e).lower())
+		fatal(str(e).lower(), 24)
 	finally:
 		try:
 			ipcon.disconnect()
@@ -142,6 +147,9 @@ def device_send_request(device_class, function_id, request_data, format_in,
 			pass
 
 def device_callback(device_class, function_id, command, names):
+	if dry_run:
+		return
+
 	if command is not None:
 		def callback(*values):
 			execute_result(command, names, values)
@@ -185,11 +193,11 @@ def device_callback(device_class, function_id, command, names):
 
 			time.sleep(duration / 1000.0)
 	except Error as e:
-		fatal(e.description.lower())
+		fatal(e.description.lower(), 200 - e.value)
 	except socket.error as e:
-		fatal(str(e).lower())
+		fatal(str(e).lower(), 23)
 	except Exception as e:
-		fatal(str(e).lower())
+		fatal(str(e).lower(), 24)
 	finally:
 		try:
 			ipcon.disconnect()
@@ -255,6 +263,25 @@ def convert_bool(string):
 		raise argparse.ArgumentTypeError(msg)
 
 convert_bool.__name__ = 'bool'
+
+def create_string_checker(type, length):
+	def check_string(string):
+		try:
+			value = type(string)
+		except (ValueError, TypeError):
+			name = getattr(type, '__name__', repr(type))
+			msg = 'invalid %s value: %r' % (name, string)
+			raise argparse.ArgumentTypeError(msg)
+
+		if len(value) > length:
+			msg = 'string value is too long: %r' % value
+			raise argparse.ArgumentTypeError(msg)
+
+		return value
+
+	check_string.__name__ = 'string'
+
+	return check_string
 
 def create_symbol_converter(type, symbols, strict=False):
 	def convert_symbol(string):
@@ -331,9 +358,9 @@ def execute_result(command, names, values):
 	try:
 		formatted_command = command.format(**result)
 	except KeyError as e:
-		fatal('invalid placeholder %s in format: %s' % (str(e).lower(), command))
+		fatal('invalid placeholder %s in format: %s' % (str(e).lower(), command), 25)
 	except Exception as e:
-		fatal('%s: %s' % (str(e).lower(), command))
+		fatal('%s: %s' % (str(e).lower(), command), 24)
 
 	os.system(formatted_command)
 

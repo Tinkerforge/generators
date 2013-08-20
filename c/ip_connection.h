@@ -49,6 +49,8 @@ enum {
 	E_UNKNOWN_ERROR_CODE = -11 // error response from device
 };
 
+#ifdef IPCON_EXPOSE_INTERNALS
+
 typedef struct _Socket Socket;
 
 typedef struct {
@@ -59,8 +61,6 @@ typedef struct {
 #endif
 } Mutex;
 
-#ifdef IPCON_EXPOSE_INTERNALS
-
 void mutex_create(Mutex *mutex);
 
 void mutex_destroy(Mutex *mutex);
@@ -68,8 +68,6 @@ void mutex_destroy(Mutex *mutex);
 void mutex_lock(Mutex *mutex);
 
 void mutex_unlock(Mutex *mutex);
-
-#endif
 
 typedef struct {
 #ifdef _WIN32
@@ -141,9 +139,6 @@ typedef struct {
 	#error unknown compiler, do not know how to enable struct packing
 #endif
 
-/**
- * \internal
- */
 typedef struct {
 	uint32_t uid;
 	uint8_t length;
@@ -152,9 +147,6 @@ typedef struct {
 	uint8_t error_code_and_future_use;
 } ATTRIBUTE_PACKED PacketHeader;
 
-/**
- * \internal
- */
 typedef struct {
 	PacketHeader header;
 	uint8_t payload[64];
@@ -166,8 +158,18 @@ typedef struct {
 #endif
 #undef ATTRIBUTE_PACKED
 
+#endif // IPCON_EXPOSE_INTERNALS
+
 typedef struct _IPConnection IPConnection;
+typedef struct _IPConnectionPrivate IPConnectionPrivate;
 typedef struct _Device Device;
+typedef struct _DevicePrivate DevicePrivate;
+
+#ifdef IPCON_EXPOSE_INTERNALS
+
+typedef struct _CallbackContext CallbackContext;
+
+#endif
 
 typedef void (*EnumerateCallbackFunction)(const char *uid,
                                           const char *connected_uid,
@@ -182,15 +184,30 @@ typedef void (*ConnectedCallbackFunction)(uint8_t connect_reason,
 typedef void (*DisconnectedCallbackFunction)(uint8_t disconnect_reason,
                                              void *user_data);
 
-#define DEVICE_NUM_FUNCTION_IDS 256
+#ifdef IPCON_EXPOSE_INTERNALS
+
+typedef void (*CallbackWrapperFunction)(DevicePrivate *device_p, Packet *packet);
+
+#endif
 
 /**
  * \internal
  */
 struct _Device {
+	DevicePrivate *p;
+};
+
+#ifdef IPCON_EXPOSE_INTERNALS
+
+#define DEVICE_NUM_FUNCTION_IDS 256
+
+/**
+ * \internal
+ */
+struct _DevicePrivate {
 	uint32_t uid;
 
-	IPConnection *ipcon;
+	IPConnectionPrivate *ipcon_p;
 
 	uint8_t api_version[3];
 
@@ -205,10 +222,8 @@ struct _Device {
 
 	void *registered_callbacks[DEVICE_NUM_FUNCTION_IDS];
 	void *registered_callback_user_data[DEVICE_NUM_FUNCTION_IDS];
-	void *callback_wrappers[DEVICE_NUM_FUNCTION_IDS];
+	CallbackWrapperFunction callback_wrappers[DEVICE_NUM_FUNCTION_IDS];
 };
-
-#ifdef IPCON_EXPOSE_INTERNALS
 
 /**
  * \internal
@@ -224,9 +239,9 @@ enum {
 /**
  * \internal
  */
-void device_create(Device *device, const char *uid, IPConnection *ipcon,
-                   uint8_t api_version_major, uint8_t api_version_minor,
-                   uint8_t api_version_release);
+void device_create(Device *device, const char *uid,
+                   IPConnectionPrivate *ipcon_p, uint8_t api_version_major,
+                   uint8_t api_version_minor, uint8_t api_version_release);
 
 /**
  * \internal
@@ -236,37 +251,37 @@ void device_destroy(Device *device);
 /**
  * \internal
  */
-int device_get_response_expected(Device *device, uint8_t function_id,
+int device_get_response_expected(DevicePrivate *device_p, uint8_t function_id,
                                  bool *ret_response_expected);
 
 /**
  * \internal
  */
-int device_set_response_expected(Device *device, uint8_t function_id,
+int device_set_response_expected(DevicePrivate *device_p, uint8_t function_id,
                                  bool response_expected);
 
 /**
  * \internal
  */
-int device_set_response_expected_all(Device *device, bool response_expected);
+int device_set_response_expected_all(DevicePrivate *device_p, bool response_expected);
 
 /**
  * \internal
  */
-void device_register_callback(Device *device, uint8_t id, void *callback,
+void device_register_callback(DevicePrivate *device_p, uint8_t id, void *callback,
                               void *user_data);
 
 /**
  * \internal
  */
-int device_get_api_version(Device *device, uint8_t ret_api_version[3]);
+int device_get_api_version(DevicePrivate *device_p, uint8_t ret_api_version[3]);
 
 /**
  * \internal
  */
-int device_send_request(Device *device, Packet *request, Packet *response);
+int device_send_request(DevicePrivate *device_p, Packet *request, Packet *response);
 
-#endif
+#endif // IPCON_EXPOSE_INTERNALS
 
 /**
  * \ingroup IPConnection
@@ -322,14 +337,21 @@ enum {
 	IPCON_CONNECTION_STATE_PENDING = 2 // auto-reconnect in progress
 };
 
-#define IPCON_NUM_CALLBACK_IDS 256
-
-typedef struct _CallbackContext CallbackContext;
-
 /**
  * \internal
  */
 struct _IPConnection {
+	IPConnectionPrivate *p;
+};
+
+#ifdef IPCON_EXPOSE_INTERNALS
+
+#define IPCON_NUM_CALLBACK_IDS 256
+
+/**
+ * \internal
+ */
+struct _IPConnectionPrivate {
 #ifdef _WIN32
 	bool wsa_startup_done; // protected by socket_mutex
 #endif
@@ -366,6 +388,8 @@ struct _IPConnection {
 
 	Semaphore wait;
 };
+
+#endif // IPCON_EXPOSE_INTERNALS
 
 /**
  * \ingroup IPConnection
@@ -501,8 +525,8 @@ void ipcon_register_callback(IPConnection *ipcon, uint8_t id,
  * \internal
  */
 int packet_header_create(PacketHeader *header, uint8_t length,
-                         uint8_t function_id, IPConnection *ipcon,
-                         Device *device);
+                         uint8_t function_id, IPConnectionPrivate *ipcon_p,
+                         DevicePrivate *device_p);
 
 /**
  * \internal
@@ -601,6 +625,6 @@ uint64_t leconvert_uint64_from(uint64_t little);
  */
 float leconvert_float_from(float little);
 
-#endif
+#endif // IPCON_EXPOSE_INTERNALS
 
 #endif

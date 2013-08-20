@@ -267,13 +267,17 @@ typedef struct {{
 def make_create_func():
     func = """
 void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
-\tdevice_create({0}, uid, ipcon, {3}, {4}, {5});
+\tDevicePrivate *device_p;
+
+\tdevice_create({0}, uid, ipcon->p, {3}, {4}, {5});
+
+\tdevice_p = {0}->p;
 {2}
 }}
 """
 
     cb_temp = """
-\t{0}->callback_wrappers[{3}_CALLBACK_{1}] = (void *){0}_callback_wrapper_{2};"""
+\tdevice_p->callback_wrappers[{3}_CALLBACK_{1}] = {0}_callback_wrapper_{2};"""
 
     cbs = ''
     dev_name = device.get_underscore_name()
@@ -297,7 +301,7 @@ void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
             prefix = 'FUNCTION'
             flag = 'DEVICE_RESPONSE_EXPECTED_FALSE'
 
-        response_expected += '\t{0}->response_expected[{1}_{2}_{3}] = {4};\n' \
+        response_expected += '\tdevice_p->response_expected[{1}_{2}_{3}] = {4};\n' \
             .format(dev_name, device.get_upper_case_name(), prefix, packet.get_upper_case_name(), flag)
 
     if len(response_expected) > 0:
@@ -320,15 +324,15 @@ void {0}_destroy({1} *{0}) {{
 def make_response_expected_funcs():
     func = """
 int {0}_get_response_expected({1} *{0}, uint8_t function_id, bool *ret_response_expected) {{
-\treturn device_get_response_expected({0}, function_id, ret_response_expected);
+\treturn device_get_response_expected({0}->p, function_id, ret_response_expected);
 }}
 
 int {0}_set_response_expected({1} *{0}, uint8_t function_id, bool response_expected) {{
-\treturn device_set_response_expected({0}, function_id, response_expected);
+\treturn device_set_response_expected({0}->p, function_id, response_expected);
 }}
 
 int {0}_set_response_expected_all({1} *{0}, bool response_expected) {{
-\treturn device_set_response_expected_all({0}, response_expected);
+\treturn device_set_response_expected_all({0}->p, response_expected);
 }}
 """
     return func.format(device.get_underscore_name(),
@@ -387,23 +391,24 @@ def make_method_funcs():
 
     func_version = """
 int {0}_get_api_version({1} *{0}, uint8_t ret_api_version[3]) {{
-\treturn device_get_api_version({0}, ret_api_version);
+\treturn device_get_api_version({0}->p, ret_api_version);
 }}
 """
 
     func = """
 int {0}_{1}({2} *{0}{3}) {{
+\tDevicePrivate *device_p = {0}->p;
 \t{5}_ request;{6}
 \tint ret;{9}
 
-\tret = packet_header_create(&request.header, sizeof(request), {4}, {0}->ipcon, {0});
+\tret = packet_header_create(&request.header, sizeof(request), {4}, device_p->ipcon_p, device_p);
 
 \tif (ret < 0) {{
 \t\treturn ret;
 \t}}
 {7}
 
-\tret = device_send_request({0}, (Packet *)&request, {10});
+\tret = device_send_request(device_p, (Packet *)&request, {10});
 {8}
 
 \treturn ret;
@@ -450,20 +455,22 @@ int {0}_{1}({2} *{0}{3}) {{
 def make_register_callback_func():
     func = """
 void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data) {{
-\tdevice_register_callback({0}, id, callback, user_data);
+\tdevice_register_callback({0}->p, id, callback, user_data);
 }}
 """
     return func.format(device.get_underscore_name(), device.get_camel_case_name())
 
 def make_callback_wrapper_funcs():
     func = """
-static void {0}_callback_wrapper_{1}({2} *{0}, Packet *packet) {{
-\t{3}CallbackFunction callback_function = ({3}CallbackFunction){0}->registered_callbacks[{7}];
-\tvoid *user_data = {0}->registered_callback_user_data[{7}];{9}{8}
-{6}
-\tif (callback_function != NULL) {{
-\t\tcallback_function({5}{4}user_data);
+static void {0}_callback_wrapper_{1}(DevicePrivate *device_p, Packet *packet) {{
+\t{3}CallbackFunction callback_function = ({3}CallbackFunction)device_p->registered_callbacks[{7}];
+\tvoid *user_data = device_p->registered_callback_user_data[{7}];{9}{8}
+
+\tif (callback_function == NULL) {{
+\t\treturn;
 \t}}
+{6}
+\tcallback_function({5}{4}user_data);
 }}
 """
 
