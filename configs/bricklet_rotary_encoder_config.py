@@ -17,8 +17,8 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': ('GetCount', 'get_count'), 
-'elements': [('count', 'int32', 1, 'out'),
-             ('reset', 'bool', 1, 'in')],
+'elements': [('reset', 'bool', 1, 'in'),
+             ('count', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
