@@ -576,7 +576,7 @@ cn_all_uppercase = ['api', 'ir', 'us', 'lcd', 'dc', 'imu', 'pwm', 'gps', 'io4',
                     'io16', 'led', 'i2c', 'ptc', 'rs485', 'eap', 'usb', 'mac',
                     '2d', '3d', '1k', '100k', '500k', '6v', '10v', '36v', '45v',
                     'sps', 'oqpsk', 'bpsk40', 'dhcp', 'ip', 'wpa', 'wpa2', 'ca',
-                    'wep']
+                    'wep', 'rgb']
 
 cn_eap_suffix = ['fast', 'tls', 'ttls', 'peap', 'mschap', 'gtc']
 
