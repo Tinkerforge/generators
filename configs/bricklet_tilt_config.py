@@ -24,9 +24,22 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the current tilt state. The state can either be
+
+* Closed: The ball in the tilt switch closes the circuit.
+* Open: The ball in the tilt switch does not close the circuit.
+* Closed Vibrating: The tilt switch is in motion (rapid change between open and close).
+
 """,
 'de':
 """
+Gibt den aktuellen Tilt-Zustand zurück. Der Zustand kann folgende Werte
+annehmen:
+
+* Closed: Der Ball im Neigungsschalter schließt den Stromkreis.
+* Open: Der Ball im Neigungsschalter schließt den Stromkreis nicht.
+* Closed Vibrating: Der Neigungsschalter ist in Bewegung (schnelle Änderungen zwischen open und close).
+
 """
 }]
 })
@@ -39,9 +52,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
+Enables the :func:`TiltState` callback.
 """,
 'de':
 """
+Aktiviert den :func:`TiltState` Callback.
 """
 }]
 })
@@ -54,9 +69,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
+Disables the :func:`TiltState` callback.
 """,
 'de':
 """
+Deaktiviert den :func:`TiltState` Callback.
 """
 }]
 })
@@ -69,9 +86,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
+Returns *true* if the :func:`TiltState` callback is enabled.
 """,
 'de':
 """
+Gibt *true* zurück wenn der :func:`TiltState` Callback aktiviert ist.
 """
 }]
 })
@@ -87,9 +106,17 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
+This callback provides the current tilt state. It is called everytime the
+state changes.
+
+See :func:`GetTiltState` for a description of the states.
 """,
 'de':
 """
+Dieser Callback übergibt den aktuellen Tilt-Status. Der Callback wird
+aufgerufen wenn sich der Status ändert.
+
+Siehe :func:`GetTiltState` für eine Beschreibung der Zustände.
 """
 }]
 })
