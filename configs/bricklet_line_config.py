@@ -22,7 +22,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO: Description
+Returns the currently measured reflectivity. The reflectivity is
+a value between 0 (not reflective) and 4095 (very reflective).
+
+Usually black has a low reflectivity while white has a high
+reflectivity.
 
 If you want to get the reflectivity periodically, it is recommended 
 to use the callback :func:`Reflectivity` and set the period with 
@@ -30,6 +34,12 @@ to use the callback :func:`Reflectivity` and set the period with
 """,
 'de':
 """
+
+Gibt die aktuell gemessene Reflektivität zurück. Die Reflektivität
+ist ein Wert zwischen 0 (nicht reflektiv) und 4095 (sehr reflektiv).
+
+Normalerweise hat schwarz eine geringe Reflektivität während
+weiß eine hohe Reflektivität hat.
 
 Wenn die Reflektivität periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Reflectivity` zu nutzen und die Periode mit 
