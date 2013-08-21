@@ -23,9 +23,15 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns 0 if a motion was detected. How long this returns 0 after a motion
+was detected can be adjusted with one of the small potentiometers on the
+Motion Detector Bricklet, see here. TODO: ADD LINK
 """,
 'de':
 """
+Gibt 0 zurück wenn eine Bewegung detektiert wurde. Wie lange 0 zürückgegeben wird
+nachdem eine Bewegung detektiert wurde kann mit einem kleinen Poti auf
+dem Motion Detector Bricklet eingestellt werden, siehe hier. TODO: LINK HINZUFÜGEN
 """
 }]
 })
@@ -38,9 +44,11 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
+This callback is called after a motion was detected.
 """,
 'de':
 """
+Dieser Callback wird aufgerufen nachdem eine Bewegung detektiert wurde.
 """
 }]
 })
@@ -53,9 +61,14 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
+This callback is called when the detection cycle ended. After this
+callback is called, a new motion can be detected again.
 """,
 'de':
 """
+Dieser Callback wird aufgerufen wenn ein Bewegungserkennungszyklus
+beendet ist. Nachdem dieser Callback aufgerufen wurde kann wieder
+eine weitere Bewegung erkannt werden.
 """
 }]
 })
