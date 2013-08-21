@@ -35,7 +35,7 @@ so a negative count is possible.
 'de':
 """
 Gibt den aktuellen Zählerwert des Encoders zurück. Wenn
-der reset auf true gesetzt wird, wird der Zählerstand
+reset auf true gesetzt wird, wird der Zählerstand
 direkt nach dem auslesen auf 0 zurück gesetzt.
 
 Der Encoder hat 24 Schritte pro Umdrehung.
@@ -291,10 +291,10 @@ to handle the button.
 """,
 'de':
 """
-Gibt *true* zurück wenn die Taste gedrückt ist und sonst *false*.
+Gibt *true* zurück wenn der Taster gedrückt ist und sonst *false*.
 
 Es wird empfohlen die :func:`Pressed` und :func:`Released` Callbacks
-zu nutzen, um die Taste programmatisch zu behandeln.
+zu nutzen, um den Taster programmatisch zu behandeln.
 """
 }]
 })
@@ -311,7 +311,7 @@ This callback is triggered when the button is pressed.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn die Taste gedrückt wird.
+Dieser Callback wird ausgelöst wenn der Taster gedrückt wird.
 """
 }]
 })
@@ -328,7 +328,7 @@ This callback is triggered when the button is released.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn die Taste losgelassen wird.
+Dieser Callback wird ausgelöst wenn der Taster losgelassen wird.
 """
 }]
 })
