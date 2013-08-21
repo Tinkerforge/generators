@@ -126,7 +126,7 @@ com['packets'].append({
 'name': ('GetRepeats', 'get_repeats'), 
 'elements': [('repeats', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
-'doc': ['bf', {
+'doc': ['af', {
 'en':
 """
 Returns the number of repeats as set by :func:`SetRepeats`. 
