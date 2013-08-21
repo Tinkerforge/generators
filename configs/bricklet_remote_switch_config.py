@@ -65,8 +65,8 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetTries', 'set_tries'), 
-'elements': [('tries', 'uint8', 1, 'in')],
+'name': ('SetRepeats', 'set_repeats'), 
+'elements': [('repeats', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -82,17 +82,17 @@ Der Standardwert ist 5.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetTries', 'get_tries'), 
-'elements': [('tries', 'uint8', 1, 'out')],
+'name': ('GetRepeats', 'get_repeats'), 
+'elements': [('repeats', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the number of tries as set by :func:`SetTries`. 
+Returns the number of repeats as set by :func:`SetRepeats`. 
 """,
 'de':
 """
-Gibt die Anzahl der Versuche zurück, wie von :func:`SetTries` gesetzt.
+Gibt die Anzahl der Versuche zurück, wie von :func:`SetRepeats` gesetzt.
 """
 }]
 })
