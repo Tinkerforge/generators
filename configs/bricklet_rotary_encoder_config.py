@@ -262,3 +262,59 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 }]
 })
 
+com['packets'].append({
+'type': 'function',
+'name': ('IsPressed', 'is_pressed'), 
+'elements': [('pressed', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Returns *true* if the button is pressed and *false* otherwise.
+
+It is recommended to use the :func:`Pressed` and :func:`Released` callbacks
+to handle the button.
+""",
+'de':
+"""
+Gibt *true* zurück wenn die Taste gedrückt ist und sonst *false*.
+
+Es wird empfohlen die :func:`Pressed` und :func:`Released` Callbacks
+zu nutzen, um die Taste programmatisch zu behandeln.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('Pressed', 'pressed'), 
+'elements': [],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered when the button is pressed.
+""",
+'de':
+"""
+Dieser Callback wird ausgelöst wenn die Taste gedrückt wird.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('Released', 'released'), 
+'elements': [],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered when the button is released.
+""",
+'de':
+"""
+Dieser Callback wird ausgelöst wenn die Taste losgelassen wird.
+"""
+}]
+})
