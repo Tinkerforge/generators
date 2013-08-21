@@ -23,11 +23,25 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the current count of the encoder. If you set reset
+to true, the count is set back to 0 directly after the
+current count is read.
+
+The encoder has 24 steps per rotation
+
+Turning the encoder to the left decrements the counter,
+so a negative count is possible.
 """,
 'de':
 """
-TODO
+Gibt den aktuellen Zählerwert des Encoders zurück. Wenn
+der reset auf true gesetzt wird, wird der Zählerstand
+direkt nach dem auslesen auf 0 zurück gesetzt.
+
+Der Encoder hat 24 Schritte pro Umdrehung.
+
+Wenn der Encoder nach links gedreht wird wird der Zählerwert
+dekrementiert, d.h. negative Zählerwerte sind möglich.
 """
 }]
 })
