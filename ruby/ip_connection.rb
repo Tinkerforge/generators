@@ -477,6 +477,7 @@ module Tinkerforge
       @registered_callbacks = {}
 
       @socket_mutex = Mutex.new
+      @socket_send_mutex = Mutex.new
       @socket = nil # protected by socket_mutex
       @socket_id = 0 # protected by socket_mutex
 
@@ -672,7 +673,9 @@ module Tinkerforge
         end
 
         begin
-          @socket.send request, 0
+          @socket_send_mutex.synchronize {
+            @socket.send request, 0
+          }
         rescue IOError
           handle_disconnect_by_peer DISCONNECT_REASON_ERROR, @socket_id, true
           raise NotConnectedException, 'Not connected'
@@ -954,6 +957,9 @@ module Tinkerforge
 
     # internal
     def disconnect_probe_loop(disconnect_probe_queue)
+      # NOTE: the disconnect probe thread is not allowed to hold the socket_mutex at any
+      #       time because it is created and joined while the socket_mutex is locked
+
       request, _, _ = create_packet_header nil, 8, FUNCTION_DISCONNECT_PROBE
 
       while true
@@ -963,17 +969,17 @@ module Tinkerforge
           }
         rescue Timeout::Error
           if @disconnect_probe_flag
-            @socket_mutex.synchronize {
-              begin
+            begin
+              @socket_send_mutex.synchronize {
                 @socket.send request, 0
-              rescue IOError
-                handle_disconnect_by_peer DISCONNECT_REASON_ERROR, @socket_id, false
-                break
-              rescue Errno::ECONNRESET
-                handle_disconnect_by_peer DISCONNECT_REASON_SHUTDOWN, @socket_id, false
-                break
-              end
-            }
+              }
+            rescue IOError
+              handle_disconnect_by_peer DISCONNECT_REASON_ERROR, @socket_id, false
+              break
+            rescue Errno::ECONNRESET
+              handle_disconnect_by_peer DISCONNECT_REASON_SHUTDOWN, @socket_id, false
+              break
+            end
           else
             @disconnect_probe_flag = true
           end
