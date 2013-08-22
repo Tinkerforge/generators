@@ -336,11 +336,11 @@ def make_methods():
 \t\t}}
 """
 
-    method_oneway = """\t\t\tSendRequest(request);
+    method_noresponse = """\t\t\tSendRequest(request);
 """
 
     method_response = """\t\t\tbyte[] response = SendRequest(request);
-{1}"""
+{0}"""
 
     cls = device.get_camel_case_name()
     for packet in device.get_packets('function'):
@@ -382,9 +382,9 @@ def make_methods():
             pos += common.get_element_size(element)
 
         if ret_count > 0:
-            method_tail = method_response.format(name_upper, read_convs)
+            method_tail = method_response.format(read_convs)
         else:
-            method_tail = method_oneway.format(name_upper)
+            method_tail = method_noresponse
 
         signature = csharp_common.make_method_signature(packet)
         methods += method.format(signature,
