@@ -18,6 +18,9 @@ using System.Text;
 [assembly: CLSCompliant(true)]
 namespace Tinkerforge
 {
+	/// <summary>
+	///  The IPConnection creates a TCP/IP connection to the Brick Daemon.
+	/// </summary>
 	public class IPConnection
 	{
 		internal int responseTimeout = 2500;
@@ -1094,6 +1097,11 @@ namespace Tinkerforge
 			}
 		}
 
+		/// <summary>
+		///  Returns the UID, the UID where the Brick/Bricklet is connected to,
+		///  the position, the hardware and firmware version as well as the
+		///  device identifier.
+		/// </summary>
 		public abstract void GetIdentity(out string uid, out string connectedUid, out char position,
 		                                 out byte[] hardwareVersion, out byte[] firmwareVersion,
 		                                 out int deviceIdentifier);
