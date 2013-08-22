@@ -912,7 +912,6 @@ module Tinkerforge
     # internal
     def dispatch_packet(packet)
       uid = get_uid_from_data packet
-      length = get_length_from_data packet
       function_id = get_function_id_from_data packet
 
       if function_id == CALLBACK_ENUMERATE and \
