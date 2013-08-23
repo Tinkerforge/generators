@@ -66,3 +66,4 @@
        Fix locking for disconnect probe thread detecting a socket error
 2.0.8: Add support for PTC Bricklet and Industrial Dual 0-20mA Bricklet
 2.0.9: Avoid ConcurrentModificationException in listener handling by using CopyOnWriteArrayList
+2.0.10: Avoid race condition between disconnect probe thread and disconnect function

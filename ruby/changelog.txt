@@ -43,3 +43,4 @@
        Only send disconnect probe if there was no packet send or received for 5s
        Add IMU orientation and Barometer averaging API
 2.0.8: Add support for PTC Bricklet and Industrial Dual 0-20mA Bricklet
+2.0.9: Avoid race condition between disconnect probe thread and disconnect function

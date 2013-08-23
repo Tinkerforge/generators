@@ -61,3 +61,4 @@
        Fix deserialization of chars in Python 3
        Add IMU orientation and Barometer averaging API
 2.0.8: Add support for PTC Bricklet and Industrial Dual 0-20mA Bricklet
+2.0.9: Avoid race condition between disconnect probe thread and disconnect function

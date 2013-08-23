@@ -63,3 +63,5 @@
        Avoid breaking strict-aliasing rules
 2.0.8: Avoid potential infinite loop in receive thread
        Handle incoming data correctly if multiple packets are received at once
+2.0.9: Avoid race condition between disconnect probe thread and disconnect function
+       Don't expose internal types such as Socket, Thread, Mutex etc anymore
