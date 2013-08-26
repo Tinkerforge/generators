@@ -278,7 +278,7 @@ Chibi Slave Adressliste in diesem Fall 3 Einträge beinhaltet.
 Es ist möglich die Adressen mit dem Brick Viewer zu setzen, dieser kümmert sich
 dann um korrekte Adressnummerierung und Terminierung der Liste.
 
-Die Slave Adresse werden im EEPROM der RS485 Extension abgespeichert. Ein
+Die Slave Adresse werden im EEPROM der Chibi Extension abgespeichert. Ein
 Setzen bei jedem Start ist daher nicht notwendig.
 """
 }]
