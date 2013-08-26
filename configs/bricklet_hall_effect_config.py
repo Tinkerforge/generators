@@ -61,7 +61,7 @@ nach dem auslesen auf 0 zurückgesetzt.
 com['packets'].append({
 'type': 'function',
 'name': ('SetEdgeCountConfig', 'set_edge_count_config'),
-'elements': [('edge_type', 'uint8', 1, 'in', ('EdgeType', 'edge_tyoe', [('Rising', 'rising', 0),
+'elements': [('edge_type', 'uint8', 1, 'in', ('EdgeType', 'edge_type', [('Rising', 'rising', 0),
                                                                         ('Falling', 'falling', 1),
                                                                         ('Both', 'both', 2)])),
              ('debounce', 'uint8', 1, 'in')],
@@ -107,7 +107,7 @@ Standardwerte: 0 (edge type) und 100ms (debounce).
 com['packets'].append({
 'type': 'function',
 'name': ('GetEdgeCountConfig', 'get_edge_count_config'),
-'elements': [('edge_type', 'uint8', 1, 'out', ('EdgeType', 'edge_tyoe', [('Rising', 'rising', 0),
+'elements': [('edge_type', 'uint8', 1, 'out', ('EdgeType', 'edge_type', [('Rising', 'rising', 0),
                                                                          ('Falling', 'falling', 1),
                                                                          ('Both', 'both', 2)])),
              ('debounce', 'uint8', 1, 'out')],
