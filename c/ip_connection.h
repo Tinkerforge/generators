@@ -366,7 +366,7 @@ struct _IPConnectionPrivate {
 	bool auto_reconnect_pending;
 
 	Mutex sequence_number_mutex;
-	int next_sequence_number; // protected by sequence_number_mutex
+	uint8_t next_sequence_number; // protected by sequence_number_mutex
 
 	Table devices;
 

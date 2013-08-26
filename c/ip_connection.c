@@ -1783,7 +1783,7 @@ void ipcon_register_callback(IPConnection *ipcon, uint8_t id, void *callback,
 int packet_header_create(PacketHeader *header, uint8_t length,
                          uint8_t function_id, IPConnectionPrivate *ipcon_p,
                          DevicePrivate *device_p) {
-	int sequence_number;
+	uint8_t sequence_number;
 	bool response_expected = false;
 	int ret = E_OK;
 
