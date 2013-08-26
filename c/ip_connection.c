@@ -1026,8 +1026,7 @@ static void ipcon_dispatch_meta(IPConnectionPrivate *ipcon_p, Meta *meta) {
 
 	if (meta->function_id == IPCON_CALLBACK_CONNECTED) {
 		if (ipcon_p->registered_callbacks[IPCON_CALLBACK_CONNECTED] != NULL) {
-			connected_callback_function =
-			    (ConnectedCallbackFunction)ipcon_p->registered_callbacks[IPCON_CALLBACK_CONNECTED];
+			*(void **)(&connected_callback_function) = ipcon_p->registered_callbacks[IPCON_CALLBACK_CONNECTED];
 			user_data = ipcon_p->registered_callback_user_data[IPCON_CALLBACK_CONNECTED];
 
 			connected_callback_function(meta->parameter, user_data);
@@ -1062,8 +1061,7 @@ static void ipcon_dispatch_meta(IPConnectionPrivate *ipcon_p, Meta *meta) {
 		thread_sleep(100);
 
 		if (ipcon_p->registered_callbacks[IPCON_CALLBACK_DISCONNECTED] != NULL) {
-			disconnected_callback_function =
-			    (DisconnectedCallbackFunction)ipcon_p->registered_callbacks[IPCON_CALLBACK_DISCONNECTED];
+			*(void **)(&disconnected_callback_function) = ipcon_p->registered_callbacks[IPCON_CALLBACK_DISCONNECTED];
 			user_data = ipcon_p->registered_callback_user_data[IPCON_CALLBACK_DISCONNECTED];
 
 			disconnected_callback_function(meta->parameter, user_data);
@@ -1110,8 +1108,7 @@ static void ipcon_dispatch_packet(IPConnectionPrivate *ipcon_p, Packet *packet) 
 
 	if (packet->header.function_id == IPCON_CALLBACK_ENUMERATE) {
 		if (ipcon_p->registered_callbacks[IPCON_CALLBACK_ENUMERATE] != NULL) {
-			enumerate_callback_function =
-			    (EnumerateCallbackFunction)ipcon_p->registered_callbacks[IPCON_CALLBACK_ENUMERATE];
+			*(void **)(&enumerate_callback_function) = ipcon_p->registered_callbacks[IPCON_CALLBACK_ENUMERATE];
 			user_data = ipcon_p->registered_callback_user_data[IPCON_CALLBACK_ENUMERATE];
 			enumerate_callback = (EnumerateCallback *)packet;
 
@@ -1783,7 +1780,7 @@ void ipcon_register_callback(IPConnection *ipcon, uint8_t id, void *callback,
 int packet_header_create(PacketHeader *header, uint8_t length,
                          uint8_t function_id, IPConnectionPrivate *ipcon_p,
                          DevicePrivate *device_p) {
-	int sequence_number;
+	uint8_t sequence_number;
 	bool response_expected = false;
 	int ret = E_OK;
 
