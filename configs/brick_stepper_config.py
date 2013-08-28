@@ -1043,12 +1043,12 @@ It returns the new state as well as the previous state.
 
 Possible states are:
 
-* Stop = 1
-* Acceleration = 2
-* Run = 3
-* Deacceleration = 4
-* Direction change to forward = 5
-* Direction change to backward = 6
+* 1 = Stop
+* 2 = Acceleration
+* 3 = Run
+* 4 = Deacceleration
+* 5 = Direction change to forward
+* 6 = Direction change to backward
 """,
 'de':
 """
@@ -1058,12 +1058,12 @@ zurückgegeben.
 
 Mögliche Zustände sind:
 
-* Stopp = 1
-* Beschleunigung = 2
-* Fahren = 3
-* Verzögerung = 4
-* Richtungswechsel auf Vorwärts = 5
-* Richtungswechsel auf Rückwärts = 6
+* 1 = Stopp
+* 2 = Beschleunigung
+* 3 = Fahren
+* 4 = Verzögerung
+* 5 = Richtungswechsel auf Vorwärts
+* 6 = Richtungswechsel auf Rückwärts
 """
 }]
 })

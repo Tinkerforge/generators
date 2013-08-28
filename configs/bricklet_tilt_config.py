@@ -26,9 +26,9 @@ com['packets'].append({
 """
 Returns the current tilt state. The state can either be
 
-* Closed: The ball in the tilt switch closes the circuit.
-* Open: The ball in the tilt switch does not close the circuit.
-* Closed Vibrating: The tilt switch is in motion (rapid change between open and close).
+* 0 = Closed: The ball in the tilt switch closes the circuit.
+* 1 = Open: The ball in the tilt switch does not close the circuit.
+* 2 = Closed Vibrating: The tilt switch is in motion (rapid change between open and close).
 
 """,
 'de':
@@ -36,9 +36,9 @@ Returns the current tilt state. The state can either be
 Gibt den aktuellen Tilt-Zustand zurück. Der Zustand kann folgende Werte
 annehmen:
 
-* Closed: Der Ball im Neigungsschalter schließt den Stromkreis.
-* Open: Der Ball im Neigungsschalter schließt den Stromkreis nicht.
-* Closed Vibrating: Der Neigungsschalter ist in Bewegung (schnelle Änderungen zwischen open und close).
+* 0 = Closed: Der Ball im Neigungsschalter schließt den Stromkreis.
+* 1 = Open: Der Ball im Neigungsschalter schließt den Stromkreis nicht.
+* 2 = Closed Vibrating: Der Neigungsschalter ist in Bewegung (schnelle Änderungen zwischen open und close).
 
 """
 }]
