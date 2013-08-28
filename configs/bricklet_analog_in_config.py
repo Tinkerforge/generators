@@ -556,7 +556,7 @@ Gibt den Messbereich zurück, wie von :func:`SetRange` gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': ('SetAveraging', 'set_averaging'),
-'elements': [('length', 'uint8', 1, 'in')],
+'elements': [('average', 'uint8', 1, 'in')],
 'since_firmware': [2, 0, 3],
 'doc': ['af', {
 'en':
@@ -585,7 +585,7 @@ Der Standardwert ist 50.
 com['packets'].append({
 'type': 'function',
 'name': ('GetAveraging', 'get_averaging'),
-'elements': [('length', 'uint8', 1, 'out')],
+'elements': [('average', 'uint8', 1, 'out')],
 'since_firmware': [2, 0, 3],
 'doc': ['af', {
 'en':

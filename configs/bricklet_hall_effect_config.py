@@ -70,7 +70,11 @@ com['packets'].append({
 'en':
 """
 The edge type parameter configures if rising edges, falling edges or 
-both are counted.
+both are counted. Possible edge types are:
+
+* 0 = rising (default)
+* 1 = falling
+* 2 = both
 
 A magnetic field of 40 Gauss (4mT) or greater causes a falling edge and a
 magnetic field of 30 Gauss (3mT) or smaller causes a rising edge.
@@ -88,7 +92,12 @@ Default values: 0 (edge type) and 100ms (debounce time)
 'de':
 """
 Der edge type Parameter konfiguriert den zu zählenden Flankentyp. Es können
-steigende, fallende oder beide Flanken gezählt werden.
+steigende, fallende oder beide Flanken gezählt werden. Mögliche Flankentypen
+sind:
+
+* 0 = steigend (Standard)
+* 1 = fallend
+* 2 = beide
 
 Wenn ein Magnet in die nähe des Bricklets entsteht ein *low*-Signal
 (fallende Flanke), wenn ein ein Magnet vom Bricklet entfernt wird entsteht

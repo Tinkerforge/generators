@@ -489,7 +489,11 @@ Configures the edge counter for pin 0 of the selected port. Pin 1-7 don't
 support edge counting.
 
 The edge type parameter configures if rising edges, falling edges or
-both are counted if the pin is configured for input.
+both are counted if the pin is configured for input. Possible edge types are:
+
+* 0 = rising (default)
+* 1 = falling
+* 2 = both
 
 The debounce time is given in ms.
 
@@ -505,7 +509,11 @@ steht kein Flankenzähler zur Verfügung.
 
 Der edge type Parameter konfiguriert den zu zählenden Flankentyp. Es können
 steigende, fallende oder beide Flanken gezählt werden für Pins die als Eingang
-konfiguriert sind.
+konfiguriert sind. Mögliche Flankentypen sind:
+
+* 0 = steigend (Standard)
+* 1 = fallend
+* 2 = beide
 
 Die Entprellzeit (debounce) wird in ms angegeben.
 

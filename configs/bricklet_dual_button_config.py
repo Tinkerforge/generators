@@ -31,10 +31,10 @@ com['packets'].append({
 """
 Sets the state of the LEDs. Possible states are:
 
-* AutoToggleOn: Enables auto toggle with enabled LED.
-* AutoToggleOff: Activates auto toggle with disabled LED.
-* On: Enables LED (auto toggle is disabled).
-* Off: Disables LED (auto toggle is disabled).
+* 0 = AutoToggleOn: Enables auto toggle with enabled LED.
+* 1 = AutoToggleOff: Activates auto toggle with disabled LED.
+* 2 = On: Enables LED (auto toggle is disabled).
+* 3 = Off: Disables LED (auto toggle is disabled).
 
 In auto toggle mode the LED is toggled automatically whenever the
 button is pressed.
@@ -43,10 +43,10 @@ button is pressed.
 """
 Setzt den Zustand der LEDs. Möglich Zustände sind:
 
-* AutoToggleOn: Aktiviert auto toggle und aktiviert LED
-* AutoToggleOff: Aktiviert auto toggle und deaktiviert LED.
-* On: Aktiviert LED (auto toggle is deaktiviert).
-* Off: Deaktiviert LED (auto toggle is deaktiviert).
+* 0 = AutoToggleOn: Aktiviert Auto-Toggle und aktiviert LED
+* 1 = AutoToggleOff: Aktiviert Auto-Toggle und deaktiviert LED.
+* 2 = On: Aktiviert LED (Auto-Toggle is deaktiviert).
+* 3 = Off: Deaktiviert LED (Auto-Toggle is deaktiviert).
 
 Im auto toggle Modus wechselt die LED automatisch zwischen
 aus und an wenn der Taster gedrückt wird.
@@ -89,17 +89,21 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the current state for both buttons. Possible states are
-pressed and released.
+Returns the current state for both buttons. Possible states are:
+
+* 0 = pressed
+* 1 = released
 """,
 'de':
 """
 Gibt den aktuellen Zustand beider Taster zurück. Mögliche
-Zustände sind pressed (gedrückt) und released (losgelassen).
+Zustände sind:
+
+* 0 = pressed (gedrückt)
+* 1 = released (losgelassen)
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'callback',
@@ -122,28 +126,33 @@ com['packets'].append({
 """
 This callback is called whenever a button is pressed. 
 
-Possible states for buttons are pressed and released.
+Possible states for buttons are:
+
+* 0 = pressed
+* 1 = released
 
 Possible states for leds are:
 
-* AutoToggleOn: Auto toggle enabled and LED on.
-* AutoToggleOff: Auto toggle emabled and LED off.
-* On: LED on (auto toggle ist disabled).
-* Off: LED off (auto toggle ist disabled).
+* 0 = AutoToggleOn: Auto toggle enabled and LED on.
+* 1 = AutoToggleOff: Auto toggle emabled and LED off.
+* 2 = On: LED on (auto toggle ist disabled).
+* 3 = Off: LED off (auto toggle ist disabled).
 """,
 'de':
 """
 Dieser Callback wird aufgerufen wenn einer der Taster gedrückt wird.
 
-Mögliche Zustände der Taster sind pressed (gedrückt) und 
-released (losgelassen).
+Mögliche Zustände der Taster sind:
+
+* 0 = pressed (gedrückt)
+* 1 = released (losgelassen)
 
 Mögliche Zustände der LEDs sind:
 
-* AutoToggleOn: Auto toggle aktiv und LED an.
-* AutoToggleOff: Auto toggle aktiv und LED aus.
-* On: Aktiviert LED (auto toggle ist deaktiviert).
-* Off: Deaktiviert LED (auto toggle ist deaktiviert).
+* 0 = AutoToggleOn: Auto-Toggle aktiv und LED an.
+* 1 = AutoToggleOff: Auto-Toggle aktiv und LED aus.
+* 2 = On: Aktiviert LED (Auto-Toggle ist deaktiviert).
+* 3 = Off: Deaktiviert LED (Auto-Toggle ist deaktiviert).
 """
 }]
 })
