@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 223,
     'name': ('IndustrialDigitalIn4', 'industrial_digital_in_4', 'Industrial Digital In 4'),
@@ -77,6 +77,9 @@ port B respectively, you could call with "['a', 'b', 'n', 'n']".
 Now the pins on the Digital In 4 on port A are assigned to 0-3 and the
 pins on the Digital In 4 on port B are assigned to 4-7. It is now possible
 to call :func:`GetValue` and read out two Bricklets at the same time.
+
+Changing the group configuration resets the alle edge counter configurations
+and values.
 """,
 'de':
 """
@@ -96,6 +99,9 @@ sind, könnte diese Funktion mit "['a', 'b', 'n', 'n']" aufgerufen werden.
 In diesem Fall wären die Pins von Port A den Werten 0-3 zugewiesen und
 die Pins von Port B den Werten 4-7. Es ist jetzt möglich mit der Funktion
 :func:`GetValue` beide Bricklets gleichzeitig auszulesen.
+
+Änderungen an der Gruppeneinteilung setzt die Konfiguration und Zählerwerte
+aller Flankenzähler zurück.
 """
 }]
 })
@@ -279,4 +285,94 @@ Beispiele:
 }]
 })
 
+com['packets'].append({
+'type': 'function',
+'name': ('GetEdgeCount', 'get_edge_count'),
+'elements': [('pin', 'uint8', 1, 'in'),
+             ('reset_counter', 'bool', 1, 'in'),
+             ('count', 'uint32', 1, 'out')],
+'since_firmware': [2, 0, 1],
+'doc': ['bf', {
+'en':
+"""
+Returns the current value of the edge counter for the selected pin. You can
+configure the edges that are counted with :func:`SetEdgeCountConfig`.
 
+If you set the reset counter to *true*, the count is set back to 0
+directly after it is read.
+""",
+'de':
+"""
+Gibt den aktuellen Wert des Flankenzählers für den ausgewählten Pin zurück. Die
+zu zählenden Flanken können mit :func:`SetEdgeCountConfig` konfiguriert werden.
+
+Wenn reset counter auf *true* gesetzt wird, wird der Zählerstand direkt
+nach dem auslesen auf 0 zurückgesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetEdgeCountConfig', 'set_edge_count_config'),
+'elements': [('selection_mask', 'uint16', 1, 'in'),
+             ('edge_type', 'uint8', 1, 'in', ('EdgeType', 'edge_type', [('Rising', 'rising', 0),
+                                                                        ('Falling', 'falling', 1),
+                                                                        ('Both', 'both', 2)])),
+             ('debounce', 'uint8', 1, 'in')],
+'since_firmware': [2, 0, 1],
+'doc': ['af', {
+'en':
+"""
+Configures the edge counter for the selected pins.
+
+The edge type parameter configures if rising edges, falling edges or
+both are counted if the pin is configured for input.
+
+The debounce time is given in ms.
+
+If you don't know what any of this means, just leave it at default. The
+default configuration is very likely OK for you.
+
+Default values: 0 (edge type) and 100ms (debounce time)
+""",
+'de':
+"""
+Konfiguriert den Flankenzähler für die ausgewählten Pins.
+
+Der edge type Parameter konfiguriert den zu zählenden Flankentyp. Es können
+steigende, fallende oder beide Flanken gezählt werden für Pins die als Eingang
+konfiguriert sind.
+
+Die Entprellzeit (debounce) wird in ms angegeben.
+
+Falls unklar ist was dies alles bedeutet, kann diese Funktion einfach
+ignoriert werden. Die Standardwerte sind in fast allen Situationen OK.
+
+Standardwerte: 0 (edge type) und 100ms (debounce).
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetEdgeCountConfig', 'get_edge_count_config'),
+'elements': [('pin', 'uint8', 1, 'in'),
+             ('edge_type', 'uint8', 1, 'out', ('EdgeType', 'edge_type', [('Rising', 'rising', 0),
+                                                                         ('Falling', 'falling', 1),
+                                                                         ('Both', 'both', 2)])),
+             ('debounce', 'uint8', 1, 'out')],
+'since_firmware': [2, 0, 1],
+'doc': ['af', {
+'en':
+"""
+Returns the edge type and debounce time for the selected pin as set by
+:func:`SetEdgeCountConfig`.
+""",
+'de':
+"""
+Gibt den Flankentyp sowie die Entprellzeit für den ausgewählten Pin zurück,
+wie von :func:`SetEdgeCountConfig` gesetzt.
+"""
+}]
+})

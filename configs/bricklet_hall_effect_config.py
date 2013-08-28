@@ -41,7 +41,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the current count of the edge counter. You can configure
+Returns the current value of the edge counter. You can configure
 the edges that are counted with :func:`SetEdgeCountConfig`.
 
 If you set the reset counter to *true*, the count is set back to 0
@@ -49,7 +49,7 @@ directly after it is read.
 """,
 'de':
 """
-Gibt den aktuellen Zählerwert des Flankenzählers zurück. Die zu
+Gibt den aktuellen Wert des Flankenzählers zurück. Die zu
 zählenden Flanken können mit :func:`SetEdgeCountConfig` konfiguriert werden.
 
 Wenn reset counter auf *true* gesetzt wird, wird der Zählerstand direkt
@@ -119,7 +119,7 @@ Returns the edge type and debounce time as set by :func:`SetEdgeCountConfig`.
 """,
 'de':
 """
-Gibt den edge type sowie die Entprellzeit zurück, wie von 
+Gibt den Flankentyp sowie die Entprellzeit zurück, wie von
 :func:`SetEdgeCountConfig` gesetzt.
 """
 }]
