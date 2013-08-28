@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-# Linear Poti Bricklet communication config
+# Analog In Bricklet communication config
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 1],
+    'api_version': [2, 0, 2],
     'category': 'Bricklet',
     'device_identifier': 219,
     'name': ('AnalogIn', 'analog_in', 'Analog In'),
@@ -498,7 +498,8 @@ com['packets'].append({
                                                              ('UpTo6V', 'up_to_6v', 1),
                                                              ('UpTo10V', 'up_to_10v', 2),
                                                              ('UpTo36V', 'up_to_36v', 3),
-                                                             ('UpTo45V', 'up_to_45v', 4)]))],
+                                                             ('UpTo45V', 'up_to_45v', 4),
+                                                             ('UpTo3V', 'up_to_3v', 5)]))],
 'since_firmware': [2, 0, 1],
 'doc': ['bf', {
 'en':
@@ -510,6 +511,7 @@ Sets the measurement range. Possible ranges:
 * 2: 0V - 10.32V, ~2.52mV resolution
 * 3: 0V - 36.30V, ~8.86mV resolution
 * 4: 0V - 45.00V, ~11.25mV resolution
+* 5: 0V - 3.3V, ~0.81mV resolution, new in version 2.0.3 (Plugin)
 
 The default measurement range is 0.
 """,
@@ -522,6 +524,7 @@ Setzt den Messbereich. Mögliche Bereiche:
 * 2: 0V - 10,32V, ~2,52mV Auflösung
 * 3: 0V - 36,30V, ~8,86mV Auflösung
 * 4: 0V - 45,00V, ~11,25mV Auflösung
+* 5: 0V - 3,3V, ~0,81mV resolution, neu in Version 2.0.3 (Plugin)
 
 Der Standardbereich ist 0.
 """
@@ -535,7 +538,8 @@ com['packets'].append({
                                                               ('UpTo6V', 'up_to_6v', 1),
                                                               ('UpTo10V', 'up_to_10v', 2),
                                                               ('UpTo36V', 'up_to_36v', 3),
-                                                              ('UpTo45V', 'up_to_45v', 4)]))],
+                                                              ('UpTo45V', 'up_to_45v', 4),
+                                                              ('UpTo3V', 'up_to_3v', 5)]))],
 'since_firmware': [2, 0, 1],
 'doc': ['bf', {
 'en':
@@ -545,6 +549,53 @@ Returns the measurement range as set by :func:`SetRange`.
 'de':
 """
 Gibt den Messbereich zurück, wie von :func:`SetRange` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetAveraging', 'set_averaging'),
+'elements': [('length', 'uint8', 1, 'in')],
+'since_firmware': [2, 0, 3],
+'doc': ['af', {
+'en':
+"""
+Set the length of a averaging for the voltage value.
+
+Setting the length to 0 will turn the averaging completely off. If the
+averaging is off, there is more noise on the data, but the data is without
+delay.
+
+The default value is 50.
+""",
+'de':
+"""
+Setzt die Länge des Mittelwerts für die Spannung.
+
+Wenn die Länge auf 0 gesetzt wird, ist das Averaging komplett aus. In diesem
+Fall gibt es mehr Rauschen auf den Daten, allerdings sind die Daten dann ohne
+Verzögerung.
+
+Der Standardwert ist 50.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetAveraging', 'get_averaging'),
+'elements': [('length', 'uint8', 1, 'out')],
+'since_firmware': [2, 0, 3],
+'doc': ['af', {
+'en':
+"""
+Returns the averaging configuration as set by :func:`SetAveraging`.
+""",
+'de':
+"""
+Gibt die Averaging-Konfiguration zurück, wie von :func:`SetAveraging`
+gesetzt.
 """
 }]
 })
