@@ -10,28 +10,17 @@ import os
 import time
 
 current_parser = None
+line_separator = '\n'
+group_terminator = '\n'
 
-def fatal(message, exit_code=1):
-	if current_parser is not None:
-		prog = current_parser.prog
-	else:
-		prog = 'tinkerforge'
-
-	sys.stderr.write('{0}: error: {1}\n'.format(prog, message))
-	sys.exit(exit_code)
-
-if sys.hexversion < 0x02050000:
-	fatal('requiring python 2.5 or newer', 21)
-
-try:
-	import argparse
-except ImportError:
-	fatal('requiring python argparse module', 22)
-
+# set from environment variable
 dry_run = False
 
-host = None
-port = None
+# set from command line
+connect_host = None
+connect_port = None
+listen_address = None
+listen_port = None
 timeout = None
 duration = None
 uid = None
@@ -39,6 +28,30 @@ item_separator = None
 group_separator = None
 no_symbolic_input = None
 no_symbolic_output = None
+
+def fatal_error(message, exit_code=1):
+	sys.stderr.write('tinkerforge: error: {1}\n'.format(prog, message))
+	sys.exit(exit_code)
+
+if sys.hexversion < 0x02050000:
+	fatal_error('requiring python 2.5 or newer', 21)
+
+try:
+	import argparse
+except ImportError:
+	fatal_error('requiring python argparse module', 22)
+
+def output(string):
+	sys.stdout.write(string)
+
+class ParserExit(Exception):
+	pass
+
+class FatalError(Exception):
+	def __init__(self, message, exit_code=1):
+		Exception.__init__(self, message)
+
+		self.exit_code = exit_code
 
 class Parser(argparse.ArgumentParser):
 	def __init__(self, prog, description=None, epilog=None):
@@ -48,6 +61,10 @@ class Parser(argparse.ArgumentParser):
 		current_parser = self
 
 		self.add_argument('--help', action='help', help='show this help message and exit')
+
+	def error(self, message):
+		self.print_usage(sys.stderr)
+		raise FatalError(message, 2)
 
 class ParserWithExecute(Parser):
 	def __init__(self, prog):
@@ -67,8 +84,8 @@ def call_generic(name, functions, argv):
 
 	class ListFunctionsAction(argparse.Action):
 		def __call__(self, parser, namespace, values, option_string=None):
-			print('\n'.join(function_choices))
-			parser.exit()
+			output(line_separator.join(function_choices) + group_terminator)
+			raise ParserExit()
 
 	parser.add_argument('--list-functions', action=ListFunctionsAction, nargs=0, help='show functions of {0} and exit'.format(name))
 	parser.add_argument('uid', type=check_base58, help='uid of a ' + name, metavar='<uid>')
@@ -88,8 +105,8 @@ def dispatch_generic(name, callbacks, argv):
 
 	class ListCallbacksAction(argparse.Action):
 		def __call__(self, parser, namespace, values, option_string=None):
-			print('\n'.join(callback_choices))
-			parser.exit()
+			output(line_separator.join(callback_choices) + group_terminator)
+			raise ParserExit()
 
 	parser.add_argument('--list-callbacks', action=ListCallbacksAction, nargs=0, help='show callbacks of {0} and exit'.format(name))
 	parser.add_argument('uid', type=check_base58, help='uid of a ' + name, metavar='<uid>')
@@ -109,37 +126,37 @@ def device_send_request(device_class, function_id, request_data, format_in,
 		return
 
 	if command is not None:
-		def handle_result(values):
-			execute_result(command, names, values)
+		def handle_response(values):
+			execute_response(command, names, values)
 	else:
-		def handle_result(values):
-			print_result(names, values)
+		def handle_response(values):
+			output_response(names, values)
 
 	try:
 		ipcon = IPConnection()
 		ipcon.set_timeout(timeout / 1000.0)
-		ipcon.connect(host, port)
+		ipcon.connect(connect_host, connect_port)
 
 		device = device_class(uid, ipcon)
 
 		if expect_response:
 			device.set_response_expected(function_id, True)
 
-		result = ipcon.send_request(device, function_id, request_data, format_in, format_out)
+		response = ipcon.send_request(device, function_id, request_data, format_in, format_out)
 
-		if result is not None:
+		if response is not None:
 			if len(names) == 1:
-				result = (result,)
+				response = (response,)
 
-			result = format_symbolic_output(result, symbols)
+			response = format_symbolic_output(response, symbols)
 
-			handle_result(result)
+			handle_response(response)
 	except Error as e:
-		fatal(e.description.lower(), 200 - e.value)
+		raise FatalError(e.description.lower(), 200 - e.value)
 	except socket.error as e:
-		fatal(str(e).lower(), 23)
+		raise FatalError(str(e).lower(), 23)
 	except Exception as e:
-		fatal(str(e).lower(), 24)
+		raise FatalError(str(e).lower(), 24)
 	finally:
 		try:
 			ipcon.disconnect()
@@ -152,7 +169,7 @@ def device_callback(device_class, function_id, command, names):
 
 	if command is not None:
 		def callback(*values):
-			execute_result(command, names, values)
+			execute_response(command, names, values)
 	else:
 		is_first_callback = [True]
 
@@ -163,11 +180,11 @@ def device_callback(device_class, function_id, command, names):
 				else:
 					sys.stdout.write(group_separator)
 
-			print_result(names, values)
+			output_response(names, values)
 
 	try:
 		ipcon = IPConnection()
-		ipcon.connect(host, port)
+		ipcon.connect(connect_host, connect_port)
 
 		device = device_class(uid, ipcon)
 
@@ -193,11 +210,11 @@ def device_callback(device_class, function_id, command, names):
 
 			time.sleep(duration / 1000.0)
 	except Error as e:
-		fatal(e.description.lower(), 200 - e.value)
+		raise FatalError(e.description.lower(), 200 - e.value)
 	except socket.error as e:
-		fatal(str(e).lower(), 23)
+		raise FatalError(str(e).lower(), 23)
 	except Exception as e:
-		fatal(str(e).lower(), 24)
+		raise FatalError(str(e).lower(), 24)
 	finally:
 		try:
 			ipcon.disconnect()
@@ -337,8 +354,8 @@ def create_array_converter(type, length, length_is_fixed=True):
 
 	return convert_array
 
-def execute_result(command, names, values):
-	result = {}
+def execute_response(command, names, values):
+	formatted_values = {}
 
 	class Tuple(tuple):
 		def __init__(self, *args):
@@ -349,29 +366,33 @@ def execute_result(command, names, values):
 
 	for name, value in zip(names, values):
 		if type(value) == tuple:
-			result[name] = Tuple(value)
+			formatted_values[name] = Tuple(value)
 		elif type(value) == bool:
-			result[name] = str(value).lower()
+			formatted_values[name] = str(value).lower()
 		else:
-			result[name] = value
+			formatted_values[name] = value
 
 	try:
-		formatted_command = command.format(**result)
+		formatted_command = command.format(**formatted_values)
 	except KeyError as e:
-		fatal('invalid placeholder %s in format: %s' % (str(e).lower(), command), 25)
+		raise FatalError('invalid placeholder %s in format: %s' % (str(e).lower(), command), 25)
 	except Exception as e:
-		fatal('%s: %s' % (str(e).lower(), command), 24)
+		raise FatalError('%s: %s' % (str(e).lower(), command), 24)
 
 	os.system(formatted_command)
 
-def print_result(names, values):
+def output_response(names, values):
+	lines = []
+
 	for name, value in zip(names, values):
 		if type(value) == tuple:
-			print('{0}={1}'.format(name, item_separator.join(map(str, value))))
+			lines.append('{0}={1}'.format(name, item_separator.join(map(str, value))))
 		elif type(value) == bool:
-			print('{0}={1}'.format(name, str(value).lower()))
+			lines.append('{0}={1}'.format(name, str(value).lower()))
 		else:
-			print('{0}={1}'.format(name, value))
+			lines.append('{0}={1}'.format(name, value))
+
+	output(line_separator.join(lines) + group_terminator)
 
 def common_get_identity(prog_prefix, klass, argv):
 	parser = ParserWithExecute(prog_prefix + ' get-identity')

@@ -5,8 +5,8 @@ def command_call(argv):
 
 	class ListDevicesAction(argparse.Action):
 		def __call__(self, parser, namespace, values, option_string=None):
-			print('\n'.join(device_choices))
-			parser.exit()
+			output(line_separator.join(device_choices) + group_terminator)
+			raise ParserExit()
 
 	parser.add_argument('--list-devices', action=ListDevicesAction, nargs=0, help='show list of devices and exit')
 	parser.add_argument('--timeout', default=2500, type=int, help='maximum time (msec) to wait for response, default: 2500', metavar='<timeout>')
@@ -26,8 +26,8 @@ def command_dispatch(argv):
 
 	class ListDevicesAction(argparse.Action):
 		def __call__(self, parser, namespace, values, option_string=None):
-			print('\n'.join(device_choices))
-			parser.exit()
+			output(line_separator.join(device_choices) + group_terminator)
+			raise ParserExit()
 
 	parser.add_argument('--list-devices', action=ListDevicesAction, nargs=0, help='show list of devices and exit')
 	parser.add_argument('--duration', default=-1, type=create_symbol_converter(int, {'exit-after-first': 0, 'forever': -1}), help='time (msec) to dispatch incoming enumerate callbacks (exit-after-first: 0, forever: -1), default: forever', metavar='<duration>')
@@ -73,7 +73,7 @@ def command_enumerate(argv):
 			if values[6] in args.types:
 				values = format_symbolic_output(values, symbols)
 
-				execute_result(args.execute, names, values)
+				execute_response(args.execute, names, values)
 				return True
 	else:
 		def callback(*values):
@@ -81,16 +81,16 @@ def command_enumerate(argv):
 				if is_first_callback[0]:
 					is_first_callback[0] = False
 				else:
-					sys.stdout.write(group_separator)
+					output(group_separator)
 
 				values = format_symbolic_output(values, symbols)
 
-				print_result(names, values)
+				output_response(names, values)
 				return True
 
 	try:
 		ipcon = IPConnection()
-		ipcon.connect(host, port)
+		ipcon.connect(connect_host, connect_port)
 
 		if args.duration == 0:
 			exit_flag = [False]
@@ -116,11 +116,11 @@ def command_enumerate(argv):
 
 			time.sleep(args.duration / 1000.0)
 	except Error as e:
-		fatal(e.description.lower(), 200 - e.value)
+		raise FatalError(e.description.lower(), 200 - e.value)
 	except socket.error as e:
-		fatal(str(e).lower(), 23)
+		raise FatalError(str(e).lower(), 23)
 	except Exception as e:
-		fatal(str(e).lower(), 24)
+		raise FatalError(str(e).lower(), 24)
 	finally:
 		try:
 			ipcon.disconnect()
@@ -135,8 +135,8 @@ def parse(argv):
 	command_choices = ['call', 'dispatch', 'enumerate']
 
 	parser.add_argument('--version', action='version', version='<<VERSION>>')
-	parser.add_argument('--host', default='localhost', type=str, help='IP address or hostname, default: localhost', metavar='<host>')
-	parser.add_argument('--port', default=4223, type=int, help='port number, default: 4223', metavar='<port>')
+	parser.add_argument('--host', default='localhost', type=str, help='IP address or hostname to connect to, default: localhost', metavar='<host>')
+	parser.add_argument('--port', default=4223, type=int, help='port number to connect to, default: 4223', metavar='<port>')
 	parser.add_argument('--item-separator', default=',', type=str, help='separator for array items, default: , (comma)', metavar='<item-separator>')
 	parser.add_argument('--group-separator', default='\n', type=str, help='separator for output groups, default: \\n (newline)', metavar='<group-separator>')
 	parser.add_argument('--no-symbolic-input', action='store_true', help='disable symbolic input of values')
@@ -147,11 +147,11 @@ def parse(argv):
 
 	args = parser.parse_args(argv)
 
-	global host
-	host = args.host
+	global connect_host
+	connect_host = args.host
 
-	global port
-	port = args.port
+	global connect_port
+	connect_port = args.port
 
 	global item_separator
 	item_separator = args.item_separator
@@ -186,3 +186,13 @@ if __name__ == '__main__':
 		parse(sys.argv[1:])
 	except KeyboardInterrupt:
 		sys.exit(1)
+	except ParserExit:
+		sys.exit(0)
+	except FatalError as e:
+		if current_parser is not None:
+			prog = current_parser.prog
+		else:
+			prog = 'tinkerforge'
+
+		sys.stderr.write('{0}: error: {1}\n'.format(prog, e.message))
+		sys.exit(e.exit_code)
