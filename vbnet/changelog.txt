@@ -16,3 +16,5 @@
        Add IMU orientation and Barometer averaging API
 2.0.4: Add support for PTC Bricklet and Industrial Dual 0-20mA Bricklet
 2.0.5: Avoid race condition between disconnect probe thread and disconnect function
+2.0.6: Add edge counters to Industrial Digital In 4, IO-4 and IO-16 Bricklet
+       Make averaging length configurable for Analog In Bricklet

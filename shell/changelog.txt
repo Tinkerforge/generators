@@ -1,3 +1,5 @@
 2.0.0: Initial version
 2.0.1: Avoid race condition between disconnect probe thread and disconnect function
        Use exit code 1 for keyboard interrupt
+2.0.2: Add edge counters to Industrial Digital In 4, IO-4 and IO-16 Bricklet
+       Make averaging length configurable for Analog In Bricklet

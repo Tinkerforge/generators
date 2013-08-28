@@ -68,3 +68,5 @@
 2.0.8: Add support for PTC Bricklet and Industrial Dual 0-20mA Bricklet
        Fix Windows Phone support
 2.0.9: Avoid race condition between disconnect probe thread and disconnect function
+2.0.10: Add edge counters to Industrial Digital In 4, IO-4 and IO-16 Bricklet
+        Make averaging length configurable for Analog In Bricklet

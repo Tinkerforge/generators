@@ -65,3 +65,6 @@
        Handle incoming data correctly if multiple packets are received at once
 2.0.9: Avoid race condition between disconnect probe thread and disconnect function
        Don't expose internal types such as Socket, Thread, Mutex etc anymore
+2.0.10: Avoid void pointer to function pointer cast warnings with MSVC
+        Make averaging length configurable for Analog In Bricklet
+        Add edge counters to Industrial Digital In 4, IO-4 and IO-16 Bricklet
