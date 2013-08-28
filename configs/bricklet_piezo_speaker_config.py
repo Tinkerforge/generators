@@ -28,7 +28,7 @@ If you set a duration of 1000, with a frequency value of 100
 the piezo buzzer will beep for one second with a frequency of
 approximately 2 kHz.
 
-*frequency* can be set between 0 and 515.
+*frequency* can be set between 0 and 513.
 
 Below you can find a graph that shows the relation between the frequency
 value parameter and a frequency in Hz of the played tone:
@@ -46,7 +46,7 @@ Beispiel: Wenn *duration* auf 1000 und *frequency* auf 100 gesetzt wird,
 erzeugt der Piezosummer einen Piepton für eine Sekunde mit einer Frequenz 
 von ca. 2 kHz.
 
-*frequency* kann die Werte 0 bis 515 annehmen.
+*frequency* kann die Werte 0 bis 513 annehmen.
 
 Im folgenden befindet sich ein Graph der die Relation zwischen dem
 angegeben Frequenzwert und der Frequenz in Hz des gespieltens Tons
