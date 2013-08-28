@@ -61,14 +61,15 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called when the detection cycle ended. After this
-callback is called, a new motion can be detected again.
+This callback is called when the detection cycle ended. When this
+callback is called, a new motion can be detected again after aproximately 2 
+seconds.
 """,
 'de':
 """
 Dieser Callback wird aufgerufen wenn ein Bewegungserkennungszyklus
-beendet ist. Nachdem dieser Callback aufgerufen wurde kann wieder
-eine weitere Bewegung erkannt werden.
+beendet ist. Wenn dieser Callback aufgerufen wurde kann wieder
+eine weitere Bewegung erkannt werden nach ungefähr 2 Sekunden.
 """
 }]
 })
