@@ -23,16 +23,40 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Beeps with the given frequency in Hz for the duration in ms. For example: 
-If you set a duration of 1000, with a frequency of 2000
-the piezo buzzer will beep for one second with 2kHz.
+Beeps with the given frequency value for the duration in ms. For example: 
+If you set a duration of 1000, with a frequency value of 100
+the piezo buzzer will beep for one second with a frequency of
+approximately 2 kHz.
+
+*frequency* can be set between 0 and 515.
+
+Below you can find a graph that shows the relation between the frequency
+value parameter and a frequency in Hz of the played tone:
+
+.. image:: /Images/Bricklets/bricklet_piezo_speaker_value_to_frequency_graph.png
+   :scale: 100 %
+   :alt: Relation between value and frequency 
+   :align: center
+
 """,
 'de':
 """
-Erzeugt einen Piepton mit der gegebenen Frequenz in Hz für eine Dauer in ms. 
-Beispiel: *duration* auf 1000 und *frequency* auf 2000 gesetzt wird, 
+Erzeugt einen Piepton mit dem gegebenen Frequenzwert für eine Dauer in ms. 
+Beispiel: Wenn *duration* auf 1000 und *frequency* auf 100 gesetzt wird, 
 erzeugt der Piezosummer einen Piepton für eine Sekunde mit einer Frequenz 
-von 2kHz.
+von ca. 2 kHz.
+
+*frequency* kann die Werte 0 bis 515 annehmen.
+
+Im folgenden befindet sich ein Graph der die Relation zwischen dem
+angegeben Frequenzwert und der Frequenz in Hz des gespieltens Tons
+darstellt:
+
+.. image:: /Images/Bricklets/bricklet_piezo_speaker_value_to_frequency_graph.png
+   :scale: 100 %
+   :alt: Relation zwischen Wert und Frequenz
+   :align: center
+
 """
 }]
 })
@@ -49,7 +73,7 @@ com['packets'].append({
 Sets morse code that will be played by the piezo buzzer. The morse code
 is given as a string consisting of "." (dot), "-" (minus) and " " (space)
 for *dits*, *dahs* and *pauses*. Every other character is ignored.
-The second parameter is the frequency in Hz.
+The second parameter is the frequency value (see :func:`Beep`).
 
 For example: If you set the string "...---...", the piezo buzzer will beep
 nine times with the durations "short short short long long long short 
@@ -63,7 +87,7 @@ Setzt Morsecode welcher vom Piezosummer abgespielt wird. Der Morsecode wird
 als Zeichenkette, mit den Zeichen "." (Punkt), "-" (Minus) und " " (Leerzeichen)
 für *kurzes Signale*, *langes Signale* und *Pausen*. Alle anderen Zeichen
 werden ignoriert.
-Der zweite Parameter ist die Frequenz in Hz.
+Der zweite Parameter ist die Frequenzwert (see :func:`Beep`).
 
 Beispiel: Wenn die Zeichenkette "...---..." gesetzt wird, gibt der Piezosummer neun
 Pieptöne aus mit den Dauern "kurz kurz kurz lang lang lang kurz kurz kurz".
