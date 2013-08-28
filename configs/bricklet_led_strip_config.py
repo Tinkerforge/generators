@@ -55,8 +55,8 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetConfig', 'set_config'), 
-'elements': [('frame_duration', 'uint16', 1, 'in')],
+'name': ('SetFrameDuration', 'set_frame_duration'), 
+'elements': [('duration', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -70,8 +70,8 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetConfig', 'get_config'), 
-'elements': [('frame_duration', 'uint16', 1, 'out')],
+'name': ('GetFrameDuration', 'get_frame_duration'), 
+'elements': [('duration', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
