@@ -22,11 +22,31 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the current sound intensity. The value has a range of
+0 to 4095.
+
+The value corresponds to the `upper envelop <http://en.wikipedia.org/wiki/Envelope_(waves)>`__
+of the signal of the microphone capsule. The sensitivity of this
+signal can be configured with the small potentiometer on the
+Sound Intensity Bricklet.
+
+If you want to get the intensity periodically, it is recommended to use the
+callback :func:`Intensity` and set the period with 
+:func:`SetIntensityCallbackPeriod`.
 """,
 'de':
 """
-TODO
+Gibt die aktuelle Schallintensität zurück. Der Wertebereich
+ist von 0 bis 4095.
+
+Der Wert enspricht der `Hüllkurve <http://de.wikipedia.org/wiki/H%C3%BCllkurvendemodulator>`__
+des Signals der Lautsprecherkapsel. Die Empfindlichkeit des Signals
+kann mit dem kleinen Potentiometer auf dem Sound Intensity
+Bricklet eingestellt werden.
+
+Wenn die Schallintensität periodisch abgefragt werden soll, wird empfohlen
+den Callback :func:`Intensity` zu nutzen und die Periode mit 
+:func:`SetIntensityCallbackPeriod` vorzugeben.
 """
 }]
 })
