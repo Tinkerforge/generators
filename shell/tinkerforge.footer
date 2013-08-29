@@ -171,13 +171,19 @@ def parse(ctx, argv):
 
 	commands[args.command](ctx, args.args)
 
+def terminate(signal=None, frame=None):
+	sys.exit(ERROR_INTERRUPTED)
+
 def main():
+	signal.signal(signal.SIGINT, terminate)
+	signal.signal(signal.SIGTERM, terminate)
+
 	ctx = Context()
 
 	try:
 		parse(ctx, sys.argv[1:])
 	except KeyboardInterrupt:
-		sys.exit(1)
+		sys.exit(ERROR_INTERRUPTED)
 	except ParserExit:
 		sys.exit(0)
 	except FatalError as e:
