@@ -23,6 +23,8 @@ ERROR_OTHER_EXCEPTION = 24
 ERROR_INVALID_PLACEHOLDER = 25
 IPCONNECTION_ERROR_OFFSET = 200
 
+listen_mode = False
+enable_execute = True
 line_separator = '\n'
 group_terminator = '\n'
 
@@ -66,10 +68,11 @@ class FatalError(Exception):
 
 class Parser(argparse.ArgumentParser):
 	def __init__(self, ctx, prog, description=None, epilog=None):
-		if len(prog) > 0:
-			prog = 'tinkerforge ' + prog
-		else:
-			prog = 'tinkerforge'
+		if not listen_mode:
+			if len(prog) > 0:
+				prog = 'tinkerforge ' + prog
+			else:
+				prog = 'tinkerforge'
 
 		argparse.ArgumentParser.__init__(self, prog=prog, add_help=False, description=description, epilog=epilog)
 
@@ -95,14 +98,25 @@ class Parser(argparse.ArgumentParser):
 			raise FatalError(message, ERROR_OTHER_EXCEPTION)
 
 	def error(self, message):
-		self.print_usage(sys.stderr)
+		if not listen_mode:
+			self.print_usage(sys.stderr)
+
 		raise FatalError(message, ERROR_SYNTAX_ERROR)
 
 class ParserWithExecute(Parser):
 	def __init__(self, ctx, prog):
 		Parser.__init__(self, ctx, prog)
 
-		self.add_argument('--execute', type=str, help='shell command line to execute for each incoming response', metavar='<command>')
+		if enable_execute:
+			self.add_argument('--execute', type=str, help='shell command line to execute for each incoming response', metavar='<command>')
+
+	def parse_args(self, args):
+		namespace = argparse.Namespace()
+
+		if not enable_execute:
+			setattr(namespace, 'execute', None)
+
+		return Parser.parse_args(self, args, namespace)
 
 class ParserWithExpectResponse(Parser):
 	def __init__(self, ctx, prog):
@@ -181,6 +195,8 @@ def device_send_request(ctx, device_class, function_id, request_data, format_in,
 			response = format_symbolic_output(ctx, response, symbols)
 
 			handle_response(response)
+		elif listen_mode:
+			ctx.output(group_terminator)
 	except Error as e:
 		raise FatalError(e.description.lower(), IPCONNECTION_ERROR_OFFSET - e.value)
 	except socket.error as e:

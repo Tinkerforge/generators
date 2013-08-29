@@ -1,5 +1,6 @@
 
 def command_call(ctx, argv):
+	# FIXME: add description
 	parser = Parser(ctx, 'call')
 	device_choices = sorted(call_devices.keys())
 
@@ -20,6 +21,7 @@ def command_call(ctx, argv):
 	call_devices[args.device](ctx, args.args)
 
 def command_dispatch(ctx, argv):
+	# FIXME: add description
 	parser = Parser(ctx, 'dispatch')
 	device_choices = sorted(dispatch_devices.keys())
 
@@ -40,6 +42,7 @@ def command_dispatch(ctx, argv):
 	dispatch_devices[args.device](ctx, args.args)
 
 def command_enumerate(ctx, argv):
+	# FIXME: add description
 	parser = Parser(ctx, 'enumerate')
 
 	enumeration_type_symbols = {
@@ -50,9 +53,16 @@ def command_enumerate(ctx, argv):
 
 	parser.add_argument('--duration', default=250, type=create_symbol_converter(ctx, int, {'exit-after-first': 0, 'forever': -1}), help='time (msec) to dispatch incoming enumerate responses (exit-after-first: 0, forever: -1), default: 250', metavar='<duration>')
 	parser.add_argument('--types', default=[IPConnection.ENUMERATION_TYPE_AVAILABLE], type=create_array_converter(ctx, create_symbol_converter(ctx, int, enumeration_type_symbols, True), 3, False), help='array of enumeration types to dispatch (available: 0, connected: 1, disconnected: 2), default: available', metavar='<types>')
-	parser.add_argument('--execute', type=str, help='shell command line to execute for each incoming response', metavar='<command>')
 
-	args = parser.parse_args(argv)
+	if enable_execute:
+		parser.add_argument('--execute', type=str, help='shell command line to execute for each incoming response', metavar='<command>')
+
+	namespace = argparse.Namespace()
+
+	if not enable_execute:
+		setattr(namespace, 'execute', None)
+
+	args = parser.parse_args(argv, namespace)
 
 	if dry_run:
 		return
@@ -125,12 +135,113 @@ def command_enumerate(ctx, argv):
 		except:
 			pass
 
+def command_listen(ctx, argv):
+	# FIXME: add description
+	parser = Parser(ctx, 'listen', epilog="In listen mode the --execute option for getter calls and callback dispatching is disabled by default, use --enable-execute to enable it.")
+
+	parser.add_argument('--address', default='0.0.0.0', type=str, help='IP address to listen to, default: 0.0.0.0', metavar='<host>')
+	parser.add_argument('--port', default=4217, type=int, help='port number to listen to, default: 4217', metavar='<port>')
+	parser.add_argument('--enable-execute', action='store_true', help='enables --execute option for getters and callbacks')
+
+	args = parser.parse_args(argv)
+
+	global listen_mode
+	listen_mode = True
+
+	global enable_execute
+	enable_execute = args.enable_execute
+
+	global line_separator
+	line_separator = '\t'
+
+	try:
+		server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+		server_socket.bind((args.address, args.port))
+		server_socket.listen(10)
+	except socket.error as e:
+		raise FatalError(str(e).lower(), ERROR_SOCKET_ERROR)
+	except Exception as e:
+		raise FatalError(str(e).lower(), ERROR_OTHER_EXCEPTION)
+
+	def client_loop():
+		if sys.hexversion < 0x03000000:
+			pending_data = ''
+		else:
+			pending_data = bytes()
+
+		try:
+			client_socket, client_address = server_socket.accept()
+		except socket.error:
+			return
+
+		def output_to_socket(string):
+			print('{0} sent to {1}'.format(repr(string), client_address[0]))
+			client_socket.sendall(string)
+
+		while True:
+			try:
+				data = client_socket.recv(1024)
+			except socket.error:
+				print('{0} disconnect by socket error'.format(client_address[0]))
+				return
+
+			if len(data) == 0:
+				print('{0} disconnect by socket shutdown'.format(client_address[0]))
+				return
+
+			pending_data += data
+
+			while len(pending_data) > 0:
+				i = pending_data.find(group_terminator)
+
+				if i < 0:
+					break
+
+				command = pending_data[:i]
+				pending_data = pending_data[i + len(group_terminator):]
+
+				print('{0} sent {1}'.format(client_address[0], repr(command + group_terminator)))
+
+				ctx = Context()
+				ctx.output = output_to_socket
+
+				try:
+					parse(ctx, shlex.split(command))
+				except ParserExit:
+					pass
+				except FatalError as e:
+					output_to_socket('error {0}: {1}{2}'.format(e.exit_code, e.message, group_terminator))
+
+				client_socket.sendall('')
+
+	while True:
+		ready, _, _ = select.select([server_socket], [], [])
+
+		if server_socket not in ready:
+			continue
+
+		try:
+			client_thread = threading.Thread(name='Client-Processor', target=client_loop)
+			client_thread.daemon = True
+			client_thread.start()
+		except Exception as e:
+			raise FatalError(str(e).lower(), ERROR_OTHER_EXCEPTION)
+
 def parse(ctx, argv):
 	global dry_run
 	dry_run = os.getenv('TINKERFORGE_SHELL_BINDINGS_DRY_RUN', 0) != 0
 
-	parser = Parser(ctx, '', epilog="Try 'tinkerforge <command> --help' for command specific help.")
+	if listen_mode:
+		prefix = ''
+	else:
+		prefix = 'tinkerforge '
+
+	parser = Parser(ctx, '', epilog="Try '{0}<command> --help' for command specific help.".format(prefix))
 	command_choices = ['call', 'dispatch', 'enumerate']
+
+	if not listen_mode:
+		command_choices.append('listen')
 
 	parser.add_argument('--version', action='version', version='<<VERSION>>')
 	parser.add_argument('--host', default='localhost', type=str, help='IP address or hostname to connect to, default: localhost', metavar='<host>')
@@ -168,6 +279,9 @@ def parse(ctx, argv):
 	'dispatch': command_dispatch,
 	'enumerate': command_enumerate
 	}
+
+	if not listen_mode:
+		commands['listen'] = command_listen
 
 	commands[args.command](ctx, args.args)
 
