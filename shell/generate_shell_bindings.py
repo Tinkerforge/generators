@@ -64,14 +64,14 @@ def get_type_converter(element):
             symbols[symbol[1].replace('_', '-')] = symbol[2]
 
         if element[2] > 1 and t != 'string':
-            return 'create_array_converter(create_symbol_converter({0}, {1}), {2})'.format(t, symbols, element[2])
+            return 'create_array_converter(ctx, create_symbol_converter(ctx, {0}, {1}), {2})'.format(t, symbols, element[2])
         elif t == 'string':
-            return 'create_string_checker(create_symbol_converter(str, {0}), {1})'.format(symbols, element[2])
+            return 'create_string_checker(create_symbol_converter(ctx, str, {0}), {1})'.format(symbols, element[2])
         else:
-            return 'create_symbol_converter({0}, {1})'.format(t, symbols)
+            return 'create_symbol_converter(ctx, {0}, {1})'.format(t, symbols)
     else:
         if element[2] > 1 and t != 'string':
-            return 'create_array_converter({0}, {1})'.format(t, element[2])
+            return 'create_array_converter(ctx, {0}, {1})'.format(t, element[2])
         elif t == 'string':
             return 'create_string_checker(str, {0})'.format(element[2])
         else:
@@ -107,7 +107,7 @@ def get_element_help(element):
     if element[2] == 1 or t == 'string':
         help = "'{0}{1}'".format(t, symbols_doc)
     else:
-        help = "get_array_type_name('{0}', {1})".format(t, element[2])
+        help = "get_array_type_name(ctx, '{0}', {1})".format(t, element[2])
 
         if len(symbols_doc) > 0:
             help += "+ '{0}'".format(symbols_doc)
@@ -191,8 +191,8 @@ def make_callback_formats():
 
 def make_call_header():
     header = """
-def call_{0}_{2}(argv):
-\tprog_prefix = 'tinkerforge call {1}-{2} <uid>'
+def call_{0}_{2}(ctx, argv):
+\tprog_prefix = 'call {1}-{2} <uid>'
 
 """
 
@@ -201,22 +201,22 @@ def call_{0}_{2}(argv):
                          device.get_category().lower())
 
 def make_call_functions():
-    setter = """\tdef {0}(argv):
-\t\tparser = ParserWithExpectResponse(prog_prefix + ' {1}')
+    setter = """\tdef {0}(ctx, argv):
+\t\tparser = ParserWithExpectResponse(ctx, prog_prefix + ' {1}')
 {2}
 \t\targs = parser.parse_args(argv)
 
-\t\tdevice_send_request({7}{8}, {3}, ({4}), '{5}', '{6}', None, args.expect_response, [], [])
+\t\tdevice_send_request(ctx, {7}{8}, {3}, ({4}), '{5}', '{6}', None, args.expect_response, [], [])
 """
-    getter = """\tdef {0}(argv):
-\t\tparser = ParserWithExecute(prog_prefix + ' {1}')
+    getter = """\tdef {0}(ctx, argv):
+\t\tparser = ParserWithExecute(ctx, prog_prefix + ' {1}')
 {2}
 \t\targs = parser.parse_args(argv)
 
-\t\tdevice_send_request({7}{8}, {3}, ({4}), '{5}', '{6}', args.execute, False, [{9}], [{10}])
+\t\tdevice_send_request(ctx, {7}{8}, {3}, ({4}), '{5}', '{6}', args.execute, False, [{9}], [{10}])
 """
-    get_identity = """\tdef get_identity(argv):
-\t\tcommon_get_identity(prog_prefix, {0}{1}, argv)
+    get_identity = """\tdef get_identity(ctx, argv):
+\t\tcommon_get_identity(ctx, prog_prefix, {0}{1}, argv)
 """
 
     functions = []
@@ -305,7 +305,7 @@ def make_call_functions():
 def make_call_footer():
     footer = """
 
-\tcall_generic('{0}-{1}', functions, argv)
+\tcall_generic(ctx, '{0}-{1}', functions, argv)
 """
 
     return footer.format(device.get_underscore_name().replace('_', '-'),
@@ -313,8 +313,8 @@ def make_call_footer():
 
 def make_dispatch_header():
     header = """
-def dispatch_{0}_{2}(argv):
-\tprog_prefix = 'tinkerforge dispatch {1}-{2} <uid>'
+def dispatch_{0}_{2}(ctx, argv):
+\tprog_prefix = 'dispatch {1}-{2} <uid>'
 
 """
 
@@ -323,12 +323,12 @@ def dispatch_{0}_{2}(argv):
                          device.get_category().lower())
 
 def make_dispatch_functions():
-    func = """\tdef {0}(argv):
-\t\tparser = ParserWithExecute(prog_prefix + ' {1}')
+    func = """\tdef {0}(ctx, argv):
+\t\tparser = ParserWithExecute(ctx, prog_prefix + ' {1}')
 
 \t\targs = parser.parse_args(argv)
 
-\t\tdevice_callback({2}{3}, {4}, args.execute, [{5}])
+\t\tdevice_callback(ctx, {2}{3}, {4}, args.execute, [{5}])
 """
 
     functions = []
@@ -361,7 +361,7 @@ def make_dispatch_functions():
 def make_dispatch_footer():
     footer = """
 
-\tdispatch_generic('{0}-{1}', callbacks, argv)
+\tdispatch_generic(ctx, '{0}-{1}', callbacks, argv)
 """
 
     return footer.format(device.get_underscore_name().replace('_', '-'),

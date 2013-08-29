@@ -1,11 +1,11 @@
 
-def command_call(argv):
-	parser = Parser('tinkerforge call')
+def command_call(ctx, argv):
+	parser = Parser(ctx, 'call')
 	device_choices = sorted(call_devices.keys())
 
 	class ListDevicesAction(argparse.Action):
 		def __call__(self, parser, namespace, values, option_string=None):
-			output(line_separator.join(device_choices) + group_terminator)
+			ctx.output(line_separator.join(device_choices) + group_terminator)
 			raise ParserExit()
 
 	parser.add_argument('--list-devices', action=ListDevicesAction, nargs=0, help='show list of devices and exit')
@@ -15,34 +15,32 @@ def command_call(argv):
 
 	args = parser.parse_args(argv)
 
-	global timeout
-	timeout = args.timeout
+	ctx.timeout = args.timeout
 
-	call_devices[args.device](args.args)
+	call_devices[args.device](ctx, args.args)
 
-def command_dispatch(argv):
-	parser = Parser('tinkerforge dispatch')
+def command_dispatch(ctx, argv):
+	parser = Parser(ctx, 'dispatch')
 	device_choices = sorted(dispatch_devices.keys())
 
 	class ListDevicesAction(argparse.Action):
 		def __call__(self, parser, namespace, values, option_string=None):
-			output(line_separator.join(device_choices) + group_terminator)
+			ctx.output(line_separator.join(device_choices) + group_terminator)
 			raise ParserExit()
 
 	parser.add_argument('--list-devices', action=ListDevicesAction, nargs=0, help='show list of devices and exit')
-	parser.add_argument('--duration', default=-1, type=create_symbol_converter(int, {'exit-after-first': 0, 'forever': -1}), help='time (msec) to dispatch incoming enumerate callbacks (exit-after-first: 0, forever: -1), default: forever', metavar='<duration>')
+	parser.add_argument('--duration', default=-1, type=create_symbol_converter(ctx, int, {'exit-after-first': 0, 'forever': -1}), help='time (msec) to dispatch incoming enumerate callbacks (exit-after-first: 0, forever: -1), default: forever', metavar='<duration>')
 	parser.add_argument('device', choices=device_choices, help='{' + ', '.join(device_choices) + '}', metavar='<device>')
 	parser.add_argument('args', nargs=argparse.REMAINDER, help='device specific arguments', metavar='<args>')
 
 	args = parser.parse_args(argv)
 
-	global duration
-	duration = args.duration
+	ctx.duration = args.duration
 
-	dispatch_devices[args.device](args.args)
+	dispatch_devices[args.device](ctx, args.args)
 
-def command_enumerate(argv):
-	parser = Parser('tinkerforge enumerate')
+def command_enumerate(ctx, argv):
+	parser = Parser(ctx, 'enumerate')
 
 	enumeration_type_symbols = {
 	'available': IPConnection.ENUMERATION_TYPE_AVAILABLE,
@@ -50,8 +48,8 @@ def command_enumerate(argv):
 	'disconnected': IPConnection.ENUMERATION_TYPE_DISCONNECTED
 	}
 
-	parser.add_argument('--duration', default=250, type=create_symbol_converter(int, {'exit-after-first': 0, 'forever': -1}), help='time (msec) to dispatch incoming enumerate responses (exit-after-first: 0, forever: -1), default: 250', metavar='<duration>')
-	parser.add_argument('--types', default=[IPConnection.ENUMERATION_TYPE_AVAILABLE], type=create_array_converter(create_symbol_converter(int, enumeration_type_symbols, True), 3, False), help='array of enumeration types to dispatch (available: 0, connected: 1, disconnected: 2), default: available', metavar='<types>')
+	parser.add_argument('--duration', default=250, type=create_symbol_converter(ctx, int, {'exit-after-first': 0, 'forever': -1}), help='time (msec) to dispatch incoming enumerate responses (exit-after-first: 0, forever: -1), default: 250', metavar='<duration>')
+	parser.add_argument('--types', default=[IPConnection.ENUMERATION_TYPE_AVAILABLE], type=create_array_converter(ctx, create_symbol_converter(ctx, int, enumeration_type_symbols, True), 3, False), help='array of enumeration types to dispatch (available: 0, connected: 1, disconnected: 2), default: available', metavar='<types>')
 	parser.add_argument('--execute', type=str, help='shell command line to execute for each incoming response', metavar='<command>')
 
 	args = parser.parse_args(argv)
@@ -71,9 +69,9 @@ def command_enumerate(argv):
 	if args.execute is not None:
 		def callback(*values):
 			if values[6] in args.types:
-				values = format_symbolic_output(values, symbols)
+				values = format_symbolic_output(ctx, values, symbols)
 
-				execute_response(args.execute, names, values)
+				execute_response(ctx, args.execute, names, values)
 				return True
 	else:
 		def callback(*values):
@@ -81,16 +79,16 @@ def command_enumerate(argv):
 				if is_first_callback[0]:
 					is_first_callback[0] = False
 				else:
-					output(group_separator)
+					ctx.output(ctx.group_separator)
 
-				values = format_symbolic_output(values, symbols)
+				values = format_symbolic_output(ctx, values, symbols)
 
-				output_response(names, values)
+				output_response(ctx, names, values)
 				return True
 
 	try:
 		ipcon = IPConnection()
-		ipcon.connect(connect_host, connect_port)
+		ipcon.connect(ctx.host, ctx.port)
 
 		if args.duration == 0:
 			exit_flag = [False]
@@ -116,22 +114,22 @@ def command_enumerate(argv):
 
 			time.sleep(args.duration / 1000.0)
 	except Error as e:
-		raise FatalError(e.description.lower(), 200 - e.value)
+		raise FatalError(e.description.lower(), IPCONNECTION_ERROR_OFFSET - e.value)
 	except socket.error as e:
-		raise FatalError(str(e).lower(), 23)
+		raise FatalError(str(e).lower(), ERROR_SOCKET_ERROR)
 	except Exception as e:
-		raise FatalError(str(e).lower(), 24)
+		raise FatalError(str(e).lower(), ERROR_OTHER_EXCEPTION)
 	finally:
 		try:
 			ipcon.disconnect()
 		except:
 			pass
 
-def parse(argv):
+def parse(ctx, argv):
 	global dry_run
 	dry_run = os.getenv('TINKERFORGE_SHELL_BINDINGS_DRY_RUN', 0) != 0
 
-	parser = Parser('tinkerforge', epilog="Try 'tinkerforge <command> --help' for command specific help.")
+	parser = Parser(ctx, '', epilog="Try 'tinkerforge <command> --help' for command specific help.")
 	command_choices = ['call', 'dispatch', 'enumerate']
 
 	parser.add_argument('--version', action='version', version='<<VERSION>>')
@@ -147,31 +145,23 @@ def parse(argv):
 
 	args = parser.parse_args(argv)
 
-	global connect_host
-	connect_host = args.host
+	ctx.host = args.host
+	ctx.port = args.port
 
-	global connect_port
-	connect_port = args.port
+	ctx.item_separator = args.item_separator
+	ctx.item_separator = ctx.item_separator.replace('\\t', '\t')
+	ctx.item_separator = ctx.item_separator.replace('\\r', '\r')
+	ctx.item_separator = ctx.item_separator.replace('\\n', '\n')
+	ctx.item_separator = ctx.item_separator.replace('\\\\', '\\')
 
-	global item_separator
-	item_separator = args.item_separator
-	item_separator = item_separator.replace('\\t', '\t')
-	item_separator = item_separator.replace('\\r', '\r')
-	item_separator = item_separator.replace('\\n', '\n')
-	item_separator = item_separator.replace('\\\\', '\\')
+	ctx.group_separator = args.group_separator
+	ctx.group_separator = ctx.group_separator.replace('\\t', '\t')
+	ctx.group_separator = ctx.group_separator.replace('\\r', '\r')
+	ctx.group_separator = ctx.group_separator.replace('\\n', '\n')
+	ctx.group_separator = ctx.group_separator.replace('\\\\', '\\')
 
-	global group_separator
-	group_separator = args.group_separator
-	group_separator = group_separator.replace('\\t', '\t')
-	group_separator = group_separator.replace('\\r', '\r')
-	group_separator = group_separator.replace('\\n', '\n')
-	group_separator = group_separator.replace('\\\\', '\\')
-
-	global no_symbolic_input
-	no_symbolic_input = args.no_symbolic_input
-
-	global no_symbolic_output
-	no_symbolic_output = args.no_symbolic_output
+	ctx.no_symbolic_input = args.no_symbolic_input
+	ctx.no_symbolic_output = args.no_symbolic_output
 
 	commands = {
 	'call': command_call,
@@ -179,20 +169,25 @@ def parse(argv):
 	'enumerate': command_enumerate
 	}
 
-	commands[args.command](args.args)
+	commands[args.command](ctx, args.args)
 
-if __name__ == '__main__':
+def main():
+	ctx = Context()
+
 	try:
-		parse(sys.argv[1:])
+		parse(ctx, sys.argv[1:])
 	except KeyboardInterrupt:
 		sys.exit(1)
 	except ParserExit:
 		sys.exit(0)
 	except FatalError as e:
-		if current_parser is not None:
-			prog = current_parser.prog
+		if ctx.current_parser is not None:
+			prog = ctx.current_parser.prog
 		else:
 			prog = 'tinkerforge'
 
 		sys.stderr.write('{0}: error: {1}\n'.format(prog, e.message))
 		sys.exit(e.exit_code)
+
+if __name__ == '__main__':
+	main()
