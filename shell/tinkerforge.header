@@ -44,6 +44,8 @@ except ImportError:
 	fatal_error('requiring python argparse module', ERROR_ARGPARSE_MISSING)
 
 class Context:
+	abort = False
+
 	host = None
 	port = None
 	timeout = None
@@ -244,12 +246,12 @@ def device_callback(ctx, device_class, function_id, command, names):
 
 			device.registered_callbacks[function_id] = callback_wapper
 
-			while not exit_flag[0]:
+			while not exit_flag[0] and not ctx.abort:
 				time.sleep(0.1)
 		elif ctx.duration < 0:
 			device.registered_callbacks[function_id] = callback
 
-			while True:
+			while not ctx.abort:
 				time.sleep(1)
 		else:
 			device.registered_callbacks[function_id] = callback
