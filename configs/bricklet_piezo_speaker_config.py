@@ -24,7 +24,7 @@ com['packets'].append({
 'en':
 """
 Beeps with the given frequency value for the duration in ms. For example: 
-If you set a duration of 1000, with a frequency value of 100
+If you set a duration of 1000, with a frequency value of 220
 the piezo buzzer will beep for one second with a frequency of
 approximately 2 kHz.
 
@@ -42,7 +42,7 @@ value parameter and a frequency in Hz of the played tone:
 'de':
 """
 Erzeugt einen Piepton mit dem gegebenen Frequenzwert für eine Dauer in ms. 
-Beispiel: Wenn *duration* auf 1000 und *frequency* auf 100 gesetzt wird, 
+Beispiel: Wenn *duration* auf 1000 und *frequency* auf 220 gesetzt wird, 
 erzeugt der Piezosummer einen Piepton für eine Sekunde mit einer Frequenz 
 von ca. 2 kHz.
 
