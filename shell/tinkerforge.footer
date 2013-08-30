@@ -278,10 +278,13 @@ def parse(ctx, argv):
 
 	if ctx.item_separator is not None:
 		item_separator_default = ctx.item_separator
-		item_separator_help_suffix = ''
 	else:
 		item_separator_default = ','
+
+	if item_separator_default == ',':
 		item_separator_help_suffix = ' (comma)'
+	else:
+		item_separator_help_suffix = ''
 
 	if ctx.no_symbolic_input is not None:
 		no_symbolic_input_default = ctx.no_symbolic_input
