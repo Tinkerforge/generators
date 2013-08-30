@@ -78,3 +78,85 @@ Gibt die Segment-, Helligkeit- und Doppenpunktdaten zurück, wie von
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': ('StartCounter', 'start_counter'), 
+'elements': [('value_from', 'int16', 1, 'in'),
+             ('value_to', 'int16', 1, 'in'),
+             ('increment', 'int16', 1, 'in'),
+             ('length', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Starts a counter with the *from* value that counts to the *to*
+value with the each step incremented by *increment*.
+The *length* of the increment is given in ms.
+
+Example: If you set *from* to 0, *to* to 100, *increment* to 1 and
+*length* to 1000, a counter that goes from 0 to 100 with 1 second
+pause between each increment will be started.
+
+The maximum values for *from*, *to* and *increment* is 9999, 
+the minimum value is -999.
+
+You can stop the counter at every time by calling :func:`SetSegments`.
+""",
+'de':
+"""
+Starter einen Zähler mit dem *from* Wert der bis zum *to* Wert Zählt
+mit einer Schrittweite von *increment*. Das Argument *length* gibt die
+Pause zwischen den Erhöhungen in ms an.
+
+Beispiel: Wenn *from* auf 0, *to* auf 100, *increment* auf 1 und
+*length* auf 1000 gesetzt wird, wird ein Zähler gestartet der von
+0 bis 100 zählt mit Rate von 1 Sekunde zwischen jeder Erhöhung.
+
+Der Zähler kann jederzeit durch einen Aufruf von :func:`SetSegments`
+gestoppt werden.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetCounterValue', 'get_counter_value'), 
+'elements': [('value', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Returns the counter value that is currently shown on the display.
+
+If there is no counter running a 0 will be returned.
+""",
+'de':
+"""
+Gibt den aktuellen Zählerstand zurück der auf der Anzeige
+angezeigt wird.
+
+Wenn kein Zähler am laufen ist wird eine 0 zurückgegeben.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('CounterFinished', 'counter_finished'), 
+'elements': [],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered when the counter (see :func:`StartCounter`) is
+finished.
+""",
+'de':
+"""
+Diese Callback wird ausgelöst wenn der Zähler (siehe :func:`StartCounter`)
+fertig ist.
+"""
+}]
+})
+
