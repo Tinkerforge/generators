@@ -48,16 +48,31 @@ class Context:
 
 	host = None
 	port = None
-	timeout = None
-	duration = None
-	uid = None
 	item_separator = None
 	group_separator = None
 	no_symbolic_input = None
 	no_symbolic_output = None
+	timeout = None
+	duration = None
+	uid = None
 
 	def output(self, string):
 		sys.stdout.write(string)
+
+	def duplicate(self):
+		ctx = Context()
+
+		ctx.host = self.host
+		ctx.port = self.port
+		ctx.item_separator = self.item_separator
+		ctx.group_separator = self.group_separator
+		ctx.no_symbolic_input = self.no_symbolic_input
+		ctx.no_symbolic_output = self.no_symbolic_output
+		ctx.timeout = self.timeout
+		ctx.duration = self.duration
+		ctx.uid = self.uid
+
+		return ctx
 
 class ParserExit(Exception):
 	pass

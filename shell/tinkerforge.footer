@@ -205,7 +205,7 @@ def command_listen(ctx, argv):
 
 				print('{0} sent {1}'.format(client_address[0], repr(command + group_terminator)))
 
-				client_ctx = Context()
+				client_ctx = ctx.duplicate()
 
 				def output_to_socket(string):
 					if client_ctx.abort:
@@ -266,18 +266,52 @@ def parse(ctx, argv):
 	if not listen_mode:
 		command_choices.append('listen')
 
+	if ctx.host is not None:
+		host_default = ctx.host
+	else:
+		host_default = 'localhost'
+
+	if ctx.port is not None:
+		port_default = ctx.port
+	else:
+		port_default = 4223
+
+	if ctx.item_separator is not None:
+		item_separator_default = ctx.item_separator
+		item_separator_help_suffix = ''
+	else:
+		item_separator_default = ','
+		item_separator_help_suffix = ' (comma)'
+
+	if ctx.no_symbolic_input is not None:
+		no_symbolic_input_default = ctx.no_symbolic_input
+	else:
+		no_symbolic_input_default = False
+
+	if ctx.no_symbolic_output is not None:
+		no_symbolic_output_default = ctx.no_symbolic_output
+	else:
+		no_symbolic_output_default = False
+
+	namespace = argparse.Namespace()
+
 	parser.add_argument('--version', action='version', version='<<VERSION>>')
-	parser.add_argument('--host', default='localhost', type=str, help='IP address or hostname to connect to, default: localhost', metavar='<host>')
-	parser.add_argument('--port', default=4223, type=int, help='port number to connect to, default: 4223', metavar='<port>')
-	parser.add_argument('--item-separator', default=',', type=str, help='separator for array items, default: , (comma)', metavar='<item-separator>')
-	parser.add_argument('--group-separator', default='\n', type=str, help='separator for output groups, default: \\n (newline)', metavar='<group-separator>')
-	parser.add_argument('--no-symbolic-input', action='store_true', help='disable symbolic input of values')
-	parser.add_argument('--no-symbolic-output', action='store_true', help='disable symbolic output of values')
+	parser.add_argument('--host', default=host_default, type=str, help='IP address or hostname to connect to, default: {0}'.format(host_default), metavar='<host>')
+	parser.add_argument('--port', default=port_default, type=int, help='port number to connect to, default: {0}'.format(port_default), metavar='<port>')
+	parser.add_argument('--item-separator', default=item_separator_default, type=str, help='separator for array items, default: {0}{1}'.format(item_separator_default, item_separator_help_suffix), metavar='<item-separator>')
+
+	if not listen_mode:
+		parser.add_argument('--group-separator', default='\n', type=str, help='separator for output groups, default: \\n (newline)', metavar='<group-separator>')
+	else:
+		setattr(namespace, 'group_separator', '\n')
+
+	parser.add_argument('--no-symbolic-input', const=True, default=no_symbolic_input_default, action='store_const', help='disable symbolic input of values')
+	parser.add_argument('--no-symbolic-output', const=True, default=no_symbolic_output_default, action='store_const', help='disable symbolic output of values')
 
 	parser.add_argument('command', choices=command_choices, help='{' + ', '.join(command_choices) + '}', metavar='<command>')
 	parser.add_argument('args', nargs=argparse.REMAINDER, help='command specific arguments', metavar='<args>')
 
-	args = parser.parse_args(argv)
+	args = parser.parse_args(argv, namespace)
 
 	ctx.host = args.host
 	ctx.port = args.port
