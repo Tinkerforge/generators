@@ -222,7 +222,7 @@ def device_callback(ctx, device_class, function_id, command, names):
 		is_first_callback = [True]
 
 		def callback(*values):
-			if len(names) > 1:
+			if len(names) > 1 and not listen_mode:
 				if is_first_callback[0]:
 					is_first_callback[0] = False
 				else:

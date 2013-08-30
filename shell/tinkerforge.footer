@@ -86,10 +86,11 @@ def command_enumerate(ctx, argv):
 	else:
 		def callback(*values):
 			if values[6] in args.types:
-				if is_first_callback[0]:
-					is_first_callback[0] = False
-				else:
-					ctx.output(ctx.group_separator)
+				if not listen_mode:
+					if is_first_callback[0]:
+						is_first_callback[0] = False
+					else:
+						ctx.output(ctx.group_separator)
 
 				values = format_symbolic_output(ctx, values, symbols)
 
@@ -137,7 +138,7 @@ def command_enumerate(ctx, argv):
 
 def command_listen(ctx, argv):
 	# FIXME: add description
-	parser = Parser(ctx, 'listen', epilog="In listen mode the --execute option for getter calls and callback dispatching is disabled by default, use --enable-execute to enable it.")
+	parser = Parser(ctx, 'listen', epilog="In listen mode the --execute option for getter calls and callback dispatching is disabled by default, use --enable-execute to enable it. No group separator is included in the output and the --group-separator option is ignored.")
 
 	parser.add_argument('--address', default='0.0.0.0', type=str, help='IP address to listen to, default: 0.0.0.0', metavar='<host>')
 	parser.add_argument('--port', default=4217, type=int, help='port number to listen to, default: 4217', metavar='<port>')
