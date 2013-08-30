@@ -22,12 +22,21 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the current moisture value. The value has a range of
+0 to 4095. A small value corresponds to little moisture, a big
+value corresponds to much moisture.
+
 If you want to get the moisture value periodically, it is recommended 
 to use the callback :func:`Moisture` and set the period with 
 :func:`SetMoistureCallbackPeriod`.
 """,
 'de':
 """
+Gibt den aktuellen Feuchtigkeitswert zurück. Der Wert hat einen
+Wertebereich von 0 bis 4095. Ein kleiner Wert entspricht einer
+geringen Feuchtigkeit, ein großer Wert enntspricht einer hohen
+Feuchtigkeit.
+
 Wenn der Feuchtigkeitswert periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Moisture` zu nutzen und die Periode mit 
 :func:`SetMoistureCallbackPeriod` vorzugeben.
@@ -273,12 +282,26 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-TODO
+Sets the length of a `moving averaging <http://en.wikipedia.org/wiki/Moving_average>`__ 
+for the moisture value.
 
-Max value: 100
+Setting the length to 0 will turn the averaging completely off. With less
+averaging,  there is more noise on the data.
+
+The range for the averaging is 0-100.
+
+The default value is 100.
 """,
 'de':
 """
+Setzt die Länge eines gleitenden Mittelwerts für den Feuchtigkeitswert.
+
+Wenn die Länge auf 0 gesetzt wird, ist das Averaging komplett aus. Desto kleiner
+die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
+
+Der Wertebereicht liegt bei 0-100.
+
+Der Standardwert ist 100.
 """
 }]
 })
@@ -291,9 +314,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the length moving average as set by :func:`SetMovingAverage`.
 """,
 'de':
 """
+Gibt die Länge des gleitenden Mittelwerts zurück, wie von 
+:func:`SetMovingAverage` gesetzt.
 """
 }]
 })
