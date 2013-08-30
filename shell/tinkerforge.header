@@ -13,6 +13,7 @@ import shlex
 import socket
 import select
 import threading
+import subprocess
 
 ERROR_INTERRUPTED = 1
 ERROR_SYNTAX_ERROR = 2
@@ -442,7 +443,18 @@ def execute_response(ctx, command, names, values):
 	except Exception as e:
 		raise FatalError('%s: %s' % (str(e).lower(), command), ERROR_OTHER_EXCEPTION)
 
-	os.system(formatted_command)
+	try:
+		if listen_mode:
+			try:
+				output = subprocess.check_output(formatted_command, stderr=subprocess.STDOUT, shell=True)
+			except subprocess.CalledProcessError as e:
+				output = e.output
+
+			ctx.output(output)
+		else:
+			subprocess.call(formatted_command, shell=True)
+	except Exception as e:
+		raise FatalError('%s: %s' % (str(e).lower(), formatted_command), ERROR_OTHER_EXCEPTION)
 
 def output_response(ctx, names, values):
 	lines = []
