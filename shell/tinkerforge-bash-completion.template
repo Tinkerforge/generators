@@ -136,7 +136,7 @@ _tinkerforge()
 
 		case "${prev}" in
 		tinkerforge)
-			COMPREPLY=($(compgen -W "--help --host --port --item-separator --group-separator --no-symbolic-input --no-symbolic-output call dispatch enumerate" -- ${cur}))
+			COMPREPLY=($(compgen -W "--help --host --port --item-separator --group-separator --no-symbolic-input --no-symbolic-output call dispatch enumerate listen" -- ${cur}))
 			break
 			;;
 		call)
@@ -151,6 +151,10 @@ _tinkerforge()
 			;;
 		enumerate)
 			COMPREPLY=($(compgen -W "--help --duration --types --execute" -- ${cur}))
+			break
+			;;
+		listen)
+			COMPREPLY=($(compgen -W "--help --address --port --enable-execute" -- ${cur}))
 			break
 			;;
 		<<DEVICES>>)
