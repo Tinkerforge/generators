@@ -448,14 +448,14 @@ auf logisch 0. Die Pins 0-6 bleiben unangetastet.
 com['packets'].append({
 'type': 'function',
 'name': ('GetEdgeCount', 'get_edge_count'),
-'elements': [('port', 'char', 1, 'in'),
+'elements': [('pin', 'uint8', 1, 'in'),
              ('reset_counter', 'bool', 1, 'in'),
              ('count', 'uint32', 1, 'out')],
 'since_firmware': [2, 0, 3],
 'doc': ['bf', {
 'en':
 """
-Returns the current value of the edge counter for pin 0 of the selected port.
+Returns the current value of the edge counter for the selected pin on port A.
 You can configure the edges that are counted with :func:`SetEdgeCountConfig`.
 
 If you set the reset counter to *true*, the count is set back to 0
@@ -463,7 +463,7 @@ directly after it is read.
 """,
 'de':
 """
-Gibt den aktuellen Wert des Flankenzählers für Pin 0 des ausgewählten Ports
+Gibt den aktuellen Wert des Flankenzählers für den ausgewählten Pin von Port A
 zurück. Die zu zählenden Flanken können mit :func:`SetEdgeCountConfig`
 konfiguriert werden.
 
@@ -476,7 +476,7 @@ nach dem auslesen auf 0 zurückgesetzt.
 com['packets'].append({
 'type': 'function',
 'name': ('SetEdgeCountConfig', 'set_edge_count_config'),
-'elements': [('port', 'char', 1, 'in'),
+'elements': [('pin', 'uint8', 1, 'in'),
              ('edge_type', 'uint8', 1, 'in', ('EdgeType', 'edge_type', [('Rising', 'rising', 0),
                                                                         ('Falling', 'falling', 1),
                                                                         ('Both', 'both', 2)])),
@@ -485,8 +485,8 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Configures the edge counter for pin 0 of the selected port. Pin 1-7 don't
-support edge counting.
+Configures the edge counter for the selected pin of port A. Pins 0 and 1
+are available for edge counting.
 
 The edge type parameter configures if rising edges, falling edges or
 both are counted if the pin is configured for input. Possible edge types are:
@@ -504,8 +504,8 @@ Default values: 0 (edge type) and 100ms (debounce time)
 """,
 'de':
 """
-Konfiguriert den Flankenzähler für Pin 0 des ausgewählten Ports. Für Pin 1-7
-steht kein Flankenzähler zur Verfügung.
+Konfiguriert den Flankenzähler für den ausgewählten Pin von Port A.
+Der Flankenzähler steht für Pins 0 und 1 zur Verfügung.
 
 Der edge type Parameter konfiguriert den zu zählenden Flankentyp. Es können
 steigende, fallende oder beide Flanken gezählt werden für Pins die als Eingang
@@ -528,7 +528,7 @@ Standardwerte: 0 (edge type) und 100ms (debounce).
 com['packets'].append({
 'type': 'function',
 'name': ('GetEdgeCountConfig', 'get_edge_count_config'),
-'elements': [('port', 'char', 1, 'in'),
+'elements': [('pin', 'uint8', 1, 'in'),
              ('edge_type', 'uint8', 1, 'out', ('EdgeType', 'edge_type', [('Rising', 'rising', 0),
                                                                          ('Falling', 'falling', 1),
                                                                          ('Both', 'both', 2)])),
@@ -537,12 +537,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the edge type and debounce time for pin 0 of the selected port as set by
+Returns the edge type and debounce time for the selected pin of port A as set by
 :func:`SetEdgeCountConfig`.
 """,
 'de':
 """
-Gibt den Flankentyp sowie die Entprellzeit für Pin 0 des ausgewählten Ports
+Gibt den Flankentyp sowie die Entprellzeit für den ausgewählten Pin von Port A
 zurück, wie von :func:`SetEdgeCountConfig` gesetzt.
 """
 }]
