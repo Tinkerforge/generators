@@ -100,6 +100,8 @@ in the EEPROM and loaded on startup.
 
 The Bricklet should come calibrated, you only need to call this
 function (once) every time you reflash the Bricklet plugin.
+
+Returns *true* after the calibration finishes.
 """,
 'de':
 """
@@ -112,6 +114,8 @@ geladen.
 Das Bricklet sollte bei Auslieferung bereits kalibriert sein. Diese
 Funktion muss lediglich (einmalig) nach jedem neuflashen des Bricklet-Plugins
 ausgeführt werden.
+
+Gibt *true* nach Abschluss der Kalibrierung zurück.
 """
 }]
 })
