@@ -308,11 +308,10 @@ IP Connection is not connected.
 
 Since Java does not support multiple return values and return by reference
 is not possible for primitive types, we use small classes that 
-only consist of member variables (comparable to structs in C). The member
-variables of the returned objects are described in the corresponding method 
-descriptions.
+only consist of member variables. The member variables of the returned objects
+are described in the corresponding method descriptions.
 
-The package for all Brick/Bricklet bindings and the IPConnection is
+The package for all Brick/Bricklet bindings and the IP Connection is
 ``com.tinkerforge.*``
 
 All methods listed below are thread-safe.
@@ -340,11 +339,10 @@ kommunizieren, aber die IP Connection nicht verbunden ist.
 
 Da Java nicht mehrere Rückgabewerte unterstützt und eine Referenzrückgabe
 für elementare Type nicht möglich ist, werden kleine Klassen verwendet, die
-nur aus Member Variablen bestehen (Vergleichbar mit Structs in C). Die Member
-Variablen des zurückgegebenen Objektes werden in der jeweiligen Methodenbeschreibung
-erläutert.
+nur aus Member Variablen bestehen. Die Member Variablen des zurückgegebenen
+Objektes werden in der jeweiligen Methodenbeschreibung erläutert.
 
-Das Package für alle Brick/Bricklet Bindings und die IPConnection ist
+Das Package für alle Brick/Bricklet Bindings und die IP Connection ist
 ``com.tinkerforge.*``
 
 Alle folgend aufgelisteten Methoden sind Thread-sicher.
