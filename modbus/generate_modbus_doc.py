@@ -274,7 +274,7 @@ def make_files(device_, directory):
     directory = os.path.join(directory, 'doc', common.lang)
     f = file('{0}/{1}.rst'.format(directory, file_name), "w")
     f.write(common.make_rst_header(device, 'modbus', 'Modbus'))
-    f.write(common.make_rst_summary(device, common.select_lang(title)))
+    f.write(common.make_rst_summary(device, common.select_lang(title), None))
     f.write(make_api())
 
 def generate(path, lang):

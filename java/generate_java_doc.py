@@ -435,7 +435,7 @@ def make_files(device_, directory):
     directory = os.path.join(directory, 'doc', common.lang)
     f = file('{0}/{1}.rst'.format(directory, file_name), "w")
     f.write(common.make_rst_header(device, 'java', 'Java'))
-    f.write(common.make_rst_summary(device, common.select_lang(title)))
+    f.write(common.make_rst_summary(device, common.select_lang(title), 'java'))
     f.write(make_examples())
     f.write(make_api())
 

@@ -196,7 +196,7 @@ def make_rst_header(device, ref_name, title):
                                               full_title,
                                               full_title_underline)
 
-def make_rst_summary(device, title):
+def make_rst_summary(device, title, programming_language):
     not_released = {
     'en': """
 .. note::
@@ -243,7 +243,11 @@ ausgeführt werden können ist :ref:`hier <{3}>` zu finden.
 
     hw_link = device.get_underscore_name() + '_' + device.get_category().lower()
     hw_test = hw_link + '_test'
-    s = select_lang(summary).format(device.get_display_name(), device.get_category(), hw_link, hw_test, title)
+    if programming_language is not None:
+        title_link = ':ref:`{0} <api_bindings_{1}>`'.format(title, programming_language)
+    else:
+        title_link = title
+    s = select_lang(summary).format(device.get_display_name(), device.get_category(), hw_link, hw_test, title_link)
 
     if not device.is_released():
         if device.get_category() == 'Brick':
