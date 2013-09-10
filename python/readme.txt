@@ -10,7 +10,7 @@ just create a folder for your project and copy the tinkerforge folder from
 source/ and the example you want to try in there (e.g. the Stepper Brick
 configuration example from examples/brick/stepper/example_configuration.py).
 
-example_folder/
+ example_folder/
  -> tinkerforge/
  -> example_configuration.py
 
@@ -19,7 +19,7 @@ this many files in you project, you can also copy the files as they are needed.
 For the Stepper Brick examples we need ip_connection.py and brick_stepper.py.
 After copying these in the project folder
 
-example_folder/
+ example_folder/
  -> ip_connection.py
  -> brick_stepper.py
  -> example_configuration.py
@@ -29,4 +29,6 @@ we have to remove the tinkerforge package from the examples, i.e. instead of
 "from ip_connection" and "from brick_stepper". After that, the example can be
 executed again.
 
-Documentation for the API can be found at http://www.tinkerforge.com/en/doc/index.html
+Documentation for the API can be found at
+
+ http://www.tinkerforge.com/en/doc/Software/API_Bindings_Python.html#api-documentation-and-examples

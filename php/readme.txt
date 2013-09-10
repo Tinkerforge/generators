@@ -10,7 +10,7 @@ directly, just create a folder for your project and copy the Tinkerforge folder
 from source/ and the example you want to try in there (e.g. the Stepper Brick
 configuration example from examples/brick/stepper/ExampleConfiguration.php).
 
-example_folder/
+ example_folder/
  -> Tinkerforge/
  -> ExampleConfiguration.php
 
@@ -19,7 +19,7 @@ this many files in you project, you can also copy the files as they are needed.
 For the Stepper Brick examples we need IPConnection.php and BrickStepper.php.
 After copying these in the project folder
 
-example_folder/
+ example_folder/
  -> IPConnection.php
  -> BrickStepper.php
  -> ExampleConfiguration.php
@@ -29,4 +29,6 @@ examples, i.e. instead of "require_once('Tinkerforge/IPConnection.php');" we
 use "require_once('IPConnection.php');". After that, the example can be executed
 again.
 
-Documentation for the API can be found at http://www.tinkerforge.com/en/doc/index.html
+Documentation for the API can be found at
+
+ http://www.tinkerforge.com/en/doc/Software/API_Bindings_PHP.html#api-documentation-and-examples

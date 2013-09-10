@@ -15,7 +15,7 @@ Stepper Brick bindings (ip_connection.h, ip_connection.c, brick_stepper.c and
 brick_stepper.h) from the bindings/ folder as well as the example_configuration.c
 from the examples/brick/stepper/ folder into our project:
 
-project_folder/
+ project_folder/
  -> ip_connection.c
  -> ip_connection.h
  -> brick_stepper.c
@@ -25,13 +25,13 @@ project_folder/
 The only dependency on Unix-like systems is pthreads, therefore a compilation
 of the project with GCC on Linux looks like:
 
-gcc -pthread -o example_configuration brick_stepper.c ip_connection.c example_configuration.c
+ gcc -pthread -o example_configuration brick_stepper.c ip_connection.c example_configuration.c
 
 On Windows Win32 is used for threading and WinSock2 for the network connection.
 Under MinGW we can compile the example as following (the library linking must
 come after the source)::
 
-gcc -o example_configuration.exe brick_stepper.c ip_connection.c example_configuration.c -lws2_32
+ gcc -o example_configuration.exe brick_stepper.c ip_connection.c example_configuration.c -lws2_32
 
 The simplest way to use the bindings in a C++ project is to rename the required
 source files from *.c to *.cpp. Then the compiler will treat the source code as
@@ -76,4 +76,6 @@ The Visual Studio compiler can also be used from the command line:
 
  cl.exe /I. brick_stepper.cpp ip_connection.cpp example_configuration.cpp /link /out:example_configuration.exe ws2_32.lib
 
-Documentation for the API can be found at http://www.tinkerforge.com/en/doc/index.html
+Documentation for the API can be found at
+
+ http://www.tinkerforge.com/en/doc/Software/API_Bindings_C.html#api-documentation-and-examples

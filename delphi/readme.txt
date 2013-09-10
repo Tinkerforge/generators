@@ -17,7 +17,7 @@ Brick bindings (BrickStepper.pas) from the bindings/ folder as well as the
 ExampleConfiguration.pas from the examples/Brick/Stepper/ folder into our
 project:
 
-project_folder/
+ project_folder/
  -> Base58.pas
  -> BlockingQueue.pas
  -> Device.pas
@@ -30,14 +30,18 @@ project_folder/
 FPC automatically finds the used units, therefore a compilation of the project
 with FPC like:
 
-fpc ExampleConfiguration.pas
+ fpc ExampleConfiguration.pas
 
-With Lazarus we can use our project_folder/ as follows:
+With Lazarus we can use our project_folder/ by clicking:
 
-Project -> New Project from file ... ->
- choose project_folder/ExampleConfiguration.pas -> Open ->
- choose Console Application -> OK -> choose Application class name and Title ->
- OK
+* Project
+* New Project from file ...
+* Choose ``project_folder/ExampleConfiguration.pas``
+* Click Open
+* Choose "Console Application"
+* Click OK
+* Choose "Application Class Name" and "Title"
+* Click OK
 
 Now we are ready to go!
 
@@ -45,9 +49,13 @@ With Delphi XE2 (older Delphi version should work similar) we can use our
 project_folder/ as follows. First rename ExampleConfiguration.pas to
 ExampleConfiguration.dpr then click:
 
-Project -> Add Existing Project... ->
- choose project_folder/ExampleConfiguration.dpr -> Open
+* Project
+* Add Existing Project...
+* Choose ``project_folder/ExampleConfiguration.dpr``
+* Click Open
 
 Now we are ready to go again!
 
-Documentation for the API can be found at http://www.tinkerforge.com/en/doc/index.html
+Documentation for the API can be found at
+
+ http://www.tinkerforge.com/en/doc/Software/API_Bindings_Delphi.html#api-documentation-and-examples
