@@ -3,3 +3,5 @@
        Use exit code 1 for keyboard interrupt
 2.0.2: Add edge counters to Industrial Digital In 4, IO-4 and IO-16 Bricklet
        Make averaging length configurable for Analog In Bricklet
+2.0.3: Fix signature of edge count functions in IO-16 Bricklet API
+       Add listen mode for handling incoming commands over a TCP/IP connection

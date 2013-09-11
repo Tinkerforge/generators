@@ -18,3 +18,4 @@
 2.0.5: Avoid race condition between disconnect probe thread and disconnect function
 2.0.6: Add edge counters to Industrial Digital In 4, IO-4 and IO-16 Bricklet
        Make averaging length configurable for Analog In Bricklet
+2.0.7: Fix signature of edge count functions in IO-16 Bricklet API
