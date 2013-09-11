@@ -60,7 +60,7 @@ How long the switching takes is dependent on the number of repeats, see
 """,
 'de':
 """
-Gibt den aktullen Zustand des Schaltens zurück. Wenn der aktuell Zustand
+Gibt den aktuellen Zustand des Schaltens zurück. Wenn der aktuell Zustand
 busy (beschäftigt) ist, sendet das Bricklet gerade einen Code um eine Steckdose
 zu schalten. Weitere Aufrufe von :func:`SwitchSocket` werden ignoriert bis
 der Zustand auf ready (fertig) wechselt.

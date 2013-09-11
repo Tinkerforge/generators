@@ -75,7 +75,7 @@ Setzt Morsecode welcher vom Piezosummer abgespielt wird. Der Morsecode wird
 als Zeichenkette, mit den Zeichen "." (Punkt), "-" (Minus) und " " (Leerzeichen)
 für *kurzes Signale*, *langes Signale* und *Pausen*. Alle anderen Zeichen
 werden ignoriert.
-Der zweite Parameter ist die Frequenz (see :func:`Beep`).
+Der zweite Parameter ist die Frequenz (siehe :func:`Beep`).
 
 Beispiel: Wenn die Zeichenkette "...---..." gesetzt wird, gibt der Piezosummer neun
 Pieptöne aus mit den Dauern "kurz kurz kurz lang lang lang kurz kurz kurz".
@@ -93,7 +93,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-The Pizeo Speaker Bricklet can play 512 different tones. This function
+The Piezo Speaker Bricklet can play 512 different tones. This function
 plays each tone and measures the exact frequency back. The result is a
 mapping between setting value and frequency. This mapping is stored
 in the EEPROM and loaded on startup.

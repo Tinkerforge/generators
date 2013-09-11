@@ -29,7 +29,7 @@ Motion Detector Bricklet, see here. TODO: ADD LINK
 """,
 'de':
 """
-Gibt 0 zurück wenn eine Bewegung detektiert wurde. Wie lange 0 zürückgegeben wird
+Gibt 0 zurück wenn eine Bewegung detektiert wurde. Wie lange 0 zurückgegeben wird
 nachdem eine Bewegung detektiert wurde kann mit einem kleinen Poti auf
 dem Motion Detector Bricklet eingestellt werden, siehe hier. TODO: LINK HINZUFÜGEN
 """
@@ -62,7 +62,7 @@ com['packets'].append({
 'en':
 """
 This callback is called when the detection cycle ended. When this
-callback is called, a new motion can be detected again after aproximately 2 
+callback is called, a new motion can be detected again after approximately 2
 seconds.
 """,
 'de':

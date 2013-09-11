@@ -159,7 +159,7 @@ aufgerufen wird.
 Wenn *edges* auf n gesetzt ist, wird der Interrupt nach jeder
 n-ten detektierten Flanke aufgerufen.
 
-Wenn *edges* auf 0 gestezt ist, wird der Interrupt deaktiviert.
+Wenn *edges* auf 0 gesetzt ist, wird der Interrupt deaktiviert.
 
 Standardwert ist 0.
 """
@@ -248,7 +248,7 @@ current count and the current value (see :func:`GetValue` and :func:`GetEdgeCoun
 Dieser Callback bei jedem n-ten Zählerwert ausgelöst, wie von
 :func:`SetEdgeInterrupt` konfiguriert. Die :word:`parameter` 
 sind der aktuelle Zählerstand und der aktuelle Wert (siehe
-:func:`GetValue` and :func:`GetEdgeCount`).
+:func:`GetValue` und :func:`GetEdgeCount`).
 """
 }]
 })

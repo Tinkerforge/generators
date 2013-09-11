@@ -78,7 +78,7 @@ Now the pins on the Digital In 4 on port A are assigned to 0-3 and the
 pins on the Digital In 4 on port B are assigned to 4-7. It is now possible
 to call :func:`GetValue` and read out two Bricklets at the same time.
 
-Changing the group configuration resets the alle edge counter configurations
+Changing the group configuration resets all edge counter configurations
 and values.
 """,
 'de':

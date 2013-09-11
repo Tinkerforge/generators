@@ -34,7 +34,7 @@ to use the callback :func:`Moisture` and set the period with
 """
 Gibt den aktuellen Feuchtigkeitswert zurück. Der Wert hat einen
 Wertebereich von 0 bis 4095. Ein kleiner Wert entspricht einer
-geringen Feuchtigkeit, ein großer Wert enntspricht einer hohen
+geringen Feuchtigkeit, ein großer Wert entspricht einer hohen
 Feuchtigkeit.
 
 Wenn der Feuchtigkeitswert periodisch abgefragt werden soll, wird empfohlen
@@ -299,7 +299,7 @@ Setzt die Länge eines gleitenden Mittelwerts für den Feuchtigkeitswert.
 Wenn die Länge auf 0 gesetzt wird, ist das Averaging komplett aus. Desto kleiner
 die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
 
-Der Wertebereicht liegt bei 0-100.
+Der Wertebereich liegt bei 0-100.
 
 Der Standardwert ist 100.
 """

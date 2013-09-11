@@ -70,7 +70,7 @@ Beispiel: Wenn der Index auf 5, die Länge auf 3, r auf [255, 0, 0],
 g auf [0, 255, 0] und b auf [0, 0, 255] gesetzt wird, werden die LEDs
 mit den Indizes 5, 6 und 7 die Farben Rot, Grün und Blau annehmen.
 
-Die Farben werden auf die tatsächlichen LEDs transferriert wenn die
+Die Farben werden auf die tatsächlichen LEDs transferiert wenn die
 nächste *frame duration* abgelaufen ist, siehe :func:`SetFrameDuration`.
 
 Genereller Ansatz:
@@ -80,11 +80,11 @@ Genereller Ansatz:
 
 * Setze alle LEDs für einen Frame.
 
-* Warte auf :func:`FrameRendered` callback.
+* Warte auf :func:`FrameRendered` Callback.
 
 * Setze alle LEDs für den nächsten Frame.
 
-* Warte auf :func:`FrameRendered` callback.
+* Warte auf :func:`FrameRendered` Callback.
 
 * Und so weiter.
 

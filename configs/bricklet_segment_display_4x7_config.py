@@ -50,7 +50,7 @@ ein Segment:
 
 Beispiel: Um eine "5" auf der Anzeige darzustellen müssen die Segment 
 0, 2, 3, 5 und 6 aktiviert werden. Dies kann mit der Zahl 
-0b00110101 = 0x35 = 53 representiert werden.
+0b00110101 = 0x35 = 53 repräsentiert werden.
 
 Die Helligkeit kann zwischen 0 (dunkel) und 7 (hell) gesetzt werden.
 Der dritte Parameter aktiviert/deaktiviert den Doppelpunkt auf der Anzeige.
@@ -73,7 +73,7 @@ Returns the segment, brightness and color data as set by
 """,
 'de':
 """
-Gibt die Segment-, Helligkeit- und Doppenpunktdaten zurück, wie von 
+Gibt die Segment-, Helligkeit- und Doppelpunktdaten zurück, wie von
 :func:`SetSegments` gesetzt.
 """
 }]

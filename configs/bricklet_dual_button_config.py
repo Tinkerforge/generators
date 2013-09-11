@@ -131,12 +131,12 @@ Possible states for buttons are:
 * 0 = pressed
 * 1 = released
 
-Possible states for leds are:
+Possible states for LEDs are:
 
 * 0 = AutoToggleOn: Auto toggle enabled and LED on.
-* 1 = AutoToggleOff: Auto toggle emabled and LED off.
-* 2 = On: LED on (auto toggle ist disabled).
-* 3 = Off: LED off (auto toggle ist disabled).
+* 1 = AutoToggleOff: Auto toggle enabled and LED off.
+* 2 = On: LED on (auto toggle is disabled).
+* 3 = Off: LED off (auto toggle is disabled).
 """,
 'de':
 """

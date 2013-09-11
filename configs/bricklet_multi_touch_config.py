@@ -58,7 +58,7 @@ die Elektroden 0, 1 und 2 berührt werden und das sich etwas in der
 nähe der Elektroden befindet.
 
 Das Proximity Bit wird ab einer Distanz von ca. 1-2cm aktiviert.
-Eine Elektrode wird schon als berührt gezählt wenn ein finger sie
+Eine Elektrode wird schon als berührt gezählt wenn ein Finger sie
 beinahe berührt. Dadurch ist es möglich ein Stück Papier oder Folie
 über die Elektrode zu kleben um damit ein Touchpanel mit einem
 professionellen aussehen zu bauen.

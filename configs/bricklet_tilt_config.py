@@ -106,7 +106,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback provides the current tilt state. It is called everytime the
+This callback provides the current tilt state. It is called every time the
 state changes.
 
 See :func:`GetTiltState` for a description of the states.

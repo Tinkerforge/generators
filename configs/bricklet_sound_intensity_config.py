@@ -39,8 +39,8 @@ callback :func:`Intensity` and set the period with
 Gibt die aktuelle Schallintensität zurück. Der Wertebereich
 ist von 0 bis 4095.
 
-Der Wert enspricht der `Hüllkurve <http://de.wikipedia.org/wiki/H%C3%BCllkurvendemodulator>`__
-des Signals der Lautsprecherkapsel. Die Empfindlichkeit des Signals
+Der Wert entspricht der `Hüllkurve <http://de.wikipedia.org/wiki/H%C3%BCllkurvendemodulator>`__
+des Signals der Mikrophonkapsel. Die Empfindlichkeit des Signals
 kann mit dem kleinen Potentiometer auf dem Sound Intensity
 Bricklet eingestellt werden.
 
