@@ -15,6 +15,7 @@ import socket
 import select
 import threading
 import subprocess
+import textwrap
 
 # error codes are also used as exit codes, valid values are [1..255]
 ERROR_INTERRUPTED = 1
@@ -88,6 +89,15 @@ class FatalError(Exception):
 
 		self.exit_code = exit_code
 
+class Formatter(argparse.HelpFormatter):
+	def _fill_text(self, text, width, indent):
+		ps = []
+
+		for p in text.split('\n'):
+			ps.append(textwrap.fill(p, width, initial_indent=indent, subsequent_indent=indent))
+
+		return '\n'.join(ps)
+
 class Parser(argparse.ArgumentParser):
 	def __init__(self, ctx, prog, description=None, epilog=None):
 		if not listen_mode:
@@ -96,7 +106,7 @@ class Parser(argparse.ArgumentParser):
 			else:
 				prog = 'tinkerforge'
 
-		argparse.ArgumentParser.__init__(self, prog=prog, add_help=False, description=description, epilog=epilog)
+		argparse.ArgumentParser.__init__(self, prog=prog, add_help=False, description=description, epilog=epilog, formatter_class=Formatter)
 
 		self.ctx = ctx
 		self.ctx.current_parser = self
