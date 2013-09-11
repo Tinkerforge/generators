@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+#
 # Copyright (C) 2013 Matthias Bolte <matthias@tinkerforge.com>
 #
 # Redistribution and use in source and binary forms of this file,
@@ -15,6 +16,7 @@ import select
 import threading
 import subprocess
 
+# error codes are also used as exit codes, valid values are [1..255]
 ERROR_INTERRUPTED = 1
 ERROR_SYNTAX_ERROR = 2
 ERROR_PYTHON_VERSION = 21
@@ -25,6 +27,8 @@ ERROR_INVALID_PLACEHOLDER = 25
 IPCONNECTION_ERROR_OFFSET = 200
 
 listen_mode = False
+enable_host = True
+enable_port = True
 enable_execute = True
 line_separator = '\n'
 group_terminator = '\n'
@@ -111,7 +115,7 @@ class Parser(argparse.ArgumentParser):
 			raise ParserExit
 		else:
 			if not message:
-				message = 'unknwon error'
+				message = 'unknown error'
 
 			raise FatalError(message, ERROR_OTHER_EXCEPTION)
 

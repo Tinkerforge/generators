@@ -154,7 +154,7 @@ _tinkerforge()
 			break
 			;;
 		listen)
-			COMPREPLY=($(compgen -W "--help --address --port --enable-execute" -- ${cur}))
+			COMPREPLY=($(compgen -W "--help --address --port --enable-host --enable-port --enable-execute" -- ${cur}))
 			break
 			;;
 		<<DEVICES>>)

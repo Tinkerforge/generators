@@ -138,16 +138,24 @@ def command_enumerate(ctx, argv):
 
 def command_listen(ctx, argv):
 	# FIXME: add description
-	parser = Parser(ctx, 'listen', epilog="In listen mode the --execute option for getter calls and callback dispatching is disabled by default, use --enable-execute to enable it. No group separator is included in the output and the --group-separator option is ignored.")
+	parser = Parser(ctx, 'listen', epilog="In listen mode some command line options are disabled by default for incoming commands.\n\nThe --host and --port options are disabled by default so incoming commands can only connect to the host and port given to the listen command. Use --enable-host and --enable-port to enable these options for incoming commands.\n\nThe --execute option for getter calls and callback dispatching is disabled by default so incoming command cannot execute other commands. Use --enable-execute to enable this option for incoming commands.\n\nNo group separator is included in the output and the --group-separator option is ignored.\n\nIncoming commands have to be terminated by \\n. The output is also terminated by \\n.")
 
-	parser.add_argument('--address', default='0.0.0.0', type=str, help='IP address to listen to, default: 0.0.0.0', metavar='<host>')
+	parser.add_argument('--address', default='0.0.0.0', type=str, help='IP address to listen to, default: 0.0.0.0', metavar='<address>')
 	parser.add_argument('--port', default=4217, type=int, help='port number to listen to, default: 4217', metavar='<port>')
+	parser.add_argument('--enable-host', action='store_true', help='enables --host option to override IP address or hostname to connect to')
+	parser.add_argument('--enable-port', action='store_true', help='enables --port option to override port number to connect to')
 	parser.add_argument('--enable-execute', action='store_true', help='enables --execute option for getters and callbacks')
 
 	args = parser.parse_args(argv)
 
 	global listen_mode
 	listen_mode = True
+
+	global enable_host
+	enable_host = args.enable_host
+
+	global enable_port
+	enable_port = args.enable_port
 
 	global enable_execute
 	enable_execute = args.enable_execute
@@ -299,8 +307,17 @@ def parse(ctx, argv):
 	namespace = argparse.Namespace()
 
 	parser.add_argument('--version', action='version', version='<<VERSION>>')
-	parser.add_argument('--host', default=host_default, type=str, help='IP address or hostname to connect to, default: {0}'.format(host_default), metavar='<host>')
-	parser.add_argument('--port', default=port_default, type=int, help='port number to connect to, default: {0}'.format(port_default), metavar='<port>')
+
+	if enable_host:
+		parser.add_argument('--host', default=host_default, type=str, help='IP address or hostname to connect to, default: {0}'.format(host_default), metavar='<host>')
+	else:
+		setattr(namespace, 'host', host_default)
+
+	if enable_port:
+		parser.add_argument('--port', default=port_default, type=int, help='port number to connect to, default: {0}'.format(port_default), metavar='<port>')
+	else:
+		setattr(namespace, 'port', port_default)
+
 	parser.add_argument('--item-separator', default=item_separator_default, type=str, help='separator for array items, default: {0}{1}'.format(item_separator_default, item_separator_help_suffix), metavar='<item-separator>')
 
 	if not listen_mode:
