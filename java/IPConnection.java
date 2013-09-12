@@ -1018,6 +1018,11 @@ public class IPConnection {
 
 		for(int i = encoded.length() - 1; i >= 0; i--) {
 			int column = BASE58.indexOf(encoded.charAt(i));
+
+			if(column < 0) {
+				throw new IllegalArgumentException("Invalid Base58 value: " + encoded);
+			}
+
 			value += column * columnMultiplier;
 			columnMultiplier *= 58;
 		}
