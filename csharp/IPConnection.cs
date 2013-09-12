@@ -1202,7 +1202,7 @@ namespace Tinkerforge
 				}
 			}
 
-			return 0;
+			return -1;
 		}
 
 		public static string Encode(long value)
@@ -1227,6 +1227,12 @@ namespace Tinkerforge
 			for (int i = encoded.Length - 1; i >= 0; i--)
 			{
 				int column = IndexOf(encoded[i], BASE58);
+
+				if (column < 0)
+				{
+					throw new ArgumentOutOfRangeException("Invalid Base58 value: " + encoded);
+				}
+
 				value += column * columnMultiplier;
 				columnMultiplier *= 58;
 			}
