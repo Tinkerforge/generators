@@ -161,7 +161,7 @@ def make_function_id_definitions():
 \t\t///  <see cref="Tinkerforge.{3}{4}.SetResponseExpected"/> and
 \t\t///  <see cref="Tinkerforge.{3}{4}.SetResponseExpectedAll"/>.
 \t\t/// </summary>
-\t\tpublic static byte {2}_{0} = {1};
+\t\tpublic const byte {2}_{0} = {1};
 """
     for packet in device.get_packets():
         function_ids += function_id.format(packet.get_upper_case_name(),
@@ -176,7 +176,7 @@ def make_constants():
     str_constant = """
 \t\t/// <summary>
 \t\t/// </summary>
-\t\tpublic static {0} {1}_{2} = {3};
+\t\tpublic const {0} {1}_{2} = {3};
 """
     constants = device.get_constants()
     for constant in constants:
