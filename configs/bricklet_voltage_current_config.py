@@ -23,7 +23,7 @@ com['packets'].append({
 'en':
 """
 Returns the current. The value is in mA
-and between 0mA and 20000mA.
+and between -20000mA and 20000mA.
 
 If you want to get the current periodically, it is recommended to use the
 callback :func:`Current` and set the period with 
@@ -32,7 +32,7 @@ callback :func:`Current` and set the period with
 'de':
 """
 Gibt die gemessenen Stromstärke zurück. Der Wert ist in mA und im
-Bereich von 0mA bis 20000mA.
+Bereich von -20000mA bis 20000mA.
 
 Wenn die Stromstärke periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Current` zu nutzen und die Periode mit 
@@ -55,15 +55,6 @@ and between 0mV and 36000mV.
 If you want to get the voltage periodically, it is recommended to use the
 callback :func:`Voltage` and set the period with 
 :func:`SetVoltageCallbackPeriod`.
-""",
-'de':
-"""
-Returns the current. The value is in mA
-and between 0mA and 20000mA.
-
-If you want to get the current periodically, it is recommended to use the
-callback :func:`Current` and set the period with 
-:func:`SetCurrentCallbackPeriod`.
 """,
 'de':
 """
