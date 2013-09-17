@@ -346,6 +346,15 @@ def check_char(string):
 
 check_char.__name__ = 'char'
 
+def convert_int(string):
+	try:
+		return int(string, base=0)
+	except (ValueError, TypeError):
+		msg = 'invalid int value: %r' % string
+		raise argparse.ArgumentTypeError(msg)
+
+convert_int.__name__ = 'int'
+
 def convert_bool(string):
 	value = string.lower()
 

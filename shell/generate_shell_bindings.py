@@ -41,14 +41,14 @@ callback_patterns = []
 
 def get_type_converter(element):
     types = {
-        'int8':   'int',
-        'uint8':  'int',
-        'int16':  'int',
-        'uint16': 'int',
-        'int32':  'int',
-        'uint32': 'int',
-        'int64':  'int',
-        'uint64': 'int',
+        'int8':   'convert_int',
+        'uint8':  'convert_int',
+        'int16':  'convert_int',
+        'uint16': 'convert_int',
+        'int32':  'convert_int',
+        'uint32': 'convert_int',
+        'int64':  'convert_int',
+        'uint64': 'convert_int',
         'bool':   'convert_bool',
         'char':   'check_char',
         'string': 'string',

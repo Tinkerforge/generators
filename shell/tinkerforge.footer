@@ -10,7 +10,7 @@ def command_call(ctx, argv):
 			raise ParserExit()
 
 	parser.add_argument('--list-devices', action=ListDevicesAction, nargs=0, help='show list of devices and exit')
-	parser.add_argument('--timeout', default=2500, type=int, help='maximum time (msec) to wait for response, default: 2500', metavar='<timeout>')
+	parser.add_argument('--timeout', default=2500, type=convert_int, help='maximum time (msec) to wait for response, default: 2500', metavar='<timeout>')
 	parser.add_argument('device', choices=device_choices, help='{' + ', '.join(device_choices) + '}', metavar='<device>')
 	parser.add_argument('args', nargs=argparse.REMAINDER, help='device specific arguments', metavar='<args>')
 
@@ -141,7 +141,7 @@ def command_listen(ctx, argv):
 	parser = Parser(ctx, 'listen', epilog="In listen mode some command line options are disabled by default for incoming commands.\n\nThe --host and --port options are disabled by default so incoming commands can only connect to the host and port given to the listen command. Use --enable-host and --enable-port to enable these options for incoming commands.\n\nThe --execute option for getter calls and callback dispatching is disabled by default so incoming command cannot execute other commands. Use --enable-execute to enable this option for incoming commands.\n\nNo group separator is included in the output and the --group-separator option is ignored.\n\nIncoming commands have to be terminated by \\n. The output is also terminated by \\n.")
 
 	parser.add_argument('--address', default='0.0.0.0', type=str, help='IP address to listen to, default: 0.0.0.0', metavar='<address>')
-	parser.add_argument('--port', default=4217, type=int, help='port number to listen to, default: 4217', metavar='<port>')
+	parser.add_argument('--port', default=4217, type=convert_int, help='port number to listen to, default: 4217', metavar='<port>')
 	parser.add_argument('--enable-host', action='store_true', help='enables --host option to override IP address or hostname to connect to')
 	parser.add_argument('--enable-port', action='store_true', help='enables --port option to override port number to connect to')
 	parser.add_argument('--enable-execute', action='store_true', help='enables --execute option for getters and callbacks')
@@ -314,7 +314,7 @@ def parse(ctx, argv):
 		setattr(namespace, 'host', host_default)
 
 	if enable_port:
-		parser.add_argument('--port', default=port_default, type=int, help='port number to connect to, default: {0}'.format(port_default), metavar='<port>')
+		parser.add_argument('--port', default=port_default, type=convert_int, help='port number to connect to, default: {0}'.format(port_default), metavar='<port>')
 	else:
 		setattr(namespace, 'port', port_default)
 
