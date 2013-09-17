@@ -46,7 +46,7 @@ a professional look.
 Gibt den aktuellen Tastzustand zurück. Der Zustand ist als ein
 Bitfeld repräsentiert.
 
-Bits 0 bis 11 repräsentiert die 12 Elektrode und Bit 12
+Bits 0 bis 11 repräsentieren die 12 Elektroden und Bit 12
 repräsentiert die Proximity (Nähe).
 
 Wird eine Elektrode berührt, ist das korrespondierende Bit *true*.
