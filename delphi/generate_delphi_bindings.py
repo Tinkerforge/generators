@@ -534,12 +534,33 @@ def finish(directory):
     r.write('released_files = ' + repr(released_files))
     r.close()
 
+def rename_bad_variable_names(packets):
+    def rename(elements, f, t):
+        for i in range(len(elements)):
+            if elements[i][0] == f:
+                l = list(elements[i])
+                l[0] = t
+                elements[i] = tuple(l)
+
+    # Rename all copy of elements
+    for packet in packets:
+        rename(packet.all_elements, 'length', 'length2')
+        rename(packet.in_elements, 'length', 'length2')
+        rename(packet.out_elements, 'length', 'length2')
+
 def make_files(device_, directory):
     global device
     device = device_
     file_name = '{0}{1}.pas'.format(device.get_category(), device.get_camel_case_name())
     version = common.get_changelog_version(directory)
     directory += '/bindings'
+
+    # Rename all copys of packet
+    rename_bad_variable_names(device.all_packets)
+    rename_bad_variable_names(device.all_packets_without_doc_only)
+    rename_bad_variable_names(device.all_function_packets)
+    rename_bad_variable_names(device.all_function_packets_without_doc_only)
+    rename_bad_variable_names(device.callback_packets)
 
     pas = file('{0}/{1}'.format(directory, file_name), 'w')
     pas.write(make_unit_header(version))
