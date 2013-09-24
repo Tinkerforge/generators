@@ -17,19 +17,19 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': ('GetMotionDetected', 'get_motion_detected'), 
-'elements': [('motion', 'uint8', 1, 'out', ('Motion', 'motion', [('Detected', 'detected', 0),
-                                                                 ('NotDetected', 'not_detected', 1)]))],
+'elements': [('motion', 'uint8', 1, 'out', ('Motion', 'motion', [('NotDetected', 'not_detected', 0),
+                                                                 ('Detected', 'detected', 1)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns 0 if a motion was detected. How long this returns 0 after a motion
+Returns 1 if a motion was detected. How long this returns 1 after a motion
 was detected can be adjusted with one of the small potentiometers on the
 Motion Detector Bricklet, see here. TODO: ADD LINK
 """,
 'de':
 """
-Gibt 0 zurück wenn eine Bewegung detektiert wurde. Wie lange 0 zurückgegeben wird
+Gibt 1 zurück wenn eine Bewegung detektiert wurde. Wie lange 1 zurückgegeben wird
 nachdem eine Bewegung detektiert wurde kann mit einem kleinen Poti auf
 dem Motion Detector Bricklet eingestellt werden, siehe hier. TODO: LINK HINZUFÜGEN
 """
@@ -73,4 +73,3 @@ eine weitere Bewegung erkannt werden nach ungefähr 2 Sekunden.
 """
 }]
 })
-
