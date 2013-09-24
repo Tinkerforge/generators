@@ -99,9 +99,9 @@ sind:
 * 1 = fallend
 * 2 = beide
 
-Wenn ein Magnet in die nähe des Bricklets entsteht ein *low*-Signal
-(fallende Flanke), wenn ein ein Magnet vom Bricklet entfernt wird entsteht
-ein *high*-Signal (steigende Flanke).
+Wird ein Magnet in die Nähe des Bricklets gebracht erzeugt dies ein *low*-Signal
+(fallende Flanke), wenn ein Magnet vom Bricklet entfernt wird entsteht ein
+*high*-Signal (steigende Flanke).
 
 Die Entprellzeit (debounce) wird in ms angegeben.
 
@@ -144,10 +144,9 @@ com['packets'].append({
 """
 Sets the number of edges until an interrupt is invoked.
 
-If edges is set to n, an interrupt is invoked for every nth detected
-edge.
+If *edges* is set to n, an interrupt is invoked for every n-th detected edge.
 
-If edges is set to 0, the interrupt is disabled.
+If *edges* is set to 0, the interrupt is disabled.
 
 Default value is 0.
 """,
@@ -239,7 +238,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is triggered every nth count, as configured with
+This callback is triggered every n-th count, as configured with
 :func:`SetEdgeInterrupt`. The :word:`parameters` are the
 current count and the current value (see :func:`GetValue` and :func:`GetEdgeCount`).
 """,
