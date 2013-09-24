@@ -61,7 +61,7 @@ Das Proximity Bit wird ab einer Distanz von ca. 1-2cm aktiviert.
 Eine Elektrode wird schon als berührt gezählt wenn ein Finger sie
 beinahe berührt. Dadurch ist es möglich ein Stück Papier oder Folie
 über die Elektrode zu kleben um damit ein Touchpanel mit einem
-professionellen aussehen zu bauen.
+professionellen Aussehen zu bauen.
 """
 }]
 })
@@ -116,7 +116,7 @@ Aktiviert/deaktiviert Elektroden mit einem Bitfeld (siehe :func:`GetTouchState`)
 deaktivierte Elektrode hat immer den Zustand *false*. Wenn nicht alle
 Elektroden gebraucht werden können die ungebrauchten deaktiviert werden.
 
-Wir empfehlen das Proximity Bit (bit 12) zu deaktivieren wenn
+Wir empfehlen das Proximity Bit (Bit 12) zu deaktivieren wenn
 das Proximity-Feature nicht benötigt wird. Das verringert den Datenverkehr
 der durch den :func:`TouchState` Callback ausgelöst wird.
 
@@ -144,7 +144,6 @@ gesetzt.
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'callback',
