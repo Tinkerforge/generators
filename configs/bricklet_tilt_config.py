@@ -105,7 +105,6 @@ Gibt *true* zurück wenn der :func:`TiltState` Callback aktiviert ist.
 }]
 })
 
-
 com['packets'].append({
 'type': 'callback',
 'name': ('TiltState', 'tilt_state'), 

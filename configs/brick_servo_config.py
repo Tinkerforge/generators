@@ -862,7 +862,7 @@ Voreinstellung ist deaktiviert.
 com['packets'].append({
 'type': 'function',
 'name': ('IsPositionReachedCallbackEnabled', 'is_position_reached_callback_enabled'), 
-'elements': [('enabled', 'uint8', 1, 'out')],
+'elements': [('enabled', 'uint8', 1, 'out')], # FIXME: should have been bool instead of uint8, maybe fix in 3.0
 'since_firmware': [2, 0, 1],
 'doc': ['ccf', {
 'en':
@@ -921,7 +921,7 @@ Voreinstellung ist deaktiviert.
 com['packets'].append({
 'type': 'function',
 'name': ('IsVelocityReachedCallbackEnabled', 'is_velocity_reached_callback_enabled'), 
-'elements': [('enabled', 'uint8', 1, 'out')],
+'elements': [('enabled', 'uint8', 1, 'out')], # FIXME: should have been bool instead of uint8, maybe fix in 3.0
 'since_firmware': [2, 0, 1],
 'doc': ['ccf', {
 'en':

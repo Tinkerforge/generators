@@ -14,7 +14,6 @@ com = {
     'packets': []
 }
 
-
 com['packets'].append({
 'type': 'function',
 'name': ('SetRGBValues', 'set_rgb_values'), 
@@ -44,15 +43,10 @@ Generic approach:
 
 * Set the frame duration to a value that represents
   the number of frames per second you want to achieve. 
-
 * Set all of the LED colors for one frame.
-
 * Wait for the :func:`FrameRendered` callback.
-
 * Set all of the LED colors for next frame.
-
 * Wait for the :func:`FrameRendered` callback.
-
 * and so on.
 
 This approach ensures that you can change the LED colors with
@@ -77,15 +71,10 @@ Genereller Ansatz:
 
 * Setze *frame duration* auf einen Wert welcher der Anzahl der
   Bilder pro Sekunde entspricht die erreicht werden sollen.
-
 * Setze alle LEDs für einen Frame.
-
 * Warte auf :func:`FrameRendered` Callback.
-
 * Setze alle LEDs für den nächsten Frame.
-
 * Warte auf :func:`FrameRendered` Callback.
-
 * Und so weiter.
 
 Dieser Ansatz garantiert das die LED Farben mit einer
@@ -178,8 +167,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the current supply voltage of the LEDs. The voltage is given
-in mv. 
+Returns the current supply voltage of the LEDs. The voltage is given in mv. 
 """,
 'de':
 """
@@ -215,4 +203,3 @@ Für eine Erklärung des generellen Ansatzes siehe :func:`SetRGBValues`.
 """
 }]
 })
-

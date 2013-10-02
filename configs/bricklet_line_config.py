@@ -34,7 +34,6 @@ to use the callback :func:`Reflectivity` and set the period with
 """,
 'de':
 """
-
 Gibt die aktuell gemessene Reflektivität zurück. Die Reflektivität
 ist ein Wert zwischen 0 (nicht reflektiv) und 4095 (sehr reflektiv).
 
