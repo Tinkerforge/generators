@@ -30,6 +30,11 @@ Returns the current tilt state. The state can either be
 * 1 = Open: The ball in the tilt switch does not close the circuit.
 * 2 = Closed Vibrating: The tilt switch is in motion (rapid change between open and close).
 
+.. image:: /Images/Bricklets/bricklet_tilt_mechanics.jpg
+   :scale: 100 %
+   :alt: Tilt states
+   :align: center
+
 """,
 'de':
 """
@@ -39,6 +44,11 @@ annehmen:
 * 0 = Closed: Der Ball im Neigungsschalter schließt den Stromkreis.
 * 1 = Open: Der Ball im Neigungsschalter schließt den Stromkreis nicht.
 * 2 = Closed Vibrating: Der Neigungsschalter ist in Bewegung (schnelle Änderungen zwischen open und close).
+
+.. image:: /Images/Bricklets/bricklet_tilt_mechanics.jpg
+   :scale: 100 %
+   :alt: Tilt-Zustände
+   :align: center
 
 """
 }]
