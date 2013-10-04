@@ -297,7 +297,7 @@ com['packets'].append({
 'en':
 """
 Sets the output voltages with which the servos are driven in mV.
-The minimum output voltage is 5000mV and the maximum output voltage is 
+The minimum output voltage is 2000mV and the maximum output voltage is 
 9000mV.
 
 .. note::
@@ -310,7 +310,7 @@ The default value is 5000.
 'de':
 """
 Setzt die Ausgangsspannung mit welchem der Servo angetrieben wird in mV.
-Die minimale Ausgangsspannung ist 5000mV und die maximale 9000mV.
+Die minimale Ausgangsspannung ist 2000mV und die maximale 9000mV.
 
 .. note::
  Es wird empfohlen diesen Wert auf die maximale Spannung laut Spezifikation
