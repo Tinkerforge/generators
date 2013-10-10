@@ -53,12 +53,12 @@ def get_element_type(element):
         'float': 'float'
     }
 
-    t = types[element[1]]
+    t = types[element.get_type()]
 
-    if element[2] == 1 or element[1] == 'string':
+    if element.get_cardinality() == 1 or element.get_type() == 'string':
         return t
     else:
-        return ','.join([t] * element[2])
+        return ','.join([t]*element.get_cardinality())
 
 def get_shell_device_name(device):
     return device.get_underscore_name().replace('_', '-') + '-' + device.get_category().lower()
@@ -88,10 +88,11 @@ def format_doc(packet):
 
         e = []
         for element in constant.elements:
-            if element[3] == 'in':
-                e.append('<{0}>'.format(element[0].replace('_', '-')))
+            name = element.get_underscore_name().replace('_', '-')
+            if element.get_direction() == 'in':
+                e.append('<{0}>'.format(name))
             else:
-                e.append(element[0].replace('_', '-'))
+                e.append(name)
 
         if len(e) > 1:
             and_ = {
@@ -135,9 +136,9 @@ def make_parameter_desc(packet):
 
     for element in packet.get_elements('in'):
         t = get_element_type(element)
-        desc += param.format(element[0].replace('_', '-'), t)
+        desc += param.format(element.get_underscore_name().replace('_', '-'), t)
 
-        if len(element) > 4:
+        if element.has_constants():
             desc += ' ({0})'.format(common.select_lang(has_symbols))
 
         desc += '\n'
@@ -161,10 +162,10 @@ def make_return_desc(packet):
     ret = '\n'
     for element in elements:
         t = get_element_type(element)
-        ret += ' :returns {0}: {1}'.format(element[0].replace('_', '-'), t)
+        ret += ' :returns {0}: {1}'.format(element.get_underscore_name().replace('_', '-'), t)
 
-        if len(element) > 4 or \
-           packet.get_function_id() == 255 and element[0] == 'device_identifier':
+        if element.has_constants() or \
+           packet.get_function_id() == 255 and element.get_underscore_name() == 'device_identifier':
             ret += ' ({0})'.format(common.select_lang(has_symbols))
 
         ret += '\n'
@@ -470,8 +471,8 @@ Befehlsstruktur
                                             device.get_category().lower())
 
     api_desc = ''
-    if 'api' in device.com:
-        api_desc = common.select_lang(device.com['api'])
+    if 'api' in device.raw_data:
+        api_desc = common.select_lang(device.raw_data['api'])
 
     return common.select_lang(api).format(ref, api_desc, api_str, get_shell_device_name(device),
                                           device.get_display_name() + ' ' + device.get_category())

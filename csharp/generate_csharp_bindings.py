@@ -186,7 +186,7 @@ def make_constants():
             else:
                 value = str(definition.value)
 
-            str_constants += str_constant.format(csharp_common.get_csharp_type([None, constant.type, 0]),
+            str_constants += str_constant.format(csharp_common.get_csharp_type(common.Element(None, [None, constant.type, 0])),
                                                  constant.name_uppercase,
                                                  definition.name_uppercase,
                                                  value)
@@ -259,14 +259,12 @@ def get_from_type(element):
         'char' : 'CharFrom'
     }
 
-    if element[1] in forms:
-        from_type = forms[element[1]]
-        if from_type != 'StringFrom' and element[2] > 1:
-            from_type = from_type.replace('From', 'ArrayFrom')
+    from_type = forms[element.get_type()]
 
-        return from_type
+    if from_type != 'StringFrom' and element.get_cardinality() > 1:
+        from_type = from_type.replace('From', 'ArrayFrom')
 
-    return ''
+    return from_type
 
 def make_callbacks():
     cbs = ''
@@ -288,10 +286,10 @@ def make_callbacks():
         name_upper = packet.get_upper_case_name()
         eles = []
         for element in packet.get_elements('out'):
-            eles.append(common.underscore_to_headless_camel_case(element[0]))
+            eles.append(element.get_headless_camel_case_name())
         callParams = ", ".join(eles)
         signatureParams = csharp_common.make_parameter_list(packet)
-        size = str(get_data_size(packet))
+        size = str(packet.get_request_size())
 
         convs = ''
         conv = '\t\t\t{0} {1} = LEConverter.{2}({3}, response{4});\n'
@@ -299,18 +297,18 @@ def make_callbacks():
         pos = 8
         for element in packet.get_elements('out'):
             csharp_type = csharp_common.get_csharp_type(element)
-            cname = common.underscore_to_headless_camel_case(element[0])
+            cname = element.get_headless_camel_case_name()
             from_type = get_from_type(element)
             length = ''
-            if element[2] > 1:
-                length = ', ' + str(element[2])
+            if element.get_cardinality() > 1:
+                length = ', ' + str(element.get_cardinality())
             convs += conv.format(csharp_type,
                                  cname,
                                  from_type,
                                  pos,
                                  length)
 
-            pos += common.get_element_size(element)
+            pos += element.get_size()
 
         if convs != '':
             convs += '\n'
@@ -345,7 +343,7 @@ def make_methods():
     cls = device.get_camel_case_name()
     for packet in device.get_packets('function'):
         ret_count = len(packet.get_elements('out'))
-        size = str(get_data_size(packet))
+        size = str(packet.get_request_size())
         name_upper = packet.get_upper_case_name()
         doc = format_doc(packet)
 
@@ -355,13 +353,13 @@ def make_methods():
 
         pos = 8
         for element in packet.get_elements('in'):
-            wname = common.underscore_to_headless_camel_case(element[0])
+            wname = element.get_headless_camel_case_name()
             csharp_type = csharp_common.get_csharp_type_for_to_convert(element)
-            if element[2] > 1:
-                write_convs += write_conv_length.format(wname, pos, element[2], csharp_type)
+            if element.get_cardinality() > 1:
+                write_convs += write_conv_length.format(wname, pos, element.get_cardinality(), csharp_type)
             else:
                 write_convs += write_conv.format(wname, pos, csharp_type)
-            pos += common.get_element_size(element)
+            pos += element.get_size()
 
         method_tail = ''
         read_convs = ''
@@ -369,17 +367,17 @@ def make_methods():
 
         pos = 8
         for element in packet.get_elements('out'):
-            aname = common.underscore_to_headless_camel_case(element[0])
+            aname = element.get_headless_camel_case_name()
             from_type = get_from_type(element)
             length = ''
-            if element[2] > 1:
-                length = ', ' + str(element[2])
+            if element.get_cardinality() > 1:
+                length = ', ' + str(element.get_cardinality())
 
             if ret_count == 1:
                 read_convs = '\n\t\t\treturn LEConverter.{0}({1}, response{2});'.format(from_type, pos, length)
             else:
                 read_convs += read_conv.format(aname, from_type, pos, length)
-            pos += common.get_element_size(element)
+            pos += element.get_size()
 
         if ret_count > 0:
             method_tail = method_response.format(read_convs)
@@ -395,12 +393,6 @@ def make_methods():
                                  doc)
 
     return methods
-
-def get_data_size(packet):
-    size = 0
-    for element in packet.get_elements('in'):
-        size += common.get_element_size(element)
-    return size + 8
 
 def finish(directory):
     r = open(os.path.join(directory, 'csharp_released_files.py'), 'wb')

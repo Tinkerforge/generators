@@ -53,12 +53,12 @@ def type_to_pytype(element):
         'float': 'float'
     }
 
-    t = type_dict[element[1]]
+    t = type_dict[element.get_type()]
     
-    if element[2] == 1 or t == 'str':
+    if element.get_cardinality() == 1 or t == 'str':
         return t
 
-    return '[' + ', '.join([t]*element[2]) + ']'
+    return '[' + ', '.join([t]*element.get_cardinality()) + ']'
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
@@ -102,7 +102,7 @@ def make_parameter_desc(packet, io):
     param = ' :param {0}: {1}\n'
     for element in packet.get_elements(io):
         t = type_to_pytype(element)
-        desc += param.format(element[0], t)
+        desc += param.format(element.get_underscore_name(), t)
 
     return desc
 
@@ -138,7 +138,7 @@ def make_object_desc(packet):
 
     var = []
     for element in packet.get_elements('out'):
-        var.append('``{0}``'.format(element[0]))
+        var.append('``{0}``'.format(element.get_underscore_name()))
 
     if len(var) == 1:
         return common.select_lang(desc).format(var[0])
@@ -398,8 +398,8 @@ Konstanten
                                              device.get_category().lower())
 
     api_desc = ''
-    if 'api' in device.com:
-        api_desc = common.select_lang(device.com['api'])
+    if 'api' in device.raw_data:
+        api_desc = common.select_lang(device.raw_data['api'])
 
     return common.select_lang(api).format(ref, api_desc, api_str)
 

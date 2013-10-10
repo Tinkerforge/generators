@@ -82,7 +82,7 @@ def make_namedtuples():
             name_tup = name_tup[3:]
         params = []
         for element in packet.get_elements('out'):
-            params.append("'{0}'".format(element[0]))
+            params.append("'{0}'".format(element.get_underscore_name()))
 
         tups += tup.format(name, name_tup, ", ".join(params))
     return tups
@@ -195,17 +195,14 @@ def make_format_from_element(element):
         'char' : 'c'
     }
 
-    if element[1] in forms:
-        return forms[element[1]]
-
-    return ''
+    return forms[element.get_type()]
 
 def make_format_list(packet, io):
     forms = []
     for element in packet.get_elements(io):
         num = ''
-        if element[2] > 1:
-            num = element[2]
+        if element.get_cardinality() > 1:
+            num = element.get_cardinality()
         form = make_format_from_element(element)
         forms.append('{0}{1}'.format(num, form))
     return " ".join(forms)

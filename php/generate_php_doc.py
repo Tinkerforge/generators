@@ -94,7 +94,7 @@ def make_object_desc(packet):
 
     var = []
     for element in packet.get_elements('out'):
-        var.append('``{0}``'.format(element[0]))
+        var.append('``{0}``'.format(element.get_underscore_name()))
 
     if len(var) == 1:
         return common.select_lang(desc).format(var[0])
@@ -378,8 +378,8 @@ Konstanten
                                           device.get_category().lower())
 
     api_desc = ''
-    if 'api' in device.com:
-        api_desc = common.select_lang(device.com['api'])
+    if 'api' in device.raw_data:
+        api_desc = common.select_lang(device.raw_data['api'])
 
     return common.select_lang(api).format(ref, api_desc, api_str)
 

@@ -35,15 +35,15 @@ import common
 device = None
 
 def type_to_pytype(element):
-    t = element[1]
+    t = element.get_type()
 
     if t == 'string':
         t = 'char'
 
-    if element[2] == 1:
+    if element.get_cardinality() == 1:
         return t
 
-    return t + '[' + str(element[2]) + ']'
+    return t + '[' + str(element.get_cardinality()) + ']'
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
@@ -81,7 +81,7 @@ def make_request_desc(packet):
     param = ' :request {0}: {1}\n'
     for element in packet.get_elements('in'):
         t = type_to_pytype(element)
-        desc += param.format(element[0], t)
+        desc += param.format(element.get_underscore_name(), t)
 
     if desc == '\n':
         desc += ' :emptyrequest: {0}\n'.format(common.select_lang(empty_payload))
@@ -101,7 +101,7 @@ def make_response_desc(packet):
     returns = ' :response {0}: {1}\n'
     for element in packet.get_elements('out'):
         t = type_to_pytype(element)
-        desc += returns.format(element[0], t)
+        desc += returns.format(element.get_underscore_name(), t)
 
     if desc == '\n':
         if packet.get_type() == 'callback':
@@ -258,8 +258,8 @@ Konstanten
                                             device.get_category().lower())
 
     api_desc = ''
-    if 'api' in device.com:
-        api_desc = common.select_lang(device.com['api'])
+    if 'api' in device.raw_data:
+        api_desc = common.select_lang(device.raw_data['api'])
 
     return common.select_lang(api).format(ref, api_desc, api_str)
 

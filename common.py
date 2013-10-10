@@ -172,9 +172,6 @@ def get_type_size(typ):
 
     return types[typ]
 
-def get_element_size(element):
-    return get_type_size(element[1]) * element[2]
-
 def select_lang(d):
     if lang in d:
         return d[lang]
@@ -689,58 +686,96 @@ def check_name(camel_case, underscore, display, is_constant=False):
 valid_types = set(['int8', 'uint8', 'int16', 'uint16', 'int32', 'uint32',
                    'int64', 'uint64', 'bool', 'char', 'string', 'float'])
 
-class Packet:
-    def __init__(self, device, packet):
-        self.device = device
+class Element:
+    def __init__(self, packet, raw_data):
         self.packet = packet
-        self.all_elements = packet['elements']
+        self.raw_data = raw_data
+
+    def get_packet(self):
+        return self.packet
+
+    def get_underscore_name(self):
+        return self.raw_data[0]
+
+    def get_headless_camel_case_name(self):
+        return underscore_to_headless_camel_case(self.get_underscore_name())
+
+    def get_type(self):
+        return self.raw_data[1]
+
+    def get_cardinality(self):
+        return self.raw_data[2]
+
+    def get_direction(self):
+        return self.raw_data[3]
+
+    def has_constants(self):
+        return len(self.raw_data) > 4
+
+    def get_constants(self):
+        if self.has_constants():
+            return self.raw_data[4]
+        else:
+            return None
+
+    def get_size(self):
+        return get_type_size(self.get_type()) * self.get_cardinality()
+
+class Packet:
+    def __init__(self, device, raw_data):
+        self.device = device
+        self.raw_data = raw_data
+        self.all_elements = []
         self.in_elements = []
         self.out_elements = []
 
-        check_name(packet['name'][0], packet['name'][1], None)
+        check_name(raw_data['name'][0], raw_data['name'][1], None)
 
-        for element in self.all_elements:
-            check_name(None, element[0], None)
+        for raw_element in self.raw_data['elements']:
+            element = Element(self, raw_element)
 
-            if element[1] not in valid_types:
-                raise ValueError('Invalid element type ' + element[1])
+            self.all_elements.append(element)
 
-            if element[2] < 1:
-                raise ValueError('Invalid element size ' + element[2])
+            check_name(None, element.get_underscore_name(), None)
 
-            if element[3] == 'in':
+            if element.get_type() not in valid_types:
+                raise ValueError('Invalid element type ' + element.get_type())
+
+            if element.get_cardinality() < 1:
+                raise ValueError('Invalid element size ' + element.get_cardinality())
+
+            if element.get_direction() == 'in':
                 self.in_elements.append(element)
-            elif element[3] == 'out':
+            elif element.get_direction() == 'out':
                 self.out_elements.append(element)
             else:
-                raise ValueError('Invalid element direction ' + element[3])
+                raise ValueError('Invalid element direction ' + element.get_direction())
 
-            if len(element) > 4:
-                constant = element[4]
+            if element.has_constants():
+                constants = element.get_constants()
+                check_name(constants[0], constants[1], None)
 
-                check_name(constant[0], constant[1], None)
-
-                for value in constant[2]:
+                for value in constants[2]:
                     check_name(value[0], value[1], None, True)
 
     def get_device(self):
         return self.device
 
     def get_type(self):
-        return self.packet['type']
+        return self.raw_data['type']
 
     def get_camel_case_name(self):
-        return self.packet['name'][0]
+        return self.raw_data['name'][0]
 
     def get_headless_camel_case_name(self):
-        m = re.match('([A-Z]+)(.*)', self.packet['name'][0])
+        m = re.match('([A-Z]+)(.*)', self.get_camel_case_name())
         return m.group(1).lower() + m.group(2)
 
     def get_underscore_name(self):
-        return self.packet['name'][1]
+        return self.raw_data['name'][1]
 
     def get_upper_case_name(self):
-        return self.packet['name'][1].upper()
+        return self.get_underscore_name().upper()
 
     def get_elements(self, direction=None):
         if direction is None:
@@ -753,25 +788,25 @@ class Packet:
             raise ValueError('Invalid element direction ' + str(direction))
 
     def get_since_firmware(self):
-        return self.packet['since_firmware']
+        return self.raw_data['since_firmware']
 
     def get_doc(self):
-        return self.packet['doc']
+        return self.raw_data['doc']
 
     def get_function_id(self):
-        return self.packet['function_id']
+        return self.raw_data['function_id']
 
-    def get_request_length(self):
-        length = 8
+    def get_request_size(self):
+        size = 8 # header
         for element in self.in_elements:
-            length += get_element_size(element)
-        return length
+            size += element.get_size()
+        return size
 
-    def get_response_length(self):
-        length = 4
+    def get_response_size(self):
+        size = 8 # header
         for element in self.out_elements:
-            length += get_element_size(element)
-        return length
+            size += element.get_size()
+        return size
 
     def get_constants(self):
         ConstantDefinitionTuple = namedtuple('ConstantValues', ['name_camelcase', 'name_underscore', 'name_uppercase', 'value'])
@@ -786,8 +821,9 @@ class Packet:
         constants = []
 
         for element in self.all_elements:
-            if len(element) > 4:
-                c = element[4]
+            c = element.get_constants()
+
+            if c is not None:
                 ec = get_existing_constants(constants, c)
 
                 if not ec:
@@ -795,36 +831,36 @@ class Packet:
                     vs = c[2]
                     for v in vs:
                         definitions.append(ConstantDefinitionTuple(v[0], v[1], v[1].upper(), v[2]))
-                    constants.append(ConstantTuple(element[1], c[0], c[1], c[1].upper(), definitions, [element]))
+                    constants.append(ConstantTuple(element.get_type(), c[0], c[1], c[1].upper(), definitions, [element]))
                 else:
                     ec.elements.append(element)
 
         return constants
 
     def has_prototype_in_device(self):
-        if 'prototype_in_device' in self.packet:
-            if self.packet['prototype_in_device'] == True:
+        if 'prototype_in_device' in self.raw_data:
+            if self.raw_data['prototype_in_device']:
                 return True
         return False
 
     def is_virtual(self):
-        if 'is_virtual' in self.packet:
-            if self.packet['is_virtual'] == True:
+        if 'is_virtual' in self.raw_data:
+            if self.raw_data['is_virtual']:
                 return True
         return False
 
 class Device:
-    def __init__(self, com):
-        self.com = com
+    def __init__(self, raw_data):
+        self.raw_data = raw_data
         self.all_packets = []
         self.all_packets_without_doc_only = []
         self.all_function_packets = []
         self.all_function_packets_without_doc_only = []
         self.callback_packets = []
 
-        check_name(com['name'][0], com['name'][1], com['name'][2])
+        check_name(raw_data['name'][0], raw_data['name'][1], raw_data['name'][2])
 
-        for i, p in zip(range(len(com['packets'])), com['packets']):
+        for i, p in zip(range(len(raw_data['packets'])), raw_data['packets']):
             if not 'function_id' in p:
                 p['function_id'] = i + 1
 
@@ -847,35 +883,35 @@ class Device:
                 raise ValueError('Invalid packet type ' + packet.get_type())
 
     def is_released(self):
-        return self.com['released']
+        return self.raw_data['released']
 
     def get_api_version(self):
-        return self.com['api_version']
+        return self.raw_data['api_version']
 
     def get_category(self):
-        return self.com['category']
+        return self.raw_data['category']
 
     def get_device_identifier(self):
-        return self.com['device_identifier']
+        return self.raw_data['device_identifier']
 
     def get_camel_case_name(self):
-        return self.com['name'][0]
+        return self.raw_data['name'][0]
 
     def get_headless_camel_case_name(self):
-        m = re.match('([A-Z]+)(.*)', self.com['name'][0])
+        m = re.match('([A-Z]+)(.*)', self.raw_data['name'][0])
         return m.group(1).lower() + m.group(2)
 
     def get_underscore_name(self):
-        return self.com['name'][1]
+        return self.raw_data['name'][1]
 
     def get_upper_case_name(self):
-        return self.com['name'][1].upper()
+        return self.raw_data['name'][1].upper()
 
     def get_display_name(self):
-        return self.com['name'][2]
+        return self.raw_data['name'][2]
 
     def get_description(self):
-        return self.com['description']
+        return self.raw_data['description']
 
     def get_packets(self, typ=None):
         if typ is None:
@@ -896,7 +932,6 @@ class Device:
     def get_callback_count(self):
         return len(self.callback_packets)
 
-
     def get_constants(self):
         ConstantDefinitionTuple = namedtuple('ConstantValues', ['name_camelcase', 'name_underscore', 'name_uppercase', 'value'])
         ConstantTuple = namedtuple('Constant', ['type', 'name_camelcase', 'name_underscore', 'name_uppercase', 'definitions'])
@@ -911,14 +946,14 @@ class Device:
 
         for packet in self.all_packets:
             for element in packet.all_elements:
-                if len(element) > 4:
-                    c = element[4]
-                    if not is_in_constants(constants, c):
+                c = element.get_constants()
+
+                if c is not None and not is_in_constants(constants, c):
                         definitions = []
                         vs = c[2]
                         for v in vs:
                             definitions.append(ConstantDefinitionTuple(v[0], v[1], v[1].upper(), v[2]))
-                        constants.append(ConstantTuple(element[1], c[0], c[1], c[1].upper(), definitions))
+                        constants.append(ConstantTuple(element.get_type(), c[0], c[1], c[1].upper(), definitions))
 
         return constants
 

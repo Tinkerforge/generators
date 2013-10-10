@@ -194,10 +194,7 @@ def make_format_from_element(element):
         'char'   : ('k', 1)
     }
 
-    if element[1] in forms:
-        return forms[element[1]]
-
-    return '', 0
+    return forms[element.get_type()]
 
 def make_format_list(packet, io):
     forms = []
@@ -205,9 +202,9 @@ def make_format_list(packet, io):
     for element in packet.get_elements(io):
         num_str = ''
         num_int = 1
-        if element[2] > 1:
-            num_str = element[2]
-            num_int = element[2]
+        if element.get_cardinality() > 1:
+            num_str = element.get_cardinality()
+            num_int = element.get_cardinality()
         form, size = make_format_from_element(element)
         forms.append('{0}{1}'.format(form, num_str))
         total_size += size * num_int

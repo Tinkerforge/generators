@@ -33,15 +33,15 @@ import common
 def make_parameter_list(packet, useOutParams=True):
     param = []
     for element in packet.get_elements():
-        if (not useOutParams) and element[3] == 'out':
+        if (not useOutParams) and element.get_direction() == 'out':
             continue
         
         out = ''
-        if element[3] == 'out' and packet.get_type() == 'function':
+        if element.get_direction() == 'out' and packet.get_type() == 'function':
             out = 'out '
 
         csharp_type = get_csharp_type(element)
-        name = common.underscore_to_headless_camel_case(element[0])
+        name = element.get_headless_camel_case_name()
        
         param.append('{0}{1} {2}'.format(out, csharp_type, name))
     return ', '.join(param)
@@ -78,9 +78,9 @@ def get_csharp_type(element):
         'char'   : 'char'
     }
 
-    csharp_type = types[element[1]]
+    csharp_type = types[element.get_type()]
 
-    if element[2] > 1 and element[1] != 'string':
+    if element.get_cardinality() > 1 and element.get_type() != 'string':
         csharp_type += '[]'
 
     return csharp_type
@@ -101,9 +101,9 @@ def get_csharp_type_for_to_convert(element):
         'char'   : 'char'
     }
 
-    csharp_type = types[element[1]]
+    csharp_type = types[element.get_type()]
 
-    if element[2] > 1 and element[1] != 'string':
+    if element.get_cardinality() > 1 and element.get_type() != 'string':
         csharp_type += '[]'
 
     return csharp_type

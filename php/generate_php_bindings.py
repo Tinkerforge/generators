@@ -109,14 +109,14 @@ def format_doc(packet, suffix):
 def make_parameter_doc(packet):
     param = []
     for element in packet.get_elements():
-        if element[3] == 'out' or packet.get_type() != 'function':
+        if element.get_direction() == 'out' or packet.get_type() != 'function':
             continue
 
-        php_type = php_common.get_php_type(element[1])
-        if element[2] > 1 and element[1] != 'string':
-            param.append('@param {0}[] ${1}'.format(php_type, element[0]))
+        php_type = php_common.get_php_type(element.get_type())
+        if element.get_cardinality() > 1 and element.get_type() != 'string':
+            param.append('@param {0}[] ${1}'.format(php_type, element.get_underscore_name()))
         else:
-            param.append('@param {0} ${1}'.format(php_type, element[0]))
+            param.append('@param {0} ${1}'.format(php_type, element.get_underscore_name()))
 
     param.append('\n@return ' + php_common.get_return_type(packet))
     return '\n'.join(param)
@@ -257,38 +257,38 @@ def get_pack_type(element):
         'char' : 'c'
     }
 
-    return forms[element[1]];
+    return forms[element.get_type()];
 
 get_unpack_type = get_pack_type
 
 def get_unpack_fix(element):
-    if element[2] > 1:
-        if element[1] == 'int16':
+    if element.get_cardinality() > 1:
+        if element.get_type() == 'int16':
             return ('IPConnection::collectUnpackedInt16Array(', ')')
-        elif element[1] == 'int32':
+        elif element.get_type() == 'int32':
             return ('IPConnection::collectUnpackedInt32Array(', ')')
-        elif element[1] == 'uint32':
+        elif element.get_type() == 'uint32':
             return ('IPConnection::collectUnpackedUInt32Array(', ')')
-        elif element[1] == 'bool':
+        elif element.get_type() == 'bool':
             return ('IPConnection::collectUnpackedBoolArray(', ')')
-        elif element[1] == 'string':
+        elif element.get_type() == 'string':
             return ('IPConnection::implodeUnpackedString(', ')')
-        elif element[1] == 'char':
+        elif element.get_type() == 'char':
             return ('IPConnection::collectUnpackedCharArray(', ')')
         else:
             return ('IPConnection::collectUnpackedArray(', ')')
     else:
-        if element[1] == 'int16':
+        if element.get_type() == 'int16':
             return ('IPConnection::fixUnpackedInt16(', ')')
-        elif element[1] == 'int32':
+        elif element.get_type() == 'int32':
             return ('IPConnection::fixUnpackedInt32(', ')')
-        elif element[1] == 'uint32':
+        elif element.get_type() == 'uint32':
             return ('IPConnection::fixUnpackedUInt32(', ')')
-        elif element[1] == 'bool':
+        elif element.get_type() == 'bool':
             return ('(bool)', '')
-        elif element[1] == 'string':
+        elif element.get_type() == 'string':
             return ('chr(', ')')
-        elif element[1] == 'char':
+        elif element.get_type() == 'char':
             return ('chr(', ')')
         else:
             return ('', '')
@@ -337,54 +337,54 @@ def make_methods():
         parameter = php_common.make_parameter_list(packet)
         pack = []
         for element in packet.get_elements('in'):
-            if element[1] == 'bool':
-                if element[2] > 1:
+            if element.get_type() == 'bool':
+                if element.get_cardinality() > 1:
                     pack.append('        for ($i = 0; $i < {0}; $i++) {{'.format(element[2]))
-                    pack.append('            $payload .= pack(\'{0}\', intval((bool)${1}[$i]));\n        }}'.format(get_pack_type(element), element[0]))
+                    pack.append('            $payload .= pack(\'{0}\', intval((bool)${1}[$i]));\n        }}'.format(get_pack_type(element), element.get_underscore_name()))
                 else:
-                    pack.append('        $payload .= pack(\'{0}\', intval((bool)${1}));'.format(get_pack_type(element), element[0]))
-            elif element[1] == 'string':
-                if element[2] > 1:
-                    pack.append('        for ($i = 0; $i < strlen(${0}) && $i < {1}; $i++) {{'.format(element[0], element[2]))
-                    pack.append('            $payload .= pack(\'{0}\', ord(${1}[$i]));\n        }}'.format(get_pack_type(element), element[0]))
-                    pack.append('        for ($i = strlen(${0}); $i < {1}; $i++) {{'.format(element[0], element[2]))
+                    pack.append('        $payload .= pack(\'{0}\', intval((bool)${1}));'.format(get_pack_type(element), element.get_underscore_name()))
+            elif element.get_type() == 'string':
+                if element.get_cardinality() > 1:
+                    pack.append('        for ($i = 0; $i < strlen(${0}) && $i < {1}; $i++) {{'.format(element.get_underscore_name(), element.get_cardinality()))
+                    pack.append('            $payload .= pack(\'{0}\', ord(${1}[$i]));\n        }}'.format(get_pack_type(element), element.get_underscore_name()))
+                    pack.append('        for ($i = strlen(${0}); $i < {1}; $i++) {{'.format(element.get_underscore_name(), element.get_cardinality()))
                     pack.append('            $payload .= pack(\'{0}\', 0);\n        }}'.format(get_pack_type(element)))
                 else:
-                    pack.append('        $payload .= pack(\'{0}\', ord(${1}));'.format(get_pack_type(element), element[0]))
-            elif element[1] == 'char':
-                if element[2] > 1:
-                    pack.append('        for ($i = 0; $i < count(${0}) && $i < {1}; $i++) {{'.format(element[0], element[2]))
-                    pack.append('            $payload .= pack(\'{0}\', ord(${1}[$i]));\n        }}'.format(get_pack_type(element), element[0]))
-                    pack.append('        for ($i = count(${0}); $i < {1}; $i++) {{'.format(element[0], element[2]))
+                    pack.append('        $payload .= pack(\'{0}\', ord(${1}));'.format(get_pack_type(element), element.get_underscore_name()))
+            elif element.get_type() == 'char':
+                if element.get_cardinality() > 1:
+                    pack.append('        for ($i = 0; $i < count(${0}) && $i < {1}; $i++) {{'.format(element.get_underscore_name(), element.get_cardinality()))
+                    pack.append('            $payload .= pack(\'{0}\', ord(${1}[$i]));\n        }}'.format(get_pack_type(element), element.get_underscore_name()))
+                    pack.append('        for ($i = count(${0}); $i < {1}; $i++) {{'.format(element.get_underscore_name(), element.get_cardinality()))
                     pack.append('            $payload .= pack(\'{0}\', 0);\n        }}'.format(get_pack_type(element)))
                 else:
-                    pack.append('        $payload .= pack(\'{0}\', ord(${1}));'.format(get_pack_type(element), element[0]))
+                    pack.append('        $payload .= pack(\'{0}\', ord(${1}));'.format(get_pack_type(element), element.get_underscore_name()))
             else:
-                if element[2] > 1:
-                    pack.append('        for ($i = 0; $i < {0}; $i++) {{'.format(element[2]))
-                    pack.append('            $payload .= pack(\'{0}\', ${1}[$i]);\n        }}'.format(get_pack_type(element), element[0]))
+                if element.get_cardinality() > 1:
+                    pack.append('        for ($i = 0; $i < {0}; $i++) {{'.format(element.get_cardinality()))
+                    pack.append('            $payload .= pack(\'{0}\', ${1}[$i]);\n        }}'.format(get_pack_type(element), element.get_underscore_name()))
                 else:
-                    pack.append('        $payload .= pack(\'{0}\', ${1});'.format(get_pack_type(element), element[0]))
+                    pack.append('        $payload .= pack(\'{0}\', ${1});'.format(get_pack_type(element), element.get_underscore_name()))
 
         has_multi_return_value = len(packet.get_elements('out')) > 1
         unpack_format = []
         collect = []
 
         for element in packet.get_elements('out'):
-            unpack_format.append('{0}{1}{2}'.format(get_unpack_type(element), element[2], element[0]))
+            unpack_format.append('{0}{1}{2}'.format(get_unpack_type(element), element.get_cardinality(), element.get_underscore_name()))
 
             unpack_fix = get_unpack_fix(element)
 
             if has_multi_return_value:
-                if element[2] > 1:
-                    collect.append('        $result[\'{0}\'] = {2}$payload, \'{0}\', {1}{3};'.format(element[0], element[2], unpack_fix[0], unpack_fix[1]))
+                if element.get_cardinality() > 1:
+                    collect.append('        $result[\'{0}\'] = {2}$payload, \'{0}\', {1}{3};'.format(element.get_underscore_name(), element.get_cardinality(), unpack_fix[0], unpack_fix[1]))
                 else:
-                    collect.append('        $result[\'{0}\'] = {1}$payload[\'{0}\']{2};'.format(element[0], unpack_fix[0], unpack_fix[1]))
+                    collect.append('        $result[\'{0}\'] = {1}$payload[\'{0}\']{2};'.format(element.get_underscore_name(), unpack_fix[0], unpack_fix[1]))
             else:
-                if element[2] > 1:
-                    collect.append('        return {2}$payload, \'{0}\', {1}{3};'.format(element[0], element[2], unpack_fix[0], unpack_fix[1]))
+                if element.get_cardinality() > 1:
+                    collect.append('        return {2}$payload, \'{0}\', {1}{3};'.format(element.get_underscore_name(), element.get_cardinality(), unpack_fix[0], unpack_fix[1]))
                 else:
-                    collect.append('        return {1}$payload[\'{0}\']{2};'.format(element[0], unpack_fix[0], unpack_fix[1]))
+                    collect.append('        return {1}$payload[\'{0}\']{2};'.format(element.get_underscore_name(), unpack_fix[0], unpack_fix[1]))
 
         if len(unpack_format) > 0:
             send = '        $data = $this->sendRequest(self::FUNCTION_{0}, $payload);\n'.format(packet.get_upper_case_name())
@@ -478,16 +478,16 @@ def make_callback_wrappers():
         result = []
 
         for element in packet.get_elements('out'):
-            unpack_format.append('{0}{1}{2}'.format(get_unpack_type(element), element[2], element[0]))
+            unpack_format.append('{0}{1}{2}'.format(get_unpack_type(element), element.get_cardinality(), element.get_underscore_name()))
 
             unpack_fix = get_unpack_fix(element)
 
-            if element[2] > 1:
-                collect.append('        array_push($result, {2}$payload, \'{0}\', {1}{3});'.format(element[0], element[2], unpack_fix[0], unpack_fix[1]))
+            if element.get_cardinality() > 1:
+                collect.append('        array_push($result, {2}$payload, \'{0}\', {1}{3});'.format(element.get_underscore_name(), element.get_cardinality(), unpack_fix[0], unpack_fix[1]))
             else:
-                collect.append('        array_push($result, {1}$payload[\'{0}\']{2});'.format(element[0], unpack_fix[0], unpack_fix[1]))
+                collect.append('        array_push($result, {1}$payload[\'{0}\']{2});'.format(element.get_underscore_name(), unpack_fix[0], unpack_fix[1]))
 
-            result.append('$payload[\'{0}\']'.format(element[0]))
+            result.append('$payload[\'{0}\']'.format(element.get_underscore_name()))
 
         final_unpack = ''
 

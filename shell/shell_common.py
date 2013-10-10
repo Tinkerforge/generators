@@ -27,5 +27,5 @@ Boston, MA 02111-1307, USA.
 def make_parameter_list(packet):
     params = []
     for element in packet.get_elements('in'):
-        params.append('<{0}>'.format(element[0].replace('_', '-')))
+        params.append('<{0}>'.format(element.get_underscore_name().replace('_', '-')))
     return ' '.join(params)

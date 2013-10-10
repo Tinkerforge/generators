@@ -55,25 +55,25 @@ def get_type_converter(element):
         'float':  'float'
     }
 
-    t = types[element[1]]
+    t = types[element.get_type()]
 
-    if len(element) > 4:
+    if element.has_constants():
         symbols = {}
 
-        for symbol in element[4][2]:
+        for symbol in element.get_constants()[2]:
             symbols[symbol[1].replace('_', '-')] = symbol[2]
 
-        if element[2] > 1 and t != 'string':
-            return 'create_array_converter(ctx, create_symbol_converter(ctx, {0}, {1}), {2})'.format(t, symbols, element[2])
+        if element.get_cardinality() > 1 and t != 'string':
+            return 'create_array_converter(ctx, create_symbol_converter(ctx, {0}, {1}), {2})'.format(t, symbols, element.get_cardinality())
         elif t == 'string':
-            return 'create_string_checker(create_symbol_converter(ctx, str, {0}), {1})'.format(symbols, element[2])
+            return 'create_string_checker(create_symbol_converter(ctx, str, {0}), {1})'.format(symbols, element.get_cardinality())
         else:
             return 'create_symbol_converter(ctx, {0}, {1})'.format(t, symbols)
     else:
-        if element[2] > 1 and t != 'string':
-            return 'create_array_converter(ctx, {0}, {1})'.format(t, element[2])
+        if element.get_cardinality() > 1 and t != 'string':
+            return 'create_array_converter(ctx, {0}, {1})'.format(t, element.get_cardinality())
         elif t == 'string':
-            return 'create_string_checker(str, {0})'.format(element[2])
+            return 'create_string_checker(str, {0})'.format(element.get_cardinality())
         else:
             return t
 
@@ -94,20 +94,21 @@ def get_element_help(element):
     }
 
     symbols_doc = ''
-    if len(element) > 4:
+
+    if element.has_constants():
         symbols = []
 
-        for symbol in element[4][2]:
+        for symbol in element.get_constants()[2]:
             symbols.append('{0}: {1}'.format(symbol[1].replace('_', '-'), symbol[2]))
 
         symbols_doc = ' (' + ', '.join(symbols) + ')'
 
-    t = types[element[1]]
+    t = types[element.get_type()]
 
-    if element[2] == 1 or t == 'string':
+    if element.get_cardinality() == 1 or t == 'string':
         help = "'{0}{1}'".format(t, symbols_doc)
     else:
-        help = "get_array_type_name(ctx, '{0}', {1})".format(t, element[2])
+        help = "get_array_type_name(ctx, '{0}', {1})".format(t, element.get_cardinality())
 
         if len(symbols_doc) > 0:
             help += "+ '{0}'".format(symbols_doc)
@@ -130,7 +131,7 @@ def get_format(element):
         'char':   'c'
     }
 
-    return formats[element[1]]
+    return formats[element.get_type()]
 
 def make_format_list(packet, direction):
     formats = []
@@ -138,8 +139,8 @@ def make_format_list(packet, direction):
     for element in packet.get_elements(direction):
         number = ''
 
-        if element[2] > 1:
-            number = element[2]
+        if element.get_cardinality() > 1:
+            number = element.get_cardinality()
 
         formats.append('{0}{1}'.format(number, get_format(element)))
 
@@ -231,13 +232,13 @@ def make_call_functions():
             request_data = []
 
             for element in packet.get_elements('in'):
-                name = element[0]
+                name = element.get_underscore_name()
                 type_converter = get_type_converter(element)
                 help = get_element_help(element)
                 metavar = "'<{0}>'".format(name.replace('_', '-'))
 
                 params.append("\t\tparser.add_argument('{0}', type={1}, help={2}, metavar={3})".format(name, type_converter, help, metavar))
-                request_data.append('args.{0}'.format(element[0]))
+                request_data.append('args.{0}'.format(name))
 
             comma = ''
             if len(request_data) == 1:
@@ -250,12 +251,12 @@ def make_call_functions():
             output_symbols = []
 
             for element in packet.get_elements('out'):
-                output_names.append("'{0}'".format(element[0].replace('_', '-')))
+                output_names.append("'{0}'".format(element.get_underscore_name().replace('_', '-')))
 
-                if len(element) > 4:
+                if element.has_constants():
                     symbols = {}
 
-                    for symbol in element[4][2]:
+                    for symbol in element.get_constants()[2]:
                         symbols[symbol[2]] = symbol[1].replace('_', '-')
 
                     output_symbols.append(str(symbols))
@@ -338,7 +339,7 @@ def make_dispatch_functions():
         output = []
 
         for element in packet.get_elements('out'):
-            output.append("'{0}'".format(element[0].replace('_', '-')))
+            output.append("'{0}'".format(element.get_underscore_name().replace('_', '-')))
 
         underscore_name = packet.get_underscore_name()
 

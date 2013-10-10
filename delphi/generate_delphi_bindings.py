@@ -105,14 +105,14 @@ def format_doc(packet):
 def make_parameter_doc(packet):
     param = []
     for element in packet.get_elements():
-        if element[3] == 'out' or packet.get_type() != 'function':
+        if element.get_direction() == 'out' or packet.get_type() != 'function':
             continue
 
-        delphi_type = delphi_common.get_delphi_type(element[1])[0]
-        if element[2] > 1 and element[1] != 'string':
-            param.append('@param {0}[] ${1}'.format(delphi_type, element[0]))
+        delphi_type = delphi_common.get_delphi_type(element.get_type())[0]
+        if element.get_cardinality() > 1 and element.get_type() != 'string':
+            param.append('@param {0}[] ${1}'.format(delphi_type, element.get_underscore_name()))
         else:
-            param.append('@param {0} ${1}'.format(delphi_type, element[0]))
+            param.append('@param {0} ${1}'.format(delphi_type, element.get_underscore_name()))
 
     param.append('\n@return ' + delphi_common.get_return_type(packet, True))
     return '\n'.join(param)
@@ -196,12 +196,12 @@ def make_arrays():
 
     for packet in device.get_packets('function'):
         for element in packet.get_elements():
-            if element[1] == 'string' or element[2] < 2:
+            if element.get_type() == 'string' or element.get_cardinality() < 2:
                 continue
 
-            delphi_type = delphi_common.get_delphi_type(element[1])
-            left = 'TArray0To{0}Of{1}'.format(element[2] - 1, delphi_type[1])
-            right = 'array [0..{0}] of {1}'.format(element[2] - 1, delphi_type[0])
+            delphi_type = delphi_common.get_delphi_type(element.get_type())
+            left = 'TArray0To{0}Of{1}'.format(element.get_cardinality() - 1, delphi_type[1])
+            right = 'array [0..{0}] of {1}'.format(element.get_cardinality() - 1, delphi_type[0])
             types[left] = right
 
     if len(types) > 0:
@@ -382,7 +382,7 @@ def get_convert_type(element):
         'char'   : 'Char'
     }
 
-    return types[element[1]];
+    return types[element.get_type()];
 
 def make_methods():
     methods = ''
@@ -413,7 +413,7 @@ def make_methods():
 
         has_array = False
         for element in packet.get_elements():
-            if element[2] > 1 and element[1] != 'string':
+            if element.get_cardinality() > 1 and element.get_type() != 'string':
                 has_array = True
                 break
 
@@ -422,28 +422,28 @@ def make_methods():
 
         method += '\n'
         method += 'begin\n'
-        method += '  request := (ipcon as TIPConnection).CreateRequestPacket(self, {0}, {1});\n'.format(function_id, packet.get_request_length())
+        method += '  request := (ipcon as TIPConnection).CreateRequestPacket(self, {0}, {1});\n'.format(function_id, packet.get_request_size())
 
         # Serialize request
         offset = 8
         for element in packet.get_elements('in'):
-            if element[2] > 1 and element[1] != 'string':
-                prefix = 'for i := 0 to Length({0}) - 1 do '.format(common.underscore_to_headless_camel_case(element[0]))
+            if element.get_cardinality() > 1 and element.get_type() != 'string':
+                prefix = 'for i := 0 to Length({0}) - 1 do '.format(element.get_headless_camel_case_name())
                 method += '  {0}LEConvert{1}To({2}[i], {3} + (i * {4}), request);\n'.format(prefix,
                                                                                             get_convert_type(element),
-                                                                                            common.underscore_to_headless_camel_case(element[0]),
+                                                                                            element.get_headless_camel_case_name(),
                                                                                             offset,
-                                                                                            common.get_type_size(element[1]))
-            elif element[1] == 'string':
-                method += '  LEConvertStringTo({0}, {1}, {2}, request);\n'.format(common.underscore_to_headless_camel_case(element[0]),
+                                                                                            common.get_type_size(element.get_type()))
+            elif element.get_type() == 'string':
+                method += '  LEConvertStringTo({0}, {1}, {2}, request);\n'.format(element.get_headless_camel_case_name(),
                                                                                   offset,
-                                                                                  element[2])
+                                                                                  element.get_cardinality())
             else:
                 method += '  LEConvert{0}To({1}, {2}, request);\n'.format(get_convert_type(element),
-                                                                          common.underscore_to_headless_camel_case(element[0]),
+                                                                          element.get_headless_camel_case_name(),
                                                                           offset)
 
-            offset += common.get_element_size(element)
+            offset += element.get_size()
 
         if out_count > 0:
             method += '  response := SendRequest(request);\n'
@@ -454,27 +454,27 @@ def make_methods():
         offset = 8
         for element in packet.get_elements('out'):
             if out_count > 1:
-                result = common.underscore_to_headless_camel_case(element[0])
+                result = element.get_headless_camel_case_name()
             else:
                 result = 'result'
 
-            if element[2] > 1 and element[1] != 'string':
-                prefix = 'for i := 0 to {0} do '.format(element[2] - 1)
+            if element.get_cardinality() > 1 and element.get_type() != 'string':
+                prefix = 'for i := 0 to {0} do '.format(element.get_cardinality() - 1)
                 method += '  {0}{1}[i] := LEConvert{2}From({3} + (i * {4}), response);\n'.format(prefix,
                                                                                                  result,
                                                                                                  get_convert_type(element),
                                                                                                  offset,
-                                                                                                 common.get_type_size(element[1]))
-            elif element[1] == 'string':
+                                                                                                 common.get_type_size(element.get_type()))
+            elif element.get_type() == 'string':
                 method += '  {0} := LEConvertStringFrom({1}, {2}, response);\n'.format(result,
                                                                                        offset,
-                                                                                       element[2])
+                                                                                       element.get_cardinality())
             else:
                 method += '  {0} := LEConvert{1}From({2}, response);\n'.format(result,
                                                                                get_convert_type(element),
                                                                                offset)
 
-            offset += common.get_element_size(element)
+            offset += element.get_size()
 
         method += 'end;\n\n'
 
@@ -503,23 +503,21 @@ def make_callback_wrappers():
         offset = 8
         parameter_names = []
         for element in packet.get_elements('out'):
-            parameter_names.append(common.underscore_to_headless_camel_case(element[0]))
+            parameter_names.append(element.get_headless_camel_case_name())
 
-            if element[2] > 1 and element[1] != 'string':
-                prefix = 'for i := 0 to {0} do '.format(element[2] - 1)
+            if element.get_cardinality() > 1 and element.get_type() != 'string':
+                prefix = 'for i := 0 to {0} do '.format(element.get_cardinality() - 1)
                 wrapper += '    {0}{1}[i] := LEConvert{2}From({3} + (i * {4}), packet);\n'.format(prefix,
-                                                                                                  common.underscore_to_headless_camel_case(element[0]),
+                                                                                                  element.get_headless_camel_case_name(),
                                                                                                   get_convert_type(element),
                                                                                                   offset,
-                                                                                                  common.get_type_size(element[1]))
+                                                                                                  common.get_type_size(element.get_type()))
             else:
-                wrapper += '    {0} := LEConvert{1}From({2}, packet);\n'.format(common.underscore_to_headless_camel_case(element[0]),
+                wrapper += '    {0} := LEConvert{1}From({2}, packet);\n'.format(element.get_headless_camel_case_name(),
                                                                                 get_convert_type(element),
                                                                                 offset)
 
-            offset += common.get_element_size(element)
-
-
+            offset += element.get_size()
 
         wrapper += '    {0}Callback({1});\n'.format(packet.get_headless_camel_case_name(), ', '.join(['self'] + parameter_names))
         wrapper += '  end;\n'
@@ -537,10 +535,10 @@ def finish(directory):
 def rename_bad_variable_names(packets):
     def rename(elements, f, t):
         for i in range(len(elements)):
-            if elements[i][0] == f:
-                l = list(elements[i])
+            if elements[i].raw_data[0] == f:
+                l = list(elements[i].raw_data)
                 l[0] = t
-                elements[i] = tuple(l)
+                elements[i].raw_data = tuple(l)
 
     # Rename all copy of elements
     for packet in packets:

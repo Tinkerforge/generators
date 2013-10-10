@@ -147,11 +147,11 @@ def make_return_objects():
         params = []
         tostr = []
         for element in packet.get_elements():
-            typ = java_common.get_java_type(element[1])
-            ele_name = common.underscore_to_headless_camel_case(element[0])
-            if element[2] > 1 and element[1] != 'string':
+            typ = java_common.get_java_type(element.get_type())
+            ele_name = element.get_headless_camel_case_name()
+            if element.get_cardinality() > 1 and element.get_type() != 'string':
                 arr = '[]'
-                new = ' = new {0}[{1}]'.format(typ, element[2])
+                new = ' = new {0}[{1}]'.format(typ, element.get_cardinality())
                 to = '"{0} = " + Arrays.toString({0}) +'.format(ele_name)
             else:
                 arr = ''
@@ -232,7 +232,7 @@ def make_callback_listener_definitions():
         parameter = ''
         parameter_list = []
         for element in packet.get_elements():
-            parameter_list.append(common.underscore_to_headless_camel_case(element[0]))
+            parameter_list.append(element.get_headless_camel_case_name())
         parameter = ', '.join(parameter_list)
         cbdata = ''
         if len(packet.get_elements('out')) > 0:
@@ -408,32 +408,32 @@ def make_methods():
         ret = java_common.get_return_type(packet)
         name_lower = packet.get_headless_camel_case_name()
         parameter = java_common.make_parameter_list(packet)
-        size = str(packet.get_request_length())
+        size = str(packet.get_request_size())
         name_upper = packet.get_upper_case_name()
         doc = format_doc(packet)
         bbputs = ''
         bbput = '\t\tbb.put{0}({1}{2});'
         for element in packet.get_elements('in'):
-            name = common.underscore_to_headless_camel_case(element[0])
-            if element[1] == 'bool':
+            name = element.get_headless_camel_case_name()
+            if element.get_type() == 'bool':
                 name = '({0} ? 1 : 0)'.format(name)
 
             cast = ''
-            put_java_type = get_put_java_type(element[1])
-            if put_java_type != java_common.get_java_type(element[1]):
+            put_java_type = get_put_java_type(element.get_type())
+            if put_java_type != java_common.get_java_type(element.get_type()):
                 cast = '({0})'.format(put_java_type)
 
-            bbput_format = bbput.format(get_put_type(element[1]),
+            bbput_format = bbput.format(get_put_type(element.get_type()),
                                         cast,
                                         name)
 
-            if element[2] > 1:
-                if element[1] == 'string':
+            if element.get_cardinality() > 1:
+                if element.get_type() == 'string':
                     bbput_format = bbput_format.replace(');', '.charAt(i));')
                     bbput_format = string_loop.format(bbput_format)
                 else:
                     bbput_format = bbput_format.replace(');', '[i]);')
-                bbput_format = loop.format(element[2], '\t' + bbput_format)
+                bbput_format = loop.format(element.get_cardinality(), '\t' + bbput_format)
 
             bbputs += bbput_format + '\n'
 
@@ -481,34 +481,34 @@ def make_bbgets(packet, with_obj = False):
     for element in packet.get_elements('out'):
         typ = ''
         if not with_obj:
-            typ = java_common.get_java_type(element[1]) + ' '
+            typ = java_common.get_java_type(element.get_type()) + ' '
 
-        bbret = common.underscore_to_headless_camel_case(element[0])
+        bbret = element.get_headless_camel_case_name()
         obj = ''
         if with_obj:
             obj = 'obj.'
         cast = ''
         cast_extra = ''
         boolean = ''
-        if element[1] == 'uint8':
+        if element.get_type() == 'uint8':
             cast = 'IPConnection.unsignedByte'
-        elif element[1] == 'uint16':
+        elif element.get_type() == 'uint16':
             cast = 'IPConnection.unsignedShort'
-        elif element[1] == 'uint32':
+        elif element.get_type() == 'uint32':
             cast = 'IPConnection.unsignedInt'
-        elif element[1] == 'bool':
+        elif element.get_type() == 'bool':
             boolean = ' != 0'
-        elif element[1] == 'char':
+        elif element.get_type() == 'char':
             cast = '(char)'
-        elif element[1] == 'string':
+        elif element.get_type() == 'string':
             cast = 'IPConnection.string'
-            cast_extra = ', {0}'.format(element[2])
+            cast_extra = ', {0}'.format(element.get_cardinality())
 
         format_typ = ''
-        if not element[2] > 1 or (element[1] == 'string' and not with_obj):
+        if not element.get_cardinality() > 1 or (element.get_type() == 'string' and not with_obj):
             format_typ = typ
 
-        if element[1] == 'string':
+        if element.get_type() == 'string':
             bbget = bbget_string
         else:
             bbget = bbget_other
@@ -517,18 +517,18 @@ def make_bbgets(packet, with_obj = False):
                                     obj,
                                     bbret,
                                     cast,
-                                    get_put_type(element[1]),
+                                    get_put_type(element.get_type()),
                                     cast_extra,
                                     boolean)
 
-        if element[2] > 1 and element[1] != 'string':
+        if element.get_cardinality() > 1 and element.get_type() != 'string':
             if with_obj:
                 bbget_format = bbget_format.replace(' =', '[i] =')
-                bbget_format = loop.format(element[2], '\t' + bbget_format, '')
+                bbget_format = loop.format(element.get_cardinality(), '\t' + bbget_format, '')
             else:
-                arr = new_arr.format(typ.replace(' ', ''), bbret, element[2])
+                arr = new_arr.format(typ.replace(' ', ''), bbret, element.get_cardinality())
                 bbget_format = bbget_format.replace(' =', '[i] =')
-                bbget_format = loop.format(element[2], '\t' + bbget_format, arr + '\n\t\t')
+                bbget_format = loop.format(element.get_cardinality(), '\t' + bbget_format, arr + '\n\t\t')
 
         bbgets += bbget_format + '\n'
     return bbgets, bbret

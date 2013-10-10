@@ -78,7 +78,7 @@ def get_vbnet_type(element):
         'char'   : 'Char',
     }
 
-    return types[element[1]]
+    return types[element.get_type()]
 
 def get_return_type(packet):
     elements = packet.get_elements('out')
@@ -86,7 +86,7 @@ def get_return_type(packet):
     if len(elements) == 1:
         vbnet_type = get_vbnet_type(elements[0])
 
-        if elements[0][2] > 1 and elements[0][1] != 'string':
+        if elements[0].get_cardinality() > 1 and elements[0].get_type() != 'string':
             vbnet_type += '[]'
 
         return vbnet_type
@@ -99,23 +99,23 @@ def make_parameter_list(packet):
         for element in packet.get_elements():
             vbnet_type = get_vbnet_type(element)
 
-            if element[3] == 'in' or packet.get_type() == 'callback':
+            if element.get_direction() == 'in' or packet.get_type() == 'callback':
                 modifier = 'ByVal '
             else:
                 modifier = 'ByRef '
 
-            name = common.underscore_to_headless_camel_case(element[0])
+            name = element.get_headless_camel_case_name()
 
-            if element[2] > 1 and element[1] != 'string':
+            if element.get_cardinality() > 1 and element.get_type() != 'string':
                 name += '[]'
 
             param.append('{0}{1} As {2}'.format(modifier, name, vbnet_type))
     else:
         for element in packet.get_elements('in'):
             vbnet_type = get_vbnet_type(element)
-            name = common.underscore_to_headless_camel_case(element[0])
+            name = element.get_headless_camel_case_name()
 
-            if element[2] > 1 and element[1] != 'string':
+            if element.get_cardinality() > 1 and element.get_type() != 'string':
                 name += '[]'
 
             param.append('ByVal {0} As {1}'.format(name, vbnet_type))
@@ -390,8 +390,8 @@ Konstanten
                                              device.get_category().lower())
 
     api_desc = ''
-    if 'api' in device.com:
-        api_desc = common.select_lang(device.com['api'])
+    if 'api' in device.raw_data:
+        api_desc = common.select_lang(device.raw_data['api'])
 
     return common.select_lang(api).format(ref, api_desc, api_str)
 
