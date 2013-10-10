@@ -93,3 +93,7 @@ def make_parameter_list(packet, just_types=False):
         else:
             param.append('{0}{1} {2}'.format(java_type, arr, name))
     return ', '.join(param)
+
+class JavaDevice(common.Device):
+    def get_java_class_name(self):
+        return self.get_category() + self.get_camel_case_name()

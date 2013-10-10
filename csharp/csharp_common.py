@@ -107,3 +107,7 @@ def get_csharp_type_for_to_convert(element):
         csharp_type += '[]'
 
     return csharp_type
+
+class CSharpDevice(common.Device):
+    def get_csharp_class_name(self):
+        return self.get_category() + self.get_camel_case_name()

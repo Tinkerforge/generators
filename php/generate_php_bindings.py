@@ -37,8 +37,8 @@ released_files = []
 
 def format_doc(packet, suffix):
     text = common.select_lang(packet.get_doc()[1])
-    link = '{0}{1}::{2}()'
-    link_c = '{0}{1}::CALLBACK_{2}'
+    link = '{0}::{1}()'
+    link_c = '{0}::CALLBACK_{1}'
 
     # handle notes and warnings
     lines = text.split('\n')
@@ -85,15 +85,15 @@ def format_doc(packet, suffix):
 
     text = '\n'.join(replaced_lines)
 
-    cls = device.get_camel_case_name()
+    cls = device.get_php_class_name()
     for other_packet in device.get_packets():
         name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
         if other_packet.get_type() == 'callback':
             name = other_packet.get_upper_case_name()
-            name_right = link_c.format(device.get_category(), cls, name)
+            name_right = link_c.format(cls, name)
         else:
             name = other_packet.get_headless_camel_case_name()
-            name_right = link.format(device.get_category(), cls, name)
+            name_right = link.format(cls, name)
 
         text = text.replace(name_false, name_right)
 
@@ -134,13 +134,13 @@ require_once(__DIR__ . '/IPConnection.php');
 def make_class():
     class_str = """
 /**
- * {2}
+ * {1}
  */
-class {0}{1} extends Device
+class {0} extends Device
 {{
 """
 
-    return class_str.format(device.get_category(), device.get_camel_case_name(), device.get_description())
+    return class_str.format(device.get_php_class_name(), device.get_description())
 
 def make_callback_wrapper_definitions():
     cbs = ''
@@ -213,7 +213,7 @@ def make_constructor():
     {{
         parent::__construct($uid, $ipcon);
 
-        $this->apiVersion = array({2}, {3}, {4});
+        $this->apiVersion = array({0}, {1}, {2});
 """
     response_expected = ''
 
@@ -237,9 +237,7 @@ def make_constructor():
     if len(response_expected) > 0:
         response_expected = '\n' + response_expected
 
-    return con.format(device.get_category(),
-                      device.get_camel_case_name(),
-                      *device.get_api_version()) + response_expected
+    return con.format(*device.get_api_version()) + response_expected
 
 def get_pack_type(element):
     forms = {
@@ -504,7 +502,7 @@ def make_callback_wrappers():
 def make_files(device_, directory):
     global device
     device = device_
-    file_name = '{0}{1}.php'.format(device.get_category(), device.get_camel_case_name())
+    file_name = '{0}.php'.format(device.get_php_class_name())
     version = common.get_changelog_version(directory)
     directory += '/bindings'
 
@@ -527,6 +525,9 @@ def make_files(device_, directory):
         released_files.append(file_name)
 
 class PHPBindingsGenerator(common.Generator):
+    def get_device_class(self):
+        return php_common.PHPDevice
+
     def prepare(self):
         common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'bindings'))
 

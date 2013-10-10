@@ -40,14 +40,14 @@ device = None
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
 
-    cls = device.get_category() + device.get_camel_case_name()
+    cls = device.get_delphi_class_name()
     for other_packet in device.get_packets():
         name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
         name = other_packet.get_camel_case_name()
         if other_packet.get_type() == 'callback':
-            name_right = ':delphi:func:`On{1} <T{0}.On{1}>`'.format(cls, name)
+            name_right = ':delphi:func:`On{1} <{0}.On{1}>`'.format(cls, name)
         else:
-            name_right = ':delphi:func:`{1} <T{0}.{1}>`'.format(cls, name)
+            name_right = ':delphi:func:`{1} <{0}.{1}>`'.format(cls, name)
         text = text.replace(name_false, name_right)
 
     text = common.handle_rst_word(text)
@@ -75,9 +75,9 @@ def make_examples():
 
 def make_methods(typ):
     methods = ''
-    function = '.. delphi:function:: function T{0}.{1}({2}): {3}\n{4}'
-    procedure = '.. delphi:function:: procedure T{0}.{1}({2})\n{3}'
-    cls = device.get_category() + device.get_camel_case_name()
+    function = '.. delphi:function:: function {0}.{1}({2}): {3}\n{4}'
+    procedure = '.. delphi:function:: procedure {0}.{1}({2})\n{3}'
+    cls = device.get_delphi_class_name()
     for packet in device.get_packets('function'):
         if packet.get_doc()[0] != typ:
             continue
@@ -97,25 +97,25 @@ def make_methods(typ):
 def make_callbacks():
     cbs = ''
     cb = {
-    'en': """.. delphi:function:: property T{0}.On{1}
+    'en': """.. delphi:function:: property {0}.On{1}
 
  .. code-block:: delphi
 
-  procedure(sender: T{0}{4}{2}) of object;
+  procedure(sender: {0}{4}{2}) of object;
 
 {3}
 """,
-    'de': """.. delphi:function:: property T{0}.On{1}
+    'de': """.. delphi:function:: property {0}.On{1}
 
  .. code-block:: delphi
 
-  procedure(sender: T{0}{4}{2}) of object;
+  procedure(sender: {0}{4}{2}) of object;
 
 {3}
 """
     }
 
-    cls = device.get_category() + device.get_camel_case_name()
+    cls = device.get_delphi_class_name()
     for packet in device.get_packets('callback'):
         name = packet.get_camel_case_name()
         params = delphi_common.make_parameter_list(packet, True)
@@ -168,12 +168,12 @@ property of the device object:
 
  .. code-block:: delphi
 
-  procedure TExample.MyCallback(sender: T{3}{4}; const param: word);
+  procedure TExample.MyCallback(sender: {3}; const param: word);
   begin
     WriteLn(param);
   end;
 
-  {1}.OnExample := {{$ifdef FPC}}@{{$endif}}example.MyCallback;
+  {4}.OnExample := {{$ifdef FPC}}@{{$endif}}example.MyCallback;
 
 The available callback property and their type of parameters are described below.
 
@@ -196,12 +196,12 @@ eine Prozedur einem Callback Property des Geräte Objektes zugewiesen wird:
 
  .. code-block:: delphi
 
-  procedure TExample.MyCallback(sender: T{3}{4}; const param: word);
+  procedure TExample.MyCallback(sender: {3}; const param: word);
   begin
     WriteLn(param);
   end;
 
-  {5}.OnExample := {{$ifdef FPC}}@{{$endif}}example.MyCallback;
+  {4}.OnExample := {{$ifdef FPC}}@{{$endif}}example.MyCallback;
 
 Die verfügbaren Callback Properties und ihre Parametertypen werden weiter
 unten beschrieben.
@@ -295,8 +295,7 @@ Konstanten
         api_str += common.select_lang(common.ccf_str).format(ccf, '')
         api_str += common.select_lang(c_str).format(c, device.get_underscore_name(),
                                                     device.get_category().lower(),
-                                                    device.get_category(),
-                                                    device.get_camel_case_name(),
+                                                    device.get_delphi_class_name(),
                                                     device.get_headless_camel_case_name())
 
     article = 'ein'
@@ -334,6 +333,9 @@ def make_files(device_, directory):
     f.write(make_api())
 
 class DelphiDocGenerator(common.Generator):
+    def get_device_class(self):
+        return delphi_common.DelphiDevice
+
     def prepare(self):
         common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'doc', self.get_language()))
 

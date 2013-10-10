@@ -41,7 +41,7 @@ device = None
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
 
-    cls = device.get_category() + device.get_camel_case_name()
+    cls = device.get_php_class_name()
     for other_packet in device.get_packets():
         name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
         if other_packet.get_type() == 'callback':
@@ -55,7 +55,7 @@ def format_doc(packet):
     text = common.handle_rst_word(text)
     text = common.handle_rst_if(text, device)
 
-    prefix = device.get_category() + device.get_camel_case_name() + '::'
+    prefix = cls + '::'
     if packet.get_underscore_name() == 'set_response_expected':
         text += common.format_function_id_constants(prefix, device)
     else:
@@ -107,7 +107,7 @@ def make_object_desc(packet):
 def make_methods(typ):
     methods = ''
     func_start = '.. php:function:: '
-    cls = device.get_category() + device.get_camel_case_name()
+    cls = device.get_php_class_name()
     for packet in device.get_packets('function'):
         if packet.get_doc()[0] != typ:
             continue
@@ -144,7 +144,7 @@ def make_callbacks():
 
     cbs = ''
     func_start = '.. php:member:: int '
-    cls = device.get_category() + device.get_camel_case_name()
+    cls = device.get_php_class_name()
     for packet in device.get_packets('callback'):
         params = php_common.make_parameter_list(packet, True)
         if len(params) > 0:
@@ -399,6 +399,9 @@ def make_files(device_, directory):
     f.write(make_api())
 
 class PHPDocGenerator(common.Generator):
+    def get_device_class(self):
+        return php_common.PHPDevice
+
     def prepare(self):
         common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'doc', self.get_language()))
 

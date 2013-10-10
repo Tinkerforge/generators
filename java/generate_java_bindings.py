@@ -37,8 +37,8 @@ released_files = []
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
-    link = '{{@link {0}{1}#{2}({3})}}'
-    link_c = '{{@link {0}{1}.{2}Listener}}'
+    link = '{{@link {0}#{1}({2})}}'
+    link_c = '{{@link {0}.{1}Listener}}'
 
     # handle tables
     lines = text.split('\n')
@@ -69,16 +69,15 @@ def format_doc(packet):
 
     text = '\n'.join(replaced_lines)
 
-    cls = device.get_camel_case_name()
+    cls = device.get_java_class_name()
     for other_packet in device.get_packets():
         name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
         if other_packet.get_type() == 'callback':
             name = other_packet.get_camel_case_name()
-            name_right = link_c.format(device.get_category(), cls, name)
+            name_right = link_c.format(cls, name)
         else:
             name = other_packet.get_headless_camel_case_name()
-            name_right = link.format(device.get_category(), cls, name,
-                                     java_common.make_parameter_list(other_packet, True))
+            name_right = link.format(cls, name, java_common.make_parameter_list(other_packet, True))
 
         text = text.replace(name_false, name_right)
 
@@ -112,15 +111,14 @@ import java.util.List;
 def make_class():
     class_str = """
 /**
- * {2}
+ * {1}
  */
-public class {0}{1} extends Device {{
-\tpublic final static int DEVICE_IDENTIFIER = {3};
+public class {0} extends Device {{
+\tpublic final static int DEVICE_IDENTIFIER = {2};
 
 """
 
-    return class_str.format(device.get_category(),
-                            device.get_camel_case_name(),
+    return class_str.format(device.get_java_class_name(),
                             device.get_description(),
                             device.get_device_identifier())
 
@@ -316,16 +314,15 @@ def make_constructor():
 \t * Creates an object with the unique device ID \c uid. and adds it to
 \t * the IP Connection \c ipcon.
 \t */
-\tpublic {0}{1}(String uid, IPConnection ipcon) {{
+\tpublic {0}(String uid, IPConnection ipcon) {{
 \t\tsuper(uid, ipcon);
 
-\t\tapiVersion[0] = {2};
-\t\tapiVersion[1] = {3};
-\t\tapiVersion[2] = {4};
+\t\tapiVersion[0] = {1};
+\t\tapiVersion[1] = {2};
+\t\tapiVersion[2] = {3};
 """
 
-    return con.format(device.get_category(),
-                      device.get_camel_case_name(),
+    return con.format(device.get_java_class_name(),
                       *device.get_api_version())
 
 def get_put_type(typ):
@@ -536,7 +533,7 @@ def make_bbgets(packet, with_obj = False):
 def make_files(device_, directory):
     global device
     device = device_
-    file_name = '{0}{1}.java'.format(device.get_category(), device.get_camel_case_name())
+    file_name = '{0}.java'.format(device.get_java_class_name())
     version = common.get_changelog_version(directory)
     directory += '/bindings'
 
@@ -559,6 +556,9 @@ def make_files(device_, directory):
         released_files.append(file_name)
 
 class JavaBindingsGenerator(common.Generator):
+    def get_device_class(self):
+        return java_common.JavaDevice
+
     def prepare(self):
         common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'bindings'))
 

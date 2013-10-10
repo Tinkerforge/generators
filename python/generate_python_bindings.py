@@ -89,15 +89,14 @@ def make_namedtuples():
 
 def make_class():
     return """
-class {0}{1}(Device):
+class {0}(Device):
     \"\"\"
-    {2}
+    {1}
     \"\"\"
 
-    DEVICE_IDENTIFIER = {3}
+    DEVICE_IDENTIFIER = {2}
 
-""".format(device.get_category(),
-           device.get_camel_case_name(),
+""".format(device.get_python_class_name(),
            device.get_description(),
            device.get_device_identifier())
 
@@ -159,8 +158,8 @@ def make_init_method():
             prefix = 'FUNCTION_'
             flag = 'RESPONSE_EXPECTED_FALSE'
 
-        response_expected += '        self.response_expected[{0}{1}.{2}{3}] = {0}{1}.{4}\n' \
-            .format(device.get_category(), device.get_camel_case_name(), prefix, packet.get_upper_case_name(), flag)
+        response_expected += '        self.response_expected[{0}.{1}{2}] = {0}.{3}\n' \
+            .format(device.get_python_class_name(), prefix, packet.get_upper_case_name(), flag)
 
     if len(response_expected) > 0:
         response_expected += '\n'
@@ -169,11 +168,10 @@ def make_init_method():
 
 def make_callback_formats():
     cbs = ''
-    cb = "        self.callback_formats[{0}{1}.CALLBACK_{2}] = '{3}'\n"
+    cb = "        self.callback_formats[{0}.CALLBACK_{1}] = '{2}'\n"
 
     for packet in device.get_packets('callback'):
-        cbs += cb.format(device.get_category(),
-                         device.get_camel_case_name(),
+        cbs += cb.format(device.get_python_class_name(),
                          packet.get_upper_case_name(),
                          make_format_list(packet, 'out'))
 
@@ -231,7 +229,7 @@ def make_methods():
 """
     methods = ''
 
-    cls = device.get_category() + device.get_camel_case_name()
+    cls = device.get_python_class_name()
     for packet in device.get_packets('function'):
         nb = packet.get_camel_case_name()
         ns = packet.get_underscore_name()
@@ -272,8 +270,8 @@ def make_register_callback_method():
 
 def make_old_name():
     return """
-{1} = {0}{1} # for backward compatibility
-""".format(device.get_category(), device.get_camel_case_name())
+{0} = {1} # for backward compatibility
+""".format(device.get_camel_case_name(), device.get_python_class_name())
 
 def make_files(device_, directory):
     global device
@@ -300,6 +298,9 @@ def make_files(device_, directory):
         released_files.append(file_name)
 
 class PythonBindingsGenerator(common.Generator):
+    def get_device_class(self):
+        return python_common.PythonDevice
+
     def prepare(self):
         common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'bindings'))
 

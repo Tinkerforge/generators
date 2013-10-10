@@ -560,7 +560,7 @@ def generate(path, language, generator_class, is_doc_):
                 com['packets'].extend(prepare_common_packets(common_packets))
                 com['common_included'] = True
 
-            device = Device(com)
+            device = generator.get_device_class()(com, generator)
 
             device_identifiers.append((device.get_device_identifier(), device.get_category() + ' ' + device.get_display_name()))
 
@@ -728,7 +728,7 @@ class Element:
         return get_type_size(self.get_type()) * self.get_cardinality()
 
 class Packet:
-    def __init__(self, device, raw_data):
+    def __init__(self, device, raw_data, generator):
         self.device = device
         self.raw_data = raw_data
         self.all_elements = []
@@ -738,7 +738,7 @@ class Packet:
         check_name(raw_data['name'][0], raw_data['name'][1], None)
 
         for raw_element in self.raw_data['elements']:
-            element = Element(self, raw_element)
+            element = generator.get_element_class()(self, raw_element)
 
             self.all_elements.append(element)
 
@@ -856,7 +856,7 @@ class Packet:
         return False
 
 class Device:
-    def __init__(self, raw_data):
+    def __init__(self, raw_data, generator):
         self.raw_data = raw_data
         self.all_packets = []
         self.all_packets_without_doc_only = []
@@ -870,7 +870,7 @@ class Device:
             if not 'function_id' in p:
                 p['function_id'] = i + 1
 
-            packet = Packet(self, p)
+            packet = generator.get_packet_class()(self, p, generator)
 
             self.all_packets.append(packet)
 
@@ -967,6 +967,15 @@ class Generator:
     def __init__(self, bindings_root_directory, language):
         self.bindings_root_directory = bindings_root_directory
         self.language = language
+
+    def get_device_class(self):
+        return Device
+
+    def get_packet_class(self):
+        return Packet
+
+    def get_element_class(self):
+        return Element
 
     def get_bindings_root_directory(self):
         return self.bindings_root_directory

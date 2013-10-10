@@ -214,7 +214,7 @@ def make_arrays():
 
 def make_callback_prototypes():
     prototypes = ''
-    prototype = '  T{0}{1}Notify{2} = procedure(sender: T{0}{1}{3}) of object;\n'
+    prototype = '  {0}Notify{1} = procedure(sender: {0}{2}) of object;\n'
 
     for packet in device.get_packets('callback'):
         params = delphi_common.make_parameter_list(packet, False)
@@ -222,33 +222,29 @@ def make_callback_prototypes():
         if len(params) > 0:
             params = '; ' + params
 
-        prototypes += prototype.format(device.get_category(),
-                                       device.get_camel_case_name(),
+        prototypes += prototype.format(device.get_delphi_class_name(),
                                        packet.get_camel_case_name(),
                                        params)
 
     if len(prototypes) > 0:
-        forward = '  T{0}{1} = class;\n'.format(device.get_category(),
-                                              device.get_camel_case_name())
+        forward = '  {0} = class;\n'.format(device.get_delphi_class_name())
         prototypes = forward + prototypes + '\n'
 
     return prototypes
 
 def make_class():
     cls = """  /// <summary>
-  ///  {2}
+  ///  {1}
   /// </summary>
-  T{0}{1} = class(TDevice)
-""".format(device.get_category(),
-           device.get_camel_case_name(),
+  {0} = class(TDevice)
+""".format(device.get_delphi_class_name(),
            device.get_description())
 
     callbacks = ''
-    callback = '    {0}Callback: T{1}{2}Notify{3};\n'
+    callback = '    {0}Callback: {1}Notify{2};\n'
     for packet in device.get_packets('callback'):
         callbacks += callback.format(packet.get_headless_camel_case_name(),
-                                     device.get_category(),
-                                     device.get_camel_case_name(),
+                                     device.get_delphi_class_name(),
                                      packet.get_camel_case_name())
 
     callback_wrappers = ''
@@ -289,14 +285,13 @@ def make_class():
 
     props = []
     prop = """    /// <summary>
-    ///  {4}
+    ///  {3}
     /// </summary>
-    property On{0}: T{1}{2}Notify{0} read {3}Callback write {3}Callback;"""
+    property On{0}: {1}Notify{0} read {2}Callback write {2}Callback;"""
     for packet in device.get_packets('callback'):
         doc = format_doc(packet)
         props.append(prop.format(packet.get_camel_case_name(),
-                                 device.get_category(),
-                                 device.get_camel_case_name(),
+                                 device.get_delphi_class_name(),
                                  packet.get_headless_camel_case_name(),
                                  doc))
 
@@ -317,12 +312,12 @@ def make_class():
 def make_constructor():
     con = """implementation
 
-constructor T{0}{1}.Create(const uid__: string; ipcon_: TIPConnection);
+constructor {0}.Create(const uid__: string; ipcon_: TIPConnection);
 begin
   inherited Create(uid__, ipcon_);
-  apiVersion[0] := {2};
-  apiVersion[1] := {3};
-  apiVersion[2] := {4};
+  apiVersion[0] := {1};
+  apiVersion[1] := {2};
+  apiVersion[2] := {3};
 
 """
     response_expected = ''
@@ -351,8 +346,7 @@ begin
     if len(response_expected) > 0:
         response_expected += '\n'
 
-    return con.format(device.get_category(),
-                      device.get_camel_case_name(),
+    return con.format(device.get_delphi_class_name(),
                       *device.get_api_version()) + response_expected
 
 def make_callback_wrapper_definitions():
@@ -389,7 +383,7 @@ def make_methods():
     function = 'function {0}.{1}{2}: {3};\n'
     procedure = 'procedure {0}.{1}{2};\n'
 
-    cls = 'T{0}{1}'.format(device.get_category(), device.get_camel_case_name())
+    cls = device.get_delphi_class_name()
     for packet in device.get_packets('function'):
         ret_type = delphi_common.get_return_type(packet, False)
         out_count = len(packet.get_elements('out'))
@@ -486,9 +480,8 @@ def make_callback_wrappers():
     wrappers = ''
 
     for packet in device.get_packets('callback'):
-        wrapper = 'procedure T{0}{1}.CallbackWrapper{2}(const packet: TByteArray);\n'.format(device.get_category(),
-                                                                                             device.get_camel_case_name(),
-                                                                                             packet.get_camel_case_name())
+        wrapper = 'procedure {0}.CallbackWrapper{1}(const packet: TByteArray);\n'.format(device.get_delphi_class_name(),
+                                                                                         packet.get_camel_case_name())
 
         if len(packet.get_elements('out')) > 0:
             wrapper += 'var ' + delphi_common.make_parameter_list(packet, False, False) + ';\n'
@@ -527,33 +520,12 @@ def make_callback_wrappers():
 
     return wrappers + 'end.\n'
 
-def rename_bad_variable_names(packets):
-    def rename(elements, f, t):
-        for i in range(len(elements)):
-            if elements[i].raw_data[0] == f:
-                l = list(elements[i].raw_data)
-                l[0] = t
-                elements[i].raw_data = tuple(l)
-
-    # Rename all copy of elements
-    for packet in packets:
-        rename(packet.all_elements, 'length', 'length2')
-        rename(packet.in_elements, 'length', 'length2')
-        rename(packet.out_elements, 'length', 'length2')
-
 def make_files(device_, directory):
     global device
     device = device_
     file_name = '{0}{1}.pas'.format(device.get_category(), device.get_camel_case_name())
     version = common.get_changelog_version(directory)
     directory += '/bindings'
-
-    # Rename all copys of packet
-    rename_bad_variable_names(device.all_packets)
-    rename_bad_variable_names(device.all_packets_without_doc_only)
-    rename_bad_variable_names(device.all_function_packets)
-    rename_bad_variable_names(device.all_function_packets_without_doc_only)
-    rename_bad_variable_names(device.callback_packets)
 
     pas = file('{0}/{1}'.format(directory, file_name), 'w')
     pas.write(make_unit_header(version))
@@ -573,7 +545,23 @@ def make_files(device_, directory):
         global released_files
         released_files.append(file_name)
 
+class DelphiBindingsElement(common.Element):
+    def get_underscore_name(self):
+        name = common.Element.get_underscore_name(self)
+
+        # length is a keyword in delphi
+        if name == 'length':
+            name += '2'
+
+        return name
+
 class DelphiBindingsGenerator(common.Generator):
+    def get_device_class(self):
+        return delphi_common.DelphiDevice
+
+    def get_element_class(self):
+        return DelphiBindingsElement
+
     def prepare(self):
         common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'bindings'))
 

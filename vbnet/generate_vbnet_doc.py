@@ -36,10 +36,14 @@ import common
 
 device = None
 
+class VBNETDevice(common.Device):
+    def get_vbnet_class_name(self):
+        return self.get_category() + self.get_camel_case_name()
+
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
 
-    cls = device.get_category() + device.get_camel_case_name()
+    cls = device.get_vbnet_class_name()
     for other_packet in device.get_packets():
         name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
         name = other_packet.get_camel_case_name()
@@ -52,7 +56,7 @@ def format_doc(packet):
     text = common.handle_rst_word(text)
     text = common.handle_rst_if(text, device)
 
-    prefix = '{0}{1}.'.format(device.get_category(), device.get_camel_case_name())
+    prefix = cls + '.'
     if packet.get_underscore_name() == 'set_response_expected':
         text += common.format_function_id_constants(prefix, device)
     else:
@@ -134,7 +138,7 @@ def make_methods(typ):
     methods = ''
     function = '.. vbnet:function:: Function {0}.{1}({2}) As {3}\n{4}'
     sub = '.. vbnet:function:: Sub {0}.{1}({2})\n{3}'
-    cls = device.get_category() + device.get_camel_case_name()
+    cls = device.get_vbnet_class_name()
     for packet in device.get_packets('function'):
         if packet.get_doc()[0] != typ:
             continue
@@ -172,7 +176,7 @@ def make_callbacks_x():
 """
     }
 
-    cls = device.get_category() + device.get_camel_case_name()
+    cls = device.get_vbnet_class_name()
     for packet in device.get_packets('callback'):
         name = packet.get_camel_case_name()
         params = make_parameter_list(packet)
@@ -202,7 +206,7 @@ def make_callbacks():
         if len(params) > 0:
             params = ', ' + params
 
-        cbs += common.select_lang(cb).format(device.get_category() + device.get_camel_case_name(),
+        cbs += common.select_lang(cb).format(device.get_vbnet_class_name(),
                                              packet.get_camel_case_name(),
                                              params,
                                              desc)
@@ -412,6 +416,9 @@ def make_files(device_, directory):
     f.write(make_api())
 
 class VBNETDocGenerator(common.Generator):
+    def get_device_class(self):
+        return VBNETDevice
+
     def prepare(self):
         common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'doc', self.get_language()))
 

@@ -75,7 +75,7 @@ def format_doc(packet):
     text = common.handle_rst_word(text)
     text = common.handle_rst_if(text, device)
 
-    prefix = device.get_category() + device.get_camel_case_name() + '.'
+    prefix = device.get_camel_case_name() + '.'
     if packet.get_underscore_name() == 'set_response_expected':
         text += common.format_function_id_constants(prefix, device)
     else:
@@ -419,6 +419,9 @@ def make_files(device_, directory):
     f.write(make_api())
 
 class PythonDocGenerator(common.Generator):
+    def get_device_class(self):
+        return python_common.PythonDevice
+
     def prepare(self):
         common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'doc', self.get_language()))
 

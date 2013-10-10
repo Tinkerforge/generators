@@ -60,12 +60,9 @@ def get_element_type(element):
     else:
         return ','.join([t]*element.get_cardinality())
 
-def get_shell_device_name(device):
-    return device.get_underscore_name().replace('_', '-') + '-' + device.get_category().lower()
-
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
-    device_name = get_shell_device_name(device)
+    device_name = device.get_shell_device_name()
     constants = {'en': 'symbols', 'de': 'Symbole'}
 
     for other_packet in device.get_packets():
@@ -175,7 +172,7 @@ def make_return_desc(packet):
 def make_methods(typ):
     methods = ''
     func_start = '.. sh:function:: '
-    device_name = get_shell_device_name(device)
+    device_name = device.get_shell_device_name()
     for packet in device.get_packets('function'):
         if packet.is_virtual():
             continue
@@ -200,7 +197,7 @@ def make_methods(typ):
 def make_callbacks():
     cbs = ''
     func_start = '.. sh:function:: '
-    device_name = get_shell_device_name(device)
+    device_name = device.get_shell_device_name()
     for packet in device.get_packets('callback'):
         if packet.is_virtual():
             continue
@@ -465,7 +462,7 @@ Befehlsstruktur
         api_str += common.select_lang(common.ccf_str).format('', ccf)
         api_str += common.select_lang(c_str).format(c, device.get_underscore_name(),
                                                     device.get_category().lower(),
-                                                    get_shell_device_name(device))
+                                                    device.get_shell_device_name())
 
     ref = '.. _{0}_{1}_shell_api:\n'.format(device.get_underscore_name(),
                                             device.get_category().lower())
@@ -474,7 +471,7 @@ Befehlsstruktur
     if 'api' in device.raw_data:
         api_desc = common.select_lang(device.raw_data['api'])
 
-    return common.select_lang(api).format(ref, api_desc, api_str, get_shell_device_name(device),
+    return common.select_lang(api).format(ref, api_desc, api_str, device.get_shell_device_name(),
                                           device.get_display_name() + ' ' + device.get_category())
 
 def make_files(device_, directory):
@@ -493,6 +490,9 @@ def make_files(device_, directory):
     f.write(make_api())
 
 class ShellDocGenerator(common.Generator):
+    def get_device_class(self):
+        return shell_common.ShellDevice
+
     def prepare(self):
         common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'doc', self.get_language()))
 

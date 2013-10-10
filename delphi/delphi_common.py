@@ -117,3 +117,7 @@ def make_parameter_list(packet, for_doc, with_modifiers=True):
                                               element.get_headless_camel_case_name(),
                                               final_type))
     return '; '.join(param)
+
+class DelphiDevice(common.Device):
+    def get_delphi_class_name(self):
+        return 'T' + self.get_category() + self.get_camel_case_name()

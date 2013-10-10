@@ -24,8 +24,18 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import sys
+import os
+
+sys.path.append(os.path.split(os.getcwd())[0])
+import common
+
 def make_parameter_list(packet):
     params = []
     for element in packet.get_elements('in'):
         params.append(element.get_underscore_name())
     return ", ".join(params)
+
+class RubyDevice(common.Device):
+    def get_ruby_class_name(self):
+        return self.get_category() + self.get_camel_case_name()

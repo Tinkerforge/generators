@@ -38,7 +38,7 @@ released_files = []
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
-    link = '<see cref="Tinkerforge.{0}{1}.{2}"/>'
+    link = '<see cref="Tinkerforge.{0}.{1}"/>'
 
     # escape XML special chars
     text = escape(text)
@@ -88,12 +88,11 @@ def format_doc(packet):
 
     text = '\n'.join(replaced_lines)
 
-    cls = device.get_camel_case_name()
+    cls = device.get_csharp_class_name()
     for other_packet in device.get_packets():
         name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
         name = other_packet.get_camel_case_name()
-        name_right = link.format(device.get_category(), cls, name)
-
+        name_right = link.format(cls, name)
         text = text.replace(name_false, name_right)
 
     text = common.handle_rst_word(text)
@@ -115,19 +114,18 @@ namespace Tinkerforge
 def make_class():
     class_str = """
 \t/// <summary>
-\t///  {2}
+\t///  {1}
 \t/// </summary>
-\tpublic class {0}{1} : Device
+\tpublic class {0} : Device
 \t{{
 \t\t/// <summary>
 \t\t///  Used to identify this device type in
 \t\t///  <see cref="Tinkerforge.IPConnection.EnumerateCallback"/>
 \t\t/// </summary>
-\t\tpublic static int DEVICE_IDENTIFIER = {3};
+\t\tpublic static int DEVICE_IDENTIFIER = {2};
 """
 
-    return class_str.format(device.get_category(),
-                            device.get_camel_case_name(),
+    return class_str.format(device.get_csharp_class_name(),
                             device.get_description(),
                             device.get_device_identifier())
 
@@ -140,7 +138,7 @@ def make_delegates():
 \t\tpublic event {0}EventHandler {0};
 \t\t/// <summary>
 \t\t/// </summary>
-\t\tpublic delegate void {0}EventHandler({3}{4} sender{1});
+\t\tpublic delegate void {0}EventHandler({3} sender{1});
 """
     for packet in device.get_packets('callback'):
         name = packet.get_camel_case_name()
@@ -148,8 +146,8 @@ def make_delegates():
         doc = format_doc(packet)
         if parameter != '':
             parameter = ', ' + parameter
-        cbs += cb.format(name, parameter, doc, device.get_category(),
-                         device.get_camel_case_name())
+        cbs += cb.format(name, parameter, doc, device.get_csharp_class_name())
+
     return cbs
 
 def make_function_id_definitions():
@@ -157,9 +155,9 @@ def make_function_id_definitions():
     function_id = """
 \t\t/// <summary>
 \t\t///  Function ID to be used with
-\t\t///  <see cref="Tinkerforge.{3}{4}.GetResponseExpected"/>,
-\t\t///  <see cref="Tinkerforge.{3}{4}.SetResponseExpected"/> and
-\t\t///  <see cref="Tinkerforge.{3}{4}.SetResponseExpectedAll"/>.
+\t\t///  <see cref="Tinkerforge.{3}.GetResponseExpected"/>,
+\t\t///  <see cref="Tinkerforge.{3}.SetResponseExpected"/> and
+\t\t///  <see cref="Tinkerforge.{3}.SetResponseExpectedAll"/>.
 \t\t/// </summary>
 \t\tpublic const byte {2}_{0} = {1};
 """
@@ -167,8 +165,7 @@ def make_function_id_definitions():
         function_ids += function_id.format(packet.get_upper_case_name(),
                                            packet.get_function_id(),
                                            packet.get_type().upper(),
-                                           device.get_category(),
-                                           device.get_camel_case_name())
+                                           device.get_csharp_class_name())
     return function_ids
 
 def make_constants():
@@ -200,12 +197,12 @@ def make_constructor():
 \t\t///  Creates an object with the unique device ID <c>uid</c> and adds  it to
 \t\t///  the IPConnection <c>ipcon</c>.
 \t\t/// </summary>
-\t\tpublic {0}{1}(string uid, IPConnection ipcon) : base(uid, ipcon)
+\t\tpublic {0}(string uid, IPConnection ipcon) : base(uid, ipcon)
 \t\t{{
-\t\t\tthis.apiVersion[0] = {3};
-\t\t\tthis.apiVersion[1] = {4};
-\t\t\tthis.apiVersion[2] = {5};
-{2}
+\t\t\tthis.apiVersion[0] = {2};
+\t\t\tthis.apiVersion[1] = {3};
+\t\t\tthis.apiVersion[2] = {4};
+{1}
 """
 
     for packet in device.get_packets('callback'):
@@ -213,14 +210,8 @@ def make_constructor():
         name_pascal = packet.get_camel_case_name()
         cbs.append(cb.format(name_upper, name_pascal))
 
-    v = device.get_api_version()
-
-    return con.format(device.get_category(),
-                      device.get_camel_case_name(),
-                      '\n'.join(cbs),
-                      v[0], v[1], v[2],
-                      device.get_display_name(),
-                      device.get_category())
+    return con.format(device.get_csharp_class_name(), '\n'.join(cbs),
+                      *device.get_api_version())
 
 def make_response_expected():
     res = '\n'
@@ -280,7 +271,7 @@ def make_callbacks():
 \t\t\t}}
 \t\t}}
 """
-    cls = device.get_camel_case_name()
+
     for packet in device.get_packets('callback'):
         name = packet.get_camel_case_name()
         name_upper = packet.get_upper_case_name()
@@ -340,7 +331,6 @@ def make_methods():
     method_response = """\t\t\tbyte[] response = SendRequest(request);
 {0}"""
 
-    cls = device.get_camel_case_name()
     for packet in device.get_packets('function'):
         ret_count = len(packet.get_elements('out'))
         size = str(packet.get_request_size())
@@ -394,11 +384,6 @@ def make_methods():
 
     return methods
 
-def finish(directory):
-    r = open(os.path.join(directory, 'csharp_released_files.py'), 'wb')
-    r.write('released_files = ' + repr(released_files))
-    r.close()
-
 def make_files(device_, directory):
     global device
     device = device_
@@ -422,6 +407,9 @@ def make_files(device_, directory):
         released_files.append(file_name)
 
 class CSharpBindingsGenerator(common.Generator):
+    def get_device_class(self):
+        return csharp_common.CSharpDevice
+
     def prepare(self):
         common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'bindings'))
 

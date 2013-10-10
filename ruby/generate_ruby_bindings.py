@@ -37,7 +37,7 @@ released_files = []
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
-    link = '{0}{1}#{2}'
+    link = '{0}#{1}'
     link_c = 'CALLBACK_{0}'
 
     # handle tables
@@ -66,7 +66,7 @@ def format_doc(packet):
 
     text = '\n'.join(replaced_lines)
 
-    cls = device.get_camel_case_name()
+    cls = device.get_ruby_class_name()
     for other_packet in device.get_packets():
         name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
         if other_packet.get_type() == 'callback':
@@ -74,7 +74,7 @@ def format_doc(packet):
             name_right = link_c.format(name)
         else:
             name = other_packet.get_underscore_name()
-            name_right = link.format(device.get_category(), cls, name)
+            name_right = link.format(cls, name)
 
         text = text.replace(name_false, name_right)
 
@@ -96,11 +96,10 @@ def make_header(version):
 
 def make_class():
     return """module Tinkerforge
-  # {2}
-  class {0}{1} < Device
-    DEVICE_IDENTIFIER = {3} # :nodoc:
-""".format(device.get_category(), device.get_camel_case_name(),
-           device.get_description(), device.get_device_identifier())
+  # {1}
+  class {0} < Device
+    DEVICE_IDENTIFIER = {2} # :nodoc:
+""".format(device.get_ruby_class_name(), device.get_description(), device.get_device_identifier())
 
 def make_callback_id_definitions():
     cbs = ''
@@ -282,6 +281,9 @@ def make_files(device_, directory):
         released_files.append(file_name)
 
 class RubyBindingsGenerator(common.Generator):
+    def get_device_class(self):
+        return ruby_common.RubyDevice
+
     def prepare(self):
         common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'bindings'))
 

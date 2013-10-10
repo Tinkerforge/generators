@@ -29,6 +29,7 @@ import os
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import shell_common
 
 device = None
 call_devices = []
@@ -148,10 +149,9 @@ def make_format_list(packet, direction):
 
 def make_class():
     klass = """
-class {0}{1}(Device):"""
+class {0}(Device):"""
 
-    return klass.format(device.get_camel_case_name(),
-                        device.get_category())
+    return klass.format(device.get_shell_class_name())
 
 def make_init_method():
     init = """
@@ -192,14 +192,14 @@ def make_callback_formats():
 
 def make_call_header():
     header = """
-def call_{0}_{2}(ctx, argv):
-\tprog_prefix = 'call {1}-{2} <uid>'
+def call_{0}_{1}(ctx, argv):
+\tprog_prefix = 'call {2} <uid>'
 
 """
 
     return header.format(device.get_underscore_name(),
-                         device.get_underscore_name().replace('_', '-'),
-                         device.get_category().lower())
+                         device.get_category().lower(),
+                         device.get_shell_device_name())
 
 def make_call_functions():
     setter = """\tdef {0}(ctx, argv):
@@ -217,7 +217,7 @@ def make_call_functions():
 \t\tdevice_send_request(ctx, {7}{8}, {3}, ({4}), '{5}', '{6}', args.execute, False, [{9}], [{10}])
 """
     get_identity = """\tdef get_identity(ctx, argv):
-\t\tcommon_get_identity(ctx, prog_prefix, {0}{1}, argv)
+\t\tcommon_get_identity(ctx, prog_prefix, {0}, argv)
 """
 
     functions = []
@@ -225,8 +225,7 @@ def make_call_functions():
 
     for packet in device.get_packets('function'):
         if packet.get_function_id() == 255:
-            function = get_identity.format(device.get_camel_case_name(),
-                                           device.get_category())
+            function = get_identity.format(device.get_shell_class_name())
         else:
             params = []
             request_data = []
@@ -306,22 +305,21 @@ def make_call_functions():
 def make_call_footer():
     footer = """
 
-\tcall_generic(ctx, '{0}-{1}', functions, argv)
+\tcall_generic(ctx, '{0}', functions, argv)
 """
 
-    return footer.format(device.get_underscore_name().replace('_', '-'),
-                         device.get_category().lower())
+    return footer.format(device.get_shell_device_name())
 
 def make_dispatch_header():
     header = """
-def dispatch_{0}_{2}(ctx, argv):
-\tprog_prefix = 'dispatch {1}-{2} <uid>'
+def dispatch_{0}_{1}(ctx, argv):
+\tprog_prefix = 'dispatch {2} <uid>'
 
 """
 
     return header.format(device.get_underscore_name(),
-                         device.get_underscore_name().replace('_', '-'),
-                         device.get_category().lower())
+                         device.get_category().lower(),
+                         device.get_shell_device_name())
 
 def make_dispatch_functions():
     func = """\tdef {0}(ctx, argv):
@@ -362,11 +360,10 @@ def make_dispatch_functions():
 def make_dispatch_footer():
     footer = """
 
-\tdispatch_generic(ctx, '{0}-{1}', callbacks, argv)
+\tdispatch_generic(ctx, '{0}', callbacks, argv)
 """
 
-    return footer.format(device.get_underscore_name().replace('_', '-'),
-                         device.get_category().lower())
+    return footer.format(device.get_shell_device_name())
 
 def make_files(device_, directory):
     if not device_.is_released():
@@ -374,28 +371,25 @@ def make_files(device_, directory):
 
     global device
     device = device_
-    file_name = '{0}-{1}'.format(device.get_underscore_name().replace('_', '-'),
-                                 device.get_category().lower())
+    file_name = device.get_shell_device_name()
     directory += '/bindings'
 
     global call_devices
-    call_devices.append("'{0}-{1}': call_{2}_{1}".format(device.get_underscore_name().replace('_', '-'),
-                                                         device.get_category().lower(),
-                                                         device.get_underscore_name()))
+    call_devices.append("'{0}': call_{1}_{2}".format(device.get_shell_device_name(),
+                                                     device.get_underscore_name(),
+                                                     device.get_category().lower()))
 
     global dispatch_devices
-    dispatch_devices.append("'{0}-{1}': dispatch_{2}_{1}".format(device.get_underscore_name().replace('_', '-'),
-                                                                 device.get_category().lower(),
-                                                                 device.get_underscore_name()))
-
-    global device_identifier_symbols
-    device_identifier_symbols.append("{0}: '{1}-{2}'".format(device.get_device_identifier(),
-                                                             device.get_underscore_name().replace('_', '-'),
+    dispatch_devices.append("'{0}': dispatch_{1}_{2}".format(device.get_shell_device_name(),
+                                                             device.get_underscore_name(),
                                                              device.get_category().lower()))
 
+    global device_identifier_symbols
+    device_identifier_symbols.append("{0}: '{1}'".format(device.get_device_identifier(),
+                                                         device.get_shell_device_name()))
+
     global completion_devices
-    completion_devices.append('{0}-{1}'.format(device.get_underscore_name().replace('_', '-'),
-                                               device.get_category().lower()))
+    completion_devices.append(device.get_shell_device_name())
 
     shell = file('{0}/{1}.part'.format(directory, file_name), 'wb')
     shell.write(make_class())
@@ -451,6 +445,9 @@ def finish(directory):
     file('{0}/../tinkerforge-bash-completion.sh'.format(directory), 'wb').write(template)
 
 class ShellBindingsGenerator(common.Generator):
+    def get_device_class(self):
+        return shell_common.ShellDevice
+
     def prepare(self):
         common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'bindings'))
 

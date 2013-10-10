@@ -39,18 +39,18 @@ device = None
 
 def format_doc(packet, shift_right):
     text = common.select_lang(packet.get_doc()[1])
-    cb_link = ':java:func:`{2}Listener <{0}{1}.{2}Listener>`'
-    fu_link = ':java:func:`{2}() <{0}{1}::{2}>`'
+    cb_link = ':java:func:`{1}Listener <{0}.{1}Listener>`'
+    fu_link = ':java:func:`{1}() <{0}::{1}>`'
 
-    cls = device.get_camel_case_name()
+    cls = device.get_java_class_name()
     for other_packet in device.get_packets():
         name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
         if other_packet.get_type() == 'callback':
             name = other_packet.get_camel_case_name()
-            name_right = cb_link.format(device.get_category(), cls, name)
+            name_right = cb_link.format(cls, name)
         else:
             name = other_packet.get_headless_camel_case_name()
-            name_right = fu_link.format(device.get_category(), cls, name)
+            name_right = fu_link.format(cls, name)
 
         text = text.replace(name_false, name_right)
 
@@ -62,7 +62,7 @@ def format_doc(packet, shift_right):
     text = common.handle_rst_word(text)
     text = common.handle_rst_if(text, device)
 
-    prefix = device.get_category() + device.get_camel_case_name() + '.'
+    prefix = cls + '.'
     if packet.get_underscore_name() == 'set_response_expected':
         text += common.format_function_id_constants(prefix, device)
     else:
@@ -115,7 +115,7 @@ def make_object_desc(packet):
 def make_methods(typ):
     methods = ''
     func_start = '.. java:function:: '
-    cls = device.get_category() + device.get_camel_case_name()
+    cls = device.get_java_class_name()
     for packet in device.get_packets('function'):
         if packet.get_doc()[0] != typ:
             continue
@@ -139,38 +139,37 @@ def make_methods(typ):
 def make_callbacks():
     cb = {
     'en': """
-.. java:function:: public class {0}{1}.{2}Listener()
+.. java:function:: public class {0}.{1}Listener()
 
- This listener can be added with the ``add{2}Listener()`` function.
- An added listener can be removed with the ``remove{2}Listener()`` function.
+ This listener can be added with the ``add{1}Listener()`` function.
+ An added listener can be removed with the ``remove{1}Listener()`` function.
 
- .. java:function:: public void {3}({4})
+ .. java:function:: public void {2}({3})
   :noindex:
 
-{5}
+{4}
 """,
     'de': """
-.. java:function:: public class {0}{1}.{2}Listener()
+.. java:function:: public class {0}.{1}Listener()
 
- Dieser Listener kann mit der Funktion ``add{2}Listener()`` hinzugefügt werde.
- Ein hinzugefügter Listener kann mit der Funktion ``remove{2}Listener()`` wieder
+ Dieser Listener kann mit der Funktion ``add{1}Listener()`` hinzugefügt werde.
+ Ein hinzugefügter Listener kann mit der Funktion ``remove{1}Listener()`` wieder
  entfernt werden.
 
- .. java:function:: public void {3}({4})
+ .. java:function:: public void {2}({3})
   :noindex:
 
-{5}
+{4}
 """
     }
 
     cbs = ''
-    cls = device.get_camel_case_name()
+    cls = device.get_java_class_name()
     for packet in device.get_packets('callback'):
         desc = format_doc(packet, 2)
         params = java_common.make_parameter_list(packet)
 
-        cbs += common.select_lang(cb).format(device.get_category(),
-                                             cls,
+        cbs += common.select_lang(cb).format(cls,
                                              packet.get_camel_case_name(),
                                              packet.get_headless_camel_case_name(),
                                              params,
@@ -438,6 +437,9 @@ def make_files(device_, directory):
     f.write(make_api())
 
 class JavaDocGenerator(common.Generator):
+    def get_device_class(self):
+        return java_common.JavaDevice
+
     def prepare(self):
         common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'doc', self.get_language()))
 
