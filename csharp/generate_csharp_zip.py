@@ -57,6 +57,16 @@ def make_files(device_, directory):
 
     copy_examples_for_zip()
 
+class CSharpZipGenerator(common.Generator):
+    def prepare(self):
+        pass
+
+    def generate(self, device):
+        make_files(device, self.get_bindings_root_directory())
+
+    def finish(self):
+        pass
+
 def generate(path):
     # Make temporary generator directory
     if os.path.exists('/tmp/generator'):
@@ -65,7 +75,7 @@ def generate(path):
     os.chdir('/tmp/generator')
 
     # Copy examples
-    common.generate(path, 'en', make_files, None, None, False)
+    common.generate(path, 'en', CSharpZipGenerator, False)
     shutil.copy(common.path_binding.replace('/generators/csharp', '/doc/en/source/Software/Example.cs'),
                 '/tmp/generator/dll/examples/ExampleEnumerate.cs')
 

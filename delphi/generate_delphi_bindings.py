@@ -527,11 +527,6 @@ def make_callback_wrappers():
 
     return wrappers + 'end.\n'
 
-def finish(directory):
-    r = open(os.path.join(directory, 'delphi_released_files.py'), 'wb')
-    r.write('released_files = ' + repr(released_files))
-    r.close()
-
 def rename_bad_variable_names(packets):
     def rename(elements, f, t):
         for i in range(len(elements)):
@@ -578,8 +573,20 @@ def make_files(device_, directory):
         global released_files
         released_files.append(file_name)
 
+class DelphiBindingsGenerator(common.Generator):
+    def prepare(self):
+        common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'bindings'))
+
+    def generate(self, device):
+        make_files(device, self.get_bindings_root_directory())
+
+    def finish(self):
+        r = open(os.path.join(self.get_bindings_root_directory(), 'delphi_released_files.py'), 'wb')
+        r.write('released_files = ' + repr(released_files))
+        r.close()
+
 def generate(path):
-    common.generate(path, 'en', make_files, common.prepare_bindings, finish, False)
+    common.generate(path, 'en', DelphiBindingsGenerator, False)
 
 if __name__ == "__main__":
     generate(os.getcwd())

@@ -533,11 +533,6 @@ def make_bbgets(packet, with_obj = False):
         bbgets += bbget_format + '\n'
     return bbgets, bbret
 
-def finish(directory):
-    r = open(os.path.join(directory, 'java_released_files.py'), 'wb')
-    r.write('released_files = ' + repr(released_files))
-    r.close()
-
 def make_files(device_, directory):
     global device
     device = device_
@@ -563,8 +558,20 @@ def make_files(device_, directory):
         global released_files
         released_files.append(file_name)
 
+class JavaBindingsGenerator(common.Generator):
+    def prepare(self):
+        common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'bindings'))
+
+    def generate(self, device):
+        make_files(device, self.get_bindings_root_directory())
+
+    def finish(self):
+        r = open(os.path.join(self.get_bindings_root_directory(), 'java_released_files.py'), 'wb')
+        r.write('released_files = ' + repr(released_files))
+        r.close()
+
 def generate(path):
-    common.generate(path, 'en', make_files, common.prepare_bindings, finish, False)
+    common.generate(path, 'en', JavaBindingsGenerator, False)
 
 if __name__ == "__main__":
     generate(os.getcwd())

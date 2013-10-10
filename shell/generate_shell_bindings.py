@@ -450,8 +450,18 @@ def finish(directory):
 
     file('{0}/../tinkerforge-bash-completion.sh'.format(directory), 'wb').write(template)
 
+class ShellBindingsGenerator(common.Generator):
+    def prepare(self):
+        common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'bindings'))
+
+    def generate(self, device):
+        make_files(device, self.get_bindings_root_directory())
+
+    def finish(self):
+        finish(self.get_bindings_root_directory())
+
 def generate(path):
-    common.generate(path, 'en', make_files, common.prepare_bindings, finish, False)
+    common.generate(path, 'en', ShellBindingsGenerator, False)
 
 if __name__ == "__main__":
     generate(os.getcwd())

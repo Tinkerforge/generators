@@ -691,11 +691,6 @@ void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data
 """
     return func.format(device.get_underscore_name(), device.get_camel_case_name(), device.get_category())
 
-def finish(directory):
-    r = open(os.path.join(directory, 'c_released_files.py'), 'wb')
-    r.write('released_files = ' + repr(released_files))
-    r.close()
-
 def make_files(device_, directory):
     global device
     device = device_
@@ -732,8 +727,20 @@ def make_files(device_, directory):
         released_files.append(file_name + '.c')
         released_files.append(file_name + '.h')
 
+class CBindingsGenerator(common.Generator):
+    def prepare(self):
+        common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'bindings'))
+
+    def generate(self, device):
+        make_files(device, self.get_bindings_root_directory())
+
+    def finish(self):
+        r = open(os.path.join(self.get_bindings_root_directory(), 'c_released_files.py'), 'wb')
+        r.write('released_files = ' + repr(released_files))
+        r.close()
+
 def generate(path):
-    common.generate(path, 'en', make_files, common.prepare_bindings, finish, False)
+    common.generate(path, 'en', CBindingsGenerator, False)
 
 if __name__ == "__main__":
     generate(os.getcwd())

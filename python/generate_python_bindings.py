@@ -275,11 +275,6 @@ def make_old_name():
 {1} = {0}{1} # for backward compatibility
 """.format(device.get_category(), device.get_camel_case_name())
 
-def finish(directory):
-    r = open(os.path.join(directory, 'python_released_files.py'), 'wb')
-    r.write('released_files = ' + repr(released_files))
-    r.close()
-
 def make_files(device_, directory):
     global device
     device = device_
@@ -304,8 +299,20 @@ def make_files(device_, directory):
         global released_files
         released_files.append(file_name)
 
+class PythonBindingsGenerator(common.Generator):
+    def prepare(self):
+        common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'bindings'))
+
+    def generate(self, device):
+        make_files(device, self.get_bindings_root_directory())
+
+    def finish(self):
+        r = open(os.path.join(self.get_bindings_root_directory(), 'python_released_files.py'), 'wb')
+        r.write('released_files = ' + repr(released_files))
+        r.close()
+
 def generate(path):
-    common.generate(path, 'en', make_files, common.prepare_bindings, finish, False)
+    common.generate(path, 'en', PythonBindingsGenerator, False)
 
 if __name__ == "__main__":
     generate(os.getcwd())

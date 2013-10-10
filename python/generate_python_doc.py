@@ -418,8 +418,18 @@ def make_files(device_, directory):
     f.write(make_examples())
     f.write(make_api())
 
+class PythonDocGenerator(common.Generator):
+    def prepare(self):
+        common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'doc', self.get_language()))
+
+    def generate(self, device):
+        make_files(device, self.get_bindings_root_directory())
+
+    def finish(self):
+        pass
+
 def generate(path, lang):
-    common.generate(path, lang, make_files, common.prepare_doc, None, True)
+    common.generate(path, lang, PythonDocGenerator, True)
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:

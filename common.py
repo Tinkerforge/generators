@@ -495,7 +495,13 @@ def prepare_bindings(directory):
         shutil.rmtree(directory)
     os.makedirs(directory)
 
-def generate(path, language, make_files, prepare, finish, is_doc_):
+def recreate_directory(directory):
+    directory = os.path.join(directory)
+    if os.path.exists(directory):
+        shutil.rmtree(directory)
+    os.makedirs(directory)
+
+def generate(path, language, generator_class, is_doc_):
     global lang
     global path_binding
     global is_doc
@@ -508,8 +514,9 @@ def generate(path, language, make_files, prepare, finish, is_doc_):
         sys.path.append(path_config)
     configs = os.listdir(path_config)
 
-    if prepare is not None:
-        prepare(path)
+    generator = generator_class(path, language)
+
+    generator.prepare()
 
     configs.remove('device_commonconfig.py')
     configs.remove('brick_commonconfig.py')
@@ -557,10 +564,9 @@ def generate(path, language, make_files, prepare, finish, is_doc_):
 
             device_identifiers.append((device.get_device_identifier(), device.get_category() + ' ' + device.get_display_name()))
 
-            make_files(device, path)
+            generator.generate(device)
 
-    if finish is not None:
-        finish(path)
+    generator.finish()
 
     f = open(os.path.join(path, '..', 'device_identifiers.py'), 'wb')
     f.write('device_identifiers = ')
@@ -956,6 +962,26 @@ class Device:
                         constants.append(ConstantTuple(element.get_type(), c[0], c[1], c[1].upper(), definitions))
 
         return constants
+
+class Generator:
+    def __init__(self, bindings_root_directory, language):
+        self.bindings_root_directory = bindings_root_directory
+        self.language = language
+
+    def get_bindings_root_directory(self):
+        return self.bindings_root_directory
+
+    def get_language(self):
+        return self.language
+
+    def prepare(self):
+        pass
+
+    def generate(self, device):
+        pass
+
+    def finish(self):
+        pass
 
 class ExamplesCompiler:
     def __init__(self, name, extension, path, subdirs=['examples'], comment=None, extra_examples=[]):
