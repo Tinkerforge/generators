@@ -518,16 +518,16 @@ def generate(path, language, make_files, prepare, finish, is_doc_):
     configs.remove('brick_commonconfig.py')
     configs.remove('bricklet_commonconfig.py')
 
-    common_device_packets = __import__('device_commonconfig').common_packets
-    common_brick_packets = __import__('brick_commonconfig').common_packets
-    common_bricklet_packets = __import__('bricklet_commonconfig').common_packets
+    common_device_packets = copy.deepcopy(__import__('device_commonconfig').common_packets)
+    common_brick_packets = copy.deepcopy(__import__('brick_commonconfig').common_packets)
+    common_bricklet_packets = copy.deepcopy(__import__('bricklet_commonconfig').common_packets)
 
     device_identifiers = []
 
     for config in configs:
         if config.endswith('_config.py'):
-            module = __import__(config[:-3])
-            if module.com['released']:
+            com = copy.deepcopy(__import__(config[:-3]).com)
+            if com['released']:
                 print(' * {0}'.format(config[:-10]))
             else:
                 print(' * {0} (not released)'.format(config[:-10]))
@@ -537,26 +537,26 @@ def generate(path, language, make_files, prepare, finish, is_doc_):
                     if common_packet['since_firmware'] is None:
                         continue
 
-                    if module.com['name'][1] in common_packet['since_firmware']:
+                    if com['name'][1] in common_packet['since_firmware']:
                         common_packet['since_firmware'] = \
-                            common_packet['since_firmware'][module.com['name'][1]]
+                            common_packet['since_firmware'][com['name'][1]]
                     else:
                         common_packet['since_firmware'] = \
                             common_packet['since_firmware']['*']
 
                 return common_packets
 
-            if 'brick_' in config and 'common_included' not in module.com:
+            if 'brick_' in config and 'common_included' not in com:
                 common_packets = copy.deepcopy(common_device_packets) + copy.deepcopy(common_brick_packets)
-                module.com['packets'].extend(prepare_common_packets(common_packets))
-                module.com['common_included'] = True
+                com['packets'].extend(prepare_common_packets(common_packets))
+                com['common_included'] = True
 
-            if 'bricklet_' in config and 'common_included' not in module.com:
+            if 'bricklet_' in config and 'common_included' not in com:
                 common_packets = copy.deepcopy(common_device_packets) + copy.deepcopy(common_bricklet_packets)
-                module.com['packets'].extend(prepare_common_packets(common_packets))
-                module.com['common_included'] = True
+                com['packets'].extend(prepare_common_packets(common_packets))
+                com['common_included'] = True
 
-            device = Device(module.com)
+            device = Device(com)
 
             device_identifiers.append((device.get_device_identifier(), device.get_category() + ' ' + device.get_display_name()))
 
