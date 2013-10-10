@@ -421,33 +421,23 @@ Konstanten
 
     return common.select_lang(api).format(ref, api_desc, api_str)
 
-def make_files(device_, directory):
-    global device
-    device = device_
-    file_name = '{0}_{1}_Java'.format(device.get_camel_case_name(), device.get_category())
-    title = {
-    'en': 'Java bindings',
-    'de': 'Java Bindings'
-    }
-    directory = os.path.join(directory, 'doc', common.lang)
-    f = file('{0}/{1}.rst'.format(directory, file_name), "w")
-    f.write(common.make_rst_header(device, 'java', 'Java'))
-    f.write(common.make_rst_summary(device, common.select_lang(title), 'java'))
-    f.write(make_examples())
-    f.write(make_api())
-
-class JavaDocGenerator(common.Generator):
+class JavaDocGenerator(common.DocGenerator):
     def get_device_class(self):
         return java_common.JavaDevice
 
-    def prepare(self):
-        common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'doc', self.get_language()))
+    def generate(self, device_):
+        global device
+        device = device_
 
-    def generate(self, device):
-        make_files(device, self.get_bindings_root_directory())
+        title = { 'en': 'Java bindings', 'de': 'Java Bindings' }
+        file_name = '{0}_{1}_Java.rst'.format(device.get_camel_case_name(), device.get_category())
 
-    def finish(self):
-        pass
+        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
+        rst.write(common.make_rst_header(device, 'java', 'Java'))
+        rst.write(common.make_rst_summary(device, common.select_lang(title), 'java'))
+        rst.write(make_examples())
+        rst.write(make_api())
+        rst.close()
 
 def generate(path, lang):
     common.generate(path, lang, JavaDocGenerator, True)

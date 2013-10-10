@@ -263,29 +263,19 @@ Konstanten
 
     return common.select_lang(api).format(ref, api_desc, api_str)
 
-def make_files(device_, directory):
-    global device
-    device = device_
-    file_name = '{0}_{1}_Modbus'.format(device.get_camel_case_name(), device.get_category())
-    title = {
-    'en': 'Modbus protocol',
-    'de': 'Modbus Protokoll'
-    }
-    directory = os.path.join(directory, 'doc', common.lang)
-    f = file('{0}/{1}.rst'.format(directory, file_name), "w")
-    f.write(common.make_rst_header(device, 'modbus', 'Modbus'))
-    f.write(common.make_rst_summary(device, common.select_lang(title), None))
-    f.write(make_api())
+class ModbusDocGenerator(common.DocGenerator):
+    def generate(self, device_):
+        global device
+        device = device_
 
-class ModbusDocGenerator(common.Generator):
-    def prepare(self):
-        common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'doc', self.get_language()))
+        title = { 'en': 'Modbus protocol', 'de': 'Modbus Protokoll' }
+        file_name = '{0}_{1}_Modbus.rst'.format(device.get_camel_case_name(), device.get_category())
 
-    def generate(self, device):
-        make_files(device, self.get_bindings_root_directory())
-
-    def finish(self):
-        pass
+        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
+        rst.write(common.make_rst_header(device, 'modbus', 'Modbus'))
+        rst.write(common.make_rst_summary(device, common.select_lang(title), None))
+        rst.write(make_api())
+        rst.close()
 
 def generate(path, lang):
     common.generate(path, lang, ModbusDocGenerator, True)

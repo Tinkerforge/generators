@@ -992,6 +992,28 @@ class Generator:
     def finish(self):
         pass
 
+class DocGenerator(Generator):
+    def prepare(self):
+        recreate_directory(os.path.join(self.get_bindings_root_directory(), 'doc', self.get_language()))
+
+class BindingsGenerator(Generator):
+    def __init__(self, *args, **kwargs):
+        Generator.__init__(self, *args, **kwargs)
+
+        self.released_files_name_prefix = 'unknown'
+        self.released_files = []
+
+    def prepare(self):
+        recreate_directory(os.path.join(self.get_bindings_root_directory(), 'bindings'))
+
+    def finish(self):
+        if self.released_files_name_prefix == 'unknown':
+            raise Exception("released_files_name_prefix not set")
+
+        py = open(os.path.join(self.get_bindings_root_directory(), self.released_files_name_prefix + '_released_files.py'), 'wb')
+        py.write('released_files = ' + repr(self.released_files))
+        py.close()
+
 class ExamplesCompiler:
     def __init__(self, name, extension, path, subdirs=['examples'], comment=None, extra_examples=[]):
         version = get_changelog_version(path)

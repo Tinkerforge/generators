@@ -34,7 +34,6 @@ import common
 import csharp_common
 
 device = None
-released_files = []
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
@@ -384,42 +383,36 @@ def make_methods():
 
     return methods
 
-def make_files(device_, directory):
-    global device
-    device = device_
-    file_name = '{0}{1}.cs'.format(device.get_category(), device.get_camel_case_name())
-    version = common.get_changelog_version(directory)
-    directory += '/bindings'
+class CSharpBindingsGenerator(common.BindingsGenerator):
+    def __init__(self, *args, **kwargs):
+        common.BindingsGenerator.__init__(self, *args, **kwargs)
 
-    csharp = file('{0}/{1}'.format(directory, file_name), "w")
-    csharp.write(make_import(version))
-    csharp.write(make_class())
-    csharp.write(make_function_id_definitions())
-    csharp.write(make_constants())
-    csharp.write(make_delegates())
-    csharp.write(make_constructor())
-    csharp.write(make_response_expected())
-    csharp.write(make_methods())
-    csharp.write(make_callbacks())
+        self.released_files_name_prefix = 'csharp'
 
-    if device.is_released():
-        global released_files
-        released_files.append(file_name)
-
-class CSharpBindingsGenerator(common.Generator):
     def get_device_class(self):
         return csharp_common.CSharpDevice
 
-    def prepare(self):
-        common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'bindings'))
+    def generate(self, device_):
+        global device
+        device = device_
 
-    def generate(self, device):
-        make_files(device, self.get_bindings_root_directory())
+        version = common.get_changelog_version(self.get_bindings_root_directory())
+        file_name = '{0}.cs'.format(device.get_csharp_class_name())
 
-    def finish(self):
-        r = open(os.path.join(self.get_bindings_root_directory(), 'csharp_released_files.py'), 'wb')
-        r.write('released_files = ' + repr(released_files))
-        r.close()
+        cs = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name), 'wb')
+        cs.write(make_import(version))
+        cs.write(make_class())
+        cs.write(make_function_id_definitions())
+        cs.write(make_constants())
+        cs.write(make_delegates())
+        cs.write(make_constructor())
+        cs.write(make_response_expected())
+        cs.write(make_methods())
+        cs.write(make_callbacks())
+        cs.close()
+
+        if device.is_released():
+            self.released_files.append(file_name)
 
 def generate(path):
     common.generate(path, 'en', CSharpBindingsGenerator, False)

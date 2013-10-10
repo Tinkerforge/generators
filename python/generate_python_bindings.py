@@ -33,7 +33,6 @@ import common
 import python_common
 
 device = None
-released_files = []
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
@@ -297,20 +296,38 @@ def make_files(device_, directory):
         global released_files
         released_files.append(file_name)
 
-class PythonBindingsGenerator(common.Generator):
+class PythonBindingsGenerator(common.BindingsGenerator):
+    def __init__(self, *args, **kwargs):
+        common.BindingsGenerator.__init__(self, *args, **kwargs)
+
+        self.released_files_name_prefix = 'python'
+
     def get_device_class(self):
         return python_common.PythonDevice
 
-    def prepare(self):
-        common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'bindings'))
+    def generate(self, device_):
+        global device
+        device = device_
 
-    def generate(self, device):
-        make_files(device, self.get_bindings_root_directory())
+        version = common.get_changelog_version(self.get_bindings_root_directory())
+        file_name = '{0}_{1}.py'.format(device.get_category().lower(), device.get_underscore_name())
 
-    def finish(self):
-        r = open(os.path.join(self.get_bindings_root_directory(), 'python_released_files.py'), 'wb')
-        r.write('released_files = ' + repr(released_files))
-        r.close()
+        py = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name), 'wb')
+        py.write(make_import(version))
+        py.write(make_namedtuples())
+        py.write(make_class())
+        py.write(make_callback_id_definitions())
+        py.write(make_function_id_definitions())
+        py.write(make_constants())
+        py.write(make_init_method())
+        py.write(make_callback_formats())
+        py.write(make_methods())
+        py.write(make_register_callback_method())
+        py.write(make_old_name())
+        py.close()
+
+        if device.is_released():
+            self.released_files.append(file_name)
 
 def generate(path):
     common.generate(path, 'en', PythonBindingsGenerator, False)

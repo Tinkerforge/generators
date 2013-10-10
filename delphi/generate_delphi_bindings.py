@@ -34,7 +34,6 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 device = None
-released_files = []
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
@@ -520,31 +519,6 @@ def make_callback_wrappers():
 
     return wrappers + 'end.\n'
 
-def make_files(device_, directory):
-    global device
-    device = device_
-    file_name = '{0}{1}.pas'.format(device.get_category(), device.get_camel_case_name())
-    version = common.get_changelog_version(directory)
-    directory += '/bindings'
-
-    pas = file('{0}/{1}'.format(directory, file_name), 'w')
-    pas.write(make_unit_header(version))
-    pas.write(make_device_identifier())
-    pas.write(make_function_id_definitions())
-    pas.write(make_callback_id_definitions())
-    pas.write(make_constants())
-    pas.write(make_arrays())
-    pas.write(make_callback_prototypes())
-    pas.write(make_class())
-    pas.write(make_constructor())
-    pas.write(make_callback_wrapper_definitions())
-    pas.write(make_methods())
-    pas.write(make_callback_wrappers())
-
-    if device.is_released():
-        global released_files
-        released_files.append(file_name)
-
 class DelphiBindingsElement(common.Element):
     def get_underscore_name(self):
         name = common.Element.get_underscore_name(self)
@@ -555,23 +529,42 @@ class DelphiBindingsElement(common.Element):
 
         return name
 
-class DelphiBindingsGenerator(common.Generator):
+class DelphiBindingsGenerator(common.BindingsGenerator):
+    def __init__(self, *args, **kwargs):
+        common.BindingsGenerator.__init__(self, *args, **kwargs)
+
+        self.released_files_name_prefix = 'delphi'
+
     def get_device_class(self):
         return delphi_common.DelphiDevice
 
     def get_element_class(self):
         return DelphiBindingsElement
 
-    def prepare(self):
-        common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'bindings'))
+    def generate(self, device_):
+        global device
+        device = device_
 
-    def generate(self, device):
-        make_files(device, self.get_bindings_root_directory())
+        version = common.get_changelog_version(self.get_bindings_root_directory())
+        file_name = '{0}{1}.pas'.format(device.get_category(), device.get_camel_case_name())
 
-    def finish(self):
-        r = open(os.path.join(self.get_bindings_root_directory(), 'delphi_released_files.py'), 'wb')
-        r.write('released_files = ' + repr(released_files))
-        r.close()
+        pas = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name), 'wb')
+        pas.write(make_unit_header(version))
+        pas.write(make_device_identifier())
+        pas.write(make_function_id_definitions())
+        pas.write(make_callback_id_definitions())
+        pas.write(make_constants())
+        pas.write(make_arrays())
+        pas.write(make_callback_prototypes())
+        pas.write(make_class())
+        pas.write(make_constructor())
+        pas.write(make_callback_wrapper_definitions())
+        pas.write(make_methods())
+        pas.write(make_callback_wrappers())
+        pas.close()
+
+        if device.is_released():
+            self.released_files.append(file_name)
 
 def generate(path):
     common.generate(path, 'en', DelphiBindingsGenerator, False)

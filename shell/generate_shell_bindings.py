@@ -365,43 +365,6 @@ def make_dispatch_footer():
 
     return footer.format(device.get_shell_device_name())
 
-def make_files(device_, directory):
-    if not device_.is_released():
-        return
-
-    global device
-    device = device_
-    file_name = device.get_shell_device_name()
-    directory += '/bindings'
-
-    global call_devices
-    call_devices.append("'{0}': call_{1}_{2}".format(device.get_shell_device_name(),
-                                                     device.get_underscore_name(),
-                                                     device.get_category().lower()))
-
-    global dispatch_devices
-    dispatch_devices.append("'{0}': dispatch_{1}_{2}".format(device.get_shell_device_name(),
-                                                             device.get_underscore_name(),
-                                                             device.get_category().lower()))
-
-    global device_identifier_symbols
-    device_identifier_symbols.append("{0}: '{1}'".format(device.get_device_identifier(),
-                                                         device.get_shell_device_name()))
-
-    global completion_devices
-    completion_devices.append(device.get_shell_device_name())
-
-    shell = file('{0}/{1}.part'.format(directory, file_name), 'wb')
-    shell.write(make_class())
-    shell.write(make_init_method())
-    shell.write(make_callback_formats())
-    shell.write(make_call_header())
-    shell.write(make_call_functions())
-    shell.write(make_call_footer())
-    shell.write(make_dispatch_header())
-    shell.write(make_dispatch_functions())
-    shell.write(make_dispatch_footer())
-
 def finish(directory):
     version = common.get_changelog_version(directory)
     shell = file('{0}/tinkerforge'.format(directory), 'wb')
@@ -444,17 +407,58 @@ def finish(directory):
 
     file('{0}/../tinkerforge-bash-completion.sh'.format(directory), 'wb').write(template)
 
-class ShellBindingsGenerator(common.Generator):
+class ShellBindingsGenerator(common.BindingsGenerator):
+    def __init__(self, *args, **kwargs):
+        common.BindingsGenerator.__init__(self, *args, **kwargs)
+
+        self.released_files_name_prefix = 'shell'
+
     def get_device_class(self):
         return shell_common.ShellDevice
 
-    def prepare(self):
-        common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'bindings'))
+    def generate(self, device_):
+        if not device_.is_released():
+            return
 
-    def generate(self, device):
-        make_files(device, self.get_bindings_root_directory())
+        global device
+        device = device_
+
+        global call_devices
+        call_devices.append("'{0}': call_{1}_{2}".format(device.get_shell_device_name(),
+                                                         device.get_underscore_name(),
+                                                         device.get_category().lower()))
+
+        global dispatch_devices
+        dispatch_devices.append("'{0}': dispatch_{1}_{2}".format(device.get_shell_device_name(),
+                                                                 device.get_underscore_name(),
+                                                                 device.get_category().lower()))
+
+        global device_identifier_symbols
+        device_identifier_symbols.append("{0}: '{1}'".format(device.get_device_identifier(),
+                                                             device.get_shell_device_name()))
+
+        global completion_devices
+        completion_devices.append(device.get_shell_device_name())
+
+        file_name = '{0}.part'.format(device.get_shell_device_name())
+
+        shell = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name), 'wb')
+        shell.write(make_class())
+        shell.write(make_init_method())
+        shell.write(make_callback_formats())
+        shell.write(make_call_header())
+        shell.write(make_call_functions())
+        shell.write(make_call_footer())
+        shell.write(make_dispatch_header())
+        shell.write(make_dispatch_functions())
+        shell.write(make_dispatch_footer())
+        shell.close()
+
+        self.released_files.append(file_name)
 
     def finish(self):
+        common.BindingsGenerator.finish(self)
+
         finish(self.get_bindings_root_directory())
 
 def generate(path):

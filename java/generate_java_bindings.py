@@ -33,7 +33,6 @@ import common
 import java_common
 
 device = None
-released_files = []
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
@@ -530,45 +529,39 @@ def make_bbgets(packet, with_obj = False):
         bbgets += bbget_format + '\n'
     return bbgets, bbret
 
-def make_files(device_, directory):
-    global device
-    device = device_
-    file_name = '{0}.java'.format(device.get_java_class_name())
-    version = common.get_changelog_version(directory)
-    directory += '/bindings'
+class JavaBindingsGenerator(common.BindingsGenerator):
+    def __init__(self, *args, **kwargs):
+        common.BindingsGenerator.__init__(self, *args, **kwargs)
 
-    java = file('{0}/{1}'.format(directory, file_name), "w")
-    java.write(make_import(version))
-    java.write(make_class())
-    java.write(make_function_id_definitions())
-    java.write(make_constants())
-    java.write(make_listener_lists())
-    java.write(make_return_objects())
-    java.write(make_listener_definitions())
-    java.write(make_constructor())
-    java.write(make_response_expected())
-    java.write(make_callback_listener_definitions())
-    java.write(make_methods())
-    java.write(make_add_listener())
+        self.released_files_name_prefix = 'java'
 
-    if device.is_released():
-        global released_files
-        released_files.append(file_name)
-
-class JavaBindingsGenerator(common.Generator):
     def get_device_class(self):
         return java_common.JavaDevice
 
-    def prepare(self):
-        common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'bindings'))
+    def generate(self, device_):
+        global device
+        device = device_
 
-    def generate(self, device):
-        make_files(device, self.get_bindings_root_directory())
+        version = common.get_changelog_version(self.get_bindings_root_directory())
+        file_name = '{0}.java'.format(device.get_java_class_name())
 
-    def finish(self):
-        r = open(os.path.join(self.get_bindings_root_directory(), 'java_released_files.py'), 'wb')
-        r.write('released_files = ' + repr(released_files))
-        r.close()
+        java = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name), 'wb')
+        java.write(make_import(version))
+        java.write(make_class())
+        java.write(make_function_id_definitions())
+        java.write(make_constants())
+        java.write(make_listener_lists())
+        java.write(make_return_objects())
+        java.write(make_listener_definitions())
+        java.write(make_constructor())
+        java.write(make_response_expected())
+        java.write(make_callback_listener_definitions())
+        java.write(make_methods())
+        java.write(make_add_listener())
+        java.close()
+
+        if device.is_released():
+            self.released_files.append(file_name)
 
 def generate(path):
     common.generate(path, 'en', JavaBindingsGenerator, False)

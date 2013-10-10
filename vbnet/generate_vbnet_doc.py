@@ -399,34 +399,23 @@ Konstanten
 
     return common.select_lang(api).format(ref, api_desc, api_str)
 
-def make_files(device_, directory):
-    global device
-    device = device_
-    file_name = '{0}_{1}_VBNET'.format(device.get_camel_case_name(),
-                                        device.get_category())
-    title = {
-    'en': 'Visual Basic .NET bindings',
-    'de': 'Visual Basic .NET Bindings'
-    }
-    directory = os.path.join(directory, 'doc', common.lang)
-    f = file('{0}/{1}.rst'.format(directory, file_name), "w")
-    f.write(common.make_rst_header(device, 'vbnet', 'Visual Basic .NET'))
-    f.write(common.make_rst_summary(device, common.select_lang(title), 'vbnet'))
-    f.write(make_examples())
-    f.write(make_api())
-
-class VBNETDocGenerator(common.Generator):
+class VBNETDocGenerator(common.DocGenerator):
     def get_device_class(self):
         return VBNETDevice
 
-    def prepare(self):
-        common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'doc', self.get_language()))
+    def generate(self, device_):
+        global device
+        device = device_
 
-    def generate(self, device):
-        make_files(device, self.get_bindings_root_directory())
+        title = { 'en': 'Visual Basic .NET bindings', 'de': 'Visual Basic .NET Bindings' }
+        file_name = '{0}_{1}_VBNET.rst'.format(device.get_camel_case_name(), device.get_category())
 
-    def finish(self):
-        pass
+        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
+        rst.write(common.make_rst_header(device, 'vbnet', 'Visual Basic .NET'))
+        rst.write(common.make_rst_summary(device, common.select_lang(title), 'vbnet'))
+        rst.write(make_examples())
+        rst.write(make_api())
+        rst.close()
 
 def generate(path, lang):
     common.generate(path, lang, VBNETDocGenerator, True)

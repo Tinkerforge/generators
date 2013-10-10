@@ -383,33 +383,23 @@ Konstanten
 
     return common.select_lang(api).format(ref, api_desc, api_str)
 
-def make_files(device_, directory):
-    global device
-    device = device_
-    file_name = '{0}_{1}_PHP'.format(device.get_camel_case_name(), device.get_category())
-    title = {
-    'en': 'PHP bindings',
-    'de': 'PHP Bindings'
-    }
-    directory = os.path.join(directory, 'doc', common.lang)
-    f = file('{0}/{1}.rst'.format(directory, file_name), "w")
-    f.write(common.make_rst_header(device, 'php', 'PHP'))
-    f.write(common.make_rst_summary(device, common.select_lang(title), 'php'))
-    f.write(make_examples())
-    f.write(make_api())
-
-class PHPDocGenerator(common.Generator):
+class PHPDocGenerator(common.DocGenerator):
     def get_device_class(self):
         return php_common.PHPDevice
 
-    def prepare(self):
-        common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'doc', self.get_language()))
+    def generate(self, device_):
+        global device
+        device = device_
 
-    def generate(self, device):
-        make_files(device, self.get_bindings_root_directory())
+        title = { 'en': 'PHP bindings', 'de': 'PHP Bindings' }
+        file_name = '{0}_{1}_PHP.rst'.format(device.get_camel_case_name(), device.get_category())
 
-    def finish(self):
-        pass
+        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
+        rst.write(common.make_rst_header(device, 'php', 'PHP'))
+        rst.write(common.make_rst_summary(device, common.select_lang(title), 'php'))
+        rst.write(make_examples())
+        rst.write(make_api())
+        rst.close()
 
 def generate(path, lang):
     common.generate(path, lang, PHPDocGenerator, True)

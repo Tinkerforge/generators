@@ -33,7 +33,6 @@ import common
 import ruby_common
 
 device = None
-released_files = []
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
@@ -257,43 +256,37 @@ end
 end
 """
 
-def make_files(device_, directory):
-    global device
-    device = device_
-    file_name = '{0}_{1}.rb'.format(device.get_category().lower(), device.get_underscore_name())
-    version = common.get_changelog_version(directory)
-    directory += '/bindings'
+class RubyBindingsGenerator(common.BindingsGenerator):
+    def __init__(self, *args, **kwargs):
+        common.BindingsGenerator.__init__(self, *args, **kwargs)
 
-    rb = file('{0}/{1}'.format(directory, file_name), "w")
-    rb.write(make_header(version))
-    rb.write(make_class())
-    rb.write(make_callback_id_definitions())
-    rb.write(make_function_id_definitions())
-    rb.write(make_constants())
-    rb.write(make_initialize_method())
-    rb.write(make_response_expected())
-    rb.write(make_callback_formats())
-    rb.write(make_methods())
-    rb.write(make_register_callback_method())
+        self.released_files_name_prefix = 'ruby'
 
-    if device.is_released():
-        global released_files
-        released_files.append(file_name)
-
-class RubyBindingsGenerator(common.Generator):
     def get_device_class(self):
         return ruby_common.RubyDevice
 
-    def prepare(self):
-        common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'bindings'))
+    def generate(self, device_):
+        global device
+        device = device_
 
-    def generate(self, device):
-        make_files(device, self.get_bindings_root_directory())
+        version = common.get_changelog_version(self.get_bindings_root_directory())
+        file_name = '{0}_{1}.rb'.format(device.get_category().lower(), device.get_underscore_name())
 
-    def finish(self):
-        r = open(os.path.join(self.get_bindings_root_directory(), 'ruby_released_files.py'), 'wb')
-        r.write('released_files = ' + repr(released_files))
-        r.close()
+        rb = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name), 'wb')
+        rb.write(make_header(version))
+        rb.write(make_class())
+        rb.write(make_callback_id_definitions())
+        rb.write(make_function_id_definitions())
+        rb.write(make_constants())
+        rb.write(make_initialize_method())
+        rb.write(make_response_expected())
+        rb.write(make_callback_formats())
+        rb.write(make_methods())
+        rb.write(make_register_callback_method())
+        rb.close()
+
+        if device.is_released():
+            self.released_files.append(file_name)
 
 def generate(path):
     common.generate(path, 'en', RubyBindingsGenerator, False)

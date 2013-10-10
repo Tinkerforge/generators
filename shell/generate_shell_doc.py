@@ -474,33 +474,23 @@ Befehlsstruktur
     return common.select_lang(api).format(ref, api_desc, api_str, device.get_shell_device_name(),
                                           device.get_display_name() + ' ' + device.get_category())
 
-def make_files(device_, directory):
-    global device
-    device = device_
-    file_name = '{0}_{1}_Shell'.format(device.get_camel_case_name(), device.get_category())
-    title = {
-    'en': 'Shell bindings',
-    'de': 'Shell Bindings'
-    }
-    directory = os.path.join(directory, 'doc', common.lang)
-    f = file('{0}/{1}.rst'.format(directory, file_name), "w")
-    f.write(common.make_rst_header(device, 'shell', 'Shell'))
-    f.write(common.make_rst_summary(device, common.select_lang(title), 'shell'))
-    f.write(make_examples())
-    f.write(make_api())
-
-class ShellDocGenerator(common.Generator):
+class ShellDocGenerator(common.DocGenerator):
     def get_device_class(self):
         return shell_common.ShellDevice
 
-    def prepare(self):
-        common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'doc', self.get_language()))
+    def generate(self, device_):
+        global device
+        device = device_
 
-    def generate(self, device):
-        make_files(device, self.get_bindings_root_directory())
+        title = { 'en': 'Shell bindings', 'de': 'Shell Bindings' }
+        file_name = '{0}_{1}_Shell.rst'.format(device.get_camel_case_name(), device.get_category())
 
-    def finish(self):
-        pass
+        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
+        rst.write(common.make_rst_header(device, 'shell', 'Shell'))
+        rst.write(common.make_rst_summary(device, common.select_lang(title), 'shell'))
+        rst.write(make_examples())
+        rst.write(make_api())
+        rst.close()
 
 def generate(path, lang):
     common.generate(path, lang, ShellDocGenerator, True)

@@ -33,7 +33,6 @@ import common
 import c_common
 
 device = None
-released_files = []
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
@@ -691,53 +690,48 @@ void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data
 """
     return func.format(device.get_underscore_name(), device.get_camel_case_name(), device.get_category())
 
-def make_files(device_, directory):
-    global device
-    device = device_
-    file_name = '{0}_{1}'.format(device.get_category().lower(), device.get_underscore_name())
-    version = common.get_changelog_version(directory)
-    directory += '/bindings'
+class CBindingsGenerator(common.BindingsGenerator):
+    def __init__(self, *args, **kwargs):
+        common.BindingsGenerator.__init__(self, *args, **kwargs)
 
-    c = file('{0}/{1}.c'.format(directory, file_name), "w")
-    c.write(make_include_c(version))
-    c.write(make_typedefs())
-    c.write(make_structs())
-    c.write(make_callback_wrapper_funcs())
-    c.write(make_create_func())
-    c.write(make_destroy_func())
-    c.write(make_response_expected_funcs())
-    c.write(make_register_callback_func())
-    c.write(make_method_funcs())
+        self.released_files_name_prefix = 'c'
 
-    h = file('{0}/{1}.h'.format(directory, file_name), "w")
-    h.write(make_include_h(version))
-    h.write(make_function_id_defines())
-    h.write(make_callback_defines())
-    h.write(make_constants())
-    h.write(make_device_identifier_define())
-    h.write(make_create_declaration())
-    h.write(make_destroy_declaration())
-    h.write(make_response_expected_declarations())
-    h.write(make_register_callback_declaration())
-    h.write(make_method_declarations())
-    h.write(make_end_h())
+    def generate(self, device_):
+        global device
+        device = device_
 
-    if device.is_released():
-        global released_files
-        released_files.append(file_name + '.c')
-        released_files.append(file_name + '.h')
+        version = common.get_changelog_version(self.get_bindings_root_directory())
+        file_name = '{0}_{1}'.format(device.get_category().lower(), device.get_underscore_name())
 
-class CBindingsGenerator(common.Generator):
-    def prepare(self):
-        common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'bindings'))
+        c = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name + '.c'), 'wb')
+        c.write(make_include_c(version))
+        c.write(make_typedefs())
+        c.write(make_structs())
+        c.write(make_callback_wrapper_funcs())
+        c.write(make_create_func())
+        c.write(make_destroy_func())
+        c.write(make_response_expected_funcs())
+        c.write(make_register_callback_func())
+        c.write(make_method_funcs())
+        c.close()
 
-    def generate(self, device):
-        make_files(device, self.get_bindings_root_directory())
+        h = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name + '.h'), 'wb')
+        h.write(make_include_h(version))
+        h.write(make_function_id_defines())
+        h.write(make_callback_defines())
+        h.write(make_constants())
+        h.write(make_device_identifier_define())
+        h.write(make_create_declaration())
+        h.write(make_destroy_declaration())
+        h.write(make_response_expected_declarations())
+        h.write(make_register_callback_declaration())
+        h.write(make_method_declarations())
+        h.write(make_end_h())
+        h.close()
 
-    def finish(self):
-        r = open(os.path.join(self.get_bindings_root_directory(), 'c_released_files.py'), 'wb')
-        r.write('released_files = ' + repr(released_files))
-        r.close()
+        if device.is_released():
+            self.released_files.append(file_name + '.c')
+            self.released_files.append(file_name + '.h')
 
 def generate(path):
     common.generate(path, 'en', CBindingsGenerator, False)

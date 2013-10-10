@@ -33,7 +33,6 @@ import common
 import php_common
 
 device = None
-released_files = []
 
 def format_doc(packet, suffix):
     text = common.select_lang(packet.get_doc()[1])
@@ -499,45 +498,39 @@ def make_callback_wrappers():
 
     return wrappers
 
-def make_files(device_, directory):
-    global device
-    device = device_
-    file_name = '{0}.php'.format(device.get_php_class_name())
-    version = common.get_changelog_version(directory)
-    directory += '/bindings'
+class PHPBindingsGenerator(common.BindingsGenerator):
+    def __init__(self, *args, **kwargs):
+        common.BindingsGenerator.__init__(self, *args, **kwargs)
 
-    php = file('{0}/{1}'.format(directory , file_name), "w")
-    php.write("<?php\n\n")
-    php.write(make_import(version))
-    php.write(make_class())
-    php.write(make_callback_id_definitions())
-    php.write(make_function_id_definitions())
-    php.write(make_constants())
-    php.write(make_device_identifier())
-    php.write(make_constructor())
-    php.write(make_callback_wrapper_definitions())
-    php.write(make_methods())
-    php.write(make_callback_wrappers())
-    php.write("}\n\n?>\n")
+        self.released_files_name_prefix = 'php'
 
-    if device.is_released():
-        global released_files
-        released_files.append(file_name)
-
-class PHPBindingsGenerator(common.Generator):
     def get_device_class(self):
         return php_common.PHPDevice
 
-    def prepare(self):
-        common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'bindings'))
+    def generate(self, device_):
+        global device
+        device = device_
 
-    def generate(self, device):
-        make_files(device, self.get_bindings_root_directory())
+        version = common.get_changelog_version(self.get_bindings_root_directory())
+        file_name = '{0}.php'.format(device.get_php_class_name())
 
-    def finish(self):
-        r = open(os.path.join(self.get_bindings_root_directory(), 'php_released_files.py'), 'wb')
-        r.write('released_files = ' + repr(released_files))
-        r.close()
+        php = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name), 'wb')
+        php.write("<?php\n\n")
+        php.write(make_import(version))
+        php.write(make_class())
+        php.write(make_callback_id_definitions())
+        php.write(make_function_id_definitions())
+        php.write(make_constants())
+        php.write(make_device_identifier())
+        php.write(make_constructor())
+        php.write(make_callback_wrapper_definitions())
+        php.write(make_methods())
+        php.write(make_callback_wrappers())
+        php.write("}\n\n?>\n")
+        php.close()
+
+        if device.is_released():
+            self.released_files.append(file_name)
 
 def generate(path):
     common.generate(path, 'en', PHPBindingsGenerator, False)

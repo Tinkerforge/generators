@@ -277,15 +277,19 @@ def make_files(device_, directory):
     f.write(common.make_rst_summary(device, common.select_lang(title), None))
     f.write(make_api())
 
-class TCPIPDocGenerator(common.Generator):
-    def prepare(self):
-        common.recreate_directory(os.path.join(self.get_bindings_root_directory(), 'doc', self.get_language()))
+class TCPIPDocGenerator(common.DocGenerator):
+    def generate(self, device_):
+        global device
+        device = device_
 
-    def generate(self, device):
-        make_files(device, self.get_bindings_root_directory())
+        title = { 'en': 'TCP/IP protocol', 'de': 'TCP/IP Protokoll' }
+        file_name = '{0}_{1}_TCPIP.rst'.format(device.get_camel_case_name(), device.get_category())
 
-    def finish(self):
-        pass
+        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
+        rst.write(common.make_rst_header(device, 'tcpip', 'TCP/IP'))
+        rst.write(common.make_rst_summary(device, common.select_lang(title), None))
+        rst.write(make_api())
+        rst.close()
 
 def generate(path, lang):
     common.generate(path, lang, TCPIPDocGenerator, True)
