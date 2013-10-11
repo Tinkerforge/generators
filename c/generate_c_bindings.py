@@ -200,7 +200,13 @@ def make_structs():
 \t#pragma pack(1)
 \t#define ATTRIBUTE_PACKED
 #elif defined __GNUC__
-\t#define ATTRIBUTE_PACKED __attribute__((packed))
+\t#ifdef _WIN32
+\t\t// workaround struct packing bug in GCC 4.7 on Windows
+\t\t// http://gcc.gnu.org/bugzilla/show_bug.cgi?id=52991
+\t\t#define ATTRIBUTE_PACKED __attribute__((gcc_struct, packed))
+\t#else
+\t\t#define ATTRIBUTE_PACKED __attribute__((packed))
+\t#endif
 #else
 \t#error unknown compiler, do not know how to enable struct packing
 #endif
