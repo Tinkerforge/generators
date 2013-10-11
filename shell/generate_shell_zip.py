@@ -28,66 +28,48 @@ import sys
 import os
 import shutil
 import subprocess
-import glob
-import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-device = None
-
-def copy_examples_for_zip():
-    if not device.is_released():
-        return
-
-    examples = common.find_examples(device, common.path_binding, 'shell', 'example-', '.sh')
-    dest = os.path.join('/tmp/generator/examples/',
-                        device.get_category().lower(),
-                        device.get_underscore_name())
-
-    if not os.path.exists(dest):
-        os.makedirs(dest)
-
-    for example in examples:
-        shutil.copy(example[1], dest)
-
-def make_files(device_, directory):
-    global device
-    device = device_
-
-    copy_examples_for_zip()
-
 class ShellZipGenerator(common.Generator):
     def prepare(self):
-        pass
+        common.recreate_directory('/tmp/generator')
+        os.makedirs('/tmp/generator/examples')
 
     def generate(self, device):
-        make_files(device, self.get_bindings_root_directory())
+        if not device.is_released():
+            return
+
+        # Copy examples
+        examples = common.find_examples(device, self.get_bindings_root_directory(), 'shell', 'example-', '.sh')
+        dest = os.path.join('/tmp/generator/examples', device.get_category().lower(), device.get_underscore_name())
+
+        if not os.path.exists(dest):
+            os.makedirs(dest)
+
+        for example in examples:
+            shutil.copy(example[1], dest)
 
     def finish(self):
-        pass
+        root = self.get_bindings_root_directory()
+
+        # Copy examples
+        shutil.copy(root.replace('/generators/shell', '/doc/en/source/Software/example.sh'),
+                    '/tmp/generator/examples/example_enumerate.sh')
+
+        # Copy bindings and readme
+        shutil.copy(os.path.join(root, 'tinkerforge'), '/tmp/generator')
+        shutil.copy(os.path.join(root, 'tinkerforge-bash-completion.sh'), '/tmp/generator')
+        shutil.copy(os.path.join(root, 'changelog.txt'), '/tmp/generator')
+        shutil.copy(os.path.join(root, 'readme.txt'), '/tmp/generator')
+
+        # Make zip
+        version = common.get_changelog_version(root)
+        common.make_zip('shell', '/tmp/generator', root, version)
 
 def generate(path):
-    # Make temporary generator directory
-    if os.path.exists('/tmp/generator'):
-        shutil.rmtree('/tmp/generator/')
-    os.makedirs('/tmp/generator')
-    os.chdir('/tmp/generator')
-
-    # Copy examples
     common.generate(path, 'en', ShellZipGenerator, False)
-    shutil.copy(common.path_binding.replace('/generators/shell', '/doc/en/source/Software/example.sh'),
-                '/tmp/generator/examples/example_enumerate.sh')
-
-    # Copy bindings and readme
-    shutil.copy(path + '/tinkerforge', '/tmp/generator')
-    shutil.copy(path + '/tinkerforge-bash-completion.sh', '/tmp/generator')
-    shutil.copy(path + '/changelog.txt', '/tmp/generator')
-    shutil.copy(path + '/readme.txt', '/tmp/generator')
-
-    # Make zip
-    version = common.get_changelog_version(path)
-    common.make_zip('shell', '/tmp/generator', path, version)
 
 if __name__ == "__main__":
     generate(os.getcwd())

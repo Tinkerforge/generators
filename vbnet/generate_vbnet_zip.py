@@ -28,73 +28,53 @@ import sys
 import os
 import shutil
 import subprocess
-import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 from csharp_released_files import released_files
 
-device = None
-
-def copy_examples_for_zip():
-    if not device.is_released():
-        return
-
-    examples = common.find_examples(device, common.path_binding, 'vbnet', 'Example', '.vb')
-    dest = os.path.join('/tmp/generator/dll/examples/',
-                        device.get_category(),
-                        device.get_camel_case_name())
-
-    if not os.path.exists(dest):
-        os.makedirs(dest)
-
-    for example in examples:
-        shutil.copy(example[1], dest)
-
-def make_files(device_, directory):
-    global device
-    device = device_
-
-    copy_examples_for_zip()
-
 class VBNETZipGenerator(common.Generator):
     def prepare(self):
-        pass
+        common.recreate_directory('/tmp/generator')
+        os.makedirs('/tmp/generator/dll/source/Tinkerforge')
+        os.makedirs('/tmp/generator/dll/examples')
 
     def generate(self, device):
-        make_files(device, self.get_bindings_root_directory())
+        if not device.is_released():
+            return
+
+        examples = common.find_examples(device, self.get_bindings_root_directory(), 'vbnet', 'Example', '.vb')
+        dest = os.path.join('/tmp/generator/dll/examples', device.get_category(), device.get_camel_case_name())
+
+        if not os.path.exists(dest):
+            os.makedirs(dest)
+
+        for example in examples:
+            shutil.copy(example[1], dest)
 
     def finish(self):
-        pass
+        root = self.get_bindings_root_directory()
 
-def generate(path):
-    # Make temporary generator directory
-    if os.path.exists('/tmp/generator'):
-        shutil.rmtree('/tmp/generator/')
-    os.makedirs('/tmp/generator/dll/source/Tinkerforge')
-    os.chdir('/tmp/generator')
+        # Copy examples
+        shutil.copy(root.replace('/generators/vbnet', '/doc/en/source/Software/Example.vb'),
+                    '/tmp/generator/dll/examples/ExampleEnumerate.vb')
 
-    # Copy examples
-    common.generate(path, 'en', VBNETZipGenerator, False)
-    shutil.copy(common.path_binding.replace('/generators/vbnet', '/doc/en/source/Software/Example.vb'),
-                '/tmp/generator/dll/examples/ExampleEnumerate.vb')
+        lines = []
+        for line in file(root.replace('/generators/vbnet', '/doc/en/source/Software/Example.vb'), 'rb'):
+            lines.append(line.replace('Module Example', 'Module ExampleEnumerate'))
+        file('/tmp/generator/dll/examples/ExampleEnumerate.vb', 'wb').writelines(lines)
 
-    lines = []
-    for line in file(common.path_binding.replace('/generators/vbnet', '/doc/en/source/Software/Example.vb'), 'rb'):
-        lines.append(line.replace('Module Example', 'Module ExampleEnumerate'))
-    file('/tmp/generator/dll/examples/ExampleEnumerate.vb', 'wb').writelines(lines)
+        # Copy bindings and readme
+        for filename in released_files:
+            shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/dll/source/Tinkerforge')
 
-    # Copy bindings and readme
-    for filename in released_files:
-        shutil.copy(os.path.join(path, 'bindings', filename), '/tmp/generator/dll/source/Tinkerforge')
+        shutil.copy(os.path.join(root, '..', 'csharp', 'IPConnection.cs'), '/tmp/generator/dll/source/Tinkerforge')
+        shutil.copy(os.path.join(root, 'changelog.txt'), '/tmp/generator/dll')
+        shutil.copy(os.path.join(root, 'readme.txt'), '/tmp/generator/dll')
 
-    shutil.copy(path + '/../csharp/IPConnection.cs', '/tmp/generator/dll/source/Tinkerforge')
-    shutil.copy(path + '/changelog.txt', '/tmp/generator/dll')
-    shutil.copy(path + '/readme.txt', '/tmp/generator/dll')
-
-    # Write AssemblyInfo
-    version = common.get_changelog_version(path)
-    file('/tmp/generator/dll/source/Tinkerforge/AssemblyInfo.cs', 'wb').write("""
+        # Write AssemblyInfo
+        version = common.get_changelog_version(root)
+        file('/tmp/generator/dll/source/Tinkerforge/AssemblyInfo.cs', 'wb').write("""
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -109,18 +89,22 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyVersion("{0}.{1}.{2}.0")]
 """.format(*version))
 
-    # Make dll
-    args = ['/usr/bin/gmcs',
-            '/optimize',
-            '/target:library',
-            '/out:/tmp/generator/dll/Tinkerforge.dll',
-            '/doc:/tmp/generator/dll/Tinkerforge.xml',
-            '/tmp/generator/dll/source/Tinkerforge/*.cs']
-    if subprocess.call(args) != 0:
-        raise Exception("Command '{0}' failed".format(' '.join(args)))
+        # Make dll
+        os.chdir('/tmp/generator')
+        args = ['/usr/bin/gmcs',
+                '/optimize',
+                '/target:library',
+                '/out:/tmp/generator/dll/Tinkerforge.dll',
+                '/doc:/tmp/generator/dll/Tinkerforge.xml',
+                '/tmp/generator/dll/source/Tinkerforge/*.cs']
+        if subprocess.call(args) != 0:
+            raise Exception("Command '{0}' failed".format(' '.join(args)))
 
-    # Make zip
-    common.make_zip('vbnet', '/tmp/generator/dll', path, version)
+        # Make zip
+        common.make_zip('vbnet', '/tmp/generator/dll', root, version)
+
+def generate(path):
+    common.generate(path, 'en', VBNETZipGenerator, False)
 
 if __name__ == "__main__":
     generate(os.getcwd())

@@ -27,70 +27,53 @@ Boston, MA 02111-1307, USA.
 import sys
 import os
 import shutil
-import subprocess
-import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 from c_released_files import released_files
 
-device = None
-
-def copy_examples_for_zip():
-    if not device.is_released():
-        return
-
-    examples = common.find_examples(device, common.path_binding, 'c', 'example_', '.c')
-    dest = os.path.join('/tmp/generator/examples/',
-                        device.get_category().lower(),
-                        device.get_underscore_name())
-
-    if not os.path.exists(dest):
-        os.makedirs(dest)
-
-    for example in examples:
-        shutil.copy(example[1], dest)
-
-def make_files(device_, directory):
-    global device
-    device = device_
-
-    copy_examples_for_zip()
-
 class CZipGenerator(common.Generator):
     def prepare(self):
-        pass
+        common.recreate_directory('/tmp/generator')
+        os.makedirs('/tmp/generator/bindings')
+        os.makedirs('/tmp/generator/examples')
 
     def generate(self, device):
-        make_files(device, self.get_bindings_root_directory())
+        if not device.is_released():
+            return
+
+        # Copy examples
+        examples = common.find_examples(device, self.get_bindings_root_directory(), 'c', 'example_', '.c')
+        dest = os.path.join('/tmp/generator/examples', device.get_category().lower(), device.get_underscore_name())
+
+        if not os.path.exists(dest):
+            os.makedirs(dest)
+
+        for example in examples:
+            shutil.copy(example[1], dest)
 
     def finish(self):
-        pass
+        root = self.get_bindings_root_directory()
+
+        # Copy examples
+        shutil.copy(root.replace('/generators/c', '/doc/en/source/Software/example.c'),
+                    '/tmp/generator/examples/example_enumerate.c')
+
+        # Copy bindings and readme
+        for filename in released_files:
+            shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/bindings')
+
+        shutil.copy(os.path.join(root, 'ip_connection.c'), '/tmp/generator/bindings')
+        shutil.copy(os.path.join(root, 'ip_connection.h'), '/tmp/generator/bindings')
+        shutil.copy(os.path.join(root, 'changelog.txt'), '/tmp/generator')
+        shutil.copy(os.path.join(root, 'readme.txt'), '/tmp/generator')
+
+        # Make zip
+        version = common.get_changelog_version(root)
+        common.make_zip('c', '/tmp/generator', root, version)
 
 def generate(path):
-    # Make temporary generator directory
-    if os.path.exists('/tmp/generator'):
-        shutil.rmtree('/tmp/generator/')
-    os.makedirs('/tmp/generator/bindings')
-    os.chdir('/tmp/generator/bindings')
-
-    # Copy examples
     common.generate(path, 'en', CZipGenerator, False)
-    shutil.copy(common.path_binding.replace('/generators/c', '/doc/en/source/Software/example.c'),
-                '/tmp/generator/examples/example_enumerate.c')
-
-    # Copy bindings and readme
-    for filename in released_files:
-        shutil.copy(os.path.join(path, 'bindings', filename), '/tmp/generator/bindings')
-
-    shutil.copy(path + '/ip_connection.c', '/tmp/generator/bindings')
-    shutil.copy(path + '/ip_connection.h', '/tmp/generator/bindings')
-    shutil.copy(path + '/changelog.txt', '/tmp/generator/')
-    shutil.copy(path + '/readme.txt', '/tmp/generator/')
-
-    # Make zip
-    version = common.get_changelog_version(path)
-    common.make_zip('c', '/tmp/generator', path, version)
 
 if __name__ == "__main__":
     generate(os.getcwd())
