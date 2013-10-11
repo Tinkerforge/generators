@@ -137,7 +137,6 @@ breadcrumbs_str = {
 }
 
 lang = 'en'
-is_doc = False
 
 def shift_right(text, n):
     return text.replace('\n', '\n' + ' '*n)
@@ -482,36 +481,22 @@ def underscore_to_headless_camel_case(name):
         ret += part[0].upper() + part[1:]
     return ret
 
-def prepare_doc(directory):
-    directory = os.path.join(directory, 'doc', lang)
-    if os.path.exists(directory):
-        shutil.rmtree(directory)
-    os.makedirs(directory)
-
-def prepare_bindings(directory):
-    directory = os.path.join(directory, 'bindings')
-    if os.path.exists(directory):
-        shutil.rmtree(directory)
-    os.makedirs(directory)
-
 def recreate_directory(directory):
     directory = os.path.join(directory)
     if os.path.exists(directory):
         shutil.rmtree(directory)
     os.makedirs(directory)
 
-def generate(bindings_root_directory, language, generator_class, is_doc_):
+def generate(bindings_root_directory, language, generator_class, is_doc):
     global lang
-    global is_doc
     lang = language
-    is_doc = is_doc_
 
     path_config = os.path.join(bindings_root_directory, '..', 'configs')
     if path_config not in sys.path:
         sys.path.append(path_config)
     configs = os.listdir(path_config)
 
-    generator = generator_class(bindings_root_directory, language)
+    generator = generator_class(bindings_root_directory, language, is_doc)
 
     generator.prepare()
 
@@ -727,6 +712,7 @@ class Element:
 class Packet:
     def __init__(self, device, raw_data, generator):
         self.device = device
+        self.generator = generator
         self.raw_data = raw_data
         self.all_elements = []
         self.in_elements = []
@@ -855,6 +841,7 @@ class Packet:
 class Device:
     def __init__(self, raw_data, generator):
         self.raw_data = raw_data
+        self.generator = generator
         self.all_packets = []
         self.all_packets_without_doc_only = []
         self.all_function_packets = []
@@ -918,12 +905,12 @@ class Device:
 
     def get_packets(self, typ=None):
         if typ is None:
-            if is_doc:
+            if self.generator.is_doc:
                 return self.all_packets
             else:
                 return self.all_packets_without_doc_only
         elif typ == 'function':
-            if is_doc:
+            if self.generator.is_doc:
                 return self.all_function_packets
             else:
                 return self.all_function_packets_without_doc_only
@@ -961,9 +948,10 @@ class Device:
         return constants
 
 class Generator:
-    def __init__(self, bindings_root_directory, language):
+    def __init__(self, bindings_root_directory, language, is_doc):
         self.bindings_root_directory = bindings_root_directory
         self.language = language
+        self.is_doc = is_doc
 
     def get_device_class(self):
         return Device
