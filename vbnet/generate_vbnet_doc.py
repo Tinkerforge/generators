@@ -125,13 +125,13 @@ def make_parameter_list(packet):
             param.append('ByVal {0} As {1}'.format(name, vbnet_type))
     return ', '.join(param)
 
-def make_examples():
+def make_examples(generator):
     def title_from_file(f):
         f = f.replace('Example', '')
         f = f.replace('.vb', '')
         return common.camel_case_to_space(f)
 
-    return common.make_rst_examples(title_from_file, device, common.path_binding,
+    return common.make_rst_examples(title_from_file, device, generator.get_bindings_root_directory(),
                                     'vbnet', 'Example', '.vb', 'VBNET')
 
 def make_methods(typ):
@@ -413,12 +413,12 @@ class VBNETDocGenerator(common.DocGenerator):
         rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
         rst.write(common.make_rst_header(device, 'vbnet', 'Visual Basic .NET'))
         rst.write(common.make_rst_summary(device, common.select_lang(title), 'vbnet'))
-        rst.write(make_examples())
+        rst.write(make_examples(self))
         rst.write(make_api())
         rst.close()
 
-def generate(path, lang):
-    common.generate(path, lang, VBNETDocGenerator, True)
+def generate(bindings_root_directory, lang):
+    common.generate(bindings_root_directory, lang, VBNETDocGenerator, True)
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:

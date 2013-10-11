@@ -68,8 +68,8 @@ class ShellZipGenerator(common.Generator):
         version = common.get_changelog_version(root)
         common.make_zip('shell', '/tmp/generator', root, version)
 
-def generate(path):
-    common.generate(path, 'en', ShellZipGenerator, False)
+def generate(bindings_root_directory):
+    common.generate(bindings_root_directory, 'en', ShellZipGenerator, False)
 
 if __name__ == "__main__":
     generate(os.getcwd())

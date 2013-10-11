@@ -329,8 +329,8 @@ class PythonBindingsGenerator(common.BindingsGenerator):
         if device.is_released():
             self.released_files.append(file_name)
 
-def generate(path):
-    common.generate(path, 'en', PythonBindingsGenerator, False)
+def generate(bindings_root_directory):
+    common.generate(bindings_root_directory, 'en', PythonBindingsGenerator, False)
 
 if __name__ == "__main__":
     generate(os.getcwd())

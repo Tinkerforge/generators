@@ -733,8 +733,8 @@ class CBindingsGenerator(common.BindingsGenerator):
             self.released_files.append(file_name + '.c')
             self.released_files.append(file_name + '.h')
 
-def generate(path):
-    common.generate(path, 'en', CBindingsGenerator, False)
+def generate(bindings_root_directory):
+    common.generate(bindings_root_directory, 'en', CBindingsGenerator, False)
 
 if __name__ == "__main__":
     generate(os.getcwd())

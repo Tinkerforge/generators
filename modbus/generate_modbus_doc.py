@@ -277,8 +277,8 @@ class ModbusDocGenerator(common.DocGenerator):
         rst.write(make_api())
         rst.close()
 
-def generate(path, lang):
-    common.generate(path, lang, ModbusDocGenerator, True)
+def generate(bindings_root_directory, lang):
+    common.generate(bindings_root_directory, lang, ModbusDocGenerator, True)
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:

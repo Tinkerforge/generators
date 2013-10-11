@@ -66,13 +66,13 @@ def format_doc(packet, shift_right):
 
     return common.shift_right(text, shift_right)
 
-def make_examples():
+def make_examples(generator):
     def title_from_file(f):
         f = f.replace('Example', '')
         f = f.replace('.cs', '')
         return common.camel_case_to_space(f)
 
-    return common.make_rst_examples(title_from_file, device, common.path_binding,
+    return common.make_rst_examples(title_from_file, device, generator.get_bindings_root_directory(),
                                     'csharp', 'Example', '.cs', 'CSharp')
 
 def make_methods(typ):
@@ -363,12 +363,12 @@ class CSharpDocGenerator(common.DocGenerator):
         rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
         rst.write(common.make_rst_header(device, 'csharp', 'C#'))
         rst.write(common.make_rst_summary(device, common.select_lang(title), 'csharp'))
-        rst.write(make_examples())
+        rst.write(make_examples(self))
         rst.write(make_api())
         rst.close()
 
-def generate(path, lang):
-    common.generate(path, lang, CSharpDocGenerator, True)
+def generate(bindings_root_directory, lang):
+    common.generate(bindings_root_directory, lang, CSharpDocGenerator, True)
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:

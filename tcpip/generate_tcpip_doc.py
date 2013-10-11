@@ -291,8 +291,8 @@ class TCPIPDocGenerator(common.DocGenerator):
         rst.write(make_api())
         rst.close()
 
-def generate(path, lang):
-    common.generate(path, lang, TCPIPDocGenerator, True)
+def generate(bindings_root_directory, lang):
+    common.generate(bindings_root_directory, lang, TCPIPDocGenerator, True)
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:

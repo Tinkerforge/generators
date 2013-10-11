@@ -65,13 +65,13 @@ def format_doc(packet):
 
     return common.shift_right(text, 1)
 
-def make_examples():
+def make_examples(generator):
     def title_from_file(f):
         f = f.replace('Example', '')
         f = f.replace('.php', '')
         return common.camel_case_to_space(f)
 
-    return common.make_rst_examples(title_from_file, device, common.path_binding,
+    return common.make_rst_examples(title_from_file, device, generator.get_bindings_root_directory(),
                                     'php', 'Example', '.php', 'PHP')
 
 def make_object_desc(packet):
@@ -397,12 +397,12 @@ class PHPDocGenerator(common.DocGenerator):
         rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
         rst.write(common.make_rst_header(device, 'php', 'PHP'))
         rst.write(common.make_rst_summary(device, common.select_lang(title), 'php'))
-        rst.write(make_examples())
+        rst.write(make_examples(self))
         rst.write(make_api())
         rst.close()
 
-def generate(path, lang):
-    common.generate(path, lang, PHPDocGenerator, True)
+def generate(bindings_root_directory, lang):
+    common.generate(bindings_root_directory, lang, PHPDocGenerator, True)
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:

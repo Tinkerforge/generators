@@ -58,7 +58,7 @@ class JavaZipGenerator(common.Generator):
 
         # Copy examples
         lines = []
-        for line in file(common.path_binding.replace('/generators/java', '/doc/en/source/Software/Example.java'), 'rb'):
+        for line in file(root.replace('/generators/java', '/doc/en/source/Software/Example.java'), 'rb'):
             lines.append(line.replace('public class Example {', 'public class ExampleEnumerate {'))
         file('/tmp/generator/jar/examples/ExampleEnumerate.java', 'wb').writelines(lines)
 
@@ -104,8 +104,8 @@ class JavaZipGenerator(common.Generator):
         # Make zip
         common.make_zip('java', '/tmp/generator/jar', root, version)
 
-def generate(path):
-    common.generate(path, 'en', JavaZipGenerator, False)
+def generate(bindings_root_directory):
+    common.generate(bindings_root_directory, 'en', JavaZipGenerator, False)
 
 if __name__ == "__main__":
     generate(os.getcwd())

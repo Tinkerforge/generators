@@ -103,8 +103,8 @@ using System.Runtime.CompilerServices;
         # Make zip
         common.make_zip('vbnet', '/tmp/generator/dll', root, version)
 
-def generate(path):
-    common.generate(path, 'en', VBNETZipGenerator, False)
+def generate(bindings_root_directory):
+    common.generate(bindings_root_directory, 'en', VBNETZipGenerator, False)
 
 if __name__ == "__main__":
     generate(os.getcwd())

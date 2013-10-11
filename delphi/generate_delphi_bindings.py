@@ -566,8 +566,8 @@ class DelphiBindingsGenerator(common.BindingsGenerator):
         if device.is_released():
             self.released_files.append(file_name)
 
-def generate(path):
-    common.generate(path, 'en', DelphiBindingsGenerator, False)
+def generate(bindings_root_directory):
+    common.generate(bindings_root_directory, 'en', DelphiBindingsGenerator, False)
 
 if __name__ == "__main__":
     generate(os.getcwd())

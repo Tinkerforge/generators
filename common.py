@@ -137,7 +137,6 @@ breadcrumbs_str = {
 }
 
 lang = 'en'
-path_binding = ''
 is_doc = False
 
 def shift_right(text, n):
@@ -501,20 +500,18 @@ def recreate_directory(directory):
         shutil.rmtree(directory)
     os.makedirs(directory)
 
-def generate(path, language, generator_class, is_doc_):
+def generate(bindings_root_directory, language, generator_class, is_doc_):
     global lang
-    global path_binding
     global is_doc
     lang = language
-    path_binding = path
     is_doc = is_doc_
 
-    path_config = os.path.join(path, '..', 'configs')
+    path_config = os.path.join(bindings_root_directory, '..', 'configs')
     if path_config not in sys.path:
         sys.path.append(path_config)
     configs = os.listdir(path_config)
 
-    generator = generator_class(path, language)
+    generator = generator_class(bindings_root_directory, language)
 
     generator.prepare()
 
@@ -568,7 +565,7 @@ def generate(path, language, generator_class, is_doc_):
 
     generator.finish()
 
-    f = open(os.path.join(path, '..', 'device_identifiers.py'), 'wb')
+    f = open(os.path.join(bindings_root_directory, '..', 'device_identifiers.py'), 'wb')
     f.write('device_identifiers = ')
     pprint(sorted(device_identifiers),  f)
     f.close()

@@ -72,8 +72,8 @@ class CZipGenerator(common.Generator):
         version = common.get_changelog_version(root)
         common.make_zip('c', '/tmp/generator', root, version)
 
-def generate(path):
-    common.generate(path, 'en', CZipGenerator, False)
+def generate(bindings_root_directory):
+    common.generate(bindings_root_directory, 'en', CZipGenerator, False)
 
 if __name__ == "__main__":
     generate(os.getcwd())

@@ -66,7 +66,7 @@ def format_doc(packet):
 
     return common.shift_right(text, 1)
 
-def make_examples():
+def make_examples(generator):
     def title_from_file(f):
         f = f.replace('example_', '')
         f = f.replace('.c', '')
@@ -75,7 +75,7 @@ def make_examples():
             s += l[0].upper() + l[1:] + ' '
         return s[:-1]
 
-    return common.make_rst_examples(title_from_file, device, common.path_binding,
+    return common.make_rst_examples(title_from_file, device, generator.get_bindings_root_directory(),
                                     'c', 'example_', '.c', 'C')
 
 def make_methods(typ):
@@ -411,12 +411,12 @@ class CDocGenerator(common.DocGenerator):
         rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
         rst.write(common.make_rst_header(device, 'c', 'C/C++'))
         rst.write(common.make_rst_summary(device, common.select_lang(title), 'c'))
-        rst.write(make_examples())
+        rst.write(make_examples(self))
         rst.write(make_api())
         rst.close()
 
-def generate(path, lang):
-    common.generate(path, lang, CDocGenerator, True)
+def generate(bindings_root_directory, lang):
+    common.generate(bindings_root_directory, lang, CDocGenerator, True)
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:

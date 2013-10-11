@@ -57,7 +57,7 @@ class DelphiZipGenerator(common.Generator):
         root = self.get_bindings_root_directory()
 
         # Copy examples
-        shutil.copy(common.path_binding.replace('/generators/delphi', '/doc/en/source/Software/Example.pas'),
+        shutil.copy(root.replace('/generators/delphi', '/doc/en/source/Software/Example.pas'),
                     '/tmp/generator/examples/ExampleEnumerate.pas')
 
         # Copy bindings and readme
@@ -77,8 +77,8 @@ class DelphiZipGenerator(common.Generator):
         version = common.get_changelog_version(root)
         common.make_zip('delphi', '/tmp/generator', root, version)
 
-def generate(path):
-    common.generate(path, 'en', DelphiZipGenerator, False)
+def generate(bindings_root_directory):
+    common.generate(bindings_root_directory, 'en', DelphiZipGenerator, False)
 
 if __name__ == "__main__":
     generate(os.getcwd())

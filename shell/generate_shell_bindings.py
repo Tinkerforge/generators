@@ -461,8 +461,8 @@ class ShellBindingsGenerator(common.BindingsGenerator):
 
         finish(self.get_bindings_root_directory())
 
-def generate(path):
-    common.generate(path, 'en', ShellBindingsGenerator, False)
+def generate(bindings_root_directory):
+    common.generate(bindings_root_directory, 'en', ShellBindingsGenerator, False)
 
 if __name__ == "__main__":
     generate(os.getcwd())

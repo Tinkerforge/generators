@@ -59,7 +59,7 @@ class PHPZipGenerator(common.Generator):
         root = self.get_bindings_root_directory()
 
         # Copy examples
-        shutil.copy(common.path_binding.replace('/generators/php', '/doc/en/source/Software/Example.php'),
+        shutil.copy(root.replace('/generators/php', '/doc/en/source/Software/Example.php'),
                     '/tmp/generator/pear/examples/ExampleEnumerate.php')
 
         # Copy bindings and readme
@@ -133,8 +133,8 @@ class PHPZipGenerator(common.Generator):
         # Make zip
         common.make_zip('php', '/tmp/generator/pear', root, version)
 
-def generate(path):
-    common.generate(path, 'en', PHPZipGenerator, False)
+def generate(bindings_root_directory):
+    common.generate(bindings_root_directory, 'en', PHPZipGenerator, False)
 
 if __name__ == "__main__":
     generate(os.getcwd())

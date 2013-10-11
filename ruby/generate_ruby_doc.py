@@ -86,7 +86,7 @@ def get_ruby_type(element):
 
     return '[' + ', '.join([t]*element.get_cardinality()) + ']'
 
-def make_examples():
+def make_examples(generator):
     def title_from_file(f):
         f = f.replace('example_', '')
         f = f.replace('.rb', '')
@@ -95,7 +95,7 @@ def make_examples():
             s += l[0].upper() + l[1:] + ' '
         return s[:-1]
 
-    return common.make_rst_examples(title_from_file, device, common.path_binding,
+    return common.make_rst_examples(title_from_file, device, generator.get_bindings_root_directory(),
                                     'ruby', 'example_', '.rb', 'Ruby')
 
 def make_parameter_desc(packet, io):
@@ -418,12 +418,12 @@ class RubyDocGenerator(common.DocGenerator):
         rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
         rst.write(common.make_rst_header(device, 'ruby', 'Ruby'))
         rst.write(common.make_rst_summary(device, common.select_lang(title), 'ruby'))
-        rst.write(make_examples())
+        rst.write(make_examples(self))
         rst.write(make_api())
         rst.close()
 
-def generate(path, lang):
-    common.generate(path, lang, RubyDocGenerator, True)
+def generate(bindings_root_directory, lang):
+    common.generate(bindings_root_directory, lang, RubyDocGenerator, True)
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:
