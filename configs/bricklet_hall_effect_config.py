@@ -22,11 +22,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns *true* if a magnetic field of 40 Gauss (4mT) or greater is detected.
+Returns *true* if a magnetic field of 35 Gauss (3.5mT) or greater is detected.
 """,
 'de':
 """
-Gibt *true* zurück wenn ein Magnetfeld mit 40 Gauss (4mT) oder größer
+Gibt *true* zurück wenn ein Magnetfeld mit 35 Gauss (3,5mT) oder größer
 detektiert wird.
 """
 }]
@@ -76,8 +76,8 @@ both are counted. Possible edge types are:
 * 1 = falling
 * 2 = both
 
-A magnetic field of 40 Gauss (4mT) or greater causes a falling edge and a
-magnetic field of 30 Gauss (3mT) or smaller causes a rising edge.
+A magnetic field of 35 Gauss (3.5mT) or greater causes a falling edge and a
+magnetic field of 25 Gauss (2.5mT) or smaller causes a rising edge.
 
 If a magnet comes near the Bricklet the signal goes low (falling edge), if
 a magnet is removed from the vicinity the signal goes high (rising edge).
@@ -99,8 +99,8 @@ sind:
 * 1 = fallend
 * 2 = beide
 
-Wird ein Magnet in die Nähe des Bricklets gebracht erzeugt dies ein *low*-Signal
-(fallende Flanke), wenn ein Magnet vom Bricklet entfernt wird entsteht ein
+Wird ein Magnet in die Nähe des Bricklets gebracht (>35 Gauss) erzeugt dies ein *low*-Signal
+(fallende Flanke), wenn ein Magnet vom Bricklet entfernt (<25 Gauss) wird entsteht ein
 *high*-Signal (steigende Flanke).
 
 Die Entprellzeit (debounce) wird in ms angegeben.
