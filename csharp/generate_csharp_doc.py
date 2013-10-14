@@ -9,8 +9,8 @@ Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 generator_csharp_doc.py: Generator for C# documentation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -39,24 +39,24 @@ device = None
 
 def format_doc(packet, shift_right):
     text = common.select_lang(packet.get_doc()[1])
-    link = ':csharp:func:`{2}() <{0}{1}::{2}>`'
-    link_c = ':csharp:func:`{2} <{0}{1}::{2}>`'
+    link = ':csharp:func:`{1}() <{0}::{1}>`'
+    link_c = ':csharp:func:`{1} <{0}::{1}>`'
 
-    cls = device.get_camel_case_name()
+    cls = device.get_csharp_class_name()
     for other_packet in device.get_packets():
         name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
         name = other_packet.get_camel_case_name()
         if other_packet.get_type() == 'callback':
-            name_right = link_c.format(device.get_category(), cls, name)
+            name_right = link_c.format(cls, name)
         else:
-            name_right = link.format(device.get_category(), cls, name)
+            name_right = link.format(cls, name)
 
         text = text.replace(name_false, name_right)
 
     text = common.handle_rst_word(text)
     text = common.handle_rst_if(text, device)
 
-    prefix = device.get_category() + device.get_camel_case_name() + '.'
+    prefix = cls + '.'
     if packet.get_underscore_name() == 'set_response_expected':
         text += common.format_function_id_constants(prefix, device)
     else:
@@ -66,13 +66,13 @@ def format_doc(packet, shift_right):
 
     return common.shift_right(text, shift_right)
 
-def make_examples():
+def make_examples(generator):
     def title_from_file(f):
         f = f.replace('Example', '')
         f = f.replace('.cs', '')
         return common.camel_case_to_space(f)
 
-    return common.make_rst_examples(title_from_file, device, common.path_binding,
+    return common.make_rst_examples(title_from_file, device, generator.get_bindings_root_directory(),
                                     'csharp', 'Example', '.cs', 'CSharp')
 
 def make_methods(typ):
@@ -89,15 +89,14 @@ def make_methods(typ):
 
     methods = ''
     func_start = '.. csharp:function:: '
-    cls = device.get_category() + device.get_camel_case_name()
     for packet in device.get_packets('function'):
         if packet.get_doc()[0] != typ:
             continue
 
         signature = csharp_common.make_method_signature(packet, True, device, True)
         desc = format_doc(packet, 1)
-        func = '{0}{1}\n{2}'.format(func_start, 
-                                    signature, 
+        func = '{0}{1}\n{2}'.format(func_start,
+                                    signature,
                                     desc)
         methods += func + '\n'
 
@@ -121,14 +120,14 @@ def make_callbacks():
     }
 
     cbs = ''
-    cls = device.get_camel_case_name()
+    cls = device.get_csharp_class_name()
     for packet in device.get_packets('callback'):
         desc = format_doc(packet, 2)
         params = csharp_common.make_parameter_list(packet)
         if len(params) > 0:
             params = ', ' + params
 
-        cbs += common.select_lang(cb).format(device.get_category() + device.get_camel_case_name(),
+        cbs += common.select_lang(cb).format(cls,
                                              packet.get_camel_case_name(),
                                              params,
                                              desc)
@@ -180,8 +179,8 @@ the device. The registration is done by appending your callback handler to
 the corresponding event:
 
 .. code-block:: csharp
-    
-    void Callback({3}{4} sender, int value)
+
+    void Callback({3} sender, int value)
     {{
         System.Console.WriteLine("Value: " + value);
     }}
@@ -208,8 +207,8 @@ vom Gerät zu erhalten. Die Registrierung geschieht durch Anhängen des Callback
 Handlers an den passenden Event:
 
 .. code-block:: csharp
-    
-    void Callback({3}{4} sender, int value)
+
+    void Callback({3} sender, int value)
     {{
         System.Console.WriteLine("Value: " + value);
     }}
@@ -219,7 +218,7 @@ Handlers an den passenden Event:
 Die verfügbaren Events werden weiter unten beschrieben.
 
 .. note::
- Callbacks für wiederkehrende Ereignisse zu verwenden ist 
+ Callbacks für wiederkehrende Ereignisse zu verwenden ist
  *immer* zu bevorzugen gegenüber der Verwendung von Abfragen.
  Es wird weniger USB-Bandbreite benutzt und die Latenz ist
  erheblich geringer, da es keine Paketumlaufzeit gibt.
@@ -237,7 +236,7 @@ API
 Generally, every method of the C# bindings that returns a value can
 throw a ``Tinkerforge.TimeoutException``. This exception gets thrown if the
 device did not respond. If a cable based connection is used, it is
-unlikely that this exception gets thrown (Assuming nobody plugs the 
+unlikely that this exception gets thrown (Assuming nobody plugs the
 device out). However, if a wireless connection is used, timeouts will occur
 if the distance to the device gets too big.
 
@@ -332,8 +331,7 @@ Konstanten
         api_str += common.select_lang(common.ccf_str).format(reg, ccf)
         api_str += common.select_lang(c_str).format(c, device.get_underscore_name(),
                                                     device.get_category().lower(),
-                                                    device.get_category(),
-                                                    device.get_camel_case_name())
+                                                    device.get_csharp_class_name())
 
     article = 'ein'
     if device.get_category() == 'Brick':
@@ -346,28 +344,31 @@ Konstanten
                                              device.get_category().lower())
 
     api_desc = ''
-    if 'api' in device.com:
-        api_desc = common.select_lang(device.com['api'])
+    if 'api' in device.raw_data:
+        api_desc = common.select_lang(device.raw_data['api'])
 
     return common.select_lang(api).format(ref, api_desc, api_str)
 
-def make_files(device_, directory):
-    global device
-    device = device_
-    file_name = '{0}_{1}_CSharp'.format(device.get_camel_case_name(), device.get_category())
-    title = {
-    'en': 'C# bindings',
-    'de': 'C# Bindings'
-    }
-    directory = os.path.join(directory, 'doc', common.lang)
-    f = file('{0}/{1}.rst'.format(directory, file_name), "w")
-    f.write(common.make_rst_header(device, 'csharp', 'C#'))
-    f.write(common.make_rst_summary(device, common.select_lang(title), 'csharp'))
-    f.write(make_examples())
-    f.write(make_api())
+class CSharpDocGenerator(common.DocGenerator):
+    def get_device_class(self):
+        return csharp_common.CSharpDevice
 
-def generate(path, lang):
-    common.generate(path, lang, make_files, common.prepare_doc, None, True)
+    def generate(self, device_):
+        global device
+        device = device_
+
+        title = { 'en': 'C# bindings', 'de': 'C# Bindings' }
+        file_name = '{0}_{1}_CSharp.rst'.format(device.get_camel_case_name(), device.get_category())
+
+        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
+        rst.write(common.make_rst_header(device, 'csharp', 'C#'))
+        rst.write(common.make_rst_summary(device, common.select_lang(title), 'csharp'))
+        rst.write(make_examples(self))
+        rst.write(make_api())
+        rst.close()
+
+def generate(bindings_root_directory, lang):
+    common.generate(bindings_root_directory, lang, CSharpDocGenerator, True)
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:

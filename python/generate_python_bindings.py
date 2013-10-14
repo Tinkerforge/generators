@@ -33,7 +33,6 @@ import common
 import python_common
 
 device = None
-released_files = []
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
@@ -82,22 +81,21 @@ def make_namedtuples():
             name_tup = name_tup[3:]
         params = []
         for element in packet.get_elements('out'):
-            params.append("'{0}'".format(element[0]))
+            params.append("'{0}'".format(element.get_underscore_name()))
 
         tups += tup.format(name, name_tup, ", ".join(params))
     return tups
 
 def make_class():
     return """
-class {0}{1}(Device):
+class {0}(Device):
     \"\"\"
-    {2}
+    {1}
     \"\"\"
 
-    DEVICE_IDENTIFIER = {3}
+    DEVICE_IDENTIFIER = {2}
 
-""".format(device.get_category(),
-           device.get_camel_case_name(),
+""".format(device.get_python_class_name(),
            device.get_description(),
            device.get_device_identifier())
 
@@ -159,8 +157,8 @@ def make_init_method():
             prefix = 'FUNCTION_'
             flag = 'RESPONSE_EXPECTED_FALSE'
 
-        response_expected += '        self.response_expected[{0}{1}.{2}{3}] = {0}{1}.{4}\n' \
-            .format(device.get_category(), device.get_camel_case_name(), prefix, packet.get_upper_case_name(), flag)
+        response_expected += '        self.response_expected[{0}.{1}{2}] = {0}.{3}\n' \
+            .format(device.get_python_class_name(), prefix, packet.get_upper_case_name(), flag)
 
     if len(response_expected) > 0:
         response_expected += '\n'
@@ -169,11 +167,10 @@ def make_init_method():
 
 def make_callback_formats():
     cbs = ''
-    cb = "        self.callback_formats[{0}{1}.CALLBACK_{2}] = '{3}'\n"
+    cb = "        self.callback_formats[{0}.CALLBACK_{1}] = '{2}'\n"
 
     for packet in device.get_packets('callback'):
-        cbs += cb.format(device.get_category(),
-                         device.get_camel_case_name(),
+        cbs += cb.format(device.get_python_class_name(),
                          packet.get_upper_case_name(),
                          make_format_list(packet, 'out'))
 
@@ -195,17 +192,14 @@ def make_format_from_element(element):
         'char' : 'c'
     }
 
-    if element[1] in forms:
-        return forms[element[1]]
-
-    return ''
+    return forms[element.get_type()]
 
 def make_format_list(packet, io):
     forms = []
     for element in packet.get_elements(io):
         num = ''
-        if element[2] > 1:
-            num = element[2]
+        if element.get_cardinality() > 1:
+            num = element.get_cardinality()
         form = make_format_from_element(element)
         forms.append('{0}{1}'.format(num, form))
     return " ".join(forms)
@@ -234,7 +228,7 @@ def make_methods():
 """
     methods = ''
 
-    cls = device.get_category() + device.get_camel_case_name()
+    cls = device.get_python_class_name()
     for packet in device.get_packets('function'):
         nb = packet.get_camel_case_name()
         ns = packet.get_underscore_name()
@@ -275,13 +269,8 @@ def make_register_callback_method():
 
 def make_old_name():
     return """
-{1} = {0}{1} # for backward compatibility
-""".format(device.get_category(), device.get_camel_case_name())
-
-def finish(directory):
-    r = open(os.path.join(directory, 'python_released_files.py'), 'wb')
-    r.write('released_files = ' + repr(released_files))
-    r.close()
+{0} = {1} # for backward compatibility
+""".format(device.get_camel_case_name(), device.get_python_class_name())
 
 def make_files(device_, directory):
     global device
@@ -307,8 +296,41 @@ def make_files(device_, directory):
         global released_files
         released_files.append(file_name)
 
-def generate(path):
-    common.generate(path, 'en', make_files, common.prepare_bindings, finish, False)
+class PythonBindingsGenerator(common.BindingsGenerator):
+    def __init__(self, *args, **kwargs):
+        common.BindingsGenerator.__init__(self, *args, **kwargs)
+
+        self.released_files_name_prefix = 'python'
+
+    def get_device_class(self):
+        return python_common.PythonDevice
+
+    def generate(self, device_):
+        global device
+        device = device_
+
+        version = common.get_changelog_version(self.get_bindings_root_directory())
+        file_name = '{0}_{1}.py'.format(device.get_category().lower(), device.get_underscore_name())
+
+        py = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name), 'wb')
+        py.write(make_import(version))
+        py.write(make_namedtuples())
+        py.write(make_class())
+        py.write(make_callback_id_definitions())
+        py.write(make_function_id_definitions())
+        py.write(make_constants())
+        py.write(make_init_method())
+        py.write(make_callback_formats())
+        py.write(make_methods())
+        py.write(make_register_callback_method())
+        py.write(make_old_name())
+        py.close()
+
+        if device.is_released():
+            self.released_files.append(file_name)
+
+def generate(bindings_root_directory):
+    common.generate(bindings_root_directory, 'en', PythonBindingsGenerator, False)
 
 if __name__ == "__main__":
     generate(os.getcwd())

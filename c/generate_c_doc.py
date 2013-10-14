@@ -66,7 +66,7 @@ def format_doc(packet):
 
     return common.shift_right(text, 1)
 
-def make_examples():
+def make_examples(generator):
     def title_from_file(f):
         f = f.replace('example_', '')
         f = f.replace('.c', '')
@@ -75,7 +75,7 @@ def make_examples():
             s += l[0].upper() + l[1:] + ' '
         return s[:-1]
 
-    return common.make_rst_examples(title_from_file, device, common.path_binding,
+    return common.make_rst_examples(title_from_file, device, generator.get_bindings_root_directory(),
                                     'c', 'example_', '.c', 'C')
 
 def make_methods(typ):
@@ -395,28 +395,28 @@ Konstanten
                                         device.get_category().lower())
 
     api_desc = ''
-    if 'api' in device.com:
-        api_desc = common.select_lang(device.com['api'])
+    if 'api' in device.raw_data:
+        api_desc = common.select_lang(device.raw_data['api'])
 
     return common.select_lang(api).format(ref, api_desc, api_str)
 
-def make_files(device_, directory):
-    global device
-    device = device_
-    file_name = '{0}_{1}_C'.format(device.get_camel_case_name(), device.get_category())
-    title = {
-    'en': 'C/C++ bindings',
-    'de': 'C/C++ Bindings'
-    }
-    directory = os.path.join(directory, 'doc', common.lang)
-    f = file('{0}/{1}.rst'.format(directory, file_name), "w")
-    f.write(common.make_rst_header(device, 'c', 'C/C++'))
-    f.write(common.make_rst_summary(device, common.select_lang(title), 'c'))
-    f.write(make_examples())
-    f.write(make_api())
+class CDocGenerator(common.DocGenerator):
+    def generate(self, device_):
+        global device
+        device = device_
 
-def generate(path, lang):
-    common.generate(path, lang, make_files, common.prepare_doc, None, True)
+        title = { 'en': 'C/C++ bindings', 'de': 'C/C++ Bindings' }
+        file_name = '{0}_{1}_C.rst'.format(device.get_camel_case_name(), device.get_category())
+
+        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
+        rst.write(common.make_rst_header(device, 'c', 'C/C++'))
+        rst.write(common.make_rst_summary(device, common.select_lang(title), 'c'))
+        rst.write(make_examples(self))
+        rst.write(make_api())
+        rst.close()
+
+def generate(bindings_root_directory, lang):
+    common.generate(bindings_root_directory, lang, CDocGenerator, True)
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:

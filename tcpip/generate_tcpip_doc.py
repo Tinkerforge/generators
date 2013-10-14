@@ -35,15 +35,15 @@ import common
 device = None
 
 def type_to_pytype(element):
-    t = element[1]
+    t = element.get_type()
 
     if t == 'string':
         t = 'char'
 
-    if element[2] == 1:
+    if element.get_cardinality() == 1:
         return t
 
-    return t + '[' + str(element[2]) + ']'
+    return t + '[' + str(element.get_cardinality()) + ']'
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
@@ -81,7 +81,7 @@ def make_request_desc(packet):
     param = ' :request {0}: {1}\n'
     for element in packet.get_elements('in'):
         t = type_to_pytype(element)
-        desc += param.format(element[0], t)
+        desc += param.format(element.get_underscore_name(), t)
 
     if desc == '\n':
         desc += ' :emptyrequest: {0}\n'.format(common.select_lang(empty_payload))
@@ -101,7 +101,7 @@ def make_response_desc(packet):
     returns = ' :response {0}: {1}\n'
     for element in packet.get_elements('out'):
         t = type_to_pytype(element)
-        desc += returns.format(element[0], t)
+        desc += returns.format(element.get_underscore_name(), t)
 
     if desc == '\n':
         if packet.get_type() == 'callback':
@@ -258,8 +258,8 @@ Konstanten
                                             device.get_category().lower())
 
     api_desc = ''
-    if 'api' in device.com:
-        api_desc = common.select_lang(device.com['api'])
+    if 'api' in device.raw_data:
+        api_desc = common.select_lang(device.raw_data['api'])
 
     return common.select_lang(api).format(ref, api_desc, api_str)
 
@@ -277,8 +277,22 @@ def make_files(device_, directory):
     f.write(common.make_rst_summary(device, common.select_lang(title), None))
     f.write(make_api())
 
-def generate(path, lang):
-    common.generate(path, lang, make_files, common.prepare_doc, None, True)
+class TCPIPDocGenerator(common.DocGenerator):
+    def generate(self, device_):
+        global device
+        device = device_
+
+        title = { 'en': 'TCP/IP protocol', 'de': 'TCP/IP Protokoll' }
+        file_name = '{0}_{1}_TCPIP.rst'.format(device.get_camel_case_name(), device.get_category())
+
+        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
+        rst.write(common.make_rst_header(device, 'tcpip', 'TCP/IP'))
+        rst.write(common.make_rst_summary(device, common.select_lang(title), None))
+        rst.write(make_api())
+        rst.close()
+
+def generate(bindings_root_directory, lang):
+    common.generate(bindings_root_directory, lang, TCPIPDocGenerator, True)
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:

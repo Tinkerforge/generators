@@ -53,19 +53,16 @@ def get_element_type(element):
         'float': 'float'
     }
 
-    t = types[element[1]]
+    t = types[element.get_type()]
 
-    if element[2] == 1 or element[1] == 'string':
+    if element.get_cardinality() == 1 or element.get_type() == 'string':
         return t
     else:
-        return ','.join([t] * element[2])
-
-def get_shell_device_name(device):
-    return device.get_underscore_name().replace('_', '-') + '-' + device.get_category().lower()
+        return ','.join([t]*element.get_cardinality())
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
-    device_name = get_shell_device_name(device)
+    device_name = device.get_shell_device_name()
     constants = {'en': 'symbols', 'de': 'Symbole'}
 
     for other_packet in device.get_packets():
@@ -88,10 +85,11 @@ def format_doc(packet):
 
         e = []
         for element in constant.elements:
-            if element[3] == 'in':
-                e.append('<{0}>'.format(element[0].replace('_', '-')))
+            name = element.get_underscore_name().replace('_', '-')
+            if element.get_direction() == 'in':
+                e.append('<{0}>'.format(name))
             else:
-                e.append(element[0].replace('_', '-'))
+                e.append(name)
 
         if len(e) > 1:
             and_ = {
@@ -113,7 +111,7 @@ def format_doc(packet):
 
     return common.shift_right(text, 1)
 
-def make_examples():
+def make_examples(generator):
     def title_from_file(f):
         f = f.replace('example-', '')
         f = f.replace('.sh', '')
@@ -122,7 +120,7 @@ def make_examples():
             s += l[0].upper() + l[1:] + ' '
         return s[:-1]
 
-    return common.make_rst_examples(title_from_file, device, common.path_binding,
+    return common.make_rst_examples(title_from_file, device, generator.get_bindings_root_directory(),
                                     'shell', 'example-', '.sh', 'Shell', 'bash')
 
 def make_parameter_desc(packet):
@@ -135,9 +133,9 @@ def make_parameter_desc(packet):
 
     for element in packet.get_elements('in'):
         t = get_element_type(element)
-        desc += param.format(element[0].replace('_', '-'), t)
+        desc += param.format(element.get_underscore_name().replace('_', '-'), t)
 
-        if len(element) > 4:
+        if element.has_constants():
             desc += ' ({0})'.format(common.select_lang(has_symbols))
 
         desc += '\n'
@@ -161,10 +159,10 @@ def make_return_desc(packet):
     ret = '\n'
     for element in elements:
         t = get_element_type(element)
-        ret += ' :returns {0}: {1}'.format(element[0].replace('_', '-'), t)
+        ret += ' :returns {0}: {1}'.format(element.get_underscore_name().replace('_', '-'), t)
 
-        if len(element) > 4 or \
-           packet.get_function_id() == 255 and element[0] == 'device_identifier':
+        if element.has_constants() or \
+           packet.get_function_id() == 255 and element.get_underscore_name() == 'device_identifier':
             ret += ' ({0})'.format(common.select_lang(has_symbols))
 
         ret += '\n'
@@ -174,7 +172,7 @@ def make_return_desc(packet):
 def make_methods(typ):
     methods = ''
     func_start = '.. sh:function:: '
-    device_name = get_shell_device_name(device)
+    device_name = device.get_shell_device_name()
     for packet in device.get_packets('function'):
         if packet.is_virtual():
             continue
@@ -199,7 +197,7 @@ def make_methods(typ):
 def make_callbacks():
     cbs = ''
     func_start = '.. sh:function:: '
-    device_name = get_shell_device_name(device)
+    device_name = device.get_shell_device_name()
     for packet in device.get_packets('callback'):
         if packet.is_virtual():
             continue
@@ -464,35 +462,38 @@ Befehlsstruktur
         api_str += common.select_lang(common.ccf_str).format('', ccf)
         api_str += common.select_lang(c_str).format(c, device.get_underscore_name(),
                                                     device.get_category().lower(),
-                                                    get_shell_device_name(device))
+                                                    device.get_shell_device_name())
 
     ref = '.. _{0}_{1}_shell_api:\n'.format(device.get_underscore_name(),
                                             device.get_category().lower())
 
     api_desc = ''
-    if 'api' in device.com:
-        api_desc = common.select_lang(device.com['api'])
+    if 'api' in device.raw_data:
+        api_desc = common.select_lang(device.raw_data['api'])
 
-    return common.select_lang(api).format(ref, api_desc, api_str, get_shell_device_name(device),
+    return common.select_lang(api).format(ref, api_desc, api_str, device.get_shell_device_name(),
                                           device.get_display_name() + ' ' + device.get_category())
 
-def make_files(device_, directory):
-    global device
-    device = device_
-    file_name = '{0}_{1}_Shell'.format(device.get_camel_case_name(), device.get_category())
-    title = {
-    'en': 'Shell bindings',
-    'de': 'Shell Bindings'
-    }
-    directory = os.path.join(directory, 'doc', common.lang)
-    f = file('{0}/{1}.rst'.format(directory, file_name), "w")
-    f.write(common.make_rst_header(device, 'shell', 'Shell'))
-    f.write(common.make_rst_summary(device, common.select_lang(title), 'shell'))
-    f.write(make_examples())
-    f.write(make_api())
+class ShellDocGenerator(common.DocGenerator):
+    def get_device_class(self):
+        return shell_common.ShellDevice
 
-def generate(path, lang):
-    common.generate(path, lang, make_files, common.prepare_doc, None, True)
+    def generate(self, device_):
+        global device
+        device = device_
+
+        title = { 'en': 'Shell bindings', 'de': 'Shell Bindings' }
+        file_name = '{0}_{1}_Shell.rst'.format(device.get_camel_case_name(), device.get_category())
+
+        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
+        rst.write(common.make_rst_header(device, 'shell', 'Shell'))
+        rst.write(common.make_rst_summary(device, common.select_lang(title), 'shell'))
+        rst.write(make_examples(self))
+        rst.write(make_api())
+        rst.close()
+
+def generate(bindings_root_directory, lang):
+    common.generate(bindings_root_directory, lang, ShellDocGenerator, True)
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:

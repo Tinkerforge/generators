@@ -29,6 +29,7 @@ import os
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
+import shell_common
 
 device = None
 call_devices = []
@@ -55,25 +56,25 @@ def get_type_converter(element):
         'float':  'float'
     }
 
-    t = types[element[1]]
+    t = types[element.get_type()]
 
-    if len(element) > 4:
+    if element.has_constants():
         symbols = {}
 
-        for symbol in element[4][2]:
+        for symbol in element.get_constants()[2]:
             symbols[symbol[1].replace('_', '-')] = symbol[2]
 
-        if element[2] > 1 and t != 'string':
-            return 'create_array_converter(ctx, create_symbol_converter(ctx, {0}, {1}), {2})'.format(t, symbols, element[2])
+        if element.get_cardinality() > 1 and t != 'string':
+            return 'create_array_converter(ctx, create_symbol_converter(ctx, {0}, {1}), {2})'.format(t, symbols, element.get_cardinality())
         elif t == 'string':
-            return 'create_string_checker(create_symbol_converter(ctx, str, {0}), {1})'.format(symbols, element[2])
+            return 'create_string_checker(create_symbol_converter(ctx, str, {0}), {1})'.format(symbols, element.get_cardinality())
         else:
             return 'create_symbol_converter(ctx, {0}, {1})'.format(t, symbols)
     else:
-        if element[2] > 1 and t != 'string':
-            return 'create_array_converter(ctx, {0}, {1})'.format(t, element[2])
+        if element.get_cardinality() > 1 and t != 'string':
+            return 'create_array_converter(ctx, {0}, {1})'.format(t, element.get_cardinality())
         elif t == 'string':
-            return 'create_string_checker(str, {0})'.format(element[2])
+            return 'create_string_checker(str, {0})'.format(element.get_cardinality())
         else:
             return t
 
@@ -94,20 +95,21 @@ def get_element_help(element):
     }
 
     symbols_doc = ''
-    if len(element) > 4:
+
+    if element.has_constants():
         symbols = []
 
-        for symbol in element[4][2]:
+        for symbol in element.get_constants()[2]:
             symbols.append('{0}: {1}'.format(symbol[1].replace('_', '-'), symbol[2]))
 
         symbols_doc = ' (' + ', '.join(symbols) + ')'
 
-    t = types[element[1]]
+    t = types[element.get_type()]
 
-    if element[2] == 1 or t == 'string':
+    if element.get_cardinality() == 1 or t == 'string':
         help = "'{0}{1}'".format(t, symbols_doc)
     else:
-        help = "get_array_type_name(ctx, '{0}', {1})".format(t, element[2])
+        help = "get_array_type_name(ctx, '{0}', {1})".format(t, element.get_cardinality())
 
         if len(symbols_doc) > 0:
             help += "+ '{0}'".format(symbols_doc)
@@ -130,7 +132,7 @@ def get_format(element):
         'char':   'c'
     }
 
-    return formats[element[1]]
+    return formats[element.get_type()]
 
 def make_format_list(packet, direction):
     formats = []
@@ -138,8 +140,8 @@ def make_format_list(packet, direction):
     for element in packet.get_elements(direction):
         number = ''
 
-        if element[2] > 1:
-            number = element[2]
+        if element.get_cardinality() > 1:
+            number = element.get_cardinality()
 
         formats.append('{0}{1}'.format(number, get_format(element)))
 
@@ -147,10 +149,9 @@ def make_format_list(packet, direction):
 
 def make_class():
     klass = """
-class {0}{1}(Device):"""
+class {0}(Device):"""
 
-    return klass.format(device.get_camel_case_name(),
-                        device.get_category())
+    return klass.format(device.get_shell_class_name())
 
 def make_init_method():
     init = """
@@ -191,14 +192,14 @@ def make_callback_formats():
 
 def make_call_header():
     header = """
-def call_{0}_{2}(ctx, argv):
-\tprog_prefix = 'call {1}-{2} <uid>'
+def call_{0}_{1}(ctx, argv):
+\tprog_prefix = 'call {2} <uid>'
 
 """
 
     return header.format(device.get_underscore_name(),
-                         device.get_underscore_name().replace('_', '-'),
-                         device.get_category().lower())
+                         device.get_category().lower(),
+                         device.get_shell_device_name())
 
 def make_call_functions():
     setter = """\tdef {0}(ctx, argv):
@@ -216,7 +217,7 @@ def make_call_functions():
 \t\tdevice_send_request(ctx, {7}{8}, {3}, ({4}), '{5}', '{6}', args.execute, False, [{9}], [{10}])
 """
     get_identity = """\tdef get_identity(ctx, argv):
-\t\tcommon_get_identity(ctx, prog_prefix, {0}{1}, argv)
+\t\tcommon_get_identity(ctx, prog_prefix, {0}, argv)
 """
 
     functions = []
@@ -224,20 +225,19 @@ def make_call_functions():
 
     for packet in device.get_packets('function'):
         if packet.get_function_id() == 255:
-            function = get_identity.format(device.get_camel_case_name(),
-                                           device.get_category())
+            function = get_identity.format(device.get_shell_class_name())
         else:
             params = []
             request_data = []
 
             for element in packet.get_elements('in'):
-                name = element[0]
+                name = element.get_underscore_name()
                 type_converter = get_type_converter(element)
                 help = get_element_help(element)
                 metavar = "'<{0}>'".format(name.replace('_', '-'))
 
                 params.append("\t\tparser.add_argument('{0}', type={1}, help={2}, metavar={3})".format(name, type_converter, help, metavar))
-                request_data.append('args.{0}'.format(element[0]))
+                request_data.append('args.{0}'.format(name))
 
             comma = ''
             if len(request_data) == 1:
@@ -250,12 +250,12 @@ def make_call_functions():
             output_symbols = []
 
             for element in packet.get_elements('out'):
-                output_names.append("'{0}'".format(element[0].replace('_', '-')))
+                output_names.append("'{0}'".format(element.get_underscore_name().replace('_', '-')))
 
-                if len(element) > 4:
+                if element.has_constants():
                     symbols = {}
 
-                    for symbol in element[4][2]:
+                    for symbol in element.get_constants()[2]:
                         symbols[symbol[2]] = symbol[1].replace('_', '-')
 
                     output_symbols.append(str(symbols))
@@ -305,22 +305,21 @@ def make_call_functions():
 def make_call_footer():
     footer = """
 
-\tcall_generic(ctx, '{0}-{1}', functions, argv)
+\tcall_generic(ctx, '{0}', functions, argv)
 """
 
-    return footer.format(device.get_underscore_name().replace('_', '-'),
-                         device.get_category().lower())
+    return footer.format(device.get_shell_device_name())
 
 def make_dispatch_header():
     header = """
-def dispatch_{0}_{2}(ctx, argv):
-\tprog_prefix = 'dispatch {1}-{2} <uid>'
+def dispatch_{0}_{1}(ctx, argv):
+\tprog_prefix = 'dispatch {2} <uid>'
 
 """
 
     return header.format(device.get_underscore_name(),
-                         device.get_underscore_name().replace('_', '-'),
-                         device.get_category().lower())
+                         device.get_category().lower(),
+                         device.get_shell_device_name())
 
 def make_dispatch_functions():
     func = """\tdef {0}(ctx, argv):
@@ -338,7 +337,7 @@ def make_dispatch_functions():
         output = []
 
         for element in packet.get_elements('out'):
-            output.append("'{0}'".format(element[0].replace('_', '-')))
+            output.append("'{0}'".format(element.get_underscore_name().replace('_', '-')))
 
         underscore_name = packet.get_underscore_name()
 
@@ -361,51 +360,10 @@ def make_dispatch_functions():
 def make_dispatch_footer():
     footer = """
 
-\tdispatch_generic(ctx, '{0}-{1}', callbacks, argv)
+\tdispatch_generic(ctx, '{0}', callbacks, argv)
 """
 
-    return footer.format(device.get_underscore_name().replace('_', '-'),
-                         device.get_category().lower())
-
-def make_files(device_, directory):
-    if not device_.is_released():
-        return
-
-    global device
-    device = device_
-    file_name = '{0}-{1}'.format(device.get_underscore_name().replace('_', '-'),
-                                 device.get_category().lower())
-    directory += '/bindings'
-
-    global call_devices
-    call_devices.append("'{0}-{1}': call_{2}_{1}".format(device.get_underscore_name().replace('_', '-'),
-                                                         device.get_category().lower(),
-                                                         device.get_underscore_name()))
-
-    global dispatch_devices
-    dispatch_devices.append("'{0}-{1}': dispatch_{2}_{1}".format(device.get_underscore_name().replace('_', '-'),
-                                                                 device.get_category().lower(),
-                                                                 device.get_underscore_name()))
-
-    global device_identifier_symbols
-    device_identifier_symbols.append("{0}: '{1}-{2}'".format(device.get_device_identifier(),
-                                                             device.get_underscore_name().replace('_', '-'),
-                                                             device.get_category().lower()))
-
-    global completion_devices
-    completion_devices.append('{0}-{1}'.format(device.get_underscore_name().replace('_', '-'),
-                                               device.get_category().lower()))
-
-    shell = file('{0}/{1}.part'.format(directory, file_name), 'wb')
-    shell.write(make_class())
-    shell.write(make_init_method())
-    shell.write(make_callback_formats())
-    shell.write(make_call_header())
-    shell.write(make_call_functions())
-    shell.write(make_call_footer())
-    shell.write(make_dispatch_header())
-    shell.write(make_dispatch_functions())
-    shell.write(make_dispatch_footer())
+    return footer.format(device.get_shell_device_name())
 
 def finish(directory):
     version = common.get_changelog_version(directory)
@@ -449,8 +407,62 @@ def finish(directory):
 
     file('{0}/../tinkerforge-bash-completion.sh'.format(directory), 'wb').write(template)
 
-def generate(path):
-    common.generate(path, 'en', make_files, common.prepare_bindings, finish, False)
+class ShellBindingsGenerator(common.BindingsGenerator):
+    def __init__(self, *args, **kwargs):
+        common.BindingsGenerator.__init__(self, *args, **kwargs)
+
+        self.released_files_name_prefix = 'shell'
+
+    def get_device_class(self):
+        return shell_common.ShellDevice
+
+    def generate(self, device_):
+        if not device_.is_released():
+            return
+
+        global device
+        device = device_
+
+        global call_devices
+        call_devices.append("'{0}': call_{1}_{2}".format(device.get_shell_device_name(),
+                                                         device.get_underscore_name(),
+                                                         device.get_category().lower()))
+
+        global dispatch_devices
+        dispatch_devices.append("'{0}': dispatch_{1}_{2}".format(device.get_shell_device_name(),
+                                                                 device.get_underscore_name(),
+                                                                 device.get_category().lower()))
+
+        global device_identifier_symbols
+        device_identifier_symbols.append("{0}: '{1}'".format(device.get_device_identifier(),
+                                                             device.get_shell_device_name()))
+
+        global completion_devices
+        completion_devices.append(device.get_shell_device_name())
+
+        file_name = '{0}.part'.format(device.get_shell_device_name())
+
+        shell = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name), 'wb')
+        shell.write(make_class())
+        shell.write(make_init_method())
+        shell.write(make_callback_formats())
+        shell.write(make_call_header())
+        shell.write(make_call_functions())
+        shell.write(make_call_footer())
+        shell.write(make_dispatch_header())
+        shell.write(make_dispatch_functions())
+        shell.write(make_dispatch_footer())
+        shell.close()
+
+        self.released_files.append(file_name)
+
+    def finish(self):
+        common.BindingsGenerator.finish(self)
+
+        finish(self.get_bindings_root_directory())
+
+def generate(bindings_root_directory):
+    common.generate(bindings_root_directory, 'en', ShellBindingsGenerator, False)
 
 if __name__ == "__main__":
     generate(os.getcwd())

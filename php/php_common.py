@@ -24,6 +24,12 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import sys
+import os
+
+sys.path.append(os.path.split(os.getcwd())[0])
+import common
+
 def get_php_type(typ):
     forms = {
         'int8' : 'int',
@@ -52,23 +58,27 @@ def get_return_type(packet):
         return 'array'
 
     for element in packet.get_elements('out'):
-        if element[2] > 1 and element[1] != 'string':
+        if element.get_cardinality() > 1 and element.get_type() != 'string':
             return 'array'
         else:
-            return get_php_type(element[1])
+            return get_php_type(element.get_type())
 
 def make_parameter_list(packet, for_doc=False):
     param = []
     for element in packet.get_elements():
-        if element[3] == 'out' and packet.get_type() == 'function':
+        if element.get_direction() == 'out' and packet.get_type() == 'function':
             continue
-        name = element[0]
+        name = element.get_underscore_name()
         if for_doc:
-            php_type = get_php_type(element[1])
-            if element[2] > 1 and element[1] != 'string':
+            php_type = get_php_type(element.get_type())
+            if element.get_cardinality() > 1 and element.get_type() != 'string':
                 php_type = 'array'
 
             param.append('{0} ${1}'.format(php_type, name))
         else:
             param.append('${0}'.format(name))
     return ', '.join(param)
+
+class PHPDevice(common.Device):
+    def get_php_class_name(self):
+        return self.get_category() + self.get_camel_case_name()

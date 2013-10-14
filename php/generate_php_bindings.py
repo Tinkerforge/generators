@@ -33,12 +33,11 @@ import common
 import php_common
 
 device = None
-released_files = []
 
 def format_doc(packet, suffix):
     text = common.select_lang(packet.get_doc()[1])
-    link = '{0}{1}::{2}()'
-    link_c = '{0}{1}::CALLBACK_{2}'
+    link = '{0}::{1}()'
+    link_c = '{0}::CALLBACK_{1}'
 
     # handle notes and warnings
     lines = text.split('\n')
@@ -85,15 +84,15 @@ def format_doc(packet, suffix):
 
     text = '\n'.join(replaced_lines)
 
-    cls = device.get_camel_case_name()
+    cls = device.get_php_class_name()
     for other_packet in device.get_packets():
         name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
         if other_packet.get_type() == 'callback':
             name = other_packet.get_upper_case_name()
-            name_right = link_c.format(device.get_category(), cls, name)
+            name_right = link_c.format(cls, name)
         else:
             name = other_packet.get_headless_camel_case_name()
-            name_right = link.format(device.get_category(), cls, name)
+            name_right = link.format(cls, name)
 
         text = text.replace(name_false, name_right)
 
@@ -109,14 +108,14 @@ def format_doc(packet, suffix):
 def make_parameter_doc(packet):
     param = []
     for element in packet.get_elements():
-        if element[3] == 'out' or packet.get_type() != 'function':
+        if element.get_direction() == 'out' or packet.get_type() != 'function':
             continue
 
-        php_type = php_common.get_php_type(element[1])
-        if element[2] > 1 and element[1] != 'string':
-            param.append('@param {0}[] ${1}'.format(php_type, element[0]))
+        php_type = php_common.get_php_type(element.get_type())
+        if element.get_cardinality() > 1 and element.get_type() != 'string':
+            param.append('@param {0}[] ${1}'.format(php_type, element.get_underscore_name()))
         else:
-            param.append('@param {0} ${1}'.format(php_type, element[0]))
+            param.append('@param {0} ${1}'.format(php_type, element.get_underscore_name()))
 
     param.append('\n@return ' + php_common.get_return_type(packet))
     return '\n'.join(param)
@@ -134,13 +133,13 @@ require_once(__DIR__ . '/IPConnection.php');
 def make_class():
     class_str = """
 /**
- * {2}
+ * {1}
  */
-class {0}{1} extends Device
+class {0} extends Device
 {{
 """
 
-    return class_str.format(device.get_category(), device.get_camel_case_name(), device.get_description())
+    return class_str.format(device.get_php_class_name(), device.get_description())
 
 def make_callback_wrapper_definitions():
     cbs = ''
@@ -213,7 +212,7 @@ def make_constructor():
     {{
         parent::__construct($uid, $ipcon);
 
-        $this->apiVersion = array({2}, {3}, {4});
+        $this->apiVersion = array({0}, {1}, {2});
 """
     response_expected = ''
 
@@ -237,9 +236,7 @@ def make_constructor():
     if len(response_expected) > 0:
         response_expected = '\n' + response_expected
 
-    return con.format(device.get_category(),
-                      device.get_camel_case_name(),
-                      *device.get_api_version()) + response_expected
+    return con.format(*device.get_api_version()) + response_expected
 
 def get_pack_type(element):
     forms = {
@@ -257,38 +254,38 @@ def get_pack_type(element):
         'char' : 'c'
     }
 
-    return forms[element[1]];
+    return forms[element.get_type()];
 
 get_unpack_type = get_pack_type
 
 def get_unpack_fix(element):
-    if element[2] > 1:
-        if element[1] == 'int16':
+    if element.get_cardinality() > 1:
+        if element.get_type() == 'int16':
             return ('IPConnection::collectUnpackedInt16Array(', ')')
-        elif element[1] == 'int32':
+        elif element.get_type() == 'int32':
             return ('IPConnection::collectUnpackedInt32Array(', ')')
-        elif element[1] == 'uint32':
+        elif element.get_type() == 'uint32':
             return ('IPConnection::collectUnpackedUInt32Array(', ')')
-        elif element[1] == 'bool':
+        elif element.get_type() == 'bool':
             return ('IPConnection::collectUnpackedBoolArray(', ')')
-        elif element[1] == 'string':
+        elif element.get_type() == 'string':
             return ('IPConnection::implodeUnpackedString(', ')')
-        elif element[1] == 'char':
+        elif element.get_type() == 'char':
             return ('IPConnection::collectUnpackedCharArray(', ')')
         else:
             return ('IPConnection::collectUnpackedArray(', ')')
     else:
-        if element[1] == 'int16':
+        if element.get_type() == 'int16':
             return ('IPConnection::fixUnpackedInt16(', ')')
-        elif element[1] == 'int32':
+        elif element.get_type() == 'int32':
             return ('IPConnection::fixUnpackedInt32(', ')')
-        elif element[1] == 'uint32':
+        elif element.get_type() == 'uint32':
             return ('IPConnection::fixUnpackedUInt32(', ')')
-        elif element[1] == 'bool':
+        elif element.get_type() == 'bool':
             return ('(bool)', '')
-        elif element[1] == 'string':
+        elif element.get_type() == 'string':
             return ('chr(', ')')
-        elif element[1] == 'char':
+        elif element.get_type() == 'char':
             return ('chr(', ')')
         else:
             return ('', '')
@@ -337,54 +334,54 @@ def make_methods():
         parameter = php_common.make_parameter_list(packet)
         pack = []
         for element in packet.get_elements('in'):
-            if element[1] == 'bool':
-                if element[2] > 1:
+            if element.get_type() == 'bool':
+                if element.get_cardinality() > 1:
                     pack.append('        for ($i = 0; $i < {0}; $i++) {{'.format(element[2]))
-                    pack.append('            $payload .= pack(\'{0}\', intval((bool)${1}[$i]));\n        }}'.format(get_pack_type(element), element[0]))
+                    pack.append('            $payload .= pack(\'{0}\', intval((bool)${1}[$i]));\n        }}'.format(get_pack_type(element), element.get_underscore_name()))
                 else:
-                    pack.append('        $payload .= pack(\'{0}\', intval((bool)${1}));'.format(get_pack_type(element), element[0]))
-            elif element[1] == 'string':
-                if element[2] > 1:
-                    pack.append('        for ($i = 0; $i < strlen(${0}) && $i < {1}; $i++) {{'.format(element[0], element[2]))
-                    pack.append('            $payload .= pack(\'{0}\', ord(${1}[$i]));\n        }}'.format(get_pack_type(element), element[0]))
-                    pack.append('        for ($i = strlen(${0}); $i < {1}; $i++) {{'.format(element[0], element[2]))
+                    pack.append('        $payload .= pack(\'{0}\', intval((bool)${1}));'.format(get_pack_type(element), element.get_underscore_name()))
+            elif element.get_type() == 'string':
+                if element.get_cardinality() > 1:
+                    pack.append('        for ($i = 0; $i < strlen(${0}) && $i < {1}; $i++) {{'.format(element.get_underscore_name(), element.get_cardinality()))
+                    pack.append('            $payload .= pack(\'{0}\', ord(${1}[$i]));\n        }}'.format(get_pack_type(element), element.get_underscore_name()))
+                    pack.append('        for ($i = strlen(${0}); $i < {1}; $i++) {{'.format(element.get_underscore_name(), element.get_cardinality()))
                     pack.append('            $payload .= pack(\'{0}\', 0);\n        }}'.format(get_pack_type(element)))
                 else:
-                    pack.append('        $payload .= pack(\'{0}\', ord(${1}));'.format(get_pack_type(element), element[0]))
-            elif element[1] == 'char':
-                if element[2] > 1:
-                    pack.append('        for ($i = 0; $i < count(${0}) && $i < {1}; $i++) {{'.format(element[0], element[2]))
-                    pack.append('            $payload .= pack(\'{0}\', ord(${1}[$i]));\n        }}'.format(get_pack_type(element), element[0]))
-                    pack.append('        for ($i = count(${0}); $i < {1}; $i++) {{'.format(element[0], element[2]))
+                    pack.append('        $payload .= pack(\'{0}\', ord(${1}));'.format(get_pack_type(element), element.get_underscore_name()))
+            elif element.get_type() == 'char':
+                if element.get_cardinality() > 1:
+                    pack.append('        for ($i = 0; $i < count(${0}) && $i < {1}; $i++) {{'.format(element.get_underscore_name(), element.get_cardinality()))
+                    pack.append('            $payload .= pack(\'{0}\', ord(${1}[$i]));\n        }}'.format(get_pack_type(element), element.get_underscore_name()))
+                    pack.append('        for ($i = count(${0}); $i < {1}; $i++) {{'.format(element.get_underscore_name(), element.get_cardinality()))
                     pack.append('            $payload .= pack(\'{0}\', 0);\n        }}'.format(get_pack_type(element)))
                 else:
-                    pack.append('        $payload .= pack(\'{0}\', ord(${1}));'.format(get_pack_type(element), element[0]))
+                    pack.append('        $payload .= pack(\'{0}\', ord(${1}));'.format(get_pack_type(element), element.get_underscore_name()))
             else:
-                if element[2] > 1:
-                    pack.append('        for ($i = 0; $i < {0}; $i++) {{'.format(element[2]))
-                    pack.append('            $payload .= pack(\'{0}\', ${1}[$i]);\n        }}'.format(get_pack_type(element), element[0]))
+                if element.get_cardinality() > 1:
+                    pack.append('        for ($i = 0; $i < {0}; $i++) {{'.format(element.get_cardinality()))
+                    pack.append('            $payload .= pack(\'{0}\', ${1}[$i]);\n        }}'.format(get_pack_type(element), element.get_underscore_name()))
                 else:
-                    pack.append('        $payload .= pack(\'{0}\', ${1});'.format(get_pack_type(element), element[0]))
+                    pack.append('        $payload .= pack(\'{0}\', ${1});'.format(get_pack_type(element), element.get_underscore_name()))
 
         has_multi_return_value = len(packet.get_elements('out')) > 1
         unpack_format = []
         collect = []
 
         for element in packet.get_elements('out'):
-            unpack_format.append('{0}{1}{2}'.format(get_unpack_type(element), element[2], element[0]))
+            unpack_format.append('{0}{1}{2}'.format(get_unpack_type(element), element.get_cardinality(), element.get_underscore_name()))
 
             unpack_fix = get_unpack_fix(element)
 
             if has_multi_return_value:
-                if element[2] > 1:
-                    collect.append('        $result[\'{0}\'] = {2}$payload, \'{0}\', {1}{3};'.format(element[0], element[2], unpack_fix[0], unpack_fix[1]))
+                if element.get_cardinality() > 1:
+                    collect.append('        $result[\'{0}\'] = {2}$payload, \'{0}\', {1}{3};'.format(element.get_underscore_name(), element.get_cardinality(), unpack_fix[0], unpack_fix[1]))
                 else:
-                    collect.append('        $result[\'{0}\'] = {1}$payload[\'{0}\']{2};'.format(element[0], unpack_fix[0], unpack_fix[1]))
+                    collect.append('        $result[\'{0}\'] = {1}$payload[\'{0}\']{2};'.format(element.get_underscore_name(), unpack_fix[0], unpack_fix[1]))
             else:
-                if element[2] > 1:
-                    collect.append('        return {2}$payload, \'{0}\', {1}{3};'.format(element[0], element[2], unpack_fix[0], unpack_fix[1]))
+                if element.get_cardinality() > 1:
+                    collect.append('        return {2}$payload, \'{0}\', {1}{3};'.format(element.get_underscore_name(), element.get_cardinality(), unpack_fix[0], unpack_fix[1]))
                 else:
-                    collect.append('        return {1}$payload[\'{0}\']{2};'.format(element[0], unpack_fix[0], unpack_fix[1]))
+                    collect.append('        return {1}$payload[\'{0}\']{2};'.format(element.get_underscore_name(), unpack_fix[0], unpack_fix[1]))
 
         if len(unpack_format) > 0:
             send = '        $data = $this->sendRequest(self::FUNCTION_{0}, $payload);\n'.format(packet.get_upper_case_name())
@@ -478,16 +475,16 @@ def make_callback_wrappers():
         result = []
 
         for element in packet.get_elements('out'):
-            unpack_format.append('{0}{1}{2}'.format(get_unpack_type(element), element[2], element[0]))
+            unpack_format.append('{0}{1}{2}'.format(get_unpack_type(element), element.get_cardinality(), element.get_underscore_name()))
 
             unpack_fix = get_unpack_fix(element)
 
-            if element[2] > 1:
-                collect.append('        array_push($result, {2}$payload, \'{0}\', {1}{3});'.format(element[0], element[2], unpack_fix[0], unpack_fix[1]))
+            if element.get_cardinality() > 1:
+                collect.append('        array_push($result, {2}$payload, \'{0}\', {1}{3});'.format(element.get_underscore_name(), element.get_cardinality(), unpack_fix[0], unpack_fix[1]))
             else:
-                collect.append('        array_push($result, {1}$payload[\'{0}\']{2});'.format(element[0], unpack_fix[0], unpack_fix[1]))
+                collect.append('        array_push($result, {1}$payload[\'{0}\']{2});'.format(element.get_underscore_name(), unpack_fix[0], unpack_fix[1]))
 
-            result.append('$payload[\'{0}\']'.format(element[0]))
+            result.append('$payload[\'{0}\']'.format(element.get_underscore_name()))
 
         final_unpack = ''
 
@@ -501,38 +498,42 @@ def make_callback_wrappers():
 
     return wrappers
 
-def finish(directory):
-    r = open(os.path.join(directory, 'php_released_files.py'), 'wb')
-    r.write('released_files = ' + repr(released_files))
-    r.close()
+class PHPBindingsGenerator(common.BindingsGenerator):
+    def __init__(self, *args, **kwargs):
+        common.BindingsGenerator.__init__(self, *args, **kwargs)
 
-def make_files(device_, directory):
-    global device
-    device = device_
-    file_name = '{0}{1}.php'.format(device.get_category(), device.get_camel_case_name())
-    version = common.get_changelog_version(directory)
-    directory += '/bindings'
+        self.released_files_name_prefix = 'php'
 
-    php = file('{0}/{1}'.format(directory , file_name), "w")
-    php.write("<?php\n\n")
-    php.write(make_import(version))
-    php.write(make_class())
-    php.write(make_callback_id_definitions())
-    php.write(make_function_id_definitions())
-    php.write(make_constants())
-    php.write(make_device_identifier())
-    php.write(make_constructor())
-    php.write(make_callback_wrapper_definitions())
-    php.write(make_methods())
-    php.write(make_callback_wrappers())
-    php.write("}\n\n?>\n")
+    def get_device_class(self):
+        return php_common.PHPDevice
 
-    if device.is_released():
-        global released_files
-        released_files.append(file_name)
+    def generate(self, device_):
+        global device
+        device = device_
 
-def generate(path):
-    common.generate(path, 'en', make_files, common.prepare_bindings, finish, False)
+        version = common.get_changelog_version(self.get_bindings_root_directory())
+        file_name = '{0}.php'.format(device.get_php_class_name())
+
+        php = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name), 'wb')
+        php.write("<?php\n\n")
+        php.write(make_import(version))
+        php.write(make_class())
+        php.write(make_callback_id_definitions())
+        php.write(make_function_id_definitions())
+        php.write(make_constants())
+        php.write(make_device_identifier())
+        php.write(make_constructor())
+        php.write(make_callback_wrapper_definitions())
+        php.write(make_methods())
+        php.write(make_callback_wrappers())
+        php.write("}\n\n?>\n")
+        php.close()
+
+        if device.is_released():
+            self.released_files.append(file_name)
+
+def generate(bindings_root_directory):
+    common.generate(bindings_root_directory, 'en', PHPBindingsGenerator, False)
 
 if __name__ == "__main__":
     generate(os.getcwd())

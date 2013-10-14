@@ -3,7 +3,7 @@
 
 """
 C/C++ ZIP Generator
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_c_zip.py: Generator for C/C++ ZIP
@@ -27,60 +27,53 @@ Boston, MA 02111-1307, USA.
 import sys
 import os
 import shutil
-import subprocess
-import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 from c_released_files import released_files
 
-device = None
+class CZipGenerator(common.Generator):
+    def prepare(self):
+        common.recreate_directory('/tmp/generator')
+        os.makedirs('/tmp/generator/bindings')
+        os.makedirs('/tmp/generator/examples')
 
-def copy_examples_for_zip():
-    if not device.is_released():
-        return
+    def generate(self, device):
+        if not device.is_released():
+            return
 
-    examples = common.find_examples(device, common.path_binding, 'c', 'example_', '.c')
-    dest = os.path.join('/tmp/generator/examples/',
-                        device.get_category().lower(),
-                        device.get_underscore_name())
+        # Copy examples
+        examples = common.find_examples(device, self.get_bindings_root_directory(), 'c', 'example_', '.c')
+        dest = os.path.join('/tmp/generator/examples', device.get_category().lower(), device.get_underscore_name())
 
-    if not os.path.exists(dest):
-        os.makedirs(dest)
+        if not os.path.exists(dest):
+            os.makedirs(dest)
 
-    for example in examples:
-        shutil.copy(example[1], dest)
+        for example in examples:
+            shutil.copy(example[1], dest)
 
-def make_files(device_, directory):
-    global device
-    device = device_
+    def finish(self):
+        root = self.get_bindings_root_directory()
 
-    copy_examples_for_zip()
+        # Copy examples
+        shutil.copy(root.replace('/generators/c', '/doc/en/source/Software/example.c'),
+                    '/tmp/generator/examples/example_enumerate.c')
 
-def generate(path):
-    # Make temporary generator directory
-    if os.path.exists('/tmp/generator'):
-        shutil.rmtree('/tmp/generator/')
-    os.makedirs('/tmp/generator/bindings')
-    os.chdir('/tmp/generator/bindings')
+        # Copy bindings and readme
+        for filename in released_files:
+            shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/bindings')
 
-    # Copy examples
-    common.generate(path, 'en', make_files, None, None, False)
-    shutil.copy(common.path_binding.replace('/generators/c', '/doc/en/source/Software/example.c'),
-                '/tmp/generator/examples/example_enumerate.c')
+        shutil.copy(os.path.join(root, 'ip_connection.c'), '/tmp/generator/bindings')
+        shutil.copy(os.path.join(root, 'ip_connection.h'), '/tmp/generator/bindings')
+        shutil.copy(os.path.join(root, 'changelog.txt'), '/tmp/generator')
+        shutil.copy(os.path.join(root, 'readme.txt'), '/tmp/generator')
 
-    # Copy bindings and readme
-    for filename in released_files:
-        shutil.copy(os.path.join(path, 'bindings', filename), '/tmp/generator/bindings')
+        # Make zip
+        version = common.get_changelog_version(root)
+        common.make_zip('c', '/tmp/generator', root, version)
 
-    shutil.copy(path + '/ip_connection.c', '/tmp/generator/bindings')
-    shutil.copy(path + '/ip_connection.h', '/tmp/generator/bindings')
-    shutil.copy(path + '/changelog.txt', '/tmp/generator/')
-    shutil.copy(path + '/readme.txt', '/tmp/generator/')
-
-    # Make zip
-    version = common.get_changelog_version(path)
-    common.make_zip('c', '/tmp/generator', path, version)
+def generate(bindings_root_directory):
+    common.generate(bindings_root_directory, 'en', CZipGenerator, False)
 
 if __name__ == "__main__":
     generate(os.getcwd())

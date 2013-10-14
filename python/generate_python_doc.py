@@ -53,12 +53,12 @@ def type_to_pytype(element):
         'float': 'float'
     }
 
-    t = type_dict[element[1]]
+    t = type_dict[element.get_type()]
     
-    if element[2] == 1 or t == 'str':
+    if element.get_cardinality() == 1 or t == 'str':
         return t
 
-    return '[' + ', '.join([t]*element[2]) + ']'
+    return '[' + ', '.join([t]*element.get_cardinality()) + ']'
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
@@ -75,7 +75,7 @@ def format_doc(packet):
     text = common.handle_rst_word(text)
     text = common.handle_rst_if(text, device)
 
-    prefix = device.get_category() + device.get_camel_case_name() + '.'
+    prefix = device.get_camel_case_name() + '.'
     if packet.get_underscore_name() == 'set_response_expected':
         text += common.format_function_id_constants(prefix, device)
     else:
@@ -85,7 +85,7 @@ def format_doc(packet):
 
     return common.shift_right(text, 1)
 
-def make_examples():
+def make_examples(generator):
     def title_from_file(f):
         f = f.replace('example_', '')
         f = f.replace('.py', '')
@@ -94,7 +94,7 @@ def make_examples():
             s += l[0].upper() + l[1:] + ' '
         return s[:-1]
 
-    return common.make_rst_examples(title_from_file, device, common.path_binding,
+    return common.make_rst_examples(title_from_file, device, generator.get_bindings_root_directory(),
                                     'python', 'example_', '.py', 'Python')
 
 def make_parameter_desc(packet, io):
@@ -102,7 +102,7 @@ def make_parameter_desc(packet, io):
     param = ' :param {0}: {1}\n'
     for element in packet.get_elements(io):
         t = type_to_pytype(element)
-        desc += param.format(element[0], t)
+        desc += param.format(element.get_underscore_name(), t)
 
     return desc
 
@@ -138,7 +138,7 @@ def make_object_desc(packet):
 
     var = []
     for element in packet.get_elements('out'):
-        var.append('``{0}``'.format(element[0]))
+        var.append('``{0}``'.format(element.get_underscore_name()))
 
     if len(var) == 1:
         return common.select_lang(desc).format(var[0])
@@ -398,28 +398,31 @@ Konstanten
                                              device.get_category().lower())
 
     api_desc = ''
-    if 'api' in device.com:
-        api_desc = common.select_lang(device.com['api'])
+    if 'api' in device.raw_data:
+        api_desc = common.select_lang(device.raw_data['api'])
 
     return common.select_lang(api).format(ref, api_desc, api_str)
 
-def make_files(device_, directory):
-    global device
-    device = device_
-    file_name = '{0}_{1}_Python'.format(device.get_camel_case_name(), device.get_category())
-    title = {
-    'en': 'Python bindings',
-    'de': 'Python Bindings'
-    }
-    directory = os.path.join(directory, 'doc', common.lang)
-    f = file('{0}/{1}.rst'.format(directory, file_name), "w")
-    f.write(common.make_rst_header(device, 'python', 'Python'))
-    f.write(common.make_rst_summary(device, common.select_lang(title), 'python'))
-    f.write(make_examples())
-    f.write(make_api())
+class PythonDocGenerator(common.DocGenerator):
+    def get_device_class(self):
+        return python_common.PythonDevice
 
-def generate(path, lang):
-    common.generate(path, lang, make_files, common.prepare_doc, None, True)
+    def generate(self, device_):
+        global device
+        device = device_
+
+        title = { 'en': 'Python bindings', 'de': 'Python Bindings' }
+        file_name = '{0}_{1}_Python.rst'.format(device.get_camel_case_name(), device.get_category())
+
+        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
+        rst.write(common.make_rst_header(device, 'python', 'Python'))
+        rst.write(common.make_rst_summary(device, common.select_lang(title), 'python'))
+        rst.write(make_examples(self))
+        rst.write(make_api())
+        rst.close()
+
+def generate(bindings_root_directory, lang):
+    common.generate(bindings_root_directory, lang, PythonDocGenerator, True)
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:

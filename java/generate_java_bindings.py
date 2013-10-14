@@ -33,12 +33,11 @@ import common
 import java_common
 
 device = None
-released_files = []
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
-    link = '{{@link {0}{1}#{2}({3})}}'
-    link_c = '{{@link {0}{1}.{2}Listener}}'
+    link = '{{@link {0}#{1}({2})}}'
+    link_c = '{{@link {0}.{1}Listener}}'
 
     # handle tables
     lines = text.split('\n')
@@ -69,16 +68,15 @@ def format_doc(packet):
 
     text = '\n'.join(replaced_lines)
 
-    cls = device.get_camel_case_name()
+    cls = device.get_java_class_name()
     for other_packet in device.get_packets():
         name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
         if other_packet.get_type() == 'callback':
             name = other_packet.get_camel_case_name()
-            name_right = link_c.format(device.get_category(), cls, name)
+            name_right = link_c.format(cls, name)
         else:
             name = other_packet.get_headless_camel_case_name()
-            name_right = link.format(device.get_category(), cls, name,
-                                     java_common.make_parameter_list(other_packet, True))
+            name_right = link.format(cls, name, java_common.make_parameter_list(other_packet, True))
 
         text = text.replace(name_false, name_right)
 
@@ -112,15 +110,14 @@ import java.util.List;
 def make_class():
     class_str = """
 /**
- * {2}
+ * {1}
  */
-public class {0}{1} extends Device {{
-\tpublic final static int DEVICE_IDENTIFIER = {3};
+public class {0} extends Device {{
+\tpublic final static int DEVICE_IDENTIFIER = {2};
 
 """
 
-    return class_str.format(device.get_category(),
-                            device.get_camel_case_name(),
+    return class_str.format(device.get_java_class_name(),
                             device.get_description(),
                             device.get_device_identifier())
 
@@ -147,11 +144,11 @@ def make_return_objects():
         params = []
         tostr = []
         for element in packet.get_elements():
-            typ = java_common.get_java_type(element[1])
-            ele_name = common.underscore_to_headless_camel_case(element[0])
-            if element[2] > 1 and element[1] != 'string':
+            typ = java_common.get_java_type(element.get_type())
+            ele_name = element.get_headless_camel_case_name()
+            if element.get_cardinality() > 1 and element.get_type() != 'string':
                 arr = '[]'
-                new = ' = new {0}[{1}]'.format(typ, element[2])
+                new = ' = new {0}[{1}]'.format(typ, element.get_cardinality())
                 to = '"{0} = " + Arrays.toString({0}) +'.format(ele_name)
             else:
                 arr = ''
@@ -232,7 +229,7 @@ def make_callback_listener_definitions():
         parameter = ''
         parameter_list = []
         for element in packet.get_elements():
-            parameter_list.append(common.underscore_to_headless_camel_case(element[0]))
+            parameter_list.append(element.get_headless_camel_case_name())
         parameter = ', '.join(parameter_list)
         cbdata = ''
         if len(packet.get_elements('out')) > 0:
@@ -316,16 +313,15 @@ def make_constructor():
 \t * Creates an object with the unique device ID \c uid. and adds it to
 \t * the IP Connection \c ipcon.
 \t */
-\tpublic {0}{1}(String uid, IPConnection ipcon) {{
+\tpublic {0}(String uid, IPConnection ipcon) {{
 \t\tsuper(uid, ipcon);
 
-\t\tapiVersion[0] = {2};
-\t\tapiVersion[1] = {3};
-\t\tapiVersion[2] = {4};
+\t\tapiVersion[0] = {1};
+\t\tapiVersion[1] = {2};
+\t\tapiVersion[2] = {3};
 """
 
-    return con.format(device.get_category(),
-                      device.get_camel_case_name(),
+    return con.format(device.get_java_class_name(),
                       *device.get_api_version())
 
 def get_put_type(typ):
@@ -408,32 +404,32 @@ def make_methods():
         ret = java_common.get_return_type(packet)
         name_lower = packet.get_headless_camel_case_name()
         parameter = java_common.make_parameter_list(packet)
-        size = str(packet.get_request_length())
+        size = str(packet.get_request_size())
         name_upper = packet.get_upper_case_name()
         doc = format_doc(packet)
         bbputs = ''
         bbput = '\t\tbb.put{0}({1}{2});'
         for element in packet.get_elements('in'):
-            name = common.underscore_to_headless_camel_case(element[0])
-            if element[1] == 'bool':
+            name = element.get_headless_camel_case_name()
+            if element.get_type() == 'bool':
                 name = '({0} ? 1 : 0)'.format(name)
 
             cast = ''
-            put_java_type = get_put_java_type(element[1])
-            if put_java_type != java_common.get_java_type(element[1]):
+            put_java_type = get_put_java_type(element.get_type())
+            if put_java_type != java_common.get_java_type(element.get_type()):
                 cast = '({0})'.format(put_java_type)
 
-            bbput_format = bbput.format(get_put_type(element[1]),
+            bbput_format = bbput.format(get_put_type(element.get_type()),
                                         cast,
                                         name)
 
-            if element[2] > 1:
-                if element[1] == 'string':
+            if element.get_cardinality() > 1:
+                if element.get_type() == 'string':
                     bbput_format = bbput_format.replace(');', '.charAt(i));')
                     bbput_format = string_loop.format(bbput_format)
                 else:
                     bbput_format = bbput_format.replace(');', '[i]);')
-                bbput_format = loop.format(element[2], '\t' + bbput_format)
+                bbput_format = loop.format(element.get_cardinality(), '\t' + bbput_format)
 
             bbputs += bbput_format + '\n'
 
@@ -481,34 +477,34 @@ def make_bbgets(packet, with_obj = False):
     for element in packet.get_elements('out'):
         typ = ''
         if not with_obj:
-            typ = java_common.get_java_type(element[1]) + ' '
+            typ = java_common.get_java_type(element.get_type()) + ' '
 
-        bbret = common.underscore_to_headless_camel_case(element[0])
+        bbret = element.get_headless_camel_case_name()
         obj = ''
         if with_obj:
             obj = 'obj.'
         cast = ''
         cast_extra = ''
         boolean = ''
-        if element[1] == 'uint8':
+        if element.get_type() == 'uint8':
             cast = 'IPConnection.unsignedByte'
-        elif element[1] == 'uint16':
+        elif element.get_type() == 'uint16':
             cast = 'IPConnection.unsignedShort'
-        elif element[1] == 'uint32':
+        elif element.get_type() == 'uint32':
             cast = 'IPConnection.unsignedInt'
-        elif element[1] == 'bool':
+        elif element.get_type() == 'bool':
             boolean = ' != 0'
-        elif element[1] == 'char':
+        elif element.get_type() == 'char':
             cast = '(char)'
-        elif element[1] == 'string':
+        elif element.get_type() == 'string':
             cast = 'IPConnection.string'
-            cast_extra = ', {0}'.format(element[2])
+            cast_extra = ', {0}'.format(element.get_cardinality())
 
         format_typ = ''
-        if not element[2] > 1 or (element[1] == 'string' and not with_obj):
+        if not element.get_cardinality() > 1 or (element.get_type() == 'string' and not with_obj):
             format_typ = typ
 
-        if element[1] == 'string':
+        if element.get_type() == 'string':
             bbget = bbget_string
         else:
             bbget = bbget_other
@@ -517,54 +513,58 @@ def make_bbgets(packet, with_obj = False):
                                     obj,
                                     bbret,
                                     cast,
-                                    get_put_type(element[1]),
+                                    get_put_type(element.get_type()),
                                     cast_extra,
                                     boolean)
 
-        if element[2] > 1 and element[1] != 'string':
+        if element.get_cardinality() > 1 and element.get_type() != 'string':
             if with_obj:
                 bbget_format = bbget_format.replace(' =', '[i] =')
-                bbget_format = loop.format(element[2], '\t' + bbget_format, '')
+                bbget_format = loop.format(element.get_cardinality(), '\t' + bbget_format, '')
             else:
-                arr = new_arr.format(typ.replace(' ', ''), bbret, element[2])
+                arr = new_arr.format(typ.replace(' ', ''), bbret, element.get_cardinality())
                 bbget_format = bbget_format.replace(' =', '[i] =')
-                bbget_format = loop.format(element[2], '\t' + bbget_format, arr + '\n\t\t')
+                bbget_format = loop.format(element.get_cardinality(), '\t' + bbget_format, arr + '\n\t\t')
 
         bbgets += bbget_format + '\n'
     return bbgets, bbret
 
-def finish(directory):
-    r = open(os.path.join(directory, 'java_released_files.py'), 'wb')
-    r.write('released_files = ' + repr(released_files))
-    r.close()
+class JavaBindingsGenerator(common.BindingsGenerator):
+    def __init__(self, *args, **kwargs):
+        common.BindingsGenerator.__init__(self, *args, **kwargs)
 
-def make_files(device_, directory):
-    global device
-    device = device_
-    file_name = '{0}{1}.java'.format(device.get_category(), device.get_camel_case_name())
-    version = common.get_changelog_version(directory)
-    directory += '/bindings'
+        self.released_files_name_prefix = 'java'
 
-    java = file('{0}/{1}'.format(directory, file_name), "w")
-    java.write(make_import(version))
-    java.write(make_class())
-    java.write(make_function_id_definitions())
-    java.write(make_constants())
-    java.write(make_listener_lists())
-    java.write(make_return_objects())
-    java.write(make_listener_definitions())
-    java.write(make_constructor())
-    java.write(make_response_expected())
-    java.write(make_callback_listener_definitions())
-    java.write(make_methods())
-    java.write(make_add_listener())
+    def get_device_class(self):
+        return java_common.JavaDevice
 
-    if device.is_released():
-        global released_files
-        released_files.append(file_name)
+    def generate(self, device_):
+        global device
+        device = device_
 
-def generate(path):
-    common.generate(path, 'en', make_files, common.prepare_bindings, finish, False)
+        version = common.get_changelog_version(self.get_bindings_root_directory())
+        file_name = '{0}.java'.format(device.get_java_class_name())
+
+        java = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name), 'wb')
+        java.write(make_import(version))
+        java.write(make_class())
+        java.write(make_function_id_definitions())
+        java.write(make_constants())
+        java.write(make_listener_lists())
+        java.write(make_return_objects())
+        java.write(make_listener_definitions())
+        java.write(make_constructor())
+        java.write(make_response_expected())
+        java.write(make_callback_listener_definitions())
+        java.write(make_methods())
+        java.write(make_add_listener())
+        java.close()
+
+        if device.is_released():
+            self.released_files.append(file_name)
+
+def generate(bindings_root_directory):
+    common.generate(bindings_root_directory, 'en', JavaBindingsGenerator, False)
 
 if __name__ == "__main__":
     generate(os.getcwd())

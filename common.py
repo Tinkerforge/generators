@@ -137,8 +137,6 @@ breadcrumbs_str = {
 }
 
 lang = 'en'
-path_binding = ''
-is_doc = False
 
 def shift_right(text, n):
     return text.replace('\n', '\n' + ' '*n)
@@ -171,9 +169,6 @@ def get_type_size(typ):
     }
 
     return types[typ]
-
-def get_element_size(element):
-    return get_type_size(element[1]) * element[2]
 
 def select_lang(d):
     if lang in d:
@@ -486,48 +481,39 @@ def underscore_to_headless_camel_case(name):
         ret += part[0].upper() + part[1:]
     return ret
 
-def prepare_doc(directory):
-    directory = os.path.join(directory, 'doc', lang)
+def recreate_directory(directory):
+    directory = os.path.join(directory)
     if os.path.exists(directory):
         shutil.rmtree(directory)
     os.makedirs(directory)
 
-def prepare_bindings(directory):
-    directory = os.path.join(directory, 'bindings')
-    if os.path.exists(directory):
-        shutil.rmtree(directory)
-    os.makedirs(directory)
-
-def generate(path, language, make_files, prepare, finish, is_doc_):
+def generate(bindings_root_directory, language, generator_class, is_doc):
     global lang
-    global path_binding
-    global is_doc
     lang = language
-    path_binding = path
-    is_doc = is_doc_
 
-    path_config = os.path.join(path, '..', 'configs')
+    path_config = os.path.join(bindings_root_directory, '..', 'configs')
     if path_config not in sys.path:
         sys.path.append(path_config)
     configs = os.listdir(path_config)
 
-    if prepare is not None:
-        prepare(path)
+    generator = generator_class(bindings_root_directory, language, is_doc)
+
+    generator.prepare()
 
     configs.remove('device_commonconfig.py')
     configs.remove('brick_commonconfig.py')
     configs.remove('bricklet_commonconfig.py')
 
-    common_device_packets = __import__('device_commonconfig').common_packets
-    common_brick_packets = __import__('brick_commonconfig').common_packets
-    common_bricklet_packets = __import__('bricklet_commonconfig').common_packets
+    common_device_packets = copy.deepcopy(__import__('device_commonconfig').common_packets)
+    common_brick_packets = copy.deepcopy(__import__('brick_commonconfig').common_packets)
+    common_bricklet_packets = copy.deepcopy(__import__('bricklet_commonconfig').common_packets)
 
     device_identifiers = []
 
     for config in configs:
         if config.endswith('_config.py'):
-            module = __import__(config[:-3])
-            if module.com['released']:
+            com = copy.deepcopy(__import__(config[:-3]).com)
+            if com['released']:
                 print(' * {0}'.format(config[:-10]))
             else:
                 print(' * {0} (not released)'.format(config[:-10]))
@@ -537,35 +523,34 @@ def generate(path, language, make_files, prepare, finish, is_doc_):
                     if common_packet['since_firmware'] is None:
                         continue
 
-                    if module.com['name'][1] in common_packet['since_firmware']:
+                    if com['name'][1] in common_packet['since_firmware']:
                         common_packet['since_firmware'] = \
-                            common_packet['since_firmware'][module.com['name'][1]]
+                            common_packet['since_firmware'][com['name'][1]]
                     else:
                         common_packet['since_firmware'] = \
                             common_packet['since_firmware']['*']
 
                 return common_packets
 
-            if 'brick_' in config and 'common_included' not in module.com:
+            if 'brick_' in config and 'common_included' not in com:
                 common_packets = copy.deepcopy(common_device_packets) + copy.deepcopy(common_brick_packets)
-                module.com['packets'].extend(prepare_common_packets(common_packets))
-                module.com['common_included'] = True
+                com['packets'].extend(prepare_common_packets(common_packets))
+                com['common_included'] = True
 
-            if 'bricklet_' in config and 'common_included' not in module.com:
+            if 'bricklet_' in config and 'common_included' not in com:
                 common_packets = copy.deepcopy(common_device_packets) + copy.deepcopy(common_bricklet_packets)
-                module.com['packets'].extend(prepare_common_packets(common_packets))
-                module.com['common_included'] = True
+                com['packets'].extend(prepare_common_packets(common_packets))
+                com['common_included'] = True
 
-            device = Device(module.com)
+            device = generator.get_device_class()(com, generator)
 
             device_identifiers.append((device.get_device_identifier(), device.get_category() + ' ' + device.get_display_name()))
 
-            make_files(device, path)
+            generator.generate(device)
 
-    if finish is not None:
-        finish(path)
+    generator.finish()
 
-    f = open(os.path.join(path, '..', 'device_identifiers.py'), 'wb')
+    f = open(os.path.join(bindings_root_directory, '..', 'device_identifiers.py'), 'wb')
     f.write('device_identifiers = ')
     pprint(sorted(device_identifiers),  f)
     f.close()
@@ -689,58 +674,97 @@ def check_name(camel_case, underscore, display, is_constant=False):
 valid_types = set(['int8', 'uint8', 'int16', 'uint16', 'int32', 'uint32',
                    'int64', 'uint64', 'bool', 'char', 'string', 'float'])
 
-class Packet:
-    def __init__(self, device, packet):
-        self.device = device
+class Element:
+    def __init__(self, packet, raw_data):
         self.packet = packet
-        self.all_elements = packet['elements']
+        self.raw_data = raw_data
+
+    def get_packet(self):
+        return self.packet
+
+    def get_underscore_name(self):
+        return self.raw_data[0]
+
+    def get_headless_camel_case_name(self):
+        return underscore_to_headless_camel_case(self.get_underscore_name())
+
+    def get_type(self):
+        return self.raw_data[1]
+
+    def get_cardinality(self):
+        return self.raw_data[2]
+
+    def get_direction(self):
+        return self.raw_data[3]
+
+    def has_constants(self):
+        return len(self.raw_data) > 4
+
+    def get_constants(self):
+        if self.has_constants():
+            return self.raw_data[4]
+        else:
+            return None
+
+    def get_size(self):
+        return get_type_size(self.get_type()) * self.get_cardinality()
+
+class Packet:
+    def __init__(self, device, raw_data, generator):
+        self.device = device
+        self.generator = generator
+        self.raw_data = raw_data
+        self.all_elements = []
         self.in_elements = []
         self.out_elements = []
 
-        check_name(packet['name'][0], packet['name'][1], None)
+        check_name(raw_data['name'][0], raw_data['name'][1], None)
 
-        for element in self.all_elements:
-            check_name(None, element[0], None)
+        for raw_element in self.raw_data['elements']:
+            element = generator.get_element_class()(self, raw_element)
 
-            if element[1] not in valid_types:
-                raise ValueError('Invalid element type ' + element[1])
+            self.all_elements.append(element)
 
-            if element[2] < 1:
-                raise ValueError('Invalid element size ' + element[2])
+            check_name(None, element.get_underscore_name(), None)
 
-            if element[3] == 'in':
+            if element.get_type() not in valid_types:
+                raise ValueError('Invalid element type ' + element.get_type())
+
+            if element.get_cardinality() < 1:
+                raise ValueError('Invalid element size ' + element.get_cardinality())
+
+            if element.get_direction() == 'in':
                 self.in_elements.append(element)
-            elif element[3] == 'out':
+            elif element.get_direction() == 'out':
                 self.out_elements.append(element)
             else:
-                raise ValueError('Invalid element direction ' + element[3])
+                raise ValueError('Invalid element direction ' + element.get_direction())
 
-            if len(element) > 4:
-                constant = element[4]
+            if element.has_constants():
+                constants = element.get_constants()
+                check_name(constants[0], constants[1], None)
 
-                check_name(constant[0], constant[1], None)
-
-                for value in constant[2]:
+                for value in constants[2]:
                     check_name(value[0], value[1], None, True)
 
     def get_device(self):
         return self.device
 
     def get_type(self):
-        return self.packet['type']
+        return self.raw_data['type']
 
     def get_camel_case_name(self):
-        return self.packet['name'][0]
+        return self.raw_data['name'][0]
 
     def get_headless_camel_case_name(self):
-        m = re.match('([A-Z]+)(.*)', self.packet['name'][0])
+        m = re.match('([A-Z]+)(.*)', self.get_camel_case_name())
         return m.group(1).lower() + m.group(2)
 
     def get_underscore_name(self):
-        return self.packet['name'][1]
+        return self.raw_data['name'][1]
 
     def get_upper_case_name(self):
-        return self.packet['name'][1].upper()
+        return self.get_underscore_name().upper()
 
     def get_elements(self, direction=None):
         if direction is None:
@@ -753,25 +777,25 @@ class Packet:
             raise ValueError('Invalid element direction ' + str(direction))
 
     def get_since_firmware(self):
-        return self.packet['since_firmware']
+        return self.raw_data['since_firmware']
 
     def get_doc(self):
-        return self.packet['doc']
+        return self.raw_data['doc']
 
     def get_function_id(self):
-        return self.packet['function_id']
+        return self.raw_data['function_id']
 
-    def get_request_length(self):
-        length = 8
+    def get_request_size(self):
+        size = 8 # header
         for element in self.in_elements:
-            length += get_element_size(element)
-        return length
+            size += element.get_size()
+        return size
 
-    def get_response_length(self):
-        length = 4
+    def get_response_size(self):
+        size = 8 # header
         for element in self.out_elements:
-            length += get_element_size(element)
-        return length
+            size += element.get_size()
+        return size
 
     def get_constants(self):
         ConstantDefinitionTuple = namedtuple('ConstantValues', ['name_camelcase', 'name_underscore', 'name_uppercase', 'value'])
@@ -786,8 +810,9 @@ class Packet:
         constants = []
 
         for element in self.all_elements:
-            if len(element) > 4:
-                c = element[4]
+            c = element.get_constants()
+
+            if c is not None:
                 ec = get_existing_constants(constants, c)
 
                 if not ec:
@@ -795,40 +820,41 @@ class Packet:
                     vs = c[2]
                     for v in vs:
                         definitions.append(ConstantDefinitionTuple(v[0], v[1], v[1].upper(), v[2]))
-                    constants.append(ConstantTuple(element[1], c[0], c[1], c[1].upper(), definitions, [element]))
+                    constants.append(ConstantTuple(element.get_type(), c[0], c[1], c[1].upper(), definitions, [element]))
                 else:
                     ec.elements.append(element)
 
         return constants
 
     def has_prototype_in_device(self):
-        if 'prototype_in_device' in self.packet:
-            if self.packet['prototype_in_device'] == True:
+        if 'prototype_in_device' in self.raw_data:
+            if self.raw_data['prototype_in_device']:
                 return True
         return False
 
     def is_virtual(self):
-        if 'is_virtual' in self.packet:
-            if self.packet['is_virtual'] == True:
+        if 'is_virtual' in self.raw_data:
+            if self.raw_data['is_virtual']:
                 return True
         return False
 
 class Device:
-    def __init__(self, com):
-        self.com = com
+    def __init__(self, raw_data, generator):
+        self.raw_data = raw_data
+        self.generator = generator
         self.all_packets = []
         self.all_packets_without_doc_only = []
         self.all_function_packets = []
         self.all_function_packets_without_doc_only = []
         self.callback_packets = []
 
-        check_name(com['name'][0], com['name'][1], com['name'][2])
+        check_name(raw_data['name'][0], raw_data['name'][1], raw_data['name'][2])
 
-        for i, p in zip(range(len(com['packets'])), com['packets']):
+        for i, p in zip(range(len(raw_data['packets'])), raw_data['packets']):
             if not 'function_id' in p:
                 p['function_id'] = i + 1
 
-            packet = Packet(self, p)
+            packet = generator.get_packet_class()(self, p, generator)
 
             self.all_packets.append(packet)
 
@@ -847,44 +873,44 @@ class Device:
                 raise ValueError('Invalid packet type ' + packet.get_type())
 
     def is_released(self):
-        return self.com['released']
+        return self.raw_data['released']
 
     def get_api_version(self):
-        return self.com['api_version']
+        return self.raw_data['api_version']
 
     def get_category(self):
-        return self.com['category']
+        return self.raw_data['category']
 
     def get_device_identifier(self):
-        return self.com['device_identifier']
+        return self.raw_data['device_identifier']
 
     def get_camel_case_name(self):
-        return self.com['name'][0]
+        return self.raw_data['name'][0]
 
     def get_headless_camel_case_name(self):
-        m = re.match('([A-Z]+)(.*)', self.com['name'][0])
+        m = re.match('([A-Z]+)(.*)', self.raw_data['name'][0])
         return m.group(1).lower() + m.group(2)
 
     def get_underscore_name(self):
-        return self.com['name'][1]
+        return self.raw_data['name'][1]
 
     def get_upper_case_name(self):
-        return self.com['name'][1].upper()
+        return self.raw_data['name'][1].upper()
 
     def get_display_name(self):
-        return self.com['name'][2]
+        return self.raw_data['name'][2]
 
     def get_description(self):
-        return self.com['description']
+        return self.raw_data['description']
 
     def get_packets(self, typ=None):
         if typ is None:
-            if is_doc:
+            if self.generator.is_doc:
                 return self.all_packets
             else:
                 return self.all_packets_without_doc_only
         elif typ == 'function':
-            if is_doc:
+            if self.generator.is_doc:
                 return self.all_function_packets
             else:
                 return self.all_function_packets_without_doc_only
@@ -895,7 +921,6 @@ class Device:
 
     def get_callback_count(self):
         return len(self.callback_packets)
-
 
     def get_constants(self):
         ConstantDefinitionTuple = namedtuple('ConstantValues', ['name_camelcase', 'name_underscore', 'name_uppercase', 'value'])
@@ -911,16 +936,68 @@ class Device:
 
         for packet in self.all_packets:
             for element in packet.all_elements:
-                if len(element) > 4:
-                    c = element[4]
-                    if not is_in_constants(constants, c):
+                c = element.get_constants()
+
+                if c is not None and not is_in_constants(constants, c):
                         definitions = []
                         vs = c[2]
                         for v in vs:
                             definitions.append(ConstantDefinitionTuple(v[0], v[1], v[1].upper(), v[2]))
-                        constants.append(ConstantTuple(element[1], c[0], c[1], c[1].upper(), definitions))
+                        constants.append(ConstantTuple(element.get_type(), c[0], c[1], c[1].upper(), definitions))
 
         return constants
+
+class Generator:
+    def __init__(self, bindings_root_directory, language, is_doc):
+        self.bindings_root_directory = bindings_root_directory
+        self.language = language
+        self.is_doc = is_doc
+
+    def get_device_class(self):
+        return Device
+
+    def get_packet_class(self):
+        return Packet
+
+    def get_element_class(self):
+        return Element
+
+    def get_bindings_root_directory(self):
+        return self.bindings_root_directory
+
+    def get_language(self):
+        return self.language
+
+    def prepare(self):
+        pass
+
+    def generate(self, device):
+        pass
+
+    def finish(self):
+        pass
+
+class DocGenerator(Generator):
+    def prepare(self):
+        recreate_directory(os.path.join(self.get_bindings_root_directory(), 'doc', self.get_language()))
+
+class BindingsGenerator(Generator):
+    def __init__(self, *args, **kwargs):
+        Generator.__init__(self, *args, **kwargs)
+
+        self.released_files_name_prefix = 'unknown'
+        self.released_files = []
+
+    def prepare(self):
+        recreate_directory(os.path.join(self.get_bindings_root_directory(), 'bindings'))
+
+    def finish(self):
+        if self.released_files_name_prefix == 'unknown':
+            raise Exception("released_files_name_prefix not set")
+
+        py = open(os.path.join(self.get_bindings_root_directory(), self.released_files_name_prefix + '_released_files.py'), 'wb')
+        py.write('released_files = ' + repr(self.released_files))
+        py.close()
 
 class ExamplesCompiler:
     def __init__(self, name, extension, path, subdirs=['examples'], comment=None, extra_examples=[]):

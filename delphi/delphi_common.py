@@ -55,13 +55,13 @@ def get_return_type(packet, for_doc):
         return ''
 
     first = elements[0]
-    delphi_type = get_delphi_type(first[1])
+    delphi_type = get_delphi_type(first.get_type())
 
-    if first[2] > 1 and first[1] != 'string':
+    if first.get_cardinality() > 1 and first.get_type() != 'string':
         if for_doc:
-            final_type = 'array [0..{0}] of {1}'.format(first[2] - 1, delphi_type[0])
+            final_type = 'array [0..{0}] of {1}'.format(first.get_cardinality() - 1, delphi_type[0])
         else:
-            final_type = 'TArray0To{0}Of{1}'.format(first[2] - 1, delphi_type[1])
+            final_type = 'TArray0To{0}Of{1}'.format(first.get_cardinality() - 1, delphi_type[1])
     else:
         final_type = delphi_type[0]
 
@@ -71,21 +71,21 @@ def make_parameter_list(packet, for_doc, with_modifiers=True):
     param = []
     if len(packet.get_elements('out')) > 1 or packet.get_type() == 'callback':
         for element in packet.get_elements():
-            delphi_type = get_delphi_type(element[1])
+            delphi_type = get_delphi_type(element.get_type())
 
             if with_modifiers:
-                if element[3] == 'in' or packet.get_type() == 'callback':
+                if element.get_direction() == 'in' or packet.get_type() == 'callback':
                     modifier = 'const '
                 else:
                     modifier = 'out '
             else:
                 modifier = ''
 
-            if element[2] > 1 and element[1] != 'string':
+            if element.get_cardinality() > 1 and element.get_type() != 'string':
                 if for_doc:
-                    final_type = 'array [0..{0}] of {1}'.format(element[2] - 1, delphi_type[0])
+                    final_type = 'array [0..{0}] of {1}'.format(element.get_cardinality() - 1, delphi_type[0])
                 else:
-                    final_type = 'TArray0To{0}Of{1}'.format(element[2] - 1, delphi_type[1])
+                    final_type = 'TArray0To{0}Of{1}'.format(element.get_cardinality() - 1, delphi_type[1])
 
                     # special case for GetIdentity to avoid redefinition of TArray0To2OfUInt8 and signature mismatch
                     if packet.get_camel_case_name() == 'GetIdentity' and final_type == 'TArray0To2OfUInt8':
@@ -94,26 +94,30 @@ def make_parameter_list(packet, for_doc, with_modifiers=True):
                 final_type = delphi_type[0]
 
             param.append('{0}{1}: {2}'.format(modifier,
-                                              common.underscore_to_headless_camel_case(element[0]),
+                                              element.get_headless_camel_case_name(),
                                               final_type))
     else:
         for element in packet.get_elements('in'):
-            delphi_type = get_delphi_type(element[1])
+            delphi_type = get_delphi_type(element.get_type())
 
             if with_modifiers:
                 modifier = 'const '
             else:
                 modifier = ''
 
-            if element[2] > 1 and element[1] != 'string':
+            if element.get_cardinality() > 1 and element.get_type() != 'string':
                 if for_doc:
-                    final_type = 'array [0..{0}] of {1}'.format(element[2] - 1, delphi_type[0])
+                    final_type = 'array [0..{0}] of {1}'.format(element.get_cardinality() - 1, delphi_type[0])
                 else:
-                    final_type = 'TArray0To{0}Of{1}'.format(element[2] - 1, delphi_type[1])
+                    final_type = 'TArray0To{0}Of{1}'.format(element.get_cardinality() - 1, delphi_type[1])
             else:
                 final_type = delphi_type[0]
 
             param.append('{0}{1}: {2}'.format(modifier,
-                                              common.underscore_to_headless_camel_case(element[0]),
+                                              element.get_headless_camel_case_name(),
                                               final_type))
     return '; '.join(param)
+
+class DelphiDevice(common.Device):
+    def get_delphi_class_name(self):
+        return 'T' + self.get_category() + self.get_camel_case_name()

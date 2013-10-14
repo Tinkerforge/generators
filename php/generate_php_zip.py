@@ -3,7 +3,7 @@
 
 """
 PHP ZIP Generator
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_php_zip.py: Generator for PHP ZIP
@@ -29,62 +29,53 @@ import sys
 import os
 import shutil
 import subprocess
-import re
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 import php_common
 from php_released_files import released_files
 
-device = None
+class PHPZipGenerator(common.Generator):
+    def prepare(self):
+        common.recreate_directory('/tmp/generator')
+        os.makedirs('/tmp/generator/pear/source/Tinkerforge')
+        os.makedirs('/tmp/generator/pear/examples')
 
-def copy_examples_for_zip():
-    if not device.is_released():
-        return
+    def generate(self, device):
+        if not device.is_released():
+            return
 
-    examples = common.find_examples(device, common.path_binding, 'php', 'Example', '.php')
-    dest = os.path.join('/tmp/generator/pear/examples/',
-                        device.get_category().lower(),
-                        device.get_underscore_name())
+        # Copy examples
+        examples = common.find_examples(device, self.get_bindings_root_directory(), 'php', 'Example', '.php')
+        dest = os.path.join('/tmp/generator/pear/examples', device.get_category().lower(), device.get_underscore_name())
 
-    if not os.path.exists(dest):
-        os.makedirs(dest)
+        if not os.path.exists(dest):
+            os.makedirs(dest)
 
-    for example in examples:
-        shutil.copy(example[1], dest)
+        for example in examples:
+            shutil.copy(example[1], dest)
 
-def make_files(device_, directory):
-    global device
-    device = device_
+    def finish(self):
+        root = self.get_bindings_root_directory()
 
-    copy_examples_for_zip()
+        # Copy examples
+        shutil.copy(root.replace('/generators/php', '/doc/en/source/Software/Example.php'),
+                    '/tmp/generator/pear/examples/ExampleEnumerate.php')
 
-def generate(path):
-    # Make temporary generator directory
-    if os.path.exists('/tmp/generator'):
-        shutil.rmtree('/tmp/generator/')
-    os.makedirs('/tmp/generator/pear/source/Tinkerforge')
-    os.chdir('/tmp/generator')
+        # Copy bindings and readme
+        package_files = ['<file name="Tinkerforge/IPConnection.php" role="php" />']
+        for filename in released_files:
+            shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/pear/source/Tinkerforge')
+            package_files.append('<file name="Tinkerforge/{0}" role="php" />'.format(os.path.basename(filename)))
 
-    # Copy examples
-    common.generate(path, 'en', make_files, None, None, False)
-    shutil.copy(common.path_binding.replace('/generators/php', '/doc/en/source/Software/Example.php'),
-                '/tmp/generator/pear/examples/ExampleEnumerate.php')
+        shutil.copy(os.path.join(root, 'IPConnection.php'), '/tmp/generator/pear/source/Tinkerforge')
+        shutil.copy(os.path.join(root, 'changelog.txt'), '/tmp/generator/pear')
+        shutil.copy(os.path.join(root, 'readme.txt'), '/tmp/generator/pear')
 
-    # Copy bindings and readme
-    package_files = ['<file name="Tinkerforge/IPConnection.php" role="php" />']
-    for filename in released_files:
-        shutil.copy(os.path.join(path, 'bindings', filename), '/tmp/generator/pear/source/Tinkerforge')
-        package_files.append('<file name="Tinkerforge/{0}" role="php" />'.format(os.path.basename(filename)))
-
-    shutil.copy(path + '/IPConnection.php', '/tmp/generator/pear/source/Tinkerforge')
-    shutil.copy(path + '/changelog.txt', '/tmp/generator/pear')
-    shutil.copy(path + '/readme.txt', '/tmp/generator/pear')
-
-    # Write package.xml
-    version = common.get_changelog_version(path)
-    date = datetime.datetime.now().strftime("%Y-%m-%d")
-    file('/tmp/generator/pear/source/package.xml', 'wb').write("""<?xml version="1.0" encoding="UTF-8"?>
+        # Write package.xml
+        version = common.get_changelog_version(root)
+        date = datetime.datetime.now().strftime("%Y-%m-%d")
+        file('/tmp/generator/pear/source/package.xml', 'wb').write("""<?xml version="1.0" encoding="UTF-8"?>
 <package packagerversion="1.9.0" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0">
  <name>Tinkerforge</name>
  <uri>http://download.tinkerforge.com/bindings/php/pear/Tinkerforge-{2}.{3}.{4}</uri>
@@ -126,21 +117,24 @@ def generate(path):
 </package>
 """.format(date, '\n    '.join(package_files), *version))
 
-    # Make PEAR package
-    os.chdir('/tmp/generator/pear/source')
-    args = ['/usr/bin/pear',
-            'package',
-            'package.xml']
-    if subprocess.call(args) != 0:
-        raise Exception("Command '{0}' failed".format(' '.join(args)))
+        # Make PEAR package
+        os.chdir('/tmp/generator/pear/source')
+        args = ['/usr/bin/pear',
+                'package',
+                'package.xml']
+        if subprocess.call(args) != 0:
+            raise Exception("Command '{0}' failed".format(' '.join(args)))
 
-    # Remove build stuff
-    shutil.move('/tmp/generator/pear/source/Tinkerforge-{0}.{1}.{2}.tgz'.format(*version),
-                '/tmp/generator/pear/Tinkerforge.tgz')
-    os.remove('/tmp/generator/pear/source/package.xml')
+        # Remove build stuff
+        shutil.move('/tmp/generator/pear/source/Tinkerforge-{0}.{1}.{2}.tgz'.format(*version),
+                    '/tmp/generator/pear/Tinkerforge.tgz')
+        os.remove('/tmp/generator/pear/source/package.xml')
 
-    # Make zip
-    common.make_zip('php', '/tmp/generator/pear', path, version)
+        # Make zip
+        common.make_zip('php', '/tmp/generator/pear', root, version)
+
+def generate(bindings_root_directory):
+    common.generate(bindings_root_directory, 'en', PHPZipGenerator, False)
 
 if __name__ == "__main__":
     generate(os.getcwd())

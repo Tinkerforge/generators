@@ -40,7 +40,7 @@ device = None
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
 
-    cls = device.get_category() + device.get_camel_case_name()
+    cls = device.get_ruby_class_name()
     for other_packet in device.get_packets():
         name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
         if other_packet.get_type() == 'callback':
@@ -53,7 +53,7 @@ def format_doc(packet):
     text = common.handle_rst_word(text)
     text = common.handle_rst_if(text, device)
 
-    prefix = device.get_category() + device.get_camel_case_name() + '::'
+    prefix = cls + '::'
     if packet.get_underscore_name() == 'set_response_expected':
         text += common.format_function_id_constants(prefix, device)
     else:
@@ -79,14 +79,14 @@ def get_ruby_type(element):
         'float': 'float'
     }
 
-    t = type_dict[element[1]]
+    t = type_dict[element.get_type()]
 
-    if element[2] == 1 or t == 'str':
+    if element.get_cardinality() == 1 or t == 'str':
         return t
 
-    return '[' + ', '.join([t]*element[2]) + ']'
+    return '[' + ', '.join([t]*element.get_cardinality()) + ']'
 
-def make_examples():
+def make_examples(generator):
     def title_from_file(f):
         f = f.replace('example_', '')
         f = f.replace('.rb', '')
@@ -95,7 +95,7 @@ def make_examples():
             s += l[0].upper() + l[1:] + ' '
         return s[:-1]
 
-    return common.make_rst_examples(title_from_file, device, common.path_binding,
+    return common.make_rst_examples(title_from_file, device, generator.get_bindings_root_directory(),
                                     'ruby', 'example_', '.rb', 'Ruby')
 
 def make_parameter_desc(packet, io):
@@ -103,7 +103,7 @@ def make_parameter_desc(packet, io):
     param = ' :param {0}: {1}\n'
     for element in packet.get_elements(io):
         t = get_ruby_type(element)
-        desc += param.format(element[0], t)
+        desc += param.format(element.get_underscore_name(), t)
 
     return desc
 
@@ -139,7 +139,7 @@ def make_object_desc(packet):
 
     var = []
     for element in packet.get_elements('out'):
-        var.append('``{0}``'.format(element[0]))
+        var.append('``{0}``'.format(element.get_underscore_name()))
 
     if len(var) == 1:
         return common.select_lang(desc).format(var[0])
@@ -152,7 +152,7 @@ def make_object_desc(packet):
 def make_methods(typ):
     methods = ''
     func_start = '.. rb:function:: '
-    cls = device.get_category() + device.get_camel_case_name()
+    cls = device.get_ruby_class_name()
     for packet in device.get_packets('function'):
         if packet.get_doc()[0] != typ:
             continue
@@ -178,7 +178,7 @@ def make_methods(typ):
 def make_callbacks():
     cbs = ''
     func_start = '.. rb:attribute:: '
-    cls = device.get_category() + device.get_camel_case_name()
+    cls = device.get_ruby_class_name()
     for packet in device.get_packets('callback'):
         param_desc = make_parameter_desc(packet, 'out')
         desc = format_doc(packet)
@@ -399,28 +399,31 @@ Konstanten
                                            device.get_category().lower())
 
     api_desc = ''
-    if 'api' in device.com:
-        api_desc = common.select_lang(device.com['api'])
+    if 'api' in device.raw_data:
+        api_desc = common.select_lang(device.raw_data['api'])
 
     return common.select_lang(api).format(ref, api_desc, api_str)
 
-def make_files(device_, directory):
-    global device
-    device = device_
-    file_name = '{0}_{1}_Ruby'.format(device.get_camel_case_name(), device.get_category())
-    title = {
-    'en': 'Ruby bindings',
-    'de': 'Ruby Bindings'
-    }
-    directory = os.path.join(directory, 'doc', common.lang)
-    f = file('{0}/{1}.rst'.format(directory, file_name), "w")
-    f.write(common.make_rst_header(device, 'ruby', 'Ruby'))
-    f.write(common.make_rst_summary(device, common.select_lang(title), 'ruby'))
-    f.write(make_examples())
-    f.write(make_api())
+class RubyDocGenerator(common.DocGenerator):
+    def get_device_class(self):
+        return ruby_common.RubyDevice
 
-def generate(path, lang):
-    common.generate(path, lang, make_files, common.prepare_doc, None, True)
+    def generate(self, device_):
+        global device
+        device = device_
+
+        title = { 'en': 'Ruby bindings', 'de': 'Ruby Bindings' }
+        file_name = '{0}_{1}_Ruby.rst'.format(device.get_camel_case_name(), device.get_category())
+
+        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
+        rst.write(common.make_rst_header(device, 'ruby', 'Ruby'))
+        rst.write(common.make_rst_summary(device, common.select_lang(title), 'ruby'))
+        rst.write(make_examples(self))
+        rst.write(make_api())
+        rst.close()
+
+def generate(bindings_root_directory, lang):
+    common.generate(bindings_root_directory, lang, RubyDocGenerator, True)
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:

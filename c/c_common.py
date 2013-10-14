@@ -44,15 +44,15 @@ def get_c_type(py_type, direction, is_in_signature):
 def make_parameter_list(packet):
     param = ''
     for element in packet.get_elements():
-        c_type = get_c_type(element[1], element[3], True)
-        name = element[0]
+        c_type = get_c_type(element.get_type(), element.get_direction(), True)
+        name = element.get_underscore_name()
         pointer = ''
         arr = ''
-        if element[3] == 'out':
+        if element.get_direction() == 'out':
             pointer = '*'
             name = "ret_{0}".format(name)
-        if element[2] > 1:
-            arr = '[{0}]'.format(element[2])
+        if element.get_cardinality() > 1:
+            arr = '[{0}]'.format(element.get_cardinality())
             pointer = ''
 
         param += ', {0} {1}{2}{3}'.format(c_type, pointer, name, arr)

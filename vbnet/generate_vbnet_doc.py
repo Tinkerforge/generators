@@ -36,10 +36,14 @@ import common
 
 device = None
 
+class VBNETDevice(common.Device):
+    def get_vbnet_class_name(self):
+        return self.get_category() + self.get_camel_case_name()
+
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
 
-    cls = device.get_category() + device.get_camel_case_name()
+    cls = device.get_vbnet_class_name()
     for other_packet in device.get_packets():
         name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
         name = other_packet.get_camel_case_name()
@@ -52,7 +56,7 @@ def format_doc(packet):
     text = common.handle_rst_word(text)
     text = common.handle_rst_if(text, device)
 
-    prefix = '{0}{1}.'.format(device.get_category(), device.get_camel_case_name())
+    prefix = cls + '.'
     if packet.get_underscore_name() == 'set_response_expected':
         text += common.format_function_id_constants(prefix, device)
     else:
@@ -78,7 +82,7 @@ def get_vbnet_type(element):
         'char'   : 'Char',
     }
 
-    return types[element[1]]
+    return types[element.get_type()]
 
 def get_return_type(packet):
     elements = packet.get_elements('out')
@@ -86,7 +90,7 @@ def get_return_type(packet):
     if len(elements) == 1:
         vbnet_type = get_vbnet_type(elements[0])
 
-        if elements[0][2] > 1 and elements[0][1] != 'string':
+        if elements[0].get_cardinality() > 1 and elements[0].get_type() != 'string':
             vbnet_type += '[]'
 
         return vbnet_type
@@ -99,42 +103,42 @@ def make_parameter_list(packet):
         for element in packet.get_elements():
             vbnet_type = get_vbnet_type(element)
 
-            if element[3] == 'in' or packet.get_type() == 'callback':
+            if element.get_direction() == 'in' or packet.get_type() == 'callback':
                 modifier = 'ByVal '
             else:
                 modifier = 'ByRef '
 
-            name = common.underscore_to_headless_camel_case(element[0])
+            name = element.get_headless_camel_case_name()
 
-            if element[2] > 1 and element[1] != 'string':
+            if element.get_cardinality() > 1 and element.get_type() != 'string':
                 name += '[]'
 
             param.append('{0}{1} As {2}'.format(modifier, name, vbnet_type))
     else:
         for element in packet.get_elements('in'):
             vbnet_type = get_vbnet_type(element)
-            name = common.underscore_to_headless_camel_case(element[0])
+            name = element.get_headless_camel_case_name()
 
-            if element[2] > 1 and element[1] != 'string':
+            if element.get_cardinality() > 1 and element.get_type() != 'string':
                 name += '[]'
 
             param.append('ByVal {0} As {1}'.format(name, vbnet_type))
     return ', '.join(param)
 
-def make_examples():
+def make_examples(generator):
     def title_from_file(f):
         f = f.replace('Example', '')
         f = f.replace('.vb', '')
         return common.camel_case_to_space(f)
 
-    return common.make_rst_examples(title_from_file, device, common.path_binding,
+    return common.make_rst_examples(title_from_file, device, generator.get_bindings_root_directory(),
                                     'vbnet', 'Example', '.vb', 'VBNET')
 
 def make_methods(typ):
     methods = ''
     function = '.. vbnet:function:: Function {0}.{1}({2}) As {3}\n{4}'
     sub = '.. vbnet:function:: Sub {0}.{1}({2})\n{3}'
-    cls = device.get_category() + device.get_camel_case_name()
+    cls = device.get_vbnet_class_name()
     for packet in device.get_packets('function'):
         if packet.get_doc()[0] != typ:
             continue
@@ -172,7 +176,7 @@ def make_callbacks_x():
 """
     }
 
-    cls = device.get_category() + device.get_camel_case_name()
+    cls = device.get_vbnet_class_name()
     for packet in device.get_packets('callback'):
         name = packet.get_camel_case_name()
         params = make_parameter_list(packet)
@@ -202,7 +206,7 @@ def make_callbacks():
         if len(params) > 0:
             params = ', ' + params
 
-        cbs += common.select_lang(cb).format(device.get_category() + device.get_camel_case_name(),
+        cbs += common.select_lang(cb).format(device.get_vbnet_class_name(),
                                              packet.get_camel_case_name(),
                                              params,
                                              desc)
@@ -390,29 +394,31 @@ Konstanten
                                              device.get_category().lower())
 
     api_desc = ''
-    if 'api' in device.com:
-        api_desc = common.select_lang(device.com['api'])
+    if 'api' in device.raw_data:
+        api_desc = common.select_lang(device.raw_data['api'])
 
     return common.select_lang(api).format(ref, api_desc, api_str)
 
-def make_files(device_, directory):
-    global device
-    device = device_
-    file_name = '{0}_{1}_VBNET'.format(device.get_camel_case_name(),
-                                        device.get_category())
-    title = {
-    'en': 'Visual Basic .NET bindings',
-    'de': 'Visual Basic .NET Bindings'
-    }
-    directory = os.path.join(directory, 'doc', common.lang)
-    f = file('{0}/{1}.rst'.format(directory, file_name), "w")
-    f.write(common.make_rst_header(device, 'vbnet', 'Visual Basic .NET'))
-    f.write(common.make_rst_summary(device, common.select_lang(title), 'vbnet'))
-    f.write(make_examples())
-    f.write(make_api())
+class VBNETDocGenerator(common.DocGenerator):
+    def get_device_class(self):
+        return VBNETDevice
 
-def generate(path, lang):
-    common.generate(path, lang, make_files, common.prepare_doc, None, True)
+    def generate(self, device_):
+        global device
+        device = device_
+
+        title = { 'en': 'Visual Basic .NET bindings', 'de': 'Visual Basic .NET Bindings' }
+        file_name = '{0}_{1}_VBNET.rst'.format(device.get_camel_case_name(), device.get_category())
+
+        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
+        rst.write(common.make_rst_header(device, 'vbnet', 'Visual Basic .NET'))
+        rst.write(common.make_rst_summary(device, common.select_lang(title), 'vbnet'))
+        rst.write(make_examples(self))
+        rst.write(make_api())
+        rst.close()
+
+def generate(bindings_root_directory, lang):
+    common.generate(bindings_root_directory, lang, VBNETDocGenerator, True)
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:

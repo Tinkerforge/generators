@@ -41,7 +41,7 @@ device = None
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
 
-    cls = device.get_category() + device.get_camel_case_name()
+    cls = device.get_php_class_name()
     for other_packet in device.get_packets():
         name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
         if other_packet.get_type() == 'callback':
@@ -55,7 +55,7 @@ def format_doc(packet):
     text = common.handle_rst_word(text)
     text = common.handle_rst_if(text, device)
 
-    prefix = device.get_category() + device.get_camel_case_name() + '::'
+    prefix = cls + '::'
     if packet.get_underscore_name() == 'set_response_expected':
         text += common.format_function_id_constants(prefix, device)
     else:
@@ -65,13 +65,13 @@ def format_doc(packet):
 
     return common.shift_right(text, 1)
 
-def make_examples():
+def make_examples(generator):
     def title_from_file(f):
         f = f.replace('Example', '')
         f = f.replace('.php', '')
         return common.camel_case_to_space(f)
 
-    return common.make_rst_examples(title_from_file, device, common.path_binding,
+    return common.make_rst_examples(title_from_file, device, generator.get_bindings_root_directory(),
                                     'php', 'Example', '.php', 'PHP')
 
 def make_object_desc(packet):
@@ -94,7 +94,7 @@ def make_object_desc(packet):
 
     var = []
     for element in packet.get_elements('out'):
-        var.append('``{0}``'.format(element[0]))
+        var.append('``{0}``'.format(element.get_underscore_name()))
 
     if len(var) == 1:
         return common.select_lang(desc).format(var[0])
@@ -107,7 +107,7 @@ def make_object_desc(packet):
 def make_methods(typ):
     methods = ''
     func_start = '.. php:function:: '
-    cls = device.get_category() + device.get_camel_case_name()
+    cls = device.get_php_class_name()
     for packet in device.get_packets('function'):
         if packet.get_doc()[0] != typ:
             continue
@@ -144,7 +144,7 @@ def make_callbacks():
 
     cbs = ''
     func_start = '.. php:member:: int '
-    cls = device.get_category() + device.get_camel_case_name()
+    cls = device.get_php_class_name()
     for packet in device.get_packets('callback'):
         params = php_common.make_parameter_list(packet, True)
         if len(params) > 0:
@@ -378,28 +378,31 @@ Konstanten
                                           device.get_category().lower())
 
     api_desc = ''
-    if 'api' in device.com:
-        api_desc = common.select_lang(device.com['api'])
+    if 'api' in device.raw_data:
+        api_desc = common.select_lang(device.raw_data['api'])
 
     return common.select_lang(api).format(ref, api_desc, api_str)
 
-def make_files(device_, directory):
-    global device
-    device = device_
-    file_name = '{0}_{1}_PHP'.format(device.get_camel_case_name(), device.get_category())
-    title = {
-    'en': 'PHP bindings',
-    'de': 'PHP Bindings'
-    }
-    directory = os.path.join(directory, 'doc', common.lang)
-    f = file('{0}/{1}.rst'.format(directory, file_name), "w")
-    f.write(common.make_rst_header(device, 'php', 'PHP'))
-    f.write(common.make_rst_summary(device, common.select_lang(title), 'php'))
-    f.write(make_examples())
-    f.write(make_api())
+class PHPDocGenerator(common.DocGenerator):
+    def get_device_class(self):
+        return php_common.PHPDevice
 
-def generate(path, lang):
-    common.generate(path, lang, make_files, common.prepare_doc, None, True)
+    def generate(self, device_):
+        global device
+        device = device_
+
+        title = { 'en': 'PHP bindings', 'de': 'PHP Bindings' }
+        file_name = '{0}_{1}_PHP.rst'.format(device.get_camel_case_name(), device.get_category())
+
+        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
+        rst.write(common.make_rst_header(device, 'php', 'PHP'))
+        rst.write(common.make_rst_summary(device, common.select_lang(title), 'php'))
+        rst.write(make_examples(self))
+        rst.write(make_api())
+        rst.close()
+
+def generate(bindings_root_directory, lang):
+    common.generate(bindings_root_directory, lang, PHPDocGenerator, True)
 
 if __name__ == "__main__":
     for lang in ['en', 'de']:

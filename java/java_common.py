@@ -70,9 +70,9 @@ def get_return_type(packet, for_doc=False):
         else:
             return get_object_name(packet)
 
-    return_type = get_java_type(elements[0][1])
+    return_type = get_java_type(elements[0].get_type())
 
-    if elements[0][2] > 1 and elements[0][1] != 'string':
+    if elements[0].get_cardinality() > 1 and elements[0].get_type() != 'string':
         return_type += '[]'
 
     return return_type
@@ -80,12 +80,12 @@ def get_return_type(packet, for_doc=False):
 def make_parameter_list(packet, just_types=False):
     param = []
     for element in packet.get_elements():
-        if element[3] == 'out' and packet.get_type() == 'function':
+        if element.get_direction() == 'out' and packet.get_type() == 'function':
             continue
-        java_type = get_java_type(element[1])
-        name = common.underscore_to_headless_camel_case(element[0])
+        java_type = get_java_type(element.get_type())
+        name = element.get_headless_camel_case_name()
         arr = ''
-        if element[2] > 1 and element[1] != 'string':
+        if element.get_cardinality() > 1 and element.get_type() != 'string':
             arr = '[]'
 
         if just_types:
@@ -93,3 +93,7 @@ def make_parameter_list(packet, just_types=False):
         else:
             param.append('{0}{1} {2}'.format(java_type, arr, name))
     return ', '.join(param)
+
+class JavaDevice(common.Device):
+    def get_java_class_name(self):
+        return self.get_category() + self.get_camel_case_name()

@@ -1,13 +1,22 @@
 <?php
 
 /*
- * Copyright (c) 2012, Matthias Bolte (matthias@tinkerforge.com)
+ * Copyright (c) 2012-2013, Matthias Bolte (matthias@tinkerforge.com)
  *
  * Redistribution and use in source and binary forms of this file,
  * with or without modification, are permitted.
  */
 
 namespace Tinkerforge;
+
+
+if (!extension_loaded('bcmath')) {
+    throw new \Exception('Required bcmath extension is not available');
+}
+
+if (!extension_loaded('sockets')) {
+    throw new \Exception('Required sockets extension is not available');
+}
 
 
 class Base58

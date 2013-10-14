@@ -34,7 +34,6 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 device = None
-released_files = []
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
@@ -105,14 +104,14 @@ def format_doc(packet):
 def make_parameter_doc(packet):
     param = []
     for element in packet.get_elements():
-        if element[3] == 'out' or packet.get_type() != 'function':
+        if element.get_direction() == 'out' or packet.get_type() != 'function':
             continue
 
-        delphi_type = delphi_common.get_delphi_type(element[1])[0]
-        if element[2] > 1 and element[1] != 'string':
-            param.append('@param {0}[] ${1}'.format(delphi_type, element[0]))
+        delphi_type = delphi_common.get_delphi_type(element.get_type())[0]
+        if element.get_cardinality() > 1 and element.get_type() != 'string':
+            param.append('@param {0}[] ${1}'.format(delphi_type, element.get_underscore_name()))
         else:
-            param.append('@param {0} ${1}'.format(delphi_type, element[0]))
+            param.append('@param {0} ${1}'.format(delphi_type, element.get_underscore_name()))
 
     param.append('\n@return ' + delphi_common.get_return_type(packet, True))
     return '\n'.join(param)
@@ -196,12 +195,12 @@ def make_arrays():
 
     for packet in device.get_packets('function'):
         for element in packet.get_elements():
-            if element[1] == 'string' or element[2] < 2:
+            if element.get_type() == 'string' or element.get_cardinality() < 2:
                 continue
 
-            delphi_type = delphi_common.get_delphi_type(element[1])
-            left = 'TArray0To{0}Of{1}'.format(element[2] - 1, delphi_type[1])
-            right = 'array [0..{0}] of {1}'.format(element[2] - 1, delphi_type[0])
+            delphi_type = delphi_common.get_delphi_type(element.get_type())
+            left = 'TArray0To{0}Of{1}'.format(element.get_cardinality() - 1, delphi_type[1])
+            right = 'array [0..{0}] of {1}'.format(element.get_cardinality() - 1, delphi_type[0])
             types[left] = right
 
     if len(types) > 0:
@@ -214,7 +213,7 @@ def make_arrays():
 
 def make_callback_prototypes():
     prototypes = ''
-    prototype = '  T{0}{1}Notify{2} = procedure(sender: T{0}{1}{3}) of object;\n'
+    prototype = '  {0}Notify{1} = procedure(sender: {0}{2}) of object;\n'
 
     for packet in device.get_packets('callback'):
         params = delphi_common.make_parameter_list(packet, False)
@@ -222,33 +221,29 @@ def make_callback_prototypes():
         if len(params) > 0:
             params = '; ' + params
 
-        prototypes += prototype.format(device.get_category(),
-                                       device.get_camel_case_name(),
+        prototypes += prototype.format(device.get_delphi_class_name(),
                                        packet.get_camel_case_name(),
                                        params)
 
     if len(prototypes) > 0:
-        forward = '  T{0}{1} = class;\n'.format(device.get_category(),
-                                              device.get_camel_case_name())
+        forward = '  {0} = class;\n'.format(device.get_delphi_class_name())
         prototypes = forward + prototypes + '\n'
 
     return prototypes
 
 def make_class():
     cls = """  /// <summary>
-  ///  {2}
+  ///  {1}
   /// </summary>
-  T{0}{1} = class(TDevice)
-""".format(device.get_category(),
-           device.get_camel_case_name(),
+  {0} = class(TDevice)
+""".format(device.get_delphi_class_name(),
            device.get_description())
 
     callbacks = ''
-    callback = '    {0}Callback: T{1}{2}Notify{3};\n'
+    callback = '    {0}Callback: {1}Notify{2};\n'
     for packet in device.get_packets('callback'):
         callbacks += callback.format(packet.get_headless_camel_case_name(),
-                                     device.get_category(),
-                                     device.get_camel_case_name(),
+                                     device.get_delphi_class_name(),
                                      packet.get_camel_case_name())
 
     callback_wrappers = ''
@@ -289,14 +284,13 @@ def make_class():
 
     props = []
     prop = """    /// <summary>
-    ///  {4}
+    ///  {3}
     /// </summary>
-    property On{0}: T{1}{2}Notify{0} read {3}Callback write {3}Callback;"""
+    property On{0}: {1}Notify{0} read {2}Callback write {2}Callback;"""
     for packet in device.get_packets('callback'):
         doc = format_doc(packet)
         props.append(prop.format(packet.get_camel_case_name(),
-                                 device.get_category(),
-                                 device.get_camel_case_name(),
+                                 device.get_delphi_class_name(),
                                  packet.get_headless_camel_case_name(),
                                  doc))
 
@@ -317,12 +311,12 @@ def make_class():
 def make_constructor():
     con = """implementation
 
-constructor T{0}{1}.Create(const uid__: string; ipcon_: TIPConnection);
+constructor {0}.Create(const uid__: string; ipcon_: TIPConnection);
 begin
   inherited Create(uid__, ipcon_);
-  apiVersion[0] := {2};
-  apiVersion[1] := {3};
-  apiVersion[2] := {4};
+  apiVersion[0] := {1};
+  apiVersion[1] := {2};
+  apiVersion[2] := {3};
 
 """
     response_expected = ''
@@ -351,8 +345,7 @@ begin
     if len(response_expected) > 0:
         response_expected += '\n'
 
-    return con.format(device.get_category(),
-                      device.get_camel_case_name(),
+    return con.format(device.get_delphi_class_name(),
                       *device.get_api_version()) + response_expected
 
 def make_callback_wrapper_definitions():
@@ -382,14 +375,14 @@ def get_convert_type(element):
         'char'   : 'Char'
     }
 
-    return types[element[1]];
+    return types[element.get_type()];
 
 def make_methods():
     methods = ''
     function = 'function {0}.{1}{2}: {3};\n'
     procedure = 'procedure {0}.{1}{2};\n'
 
-    cls = 'T{0}{1}'.format(device.get_category(), device.get_camel_case_name())
+    cls = device.get_delphi_class_name()
     for packet in device.get_packets('function'):
         ret_type = delphi_common.get_return_type(packet, False)
         out_count = len(packet.get_elements('out'))
@@ -413,7 +406,7 @@ def make_methods():
 
         has_array = False
         for element in packet.get_elements():
-            if element[2] > 1 and element[1] != 'string':
+            if element.get_cardinality() > 1 and element.get_type() != 'string':
                 has_array = True
                 break
 
@@ -422,28 +415,28 @@ def make_methods():
 
         method += '\n'
         method += 'begin\n'
-        method += '  request := (ipcon as TIPConnection).CreateRequestPacket(self, {0}, {1});\n'.format(function_id, packet.get_request_length())
+        method += '  request := (ipcon as TIPConnection).CreateRequestPacket(self, {0}, {1});\n'.format(function_id, packet.get_request_size())
 
         # Serialize request
         offset = 8
         for element in packet.get_elements('in'):
-            if element[2] > 1 and element[1] != 'string':
-                prefix = 'for i := 0 to Length({0}) - 1 do '.format(common.underscore_to_headless_camel_case(element[0]))
+            if element.get_cardinality() > 1 and element.get_type() != 'string':
+                prefix = 'for i := 0 to Length({0}) - 1 do '.format(element.get_headless_camel_case_name())
                 method += '  {0}LEConvert{1}To({2}[i], {3} + (i * {4}), request);\n'.format(prefix,
                                                                                             get_convert_type(element),
-                                                                                            common.underscore_to_headless_camel_case(element[0]),
+                                                                                            element.get_headless_camel_case_name(),
                                                                                             offset,
-                                                                                            common.get_type_size(element[1]))
-            elif element[1] == 'string':
-                method += '  LEConvertStringTo({0}, {1}, {2}, request);\n'.format(common.underscore_to_headless_camel_case(element[0]),
+                                                                                            common.get_type_size(element.get_type()))
+            elif element.get_type() == 'string':
+                method += '  LEConvertStringTo({0}, {1}, {2}, request);\n'.format(element.get_headless_camel_case_name(),
                                                                                   offset,
-                                                                                  element[2])
+                                                                                  element.get_cardinality())
             else:
                 method += '  LEConvert{0}To({1}, {2}, request);\n'.format(get_convert_type(element),
-                                                                          common.underscore_to_headless_camel_case(element[0]),
+                                                                          element.get_headless_camel_case_name(),
                                                                           offset)
 
-            offset += common.get_element_size(element)
+            offset += element.get_size()
 
         if out_count > 0:
             method += '  response := SendRequest(request);\n'
@@ -454,27 +447,27 @@ def make_methods():
         offset = 8
         for element in packet.get_elements('out'):
             if out_count > 1:
-                result = common.underscore_to_headless_camel_case(element[0])
+                result = element.get_headless_camel_case_name()
             else:
                 result = 'result'
 
-            if element[2] > 1 and element[1] != 'string':
-                prefix = 'for i := 0 to {0} do '.format(element[2] - 1)
+            if element.get_cardinality() > 1 and element.get_type() != 'string':
+                prefix = 'for i := 0 to {0} do '.format(element.get_cardinality() - 1)
                 method += '  {0}{1}[i] := LEConvert{2}From({3} + (i * {4}), response);\n'.format(prefix,
                                                                                                  result,
                                                                                                  get_convert_type(element),
                                                                                                  offset,
-                                                                                                 common.get_type_size(element[1]))
-            elif element[1] == 'string':
+                                                                                                 common.get_type_size(element.get_type()))
+            elif element.get_type() == 'string':
                 method += '  {0} := LEConvertStringFrom({1}, {2}, response);\n'.format(result,
                                                                                        offset,
-                                                                                       element[2])
+                                                                                       element.get_cardinality())
             else:
                 method += '  {0} := LEConvert{1}From({2}, response);\n'.format(result,
                                                                                get_convert_type(element),
                                                                                offset)
 
-            offset += common.get_element_size(element)
+            offset += element.get_size()
 
         method += 'end;\n\n'
 
@@ -486,9 +479,8 @@ def make_callback_wrappers():
     wrappers = ''
 
     for packet in device.get_packets('callback'):
-        wrapper = 'procedure T{0}{1}.CallbackWrapper{2}(const packet: TByteArray);\n'.format(device.get_category(),
-                                                                                             device.get_camel_case_name(),
-                                                                                             packet.get_camel_case_name())
+        wrapper = 'procedure {0}.CallbackWrapper{1}(const packet: TByteArray);\n'.format(device.get_delphi_class_name(),
+                                                                                         packet.get_camel_case_name())
 
         if len(packet.get_elements('out')) > 0:
             wrapper += 'var ' + delphi_common.make_parameter_list(packet, False, False) + ';\n'
@@ -503,23 +495,21 @@ def make_callback_wrappers():
         offset = 8
         parameter_names = []
         for element in packet.get_elements('out'):
-            parameter_names.append(common.underscore_to_headless_camel_case(element[0]))
+            parameter_names.append(element.get_headless_camel_case_name())
 
-            if element[2] > 1 and element[1] != 'string':
-                prefix = 'for i := 0 to {0} do '.format(element[2] - 1)
+            if element.get_cardinality() > 1 and element.get_type() != 'string':
+                prefix = 'for i := 0 to {0} do '.format(element.get_cardinality() - 1)
                 wrapper += '    {0}{1}[i] := LEConvert{2}From({3} + (i * {4}), packet);\n'.format(prefix,
-                                                                                                  common.underscore_to_headless_camel_case(element[0]),
+                                                                                                  element.get_headless_camel_case_name(),
                                                                                                   get_convert_type(element),
                                                                                                   offset,
-                                                                                                  common.get_type_size(element[1]))
+                                                                                                  common.get_type_size(element.get_type()))
             else:
-                wrapper += '    {0} := LEConvert{1}From({2}, packet);\n'.format(common.underscore_to_headless_camel_case(element[0]),
+                wrapper += '    {0} := LEConvert{1}From({2}, packet);\n'.format(element.get_headless_camel_case_name(),
                                                                                 get_convert_type(element),
                                                                                 offset)
 
-            offset += common.get_element_size(element)
-
-
+            offset += element.get_size()
 
         wrapper += '    {0}Callback({1});\n'.format(packet.get_headless_camel_case_name(), ', '.join(['self'] + parameter_names))
         wrapper += '  end;\n'
@@ -529,59 +519,55 @@ def make_callback_wrappers():
 
     return wrappers + 'end.\n'
 
-def finish(directory):
-    r = open(os.path.join(directory, 'delphi_released_files.py'), 'wb')
-    r.write('released_files = ' + repr(released_files))
-    r.close()
+class DelphiBindingsElement(common.Element):
+    def get_underscore_name(self):
+        name = common.Element.get_underscore_name(self)
 
-def rename_bad_variable_names(packets):
-    def rename(elements, f, t):
-        for i in range(len(elements)):
-            if elements[i][0] == f:
-                l = list(elements[i])
-                l[0] = t
-                elements[i] = tuple(l)
+        # length is a keyword in delphi
+        if name == 'length':
+            name += '2'
 
-    # Rename all copy of elements
-    for packet in packets:
-        rename(packet.all_elements, 'length', 'length2')
-        rename(packet.in_elements, 'length', 'length2')
-        rename(packet.out_elements, 'length', 'length2')
+        return name
 
-def make_files(device_, directory):
-    global device
-    device = device_
-    file_name = '{0}{1}.pas'.format(device.get_category(), device.get_camel_case_name())
-    version = common.get_changelog_version(directory)
-    directory += '/bindings'
+class DelphiBindingsGenerator(common.BindingsGenerator):
+    def __init__(self, *args, **kwargs):
+        common.BindingsGenerator.__init__(self, *args, **kwargs)
 
-    # Rename all copys of packet
-    rename_bad_variable_names(device.all_packets)
-    rename_bad_variable_names(device.all_packets_without_doc_only)
-    rename_bad_variable_names(device.all_function_packets)
-    rename_bad_variable_names(device.all_function_packets_without_doc_only)
-    rename_bad_variable_names(device.callback_packets)
+        self.released_files_name_prefix = 'delphi'
 
-    pas = file('{0}/{1}'.format(directory, file_name), 'w')
-    pas.write(make_unit_header(version))
-    pas.write(make_device_identifier())
-    pas.write(make_function_id_definitions())
-    pas.write(make_callback_id_definitions())
-    pas.write(make_constants())
-    pas.write(make_arrays())
-    pas.write(make_callback_prototypes())
-    pas.write(make_class())
-    pas.write(make_constructor())
-    pas.write(make_callback_wrapper_definitions())
-    pas.write(make_methods())
-    pas.write(make_callback_wrappers())
+    def get_device_class(self):
+        return delphi_common.DelphiDevice
 
-    if device.is_released():
-        global released_files
-        released_files.append(file_name)
+    def get_element_class(self):
+        return DelphiBindingsElement
 
-def generate(path):
-    common.generate(path, 'en', make_files, common.prepare_bindings, finish, False)
+    def generate(self, device_):
+        global device
+        device = device_
+
+        version = common.get_changelog_version(self.get_bindings_root_directory())
+        file_name = '{0}{1}.pas'.format(device.get_category(), device.get_camel_case_name())
+
+        pas = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name), 'wb')
+        pas.write(make_unit_header(version))
+        pas.write(make_device_identifier())
+        pas.write(make_function_id_definitions())
+        pas.write(make_callback_id_definitions())
+        pas.write(make_constants())
+        pas.write(make_arrays())
+        pas.write(make_callback_prototypes())
+        pas.write(make_class())
+        pas.write(make_constructor())
+        pas.write(make_callback_wrapper_definitions())
+        pas.write(make_methods())
+        pas.write(make_callback_wrappers())
+        pas.close()
+
+        if device.is_released():
+            self.released_files.append(file_name)
+
+def generate(bindings_root_directory):
+    common.generate(bindings_root_directory, 'en', DelphiBindingsGenerator, False)
 
 if __name__ == "__main__":
     generate(os.getcwd())

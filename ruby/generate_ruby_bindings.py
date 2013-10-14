@@ -33,11 +33,10 @@ import common
 import ruby_common
 
 device = None
-released_files = []
 
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
-    link = '{0}{1}#{2}'
+    link = '{0}#{1}'
     link_c = 'CALLBACK_{0}'
 
     # handle tables
@@ -66,7 +65,7 @@ def format_doc(packet):
 
     text = '\n'.join(replaced_lines)
 
-    cls = device.get_camel_case_name()
+    cls = device.get_ruby_class_name()
     for other_packet in device.get_packets():
         name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
         if other_packet.get_type() == 'callback':
@@ -74,7 +73,7 @@ def format_doc(packet):
             name_right = link_c.format(name)
         else:
             name = other_packet.get_underscore_name()
-            name_right = link.format(device.get_category(), cls, name)
+            name_right = link.format(cls, name)
 
         text = text.replace(name_false, name_right)
 
@@ -96,11 +95,10 @@ def make_header(version):
 
 def make_class():
     return """module Tinkerforge
-  # {2}
-  class {0}{1} < Device
-    DEVICE_IDENTIFIER = {3} # :nodoc:
-""".format(device.get_category(), device.get_camel_case_name(),
-           device.get_description(), device.get_device_identifier())
+  # {1}
+  class {0} < Device
+    DEVICE_IDENTIFIER = {2} # :nodoc:
+""".format(device.get_ruby_class_name(), device.get_description(), device.get_device_identifier())
 
 def make_callback_id_definitions():
     cbs = ''
@@ -194,10 +192,7 @@ def make_format_from_element(element):
         'char'   : ('k', 1)
     }
 
-    if element[1] in forms:
-        return forms[element[1]]
-
-    return '', 0
+    return forms[element.get_type()]
 
 def make_format_list(packet, io):
     forms = []
@@ -205,9 +200,9 @@ def make_format_list(packet, io):
     for element in packet.get_elements(io):
         num_str = ''
         num_int = 1
-        if element[2] > 1:
-            num_str = element[2]
-            num_int = element[2]
+        if element.get_cardinality() > 1:
+            num_str = element.get_cardinality()
+            num_int = element.get_cardinality()
         form, size = make_format_from_element(element)
         forms.append('{0}{1}'.format(form, num_str))
         total_size += size * num_int
@@ -261,36 +256,40 @@ end
 end
 """
 
-def finish(directory):
-    r = open(os.path.join(directory, 'ruby_released_files.py'), 'wb')
-    r.write('released_files = ' + repr(released_files))
-    r.close()
+class RubyBindingsGenerator(common.BindingsGenerator):
+    def __init__(self, *args, **kwargs):
+        common.BindingsGenerator.__init__(self, *args, **kwargs)
 
-def make_files(device_, directory):
-    global device
-    device = device_
-    file_name = '{0}_{1}.rb'.format(device.get_category().lower(), device.get_underscore_name())
-    version = common.get_changelog_version(directory)
-    directory += '/bindings'
+        self.released_files_name_prefix = 'ruby'
 
-    rb = file('{0}/{1}'.format(directory, file_name), "w")
-    rb.write(make_header(version))
-    rb.write(make_class())
-    rb.write(make_callback_id_definitions())
-    rb.write(make_function_id_definitions())
-    rb.write(make_constants())
-    rb.write(make_initialize_method())
-    rb.write(make_response_expected())
-    rb.write(make_callback_formats())
-    rb.write(make_methods())
-    rb.write(make_register_callback_method())
+    def get_device_class(self):
+        return ruby_common.RubyDevice
 
-    if device.is_released():
-        global released_files
-        released_files.append(file_name)
+    def generate(self, device_):
+        global device
+        device = device_
 
-def generate(path):
-    common.generate(path, 'en', make_files, common.prepare_bindings, finish, False)
+        version = common.get_changelog_version(self.get_bindings_root_directory())
+        file_name = '{0}_{1}.rb'.format(device.get_category().lower(), device.get_underscore_name())
+
+        rb = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name), 'wb')
+        rb.write(make_header(version))
+        rb.write(make_class())
+        rb.write(make_callback_id_definitions())
+        rb.write(make_function_id_definitions())
+        rb.write(make_constants())
+        rb.write(make_initialize_method())
+        rb.write(make_response_expected())
+        rb.write(make_callback_formats())
+        rb.write(make_methods())
+        rb.write(make_register_callback_method())
+        rb.close()
+
+        if device.is_released():
+            self.released_files.append(file_name)
+
+def generate(bindings_root_directory):
+    common.generate(bindings_root_directory, 'en', RubyBindingsGenerator, False)
 
 if __name__ == "__main__":
     generate(os.getcwd())
