@@ -55,6 +55,8 @@ class CExamplesCompiler(common.ExamplesCompiler):
 
         if self.compiler == 'gcc':
             args += ['/usr/bin/gcc', '-std=c99']
+        elif self.compiler == 'clang':
+            args += ['/usr/bin/clang', '-std=c99']
         else:
             args += ['/usr/bin/g++', '-std=c++98']
 
@@ -90,7 +92,12 @@ def run(path):
     if rc != 0:
         return rc
 
-    return CExamplesCompiler(path, 'g++', extra_examples).run()
+    rc = CExamplesCompiler(path, 'g++', extra_examples).run()
+
+    if rc != 0:
+        return rc
+
+    return CExamplesCompiler(path, 'clang', extra_examples).run()
 
 if __name__ == "__main__":
     sys.exit(run(os.getcwd()))
