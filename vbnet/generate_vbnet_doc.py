@@ -36,10 +36,6 @@ import common
 
 device = None
 
-class VBNETDevice(common.Device):
-    def get_vbnet_class_name(self):
-        return self.get_category() + self.get_camel_case_name()
-
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
 
@@ -66,29 +62,11 @@ def format_doc(packet):
 
     return common.shift_right(text, 1)
 
-def get_vbnet_type(element):
-    types = {
-        'int8'   : 'Short',
-        'uint8'  : 'Byte',
-        'int16'  : 'Short',
-        'uint16' : 'Integer',
-        'int32'  : 'Integer',
-        'uint32' : 'Long',
-        'int64'  : 'Long',
-        'uint64' : 'Long',
-        'float'  : 'Single',
-        'bool'   : 'Boolean',
-        'string' : 'String',
-        'char'   : 'Char',
-    }
-
-    return types[element.get_type()]
-
 def get_return_type(packet):
     elements = packet.get_elements('out')
 
     if len(elements) == 1:
-        vbnet_type = get_vbnet_type(elements[0])
+        vbnet_type = elements[0].get_vbnet_type()
 
         if elements[0].get_cardinality() > 1 and elements[0].get_type() != 'string':
             vbnet_type += '[]'
@@ -101,7 +79,7 @@ def make_parameter_list(packet):
     param = []
     if len(packet.get_elements('out')) > 1 or packet.get_type() == 'callback':
         for element in packet.get_elements():
-            vbnet_type = get_vbnet_type(element)
+            vbnet_type = element.get_vbnet_type()
 
             if element.get_direction() == 'in' or packet.get_type() == 'callback':
                 modifier = 'ByVal '
@@ -116,7 +94,7 @@ def make_parameter_list(packet):
             param.append('{0}{1} As {2}'.format(modifier, name, vbnet_type))
     else:
         for element in packet.get_elements('in'):
-            vbnet_type = get_vbnet_type(element)
+            vbnet_type = element.get_vbnet_type()
             name = element.get_headless_camel_case_name()
 
             if element.get_cardinality() > 1 and element.get_type() != 'string':
@@ -126,12 +104,11 @@ def make_parameter_list(packet):
     return ', '.join(param)
 
 def make_examples(generator):
-    def title_from_file(f):
-        f = f.replace('Example', '')
-        f = f.replace('.vb', '')
-        return common.camel_case_to_space(f)
+    def title_from_file_name(file_name):
+        file_name = file_name.replace('Example', '').replace('.vb', '')
+        return common.camel_case_to_space(file_name)
 
-    return common.make_rst_examples(title_from_file, device, generator.get_bindings_root_directory(),
+    return common.make_rst_examples(title_from_file_name, device, generator.get_bindings_root_directory(),
                                     'vbnet', 'Example', '.vb', 'VBNET')
 
 def make_methods(typ):
@@ -154,36 +131,6 @@ def make_methods(typ):
         methods += method + '\n'
 
     return methods
-
-def make_callbacks_x():
-    cbs = ''
-    cb = {
-    'en': """.. vbnet:function:: event {0}.On{1}
-
- .. code-block:: vbnet
-
-  procedure({2}) of object;
-
-{3}
-""",
-    'de': """.. vbnet:function:: event {0}.On{1}
-
- .. code-block:: vbnet
-
-  procedure({2}) of object;
-
-{3}
-"""
-    }
-
-    cls = device.get_vbnet_class_name()
-    for packet in device.get_packets('callback'):
-        name = packet.get_camel_case_name()
-        params = make_parameter_list(packet)
-        desc = format_doc(packet)
-        cbs += common.select_lang(cb).format(cls, name, params, desc)
-
-    return cbs
 
 def make_callbacks():
     cb = {
@@ -399,9 +346,35 @@ Konstanten
 
     return common.select_lang(api).format(ref, api_desc, api_str)
 
+class VBNETDevice(common.Device):
+    def get_vbnet_class_name(self):
+        return self.get_category() + self.get_camel_case_name()
+
+class VBNETElement(common.Element):
+    vbnet_types = {
+        'int8':   'Short',
+        'uint8':  'Byte',
+        'int16':  'Short',
+        'uint16': 'Integer',
+        'int32':  'Integer',
+        'uint32': 'Long',
+        'int64':  'Long',
+        'uint64': 'Long',
+        'float':  'Single',
+        'bool':   'Boolean',
+        'string': 'String',
+        'char':   'Char',
+    }
+
+    def get_vbnet_type(self):
+        return VBNETElement.vbnet_types[self.get_type()]
+
 class VBNETDocGenerator(common.DocGenerator):
     def get_device_class(self):
         return VBNETDevice
+
+    def get_element_class(self):
+        return VBNETElement
 
     def generate(self, device_):
         global device

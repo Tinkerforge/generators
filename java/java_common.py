@@ -30,27 +30,6 @@ import os
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-def get_java_type(typ):
-    forms = {
-        'int8' : 'byte',
-        'uint8' : 'short',
-        'int16' : 'short',
-        'uint16' : 'int',
-        'int32' : 'int',
-        'uint32' : 'long',
-        'int64' : 'long',
-        'uint64' : 'long',
-        'float' : 'float',
-        'bool' : 'boolean',
-        'string' : 'String',
-        'char' : 'char'
-    }
-
-    if typ in forms:
-        return forms[typ]
-
-    return ''
-
 def get_object_name(packet):
     name = packet.get_camel_case_name()
     if name.startswith('Get'):
@@ -70,7 +49,7 @@ def get_return_type(packet, for_doc=False):
         else:
             return get_object_name(packet)
 
-    return_type = get_java_type(elements[0].get_type())
+    return_type = elements[0].get_java_type()
 
     if elements[0].get_cardinality() > 1 and elements[0].get_type() != 'string':
         return_type += '[]'
@@ -82,7 +61,7 @@ def make_parameter_list(packet, just_types=False):
     for element in packet.get_elements():
         if element.get_direction() == 'out' and packet.get_type() == 'function':
             continue
-        java_type = get_java_type(element.get_type())
+        java_type = element.get_java_type()
         name = element.get_headless_camel_case_name()
         arr = ''
         if element.get_cardinality() > 1 and element.get_type() != 'string':
@@ -97,3 +76,58 @@ def make_parameter_list(packet, just_types=False):
 class JavaDevice(common.Device):
     def get_java_class_name(self):
         return self.get_category() + self.get_camel_case_name()
+
+class JavaElement(common.Element):
+    java_type = {
+        'int8':   'byte',
+        'uint8':  'short',
+        'int16':  'short',
+        'uint16': 'int',
+        'int32':  'int',
+        'uint32': 'long',
+        'int64':  'long',
+        'uint64': 'long',
+        'float':  'float',
+        'bool':   'boolean',
+        'string': 'String',
+        'char':   'char'
+    }
+
+    java_byte_buffer_method_suffix = {
+        'int8':   '',
+        'uint8':  '',
+        'int16':  'Short',
+        'uint16': 'Short',
+        'int32':  'Int',
+        'uint32': 'Int',
+        'int64':  'Long',
+        'uint64': 'Long',
+        'float':  'Float',
+        'bool':   '',
+        'string': '',
+        'char':   ''
+    }
+
+    java_byte_buffer_storage_type = {
+        'int8':   'byte',
+        'uint8':  'byte',
+        'int16':  'short',
+        'uint16': 'short',
+        'int32':  'int',
+        'uint32': 'int',
+        'int64':  'long',
+        'uint64': 'long',
+        'float':  'float',
+        'bool':   'byte',
+        'string': 'byte',
+        'char':   'byte'
+    }
+
+    def get_java_type(self):
+        return JavaElement.java_type[self.get_type()]
+
+    def get_java_byte_buffer_method_suffix(self):
+        return JavaElement.java_byte_buffer_method_suffix[self.get_type()]
+
+    def get_java_byte_buffer_storage_type(self):
+        return JavaElement.java_byte_buffer_storage_type[self.get_type()]

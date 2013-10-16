@@ -65,12 +65,11 @@ def format_doc(packet):
     return common.shift_right(text, 1)
 
 def make_examples(generator):
-    def title_from_file(f):
-        f = f.replace('Example', '')
-        f = f.replace('.pas', '')
-        return common.camel_case_to_space(f)
+    def title_from_file_name(file_name):
+        file_name = file_name.replace('Example', '').replace('.pas', '')
+        return common.camel_case_to_space(file_name)
 
-    return common.make_rst_examples(title_from_file, device, generator.get_bindings_root_directory(),
+    return common.make_rst_examples(title_from_file_name, device, generator.get_bindings_root_directory(),
                                     'delphi', 'Example', '.pas', 'Delphi')
 
 def make_methods(typ):
@@ -319,6 +318,9 @@ Konstanten
 class DelphiDocGenerator(common.DocGenerator):
     def get_device_class(self):
         return delphi_common.DelphiDevice
+
+    def get_element_class(self):
+        return delphi_common.DelphiElement
 
     def generate(self, device_):
         global device

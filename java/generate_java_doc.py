@@ -73,12 +73,11 @@ def format_doc(packet, shift_right):
     return common.shift_right(text, shift_right)
 
 def make_examples(generator):
-    def title_from_file(f):
-        f = f.replace('Example', '')
-        f = f.replace('.java', '')
-        return common.camel_case_to_space(f)
+    def title_from_file_name(file_name):
+        file_name = file_name.replace('Example', '').replace('.java', '')
+        return common.camel_case_to_space(file_name)
 
-    return common.make_rst_examples(title_from_file, device, generator.get_bindings_root_directory(),
+    return common.make_rst_examples(title_from_file_name, device, generator.get_bindings_root_directory(),
                                     'java', 'Example', '.java', 'Java')
 
 def make_object_desc(packet):
@@ -101,7 +100,7 @@ def make_object_desc(packet):
 
     var = []
     for element in packet.get_elements('out'):
-        var.append('``{0} {1}``'.format(java_common.get_java_type(element.get_type()),
+        var.append('``{0} {1}``'.format(element.get_java_type(),
                                         element.get_headless_camel_case_name()))
 
     if len(var) == 1:
@@ -424,6 +423,9 @@ Konstanten
 class JavaDocGenerator(common.DocGenerator):
     def get_device_class(self):
         return java_common.JavaDevice
+
+    def get_element_class(self):
+        return java_common.JavaElement
 
     def generate(self, device_):
         global device

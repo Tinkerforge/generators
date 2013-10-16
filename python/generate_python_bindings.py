@@ -176,33 +176,11 @@ def make_callback_formats():
 
     return cbs
 
-def make_format_from_element(element):
-    forms = {
-        'int8' : 'b',
-        'uint8' : 'B',
-        'int16' : 'h',
-        'uint16' : 'H',
-        'int32' : 'i',
-        'uint32' : 'I',
-        'int64' : 'q',
-        'uint64' : 'Q',
-        'float' : 'f',
-        'bool' : '?',
-        'string' : 's',
-        'char' : 'c'
-    }
-
-    return forms[element.get_type()]
-
 def make_format_list(packet, io):
     forms = []
     for element in packet.get_elements(io):
-        num = ''
-        if element.get_cardinality() > 1:
-            num = element.get_cardinality()
-        form = make_format_from_element(element)
-        forms.append('{0}{1}'.format(num, form))
-    return " ".join(forms)
+        forms.append(element.get_python_struct_format())
+    return ' '.join(forms)
 
 def make_methods():
     m_tup = """
@@ -304,6 +282,9 @@ class PythonBindingsGenerator(common.BindingsGenerator):
 
     def get_device_class(self):
         return python_common.PythonDevice
+
+    def get_element_class(self):
+        return python_common.PythonElement
 
     def generate(self, device_):
         global device

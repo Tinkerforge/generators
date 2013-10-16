@@ -30,27 +30,6 @@ import os
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-def get_php_type(typ):
-    forms = {
-        'int8' : 'int',
-        'uint8' : 'int',
-        'int16' : 'int',
-        'uint16' : 'int',
-        'int32' : 'int',
-        'uint32' : 'int',
-        'int64' : 'int',
-        'uint64' : 'int',
-        'float' : 'float',
-        'bool' : 'bool',
-        'string' : 'string',
-        'char' : 'string'
-    }
-
-    if typ in forms:
-        return forms[typ]
-
-    return ''
-
 def get_return_type(packet):
     if len(packet.get_elements('out')) == 0:
         return 'void'
@@ -61,7 +40,7 @@ def get_return_type(packet):
         if element.get_cardinality() > 1 and element.get_type() != 'string':
             return 'array'
         else:
-            return get_php_type(element.get_type())
+            return element.get_php_type()
 
 def make_parameter_list(packet, for_doc=False):
     param = []
@@ -70,7 +49,7 @@ def make_parameter_list(packet, for_doc=False):
             continue
         name = element.get_underscore_name()
         if for_doc:
-            php_type = get_php_type(element.get_type())
+            php_type = element.get_php_type()
             if element.get_cardinality() > 1 and element.get_type() != 'string':
                 php_type = 'array'
 
@@ -82,3 +61,76 @@ def make_parameter_list(packet, for_doc=False):
 class PHPDevice(common.Device):
     def get_php_class_name(self):
         return self.get_category() + self.get_camel_case_name()
+
+class PHPElement(common.Element):
+    php_type = {
+        'int8':   'int',
+        'uint8':  'int',
+        'int16':  'int',
+        'uint16': 'int',
+        'int32':  'int',
+        'uint32': 'int',
+        'int64':  'int',
+        'uint64': 'int',
+        'float':  'float',
+        'bool':   'bool',
+        'string': 'string',
+        'char':   'string'
+    }
+
+    php_pack_format = {
+        'int8':   'c',
+        'uint8':  'C',
+        'int16':  'v',
+        'uint16': 'v',
+        'int32':  'V',
+        'uint32': 'V',
+       #'int64': # NOTE: unsupported
+       #'uint64': # NOTE: unsupported
+        'float':  'f',
+        'bool':   'C',
+        'string': 'c',
+        'char':   'c'
+    }
+
+    def get_php_type(self):
+        return PHPElement.php_type[self.get_type()]
+
+    def get_php_pack_format(self):
+        return PHPElement.php_pack_format[self.get_type()]
+
+    def get_php_unpack_format(self):
+        # pack und unpack format are the same
+        return self.get_php_pack_format()
+
+    def get_php_unpack_fix(self):
+        if self.get_cardinality() > 1:
+            if self.get_type() == 'int16':
+                return ('IPConnection::collectUnpackedInt16Array(', ')')
+            elif self.get_type() == 'int32':
+                return ('IPConnection::collectUnpackedInt32Array(', ')')
+            elif self.get_type() == 'uint32':
+                return ('IPConnection::collectUnpackedUInt32Array(', ')')
+            elif self.get_type() == 'bool':
+                return ('IPConnection::collectUnpackedBoolArray(', ')')
+            elif self.get_type() == 'string':
+                return ('IPConnection::implodeUnpackedString(', ')')
+            elif self.get_type() == 'char':
+                return ('IPConnection::collectUnpackedCharArray(', ')')
+            else:
+                return ('IPConnection::collectUnpackedArray(', ')')
+        else:
+            if self.get_type() == 'int16':
+                return ('IPConnection::fixUnpackedInt16(', ')')
+            elif self.get_type() == 'int32':
+                return ('IPConnection::fixUnpackedInt32(', ')')
+            elif self.get_type() == 'uint32':
+                return ('IPConnection::fixUnpackedUInt32(', ')')
+            elif self.get_type() == 'bool':
+                return ('(bool)', '')
+            elif self.get_type() == 'string':
+                return ('chr(', ')')
+            elif self.get_type() == 'char':
+                return ('chr(', ')')
+            else:
+                return ('', '')

@@ -63,47 +63,19 @@ def format_doc(packet):
 
     return common.shift_right(text, 1)
 
-def get_ruby_type(element):
-    type_dict = {
-        'int8': 'int',
-        'uint8': 'int',
-        'int16': 'int',
-        'uint16': 'int',
-        'int32': 'int',
-        'uint32': 'int',
-        'int64': 'int',
-        'uint64': 'int',
-        'bool': 'bool',
-        'char': 'str',
-        'string': 'str',
-        'float': 'float'
-    }
-
-    t = type_dict[element.get_type()]
-
-    if element.get_cardinality() == 1 or t == 'str':
-        return t
-
-    return '[' + ', '.join([t]*element.get_cardinality()) + ']'
-
 def make_examples(generator):
-    def title_from_file(f):
-        f = f.replace('example_', '')
-        f = f.replace('.rb', '')
-        s = ''
-        for l in f.split('_'):
-            s += l[0].upper() + l[1:] + ' '
-        return s[:-1]
+    def title_from_file_name(file_name):
+        file_name = file_name.replace('example_', '').replace('.rb', '')
+        return common.underscore_to_space(file_name)
 
-    return common.make_rst_examples(title_from_file, device, generator.get_bindings_root_directory(),
+    return common.make_rst_examples(title_from_file_name, device, generator.get_bindings_root_directory(),
                                     'ruby', 'example_', '.rb', 'Ruby')
 
 def make_parameter_desc(packet, io):
     desc = '\n'
     param = ' :param {0}: {1}\n'
     for element in packet.get_elements(io):
-        t = get_ruby_type(element)
-        desc += param.format(element.get_underscore_name(), t)
+        desc += param.format(element.get_underscore_name(), element.get_ruby_type())
 
     return desc
 
@@ -111,7 +83,7 @@ def make_return_desc(packet):
     ret = ' -> {0}'
     ret_list = []
     for element in packet.get_elements('out'):
-        ret_list.append(get_ruby_type(element))
+        ret_list.append(element.get_ruby_type())
     if len(ret_list) == 0:
         return ret.format('nil')
     elif len(ret_list) == 1:
@@ -407,6 +379,9 @@ Konstanten
 class RubyDocGenerator(common.DocGenerator):
     def get_device_class(self):
         return ruby_common.RubyDevice
+
+    def get_element_class(self):
+        return ruby_common.RubyElement
 
     def generate(self, device_):
         global device

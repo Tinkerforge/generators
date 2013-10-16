@@ -66,12 +66,11 @@ def format_doc(packet):
     return common.shift_right(text, 1)
 
 def make_examples(generator):
-    def title_from_file(f):
-        f = f.replace('Example', '')
-        f = f.replace('.php', '')
-        return common.camel_case_to_space(f)
+    def title_from_file_name(file_name):
+        file_name = file_name.replace('Example', '').replace('.php', '')
+        return common.camel_case_to_space(file_name)
 
-    return common.make_rst_examples(title_from_file, device, generator.get_bindings_root_directory(),
+    return common.make_rst_examples(title_from_file_name, device, generator.get_bindings_root_directory(),
                                     'php', 'Example', '.php', 'PHP')
 
 def make_object_desc(packet):
@@ -386,6 +385,9 @@ Konstanten
 class PHPDocGenerator(common.DocGenerator):
     def get_device_class(self):
         return php_common.PHPDevice
+
+    def get_element_class(self):
+        return php_common.PHPElement
 
     def generate(self, device_):
         global device

@@ -67,15 +67,11 @@ def format_doc(packet):
     return common.shift_right(text, 1)
 
 def make_examples(generator):
-    def title_from_file(f):
-        f = f.replace('example_', '')
-        f = f.replace('.c', '')
-        s = ''
-        for l in f.split('_'):
-            s += l[0].upper() + l[1:] + ' '
-        return s[:-1]
+    def title_from_file_name(file_name):
+        file_name = file_name.replace('example_', '').replace('.c', '')
+        return common.underscore_to_space(file_name)
 
-    return common.make_rst_examples(title_from_file, device, generator.get_bindings_root_directory(),
+    return common.make_rst_examples(title_from_file_name, device, generator.get_bindings_root_directory(),
                                     'c', 'example_', '.c', 'C')
 
 def make_methods(typ):
@@ -401,6 +397,9 @@ Konstanten
     return common.select_lang(api).format(ref, api_desc, api_str)
 
 class CDocGenerator(common.DocGenerator):
+    def get_element_class(self):
+        return c_common.CElement
+
     def generate(self, device_):
         global device
         device = device_

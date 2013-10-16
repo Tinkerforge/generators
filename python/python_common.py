@@ -34,8 +34,56 @@ def make_parameter_list(packet):
     params = []
     for element in packet.get_elements('in'):
         params.append(element.get_underscore_name())
-    return ", ".join(params)
+    return ', '.join(params)
 
 class PythonDevice(common.Device):
     def get_python_class_name(self):
         return self.get_category() + self.get_camel_case_name()
+
+class PythonElement(common.Element):
+    python_type = {
+        'int8':   'int',
+        'uint8':  'int',
+        'int16':  'int',
+        'uint16': 'int',
+        'int32':  'int',
+        'uint32': 'int',
+        'int64':  'int',
+        'uint64': 'int',
+        'bool':   'bool',
+        'char':   'chr',
+        'string': 'str',
+        'float':  'float'
+    }
+
+    python_struct_formats = {
+        'int8':   'b',
+        'uint8':  'B',
+        'int16':  'h',
+        'uint16': 'H',
+        'int32':  'i',
+        'uint32': 'I',
+        'int64':  'q',
+        'uint64': 'Q',
+        'float':  'f',
+        'bool':   '?',
+        'string': 's',
+        'char':   'c'
+    }
+
+    def get_python_type(self):
+        t = PythonElement.python_type[self.get_type()]
+
+        if self.get_cardinality() == 1 or t == 'str':
+            return t
+
+        return '[' + ', '.join([t]*self.get_cardinality()) + ']'
+
+    def get_python_struct_format(self):
+        f = PythonElement.python_struct_formats[self.get_type()]
+        c = self.get_cardinality()
+
+        if c > 1:
+            f = str(c) + f
+
+        return f

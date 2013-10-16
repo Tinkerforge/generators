@@ -67,12 +67,11 @@ def format_doc(packet, shift_right):
     return common.shift_right(text, shift_right)
 
 def make_examples(generator):
-    def title_from_file(f):
-        f = f.replace('Example', '')
-        f = f.replace('.cs', '')
-        return common.camel_case_to_space(f)
+    def title_from_file_name(file_name):
+        file_name = file_name.replace('Example', '').replace('.cs', '')
+        return common.camel_case_to_space(file_name)
 
-    return common.make_rst_examples(title_from_file, device, generator.get_bindings_root_directory(),
+    return common.make_rst_examples(title_from_file_name, device, generator.get_bindings_root_directory(),
                                     'csharp', 'Example', '.cs', 'CSharp')
 
 def make_methods(typ):
@@ -352,6 +351,9 @@ Konstanten
 class CSharpDocGenerator(common.DocGenerator):
     def get_device_class(self):
         return csharp_common.CSharpDevice
+
+    def get_element_class(self):
+        return csharp_common.CSharpElement
 
     def generate(self, device_):
         global device

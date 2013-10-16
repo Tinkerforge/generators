@@ -34,17 +34,6 @@ import common
 
 device = None
 
-def type_to_pytype(element):
-    t = element.get_type()
-
-    if t == 'string':
-        t = 'char'
-
-    if element.get_cardinality() == 1:
-        return t
-
-    return t + '[' + str(element.get_cardinality()) + ']'
-
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
     parameter = {
@@ -80,8 +69,7 @@ def make_request_desc(packet):
     desc = '\n'
     param = ' :request {0}: {1}\n'
     for element in packet.get_elements('in'):
-        t = type_to_pytype(element)
-        desc += param.format(element.get_underscore_name(), t)
+        desc += param.format(element.get_underscore_name(), element.get_tcpip_type())
 
     if desc == '\n':
         desc += ' :emptyrequest: {0}\n'.format(common.select_lang(empty_payload))
@@ -100,8 +88,7 @@ def make_response_desc(packet):
     desc = '\n'
     returns = ' :response {0}: {1}\n'
     for element in packet.get_elements('out'):
-        t = type_to_pytype(element)
-        desc += returns.format(element.get_underscore_name(), t)
+        desc += returns.format(element.get_underscore_name(), element.get_tcpip_type())
 
     if desc == '\n':
         if packet.get_type() == 'callback':
@@ -277,7 +264,22 @@ def make_files(device_, directory):
     f.write(common.make_rst_summary(device, common.select_lang(title), None))
     f.write(make_api())
 
+class TCPIPElement(common.Element):
+    def get_tcpip_type(self):
+        t = self.get_type()
+
+        if t == 'string':
+            t = 'char'
+
+        if self.get_cardinality() == 1:
+            return t
+
+        return t + '[' + str(self.get_cardinality()) + ']'
+
 class TCPIPDocGenerator(common.DocGenerator):
+    def get_element_class(self):
+        return TCPIPElement
+
     def generate(self, device_):
         global device
         device = device_

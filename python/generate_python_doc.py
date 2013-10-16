@@ -37,29 +37,6 @@ import python_common
 
 device = None
 
-def type_to_pytype(element):
-    type_dict = {
-        'int8': 'int',
-        'uint8': 'int',
-        'int16': 'int',
-        'uint16': 'int',
-        'int32': 'int',
-        'uint32': 'int',
-        'int64': 'int',
-        'uint64': 'int',
-        'bool': 'bool',
-        'char': 'chr',
-        'string': 'str',
-        'float': 'float'
-    }
-
-    t = type_dict[element.get_type()]
-    
-    if element.get_cardinality() == 1 or t == 'str':
-        return t
-
-    return '[' + ', '.join([t]*element.get_cardinality()) + ']'
-
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
     cls = device.get_camel_case_name()
@@ -86,22 +63,18 @@ def format_doc(packet):
     return common.shift_right(text, 1)
 
 def make_examples(generator):
-    def title_from_file(f):
-        f = f.replace('example_', '')
-        f = f.replace('.py', '')
-        s = ''
-        for l in f.split('_'):
-            s += l[0].upper() + l[1:] + ' '
-        return s[:-1]
+    def title_from_file_name(file_name):
+        file_name = file_name.replace('example_', '').replace('.py', '')
+        return common.underscore_to_space(file_name)
 
-    return common.make_rst_examples(title_from_file, device, generator.get_bindings_root_directory(),
+    return common.make_rst_examples(title_from_file_name, device, generator.get_bindings_root_directory(),
                                     'python', 'example_', '.py', 'Python')
 
 def make_parameter_desc(packet, io):
     desc = '\n'
     param = ' :param {0}: {1}\n'
     for element in packet.get_elements(io):
-        t = type_to_pytype(element)
+        t = element.get_python_type()
         desc += param.format(element.get_underscore_name(), t)
 
     return desc
@@ -110,7 +83,7 @@ def make_return_desc(packet):
     ret = ' :rtype: {0}\n'
     ret_list = []
     for element in packet.get_elements('out'):
-        ret_list.append(type_to_pytype(element))
+        ret_list.append(element.get_python_type())
     if len(ret_list) == 0:
         return ret.format(None)
     elif len(ret_list) == 1:
@@ -406,6 +379,9 @@ Konstanten
 class PythonDocGenerator(common.DocGenerator):
     def get_device_class(self):
         return python_common.PythonDevice
+
+    def get_element_class(self):
+        return python_common.PythonElement
 
     def generate(self, device_):
         global device

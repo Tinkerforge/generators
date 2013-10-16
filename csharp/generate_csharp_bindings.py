@@ -182,7 +182,7 @@ def make_constants():
             else:
                 value = str(definition.value)
 
-            str_constants += str_constant.format(csharp_common.get_csharp_type(common.Element(None, [None, constant.type, 0])),
+            str_constants += str_constant.format(csharp_common.CSharpElement(None, [None, constant.type, 1]).get_csharp_type(), # FIXME
                                                  constant.name_uppercase,
                                                  definition.name_uppercase,
                                                  value)
@@ -233,29 +233,6 @@ def make_response_expected():
 
     return res + '\t\t}\n'
 
-def get_from_type(element):
-    forms = {
-        'int8' : 'SByteFrom',
-        'uint8' : 'ByteFrom',
-        'int16' : 'ShortFrom',
-        'uint16' : 'UShortFrom',
-        'int32' : 'IntFrom',
-        'uint32' : 'UIntFrom',
-        'int64' : 'LongFrom',
-        'uint64' : 'ULongFrom',
-        'float' : 'FloatFrom',
-        'bool' : 'BoolFrom',
-        'string' : 'StringFrom',
-        'char' : 'CharFrom'
-    }
-
-    from_type = forms[element.get_type()]
-
-    if from_type != 'StringFrom' and element.get_cardinality() > 1:
-        from_type = from_type.replace('From', 'ArrayFrom')
-
-    return from_type
-
 def make_callbacks():
     cbs = ''
     cb = """
@@ -286,15 +263,15 @@ def make_callbacks():
 
         pos = 8
         for element in packet.get_elements('out'):
-            csharp_type = csharp_common.get_csharp_type(element)
+            csharp_type = element.get_csharp_type()
             cname = element.get_headless_camel_case_name()
-            from_type = get_from_type(element)
+            from_method = element.get_csharp_le_converter_from_method()
             length = ''
             if element.get_cardinality() > 1:
                 length = ', ' + str(element.get_cardinality())
             convs += conv.format(csharp_type,
                                  cname,
-                                 from_type,
+                                 from_method,
                                  pos,
                                  length)
 
@@ -343,7 +320,7 @@ def make_methods():
         pos = 8
         for element in packet.get_elements('in'):
             wname = element.get_headless_camel_case_name()
-            csharp_type = csharp_common.get_csharp_type_for_to_convert(element)
+            csharp_type = element.get_csharp_le_converter_type()
             if element.get_cardinality() > 1:
                 write_convs += write_conv_length.format(wname, pos, element.get_cardinality(), csharp_type)
             else:
@@ -357,15 +334,15 @@ def make_methods():
         pos = 8
         for element in packet.get_elements('out'):
             aname = element.get_headless_camel_case_name()
-            from_type = get_from_type(element)
+            from_method = element.get_csharp_le_converter_from_method()
             length = ''
             if element.get_cardinality() > 1:
                 length = ', ' + str(element.get_cardinality())
 
             if ret_count == 1:
-                read_convs = '\n\t\t\treturn LEConverter.{0}({1}, response{2});'.format(from_type, pos, length)
+                read_convs = '\n\t\t\treturn LEConverter.{0}({1}, response{2});'.format(from_method, pos, length)
             else:
-                read_convs += read_conv.format(aname, from_type, pos, length)
+                read_convs += read_conv.format(aname, from_method, pos, length)
             pos += element.get_size()
 
         if ret_count > 0:
@@ -391,6 +368,9 @@ class CSharpBindingsGenerator(common.BindingsGenerator):
 
     def get_device_class(self):
         return csharp_common.CSharpDevice
+
+    def get_element_class(self):
+        return csharp_common.CSharpElement
 
     def generate(self, device_):
         global device

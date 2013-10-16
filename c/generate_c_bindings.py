@@ -223,7 +223,7 @@ typedef struct {{
             cb = "Callback"
             struct_body = ''
             for element in packet.get_elements():
-                c_type = c_common.get_c_type(element.get_type(), 'out', False)
+                c_type = element.get_c_type(False)
                 if element.get_cardinality() > 1:
                     struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
                                                               element.get_underscore_name(),
@@ -236,7 +236,7 @@ typedef struct {{
 
         struct_body = ''
         for element in packet.get_elements('in'):
-            c_type = c_common.get_c_type(element.get_type(), 'in', False)
+            c_type = element.get_c_type(False)
             if element.get_cardinality() > 1:
                 struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
                                                           element.get_underscore_name(),
@@ -251,7 +251,7 @@ typedef struct {{
 
         struct_body = ''
         for element in packet.get_elements('out'):
-            c_type = c_common.get_c_type(element.get_type(), 'out', False)
+            c_type = element.get_c_type(False)
             if element.get_cardinality() > 1:
                 struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
                                                           element.get_underscore_name(),
@@ -362,7 +362,7 @@ def make_method_funcs():
                     struct_list += temp.format(sf,
                                                element.get_underscore_name(),
                                                element.get_cardinality(),
-                                               c_common.get_c_type(element.get_type(), 'in', False))
+                                               element.get_c_type(False))
             elif common.get_type_size(element.get_type()) > 1:
                 struct_list += '\n\t{0}.{1} = leconvert_{2}_to({1});'.format(sf, element.get_underscore_name(), element.get_type())
             else:
@@ -387,7 +387,7 @@ def make_method_funcs():
                     return_list += temp.format(element.get_underscore_name(),
                                                sf,
                                                element.get_cardinality(),
-                                               c_common.get_c_type(element.get_type(), 'out', False))
+                                               element.get_c_type(False))
             elif common.get_type_size(element.get_type()) > 1:
                 return_list += '\t*ret_{0} = leconvert_{2}_from({1}.{0});\n'.format(element.get_underscore_name(), sf, element.get_type())
             else:
@@ -561,9 +561,9 @@ typedef void (*{0}CallbackFunction)({1});
         c_type_list = []
         for element in packet.get_elements():
             if element.get_cardinality() > 1:
-                c_type_list.append('{0}[{1}]'.format(c_common.get_c_type(element.get_type(), 'out', True), element.get_cardinality()))
+                c_type_list.append('{0}[{1}]'.format(element.get_c_type(True), element.get_cardinality()))
             else:
-                c_type_list.append(c_common.get_c_type(element.get_type(), 'out', True))
+                c_type_list.append(element.get_c_type(True))
 
         typedefs += typedef.format(name, ', '.join(c_type_list + ['void *']))
 
@@ -701,6 +701,9 @@ class CBindingsGenerator(common.BindingsGenerator):
         common.BindingsGenerator.__init__(self, *args, **kwargs)
 
         self.released_files_name_prefix = 'c'
+
+    def get_element_class(self):
+        return c_common.CElement
 
     def generate(self, device_):
         global device

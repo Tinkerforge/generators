@@ -30,24 +30,6 @@ import sys
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-def get_delphi_type(typ):
-    types = {
-        'int8'   : ('shortint', 'Int8'),
-        'uint8'  : ('byte',     'UInt8'),
-        'int16'  : ('smallint', 'Int16'),
-        'uint16' : ('word',     'UInt16'),
-        'int32'  : ('longint',  'Int32'),
-        'uint32' : ('longword', 'UInt32'),
-        'int64'  : ('int64',    'Int64'),
-        'uint64' : ('uint64',   'UInt64'),
-        'float'  : ('single',   'Float'),
-        'bool'   : ('boolean',  'Boolean'),
-        'string' : ('string',   'String'),
-        'char'   : ('char',     'Char')
-    }
-
-    return types[typ]
-
 def get_return_type(packet, for_doc):
     elements = packet.get_elements('out')
 
@@ -55,7 +37,7 @@ def get_return_type(packet, for_doc):
         return ''
 
     first = elements[0]
-    delphi_type = get_delphi_type(first.get_type())
+    delphi_type = first.get_delphi_type()
 
     if first.get_cardinality() > 1 and first.get_type() != 'string':
         if for_doc:
@@ -71,7 +53,7 @@ def make_parameter_list(packet, for_doc, with_modifiers=True):
     param = []
     if len(packet.get_elements('out')) > 1 or packet.get_type() == 'callback':
         for element in packet.get_elements():
-            delphi_type = get_delphi_type(element.get_type())
+            delphi_type = element.get_delphi_type()
 
             if with_modifiers:
                 if element.get_direction() == 'in' or packet.get_type() == 'callback':
@@ -98,7 +80,7 @@ def make_parameter_list(packet, for_doc, with_modifiers=True):
                                               final_type))
     else:
         for element in packet.get_elements('in'):
-            delphi_type = get_delphi_type(element.get_type())
+            delphi_type = element.get_delphi_type()
 
             if with_modifiers:
                 modifier = 'const '
@@ -121,3 +103,40 @@ def make_parameter_list(packet, for_doc, with_modifiers=True):
 class DelphiDevice(common.Device):
     def get_delphi_class_name(self):
         return 'T' + self.get_category() + self.get_camel_case_name()
+
+class DelphiElement(common.Element):
+    delphi_types = {
+        'int8':   ('shortint', 'Int8'),
+        'uint8':  ('byte',     'UInt8'),
+        'int16':  ('smallint', 'Int16'),
+        'uint16': ('word',     'UInt16'),
+        'int32':  ('longint',  'Int32'),
+        'uint32': ('longword', 'UInt32'),
+        'int64':  ('int64',    'Int64'),
+        'uint64': ('uint64',   'UInt64'),
+        'float':  ('single',   'Float'),
+        'bool':   ('boolean',  'Boolean'),
+        'string': ('string',   'String'),
+        'char':   ('char',     'Char')
+    }
+
+    delphi_le_convert_types = {
+        'int8':   'Int8',
+        'uint8':  'UInt8',
+        'int16':  'Int16',
+        'uint16': 'UInt16',
+        'int32':  'Int32',
+        'uint32': 'UInt32',
+        'int64':  'Int64',
+        'uint64': 'UInt64',
+        'float':  'Float',
+        'bool':   'Boolean',
+        'string': 'String',
+        'char':   'Char'
+    }
+
+    def get_delphi_type(self):
+        return DelphiElement.delphi_types[self.get_type()]
+
+    def get_delphi_le_convert_type(self):
+        return DelphiElement.delphi_le_convert_types[self.get_type()]

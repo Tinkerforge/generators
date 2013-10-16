@@ -254,7 +254,7 @@ ausgeführt werden können ist :ref:`hier <{3}>` zu finden.
 
     return s
 
-def make_rst_examples(title_from_file, device, base_path, dirname,
+def make_rst_examples(title_from_file_name, device, base_path, dirname,
                       filename_prefix, filename_suffix, include_name,
                       language=None):
     if language is None:
@@ -313,7 +313,7 @@ Der folgende Beispielcode ist Public Domain.
     for f in files:
         include = '{0}_{1}_{2}_{3}'.format(device.get_camel_case_name(), device.get_category(), include_name, f[0])
         copy_files.append((f[1], include))
-        title = title_from_file(f[0])
+        title = title_from_file_name(f[0])
         git_name = device.get_underscore_name().replace('_', '-') + '-' + device.get_category().lower()
         examples += select_lang(imp).format(title, '^'*len(title), include, git_name, dirname, f[0], language)
 
@@ -480,6 +480,12 @@ def underscore_to_headless_camel_case(name):
     for part in parts[1:]:
         ret += part[0].upper() + part[1:]
     return ret
+
+def underscore_to_space(name):
+    ret = []
+    for part in name.split('_'):
+        ret.append(part[0].upper() + part[1:])
+    return ' '.join(ret)
 
 def recreate_directory(directory):
     directory = os.path.join(directory)
@@ -671,9 +677,6 @@ def check_name(camel_case, underscore, display, is_constant=False):
             raise ValueError("underscore name '{0}' and display name '{1}' ({2}) mismatch" \
                              .format(underscore, display, display_to_check))
 
-valid_types = set(['int8', 'uint8', 'int16', 'uint16', 'int32', 'uint32',
-                   'int64', 'uint64', 'bool', 'char', 'string', 'float'])
-
 class Element:
     def __init__(self, packet, raw_data):
         self.packet = packet
@@ -710,6 +713,19 @@ class Element:
         return get_type_size(self.get_type()) * self.get_cardinality()
 
 class Packet:
+    valid_types = set(['int8',
+                       'uint8',
+                       'int16',
+                       'uint16',
+                       'int32',
+                       'uint32',
+                       'int64',
+                       'uint64',
+                       'bool',
+                       'char',
+                       'string',
+                       'float'])
+
     def __init__(self, device, raw_data, generator):
         self.device = device
         self.generator = generator
@@ -727,7 +743,7 @@ class Packet:
 
             check_name(None, element.get_underscore_name(), None)
 
-            if element.get_type() not in valid_types:
+            if element.get_type() not in Packet.valid_types:
                 raise ValueError('Invalid element type ' + element.get_type())
 
             if element.get_cardinality() < 1:

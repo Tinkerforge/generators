@@ -176,24 +176,6 @@ def make_callback_formats():
         cbs += cb.format(packet.get_upper_case_name(), form)
     return cbs + '    end\n'
 
-def make_format_from_element(element):
-    forms = {
-        'int8'   : ('c', 1),
-        'uint8'  : ('C', 1),
-        'int16'  : ('s', 2),
-        'uint16' : ('S', 2),
-        'int32'  : ('l', 4),
-        'uint32' : ('L', 4),
-        'int64'  : ('q', 8),
-        'uint64' : ('Q', 8),
-        'float'  : ('e', 4),
-        'bool'   : ('?', 1),
-        'string' : ('Z', 1),
-        'char'   : ('k', 1)
-    }
-
-    return forms[element.get_type()]
-
 def make_format_list(packet, io):
     forms = []
     total_size = 0
@@ -203,7 +185,7 @@ def make_format_list(packet, io):
         if element.get_cardinality() > 1:
             num_str = element.get_cardinality()
             num_int = element.get_cardinality()
-        form, size = make_format_from_element(element)
+        form, size = element.get_ruby_pack_format()
         forms.append('{0}{1}'.format(form, num_str))
         total_size += size * num_int
     return " ".join(forms), total_size
@@ -264,6 +246,9 @@ class RubyBindingsGenerator(common.BindingsGenerator):
 
     def get_device_class(self):
         return ruby_common.RubyDevice
+
+    def get_element_class(self):
+        return ruby_common.RubyElement
 
     def generate(self, device_):
         global device

@@ -107,7 +107,7 @@ def make_parameter_doc(packet):
         if element.get_direction() == 'out' or packet.get_type() != 'function':
             continue
 
-        delphi_type = delphi_common.get_delphi_type(element.get_type())[0]
+        delphi_type = element.get_delphi_type()[0]
         if element.get_cardinality() > 1 and element.get_type() != 'string':
             param.append('@param {0}[] ${1}'.format(delphi_type, element.get_underscore_name()))
         else:
@@ -198,7 +198,7 @@ def make_arrays():
             if element.get_type() == 'string' or element.get_cardinality() < 2:
                 continue
 
-            delphi_type = delphi_common.get_delphi_type(element.get_type())
+            delphi_type = element.get_delphi_type()
             left = 'TArray0To{0}Of{1}'.format(element.get_cardinality() - 1, delphi_type[1])
             right = 'array [0..{0}] of {1}'.format(element.get_cardinality() - 1, delphi_type[0])
             types[left] = right
@@ -359,24 +359,6 @@ def make_callback_wrapper_definitions():
                          packet.get_camel_case_name())
     return cbs + cbs_end
 
-def get_convert_type(element):
-    types = {
-        'int8'   : 'Int8',
-        'uint8'  : 'UInt8',
-        'int16'  : 'Int16',
-        'uint16' : 'UInt16',
-        'int32'  : 'Int32',
-        'uint32' : 'UInt32',
-        'int64'  : 'Int64',
-        'uint64' : 'UInt64',
-        'float'  : 'Float',
-        'bool'   : 'Boolean',
-        'string' : 'String',
-        'char'   : 'Char'
-    }
-
-    return types[element.get_type()];
-
 def make_methods():
     methods = ''
     function = 'function {0}.{1}{2}: {3};\n'
@@ -423,7 +405,7 @@ def make_methods():
             if element.get_cardinality() > 1 and element.get_type() != 'string':
                 prefix = 'for i := 0 to Length({0}) - 1 do '.format(element.get_headless_camel_case_name())
                 method += '  {0}LEConvert{1}To({2}[i], {3} + (i * {4}), request);\n'.format(prefix,
-                                                                                            get_convert_type(element),
+                                                                                            element.get_delphi_le_convert_type(),
                                                                                             element.get_headless_camel_case_name(),
                                                                                             offset,
                                                                                             common.get_type_size(element.get_type()))
@@ -432,7 +414,7 @@ def make_methods():
                                                                                   offset,
                                                                                   element.get_cardinality())
             else:
-                method += '  LEConvert{0}To({1}, {2}, request);\n'.format(get_convert_type(element),
+                method += '  LEConvert{0}To({1}, {2}, request);\n'.format(element.get_delphi_le_convert_type(),
                                                                           element.get_headless_camel_case_name(),
                                                                           offset)
 
@@ -455,7 +437,7 @@ def make_methods():
                 prefix = 'for i := 0 to {0} do '.format(element.get_cardinality() - 1)
                 method += '  {0}{1}[i] := LEConvert{2}From({3} + (i * {4}), response);\n'.format(prefix,
                                                                                                  result,
-                                                                                                 get_convert_type(element),
+                                                                                                 element.get_delphi_le_convert_type(),
                                                                                                  offset,
                                                                                                  common.get_type_size(element.get_type()))
             elif element.get_type() == 'string':
@@ -464,7 +446,7 @@ def make_methods():
                                                                                        element.get_cardinality())
             else:
                 method += '  {0} := LEConvert{1}From({2}, response);\n'.format(result,
-                                                                               get_convert_type(element),
+                                                                               element.get_delphi_le_convert_type(),
                                                                                offset)
 
             offset += element.get_size()
@@ -501,12 +483,12 @@ def make_callback_wrappers():
                 prefix = 'for i := 0 to {0} do '.format(element.get_cardinality() - 1)
                 wrapper += '    {0}{1}[i] := LEConvert{2}From({3} + (i * {4}), packet);\n'.format(prefix,
                                                                                                   element.get_headless_camel_case_name(),
-                                                                                                  get_convert_type(element),
+                                                                                                  element.get_delphi_le_convert_type(),
                                                                                                   offset,
                                                                                                   common.get_type_size(element.get_type()))
             else:
                 wrapper += '    {0} := LEConvert{1}From({2}, packet);\n'.format(element.get_headless_camel_case_name(),
-                                                                                get_convert_type(element),
+                                                                                element.get_delphi_le_convert_type(),
                                                                                 offset)
 
             offset += element.get_size()
@@ -519,7 +501,7 @@ def make_callback_wrappers():
 
     return wrappers + 'end.\n'
 
-class DelphiBindingsElement(common.Element):
+class DelphiBindingsElement(delphi_common.DelphiElement):
     def get_underscore_name(self):
         name = common.Element.get_underscore_name(self)
 

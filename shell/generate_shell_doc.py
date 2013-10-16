@@ -37,29 +37,6 @@ import shell_common
 
 device = None
 
-def get_element_type(element):
-    types = {
-        'int8': 'int',
-        'uint8': 'int',
-        'int16': 'int',
-        'uint16': 'int',
-        'int32': 'int',
-        'uint32': 'int',
-        'int64': 'int',
-        'uint64': 'int',
-        'bool': 'bool',
-        'char': 'char',
-        'string': 'string',
-        'float': 'float'
-    }
-
-    t = types[element.get_type()]
-
-    if element.get_cardinality() == 1 or element.get_type() == 'string':
-        return t
-    else:
-        return ','.join([t]*element.get_cardinality())
-
 def format_doc(packet):
     text = common.select_lang(packet.get_doc()[1])
     device_name = device.get_shell_device_name()
@@ -85,7 +62,7 @@ def format_doc(packet):
 
         e = []
         for element in constant.elements:
-            name = element.get_underscore_name().replace('_', '-')
+            name = element.get_dash_name()
             if element.get_direction() == 'in':
                 e.append('<{0}>'.format(name))
             else:
@@ -112,15 +89,11 @@ def format_doc(packet):
     return common.shift_right(text, 1)
 
 def make_examples(generator):
-    def title_from_file(f):
-        f = f.replace('example-', '')
-        f = f.replace('.sh', '')
-        s = ''
-        for l in f.split('-'):
-            s += l[0].upper() + l[1:] + ' '
-        return s[:-1]
+    def title_from_file_name(file_name):
+        file_name = file_name.replace('example-', '').replace('.sh', '').replace('-', '_')
+        return common.underscore_to_space(file_name)
 
-    return common.make_rst_examples(title_from_file, device, generator.get_bindings_root_directory(),
+    return common.make_rst_examples(title_from_file_name, device, generator.get_bindings_root_directory(),
                                     'shell', 'example-', '.sh', 'Shell', 'bash')
 
 def make_parameter_desc(packet):
@@ -132,8 +105,8 @@ def make_parameter_desc(packet):
     }
 
     for element in packet.get_elements('in'):
-        t = get_element_type(element)
-        desc += param.format(element.get_underscore_name().replace('_', '-'), t)
+        t = element.get_shell_type()
+        desc += param.format(element.get_dash_name(), t)
 
         if element.has_constants():
             desc += ' ({0})'.format(common.select_lang(has_symbols))
@@ -158,8 +131,8 @@ def make_return_desc(packet):
 
     ret = '\n'
     for element in elements:
-        t = get_element_type(element)
-        ret += ' :returns {0}: {1}'.format(element.get_underscore_name().replace('_', '-'), t)
+        t = element.get_shell_type()
+        ret += ' :returns {0}: {1}'.format(element.get_dash_name(), t)
 
         if element.has_constants() or \
            packet.get_function_id() == 255 and element.get_underscore_name() == 'device_identifier':
@@ -477,6 +450,9 @@ Befehlsstruktur
 class ShellDocGenerator(common.DocGenerator):
     def get_device_class(self):
         return shell_common.ShellDevice
+
+    def get_element_class(self):
+        return shell_common.ShellElement
 
     def generate(self, device_):
         global device

@@ -40,110 +40,11 @@ getter_patterns = []
 setter_patterns = []
 callback_patterns = []
 
-def get_type_converter(element):
-    types = {
-        'int8':   'convert_int',
-        'uint8':  'convert_int',
-        'int16':  'convert_int',
-        'uint16': 'convert_int',
-        'int32':  'convert_int',
-        'uint32': 'convert_int',
-        'int64':  'convert_int',
-        'uint64': 'convert_int',
-        'bool':   'convert_bool',
-        'char':   'check_char',
-        'string': 'string',
-        'float':  'float'
-    }
-
-    t = types[element.get_type()]
-
-    if element.has_constants():
-        symbols = {}
-
-        for symbol in element.get_constants()[2]:
-            symbols[symbol[1].replace('_', '-')] = symbol[2]
-
-        if element.get_cardinality() > 1 and t != 'string':
-            return 'create_array_converter(ctx, create_symbol_converter(ctx, {0}, {1}), {2})'.format(t, symbols, element.get_cardinality())
-        elif t == 'string':
-            return 'create_string_checker(create_symbol_converter(ctx, str, {0}), {1})'.format(symbols, element.get_cardinality())
-        else:
-            return 'create_symbol_converter(ctx, {0}, {1})'.format(t, symbols)
-    else:
-        if element.get_cardinality() > 1 and t != 'string':
-            return 'create_array_converter(ctx, {0}, {1})'.format(t, element.get_cardinality())
-        elif t == 'string':
-            return 'create_string_checker(str, {0})'.format(element.get_cardinality())
-        else:
-            return t
-
-def get_element_help(element):
-    types = {
-        'int8':   'int',
-        'uint8':  'int',
-        'int16':  'int',
-        'uint16': 'int',
-        'int32':  'int',
-        'uint32': 'int',
-        'int64':  'int',
-        'uint64': 'int',
-        'bool':   'bool',
-        'char':   'char',
-        'string': 'string',
-        'float':  'float'
-    }
-
-    symbols_doc = ''
-
-    if element.has_constants():
-        symbols = []
-
-        for symbol in element.get_constants()[2]:
-            symbols.append('{0}: {1}'.format(symbol[1].replace('_', '-'), symbol[2]))
-
-        symbols_doc = ' (' + ', '.join(symbols) + ')'
-
-    t = types[element.get_type()]
-
-    if element.get_cardinality() == 1 or t == 'string':
-        help = "'{0}{1}'".format(t, symbols_doc)
-    else:
-        help = "get_array_type_name(ctx, '{0}', {1})".format(t, element.get_cardinality())
-
-        if len(symbols_doc) > 0:
-            help += "+ '{0}'".format(symbols_doc)
-
-    return help
-
-def get_format(element):
-    formats = {
-        'int8':   'b',
-        'uint8':  'B',
-        'int16':  'h',
-        'uint16': 'H',
-        'int32':  'i',
-        'uint32': 'I',
-        'int64':  'q',
-        'uint64': 'Q',
-        'float':  'f',
-        'bool':   '?',
-        'string': 's',
-        'char':   'c'
-    }
-
-    return formats[element.get_type()]
-
 def make_format_list(packet, direction):
     formats = []
 
     for element in packet.get_elements(direction):
-        number = ''
-
-        if element.get_cardinality() > 1:
-            number = element.get_cardinality()
-
-        formats.append('{0}{1}'.format(number, get_format(element)))
+        formats.append(element.get_shell_struct_format())
 
     return ' '.join(formats)
 
@@ -232,9 +133,9 @@ def make_call_functions():
 
             for element in packet.get_elements('in'):
                 name = element.get_underscore_name()
-                type_converter = get_type_converter(element)
-                help = get_element_help(element)
-                metavar = "'<{0}>'".format(name.replace('_', '-'))
+                type_converter = element.get_shell_type_converter()
+                help = element.get_shell_help()
+                metavar = "'<{0}>'".format(element.get_dash_name())
 
                 params.append("\t\tparser.add_argument('{0}', type={1}, help={2}, metavar={3})".format(name, type_converter, help, metavar))
                 request_data.append('args.{0}'.format(name))
@@ -250,7 +151,7 @@ def make_call_functions():
             output_symbols = []
 
             for element in packet.get_elements('out'):
-                output_names.append("'{0}'".format(element.get_underscore_name().replace('_', '-')))
+                output_names.append("'{0}'".format(element.get_dash_name()))
 
                 if element.has_constants():
                     symbols = {}
@@ -337,7 +238,7 @@ def make_dispatch_functions():
         output = []
 
         for element in packet.get_elements('out'):
-            output.append("'{0}'".format(element.get_underscore_name().replace('_', '-')))
+            output.append("'{0}'".format(element.get_dash_name()))
 
         underscore_name = packet.get_underscore_name()
 
@@ -368,7 +269,7 @@ def make_dispatch_footer():
 def finish(directory):
     version = common.get_changelog_version(directory)
     shell = file('{0}/tinkerforge'.format(directory), 'wb')
-    header = file('{0}/tinkerforge.header'.format(directory), 'rb').read()
+    header = file('{0}/tinkerforge.header'.format(directory), 'rb').read().replace('<<VERSION>>', '.'.join(version))
     footer = file('{0}/tinkerforge.footer'.format(directory), 'rb').read().replace('<<VERSION>>', '.'.join(version))
     directory += '/bindings'
 
@@ -415,6 +316,9 @@ class ShellBindingsGenerator(common.BindingsGenerator):
 
     def get_device_class(self):
         return shell_common.ShellDevice
+
+    def get_element_class(self):
+        return shell_common.ShellElement
 
     def generate(self, device_):
         if not device_.is_released():

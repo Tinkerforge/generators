@@ -30,30 +30,31 @@ import os
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-def get_c_type(py_type, direction, is_in_signature):
-    if py_type == 'string':
-        if direction == 'in' and is_in_signature:
-            return 'const char'
-        else:
-            return 'char'
-    if py_type in ( 'int8',  'int16',  'int32' , 'int64', \
-                   'uint8', 'uint16', 'uint32', 'uint64'):
-        return "{0}_t".format(py_type)
-    return py_type
-
 def make_parameter_list(packet):
     param = ''
     for element in packet.get_elements():
-        c_type = get_c_type(element.get_type(), element.get_direction(), True)
+        c_type = element.get_c_type(True)
         name = element.get_underscore_name()
         pointer = ''
         arr = ''
         if element.get_direction() == 'out':
             pointer = '*'
-            name = "ret_{0}".format(name)
+            name = 'ret_{0}'.format(name)
         if element.get_cardinality() > 1:
             arr = '[{0}]'.format(element.get_cardinality())
             pointer = ''
 
         param += ', {0} {1}{2}{3}'.format(c_type, pointer, name, arr)
     return param
+
+class CElement(common.Element):
+    def get_c_type(self, is_in_signature):
+        if self.get_type() == 'string':
+            if self.get_direction() == 'in' and is_in_signature:
+                return 'const char'
+            else:
+                return 'char'
+        if self.get_type() in ('int8', 'int16', 'int32', 'int64', 'uint8', 'uint16', 'uint32', 'uint64'):
+            return '{0}_t'.format(self.get_type())
+
+        return self.get_type()

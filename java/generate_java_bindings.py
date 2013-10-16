@@ -144,7 +144,7 @@ def make_return_objects():
         params = []
         tostr = []
         for element in packet.get_elements():
-            typ = java_common.get_java_type(element.get_type())
+            typ = element.get_java_type()
             ele_name = element.get_headless_camel_case_name()
             if element.get_cardinality() > 1 and element.get_type() != 'string':
                 arr = '[]'
@@ -181,7 +181,6 @@ def make_listener_definitions():
         doc = format_doc(packet)
         cbs += cb.format(name, name_lower, parameter, doc)
     return cbs
-
 
 def make_response_expected():
     res = ''
@@ -283,15 +282,17 @@ def make_constants():
     str_constant = '\tpublic final static {0} {1}_{2} = {3}{4};\n'
     constants = device.get_constants()
     for constant in constants:
+        typ = java_common.JavaElement(None, [None, constant.type, 1]).get_java_type() # FIXME
+
         for definition in constant.definitions:
             if constant.type == 'char':
                 cast = ''
                 value = "'{0}'".format(definition.value)
             else:
-                cast = '({0})'.format(java_common.get_java_type(constant.type))
+                cast = '({0})'.format(typ)
                 value = str(definition.value)
 
-            str_constants += str_constant.format(java_common.get_java_type(constant.type),
+            str_constants += str_constant.format(typ,
                                                  constant.name_uppercase,
                                                  definition.name_uppercase,
                                                  cast,
@@ -321,50 +322,7 @@ def make_constructor():
 \t\tapiVersion[2] = {3};
 """
 
-    return con.format(device.get_java_class_name(),
-                      *device.get_api_version())
-
-def get_put_type(typ):
-    forms = {
-        'int8' : '',
-        'uint8' : '',
-        'int16' : 'Short',
-        'uint16' : 'Short',
-        'int32' : 'Int',
-        'uint32' : 'Int',
-        'int64' : 'Long',
-        'uint64' : 'Long',
-        'float' : 'Float',
-        'bool' : '',
-        'string' : '',
-        'char' : ''
-    }
-
-    if typ in forms:
-        return forms[typ]
-
-    return ''
-
-def get_put_java_type(typ):
-    forms = {
-        'int8' : 'byte',
-        'uint8' : 'byte',
-        'int16' : 'short',
-        'uint16' : 'short',
-        'int32' : 'int',
-        'uint32' : 'int',
-        'int64' : 'long',
-        'uint64' : 'long',
-        'float' : 'float',
-        'bool' : 'byte',
-        'string' : 'byte',
-        'char' : 'byte'
-    }
-
-    if typ in forms:
-        return forms[typ]
-
-    return ''
+    return con.format(device.get_java_class_name(), *device.get_api_version())
 
 def make_methods():
     methods = ''
@@ -415,11 +373,11 @@ def make_methods():
                 name = '({0} ? 1 : 0)'.format(name)
 
             cast = ''
-            put_java_type = get_put_java_type(element.get_type())
-            if put_java_type != java_common.get_java_type(element.get_type()):
-                cast = '({0})'.format(put_java_type)
+            storage_type = element.get_java_byte_buffer_storage_type()
+            if storage_type != element.get_java_type():
+                cast = '({0})'.format(storage_type)
 
-            bbput_format = bbput.format(get_put_type(element.get_type()),
+            bbput_format = bbput.format(element.get_java_byte_buffer_method_suffix(),
                                         cast,
                                         name)
 
@@ -477,7 +435,7 @@ def make_bbgets(packet, with_obj = False):
     for element in packet.get_elements('out'):
         typ = ''
         if not with_obj:
-            typ = java_common.get_java_type(element.get_type()) + ' '
+            typ = element.get_java_type() + ' '
 
         bbret = element.get_headless_camel_case_name()
         obj = ''
@@ -513,7 +471,7 @@ def make_bbgets(packet, with_obj = False):
                                     obj,
                                     bbret,
                                     cast,
-                                    get_put_type(element.get_type()),
+                                    element.get_java_byte_buffer_method_suffix(),
                                     cast_extra,
                                     boolean)
 
@@ -537,6 +495,9 @@ class JavaBindingsGenerator(common.BindingsGenerator):
 
     def get_device_class(self):
         return java_common.JavaDevice
+
+    def get_element_class(self):
+        return java_common.JavaElement
 
     def generate(self, device_):
         global device
