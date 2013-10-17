@@ -37,6 +37,8 @@ Sets the state of the LEDs. Possible states are:
 * 3 = Off: Disables LED (auto toggle is disabled).
 
 In auto toggle mode the LED is toggled automatically at each press of a button.
+
+The default value is (1, 1).
 """,
 'de':
 """
@@ -49,6 +51,8 @@ Setzt den Zustand der LEDs. Möglich Zustände sind:
 
 Im Auto-Toggle Modus wechselt die LED automatisch zwischen aus und an bei jedem
 Tasterdruck.
+
+Der Standardwert ist (1, 1).
 """
 }]
 })
