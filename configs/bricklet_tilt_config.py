@@ -34,6 +34,7 @@ Returns the current tilt state. The state can either be
    :scale: 100 %
    :alt: Tilt states
    :align: center
+   :target: ../../_images/Bricklets/bricklet_tilt_mechanics.jpg
 
 """,
 'de':
@@ -49,6 +50,7 @@ annehmen:
    :scale: 100 %
    :alt: Tilt-Zustände
    :align: center
+   :target: ../../_images/Bricklets/bricklet_tilt_mechanics.jpg
 
 """
 }]
