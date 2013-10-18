@@ -38,6 +38,10 @@ Sets the state of the LEDs. Possible states are:
 
 In auto toggle mode the LED is toggled automatically at each press of a button.
 
+If you just want to set one of the LEDs and don't know the current state
+of the other LED, you can get the state with :func:`GetLEDState` or you
+can use :func:`SetSelectedLEDState`.
+
 The default value is (1, 1).
 """,
 'de':
@@ -51,6 +55,10 @@ Setzt den Zustand der LEDs. Möglich Zustände sind:
 
 Im Auto-Toggle Modus wechselt die LED automatisch zwischen aus und an bei jedem
 Tasterdruck.
+
+Wenn nur eines der LEDs gesetzt werden soll und der aktuelle Zustand der anderen LED
+nicht bekannt ist, dann kann der Zustand mit :func:`GetLEDState` ausgelesen werden oder
+es kann :func:`SetSelectedLEDState` genutzt werden.
 
 Der Standardwert ist (1, 1).
 """
@@ -156,6 +164,33 @@ Mögliche Zustände der LEDs sind:
 * 1 = AutoToggleOff: Auto-Toggle aktiv und LED aus.
 * 2 = On: Aktiviert LED (Auto-Toggle ist deaktiviert).
 * 3 = Off: Deaktiviert LED (Auto-Toggle ist deaktiviert).
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetSelectedLEDState', 'set_selected_led_state'), 
+'elements': [('led', 'uint8', 1, 'in', ('LED', 'led', [('Left', 'left', 0),
+                                                       ('Right', 'right', 1)])),
+             ('state', 'uint8', 1, 'in', ('LEDState', 'led_state', [('AutoToggleOn', 'auto_toggle_on', 0),
+                                                                    ('AutoToggleOff', 'auto_toggle_off', 1),
+                                                                    ('On', 'on', 2),
+                                                                    ('Off', 'off', 3)])),
+],
+'since_firmware': [2, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Sets the state of the selected LED (0 or 1). 
+
+The other LED remains untouched.
+""",
+'de':
+"""
+Setzt den Zustand der selektierten LED (0 oder 1).
+
+Die andere LED bleibt unangetastet.
 """
 }]
 })
