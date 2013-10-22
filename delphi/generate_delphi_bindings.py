@@ -101,21 +101,6 @@ def format_doc(packet):
 
     return '\n    ///  '.join(text.strip().split('\n'))
 
-def make_parameter_doc(packet):
-    param = []
-    for element in packet.get_elements():
-        if element.get_direction() == 'out' or packet.get_type() != 'function':
-            continue
-
-        delphi_type = element.get_delphi_type()[0]
-        if element.get_cardinality() > 1 and element.get_type() != 'string':
-            param.append('@param {0}[] ${1}'.format(delphi_type, element.get_underscore_name()))
-        else:
-            param.append('@param {0} ${1}'.format(delphi_type, element.get_underscore_name()))
-
-    param.append('\n@return ' + delphi_common.get_return_type(packet, True))
-    return '\n'.join(param)
-
 def make_unit_header(version):
     include = """{0}
 unit {1}{2};
@@ -181,13 +166,6 @@ def make_callback_id_definitions():
                          packet.get_upper_case_name(),
                          packet.get_function_id())
     return cbs + '\n'
-
-def get_object_name(packet):
-    name = packet.get_camel_case_name()
-    if name.startswith('Get'):
-        name = name[3:]
-
-    return name
 
 def make_arrays():
     arrays = 'type\n'
