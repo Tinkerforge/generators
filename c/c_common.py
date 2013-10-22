@@ -47,6 +47,63 @@ def make_parameter_list(packet):
         param += ', {0} {1}{2}{3}'.format(c_type, pointer, name, arr)
     return param
 
+class CPacket(common.Packet):
+    def get_c_struct_list(self):
+        struct_list = ''
+        needs_i = False
+
+        for element in self.get_elements('in'):
+            sf = 'request'
+
+            if element.get_type() == 'string':
+                temp = '\n\tstrncpy({0}.{1}, {1}, {2});\n'
+                struct_list += temp.format(sf, element.get_underscore_name(), element.get_cardinality())
+            elif element.get_cardinality() > 1:
+                if common.get_type_size(element.get_type()) > 1:
+                    needs_i = True
+                    struct_list += '\n\tfor (i = 0; i < {3}; i++) {0}.{1}[i] = leconvert_{2}_to({1}[i]);' \
+                                   .format(sf, element.get_underscore_name(), element.get_type(), element.get_cardinality())
+                else:
+                    temp = '\n\tmemcpy({0}.{1}, {1}, {2} * sizeof({3}));'
+                    struct_list += temp.format(sf,
+                                               element.get_underscore_name(),
+                                               element.get_cardinality(),
+                                               element.get_c_type(False))
+            elif common.get_type_size(element.get_type()) > 1:
+                struct_list += '\n\t{0}.{1} = leconvert_{2}_to({1});'.format(sf, element.get_underscore_name(), element.get_type())
+            else:
+                struct_list += '\n\t{0}.{1} = {1};'.format(sf, element.get_underscore_name())
+
+        return struct_list, needs_i
+
+    def get_c_return_list(self):
+        return_list = ''
+        needs_i = False
+
+        for element in self.get_elements('out'):
+            sf = 'response'
+
+            if element.get_type() == 'string':
+                temp = '\tstrncpy(ret_{0}, {1}.{0}, {2});\n'
+                return_list += temp.format(element.get_underscore_name(), sf, element.get_cardinality())
+            elif element.get_cardinality() > 1:
+                if common.get_type_size(element.get_type()) > 1:
+                    needs_i = True
+                    return_list += '\tfor (i = 0; i < {3}; i++) ret_{0}[i] = leconvert_{2}_from({1}.{0}[i]);\n' \
+                                   .format(element.get_underscore_name(), sf, element.get_type(), element.get_cardinality())
+                else:
+                    temp = '\tmemcpy(ret_{0}, {1}.{0}, {2} * sizeof({3}));\n'
+                    return_list += temp.format(element.get_underscore_name(),
+                                               sf,
+                                               element.get_cardinality(),
+                                               element.get_c_type(False))
+            elif common.get_type_size(element.get_type()) > 1:
+                return_list += '\t*ret_{0} = leconvert_{2}_from({1}.{0});\n'.format(element.get_underscore_name(), sf, element.get_type())
+            else:
+                return_list += '\t*ret_{0} = {1}.{0};\n'.format(element.get_underscore_name(), sf)
+
+        return return_list, needs_i
+
 class CElement(common.Element):
     def get_c_type(self, is_in_signature):
         if self.get_type() == 'string':

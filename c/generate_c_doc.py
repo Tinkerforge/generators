@@ -397,6 +397,9 @@ Konstanten
     return common.select_lang(api).format(ref, api_desc, api_str)
 
 class CDocGenerator(common.DocGenerator):
+    def get_packet_class(self):
+        return c_common.CPacket
+
     def get_element_class(self):
         return c_common.CElement
 

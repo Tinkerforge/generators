@@ -344,56 +344,6 @@ int {0}_set_response_expected_all({1} *{0}, bool response_expected) {{
                        device.get_camel_case_name())
 
 def make_method_funcs():
-    def make_struct_list(packet):
-        struct_list = ''
-        needs_i = False
-        for element in packet.get_elements('in'):
-            sf = 'request'
-            if element.get_type() == 'string':
-                temp = '\n\tstrncpy({0}.{1}, {1}, {2});\n'
-                struct_list += temp.format(sf, element.get_underscore_name(), element.get_cardinality())
-            elif element.get_cardinality() > 1:
-                if common.get_type_size(element.get_type()) > 1:
-                    needs_i = True
-                    struct_list += '\n\tfor (i = 0; i < {3}; i++) {0}.{1}[i] = leconvert_{2}_to({1}[i]);' \
-                                   .format(sf, element.get_underscore_name(), element.get_type(), element.get_cardinality())
-                else:
-                    temp = '\n\tmemcpy({0}.{1}, {1}, {2} * sizeof({3}));'
-                    struct_list += temp.format(sf,
-                                               element.get_underscore_name(),
-                                               element.get_cardinality(),
-                                               element.get_c_type(False))
-            elif common.get_type_size(element.get_type()) > 1:
-                struct_list += '\n\t{0}.{1} = leconvert_{2}_to({1});'.format(sf, element.get_underscore_name(), element.get_type())
-            else:
-                struct_list += '\n\t{0}.{1} = {1};'.format(sf, element.get_underscore_name())
-        return struct_list, needs_i
-
-    def make_return_list(packet):
-        return_list = ''
-        needs_i = False
-        for element in packet.get_elements('out'):
-            sf = 'response'
-            if element.get_type() == 'string':
-                temp = '\tstrncpy(ret_{0}, {1}.{0}, {2});\n'
-                return_list += temp.format(element.get_underscore_name(), sf, element.get_cardinality())
-            elif element.get_cardinality() > 1:
-                if common.get_type_size(element.get_type()) > 1:
-                    needs_i = True
-                    return_list += '\tfor (i = 0; i < {3}; i++) ret_{0}[i] = leconvert_{2}_from({1}.{0}[i]);\n' \
-                                   .format(element.get_underscore_name(), sf, element.get_type(), element.get_cardinality())
-                else:
-                    temp = '\tmemcpy(ret_{0}, {1}.{0}, {2} * sizeof({3}));\n'
-                    return_list += temp.format(element.get_underscore_name(),
-                                               sf,
-                                               element.get_cardinality(),
-                                               element.get_c_type(False))
-            elif common.get_type_size(element.get_type()) > 1:
-                return_list += '\t*ret_{0} = leconvert_{2}_from({1}.{0});\n'.format(element.get_underscore_name(), sf, element.get_type())
-            else:
-                return_list += '\t*ret_{0} = {1}.{0};\n'.format(element.get_underscore_name(), sf)
-        return return_list, needs_i
-
     func_version = """
 int {0}_get_api_version({1} *{0}, uint8_t ret_api_version[3]) {{
 \treturn device_get_api_version({0}->p, ret_api_version);
@@ -437,10 +387,10 @@ int {0}_{1}({2} *{0}{3}) {{
         fid = '{0}_FUNCTION_{1}'.format(device.get_upper_case_name(),
                                         packet.get_upper_case_name())
         f = packet.get_camel_case_name()
-        h, needs_i = make_struct_list(packet)
+        h, needs_i = packet.get_c_struct_list()
         if len(packet.get_elements('out')) > 0:
             g = '\n\t' + f + 'Response_ response;'
-            rl, needs_i2 = make_return_list(packet)
+            rl, needs_i2 = packet.get_c_return_list()
             i = func_ret.format(f, device_name, rl)
             r = '(Packet *)&response'
         else:
@@ -701,6 +651,9 @@ class CBindingsGenerator(common.BindingsGenerator):
         common.BindingsGenerator.__init__(self, *args, **kwargs)
 
         self.released_files_name_prefix = 'c'
+
+    def get_packet_class(self):
+        return c_common.CPacket
 
     def get_element_class(self):
         return c_common.CElement
