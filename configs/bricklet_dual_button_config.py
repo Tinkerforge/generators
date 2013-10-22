@@ -56,7 +56,7 @@ Setzt den Zustand der LEDs. Möglich Zustände sind:
 Im Auto-Toggle Modus wechselt die LED automatisch zwischen aus und an bei jedem
 Tasterdruck.
 
-Wenn nur eines der LEDs gesetzt werden soll und der aktuelle Zustand der anderen LED
+Wenn nur eine der LEDs gesetzt werden soll und der aktuelle Zustand der anderen LED
 nicht bekannt ist, dann kann der Zustand mit :func:`GetLEDState` ausgelesen werden oder
 es kann :func:`SetSelectedLEDState` genutzt werden.
 
