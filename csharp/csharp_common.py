@@ -30,41 +30,49 @@ import sys
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-def make_parameter_list(packet, useOutParams=True):
-    param = []
-    for element in packet.get_elements():
-        if (not useOutParams) and element.get_direction() == 'out':
-            continue
-
-        out = ''
-        if element.get_direction() == 'out' and packet.get_type() == 'function':
-            out = 'out '
-
-        csharp_type = element.get_csharp_type()
-        name = element.get_headless_camel_case_name()
-
-        param.append('{0}{1} {2}'.format(out, csharp_type, name))
-    return ', '.join(param)
-
-def make_method_signature(packet, printFullName=False, device=None, is_doc=False):
-    sig_format = "public {4}{0} {1}{2}({3})"
-    ret_count = len(packet.get_elements('out'))
-    params = make_parameter_list(packet, ret_count > 1)
-    return_type = 'void'
-    if ret_count == 1:
-        return_type = packet.get_elements('out')[0].get_csharp_type()
-    classPrefix = ''
-    if printFullName:
-        classPrefix = device.get_category() + device.get_camel_case_name() + '::'
-    override = ''
-    if not is_doc and packet.has_prototype_in_device():
-        override = 'override '
-
-    return sig_format.format(return_type, classPrefix, packet.get_camel_case_name(), params, override)
-
 class CSharpDevice(common.Device):
     def get_csharp_class_name(self):
         return self.get_category() + self.get_camel_case_name()
+
+class CSharpPacket(common.Packet):
+    def get_csharp_parameter_list(self, use_out_params=True):
+        param = []
+
+        for element in self.get_elements():
+            if (not use_out_params) and element.get_direction() == 'out':
+                continue
+
+            out = ''
+            if element.get_direction() == 'out' and self.get_type() == 'function':
+                out = 'out '
+
+            csharp_type = element.get_csharp_type()
+            name = element.get_headless_camel_case_name()
+
+            param.append('{0}{1} {2}'.format(out, csharp_type, name))
+
+        return ', '.join(param)
+
+    def get_csharp_method_signature(self, print_full_name=False, is_doc=False):
+        sig_format = "public {4}{0} {1}{2}({3})"
+        ret_count = len(self.get_elements('out'))
+        params = self.get_csharp_parameter_list(ret_count > 1)
+        return_type = 'void'
+
+        if ret_count == 1:
+            return_type = self.get_elements('out')[0].get_csharp_type()
+
+        class_prefix = ''
+
+        if print_full_name:
+            class_prefix = self.get_device().get_csharp_class_name() + '::'
+
+        override = ''
+
+        if not is_doc and self.has_prototype_in_device():
+            override = 'override '
+
+        return sig_format.format(return_type, class_prefix, self.get_camel_case_name(), params, override)
 
 class CSharpElement(common.Element):
     csharp_types = {

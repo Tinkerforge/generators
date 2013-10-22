@@ -33,85 +33,85 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 import csharp_common
 
-device = None
+class CSharpBindingsPacket(csharp_common.CSharpPacket):
+    def get_csharp_formatted_doc(self):
+        text = common.select_lang(self.get_doc()[1])
+        link = '<see cref="Tinkerforge.{0}.{1}"/>'
 
-def format_doc(packet):
-    text = common.select_lang(packet.get_doc()[1])
-    link = '<see cref="Tinkerforge.{0}.{1}"/>'
+        # escape XML special chars
+        text = escape(text)
 
-    # escape XML special chars
-    text = escape(text)
+        # handle notes and warnings
+        lines = text.split('\n')
+        replaced_lines = []
+        in_note = False
+        in_warning = False
+        in_table_head = False
+        in_table_body = False
 
-    # handle notes and warnings
-    lines = text.split('\n')
-    replaced_lines = []
-    in_note = False
-    in_warning = False
-    in_table_head = False
-    in_table_body = False
+        for line in lines:
+            if line.strip() == '.. note::':
+                in_note = True
+                replaced_lines.append('<note>')
+            elif line.strip() == '.. warning::':
+                in_warning = True
+                replaced_lines.append('<note type="caution">')
+            elif len(line.strip()) == 0 and (in_note or in_warning):
+                if in_note:
+                    in_note = False
+                if in_warning:
+                    in_warning = False
 
-    for line in lines:
-        if line.strip() == '.. note::':
-            in_note = True
-            replaced_lines.append('<note>')
-        elif line.strip() == '.. warning::':
-            in_warning = True
-            replaced_lines.append('<note type="caution">')
-        elif len(line.strip()) == 0 and (in_note or in_warning):
-            if in_note:
-                in_note = False
-            if in_warning:
-                in_warning = False
+                replaced_lines.append('</note>')
+                replaced_lines.append('')
+            elif line.strip() == '.. csv-table::':
+                in_table_head = True
+                replaced_lines.append('<code>')
+            elif line.strip().startswith(':header: ') and in_table_head:
+                replaced_lines.append(line[len(':header: '):])
+            elif line.strip().startswith(':widths:') and in_table_head:
+                pass
+            elif len(line.strip()) == 0 and in_table_head:
+                in_table_head = False
+                in_table_body = True
 
-            replaced_lines.append('</note>')
-            replaced_lines.append('')
-        elif line.strip() == '.. csv-table::':
-            in_table_head = True
-            replaced_lines.append('<code>')
-        elif line.strip().startswith(':header: ') and in_table_head:
-            replaced_lines.append(line[len(':header: '):])
-        elif line.strip().startswith(':widths:') and in_table_head:
-            pass
-        elif len(line.strip()) == 0 and in_table_head:
-            in_table_head = False
-            in_table_body = True
+                replaced_lines.append('')
+            elif len(line.strip()) == 0 and in_table_body:
+                in_table_body = False
 
-            replaced_lines.append('')
-        elif len(line.strip()) == 0 and in_table_body:
-            in_table_body = False
+                replaced_lines.append('</code>')
+                replaced_lines.append('')
+            else:
+                replaced_lines.append(line)
 
-            replaced_lines.append('</code>')
-            replaced_lines.append('')
-        else:
-            replaced_lines.append(line)
+        text = '\n'.join(replaced_lines)
 
-    text = '\n'.join(replaced_lines)
+        cls = self.get_device().get_csharp_class_name()
+        for other_packet in self.get_device().get_packets():
+            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+            name = other_packet.get_camel_case_name()
+            name_right = link.format(cls, name)
+            text = text.replace(name_false, name_right)
 
-    cls = device.get_csharp_class_name()
-    for other_packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-        name = other_packet.get_camel_case_name()
-        name_right = link.format(cls, name)
-        text = text.replace(name_false, name_right)
+        text = common.handle_rst_word(text)
+        text = common.handle_rst_if(text, device)
+        text += common.format_since_firmware(self.get_device(), self)
 
-    text = common.handle_rst_word(text)
-    text = common.handle_rst_if(text, device)
-    text += common.format_since_firmware(device, packet)
+        return '\n\t\t///  '.join(text.strip().split('\n'))
 
-    return '\n\t\t///  '.join(text.strip().split('\n'))
-
-def make_import(version):
-    include = """{0}
+class CSharpBindingsDevice(csharp_common.CSharpDevice):
+    def get_csharp_import(self, version):
+        include = """{0}
 using System;
 
 namespace Tinkerforge
 {{"""
-    date = datetime.datetime.now().strftime("%Y-%m-%d")
+        date = datetime.datetime.now().strftime("%Y-%m-%d")
 
-    return include.format(common.gen_text_star.format(date, *version))
+        return include.format(common.gen_text_star.format(date, *version))
 
-def make_class():
-    class_str = """
+    def get_csharp_class(self):
+        class_str = """
 \t/// <summary>
 \t///  {1}
 \t/// </summary>
@@ -124,13 +124,13 @@ def make_class():
 \t\tpublic static int DEVICE_IDENTIFIER = {2};
 """
 
-    return class_str.format(device.get_csharp_class_name(),
-                            device.get_description(),
-                            device.get_device_identifier())
+        return class_str.format(self.get_csharp_class_name(),
+                                self.get_description(),
+                                self.get_device_identifier())
 
-def make_delegates():
-    cbs = '\n'
-    cb = """
+    def get_csharp_delegates(self):
+        cbs = '\n'
+        cb = """
 \t\t/// <summary>
 \t\t///  {2}
 \t\t/// </summary>
@@ -139,19 +139,19 @@ def make_delegates():
 \t\t/// </summary>
 \t\tpublic delegate void {0}EventHandler({3} sender{1});
 """
-    for packet in device.get_packets('callback'):
-        name = packet.get_camel_case_name()
-        parameter = csharp_common.make_parameter_list(packet)
-        doc = format_doc(packet)
-        if parameter != '':
-            parameter = ', ' + parameter
-        cbs += cb.format(name, parameter, doc, device.get_csharp_class_name())
+        for packet in self.get_packets('callback'):
+            name = packet.get_camel_case_name()
+            parameter = packet.get_csharp_parameter_list()
+            doc = packet.get_csharp_formatted_doc()
+            if parameter != '':
+                parameter = ', ' + parameter
+            cbs += cb.format(name, parameter, doc, self.get_csharp_class_name())
 
-    return cbs
+        return cbs
 
-def make_function_id_definitions():
-    function_ids = ''
-    function_id = """
+    def get_csharp_function_id_definitions(self):
+        function_ids = ''
+        function_id = """
 \t\t/// <summary>
 \t\t///  Function ID to be used with
 \t\t///  <see cref="Tinkerforge.{3}.GetResponseExpected"/>,
@@ -160,38 +160,38 @@ def make_function_id_definitions():
 \t\t/// </summary>
 \t\tpublic const byte {2}_{0} = {1};
 """
-    for packet in device.get_packets():
-        function_ids += function_id.format(packet.get_upper_case_name(),
-                                           packet.get_function_id(),
-                                           packet.get_type().upper(),
-                                           device.get_csharp_class_name())
-    return function_ids
+        for packet in self.get_packets():
+            function_ids += function_id.format(packet.get_upper_case_name(),
+                                               packet.get_function_id(),
+                                               packet.get_type().upper(),
+                                               self.get_csharp_class_name())
+        return function_ids
 
-def make_constants():
-    str_constants = '\n'
-    str_constant = """
+    def get_csharp_constants(self):
+        str_constants = '\n'
+        str_constant = """
 \t\t/// <summary>
 \t\t/// </summary>
 \t\tpublic const {0} {1}_{2} = {3};
 """
-    constants = device.get_constants()
-    for constant in constants:
-        for definition in constant.definitions:
-            if constant.type == 'char':
-                value = "'{0}'".format(definition.value)
-            else:
-                value = str(definition.value)
+        constants = self.get_constants()
+        for constant in constants:
+            for definition in constant.definitions:
+                if constant.type == 'char':
+                    value = "'{0}'".format(definition.value)
+                else:
+                    value = str(definition.value)
 
-            str_constants += str_constant.format(csharp_common.CSharpElement(None, [None, constant.type, 1]).get_csharp_type(), # FIXME
-                                                 constant.name_uppercase,
-                                                 definition.name_uppercase,
-                                                 value)
-    return str_constants
+                str_constants += str_constant.format(csharp_common.CSharpElement(None, [None, constant.type, 1]).get_csharp_type(), # FIXME
+                                                     constant.name_uppercase,
+                                                     definition.name_uppercase,
+                                                     value)
+        return str_constants
 
-def make_constructor():
-    cbs = []
-    cb = '\t\t\tcallbackWrappers[CALLBACK_{0}] = new CallbackWrapper(On{1});'
-    con = """
+    def get_csharp_constructor(self):
+        cbs = []
+        cb = '\t\t\tcallbackWrappers[CALLBACK_{0}] = new CallbackWrapper(On{1});'
+        con = """
 \t\t/// <summary>
 \t\t///  Creates an object with the unique device ID <c>uid</c> and adds  it to
 \t\t///  the IPConnection <c>ipcon</c>.
@@ -204,38 +204,38 @@ def make_constructor():
 {1}
 """
 
-    for packet in device.get_packets('callback'):
-        name_upper = packet.get_upper_case_name()
-        name_pascal = packet.get_camel_case_name()
-        cbs.append(cb.format(name_upper, name_pascal))
+        for packet in self.get_packets('callback'):
+            name_upper = packet.get_upper_case_name()
+            name_pascal = packet.get_camel_case_name()
+            cbs.append(cb.format(name_upper, name_pascal))
 
-    return con.format(device.get_csharp_class_name(), '\n'.join(cbs),
-                      *device.get_api_version())
+        return con.format(self.get_csharp_class_name(), '\n'.join(cbs),
+                          *self.get_api_version())
 
-def make_response_expected():
-    res = '\n'
-    re = "\t\t\tresponseExpected[{0}] = {1}\n"
+    def get_csharp_response_expected(self):
+        res = '\n'
+        re = "\t\t\tresponseExpected[{0}] = {1}\n"
 
-    for packet in device.get_packets('function'):
-        name_upper = 'FUNCTION_' + packet.get_upper_case_name()
-        setto = 'ResponseExpectedFlag.FALSE;'
-        if len(packet.get_elements('out')) > 0:
-            setto = 'ResponseExpectedFlag.ALWAYS_TRUE;'
-        elif packet.get_doc()[0] == 'ccf':
-            setto = 'ResponseExpectedFlag.TRUE;'
+        for packet in self.get_packets('function'):
+            name_upper = 'FUNCTION_' + packet.get_upper_case_name()
+            setto = 'ResponseExpectedFlag.FALSE;'
+            if len(packet.get_elements('out')) > 0:
+                setto = 'ResponseExpectedFlag.ALWAYS_TRUE;'
+            elif packet.get_doc()[0] == 'ccf':
+                setto = 'ResponseExpectedFlag.TRUE;'
 
-        res += re.format(name_upper, setto)
+            res += re.format(name_upper, setto)
 
-    for packet in device.get_packets('callback'):
-        name_upper = 'CALLBACK_' + packet.get_upper_case_name()
-        setto = 'ResponseExpectedFlag.ALWAYS_FALSE;'
-        res += re.format(name_upper, setto)
+        for packet in self.get_packets('callback'):
+            name_upper = 'CALLBACK_' + packet.get_upper_case_name()
+            setto = 'ResponseExpectedFlag.ALWAYS_FALSE;'
+            res += re.format(name_upper, setto)
 
-    return res + '\t\t}\n'
+        return res + '\t\t}\n'
 
-def make_callbacks():
-    cbs = ''
-    cb = """
+    def get_csharp_callbacks(self):
+        cbs = ''
+        cb = """
 \t\t/// <summary>
 \t\t/// </summary>
 \t\tprotected void On{0}(byte[] response)
@@ -248,48 +248,48 @@ def make_callbacks():
 \t\t}}
 """
 
-    for packet in device.get_packets('callback'):
-        name = packet.get_camel_case_name()
-        name_upper = packet.get_upper_case_name()
-        eles = []
-        for element in packet.get_elements('out'):
-            eles.append(element.get_headless_camel_case_name())
-        callParams = ", ".join(eles)
-        signatureParams = csharp_common.make_parameter_list(packet)
-        size = str(packet.get_request_size())
+        for packet in self.get_packets('callback'):
+            name = packet.get_camel_case_name()
+            name_upper = packet.get_upper_case_name()
+            eles = []
+            for element in packet.get_elements('out'):
+                eles.append(element.get_headless_camel_case_name())
+            callParams = ", ".join(eles)
+            signatureParams = packet.get_csharp_parameter_list()
+            size = str(packet.get_request_size())
 
-        convs = ''
-        conv = '\t\t\t{0} {1} = LEConverter.{2}({3}, response{4});\n'
+            convs = ''
+            conv = '\t\t\t{0} {1} = LEConverter.{2}({3}, response{4});\n'
 
-        pos = 8
-        for element in packet.get_elements('out'):
-            csharp_type = element.get_csharp_type()
-            cname = element.get_headless_camel_case_name()
-            from_method = element.get_csharp_le_converter_from_method()
-            length = ''
-            if element.get_cardinality() > 1:
-                length = ', ' + str(element.get_cardinality())
-            convs += conv.format(csharp_type,
-                                 cname,
-                                 from_method,
-                                 pos,
-                                 length)
+            pos = 8
+            for element in packet.get_elements('out'):
+                csharp_type = element.get_csharp_type()
+                cname = element.get_headless_camel_case_name()
+                from_method = element.get_csharp_le_converter_from_method()
+                length = ''
+                if element.get_cardinality() > 1:
+                    length = ', ' + str(element.get_cardinality())
+                convs += conv.format(csharp_type,
+                                     cname,
+                                     from_method,
+                                     pos,
+                                     length)
 
-            pos += element.get_size()
+                pos += element.get_size()
 
-        if convs != '':
-            convs += '\n'
+            if convs != '':
+                convs += '\n'
 
-        if callParams != '':
-            callParams = ', ' + callParams
+            if callParams != '':
+                callParams = ', ' + callParams
 
-        cbs += cb.format(name, convs, name_upper, callParams, pos, signatureParams)
+            cbs += cb.format(name, convs, name_upper, callParams, pos, signatureParams)
 
-    return cbs + "\t}\n}"
+        return cbs + "\t}\n}"
 
-def make_methods():
-    methods = ''
-    method = """
+    def get_csharp_methods(self):
+        methods = ''
+        method = """
 \t\t/// <summary>
 \t\t///  {5}
 \t\t/// </summary>
@@ -301,64 +301,64 @@ def make_methods():
 \t\t}}
 """
 
-    method_noresponse = """\t\t\tSendRequest(request);
+        method_noresponse = """\t\t\tSendRequest(request);
 """
 
-    method_response = """\t\t\tbyte[] response = SendRequest(request);
+        method_response = """\t\t\tbyte[] response = SendRequest(request);
 {0}"""
 
-    for packet in device.get_packets('function'):
-        ret_count = len(packet.get_elements('out'))
-        size = str(packet.get_request_size())
-        name_upper = packet.get_upper_case_name()
-        doc = format_doc(packet)
+        for packet in self.get_packets('function'):
+            ret_count = len(packet.get_elements('out'))
+            size = str(packet.get_request_size())
+            name_upper = packet.get_upper_case_name()
+            doc = packet.get_csharp_formatted_doc()
 
-        write_convs = ''
-        write_conv = '\t\t\tLEConverter.To(({2}){0}, {1}, request);\n'
-        write_conv_length = '\t\t\tLEConverter.To(({3}){0}, {1}, {2}, request);\n'
+            write_convs = ''
+            write_conv = '\t\t\tLEConverter.To(({2}){0}, {1}, request);\n'
+            write_conv_length = '\t\t\tLEConverter.To(({3}){0}, {1}, {2}, request);\n'
 
-        pos = 8
-        for element in packet.get_elements('in'):
-            wname = element.get_headless_camel_case_name()
-            csharp_type = element.get_csharp_le_converter_type()
-            if element.get_cardinality() > 1:
-                write_convs += write_conv_length.format(wname, pos, element.get_cardinality(), csharp_type)
+            pos = 8
+            for element in packet.get_elements('in'):
+                wname = element.get_headless_camel_case_name()
+                csharp_type = element.get_csharp_le_converter_type()
+                if element.get_cardinality() > 1:
+                    write_convs += write_conv_length.format(wname, pos, element.get_cardinality(), csharp_type)
+                else:
+                    write_convs += write_conv.format(wname, pos, csharp_type)
+                pos += element.get_size()
+
+            method_tail = ''
+            read_convs = ''
+            read_conv = '\n\t\t\t{0} = LEConverter.{1}({2}, response{3});'
+
+            pos = 8
+            for element in packet.get_elements('out'):
+                aname = element.get_headless_camel_case_name()
+                from_method = element.get_csharp_le_converter_from_method()
+                length = ''
+                if element.get_cardinality() > 1:
+                    length = ', ' + str(element.get_cardinality())
+
+                if ret_count == 1:
+                    read_convs = '\n\t\t\treturn LEConverter.{0}({1}, response{2});'.format(from_method, pos, length)
+                else:
+                    read_convs += read_conv.format(aname, from_method, pos, length)
+                pos += element.get_size()
+
+            if ret_count > 0:
+                method_tail = method_response.format(read_convs)
             else:
-                write_convs += write_conv.format(wname, pos, csharp_type)
-            pos += element.get_size()
+                method_tail = method_noresponse
 
-        method_tail = ''
-        read_convs = ''
-        read_conv = '\n\t\t\t{0} = LEConverter.{1}({2}, response{3});'
+            signature = packet.get_csharp_method_signature()
+            methods += method.format(signature,
+                                     size,
+                                     name_upper,
+                                     write_convs,
+                                     method_tail,
+                                     doc)
 
-        pos = 8
-        for element in packet.get_elements('out'):
-            aname = element.get_headless_camel_case_name()
-            from_method = element.get_csharp_le_converter_from_method()
-            length = ''
-            if element.get_cardinality() > 1:
-                length = ', ' + str(element.get_cardinality())
-
-            if ret_count == 1:
-                read_convs = '\n\t\t\treturn LEConverter.{0}({1}, response{2});'.format(from_method, pos, length)
-            else:
-                read_convs += read_conv.format(aname, from_method, pos, length)
-            pos += element.get_size()
-
-        if ret_count > 0:
-            method_tail = method_response.format(read_convs)
-        else:
-            method_tail = method_noresponse
-
-        signature = csharp_common.make_method_signature(packet)
-        methods += method.format(signature,
-                                 size,
-                                 name_upper,
-                                 write_convs,
-                                 method_tail,
-                                 doc)
-
-    return methods
+        return methods
 
 class CSharpBindingsGenerator(common.BindingsGenerator):
     def __init__(self, *args, **kwargs):
@@ -367,7 +367,10 @@ class CSharpBindingsGenerator(common.BindingsGenerator):
         self.released_files_name_prefix = 'csharp'
 
     def get_device_class(self):
-        return csharp_common.CSharpDevice
+        return CSharpBindingsDevice
+
+    def get_packet_class(self):
+        return CSharpBindingsPacket
 
     def get_element_class(self):
         return csharp_common.CSharpElement
@@ -380,15 +383,15 @@ class CSharpBindingsGenerator(common.BindingsGenerator):
         file_name = '{0}.cs'.format(device.get_csharp_class_name())
 
         cs = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name), 'wb')
-        cs.write(make_import(version))
-        cs.write(make_class())
-        cs.write(make_function_id_definitions())
-        cs.write(make_constants())
-        cs.write(make_delegates())
-        cs.write(make_constructor())
-        cs.write(make_response_expected())
-        cs.write(make_methods())
-        cs.write(make_callbacks())
+        cs.write(device.get_csharp_import(version))
+        cs.write(device.get_csharp_class())
+        cs.write(device.get_csharp_function_id_definitions())
+        cs.write(device.get_csharp_constants())
+        cs.write(device.get_csharp_delegates())
+        cs.write(device.get_csharp_constructor())
+        cs.write(device.get_csharp_response_expected())
+        cs.write(device.get_csharp_methods())
+        cs.write(device.get_csharp_callbacks())
         cs.close()
 
         if device.is_released():
