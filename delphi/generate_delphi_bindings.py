@@ -386,7 +386,7 @@ def make_methods():
                                                                                             element.get_delphi_le_convert_type(),
                                                                                             element.get_headless_camel_case_name(),
                                                                                             offset,
-                                                                                            common.get_type_size(element.get_type()))
+                                                                                            element.get_item_size())
             elif element.get_type() == 'string':
                 method += '  LEConvertStringTo({0}, {1}, {2}, request);\n'.format(element.get_headless_camel_case_name(),
                                                                                   offset,
@@ -417,7 +417,7 @@ def make_methods():
                                                                                                  result,
                                                                                                  element.get_delphi_le_convert_type(),
                                                                                                  offset,
-                                                                                                 common.get_type_size(element.get_type()))
+                                                                                                 element.get_item_size())
             elif element.get_type() == 'string':
                 method += '  {0} := LEConvertStringFrom({1}, {2}, response);\n'.format(result,
                                                                                        offset,
@@ -463,7 +463,7 @@ def make_callback_wrappers():
                                                                                                   element.get_headless_camel_case_name(),
                                                                                                   element.get_delphi_le_convert_type(),
                                                                                                   offset,
-                                                                                                  common.get_type_size(element.get_type()))
+                                                                                                  element.get_item_size())
             else:
                 wrapper += '    {0} := LEConvert{1}From({2}, packet);\n'.format(element.get_headless_camel_case_name(),
                                                                                 element.get_delphi_le_convert_type(),

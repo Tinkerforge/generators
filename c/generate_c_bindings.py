@@ -446,7 +446,7 @@ static void {0}_callback_wrapper_{1}(DevicePrivate *device_p, Packet *packet) {{
         endian_list = []
         i = ''
         for element in packet.get_elements():
-            if common.get_type_size(element.get_type()) > 1:
+            if element.get_item_size() > 1:
                 if element.get_cardinality() > 1:
                     i = '\n\tint i;'
                     endian_list.append('\tfor (i = 0; i < {2}; i++) callback->{0}[i] = leconvert_{1}_from(callback->{0}[i]);' \

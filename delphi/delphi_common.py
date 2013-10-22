@@ -116,8 +116,8 @@ class DelphiElement(common.Element):
         'uint64': ('uint64',   'UInt64'),
         'float':  ('single',   'Float'),
         'bool':   ('boolean',  'Boolean'),
-        'string': ('string',   'String'),
-        'char':   ('char',     'Char')
+        'char':   ('char',     'Char'),
+        'string': ('string',   'String')
     }
 
     delphi_le_convert_types = {
@@ -131,8 +131,8 @@ class DelphiElement(common.Element):
         'uint64': 'UInt64',
         'float':  'Float',
         'bool':   'Boolean',
-        'string': 'String',
-        'char':   'Char'
+        'char':   'Char',
+        'string': 'String'
     }
 
     def get_delphi_type(self):

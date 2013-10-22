@@ -244,11 +244,7 @@ Konstanten
     ref = '.. _{0}_{1}_modbus_api:\n'.format(device.get_underscore_name(),
                                              device.get_category().lower())
 
-    api_desc = ''
-    if 'api' in device.raw_data:
-        api_desc = common.select_lang(device.raw_data['api'])
-
-    return common.select_lang(api).format(ref, api_desc, api_str)
+    return common.select_lang(api).format(ref, device.get_api_doc(), api_str)
 
 class ModbusElement(common.Element):
     def get_modbus_type(self):

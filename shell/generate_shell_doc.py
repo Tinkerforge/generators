@@ -440,11 +440,8 @@ Befehlsstruktur
     ref = '.. _{0}_{1}_shell_api:\n'.format(device.get_underscore_name(),
                                             device.get_category().lower())
 
-    api_desc = ''
-    if 'api' in device.raw_data:
-        api_desc = common.select_lang(device.raw_data['api'])
-
-    return common.select_lang(api).format(ref, api_desc, api_str, device.get_shell_device_name(),
+    return common.select_lang(api).format(ref, device.get_api_doc(), api_str,
+                                          device.get_shell_device_name(),
                                           device.get_display_name() + ' ' + device.get_category())
 
 class ShellDocGenerator(common.DocGenerator):

@@ -141,34 +141,17 @@ lang = 'en'
 def shift_right(text, n):
     return text.replace('\n', '\n' + ' '*n)
 
-def get_changelog_version(path):
+def get_changelog_version(bindings_root_directory):
     r = re.compile('^(\d+)\.(\d+)\.(\d+):')
     last = None
-    for line in file(path + '/changelog.txt', 'rb').readlines():
+
+    for line in file(os.path.join(bindings_root_directory, 'changelog.txt'), 'rb').readlines():
         m = r.match(line)
 
         if m is not None:
             last = (m.group(1), m.group(2), m.group(3))
 
     return last
-
-def get_type_size(typ):
-    types = {
-        'int8'   : 1,
-        'uint8'  : 1,
-        'int16'  : 2,
-        'uint16' : 2,
-        'int32'  : 4,
-        'uint32' : 4,
-        'int64'  : 8,
-        'uint64' : 8,
-        'float'  : 4,
-        'bool'   : 1,
-        'string' : 1,
-        'char'   : 1
-    }
-
-    return types[typ]
 
 def select_lang(d):
     if lang in d:
@@ -709,8 +692,26 @@ class Element:
         else:
             return None
 
+    def get_item_size(self):
+        item_sizes = {
+            'int8':   1,
+            'uint8':  1,
+            'int16':  2,
+            'uint16': 2,
+            'int32':  4,
+            'uint32': 4,
+            'int64':  8,
+            'uint64': 8,
+            'float':  4,
+            'bool':   1,
+            'char':   1,
+            'string': 1
+        }
+
+        return item_sizes[self.get_type()]
+
     def get_size(self):
-        return get_type_size(self.get_type()) * self.get_cardinality()
+        return self.get_item_size() * self.get_cardinality()
 
 class Packet:
     valid_types = set(['int8',
@@ -721,10 +722,10 @@ class Packet:
                        'uint32',
                        'int64',
                        'uint64',
+                       'float',
                        'bool',
                        'char',
-                       'string',
-                       'float'])
+                       'string'])
 
     def __init__(self, device, raw_data, generator):
         self.device = device
@@ -888,11 +889,20 @@ class Device:
             else:
                 raise ValueError('Invalid packet type ' + packet.get_type())
 
+    def get_generator(self):
+        return self.generator
+
     def is_released(self):
         return self.raw_data['released']
 
     def get_api_version(self):
         return self.raw_data['api_version']
+
+    def get_api_doc(self):
+        if 'api' in self.raw_data:
+            return select_lang(self.raw_data['api'])
+        else:
+            return ''
 
     def get_category(self):
         return self.raw_data['category']

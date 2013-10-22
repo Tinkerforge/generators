@@ -50,10 +50,10 @@ class RubyElement(common.Element):
         'uint32': 'int',
         'int64':  'int',
         'uint64': 'int',
+        'float':  'float',
         'bool':   'bool',
         'char':   'str',
-        'string': 'str',
-        'float':  'float'
+        'string': 'str'
     }
 
     ruby_pack_formats = {
@@ -67,8 +67,8 @@ class RubyElement(common.Element):
         'uint64': ('Q', 8),
         'float':  ('e', 4),
         'bool':   ('?', 1),
-        'string': ('Z', 1),
-        'char':   ('k', 1)
+        'char':   ('k', 1),
+        'string': ('Z', 1)
     }
 
     def get_ruby_type(self):

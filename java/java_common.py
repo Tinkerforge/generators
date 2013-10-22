@@ -89,8 +89,8 @@ class JavaElement(common.Element):
         'uint64': 'long',
         'float':  'float',
         'bool':   'boolean',
-        'string': 'String',
-        'char':   'char'
+        'char':   'char',
+        'string': 'String'
     }
 
     java_byte_buffer_method_suffix = {
@@ -104,8 +104,8 @@ class JavaElement(common.Element):
         'uint64': 'Long',
         'float':  'Float',
         'bool':   '',
-        'string': '',
-        'char':   ''
+        'char':   '',
+        'string': ''
     }
 
     java_byte_buffer_storage_type = {
@@ -119,8 +119,8 @@ class JavaElement(common.Element):
         'uint64': 'long',
         'float':  'float',
         'bool':   'byte',
-        'string': 'byte',
-        'char':   'byte'
+        'char':   'byte',
+        'string': 'byte'
     }
 
     def get_java_type(self):

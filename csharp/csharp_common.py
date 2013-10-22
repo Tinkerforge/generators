@@ -78,8 +78,8 @@ class CSharpElement(common.Element):
         'uint64': 'long',
         'float':  'float',
         'bool':   'bool',
-        'string': 'string',
-        'char':   'char'
+        'char':   'char',
+        'string': 'string'
     }
 
     csharp_le_converter_types = {
@@ -93,8 +93,8 @@ class CSharpElement(common.Element):
         'uint64': 'long',
         'float':  'float',
         'bool':   'bool',
-        'string': 'string',
-        'char':   'char'
+        'char':   'char',
+        'string': 'string'
     }
 
     csharp_le_converter_from_methods = {
@@ -108,8 +108,8 @@ class CSharpElement(common.Element):
         'uint64': 'ULongFrom',
         'float':  'FloatFrom',
         'bool':   'BoolFrom',
-        'string': 'StringFrom',
-        'char':   'CharFrom'
+        'char':   'CharFrom',
+        'string': 'StringFrom'
     }
 
     def get_csharp_type(self):

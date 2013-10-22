@@ -50,10 +50,10 @@ class PythonElement(common.Element):
         'uint32': 'int',
         'int64':  'int',
         'uint64': 'int',
+        'float':  'float',
         'bool':   'bool',
         'char':   'chr',
-        'string': 'str',
-        'float':  'float'
+        'string': 'str'
     }
 
     python_struct_formats = {
@@ -67,8 +67,8 @@ class PythonElement(common.Element):
         'uint64': 'Q',
         'float':  'f',
         'bool':   '?',
-        'string': 's',
-        'char':   'c'
+        'char':   'c',
+        'string': 's'
     }
 
     def get_python_type(self):

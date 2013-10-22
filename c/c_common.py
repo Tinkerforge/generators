@@ -59,7 +59,7 @@ class CPacket(common.Packet):
                 temp = '\n\tstrncpy({0}.{1}, {1}, {2});\n'
                 struct_list += temp.format(sf, element.get_underscore_name(), element.get_cardinality())
             elif element.get_cardinality() > 1:
-                if common.get_type_size(element.get_type()) > 1:
+                if element.get_item_size() > 1:
                     needs_i = True
                     struct_list += '\n\tfor (i = 0; i < {3}; i++) {0}.{1}[i] = leconvert_{2}_to({1}[i]);' \
                                    .format(sf, element.get_underscore_name(), element.get_type(), element.get_cardinality())
@@ -69,7 +69,7 @@ class CPacket(common.Packet):
                                                element.get_underscore_name(),
                                                element.get_cardinality(),
                                                element.get_c_type(False))
-            elif common.get_type_size(element.get_type()) > 1:
+            elif element.get_item_size() > 1:
                 struct_list += '\n\t{0}.{1} = leconvert_{2}_to({1});'.format(sf, element.get_underscore_name(), element.get_type())
             else:
                 struct_list += '\n\t{0}.{1} = {1};'.format(sf, element.get_underscore_name())
@@ -87,7 +87,7 @@ class CPacket(common.Packet):
                 temp = '\tstrncpy(ret_{0}, {1}.{0}, {2});\n'
                 return_list += temp.format(element.get_underscore_name(), sf, element.get_cardinality())
             elif element.get_cardinality() > 1:
-                if common.get_type_size(element.get_type()) > 1:
+                if element.get_item_size() > 1:
                     needs_i = True
                     return_list += '\tfor (i = 0; i < {3}; i++) ret_{0}[i] = leconvert_{2}_from({1}.{0}[i]);\n' \
                                    .format(element.get_underscore_name(), sf, element.get_type(), element.get_cardinality())
@@ -97,7 +97,7 @@ class CPacket(common.Packet):
                                                sf,
                                                element.get_cardinality(),
                                                element.get_c_type(False))
-            elif common.get_type_size(element.get_type()) > 1:
+            elif element.get_item_size() > 1:
                 return_list += '\t*ret_{0} = leconvert_{2}_from({1}.{0});\n'.format(element.get_underscore_name(), sf, element.get_type())
             else:
                 return_list += '\t*ret_{0} = {1}.{0};\n'.format(element.get_underscore_name(), sf)

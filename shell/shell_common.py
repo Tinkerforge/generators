@@ -53,10 +53,10 @@ class ShellElement(common.Element):
         'uint32': 'int',
         'int64':  'int',
         'uint64': 'int',
+        'float':  'float',
         'bool':   'bool',
         'char':   'char',
-        'string': 'string',
-        'float':  'float'
+        'string': 'string'
     }
 
     shell_struct_formats = {
@@ -70,8 +70,8 @@ class ShellElement(common.Element):
         'uint64': 'Q',
         'float':  'f',
         'bool':   '?',
-        'string': 's',
-        'char':   'c'
+        'char':   'c',
+        'string': 's'
     }
 
     shell_type_converters = {
@@ -83,10 +83,10 @@ class ShellElement(common.Element):
         'uint32': 'convert_int',
         'int64':  'convert_int',
         'uint64': 'convert_int',
+        'float':  'float',
         'bool':   'convert_bool',
         'char':   'check_char',
-        'string': 'string',
-        'float':  'float'
+        'string': 'string'
     }
 
     def get_dash_name(self):

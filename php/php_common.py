@@ -74,8 +74,8 @@ class PHPElement(common.Element):
         'uint64': 'int',
         'float':  'float',
         'bool':   'bool',
-        'string': 'string',
-        'char':   'string'
+        'char':   'string',
+        'string': 'string'
     }
 
     php_pack_format = {
@@ -89,8 +89,8 @@ class PHPElement(common.Element):
        #'uint64': # NOTE: unsupported
         'float':  'f',
         'bool':   'C',
-        'string': 'c',
-        'char':   'c'
+        'char':   'c',
+        'string': 'c'
     }
 
     def get_php_type(self):
