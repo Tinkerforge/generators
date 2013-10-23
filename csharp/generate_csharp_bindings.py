@@ -33,72 +33,6 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 import csharp_common
 
-class CSharpBindingsPacket(csharp_common.CSharpPacket):
-    def get_csharp_formatted_doc(self):
-        text = common.select_lang(self.get_doc()[1])
-        link = '<see cref="Tinkerforge.{0}.{1}"/>'
-
-        # escape XML special chars
-        text = escape(text)
-
-        # handle notes and warnings
-        lines = text.split('\n')
-        replaced_lines = []
-        in_note = False
-        in_warning = False
-        in_table_head = False
-        in_table_body = False
-
-        for line in lines:
-            if line.strip() == '.. note::':
-                in_note = True
-                replaced_lines.append('<note>')
-            elif line.strip() == '.. warning::':
-                in_warning = True
-                replaced_lines.append('<note type="caution">')
-            elif len(line.strip()) == 0 and (in_note or in_warning):
-                if in_note:
-                    in_note = False
-                if in_warning:
-                    in_warning = False
-
-                replaced_lines.append('</note>')
-                replaced_lines.append('')
-            elif line.strip() == '.. csv-table::':
-                in_table_head = True
-                replaced_lines.append('<code>')
-            elif line.strip().startswith(':header: ') and in_table_head:
-                replaced_lines.append(line[len(':header: '):])
-            elif line.strip().startswith(':widths:') and in_table_head:
-                pass
-            elif len(line.strip()) == 0 and in_table_head:
-                in_table_head = False
-                in_table_body = True
-
-                replaced_lines.append('')
-            elif len(line.strip()) == 0 and in_table_body:
-                in_table_body = False
-
-                replaced_lines.append('</code>')
-                replaced_lines.append('')
-            else:
-                replaced_lines.append(line)
-
-        text = '\n'.join(replaced_lines)
-
-        cls = self.get_device().get_csharp_class_name()
-        for other_packet in self.get_device().get_packets():
-            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-            name = other_packet.get_camel_case_name()
-            name_right = link.format(cls, name)
-            text = text.replace(name_false, name_right)
-
-        text = common.handle_rst_word(text)
-        text = common.handle_rst_if(text, device)
-        text += common.format_since_firmware(self.get_device(), self)
-
-        return '\n\t\t///  '.join(text.strip().split('\n'))
-
 class CSharpBindingsDevice(csharp_common.CSharpDevice):
     def get_csharp_import(self, version):
         include = """{0}
@@ -360,6 +294,85 @@ namespace Tinkerforge
 
         return methods
 
+    def get_csharp_source(self, version):
+        source  = self.get_csharp_import(version)
+        source += self.get_csharp_class()
+        source += self.get_csharp_function_id_definitions()
+        source += self.get_csharp_constants()
+        source += self.get_csharp_delegates()
+        source += self.get_csharp_constructor()
+        source += self.get_csharp_response_expected()
+        source += self.get_csharp_methods()
+        source += self.get_csharp_callbacks()
+
+        return source
+
+class CSharpBindingsPacket(csharp_common.CSharpPacket):
+    def get_csharp_formatted_doc(self):
+        text = common.select_lang(self.get_doc()[1])
+        link = '<see cref="Tinkerforge.{0}.{1}"/>'
+
+        # escape XML special chars
+        text = escape(text)
+
+        # handle notes and warnings
+        lines = text.split('\n')
+        replaced_lines = []
+        in_note = False
+        in_warning = False
+        in_table_head = False
+        in_table_body = False
+
+        for line in lines:
+            if line.strip() == '.. note::':
+                in_note = True
+                replaced_lines.append('<note>')
+            elif line.strip() == '.. warning::':
+                in_warning = True
+                replaced_lines.append('<note type="caution">')
+            elif len(line.strip()) == 0 and (in_note or in_warning):
+                if in_note:
+                    in_note = False
+                if in_warning:
+                    in_warning = False
+
+                replaced_lines.append('</note>')
+                replaced_lines.append('')
+            elif line.strip() == '.. csv-table::':
+                in_table_head = True
+                replaced_lines.append('<code>')
+            elif line.strip().startswith(':header: ') and in_table_head:
+                replaced_lines.append(line[len(':header: '):])
+            elif line.strip().startswith(':widths:') and in_table_head:
+                pass
+            elif len(line.strip()) == 0 and in_table_head:
+                in_table_head = False
+                in_table_body = True
+
+                replaced_lines.append('')
+            elif len(line.strip()) == 0 and in_table_body:
+                in_table_body = False
+
+                replaced_lines.append('</code>')
+                replaced_lines.append('')
+            else:
+                replaced_lines.append(line)
+
+        text = '\n'.join(replaced_lines)
+
+        cls = self.get_device().get_csharp_class_name()
+        for other_packet in self.get_device().get_packets():
+            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+            name = other_packet.get_camel_case_name()
+            name_right = link.format(cls, name)
+            text = text.replace(name_false, name_right)
+
+        text = common.handle_rst_word(text)
+        text = common.handle_rst_if(text, self.get_device())
+        text += common.format_since_firmware(self.get_device(), self)
+
+        return '\n\t\t///  '.join(text.strip().split('\n'))
+
 class CSharpBindingsGenerator(common.BindingsGenerator):
     def __init__(self, *args, **kwargs):
         common.BindingsGenerator.__init__(self, *args, **kwargs)
@@ -375,23 +388,12 @@ class CSharpBindingsGenerator(common.BindingsGenerator):
     def get_element_class(self):
         return csharp_common.CSharpElement
 
-    def generate(self, device_):
-        global device
-        device = device_
-
+    def generate(self, device):
         version = common.get_changelog_version(self.get_bindings_root_directory())
         file_name = '{0}.cs'.format(device.get_csharp_class_name())
 
         cs = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name), 'wb')
-        cs.write(device.get_csharp_import(version))
-        cs.write(device.get_csharp_class())
-        cs.write(device.get_csharp_function_id_definitions())
-        cs.write(device.get_csharp_constants())
-        cs.write(device.get_csharp_delegates())
-        cs.write(device.get_csharp_constructor())
-        cs.write(device.get_csharp_response_expected())
-        cs.write(device.get_csharp_methods())
-        cs.write(device.get_csharp_callbacks())
+        cs.write(device.get_csharp_source(version))
         cs.close()
 
         if device.is_released():

@@ -35,36 +35,6 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 import csharp_common
 
-class CSharpDocPacket(csharp_common.CSharpPacket):
-    def get_csharp_formatted_doc(self, shift_right):
-        text = common.select_lang(self.get_doc()[1])
-        link = ':csharp:func:`{1}() <{0}::{1}>`'
-        link_c = ':csharp:func:`{1} <{0}::{1}>`'
-
-        cls = self.get_device().get_csharp_class_name()
-        for other_packet in self.get_device().get_packets():
-            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-            name = other_packet.get_camel_case_name()
-            if other_packet.get_type() == 'callback':
-                name_right = link_c.format(cls, name)
-            else:
-                name_right = link.format(cls, name)
-
-            text = text.replace(name_false, name_right)
-
-        text = common.handle_rst_word(text)
-        text = common.handle_rst_if(text, self.get_device())
-
-        prefix = cls + '.'
-        if self.get_underscore_name() == 'set_response_expected':
-            text += common.format_function_id_constants(prefix, self.get_device())
-        else:
-            text += common.format_constants(prefix, self)
-
-        text += common.format_since_firmware(self.get_device(), self)
-
-        return common.shift_right(text, shift_right)
-
 class CSharpDocDevice(csharp_common.CSharpDevice):
     def get_csharp_examples(self):
         def title_from_file_name(file_name):
@@ -342,6 +312,46 @@ Konstanten
 
         return common.select_lang(api).format(ref, self.get_api_doc(), api_str)
 
+    def get_csharp_doc(self):
+        title = { 'en': 'C# bindings', 'de': 'C# Bindings' }
+
+        doc  = common.make_rst_header(self, 'csharp', 'C#')
+        doc += common.make_rst_summary(self, common.select_lang(title), 'csharp')
+        doc += self.get_csharp_examples()
+        doc += self.get_csharp_api()
+
+        return doc
+
+class CSharpDocPacket(csharp_common.CSharpPacket):
+    def get_csharp_formatted_doc(self, shift_right):
+        text = common.select_lang(self.get_doc()[1])
+        link = ':csharp:func:`{1}() <{0}::{1}>`'
+        link_c = ':csharp:func:`{1} <{0}::{1}>`'
+
+        cls = self.get_device().get_csharp_class_name()
+        for other_packet in self.get_device().get_packets():
+            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+            name = other_packet.get_camel_case_name()
+            if other_packet.get_type() == 'callback':
+                name_right = link_c.format(cls, name)
+            else:
+                name_right = link.format(cls, name)
+
+            text = text.replace(name_false, name_right)
+
+        text = common.handle_rst_word(text)
+        text = common.handle_rst_if(text, self.get_device())
+
+        prefix = cls + '.'
+        if self.get_underscore_name() == 'set_response_expected':
+            text += common.format_function_id_constants(prefix, self.get_device())
+        else:
+            text += common.format_constants(prefix, self)
+
+        text += common.format_since_firmware(self.get_device(), self)
+
+        return common.shift_right(text, shift_right)
+
 class CSharpDocGenerator(common.DocGenerator):
     def get_device_class(self):
         return CSharpDocDevice
@@ -353,14 +363,10 @@ class CSharpDocGenerator(common.DocGenerator):
         return csharp_common.CSharpElement
 
     def generate(self, device):
-        title = { 'en': 'C# bindings', 'de': 'C# Bindings' }
         file_name = '{0}_{1}_CSharp.rst'.format(device.get_camel_case_name(), device.get_category())
 
         rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
-        rst.write(common.make_rst_header(device, 'csharp', 'C#'))
-        rst.write(common.make_rst_summary(device, common.select_lang(title), 'csharp'))
-        rst.write(device.get_csharp_examples())
-        rst.write(device.get_csharp_api())
+        rst.write(device.get_csharp_doc())
         rst.close()
 
 def generate(bindings_root_directory, lang):

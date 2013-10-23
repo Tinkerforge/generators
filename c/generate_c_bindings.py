@@ -32,123 +32,6 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 import c_common
 
-class CBindingsPacket(c_common.CPacket):
-    def get_c_formatted_doc(self):
-        text = common.select_lang(self.get_doc()[1])
-        link = '{{@link {0}_{1}}}'
-        link_c = '{{@link {0}_CALLBACK_{1}}}'
-
-        # handle tables
-        lines = text.split('\n')
-        replaced_lines = []
-        in_table_head = False
-        in_table_body = False
-
-        for line in lines:
-            if line.strip() == '.. csv-table::':
-                in_table_head = True
-                replaced_lines.append('\\verbatim')
-            elif line.strip().startswith(':header: ') and in_table_head:
-                replaced_lines.append(line[len(':header: '):])
-            elif line.strip().startswith(':widths:') and in_table_head:
-                pass
-            elif len(line.strip()) == 0 and in_table_head:
-                in_table_head = False
-                in_table_body = True
-
-                replaced_lines.append('')
-            elif len(line.strip()) == 0 and in_table_body:
-                in_table_body = False
-
-                replaced_lines.append('\\endverbatim')
-                replaced_lines.append('')
-            else:
-                replaced_lines.append(line)
-
-        text = '\n'.join(replaced_lines)
-
-        for other_packet in self.get_device().get_packets():
-            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-            if other_packet.get_type() == 'callback':
-                name = other_packet.get_upper_case_name()
-                name_right = link_c.format(self.get_device().get_upper_case_name(), name)
-            else:
-                name = other_packet.get_underscore_name()
-                name_right = link.format(self.get_device().get_underscore_name(), name)
-
-            text = text.replace(name_false, name_right)
-
-        if self.get_type() == 'callback':
-            plist = self.get_c_parameter_list()[2:].replace('*ret_', '')
-            if len(plist) > 0:
-                plist += ', '
-            text = 'Signature: \code void callback({0}void *user_data) \endcode\n'.format(plist) + text
-
-        text = text.replace('.. note::', '\\note')
-        text = text.replace('.. warning::', '\\warning')
-
-        text = common.handle_rst_word(text)
-        text = common.handle_rst_if(text, self.get_device())
-        text += common.format_since_firmware(self.get_device(), self)
-
-        return '\n * '.join(text.strip().split('\n'))
-
-    def get_c_struct_list(self):
-        struct_list = ''
-        needs_i = False
-
-        for element in self.get_elements('in'):
-            sf = 'request'
-
-            if element.get_type() == 'string':
-                temp = '\n\tstrncpy({0}.{1}, {1}, {2});\n'
-                struct_list += temp.format(sf, element.get_underscore_name(), element.get_cardinality())
-            elif element.get_cardinality() > 1:
-                if element.get_item_size() > 1:
-                    needs_i = True
-                    struct_list += '\n\tfor (i = 0; i < {3}; i++) {0}.{1}[i] = leconvert_{2}_to({1}[i]);' \
-                                   .format(sf, element.get_underscore_name(), element.get_type(), element.get_cardinality())
-                else:
-                    temp = '\n\tmemcpy({0}.{1}, {1}, {2} * sizeof({3}));'
-                    struct_list += temp.format(sf,
-                                               element.get_underscore_name(),
-                                               element.get_cardinality(),
-                                               element.get_c_type(False))
-            elif element.get_item_size() > 1:
-                struct_list += '\n\t{0}.{1} = leconvert_{2}_to({1});'.format(sf, element.get_underscore_name(), element.get_type())
-            else:
-                struct_list += '\n\t{0}.{1} = {1};'.format(sf, element.get_underscore_name())
-
-        return struct_list, needs_i
-
-    def get_c_return_list(self):
-        return_list = ''
-        needs_i = False
-
-        for element in self.get_elements('out'):
-            sf = 'response'
-
-            if element.get_type() == 'string':
-                temp = '\tstrncpy(ret_{0}, {1}.{0}, {2});\n'
-                return_list += temp.format(element.get_underscore_name(), sf, element.get_cardinality())
-            elif element.get_cardinality() > 1:
-                if element.get_item_size() > 1:
-                    needs_i = True
-                    return_list += '\tfor (i = 0; i < {3}; i++) ret_{0}[i] = leconvert_{2}_from({1}.{0}[i]);\n' \
-                                   .format(element.get_underscore_name(), sf, element.get_type(), element.get_cardinality())
-                else:
-                    temp = '\tmemcpy(ret_{0}, {1}.{0}, {2} * sizeof({3}));\n'
-                    return_list += temp.format(element.get_underscore_name(),
-                                               sf,
-                                               element.get_cardinality(),
-                                               element.get_c_type(False))
-            elif element.get_item_size() > 1:
-                return_list += '\t*ret_{0} = leconvert_{2}_from({1}.{0});\n'.format(element.get_underscore_name(), sf, element.get_type())
-            else:
-                return_list += '\t*ret_{0} = {1}.{0};\n'.format(element.get_underscore_name(), sf)
-
-        return return_list, needs_i
-
 class CBindingsDevice(common.Device):
     def get_c_include_c(self, version):
         include = """{0}
@@ -703,6 +586,151 @@ void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data
 """
         return func.format(self.get_underscore_name(), self.get_camel_case_name(), self.get_category())
 
+    def get_c_source(self, version):
+        source  = self.get_c_include_c(version)
+        source += self.get_c_typedefs()
+        source += self.get_c_structs()
+        source += self.get_c_callback_wrapper_functions()
+        source += self.get_c_create_function()
+        source += self.get_c_destroy_function()
+        source += self.get_c_response_expected_functions()
+        source += self.get_c_register_callback_function()
+        source += self.get_c_method_functions()
+
+        return source
+
+    def get_c_header(self, version):
+        header  = self.get_c_include_h(version)
+        header += self.get_c_function_id_defines()
+        header += self.get_c_callback_defines()
+        header += self.get_c_constants()
+        header += self.get_c_device_identifier_define()
+        header += self.get_c_create_declaration()
+        header += self.get_c_destroy_declaration()
+        header += self.get_c_response_expected_declarations()
+        header += self.get_c_register_callback_declaration()
+        header += self.get_c_method_declarations()
+        header += self.get_c_end_h()
+
+        return header
+
+class CBindingsPacket(c_common.CPacket):
+    def get_c_formatted_doc(self):
+        text = common.select_lang(self.get_doc()[1])
+        link = '{{@link {0}_{1}}}'
+        link_c = '{{@link {0}_CALLBACK_{1}}}'
+
+        # handle tables
+        lines = text.split('\n')
+        replaced_lines = []
+        in_table_head = False
+        in_table_body = False
+
+        for line in lines:
+            if line.strip() == '.. csv-table::':
+                in_table_head = True
+                replaced_lines.append('\\verbatim')
+            elif line.strip().startswith(':header: ') and in_table_head:
+                replaced_lines.append(line[len(':header: '):])
+            elif line.strip().startswith(':widths:') and in_table_head:
+                pass
+            elif len(line.strip()) == 0 and in_table_head:
+                in_table_head = False
+                in_table_body = True
+
+                replaced_lines.append('')
+            elif len(line.strip()) == 0 and in_table_body:
+                in_table_body = False
+
+                replaced_lines.append('\\endverbatim')
+                replaced_lines.append('')
+            else:
+                replaced_lines.append(line)
+
+        text = '\n'.join(replaced_lines)
+
+        for other_packet in self.get_device().get_packets():
+            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+            if other_packet.get_type() == 'callback':
+                name = other_packet.get_upper_case_name()
+                name_right = link_c.format(self.get_device().get_upper_case_name(), name)
+            else:
+                name = other_packet.get_underscore_name()
+                name_right = link.format(self.get_device().get_underscore_name(), name)
+
+            text = text.replace(name_false, name_right)
+
+        if self.get_type() == 'callback':
+            plist = self.get_c_parameter_list()[2:].replace('*ret_', '')
+            if len(plist) > 0:
+                plist += ', '
+            text = 'Signature: \code void callback({0}void *user_data) \endcode\n'.format(plist) + text
+
+        text = text.replace('.. note::', '\\note')
+        text = text.replace('.. warning::', '\\warning')
+
+        text = common.handle_rst_word(text)
+        text = common.handle_rst_if(text, self.get_device())
+        text += common.format_since_firmware(self.get_device(), self)
+
+        return '\n * '.join(text.strip().split('\n'))
+
+    def get_c_struct_list(self):
+        struct_list = ''
+        needs_i = False
+
+        for element in self.get_elements('in'):
+            sf = 'request'
+
+            if element.get_type() == 'string':
+                temp = '\n\tstrncpy({0}.{1}, {1}, {2});\n'
+                struct_list += temp.format(sf, element.get_underscore_name(), element.get_cardinality())
+            elif element.get_cardinality() > 1:
+                if element.get_item_size() > 1:
+                    needs_i = True
+                    struct_list += '\n\tfor (i = 0; i < {3}; i++) {0}.{1}[i] = leconvert_{2}_to({1}[i]);' \
+                                   .format(sf, element.get_underscore_name(), element.get_type(), element.get_cardinality())
+                else:
+                    temp = '\n\tmemcpy({0}.{1}, {1}, {2} * sizeof({3}));'
+                    struct_list += temp.format(sf,
+                                               element.get_underscore_name(),
+                                               element.get_cardinality(),
+                                               element.get_c_type(False))
+            elif element.get_item_size() > 1:
+                struct_list += '\n\t{0}.{1} = leconvert_{2}_to({1});'.format(sf, element.get_underscore_name(), element.get_type())
+            else:
+                struct_list += '\n\t{0}.{1} = {1};'.format(sf, element.get_underscore_name())
+
+        return struct_list, needs_i
+
+    def get_c_return_list(self):
+        return_list = ''
+        needs_i = False
+
+        for element in self.get_elements('out'):
+            sf = 'response'
+
+            if element.get_type() == 'string':
+                temp = '\tstrncpy(ret_{0}, {1}.{0}, {2});\n'
+                return_list += temp.format(element.get_underscore_name(), sf, element.get_cardinality())
+            elif element.get_cardinality() > 1:
+                if element.get_item_size() > 1:
+                    needs_i = True
+                    return_list += '\tfor (i = 0; i < {3}; i++) ret_{0}[i] = leconvert_{2}_from({1}.{0}[i]);\n' \
+                                   .format(element.get_underscore_name(), sf, element.get_type(), element.get_cardinality())
+                else:
+                    temp = '\tmemcpy(ret_{0}, {1}.{0}, {2} * sizeof({3}));\n'
+                    return_list += temp.format(element.get_underscore_name(),
+                                               sf,
+                                               element.get_cardinality(),
+                                               element.get_c_type(False))
+            elif element.get_item_size() > 1:
+                return_list += '\t*ret_{0} = leconvert_{2}_from({1}.{0});\n'.format(element.get_underscore_name(), sf, element.get_type())
+            else:
+                return_list += '\t*ret_{0} = {1}.{0};\n'.format(element.get_underscore_name(), sf)
+
+        return return_list, needs_i
+
 class CBindingsGenerator(common.BindingsGenerator):
     def __init__(self, *args, **kwargs):
         common.BindingsGenerator.__init__(self, *args, **kwargs)
@@ -723,29 +751,11 @@ class CBindingsGenerator(common.BindingsGenerator):
         file_name = '{0}_{1}'.format(device.get_category().lower(), device.get_underscore_name())
 
         c = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name + '.c'), 'wb')
-        c.write(device.get_c_include_c(version))
-        c.write(device.get_c_typedefs())
-        c.write(device.get_c_structs())
-        c.write(device.get_c_callback_wrapper_functions())
-        c.write(device.get_c_create_function())
-        c.write(device.get_c_destroy_function())
-        c.write(device.get_c_response_expected_functions())
-        c.write(device.get_c_register_callback_function())
-        c.write(device.get_c_method_functions())
+        c.write(device.get_c_source(version))
         c.close()
 
         h = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name + '.h'), 'wb')
-        h.write(device.get_c_include_h(version))
-        h.write(device.get_c_function_id_defines())
-        h.write(device.get_c_callback_defines())
-        h.write(device.get_c_constants())
-        h.write(device.get_c_device_identifier_define())
-        h.write(device.get_c_create_declaration())
-        h.write(device.get_c_destroy_declaration())
-        h.write(device.get_c_response_expected_declarations())
-        h.write(device.get_c_register_callback_declaration())
-        h.write(device.get_c_method_declarations())
-        h.write(device.get_c_end_h())
+        h.write(device.get_c_header(version))
         h.close()
 
         if device.is_released():

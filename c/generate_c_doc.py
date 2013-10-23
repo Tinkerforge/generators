@@ -35,36 +35,6 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 import c_common
 
-class CDocPacket(c_common.CPacket):
-    def get_c_formatted_doc(self):
-        text = common.select_lang(self.get_doc()[1])
-        constants = {'en': 'defines', 'de': 'Defines'}
-
-        for other_packet in self.get_device().get_packets():
-            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-            if other_packet.get_type() == 'callback':
-                name_upper = other_packet.get_upper_case_name()
-                pre_upper = self.get_device().get_upper_case_name()
-                name_right = ':c:data:`{0}_CALLBACK_{1}`'.format(pre_upper,
-                                                                 name_upper)
-            else:
-                name_right = ':c:func:`{0}_{1}`'.format(self.get_device().get_underscore_name(),
-                                                        other_packet.get_underscore_name())
-            text = text.replace(name_false, name_right)
-
-        text = common.handle_rst_word(text, constants=constants)
-        text = common.handle_rst_if(text, self.get_device())
-
-        prefix = self.get_device().get_upper_case_name() + '_'
-        if self.get_underscore_name() == 'set_response_expected':
-            text += common.format_function_id_constants(prefix, self.get_device(), constants)
-        else:
-            text += common.format_constants(prefix, self, constants)
-
-        text += common.format_since_firmware(self.get_device(), self)
-
-        return common.shift_right(text, 1)
-
 class CDocDevice(common.Device):
     def get_c_examples(self):
         def title_from_file_name(file_name):
@@ -393,6 +363,46 @@ Konstanten
 
         return common.select_lang(api).format(ref, self.get_api_doc(), api_str)
 
+    def get_c_doc(self):
+        title = { 'en': 'C/C++ bindings', 'de': 'C/C++ Bindings' }
+
+        doc  = common.make_rst_header(self, 'c', 'C/C++')
+        doc += common.make_rst_summary(self, common.select_lang(title), 'c')
+        doc += self.get_c_examples()
+        doc += self.get_c_api()
+
+        return doc
+
+class CDocPacket(c_common.CPacket):
+    def get_c_formatted_doc(self):
+        text = common.select_lang(self.get_doc()[1])
+        constants = {'en': 'defines', 'de': 'Defines'}
+
+        for other_packet in self.get_device().get_packets():
+            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+            if other_packet.get_type() == 'callback':
+                name_upper = other_packet.get_upper_case_name()
+                pre_upper = self.get_device().get_upper_case_name()
+                name_right = ':c:data:`{0}_CALLBACK_{1}`'.format(pre_upper,
+                                                                 name_upper)
+            else:
+                name_right = ':c:func:`{0}_{1}`'.format(self.get_device().get_underscore_name(),
+                                                        other_packet.get_underscore_name())
+            text = text.replace(name_false, name_right)
+
+        text = common.handle_rst_word(text, constants=constants)
+        text = common.handle_rst_if(text, self.get_device())
+
+        prefix = self.get_device().get_upper_case_name() + '_'
+        if self.get_underscore_name() == 'set_response_expected':
+            text += common.format_function_id_constants(prefix, self.get_device(), constants)
+        else:
+            text += common.format_constants(prefix, self, constants)
+
+        text += common.format_since_firmware(self.get_device(), self)
+
+        return common.shift_right(text, 1)
+
 class CDocGenerator(common.DocGenerator):
     def get_device_class(self):
         return CDocDevice
@@ -404,14 +414,10 @@ class CDocGenerator(common.DocGenerator):
         return c_common.CElement
 
     def generate(self, device):
-        title = { 'en': 'C/C++ bindings', 'de': 'C/C++ Bindings' }
         file_name = '{0}_{1}_C.rst'.format(device.get_camel_case_name(), device.get_category())
 
         rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
-        rst.write(common.make_rst_header(device, 'c', 'C/C++'))
-        rst.write(common.make_rst_summary(device, common.select_lang(title), 'c'))
-        rst.write(device.get_c_examples())
-        rst.write(device.get_c_api())
+        rst.write(device.get_c_doc())
         rst.close()
 
 def generate(bindings_root_directory, lang):
