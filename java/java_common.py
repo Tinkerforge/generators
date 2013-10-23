@@ -30,52 +30,55 @@ import os
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-def get_object_name(packet):
-    name = packet.get_camel_case_name()
-    if name.startswith('Get'):
-        name = name[3:]
-
-    return name
-
-def get_return_type(packet, for_doc=False):
-    elements = packet.get_elements('out')
-
-    if len(elements) == 0:
-        return 'void'
-
-    if len(elements) > 1:
-        if for_doc:
-            return packet.get_device().get_category() + packet.get_device().get_camel_case_name() + '.' + get_object_name(packet)
-        else:
-            return get_object_name(packet)
-
-    return_type = elements[0].get_java_type()
-
-    if elements[0].get_cardinality() > 1 and elements[0].get_type() != 'string':
-        return_type += '[]'
-
-    return return_type
-
-def make_parameter_list(packet, just_types=False):
-    param = []
-    for element in packet.get_elements():
-        if element.get_direction() == 'out' and packet.get_type() == 'function':
-            continue
-        java_type = element.get_java_type()
-        name = element.get_headless_camel_case_name()
-        arr = ''
-        if element.get_cardinality() > 1 and element.get_type() != 'string':
-            arr = '[]'
-
-        if just_types:
-            param.append('{0}{1}'.format(java_type, arr))
-        else:
-            param.append('{0}{1} {2}'.format(java_type, arr, name))
-    return ', '.join(param)
-
 class JavaDevice(common.Device):
     def get_java_class_name(self):
         return self.get_category() + self.get_camel_case_name()
+
+class JavaPacket(common.Packet):
+    def get_java_object_name(self):
+        name = self.get_camel_case_name()
+        if name.startswith('Get'):
+            name = name[3:]
+
+        return name
+
+    def get_java_return_type(self, for_doc=False):
+        elements = self.get_elements('out')
+
+        if len(elements) == 0:
+            return 'void'
+
+        if len(elements) > 1:
+            if for_doc:
+                return self.get_device().get_java_class_name() + '.' + self.get_java_object_name()
+            else:
+                return self.get_java_object_name()
+
+        return_type = elements[0].get_java_type()
+
+        if elements[0].get_cardinality() > 1 and elements[0].get_type() != 'string':
+            return_type += '[]'
+
+        return return_type
+
+    def get_java_parameter_list(self, just_types=False):
+        param = []
+
+        for element in self.get_elements():
+            if element.get_direction() == 'out' and self.get_type() == 'function':
+                continue
+            java_type = element.get_java_type()
+            name = element.get_headless_camel_case_name()
+            arr = ''
+            if element.get_cardinality() > 1 and element.get_type() != 'string':
+                arr = '[]'
+
+            if just_types:
+                param.append('{0}{1}'.format(java_type, arr))
+            else:
+                param.append('{0}{1} {2}'.format(java_type, arr, name))
+
+        return ', '.join(param)
 
 class JavaElement(common.Element):
     java_type = {

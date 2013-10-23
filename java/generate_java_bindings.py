@@ -32,69 +32,9 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 import java_common
 
-device = None
-
-def format_doc(packet):
-    text = common.select_lang(packet.get_doc()[1])
-    link = '{{@link {0}#{1}({2})}}'
-    link_c = '{{@link {0}.{1}Listener}}'
-
-    # handle tables
-    lines = text.split('\n')
-    replaced_lines = []
-    in_table_head = False
-    in_table_body = False
-
-    for line in lines:
-        if line.strip() == '.. csv-table::':
-            in_table_head = True
-            replaced_lines.append('\\verbatim')
-        elif line.strip().startswith(':header: ') and in_table_head:
-            replaced_lines.append(line[len(':header: '):])
-        elif line.strip().startswith(':widths:') and in_table_head:
-            pass
-        elif len(line.strip()) == 0 and in_table_head:
-            in_table_head = False
-            in_table_body = True
-
-            replaced_lines.append('')
-        elif len(line.strip()) == 0 and in_table_body:
-            in_table_body = False
-
-            replaced_lines.append('\\endverbatim')
-            replaced_lines.append('')
-        else:
-            replaced_lines.append(line)
-
-    text = '\n'.join(replaced_lines)
-
-    cls = device.get_java_class_name()
-    for other_packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-        if other_packet.get_type() == 'callback':
-            name = other_packet.get_camel_case_name()
-            name_right = link_c.format(cls, name)
-        else:
-            name = other_packet.get_headless_camel_case_name()
-            name_right = link.format(cls, name, java_common.make_parameter_list(other_packet, True))
-
-        text = text.replace(name_false, name_right)
-
-    text = text.replace('Callback ', 'Listener ')
-    text = text.replace(' Callback', ' Listener')
-    text = text.replace('callback ', 'listener ')
-    text = text.replace(' callback', ' listener')
-    text = text.replace('.. note::', '\\note')
-    text = text.replace('.. warning::', '\\warning')
-
-    text = common.handle_rst_word(text)
-    text = common.handle_rst_if(text, device)
-    text += common.format_since_firmware(device, packet)
-
-    return '\n\t * '.join(text.strip().split('\n'))
-
-def make_import(version):
-    include = """{0}
+class JavaBindingsDevice(java_common.JavaDevice):
+    def get_java_import(self):
+        include = """{0}
 package com.tinkerforge;
 
 import java.nio.ByteBuffer;
@@ -103,12 +43,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.Arrays;
 import java.util.List;
 """
-    date = datetime.datetime.now().strftime("%Y-%m-%d")
+        date = datetime.datetime.now().strftime("%Y-%m-%d")
+        version = common.get_changelog_version(self.get_generator().get_bindings_root_directory())
 
-    return include.format(common.gen_text_star.format(date, *version))
+        return include.format(common.gen_text_star.format(date, *version))
 
-def make_class():
-    class_str = """
+    def get_java_class(self):
+        class_str = """
 /**
  * {1}
  */
@@ -117,13 +58,13 @@ public class {0} extends Device {{
 
 """
 
-    return class_str.format(device.get_java_class_name(),
-                            device.get_description(),
-                            device.get_device_identifier())
+        return class_str.format(self.get_java_class_name(),
+                                self.get_description(),
+                                self.get_device_identifier())
 
-def make_return_objects():
-    objs = ''
-    obj = """
+    def get_java_return_objects(self):
+        objs = ''
+        obj = """
 \tpublic class {0} {{
 {1}
 
@@ -132,41 +73,41 @@ def make_return_objects():
 \t\t}}
 \t}}
 """
-    param = '\t\tpublic {0}{1} {2}{3};'
-    for packet in device.get_packets('function'):
-        if packet.has_prototype_in_device():
-            continue
-        if len(packet.get_elements('out')) < 2:
-            continue
+        param = '\t\tpublic {0}{1} {2}{3};'
+        for packet in self.get_packets('function'):
+            if packet.has_prototype_in_device():
+                continue
+            if len(packet.get_elements('out')) < 2:
+                continue
 
-        name = java_common.get_object_name(packet)
+            name = packet.get_java_object_name()
 
-        params = []
-        tostr = []
-        for element in packet.get_elements():
-            typ = element.get_java_type()
-            ele_name = element.get_headless_camel_case_name()
-            if element.get_cardinality() > 1 and element.get_type() != 'string':
-                arr = '[]'
-                new = ' = new {0}[{1}]'.format(typ, element.get_cardinality())
-                to = '"{0} = " + Arrays.toString({0}) +'.format(ele_name)
-            else:
-                arr = ''
-                new = ''
-                to = '"{0} = " + {0} +'.format(ele_name)
+            params = []
+            tostr = []
+            for element in packet.get_elements():
+                typ = element.get_java_type()
+                ele_name = element.get_headless_camel_case_name()
+                if element.get_cardinality() > 1 and element.get_type() != 'string':
+                    arr = '[]'
+                    new = ' = new {0}[{1}]'.format(typ, element.get_cardinality())
+                    to = '"{0} = " + Arrays.toString({0}) +'.format(ele_name)
+                else:
+                    arr = ''
+                    new = ''
+                    to = '"{0} = " + {0} +'.format(ele_name)
 
-            tostr.append(to)
-            params.append(param.format(typ, arr, ele_name, new))
+                tostr.append(to)
+                params.append(param.format(typ, arr, ele_name, new))
 
-        objs += obj.format(name,
-                           '\n'.join(params),
-                           ' ", " + '.join(tostr))
+            objs += obj.format(name,
+                               '\n'.join(params),
+                               ' ", " + '.join(tostr))
 
-    return objs
+        return objs
 
-def make_listener_definitions():
-    cbs = ''
-    cb = """
+    def get_java_listener_definitions(self):
+        cbs = ''
+        cb = """
 \t/**
 \t * {3}
 \t */
@@ -174,38 +115,38 @@ def make_listener_definitions():
 \t\tpublic void {1}({2});
 \t}}
 """
-    for packet in device.get_packets('callback'):
-        name = packet.get_camel_case_name()
-        name_lower = packet.get_headless_camel_case_name()
-        parameter = java_common.make_parameter_list(packet)
-        doc = format_doc(packet)
-        cbs += cb.format(name, name_lower, parameter, doc)
-    return cbs
+        for packet in self.get_packets('callback'):
+            name = packet.get_camel_case_name()
+            name_lower = packet.get_headless_camel_case_name()
+            parameter = packet.get_java_parameter_list()
+            doc = packet.get_java_formatted_doc()
+            cbs += cb.format(name, name_lower, parameter, doc)
+        return cbs
 
-def make_response_expected():
-    res = ''
-    re = "\t\tresponseExpected[IPConnection.unsignedByte({0})] = {1}\n"
+    def get_java_response_expected(self):
+        res = ''
+        re = "\t\tresponseExpected[IPConnection.unsignedByte({0})] = {1}\n"
 
-    for packet in device.get_packets('function'):
-        name_upper = 'FUNCTION_' + packet.get_upper_case_name()
-        setto = 'RESPONSE_EXPECTED_FLAG_FALSE;'
-        if len(packet.get_elements('out')) > 0:
-            setto = 'RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE;'
-        elif packet.get_doc()[0] == 'ccf':
-            setto = 'RESPONSE_EXPECTED_FLAG_TRUE;'
+        for packet in self.get_packets('function'):
+            name_upper = 'FUNCTION_' + packet.get_upper_case_name()
+            setto = 'RESPONSE_EXPECTED_FLAG_FALSE;'
+            if len(packet.get_elements('out')) > 0:
+                setto = 'RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE;'
+            elif packet.get_doc()[0] == 'ccf':
+                setto = 'RESPONSE_EXPECTED_FLAG_TRUE;'
 
-        res += re.format(name_upper, setto)
+            res += re.format(name_upper, setto)
 
-    for packet in device.get_packets('callback'):
-        name_upper = 'CALLBACK_' + packet.get_upper_case_name()
-        setto = 'RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;'
-        res += re.format(name_upper, setto)
+        for packet in self.get_packets('callback'):
+            name_upper = 'CALLBACK_' + packet.get_upper_case_name()
+            setto = 'RESPONSE_EXPECTED_FLAG_ALWAYS_FALSE;'
+            res += re.format(name_upper, setto)
 
-    return res
+        return res
 
-def make_callback_listener_definitions():
-    cbs = ''
-    cb = """
+    def get_java_callback_listener_definitions(self):
+        cbs = ''
+        cb = """
 \t\tcallbacks[CALLBACK_{0}] = new CallbackListener() {{
 \t\t\tpublic void callback(byte[] data) {{{1}
 \t\t\t\tfor({2}Listener listener: listener{2}) {{
@@ -215,38 +156,38 @@ def make_callback_listener_definitions():
 \t\t}};
 """
 
-    data = """
+        data = """
 \t\t\t\tByteBuffer bb = ByteBuffer.wrap(data, 8, data.length - 8);
 \t\t\t\tbb.order(ByteOrder.LITTLE_ENDIAN);
 
 {1}"""
-    cbs_end = '\t}\n'
-    for packet in device.get_packets('callback'):
-        typ = packet.get_upper_case_name()
-        name = packet.get_camel_case_name()
-        name_lower = packet.get_headless_camel_case_name()
-        parameter = ''
-        parameter_list = []
-        for element in packet.get_elements():
-            parameter_list.append(element.get_headless_camel_case_name())
-        parameter = ', '.join(parameter_list)
-        cbdata = ''
-        if len(packet.get_elements('out')) > 0:
-            bbgets, bbret = make_bbgets(packet)
-            bbgets = bbgets.replace('\t\t', '\t\t\t\t')
-            cbdata = data.format(name_lower,
-                                 bbgets,
-                                 bbret)
+        cbs_end = '\t}\n'
+        for packet in self.get_packets('callback'):
+            typ = packet.get_upper_case_name()
+            name = packet.get_camel_case_name()
+            name_lower = packet.get_headless_camel_case_name()
+            parameter = ''
+            parameter_list = []
+            for element in packet.get_elements():
+                parameter_list.append(element.get_headless_camel_case_name())
+            parameter = ', '.join(parameter_list)
+            cbdata = ''
+            if len(packet.get_elements('out')) > 0:
+                bbgets, bbret = packet.get_java_bbgets()
+                bbgets = bbgets.replace('\t\t', '\t\t\t\t')
+                cbdata = data.format(name_lower,
+                                     bbgets,
+                                     bbret)
 
-        cbs += cb.format(typ, cbdata, name, name_lower, parameter)
-    return cbs + cbs_end
+            cbs += cb.format(typ, cbdata, name, name_lower, parameter)
+        return cbs + cbs_end
 
-def make_add_listener():
-    if device.get_callback_count() == 0:
-        return '}'
+    def get_java_add_listener(self):
+        if self.get_callback_count() == 0:
+            return '}'
 
-    listeners = ''
-    listener = """
+        listeners = ''
+        listener = """
 \t/**
 \t * Adds a {0} listener.
 \t */
@@ -262,54 +203,54 @@ def make_add_listener():
 \t}}
 """
 
-    l = []
-    for packet in device.get_packets('callback'):
-        name = packet.get_camel_case_name()
-        listeners += listener.format(name)
-    return listeners + '}'
+        l = []
+        for packet in self.get_packets('callback'):
+            name = packet.get_camel_case_name()
+            listeners += listener.format(name)
+        return listeners + '}'
 
-def make_function_id_definitions():
-    function_ids = ''
-    function_id = '\tpublic final static byte {2}_{0} = (byte){1};\n'
-    for packet in device.get_packets():
-        function_ids += function_id.format(packet.get_upper_case_name(),
-                                           packet.get_function_id(),
-                                           packet.get_type().upper())
-    return function_ids
+    def get_java_function_id_definitions(self):
+        function_ids = ''
+        function_id = '\tpublic final static byte {2}_{0} = (byte){1};\n'
+        for packet in self.get_packets():
+            function_ids += function_id.format(packet.get_upper_case_name(),
+                                               packet.get_function_id(),
+                                               packet.get_type().upper())
+        return function_ids
 
-def make_constants():
-    str_constants = '\n'
-    str_constant = '\tpublic final static {0} {1}_{2} = {3}{4};\n'
-    constants = device.get_constants()
-    for constant in constants:
-        typ = java_common.JavaElement(None, [None, constant.type, 1]).get_java_type() # FIXME
+    def get_java_constants(self):
+        str_constants = '\n'
+        str_constant = '\tpublic final static {0} {1}_{2} = {3}{4};\n'
+        constants = self.get_constants()
+        for constant in constants:
+            typ = java_common.JavaElement(None, [None, constant.type, 1]).get_java_type() # FIXME
 
-        for definition in constant.definitions:
-            if constant.type == 'char':
-                cast = ''
-                value = "'{0}'".format(definition.value)
-            else:
-                cast = '({0})'.format(typ)
-                value = str(definition.value)
+            for definition in constant.definitions:
+                if constant.type == 'char':
+                    cast = ''
+                    value = "'{0}'".format(definition.value)
+                else:
+                    cast = '({0})'.format(typ)
+                    value = str(definition.value)
 
-            str_constants += str_constant.format(typ,
-                                                 constant.name_uppercase,
-                                                 definition.name_uppercase,
-                                                 cast,
-                                                 value)
-    return str_constants
+                str_constants += str_constant.format(typ,
+                                                     constant.name_uppercase,
+                                                     definition.name_uppercase,
+                                                     cast,
+                                                     value)
+        return str_constants
 
-def make_listener_lists():
-    llists = '\n'
-    llist = '\tprivate List<{0}Listener> listener{0} = new CopyOnWriteArrayList<{0}Listener>();\n'
-    for packet in device.get_packets('callback'):
-        name = packet.get_camel_case_name()
-        llists += llist.format(name)
+    def get_java_listener_lists(self):
+        llists = '\n'
+        llist = '\tprivate List<{0}Listener> listener{0} = new CopyOnWriteArrayList<{0}Listener>();\n'
+        for packet in self.get_packets('callback'):
+            name = packet.get_camel_case_name()
+            llists += llist.format(name)
 
-    return llists
+        return llists
 
-def make_constructor():
-    con = """
+    def get_java_constructor(self):
+        con = """
 \t/**
 \t * Creates an object with the unique device ID \c uid. and adds it to
 \t * the IP Connection \c ipcon.
@@ -322,11 +263,11 @@ def make_constructor():
 \t\tapiVersion[2] = {3};
 """
 
-    return con.format(device.get_java_class_name(), *device.get_api_version())
+        return con.format(self.get_java_class_name(), *self.get_api_version())
 
-def make_methods():
-    methods = ''
-    method = """
+    def get_java_methods(self):
+        methods = ''
+        method = """
 \t/**
 \t * {8}
 \t */
@@ -336,7 +277,7 @@ def make_methods():
 {7}
 \t}}
 """
-    method_response = """\t\tbyte[] response = sendRequest(bb.array());
+        method_response = """\t\tbyte[] response = sendRequest(bb.array());
 
 \t\tbb = ByteBuffer.wrap(response, 8, response.length - 8);
 \t\tbb.order(ByteOrder.LITTLE_ENDIAN);
@@ -344,148 +285,225 @@ def make_methods():
 {1}
 \t\treturn {2};"""
 
-    method_noresponse = """\t\tsendRequest(bb.array());"""
+        method_noresponse = """\t\tsendRequest(bb.array());"""
 
-    loop = """\t\tfor(int i = 0; i < {0}; i++) {{
+        loop = """\t\tfor(int i = 0; i < {0}; i++) {{
 {1}
 \t\t}}
 """
-    string_loop = """\t\ttry {{
+        string_loop = """\t\ttry {{
 \t\t{0}
 \t\t\t}} catch(Exception e) {{
 \t\t\t\tbb.put((byte)0);
 \t\t\t}}"""
 
-    cls = device.get_camel_case_name()
-    for packet in device.get_packets('function'):
-        options = 0
-        ret = java_common.get_return_type(packet)
-        name_lower = packet.get_headless_camel_case_name()
-        parameter = java_common.make_parameter_list(packet)
-        size = str(packet.get_request_size())
-        name_upper = packet.get_upper_case_name()
-        doc = format_doc(packet)
-        bbputs = ''
-        bbput = '\t\tbb.put{0}({1}{2});'
-        for element in packet.get_elements('in'):
-            name = element.get_headless_camel_case_name()
-            if element.get_type() == 'bool':
-                name = '({0} ? 1 : 0)'.format(name)
+        cls = self.get_camel_case_name()
+        for packet in self.get_packets('function'):
+            options = 0
+            ret = packet.get_java_return_type()
+            name_lower = packet.get_headless_camel_case_name()
+            parameter = packet.get_java_parameter_list()
+            size = str(packet.get_request_size())
+            name_upper = packet.get_upper_case_name()
+            doc = packet.get_java_formatted_doc()
+            bbputs = ''
+            bbput = '\t\tbb.put{0}({1}{2});'
+            for element in packet.get_elements('in'):
+                name = element.get_headless_camel_case_name()
+                if element.get_type() == 'bool':
+                    name = '({0} ? 1 : 0)'.format(name)
 
-            cast = ''
-            storage_type = element.get_java_byte_buffer_storage_type()
-            if storage_type != element.get_java_type():
-                cast = '({0})'.format(storage_type)
+                cast = ''
+                storage_type = element.get_java_byte_buffer_storage_type()
+                if storage_type != element.get_java_type():
+                    cast = '({0})'.format(storage_type)
 
-            bbput_format = bbput.format(element.get_java_byte_buffer_method_suffix(),
-                                        cast,
-                                        name)
+                bbput_format = bbput.format(element.get_java_byte_buffer_method_suffix(),
+                                            cast,
+                                            name)
 
-            if element.get_cardinality() > 1:
-                if element.get_type() == 'string':
-                    bbput_format = bbput_format.replace(');', '.charAt(i));')
-                    bbput_format = string_loop.format(bbput_format)
-                else:
-                    bbput_format = bbput_format.replace(');', '[i]);')
-                bbput_format = loop.format(element.get_cardinality(), '\t' + bbput_format)
+                if element.get_cardinality() > 1:
+                    if element.get_type() == 'string':
+                        bbput_format = bbput_format.replace(');', '.charAt(i));')
+                        bbput_format = string_loop.format(bbput_format)
+                    else:
+                        bbput_format = bbput_format.replace(');', '[i]);')
+                    bbput_format = loop.format(element.get_cardinality(), '\t' + bbput_format)
 
-            bbputs += bbput_format + '\n'
+                bbputs += bbput_format + '\n'
 
-        throw = 'throws TimeoutException, NotConnectedException'
-        if len(packet.get_elements('out')) == 0:
-            bbgets = ''
-            bbret = ''
-        elif len(packet.get_elements('out')) > 1:
-            bbgets, bbret = make_bbgets(packet, True)
-            obj_name = java_common.get_object_name(packet)
-            obj = '\t\t{0} obj = new {0}();\n'.format(obj_name)
-            bbgets = obj + bbgets
-            bbret = 'obj'
-        else:
-            bbgets, bbret = make_bbgets(packet, False)
+            throw = 'throws TimeoutException, NotConnectedException'
+            if len(packet.get_elements('out')) == 0:
+                bbgets = ''
+                bbret = ''
+            elif len(packet.get_elements('out')) > 1:
+                bbgets, bbret = packet.get_java_bbgets(True)
+                obj_name = packet.get_java_object_name()
+                obj = '\t\t{0} obj = new {0}();\n'.format(obj_name)
+                bbgets = obj + bbgets
+                bbret = 'obj'
+            else:
+                bbgets, bbret = packet.get_java_bbgets(False)
 
-        if len(packet.get_elements('out')) == 0:
-            response = method_noresponse.format(name_upper)
-        else:
-            response = method_response.format(name_upper,
-                                              bbgets,
-                                              bbret)
+            if len(packet.get_elements('out')) == 0:
+                response = method_noresponse.format(name_upper)
+            else:
+                response = method_response.format(name_upper,
+                                                  bbgets,
+                                                  bbret)
 
-        methods += method.format(ret,
-                                 name_lower,
-                                 parameter,
-                                 throw,
-                                 size,
-                                 name_upper,
-                                 bbputs,
-                                 response,
-                                 doc)
+            methods += method.format(ret,
+                                     name_lower,
+                                     parameter,
+                                     throw,
+                                     size,
+                                     name_upper,
+                                     bbputs,
+                                     response,
+                                     doc)
 
-    return methods
+        return methods
 
-def make_bbgets(packet, with_obj = False):
-    bbgets = ''
-    bbget_other = '\t\t{0}{1}{2} = {3}(bb.get{4}(){5}){6};'
-    bbget_string = '\t\t{0}{1}{2} = {3}(bb{4}{5}){6};'
-    new_arr ='{0}[] {1} = new {0}[{2}];'
-    loop = """\t\t{2}for(int i = 0; i < {0}; i++) {{
+    def get_java_source(self):
+        source  = self.get_java_import()
+        source += self.get_java_class()
+        source += self.get_java_function_id_definitions()
+        source += self.get_java_constants()
+        source += self.get_java_listener_lists()
+        source += self.get_java_return_objects()
+        source += self.get_java_listener_definitions()
+        source += self.get_java_constructor()
+        source += self.get_java_response_expected()
+        source += self.get_java_callback_listener_definitions()
+        source += self.get_java_methods()
+        source += self.get_java_add_listener()
+
+        return source
+
+class JavaBindingsPacket(java_common.JavaPacket):
+    def get_java_formatted_doc(self):
+        text = common.select_lang(self.get_doc()[1])
+        link = '{{@link {0}#{1}({2})}}'
+        link_c = '{{@link {0}.{1}Listener}}'
+
+        # handle tables
+        lines = text.split('\n')
+        replaced_lines = []
+        in_table_head = False
+        in_table_body = False
+
+        for line in lines:
+            if line.strip() == '.. csv-table::':
+                in_table_head = True
+                replaced_lines.append('\\verbatim')
+            elif line.strip().startswith(':header: ') and in_table_head:
+                replaced_lines.append(line[len(':header: '):])
+            elif line.strip().startswith(':widths:') and in_table_head:
+                pass
+            elif len(line.strip()) == 0 and in_table_head:
+                in_table_head = False
+                in_table_body = True
+
+                replaced_lines.append('')
+            elif len(line.strip()) == 0 and in_table_body:
+                in_table_body = False
+
+                replaced_lines.append('\\endverbatim')
+                replaced_lines.append('')
+            else:
+                replaced_lines.append(line)
+
+        text = '\n'.join(replaced_lines)
+
+        cls = self.get_device().get_java_class_name()
+        for other_packet in self.get_device().get_packets():
+            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+            if other_packet.get_type() == 'callback':
+                name = other_packet.get_camel_case_name()
+                name_right = link_c.format(cls, name)
+            else:
+                name = other_packet.get_headless_camel_case_name()
+                name_right = link.format(cls, name, other_packet.get_java_parameter_list(True))
+
+            text = text.replace(name_false, name_right)
+
+        text = text.replace('Callback ', 'Listener ')
+        text = text.replace(' Callback', ' Listener')
+        text = text.replace('callback ', 'listener ')
+        text = text.replace(' callback', ' listener')
+        text = text.replace('.. note::', '\\note')
+        text = text.replace('.. warning::', '\\warning')
+
+        text = common.handle_rst_word(text)
+        text = common.handle_rst_if(text, self.get_device())
+        text += common.format_since_firmware(self.get_device(), self)
+
+        return '\n\t * '.join(text.strip().split('\n'))
+
+    def get_java_bbgets(self, with_obj=False):
+        bbgets = ''
+        bbget_other = '\t\t{0}{1}{2} = {3}(bb.get{4}(){5}){6};'
+        bbget_string = '\t\t{0}{1}{2} = {3}(bb{4}{5}){6};'
+        new_arr ='{0}[] {1} = new {0}[{2}];'
+        loop = """\t\t{2}for(int i = 0; i < {0}; i++) {{
 {1}
 \t\t}}
 """
-    for element in packet.get_elements('out'):
-        typ = ''
-        if not with_obj:
-            typ = element.get_java_type() + ' '
+        for element in self.get_elements('out'):
+            typ = ''
+            if not with_obj:
+                typ = element.get_java_type() + ' '
 
-        bbret = element.get_headless_camel_case_name()
-        obj = ''
-        if with_obj:
-            obj = 'obj.'
-        cast = ''
-        cast_extra = ''
-        boolean = ''
-        if element.get_type() == 'uint8':
-            cast = 'IPConnection.unsignedByte'
-        elif element.get_type() == 'uint16':
-            cast = 'IPConnection.unsignedShort'
-        elif element.get_type() == 'uint32':
-            cast = 'IPConnection.unsignedInt'
-        elif element.get_type() == 'bool':
-            boolean = ' != 0'
-        elif element.get_type() == 'char':
-            cast = '(char)'
-        elif element.get_type() == 'string':
-            cast = 'IPConnection.string'
-            cast_extra = ', {0}'.format(element.get_cardinality())
-
-        format_typ = ''
-        if not element.get_cardinality() > 1 or (element.get_type() == 'string' and not with_obj):
-            format_typ = typ
-
-        if element.get_type() == 'string':
-            bbget = bbget_string
-        else:
-            bbget = bbget_other
-
-        bbget_format = bbget.format(format_typ,
-                                    obj,
-                                    bbret,
-                                    cast,
-                                    element.get_java_byte_buffer_method_suffix(),
-                                    cast_extra,
-                                    boolean)
-
-        if element.get_cardinality() > 1 and element.get_type() != 'string':
+            bbret = element.get_headless_camel_case_name()
+            obj = ''
             if with_obj:
-                bbget_format = bbget_format.replace(' =', '[i] =')
-                bbget_format = loop.format(element.get_cardinality(), '\t' + bbget_format, '')
-            else:
-                arr = new_arr.format(typ.replace(' ', ''), bbret, element.get_cardinality())
-                bbget_format = bbget_format.replace(' =', '[i] =')
-                bbget_format = loop.format(element.get_cardinality(), '\t' + bbget_format, arr + '\n\t\t')
+                obj = 'obj.'
+            cast = ''
+            cast_extra = ''
+            boolean = ''
+            if element.get_type() == 'uint8':
+                cast = 'IPConnection.unsignedByte'
+            elif element.get_type() == 'uint16':
+                cast = 'IPConnection.unsignedShort'
+            elif element.get_type() == 'uint32':
+                cast = 'IPConnection.unsignedInt'
+            elif element.get_type() == 'bool':
+                boolean = ' != 0'
+            elif element.get_type() == 'char':
+                cast = '(char)'
+            elif element.get_type() == 'string':
+                cast = 'IPConnection.string'
+                cast_extra = ', {0}'.format(element.get_cardinality())
 
-        bbgets += bbget_format + '\n'
-    return bbgets, bbret
+            format_typ = ''
+            if not element.get_cardinality() > 1 or (element.get_type() == 'string' and not with_obj):
+                format_typ = typ
+
+            if element.get_type() == 'string':
+                bbget = bbget_string
+            else:
+                bbget = bbget_other
+
+            bbget_format = bbget.format(format_typ,
+                                        obj,
+                                        bbret,
+                                        cast,
+                                        element.get_java_byte_buffer_method_suffix(),
+                                        cast_extra,
+                                        boolean)
+
+            if element.get_cardinality() > 1 and element.get_type() != 'string':
+                if with_obj:
+                    bbget_format = bbget_format.replace(' =', '[i] =')
+                    bbget_format = loop.format(element.get_cardinality(), '\t' + bbget_format, '')
+                else:
+                    arr = new_arr.format(typ.replace(' ', ''), bbret, element.get_cardinality())
+                    bbget_format = bbget_format.replace(' =', '[i] =')
+                    bbget_format = loop.format(element.get_cardinality(), '\t' + bbget_format, arr + '\n\t\t')
+
+            bbgets += bbget_format + '\n'
+
+        return bbgets, bbret
 
 class JavaBindingsGenerator(common.BindingsGenerator):
     def __init__(self, *args, **kwargs):
@@ -494,31 +512,19 @@ class JavaBindingsGenerator(common.BindingsGenerator):
         self.released_files_name_prefix = 'java'
 
     def get_device_class(self):
-        return java_common.JavaDevice
+        return JavaBindingsDevice
+
+    def get_packet_class(self):
+        return JavaBindingsPacket
 
     def get_element_class(self):
         return java_common.JavaElement
 
-    def generate(self, device_):
-        global device
-        device = device_
-
-        version = common.get_changelog_version(self.get_bindings_root_directory())
+    def generate(self, device):
         file_name = '{0}.java'.format(device.get_java_class_name())
 
         java = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name), 'wb')
-        java.write(make_import(version))
-        java.write(make_class())
-        java.write(make_function_id_definitions())
-        java.write(make_constants())
-        java.write(make_listener_lists())
-        java.write(make_return_objects())
-        java.write(make_listener_definitions())
-        java.write(make_constructor())
-        java.write(make_response_expected())
-        java.write(make_callback_listener_definitions())
-        java.write(make_methods())
-        java.write(make_add_listener())
+        java.write(device.get_java_source())
         java.close()
 
         if device.is_released():

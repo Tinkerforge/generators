@@ -30,37 +30,40 @@ import os
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-def get_return_type(packet):
-    if len(packet.get_elements('out')) == 0:
-        return 'void'
-    if len(packet.get_elements('out')) > 1:
-        return 'array'
-
-    for element in packet.get_elements('out'):
-        if element.get_cardinality() > 1 and element.get_type() != 'string':
-            return 'array'
-        else:
-            return element.get_php_type()
-
-def make_parameter_list(packet, for_doc=False):
-    param = []
-    for element in packet.get_elements():
-        if element.get_direction() == 'out' and packet.get_type() == 'function':
-            continue
-        name = element.get_underscore_name()
-        if for_doc:
-            php_type = element.get_php_type()
-            if element.get_cardinality() > 1 and element.get_type() != 'string':
-                php_type = 'array'
-
-            param.append('{0} ${1}'.format(php_type, name))
-        else:
-            param.append('${0}'.format(name))
-    return ', '.join(param)
-
 class PHPDevice(common.Device):
     def get_php_class_name(self):
         return self.get_category() + self.get_camel_case_name()
+
+class PHPPacket(common.Packet):
+    def get_php_return_type(self):
+        if len(self.get_elements('out')) == 0:
+            return 'void'
+        if len(self.get_elements('out')) > 1:
+            return 'array'
+
+        for element in self.get_elements('out'):
+            if element.get_cardinality() > 1 and element.get_type() != 'string':
+                return 'array'
+            else:
+                return element.get_php_type()
+
+    def get_php_parameter_list(self, for_doc=False):
+        param = []
+
+        for element in self.get_elements():
+            if element.get_direction() == 'out' and self.get_type() == 'function':
+                continue
+            name = element.get_underscore_name()
+            if for_doc:
+                php_type = element.get_php_type()
+                if element.get_cardinality() > 1 and element.get_type() != 'string':
+                    php_type = 'array'
+
+                param.append('{0} ${1}'.format(php_type, name))
+            else:
+                param.append('${0}'.format(name))
+
+        return ', '.join(param)
 
 class PHPElement(common.Element):
     php_type = {
@@ -85,8 +88,8 @@ class PHPElement(common.Element):
         'uint16': 'v',
         'int32':  'V',
         'uint32': 'V',
-       #'int64': # NOTE: unsupported
-       #'uint64': # NOTE: unsupported
+       #'int64': # FIXME: unsupported
+       #'uint64': # FIXME: unsupported
         'float':  'f',
         'bool':   'C',
         'char':   'c',

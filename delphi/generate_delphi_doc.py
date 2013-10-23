@@ -35,68 +35,40 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 import delphi_common
 
-device = None
+class DelphiBindingsDevice(delphi_common.DelphiDevice):
+    def get_delphi_examples(self):
+        def title_from_file_name(file_name):
+            file_name = file_name.replace('Example', '').replace('.pas', '')
+            return common.camel_case_to_space(file_name)
 
-def format_doc(packet):
-    text = common.select_lang(packet.get_doc()[1])
+        return common.make_rst_examples(title_from_file_name, self, self.get_generator().get_bindings_root_directory(),
+                                        'delphi', 'Example', '.pas', 'Delphi')
 
-    cls = device.get_delphi_class_name()
-    for other_packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-        name = other_packet.get_camel_case_name()
-        if other_packet.get_type() == 'callback':
-            name_right = ':delphi:func:`On{1} <{0}.On{1}>`'.format(cls, name)
-        else:
-            name_right = ':delphi:func:`{1} <{0}.{1}>`'.format(cls, name)
-        text = text.replace(name_false, name_right)
+    def get_delphi_methods(self, typ):
+        methods = ''
+        function = '.. delphi:function:: function {0}.{1}({2}): {3}\n{4}'
+        procedure = '.. delphi:function:: procedure {0}.{1}({2})\n{3}'
+        cls = self.get_delphi_class_name()
+        for packet in self.get_packets('function'):
+            if packet.get_doc()[0] != typ:
+                continue
 
-    text = common.handle_rst_word(text)
-    text = common.handle_rst_if(text, device)
+            ret_type = packet.get_delphi_return_type(True)
+            name = packet.get_camel_case_name()
+            params = packet.get_delphi_parameter_list(True)
+            desc = packet.get_delphi_formatted_doc()
+            if len(ret_type) > 0:
+                method = function.format(cls, name, params, ret_type, desc)
+            else:
+                method = procedure.format(cls, name, params, desc)
+            methods += method + '\n'
 
-    prefix = '{0}_{1}_'.format(device.get_category().upper(), 
-                               device.get_upper_case_name())
-    if packet.get_underscore_name() == 'set_response_expected':
-        text += common.format_function_id_constants(prefix, device)
-    else:
-        text += common.format_constants(prefix, packet)
+        return methods
 
-    text += common.format_since_firmware(device, packet)
-
-    return common.shift_right(text, 1)
-
-def make_examples(generator):
-    def title_from_file_name(file_name):
-        file_name = file_name.replace('Example', '').replace('.pas', '')
-        return common.camel_case_to_space(file_name)
-
-    return common.make_rst_examples(title_from_file_name, device, generator.get_bindings_root_directory(),
-                                    'delphi', 'Example', '.pas', 'Delphi')
-
-def make_methods(typ):
-    methods = ''
-    function = '.. delphi:function:: function {0}.{1}({2}): {3}\n{4}'
-    procedure = '.. delphi:function:: procedure {0}.{1}({2})\n{3}'
-    cls = device.get_delphi_class_name()
-    for packet in device.get_packets('function'):
-        if packet.get_doc()[0] != typ:
-            continue
-
-        ret_type = delphi_common.get_return_type(packet, True)
-        name = packet.get_camel_case_name()
-        params = delphi_common.make_parameter_list(packet, True)
-        desc = format_doc(packet)
-        if len(ret_type) > 0:
-            method = function.format(cls, name, params, ret_type, desc)
-        else:
-            method = procedure.format(cls, name, params, desc)
-        methods += method + '\n'
-
-    return methods
-
-def make_callbacks():
-    cbs = ''
-    cb = {
-    'en': """.. delphi:function:: property {0}.On{1}
+    def get_delphi_callbacks(self):
+        cbs = ''
+        cb = {
+        'en': """.. delphi:function:: property {0}.On{1}
 
  .. code-block:: delphi
 
@@ -104,7 +76,7 @@ def make_callbacks():
 
 {3}
 """,
-    'de': """.. delphi:function:: property {0}.On{1}
+        'de': """.. delphi:function:: property {0}.On{1}
 
  .. code-block:: delphi
 
@@ -112,23 +84,23 @@ def make_callbacks():
 
 {3}
 """
-    }
+        }
 
-    cls = device.get_delphi_class_name()
-    for packet in device.get_packets('callback'):
-        name = packet.get_camel_case_name()
-        params = delphi_common.make_parameter_list(packet, True)
-        desc = format_doc(packet)
-        semi = ''
-        if len(params) > 0:
-            semi = '; '
-        cbs += common.select_lang(cb).format(cls, name, params, desc, semi)
+        cls = self.get_delphi_class_name()
+        for packet in self.get_packets('callback'):
+            name = packet.get_camel_case_name()
+            params = packet.get_delphi_parameter_list(True)
+            desc = packet.get_delphi_formatted_doc()
+            semi = ''
+            if len(params) > 0:
+                semi = '; '
+            cbs += common.select_lang(cb).format(cls, name, params, desc, semi)
 
-    return cbs
+        return cbs
 
-def make_api():
-    create_str = {
-    'en': """
+    def get_delphi_api(self):
+        create_str = {
+        'en': """
 .. delphi:function:: constructor T{3}{1}.Create(const uid: string; ipcon: TIPConnection)
 
  Creates an object with the unique device ID ``uid``:
@@ -140,7 +112,7 @@ def make_api():
  This object can then be used after the IP Connection is connected
  (see examples :ref:`above <{0}_{2}_delphi_examples>`).
 """,
-    'de': """
+        'de': """
 .. delphi:function:: constructor T{3}{1}.Create(const uid: string; ipcon: TIPConnection)
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``:
@@ -152,10 +124,10 @@ def make_api():
  Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
  (siehe Beispiele :ref:`oben <{0}_{2}_delphi_examples>`).
 """
-    }
+        }
 
-    c_str = {
-    'en': """
+        c_str = {
+        'en': """
 .. _{1}_{2}_delphi_callbacks:
 
 Callbacks
@@ -183,7 +155,7 @@ The available callback property and their type of parameters are described below
 
 {0}
 """,
-    'de': """
+        'de': """
 .. _{1}_{2}_delphi_callbacks:
 
 Callbacks
@@ -213,10 +185,10 @@ unten beschrieben.
 
 {0}
 """
-    }
+        }
 
-    api = {
-    'en': """
+        api = {
+        'en': """
 {0}
 API
 ---
@@ -230,7 +202,7 @@ All functions and procedures listed below are thread-safe.
 
 {2}
 """,
-    'de': """
+        'de': """
 {0}
 API
 ---
@@ -244,10 +216,10 @@ Alle folgend aufgelisteten Funktionen und Prozeduren sind Thread-sicher.
 
 {2}
 """
-    }
+        }
 
-    const_str = {
-    'en' : """
+        const_str = {
+        'en' : """
 Constants
 ^^^^^^^^^
 
@@ -260,7 +232,7 @@ Constants
  callback of the IP Connection have a ``deviceIdentifier`` parameter to specify
  the Brick's or Bricklet's type.
 """,
-    'de' : """
+        'de' : """
 Konstanten
 ^^^^^^^^^^
 
@@ -273,63 +245,97 @@ Konstanten
  Callback der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 """
-    }
+        }
 
-    cre = common.select_lang(create_str).format(device.get_underscore_name(),
-                                                device.get_camel_case_name(),
-                                                device.get_category().lower(),
-                                                device.get_category(),
-                                                device.get_headless_camel_case_name())
+        cre = common.select_lang(create_str).format(self.get_underscore_name(),
+                                                    self.get_camel_case_name(),
+                                                    self.get_category().lower(),
+                                                    self.get_category(),
+                                                    self.get_headless_camel_case_name())
 
-    bf = make_methods('bf')
-    af = make_methods('af')
-    ccf = make_methods('ccf')
-    c = make_callbacks()
-    api_str = ''
-    if bf:
-        api_str += common.select_lang(common.bf_str).format(cre, bf)
-    if af:
-        api_str += common.select_lang(common.af_str).format(af)
-    if c:
-        api_str += common.select_lang(common.ccf_str).format(ccf, '')
-        api_str += common.select_lang(c_str).format(c, device.get_underscore_name(),
-                                                    device.get_category().lower(),
-                                                    device.get_delphi_class_name(),
-                                                    device.get_headless_camel_case_name())
+        bf = self.get_delphi_methods('bf')
+        af = self.get_delphi_methods('af')
+        ccf = self.get_delphi_methods('ccf')
+        c = self.get_delphi_callbacks()
+        api_str = ''
+        if bf:
+            api_str += common.select_lang(common.bf_str).format(cre, bf)
+        if af:
+            api_str += common.select_lang(common.af_str).format(af)
+        if c:
+            api_str += common.select_lang(common.ccf_str).format(ccf, '')
+            api_str += common.select_lang(c_str).format(c, self.get_underscore_name(),
+                                                        self.get_category().lower(),
+                                                        self.get_delphi_class_name(),
+                                                        self.get_headless_camel_case_name())
 
-    article = 'ein'
-    if device.get_category() == 'Brick':
-        article = 'einen'
-    api_str += common.select_lang(const_str).format(device.get_upper_case_name(),
-                                                    device.get_category().upper(),
-                                                    article,
-                                                    device.get_camel_case_name(),
-                                                    device.get_category())
+        article = 'ein'
+        if self.get_category() == 'Brick':
+            article = 'einen'
+        api_str += common.select_lang(const_str).format(self.get_upper_case_name(),
+                                                        self.get_category().upper(),
+                                                        article,
+                                                        self.get_camel_case_name(),
+                                                        self.get_category())
 
-    ref = '.. _{0}_{1}_delphi_api:\n'.format(device.get_underscore_name(),
-                                             device.get_category().lower())
+        ref = '.. _{0}_{1}_delphi_api:\n'.format(self.get_underscore_name(),
+                                                 self.get_category().lower())
 
-    return common.select_lang(api).format(ref, device.get_api_doc(), api_str)
+        return common.select_lang(api).format(ref, self.get_api_doc(), api_str)
+
+    def get_delphi_doc(self):
+        title = { 'en': 'Delphi bindings', 'de': 'Delphi Bindings' }
+
+        doc  = common.make_rst_header(self, 'delphi', 'Delphi')
+        doc += common.make_rst_summary(self, common.select_lang(title), 'delphi')
+        doc += self.get_delphi_examples()
+        doc += self.get_delphi_api()
+
+        return doc
+
+class DelphiBindingsPacket(delphi_common.DelphiPacket):
+    def get_delphi_formatted_doc(self):
+        text = common.select_lang(self.get_doc()[1])
+
+        cls = self.get_device().get_delphi_class_name()
+        for other_packet in self.get_device().get_packets():
+            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+            name = other_packet.get_camel_case_name()
+            if other_packet.get_type() == 'callback':
+                name_right = ':delphi:func:`On{1} <{0}.On{1}>`'.format(cls, name)
+            else:
+                name_right = ':delphi:func:`{1} <{0}.{1}>`'.format(cls, name)
+            text = text.replace(name_false, name_right)
+
+        text = common.handle_rst_word(text)
+        text = common.handle_rst_if(text, self.get_device())
+
+        prefix = '{0}_{1}_'.format(self.get_device().get_category().upper(),
+                                   self.get_device().get_upper_case_name())
+        if self.get_underscore_name() == 'set_response_expected':
+            text += common.format_function_id_constants(prefix, self.get_device())
+        else:
+            text += common.format_constants(prefix, self)
+
+        text += common.format_since_firmware(self.get_device(), self)
+
+        return common.shift_right(text, 1)
 
 class DelphiDocGenerator(common.DocGenerator):
     def get_device_class(self):
-        return delphi_common.DelphiDevice
+        return DelphiBindingsDevice
+
+    def get_packet_class(self):
+        return DelphiBindingsPacket
 
     def get_element_class(self):
         return delphi_common.DelphiElement
 
-    def generate(self, device_):
-        global device
-        device = device_
-
-        title = { 'en': 'Delphi bindings', 'de': 'Delphi Bindings' }
+    def generate(self, device):
         file_name = '{0}_{1}_Delphi.rst'.format(device.get_camel_case_name(), device.get_category())
 
         rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
-        rst.write(common.make_rst_header(device, 'delphi', 'Delphi'))
-        rst.write(common.make_rst_summary(device, common.select_lang(title), 'delphi'))
-        rst.write(make_examples(self))
-        rst.write(make_api())
+        rst.write(device.get_delphi_doc())
         rst.close()
 
 def generate(bindings_root_directory, lang):

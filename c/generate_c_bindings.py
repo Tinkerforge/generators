@@ -33,7 +33,7 @@ import common
 import c_common
 
 class CBindingsDevice(common.Device):
-    def get_c_include_c(self, version):
+    def get_c_include_c(self):
         include = """{0}
 
 #define IPCON_EXPOSE_INTERNALS
@@ -44,6 +44,7 @@ class CBindingsDevice(common.Device):
 
 """
         date = datetime.datetime.now().strftime("%Y-%m-%d")
+        version = common.get_changelog_version(self.get_generator().get_bindings_root_directory())
 
         return include.format(common.gen_text_star.format(date, *version),
                               self.get_category().lower(),
@@ -405,7 +406,7 @@ static void {0}_callback_wrapper_{1}(DevicePrivate *device_p, Packet *packet) {{
 
         return functions
 
-    def get_c_include_h(self, version):
+    def get_c_include_h(self):
         include = """{0}
 #ifndef {1}_{2}_H
 #define {1}_{2}_H
@@ -425,6 +426,7 @@ typedef Device {3};
 """
 
         date = datetime.datetime.now().strftime("%Y-%m-%d")
+        version = common.get_changelog_version(self.get_generator().get_bindings_root_directory())
         upper_type = self.get_category().upper()
         upper_name = self.get_upper_case_name()
 
@@ -586,8 +588,8 @@ void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data
 """
         return func.format(self.get_underscore_name(), self.get_camel_case_name(), self.get_category())
 
-    def get_c_source(self, version):
-        source  = self.get_c_include_c(version)
+    def get_c_source(self):
+        source  = self.get_c_include_c()
         source += self.get_c_typedefs()
         source += self.get_c_structs()
         source += self.get_c_callback_wrapper_functions()
@@ -599,8 +601,8 @@ void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data
 
         return source
 
-    def get_c_header(self, version):
-        header  = self.get_c_include_h(version)
+    def get_c_header(self):
+        header  = self.get_c_include_h()
         header += self.get_c_function_id_defines()
         header += self.get_c_callback_defines()
         header += self.get_c_constants()
@@ -747,15 +749,14 @@ class CBindingsGenerator(common.BindingsGenerator):
         return c_common.CElement
 
     def generate(self, device):
-        version = common.get_changelog_version(self.get_bindings_root_directory())
         file_name = '{0}_{1}'.format(device.get_category().lower(), device.get_underscore_name())
 
         c = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name + '.c'), 'wb')
-        c.write(device.get_c_source(version))
+        c.write(device.get_c_source())
         c.close()
 
         h = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name + '.h'), 'wb')
-        h.write(device.get_c_header(version))
+        h.write(device.get_c_header())
         h.close()
 
         if device.is_released():

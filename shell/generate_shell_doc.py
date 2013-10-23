@@ -35,161 +35,66 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 import shell_common
 
-device = None
+class ShellDocDevice(shell_common.ShellDevice):
+    def get_shell_examples(self):
+        def title_from_file_name(file_name):
+            file_name = file_name.replace('example-', '').replace('.sh', '').replace('-', '_')
+            return common.underscore_to_space(file_name)
 
-def format_doc(packet):
-    text = common.select_lang(packet.get_doc()[1])
-    device_name = device.get_shell_device_name()
-    constants = {'en': 'symbols', 'de': 'Symbole'}
+        return common.make_rst_examples(title_from_file_name, self, self.get_generator().get_bindings_root_directory(),
+                                        'shell', 'example-', '.sh', 'Shell', 'bash')
 
-    for other_packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-        name_right = ':sh:func:`{1} <{0} {1}>`'.format(device_name, other_packet.get_underscore_name().replace('_', '-'))
-        text = text.replace(name_false, name_right)
+    def get_shell_methods(self, typ):
+        methods = ''
+        func_start = '.. sh:function:: '
+        device_name = self.get_shell_device_name()
 
-    text = common.handle_rst_word(text)
-    text = common.handle_rst_if(text, device)
+        for packet in self.get_packets('function'):
+            if packet.is_virtual():
+                continue
 
-    def constant_format(prefix, constant, definition, value):
-        c = '* ``{0}`` = {1}, '.format(definition.name_underscore.replace('_', '-'), value)
+            if packet.get_doc()[0] != typ:
+                continue
 
-        for_ = {
-        'en': 'for',
-        'de': 'für'
-        }
+            name = packet.get_dash_name()
+            params = packet.get_shell_parameter_list()
+            pd = packet.get_shell_parameter_desc()
+            r = packet.get_shell_return_desc()
+            d = packet.get_shell_formatted_doc()
+            desc = '{0}{1}{2}'.format(pd, r, d)
+            func = '{0}tinkerforge call {1} <uid> {2} {3} \n{4}'.format(func_start,
+                                                                        device_name,
+                                                                        name,
+                                                                        params,
+                                                                        desc)
+            methods += func + '\n'
 
-        c += common.select_lang(for_) + ' '
+        return methods
 
-        e = []
-        for element in constant.elements:
-            name = element.get_dash_name()
-            if element.get_direction() == 'in':
-                e.append('<{0}>'.format(name))
-            else:
-                e.append(name)
+    def get_shell_callbacks(self):
+        cbs = ''
+        func_start = '.. sh:function:: '
+        device_name = self.get_shell_device_name()
 
-        if len(e) > 1:
-            and_ = {
-            'en': 'and',
-            'de': 'und'
-            }
+        for packet in self.get_packets('callback'):
+            if packet.is_virtual():
+                continue
 
-            c += ', '.join(e[:-1]) + ' ' + common.select_lang(and_) + ' ' + e[-1]
-        else:
-            c += e[0]
+            param_desc = packet.get_shell_return_desc()
+            desc = packet.get_shell_formatted_doc()
 
-        return c + '\n'
+            func = '{0} tinkerforge dispatch {1} <uid> {2}\n{3}\n{4}'.format(func_start,
+                                                                             device_name,
+                                                                             packet.get_dash_name(),
+                                                                             param_desc,
+                                                                             desc)
+            cbs += func + '\n'
 
-    text += common.format_constants('', packet, constants_name=constants,
-                                    char_format='{0}',
-                                    constant_format_func=constant_format)
+        return cbs
 
-    text += common.format_since_firmware(device, packet)
-
-    return common.shift_right(text, 1)
-
-def make_examples(generator):
-    def title_from_file_name(file_name):
-        file_name = file_name.replace('example-', '').replace('.sh', '').replace('-', '_')
-        return common.underscore_to_space(file_name)
-
-    return common.make_rst_examples(title_from_file_name, device, generator.get_bindings_root_directory(),
-                                    'shell', 'example-', '.sh', 'Shell', 'bash')
-
-def make_parameter_desc(packet):
-    desc = '\n'
-    param = ' :param <{0}>: {1}'
-    has_symbols = {
-    'en': 'has symbols',
-    'de': 'hat Symbole'
-    }
-
-    for element in packet.get_elements('in'):
-        t = element.get_shell_type()
-        desc += param.format(element.get_dash_name(), t)
-
-        if element.has_constants():
-            desc += ' ({0})'.format(common.select_lang(has_symbols))
-
-        desc += '\n'
-
-    return desc
-
-def make_return_desc(packet):
-    nothing = {
-    'en': 'no output',
-    'de': 'keine Ausgabe'
-    }
-    has_symbols = {
-    'en': 'has symbols',
-    'de': 'hat Symbole'
-    }
-    elements = packet.get_elements('out')
-
-    if len(elements) == 0:
-        return '\n :noreturn: {0}\n'.format(common.select_lang(nothing))
-
-    ret = '\n'
-    for element in elements:
-        t = element.get_shell_type()
-        ret += ' :returns {0}: {1}'.format(element.get_dash_name(), t)
-
-        if element.has_constants() or \
-           packet.get_function_id() == 255 and element.get_underscore_name() == 'device_identifier':
-            ret += ' ({0})'.format(common.select_lang(has_symbols))
-
-        ret += '\n'
-
-    return ret
-
-def make_methods(typ):
-    methods = ''
-    func_start = '.. sh:function:: '
-    device_name = device.get_shell_device_name()
-    for packet in device.get_packets('function'):
-        if packet.is_virtual():
-            continue
-
-        if packet.get_doc()[0] != typ:
-            continue
-        name = packet.get_underscore_name().replace('_', '-')
-        params = shell_common.make_parameter_list(packet)
-        pd = make_parameter_desc(packet)
-        r = make_return_desc(packet)
-        d = format_doc(packet)
-        desc = '{0}{1}{2}'.format(pd, r, d)
-        func = '{0}tinkerforge call {1} <uid> {2} {3} \n{4}'.format(func_start,
-                                                                    device_name,
-                                                                    name,
-                                                                    params,
-                                                                    desc)
-        methods += func + '\n'
-
-    return methods
-
-def make_callbacks():
-    cbs = ''
-    func_start = '.. sh:function:: '
-    device_name = device.get_shell_device_name()
-    for packet in device.get_packets('callback'):
-        if packet.is_virtual():
-            continue
-
-        param_desc = make_return_desc(packet)
-        desc = format_doc(packet)
-
-        func = '{0} tinkerforge dispatch {1} <uid> {2}\n{3}\n{4}'.format(func_start,
-                                                                         device_name,
-                                                                         packet.get_underscore_name().replace('_', '-'),
-                                                                         param_desc,
-                                                                         desc)
-        cbs += func + '\n'
-
-    return cbs
-
-def make_api():
-    c_str = {
-    'en': """
+    def get_shell_api(self):
+        c_str = {
+        'en': """
 .. _{1}_{2}_shell_callbacks:
 
 Callbacks
@@ -211,7 +116,7 @@ The available callbacks are described below.
 
 {0}
 """,
-    'de': """
+        'de': """
 .. _{1}_{2}_shell_callbacks:
 
 Callbacks
@@ -234,10 +139,10 @@ Die verfügbaren Callbacks werden weiter unten beschrieben.
 
 {0}
 """
-    }
+        }
 
-    api = {
-    'en': """
+        api = {
+        'en': """
 {0}
 API
 ---
@@ -327,7 +232,7 @@ Command Structure
 
 {2}
 """,
-    'de': """
+        'de': """
 {0}
 API
 ---
@@ -420,49 +325,153 @@ Befehlsstruktur
 
 {2}
 """
-    }
+        }
 
-    bf = make_methods('bf')
-    af = make_methods('af')
-    ccf = make_methods('ccf')
-    c = make_callbacks()
-    api_str = ''
-    if bf:
-        api_str += common.select_lang(common.bf_str).format('', bf)
-    if af:
-        api_str += common.select_lang(common.af_str).format(af)
-    if c:
-        api_str += common.select_lang(common.ccf_str).format('', ccf)
-        api_str += common.select_lang(c_str).format(c, device.get_underscore_name(),
-                                                    device.get_category().lower(),
-                                                    device.get_shell_device_name())
+        bf = self.get_shell_methods('bf')
+        af = self.get_shell_methods('af')
+        ccf = self.get_shell_methods('ccf')
+        c = self.get_shell_callbacks()
+        api_str = ''
+        if bf:
+            api_str += common.select_lang(common.bf_str).format('', bf)
+        if af:
+            api_str += common.select_lang(common.af_str).format(af)
+        if c:
+            api_str += common.select_lang(common.ccf_str).format('', ccf)
+            api_str += common.select_lang(c_str).format(c, self.get_underscore_name(),
+                                                        self.get_category().lower(),
+                                                        self.get_shell_device_name())
 
-    ref = '.. _{0}_{1}_shell_api:\n'.format(device.get_underscore_name(),
-                                            device.get_category().lower())
+        ref = '.. _{0}_{1}_shell_api:\n'.format(self.get_underscore_name(),
+                                                self.get_category().lower())
 
-    return common.select_lang(api).format(ref, device.get_api_doc(), api_str,
-                                          device.get_shell_device_name(),
-                                          device.get_display_name() + ' ' + device.get_category())
+        return common.select_lang(api).format(ref, self.get_api_doc(), api_str,
+                                              self.get_shell_device_name(),
+                                              self.get_display_name() + ' ' + self.get_category())
+
+    def get_shell_doc(self):
+        title = { 'en': 'Shell bindings', 'de': 'Shell Bindings' }
+
+        doc  = common.make_rst_header(self, 'shell', 'Shell')
+        doc += common.make_rst_summary(self, common.select_lang(title), 'shell')
+        doc += self.get_shell_examples()
+        doc += self.get_shell_api()
+
+        return doc
+
+class ShellDocPacket(shell_common.ShellPacket):
+    def get_shell_formatted_doc(self):
+        text = common.select_lang(self.get_doc()[1])
+        device_name = self.get_device().get_shell_device_name()
+        constants = {'en': 'symbols', 'de': 'Symbole'}
+
+        for other_packet in self.get_device().get_packets():
+            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+            name_right = ':sh:func:`{1} <{0} {1}>`'.format(device_name, other_packet.get_dash_name())
+            text = text.replace(name_false, name_right)
+
+        text = common.handle_rst_word(text)
+        text = common.handle_rst_if(text, self.get_device())
+
+        def constant_format(prefix, constant, definition, value):
+            c = '* ``{0}`` = {1}, '.format(definition.name_underscore.replace('_', '-'), value)
+
+            for_ = {
+            'en': 'for',
+            'de': 'für'
+            }
+
+            c += common.select_lang(for_) + ' '
+
+            e = []
+            for element in constant.elements:
+                name = element.get_dash_name()
+                if element.get_direction() == 'in':
+                    e.append('<{0}>'.format(name))
+                else:
+                    e.append(name)
+
+            if len(e) > 1:
+                and_ = {
+                'en': 'and',
+                'de': 'und'
+                }
+
+                c += ', '.join(e[:-1]) + ' ' + common.select_lang(and_) + ' ' + e[-1]
+            else:
+                c += e[0]
+
+            return c + '\n'
+
+        text += common.format_constants('', self, constants_name=constants,
+                                        char_format='{0}',
+                                        constant_format_func=constant_format)
+
+        text += common.format_since_firmware(self.get_device(), self)
+
+        return common.shift_right(text, 1)
+
+    def get_shell_parameter_desc(self):
+        desc = '\n'
+        param = ' :param <{0}>: {1}'
+        has_symbols = {
+        'en': 'has symbols',
+        'de': 'hat Symbole'
+        }
+
+        for element in self.get_elements('in'):
+            t = element.get_shell_type()
+            desc += param.format(element.get_dash_name(), t)
+
+            if element.has_constants():
+                desc += ' ({0})'.format(common.select_lang(has_symbols))
+
+            desc += '\n'
+
+        return desc
+
+    def get_shell_return_desc(self):
+        nothing = {
+        'en': 'no output',
+        'de': 'keine Ausgabe'
+        }
+        has_symbols = {
+        'en': 'has symbols',
+        'de': 'hat Symbole'
+        }
+        elements = self.get_elements('out')
+
+        if len(elements) == 0:
+            return '\n :noreturn: {0}\n'.format(common.select_lang(nothing))
+
+        ret = '\n'
+        for element in elements:
+            t = element.get_shell_type()
+            ret += ' :returns {0}: {1}'.format(element.get_dash_name(), t)
+
+            if element.has_constants() or \
+               self.get_function_id() == 255 and element.get_underscore_name() == 'device_identifier':
+                ret += ' ({0})'.format(common.select_lang(has_symbols))
+
+            ret += '\n'
+
+        return ret
 
 class ShellDocGenerator(common.DocGenerator):
     def get_device_class(self):
-        return shell_common.ShellDevice
+        return ShellDocDevice
+
+    def get_packet_class(self):
+        return ShellDocPacket
 
     def get_element_class(self):
         return shell_common.ShellElement
 
-    def generate(self, device_):
-        global device
-        device = device_
-
-        title = { 'en': 'Shell bindings', 'de': 'Shell Bindings' }
+    def generate(self, device):
         file_name = '{0}_{1}_Shell.rst'.format(device.get_camel_case_name(), device.get_category())
 
         rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
-        rst.write(common.make_rst_header(device, 'shell', 'Shell'))
-        rst.write(common.make_rst_summary(device, common.select_lang(title), 'shell'))
-        rst.write(make_examples(self))
-        rst.write(make_api())
+        rst.write(device.get_shell_doc())
         rst.close()
 
 def generate(bindings_root_directory, lang):

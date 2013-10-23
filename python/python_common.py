@@ -30,15 +30,18 @@ import os
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-def make_parameter_list(packet):
-    params = []
-    for element in packet.get_elements('in'):
-        params.append(element.get_underscore_name())
-    return ', '.join(params)
-
 class PythonDevice(common.Device):
     def get_python_class_name(self):
         return self.get_category() + self.get_camel_case_name()
+
+class PythonPacket(common.Packet):
+    def get_python_parameter_list(self):
+        params = []
+
+        for element in self.get_elements('in'):
+            params.append(element.get_underscore_name())
+
+        return ', '.join(params)
 
 class PythonElement(common.Element):
     python_type = {

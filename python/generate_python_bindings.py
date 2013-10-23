@@ -32,19 +32,9 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 import python_common
 
-device = None
-
-def format_doc(packet):
-    text = common.select_lang(packet.get_doc()[1])
-
-    text = common.handle_rst_word(text)
-    text = common.handle_rst_if(text, device)
-    text += common.format_since_firmware(device, packet)
-
-    return '\n        '.join(text.strip().split('\n'))
-
-def make_import(version):
-    include = """# -*- coding: utf-8 -*-
+class PythonBindingsDevice(python_common.PythonDevice):
+    def get_python_import(self):
+        include = """# -*- coding: utf-8 -*-
 {0}
 try:
     from collections import namedtuple
@@ -60,34 +50,35 @@ except ValueError:
     from ip_connection import Device, IPConnection, Error
 
 """
-    date = datetime.datetime.now().strftime("%Y-%m-%d")
-    lower_type = device.get_category().lower()
+        date = datetime.datetime.now().strftime("%Y-%m-%d")
+        version = common.get_changelog_version(self.get_generator().get_bindings_root_directory())
+        lower_type = self.get_category().lower()
 
-    return include.format(common.gen_text_hash.format(date, *version),
-                          lower_type, device.get_underscore_name())
+        return include.format(common.gen_text_hash.format(date, *version),
+                              lower_type, self.get_underscore_name())
 
-def make_namedtuples():
-    tup = """{0} = namedtuple('{1}', [{2}])
+    def get_python_namedtuples(self):
+        tup = """{0} = namedtuple('{1}', [{2}])
 """
 
-    tups = ''
-    for packet in device.get_packets('function'):
-        if len(packet.get_elements('out')) < 2:
-            continue
+        tups = ''
+        for packet in self.get_packets('function'):
+            if len(packet.get_elements('out')) < 2:
+                continue
 
-        name = packet.get_camel_case_name()
-        name_tup = name
-        if name_tup.startswith('Get'):
-            name_tup = name_tup[3:]
-        params = []
-        for element in packet.get_elements('out'):
-            params.append("'{0}'".format(element.get_underscore_name()))
+            name = packet.get_camel_case_name()
+            name_tup = name
+            if name_tup.startswith('Get'):
+                name_tup = name_tup[3:]
+            params = []
+            for element in packet.get_elements('out'):
+                params.append("'{0}'".format(element.get_underscore_name()))
 
-        tups += tup.format(name, name_tup, ", ".join(params))
-    return tups
+            tups += tup.format(name, name_tup, ", ".join(params))
+        return tups
 
-def make_class():
-    return """
+    def get_python_class(self):
+        return """
 class {0}(Device):
     \"\"\"
     {1}
@@ -95,42 +86,42 @@ class {0}(Device):
 
     DEVICE_IDENTIFIER = {2}
 
-""".format(device.get_python_class_name(),
-           device.get_description(),
-           device.get_device_identifier())
+""".format(self.get_python_class_name(),
+           self.get_description(),
+           self.get_device_identifier())
 
-def make_callback_id_definitions():
-    cbs = ''
-    cb = '    CALLBACK_{0} = {1}\n'
-    for packet in device.get_packets('callback'):
-        cbs += cb.format(packet.get_upper_case_name(), packet.get_function_id())
-    return cbs
+    def get_python_callback_id_definitions(self):
+        cbs = ''
+        cb = '    CALLBACK_{0} = {1}\n'
+        for packet in self.get_packets('callback'):
+            cbs += cb.format(packet.get_upper_case_name(), packet.get_function_id())
+        return cbs
 
-def make_function_id_definitions():
-    function_ids = '\n'
-    function_id = '    FUNCTION_{0} = {1}\n'
-    for packet in device.get_packets('function'):
-        function_ids += function_id.format(packet.get_upper_case_name(), packet.get_function_id())
-    return function_ids
+    def get_python_function_id_definitions(self):
+        function_ids = '\n'
+        function_id = '    FUNCTION_{0} = {1}\n'
+        for packet in self.get_packets('function'):
+            function_ids += function_id.format(packet.get_upper_case_name(), packet.get_function_id())
+        return function_ids
 
-def make_constants():
-    str_constants = '\n'
-    str_constant = '    {0}_{1} = {2}\n'
-    constants = device.get_constants()
-    for constant in constants:
-        for definition in constant.definitions:
-            if constant.type == 'char':
-                value = "'{0}'".format(definition.value)
-            else:
-                value = str(definition.value)
+    def get_python_constants(self):
+        str_constants = '\n'
+        str_constant = '    {0}_{1} = {2}\n'
+        constants = self.get_constants()
+        for constant in constants:
+            for definition in constant.definitions:
+                if constant.type == 'char':
+                    value = "'{0}'".format(definition.value)
+                else:
+                    value = str(definition.value)
 
-            str_constants += str_constant.format(constant.name_uppercase,
-                                                 definition.name_uppercase,
-                                                 value)
-    return str_constants
+                str_constants += str_constant.format(constant.name_uppercase,
+                                                     definition.name_uppercase,
+                                                     value)
+        return str_constants
 
-def make_init_method():
-    dev_init = """
+    def get_python_init_method(self):
+        dev_init = """
     def __init__(self, uid, ipcon):
         \"\"\"
         Creates an object with the unique device ID *uid* and adds it to
@@ -141,103 +132,97 @@ def make_init_method():
         self.api_version = ({0}, {1}, {2})
 
 """
-    response_expected = ''
+        response_expected = ''
 
-    for packet in device.get_packets():
-        if packet.get_type() == 'callback':
-            prefix = 'CALLBACK_'
-            flag = 'RESPONSE_EXPECTED_ALWAYS_FALSE'
-        elif len(packet.get_elements('out')) > 0:
-            prefix = 'FUNCTION_'
-            flag = 'RESPONSE_EXPECTED_ALWAYS_TRUE'
-        elif packet.get_doc()[0] == 'ccf':
-            prefix = 'FUNCTION_'
-            flag = 'RESPONSE_EXPECTED_TRUE'
-        else:
-            prefix = 'FUNCTION_'
-            flag = 'RESPONSE_EXPECTED_FALSE'
+        for packet in self.get_packets():
+            if packet.get_type() == 'callback':
+                prefix = 'CALLBACK_'
+                flag = 'RESPONSE_EXPECTED_ALWAYS_FALSE'
+            elif len(packet.get_elements('out')) > 0:
+                prefix = 'FUNCTION_'
+                flag = 'RESPONSE_EXPECTED_ALWAYS_TRUE'
+            elif packet.get_doc()[0] == 'ccf':
+                prefix = 'FUNCTION_'
+                flag = 'RESPONSE_EXPECTED_TRUE'
+            else:
+                prefix = 'FUNCTION_'
+                flag = 'RESPONSE_EXPECTED_FALSE'
 
-        response_expected += '        self.response_expected[{0}.{1}{2}] = {0}.{3}\n' \
-            .format(device.get_python_class_name(), prefix, packet.get_upper_case_name(), flag)
+            response_expected += '        self.response_expected[{0}.{1}{2}] = {0}.{3}\n' \
+                .format(self.get_python_class_name(), prefix, packet.get_upper_case_name(), flag)
 
-    if len(response_expected) > 0:
-        response_expected += '\n'
+        if len(response_expected) > 0:
+            response_expected += '\n'
 
-    return dev_init.format(*device.get_api_version()) + response_expected
+        return dev_init.format(*self.get_api_version()) + response_expected
 
-def make_callback_formats():
-    cbs = ''
-    cb = "        self.callback_formats[{0}.CALLBACK_{1}] = '{2}'\n"
+    def get_python_callback_formats(self):
+        cbs = ''
+        cb = "        self.callback_formats[{0}.CALLBACK_{1}] = '{2}'\n"
 
-    for packet in device.get_packets('callback'):
-        cbs += cb.format(device.get_python_class_name(),
-                         packet.get_upper_case_name(),
-                         make_format_list(packet, 'out'))
+        for packet in self.get_packets('callback'):
+            cbs += cb.format(self.get_python_class_name(),
+                             packet.get_upper_case_name(),
+                             packet.get_python_format_list('out'))
 
-    return cbs
+        return cbs
 
-def make_format_list(packet, io):
-    forms = []
-    for element in packet.get_elements(io):
-        forms.append(element.get_python_struct_format())
-    return ' '.join(forms)
-
-def make_methods():
-    m_tup = """
+    def get_python_methods(self):
+        m_tup = """
     def {0}(self{7}{4}):
         \"\"\"
         {9}
         \"\"\"
         return {1}(*self.ipcon.send_request(self, {2}.FUNCTION_{3}, ({4}{8}), '{5}', '{6}'))
 """
-    m_ret = """
+        m_ret = """
     def {0}(self{6}{3}):
         \"\"\"
         {8}
         \"\"\"
         return self.ipcon.send_request(self, {1}.FUNCTION_{2}, ({3}{7}), '{4}', '{5}')
 """
-    m_nor = """
+        m_nor = """
     def {0}(self{6}{3}):
         \"\"\"
         {8}
         \"\"\"
         self.ipcon.send_request(self, {1}.FUNCTION_{2}, ({3}{7}), '{4}', '{5}')
 """
-    methods = ''
+        methods = ''
 
-    cls = device.get_python_class_name()
-    for packet in device.get_packets('function'):
-        nb = packet.get_camel_case_name()
-        ns = packet.get_underscore_name()
-        nh = ns.upper()
-        par = python_common.make_parameter_list(packet)
-        doc = format_doc(packet)
-        cp = ''
-        ct = ''
-        if par != '':
-            cp = ', '
-            if not ',' in par:
-                ct = ','
+        cls = self.get_python_class_name()
+        for packet in self.get_packets('function'):
+            nb = packet.get_camel_case_name()
+            ns = packet.get_underscore_name()
+            nh = ns.upper()
+            par = packet.get_python_parameter_list()
+            doc = packet.get_python_formatted_doc()
+            cp = ''
+            ct = ''
+            if par != '':
+                cp = ', '
+                if not ',' in par:
+                    ct = ','
 
-        in_f = make_format_list(packet, 'in')
-        out_f = make_format_list(packet, 'out')
+            in_f = packet.get_python_format_list('in')
+            out_f = packet.get_python_format_list('out')
 
-        elements = len(packet.get_elements('out'))
-        if elements > 1:
-            methods += m_tup.format(ns, nb, cls, nh, par, in_f, out_f, cp, ct, doc)
-        elif elements == 1:
-            methods += m_ret.format(ns, cls, nh, par, in_f, out_f, cp, ct, doc)
-        else:
-            methods += m_nor.format(ns, cls, nh, par, in_f, out_f, cp, ct, doc)
+            elements = len(packet.get_elements('out'))
+            if elements > 1:
+                methods += m_tup.format(ns, nb, cls, nh, par, in_f, out_f, cp, ct, doc)
+            elif elements == 1:
+                methods += m_ret.format(ns, cls, nh, par, in_f, out_f, cp, ct, doc)
+            else:
+                methods += m_nor.format(ns, cls, nh, par, in_f, out_f, cp, ct, doc)
 
-    return methods
+        return methods
 
-def make_register_callback_method():
-    if len(device.get_packets('callback')) == 0:
-        return ''
+    def get_python_register_callback_method(self):
+        if len(self.get_packets('callback')) == 0:
+            return ''
 
-    return """
+        return """
     def register_callback(self, id, callback):
         \"\"\"
         Registers a callback with ID *id* to the function *callback*.
@@ -245,34 +230,43 @@ def make_register_callback_method():
         self.registered_callbacks[id] = callback
 """
 
-def make_old_name():
-    return """
+    def get_python_old_name(self):
+        return """
 {0} = {1} # for backward compatibility
-""".format(device.get_camel_case_name(), device.get_python_class_name())
+""".format(self.get_camel_case_name(), self.get_python_class_name())
 
-def make_files(device_, directory):
-    global device
-    device = device_
-    file_name = '{0}_{1}.py'.format(device.get_category().lower(), device.get_underscore_name())
-    version = common.get_changelog_version(directory)
-    directory += '/bindings'
+    def get_python_source(self):
+        source  = self.get_python_import()
+        source += self.get_python_namedtuples()
+        source += self.get_python_class()
+        source += self.get_python_callback_id_definitions()
+        source += self.get_python_function_id_definitions()
+        source += self.get_python_constants()
+        source += self.get_python_init_method()
+        source += self.get_python_callback_formats()
+        source += self.get_python_methods()
+        source += self.get_python_register_callback_method()
+        source += self.get_python_old_name()
 
-    py = file('{0}/{1}'.format(directory, file_name), "w")
-    py.write(make_import(version))
-    py.write(make_namedtuples())
-    py.write(make_class())
-    py.write(make_callback_id_definitions())
-    py.write(make_function_id_definitions())
-    py.write(make_constants())
-    py.write(make_init_method())
-    py.write(make_callback_formats())
-    py.write(make_methods())
-    py.write(make_register_callback_method())
-    py.write(make_old_name())
+        return source
 
-    if device.is_released():
-        global released_files
-        released_files.append(file_name)
+class PythonBindingsPacket(python_common.PythonPacket):
+    def get_python_formatted_doc(self):
+        text = common.select_lang(self.get_doc()[1])
+
+        text = common.handle_rst_word(text)
+        text = common.handle_rst_if(text, self.get_device())
+        text += common.format_since_firmware(self.get_device(), self)
+
+        return '\n        '.join(text.strip().split('\n'))
+
+    def get_python_format_list(self, io):
+        forms = []
+
+        for element in self.get_elements(io):
+            forms.append(element.get_python_struct_format())
+
+        return ' '.join(forms)
 
 class PythonBindingsGenerator(common.BindingsGenerator):
     def __init__(self, *args, **kwargs):
@@ -281,30 +275,19 @@ class PythonBindingsGenerator(common.BindingsGenerator):
         self.released_files_name_prefix = 'python'
 
     def get_device_class(self):
-        return python_common.PythonDevice
+        return PythonBindingsDevice
+
+    def get_packet_class(self):
+        return PythonBindingsPacket
 
     def get_element_class(self):
         return python_common.PythonElement
 
-    def generate(self, device_):
-        global device
-        device = device_
-
-        version = common.get_changelog_version(self.get_bindings_root_directory())
+    def generate(self, device):
         file_name = '{0}_{1}.py'.format(device.get_category().lower(), device.get_underscore_name())
 
         py = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name), 'wb')
-        py.write(make_import(version))
-        py.write(make_namedtuples())
-        py.write(make_class())
-        py.write(make_callback_id_definitions())
-        py.write(make_function_id_definitions())
-        py.write(make_constants())
-        py.write(make_init_method())
-        py.write(make_callback_formats())
-        py.write(make_methods())
-        py.write(make_register_callback_method())
-        py.write(make_old_name())
+        py.write(device.get_python_source())
         py.close()
 
         if device.is_released():

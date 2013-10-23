@@ -34,13 +34,14 @@ import common
 import csharp_common
 
 class CSharpBindingsDevice(csharp_common.CSharpDevice):
-    def get_csharp_import(self, version):
+    def get_csharp_import(self):
         include = """{0}
 using System;
 
 namespace Tinkerforge
 {{"""
         date = datetime.datetime.now().strftime("%Y-%m-%d")
+        version = common.get_changelog_version(self.get_generator().get_bindings_root_directory())
 
         return include.format(common.gen_text_star.format(date, *version))
 
@@ -294,8 +295,8 @@ namespace Tinkerforge
 
         return methods
 
-    def get_csharp_source(self, version):
-        source  = self.get_csharp_import(version)
+    def get_csharp_source(self):
+        source  = self.get_csharp_import()
         source += self.get_csharp_class()
         source += self.get_csharp_function_id_definitions()
         source += self.get_csharp_constants()
@@ -389,11 +390,10 @@ class CSharpBindingsGenerator(common.BindingsGenerator):
         return csharp_common.CSharpElement
 
     def generate(self, device):
-        version = common.get_changelog_version(self.get_bindings_root_directory())
         file_name = '{0}.cs'.format(device.get_csharp_class_name())
 
         cs = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name), 'wb')
-        cs.write(device.get_csharp_source(version))
+        cs.write(device.get_csharp_source())
         cs.close()
 
         if device.is_released():

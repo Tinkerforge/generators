@@ -30,18 +30,24 @@ import os
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-def make_parameter_list(packet):
-    params = []
-    for element in packet.get_elements('in'):
-        params.append('<{0}>'.format(element.get_underscore_name().replace('_', '-')))
-    return ' '.join(params)
-
 class ShellDevice(common.Device):
     def get_shell_class_name(self):
         return self.get_camel_case_name() + self.get_category()
 
     def get_shell_device_name(self):
         return self.get_underscore_name().replace('_', '-') + '-' + self.get_category().lower()
+
+class ShellPacket(common.Packet):
+    def get_dash_name(self):
+        return self.get_underscore_name().replace('_', '-')
+
+    def get_shell_parameter_list(self):
+        params = []
+
+        for element in self.get_elements('in'):
+            params.append('<{0}>'.format(element.get_underscore_name().replace('_', '-')))
+
+        return ' '.join(params)
 
 class ShellElement(common.Element):
     shell_types = {

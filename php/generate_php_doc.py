@@ -36,134 +36,76 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 import php_common
 
-device = None
+class PHPDocDevice(php_common.PHPDevice):
+    def get_php_examples(self):
+        def title_from_file_name(file_name):
+            file_name = file_name.replace('Example', '').replace('.php', '')
+            return common.camel_case_to_space(file_name)
 
-def format_doc(packet):
-    text = common.select_lang(packet.get_doc()[1])
+        return common.make_rst_examples(title_from_file_name, self, self.get_generator().get_bindings_root_directory(),
+                                        'php', 'Example', '.php', 'PHP')
 
-    cls = device.get_php_class_name()
-    for other_packet in device.get_packets():
-        name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-        if other_packet.get_type() == 'callback':
-            name_upper = other_packet.get_upper_case_name()
-            name_right = ':php:member:`CALLBACK_{1} <{0}::CALLBACK_{1}>`'.format(cls, name_upper)
-        else:
-            name = other_packet.get_headless_camel_case_name()
-            name_right = ':php:func:`{1}() <{0}::{1}>`'.format(cls, name)
-        text = text.replace(name_false, name_right)
+    def get_php_methods(self, typ):
+        methods = ''
+        func_start = '.. php:function:: '
+        cls = self.get_php_class_name()
+        for packet in self.get_packets('function'):
+            if packet.get_doc()[0] != typ:
+                continue
 
-    text = common.handle_rst_word(text)
-    text = common.handle_rst_if(text, device)
+            ret_type = packet.get_php_return_type()
+            name = packet.get_headless_camel_case_name()
+            params = packet.get_php_parameter_list(True)
+            desc = packet.get_php_formatted_doc()
+            obj_desc = packet.get_php_object_desc()
+            func = '{0}{1} {2}::{3}({4})\n{5}{6}'.format(func_start,
+                                                         ret_type,
+                                                         cls,
+                                                         name,
+                                                         params,
+                                                         desc,
+                                                         obj_desc)
+            methods += func + '\n'
 
-    prefix = cls + '::'
-    if packet.get_underscore_name() == 'set_response_expected':
-        text += common.format_function_id_constants(prefix, device)
-    else:
-        text += common.format_constants(prefix, packet)
+        return methods
 
-    text += common.format_since_firmware(device, packet)
-
-    return common.shift_right(text, 1)
-
-def make_examples(generator):
-    def title_from_file_name(file_name):
-        file_name = file_name.replace('Example', '').replace('.php', '')
-        return common.camel_case_to_space(file_name)
-
-    return common.make_rst_examples(title_from_file_name, device, generator.get_bindings_root_directory(),
-                                    'php', 'Example', '.php', 'PHP')
-
-def make_object_desc(packet):
-    if len(packet.get_elements('out')) < 2:
-        return ''
-
-    desc = {
-    'en': """
- The returned array has the keys {0}.
-""",
-    'de': """
- Das zurückgegebene Array enthält die Keys {0}.
-"""
-    }
-
-    and_ = {
-    'en': ' and ',
-    'de': ' und '
-    }
-
-    var = []
-    for element in packet.get_elements('out'):
-        var.append('``{0}``'.format(element.get_underscore_name()))
-
-    if len(var) == 1:
-        return common.select_lang(desc).format(var[0])
-
-    if len(var) == 2:
-        return common.select_lang(desc).format(var[0] + common.select_lang(and_) + var[1])
-
-    return common.select_lang(desc).format(', '.join(var[:-1]) + common.select_lang(and_) + var[-1])
-
-def make_methods(typ):
-    methods = ''
-    func_start = '.. php:function:: '
-    cls = device.get_php_class_name()
-    for packet in device.get_packets('function'):
-        if packet.get_doc()[0] != typ:
-            continue
-
-        ret_type = php_common.get_return_type(packet)
-        name = packet.get_headless_camel_case_name()
-        params = php_common.make_parameter_list(packet, True)
-        desc = format_doc(packet)
-        obj_desc = make_object_desc(packet)
-        func = '{0}{1} {2}::{3}({4})\n{5}{6}'.format(func_start,
-                                                     ret_type,
-                                                     cls,
-                                                     name,
-                                                     params,
-                                                     desc,
-                                                     obj_desc)
-        methods += func + '\n'
-
-    return methods
-
-def make_callbacks():
-    signature_str = {
-    'en':  """
+    def get_php_callbacks(self):
+        signature_str = {
+        'en':  """
  .. code-block:: php
 
   <?php   void callback({0})   ?>
 """,
-    'de':  """
+        'de':  """
  .. code-block:: php
 
   <?php   void callback({0})   ?>
 """
-    }
+        }
 
-    cbs = ''
-    func_start = '.. php:member:: int '
-    cls = device.get_php_class_name()
-    for packet in device.get_packets('callback'):
-        params = php_common.make_parameter_list(packet, True)
-        if len(params) > 0:
-            params += " [, mixed $userData]"
-        else:
-            params += "[mixed $userData]"
-        desc = format_doc(packet)
-        signature = common.select_lang(signature_str).format(params)
-        func = '{0}{1}::CALLBACK_{2}\n{3}{4}'.format(func_start,
-                                                     cls,
-                                                     packet.get_upper_case_name(),
-                                                     signature,
-                                                     desc)
-        cbs += func + '\n'
+        cbs = ''
+        func_start = '.. php:member:: int '
+        cls = self.get_php_class_name()
+        for packet in self.get_packets('callback'):
+            params = packet.get_php_parameter_list(True)
+            if len(params) > 0:
+                params += " [, mixed $userData]"
+            else:
+                params += "[mixed $userData]"
+            desc = packet.get_php_formatted_doc()
+            signature = common.select_lang(signature_str).format(params)
+            func = '{0}{1}::CALLBACK_{2}\n{3}{4}'.format(func_start,
+                                                         cls,
+                                                         packet.get_upper_case_name(),
+                                                         signature,
+                                                         desc)
+            cbs += func + '\n'
 
-    return cbs
+        return cbs
 
-def make_api():
-    create_str = {
-    'en': """
+    def get_php_api(self):
+        create_str = {
+        'en': """
 .. php:function:: class {3}{1}(string $uid, IPConnection $ipcon)
 
  Creates an object with the unique device ID ``$uid``:
@@ -175,7 +117,7 @@ def make_api():
  This object can then be used after the IP Connection is connected
  (see examples :ref:`above <{0}_{2}_php_examples>`).
 """,
-    'de': """
+        'de': """
 .. php:function:: class {3}{1}(string $uid, IPConnection $ipcon)
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``$uid``:
@@ -187,10 +129,10 @@ def make_api():
  Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
  (siehe Beispiele :ref:`oben <{0}_{2}_php_examples>`).
 """
-    }
+        }
 
-    register_str = {
-    'en': """
+        register_str = {
+        'en': """
 .. php:function:: void {3}{1}::registerCallback(int $id, callable $callback, mixed $userData = NULL)
 
  Registers a callback with ID *$id* to the callable *$callback*.
@@ -199,7 +141,7 @@ def make_api():
  The available  IDs with corresponding function signatures are listed
  :ref:`below <{0}_{2}_php_callbacks>`.
 """,
-    'de': """
+        'de': """
 .. php:function:: void {3}{1}::registerCallback(int $id, callable $callback, mixed $userData = NULL)
 
  Registriert einen Callback mit der ID *$id* zu der Callable *$callback*.
@@ -208,10 +150,10 @@ def make_api():
  Die verfügbaren IDs mit den zugehörigen Funktionssignaturen sind :ref:`unten <{0}_{2}_php_callbacks>`
  zu finden.
 """
-    }
+        }
 
-    c_str = {
-    'en': """
+        c_str = {
+        'en': """
 .. _{1}_{2}_php_callbacks:
 
 Callbacks
@@ -246,7 +188,7 @@ described below.
 
 {0}
 """,
-    'de': """
+        'de': """
 .. _{1}_{2}_php_callbacks:
 
 Callbacks
@@ -282,10 +224,10 @@ weiter unten beschrieben.
 
 {0}
 """
-    }
+        }
 
-    api = {
-    'en': """
+        api = {
+        'en': """
 {0}
 API
 ---
@@ -296,7 +238,7 @@ Functions that return multiple values return them in an associative array.
 
 {2}
 """,
-    'de': """
+        'de': """
 {0}
 API
 ---
@@ -308,10 +250,10 @@ zurück.
 
 {2}
 """
-    }
+        }
 
-    const_str = {
-    'en' : """
+        const_str = {
+        'en' : """
 Constants
 ^^^^^^^^^
 
@@ -324,7 +266,7 @@ Constants
  callback of the IP Connection have a ``deviceIdentifier`` parameter to specify
  the Brick's or Bricklet's type.
 """,
-    'de' : """
+        'de' : """
 Konstanten
 ^^^^^^^^^^
 
@@ -337,66 +279,130 @@ Konstanten
  Callback der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 """
-    }
+        }
 
-    cre = common.select_lang(create_str).format(device.get_underscore_name(),
-                                                device.get_camel_case_name(),
-                                                device.get_category().lower(),
-                                                device.get_category())
-    reg = common.select_lang(register_str).format(device.get_underscore_name(),
-                                                  device.get_camel_case_name(),
-                                                  device.get_category().lower(),
-                                                  device.get_category())
+        cre = common.select_lang(create_str).format(self.get_underscore_name(),
+                                                    self.get_camel_case_name(),
+                                                    self.get_category().lower(),
+                                                    self.get_category())
+        reg = common.select_lang(register_str).format(self.get_underscore_name(),
+                                                      self.get_camel_case_name(),
+                                                      self.get_category().lower(),
+                                                      self.get_category())
 
-    bf = make_methods('bf')
-    af = make_methods('af')
-    ccf = make_methods('ccf')
-    c = make_callbacks()
-    api_str = ''
-    if bf:
-        api_str += common.select_lang(common.bf_str).format(cre, bf)
-    if af:
-        api_str += common.select_lang(common.af_str).format(af)
-    if c:
-        api_str += common.select_lang(common.ccf_str).format(reg, ccf)
-        api_str += common.select_lang(c_str).format(c, device.get_underscore_name(),
-                                                    device.get_category().lower(),
-                                                    device.get_category(),
-                                                    device.get_camel_case_name())
+        bf = self.get_php_methods('bf')
+        af = self.get_php_methods('af')
+        ccf = self.get_php_methods('ccf')
+        c = self.get_php_callbacks()
+        api_str = ''
+        if bf:
+            api_str += common.select_lang(common.bf_str).format(cre, bf)
+        if af:
+            api_str += common.select_lang(common.af_str).format(af)
+        if c:
+            api_str += common.select_lang(common.ccf_str).format(reg, ccf)
+            api_str += common.select_lang(c_str).format(c, self.get_underscore_name(),
+                                                        self.get_category().lower(),
+                                                        self.get_category(),
+                                                        self.get_camel_case_name())
 
-    article = 'ein'
-    if device.get_category() == 'Brick':
-        article = 'einen'
-    api_str += common.select_lang(const_str).format(device.get_camel_case_name(),
-                                                    device.get_category(),
-                                                    article,
-                                                    device.get_camel_case_name(),
-                                                    device.get_category())
+        article = 'ein'
+        if self.get_category() == 'Brick':
+            article = 'einen'
+        api_str += common.select_lang(const_str).format(self.get_camel_case_name(),
+                                                        self.get_category(),
+                                                        article,
+                                                        self.get_camel_case_name(),
+                                                        self.get_category())
 
-    ref = '.. _{0}_{1}_php_api:\n'.format(device.get_underscore_name(),
-                                          device.get_category().lower())
+        ref = '.. _{0}_{1}_php_api:\n'.format(self.get_underscore_name(),
+                                              self.get_category().lower())
 
-    return common.select_lang(api).format(ref, device.get_api_doc(), api_str)
+        return common.select_lang(api).format(ref, self.get_api_doc(), api_str)
+
+    def get_php_doc(self):
+        title = { 'en': 'PHP bindings', 'de': 'PHP Bindings' }
+
+        doc  = common.make_rst_header(self, 'php', 'PHP')
+        doc += common.make_rst_summary(self, common.select_lang(title), 'php')
+        doc += self.get_php_examples()
+        doc += self.get_php_api()
+
+        return doc
+
+class PHPDocPacket(php_common.PHPPacket):
+    def get_php_formatted_doc(self):
+        text = common.select_lang(self.get_doc()[1])
+
+        cls = self.get_device().get_php_class_name()
+        for other_packet in self.get_device().get_packets():
+            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+            if other_packet.get_type() == 'callback':
+                name_upper = other_packet.get_upper_case_name()
+                name_right = ':php:member:`CALLBACK_{1} <{0}::CALLBACK_{1}>`'.format(cls, name_upper)
+            else:
+                name = other_packet.get_headless_camel_case_name()
+                name_right = ':php:func:`{1}() <{0}::{1}>`'.format(cls, name)
+            text = text.replace(name_false, name_right)
+
+        text = common.handle_rst_word(text)
+        text = common.handle_rst_if(text, self.get_device())
+
+        prefix = cls + '::'
+        if self.get_underscore_name() == 'set_response_expected':
+            text += common.format_function_id_constants(prefix, self.get_device())
+        else:
+            text += common.format_constants(prefix, self)
+
+        text += common.format_since_firmware(self.get_device(), self)
+
+        return common.shift_right(text, 1)
+
+    def get_php_object_desc(self):
+        if len(self.get_elements('out')) < 2:
+            return ''
+
+        desc = {
+        'en': """
+ The returned array has the keys {0}.
+""",
+        'de': """
+ Das zurückgegebene Array enthält die Keys {0}.
+"""
+        }
+
+        and_ = {
+        'en': ' and ',
+        'de': ' und '
+        }
+
+        var = []
+        for element in self.get_elements('out'):
+            var.append('``{0}``'.format(element.get_underscore_name()))
+
+        if len(var) == 1:
+            return common.select_lang(desc).format(var[0])
+
+        if len(var) == 2:
+            return common.select_lang(desc).format(var[0] + common.select_lang(and_) + var[1])
+
+        return common.select_lang(desc).format(', '.join(var[:-1]) + common.select_lang(and_) + var[-1])
 
 class PHPDocGenerator(common.DocGenerator):
     def get_device_class(self):
-        return php_common.PHPDevice
+        return PHPDocDevice
+
+    def get_packet_class(self):
+        return PHPDocPacket
 
     def get_element_class(self):
         return php_common.PHPElement
 
-    def generate(self, device_):
-        global device
-        device = device_
-
-        title = { 'en': 'PHP bindings', 'de': 'PHP Bindings' }
+    def generate(self, device):
         file_name = '{0}_{1}_PHP.rst'.format(device.get_camel_case_name(), device.get_category())
 
         rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
-        rst.write(common.make_rst_header(device, 'php', 'PHP'))
-        rst.write(common.make_rst_summary(device, common.select_lang(title), 'php'))
-        rst.write(make_examples(self))
-        rst.write(make_api())
+        rst.write(device.get_php_doc())
         rst.close()
 
 def generate(bindings_root_directory, lang):
