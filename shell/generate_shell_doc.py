@@ -166,6 +166,9 @@ Possible exit codes for all ``tinkerforge`` commands are:
 Command Structure
 ^^^^^^^^^^^^^^^^^
 
+The common options of the ``call`` and ``dispatch`` commands are documented
+:ref:`here <ipcon_shell_api>`. The specific command structure is shown below.
+
 .. sh:function:: X Stinkerforge Pcall N{3} A[<option>..] L<uid> L<function> L[<argument>..]
 
  :param <uid>: string
@@ -255,6 +258,10 @@ Mögliche Exit Codes für alle ``tinkerforge`` Befehle sind:
 
 Befehlsstruktur
 ^^^^^^^^^^^^^^^
+
+Allgemeine Optionen des ``call`` und des ``dispatch`` Befehls sind
+:ref:`hier <ipcon_shell_api>` zu finden. Im Folgenden wird die spezifische
+Befehlsstruktur dargestellt.
 
 .. sh:function:: X Stinkerforge Pcall N{3} A[<option>..] L<uid> L<function> L[<argument>..]
 
