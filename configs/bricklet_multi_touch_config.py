@@ -167,3 +167,66 @@ Dieser Callback wird ausgelöst wenn sich ein Tastzustand ändert.
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetElectrodeSensitivity', 'set_electrode_sensitivity'), 
+'elements': [('sensitivity', 'uint8', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Sets the sensitivity of the electrodes. An electrode with a high sensitivity
+will register a touch earlier then an electrode with a low sensitivity.
+
+If you build a big electrode you might need to decrease the sensitivity, since
+the area that can be charged will get bigger. If you want to be able to
+activate an electrode from further away you need to increase the sensitivity.
+
+After a new sensitivity is set, you likely want to call :func:`Recalibrate`
+to calibrate the electrodes with the newly defined sensitivity.
+
+The valid sensitivity value range is 5-201.
+
+The default sensitivity value is 181.
+""",
+'de':
+"""
+Setzt die Empfindlichkeit der Elektrode. Eine Elektrode mit einer hohen
+Empfindlichkeit registriert eine Berührung früher als eine Elektrode mit einer
+niedrigen Empfindlichkeit.
+
+Wenn eine große Elektrode verwendet wird sollte die Empfindlichkeit verringert
+werden, da eine größere Fläche aufgeladen werden kann. Wenn eine Elektrode aus 
+größerem Abstand aktivierbar seien soll, muss die Empfindlichkeit
+vergrößert werden.
+
+Nachdem eine neue Empfindlichkeit gesetzt wurde, macht es Sinn
+:func:`Recalibrate` aufzurufen damit die Elektroden mit der neu
+definierten Empfindlichkeit kalibriert werden.
+
+Der zulässige Wertebereich für den Empfindlichkeitswert ist 5-201.
+
+Der voreingestellte Empfindlichkeitswert ist 181.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetElectrodeSensitivity', 'get_electrode_sensitivity'), 
+'elements': [('sensitivity', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Returns the current sensitivity, as set by :func:`SetElectrodeSensitivity`.
+""",
+'de':
+"""
+Gibt die aktuelle Empfindlichkeit zurück, wie von 
+:func:`SetElectrodeSensitivity` gesetzt.
+"""
+}]
+})
+
