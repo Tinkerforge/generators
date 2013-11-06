@@ -40,7 +40,7 @@ group_terminator = '\n'
 dry_run = False
 
 def fatal_error(message, exit_code):
-	sys.stderr.write('tinkerforge: error: {1}\n'.format(prog, message))
+	sys.stderr.write('tinkerforge: error: {0}\n'.format(message))
 	sys.exit(exit_code)
 
 if sys.hexversion < 0x02050000:
@@ -90,6 +90,7 @@ class FatalError(Exception):
 		Exception.__init__(self, message)
 
 		self.exit_code = exit_code
+		self.message = message
 
 class Formatter(argparse.HelpFormatter):
 	def _fill_text(self, text, width, indent):
