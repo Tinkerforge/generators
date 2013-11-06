@@ -42,7 +42,8 @@ com['packets'].append({
 'en':
 """
 Returns the current value of the edge counter. You can configure
-the edges that are counted with :func:`SetEdgeCountConfig`.
+edge type (risign, falling, both) that is counted with 
+:func:`SetEdgeCountConfig`.
 
 If you set the reset counter to *true*, the count is set back to 0
 directly after it is read.
