@@ -51,6 +51,11 @@ Generic approach:
 
 This approach ensures that you can change the LED colors with
 a fixed frame rate.
+
+The actual number of controllable LEDs depends on the number of free
+Bricklet ports. See :ref:`here <led_strip_ram_constraints>` for more 
+information. A call of :func:`SetRGBValues` with index + length above the
+bounds is ignored completely.
 """,
 'de':
 """
@@ -79,6 +84,11 @@ Genereller Ansatz:
 
 Dieser Ansatz garantiert das die LED Farben mit einer
 festen Framerate angezeigt werden.
+
+Die effektive Anzahl steuerbarer LEDs ist abhängig von der Anzahl
+der freien Bricklet Ports (siehe :ref:`hier <led_strip_ram_constraints>`). 
+Ein Aufruf von :func:`SetRGBValues` mit index + length größer als die 
+Begrenzung werden komplett ingnoriert.
 """
 }]
 })
