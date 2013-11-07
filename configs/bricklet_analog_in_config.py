@@ -524,7 +524,7 @@ Setzt den Messbereich. Mögliche Bereiche:
 * 2: 0V - 10,32V, ~2,52mV Auflösung
 * 3: 0V - 36,30V, ~8,86mV Auflösung
 * 4: 0V - 45,00V, ~11,25mV Auflösung
-* 5: 0V - 3,3V, ~0,81mV resolution, neu in Version 2.0.3 (Plugin)
+* 5: 0V - 3,3V, ~0,81mV Auflösung, neu in Version 2.0.3 (Plugin)
 
 Der Standardbereich ist 0.
 """

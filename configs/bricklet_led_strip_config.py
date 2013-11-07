@@ -167,12 +167,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the current supply voltage of the LEDs. The voltage is given in mv. 
+Returns the current supply voltage of the LEDs. The voltage is given in mV.
 """,
 'de':
 """
 Gibt die aktuelle Versorgungsspannung der LEDs zurück. Die Spannung ist
-in mv angegeben.
+in mV angegeben.
 """
 }]
 })
