@@ -33,10 +33,10 @@ can be found here. TODO: ADD LINK
 """,
 'de':
 """
-Um eine Steckdose zu schalten muss der House Code, Receiver Code sowie
+Um eine Steckdose zu schalten muss der Housecode, Receivercode sowie
 der Zustand (an oder aus) zu dem geschaltet werden soll übergeben werden.
 
-Eine detaillierte Beschreibung wie man den House und Receiver Code
+Eine detaillierte Beschreibung wie man den House- und Receivercode
 herausfinden kann gibt es hier. TODO: LINK HINZUFÜGEN
 """
 }]
