@@ -327,27 +327,27 @@ class ShellBindingsGenerator(common.BindingsGenerator):
 
         directory = self.get_bindings_root_directory()
         version = common.get_changelog_version(directory)
-        shell = file('{0}/tinkerforge'.format(directory), 'wb')
-        header = file('{0}/tinkerforge.header'.format(directory), 'rb').read().replace('<<VERSION>>', '.'.join(version))
-        footer = file('{0}/tinkerforge.footer'.format(directory), 'rb').read().replace('<<VERSION>>', '.'.join(version))
-        directory += '/bindings'
+        shell = file(os.path.join(directory, 'tinkerforge'), 'wb')
+        header = file(os.path.join(directory, 'tinkerforge.header'), 'rb').read().replace('<<VERSION>>', '.'.join(version))
+        footer = file(os.path.join(directory, 'tinkerforge.footer'), 'rb').read().replace('<<VERSION>>', '.'.join(version))
 
         shell.write(header)
 
-        ipcon = file(os.path.join(directory, '..', '..', 'python', 'ip_connection.py'), 'rb').read()
+        ipcon = file(os.path.join(directory, '..', 'python', 'ip_connection.py'), 'rb').read()
         shell.write('\n\n\n' + ipcon + '\n\n\n')
 
         for file_name in sorted(self.part_files):
-            shell.write(file(os.path.join(directory, file_name), 'rb').read())
+            shell.write(file(os.path.join(directory, 'bindings', file_name), 'rb').read())
 
         shell.write('\ncall_devices = {\n' + ',\n'.join(self.call_devices) + '\n}\n')
         shell.write('\ndispatch_devices = {\n' + ',\n'.join(self.dispatch_devices) + '\n}\n')
         shell.write('\ndevice_identifier_symbols = {\n' + ',\n'.join(self.device_identifier_symbols) + '\n}\n')
         shell.write(footer)
         shell.close()
-        os.system('chmod +x {0}/../tinkerforge'.format(directory))
 
-        template = file('{0}/../tinkerforge-bash-completion.template'.format(directory), 'rb').read()
+        os.system('chmod +x {0}/tinkerforge'.format(directory))
+
+        template = file(os.path.join(directory, 'tinkerforge-bash-completion.template'), 'rb').read()
         template = template.replace('<<DEVICES>>', '|'.join(sorted(self.completion_devices)))
 
         if len(getter_patterns) > 0:
@@ -365,7 +365,7 @@ class ShellBindingsGenerator(common.BindingsGenerator):
         else:
             template = template.replace('<<CALLBACK>>', '')
 
-        file('{0}/../tinkerforge-bash-completion.sh'.format(directory), 'wb').write(template)
+        file(os.path.join(directory, 'tinkerforge-bash-completion.sh'), 'wb').write(template)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', ShellBindingsGenerator, False)
