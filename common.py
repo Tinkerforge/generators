@@ -483,11 +483,7 @@ def generate(bindings_root_directory, language, generator_class, is_doc):
     path_config = os.path.join(bindings_root_directory, '..', 'configs')
     if path_config not in sys.path:
         sys.path.append(path_config)
-    configs = os.listdir(path_config)
-
-    generator = generator_class(bindings_root_directory, language, is_doc)
-
-    generator.prepare()
+    configs = sorted(os.listdir(path_config))
 
     configs.remove('device_commonconfig.py')
     configs.remove('brick_commonconfig.py')
@@ -498,6 +494,10 @@ def generate(bindings_root_directory, language, generator_class, is_doc):
     common_bricklet_packets = copy.deepcopy(__import__('bricklet_commonconfig').common_packets)
 
     device_identifiers = []
+
+    generator = generator_class(bindings_root_directory, language, is_doc)
+
+    generator.prepare()
 
     for config in configs:
         if config.endswith('_config.py'):
