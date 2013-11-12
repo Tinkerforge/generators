@@ -44,7 +44,7 @@ class PythonPacket(common.Packet):
         return ', '.join(params)
 
 class PythonElement(common.Element):
-    python_type = {
+    python_types = {
         'int8':   'int',
         'uint8':  'int',
         'int16':  'int',
@@ -75,7 +75,7 @@ class PythonElement(common.Element):
     }
 
     def get_python_type(self):
-        t = PythonElement.python_type[self.get_type()]
+        t = PythonElement.python_types[self.get_type()]
 
         if self.get_cardinality() == 1 or t == 'str':
             return t

@@ -209,7 +209,7 @@ typedef struct {{
         return structs
 
     def get_c_create_function(self):
-        func = """
+        function = """
 void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
 \tDevicePrivate *device_p;
 
@@ -251,10 +251,10 @@ void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
         if len(response_expected) > 0:
             response_expected = '\n' + response_expected
 
-        return func.format(dev_name,
-                           self.get_camel_case_name(),
-                           response_expected + cbs,
-                           *self.get_api_version())
+        return function.format(dev_name,
+                               self.get_camel_case_name(),
+                               response_expected + cbs,
+                               *self.get_api_version())
 
     def get_c_destroy_function(self):
         function = """
@@ -280,9 +280,9 @@ int {0}_set_response_expected_all({1} *{0}, bool response_expected) {{
 }}
 """
         return function.format(self.get_underscore_name(),
-                              self.get_camel_case_name())
+                               self.get_camel_case_name())
 
-    def get_c_method_functions(self):
+    def get_c_functions(self):
         function_version = """
 int {0}_get_api_version({1} *{0}, uint8_t ret_api_version[3]) {{
 \treturn device_get_api_version({0}->p, ret_api_version);
@@ -541,7 +541,7 @@ int {0}_set_response_expected_all({1} *{0}, bool response_expected);
                                         self.get_camel_case_name(),
                                         self.get_category())
 
-    def get_c_method_declarations(self):
+    def get_c_function_declaration(self):
         func_version = """
 /**
  * \ingroup {2}{1}
@@ -597,7 +597,7 @@ void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data
         source += self.get_c_destroy_function()
         source += self.get_c_response_expected_functions()
         source += self.get_c_register_callback_function()
-        source += self.get_c_method_functions()
+        source += self.get_c_functions()
 
         return source
 
@@ -611,7 +611,7 @@ void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data
         header += self.get_c_destroy_declaration()
         header += self.get_c_response_expected_declarations()
         header += self.get_c_register_callback_declaration()
-        header += self.get_c_method_declarations()
+        header += self.get_c_function_declaration()
         header += self.get_c_end_h()
 
         return header
