@@ -48,11 +48,12 @@ def command_enumerate(ctx, argv):
 	enumeration_type_symbols = {
 	'available': IPConnection.ENUMERATION_TYPE_AVAILABLE,
 	'connected': IPConnection.ENUMERATION_TYPE_CONNECTED,
-	'disconnected': IPConnection.ENUMERATION_TYPE_DISCONNECTED
+	'disconnected': IPConnection.ENUMERATION_TYPE_DISCONNECTED,
+	'all': -1
 	}
 
 	parser.add_argument('--duration', default=250, type=create_symbol_converter(ctx, int, {'exit-after-first': 0, 'forever': -1}), help='time (msec) to dispatch incoming enumerate responses (exit-after-first: 0, forever: -1), default: 250', metavar='<duration>')
-	parser.add_argument('--types', default=[IPConnection.ENUMERATION_TYPE_AVAILABLE], type=create_array_converter(ctx, create_symbol_converter(ctx, int, enumeration_type_symbols, True), 3, False), help='array of enumeration types to dispatch (available: 0, connected: 1, disconnected: 2), default: available', metavar='<types>')
+	parser.add_argument('--types', default=[IPConnection.ENUMERATION_TYPE_AVAILABLE], type=create_array_converter(ctx, create_symbol_converter(ctx, int, enumeration_type_symbols, True), 3, False), help='array of enumeration types to dispatch (available: 0, connected: 1, disconnected: 2, all: -1), default: available', metavar='<types>')
 
 	if enable_execute:
 		parser.add_argument('--execute', type=str, help='shell command line to execute for each incoming response', metavar='<command>')
@@ -78,14 +79,14 @@ def command_enumerate(ctx, argv):
 
 	if args.execute is not None:
 		def callback(*values):
-			if values[6] in args.types:
+			if -1 in args.types or values[6] in args.types:
 				values = format_symbolic_output(ctx, values, symbols)
 
 				execute_response(ctx, args.execute, names, values)
 				return True
 	else:
 		def callback(*values):
-			if values[6] in args.types:
+			if -1 in args.types or values[6] in args.types:
 				if not listen_mode:
 					if is_first_callback[0]:
 						is_first_callback[0] = False
