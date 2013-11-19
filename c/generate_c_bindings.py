@@ -319,7 +319,7 @@ int {0}_{1}({2} *{0}{3}) {{
         device_name = self.get_underscore_name()
         c = self.get_camel_case_name()
 
-        functions = ''
+        functions = []
         for packet in self.get_packets('function'):
             packet_name = packet.get_underscore_name()
             params = packet.get_c_parameter_list()
@@ -342,9 +342,9 @@ int {0}_{1}({2} *{0}{3}) {{
             else:
                 k = ''
 
-            functions += function.format(device_name, packet_name, c, params, fid, f, g, h, i, k, r)
+            functions.append(function.format(device_name, packet_name, c, params, fid, f, g, h, i, k, r))
 
-        return function_version.format(device_name, c) + functions
+        return function_version.format(device_name, c) + ''.join(functions)
 
     def get_c_register_callback_function(self):
         function = """
@@ -369,7 +369,7 @@ static void {0}_callback_wrapper_{1}(DevicePrivate *device_p, Packet *packet) {{
 }}
 """
 
-        functions = ''
+        functions = []
         for packet in self.get_packets('callback'):
             a = self.get_underscore_name()
             b = packet.get_underscore_name()
@@ -402,9 +402,9 @@ static void {0}_callback_wrapper_{1}(DevicePrivate *device_p, Packet *packet) {{
             else:
                 cb = '\n\t(void)packet;'
 
-            functions += function.format(a, b, c, d, e, f, endian, fid, cb, i)
+            functions.append(function.format(a, b, c, d, e, f, endian, fid, cb, i))
 
-        return functions
+        return ''.join(functions)
 
     def get_c_include_h(self):
         include = """{0}
