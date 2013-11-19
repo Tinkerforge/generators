@@ -174,10 +174,7 @@ def command_listen(ctx, argv):
 		raise FatalError(str(e).lower(), ERROR_OTHER_EXCEPTION)
 
 	def client_loop():
-		if sys.hexversion < 0x03000000:
-			pending_data = ''
-		else:
-			pending_data = bytes()
+		pending_data = ''
 
 		try:
 			client_socket, client_address = server_socket.accept()
@@ -200,6 +197,13 @@ def command_listen(ctx, argv):
 				print('{0} disconnected'.format(client_address[0]))
 				return
 
+			if sys.hexversion >= 0x03000000:
+				try:
+					data = data.decode('utf-8')
+				except UnicodeDecodeError as e:
+					print('{0} sent invalid utf-8 data, disconnecting: {1}'.format(client_address[0], str(e).lower()))
+					return
+
 			pending_data += data
 
 			while len(pending_data) > 0:
@@ -218,6 +222,15 @@ def command_listen(ctx, argv):
 				def output_to_socket(string):
 					if client_ctx.abort:
 						return
+
+					if sys.hexversion >= 0x03000000:
+						try:
+							string = string.encode('utf-8')
+						except UnicodeDecodeError as e:
+							print('utf-8 encoding error while sending {0} to {1}, disconnecting: {2}'.format(repr(string), client_address[0], str(e).lower()))
+
+							client_ctx.abort = True
+							return
 
 					try:
 						client_socket.sendall(string)
