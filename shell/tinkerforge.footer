@@ -77,10 +77,18 @@ def command_enumerate(ctx, argv):
 	symbols = [None, None, None, None, None, device_identifier_symbols, enumeration_type_symbols]
 	is_first_callback = [True]
 
+	def fix_position(values):
+		if values[2] == '\0':
+			values = list(values)
+			values[2] = 'x'
+			values = tuple(values)
+
+		return values
+
 	if args.execute is not None:
 		def callback(*values):
 			if -1 in args.types or values[6] in args.types:
-				values = format_symbolic_output(ctx, values, symbols)
+				values = format_symbolic_output(ctx, fix_position(values), symbols)
 
 				execute_response(ctx, args.execute, names, values)
 				return True
@@ -93,7 +101,7 @@ def command_enumerate(ctx, argv):
 					else:
 						ctx.output(ctx.group_separator)
 
-				values = format_symbolic_output(ctx, values, symbols)
+				values = format_symbolic_output(ctx, fix_position(values), symbols)
 
 				output_response(ctx, names, values)
 				return True
