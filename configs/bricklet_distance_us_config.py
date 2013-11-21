@@ -16,65 +16,29 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDistance', 'get_distance'), 
+'name': ('GetDistanceValue', 'get_distance_value'), 
 'elements': [('distance', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the distance measured by the sensor. The value is in mm.
+Returns the current distance value measured by the sensor. The value has a
+range of 0 to 4095. A small value corresponds to small distance, a big
+value corresponds to a big distance.
 
-If you want to get the distance periodically, it is recommended to use the
-callback :func:`Distance` and set the period with 
+If you want to get the distance value periodically, it is recommended to
+use the callback :func:`Distance` and set the period with 
 :func:`SetDistanceCallbackPeriod`.
 """,
 'de':
 """
-Gibt die gemessene Entfernung des Sensors zurück. Der Wert wird in mm 
-zurückgegeben.
+Gibt den aktuellen Entfernungswert zurück. Der Wert hat einen
+Wertebereich von 0 bis 4095. Ein kleiner Wert entspricht kleiner
+Entfernung, ein großer Wert entspricht einer großer Entfernung.
 
-Wenn die Entfernung periodisch abgefragt werden soll, wird empfohlen
+Wenn der Entfernungswert periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Distance` zu nutzen und die Periode mit 
 :func:`SetDistanceCallbackPeriod` vorzugeben.
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('GetAnalogValue', 'get_analog_value'), 
-'elements': [('value', 'uint16', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Returns the value as read by a 12-bit analog-to-digital converter.
-The value is between 0 and 4095.
-
-.. note::
- The value returned by :func:`GetDistance` is averaged over several samples
- to yield less noise, while :func:`GetAnalogValue` gives back raw
- unfiltered analog values. The only reason to use :func:`GetAnalogValue` is,
- if you need the full resolution of the analog-to-digital converter.
-
-If you want the analog value periodically, it is recommended to use the 
-callback :func:`AnalogValue` and set the period with 
-:func:`SetAnalogValueCallbackPeriod`.
-""",
-'de':
-"""
-Gibt den Wert, wie vom 12-Bit Analog-Digital-Wandler gelesen, zurück. Der
-Wertebereich ist 0 bis 4095.
-
-.. note::
- Der von :func:`GetDistance` zurückgegebene Wert ist über mehrere
- Messwerte gemittelt um das Rauschen zu vermindern, während :func:`GetAnalogValue`
- unverarbeitete Analogwerte zurück gibt. Der einzige Grund :func:`GetAnalogValue`
- zu nutzen, ist die volle Auflösung des Analog-Digital-Wandlers zu erhalten.
- 
-Wenn der Analogwert periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`AnalogValue` zu nutzen und die Periode mit 
-:func:`SetAnalogValueCallbackPeriod` vorzugeben.
 """
 }]
 })
@@ -90,7 +54,7 @@ com['packets'].append({
 Sets the period in ms with which the :func:`Distance` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Distance` is only triggered if the distance has changed since the
+:func:`Distance` is only triggered if the distance value has changed since the
 last triggering.
 
 The default value is 0.
@@ -100,7 +64,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :func:`Distance` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Distance` wird nur ausgelöst wenn sich der Strom seit der
+:func:`Distance` wird nur ausgelöst wenn sich der Entfernungswert seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -121,53 +85,6 @@ Returns the period as set by :func:`SetDistanceCallbackPeriod`.
 'de':
 """
 Gibt die Periode zurück, wie von :func:`SetDistanceCallbackPeriod`
-gesetzt.
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('SetAnalogValueCallbackPeriod', 'set_analog_value_callback_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
-'since_firmware': [1, 0, 0],
-'doc': ['ccf', {
-'en':
-"""
-Sets the period in ms with which the :func:`AnalogValue` callback is triggered
-periodically. A value of 0 turns the callback off.
-
-:func:`AnalogValue` is only triggered if the analog value has changed since the
-last triggering.
-
-The default value is 0.
-""",
-'de':
-"""
-Setzt die Periode in ms mit welcher der :func:`AnalogValue` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
-
-:func:`AnalogValue` wird nur ausgelöst wenn sich der Analogwert seit der
-letzten Auslösung geändert hat.
-
-Der Standardwert ist 0.
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('GetAnalogValueCallbackPeriod', 'get_analog_value_callback_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['ccf', {
-'en':
-"""
-Returns the period as set by :func:`SetAnalogValueCallbackPeriod`.
-""",
-'de':
-"""
-Gibt die Periode zurück, wie von :func:`SetAnalogValueCallbackPeriod`
 gesetzt.
 """
 }]
@@ -196,10 +113,10 @@ The following options are possible:
  :widths: 10, 100
 
  "'x'",    "Callback is turned off"
- "'o'",    "Callback is triggered when the distance is *outside* the min and max values"
- "'i'",    "Callback is triggered when the distance is *inside* the min and max values"
- "'<'",    "Callback is triggered when the distance is smaller than the min value (max is ignored)"
- "'>'",    "Callback is triggered when the distance is greater than the min value (max is ignored)"
+ "'o'",    "Callback is triggered when the distance value is *outside* the min and max values"
+ "'i'",    "Callback is triggered when the distance value is *inside* the min and max values"
+ "'<'",    "Callback is triggered when the distance value is smaller than the min value (max is ignored)"
+ "'>'",    "Callback is triggered when the distance value is greater than the min value (max is ignored)"
 
 The default value is ('x', 0, 0).
 """,
@@ -214,10 +131,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
  
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Entfernung *außerhalb* des min und max Wertes ist"
- "'i'",    "Callback wird ausgelöst wenn die Entfernung *innerhalb* des min und max Wertes ist"
- "'<'",    "Callback wird ausgelöst wenn die Entfernung kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn die Entfernung größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst wenn der Entfernungswert *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst wenn der Entfernungswert *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst wenn der Entfernungswert kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn der Entfernungswert größer als der min Wert ist (max wird ignoriert)"
  
 Der Standardwert ist ('x', 0, 0).
 """
@@ -250,81 +167,6 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetAnalogValueCallbackThreshold', 'set_analog_value_callback_threshold'), 
-'elements': [('option', 'char', 1, 'in', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
-                                                                                  ('Outside', 'outside', 'o'),
-                                                                                  ('Inside', 'inside', 'i'),
-                                                                                  ('Smaller', 'smaller', '<'),
-                                                                                  ('Greater', 'greater', '>')])), 
-             ('min', 'uint16', 1, 'in'),
-             ('max', 'uint16', 1, 'in')],
-'since_firmware': [1, 0, 0],
-'doc': ['ccf', {
-'en':
-"""
-Sets the thresholds for the :func:`AnalogValueReached` callback. 
-
-The following options are possible:
-
-.. csv-table::
- :header: "Option", "Description"
- :widths: 10, 100
-
- "'x'",    "Callback is turned off"
- "'o'",    "Callback is triggered when the analog value is *outside* the min and max values"
- "'i'",    "Callback is triggered when the analog value is *inside* the min and max values"
- "'<'",    "Callback is triggered when the analog value is smaller than the min value (max is ignored)"
- "'>'",    "Callback is triggered when the analog value is greater than the min value (max is ignored)"
-
-The default value is ('x', 0, 0).
-""",
-'de':
-"""
-Setzt den Schwellwert für den :func:`AnalogValueReached` Callback.
-
-Die folgenden Optionen sind möglich:
-
-.. csv-table::
- :header: "Option", "Beschreibung"
- :widths: 10, 100
- 
- "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn der Analogwert *außerhalb* des min und max Wertes ist"
- "'i'",    "Callback wird ausgelöst wenn der Analogwert *innerhalb* des min und max Wertes ist"
- "'<'",    "Callback wird ausgelöst wenn der Analogwert kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn der Analogwert größer als der min Wert ist (max wird ignoriert)"
- 
-Der Standardwert ist ('x', 0, 0).
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('GetAnalogValueCallbackThreshold', 'get_analog_value_callback_threshold'), 
-'elements': [('option', 'char', 1, 'out', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
-                                                                                   ('Outside', 'outside', 'o'),
-                                                                                   ('Inside', 'inside', 'i'),
-                                                                                   ('Smaller', 'smaller', '<'),
-                                                                                   ('Greater', 'greater', '>')])), 
-             ('min', 'uint16', 1, 'out'),
-             ('max', 'uint16', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['ccf', {
-'en':
-"""
-Returns the threshold as set by :func:`SetAnalogValueCallbackThreshold`.
-""",
-'de':
-"""
-Gibt den Schwellwert zurück, wie von :func:`SetAnalogValueCallbackThreshold`
-gesetzt.
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
 'name': ('SetDebouncePeriod', 'set_debounce_period'), 
 'elements': [('debounce', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -334,12 +176,10 @@ com['packets'].append({
 Sets the period in ms with which the threshold callbacks
 
 * :func:`DistanceReached`,
-* :func:`AnalogValueReached`
 
 are triggered, if the thresholds
 
 * :func:`SetDistanceCallbackThreshold`,
-* :func:`SetAnalogValueCallbackThreshold`
 
 keep being reached.
 
@@ -350,12 +190,10 @@ The default value is 100.
 Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
 * :func:`DistanceReached`,
-* :func:`AnalogValueReached`
  
 ausgelöst werden, wenn die Schwellwerte 
 
 * :func:`SetDistanceCallbackThreshold`,
-* :func:`SetAnalogValueCallbackThreshold`
  
 weiterhin erreicht bleiben.
 
@@ -391,44 +229,18 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetDistanceCallbackPeriod`. The :word:`parameter` is the distance of the
-sensor.
+:func:`SetDistanceCallbackPeriod`. The :word:`parameter` is the distance value
+of the sensor.
 
-:func:`Distance` is only triggered if the distance has changed since the
+:func:`Distance` is only triggered if the distance value has changed since the
 last triggering.
 """,
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetDistanceCallbackPeriod`,
-ausgelöst. Der :word:`parameter` ist die Entfernung des Sensors.
+ausgelöst. Der :word:`parameter` ist die Entfernungswert des Sensors.
 
-:func:`Distance` wird nur ausgelöst wenn sich der Strom seit der
-letzten Auslösung geändert hat.
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'callback',
-'name': ('AnalogValue', 'analog_value'), 
-'elements': [('value', 'uint16', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['c', {
-'en':
-"""
-This callback is triggered periodically with the period that is set by
-:func:`SetAnalogValueCallbackPeriod`. The :word:`parameter` is the analog value of the
-sensor.
-
-:func:`AnalogValue` is only triggered if the analog value has changed since the
-last triggering.
-""",
-'de':
-"""
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAnalogValueCallbackPeriod`,
-ausgelöst. Der :word:`parameter` ist der Analogwert des Sensors.
-
-:func:`AnalogValue` wird nur ausgelöst wenn sich der Analogwert seit der
+:func:`Distance` wird nur ausgelöst wenn sich der Entfernungswert seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -444,7 +256,7 @@ com['packets'].append({
 """
 This callback is triggered when the threshold as set by
 :func:`SetDistanceCallbackThreshold` is reached.
-The :word:`parameter` is the distance of the sensor.
+The :word:`parameter` is the distance value of the sensor.
 
 If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
@@ -453,7 +265,7 @@ with the period as set by :func:`SetDebouncePeriod`.
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
 :func:`SetDistanceCallbackThreshold` gesetzt, erreicht wird.
-Der :word:`parameter` ist die Entfernung des Sensors.
+Der :word:`parameter` ist der Entfernungswert des Sensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
 mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
@@ -462,28 +274,51 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 })
 
 com['packets'].append({
-'type': 'callback',
-'name': ('AnalogValueReached', 'analog_value_reached'), 
-'elements': [('value', 'uint16', 1, 'out')],
+'type': 'function',
+'name': ('SetMovingAverage', 'set_moving_average'), 
+'elements': [('average', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
-'doc': ['c', {
+'doc': ['af', {
 'en':
 """
-This callback is triggered when the threshold as set by
-:func:`SetAnalogValueCallbackThreshold` is reached.
-The :word:`parameter` is the analog value of the sensor.
+Sets the length of a `moving averaging <http://en.wikipedia.org/wiki/Moving_average>`__ 
+for the distance value.
 
-If the threshold keeps being reached, the callback is triggered periodically
-with the period as set by :func:`SetDebouncePeriod`.
+Setting the length to 0 will turn the averaging completely off. With less
+averaging, there is more noise on the data.
+
+The range for the averaging is 0-100.
+
+The default value is 50.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
-:func:`SetAnalogValueCallbackThreshold` gesetzt, erreicht wird.
-Der :word:`parameter` ist der Analogwert des Sensors.
+Setzt die Länge eines gleitenden Mittelwerts für den Entfernungswert.
 
-Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
-mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+Wenn die Länge auf 0 gesetzt wird, ist das Averaging komplett aus. Desto kleiner
+die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
+
+Der Wertebereich liegt bei 0-100.
+
+Der Standardwert ist 50.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetMovingAverage', 'get_moving_average'), 
+'elements': [('average', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Returns the length moving average as set by :func:`SetMovingAverage`.
+""",
+'de':
+"""
+Gibt die Länge des gleitenden Mittelwerts zurück, wie von 
+:func:`SetMovingAverage` gesetzt.
 """
 }]
 })

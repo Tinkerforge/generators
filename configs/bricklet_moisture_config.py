@@ -286,7 +286,7 @@ Sets the length of a `moving averaging <http://en.wikipedia.org/wiki/Moving_aver
 for the moisture value.
 
 Setting the length to 0 will turn the averaging completely off. With less
-averaging,  there is more noise on the data.
+averaging, there is more noise on the data.
 
 The range for the averaging is 0-100.
 
