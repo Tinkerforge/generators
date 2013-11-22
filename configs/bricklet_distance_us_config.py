@@ -23,8 +23,11 @@ com['packets'].append({
 'en':
 """
 Returns the current distance value measured by the sensor. The value has a
-range of 0 to 4095. A small value corresponds to small distance, a big
-value corresponds to a big distance.
+range of 0 to 4095. A small value corresponds to a small distance, a big
+value corresponds to a big distance. The relation between the measured distance
+value and the actual distance is affected by the 5V supply voltage (deviations
+in the supply voltage result in deviations in the distance values) and is
+non-linear (resolution is bigger at close range).
 
 If you want to get the distance value periodically, it is recommended to
 use the callback :func:`Distance` and set the period with 
@@ -33,8 +36,12 @@ use the callback :func:`Distance` and set the period with
 'de':
 """
 Gibt den aktuellen Entfernungswert zurück. Der Wert hat einen
-Wertebereich von 0 bis 4095. Ein kleiner Wert entspricht kleiner
-Entfernung, ein großer Wert entspricht einer großer Entfernung.
+Wertebereich von 0 bis 4095. Ein kleiner Wert entspricht einer kleinen
+Entfernung, ein großer Wert entspricht einer großen Entfernung. Das Verhältnis
+zwischen gemessenem Entfernungswert und wirklicher Entfernung wird durch die
+5V Versorgungsspannung beeinflusst (Abweichungen der Versorgungsspannung führen
+zu Abweichungen in den Entfernungswerten) und ist nicht-linear (Auflösung ist
+größer im Nahbereich).
 
 Wenn der Entfernungswert periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Distance` zu nutzen und die Periode mit 
@@ -289,7 +296,7 @@ averaging, there is more noise on the data.
 
 The range for the averaging is 0-100.
 
-The default value is 50.
+The default value is 20.
 """,
 'de':
 """
@@ -300,7 +307,7 @@ die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
 
 Der Wertebereich liegt bei 0-100.
 
-Der Standardwert ist 50.
+Der Standardwert ist 20.
 """
 }]
 })
