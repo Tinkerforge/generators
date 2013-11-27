@@ -29,7 +29,7 @@ To switch a socket you have to give the house code, receiver code and the
 state (on or off) you want to switch to.
 
 A detailed description on how you can find the house and receiver code
-can be found here. TODO: ADD LINK
+can be found :ref:`here <remote_switch_bricklet_house_and_receiver_code>`.
 """,
 'de':
 """
@@ -37,7 +37,8 @@ Um eine Steckdose zu schalten muss der Housecode, Receivercode sowie
 der Zustand (an oder aus) zu dem geschaltet werden soll übergeben werden.
 
 Eine detaillierte Beschreibung wie man den House- und Receivercode
-herausfinden kann gibt es hier. TODO: LINK HINZUFÜGEN
+herausfinden kann gibt es 
+:ref:`hier <remote_switch_bricklet_house_and_receiver_code>`.
 """
 }]
 })

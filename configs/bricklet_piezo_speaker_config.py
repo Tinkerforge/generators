@@ -35,7 +35,7 @@ the best possible match by applying the calibration (see :func:`Calibrate`).
 """,
 'de':
 """
-Erzeugt einen Piepton mit der gegebenen Frequenz für eine Dauer in ms. 
+Erzeugt einen Piepton mit der gegebenen Frequenz für die angegebene Dauer in ms. 
 Beispiel: Wenn *duration* auf 1000 und *frequency* auf 2000 gesetzt wird, 
 erzeugt der Piezosummer einen Piepton für eine Sekunde mit einer Frequenz 
 von ca. 2 kHz.
