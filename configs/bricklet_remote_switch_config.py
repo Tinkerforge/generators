@@ -10,7 +10,7 @@ com = {
     'name': ('RemoteSwitch', 'remote_switch', 'Remote Switch'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device that controls mains switches remotely',
-    'released': False,
+    'released': True,
     'packets': []
 }
 

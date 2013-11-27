@@ -10,7 +10,7 @@ com = {
     'name': ('DistanceUS', 'distance_us', 'Distance US'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing distance via ultrasound',
-    'released': False,
+    'released': True,
     'packets': []
 }
 

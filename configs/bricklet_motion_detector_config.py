@@ -10,7 +10,7 @@ com = {
     'name': ('MotionDetector', 'motion_detector', 'Motion Detector'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device that reads out PIR motion detector',
-    'released': False,
+    'released': True,
     'packets': []
 }
 

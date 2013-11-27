@@ -10,7 +10,7 @@ com = {
     'name': ('Line', 'line', 'Line'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device that measures reflectivity to allow following a line',
-    'released': False,
+    'released': True,
     'packets': []
 }
 

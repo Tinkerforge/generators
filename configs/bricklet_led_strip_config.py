@@ -10,7 +10,7 @@ com = {
     'name': ('LEDStrip', 'led_strip', 'LED Strip'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device to control up to 320 RGB LEDs',
-    'released': False,
+    'released': True,
     'packets': []
 }
 

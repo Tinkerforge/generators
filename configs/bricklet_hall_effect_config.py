@@ -10,7 +10,7 @@ com = {
     'name': ('HallEffect', 'hall_effect', 'Hall Effect'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device that detects presence of magnetic field via hall effect',
-    'released': False,
+    'released': True,
     'packets': []
 }
 

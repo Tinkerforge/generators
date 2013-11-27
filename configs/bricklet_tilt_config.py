@@ -10,7 +10,7 @@ com = {
     'name': ('Tilt', 'tilt', 'Tilt'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing tilt and vibration',
-    'released': False,
+    'released': True,
     'packets': []
 }
 

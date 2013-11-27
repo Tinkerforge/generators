@@ -10,7 +10,7 @@ com = {
     'name': ('RotaryEncoder', 'rotary_encoder', 'Rotary Encoder'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing Rotary Encoder input',
-    'released': False,
+    'released': True,
     'packets': []
 }
 

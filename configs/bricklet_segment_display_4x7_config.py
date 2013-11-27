@@ -10,7 +10,7 @@ com = {
     'name': ('SegmentDisplay4x7', 'segment_display_4x7', 'Segment Display 4x7'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controling four 7-segment displays',
-    'released': False,
+    'released': True,
     'packets': []
 }
 

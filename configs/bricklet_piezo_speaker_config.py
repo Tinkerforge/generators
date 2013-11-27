@@ -10,7 +10,7 @@ com = {
     'name': ('PiezoSpeaker', 'piezo_speaker', 'Piezo Speaker'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling a piezo buzzer with configurable frequencies',
-    'released': False,
+    'released': True,
     'packets': []
 }
 
