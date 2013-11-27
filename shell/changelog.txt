@@ -5,3 +5,7 @@
        Make averaging length configurable for Analog In Bricklet
 2.0.3: Fix signature of edge count functions in IO-16 Bricklet API
        Add listen mode for handling incoming commands over a TCP/IP connection
+2.0.4: Add support for Distance US, Dual Button, Hall Effect, LED Strip, Line, Moisture, Motion Detector, Multi Touch, Piezo Speaker, Remote Switch, Rotary Encoder, Segment Display 4x7, Sound Intensity and Tilt Bricklet
+       Accept int values also in hexadecimal, octal and binary notation
+       Fix Python3 string handling for listen command
+       Avoid printing '\0' in enumerate-disconnect callback

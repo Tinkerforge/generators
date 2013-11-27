@@ -19,3 +19,5 @@
 2.0.6: Add edge counters to Industrial Digital In 4, IO-4 and IO-16 Bricklet
        Make averaging length configurable for Analog In Bricklet
 2.0.7: Fix signature of edge count functions in IO-16 Bricklet API
+2.0.8: Add support for Distance US, Dual Button, Hall Effect, LED Strip, Line, Moisture, Motion Detector, Multi Touch, Piezo Speaker, Remote Switch, Rotary Encoder, Segment Display 4x7, Sound Intensity and Tilt Bricklet
+       Throw ArgumentOutOfRangeException on invalid Base58 value as UID
