@@ -378,7 +378,7 @@ class ShellDocPacket(shell_common.ShellPacket):
             text = text.replace(name_false, name_right)
 
         text = common.handle_rst_word(text)
-        text = common.handle_rst_if(text, self.get_device())
+        text = common.handle_rst_substitutions(text, self)
 
         def constant_format(prefix, constant, definition, value):
             c = '* ``{0}`` = {1}, '.format(definition.name_underscore.replace('_', '-'), value)

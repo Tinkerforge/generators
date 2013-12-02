@@ -383,7 +383,7 @@ class JavaDocPacket(java_common.JavaPacket):
         text = text.replace(' callback', ' listener')
 
         text = common.handle_rst_word(text)
-        text = common.handle_rst_if(text, self.get_device())
+        text = common.handle_rst_substitutions(text, self)
 
         prefix = cls + '.'
         if self.get_underscore_name() == 'set_response_expected':

@@ -435,7 +435,7 @@ class JavaBindingsPacket(java_common.JavaPacket):
         text = text.replace('.. warning::', '\\warning')
 
         text = common.handle_rst_word(text)
-        text = common.handle_rst_if(text, self.get_device())
+        text = common.handle_rst_substitutions(text, self)
         text += common.format_since_firmware(self.get_device(), self)
 
         return '\n\t * '.join(text.strip().split('\n'))

@@ -369,7 +369,7 @@ class CSharpBindingsPacket(csharp_common.CSharpPacket):
             text = text.replace(name_false, name_right)
 
         text = common.handle_rst_word(text)
-        text = common.handle_rst_if(text, self.get_device())
+        text = common.handle_rst_substitutions(text, self)
         text += common.format_since_firmware(self.get_device(), self)
 
         return '\n\t\t///  '.join(text.strip().split('\n'))

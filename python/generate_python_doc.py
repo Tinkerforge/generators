@@ -319,7 +319,7 @@ class PythonDocPacket(python_common.PythonPacket):
             text = text.replace(name_false, name_right)
 
         text = common.handle_rst_word(text)
-        text = common.handle_rst_if(text, self.get_device())
+        text = common.handle_rst_substitutions(text, self)
 
         prefix = self.get_device().get_camel_case_name() + '.'
         if self.get_underscore_name() == 'set_response_expected':

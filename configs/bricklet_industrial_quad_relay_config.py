@@ -175,7 +175,7 @@ Each element can either be one of the ports ('a' to 'd') or 'n' if it should
 not be used.
 
 For example: If you have two Quad Relay Bricklets connected to port A and
-port B respectively, you could call with "['a', 'b', 'n', 'n']".
+port B respectively, you could call with |abnn|.
 
 Now the pins on the Quad Relay on port A are assigned to 0-3 and the
 pins on the Quad Relay on port B are assigned to 4-7. It is now possible
@@ -194,12 +194,18 @@ Jedes Element kann entweder auf einen der Ports ('a' bis 'd') gesetzt werden
 oder falls nicht genutzt 'n' gesetzt werden.
 
 Zum Beispiel: Falls zwei Quad Relay Bricklets mit Port A und Port B verbunden
-sind, könnte diese Funktion mit "['a', 'b', 'n', 'n']" aufgerufen werden.
+sind, könnte diese Funktion mit |abnn| aufgerufen werden.
 
 In diesem Fall wären die Pins von Port A den Werten 0-3 zugewiesen und
 die Pins von Port B den Werten 4-7. Es ist jetzt möglich mit der Funktion
 :func:`SetValue` beide Bricklets gleichzeitig zu kontrollieren.
 """
+},
+{
+'*': {
+'abnn': {'php': "``array('a', 'b', 'n', 'n')``",
+         '*': "``['a', 'b', 'n', 'n']``"}
+}
 }]
 })
 

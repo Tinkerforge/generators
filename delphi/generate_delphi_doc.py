@@ -308,7 +308,7 @@ class DelphiBindingsPacket(delphi_common.DelphiPacket):
             text = text.replace(name_false, name_right)
 
         text = common.handle_rst_word(text)
-        text = common.handle_rst_if(text, self.get_device())
+        text = common.handle_rst_substitutions(text, self)
 
         prefix = '{0}_{1}_'.format(self.get_device().get_category().upper(),
                                    self.get_device().get_upper_case_name())

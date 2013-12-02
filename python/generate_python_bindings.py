@@ -255,7 +255,7 @@ class PythonBindingsPacket(python_common.PythonPacket):
         text = common.select_lang(self.get_doc()[1])
 
         text = common.handle_rst_word(text)
-        text = common.handle_rst_if(text, self.get_device())
+        text = common.handle_rst_substitutions(text, self)
         text += common.format_since_firmware(self.get_device(), self)
 
         return '\n        '.join(text.strip().split('\n'))
