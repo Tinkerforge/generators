@@ -276,7 +276,7 @@ Sets the output value with a bitmask, according to the selection mask.
 The bitmask is 16 bit long, *true* refers to a closed relay and 
 *false* refers to an open relay.
 
-For example: The values 00b0000000000000011, b0000000000000001 will close 
+For example: The values 0b0000000000000011, 0b0000000000000001 will close
 the relay of pin 0, open the relay of pin 1 and leave the others untouched.
 
 If no groups are used (see :func:`SetGroup`), the pins correspond to the
@@ -293,7 +293,7 @@ Die Bitmaske ist 16 Bit lang.
 *true* steht für ein geschlossenes Relais und *false* für ein offenes
 Relay.
 
-Zum Beispiel: Die Werte 0b0000000000000011, b0000000000000001 werden das 
+Zum Beispiel: Die Werte 0b0000000000000011, 0b0000000000000001 werden das
 Relais 0 schließen, das Relais 1 öffnen und alle anderen unangetastet lassen.
 
 Falls keine Gruppen verwendet werden (siehe :func:`SetGroup`), entsprechen
