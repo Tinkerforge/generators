@@ -476,7 +476,7 @@ def recreate_directory(directory):
         shutil.rmtree(directory)
     os.makedirs(directory)
 
-def generate(bindings_root_directory, language, generator_class, is_doc):
+def generate(bindings_root_directory, language, generator_class):
     global lang
     lang = language
 
@@ -495,7 +495,7 @@ def generate(bindings_root_directory, language, generator_class, is_doc):
 
     device_identifiers = []
 
-    generator = generator_class(bindings_root_directory, language, is_doc)
+    generator = generator_class(bindings_root_directory, language)
 
     generator.prepare()
 
@@ -931,12 +931,12 @@ class Device:
 
     def get_packets(self, typ=None):
         if typ is None:
-            if self.generator.is_doc:
+            if self.generator.is_doc():
                 return self.all_packets
             else:
                 return self.all_packets_without_doc_only
         elif typ == 'function':
-            if self.generator.is_doc:
+            if self.generator.is_doc():
                 return self.all_function_packets
             else:
                 return self.all_function_packets_without_doc_only
@@ -974,10 +974,12 @@ class Device:
         return constants
 
 class Generator:
-    def __init__(self, bindings_root_directory, language, is_doc):
+    def __init__(self, bindings_root_directory, language):
         self.bindings_root_directory = bindings_root_directory
         self.language = language
-        self.is_doc = is_doc
+
+    def get_bindings_name(self):
+        raise Exception("get_bindings_name not implemented")
 
     def get_device_class(self):
         return Device
@@ -994,6 +996,9 @@ class Generator:
     def get_language(self):
         return self.language
 
+    def is_doc(self):
+        return False
+
     def prepare(self):
         pass
 
@@ -1004,6 +1009,9 @@ class Generator:
         pass
 
 class DocGenerator(Generator):
+    def is_doc(self):
+        return True
+
     def prepare(self):
         recreate_directory(os.path.join(self.get_bindings_root_directory(), 'doc', self.get_language()))
 

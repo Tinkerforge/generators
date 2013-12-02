@@ -286,7 +286,7 @@ class RubyBindingsGenerator(common.BindingsGenerator):
             self.released_files.append(file_name)
 
 def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', RubyBindingsGenerator, False)
+    common.generate(bindings_root_directory, 'en', RubyBindingsGenerator)
 
 if __name__ == "__main__":
     generate(os.getcwd())

@@ -400,7 +400,7 @@ class CSharpBindingsGenerator(common.BindingsGenerator):
             self.released_files.append(file_name)
 
 def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', CSharpBindingsGenerator, False)
+    common.generate(bindings_root_directory, 'en', CSharpBindingsGenerator)
 
 if __name__ == "__main__":
     generate(os.getcwd())

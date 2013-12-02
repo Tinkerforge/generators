@@ -101,7 +101,7 @@ using System.Runtime.CompilerServices;
         common.make_zip('csharp', '/tmp/generator/dll', root, version)
 
 def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', CSharpZipGenerator, False)
+    common.generate(bindings_root_directory, 'en', CSharpZipGenerator)
 
 if __name__ == "__main__":
     generate(os.getcwd())

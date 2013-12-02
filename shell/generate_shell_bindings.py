@@ -368,7 +368,7 @@ class ShellBindingsGenerator(common.BindingsGenerator):
         file(os.path.join(directory, 'tinkerforge-bash-completion.sh'), 'wb').write(template)
 
 def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', ShellBindingsGenerator, False)
+    common.generate(bindings_root_directory, 'en', ShellBindingsGenerator)
 
 if __name__ == "__main__":
     generate(os.getcwd())

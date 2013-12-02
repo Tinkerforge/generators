@@ -497,7 +497,7 @@ class PHPBindingsGenerator(common.BindingsGenerator):
             self.released_files.append(file_name)
 
 def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', PHPBindingsGenerator, False)
+    common.generate(bindings_root_directory, 'en', PHPBindingsGenerator)
 
 if __name__ == "__main__":
     generate(os.getcwd())

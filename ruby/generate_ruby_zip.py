@@ -126,7 +126,7 @@ end
         common.make_zip('ruby', '/tmp/generator/gem', root, version)
 
 def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', RubyZipGenerator, False)
+    common.generate(bindings_root_directory, 'en', RubyZipGenerator)
 
 if __name__ == "__main__":
     generate(os.getcwd())

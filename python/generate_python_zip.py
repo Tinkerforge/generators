@@ -107,7 +107,7 @@ setup(name='tinkerforge',
         common.make_zip('python', '/tmp/generator/egg', root, version)
 
 def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', PythonZipGenerator, False)
+    common.generate(bindings_root_directory, 'en', PythonZipGenerator)
 
 if __name__ == "__main__":
     generate(os.getcwd())

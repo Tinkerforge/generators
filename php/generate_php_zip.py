@@ -134,7 +134,7 @@ class PHPZipGenerator(common.Generator):
         common.make_zip('php', '/tmp/generator/pear', root, version)
 
 def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', PHPZipGenerator, False)
+    common.generate(bindings_root_directory, 'en', PHPZipGenerator)
 
 if __name__ == "__main__":
     generate(os.getcwd())

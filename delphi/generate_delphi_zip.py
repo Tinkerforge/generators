@@ -78,7 +78,7 @@ class DelphiZipGenerator(common.Generator):
         common.make_zip('delphi', '/tmp/generator', root, version)
 
 def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', DelphiZipGenerator, False)
+    common.generate(bindings_root_directory, 'en', DelphiZipGenerator)
 
 if __name__ == "__main__":
     generate(os.getcwd())
