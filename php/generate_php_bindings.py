@@ -472,10 +472,10 @@ class PHPBindingsPacket(php_common.PHPPacket):
         return '\n'.join(param)
 
 class PHPBindingsGenerator(common.BindingsGenerator):
-    def __init__(self, *args, **kwargs):
-        common.BindingsGenerator.__init__(self, *args, **kwargs)
+    released_files_name_prefix = 'php'
 
-        self.released_files_name_prefix = 'php'
+    def get_bindings_name(self):
+        return 'php'
 
     def get_device_class(self):
         return PHPBindingsDevice

@@ -272,6 +272,9 @@ class TCPIPDocElement(common.Element):
         return t + '[' + str(self.get_cardinality()) + ']'
 
 class TCPIPDocGenerator(common.DocGenerator):
+    def get_bindings_name(self):
+        return 'tcpip'
+
     def get_device_class(self):
         return TCPIPDocDevice
 

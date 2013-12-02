@@ -383,6 +383,9 @@ class VBNETDocElement(common.Element):
         return VBNETDocElement.vbnet_types[self.get_type()]
 
 class VBNETDocGenerator(common.DocGenerator):
+    def get_bindings_name(self):
+        return 'vbnet'
+
     def get_device_class(self):
         return VBNETDocDevice
 

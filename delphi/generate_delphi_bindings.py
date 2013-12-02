@@ -506,10 +506,10 @@ class DelphiBindingsElement(delphi_common.DelphiElement):
         return name
 
 class DelphiBindingsGenerator(common.BindingsGenerator):
-    def __init__(self, *args, **kwargs):
-        common.BindingsGenerator.__init__(self, *args, **kwargs)
+    released_files_name_prefix = 'delphi'
 
-        self.released_files_name_prefix = 'delphi'
+    def get_bindings_name(self):
+        return 'delphi'
 
     def get_device_class(self):
         return DelphiBindingsDevice

@@ -261,10 +261,10 @@ class RubyBindingsPacket(ruby_common.RubyPacket):
         return " ".join(forms), total_size
 
 class RubyBindingsGenerator(common.BindingsGenerator):
-    def __init__(self, *args, **kwargs):
-        common.BindingsGenerator.__init__(self, *args, **kwargs)
+    released_files_name_prefix = 'ruby'
 
-        self.released_files_name_prefix = 'ruby'
+    def get_bindings_name(self):
+        return 'ruby'
 
     def get_device_class(self):
         return RubyBindingsDevice

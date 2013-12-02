@@ -383,6 +383,9 @@ class PythonDocPacket(python_common.PythonPacket):
         return common.select_lang(desc).format(', '.join(var[:-1]) + common.select_lang(and_) + var[-1])
 
 class PythonDocGenerator(common.DocGenerator):
+    def get_bindings_name(self):
+        return 'python'
+
     def get_device_class(self):
         return PythonDocDevice
 

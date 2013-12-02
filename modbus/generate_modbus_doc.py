@@ -269,6 +269,9 @@ class ModbusDocElement(common.Element):
         return t + '[' + str(self.get_cardinality()) + ']'
 
 class ModbusDocGenerator(common.DocGenerator):
+    def get_bindings_name(self):
+        return 'modbus'
+
     def get_device_class(self):
         return ModbusDocDevice
 

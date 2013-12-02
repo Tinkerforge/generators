@@ -391,6 +391,9 @@ class RubyDocPacket(ruby_common.RubyPacket):
         return common.select_lang(desc).format(', '.join(var[:-1]) + common.select_lang(and_) + var[-1])
 
 class RubyDocGenerator(common.DocGenerator):
+    def get_bindings_name(self):
+        return 'ruby'
+
     def get_device_class(self):
         return RubyDocDevice
 

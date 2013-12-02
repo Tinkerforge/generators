@@ -427,6 +427,9 @@ class JavaDocPacket(java_common.JavaPacket):
         return common.select_lang(desc).format(', '.join(var[:-1]) + common.select_lang(and_) + var[-1])
 
 class JavaDocGenerator(common.DocGenerator):
+    def get_bindings_name(self):
+        return 'java'
+
     def get_device_class(self):
         return JavaDocDevice
 

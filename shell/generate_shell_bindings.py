@@ -288,6 +288,9 @@ class ShellBindingsGenerator(common.BindingsGenerator):
         self.completion_devices = []
         self.part_files = []
 
+    def get_bindings_name(self):
+        return 'shell'
+
     def get_device_class(self):
         return ShellBindingsDevice
 

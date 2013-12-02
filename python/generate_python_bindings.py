@@ -269,10 +269,10 @@ class PythonBindingsPacket(python_common.PythonPacket):
         return ' '.join(forms)
 
 class PythonBindingsGenerator(common.BindingsGenerator):
-    def __init__(self, *args, **kwargs):
-        common.BindingsGenerator.__init__(self, *args, **kwargs)
+    released_files_name_prefix = 'python'
 
-        self.released_files_name_prefix = 'python'
+    def get_bindings_name(self):
+        return 'python'
 
     def get_device_class(self):
         return PythonBindingsDevice

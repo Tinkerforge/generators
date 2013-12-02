@@ -375,10 +375,10 @@ class CSharpBindingsPacket(csharp_common.CSharpPacket):
         return '\n\t\t///  '.join(text.strip().split('\n'))
 
 class CSharpBindingsGenerator(common.BindingsGenerator):
-    def __init__(self, *args, **kwargs):
-        common.BindingsGenerator.__init__(self, *args, **kwargs)
+    released_files_name_prefix = 'csharp'
 
-        self.released_files_name_prefix = 'csharp'
+    def get_bindings_name(self):
+        return 'csharp'
 
     def get_device_class(self):
         return CSharpBindingsDevice

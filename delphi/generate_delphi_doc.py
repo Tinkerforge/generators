@@ -322,6 +322,9 @@ class DelphiBindingsPacket(delphi_common.DelphiPacket):
         return common.shift_right(text, 1)
 
 class DelphiDocGenerator(common.DocGenerator):
+    def get_bindings_name(self):
+        return 'delphi'
+
     def get_device_class(self):
         return DelphiBindingsDevice
 

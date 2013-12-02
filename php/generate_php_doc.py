@@ -389,6 +389,9 @@ class PHPDocPacket(php_common.PHPPacket):
         return common.select_lang(desc).format(', '.join(var[:-1]) + common.select_lang(and_) + var[-1])
 
 class PHPDocGenerator(common.DocGenerator):
+    def get_bindings_name(self):
+        return 'php'
+
     def get_device_class(self):
         return PHPDocDevice
 

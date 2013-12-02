@@ -34,6 +34,9 @@ import common
 from python_released_files import released_files
 
 class PythonZipGenerator(common.Generator):
+    def get_bindings_name(self):
+        return 'python'
+
     def prepare(self):
         common.recreate_directory('/tmp/generator')
         os.makedirs('/tmp/generator/egg/source/tinkerforge')
@@ -44,7 +47,7 @@ class PythonZipGenerator(common.Generator):
             return
 
         # Copy examples
-        examples = common.find_examples(device, self.get_bindings_root_directory(), 'python', 'example_', '.py')
+        examples = common.find_examples(device, self.get_bindings_root_directory(), self.get_bindings_name(), 'example_', '.py')
         dest = os.path.join('/tmp/generator/egg/examples', device.get_category().lower(), device.get_underscore_name())
 
         if not os.path.exists(dest):
@@ -104,7 +107,7 @@ setup(name='tinkerforge',
         file('/tmp/generator/egg/source/tinkerforge/__init__.py', 'wb').write(' ')
 
         # Make zip
-        common.make_zip('python', '/tmp/generator/egg', root, version)
+        common.make_zip(self.get_bindings_name(), '/tmp/generator/egg', root, version)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', PythonZipGenerator)

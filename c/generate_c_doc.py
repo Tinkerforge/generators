@@ -404,6 +404,9 @@ class CDocPacket(c_common.CPacket):
         return common.shift_right(text, 1)
 
 class CDocGenerator(common.DocGenerator):
+    def get_bindings_name(self):
+        return 'c'
+
     def get_device_class(self):
         return CDocDevice
 

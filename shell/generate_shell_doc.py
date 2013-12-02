@@ -465,6 +465,9 @@ class ShellDocPacket(shell_common.ShellPacket):
         return ret
 
 class ShellDocGenerator(common.DocGenerator):
+    def get_bindings_name(self):
+        return 'shell'
+
     def get_device_class(self):
         return ShellDocDevice
 

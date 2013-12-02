@@ -34,6 +34,9 @@ import delphi_common
 from delphi_released_files import released_files
 
 class DelphiZipGenerator(common.Generator):
+    def get_bindings_name(self):
+        return 'delphi'
+
     def prepare(self):
         common.recreate_directory('/tmp/generator')
         os.makedirs('/tmp/generator/bindings')
@@ -44,7 +47,7 @@ class DelphiZipGenerator(common.Generator):
             return
 
         # Copy examples
-        examples = common.find_examples(device, self.get_bindings_root_directory(), 'delphi', 'Example', '.pas')
+        examples = common.find_examples(device, self.get_bindings_root_directory(), self.get_bindings_name(), 'Example', '.pas')
         dest = os.path.join('/tmp/generator/examples', device.get_category(), device.get_camel_case_name())
 
         if not os.path.exists(dest):
@@ -75,7 +78,7 @@ class DelphiZipGenerator(common.Generator):
 
         # Make zip
         version = common.get_changelog_version(root)
-        common.make_zip('delphi', '/tmp/generator', root, version)
+        common.make_zip(self.get_bindings_name(), '/tmp/generator', root, version)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', DelphiZipGenerator)

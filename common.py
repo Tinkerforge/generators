@@ -1016,11 +1016,12 @@ class DocGenerator(Generator):
         recreate_directory(os.path.join(self.get_bindings_root_directory(), 'doc', self.get_language()))
 
 class BindingsGenerator(Generator):
+    released_files_name_prefix = None
+    recreate_bindings_subdirectory = True
+
     def __init__(self, *args, **kwargs):
         Generator.__init__(self, *args, **kwargs)
 
-        self.recreate_bindings_subdirectory = True
-        self.released_files_name_prefix = None
         self.released_files = []
 
     def prepare(self):

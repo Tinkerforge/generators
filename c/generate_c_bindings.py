@@ -734,10 +734,10 @@ class CBindingsPacket(c_common.CPacket):
         return return_list, needs_i
 
 class CBindingsGenerator(common.BindingsGenerator):
-    def __init__(self, *args, **kwargs):
-        common.BindingsGenerator.__init__(self, *args, **kwargs)
+    released_files_name_prefix = 'c'
 
-        self.released_files_name_prefix = 'c'
+    def get_bindings_name(self):
+        return 'c'
 
     def get_device_class(self):
         return CBindingsDevice

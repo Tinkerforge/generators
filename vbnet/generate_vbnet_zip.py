@@ -34,6 +34,9 @@ import common
 from csharp_released_files import released_files
 
 class VBNETZipGenerator(common.Generator):
+    def get_bindings_name(self):
+        return 'vbnet'
+
     def prepare(self):
         common.recreate_directory('/tmp/generator')
         os.makedirs('/tmp/generator/dll/source/Tinkerforge')
@@ -43,7 +46,7 @@ class VBNETZipGenerator(common.Generator):
         if not device.is_released():
             return
 
-        examples = common.find_examples(device, self.get_bindings_root_directory(), 'vbnet', 'Example', '.vb')
+        examples = common.find_examples(device, self.get_bindings_root_directory(), self.get_bindings_name(), 'Example', '.vb')
         dest = os.path.join('/tmp/generator/dll/examples', device.get_category(), device.get_camel_case_name())
 
         if not os.path.exists(dest):
@@ -101,7 +104,7 @@ using System.Runtime.CompilerServices;
             raise Exception("Command '{0}' failed".format(' '.join(args)))
 
         # Make zip
-        common.make_zip('vbnet', '/tmp/generator/dll', root, version)
+        common.make_zip(self.get_bindings_name(), '/tmp/generator/dll', root, version)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', VBNETZipGenerator)

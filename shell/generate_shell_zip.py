@@ -33,6 +33,9 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class ShellZipGenerator(common.Generator):
+    def get_bindings_name(self):
+        return 'shell'
+
     def prepare(self):
         common.recreate_directory('/tmp/generator')
         os.makedirs('/tmp/generator/examples')
@@ -42,7 +45,7 @@ class ShellZipGenerator(common.Generator):
             return
 
         # Copy examples
-        examples = common.find_examples(device, self.get_bindings_root_directory(), 'shell', 'example-', '.sh')
+        examples = common.find_examples(device, self.get_bindings_root_directory(), self.get_bindings_name(), 'example-', '.sh')
         dest = os.path.join('/tmp/generator/examples', device.get_category().lower(), device.get_underscore_name())
 
         if not os.path.exists(dest):
@@ -66,7 +69,7 @@ class ShellZipGenerator(common.Generator):
 
         # Make zip
         version = common.get_changelog_version(root)
-        common.make_zip('shell', '/tmp/generator', root, version)
+        common.make_zip(self.get_bindings_name(), '/tmp/generator', root, version)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', ShellZipGenerator)

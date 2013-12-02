@@ -506,10 +506,10 @@ class JavaBindingsPacket(java_common.JavaPacket):
         return bbgets, bbret
 
 class JavaBindingsGenerator(common.BindingsGenerator):
-    def __init__(self, *args, **kwargs):
-        common.BindingsGenerator.__init__(self, *args, **kwargs)
+    released_files_name_prefix = 'java'
 
-        self.released_files_name_prefix = 'java'
+    def get_bindings_name(self):
+        return 'java'
 
     def get_device_class(self):
         return JavaBindingsDevice
