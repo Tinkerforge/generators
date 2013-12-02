@@ -32,8 +32,10 @@ from *index*.
 The maximum length is 16, the index goes from 0 to 319 and the rgb values
 have 8 bits each.
 
-Example: If you set index to 5, length to 3, r to [255, 0, 0], 
-g to [0, 255, 0] and b to [0, 0, 255] the LEDs with index 5, 6
+Example: If you set index to 5, length to 3, r to 
+[255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+g to [0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] and b to 
+[0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] the LEDs with index 5, 6
 and 7 will get the color red, green and blue respectively.
 
 The colors will be transfered to actual LEDs when the next
@@ -60,14 +62,16 @@ bounds is ignored completely.
 'de':
 """
 Setzt die *rgb* Werte für die LEDs mit der angegebenen *length* und
-startend vom angegebenen *index*.
+beginnend vom angegebenen *index*.
 
 Die maximale Länge ist 16. Der Index geht von 0 bis 319 und die
 rgb Werte haben jeweils 8 Bit.
 
-Beispiel: Wenn der Index auf 5, die Länge auf 3, r auf [255, 0, 0],
-g auf [0, 255, 0] und b auf [0, 0, 255] gesetzt wird, werden die LEDs
-mit den Indizes 5, 6 und 7 die Farben Rot, Grün und Blau annehmen.
+Beispiel: Wenn der Index auf 5, die Länge auf 3, r auf 
+[255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+g auf [0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] und b auf 
+[0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] gesetzt wird, werden 
+die LEDs mit den Indizes 5, 6 und 7 die Farben Rot, Grün und Blau annehmen.
 
 Die Farben werden auf die tatsächlichen LEDs transferiert wenn die
 nächste *frame duration* abgelaufen ist, siehe :func:`SetFrameDuration`.
@@ -112,7 +116,7 @@ The values are the last values that were set by :func:`SetRGBValues`.
 """,
 'de':
 """
-Gibt rgb Werte mit der übergebenen *length* zurück, startend vom
+Gibt rgb Werte mit der übergebenen *length* zurück, beginnend vom
 übergebenen *index*.
 
 Die Werte sind die letzten von :func:`SetRGBValues` gesetzten Werte.
