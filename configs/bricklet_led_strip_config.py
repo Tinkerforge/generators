@@ -61,7 +61,7 @@ bounds is ignored completely.
 """,
 'de':
 """
-Setzt die *rgb* Werte für die LEDs mit der angegebenen *length* und
+Setzt die *rgb* Werte für die LEDs mit der angegebenen *length*,
 beginnend vom angegebenen *index*.
 
 Die maximale Länge ist 16. Der Index geht von 0 bis 319 und die
