@@ -280,7 +280,7 @@ aktuellen Zustände.
 
 Beispiele:
 
-* (1, 1) bedeutet, dass ein Interrupt am Pin 0 ist aufgetreten ist und aktuell
+* (1, 1) bedeutet, dass ein Interrupt am Pin 0 aufgetreten ist und aktuell
   Pin 0 logisch 1 ist und die Pins 1-3 logisch 0 sind.
 * (9, 14) bedeutet, dass Interrupts an den Pins 0 und 3 aufgetreten sind und
   aktuell Pin 0 logisch 0 ist und die Pins 1-3 logisch 1 sind.
