@@ -217,3 +217,74 @@ Für eine Erklärung des generellen Ansatzes siehe :func:`SetRGBValues`.
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetClockFrequency', 'set_clock_frequency'), 
+'elements': [('frequency', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 1],
+'doc': ['bf', {
+'en':
+"""
+Sets the frequency of the clock in Hz. The range is 10000Hz (10KHz) up to
+2000000Hz (2MHz).
+
+The Bricklet will choose the nearest achievable frequency, which may
+be off by a few Hz. You can get the excact frequency that is used by
+calling :func:`GetClockFrequency`.
+
+If you have problems with flickering LEDs, they may be bits flipping. You
+can fix this by either making the connection between the LEDs and the
+Bricklet shorter or by reducing the frequency.
+
+With a decreasing frequency your maximum frames per second will decrease
+too.
+
+The default value is 1.66MHz.
+
+.. note::
+ The frequency in firmware version 1.0.0 is fixed at 2MHz.
+
+""",
+'de':
+"""
+Setzt die Frequenz der Clockleitung in Hz. Der erlaubte Wertebereich
+beläuft von sich 10000Hz (10KHz) bis 2000000Hz (2MHz).
+
+Das Bricklet wählt die nächst mögliche erreichbare Frequenz. Diese
+kann ein paar Hz neben des gesetzten Wertes liegen. Die exakte Frequenz
+wie sie genutzt wird kann mit :func:`GetClockFrequency` erfragt werden.
+
+Wenn Probleme mit flackernden LEDs auftreten kann es daran liegen das
+Bits auf der Leitung flippen. Dies kann behoben werden in dem man die
+Verbindung zwischen Bricklet und LEDs verringert oder in dem man die
+Frequenz reduziert.
+
+Mit abnehmender Frequenz nimmt allerdings auch die maximale Framerate
+ab.
+
+Der Standardwert ist 1.66MHz
+
+.. note::
+ Die Frequenz in Firmwareversion 1.0.0 ist fest auf 2MHz.
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetClockFrequency', 'get_clock_frequency'), 
+'elements': [('frequency', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Returns the currently used clock frequency.
+""",
+'de':
+"""
+Gibt die aktuell genutzte Clock-Frequenz zurück.
+"""
+}]
+})
