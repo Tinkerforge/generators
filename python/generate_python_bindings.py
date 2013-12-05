@@ -255,7 +255,7 @@ class PythonBindingsPacket(python_common.PythonPacket):
         text = common.select_lang(self.get_doc()[1])
 
         text = common.handle_rst_word(text)
-        text = common.handle_rst_if(text, self.get_device())
+        text = common.handle_rst_substitutions(text, self)
         text += common.format_since_firmware(self.get_device(), self)
 
         return '\n        '.join(text.strip().split('\n'))
@@ -269,10 +269,10 @@ class PythonBindingsPacket(python_common.PythonPacket):
         return ' '.join(forms)
 
 class PythonBindingsGenerator(common.BindingsGenerator):
-    def __init__(self, *args, **kwargs):
-        common.BindingsGenerator.__init__(self, *args, **kwargs)
+    released_files_name_prefix = 'python'
 
-        self.released_files_name_prefix = 'python'
+    def get_bindings_name(self):
+        return 'python'
 
     def get_device_class(self):
         return PythonBindingsDevice
@@ -294,7 +294,7 @@ class PythonBindingsGenerator(common.BindingsGenerator):
             self.released_files.append(file_name)
 
 def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', PythonBindingsGenerator, False)
+    common.generate(bindings_root_directory, 'en', PythonBindingsGenerator)
 
 if __name__ == "__main__":
     generate(os.getcwd())

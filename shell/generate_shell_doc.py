@@ -378,7 +378,7 @@ class ShellDocPacket(shell_common.ShellPacket):
             text = text.replace(name_false, name_right)
 
         text = common.handle_rst_word(text)
-        text = common.handle_rst_if(text, self.get_device())
+        text = common.handle_rst_substitutions(text, self)
 
         def constant_format(prefix, constant, definition, value):
             c = '* ``{0}`` = {1}, '.format(definition.name_underscore.replace('_', '-'), value)
@@ -465,6 +465,9 @@ class ShellDocPacket(shell_common.ShellPacket):
         return ret
 
 class ShellDocGenerator(common.DocGenerator):
+    def get_bindings_name(self):
+        return 'shell'
+
     def get_device_class(self):
         return ShellDocDevice
 
@@ -481,10 +484,10 @@ class ShellDocGenerator(common.DocGenerator):
         rst.write(device.get_shell_doc())
         rst.close()
 
-def generate(bindings_root_directory, lang):
-    common.generate(bindings_root_directory, lang, ShellDocGenerator, True)
+def generate(bindings_root_directory, language):
+    common.generate(bindings_root_directory, language, ShellDocGenerator)
 
 if __name__ == "__main__":
-    for lang in ['en', 'de']:
-        print("=== Generating %s ===" % lang)
-        generate(os.getcwd(), lang)
+    for language in ['en', 'de']:
+        print("=== Generating %s ===" % language)
+        generate(os.getcwd(), language)

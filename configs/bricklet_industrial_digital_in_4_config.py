@@ -22,12 +22,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the input value with a bitmask. The bitmask
-is 16 bit long, *true* refers to high and *false* refers to 
-low.
+Returns the input value with a bitmask. The bitmask is 16bit long, *true*
+refers to high and *false* refers to low.
 
-For example: The value 0b0000000000000011 means that pins 0-1 
-are high and the other pins are low.
+For example: The value 3 or 0b0011 means that pins 0-1 are high and the other
+pins are low.
 
 If no groups are used (see :func:`SetGroup`), the pins correspond to the
 markings on the Digital In 4 Bricklet.
@@ -38,11 +37,11 @@ pins 8-11 and element 4 pins 12-15.
 """,
 'de':
 """
-Gibt die Ausgabewerte mit einer Bitmaske zurück. Die Bitmaske ist 16 Bit lang.
+Gibt die Ausgabewerte mit einer Bitmaske zurück. Die Bitmaske ist 16Bit lang.
 *true* bedeutet logisch 1 und *false* logisch 0.
 
-Zum Beispiel: Der Wert 0b0000000000000011 bedeutet, dass die Pins 0-1 auf 
-logisch 1 und alle anderen auf logisch 0 sind.
+Zum Beispiel: Der Wert 3 bzw. 0b0011 bedeutet, dass die Pins 0-1 auf logisch 1
+und alle anderen auf logisch 0 sind.
 
 Falls keine Gruppen verwendet werden (siehe :func:`SetGroup`), entsprechen
 die Pins der Beschriftung auf dem Digital In 4 Bricklet.
@@ -72,7 +71,7 @@ Each element can either be one of the ports ('a' to 'd') or 'n' if it should
 not be used.
 
 For example: If you have two Digital In 4 Bricklets connected to port A and
-port B respectively, you could call with "['a', 'b', 'n', 'n']".
+port B respectively, you could call with |abnn|.
 
 Now the pins on the Digital In 4 on port A are assigned to 0-3 and the
 pins on the Digital In 4 on port B are assigned to 4-7. It is now possible
@@ -94,7 +93,7 @@ Jedes Element kann entweder auf einen der Ports ('a' bis 'd') gesetzt werden
 oder falls nicht genutzt 'n' gesetzt werden.
 
 Zum Beispiel: Falls zwei Digital In 4 Bricklets mit Port A und Port B verbunden
-sind, könnte diese Funktion mit "['a', 'b', 'n', 'n']" aufgerufen werden.
+sind, könnte diese Funktion mit |abnn| aufgerufen werden.
 
 In diesem Fall wären die Pins von Port A den Werten 0-3 zugewiesen und
 die Pins von Port B den Werten 4-7. Es ist jetzt möglich mit der Funktion
@@ -103,6 +102,12 @@ die Pins von Port B den Werten 4-7. Es ist jetzt möglich mit der Funktion
 Änderungen an der Gruppeneinteilung setzt die Konfiguration und Zählerwerte
 aller Flankenzähler zurück.
 """
+},
+{
+'*': {
+'abnn': {'php': "``array('a', 'b', 'n', 'n')``",
+         '*': "``['a', 'b', 'n', 'n']``"}
+}
 }]
 })
 
@@ -132,13 +137,13 @@ com['packets'].append({
 'en':
 """
 Returns a bitmask of ports that are available for grouping. For example the
-value 0b0101 means: Port *A* and Port *C* are connected to Bricklets that
+value 5 or 0b0101 means: Port A and port C are connected to Bricklets that
 can be grouped together.
 """,
 'de':
 """
 Gibt eine Bitmaske von Ports zurück die für die Gruppierung zur Verfügung
-stehen. Zum Beispiel bedeutet der Wert 0b0101: Port *A* und Port *C* sind
+stehen. Zum Beispiel bedeutet der Wert 5 bzw. 0b0101: Port A und Port C sind
 mit Bricklets verbunden die zusammen gruppiert werden können.
 """
 }]
@@ -203,8 +208,8 @@ Sets the pins on which an interrupt is activated with a bitmask.
 Interrupts are triggered on changes of the voltage level of the pin,
 i.e. changes from high to low and low to high.
 
-For example: An interrupt bitmask of 9 (0b0000000000001001) will 
-enable the interrupt for pins 0 and 3.
+For example: An interrupt bitmask of 9 or 0b1001 will enable the interrupt for
+pins 0 and 3.
 
 The interrupts use the grouping as set by :func:`SetGroup`.
 
@@ -216,8 +221,8 @@ Setzt durch eine Bitmaske die Pins für welche der Interrupt aktiv ist.
 Interrupts werden ausgelöst bei Änderung des Spannungspegels eines Pins,
 z.B. ein Wechsel von logisch 1 zu logisch 0 und logisch 0 zu logisch 1.
 
-Beispiel: Eine Interrupt Bitmaske von 9 (0b0000000000001001) aktiviert 
-den Interrupt für die Pins 0 und 3.
+Beispiel: Eine Interrupt Bitmaske von 9 bzw. 0b1001 aktiviert den Interrupt für
+die Pins 0 und 3.
 
 Die Interrupts benutzen die Gruppierung, wie von :func:`SetGroup`
 gesetzt.
@@ -261,9 +266,9 @@ and the current value bitmask.
 
 For example:
 
-* (1, 1) means that an interrupt on pin 0 occurred and
+* (1, 1) or (0b0001, 0b0001) means that an interrupt on pin 0 occurred and
   currently pin 0 is high and pins 1-3 are low.
-* (9, 14) means that interrupts on pins 0 and 3
+* (9, 14) or (0b1001, 0b1110) means that interrupts on pins 0 and 3
   occurred and currently pin 0 is low and pins 1-3 are high.
 """,
 'de':
@@ -277,10 +282,10 @@ aktuellen Zustände.
 
 Beispiele:
 
-* (1, 1) bedeutet, dass ein Interrupt am Pin 0 ist aufgetreten ist und aktuell
-  Pin 0 logisch 1 ist und die Pins 1-3 logisch 0 sind.
-* (9, 14) bedeutet, dass Interrupts an den Pins 0 und 3 aufgetreten sind und
-  aktuell Pin 0 logisch 0 ist und die Pins 1-3 logisch 1 sind.
+* (1, 1) bzw. (0b0001, 0b0001) bedeutet, dass ein Interrupt am Pin 0 aufgetreten
+  ist und aktuell Pin 0 logisch 1 ist und die Pins 1-3 logisch 0 sind.
+* (9, 14) bzw. (0b1001, 0b1110) bedeutet, dass Interrupts an den Pins 0 und 3
+  aufgetreten sind und aktuell Pin 0 logisch 0 ist und die Pins 1-3 logisch 1 sind.
 """
 }]
 })

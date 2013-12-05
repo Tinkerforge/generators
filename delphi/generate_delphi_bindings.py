@@ -490,7 +490,7 @@ class DelphiBindingsPacket(delphi_common.DelphiPacket):
             text = text.replace(name_false, name_right)
 
         text = common.handle_rst_word(text)
-        text = common.handle_rst_if(text, self.get_device())
+        text = common.handle_rst_substitutions(text, self)
         text += common.format_since_firmware(self.get_device(), self)
 
         return '\n    ///  '.join(text.strip().split('\n'))
@@ -506,10 +506,10 @@ class DelphiBindingsElement(delphi_common.DelphiElement):
         return name
 
 class DelphiBindingsGenerator(common.BindingsGenerator):
-    def __init__(self, *args, **kwargs):
-        common.BindingsGenerator.__init__(self, *args, **kwargs)
+    released_files_name_prefix = 'delphi'
 
-        self.released_files_name_prefix = 'delphi'
+    def get_bindings_name(self):
+        return 'delphi'
 
     def get_device_class(self):
         return DelphiBindingsDevice
@@ -531,7 +531,7 @@ class DelphiBindingsGenerator(common.BindingsGenerator):
             self.released_files.append(file_name)
 
 def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', DelphiBindingsGenerator, False)
+    common.generate(bindings_root_directory, 'en', DelphiBindingsGenerator)
 
 if __name__ == "__main__":
     generate(os.getcwd())

@@ -34,6 +34,9 @@ import common
 from java_released_files import released_files
 
 class JavaZipGenerator(common.Generator):
+    def get_bindings_name(self):
+        return 'java'
+
     def prepare(self):
         common.recreate_directory('/tmp/generator')
         os.makedirs('/tmp/generator/jar/source/com/tinkerforge')
@@ -44,7 +47,7 @@ class JavaZipGenerator(common.Generator):
             return
 
         # Copy examples
-        examples = common.find_examples(device, self.get_bindings_root_directory(), 'java', 'Example', '.java')
+        examples = common.find_examples(device, self.get_bindings_root_directory(), self.get_bindings_name(), 'Example', '.java')
         dest = os.path.join('/tmp/generator/jar/examples', device.get_category(), device.get_camel_case_name())
 
         if not os.path.exists(dest):
@@ -102,10 +105,10 @@ class JavaZipGenerator(common.Generator):
                 os.remove('/tmp/generator/jar/source/com/tinkerforge/' + f)
 
         # Make zip
-        common.make_zip('java', '/tmp/generator/jar', root, version)
+        common.make_zip(self.get_bindings_name(), '/tmp/generator/jar', root, version)
 
 def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', JavaZipGenerator, False)
+    common.generate(bindings_root_directory, 'en', JavaZipGenerator)
 
 if __name__ == "__main__":
     generate(os.getcwd())

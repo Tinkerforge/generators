@@ -340,7 +340,7 @@ class CSharpDocPacket(csharp_common.CSharpPacket):
             text = text.replace(name_false, name_right)
 
         text = common.handle_rst_word(text)
-        text = common.handle_rst_if(text, self.get_device())
+        text = common.handle_rst_substitutions(text, self)
 
         prefix = cls + '.'
         if self.get_underscore_name() == 'set_response_expected':
@@ -353,6 +353,9 @@ class CSharpDocPacket(csharp_common.CSharpPacket):
         return common.shift_right(text, shift_right)
 
 class CSharpDocGenerator(common.DocGenerator):
+    def get_bindings_name(self):
+        return 'csharp'
+
     def get_device_class(self):
         return CSharpDocDevice
 
@@ -369,10 +372,10 @@ class CSharpDocGenerator(common.DocGenerator):
         rst.write(device.get_csharp_doc())
         rst.close()
 
-def generate(bindings_root_directory, lang):
-    common.generate(bindings_root_directory, lang, CSharpDocGenerator, True)
+def generate(bindings_root_directory, language):
+    common.generate(bindings_root_directory, language, CSharpDocGenerator)
 
 if __name__ == "__main__":
-    for lang in ['en', 'de']:
-        print("=== Generating %s ===" % lang)
-        generate(os.getcwd(), lang)
+    for language in ['en', 'de']:
+        print("=== Generating %s ===" % language)
+        generate(os.getcwd(), language)

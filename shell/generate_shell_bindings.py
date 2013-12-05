@@ -288,6 +288,9 @@ class ShellBindingsGenerator(common.BindingsGenerator):
         self.completion_devices = []
         self.part_files = []
 
+    def get_bindings_name(self):
+        return 'shell'
+
     def get_device_class(self):
         return ShellBindingsDevice
 
@@ -368,7 +371,7 @@ class ShellBindingsGenerator(common.BindingsGenerator):
         file(os.path.join(directory, 'tinkerforge-bash-completion.sh'), 'wb').write(template)
 
 def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', ShellBindingsGenerator, False)
+    common.generate(bindings_root_directory, 'en', ShellBindingsGenerator)
 
 if __name__ == "__main__":
     generate(os.getcwd())

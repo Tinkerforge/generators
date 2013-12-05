@@ -325,7 +325,7 @@ class RubyDocPacket(ruby_common.RubyPacket):
             text = text.replace(name_false, name_right)
 
         text = common.handle_rst_word(text)
-        text = common.handle_rst_if(text, self.get_device())
+        text = common.handle_rst_substitutions(text, self)
 
         prefix = cls + '::'
         if self.get_underscore_name() == 'set_response_expected':
@@ -391,6 +391,9 @@ class RubyDocPacket(ruby_common.RubyPacket):
         return common.select_lang(desc).format(', '.join(var[:-1]) + common.select_lang(and_) + var[-1])
 
 class RubyDocGenerator(common.DocGenerator):
+    def get_bindings_name(self):
+        return 'ruby'
+
     def get_device_class(self):
         return RubyDocDevice
 
@@ -407,10 +410,10 @@ class RubyDocGenerator(common.DocGenerator):
         rst.write(device.get_ruby_doc())
         rst.close()
 
-def generate(bindings_root_directory, lang):
-    common.generate(bindings_root_directory, lang, RubyDocGenerator, True)
+def generate(bindings_root_directory, language):
+    common.generate(bindings_root_directory, language, RubyDocGenerator)
 
 if __name__ == "__main__":
-    for lang in ['en', 'de']:
-        print("=== Generating %s ===" % lang)
-        generate(os.getcwd(), lang)
+    for language in ['en', 'de']:
+        print("=== Generating %s ===" % language)
+        generate(os.getcwd(), language)

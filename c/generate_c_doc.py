@@ -391,7 +391,7 @@ class CDocPacket(c_common.CPacket):
             text = text.replace(name_false, name_right)
 
         text = common.handle_rst_word(text, constants=constants)
-        text = common.handle_rst_if(text, self.get_device())
+        text = common.handle_rst_substitutions(text, self)
 
         prefix = self.get_device().get_upper_case_name() + '_'
         if self.get_underscore_name() == 'set_response_expected':
@@ -404,6 +404,9 @@ class CDocPacket(c_common.CPacket):
         return common.shift_right(text, 1)
 
 class CDocGenerator(common.DocGenerator):
+    def get_bindings_name(self):
+        return 'c'
+
     def get_device_class(self):
         return CDocDevice
 
@@ -420,10 +423,10 @@ class CDocGenerator(common.DocGenerator):
         rst.write(device.get_c_doc())
         rst.close()
 
-def generate(bindings_root_directory, lang):
-    common.generate(bindings_root_directory, lang, CDocGenerator, True)
+def generate(bindings_root_directory, language):
+    common.generate(bindings_root_directory, language, CDocGenerator)
 
 if __name__ == "__main__":
-    for lang in ['en', 'de']:
-        print("=== Generating %s ===" % lang)
-        generate(os.getcwd(), lang)
+    for language in ['en', 'de']:
+        print("=== Generating %s ===" % language)
+        generate(os.getcwd(), language)

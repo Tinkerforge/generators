@@ -84,7 +84,7 @@ com['packets'].append({
 'en':
 """
 Configures the value and direction of a specified port. Possible directions
-are "i" and "o" for input and output.
+are 'i' and 'o' for input and output.
 
 If the direction is configured as output, the value is either high or low
 (set as *true* or *false*).
@@ -94,15 +94,15 @@ default (set as *true* or *false*).
 
 For example:
 
-* ("a", 255, 'i', true) will set all pins of port a as input pull-up.
-* ("a", 128, 'i', false) will set pin 7 of port a as input default (floating if nothing is connected).
-* ("b", 3, 'o', false) will set pins 0 and 1 of port b as output low.
-* ("b", 4, 'o', true) will set pin 2 of port b as output high.
+* ('a', 255, 'i', true) or ('a', 0b11111111, 'i', true) will set all pins of port A as input pull-up.
+* ('a', 128, 'i', false) or ('a', 0b10000000, 'i', false) will set pin 7 of port A as input default (floating if nothing is connected).
+* ('b', 3, 'o', false) or ('b', 0b00000011, 'o', false) will set pins 0 and 1 of port B as output low.
+* ('b', 4, 'o', true) or ('b', 0b00000100, 'o', true) will set pin 2 of port B as output high.
 """,
 'de':
 """
 Konfiguriert den Zustand und die Richtung des angegebenen Ports. Mögliche Richtungen
-sind "i" und "o" für Ein- und Ausgang.
+sind 'i' und 'o' für Ein- und Ausgang.
 
 Wenn die Richtung als Ausgang konfiguriert ist, ist der Zustand entweder
 logisch 1 oder logisch 0 (gesetzt als *true* oder *false*).
@@ -112,10 +112,10 @@ Pull-Up oder Standard (gesetzt als *true* oder *false*).
 
 Beispiele:
 
-* ("a", 255, 'i', true) setzt alle Pins des Ports a als Eingang mit Pull-Up.
-* ("a", 128, 'i', false) setzt Pin 7 des Ports a als Standard Eingang (potentialfrei wenn nicht verbunden).
-* ("b", 3, 'o', false) setzt die Pins 0 und 1 des Ports b als Ausgang im Zustand logisch 0.
-* ("b", 4, 'o', true) setzt Pin 2 des Ports b als Ausgang im Zustand logisch 1.
+* ('a', 255, 'i', true) bzw. ('a', 0b11111111, 'i', true) setzt alle Pins des Ports a als Eingang mit Pull-Up.
+* ('a', 128, 'i', false) bzw. ('a', 0b10000000, 'i', false) setzt Pin 7 des Ports a als Standard Eingang (potentialfrei wenn nicht verbunden).
+* ('b', 3, 'o', false) bzw. ('b', 0b00000011, 'o', false) setzt die Pins 0 und 1 des Ports b als Ausgang im Zustand logisch 0.
+* ('b', 4, 'o', true) bzw. ('b', 0b00000100, 'o', true) setzt Pin 2 des Ports b als Ausgang im Zustand logisch 1.
 """
 }]
 })
@@ -132,7 +132,7 @@ com['packets'].append({
 """
 Returns a direction bitmask and a value bitmask for the specified port.
 
-For example: A return value of 0b00001111 and 0b00110011 for
+For example: A return value of (15, 51) or (0b00001111, 0b00110011) for
 direction and value means that:
 
 * pins 0 and 1 are configured as input pull-up,
@@ -145,7 +145,7 @@ direction and value means that:
 Gibt eine Bitmaske für die Richtung und eine Bitmaske für den Zustand der Pins
 des gewählten Ports zurück.
 
-Beispiel: Ein Rückgabewert von 0b00001111 und 0b00110011 für 
+Beispiel: Ein Rückgabewert von (15, 51) bzw. (0b00001111, 0b00110011) für
 Richtung und Zustand bedeutet:
 
 * Pin 0 und 1 sind als Eingang mit Pull-Up konfiguriert,
@@ -216,8 +216,8 @@ Sets the pins on which an interrupt is activated with a bitmask.
 Interrupts are triggered on changes of the voltage level of the pin,
 i.e. changes from high to low and low to high.
 
-For example: ('a', 129) will enable the interrupt for pins 0 and 7 of
-port a.
+For example: ('a', 129) or (a, 0b10000001) will enable the interrupt for
+pins 0 and 7 of port a.
 
 The interrupt is delivered with the callback :func:`Interrupt`.
 """,
@@ -227,7 +227,7 @@ Setzt durch eine Bitmaske die Pins für welche der Interrupt aktiv ist.
 Interrupts werden ausgelöst bei Änderung des Spannungspegels eines Pins,
 z.B. ein Wechsel von logisch 1 zu logisch 0 und logisch 0 zu logisch 1.
 
-Beispiel: ('a', 129) aktiviert den Interrupt für die
+Beispiel: ('a', 129) bzw. (a, 0b10000001) aktiviert den Interrupt für die
 Pins 0 und 7 des Ports a.
 
 Der Interrupt wird mit der Callback :func:`Interrupt` zugestellt.
@@ -273,10 +273,11 @@ and the current value bitmask of the port.
 
 For example:
 
-* ("a", 1, 1) means that on port a an interrupt on pin 0 occurred and
-  currently pin 0 is high and pins 1-7 are low.
-* ("b", 128, 254) means that on port b interrupts on pins 0 and 7
-  occurred and currently pin 0 is low and pins 1-7 are high.
+* ('a', 1, 1) or ('a', 0b00000001, 0b00000001) means that on port A an
+  interrupt on pin 0 occurred and currently pin 0 is high and pins 1-7 are low.
+* ('b', 129, 254) or ('b', 0b10000001, 0b11111110) means that on port B
+  interrupts on pins 0 and 7 occurred and currently pin 0 is low and pins 1-7
+  are high.
 """,
 'de':
 """
@@ -289,11 +290,12 @@ der aktuellen Zustände des Ports.
 
 Beispiele:
 
-* ("a", 1, 1) bedeutet, dass an Port a ein Interrupt am Pin 0 aufgetreten ist
-  und aktuell ist Pin 0 logisch 1 und die Pins 1-7 sind logisch 0.
-* ("b", 128, 254) bedeutet, dass an Port b Interrupts an den Pins 0 und 7
-  aufgetreten sind und aktuell ist Pin 0 logisch 0 und die Pins 1-7 sind
-  logisch 1.
+* ('a', 1, 1) bzw. ('a', 0b00000001, 0b00000001) bedeutet, dass an Port A ein
+  Interrupt am Pin 0 aufgetreten ist und aktuell ist Pin 0 logisch 1 und die
+  Pins 1-7 sind logisch 0.
+* ('b', 129, 254) bzw. ('b', 0b10000001, 0b11111110) bedeutet, dass an Port B
+  Interrupts an den Pins 0 und 7 aufgetreten sind und aktuell ist Pin 0 logisch
+  0 und die Pins 1-7 sind logisch 1.
 """
 }]
 })
@@ -319,9 +321,9 @@ output pins (*true* means high and *false* means low).
 The forth parameter indicates the time (in ms) that the pins should hold
 the value.
 
-If this function is called with the parameters ('a', (1 << 0) | (1 << 3), (1 << 0), 1500):
-Pin 0 will get high and pin 3 will get low on port 'a'. In 1.5s pin 0 will get
-low and pin 3 will get high again.
+If this function is called with the parameters ('a', 9, 1, 1500) or
+('a', 0b00001001, 0b00000001, 1500): Pin 0 will get high and pin 3 will get
+low on port 'a'. In 1.5s pin 0 will get low and pin 3 will get high again.
 
 A monoflop can be used as a fail-safe mechanism. For example: Lets assume you
 have a RS485 bus and an IO-16 Bricklet connected to one of the slave
@@ -335,15 +337,16 @@ Konfiguriert einen Monoflop für die Pins, wie mittels der 8 Bit langen Bitmaske
 des zweiten Parameters festgelegt. Die festgelegten Pins müssen als Ausgänge
 konfiguriert sein. Als Eingänge konfigurierte Pins werden ignoriert.
 
-Der dritte Parameter ist eine Bitmaske mit den gewünschten Zuständen der festgelegten
-Ausgangspins (*true* bedeutet logisch 1 und *false* logisch 0).
+Der dritte Parameter ist eine Bitmaske mit den gewünschten Zuständen der
+festgelegten Ausgangspins (*true* bedeutet logisch 1 und *false* logisch 0).
 
 Der vierte Parameter stellt die Zeit (in ms) dar, welche die Pins den Zustand
 halten sollen.
 
-Wenn diese Funktion mit den Parametern ('a', (1 << 0) | (1 << 3), (1 << 0), 1500)
-aufgerufen wird: Pin 0 wird auf logisch 1 und Pin 3 auf logisch 0 am Port 'a'
-gesetzt. Nach 1,5s wird Pin 0 wieder logisch 0 und Pin 3 logisch 1 gesetzt.
+Wenn diese Funktion mit den Parametern ('a', 9, 1, 1500) bzw.
+('a', 0b00001001, 0b00000001, 1500) aufgerufen wird: Pin 0 wird auf logisch 1
+und Pin 3 auf logisch 0 am Port 'a' gesetzt. Nach 1,5s wird Pin 0 wieder
+logisch 0 und Pin 3 logisch 1 gesetzt.
 
 Ein Monoflop kann zur Ausfallsicherung verwendet werden. Beispiel:
 Angenommen ein RS485 Bus und ein IO-16 Bricklet ist an ein Slave Stapel verbunden.
@@ -421,8 +424,8 @@ Sets the output value (high or low) for a port ("a" or "b" with a bitmask,
 according to the selection mask. The bitmask is 8 bit long, *true* refers 
 to high and *false* refers to low.
 
-For example: The values 0b11000000, 0b10000000 will turn pin 7 high and
-pin 6 low, pins 0-6 will remain untouched.
+For example: The parameters ('a', 192, 128) or ('a', 0b11000000, 0b10000000)
+will turn pin 7 high and pin 6 low on port A, pins 0-6 will remain untouched.
 
 .. note::
  This function does nothing for pins that are configured as input.
@@ -435,8 +438,9 @@ entsprechend der Selektionsmaske. Die Bitmaske hat eine Länge von 8 Bit,
 *true* bedeutet logisch 1 und *false*
 logisch 0.
 
-Beispiel: Die Werte 0b11000000, 0b10000000 setzen den Pin 7 auf logisch 1 und den Pin 6
-auf logisch 0. Die Pins 0-6 bleiben unangetastet.
+Beispiel: Die Parameter ('a', 192, 128) bzw. ('a', 0b11000000, 0b10000000)
+setzen den Pin 7 auf logisch 1 und den Pin 6 auf logisch 0 an Port A. Die Pins
+0-6 bleiben unangetastet.
 
 .. note::
  Diese Funktion bewirkt keine Änderung an Pins die als Eingang konfiguriert sind.

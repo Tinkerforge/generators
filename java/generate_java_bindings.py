@@ -435,7 +435,7 @@ class JavaBindingsPacket(java_common.JavaPacket):
         text = text.replace('.. warning::', '\\warning')
 
         text = common.handle_rst_word(text)
-        text = common.handle_rst_if(text, self.get_device())
+        text = common.handle_rst_substitutions(text, self)
         text += common.format_since_firmware(self.get_device(), self)
 
         return '\n\t * '.join(text.strip().split('\n'))
@@ -506,10 +506,10 @@ class JavaBindingsPacket(java_common.JavaPacket):
         return bbgets, bbret
 
 class JavaBindingsGenerator(common.BindingsGenerator):
-    def __init__(self, *args, **kwargs):
-        common.BindingsGenerator.__init__(self, *args, **kwargs)
+    released_files_name_prefix = 'java'
 
-        self.released_files_name_prefix = 'java'
+    def get_bindings_name(self):
+        return 'java'
 
     def get_device_class(self):
         return JavaBindingsDevice
@@ -531,7 +531,7 @@ class JavaBindingsGenerator(common.BindingsGenerator):
             self.released_files.append(file_name)
 
 def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', JavaBindingsGenerator, False)
+    common.generate(bindings_root_directory, 'en', JavaBindingsGenerator)
 
 if __name__ == "__main__":
     generate(os.getcwd())

@@ -32,11 +32,15 @@ from *index*.
 The maximum length is 16, the index goes from 0 to 319 and the rgb values
 have 8 bits each.
 
-Example: If you set index to 5, length to 3, r to 
-[255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-g to [0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] and b to 
-[0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] the LEDs with index 5, 6
-and 7 will get the color red, green and blue respectively.
+Example: If you set
+
+* index to 5,
+* length to 3,
+* r to |r_values|,
+* g to |g_values| and
+* b to |b_values|
+
+the LED with index 5 will be red, 6 will be green and 7 will be blue.
 
 The colors will be transfered to actual LEDs when the next
 frame duration ends, see :func:`SetFrameDuration`.
@@ -61,17 +65,22 @@ bounds is ignored completely.
 """,
 'de':
 """
-Setzt die *rgb* Werte für die LEDs mit der angegebenen *length* und
+Setzt die *rgb* Werte für die LEDs mit der angegebenen *length*,
 beginnend vom angegebenen *index*.
 
 Die maximale Länge ist 16. Der Index geht von 0 bis 319 und die
 rgb Werte haben jeweils 8 Bit.
 
-Beispiel: Wenn der Index auf 5, die Länge auf 3, r auf 
-[255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-g auf [0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] und b auf 
-[0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] gesetzt wird, werden 
-die LEDs mit den Indizes 5, 6 und 7 die Farben Rot, Grün und Blau annehmen.
+Beispiel: Wenn
+
+* index auf 5,
+* length auf 3,
+* r auf |r_values|,
+* g auf |g_values| und
+* b auf |b_values|
+
+gesetzt wird, wird die LED an Index 5 die Farbe Rot annehmen, 6 wird Grün und 7
+wird Blau.
 
 Die Farben werden auf die tatsächlichen LEDs transferiert wenn die
 nächste *frame duration* abgelaufen ist, siehe :func:`SetFrameDuration`.
@@ -94,6 +103,16 @@ der freien Bricklet Ports (siehe :ref:`hier <led_strip_bricklet_ram_constraints>
 Ein Aufruf von :func:`SetRGBValues` mit index + length größer als die 
 Begrenzung werden komplett ingnoriert.
 """
+},
+{
+'*': {
+'r_values': {'php': 'array(255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)',
+             '*': '[255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]'},
+'g_values': {'php': 'array(0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)',
+             '*': '[0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]'},
+'b_values': {'php': 'array(0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)',
+             '*': '[0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]'}
+}
 }]
 })
 

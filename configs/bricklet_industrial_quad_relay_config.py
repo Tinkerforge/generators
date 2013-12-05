@@ -26,8 +26,8 @@ Sets the output value with a bitmask. The bitmask
 is 16 bit long, *true* refers to a closed relay and *false* refers to 
 an open relay.
 
-For example: The value 0b0000000000000011 will close the relay 
-of pins 0-1 and open the other pins.
+For example: The value 0b0011 will close the relay of pins 0-1 and open the
+other pins.
 
 If no groups are used (see :func:`SetGroup`), the pins correspond to the
 markings on the Quad Relay Bricklet.
@@ -42,8 +42,8 @@ Setzt die Ausgabewerte mit einer Bitmaske. Die Bitmaske ist 16 Bit lang.
 *true* steht für ein geschlossenes Relais und *false* für ein offenes
 Relay.
 
-Zum Beispiel: Der Wert 0b0000000000000011 wird die Relais 0-1 schließen und
-alle anderen öffnen.
+Zum Beispiel: Der Wert 0b0011 wird die Relais 0-1 schließen und alle anderen
+öffnen.
 
 Falls keine Gruppen verwendet werden (siehe :func:`SetGroup`), entsprechen
 die Pins der Beschriftung auf dem Quad Relay Bricklet.
@@ -91,10 +91,9 @@ pins (*true* means relay closed and *false* means relay open).
 The third parameter indicates the time (in ms) that the pins should hold
 the value.
 
-If this function is called with the parameters 
-((1 << 0) | (1 << 3), (1 << 0), 1500):
-Pin 0 will close and pin 3 will open. In 1.5s pin 0 will open and pin
-3 will close again.
+If this function is called with the parameters (9, 1, 1500) or
+(0b1001, 0b0001, 1500): Pin 0 will close and pin 3 will open. In 1.5s pin 0
+will open and pin 3 will close again.
 
 A monoflop can be used as a fail-safe mechanism. For example: Lets assume you
 have a RS485 bus and a Quad Relay Bricklet connected to one of the slave
@@ -108,13 +107,13 @@ Konfiguriert einen Monoflop für die Pins, wie mittels der Bitmaske
 des ersten Parameters festgelegt.
 
 Der zweite Parameter ist eine Bitmaske mit den gewünschten Zuständen der
-festgelegten Pins (*true* bedeutet Relais geschlossen und
-*false* bedeutet Relais offen).
+festgelegten Pins (*true* bedeutet Relais geschlossen und *false* bedeutet
+Relais offen).
 
 Der dritte Parameter stellt die Zeit (in ms) dar, welche die Pins den Zustand
 halten sollen.
 
-Wenn diese Funktion mit den Parametern ((1 << 0) | (1 << 3), (1 << 0), 1500)
+Wenn diese Funktion mit den Parametern (9, 1, 1500) bzw. (0b1001, 0b0001, 1500)
 aufgerufen wird: Pin 0 wird auf geschlossen und Pin 3 auf geöffnet gesetzt.
 Nach 1,5s wird Pin 0 wieder geöffnet und Pin 3 geschlossen.
 
@@ -175,7 +174,7 @@ Each element can either be one of the ports ('a' to 'd') or 'n' if it should
 not be used.
 
 For example: If you have two Quad Relay Bricklets connected to port A and
-port B respectively, you could call with "['a', 'b', 'n', 'n']".
+port B respectively, you could call with |abnn|.
 
 Now the pins on the Quad Relay on port A are assigned to 0-3 and the
 pins on the Quad Relay on port B are assigned to 4-7. It is now possible
@@ -194,12 +193,18 @@ Jedes Element kann entweder auf einen der Ports ('a' bis 'd') gesetzt werden
 oder falls nicht genutzt 'n' gesetzt werden.
 
 Zum Beispiel: Falls zwei Quad Relay Bricklets mit Port A und Port B verbunden
-sind, könnte diese Funktion mit "['a', 'b', 'n', 'n']" aufgerufen werden.
+sind, könnte diese Funktion mit |abnn| aufgerufen werden.
 
 In diesem Fall wären die Pins von Port A den Werten 0-3 zugewiesen und
 die Pins von Port B den Werten 4-7. Es ist jetzt möglich mit der Funktion
 :func:`SetValue` beide Bricklets gleichzeitig zu kontrollieren.
 """
+},
+{
+'*': {
+'abnn': {'php': "``array('a', 'b', 'n', 'n')``",
+         '*': "``['a', 'b', 'n', 'n']``"}
+}
 }]
 })
 
@@ -229,13 +234,13 @@ com['packets'].append({
 'en':
 """
 Returns a bitmask of ports that are available for grouping. For example the
-value 0b0101 means: Port *A* and Port *C* are connected to Bricklets that
+value 5 or 0b0101 means: Port A and port C are connected to Bricklets that
 can be grouped together.
 """,
 'de':
 """
 Gibt eine Bitmaske von Ports zurück die für die Gruppierung zur Verfügung
-stehen. Zum Beispiel bedeutet der Wert 0b0101: Port *A* und Port *C* sind
+stehen. Zum Beispiel bedeutet der Wert 5 bzw. 0b0101: Port A und Port C sind
 mit Bricklets verbunden die zusammen gruppiert werden können.
 """
 }]
@@ -276,8 +281,8 @@ Sets the output value with a bitmask, according to the selection mask.
 The bitmask is 16 bit long, *true* refers to a closed relay and 
 *false* refers to an open relay.
 
-For example: The values 00b0000000000000011, b0000000000000001 will close 
-the relay of pin 0, open the relay of pin 1 and leave the others untouched.
+For example: The values (3, 1) or (0b0011, 0b0001) will close the relay of
+pin 0, open the relay of pin 1 and leave the others untouched.
 
 If no groups are used (see :func:`SetGroup`), the pins correspond to the
 markings on the Quad Relay Bricklet.
@@ -293,8 +298,8 @@ Die Bitmaske ist 16 Bit lang.
 *true* steht für ein geschlossenes Relais und *false* für ein offenes
 Relay.
 
-Zum Beispiel: Die Werte 0b0000000000000011, b0000000000000001 werden das 
-Relais 0 schließen, das Relais 1 öffnen und alle anderen unangetastet lassen.
+Zum Beispiel: Die Werte (3, 1) bzw. (0b0011, 0b0001) wird das Relais 0
+schließen, das Relais 1 öffnen und alle anderen unangetastet lassen.
 
 Falls keine Gruppen verwendet werden (siehe :func:`SetGroup`), entsprechen
 die Pins der Beschriftung auf dem Quad Relay Bricklet.

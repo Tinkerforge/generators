@@ -672,7 +672,7 @@ class CBindingsPacket(c_common.CPacket):
         text = text.replace('.. warning::', '\\warning')
 
         text = common.handle_rst_word(text)
-        text = common.handle_rst_if(text, self.get_device())
+        text = common.handle_rst_substitutions(text, self)
         text += common.format_since_firmware(self.get_device(), self)
 
         return '\n * '.join(text.strip().split('\n'))
@@ -734,10 +734,10 @@ class CBindingsPacket(c_common.CPacket):
         return return_list, needs_i
 
 class CBindingsGenerator(common.BindingsGenerator):
-    def __init__(self, *args, **kwargs):
-        common.BindingsGenerator.__init__(self, *args, **kwargs)
+    released_files_name_prefix = 'c'
 
-        self.released_files_name_prefix = 'c'
+    def get_bindings_name(self):
+        return 'c'
 
     def get_device_class(self):
         return CBindingsDevice
@@ -764,7 +764,7 @@ class CBindingsGenerator(common.BindingsGenerator):
             self.released_files.append(file_name + '.h')
 
 def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', CBindingsGenerator, False)
+    common.generate(bindings_root_directory, 'en', CBindingsGenerator)
 
 if __name__ == "__main__":
     generate(os.getcwd())

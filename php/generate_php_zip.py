@@ -36,6 +36,9 @@ import php_common
 from php_released_files import released_files
 
 class PHPZipGenerator(common.Generator):
+    def get_bindings_name(self):
+        return 'php'
+
     def prepare(self):
         common.recreate_directory('/tmp/generator')
         os.makedirs('/tmp/generator/pear/source/Tinkerforge')
@@ -46,7 +49,7 @@ class PHPZipGenerator(common.Generator):
             return
 
         # Copy examples
-        examples = common.find_examples(device, self.get_bindings_root_directory(), 'php', 'Example', '.php')
+        examples = common.find_examples(device, self.get_bindings_root_directory(), self.get_bindings_name(), 'Example', '.php')
         dest = os.path.join('/tmp/generator/pear/examples', device.get_category().lower(), device.get_underscore_name())
 
         if not os.path.exists(dest):
@@ -131,10 +134,10 @@ class PHPZipGenerator(common.Generator):
         os.remove('/tmp/generator/pear/source/package.xml')
 
         # Make zip
-        common.make_zip('php', '/tmp/generator/pear', root, version)
+        common.make_zip(self.get_bindings_name(), '/tmp/generator/pear', root, version)
 
 def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', PHPZipGenerator, False)
+    common.generate(bindings_root_directory, 'en', PHPZipGenerator)
 
 if __name__ == "__main__":
     generate(os.getcwd())

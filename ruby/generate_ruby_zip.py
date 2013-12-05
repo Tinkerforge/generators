@@ -35,6 +35,9 @@ import common
 from ruby_released_files import released_files
 
 class RubyZipGenerator(common.Generator):
+    def get_bindings_name(self):
+        return 'ruby'
+
     def prepare(self):
         common.recreate_directory('/tmp/generator')
         os.makedirs('/tmp/generator/gem/source/lib/tinkerforge')
@@ -45,7 +48,7 @@ class RubyZipGenerator(common.Generator):
             return
 
         # Copy examples
-        examples = common.find_examples(device, self.get_bindings_root_directory(), 'ruby', 'example_', '.rb')
+        examples = common.find_examples(device, self.get_bindings_root_directory(), self.get_bindings_name(), 'example_', '.rb')
         dest = os.path.join('/tmp/generator/gem/examples', device.get_category().lower(), device.get_underscore_name())
 
         if not os.path.exists(dest):
@@ -123,10 +126,10 @@ end
         shutil.rmtree('/tmp/generator/gem/source/lib/')
 
         # Make zip
-        common.make_zip('ruby', '/tmp/generator/gem', root, version)
+        common.make_zip(self.get_bindings_name(), '/tmp/generator/gem', root, version)
 
 def generate(bindings_root_directory):
-    common.generate(bindings_root_directory, 'en', RubyZipGenerator, False)
+    common.generate(bindings_root_directory, 'en', RubyZipGenerator)
 
 if __name__ == "__main__":
     generate(os.getcwd())

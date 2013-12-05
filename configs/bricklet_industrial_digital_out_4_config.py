@@ -26,8 +26,8 @@ Sets the output value with a bitmask. The bitmask
 is 16 bit long, *true* refers to high and *false* refers to 
 low.
 
-For example: The value 0b0000000000000011 will turn pins 0-1 
-high and the other pins low.
+For example: The value 3 or 0b0011 will turn pins 0-1 high and the other pins
+low.
 
 If no groups are used (see :func:`SetGroup`), the pins correspond to the
 markings on the Digital Out 4 Bricklet.
@@ -41,7 +41,7 @@ pins 8-11 and element 4 pins 12-15.
 Setzt die Ausgabewerte mit einer Bitmaske. Die Bitmaske ist 16 Bit lang.
 *true* bedeutet logisch 1 und *false* logisch 0.
 
-Zum Beispiel: Der Wert 0b0000000000000011 wird die Pins 0-1 auf logisch 1
+Zum Beispiel: Der Wert 3 bzw. 0b0011 wird die Pins 0-1 auf logisch 1
 und alle anderen auf logisch 0 setzen.
 
 Falls keine Gruppen verwendet werden (siehe :func:`SetGroup`), entsprechen
@@ -90,10 +90,9 @@ pins (*true* means high and *false* means low).
 The third parameter indicates the time (in ms) that the pins should hold
 the value.
 
-If this function is called with the parameters 
-((1 << 0) | (1 << 3), (1 << 0), 1500):
-Pin 0 will get high and pin 3 will get low. In 1.5s pin 0 will get low and
-pin 3 will get high again.
+If this function is called with the parameters (9, 1, 1500) or
+(0b1001, 0b0001, 1500): Pin 0 will get high and pin 3 will get low. In 1.5s
+pin 0 will get low and pin 3 will get high again.
 
 A monoflop can be used as a fail-safe mechanism. For example: Lets assume you
 have a RS485 bus and a Digital Out 4 Bricklet connected to one of the slave
@@ -112,7 +111,7 @@ festgelegten Pins (*true* bedeutet logisch 1 und *false* bedeutet logisch 0).
 Der dritte Parameter stellt die Zeit (in ms) dar, welche die Pins den Zustand
 halten sollen.
 
-Wenn diese Funktion mit den Parametern ((1 << 0) | (1 << 3), (1 << 0), 1500)
+Wenn diese Funktion mit den Parametern (9, 1, 1500) bzw. (0b1001, 0b0001, 1500)
 aufgerufen wird: Pin 0 wird auf logisch 1 und Pin 3 auf logisch 0 gesetzt.
 Nach 1,5s wird Pin 0 wieder auf logisch 0 und Pin 3 auf logisch 1 gesetzt.
 
@@ -173,7 +172,7 @@ Each element can either be one of the ports ('a' to 'd') or 'n' if it should
 not be used.
 
 For example: If you have two Digital Out 4 Bricklets connected to port A and
-port B respectively, you could call with "['a', 'b', 'n', 'n']".
+port B respectively, you could call with |abnn|.
 
 Now the pins on the Digital Out 4 on port A are assigned to 0-3 and the
 pins on the Digital Out 4 on port B are assigned to 4-7. It is now possible
@@ -192,12 +191,18 @@ Jedes Element kann entweder auf einen der Ports ('a' bis 'd') gesetzt werden
 oder falls nicht genutzt 'n' gesetzt werden.
 
 Zum Beispiel: Falls zwei Digital Out 4 Bricklets mit Port A und Port B verbunden
-sind, könnte diese Funktion mit "['a', 'b', 'n', 'n']" aufgerufen werden.
+sind, könnte diese Funktion mit |abnn| aufgerufen werden.
 
 In diesem Fall wären die Pins von Port A den Werten 0-3 zugewiesen und
 die Pins von Port B den Werten 4-7. Es ist jetzt möglich mit der Funktion
 :func:`SetValue` beide Bricklets gleichzeitig zu kontrollieren.
 """
+},
+{
+'*': {
+'abnn': {'php': "``array('a', 'b', 'n', 'n')``",
+         '*': "``['a', 'b', 'n', 'n']``"}
+}
 }]
 })
 
@@ -227,13 +232,13 @@ com['packets'].append({
 'en':
 """
 Returns a bitmask of ports that are available for grouping. For example the
-value 0b0101 means: Port *A* and Port *C* are connected to Bricklets that
+value 5 or 0b0101 means: Port A and port C are connected to Bricklets that
 can be grouped together.
 """,
 'de':
 """
 Gibt eine Bitmaske von Ports zurück die für die Gruppierung zur Verfügung
-stehen. Zum Beispiel bedeutet der Wert 0b0101: Port *A* und Port *C* sind
+stehen. Zum Beispiel bedeutet der Wert 5 bzw. 0b0101: Port A und Port C sind
 mit Bricklets verbunden die zusammen gruppiert werden können.
 """
 }]
@@ -274,8 +279,8 @@ Sets the output value with a bitmask, according to the selection mask.
 The bitmask is 16 bit long, *true* refers to high and *false* refers to 
 low.
 
-For example: The values 0b0000000000000011, b0000000000000001 will turn 
-pin 0 high, pin 1 low the other pins remain untouched.
+For example: The values (3, 1) or (0b0011, 0b0001) will turn pin 0 high, pin 1
+low the other pins remain untouched.
 
 If no groups are used (see :func:`SetGroup`), the pins correspond to the
 markings on the Digital Out 4 Bricklet.
@@ -289,9 +294,9 @@ pins 8-11 and element 4 pins 12-15.
 Setzt die Ausgabewerte mit einer Bitmaske, entsprechend der Selektionsmaske.
 Die Bitmaske ist 16 Bit lang. *true* bedeutet logisch 1 und *false* logisch 0.
 
-Zum Beispiel: Die Werte 0b0000000000000011, b0000000000000001 werden den 
-Pin 0 auf logisch 1 und den Pin 1 auf logisch 0 setzen. Alle anderen
-Pins bleiben unangetastet.
+Zum Beispiel: Die Werte (3, 1) bzw. (0b0011, 0b0001) werden den Pin 0 auf
+logisch 1 und den Pin 1 auf logisch 0 setzen. Alle anderen Pins bleiben
+unangetastet.
 
 Falls keine Gruppen verwendet werden (siehe :func:`SetGroup`), entsprechen
 die Pins der Beschriftung auf dem Digital Out 4 Bricklet.

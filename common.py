@@ -431,31 +431,16 @@ def handle_rst_word(text,
 
     return text
 
-def handle_rst_if(text, device):
-    lines = []
+def handle_rst_substitutions(text, packet):
+    subsitutions = packet.get_doc_substitutions()
 
-    for line in text.split('\n'):
-        if ':if:' in line:
-            m = re.match('(.*):if:([^:]+):`([^`]+)`(.*)', line)
+    if len(subsitutions) == 0:
+        return text
 
-            if m is None:
-                raise 'invalid if: ' + line
+    for key, value in subsitutions.items():
+        text = text.replace('|' + key + '|', value)
 
-            prefix = m.group(1)
-            condition = m.group(2)
-            body = m.group(3)
-            suffix = m.group(4)
-
-            name = device.get_underscore_name() + '-' + device.get_category().lower()
-
-            if name == condition:
-                lines.append(prefix + body + suffix)
-            elif len(prefix + suffix) > 0:
-                lines.append(prefix + suffix)
-        else:
-            lines.append(line)
-
-    return '\n'.join(lines)
+    return text
 
 def underscore_to_headless_camel_case(name):
     parts = name.split('_')
@@ -476,7 +461,7 @@ def recreate_directory(directory):
         shutil.rmtree(directory)
     os.makedirs(directory)
 
-def generate(bindings_root_directory, language, generator_class, is_doc):
+def generate(bindings_root_directory, language, generator_class):
     global lang
     lang = language
 
@@ -495,7 +480,7 @@ def generate(bindings_root_directory, language, generator_class, is_doc):
 
     device_identifiers = []
 
-    generator = generator_class(bindings_root_directory, language, is_doc)
+    generator = generator_class(bindings_root_directory, language)
 
     generator.prepare()
 
@@ -799,6 +784,28 @@ class Packet:
     def get_doc(self):
         return self.raw_data['doc']
 
+    def get_doc_substitutions(self):
+        doc = self.get_doc()
+
+        if len(doc) < 3:
+            return []
+
+        if lang in doc[2]:
+            subsitutions = doc[2][lang]
+        else:
+            subsitutions = doc[2]['*']
+
+        filtered_subsitutions = {}
+        bindings_name = self.get_device().get_generator().get_bindings_name()
+
+        for key, value in subsitutions.items():
+            if bindings_name in value:
+                filtered_subsitutions[key] = value[bindings_name]
+            else:
+                filtered_subsitutions[key] = value['*']
+
+        return filtered_subsitutions
+
     def get_function_id(self):
         return self.raw_data['function_id']
 
@@ -931,12 +938,12 @@ class Device:
 
     def get_packets(self, typ=None):
         if typ is None:
-            if self.generator.is_doc:
+            if self.generator.is_doc():
                 return self.all_packets
             else:
                 return self.all_packets_without_doc_only
         elif typ == 'function':
-            if self.generator.is_doc:
+            if self.generator.is_doc():
                 return self.all_function_packets
             else:
                 return self.all_function_packets_without_doc_only
@@ -974,10 +981,12 @@ class Device:
         return constants
 
 class Generator:
-    def __init__(self, bindings_root_directory, language, is_doc):
+    def __init__(self, bindings_root_directory, language):
         self.bindings_root_directory = bindings_root_directory
         self.language = language
-        self.is_doc = is_doc
+
+    def get_bindings_name(self):
+        raise Exception("get_bindings_name not implemented")
 
     def get_device_class(self):
         return Device
@@ -994,6 +1003,9 @@ class Generator:
     def get_language(self):
         return self.language
 
+    def is_doc(self):
+        return False
+
     def prepare(self):
         pass
 
@@ -1004,15 +1016,19 @@ class Generator:
         pass
 
 class DocGenerator(Generator):
+    def is_doc(self):
+        return True
+
     def prepare(self):
         recreate_directory(os.path.join(self.get_bindings_root_directory(), 'doc', self.get_language()))
 
 class BindingsGenerator(Generator):
+    released_files_name_prefix = None
+    recreate_bindings_subdirectory = True
+
     def __init__(self, *args, **kwargs):
         Generator.__init__(self, *args, **kwargs)
 
-        self.recreate_bindings_subdirectory = True
-        self.released_files_name_prefix = None
         self.released_files = []
 
     def prepare(self):

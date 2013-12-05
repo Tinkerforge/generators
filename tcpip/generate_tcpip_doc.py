@@ -215,7 +215,7 @@ class TCPIPDocPacket(common.Packet):
             text = text.replace(name_false, name_right)
 
         text = common.handle_rst_word(text, parameter, parameters)
-        text = common.handle_rst_if(text, self.get_device())
+        text = common.handle_rst_substitutions(text, self)
         text += common.format_since_firmware(self.get_device(), self)
 
         return common.shift_right(text, 1)
@@ -272,6 +272,9 @@ class TCPIPDocElement(common.Element):
         return t + '[' + str(self.get_cardinality()) + ']'
 
 class TCPIPDocGenerator(common.DocGenerator):
+    def get_bindings_name(self):
+        return 'tcpip'
+
     def get_device_class(self):
         return TCPIPDocDevice
 
@@ -288,10 +291,10 @@ class TCPIPDocGenerator(common.DocGenerator):
         rst.write(device.get_tcpip_doc())
         rst.close()
 
-def generate(bindings_root_directory, lang):
-    common.generate(bindings_root_directory, lang, TCPIPDocGenerator, True)
+def generate(bindings_root_directory, language):
+    common.generate(bindings_root_directory, language, TCPIPDocGenerator)
 
 if __name__ == "__main__":
-    for lang in ['en', 'de']:
-        print("=== Generating %s ===" % lang)
-        generate(os.getcwd(), lang)
+    for language in ['en', 'de']:
+        print("=== Generating %s ===" % language)
+        generate(os.getcwd(), language)

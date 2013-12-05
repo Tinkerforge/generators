@@ -23,9 +23,9 @@ com['packets'].append({
 'en':
 """
 Sets the output value (high or low) with a bitmask. The bitmask
-is 4 bit long, *true* refers to high and *false* refers to low.
+is 4bit long, *true* refers to high and *false* refers to low.
 
-For example: The value 0b0011 will turn the pins 0-1 high and the
+For example: The value 3 or 0b0011 will turn the pins 0-1 high and the
 pins 2-3 low.
 
 .. note::
@@ -35,11 +35,11 @@ pins 2-3 low.
 'de':
 """
 Setzt den Ausgangszustand (logisch 1 oder logisch 0) mittels einer Bitmaske.
-Die Bitmaske hat eine Länge von 4 Bit, *true* bedeutet logisch 1 und *false*
+Die Bitmaske hat eine Länge von 4Bit, *true* bedeutet logisch 1 und *false*
 logisch 0.
 
-Beispiel: Der Wert 0b0011 setzt die Pins 0-1 auf logisch 1 und die Pins 2-3
-auf logisch 0.
+Beispiel: Der Wert 3 bzw. 0b0011 setzt die Pins 0-1 auf logisch 1 und die
+Pins 2-3 auf logisch 0.
 
 .. note::
  Diese Funktion bewirkt keine Änderung an Pins die als Eingang konfiguriert sind.
@@ -81,7 +81,7 @@ com['packets'].append({
 'en':
 """
 Configures the value and direction of the specified pins. Possible directions
-are "i" and "o" for input and output.
+are 'i' and 'o' for input and output.
 
 If the direction is configured as output, the value is either high or low
 (set as *true* or *false*).
@@ -91,15 +91,15 @@ default (set as *true* or *false*).
 
 For example:
 
-* (15, 'i', true) will set all pins of as input pull-up.
-* (8, 'i', false) will set pin 3 of as input default (floating if nothing is connected).
-* (3, 'o', false) will set pins 0 and 1 as output low.
-* (4, 'o', true) will set pin 2 of as output high.
+* (15, 'i', true) or (0b1111, 'i', true) will set all pins of as input pull-up.
+* (8, 'i', false) or (0b1000, 'i', false) will set pin 3 of as input default (floating if nothing is connected).
+* (3, 'o', false) or (0b0011, 'o', false) will set pins 0 and 1 as output low.
+* (4, 'o', true) or (0b0100, 'o', true) will set pin 2 of as output high.
 """,
 'de':
 """
 Konfiguriert den Zustand und die Richtung eines angegebenen Pins. Mögliche
-Richtungen sind "i" und "o" für Ein- und Ausgang.
+Richtungen sind 'i' und 'o' für Ein- und Ausgang.
 
 Wenn die Richtung als Ausgang konfiguriert ist, ist der Zustand entweder
 logisch 1 oder logisch 0 (gesetzt als *true* oder *false*).
@@ -109,10 +109,10 @@ Pull-Up oder Standard (gesetzt als *true* oder *false*).
 
 Beispiele:
 
-* (15, 'i', true) setzt alle Pins als Eingang mit Pull-Up.
-* (8, 'i', false) setzt Pin 3 als Standard Eingang (potentialfrei wenn nicht verbunden).
-* (3, 'o', false) setzt die Pins 0 und 1 als Ausgang im Zustand logisch 0.
-* (4, 'o', true) setzt Pin 2 als Ausgang im Zustand logisch 1.
+* (15, 'i', true) bzw. (0b1111, 'i', true) setzt alle Pins als Eingang mit Pull-Up.
+* (8, 'i', false) bzw. (0b1000, 'i', true) setzt Pin 3 als Standard Eingang (potentialfrei wenn nicht verbunden).
+* (3, 'o', false) bzw. (0b0011, 'i', true) setzt die Pins 0 und 1 als Ausgang im Zustand logisch 0.
+* (4, 'o', true) bzw. (0b0100, 'i', true) setzt Pin 2 als Ausgang im Zustand logisch 1.
 """
 }]
 })
@@ -128,26 +128,26 @@ com['packets'].append({
 """
 Returns a value bitmask and a direction bitmask.
 
-For example: A return value of 0b0011 and 0b0101 for
-direction and value means that:
+For example: A return value of (3, 5) or (0b0011, 0b0101) for direction and
+value means that:
 
 * pin 0 is configured as input pull-up,
 * pin 1 is configured as input default,
-* pin 2 is configured as output high
-* and pin 3 is are configured as output low.
+* pin 2 is configured as output high and
+* pin 3 is are configured as output low.
 """,
 'de':
 """
 Gibt eine Bitmaske für die Richtung und eine Bitmaske für den Zustand der Pins
 zurück.
 
-Beispiel: Ein Rückgabewert von 0b0011 und 0b0101 für Richtung und Zustand
-bedeutet:
+Beispiel: Ein Rückgabewert von (3, 5) bzw. (0b0011, 0b0101) für Richtung und
+Zustand bedeutet:
 
 * Pin 0 ist als Eingang mit Pull-Up konfiguriert,
 * Pin 1 ist als Standard Eingang konfiguriert,
-* Pin 2 ist als Ausgang im Zustand logisch 1 konfiguriert
-* und Pin 3 ist als Ausgang im Zustand logisch 0 konfiguriert.
+* Pin 2 ist als Ausgang im Zustand logisch 1 konfiguriert und
+* Pin 3 ist als Ausgang im Zustand logisch 0 konfiguriert.
 """
 }]
 })
@@ -211,8 +211,8 @@ Sets the pins on which an interrupt is activated with a bitmask.
 Interrupts are triggered on changes of the voltage level of the pin,
 i.e. changes from high to low and low to high.
 
-For example: An interrupt bitmask of 9 will enable the interrupt for
-pins 0 and 3.
+For example: An interrupt bitmask of 10 or 0b1010 will enable the interrupt for
+pins 1 and 3.
 
 The interrupt is delivered with the callback :func:`Interrupt`.
 """,
@@ -222,8 +222,8 @@ Setzt durch eine Bitmaske die Pins für welche der Interrupt aktiv ist.
 Interrupts werden ausgelöst bei Änderung des Spannungspegels eines Pins,
 z.B. ein Wechsel von logisch 1 zu logisch 0 und logisch 0 zu logisch 1.
 
-Beispiel: Eine Interrupt Bitmaske von 9 aktiviert den Interrupt für die
-Pins 0 und 3.
+Beispiel: Eine Interrupt Bitmaske von 10 bzw. 0b1010 aktiviert den Interrupt für
+die Pins 1 und 3.
 
 Der Interrupt wird mit der Callback :func:`Interrupt` zugestellt.
 """
@@ -264,9 +264,9 @@ and the current value bitmask.
 
 For example:
 
-* (1, 1) means that an interrupt on pin 0 occurred and
+* (1, 1) or (0b0001, 0b0001) means that an interrupt on pin 0 occurred and
   currently pin 0 is high and pins 1-3 are low.
-* (9, 14) means that interrupts on pins 0 and 3
+* (9, 14) or (0b1001, 0b1110) means that interrupts on pins 0 and 3
   occurred and currently pin 0 is low and pins 1-3 are high.
 """,
 'de':
@@ -280,10 +280,10 @@ aktuellen Zustände.
 
 Beispiele:
 
-* (1, 1) bedeutet, dass ein Interrupt am Pin 0 ist aufgetreten ist und aktuell
-  Pin 0 logisch 1 ist und die Pins 1-3 logisch 0 sind.
-* (9, 14) bedeutet, dass Interrupts an den Pins 0 und 3 aufgetreten sind und
-  aktuell Pin 0 logisch 0 ist und die Pins 1-3 logisch 1 sind.
+* (1, 1) bzw. (0b0001, 0b0001) bedeutet, dass ein Interrupt am Pin 0 aufgetreten
+  ist und aktuell Pin 0 logisch 1 ist und die Pins 1-3 logisch 0 sind.
+* (9, 14) bzw. (0b1001, 0b1110) bedeutet, dass Interrupts an den Pins 0 und 3
+  aufgetreten sind und aktuell Pin 0 logisch 0 ist und die Pins 1-3 logisch 1 sind.
 """
 }]
 })
@@ -308,9 +308,9 @@ output pins (*true* means high and *false* means low).
 The third parameter indicates the time (in ms) that the pins should hold
 the value.
 
-If this function is called with the parameters ((1 << 0) | (1 << 3), (1 << 0), 1500):
-Pin 0 will get high and pin 3 will get low. In 1.5s pin 0 will get low and pin
-3 will get high again.
+If this function is called with the parameters (9, 1, 1500) or
+(0b1001, 0b0001, 1500): Pin 0 will get high and pin 3 will get low. In 1.5s pin
+0 will get low and pin 3 will get high again.
 
 A monoflop can be used as a fail-safe mechanism. For example: Lets assume you
 have a RS485 bus and an IO-4 Bricklet connected to one of the slave
@@ -330,7 +330,7 @@ festgelegten Ausgangspins (*true* bedeutet logisch 1 und *false* logisch 0).
 Der dritte Parameter stellt die Zeit (in ms) dar, welche die Pins den Zustand
 halten sollen.
 
-Wenn diese Funktion mit den Parametern ((1 << 0) | (1 << 3), (1 << 0), 1500)
+Wenn diese Funktion mit den Parametern (9, 1, 1500) bzw. (0b1001, 0b0001, 1500)
 aufgerufen wird: Pin 0 wird auf logisch 1 und Pin 3 auf logisch 0 gesetzt.
 Nach 1,5s wird Pin 0 wieder logisch 0 und Pin 3 logisch 1 gesetzt.
 
@@ -407,8 +407,8 @@ Sets the output value (high or low) with a bitmask, according to
 the selection mask. The bitmask is 4 bit long, *true* refers to high 
 and *false* refers to low.
 
-For example: The values 0b0110, 0b0011 will turn pin 2 high and
-pin 1 low, pin 0 and 3 will remain untouched.
+For example: The parameters (9, 4) or (0b0110, 0b0100) will turn
+pin 1 low and pin 2 high, pin 0 and 3 will remain untouched.
 
 .. note::
  This function does nothing for pins that are configured as input.
@@ -421,8 +421,8 @@ entsprechend der Selektionsmaske. Die Bitmaske hat eine Länge von 4 Bit,
 *true* bedeutet logisch 1 und *false*
 logisch 0.
 
-Beispiel: Die Werte 0b0110, 0b0011 setzen den Pin 2 auf logisch 1 und den Pin 1
-auf logisch 0. Die Pins 0 und 3 bleiben unangetastet.
+Beispiel: Die Parameter (9, 4) bzw (0b0110, 0b0100) setzen den Pin 1 auf
+logisch 0 und den Pin 2 auf logisch 1. Die Pins 0 und 3 bleiben unangetastet.
 
 .. note::
  Diese Funktion bewirkt keine Änderung an Pins die als Eingang konfiguriert sind.
