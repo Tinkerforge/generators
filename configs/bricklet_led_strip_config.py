@@ -4,7 +4,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 231,
     'name': ('LEDStrip', 'led_strip', 'LED Strip'),
@@ -241,15 +241,15 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetClockFrequency', 'set_clock_frequency'), 
 'elements': [('frequency', 'uint32', 1, 'in')],
-'since_firmware': [1, 0, 1],
+'since_firmware': [2, 0, 1],
 'doc': ['bf', {
 'en':
 """
-Sets the frequency of the clock in Hz. The range is 10000Hz (10KHz) up to
+Sets the frequency of the clock in Hz. The range is 10000Hz (10kHz) up to
 2000000Hz (2MHz).
 
 The Bricklet will choose the nearest achievable frequency, which may
-be off by a few Hz. You can get the excact frequency that is used by
+be off by a few Hz. You can get the exact frequency that is used by
 calling :func:`GetClockFrequency`.
 
 If you have problems with flickering LEDs, they may be bits flipping. You
@@ -262,13 +262,12 @@ too.
 The default value is 1.66MHz.
 
 .. note::
- The frequency in firmware version 1.0.0 is fixed at 2MHz.
-
+ The frequency in firmware version 2.0.0 is fixed at 2MHz.
 """,
 'de':
 """
-Setzt die Frequenz der Clockleitung in Hz. Der erlaubte Wertebereich
-beläuft von sich 10000Hz (10KHz) bis 2000000Hz (2MHz).
+Setzt die Frequenz der Clock-Leitung in Hz. Der erlaubte Wertebereich
+beläuft von sich 10000Hz (10kHz) bis 2000000Hz (2MHz).
 
 Das Bricklet wählt die nächst mögliche erreichbare Frequenz. Diese
 kann ein paar Hz neben des gesetzten Wertes liegen. Die exakte Frequenz
@@ -279,14 +278,12 @@ Bits auf der Leitung flippen. Dies kann behoben werden in dem man die
 Verbindung zwischen Bricklet und LEDs verringert oder in dem man die
 Frequenz reduziert.
 
-Mit abnehmender Frequenz nimmt allerdings auch die maximale Framerate
-ab.
+Mit abnehmender Frequenz nimmt allerdings auch die maximale Framerateab.
 
-Der Standardwert ist 1.66MHz
+Der Standardwert ist 1,66MHz
 
 .. note::
- Die Frequenz in Firmwareversion 1.0.0 ist fest auf 2MHz.
-
+ Die Frequenz in Firmwareversion 2.0.0 ist fest auf 2MHz gesetzt.
 """
 }]
 })
@@ -295,7 +292,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetClockFrequency', 'get_clock_frequency'), 
 'elements': [('frequency', 'uint32', 1, 'out')],
-'since_firmware': [1, 0, 0],
+'since_firmware': [2, 0, 1],
 'doc': ['bf', {
 'en':
 """
