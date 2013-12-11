@@ -93,9 +93,12 @@ Possible fix status values can be:
  :header: "Value", "Description"
  :widths: 10, 100
 
- "1", "No Fix"
- "2", "2D Fix"
- "3", "3D Fix"
+ "1", "No Fix, :func:`GetCoordinates` and :func:`GetAltitude` return invalid data"
+ "2", "2D Fix, only :func:`GetCoordinates` returns valid data"
+ "3", "3D Fix, :func:`GetCoordinates` and :func:`GetAltitude` return valid data"
+
+There is also a :ref:`blue LED <gps_bricklet_fix_led>` on the Bricklet that
+indicates the fix status.
 """,
 'de':
 """
@@ -108,9 +111,12 @@ Mögliche Fix-Status Werte sind:
  :header: "Wert", "Beschreibung"
  :widths: 10, 100
 
- "1", "Kein Fix"
- "2", "2D Fix"
- "3", "3D Fix"
+ "1", "Kein Fix, :func:`GetCoordinates` und :func:`GetAltitude` geben ungültige Daten zurück"
+ "2", "2D Fix, nur :func:`GetCoordinates` gibt gültige Daten zurück"
+ "3", "3D Fix, :func:`GetCoordinates` und :func:`GetAltitude` geben gültige Daten zurück"
+
+Auf dem Bricklet ist eine :ref:`blaue LED <gps_bricklet_fix_led>`, die den
+Fix-Status anzeigt.
 """
 }]
 })
