@@ -138,3 +138,71 @@ Gibt die Anzahl der Wiederholungen zurück, wie von :func:`SetRepeats` gesetzt.
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': ('SwitchSocketA', 'switch_socket_a'), 
+'elements': [('house_code', 'uint8', 1, 'in'),
+             ('receiver_code', 'uint8', 1, 'in'),
+             ('switch_to', 'uint8', 1, 'in', ('SwitchTo', 'switch_to', [('Off', 'off', 0),
+                                                                        ('On', 'on', 1)]))],
+'since_firmware': [2, 0, 1],
+'doc': ['bf', {
+'en':
+"""
+To switch a socket you have to give the house code, receiver code and the
+state (on or off) you want to switch to.
+
+A detailed description on how you can find the house and receiver code
+can be found :ref:`here <remote_switch_bricklet_house_and_receiver_code>`.
+""",
+'de':
+"""
+Um eine Steckdose zu schalten muss der Housecode, Receivercode sowie
+der Zustand (an oder aus) zu dem geschaltet werden soll übergeben werden.
+
+Eine detaillierte Beschreibung wie man den House- und Receivercode
+herausfinden kann gibt es 
+:ref:`hier <remote_switch_bricklet_house_and_receiver_code>`.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SwitchSocketB', 'switch_socket_b'), 
+'elements': [('address', 'uint32', 1, 'in'),
+             ('unit', 'uint8', 1, 'in'),
+             ('switch_to', 'uint8', 1, 'in', ('SwitchTo', 'switch_to', [('Off', 'off', 0),
+                                                                        ('On', 'on', 1)]))],
+'since_firmware': [2, 0, 1],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('DimSocketB', 'dim_socket_b'), 
+'elements': [('address', 'uint32', 1, 'in'),
+             ('unit', 'uint8', 1, 'in'),
+             ('dim_value', 'uint8', 1, 'in')],
+'since_firmware': [2, 0, 1],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
