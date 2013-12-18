@@ -389,53 +389,6 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDateTimeCallbackPeriod', 'set_date_time_callback_period'),
-'elements': [('period', 'uint32', 1, 'in')],
-'since_firmware': [1, 0, 0],
-'doc': ['ccf', {
-'en':
-"""
-Sets the period in ms with which the :func:`DateTime` callback is triggered
-periodically. A value of 0 turns the callback off.
-
-:func:`DateTime` is only triggered if the date or time changed since the
-last triggering.
-
-The default value is 0.
-""",
-'de':
-"""
-Setzt die Periode in ms mit welcher der :func:`DateTime` Callback ausgelöst wird.
-Ein Wert von 0 deaktiviert den Callback.
-
-:func:`DateTime` wird nur ausgelöst wenn sich das Datum oder die Zeit seit der
-letzten Auslösung geändert haben.
-
-Der Standardwert ist 0.
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('GetDateTimeCallbackPeriod', 'get_date_time_callback_period'),
-'elements': [('period', 'uint32', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['ccf', {
-'en':
-"""
-Returns the period as set by :func:`SetDateTimeCallbackPeriod`.
-""",
-'de':
-"""
-Gibt die Periode zurück, wie von :func:`SetDateTimeCallbackPeriod`
-gesetzt.
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
 'name': ('SetMotionCallbackPeriod', 'set_motion_callback_period'),
 'elements': [('period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -476,6 +429,53 @@ Returns the period as set by :func:`SetMotionCallbackPeriod`.
 'de':
 """
 Gibt die Periode zurück, wie von :func:`SetMotionCallbackPeriod`
+gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetDateTimeCallbackPeriod', 'set_date_time_callback_period'),
+'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Sets the period in ms with which the :func:`DateTime` callback is triggered
+periodically. A value of 0 turns the callback off.
+
+:func:`DateTime` is only triggered if the date or time changed since the
+last triggering.
+
+The default value is 0.
+""",
+'de':
+"""
+Setzt die Periode in ms mit welcher der :func:`DateTime` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+:func:`DateTime` wird nur ausgelöst wenn sich das Datum oder die Zeit seit der
+letzten Auslösung geändert haben.
+
+Der Standardwert ist 0.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetDateTimeCallbackPeriod', 'get_date_time_callback_period'),
+'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Returns the period as set by :func:`SetDateTimeCallbackPeriod`.
+""",
+'de':
+"""
+Gibt die Periode zurück, wie von :func:`SetDateTimeCallbackPeriod`
 gesetzt.
 """
 }]
