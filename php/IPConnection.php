@@ -55,8 +55,7 @@ class Base58
         $value = '0';
         $base = '1';
 
-        for ($i = $length - 1; $i >= 0; $i--)
-        {
+        for ($i = $length - 1; $i >= 0; $i--) {
             $index = strval(strpos(self::$alphabet, $encoded[$i]));
             $value = bcadd($value, bcmul($index, $base));
             $base = bcmul($base, '58');
