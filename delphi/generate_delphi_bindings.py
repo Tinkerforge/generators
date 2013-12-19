@@ -500,7 +500,7 @@ class DelphiBindingsElement(delphi_common.DelphiElement):
         name = common.Element.get_underscore_name(self)
 
         # length is a keyword in delphi
-        if name == 'length':
+        if name in ['length', 'unit']:
             name += '2'
 
         return name
