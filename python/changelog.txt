@@ -66,3 +66,6 @@
         Make averaging length configurable for Analog In Bricklet
 2.0.11: Fix signature of edge count functions in IO-16 Bricklet API
 2.0.12: Add support for Distance US, Dual Button, Hall Effect, LED Strip, Line, Moisture, Motion Detector, Multi Touch, Piezo Speaker, Remote Switch, Rotary Encoder, Segment Display 4x7, Sound Intensity and Tilt Bricklet
+2.0.13: Add Get/SetClockFrequency function to LED Strip Bricklet API
+        Fix mixup of Set/GetDateTimeCallbackPeriod and Set/GetMotionCallbackPeriod in GPS Bricklet API
+        Support addressing types of Intertechno and ELRO Home Easy devices in Remote Switch Bricklet API
