@@ -33,7 +33,7 @@ segment:
    :align: center
 
 For example to set a "5" you would want to activate segments 0, 2, 3, 5 and 6.
-This is represented by the number 0b00110101 = 0x35 = 53.
+This is represented by the number 0b01101101 = 0x6d = 109.
 
 The brightness can be set between 0 (dark) and 7 (bright). The colon
 parameter turns the colon of the display on or off.
@@ -50,7 +50,7 @@ ein Segment:
 
 Beispiel: Um eine "5" auf der Anzeige darzustellen müssen die Segment 
 0, 2, 3, 5 und 6 aktiviert werden. Dies kann mit der Zahl 
-0b00110101 = 0x35 = 53 repräsentiert werden.
+0b01101101 = 0x6d = 109 repräsentiert werden.
 
 Die Helligkeit kann zwischen 0 (dunkel) und 7 (hell) gesetzt werden.
 Der dritte Parameter aktiviert/deaktiviert den Doppelpunkt auf der Anzeige.
