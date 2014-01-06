@@ -22,8 +22,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the output value (high or low) with a bitmask. The bitmask
-is 4bit long, *true* refers to high and *false* refers to low.
+Sets the output value (high or low) with a bitmask (4bit). A 1 in the bitmask
+means high and a 0 in the bitmask means low.
 
 For example: The value 3 or 0b0011 will turn the pins 0-1 high and the
 pins 2-3 low.
@@ -34,9 +34,9 @@ pins 2-3 low.
 """,
 'de':
 """
-Setzt den Ausgangszustand (logisch 1 oder logisch 0) mittels einer Bitmaske.
-Die Bitmaske hat eine Länge von 4Bit, *true* bedeutet logisch 1 und *false*
-logisch 0.
+Setzt den Ausgangszustand (logisch 1 oder logisch 0) mittels einer Bitmaske
+(4Bit). Eine 1 in der Bitmaske bedeutet logisch 1 und eine 0 in der Bitmaske
+bedeutet logisch 0.
 
 Beispiel: Der Wert 3 bzw. 0b0011 setzt die Pins 0-1 auf logisch 1 und die
 Pins 2-3 auf logisch 0.
@@ -303,7 +303,7 @@ long bitmask. The specified pins must be configured for output. Non-output
 pins will be ignored.
 
 The second parameter is a bitmask with the desired value of the specified
-output pins (*true* means high and *false* means low).
+output pins. A 1 in the bitmask means high and a 0 in the bitmask means low.
 
 The third parameter indicates the time (in ms) that the pins should hold
 the value.
@@ -325,7 +325,8 @@ des ersten Parameters festgelegt. Die festgelegten Pins müssen als Ausgänge
 konfiguriert sein. Als Eingänge konfigurierte Pins werden ignoriert.
 
 Der zweite Parameter ist eine Bitmaske mit den gewünschten Zustanden der
-festgelegten Ausgangspins (*true* bedeutet logisch 1 und *false* logisch 0).
+festgelegten Ausgangspins. Eine 1 in der Bitmaske bedeutet logisch 1 und
+eine 0 in der Bitmaske bedeutet logisch 0.
 
 Der dritte Parameter stellt die Zeit (in ms) dar, welche die Pins den Zustand
 halten sollen.

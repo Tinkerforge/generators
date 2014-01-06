@@ -22,12 +22,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the output value with a bitmask. The bitmask
-is 16 bit long, *true* refers to a closed relay and *false* refers to 
-an open relay.
+Sets the output value with a bitmask (16bit). A 1 in the bitmask means relay
+closed and a 0 means relay open.
 
-For example: The value 0b0011 will close the relay of pins 0-1 and open the
-other pins.
+For example: The value 3 or 0b0011 will close the relay of pins 0-1 and open
+the other pins.
 
 If no groups are used (see :func:`SetGroup`), the pins correspond to the
 markings on the Quad Relay Bricklet.
@@ -38,12 +37,11 @@ pins 8-11 and element 4 pins 12-15.
 """,
 'de':
 """
-Setzt die Ausgabewerte mit einer Bitmaske. Die Bitmaske ist 16 Bit lang.
-*true* steht für ein geschlossenes Relais und *false* für ein offenes
-Relay.
+Setzt die Ausgabewerte mit einer Bitmaske (16Bit). Eine 1 in der Bitmaske
+bedeutet Relais geschlossen und eine 0 in der Bitmaske bedeutet Relais offen.
 
-Zum Beispiel: Der Wert 0b0011 wird die Relais 0-1 schließen und alle anderen
-öffnen.
+Zum Beispiel: Der Wert 3 bzw. 0b0011 wird die Relais 0-1 schließen und alle
+anderen öffnen.
 
 Falls keine Gruppen verwendet werden (siehe :func:`SetGroup`), entsprechen
 die Pins der Beschriftung auf dem Quad Relay Bricklet.
@@ -86,7 +84,7 @@ Configures a monoflop of the pins specified by the first parameter
 bitmask.
 
 The second parameter is a bitmask with the desired value of the specified
-pins (*true* means relay closed and *false* means relay open).
+pins. A 1 in the bitmask means relay closed and a 0 means relay open.
 
 The third parameter indicates the time (in ms) that the pins should hold
 the value.
@@ -107,8 +105,8 @@ Konfiguriert einen Monoflop für die Pins, wie mittels der Bitmaske
 des ersten Parameters festgelegt.
 
 Der zweite Parameter ist eine Bitmaske mit den gewünschten Zuständen der
-festgelegten Pins (*true* bedeutet Relais geschlossen und *false* bedeutet
-Relais offen).
+festgelegten Pins. Eine 1 in der Bitmaske bedeutet Relais geschlossen und
+eine 0 in der Bitmaske bedeutet Relais offen.
 
 Der dritte Parameter stellt die Zeit (in ms) dar, welche die Pins den Zustand
 halten sollen.

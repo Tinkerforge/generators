@@ -22,9 +22,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the output value with a bitmask. The bitmask
-is 16 bit long, *true* refers to high and *false* refers to 
-low.
+Sets the output value with a bitmask (16bit). A 1 in the bitmask means high
+and a 0 in the bitmask means low.
 
 For example: The value 3 or 0b0011 will turn pins 0-1 high and the other pins
 low.
@@ -38,8 +37,8 @@ pins 8-11 and element 4 pins 12-15.
 """,
 'de':
 """
-Setzt die Ausgabewerte mit einer Bitmaske. Die Bitmaske ist 16 Bit lang.
-*true* bedeutet logisch 1 und *false* logisch 0.
+Setzt die Ausgabewerte mit einer Bitmaske (16Bit). Eine 1 in der Bitmaske
+bedeutet logisch 1 und eine 0 in der Bitmaske bedeutet logisch 0.
 
 Zum Beispiel: Der Wert 3 bzw. 0b0011 wird die Pins 0-1 auf logisch 1
 und alle anderen auf logisch 0 setzen.
@@ -85,7 +84,7 @@ Configures a monoflop of the pins specified by the first parameter
 bitmask.
 
 The second parameter is a bitmask with the desired value of the specified
-pins (*true* means high and *false* means low).
+pins. A 1 in the bitmask means high and a 0 in the bitmask means low.
 
 The third parameter indicates the time (in ms) that the pins should hold
 the value.
@@ -106,7 +105,8 @@ Konfiguriert einen Monoflop für die Pins, wie mittels der Bitmaske
 des ersten Parameters festgelegt.
 
 Der zweite Parameter ist eine Bitmaske mit den gewünschten Zuständen der
-festgelegten Pins (*true* bedeutet logisch 1 und *false* bedeutet logisch 0).
+festgelegten Pins. Eine 1 in der Bitmaske bedeutet logisch 1 und
+eine 0 in der Bitmaske bedeutet logisch 0.
 
 Der dritte Parameter stellt die Zeit (in ms) dar, welche die Pins den Zustand
 halten sollen.

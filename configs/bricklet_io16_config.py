@@ -23,10 +23,10 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the output value (high or low) for a port ("a" or "b") with a bitmask.
-The bitmask is 8 bit long, *true* refers to high and *false* refers to low.
+Sets the output value (high or low) for a port ("a" or "b") with a bitmask
+(8bit). A 1 in the bitmask means high and a 0 in the bitmask means low.
 
-For example: The value 0b00001111 will turn the pins 0-3 high and the
+For example: The value 15 or 0b00001111 will turn the pins 0-3 high and the
 pins 4-7 low for the specified port.
 
 .. note::
@@ -35,11 +35,11 @@ pins 4-7 low for the specified port.
 """,
 'de':
 """
-Setzt den Ausgangszustand (logisch 1 oder logisch 0) für einen Port ("a" oder "b")
-mittels einer Bitmaske. Die Bitmaske hat eine Länge von 8 Bit, *true* bedeutet
-logisch 1 und *false* auf logisch 0.
+Setzt den Ausgangszustand (logisch 1 oder logisch 0) für einen Port ("a" oder
+"b") mittels einer Bitmaske (8Bit). Eine 1 in der Bitmaske bedeutet logisch 1
+und eine 0 in der Bitmaske bedeutet logisch 0.
 
-Beispiel: Der Wert 0b00001111 setzt die Pins 0-3 auf logisch 1 und die
+Beispiel: Der Wert 15 bzw. 0b00001111 setzt die Pins 0-3 auf logisch 1 und die
 Pins 4-7 auf logisch 0.
 
 .. note::
@@ -101,8 +101,8 @@ For example:
 """,
 'de':
 """
-Konfiguriert den Zustand und die Richtung des angegebenen Ports. Mögliche Richtungen
-sind 'i' und 'o' für Ein- und Ausgang.
+Konfiguriert den Zustand und die Richtung des angegebenen Ports. Mögliche
+Richtungen sind 'i' und 'o' für Ein- und Ausgang.
 
 Wenn die Richtung als Ausgang konfiguriert ist, ist der Zustand entweder
 logisch 1 oder logisch 0 (gesetzt als *true* oder *false*).
@@ -113,9 +113,9 @@ Pull-Up oder Standard (gesetzt als *true* oder *false*).
 Beispiele:
 
 * ('a', 255, 'i', true) bzw. ('a', 0b11111111, 'i', true) setzt alle Pins des Ports a als Eingang mit Pull-Up.
-* ('a', 128, 'i', false) bzw. ('a', 0b10000000, 'i', false) setzt Pin 7 des Ports a als Standard Eingang (potentialfrei wenn nicht verbunden).
-* ('b', 3, 'o', false) bzw. ('b', 0b00000011, 'o', false) setzt die Pins 0 und 1 des Ports b als Ausgang im Zustand logisch 0.
-* ('b', 4, 'o', true) bzw. ('b', 0b00000100, 'o', true) setzt Pin 2 des Ports b als Ausgang im Zustand logisch 1.
+* ('a', 128, 'i', false) bzw. ('a', 0b10000000, 'i', false) setzt Pin 7 des Ports A als Standard Eingang (potentialfrei wenn nicht verbunden).
+* ('b', 3, 'o', false) bzw. ('b', 0b00000011, 'o', false) setzt die Pins 0 und 1 des Ports B als Ausgang im Zustand logisch 0.
+* ('b', 4, 'o', true) bzw. ('b', 0b00000100, 'o', true) setzt Pin 2 des Ports B als Ausgang im Zustand logisch 1.
 """
 }]
 })
@@ -216,7 +216,7 @@ Sets the pins on which an interrupt is activated with a bitmask.
 Interrupts are triggered on changes of the voltage level of the pin,
 i.e. changes from high to low and low to high.
 
-For example: ('a', 129) or (a, 0b10000001) will enable the interrupt for
+For example: ('a', 129) or ('a', 0b10000001) will enable the interrupt for
 pins 0 and 7 of port a.
 
 The interrupt is delivered with the callback :func:`Interrupt`.
@@ -227,7 +227,7 @@ Setzt durch eine Bitmaske die Pins für welche der Interrupt aktiv ist.
 Interrupts werden ausgelöst bei Änderung des Spannungspegels eines Pins,
 z.B. ein Wechsel von logisch 1 zu logisch 0 und logisch 0 zu logisch 1.
 
-Beispiel: ('a', 129) bzw. (a, 0b10000001) aktiviert den Interrupt für die
+Beispiel: ('a', 129) bzw. ('a', 0b10000001) aktiviert den Interrupt für die
 Pins 0 und 7 des Ports a.
 
 Der Interrupt wird mit der Callback :func:`Interrupt` zugestellt.
@@ -316,7 +316,7 @@ long bitmask. The specified pins must be configured for output. Non-output
 pins will be ignored.
 
 The third parameter is a bitmask with the desired value of the specified
-output pins (*true* means high and *false* means low).
+output pins. A 1 in the bitmask means high and a 0 in the bitmask means low.
 
 The forth parameter indicates the time (in ms) that the pins should hold
 the value.
@@ -338,7 +338,8 @@ des zweiten Parameters festgelegt. Die festgelegten Pins müssen als Ausgänge
 konfiguriert sein. Als Eingänge konfigurierte Pins werden ignoriert.
 
 Der dritte Parameter ist eine Bitmaske mit den gewünschten Zuständen der
-festgelegten Ausgangspins (*true* bedeutet logisch 1 und *false* logisch 0).
+festgelegten Ausgangspins. Eine 1 in der Bitmaske bedeutet logisch 1 und
+eine 0 in der Bitmaske bedeutet logisch 0.
 
 Der vierte Parameter stellt die Zeit (in ms) dar, welche die Pins den Zustand
 halten sollen.
