@@ -329,7 +329,8 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Configures the edge counter for the selected pins.
+Configures the edge counter for the selected pins. A bitmask of 9 or 0b1001 will
+enable the edge counter for pins 0 and 3.
 
 The edge type parameter configures if rising edges, falling edges or
 both are counted if the pin is configured for input. Possible edge types are:
@@ -347,7 +348,8 @@ Default values: 0 (edge type) and 100ms (debounce time)
 """,
 'de':
 """
-Konfiguriert den Flankenzähler für die ausgewählten Pins.
+Konfiguriert den Flankenzähler für die ausgewählten Pins. Eine Bitmaske von 9
+bzw. 0b1001 aktiviert den Flankenzähler für die Pins 0 und 3.
 
 Der edge type Parameter konfiguriert den zu zählenden Flankentyp. Es können
 steigende, fallende oder beide Flanken gezählt werden für Pins die als Eingang
