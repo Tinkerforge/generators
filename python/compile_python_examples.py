@@ -3,7 +3,7 @@
 
 """
 Python Examples Compiler
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 
 compile_python_examples.py: Compile all examples for the Python bindings
 
@@ -52,7 +52,22 @@ def run(path):
     extra_examples = [os.path.join(path, '../../weather-station/xively/python/weather_xively.py'),
                       os.path.join(path, '../../weather-station/write_to_lcd/python/weather_station.py'),
                       os.path.join(path, '../../hardware-hacking/remote_switch/python/remote_switch.py'),
-                      os.path.join(path, '../../hardware-hacking/smoke_detector/python/smoke_detector.py')]
+                      os.path.join(path, '../../hardware-hacking/smoke_detector/python/smoke_detector.py'),
+                      os.path.join(path, '../../blinkenlights/demo/src/demo.py'),
+                      os.path.join(path, '../../blinkenlights/demo/src/fire_widget.py'),
+                      os.path.join(path, '../../blinkenlights/demo/src/pong_widget.py'),
+                      os.path.join(path, '../../blinkenlights/demo/src/tetris_widget.py'),
+                      os.path.join(path, '../../blinkenlights/demo/src/images_widget.py'),
+                      os.path.join(path, '../../blinkenlights/demo/src/rainbow_widget.py'),
+                      os.path.join(path, '../../blinkenlights/demo/src/text_widget.py'),
+                      os.path.join(path, '../../blinkenlights/fire/python/fire.py'),
+                      os.path.join(path, '../../blinkenlights/games/python/keypress.py'),
+                      os.path.join(path, '../../blinkenlights/games/python/pong.py'),
+                      os.path.join(path, '../../blinkenlights/games/python/repeated_timer.py'),
+                      os.path.join(path, '../../blinkenlights/games/python/tetris.py'),
+                      os.path.join(path, '../../blinkenlights/images/python/images.py'),
+                      os.path.join(path, '../../blinkenlights/rainbow/python/rainbow.py'),
+                      os.path.join(path, '../../blinkenlights/text/python/text.py')]
 
     rc = PythonExamplesCompiler(path, 'python', extra_examples).run()
 
