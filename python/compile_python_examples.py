@@ -25,27 +25,28 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
-import py_compile
+import subprocess
 import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class PythonExamplesCompiler(common.ExamplesCompiler):
-    def __init__(self, path, extra_examples):
-        common.ExamplesCompiler.__init__(self, 'python', '.py', path, subdirs=['examples', 'source'], extra_examples=extra_examples)
+    def __init__(self, path, python, extra_examples):
+        common.ExamplesCompiler.__init__(self, 'python', '.py', path, comment=python, subdirs=['examples', 'source'], extra_examples=extra_examples)
+
+        self.python = python
 
     def compile(self, src, is_extra_example):
         if is_extra_example:
             shutil.copy(src, '/tmp/compiler/')
             src = os.path.join('/tmp/compiler/', os.path.split(src)[1])
 
-        try:
-            py_compile.compile(src, doraise=True)
-            return True
-        except Exception as e:
-            print(str(e))
-            return False
+        args = [self.python,
+                '-c',
+                'import py_compile; py_compile.compile("{0}", doraise=True)'.format(src)]
+
+        return subprocess.call(args) == 0
 
 def run(path):
     extra_examples = [os.path.join(path, '../../weather-station/xively/python/weather_xively.py'),
@@ -53,7 +54,12 @@ def run(path):
                       os.path.join(path, '../../hardware-hacking/remote_switch/python/remote_switch.py'),
                       os.path.join(path, '../../hardware-hacking/smoke_detector/python/smoke_detector.py')]
 
-    return PythonExamplesCompiler(path, extra_examples).run()
+    rc = PythonExamplesCompiler(path, 'python', extra_examples).run()
+
+    if rc != 0:
+        return rc
+
+    return PythonExamplesCompiler(path, 'python3', extra_examples).run()
 
 if __name__ == "__main__":
     sys.exit(run(os.getcwd()))
