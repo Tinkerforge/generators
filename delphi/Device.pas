@@ -114,7 +114,7 @@ type
     uids: TUIDArray;
     devices: TDeviceArray;
   public
-    constructor Create();
+    constructor Create;
     destructor Destroy; override;
     procedure Insert(const uid: longword; const device: TDevice);
     procedure Remove(const uid: longword);
