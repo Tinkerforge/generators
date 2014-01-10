@@ -3,9 +3,10 @@
 
 """
 Perl Bindings Generator
-Copyright (C) 2013 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+Copyright (C) 2013-2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
-generator_perl.py: Generator for Perl bindings
+generator_perl_bindings.py: Generator for Perl bindings
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -194,29 +195,13 @@ sub {0}
         for packet in self.get_packets('function'):
             subroutine_name = packet.get_underscore_name()
             function_id_constant = subroutine_name.upper()
+            parameters = packet.get_perl_parameter_list()
 
-            parameters_str = packet.get_perl_parameter_list()
-            parameters_arr = ()
-            if parameters_str != '':
-                parameters_arr = parameters_str.split(', ')
-                
-                for idx, parameter in enumerate(parameters_arr):
-                    parameter = '$'+parameter;
-                    parameters_arr[idx] = parameter
-                    
-            parameters = ''
-            parameters_arg = ''
-            
-            if len(parameters_arr) > 1:
-                
-                parameters = ', '.join(parameters_arr)
-                parameters_arg = ', '+parameters
-            elif len(parameters_arr) == 1:
-                parameters = parameters_arr[0]
-                parameters_arg = ', '+parameters
-            else: 
-                parameters = ''
-            
+            if len(parameters) > 0:
+                parameters_arg = ', ' + parameters
+            else:
+                parameters_arg = ''
+
             doc = packet.get_perl_formatted_doc()
             device_in_format = packet.get_perl_format_list('in')
             device_out_format = packet.get_perl_format_list('out')
@@ -368,10 +353,18 @@ sub set_response_expected_all
         source += self.get_perl_subroutines()
         source += self.get_perl_common_device_subroutines()
         source += "1;\n"
-        
+
         return source
 
-class PerlBindingsPacket(perl_common.PerlPacket):
+class PerlBindingsPacket(common.Packet):
+    def get_perl_parameter_list(self):
+        params = []
+
+        for element in self.get_elements('in'):
+            params.append('$' + element.get_underscore_name())
+
+        return ', '.join(params)
+
     def get_perl_formatted_doc(self):
         text = common.select_lang(self.get_doc()[1])
 

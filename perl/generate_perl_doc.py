@@ -3,7 +3,8 @@
 
 """
 Perl Documentation Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2013-2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_perl_doc.py: Generator for Perl documentation
@@ -47,7 +48,7 @@ class PerlDocDevice(perl_common.PerlDevice):
     def get_perl_methods(self, typ):
         methods = ''
         func_start = '.. perl:function:: '
-        cls = self.get_camel_case_name()
+        cls = self.get_perl_class_name()
         for packet in self.get_packets('function'):
             if packet.get_doc()[0] != typ:
                 continue
@@ -70,7 +71,7 @@ class PerlDocDevice(perl_common.PerlDevice):
     def get_perl_callbacks(self):
         cbs = ''
         func_start = '.. perl:attribute:: '
-        cls = self.get_camel_case_name()
+        cls = self.get_perl_class_name()
         for packet in self.get_packets('callback'):
             param_desc = packet.get_perl_parameter_desc('out')
             desc = packet.get_perl_formatted_doc()
@@ -87,31 +88,31 @@ class PerlDocDevice(perl_common.PerlDevice):
     def get_perl_api(self):
         create_str = {
         'en': """
-.. perl:function:: {1}(uid, ipcon)
+.. perl:function:: {1}.new($uid, $ipcon)
 
- :param uid: string
- :param ipcon: IPConnection
+ :param $uid: string
+ :param $ipcon: IPConnection
 
  Creates an object with the unique device ID ``uid``:
 
  .. code-block:: perl
 
-    {0} = {1}("YOUR_DEVICE_UID", ipcon)
+    ${0} = {1}->new("YOUR_DEVICE_UID", $ipcon);
 
  This object can then be used after the IP Connection is connected
  (see examples :ref:`above <{0}_{2}_perl_examples>`).
 """,
         'de': """
-.. py:function:: {1}(uid, ipcon)
+.. perl:function:: {1}.new($uid, $ipcon)
 
- :param uid: string
- :param ipcon: IPConnection
+ :param $uid: string
+ :param $ipcon: IPConnection
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``:
 
  .. code-block:: perl
 
-    {0} = {1}("YOUR_DEVICE_UID", ipcon)
+    ${0} = {1}->new("YOUR_DEVICE_UID", $ipcon);
 
  Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
  (siehe Beispiele :ref:`oben <{0}_{2}_perl_examples>`).
@@ -120,25 +121,25 @@ class PerlDocDevice(perl_common.PerlDevice):
 
         register_str = {
         'en': """
-.. perl:function:: {1}.register_callback(id, callback)
+.. perl:function:: {1}.register_callback($id, $callback)
 
- :param id: int
- :param callback: callable
- :rtype: None
+ :param $id: int
+ :param $callback: string
+ :rtype: undef
 
- Registers a callback with ID *id* to the function *callback*. The available
- IDs with corresponding function signatures are listed
+ Registers a callback with ID *id* to the function named *callback*. The
+ available IDs with corresponding function signatures are listed
  :ref:`below <{0}_{2}_perl_callbacks>`.
 """,
         'de': """
-.. perl:function:: {1}.register_callback(id, callback)
+.. perl:function:: {1}.register_callback($id, $callback)
 
- :param id: int
- :param callback: callable
- :rtype: None
+ :param $id: int
+ :param $callback: string
+ :rtype: undef
 
- Registriert einen Callback mit der ID *id* mit der Funktion *callback*. Die
- verfügbaren IDs mit den zugehörigen Funktionssignaturen sind
+ Registriert einen Callback mit der ID *id* mit der Funktion names *callback*.
+ Die verfügbaren IDs mit den zugehörigen Funktionssignaturen sind
  :ref:`unten <{0}_{2}_perl_callbacks>` zu finden.
 """
         }
@@ -152,16 +153,18 @@ Callbacks
 
 Callbacks can be registered to receive
 time critical or recurring data from the device. The registration is done
-with the :py:func:`register_callback() <{3}.register_callback>` function of
+with the :perl:func:`register_callback() <{3}.register_callback>` function of
 the device object. The first parameter is the callback ID and the second
-parameter the callback function:
+parameter the callback function name:
 
 .. code-block:: perl
 
-    def my_callback(param):
-        print(param)
+    sub my_callback
+    {{
+        print "@_[0]";
+    }}
 
-    {1}.register_callback({3}.CALLBACK_EXAMPLE, my_callback)
+    ${1}->register_callback({3}->CALLBACK_EXAMPLE, 'my_callback')
 
 The available constants with inherent number and type of parameters are
 described below.
@@ -181,16 +184,18 @@ Callbacks
 
 Callbacks können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
-mit der Funktion :py:func:`register_callback() <{3}.register_callback>` des
+mit der Funktion :perl:func:`register_callback() <{3}.register_callback>` des
 Geräte Objektes durchgeführt werden. Der erste Parameter ist die Callback ID
-und der zweite Parameter die Callback-Funktion:
+und der zweite Parameter ist der Name der Callback-Funktion:
 
 .. code-block:: perl
 
-    def my_callback(param):
-        print(param)
+    sub my_callback
+    {{
+        print "@_[0]";
+    }}
 
-    {1}.register_callback({3}.CALLBACK_EXAMPLE, my_callback)
+    ${1}->register_callback({3}->CALLBACK_EXAMPLE, 'my_callback')
 
 Die verfügbaren Konstanten mit der dazugehörigen Parameteranzahl und -typen werden
 weiter unten beschrieben.
@@ -239,7 +244,7 @@ Constants
 
  This constant is used to identify a {3} {4}.
 
- The :perl:func:`get_identity() <{3}.get_identity>` function and the
+ The :perl:func:`get_identity() <{4}{3}.get_identity>` function and the
  :perl:attr:`CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
  callback of the IP Connection have a ``device_identifier`` parameter to specify
  the Brick's or Bricklet's type.
@@ -252,7 +257,7 @@ Konstanten
 
  Diese Konstante wird verwendet um {2} {3} {4} zu identifizieren.
 
- Die :perl:func:`get_identity() <{3}.get_identity>` Funktion und der
+ Die :perl:func:`get_identity() <{4}{3}.get_identity>` Funktion und der
  :perl:attr:`CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
  Callback der IP Connection haben ein ``device_identifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
@@ -260,10 +265,10 @@ Konstanten
         }
 
         cre = common.select_lang(create_str).format(self.get_underscore_name(),
-                                                    self.get_camel_case_name(),
+                                                    self.get_perl_class_name(),
                                                     self.get_category().lower())
         reg = common.select_lang(register_str).format(self.get_underscore_name(),
-                                                      self.get_camel_case_name(),
+                                                      self.get_perl_class_name(),
                                                       self.get_category().lower())
 
         bf = self.get_perl_methods('bf')
@@ -279,19 +284,19 @@ Konstanten
             api_str += common.select_lang(common.ccf_str).format(reg, ccf)
             api_str += common.select_lang(c_str).format(c, self.get_underscore_name(),
                                                         self.get_category().lower(),
-                                                        self.get_camel_case_name())
+                                                        self.get_perl_class_name())
 
         article = 'ein'
         if self.get_category() == 'Brick':
             article = 'einen'
-        api_str += common.select_lang(const_str).format(self.get_camel_case_name(),
+        api_str += common.select_lang(const_str).format(self.get_perl_class_name(),
                                                         self.get_category(),
                                                         article,
                                                         self.get_camel_case_name(),
                                                         self.get_category())
 
         ref = '.. _{0}_{1}_perl_api:\n'.format(self.get_underscore_name(),
-                                                 self.get_category().lower())
+                                               self.get_category().lower())
 
         return common.select_lang(api).format(ref, self.get_api_doc(), api_str)
 
@@ -305,10 +310,18 @@ Konstanten
 
         return doc
 
-class PerlDocPacket(perl_common.PerlPacket):
+class PerlDocPacket(common.Packet):
+    def get_perl_parameter_list(self):
+        params = []
+
+        for element in self.get_elements('in'):
+            params.append(element.get_perl_doc_name())
+
+        return ', '.join(params)
+
     def get_perl_formatted_doc(self):
         text = common.select_lang(self.get_doc()[1])
-        cls = self.get_device().get_camel_case_name()
+        cls = self.get_device().get_perl_class_name()
         for other_packet in self.get_device().get_packets():
             name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
             if other_packet.get_type() == 'callback':
@@ -321,7 +334,7 @@ class PerlDocPacket(perl_common.PerlPacket):
         text = common.handle_rst_word(text)
         text = common.handle_rst_substitutions(text, self)
 
-        prefix = self.get_device().get_camel_case_name() + '.'
+        prefix = self.get_device().get_perl_class_name() + '->'
         if self.get_underscore_name() == 'set_response_expected':
             text += common.format_function_id_constants(prefix, self.get_device())
         else:
@@ -336,7 +349,7 @@ class PerlDocPacket(perl_common.PerlPacket):
         param = ' :param {0}: {1}\n'
         for element in self.get_elements(io):
             t = element.get_perl_type()
-            desc += param.format(element.get_underscore_name(), t)
+            desc += param.format(element.get_perl_doc_name(), t)
 
         return desc
 
@@ -346,11 +359,11 @@ class PerlDocPacket(perl_common.PerlPacket):
         for element in self.get_elements('out'):
             ret_list.append(element.get_perl_type())
         if len(ret_list) == 0:
-            return ret.format(None)
+            return ret.format('undef')
         elif len(ret_list) == 1:
             return ret.format(ret_list[0])
 
-        return ret.format('(' + ', '.join(ret_list) + ')')
+        return ret.format('[' + ', '.join(ret_list) + ']')
 
     def get_perl_object_desc(self):
         if len(self.get_elements('out')) < 2:
@@ -358,10 +371,10 @@ class PerlDocPacket(perl_common.PerlPacket):
 
         desc = {
         'en': """
- The returned namedtuple has the variables {0}.
+ The returned array contains the elements {0}.
 """,
         'de': """
- Das zurückgegebene namedtuple enthält die Variablen {0}.
+ Das zurückgegebene Array enhält die Elemente {0}.
 """
         }
 
