@@ -44,4 +44,4 @@ After that, the example can be executed again.
 
 Documentation for the API can be found at
 
- http://www.tinkerforge.com/en/doc/Software/API_Bindings_Python.html#api-documentation-and-examples
+ http://www.tinkerforge.com/en/doc/Software/API_Bindings_Perl.html#api-documentation-and-examples
