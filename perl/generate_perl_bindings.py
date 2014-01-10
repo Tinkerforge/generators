@@ -27,7 +27,7 @@ import datetime
 import sys
 import os
 from apt.package import Package
- 
+
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 import perl_common
@@ -58,7 +58,7 @@ use threads::shared;
 
 use constant DEVICE_IDENTIFIER => {0};
 """.format(self.get_device_identifier())
-    
+
     def get_perl_constants(self):
         cbs = ''
         cb = 'use constant CALLBACK_{0} => {1};\n'
@@ -69,7 +69,7 @@ use constant DEVICE_IDENTIFIER => {0};
         function_id = 'use constant FUNCTION_{0} => {1};\n'
         for packet in self.get_packets('function'):
             function_ids += function_id.format(packet.get_upper_case_name(), packet.get_function_id())
-        
+
         str_constants = '\n'
         str_constant = 'use constant {0}_{1} => {2};\n'
         constants = self.get_constants()
@@ -84,7 +84,7 @@ use constant DEVICE_IDENTIFIER => {0};
                                                      definition.name_uppercase,
                                                      value)+''
         return cbs + function_ids + str_constants
-    
+
     def get_perl_new_subroutine(self):
         dev_new = """
 sub new
@@ -127,7 +127,6 @@ sub new
         dev_new = dev_new.format(*self.get_api_version()) + response_expected
 
         if len(self.get_packets('callback')) > 0:
-        
             cbs = ',\n                                    callback_formats => shared_clone({'
 
             for idx, packet in enumerate(self.get_packets('callback')):
@@ -137,18 +136,19 @@ sub new
                     cb = "                                                                      &CALLBACK_{0} => '{1}',\n"
                 if idx == len(self.get_packets('callback')) - 1:
                     cb = "                                                                      &CALLBACK_{0} => '{1}'}})}});\n\n"
-                
+
                 cbs += cb.format(packet.get_upper_case_name(),
                                  packet.get_perl_format_list('out'))
         else:
             cbs = '});\n'
+
         reg_ipcon_str = '    $self->{super}->{ipcon}->{devices}->{$self->{super}->{uid}} = $self;\n\n'
         reg_api_ver_str = '    $self->{super}->{api_version} = $self->{api_version};\n\n'
         bless_str = '    bless($self, $class);\n\n'
         return_str = '    return $self;\n}\n'
 
         return dev_new + cbs + reg_ipcon_str + reg_api_ver_str + bless_str + return_str
-    
+
     def get_perl_subroutines(self):
         multiple_return = """
 sub {0}
@@ -157,9 +157,9 @@ sub {0}
         {1}
 =cut
     lock($Device::DEVICE_LOCK);
-    
+
     my ($self{2}) = @_;
-    
+
     return $self->{{super}}->send_request($self, &FUNCTION_{3}, [{4}], '{5}', '{6}');
  }}
 """
@@ -170,9 +170,9 @@ sub {0}
         {1}
 =cut
     lock($Device::DEVICE_LOCK);
-    
+
     my ($self{2}) = @_;
-    
+
     return $self->{{super}}->send_request($self, &FUNCTION_{3}, [{4}], '{5}', '{6}');
 }}
 """
@@ -183,17 +183,15 @@ sub {0}
         {1}
 =cut
     lock($Device::DEVICE_LOCK);
-    
+
     my ($self{2}) = @_;
-    
+
     $self->{{super}}->send_request($self, &FUNCTION_{3}, [{4}], '{5}', '{6}');
 }}
 """
         methods = ''
-
         cls = self.get_perl_class_name()
         for packet in self.get_packets('function'):
-            
             subroutine_name = packet.get_underscore_name()
             function_id_constant = subroutine_name.upper()
 
@@ -222,9 +220,9 @@ sub {0}
             doc = packet.get_perl_formatted_doc()
             device_in_format = packet.get_perl_format_list('in')
             device_out_format = packet.get_perl_format_list('out')
-            
+
             elements = len(packet.get_elements('out'))
-            
+
             if elements > 1:
                 methods += multiple_return.format(subroutine_name, doc, parameters_arg, function_id_constant, parameters, device_in_format, device_out_format)
             elif elements == 1:
@@ -233,7 +231,7 @@ sub {0}
                 methods += no_return.format(subroutine_name, doc, parameters_arg, function_id_constant, parameters, device_in_format, device_out_format)
 
         return methods
-    
+
     def get_perl_common_device_subroutines(self):
         return """
 
@@ -243,7 +241,7 @@ sub register_callback
         Registers a callback with ID *id* to the function *callback*.
 =cut
     lock($Device::DEVICE_LOCK);
-    
+
     my ($self, $id, $callback) = @_;
 
     $self->{super}->{registered_callbacks}->{$id} = '&'.caller.'::'.$callback;
@@ -256,12 +254,12 @@ sub get_api_version
         this device.
 =cut
     my ($self) = @_;
-    
+
     return $self->{super}->{api_version};
 }
 
 sub get_response_expected
-{    
+{
 =comment
         Returns the response expected flag for the function specified by the
         *function_id* parameter. It is *true* if the function is expected to
@@ -280,9 +278,9 @@ sub get_response_expected
         errors are silently ignored, because they cannot be detected.
 =cut
     lock($Device::DEVICE_LOCK);
-    
+
     my ($self, $function_id) = @_;
-    
+
     if(defined($self->{response_expected}->{$function_id}))
     {
         return $self->{response_expected}->{$function_id};
@@ -294,7 +292,7 @@ sub get_response_expected
 }
 
 sub set_response_expected
-{    
+{
 =comment
         Changes the response expected flag of the function specified by the
         *function_id* parameter. This flag can only be changed for setter
@@ -309,10 +307,10 @@ sub set_response_expected
         errors are silently ignored, because they cannot be detected.
 =cut
     lock($Device::DEVICE_LOCK);
-    
+
     my ($self, $function_id, $response_expected) = @_;
-    
-    if(defined($self->{response_expected}->{$function_id}) && 
+
+    if(defined($self->{response_expected}->{$function_id}) &&
       ($self->{response_expected}->{$function_id} != Device->RESPONSE_EXPECTED_ALWAYS_TRUE ||
        $self->{response_expected}->{$function_id} != Device->RESPONSE_EXPECTED_ALWAYS_FALSE))
     {
@@ -333,13 +331,13 @@ sub set_response_expected
 }
 
 sub set_response_expected_all
-{    
+{
 =comment
         Changes the response expected flag for all setter and callback
         configuration functions of this device at once.
 =cut
     lock($Device::DEVICE_LOCK);
-    
+
     my ($self, $response_expected) = @_;
 
     foreach my $key (sort keys $self->{response_expected})
@@ -359,7 +357,7 @@ sub set_response_expected_all
         }
     }
 }
-        
+
 """
 
     def get_perl_source(self):
