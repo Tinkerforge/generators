@@ -59,11 +59,11 @@ class PerlDocDevice(perl_common.PerlDevice):
             d = packet.get_perl_formatted_doc()
             obj_desc = packet.get_perl_object_desc()
             desc = '{0}{1}{2}{3}'.format(pd, r, d, obj_desc)
-            func = '{0}{1}.{2}({3})\n{4}'.format(func_start,
-                                                 cls,
-                                                 name,
-                                                 params,
-                                                 desc)
+            func = '{0}{1}->{2}({3})\n{4}'.format(func_start,
+                                                  cls,
+                                                  name,
+                                                  params,
+                                                  desc)
             methods += func + '\n'
 
         return methods
@@ -76,11 +76,11 @@ class PerlDocDevice(perl_common.PerlDevice):
             param_desc = packet.get_perl_parameter_desc('out')
             desc = packet.get_perl_formatted_doc()
 
-            func = '{0}{1}.CALLBACK_{2}\n{3}\n{4}'.format(func_start,
-                                                          cls,
-                                                          packet.get_upper_case_name(),
-                                                          param_desc,
-                                                          desc)
+            func = '{0}{1}->CALLBACK_{2}\n{3}\n{4}'.format(func_start,
+                                                           cls,
+                                                           packet.get_upper_case_name(),
+                                                           param_desc,
+                                                           desc)
             cbs += func + '\n'
 
         return cbs
@@ -88,12 +88,12 @@ class PerlDocDevice(perl_common.PerlDevice):
     def get_perl_api(self):
         create_str = {
         'en': """
-.. perl:function:: {1}.new($uid, $ipcon)
+.. perl:function:: {1}->new($uid, $ipcon)
 
  :param $uid: string
  :param $ipcon: IPConnection
 
- Creates an object with the unique device ID ``uid``:
+ Creates an object with the unique device ID ``$uid``:
 
  .. code-block:: perl
 
@@ -103,12 +103,12 @@ class PerlDocDevice(perl_common.PerlDevice):
  (see examples :ref:`above <{0}_{2}_perl_examples>`).
 """,
         'de': """
-.. perl:function:: {1}.new($uid, $ipcon)
+.. perl:function:: {1}->new($uid, $ipcon)
 
  :param $uid: string
  :param $ipcon: IPConnection
 
- Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``:
+ Erzeugt ein Objekt mit der eindeutigen Geräte ID ``$uid``:
 
  .. code-block:: perl
 
@@ -121,24 +121,24 @@ class PerlDocDevice(perl_common.PerlDevice):
 
         register_str = {
         'en': """
-.. perl:function:: {1}.register_callback($id, $callback)
+.. perl:function:: {1}->register_callback($id, $callback)
 
  :param $id: int
  :param $callback: string
  :rtype: undef
 
- Registers a callback with ID *id* to the function named *callback*. The
+ Registers a callback with ID ``$id`` to the function named ``$callback``. The
  available IDs with corresponding function signatures are listed
  :ref:`below <{0}_{2}_perl_callbacks>`.
 """,
         'de': """
-.. perl:function:: {1}.register_callback($id, $callback)
+.. perl:function:: {1}->register_callback($id, $callback)
 
  :param $id: int
  :param $callback: string
  :rtype: undef
 
- Registriert einen Callback mit der ID *id* mit der Funktion names *callback*.
+ Registriert einen Callback mit der ID ``$id`` mit der Funktion names ``$callback``.
  Die verfügbaren IDs mit den zugehörigen Funktionssignaturen sind
  :ref:`unten <{0}_{2}_perl_callbacks>` zu finden.
 """
@@ -153,7 +153,7 @@ Callbacks
 
 Callbacks can be registered to receive
 time critical or recurring data from the device. The registration is done
-with the :perl:func:`register_callback() <{3}.register_callback>` function of
+with the :perl:func:`register_callback() <{3}->register_callback>` function of
 the device object. The first parameter is the callback ID and the second
 parameter the callback function name:
 
@@ -184,7 +184,7 @@ Callbacks
 
 Callbacks können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
-mit der Funktion :perl:func:`register_callback() <{3}.register_callback>` des
+mit der Funktion :perl:func:`register_callback() <{3}->register_callback>` des
 Geräte Objektes durchgeführt werden. Der erste Parameter ist die Callback ID
 und der zweite Parameter ist der Name der Callback-Funktion:
 
@@ -240,11 +240,11 @@ Alle folgend aufgelisteten Funktionen sind Thread-sicher.
 Constants
 ^^^^^^^^^
 
-.. perl:attribute:: {0}.DEVICE_IDENTIFIER
+.. perl:attribute:: {0}->DEVICE_IDENTIFIER
 
  This constant is used to identify a {3} {4}.
 
- The :perl:func:`get_identity() <{4}{3}.get_identity>` function and the
+ The :perl:func:`get_identity() <{4}{3}->get_identity>` function and the
  :perl:attr:`CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
  callback of the IP Connection have a ``device_identifier`` parameter to specify
  the Brick's or Bricklet's type.
@@ -253,11 +253,11 @@ Constants
 Konstanten
 ^^^^^^^^^^
 
-.. perl:attribute:: {0}.DEVICE_IDENTIFIER
+.. perl:attribute:: {0}->DEVICE_IDENTIFIER
 
  Diese Konstante wird verwendet um {2} {3} {4} zu identifizieren.
 
- Die :perl:func:`get_identity() <{4}{3}.get_identity>` Funktion und der
+ Die :perl:func:`get_identity() <{4}{3}->get_identity>` Funktion und der
  :perl:attr:`CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
  Callback der IP Connection haben ein ``device_identifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
@@ -326,9 +326,9 @@ class PerlDocPacket(common.Packet):
             name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
             if other_packet.get_type() == 'callback':
                 name_upper = other_packet.get_upper_case_name()
-                name_right = ':perl:attr:`CALLBACK_{1} <{0}.CALLBACK_{1}>`'.format(cls, name_upper)
+                name_right = ':perl:attr:`CALLBACK_{1} <{0}->CALLBACK_{1}>`'.format(cls, name_upper)
             else:
-                name_right = ':perl:func:`{1}() <{0}.{1}>`'.format(cls, other_packet.get_underscore_name())
+                name_right = ':perl:func:`{1}() <{0}->{1}>`'.format(cls, other_packet.get_underscore_name())
             text = text.replace(name_false, name_right)
 
         def format_parameter(name):
