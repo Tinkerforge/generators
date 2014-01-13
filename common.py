@@ -431,6 +431,9 @@ def handle_rst_word(text,
 
     return text
 
+def handle_rst_param(text, format_parameter):
+    return re.sub('\:param\:\`([^\`]+)\`', lambda match: format_parameter(match.group(1)), text)
+
 def handle_rst_substitutions(text, packet):
     subsitutions = packet.get_doc_substitutions()
 

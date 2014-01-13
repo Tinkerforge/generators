@@ -236,6 +236,10 @@ class RubyBindingsPacket(ruby_common.RubyPacket):
 
             text = text.replace(name_false, name_right)
 
+        def format_parameter(name):
+            return name # FIXME
+
+        text = common.handle_rst_param(text, format_parameter)
         text = common.handle_rst_word(text)
         text = common.handle_rst_substitutions(text, self)
         text += common.format_since_firmware(self.get_device(), self)

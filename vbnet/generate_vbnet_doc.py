@@ -307,6 +307,11 @@ class VBNETDocPacket(common.Packet):
                 name_right = ':vbnet:func:`{1}() <{0}.{1}>`'.format(cls, name)
             text = text.replace(name_false, name_right)
 
+        # FIXME: add something similar for :char:`c`
+        def format_parameter(name):
+            return '``{0}``'.format(name) # FIXME
+
+        text = common.handle_rst_param(text, format_parameter)
         text = common.handle_rst_word(text)
         text = common.handle_rst_substitutions(text, self)
 

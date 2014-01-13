@@ -345,6 +345,10 @@ class PHPDocPacket(php_common.PHPPacket):
                 name_right = ':php:func:`{1}() <{0}::{1}>`'.format(cls, name)
             text = text.replace(name_false, name_right)
 
+        def format_parameter(name):
+            return '``${0}``'.format(name)
+
+        text = common.handle_rst_param(text, format_parameter)
         text = common.handle_rst_word(text)
         text = common.handle_rst_substitutions(text, self)
 

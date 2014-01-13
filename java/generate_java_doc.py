@@ -382,6 +382,10 @@ class JavaDocPacket(java_common.JavaPacket):
         text = text.replace('callback ', 'listener ')
         text = text.replace(' callback', ' listener')
 
+        def format_parameter(name):
+            return '``{0}``'.format(name) # FIXME
+
+        text = common.handle_rst_param(text, format_parameter)
         text = common.handle_rst_word(text)
         text = common.handle_rst_substitutions(text, self)
 

@@ -248,7 +248,7 @@ com['packets'].append({
 """
 Sets up to 254 slave addresses. Valid addresses are in range 1-255. 0 has a
 special meaning, it is used as list terminator and not allowed as normal slave
-address. The address numeration (via ``num`` parameter) has to be used
+address. The address numeration (via :param:`num` parameter) has to be used
 ascending from 0. For example: If you use the Chibi Extension in Master mode
 (i.e. the stack has an USB connection) and you want to talk to three other
 Chibi stacks with the slave addresses 17, 23, and 42, you should call with
@@ -267,7 +267,7 @@ don't have to be set on every startup.
 Setzt bis zu 254 Slave Adressen. Gültige Adressen sind 1-255. 0 hat eine
 besondere Bedeutung, sie wird zur Terminierung der Liste verwendet und ist nicht
 als normale Slave Adresse erlaubt.
-Die Adressnummerierung (mittels ``num`` Parameter) muss aufsteigend ab
+Die Adressnummerierung (mittels :param:`num` Parameter) muss aufsteigend ab
 0 erfolgen. Beispiel: Wenn die Chibi Extension im Master Modus verwendet wird
 (z.B. wenn der Stapel eine USB-Verbindung hat) und es soll mit drei weiteren
 Chibi Stapeln kommuniziert werden, mit den Adressen 17, 23 und 42, sollten die
@@ -293,12 +293,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the slave address for a given ``num`` as set by
+Returns the slave address for a given :param:`num` as set by
 :func:`SetChibiSlaveAddress`.
 """,
 'de':
 """
-Gibt die Slave Adresse für eine Adressnummerierung (mittels ``num`` Parameter)
+Gibt die Slave Adresse für eine Adressnummerierung (mittels :param:`num` Parameter)
 zurück, wie von :func:`SetChibiSlaveAddress` gesetzt.
 """
 }]

@@ -1590,7 +1590,7 @@ namespace Tinkerforge
 		}
 	}
 
-	// There is no BlockingQueue in c# version <= 2.0, we make our own
+	// There is no BlockingQueue in C# version <= 2.0, we make our own
 	// to be backward compatible
 	internal class BlockingQueue<T>
 	{

@@ -69,6 +69,7 @@ class DelphiZipGenerator(common.Generator):
 
         shutil.copy(os.path.join(root, 'Base58.pas'), '/tmp/generator/bindings')
         shutil.copy(os.path.join(root, 'BlockingQueue.pas'), '/tmp/generator/bindings')
+        shutil.copy(os.path.join(root, 'DeviceBase.pas'), '/tmp/generator/bindings')
         shutil.copy(os.path.join(root, 'Device.pas'), '/tmp/generator/bindings')
         shutil.copy(os.path.join(root, 'IPConnection.pas'), '/tmp/generator/bindings')
         shutil.copy(os.path.join(root, 'LEConverter.pas'), '/tmp/generator/bindings')

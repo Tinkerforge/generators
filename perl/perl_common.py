@@ -3,7 +3,8 @@
 
 """
 Perl Documentation Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2013-2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 perl_common.py: Common Library for generation of Perl bindings and documentation
@@ -34,15 +35,6 @@ class PerlDevice(common.Device):
     def get_perl_class_name(self):
         return self.get_category() + self.get_camel_case_name()
 
-class PerlPacket(common.Packet):
-    def get_perl_parameter_list(self):
-        params = []
-
-        for element in self.get_elements('in'):
-            params.append(element.get_underscore_name())
-
-        return ', '.join(params)
-
 class PerlElement(common.Element):
     perl_types = {
         'int8':   'int',
@@ -55,8 +47,8 @@ class PerlElement(common.Element):
         'uint64': 'int',
         'float':  'float',
         'bool':   'bool',
-        'char':   'chr',
-        'string': 'str'
+        'char':   'char',
+        'string': 'string'
     }
 
     perl_pack_formats = {
@@ -77,10 +69,20 @@ class PerlElement(common.Element):
     def get_perl_type(self):
         t = PerlElement.perl_types[self.get_type()]
 
-        if self.get_cardinality() == 1 or t == 'str':
+        if self.get_cardinality() == 1 or t == 'string':
             return t
 
         return '[' + ', '.join([t]*self.get_cardinality()) + ']'
+
+    def get_perl_doc_name(self):
+        name = self.get_underscore_name()
+
+        if self.get_cardinality() == 1 or self.get_type() == 'string':
+            prefix = '$'
+        else:
+            prefix = '@'
+
+        return prefix + name
 
     def get_perl_pack_format(self):
         f = PerlElement.perl_pack_formats[self.get_type()]
