@@ -6,6 +6,23 @@
 # package definition
 package IPConnection;
 
+# setting the module version
+use vars '$VERSION';
+$VERSION = 2.0.0;
+
+=head1 NAME
+
+Tinkerforge - Official Perl support for all Tinkerforge Bricks and Bricklets
+
+=head1 ABSTRACT
+
+Tinkerforge Perl module provides official API support for all Tinkerforge Bricks and Bricklets.
+A comprehensive documentation for the Perl bindings can be found at,
+English: http://www.tinkerforge.com/en/doc/index.html
+German: http://www.tinkerforge.com/de/doc/index.html
+
+=cut
+
 # using modules
 use strict;
 use warnings;
