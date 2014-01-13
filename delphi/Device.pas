@@ -12,7 +12,7 @@ unit Device;
 interface
 
 uses
-  {$ifdef UNIX}CThreads,{$endif} SyncObjs, SysUtils, Base58, BlockingQueue, LEConverter;
+  {$ifdef UNIX}CThreads,{$endif} SyncObjs, SysUtils, Base58, BlockingQueue, LEConverter, DeviceBase;
 
 const
   DEVICE_RESPONSE_EXPECTED_INVALID_FUNCTION_ID = 0;
@@ -25,7 +25,7 @@ type
   { TDevice }
   TCallbackWrapper = procedure(const packet: TByteArray) of object;
   TVersionNumber = array [0..2] of byte;
-  TDevice = class
+  TDevice = class(TDeviceBase)
   private
     requestMutex: TCriticalSection;
   public
@@ -130,6 +130,7 @@ uses
 constructor TDevice.Create(const uid__: string; ipcon_: TObject);
 var longUid: uint64; value1, value2, i: longint;
 begin
+  inherited Create;
   longUid := Base58Decode(uid__);
   if (longUid > $FFFFFFFF) then begin
     { Convert from 64bit to 32bit }
