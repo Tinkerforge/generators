@@ -8,7 +8,7 @@ package IPConnection;
 
 # setting the module version
 use vars '$VERSION';
-$VERSION = 2.0.0;
+$VERSION = '2.0.0';
 
 =head1 NAME
 
