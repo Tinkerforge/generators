@@ -117,9 +117,6 @@ class PerlZipGenerator(common.Generator):
 
         # Generating the CPAN package archive and cleaning up
         subprocess.call("cd /tmp/generator/perl/Tinkerforge/ && perl /tmp/generator/perl/Tinkerforge/Makefile.PL", shell=True)
-        #subprocess.call("mv ./Makefile /tmp/generator/perl/Tinkerforge/", shell=True)
-        #subprocess.call("mv ./MYMETA.json /tmp/generator/perl/Tinkerforge/", shell=True)
-        #subprocess.call("mv ./MYMETA.yml /tmp/generator/perl/Tinkerforge/", shell=True)
         subprocess.call("cd /tmp/generator/perl/Tinkerforge/ && make dist", shell=True)
         subprocess.call("cp /tmp/generator/perl/Tinkerforge/Tinkerforge-v2.0.0.tar.gz /tmp/generator/perl/", shell=True)
         subprocess.call("rm -rf /tmp/generator/perl/Tinkerforge/", shell=True)
