@@ -55,6 +55,7 @@ use Tinkerforge::Device;
 use strict;
 use warnings;
 use Carp;
+use threads;
 use threads::shared;
 
 use constant DEVICE_IDENTIFIER => {0};

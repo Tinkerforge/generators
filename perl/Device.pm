@@ -10,6 +10,7 @@ package Device;
 use strict;
 use warnings;
 use Carp;
+use threads;
 use threads::shared;
 use Thread::Queue;
 use Tinkerforge::IPConnection;
