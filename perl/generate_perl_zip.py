@@ -59,6 +59,7 @@ class PerlZipGenerator(common.Generator):
 
     def finish(self):
         root = self.get_bindings_root_directory()
+        version = common.get_changelog_version(root)
 
         # Copy examples
         shutil.copy(root.replace('/generators/perl', '/doc/en/source/Software/example.pl'),
@@ -118,11 +119,10 @@ class PerlZipGenerator(common.Generator):
         # Generating the CPAN package archive and cleaning up
         subprocess.call("cd /tmp/generator/perl/Tinkerforge/ && perl /tmp/generator/perl/Tinkerforge/Makefile.PL", shell=True)
         subprocess.call("cd /tmp/generator/perl/Tinkerforge/ && make dist", shell=True)
-        subprocess.call("cp /tmp/generator/perl/Tinkerforge/Tinkerforge-v2.0.0.tar.gz /tmp/generator/perl/", shell=True)
+        subprocess.call("cp /tmp/generator/perl/Tinkerforge/Tinkerforge-{0}.{1}.{2}.tar.gz /tmp/generator/perl/".format(*version), shell=True)
         subprocess.call("rm -rf /tmp/generator/perl/Tinkerforge/", shell=True)
 
         # Make zip
-        version = common.get_changelog_version(root)
         common.make_zip(self.get_bindings_name(), '/tmp/generator/perl', root, version)
 
 def generate(bindings_root_directory):
