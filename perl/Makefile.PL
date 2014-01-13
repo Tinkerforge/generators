@@ -8,10 +8,7 @@ WriteMakefile(
     AUTHOR              => q{Ishraq Ibne Ashraf <ishraq@tinkerforge.com>},
     VERSION_FROM        => './lib/Tinkerforge/IPConnection.pm',
     ABSTRACT_FROM       => './lib/Tinkerforge/IPConnection.pm',
-    ($ExtUtils::MakeMaker::VERSION >= 6.3002
-      ? ('LICENSE'=> 'perl')
-      : ()),
-    PL_FILES            => {},
+    LICENSE             => 'public domain',
     BUILD_REQUIRES => {
         'Test::More' => 0,
     },
