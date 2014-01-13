@@ -368,6 +368,10 @@ class PerlBindingsPacket(common.Packet):
     def get_perl_formatted_doc(self):
         text = common.select_lang(self.get_doc()[1])
 
+        def format_parameter(name):
+            return name # FIXME
+
+        text = common.handle_rst_param(text, format_parameter)
         text = common.handle_rst_word(text)
         text = common.handle_rst_substitutions(text, self)
         text += common.format_since_firmware(self.get_device(), self)

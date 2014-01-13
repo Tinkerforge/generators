@@ -339,6 +339,10 @@ class CSharpDocPacket(csharp_common.CSharpPacket):
 
             text = text.replace(name_false, name_right)
 
+        def format_parameter(name):
+            return '``{0}``'.format(name) # FIXME
+
+        text = common.handle_rst_param(text, format_parameter)
         text = common.handle_rst_word(text)
         text = common.handle_rst_substitutions(text, self)
 
