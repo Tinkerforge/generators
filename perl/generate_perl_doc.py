@@ -138,7 +138,7 @@ class PerlDocDevice(perl_common.PerlDevice):
  :param $callback: string
  :rtype: undef
 
- Registriert einen Callback mit der ID ``$id`` mit der Funktion names ``$callback``.
+ Registriert einen Callback mit der ID ``$id`` mit der Funktion namens ``$callback``.
  Die verfügbaren IDs mit den zugehörigen Funktionssignaturen sind
  :ref:`unten <{0}_{2}_perl_callbacks>` zu finden.
 """
@@ -378,7 +378,7 @@ class PerlDocPacket(common.Packet):
  The returned array contains the elements {0}.
 """,
         'de': """
- Das zurückgegebene Array enhält die Elemente {0}.
+ Das zurückgegebene Array enthält die Elemente {0}.
 """
         }
 
