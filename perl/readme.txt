@@ -16,13 +16,13 @@ Tinkerforge.tar.gz and running the following commands:
 You can also use the source directly,
 just create a folder for your project and copy the Tinkerforge/ folder from
 source/ and the example you want to try in there (e.g. the Stepper configuration
-example from, "examples/brick/stepper/example_configuration.pl")
+example from, examples/brick/stepper/example_configuration.pl)
 
  example_folder/
   -> Tinkerforge/
   -> example_configuration.pl
 
-we have to add a line on top of the file ("example_configuration.pl"):
+You have to add a line on top of the file example_configuration.pl:
 
  use lib './';
 

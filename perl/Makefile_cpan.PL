@@ -8,7 +8,7 @@ WriteMakefile(
     AUTHOR              => q{Ishraq Ibne Ashraf <ishraq@tinkerforge.com>},
     VERSION_FROM        => './lib/Tinkerforge.pm',
     ABSTRACT_FROM       => './lib/Tinkerforge.pm',
-    LICENSE             => 'public domain',
+    LICENSE             => 'Public Domain (CC0 1.0)',
     BUILD_REQUIRES => {
         'Test::More' => 0,
     },

@@ -250,7 +250,8 @@ def make_rst_examples(title_from_file_name, device, base_path, dirname,
 Examples
 --------
 
-The example code below is public domain.
+The example code below is `Public Domain (CC0 1.0)
+<http://creativecommons.org/publicdomain/zero/1.0/>`__.
 """,
     'de': """
 {0}
@@ -258,7 +259,8 @@ The example code below is public domain.
 Beispiele
 ---------
 
-Der folgende Beispielcode ist Public Domain.
+Der folgende Beispielcode ist `Public Domain (CC0 1.0)
+<http://creativecommons.org/publicdomain/zero/1.0/deed.de>`__.
 """
     }
 
