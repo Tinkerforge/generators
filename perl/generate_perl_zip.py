@@ -84,6 +84,7 @@ class PerlZipGenerator(common.Generator):
     
         modules.append("Tinkerforge::IPConnection")
         modules.append("Tinkerforge::Device")
+        modules.append("Tinkerforge")
         modules = ','.join(modules)
 
         if(os.path.isdir("/tmp/generator/perl/Tinkerforge")):
@@ -92,12 +93,56 @@ class PerlZipGenerator(common.Generator):
         subprocess.call("module-starter --dir=/tmp/generator/perl/Tinkerforge --module="+modules+" --distro=Tinkerforge"\
         " --author=\"Ishraq Ibne Ashraf\" --email=ishraq@tinkerforge.com", shell=True)
 
+        # Version replacing
+        tinkerforge_pm = open('./Tinkerforge_cpan_template.pm', 'r')
+        readme = open('./README_cpan_template', 'r')
+
+        lines_tinkerforge_pm = tinkerforge_pm.readlines()
+        lines_readme = readme.readlines()
+
+        for i, line_tfpm in enumerate(lines_tinkerforge_pm):
+            lines_tinkerforge_pm[i] = line_tfpm.replace("<TF_API_VERSION>", "{0}.{1}.{2}".format(*version))
+
+        for j, line_readme in enumerate(lines_readme):
+            lines_readme[j] = line_readme.replace("<TF_API_VERSION>", "{0}.{1}.{2}".format(*version))
+
+        tinkerforge_pm.close()
+        readme.close()        
+
+        tinkerforge_pm = open('./Tinkerforge_cpan.pm', 'w+')
+        readme = open('./README_cpan', 'w+')
+
+        for line_tfpm in lines_tinkerforge_pm:
+            tinkerforge_pm.write(str(line_tfpm))
+        for line_readme in lines_readme:
+            readme.write(str(line_readme))
+
+        tinkerforge_pm.close()
+        readme.close()
+
+        # Copying bindings
         subprocess.call("rm -rf /tmp/generator/perl/Tinkerforge/lib/Tinkerforge/*", shell=True)
         subprocess.call("cp -ar ./bindings/* /tmp/generator/perl/Tinkerforge/lib/Tinkerforge/", shell=True)
+        
+        # Copying IPconnection.pm and Device.pm
         subprocess.call("cp -ar ./IPConnection.pm /tmp/generator/perl/Tinkerforge/lib/Tinkerforge/", shell=True)
         subprocess.call("cp -ar ./Device.pm /tmp/generator/perl/Tinkerforge/lib/Tinkerforge/", shell=True)
+
+        # Copying README
+        subprocess.call("rm -rf /tmp/generator/perl/Tinkerforge/README", shell=True)
+        subprocess.call("cp -ar ./README_cpan /tmp/generator/perl/Tinkerforge/README", shell=True)
+
+        # Copying Changes
+        subprocess.call("rm -rf /tmp/generator/perl/Tinkerforge/Changes", shell=True)
+        subprocess.call("cp -ar ./changelog.txt /tmp/generator/perl/Tinkerforge/Changes", shell=True)
+
+        # Copying Tinkerforge.pm
+        subprocess.call("rm -rf /tmp/generator/perl/Tinkerforge/lib/Tinkerforge.pm", shell=True)
+        subprocess.call("cp ./Tinkerforge_cpan.pm /tmp/generator/perl/Tinkerforge/lib/Tinkerforge.pm", shell=True)
+
+        # Copying Makefile.PL
         subprocess.call("rm -rf /tmp/generator/perl/Tinkerforge/Makefile.PL", shell=True)
-        subprocess.call("cp ./Makefile.PL /tmp/generator/perl/Tinkerforge/", shell=True)
+        subprocess.call("cp ./Makefile_cpan.PL /tmp/generator/perl/Tinkerforge/Makefile.PL", shell=True)
 
         # Modifying 00-load.t test file
         old_test_file = open('/tmp/generator/perl/Tinkerforge/t/00-load.t')
@@ -119,7 +164,8 @@ class PerlZipGenerator(common.Generator):
         # Generating the CPAN package archive and cleaning up
         subprocess.call("cd /tmp/generator/perl/Tinkerforge/ && perl /tmp/generator/perl/Tinkerforge/Makefile.PL", shell=True)
         subprocess.call("cd /tmp/generator/perl/Tinkerforge/ && make dist", shell=True)
-        subprocess.call("cp /tmp/generator/perl/Tinkerforge/Tinkerforge-{0}.{1}.{2}.tar.gz /tmp/generator/perl/".format(*version), shell=True)
+        subprocess.call("cp /tmp/generator/perl/Tinkerforge/Tinkerforge-{0}.{1}.{2}.tar.gz /tmp/generator/perl/Tinkerforge.tar.gz".format(*version), shell=True)
+        subprocess.call("cp /tmp/generator/perl/Tinkerforge/Tinkerforge-{0}.{1}.{2}.tar.gz .".format(*version), shell=True)
         subprocess.call("rm -rf /tmp/generator/perl/Tinkerforge/", shell=True)
 
         # Make zip

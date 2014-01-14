@@ -5,6 +5,14 @@ Perl examples (examples/).
 You can install the package from CPAN ("sudo cpan install Tinkerforge"). After
 that you can use the examples as they are.
 
+Yon can also install the local version of the CPAN package by unpacking
+Tinkerforge.tar.gz and running the following commands:
+
+ perl Makefile.PL
+ make
+ make test
+ make install
+
 If you can't or don't want to use CPAN, you can also use the source directly,
 just create a folder for your project and copy the Tinkerforge/ folder from
 source/ and the example you want to try in there (e.g. the Stepper configuration

@@ -1,0 +1,34 @@
+# setting the module version
+use vars '$VERSION';
+$VERSION = '<TF_API_VERSION>';
+
+=pod
+
+=encoding UTF-8
+
+=head1 NAME
+
+Tinkerforge - Official Perl support for all Tinkerforge Bricks and Bricklets
+
+=head1 VERSION
+
+version <TF_API_VERSION>
+
+=head1 ABSTRACT
+
+Tinkerforge Perl module provides official API support for all Tinkerforge Bricks and Bricklets.
+A comprehensive documentation for the Perl bindings can be found at,
+English: L<strict|http://www.tinkerforge.com/en/doc/Software/API_Bindings_Perl.html>
+German: L<strict|http://www.tinkerforge.com/de/doc/Software/API_Bindings_Perl.html>
+
+=cut
+
+
+
+
+
+
+
+
+
+
