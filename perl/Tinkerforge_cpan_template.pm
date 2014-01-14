@@ -1,6 +1,8 @@
+package Tinkerforge;
+
 # setting the module version
 use vars '$VERSION';
-$VERSION = '<TF_API_VERSION>';
+our $VERSION = '<TF_API_VERSION>';
 
 =pod
 
