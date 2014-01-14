@@ -31,6 +31,12 @@ import shutil
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
+def check_output_and_error(*popenargs, **kwargs):
+    process = subprocess.Popen(stdout=subprocess.PIPE, stderr=subprocess.PIPE, *popenargs, **kwargs)
+    output, error = process.communicate()
+    retcode = process.poll()
+    return (retcode, output + error)
+
 class PerlExamplesCompiler(common.ExamplesCompiler):
     def __init__(self, path, extra_examples):
         common.ExamplesCompiler.__init__(self, 'perl', '.pl', path, subdirs=['examples', 'source'], extra_examples=extra_examples)
@@ -40,11 +46,21 @@ class PerlExamplesCompiler(common.ExamplesCompiler):
             shutil.copy(src, '/tmp/compiler/')
             src = os.path.join('/tmp/compiler/', os.path.split(src)[1])
 
-        args = ['perl',
-                '-c',
-                src]
+        src_check = src.replace('.pl', '_check.pl')
 
-        return subprocess.call(args) == 0
+        code = file(src, 'rb').read()
+        file(src_check, 'wb').write('CHECK { sub __check__ { ' + code + '\n\n}}\n\n__check__;\n');
+
+        args = ['perl',
+                '-cWT',
+                src_check]
+
+        retcode, output = check_output_and_error(args)
+        output = output.strip('\r\n')
+
+        print output
+
+        return retcode == 0 and len(output.split('\n')) == 1 and 'syntax OK' in output
 
 def run(path):
     extra_examples = []
