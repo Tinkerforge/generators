@@ -2,10 +2,18 @@ This zip contains the Perl support for all Tinkerforge Bricks and Bricklets
 (Tinkerforge.tar.gz), the source of the CPAN package (source/) and all available
 Perl examples (examples/).
 
-A CPAN package will be soon available. Then it will be possible to install the
-binding from CPAN.
+The package will be available on CPAN soon. Then it will be possible to install
+the bindings from CPAN.
 
-You can also use the source directly,
+A preliminary CPAN package (Tinkerforge.tar.gz) is included. You can unpack it
+and execute the following commands to install the Perl bindings:
+
+ perl Makefile.PL
+ make
+ make test
+ make install
+
+If you can't or don't want to use the CPAN package, you can also use the source
 just create a folder for your project and copy the Tinkerforge/ folder from
 source/ and the example you want to try in there (e.g. the Stepper configuration
 example from, "examples/brick/stepper/example_configuration.pl")
