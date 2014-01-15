@@ -30,6 +30,12 @@ import subprocess
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
+def check_output_and_error(*popenargs, **kwargs):
+    process = subprocess.Popen(stdout=subprocess.PIPE, stderr=subprocess.PIPE, *popenargs, **kwargs)
+    output, error = process.communicate()
+    retcode = process.poll()
+    return (retcode, output + error)
+
 class RubyExamplesCompiler(common.ExamplesCompiler):
     def __init__(self, path, extra_examples):
         common.ExamplesCompiler.__init__(self, 'ruby', '.rb', path, subdirs=['examples', 'source'], extra_examples=extra_examples)
@@ -39,7 +45,12 @@ class RubyExamplesCompiler(common.ExamplesCompiler):
                 '-wc',
                 src]
 
-        return subprocess.call(args) == 0
+        retcode, output = check_output_and_error(args)
+        output = output.strip('\r\n')
+
+        print output
+
+        return retcode == 0 and len(output.split('\n')) == 1 and 'Syntax OK' in output
 
 def run(path):
     extra_examples = [os.path.join(path, '../../weather-station/write_to_lcd/ruby/weather_station.rb'),
