@@ -87,7 +87,7 @@ com['packets'].append({
 'en':
 """
 Returns the calibrated angular velocity from the gyroscope for the 
-x, y and z axis in °/17.5s (you have to divide by 17.5 to
+x, y and z axis in °/14.375s (you have to divide by 14.375 to
 get the value in °/s).
 
 If you want to get the angular velocity periodically, it is recommended 
@@ -97,8 +97,8 @@ to use the callback :func:`AngularVelocity` and set the period with
 'de':
 """
 Gibt die kalibrierten Winkelgeschwindigkeiten des Gyroskops für die X, Y und
-Z-Achse in °/17,5s zurück. (Um den Wert in °/s zu erhalten ist es notwendig
-durch 17,5 zu teilen)
+Z-Achse in °/14,375s zurück. (Um den Wert in °/s zu erhalten ist es notwendig
+durch 14,375 zu teilen)
 
 Wenn die Winkelgeschwindigkeiten periodisch abgefragt werden sollen, wird empfohlen
 den Callback :func:`AngularVelocity` zu nutzen und die Periode mit
