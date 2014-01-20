@@ -46,6 +46,8 @@ Example: If you set
 
 the LED with index 5 will be red, 6 will be green and 7 will be blue.
 
+.. note:: Depending on the LED circuitry colors can be permuted.
+
 The colors will be transfered to actual LEDs when the next
 frame duration ends, see :func:`SetFrameDuration`.
 
@@ -85,6 +87,9 @@ Beispiel: Wenn
 
 gesetzt wird, wird die LED an Index 5 die Farbe Rot annehmen, 6 wird Grün und 7
 wird Blau.
+
+.. note:: Abhängig von der internen LED Schaltung können die Farben vertauscht 
+   sein.
 
 Die Farben werden auf die tatsächlichen LEDs transferiert wenn die
 nächste *frame duration* abgelaufen ist, siehe :func:`SetFrameDuration`.
