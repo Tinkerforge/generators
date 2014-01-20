@@ -18,7 +18,7 @@ uses
   {$else}
    {$ifdef MSWINDOWS}Windows, WinSock,{$endif}
   {$endif}
-  Classes, Sockets, SyncObjs, SysUtils, Base58, LEConverter, BlockingQueue, Device, TimedSemaphore;
+  Classes, Sockets, SyncObjs, SysUtils, LEConverter, BlockingQueue, Device, TimedSemaphore;
 
 const
   IPCON_FUNCTION_DISCONNECT_PROBE = 128;
