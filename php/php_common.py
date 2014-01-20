@@ -88,7 +88,7 @@ class PHPElement(common.Element):
         'uint16': 'v',
         'int32':  'V',
         'uint32': 'V',
-       #'int64': # FIXME: unsupported
+       #'int64':  # FIXME: unsupported
        #'uint64': # FIXME: unsupported
         'float':  'f',
         'bool':   'C',
