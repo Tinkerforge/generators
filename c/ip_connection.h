@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
@@ -114,7 +114,6 @@ typedef struct _QueueItem {
 	struct _QueueItem *next;
 	int kind;
 	void *data;
-	int length;
 } QueueItem;
 
 typedef struct {

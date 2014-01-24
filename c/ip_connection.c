@@ -403,7 +403,7 @@ static void event_reset(Event *event) {
 static int event_wait(Event *event, uint32_t timeout) { // in msec
 	struct timeval tp;
 	struct timespec ts;
-	int ret = 0;
+	int ret = E_OK;
 
 	gettimeofday(&tp, NULL);
 
@@ -421,7 +421,7 @@ static int event_wait(Event *event, uint32_t timeout) { // in msec
 		ret = pthread_cond_timedwait(&event->condition, &event->mutex, &ts);
 
 		if (ret != 0) {
-			ret = -1;
+			ret = E_TIMEOUT;
 			break;
 		}
 	}
@@ -720,18 +720,12 @@ static void queue_destroy(Queue *queue) {
 	semaphore_destroy(&queue->semaphore);
 }
 
-static void queue_put(Queue *queue, int kind, void *data, int length) {
+static void queue_put(Queue *queue, int kind, void *data) {
 	QueueItem *item = (QueueItem *)malloc(sizeof(QueueItem));
 
 	item->next = NULL;
 	item->kind = kind;
-	item->data = NULL;
-	item->length = length;
-
-	if (data != NULL) {
-		item->data = malloc(length);
-		memcpy(item->data, data, length);
-	}
+	item->data = data;
 
 	mutex_lock(&queue->mutex);
 
@@ -747,7 +741,7 @@ static void queue_put(Queue *queue, int kind, void *data, int length) {
 	semaphore_release(&queue->semaphore);
 }
 
-static int queue_get(Queue *queue, int *kind, void **data, int *length) {
+static int queue_get(Queue *queue, int *kind, void **data) {
 	QueueItem *item;
 
 	if (semaphore_acquire(&queue->semaphore) < 0) {
@@ -775,7 +769,6 @@ static int queue_get(Queue *queue, int *kind, void **data, int *length) {
 
 	*kind = item->kind;
 	*data = item->data;
-	*length = item->length;
 
 	free(item);
 
@@ -1143,10 +1136,9 @@ static void ipcon_callback_loop(void *opaque) {
 	CallbackContext *callback = (CallbackContext *)opaque;
 	int kind;
 	void *data;
-	int length;
 
 	while (true) {
-		if (queue_get(&callback->queue, &kind, &data, &length) < 0) {
+		if (queue_get(&callback->queue, &kind, &data) < 0) {
 			// FIXME: what to do here? try again? exit?
 			break;
 		}
@@ -1185,7 +1177,7 @@ static void ipcon_handle_disconnect_by_peer(IPConnectionPrivate *ipcon_p,
                                             uint8_t disconnect_reason,
                                             uint64_t socket_id,
                                             bool disconnect_immediately) {
-	Meta meta;
+	Meta *meta;
 
 	ipcon_p->auto_reconnect_allowed = true;
 
@@ -1193,11 +1185,12 @@ static void ipcon_handle_disconnect_by_peer(IPConnectionPrivate *ipcon_p,
 		ipcon_disconnect_unlocked(ipcon_p);
 	}
 
-	meta.function_id = IPCON_CALLBACK_DISCONNECTED;
-	meta.parameter = disconnect_reason;
-	meta.socket_id = socket_id;
+	meta = (Meta *)malloc(sizeof(Meta));
+	meta->function_id = IPCON_CALLBACK_DISCONNECTED;
+	meta->parameter = disconnect_reason;
+	meta->socket_id = socket_id;
 
-	queue_put(&ipcon_p->callback->queue, QUEUE_KIND_META, &meta, sizeof(meta));
+	queue_put(&ipcon_p->callback->queue, QUEUE_KIND_META, meta);
 }
 
 enum {
@@ -1236,6 +1229,7 @@ static void ipcon_disconnect_probe_loop(void *opaque) {
 static void ipcon_handle_response(IPConnectionPrivate *ipcon_p, Packet *response) {
 	DevicePrivate *device_p;
 	uint8_t sequence_number = packet_header_get_sequence_number(&response->header);
+	Packet *callback;
 
 	ipcon_p->disconnect_probe_flag = false;
 
@@ -1244,8 +1238,10 @@ static void ipcon_handle_response(IPConnectionPrivate *ipcon_p, Packet *response
 	if (sequence_number == 0 &&
 	    response->header.function_id == IPCON_CALLBACK_ENUMERATE) {
 		if (ipcon_p->registered_callbacks[IPCON_CALLBACK_ENUMERATE] != NULL) {
-			queue_put(&ipcon_p->callback->queue, QUEUE_KIND_PACKET, response,
-			          response->header.length);
+			callback = (Packet *)malloc(response->header.length);
+
+			memcpy(callback, response, response->header.length);
+			queue_put(&ipcon_p->callback->queue, QUEUE_KIND_PACKET, callback);
 		}
 
 		return;
@@ -1260,8 +1256,10 @@ static void ipcon_handle_response(IPConnectionPrivate *ipcon_p, Packet *response
 
 	if (sequence_number == 0) {
 		if (device_p->registered_callbacks[response->header.function_id] != NULL) {
-			queue_put(&ipcon_p->callback->queue, QUEUE_KIND_PACKET, response,
-			          response->header.length);
+			callback = (Packet *)malloc(response->header.length);
+
+			memcpy(callback, response, response->header.length);
+			queue_put(&ipcon_p->callback->queue, QUEUE_KIND_PACKET, callback);
 		}
 
 		return;
@@ -1342,7 +1340,7 @@ static int ipcon_connect_unlocked(IPConnectionPrivate *ipcon_p, bool is_auto_rec
 	struct hostent *entity;
 	struct sockaddr_in address;
 	uint8_t connect_reason;
-	Meta meta;
+	Meta *meta;
 
 	// create callback queue and thread
 	if (ipcon_p->callback == NULL) {
@@ -1372,7 +1370,7 @@ static int ipcon_connect_unlocked(IPConnectionPrivate *ipcon_p, bool is_auto_rec
 	if (entity == NULL) {
 		// destroy callback thread
 		if (!is_auto_reconnect) {
-			queue_put(&ipcon_p->callback->queue, QUEUE_KIND_EXIT, NULL, 0);
+			queue_put(&ipcon_p->callback->queue, QUEUE_KIND_EXIT, NULL);
 
 			if (!thread_is_current(&ipcon_p->callback->thread)) {
 				thread_join(&ipcon_p->callback->thread);
@@ -1395,7 +1393,7 @@ static int ipcon_connect_unlocked(IPConnectionPrivate *ipcon_p, bool is_auto_rec
 	if (socket_create(ipcon_p->socket, AF_INET, SOCK_STREAM, 0) < 0) {
 		// destroy callback thread
 		if (!is_auto_reconnect) {
-			queue_put(&ipcon_p->callback->queue, QUEUE_KIND_EXIT, NULL, 0);
+			queue_put(&ipcon_p->callback->queue, QUEUE_KIND_EXIT, NULL);
 
 			if (!thread_is_current(&ipcon_p->callback->thread)) {
 				thread_join(&ipcon_p->callback->thread);
@@ -1414,7 +1412,7 @@ static int ipcon_connect_unlocked(IPConnectionPrivate *ipcon_p, bool is_auto_rec
 	if (socket_connect(ipcon_p->socket, &address, sizeof(address)) < 0) {
 		// destroy callback thread
 		if (!is_auto_reconnect) {
-			queue_put(&ipcon_p->callback->queue, QUEUE_KIND_EXIT, NULL, 0);
+			queue_put(&ipcon_p->callback->queue, QUEUE_KIND_EXIT, NULL);
 
 			if (!thread_is_current(&ipcon_p->callback->thread)) {
 				thread_join(&ipcon_p->callback->thread);
@@ -1442,7 +1440,7 @@ static int ipcon_connect_unlocked(IPConnectionPrivate *ipcon_p, bool is_auto_rec
 	                  ipcon_disconnect_probe_loop, ipcon_p) < 0) {
 		// destroy callback thread
 		if (!is_auto_reconnect) {
-			queue_put(&ipcon_p->callback->queue, QUEUE_KIND_EXIT, NULL, 0);
+			queue_put(&ipcon_p->callback->queue, QUEUE_KIND_EXIT, NULL);
 
 			if (!thread_is_current(&ipcon_p->callback->thread)) {
 				thread_join(&ipcon_p->callback->thread);
@@ -1468,7 +1466,7 @@ static int ipcon_connect_unlocked(IPConnectionPrivate *ipcon_p, bool is_auto_rec
 
 		// destroy callback thread
 		if (!is_auto_reconnect) {
-			queue_put(&ipcon_p->callback->queue, QUEUE_KIND_EXIT, NULL, 0);
+			queue_put(&ipcon_p->callback->queue, QUEUE_KIND_EXIT, NULL);
 
 			if (!thread_is_current(&ipcon_p->callback->thread)) {
 				thread_join(&ipcon_p->callback->thread);
@@ -1490,11 +1488,12 @@ static int ipcon_connect_unlocked(IPConnectionPrivate *ipcon_p, bool is_auto_rec
 		connect_reason = IPCON_CONNECT_REASON_REQUEST;
 	}
 
-	meta.function_id = IPCON_CALLBACK_CONNECTED;
-	meta.parameter = connect_reason;
-	meta.socket_id = 0;
+	meta = (Meta *)malloc(sizeof(Meta));
+	meta->function_id = IPCON_CALLBACK_CONNECTED;
+	meta->parameter = connect_reason;
+	meta->socket_id = 0;
 
-	queue_put(&ipcon_p->callback->queue, QUEUE_KIND_META, &meta, sizeof(meta));
+	queue_put(&ipcon_p->callback->queue, QUEUE_KIND_META, meta);
 
 	return E_OK;
 }
@@ -1668,7 +1667,7 @@ int ipcon_connect(IPConnection *ipcon, const char *host, uint16_t port) {
 int ipcon_disconnect(IPConnection *ipcon) {
 	IPConnectionPrivate *ipcon_p = ipcon->p;
 	CallbackContext *callback;
-	Meta meta;
+	Meta *meta;
 
 	mutex_lock(&ipcon_p->socket_mutex);
 
@@ -1695,12 +1694,13 @@ int ipcon_disconnect(IPConnection *ipcon) {
 
 	// do this outside of socket_mutex to allow calling (dis-)connect from
 	// the callbacks while blocking on the join call here
-	meta.function_id = IPCON_CALLBACK_DISCONNECTED;
-	meta.parameter = IPCON_DISCONNECT_REASON_REQUEST;
-	meta.socket_id = 0;
+	meta = (Meta *)malloc(sizeof(Meta));
+	meta->function_id = IPCON_CALLBACK_DISCONNECTED;
+	meta->parameter = IPCON_DISCONNECT_REASON_REQUEST;
+	meta->socket_id = 0;
 
-	queue_put(&callback->queue, QUEUE_KIND_META, &meta, sizeof(meta));
-	queue_put(&callback->queue, QUEUE_KIND_EXIT, NULL, 0);
+	queue_put(&callback->queue, QUEUE_KIND_META, meta);
+	queue_put(&callback->queue, QUEUE_KIND_EXIT, NULL);
 
 	if (!thread_is_current(&callback->thread)) {
 		thread_join(&callback->thread);
