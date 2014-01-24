@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
@@ -388,7 +388,7 @@ static void event_set(Event *event) {
 
 	event->flag = true;
 
-	pthread_cond_signal(&event->condition);
+	pthread_cond_broadcast(&event->condition);
 	pthread_mutex_unlock(&event->mutex);
 }
 
