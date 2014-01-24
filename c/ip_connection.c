@@ -441,10 +441,8 @@ static int event_wait(Event *event, uint32_t timeout) { // in msec
 
 #ifdef _WIN32
 
-static int semaphore_create(Semaphore *semaphore) {
+static void semaphore_create(Semaphore *semaphore) {
 	semaphore->handle = CreateSemaphore(NULL, 0, INT32_MAX, NULL);
-
-	return semaphore->handle == NULL ? -1 : 0;
 }
 
 static void semaphore_destroy(Semaphore *semaphore) {
@@ -461,7 +459,7 @@ static void semaphore_release(Semaphore *semaphore) {
 
 #else
 
-static int semaphore_create(Semaphore *semaphore) {
+static void semaphore_create(Semaphore *semaphore) {
 #ifdef __APPLE__
 	// Mac OS X does not support unnamed semaphores, so we fake them. Unlink
 	// first to ensure that there is no existing semaphore with that name.
@@ -474,19 +472,11 @@ static int semaphore_create(Semaphore *semaphore) {
 	sem_unlink(name);
 	semaphore->pointer = sem_open(name, O_CREAT | O_EXCL, S_IRWXU, 0);
 	sem_unlink(name);
-
-	if (semaphore->pointer == SEM_FAILED) {
-		return -1;
-	}
 #else
 	semaphore->pointer = &semaphore->object;
 
-	if (sem_init(semaphore->pointer, 0, 0) < 0) {
-		return -1;
-	}
+	sem_init(semaphore->pointer, 0, 0);
 #endif
-
-	return 0;
 }
 
 static void semaphore_destroy(Semaphore *semaphore) {
