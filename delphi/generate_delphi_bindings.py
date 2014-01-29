@@ -74,22 +74,9 @@ uses
         return function_ids + '\n'
 
     def get_delphi_constants(self):
-        str_constants = ''
-        str_constant = '  {0}_{1}_{2}_{3} = {4};\n'
-        constants = self.get_constants()
-        for constant in constants:
-            for definition in constant.definitions:
-                if constant.type == 'char':
-                    value = "'{0}'".format(definition.value)
-                else:
-                    value = str(definition.value)
+        constant_format = '  {prefix}_{constant_group_upper_case_name}_{constant_item_upper_case_name} = {constant_item_value};\n'
 
-                str_constants += str_constant.format(self.get_category().upper(),
-                                                     self.get_upper_case_name(),
-                                                     constant.name_uppercase,
-                                                     definition.name_uppercase,
-                                                     value)
-        return str_constants + '\n'
+        return self.get_formatted_constants(constant_format, prefix=self.get_category().upper()+'_'+self.get_upper_case_name()) + '\n'
 
     def get_delphi_callback_id_definitions(self):
         cbs = ''

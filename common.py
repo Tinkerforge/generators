@@ -366,15 +366,15 @@ def format_since_firmware(device, packet):
     else:
         return ''
 
-def default_constant_format(prefix, constant, definition, value):
-    return '* {0}{1}_{2} = {3}\n'.format(prefix, constant.name_uppercase,
-                                         definition.name_uppercase, value)
+def default_constant_format(prefix, constant_group, constant_item, value):
+    return '* {0}{1}_{2} = {3}\n'.format(prefix, constant_group.get_upper_case_name(),
+                                         constant_item.get_upper_case_name(), value)
 
 def format_constants(prefix, packet,
                      constants_name={'en': 'constants', 'de': 'Konstanten'},
                      char_format="'{0}'",
                      constant_format_func=default_constant_format):
-    str_constants = {
+    constants_intro = {
 'en': """
 The following {0} are available for this function:
 
@@ -384,20 +384,19 @@ Die folgenden {0} sind für diese Funktion verfügbar:
 
 """
 }
-    has_constant = False
-    str_constants = select_lang(str_constants).format(select_lang(constants_name))
-    constants = packet.get_constants()
-    for constant in constants:
-        for definition in constant.definitions:
-            if constant.type == 'char':
-                value = char_format.format(definition.value)
-            else:
-                value = str(definition.value)
+    constants = []
 
-            has_constant = True
-            str_constants += constant_format_func(prefix, constant, definition, value)
-    if has_constant:
-        return str_constants
+    for constant_group in packet.get_constant_groups():
+        for constant_item in constant_group.get_items():
+            if constant_group.get_type() == 'char':
+                value = char_format.format(constant_item.get_value())
+            else:
+                value = str(constant_item.get_value())
+
+            constants.append(constant_format_func(prefix, constant_group, constant_item, value))
+
+    if len(constants) > 0:
+        return select_lang(constants_intro).format(select_lang(constants_name)) + ''.join(constants)
     else:
         return ''
 
@@ -650,10 +649,68 @@ def check_name(camel_case, underscore, display, is_constant=False):
             raise ValueError("underscore name '{0}' and display name '{1}' ({2}) mismatch" \
                              .format(underscore, display, display_to_check))
 
+class ConstantItem:
+    def __init__(self, raw_data):
+        self.raw_data = raw_data
+
+    def get_camel_case_name(self):
+        return self.raw_data[0]
+
+    def get_underscore_name(self):
+        return self.raw_data[1]
+
+    def get_upper_case_name(self):
+        return self.get_underscore_name().upper()
+
+    def get_dash_name(self):
+        return self.get_underscore_name().replace('_', '-')
+
+    def get_value(self):
+        return self.raw_data[2]
+
+class ConstantGroup:
+    def __init__(self, element, type, raw_data, generator):
+        self.type = type
+        self.raw_data = raw_data
+        self.elements = [element]
+        self.items = []
+
+        for item_raw_data in raw_data[2]:
+            self.items.append(generator.get_constant_item_class()(item_raw_data))
+
+    def add_elements(self, elements):
+        self.elements += elements
+
+    def get_camel_case_name(self):
+        return self.raw_data[0]
+
+    def get_underscore_name(self):
+        return self.raw_data[1]
+
+    def get_upper_case_name(self):
+        return self.get_underscore_name().upper()
+
+    def get_dash_name(self):
+        return self.get_underscore_name().replace('_', '-')
+
+    def get_type(self):
+        return self.type
+
+    def get_items(self):
+        return self.items
+
+    def get_elements(self):
+        return self.elements
+
 class Element:
-    def __init__(self, packet, raw_data):
+    def __init__(self, packet, raw_data, generator):
         self.packet = packet
         self.raw_data = raw_data
+        self.generator = generator
+        self.constant_group = None
+
+        if len(self.raw_data) > 4:
+            self.constant_group = generator.get_constant_group_class()(self, self.raw_data[1], self.raw_data[4], generator)
 
     def get_packet(self):
         return self.packet
@@ -664,6 +721,9 @@ class Element:
     def get_headless_camel_case_name(self):
         return underscore_to_headless_camel_case(self.get_underscore_name())
 
+    def get_dash_name(self):
+        return self.get_underscore_name().replace('_', '-')
+
     def get_type(self):
         return self.raw_data[1]
 
@@ -673,14 +733,8 @@ class Element:
     def get_direction(self):
         return self.raw_data[3]
 
-    def has_constants(self):
-        return len(self.raw_data) > 4
-
-    def get_constants(self):
-        if self.has_constants():
-            return self.raw_data[4]
-        else:
-            return None
+    def get_constant_group(self):
+        return self.constant_group
 
     def get_item_size(self):
         item_sizes = {
@@ -728,7 +782,7 @@ class Packet:
         check_name(raw_data['name'][0], raw_data['name'][1], None)
 
         for raw_element in self.raw_data['elements']:
-            element = generator.get_element_class()(self, raw_element)
+            element = generator.get_element_class()(self, raw_element, generator)
 
             self.all_elements.append(element)
 
@@ -747,12 +801,50 @@ class Packet:
             else:
                 raise ValueError('Invalid element direction ' + element.get_direction())
 
-            if element.has_constants():
-                constants = element.get_constants()
-                check_name(constants[0], constants[1], None)
+            constant_group = element.get_constant_group()
 
-                for value in constants[2]:
-                    check_name(value[0], value[1], None, True)
+            if constant_group is not None:
+                check_name(constant_group.get_camel_case_name(), constant_group.get_underscore_name(), None)
+
+                for constant_item in constant_group.get_items():
+                    check_name(constant_item.get_camel_case_name(), constant_item.get_underscore_name(), None, True)
+
+        self.constant_groups = []
+
+        for element in self.all_elements:
+            constant_group = element.get_constant_group()
+
+            if constant_group is None:
+                continue
+
+            for known_constant_group in self.constant_groups:
+                if constant_group.get_underscore_name() != known_constant_group.get_underscore_name():
+                    continue
+
+                if constant_group.get_type() != known_constant_group.get_type():
+                    raise ValueError('Multiple instance of constant group {0} with different types'.format(constant_group.get_underscore_name()))
+
+                for constant_item, known_constant_item in zip(constant_group.get_items(), known_constant_group.get_items()):
+                    a = known_constant_item.get_underscore_name()
+                    b = constant_item.get_underscore_name()
+
+                    if a != b:
+                        raise ValueError('Constant item name ({0} != {1}) mismatch in constant group {2}'.format(a, b, constant_group.get_underscore_name()))
+
+                    a = known_constant_item.get_value()
+                    b = constant_item.get_value()
+
+                    if a != b:
+                        raise ValueError('Constant item value ({0} != {1}) mismatch in constant group {2}'.format(a, b, constant_group.get_underscore_name()))
+
+                known_constant_group.add_elements(constant_group.get_elements())
+
+                constant_group = None
+
+                break
+
+            if constant_group is not None:
+                self.constant_groups.append(constant_group)
 
     def get_device(self):
         return self.device
@@ -772,6 +864,9 @@ class Packet:
 
     def get_upper_case_name(self):
         return self.get_underscore_name().upper()
+
+    def get_dash_name(self):
+        return self.get_underscore_name().replace('_', '-')
 
     def get_elements(self, direction=None):
         if direction is None:
@@ -826,34 +921,25 @@ class Packet:
             size += element.get_size()
         return size
 
-    def get_constants(self):
-        ConstantDefinitionTuple = namedtuple('ConstantValues', ['name_camelcase', 'name_underscore', 'name_uppercase', 'value'])
-        ConstantTuple = namedtuple('Constant', ['type', 'name_camelcase', 'name_underscore', 'name_uppercase', 'definitions', 'elements'])
+    def get_constant_groups(self):
+        return self.constant_groups
 
-        def get_existing_constants(constants, new_constant):
-            for constant in constants:
-                if constant.name_camelcase == new_constant[0]:
-                    return constant
-            return None
-
+    def get_formatted_constants(self, constant_format, char_format="'{0}'", **extra_value):
         constants = []
 
-        for element in self.all_elements:
-            c = element.get_constants()
-
-            if c is not None:
-                ec = get_existing_constants(constants, c)
-
-                if not ec:
-                    definitions = []
-                    vs = c[2]
-                    for v in vs:
-                        definitions.append(ConstantDefinitionTuple(v[0], v[1], v[1].upper(), v[2]))
-                    constants.append(ConstantTuple(element.get_type(), c[0], c[1], c[1].upper(), definitions, [element]))
+        for constant_group in self.get_constant_groups():
+            for constant_item in constant_group.get_items():
+                if constant_group.get_type() == 'char':
+                    value = char_format.format(constant_item.get_value())
                 else:
-                    ec.elements.append(element)
+                    value = str(constant_item.get_value())
 
-        return constants
+                constants.append(constant_format.format(constant_group_upper_case_name=constant_group.get_upper_case_name(),
+                                                        constant_item_upper_case_name=constant_item.get_upper_case_name(),
+                                                        constant_item_value=value,
+                                                        **extra_value))
+
+        return ''.join(constants)
 
     def has_prototype_in_device(self):
         if 'prototype_in_device' in self.raw_data:
@@ -901,6 +987,37 @@ class Device:
             else:
                 raise ValueError('Invalid packet type ' + packet.get_type())
 
+        self.constant_groups = []
+
+        for packet in self.all_packets:
+            for constant_group in packet.get_constant_groups():
+                for known_constant_group in self.constant_groups:
+                    if constant_group.get_underscore_name() != known_constant_group.get_underscore_name():
+                        continue
+
+                    if constant_group.get_type() != known_constant_group.get_type():
+                        raise ValueError('Multiple instance of constant group {0} with different types'.format(constant_group.get_underscore_name()))
+
+                    for constant_item, known_constant_item in zip(constant_group.get_items(), known_constant_group.get_items()):
+                        a = known_constant_item.get_underscore_name()
+                        b = constant_item.get_underscore_name()
+
+                        if a != b:
+                            raise ValueError('Constant item name ({0} != {1}) mismatch in constant group {2}'.format(a, b, constant_group.get_underscore_name()))
+
+                        a = known_constant_item.get_value()
+                        b = constant_item.get_value()
+
+                        if a != b:
+                            raise ValueError('Constant item value ({0} != {1}) mismatch in constant group {2}'.format(a, b, constant_group.get_underscore_name()))
+
+                    constant_group = None
+
+                    break
+
+                if constant_group is not None:
+                    self.constant_groups.append(constant_group)
+
     def get_generator(self):
         return self.generator
 
@@ -926,14 +1043,17 @@ class Device:
         return self.raw_data['name'][0]
 
     def get_headless_camel_case_name(self):
-        m = re.match('([A-Z]+)(.*)', self.raw_data['name'][0])
+        m = re.match('([A-Z]+)(.*)', self.get_camel_case_name())
         return m.group(1).lower() + m.group(2)
 
     def get_underscore_name(self):
         return self.raw_data['name'][1]
 
     def get_upper_case_name(self):
-        return self.raw_data['name'][1].upper()
+        return self.get_underscore_name().upper()
+
+    def get_dash_name(self):
+        return self.get_underscore_name().replace('_', '-')
 
     def get_display_name(self):
         return self.raw_data['name'][2]
@@ -960,30 +1080,25 @@ class Device:
     def get_callback_count(self):
         return len(self.callback_packets)
 
-    def get_constants(self):
-        ConstantDefinitionTuple = namedtuple('ConstantValues', ['name_camelcase', 'name_underscore', 'name_uppercase', 'value'])
-        ConstantTuple = namedtuple('Constant', ['type', 'name_camelcase', 'name_underscore', 'name_uppercase', 'definitions'])
+    def get_constant_groups(self):
+        return self.constant_groups
 
-        def is_in_constants(constants, new_constant):
-            for constant in constants:
-                if constant.name_camelcase == new_constant[0]:
-                    return True
-            return False
-
+    def get_formatted_constants(self, constant_format, char_format="'{0}'", **extra_value):
         constants = []
 
-        for packet in self.all_packets:
-            for element in packet.all_elements:
-                c = element.get_constants()
+        for constant_group in self.get_constant_groups():
+            for constant_item in constant_group.get_items():
+                if constant_group.get_type() == 'char':
+                    value = char_format.format(constant_item.get_value())
+                else:
+                    value = str(constant_item.get_value())
 
-                if c is not None and not is_in_constants(constants, c):
-                        definitions = []
-                        vs = c[2]
-                        for v in vs:
-                            definitions.append(ConstantDefinitionTuple(v[0], v[1], v[1].upper(), v[2]))
-                        constants.append(ConstantTuple(element.get_type(), c[0], c[1], c[1].upper(), definitions))
+                constants.append(constant_format.format(constant_group_upper_case_name=constant_group.get_upper_case_name(),
+                                                        constant_item_upper_case_name=constant_item.get_upper_case_name(),
+                                                        constant_item_value=value,
+                                                        **extra_value))
 
-        return constants
+        return ''.join(constants)
 
 class Generator:
     def __init__(self, bindings_root_directory, language):
@@ -1001,6 +1116,12 @@ class Generator:
 
     def get_element_class(self):
         return Element
+
+    def get_constant_group_class(self):
+        return ConstantGroup
+
+    def get_constant_item_class(self):
+        return ConstantItem
 
     def get_bindings_root_directory(self):
         return self.bindings_root_directory

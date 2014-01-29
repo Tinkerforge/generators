@@ -35,17 +35,14 @@ class ShellDevice(common.Device):
         return self.get_camel_case_name() + self.get_category()
 
     def get_shell_device_name(self):
-        return self.get_underscore_name().replace('_', '-') + '-' + self.get_category().lower()
+        return self.get_dash_name() + '-' + self.get_category().lower()
 
 class ShellPacket(common.Packet):
-    def get_dash_name(self):
-        return self.get_underscore_name().replace('_', '-')
-
     def get_shell_parameter_list(self):
         params = []
 
         for element in self.get_elements('in'):
-            params.append('<{0}>'.format(element.get_underscore_name().replace('_', '-')))
+            params.append('<{0}>'.format(element.get_dash_name()))
 
         return ' '.join(params)
 
@@ -95,9 +92,6 @@ class ShellElement(common.Element):
         'string': 'string'
     }
 
-    def get_dash_name(self):
-        return self.get_underscore_name().replace('_', '-')
-
     def get_shell_type(self):
         t = ShellElement.shell_types[self.get_type()]
 
@@ -118,11 +112,11 @@ class ShellElement(common.Element):
     def get_shell_help(self):
         symbols_doc = ''
 
-        if self.has_constants():
+        if self.get_constant_group() is not None:
             symbols = []
 
-            for symbol in self.get_constants()[2]:
-                symbols.append('{0}: {1}'.format(symbol[1].replace('_', '-'), symbol[2]))
+            for constant_item in self.get_constant_group().get_items():
+                symbols.append('{0}: {1}'.format(constant_item.get_dash_name(), constant_item.get_value()))
 
             symbols_doc = ' (' + ', '.join(symbols) + ')'
 
@@ -141,11 +135,11 @@ class ShellElement(common.Element):
     def get_shell_type_converter(self):
         t = ShellElement.shell_type_converters[self.get_type()]
 
-        if self.has_constants():
+        if self.get_constant_group() is not None:
             symbols = {}
 
-            for symbol in self.get_constants()[2]:
-                symbols[symbol[1].replace('_', '-')] = symbol[2]
+            for constant_item in self.get_constant_group().get_items():
+                symbols[constant_item.get_dash_name()] = constant_item.get_value()
 
             if self.get_cardinality() > 1 and t != 'string':
                 return 'create_array_converter(ctx, create_symbol_converter(ctx, {0}, {1}), {2})'.format(t, symbols, self.get_cardinality())

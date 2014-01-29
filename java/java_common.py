@@ -80,22 +80,25 @@ class JavaPacket(common.Packet):
 
         return ', '.join(param)
 
-class JavaElement(common.Element):
-    java_type = {
-        'int8':   'byte',
-        'uint8':  'short',
-        'int16':  'short',
-        'uint16': 'int',
-        'int32':  'int',
-        'uint32': 'long',
-        'int64':  'long',
-        'uint64': 'long',
-        'float':  'float',
-        'bool':   'boolean',
-        'char':   'char',
-        'string': 'String'
-    }
+java_type = {
+    'int8':   'byte',
+    'uint8':  'short',
+    'int16':  'short',
+    'uint16': 'int',
+    'int32':  'int',
+    'uint32': 'long',
+    'int64':  'long',
+    'uint64': 'long',
+    'float':  'float',
+    'bool':   'boolean',
+    'char':   'char',
+    'string': 'String'
+}
 
+def get_java_type(type):
+    return java_type[type]
+
+class JavaElement(common.Element):
     java_byte_buffer_method_suffix = {
         'int8':   '',
         'uint8':  '',
@@ -127,7 +130,7 @@ class JavaElement(common.Element):
     }
 
     def get_java_type(self):
-        return JavaElement.java_type[self.get_type()]
+        return get_java_type(self.get_type())
 
     def get_java_byte_buffer_method_suffix(self):
         return JavaElement.java_byte_buffer_method_suffix[self.get_type()]

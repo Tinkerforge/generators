@@ -72,20 +72,9 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
         return function_ids
 
     def get_ruby_constants(self):
-        str_constants = '\n'
-        str_constant = '    {0}_{1} = {2} # :nodoc:\n'
-        constants = self.get_constants()
-        for constant in constants:
-            for definition in constant.definitions:
-                if constant.type == 'char':
-                    value = "'{0}'".format(definition.value)
-                else:
-                    value = str(definition.value)
+        constant_format = '    {constant_group_upper_case_name}_{constant_item_upper_case_name} = {constant_item_value} # :nodoc:\n'
 
-                str_constants += str_constant.format(constant.name_uppercase,
-                                                     definition.name_uppercase,
-                                                     value)
-        return str_constants
+        return '\n' + self.get_formatted_constants(constant_format)
 
     def get_ruby_initialize_method(self):
         dev_init = """

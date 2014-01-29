@@ -384,8 +384,8 @@ class ShellDocPacket(shell_common.ShellPacket):
         text = common.handle_rst_word(text)
         text = common.handle_rst_substitutions(text, self)
 
-        def constant_format(prefix, constant, definition, value):
-            c = '* ``{0}`` = {1}, '.format(definition.name_underscore.replace('_', '-'), value)
+        def constant_format(prefix, constant_group, constant_item, value):
+            c = '* ``{0}`` = {1}, '.format(constant_item.get_dash_name(), value)
 
             for_ = {
             'en': 'for',
@@ -395,7 +395,7 @@ class ShellDocPacket(shell_common.ShellPacket):
             c += common.select_lang(for_) + ' '
 
             e = []
-            for element in constant.elements:
+            for element in constant_group.get_elements():
                 name = element.get_dash_name()
                 if element.get_direction() == 'in':
                     e.append('<{0}>'.format(name))
@@ -434,7 +434,7 @@ class ShellDocPacket(shell_common.ShellPacket):
             t = element.get_shell_type()
             desc += param.format(element.get_dash_name(), t)
 
-            if element.has_constants():
+            if element.get_constant_group() is not None:
                 desc += ' ({0})'.format(common.select_lang(has_symbols))
 
             desc += '\n'
@@ -460,7 +460,7 @@ class ShellDocPacket(shell_common.ShellPacket):
             t = element.get_shell_type()
             ret += ' :returns {0}: {1}'.format(element.get_dash_name(), t)
 
-            if element.has_constants() or \
+            if element.get_constant_group() is not None or \
                self.get_function_id() == 255 and element.get_underscore_name() == 'device_identifier':
                 ret += ' ({0})'.format(common.select_lang(has_symbols))
 

@@ -150,11 +150,11 @@ def call_{0}_{1}(ctx, argv):
                 for element in packet.get_elements('out'):
                     output_names.append("'{0}'".format(element.get_dash_name()))
 
-                    if element.has_constants():
+                    if element.get_constant_group() is not None:
                         symbols = {}
 
-                        for symbol in element.get_constants()[2]:
-                            symbols[symbol[2]] = symbol[1].replace('_', '-')
+                        for constant_item in element.get_constant_group().get_items():
+                            symbols[constant_item.get_value()] = constant_item.get_dash_name()
 
                         output_symbols.append(str(symbols))
                     else:

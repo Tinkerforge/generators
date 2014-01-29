@@ -74,22 +74,30 @@ class CSharpPacket(common.Packet):
 
         return sig_format.format(return_type, class_prefix, self.get_camel_case_name(), params, override)
 
-class CSharpElement(common.Element):
-    csharp_types = {
-        'int8':   'short',
-        'uint8':  'byte',
-        'int16':  'short',
-        'uint16': 'int',
-        'int32':  'int',
-        'uint32': 'long',
-        'int64':  'long',
-        'uint64': 'long',
-        'float':  'float',
-        'bool':   'bool',
-        'char':   'char',
-        'string': 'string'
-    }
+csharp_types = {
+    'int8':   'short',
+    'uint8':  'byte',
+    'int16':  'short',
+    'uint16': 'int',
+    'int32':  'int',
+    'uint32': 'long',
+    'int64':  'long',
+    'uint64': 'long',
+    'float':  'float',
+    'bool':   'bool',
+    'char':   'char',
+    'string': 'string'
+}
 
+def get_csharp_type(type, cardinality):
+    t = csharp_types[type]
+
+    if cardinality > 1 and type != 'string':
+        t += '[]'
+
+    return t
+
+class CSharpElement(common.Element):
     csharp_le_converter_types = {
         'int8':   'byte',
         'uint8':  'byte',
@@ -121,12 +129,7 @@ class CSharpElement(common.Element):
     }
 
     def get_csharp_type(self):
-        t = CSharpElement.csharp_types[self.get_type()]
-
-        if self.get_cardinality() > 1 and self.get_type() != 'string':
-            t += '[]'
-
-        return t
+        return get_csharp_type(self.get_type(), self.get_cardinality())
 
     def get_csharp_le_converter_type(self):
         t = CSharpElement.csharp_le_converter_types[self.get_type()]

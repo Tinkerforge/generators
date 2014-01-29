@@ -90,28 +90,15 @@ class CBindingsDevice(common.Device):
         return defines
 
     def get_c_constants(self):
-        str_constants = '\n'
-        str_constant = """
+        constant_format = """
 /**
- * \ingroup {4}{3}
+ * \ingroup {doxygen}
  */
-#define {5}_{0}_{1} {2}
+#define {prefix}_{constant_group_upper_case_name}_{constant_item_upper_case_name} {constant_item_value}
 """
-        constants = self.get_constants()
-        for constant in constants:
-            for definition in constant.definitions:
-                if constant.type == 'char':
-                    value = "'{0}'".format(definition.value)
-                else:
-                    value = str(definition.value)
-
-                str_constants += str_constant.format(constant.name_uppercase,
-                                                     definition.name_uppercase,
-                                                     value,
-                                                     self.get_camel_case_name(),
-                                                     self.get_category(),
-                                                     self.get_upper_case_name())
-        return str_constants
+        return '\n' + self.get_formatted_constants(constant_format,
+                                                   doxygen=self.get_category()+self.get_camel_case_name(),
+                                                   prefix=self.get_upper_case_name())
 
     def get_c_device_identifier_define(self):
         define_temp = """

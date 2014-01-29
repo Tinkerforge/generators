@@ -74,17 +74,16 @@ use constant DEVICE_IDENTIFIER => {0};
 
         str_constants = '\n'
         str_constant = 'use constant {0}_{1} => {2};\n'
-        constants = self.get_constants()
-        for constant in constants:
-            for definition in constant.definitions:
-                if constant.type == 'char':
-                    value = "'{0}'".format(definition.value)
+        for constant_group in self.get_constant_groups():
+            for constant_item in constant_group.get_items():
+                if constant_group.get_type() == 'char':
+                    value = "'{0}'".format(constant_item.get_value())
                 else:
-                    value = str(definition.value)
+                    value = str(constant_item.get_value())
 
-                str_constants += str_constant.format(constant.name_uppercase,
-                                                     definition.name_uppercase,
-                                                     value)+''
+                str_constants += str_constant.format(constant_group.get_upper_case_name(),
+                                                     constant_item.get_upper_case_name(),
+                                                     value)
         return cbs + function_ids + str_constants
 
     def get_perl_new_subroutine(self):

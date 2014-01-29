@@ -103,25 +103,24 @@ namespace Tinkerforge
         return function_ids
 
     def get_csharp_constants(self):
-        str_constants = '\n'
-        str_constant = """
+        constant = """
 \t\t/// <summary>
 \t\t/// </summary>
 \t\tpublic const {0} {1}_{2} = {3};
 """
-        constants = self.get_constants()
-        for constant in constants:
-            for definition in constant.definitions:
-                if constant.type == 'char':
-                    value = "'{0}'".format(definition.value)
+        constants = []
+        for constant_group in self.get_constant_groups():
+            for constant_item in constant_group.get_items():
+                if constant_group.get_type() == 'char':
+                    value = "'{0}'".format(constant_item.get_value())
                 else:
-                    value = str(definition.value)
+                    value = str(constant_item.get_value())
 
-                str_constants += str_constant.format(csharp_common.CSharpElement(None, [None, constant.type, 1]).get_csharp_type(), # FIXME
-                                                     constant.name_uppercase,
-                                                     definition.name_uppercase,
-                                                     value)
-        return str_constants
+                constants.append(constant.format(csharp_common.get_csharp_type(constant_group.get_type(), 1),
+                                                 constant_group.get_upper_case_name(),
+                                                 constant_item.get_upper_case_name(),
+                                                 value))
+        return '\n' + ''.join(constants)
 
     def get_csharp_constructor(self):
         cbs = []

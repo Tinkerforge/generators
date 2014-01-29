@@ -219,26 +219,25 @@ public class {0} extends Device {{
         return function_ids
 
     def get_java_constants(self):
-        str_constants = '\n'
-        str_constant = '\tpublic final static {0} {1}_{2} = {3}{4};\n'
-        constants = self.get_constants()
-        for constant in constants:
-            typ = java_common.JavaElement(None, [None, constant.type, 1]).get_java_type() # FIXME
+        constant = '\tpublic final static {0} {1}_{2} = {3}{4};\n'
+        constants = []
+        for constant_group in self.get_constant_groups():
+            type = java_common.get_java_type(constant_group.get_type())
 
-            for definition in constant.definitions:
-                if constant.type == 'char':
+            for constant_item in constant_group.get_items():
+                if constant_group.get_type() == 'char':
                     cast = ''
-                    value = "'{0}'".format(definition.value)
+                    value = "'{0}'".format(constant_item.get_value())
                 else:
-                    cast = '({0})'.format(typ)
-                    value = str(definition.value)
+                    cast = '({0})'.format(type)
+                    value = str(constant_item.get_value())
 
-                str_constants += str_constant.format(typ,
-                                                     constant.name_uppercase,
-                                                     definition.name_uppercase,
-                                                     cast,
-                                                     value)
-        return str_constants
+                constants.append(constant.format(type,
+                                                 constant_group.get_upper_case_name(),
+                                                 constant_item.get_upper_case_name(),
+                                                 cast,
+                                                 value))
+        return '\n' + ''.join(constants)
 
     def get_java_listener_lists(self):
         llists = '\n'
