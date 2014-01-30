@@ -3,7 +3,7 @@
 
 """
 TCP/IP Documentation Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_tcpip_doc.py: Generator for TCP/IP documentation
@@ -33,10 +33,13 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class TCPIPDocDevice(common.Device):
+    def get_tcpip_name(self):
+        return self.get_category() + self.get_camel_case_name()
+
     def get_tcpip_methods(self, typ):
         methods = ''
         func_start = '.. tcpip:function:: '
-        cls = self.get_camel_case_name()
+        cls = self.get_tcpip_name()
 
         for packet in self.get_packets('function'):
             if packet.get_doc()[0] != typ or packet.get_function_id() < 0:
@@ -56,7 +59,7 @@ class TCPIPDocDevice(common.Device):
     def get_tcpip_callbacks(self):
         cbs = ''
         func_start = '.. tcpip:function:: '
-        cls = self.get_camel_case_name()
+        cls = self.get_tcpip_name()
 
         for packet in self.get_packets('callback'):
             fid = '\n :functionid: {0}'.format(packet.get_function_id())
@@ -204,7 +207,7 @@ class TCPIPDocPacket(common.Packet):
         'de': 'Rückgabewerte'
         }
 
-        cls = self.get_device().get_camel_case_name()
+        cls = self.get_device().get_tcpip_name()
         for other_packet in self.get_device().get_packets():
             name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
             if other_packet.get_type() == 'callback':

@@ -4,7 +4,7 @@
 """
 Modbus Documentation Generator
 Copyright (C) 2012-2013 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 
 generator_modbus_doc.py: Generator for Modbus documentation
 
@@ -33,10 +33,13 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class ModbusDocDevice(common.Device):
+    def get_modbus_name(self):
+        return self.get_category() + self.get_camel_case_name()
+
     def get_modbus_methods(self, typ):
         methods = ''
         func_start = '.. modbus:function:: '
-        cls = self.get_camel_case_name()
+        cls = self.get_modbus_name()
 
         for packet in self.get_packets('function'):
             if packet.get_doc()[0] != typ or packet.get_function_id() < 0:
@@ -56,7 +59,7 @@ class ModbusDocDevice(common.Device):
     def get_modbus_callbacks(self):
         cbs = ''
         func_start = '.. modbus:function:: '
-        cls = self.get_camel_case_name()
+        cls = self.get_modbus_name()
         for packet in self.get_packets('callback'):
             fid = '\n :functionid: {0}'.format(packet.get_function_id())
             response = packet.get_modbus_response_desc()
@@ -203,7 +206,7 @@ class ModbusDocPacket(common.Packet):
         'de': 'Rückgabewerte'
         }
 
-        cls = self.get_device().get_camel_case_name()
+        cls = self.get_device().get_modbus_name()
         for other_packet in self.get_device().get_packets():
             name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
             if other_packet.get_type() == 'callback':
