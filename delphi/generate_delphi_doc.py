@@ -220,6 +220,8 @@ Alle folgend aufgelisteten Funktionen und Prozeduren sind Thread-sicher.
 
         const_str = {
         'en' : """
+.. _{5}_{6}_delphi_constants:
+
 Constants
 ^^^^^^^^^
 
@@ -233,6 +235,8 @@ Constants
  the Brick's or Bricklet's type.
 """,
         'de' : """
+.. _{5}_{6}_delphi_constants:
+
 Konstanten
 ^^^^^^^^^^
 
@@ -276,7 +280,9 @@ Konstanten
                                                         self.get_category().upper(),
                                                         article,
                                                         self.get_camel_case_name(),
-                                                        self.get_category())
+                                                        self.get_category(),
+                                                        self.get_underscore_name(),
+                                                        self.get_category().lower())
 
         ref = '.. _{0}_{1}_delphi_api:\n'.format(self.get_underscore_name(),
                                                  self.get_category().lower())

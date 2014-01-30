@@ -1061,21 +1061,21 @@ class Device:
     def get_description(self):
         return self.raw_data['description']
 
-    def get_packets(self, typ=None):
-        if typ is None:
+    def get_packets(self, type=None):
+        if type is None:
             if self.generator.is_doc():
                 return self.all_packets
             else:
                 return self.all_packets_without_doc_only
-        elif typ == 'function':
+        elif type == 'function':
             if self.generator.is_doc():
                 return self.all_function_packets
             else:
                 return self.all_function_packets_without_doc_only
-        elif typ == 'callback':
+        elif type == 'callback':
             return self.callback_packets
         else:
-            raise ValueError('Invalid packet type ' + str(typ))
+            raise ValueError('Invalid packet type ' + str(type))
 
     def get_callback_count(self):
         return len(self.callback_packets)

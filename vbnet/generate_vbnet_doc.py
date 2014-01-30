@@ -218,6 +218,8 @@ Alle folgend aufgelisteten Funktionen und Prozeduren sind Thread-sicher.
 
         const_str = {
         'en' : """
+.. _{3}_{4}_vbnet_constants:
+
 Constants
 ^^^^^^^^^
 
@@ -231,6 +233,8 @@ Constants
  the Brick's or Bricklet's type.
 """,
         'de' : """
+.. _{3}_{4}_vbnet_constants:
+
 Konstanten
 ^^^^^^^^^^
 
@@ -273,7 +277,9 @@ Konstanten
             article = 'einen'
         api_str += common.select_lang(const_str).format(self.get_camel_case_name(),
                                                         self.get_category(),
-                                                        article)
+                                                        article,
+                                                        self.get_underscore_name(),
+                                                        self.get_category().lower())
 
         ref = '.. _{0}_{1}_vbnet_api:\n'.format(self.get_underscore_name(),
                                                 self.get_category().lower())

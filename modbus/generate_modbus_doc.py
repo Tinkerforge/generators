@@ -124,39 +124,6 @@ Eine allgemeine Beschreibung der Modbus Protokollstruktur findet sich
 """
         }
 
-        const_str = {
-        'en' : """
-Constants
-^^^^^^^^^
-
-.. modbus:attribute:: {0}.DEVICE_IDENTIFIER
-
- :value: {3}
-
- This constant is used to identify a {0} {1}.
-
- The :modbus:func:`get_identity <{0}.get_identity>` function and the
- :modbus:func:`CALLBACK_ENUMERATE <CALLBACK_ENUMERATE>`
- callback of the IP Connection have a ``device_identifier`` parameter to specify
- the Brick's or Bricklet's type.
-""",
-        'de' : """
-Konstanten
-^^^^^^^^^^
-
-.. modbus:attribute:: {0}.DEVICE_IDENTIFIER
-
- :value: {3}
-
- Diese Konstante wird verwendet um {2} {0} {1} zu identifizieren.
-
- Die :modbus:func:`get_identity <{0}.get_identity>` Funktion und der
- :modbus:func:`CALLBACK_ENUMERATE <CALLBACK_ENUMERATE>`
- Callback der IP Connection haben ein ``device_identifier`` Parameter um den Typ
- des Bricks oder Bricklets anzugeben.
-"""
-        }
-
         bf = self.get_modbus_methods('bf')
         af = self.get_modbus_methods('af')
         ccf = self.get_modbus_methods('ccf')
@@ -171,14 +138,6 @@ Konstanten
         if c:
             api_str += common.select_lang(c_str).format(c, self.get_underscore_name(),
                                                         self.get_category().lower())
-
-        article = 'ein'
-        if self.get_category() == 'Brick':
-            article = 'einen'
-        api_str += common.select_lang(const_str).format(self.get_camel_case_name(),
-                                                        self.get_category(),
-                                                        article,
-                                                        self.get_device_identifier())
 
         ref = '.. _{0}_{1}_modbus_api:\n'.format(self.get_underscore_name(),
                                                  self.get_category().lower())

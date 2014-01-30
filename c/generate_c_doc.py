@@ -299,6 +299,8 @@ Alle folgend aufgelisteten Funktionen sind Thread-sicher.
 
         const_str = {
     'en' : """
+.. _{1}_{5}_c_constants:
+
 Constants
 ^^^^^^^^^
 
@@ -311,6 +313,8 @@ Constants
  the Brick's or Bricklet's type.
 """,
     'de' : """
+.. _{1}_{5}_c_constants:
+
 Konstanten
 ^^^^^^^^^^
 
@@ -356,7 +360,8 @@ Konstanten
                                                         self.get_underscore_name(),
                                                         article,
                                                         self.get_camel_case_name(),
-                                                        self.get_category())
+                                                        self.get_category(),
+                                                        self.get_category().lower())
 
         ref = '.. _{0}_{1}_c_api:\n'.format(self.get_underscore_name(),
                                             self.get_category().lower())

@@ -286,6 +286,8 @@ Alle folgend aufgelisteten Methoden sind Thread-sicher.
 
         const_str = {
         'en' : """
+.. _{5}_{6}_java_constants:
+
 Constants
 ^^^^^^^^^
 
@@ -299,6 +301,8 @@ Constants
  the Brick's or Bricklet's type.
 """,
         'de' : """
+.. _{5}_{6}_java_constants:
+
 Konstanten
 ^^^^^^^^^^
 
@@ -342,7 +346,9 @@ Konstanten
                                                         self.get_category(),
                                                         article,
                                                         self.get_camel_case_name(),
-                                                        self.get_category())
+                                                        self.get_category(),
+                                                        self.get_underscore_name(),
+                                                        self.get_category().lower())
 
         ref = '.. _{0}_{1}_java_api:\n'.format(self.get_underscore_name(),
                                                self.get_category().lower())
