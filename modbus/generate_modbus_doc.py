@@ -147,7 +147,7 @@ Eine allgemeine Beschreibung der Modbus Protokollstruktur findet sich
     def get_modbus_doc(self):
         title = { 'en': 'Modbus protocol', 'de': 'Modbus Protokoll' }
 
-        doc  = common.make_rst_header(self, 'modbus', 'Modbus')
+        doc  = common.make_rst_header(self, 'modbus', 'Modbus', has_device_identifier_constant=False)
         doc += common.make_rst_summary(self, common.select_lang(title), None)
         doc += self.get_modbus_api()
 

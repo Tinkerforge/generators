@@ -161,18 +161,25 @@ def select_lang(d):
     else:
         return "Missing '{0}' documentation".format(lang)
 
-def make_rst_header(device, ref_name, title):
+def make_rst_header(device, ref_name, title, has_device_identifier_constant=True):
     category = device.get_category()
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     full_title = '{0} - {1} {2}'.format(title, device.get_display_name(), category)
     full_title_underline = '='*len(full_title)
     breadcrumbs = select_lang(breadcrumbs_str).format(category.lower(), category, full_title)
-    ref = '.. _{0}_{1}_{2}:\n'.format(device.get_underscore_name(),category.lower(), ref_name)
-    return '{0}\n{1}\n{2}\n{3}\n{4}\n'.format(gen_text_rst.format(date),
-                                              breadcrumbs,
-                                              ref,
-                                              full_title,
-                                              full_title_underline)
+    device_identifier_constant = {'en': '.. |device_identifier_constant| replace:: There is also a :ref:`constant <{0}_{1}_{2}_constants>` for the device identifier of this {3}.\n',
+                                  'de': '.. |device_identifier_constant| replace:: Es gibt auch eine :ref:`Konstante <{0}_{1}_{2}_constants>` für den Device Identifier dieses {3}.\n'}
+    if has_device_identifier_constant:
+        device_identifier_constant = select_lang(device_identifier_constant).format(device.get_underscore_name(), category.lower(), ref_name, category)
+    else:
+        device_identifier_constant = '.. |device_identifier_constant| unicode:: 0xA0\n   :trim:\n'
+    ref = '.. _{0}_{1}_{2}:\n'.format(device.get_underscore_name(), category.lower(), ref_name)
+    return '{0}\n{1}\n{2}\n{3}\n{4}\n{5}\n'.format(gen_text_rst.format(date),
+                                                   breadcrumbs,
+                                                   device_identifier_constant,
+                                                   ref,
+                                                   full_title,
+                                                   full_title_underline)
 
 def make_rst_summary(device, title, programming_language):
     not_released = {

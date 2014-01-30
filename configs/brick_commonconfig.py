@@ -125,7 +125,8 @@ device identifier.
 
 The position can be '0'-'8' (stack position).
 
-The device identifiers can be found :ref:`here <device_identifier>`.
+The device identifier numbers can be found :ref:`here <device_identifier>`.
+|device_identifier_constant|
 """,
 'de':
 """
@@ -135,7 +136,8 @@ zurück.
 
 Die Position kann '0'-'8' (Stack Position) sein.
 
-Die Device Identifiers sind :ref:`hier <device_identifier>` zu finden.
+Eine Liste der Device Identifier Werte ist :ref:`hier <device_identifier>` zu
+finden. |device_identifier_constant|
 """
 }]
 })

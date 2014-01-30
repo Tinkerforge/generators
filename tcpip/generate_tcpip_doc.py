@@ -148,7 +148,7 @@ Eine allgemeine Beschreibung der TCP/IP Protokollstruktur findet sich
     def get_tcpip_doc(self):
         title = { 'en': 'TCP/IP protocol', 'de': 'TCP/IP Protokoll' }
 
-        doc  = common.make_rst_header(self, 'tcpip', 'TCP/IP')
+        doc  = common.make_rst_header(self, 'tcpip', 'TCP/IP', has_device_identifier_constant=False)
         doc += common.make_rst_summary(self, common.select_lang(title), None)
         doc += self.get_tcpip_api()
 

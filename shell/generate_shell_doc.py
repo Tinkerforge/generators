@@ -359,7 +359,7 @@ Befehlsstruktur dargestellt.
     def get_shell_doc(self):
         title = { 'en': 'Shell bindings', 'de': 'Shell Bindings' }
 
-        doc  = common.make_rst_header(self, 'shell', 'Shell')
+        doc  = common.make_rst_header(self, 'shell', 'Shell', has_device_identifier_constant=False)
         doc += common.make_rst_summary(self, common.select_lang(title), 'shell')
         doc += self.get_shell_examples()
         doc += self.get_shell_api()

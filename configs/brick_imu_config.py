@@ -495,7 +495,7 @@ There are several different types that can be calibrated:
 
 .. csv-table::
  :header: "Type", "Description", "Values"
- :widths: 10, 40, 100
+ :widths: 10, 30, 110
 
  "0",    "Accelerometer Gain", "``[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]``"
  "1",    "Accelerometer Bias", "``[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]``"
@@ -532,7 +532,7 @@ Es sind folgende verschiedene Kalibrierungen möglich:
 
 .. csv-table::
  :header: "Typ", "Beschreibung", "Werte"
- :widths: 10, 40, 100
+ :widths: 10, 30, 110
  
  "0",    "Beschleunigungsmesser Verstärkung", "``[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]``"
  "1",    "Beschleunigungsmesser Versatz",     "``[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]``"
