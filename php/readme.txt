@@ -1,4 +1,4 @@
-This zip contains a PEAR package with the bindings for all Tinkerforge Bricks
+This ZIP contains a PEAR package with the bindings for all Tinkerforge Bricks
 and Bricklets (Tinkerforge.tgz), the source of the PEAR package (in source/)
 and all available PHP examples (in examples/).
 

@@ -1,6 +1,6 @@
-The Visual Basic .NET bindings consist of a library (.dll) for all Tinkerforge
-Bricks and Bricklets (Tinkerforge.dll), the C# source of the DLL
-(in source/) and all available Visual Basic .NET examples (in examples/).
+This ZIP contains a Visual Basic .NET library (.dll) for all Tinkerforge
+Bricks and Bricklets (Tinkerforge.dll), the source of the library (in source/)
+and all available Visual Basic .NET examples (in examples/).
 
 As an example we will compile the Stepper Brick configuration example with
 the Visual Basic .NET Compiler (VBNC) that comes with Mono. Create a new

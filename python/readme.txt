@@ -1,4 +1,4 @@
-This zip contains a Python egg with the bindings for all Tinkerforge Bricks and
+This ZIP contains a Python egg with the bindings for all Tinkerforge Bricks and
 Bricklets (tinkerforge.egg), the source of the egg (in source/) and all available
 Python examples (in examples/).
 

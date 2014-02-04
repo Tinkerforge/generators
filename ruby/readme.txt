@@ -1,4 +1,4 @@
-This zip contains a Ruby GEM with the bindings for all Tinkerforge Bricks and
+This ZIP contains a Ruby GEM with the bindings for all Tinkerforge Bricks and
 Bricklets (tinkerforge.gem), the source of the GEM (in source/) and all available
 Ruby examples (in examples/).
 

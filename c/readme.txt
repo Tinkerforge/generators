@@ -1,4 +1,4 @@
-This zip contains the C/C++ bindings for all Tinkerforge Bricks and Bricklets
+This ZIP contains the C/C++ bindings for all Tinkerforge Bricks and Bricklets
 (in bindings/) and all available C/C++ examples (in examples/).
 
 To keep the C/C++ bindings stupid and simple, they only have dependencies that
@@ -7,7 +7,7 @@ project hassle-free. We do not offer a pre-compiled library, since it would be
 a pain in the ass to provide them for all combinations of architectures and
 operating systems. This means, the bindings should work on most architectures
 (ARM, x86, etc.) and on most operating systems (Windows and POSIX systems such
-as Linux and Mac OS, etc.).
+as Linux and Mac OS X, etc.).
 
 As an example we will compile the Stepper Brick configuration example with gcc
 on Windows and Linux. For that we have to copy the IP Connection and the

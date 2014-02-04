@@ -1,4 +1,4 @@
-This zip contains a script to interact with all Tinkerforge Bricks and
+This ZIP contains a script to interact with all Tinkerforge Bricks and
 Bricklets (tinkerforge), a corresponding Bash Completion script
 (tinkerforge-bash-completion.sh) and all available Shell examples (in
 examples/).
