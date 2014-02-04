@@ -246,7 +246,7 @@ ausgeführt werden können ist :ref:`hier <{3}>` zu finden.
 
 def make_rst_examples(title_from_file_name, device, base_path, dirname,
                       filename_prefix, filename_suffix, include_name,
-                      language=None):
+                      language=None, url_fixer=None):
     if language is None:
        language = dirname
 
@@ -276,10 +276,10 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
 {0}
 {1}
 
-`Download <https://github.com/Tinkerforge/{3}/raw/master/software/examples/{4}/{5}>`__
+`Download <{3}>`__
 
 .. literalinclude:: {2}
- :language: {6}
+ :language: {4}
  :linenos:
  :tab-width: 4
 """,
@@ -287,10 +287,10 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
 {0}
 {1}
 
-`Download <https://github.com/Tinkerforge/{3}/raw/master/software/examples/{4}/{5}>`__
+`Download <{3}>`__
 
 .. literalinclude:: {2}
- :language: {6}
+ :language: {4}
  :linenos:
  :tab-width: 4
 """
@@ -307,7 +307,10 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
         copy_files.append((f[1], include))
         title = title_from_file_name(f[0])
         git_name = device.get_underscore_name().replace('_', '-') + '-' + device.get_category().lower()
-        examples += select_lang(imp).format(title, '^'*len(title), include, git_name, dirname, f[0], language)
+        url = 'https://github.com/Tinkerforge/{0}/raw/master/software/examples/{1}/{2}'.format(git_name, dirname, f[0])
+        if url_fixer is not None:
+            url = url_fixer(url)
+        examples += select_lang(imp).format(title, '^'*len(title), include, url, language)
 
     copy_examples(copy_files, base_path)
     return examples
@@ -1101,7 +1104,9 @@ class Device:
                     value = str(constant_item.get_value())
 
                 constants.append(constant_format.format(constant_group_upper_case_name=constant_group.get_upper_case_name(),
+                                                        constant_group_camel_case_name=constant_group.get_camel_case_name(),
                                                         constant_item_upper_case_name=constant_item.get_upper_case_name(),
+                                                        constant_item_camel_case_name=constant_item.get_camel_case_name(),
                                                         constant_item_value=value,
                                                         **extra_value))
 
