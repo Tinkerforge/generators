@@ -44,12 +44,12 @@ class PythonDocDevice(python_common.PythonDevice):
         return common.make_rst_examples(title_from_file_name, self, self.get_generator().get_bindings_root_directory(),
                                         'python', 'example_', '.py', 'Python')
 
-    def get_python_methods(self, typ):
-        methods = ''
+    def get_python_methods(self, type):
+        methods = []
         func_start = '.. py:function:: '
         cls = self.get_camel_case_name()
         for packet in self.get_packets('function'):
-            if packet.get_doc()[0] != typ:
+            if packet.get_doc()[0] != type:
                 continue
             name = packet.get_underscore_name()
             params = packet.get_python_parameter_list()
@@ -58,14 +58,14 @@ class PythonDocDevice(python_common.PythonDevice):
             d = packet.get_python_formatted_doc()
             obj_desc = packet.get_python_object_desc()
             desc = '{0}{1}{2}{3}'.format(pd, r, d, obj_desc)
-            func = '{0}{1}.{2}({3})\n{4}'.format(func_start,
-                                                 cls,
-                                                 name,
-                                                 params,
-                                                 desc)
-            methods += func + '\n'
+            func = '{0}{1}.{2}({3})\n{4}\n'.format(func_start,
+                                                   cls,
+                                                   name,
+                                                   params,
+                                                   desc)
+            methods.append(func)
 
-        return methods
+        return ''.join(methods)
 
     def get_python_callbacks(self):
         cbs = ''
