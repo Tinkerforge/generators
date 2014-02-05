@@ -198,15 +198,15 @@ API
 Generally, every method of the C# bindings that returns a value can
 throw a ``Tinkerforge.TimeoutException``. This exception gets thrown if the
 device did not respond. If a cable based connection is used, it is
-unlikely that this exception gets thrown (Assuming nobody plugs the
+unlikely that this exception gets thrown (assuming nobody plugs the
 device out). However, if a wireless connection is used, timeouts will occur
 if the distance to the device gets too big.
 
-Since C# does not support multiple return values directly, we use the out
+Since C# does not support multiple return values directly, we use the ``out``
 keyword to return multiple values from a method.
 
 The namespace for all Brick/Bricklet bindings and the IPConnection is
-``Tinkerforge.*``
+``Tinkerforge.*``.
 
 All methods listed below are thread-safe.
 
@@ -231,7 +231,7 @@ Da C# nicht mehrere Rückgabewerte direkt unterstützt, wird das ``out`` Schlüs
 genutzt, um mehrere Werte aus einer Funktion zurückzugeben.
 
 Der Namensraum für alle Brick/Bricklet Bindings und die IPConnection ist
-``Tinkerforge.*``
+``Tinkerforge.*``.
 
 Alle folgend aufgelisteten Methoden sind Thread-sicher.
 
