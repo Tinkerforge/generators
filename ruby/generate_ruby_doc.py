@@ -376,10 +376,10 @@ class RubyDocPacket(ruby_common.RubyPacket):
 
         desc = {
         'en': """
- The returned tuple has the values {0}.
+ The returned array has the values {0}.
 """,
         'de': """
- Das zurückgegebene Tupel enthält die Werte {0}.
+ Das zurückgegebene Array enthält die Werte {0}.
 """
         }
 
