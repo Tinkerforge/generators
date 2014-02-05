@@ -426,7 +426,12 @@ class JavaDocPacket(java_common.JavaPacket):
 
         var = []
         for element in self.get_elements('out'):
-            var.append('``{0} {1}``'.format(element.get_java_type(),
+            typ = element.get_java_type()
+
+            if element.get_cardinality() > 1 and element.get_type() != 'string':
+                typ += '[]'
+
+            var.append('``{0} {1}``'.format(typ,
                                             element.get_headless_camel_case_name()))
 
         if len(var) == 1:
