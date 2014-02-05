@@ -130,11 +130,11 @@ Eine allgemeine Beschreibung der Modbus Protokollstruktur findet sich
         c = self.get_modbus_callbacks()
         api_str = ''
         if bf:
-            api_str += common.select_lang(common.bf_str).format(bf, '')
+            api_str += common.select_lang(common.bf_str).format('', bf)
         if af:
             api_str += common.select_lang(common.af_str).format(af)
         if ccf:
-            api_str += common.select_lang(common.ccf_str).format(ccf, '')
+            api_str += common.select_lang(common.ccf_str).format('', ccf)
         if c:
             api_str += common.select_lang(c_str).format(c, self.get_underscore_name(),
                                                         self.get_category().lower())

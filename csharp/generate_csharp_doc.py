@@ -129,11 +129,6 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
 """
         }
 
-        register_str = {
-        'en': '',
-        'de': ''
-        }
-
         c_str = {
         'en': """
 .. _{1}_{2}_csharp_callbacks:
@@ -284,10 +279,6 @@ Konstanten
                                                     self.get_category().lower(),
                                                     self.get_category(),
                                                     self.get_underscore_name())
-        reg = common.select_lang(register_str).format(self.get_underscore_name(),
-                                                      self.get_camel_case_name(),
-                                                      self.get_category().lower(),
-                                                      self.get_category())
 
         bf = self.get_csharp_methods('bf')
         af = self.get_csharp_methods('af')
@@ -298,8 +289,9 @@ Konstanten
             api_str += common.select_lang(common.bf_str).format(cre, bf)
         if af:
             api_str += common.select_lang(common.af_str).format(af)
+        if ccf:
+            api_str += common.select_lang(common.ccf_str).format('', ccf)
         if c:
-            api_str += common.select_lang(common.ccf_str).format(reg, ccf)
             api_str += common.select_lang(c_str).format(c, self.get_underscore_name(),
                                                         self.get_category().lower(),
                                                         self.get_csharp_class_name())

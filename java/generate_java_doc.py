@@ -332,8 +332,9 @@ Konstanten
             api_str += common.select_lang(common.bf_str).format(cre, bf)
         if af:
             api_str += common.select_lang(common.af_str).format(af)
-        if c:
+        if ccf:
             api_str += common.select_lang(ccf_str).format(ccf)
+        if c:
             api_str += common.select_lang(c_str).format(c, self.get_underscore_name(),
                                                         self.get_category().lower(),
                                                         self.get_category(),
