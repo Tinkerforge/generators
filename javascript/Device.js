@@ -3,8 +3,7 @@ Device.RESPONSE_EXPECTED_ALWAYS_TRUE = 1; // getter
 Device.RESPONSE_EXPECTED_ALWAYS_FALSE = 2; // callback
 Device.RESPONSE_EXPECTED_TRUE = 3; // setter
 Device.RESPONSE_EXPECTED_FALSE = 4; // setter, default
-Device.INVALID_FUNCTION_ID = 21;
-Device.INVALID_RESPONSE_EXPECTED = 22;
+Device.ERROR_INVALID_FUNCTION_ID = 21;
 
 function Device(deviceRegistering, uid, ipcon) {
 	if(deviceRegistering !== undefined &&
@@ -18,12 +17,13 @@ function Device(deviceRegistering, uid, ipcon) {
 		this.registeredCallbacks = {};
 		this.callbackFormats = {}; //will be overwritten by child class
 		this.expectedResponses = [];//has following structured objects as elements of the array,
-									//{FID:,
+									//{DeviceOID:,
+									// FID:,
 									// SEQ:,
 									// unpackFormat:,
 									// timeout:,
-									// returnCallback:,
-									// errorCallback:}
+									// returnCB:,
+									// errorCB:}
 		this.authKey = undefined;
 		//Creates the device object with the unique device ID *uid* and adds
 		//it to the IPConnection *ipcon*.
@@ -40,53 +40,45 @@ function Device(deviceRegistering, uid, ipcon) {
 		this.getResponseExpected = function(functionID, errorCallback) {
 			if(this.responseExpected[functionID] === undefined) {
 				if(errorCallback !== undefined) {
-					errorCallback(Device.INVALID_FUNCTION_ID);
+					errorCallback(Device.ERROR_INVALID_FUNCTION_ID);
 					return;
 				}
 			}
-			return this.responseExpected[functionID];
+			if(this.responseExpected[functionID] === Device.RESPONSE_EXPECTED_TRUE || 
+					this.responseExpected[functionID] === Device.RESPONSE_EXPECTED_ALWAYS_TRUE) {
+				return true;
+			}
+			else {
+				return false;
+			}			
 		};
-		this.setResponseExpected = function(functionID, expectedResponse, errorCallback) {
+		this.setResponseExpected = function(functionID, responseBoolean, errorCallback) {
 			if(this.responseExpected[functionID] === undefined) {
 				if(errorCallback !== undefined) {
-					errorCallback(Device.INVALID_FUNCTION_ID);
+					errorCallback(Device.ERROR_INVALID_FUNCTION_ID);
 					return;
 				}
 			}
-			if(expectedResponse !== Device.RESPONSE_EXPECTED_TRUE){
-				if(expectedResponse !== Device.RESPONSE_EXPECTED_ALWAYS_TRUE){
-					if(expectedResponse !== Device.RESPONSE_EXPECTED_FALSE){
-						if(expectedResponse !== Device.RESPONSE_EXPECTED_ALWAYS_FALSE) {
-							if(errorCallback !== undefined) {
-								errorCallback(Device.INVALID_RESPONSE_EXPECTED);
-								return;
-							}
-						}
-					}
+			if(this.responseExpected[functionID] === Device.RESPONSE_EXPECTED_TRUE || 
+					this.responseExpected[functionID] === Device.RESPONSE_EXPECTED_FALSE) {
+				if(responseBoolean) {
+					this.responseExpected[functionID] = Device.RESPONSE_EXPECTED_TRUE;
 				}
-			}
-			if(this.responseExpected[functionID] !== Device.RESPONSE_EXPECTED_ALWAYS_TRUE &&
-					this.responseExpected[functionID] !== Device.RESPONSE_EXPECTED_ALWAYS_FALSE) {
-				this.responseExpected[functionID] = expectedResponse;
+				else {
+					this.responseExpected[functionID] = Device.RESPONSE_EXPECTED_FALSE;
+				}
 			}
 		};
-		this.setResponseExpectedAll = function(expectedResponse) {
-			if(expectedResponse !== Device.RESPONSE_EXPECTED_TRUE){
-				if(expectedResponse !== Device.RESPONSE_EXPECTED_ALWAYS_TRUE){
-					if(expectedResponse !== Device.RESPONSE_EXPECTED_FALSE){
-						if(expectedResponse !== Device.RESPONSE_EXPECTED_ALWAYS_FALSE) {
-							if(errorCallback !== undefined) {
-								errorCallback(Device.INVALID_RESPONSE_EXPECTED);
-								return;
-							}
-						}
-					}
-				}
-			}
+		this.setResponseExpectedAll = function(responseBoolean) {
 			for(var fid in this.responseExpected) {
-				if(this.responseExpected[fid] !== Device.RESPONSE_EXPECTED_ALWAYS_TRUE &&
-						this.responseExpected[fid] !== Device.RESPONSE_EXPECTED_ALWAYS_FALSE) {
-					this.responseExpected[fid] = expectedResponse;
+				if(this.responseExpected[fid] === Device.RESPONSE_EXPECTED_TRUE ||
+						this.responseExpected[fid] === Device.RESPONSE_EXPECTED_FALSE) {
+					if(responseBoolean) {
+						this.responseExpected[fid] = Device.RESPONSE_EXPECTED_TRUE;
+					}
+					else {
+						this.responseExpected[fid] = Device.RESPONSE_EXPECTED_FALSE;
+					}
 				}
 			}
 		};
