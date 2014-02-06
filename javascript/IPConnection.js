@@ -25,12 +25,14 @@ IPConnection.CONNECTION_STATE_PENDING = 2; //auto-reconnect in process
 IPConnection.DISCONNECT_PROBE_INTERVAL = 5000;
 IPConnection.RETRY_CONNECTION_INTERVAL = 2000;
 // error codes
-IPConnection.ALREADY_CONNECTED = 11;
-IPConnection.ALREADY_DISCONNECTED = 12;
-IPConnection.CONNECT_FAILED = 13;
-IPConnection.INVALID_FUNCTION_ID = 21;
-IPConnection.INVALID_RESPONSE_EXPECTED = 22;
-IPConnection.RESPONSE_TIMED_OUT = 31;
+IPConnection.ERROR_ALREADY_CONNECTED = 11;
+IPConnection.ERROR_NOT_CONNECTED = 12;
+IPConnection.ERROR_AUTO_RECONNECT_IN_PROGRESS = 13;
+IPConnection.ERROR_CONNECT_FAILED = 13;
+IPConnection.ERROR_INVALID_FUNCTION_ID = 21;
+IPConnection.ERROR_TIMEOUT = 31;
+IPConnection.ERROR_INVALID_PARAMETER = 41;
+IPConnection.ERROR_FUNCTION_NOT_SUPPORTED = 42;
 
 //the IPConnection class and constructor
 function IPConnection() {
@@ -89,16 +91,19 @@ function IPConnection() {
         //checking if already connected
         if(this.isConnected && this.socket !== undefined && this.host != undefined && this.port != undefined) {
             if (this.connectErrorCallback !== undefined) {
-                this.connectErrorCallback(IPConnection.ALREADY_CONNECTED);
+                this.connectErrorCallback(IPConnection.ERROR_ALREADY_CONNECTED);
             }
             return;
         }
         //checking if reconnect retry is in progress
-        //if so then stopping and resetting the flag
+        //if so then calling user error CB(if any) and simply returning
         if(this.connectionPending) {
-            clearInterval(this.retryConnectionIID);
-            this.connectionPending = false;
+        	if (this.connectErrorCallback !== undefined) {
+        		this.connectErrorCallback(IPConnection.ERROR_AUTO_RECONNECT_IN_PROGRESS);
+        	}
+        	return;
         }
+        clearInterval(this.retryConnectionIID);
         clearInterval(this.disconnectProbeIID);
         this.isConnected = false;
         this.connectRequested = true;
@@ -178,9 +183,9 @@ function IPConnection() {
     this.handleConnectionClose = function() {
         if(this.disconnectRequested) {
             for(var i=0; i<this.devices.length; i++) {
+            	clearTimeout(this.devices[i].expectedResponses.timeout);
                 this.devices[i].expectedResponses = [];
             }
-            this.devices = {};
             this.isConnected = false;
             this.connectRequested = false;
             this.disconnectRequested = false;
@@ -249,7 +254,7 @@ function IPConnection() {
             }
             if (this.connectErrorCallback !== undefined) {
                 
-                this.connectErrorCallback(IPConnection.CONNECT_FAILED);
+                this.connectErrorCallback(IPConnection.ERROR_CONNECT_FAILED);
             }
         }
         return;
@@ -613,6 +618,13 @@ function IPConnection() {
     this.sendRequest = function(sendRequestDevice, sendRequestFID, sendRequestData,
                                 sendRequestPackFormat, sendRequestUnpackFormat,
                                 sendRequestReturnCB, sendRequestErrorCB) {
+    	if(this.getConnectionState() === IPConnection.CONNECTION_STATE_DISCONNECTED ||
+    			this.getConnectionState() === IPConnection.CONNECTION_STATE_PENDING) {
+    		if(sendRequestErrorCB !== undefined) {
+    			sendRequestErrorCB(IPConnection.ERROR_NOT_CONNECTED);
+    		}
+    		return;
+    	}
         //packet creation
         var sendRequestPayload = pack(sendRequestData, sendRequestPackFormat);
         var sendRequestHeader = this.createPacketHeader(sendRequestDevice,
@@ -624,8 +636,7 @@ function IPConnection() {
         var sendRequestPacket = bufferConcat([sendRequestHeader, sendRequestPayload]);
         var sendRequestSEQ = this.getSequenceNumberFromPacket(sendRequestHeader);
         //sending the created packet
-        if(sendRequestDevice.getResponseExpected(sendRequestFID) === Device.RESPONSE_EXPECTED_TRUE ||
-                sendRequestDevice.getResponseExpected(sendRequestFID) === Device.RESPONSE_EXPECTED_ALWAYS_TRUE) {
+        if(sendRequestDevice.getResponseExpected(sendRequestFID)) {
             //setting the requesting current device's current request            
             var sendRequestDeviceOID = sendRequestDevice.getDeviceOID();
             sendRequestDevice.expectedResponses.push({DeviceOID:sendRequestDeviceOID,
@@ -645,7 +656,7 @@ function IPConnection() {
                 clearTimeout(timeoutDevice.expectedResponses[i].timeout);
                 timeoutDevice.expectedResponses.splice(i, 1);
                 if(timeoutErrorCB !== undefined){
-                    timeoutErrorCB(IPConnection.RESPONSE_TIMED_OUT);
+                    timeoutErrorCB(IPConnection.ERROR_TIMEOUT);
                 }
                 return;
             }
@@ -663,26 +674,46 @@ function IPConnection() {
             }
             if(this.devices[this.getUIDFromPacket(packetResponse)].expectedResponses[i].unpackFormat === '') {
                 clearTimeout(handleResponseDevice.expectedResponses[i].timeout);
+                if(handleResponseDevice.expectedResponses[i].returnCB !== undefined) {
+                	eval('handleResponseDevice.expectedResponses[i].returnCB();');
+                }
                 handleResponseDevice.expectedResponses.splice(i, 1);
-                eval('handleResponseDevice.expectedResponses[i].returnCB();');
                 return;
             }
             if(handleResponseDevice.expectedResponses[i].FID === handleResponseFID &&
                     handleResponseDevice.expectedResponses[i].SEQ === handleResponseSEQ) {
+            	if (this.getEFromPacket(packetResponse) === 1) {
+                    clearTimeout(handleResponseDevice.expectedResponses[i].timeout);
+            		if(this.devices[this.getUIDFromPacket(packetResponse)].expectedResponses[i].errorCB !== undefined) {
+            			eval('handleResponseDevice.expectedResponses[i].errorCB(IPConnection.ERROR_INVALID_PARAMETER);');
+            		}
+            		handleResponseDevice.expectedResponses.splice(i, 1);
+            		return;
+            	}
+            	if (this.getEFromPacket(packetResponse) === 2) {
+                    clearTimeout(handleResponseDevice.expectedResponses[i].timeout);
+            		if(this.devices[this.getUIDFromPacket(packetResponse)].expectedResponses[i].errorCB !== undefined) {
+            			eval('handleResponseDevice.expectedResponses[i].errorCB(IPConnection.FUNCTION_NOT_SUPPORTED);');
+            		}
+            		handleResponseDevice.expectedResponses.splice(i, 1);
+            		return;
+            	}
                 clearTimeout(handleResponseDevice.expectedResponses[i].timeout);
-                var retArgs = unpack(this.getPayloadFromPacket(packetResponse),
-                        handleResponseDevice.expectedResponses[i].unpackFormat);
-                var evalStr = 'handleResponseDevice.expectedResponses[i].returnCB(';
-                for(var j=0; j<retArgs.length;j++) {
-                    eval('var retSingleArg'+j+'=retArgs['+j+'];');
-                    if(j != retArgs.length-1) {
-                        evalStr += 'retSingleArg'+j+',';
-                    }
-                    else {
-                        evalStr += 'retSingleArg'+j+');';
-                    }
+                if(handleResponseDevice.expectedResponses[i].returnCB !== undefined) {
+                	var retArgs = unpack(this.getPayloadFromPacket(packetResponse),
+                			handleResponseDevice.expectedResponses[i].unpackFormat);
+                	var evalStr = 'handleResponseDevice.expectedResponses[i].returnCB(';
+                	for(var j=0; j<retArgs.length;j++) {
+                		eval('var retSingleArg'+j+'=retArgs['+j+'];');
+                		if(j != retArgs.length-1) {
+                			evalStr += 'retSingleArg'+j+',';
+                		}
+                		else {
+                			evalStr += 'retSingleArg'+j+');';
+                		}
+                	}
+                	eval(evalStr);
                 }
-                eval(evalStr);
                 handleResponseDevice.expectedResponses.splice(i, 1);
                 return;
             }
@@ -808,8 +839,7 @@ function IPConnection() {
                 return;
             }
             UID = headerDevice.uid;
-            if(responseExpected === Device.RESPONSE_EXPECTED_ALWAYS_TRUE ||
-                    responseExpected === Device.RESPONSE_EXPECTED_TRUE) {
+            if(responseExpected) {
                 responseBits = 1;
             }
             if(headerDevice.authKey !== undefined) {
