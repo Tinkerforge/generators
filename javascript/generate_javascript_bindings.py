@@ -3,6 +3,7 @@
 
 """
 JavaScript Bindings Generator
+Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
@@ -34,9 +35,13 @@ import javascript_common
 
 class JavaScriptBindingsDevice(javascript_common.JavaScriptDevice):
     def get_javascript_require(self):
-        return """var Device = require('./Device');\n
-{0}.DEVICE_IDENTIFIER = {1};\n""".format(self.get_javascript_class_name(),
-                                                  self.get_device_identifier())
+        date = datetime.datetime.now().strftime("%Y-%m-%d")
+        version = common.get_changelog_version(self.get_generator().get_bindings_root_directory())
+        return """{0}
+var Device = require('./Device');\n
+{1}.DEVICE_IDENTIFIER = {2};\n""".format(common.gen_text_star.format(date, *version),
+                                         self.get_javascript_class_name(),
+                                         self.get_device_identifier())
     
     def get_javascript_constants(self):
         callback_constants = ''
