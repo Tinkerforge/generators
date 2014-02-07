@@ -3,8 +3,7 @@
 
 """
 JavaScript Documentation Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
-Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 
 generator_javascript_doc.py: Generator for JavaScript documentation
 

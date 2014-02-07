@@ -4,8 +4,7 @@
 """
 JavaScript Bindings Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
-Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_javascript.py: Generator for JavaScript bindings
 

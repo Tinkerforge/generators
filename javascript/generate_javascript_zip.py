@@ -3,8 +3,8 @@
 
 """
 JavaScript ZIP Generator
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
-Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_javascript_zip.py: Generator for JavaScript ZIP
 
