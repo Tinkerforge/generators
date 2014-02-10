@@ -1101,6 +1101,27 @@ sub handle_packet
 	{
 		if(defined($self->{devices}->{$uid}))
 		{
+            my $_device = $self->{devices}->{$uid}; 
+            my $_err_code = $_device->{super}->{ipcon}->get_err_from_data($packet);
+            
+            if($_err_code != 0)
+            {
+                if($_err_code == 1)
+                {
+                    croak("Got invalid parameter for function $fid");
+                    return 1;
+                }
+                elsif($_err_code == 2)
+                {
+                    croak("Function $fid is not supported");
+                    return 1;
+                }    
+                else
+                {
+                    croak("Function $fid returned an unknown error");
+                    return 1;
+                }     
+            }
 			$self->{callback_queue}->enqueue([&QUEUE_PACKET, $packet, undef, undef]);
 		}
 		return 1;
@@ -1109,7 +1130,7 @@ sub handle_packet
 	my $_fid = $self->{devices}->{$uid}->{super}->{expected_response_function_id};
 	my $_seq = $self->{devices}->{$uid}->{super}->{expected_response_sequence_number};
 
-	if($$_fid== $fid && $$_seq== $seq)
+	if($$_fid == $fid && $$_seq == $seq)
 	{
 		$self->{devices}->{$uid}->{super}->{response_queue}->enqueue($packet);
 		return 1;

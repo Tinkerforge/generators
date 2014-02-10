@@ -171,8 +171,27 @@ sub send_request
 		{
 			if(defined($form_return))
 			{
-				if(length($response_packet) > 8)
+				if(length($response_packet) >= 8)
 				{
+                    my $_err_code = $device->{super}->{ipcon}->get_err_from_data($response_packet);
+                    if($_err_code != 0)
+                    {
+                        if($_err_code == 1)
+                        {
+                            croak("Got invalid parameter for function $function_id");
+                            return 1;
+                        }
+                        elsif($_err_code == 2)
+                        {
+                            croak("Function $function_id is not supported");
+                            return 1;
+                        }    
+                        else
+                        {
+                            croak("Function $function_id returned an unknown error");
+                            return 1;
+                        }     
+                    }
 					my $response_packet_payload = $device->{super}->{ipcon}->get_payload_from_data($response_packet);
 					my @form_return_arr = split(' ', $form_return);
 
