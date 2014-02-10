@@ -47,7 +47,7 @@ package {1};
         package_name = self.get_category() + self.get_camel_case_name()
 
         return package.format(common.gen_text_hash.format(date, *version),
-                              package_name, self.get_description())
+                              'Tinkerforge::'+package_name, self.get_description())
 
     def get_perl_use(self):
         return """
@@ -96,7 +96,7 @@ sub new
 =cut
     my ($class, $host, $port) = @_;
 
-    my $self :shared = shared_clone({{super => shared_clone(new Device($host,$port)),
+    my $self :shared = shared_clone({{super => shared_clone(Tinkerforge::Device->new($host,$port)),
                                      api_version => [{0}, {1}, {2}],
 """
         response_expected = '                                     response_expected => shared_clone({'
@@ -116,13 +116,13 @@ sub new
                 flag = 'RESPONSE_EXPECTED_FALSE'
 
             if idx == 0:
-                response_expected += '&{0}{1} => Device->{2},\n' \
+                response_expected += '&{0}{1} => Tinkerforge::Device->{2},\n' \
                     .format(prefix, packet.get_upper_case_name(), flag)
             if idx > 0 and idx != len(self.get_packets()) - 1:
-                response_expected += '                                                                        &{0}{1} => Device->{2},\n' \
+                response_expected += '                                                                        &{0}{1} => Tinkerforge::Device->{2},\n' \
                     .format(prefix, packet.get_upper_case_name(), flag)
             if idx == len(self.get_packets()) - 1:
-                response_expected += '                                                                        &{0}{1} => Device->{2}}})' \
+                response_expected += '                                                                        &{0}{1} => Tinkerforge::Device->{2}}})' \
                     .format(prefix, packet.get_upper_case_name(), flag)
 
         dev_new = dev_new.format(*self.get_api_version()) + response_expected
@@ -157,7 +157,7 @@ sub {0}
 =comment
         {1}
 =cut
-    lock($Device::DEVICE_LOCK);
+    lock($Tinkerforge::Device::DEVICE_LOCK);
 
     my ($self{2}) = @_;
 
@@ -170,7 +170,7 @@ sub {0}
 =comment
         {1}
 =cut
-    lock($Device::DEVICE_LOCK);
+    lock($Tinkerforge::Device::DEVICE_LOCK);
 
     my ($self{2}) = @_;
 
@@ -183,7 +183,7 @@ sub {0}
 =comment
         {1}
 =cut
-    lock($Device::DEVICE_LOCK);
+    lock($Tinkerforge::Device::DEVICE_LOCK);
 
     my ($self{2}) = @_;
 
@@ -225,7 +225,7 @@ sub register_callback
 =comment
         Registers a callback with ID *id* to the function *callback*.
 =cut
-    lock($Device::DEVICE_LOCK);
+    lock($Tinkerforge::Device::DEVICE_LOCK);
 
     my ($self, $id, $callback) = @_;
 
@@ -262,7 +262,7 @@ sub get_response_expected
         flag is disabled for a setter function then no response is send and
         errors are silently ignored, because they cannot be detected.
 =cut
-    lock($Device::DEVICE_LOCK);
+    lock($Tinkerforge::Device::DEVICE_LOCK);
 
     my ($self, $function_id) = @_;
 
@@ -291,7 +291,7 @@ sub set_response_expected
         flag is disabled for a setter function then no response is send and
         errors are silently ignored, because they cannot be detected.
 =cut
-    lock($Device::DEVICE_LOCK);
+    lock($Tinkerforge::Device::DEVICE_LOCK);
 
     my ($self, $function_id, $response_expected) = @_;
 
@@ -321,7 +321,7 @@ sub set_response_expected_all
         Changes the response expected flag for all setter and callback
         configuration functions of this device at once.
 =cut
-    lock($Device::DEVICE_LOCK);
+    lock($Tinkerforge::Device::DEVICE_LOCK);
 
     my ($self, $response_expected) = @_;
 

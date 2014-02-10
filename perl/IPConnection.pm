@@ -5,7 +5,7 @@
 # Commons Zero (CC0 1.0) License for more details.
 
 # package definition
-package IPConnection;
+package Tinkerforge::IPConnection;
 
 # using modules
 use strict;
@@ -110,7 +110,7 @@ sub connect
 
 sub handle_connect
 {
-	lock($IPConnection::CONNECT_LOCK);
+	lock($Tinkerforge::IPConnection::CONNECT_LOCK);
 
 	my ($self, $connect_reason) = @_;
 
@@ -770,8 +770,8 @@ sub create_packet_header
 	{
 		$uid = $device->{super}->{uid};
 
-		if($device->get_response_expected($function_id) == Device->RESPONSE_EXPECTED_ALWAYS_TRUE ||
-		   $device->get_response_expected($function_id) == Device->RESPONSE_EXPECTED_TRUE)
+		if($device->get_response_expected($function_id) == Tinkerforge::Device->RESPONSE_EXPECTED_ALWAYS_TRUE ||
+		   $device->get_response_expected($function_id) == Tinkerforge::Device->RESPONSE_EXPECTED_TRUE)
 		{
 			#setting response expected bit
 			$seq_res_aut_oth |= (1<<3);
@@ -837,7 +837,7 @@ sub create_packet_header
 
 sub get_next_sequence_number
 {
-	lock($IPConnection::SEQUENCE_NUMBER_LOCK);
+	lock($Tinkerforge::IPConnection::SEQUENCE_NUMBER_LOCK);
 
 	my ($self) = @_;
 
@@ -858,7 +858,7 @@ sub get_next_sequence_number
 
 sub ipconnection_send
 {
-	lock($IPConnection::SEND_LOCK);
+	lock($Tinkerforge::IPConnection::SEND_LOCK);
 
 	my ($self, $packet) = @_;
 
@@ -1679,7 +1679,7 @@ sub disconnect_probe_thread_subroutine
 		}
 		else
 		{
-			lock($IPConnection::SEND_LOCK);
+			lock($Tinkerforge::IPConnection::SEND_LOCK);
 
 			my $_disconnect_probe_packet = $self->create_packet_header(undef, 8, &FUNCTION_DISCONNECT_PROBE);
 

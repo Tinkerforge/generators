@@ -5,7 +5,7 @@
 # Commons Zero (CC0 1.0) License for more details.
 
 # package definition
-package Device;
+package Tinkerforge::Device;
 
 # using modules
 use strict;
@@ -41,9 +41,9 @@ sub new
 									 response_queue => Thread::Queue->new(),
 									 request_lock => undef,
 									 auth_key => undef,
-									 response_expected => shared_clone({IPConnection->FUNCTION_ENUMERATE =>
+									 response_expected => shared_clone({Tinkerforge::IPConnection->FUNCTION_ENUMERATE =>
 																		&RESPONSE_EXPECTED_ALWAYS_FALSE,
-																		IPConnection->CALLBACK_ENUMERATE =>
+																		Tinkerforge::IPConnection->CALLBACK_ENUMERATE =>
 																		&RESPONSE_EXPECTED_ALWAYS_FALSE})});
 
 	bless($self, $class);
@@ -82,7 +82,7 @@ sub base58_decode
 
 sub send_request
 {
-	lock($Device::DEVICE_LOCK);
+	lock($Tinkerforge::Device::DEVICE_LOCK);
 
 	my ($self, $device, $function_id, $data, $form_data, $form_return) = @_;
 
