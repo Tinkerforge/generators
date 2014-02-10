@@ -166,6 +166,13 @@ parameter the callback function name:
 
     ${1}->register_callback({3}->CALLBACK_EXAMPLE, 'my_callback')
 
+The callback function will be called from an internal thread of the
+IP Connection. In contrast to many other programming languages, variables are
+not automatically shared between threads in Perl. If you want to share a global
+variable between a callback function and the rest for your program it has to be
+marked as ``:shared``. See the documentation of the `threads::shared
+<http://perldoc.perl.org/threads/shared.html>`__ Perl module for more details.
+
 The available constants with inherent number and type of parameters are
 described below.
 
@@ -196,6 +203,15 @@ und der zweite Parameter ist der Name der Callback-Funktion:
     }}
 
     ${1}->register_callback({3}->CALLBACK_EXAMPLE, 'my_callback')
+
+Die Callback Funktion wird dann von einem internen Thread der IP Connection
+aufgerufen werden. Im Gegensatz zu vielen anderen Programmiersprachen werden
+Variablen nicht automatisch zwischen Threads geteilt. Wenn eine Variable
+gleichzeitig in einer Callback Funktion und dem Rest des Programms genutzt
+werden soll, dann muss diese als ``:shared`` markiert werden. Siehe dazu auch
+die Dokumentation des `threads::shared
+<http://perldoc.perl.org/threads/shared.html>`__ Perl Moduls für weitere
+Details.
 
 Die verfügbaren Konstanten mit der dazugehörigen Parameteranzahl und -typen werden
 weiter unten beschrieben.
