@@ -94,9 +94,9 @@ sub new
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
 =cut
-    my ($class, $host, $port) = @_;
+    my ($class, $uid, $ipcon) = @_;
 
-    my $self :shared = shared_clone({{super => shared_clone(Tinkerforge::Device->new($host,$port)),
+    my $self :shared = shared_clone({{super => shared_clone(Tinkerforge::Device->new($uid, $ipcon)),
                                      api_version => [{0}, {1}, {2}],
 """
         response_expected = '                                     response_expected => shared_clone({'
