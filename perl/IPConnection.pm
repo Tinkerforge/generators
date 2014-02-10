@@ -770,8 +770,7 @@ sub create_packet_header
 	{
 		$uid = $device->{super}->{uid};
 
-		if($device->get_response_expected($function_id) == Tinkerforge::Device->RESPONSE_EXPECTED_ALWAYS_TRUE ||
-		   $device->get_response_expected($function_id) == Tinkerforge::Device->RESPONSE_EXPECTED_TRUE)
+		if($device->get_response_expected($function_id))
 		{
 			#setting response expected bit
 			$seq_res_aut_oth |= (1<<3);

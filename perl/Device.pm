@@ -162,8 +162,7 @@ sub send_request
 	$device->{super}->{ipcon}->ipconnection_send($packet);
 
 	#checking whether response is expected
-	if($device->get_response_expected($function_id) == &RESPONSE_EXPECTED_ALWAYS_TRUE ||
-	   $device->get_response_expected($function_id) == &RESPONSE_EXPECTED_TRUE)
+	if($device->get_response_expected($function_id))
 	{
 		#waiting for response
 		$response_packet = $device->{super}->{response_queue}->dequeue_timed($device->{super}->{ipcon}->{timeout});

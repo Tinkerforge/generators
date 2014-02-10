@@ -268,7 +268,15 @@ sub get_response_expected
 
     if(defined($self->{response_expected}->{$function_id}))
     {
-        return $self->{response_expected}->{$function_id};
+        if($self->{response_expected}->{$function_id} == Tinkerforge::Device->RESPONSE_EXPECTED_ALWAYS_TRUE ||
+           $self->{response_expected}->{$function_id} == Tinkerforge::Device->RESPONSE_EXPECTED_TRUE)
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
     }
     else
     {
@@ -295,23 +303,20 @@ sub set_response_expected
 
     my ($self, $function_id, $response_expected) = @_;
 
-    if(defined($self->{response_expected}->{$function_id}) &&
-      ($self->{response_expected}->{$function_id} != Device->RESPONSE_EXPECTED_ALWAYS_TRUE ||
-       $self->{response_expected}->{$function_id} != Device->RESPONSE_EXPECTED_ALWAYS_FALSE))
+    if(defined($self->{response_expected}->{$function_id}))
     {
-       if($response_expected == Device->RESPONSE_EXPECTED_TRUE ||
-          $response_expected == Device->RESPONSE_EXPECTED_FALSE)
-       {
-           $self->{response_expected}->{$function_id} = $response_expected;
-       }
-       else
-       {
-           croak('Unknown value');
-       }
+        if($response_expected)
+        {
+            $self->{response_expected}->{$function_id} = Tinkerforge::Device->RESPONSE_EXPECTED_TRUE;
+        }
+        else
+        {  
+            $self->{response_expected}->{$function_id} = Tinkerforge::Device->RESPONSE_EXPECTED_FALSE;
+        }
     }
     else
     {
-        croak('Unknown function or value');
+        croak('Unknown function');
     }
 }
 
@@ -327,18 +332,13 @@ sub set_response_expected_all
 
     foreach my $key (sort keys $self->{response_expected})
     {
-        if($response_expected == Device->RESPONSE_EXPECTED_TRUE ||
-           $response_expected == Device->RESPONSE_EXPECTED_FALSE)
+        if($response_expected)
         {
-            if($self->{response_expected}->{$key} != Device->RESPONSE_EXPECTED_ALWAYS_TRUE ||
-               $self->{response_expected}->{$key} != Device->RESPONSE_EXPECTED_ALWAYS_FALSE)
-            {
-                $self->{response_expected}->{$key} = $response_expected;
-            }
+            $self->{response_expected}->{$key} = Tinkerforge::Device->RESPONSE_EXPECTED_TRUE;
         }
         else
         {
-            croak('Unknown value');
+            $self->{response_expected}->{$key} = Tinkerforge::Device->RESPONSE_EXPECTED_FALSE;
         }
     }
 }
