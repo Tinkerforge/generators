@@ -3,7 +3,7 @@
 
 """
 JavaScript Examples Compiler
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 
 compile_javascript_examples.py: Compile all examples for the JavaScript bindings
 

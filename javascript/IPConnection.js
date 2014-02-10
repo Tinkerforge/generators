@@ -1,4 +1,3 @@
-var net = require('net');
 var Device = require('./Device');
 
 IPConnection.FUNCTION_ENUMERATE = 254;
@@ -34,7 +33,102 @@ IPConnection.ERROR_TIMEOUT = 31;
 IPConnection.ERROR_INVALID_PARAMETER = 41;
 IPConnection.ERROR_FUNCTION_NOT_SUPPORTED = 42;
 
-//the IPConnection class and constructor
+// Socket implementation for Node.js and Websocket. 
+// The API resembles the Node.js API.
+function TFSocket(PORT, HOST) {
+    this.port = PORT;
+    this.host = HOST;
+    this.socket = null;
+    
+    if(process.browser) {
+        var websocket_url = "ws://" + this.host + ":" + this.port + "/"
+        if (typeof MozWebSocket != "undefined") {
+            this.socket = new MozWebSocket(websocket_url, "tfp");
+        } else {
+            this.socket = new WebSocket(websocket_url, "tfp");
+        }
+        this.socket.binaryType = 'arraybuffer';
+    } else {
+        var net = require('net');
+        this.socket = new net.Socket();
+    }
+    
+    this.on = function(str, func) {
+        if(process.browser) {
+            switch(str) {
+                case "connect":
+                    this.socket.onopen = func;
+                    break;
+                case "data":
+                    // Websockets in browsers return a MessageEvent. We just
+                    // expose the data from the event as a Buffer as in Node.js.
+                    this.socket.onmessage = function(messageEvent) {
+                        data = new Buffer(new Uint8Array(messageEvent.data))
+                        func(data);
+                    };
+                    break;
+                case "error":
+                    // There is no easy way to get errno for error in browser websockets.
+                    // We assume error['errno'] === 'ECONNRESET'
+                    this.socket.onerror = function() {
+                        var error = {"errno": "ECONNRESET"};
+                        func(error);
+                    };
+                    break;
+                case "close":
+                    this.socket.onclose = func;
+                    break;
+            } 
+        } else {
+            this.socket.on(str, func);
+        }
+    }
+
+    this.connect = function() {
+        if(process.browser) {
+            // In the browser we already connected by creating a WebSocket object
+        } else {
+            this.socket.connect(this.port, this.host, null);
+        }
+    }
+
+    this.setNoDelay = function(value) {
+        if(process.browser) {
+            // Currently no API available in browsers
+			// But Nagle algorithm seems te be turned off in most browsers by default anyway
+        } else {
+            this.socket.setNoDelay(value);
+        }
+    }
+
+    this.write = function(data) {
+        if(process.browser) {
+            this.socket.send(data); 
+        } else {
+            this.socket.write(data);
+        }
+    }
+
+	this.end = function() {
+		if(process.browser) {
+			this.socket.close();
+        } else {
+            this.socket.end();
+        }
+	}
+
+	this.destroy = function() {
+		if(process.browser) {
+			// There is no end/destroy in browser socket, so we close in end
+			// and do nothing in destroy
+        } else {
+            this.socket.destroy();
+        }
+	}
+
+}
+
+// the IPConnection class and constructor
 function IPConnection() {
     // Creates an IP Connection object that can be used to enumerate the available
     // devices. It is also required for the constructor of Bricks and Bricklets.
@@ -110,13 +204,13 @@ function IPConnection() {
         this.disconnectRequested = false;
         this.host = HOST;
         this.port = PORT;
-        this.socket = new net.Socket();
+        this.socket = new TFSocket(this.port, this.host);
         this.socket.setNoDelay(true);
         this.socket.on('connect', this.handleConnect.bind(this));
         this.socket.on('data', this.handleIncomingData.bind(this));
         this.socket.on('error', this.handleConnectionError.bind(this));
         this.socket.on('close', this.handleConnectionClose.bind(this));
-        this.socket.connect(this.port, this.host, null);
+        this.socket.connect();
     };
     this.handleConnect = function() {
         if(this.connectRequested) {
@@ -260,13 +354,13 @@ function IPConnection() {
         return;
     };
     this.retryConnection = function() {
-        this.socket = new net.Socket();
+        this.socket = new TFSocket(this.port, this.host);
         this.socket.setNoDelay(true);
         this.socket.on('connect', this.handleConnect.bind(this));
         this.socket.on('data', this.handleIncomingData.bind(this));
         this.socket.on('error', this.handleConnectionError.bind(this));
         this.socket.on('close', this.handleConnectionClose.bind(this));
-        this.socket.connect(this.port, this.host, null);
+        this.socket.connect();
     };
 
     this.getUIDFromPacket = function(packetUID){

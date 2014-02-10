@@ -3,8 +3,8 @@
 
 """
 JavaScript ZIP Generator
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
-Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
 
 generator_javascript_zip.py: Generator for JavaScript ZIP
 
@@ -39,22 +39,31 @@ class JavaScriptZipGenerator(common.Generator):
 
     def prepare(self):
         common.recreate_directory('/tmp/generator')
-        os.makedirs('/tmp/generator/npn/source/tinkerforge')
-        os.makedirs('/tmp/generator/npn/examples')
+        os.makedirs('/tmp/generator/npn/nodejs/source/tinkerforge')
+        os.makedirs('/tmp/generator/npn/nodejs/examples')
+        os.makedirs('/tmp/generator/npn/browser/source')
+        os.makedirs('/tmp/generator/npn/browser/examples')
 
     def generate(self, device):
         if not device.is_released():
             return
 
         # Copy examples
-        examples = common.find_examples(device, self.get_bindings_root_directory(), self.get_bindings_name(), 'Example', '.js')
-        dest = os.path.join('/tmp/generator/npn/examples', device.get_category(), device.get_camel_case_name())
+        examples_nodejs = common.find_examples(device, self.get_bindings_root_directory(), self.get_bindings_name(), 'Example', '.js')
+        examples_browser = common.find_examples(device, self.get_bindings_root_directory(), self.get_bindings_name(), 'Example', '.html')
+        dest_nodejs = os.path.join('/tmp/generator/npn/nodejs/examples/', device.get_category(), device.get_camel_case_name())
+        dest_browser = os.path.join('/tmp/generator/npn/browser/examples/', device.get_category(), device.get_camel_case_name())
 
-        if not os.path.exists(dest):
-            os.makedirs(dest)
+        if not os.path.exists(dest_nodejs):
+            os.makedirs(dest_nodejs)
+        if not os.path.exists(dest_browser):
+            os.makedirs(dest_browser)
 
-        for example in examples:
-            shutil.copy(example[1], dest)
+        for example in examples_nodejs:
+            shutil.copy(example[1], dest_nodejs)
+
+        for example in examples_browser:
+            shutil.copy(example[1], dest_browser)
 
     def finish(self):
         root = self.get_bindings_root_directory()
@@ -65,12 +74,24 @@ class JavaScriptZipGenerator(common.Generator):
 
         # Copy bindings and readme
         for filename in released_files:
-            shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/npn/source/tinkerforge')
+            shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/npn/nodejs/source/tinkerforge')
 
-        shutil.copy(os.path.join(root, 'IPConnection.js'), '/tmp/generator/npn/source/tinkerforge')
-        shutil.copy(os.path.join(root, 'Device.js'), '/tmp/generator/npn/source/tinkerforge')
+        shutil.copy(os.path.join(root, 'IPConnection.js'), '/tmp/generator/npn/nodejs/source/tinkerforge')
+        shutil.copy(os.path.join(root, 'Device.js'), '/tmp/generator/npn/nodejs/source/tinkerforge')
         shutil.copy(os.path.join(root, 'changelog.txt'), '/tmp/generator/npn')
         #shutil.copy(os.path.join(root, 'readme.txt'), '/tmp/generator/npn')
+
+        # Make tinkerforge.js for browser with browserify
+        os.chdir('/tmp/generator/npn/nodejs/source/tinkerforge/')
+        browserify_args = ['browserify']
+        browserify_args.extend(os.listdir('/tmp/generator/npn/nodejs/source/tinkerforge/'))
+        browserify_args.append('-o')
+        browserify_args.append('/tmp/generator/npn/browser/source/tinkerforge.js')
+        if subprocess.call(browserify_args) != 0:
+            raise Exception("Command '{0}' failed".format(' '.join(browserify_args)))
+
+        # Remove BrowserAPI.js from nodejs Bindings
+        os.remove('/tmp/generator/npn/nodejs/source/tinkerforge/BrowserAPI.js')
 
         # Make zip
         version = common.get_changelog_version(root)
