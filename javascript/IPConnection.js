@@ -41,18 +41,19 @@ function TFSocket(PORT, HOST) {
     this.socket = null;
     
     if(process.browser) {
-        var websocket_url = "ws://" + this.host + ":" + this.port + "/"
+        var webSocketURL = "ws://" + this.host + ":" + this.port + "/"
         if (typeof MozWebSocket != "undefined") {
-            this.socket = new MozWebSocket(websocket_url, "tfp");
-        } else {
-            this.socket = new WebSocket(websocket_url, "tfp");
+            this.socket = new MozWebSocket(webSocketURL, "tfp");
+        }
+        else {
+            this.socket = new WebSocket(webSocketURL, "tfp");
         }
         this.socket.binaryType = 'arraybuffer';
-    } else {
+    }
+    else {
         var net = require('net');
         this.socket = new net.Socket();
     }
-    
     this.on = function(str, func) {
         if(process.browser) {
             switch(str) {
@@ -79,53 +80,53 @@ function TFSocket(PORT, HOST) {
                     this.socket.onclose = func;
                     break;
             } 
-        } else {
+        }
+        else {
             this.socket.on(str, func);
         }
     }
-
     this.connect = function() {
         if(process.browser) {
             // In the browser we already connected by creating a WebSocket object
-        } else {
+        }
+        else {
             this.socket.connect(this.port, this.host, null);
         }
     }
-
     this.setNoDelay = function(value) {
         if(process.browser) {
             // Currently no API available in browsers
 			// But Nagle algorithm seems te be turned off in most browsers by default anyway
-        } else {
+        }
+        else {
             this.socket.setNoDelay(value);
         }
     }
-
     this.write = function(data) {
         if(process.browser) {
             this.socket.send(data); 
-        } else {
+        }
+        else {
             this.socket.write(data);
         }
     }
-
 	this.end = function() {
 		if(process.browser) {
 			this.socket.close();
-        } else {
+        }
+        else {
             this.socket.end();
         }
 	}
-
 	this.destroy = function() {
 		if(process.browser) {
 			// There is no end/destroy in browser socket, so we close in end
 			// and do nothing in destroy
-        } else {
+        }
+        else {
             this.socket.destroy();
         }
 	}
-
 }
 
 // the IPConnection class and constructor
@@ -159,7 +160,7 @@ function IPConnection() {
     };
     this.disconnect = function(disconnectErrorCallback) {
         this.disconnectErrorCallback = disconnectErrorCallback;
-        //checking if already disconnected
+        // Checking if already disconnected
         if(!this.isConnected || this.socket === undefined) {
             if (this.connectErrorCallback !== undefined) {
                 this.disconnectErrorCallback(IPConnection.ALREADY_DISCONNECTED);
@@ -168,7 +169,7 @@ function IPConnection() {
         }
         this.disconnectRequested = true;
         this.connectRequested = false;
-        //if retry pending clear the flag and stop it
+        // If retry pending clear the flag and stop it
         if(this.connectionPending) {
             clearInterval(this.retryConnectionIID);
             this.connectionPending = false;
@@ -182,15 +183,15 @@ function IPConnection() {
     };
     this.connect = function(HOST, PORT, connectErrorCallback) {
         this.connectErrorCallback = connectErrorCallback;
-        //checking if already connected
+        // Checking if already connected
         if(this.isConnected && this.socket !== undefined && this.host != undefined && this.port != undefined) {
             if (this.connectErrorCallback !== undefined) {
                 this.connectErrorCallback(IPConnection.ERROR_ALREADY_CONNECTED);
             }
             return;
         }
-        //checking if reconnect retry is in progress
-        //if so then calling user error CB(if any) and simply returning
+        // Checking if reconnect retry is in progress
+        // If so then calling user error CB(if any) and simply returning
         if(this.connectionPending) {
         	if (this.connectErrorCallback !== undefined) {
         		this.connectErrorCallback(IPConnection.ERROR_AUTO_RECONNECT_IN_PROGRESS);
@@ -221,7 +222,7 @@ function IPConnection() {
             this.disconnectRequested = false;
             this.connectionPending = false;
             
-            //check and call functions if registered for callback connected
+            // Check and call functions if registered for callback connected
             if(this.registeredCallbacks[IPConnection.CALLBACK_CONNECTED] !== undefined) {
                 this.registeredCallbacks[IPConnection.CALLBACK_CONNECTED](IPConnection.CONNECT_REASON_REQUEST);
             }
@@ -230,7 +231,7 @@ function IPConnection() {
                                                        IPConnection.DISCONNECT_PROBE_INTERVAL);
             return;
         }
-        //if true then reconnected from auto reconnect try
+        // If true then reconnected from auto reconnect try
         if(this.connectionPending) {
             clearInterval(this.disconnectProbeIID);
             clearInterval(this.retryConnectionIID);
@@ -239,7 +240,7 @@ function IPConnection() {
             this.disconnectRequested = false;
             this.connectionPending = false;
             
-            //check and call functions if registered for callback connected
+            // Check and call functions if registered for callback connected
             if(this.registeredCallbacks[IPConnection.CALLBACK_CONNECTED] !== undefined) {
                 this.registeredCallbacks[IPConnection.CALLBACK_CONNECTED](IPConnection.CONNECT_REASON_AUTO_RECONNECT);
             }
@@ -268,7 +269,7 @@ function IPConnection() {
     };
     this.handleConnectionError = function(error) {
         if(error['errno'] === 'ECONNRESET') {
-            //check and call functions if registered for callback disconnected
+            // Check and call functions if registered for callback disconnected
             if(this.registeredCallbacks[IPConnection.CALLBACK_DISCONNECTED] !== undefined) {
                 this.registeredCallbacks[IPConnection.CALLBACK_DISCONNECTED](IPConnection.DISCONNECT_REASON_SHUTDOWN);
             }
@@ -291,13 +292,13 @@ function IPConnection() {
                 this.socket.destroy();
                 this.socket = undefined;
             }
-            //check and call functions if registered for callback disconnected
+            // Check and call functions if registered for callback disconnected
             if(this.registeredCallbacks[IPConnection.CALLBACK_DISCONNECTED] !== undefined) {
                 this.registeredCallbacks[IPConnection.CALLBACK_DISCONNECTED](IPConnection.DISCONNECT_REASON_REQUEST);
             }
             return;
         }
-        //was connected, disconnected because of error and auto reconnect is enabled
+        // Was connected, disconnected because of error and auto reconnect is enabled
         if(this.isConnected && this.autoReconnect && !this.disconnectRequested) {
             this.isConnected = false;
             this.connectRequested = false;
@@ -310,7 +311,7 @@ function IPConnection() {
                 this.socket.destroy();
                 this.socket = undefined;
             }
-            //check and call functions if registered for callback disconnected
+            // Check and call functions if registered for callback disconnected
             if(this.registeredCallbacks[IPConnection.CALLBACK_DISCONNECTED] !== undefined) {
                 this.registeredCallbacks[IPConnection.CALLBACK_DISCONNECTED](IPConnection.DISCONNECT_REASON_ERROR);
             }
@@ -318,7 +319,7 @@ function IPConnection() {
                                                        IPConnection.RETRY_CONNECTION_INTERVAL);
             return;
         }
-        //same as before but auto reconnect is disabled
+        // Same as before but auto reconnect is disabled
         if(this.isConnected && !this.autoReconnect && !this.disconnectRequested && 
             this.host != undefined && this.port != undefined) {
             this.isConnected = false;
@@ -332,16 +333,16 @@ function IPConnection() {
                 this.socket.destroy();
                 this.socket = undefined;
             }
-            //check and call functions if registered for callback disconnected
+            // Check and call functions if registered for callback disconnected
             if(this.registeredCallbacks[IPConnection.CALLBACK_DISCONNECTED] !== undefined) {
                 this.registeredCallbacks[IPConnection.CALLBACK_DISCONNECTED](IPConnection.DISCONNECT_REASON_ERROR);
                 return;
             }
             return;
         }
-        //were not connected. failed at new connection attempt
+        // Were not connected. failed at new connection attempt
         if(!this.connectionPending) {
-            //check and call functions if registered for callback disconnected
+            // Check and call functions if registered for callback disconnected
             if(this.registeredCallbacks[IPConnection.CALLBACK_DISCONNECTED] !== undefined) {
                 this.registeredCallbacks[IPConnection.CALLBACK_DISCONNECTED](IPConnection.DISCONNECT_REASON_ERROR);
                 return;
@@ -386,11 +387,11 @@ function IPConnection() {
         return packetOO.readUInt8(6) & 0x03;
     };
     this.getEFromPacket = function(packetE) {
-        //getting Error bits(E, 2bits)
+        // Getting Error bits(E, 2bits)
         return (packetE.readUInt8(7) >>> 6) & 0x03;
     };
     this.getFutureUseFromPacket = function(packetFutureUse) {
-        //getting Future Use(6bits)
+        // Getting Future Use(6bits)
         return (packetFutureUse.readUInt8(7) >>> 6) & 0x63;
     };
     this.getPayloadFromPacket = function(packetPayload) {
@@ -719,7 +720,7 @@ function IPConnection() {
     		}
     		return;
     	}
-        //packet creation
+        // Packet creation
         var sendRequestPayload = pack(sendRequestData, sendRequestPackFormat);
         var sendRequestHeader = this.createPacketHeader(sendRequestDevice,
                                                         8+sendRequestPayload.length,
@@ -729,9 +730,9 @@ function IPConnection() {
         }
         var sendRequestPacket = bufferConcat([sendRequestHeader, sendRequestPayload]);
         var sendRequestSEQ = this.getSequenceNumberFromPacket(sendRequestHeader);
-        //sending the created packet
+        // Sending the created packet
         if(sendRequestDevice.getResponseExpected(sendRequestFID)) {
-            //setting the requesting current device's current request            
+            // Setting the requesting current device's current request            
             var sendRequestDeviceOID = sendRequestDevice.getDeviceOID();
             sendRequestDevice.expectedResponses.push({DeviceOID:sendRequestDeviceOID,
                 FID:sendRequestFID,
