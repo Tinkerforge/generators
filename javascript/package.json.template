@@ -1,0 +1,28 @@
+{
+  "name": "Tinkerforge",
+  "preferGlobal": true,
+  "version": "0.0.0",
+  "author": "Ishraq Ibne Ashraf <ishraq@tinkerforge.com>",
+  "description": "Official API binding for all Tinkerforge hardware",
+  "contributors": [{}],
+  "bin": {},
+  "scripts": {},
+  "main": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tinkerforge/generators/tree/master/javascript"
+  },
+  "keywords": [
+    "hardware",
+    "embedded",
+    "api"
+  ],
+  "dependencies" : {},
+  "analyze": false,
+  "devDependencies": {},
+  "bundledDependencies": [],  
+  "license": "CC0",
+  "engines": {
+    "node": ">=0.6"
+  }
+}
