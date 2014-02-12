@@ -27,11 +27,12 @@ IPConnection.RETRY_CONNECTION_INTERVAL = 2000;
 IPConnection.ERROR_ALREADY_CONNECTED = 11;
 IPConnection.ERROR_NOT_CONNECTED = 12;
 IPConnection.ERROR_AUTO_RECONNECT_IN_PROGRESS = 13;
-IPConnection.ERROR_CONNECT_FAILED = 13;
+IPConnection.ERROR_CONNECT_FAILED = 14;
 IPConnection.ERROR_INVALID_FUNCTION_ID = 21;
 IPConnection.ERROR_TIMEOUT = 31;
 IPConnection.ERROR_INVALID_PARAMETER = 41;
 IPConnection.ERROR_FUNCTION_NOT_SUPPORTED = 42;
+IPConnection.ERROR_UNKNOWN_ERROR = 43;
 
 // Socket implementation for Node.js and Websocket. 
 // The API resembles the Node.js API.
@@ -162,8 +163,8 @@ function IPConnection() {
         this.disconnectErrorCallback = disconnectErrorCallback;
         // Checking if already disconnected
         if(!this.isConnected || this.socket === undefined) {
-            if (this.connectErrorCallback !== undefined) {
-                this.disconnectErrorCallback(IPConnection.ALREADY_DISCONNECTED);
+            if (this.disconnectErrorCallback !== undefined){
+                this.disconnectErrorCallback(IPConnection.ERROR_NOT_CONNECTED);
             }
             return;
         }
@@ -788,7 +789,15 @@ function IPConnection() {
             	if (this.getEFromPacket(packetResponse) === 2) {
                     clearTimeout(handleResponseDevice.expectedResponses[i].timeout);
             		if(this.devices[this.getUIDFromPacket(packetResponse)].expectedResponses[i].errorCB !== undefined) {
-            			eval('handleResponseDevice.expectedResponses[i].errorCB(IPConnection.FUNCTION_NOT_SUPPORTED);');
+            			eval('handleResponseDevice.expectedResponses[i].errorCB(IPConnection.ERROR_FUNCTION_NOT_SUPPORTED);');
+            		}
+            		handleResponseDevice.expectedResponses.splice(i, 1);
+            		return;
+            	}
+            	if (this.getEFromPacket(packetResponse) !== 0) {
+                    clearTimeout(handleResponseDevice.expectedResponses[i].timeout);
+            		if(this.devices[this.getUIDFromPacket(packetResponse)].expectedResponses[i].errorCB !== undefined) {
+            			eval('handleResponseDevice.expectedResponses[i].errorCB(IPConnection.ERROR_UNKNOWN_ERROR);');
             		}
             		handleResponseDevice.expectedResponses.splice(i, 1);
             		return;
