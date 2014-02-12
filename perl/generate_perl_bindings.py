@@ -52,6 +52,8 @@ package {1};
     def get_perl_use(self):
         return """
 use Tinkerforge::Device;
+use Tinkerforge::IPConnection;
+use Tinkerforge::Error;
 use strict;
 use warnings;
 use Carp;
@@ -280,7 +282,7 @@ sub get_response_expected
     }
     else
     {
-        croak('Unknown function');
+        croak(Tinkerforge::Error->new(Tinkerforge::IPConnection->ERROR_INVALID_FUNCTION_ID, "Function ID $function_id is unknown"));
     }
 }
 
@@ -316,7 +318,7 @@ sub set_response_expected
     }
     else
     {
-        croak('Unknown function');
+        croak(Tinkerforge::Error->new(Tinkerforge::IPConnection->ERROR_INVALID_FUNCTION_ID, "Function ID $function_id is unknown"));
     }
 }
 

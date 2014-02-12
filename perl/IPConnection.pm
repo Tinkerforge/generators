@@ -17,6 +17,7 @@ use Thread::Queue;
 use Socket qw(IPPROTO_TCP TCP_NODELAY);
 use IO::Socket::INET;
 use Tinkerforge::Device;
+use Tinkerforge::Error;
 
 # constants
 use constant FUNCTION_ENUMERATE => 254;
@@ -48,6 +49,15 @@ use constant QUEUE_META => 1;
 use constant QUEUE_PACKET => 2;
 
 use constant DISCONNECT_PROBE_INTERVAL => 5;
+
+use constant ERROR_ALREADY_CONNECTED => 11;
+use constant ERROR_NOT_CONNECTED => 12;
+use constant ERROR_CONNECT_FAILED => 13;
+use constant ERROR_INVALID_FUNCTION_ID => 21;
+use constant ERROR_TIMEOUT => 31;
+use constant ERROR_INVALID_PARAMETER => 41;
+use constant ERROR_FUNCTION_NOT_SUPPORTED => 42;
+use constant ERROR_UNKNOWN_ERROR => 43;
 
 # the socket variable
 my $IPCONNECTION_SOCKET = undef;
@@ -92,18 +102,20 @@ sub connect
 
 	if(defined($IPCONNECTION_SOCKET) && $self->{auto_reconnect_pending} == 0 && defined($IPCONNECTION_SOCKET))
 	{
-		croak("Already connected to $self->{host}:$self->{host}");
+		croak(Tinkerforge::Error->new(&ERROR_ALREADY_CONNECTED, "Already connected to $self->{host}:$self->{host}"));
+        return 1;
 	}
 	elsif(!defined($IPCONNECTION_SOCKET) && $self->{auto_reconnect_pending} == 0 && !defined($IPCONNECTION_SOCKET))
 	{
 		$self->{host} = $host;
 		$self->{port} = $port;
 		$self->handle_connect(&CONNECT_REASON_REQUEST);
+        return 1;
 	}
-	else
-	{
-		croak('Undefined connect state');
-	}
+    else
+    {
+        croak('Undefined connect state');
+    }
 
 	return 1;
 }
@@ -142,7 +154,7 @@ sub handle_connect
 
 			$IPCONNECTION_SOCKET = undef;
 
-			croak("Can't connect to	$self->{host}:$self->{port}");
+			croak(Tinkerforge::Error->new(&ERROR_CONNECT_FAILED, "Can't connect to	$self->{host}:$self->{port}"));
 		}
 		else
 		{
@@ -873,12 +885,12 @@ sub ipconnection_send
 		{
 			$self->{callback_queue}->enqueue([&QUEUE_META, &CALLBACK_DISCONNECTED, &DISCONNECT_REASON_ERROR, $self->{socket_id}]);
 
-			croak('Not connected');
+			croak(Tinkerforge::Error->new(&ERROR_NOT_CONNECTED, 'Not connected'));
 		}
 	}
 	else
 	{
-		croak('Not connected');
+		croak(Tinkerforge::Error->new(&ERROR_NOT_CONNECTED, 'Not connected'));
 	}
 
 	return 1;
@@ -1108,17 +1120,17 @@ sub handle_packet
             {
                 if($_err_code == 1)
                 {
-                    croak("Got invalid parameter for function $fid");
+                    croak(Tinkerforge::Error->new(&ERROR_INVALID_PARAMETER, "Got invalid parameter for function $fid"));
                     return 1;
                 }
                 elsif($_err_code == 2)
                 {
-                    croak("Function $fid is not supported");
+                    croak(Tinkerforge::Error->new(&ERROR_FUNCTION_NOT_SUPPORTED, "Function $fid is not supported"));
                     return 1;
                 }    
                 else
                 {
-                    croak("Function $fid returned an unknown error");
+                    croak(Tinkerforge::Error->new(&ERROR_UNKNOWN_ERROR, "Function $fid returned an unknown error"));
                     return 1;
                 }     
             }

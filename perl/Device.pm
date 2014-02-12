@@ -15,6 +15,7 @@ use threads;
 use threads::shared;
 use Thread::Queue;
 use Tinkerforge::IPConnection;
+use Tinkerforge::Error;
 
 # constants
 use constant RESPONSE_EXPECTED_INVALID_FUNCTION_ID => 0;
@@ -176,19 +177,21 @@ sub send_request
                     my $_err_code = $device->{super}->{ipcon}->get_err_from_data($response_packet);
                     if($_err_code != 0)
                     {
+                        my $_fid = $device->{super}->{ipcon}->get_fid_from_data($response_packet);
+
                         if($_err_code == 1)
                         {
-                            croak("Got invalid parameter for function $function_id");
+                            croak(Tinkerforge::Error->new(Tinkerforge::IPConnection->ERROR_INVALID_PARAMETER, "Got invalid parameter for function $_fid"));
                             return 1;
                         }
                         elsif($_err_code == 2)
                         {
-                            croak("Function $function_id is not supported");
+                            croak(Tinkerforge::Error->new(Tinkerforge::IPConnection->ERROR_FUNCTION_NOT_SUPPORTED, "Function $_fid is not supported"));
                             return 1;
                         }    
                         else
                         {
-                            croak("Function $function_id returned an unknown error");
+                            croak(Tinkerforge::Error->new(Tinkerforge::IPConnection->ERROR_UNKNOWN_ERROR, "Function $_fid returned an unknown error"));
                             return 1;
                         }     
                     }
@@ -365,7 +368,7 @@ sub send_request
 		}
 		else
 		{
-			croak("Did not receive response for function $function_id in time");
+            croak(Tinkerforge::Error->new(Tinkerforge::IPConnection->ERROR_INVALID_PARAMETER, "Did not receive response for function $function_id in time"));
 		}
 	}
 

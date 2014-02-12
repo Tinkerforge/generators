@@ -71,6 +71,7 @@ class PerlZipGenerator(common.Generator):
 
         shutil.copy(os.path.join(root, 'IPConnection.pm'), '/tmp/generator/perl/source/Tinkerforge')
         shutil.copy(os.path.join(root, 'Device.pm'), '/tmp/generator/perl/source/Tinkerforge')
+        shutil.copy(os.path.join(root, 'Error.pm'), '/tmp/generator/perl/source/Tinkerforge')
         shutil.copy(os.path.join(root, 'changelog.txt'), '/tmp/generator/perl')
         shutil.copy(os.path.join(root, 'readme.txt'), '/tmp/generator/perl')
 
@@ -82,6 +83,7 @@ class PerlZipGenerator(common.Generator):
 
         modules.append("Tinkerforge::IPConnection")
         modules.append("Tinkerforge::Device")
+        modules.append("Tinkerforge::Error")
         modules.append("Tinkerforge")
 
         modules = ','.join(modules)
@@ -126,9 +128,10 @@ class PerlZipGenerator(common.Generator):
         for filename in released_files:
             subprocess.call("cp -ar {0}/bindings/{1} /tmp/generator/perl/Tinkerforge/lib/Tinkerforge/".format(root, filename), shell=True)
 
-        # Copying IPconnection.pm and Device.pm
+        # Copying IPconnection.pm, Device.pm and Error.pm
         subprocess.call("cp -ar {0}/IPConnection.pm /tmp/generator/perl/Tinkerforge/lib/Tinkerforge/".format(root), shell=True)
         subprocess.call("cp -ar {0}/Device.pm /tmp/generator/perl/Tinkerforge/lib/Tinkerforge/".format(root), shell=True)
+        subprocess.call("cp -ar {0}/Error.pm /tmp/generator/perl/Tinkerforge/lib/Tinkerforge/".format(root), shell=True)
 
         # Copying README
         subprocess.call("rm -rf /tmp/generator/perl/Tinkerforge/README", shell=True)
