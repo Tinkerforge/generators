@@ -7,7 +7,7 @@
   "contributors": [{}],
   "bin": {},
   "scripts": {},
-  "main": "",
+  "main": "./Tinkerforge.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/Tinkerforge/generators/tree/master/javascript"
