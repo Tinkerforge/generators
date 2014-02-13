@@ -35,7 +35,6 @@ function Device(deviceRegistering, uid, ipcon) {
 		this.ipcon = ipcon;
 		this.deviceOID = 0;
 		this.APIVersion = [0, 0, 0];
-		this.callbackFormats = {}; // Will be overwritten by child class
 		this.expectedResponses = [];// Has following structured objects as elements of the array,
 									/*
                                     {
