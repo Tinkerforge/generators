@@ -6,24 +6,24 @@ IPConnection.CALLBACK_ENUMERATE = 253;
 IPConnection.CALLBACK_CONNECTED = 0;
 IPConnection.CALLBACK_DISCONNECTED = 1;
 IPConnection.BROADCAST_UID = 0;
-// enumeration_type parameter to the enumerate callback
+// Enumeration type parameter to the enumerate callback
 IPConnection.ENUMERATION_TYPE_AVAILABLE = 0;
 IPConnection.ENUMERATION_TYPE_CONNECTED = 1;
 IPConnection.ENUMERATION_TYPE_DISCONNECTED = 2;
-// connect_reason parameter to the connected callback
+// Connect reason parameter to the connected callback
 IPConnection.CONNECT_REASON_REQUEST = 0;
 IPConnection.CONNECT_REASON_AUTO_RECONNECT = 1;
-// disconnect_reason parameter to the disconnected callback
+// Disconnect reason parameter to the disconnected callback
 IPConnection.DISCONNECT_REASON_REQUEST = 0;
 IPConnection.DISCONNECT_REASON_ERROR = 1;
 IPConnection.DISCONNECT_REASON_SHUTDOWN = 2;
-// returned by getConnectionState
+// Returned by getConnectionState()
 IPConnection.CONNECTION_STATE_DISCONNECTED = 0;
 IPConnection.CONNECTION_STATE_CONNECTED = 1;
 IPConnection.CONNECTION_STATE_PENDING = 2; //auto-reconnect in process
 IPConnection.DISCONNECT_PROBE_INTERVAL = 5000;
 IPConnection.RETRY_CONNECTION_INTERVAL = 2000;
-// error codes
+// Error codes
 IPConnection.ERROR_ALREADY_CONNECTED = 11;
 IPConnection.ERROR_NOT_CONNECTED = 12;
 IPConnection.ERROR_AUTO_RECONNECT_IN_PROGRESS = 13;
@@ -33,6 +33,10 @@ IPConnection.ERROR_TIMEOUT = 31;
 IPConnection.ERROR_INVALID_PARAMETER = 41;
 IPConnection.ERROR_FUNCTION_NOT_SUPPORTED = 42;
 IPConnection.ERROR_UNKNOWN_ERROR = 43;
+
+IPConnection.TASK_KIND_CONNECT = 0;
+IPConnection.TASK_KIND_DISCONNECT = 1;
+IPConnection.TASK_KIND_AUTO_RECONNECT = 2;
 
 // Socket implementation for Node.js and Websocket. 
 // The API resembles the Node.js API.
@@ -145,11 +149,8 @@ function IPConnection() {
     this.registeredCallbacks = {};
     this.socket = undefined;
     this.disconnectProbeIID = undefined;
-    this.retryConnectionIID = undefined;
+    this.taskQueue = [];
     this.isConnected = false;
-    this.disconnectRequested = false;
-    this.connectRequested = false;
-    this.connectionPending = false;
     this.connectErrorCallback = undefined;
     this.disconnectErrorCallback = undefined;
     this.mergeBuffer = new Buffer(0);
@@ -159,53 +160,90 @@ function IPConnection() {
             this.socket.write(this.createPacketHeader(undefined, 8, IPConnection.FUNCTION_DISCONNECT_PROBE));
         }
     };
+    this.pushTask = function(handler, kind) {
+        this.taskQueue.push({"handler":handler, "kind":kind});
+
+        if (this.taskQueue.length === 1) {
+            this.executeTask();
+        }
+    };
+    this.executeTask = function() {
+        var task = this.taskQueue[0];
+
+        if (task !== undefined) {
+            task.handler();
+        }
+    };
+    this.popTask = function() {
+        this.taskQueue.splice(0, 1);
+        this.executeTask();
+    };
+    this.removeNextTask = function() {
+        this.taskQueue.splice(1, 1);
+    };
+    this.getCurrentTaskKind = function() {
+        var task = this.taskQueue[0];
+
+        if (task !== undefined) {
+            return task.kind;
+        }
+
+        return undefined;
+    };
+    this.getNextTaskKind = function() {
+        var task = this.taskQueue[1];
+
+        if (task !== undefined) {
+            return task.kind;
+        }
+
+        return undefined;
+    };
     this.disconnect = function(disconnectErrorCallback) {
-        this.disconnectErrorCallback = disconnectErrorCallback;
-        // Checking if already disconnected
-        if(!this.isConnected || this.socket === undefined) {
-            if (this.disconnectErrorCallback !== undefined){
-                this.disconnectErrorCallback(IPConnection.ERROR_NOT_CONNECTED);
+        this.pushTask(this.disconnectInternal.bind(this, disconnectErrorCallback), IPConnection.TASK_KIND_DISCONNECT);
+    };
+    this.disconnectInternal = function(disconnectErrorCallback) {
+        var autoReconnectAborted = false;
+
+        if (this.getNextTaskKind() === IPConnection.TASK_KIND_AUTO_RECONNECT) {
+            // Remove auto-reconnect task, to break recursion
+            this.removeNextTask();
+            autoReconnectAborted = true;
+        }
+
+        if (!this.isConnected) {
+            if (!autoReconnectAborted && disconnectErrorCallback !== undefined) {
+                disconnectErrorCallback(IPConnection.ERROR_NOT_CONNECTED);
             }
+
+            this.popTask();
             return;
         }
-        this.disconnectRequested = true;
-        this.connectRequested = false;
-        // If retry pending clear the flag and stop it
-        if(this.connectionPending) {
-            clearInterval(this.retryConnectionIID);
-            this.connectionPending = false;
-        }
+
+        this.disconnectErrorCallback = disconnectErrorCallback;
+
         this.socket.end();
         this.socket.destroy();
-        if(this.socket !== undefined) {
-            this.socket.write(this.createPacketHeader(undefined, 8, IPConnection.FUNCTION_DISCONNECT_PROBE));
-        }
         return;
     };
-    this.connect = function(HOST, PORT, connectErrorCallback) {
-        this.connectErrorCallback = connectErrorCallback;
-        // Checking if already connected
-        if(this.isConnected && this.socket !== undefined && this.host != undefined && this.port != undefined) {
-            if (this.connectErrorCallback !== undefined) {
-                this.connectErrorCallback(IPConnection.ERROR_ALREADY_CONNECTED);
+    this.connect = function(host, port, connectErrorCallback) {
+        this.pushTask(this.connectInternal.bind(this, host, port, connectErrorCallback), IPConnection.TASK_KIND_CONNECT);
+    };
+    this.connectInternal = function(host, port, connectErrorCallback) {
+        if (this.isConnected) {
+            if (connectErrorCallback !== undefined) {
+                connectErrorCallback(IPConnection.ERROR_ALREADY_CONNECTED);
             }
+
+            this.popTask();
             return;
         }
-        // Checking if reconnect retry is in progress
-        // If so then calling user error CB(if any) and simply returning
-        if(this.connectionPending) {
-        	if (this.connectErrorCallback !== undefined) {
-        		this.connectErrorCallback(IPConnection.ERROR_AUTO_RECONNECT_IN_PROGRESS);
-        	}
-        	return;
-        }
-        clearInterval(this.retryConnectionIID);
+
         clearInterval(this.disconnectProbeIID);
-        this.isConnected = false;
-        this.connectRequested = true;
-        this.disconnectRequested = false;
-        this.host = HOST;
-        this.port = PORT;
+
+        this.connectErrorCallback = connectErrorCallback;
+        this.host = host;
+        this.port = port;
         this.socket = new TFSocket(this.port, this.host);
         this.socket.setNoDelay(true);
         this.socket.on('connect', this.handleConnect.bind(this));
@@ -215,40 +253,24 @@ function IPConnection() {
         this.socket.connect();
     };
     this.handleConnect = function() {
-        if(this.connectRequested) {
-            clearInterval(this.retryConnectionIID);
-            clearInterval(this.disconnectProbeIID);
-            this.isConnected = true;
-            this.connectRequested = false;
-            this.disconnectRequested = false;
-            this.connectionPending = false;
-            
-            // Check and call functions if registered for callback connected
-            if(this.registeredCallbacks[IPConnection.CALLBACK_CONNECTED] !== undefined) {
-                this.registeredCallbacks[IPConnection.CALLBACK_CONNECTED](IPConnection.CONNECT_REASON_REQUEST);
-            }
-            
-            this.disconnectProbeIID = setInterval(this.disconnectProbe.bind(this),
-                                                       IPConnection.DISCONNECT_PROBE_INTERVAL);
-            return;
+        var connectReason = IPConnection.CONNECT_REASON_REQUEST;
+
+        if(this.getCurrentTaskKind() === IPConnection.TASK_KIND_AUTO_RECONNECT) {
+            connectReason = IPConnection.CONNECT_REASON_AUTO_RECONNECT;
         }
-        // If true then reconnected from auto reconnect try
-        if(this.connectionPending) {
-            clearInterval(this.disconnectProbeIID);
-            clearInterval(this.retryConnectionIID);
-            this.isConnected = true;
-            this.connectRequested = false;
-            this.disconnectRequested = false;
-            this.connectionPending = false;
-            
-            // Check and call functions if registered for callback connected
-            if(this.registeredCallbacks[IPConnection.CALLBACK_CONNECTED] !== undefined) {
-                this.registeredCallbacks[IPConnection.CALLBACK_CONNECTED](IPConnection.CONNECT_REASON_AUTO_RECONNECT);
-            }
-            
-            this.disconnectProbeIID = setInterval(this.disconnectProbe.bind(this),
-                                                       IPConnection.DISCONNECT_PROBE_INTERVAL);
+
+        clearInterval(this.disconnectProbeIID);
+        this.isConnected = true;
+        
+        // Check and call functions if registered for callback connected
+        if(this.registeredCallbacks[IPConnection.CALLBACK_CONNECTED] !== undefined) {
+            this.registeredCallbacks[IPConnection.CALLBACK_CONNECTED](connectReason);
         }
+        
+        this.disconnectProbeIID = setInterval(this.disconnectProbe.bind(this),
+                                                   IPConnection.DISCONNECT_PROBE_INTERVAL);
+
+        this.popTask();
     };
     this.handleIncomingData = function(data) {
         if(data.length === 0) {
@@ -276,18 +298,26 @@ function IPConnection() {
             }
         }
     };
+    this.handleAutoReconnectError = function(error) {
+        if (!this.isConnected && this.autoReconnect && error != IPConnection.ERROR_ALREADY_CONNECTED) {
+            this.pushTask(this.connectInternal.bind(this, this.host, this.port, this.handleAutoReconnectError), IPConnection.TASK_KIND_AUTO_RECONNECT);
+        }
+    }
     this.handleConnectionClose = function() {
-        if(this.disconnectRequested) {
-            for(var i=0; i<this.devices.length; i++) {
-            	clearTimeout(this.devices[i].expectedResponses.timeout);
-                this.devices[i].expectedResponses = [];
+        if(this.getCurrentTaskKind() === IPConnection.TASK_KIND_DISCONNECT) {
+            // This disconnect was requested
+            for(var uid in this.devices) {
+                for(var i=0;i<this.devices[uid].expectedResponses.length;i++) {
+                    clearTimeout(this.devices[uid].expectedResponses[i].timeout);
+
+                    if (this.devices[uid].expectedResponses[i].errorCB !== undefined) {
+                        this.devices[uid].expectedResponses[i].errorCB(IPConnection.ERROR_TIMEOUT);
+                    }
+                }
+                this.devices[uid].expectedResponses = [];
             }
             this.isConnected = false;
-            this.connectRequested = false;
-            this.disconnectRequested = false;
-            this.connectionPending = false;
             clearInterval(this.disconnectProbeIID);
-            clearInterval(this.retryConnectionIID);
             if(this.socket !== undefined) {
                 this.socket.end();
                 this.socket.destroy();
@@ -297,16 +327,13 @@ function IPConnection() {
             if(this.registeredCallbacks[IPConnection.CALLBACK_DISCONNECTED] !== undefined) {
                 this.registeredCallbacks[IPConnection.CALLBACK_DISCONNECTED](IPConnection.DISCONNECT_REASON_REQUEST);
             }
+            this.popTask();
             return;
         }
         // Was connected, disconnected because of error and auto reconnect is enabled
-        if(this.isConnected && this.autoReconnect && !this.disconnectRequested) {
+        if(this.isConnected) {
             this.isConnected = false;
-            this.connectRequested = false;
-            this.disconnectRequested = false;
-            this.connectionPending = true;
             clearInterval(this.disconnectProbeIID);
-            clearInterval(this.retryConnectionIID);
             if(this.socket !== undefined) {
                 this.socket.end();
                 this.socket.destroy();
@@ -316,55 +343,20 @@ function IPConnection() {
             if(this.registeredCallbacks[IPConnection.CALLBACK_DISCONNECTED] !== undefined) {
                 this.registeredCallbacks[IPConnection.CALLBACK_DISCONNECTED](IPConnection.DISCONNECT_REASON_ERROR);
             }
-            this.retryConnectionIID = setInterval(this.retryConnection.bind(this),
-                                                       IPConnection.RETRY_CONNECTION_INTERVAL);
-            return;
-        }
-        // Same as before but auto reconnect is disabled
-        if(this.isConnected && !this.autoReconnect && !this.disconnectRequested && 
-            this.host != undefined && this.port != undefined) {
-            this.isConnected = false;
-            this.connectRequested = false;
-            this.disconnectRequested = false;
-            this.connectionPending = false;
-            clearInterval(this.disconnectProbeIID);
-            clearInterval(this.retryConnectionIID);
-            if(this.socket !== undefined) {
-                this.socket.end();
-                this.socket.destroy();
-                this.socket = undefined;
-            }
-            // Check and call functions if registered for callback disconnected
-            if(this.registeredCallbacks[IPConnection.CALLBACK_DISCONNECTED] !== undefined) {
-                this.registeredCallbacks[IPConnection.CALLBACK_DISCONNECTED](IPConnection.DISCONNECT_REASON_ERROR);
-                return;
+            if (this.autoReconnect) {
+                this.pushTask(this.connectInternal.bind(this, this.host, this.port, this.handleAutoReconnectError), IPConnection.TASK_KIND_AUTO_RECONNECT);
             }
             return;
         }
         // Were not connected. failed at new connection attempt
-        if(!this.connectionPending) {
-            // Check and call functions if registered for callback disconnected
-            if(this.registeredCallbacks[IPConnection.CALLBACK_DISCONNECTED] !== undefined) {
-                this.registeredCallbacks[IPConnection.CALLBACK_DISCONNECTED](IPConnection.DISCONNECT_REASON_ERROR);
-                return;
-            }
+        if(this.getCurrentTaskKind() === IPConnection.TASK_KIND_CONNECT || this.getCurrentTaskKind() === IPConnection.TASK_KIND_AUTO_RECONNECT) {
             if (this.connectErrorCallback !== undefined) {
-                
                 this.connectErrorCallback(IPConnection.ERROR_CONNECT_FAILED);
             }
+            this.popTask();
+            return;
         }
-        return;
     };
-    this.retryConnection = function() {
-        this.socket = new TFSocket(this.port, this.host);
-        this.socket.setNoDelay(true);
-        this.socket.on('connect', this.handleConnect.bind(this));
-        this.socket.on('data', this.handleIncomingData.bind(this));
-        this.socket.on('error', this.handleConnectionError.bind(this));
-        this.socket.on('close', this.handleConnectionClose.bind(this));
-        this.socket.connect();
-    };
-
     this.getUIDFromPacket = function(packetUID){
         return packetUID.readUInt32LE(0);
     };
@@ -714,8 +706,7 @@ function IPConnection() {
     this.sendRequest = function(sendRequestDevice, sendRequestFID, sendRequestData,
                                 sendRequestPackFormat, sendRequestUnpackFormat,
                                 sendRequestReturnCB, sendRequestErrorCB) {
-    	if(this.getConnectionState() === IPConnection.CONNECTION_STATE_DISCONNECTED ||
-    			this.getConnectionState() === IPConnection.CONNECTION_STATE_PENDING) {
+    	if(this.getConnectionState() !== IPConnection.CONNECTION_STATE_CONNECTED) {
     		if(sendRequestErrorCB !== undefined) {
     			sendRequestErrorCB(IPConnection.ERROR_NOT_CONNECTED);
     		}
@@ -896,22 +887,22 @@ function IPConnection() {
         if(this.isConnected) {
             return IPConnection.CONNECTION_STATE_CONNECTED;
         }
-        if(this.connectionPending) {
+        if(this.getCurrentTaskKind() === IPConnection.TASK_KIND_AUTO_RECONNECT) {
             return IPConnection.CONNECTION_STATE_PENDING;
         }
         return IPConnection.CONNECTION_STATE_DISCONNECTED;
     };
-    this.setAutoReconnect = function(autoReconnectSet) {
-        autoReconnect = autoReconnectSet;
+    this.setAutoReconnect = function(autoReconnect) {
+        this.autoReconnect = autoReconnect;
     };
     this.getAutoReconnect = function() {
-        return autoReconnect;
+        return this.autoReconnect;
     };
-    this.setTimeout = function(timeoutSet) {
-        timeout = timeoutSet;
+    this.setTimeout = function(timeout) {
+        this.timeout = timeout;
     };
     this.getTimeout = function() {
-        return timeout;
+        return this.timeout;
     };
     this.enumerate = function() {
         this.socket.write(this.createPacketHeader(undefined, 8, IPConnection.FUNCTION_ENUMERATE));
