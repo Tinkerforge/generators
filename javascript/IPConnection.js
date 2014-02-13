@@ -109,7 +109,10 @@ function TFSocket(PORT, HOST) {
     }
     this.write = function(data) {
         if(process.browser) {
-            this.socket.send(data); 
+            // Some browers can't send a nodejs Buffer through a websocket,
+            // we copy it into an ArrayBuffer
+            var arrayBuffer = new Uint8Array(data).buffer;
+            this.socket.send(arrayBuffer); 
         }
         else {
             this.socket.write(data);
