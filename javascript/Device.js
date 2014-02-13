@@ -1,8 +1,8 @@
 Device.RESPONSE_EXPECTED_INVALID_FUNCTION_ID = 0;
-Device.RESPONSE_EXPECTED_ALWAYS_TRUE = 1; // getter
-Device.RESPONSE_EXPECTED_ALWAYS_FALSE = 2; // callback
-Device.RESPONSE_EXPECTED_TRUE = 3; // setter
-Device.RESPONSE_EXPECTED_FALSE = 4; // setter, default
+Device.RESPONSE_EXPECTED_ALWAYS_TRUE = 1;// Getter
+Device.RESPONSE_EXPECTED_ALWAYS_FALSE = 2;// Callback
+Device.RESPONSE_EXPECTED_TRUE = 3;// Setter
+Device.RESPONSE_EXPECTED_FALSE = 4;// Setter, default
 Device.ERROR_INVALID_FUNCTION_ID = 21;
 
 function Device(deviceRegistering, uid, ipcon) {
@@ -13,21 +13,23 @@ function Device(deviceRegistering, uid, ipcon) {
 		this.ipcon = ipcon;
 		this.deviceOID = 0;
 		this.APIVersion = [0, 0, 0];
-		this.responseExpected = {};
-		this.registeredCallbacks = {};
-		this.callbackFormats = {}; //will be overwritten by child class
-		this.expectedResponses = [];//has following structured objects as elements of the array,
-									//{DeviceOID:,
-									// FID:,
-									// SEQ:,
-									// unpackFormat:,
-									// timeout:,
-									// returnCB:,
-									// errorCB:}
+		this.callbackFormats = {}; // Will be overwritten by child class
+		this.expectedResponses = [];// Has following structured objects as elements of the array,
+									/*
+                                    {
+                                        DeviceOID:,
+									    FID:,
+									    SEQ:,
+									    unpackFormat:,
+									    timeout:,
+									    returnCB:,
+									    errorCB:
+                                    }
+                                    */
 		this.authKey = undefined;
 		//Creates the device object with the unique device ID *uid* and adds
 		//it to the IPConnection *ipcon*.
-		this.ipcon.devices[this.uid] = deviceRegistering; // FIXME: maybe use a weakref here
+		this.ipcon.devices[this.uid] = deviceRegistering;
 		this.getDeviceOID = function() {
 			return this.deviceOID++;
 		};

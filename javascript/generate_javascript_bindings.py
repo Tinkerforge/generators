@@ -68,6 +68,8 @@ var Device = require('./Device');\n
     */
     Device.call(this, this, uid, ipcon);
     {2}.prototype = Object.create(Device);
+    this.responseExpected = {{}};
+    this.callbackFormats = {{}};
     this.APIVersion = [{3}, {4}, {5}];\n""".format(self.get_javascript_class_name(),self.get_description(),
                                                  self.get_javascript_class_name(), *self.get_api_version())
     
