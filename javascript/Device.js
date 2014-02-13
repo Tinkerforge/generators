@@ -5,6 +5,28 @@ Device.RESPONSE_EXPECTED_TRUE = 3; // setter
 Device.RESPONSE_EXPECTED_FALSE = 4; // setter, default
 Device.ERROR_INVALID_FUNCTION_ID = 21;
 
+function base58Decode(str) {
+	var alphabet = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
+	var base = alphabet.length;
+	var char;
+	var char_index;
+	var index;
+	var num;
+	var _i;
+	var _len;
+	var _ref;
+	num = 0;
+	_ref = str.split(/(?:)/).reverse();
+	for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
+		char = _ref[index];
+		if ((char_index = alphabet.indexOf(char)) === -1) {
+			throw new Error('Value passed is not a valid Base58 string.');
+		}
+		num += char_index * Math.pow(base, index);
+	}
+	return num;
+};
+
 function Device(deviceRegistering, uid, ipcon) {
 	if(deviceRegistering !== undefined &&
 			uid !== undefined &&
@@ -82,27 +104,6 @@ function Device(deviceRegistering, uid, ipcon) {
 				}
 			}
 		};
-		function base58Decode(str) {
-			var alphabet = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
-			var base = alphabet.length;
-			var char;
-			var char_index;
-			var index;
-			var num;
-			var _i;
-			var _len;
-			var _ref;
-			num = 0;
-			_ref = str.split(/(?:)/).reverse();
-			for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
-				char = _ref[index];
-				if ((char_index = alphabet.indexOf(char)) === -1) {
-					throw new Error('Value passed is not a valid Base58 string.');
-				}
-				num += char_index * Math.pow(base, index);
-			}
-			return num;
-		}
 	}
 }
 
