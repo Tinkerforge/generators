@@ -64,8 +64,8 @@ function Device(deviceRegistering, uid, ipcon) {
 			if(this.responseExpected[functionID] === undefined) {
 				if(errorCallback !== undefined) {
 					errorCallback(Device.ERROR_INVALID_FUNCTION_ID);
-					return;
 				}
+				return;
 			}
 			if(this.responseExpected[functionID] === Device.RESPONSE_EXPECTED_TRUE || 
 					this.responseExpected[functionID] === Device.RESPONSE_EXPECTED_ALWAYS_TRUE) {
@@ -73,14 +73,14 @@ function Device(deviceRegistering, uid, ipcon) {
 			}
 			else {
 				return false;
-			}			
+			}
 		};
 		this.setResponseExpected = function(functionID, responseBoolean, errorCallback) {
 			if(this.responseExpected[functionID] === undefined) {
 				if(errorCallback !== undefined) {
 					errorCallback(Device.ERROR_INVALID_FUNCTION_ID);
-					return;
 				}
+				return;
 			}
 			if(this.responseExpected[functionID] === Device.RESPONSE_EXPECTED_TRUE || 
 					this.responseExpected[functionID] === Device.RESPONSE_EXPECTED_FALSE) {
@@ -90,6 +90,10 @@ function Device(deviceRegistering, uid, ipcon) {
 				else {
 					this.responseExpected[functionID] = Device.RESPONSE_EXPECTED_FALSE;
 				}
+				return;
+			}
+			if(errorCallback !== undefined) {
+				errorCallback(Device.ERROR_INVALID_FUNCTION_ID);
 			}
 		};
 		this.setResponseExpectedAll = function(responseBoolean) {
