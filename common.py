@@ -377,8 +377,15 @@ def find_examples(device, base_path, dirname, filename_prefix, filename_suffix):
             if f.startswith(filename_prefix) and f.endswith(filename_suffix):
                 f_dir = '{0}/{1}'.format(board_path, f)
                 lines = 0
-                for line in open(os.path.join(f, f_dir)):
-                    lines += 1
+                ff = os.path.join(f, f_dir)
+
+                if ff.endswith('.png'):
+                    size = Image.open(ff).size
+                    lines = size[0] * size[1]
+                else:
+                    for line in open(ff):
+                        lines += 1
+
                 files.append((f, f_dir, lines))
 
         files.sort(lambda i, j: cmp(i[2], j[2]))
