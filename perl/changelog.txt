@@ -1,1 +1,5 @@
 2.0.0: Initial version
+2.0.1: Put all packages into Tinkerforge namespace
+       Fix signature of get/set_response_expected(_all) functions to match the documentation
+       Handle error code in response packages
+       Add Error class to report an error code in addition to the error message
