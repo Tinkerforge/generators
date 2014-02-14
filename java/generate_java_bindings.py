@@ -111,7 +111,7 @@ public class {0} extends Device {{
 \t/**
 \t * {3}
 \t */
-\tpublic interface {0}Listener {{
+\tpublic interface {0}Listener extends DeviceListener {{
 \t\tpublic void {1}({2});
 \t}}
 """
