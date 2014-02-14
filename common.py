@@ -32,6 +32,7 @@ import sys
 import copy
 from collections import namedtuple
 from pprint import pprint
+from PIL import Image
 
 gen_text_star = """/* ***********************************************************
  * This file was automatically generated on {0}.      *
@@ -246,7 +247,8 @@ ausgeführt werden können ist :ref:`hier <{3}>` zu finden.
 
 def make_rst_examples(title_from_file_name, device, base_path, dirname,
                       filename_prefix, filename_suffix, include_name,
-                      language=None, url_fixer=None):
+                      language=None, url_fixer=None, is_picture=False,
+                      additional_download_finder=None, display_name_fixer=None):
     if language is None:
        language = dirname
 
@@ -271,30 +273,55 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
 """
     }
 
-    imp = {
-    'en': """
+    imp_code = """
 {0}
 {1}
 
-`Download <{3}>`__
-
-.. literalinclude:: {2}
- :language: {4}
- :linenos:
- :tab-width: 4
-""",
-    'de': """
-{0}
-{1}
-
-`Download <{3}>`__
+{3}
 
 .. literalinclude:: {2}
  :language: {4}
  :linenos:
  :tab-width: 4
 """
-    }
+
+    imp_picture = """
+{0}
+{1}
+
+{3}
+
+.. image:: /Images/Screenshots/LabVIEW/{2}
+ :scale: 100 %
+ :alt: LabVIEW {0} Example
+ :align: center
+"""
+
+    imp_picture_scroll = """
+{0}
+{1}
+
+{3}
+
+.. raw:: html
+
+   <div class="horizontal-image-scroll">
+
+.. image:: /Images/Screenshots/LabVIEW/{2}
+ :scale: 100 %
+ :alt: LabVIEW {0} Example
+ :align: center
+
+.. raw:: html
+
+   </div>
+"""
+
+    download = '`Download ({0}) <{1}>`__'
+
+    imp = imp_code
+    if is_picture:
+        imp = imp_picture_scroll
 
     ref = '.. _{0}_{1}_{2}_examples:\n'.format(device.get_underscore_name(),
                                                device.get_category().lower(),
@@ -302,15 +329,38 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
     examples = select_lang(ex).format(ref)
     files = find_examples(device, base_path, dirname, filename_prefix, filename_suffix)
     copy_files = []
+
     for f in files:
-        include = '{0}_{1}_{2}_{3}'.format(device.get_camel_case_name(), device.get_category(), include_name, f[0])
+        if is_picture:
+            if Image.open(f[1]).size[0] > 950:
+                imp = imp_picture_scroll
+            else:
+                imp = imp_picture
+
+        include = '{0}_{1}_{2}_{3}'.format(device.get_camel_case_name(), device.get_category(), include_name, f[0].replace(' ', '_'))
         copy_files.append((f[1], include))
         title = title_from_file_name(f[0])
         git_name = device.get_underscore_name().replace('_', '-') + '-' + device.get_category().lower()
-        url = 'https://github.com/Tinkerforge/{0}/raw/master/software/examples/{1}/{2}'.format(git_name, dirname, f[0])
+        url = 'https://github.com/Tinkerforge/{0}/raw/master/software/examples/{1}/{2}'.format(git_name, dirname, f[0].replace(' ', '%20'))
+
         if url_fixer is not None:
             url = url_fixer(url)
-        examples += select_lang(imp).format(title, '^'*len(title), include, url, language)
+
+        display_name = f[0]
+
+        if display_name_fixer is not None:
+            display_name = display_name_fixer(display_name)
+
+        downloads = []
+
+        if additional_download_finder is not None:
+            for additional_download in additional_download_finder(f[1]):
+                additional_url = 'https://github.com/Tinkerforge/{0}/raw/master/software/examples/{1}/{2}'.format(git_name, dirname, additional_download.replace(' ', '%20'))
+                downloads.append(download.format(additional_download, additional_url))
+
+        downloads = [download.format(display_name, url)] + downloads
+
+        examples += imp.format(title, '^'*len(title), include, ', '.join(downloads), language)
 
     copy_examples(copy_files, base_path)
     return examples

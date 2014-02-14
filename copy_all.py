@@ -24,7 +24,7 @@ def files_are_not_the_same(src_file, dest_path):
                 continue
 
             return True
-        
+
     return False
 
 path = os.getcwd()
@@ -58,9 +58,10 @@ for f in os.listdir(src_file_path):
             print(' * {0}'.format(f))
 
 print('')
-doc_copy = [('_Brick_', 'Bricks'), 
+doc_copy = [('_Brick_', 'Bricks'),
             ('_Bricklet_', 'Bricklets')]
 doc_path = 'doc/{0}/source/Software'
+labview_image_path = 'doc/en/source/Images/Screenshots/LabVIEW'
 
 for lang in ['en', 'de']:
     print("Copying '{0}' documentation and examples:".format(lang))
@@ -74,13 +75,24 @@ for lang in ['en', 'de']:
         path_binding = '{0}/{1}'.format(path, binding)
         src_file_path = '{0}/doc/{1}'.format(path_binding, lang)
         for f in os.listdir(src_file_path):
-            if not f.endswith('.swp'):
-                for t in doc_copy:
-                    if t[0] in f:
-                        src_file = '{0}/{1}'.format(src_file_path, f)
+            if f.endswith('.swp'):
+                continue
+
+            for t in doc_copy:
+                if t[0] in f:
+                    src_file = '{0}/{1}'.format(src_file_path, f)
+
+                    if f.endswith('.vi.png'):
+                        if lang != 'en':
+                            continue
+
+                        dest_path = '{0}/{1}'.format(start_path,
+                                                     labview_image_path)
+                    else:
                         dest_path = '{0}/{1}/{2}'.format(start_path,
                                                          doc_path.format(lang),
                                                          t[1])
-                        if files_are_not_the_same(src_file, dest_path):
-                            shutil.copy(src_file, dest_path)
-                            print(' * {0}'.format(f))
+
+                    if files_are_not_the_same(src_file, dest_path):
+                        shutil.copy(src_file, dest_path)
+                        print(' * {0}'.format(f))

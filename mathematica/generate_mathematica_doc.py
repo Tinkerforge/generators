@@ -46,8 +46,12 @@ class MathematicaDocDevice(common.Device):
         def url_fixer(url):
             return url.replace('.nb.txt', '.nb')
 
+        def display_name_fixer(url):
+            return url.replace('.nb.txt', '.nb')
+
         return common.make_rst_examples(title_from_file_name, self, self.get_generator().get_bindings_root_directory(),
-                                        'mathematica', 'Example', '.nb.txt', 'Mathematica', url_fixer=url_fixer)
+                                        'mathematica', 'Example', '.nb.txt', 'Mathematica', url_fixer=url_fixer,
+                                        display_name_fixer=display_name_fixer)
 
     def get_mathematica_functions(self, type):
         function = '.. mathematica:function:: {0}@{1}[{2}] -> {3}\n{4}{5}{6}\n'
