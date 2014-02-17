@@ -228,10 +228,10 @@ module.exports = new Tinkerforge();""")
 
     def add_npm_main_function(self, device):
         if device.is_released():
-            api = """    this.{0}{1} = require('./lib/{0}{1}');
+            npm_main = """    this.{0}{1} = require('./lib/{0}{1}');
 """
-            api_format = api.format(device.get_category(), device.get_camel_case_name())
-            self.npm_main_file.write(api_format)
+            npm_main_format = npm_main.format(device.get_category(), device.get_camel_case_name())
+            self.npm_main_file.write(npm_main_format)
 
     def get_bindings_name(self):
         return 'javascript'
@@ -248,7 +248,7 @@ module.exports = new Tinkerforge();""")
     def generate(self, device):
         self.add_browser_api_function(device)
         self.add_npm_main_function(device)
-    
+
         file_name = '{0}{1}.js'.format(device.get_category(), device.get_camel_case_name())
 
         py = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name), 'wb')
