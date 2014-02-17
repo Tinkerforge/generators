@@ -121,8 +121,8 @@ class JavaScriptZipGenerator(common.Generator):
         shutil.copy(os.path.join(root, 'changelog.txt'), '/tmp/generator/npn')
 
         # Copy browser specific files
-        shutil.copy(os.path.join(root, 'es5-shim.js'), '/tmp/generator/npn/nodejs/source/tinkerforge')
-        shutil.copy(os.path.join(root, 'es5-sham.js'), '/tmp/generator/npn/nodejs/source/tinkerforge')
+        shutil.copy(os.path.join(root, 'es5-shim.js'), '/tmp/generator/npn/nodejs/source/Tinkerforge')
+        shutil.copy(os.path.join(root, 'es5-sham.js'), '/tmp/generator/npn/nodejs/source/Tinkerforge')
 
         # Make Tinkerforge.js for browser with browserify
         os.chdir('/tmp/generator/npn/nodejs/source/Tinkerforge/')
@@ -134,9 +134,9 @@ class JavaScriptZipGenerator(common.Generator):
             raise Exception("Command '{0}' failed".format(' '.join(browserify_args)))
 
         # Remove browser specific files
-        os.remove('/tmp/generator/npn/nodejs/source/tinkerforge/BrowserAPI.js')
-        os.remove('/tmp/generator/npn/nodejs/source/tinkerforge/es5-shim.js')
-        os.remove('/tmp/generator/npn/nodejs/source/tinkerforge/es5-sham.js')
+        os.remove('/tmp/generator/npn/nodejs/source/Tinkerforge/BrowserAPI.js')
+        os.remove('/tmp/generator/npn/nodejs/source/Tinkerforge/es5-shim.js')
+        os.remove('/tmp/generator/npn/nodejs/source/Tinkerforge/es5-sham.js')
 
         # Generate the NPM package and put it on the root of ZIP archive
         os.chdir('/tmp/generator/npn/nodejs/npm_pkg_dir')

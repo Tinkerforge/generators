@@ -40,6 +40,7 @@ function Device(deviceRegistering, uid, ipcon) {
 			uid !== undefined &&
 			ipcon !== undefined) {
 		this.uid = base58Decode(uid);
+        this.registeredCallbacks = {};
 		this.ipcon = ipcon;
 		this.deviceOID = 0;
 		this.APIVersion = [0, 0, 0];
