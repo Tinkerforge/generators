@@ -29,7 +29,7 @@ def files_are_not_the_same(src_file, dest_path):
 
 path = os.getcwd()
 start_path = path.replace('/generators', '')
-brickv_path_bindings = '{0}/{1}'.format(start_path, 'brickv/src/brickv/bindings')
+brickv_path_bindings = os.path.join(start_path, 'brickv/src/brickv/bindings')
 
 bindings = []
 for d in os.listdir(path):
@@ -39,18 +39,18 @@ for d in os.listdir(path):
 
 print('')
 print('Copying ip_connection to brickv:')
-src_file = '{0}/{1}'.format(path, 'python/ip_connection.py')
+src_file = os.path.join(path, 'python', 'ip_connection.py')
 if files_are_not_the_same(src_file, brickv_path_bindings):
     shutil.copy(src_file, brickv_path_bindings)
     print(' * ip_connection.py')
 
 print('')
 print('Copying Python bindings to brickv:')
-path_binding = '{0}/{1}'.format(path, 'python')
-src_file_path = '{0}/{1}'.format(path_binding, 'bindings')
+path_binding = os.path.join(path, 'python')
+src_file_path = os.path.join(path_binding, 'bindings')
 for f in os.listdir(src_file_path):
     if f.endswith('.py'):
-        src_file = '{0}/{1}'.format(src_file_path, f)
+        src_file = os.path.join(src_file_path, f)
         dest_path = brickv_path_bindings
 
         if files_are_not_the_same(src_file, dest_path):
@@ -67,31 +67,28 @@ for lang in ['en', 'de']:
     print("Copying '{0}' documentation and examples:".format(lang))
 
     for t in doc_copy:
-        dest_dir = '{0}/{1}/{2}'.format(start_path, doc_path.format(lang), t[1])
+        dest_dir = os.path.join(start_path, doc_path.format(lang), t[1])
         if not os.path.exists(dest_dir):
             os.makedirs(dest_dir)
 
     for binding in bindings:
-        path_binding = '{0}/{1}'.format(path, binding)
-        src_file_path = '{0}/doc/{1}'.format(path_binding, lang)
+        path_binding = os.path.join(path, binding)
+        src_file_path = os.path.join(path_binding, 'doc', lang)
         for f in os.listdir(src_file_path):
             if f.endswith('.swp'):
                 continue
 
             for t in doc_copy:
                 if t[0] in f:
-                    src_file = '{0}/{1}'.format(src_file_path, f)
+                    src_file = os.path.join(src_file_path, f)
 
                     if f.endswith('.vi.png'):
                         if lang != 'en':
                             continue
 
-                        dest_path = '{0}/{1}'.format(start_path,
-                                                     labview_image_path)
+                        dest_path = os.path.join(start_path, labview_image_path)
                     else:
-                        dest_path = '{0}/{1}/{2}'.format(start_path,
-                                                         doc_path.format(lang),
-                                                         t[1])
+                        dest_path = os.path.join(start_path, doc_path.format(lang), t[1])
 
                     if files_are_not_the_same(src_file, dest_path):
                         shutil.copy(src_file, dest_path)
