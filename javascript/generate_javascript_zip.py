@@ -39,7 +39,7 @@ class JavaScriptZipGenerator(common.Generator):
 
     def prepare(self):
         common.recreate_directory('/tmp/generator')
-        os.makedirs('/tmp/generator/npn/nodejs/source/tinkerforge')
+        os.makedirs('/tmp/generator/npn/nodejs/source/Tinkerforge')
         os.makedirs('/tmp/generator/npn/nodejs/examples')
         os.makedirs('/tmp/generator/npn/browser/source')
         os.makedirs('/tmp/generator/npn/browser/examples')
@@ -74,22 +74,22 @@ class JavaScriptZipGenerator(common.Generator):
 
         # Copy bindings and readme
         for filename in released_files:
-            shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/npn/nodejs/source/tinkerforge')
+            shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/npn/nodejs/source/Tinkerforge')
 
-        shutil.copy(os.path.join(root, 'IPConnection.js'), '/tmp/generator/npn/nodejs/source/tinkerforge')
-        shutil.copy(os.path.join(root, 'Device.js'), '/tmp/generator/npn/nodejs/source/tinkerforge')
+        shutil.copy(os.path.join(root, 'IPConnection.js'), '/tmp/generator/npn/nodejs/source/Tinkerforge')
+        shutil.copy(os.path.join(root, 'Device.js'), '/tmp/generator/npn/nodejs/source/Tinkerforge')
         shutil.copy(os.path.join(root, 'changelog.txt'), '/tmp/generator/npn')
 
         # Copy browser specific files
         shutil.copy(os.path.join(root, 'es5-shim.js'), '/tmp/generator/npn/nodejs/source/tinkerforge')
         shutil.copy(os.path.join(root, 'es5-sham.js'), '/tmp/generator/npn/nodejs/source/tinkerforge')
 
-        # Make tinkerforge.js for browser with browserify
-        os.chdir('/tmp/generator/npn/nodejs/source/tinkerforge/')
+        # Make Tinkerforge.js for browser with browserify
+        os.chdir('/tmp/generator/npn/nodejs/source/Tinkerforge/')
         browserify_args = ['browserify']
-        browserify_args.extend(os.listdir('/tmp/generator/npn/nodejs/source/tinkerforge/'))
+        browserify_args.extend(os.listdir('/tmp/generator/npn/nodejs/source/Tinkerforge/'))
         browserify_args.append('-o')
-        browserify_args.append('/tmp/generator/npn/browser/source/tinkerforge.js')
+        browserify_args.append('/tmp/generator/npn/browser/source/Tinkerforge.js')
         if subprocess.call(browserify_args) != 0:
             raise Exception("Command '{0}' failed".format(' '.join(browserify_args)))
 

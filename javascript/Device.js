@@ -1,8 +1,16 @@
+/*
+Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+
+Redistribution and use in source and binary forms of this file,
+with or without modification, are permitted. See the Creative
+Commons Zero (CC0 1.0) License for more details.
+*/
+
 Device.RESPONSE_EXPECTED_INVALID_FUNCTION_ID = 0;
-Device.RESPONSE_EXPECTED_ALWAYS_TRUE = 1; // getter
-Device.RESPONSE_EXPECTED_ALWAYS_FALSE = 2; // callback
-Device.RESPONSE_EXPECTED_TRUE = 3; // setter
-Device.RESPONSE_EXPECTED_FALSE = 4; // setter, default
+Device.RESPONSE_EXPECTED_ALWAYS_TRUE = 1;// Getter
+Device.RESPONSE_EXPECTED_ALWAYS_FALSE = 2;// Callback
+Device.RESPONSE_EXPECTED_TRUE = 3;// Setter
+Device.RESPONSE_EXPECTED_FALSE = 4;// Setter, default
 Device.ERROR_INVALID_FUNCTION_ID = 21;
 
 function base58Decode(str) {
@@ -35,21 +43,22 @@ function Device(deviceRegistering, uid, ipcon) {
 		this.ipcon = ipcon;
 		this.deviceOID = 0;
 		this.APIVersion = [0, 0, 0];
-		this.responseExpected = {};
-		this.registeredCallbacks = {};
-		this.callbackFormats = {}; //will be overwritten by child class
-		this.expectedResponses = [];//has following structured objects as elements of the array,
-									//{DeviceOID:,
-									// FID:,
-									// SEQ:,
-									// unpackFormat:,
-									// timeout:,
-									// returnCB:,
-									// errorCB:}
+		this.expectedResponses = [];// Has following structured objects as elements of the array,
+									/*
+                                    {
+                                        DeviceOID:,
+									    FID:,
+									    SEQ:,
+									    unpackFormat:,
+									    timeout:,
+									    returnCB:,
+									    errorCB:
+                                    }
+                                    */
 		this.authKey = undefined;
 		//Creates the device object with the unique device ID *uid* and adds
 		//it to the IPConnection *ipcon*.
-		this.ipcon.devices[this.uid] = deviceRegistering; // FIXME: maybe use a weakref here
+		this.ipcon.devices[this.uid] = deviceRegistering;
 		this.getDeviceOID = function() {
 			return this.deviceOID++;
 		};
@@ -63,8 +72,8 @@ function Device(deviceRegistering, uid, ipcon) {
 			if(this.responseExpected[functionID] === undefined) {
 				if(errorCallback !== undefined) {
 					errorCallback(Device.ERROR_INVALID_FUNCTION_ID);
-					return;
 				}
+				return;
 			}
 			if(this.responseExpected[functionID] === Device.RESPONSE_EXPECTED_TRUE || 
 					this.responseExpected[functionID] === Device.RESPONSE_EXPECTED_ALWAYS_TRUE) {
@@ -72,14 +81,14 @@ function Device(deviceRegistering, uid, ipcon) {
 			}
 			else {
 				return false;
-			}			
+			}
 		};
 		this.setResponseExpected = function(functionID, responseBoolean, errorCallback) {
 			if(this.responseExpected[functionID] === undefined) {
 				if(errorCallback !== undefined) {
 					errorCallback(Device.ERROR_INVALID_FUNCTION_ID);
-					return;
 				}
+				return;
 			}
 			if(this.responseExpected[functionID] === Device.RESPONSE_EXPECTED_TRUE || 
 					this.responseExpected[functionID] === Device.RESPONSE_EXPECTED_FALSE) {
@@ -89,6 +98,10 @@ function Device(deviceRegistering, uid, ipcon) {
 				else {
 					this.responseExpected[functionID] = Device.RESPONSE_EXPECTED_FALSE;
 				}
+				return;
+			}
+			if(errorCallback !== undefined) {
+				errorCallback(Device.ERROR_INVALID_FUNCTION_ID);
 			}
 		};
 		this.setResponseExpectedAll = function(responseBoolean) {

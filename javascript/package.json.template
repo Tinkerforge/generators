@@ -7,7 +7,7 @@
   "contributors": [{}],
   "bin": {},
   "scripts": {},
-  "main": "",
+  "main": "./Tinkerforge.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/Tinkerforge/generators/tree/master/javascript"
@@ -18,7 +18,7 @@
     "api"
   ],
   "dependencies" : {},
-  "analyze": false,
+  "analyze": true,
   "devDependencies": {},
   "bundledDependencies": [],  
   "license": "CC0",

@@ -443,17 +443,17 @@ public class IPConnection {
 		}
 	}
 
-	public interface EnumerateListener {
+	public interface EnumerateListener extends TinkerforgeListener {
 		public void enumerate(String uid, String connectedUid, char position,
 		                      short[] hardwareVersion, short[] firmwareVersion,
 		                      int deviceIdentifier, short enumerationType);
 	}
 
-	public interface ConnectedListener {
+	public interface ConnectedListener extends TinkerforgeListener {
 		public void connected(short connectReason);
 	}
 
-	public interface DisconnectedListener {
+	public interface DisconnectedListener extends TinkerforgeListener {
 		public void disconnected(short disconnectReason);
 	}
 
