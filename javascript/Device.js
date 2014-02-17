@@ -1,3 +1,11 @@
+/*
+Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+
+Redistribution and use in source and binary forms of this file,
+with or without modification, are permitted. See the Creative
+Commons Zero (CC0 1.0) License for more details.
+*/
+
 Device.RESPONSE_EXPECTED_INVALID_FUNCTION_ID = 0;
 Device.RESPONSE_EXPECTED_ALWAYS_TRUE = 1;// Getter
 Device.RESPONSE_EXPECTED_ALWAYS_FALSE = 2;// Callback
