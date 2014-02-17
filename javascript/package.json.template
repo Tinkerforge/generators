@@ -18,7 +18,7 @@
     "api"
   ],
   "dependencies" : {},
-  "analyze": false,
+  "analyze": true,
   "devDependencies": {},
   "bundledDependencies": [],  
   "license": "CC0",

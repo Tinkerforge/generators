@@ -190,11 +190,18 @@ class JavaScriptBindingsGenerator(common.BindingsGenerator):
         ret = common.BindingsGenerator.prepare(self)
 
         browser_api_filename = os.path.join(self.get_bindings_root_directory(), 'bindings', 'BrowserAPI.js')
+        npm_main_filename = os.path.join(self.get_bindings_root_directory(), 'bindings', 'Tinkerforge.js')
         self.browser_api_file = open(browser_api_filename, 'wb')
+        self.npm_main_file = open(npm_main_filename, 'wb')
         self.released_files.append(browser_api_filename)
+        self.released_files.append(npm_main_filename)
 
         self.browser_api_file.write("""function Tinkerforge() {
     this.IPConnection = require('./IPConnection');
+""")
+
+        self.npm_main_file.write("""function Tinkerforge() {
+    this.IPConnection = require('./lib/IPConnection');
 """)
 
         return ret
@@ -204,6 +211,12 @@ class JavaScriptBindingsGenerator(common.BindingsGenerator):
 
 global.window.Tinkerforge = new Tinkerforge();""")
         self.browser_api_file.close()
+
+        self.npm_main_file.write("""}
+
+module.exports = new Tinkerforge();""")
+        self.npm_main_file.close()
+
         return common.BindingsGenerator.finish(self)
 
     def add_browser_api_function(self, device):
@@ -212,6 +225,13 @@ global.window.Tinkerforge = new Tinkerforge();""")
 """
             api_format = api.format(device.get_category(), device.get_camel_case_name())
             self.browser_api_file.write(api_format)
+
+    def add_npm_main_function(self, device):
+        if device.is_released():
+            api = """    this.{0}{1} = require('./lib/{0}{1}');
+"""
+            api_format = api.format(device.get_category(), device.get_camel_case_name())
+            self.npm_main_file.write(api_format)
 
     def get_bindings_name(self):
         return 'javascript'
@@ -227,7 +247,8 @@ global.window.Tinkerforge = new Tinkerforge();""")
 
     def generate(self, device):
         self.add_browser_api_function(device)
-
+        self.add_npm_main_function(device)
+    
         file_name = '{0}{1}.js'.format(device.get_category(), device.get_camel_case_name())
 
         py = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name), 'wb')
