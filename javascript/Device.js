@@ -105,17 +105,19 @@ function Device(deviceRegistering, uid, ipcon) {
 			}
 		};
 		this.setResponseExpectedAll = function(responseBoolean) {
-			for(var fid in this.responseExpected) {
-				if(this.responseExpected[fid] === Device.RESPONSE_EXPECTED_TRUE ||
-						this.responseExpected[fid] === Device.RESPONSE_EXPECTED_FALSE) {
-					if(responseBoolean) {
-						this.responseExpected[fid] = Device.RESPONSE_EXPECTED_TRUE;
-					}
-					else {
-						this.responseExpected[fid] = Device.RESPONSE_EXPECTED_FALSE;
-					}
-				}
-			}
+            if(responseBoolean === true || responseBoolean === false) {
+			    for(var fid in this.responseExpected) {
+				    if(this.responseExpected[fid] === Device.RESPONSE_EXPECTED_TRUE ||
+					    	this.responseExpected[fid] === Device.RESPONSE_EXPECTED_FALSE) {
+					    if(responseBoolean) {
+					    	this.responseExpected[fid] = Device.RESPONSE_EXPECTED_TRUE;
+					    }
+					    else {
+					    	this.responseExpected[fid] = Device.RESPONSE_EXPECTED_FALSE;
+					    }
+				    }
+			    }
+            }
 		};
 	}
 }

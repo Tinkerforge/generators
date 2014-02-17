@@ -41,6 +41,8 @@ class JavaScriptZipGenerator(common.Generator):
         common.recreate_directory('/tmp/generator')
         os.makedirs('/tmp/generator/npn/nodejs/source/Tinkerforge')
         os.makedirs('/tmp/generator/npn/nodejs/examples')
+        os.makedirs('/tmp/generator/npn/nodejs/npm_pkg_dir')
+        os.makedirs('/tmp/generator/npn/nodejs/npm_pkg_dir/lib')
         os.makedirs('/tmp/generator/npn/browser/source')
         os.makedirs('/tmp/generator/npn/browser/examples')
 
@@ -74,7 +76,45 @@ class JavaScriptZipGenerator(common.Generator):
 
         # Copy bindings and readme
         for filename in released_files:
-            shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/npn/nodejs/source/Tinkerforge')
+            print filename
+            if(filename == os.path.join(root, 'bindings', 'TinkerforgeMain.js')):
+                shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/npn/nodejs/npm_pkg_dir/Tinkerforge.js')
+                continue
+            if(filename == os.path.join(root, 'bindings', 'BrowserAPI.js')):
+                shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/npn/nodejs/source/Tinkerforge/')
+                continue
+            shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/npn/nodejs/source/Tinkerforge/')
+            shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/npn/nodejs/npm_pkg_dir/lib/')
+
+        dot_version = '.'.join(str(i) for i in common.get_changelog_version(root))
+
+        # Replace <TF_API_VERSION> in package.json file
+        package_json_file = open(os.path.join(root, 'package.json'), 'rb')
+        package_json_lines = package_json_file.readlines()
+        for i, package_json_line in enumerate(package_json_lines):
+            package_json_lines[i] = package_json_line.replace("<TF_API_VERSION>", dot_version)
+        package_json_file.close()
+        package_json_file = open('/tmp/generator/npn/nodejs/npm_pkg_dir/package.json', 'wb+')
+        for package_json_line in package_json_lines:
+            package_json_file.write(str(package_json_line))
+        package_json_file.close()
+
+        #shutil.copy(os.path.join(root, 'package.json'), '/tmp/generator/npn/nodejs/npm_pkg_dir/package.json')
+        shutil.copy(os.path.join(root, 'README.md'), '/tmp/generator/npn/nodejs/npm_pkg_dir/README.md')
+        shutil.copy(os.path.join(root, 'LICENCE'), '/tmp/generator/npn/nodejs/npm_pkg_dir/LICENCE')
+        shutil.copy(os.path.join(root, 'IPConnection.js'), '/tmp/generator/npn/nodejs/npm_pkg_dir/lib/IPConnection.js')
+        shutil.copy(os.path.join(root, 'Device.js'), '/tmp/generator/npn/nodejs/npm_pkg_dir/lib/Device.js')
+
+        # Replace <TF_API_VERSION> in readme.txt
+        readme_txt_file = open(os.path.join(root, 'readme.txt'), 'rb')
+        readme_txt_lines = readme_txt_file.readlines()
+        for i, readme_txt_line in enumerate(readme_txt_lines):
+            readme_txt_lines[i] = readme_txt_line.replace("<TF_API_VERSION>", dot_version)
+        readme_txt_file.close()
+        readme_txt_file = open('/tmp/generator/npn/readme.txt', 'wb+')
+        for readme_txt_line in readme_txt_lines:
+            readme_txt_file.write(str(readme_txt_line))
+        readme_txt_file.close()
 
         shutil.copy(os.path.join(root, 'IPConnection.js'), '/tmp/generator/npn/nodejs/source/Tinkerforge')
         shutil.copy(os.path.join(root, 'Device.js'), '/tmp/generator/npn/nodejs/source/Tinkerforge')
@@ -90,8 +130,20 @@ class JavaScriptZipGenerator(common.Generator):
         if subprocess.call(browserify_args) != 0:
             raise Exception("Command '{0}' failed".format(' '.join(browserify_args)))
 
+        # Generate the NPM package and put it on the root of ZIP archive
+        os.chdir('/tmp/generator/npn/nodejs/npm_pkg_dir')
+        
+
+        if subprocess.call('npm pack', shell=True) != 0:
+            raise Exception("Command npm pack failed")
+        
+        shutil.copy(os.path.join('Tinkerforge-'+dot_version+'.tgz'), '/tmp/generator/npn/Tinkerforge-'+dot_version+'.tgz')    
+
         # Remove BrowserAPI.js from nodejs Bindings
         os.remove('/tmp/generator/npn/nodejs/source/Tinkerforge/BrowserAPI.js')
+
+        # Remove directory npm_pkg_dir
+        shutil.rmtree('/tmp/generator/npn/nodejs/npm_pkg_dir/')
 
         # Make zip
         version = common.get_changelog_version(root)

@@ -190,7 +190,7 @@ class JavaScriptBindingsGenerator(common.BindingsGenerator):
         ret = common.BindingsGenerator.prepare(self)
 
         browser_api_filename = os.path.join(self.get_bindings_root_directory(), 'bindings', 'BrowserAPI.js')
-        npm_main_filename = os.path.join(self.get_bindings_root_directory(), 'bindings', 'Tinkerforge.js')
+        npm_main_filename = os.path.join(self.get_bindings_root_directory(), 'bindings', 'TinkerforgeMain.js')
         self.browser_api_file = open(browser_api_filename, 'wb')
         self.npm_main_file = open(npm_main_filename, 'wb')
         self.released_files.append(browser_api_filename)

@@ -36,6 +36,8 @@ IPConnection = new IPConnection();
 BrickletDualButton = new BrickletDualButton();
 ```
 
+Detailed documentation is available [here](http://)
+
 ## Examples
 
 ### Enumeration
