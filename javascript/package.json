@@ -1,7 +1,7 @@
 {
   "name": "tinkerforge",
   "preferGlobal": true,
-  "version": "<TF_API_VERSION>-2",
+  "version": "<TF_API_VERSION>-3",
   "author": "Ishraq Ibne Ashraf <ishraq@tinkerforge.com>",
   "description": "Official API binding for all Tinkerforge hardware",
   "contributors": [{}],
