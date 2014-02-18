@@ -92,6 +92,7 @@ class PerlDocDevice(perl_common.PerlDevice):
 
  :param $uid: string
  :param $ipcon: IPConnection
+ :rtype: {1}
 
  Creates an object with the unique device ID ``$uid``:
 
@@ -107,6 +108,7 @@ class PerlDocDevice(perl_common.PerlDevice):
 
  :param $uid: string
  :param $ipcon: IPConnection
+ :rtype: {1}
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``$uid``:
 
