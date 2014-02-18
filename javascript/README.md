@@ -9,7 +9,7 @@ and Bricklets.
 ## How to Install
 
 ```
-npm install Tinkerforge
+npm install tinkerforge
 ```
 
 ## How to Use
