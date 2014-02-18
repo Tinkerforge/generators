@@ -145,7 +145,7 @@ class JavaScriptZipGenerator(common.Generator):
         if subprocess.call('npm pack', shell=True) != 0:
             raise Exception("Command npm pack failed")
         
-        shutil.copy(os.path.join('tinkerforge-'+dot_version+'-3.tgz'), '/tmp/generator/npn/tinkerforge-'+dot_version+'-3.tgz')    
+        shutil.copy(os.path.join('tinkerforge-'+dot_version+'-4.tgz'), '/tmp/generator/npn/tinkerforge-'+dot_version+'-4.tgz')    
 
         # Remove directory npm_pkg_dir
         shutil.rmtree('/tmp/generator/npn/nodejs/npm_pkg_dir/')
