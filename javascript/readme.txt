@@ -1,11 +1,11 @@
-This zip contains a Node.JS NPM package (tinkerforge-<TF_API_VERSION>.tgz)
+This zip contains a Node.JS NPM package (tinkerforge-<TF_API_VERSION>-2.tgz)
 and the browser version of the Tinkerforge API (in browser/). The source
 and examples of the Node.JS implementation (in nodejs/source/Tinkerforge) and
 (in nodejs/examples), the examples of the browser API (in /browser/exmaples)
 for all Tinkerforge Bricks and Bricklets.
 
 You can install the NPM Package locally with
-("sudo npm -g install tinkerforge-<TF_API_VERSION>.tgz") or from NPM registry with
+("sudo npm -g install tinkerforge-<TF_API_VERSION>-2.tgz") or from NPM registry with
 ("sudo npm -g install tinkerforge") After that you can use the examples as they are.
 
 If you can't or don't want to use the NPM package, you can also use the source

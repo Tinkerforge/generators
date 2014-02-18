@@ -38,7 +38,7 @@ BrickletDualButton = new BrickletDualButton();
 
 ## Documentation
 
-Detailed documentation is available [here](http://www.tinkerforge.com)
+For detailed documentation, <http://www.tinkerforge.com>
 
 ## Examples
 
