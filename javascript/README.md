@@ -36,6 +36,8 @@ IPConnection = new IPConnection();
 BrickletDualButton = new BrickletDualButton();
 ```
 
+## Documentation
+
 Detailed documentation is available [here](http://www.tinkerforge.com)
 
 ## Examples
@@ -175,5 +177,11 @@ process.stdin.on('data',
 ```
 ## License
 
-CC0
+(CC0)
+
+Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+
+Redistribution and use in source and binary forms of this file,
+with or without modification, are permitted. See the Creative
+Commons Zero (CC0 1.0) License for more details.
 
