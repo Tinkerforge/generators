@@ -90,6 +90,8 @@ a magnet is removed from the vicinity the signal goes high (rising edge).
 
 The debounce time is given in ms.
 
+Configuring an edge counter resets its value to 0.
+
 If you don't know what any of this means, just leave it at default. The
 default configuration is very likely OK for you.
 
@@ -110,6 +112,8 @@ Wird ein Magnet in die Nähe des Bricklets gebracht (>35 Gauss) erzeugt dies ein
 *high*-Signal (steigende Flanke).
 
 Die Entprellzeit (debounce) wird in ms angegeben.
+
+Durch das Konfigurieren wird der Wert des Flankenzählers auf 0 zurückgesetzt.
 
 Falls unklar ist was dies alles bedeutet, kann diese Funktion einfach
 ignoriert werden. Die Standardwerte sind in fast allen Situationen OK.
