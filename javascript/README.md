@@ -43,7 +43,6 @@ Detailed documentation is available [here](http://www.tinkerforge.com)
 ### Enumeration
 ```js
 var Tinkerforge = require('Tinkerforge');
-
 var IPConnection = Tinkerforge.IPConnection;
 
 var HOST = 'localhost';
