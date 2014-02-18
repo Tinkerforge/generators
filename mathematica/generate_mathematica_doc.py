@@ -102,6 +102,8 @@ class MathematicaDocDevice(common.Device):
         'en': """
 .. mathematica:function:: {3}{1}[uid, ipcon] -> {4}
 
+ :param uid: String
+ :param ipcon: NETObject[IPConnection]
  :ret {4}: NETObject[{3}{1}]
 
  Creates an object with the unique device ID ``uid``:
@@ -127,6 +129,8 @@ class MathematicaDocDevice(common.Device):
         'de': """
 .. mathematica:function:: {3}{1}[uid, ipcon] -> {4}
 
+ :param uid: String
+ :param ipcon: NETObject[IPConnection]
  :ret {4}: NETObject[{3}{1}]
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``:
@@ -161,7 +165,7 @@ Callbacks
 ^^^^^^^^^
 
 Callbacks can be registered to receive time critical or recurring data from
-the device. The registration is done by assigning a function to an callback
+the device. The registration is done by assigning a function to a callback
 property of the device object:
 
  .. code-block:: mathematica
