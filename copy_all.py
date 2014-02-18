@@ -6,7 +6,7 @@ import os
 import shutil
 import filecmp
 
-def files_are_not_the_same(src_file, dest_path):
+def text_files_are_not_the_same(src_file, dest_path):
     dest_file = os.path.join(dest_path, src_file.split('/')[-1])
     try:
         lines1 = file(src_file, 'rb').readlines()
@@ -26,6 +26,19 @@ def files_are_not_the_same(src_file, dest_path):
             return True
 
     return False
+
+def files_are_not_the_same(src_file, dest_path):
+    if src_file.endswith('.vi') or src_file.endswith('.vi.png'):
+        dest_file = os.path.join(dest_path, src_file.split('/')[-1])
+        try:
+            f1 = file(src_file, 'rb').read()
+            f2 = file(dest_file, 'rb').read()
+        except:
+            return True
+
+        return f1 != f2
+    else:
+        return text_files_are_not_the_same(src_file, dest_path)
 
 path = os.getcwd()
 start_path = path.replace('/generators', '')
