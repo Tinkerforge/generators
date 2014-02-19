@@ -45,22 +45,21 @@ For detailed documentation, <http://www.tinkerforge.com>
 ### Enumeration
 ```js
 var Tinkerforge = require('tinkerforge');
-var IPConnection = Tinkerforge.IPConnection;
 
 var HOST = 'localhost';
 var PORT = 4223;
 
 // Create connection and connect to brickd
-ipcon = new IPConnection();
+ipcon = new Tinkerforge.IPConnection();
 ipcon.connect(HOST, PORT);
 
 // Register Enumerate Callback
-ipcon.on(IPConnection.CALLBACK_ENUMERATE,
+ipcon.on(Tinkerforge.IPConnection.CALLBACK_ENUMERATE,
     // Print incoming enumeration
     function(uid, cuid, pos, hwv, fwv, devid, enumtype) {
         console.log('UID:               '+uid);
         console.log('Enumeration Type:  '+enumtype);
-        if(enumtype === IPConnection.ENUMERATION_TYPE_DISCONNECTED) {
+        if(enumtype === Tinkerforge.IPConnection.ENUMERATION_TYPE_DISCONNECTED) {
             return;
         }
         console.log('Connected UID:     '+cuid);
