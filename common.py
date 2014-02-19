@@ -403,6 +403,9 @@ def copy_examples(copy_files, path):
         shutil.copy(doc_src, doc_dest)
         print('   - {0}'.format(copy_file[1]))
 
+    if len(copy_files) == 0:
+        print('   ! No examples')
+
 def make_zip(dirname, source_path, dest_path, version):
     zipname = 'tinkerforge_{0}_bindings_{1}_{2}_{3}.zip'.format(dirname, *version)
     os.chdir(source_path)
