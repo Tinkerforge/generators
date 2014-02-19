@@ -155,7 +155,6 @@ function IPConnection() {
     this.port = undefined;
     this.timeout = 2500;
     this.autoReconnect = true;
-    this.autoReconnectPending = false;
     this.sequenceNumber = 0;
     this.authKey = undefined;
     this.devices = {};
