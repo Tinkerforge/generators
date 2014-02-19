@@ -216,24 +216,22 @@ function IPConnection() {
     };
     this.disconnectInternal = function(disconnectErrorCallback) {
         var autoReconnectAborted = false;
-
         if (this.getNextTaskKind() === IPConnection.TASK_KIND_AUTO_RECONNECT) {
             // Remove auto-reconnect task, to break recursion
             this.removeNextTask();
             autoReconnectAborted = true;
         }
-
         if (!this.isConnected) {
             if (!autoReconnectAborted && disconnectErrorCallback !== undefined) {
-                disconnectErrorCallback(IPConnection.ERROR_NOT_CONNECTED);
+                // Not using `this.` for the error callback function because
+                // we want to call what user provided not the saved one
+                disconnectErrorCallback(IPConnection.ERROR_NOT_CONNECTED); 
             }
-
             this.popTask();
             return;
         }
-
+        // Saving the user provided error callback function for future use
         this.disconnectErrorCallback = disconnectErrorCallback;
-
         this.socket.end();
         this.socket.destroy();
         return;
@@ -244,16 +242,16 @@ function IPConnection() {
     this.connectInternal = function(host, port, connectErrorCallback) {
         if (this.isConnected) {
             if (connectErrorCallback !== undefined) {
+                // Not using `this.` for the error callback function because
+                // we want to call what user provided not the saved one
                 connectErrorCallback(IPConnection.ERROR_ALREADY_CONNECTED);
             }
-
             this.popTask();
             return;
         }
-
-        clearInterval(this.disconnectProbeIID);
-
+        // Saving the user provided error callback function for future use
         this.connectErrorCallback = connectErrorCallback;
+        clearInterval(this.disconnectProbeIID);
         this.host = host;
         this.port = port;
         this.socket = new TFSocket(this.port, this.host);
