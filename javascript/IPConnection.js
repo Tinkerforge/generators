@@ -155,6 +155,7 @@ function IPConnection() {
     this.port = undefined;
     this.timeout = 2500;
     this.autoReconnect = true;
+    this.autoReconnectPending = false;
     this.sequenceNumber = 0;
     this.authKey = undefined;
     this.devices = {};
@@ -224,8 +225,8 @@ function IPConnection() {
         }
 
         if (!this.isConnected) {
-            if (!autoReconnectAborted && this.disconnectErrorCallback !== undefined) {
-                this.disconnectErrorCallback(IPConnection.ERROR_NOT_CONNECTED);
+            if (!autoReconnectAborted && disconnectErrorCallback !== undefined) {
+                disconnectErrorCallback(IPConnection.ERROR_NOT_CONNECTED);
             }
 
             this.popTask();
@@ -243,8 +244,8 @@ function IPConnection() {
     };
     this.connectInternal = function(host, port, connectErrorCallback) {
         if (this.isConnected) {
-            if (this.connectErrorCallback !== undefined) {
-                this.connectErrorCallback(IPConnection.ERROR_ALREADY_CONNECTED);
+            if (connectErrorCallback !== undefined) {
+                connectErrorCallback(IPConnection.ERROR_ALREADY_CONNECTED);
             }
 
             this.popTask();
