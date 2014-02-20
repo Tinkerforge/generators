@@ -484,6 +484,18 @@ function IPConnection() {
                         tmpPackedBuffer.writeDoubleLE(data[i], 0);
                         packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                         continue;
+                    case '?':
+                        var tmpPackedBuffer = new Buffer(1);
+                        tmpPackedBuffer.fill(0x00);
+                        if(data[i] === 0 || data[i] === false || data[i] === undefined ||
+                           data[i] === null || data[i] === NaN || data[i] === -0) {
+                            tmpPackedBuffer.writeUInt8(0x00, 0);
+                        }
+                        else {
+                            tmpPackedBuffer.writeUInt8(0x01, 0);
+                        }
+                        packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
+                        continue;
                 }
             }
             if(formatArray[i].split('').length > 1) {
@@ -571,6 +583,18 @@ function IPConnection() {
                             tmpPackedBuffer.writeDoubleLE(data[i][j], 0);
                             packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
                             continue;
+                        case '?':
+                            var tmpPackedBuffer = new Buffer(1);
+                            tmpPackedBuffer.fill(0x00);
+                            if(data[i][j] === 0 || data[i][j] === false || data[i][j] === undefined ||
+                               data[i][j] === null || data[i][j] === NaN || data[i][j] === -0) {
+                                tmpPackedBuffer.writeUInt8(0x00, 0);
+                            }
+                            else {
+                                tmpPackedBuffer.writeUInt8(0x01, 0);
+                            }
+                            packedBuffer = bufferConcat([packedBuffer,tmpPackedBuffer]);
+                            continue;
                     }
                 }
             }
@@ -640,6 +664,15 @@ function IPConnection() {
                         returnArguments.push(unpackPayload.readDoubleLE(payloadReadOffset));
                         payloadReadOffset = payloadReadOffset + 8;
                         continue;
+                    case '?':
+                        if(unpackPayload.readUInt8(payloadReadOffset) === 0x01) {
+                            returnArguments.push(true);
+                        }
+                        if(unpackPayload.readUInt8(payloadReadOffset) === 0x00) {
+                            returnArguments.push(false);
+                        }
+                        payloadReadOffset++;
+                        continue;
                 }
             }
             if(formatArray[i].split('').length > 1) {
@@ -699,6 +732,15 @@ function IPConnection() {
                             continue;
                         case 'd':
                             returnSubArray.push(unpackPayload.readDoubleLE(payloadReadOffset));
+                            payloadReadOffset++;
+                            continue;
+                        case '?':
+                            if(unpackPayload.readUInt8(payloadReadOffset) === 0x01) {
+                                returnSubArray.push(true);
+                            }
+                            if(unpackPayload.readUInt8(payloadReadOffset) === 0x00) {
+                                returnSubArray.push(false);
+                            }
                             payloadReadOffset++;
                             continue;
                     }

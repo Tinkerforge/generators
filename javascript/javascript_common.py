@@ -68,7 +68,7 @@ class JavaScriptElement(common.Element):
         'int64':  'q',
         'uint64': 'Q',
         'float':  'f',
-        'bool':   'B',
+        'bool':   '?',
         'char':   'c',
         'string': 's'
     }
