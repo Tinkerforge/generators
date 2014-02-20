@@ -130,7 +130,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns a value bitmask and a direction bitmask.
+Returns a value bitmask and a direction bitmask. A 1 in the direction bitmask
+means input and a 0 in the bitmask means output.
 
 For example: A return value of (3, 5) or (0b0011, 0b0101) for direction and
 value means that:
@@ -143,7 +144,8 @@ value means that:
 'de':
 """
 Gibt eine Bitmaske für die Richtung und eine Bitmaske für den Zustand der Pins
-zurück.
+zurück. Eine 1 in der Bitmaske für die Richtung bedeutet Eingang und eine 0
+in der Bitmaske bedeutet Ausgang.
 
 Beispiel: Ein Rückgabewert von (3, 5) bzw. (0b0011, 0b0101) für Richtung und
 Zustand bedeutet:

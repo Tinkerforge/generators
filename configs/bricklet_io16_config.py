@@ -134,7 +134,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns a direction bitmask and a value bitmask for the specified port.
+Returns a direction bitmask and a value bitmask for the specified port. A 1 in
+the direction bitmask means input and a 0 in the bitmask means output.
 
 For example: A return value of (15, 51) or (0b00001111, 0b00110011) for
 direction and value means that:
@@ -147,7 +148,8 @@ direction and value means that:
 'de':
 """
 Gibt eine Bitmaske für die Richtung und eine Bitmaske für den Zustand der Pins
-des gewählten Ports zurück.
+des gewählten Ports zurück. Eine 1 in der Bitmaske für die Richtung bedeutet
+Eingang und eine 0 in der Bitmaske bedeutet Ausgang.
 
 Beispiel: Ein Rückgabewert von (15, 51) bzw. (0b00001111, 0b00110011) für
 Richtung und Zustand bedeutet:
@@ -426,8 +428,8 @@ com['packets'].append({
 'en':
 """
 Sets the output value (high or low) for a port ("a" or "b" with a bitmask, 
-according to the selection mask. The bitmask is 8 bit long, *true* refers 
-to high and *false* refers to low.
+according to the selection mask. The bitmask is 8 bit long and a 1 in the
+bitmask means high and a 0 in the bitmask means low.
 
 For example: The parameters ('a', 192, 128) or ('a', 0b11000000, 0b10000000)
 will turn pin 7 high and pin 6 low on port A, pins 0-6 will remain untouched.
@@ -439,8 +441,8 @@ will turn pin 7 high and pin 6 low on port A, pins 0-6 will remain untouched.
 'de':
 """
 Setzt den Ausgangszustand (logisch 1 oder logisch 0) mittels einer Bitmaske,
-entsprechend der Selektionsmaske. Die Bitmaske hat eine Länge von 8 Bit,
-*true* bedeutet logisch 1 und *false*
+entsprechend der Selektionsmaske. Die Bitmaske hat eine Länge von 8 Bit und
+eine 1 in der Bitmaske bedeutet logisch 1 und eine 0 in der Bitmaske bedeutet
 logisch 0.
 
 Beispiel: Die Parameter ('a', 192, 128) bzw. ('a', 0b11000000, 0b10000000)
