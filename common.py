@@ -404,7 +404,7 @@ def copy_examples(copy_files, path):
         print('   - {0}'.format(copy_file[1]))
 
     if len(copy_files) == 0:
-        print('   ! No examples')
+        print('   \033[01;31m! No examples\033[0m')
 
 def make_zip(dirname, source_path, dest_path, version):
     zipname = 'tinkerforge_{0}_bindings_{1}_{2}_{3}.zip'.format(dirname, *version)
