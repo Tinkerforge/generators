@@ -10,6 +10,7 @@ for d in os.listdir(path):
     if os.path.isdir(d):
         if not d in ('configs', '.git', '__pycache__'):
             bindings.append(d)
+bindings = sorted(bindings)
 
 for binding in bindings:
     if binding in ('tcpip', 'modbus'):
@@ -25,3 +26,5 @@ for binding in bindings:
 
     if rc != 0:
         sys.exit(rc)
+
+print('>>> Done <<<')

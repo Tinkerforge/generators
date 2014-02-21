@@ -12,6 +12,7 @@ for d in os.listdir(path):
     if os.path.isdir(d):
         if not d in ('configs', '.git', '__pycache__'):
             bindings.append(d)
+bindings = sorted(bindings)
 
 # bindings
 for binding in bindings:
@@ -44,3 +45,5 @@ if socket.gethostname() != 'tinkerforge.com':
         module = __import__('generate_{0}_zip'.format(binding))
         print("\nGenerating ZIP for {0}:".format(binding))
         module.generate(path_binding)
+
+print('>>> Done <<<')
