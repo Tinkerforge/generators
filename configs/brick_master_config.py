@@ -793,7 +793,7 @@ verbindet. Der Standardport von brickd ist 4223.
 Die Werte sind im EEPROM gespeichert und werden nur beim Start angewandt. Dass
 bedeutet, der Master Brick muss nach einer Konfiguration neu gestartet werden.
 
-Wir empfehlen die Brick Viewer zu nutzen um die WIFI Extension zu
+Wir empfehlen den Brick Viewer zu nutzen um die WIFI Extension zu
 konfigurieren.
 """
 }]
@@ -941,7 +941,7 @@ Beispiel für EAP-TTLS + EAP-GTC + Private Key: ``option = 2 | (1 << 2) | (2 << 
 Die Werte sind im EEPROM gespeichert und werden nur beim Start angewandt.
 Das bedeutet der Master Brick muss nach einer Konfiguration neu gestartet werden.
 
-Wir empfehlen die Brick Viewer zu nutzen um die WIFI Extension Verschlüsselung
+Wir empfehlen den Brick Viewer zu nutzen um die WIFI Extension Verschlüsselung
 zu konfigurieren.
 """
 }]
@@ -1114,7 +1114,7 @@ für Private Key 20000. Die Maximalen Dateigrößen sind jeweils 1312, 1312 und
 Die Werte sind im EEPROM gespeichert und werden nur beim Start angewandt.
 Das bedeutet der Master Brick muss nach einer Konfiguration neu gestartet werden.
 
-Wir empfehlen die Brick Viewer zu nutzen um die WIFI Extension Verschlüsselung
+Wir empfehlen den Brick Viewer zu nutzen um die WIFI Extension Verschlüsselung
 zu konfigurieren.
 """
 }]
@@ -2084,7 +2084,7 @@ Die Werte sind im EEPROM gespeichert und werden nur beim Start angewandt.
 Das bedeutet der Master Brick muss nach einer Konfiguration neu gestartet
 werden.
 
-Wir empfehlen die Brick Viewer zu nutzen um die Ethernet Extension zu
+Wir empfehlen den Brick Viewer zu nutzen um die Ethernet Extension zu
 konfigurieren.
 """
 }]
@@ -2205,3 +2205,71 @@ Die MAC Adresse kann mit :func:`GetEthernetStatus` wieder ausgelesen werden.
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function', 
+'name': ('SetEthernetWebsocketConfiguration', 'set_ethernet_websocket_configuration'), 
+'elements': [('sockets', 'uint8', 1, 'in'),
+             ('port', 'uint16', 1, 'in')], 
+'since_firmware': [2, 2, 0],
+'doc': ['af', {
+'en':
+"""
+Sets the Ethernet Websocket configuration. The first parameter sets the number of socket
+connections that are reserved for websockets. The range ist 0-7. The connections
+are shared with the plain sockets. Example: If you set the connections to 3,
+there will be 3 websocket and 4 plain socket connections available.
+
+The second parameter is the port for the websocket connections. The port can
+not be the same as the port for the plain socket connections.
+
+The values are stored in the EEPROM and only applied on startup. That means
+you have to restart the Master Brick after configuration.
+
+It is recommended to use the Brick Viewer to set the Ethernet configuration.
+
+The default values are 3 for the socket connections and 4280 for the port.
+""",
+'de':
+"""
+Setzt die Ethernet Websocket-Konfiguration. Der erste Parameter setzt
+die Anzahl der Socketverbindungen die für Websockets reserviert werden.
+Der mögliche Wertebereich ist 0-7- Die Verbindungen werden zwischen den 
+normalen-und web-sockets aufgeteilt. Beispiel: Wenn die Socketverbindungen auf 3
+gesetzt werden, stehen 3 Websockets und 4 normale Sockets zur verfügung.
+
+Der zweite Parameter ist der Port für die Websocket-Verbindungen. Der Port
+kann nicht der gleiche sein wie der Port des normalen Sockets.
+
+Die Werte sind im EEPROM gespeichert und werden nur beim Start angewandt.
+Das bedeutet der Master Brick muss nach einer Konfiguration neu gestartet
+werden.
+
+Wir empfehlen den Brick Viewer zu nutzen um die Ethernet Extension zu
+konfigurieren.
+
+Die Standardwerte sind 3 für die Anzahl der Socketverbindungen und
+4280 für den Port.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('GetEthernetWebsocketConfiguration', 'get_ethernet_websocket_configuration'), 
+'elements': [('sockets', 'uint8', 1, 'out'),
+             ('port', 'uint16', 1, 'out')], 
+'since_firmware': [2, 2, 0],
+'doc': ['af', {
+'en':
+"""
+Returns the configuration as set by :func:`SetEthernetConfiguration`.
+""",
+'de':
+"""
+Gibt die Konfiguration zurück, wie von :func:`SetEthernetConfiguration`
+gesetzt.
+"""
+}]
+})
+
