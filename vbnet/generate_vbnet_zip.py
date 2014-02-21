@@ -59,13 +59,9 @@ class VBNETZipGenerator(common.Generator):
         root = self.get_bindings_root_directory()
 
         # Copy examples
-        shutil.copy(root.replace('/generators/vbnet', '/doc/en/source/Software/Example.vb'),
-                    '/tmp/generator/dll/examples/ExampleEnumerate.vb')
-
-        lines = []
-        for line in file(root.replace('/generators/vbnet', '/doc/en/source/Software/Example.vb'), 'rb'):
-            lines.append(line.replace('Module Example', 'Module ExampleEnumerate'))
-        file('/tmp/generator/dll/examples/ExampleEnumerate.vb', 'wb').writelines(lines)
+        common.replace_in_file(root.replace('/generators/vbnet', '/doc/en/source/Software/Example.vb'),
+                               '/tmp/generator/dll/examples/ExampleEnumerate.vb',
+                               'Module Example', 'Module ExampleEnumerate')
 
         # Copy bindings and readme
         for filename in released_files:

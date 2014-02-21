@@ -60,10 +60,9 @@ class JavaZipGenerator(common.Generator):
         root = self.get_bindings_root_directory()
 
         # Copy examples
-        lines = []
-        for line in file(root.replace('/generators/java', '/doc/en/source/Software/Example.java'), 'rb'):
-            lines.append(line.replace('public class Example {', 'public class ExampleEnumerate {'))
-        file('/tmp/generator/jar/examples/ExampleEnumerate.java', 'wb').writelines(lines)
+        common.replace_in_file(root.replace('/generators/java', '/doc/en/source/Software/Example.java'),
+                               '/tmp/generator/jar/examples/ExampleEnumerate.java',
+                               'public class Example {', 'public class ExampleEnumerate {')
 
         # Copy bindings and readme
         for filename in released_files:

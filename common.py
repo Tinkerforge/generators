@@ -538,6 +538,20 @@ def recreate_directory(directory):
         shutil.rmtree(directory)
     os.makedirs(directory)
 
+def replace_in_file(source_file_name, destination_file_name, search, replace):
+    source_file = open(source_file_name, 'rb')
+    lines = []
+
+    for line in source_file.readlines():
+        line = line.replace(search, replace)
+        lines.append(line)
+
+    source_file.close()
+
+    destination_file = open(destination_file_name, 'wb')
+    destination_file.writelines(lines)
+    destination_file.close()
+
 def generate(bindings_root_directory, language, generator_class):
     global lang
     lang = language
