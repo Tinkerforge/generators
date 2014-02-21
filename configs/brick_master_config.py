@@ -2216,7 +2216,7 @@ com['packets'].append({
 'en':
 """
 Sets the Ethernet Websocket configuration. The first parameter sets the number of socket
-connections that are reserved for websockets. The range ist 0-7. The connections
+connections that are reserved for websockets. The range is 0-7. The connections
 are shared with the plain sockets. Example: If you set the connections to 3,
 there will be 3 websocket and 4 plain socket connections available.
 
@@ -2233,10 +2233,10 @@ The default values are 3 for the socket connections and 4280 for the port.
 'de':
 """
 Setzt die Ethernet Websocket-Konfiguration. Der erste Parameter setzt
-die Anzahl der Socketverbindungen die für Websockets reserviert werden.
-Der mögliche Wertebereich ist 0-7- Die Verbindungen werden zwischen den 
-normalen-und web-sockets aufgeteilt. Beispiel: Wenn die Socketverbindungen auf 3
-gesetzt werden, stehen 3 Websockets und 4 normale Sockets zur verfügung.
+die Anzahl der Socket-Verbindungen die für Websockets reserviert werden.
+Der mögliche Wertebereich ist 0-7. Die Verbindungen werden zwischen den
+normalen Sockets und den Websockets aufgeteilt. Beispiel: Wenn die Socket-Verbindungen auf 3
+gesetzt werden, stehen 3 Websockets und 4 normale Sockets zur Verfügung.
 
 Der zweite Parameter ist der Port für die Websocket-Verbindungen. Der Port
 kann nicht der gleiche sein wie der Port des normalen Sockets.
@@ -2248,7 +2248,7 @@ werden.
 Wir empfehlen den Brick Viewer zu nutzen um die Ethernet Extension zu
 konfigurieren.
 
-Die Standardwerte sind 3 für die Anzahl der Socketverbindungen und
+Die Standardwerte sind 3 für die Anzahl der Socket-Verbindungen und
 4280 für den Port.
 """
 }]
