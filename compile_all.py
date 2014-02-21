@@ -24,6 +24,9 @@ for binding in bindings:
 
     rc = module.run(path_binding)
 
+    if type(rc) != int:
+        raise Exception('compile_{0}_examples.py returns wrong type from its run() function'.format(binding))
+
     if rc != 0:
         sys.exit(rc)
 
