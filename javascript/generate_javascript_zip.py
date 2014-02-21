@@ -125,13 +125,14 @@ class JavaScriptZipGenerator(common.Generator):
         shutil.copy(os.path.join(root, 'es5-sham.js'), '/tmp/generator/npm/nodejs/source/Tinkerforge')
 
         # Make Tinkerforge.js for browser with browserify
-        os.chdir('/tmp/generator/npm/nodejs/source/Tinkerforge/')
-        browserify_args = ['browserify']
-        browserify_args.extend(os.listdir('/tmp/generator/npm/nodejs/source/Tinkerforge/'))
-        browserify_args.append('-o')
-        browserify_args.append('/tmp/generator/npm/browser/source/Tinkerforge.js')
-        if subprocess.call(browserify_args) != 0:
-            raise Exception("Command '{0}' failed".format(' '.join(browserify_args)))
+        with common.ChangedDirectory('/tmp/generator/npm/nodejs/source/Tinkerforge/'):
+            browserify_args = ['browserify']
+            browserify_args.extend(os.listdir('/tmp/generator/npm/nodejs/source/Tinkerforge/'))
+            browserify_args.append('-o')
+            browserify_args.append('/tmp/generator/npm/browser/source/Tinkerforge.js')
+
+            if subprocess.call(browserify_args) != 0:
+                raise Exception("Command '{0}' failed".format(' '.join(browserify_args)))
 
         # Remove browser specific files
         os.remove('/tmp/generator/npm/nodejs/source/Tinkerforge/BrowserAPI.js')
@@ -139,12 +140,12 @@ class JavaScriptZipGenerator(common.Generator):
         os.remove('/tmp/generator/npm/nodejs/source/Tinkerforge/es5-sham.js')
 
         # Generate the NPM package and put it on the root of ZIP archive
-        os.chdir('/tmp/generator/npm/nodejs/npm_pkg_dir')
+        with common.ChangedDirectory('/tmp/generator/npm/nodejs/npm_pkg_dir'):
+            if subprocess.call('npm pack', shell=True) != 0:
+                raise Exception("Command npm pack failed")
 
-        if subprocess.call('npm pack', shell=True) != 0:
-            raise Exception("Command npm pack failed")
-        
-        shutil.copy(os.path.join('tinkerforge-'+dot_version+'.tgz'), '/tmp/generator/npm/tinkerforge-'+dot_version+'.tgz')
+            shutil.copy(os.path.join('tinkerforge-{0}.tgz'.format(dot_version)),
+                        '/tmp/generator/npm/tinkerforge-{0}.tgz'.format(dot_version))
 
         # Remove directory npm_pkg_dir
         shutil.rmtree('/tmp/generator/npm/nodejs/npm_pkg_dir/')

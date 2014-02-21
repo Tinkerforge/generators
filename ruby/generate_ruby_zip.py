@@ -106,12 +106,12 @@ end
 """.format(*version))
 
         # Make gem
-        os.chdir('/tmp/generator/gem/source')
-        args = ['/usr/bin/gem',
-                'build',
-                'tinkerforge.gemspec']
-        if subprocess.call(args) != 0:
-            raise Exception("Command '{0}' failed".format(' '.join(args)))
+        with common.ChangedDirectory('/tmp/generator/gem/source'):
+            args = ['/usr/bin/gem',
+                    'build',
+                    'tinkerforge.gemspec']
+            if subprocess.call(args) != 0:
+                raise Exception("Command '{0}' failed".format(' '.join(args)))
 
         # Remove build stuff
         os.remove('/tmp/generator/gem/source/tinkerforge.gemspec')

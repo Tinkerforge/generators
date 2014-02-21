@@ -88,12 +88,12 @@ setup(name='tinkerforge',
 """.format(*version))
 
         # Make egg
-        os.chdir('/tmp/generator/egg/source')
-        args = ['/usr/bin/python',
-                'setup.py',
-                'bdist_egg']
-        if subprocess.call(args) != 0:
-            raise Exception("Command '{0}' failed".format(' '.join(args)))
+        with common.ChangedDirectory('/tmp/generator/egg/source'):
+            args = ['/usr/bin/python',
+                    'setup.py',
+                    'bdist_egg']
+            if subprocess.call(args) != 0:
+                raise Exception("Command '{0}' failed".format(' '.join(args)))
 
         # Remove build stuff
         shutil.rmtree('/tmp/generator/egg/source/build')

@@ -89,16 +89,16 @@ using System.Runtime.CompilerServices;
 """.format(*version))
 
         # Make dll
-        os.chdir('/tmp/generator')
-        args = ['/usr/bin/gmcs',
-                '/optimize',
-                '/target:library',
-                '/out:/tmp/generator/dll/Tinkerforge.dll',
-                '/doc:/tmp/generator/dll/Tinkerforge.xml',
-                '/tmp/generator/dll/source/Tinkerforge/*.cs']
+        with common.ChangedDirectory('/tmp/generator'):
+            args = ['/usr/bin/gmcs',
+                    '/optimize',
+                    '/target:library',
+                    '/out:/tmp/generator/dll/Tinkerforge.dll',
+                    '/doc:/tmp/generator/dll/Tinkerforge.xml',
+                    '/tmp/generator/dll/source/Tinkerforge/*.cs']
 
-        if subprocess.call(args) != 0:
-            raise Exception("Command '{0}' failed".format(' '.join(args)))
+            if subprocess.call(args) != 0:
+                raise Exception("Command '{0}' failed".format(' '.join(args)))
 
         # Make zip
         common.make_zip(self.get_bindings_name(), '/tmp/generator/dll', root, version)

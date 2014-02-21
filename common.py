@@ -408,15 +408,18 @@ def copy_examples(copy_files, path):
 
 def make_zip(dirname, source_path, dest_path, version):
     zipname = 'tinkerforge_{0}_bindings_{1}_{2}_{3}.zip'.format(dirname, *version)
-    os.chdir(source_path)
-    args = ['/usr/bin/zip',
-            '-q',
-            '-r',
-            zipname,
-            '.']
-    if subprocess.call(args) != 0:
-        raise Exception("Command '{0}' failed".format(' '.join(args)))
-    shutil.copy(zipname, dest_path)
+
+    with ChangedDirectory(source_path):
+        args = ['/usr/bin/zip',
+                '-q',
+                '-r',
+                zipname,
+                '.']
+
+        if subprocess.call(args) != 0:
+            raise Exception("Command '{0}' failed".format(' '.join(args)))
+
+        shutil.copy(zipname, dest_path)
 
 re_camel_case_to_space = re.compile('([A-Z][A-Z][a-z])|([a-z][A-Z])|([a-zA-Z][0-9])')
 
@@ -1281,47 +1284,54 @@ class ExamplesCompiler:
         return False
 
     def run(self):
-        cwd = os.getcwd()
-
         # Make temporary examples directory
         if os.path.exists('/tmp/compiler'):
             shutil.rmtree('/tmp/compiler/')
 
         os.makedirs('/tmp/compiler')
-        os.chdir('/tmp/compiler')
 
-        shutil.copy(os.path.join(self.path, self.zipname), '/tmp/compiler/')
+        with ChangedDirectory('/tmp/compiler'):
+            shutil.copy(os.path.join(self.path, self.zipname), '/tmp/compiler/')
 
-        # unzip
-        print('>>> unpacking {0}'.format(self.zipname))
+            # unzip
+            print('>>> unpacking {0}'.format(self.zipname))
 
-        args = ['/usr/bin/unzip',
-                '-q',
-                os.path.join('/tmp/compiler', self.zipname)]
+            args = ['/usr/bin/unzip',
+                    '-q',
+                    os.path.join('/tmp/compiler', self.zipname)]
 
-        rc = subprocess.call(args)
+            rc = subprocess.call(args)
 
-        if rc != 0:
-            os.chdir(cwd)
-            print('### could not unpack {0}'.format(self.zipname))
-            return 1
+            if rc != 0:
+                print('### could not unpack {0}'.format(self.zipname))
+                return 1
 
-        # compile
-        for subdir in self.subdirs:
-            os.path.walk(os.path.join('/tmp/compiler', subdir), self.walker, None)
+            # compile
+            for subdir in self.subdirs:
+                os.path.walk(os.path.join('/tmp/compiler', subdir), self.walker, None)
 
-        for extra_example in self.extra_examples:
-            self.handle_source(extra_example, True)
+            for extra_example in self.extra_examples:
+                self.handle_source(extra_example, True)
 
-        # report
-        if self.comment is not None:
-            print('### [{0}] {1} files compiled, {2} failure(s) occurred'.format(self.comment, self.compile_count, self.failure_count))
-        else:
-            print('### {0} files compiled, {1} failure(s) occurred'.format(self.compile_count, self.failure_count))
-
-        os.chdir(cwd)
+            # report
+            if self.comment is not None:
+                print('### [{0}] {1} files compiled, {2} failure(s) occurred'.format(self.comment, self.compile_count, self.failure_count))
+            else:
+                print('### {0} files compiled, {1} failure(s) occurred'.format(self.compile_count, self.failure_count))
 
         if self.failure_count > 0:
             return 1
         else:
             return 0
+
+# use "with ChangedDirectory('/path/to/abc')" instead of "os.chdir('/path/to/abc')"
+class ChangedDirectory:
+    def __init__(self, directory):
+        self.directory = directory
+
+    def __enter__(self):
+        self.previous_directory = os.getcwd()
+        os.chdir(self.directory)
+
+    def __exit__(self, type, value, traceback):
+        os.chdir(self.previous_directory)

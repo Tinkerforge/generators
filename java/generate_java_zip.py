@@ -85,21 +85,21 @@ class JavaZipGenerator(common.Generator):
         file('/tmp/generator/manifest.txt', 'wb').write('Bindings-Version: {0}.{1}.{2}\n'.format(*version))
 
         # Make jar
-        os.chdir('/tmp/generator')
-        args = ['/usr/bin/javac ' +
-                '-Xlint ' +
-                '/tmp/generator/jar/source/com/tinkerforge/*.java']
-        if subprocess.call(args, shell=True) != 0:
-            raise Exception("Command '{0}' failed".format(' '.join(args)))
+        with common.ChangedDirectory('/tmp/generator'):
+            args = ['/usr/bin/javac ' +
+                    '-Xlint ' +
+                    '/tmp/generator/jar/source/com/tinkerforge/*.java']
+            if subprocess.call(args, shell=True) != 0:
+                raise Exception("Command '{0}' failed".format(' '.join(args)))
 
-        os.chdir('/tmp/generator/jar/source')
-        args = ['/usr/bin/jar ' +
-                'cfm ' +
-                '/tmp/generator/jar/Tinkerforge.jar ' +
-                '/tmp/generator/manifest.txt ' +
-                'com']
-        if subprocess.call(args, shell=True) != 0:
-            raise Exception("Command '{0}' failed".format(' '.join(args)))
+        with common.ChangedDirectory('/tmp/generator/jar/source'):
+            args = ['/usr/bin/jar ' +
+                    'cfm ' +
+                    '/tmp/generator/jar/Tinkerforge.jar ' +
+                    '/tmp/generator/manifest.txt ' +
+                    'com']
+            if subprocess.call(args, shell=True) != 0:
+                raise Exception("Command '{0}' failed".format(' '.join(args)))
 
         # Remove class
         for f in os.listdir('/tmp/generator/jar/source/com/tinkerforge/'):
