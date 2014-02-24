@@ -305,6 +305,10 @@ class {0} extends Device
      */
     public function registerCallback($id, $callback, $userData = NULL)
     {
+        if (!is_callable($callback)) {
+            throw new \Exception('Callback function is not callable');
+        }
+
         $this->registeredCallbacks[$id] = $callback;
         $this->registeredCallbackUserData[$id] = $userData;
     }
@@ -320,6 +324,7 @@ class {0} extends Device
 {1}
 
 {2}
+        array_push($result, $this->registeredCallbackUserData[self::CALLBACK_{3}]);
 
         call_user_func_array($this->registeredCallbacks[self::CALLBACK_{3}], $result);
     }}
