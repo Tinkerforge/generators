@@ -52,3 +52,4 @@
 2.0.12: Add Get/SetClockFrequency function to LED Strip Bricklet API
         Fix mixup of Set/GetDateTimeCallbackPeriod and Set/GetMotionCallbackPeriod in GPS Bricklet API
         Support addressing types of Intertechno and ELRO Home Easy devices in Remote Switch Bricklet API
+2.0.13: Fix passing $userData parameter to callbacks
