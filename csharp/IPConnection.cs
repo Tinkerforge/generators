@@ -832,7 +832,7 @@ namespace Tinkerforge
 			// Response seems to be OK, but can't be handled
 		}
 
-		public void SendRequest(byte[] request)
+		internal void SendRequest(byte[] request)
 		{
 			lock (socketLock)
 			{
@@ -1107,7 +1107,7 @@ namespace Tinkerforge
 		                                 out byte[] hardwareVersion, out byte[] firmwareVersion,
 		                                 out int deviceIdentifier);
 
-		protected byte[] CreateRequestPacket(byte length, byte fid)
+		internal byte[] CreateRequestPacket(byte length, byte fid)
 		{
 			byte[] packet = new byte[length];
 			LEConverter.To((int)this.internalUID, 0, packet);
@@ -1126,7 +1126,7 @@ namespace Tinkerforge
 			return packet;
 		}
 
-		protected byte[] SendRequest(byte[] request)
+		internal byte[] SendRequest(byte[] request)
 		{
 			byte[] response = null;
 
@@ -1189,7 +1189,7 @@ namespace Tinkerforge
 		}
 	}
 
-	public class Base58
+	internal class Base58
 	{
 		private const string BASE58 = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
 
