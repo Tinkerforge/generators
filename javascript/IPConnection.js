@@ -50,7 +50,7 @@ IPConnection.TASK_KIND_AUTO_RECONNECT = 2;
 
 // Socket implementation for Node.js and Websocket. 
 // The API resembles the Node.js API.
-function TFSocket(PORT, HOST) {
+function TFSocket(PORT, HOST, ipcon) {
     this.port = PORT;
     this.host = HOST;
     this.socket = null;
@@ -122,10 +122,11 @@ function TFSocket(PORT, HOST) {
             // Some browers can't send a nodejs Buffer through a websocket,
             // we copy it into an ArrayBuffer
             var arrayBuffer = new Uint8Array(data).buffer;
-            this.socket.send(arrayBuffer); 
+            this.socket.send(arrayBuffer);
+            ipcon.resetDisconnectProbe();
         }
         else {
-            this.socket.write(data);
+            this.socket.write(data, ipcon.resetDisconnectProbe());
         }
     }
 	this.end = function() {
@@ -169,7 +170,7 @@ function IPConnection() {
     
     this.disconnectProbe = function() {
         if(this.socket !== undefined) {
-            this.socket.write(this.createPacketHeader(undefined, 8, IPConnection.FUNCTION_DISCONNECT_PROBE));
+            this.socket.write(this.createPacketHeader(undefined, 8, IPConnection.FUNCTION_DISCONNECT_PROBE), this.resetDisconnectProbe());
         }
     };
     this.pushTask = function(handler, kind) {
@@ -254,7 +255,7 @@ function IPConnection() {
         clearInterval(this.disconnectProbeIID);
         this.host = host;
         this.port = port;
-        this.socket = new TFSocket(this.port, this.host);
+        this.socket = new TFSocket(this.port, this.host, this);
         this.socket.setNoDelay(true);
         this.socket.on('connect', this.handleConnect.bind(this));
         this.socket.on('data', this.handleIncomingData.bind(this));
@@ -283,6 +284,7 @@ function IPConnection() {
         this.popTask();
     };
     this.handleIncomingData = function(data) {
+        this.resetDisconnectProbe();
         if(data.length === 0) {
             return;
         }
@@ -366,6 +368,13 @@ function IPConnection() {
             this.popTask();
             return;
         }
+    };
+    this.resetDisconnectProbe = function() {
+        if(this.disconnectProbeIID !== undefined) {
+            clearInterval(this.disconnectProbeIID);
+            this.disconnectProbeIID = setInterval(this.disconnectProbe.bind(this),
+                                                       IPConnection.DISCONNECT_PROBE_INTERVAL);
+        }    
     };
     this.getUIDFromPacket = function(packetUID){
         return packetUID.readUInt32LE(0);
@@ -787,7 +796,7 @@ function IPConnection() {
                 returnCB:sendRequestReturnCB,
                 errorCB:sendRequestErrorCB});
         }
-        this.socket.write(sendRequestPacket);
+        this.socket.write(sendRequestPacket, this.resetDisconnectProbe());
     };
     this.sendRequestTimeout = function(timeoutDevice, timeoutDeviceOID, timeoutErrorCB) {
         for(var i=0; i<timeoutDevice.expectedResponses.length; ++i) {
@@ -957,7 +966,7 @@ function IPConnection() {
         return this.timeout;
     };
     this.enumerate = function() {
-        this.socket.write(this.createPacketHeader(undefined, 8, IPConnection.FUNCTION_ENUMERATE));
+        this.socket.write(this.createPacketHeader(undefined, 8, IPConnection.FUNCTION_ENUMERATE), this.resetDisconnectProbe());
     };
     this.on = function(FID, CBFunction) {
         this.registeredCallbacks[FID] = CBFunction;
