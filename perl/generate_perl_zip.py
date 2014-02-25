@@ -150,8 +150,8 @@ class PerlZipGenerator(common.Generator):
         # Generating the CPAN package archive and cleaning up
         subprocess.call("cd /tmp/generator/perl/Tinkerforge/ && perl /tmp/generator/perl/Tinkerforge/Makefile.PL", shell=True)
         subprocess.call("cd /tmp/generator/perl/Tinkerforge/ && make dist", shell=True)
-        subprocess.call("cp /tmp/generator/perl/Tinkerforge/Tinkerforge-{0}.{1}.{2}.tar.gz /tmp/generator/perl/Tinkerforge.tar.gz".format(*version), shell=True)
-        subprocess.call("cp /tmp/generator/perl/Tinkerforge/Tinkerforge-{1}.{2}.{3}.tar.gz {0}".format(root, *version), shell=True)
+        shutil.copy("/tmp/generator/perl/Tinkerforge/Tinkerforge-{0}.{1}.{2}.tar.gz".format(*version), "/tmp/generator/perl/Tinkerforge.tar.gz")
+        shutil.copy("/tmp/generator/perl/Tinkerforge/Tinkerforge-{0}.{1}.{2}.tar.gz".format(*version), root)
         shutil.rmtree('/tmp/generator/perl/Tinkerforge')
         os.remove(os.path.join(root, 'Tinkerforge_cpan.pm'))
         os.remove(os.path.join(root, 'README_cpan'))
