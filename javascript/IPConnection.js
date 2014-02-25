@@ -50,28 +50,25 @@ IPConnection.TASK_KIND_AUTO_RECONNECT = 2;
 
 // Socket implementation for Node.js and Websocket.
 // The API resembles the Node.js API.
-
-function TFSocket(port, host) {
-    this.port = port;
-    this.host = host;
-
+function TFSocket(PORT, HOST, ipcon) {
+    this.port = PORT;
+    this.host = HOST;
     this.socket = null;
 
     if (process.browser) {
         var webSocketURL = "ws://" + this.host + ":" + this.port + "/";
-
         if (typeof MozWebSocket != "undefined") {
             this.socket = new MozWebSocket(webSocketURL, "tfp");
-        } else {
+        }
+        else {
             this.socket = new WebSocket(webSocketURL, "tfp");
         }
-
         this.socket.binaryType = 'arraybuffer';
-    } else {
+    }
+    else {
         var net = require('net');
         this.socket = new net.Socket();
     }
-
     this.on = function (str, func) {
         if (process.browser) {
             switch (str) {
@@ -98,54 +95,54 @@ function TFSocket(port, host) {
                 this.socket.onclose = func;
                 break;
             }
-        } else {
+        }
+        else {
             this.socket.on(str, func);
         }
     };
-
     this.connect = function () {
         if (process.browser) {
             // In the browser we already connected by creating a WebSocket object
-        } else {
+        }
+        else {
             this.socket.connect(this.port, this.host, null);
         }
     };
-
     this.setNoDelay = function (value) {
         if (process.browser) {
             // Currently no API available in browsers
             // But Nagle algorithm seems te be turned off in most browsers by default anyway
-        } else {
+        }
+        else {
             this.socket.setNoDelay(value);
         }
     };
-
     this.write = function (data) {
         if (process.browser) {
             // Some browers can't send a nodejs Buffer through a websocket,
             // we copy it into an ArrayBuffer
             var arrayBuffer = new Uint8Array(data).buffer;
             this.socket.send(arrayBuffer);
-
-        } else {
-            this.socket.write(data);
-
+            ipcon.resetDisconnectProbe();
+        }
+        else {
+            this.socket.write(data, ipcon.resetDisconnectProbe());
         }
     };
-
     this.end = function () {
         if (process.browser) {
             this.socket.close();
-        } else {
+        }
+        else {
             this.socket.end();
         }
     };
-
     this.destroy = function () {
         if (process.browser) {
             // There is no end/destroy in browser socket, so we close in end
             // and do nothing in destroy
-        } else {
+        }
+        else {
             this.socket.destroy();
         }
     };
@@ -170,15 +167,12 @@ function IPConnection() {
     this.connectErrorCallback = undefined;
     this.disconnectErrorCallback = undefined;
     this.mergeBuffer = new Buffer(0);
-
-
+   
     this.disconnectProbe = function () {
         if (this.socket !== undefined) {
-            this.socket.write(this.createPacketHeader(undefined, 8, IPConnection.FUNCTION_DISCONNECT_PROBE));
-
+            this.socket.write(this.createPacketHeader(undefined, 8, IPConnection.FUNCTION_DISCONNECT_PROBE), this.resetDisconnectProbe());
         }
     };
-
     this.pushTask = function (handler, kind) {
         this.taskQueue.push({"handler": handler, "kind": kind});
 
@@ -186,7 +180,6 @@ function IPConnection() {
             this.executeTask();
         }
     };
-
     this.executeTask = function () {
         var task = this.taskQueue[0];
 
@@ -194,16 +187,13 @@ function IPConnection() {
             task.handler();
         }
     };
-
     this.popTask = function () {
         this.taskQueue.splice(0, 1);
         this.executeTask();
     };
-
     this.removeNextTask = function () {
         this.taskQueue.splice(1, 1);
     };
-
     this.getCurrentTaskKind = function () {
         var task = this.taskQueue[0];
 
@@ -213,7 +203,6 @@ function IPConnection() {
 
         return undefined;
     };
-
     this.getNextTaskKind = function () {
         var task = this.taskQueue[1];
 
@@ -227,7 +216,6 @@ function IPConnection() {
     this.disconnect = function (disconnectErrorCallback) {
         this.pushTask(this.disconnectInternal.bind(this, disconnectErrorCallback), IPConnection.TASK_KIND_DISCONNECT);
     };
-
     this.disconnectInternal = function (disconnectErrorCallback) {
         var autoReconnectAborted = false;
 
@@ -253,11 +241,9 @@ function IPConnection() {
         this.socket.destroy();
         return;
     };
-
     this.connect = function (host, port, connectErrorCallback) {
         this.pushTask(this.connectInternal.bind(this, host, port, connectErrorCallback), IPConnection.TASK_KIND_CONNECT);
     };
-
     this.connectInternal = function (host, port, connectErrorCallback) {
         if (this.isConnected) {
             if (connectErrorCallback !== undefined) {
@@ -283,7 +269,6 @@ function IPConnection() {
         this.socket.on('close', this.handleConnectionClose.bind(this));
         this.socket.connect();
     };
-
     this.handleConnect = function () {
         var connectReason = IPConnection.CONNECT_REASON_REQUEST;
 
@@ -305,20 +290,18 @@ function IPConnection() {
         this.popTask();
     };
     this.handleIncomingData = function (data) {
+        this.resetDisconnectProbe();
         if (data.length === 0) {
             return;
         }
-
         this.mergeBuffer = bufferConcat([this.mergeBuffer, data]);
 
         if (this.mergeBuffer.length < 8) {
             return;
         }
-
         if (this.mergeBuffer.length < this.mergeBuffer.readUInt8(4)) {
             return;
         }
-
         while (this.mergeBuffer.length >= 8) {
             var newPacket = new Buffer(this.mergeBuffer.readUInt8(4));
             this.mergeBuffer.copy(newPacket, 0, 0, this.mergeBuffer.readUInt8(4));
@@ -326,7 +309,6 @@ function IPConnection() {
             this.mergeBuffer = this.mergeBuffer.slice(this.mergeBuffer.readUInt8(4));
         }
     };
-
     this.handleConnectionError = function (error) {
         if (error.errno === 'ECONNRESET') {
             // Check and call functions if registered for callback disconnected
@@ -335,13 +317,11 @@ function IPConnection() {
             }
         }
     };
-
     this.handleAutoReconnectError = function (error) {
         if (!this.isConnected && this.autoReconnect && error !== IPConnection.ERROR_ALREADY_CONNECTED) {
             this.pushTask(this.connectInternal.bind(this, this.host, this.port, this.handleAutoReconnectError), IPConnection.TASK_KIND_AUTO_RECONNECT);
         }
     };
-
     this.handleConnectionClose = function () {
         if (this.getCurrentTaskKind() === IPConnection.TASK_KIND_DISCONNECT) {
             // This disconnect was requested
@@ -407,9 +387,16 @@ function IPConnection() {
             return;
         }
     };
-
-
+    this.resetDisconnectProbe = function() {
+        if(this.disconnectProbeIID === undefined) {
+            return;
+        }
+        clearInterval(this.disconnectProbeIID);
+        this.disconnectProbeIID = setInterval(this.disconnectProbe.bind(this),
+                                                   IPConnection.DISCONNECT_PROBE_INTERVAL);
+    };
     this.getUIDFromPacket = function (packetUID){
+
         return packetUID.readUInt32LE(0);
     };
 
@@ -1004,10 +991,8 @@ function IPConnection() {
     this.getTimeout = function () {
         return this.timeout;
     };
-
-    this.enumerate = function () {
-        this.socket.write(this.createPacketHeader(undefined, 8, IPConnection.FUNCTION_ENUMERATE));
-
+    this.enumerate = function() {
+        this.socket.write(this.createPacketHeader(undefined, 8, IPConnection.FUNCTION_ENUMERATE), this.resetDisconnectProbe());
     };
     this.on = function (FID, CBFunction) {
         this.registeredCallbacks[FID] = CBFunction;
