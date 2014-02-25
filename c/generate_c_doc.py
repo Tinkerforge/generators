@@ -39,7 +39,7 @@ class CDocDevice(common.Device):
     def get_c_examples(self):
         def title_from_file_name(file_name):
             file_name = file_name.replace('example_', '').replace('.c', '')
-            return common.underscore_to_space(file_name)
+            return common.underscore_to_space(file_name).replace('Pwm ', 'PWM ')
 
         return common.make_rst_examples(title_from_file_name, self, self.get_generator().get_bindings_root_directory(),
                                         'c', 'example_', '.c', 'C')
