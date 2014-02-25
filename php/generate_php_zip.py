@@ -50,7 +50,7 @@ class PHPZipGenerator(common.Generator):
 
         # Copy examples
         examples = common.find_examples(device, self.get_bindings_root_directory(), self.get_bindings_name(), 'Example', '.php')
-        dest = os.path.join('/tmp/generator/pear/examples', device.get_category().lower(), device.get_underscore_name())
+        dest = os.path.join('/tmp/generator/pear/examples', device.get_category(), device.get_camel_case_name())
 
         if not os.path.exists(dest):
             os.makedirs(dest)
@@ -121,12 +121,12 @@ class PHPZipGenerator(common.Generator):
 """.format(date, '\n    '.join(package_files), *version))
 
         # Make PEAR package
-        os.chdir('/tmp/generator/pear/source')
-        args = ['/usr/bin/pear',
-                'package',
-                'package.xml']
-        if subprocess.call(args) != 0:
-            raise Exception("Command '{0}' failed".format(' '.join(args)))
+        with common.ChangedDirectory('/tmp/generator/pear/source'):
+            args = ['/usr/bin/pear',
+                    'package',
+                    'package.xml']
+            if subprocess.call(args) != 0:
+                raise Exception("Command '{0}' failed".format(' '.join(args)))
 
         # Remove build stuff
         shutil.move('/tmp/generator/pear/source/Tinkerforge-{0}.{1}.{2}.tgz'.format(*version),

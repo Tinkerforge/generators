@@ -10,6 +10,7 @@ for d in os.listdir(path):
     if os.path.isdir(d):
         if not d in ('configs', '.git', '__pycache__'):
             bindings.append(d)
+bindings = sorted(bindings)
 
 for binding in bindings:
     if binding in ('tcpip', 'modbus'):
@@ -23,5 +24,10 @@ for binding in bindings:
 
     rc = module.run(path_binding)
 
+    if type(rc) != int:
+        raise Exception('compile_{0}_examples.py returns wrong type from its run() function'.format(binding))
+
     if rc != 0:
         sys.exit(rc)
+
+print('>>> Done <<<')

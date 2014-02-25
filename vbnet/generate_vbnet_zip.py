@@ -59,13 +59,9 @@ class VBNETZipGenerator(common.Generator):
         root = self.get_bindings_root_directory()
 
         # Copy examples
-        shutil.copy(root.replace('/generators/vbnet', '/doc/en/source/Software/Example.vb'),
-                    '/tmp/generator/dll/examples/ExampleEnumerate.vb')
-
-        lines = []
-        for line in file(root.replace('/generators/vbnet', '/doc/en/source/Software/Example.vb'), 'rb'):
-            lines.append(line.replace('Module Example', 'Module ExampleEnumerate'))
-        file('/tmp/generator/dll/examples/ExampleEnumerate.vb', 'wb').writelines(lines)
+        common.replace_in_file(root.replace('/generators/vbnet', '/doc/en/source/Software/Example.vb'),
+                               '/tmp/generator/dll/examples/ExampleEnumerate.vb',
+                               'Module Example', 'Module ExampleEnumerate')
 
         # Copy bindings and readme
         for filename in released_files:
@@ -93,15 +89,15 @@ using System.Runtime.CompilerServices;
 """.format(*version))
 
         # Make dll
-        os.chdir('/tmp/generator')
-        args = ['/usr/bin/gmcs',
-                '/optimize',
-                '/target:library',
-                '/out:/tmp/generator/dll/Tinkerforge.dll',
-                '/doc:/tmp/generator/dll/Tinkerforge.xml',
-                '/tmp/generator/dll/source/Tinkerforge/*.cs']
-        if subprocess.call(args) != 0:
-            raise Exception("Command '{0}' failed".format(' '.join(args)))
+        with common.ChangedDirectory('/tmp/generator'):
+            args = ['/usr/bin/gmcs',
+                    '/optimize',
+                    '/target:library',
+                    '/out:/tmp/generator/dll/Tinkerforge.dll',
+                    '/doc:/tmp/generator/dll/Tinkerforge.xml',
+                    '/tmp/generator/dll/source/Tinkerforge/*.cs']
+            if subprocess.call(args) != 0:
+                raise Exception("Command '{0}' failed".format(' '.join(args)))
 
         # Make zip
         common.make_zip(self.get_bindings_name(), '/tmp/generator/dll', root, version)

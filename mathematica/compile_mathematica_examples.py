@@ -27,7 +27,7 @@ import sys
 import os
 
 def run(path):
-    return True
+    return 0
 
 if __name__ == "__main__":
     sys.exit(run(os.getcwd()))

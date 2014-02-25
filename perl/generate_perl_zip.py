@@ -60,6 +60,7 @@ class PerlZipGenerator(common.Generator):
     def finish(self):
         root = self.get_bindings_root_directory()
         version = common.get_changelog_version(root)
+        dot_version = "{0}.{1}.{2}".format(*version)
 
         # Copy examples
         shutil.copy(root.replace('/generators/perl', '/doc/en/source/Software/example.pl'),
@@ -95,32 +96,12 @@ class PerlZipGenerator(common.Generator):
                         " --author=\"Ishraq Ibne Ashraf\" --email=ishraq@tinkerforge.com".format(modules), shell=True)
 
         # Version replacing
-        tinkerforge_pm = open(os.path.join(root, 'Tinkerforge_cpan_template.pm'), 'rb')
-        readme = open(os.path.join(root, 'README_cpan_template'), 'rb')
-
-        lines_tinkerforge_pm = tinkerforge_pm.readlines()
-        lines_readme = readme.readlines()
-
-        for i, line_tfpm in enumerate(lines_tinkerforge_pm):
-            lines_tinkerforge_pm[i] = line_tfpm.replace("<TF_API_VERSION>", "{0}.{1}.{2}".format(*version))
-
-        for j, line_readme in enumerate(lines_readme):
-            lines_readme[j] = line_readme.replace("<TF_API_VERSION>", "{0}.{1}.{2}".format(*version))
-
-        tinkerforge_pm.close()
-        readme.close()
-
-        tinkerforge_pm = open(os.path.join(root, 'Tinkerforge_cpan.pm'), 'wb+')
-        readme = open(os.path.join(root, 'README_cpan'), 'wb+')
-
-        for line_tfpm in lines_tinkerforge_pm:
-            tinkerforge_pm.write(str(line_tfpm))
-
-        for line_readme in lines_readme:
-            readme.write(str(line_readme))
-
-        tinkerforge_pm.close()
-        readme.close()
+        common.replace_in_file(os.path.join(root, 'Tinkerforge_cpan_template.pm'),
+                               os.path.join(root, 'Tinkerforge_cpan.pm'),
+                               '<TF_API_VERSION>', dot_version)
+        common.replace_in_file(os.path.join(root, 'README_cpan_template'),
+                               os.path.join(root, 'README_cpan'),
+                               '<TF_API_VERSION>', dot_version)
 
         # Copying bindings
         subprocess.call("rm -rf /tmp/generator/perl/Tinkerforge/lib/Tinkerforge/*", shell=True)

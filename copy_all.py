@@ -49,6 +49,7 @@ for d in os.listdir(path):
     if os.path.isdir(d):
         if not d in ('configs', '.git', '__pycache__'):
             bindings.append(d)
+bindings = sorted(bindings)
 
 print('')
 print('Copying ip_connection to brickv:')
@@ -106,3 +107,5 @@ for lang in ['en', 'de']:
                     if files_are_not_the_same(src_file, dest_path):
                         shutil.copy(src_file, dest_path)
                         print(' * {0}'.format(f))
+
+print('>>> Done <<<')

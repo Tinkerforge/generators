@@ -49,7 +49,7 @@ class JavaScriptExamplesCompiler(common.ExamplesCompiler):
         return subprocess.call(args) == 0
 
 def run(path):
-    return
+    return 0
 
     extra_examples = [os.path.join(path, '../../weather-station/xively/javascript/weather_xively.js'),
                       os.path.join(path, '../../weather-station/write_to_lcd/javascript/weather_station.js'),
