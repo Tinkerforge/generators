@@ -162,7 +162,8 @@ def select_lang(d):
     else:
         return "Missing '{0}' documentation".format(lang)
 
-def make_rst_header(device, ref_name, title, has_device_identifier_constant=True):
+def make_rst_header(device, title, has_device_identifier_constant=True):
+    ref_name = device.get_generator().get_bindings_name()
     category = device.get_category()
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     full_title = '{0} - {1} {2}'.format(title, device.get_display_name(), category)
@@ -182,7 +183,7 @@ def make_rst_header(device, ref_name, title, has_device_identifier_constant=True
                                                    full_title,
                                                    full_title_underline)
 
-def make_rst_summary(device, title, programming_language):
+def make_rst_summary(device, title, is_programming_language=True):
     not_released = {
     'en': """
 .. note::
@@ -229,8 +230,8 @@ ausgeführt werden können ist :ref:`hier <{3}>` zu finden.
 
     hw_link = device.get_underscore_name() + '_' + device.get_category().lower()
     hw_test = hw_link + '_test'
-    if programming_language is not None:
-        title_link = ':ref:`{0} <api_bindings_{1}>`'.format(title, programming_language)
+    if is_programming_language:
+        title_link = ':ref:`{0} <api_bindings_{1}>`'.format(title, device.get_generator().get_bindings_name())
     else:
         title_link = title
     s = select_lang(summary).format(device.get_display_name(), device.get_category(), hw_link, hw_test, title_link)
@@ -245,12 +246,14 @@ ausgeführt werden können ist :ref:`hier <{3}>` zu finden.
 
     return s
 
-def make_rst_examples(title_from_file_name, device, base_path, dirname,
+def make_rst_examples(title_from_file_name, device,
                       filename_prefix, filename_suffix, include_name,
                       language=None, url_fixer=None, is_picture=False,
                       additional_download_finder=None, display_name_fixer=None):
+    bindings_name = device.get_generator().get_bindings_name()
+
     if language is None:
-       language = dirname
+       language = bindings_name
 
     ex = {
     'en': """
@@ -325,9 +328,9 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
 
     ref = '.. _{0}_{1}_{2}_examples:\n'.format(device.get_underscore_name(),
                                                device.get_category().lower(),
-                                               dirname)
+                                               bindings_name)
     examples = select_lang(ex).format(ref)
-    files = find_examples(device, base_path, dirname, filename_prefix, filename_suffix)
+    files = find_examples(device, filename_prefix, filename_suffix)
     copy_files = []
 
     for f in files:
@@ -341,7 +344,7 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
         copy_files.append((f[1], include))
         title = title_from_file_name(f[0])
         git_name = device.get_underscore_name().replace('_', '-') + '-' + device.get_category().lower()
-        url = 'https://github.com/Tinkerforge/{0}/raw/master/software/examples/{1}/{2}'.format(git_name, dirname, f[0].replace(' ', '%20'))
+        url = 'https://github.com/Tinkerforge/{0}/raw/master/software/examples/{1}/{2}'.format(git_name, bindings_name, f[0].replace(' ', '%20'))
 
         if url_fixer is not None:
             url = url_fixer(url)
@@ -355,44 +358,44 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
 
         if additional_download_finder is not None:
             for additional_download in additional_download_finder(f[1]):
-                additional_url = 'https://github.com/Tinkerforge/{0}/raw/master/software/examples/{1}/{2}'.format(git_name, dirname, additional_download.replace(' ', '%20'))
+                additional_url = 'https://github.com/Tinkerforge/{0}/raw/master/software/examples/{1}/{2}'.format(git_name, bindings_name, additional_download.replace(' ', '%20'))
                 downloads.append(download.format(additional_download, additional_url))
 
         downloads = [download.format(display_name, url)] + downloads
 
         examples += imp.format(title, '^'*len(title), include, ', '.join(downloads), language)
 
-    copy_examples(copy_files, base_path)
+    copy_examples(copy_files, device.get_generator().get_bindings_root_directory())
     return examples
 
-def find_examples(device, base_path, dirname, filename_prefix, filename_suffix):
-    start_path = base_path.replace('/generators/' + dirname, '')
-    board = '{0}-{1}'.format(device.get_underscore_name(), device.get_category().lower())
-    board = board.replace('_', '-')
-    board_path = os.path.join(start_path, board, 'software/examples/' + dirname)
-    files = []
+def find_examples(device, filename_prefix, filename_suffix):
+    bindings_name = device.get_generator().get_bindings_name()
+    root_directory = device.get_generator().get_bindings_root_directory().replace('/generators/' + bindings_name, '')
+    device_git_name = '{0}-{1}'.format(device.get_underscore_name(), device.get_category().lower()).replace('_', '-')
+    examples_directory = os.path.join(root_directory, device_git_name, 'software', 'examples', bindings_name)
+    examples = []
 
     try:
-        for f in os.listdir(board_path):
-            if f.startswith(filename_prefix) and f.endswith(filename_suffix):
-                f_dir = '{0}/{1}'.format(board_path, f)
+        for example_filename in os.listdir(examples_directory):
+            if example_filename.startswith(filename_prefix) and example_filename.endswith(filename_suffix):
+                example_path = os.path.join(examples_directory, example_filename)
                 lines = 0
-                ff = os.path.join(f, f_dir)
 
-                if ff.endswith('.png'):
-                    size = Image.open(ff).size
+                if example_path.endswith('.png'):
+                    size = Image.open(example_path).size
                     lines = size[0] * size[1]
                 else:
-                    for line in open(ff):
+                    for line in open(example_path):
                         lines += 1
 
-                files.append((f, f_dir, lines))
+                examples.append((example_filename, example_path, lines))
 
-        files.sort(lambda i, j: cmp(i[2], j[2]))
+        examples.sort(lambda i, j: cmp(i[2], j[2]))
     except:
         return []
 
-    return files
+    return examples
+
 
 def copy_examples(copy_files, path):
     doc_path = '{0}/doc/{1}'.format(path, lang)

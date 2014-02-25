@@ -42,8 +42,7 @@ class PerlDocDevice(perl_common.PerlDevice):
             file_name = file_name.replace('example_', '').replace('.pl', '')
             return common.underscore_to_space(file_name)
 
-        return common.make_rst_examples(title_from_file_name, self, self.get_generator().get_bindings_root_directory(),
-                                        'perl', 'example_', '.pl', 'Perl')
+        return common.make_rst_examples(title_from_file_name, self, 'example_', '.pl', 'Perl')
 
     def get_perl_methods(self, typ):
         methods = ''
@@ -327,8 +326,8 @@ Konstanten
     def get_perl_doc(self):
         title = { 'en': 'Perl bindings', 'de': 'Perl Bindings' }
 
-        doc  = common.make_rst_header(self, 'perl', 'Perl')
-        doc += common.make_rst_summary(self, common.select_lang(title), 'perl')
+        doc  = common.make_rst_header(self, 'Perl')
+        doc += common.make_rst_summary(self, common.select_lang(title))
         doc += self.get_perl_examples()
         doc += self.get_perl_api()
 

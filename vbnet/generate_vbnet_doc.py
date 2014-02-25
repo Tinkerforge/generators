@@ -43,8 +43,7 @@ class VBNETDocDevice(common.Device):
             file_name = file_name.replace('Example', '').replace('.vb', '')
             return common.camel_case_to_space(file_name)
 
-        return common.make_rst_examples(title_from_file_name, self, self.get_generator().get_bindings_root_directory(),
-                                        'vbnet', 'Example', '.vb', 'VBNET')
+        return common.make_rst_examples(title_from_file_name, self, 'Example', '.vb', 'VBNET')
 
     def get_vbnet_methods(self, typ):
         methods = ''
@@ -290,8 +289,8 @@ Konstanten
     def get_vbnet_doc(self):
         title = { 'en': 'Visual Basic .NET bindings', 'de': 'Visual Basic .NET Bindings' }
 
-        doc  = common.make_rst_header(self, 'vbnet', 'Visual Basic .NET')
-        doc += common.make_rst_summary(self, common.select_lang(title), 'vbnet')
+        doc  = common.make_rst_header(self, 'Visual Basic .NET')
+        doc += common.make_rst_summary(self, common.select_lang(title))
         doc += self.get_vbnet_examples()
         doc += self.get_vbnet_api()
 

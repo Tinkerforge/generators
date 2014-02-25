@@ -42,8 +42,7 @@ class PHPDocDevice(php_common.PHPDevice):
             file_name = file_name.replace('Example', '').replace('.php', '')
             return common.camel_case_to_space(file_name)
 
-        return common.make_rst_examples(title_from_file_name, self, self.get_generator().get_bindings_root_directory(),
-                                        'php', 'Example', '.php', 'PHP')
+        return common.make_rst_examples(title_from_file_name, self, 'Example', '.php', 'PHP')
 
     def get_php_methods(self, typ):
         methods = ''
@@ -329,8 +328,8 @@ Konstanten
     def get_php_doc(self):
         title = { 'en': 'PHP bindings', 'de': 'PHP Bindings' }
 
-        doc  = common.make_rst_header(self, 'php', 'PHP')
-        doc += common.make_rst_summary(self, common.select_lang(title), 'php')
+        doc  = common.make_rst_header(self, 'PHP')
+        doc += common.make_rst_summary(self, common.select_lang(title))
         doc += self.get_php_examples()
         doc += self.get_php_api()
 

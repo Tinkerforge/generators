@@ -36,12 +36,16 @@ import javascript_common
 
 class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
     def get_javascript_examples(self):
-        def title_from_file_name(file_name):
+        def title_from_js_file_name(file_name):
             file_name = file_name.replace('Example', '').replace('.js', '')
             return common.underscore_to_space(file_name)
 
-        return common.make_rst_examples(title_from_file_name, self, self.get_generator().get_bindings_root_directory(),
-                                        'javascript', 'Example', '.js', 'JavaScript')
+        def title_from_html_file_name(file_name):
+            file_name = file_name.replace('Example', '').replace('.js', '')
+            return common.underscore_to_space(file_name)
+
+        return common.make_rst_examples(title_from_js_file_name, self, 'Example', '.js', 'JavaScript') + \
+               common.make_rst_examples(title_from_html_file_name, self, 'Example', '.html', 'JavaScript')
 
     def get_javascript_methods(self, typ):
         methods = ''
@@ -320,8 +324,8 @@ Konstanten
     def get_javascript_doc(self):
         title = { 'en': 'JavaScript bindings', 'de': 'JavaScript Bindings' }
 
-        doc  = common.make_rst_header(self, 'javascript', 'JavaScript')
-        doc += common.make_rst_summary(self, common.select_lang(title), 'javascript')
+        doc  = common.make_rst_header(self, 'JavaScript')
+        doc += common.make_rst_summary(self, common.select_lang(title))
         doc += self.get_javascript_examples()
         doc += self.get_javascript_api()
 

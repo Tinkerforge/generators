@@ -41,8 +41,7 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
             file_name = file_name.replace('Example', '').replace('.cs', '')
             return common.camel_case_to_space(file_name)
 
-        return common.make_rst_examples(title_from_file_name, self, self.get_generator().get_bindings_root_directory(),
-                                        'csharp', 'Example', '.cs', 'CSharp')
+        return common.make_rst_examples(title_from_file_name, self, 'Example', '.cs', 'CSharp')
 
     def get_csharp_methods(self, typ):
         version_changed = {
@@ -313,8 +312,8 @@ Konstanten
     def get_csharp_doc(self):
         title = { 'en': 'C# bindings', 'de': 'C# Bindings' }
 
-        doc  = common.make_rst_header(self, 'csharp', 'C#')
-        doc += common.make_rst_summary(self, common.select_lang(title), 'csharp')
+        doc  = common.make_rst_header(self, 'C#')
+        doc += common.make_rst_summary(self, common.select_lang(title))
         doc += self.get_csharp_examples()
         doc += self.get_csharp_api()
 

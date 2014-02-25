@@ -41,8 +41,7 @@ class RubyDocDevice(ruby_common.RubyDevice):
             file_name = file_name.replace('example_', '').replace('.rb', '')
             return common.underscore_to_space(file_name)
 
-        return common.make_rst_examples(title_from_file_name, self, self.get_generator().get_bindings_root_directory(),
-                                        'ruby', 'example_', '.rb', 'Ruby')
+        return common.make_rst_examples(title_from_file_name, self, 'example_', '.rb', 'Ruby')
 
     def get_ruby_methods(self, typ):
         methods = ''
@@ -309,8 +308,8 @@ Konstanten
     def get_ruby_doc(self):
         title = { 'en': 'Ruby bindings', 'de': 'Ruby Bindings' }
 
-        doc  = common.make_rst_header(self, 'ruby', 'Ruby')
-        doc += common.make_rst_summary(self, common.select_lang(title), 'ruby')
+        doc  = common.make_rst_header(self, 'Ruby')
+        doc += common.make_rst_summary(self, common.select_lang(title))
         doc += self.get_ruby_examples()
         doc += self.get_ruby_api()
 

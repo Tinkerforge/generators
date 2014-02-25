@@ -41,8 +41,7 @@ class ShellDocDevice(shell_common.ShellDevice):
             file_name = file_name.replace('example-', '').replace('.sh', '').replace('-', '_')
             return common.underscore_to_space(file_name)
 
-        return common.make_rst_examples(title_from_file_name, self, self.get_generator().get_bindings_root_directory(),
-                                        'shell', 'example-', '.sh', 'Shell', 'bash')
+        return common.make_rst_examples(title_from_file_name, self, 'example-', '.sh', 'Shell', language='bash')
 
     def get_shell_methods(self, typ):
         methods = ''
@@ -360,8 +359,8 @@ Befehlsstruktur dargestellt.
     def get_shell_doc(self):
         title = { 'en': 'Shell bindings', 'de': 'Shell Bindings' }
 
-        doc  = common.make_rst_header(self, 'shell', 'Shell', has_device_identifier_constant=False)
-        doc += common.make_rst_summary(self, common.select_lang(title), 'shell')
+        doc  = common.make_rst_header(self, 'Shell', has_device_identifier_constant=False)
+        doc += common.make_rst_summary(self, common.select_lang(title))
         doc += self.get_shell_examples()
         doc += self.get_shell_api()
 

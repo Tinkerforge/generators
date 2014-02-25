@@ -49,8 +49,7 @@ class MathematicaDocDevice(common.Device):
         def display_name_fixer(url):
             return url.replace('.nb.txt', '.nb')
 
-        return common.make_rst_examples(title_from_file_name, self, self.get_generator().get_bindings_root_directory(),
-                                        'mathematica', 'Example', '.nb.txt', 'Mathematica', url_fixer=url_fixer,
+        return common.make_rst_examples(title_from_file_name, self, 'Example', '.nb.txt', 'Mathematica', url_fixer=url_fixer,
                                         display_name_fixer=display_name_fixer)
 
     def get_mathematica_functions(self, type):
@@ -350,8 +349,8 @@ Konstanten
     def get_mathematica_doc(self):
         title = { 'en': 'Mathematica bindings', 'de': 'Mathematica Bindings' }
 
-        doc  = common.make_rst_header(self, 'mathematica', 'Mathematica')
-        doc += common.make_rst_summary(self, common.select_lang(title), 'mathematica')
+        doc  = common.make_rst_header(self, 'Mathematica')
+        doc += common.make_rst_summary(self, common.select_lang(title))
         doc += self.get_mathematica_examples()
         doc += self.get_mathematica_api()
 

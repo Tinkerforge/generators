@@ -47,7 +47,7 @@ class DelphiZipGenerator(common.Generator):
             return
 
         # Copy examples
-        examples = common.find_examples(device, self.get_bindings_root_directory(), self.get_bindings_name(), 'Example', '.pas')
+        examples = common.find_examples(device, 'Example', '.pas')
         dest = os.path.join('/tmp/generator/examples', device.get_category(), device.get_camel_case_name())
 
         if not os.path.exists(dest):

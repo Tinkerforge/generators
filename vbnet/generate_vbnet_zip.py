@@ -46,7 +46,7 @@ class VBNETZipGenerator(common.Generator):
         if not device.is_released():
             return
 
-        examples = common.find_examples(device, self.get_bindings_root_directory(), self.get_bindings_name(), 'Example', '.vb')
+        examples = common.find_examples(device, 'Example', '.vb')
         dest = os.path.join('/tmp/generator/dll/examples', device.get_category(), device.get_camel_case_name())
 
         if not os.path.exists(dest):

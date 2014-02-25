@@ -41,8 +41,7 @@ class CDocDevice(common.Device):
             file_name = file_name.replace('example_', '').replace('.c', '')
             return common.underscore_to_space(file_name).replace('Pwm ', 'PWM ')
 
-        return common.make_rst_examples(title_from_file_name, self, self.get_generator().get_bindings_root_directory(),
-                                        'c', 'example_', '.c', 'C')
+        return common.make_rst_examples(title_from_file_name, self, 'example_', '.c', 'C')
 
     def get_c_methods(self, typ):
         methods = ''
@@ -371,8 +370,8 @@ Konstanten
     def get_c_doc(self):
         title = { 'en': 'C/C++ bindings', 'de': 'C/C++ Bindings' }
 
-        doc  = common.make_rst_header(self, 'c', 'C/C++')
-        doc += common.make_rst_summary(self, common.select_lang(title), 'c')
+        doc  = common.make_rst_header(self, 'C/C++')
+        doc += common.make_rst_summary(self, common.select_lang(title))
         doc += self.get_c_examples()
         doc += self.get_c_api()
 

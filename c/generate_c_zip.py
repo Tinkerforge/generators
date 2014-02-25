@@ -46,7 +46,7 @@ class CZipGenerator(common.Generator):
             return
 
         # Copy examples
-        examples = common.find_examples(device, self.get_bindings_root_directory(), self.get_bindings_name(), 'example_', '.c')
+        examples = common.find_examples(device, 'example_', '.c')
         dest = os.path.join('/tmp/generator/examples', device.get_category().lower(), device.get_underscore_name())
 
         if not os.path.exists(dest):

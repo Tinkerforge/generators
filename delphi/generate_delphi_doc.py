@@ -41,8 +41,7 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
             file_name = file_name.replace('Example', '').replace('.pas', '')
             return common.camel_case_to_space(file_name)
 
-        return common.make_rst_examples(title_from_file_name, self, self.get_generator().get_bindings_root_directory(),
-                                        'delphi', 'Example', '.pas', 'Delphi')
+        return common.make_rst_examples(title_from_file_name, self, 'Example', '.pas', 'Delphi')
 
     def get_delphi_methods(self, typ):
         methods = ''
@@ -292,8 +291,8 @@ Konstanten
     def get_delphi_doc(self):
         title = { 'en': 'Delphi bindings', 'de': 'Delphi Bindings' }
 
-        doc  = common.make_rst_header(self, 'delphi', 'Delphi')
-        doc += common.make_rst_summary(self, common.select_lang(title), 'delphi')
+        doc  = common.make_rst_header(self, 'Delphi')
+        doc += common.make_rst_summary(self, common.select_lang(title))
         doc += self.get_delphi_examples()
         doc += self.get_delphi_api()
 

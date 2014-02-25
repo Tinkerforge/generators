@@ -51,8 +51,8 @@ class JavaScriptZipGenerator(common.Generator):
             return
 
         # Copy examples
-        examples_nodejs = common.find_examples(device, self.get_bindings_root_directory(), self.get_bindings_name(), 'Example', '.js')
-        examples_browser = common.find_examples(device, self.get_bindings_root_directory(), self.get_bindings_name(), 'Example', '.html')
+        examples_nodejs = common.find_examples(device, 'Example', '.js')
+        examples_browser = common.find_examples(device, 'Example', '.html')
         dest_nodejs = os.path.join('/tmp/generator/npm/nodejs/examples/', device.get_category(), device.get_camel_case_name())
         dest_browser = os.path.join('/tmp/generator/npm/browser/examples/', device.get_category(), device.get_camel_case_name())
 

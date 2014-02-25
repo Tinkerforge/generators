@@ -41,8 +41,7 @@ class JavaDocDevice(java_common.JavaDevice):
             file_name = file_name.replace('Example', '').replace('.java', '')
             return common.camel_case_to_space(file_name)
 
-        return common.make_rst_examples(title_from_file_name, self, self.get_generator().get_bindings_root_directory(),
-                                        'java', 'Example', '.java', 'Java')
+        return common.make_rst_examples(title_from_file_name, self, 'Example', '.java', 'Java')
 
     def get_java_methods(self, typ):
         methods = ''
@@ -359,8 +358,8 @@ Konstanten
     def get_java_doc(self):
         title = { 'en': 'Java bindings', 'de': 'Java Bindings' }
 
-        doc  = common.make_rst_header(self, 'java', 'Java')
-        doc += common.make_rst_summary(self, common.select_lang(title), 'java')
+        doc  = common.make_rst_header(self, 'Java')
+        doc += common.make_rst_summary(self, common.select_lang(title))
         doc += self.get_java_examples()
         doc += self.get_java_api()
 

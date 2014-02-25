@@ -41,8 +41,7 @@ class PythonDocDevice(python_common.PythonDevice):
             file_name = file_name.replace('example_', '').replace('.py', '')
             return common.underscore_to_space(file_name)
 
-        return common.make_rst_examples(title_from_file_name, self, self.get_generator().get_bindings_root_directory(),
-                                        'python', 'example_', '.py', 'Python')
+        return common.make_rst_examples(title_from_file_name, self, 'example_', '.py', 'Python')
 
     def get_python_methods(self, type):
         methods = []
@@ -326,8 +325,8 @@ Konstanten
     def get_python_doc(self):
         title = { 'en': 'Python bindings', 'de': 'Python Bindings' }
 
-        doc  = common.make_rst_header(self, 'python', 'Python')
-        doc += common.make_rst_summary(self, common.select_lang(title), 'python')
+        doc  = common.make_rst_header(self, 'Python')
+        doc += common.make_rst_summary(self, common.select_lang(title))
         doc += self.get_python_examples()
         doc += self.get_python_api()
 
