@@ -73,8 +73,10 @@ class JavaScriptZipGenerator(common.Generator):
         dot_version = "{0}.{1}.{2}".format(*version)
 
         # Copy examples
-        #shutil.copy(root.replace('/generators/javascript', '/doc/en/source/Software/Example.js'),
-        #            '/tmp/generator/npm/examples/ExampleEnumerate.js')
+        shutil.copy(root.replace('/generators/javascript', '/doc/en/source/Software/Example.js'),
+                    '/tmp/generator/npm/nodejs/examples/ExampleEnumerate.js')
+        #shutil.copy(root.replace('/generators/javascript', '/doc/en/source/Software/Example.html'),
+        #            '/tmp/generator/npm/browser/examples/ExampleEnumerate.html')
 
         # Copy bindings and readme
         for filename in released_files:
