@@ -37,11 +37,11 @@ import shell_common
 
 class ShellDocDevice(shell_common.ShellDevice):
     def get_shell_examples(self):
-        def title_from_file_name(file_name):
-            file_name = file_name.replace('example-', '').replace('.sh', '').replace('-', '_')
-            return common.underscore_to_space(file_name)
+        def title_from_filename(filename):
+            filename = filename.replace('example-', '').replace('.sh', '').replace('-', '_')
+            return common.underscore_to_space(filename)
 
-        return common.make_rst_examples(title_from_file_name, self, 'example-', '.sh', 'Shell', language='bash')
+        return common.make_rst_examples(title_from_filename, self, '^example-.*\.sh$', 'Shell', language='bash')
 
     def get_shell_methods(self, typ):
         methods = ''
@@ -482,9 +482,9 @@ class ShellDocGenerator(common.DocGenerator):
         return shell_common.ShellElement
 
     def generate(self, device):
-        file_name = '{0}_{1}_Shell.rst'.format(device.get_camel_case_name(), device.get_category())
+        filename = '{0}_{1}_Shell.rst'.format(device.get_camel_case_name(), device.get_category())
 
-        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
+        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, filename), 'wb')
         rst.write(device.get_shell_doc())
         rst.close()
 

@@ -37,11 +37,11 @@ import python_common
 
 class PythonDocDevice(python_common.PythonDevice):
     def get_python_examples(self):
-        def title_from_file_name(file_name):
-            file_name = file_name.replace('example_', '').replace('.py', '')
-            return common.underscore_to_space(file_name)
+        def title_from_filename(filename):
+            filename = filename.replace('example_', '').replace('.py', '')
+            return common.underscore_to_space(filename)
 
-        return common.make_rst_examples(title_from_file_name, self, 'example_', '.py', 'Python')
+        return common.make_rst_examples(title_from_filename, self, '^example_.*\.py$', 'Python')
 
     def get_python_methods(self, type):
         methods = []
@@ -427,9 +427,9 @@ class PythonDocGenerator(common.DocGenerator):
         return python_common.PythonElement
 
     def generate(self, device):
-        file_name = '{0}_{1}_Python.rst'.format(device.get_camel_case_name(), device.get_category())
+        filename = '{0}_{1}_Python.rst'.format(device.get_camel_case_name(), device.get_category())
 
-        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
+        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, filename), 'wb')
         rst.write(device.get_python_doc())
         rst.close()
 

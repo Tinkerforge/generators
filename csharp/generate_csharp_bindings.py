@@ -393,14 +393,14 @@ class CSharpBindingsGenerator(common.BindingsGenerator):
         return csharp_common.CSharpElement
 
     def generate(self, device):
-        file_name = '{0}.cs'.format(device.get_csharp_class_name())
+        filename = '{0}.cs'.format(device.get_csharp_class_name())
 
-        cs = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name), 'wb')
+        cs = open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'wb')
         cs.write(device.get_csharp_source())
         cs.close()
 
         if device.is_released():
-            self.released_files.append(file_name)
+            self.released_files.append(filename)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', CSharpBindingsGenerator)

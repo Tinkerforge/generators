@@ -48,7 +48,7 @@ class RubyZipGenerator(common.Generator):
             return
 
         # Copy examples
-        examples = common.find_examples(device, 'example_', '.rb')
+        examples = common.find_examples(device, '^example_.*\.rb$')
         dest = os.path.join('/tmp/generator/gem/examples', device.get_category().lower(), device.get_underscore_name())
 
         if not os.path.exists(dest):

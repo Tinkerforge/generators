@@ -251,9 +251,9 @@ class TCPIPDocGenerator(common.DocGenerator):
         return TCPIPDocElement
 
     def generate(self, device):
-        file_name = '{0}_{1}_TCPIP.rst'.format(device.get_camel_case_name(), device.get_category())
+        filename = '{0}_{1}_TCPIP.rst'.format(device.get_camel_case_name(), device.get_category())
 
-        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
+        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, filename), 'wb')
         rst.write(device.get_tcpip_doc())
         rst.close()
 

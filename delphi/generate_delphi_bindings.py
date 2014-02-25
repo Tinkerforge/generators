@@ -512,14 +512,14 @@ class DelphiBindingsGenerator(common.BindingsGenerator):
         return DelphiBindingsElement
 
     def generate(self, device):
-        file_name = '{0}{1}.pas'.format(device.get_category(), device.get_camel_case_name())
+        filename = '{0}{1}.pas'.format(device.get_category(), device.get_camel_case_name())
 
-        pas = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name), 'wb')
+        pas = open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'wb')
         pas.write(device.get_delphi_source())
         pas.close()
 
         if device.is_released():
-            self.released_files.append(file_name)
+            self.released_files.append(filename)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', DelphiBindingsGenerator)

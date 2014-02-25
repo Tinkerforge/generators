@@ -246,8 +246,7 @@ ausgeführt werden können ist :ref:`hier <{3}>` zu finden.
 
     return s
 
-def make_rst_examples(title_from_file_name, device,
-                      filename_prefix, filename_suffix, include_name,
+def make_rst_examples(title_from_filename, device, filename_regex, include_name,
                       language=None, url_fixer=None, is_picture=False,
                       additional_download_finder=None, display_name_fixer=None):
     bindings_name = device.get_generator().get_bindings_name()
@@ -330,7 +329,7 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
                                                device.get_category().lower(),
                                                bindings_name)
     examples = select_lang(ex).format(ref)
-    files = find_examples(device, filename_prefix, filename_suffix)
+    files = find_examples(device, filename_regex)
     copy_files = []
 
     for f in files:
@@ -342,7 +341,7 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
 
         include = '{0}_{1}_{2}_{3}'.format(device.get_camel_case_name(), device.get_category(), include_name, f[0].replace(' ', '_'))
         copy_files.append((f[1], include))
-        title = title_from_file_name(f[0])
+        title = title_from_filename(f[0])
         git_name = device.get_underscore_name().replace('_', '-') + '-' + device.get_category().lower()
         url = 'https://github.com/Tinkerforge/{0}/raw/master/software/examples/{1}/{2}'.format(git_name, bindings_name, f[0].replace(' ', '%20'))
 
@@ -368,7 +367,8 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
     copy_examples(copy_files, device.get_generator().get_bindings_root_directory())
     return examples
 
-def find_examples(device, filename_prefix, filename_suffix):
+def find_examples(device, filename_regex):
+    compiled_filename_regex = re.compile(filename_regex)
     bindings_name = device.get_generator().get_bindings_name()
     root_directory = device.get_generator().get_bindings_root_directory().replace('/generators/' + bindings_name, '')
     device_git_name = '{0}-{1}'.format(device.get_underscore_name(), device.get_category().lower()).replace('_', '-')
@@ -377,7 +377,7 @@ def find_examples(device, filename_prefix, filename_suffix):
 
     try:
         for example_filename in os.listdir(examples_directory):
-            if example_filename.startswith(filename_prefix) and example_filename.endswith(filename_suffix):
+            if compiled_filename_regex.match(example_filename) is not None:
                 example_path = os.path.join(examples_directory, example_filename)
                 lines = 0
 
@@ -541,8 +541,8 @@ def recreate_directory(directory):
         shutil.rmtree(directory)
     os.makedirs(directory)
 
-def replace_in_file(source_file_name, destination_file_name, search, replace):
-    source_file = open(source_file_name, 'rb')
+def replace_in_file(source_filename, destination_filename, search, replace):
+    source_file = open(source_filename, 'rb')
     lines = []
 
     for line in source_file.readlines():
@@ -551,7 +551,7 @@ def replace_in_file(source_file_name, destination_file_name, search, replace):
 
     source_file.close()
 
-    destination_file = open(destination_file_name, 'wb')
+    destination_file = open(destination_filename, 'wb')
     destination_file.writelines(lines)
     destination_file.close()
 

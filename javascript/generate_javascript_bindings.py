@@ -249,14 +249,14 @@ module.exports = new Tinkerforge();""")
         self.add_browser_api_function(device)
         self.add_npm_main_function(device)
 
-        file_name = '{0}{1}.js'.format(device.get_category(), device.get_camel_case_name())
+        filename = '{0}{1}.js'.format(device.get_category(), device.get_camel_case_name())
 
-        py = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name), 'wb')
+        py = open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'wb')
         py.write(device.get_javascript_source())
         py.close()
 
         if device.is_released():
-            self.released_files.append(file_name)
+            self.released_files.append(filename)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', JavaScriptBindingsGenerator)

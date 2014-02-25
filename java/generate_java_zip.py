@@ -47,7 +47,7 @@ class JavaZipGenerator(common.Generator):
             return
 
         # Copy examples
-        examples = common.find_examples(device, 'Example', '.java')
+        examples = common.find_examples(device, '^Example.*\.java$')
         dest = os.path.join('/tmp/generator/jar/examples', device.get_category(), device.get_camel_case_name())
 
         if not os.path.exists(dest):

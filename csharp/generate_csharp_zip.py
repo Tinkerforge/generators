@@ -47,7 +47,7 @@ class CSharpZipGenerator(common.Generator):
             return
 
         # Copy examples
-        examples = common.find_examples(device, 'Example', '.cs')
+        examples = common.find_examples(device, '^Example.*\.cs$')
         dest = os.path.join('/tmp/generator/dll/examples', device.get_category(), device.get_camel_case_name())
 
         if not os.path.exists(dest):

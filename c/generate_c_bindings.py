@@ -740,19 +740,19 @@ class CBindingsGenerator(common.BindingsGenerator):
         return c_common.CElement
 
     def generate(self, device):
-        file_name = '{0}_{1}'.format(device.get_category().lower(), device.get_underscore_name())
+        filename = '{0}_{1}'.format(device.get_category().lower(), device.get_underscore_name())
 
-        c = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name + '.c'), 'wb')
+        c = open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename + '.c'), 'wb')
         c.write(device.get_c_source())
         c.close()
 
-        h = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name + '.h'), 'wb')
+        h = open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename + '.h'), 'wb')
         h.write(device.get_c_header())
         h.close()
 
         if device.is_released():
-            self.released_files.append(file_name + '.c')
-            self.released_files.append(file_name + '.h')
+            self.released_files.append(filename + '.c')
+            self.released_files.append(filename + '.h')
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', CBindingsGenerator)

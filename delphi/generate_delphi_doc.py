@@ -37,11 +37,11 @@ import delphi_common
 
 class DelphiBindingsDevice(delphi_common.DelphiDevice):
     def get_delphi_examples(self):
-        def title_from_file_name(file_name):
-            file_name = file_name.replace('Example', '').replace('.pas', '')
-            return common.camel_case_to_space(file_name)
+        def title_from_filename(filename):
+            filename = filename.replace('Example', '').replace('.pas', '')
+            return common.camel_case_to_space(filename)
 
-        return common.make_rst_examples(title_from_file_name, self, 'Example', '.pas', 'Delphi')
+        return common.make_rst_examples(title_from_filename, self, '^Example.*\.pas$', 'Delphi')
 
     def get_delphi_methods(self, typ):
         methods = ''
@@ -344,9 +344,9 @@ class DelphiDocGenerator(common.DocGenerator):
         return delphi_common.DelphiElement
 
     def generate(self, device):
-        file_name = '{0}_{1}_Delphi.rst'.format(device.get_camel_case_name(), device.get_category())
+        filename = '{0}_{1}_Delphi.rst'.format(device.get_camel_case_name(), device.get_category())
 
-        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
+        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, filename), 'wb')
         rst.write(device.get_delphi_doc())
         rst.close()
 

@@ -37,11 +37,11 @@ import c_common
 
 class CDocDevice(common.Device):
     def get_c_examples(self):
-        def title_from_file_name(file_name):
-            file_name = file_name.replace('example_', '').replace('.c', '')
-            return common.underscore_to_space(file_name).replace('Pwm ', 'PWM ')
+        def title_from_filename(filename):
+            filename = filename.replace('example_', '').replace('.c', '')
+            return common.underscore_to_space(filename).replace('Pwm ', 'PWM ')
 
-        return common.make_rst_examples(title_from_file_name, self, 'example_', '.c', 'C')
+        return common.make_rst_examples(title_from_filename, self, '^example_.*\.c$', 'C')
 
     def get_c_methods(self, typ):
         methods = ''
@@ -425,9 +425,9 @@ class CDocGenerator(common.DocGenerator):
         return c_common.CElement
 
     def generate(self, device):
-        file_name = '{0}_{1}_C.rst'.format(device.get_camel_case_name(), device.get_category())
+        filename = '{0}_{1}_C.rst'.format(device.get_camel_case_name(), device.get_category())
 
-        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
+        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, filename), 'wb')
         rst.write(device.get_c_doc())
         rst.close()
 

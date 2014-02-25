@@ -524,14 +524,14 @@ class JavaBindingsGenerator(common.BindingsGenerator):
         return java_common.JavaElement
 
     def generate(self, device):
-        file_name = '{0}.java'.format(device.get_java_class_name())
+        filename = '{0}.java'.format(device.get_java_class_name())
 
-        java = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name), 'wb')
+        java = open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'wb')
         java.write(device.get_java_source())
         java.close()
 
         if device.is_released():
-            self.released_files.append(file_name)
+            self.released_files.append(filename)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', JavaBindingsGenerator)

@@ -317,13 +317,13 @@ class ShellBindingsGenerator(common.BindingsGenerator):
 
         self.completion_devices.append(device.get_shell_device_name())
 
-        file_name = '{0}.part'.format(device.get_shell_device_name())
+        filename = '{0}.part'.format(device.get_shell_device_name())
 
-        shell = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name), 'wb')
+        shell = open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'wb')
         shell.write(device.get_shell_source())
         shell.close()
 
-        self.part_files.append(file_name)
+        self.part_files.append(filename)
 
     def finish(self):
         common.BindingsGenerator.finish(self)
@@ -339,8 +339,8 @@ class ShellBindingsGenerator(common.BindingsGenerator):
         ipcon = file(os.path.join(directory, '..', 'python', 'ip_connection.py'), 'rb').read()
         shell.write('\n\n\n' + ipcon + '\n\n\n')
 
-        for file_name in sorted(self.part_files):
-            shell.write(file(os.path.join(directory, 'bindings', file_name), 'rb').read())
+        for filename in sorted(self.part_files):
+            shell.write(file(os.path.join(directory, 'bindings', filename), 'rb').read())
 
         shell.write('\ncall_devices = {\n' + ',\n'.join(self.call_devices) + '\n}\n')
         shell.write('\ndispatch_devices = {\n' + ',\n'.join(self.dispatch_devices) + '\n}\n')

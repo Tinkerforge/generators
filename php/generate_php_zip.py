@@ -49,7 +49,7 @@ class PHPZipGenerator(common.Generator):
             return
 
         # Copy examples
-        examples = common.find_examples(device, 'Example', '.php')
+        examples = common.find_examples(device, '^Example.*\.php$')
         dest = os.path.join('/tmp/generator/pear/examples', device.get_category(), device.get_camel_case_name())
 
         if not os.path.exists(dest):

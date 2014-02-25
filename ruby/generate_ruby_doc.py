@@ -37,11 +37,11 @@ import ruby_common
 
 class RubyDocDevice(ruby_common.RubyDevice):
     def get_ruby_examples(self):
-        def title_from_file_name(file_name):
-            file_name = file_name.replace('example_', '').replace('.rb', '')
-            return common.underscore_to_space(file_name)
+        def title_from_filename(filename):
+            filename = filename.replace('example_', '').replace('.rb', '')
+            return common.underscore_to_space(filename)
 
-        return common.make_rst_examples(title_from_file_name, self, 'example_', '.rb', 'Ruby')
+        return common.make_rst_examples(title_from_filename, self, '^example_.*\.rb$', 'Ruby')
 
     def get_ruby_methods(self, typ):
         methods = ''
@@ -413,9 +413,9 @@ class RubyDocGenerator(common.DocGenerator):
         return ruby_common.RubyElement
 
     def generate(self, device):
-        file_name = '{0}_{1}_Ruby.rst'.format(device.get_camel_case_name(), device.get_category())
+        filename = '{0}_{1}_Ruby.rst'.format(device.get_camel_case_name(), device.get_category())
 
-        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
+        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, filename), 'wb')
         rst.write(device.get_ruby_doc())
         rst.close()
 

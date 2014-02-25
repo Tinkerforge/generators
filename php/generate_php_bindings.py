@@ -485,14 +485,14 @@ class PHPBindingsGenerator(common.BindingsGenerator):
         return php_common.PHPElement
 
     def generate(self, device):
-        file_name = '{0}.php'.format(device.get_php_class_name())
+        filename = '{0}.php'.format(device.get_php_class_name())
 
-        php = open(os.path.join(self.get_bindings_root_directory(), 'bindings', file_name), 'wb')
+        php = open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'wb')
         php.write(device.get_php_source())
         php.close()
 
         if device.is_released():
-            self.released_files.append(file_name)
+            self.released_files.append(filename)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', PHPBindingsGenerator)

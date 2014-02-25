@@ -36,16 +36,17 @@ import javascript_common
 
 class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
     def get_javascript_examples(self):
-        def title_from_js_file_name(file_name):
-            file_name = file_name.replace('Example', '').replace('.js', '')
-            return common.underscore_to_space(file_name)
+        def title_from_filename(filename):
+            if filename.endswith('.js'):
+                filename = filename.replace('Example', '').replace('.js', '')
+                return common.underscore_to_space(filename) + ' (Node.js)'
+            elif filename.endswith('.html'):
+                filename = filename.replace('Example', '').replace('.html', '')
+                return common.underscore_to_space(filename) + ' (HTML)'
+            else:
+                raise ValueError('Invalid filename ' + filename)
 
-        def title_from_html_file_name(file_name):
-            file_name = file_name.replace('Example', '').replace('.js', '')
-            return common.underscore_to_space(file_name)
-
-        return common.make_rst_examples(title_from_js_file_name, self, 'Example', '.js', 'JavaScript') + \
-               common.make_rst_examples(title_from_html_file_name, self, 'Example', '.html', 'JavaScript')
+        return common.make_rst_examples(title_from_filename, self, '^Example.*\.(?:js|html)$', 'JavaScript')
 
     def get_javascript_methods(self, typ):
         methods = ''
@@ -396,9 +397,9 @@ class JavaScriptDocGenerator(common.DocGenerator):
         return javascript_common.JavaScriptElement
 
     def generate(self, device):
-        file_name = '{0}_{1}_JavaScript.rst'.format(device.get_camel_case_name(), device.get_category())
+        filename = '{0}_{1}_JavaScript.rst'.format(device.get_camel_case_name(), device.get_category())
 
-        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, file_name), 'wb')
+        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, filename), 'wb')
         rst.write(device.get_javascript_doc())
         rst.close()
 

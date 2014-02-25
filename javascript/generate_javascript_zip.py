@@ -51,8 +51,8 @@ class JavaScriptZipGenerator(common.Generator):
             return
 
         # Copy examples
-        examples_nodejs = common.find_examples(device, 'Example', '.js')
-        examples_browser = common.find_examples(device, 'Example', '.html')
+        examples_nodejs = common.find_examples(device, '^Example.*\.js')
+        examples_browser = common.find_examples(device, '^Example.*\.html')
         dest_nodejs = os.path.join('/tmp/generator/npm/nodejs/examples/', device.get_category(), device.get_camel_case_name())
         dest_browser = os.path.join('/tmp/generator/npm/browser/examples/', device.get_category(), device.get_camel_case_name())
 
@@ -78,7 +78,6 @@ class JavaScriptZipGenerator(common.Generator):
 
         # Copy bindings and readme
         for filename in released_files:
-            print filename
             if filename == os.path.join(root, 'bindings', 'TinkerforgeMain.js'):
                 shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/npm/nodejs/npm_pkg_dir/Tinkerforge.js')
                 continue
