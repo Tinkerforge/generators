@@ -38,7 +38,7 @@ class JavaScriptPacket(common.Packet):
         params = []
 
         for element in self.get_elements('in'):
-            params.append(element.get_underscore_name())
+            params.append(element.get_headless_camel_case_name())
 
         return ', '.join(params)
 
