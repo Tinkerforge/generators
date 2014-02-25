@@ -95,12 +95,10 @@ class JavaScriptZipGenerator(common.Generator):
         shutil.copy(os.path.join(root, 'IPConnection.js'), '/tmp/generator/npm/nodejs/npm_pkg_dir/lib/IPConnection.js')
         shutil.copy(os.path.join(root, 'Device.js'), '/tmp/generator/npm/nodejs/npm_pkg_dir/lib/Device.js')
 
-        # Replace <TF_API_VERSION> in readme.txt
-        common.replace_in_file(os.path.join(root, 'readme.txt'), '/tmp/generator/npm/readme.txt', '<TF_API_VERSION>', dot_version)
-
         shutil.copy(os.path.join(root, 'IPConnection.js'), '/tmp/generator/npm/nodejs/source/Tinkerforge')
         shutil.copy(os.path.join(root, 'Device.js'), '/tmp/generator/npm/nodejs/source/Tinkerforge')
         shutil.copy(os.path.join(root, 'changelog.txt'), '/tmp/generator/npm')
+        shutil.copy(os.path.join(root, 'readme.txt'), '/tmp/generator/npm/readme.txt')
 
         # Copy browser specific files
         shutil.copy(os.path.join(root, 'es5-shim.js'), '/tmp/generator/npm/nodejs/source/Tinkerforge')
@@ -126,8 +124,10 @@ class JavaScriptZipGenerator(common.Generator):
             if subprocess.call('npm pack', shell=True) != 0:
                 raise Exception("Command npm pack failed")
 
-            shutil.copy(os.path.join('tinkerforge-{0}.tgz'.format(dot_version)),
-                        '/tmp/generator/npm/tinkerforge-{0}.tgz'.format(dot_version))
+        shutil.copy('/tmp/generator/npm/nodejs/npm_pkg_dir/tinkerforge-{0}.tgz'.format(dot_version),
+                    '/tmp/generator/npm/tinkerforge.tgz')
+        shutil.copy('/tmp/generator/npm/nodejs/npm_pkg_dir/tinkerforge-{0}.tgz'.format(dot_version),
+                    os.path.join(root, 'tinkerforge-{0}.tgz'.format(dot_version)))
 
         # Remove directory npm_pkg_dir
         shutil.rmtree('/tmp/generator/npm/nodejs/npm_pkg_dir/')
