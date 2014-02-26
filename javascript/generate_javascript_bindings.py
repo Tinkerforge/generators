@@ -49,7 +49,7 @@ var Device = require('./Device');\n
             callback_constants += callback_constant_statement.format(packet.get_upper_case_name(),
                                                                      packet.get_function_id())
         function_constants = ''
-        function_constant_statement = self.get_javascript_class_name()+'.FUNCTION_{0} = {1}\n'
+        function_constant_statement = self.get_javascript_class_name()+'.FUNCTION_{0} = {1};\n'
         for packet in self.get_packets('function'):
             function_constants += function_constant_statement.format(packet.get_upper_case_name(),
                                                                      packet.get_function_id())
