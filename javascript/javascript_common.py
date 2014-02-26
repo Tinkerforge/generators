@@ -53,9 +53,9 @@ class JavaScriptElement(common.Element):
         'int64':  'int',
         'uint64': 'int',
         'float':  'float',
-        'bool':   'bool',
-        'char':   'chr',
-        'string': 'str'
+        'bool':   'boolean',
+        'char':   'char',
+        'string': 'string'
     }
 
     javascript_struct_formats = {
