@@ -2,7 +2,8 @@ This ZIP contains a Node.js NPM package (tinkerforge.tgz) and the browser
 version (in browser/) of the bindings for all Tinkerforge Bricks and Bricklets.
 The source and examples of the Node.js implementation (in nodejs/source) and
 (in nodejs/examples), the examples of the browser API (in browser/exmaples)
-for all Tinkerforge Bricks and Bricklets are included as well.
+for all Tinkerforge Bricks and Bricklets are included as well. The source of the
+browser implementation can be found in (browser/source/).
 
 You can install the NPM Package locally with ("sudo npm -g install tinkerforge.tgz")
 or from NPM registry with ("sudo npm -g install tinkerforge"). After that you
@@ -17,7 +18,7 @@ configuration example from examples/brick/stepper/ExampleConfiguration.js).
  -> Tinkerforge/
  -> ExampleConfiguration.js
 
-The require statements must be modified in this case as follows,
+The required statements must be modified in this case as follows,
 
 instead of,
 
@@ -28,14 +29,14 @@ instead of,
 use,
 
 "var IPConnection = require('./Tinkerforge/IPConnection')"
+"var BrickStepper = require('./Tinkerforge/BrickStepper')"
 "var ipcon = new IPConnection();"
 "var stepper = new BrickStepper();"
 
-For using the API in browser from html files,
-
- <head>
-   <script src="/path/to/Tinkerforge.js" type="text/javascript">
- </head>
+For using the HTML examples, just put the browser implementation source
+file from (browser/source/Tinkerforge.js) and the HTML file of the example
+that you want to try in the same directory and simply open the HTML file with
+a browser.
 
 Documentation for the API can be found at
 
