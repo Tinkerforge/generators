@@ -102,7 +102,7 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
 
  .. code-block:: javascript
 
-    var {0} = new {1}("YOUR_DEVICE_UID", ipcon);
+    var {3} = new {1}("YOUR_DEVICE_UID", ipcon);
 
  This object can then be used after the IP Connection is connected
  (see examples :ref:`above <{0}_{2}_javascript_examples>`).
@@ -117,7 +117,7 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
 
  .. code-block:: javascript
 
-    var {0} = new {1}("YOUR_DEVICE_UID", ipcon)
+    var {3} = new {1}("YOUR_DEVICE_UID", ipcon)
 
  Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
  (siehe Beispiele :ref:`oben <{0}_{2}_javascript_examples>`).
@@ -129,7 +129,7 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
 .. javascript:function:: {1}.on(id, callback)
 
  :param id: int
- :param callback: callable
+ :param callback: function
 
  Registers a callback with ID *id* to the function *callback*. The available
  IDs with corresponding function signatures are listed
@@ -139,7 +139,7 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
 .. javascript:function:: {1}.on(id, callback)
 
  :param id: int
- :param callback: callable
+ :param callback: function
 
  Registriert einen Callback mit der ID *id* mit der Funktion *callback*. Die
  verfügbaren IDs mit den zugehörigen Funktionssignaturen sind
@@ -162,8 +162,8 @@ parameter the callback function:
 
 .. code-block:: javascript
 
-    {1}.on({3}.CALLBACK_EXAMPLE,
-        function(param) {{
+    {4}.on({3}.CALLBACK_EXAMPLE,
+        function (param) {{
             console.log(param);    
         }}
     );
@@ -186,14 +186,14 @@ Callbacks
 
 Callbacks können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
-mit der Funktion :javascript:func:`register_callback() <{3}.register_callback>` des
+mit der Funktion :javascript:func:`on() <{3}.on>` des
 Geräte Objektes durchgeführt werden. Der erste Parameter ist die Callback ID
 und der zweite Parameter die Callback-Funktion:
 
 .. code-block:: javascript
 
-    {1}.on({3}.CALLBACK_EXAMPLE,
-        function(param) {{
+    {4}.on({3}.CALLBACK_EXAMPLE,
+        function (param) {{
             console.log(param);    
         }}
     );
@@ -232,7 +232,7 @@ The error code can be one of the following:
 * IPConnection.ERROR_FUNCTION_NOT_SUPPORTED = 42
 * IPConnection.ERROR_UNKNOWN_ERROR = 43
 
-The namespace for the javaScript binding is Tinkerforge.*.
+The namespace for the JavaScript bindings is Tinkerforge.*.
 
 {1}
 
@@ -253,40 +253,41 @@ Alle folgend aufgelisteten Funktionen sind Thread-sicher.
 
         const_str = {
         'en' : """
-.. _{5}_{6}_javascript_constants:
+.. _{4}_{5}_javascript_constants:
 
 Constants
 ^^^^^^^^^
 
 .. javascript:attribute:: {0}.DEVICE_IDENTIFIER
 
- This constant is used to identify a {3} {4}.
+ This constant is used to identify a {2} {3}.
 
- The :javascript:func:`getIdentity() <{3}.getIdentity>` function and the
+ The :javascript:func:`getIdentity() <{0}.getIdentity>` function and the
  :javascript:attr:`CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
  callback of the IP Connection have a ``device_identifier`` parameter to specify
  the Brick's or Bricklet's type.
 """,
         'de' : """
-.. _{5}_{6}_javascript_constants:
+.. _{4}_{5}_javascript_constants:
 
 Konstanten
 ^^^^^^^^^^
 
 .. javascript:attribute:: {0}.DEVICE_IDENTIFIER
 
- Diese Konstante wird verwendet um {2} {3} {4} zu identifizieren.
+ Diese Konstante wird verwendet um {1} {2} {3} zu identifizieren.
 
- Die :javascript:func:`getIdentity() <{3}.getIdentity>` Funktion und der
+ Die :javascript:func:`getIdentity() <{0}.getIdentity>` Funktion und der
  :javascript:attr:`CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
  Callback der IP Connection haben ein ``device_identifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 """
         }
 
-        cre = common.select_lang(create_str).format(self.get_headless_camel_case_name(),
+        cre = common.select_lang(create_str).format(self.get_underscore_name(),
                                                     self.get_javascript_class_name(),
-                                                    self.get_category().lower())
+                                                    self.get_category().lower(),
+                                                    self.get_headless_camel_case_name())
         reg = common.select_lang(register_str).format(self.get_underscore_name(),
                                                       self.get_javascript_class_name(),
                                                       self.get_category().lower())
@@ -302,17 +303,17 @@ Konstanten
             api_str += common.select_lang(common.af_str).format(af)
         if c:
             api_str += common.select_lang(common.ccf_str).format(reg, ccf)
-            api_str += common.select_lang(c_str).format(c, self.get_javascript_class_name(),
+            api_str += common.select_lang(c_str).format(c, self.get_underscore_name(),
                                                         self.get_category().lower(),
-                                                        self.get_camel_case_name())
+                                                        self.get_javascript_class_name(),
+                                                        self.get_headless_camel_case_name())
 
         article = 'ein'
         if self.get_category() == 'Brick':
             article = 'einen'
         api_str += common.select_lang(const_str).format(self.get_javascript_class_name(),
-                                                        self.get_category(),
                                                         article,
-                                                        self.get_camel_case_name(),
+                                                        self.get_display_name(),
                                                         self.get_category(),
                                                         self.get_underscore_name(),
                                                         self.get_category().lower())
