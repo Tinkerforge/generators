@@ -522,6 +522,11 @@ def handle_rst_substitutions(text, packet):
 
     return text
 
+def make_headless_camel_case(camel_case_name, underscore_name):
+    prefix_len = len(underscore_name.split('_')[0])
+
+    return camel_case_name[:prefix_len].lower() + camel_case_name[prefix_len:]
+
 def underscore_to_headless_camel_case(name):
     parts = name.split('_')
     ret = parts[0]
@@ -946,7 +951,7 @@ class Packet:
         return self.raw_data['name'][0]
 
     def get_headless_camel_case_name(self):
-        return underscore_to_headless_camel_case(self.get_underscore_name())
+        return make_headless_camel_case(self.get_camel_case_name(), self.get_underscore_name())
 
     def get_underscore_name(self):
         return self.raw_data['name'][1]
@@ -1132,7 +1137,7 @@ class Device:
         return self.raw_data['name'][0]
 
     def get_headless_camel_case_name(self):
-        return underscore_to_headless_camel_case(self.get_underscore_name())
+        return make_headless_camel_case(self.get_camel_case_name(), self.get_underscore_name())
 
     def get_underscore_name(self):
         return self.raw_data['name'][1]

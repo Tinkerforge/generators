@@ -115,8 +115,8 @@ var Device = require('./Device');\n
     def get_javascript_methods(self):
         method_code = ''
         for packet in self.get_packets('function'):
-            camel_case_name_js_mod = packet.get_headless_camel_case_name()
-            under_score_name = packet.get_underscore_name()
+            name = packet.get_headless_camel_case_name()
+            underscore_name = packet.get_underscore_name()
             param_list = packet.get_javascript_parameter_list()
             pack_format = packet.get_javascript_format_list('in')
             unpack_format = packet.get_javascript_format_list('out')
@@ -137,9 +137,9 @@ var Device = require('./Device');\n
     }};
 """            
             if(len(param_list) == 0):
-                method_code += no_param_method_code.format(camel_case_name_js_mod, doc, self.get_javascript_class_name(), under_score_name.upper(), param_list, pack_format, unpack_format)
+                method_code += no_param_method_code.format(name, doc, self.get_javascript_class_name(), underscore_name.upper(), param_list, pack_format, unpack_format)
             if(len(param_list) > 0):
-                method_code += param_method_code.format(camel_case_name_js_mod, param_list, doc, self.get_javascript_class_name(), under_score_name.upper(), param_list, pack_format, unpack_format)
+                method_code += param_method_code.format(name, param_list, doc, self.get_javascript_class_name(), underscore_name.upper(), param_list, pack_format, unpack_format)
 
         return method_code
 
