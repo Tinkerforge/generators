@@ -28,8 +28,8 @@ instead of,
 
 use,
 
-"var IPConnection = require('./Tinkerforge/IPConnection')"
-"var BrickStepper = require('./Tinkerforge/BrickStepper')"
+"var IPConnection = require('./Tinkerforge/IPConnection');"
+"var BrickStepper = require('./Tinkerforge/BrickStepper');"
 "var ipcon = new IPConnection();"
 "var stepper = new BrickStepper();"
 
