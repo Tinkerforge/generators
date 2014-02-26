@@ -946,8 +946,7 @@ class Packet:
         return self.raw_data['name'][0]
 
     def get_headless_camel_case_name(self):
-        m = re.match('([A-Z]+)(.*)', self.get_camel_case_name())
-        return m.group(1).lower() + m.group(2)
+        return underscore_to_headless_camel_case(self.get_underscore_name())
 
     def get_underscore_name(self):
         return self.raw_data['name'][1]
@@ -1133,8 +1132,7 @@ class Device:
         return self.raw_data['name'][0]
 
     def get_headless_camel_case_name(self):
-        m = re.match('([A-Z]+)(.*)', self.get_camel_case_name())
-        return m.group(1).lower() + m.group(2)
+        return underscore_to_headless_camel_case(self.get_underscore_name())
 
     def get_underscore_name(self):
         return self.raw_data['name'][1]
