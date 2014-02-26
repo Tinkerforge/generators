@@ -2,7 +2,7 @@
 
 # Tinkerforge
 
-Tinkerforge is a Node.JS package that provides the
+Tinkerforge is a Node.js package that provides the
 Tinkerforge API bindings for all Tinkerforge Bricks
 and Bricklets.
 
@@ -38,7 +38,7 @@ BrickletDualButton = new BrickletDualButton();
 
 ## Documentation
 
-For detailed documentation, <http://www.tinkerforge.com>
+For detailed documentation see the [Tinkerforge](http://www.tinkerforge.com/en/doc/Software/API_Bindings_JavaScript.html#api-documentation-and-examples) homepage.
 
 ## Examples
 
@@ -181,4 +181,3 @@ Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 Redistribution and use in source and binary forms of this file,
 with or without modification, are permitted. See the Creative
 Commons Zero (CC0 1.0) License for more details.
-
