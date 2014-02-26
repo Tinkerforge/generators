@@ -93,7 +93,7 @@ class JavaScriptZipGenerator(common.Generator):
         common.replace_in_file(os.path.join(root, 'package.json'), '/tmp/generator/npm/nodejs/npm_pkg_dir/package.json', '<TF_API_VERSION>', dot_version)
 
         shutil.copy(os.path.join(root, 'README.md'), '/tmp/generator/npm/nodejs/npm_pkg_dir/README.md')
-        shutil.copy(os.path.join(root, 'LICENCE'), '/tmp/generator/npm/nodejs/npm_pkg_dir/LICENCE')
+        shutil.copy(os.path.join(root, 'LICENSE'), '/tmp/generator/npm/nodejs/npm_pkg_dir/LICENSE')
         shutil.copy(os.path.join(root, 'IPConnection.js'), '/tmp/generator/npm/nodejs/npm_pkg_dir/lib/IPConnection.js')
         shutil.copy(os.path.join(root, 'Device.js'), '/tmp/generator/npm/nodejs/npm_pkg_dir/lib/Device.js')
 
