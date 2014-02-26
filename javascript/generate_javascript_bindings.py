@@ -115,8 +115,7 @@ var Device = require('./Device');\n
     def get_javascript_methods(self):
         method_code = ''
         for packet in self.get_packets('function'):
-            camel_case_name = packet.get_camel_case_name()
-            camel_case_name_js_mod = camel_case_name[0].lower()+camel_case_name[1:]
+            camel_case_name_js_mod = packet.get_headless_camel_case_name()
             under_score_name = packet.get_underscore_name()
             param_list = packet.get_javascript_parameter_list()
             pack_format = packet.get_javascript_format_list('in')
