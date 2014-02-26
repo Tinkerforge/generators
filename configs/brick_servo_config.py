@@ -539,7 +539,7 @@ set it accordingly. If you don't have a datasheet and you have no idea
 what the correct period is, the default value (19.5ms) will most likely
 work fine. 
 
-The minimum possible period is 2000µs and the maximum is 65535µs.
+The minimum possible period is 1µs and the maximum is 65535µs.
 
 The default value is 19.5ms (19500µs).
 """,
@@ -557,7 +557,7 @@ Wert entsprechend gesetzt werden. Sollte der Servo ohne ein Datenblatt
 vorliegen und die korrekte Periode unbekannt sein, wird der Standardwert
 (19,5ms) meinst funktionieren.
 
-Die minimal mögliche Periode ist 2000µs und die maximale 65535µs.
+Die minimal mögliche Periode ist 1µs und die maximale 65535µs.
 
 Der Standardwert ist 19,5ms (19500µs).
 """
