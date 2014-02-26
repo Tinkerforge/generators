@@ -3,7 +3,7 @@
   "preferGlobal": true,
   "version": "<TF_API_VERSION>",
   "author": "Ishraq Ibne Ashraf <ishraq@tinkerforge.com>",
-  "description": "Official API binding for all Tinkerforge hardware",
+  "description": "Official API bindings for all Tinkerforge hardware",
   "contributors": [{}],
   "bin": {},
   "scripts": {},
