@@ -18,7 +18,7 @@ To be able to use the bindings first the API must be
 included in the code in following way:
 
 ```js
-var Tinkerforge = require('Tinkerforge');
+var Tinkerforge = require('tinkerforge');
 ```
 
 After that all the classes and their functionalities
