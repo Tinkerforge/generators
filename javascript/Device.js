@@ -7,10 +7,10 @@ Commons Zero (CC0 1.0) License for more details.
 */
 
 Device.RESPONSE_EXPECTED_INVALID_FUNCTION_ID = 0;
-Device.RESPONSE_EXPECTED_ALWAYS_TRUE = 1;// Getter
-Device.RESPONSE_EXPECTED_ALWAYS_FALSE = 2;// Callback
-Device.RESPONSE_EXPECTED_TRUE = 3;// Setter
-Device.RESPONSE_EXPECTED_FALSE = 4;// Setter, default
+Device.RESPONSE_EXPECTED_ALWAYS_TRUE = 1; // Getter
+Device.RESPONSE_EXPECTED_ALWAYS_FALSE = 2; // Callback
+Device.RESPONSE_EXPECTED_TRUE = 3; // Setter
+Device.RESPONSE_EXPECTED_FALSE = 4; // Setter, default
 Device.ERROR_INVALID_FUNCTION_ID = 21;
 
 function base58Decode(str) {
@@ -36,7 +36,7 @@ function Device(deviceRegistering, uid, ipcon) {
         this.ipcon = ipcon;
         this.deviceOID = 0;
         this.APIVersion = [0, 0, 0];
-        this.expectedResponses = [];// Has following structured objects as elements of the array,
+        this.expectedResponses = []; // Has following structured objects as elements of the array,
                                     /*
                                     {
                                         DeviceOID:,
@@ -49,8 +49,8 @@ function Device(deviceRegistering, uid, ipcon) {
                                     }
                                     */
         this.authKey = undefined;
-        //Creates the device object with the unique device ID *uid* and adds
-        //it to the IPConnection *ipcon*.
+        // Creates the device object with the unique device ID *uid* and adds
+        // it to the IPConnection *ipcon*.
         this.ipcon.devices[this.uid] = deviceRegistering;
         this.getDeviceOID = function () {
             return this.deviceOID++;

@@ -22,16 +22,16 @@ The required statements must be modified in this case as follows,
 
 instead of,
 
-"var Tinkerforge = require('tinkerforge');"
-"var ipcon = new Tinkerforge.IPConnection();"
-"var stepper = new Tinkerforge.BrickStepper();"
+ var Tinkerforge = require('tinkerforge');
+ var ipcon = new Tinkerforge.IPConnection();
+ var stepper = new Tinkerforge.BrickStepper();
 
 use,
 
-"var IPConnection = require('./Tinkerforge/IPConnection');"
-"var BrickStepper = require('./Tinkerforge/BrickStepper');"
-"var ipcon = new IPConnection();"
-"var stepper = new BrickStepper();"
+ var IPConnection = require('./Tinkerforge/IPConnection');
+ var BrickStepper = require('./Tinkerforge/BrickStepper');
+ var ipcon = new IPConnection();
+ var stepper = new BrickStepper();
 
 For using the HTML examples, just put the browser implementation source
 file from (browser/source/Tinkerforge.js) and the HTML file of the example
