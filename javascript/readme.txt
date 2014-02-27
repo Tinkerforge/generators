@@ -22,7 +22,7 @@ The required statements must be modified in this case as follows,
 
 instead of,
 
-"var Tinkerforge = require('Tinkerforge');"
+"var Tinkerforge = require('tinkerforge');"
 "var ipcon = new Tinkerforge.IPConnection();"
 "var stepper = new Tinkerforge.BrickStepper();"
 
