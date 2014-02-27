@@ -990,7 +990,13 @@ function IPConnection() {
     this.getTimeout = function () {
         return this.timeout;
     };
-    this.enumerate = function() {
+    this.enumerate = function (errorCallback) {
+        if (this.getConnectionState() !== IPConnection.CONNECTION_STATE_CONNECTED) {
+            if (errorCallback !== undefined) {
+                errorCallback(IPConnection.ERROR_NOT_CONNECTED);
+            }
+            return;
+        }
         this.socket.write(this.createPacketHeader(undefined, 8, IPConnection.FUNCTION_ENUMERATE), this.resetDisconnectProbe());
     };
     this.on = function (FID, CBFunction) {
