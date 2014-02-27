@@ -232,7 +232,7 @@ The error code can be one of the following:
 * IPConnection.ERROR_FUNCTION_NOT_SUPPORTED = 42
 * IPConnection.ERROR_UNKNOWN_ERROR = 43
 
-The namespace for the JavaScript bindings is Tinkerforge.*.
+The namespace for the JavaScript bindings is ``Tinkerforge.*``.
 
 {1}
 
