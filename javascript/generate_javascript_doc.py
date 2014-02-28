@@ -46,7 +46,16 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
             else:
                 raise ValueError('Invalid filename ' + filename)
 
-        return common.make_rst_examples(title_from_filename, self, '^Example.*\.(?:js|html)$', 'JavaScript')
+        def language_from_filename(filename):
+            if filename.endswith('.js'):
+                return 'javascript'
+            elif filename.endswith('.html'):
+                return 'html'
+            else:
+                raise ValueError('Invalid filename ' + filename)
+
+        return common.make_rst_examples(title_from_filename, self, '^Example.*\.(?:js|html)$', 'JavaScript',
+                                        language_from_filename=language_from_filename)
 
     def get_javascript_methods(self, typ):
         methods = ''

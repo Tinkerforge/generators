@@ -247,12 +247,9 @@ ausgeführt werden können ist :ref:`hier <{3}>` zu finden.
     return s
 
 def make_rst_examples(title_from_filename, device, filename_regex, include_name,
-                      language=None, url_fixer=None, is_picture=False,
-                      additional_download_finder=None, display_name_fixer=None):
+                      url_fixer=None, is_picture=False, additional_download_finder=None,
+                      display_name_fixer=None, language_from_filename=None):
     bindings_name = device.get_generator().get_bindings_name()
-
-    if language is None:
-       language = bindings_name
 
     ex = {
     'en': """
@@ -338,6 +335,11 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
                 imp = imp_picture_scroll
             else:
                 imp = imp_picture
+
+        if language_from_filename is None:
+            language = bindings_name
+        else:
+            language = language_from_filename(f[0])
 
         include = '{0}_{1}_{2}_{3}'.format(device.get_camel_case_name(), device.get_category(), include_name, f[0].replace(' ', '_'))
         copy_files.append((f[1], include))

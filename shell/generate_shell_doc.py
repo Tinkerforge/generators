@@ -41,7 +41,11 @@ class ShellDocDevice(shell_common.ShellDevice):
             filename = filename.replace('example-', '').replace('.sh', '').replace('-', '_')
             return common.underscore_to_space(filename)
 
-        return common.make_rst_examples(title_from_filename, self, '^example-.*\.sh$', 'Shell', language='bash')
+        def language_from_filename(filename):
+            return 'bash'
+
+        return common.make_rst_examples(title_from_filename, self, '^example-.*\.sh$', 'Shell',
+                                        language_from_filename=language_from_filename)
 
     def get_shell_methods(self, typ):
         methods = ''
