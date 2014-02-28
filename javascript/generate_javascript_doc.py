@@ -217,7 +217,7 @@ weiter unten beschrieben.
 API
 ---
 
-Generally, every method of the JavaScript binding takes two optional parameters,
+Generally, every method of the JavaScript bindings can take two optional parameters,
 ``returnCallback`` and ``errorCallback``. These are two user defined callback functions.
 ``returnCallback`` is called when a return value is expected with the value as the
 function's argument and ``errorCallback`` is called in case of an error with an error code.
