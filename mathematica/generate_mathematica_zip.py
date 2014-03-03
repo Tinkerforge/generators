@@ -46,7 +46,8 @@ class MathematicaZipGenerator(common.Generator):
         if not device.is_released():
             return
 
-        examples = common.find_examples(device, '^Example.*\.nb$')
+        # Copy device examples
+        examples = common.find_device_examples(device, '^Example.*\.nb$')
         dest = os.path.join('/tmp/generator/dll/examples', device.get_category(), device.get_camel_case_name())
 
         if not os.path.exists(dest):

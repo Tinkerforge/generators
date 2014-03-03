@@ -46,8 +46,8 @@ class PythonZipGenerator(common.Generator):
         if not device.is_released():
             return
 
-        # Copy examples
-        examples = common.find_examples(device, '^example_.*\.py$')
+        # Copy device examples
+        examples = common.find_device_examples(device, '^example_.*\.py$')
         dest = os.path.join('/tmp/generator/egg/examples', device.get_category().lower(), device.get_underscore_name())
 
         if not os.path.exists(dest):

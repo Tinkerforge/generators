@@ -47,8 +47,8 @@ class PerlZipGenerator(common.Generator):
         if not device.is_released():
             return
 
-        # Copy examples
-        examples = common.find_examples(device, '^example_.*\.pl$')
+        # Copy device examples
+        examples = common.find_device_examples(device, '^example_.*\.pl$')
         dest = os.path.join('/tmp/generator/perl/examples', device.get_category().lower(), device.get_underscore_name())
 
         if not os.path.exists(dest):

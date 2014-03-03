@@ -50,9 +50,9 @@ class JavaScriptZipGenerator(common.Generator):
         if not device.is_released():
             return
 
-        # Copy examples
-        examples_nodejs = common.find_examples(device, '^Example.*\.js')
-        examples_browser = common.find_examples(device, '^Example.*\.html')
+        # Copy device examples
+        examples_nodejs = common.find_device_examples(device, '^Example.*\.js')
+        examples_browser = common.find_device_examples(device, '^Example.*\.html')
         dest_nodejs = os.path.join('/tmp/generator/npm/nodejs/examples/', device.get_category(), device.get_camel_case_name())
         dest_browser = os.path.join('/tmp/generator/npm/browser/examples/', device.get_category(), device.get_camel_case_name())
 

@@ -48,8 +48,8 @@ class PHPZipGenerator(common.Generator):
         if not device.is_released():
             return
 
-        # Copy examples
-        examples = common.find_examples(device, '^Example.*\.php$')
+        # Copy device examples
+        examples = common.find_device_examples(device, '^Example.*\.php$')
         dest = os.path.join('/tmp/generator/pear/examples', device.get_category(), device.get_camel_case_name())
 
         if not os.path.exists(dest):

@@ -326,7 +326,7 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
                                                device.get_category().lower(),
                                                bindings_name)
     examples = select_lang(ex).format(ref)
-    files = find_examples(device, filename_regex)
+    files = find_device_examples(device, filename_regex)
     copy_files = []
     include_name = device.get_generator().get_doc_rst_name()
 
@@ -370,12 +370,8 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
     copy_examples(copy_files, device.get_generator().get_bindings_root_directory())
     return examples
 
-def find_examples(device, filename_regex):
+def find_examples(examples_directory, filename_regex):
     compiled_filename_regex = re.compile(filename_regex)
-    bindings_name = device.get_generator().get_bindings_name()
-    root_directory = device.get_generator().get_bindings_root_directory().replace('/generators/' + bindings_name, '')
-    device_git_name = '{0}-{1}'.format(device.get_underscore_name(), device.get_category().lower()).replace('_', '-')
-    examples_directory = os.path.join(root_directory, device_git_name, 'software', 'examples', bindings_name)
     examples = []
 
     try:
@@ -399,6 +395,13 @@ def find_examples(device, filename_regex):
 
     return examples
 
+def find_device_examples(device, filename_regex):
+    bindings_name = device.get_generator().get_bindings_name()
+    root_directory = device.get_generator().get_bindings_root_directory().replace('/generators/' + bindings_name, '')
+    device_git_name = '{0}-{1}'.format(device.get_underscore_name(), device.get_category().lower()).replace('_', '-')
+    examples_directory = os.path.join(root_directory, device_git_name, 'software', 'examples', bindings_name)
+
+    return find_examples(examples_directory, filename_regex)
 
 def copy_examples(copy_files, path):
     doc_path = '{0}/doc/{1}'.format(path, lang)
