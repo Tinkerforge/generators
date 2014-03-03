@@ -238,6 +238,9 @@ class ModbusDocGenerator(common.DocGenerator):
     def get_bindings_name(self):
         return 'modbus'
 
+    def get_doc_rst_name(self):
+        return 'Modbus'
+
     def get_device_class(self):
         return ModbusDocDevice
 
@@ -248,9 +251,7 @@ class ModbusDocGenerator(common.DocGenerator):
         return ModbusDocElement
 
     def generate(self, device):
-        filename = '{0}_{1}_Modbus.rst'.format(device.get_camel_case_name(), device.get_category())
-
-        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, filename), 'wb')
+        rst = open(device.get_doc_rst_path(), 'wb')
         rst.write(device.get_modbus_doc())
         rst.close()
 

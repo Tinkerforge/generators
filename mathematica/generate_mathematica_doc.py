@@ -49,8 +49,8 @@ class MathematicaDocDevice(common.Device):
         def display_name_fixer(url):
             return url.replace('.nb.txt', '.nb')
 
-        return common.make_rst_examples(title_from_filename, self, '^Example.*\.nb.txt$', 'Mathematica', url_fixer=url_fixer,
-                                        display_name_fixer=display_name_fixer)
+        return common.make_rst_examples(title_from_filename, self, '^Example.*\.nb.txt$',
+                                        url_fixer=url_fixer, display_name_fixer=display_name_fixer)
 
     def get_mathematica_functions(self, type):
         function = '.. mathematica:function:: {0}@{1}[{2}] -> {3}\n{4}{5}{6}\n'
@@ -489,6 +489,9 @@ class MathematicaDocGenerator(common.DocGenerator):
     def get_bindings_name(self):
         return 'mathematica'
 
+    def get_doc_rst_name(self):
+        return 'Mathematica'
+
     def get_device_class(self):
         return MathematicaDocDevice
 
@@ -499,9 +502,7 @@ class MathematicaDocGenerator(common.DocGenerator):
         return MathematicaDocElement
 
     def generate(self, device):
-        filename = '{0}_{1}_Mathematica.rst'.format(device.get_camel_case_name(), device.get_category())
-
-        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, filename), 'wb')
+        rst = open(device.get_doc_rst_path(), 'wb')
         rst.write(device.get_mathematica_doc())
         rst.close()
 

@@ -42,7 +42,7 @@ class PerlDocDevice(perl_common.PerlDevice):
             filename = filename.replace('example_', '').replace('.pl', '')
             return common.underscore_to_space(filename)
 
-        return common.make_rst_examples(title_from_filename, self, '^example_.*\.pl$', 'Perl')
+        return common.make_rst_examples(title_from_filename, self, '^example_.*\.pl$')
 
     def get_perl_methods(self, typ):
         methods = ''
@@ -426,6 +426,9 @@ class PerlDocGenerator(common.DocGenerator):
     def get_bindings_name(self):
         return 'perl'
 
+    def get_doc_rst_name(self):
+        return 'Perl'
+
     def get_device_class(self):
         return PerlDocDevice
 
@@ -436,9 +439,7 @@ class PerlDocGenerator(common.DocGenerator):
         return perl_common.PerlElement
 
     def generate(self, device):
-        filename = '{0}_{1}_Perl.rst'.format(device.get_camel_case_name(), device.get_category())
-
-        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, filename), 'wb')
+        rst = open(device.get_doc_rst_path(), 'wb')
         rst.write(device.get_perl_doc())
         rst.close()
 

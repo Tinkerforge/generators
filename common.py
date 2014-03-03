@@ -246,7 +246,7 @@ ausgeführt werden können ist :ref:`hier <{3}>` zu finden.
 
     return s
 
-def make_rst_examples(title_from_filename, device, filename_regex, include_name,
+def make_rst_examples(title_from_filename, device, filename_regex,
                       url_fixer=None, is_picture=False, additional_download_finder=None,
                       display_name_fixer=None, language_from_filename=None):
     bindings_name = device.get_generator().get_bindings_name()
@@ -328,6 +328,7 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
     examples = select_lang(ex).format(ref)
     files = find_examples(device, filename_regex)
     copy_files = []
+    include_name = device.get_generator().get_doc_rst_name()
 
     for f in files:
         if is_picture:
@@ -1156,6 +1157,19 @@ class Device:
     def get_description(self):
         return self.raw_data['description']
 
+    def get_doc_rst_path(self):
+        if not self.get_generator().is_doc():
+            raise Exception("Invalid call in non-doc generator")
+
+        filename = '{0}_{1}_{2}.rst'.format(self.get_camel_case_name(),
+                                            self.get_category(),
+                                            self.get_generator().get_doc_rst_name())
+
+        return os.path.join(self.get_generator().get_bindings_root_directory(),
+                            'doc',
+                            self.get_generator().get_language(),
+                            filename)
+
     def get_packets(self, type=None):
         if type is None:
             if self.generator.is_doc():
@@ -1200,10 +1214,10 @@ class Device:
 class Generator:
     def __init__(self, bindings_root_directory, language):
         self.bindings_root_directory = bindings_root_directory
-        self.language = language
+        self.language = language # en or de
 
     def get_bindings_name(self):
-        raise Exception("get_bindings_name not implemented")
+        raise Exception("get_bindings_name() not implemented")
 
     def get_device_class(self):
         return Device
@@ -1224,7 +1238,7 @@ class Generator:
         return self.bindings_root_directory
 
     def get_language(self):
-        return self.language
+        return self.language # en or de
 
     def is_doc(self):
         return False
@@ -1233,12 +1247,21 @@ class Generator:
         pass
 
     def generate(self, device):
-        pass
+        raise Exception("generate() not implemented")
 
     def finish(self):
         pass
 
 class DocGenerator(Generator):
+    def __init__(self, *args, **kwargs):
+        Generator.__init__(self, *args, **kwargs)
+
+        if self.get_bindings_name() != self.get_doc_rst_name().lower():
+            raise Exception("bindings name '{0}' and doc rst name '{1}' do not match".format(self.get_bindings_name(), self.get_doc_rst_name()))
+
+    def get_doc_rst_name(self):
+        raise Exception("get_doc_rst_name() not implemented")
+
     def is_doc(self):
         return True
 

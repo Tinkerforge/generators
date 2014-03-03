@@ -43,7 +43,7 @@ class VBNETDocDevice(common.Device):
             filename = filename.replace('Example', '').replace('.vb', '')
             return common.camel_case_to_space(filename)
 
-        return common.make_rst_examples(title_from_filename, self, '^Example.*\.vb$', 'VBNET')
+        return common.make_rst_examples(title_from_filename, self, '^Example.*\.vb$')
 
     def get_vbnet_methods(self, typ):
         methods = ''
@@ -397,6 +397,9 @@ class VBNETDocGenerator(common.DocGenerator):
     def get_bindings_name(self):
         return 'vbnet'
 
+    def get_doc_rst_name(self):
+        return 'VBNET'
+
     def get_device_class(self):
         return VBNETDocDevice
 
@@ -407,9 +410,7 @@ class VBNETDocGenerator(common.DocGenerator):
         return VBNETDocElement
 
     def generate(self, device):
-        filename = '{0}_{1}_VBNET.rst'.format(device.get_camel_case_name(), device.get_category())
-
-        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, filename), 'wb')
+        rst = open(device.get_doc_rst_path(), 'wb')
         rst.write(device.get_vbnet_doc())
         rst.close()
 

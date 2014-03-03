@@ -44,7 +44,7 @@ class ShellDocDevice(shell_common.ShellDevice):
         def language_from_filename(filename):
             return 'bash'
 
-        return common.make_rst_examples(title_from_filename, self, '^example-.*\.sh$', 'Shell',
+        return common.make_rst_examples(title_from_filename, self, '^example-.*\.sh$',
                                         language_from_filename=language_from_filename)
 
     def get_shell_methods(self, typ):
@@ -476,6 +476,9 @@ class ShellDocGenerator(common.DocGenerator):
     def get_bindings_name(self):
         return 'shell'
 
+    def get_doc_rst_name(self):
+        return 'Shell'
+
     def get_device_class(self):
         return ShellDocDevice
 
@@ -486,9 +489,7 @@ class ShellDocGenerator(common.DocGenerator):
         return shell_common.ShellElement
 
     def generate(self, device):
-        filename = '{0}_{1}_Shell.rst'.format(device.get_camel_case_name(), device.get_category())
-
-        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, filename), 'wb')
+        rst = open(device.get_doc_rst_path(), 'wb')
         rst.write(device.get_shell_doc())
         rst.close()
 

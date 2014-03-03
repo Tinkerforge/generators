@@ -41,7 +41,7 @@ class PythonDocDevice(python_common.PythonDevice):
             filename = filename.replace('example_', '').replace('.py', '')
             return common.underscore_to_space(filename)
 
-        return common.make_rst_examples(title_from_filename, self, '^example_.*\.py$', 'Python')
+        return common.make_rst_examples(title_from_filename, self, '^example_.*\.py$')
 
     def get_python_methods(self, type):
         methods = []
@@ -417,6 +417,9 @@ class PythonDocGenerator(common.DocGenerator):
     def get_bindings_name(self):
         return 'python'
 
+    def get_doc_rst_name(self):
+        return 'Python'
+
     def get_device_class(self):
         return PythonDocDevice
 
@@ -427,9 +430,7 @@ class PythonDocGenerator(common.DocGenerator):
         return python_common.PythonElement
 
     def generate(self, device):
-        filename = '{0}_{1}_Python.rst'.format(device.get_camel_case_name(), device.get_category())
-
-        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, filename), 'wb')
+        rst = open(device.get_doc_rst_path(), 'wb')
         rst.write(device.get_python_doc())
         rst.close()
 

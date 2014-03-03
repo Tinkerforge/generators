@@ -42,7 +42,7 @@ class PHPDocDevice(php_common.PHPDevice):
             filename = filename.replace('Example', '').replace('.php', '')
             return common.camel_case_to_space(filename)
 
-        return common.make_rst_examples(title_from_filename, self, '^Example.*\.php$', 'PHP')
+        return common.make_rst_examples(title_from_filename, self, '^Example.*\.php$')
 
     def get_php_methods(self, typ):
         methods = ''
@@ -401,6 +401,9 @@ class PHPDocGenerator(common.DocGenerator):
     def get_bindings_name(self):
         return 'php'
 
+    def get_doc_rst_name(self):
+        return 'PHP'
+
     def get_device_class(self):
         return PHPDocDevice
 
@@ -411,9 +414,7 @@ class PHPDocGenerator(common.DocGenerator):
         return php_common.PHPElement
 
     def generate(self, device):
-        filename = '{0}_{1}_PHP.rst'.format(device.get_camel_case_name(), device.get_category())
-
-        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, filename), 'wb')
+        rst = open(device.get_doc_rst_path(), 'wb')
         rst.write(device.get_php_doc())
         rst.close()
 

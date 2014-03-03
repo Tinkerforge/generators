@@ -41,7 +41,7 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
             filename = filename.replace('Example', '').replace('.cs', '')
             return common.camel_case_to_space(filename)
 
-        return common.make_rst_examples(title_from_filename, self, '^Example.*\.cs$', 'CSharp')
+        return common.make_rst_examples(title_from_filename, self, '^Example.*\.cs$')
 
     def get_csharp_methods(self, typ):
         version_changed = {
@@ -357,6 +357,9 @@ class CSharpDocGenerator(common.DocGenerator):
     def get_bindings_name(self):
         return 'csharp'
 
+    def get_doc_rst_name(self):
+        return 'CSharp'
+
     def get_device_class(self):
         return CSharpDocDevice
 
@@ -367,9 +370,7 @@ class CSharpDocGenerator(common.DocGenerator):
         return csharp_common.CSharpElement
 
     def generate(self, device):
-        filename = '{0}_{1}_CSharp.rst'.format(device.get_camel_case_name(), device.get_category())
-
-        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, filename), 'wb')
+        rst = open(device.get_doc_rst_path(), 'wb')
         rst.write(device.get_csharp_doc())
         rst.close()
 

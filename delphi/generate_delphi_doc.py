@@ -41,7 +41,7 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
             filename = filename.replace('Example', '').replace('.pas', '')
             return common.camel_case_to_space(filename)
 
-        return common.make_rst_examples(title_from_filename, self, '^Example.*\.pas$', 'Delphi')
+        return common.make_rst_examples(title_from_filename, self, '^Example.*\.pas$')
 
     def get_delphi_methods(self, typ):
         methods = ''
@@ -334,6 +334,9 @@ class DelphiDocGenerator(common.DocGenerator):
     def get_bindings_name(self):
         return 'delphi'
 
+    def get_doc_rst_name(self):
+        return 'Delphi'
+
     def get_device_class(self):
         return DelphiBindingsDevice
 
@@ -344,9 +347,7 @@ class DelphiDocGenerator(common.DocGenerator):
         return delphi_common.DelphiElement
 
     def generate(self, device):
-        filename = '{0}_{1}_Delphi.rst'.format(device.get_camel_case_name(), device.get_category())
-
-        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, filename), 'wb')
+        rst = open(device.get_doc_rst_path(), 'wb')
         rst.write(device.get_delphi_doc())
         rst.close()
 

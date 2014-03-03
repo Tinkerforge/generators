@@ -54,7 +54,7 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
             else:
                 raise ValueError('Invalid filename ' + filename)
 
-        return common.make_rst_examples(title_from_filename, self, '^Example.*\.(?:js|html)$', 'JavaScript',
+        return common.make_rst_examples(title_from_filename, self, '^Example.*\.(?:js|html)$',
                                         language_from_filename=language_from_filename)
 
     def get_javascript_methods(self, typ):
@@ -397,6 +397,9 @@ class JavaScriptDocGenerator(common.DocGenerator):
     def get_bindings_name(self):
         return 'javascript'
 
+    def get_doc_rst_name(self):
+        return 'JavaScript'
+
     def get_device_class(self):
         return JavaScriptDocDevice
 
@@ -407,9 +410,7 @@ class JavaScriptDocGenerator(common.DocGenerator):
         return javascript_common.JavaScriptElement
 
     def generate(self, device):
-        filename = '{0}_{1}_JavaScript.rst'.format(device.get_camel_case_name(), device.get_category())
-
-        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, filename), 'wb')
+        rst = open(device.get_doc_rst_path(), 'wb')
         rst.write(device.get_javascript_doc())
         rst.close()
 

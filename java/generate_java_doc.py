@@ -41,7 +41,7 @@ class JavaDocDevice(java_common.JavaDevice):
             filename = filename.replace('Example', '').replace('.java', '')
             return common.camel_case_to_space(filename)
 
-        return common.make_rst_examples(title_from_filename, self, '^Example.*\.java$', 'Java')
+        return common.make_rst_examples(title_from_filename, self, '^Example.*\.java$')
 
     def get_java_methods(self, typ):
         methods = ''
@@ -445,6 +445,9 @@ class JavaDocGenerator(common.DocGenerator):
     def get_bindings_name(self):
         return 'java'
 
+    def get_doc_rst_name(self):
+        return 'Java'
+
     def get_device_class(self):
         return JavaDocDevice
 
@@ -455,9 +458,7 @@ class JavaDocGenerator(common.DocGenerator):
         return java_common.JavaElement
 
     def generate(self, device):
-        filename = '{0}_{1}_Java.rst'.format(device.get_camel_case_name(), device.get_category())
-
-        rst = open(os.path.join(self.get_bindings_root_directory(), 'doc', common.lang, filename), 'wb')
+        rst = open(device.get_doc_rst_path(), 'wb')
         rst.write(device.get_java_doc())
         rst.close()
 
