@@ -41,7 +41,7 @@ class JavaDocDevice(java_common.JavaDevice):
             filename = filename.replace('Example', '').replace('.java', '')
             return common.camel_case_to_space(filename)
 
-        return common.make_rst_examples(title_from_filename, self, '^Example.*\.java$')
+        return common.make_rst_examples(title_from_filename, self)
 
     def get_java_methods(self, typ):
         methods = ''
@@ -447,6 +447,9 @@ class JavaDocGenerator(common.DocGenerator):
 
     def get_doc_rst_name(self):
         return 'Java'
+
+    def get_doc_example_regex(self):
+        return '^Example.*\.java$'
 
     def get_device_class(self):
         return JavaDocDevice

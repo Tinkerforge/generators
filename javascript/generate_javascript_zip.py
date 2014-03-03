@@ -72,11 +72,13 @@ class JavaScriptZipGenerator(common.Generator):
         version = common.get_changelog_version(root)
         dot_version = "{0}.{1}.{2}".format(*version)
 
-        # Copy examples
-        shutil.copy(root.replace('/generators/javascript', '/doc/en/source/Software/Example.js'),
-                    '/tmp/generator/npm/nodejs/examples/ExampleEnumerate.js')
-        shutil.copy(root.replace('/generators/javascript', '/doc/en/source/Software/Example.html'),
-                    '/tmp/generator/npm/browser/examples/ExampleEnumerate.html')
+        # Copy IPConnection examples
+        examples_nodejs = common.find_examples(root, '^Example.*\.js')
+        examples_browser = common.find_examples(root, '^Example.*\.html')
+        for example in examples_nodejs:
+            shutil.copy(example[1], '/tmp/generator/npm/nodejs/examples')
+        for example in examples_browser:
+            shutil.copy(example[1], '/tmp/generator/npm/browser/examples')
 
         # Copy bindings and readme
         for filename in released_files:

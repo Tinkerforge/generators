@@ -1,0 +1,36 @@
+Needs["NETLink`"]
+LoadNETAssembly["Tinkerforge",NotebookDirectory[]<>".."]
+
+host="localhost"
+port=4223
+
+(* Create IPConnection *)
+ipcon=NETNew["Tinkerforge.IPConnection"]
+ipcon@Connect[host,port]
+
+(* Print incoming enumeration information *)
+EnumerateCB[sender_,uid_,connectedUid_,position_,hardwareVersion_,firmwareVersion_,
+            deviceIdentifier_,enumerationType_]:=
+ Module[{},
+  Print["UID:               "<>uid];
+  Print["Enumeration Type:  "<>ToString[enumerationType]];
+  If[enumerationType!=Tinkerforge`IPConnection`ENUMERATIONUTYPEUDISCONNECTED,
+   Print["Connected UID:     "<>connectedUid];
+   Print["Position:          "<>FromCharacterCode[position]];
+   Print["Hardware Version:  "<>StringJoin[Riffle[Map[ToString,hardwareVersion],{".","."}]]];
+   Print["Firmware Version:  "<>StringJoin[Riffle[Map[ToString,firmwareVersion],{".","."}]]];
+   Print["Device Identifier: "<>ToString[deviceIdentifier]]
+  ];
+  Print[""]
+ ]
+
+AddEventHandler[ipcon@EnumerateCallback,EnumerateCB]
+
+(* Trigger enumerate *)
+ipcon@Enumerate[]
+
+Input["Click OK to exit"]
+
+(* Clean up *)
+ipcon@Disconnect[]
+ReleaseNETObject[ipcon]

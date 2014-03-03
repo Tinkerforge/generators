@@ -41,7 +41,7 @@ class PythonDocDevice(python_common.PythonDevice):
             filename = filename.replace('example_', '').replace('.py', '')
             return common.underscore_to_space(filename)
 
-        return common.make_rst_examples(title_from_filename, self, '^example_.*\.py$')
+        return common.make_rst_examples(title_from_filename, self)
 
     def get_python_methods(self, type):
         methods = []
@@ -419,6 +419,9 @@ class PythonDocGenerator(common.DocGenerator):
 
     def get_doc_rst_name(self):
         return 'Python'
+
+    def get_doc_example_regex(self):
+        return '^example_.*\.py$'
 
     def get_device_class(self):
         return PythonDocDevice

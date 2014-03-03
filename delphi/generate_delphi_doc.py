@@ -41,7 +41,7 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
             filename = filename.replace('Example', '').replace('.pas', '')
             return common.camel_case_to_space(filename)
 
-        return common.make_rst_examples(title_from_filename, self, '^Example.*\.pas$')
+        return common.make_rst_examples(title_from_filename, self)
 
     def get_delphi_methods(self, typ):
         methods = ''
@@ -336,6 +336,9 @@ class DelphiDocGenerator(common.DocGenerator):
 
     def get_doc_rst_name(self):
         return 'Delphi'
+
+    def get_doc_example_regex(self):
+        return '^Example.*\.pas$'
 
     def get_device_class(self):
         return DelphiBindingsDevice

@@ -41,7 +41,7 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
             filename = filename.replace('Example', '').replace('.cs', '')
             return common.camel_case_to_space(filename)
 
-        return common.make_rst_examples(title_from_filename, self, '^Example.*\.cs$')
+        return common.make_rst_examples(title_from_filename, self)
 
     def get_csharp_methods(self, typ):
         version_changed = {
@@ -359,6 +359,9 @@ class CSharpDocGenerator(common.DocGenerator):
 
     def get_doc_rst_name(self):
         return 'CSharp'
+
+    def get_doc_example_regex(self):
+        return '^Example.*\.cs$'
 
     def get_device_class(self):
         return CSharpDocDevice

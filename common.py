@@ -246,10 +246,11 @@ ausgeführt werden können ist :ref:`hier <{3}>` zu finden.
 
     return s
 
-def make_rst_examples(title_from_filename, device, filename_regex,
+def make_rst_examples(title_from_filename, device,
                       url_fixer=None, is_picture=False, additional_download_finder=None,
                       display_name_fixer=None, language_from_filename=None):
     bindings_name = device.get_generator().get_bindings_name()
+    filename_regex = device.get_generator().get_doc_example_regex()
 
     ex = {
     'en': """
@@ -1265,11 +1266,34 @@ class DocGenerator(Generator):
     def get_doc_rst_name(self):
         raise Exception("get_doc_rst_name() not implemented")
 
+    def get_doc_example_regex(self):
+        raise Exception("get_doc_example_regex() not implemented")
+
     def is_doc(self):
         return True
 
     def prepare(self):
+        Generator.prepare(self)
+
         recreate_directory(os.path.join(self.get_bindings_root_directory(), 'doc', self.get_language()))
+
+    def finish(self):
+        Generator.finish(self)
+
+        # Copy IPConnection examples
+        example_regex = self.get_doc_example_regex()
+
+        if example_regex is not None:
+            print(' * ip_connection')
+
+            examples = find_examples(self.get_bindings_root_directory(), example_regex)
+            copy_files = []
+
+            for example in examples:
+                include = 'IPConnection_{0}_{1}'.format(self.get_doc_rst_name(), example[0].replace(' ', '_'))
+                copy_files.append((example[1], include))
+
+            copy_examples(copy_files, self.get_bindings_root_directory())
 
 class BindingsGenerator(Generator):
     released_files_name_prefix = None

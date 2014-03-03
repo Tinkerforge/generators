@@ -59,10 +59,10 @@ class JavaZipGenerator(common.Generator):
     def finish(self):
         root = self.get_bindings_root_directory()
 
-        # Copy examples
-        common.replace_in_file(root.replace('/generators/java', '/doc/en/source/Software/Example.java'),
-                               '/tmp/generator/jar/examples/ExampleEnumerate.java',
-                               'public class Example {', 'public class ExampleEnumerate {')
+        # Copy IPConnection examples
+        examples = common.find_examples(root, '^Example.*\.java$')
+        for example in examples:
+            shutil.copy(example[1], '/tmp/generator/jar/examples')
 
         # Copy bindings and readme
         for filename in released_files:

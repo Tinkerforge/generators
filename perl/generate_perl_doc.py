@@ -42,7 +42,7 @@ class PerlDocDevice(perl_common.PerlDevice):
             filename = filename.replace('example_', '').replace('.pl', '')
             return common.underscore_to_space(filename)
 
-        return common.make_rst_examples(title_from_filename, self, '^example_.*\.pl$')
+        return common.make_rst_examples(title_from_filename, self)
 
     def get_perl_methods(self, typ):
         methods = ''
@@ -428,6 +428,9 @@ class PerlDocGenerator(common.DocGenerator):
 
     def get_doc_rst_name(self):
         return 'Perl'
+
+    def get_doc_example_regex(self):
+        return '^example_.*\.pl$'
 
     def get_device_class(self):
         return PerlDocDevice

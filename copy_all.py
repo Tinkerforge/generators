@@ -73,7 +73,8 @@ for f in os.listdir(src_file_path):
 
 print('')
 doc_copy = [('_Brick_', 'Bricks'),
-            ('_Bricklet_', 'Bricklets')]
+            ('_Bricklet_', 'Bricklets'),
+            ('IPConnection_', '.')]
 doc_path = 'doc/{0}/source/Software'
 labview_image_path = 'doc/en/source/Images/Screenshots/LabVIEW'
 

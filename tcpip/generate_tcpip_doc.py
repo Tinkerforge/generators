@@ -244,6 +244,9 @@ class TCPIPDocGenerator(common.DocGenerator):
     def get_doc_rst_name(self):
         return 'TCPIP'
 
+    def get_doc_example_regex(self):
+        return None
+
     def get_device_class(self):
         return TCPIPDocDevice
 

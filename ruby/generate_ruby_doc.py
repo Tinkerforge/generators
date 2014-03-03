@@ -41,7 +41,7 @@ class RubyDocDevice(ruby_common.RubyDevice):
             filename = filename.replace('example_', '').replace('.rb', '')
             return common.underscore_to_space(filename)
 
-        return common.make_rst_examples(title_from_filename, self, '^example_.*\.rb$')
+        return common.make_rst_examples(title_from_filename, self)
 
     def get_ruby_methods(self, typ):
         methods = ''
@@ -405,6 +405,9 @@ class RubyDocGenerator(common.DocGenerator):
 
     def get_doc_rst_name(self):
         return 'Ruby'
+
+    def get_doc_example_regex(self):
+        return '^example_.*\.rb$'
 
     def get_device_class(self):
         return RubyDocDevice

@@ -59,10 +59,10 @@ class VBNETZipGenerator(common.Generator):
     def finish(self):
         root = self.get_bindings_root_directory()
 
-        # Copy examples
-        common.replace_in_file(root.replace('/generators/vbnet', '/doc/en/source/Software/Example.vb'),
-                               '/tmp/generator/dll/examples/ExampleEnumerate.vb',
-                               'Module Example', 'Module ExampleEnumerate')
+        # Copy IPConnection examples
+        examples = common.find_examples(root, '^Example.*\.vb$')
+        for example in examples:
+            shutil.copy(example[1], '/tmp/generator/dll/examples')
 
         # Copy bindings and readme
         for filename in released_files:

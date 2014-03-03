@@ -49,7 +49,7 @@ class MathematicaDocDevice(common.Device):
         def display_name_fixer(url):
             return url.replace('.nb.txt', '.nb')
 
-        return common.make_rst_examples(title_from_filename, self, '^Example.*\.nb.txt$',
+        return common.make_rst_examples(title_from_filename, self,
                                         url_fixer=url_fixer, display_name_fixer=display_name_fixer)
 
     def get_mathematica_functions(self, type):
@@ -491,6 +491,9 @@ class MathematicaDocGenerator(common.DocGenerator):
 
     def get_doc_rst_name(self):
         return 'Mathematica'
+
+    def get_doc_example_regex(self):
+        return '^Example.*\.nb.txt$'
 
     def get_device_class(self):
         return MathematicaDocDevice

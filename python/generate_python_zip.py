@@ -59,9 +59,10 @@ class PythonZipGenerator(common.Generator):
     def finish(self):
         root = self.get_bindings_root_directory()
 
-        # Copy examples
-        shutil.copy(root.replace('/generators/python', '/doc/en/source/Software/example.py'),
-                    '/tmp/generator/egg/examples/example_enumerate.py')
+        # Copy IPConnection examples
+        examples = common.find_examples(root, '^example_.*\.py$')
+        for example in examples:
+            shutil.copy(example[1], '/tmp/generator/egg/examples')
 
         # Copy bindings and readme
         for filename in released_files:

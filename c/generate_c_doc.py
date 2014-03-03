@@ -41,7 +41,7 @@ class CDocDevice(common.Device):
             filename = filename.replace('example_', '').replace('.c', '')
             return common.underscore_to_space(filename).replace('Pwm ', 'PWM ')
 
-        return common.make_rst_examples(title_from_filename, self, '^example_.*\.c$')
+        return common.make_rst_examples(title_from_filename, self)
 
     def get_c_methods(self, typ):
         methods = ''
@@ -417,6 +417,9 @@ class CDocGenerator(common.DocGenerator):
 
     def get_doc_rst_name(self):
         return 'C'
+
+    def get_doc_example_regex(self):
+        return '^example_.*\.c$'
 
     def get_device_class(self):
         return CDocDevice

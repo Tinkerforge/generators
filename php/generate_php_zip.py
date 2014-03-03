@@ -61,9 +61,10 @@ class PHPZipGenerator(common.Generator):
     def finish(self):
         root = self.get_bindings_root_directory()
 
-        # Copy examples
-        shutil.copy(root.replace('/generators/php', '/doc/en/source/Software/Example.php'),
-                    '/tmp/generator/pear/examples/ExampleEnumerate.php')
+        # Copy IPConnection examples
+        examples = common.find_examples(root, '^Example.*\.php$')
+        for example in examples:
+            shutil.copy(example[1], '/tmp/generator/pear/examples')
 
         # Copy bindings and readme
         package_files = ['<file name="Tinkerforge/IPConnection.php" role="php" />']

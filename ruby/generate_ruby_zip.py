@@ -60,9 +60,10 @@ class RubyZipGenerator(common.Generator):
     def finish(self):
         root = self.get_bindings_root_directory()
 
-        # Copy examples
-        shutil.copy(root.replace('/generators/ruby', '/doc/en/source/Software/example.rb'),
-                    '/tmp/generator/gem/examples/example_enumerate.rb')
+        # Copy IPConnection examples
+        examples = common.find_examples(root, '^example_.*\.rb$')
+        for example in examples:
+            shutil.copy(example[1], '/tmp/generator/gem/examples')
 
         # Copy bindings and readme
         for filename in released_files:

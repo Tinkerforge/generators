@@ -43,7 +43,7 @@ class VBNETDocDevice(common.Device):
             filename = filename.replace('Example', '').replace('.vb', '')
             return common.camel_case_to_space(filename)
 
-        return common.make_rst_examples(title_from_filename, self, '^Example.*\.vb$')
+        return common.make_rst_examples(title_from_filename, self)
 
     def get_vbnet_methods(self, typ):
         methods = ''
@@ -399,6 +399,9 @@ class VBNETDocGenerator(common.DocGenerator):
 
     def get_doc_rst_name(self):
         return 'VBNET'
+
+    def get_doc_example_regex(self):
+        return '^Example.*\.vb$'
 
     def get_device_class(self):
         return VBNETDocDevice

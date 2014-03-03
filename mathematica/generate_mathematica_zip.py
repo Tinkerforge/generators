@@ -59,9 +59,10 @@ class MathematicaZipGenerator(common.Generator):
     def finish(self):
         root = self.get_bindings_root_directory()
 
-        # Copy examples
-        shutil.copy(root.replace('/generators/mathematica', '/doc/en/source/Software/Example.nb'),
-                    '/tmp/generator/dll/examples/ExampleEnumerate.nb')
+        # Copy IPConnection examples
+        examples = common.find_examples(root, '^Example.*\.nb$')
+        for example in examples:
+            shutil.copy(example[1], '/tmp/generator/dll/examples')
 
         # Copy bindings and readme
         for filename in released_files:

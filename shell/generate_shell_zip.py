@@ -57,9 +57,10 @@ class ShellZipGenerator(common.Generator):
     def finish(self):
         root = self.get_bindings_root_directory()
 
-        # Copy examples
-        shutil.copy(root.replace('/generators/shell', '/doc/en/source/Software/example.sh'),
-                    '/tmp/generator/examples/example_enumerate.sh')
+        # Copy IPConnection examples
+        examples = common.find_examples(root, '^example-.*\.sh$')
+        for example in examples:
+            shutil.copy(example[1], '/tmp/generator/examples')
 
         # Copy bindings and readme
         shutil.copy(os.path.join(root, 'tinkerforge'), '/tmp/generator')

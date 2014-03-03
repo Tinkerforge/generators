@@ -241,6 +241,9 @@ class ModbusDocGenerator(common.DocGenerator):
     def get_doc_rst_name(self):
         return 'Modbus'
 
+    def get_doc_example_regex(self):
+        return None
+
     def get_device_class(self):
         return ModbusDocDevice
 

@@ -42,7 +42,7 @@ class PHPDocDevice(php_common.PHPDevice):
             filename = filename.replace('Example', '').replace('.php', '')
             return common.camel_case_to_space(filename)
 
-        return common.make_rst_examples(title_from_filename, self, '^Example.*\.php$')
+        return common.make_rst_examples(title_from_filename, self)
 
     def get_php_methods(self, typ):
         methods = ''
@@ -403,6 +403,9 @@ class PHPDocGenerator(common.DocGenerator):
 
     def get_doc_rst_name(self):
         return 'PHP'
+
+    def get_doc_example_regex(self):
+        return '^Example.*\.php$'
 
     def get_device_class(self):
         return PHPDocDevice

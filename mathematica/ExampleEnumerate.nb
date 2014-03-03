@@ -1,0 +1,167 @@
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[         0,          0]
+NotebookDataLength[      7038,        166]
+NotebookOptionsPosition[      6605,        145]
+NotebookOutlinePosition[      6943,        160]
+CellTagsIndexPosition[      6900,        157]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[{
+ RowBox[{"Needs", "[", "\"\<NETLink`\>\"", "]"}], "\[IndentingNewLine]", 
+ RowBox[{"LoadNETAssembly", "[", 
+  RowBox[{"\"\<Tinkerforge\>\"", ",", 
+   RowBox[{
+    RowBox[{"NotebookDirectory", "[", "]"}], "<>", "\"\<..\>\""}]}], 
+  "]"}]}], "Input",
+ CellChangeTimes->{{3.600497173928502*^9, 3.600497199465363*^9}, {
+  3.600497533909457*^9, 3.600497599351111*^9}, {3.6004977006290617`*^9, 
+  3.6004977148822737`*^9}, {3.6004983038680573`*^9, 3.6004983067605257`*^9}, {
+  3.6004985472855673`*^9, 3.60049855272231*^9}, {3.600498739041091*^9, 
+  3.6004987722681723`*^9}, {3.600506493722631*^9, 3.600506494125083*^9}}],
+
+Cell[BoxData[{
+ RowBox[{"host", "=", "\"\<localhost\>\""}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"port", "=", "4223"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{"Create", " ", "IPConnection"}], " ", 
+   "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{"ipcon", "=", 
+  RowBox[{
+  "NETNew", "[", "\"\<Tinkerforge.IPConnection\>\"", 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"ipcon", "@", 
+   RowBox[{"Connect", "[", 
+    RowBox[{"host", ",", "port"}], "]"}]}], "\n", "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{"Print", " ", "incoming", " ", "enumeration", " ", "information"}],
+    " ", "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"EnumerateCB", "[", 
+    RowBox[{
+    "sender_", ",", "uid_", ",", "connectedUid_", ",", "position_", ",", 
+     "hardwareVersion_", ",", "firmwareVersion_", ",", "\[IndentingNewLine]", 
+     "                      ", "deviceIdentifier_", ",", "enumerationType_"}],
+     "]"}], ":=", "\[IndentingNewLine]", 
+   RowBox[{"Module", "[", 
+    RowBox[{
+     RowBox[{"{", "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"Print", "[", 
+       RowBox[{"\"\<UID:               \>\"", "<>", "uid"}], "]"}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"Print", "[", 
+       RowBox[{"\"\<Enumeration Type:  \>\"", "<>", 
+        RowBox[{"ToString", "[", "enumerationType", "]"}]}], "]"}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{
+        "enumerationType", "!=", 
+         "Tinkerforge`IPConnection`ENUMERATIONUTYPEUDISCONNECTED"}], ",", 
+        "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"Print", "[", 
+          RowBox[{"\"\<Connected UID:     \>\"", "<>", "connectedUid"}], 
+          "]"}], ";", "\[IndentingNewLine]", 
+         RowBox[{"Print", "[", 
+          RowBox[{"\"\<Position:          \>\"", "<>", 
+           RowBox[{"FromCharacterCode", "[", "position", "]"}]}], "]"}], ";", 
+         "\[IndentingNewLine]", 
+         RowBox[{"Print", "[", 
+          RowBox[{"\"\<Hardware Version:  \>\"", "<>", 
+           RowBox[{"StringJoin", "[", 
+            RowBox[{"Riffle", "[", 
+             RowBox[{
+              RowBox[{"Map", "[", 
+               RowBox[{"ToString", ",", "hardwareVersion"}], "]"}], ",", 
+              RowBox[{"{", 
+               RowBox[{"\"\<.\>\"", ",", "\"\<.\>\""}], "}"}]}], "]"}], 
+            "]"}]}], "]"}], ";", "\[IndentingNewLine]", 
+         RowBox[{"Print", "[", 
+          RowBox[{"\"\<Firmware Version:  \>\"", "<>", 
+           RowBox[{"StringJoin", "[", 
+            RowBox[{"Riffle", "[", 
+             RowBox[{
+              RowBox[{"Map", "[", 
+               RowBox[{"ToString", ",", "firmwareVersion"}], "]"}], ",", 
+              RowBox[{"{", 
+               RowBox[{"\"\<.\>\"", ",", "\"\<.\>\""}], "}"}]}], "]"}], 
+            "]"}]}], "]"}], ";", "\[IndentingNewLine]", 
+         RowBox[{"Print", "[", 
+          RowBox[{"\"\<Device Identifier: \>\"", "<>", 
+           RowBox[{"ToString", "[", "deviceIdentifier", "]"}]}], "]"}]}]}], 
+       "\[IndentingNewLine]", "]"}], ";", "\[IndentingNewLine]", 
+      RowBox[{"Print", "[", "\"\<\>\"", "]"}]}]}], "\[IndentingNewLine]", 
+    "]"}]}], "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"AddEventHandler", "[", 
+   RowBox[{
+    RowBox[{"ipcon", "@", "EnumerateCallback"}], ",", "EnumerateCB"}], "]"}], 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{"Trigger", " ", "enumerate"}], " ", 
+   "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"ipcon", "@", 
+   RowBox[{"Enumerate", "[", "]"}]}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Input", "[", "\"\<Click OK to exit\>\"", "]"}], 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{"Clean", " ", "up"}], " ", "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{"ipcon", "@", 
+  RowBox[{"Disconnect", "[", "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"ReleaseNETObject", "[", "ipcon", "]"}]}], "Input",
+ CellChangeTimes->{{3.60008871422269*^9, 3.600088759994157*^9}, {
+   3.6000887922548113`*^9, 3.60008884627213*^9}, {3.600088881970428*^9, 
+   3.600088954290454*^9}, 3.6000890037000237`*^9, {3.600090155323289*^9, 
+   3.600090159528957*^9}, {3.600090190653946*^9, 3.600090260015007*^9}, {
+   3.6000903332764797`*^9, 3.600090409129648*^9}, {3.600090439686591*^9, 
+   3.6000905851613693`*^9}, {3.6000906797419252`*^9, 3.600090716810945*^9}, {
+   3.600090846508687*^9, 3.600090879266223*^9}, {3.600090923289506*^9, 
+   3.60009093715405*^9}, {3.6000912038806667`*^9, 3.6000912042633543`*^9}, {
+   3.60009124451397*^9, 3.6000913300384703`*^9}, {3.6000923207489443`*^9, 
+   3.600092327806107*^9}, {3.6001607546304903`*^9, 3.600160757837481*^9}, {
+   3.6001608288767853`*^9, 3.600160854490407*^9}, {3.600160911826558*^9, 
+   3.600160912216938*^9}, {3.6004971528594847`*^9, 3.600497167966416*^9}, {
+   3.600497213098345*^9, 3.600497520497857*^9}, {3.60049762109972*^9, 
+   3.600497644962676*^9}, {3.600498046624061*^9, 3.6004980483989887`*^9}, 
+   3.60049808460454*^9, {3.600498225193905*^9, 3.600498226958331*^9}, {
+   3.6004985372899113`*^9, 3.60049853764821*^9}, {3.600498607368368*^9, 
+   3.600498613658107*^9}, {3.600498663900527*^9, 3.600498684234853*^9}, {
+   3.600506419780115*^9, 3.600506422879375*^9}, {3.600506495015883*^9, 
+   3.600506495418359*^9}, 3.600508599100515*^9, 3.6005092166424*^9, {
+   3.600611409996567*^9, 3.6006114154427137`*^9}, {3.600688051987836*^9, 
+   3.600688055917898*^9}}]
+},
+WindowSize->{1419, 867},
+WindowMargins->{{185, Automatic}, {Automatic, 24}},
+FrontEndVersion->"9.0 for Linux x86 (64-bit) (February 7, 2013)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[400, 13, 628, 11, 55, "Input"],
+Cell[1031, 26, 5570, 117, 737, "Input"]
+}
+]
+*)
+

@@ -62,9 +62,10 @@ class PerlZipGenerator(common.Generator):
         version = common.get_changelog_version(root)
         dot_version = "{0}.{1}.{2}".format(*version)
 
-        # Copy examples
-        shutil.copy(root.replace('/generators/cpan', '/doc/en/source/Software/example.pl'),
-                    '/tmp/generator/cpan/examples/example_enumerate.pl')
+        # Copy IPConnection examples
+        examples = common.find_examples(root, '^example_.*\.pl$')
+        for example in examples:
+            shutil.copy(example[1], '/tmp/generator/examples')
 
         # Copy bindings and readme
         for filename in released_files:
