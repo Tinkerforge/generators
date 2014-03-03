@@ -6,7 +6,7 @@ JavaScript ZIP Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
 
-generator_javascript_zip.py: Generator for JavaScript ZIP
+generate_javascript_zip.py: Generator for JavaScript ZIP
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

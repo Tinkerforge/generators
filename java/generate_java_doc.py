@@ -6,7 +6,7 @@ Java Documentation Generator
 Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
-generator_java_doc.py: Generator for Java documentation
+generate_java_doc.py: Generator for Java documentation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

@@ -6,7 +6,7 @@ Perl Bindings Generator
 Copyright (C) 2013-2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
-generator_perl_bindings.py: Generator for Perl bindings
+generate_perl_bindings.py: Generator for Perl bindings
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

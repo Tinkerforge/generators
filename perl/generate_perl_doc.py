@@ -7,7 +7,7 @@ Copyright (C) 2013-2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
-generator_perl_doc.py: Generator for Perl documentation
+generate_perl_doc.py: Generator for Perl documentation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

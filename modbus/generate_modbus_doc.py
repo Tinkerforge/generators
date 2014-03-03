@@ -6,7 +6,7 @@ Modbus Documentation Generator
 Copyright (C) 2012-2013 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 
-generator_modbus_doc.py: Generator for Modbus documentation
+generate_modbus_doc.py: Generator for Modbus documentation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

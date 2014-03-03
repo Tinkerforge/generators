@@ -6,7 +6,7 @@ Ruby Documentation Generator
 Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
-generator_ruby_doc.py: Generator for Ruby documentation
+generate_ruby_doc.py: Generator for Ruby documentation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

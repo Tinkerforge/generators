@@ -5,7 +5,7 @@
 Shell Bindings Generator
 Copyright (C) 2013 Matthias Bolte <matthias@tinkerforge.com>
 
-generator_shell_bindings.py: Generator for shell bindings
+generate_shell_bindings.py: Generator for shell bindings
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

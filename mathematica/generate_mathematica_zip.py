@@ -6,7 +6,7 @@ Mathematica ZIP Generator
 Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
-generator_mathematica_zip.py: Generator for Mathematica ZIP
+generate_mathematica_zip.py: Generator for Mathematica ZIP
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
