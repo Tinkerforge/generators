@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-Ruby Examples Compiler
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Python Bindings Tester
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 
-compile_ruby_examples.py: Compile all examples for the Ruby bindings
+test_perl_bindings.py: Tests the Perl bindings
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -26,6 +26,7 @@ Boston, MA 02111-1307, USA.
 import sys
 import os
 import subprocess
+import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -36,28 +37,35 @@ def check_output_and_error(*popenargs, **kwargs):
     retcode = process.poll()
     return (retcode, output + error)
 
-class RubyExamplesCompiler(common.ExamplesCompiler):
+class PerlExamplesTester(common.ExamplesTester):
     def __init__(self, path, extra_examples):
-        common.ExamplesCompiler.__init__(self, 'ruby', '.rb', path, subdirs=['examples', 'source'], extra_examples=extra_examples)
+        common.ExamplesTester.__init__(self, 'perl', '.pl', path, subdirs=['examples', 'source'], extra_examples=extra_examples)
 
-    def compile(self, src, is_extra_example):
-        args = ['/usr/bin/ruby',
-                '-wc',
-                src]
+    def test(self, src, is_extra_example):
+        if is_extra_example:
+            shutil.copy(src, '/tmp/tester/')
+            src = os.path.join('/tmp/tester/', os.path.split(src)[1])
+
+        src_check = src.replace('.pl', '_check.pl')
+
+        code = file(src, 'rb').read()
+        file(src_check, 'wb').write('CHECK { sub __check__ { ' + code + '\n\n}}\n\n__check__;\n');
+
+        args = ['perl',
+                '-cWT',
+                src_check]
 
         retcode, output = check_output_and_error(args)
         output = output.strip('\r\n')
 
         print output
 
-        return retcode == 0 and len(output.split('\n')) == 1 and 'Syntax OK' in output
+        return retcode == 0 and len(output.split('\n')) == 1 and 'syntax OK' in output
 
 def run(path):
-    extra_examples = [os.path.join(path, '../../weather-station/write_to_lcd/ruby/weather_station.rb'),
-                      os.path.join(path, '../../hardware-hacking/remote_switch/ruby/remote_switch.rb'),
-                      os.path.join(path, '../../hardware-hacking/smoke_detector/ruby/smoke_detector.rb')]
+    extra_examples = []
 
-    return RubyExamplesCompiler(path, extra_examples).run()
+    return PerlExamplesTester(path, extra_examples).run()
 
 if __name__ == "__main__":
     sys.exit(run(os.getcwd()))

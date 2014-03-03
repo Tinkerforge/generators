@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-Java Examples Compiler
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Java Bindings Tester
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 
-compile_java_examples.py: Compile all examples for the Java bindings
+test_java_bindings.py: Tests the Java bindings
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -31,19 +31,19 @@ import shutil
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-class JavaExamplesCompiler(common.ExamplesCompiler):
+class JavaExamplesTester(common.ExamplesTester):
     def __init__(self, path, extra_examples):
-        common.ExamplesCompiler.__init__(self, 'java', '.java', path, extra_examples=extra_examples)
+        common.ExamplesTester.__init__(self, 'java', '.java', path, extra_examples=extra_examples)
 
-    def compile(self, src, is_extra_example):
+    def test(self, src, is_extra_example):
         if is_extra_example:
-            shutil.copy(src, '/tmp/compiler/')
-            src = os.path.join('/tmp/compiler/', os.path.split(src)[1])
+            shutil.copy(src, '/tmp/tester/')
+            src = os.path.join('/tmp/tester/', os.path.split(src)[1])
 
         args = ['/usr/bin/javac',
                 '-Xlint',
                 '-cp',
-                '/tmp/compiler/Tinkerforge.jar:.',
+                '/tmp/tester/Tinkerforge.jar:.',
                 src]
 
         return subprocess.call(args) == 0
@@ -54,7 +54,7 @@ def run(path):
                       os.path.join(path, '../../hardware-hacking/remote_switch/java/RemoteSwitch.java'),
                       os.path.join(path, '../../hardware-hacking/smoke_detector/java/SmokeDetector.java')]
 
-    return JavaExamplesCompiler(path, extra_examples).run()
+    return JavaExamplesTester(path, extra_examples).run()
 
 if __name__ == "__main__":
     sys.exit(run(os.getcwd()))

@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-Python Examples Compiler
+Python Bindings Tester
 Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 
-compile_python_examples.py: Compile all examples for the Python bindings
+test_python_bindings.py: Tests the Python bindings
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -31,16 +31,16 @@ import shutil
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-class PythonExamplesCompiler(common.ExamplesCompiler):
+class PythonExamplesTester(common.ExamplesTester):
     def __init__(self, path, python, extra_examples):
-        common.ExamplesCompiler.__init__(self, 'python', '.py', path, comment=python, subdirs=['examples', 'source'], extra_examples=extra_examples)
+        common.ExamplesTester.__init__(self, 'python', '.py', path, comment=python, subdirs=['examples', 'source'], extra_examples=extra_examples)
 
         self.python = python
 
-    def compile(self, src, is_extra_example):
+    def test(self, src, is_extra_example):
         if is_extra_example:
-            shutil.copy(src, '/tmp/compiler/')
-            src = os.path.join('/tmp/compiler/', os.path.split(src)[1])
+            shutil.copy(src, '/tmp/tester/')
+            src = os.path.join('/tmp/tester/', os.path.split(src)[1])
 
         args = [self.python,
                 '-c',
@@ -69,12 +69,12 @@ def run(path):
                       os.path.join(path, '../../blinkenlights/rainbow/python/rainbow.py'),
                       os.path.join(path, '../../blinkenlights/text/python/text.py')]
 
-    rc = PythonExamplesCompiler(path, 'python', extra_examples).run()
+    success = PythonExamplesTester(path, 'python', extra_examples).run()
 
-    if rc != 0:
-        return rc
+    if not success:
+        return success
 
-    return PythonExamplesCompiler(path, 'python3', extra_examples).run()
+    return PythonExamplesTester(path, 'python3', extra_examples).run()
 
 if __name__ == "__main__":
     sys.exit(run(os.getcwd()))

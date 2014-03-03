@@ -1267,7 +1267,7 @@ class BindingsGenerator(Generator):
             py.write('released_files = ' + repr(self.released_files))
             py.close()
 
-class ExamplesCompiler:
+class ExamplesTester:
     def __init__(self, name, extension, path, subdirs=['examples'], comment=None, extra_examples=[]):
         version = get_changelog_version(path)
 
@@ -1277,7 +1277,7 @@ class ExamplesCompiler:
         self.comment = comment
         self.extra_examples = extra_examples[:]
         self.zipname = 'tinkerforge_{0}_bindings_{1}_{2}_{3}.zip'.format(name, *version)
-        self.compile_count = 0
+        self.test_count = 0
         self.failure_count = 0
 
     def walker(self, arg, dirname, names):
@@ -1288,63 +1288,62 @@ class ExamplesCompiler:
             self.handle_source(os.path.join(dirname, name), False)
 
     def handle_source(self, src, is_extra_example):
-        self.compile_count += 1
+        self.test_count += 1
 
         if self.comment is not None:
-            print('>>> [{0}] compiling {1}'.format(self.comment, src))
+            print('>>> [{0}] testing {1}'.format(self.comment, src))
         else:
-            print('>>> compiling {0}'.format(src))
+            print('>>> testing {0}'.format(src))
 
-        if not self.compile(src, is_extra_example):
+        if not self.test(src, is_extra_example):
             self.failure_count += 1
 
-            print('>>> compilation failed\n')
+            print('>>> test failed\n')
         else:
-            print('>>> compilation succeded\n')
+            print('>>> test succeded\n')
 
-    def compile(self, src, is_extra_example):
+    def test(self, src, is_extra_example):
         return False
 
     def run(self):
         # Make temporary examples directory
-        if os.path.exists('/tmp/compiler'):
-            shutil.rmtree('/tmp/compiler/')
+        if os.path.exists('/tmp/tester'):
+            shutil.rmtree('/tmp/tester/')
 
-        os.makedirs('/tmp/compiler')
+        os.makedirs('/tmp/tester')
 
-        with ChangedDirectory('/tmp/compiler'):
-            shutil.copy(os.path.join(self.path, self.zipname), '/tmp/compiler/')
+        with ChangedDirectory('/tmp/tester'):
+            shutil.copy(os.path.join(self.path, self.zipname), '/tmp/tester/')
 
             # unzip
             print('>>> unpacking {0}'.format(self.zipname))
 
             args = ['/usr/bin/unzip',
                     '-q',
-                    os.path.join('/tmp/compiler', self.zipname)]
+                    os.path.join('/tmp/tester', self.zipname)]
 
             rc = subprocess.call(args)
 
             if rc != 0:
                 print('### could not unpack {0}'.format(self.zipname))
-                return 1
+                return False
 
-            # compile
+            print('>>> unpacking {0} done\n'.format(self.zipname))
+
+            # test
             for subdir in self.subdirs:
-                os.path.walk(os.path.join('/tmp/compiler', subdir), self.walker, None)
+                os.path.walk(os.path.join('/tmp/tester', subdir), self.walker, None)
 
             for extra_example in self.extra_examples:
                 self.handle_source(extra_example, True)
 
             # report
             if self.comment is not None:
-                print('### [{0}] {1} files compiled, {2} failure(s) occurred'.format(self.comment, self.compile_count, self.failure_count))
+                print('### [{0}] {1} files tested, {2} failure(s) occurred'.format(self.comment, self.test_count, self.failure_count))
             else:
-                print('### {0} files compiled, {1} failure(s) occurred'.format(self.compile_count, self.failure_count))
+                print('### {0} files tested, {1} failure(s) occurred'.format(self.test_count, self.failure_count))
 
-        if self.failure_count > 0:
-            return 1
-        else:
-            return 0
+        return self.failure_count == 0
 
 # use "with ChangedDirectory('/path/to/abc')" instead of "os.chdir('/path/to/abc')"
 class ChangedDirectory:

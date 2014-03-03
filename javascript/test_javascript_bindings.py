@@ -2,10 +2,11 @@
 # -*- coding: utf-8 -*-
 
 """
-Mathematica Examples Compiler
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+JavaScript Bindings Tester
+Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
-compile_mathematica_examples.py: Compile all examples for the Mathematica bindings
+test_javascript_bindings.py: Tests the JavaScript bindings
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -27,7 +28,8 @@ import sys
 import os
 
 def run(path):
-    return 0
+    print('### no tests available')
+    return True
 
 if __name__ == "__main__":
     sys.exit(run(os.getcwd()))

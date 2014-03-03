@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-Shell Examples Compiler
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Shell Bindings Tester
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 
-compile_shell_examples.py: Compile all examples for the Shell bindings
+test_shell_bindings.py: Tests the Shell bindings
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -30,15 +30,15 @@ import shutil
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-class ShellExamplesCompiler(common.ExamplesCompiler):
+class ShellExamplesTester(common.ExamplesTester):
     def __init__(self, path, extra_examples):
-        common.ExamplesCompiler.__init__(self, 'shell', '.sh', path, extra_examples=extra_examples)
+        common.ExamplesTester.__init__(self, 'shell', '.sh', path, extra_examples=extra_examples)
 
-    def compile(self, src, is_extra_example):
-        return os.system('TINKERFORGE_SHELL_BINDINGS_DRY_RUN=1 PATH=/tmp/compiler:${PATH} ' + src) == 0
+    def test(self, src, is_extra_example):
+        return os.system('TINKERFORGE_SHELL_BINDINGS_DRY_RUN=1 PATH=/tmp/tester:${PATH} ' + src) == 0
 
 def run(path):
-    return ShellExamplesCompiler(path, []).run()
+    return ShellExamplesTester(path, []).run()
 
 if __name__ == "__main__":
     sys.exit(run(os.getcwd()))

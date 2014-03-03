@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-Delphi Examples Compiler
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Delphi Bindings Tester
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 
-compile_delphi_examples.py: Compile all examples for the Delphi bindings
+test_delphi_bindings.py: Tests the Delphi bindings
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -31,18 +31,18 @@ import shutil
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-class DelphiExamplesCompiler(common.ExamplesCompiler):
+class DelphiExamplesTester(common.ExamplesTester):
     def __init__(self, path, extra_examples):
-        common.ExamplesCompiler.__init__(self, 'delphi', '.pas', path, extra_examples=extra_examples)
+        common.ExamplesTester.__init__(self, 'delphi', '.pas', path, extra_examples=extra_examples)
 
-    def compile(self, src, is_extra_example):
+    def test(self, src, is_extra_example):
         if is_extra_example:
-            shutil.copy(src, '/tmp/compiler/')
-            src = os.path.join('/tmp/compiler/', os.path.split(src)[1])
+            shutil.copy(src, '/tmp/tester/')
+            src = os.path.join('/tmp/tester/', os.path.split(src)[1])
 
         args = ['/usr/bin/fpc',
                 '-vw',
-                '-Fu/tmp/compiler/bindings',
+                '-Fu/tmp/tester/bindings',
                 '-l',
                 src]
 
@@ -53,7 +53,7 @@ def run(path):
                       os.path.join(path, '../../hardware-hacking/remote_switch/delphi/RemoteSwitch.pas'),
                       os.path.join(path, '../../hardware-hacking/smoke_detector/delphi/SmokeDetector.pas')]
 
-    return DelphiExamplesCompiler(path, extra_examples).run()
+    return DelphiExamplesTester(path, extra_examples).run()
 
 if __name__ == "__main__":
     sys.exit(run(os.getcwd()))

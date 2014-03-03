@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-Visual Basic .NET Examples Compiler
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+C# Bindings Tester
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 
-compile_vbnet_examples.py: Compile all examples for the Visual Basic .NET bindings
+test_csharp_bindings.py: Tests the C# bindings
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -31,35 +31,34 @@ import shutil
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-class VBNETExamplesCompiler(common.ExamplesCompiler):
+class CSharpExamplesTester(common.ExamplesTester):
     def __init__(self, path, extra_examples):
-        common.ExamplesCompiler.__init__(self, 'vbnet', '.vb', path, extra_examples=extra_examples)
+        common.ExamplesTester.__init__(self, 'csharp', '.cs', path, extra_examples=extra_examples)
 
-    def compile(self, src, is_extra_example):
+    def test(self, src, is_extra_example):
         if is_extra_example:
-            shutil.copy(src, '/tmp/compiler/')
-            src = os.path.join('/tmp/compiler/', os.path.split(src)[1])
+            shutil.copy(src, '/tmp/tester/')
+            src = os.path.join('/tmp/tester/', os.path.split(src)[1])
 
         dest = src[:-3] + '.exe';
 
-        args = ['/usr/bin/vbnc2',
-                '/nologo',
+        args = ['/usr/bin/gmcs',
+                '/warn:4',
                 '/optimize',
-                '/optionstrict',
-                '/warnaserror',
                 '/target:exe',
                 '/out:' + dest,
-                '/reference:/tmp/compiler/Tinkerforge.dll',
+                '/reference:/tmp/tester/Tinkerforge.dll',
                 src]
 
         return subprocess.call(args) == 0
 
 def run(path):
-    extra_examples = [os.path.join(path, '../../weather-station/write_to_lcd/vbnet/WeatherStation.vb'),
-                      os.path.join(path, '../../hardware-hacking/remote_switch/vbnet/RemoteSwitch.vb'),
-                      os.path.join(path, '../../hardware-hacking/smoke_detector/vbnet/SmokeDetector.vb')]
+    extra_examples = [os.path.join(path, '../../weather-station/button_control/csharp/WeatherStationButton.cs'),
+                      os.path.join(path, '../../weather-station/write_to_lcd/csharp/WeatherStation.cs'),
+                      os.path.join(path, '../../hardware-hacking/remote_switch/csharp/RemoteSwitch.cs'),
+                      os.path.join(path, '../../hardware-hacking/smoke_detector/csharp/SmokeDetector.cs')]
 
-    return VBNETExamplesCompiler(path, extra_examples).run()
+    return CSharpExamplesTester(path, extra_examples).run()
 
 if __name__ == "__main__":
     sys.exit(run(os.getcwd()))

@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-PHP Examples Compiler
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+PHP Bindings Tester
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 
-compile_php_examples.py: Compile all examples for the PHP bindings
+test_php_bindings.py: Tests the PHP bindings
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -30,11 +30,11 @@ import subprocess
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-class PHPExamplesCompiler(common.ExamplesCompiler):
+class PHPExamplesTester(common.ExamplesTester):
     def __init__(self, path, extra_examples):
-        common.ExamplesCompiler.__init__(self, 'php', '.php', path, subdirs=['examples', 'source'], extra_examples=extra_examples)
+        common.ExamplesTester.__init__(self, 'php', '.php', path, subdirs=['examples', 'source'], extra_examples=extra_examples)
 
-    def compile(self, src, is_extra_example):
+    def test(self, src, is_extra_example):
         args = ['/usr/bin/php',
                 '-l',
                 src]
@@ -47,7 +47,7 @@ def run(path):
                       os.path.join(path, '../../hardware-hacking/remote_switch/php/RemoteSwitch.php'),
                       os.path.join(path, '../../hardware-hacking/smoke_detector/php/SmokeDetector.php')]
 
-    return PHPExamplesCompiler(path, extra_examples).run()
+    return PHPExamplesTester(path, extra_examples).run()
 
 if __name__ == "__main__":
     sys.exit(run(os.getcwd()))

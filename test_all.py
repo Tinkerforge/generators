@@ -18,16 +18,16 @@ for binding in bindings:
 
     path_binding = '{0}/{1}'.format(path, binding)
     sys.path.append(path_binding)
-    module = __import__('compile_{0}_examples'.format(binding))
+    module = __import__('test_{0}_bindings'.format(binding))
 
-    print(">>> compiling examples for {0}:".format(binding))
+    print("### testing {0} bindings:".format(binding))
 
-    rc = module.run(path_binding)
+    success = module.run(path_binding)
 
-    if type(rc) != int:
-        raise Exception('compile_{0}_examples.py returns wrong type from its run() function'.format(binding))
+    if type(success) != bool:
+        raise Exception('test_{0}_bindings.py returns wrong type from its run() function'.format(binding))
 
-    if rc != 0:
-        sys.exit(rc)
+    if not success:
+        sys.exit(1)
 
 print('>>> Done <<<')
