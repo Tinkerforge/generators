@@ -5,6 +5,7 @@
 JavaScript Bindings Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias <matthias@tinkerforge.com>
 
 generate_javascript_bindings.py: Generator for JavaScript bindings
 
@@ -185,6 +186,18 @@ class JavaScriptBindingsGenerator(common.BindingsGenerator):
     released_files_name_prefix = 'javascript'
     browser_api_file = None
 
+    def get_bindings_name(self):
+        return 'javascript'
+
+    def get_device_class(self):
+        return JavaScriptBindingsDevice
+
+    def get_packet_class(self):
+        return JavaScriptBindingsPacket
+
+    def get_element_class(self):
+        return javascript_common.JavaScriptElement
+
     def prepare(self):
         ret = common.BindingsGenerator.prepare(self)
 
@@ -205,19 +218,6 @@ class JavaScriptBindingsGenerator(common.BindingsGenerator):
 
         return ret
 
-    def finish(self):
-        self.browser_api_file.write("""}
-
-global.window.Tinkerforge = new Tinkerforge();""")
-        self.browser_api_file.close()
-
-        self.npm_main_file.write("""}
-
-module.exports = new Tinkerforge();""")
-        self.npm_main_file.close()
-
-        return common.BindingsGenerator.finish(self)
-
     def add_browser_api_function(self, device):
         if device.is_released():
             api = """    this.{0}{1} = require('./{0}{1}');
@@ -232,30 +232,31 @@ module.exports = new Tinkerforge();""")
             npm_main_format = npm_main.format(device.get_category(), device.get_camel_case_name())
             self.npm_main_file.write(npm_main_format)
 
-    def get_bindings_name(self):
-        return 'javascript'
-
-    def get_device_class(self):
-        return JavaScriptBindingsDevice
-
-    def get_packet_class(self):
-        return JavaScriptBindingsPacket
-
-    def get_element_class(self):
-        return javascript_common.JavaScriptElement
-
     def generate(self, device):
         self.add_browser_api_function(device)
         self.add_npm_main_function(device)
 
         filename = '{0}{1}.js'.format(device.get_category(), device.get_camel_case_name())
 
-        py = open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'wb')
-        py.write(device.get_javascript_source())
-        py.close()
+        js = open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'wb')
+        js.write(device.get_javascript_source())
+        js.close()
 
         if device.is_released():
             self.released_files.append(filename)
+
+    def finish(self):
+        self.browser_api_file.write("""}
+
+global.window.Tinkerforge = new Tinkerforge();""")
+        self.browser_api_file.close()
+
+        self.npm_main_file.write("""}
+
+module.exports = new Tinkerforge();""")
+        self.npm_main_file.close()
+
+        return common.BindingsGenerator.finish(self)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', JavaScriptBindingsGenerator)
