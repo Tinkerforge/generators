@@ -716,10 +716,17 @@ function IPConnection() {
                 var singleFormatArray = formatArray[i].split('');
                 if (singleFormatArray[0] === 's') {
                     constructedString = '';
-                    for (var j=0; j<parseInt(formatArray[i].match(/\d/g).join('')); j++) {
-                        constructedString += String.fromCharCode(unpackPayload.readUInt8(payloadReadOffset));
-                        payloadReadOffset++;
+					skip = false; 
+                    for(var j=0; j<parseInt(formatArray[i].match(/\d/g).join('')); j++) {
+						c = String.fromCharCode(unpackPayload.readUInt8(payloadReadOffset));
+						if(c === '\0' || skip) {
+							skip = true;
+						} else {
+	                        constructedString += c;                        
+						}
+						payloadReadOffset++;
                     }
+					skip = false;
                     returnArguments.push(constructedString);
                     constructedString = '';
                     continue;
