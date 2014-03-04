@@ -214,7 +214,7 @@ und optionalen Benutzer Daten:
 
     {0}_register_callback(&{0}, {1}_CALLBACK_EXAMPLE, (void*)my_callback, NULL);
 
-Die verfügbaren Konstanten mit den zugehörigen Callback Funktionssignaturen
+Die verfügbaren IDs mit den zugehörigen Callback Funktionssignaturen
 werden weiter unten beschrieben.
 
 .. note::

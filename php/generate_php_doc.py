@@ -212,7 +212,7 @@ und der zweite die Callback-Funktion:
 
     ?>
 
-Die verfügbaren Konstanten mit den dazugehörigen Funktionssignaturen werden
+Die verfügbaren IDs mit den dazugehörigen Funktionssignaturen werden
 weiter unten beschrieben.
 
 .. note::

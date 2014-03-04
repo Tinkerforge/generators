@@ -191,7 +191,7 @@ und der zweite Parameter die Callback-Funktion:
 
     {1}.register_callback({3}.CALLBACK_EXAMPLE, my_callback)
 
-Die verfügbaren Konstanten mit der dazugehörigen Parameteranzahl und -typen werden
+Die verfügbaren IDs mit der dazugehörigen Parameteranzahl und -typen werden
 weiter unten beschrieben.
 
 .. note::

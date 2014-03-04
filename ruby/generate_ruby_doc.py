@@ -193,7 +193,7 @@ und der zweite Parameter der Block:
       puts "#{{param}}"
     end
 
-Die verfügbaren Konstanten mit der dazugehörigen Parameteranzahl und -typen werden
+Die verfügbaren IDs mit der dazugehörigen Parameteranzahl und -typen werden
 weiter unten beschrieben.
 
 .. note::
