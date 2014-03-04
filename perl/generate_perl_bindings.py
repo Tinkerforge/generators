@@ -145,7 +145,7 @@ sub new
 {{
     my ($class, $uid, $ipcon) = @_;
 
-    my $self :shared = shared_clone({{super => shared_clone(Tinkerforge::Device->new($uid, $ipcon)),
+    my $self :shared = shared_clone({{super => shared_clone(Tinkerforge::Device->_new($uid, $ipcon)),
                                      api_version => [{0}, {1}, {2}],
 """
         response_expected = '                                     response_expected => shared_clone({'
@@ -153,16 +153,16 @@ sub new
         for idx, packet in enumerate(self.get_packets()):
             if packet.get_type() == 'callback':
                 prefix = 'CALLBACK_'
-                flag = 'RESPONSE_EXPECTED_ALWAYS_FALSE'
+                flag = '_RESPONSE_EXPECTED_ALWAYS_FALSE'
             elif len(packet.get_elements('out')) > 0:
                 prefix = 'FUNCTION_'
-                flag = 'RESPONSE_EXPECTED_ALWAYS_TRUE'
+                flag = '_RESPONSE_EXPECTED_ALWAYS_TRUE'
             elif packet.get_doc()[0] == 'ccf':
                 prefix = 'FUNCTION_'
-                flag = 'RESPONSE_EXPECTED_TRUE'
+                flag = '_RESPONSE_EXPECTED_TRUE'
             else:
                 prefix = 'FUNCTION_'
-                flag = 'RESPONSE_EXPECTED_FALSE'
+                flag = '_RESPONSE_EXPECTED_FALSE'
 
             if idx == 0:
                 response_expected += '&{0}{1} => Tinkerforge::Device->{2},\n' \
@@ -213,7 +213,7 @@ sub {0}
 
     my ($self{2}) = @_;
 
-    return $self->{{super}}->send_request($self, &FUNCTION_{3}, [{4}], '{5}', '{6}');
+    return $self->{{super}}->_send_request($self, &FUNCTION_{3}, [{4}], '{5}', '{6}');
  }}
 """
         single_return = """
@@ -229,7 +229,7 @@ sub {0}
 
     my ($self{2}) = @_;
 
-    return $self->{{super}}->send_request($self, &FUNCTION_{3}, [{4}], '{5}', '{6}');
+    return $self->{{super}}->_send_request($self, &FUNCTION_{3}, [{4}], '{5}', '{6}');
 }}
 """
         no_return = """
@@ -245,7 +245,7 @@ sub {0}
 
     my ($self{2}) = @_;
 
-    $self->{{super}}->send_request($self, &FUNCTION_{3}, [{4}], '{5}', '{6}');
+    $self->{{super}}->_send_request($self, &FUNCTION_{3}, [{4}], '{5}', '{6}');
 }}
 """
         methods = ''
@@ -335,8 +335,8 @@ sub get_response_expected
 
     if(defined($self->{response_expected}->{$function_id}))
     {
-        if($self->{response_expected}->{$function_id} == Tinkerforge::Device->RESPONSE_EXPECTED_ALWAYS_TRUE ||
-           $self->{response_expected}->{$function_id} == Tinkerforge::Device->RESPONSE_EXPECTED_TRUE)
+        if($self->{response_expected}->{$function_id} == Tinkerforge::Device->_RESPONSE_EXPECTED_ALWAYS_TRUE ||
+           $self->{response_expected}->{$function_id} == Tinkerforge::Device->_RESPONSE_EXPECTED_TRUE)
         {
             return 1;
         }
@@ -347,7 +347,7 @@ sub get_response_expected
     }
     else
     {
-        croak(Tinkerforge::Error->new(Tinkerforge::IPConnection->ERROR_INVALID_FUNCTION_ID, "Function ID $function_id is unknown"));
+        croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_FUNCTION_ID, "Function ID $function_id is unknown"));
     }
 }
 
@@ -377,16 +377,16 @@ sub set_response_expected
     {
         if($response_expected)
         {
-            $self->{response_expected}->{$function_id} = Tinkerforge::Device->RESPONSE_EXPECTED_TRUE;
+            $self->{response_expected}->{$function_id} = Tinkerforge::Device->_RESPONSE_EXPECTED_TRUE;
         }
         else
-        {  
-            $self->{response_expected}->{$function_id} = Tinkerforge::Device->RESPONSE_EXPECTED_FALSE;
+        {
+            $self->{response_expected}->{$function_id} = Tinkerforge::Device->_RESPONSE_EXPECTED_FALSE;
         }
     }
     else
     {
-        croak(Tinkerforge::Error->new(Tinkerforge::IPConnection->ERROR_INVALID_FUNCTION_ID, "Function ID $function_id is unknown"));
+        croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_FUNCTION_ID, "Function ID $function_id is unknown"));
     }
 }
 
@@ -407,11 +407,11 @@ sub set_response_expected_all
     {
         if($response_expected)
         {
-            $self->{response_expected}->{$key} = Tinkerforge::Device->RESPONSE_EXPECTED_TRUE;
+            $self->{response_expected}->{$key} = Tinkerforge::Device->_RESPONSE_EXPECTED_TRUE;
         }
         else
         {
-            $self->{response_expected}->{$key} = Tinkerforge::Device->RESPONSE_EXPECTED_FALSE;
+            $self->{response_expected}->{$key} = Tinkerforge::Device->_RESPONSE_EXPECTED_FALSE;
         }
     }
 }

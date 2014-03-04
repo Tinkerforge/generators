@@ -30,45 +30,138 @@ use IO::Socket::INET;
 use Tinkerforge::Device;
 use Tinkerforge::Error;
 
-# constants
-use constant FUNCTION_ENUMERATE => 254;
-use constant FUNCTION_DISCONNECT_PROBE => 128;
+=head1 CONSTANTS
+
+=over
+
+=item CALLBACK_ENUMERATE
+
+This constant is used with the register_callback() subroutine to specify
+the CALLBACK_ENUMERATE callback.
+
+=cut
 
 use constant CALLBACK_ENUMERATE => 253;
+
+=item CALLBACK_CONNECTED
+
+This constant is used with the register_callback() subroutine to specify
+the CALLBACK_CONNECTED callback.
+
+=cut
+
 use constant CALLBACK_CONNECTED => 0;
+
+=item CALLBACK_DISCONNECTED
+
+This constant is used with the register_callback() subroutine to specify
+the CALLBACK_DISCONNECTED callback.
+
+=cut
+
 use constant CALLBACK_DISCONNECTED => 1;
 
-use constant BROADCAST_UID => 0;
+=item ENUMERATION_TYPE_AVAILABLE
+
+Possible value for $enumeration_type parameter of CALLBACK_ENUMERATE callback.
+
+=cut
 
 use constant ENUMERATION_TYPE_AVAILABLE => 0;
+
+=item ENUMERATION_TYPE_CONNECTED
+
+Possible value for $enumeration_type parameter of CALLBACK_ENUMERATE callback.
+
+=cut
+
 use constant ENUMERATION_TYPE_CONNECTED => 1;
+
+=item ENUMERATION_TYPE_DISCONNECTED
+
+Possible value for $enumeration_type parameter of CALLBACK_ENUMERATE callback.
+
+=cut
+
 use constant ENUMERATION_TYPE_DISCONNECTED => 2;
 
+=item CONNECT_REASON_REQUEST
+
+Possible value for $connect_reason parameter of CALLBACK_CONNECTED callback.
+
+=cut
+
 use constant CONNECT_REASON_REQUEST => 0;
+
+=item CONNECT_REASON_AUTO_RECONNECT
+
+Possible value for $connect_reason parameter of CALLBACK_CONNECTED callback.
+
+=cut
+
 use constant CONNECT_REASON_AUTO_RECONNECT => 1;
 
+=item DISCONNECT_REASON_REQUEST
+
+Possible value for $disconnect_reason parameter of CALLBACK_DISCONNECTED callback.
+
+=cut
+
 use constant DISCONNECT_REASON_REQUEST => 0;
+
+=item DISCONNECT_REASON_ERROR
+
+Possible value for $disconnect_reason parameter of CALLBACK_DISCONNECTED callback.
+
+=cut
+
 use constant DISCONNECT_REASON_ERROR => 1;
+
+=item DISCONNECT_REASON_SHUTDOWN
+
+Possible value for $disconnect_reason parameter of CALLBACK_DISCONNECTED callback.
+
+=cut
+
 use constant DISCONNECT_REASON_SHUTDOWN => 2;
 
+=item CONNECTION_STATE_DISCONNECTED
+
+Possible return value of the get_connection_state() subroutine.
+
+=cut
+
 use constant CONNECTION_STATE_DISCONNECTED => 0;
+
+=item CONNECTION_STATE_CONNECTED
+
+Possible return value of the get_connection_state() subroutine.
+
+=cut
+
 use constant CONNECTION_STATE_CONNECTED => 1;
+
+=item CONNECTION_STATE_PENDING
+
+Possible return value of the get_connection_state() subroutine.
+
+=cut
+
 use constant CONNECTION_STATE_PENDING => 2;
 
-use constant QUEUE_EXIT => 0;
-use constant QUEUE_META => 1;
-use constant QUEUE_PACKET => 2;
+=back
+=cut
 
-use constant DISCONNECT_PROBE_INTERVAL => 5;
+use constant _FUNCTION_ENUMERATE => 254;
+use constant _FUNCTION_DISCONNECT_PROBE => 128;
 
-use constant ERROR_ALREADY_CONNECTED => 11;
-use constant ERROR_NOT_CONNECTED => 12;
-use constant ERROR_CONNECT_FAILED => 13;
-use constant ERROR_INVALID_FUNCTION_ID => 21;
-use constant ERROR_TIMEOUT => 31;
-use constant ERROR_INVALID_PARAMETER => 41;
-use constant ERROR_FUNCTION_NOT_SUPPORTED => 42;
-use constant ERROR_UNKNOWN_ERROR => 43;
+use constant _BROADCAST_UID => 0;
+
+use constant _QUEUE_EXIT => 0;
+use constant _QUEUE_META => 1;
+use constant _QUEUE_PACKET => 2;
+
+use constant _DISCONNECT_PROBE_INTERVAL => 5;
 
 # the socket variable
 my $IPCONNECTION_SOCKET = undef;
@@ -137,16 +230,16 @@ sub connect
 {
 	my ($self, $host, $port) = @_;
 
-	if(defined($IPCONNECTION_SOCKET) && $self->{auto_reconnect_pending} == 0 && defined($IPCONNECTION_SOCKET))
+	if(defined($IPCONNECTION_SOCKET) && $self->{auto_reconnect_pending} == 0)
 	{
-		croak(Tinkerforge::Error->new(&ERROR_ALREADY_CONNECTED, "Already connected to $self->{host}:$self->{host}"));
+		croak(Tinkerforge::Error->_new(Tinkerforge::Error->ALREADY_CONNECTED, "Already connected to $self->{host}:$self->{host}"));
         return 1;
 	}
-	elsif(!defined($IPCONNECTION_SOCKET) && $self->{auto_reconnect_pending} == 0 && !defined($IPCONNECTION_SOCKET))
+	elsif(!defined($IPCONNECTION_SOCKET) && $self->{auto_reconnect_pending} == 0)
 	{
 		$self->{host} = $host;
 		$self->{port} = $port;
-		$self->handle_connect(&CONNECT_REASON_REQUEST);
+		$self->_handle_connect(&CONNECT_REASON_REQUEST);
         return 1;
 	}
     else
@@ -157,7 +250,7 @@ sub connect
 	return 1;
 }
 
-sub handle_connect
+sub _handle_connect
 {
 	lock($Tinkerforge::IPConnection::CONNECT_LOCK);
 
@@ -191,33 +284,33 @@ sub handle_connect
 
 			$IPCONNECTION_SOCKET = undef;
 
-			croak(Tinkerforge::Error->new(&ERROR_CONNECT_FAILED, "Can't connect to	$self->{host}:$self->{port}"));
+			croak(Tinkerforge::Error->_new(Tinkerforge::Error->CONNECT_FAILED, "Can't connect to	$self->{host}:$self->{port}"));
 		}
 		else
 		{
 			if(!defined($self->{callback_thread}))
 			{
 				$self->{socket_id} ++;
-				$self->{callback_thread} = shared_clone(threads->create(\&callback_thread_subroutine, $self));
+				$self->{callback_thread} = shared_clone(threads->create(\&_callback_thread_subroutine, $self));
 
 				if(defined($self->{callback_thread}))
 				{
 					if(!defined($self->{receive_thread}))
 					{
-						$self->{receive_thread} = shared_clone(threads->create(\&receive_thread_subroutine, $self));
+						$self->{receive_thread} = shared_clone(threads->create(\&_receive_thread_subroutine, $self));
 
 						if(defined($self->{receive_thread}))
 						{
 							if(!defined($self->{disconnect_probe_thread}))
 							{
-								$self->{disconnect_probe_thread} = shared_clone(threads->create(\&disconnect_probe_thread_subroutine, $self));
+								$self->{disconnect_probe_thread} = shared_clone(threads->create(\&_disconnect_probe_thread_subroutine, $self));
 
 								if(defined($self->{disconnect_probe_thread}))
 								{
 									if(defined($self->{callback_thread}))
 									{
 										$self->{auto_reconnect_allowed} = 0;
-										$self->{callback_queue}->enqueue([&QUEUE_META, &CALLBACK_CONNECTED, &CONNECT_REASON_REQUEST, $self->{socket_id}]);
+										$self->{callback_queue}->enqueue([&_QUEUE_META, &CALLBACK_CONNECTED, &CONNECT_REASON_REQUEST, $self->{socket_id}]);
 									}
 									else
 									{
@@ -225,7 +318,7 @@ sub handle_connect
 
 										if(defined($self->{disconnect_probe_thread}))
 										{
-											$self->{disconnect_probe_queue}->enqueue(&QUEUE_EXIT);
+											$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
 											$self->{disconnect_probe_thread}->join();
 											$self->{disconnect_probe_thread} = undef;
 										}
@@ -247,7 +340,7 @@ sub handle_connect
 
 										if(defined($self->{callback_thread}))
 										{
-											$self->{callback_queue}->enqueue([&QUEUE_EXIT, undef, undef, undef]);
+											$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
 											$self->{callback_thread}->join();
 											$self->{callback_thread} = undef;
 										}
@@ -262,7 +355,7 @@ sub handle_connect
 
 									if(defined($self->{disconnect_probe_thread}))
 									{
-										$self->{disconnect_probe_queue}->enqueue(&QUEUE_EXIT);
+										$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
 										$self->{disconnect_probe_thread}->join();
 										$self->{disconnect_probe_thread} = undef;
 									}
@@ -284,7 +377,7 @@ sub handle_connect
 
 									if(defined($self->{callback_thread}))
 									{
-										$self->{callback_queue}->enqueue([&QUEUE_EXIT, undef, undef, undef]);
+										$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
 										$self->{callback_thread}->join();
 										$self->{callback_thread} = undef;
 									}
@@ -299,7 +392,7 @@ sub handle_connect
 
 								if(defined($self->{disconnect_probe_thread}))
 								{
-									$self->{disconnect_probe_queue}->enqueue(&QUEUE_EXIT);
+									$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
 									$self->{disconnect_probe_thread}->join();
 									$self->{disconnect_probe_thread} = undef;
 								}
@@ -321,7 +414,7 @@ sub handle_connect
 
 								if(defined($self->{callback_thread}))
 								{
-									$self->{callback_queue}->enqueue([&QUEUE_EXIT, undef, undef, undef]);
+									$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
 									$self->{callback_thread}->join();
 									$self->{callback_thread} = undef;
 								}
@@ -336,7 +429,7 @@ sub handle_connect
 
 							if(defined($self->{disconnect_probe_thread}))
 							{
-								$self->{disconnect_probe_queue}->enqueue(&QUEUE_EXIT);
+								$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
 								$self->{disconnect_probe_thread}->join();
 								$self->{disconnect_probe_thread} = undef;
 							}
@@ -358,7 +451,7 @@ sub handle_connect
 
 							if(defined($self->{callback_thread}))
 							{
-								$self->{callback_queue}->enqueue([&QUEUE_EXIT, undef, undef, undef]);
+								$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
 								$self->{callback_thread}->join();
 								$self->{callback_thread} = undef;
 							}
@@ -373,7 +466,7 @@ sub handle_connect
 
 						if(defined($self->{disconnect_probe_thread}))
 						{
-							$self->{disconnect_probe_queue}->enqueue(&QUEUE_EXIT);
+							$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
 							$self->{disconnect_probe_thread}->join();
 							$self->{disconnect_probe_thread} = undef;
 						}
@@ -395,7 +488,7 @@ sub handle_connect
 
 						if(defined($self->{callback_thread}))
 						{
-							$self->{callback_queue}->enqueue([&QUEUE_EXIT, undef, undef, undef]);
+							$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
 							$self->{callback_thread}->join();
 							$self->{callback_thread} = undef;
 						}
@@ -410,7 +503,7 @@ sub handle_connect
 
 					if(defined($self->{disconnect_probe_thread}))
 					{
-						$self->{disconnect_probe_queue}->enqueue(&QUEUE_EXIT);
+						$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
 						$self->{disconnect_probe_thread}->join();
 						$self->{disconnect_probe_thread} = undef;
 					}
@@ -432,7 +525,7 @@ sub handle_connect
 
 					if(defined($self->{callback_thread}))
 					{
-						$self->{callback_queue}->enqueue([&QUEUE_EXIT, undef, undef, undef]);
+						$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
 						$self->{callback_thread}->join();
 						$self->{callback_thread} = undef;
 					}
@@ -447,7 +540,7 @@ sub handle_connect
 
 				if(defined($self->{disconnect_probe_thread}))
 				{
-					$self->{disconnect_probe_queue}->enqueue(&QUEUE_EXIT);
+					$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
 					$self->{disconnect_probe_thread}->join();
 					$self->{disconnect_probe_thread} = undef;
 				}
@@ -469,7 +562,7 @@ sub handle_connect
 
 				if(defined($self->{callback_thread}))
 				{
-					$self->{callback_queue}->enqueue([&QUEUE_EXIT, undef, undef, undef]);
+					$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
 					$self->{callback_thread}->join();
 					$self->{callback_thread} = undef;
 				}
@@ -526,19 +619,19 @@ sub handle_connect
 					{
 						$self->{socket_id} ++;
 
-						$self->{receive_thread} = shared_clone(threads->create(\&receive_thread_subroutine, $self));
+						$self->{receive_thread} = shared_clone(threads->create(\&_receive_thread_subroutine, $self));
 
 						if(defined($self->{receive_thread}))
 						{
 							if(!defined($self->{disconnect_probe_thread}))
 							{
-								$self->{disconnect_probe_thread} = shared_clone(threads->create(\&disconnect_probe_thread_subroutine, $self));
+								$self->{disconnect_probe_thread} = shared_clone(threads->create(\&_disconnect_probe_thread_subroutine, $self));
 
 								if(defined($self->{disconnect_probe_thread}))
 								{
 									$self->{auto_reconnect_pending} = 0;
 									$self->{auto_reconnect_allowed} = 0;
-									$self->{callback_queue}->enqueue([&QUEUE_META, &CALLBACK_CONNECTED, &CONNECT_REASON_AUTO_RECONNECT, $self->{socket_id}]);
+									$self->{callback_queue}->enqueue([&_QUEUE_META, &CALLBACK_CONNECTED, &CONNECT_REASON_AUTO_RECONNECT, $self->{socket_id}]);
 
 									#exit auto reconnect loop
 									last;
@@ -550,7 +643,7 @@ sub handle_connect
 
 									if(defined($self->{disconnect_probe_thread}))
 									{
-										$self->{disconnect_probe_queue}->enqueue(&QUEUE_EXIT);
+										$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
 										$self->{disconnect_probe_thread}->join();
 										$self->{disconnect_probe_thread} = undef;
 									}
@@ -572,7 +665,7 @@ sub handle_connect
 
 									if(defined($self->{callback_thread}))
 									{
-										$self->{callback_queue}->enqueue([&QUEUE_EXIT, undef, undef, undef]);
+										$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
 										$self->{callback_thread}->join();
 										$self->{callback_thread} = undef;
 									}
@@ -587,7 +680,7 @@ sub handle_connect
 
 								if(defined($self->{disconnect_probe_thread}))
 								{
-									$self->{disconnect_probe_queue}->enqueue(&QUEUE_EXIT);
+									$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
 									$self->{disconnect_probe_thread}->join();
 									$self->{disconnect_probe_thread} = undef;
 								}
@@ -609,7 +702,7 @@ sub handle_connect
 
 								if(defined($self->{callback_thread}))
 								{
-									$self->{callback_queue}->enqueue([&QUEUE_EXIT, undef, undef, undef]);
+									$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
 									$self->{callback_thread}->join();
 									$self->{callback_thread} = undef;
 								}
@@ -624,7 +717,7 @@ sub handle_connect
 
 							if(defined($self->{disconnect_probe_thread}))
 							{
-								$self->{disconnect_probe_queue}->enqueue(&QUEUE_EXIT);
+								$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
 								$self->{disconnect_probe_thread}->join();
 								$self->{disconnect_probe_thread} = undef;
 							}
@@ -646,7 +739,7 @@ sub handle_connect
 
 							if(defined($self->{callback_thread}))
 							{
-								$self->{callback_queue}->enqueue([&QUEUE_EXIT, undef, undef, undef]);
+								$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
 								$self->{callback_thread}->join();
 								$self->{callback_thread} = undef;
 							}
@@ -661,7 +754,7 @@ sub handle_connect
 
 						if(defined($self->{disconnect_probe_thread}))
 						{
-							$self->{disconnect_probe_queue}->enqueue(&QUEUE_EXIT);
+							$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
 							$self->{disconnect_probe_thread}->join();
 							$self->{disconnect_probe_thread} = undef;
 						}
@@ -683,7 +776,7 @@ sub handle_connect
 
 						if(defined($self->{callback_thread}))
 						{
-							$self->{callback_queue}->enqueue([&QUEUE_EXIT, undef, undef, undef]);
+							$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
 							$self->{callback_thread}->join();
 							$self->{callback_thread} = undef;
 						}
@@ -719,7 +812,7 @@ sub disconnect
 {
 	my ($self) = @_;
 
-	$self->{callback_queue}->enqueue([&QUEUE_META, &CALLBACK_DISCONNECTED, &DISCONNECT_REASON_REQUEST, $self->{socket_id}]);
+	$self->{callback_queue}->enqueue([&_QUEUE_META, &CALLBACK_DISCONNECTED, &DISCONNECT_REASON_REQUEST, $self->{socket_id}]);
 
 	if(defined($self->{disconnect_probe_thread}))
 	{
@@ -773,7 +866,7 @@ sub get_connection_state
 		return &CONNECTION_STATE_DISCONNECTED;
 	}
 
-	return 1;
+	return 1; # FIXME
 }
 
 =item set_auto_reconnect()
@@ -853,7 +946,7 @@ sub enumerate
 {
 	my ($self) = @_;
 
-	$self->ipconnection_send($self->create_packet_header(undef, 8, &FUNCTION_ENUMERATE));
+	$self->_ipconnection_send($self->_create_packet_header(undef, 8, &_FUNCTION_ENUMERATE));
 }
 
 =item register_callback()
@@ -870,12 +963,12 @@ sub register_callback
 	$self->{registered_callbacks}->{$function_id} = '\&'.caller.'::'.$function_name;
 }
 
-sub create_packet_header
+sub _create_packet_header
 {
 	my ($self, $device, $length, $function_id) = @_;
 
-	my $uid = &BROADCAST_UID;
-	my $seq_res_aut_oth = $self->get_next_sequence_number();
+	my $uid = &_BROADCAST_UID;
+	my $seq_res_aut_oth = $self->_get_next_sequence_number();
 	$seq_res_aut_oth = $seq_res_aut_oth << 4;
 	my $err_fut = undef;
 
@@ -947,7 +1040,7 @@ sub create_packet_header
 	return 1;
 }
 
-sub get_next_sequence_number
+sub _get_next_sequence_number
 {
 	lock($Tinkerforge::IPConnection::SEQUENCE_NUMBER_LOCK);
 
@@ -968,7 +1061,7 @@ sub get_next_sequence_number
 	return 1;
 }
 
-sub ipconnection_send
+sub _ipconnection_send
 {
 	lock($Tinkerforge::IPConnection::SEND_LOCK);
 
@@ -984,20 +1077,20 @@ sub ipconnection_send
 
 		if($!)
 		{
-			$self->{callback_queue}->enqueue([&QUEUE_META, &CALLBACK_DISCONNECTED, &DISCONNECT_REASON_ERROR, $self->{socket_id}]);
+			$self->{callback_queue}->enqueue([&_QUEUE_META, &CALLBACK_DISCONNECTED, &DISCONNECT_REASON_ERROR, $self->{socket_id}]);
 
-			croak(Tinkerforge::Error->new(&ERROR_NOT_CONNECTED, 'Not connected'));
+			croak(Tinkerforge::Error->_new(Tinkerforge::Error->NOT_CONNECTED, 'Not connected'));
 		}
 	}
 	else
 	{
-		croak(Tinkerforge::Error->new(&ERROR_NOT_CONNECTED, 'Not connected'));
+		croak(Tinkerforge::Error->_new(Tinkerforge::Error->NOT_CONNECTED, 'Not connected'));
 	}
 
 	return 1;
 }
 
-sub get_uid_from_data
+sub _get_uid_from_data
 {
 	my ($self, $data) = @_;
 
@@ -1013,7 +1106,7 @@ sub get_uid_from_data
 	return 1;
 }
 
-sub get_len_from_data
+sub _get_len_from_data
 {
 	my ($self, $data) = @_;
 
@@ -1029,7 +1122,7 @@ sub get_len_from_data
 	return 1;
 }
 
-sub get_fid_from_data
+sub _get_fid_from_data
 {
 	my ($self, $data) = @_;
 
@@ -1045,7 +1138,7 @@ sub get_fid_from_data
 	return 1;
 }
 
-sub get_seq_from_data
+sub _get_seq_from_data
 {
 	my ($self, $data) = @_;
 
@@ -1065,7 +1158,7 @@ sub get_seq_from_data
 	return 1;
 }
 
-sub get_err_from_data
+sub _get_err_from_data
 {
 	my ($self, $data) = @_;
 
@@ -1085,7 +1178,7 @@ sub get_err_from_data
 	return 1;
 }
 
-sub get_payload_from_data
+sub _get_payload_from_data
 {
 	my ($self, $data) = @_;
 
@@ -1106,23 +1199,23 @@ sub get_payload_from_data
 	return 1;
 }
 
-sub handle_packet
+sub _handle_packet
 {
 	my ($self, $packet) = @_;
 
-	my $fid = $self->get_fid_from_data($packet);
-	my $seq = $self->get_seq_from_data($packet);
+	my $fid = $self->_get_fid_from_data($packet);
+	my $seq = $self->_get_seq_from_data($packet);
 
 	if($seq == 0 && $fid == &CALLBACK_ENUMERATE)
 	{
 		if(defined($self->{registered_callbacks}->{&CALLBACK_ENUMERATE}))
 		{
-			$self->{callback_queue}->enqueue([&QUEUE_PACKET, $packet, undef, undef]);
+			$self->{callback_queue}->enqueue([&_QUEUE_PACKET, $packet, undef, undef]);
 		}
 		return 1;
 	}
 
-	my $uid = $self->get_uid_from_data($packet);
+	my $uid = $self->_get_uid_from_data($packet);
 
 	if(!defined($self->{devices}->{$uid}))
 	{
@@ -1135,27 +1228,27 @@ sub handle_packet
 		if(defined($self->{devices}->{$uid}))
 		{
             my $_device = $self->{devices}->{$uid}; 
-            my $_err_code = $_device->{super}->{ipcon}->get_err_from_data($packet);
+            my $_err_code = $_device->{super}->{ipcon}->_get_err_from_data($packet);
             
             if($_err_code != 0)
             {
                 if($_err_code == 1)
                 {
-                    croak(Tinkerforge::Error->new(&ERROR_INVALID_PARAMETER, "Got invalid parameter for function $fid"));
+                    croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_PARAMETER, "Got invalid parameter for function $fid"));
                     return 1;
                 }
                 elsif($_err_code == 2)
                 {
-                    croak(Tinkerforge::Error->new(&ERROR_FUNCTION_NOT_SUPPORTED, "Function $fid is not supported"));
+                    croak(Tinkerforge::Error->_new(Tinkerforge::Error->FUNCTION_NOT_SUPPORTED, "Function $fid is not supported"));
                     return 1;
                 }    
                 else
                 {
-                    croak(Tinkerforge::Error->new(&ERROR_UNKNOWN_ERROR, "Function $fid returned an unknown error"));
+                    croak(Tinkerforge::Error->_new(Tinkerforge::Error->UNKNOWN_ERROR, "Function $fid returned an unknown error"));
                     return 1;
                 }     
             }
-			$self->{callback_queue}->enqueue([&QUEUE_PACKET, $packet, undef, undef]);
+			$self->{callback_queue}->enqueue([&_QUEUE_PACKET, $packet, undef, undef]);
 		}
 		return 1;
 	}
@@ -1174,7 +1267,7 @@ sub handle_packet
 
 # thread subroutines
 
-sub receive_thread_subroutine
+sub _receive_thread_subroutine
 {
 	my ($self) = @_;
 
@@ -1200,7 +1293,7 @@ sub receive_thread_subroutine
 
 			if($! && defined($self->{receive_flag}))
 			{
-				$self->{callback_queue}->enqueue([&QUEUE_META, &CALLBACK_DISCONNECTED, &DISCONNECT_REASON_SHUTDOWN, $socket_id]);
+				$self->{callback_queue}->enqueue([&_QUEUE_META, &CALLBACK_DISCONNECTED, &DISCONNECT_REASON_SHUTDOWN, $socket_id]);
 				last;
 			}
 
@@ -1212,7 +1305,7 @@ sub receive_thread_subroutine
 
 			if(length($data) == 0 && defined($self->{receive_flag}))
 			{
-				$self->{callback_queue}->enqueue([&QUEUE_META, &CALLBACK_DISCONNECTED, &DISCONNECT_REASON_ERROR, $socket_id]);
+				$self->{callback_queue}->enqueue([&_QUEUE_META, &CALLBACK_DISCONNECTED, &DISCONNECT_REASON_ERROR, $socket_id]);
 				last;
 			}
 
@@ -1253,7 +1346,7 @@ sub receive_thread_subroutine
 						my $packet_to_handle = join('', @data_arr[0 .. (unpack('C', $data_arr[4]))-1]);
 						my $len = unpack('C', $data_arr[4]);
 
-						$self->handle_packet($packet_to_handle);
+						$self->_handle_packet($packet_to_handle);
 
 						while($len > 0)
 						{
@@ -1307,7 +1400,7 @@ sub receive_thread_subroutine
 	return 1;
 }
 
-sub callback_thread_subroutine
+sub _callback_thread_subroutine
 {
 	my ($self) = @_;
 
@@ -1316,29 +1409,29 @@ sub callback_thread_subroutine
 		my $_callback_queue_data_arr_ref = $self->{callback_queue}->dequeue();
 		my ($kind, $data_or_callback, $reason, $socket_id) = @{$_callback_queue_data_arr_ref};
 
-		if($kind == &QUEUE_EXIT)
+		if($kind == &_QUEUE_EXIT)
 		{
 			#exit callback thread
 			last;
 		}
 
-		if($kind == &QUEUE_META)
+		if($kind == &_QUEUE_META)
 		{
 			#exit callback thread
-			$self->dispatch_meta($data_or_callback, $reason, $socket_id);
+			$self->_dispatch_meta($data_or_callback, $reason, $socket_id);
 		}
 
-		if($kind == &QUEUE_PACKET)
+		if($kind == &_QUEUE_PACKET)
 		{
 			#exit callback thread
-			$self->dispatch_packet($data_or_callback);
+			$self->_dispatch_packet($data_or_callback);
 		}
 	}
 
 	return 1;
 }
 
-sub dispatch_meta
+sub _dispatch_meta
 {
 	my ($self, $callback, $reason, $socket_id) = @_;
 
@@ -1378,7 +1471,7 @@ sub dispatch_meta
 
 					if(defined($self->{disconnect_probe_thread}))
 					{
-						$self->{disconnect_probe_queue}->enqueue(&QUEUE_EXIT);
+						$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
 					}
 
 					if(defined($self->{receive_thread}))
@@ -1396,7 +1489,7 @@ sub dispatch_meta
 
 					if(defined($self->{callback_thread}))
 					{
-						$self->{callback_queue}->enqueue([&QUEUE_EXIT, undef, undef, undef]);
+						$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
 					}
 
 					if(defined($self->{registered_callbacks}->{&CALLBACK_DISCONNECTED}))
@@ -1412,7 +1505,7 @@ sub dispatch_meta
 				{
 					$self->{auto_reconnect_pending} = 0;
 					$self->{auto_reconnect_allowed} = 1;
-					$self->{disconnect_probe_queue}->enqueue(&QUEUE_EXIT);
+					$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
 
 					if(defined($self->{disconnect_probe_thread}))
 					{
@@ -1447,7 +1540,7 @@ sub dispatch_meta
 					   $self->{auto_reconnect_pending} == 0)
 					{
 						$self->{auto_reconnect_pending} = 1;
-						$self->handle_connect(&CONNECT_REASON_AUTO_RECONNECT);
+						$self->_handle_connect(&CONNECT_REASON_AUTO_RECONNECT);
 					}
 
 					return 1;
@@ -1457,7 +1550,7 @@ sub dispatch_meta
 				{
 					$self->{auto_reconnect_pending} = 0;
 					$self->{auto_reconnect_allowed} = 1;
-					$self->{disconnect_probe_queue}->enqueue(&QUEUE_EXIT);
+					$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
 
 					if(defined($self->{disconnect_probe_thread}))
 					{
@@ -1492,7 +1585,7 @@ sub dispatch_meta
 					   $self->{auto_reconnect_pending} == 0)
 					{
 						$self->{auto_reconnect_pending} = 1;
-						$self->handle_connect(&CONNECT_REASON_AUTO_RECONNECT);
+						$self->_handle_connect(&CONNECT_REASON_AUTO_RECONNECT);
 					}
 
 					return 1;
@@ -1503,14 +1596,14 @@ sub dispatch_meta
 	return 1;
 }
 
-sub dispatch_packet
+sub _dispatch_packet
 {
 	my ($self, $packet) = @_;
 
-	my $uid = $self->get_uid_from_data($packet);
-	my $len = $self->get_len_from_data($packet);
-	my $fid = $self->get_fid_from_data($packet);
-	my $payload = $self->get_payload_from_data($packet);
+	my $uid = $self->_get_uid_from_data($packet);
+	my $len = $self->_get_len_from_data($packet);
+	my $fid = $self->_get_fid_from_data($packet);
+	my $payload = $self->_get_payload_from_data($packet);
 
 	if($fid == &CALLBACK_ENUMERATE)
 	{
@@ -1714,7 +1807,7 @@ sub dispatch_packet
 	return 1;
 }
 
-sub disconnect_probe_thread_subroutine
+sub _disconnect_probe_thread_subroutine
 {
 	my ($self) = @_;
 
@@ -1723,9 +1816,9 @@ sub disconnect_probe_thread_subroutine
 	while(1)
 	{
 		my $_disconnect_probe_queue_data = undef;
-		$_disconnect_probe_queue_data = $self->{disconnect_probe_queue}->dequeue_timed(&DISCONNECT_PROBE_INTERVAL);
+		$_disconnect_probe_queue_data = $self->{disconnect_probe_queue}->dequeue_timed(&_DISCONNECT_PROBE_INTERVAL);
 
-		if(defined($_disconnect_probe_queue_data) && $_disconnect_probe_queue_data == &QUEUE_EXIT)
+		if(defined($_disconnect_probe_queue_data) && $_disconnect_probe_queue_data == &_QUEUE_EXIT)
 		{
 			#exiting thread
 			last;
@@ -1734,7 +1827,7 @@ sub disconnect_probe_thread_subroutine
 		{
 			lock($Tinkerforge::IPConnection::SEND_LOCK);
 
-			my $_disconnect_probe_packet = $self->create_packet_header(undef, 8, &FUNCTION_DISCONNECT_PROBE);
+			my $_disconnect_probe_packet = $self->_create_packet_header(undef, 8, &_FUNCTION_DISCONNECT_PROBE);
 
 			eval
 			{
@@ -1744,7 +1837,7 @@ sub disconnect_probe_thread_subroutine
 
 			if($!)
 			{
-				$self->{callback_queue}->enqueue([&QUEUE_META, &CALLBACK_DISCONNECTED, &DISCONNECT_REASON_ERROR, $socket_id]);
+				$self->{callback_queue}->enqueue([&_QUEUE_META, &CALLBACK_DISCONNECTED, &DISCONNECT_REASON_ERROR, $socket_id]);
 
 				last;
 			}

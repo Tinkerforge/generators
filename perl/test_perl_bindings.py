@@ -39,7 +39,8 @@ def check_output_and_error(*popenargs, **kwargs):
 
 class PerlExamplesTester(common.ExamplesTester):
     def __init__(self, path, extra_examples):
-        common.ExamplesTester.__init__(self, 'perl', '.pl', path, subdirs=['examples', 'source'], extra_examples=extra_examples)
+        # FIXME: currently only the exampels code is checked, but not the actual bindings code in .pm files
+        common.ExamplesTester.__init__(self, 'perl', '.pl', path, extra_examples=extra_examples)
 
     def test(self, src, is_extra_example):
         if is_extra_example:
@@ -49,7 +50,7 @@ class PerlExamplesTester(common.ExamplesTester):
         src_check = src.replace('.pl', '_check.pl')
 
         code = file(src, 'rb').read()
-        file(src_check, 'wb').write('CHECK { sub __check__ { ' + code + '\n\n}}\n\n__check__;\n');
+        file(src_check, 'wb').write('use lib "/tmp/tester/source";\nCHECK { sub __check__ { ' + code + '\n\n}}\n\n__check__;\n');
 
         args = ['perl',
                 '-cWT',

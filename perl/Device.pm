@@ -29,21 +29,21 @@ use Tinkerforge::IPConnection;
 use Tinkerforge::Error;
 
 # constants
-use constant RESPONSE_EXPECTED_INVALID_FUNCTION_ID => 0;
-use constant RESPONSE_EXPECTED_ALWAYS_TRUE => 1; # GETTER
-use constant RESPONSE_EXPECTED_ALWAYS_FALSE => 2; # CALLBACK
-use constant RESPONSE_EXPECTED_TRUE => 3; # SETTER
-use constant RESPONSE_EXPECTED_FALSE => 4; # SETTER; DEFAULT
+use constant _RESPONSE_EXPECTED_INVALID_FUNCTION_ID => 0;
+use constant _RESPONSE_EXPECTED_ALWAYS_TRUE => 1; # GETTER
+use constant _RESPONSE_EXPECTED_ALWAYS_FALSE => 2; # CALLBACK
+use constant _RESPONSE_EXPECTED_TRUE => 3; # SETTER
+use constant _RESPONSE_EXPECTED_FALSE => 4; # SETTER; DEFAULT
 
 # lock(s)
 our $DEVICE_LOCK :shared;
 
 # the constructor
-sub new
+sub _new
 {
 	my ($class, $uid, $ipcon) =  @_;
 
-	my $self :shared = shared_clone({uid => base58_decode($uid),
+	my $self :shared = shared_clone({uid => _base58_decode($uid),
 									 ipcon => shared_clone($ipcon),
 									 api_version => [0, 0, 0],
 									 registered_callbacks => shared_clone({}),
@@ -53,17 +53,17 @@ sub new
 									 response_queue => Thread::Queue->new(),
 									 request_lock => undef,
 									 auth_key => undef,
-									 response_expected => shared_clone({Tinkerforge::IPConnection->FUNCTION_ENUMERATE =>
-																		&RESPONSE_EXPECTED_ALWAYS_FALSE,
+									 response_expected => shared_clone({Tinkerforge::IPConnection->_FUNCTION_ENUMERATE =>
+																		&_RESPONSE_EXPECTED_ALWAYS_FALSE,
 																		Tinkerforge::IPConnection->CALLBACK_ENUMERATE =>
-																		&RESPONSE_EXPECTED_ALWAYS_FALSE})});
+																		&_RESPONSE_EXPECTED_ALWAYS_FALSE})});
 
 	bless($self, $class);
 
 	return $self;
 }
 
-sub base58_decode
+sub _base58_decode
 {
 	my ($encoded) = @_;
 
@@ -92,7 +92,7 @@ sub base58_decode
 	return $decoded;
 }
 
-sub send_request
+sub _send_request
 {
 	lock($Tinkerforge::Device::DEVICE_LOCK);
 
@@ -153,9 +153,9 @@ sub send_request
 	}
 
 	#creating a packet header for the request
-	$packet_header = $device->{super}->{ipcon}->create_packet_header($device, $length, $function_id);
+	$packet_header = $device->{super}->{ipcon}->_create_packet_header($device, $length, $function_id);
 
-	my $_seq = $device->{super}->{ipcon}->get_seq_from_data($packet_header);
+	my $_seq = $device->{super}->{ipcon}->_get_seq_from_data($packet_header);
 
 	$device->{super}->{expected_response_sequence_number} = share($_seq);
 	$device->{super}->{expected_response_function_id} = share($function_id);
@@ -171,7 +171,7 @@ sub send_request
 		$packet = $packet_header;
 	}
 
-	$device->{super}->{ipcon}->ipconnection_send($packet);
+	$device->{super}->{ipcon}->_ipconnection_send($packet);
 
 	#checking whether response is expected
 	if($device->get_response_expected($function_id))
@@ -185,28 +185,28 @@ sub send_request
 			{
 				if(length($response_packet) >= 8)
 				{
-                    my $_err_code = $device->{super}->{ipcon}->get_err_from_data($response_packet);
+                    my $_err_code = $device->{super}->{ipcon}->_get_err_from_data($response_packet);
                     if($_err_code != 0)
                     {
-                        my $_fid = $device->{super}->{ipcon}->get_fid_from_data($response_packet);
+                        my $_fid = $device->{super}->{ipcon}->_get_fid_from_data($response_packet);
 
                         if($_err_code == 1)
                         {
-                            croak(Tinkerforge::Error->new(Tinkerforge::IPConnection->ERROR_INVALID_PARAMETER, "Got invalid parameter for function $_fid"));
+                            croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_PARAMETER, "Got invalid parameter for function $_fid"));
                             return 1;
                         }
                         elsif($_err_code == 2)
                         {
-                            croak(Tinkerforge::Error->new(Tinkerforge::IPConnection->ERROR_FUNCTION_NOT_SUPPORTED, "Function $_fid is not supported"));
+                            croak(Tinkerforge::Error->_new(Tinkerforge::Error->FUNCTION_NOT_SUPPORTED, "Function $_fid is not supported"));
                             return 1;
                         }    
                         else
                         {
-                            croak(Tinkerforge::Error->new(Tinkerforge::IPConnection->ERROR_UNKNOWN_ERROR, "Function $_fid returned an unknown error"));
+                            croak(Tinkerforge::Error->_new(Tinkerforge::Error->UNKNOWN_ERROR, "Function $_fid returned an unknown error"));
                             return 1;
                         }     
                     }
-					my $response_packet_payload = $device->{super}->{ipcon}->get_payload_from_data($response_packet);
+					my $response_packet_payload = $device->{super}->{ipcon}->_get_payload_from_data($response_packet);
 					my @form_return_arr = split(' ', $form_return);
 
 					if(scalar(@form_return_arr) > 1)
@@ -379,7 +379,7 @@ sub send_request
 		}
 		else
 		{
-            croak(Tinkerforge::Error->new(Tinkerforge::IPConnection->TIMEOUT, "Did not receive response for function $function_id in time"));
+            croak(Tinkerforge::Error->_new(Tinkerforge::Error->TIMEOUT, "Did not receive response for function $function_id in time"));
 		}
 	}
 

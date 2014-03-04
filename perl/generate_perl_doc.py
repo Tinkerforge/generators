@@ -233,6 +233,20 @@ weiter unten beschrieben.
 API
 ---
 
+Generally, every subroutine of the Perl bindings can report an error as
+``Tinkerforge::Error`` object via ``croak()``. The object that has a
+``get_code()`` and a ``get_message()`` subroutine. There are different
+error code:
+
+* Error->ALREADY_CONNECTED = 11
+* Error->NOT_CONNECTED = 12
+* Error->CONNECT_FAILED = 13
+* Error->INVALID_FUNCTION_ID = 21
+* Error->TIMEOUT = 31
+* Error->INVALID_PARAMETER = 41
+* Error->FUNCTION_NOT_SUPPORTED = 42
+* Error->UNKNOWN_ERROR = 43
+
 All methods listed below are thread-safe.
 
 {1}
@@ -243,6 +257,20 @@ All methods listed below are thread-safe.
 {0}
 API
 ---
+
+Allgemein kann jede Subroutine der Perl Bindings Fehler als
+``Tinkerforge::Error`` Objekt mittels ``croak()`` melden. Das Objekt hat eine
+``get_code()`` und eine ``get_message()`` Subroutine. Es sind verschiedene
+Fehlercodes definiert:
+
+* Error->ALREADY_CONNECTED = 11
+* Error->NOT_CONNECTED = 12
+* Error->CONNECT_FAILED = 13
+* Error->INVALID_FUNCTION_ID = 21
+* Error->TIMEOUT = 31
+* Error->INVALID_PARAMETER = 41
+* Error->FUNCTION_NOT_SUPPORTED = 42
+* Error->UNKNOWN_ERROR = 43
 
 Alle folgend aufgelisteten Funktionen sind Thread-sicher.
 
