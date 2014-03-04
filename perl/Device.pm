@@ -379,7 +379,7 @@ sub send_request
 		}
 		else
 		{
-            croak(Tinkerforge::Error->new(Tinkerforge::IPConnection->ERROR_INVALID_PARAMETER, "Did not receive response for function $function_id in time"));
+            croak(Tinkerforge::Error->new(Tinkerforge::IPConnection->TIMEOUT, "Did not receive response for function $function_id in time"));
 		}
 	}
 
