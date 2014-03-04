@@ -28,7 +28,16 @@ import sys
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
-from csharp.generate_csharp_bindings import generate
+from csharp.generate_csharp_bindings import CSharpBindingsGenerator
+
+class MathematicaBindingsGenerator(CSharpBindingsGenerator):
+    released_files_name_prefix = 'mathematica'
+
+    def get_bindings_name(self):
+        return 'mathematica'
+
+def generate(bindings_root_directory):
+    common.generate(bindings_root_directory, 'en', MathematicaBindingsGenerator)
 
 if __name__ == "__main__":
     generate(os.getcwd())

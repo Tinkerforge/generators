@@ -31,7 +31,7 @@ import subprocess
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
-from csharp_released_files import released_files
+from mathematica_released_files import released_files
 
 class MathematicaZipGenerator(common.Generator):
     def get_bindings_name(self):

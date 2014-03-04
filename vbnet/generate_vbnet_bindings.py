@@ -28,7 +28,16 @@ import sys
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
-from csharp.generate_csharp_bindings import generate
+from csharp.generate_csharp_bindings import CSharpBindingsGenerator
+
+class VBNETBindingsGenerator(CSharpBindingsGenerator):
+    released_files_name_prefix = 'vbnet'
+
+    def get_bindings_name(self):
+        return 'vbnet'
+
+def generate(bindings_root_directory):
+    common.generate(bindings_root_directory, 'en', VBNETBindingsGenerator)
 
 if __name__ == "__main__":
     generate(os.getcwd())
