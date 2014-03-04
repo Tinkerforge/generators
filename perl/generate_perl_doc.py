@@ -234,7 +234,7 @@ API
 ---
 
 Generally, every subroutine of the Perl bindings can report an error as
-``Tinkerforge::Error`` object via ``croak()``. The object that has a
+``Tinkerforge::Error`` object via ``croak()``. The object has a
 ``get_code()`` and a ``get_message()`` subroutine. There are different
 error code:
 
