@@ -1065,66 +1065,6 @@ sub get_seq_from_data
 	return 1;
 }
 
-sub get_res_from_data
-{
-	my ($self, $data) = @_;
-
-	my @data_arr = undef;
-	my @bit_arr = undef;
-	my $res = undef;
-
-	@data_arr = split('', $data);
-
-	if(scalar(@data_arr) >= 8)
-	{
-		@bit_arr = split('', unpack('(b8)<', $data_arr[6]));
-		$res = $bit_arr[3];
-		return oct("0b$res");
-	}
-
-	return 1;
-}
-
-sub get_aut_from_data
-{
-	my ($self, $data) = @_;
-
-	my @data_arr = undef;
-	my @bit_arr = undef;
-	my $aut = undef;
-
-	@data_arr = split('', $data);
-
-	if(scalar(@data_arr) >= 8)
-	{
-		@bit_arr = split('', unpack('(b8)<', $data_arr[6]));
-		$aut = $bit_arr[2];
-		return oct("0b$aut");
-	}
-
-	return 1;
-}
-
-sub get_oth_from_data
-{
-	my ($self, $data) = @_;
-
-	my @data_arr = undef;
-	my @bit_arr = undef;
-	my $oth = undef;
-
-	@data_arr = split('', $data);
-
-	if(scalar(@data_arr) >= 8)
-	{
-		@bit_arr = split('', unpack('(b8)<', $data_arr[6]));
-		$oth = $bit_arr[1].$bit_arr[0];
-		return oct("0b$oth");
-	}
-
-	return 1;
-}
-
 sub get_err_from_data
 {
 	my ($self, $data) = @_;
@@ -1140,26 +1080,6 @@ sub get_err_from_data
 		@bit_arr = split('', unpack('(b8)<', $data_arr[7]));
 		$err = $bit_arr[7].$bit_arr[6];
 		return oct("0b$err");
-	}
-
-	return 1;
-}
-
-sub get_fut_from_data
-{
-	my ($self, $data) = @_;
-
-	my @data_arr = undef;
-	my @bit_arr = undef;
-	my $fut = undef;
-
-	@data_arr = split('', $data);
-
-	if(scalar(@data_arr) >= 8)
-	{
-		@bit_arr = split('', unpack('(b8)<', $data_arr[6]));
-		$fut = $bit_arr[5].$bit_arr[4].$bit_arr[3].$bit_arr[2].$bit_arr[1].$bit_arr[0];
-		return oct("0b$fut");
 	}
 
 	return 1;
