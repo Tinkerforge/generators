@@ -37,17 +37,25 @@ class PerlBindingsDevice(perl_common.PerlDevice):
     def get_perl_package(self):
         package = """
 {0}
-package {1};
-=comment
-        {2}
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+Tinkerforge::{1}{2} - {3}
+
 =cut
+
+package Tinkerforge::{1}{2};
 """
         date = datetime.datetime.now().strftime("%Y-%m-%d")
         version = common.get_changelog_version(self.get_generator().get_bindings_root_directory())
-        package_name = self.get_category() + self.get_camel_case_name()
 
         return package.format(common.gen_text_hash.format(date, *version),
-                              'Tinkerforge::'+package_name, self.get_description())
+                              self.get_category(),
+                              self.get_camel_case_name(),
+                              self.get_description())
 
     def get_perl_use(self):
         return """
@@ -60,19 +68,50 @@ use Carp;
 use threads;
 use threads::shared;
 
+=head1 CONSTANTS
+
+=over
+
+=item DEVICE_IDENTIFIER
+
+This constant is used to identify a {1} {2}.
+
+The get_identity() subroutine and the CALLBACK_ENUMERATE callback of the
+IP Connection have a device_identifier parameter to specify the Brick's or
+Bricklet's type.
+
+=cut
+
 use constant DEVICE_IDENTIFIER => {0};
-""".format(self.get_device_identifier())
+""".format(self.get_device_identifier(), self.get_display_name(), self.get_category())
 
     def get_perl_constants(self):
-        cbs = ''
-        cb = 'use constant CALLBACK_{0} => {1};\n'
-        for packet in self.get_packets('callback'):
-            cbs += cb.format(packet.get_upper_case_name(), packet.get_function_id())
+        callbacks = []
+        callback = """
+=item CALLBACK_{0}
 
-        function_ids = '\n'
-        function_id = 'use constant FUNCTION_{0} => {1};\n'
+This constant is used with the register_callback() subroutine to specify
+the CALLBACK_{0} callback.
+
+=cut
+
+use constant CALLBACK_{0} => {1};"""
+
+        for packet in self.get_packets('callback'):
+            callbacks.append(callback.format(packet.get_upper_case_name(), packet.get_function_id()))
+
+        function_ids = []
+        function_id = """
+=item FUNCTION_{0}
+
+This constant is used with the get_response_expected(), set_response_expected()
+and set_response_expected_all() subroutines.
+
+=cut
+
+use constant FUNCTION_{0} => {1};"""
         for packet in self.get_packets('function'):
-            function_ids += function_id.format(packet.get_upper_case_name(), packet.get_function_id())
+            function_ids.append(function_id.format(packet.get_upper_case_name(), packet.get_function_id()))
 
         str_constants = '\n'
         str_constant = 'use constant {0}_{1} => {2};\n'
@@ -86,16 +125,24 @@ use constant DEVICE_IDENTIFIER => {0};
                 str_constants += str_constant.format(constant_group.get_upper_case_name(),
                                                      constant_item.get_upper_case_name(),
                                                      value)
-        return cbs + function_ids + str_constants
+
+        return '\n'.join(callbacks) + '\n' + '\n'.join(function_ids) + str_constants + "\n\n=back\n"
 
     def get_perl_new_subroutine(self):
         dev_new = """
+=head1 FUNCTIONS
+
+=over
+
+=item new()
+
+Creates an object with the unique device ID *uid* and adds it to
+the IP Connection *ipcon*.
+
+=cut
+
 sub new
 {{
-=comment
-        Creates an object with the unique device ID *uid* and adds it to
-        the IP Connection *ipcon*.
-=cut
     my ($class, $uid, $ipcon) = @_;
 
     my $self :shared = shared_clone({{super => shared_clone(Tinkerforge::Device->new($uid, $ipcon)),
@@ -154,11 +201,14 @@ sub new
 
     def get_perl_subroutines(self):
         multiple_return = """
+=item {0}()
+
+{1}
+
+=cut
+
 sub {0}
 {{
-=comment
-        {1}
-=cut
     lock($Tinkerforge::Device::DEVICE_LOCK);
 
     my ($self{2}) = @_;
@@ -167,11 +217,14 @@ sub {0}
  }}
 """
         single_return = """
+=item {0}()
+
+{1}
+
+=cut
+
 sub {0}
 {{
-=comment
-        {1}
-=cut
     lock($Tinkerforge::Device::DEVICE_LOCK);
 
     my ($self{2}) = @_;
@@ -180,11 +233,14 @@ sub {0}
 }}
 """
         no_return = """
+=item {0}()
+
+{1}
+
+=cut
+
 sub {0}
 {{
-=comment
-        {1}
-=cut
     lock($Tinkerforge::Device::DEVICE_LOCK);
 
     my ($self{2}) = @_;
@@ -222,11 +278,14 @@ sub {0}
     def get_perl_common_device_subroutines(self):
         return """
 
+=item register_callback()
+
+Registers a callback with ID $id to the function named $callback.
+
+=cut
+
 sub register_callback
 {
-=comment
-        Registers a callback with ID *id* to the function *callback*.
-=cut
     lock($Tinkerforge::Device::DEVICE_LOCK);
 
     my ($self, $id, $callback) = @_;
@@ -234,36 +293,42 @@ sub register_callback
     $self->{super}->{registered_callbacks}->{$id} = '&'.caller.'::'.$callback;
 }
 
+=item get_api_version()
+
+Returns the API version (major, minor, revision) of the bindings for
+this device.
+
+=cut
+
 sub get_api_version
 {
-=comment
-        Returns the API version (major, minor, revision) of the bindings for
-        this device.
-=cut
     my ($self) = @_;
 
     return $self->{super}->{api_version};
 }
 
+=item get_response_expected()
+
+Returns the response expected flag for the function specified by the
+*function_id* parameter. It is *true* if the function is expected to
+send a response, *false* otherwise.
+
+For getter functions this is enabled by default and cannot be disabled,
+because those functions will always send a response. For callback
+configuration functions it is enabled by default too, but can be
+disabled via the set_response_expected function. For setter functions
+it is disabled by default and can be enabled.
+
+Enabling the response expected flag for a setter function allows to
+detect timeouts and other error conditions calls of this setter as
+well. The device will then send a response for this purpose. If this
+flag is disabled for a setter function then no response is send and
+errors are silently ignored, because they cannot be detected.
+
+=cut
+
 sub get_response_expected
 {
-=comment
-        Returns the response expected flag for the function specified by the
-        *function_id* parameter. It is *true* if the function is expected to
-        send a response, *false* otherwise.
-
-        For getter functions this is enabled by default and cannot be disabled,
-        because those functions will always send a response. For callback
-        configuration functions it is enabled by default too, but can be
-        disabled via the set_response_expected function. For setter functions
-        it is disabled by default and can be enabled.
-
-        Enabling the response expected flag for a setter function allows to
-        detect timeouts and other error conditions calls of this setter as
-        well. The device will then send a response for this purpose. If this
-        flag is disabled for a setter function then no response is send and
-        errors are silently ignored, because they cannot be detected.
-=cut
     lock($Tinkerforge::Device::DEVICE_LOCK);
 
     my ($self, $function_id) = @_;
@@ -286,21 +351,24 @@ sub get_response_expected
     }
 }
 
+=item set_response_expected()
+
+Changes the response expected flag of the function specified by the
+*function_id* parameter. This flag can only be changed for setter
+(default value: *false*) and callback configuration functions
+(default value: *true*). For getter functions it is always enabled
+and callbacks it is always disabled.
+
+Enabling the response expected flag for a setter function allows to
+detect timeouts and other error conditions calls of this setter as
+well. The device will then send a response for this purpose. If this
+flag is disabled for a setter function then no response is send and
+errors are silently ignored, because they cannot be detected.
+
+=cut
+
 sub set_response_expected
 {
-=comment
-        Changes the response expected flag of the function specified by the
-        *function_id* parameter. This flag can only be changed for setter
-        (default value: *false*) and callback configuration functions
-        (default value: *true*). For getter functions it is always enabled
-        and callbacks it is always disabled.
-
-        Enabling the response expected flag for a setter function allows to
-        detect timeouts and other error conditions calls of this setter as
-        well. The device will then send a response for this purpose. If this
-        flag is disabled for a setter function then no response is send and
-        errors are silently ignored, because they cannot be detected.
-=cut
     lock($Tinkerforge::Device::DEVICE_LOCK);
 
     my ($self, $function_id, $response_expected) = @_;
@@ -322,12 +390,15 @@ sub set_response_expected
     }
 }
 
+=item set_response_expected_all()
+
+Changes the response expected flag for all setter and callback
+configuration functions of this device at once.
+
+=cut
+
 sub set_response_expected_all
 {
-=comment
-        Changes the response expected flag for all setter and callback
-        configuration functions of this device at once.
-=cut
     lock($Tinkerforge::Device::DEVICE_LOCK);
 
     my ($self, $response_expected) = @_;
@@ -378,7 +449,7 @@ class PerlBindingsPacket(common.Packet):
         text = common.handle_rst_substitutions(text, self)
         text += common.format_since_firmware(self.get_device(), self)
 
-        return '\n        '.join(text.strip().split('\n'))
+        return text.strip()
 
     def get_perl_format_list(self, io):
         forms = []

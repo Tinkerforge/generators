@@ -1,8 +1,19 @@
 # Copyright (C) 2013 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+# Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 #
 # Redistribution and use in source and binary forms of this file,
 # with or without modification, are permitted. See the Creative
 # Commons Zero (CC0 1.0) License for more details.
+
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+Tinkerforge::Device - Base class for all Bricks and Bricklets
+
+=cut
 
 # package definition
 package Tinkerforge::Device;

@@ -1,8 +1,19 @@
 # Copyright (C) 2013 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+# Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 #
 # Redistribution and use in source and binary forms of this file,
 # with or without modification, are permitted. See the Creative
 # Commons Zero (CC0 1.0) License for more details.
+
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+Tinkerforge::IPConnection - TCP/IP connection handling
+
+=cut
 
 # package definition
 package Tinkerforge::IPConnection;
@@ -67,6 +78,18 @@ our $CONNECT_LOCK :shared;
 our $SEND_LOCK :shared;
 our $SEQUENCE_NUMBER_LOCK :shared;
 
+
+=head1 FUNCTIONS
+
+=over
+
+=item new()
+
+Creates an IP Connection object that can be used to enumerate the available
+devices. It is also required for the constructor of Bricks and Bricklets.
+
+=cut
+
 # the constructor
 sub new
 {
@@ -95,6 +118,20 @@ sub new
 
 	return $self;
 }
+
+=item connect()
+
+Creates a TCP/IP connection to the given $host and $port. The host and port
+can refer to a Brick Daemon or to a WIFI/Ethernet Extension.
+
+Devices can only be controlled when the connection was established
+successfully.
+
+Blocks until the connection is established and throws an exception if there
+is no Brick Daemon or WIFI/Ethernet Extension listening at the given
+host and port.
+
+=cut
 
 sub connect
 {
@@ -671,6 +708,13 @@ sub handle_connect
 	return 1;
 }
 
+=item disconnect()
+
+Disconnects the TCP/IP connection from the Brick Daemon or the WIFI/Ethernet
+Extension.
+
+=cut
+
 sub disconnect
 {
 	my ($self) = @_;
@@ -698,6 +742,18 @@ sub disconnect
 	return 1;
 }
 
+=item get_connection_state()
+
+Can return the following states:
+
+* IPConnection->CONNECTION_STATE_DISCONNECTED (0): No connection is established.
+* IPConnection->CONNECTION_STATE_CONNETED (1): A connection to the Brick Daemon
+  or the WIFI/Ethernet Extension  is established.
+* IPConnection->CONNECTION_STATE_PENDING (2): IP Connection is currently trying
+  to connect.
+
+=cut
+
 sub get_connection_state
 {
 	my ($self) = @_;
@@ -720,6 +776,16 @@ sub get_connection_state
 	return 1;
 }
 
+=item set_auto_reconnect()
+
+Enables or disables auto-reconnect. If auto-reconnect is enabled,
+the IP Connection will try to reconnect to the previously given
+host and port, if the connection is lost.
+
+Default value is 1.
+
+=cut
+
 sub set_auto_reconnect
 {
 	my ($self, $auto_reconnect) = @_;
@@ -727,12 +793,27 @@ sub set_auto_reconnect
 	$self->{auto_reconnect} = $auto_reconnect;
 }
 
+=item get_auto_reconnect()
+
+Returns 1 if auto-reconnect is enabled, 0 otherwise.
+
+=cut
+
 sub get_auto_reconnect
 {
 	my ($self) = @_;
 
 	return $self->{auto_reconnect};
 }
+
+=item set_timeout()
+
+Sets the timeout in seconds for getters and for setters for which the
+response expected flag is activated.
+
+Default timeout is 2.5.
+
+=cut
 
 sub set_timeout
 {
@@ -748,6 +829,12 @@ sub set_timeout
 	}
 }
 
+=item get_timeout()
+
+Returns the timeout as set by set_timeout().
+
+=cut
+
 sub get_timeout
 {
 	my ($self) = @_;
@@ -755,12 +842,26 @@ sub get_timeout
 	return $self->{timeout};
 }
 
+=item enumerate()
+
+Broadcasts an enumerate request. All devices will respond with an enumerate
+callback.
+
+=cut
+
 sub enumerate
 {
 	my ($self) = @_;
 
 	$self->ipconnection_send($self->create_packet_header(undef, 8, &FUNCTION_ENUMERATE));
 }
+
+=item register_callback()
+
+Registers a callback with ID $id to the function named $callback.
+
+=back
+=cut
 
 sub register_callback
 {
