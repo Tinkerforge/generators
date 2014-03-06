@@ -29,9 +29,21 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the color of the sensor. The value
+has a range of 0 to 65535.
+
+If you want to get the color periodically, it is recommended 
+to use the callback :func:`Color` and set the period with 
+:func:`SetColorCallbackPeriod`.
 """,
 'de':
 """
+Gibt die Farbe des Sensors zurück. Der Wertebereich ist von
+0 bis 65535.
+
+Wenn die Farbe periodisch abgefragt werden soll, wird empfohlen
+den Callback :func:`Color` zu nutzen und die Periode mit 
+:func:`SetColorCallbackPeriod` vorzugeben.
 """
 }]
 })
@@ -44,9 +56,23 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
+Sets the period in ms with which the :func:`Color` callback is triggered
+periodically. A value of 0 turns the callback off.
+
+:func:`Color` is only triggered if the color has changed since the
+last triggering.
+
+The default value is 0.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher der :func:`Color` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+:func:`Color` wird nur ausgelöst wenn sich die Color seit der
+letzten Auslösung geändert hat.
+
+Der Standardwert ist 0.
 """
 }]
 })
@@ -59,9 +85,12 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
+Returns the period as set by :func:`SetColorCallbackPeriod`.
 """,
 'de':
 """
+Gibt die Periode zurück, wie von :func:`SetColorCallbackPeriod`
+gesetzt.
 """
 }]
 })
@@ -86,9 +115,39 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
+Sets the thresholds for the :func:`ColorReached` callback. 
+
+The following options are possible:
+
+.. csv-table::
+ :header: "Option", "Description"
+ :widths: 10, 100
+
+ "'x'",    "Callback is turned off"
+ "'o'",    "Callback is triggered when the temperature is *outside* the min and max values"
+ "'i'",    "Callback is triggered when the temperature is *inside* the min and max values"
+ "'<'",    "Callback is triggered when the temperature is smaller than the min value (max is ignored)"
+ "'>'",    "Callback is triggered when the temperature is greater than the min value (max is ignored)"
+
+The default value is ('x', 0, 0, 0, 0, 0, 0, 0, 0).
 """,
 'de':
 """
+Setzt den Schwellwert für den :func:`ColorReached` Callback.
+
+Die folgenden Optionen sind möglich:
+
+.. csv-table::
+ :header: "Option", "Beschreibung"
+ :widths: 10, 100
+ 
+ "'x'",    "Callback ist inaktiv"
+ "'o'",    "Callback wird ausgelöst wenn die Temperatur *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst wenn die Temperatur *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst wenn die Temperatur kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn die Temperatur größer als der min Wert ist (max wird ignoriert)"
+ 
+Der Standardwert ist ('x', 0, 0, 0, 0, 0, 0, 0, 0).
 """
 }]
 })
@@ -113,9 +172,12 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
+Returns the threshold as set by :func:`SetColorCallbackThreshold`.
 """,
 'de':
 """
+Gibt den Schwellwert zurück, wie von :func:`SetColorCallbackThreshold`
+gesetzt.
 """
 }]
 })
@@ -128,9 +190,31 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
+Sets the period in ms with which the threshold callback
+
+* :func:`ColorReached`
+
+is triggered, if the threshold
+
+* :func:`SetColorCallbackThreshold`
+
+keeps being reached.
+
+The default value is 100.
 """,
 'de':
 """
+Setzt die Periode in ms mit welcher die Schwellwert Callback
+
+* :func:`ColorReached`
+ 
+ausgelöst wird, wenn der Schwellwert 
+
+* :func:`SetColorCallbackThreshold`
+ 
+weiterhin erreicht bleibt.
+
+Der Standardwert ist 100.
 """
 }]
 })
@@ -143,9 +227,12 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
+Returns the debounce period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
 """
+Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
+gesetzt.
 """
 }]
 
@@ -179,9 +266,20 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
+This callback is triggered periodically with the period that is set by
+:func:`SetColorCallbackPeriod`. The :word:`parameter` is the color
+of the sensor as RGBC.
+
+:func:`Color` is only triggered if the temperature has changed since the
+last triggering.
 """,
 'de':
 """
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetColorCallbackPeriod`,
+ausgelöst. Der :word:`parameter` ist die Color des Sensors als RGBC.
+
+:func:`Color` wird nur ausgelöst wenn sich die Temperatur seit der
+letzten Auslösung geändert hat.
 """
 }]
 })
@@ -255,6 +353,31 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Sets the configuration of the sensor. Gain and itegration time
+can be configured in this way.
+
+For confguring the gain:
+
+* 0x0: 1x Gain
+* 0x1: 4x Gain
+* 0x2: 16x Gain
+* 0x3: 60x Gain
+
+For configuring the integration time:
+
+* 0xFF: 2ms
+* 0xF6: 24ms
+* 0xD5: 101ms
+* 0xC0: 154ms
+* 0x00: 700ms
+
+Increasing the gain makes the sensor be able to detect a
+color from a higher distance.
+
+The integration time provdes a trade-off between conversion time
+and accuracy. With a longer integration time  the values read will
+be more accurate but it will take longer time to get the conversion
+results.
 """,
 'de':
 """
@@ -278,9 +401,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the configuration as set by :func:`SetConfig`.
 """,
 'de':
 """
+Gibt die Einstellungen zurück, wie von :func:`SetConfig`
+gesetzt.
 """
 }]
 })
