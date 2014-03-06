@@ -49,12 +49,19 @@ class LabVIEWZipGenerator(common.Generator):
         # Copy device examples
         examples = common.find_device_examples(device, '^Example .*\.vi$')
         dest = os.path.join('/tmp/generator/dll/examples', device.get_category(), device.get_camel_case_name())
+        dest_10 = os.path.join('/tmp/generator/dll/examples', device.get_category(), device.get_camel_case_name(), '10.0')
 
         if not os.path.exists(dest):
             os.makedirs(dest)
 
+        if not os.path.exists(dest_10):
+            os.makedirs(dest_10)
+
         for example in examples:
             shutil.copy(example[1], dest)
+
+            parts = os.path.split(example[1])
+            shutil.copy(os.path.join(parts[0], '10.0', parts[1]), dest_10)
 
     def finish(self):
         root = self.get_bindings_root_directory()

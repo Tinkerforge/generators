@@ -1,6 +1,8 @@
 The LabVIEW bindings consist of a .NET library (.dll) for all Tinkerforge
 Bricks and Bricklets (Tinkerforge.dll), the C# source of the library
-(in source/) and all available LabVIEW examples (in examples/).
+(in source/) and all available LabVIEW examples (in examples/). The examples
+are stored in LabVIEW 2013 format. All examples are provided in LabVIEW 2010
+format as well.
 
 The .NET support in LabVIEW is only available on Windows.
 
@@ -10,7 +12,9 @@ not find it. You can avoid this search and ask procedure by putting the
 Tinkerforge.dll in a folder known to LabVIEW. The easiest options are the
 vi.lib folder of your LabVIEW installation or you can put it in the same
 folder as the example you want to test. In both cases LabVIEW will find the
-Tinkerforge.dll automatically and does not ask for your support.
+Tinkerforge.dll automatically and does not ask for your support. But LabVIEW
+might warn that Tinkerforge.dll was loaded from a different folder. This
+warning can be ignored.
 
 As an example we will run the Stepper Brick configuration example. To do this
 open examples/Brick/Stepper/Example Configuration.vi in LabVIEW, change the
