@@ -340,15 +340,15 @@ Gibt *true* zurück wenn die LED aktiv ist, sonst *false*.
 com['packets'].append({
 'type': 'function',
 'name': ('SetConfig', 'set_config'), 
-'elements': [('gain', 'uint8', 1, 'in', ('Gain', 'gain', [('1x', '1x', 0x0),
-                                                          ('4x', '4x', 0x1),
-                                                          ('16x', '16x', 0x2),
-                                                          ('60x', '60x', 0x3)])),
-             ('integration_time', 'uint8', 1, 'in', ('IntegrationTime', 'integration_time', [('2ms', '2ms', 0xFF),
-                                                                                             ('24ms', '24ms', 0xF6),
-                                                                                             ('101ms', '101ms', 0xD5),
-                                                                                             ('154ms', '154ms', 0xC0),
-                                                                                             ('700ms', '700ms', 0x00)]))],
+'elements': [('gain', 'uint8', 1, 'in', ('Gain', 'gain', [('1x', '1x', 0),
+                                                          ('4x', '4x', 1),
+                                                          ('16x', '16x', 2),
+                                                          ('60x', '60x', 3)])),
+             ('integration_time', 'uint8', 1, 'in', ('IntegrationTime', 'integration_time', [('2ms', '2ms', 0),
+                                                                                             ('24ms', '24ms', 1),
+                                                                                             ('101ms', '101ms', 2),
+                                                                                             ('154ms', '154ms', 3),
+                                                                                             ('700ms', '700ms', 4)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -358,18 +358,18 @@ can be configured in this way.
 
 For confguring the gain:
 
-* 0x0: 1x Gain
-* 0x1: 4x Gain
-* 0x2: 16x Gain
-* 0x3: 60x Gain
+* 0: 1x Gain
+* 1: 4x Gain
+* 2: 16x Gain
+* 3: 60x Gain
 
 For configuring the integration time:
 
-* 0xFF: 2ms
-* 0xF6: 24ms
-* 0xD5: 101ms
-* 0xC0: 154ms
-* 0x00: 700ms
+* 0: 2ms
+* 1: 24ms
+* 2: 101ms
+* 3: 154ms
+* 4: 700ms
 
 Increasing the gain makes the sensor be able to detect a
 color from a higher distance.
@@ -378,6 +378,8 @@ The integration time provdes a trade-off between conversion time
 and accuracy. With a longer integration time  the values read will
 be more accurate but it will take longer time to get the conversion
 results.
+
+The default values are 16x gain and 153ms integration time.
 """,
 'de':
 """
@@ -388,15 +390,15 @@ results.
 com['packets'].append({
 'type': 'function',
 'name': ('GetConfig', 'get_config'), 
-'elements': [('gain', 'uint8', 1, 'out', ('Gain', 'gain', [('1x', '1x', 0x0),
-                                                            ('4x', '4x', 0x1),
-                                                            ('16x', '16x', 0x2),
-                                                            ('60x', '60x', 0x3)])),
-             ('integration_time', 'uint8', 1, 'out', ('IntegrationTime', 'integration_time', [('2ms', '2ms', 0xFF),
-                                                                                              ('24ms', '24ms', 0xF6),
-                                                                                              ('101ms', '101ms', 0xD5),
-                                                                                              ('154ms', '154ms', 0xC0),
-                                                                                              ('700ms', '700ms', 0x00)]))],
+'elements': [('gain', 'uint8', 1, 'out', ('Gain', 'gain', [('1x', '1x', 0),
+                                                            ('4x', '4x', 1),
+                                                            ('16x', '16x', 2),
+                                                            ('60x', '60x', 3)])),
+             ('integration_time', 'uint8', 1, 'out', ('IntegrationTime', 'integration_time', [('2ms', '2ms', 0),
+                                                                                              ('24ms', '24ms', 1),
+                                                                                              ('101ms', '101ms', 2),
+                                                                                              ('154ms', '154ms', 3),
+                                                                                              ('700ms', '700ms', 4)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -411,3 +413,36 @@ gesetzt.
 }]
 })
 
+com['packets'].append({
+'type': 'function',
+'name': ('GetIlluminance', 'get_illuminance'), 
+'elements': [('illuminance', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetColorTemperature', 'get_color_temperature'), 
+'elements': [('color_temperature', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
