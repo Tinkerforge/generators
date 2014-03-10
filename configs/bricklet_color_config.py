@@ -235,8 +235,8 @@ Gibt die Entprellperiode zurück, wie von :func:`SetDebouncePeriod`
 gesetzt.
 """
 }]
-
 })
+
 com['packets'].append({
 'type': 'callback',
 'name': ('Color', 'color'), 
@@ -446,3 +446,128 @@ com['packets'].append({
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetIlluminanceCallbackPeriod', 'set_illuminance_callback_period'), 
+'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Sets the period in ms with which the :func:`Illuminance` callback is triggered
+periodically. A value of 0 turns the callback off.
+
+:func:`Illuminance` is only triggered if the illuminance has changed since the
+last triggering.
+
+The default value is 0.
+""",
+'de':
+"""
+Setzt die Periode in ms mit welcher der :func:`Illuminance` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+:func:`Illuminance` wird nur ausgelöst wenn sich die Beleuchtungsstärke seit der
+letzten Auslösung geändert hat.
+
+Der Standardwert ist 0.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetIlluminanceCallbackPeriod', 'get_illuminance_callback_period'), 
+'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Returns the period as set by :func:`SetIlluminanceCallbackPeriod`.
+""",
+'de':
+"""
+Gibt die Periode zurück, wie von :func:`SetIlluminanceCallbackPeriod`
+gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetColorTemperatureCallbackPeriod', 'set_color_temperature_callback_period'), 
+'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Sets the period in ms with which the :func:`ColorTemperature` callback is triggered
+periodically. A value of 0 turns the callback off.
+
+:func:`ColorTemperature` is only triggered if the color temperature has changed since the
+last triggering.
+
+The default value is 0.
+""",
+'de':
+"""
+Setzt die Periode in ms mit welcher der :func:`ColorTemperature` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+:func:`ColorTemperature` wird nur ausgelöst wenn sich die Farbtemperatur seit der
+letzten Auslösung geändert hat.
+
+Der Standardwert ist 0.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetColorTemperatureCallbackPeriod', 'get_color_temperature_callback_period'), 
+'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Returns the period as set by :func:`SetColorTemperatureCallbackPeriod`.
+""",
+'de':
+"""
+Gibt die Periode zurück, wie von :func:`SetColorTemperatureCallbackPeriod`
+gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('Illuminance', 'illuminance'), 
+'elements': [('illuminance', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('ColorTemperature', 'color_temperature'), 
+'elements': [('color_temperature', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
