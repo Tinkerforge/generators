@@ -439,7 +439,7 @@ def camel_case_to_space(name):
 def format_since_firmware(device, packet):
     since = packet.get_since_firmware()
 
-    if since is not None and since != [1, 0, 0]:
+    if since is not None and since > [2, 0, 0]:
         if device.get_category() == 'Brick':
             suffix = 'Firmware'
         else:

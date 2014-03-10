@@ -44,17 +44,6 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
         return common.make_rst_examples(title_from_filename, self)
 
     def get_csharp_methods(self, typ):
-        version_changed = {
-        'en': """
- .. versionchanged:: 1.1.0~(Bindings)
-    Result is returned. Previously it was passed as ``out`` parameter.
-""",
-        'de': """
- .. versionchanged:: 1.1.0~(Bindings)
-    Das Ergebnis wird zurückgegeben. In vorherigen Versionen wurde es als ``out`` Parameter übergeben.
-"""
-        }
-
         methods = ''
         func_start = '.. csharp:function:: '
         for packet in self.get_packets('function'):
@@ -65,9 +54,6 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
             desc = packet.get_csharp_formatted_doc(1)
             func = '{0}{1}\n{2}'.format(func_start, signature, desc)
             methods += func + '\n'
-
-            if len(packet.get_elements('out')) == 1:
-                methods += common.select_lang(version_changed) + '\n'
 
         return methods
 
