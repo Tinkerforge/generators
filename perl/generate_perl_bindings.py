@@ -425,7 +425,7 @@ sub set_response_expected_all
         source += self.get_perl_new_subroutine()
         source += self.get_perl_subroutines()
         source += self.get_perl_common_device_subroutines()
-        source += "1;\n"
+        source += "=back\n=cut\n\n1;\n"
 
         return source
 
