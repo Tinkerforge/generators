@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+# Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 # Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 #
 # Redistribution and use in source and binary forms of this file,
@@ -125,7 +125,6 @@ class Device:
         self.expected_response_sequence_number = None # protected by request_lock
         self.response_queue = Queue()
         self.request_lock = Lock()
-        self.auth_key = None
 
         self.response_expected = [Device.RESPONSE_EXPECTED_INVALID_FUNCTION_ID] * 256
         self.response_expected[IPConnection.FUNCTION_ENUMERATE] = Device.RESPONSE_EXPECTED_ALWAYS_FALSE
@@ -286,7 +285,6 @@ class IPConnection:
         self.auto_reconnect_pending = False
         self.sequence_number_lock = Lock()
         self.next_sequence_number = 0 # protected by sequence_number_lock
-        self.auth_key = None
         self.devices = {}
         self.registered_callbacks = {}
         self.socket = None # protected by socket_lock
@@ -954,7 +952,6 @@ class IPConnection:
         uid = IPConnection.BROADCAST_UID
         sequence_number = self.get_next_sequence_number()
         r_bit = 0
-        a_bit = 0
 
         if device is not None:
             uid = device.uid
@@ -962,14 +959,7 @@ class IPConnection:
             if device.get_response_expected(function_id):
                 r_bit = 1
 
-            if device.auth_key is not None:
-                a_bit = 1
-        else:
-            if self.auth_key is not None:
-                a_bit = 1
-
-        sequence_number_and_options = \
-            (sequence_number << 4) | (r_bit << 3) | (a_bit << 2)
+        sequence_number_and_options = (sequence_number << 4) | (r_bit << 3)
 
         return (struct.pack('<IBBBB', uid, length, function_id,
                             sequence_number_and_options, 0),
