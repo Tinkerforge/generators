@@ -156,7 +156,6 @@ function IPConnection() {
     this.timeout = 2500;
     this.autoReconnect = true;
     this.sequenceNumber = 0;
-    this.authKey = undefined;
     this.devices = {};
     this.registeredCallbacks = {};
     this.socket = undefined;
@@ -1021,7 +1020,6 @@ function IPConnection() {
         var FID = headerFunctionID;
         var seq = this.getNextSequenceNumber();
         var responseBits = 0;
-        var authBits = 0;
         var EFutureUse = 0;
         var returnOnError = false;
         if (headerDevice !== undefined) {
@@ -1041,24 +1039,16 @@ function IPConnection() {
             if (responseExpected) {
                 responseBits = 1;
             }
-            if (headerDevice.authKey !== undefined) {
-                authBits = 1;
-            }
-        } else if (this.authKey != undefined) {
-            authBits = 1;
         }
-        var seqResponseAuthOOBits = seq << 4;
+        var seqResponseOOBits = seq << 4;
         if (responseBits) {
-            seqResponseAuthOOBits |= (responseBits << 3);
-        }
-        if (authBits) {
-            seqResponseAuthOOBits |= (authBits << 2);
+            seqResponseOOBits |= (responseBits << 3);
         }
         var returnHeader = new Buffer(8);
         returnHeader.writeUInt32LE(UID, 0);
         returnHeader.writeUInt8(len, 4);
         returnHeader.writeUInt8(FID, 5);
-        returnHeader.writeUInt8(seqResponseAuthOOBits, 6);
+        returnHeader.writeUInt8(seqResponseOOBits, 6);
         returnHeader.writeUInt8(EFutureUse , 7);
         return returnHeader;
     };

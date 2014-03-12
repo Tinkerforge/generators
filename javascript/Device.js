@@ -48,7 +48,6 @@ function Device(deviceRegistering, uid, ipcon) {
                                         errorCB:
                                     }
                                     */
-        this.authKey = undefined;
         // Creates the device object with the unique device ID *uid* and adds
         // it to the IPConnection *ipcon*.
         this.ipcon.devices[this.uid] = deviceRegistering;
