@@ -52,7 +52,6 @@ sub _new
 									 expected_response_function_id => undef,
 									 response_queue => Thread::Queue->new(),
 									 request_lock => undef,
-									 auth_key => undef,
 									 response_expected => shared_clone({Tinkerforge::IPConnection->_FUNCTION_ENUMERATE =>
 																		&_RESPONSE_EXPECTED_ALWAYS_FALSE,
 																		Tinkerforge::IPConnection->CALLBACK_ENUMERATE =>

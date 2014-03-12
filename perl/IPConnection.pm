@@ -195,7 +195,6 @@ sub new
 									 auto_reconnect => 1,
 									 auto_reconnect_allowed => 0,
 									 auto_reconnect_pending => 0,
-									 auth_key => 0,
 									 devices => shared_clone({}),
 									 registered_callbacks => shared_clone({}),
 									 socket_id => 0,
@@ -968,8 +967,7 @@ sub _create_packet_header
 	my ($self, $device, $length, $function_id) = @_;
 
 	my $uid = &_BROADCAST_UID;
-	my $seq_res_aut_oth = $self->_get_next_sequence_number();
-	$seq_res_aut_oth = $seq_res_aut_oth << 4;
+	my $seq_res_oth = $self->_get_next_sequence_number() << 4;
 	my $err_fut = undef;
 
 	if(defined($device))
@@ -979,20 +977,18 @@ sub _create_packet_header
 		if($device->get_response_expected($function_id))
 		{
 			#setting response expected bit
-			$seq_res_aut_oth |= (1<<3);
+			$seq_res_oth |= (1<<3);
 		}
 		else
 		{
 			#clearing response expected bit
-			$seq_res_aut_oth &= ~(1<<3);
+			$seq_res_oth &= ~(1<<3);
 		}
 
-		#clearing authentication bit
-		$seq_res_aut_oth &= ~(1<<2);
-
 		#clearing other_options bits
-		$seq_res_aut_oth &= ~(1<<0);
-		$seq_res_aut_oth &= ~(1<<1);
+		$seq_res_oth &= ~(1<<0);
+		$seq_res_oth &= ~(1<<1);
+		$seq_res_oth &= ~(1<<2);
 
 		$err_fut = 0;
 		#clearing error_code bits
@@ -1007,19 +1003,17 @@ sub _create_packet_header
 		$err_fut &= ~(1<<4);
 		$err_fut &= ~(1<<5);
 
-		return pack('(V C C C C)<', $uid, $length, $function_id, $seq_res_aut_oth, $err_fut);
+		return pack('(V C C C C)<', $uid, $length, $function_id, $seq_res_oth, $err_fut);
 	}
 	else
 	{
 		#clearing response expected bit
-		$seq_res_aut_oth &= ~(1<<3);
-
-		#clearing authentication bit
-		$seq_res_aut_oth &= ~(1<<2);
+		$seq_res_oth &= ~(1<<3);
 
 		#clearing other_options bits
-		$seq_res_aut_oth &= ~(1<<0);
-		$seq_res_aut_oth &= ~(1<<1);
+		$seq_res_oth &= ~(1<<0);
+		$seq_res_oth &= ~(1<<1);
+		$seq_res_oth &= ~(1<<2);
 
 		$err_fut = 0;
 		#clearing error_code bits
@@ -1034,7 +1028,7 @@ sub _create_packet_header
 		$err_fut &= ~(1<<4);
 		$err_fut &= ~(1<<5);
 
-		return pack('(V C C C C)<', $uid, $length, $function_id, $seq_res_aut_oth, $err_fut);
+		return pack('(V C C C C)<', $uid, $length, $function_id, $seq_res_oth, $err_fut);
 	}
 
 	return 1;
