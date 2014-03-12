@@ -101,7 +101,7 @@ def run(path):
     if not success:
         return success
 
-    success = CExamplesTester(path, 'g++', extra_examples).run()
+    success = CExamplesTester(path, 'clang', extra_examples).run()
 
     if not success:
         return success
