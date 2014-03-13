@@ -2215,12 +2215,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets the Ethernet Websocket configuration. The first parameter sets the number of socket
-connections that are reserved for websockets. The range is 0-7. The connections
+Sets the Ethernet WebSocket configuration. The first parameter sets the number of socket
+connections that are reserved for WebSockets. The range is 0-7. The connections
 are shared with the plain sockets. Example: If you set the connections to 3,
-there will be 3 websocket and 4 plain socket connections available.
+there will be 3 WebSocket and 4 plain socket connections available.
 
-The second parameter is the port for the websocket connections. The port can
+The second parameter is the port for the WebSocket connections. The port can
 not be the same as the port for the plain socket connections.
 
 The values are stored in the EEPROM and only applied on startup. That means
@@ -2232,13 +2232,13 @@ The default values are 3 for the socket connections and 4280 for the port.
 """,
 'de':
 """
-Setzt die Ethernet Websocket-Konfiguration. Der erste Parameter setzt
-die Anzahl der Socket-Verbindungen die für Websockets reserviert werden.
+Setzt die Ethernet WebSocket-Konfiguration. Der erste Parameter setzt
+die Anzahl der Socket-Verbindungen die für WebSockets reserviert werden.
 Der mögliche Wertebereich ist 0-7. Die Verbindungen werden zwischen den
-normalen Sockets und den Websockets aufgeteilt. Beispiel: Wenn die Socket-Verbindungen auf 3
-gesetzt werden, stehen 3 Websockets und 4 normale Sockets zur Verfügung.
+normalen Sockets und den WebSockets aufgeteilt. Beispiel: Wenn die Socket-Verbindungen auf 3
+gesetzt werden, stehen 3 WebSockets und 4 normale Sockets zur Verfügung.
 
-Der zweite Parameter ist der Port für die Websocket-Verbindungen. Der Port
+Der zweite Parameter ist der Port für die WebSocket-Verbindungen. Der Port
 kann nicht der gleiche sein wie der Port des normalen Sockets.
 
 Die Werte sind im EEPROM gespeichert und werden nur beim Start angewandt.
