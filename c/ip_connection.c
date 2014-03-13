@@ -11,6 +11,9 @@
 	#ifndef _BSD_SOURCE
 		#define _BSD_SOURCE // for usleep from unistd.h
 	#endif
+	#ifndef _GNU_SOURCE
+		#define _GNU_SOURCE // for strnlen from string.h
+	#endif
 #endif
 
 #include <errno.h>
@@ -22,15 +25,25 @@
 
 #ifdef _WIN32
 	#include <winsock2.h>
+	#include <wincrypt.h>
+	#include <process.h>
 #else
+	#include <fcntl.h>
 	#include <unistd.h>
 	#include <sys/types.h>
-	#include <sys/time.h> // gettimeofday
 	#include <sys/socket.h> // connect
 	#include <sys/select.h>
+	#include <sys/stat.h>
 	#include <netinet/tcp.h> // TCP_NO_DELAY
 	#include <netdb.h> // gethostbyname
 	#include <netinet/in.h> // struct sockaddr_in
+#endif
+
+#ifdef _MSC_VER
+	// replace getpid with GetCurrentProcessId
+	#define getpid GetCurrentProcessId
+#else
+	#include <sys/time.h> // gettimeofday
 #endif
 
 #define IPCON_EXPOSE_INTERNALS
@@ -68,6 +81,21 @@ typedef struct {
 	uint8_t enumeration_type;
 } ATTRIBUTE_PACKED EnumerateCallback;
 
+typedef struct {
+	PacketHeader header;
+} ATTRIBUTE_PACKED GetAuthenticationNonce;
+
+typedef struct {
+	PacketHeader header;
+	uint8_t server_nonce[4];
+} ATTRIBUTE_PACKED GetAuthenticationNonceResponse;
+
+typedef struct {
+	PacketHeader header;
+	uint8_t client_nonce[4];
+	uint8_t digest[20];
+} ATTRIBUTE_PACKED Authenticate;
+
 #if defined _MSC_VER || defined __BORLANDC__
 	#pragma pack(pop)
 #endif
@@ -92,7 +120,347 @@ typedef struct {
 	STATIC_ASSERT(sizeof(PacketHeader) == 8, "PacketHeader has invalid size");
 	STATIC_ASSERT(sizeof(Packet) == 80, "Packet has invalid size");
 	STATIC_ASSERT(sizeof(EnumerateCallback) == 34, "EnumerateCallback has invalid size");
+	STATIC_ASSERT(sizeof(GetAuthenticationNonce) == 8, "GetAuthenticationNonce has invalid size");
+	STATIC_ASSERT(sizeof(GetAuthenticationNonceResponse) == 12, "GetAuthenticationNonceResponse has invalid size");
+	STATIC_ASSERT(sizeof(Authenticate) == 32, "Authenticate has invalid size");
 #endif
+
+/*****************************************************************************
+ *
+ *                                 SHA1
+ *
+ *****************************************************************************/
+
+/*
+ * Based on the SHA-1 C implementation by Steve Reid <steve@edmweb.com>
+ * 100% Public Domain
+ *
+ * Test Vectors (from FIPS PUB 180-1)
+ * "abc"
+ *   A9993E36 4706816A BA3E2571 7850C26C 9CD0D89D
+ * "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq"
+ *   84983E44 1C3BD26E BAAE4AA1 F95129E5 E54670F1
+ * A million repetitions of "a"
+ *   34AA973C D4C4DAA4 F61EEB2B DBAD2731 6534016F
+ */
+
+#define SHA1_BLOCK_LENGTH 64
+#define SHA1_DIGEST_LENGTH 20
+
+typedef struct {
+    uint32_t state[5];
+    uint64_t count;
+    uint8_t buffer[SHA1_BLOCK_LENGTH];
+} SHA1;
+
+#define rol(value, bits) (((value) << (bits)) | ((value) >> (32 - (bits))))
+
+// blk0() and blk() perform the initial expand. blk0() deals with host endianess
+#define blk0(i) (block[i] = htonl(block[i]))
+#define blk(i) (block[i&15] = rol(block[(i+13)&15]^block[(i+8)&15] \
+    ^block[(i+2)&15]^block[i&15],1))
+
+// (R0+R1), R2, R3, R4 are the different operations (rounds) used in SHA1
+#define R0(v,w,x,y,z,i) z+=((w&(x^y))^y)+blk0(i)+0x5A827999+rol(v,5);w=rol(w,30);
+#define R1(v,w,x,y,z,i) z+=((w&(x^y))^y)+blk(i)+0x5A827999+rol(v,5);w=rol(w,30);
+#define R2(v,w,x,y,z,i) z+=(w^x^y)+blk(i)+0x6ED9EBA1+rol(v,5);w=rol(w,30);
+#define R3(v,w,x,y,z,i) z+=(((w|x)&y)|(w&x))+blk(i)+0x8F1BBCDC+rol(v,5);w=rol(w,30);
+#define R4(v,w,x,y,z,i) z+=(w^x^y)+blk(i)+0xCA62C1D6+rol(v,5);w=rol(w,30);
+
+// hash a single 512-bit block. this is the core of the algorithm
+static uint32_t sha1_transform(SHA1 *sha1, const uint8_t buffer[SHA1_BLOCK_LENGTH]) {
+	uint32_t a, b, c, d, e;
+	uint32_t block[SHA1_BLOCK_LENGTH / 4];
+
+	memcpy(&block, buffer, SHA1_BLOCK_LENGTH);
+
+	// copy sha1->state[] to working variables
+	a = sha1->state[0];
+	b = sha1->state[1];
+	c = sha1->state[2];
+	d = sha1->state[3];
+	e = sha1->state[4];
+
+	// 4 rounds of 20 operations each (loop unrolled)
+	R0(a,b,c,d,e, 0); R0(e,a,b,c,d, 1); R0(d,e,a,b,c, 2); R0(c,d,e,a,b, 3);
+	R0(b,c,d,e,a, 4); R0(a,b,c,d,e, 5); R0(e,a,b,c,d, 6); R0(d,e,a,b,c, 7);
+	R0(c,d,e,a,b, 8); R0(b,c,d,e,a, 9); R0(a,b,c,d,e,10); R0(e,a,b,c,d,11);
+	R0(d,e,a,b,c,12); R0(c,d,e,a,b,13); R0(b,c,d,e,a,14); R0(a,b,c,d,e,15);
+	R1(e,a,b,c,d,16); R1(d,e,a,b,c,17); R1(c,d,e,a,b,18); R1(b,c,d,e,a,19);
+	R2(a,b,c,d,e,20); R2(e,a,b,c,d,21); R2(d,e,a,b,c,22); R2(c,d,e,a,b,23);
+	R2(b,c,d,e,a,24); R2(a,b,c,d,e,25); R2(e,a,b,c,d,26); R2(d,e,a,b,c,27);
+	R2(c,d,e,a,b,28); R2(b,c,d,e,a,29); R2(a,b,c,d,e,30); R2(e,a,b,c,d,31);
+	R2(d,e,a,b,c,32); R2(c,d,e,a,b,33); R2(b,c,d,e,a,34); R2(a,b,c,d,e,35);
+	R2(e,a,b,c,d,36); R2(d,e,a,b,c,37); R2(c,d,e,a,b,38); R2(b,c,d,e,a,39);
+	R3(a,b,c,d,e,40); R3(e,a,b,c,d,41); R3(d,e,a,b,c,42); R3(c,d,e,a,b,43);
+	R3(b,c,d,e,a,44); R3(a,b,c,d,e,45); R3(e,a,b,c,d,46); R3(d,e,a,b,c,47);
+	R3(c,d,e,a,b,48); R3(b,c,d,e,a,49); R3(a,b,c,d,e,50); R3(e,a,b,c,d,51);
+	R3(d,e,a,b,c,52); R3(c,d,e,a,b,53); R3(b,c,d,e,a,54); R3(a,b,c,d,e,55);
+	R3(e,a,b,c,d,56); R3(d,e,a,b,c,57); R3(c,d,e,a,b,58); R3(b,c,d,e,a,59);
+	R4(a,b,c,d,e,60); R4(e,a,b,c,d,61); R4(d,e,a,b,c,62); R4(c,d,e,a,b,63);
+	R4(b,c,d,e,a,64); R4(a,b,c,d,e,65); R4(e,a,b,c,d,66); R4(d,e,a,b,c,67);
+	R4(c,d,e,a,b,68); R4(b,c,d,e,a,69); R4(a,b,c,d,e,70); R4(e,a,b,c,d,71);
+	R4(d,e,a,b,c,72); R4(c,d,e,a,b,73); R4(b,c,d,e,a,74); R4(a,b,c,d,e,75);
+	R4(e,a,b,c,d,76); R4(d,e,a,b,c,77); R4(c,d,e,a,b,78); R4(b,c,d,e,a,79);
+
+	// add the working variables back into sha1->state[]
+	sha1->state[0] += a;
+	sha1->state[1] += b;
+	sha1->state[2] += c;
+	sha1->state[3] += d;
+	sha1->state[4] += e;
+
+	// wipe variables
+	a = b = c = d = e = 0;
+
+	return a; // return a to avoid dead-store warning from clang static analyzer
+}
+
+static void sha1_init(SHA1 *sha1) {
+	sha1->state[0] = 0x67452301;
+	sha1->state[1] = 0xEFCDAB89;
+	sha1->state[2] = 0x98BADCFE;
+	sha1->state[3] = 0x10325476;
+	sha1->state[4] = 0xC3D2E1F0;
+	sha1->count = 0;
+}
+
+static void sha1_update(SHA1 *sha1, const uint8_t *data, size_t length) {
+	size_t i, j;
+
+	j = (size_t)((sha1->count >> 3) & 63);
+	sha1->count += (length << 3);
+
+	if ((j + length) > 63) {
+		memcpy(&sha1->buffer[j], data, (i = 64 - j));
+		sha1_transform(sha1, sha1->buffer);
+
+		for (; i + 63 < length; i += 64) {
+			sha1_transform(sha1, (uint8_t *)&data[i]);
+		}
+
+		j = 0;
+	} else {
+		i = 0;
+	}
+
+	memcpy(&sha1->buffer[j], &data[i], length - i);
+}
+
+static void sha1_pad(SHA1 *sha1) {
+	uint8_t final_count[8];
+	uint32_t i;
+
+	for (i = 0; i < 8; i++) {
+		// endian independent
+		final_count[i] = (uint8_t)((sha1->count >> ((7 - (i & 7)) * 8)) & 255);
+	}
+
+	sha1_update(sha1, (uint8_t *)"\200", 1);
+
+	while ((sha1->count & 504) != 448) {
+		sha1_update(sha1, (uint8_t *)"\0", 1);
+	}
+
+	sha1_update(sha1, final_count, 8); // should cause a sha1_transform()
+}
+
+static void sha1_final(SHA1 *sha1, uint8_t digest[SHA1_DIGEST_LENGTH]) {
+	uint32_t i;
+
+	sha1_pad(sha1);
+
+	for (i = 0; i < SHA1_DIGEST_LENGTH; i++) {
+		digest[i] = (uint8_t)((sha1->state[i >> 2] >> ((3 - (i & 3)) * 8)) & 255);
+	}
+
+	memset(sha1, 0, sizeof(*sha1));
+}
+
+#undef rol
+#undef blk0
+#undef blk
+#undef R0
+#undef R1
+#undef R2
+#undef R3
+#undef R4
+
+/*****************************************************************************
+ *
+ *                                 Utils
+ *
+ *****************************************************************************/
+
+#ifdef __MINGW32__
+
+static size_t strnlen(const char *s, size_t maxlen) {
+	const char *p = s;
+	size_t n = 0;
+
+	while (*p != '\0' && n < maxlen) {
+		++p;
+		++n;
+	}
+
+	return n;
+}
+
+#endif
+
+#ifdef _MSC_VER
+
+// difference between Unix epoch and January 1, 1601 in 100-nanoseconds
+#define DELTA_EPOCH 116444736000000000ULL
+
+typedef void (WINAPI *GETSYSTEMTIMEPRECISEASFILETIME)(LPFILETIME);
+
+// implement gettimeofday based on GetSystemTime(Precise)AsFileTime
+static int gettimeofday(struct timeval *tv, struct timezone *tz) {
+	GETSYSTEMTIMEPRECISEASFILETIME get_system_time_precise_as_file_time = NULL;
+	FILETIME ft;
+	uint64_t t;
+
+	(void)tz;
+
+	if (tv != NULL) {
+		get_system_time_precise_as_file_time =
+		  (GETSYSTEMTIMEPRECISEASFILETIME)GetProcAddress(GetModuleHandle("kernel32"),
+		                                                 "GetSystemTimePreciseAsFileTime");
+
+		if (get_system_time_precise_as_file_time != NULL) {
+			get_system_time_precise_as_file_time(&ft);
+		} else {
+			GetSystemTimeAsFileTime(&ft);
+		}
+
+		t = ((uint64_t)ft.dwHighDateTime << 32) | (uint64_t)ft.dwLowDateTime;
+		t = (t - DELTA_EPOCH) / 10; // 100-nanoseconds to microseconds
+
+		tv->tv_sec = (long)(t / 1000000UL);
+		tv->tv_usec = (long)(t % 1000000UL);
+	}
+
+	return 0;
+}
+
+#endif
+
+#ifndef _WIN32
+
+static int read_uint32_non_blocking(const char *filename, uint32_t *value) {
+	int fd = open(filename, O_NONBLOCK);
+	int rc;
+
+	if (fd < 0) {
+		return -1;
+	}
+
+	rc = read(fd, value, sizeof(uint32_t));
+
+	close(fd);
+
+	return rc != sizeof(uint32_t) ? -1 : 0;
+}
+
+#endif
+
+// this function is not meant to be called often,
+// this function is meant to provide a good random seed value
+uint32_t get_random_uint32(void) {
+	uint32_t r;
+	struct timeval tv;
+	uint32_t seconds;
+	uint32_t microseconds;
+#ifdef _WIN32
+	HCRYPTPROV hprovider;
+
+	if (!CryptAcquireContext(&hprovider, NULL, NULL, PROV_RSA_FULL,
+	                         CRYPT_VERIFYCONTEXT | CRYPT_SILENT)) {
+		goto fallback;
+	}
+
+	if (!CryptGenRandom(hprovider, sizeof(r), (BYTE *)&r)) {
+		CryptReleaseContext(hprovider, 0);
+
+		goto fallback;
+	}
+
+	CryptReleaseContext(hprovider, 0);
+#else
+	if (read_uint32_non_blocking("/dev/random", &r) < 0) {
+		if (read_uint32_non_blocking("/dev/urandom", &r) < 0) {
+			goto fallback;
+		}
+	}
+#endif
+
+	return r;
+
+fallback:
+	if (gettimeofday(&tv, NULL) < 0) {
+		seconds = (uint32_t)time(NULL);
+		microseconds = 0;
+	} else {
+		seconds = tv.tv_sec;
+		microseconds = tv.tv_usec;
+	}
+
+	return (seconds << 26 | seconds >> 6) + microseconds + getpid(); // overflow is intended
+}
+
+static void hmac_sha1(uint8_t *secret, int secret_length,
+                      uint8_t *data, int data_length,
+                      uint8_t digest[SHA1_DIGEST_LENGTH]) {
+	SHA1 secret_sha1;
+	SHA1 inner_sha1;
+	SHA1 outer_sha1;
+	uint8_t secret_digest[SHA1_DIGEST_LENGTH];
+	uint8_t inner_digest[SHA1_DIGEST_LENGTH];
+	uint8_t outer_digest[SHA1_DIGEST_LENGTH];
+	uint8_t ipad[SHA1_BLOCK_LENGTH];
+	uint8_t opad[SHA1_BLOCK_LENGTH];
+	int i;
+
+	if (secret_length > SHA1_BLOCK_LENGTH) {
+		sha1_init(&secret_sha1);
+		sha1_update(&secret_sha1, secret, secret_length);
+		sha1_final(&secret_sha1, secret_digest);
+
+		secret = secret_digest;
+		secret_length = SHA1_DIGEST_LENGTH;
+	}
+
+	// inner digest
+	for (i = 0; i < secret_length; ++i) {
+		ipad[i] = secret[i] ^ 0x36;
+	}
+
+	for (i = secret_length; i < SHA1_BLOCK_LENGTH; ++i) {
+		ipad[i] = 0x36;
+	}
+
+	sha1_init(&inner_sha1);
+	sha1_update(&inner_sha1, ipad, SHA1_BLOCK_LENGTH);
+	sha1_update(&inner_sha1, data, data_length);
+	sha1_final(&inner_sha1, inner_digest);
+
+	// outer digest
+	for (i = 0; i < secret_length; ++i) {
+		opad[i] = secret[i] ^ 0x5C;
+	}
+
+	for (i = secret_length; i < SHA1_BLOCK_LENGTH; ++i) {
+		opad[i] = 0x5C;
+	}
+
+	sha1_init(&outer_sha1);
+	sha1_update(&outer_sha1, opad, SHA1_BLOCK_LENGTH);
+	sha1_update(&outer_sha1, inner_digest, SHA1_DIGEST_LENGTH);
+	sha1_final(&outer_sha1, outer_digest);
+
+	memcpy(digest, outer_digest, SHA1_DIGEST_LENGTH);
+}
 
 /*****************************************************************************
  *
@@ -989,6 +1357,74 @@ int device_send_request(DevicePrivate *device_p, Packet *request, Packet *respon
 
 /*****************************************************************************
  *
+ *                                 Brick Daemon
+ *
+ *****************************************************************************/
+
+enum {
+	BRICK_DAEMON_FUNCTION_GET_AUTHENTICATION_NONCE = 1,
+	BRICK_DAEMON_FUNCTION_AUTHENTICATE = 2
+};
+
+static void brickd_create(BrickDaemon *brickd, const char *uid, IPConnection *ipcon) {
+	DevicePrivate *device_p;
+
+	device_create(brickd, uid, ipcon->p, 2, 0, 0);
+
+	device_p = brickd->p;
+
+	device_p->response_expected[BRICK_DAEMON_FUNCTION_GET_AUTHENTICATION_NONCE] = DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE;
+	device_p->response_expected[BRICK_DAEMON_FUNCTION_AUTHENTICATE] = DEVICE_RESPONSE_EXPECTED_TRUE;
+}
+
+static void brickd_destroy(BrickDaemon *brickd) {
+	device_destroy(brickd);
+}
+
+static int brickd_get_authentication_nonce(BrickDaemon *brickd, uint8_t ret_server_nonce[4]) {
+	DevicePrivate *device_p = brickd->p;
+	GetAuthenticationNonce request;
+	GetAuthenticationNonceResponse response;
+	int ret;
+
+	ret = packet_header_create(&request.header, sizeof(request), BRICK_DAEMON_FUNCTION_GET_AUTHENTICATION_NONCE, device_p->ipcon_p, device_p);
+
+	if (ret < 0) {
+		return ret;
+	}
+
+	ret = device_send_request(device_p, (Packet *)&request, (Packet *)&response);
+
+	if (ret < 0) {
+		return ret;
+	}
+
+	memcpy(ret_server_nonce, response.server_nonce, 4 * sizeof(uint8_t));
+
+	return ret;
+}
+
+static int brickd_authenticate(BrickDaemon *brickd, uint8_t client_nonce[4], uint8_t digest[20]) {
+	DevicePrivate *device_p = brickd->p;
+	Authenticate request;
+	int ret;
+
+	ret = packet_header_create(&request.header, sizeof(request), BRICK_DAEMON_FUNCTION_AUTHENTICATE, device_p->ipcon_p, device_p);
+
+	if (ret < 0) {
+		return ret;
+	}
+
+	memcpy(request.client_nonce, client_nonce, 4 * sizeof(uint8_t));
+	memcpy(request.digest, digest, 20 * sizeof(uint8_t));
+
+	ret = device_send_request(device_p, (Packet *)&request, NULL);
+
+	return ret;
+}
+
+/*****************************************************************************
+ *
  *                                 IPConnection
  *
  *****************************************************************************/
@@ -1009,6 +1445,7 @@ static void ipcon_dispatch_meta(IPConnectionPrivate *ipcon_p, Meta *meta) {
 	DisconnectedCallbackFunction disconnected_callback_function;
 	void *user_data;
 	bool retry;
+	char local_secret[IPCON_MAX_SECRET_LENGTH];
 
 	if (meta->function_id == IPCON_CALLBACK_CONNECTED) {
 		if (ipcon_p->registered_callbacks[IPCON_CALLBACK_CONNECTED] != NULL) {
@@ -1061,6 +1498,7 @@ static void ipcon_dispatch_meta(IPConnectionPrivate *ipcon_p, Meta *meta) {
 			// block here until reconnect. this is okay, there is no
 			// callback to deliver when there is no connection
 			while (retry) {
+				local_secret[0] = '\0';
 				retry = false;
 
 				mutex_lock(&ipcon_p->socket_mutex);
@@ -1068,6 +1506,8 @@ static void ipcon_dispatch_meta(IPConnectionPrivate *ipcon_p, Meta *meta) {
 				if (ipcon_p->auto_reconnect_allowed && ipcon_p->socket == NULL) {
 					if (ipcon_connect_unlocked(ipcon_p, true) < 0) {
 						retry = true;
+					} else {
+						strncpy(local_secret, ipcon_p->secret, IPCON_MAX_SECRET_LENGTH);
 					}
 				} else {
 					ipcon_p->auto_reconnect_pending = false;
@@ -1079,6 +1519,9 @@ static void ipcon_dispatch_meta(IPConnectionPrivate *ipcon_p, Meta *meta) {
 					// wait a moment to give another thread a chance to
 					// interrupt the auto-reconnect
 					thread_sleep(100);
+				} else if (ipcon_p->auto_reauthenticate && strnlen(local_secret, 1) > 0) {
+					// FIXME: how to handle errors here?
+					ipcon_authenticate(ipcon_p->p, local_secret);
 				}
 			}
 		}
@@ -1526,6 +1969,9 @@ static void ipcon_disconnect_unlocked(IPConnectionPrivate *ipcon_p) {
 	socket_destroy(ipcon_p->socket);
 	free(ipcon_p->socket);
 	ipcon_p->socket = NULL;
+
+	// clear secret
+	memset(ipcon_p->secret, 0, IPCON_MAX_SECRET_LENGTH);
 }
 
 static int ipcon_send_request(IPConnectionPrivate *ipcon_p, Packet *request) {
@@ -1559,6 +2005,7 @@ void ipcon_create(IPConnection *ipcon) {
 
 	ipcon_p = (IPConnectionPrivate *)malloc(sizeof(IPConnectionPrivate));
 	ipcon->p = ipcon_p;
+	ipcon_p->p = ipcon;
 
 #ifdef _WIN32
 	ipcon_p->wsa_startup_done = false;
@@ -1566,6 +2013,10 @@ void ipcon_create(IPConnection *ipcon) {
 
 	ipcon_p->host = NULL;
 	ipcon_p->port = 0;
+
+	memset(ipcon_p->secret, 0, IPCON_MAX_SECRET_LENGTH);
+	ipcon_p->next_authentication_nonce = 0;
+	ipcon_p->auto_reauthenticate = true;
 
 	ipcon_p->timeout = 2500;
 
@@ -1595,12 +2046,16 @@ void ipcon_create(IPConnection *ipcon) {
 	event_create(&ipcon_p->disconnect_probe_event);
 
 	semaphore_create(&ipcon_p->wait);
+
+	brickd_create(&ipcon_p->brickd, "2", ipcon);
 }
 
 void ipcon_destroy(IPConnection *ipcon) {
 	IPConnectionPrivate *ipcon_p = ipcon->p;
 
 	ipcon_disconnect(ipcon); // FIXME: disable disconnected callback before?
+
+	brickd_destroy(&ipcon_p->brickd);
 
 	mutex_destroy(&ipcon_p->sequence_number_mutex);
 
@@ -1648,6 +2103,8 @@ int ipcon_connect(IPConnection *ipcon, const char *host, uint16_t port) {
 
 	ipcon_p->host = strdup(host);
 	ipcon_p->port = port;
+
+	memset(ipcon_p->secret, 0, IPCON_MAX_SECRET_LENGTH);
 
 	ret = ipcon_connect_unlocked(ipcon_p, false);
 
@@ -1704,6 +2161,50 @@ int ipcon_disconnect(IPConnection *ipcon) {
 	return E_OK;
 }
 
+int ipcon_authenticate(IPConnection *ipcon, const char secret[64]) {
+	IPConnectionPrivate *ipcon_p = ipcon->p;
+	int ret;
+	uint32_t nonces[2]; // server, client
+	uint8_t digest[SHA1_DIGEST_LENGTH];
+
+	mutex_lock(&ipcon_p->sequence_number_mutex);
+
+	if (ipcon_p->next_authentication_nonce == 0) {
+		ipcon_p->next_authentication_nonce = get_random_uint32();
+	}
+
+	mutex_unlock(&ipcon_p->sequence_number_mutex);
+
+	ret = brickd_get_authentication_nonce(&ipcon_p->brickd, (uint8_t *)nonces);
+
+	if (ret < 0) {
+		return ret;
+	}
+
+	mutex_lock(&ipcon_p->sequence_number_mutex);
+
+	nonces[1] = ipcon_p->next_authentication_nonce++;
+
+	mutex_unlock(&ipcon_p->sequence_number_mutex);
+
+	hmac_sha1((uint8_t *)secret, strnlen(secret, IPCON_MAX_SECRET_LENGTH),
+	          (uint8_t *)nonces, sizeof(nonces), digest);
+
+	ret = brickd_authenticate(&ipcon_p->brickd, (uint8_t *)&nonces[1], digest);
+
+	if (ret < 0) {
+		return ret;
+	}
+
+	mutex_lock(&ipcon_p->socket_mutex);
+
+	strncpy(ipcon_p->secret, secret, IPCON_MAX_SECRET_LENGTH);
+
+	mutex_unlock(&ipcon_p->socket_mutex);
+
+	return E_OK;
+}
+
 int ipcon_get_connection_state(IPConnection *ipcon) {
 	IPConnectionPrivate *ipcon_p = ipcon->p;
 
@@ -1729,6 +2230,14 @@ void ipcon_set_auto_reconnect(IPConnection *ipcon, bool auto_reconnect) {
 
 bool ipcon_get_auto_reconnect(IPConnection *ipcon) {
 	return ipcon->p->auto_reconnect;
+}
+
+void ipcon_set_auto_reauthenticate(IPConnection *ipcon, bool auto_reauthenticate) {
+	ipcon->p->auto_reauthenticate = auto_reauthenticate;
+}
+
+bool ipcon_get_auto_reauthenticate(IPConnection *ipcon) {
+	return ipcon->p->auto_reauthenticate;
 }
 
 void ipcon_set_timeout(IPConnection *ipcon, uint32_t timeout) { // in msec

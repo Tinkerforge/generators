@@ -31,7 +31,7 @@ On Windows Win32 is used for threading and WinSock2 for the network connection.
 Under MinGW we can compile the example as following (the library linking must
 come after the source)::
 
- gcc -o example_configuration.exe brick_stepper.c ip_connection.c example_configuration.c -lws2_32
+ gcc -o example_configuration.exe brick_stepper.c ip_connection.c example_configuration.c -lws2_32 -ladvapi32
 
 The simplest way to use the bindings in a C++ project is to rename the required
 source files from *.c to *.cpp. Then the compiler will treat the source code as
@@ -58,13 +58,13 @@ Now a new project can be created in Visual Studio by clicking:
 * Choose "Console Application"
 * Click Finish
 
-Then ws2_32.lib (WinSock2) has to included by clicking:
+Then ws2_32.lib (WinSock2) and advapi32.lib have to included by clicking:
 
 * Project
 * Properties
 * Linker
 * Input, option "Additional Dependencies"
-* Add "ws2_32.lib;"
+* Add "ws2_32.lib;advapi32.lib;"
 
 Older version of Visual Studio don't come with stdint.h. A compatible version
 can be found at http://msinttypes.googlecode.com/svn/trunk/stdint.h. If necessary
@@ -74,7 +74,7 @@ That's it, we are ready to go!
 
 The Visual Studio compiler can also be used from the command line:
 
- cl.exe /I. brick_stepper.cpp ip_connection.cpp example_configuration.cpp /link /out:example_configuration.exe ws2_32.lib
+ cl.exe /I. brick_stepper.cpp ip_connection.cpp example_configuration.cpp /link /out:example_configuration.exe ws2_32.lib advapi32.lib
 
 Documentation for the API can be found at
 

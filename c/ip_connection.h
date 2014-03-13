@@ -347,17 +347,29 @@ struct _IPConnection {
 #ifdef IPCON_EXPOSE_INTERNALS
 
 #define IPCON_NUM_CALLBACK_IDS 256
+#define IPCON_MAX_SECRET_LENGTH 64
+
+/**
+ * \internal
+ */
+typedef Device BrickDaemon;
 
 /**
  * \internal
  */
 struct _IPConnectionPrivate {
+	IPConnection *p;
+
 #ifdef _WIN32
 	bool wsa_startup_done; // protected by socket_mutex
 #endif
 
 	char *host;
 	uint16_t port;
+
+	char secret[IPCON_MAX_SECRET_LENGTH]; // protected by socket_mutex
+	uint32_t next_authentication_nonce; // protected by sequence_number_mutex
+	bool auto_reauthenticate;
 
 	uint32_t timeout; // in msec
 
@@ -387,6 +399,8 @@ struct _IPConnectionPrivate {
 	Event disconnect_probe_event;
 
 	Semaphore wait;
+
+	BrickDaemon brickd;
 };
 
 #endif // IPCON_EXPOSE_INTERNALS
@@ -433,6 +447,11 @@ int ipcon_disconnect(IPConnection *ipcon);
 
 /**
  * \ingroup IPConnection
+ */
+int ipcon_authenticate(IPConnection *ipcon, const char secret[64]);
+
+/**
+ * \ingroup IPConnection
  *
  * Can return the following states:
  *
@@ -461,6 +480,24 @@ void ipcon_set_auto_reconnect(IPConnection *ipcon, bool auto_reconnect);
  * Returns *true* if auto-reconnect is enabled, *false* otherwise.
  */
 bool ipcon_get_auto_reconnect(IPConnection *ipcon);
+
+/**
+ * \ingroup IPConnection
+ *
+ * Enables or disables auto-reauthenticate. If auto-reauthenticate is enabled,
+ * the IP Connection will try to reauthenticate with the previously given
+ * secret after an auto-reconnect.
+ *
+ * Default value is *true*.
+ */
+void ipcon_set_auto_reauthenticate(IPConnection *ipcon, bool auto_reauthenticate);
+
+/**
+ * \ingroup IPConnection
+ *
+ * Returns *true* if auto-reauthenticate is enabled, *false* otherwise.
+ */
+bool ipcon_get_auto_reauthenticate(IPConnection *ipcon);
 
 /**
  * \ingroup IPConnection
