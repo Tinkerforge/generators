@@ -320,7 +320,7 @@ Aktiviert den :func:`BeatStateChanged` Callback.
 
 com['packets'].append({
 'type': 'function',
-'name': ('DisableBeatChangedCallback', 'disable_beat_changed_callback'),
+'name': ('DisableBeatStateChangedCallback', 'disable_beat_state_changed_callback'),
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -337,7 +337,7 @@ Deaktiviert den :func:`BeatStateChanged` Callback.
 
 com['packets'].append({
 'type': 'function',
-'name': ('IsBeatChangedCallbackEnabled', 'is_beat_changed_callback_enabled'),
+'name': ('IsBeatStateChangedCallbackEnabled', 'is_beat_state_changed_callback_enabled'),
 'elements': [('enabled', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
