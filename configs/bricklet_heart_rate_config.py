@@ -277,7 +277,7 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 com['packets'].append({
 'type': 'callback',
 'name': ('BeatStateChanged', 'beat_state_changed'), 
-'elements': [('state', 'uint8', 1, 'out', ('HeartBeat', 'heart_beat', [('Falling', 'falling', 0),
+'elements': [('state', 'uint8', 1, 'out', ('BeatState', 'beat_state', [('Falling', 'falling', 0),
                                                                        ('Rising', 'rising', 1)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
