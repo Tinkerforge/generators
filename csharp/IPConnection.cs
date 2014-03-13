@@ -15,6 +15,7 @@ using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Text;
+using System.Security.Cryptography;
 
 [assembly: CLSCompliant(true)]
 namespace Tinkerforge
@@ -68,8 +69,16 @@ namespace Tinkerforge
 		internal bool autoReconnectPending = false;
 		internal bool autoReconnect = true;
 
+		private static RNGCryptoServiceProvider randomGenerator = null; // protected by randomGeneratorLock
+		private static object randomGeneratorLock = new object();
+
+		internal BrickDaemon brickd = null;
+
 		string host;
 		int port;
+		string secret = null; // protected by socketLock
+		uint nextAuthenticationNonce = 0; // protected by sequenceNumberLock
+		bool autoReauthenticate = true;
 		Socket socket = null;
 		internal object socketLock = new object();
 		NetworkStream socketStream = null; // protected by socketLock
@@ -127,6 +136,7 @@ namespace Tinkerforge
 		/// </summary>
 		public IPConnection()
 		{
+			brickd = new BrickDaemon("2", this);
 		}
 
 		/// <summary>
@@ -152,6 +162,7 @@ namespace Tinkerforge
 
 				this.host = host;
 				this.port = port;
+				secret = null;
 
 				ConnectUnlocked(false);
 			}
@@ -300,6 +311,66 @@ namespace Tinkerforge
 				receiveThread.Join();
 				receiveThread = null;
 			}
+
+			secret = null;
+		}
+
+		public void Authenticate(string secret)
+		{
+			lock (sequenceNumberLock)
+			{
+				if (nextAuthenticationNonce == 0)
+				{
+					lock (randomGeneratorLock)
+					{
+						if (randomGenerator == null)
+						{
+							randomGenerator = new RNGCryptoServiceProvider();
+						}
+
+						try
+						{
+							byte[] randomNumber = new byte[4];
+
+							randomGenerator.GetBytes(randomNumber);
+
+							nextAuthenticationNonce = (uint)LEConverter.IntFrom(0, randomNumber);
+						}
+						catch (CryptographicException)
+						{
+							ulong milliseconds = (ulong)DateTime.Now.Ticks / (ulong)TimeSpan.TicksPerMillisecond;
+							ulong seconds = milliseconds / 1000;
+							ulong remainder = milliseconds % 1000;
+							ulong pid = (ulong)System.Diagnostics.Process.GetCurrentProcess().Id;
+
+							nextAuthenticationNonce = (uint)((seconds << 26 | seconds >> 6) + remainder + pid); // overflow is intended
+						}
+					}
+				}
+			}
+
+			byte[] serverNonce = brickd.GetAuthenticationNonce();
+			byte[] clientNonce = new byte[4];
+
+			lock (sequenceNumberLock)
+			{
+				LEConverter.To((int)nextAuthenticationNonce++, 0, clientNonce);
+			}
+
+			byte[] data = new byte[serverNonce.Length + clientNonce.Length];
+
+			System.Buffer.BlockCopy(serverNonce, 0, data, 0, serverNonce.Length);
+			System.Buffer.BlockCopy(clientNonce, 0, data, serverNonce.Length, clientNonce.Length);
+
+			HMACSHA1 hmac = new HMACSHA1(Encoding.ASCII.GetBytes(secret));
+			byte[] digest = hmac.ComputeHash(data);
+
+			brickd.Authenticate(clientNonce, digest);
+
+			lock (socketLock)
+			{
+				this.secret = secret;
+			}
 		}
 
 		/// <summary>
@@ -349,6 +420,26 @@ namespace Tinkerforge
 		public bool GetAutoReconnect()
 		{
 			return autoReconnect;
+		}
+
+		/// <summary>
+		///  Enables or disables auto-reauthenticate. If auto-reauthenticate is enabled,
+		///  the IP Connection will try to reauthenticate with the previously given
+		///  secret after an auto-reconnect.
+		///
+		///  Default value is *true*.
+		/// </summary>
+		public void SetAutoReauthenticate(bool autoReauthenticate)
+		{
+			this.autoReauthenticate = autoReauthenticate;
+		}
+
+		/// <summary>
+		///  Returns *true* if auto-reauthenticate is enabled, *false* otherwise.
+		/// </summary>
+		public bool GetAutoReauthenticate()
+		{
+			return autoReauthenticate;
 		}
 
 		/// <summary>
@@ -579,10 +670,15 @@ namespace Tinkerforge
 					    autoReconnect && autoReconnectAllowed)
 					{
 						autoReconnectPending = true;
+
 						bool retry = true;
+						string localSecret = null;
+
 						while (retry)
 						{
+							localSecret = null;
 							retry = false;
+
 							lock (socketLock)
 							{
 								if (autoReconnectAllowed && socket == null)
@@ -590,6 +686,7 @@ namespace Tinkerforge
 									try
 									{
 										ConnectUnlocked(true);
+										localSecret = secret;
 									}
 									catch (Exception)
 									{
@@ -605,6 +702,17 @@ namespace Tinkerforge
 							if (retry)
 							{
 								Thread.Sleep(100);
+							}
+							else if (autoReauthenticate && localSecret != null)
+							{
+								try
+								{
+									Authenticate(localSecret);
+								}
+								catch (Exception)
+								{
+									// FIXME: how to handle errors here?
+								}
 							}
 						}
 					}
@@ -1186,6 +1294,50 @@ namespace Tinkerforge
 			}
 
 			return response;
+		}
+	}
+
+	internal class BrickDaemon : Device
+	{
+		public const byte FUNCTION_GET_AUTHENTICATION_NONCE = 1;
+		public const byte FUNCTION_AUTHENTICATE = 2;
+
+		public BrickDaemon(string uid, IPConnection ipcon) : base(uid, ipcon)
+		{
+			this.apiVersion[0] = 2;
+			this.apiVersion[1] = 0;
+			this.apiVersion[2] = 0;
+
+			responseExpected[FUNCTION_GET_AUTHENTICATION_NONCE] = ResponseExpectedFlag.ALWAYS_TRUE;
+			responseExpected[FUNCTION_AUTHENTICATE] = ResponseExpectedFlag.TRUE;
+		}
+
+		public byte[] GetAuthenticationNonce()
+		{
+			byte[] request = CreateRequestPacket(8, FUNCTION_GET_AUTHENTICATION_NONCE);
+			byte[] response = SendRequest(request);
+
+			return LEConverter.ByteArrayFrom(8, response, 4);
+		}
+
+		public void Authenticate(byte[] clientNonce, byte[] digest)
+		{
+			byte[] request = CreateRequestPacket(32, FUNCTION_AUTHENTICATE);
+
+			LEConverter.To(clientNonce, 8, 4, request);
+			LEConverter.To(digest, 12, 20, request);
+
+			SendRequest(request);
+		}
+
+		public override void GetIdentity(out string uid, out string connectedUid, out char position, out byte[] hardwareVersion, out byte[] firmwareVersion, out int deviceIdentifier)
+		{
+			uid = "";
+			connectedUid = "";
+			position = '0';
+			hardwareVersion = new byte[0];
+			firmwareVersion = new byte[0];
+			deviceIdentifier = 0;
 		}
 	}
 
