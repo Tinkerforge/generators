@@ -447,6 +447,8 @@ int ipcon_disconnect(IPConnection *ipcon);
 
 /**
  * \ingroup IPConnection
+ *
+ * FIXME
  */
 int ipcon_authenticate(IPConnection *ipcon, const char secret[64]);
 

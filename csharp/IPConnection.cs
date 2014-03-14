@@ -79,7 +79,7 @@ namespace Tinkerforge
 		string secret = null; // protected by socketLock
 		uint nextAuthenticationNonce = 0; // protected by sequenceNumberLock
 		bool autoReauthenticate = true;
-		Socket socket = null;
+		Socket socket = null; // protected by socketLock
 		internal object socketLock = new object();
 		NetworkStream socketStream = null; // protected by socketLock
 		internal object socketStreamSendLock = new object(); // used to synchronize send access to socketStream
@@ -315,6 +315,9 @@ namespace Tinkerforge
 			secret = null;
 		}
 
+		/// <summary>
+		///  FIXME
+		/// </summary>
 		public void Authenticate(string secret)
 		{
 			lock (sequenceNumberLock)

@@ -401,21 +401,22 @@ public class IPConnection {
 
 	Object socketMutex = new Object();
 	Object socketSendMutex = new Object();
-	private Object sequenceNumberMutex = new Object();
 
 	private String host;
 	private int port;
+	String secret; // protected by socketMutex
 
 	private final static int SEQUENCE_NUMBER_POS = 4;
-	private int nextSequenceNumber = 0;
+	private int nextSequenceNumber = 0; // protected by sequenceNumberMutex
+	private Object sequenceNumberMutex = new Object();
 
 	boolean receiveFlag = false;
 
 	boolean autoReconnect = true;
 	boolean autoReconnectAllowed = false;
 	boolean autoReconnectPending = false;
-	Socket socket = null;
-	long socketID = 0;
+	Socket socket = null; // protected by socketMutex
+	long socketID = 0; // protected by socketMutex
 	OutputStream out = null;
 	InputStream in = null;
 	List<EnumerateListener> listenerEnumerate = new CopyOnWriteArrayList<EnumerateListener>();
