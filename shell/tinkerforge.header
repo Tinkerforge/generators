@@ -57,6 +57,7 @@ class Context:
 
 	host = None
 	port = None
+	secret = None
 	item_separator = None
 	group_separator = None
 	no_symbolic_input = None
@@ -73,6 +74,7 @@ class Context:
 
 		ctx.host = self.host
 		ctx.port = self.port
+		ctx.secret = self.secret
 		ctx.item_separator = self.item_separator
 		ctx.group_separator = self.group_separator
 		ctx.no_symbolic_input = self.no_symbolic_input
@@ -217,6 +219,9 @@ def device_send_request(ctx, device_class, function_id, request_data, format_in,
 		ipcon.set_timeout(ctx.timeout / 1000.0)
 		ipcon.connect(ctx.host, ctx.port)
 
+		if len(ctx.secret) > 0:
+			ipcon.authenticate(ctx.secret)
+
 		device = device_class(ctx.uid, ipcon)
 
 		if expect_response:
@@ -267,6 +272,9 @@ def device_callback(ctx, device_class, function_id, command, names):
 	try:
 		ipcon = IPConnection()
 		ipcon.connect(ctx.host, ctx.port)
+
+		if len(ctx.secret) > 0:
+			ipcon.authenticate(ctx.secret)
 
 		device = device_class(ctx.uid, ipcon)
 

@@ -110,6 +110,9 @@ def command_enumerate(ctx, argv):
 		ipcon = IPConnection()
 		ipcon.connect(ctx.host, ctx.port)
 
+		if len(ctx.secret) > 0:
+			ipcon.authenticate(ctx.secret)
+
 		if args.duration == 0:
 			exit_flag = [False]
 
@@ -340,6 +343,7 @@ def parse(ctx, argv):
 	else:
 		setattr(namespace, 'port', port_default)
 
+	parser.add_argument('--secret', default='', type=str, help='secret for authentication', metavar='<secret>')
 	parser.add_argument('--item-separator', default=item_separator_default, type=str, help='separator for array items, default: {0}{1}'.format(item_separator_default, item_separator_help_suffix), metavar='<item-separator>')
 
 	if not listen_mode:
@@ -357,6 +361,7 @@ def parse(ctx, argv):
 
 	ctx.host = args.host
 	ctx.port = args.port
+	ctx.secret = args.secret
 
 	ctx.item_separator = args.item_separator
 	ctx.item_separator = ctx.item_separator.replace('\\t', '\t')
