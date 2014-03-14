@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
@@ -19,6 +19,10 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.security.SecureRandom;
+import java.security.SignatureException;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 class ReceiveThread extends Thread {
 	IPConnection ipcon = null;
@@ -182,14 +186,17 @@ class CallbackThread extends Thread {
 				   ipcon.autoReconnect && ipcon.autoReconnectAllowed) {
 					ipcon.autoReconnectPending = true;
 					boolean retry = true;
+					String localSecret = null;
 
 					while(retry) {
 						retry = false;
+						localSecret = null;
 
 						synchronized(ipcon.socketMutex) {
 							if(ipcon.autoReconnectAllowed && ipcon.socket == null) {
 								try {
 									ipcon.connectUnlocked(true);
+									localSecret = ipcon.secret;
 								} catch(Exception e) {
 									retry = true;
 								}
@@ -203,6 +210,12 @@ class CallbackThread extends Thread {
 								Thread.sleep(100);
 							} catch(InterruptedException e) {
 								e.printStackTrace();
+							}
+						} else if (ipcon.autoReauthenticate && localSecret != null) {
+							try {
+								ipcon.authenticate(localSecret);
+							} catch(Exception e) {
+								// FIXME: how to handle errors here?
 							}
 						}
 					}
@@ -360,6 +373,53 @@ class DisconnectProbeThread extends Thread {
 	}
 }
 
+class BrickDaemon extends Device {
+	public final static byte FUNCTION_GET_AUTHENTICATION_NONCE = (byte)1;
+	public final static byte FUNCTION_AUTHENTICATE = (byte)2;
+
+	public BrickDaemon(String uid, IPConnection ipcon) {
+		super(uid, ipcon);
+
+		apiVersion[0] = 2;
+		apiVersion[1] = 0;
+		apiVersion[2] = 0;
+
+		responseExpected[IPConnection.unsignedByte(FUNCTION_GET_AUTHENTICATION_NONCE)] = RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE;
+		responseExpected[IPConnection.unsignedByte(FUNCTION_AUTHENTICATE)] = RESPONSE_EXPECTED_FLAG_TRUE;
+	}
+
+	public byte[] getAuthenticationNonce() throws TimeoutException, NotConnectedException {
+		ByteBuffer bb = ipcon.createRequestPacket((byte)8, FUNCTION_GET_AUTHENTICATION_NONCE, this);
+
+		byte[] response = sendRequest(bb.array());
+
+		bb = ByteBuffer.wrap(response, 8, response.length - 8);
+		bb.order(ByteOrder.LITTLE_ENDIAN);
+
+		byte[] server_nonce = new byte[4];
+
+		for (int i = 0; i < 4; i++) {
+			server_nonce[i] = bb.get();
+		}
+
+		return server_nonce;
+	}
+
+	public void authenticate(byte[] client_nonce, byte[] digest) throws TimeoutException, NotConnectedException {
+		ByteBuffer bb = ipcon.createRequestPacket((byte)32, FUNCTION_AUTHENTICATE, this);
+
+		for (int i = 0; i < 4; i++) {
+			bb.put(client_nonce[i]);
+		}
+
+		for (int i = 0; i < 20; i++) {
+			bb.put(digest[i]);
+		}
+
+		sendRequest(bb.array());
+	}
+}
+
 public class IPConnection {
 	private final static String BASE58 = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
 
@@ -394,6 +454,8 @@ public class IPConnection {
 	final static int QUEUE_META = 1;
 	final static int QUEUE_PACKET = 2;
 
+	private BrickDaemon brickd = null;
+
 	int responseTimeout = 2500;
 
 	Hashtable<Long, Device> devices = new Hashtable<Long, Device>();
@@ -409,6 +471,9 @@ public class IPConnection {
 	private final static int SEQUENCE_NUMBER_POS = 4;
 	private int nextSequenceNumber = 0; // protected by sequenceNumberMutex
 	private Object sequenceNumberMutex = new Object();
+
+	private long nextAuthenticationNonce = 0; // protected by sequenceNumberMutex
+	boolean autoReauthenticate = true;
 
 	boolean receiveFlag = false;
 
@@ -463,6 +528,7 @@ public class IPConnection {
 	 * devices. It is also required for the constructor of Bricks and Bricklets.
 	 */
 	public IPConnection() {
+		brickd = new BrickDaemon("2", this);
 	}
 
 	/**
@@ -486,6 +552,7 @@ public class IPConnection {
 
 			this.host = host;
 			this.port = port;
+			secret = null;
 
 			connectUnlocked(false);
 		}
@@ -624,6 +691,60 @@ public class IPConnection {
 
 			receiveThread = null;
 		}
+
+		// clear secret
+		secret = null;
+	}
+
+	/**
+	 * FIXME
+	 */
+	public void authenticate(String secret) throws TimeoutException, NotConnectedException, SignatureException {
+		synchronized(sequenceNumberMutex) {
+			if (nextAuthenticationNonce == 0) {
+				byte[] seed = new SecureRandom().generateSeed(4);
+				ByteBuffer bb = ByteBuffer.wrap(seed, 0, 4);
+
+				bb.order(ByteOrder.LITTLE_ENDIAN);
+				nextAuthenticationNonce = bb.getInt();
+			}
+		}
+
+		byte[] serverNonce = brickd.getAuthenticationNonce();
+		byte[] clientNonce;
+
+		synchronized(sequenceNumberMutex) {
+			ByteBuffer bb = ByteBuffer.allocate(4);
+
+			bb.order(ByteOrder.LITTLE_ENDIAN);
+			bb.putInt((int)nextAuthenticationNonce);
+
+			clientNonce = bb.array();
+			nextAuthenticationNonce = (nextAuthenticationNonce + 1) % ((long)1 << 32);
+		}
+
+		byte[] data = new byte[serverNonce.length + clientNonce.length];
+
+		System.arraycopy(serverNonce, 0, data, 0, serverNonce.length);
+		System.arraycopy(clientNonce, 0, data, serverNonce.length, clientNonce.length);
+
+		byte[] digest;
+
+		try {
+			Mac mac = Mac.getInstance("HmacSHA1");
+
+			mac.init(new SecretKeySpec(secret.getBytes(), "HmacSHA1"));
+
+			digest = mac.doFinal(data);
+		} catch (Exception e) {
+			throw new SignatureException("Could not generate HMAC-SHA1: " + e.getMessage());
+		}
+
+		brickd.authenticate(clientNonce, digest);
+
+		synchronized(socketMutex) {
+			this.secret = secret;
+		}
 	}
 
 	/**
@@ -667,6 +788,24 @@ public class IPConnection {
 	 */
 	public boolean getAutoReconnect() {
 		return autoReconnect;
+	}
+
+	/**
+	 * Enables or disables auto-reauthenticate. If auto-reauthenticate is enabled,
+	 * the IP Connection will try to reauthenticate with the previously given
+	 * secret after an auto-reconnect.
+	 *
+	 * Default value is *true*.
+	 */
+	public void setAutoReauthenticate(boolean autoReauthenticate) {
+		this.autoReauthenticate = autoReauthenticate;
+	}
+
+	/**
+	 * Returns *true* if auto-reauthenticate is enabled, *false* otherwise.
+	 */
+	public boolean getAutoReauthenticate() {
+		return autoReauthenticate;
 	}
 
 	/**
