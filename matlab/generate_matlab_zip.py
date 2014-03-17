@@ -88,6 +88,7 @@ class MATLABZipGenerator(common.Generator):
         with common.ChangedDirectory('/tmp/generator'):
             args = ['/usr/bin/javac ' +
                     '-Xlint ' +
+                    '-target 1.5 ' +
                     '/tmp/generator/jar/source/com/tinkerforge/*.java']
             if subprocess.call(args, shell=True) != 0:
                 raise Exception("Command '{0}' failed".format(' '.join(args)))
