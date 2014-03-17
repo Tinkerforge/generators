@@ -62,6 +62,63 @@ public class {0} extends Device {{
                                 self.get_description(),
                                 self.get_device_identifier())
 
+    def get_matlab_callback_data_objects(self):
+        objs = ''
+        obj = """
+\tpublic class {0}CallbackData extends java.util.EventObject {{
+\t\tprivate static final long serialVersionUID = 1L;
+
+{1}
+
+\t\tpublic {0}CallbackData(Object device{3}) {{
+\t\t\tsuper(device);
+
+{4}
+\t\t}}
+
+\t\tpublic String toString() {{
+\t\t\treturn "[" + {2} "]";
+\t\t}}
+\t}}
+"""
+        param = '\t\tpublic {0}{1} {2}{3};'
+        for packet in self.get_packets('callback'):
+            if packet.has_prototype_in_device():
+                continue
+
+            name = packet.get_java_object_name()
+            params = []
+            tostr = []
+            assignments = []
+            for element in packet.get_elements():
+                typ = element.get_java_type()
+                ele_name = element.get_headless_camel_case_name()
+                if element.get_cardinality() > 1 and element.get_type() != 'string':
+                    arr = '[]'
+                    new = ' = new {0}[{1}]'.format(typ, element.get_cardinality())
+                    to = '"{0} = " + Arrays.toString({0}) +'.format(ele_name)
+                else:
+                    arr = ''
+                    new = ''
+                    to = '"{0} = " + {0} +'.format(ele_name)
+
+                tostr.append(to)
+                params.append(param.format(typ, arr, ele_name, new))
+
+                assignments.append('\t\t\tthis.{0} = {0};'.format(ele_name));
+
+            signature_params = packet.get_java_parameter_list()
+            if len(signature_params) > 0:
+                signature_params = ', ' + signature_params
+
+            objs += obj.format(name,
+                               '\n'.join(params),
+                               ' ", " + '.join(tostr),
+                               signature_params,
+                               '\n'.join(assignments))
+
+        return objs
+
     def get_java_return_objects(self):
         objs = ''
         obj = """
@@ -118,7 +175,12 @@ public class {0} extends Device {{
         for packet in self.get_packets('callback'):
             name = packet.get_camel_case_name()
             name_lower = packet.get_headless_camel_case_name()
-            parameter = packet.get_java_parameter_list()
+
+            if self.get_generator().is_matlab():
+                parameter = name + 'CallbackData data'
+            else:
+                parameter = packet.get_java_parameter_list()
+
             doc = packet.get_java_formatted_doc()
             cbs += cb.format(name, name_lower, parameter, doc)
         return cbs
@@ -147,8 +209,8 @@ public class {0} extends Device {{
     def get_java_callback_listener_definitions(self):
         cbs = ''
         cb = """
-\t\tcallbacks[CALLBACK_{0}] = new CallbackListener() {{
-\t\t\tpublic void callback(byte[] data) {{{1}
+\t\tcallbacks[CALLBACK_{0}] = new IPConnection.DeviceCallbackListener() {{
+\t\t\tpublic void callback({5}byte[] data) {{{1}
 \t\t\t\tfor({2}Listener listener: listener{2}) {{
 \t\t\t\t\tlistener.{3}({4});
 \t\t\t\t}}
@@ -179,7 +241,15 @@ public class {0} extends Device {{
                                      bbgets,
                                      bbret)
 
-            cbs += cb.format(typ, cbdata, name, name_lower, parameter)
+            device_param = ''
+
+            if self.get_generator().is_matlab():
+                if len(parameter) > 0:
+                    parameter = ', ' + parameter
+                parameter = 'new {0}CallbackData(device{1})'.format(name, parameter)
+                device_param = 'Device device, '
+
+            cbs += cb.format(typ, cbdata, name, name_lower, parameter, device_param)
         return cbs + cbs_end
 
     def get_java_add_listener(self):
@@ -369,6 +439,10 @@ public class {0} extends Device {{
         source += self.get_java_function_id_definitions()
         source += self.get_java_constants()
         source += self.get_java_listener_lists()
+
+        if self.get_generator().is_matlab():
+            source += self.get_matlab_callback_data_objects()
+
         source += self.get_java_return_objects()
         source += self.get_java_listener_definitions()
         source += self.get_java_constructor()
@@ -422,7 +496,7 @@ class JavaBindingsPacket(java_common.JavaPacket):
                 name_right = link_c.format(cls, name)
             else:
                 name = other_packet.get_headless_camel_case_name()
-                name_right = link.format(cls, name, other_packet.get_java_parameter_list(True))
+                name_right = link.format(cls, name, other_packet.get_java_parameter_list(just_types=True))
 
             text = text.replace(name_false, name_right)
 
@@ -532,6 +606,9 @@ class JavaBindingsGenerator(common.BindingsGenerator):
 
         if device.is_released():
             self.released_files.append(filename)
+
+    def is_matlab(self):
+        return False
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', JavaBindingsGenerator)

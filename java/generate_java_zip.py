@@ -68,9 +68,11 @@ class JavaZipGenerator(common.Generator):
         for filename in released_files:
             shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/jar/source/com/tinkerforge')
 
+        shutil.copy(os.path.join(root, 'BrickDaemon.java'), '/tmp/generator/jar/source/com/tinkerforge')
         shutil.copy(os.path.join(root, 'Device.java'), '/tmp/generator/jar/source/com/tinkerforge')
         shutil.copy(os.path.join(root, 'DeviceListener.java'), '/tmp/generator/jar/source/com/tinkerforge')
         shutil.copy(os.path.join(root, 'IPConnection.java'), '/tmp/generator/jar/source/com/tinkerforge')
+        shutil.copy(os.path.join(root, 'IPConnectionBase.java'), '/tmp/generator/jar/source/com/tinkerforge')
         shutil.copy(os.path.join(root, 'TinkerforgeException.java'), '/tmp/generator/jar/source/com/tinkerforge')
         shutil.copy(os.path.join(root, 'TimeoutException.java'), '/tmp/generator/jar/source/com/tinkerforge')
         shutil.copy(os.path.join(root, 'AlreadyConnectedException.java'), '/tmp/generator/jar/source/com/tinkerforge')

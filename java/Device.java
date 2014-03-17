@@ -22,7 +22,7 @@ public abstract class Device {
 	private Object requestMutex = new Object();
 	LinkedBlockingQueue<byte[]> responseQueue = new LinkedBlockingQueue<byte[]>();
 	IPConnection ipcon = null;
-	CallbackListener[] callbacks = new CallbackListener[256];
+	IPConnection.DeviceCallbackListener[] callbacks = new IPConnection.DeviceCallbackListener[256];
 
 	final static byte RESPONSE_EXPECTED_FLAG_INVALID_FUNCTION_ID = 0;
 	final static byte RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE = 1;
@@ -44,10 +44,6 @@ public abstract class Device {
 			       "firmwareVersion = " + Arrays.toString(firmwareVersion) + ", " +
 			       "deviceIdentifier = " + deviceIdentifier + "]";
 		}
-	}
-
-	interface CallbackListener {
-		public void callback(byte data[]);
 	}
 
 	/**
@@ -81,9 +77,7 @@ public abstract class Device {
 		ipcon.devices.put(this.uid, this); // FIXME: use weakref here
 	}
 
-	public Identity getIdentity() throws TimeoutException, NotConnectedException {
-		return null;
-	}
+	public abstract Identity getIdentity() throws TimeoutException, NotConnectedException;
 
 	/**
 	 * Returns the API version (major, minor, revision) of the bindings for
