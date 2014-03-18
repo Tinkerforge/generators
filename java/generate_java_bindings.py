@@ -599,8 +599,14 @@ class JavaBindingsGenerator(common.BindingsGenerator):
 
     def generate(self, device):
         filename = '{0}.java'.format(device.get_java_class_name())
+        suffix = ''
 
-        java = open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'wb')
+        if self.is_matlab():
+            suffix = '_matlab'
+        elif self.is_octave():
+            suffix = '_octave'
+
+        java = open(os.path.join(self.get_bindings_root_directory(), 'bindings' + suffix, filename), 'wb')
         java.write(device.get_java_source())
         java.close()
 
@@ -608,6 +614,9 @@ class JavaBindingsGenerator(common.BindingsGenerator):
             self.released_files.append(filename)
 
     def is_matlab(self):
+        return False
+
+    def is_octave(self):
         return False
 
 def generate(bindings_root_directory):

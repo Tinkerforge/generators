@@ -32,6 +32,7 @@ from java.generate_java_bindings import JavaBindingsGenerator
 
 class MATLABBindingsGenerator(JavaBindingsGenerator):
     released_files_name_prefix = 'matlab'
+    bindings_subdirectory_name = 'bindings_matlab'
 
     def get_bindings_name(self):
         return 'matlab'
@@ -39,8 +40,20 @@ class MATLABBindingsGenerator(JavaBindingsGenerator):
     def is_matlab(self):
         return True
 
+class OcatveBindingsGenerator(JavaBindingsGenerator):
+    released_files_name_prefix = 'octave'
+    bindings_subdirectory_name = 'bindings_octave'
+    check_directory_name = False
+
+    def get_bindings_name(self):
+        return 'octave'
+
+    def is_octave(self):
+        return True
+
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', MATLABBindingsGenerator)
+    common.generate(bindings_root_directory, 'en', OcatveBindingsGenerator)
 
 if __name__ == "__main__":
     generate(os.getcwd())

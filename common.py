@@ -1298,20 +1298,22 @@ class DocGenerator(Generator):
 class BindingsGenerator(Generator):
     released_files_name_prefix = None
     recreate_bindings_subdirectory = True
+    bindings_subdirectory_name = 'bindings'
+    check_directory_name = True
 
     def __init__(self, *args, **kwargs):
         Generator.__init__(self, *args, **kwargs)
 
         directory = os.path.split(self.get_bindings_root_directory())[1]
 
-        if self.get_bindings_name() != directory:
+        if self.check_directory_name and self.get_bindings_name() != directory:
             raise Exception("bindings root directory '{0}' and bindings name '{1}' do not match".format(directory, self.get_bindings_name()))
 
         self.released_files = []
 
     def prepare(self):
         if self.recreate_bindings_subdirectory:
-            recreate_directory(os.path.join(self.get_bindings_root_directory(), 'bindings'))
+            recreate_directory(os.path.join(self.get_bindings_root_directory(), self.bindings_subdirectory_name))
 
     def finish(self):
         if self.released_files_name_prefix is None:

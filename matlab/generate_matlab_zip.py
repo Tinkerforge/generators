@@ -38,77 +38,85 @@ class MATLABZipGenerator(common.Generator):
 
     def prepare(self):
         common.recreate_directory('/tmp/generator')
-        os.makedirs('/tmp/generator/jar/source/com/tinkerforge')
-        os.makedirs('/tmp/generator/jar/examples')
+
+        os.makedirs('/tmp/generator/jar/matlab/source/com/tinkerforge')
+        os.makedirs('/tmp/generator/jar/matlab/examples')
+
+        os.makedirs('/tmp/generator/jar/octave/source/com/tinkerforge')
+        os.makedirs('/tmp/generator/jar/octave/examples')
 
     def generate(self, device):
         if not device.is_released():
             return
 
         # Copy device examples
-        examples = common.find_device_examples(device, '^example_.*\.m$')
-        dest = os.path.join('/tmp/generator/jar/examples', device.get_category(), device.get_camel_case_name())
+        for flavor in ['matlab', 'octave']:
+            examples = common.find_device_examples(device, '^{0}_example_.*\.m$'.format(flavor))
+            dest = os.path.join('/tmp/generator/jar/{0}/examples'.format(flavor), device.get_category().lower(), device.get_underscore_name())
 
-        if not os.path.exists(dest):
-            os.makedirs(dest)
+            if not os.path.exists(dest):
+                os.makedirs(dest)
 
-        for example in examples:
-            shutil.copy(example[1], dest)
+            for example in examples:
+                shutil.copy(example[1], dest)
 
     def finish(self):
         root = self.get_bindings_root_directory()
 
-        # Copy IPConnection examples
-        examples = common.find_examples(root, '^example_.*\.m$')
-        for example in examples:
-            shutil.copy(example[1], '/tmp/generator/jar/examples')
+        for flavor in ['matlab', 'octave']:
+            jar_root = '/tmp/generator/jar/' + flavor
 
-        # Copy bindings and readme
-        for filename in released_files:
-            shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/jar/source/com/tinkerforge')
+            # Copy IPConnection examples
+            examples = common.find_examples(root, '^example_.*\.m$')
+            for example in examples:
+                shutil.copy(example[1], jar_root + '/examples')
 
-        shutil.copy(os.path.join(root, '..', 'java', 'BrickDaemon.java'), '/tmp/generator/jar/source/com/tinkerforge')
-        shutil.copy(os.path.join(root, '..', 'java', 'Device.java'), '/tmp/generator/jar/source/com/tinkerforge')
-        shutil.copy(os.path.join(root, '..', 'java', 'DeviceListener.java'), '/tmp/generator/jar/source/com/tinkerforge')
-        shutil.copy(os.path.join(root, 'IPConnection.java'), '/tmp/generator/jar/source/com/tinkerforge')
-        shutil.copy(os.path.join(root, '..', 'java', 'IPConnectionBase.java'), '/tmp/generator/jar/source/com/tinkerforge')
-        shutil.copy(os.path.join(root, '..', 'java', 'TinkerforgeException.java'), '/tmp/generator/jar/source/com/tinkerforge')
-        shutil.copy(os.path.join(root, '..', 'java', 'TimeoutException.java'), '/tmp/generator/jar/source/com/tinkerforge')
-        shutil.copy(os.path.join(root, '..', 'java', 'AlreadyConnectedException.java'), '/tmp/generator/jar/source/com/tinkerforge')
-        shutil.copy(os.path.join(root, '..', 'java', 'NotConnectedException.java'), '/tmp/generator/jar/source/com/tinkerforge')
-        shutil.copy(os.path.join(root, '..', 'java', 'TinkerforgeListener.java'), '/tmp/generator/jar/source/com/tinkerforge')
-        shutil.copy(os.path.join(root, 'changelog.txt'), '/tmp/generator/jar')
-        shutil.copy(os.path.join(root, 'readme.txt'), '/tmp/generator/jar')
+            # Copy bindings and readme
+            for filename in released_files:
+                shutil.copy(os.path.join(root, 'bindings_' + flavor, filename), jar_root + '/source/com/tinkerforge')
 
-        # Make Manifest
-        version = common.get_changelog_version(root)
-        file('/tmp/generator/manifest.txt', 'wb').write('Bindings-Version: {0}.{1}.{2}\nBindings-Flavor: MATLAB\n'.format(*version))
+            shutil.copy(os.path.join(root, '..', 'java', 'BrickDaemon.java'), jar_root + '/source/com/tinkerforge')
+            shutil.copy(os.path.join(root, '..', 'java', 'Device.java'), jar_root + '/source/com/tinkerforge')
+            shutil.copy(os.path.join(root, '..', 'java', 'DeviceListener.java'), jar_root + '/source/com/tinkerforge')
+            shutil.copy(os.path.join(root, 'IPConnection_{0}.java'.format(flavor)), jar_root + '/source/com/tinkerforge/IPConnection.java')
+            shutil.copy(os.path.join(root, '..', 'java', 'IPConnectionBase.java'), jar_root + '/source/com/tinkerforge')
+            shutil.copy(os.path.join(root, '..', 'java', 'TinkerforgeException.java'), jar_root + '/source/com/tinkerforge')
+            shutil.copy(os.path.join(root, '..', 'java', 'TimeoutException.java'), jar_root + '/source/com/tinkerforge')
+            shutil.copy(os.path.join(root, '..', 'java', 'AlreadyConnectedException.java'), jar_root + '/source/com/tinkerforge')
+            shutil.copy(os.path.join(root, '..', 'java', 'NotConnectedException.java'), jar_root + '/source/com/tinkerforge')
+            shutil.copy(os.path.join(root, '..', 'java', 'TinkerforgeListener.java'), jar_root + '/source/com/tinkerforge')
+            shutil.copy(os.path.join(root, 'changelog.txt'), '/tmp/generator/jar/')
+            shutil.copy(os.path.join(root, 'readme.txt'), '/tmp/generator/jar/')
 
-        # Make jar
-        with common.ChangedDirectory('/tmp/generator'):
-            args = ['/usr/bin/javac ' +
-                    '-Xlint ' +
-                    '-target 1.5 ' +
-                    '/tmp/generator/jar/source/com/tinkerforge/*.java']
-            if subprocess.call(args, shell=True) != 0:
-                raise Exception("Command '{0}' failed".format(' '.join(args)))
+            # Make Manifest
+            version = common.get_changelog_version(root)
+            file('/tmp/generator/manifest.txt', 'wb').write('Bindings-Version: {1}.{2}.{3}\nBindings-Flavor: {0}\n'.format(flavor.upper(), *version))
 
-        with common.ChangedDirectory('/tmp/generator/jar/source'):
-            args = ['/usr/bin/jar ' +
-                    'cfm ' +
-                    '/tmp/generator/jar/Tinkerforge.jar ' +
-                    '/tmp/generator/manifest.txt ' +
-                    'com']
-            if subprocess.call(args, shell=True) != 0:
-                raise Exception("Command '{0}' failed".format(' '.join(args)))
+            # Make jar
+            with common.ChangedDirectory('/tmp/generator'):
+                args = ['/usr/bin/javac ' +
+                        '-Xlint ' +
+                        '-target 1.5 ' +
+                        jar_root + '/source/com/tinkerforge/*.java']
+                if subprocess.call(args, shell=True) != 0:
+                    raise Exception("Command '{0}' failed".format(' '.join(args)))
 
-        # Remove class
-        for f in os.listdir('/tmp/generator/jar/source/com/tinkerforge/'):
-            if f.endswith('.class'):
-                os.remove('/tmp/generator/jar/source/com/tinkerforge/' + f)
+            with common.ChangedDirectory(jar_root + '/source'):
+                args = ['/usr/bin/jar ' +
+                        'cfm ' +
+                        jar_root + '/Tinkerforge.jar ' +
+                        '/tmp/generator/manifest.txt ' +
+                        'com']
+                if subprocess.call(args, shell=True) != 0:
+                    raise Exception("Command '{0}' failed".format(' '.join(args)))
 
-        # FIXME: remove this
-        shutil.copy('/tmp/generator/jar/Tinkerforge.jar', root)
+            # Remove class
+            for f in os.listdir(jar_root + '/source/com/tinkerforge/'):
+                if f.endswith('.class'):
+                    os.remove(jar_root + '/source/com/tinkerforge/' + f)
+
+            # FIXME: remove this
+            shutil.copy(jar_root + '/Tinkerforge.jar', root + '/Tinkerforge_' + flavor + '.jar')
 
         # Make zip
         common.make_zip(self.get_bindings_name(), '/tmp/generator/jar', root, version)
