@@ -2273,3 +2273,36 @@ gesetzt.
 }]
 })
 
+com['packets'].append({
+'type': 'function', 
+'name': ('SetEthernetAuthenticationSecret', 'set_ethernet_authentication_secret'), 
+'elements': [('secret', 'string', 64, 'in')], 
+'since_firmware': [2, 2, 0],
+'doc': ['af', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('GetEthernetAuthenticationSecret', 'get_ethernet_authentication_secret'), 
+'elements': [('secret', 'string', 64, 'out')], 
+'since_firmware': [2, 2, 0],
+'doc': ['af', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
