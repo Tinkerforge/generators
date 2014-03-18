@@ -8,5 +8,5 @@
 
 package com.tinkerforge;
 
-public interface TinkerforgeListener {
+public interface TinkerforgeListener extends java.util.EventListener {
 }

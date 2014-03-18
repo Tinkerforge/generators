@@ -51,6 +51,9 @@ _tinkerforge()
 	--port)
 		return 0
 		;;
+	--secret)
+		return 0
+		;;
 	--item-separator)
 		return 0
 		;;
@@ -79,9 +82,10 @@ _tinkerforge()
 		return 0
 		;;
 	<<DEVICES>>)
-		local host port options
+		local host port secret options
 		host=""
 		port=""
+		secret=""
 		options=""
 
 		for (( i=${COMP_CWORD}; i > 0; i-- )); do
@@ -106,6 +110,16 @@ _tinkerforge()
 					;;
 				esac
 				;;
+			--secret)
+				case "${COMP_WORDS[i+1]}" in
+				=)
+					secret="--secret ${COMP_WORDS[i+2]}"
+					;;
+				*)
+					secret="--secret ${COMP_WORDS[i+1]}"
+					;;
+				esac
+				;;
 			call)
 				options="--list-functions"
 				;;
@@ -117,7 +131,7 @@ _tinkerforge()
 			esac
 		done
 
-		local uids=$(tinkerforge ${host} ${port} enumerate --duration 100 --execute "if [ {device-identifier} = '${COMP_WORDS[COMP_CWORD-1]}' ]; then echo {uid}; fi" 2> /dev/null)
+		local uids=$(tinkerforge ${host} ${port} ${secret} enumerate --duration 100 --execute "if [ {device-identifier} = '${COMP_WORDS[COMP_CWORD-1]}' ]; then echo {uid}; fi" 2> /dev/null)
 		COMPREPLY=($(compgen -W "--help ${options} ${uids}" -- ${cur}))
 		return 0
 		;;
@@ -136,7 +150,7 @@ _tinkerforge()
 
 		case "${prev}" in
 		tinkerforge)
-			COMPREPLY=($(compgen -W "--help --host --port --item-separator --group-separator --no-symbolic-input --no-symbolic-output call dispatch enumerate listen" -- ${cur}))
+			COMPREPLY=($(compgen -W "--help --host --port --secret --item-separator --group-separator --no-symbolic-input --no-symbolic-output call dispatch enumerate listen" -- ${cur}))
 			break
 			;;
 		call)

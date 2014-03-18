@@ -17,21 +17,70 @@ public class IPConnection extends IPConnectionBase {
 	List<DisconnectedListener> listenerDisconnected = new CopyOnWriteArrayList<DisconnectedListener>();
 
 	interface DeviceCallbackListener {
-		public void callback(byte data[]);
+		public void callback(Device device, byte data[]);
+	}
+
+	public class EnumerateCallbackData extends java.util.EventObject {
+		private static final long serialVersionUID = 1L;
+
+		public String uid;
+		public String connectedUid;
+		public char position;
+		public short[] hardwareVersion;
+		public short[] firmwareVersion;
+		public int deviceIdentifier;
+		public short enumerationType;
+
+		public EnumerateCallbackData(IPConnection ipcon,
+		                             String uid, String connectedUid, char position,
+		                             short[] hardwareVersion, short[] firmwareVersion,
+		                             int deviceIdentifier, short enumerationType) {
+			super(ipcon);
+
+			this.uid = uid;
+			this.connectedUid = connectedUid;
+			this.position = position;
+			this.hardwareVersion = hardwareVersion;
+			this.firmwareVersion = firmwareVersion;
+			this.deviceIdentifier = deviceIdentifier;
+			this.enumerationType = enumerationType;
+		}
 	}
 
 	public interface EnumerateListener extends TinkerforgeListener {
-		public void enumerate(String uid, String connectedUid, char position,
-		                      short[] hardwareVersion, short[] firmwareVersion,
-		                      int deviceIdentifier, short enumerationType);
+		public void enumerate(EnumerateCallbackData data);
+	}
+
+	public class ConnectedCallbackData extends java.util.EventObject {
+		private static final long serialVersionUID = 1L;
+
+		public short connectReason;
+
+		public ConnectedCallbackData(IPConnection ipcon, short connectReason) {
+			super(ipcon);
+
+			this.connectReason = connectReason;
+		}
 	}
 
 	public interface ConnectedListener extends TinkerforgeListener {
-		public void connected(short connectReason);
+		public void connected(ConnectedCallbackData data);
+	}
+
+	public class DisconnectedCallbackData extends java.util.EventObject {
+		private static final long serialVersionUID = 1L;
+
+		public short disconnectReason;
+
+		public DisconnectedCallbackData(IPConnection ipcon, short disconnectReason) {
+			super(ipcon);
+
+			this.disconnectReason = disconnectReason;
+		}
 	}
 
 	public interface DisconnectedListener extends TinkerforgeListener {
-		public void disconnected(short disconnectReason);
+		public void disconnected(DisconnectedCallbackData data);
 	}
 
 	/**
@@ -127,9 +176,9 @@ public class IPConnection extends IPConnectionBase {
 	                            short[] hardwareVersion, short[] firmwareVersion,
 	                            int deviceIdentifier, short enumerationType) {
 		for(IPConnection.EnumerateListener listener: listenerEnumerate) {
-			listener.enumerate(uid, connectedUid, position,
-			                   hardwareVersion, firmwareVersion,
-			                   deviceIdentifier, enumerationType);
+			listener.enumerate(new EnumerateCallbackData(this, uid, connectedUid, position,
+			                                             hardwareVersion, firmwareVersion,
+			                                             deviceIdentifier, enumerationType));
 		}
 	}
 
@@ -139,19 +188,19 @@ public class IPConnection extends IPConnectionBase {
 
 	void callConnectedListeners(short connectReason) {
 		for(IPConnection.ConnectedListener listener: listenerConnected) {
-			listener.connected(connectReason);
+			listener.connected(new ConnectedCallbackData(this, connectReason));
 		}
 	}
 
 	void callDisconnectedListeners(short disconnectReason) {
 		for(IPConnection.DisconnectedListener listener: listenerDisconnected) {
-			listener.disconnected(disconnectReason);
+			listener.disconnected(new DisconnectedCallbackData(this, disconnectReason));
 		}
 	}
 
 	void callDeviceListener(Device device, byte functionID, byte[] data) {
 		if(device.callbacks[functionID] != null) {
-			device.callbacks[functionID].callback(data);
+			device.callbacks[functionID].callback(device, data);
 		}
 	}
 }
