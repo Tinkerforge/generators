@@ -10,26 +10,24 @@ package com.tinkerforge;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import org.octave.Octave;
 
 public class IPConnection extends IPConnectionBase {
-	List<EnumerateListener> listenerEnumerate = new CopyOnWriteArrayList<EnumerateListener>();
-	List<ConnectedListener> listenerConnected = new CopyOnWriteArrayList<ConnectedListener>();
-	List<DisconnectedListener> listenerDisconnected = new CopyOnWriteArrayList<DisconnectedListener>();
+	List<String> listenerEnumerate = new CopyOnWriteArrayList<String>();
+	List<String> listenerConnected = new CopyOnWriteArrayList<String>();
+	List<String> listenerDisconnected = new CopyOnWriteArrayList<String>();
 
 	interface DeviceCallbackListener {
 		public void callback(byte data[]);
 	}
-
 	public interface EnumerateListener extends TinkerforgeListener {
 		public void enumerate(String uid, String connectedUid, char position,
 		                      short[] hardwareVersion, short[] firmwareVersion,
 		                      int deviceIdentifier, short enumerationType);
 	}
-
 	public interface ConnectedListener extends TinkerforgeListener {
 		public void connected(short connectReason);
 	}
-
 	public interface DisconnectedListener extends TinkerforgeListener {
 		public void disconnected(short disconnectReason);
 	}
@@ -45,42 +43,42 @@ public class IPConnection extends IPConnectionBase {
 	/**
 	 * Adds a Enumerate listener.
 	 */
-	public void addEnumerateListener(EnumerateListener listener) {
+	public void addEnumerateListener(String listener) {
 		listenerEnumerate.add(listener);
 	}
 
 	/**
 	 * Removes a Enumerate listener.
 	 */
-	public void removeEnumerateListener(EnumerateListener listener) {
+	public void removeEnumerateListener(String listener) {
 		listenerEnumerate.remove(listener);
 	}
 
 	/**
 	 * Adds a Connected listener.
 	 */
-	public void addConnectedListener(ConnectedListener listener) {
+	public void addConnectedListener(String listener) {
 		listenerConnected.add(listener);
 	}
 
 	/**
 	 * Removes a Connected listener.
 	 */
-	public void removeConnectedListener(ConnectedListener listener) {
+	public void removeConnectedListener(String listener) {
 		listenerConnected.remove(listener);
 	}
 
 	/**
 	 * Adds a Disconnected listener.
 	 */
-	public void addDisconnectedListener(DisconnectedListener listener) {
+	public void addDisconnectedListener(String listener) {
 		listenerDisconnected.add(listener);
 	}
 
 	/**
 	 * Removes a Disconnected listener.
 	 */
-	public void removeDisconnectedListener(DisconnectedListener listener) {
+	public void removeDisconnectedListener(String listener) {
 		listenerDisconnected.remove(listener);
 	}
 
@@ -91,7 +89,7 @@ public class IPConnection extends IPConnectionBase {
 	 * Use the add and remove listener function per listener type instead.
 	 */
 	@Deprecated
-	public void addListener(Object object) {
+	/*public void addListener(Object object) {
 		boolean knownListener = false;
 
 		if(object instanceof EnumerateListener) {
@@ -121,15 +119,17 @@ public class IPConnection extends IPConnectionBase {
 		if(!knownListener) {
 			throw new IllegalArgumentException("Unknown listener type");
 		}
-	}
+	}*/
 
 	void callEnumerateListeners(String uid, String connectedUid, char position,
 	                            short[] hardwareVersion, short[] firmwareVersion,
 	                            int deviceIdentifier, short enumerationType) {
-		for(IPConnection.EnumerateListener listener: listenerEnumerate) {
-			listener.enumerate(uid, connectedUid, position,
-			                   hardwareVersion, firmwareVersion,
-			                   deviceIdentifier, enumerationType);
+		for(String listener: listenerEnumerate) {
+            Octave.call(listener,
+                        new Object[]{uid, connectedUid, position,
+                                     hardwareVersion, firmwareVersion,
+                                     deviceIdentifier, enumerationType},
+                        new Object[]{});
 		}
 	}
 
@@ -138,14 +138,14 @@ public class IPConnection extends IPConnectionBase {
 	}
 
 	void callConnectedListeners(short connectReason) {
-		for(IPConnection.ConnectedListener listener: listenerConnected) {
-			listener.connected(connectReason);
+		for(String listener: listenerConnected) {
+			Octave.call(listener, new Object[]{connectReason}, new Object[]{});
 		}
 	}
 
 	void callDisconnectedListeners(short disconnectReason) {
-		for(IPConnection.DisconnectedListener listener: listenerDisconnected) {
-			listener.disconnected(disconnectReason);
+		for(String listener: listenerDisconnected) {
+            Octave.call(listener, new Object[]{disconnectReason}, new Object[]{});
 		}
 	}
 

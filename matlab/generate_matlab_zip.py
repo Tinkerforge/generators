@@ -61,6 +61,7 @@ class MATLABZipGenerator(common.Generator):
                 shutil.copy(example[1], dest)
 
     def finish(self):
+        octave_jar_path = '-classpath /usr/share/octave/packages/java-1.2.8/octave.jar '
         root = self.get_bindings_root_directory()
 
         for flavor in ['matlab', 'octave']:
@@ -94,10 +95,17 @@ class MATLABZipGenerator(common.Generator):
 
             # Make jar
             with common.ChangedDirectory('/tmp/generator'):
-                args = ['/usr/bin/javac ' +
-                        '-Xlint ' +
-                        '-target 1.5 ' +
-                        jar_root + '/source/com/tinkerforge/*.java']
+                if flavor == 'octave':
+                    args = ['/usr/bin/javac ' +
+                            octave_jar_path +
+                            '-Xlint ' +
+                            '-target 1.5 ' +
+                            jar_root + '/source/com/tinkerforge/*.java']
+                else:
+                    args = ['/usr/bin/javac ' +
+                            '-Xlint ' +
+                            '-target 1.5 ' +
+                            jar_root + '/source/com/tinkerforge/*.java']
                 if subprocess.call(args, shell=True) != 0:
                     raise Exception("Command '{0}' failed".format(' '.join(args)))
 
