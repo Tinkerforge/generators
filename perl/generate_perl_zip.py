@@ -65,7 +65,7 @@ class PerlZipGenerator(common.Generator):
         # Copy IPConnection examples
         examples = common.find_examples(root, '^example_.*\.pl$')
         for example in examples:
-            shutil.copy(example[1], '/tmp/generator/examples')
+            shutil.copy(example[1], '/tmp/generator/cpan/examples')
 
         # Copy bindings and readme
         for filename in released_files:
