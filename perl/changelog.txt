@@ -3,3 +3,5 @@
        Fix signature of get/set_response_expected(_all) functions to match the documentation
        Handle error code in response packages
        Add Error class to report an error code in addition to the error message
+2.0.2: Use better markup in inline documentation
+       Rework socket sharing between threads to fix (auto-)reconnection handling

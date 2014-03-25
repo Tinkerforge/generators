@@ -2,6 +2,10 @@ This ZIP contains the Perl support for all Tinkerforge Bricks and Bricklets
 (Tinkerforge.tar.gz), the source of the CPAN package (source/) and all available
 Perl examples (examples/).
 
+There are known deadlock problems on Windows with Strawberry Perl and Active
+State Perl. The recommended workaround is to use Cygwin's Perl that doesn't
+suffer from this problem (see http://perlmonks.org/?node_id=1078634).
+
 A CPAN package will be available soon. Then it will be possible to install
 the Perl bindings support from CPAN.
 
