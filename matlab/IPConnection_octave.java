@@ -82,45 +82,6 @@ public class IPConnection extends IPConnectionBase {
 		listenerDisconnected.remove(listener);
 	}
 
-	/**
-	 * Registers a listener object.
-	 *
-	 * @deprecated
-	 * Use the add and remove listener function per listener type instead.
-	 */
-	@Deprecated
-	/*public void addListener(Object object) {
-		boolean knownListener = false;
-
-		if(object instanceof EnumerateListener) {
-			knownListener = true;
-
-			if (!listenerEnumerate.contains((EnumerateListener)object)) {
-				listenerEnumerate.add((EnumerateListener)object);
-			}
-		}
-
-		if(object instanceof ConnectedListener) {
-			knownListener = true;
-
-			if (!listenerConnected.contains((ConnectedListener)object)) {
-				listenerConnected.add((ConnectedListener)object);
-			}
-		}
-
-		if(object instanceof DisconnectedListener) {
-			knownListener = true;
-
-			if (!listenerDisconnected.contains((DisconnectedListener)object)) {
-				listenerDisconnected.add((DisconnectedListener)object);
-			}
-		}
-
-		if(!knownListener) {
-			throw new IllegalArgumentException("Unknown listener type");
-		}
-	}*/
-
 	void callEnumerateListeners(String uid, String connectedUid, char position,
 	                            short[] hardwareVersion, short[] firmwareVersion,
 	                            int deviceIdentifier, short enumerationType) {

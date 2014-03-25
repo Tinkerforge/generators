@@ -131,61 +131,6 @@ public class {0} extends Device {{
 
         return objs
 
-
-    def get_octave_callback_data_objects(self):
-        objs = ''
-        obj = """
-\tpublic class {0}CallbackData extends java.util.EventObject {{
-\t\tprivate static final long serialVersionUID = 1L;
-
-{1}
-
-\t\tpublic {0}CallbackData(Object device{3}) {{
-\t\t\tsuper(device);
-
-{4}
-\t\t}}
-\t}}
-"""
-        param = '\t\tpublic {0}{1} {2}{3};'
-        for packet in self.get_packets('callback'):
-            if packet.has_prototype_in_device():
-                continue
-
-            name = packet.get_java_object_name()
-            params = []
-            tostr = []
-            assignments = []
-            for element in packet.get_elements():
-                typ = element.get_java_type()
-                ele_name = element.get_headless_camel_case_name()
-                if element.get_cardinality() > 1 and element.get_type() != 'string':
-                    arr = '[]'
-                    new = ' = new {0}[{1}]'.format(typ, element.get_cardinality())
-                    to = '"{0} = " + Arrays.toString({0}) +'.format(ele_name)
-                else:
-                    arr = ''
-                    new = ''
-                    to = '"{0} = " + {0} +'.format(ele_name)
-
-                tostr.append(to)
-                params.append(param.format(typ, arr, ele_name, new))
-
-                assignments.append('\t\t\tthis.{0} = {0};'.format(ele_name));
-
-            signature_params = packet.get_java_parameter_list()
-            if len(signature_params) > 0:
-                signature_params = ', ' + signature_params
-
-            objs += obj.format(name,
-                               '\n'.join(params),
-                               ' ", " + '.join(tostr),
-                               signature_params,
-                               '\n'.join(assignments))
-
-        return objs
-
-
     def get_java_return_objects(self):
         objs = ''
         obj = """
@@ -457,7 +402,7 @@ public class {0} extends Device {{
             llists += llist.format(name)
 
         return llists
-        
+
     def get_octave_listener_lists(self):
         llists = '\n'
         llist = '\tprivate List<String> listener{0} = new CopyOnWriteArrayList<String>();\n'
@@ -587,7 +532,7 @@ public class {0} extends Device {{
         source += self.get_java_class()
         source += self.get_java_function_id_definitions()
         source += self.get_java_constants()
-        
+
         if self.get_generator().is_octave():
             source += self.get_octave_listener_lists()
         else:
@@ -595,24 +540,22 @@ public class {0} extends Device {{
 
         if self.get_generator().is_matlab():
             source += self.get_matlab_callback_data_objects()
-        if self.get_generator().is_octave():
-            source += self.get_octave_callback_data_objects()
 
         source += self.get_java_return_objects()
-            
+
         if not self.get_generator().is_octave():
             source += self.get_java_listener_definitions()
-            
+
         source += self.get_java_constructor()
         source += self.get_java_response_expected()
-        
+
         if self.get_generator().is_octave():
             source += self.get_octave_callback_listener_definitions()
         else:
             source += self.get_java_callback_listener_definitions()
-            
+
         source += self.get_java_methods()
-        
+
         if self.get_generator().is_octave():
             source += self.get_octave_add_listener()
         else:
