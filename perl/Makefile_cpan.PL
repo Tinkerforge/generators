@@ -15,6 +15,7 @@ WriteMakefile(
     PREREQ_PM => {
         'Test::More' => 0,
         'Thread::Queue' => 3.02,
+        'Thread::Semaphore' => 0,
         'IO::Socket::INET' => 0,
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },

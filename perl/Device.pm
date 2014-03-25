@@ -170,7 +170,7 @@ sub _send_request
 		$packet = $packet_header;
 	}
 
-	$device->{super}->{ipcon}->_ipconnection_send($packet);
+	$device->{super}->{ipcon}->_ipcon_send($packet);
 
 	#checking whether response is expected
 	if($device->get_response_expected($function_id))

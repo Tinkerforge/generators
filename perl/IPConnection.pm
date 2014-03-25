@@ -25,8 +25,10 @@ use Carp;
 use threads;
 use threads::shared;
 use Thread::Queue;
-use Socket qw(IPPROTO_TCP TCP_NODELAY);
+use Thread::Semaphore;
 use IO::Socket::INET;
+use Socket qw(IPPROTO_TCP TCP_NODELAY MSG_NOSIGNAL);
+use POSIX qw(dup);
 use Tinkerforge::Device;
 use Tinkerforge::Error;
 
@@ -163,14 +165,64 @@ use constant _QUEUE_PACKET => 2;
 
 use constant _DISCONNECT_PROBE_INTERVAL => 5;
 
-# the socket variable
-my $IPCONNECTION_SOCKET = undef;
-
 # lock(s)
-our $CONNECT_LOCK :shared;
+our $SOCKET_LOCK :shared;
 our $SEND_LOCK :shared;
+our $LOCAL_SOCKET_LOCK :shared;
 our $SEQUENCE_NUMBER_LOCK :shared;
 
+# the local socket variable, the actual socket
+my $local_socket = undef;
+my $local_socket_id = 0;
+
+sub _init_local_socket
+{
+	lock($Tinkerforge::IPConnection::LOCAL_SOCKET_LOCK);
+
+	my ($self) = @_;
+
+	# clear values copied over by threads->create(). this has to be
+	# called first from every thread.
+	#
+	# FIXME 1: this sharing model will create problems with user-created
+	#          threads as they won't call this and will have their local
+	#          copies not properly initialized
+
+	if (defined($local_socket)) {
+		$local_socket->close();
+	}
+
+	$local_socket = undef;
+	$local_socket_id = 0;
+
+	# ensure that current thread has valid local socket
+	$self->_get_local_socket();
+
+	# indicate that local socket got updated
+	$self->{local_socket_handshake}->up();
+}
+
+sub _get_local_socket
+{
+	lock($Tinkerforge::IPConnection::LOCAL_SOCKET_LOCK);
+
+	my ($self) = @_;
+
+	if ($self->{socket_id} != $local_socket_id)
+	{
+		if (defined($local_socket))
+		{
+			$local_socket->close();
+		}
+
+		$local_socket = IO::Socket::INET->new();
+		$local_socket_id = $self->{socket_id};
+
+		$local_socket->fdopen(dup($self->{socket_fileno}), '+>>');
+	}
+
+	return $local_socket;
+}
 
 =head1 FUNCTIONS
 
@@ -189,22 +241,25 @@ sub new
 	my ($class) = @_;
 
 	my $self :shared = shared_clone({host => undef,
-									 port => undef,
-									 timeout => 2.5,
-									 sequence_number => 0,
-									 auto_reconnect => 1,
-									 auto_reconnect_allowed => 0,
-									 auto_reconnect_pending => 0,
-									 devices => shared_clone({}),
-									 registered_callbacks => shared_clone({}),
-									 socket_id => 0,
-									 receive_flag => 0,
-									 receive_thread => undef,
-									 disconnect_probe_thread => undef,
-									 disconnect_probe_queue => Thread::Queue->new(),
-									 callback_thread => undef,
-									 callback_queue => Thread::Queue->new()
-									});
+	                                 port => undef,
+	                                 timeout => 2.5,
+	                                 sequence_number => 0,
+	                                 auto_reconnect => 1,
+	                                 auto_reconnect_allowed => 0,
+	                                 auto_reconnect_pending => 0,
+	                                 devices => shared_clone({}),
+	                                 registered_callbacks => shared_clone({}),
+	                                 socket_fileno => undef,
+	                                 socket_id => 0,
+	                                 receive_flag => 0,
+	                                 receive_thread => undef,
+	                                 disconnect_probe_flag => 0,
+	                                 disconnect_probe_thread => undef,
+	                                 disconnect_probe_queue => undef,
+	                                 callback_thread => undef,
+	                                 callback_queue => undef,
+	                                 local_socket_handshake => undef
+	                                });
 
 	bless($self, $class);
 
@@ -227,574 +282,200 @@ host and port.
 
 sub connect
 {
+	lock($Tinkerforge::IPConnection::SOCKET_LOCK);
+
 	my ($self, $host, $port) = @_;
 
-	if(defined($IPCONNECTION_SOCKET) && $self->{auto_reconnect_pending} == 0)
+	if(defined($self->{socket_fileno}))
 	{
-		croak(Tinkerforge::Error->_new(Tinkerforge::Error->ALREADY_CONNECTED, "Already connected to $self->{host}:$self->{host}"));
-        return 1;
+		croak(Tinkerforge::Error->_new(Tinkerforge::Error->ALREADY_CONNECTED,
+		                               "Already connected to $self->{host}:$self->{host}"));
 	}
-	elsif(!defined($IPCONNECTION_SOCKET) && $self->{auto_reconnect_pending} == 0)
+	else
 	{
 		$self->{host} = $host;
 		$self->{port} = $port;
-		$self->_handle_connect(&CONNECT_REASON_REQUEST);
-        return 1;
+		$self->_connect_unlocked(0);
 	}
-    else
-    {
-        croak('Undefined connect state');
-    }
 
 	return 1;
 }
 
-sub _handle_connect
+# NOTE: assumes that SOCKET_LOCK is locked
+sub _connect_unlocked
 {
-	lock($Tinkerforge::IPConnection::CONNECT_LOCK);
+	my ($self, $is_auto_reconnect) = @_;
 
-	my ($self, $connect_reason) = @_;
-
-	#normal connect request
-	if($connect_reason == &CONNECT_REASON_REQUEST && $self->{auto_reconnect_pending} == 0 && !defined($IPCONNECTION_SOCKET))
+	# create callback queue and thread
+	if(!defined($self->{callback_thread}))
 	{
-		$IPCONNECTION_SOCKET = undef;
+		$self->{local_socket_handshake} = Thread::Semaphore->new(0);
 
-		eval
+		# FIXME: need packet_dispatch_allowed handling for the callback thread
+		$self->{callback_queue} = Thread::Queue->new();
+		$self->{callback_thread} = shared_clone(threads->create(\&_callback_thread_subroutine,
+		                                                        $self, $self->{callback_queue}));
+
+		if(!defined($self->{callback_thread}))
 		{
-			$IPCONNECTION_SOCKET = IO::Socket::INET->new(PeerAddr => $self->{host},
-														 PeerPort => $self->{port},
-														 Proto => 'tcp',
-														 Type => SOCK_STREAM,
-														 Blocking => 1);
+			croak(Tinkerforge::Error->_new(Tinkerforge::Error->NO_THREAD,
+			                               'Could not create callback thread'));
+		}
 
-			$IPCONNECTION_SOCKET->setsockopt(IPPROTO_TCP, TCP_NODELAY, 1);
+		$self->{local_socket_handshake}->down();
+	}
 
-			$| = 1;
-			$IPCONNECTION_SOCKET->send('');
-		};
-		if($!)
+	# create socket
+	$self->{socket_fileno} = undef;
+
+	my $socket = IO::Socket::INET->new(PeerAddr => $self->{host},
+	                                   PeerPort => $self->{port},
+	                                   Proto => 'tcp',
+	                                   Type => SOCK_STREAM,
+	                                   Blocking => 1);
+	my $error = $!;
+
+	if(!defined($socket))
+	{
+		if (!$is_auto_reconnect)
 		{
-			if(defined($IPCONNECTION_SOCKET))
-			{
-				$IPCONNECTION_SOCKET->shutdown(2);
-				$IPCONNECTION_SOCKET->close();
-			}
+			# destroy callback thread
+			$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
+			$self->{callback_thread}->join();
+			$self->{callback_thread} = undef;
+		}
 
-			$IPCONNECTION_SOCKET = undef;
+		croak(Tinkerforge::Error->_new(Tinkerforge::Error->CONNECT_FAILED,
+		                               "Could not connect to $self->{host}:$self->{port}: $error"));
+	}
 
-			croak(Tinkerforge::Error->_new(Tinkerforge::Error->CONNECT_FAILED, "Can't connect to	$self->{host}:$self->{port}"));
+	eval
+	{
+		$socket->setsockopt(IPPROTO_TCP, TCP_NODELAY, 1);
+
+		$| = 1; # enable autoflush
+		if ($^O eq 'MSWin32')
+		{
+			$socket->send('');
 		}
 		else
 		{
-			if(!defined($self->{callback_thread}))
-			{
-				$self->{socket_id} ++;
-				$self->{callback_thread} = shared_clone(threads->create(\&_callback_thread_subroutine, $self));
-
-				if(defined($self->{callback_thread}))
-				{
-					if(!defined($self->{receive_thread}))
-					{
-						$self->{receive_thread} = shared_clone(threads->create(\&_receive_thread_subroutine, $self));
-
-						if(defined($self->{receive_thread}))
-						{
-							if(!defined($self->{disconnect_probe_thread}))
-							{
-								$self->{disconnect_probe_thread} = shared_clone(threads->create(\&_disconnect_probe_thread_subroutine, $self));
-
-								if(defined($self->{disconnect_probe_thread}))
-								{
-									if(defined($self->{callback_thread}))
-									{
-										$self->{auto_reconnect_allowed} = 0;
-										$self->{callback_queue}->enqueue([&_QUEUE_META, &CALLBACK_CONNECTED, &CONNECT_REASON_REQUEST, $self->{socket_id}]);
-									}
-									else
-									{
-										$self->{auto_reconnect_pending} = 0;
-
-										if(defined($self->{disconnect_probe_thread}))
-										{
-											$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
-											$self->{disconnect_probe_thread}->join();
-											$self->{disconnect_probe_thread} = undef;
-										}
-
-										if(defined($self->{receive_thread}))
-										{
-											$self->{receive_flag} = undef;
-
-											if(defined($IPCONNECTION_SOCKET))
-											{
-												$IPCONNECTION_SOCKET->shutdown(2);
-												$IPCONNECTION_SOCKET->close();
-											}
-											$IPCONNECTION_SOCKET = undef;
-
-											$self->{receive_thread}->join();
-											$self->{receive_thread} = undef;
-										}
-
-										if(defined($self->{callback_thread}))
-										{
-											$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
-											$self->{callback_thread}->join();
-											$self->{callback_thread} = undef;
-										}
-
-										croak('Thread create error');
-									}
-								}
-								else
-								{
-									$self->{auto_reconnect_pending} = 0;
-									$self->{auto_reconnect_allowed} = 0;
-
-									if(defined($self->{disconnect_probe_thread}))
-									{
-										$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
-										$self->{disconnect_probe_thread}->join();
-										$self->{disconnect_probe_thread} = undef;
-									}
-
-									if(defined($self->{receive_thread}))
-									{
-										$self->{receive_flag} = undef;
-
-										if(defined($IPCONNECTION_SOCKET))
-										{
-											$IPCONNECTION_SOCKET->shutdown(2);
-											$IPCONNECTION_SOCKET->close();
-										}
-										$IPCONNECTION_SOCKET = undef;
-
-										$self->{receive_thread}->join();
-										$self->{receive_thread} = undef;
-									}
-
-									if(defined($self->{callback_thread}))
-									{
-										$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
-										$self->{callback_thread}->join();
-										$self->{callback_thread} = undef;
-									}
-
-									croak('Thread create error');
-								}
-							}
-							else
-							{
-								$self->{auto_reconnect_pending} = 0;
-								$self->{auto_reconnect_allowed} = 0;
-
-								if(defined($self->{disconnect_probe_thread}))
-								{
-									$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
-									$self->{disconnect_probe_thread}->join();
-									$self->{disconnect_probe_thread} = undef;
-								}
-
-								if(defined($self->{receive_thread}))
-								{
-									$self->{receive_flag} = undef;
-
-									if(defined($IPCONNECTION_SOCKET))
-									{
-										$IPCONNECTION_SOCKET->shutdown(2);
-										$IPCONNECTION_SOCKET->close();
-									}
-									$IPCONNECTION_SOCKET = undef;
-
-									$self->{receive_thread}->join();
-									$self->{receive_thread} = undef;
-								}
-
-								if(defined($self->{callback_thread}))
-								{
-									$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
-									$self->{callback_thread}->join();
-									$self->{callback_thread} = undef;
-								}
-
-								croak('Thread create error');
-							}
-						}
-						else
-						{
-							$self->{auto_reconnect_pending} = 0;
-							$self->{auto_reconnect_allowed} = 0;
-
-							if(defined($self->{disconnect_probe_thread}))
-							{
-								$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
-								$self->{disconnect_probe_thread}->join();
-								$self->{disconnect_probe_thread} = undef;
-							}
-
-							if(defined($self->{receive_thread}))
-							{
-								$self->{receive_flag} = undef;
-
-								if(defined($IPCONNECTION_SOCKET))
-								{
-									$IPCONNECTION_SOCKET->shutdown(2);
-									$IPCONNECTION_SOCKET->close();
-								}
-								$IPCONNECTION_SOCKET = undef;
-
-								$self->{receive_thread}->join();
-								$self->{receive_thread} = undef;
-							}
-
-							if(defined($self->{callback_thread}))
-							{
-								$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
-								$self->{callback_thread}->join();
-								$self->{callback_thread} = undef;
-							}
-
-							croak('Thread create error');
-						}
-					}
-					else
-					{
-						$self->{auto_reconnect_pending} = 0;
-						$self->{auto_reconnect_allowed} = 0;
-
-						if(defined($self->{disconnect_probe_thread}))
-						{
-							$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
-							$self->{disconnect_probe_thread}->join();
-							$self->{disconnect_probe_thread} = undef;
-						}
-
-						if(defined($self->{receive_thread}))
-						{
-							$self->{receive_flag} = undef;
-
-							if(defined($IPCONNECTION_SOCKET))
-							{
-								$IPCONNECTION_SOCKET->shutdown(2);
-								$IPCONNECTION_SOCKET->close();
-							}
-							$IPCONNECTION_SOCKET = undef;
-
-							$self->{receive_thread}->join();
-							$self->{receive_thread} = undef;
-						}
-
-						if(defined($self->{callback_thread}))
-						{
-							$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
-							$self->{callback_thread}->join();
-							$self->{callback_thread} = undef;
-						}
-
-						croak('Thread create error');
-					}
-				}
-				else
-				{
-					$self->{auto_reconnect_pending} = 0;
-					$self->{auto_reconnect_allowed} = 0;
-
-					if(defined($self->{disconnect_probe_thread}))
-					{
-						$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
-						$self->{disconnect_probe_thread}->join();
-						$self->{disconnect_probe_thread} = undef;
-					}
-
-					if(defined($self->{receive_thread}))
-					{
-						$self->{receive_flag} = undef;
-
-						if(defined($IPCONNECTION_SOCKET))
-						{
-							$IPCONNECTION_SOCKET->shutdown(2);
-							$IPCONNECTION_SOCKET->close();
-						}
-						$IPCONNECTION_SOCKET = undef;
-
-						$self->{receive_thread}->join();
-						$self->{receive_thread} = undef;
-					}
-
-					if(defined($self->{callback_thread}))
-					{
-						$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
-						$self->{callback_thread}->join();
-						$self->{callback_thread} = undef;
-					}
-
-					croak('Thread create error');
-				}
-			}
-			else
-			{
-				$self->{auto_reconnect_pending} = 0;
-				$self->{auto_reconnect_allowed} = 0;
-
-				if(defined($self->{disconnect_probe_thread}))
-				{
-					$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
-					$self->{disconnect_probe_thread}->join();
-					$self->{disconnect_probe_thread} = undef;
-				}
-
-				if(defined($self->{receive_thread}))
-				{
-					$self->{receive_flag} = undef;
-
-					if(defined($IPCONNECTION_SOCKET))
-					{
-						$IPCONNECTION_SOCKET->shutdown(2);
-						$IPCONNECTION_SOCKET->close();
-					}
-					$IPCONNECTION_SOCKET = undef;
-
-					$self->{receive_thread}->join();
-					$self->{receive_thread} = undef;
-				}
-
-				if(defined($self->{callback_thread}))
-				{
-					$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
-					$self->{callback_thread}->join();
-					$self->{callback_thread} = undef;
-				}
-
-				croak('Thread create error');
-			}
+			$socket->send('', MSG_NOSIGNAL);
 		}
+
+		$self->{socket_fileno} = dup($socket->fileno());
+	};
+	$error = $!;
+
+	eval
+	{
+		$socket->close();
+	};
+
+	if($error)
+	{
+		if (!$is_auto_reconnect)
+		{
+			# destroy callback thread
+			$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
+			$self->{callback_thread}->join();
+			$self->{callback_thread} = undef;
+		}
+
+		# destroy socket
+		$self->_destroy_socket();
+
+		croak(Tinkerforge::Error->_new(Tinkerforge::Error->CONNECT_FAILED,
+		                               "Could not connect to $self->{host}:$self->{port}: $error"));
 	}
 
-	#auto reconnect handle
-	elsif($connect_reason == &CONNECT_REASON_AUTO_RECONNECT &&
-		  $self->{auto_reconnect} == 1 &&
-		  $self->{auto_reconnect_allowed} == 1 &&
-		  $self->{auto_reconnect_pending} == 1)
+	$self->{socket_id}++;
+
+	$self->_init_local_socket();
+
+	# create disconnect probe thread
+	$self->{local_socket_handshake} = Thread::Semaphore->new(0);
+
+	$self->{disconnect_probe_flag} = 1;
+	$self->{disconnect_probe_queue} = Thread::Queue->new();
+	$self->{disconnect_probe_thread} = shared_clone(threads->create(\&_disconnect_probe_thread_subroutine,
+	                                                                $self, $self->{disconnect_probe_queue}));
+
+	if(!defined($self->{disconnect_probe_thread}))
 	{
-		#while loop of the auto reconnect
-		while(1)
+		if (!$is_auto_reconnect)
 		{
-			#disconnect can stop auto reconnect process if any
-			if($self->{auto_reconnect_allowed} == 1)
-			{
-				$IPCONNECTION_SOCKET = undef;
-
-				eval
-				{
-					$IPCONNECTION_SOCKET = IO::Socket::INET->new(PeerAddr => $self->{host},
-																 PeerPort => $self->{port},
-																 Proto => 'tcp',
-																 Type => SOCK_STREAM,
-																 Blocking => 1);
-
-					$IPCONNECTION_SOCKET->setsockopt(IPPROTO_TCP, TCP_NODELAY, 1);
-					$| = 1;
-					$IPCONNECTION_SOCKET->send('');
-
-				};
-
-				if($!)
-				{
-					if(defined($IPCONNECTION_SOCKET))
-					{
-						$IPCONNECTION_SOCKET->shutdown(2);
-						$IPCONNECTION_SOCKET->close();
-
-					}
-
-					$IPCONNECTION_SOCKET = undef;
-
-					next;
-				}
-				else
-				{
-					if(!defined($self->{receive_thread}))
-					{
-						$self->{socket_id} ++;
-
-						$self->{receive_thread} = shared_clone(threads->create(\&_receive_thread_subroutine, $self));
-
-						if(defined($self->{receive_thread}))
-						{
-							if(!defined($self->{disconnect_probe_thread}))
-							{
-								$self->{disconnect_probe_thread} = shared_clone(threads->create(\&_disconnect_probe_thread_subroutine, $self));
-
-								if(defined($self->{disconnect_probe_thread}))
-								{
-									$self->{auto_reconnect_pending} = 0;
-									$self->{auto_reconnect_allowed} = 0;
-									$self->{callback_queue}->enqueue([&_QUEUE_META, &CALLBACK_CONNECTED, &CONNECT_REASON_AUTO_RECONNECT, $self->{socket_id}]);
-
-									#exit auto reconnect loop
-									last;
-								}
-								else
-								{
-									$self->{auto_reconnect_allowed} = 0;
-									$self->{auto_reconnect_pending} = 0;
-
-									if(defined($self->{disconnect_probe_thread}))
-									{
-										$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
-										$self->{disconnect_probe_thread}->join();
-										$self->{disconnect_probe_thread} = undef;
-									}
-
-									if(defined($self->{receive_thread}))
-									{
-										$self->{receive_flag} = undef;
-
-										if(defined($IPCONNECTION_SOCKET))
-										{
-											$IPCONNECTION_SOCKET->shutdown(2);
-											$IPCONNECTION_SOCKET->close();
-										}
-										$IPCONNECTION_SOCKET = undef;
-
-										$self->{receive_thread}->join();
-										$self->{receive_thread} = undef;
-									}
-
-									if(defined($self->{callback_thread}))
-									{
-										$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
-										$self->{callback_thread}->join();
-										$self->{callback_thread} = undef;
-									}
-
-									croak('Thread create error');
-								}
-							}
-							else
-							{
-								$self->{auto_reconnect_allowed} = 0;
-								$self->{auto_reconnect_pending} = 0;
-
-								if(defined($self->{disconnect_probe_thread}))
-								{
-									$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
-									$self->{disconnect_probe_thread}->join();
-									$self->{disconnect_probe_thread} = undef;
-								}
-
-								if(defined($self->{receive_thread}))
-								{
-									$self->{receive_flag} = undef;
-
-									if(defined($IPCONNECTION_SOCKET))
-									{
-										$IPCONNECTION_SOCKET->shutdown(2);
-										$IPCONNECTION_SOCKET->close();
-									}
-									$IPCONNECTION_SOCKET = undef;
-
-									$self->{receive_thread}->join();
-									$self->{receive_thread} = undef;
-								}
-
-								if(defined($self->{callback_thread}))
-								{
-									$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
-									$self->{callback_thread}->join();
-									$self->{callback_thread} = undef;
-								}
-
-								croak('Thread create error');
-							}
-						}
-						else
-						{
-							$self->{auto_reconnect_allowed} = 0;
-							$self->{auto_reconnect_pending} = 0;
-
-							if(defined($self->{disconnect_probe_thread}))
-							{
-								$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
-								$self->{disconnect_probe_thread}->join();
-								$self->{disconnect_probe_thread} = undef;
-							}
-
-							if(defined($self->{receive_thread}))
-							{
-								$self->{receive_flag} = undef;
-
-								if(defined($IPCONNECTION_SOCKET))
-								{
-									$IPCONNECTION_SOCKET->shutdown(2);
-									$IPCONNECTION_SOCKET->close();
-								}
-								$IPCONNECTION_SOCKET = undef;
-
-								$self->{receive_thread}->join();
-								$self->{receive_thread} = undef;
-							}
-
-							if(defined($self->{callback_thread}))
-							{
-								$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
-								$self->{callback_thread}->join();
-								$self->{callback_thread} = undef;
-							}
-
-							croak('Thread create error');
-						}
-					}
-					else
-					{
-						$self->{auto_reconnect_allowed} = 0;
-						$self->{auto_reconnect_pending} = 0;
-
-						if(defined($self->{disconnect_probe_thread}))
-						{
-							$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
-							$self->{disconnect_probe_thread}->join();
-							$self->{disconnect_probe_thread} = undef;
-						}
-
-						if(defined($self->{receive_thread}))
-						{
-							$self->{receive_flag} = undef;
-
-							if(defined($IPCONNECTION_SOCKET))
-							{
-								$IPCONNECTION_SOCKET->shutdown(2);
-								$IPCONNECTION_SOCKET->close();
-							}
-							$IPCONNECTION_SOCKET = undef;
-
-							$self->{receive_thread}->join();
-							$self->{receive_thread} = undef;
-						}
-
-						if(defined($self->{callback_thread}))
-						{
-							$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
-							$self->{callback_thread}->join();
-							$self->{callback_thread} = undef;
-						}
-
-						croak('Thread create error');
-					}
-				}
-			}
-			else
-			{
-				#exit auto reconnect
-				$self->{auto_reconnect_pending} = 0;
-				last;
-			}
+			# destroy callback thread
+			$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
+			$self->{callback_thread}->join();
+			$self->{callback_thread} = undef;
 		}
+
+		# destroy socket
+		$self->_destroy_socket();
+
+		croak(Tinkerforge::Error->_new(Tinkerforge::Error->NO_THREAD,
+		                               'Could not create disconnect probe thread'));
+	}
+
+	$self->{local_socket_handshake}->down();
+
+	# create receive thread. this has to be done after all other threads have
+	# been created, because the receive thread will do a blocking recv() call
+	# and while the call blocks the socket cannot be copied using Strawberry
+	# Perl and Active State Perl. but perl will have to copy the socket during
+	# the creation of a new thread and will then deadlock. so to avoid this
+	# problem all threads have to be created before the first recv() call.
+	#
+	# FIXME: this only covers one case. if the user creates a thread then this
+	#        one will deadlock on Windows if the receive thread is doing a
+	#        blocking recv() call. another case is the user calling a setter or
+	#        getter after an auto-reconnect. the IPConnection takes case of
+	#        its own threads to have a valid local socket before starting to
+	#        receive data. but the program main thread or user-created threads
+	#        will update their local sockets (via _get_local_socket) later while
+	#        the receive thread is already blocking the socket. this creates
+	#        a deadlock on Windows again. http://perlmonks.org/?node_id=1078634
+	#
+	# NOTE:  all this applies to Strawberry Perl and Active State Perl only.
+	#        with Cygwin's Perl everything works as expected.
+	$self->{local_socket_handshake} = Thread::Semaphore->new(0);
+
+	$self->{receive_flag} = 1;
+	$self->{receive_thread} = shared_clone(threads->create(\&_receive_thread_subroutine, $self));
+
+	if(!defined($self->{receive_thread}))
+	{
+		# destroy socket
+		$self->_disconnect_unlocked();
+
+		if (!$is_auto_reconnect)
+		{
+			# destroy callback thread
+			$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
+			$self->{callback_thread}->join();
+			$self->{callback_thread} = undef;
+		}
+
+		croak(Tinkerforge::Error->_new(Tinkerforge::Error->NO_THREAD,
+		                               'Could not create receive thread'));
+	}
+
+	$self->{local_socket_handshake}->down();
+
+	$self->{auto_reconnect_pending} = 0;
+	$self->{auto_reconnect_allowed} = 0;
+
+	# trigger connected callback
+	if ($is_auto_reconnect)
+	{
+		$self->{callback_queue}->enqueue([&_QUEUE_META, &CALLBACK_CONNECTED,
+		                                  &CONNECT_REASON_AUTO_RECONNECT, undef]);
 	}
 	else
 	{
-		croak('Undefined connect state');
+		$self->{callback_queue}->enqueue([&_QUEUE_META, &CALLBACK_CONNECTED,
+		                                  &CONNECT_REASON_REQUEST, undef]);
 	}
 
 	return 1;
@@ -811,27 +492,125 @@ sub disconnect
 {
 	my ($self) = @_;
 
-	$self->{callback_queue}->enqueue([&_QUEUE_META, &CALLBACK_DISCONNECTED, &DISCONNECT_REASON_REQUEST, $self->{socket_id}]);
+	my $callback_queue = undef;
+	my $callback_thread = undef;
 
-	if(defined($self->{disconnect_probe_thread}))
-	{
-		$self->{disconnect_probe_thread}->join();
-		$self->{disconnect_probe_thread} = undef;
+	if (1) {
+		lock($Tinkerforge::IPConnection::SOCKET_LOCK);
+
+		$self->{auto_reconnect_allowed} = 0;
+
+		if ($self->{auto_reconnect_pending})
+		{
+			# abort pending auto-reconnect
+			$self->{auto_reconnect_pending} = 0;
+		}
+		else
+		{
+			if (!defined($self->{socket_fileno}))
+			{
+				croak(Tinkerforge::Error->_new(Tinkerforge::Error->NOT_CONNECTED,
+				                               'Not connected'));
+			}
+
+			$self->_disconnect_unlocked();
+		}
+
+		# destroy callback thread
+		$callback_queue = $self->{callback_queue};
+		$callback_thread = $self->{callback_thread};
+
+		$self->{callback_queue} = undef;
+		$self->{callback_thread} = undef;
 	}
 
+	# do this outside of socket_mutex to allow calling (dis-)connect from
+	# the callbacks while blocking on the join call here
+	$callback_queue->enqueue([&_QUEUE_META, &CALLBACK_DISCONNECTED,
+	                          &DISCONNECT_REASON_REQUEST, undef]);
+	$callback_queue->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
+
+	if (threads->self() != $callback_thread)
+	{
+		$callback_thread->join();
+	}
+	else
+	{
+		threads->self()->detach(); # detach, join() won't be called in this situation
+	}
+
+	$callback_thread = undef;
+
+	# NOTE: no further cleanup of the callback queue and thread here, the
+	# callback thread is doing this on exit
+
+	return 1;
+}
+
+# NOTE: assumes that SOCKET_LOCK is locked
+sub _disconnect_unlocked
+{
+	my ($self) = @_;
+
+	# destroy disconnect probe thread
+	$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
+	$self->{disconnect_probe_thread}->join();
+	$self->{disconnect_probe_thread} = undef;
+
+	# FIXME: need packet_dispatch_allowed handling for the callback thread here
+
+	# destroy receive thread (1/2)
+	if(defined($self->{receive_thread}))
+	{
+		$self->{receive_flag} = 0;
+	}
+
+	# shutdown socket
+	my $socket = $self->_get_local_socket();
+
+	eval
+	{
+		$socket->shutdown(2);
+	};
+
+	# destroy receive thread (2/2)
 	if(defined($self->{receive_thread}))
 	{
 		$self->{receive_thread}->join();
 		$self->{receive_thread} = undef;
 	}
 
-	if(defined($self->{callback_thread}))
+	# destroy socket
+	eval
 	{
-		$self->{callback_thread}->join();
-		$self->{callback_thread} = undef
-	}
+		$socket->close();
+	};
+
+	$self->{socket_fileno} = undef;
 
 	return 1;
+}
+
+# NOTE: assumes that SOCKET_LOCK is locked
+sub _destroy_socket
+{
+	my ($self) = @_;
+
+	if (defined($self->{socket_fileno}))
+	{
+		my $socket = $self->_get_local_socket();
+
+		eval
+		{
+			$socket->shutdown(2);
+		};
+		eval
+		{
+			$socket->close();
+		};
+	}
+
+	$self->{socket_fileno} = undef;
 }
 
 =item get_connection_state()
@@ -850,22 +629,18 @@ sub get_connection_state
 {
 	my ($self) = @_;
 
-	if(defined($IPCONNECTION_SOCKET) && $self->{auto_reconnect_pending} == 0)
+	if(defined($self->{socket_fileno}))
 	{
 		return &CONNECTION_STATE_CONNECTED;
 	}
-
-	if(!defined($IPCONNECTION_SOCKET) && $self->{auto_reconnect_pending} == 1)
+	elsif($self->{auto_reconnect_pending})
 	{
-		return  &CONNECTION_STATE_PENDING;
+		return &CONNECTION_STATE_PENDING;
 	}
-
-	if(!defined($IPCONNECTION_SOCKET) && $self->{auto_reconnect_pending} == 0)
+	else
 	{
 		return &CONNECTION_STATE_DISCONNECTED;
 	}
-
-	return 1; # FIXME
 }
 
 =item set_auto_reconnect()
@@ -883,6 +658,11 @@ sub set_auto_reconnect
 	my ($self, $auto_reconnect) = @_;
 
 	$self->{auto_reconnect} = $auto_reconnect;
+
+	if (!$self->{auto_reconnect}) {
+		# abort potentially pending auto reconnect
+		$self->{auto_reconnect_allowed} = 0;
+	}
 }
 
 =item get_auto_reconnect()
@@ -913,7 +693,8 @@ sub set_timeout
 
 	if($timeout < 0)
 	{
-		croak('Timeout cannot be negative');
+		croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_PARAMETER,
+		                               'Timeout cannot be negative'));
 	}
 	else
 	{
@@ -945,7 +726,7 @@ sub enumerate
 {
 	my ($self) = @_;
 
-	$self->_ipconnection_send($self->_create_packet_header(undef, 8, &_FUNCTION_ENUMERATE));
+	$self->_ipcon_send($self->_create_packet_header(undef, 8, &_FUNCTION_ENUMERATE));
 }
 
 =item register_callback()
@@ -1047,39 +828,62 @@ sub _get_next_sequence_number
 	}
 	else
 	{
-		$self->{sequence_number} = 0;
-		$self->{sequence_number} ++;
+		$self->{sequence_number} = 1;
 		return $self->{sequence_number};
 	}
 
 	return 1;
 }
 
-sub _ipconnection_send
+# NOTE: assumes that SOCKET_LOCK is locked if disconnect_immediately is 1
+sub _handle_disconnect_by_peer
 {
-	lock($Tinkerforge::IPConnection::SEND_LOCK);
+	my ($self, $disconnect_reason, $socket_id, $disconnect_immediately) = @_;
+
+	$self->{auto_reconnect_allowed} = 1;
+
+	if ($disconnect_immediately) {
+		$self->_disconnect_unlocked();
+	}
+
+	$self->{callback_queue}->enqueue([&_QUEUE_META, &CALLBACK_DISCONNECTED,
+	                                  $disconnect_reason, $socket_id]);
+}
+
+sub _ipcon_send
+{
+	lock($Tinkerforge::IPConnection::SOCKET_LOCK);
 
 	my ($self, $packet) = @_;
 
-	if(defined($IPCONNECTION_SOCKET) && $self->{auto_reconnect_pending} == 0)
-	{
-		eval
-		{
-			$| = 1;
-			$IPCONNECTION_SOCKET->send($packet);
-		};
-
-		if($!)
-		{
-			$self->{callback_queue}->enqueue([&_QUEUE_META, &CALLBACK_DISCONNECTED, &DISCONNECT_REASON_ERROR, $self->{socket_id}]);
-
-			croak(Tinkerforge::Error->_new(Tinkerforge::Error->NOT_CONNECTED, 'Not connected'));
-		}
-	}
-	else
+	if(!defined($self->{socket_fileno}))
 	{
 		croak(Tinkerforge::Error->_new(Tinkerforge::Error->NOT_CONNECTED, 'Not connected'));
 	}
+
+	my $rc;
+	eval
+	{
+		lock($Tinkerforge::IPConnection::SEND_LOCK);
+
+		$| = 1; # enable autoflush
+		if ($^O eq 'MSWin32')
+		{
+			$rc = $self->_get_local_socket()->send($packet);
+		}
+		else
+		{
+			$rc = $self->_get_local_socket()->send($packet, MSG_NOSIGNAL);
+		}
+	};
+	if(!defined($rc))
+	{
+		$self->_handle_disconnect_by_peer(&DISCONNECT_REASON_ERROR, 0, 1);
+
+		croak(Tinkerforge::Error->_new(Tinkerforge::Error->NOT_CONNECTED, 'Not connected'));
+	}
+
+	$self->{disconnect_probe_flag} = 0;
 
 	return 1;
 }
@@ -1197,6 +1001,8 @@ sub _handle_packet
 {
 	my ($self, $packet) = @_;
 
+	$self->{disconnect_probe_flag} = 0;
+
 	my $fid = $self->_get_fid_from_data($packet);
 	my $seq = $self->_get_seq_from_data($packet);
 
@@ -1221,27 +1027,30 @@ sub _handle_packet
 	{
 		if(defined($self->{devices}->{$uid}))
 		{
-            my $_device = $self->{devices}->{$uid}; 
-            my $_err_code = $_device->{super}->{ipcon}->_get_err_from_data($packet);
-            
-            if($_err_code != 0)
-            {
-                if($_err_code == 1)
-                {
-                    croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_PARAMETER, "Got invalid parameter for function $fid"));
-                    return 1;
-                }
-                elsif($_err_code == 2)
-                {
-                    croak(Tinkerforge::Error->_new(Tinkerforge::Error->FUNCTION_NOT_SUPPORTED, "Function $fid is not supported"));
-                    return 1;
-                }    
-                else
-                {
-                    croak(Tinkerforge::Error->_new(Tinkerforge::Error->UNKNOWN_ERROR, "Function $fid returned an unknown error"));
-                    return 1;
-                }     
-            }
+			my $_device = $self->{devices}->{$uid};
+			my $_err_code = $_device->{super}->{ipcon}->_get_err_from_data($packet);
+
+			if($_err_code != 0)
+			{
+				if($_err_code == 1)
+				{
+					croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_PARAMETER,
+					                               "Got invalid parameter for function $fid"));
+					return 1;
+				}
+				elsif($_err_code == 2)
+				{
+					croak(Tinkerforge::Error->_new(Tinkerforge::Error->FUNCTION_NOT_SUPPORTED,
+					                               "Function $fid is not supported"));
+					return 1;
+				}
+				else
+				{
+					croak(Tinkerforge::Error->_new(Tinkerforge::Error->UNKNOWN_ERROR,
+					                               "Function $fid returned an unknown error"));
+					return 1;
+				}
+			}
 			$self->{callback_queue}->enqueue([&_QUEUE_PACKET, $packet, undef, undef]);
 		}
 		return 1;
@@ -1265,128 +1074,116 @@ sub _receive_thread_subroutine
 {
 	my ($self) = @_;
 
+	$self->_init_local_socket();
+
 	my $data = '';
 	my @data_arr = ();
 	my $data_pending_flag = undef;
-
-	$self->{receive_flag} = 1;
 	my $socket_id = $self->{socket_id};
 
-	while(defined($self->{receive_flag}))
+	while($self->{receive_flag})
 	{
-		if(defined($IPCONNECTION_SOCKET))
+		my $rc = $self->_get_local_socket()->recv($data, 8192);
+		my $error = $!;
+		my $len = length($data);
+
+		if(!$self->{receive_flag})
 		{
-			$data = '';
+			last;
+		}
 
-			#blocking call
+		if(!defined($rc))
+		{
+			threads->self()->detach(); # detach, join() won't be called in this situation
+			$self->_handle_disconnect_by_peer(&DISCONNECT_REASON_ERROR, $socket_id, 0);
+			last;
+		}
 
-			eval
+		if(length($data) == 0)
+		{
+			threads->self()->detach(); # detach, join() won't be called in this situation
+			$self->_handle_disconnect_by_peer(&DISCONNECT_REASON_SHUTDOWN, $socket_id, 0);
+			last;
+		}
+
+		if($data_pending_flag)
+		{
+			@data_arr = (@data_arr, split('', $data));
+			goto MORE_BYTES_TO_PROCCESS;
+		}
+		else
+		{
+			@data_arr = split('', $data);
+
+			MORE_BYTES_TO_PROCCESS:
+
+			if(scalar(@data_arr) >= 8)
 			{
-				$IPCONNECTION_SOCKET->recv($data, 8192);
-			};
+				my $i = undef;
 
-			if($! && defined($self->{receive_flag}))
-			{
-				$self->{callback_queue}->enqueue([&_QUEUE_META, &CALLBACK_DISCONNECTED, &DISCONNECT_REASON_SHUTDOWN, $socket_id]);
-				last;
-			}
-
-			if($! && !defined($self->{receive_flag}))
-			{
-				$self->{auto_reconnect_allowed} = 1;
-				last;
-			}
-
-			if(length($data) == 0 && defined($self->{receive_flag}))
-			{
-				$self->{callback_queue}->enqueue([&_QUEUE_META, &CALLBACK_DISCONNECTED, &DISCONNECT_REASON_ERROR, $socket_id]);
-				last;
-			}
-
-			if(length($data) == 0 && !defined($self->{receive_flag}))
-			{
-				last;
-			}
-
-			if($data_pending_flag)
-			{
-				@data_arr = (@data_arr, split('', $data));
-				goto MORE_BYTES_TO_PROCCESS;
-			}
-			else
-			{
-				@data_arr = split('', $data);
-
-				MORE_BYTES_TO_PROCCESS:
-
-				if(scalar(@data_arr) >= 8)
+				for($i = 8; $i <= unpack('C', $data_arr[4])-1; $i++)
 				{
-					my $i = undef;
-
-					for($i = 8; $i <= unpack('C', $data_arr[4])-1; $i++)
+					if(defined($data_arr[$i]))
 					{
-						if(defined($data_arr[$i]))
-						{
-							next;
-						}
-						else
-						{
-							last;
-						}
+						next;
+					}
+					else
+					{
+						last;
+					}
+				}
+
+				if($i == unpack('C', $data_arr[4]))
+				{
+					my $packet_to_handle = join('', @data_arr[0 .. (unpack('C', $data_arr[4]))-1]);
+					my $len = unpack('C', $data_arr[4]);
+
+					$self->_handle_packet($packet_to_handle);
+
+					while($len > 0)
+					{
+						shift (@data_arr);
+						$len --;
 					}
 
-					if($i == unpack('C', $data_arr[4]))
+					if(scalar(@data_arr) == 0)
 					{
-						my $packet_to_handle = join('', @data_arr[0 .. (unpack('C', $data_arr[4]))-1]);
-						my $len = unpack('C', $data_arr[4]);
-
-						$self->_handle_packet($packet_to_handle);
-
-						while($len > 0)
-						{
-							shift (@data_arr);
-							$len --;
-						}
-
-						if(scalar(@data_arr) == 0)
-						{
-							$data_pending_flag = undef;
-							next;
-						}
-						elsif(scalar(@data_arr) >= 8)
-						{
-							goto MORE_BYTES_TO_PROCCESS;
-						}
-						elsif(scalar(@data_arr) != 0 && scalar(@data_arr) < 8 )
-						{
-							$data_pending_flag = 1;
-							next;
-						}
-						else
-						{
-							next;
-						}
+						$data_pending_flag = undef;
+						next;
 					}
-					elsif($i < unpack('C', $data_arr[4]))
+					elsif(scalar(@data_arr) >= 8)
+					{
+						goto MORE_BYTES_TO_PROCCESS;
+					}
+					elsif(scalar(@data_arr) != 0 && scalar(@data_arr) < 8 )
 					{
 						$data_pending_flag = 1;
-						goto next;
+						next;
 					}
 					else
 					{
 						next;
 					}
 				}
-				elsif(scalar(@data_arr) != 0)
+				elsif($i < unpack('C', $data_arr[4]))
 				{
-					#the header is incomplete
 					$data_pending_flag = 1;
-					next;
+					goto next;
 				}
 				else
 				{
 					next;
 				}
+			}
+			elsif(scalar(@data_arr) != 0)
+			{
+				#the header is incomplete
+				$data_pending_flag = 1;
+				next;
+			}
+			else
+			{
+				next;
 			}
 		}
 	}
@@ -1396,28 +1193,24 @@ sub _receive_thread_subroutine
 
 sub _callback_thread_subroutine
 {
-	my ($self) = @_;
+	my ($self, $callback_queue) = @_;
+
+	$self->_init_local_socket();
 
 	while(1)
 	{
-		my $_callback_queue_data_arr_ref = $self->{callback_queue}->dequeue();
-		my ($kind, $data_or_callback, $reason, $socket_id) = @{$_callback_queue_data_arr_ref};
+		my ($kind, $data_or_callback, $reason, $socket_id) = @{$callback_queue->dequeue()};
 
 		if($kind == &_QUEUE_EXIT)
 		{
-			#exit callback thread
 			last;
 		}
-
-		if($kind == &_QUEUE_META)
+		elsif($kind == &_QUEUE_META)
 		{
-			#exit callback thread
 			$self->_dispatch_meta($data_or_callback, $reason, $socket_id);
 		}
-
-		if($kind == &_QUEUE_PACKET)
+		elsif($kind == &_QUEUE_PACKET)
 		{
-			#exit callback thread
 			$self->_dispatch_packet($data_or_callback);
 		}
 	}
@@ -1435,158 +1228,87 @@ sub _dispatch_meta
 		{
 			if($callback == &CALLBACK_CONNECTED)
 			{
-				if($reason == &CONNECT_REASON_REQUEST)
+				if(defined($self->{registered_callbacks}->{&CALLBACK_CONNECTED}))
 				{
-					if(defined($self->{registered_callbacks}->{&CALLBACK_CONNECTED}))
-					{
-						#call the callback with connect reason as request
-						eval("$self->{registered_callbacks}->{&CALLBACK_CONNECTED}(&CONNECT_REASON_REQUEST)");
-						return 1;
-					}
-				}
-
-				if($reason == &CONNECT_REASON_AUTO_RECONNECT)
-				{
-					if(defined($self->{registered_callbacks}->{&CALLBACK_CONNECTED}))
-					{
-						#call the callback with connect reason as request
-						eval("$self->{registered_callbacks}->{&CALLBACK_CONNECTED}(&CONNECT_REASON_AUTO_RECONNECT)");
-						return 1;
-					}
+					eval("$self->{registered_callbacks}->{&CALLBACK_CONNECTED}($reason);");
+					return 1;
 				}
 			}
-
-			if($callback == &CALLBACK_DISCONNECTED)
+			elsif($callback == &CALLBACK_DISCONNECTED)
 			{
-				if($reason == &DISCONNECT_REASON_REQUEST)
+				# need to do this here, the receive loop is not allowed to
+				# hold the socket mutex because this could cause a deadlock
+				# with a concurrent call to the (dis-)connect function
+				if($reason != &DISCONNECT_REASON_REQUEST)
 				{
-					$self->{auto_reconnect_pending} = 0;
-					$self->{auto_reconnect_allowed} = 0;
+					lock($Tinkerforge::IPConnection::SOCKET_LOCK);
 
-					if(defined($self->{disconnect_probe_thread}))
+					# don't close the socket if it got disconnected or
+					# reconnected in the meantime
+					if (defined($self->{socket_fileno}) && $self->{socket_id} == $socket_id)
 					{
+						# destroy disconnect probe thread
 						$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
-					}
-
-					if(defined($self->{receive_thread}))
-					{
-						$self->{receive_flag} = undef;
-					}
-
-					if(defined($IPCONNECTION_SOCKET))
-					{
-						$IPCONNECTION_SOCKET->shutdown(2);
-						$IPCONNECTION_SOCKET->close();
-					}
-
-					$IPCONNECTION_SOCKET = undef;
-
-					if(defined($self->{callback_thread}))
-					{
-						$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
-					}
-
-					if(defined($self->{registered_callbacks}->{&CALLBACK_DISCONNECTED}))
-					{
-						#call the callback with disconnect reason as request
-						eval("$self->{registered_callbacks}->{&CALLBACK_DISCONNECTED}(&DISCONNECT_REASON_REQUEST)");
-					}
-
-					return 1;
-				}
-
-				if($reason == &DISCONNECT_REASON_ERROR)
-				{
-					$self->{auto_reconnect_pending} = 0;
-					$self->{auto_reconnect_allowed} = 1;
-					$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
-
-					if(defined($self->{disconnect_probe_thread}))
-					{
 						$self->{disconnect_probe_thread}->join();
 						$self->{disconnect_probe_thread} = undef;
+
+						# destroy socket
+						$self->_destroy_socket();
+						#$self->_destroy_receive_interrupt();
 					}
-
-					if(defined($IPCONNECTION_SOCKET) && $self->{socket_id} == $socket_id)
-					{
-						$self->{receive_flag} = undef;
-
-						$IPCONNECTION_SOCKET->shutdown(2);
-						$IPCONNECTION_SOCKET->close();
-					}
-
-					$IPCONNECTION_SOCKET = undef;
-
-					if(defined($self->{receive_thread}))
-					{
-						$self->{receive_thread}->join();
-						$self->{receive_thread} = undef;
-					}
-
-					if(defined($self->{registered_callbacks}->{&CALLBACK_DISCONNECTED}))
-					{
-						#call the callback with disconnect reason as request
-						eval("$self->{registered_callbacks}->{&CALLBACK_DISCONNECTED}(&DISCONNECT_REASON_ERROR)");
-					}
-
-					if($self->{auto_reconnect} == 1 &&
-					   $self->{auto_reconnect_allowed} == 1 &&
-					   $self->{auto_reconnect_pending} == 0)
-					{
-						$self->{auto_reconnect_pending} = 1;
-						$self->_handle_connect(&CONNECT_REASON_AUTO_RECONNECT);
-					}
-
-					return 1;
 				}
 
-				if($reason == &DISCONNECT_REASON_SHUTDOWN)
+				if(defined($self->{registered_callbacks}->{&CALLBACK_DISCONNECTED}))
 				{
-					$self->{auto_reconnect_pending} = 0;
-					$self->{auto_reconnect_allowed} = 1;
-					$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
+					eval("$self->{registered_callbacks}->{&CALLBACK_DISCONNECTED}($reason);");
+				}
 
-					if(defined($self->{disconnect_probe_thread}))
+				if ($reason != &DISCONNECT_REASON_REQUEST &&
+				    $self->{auto_reconnect} &&
+				    $self->{auto_reconnect_allowed})
+				{
+					$self->{auto_reconnect_pending} = 1;
+
+					my $retry = 1;
+
+					# block here until reconnect. this is okay, there is no
+					# callback to deliver when there is no connection
+					while ($retry)
 					{
-						$self->{disconnect_probe_thread}->join();
-						$self->{disconnect_probe_thread} = undef;
+						$retry = 0;
+
+						if (1) {
+							lock($Tinkerforge::IPConnection::SOCKET_LOCK);
+
+							if ($self->{auto_reconnect_allowed} && !defined($self->{socket_fileno}))
+							{
+								eval
+								{
+									$self->_connect_unlocked(1);
+								};
+								if($!)
+								{
+									$retry = 1;
+								}
+							}
+							else
+							{
+								$self->{auto_reconnect_pending} = 0;
+							}
+						}
+
+						if ($retry)
+						{
+							# wait a moment to give another thread a chance to
+							# interrupt the auto-reconnect
+							select(undef, undef, undef, 0.1);
+						}
 					}
-
-					if(defined($IPCONNECTION_SOCKET) && $self->{socket_id} == $socket_id)
-					{
-						$self->{receive_flag} = undef;
-
-						$IPCONNECTION_SOCKET->shutdown(2);
-						$IPCONNECTION_SOCKET->close();
-					}
-
-					$IPCONNECTION_SOCKET = undef;
-
-					if(defined($self->{receive_thread}))
-					{
-						$self->{receive_thread}->join();
-						$self->{receive_thread} = undef;
-					}
-
-					if(defined($self->{registered_callbacks}->{&CALLBACK_DISCONNECTED}))
-					{
-						#call the callback with disconnect reason as request
-						eval("$self->{registered_callbacks}->{&CALLBACK_DISCONNECTED}(&DISCONNECT_REASON_SHUTDOWN)");
-					}
-
-					if($self->{auto_reconnect} == 1 &&
-					   $self->{auto_reconnect_allowed} == 1 &&
-					   $self->{auto_reconnect_pending} == 0)
-					{
-						$self->{auto_reconnect_pending} = 1;
-						$self->_handle_connect(&CONNECT_REASON_AUTO_RECONNECT);
-					}
-
-					return 1;
 				}
 			}
 		}
 	}
+
 	return 1;
 }
 
@@ -1805,40 +1527,44 @@ sub _disconnect_probe_thread_subroutine
 {
 	my ($self) = @_;
 
-	my $socket_id = $self->{socket_id};
+	$self->_init_local_socket();
 
 	while(1)
 	{
-		my $_disconnect_probe_queue_data = undef;
-		$_disconnect_probe_queue_data = $self->{disconnect_probe_queue}->dequeue_timed(&_DISCONNECT_PROBE_INTERVAL);
+		my $data = $self->{disconnect_probe_queue}->dequeue_timed(&_DISCONNECT_PROBE_INTERVAL);
 
-		if(defined($_disconnect_probe_queue_data) && $_disconnect_probe_queue_data == &_QUEUE_EXIT)
+		if(defined($data) && $data == &_QUEUE_EXIT)
 		{
-			#exiting thread
 			last;
+		}
+
+		if ($self->{disconnect_probe_flag}) {
+			my $packet = $self->_create_packet_header(undef, 8, &_FUNCTION_DISCONNECT_PROBE);
+
+			my $rc;
+			eval
+			{
+				lock($Tinkerforge::IPConnection::SEND_LOCK);
+
+				$| = 1; # enable autoflush
+				if ($^O eq 'MSWin32')
+				{
+					$rc = $self->_get_local_socket()->send($packet);
+				}
+				else
+				{
+					$rc = $self->_get_local_socket()->send($packet, MSG_NOSIGNAL);
+				}
+			};
+			if(!defined($rc))
+			{
+				$self->_handle_disconnect_by_peer(&DISCONNECT_REASON_ERROR, $self->{socket_id}, 0);
+				last;
+			}
 		}
 		else
 		{
-			lock($Tinkerforge::IPConnection::SEND_LOCK);
-
-			my $_disconnect_probe_packet = $self->_create_packet_header(undef, 8, &_FUNCTION_DISCONNECT_PROBE);
-
-			eval
-			{
-				$| = 1;
-				$IPCONNECTION_SOCKET->send($_disconnect_probe_packet);
-			};
-
-			if($!)
-			{
-				$self->{callback_queue}->enqueue([&_QUEUE_META, &CALLBACK_DISCONNECTED, &DISCONNECT_REASON_ERROR, $socket_id]);
-
-				last;
-			}
-			else
-			{
-				next;
-			}
+			$self->{disconnect_probe_flag} = 1;
 		}
 	}
 

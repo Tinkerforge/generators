@@ -53,6 +53,14 @@ Possible return value of the get_code() subroutine.
 
 use constant CONNECT_FAILED => 13;
 
+=item NO_THREAD
+
+Possible return value of the get_code() subroutine.
+
+=cut
+
+use constant NO_THREAD => 14;
+
 =item INVALID_FUNCTION_ID
 
 Possible return value of the get_code() subroutine.
