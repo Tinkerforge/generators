@@ -57,8 +57,6 @@ class CExamplesTester(common.ExamplesTester):
             args += ['/usr/bin/gcc', '-std=c99']
         elif self.compiler == 'g++':
             args += ['/usr/bin/g++', '-std=c++98']
-        elif self.compiler == 'clang':
-            args += ['/usr/bin/clang', '-std=c99']
         elif self.compiler == 'scan-build clang':
             args += ['/usr/bin/scan-build', '/usr/bin/clang', '-std=c99']
         else:
@@ -97,11 +95,6 @@ def run(path):
         return success
 
     success = CExamplesTester(path, 'g++', extra_examples).run()
-
-    if not success:
-        return success
-
-    success = CExamplesTester(path, 'clang', extra_examples).run()
 
     if not success:
         return success
