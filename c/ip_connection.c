@@ -386,8 +386,10 @@ uint32_t get_random_uint32(void) {
 
 	CryptReleaseContext(hprovider, 0);
 #else
-	if (read_uint32_non_blocking("/dev/random", &r) < 0) {
-		if (read_uint32_non_blocking("/dev/urandom", &r) < 0) {
+	// try /dev/urandom first, if not available or a read would
+	// block then fall back to /dev/random
+	if (read_uint32_non_blocking("/dev/urandom", &r) < 0) {
+		if (read_uint32_non_blocking("/dev/random", &r) < 0) {
 			goto fallback;
 		}
 	}
@@ -396,6 +398,7 @@ uint32_t get_random_uint32(void) {
 	return r;
 
 fallback:
+	// if no other random source is available fall back to the current time
 	if (gettimeofday(&tv, NULL) < 0) {
 		seconds = (uint32_t)time(NULL);
 		microseconds = 0;
