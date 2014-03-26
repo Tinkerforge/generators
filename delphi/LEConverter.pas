@@ -19,7 +19,7 @@ type
 
   TFloatAsBytes = record
     case boolean of
-      true:  (bytes : packed array[0..4] of byte);
+      true:  (bytes : packed array [0..4] of byte);
       false: (float : single);
   end;
 
