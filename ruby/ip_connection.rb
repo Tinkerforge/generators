@@ -813,6 +813,13 @@ module Tinkerforge
         rescue Errno::ECONNRESET
           handle_disconnect_by_peer DISCONNECT_REASON_SHUTDOWN, socket_id, false
           break
+        rescue Errno::ESHUTDOWN
+          # shutdown was called from disconnect_unlocked
+          break
+        end
+
+        if not @receive_flag
+          break
         end
 
         if data.length == 0
