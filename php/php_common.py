@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-PHP Documentation Generator
+PHP Generator
 Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 

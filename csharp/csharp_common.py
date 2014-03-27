@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-C# Documentation Generator
+C# Generator
 Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 

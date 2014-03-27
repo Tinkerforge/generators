@@ -2,10 +2,9 @@
 # -*- coding: utf-8 -*-
 
 """
-Perl Documentation Generator
+Perl Generator
 Copyright (C) 2013-2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
-Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 perl_common.py: Common Library for generation of Perl bindings and documentation
 
