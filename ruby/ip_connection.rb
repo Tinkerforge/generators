@@ -1,5 +1,5 @@
 # -*- ruby encoding: utf-8 -*-
-# Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+# Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 #
 # Redistribution and use in source and binary forms of this file,
 # with or without modification, are permitted. See the Creative
@@ -8,6 +8,8 @@
 require 'socket'
 require 'thread'
 require 'timeout'
+require 'securerandom'
+require 'openssl'
 
 module Tinkerforge
   class Base58
@@ -430,6 +432,31 @@ module Tinkerforge
     end
   end
 
+  # internal
+  class BrickDaemon < Device
+    FUNCTION_GET_AUTHENTICATION_NONCE = 1 # :nodoc:
+    FUNCTION_AUTHENTICATE = 2 # :nodoc:
+
+    # Creates an object with the unique device ID <tt>uid</tt> and adds it to
+    # the IP Connection <tt>ipcon</tt>.
+    def initialize(uid, ipcon)
+      super uid, ipcon
+
+      @api_version = [2, 0, 0]
+
+      @response_expected[FUNCTION_GET_AUTHENTICATION_NONCE] = RESPONSE_EXPECTED_ALWAYS_TRUE
+      @response_expected[FUNCTION_AUTHENTICATE] = RESPONSE_EXPECTED_TRUE
+    end
+
+    def get_authentication_nonce
+      send_request(FUNCTION_GET_AUTHENTICATION_NONCE, [], '', 4, 'C4')
+    end
+
+    def authenticate(client_nonce, digest)
+      send_request(FUNCTION_AUTHENTICATE, [client_nonce, digest], 'C4 C20', 0, '')
+    end
+  end
+
   class IPConnection
     attr_accessor :devices
     attr_accessor :timeout
@@ -463,6 +490,7 @@ module Tinkerforge
     def initialize
       @host = nil
       @port = 0
+      @secret = nil # protected by socket_mutex
 
       @timeout = 2.5
 
@@ -470,7 +498,10 @@ module Tinkerforge
       @auto_reconnect_allowed = false
       @auto_reconnect_pending = false
 
-      @next_sequence_number = 0
+      @auto_reauthenticate = true
+
+      @next_authentication_nonce = 0; # protected by sequence_number_mutex
+      @next_sequence_number = 0 # protected by sequence_number_mutex
       @sequence_number_mutex = Mutex.new
 
       @devices = {}
@@ -492,6 +523,8 @@ module Tinkerforge
       @disconnect_probe_thread = nil # protected by socket_mutex
 
       @waiter_queue = Queue.new
+
+      @brickd = BrickDaemon.new '2', self
     end
 
     # Creates a TCP/IP connection to the given <tt>host</tt> and <tt>port</tt>.
@@ -512,6 +545,7 @@ module Tinkerforge
 
         @host = host
         @port = port
+        @secret = nil
 
         connect_unlocked false
       }
@@ -552,6 +586,33 @@ module Tinkerforge
       end
     end
 
+    # FIXME
+    def authenticate(secret)
+      @sequence_number_mutex.synchronize {
+        if @next_authentication_nonce == 0
+          @next_authentication_nonce = SecureRandom.random_number(1 << 32)
+        end
+      }
+
+      server_nonce = @brickd.get_authentication_nonce
+      client_nonce = nil
+
+      @sequence_number_mutex.synchronize {
+        client_nonce = unpack(pack([@next_authentication_nonce], 'L'), 'C4')[0]
+        @next_authentication_nonce += 1
+      }
+
+      nonce_bytes = pack [server_nonce, client_nonce], 'C4 C4'
+      digest_bytes = OpenSSL::HMAC.digest 'sha1', secret, nonce_bytes
+      digest = unpack(digest_bytes, 'C20')[0]
+
+      @brickd.authenticate client_nonce, digest
+
+      @socket_mutex.synchronize {
+        @secret = secret
+      }
+    end
+
     # Can return the following states:
     #
     # - CONNECTION_STATE_DISCONNECTED: No connection is established.
@@ -573,7 +634,7 @@ module Tinkerforge
     # the IP Connection will try to reconnect to the previously given
     # host and port, if the connection is lost.
     #
-    # Default value is *true*.
+    # Default value is <tt>true</tt>.
     def set_auto_reconnect(auto_reconnect)
       @auto_reconnect = auto_reconnect
 
@@ -587,6 +648,21 @@ module Tinkerforge
     # otherwise.
     def get_auto_reconnect
       @auto_reconnect
+    end
+
+    # Enables or disables auto-reauthenticate. If auto-reauthenticate is enabled,
+    # the IP Connection will try to reauthenticate with the previously given
+    # secret after an auto-reconnect.
+    #
+    # Default value is <tt>true</tt>.
+    def set_auto_reauthenticate(auto_reauthenticate)
+      @auto_reauthenticate = auto_reauthenticate
+    end
+
+    # Returns <tt>true</tt> if auto-reauthenticate is enabled, <tt>false</tt>
+    # otherwise.
+    def get_auto_reauthenticate
+      @auto_reauthenticate
     end
 
     # Sets the timeout in seconds for getters and for setters for which
@@ -667,6 +743,7 @@ module Tinkerforge
       [header, response_expected, sequence_number]
     end
 
+    # internal
     def send_request(request)
       @socket_mutex.synchronize {
         if @socket == nil
@@ -787,6 +864,9 @@ module Tinkerforge
       # Destroy socket
       @socket.close
       @socket = nil
+
+      # clear secret
+      @secret = nil
     end
 
     # internal
@@ -896,11 +976,13 @@ module Tinkerforge
           # callback to deliver when there is no connection
           while retry_connect
             retry_connect = false
+            local_secret = nil
 
             @socket_mutex.synchronize {
               if @auto_reconnect_allowed and @socket == nil
                 begin
                   connect_unlocked true
+                  local_secret = @secret
                 rescue
                   retry_connect = true
                 end
@@ -911,6 +993,12 @@ module Tinkerforge
 
             if retry_connect
               sleep 0.1
+            elsif @auto_reauthenticate and local_secret != nil
+              begin
+                authenticate local_secret
+              rescue
+                # FIXME: how to handle errors here?
+              end
             end
           end
         end
