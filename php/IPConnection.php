@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2012-2013, Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (c) 2012-2014, Matthias Bolte <matthias@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
  * with or without modification, are permitted. See the Creative
@@ -410,6 +410,52 @@ abstract class Device
 }
 
 
+/**
+ * @internal
+ */
+class BrickDaemon extends Device
+{
+    const FUNCTION_GET_AUTHENTICATION_NONCE = 1;
+    const FUNCTION_AUTHENTICATE = 2;
+
+    public function __construct($uid, $ipcon)
+    {
+        parent::__construct($uid, $ipcon);
+
+        $this->apiVersion = array(2, 0, 0);
+
+        $this->responseExpected[self::FUNCTION_GET_AUTHENTICATION_NONCE] = self::RESPONSE_EXPECTED_ALWAYS_TRUE;
+        $this->responseExpected[self::FUNCTION_AUTHENTICATE] = self::RESPONSE_EXPECTED_TRUE;
+    }
+
+    public function getAuthenticationNonce()
+    {
+        $payload = '';
+
+        $data = $this->sendRequest(self::FUNCTION_GET_AUTHENTICATION_NONCE, $payload);
+
+        $payload = unpack('C4nonce', $data);
+
+        return IPConnection::collectUnpackedArray($payload, 'nonce', 4);
+    }
+
+    public function authenticate($clientNonce, $digest)
+    {
+        $payload = '';
+
+        for ($i = 0; $i < 4; $i++) {
+            $payload .= pack('C', $clientNonce[$i]);
+        }
+
+        for ($i = 0; $i < 20; $i++) {
+            $payload .= pack('C', $digest[$i]);
+        }
+
+        $this->sendRequest(self::FUNCTION_AUTHENTICATE, $payload);
+    }
+}
+
+
 class IPConnection
 {
     const DISCONNECT_PROBE_INTERVAL = 5.0;
@@ -442,6 +488,7 @@ class IPConnection
     public $timeout = 2.5; // seconds
 
     private $nextSequenceNumber = 0;
+    private $nextAuthenticationNonce = 0;
 
     public $devices = array();
 
@@ -451,12 +498,15 @@ class IPConnection
 
     private $host = "";
     private $port = 0;
+    private $secret = "";
 
     public $socket = FALSE;
     private $pendingData = '';
 
     private $disconnectProbeRequest = '';
     private $nextDisconnectProbe = 0.0;
+
+    private $brickd = NULL;
 
     /**
      * Creates an IP Connection object that can be used to enumerate the available
@@ -467,6 +517,8 @@ class IPConnection
         $result = $this->createPacketHeader(NULL, 8, self::FUNCTION_DISCONNECT_PROBE);
         $this->disconnectProbeRequest = $result[0];
         $this->nextDisconnectProbe = microtime(true) + self::DISCONNECT_PROBE_INTERVAL;
+
+        $this->brickd = new BrickDaemon('2', $this);
     }
 
     function __destruct()
@@ -501,6 +553,7 @@ class IPConnection
 
         $this->host = $host;
         $this->port = $port;
+        $this->secret = '';
 
         $address = '';
 
@@ -558,6 +611,45 @@ class IPConnection
         $this->disconnectInternal(self::DISCONNECT_REASON_REQUEST);
 
         $this->pendingData = '';
+    }
+
+    /**
+     * FIXME
+     *
+     * @param string $secret
+     *
+     * @return void
+     */
+    public function authenticate($secret)
+    {
+        if ($this->nextAuthenticationNonce == 0) {
+            $this->nextAuthenticationNonce = self::getRandomUInt32();
+        }
+
+        $serverNonce = $this->brickd->getAuthenticationNonce();
+        $serverNonceBytes = pack('C4', $serverNonce[0], $serverNonce[1], $serverNonce[2], $serverNonce[3]);
+
+        $clientNonceNumber = $this->nextAuthenticationNonce;
+        $this->nextAuthenticationNonce = bcadd($this->nextAuthenticationNonce, '1');
+
+        // cannot use pack() here because $clientNonceNumber might be a number in a string
+        $clientNonce = array((int)bcmod(      $clientNonceNumber,              '256'),
+                             (int)bcmod(bcdiv($clientNonceNumber,      '256'), '256'),
+                             (int)bcmod(bcdiv($clientNonceNumber,    '65536'), '256'),
+                             (int)bcmod(bcdiv($clientNonceNumber, '16777216'), '256'));
+        $clientNonceBytes = pack('C4', $clientNonce[0], $clientNonce[1], $clientNonce[2], $clientNonce[3]);
+
+        $digestBytes = hash_hmac('sha1', $serverNonceBytes . $clientNonceBytes, $secret, true);
+
+        if ($digestBytes === FALSE) {
+            throw new \Exception('HMAC-SHA1 not avialable');
+        }
+
+        $digest = self::collectUnpackedArray(unpack('C20digest', $digestBytes), 'digest', 20);
+
+        $this->brickd->authenticate($clientNonce, $digest);
+
+        $this->secret = $secret;
     }
 
     /**
@@ -833,6 +925,9 @@ class IPConnection
                                  array($disconnectReason,
                                        $this->registeredCallbackUserData[self::CALLBACK_DISCONNECTED]));
         }
+
+        // clear secret
+        $this->secret = '';
     }
 
     /**
@@ -1083,6 +1178,78 @@ class IPConnection
         }
 
         return $result;
+    }
+
+    /**
+     * @internal
+     */
+    static private function readUInt32NonBlocking($filename)
+    {
+        $fp = @fopen($filename, 'rb');
+
+        if ($fp === FALSE) {
+            return FALSE;
+        }
+
+        stream_set_blocking($fp, 0);
+
+        $bytes = @fread($fp, 4);
+
+        @fclose($fp);
+
+        if (strlen($bytes) != 4) {
+            return FALSE;
+        }
+
+        $data = unpack('V1number', $bytes);
+
+        return self::fixUnpackedUInt32($data['number']);
+    }
+
+    /**
+     * @internal
+     */
+    static private function getRandomUInt32()
+    {
+        $r = self::readUInt32NonBlocking('/dev/urandom');
+
+        if ($r !== FALSE) {
+            return $r;
+        }
+
+        $r = self::readUInt32NonBlocking('/dev/random');
+
+        if ($r !== FALSE) {
+            return $r;
+        }
+
+        if (function_exists('mcrypt_create_iv')) {
+            $bytes = @mcrypt_create_iv(4, MCRYPT_DEV_URANDOM);
+
+            if ($bytes !== FALSE) {
+                $data = unpack('V1number', $bytes);
+
+                return self::fixUnpackedUInt32($data['number']);
+            }
+        }
+
+        if (function_exists('openssl_random_pseudo_bytes')) {
+            $strong = false;
+            $bytes = @openssl_random_pseudo_bytes(4, $strong);
+
+            if (!$strong && $bytes !== FALSE) {
+                $data = unpack('V1number', $bytes);
+
+                return self::fixUnpackedUInt32($data['number']);
+            }
+        }
+
+        $time = gettimeofday();
+        $seconds = $time['sec'];
+        $microseconds = $time['usec'];
+
+        // (($seconds << 26 | $seconds >> 6) + $microseconds + getmypid()) % (1 << 32)
+        return bcmod(bcadd(bcadd(bcadd(bcmul($seconds, '67108864'), bcdiv($seconds, '64')), $microseconds), getmypid()), '4294967296');
     }
 }
 
