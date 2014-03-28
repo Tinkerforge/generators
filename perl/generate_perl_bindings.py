@@ -143,10 +143,10 @@ the IP Connection *ipcon*.
 
 sub new
 {{
-    my ($class, $uid, $ipcon) = @_;
+\tmy ($class, $uid, $ipcon) = @_;
 
-    my $self :shared = shared_clone({{super => shared_clone(Tinkerforge::Device->_new($uid, $ipcon)),
-                                     api_version => [{0}, {1}, {2}],
+\tmy $self :shared = shared_clone({{super => shared_clone(Tinkerforge::Device->_new($uid, $ipcon)),
+\t                                 api_version => [{0}, {1}, {2}],
 """
         response_expected = '                                     response_expected => shared_clone({'
 
@@ -211,10 +211,10 @@ sub {0}
 {{
     lock($Tinkerforge::Device::DEVICE_LOCK);
 
-    my ($self{2}) = @_;
+\tmy ($self{2}) = @_;
 
-    return $self->{{super}}->_send_request($self, &FUNCTION_{3}, [{4}], '{5}', '{6}');
- }}
+\treturn $self->{{super}}->_send_request($self, &FUNCTION_{3}, [{4}], '{5}', '{6}');
+}}
 """
         single_return = """
 =item {0}()
@@ -225,11 +225,11 @@ sub {0}
 
 sub {0}
 {{
-    lock($Tinkerforge::Device::DEVICE_LOCK);
+\tlock($Tinkerforge::Device::REQUEST_LOCK);
 
-    my ($self{2}) = @_;
+\tmy ($self{2}) = @_;
 
-    return $self->{{super}}->_send_request($self, &FUNCTION_{3}, [{4}], '{5}', '{6}');
+\treturn $self->{{super}}->_send_request($self, &FUNCTION_{3}, [{4}], '{5}', '{6}');
 }}
 """
         no_return = """
@@ -241,11 +241,11 @@ sub {0}
 
 sub {0}
 {{
-    lock($Tinkerforge::Device::DEVICE_LOCK);
+\tlock($Tinkerforge::Device::REQUEST_LOCK);
 
-    my ($self{2}) = @_;
+\tmy ($self{2}) = @_;
 
-    $self->{{super}}->_send_request($self, &FUNCTION_{3}, [{4}], '{5}', '{6}');
+\t$self->{{super}}->_send_request($self, &FUNCTION_{3}, [{4}], '{5}', '{6}');
 }}
 """
         methods = ''
@@ -286,11 +286,11 @@ Registers a callback with ID $id to the function named $callback.
 
 sub register_callback
 {
-    lock($Tinkerforge::Device::DEVICE_LOCK);
+\tlock($Tinkerforge::Device::DEVICE_LOCK);
 
-    my ($self, $id, $callback) = @_;
+\tmy ($self, $id, $callback) = @_;
 
-    $self->{super}->{registered_callbacks}->{$id} = '&'.caller.'::'.$callback;
+\t$self->{super}->{registered_callbacks}->{$id} = '&'.caller.'::'.$callback;
 }
 
 =item get_api_version()
@@ -302,9 +302,9 @@ this device.
 
 sub get_api_version
 {
-    my ($self) = @_;
+\tmy ($self) = @_;
 
-    return $self->{super}->{api_version};
+\treturn $self->{super}->{api_version};
 }
 
 =item get_response_expected()
@@ -329,26 +329,26 @@ errors are silently ignored, because they cannot be detected.
 
 sub get_response_expected
 {
-    lock($Tinkerforge::Device::DEVICE_LOCK);
+\tlock($Tinkerforge::Device::DEVICE_LOCK);
 
-    my ($self, $function_id) = @_;
+\tmy ($self, $function_id) = @_;
 
-    if(defined($self->{response_expected}->{$function_id}))
-    {
-        if($self->{response_expected}->{$function_id} == Tinkerforge::Device->_RESPONSE_EXPECTED_ALWAYS_TRUE ||
-           $self->{response_expected}->{$function_id} == Tinkerforge::Device->_RESPONSE_EXPECTED_TRUE)
-        {
-            return 1;
-        }
-        else
-        {
-            return 0;
-        }
-    }
-    else
-    {
-        croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_FUNCTION_ID, "Function ID $function_id is unknown"));
-    }
+\tif(defined($self->{response_expected}->{$function_id}))
+\t{
+\t\tif($self->{response_expected}->{$function_id} == Tinkerforge::Device->_RESPONSE_EXPECTED_ALWAYS_TRUE ||
+\t\t   $self->{response_expected}->{$function_id} == Tinkerforge::Device->_RESPONSE_EXPECTED_TRUE)
+\t\t{
+\t\t\treturn 1;
+\t\t}
+\t\telse
+\t\t{
+\t\t\treturn 0;
+\t\t}
+\t}
+\telse
+\t{
+\t\tcroak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_FUNCTION_ID, "Function ID $function_id is unknown"));
+\t}
 }
 
 =item set_response_expected()
@@ -369,25 +369,25 @@ errors are silently ignored, because they cannot be detected.
 
 sub set_response_expected
 {
-    lock($Tinkerforge::Device::DEVICE_LOCK);
+\tlock($Tinkerforge::Device::DEVICE_LOCK);
 
-    my ($self, $function_id, $response_expected) = @_;
+\tmy ($self, $function_id, $response_expected) = @_;
 
-    if(defined($self->{response_expected}->{$function_id}))
-    {
-        if($response_expected)
-        {
-            $self->{response_expected}->{$function_id} = Tinkerforge::Device->_RESPONSE_EXPECTED_TRUE;
-        }
-        else
-        {
-            $self->{response_expected}->{$function_id} = Tinkerforge::Device->_RESPONSE_EXPECTED_FALSE;
-        }
-    }
-    else
-    {
-        croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_FUNCTION_ID, "Function ID $function_id is unknown"));
-    }
+\tif(defined($self->{response_expected}->{$function_id}))
+\t{
+\t\tif($response_expected)
+\t\t{
+\t\t\t$self->{response_expected}->{$function_id} = Tinkerforge::Device->_RESPONSE_EXPECTED_TRUE;
+\t\t}
+\t\telse
+\t\t{
+\t\t\t$self->{response_expected}->{$function_id} = Tinkerforge::Device->_RESPONSE_EXPECTED_FALSE;
+\t\t}
+\t}
+\telse
+\t{
+\t\tcroak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_FUNCTION_ID, "Function ID $function_id is unknown"));
+\t}
 }
 
 =item set_response_expected_all()
@@ -399,21 +399,21 @@ configuration functions of this device at once.
 
 sub set_response_expected_all
 {
-    lock($Tinkerforge::Device::DEVICE_LOCK);
+\tlock($Tinkerforge::Device::DEVICE_LOCK);
 
-    my ($self, $response_expected) = @_;
+\tmy ($self, $response_expected) = @_;
 
-    foreach my $key (sort keys $self->{response_expected})
-    {
-        if($response_expected)
-        {
-            $self->{response_expected}->{$key} = Tinkerforge::Device->_RESPONSE_EXPECTED_TRUE;
-        }
-        else
-        {
-            $self->{response_expected}->{$key} = Tinkerforge::Device->_RESPONSE_EXPECTED_FALSE;
-        }
-    }
+\tforeach my $key (sort keys $self->{response_expected})
+\t{
+\t\tif($response_expected)
+\t\t{
+\t\t\t$self->{response_expected}->{$key} = Tinkerforge::Device->_RESPONSE_EXPECTED_TRUE;
+\t\t}
+\t\telse
+\t\t{
+\t\t\t$self->{response_expected}->{$key} = Tinkerforge::Device->_RESPONSE_EXPECTED_FALSE;
+\t\t}
+\t}
 }
 
 """
