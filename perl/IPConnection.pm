@@ -28,7 +28,10 @@ use Thread::Queue;
 use Thread::Semaphore;
 use IO::Socket::INET;
 use Socket qw(IPPROTO_TCP TCP_NODELAY MSG_NOSIGNAL);
-use POSIX qw(dup);
+use POSIX qw(dup getpid);
+use Fcntl;
+use Digest::HMAC_SHA1 qw(hmac_sha1);
+use Time::HiRes qw(gettimeofday);
 use Tinkerforge::Device;
 use Tinkerforge::Error;
 
@@ -236,11 +239,14 @@ sub new
 
 	my $self :shared = shared_clone({host => undef,
 	                                 port => undef,
+	                                 secret => undef, # protected by SOCKET_LOCK
 	                                 timeout => 2.5,
 	                                 next_sequence_number => 0, # protected by SEQUENCE_NUMBER_LOCK
+	                                 next_authentication_nonce => 0, # protected by SEQUENCE_NUMBER_LOCK
 	                                 auto_reconnect => 1,
 	                                 auto_reconnect_allowed => 0,
 	                                 auto_reconnect_pending => 0,
+	                                 auto_reauthenticate => 1,
 	                                 devices => shared_clone({}),
 	                                 registered_callbacks => shared_clone({}),
 	                                 socket_fileno => undef, # protected by SOCKET_LOCK
@@ -257,6 +263,7 @@ sub new
 	                                 local_socket_lock_ref => undef,
 	                                 send_lock_ref => undef,
 	                                 sequence_number_lock_ref => undef,
+	                                 brickd => undef
 	                                });
 
 	bless($self, $class);
@@ -270,6 +277,8 @@ sub new
 	$self->{local_socket_lock_ref} = \$local_socket_lock;
 	$self->{send_lock_ref} = \$send_lock;
 	$self->{sequence_number_lock_ref} = \$sequence_number_lock;
+
+	$self->_brickd_create();
 
 	return $self;
 }
@@ -303,6 +312,8 @@ sub connect
 	{
 		$self->{host} = $host;
 		$self->{port} = $port;
+		$self->{secret} = undef;
+
 		$self->_connect_unlocked(0);
 	}
 
@@ -486,6 +497,8 @@ sub _connect_unlocked
 		                                  &CONNECT_REASON_REQUEST, undef]);
 	}
 
+	$! = undef; # FIXME: workaround some Perl code polluting $!
+
 	return 1;
 }
 
@@ -596,6 +609,9 @@ sub _disconnect_unlocked
 
 	$self->{socket_fileno} = undef;
 
+	# clear secret
+	$self->{secret} = undef;
+
 	return 1;
 }
 
@@ -619,6 +635,135 @@ sub _destroy_socket
 	}
 
 	$self->{socket_fileno} = undef;
+}
+
+sub _read_uint32_non_blocking
+{
+	my ($self, $filename) = @_;
+
+	my $fh = undef;
+
+	if (!defined(sysopen($fh, $filename, O_RDONLY | O_NONBLOCK)))
+	{
+		return undef;
+	}
+
+	my $bytes = undef;
+
+	if (sysread($fh, $bytes, 4) != 4)
+	{
+		close($fh);
+
+		return undef;
+	}
+
+	close($fh);
+
+	return unpack('(V)<', $bytes);
+}
+
+# FIXME: this code is not ideal on Windows. if the script happens to run
+#        under Cygwin then there will be a /dev/[u]random to use. otherwise
+#        it'll fall back to the current time on Windows. there seems to be
+#        no easy way to call CryptGenRandom from Perl here. on the other
+#        the Perl bindings only work correct on Cygwin anyway, so this isn't
+#        a huge problem currently.
+sub _get_random_uint32
+{
+	my ($self) = @_;
+
+	my $r = $self->_read_uint32_non_blocking('/dev/urandom');
+
+	if (defined($r))
+	{
+		return $r;
+	}
+
+	$r = $self->_read_uint32_non_blocking('/dev/random');
+
+	if (defined($r))
+	{
+		return $r;
+	}
+
+	my ($seconds, $microseconds) = gettimeofday();
+
+	return (($seconds << 26 | $seconds >> 6) + $microseconds + getpid()) & 0xFFFFFFFF;
+}
+
+use constant _BRICK_DAEMON_FUNCTION_GET_AUTHENTICATION_NONCE => 1;
+use constant _BRICK_DAEMON_FUNCTION_AUTHENTICATE => 2;
+
+sub _brickd_create
+{
+	my ($self) = @_;
+
+	$self->{brickd} = Tinkerforge::Device->_new('2', $self, [2, 0, 0]);
+	$self->{brickd}->{response_expected}->{&_BRICK_DAEMON_FUNCTION_GET_AUTHENTICATION_NONCE} = Tinkerforge::Device->_RESPONSE_EXPECTED_ALWAYS_TRUE;
+	$self->{brickd}->{response_expected}->{&_BRICK_DAEMON_FUNCTION_AUTHENTICATE} = Tinkerforge::Device->_RESPONSE_EXPECTED_TRUE;
+}
+
+sub _brickd_get_authentication_nonce
+{
+	my ($self) = @_;
+
+	return $self->{brickd}->_send_request(&_BRICK_DAEMON_FUNCTION_GET_AUTHENTICATION_NONCE, [], '', 'C4');
+}
+
+sub _brickd_authenticate
+{
+	my ($self, $clientNonce, $digest) = @_;
+
+	$self->{brickd}->_send_request(&_BRICK_DAEMON_FUNCTION_AUTHENTICATE, [$clientNonce, $digest], 'C4 C20', '');
+}
+
+=item authenticate()
+
+FIXME
+
+=cut
+
+sub authenticate
+{
+	my ($self, $secret) = @_;
+
+	if (1)
+	{
+		lock(${$self->{sequence_number_lock_ref}});
+
+		if ($self->{next_authentication_nonce} == 0)
+		{
+			$self->{next_authentication_nonce} = $self->_get_random_uint32();
+		}
+	}
+
+	my @serverNonceArray = $self->_brickd_get_authentication_nonce();
+	my $serverNonce = \@serverNonceArray;
+	my $serverNonceBytes = pack('C4', @serverNonceArray);
+	my $clientNonce = undef;
+	my $clientNonceBytes = undef;
+
+	if (1)
+	{
+		lock(${$self->{sequence_number_lock_ref}});
+
+		my $clientNonceNumber = $self->{next_authentication_nonce}++;
+
+		$clientNonceBytes = pack('V', $clientNonceNumber);
+		$clientNonce = [unpack('C4', $clientNonceBytes)];
+	}
+
+	my $digestBytes = hmac_sha1($serverNonceBytes . $clientNonceBytes, $secret);
+	my $digest = [unpack('C20', $digestBytes)];
+
+	$self->_brickd_authenticate($clientNonce, $digest);
+
+	if (1)
+	{
+		lock(${$self->{socket_lock_ref}});
+
+		$self->{secret} = $secret;
+	}
 }
 
 =item get_connection_state()
@@ -685,6 +830,36 @@ sub get_auto_reconnect
 	my ($self) = @_;
 
 	return $self->{auto_reconnect};
+}
+
+=item set_auto_reauthenticate()
+
+Enables or disables auto-reauthenticate. If auto-reauthenticate is enabled,
+the IP Connection will try to reauthenticate with the previously given
+secret after an auto-reconnect.
+
+Default value is 1.
+
+=cut
+
+sub set_auto_reauthenticate
+{
+	my ($self, $auto_reauthenticate) = @_;
+
+	$self->{auto_reauthenticate} = $auto_reauthenticate;
+}
+
+=item get_auto_reauthenticate()
+
+Returns 1 if auto-reauthenticate is enabled, 0 otherwise.
+
+=cut
+
+sub get_auto_reauthenticate
+{
+	my ($self) = @_;
+
+	return $self->{auto_reauthenticate};
 }
 
 =item set_timeout()
@@ -1276,12 +1451,14 @@ sub _dispatch_meta
 					$self->{auto_reconnect_pending} = 1;
 
 					my $retry = 1;
+					my $local_secret = undef;
 
 					# block here until reconnect. this is okay, there is no
 					# callback to deliver when there is no connection
 					while ($retry)
 					{
 						$retry = 0;
+						$local_secret = undef;
 
 						if (1) {
 							lock(${$self->{socket_lock_ref}});
@@ -1291,6 +1468,7 @@ sub _dispatch_meta
 								eval
 								{
 									$self->_connect_unlocked(1);
+									$local_secret = $self->{secret};
 								};
 								if($!)
 								{
@@ -1308,6 +1486,14 @@ sub _dispatch_meta
 							# wait a moment to give another thread a chance to
 							# interrupt the auto-reconnect
 							select(undef, undef, undef, 0.1);
+						}
+						elsif ($self->{auto_reauthenticate} and defined($local_secret))
+						{
+							eval
+							{
+								# FIXME: how to handle errors here?
+								$self->authenticate($local_secret);
+							};
 						}
 					}
 				}
