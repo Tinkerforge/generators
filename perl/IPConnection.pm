@@ -165,21 +165,15 @@ use constant _QUEUE_PACKET => 2;
 
 use constant _DISCONNECT_PROBE_INTERVAL => 5;
 
-# lock(s)
-our $SOCKET_LOCK :shared;
-our $SEND_LOCK :shared;
-our $LOCAL_SOCKET_LOCK :shared;
-our $SEQUENCE_NUMBER_LOCK :shared;
-
 # the local socket variable, the actual socket
 my $local_socket = undef;
 my $local_socket_id = 0;
 
 sub _init_local_socket
 {
-	lock($Tinkerforge::IPConnection::LOCAL_SOCKET_LOCK);
-
 	my ($self) = @_;
+
+	lock(${$self->{local_socket_lock_ref}});
 
 	# clear values copied over by threads->create(). this has to be
 	# called first from every thread.
@@ -204,9 +198,9 @@ sub _init_local_socket
 
 sub _get_local_socket
 {
-	lock($Tinkerforge::IPConnection::LOCAL_SOCKET_LOCK);
-
 	my ($self) = @_;
+
+	lock(${$self->{local_socket_lock_ref}});
 
 	if ($self->{socket_id} != $local_socket_id)
 	{
@@ -243,13 +237,13 @@ sub new
 	my $self :shared = shared_clone({host => undef,
 	                                 port => undef,
 	                                 timeout => 2.5,
-	                                 sequence_number => 0,
+	                                 next_sequence_number => 0, # protected by SEQUENCE_NUMBER_LOCK
 	                                 auto_reconnect => 1,
 	                                 auto_reconnect_allowed => 0,
 	                                 auto_reconnect_pending => 0,
 	                                 devices => shared_clone({}),
 	                                 registered_callbacks => shared_clone({}),
-	                                 socket_fileno => undef,
+	                                 socket_fileno => undef, # protected by SOCKET_LOCK
 	                                 socket_id => 0,
 	                                 receive_flag => 0,
 	                                 receive_thread => undef,
@@ -258,10 +252,24 @@ sub new
 	                                 disconnect_probe_queue => undef,
 	                                 callback_thread => undef,
 	                                 callback_queue => undef,
-	                                 local_socket_handshake => undef
+	                                 local_socket_handshake => undef,
+	                                 socket_lock_ref => undef,
+	                                 local_socket_lock_ref => undef,
+	                                 send_lock_ref => undef,
+	                                 sequence_number_lock_ref => undef,
 	                                });
 
 	bless($self, $class);
+
+	my $socket_lock :shared;
+	my $local_socket_lock :shared;
+	my $send_lock :shared;
+	my $sequence_number_lock :shared;
+
+	$self->{socket_lock_ref} = \$socket_lock;
+	$self->{local_socket_lock_ref} = \$local_socket_lock;
+	$self->{send_lock_ref} = \$send_lock;
+	$self->{sequence_number_lock_ref} = \$sequence_number_lock;
 
 	return $self;
 }
@@ -282,9 +290,9 @@ host and port.
 
 sub connect
 {
-	lock($Tinkerforge::IPConnection::SOCKET_LOCK);
-
 	my ($self, $host, $port) = @_;
+
+	lock(${$self->{socket_lock_ref}});
 
 	if(defined($self->{socket_fileno}))
 	{
@@ -496,7 +504,7 @@ sub disconnect
 	my $callback_thread = undef;
 
 	if (1) {
-		lock($Tinkerforge::IPConnection::SOCKET_LOCK);
+		lock(${$self->{socket_lock_ref}});
 
 		$self->{auto_reconnect_allowed} = 0;
 
@@ -659,7 +667,8 @@ sub set_auto_reconnect
 
 	$self->{auto_reconnect} = $auto_reconnect;
 
-	if (!$self->{auto_reconnect}) {
+	if (!$self->{auto_reconnect})
+	{
 		# abort potentially pending auto reconnect
 		$self->{auto_reconnect_allowed} = 0;
 	}
@@ -691,15 +700,13 @@ sub set_timeout
 {
 	my ($self, $timeout) = @_;
 
-	if($timeout < 0)
+	if ($timeout < 0)
 	{
-		croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_PARAMETER,
-		                               'Timeout cannot be negative'));
+		croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_PARAMETER, 'Timeout cannot be negative'));
 	}
-	else
-	{
-		$self->{auto_reconnect} = $timeout;
-	}
+
+	$self->{auto_reconnect} = $timeout;
+
 }
 
 =item get_timeout()
@@ -817,19 +824,19 @@ sub _create_packet_header
 
 sub _get_next_sequence_number
 {
-	lock($Tinkerforge::IPConnection::SEQUENCE_NUMBER_LOCK);
-
 	my ($self) = @_;
 
-	if($self->{sequence_number} >= 0 && $self->{sequence_number} < 15)
+	lock(${$self->{sequence_number_lock_ref}});
+
+	if($self->{next_sequence_number} >= 0 && $self->{next_sequence_number} < 15)
 	{
-		$self->{sequence_number} ++;
-		return $self->{sequence_number};
+		$self->{next_sequence_number}++;
+		return $self->{next_sequence_number};
 	}
 	else
 	{
-		$self->{sequence_number} = 1;
-		return $self->{sequence_number};
+		$self->{next_sequence_number} = 1;
+		return $self->{next_sequence_number};
 	}
 
 	return 1;
@@ -852,9 +859,9 @@ sub _handle_disconnect_by_peer
 
 sub _ipcon_send
 {
-	lock($Tinkerforge::IPConnection::SOCKET_LOCK);
-
 	my ($self, $packet) = @_;
+
+	lock(${$self->{socket_lock_ref}});
 
 	if(!defined($self->{socket_fileno}))
 	{
@@ -864,7 +871,7 @@ sub _ipcon_send
 	my $rc;
 	eval
 	{
-		lock($Tinkerforge::IPConnection::SEND_LOCK);
+		lock(${$self->{send_lock_ref}});
 
 		$| = 1; # enable autoflush
 		if ($^O eq 'MSWin32')
@@ -1241,7 +1248,7 @@ sub _dispatch_meta
 				# with a concurrent call to the (dis-)connect function
 				if($reason != &DISCONNECT_REASON_REQUEST)
 				{
-					lock($Tinkerforge::IPConnection::SOCKET_LOCK);
+					lock(${$self->{socket_lock_ref}});
 
 					# don't close the socket if it got disconnected or
 					# reconnected in the meantime
@@ -1254,7 +1261,6 @@ sub _dispatch_meta
 
 						# destroy socket
 						$self->_destroy_socket();
-						#$self->_destroy_receive_interrupt();
 					}
 				}
 
@@ -1278,7 +1284,7 @@ sub _dispatch_meta
 						$retry = 0;
 
 						if (1) {
-							lock($Tinkerforge::IPConnection::SOCKET_LOCK);
+							lock(${$self->{socket_lock_ref}});
 
 							if ($self->{auto_reconnect_allowed} && !defined($self->{socket_fileno}))
 							{
@@ -1544,7 +1550,7 @@ sub _disconnect_probe_thread_subroutine
 			my $rc;
 			eval
 			{
-				lock($Tinkerforge::IPConnection::SEND_LOCK);
+				lock(${$self->{send_lock_ref}});
 
 				$| = 1; # enable autoflush
 				if ($^O eq 'MSWin32')
