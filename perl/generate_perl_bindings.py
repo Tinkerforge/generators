@@ -59,14 +59,14 @@ package Tinkerforge::{1}{2};
 
     def get_perl_use(self):
         return """
-use Tinkerforge::Device;
-use Tinkerforge::IPConnection;
-use Tinkerforge::Error;
 use strict;
 use warnings;
 use Carp;
 use threads;
 use threads::shared;
+use parent 'Tinkerforge::Device';
+use Tinkerforge::IPConnection;
+use Tinkerforge::Error;
 
 =head1 CONSTANTS
 
@@ -145,12 +145,11 @@ sub new
 {{
 \tmy ($class, $uid, $ipcon) = @_;
 
-\tmy $self :shared = shared_clone({{super => shared_clone(Tinkerforge::Device->_new($uid, $ipcon)),
-\t                                 api_version => [{0}, {1}, {2}],
+\tmy $self = Tinkerforge::Device->_new($uid, $ipcon, [{0}, {1}, {2}]);
 """
-        response_expected = '                                     response_expected => shared_clone({'
+        response_expecteds = []
 
-        for idx, packet in enumerate(self.get_packets()):
+        for packet in self.get_packets():
             if packet.get_type() == 'callback':
                 prefix = 'CALLBACK_'
                 flag = '_RESPONSE_EXPECTED_ALWAYS_FALSE'
@@ -164,40 +163,22 @@ sub new
                 prefix = 'FUNCTION_'
                 flag = '_RESPONSE_EXPECTED_FALSE'
 
-            if idx == 0:
-                response_expected += '&{0}{1} => Tinkerforge::Device->{2},\n' \
-                    .format(prefix, packet.get_upper_case_name(), flag)
-            if idx > 0 and idx != len(self.get_packets()) - 1:
-                response_expected += '                                                                        &{0}{1} => Tinkerforge::Device->{2},\n' \
-                    .format(prefix, packet.get_upper_case_name(), flag)
-            if idx == len(self.get_packets()) - 1:
-                response_expected += '                                                                        &{0}{1} => Tinkerforge::Device->{2}}})' \
-                    .format(prefix, packet.get_upper_case_name(), flag)
+            response_expecteds.append('\t$self->{{response_expected}}->{{&{0}{1}}} = Tinkerforge::Device->{2};'.format(prefix, packet.get_upper_case_name(), flag))
 
-        dev_new = dev_new.format(*self.get_api_version()) + response_expected
+        callbacks = []
 
         if len(self.get_packets('callback')) > 0:
-            cbs = ',\n                                    callback_formats => shared_clone({'
+            for packet in self.get_packets('callback'):
+                callbacks.append('\t$self->{{callback_formats}}->{{&CALLBACK_{0}}} = \'{1}\';'.format(packet.get_upper_case_name(), packet.get_perl_format_list('out')))
 
-            for idx, packet in enumerate(self.get_packets('callback')):
-                if idx == 0:
-                    cb = "&CALLBACK_{0} => '{1}',\n"
-                if idx > 0 and idx != len(self.get_packets()) - 1:
-                    cb = "                                                                      &CALLBACK_{0} => '{1}',\n"
-                if idx == len(self.get_packets('callback')) - 1:
-                    cb = "                                                                      &CALLBACK_{0} => '{1}'}})}});\n\n"
+        return dev_new.format(*self.get_api_version()) + '\n' + '\n'.join(response_expecteds) + '\n\n' + '\n'.join(callbacks) + """
 
-                cbs += cb.format(packet.get_upper_case_name(),
-                                 packet.get_perl_format_list('out'))
-        else:
-            cbs = '});\n'
+\tbless($self, $class);
 
-        reg_ipcon_str = '    $self->{super}->{ipcon}->{devices}->{$self->{super}->{uid}} = $self;\n\n'
-        reg_api_ver_str = '    $self->{super}->{api_version} = $self->{api_version};\n\n'
-        bless_str = '    bless($self, $class);\n\n'
-        return_str = '    return $self;\n}\n'
+\treturn $self;
+}
 
-        return dev_new + cbs + reg_ipcon_str + reg_api_ver_str + bless_str + return_str
+"""
 
     def get_perl_subroutines(self):
         multiple_return = """
@@ -209,11 +190,9 @@ sub new
 
 sub {0}
 {{
-    lock($Tinkerforge::Device::DEVICE_LOCK);
-
 \tmy ($self{2}) = @_;
 
-\treturn $self->{{super}}->_send_request($self, &FUNCTION_{3}, [{4}], '{5}', '{6}');
+\treturn $self->_send_request(&FUNCTION_{3}, [{4}], '{5}', '{6}');
 }}
 """
         single_return = """
@@ -225,11 +204,9 @@ sub {0}
 
 sub {0}
 {{
-\tlock($Tinkerforge::Device::REQUEST_LOCK);
-
 \tmy ($self{2}) = @_;
 
-\treturn $self->{{super}}->_send_request($self, &FUNCTION_{3}, [{4}], '{5}', '{6}');
+\treturn $self->_send_request(&FUNCTION_{3}, [{4}], '{5}', '{6}');
 }}
 """
         no_return = """
@@ -241,11 +218,9 @@ sub {0}
 
 sub {0}
 {{
-\tlock($Tinkerforge::Device::REQUEST_LOCK);
-
 \tmy ($self{2}) = @_;
 
-\t$self->{{super}}->_send_request($self, &FUNCTION_{3}, [{4}], '{5}', '{6}');
+\t$self->_send_request(&FUNCTION_{3}, [{4}], '{5}', '{6}');
 }}
 """
         methods = ''
@@ -275,156 +250,12 @@ sub {0}
 
         return methods
 
-    def get_perl_common_device_subroutines(self):
-        return """
-
-=item register_callback()
-
-Registers a callback with ID $id to the function named $callback.
-
-=cut
-
-sub register_callback
-{
-\tlock($Tinkerforge::Device::DEVICE_LOCK);
-
-\tmy ($self, $id, $callback) = @_;
-
-\t$self->{super}->{registered_callbacks}->{$id} = '&'.caller.'::'.$callback;
-}
-
-=item get_api_version()
-
-Returns the API version (major, minor, revision) of the bindings for
-this device.
-
-=cut
-
-sub get_api_version
-{
-\tmy ($self) = @_;
-
-\treturn $self->{super}->{api_version};
-}
-
-=item get_response_expected()
-
-Returns the response expected flag for the function specified by the
-*function_id* parameter. It is *true* if the function is expected to
-send a response, *false* otherwise.
-
-For getter functions this is enabled by default and cannot be disabled,
-because those functions will always send a response. For callback
-configuration functions it is enabled by default too, but can be
-disabled via the set_response_expected function. For setter functions
-it is disabled by default and can be enabled.
-
-Enabling the response expected flag for a setter function allows to
-detect timeouts and other error conditions calls of this setter as
-well. The device will then send a response for this purpose. If this
-flag is disabled for a setter function then no response is send and
-errors are silently ignored, because they cannot be detected.
-
-=cut
-
-sub get_response_expected
-{
-\tlock($Tinkerforge::Device::DEVICE_LOCK);
-
-\tmy ($self, $function_id) = @_;
-
-\tif(defined($self->{response_expected}->{$function_id}))
-\t{
-\t\tif($self->{response_expected}->{$function_id} == Tinkerforge::Device->_RESPONSE_EXPECTED_ALWAYS_TRUE ||
-\t\t   $self->{response_expected}->{$function_id} == Tinkerforge::Device->_RESPONSE_EXPECTED_TRUE)
-\t\t{
-\t\t\treturn 1;
-\t\t}
-\t\telse
-\t\t{
-\t\t\treturn 0;
-\t\t}
-\t}
-\telse
-\t{
-\t\tcroak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_FUNCTION_ID, "Function ID $function_id is unknown"));
-\t}
-}
-
-=item set_response_expected()
-
-Changes the response expected flag of the function specified by the
-*function_id* parameter. This flag can only be changed for setter
-(default value: *false*) and callback configuration functions
-(default value: *true*). For getter functions it is always enabled
-and callbacks it is always disabled.
-
-Enabling the response expected flag for a setter function allows to
-detect timeouts and other error conditions calls of this setter as
-well. The device will then send a response for this purpose. If this
-flag is disabled for a setter function then no response is send and
-errors are silently ignored, because they cannot be detected.
-
-=cut
-
-sub set_response_expected
-{
-\tlock($Tinkerforge::Device::DEVICE_LOCK);
-
-\tmy ($self, $function_id, $response_expected) = @_;
-
-\tif(defined($self->{response_expected}->{$function_id}))
-\t{
-\t\tif($response_expected)
-\t\t{
-\t\t\t$self->{response_expected}->{$function_id} = Tinkerforge::Device->_RESPONSE_EXPECTED_TRUE;
-\t\t}
-\t\telse
-\t\t{
-\t\t\t$self->{response_expected}->{$function_id} = Tinkerforge::Device->_RESPONSE_EXPECTED_FALSE;
-\t\t}
-\t}
-\telse
-\t{
-\t\tcroak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_FUNCTION_ID, "Function ID $function_id is unknown"));
-\t}
-}
-
-=item set_response_expected_all()
-
-Changes the response expected flag for all setter and callback
-configuration functions of this device at once.
-
-=cut
-
-sub set_response_expected_all
-{
-\tlock($Tinkerforge::Device::DEVICE_LOCK);
-
-\tmy ($self, $response_expected) = @_;
-
-\tforeach my $key (sort keys $self->{response_expected})
-\t{
-\t\tif($response_expected)
-\t\t{
-\t\t\t$self->{response_expected}->{$key} = Tinkerforge::Device->_RESPONSE_EXPECTED_TRUE;
-\t\t}
-\t\telse
-\t\t{
-\t\t\t$self->{response_expected}->{$key} = Tinkerforge::Device->_RESPONSE_EXPECTED_FALSE;
-\t\t}
-\t}
-}
-
-"""
-
     def get_perl_source(self):
         source  = self.get_perl_package()
         source += self.get_perl_use()
         source += self.get_perl_constants()
         source += self.get_perl_new_subroutine()
         source += self.get_perl_subroutines()
-        source += self.get_perl_common_device_subroutines()
         source += "=back\n=cut\n\n1;\n"
 
         return source

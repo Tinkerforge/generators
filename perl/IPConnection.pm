@@ -760,7 +760,7 @@ sub _create_packet_header
 
 	if(defined($device))
 	{
-		$uid = $device->{super}->{uid};
+		$uid = $device->{uid};
 
 		if($device->get_response_expected($function_id))
 		{
@@ -1035,7 +1035,7 @@ sub _handle_packet
 		if(defined($self->{devices}->{$uid}))
 		{
 			my $_device = $self->{devices}->{$uid};
-			my $_err_code = $_device->{super}->{ipcon}->_get_err_from_data($packet);
+			my $_err_code = $_device->{ipcon}->_get_err_from_data($packet);
 
 			if($_err_code != 0)
 			{
@@ -1063,12 +1063,12 @@ sub _handle_packet
 		return 1;
 	}
 
-	my $_fid = $self->{devices}->{$uid}->{super}->{expected_response_function_id};
-	my $_seq = $self->{devices}->{$uid}->{super}->{expected_response_sequence_number};
+	my $_fid = $self->{devices}->{$uid}->{expected_response_function_id};
+	my $_seq = $self->{devices}->{$uid}->{expected_response_sequence_number};
 
 	if($$_fid == $fid && $$_seq == $seq)
 	{
-		$self->{devices}->{$uid}->{super}->{response_queue}->enqueue($packet);
+		$self->{devices}->{$uid}->{response_queue}->enqueue($packet);
 		return 1;
 	}
 
@@ -1504,25 +1504,25 @@ sub _dispatch_packet
 		return 1;
 	}
 
-	if(defined($self->{devices}->{$uid}->{super}->{registered_callbacks}->{$fid}))
+	if(defined($self->{devices}->{$uid}->{registered_callbacks}->{$fid}))
 	{
 		my @callback_format_arr = split(' ', $self->{devices}->{$uid}->{callback_formats}->{$fid});
 
 		if(scalar(@callback_format_arr) > 1)
 		{
 			my @callback_return_arr = unpack($self->{devices}->{$uid}->{callback_formats}->{$fid}, $payload);
-			eval("$self->{devices}->{$uid}->{super}->{registered_callbacks}->{$fid}(\@callback_return_arr)");
+			eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}(\@callback_return_arr)");
 		}
 
 		if(scalar(@callback_format_arr) == 1)
 		{
 			my $_payload_unpacked = unpack($self->{devices}->{$uid}->{callback_formats}->{$fid}, $payload);
-			eval("$self->{devices}->{$uid}->{super}->{registered_callbacks}->{$fid}($_payload_unpacked)");
+			eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}($_payload_unpacked)");
 		}
 
 		if(scalar(@callback_format_arr) == 0)
 		{
-			eval("$self->{devices}->{$uid}->{super}->{registered_callbacks}->{$fid}()");
+			eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}()");
 		}
 	}
 
