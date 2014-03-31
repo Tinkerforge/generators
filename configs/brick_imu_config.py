@@ -204,12 +204,20 @@ Returns the current orientation (x, y, z, w) of the IMU as
 
 You can go from quaternions to Euler angles with the following formula::
 
- roll  = atan2(2*y*w - 2*x*z, 1 - 2*y*y - 2*z*z)
- pitch = atan2(2*x*w - 2*y*z, 1 - 2*x*x - 2*z*z)
- yaw   =  asin(2*x*y + 2*z*w)
+ xAngle = atan2(2*y*w - 2*x*z, 1 - 2*y*y - 2*z*z)
+ yAngle = atan2(2*x*w - 2*y*z, 1 - 2*x*x - 2*z*z)
+ zAngle =  asin(2*x*y + 2*z*w)
 
 This process is not reversible, because of the 
 `gimbal lock <http://en.wikipedia.org/wiki/Gimbal_lock>`__.
+
+It is also possible to calculate independent angles. You can calculate 
+yaw, pitch and roll in a right-handed vehicle coordinate system according to DIN70000
+with::
+
+ yaw   =  atan2(2*x*y + 2*w*z, w*w + x*x - y*y - z*z)
+ pitch = -asin(2*w*y - 2*x*z)
+ roll  = -atan2(2*y*z + 2*w*x, -w*w + x*x + y*y - z*z))
 
 Converting the quaternions to an OpenGL transformation matrix is
 possible with the following formula::
@@ -230,9 +238,17 @@ Gibt die aktuelle Orientierung (x, y, z, w) des IMU Brick als
 
 Die Umrechnung von Quaternionen in Eulerwinkel ist mit folgender Formel möglich::
 
- roll  = atan2(2*y*w - 2*x*z, 1 - 2*y*y - 2*z*z)
- pitch = atan2(2*x*w - 2*y*z, 1 - 2*x*x - 2*z*z)
- yaw   =  asin(2*x*y + 2*z*w)
+ xAngle = atan2(2*y*w - 2*x*z, 1 - 2*y*y - 2*z*z)
+ yAngle = atan2(2*x*w - 2*y*z, 1 - 2*x*x - 2*z*z)
+ zAngle =  asin(2*x*y + 2*z*w)
+
+Es ist auch möglich unabhängige Winkel zu berechen. Yaw, Pitch und Roll
+in einem rechtshändigen Fahrzeugkoordinatensystem nach DIN70000 können
+wie folgt berechnet werden::
+
+ yaw   =  atan2(2*x*y + 2*w*z, w*w + x*x - y*y - z*z)
+ pitch = -asin(2*w*y - 2*x*z)
+ roll  = -atan2(2*y*z + 2*w*x, -w*w + x*x + y*y - z*z))
  
 Diese Umrechnung ist irreversibel aufgrund der 
 `kardanischen Blockade <http://de.wikipedia.org/wiki/Gimbal_lock>`__.
