@@ -50,7 +50,7 @@ class PerlExamplesTester(common.ExamplesTester):
         src_check = src.replace('.pl', '_check.pl')
 
         code = file(src, 'rb').read()
-        file(src_check, 'wb').write('use lib "/tmp/tester/source";\nCHECK { sub __check__ { ' + code + '\n\n}}\n\n__check__;\n');
+        file(src_check, 'wb').write('use lib "/tmp/tester/source"; use strict; use warnings; CHECK { sub __check__ { ' + code + '\n\n}}\n\n__check__;\n');
 
         args = ['perl',
                 '-cWT',
