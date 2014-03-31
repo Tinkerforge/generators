@@ -389,50 +389,29 @@ function IPConnection() {
                                                    IPConnection.DISCONNECT_PROBE_INTERVAL);
     };
     this.getUIDFromPacket = function (packetUID){
-
         return packetUID.readUInt32LE(0);
     };
-
     this.getLengthFromPacket = function (packetLen) {
         return packetLen.readUInt8(4);
     };
-
     this.getFunctionIDFromPacket = function (packetFID) {
         return packetFID.readUInt8(5);
     };
-
     this.getSequenceNumberFromPacket = function (packetSeq) {
         return (packetSeq.readUInt8(6) >>> 4) & 0x0F;
     };
-
     this.getRFromPacket = function (packetR) {
         return (packetR.readUInt8(6) >>> 3) & 0x01;
     };
-
-    this.getAFromPacket = function (packetA) {
-        return (packetA.readUInt8(6) >>> 2) & 0x01;
-    };
-
-    this.getOOFromPacket = function (packetOO) {
-        return packetOO.readUInt8(6) & 0x03;
-    };
-
     this.getEFromPacket = function (packetE) {
         // Getting Error bits(E, 2bits)
         return (packetE.readUInt8(7) >>> 6) & 0x03;
     };
-
-    this.getFutureUseFromPacket = function (packetFutureUse) {
-        // Getting Future Use(6bits)
-        return (packetFutureUse.readUInt8(7) >>> 6) & 0x63;
-    };
-
     this.getPayloadFromPacket = function (packetPayload) {
         var payloadReturn = new Buffer(packetPayload.length - 8);
         packetPayload.copy(payloadReturn, 0, 8, packetPayload.length);
         return new Buffer(payloadReturn);
     };
-
     function pack(data, format) {
         var formatArray = format.split(' ');
         if (formatArray.length <= 0) {
@@ -710,13 +689,13 @@ function IPConnection() {
                 var singleFormatArray = formatArray[i].split('');
                 if (singleFormatArray[0] === 's') {
                     constructedString = '';
-					skip = false; 
+					skip = false;
                     for(var j=0; j<parseInt(formatArray[i].match(/\d/g).join('')); j++) {
 						c = String.fromCharCode(unpackPayload.readUInt8(payloadReadOffset));
 						if(c === '\0' || skip) {
 							skip = true;
 						} else {
-	                        constructedString += c;                        
+	                        constructedString += c;
 						}
 						payloadReadOffset++;
                     }
@@ -792,7 +771,6 @@ function IPConnection() {
         }
         return returnArguments;
      }
-
     this.sendRequest = function (sendRequestDevice, sendRequestFID, sendRequestData,
                                  sendRequestPackFormat, sendRequestUnpackFormat,
                                  sendRequestReturnCB, sendRequestErrorCB) {
