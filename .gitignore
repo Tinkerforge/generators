@@ -7,6 +7,8 @@
 */bindings_octave/
 */doc/
 device_identifiers.py
+delphi/*.o
+delphi/*.ppu
 perl/Tinkerforge-*.tar.gz
 ruby/tinkerforge-*.gem
 shell/tinkerforge

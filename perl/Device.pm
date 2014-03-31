@@ -11,7 +11,7 @@
 
 =head1 NAME
 
-Tinkerforge::Device - Base class for all Bricks and Bricklets
+Tinkerforge::Device - Base class for all Bricks and Bricklets (for internal use only)
 
 =cut
 
@@ -35,29 +35,33 @@ use constant _RESPONSE_EXPECTED_ALWAYS_FALSE => 2; # CALLBACK
 use constant _RESPONSE_EXPECTED_TRUE => 3; # SETTER
 use constant _RESPONSE_EXPECTED_FALSE => 4; # SETTER; DEFAULT
 
-# lock(s)
-our $DEVICE_LOCK :shared;
-
 # the constructor
 sub _new
 {
-	my ($class, $uid, $ipcon) =  @_;
+	my ($class, $uid, $ipcon, $api_version) =  @_;
 
 	my $self :shared = shared_clone({uid => _base58_decode($uid),
-									 ipcon => shared_clone($ipcon),
-									 api_version => [0, 0, 0],
-									 registered_callbacks => shared_clone({}),
-									 callback_formats => shared_clone({}),
-									 expected_response_sequence_number => undef,
-									 expected_response_function_id => undef,
-									 response_queue => Thread::Queue->new(),
-									 request_lock => undef,
-									 response_expected => shared_clone({Tinkerforge::IPConnection->_FUNCTION_ENUMERATE =>
-																		&_RESPONSE_EXPECTED_ALWAYS_FALSE,
-																		Tinkerforge::IPConnection->CALLBACK_ENUMERATE =>
-																		&_RESPONSE_EXPECTED_ALWAYS_FALSE})});
+	                                 ipcon => shared_clone($ipcon),
+	                                 api_version => shared_clone($api_version),
+	                                 registered_callbacks => shared_clone({}),
+	                                 callback_formats => shared_clone({}),
+	                                 expected_response_sequence_number => undef,
+	                                 expected_response_function_id => undef,
+	                                 response_queue => Thread::Queue->new(),
+	                                 device_lock_ref => undef,
+	                                 request_lock_ref => undef,
+	                                 response_expected => shared_clone({Tinkerforge::IPConnection->_FUNCTION_ENUMERATE => &_RESPONSE_EXPECTED_ALWAYS_FALSE,
+	                                                                    Tinkerforge::IPConnection->CALLBACK_ENUMERATE => &_RESPONSE_EXPECTED_ALWAYS_FALSE})});
 
 	bless($self, $class);
+
+	my $device_lock :shared;
+	my $request_lock :shared;
+
+	$self->{device_lock_ref} = \$device_lock;
+	$self->{request_lock_ref} = \$request_lock;
+
+	$self->{ipcon}->{devices}->{$self->{uid}} = $self;
 
 	return $self;
 }
@@ -93,9 +97,9 @@ sub _base58_decode
 
 sub _send_request
 {
-	lock($Tinkerforge::Device::DEVICE_LOCK);
+	my ($self, $function_id, $data, $form_data, $form_return) = @_;
 
-	my ($self, $device, $function_id, $data, $form_data, $form_return) = @_;
+	lock(${$self->{request_lock_ref}});
 
 	my $packet_header = undef;
 	my $packed_data = undef;
@@ -152,12 +156,12 @@ sub _send_request
 	}
 
 	#creating a packet header for the request
-	$packet_header = $device->{super}->{ipcon}->_create_packet_header($device, $length, $function_id);
+	$packet_header = $self->{ipcon}->_create_packet_header($self, $length, $function_id);
 
-	my $_seq = $device->{super}->{ipcon}->_get_seq_from_data($packet_header);
+	my $_seq = $self->{ipcon}->_get_seq_from_data($packet_header);
 
-	$device->{super}->{expected_response_sequence_number} = share($_seq);
-	$device->{super}->{expected_response_function_id} = share($function_id);
+	$self->{expected_response_sequence_number} = share($_seq);
+	$self->{expected_response_function_id} = share($function_id);
 
 	#means there is data in payload
 	if($length > 8)
@@ -170,13 +174,13 @@ sub _send_request
 		$packet = $packet_header;
 	}
 
-	$device->{super}->{ipcon}->_ipcon_send($packet);
+	$self->{ipcon}->_ipcon_send($packet);
 
 	#checking whether response is expected
-	if($device->get_response_expected($function_id))
+	if($self->get_response_expected($function_id))
 	{
 		#waiting for response
-		$response_packet = $device->{super}->{response_queue}->dequeue_timed($device->{super}->{ipcon}->{timeout});
+		$response_packet = $self->{response_queue}->dequeue_timed($self->{ipcon}->{timeout});
 
 		if(defined($response_packet))
 		{
@@ -184,28 +188,28 @@ sub _send_request
 			{
 				if(length($response_packet) >= 8)
 				{
-                    my $_err_code = $device->{super}->{ipcon}->_get_err_from_data($response_packet);
-                    if($_err_code != 0)
-                    {
-                        my $_fid = $device->{super}->{ipcon}->_get_fid_from_data($response_packet);
+					my $_err_code = $self->{ipcon}->_get_err_from_data($response_packet);
+					if($_err_code != 0)
+					{
+						my $_fid = $self->{ipcon}->_get_fid_from_data($response_packet);
 
-                        if($_err_code == 1)
-                        {
-                            croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_PARAMETER, "Got invalid parameter for function $_fid"));
-                            return 1;
-                        }
-                        elsif($_err_code == 2)
-                        {
-                            croak(Tinkerforge::Error->_new(Tinkerforge::Error->FUNCTION_NOT_SUPPORTED, "Function $_fid is not supported"));
-                            return 1;
-                        }    
-                        else
-                        {
-                            croak(Tinkerforge::Error->_new(Tinkerforge::Error->UNKNOWN_ERROR, "Function $_fid returned an unknown error"));
-                            return 1;
-                        }     
-                    }
-					my $response_packet_payload = $device->{super}->{ipcon}->_get_payload_from_data($response_packet);
+						if($_err_code == 1)
+						{
+							croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_PARAMETER, "Got invalid parameter for function $_fid"));
+							return 1;
+						}
+						elsif($_err_code == 2)
+						{
+							croak(Tinkerforge::Error->_new(Tinkerforge::Error->FUNCTION_NOT_SUPPORTED, "Function $_fid is not supported"));
+							return 1;
+						}
+						else
+						{
+							croak(Tinkerforge::Error->_new(Tinkerforge::Error->UNKNOWN_ERROR, "Function $_fid returned an unknown error"));
+							return 1;
+						}
+					}
+					my $response_packet_payload = $self->{ipcon}->_get_payload_from_data($response_packet);
 					my @form_return_arr = split(' ', $form_return);
 
 					if(scalar(@form_return_arr) > 1)
@@ -378,11 +382,162 @@ sub _send_request
 		}
 		else
 		{
-            croak(Tinkerforge::Error->_new(Tinkerforge::Error->TIMEOUT, "Did not receive response for function $function_id in time"));
+			croak(Tinkerforge::Error->_new(Tinkerforge::Error->TIMEOUT, "Did not receive response for function $function_id in time"));
 		}
 	}
 
 	return 1;
 }
+
+=head1 FUNCTIONS
+
+=over
+
+=item register_callback()
+
+Registers a callback with ID $id to the function named $callback.
+
+=cut
+
+sub register_callback
+{
+	my ($self, $id, $callback) = @_;
+
+	lock(${$self->{device_lock_ref}});
+
+	$self->{registered_callbacks}->{$id} = '&'.caller.'::'.$callback;
+}
+
+=item get_api_version()
+
+Returns the API version (major, minor, revision) of the bindings for
+this device.
+
+=cut
+
+sub get_api_version
+{
+	my ($self) = @_;
+
+	return $self->{api_version};
+}
+
+=item get_response_expected()
+
+Returns the response expected flag for the function specified by the
+*function_id* parameter. It is *true* if the function is expected to
+send a response, *false* otherwise.
+
+For getter functions this is enabled by default and cannot be disabled,
+because those functions will always send a response. For callback
+configuration functions it is enabled by default too, but can be
+disabled via the set_response_expected function. For setter functions
+it is disabled by default and can be enabled.
+
+Enabling the response expected flag for a setter function allows to
+detect timeouts and other error conditions calls of this setter as
+well. The device will then send a response for this purpose. If this
+flag is disabled for a setter function then no response is send and
+errors are silently ignored, because they cannot be detected.
+
+=cut
+
+sub get_response_expected
+{
+	my ($self, $function_id) = @_;
+
+	lock(${$self->{device_lock_ref}});
+
+	if (!defined($self->{response_expected}->{$function_id}))
+	{
+		croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_FUNCTION_ID, "Function ID $function_id is unknown"));
+	}
+
+	if ($self->{response_expected}->{$function_id} == &_RESPONSE_EXPECTED_ALWAYS_TRUE ||
+	    $self->{response_expected}->{$function_id} == &_RESPONSE_EXPECTED_TRUE)
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+=item set_response_expected()
+
+Changes the response expected flag of the function specified by the
+*function_id* parameter. This flag can only be changed for setter
+(default value: *false*) and callback configuration functions
+(default value: *true*). For getter functions it is always enabled
+and callbacks it is always disabled.
+
+Enabling the response expected flag for a setter function allows to
+detect timeouts and other error conditions calls of this setter as
+well. The device will then send a response for this purpose. If this
+flag is disabled for a setter function then no response is send and
+errors are silently ignored, because they cannot be detected.
+
+=cut
+
+sub set_response_expected
+{
+	my ($self, $function_id, $response_expected) = @_;
+
+	lock(${$self->{device_lock_ref}});
+
+	if (!defined($self->{response_expected}->{$function_id}))
+	{
+		croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_FUNCTION_ID, "Function ID $function_id is unknown"));
+	}
+
+	if ($self->{response_expected}->{$function_id} != &_RESPONSE_EXPECTED_TRUE &&
+	    $self->{response_expected}->{$function_id} != &_RESPONSE_EXPECTED_FALSE)
+	{
+		croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_FUNCTION_ID, "Response-Exepcted for function ID $function_id cannot be changed"));
+	}
+
+	if ($response_expected)
+	{
+		$self->{response_expected}->{$function_id} = &_RESPONSE_EXPECTED_TRUE;
+	}
+	else
+	{
+		$self->{response_expected}->{$function_id} = &_RESPONSE_EXPECTED_FALSE;
+	}
+}
+
+=item set_response_expected_all()
+
+Changes the response expected flag for all setter and callback
+configuration functions of this device at once.
+
+=cut
+
+sub set_response_expected_all
+{
+	my ($self, $response_expected) = @_;
+
+	lock(${$self->{device_lock_ref}});
+
+	foreach my $function_id (keys $self->{response_expected})
+	{
+		if ($self->{response_expected}->{$function_id} == &_RESPONSE_EXPECTED_TRUE ||
+		    $self->{response_expected}->{$function_id} == &_RESPONSE_EXPECTED_FALSE)
+		{
+			if ($response_expected)
+			{
+				$self->{response_expected}->{$function_id} = &_RESPONSE_EXPECTED_TRUE;
+			}
+			else
+			{
+				$self->{response_expected}->{$function_id} = &_RESPONSE_EXPECTED_FALSE;
+			}
+		}
+	}
+}
+
+=back
+=cut
 
 1;

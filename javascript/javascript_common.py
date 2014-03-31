@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-JavaScript Documentation Generator
+JavaScript Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 
 javascript_common.py: Common Library for generation of JavaScript bindings and documentation

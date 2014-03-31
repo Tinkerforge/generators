@@ -386,8 +386,10 @@ uint32_t get_random_uint32(void) {
 
 	CryptReleaseContext(hprovider, 0);
 #else
-	if (read_uint32_non_blocking("/dev/random", &r) < 0) {
-		if (read_uint32_non_blocking("/dev/urandom", &r) < 0) {
+	// try /dev/urandom first, if not available or a read would
+	// block then fall back to /dev/random
+	if (read_uint32_non_blocking("/dev/urandom", &r) < 0) {
+		if (read_uint32_non_blocking("/dev/random", &r) < 0) {
 			goto fallback;
 		}
 	}
@@ -396,6 +398,7 @@ uint32_t get_random_uint32(void) {
 	return r;
 
 fallback:
+	// if no other random source is available fall back to the current time
 	if (gettimeofday(&tv, NULL) < 0) {
 		seconds = (uint32_t)time(NULL);
 		microseconds = 0;
@@ -1890,6 +1893,7 @@ static int ipcon_connect_unlocked(IPConnectionPrivate *ipcon_p, bool is_auto_rec
 	ipcon_p->callback->packet_dispatch_allowed = true;
 
 	if (thread_create(&ipcon_p->receive_thread, ipcon_receive_loop, ipcon_p) < 0) {
+		// destroy socket
 		ipcon_disconnect_unlocked(ipcon_p);
 
 		// destroy callback thread
@@ -2326,183 +2330,123 @@ uint8_t packet_header_get_error_code(PacketHeader *header) {
 	return (header->error_code_and_future_use >> 6) & 0x03;
 }
 
-// undefine potential defines from /usr/include/endian.h
-#undef LITTLE_ENDIAN
-#undef BIG_ENDIAN
-
-#define LITTLE_ENDIAN 0x03020100ul
-#define BIG_ENDIAN    0x00010203ul
-
-static const union {
-	uint8_t bytes[4];
-	uint32_t value;
-} native_endian = {
-	{ 0, 1, 2, 3 }
-};
-
-static void *leconvert_swap16(void *data) {
-	uint8_t *s = (uint8_t *)data;
-	uint8_t d[2];
-
-	d[0] = s[1];
-	d[1] = s[0];
-
-	s[0] = d[0];
-	s[1] = d[1];
-
-	return data;
-}
-
-static void *leconvert_swap32(void *data) {
-	uint8_t *s = (uint8_t *)data;
-	uint8_t d[4];
-
-	d[0] = s[3];
-	d[1] = s[2];
-	d[2] = s[1];
-	d[3] = s[0];
-
-	s[0] = d[0];
-	s[1] = d[1];
-	s[2] = d[2];
-	s[3] = d[3];
-
-	return data;
-}
-
-static void *leconvert_swap64(void *data) {
-	uint8_t *s = (uint8_t *)data;
-	uint8_t d[8];
-
-	d[0] = s[7];
-	d[1] = s[6];
-	d[2] = s[5];
-	d[3] = s[4];
-	d[4] = s[3];
-	d[5] = s[2];
-	d[6] = s[1];
-	d[7] = s[0];
-
-	s[0] = d[0];
-	s[1] = d[1];
-	s[2] = d[2];
-	s[3] = d[3];
-	s[4] = d[4];
-	s[5] = d[5];
-	s[6] = d[6];
-	s[7] = d[7];
-
-	return data;
-}
-
 int16_t leconvert_int16_to(int16_t native) {
-	if (native_endian.value == LITTLE_ENDIAN) {
-		return native;
-	} else {
-		return *(int16_t *)leconvert_swap16(&native);
-	}
+	return leconvert_uint16_to(native);
 }
 
 uint16_t leconvert_uint16_to(uint16_t native) {
-	if (native_endian.value == LITTLE_ENDIAN) {
-		return native;
-	} else {
-		return *(uint16_t *)leconvert_swap16(&native);
-	}
+	union {
+		uint8_t bytes[2];
+		uint16_t little;
+	} c;
+
+	c.bytes[0] = (native >> 0) & 0xFF;
+	c.bytes[1] = (native >> 8) & 0xFF;
+
+	return c.little;
 }
 
 int32_t leconvert_int32_to(int32_t native) {
-	if (native_endian.value == LITTLE_ENDIAN) {
-		return native;
-	} else {
-		return *(int32_t *)leconvert_swap32(&native);
-	}
+	return leconvert_uint32_to(native);
 }
 
 uint32_t leconvert_uint32_to(uint32_t native) {
-	if (native_endian.value == LITTLE_ENDIAN) {
-		return native;
-	} else {
-		return *(uint32_t *)leconvert_swap32(&native);
-	}
+	union {
+		uint8_t bytes[4];
+		uint32_t little;
+	} c;
+
+	c.bytes[0] = (native >>  0) & 0xFF;
+	c.bytes[1] = (native >>  8) & 0xFF;
+	c.bytes[2] = (native >> 16) & 0xFF;
+	c.bytes[3] = (native >> 24) & 0xFF;
+
+	return c.little;
 }
 
 int64_t leconvert_int64_to(int64_t native) {
-	if (native_endian.value == LITTLE_ENDIAN) {
-		return native;
-	} else {
-		return *(int64_t *)leconvert_swap64(&native);
-	}
+	return leconvert_uint64_to(native);
 }
 
 uint64_t leconvert_uint64_to(uint64_t native) {
-	if (native_endian.value == LITTLE_ENDIAN) {
-		return native;
-	} else {
-		return *(uint64_t *)leconvert_swap64(&native);
-	}
+	union {
+		uint8_t bytes[8];
+		uint64_t little;
+	} c;
+
+	c.bytes[0] = (native >>  0) & 0xFF;
+	c.bytes[1] = (native >>  8) & 0xFF;
+	c.bytes[2] = (native >> 16) & 0xFF;
+	c.bytes[3] = (native >> 24) & 0xFF;
+	c.bytes[4] = (native >> 32) & 0xFF;
+	c.bytes[5] = (native >> 40) & 0xFF;
+	c.bytes[6] = (native >> 48) & 0xFF;
+	c.bytes[7] = (native >> 56) & 0xFF;
+
+	return c.little;
 }
 
 float leconvert_float_to(float native) {
-	if (native_endian.value == LITTLE_ENDIAN) {
-		return native;
-	} else {
-		return *(float *)leconvert_swap32(&native);
-	}
+	union {
+		uint32_t u;
+		float f;
+	} c;
+
+	c.f = native;
+	c.u = leconvert_uint32_to(c.u);
+
+	return c.f;
 }
 
 int16_t leconvert_int16_from(int16_t little) {
-	if (native_endian.value == LITTLE_ENDIAN) {
-		return little;
-	} else {
-		return *(int16_t *)leconvert_swap16(&little);
-	}
+	return leconvert_uint16_from(little);
 }
 
 uint16_t leconvert_uint16_from(uint16_t little) {
-	if (native_endian.value == LITTLE_ENDIAN) {
-		return little;
-	} else {
-		return *(uint16_t *)leconvert_swap16(&little);
-	}
+	uint8_t *bytes = (uint8_t *)&little;
+
+	return ((uint16_t)bytes[1] << 8) |
+	        (uint16_t)bytes[0];
 }
 
 int32_t leconvert_int32_from(int32_t little) {
-	if (native_endian.value == LITTLE_ENDIAN) {
-		return little;
-	} else {
-		return *(int32_t *)leconvert_swap32(&little);
-	}
+	return leconvert_uint32_from(little);
 }
 
 uint32_t leconvert_uint32_from(uint32_t little) {
-	if (native_endian.value == LITTLE_ENDIAN) {
-		return little;
-	} else {
-		return *(uint32_t *)leconvert_swap32(&little);
-	}
+	uint8_t *bytes = (uint8_t *)&little;
+
+	return ((uint32_t)bytes[3] << 24) |
+	       ((uint32_t)bytes[2] << 16) |
+	       ((uint32_t)bytes[1] <<  8) |
+	        (uint32_t)bytes[0];
 }
 
 int64_t leconvert_int64_from(int64_t little) {
-	if (native_endian.value == LITTLE_ENDIAN) {
-		return little;
-	} else {
-		return *(int64_t *)leconvert_swap64(&little);
-	}
+	return leconvert_uint64_from(little);
 }
 
 uint64_t leconvert_uint64_from(uint64_t little) {
-	if (native_endian.value == LITTLE_ENDIAN) {
-		return little;
-	} else {
-		return *(uint64_t *)leconvert_swap64(&little);
-	}
+	uint8_t *bytes = (uint8_t *)&little;
+
+	return ((uint64_t)bytes[7] << 56) |
+	       ((uint64_t)bytes[6] << 48) |
+	       ((uint64_t)bytes[5] << 40) |
+	       ((uint64_t)bytes[4] << 32) |
+	       ((uint64_t)bytes[3] << 24) |
+	       ((uint64_t)bytes[2] << 16) |
+	       ((uint64_t)bytes[1] <<  8) |
+	        (uint64_t)bytes[0];
 }
 
 float leconvert_float_from(float little) {
-	if (native_endian.value == LITTLE_ENDIAN) {
-		return little;
-	} else {
-		return *(float *)leconvert_swap32(&little);
-	}
+	union {
+		uint32_t u;
+		float f;
+	} c;
+
+	c.f = little;
+	c.u = leconvert_uint32_from(c.u);
+
+	return c.f;
 }

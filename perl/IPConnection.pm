@@ -28,7 +28,10 @@ use Thread::Queue;
 use Thread::Semaphore;
 use IO::Socket::INET;
 use Socket qw(IPPROTO_TCP TCP_NODELAY MSG_NOSIGNAL);
-use POSIX qw(dup);
+use POSIX qw(dup getpid);
+use Fcntl;
+use Digest::HMAC_SHA1 qw(hmac_sha1);
+use Time::HiRes qw(gettimeofday);
 use Tinkerforge::Device;
 use Tinkerforge::Error;
 
@@ -165,21 +168,15 @@ use constant _QUEUE_PACKET => 2;
 
 use constant _DISCONNECT_PROBE_INTERVAL => 5;
 
-# lock(s)
-our $SOCKET_LOCK :shared;
-our $SEND_LOCK :shared;
-our $LOCAL_SOCKET_LOCK :shared;
-our $SEQUENCE_NUMBER_LOCK :shared;
-
 # the local socket variable, the actual socket
 my $local_socket = undef;
 my $local_socket_id = 0;
 
 sub _init_local_socket
 {
-	lock($Tinkerforge::IPConnection::LOCAL_SOCKET_LOCK);
-
 	my ($self) = @_;
+
+	lock(${$self->{local_socket_lock_ref}});
 
 	# clear values copied over by threads->create(). this has to be
 	# called first from every thread.
@@ -204,9 +201,9 @@ sub _init_local_socket
 
 sub _get_local_socket
 {
-	lock($Tinkerforge::IPConnection::LOCAL_SOCKET_LOCK);
-
 	my ($self) = @_;
+
+	lock(${$self->{local_socket_lock_ref}});
 
 	if ($self->{socket_id} != $local_socket_id)
 	{
@@ -242,14 +239,17 @@ sub new
 
 	my $self :shared = shared_clone({host => undef,
 	                                 port => undef,
+	                                 secret => undef, # protected by SOCKET_LOCK
 	                                 timeout => 2.5,
-	                                 sequence_number => 0,
+	                                 next_sequence_number => 0, # protected by SEQUENCE_NUMBER_LOCK
+	                                 next_authentication_nonce => 0, # protected by SEQUENCE_NUMBER_LOCK
 	                                 auto_reconnect => 1,
 	                                 auto_reconnect_allowed => 0,
 	                                 auto_reconnect_pending => 0,
+	                                 auto_reauthenticate => 1,
 	                                 devices => shared_clone({}),
 	                                 registered_callbacks => shared_clone({}),
-	                                 socket_fileno => undef,
+	                                 socket_fileno => undef, # protected by SOCKET_LOCK
 	                                 socket_id => 0,
 	                                 receive_flag => 0,
 	                                 receive_thread => undef,
@@ -258,10 +258,27 @@ sub new
 	                                 disconnect_probe_queue => undef,
 	                                 callback_thread => undef,
 	                                 callback_queue => undef,
-	                                 local_socket_handshake => undef
+	                                 local_socket_handshake => undef,
+	                                 socket_lock_ref => undef,
+	                                 local_socket_lock_ref => undef,
+	                                 send_lock_ref => undef,
+	                                 sequence_number_lock_ref => undef,
+	                                 brickd => undef
 	                                });
 
 	bless($self, $class);
+
+	my $socket_lock :shared;
+	my $local_socket_lock :shared;
+	my $send_lock :shared;
+	my $sequence_number_lock :shared;
+
+	$self->{socket_lock_ref} = \$socket_lock;
+	$self->{local_socket_lock_ref} = \$local_socket_lock;
+	$self->{send_lock_ref} = \$send_lock;
+	$self->{sequence_number_lock_ref} = \$sequence_number_lock;
+
+	$self->_brickd_create();
 
 	return $self;
 }
@@ -282,9 +299,9 @@ host and port.
 
 sub connect
 {
-	lock($Tinkerforge::IPConnection::SOCKET_LOCK);
-
 	my ($self, $host, $port) = @_;
+
+	lock(${$self->{socket_lock_ref}});
 
 	if(defined($self->{socket_fileno}))
 	{
@@ -295,6 +312,8 @@ sub connect
 	{
 		$self->{host} = $host;
 		$self->{port} = $port;
+		$self->{secret} = undef;
+
 		$self->_connect_unlocked(0);
 	}
 
@@ -478,6 +497,8 @@ sub _connect_unlocked
 		                                  &CONNECT_REASON_REQUEST, undef]);
 	}
 
+	$! = undef; # FIXME: workaround some Perl code polluting $!
+
 	return 1;
 }
 
@@ -496,7 +517,7 @@ sub disconnect
 	my $callback_thread = undef;
 
 	if (1) {
-		lock($Tinkerforge::IPConnection::SOCKET_LOCK);
+		lock(${$self->{socket_lock_ref}});
 
 		$self->{auto_reconnect_allowed} = 0;
 
@@ -588,6 +609,9 @@ sub _disconnect_unlocked
 
 	$self->{socket_fileno} = undef;
 
+	# clear secret
+	$self->{secret} = undef;
+
 	return 1;
 }
 
@@ -611,6 +635,135 @@ sub _destroy_socket
 	}
 
 	$self->{socket_fileno} = undef;
+}
+
+sub _read_uint32_non_blocking
+{
+	my ($self, $filename) = @_;
+
+	my $fh = undef;
+
+	if (!defined(sysopen($fh, $filename, O_RDONLY | O_NONBLOCK)))
+	{
+		return undef;
+	}
+
+	my $bytes = undef;
+
+	if (sysread($fh, $bytes, 4) != 4)
+	{
+		close($fh);
+
+		return undef;
+	}
+
+	close($fh);
+
+	return unpack('(V)<', $bytes);
+}
+
+# FIXME: this code is not ideal on Windows. if the script happens to run
+#        under Cygwin then there will be a /dev/[u]random to use. otherwise
+#        it'll fall back to the current time on Windows. there seems to be
+#        no easy way to call CryptGenRandom from Perl here. on the other
+#        the Perl bindings only work correct on Cygwin anyway, so this isn't
+#        a huge problem currently.
+sub _get_random_uint32
+{
+	my ($self) = @_;
+
+	my $r = $self->_read_uint32_non_blocking('/dev/urandom');
+
+	if (defined($r))
+	{
+		return $r;
+	}
+
+	$r = $self->_read_uint32_non_blocking('/dev/random');
+
+	if (defined($r))
+	{
+		return $r;
+	}
+
+	my ($seconds, $microseconds) = gettimeofday();
+
+	return (($seconds << 26 | $seconds >> 6) + $microseconds + getpid()) & 0xFFFFFFFF;
+}
+
+use constant _BRICK_DAEMON_FUNCTION_GET_AUTHENTICATION_NONCE => 1;
+use constant _BRICK_DAEMON_FUNCTION_AUTHENTICATE => 2;
+
+sub _brickd_create
+{
+	my ($self) = @_;
+
+	$self->{brickd} = Tinkerforge::Device->_new('2', $self, [2, 0, 0]);
+	$self->{brickd}->{response_expected}->{&_BRICK_DAEMON_FUNCTION_GET_AUTHENTICATION_NONCE} = Tinkerforge::Device->_RESPONSE_EXPECTED_ALWAYS_TRUE;
+	$self->{brickd}->{response_expected}->{&_BRICK_DAEMON_FUNCTION_AUTHENTICATE} = Tinkerforge::Device->_RESPONSE_EXPECTED_TRUE;
+}
+
+sub _brickd_get_authentication_nonce
+{
+	my ($self) = @_;
+
+	return $self->{brickd}->_send_request(&_BRICK_DAEMON_FUNCTION_GET_AUTHENTICATION_NONCE, [], '', 'C4');
+}
+
+sub _brickd_authenticate
+{
+	my ($self, $clientNonce, $digest) = @_;
+
+	$self->{brickd}->_send_request(&_BRICK_DAEMON_FUNCTION_AUTHENTICATE, [$clientNonce, $digest], 'C4 C20', '');
+}
+
+=item authenticate()
+
+FIXME
+
+=cut
+
+sub authenticate
+{
+	my ($self, $secret) = @_;
+
+	if (1)
+	{
+		lock(${$self->{sequence_number_lock_ref}});
+
+		if ($self->{next_authentication_nonce} == 0)
+		{
+			$self->{next_authentication_nonce} = $self->_get_random_uint32();
+		}
+	}
+
+	my @serverNonceArray = $self->_brickd_get_authentication_nonce();
+	my $serverNonce = \@serverNonceArray;
+	my $serverNonceBytes = pack('C4', @serverNonceArray);
+	my $clientNonce = undef;
+	my $clientNonceBytes = undef;
+
+	if (1)
+	{
+		lock(${$self->{sequence_number_lock_ref}});
+
+		my $clientNonceNumber = $self->{next_authentication_nonce}++;
+
+		$clientNonceBytes = pack('V', $clientNonceNumber);
+		$clientNonce = [unpack('C4', $clientNonceBytes)];
+	}
+
+	my $digestBytes = hmac_sha1($serverNonceBytes . $clientNonceBytes, $secret);
+	my $digest = [unpack('C20', $digestBytes)];
+
+	$self->_brickd_authenticate($clientNonce, $digest);
+
+	if (1)
+	{
+		lock(${$self->{socket_lock_ref}});
+
+		$self->{secret} = $secret;
+	}
 }
 
 =item get_connection_state()
@@ -659,7 +812,8 @@ sub set_auto_reconnect
 
 	$self->{auto_reconnect} = $auto_reconnect;
 
-	if (!$self->{auto_reconnect}) {
+	if (!$self->{auto_reconnect})
+	{
 		# abort potentially pending auto reconnect
 		$self->{auto_reconnect_allowed} = 0;
 	}
@@ -678,6 +832,36 @@ sub get_auto_reconnect
 	return $self->{auto_reconnect};
 }
 
+=item set_auto_reauthenticate()
+
+Enables or disables auto-reauthenticate. If auto-reauthenticate is enabled,
+the IP Connection will try to reauthenticate with the previously given
+secret after an auto-reconnect.
+
+Default value is 1.
+
+=cut
+
+sub set_auto_reauthenticate
+{
+	my ($self, $auto_reauthenticate) = @_;
+
+	$self->{auto_reauthenticate} = $auto_reauthenticate;
+}
+
+=item get_auto_reauthenticate()
+
+Returns 1 if auto-reauthenticate is enabled, 0 otherwise.
+
+=cut
+
+sub get_auto_reauthenticate
+{
+	my ($self) = @_;
+
+	return $self->{auto_reauthenticate};
+}
+
 =item set_timeout()
 
 Sets the timeout in seconds for getters and for setters for which the
@@ -691,15 +875,13 @@ sub set_timeout
 {
 	my ($self, $timeout) = @_;
 
-	if($timeout < 0)
+	if ($timeout < 0)
 	{
-		croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_PARAMETER,
-		                               'Timeout cannot be negative'));
+		croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_PARAMETER, 'Timeout cannot be negative'));
 	}
-	else
-	{
-		$self->{auto_reconnect} = $timeout;
-	}
+
+	$self->{auto_reconnect} = $timeout;
+
 }
 
 =item get_timeout()
@@ -753,7 +935,7 @@ sub _create_packet_header
 
 	if(defined($device))
 	{
-		$uid = $device->{super}->{uid};
+		$uid = $device->{uid};
 
 		if($device->get_response_expected($function_id))
 		{
@@ -817,19 +999,19 @@ sub _create_packet_header
 
 sub _get_next_sequence_number
 {
-	lock($Tinkerforge::IPConnection::SEQUENCE_NUMBER_LOCK);
-
 	my ($self) = @_;
 
-	if($self->{sequence_number} >= 0 && $self->{sequence_number} < 15)
+	lock(${$self->{sequence_number_lock_ref}});
+
+	if($self->{next_sequence_number} >= 0 && $self->{next_sequence_number} < 15)
 	{
-		$self->{sequence_number} ++;
-		return $self->{sequence_number};
+		$self->{next_sequence_number}++;
+		return $self->{next_sequence_number};
 	}
 	else
 	{
-		$self->{sequence_number} = 1;
-		return $self->{sequence_number};
+		$self->{next_sequence_number} = 1;
+		return $self->{next_sequence_number};
 	}
 
 	return 1;
@@ -852,9 +1034,9 @@ sub _handle_disconnect_by_peer
 
 sub _ipcon_send
 {
-	lock($Tinkerforge::IPConnection::SOCKET_LOCK);
-
 	my ($self, $packet) = @_;
+
+	lock(${$self->{socket_lock_ref}});
 
 	if(!defined($self->{socket_fileno}))
 	{
@@ -864,7 +1046,7 @@ sub _ipcon_send
 	my $rc;
 	eval
 	{
-		lock($Tinkerforge::IPConnection::SEND_LOCK);
+		lock(${$self->{send_lock_ref}});
 
 		$| = 1; # enable autoflush
 		if ($^O eq 'MSWin32')
@@ -1028,7 +1210,7 @@ sub _handle_packet
 		if(defined($self->{devices}->{$uid}))
 		{
 			my $_device = $self->{devices}->{$uid};
-			my $_err_code = $_device->{super}->{ipcon}->_get_err_from_data($packet);
+			my $_err_code = $_device->{ipcon}->_get_err_from_data($packet);
 
 			if($_err_code != 0)
 			{
@@ -1056,12 +1238,12 @@ sub _handle_packet
 		return 1;
 	}
 
-	my $_fid = $self->{devices}->{$uid}->{super}->{expected_response_function_id};
-	my $_seq = $self->{devices}->{$uid}->{super}->{expected_response_sequence_number};
+	my $_fid = $self->{devices}->{$uid}->{expected_response_function_id};
+	my $_seq = $self->{devices}->{$uid}->{expected_response_sequence_number};
 
 	if($$_fid == $fid && $$_seq == $seq)
 	{
-		$self->{devices}->{$uid}->{super}->{response_queue}->enqueue($packet);
+		$self->{devices}->{$uid}->{response_queue}->enqueue($packet);
 		return 1;
 	}
 
@@ -1241,7 +1423,7 @@ sub _dispatch_meta
 				# with a concurrent call to the (dis-)connect function
 				if($reason != &DISCONNECT_REASON_REQUEST)
 				{
-					lock($Tinkerforge::IPConnection::SOCKET_LOCK);
+					lock(${$self->{socket_lock_ref}});
 
 					# don't close the socket if it got disconnected or
 					# reconnected in the meantime
@@ -1254,7 +1436,6 @@ sub _dispatch_meta
 
 						# destroy socket
 						$self->_destroy_socket();
-						#$self->_destroy_receive_interrupt();
 					}
 				}
 
@@ -1270,21 +1451,24 @@ sub _dispatch_meta
 					$self->{auto_reconnect_pending} = 1;
 
 					my $retry = 1;
+					my $local_secret = undef;
 
 					# block here until reconnect. this is okay, there is no
 					# callback to deliver when there is no connection
 					while ($retry)
 					{
 						$retry = 0;
+						$local_secret = undef;
 
 						if (1) {
-							lock($Tinkerforge::IPConnection::SOCKET_LOCK);
+							lock(${$self->{socket_lock_ref}});
 
 							if ($self->{auto_reconnect_allowed} && !defined($self->{socket_fileno}))
 							{
 								eval
 								{
 									$self->_connect_unlocked(1);
+									$local_secret = $self->{secret};
 								};
 								if($!)
 								{
@@ -1302,6 +1486,14 @@ sub _dispatch_meta
 							# wait a moment to give another thread a chance to
 							# interrupt the auto-reconnect
 							select(undef, undef, undef, 0.1);
+						}
+						elsif ($self->{auto_reauthenticate} and defined($local_secret))
+						{
+							eval
+							{
+								# FIXME: how to handle errors here?
+								$self->authenticate($local_secret);
+							};
 						}
 					}
 				}
@@ -1498,25 +1690,25 @@ sub _dispatch_packet
 		return 1;
 	}
 
-	if(defined($self->{devices}->{$uid}->{super}->{registered_callbacks}->{$fid}))
+	if(defined($self->{devices}->{$uid}->{registered_callbacks}->{$fid}))
 	{
 		my @callback_format_arr = split(' ', $self->{devices}->{$uid}->{callback_formats}->{$fid});
 
 		if(scalar(@callback_format_arr) > 1)
 		{
 			my @callback_return_arr = unpack($self->{devices}->{$uid}->{callback_formats}->{$fid}, $payload);
-			eval("$self->{devices}->{$uid}->{super}->{registered_callbacks}->{$fid}(\@callback_return_arr)");
+			eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}(\@callback_return_arr)");
 		}
 
 		if(scalar(@callback_format_arr) == 1)
 		{
 			my $_payload_unpacked = unpack($self->{devices}->{$uid}->{callback_formats}->{$fid}, $payload);
-			eval("$self->{devices}->{$uid}->{super}->{registered_callbacks}->{$fid}($_payload_unpacked)");
+			eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}($_payload_unpacked)");
 		}
 
 		if(scalar(@callback_format_arr) == 0)
 		{
-			eval("$self->{devices}->{$uid}->{super}->{registered_callbacks}->{$fid}()");
+			eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}()");
 		}
 	}
 
@@ -1544,7 +1736,7 @@ sub _disconnect_probe_thread_subroutine
 			my $rc;
 			eval
 			{
-				lock($Tinkerforge::IPConnection::SEND_LOCK);
+				lock(${$self->{send_lock_ref}});
 
 				$| = 1; # enable autoflush
 				if ($^O eq 'MSWin32')

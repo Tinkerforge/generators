@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Java Documentation Generator
+Java Generator
 Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 

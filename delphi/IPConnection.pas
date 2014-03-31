@@ -1,5 +1,5 @@
 {
-  Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+  Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 
   Redistribution and use in source and binary forms of this file,
   with or without modification, are permitted. See the Creative
@@ -10,15 +10,17 @@ unit IPConnection;
 
 {$ifdef FPC}{$mode OBJFPC}{$H+}{$endif}
 
+{ FIXME: the code assumes in some places non-FPC means Delphi IDE on Windows }
+
 interface
 
 uses
   {$ifdef FPC}
-   {$ifdef UNIX}CThreads, Errors, CNetDB, BaseUnix, {$else}WinSock,{$endif}
+   {$ifdef UNIX}CThreads, Errors, CNetDB, BaseUnix, {$else}Windows, WinSock,{$endif}
   {$else}
    {$ifdef MSWINDOWS}Windows, WinSock,{$endif}
   {$endif}
-  Classes, Sockets, SyncObjs, SysUtils, LEConverter, BlockingQueue, Device, TimedSemaphore;
+  Classes, Sockets, SyncObjs, SysUtils, LEConverter, BlockingQueue, Device, TimedSemaphore, SHA1, BrickDaemon;
 
 const
   IPCON_FUNCTION_DISCONNECT_PROBE = 128;
@@ -123,9 +125,11 @@ type
   private
     host: string;
     port: word;
+    secret: string; { protected by socketMutex }
     autoReconnect: boolean;
     autoReconnectAllowed: boolean;
     autoReconnectPending: boolean;
+    autoReauthenticate: boolean;
     receiveFlag: boolean;
     receiveThread: TWrapperThread;
     callback: PCallbackContext;
@@ -133,16 +137,18 @@ type
     disconnectProbeQueue: TBlockingQueue;
     disconnectProbeThread: TWrapperThread;
     sequenceNumberMutex: TCriticalSection;
-    nextSequenceNumber: byte;
+    nextSequenceNumber: byte; { protected by sequenceNumberMutex }
+    nextAuthenticationNonce: longword; { protected by sequenceNumberMutex }
     pendingData: TByteArray;
     socketMutex: TCriticalSection;
     socketSendMutex: TCriticalSection;
-    socket: TSocket;
-    socketID: longword;
+    socket: TSocket; { protected by socketMutex }
+    socketID: longword; { protected by socketMutex }
     waiter: TTimedSemaphore;
     enumerateCallback: TIPConnectionNotifyEnumerate;
     connectedCallback: TIPConnectionNotifyConnected;
     disconnectedCallback: TIPConnectionNotifyDisconnected;
+    brickd: TBrickDaemon;
 
     procedure ConnectUnlocked(const isAutoReconnect: boolean);
     procedure DisconnectUnlocked;
@@ -191,6 +197,11 @@ type
     procedure Disconnect;
 
     /// <summary>
+    ///  FIXME
+    /// </summary>
+    procedure Authenticate(const secret_: string);
+
+    /// <summary>
     ///  Can return the following states:
     ///
     ///  - IPCON_CONNECTION_STATE_DISCONNECTED: No connection is established.
@@ -214,6 +225,20 @@ type
     ///  Returns *true* if auto-reconnect is enabled, *false* otherwise.
     /// </summary>
     function GetAutoReconnect: boolean;
+
+    /// <summary>
+    ///  Enables or disables auto-reauthenticate. If auto-reauthenticate is enabled,
+    ///  the IP Connection will try to reauthenticate with the previously given
+    ///  secret after an auto-reconnect.
+    ///
+    ///  Default value is *true*.
+    /// </summary>
+    procedure SetAutoReauthenticate(const autoReauthenticate_: boolean);
+
+    /// <summary>
+    ///  Returns *true* if auto-authenticate is enabled, *false* otherwise.
+    /// </summary>
+    function GetAutoReauthenticate: boolean;
 
     /// <summary>
     ///  Sets the timeout in milliseconds for getters and for setters for
@@ -273,6 +298,119 @@ type
 
 implementation
 
+{$ifdef MSWINDOWS}
+
+function CryptAcquireContextA(phProv: pointer; pszContainer: LPCSTR; pszProvider: LPCSTR; dwProvType: DWORD; dwFlags: DWORD): BOOL; stdcall; external 'advapi32.dll' name 'CryptAcquireContextA';
+function CryptReleaseContext(hProv: pointer; dwFlags: DWORD): BOOL; stdcall; external 'advapi32.dll' name 'CryptReleaseContext';
+function CryptGenRandom(hProv: ULONG; dwLen: DWORD; pbBuffer: PBYTE): BOOL; stdcall; external 'advapi32.dll' name 'CryptGenRandom';
+
+{$else}
+
+function ReadUInt32(const filename: string): longword;
+var fh: File; bytes: array [0..3] of byte; count: longint;
+begin
+  count := 0;
+  AssignFile(fh, filename);
+  try
+    Reset(fh, 1);
+    BlockRead(fh, bytes, 4, count);
+  finally
+    CloseFile(fh);
+  end;
+  if (count <> 4) then begin
+    raise Exception.Create('Insufficent number of random bytes read');
+  end;
+  result := LEConvertUInt32From(0, bytes);
+end;
+
+{$endif}
+
+function GetRandomUInt32: longword;
+var success: boolean; days: double; seconds, microseconds, pid: longword;
+{$ifdef MSWINDOWS}
+    provider: ULONG; bytes: TByteArray;
+{$endif}
+begin
+  result := 0;
+  success := false;
+{$ifdef MSWINDOWS}
+  provider := 0;
+  if (CryptAcquireContextA(@provider, nil, nil, 1, $F0000040)) then begin
+    SetLength(bytes, 4);
+    if (CryptGenRandom(provider, 4, @bytes[0])) then begin
+      result := LEConvertUInt32From(0, bytes);
+      success := true;
+    end;
+    CryptReleaseContext(@provider, 0);
+  end;
+{$else}
+  try
+    { Try the non-blocking /dev/urandom first, as there seems to be no direct
+      way to do a non-blocking read from Delphi. }
+    result := ReadUInt32('/dev/urandom');
+    success := true;
+  except
+  end;
+  if (not success) then begin
+    try
+      { If /dev/urandom is not available fallback to /dev/random which might
+        block on read }
+      result := ReadUInt32('/dev/random');
+      success := true;
+    except
+    end;
+  end;
+{$endif}
+  if (not success) then begin
+    days := Now;
+    seconds := Trunc(days * 86400);
+    microseconds := Trunc(Frac(days * 86400) * 1000000);
+{$ifdef FPC}
+    pid := GetProcessID;
+{$else}
+ {$ifdef MSWINDOWS}
+    pid := Windows.GetCurrentProcessId;
+ {$else}
+    { FIXME: no clue how to get PID }
+    pid := 0;
+ {$endif}
+{$endif}
+    result := ((seconds shl 26) or (seconds shr 6)) + microseconds + pid; { overflow is intended }
+  end;
+end;
+
+function HMACSHA1(const secret: TByteArray; const data: TByteArray): TSHA1Digest;
+var preparedSecret: TByteArray; sha1: TSHA1; i: longint;
+    ipad, opad: array [0..63] of byte; digest: TSHA1Digest;
+begin
+  if Length(secret) > 64 then begin
+    SHA1Init(sha1);
+    SHA1Update(sha1, secret);
+    digest := SHA1Final(sha1);
+    SetLength(preparedSecret, 64);
+    Move(digest, preparedSecret, 64);
+  end
+  else begin
+    preparedSecret := secret;
+  end;
+  for i := 0 to 63 do begin
+    ipad[i] := $36;
+    opad[i] := $5C;
+  end;
+  for i := 0 to (Length(preparedSecret) - 1) do begin
+    ipad[i] := preparedSecret[i] xor ipad[i];
+    opad[i] := preparedSecret[i] xor opad[i];
+  end;
+  SHA1Init(sha1);
+  SHA1Update(sha1, ipad);
+  SHA1Update(sha1, data);
+  digest := SHA1Final(sha1);
+  SHA1Init(sha1);
+  SHA1Update(sha1, opad);
+  SHA1Update(sha1, digest);
+  result := SHA1Final(sha1);
+end;
+
 { TWrapperThread }
 constructor TWrapperThread.Create(const proc_: TThreadProcedure; opaque_: pointer);
 begin
@@ -300,10 +438,12 @@ constructor TIPConnection.Create;
 begin
   host := '';
   port := 0;
+  secret := '';
   timeout := 2500;
   autoReconnect := true;
   autoReconnectAllowed := false;
   autoReconnectPending := false;
+  autoReauthenticate := true;
   receiveFlag := false;
   receiveThread := nil;
   callback := nil;
@@ -312,12 +452,14 @@ begin
   disconnectProbeThread := nil;
   sequenceNumberMutex := TCriticalSection.Create;
   nextSequenceNumber := 0;
+  nextAuthenticationNonce := 0;
   SetLength(pendingData, 0);
   devices := TDeviceTable.Create;
   socketMutex := TCriticalSection.Create;
   socketSendMutex := TCriticalSection.Create;
   socket := INVALID_SOCKET;
   waiter := TTimedSemaphore.Create;
+  brickd := TBrickDaemon.Create('2', self);
 end;
 
 destructor TIPConnection.Destroy;
@@ -342,6 +484,7 @@ begin
     end;
     host := host_;
     port := port_;
+    secret := '';
     ConnectUnlocked(false);
   finally
     socketMutex.Release;
@@ -390,6 +533,48 @@ begin
   end;
 end;
 
+procedure TIPConnection.Authenticate(const secret_: string);
+var serverNonce, clientNonce: TArray0To3OfUInt8; i: longint;
+    secretBytes, clientNonceBytes, data: TByteArray;
+    digest: TSHA1Digest;
+begin
+  sequenceNumberMutex.Acquire;
+  try
+    if (nextAuthenticationNonce = 0) then begin
+      nextAuthenticationNonce := GetRandomUInt32;
+    end;
+  finally
+    sequenceNumberMutex.Release;
+  end;
+  serverNonce := brickd.GetAuthenticationNonce;
+  sequenceNumberMutex.Acquire;
+  try
+    SetLength(clientNonceBytes, 4);
+    LEConvertUInt32To(nextAuthenticationNonce, 0, clientNonceBytes);
+    Inc(nextAuthenticationNonce);
+  finally
+    sequenceNumberMutex.Release;
+  end;
+  SetLength(data, 8);
+  for i := 0 to 3 do begin
+    data[i] := serverNonce[i];
+  end;
+  for i := 0 to 3 do begin
+    data[4 + i] := clientNonceBytes[i];
+    clientNonce[i] := clientNonceBytes[i];
+  end;
+  SetLength(secretBytes, Length(secret_));
+  LEConvertStringTo(secret_, 0, Length(secret_), secretBytes);
+  digest := HMACSHA1(secretBytes, data);
+  brickd.Authenticate(clientNonce, TArray0To19OfUInt8(digest));
+  socketMutex.Acquire;
+  try
+    secret := secret_;
+  finally
+    socketMutex.Release;
+  end;
+end;
+
 function TIPConnection.GetConnectionState: byte;
 begin
   if (IsConnected) then begin
@@ -415,6 +600,16 @@ end;
 function TIPConnection.GetAutoReconnect: boolean;
 begin
   result := autoReconnect;
+end;
+
+procedure TIPConnection.SetAutoReauthenticate(const autoReauthenticate_: boolean);
+begin
+  autoReauthenticate := autoReauthenticate_;
+end;
+
+function TIPConnection.GetAutoReauthenticate: boolean;
+begin
+  result := autoReauthenticate;
 end;
 
 procedure TIPConnection.SetTimeout(const timeout_: longword);
@@ -577,6 +772,8 @@ begin
   { Destroy socket }
   closesocket(socket);
   socket := INVALID_SOCKET;
+  { Clear secret }
+  secret := '';
 end;
 
 function TIPConnection.GetLastSocketError: string;
@@ -765,7 +962,7 @@ begin
 end;
 
 procedure TIPConnection.DispatchMeta(const meta: TByteArray);
-var retry: boolean;
+var retry: boolean; localSecret: string;
 begin
   if (meta[0] = IPCON_CALLBACK_CONNECTED) then begin
     if (Assigned(connectedCallback)) then begin
@@ -820,11 +1017,13 @@ begin
         deliver when there is no connection }
       while (retry) do begin
         retry := false;
+        localSecret := '';
         socketMutex.Acquire;
         try
           if (autoReconnectAllowed and (not IsConnected)) then begin
             try
               ConnectUnlocked(true);
+              localSecret := secret;
             except
               retry := true;
             end;
@@ -839,6 +1038,13 @@ begin
           { Wait a moment to give another thread a chance to interrupt the
             auto-reconnect }
           Sleep(100);
+        end
+        else if (autoReauthenticate and (Length(localSecret) > 0)) then begin
+          try
+            Authenticate(localSecret);
+          except
+            { FIXME: how to handle errors here? }
+          end;
         end;
       end;
     end;
