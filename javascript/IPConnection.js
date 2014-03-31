@@ -632,47 +632,47 @@ function IPConnection() {
                 switch(formatArray[i]) {
                     case 'c':
                         returnArguments.push(String.fromCharCode(unpackPayload.readUInt8(payloadReadOffset)));
-                        payloadReadOffset++;
+                        payloadReadOffset += 1;
                         continue;
                     case 'b':
                         returnArguments.push(unpackPayload.readInt8(payloadReadOffset));
-                        payloadReadOffset++;
+                        payloadReadOffset += 1;
                         continue;
                     case 'B':
                         returnArguments.push(unpackPayload.readUInt8(payloadReadOffset));
-                        payloadReadOffset++;
+                        payloadReadOffset += 1;
                         continue;
                     case 'h':
                         returnArguments.push(unpackPayload.readInt16LE(payloadReadOffset));
-                        payloadReadOffset = payloadReadOffset + 2;
+                        payloadReadOffset += 2;
                         continue;
                     case 'H':
                         returnArguments.push(unpackPayload.readUInt16LE(payloadReadOffset));
-                        payloadReadOffset = payloadReadOffset + 2;
+                        payloadReadOffset += 2;
                         continue;
                     case 'i':
                         returnArguments.push(unpackPayload.readInt32LE(payloadReadOffset));
-                        payloadReadOffset = payloadReadOffset + 4;
+                        payloadReadOffset += 4;
                         continue;
                     case 'I':
                         returnArguments.push(unpackPayload.readUInt32LE(payloadReadOffset));
-                        payloadReadOffset = payloadReadOffset + 4;
+                        payloadReadOffset += 4;
                         continue;
                     case 'q':
                         returnArguments.push(unpackPayload.readDoubleLE(payloadReadOffset));
-                        payloadReadOffset = payloadReadOffset + 8;
+                        payloadReadOffset += 8;
                         continue;
                     case 'Q':
                         returnArguments.push(unpackPayload.readDoubleLE(payloadReadOffset));
-                        payloadReadOffset = payloadReadOffset + 8;
+                        payloadReadOffset += 8;
                         continue;
                     case 'f':
                         returnArguments.push(unpackPayload.readFloatLE(payloadReadOffset));
-                        payloadReadOffset = payloadReadOffset + 4;
+                        payloadReadOffset += 4;
                         continue;
                     case 'd':
                         returnArguments.push(unpackPayload.readDoubleLE(payloadReadOffset));
-                        payloadReadOffset = payloadReadOffset + 8;
+                        payloadReadOffset += 8;
                         continue;
                     case '?':
                         if (unpackPayload.readUInt8(payloadReadOffset) === 0x01) {
@@ -709,47 +709,47 @@ function IPConnection() {
                     switch(singleFormatArray[0]) {
                         case 'c':
                             returnSubArray.push(String.fromCharCode(unpackPayload.readUInt8(payloadReadOffset)));
-                            payloadReadOffset++;
+                            payloadReadOffset += 1;
                             continue;
                         case 'b':
                             returnSubArray.push(unpackPayload.readInt8(payloadReadOffset));
-                            payloadReadOffset++;
+                            payloadReadOffset += 1;
                             continue;
                         case 'B':
                             returnSubArray.push(unpackPayload.readUInt8(payloadReadOffset));
-                            payloadReadOffset++;
+                            payloadReadOffset += 1;
                             continue;
                         case 'h':
                             returnSubArray.push(unpackPayload.readInt16LE(payloadReadOffset));
-                            payloadReadOffset++;
+                            payloadReadOffset += 2;
                             continue;
                         case 'H':
-                            returnSubArray.push(unpackPayload.readIntU16LE(payloadReadOffset));
-                            payloadReadOffset++;
+                            returnSubArray.push(unpackPayload.readUInt16LE(payloadReadOffset));
+                            payloadReadOffset += 2;
                             continue;
                         case 'i':
                             returnSubArray.push(unpackPayload.readInt32LE(payloadReadOffset));
-                            payloadReadOffset++;
+                            payloadReadOffset += 4;
                             continue;
                         case 'I':
-                            returnSubArray.push(unpackPayload.readIntU32LE(payloadReadOffset));
-                            payloadReadOffset++;
+                            returnSubArray.push(unpackPayload.readUInt32LE(payloadReadOffset));
+                            payloadReadOffset += 4;
                             continue;
                         case 'q':
                             returnSubArray.push(unpackPayload.readDoubleLE(payloadReadOffset));
-                            payloadReadOffset++;
+                            payloadReadOffset += 8;
                             continue;
                         case 'Q':
                             returnSubArray.push(unpackPayload.readDoubleLE(payloadReadOffset));
-                            payloadReadOffset++;
+                            payloadReadOffset += 8;
                             continue;
                         case 'f':
                             returnSubArray.push(unpackPayload.readFloatLE(payloadReadOffset));
-                            payloadReadOffset++;
+                            payloadReadOffset += 4;
                             continue;
                         case 'd':
                             returnSubArray.push(unpackPayload.readDoubleLE(payloadReadOffset));
-                            payloadReadOffset++;
+                            payloadReadOffset += 8;
                             continue;
                         case '?':
                             if (unpackPayload.readUInt8(payloadReadOffset) === 0x01) {
