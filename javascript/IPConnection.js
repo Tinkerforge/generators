@@ -163,9 +163,7 @@ function IPConnection() {
     this.taskQueue = [];
     this.isConnected = false;
     this.connectErrorCallback = undefined;
-    this.disconnectErrorCallback = undefined;
     this.mergeBuffer = new Buffer(0);
-   
     this.disconnectProbe = function () {
         if (this.socket !== undefined) {
             this.socket.write(this.createPacketHeader(undefined, 8, IPConnection.FUNCTION_DISCONNECT_PROBE), this.resetDisconnectProbe());
@@ -210,11 +208,10 @@ function IPConnection() {
 
         return undefined;
     };
-
-    this.disconnect = function (disconnectErrorCallback) {
-        this.pushTask(this.disconnectInternal.bind(this, disconnectErrorCallback), IPConnection.TASK_KIND_DISCONNECT);
+    this.disconnect = function (errorCallback) {
+        this.pushTask(this.disconnectInternal.bind(this, errorCallback), IPConnection.TASK_KIND_DISCONNECT);
     };
-    this.disconnectInternal = function (disconnectErrorCallback) {
+    this.disconnectInternal = function (errorCallback) {
         var autoReconnectAborted = false;
 
         if (this.getNextTaskKind() === IPConnection.TASK_KIND_AUTO_RECONNECT) {
@@ -224,30 +221,28 @@ function IPConnection() {
         }
 
         if (!this.isConnected) {
-            if (!autoReconnectAborted && disconnectErrorCallback !== undefined) {
+            if (!autoReconnectAborted && errorCallback !== undefined) {
                 // Not using `this.` for the error callback function because
                 // we want to call what user provided not the saved one
-                disconnectErrorCallback(IPConnection.ERROR_NOT_CONNECTED);
+                errorCallback(IPConnection.ERROR_NOT_CONNECTED);
             }
             this.popTask();
             return;
         }
 
-        // Saving the user provided error callback function for future use
-        this.disconnectErrorCallback = disconnectErrorCallback;
         this.socket.end();
         this.socket.destroy();
         return;
     };
-    this.connect = function (host, port, connectErrorCallback) {
-        this.pushTask(this.connectInternal.bind(this, host, port, connectErrorCallback), IPConnection.TASK_KIND_CONNECT);
+    this.connect = function (host, port, errorCallback) {
+        this.pushTask(this.connectInternal.bind(this, host, port, errorCallback), IPConnection.TASK_KIND_CONNECT);
     };
-    this.connectInternal = function (host, port, connectErrorCallback) {
+    this.connectInternal = function (host, port, errorCallback) {
         if (this.isConnected) {
-            if (connectErrorCallback !== undefined) {
+            if (errorCallback !== undefined) {
                 // Not using `this.` for the error callback function because
                 // we want to call what user provided not the saved one
-                connectErrorCallback(IPConnection.ERROR_ALREADY_CONNECTED);
+                errorCallback(IPConnection.ERROR_ALREADY_CONNECTED);
             }
 
             this.popTask();
@@ -255,7 +250,7 @@ function IPConnection() {
         }
 
         // Saving the user provided error callback function for future use
-        this.connectErrorCallback = connectErrorCallback;
+        this.connectErrorCallback = errorCallback;
         clearInterval(this.disconnectProbeIID);
         this.host = host;
         this.port = port;
@@ -283,7 +278,7 @@ function IPConnection() {
         }
 
         this.disconnectProbeIID = setInterval(this.disconnectProbe.bind(this),
-                                                   IPConnection.DISCONNECT_PROBE_INTERVAL);
+                                              IPConnection.DISCONNECT_PROBE_INTERVAL);
 
         this.popTask();
     };
@@ -369,7 +364,7 @@ function IPConnection() {
                 this.registeredCallbacks[IPConnection.CALLBACK_DISCONNECTED](IPConnection.DISCONNECT_REASON_ERROR);
             }
 
-            if  (this.autoReconnect) {
+            if (this.autoReconnect) {
                 this.pushTask(this.connectInternal.bind(this, this.host, this.port, this.handleAutoReconnectError), IPConnection.TASK_KIND_AUTO_RECONNECT);
             }
 
