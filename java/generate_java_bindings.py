@@ -155,6 +155,10 @@ public class {0} extends Device {{
             tostr = []
             for element in packet.get_elements():
                 typ = element.get_java_type()
+
+                if self.get_generator().is_octave() and typ == 'char':
+                    typ = 'String'
+
                 ele_name = element.get_headless_camel_case_name()
                 if element.get_cardinality() > 1 and element.get_type() != 'string':
                     arr = '[]'
@@ -377,17 +381,21 @@ public class {0} extends Device {{
         constant = '\tpublic final static {0} {1}_{2} = {3}{4};\n'
         constants = []
         for constant_group in self.get_constant_groups():
-            type = java_common.get_java_type(constant_group.get_type())
+            typ = java_common.get_java_type(constant_group.get_type())
 
             for constant_item in constant_group.get_items():
                 if constant_group.get_type() == 'char':
                     cast = ''
-                    value = "'{0}'".format(constant_item.get_value())
+                    if self.get_generator().is_octave():
+                        value = "new String(new char[]{{'{0}'}})".format(constant_item.get_value())
+                        typ = 'String'
+                    else:
+                        value = "'{0}'".format(constant_item.get_value())
                 else:
-                    cast = '({0})'.format(type)
+                    cast = '({0})'.format(typ)
                     value = str(constant_item.get_value())
 
-                constants.append(constant.format(type,
+                constants.append(constant.format(typ,
                                                  constant_group.get_upper_case_name(),
                                                  constant_item.get_upper_case_name(),
                                                  cast,
@@ -489,9 +497,13 @@ public class {0} extends Device {{
                     if element.get_type() == 'string':
                         bbput_format = bbput_format.replace(');', '.charAt(i));')
                         bbput_format = string_loop.format(bbput_format)
+                    elif self.get_generator().is_octave() and element.get_type() == 'char':
+                        bbput_format = bbput_format.replace(');', '[i].charAt(0));')
                     else:
                         bbput_format = bbput_format.replace(');', '[i]);')
                     bbput_format = loop.format(element.get_cardinality(), '\t' + bbput_format)
+                elif self.get_generator().is_octave() and element.get_type() == 'char':
+                    bbput_format = bbput_format.replace(');', '.charAt(0));')
 
                 bbputs += bbput_format + '\n'
 
@@ -639,7 +651,12 @@ class JavaBindingsPacket(java_common.JavaPacket):
         for element in self.get_elements('out'):
             typ = ''
             if not with_obj:
-                typ = element.get_java_type() + ' '
+                typ = element.get_java_type()
+
+                if self.get_device().get_generator().is_octave() and typ == 'char':
+                    typ = 'String'
+
+                typ += ' '
 
             bbret = element.get_headless_camel_case_name()
             obj = ''
@@ -647,7 +664,7 @@ class JavaBindingsPacket(java_common.JavaPacket):
                 obj = 'obj.'
             cast = ''
             cast_extra = ''
-            boolean = ''
+            suffix = ''
             if element.get_type() == 'uint8':
                 cast = 'IPConnection.unsignedByte'
             elif element.get_type() == 'uint16':
@@ -655,9 +672,13 @@ class JavaBindingsPacket(java_common.JavaPacket):
             elif element.get_type() == 'uint32':
                 cast = 'IPConnection.unsignedInt'
             elif element.get_type() == 'bool':
-                boolean = ' != 0'
+                suffix = ' != 0'
             elif element.get_type() == 'char':
-                cast = '(char)'
+                if self.get_device().get_generator().is_octave():
+                    cast = 'new String(new char[]{(char)'
+                    suffix = '})'
+                else:
+                    cast = '(char)'
             elif element.get_type() == 'string':
                 cast = 'IPConnection.string'
                 cast_extra = ', {0}'.format(element.get_cardinality())
@@ -677,7 +698,7 @@ class JavaBindingsPacket(java_common.JavaPacket):
                                         cast,
                                         element.get_java_byte_buffer_method_suffix(),
                                         cast_extra,
-                                        boolean)
+                                        suffix)
 
             if element.get_cardinality() > 1 and element.get_type() != 'string':
                 if with_obj:

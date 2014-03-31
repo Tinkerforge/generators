@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
- * Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+ * Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
  * with or without modification, are permitted. See the Creative
@@ -15,7 +14,7 @@ public abstract class Device extends DeviceBase {
 	public class Identity {
 		public String uid;
 		public String connectedUid;
-		public char position;
+		public String position;
 		public short[] hardwareVersion = new short[3];
 		public short[] firmwareVersion = new short[3];
 		public int deviceIdentifier;

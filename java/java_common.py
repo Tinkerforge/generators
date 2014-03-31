@@ -55,6 +55,8 @@ class JavaPacket(common.Packet):
                 return self.get_java_object_name()
 
         return_type = elements[0].get_java_type()
+        if self.get_device().get_generator().is_octave() and return_type == 'char':
+            return_type = 'String'
 
         if elements[0].get_cardinality() > 1 and elements[0].get_type() != 'string':
             return_type += '[]'
@@ -68,6 +70,8 @@ class JavaPacket(common.Packet):
             if element.get_direction() == 'out' and self.get_type() == 'function':
                 continue
             java_type = element.get_java_type()
+            if self.get_device().get_generator().is_octave() and java_type == 'char':
+                java_type = 'String'
             name = element.get_headless_camel_case_name()
             arr = ''
             if element.get_cardinality() > 1 and element.get_type() != 'string':

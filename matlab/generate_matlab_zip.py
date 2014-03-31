@@ -77,7 +77,8 @@ class MATLABZipGenerator(common.Generator):
                 shutil.copy(os.path.join(root, 'bindings_' + flavor, filename), jar_root + '/source/com/tinkerforge')
 
             shutil.copy(os.path.join(root, '..', 'java', 'BrickDaemon.java'), jar_root + '/source/com/tinkerforge')
-            shutil.copy(os.path.join(root, '..', 'java', 'Device.java'), jar_root + '/source/com/tinkerforge')
+            shutil.copy(os.path.join(root, '..', 'java', 'DeviceBase.java'), jar_root + '/source/com/tinkerforge')
+            shutil.copy(os.path.join(root, 'Device_{0}.java'.format(flavor)), jar_root + '/source/com/tinkerforge/Device.java')
             shutil.copy(os.path.join(root, '..', 'java', 'DeviceListener.java'), jar_root + '/source/com/tinkerforge')
             shutil.copy(os.path.join(root, 'IPConnection_{0}.java'.format(flavor)), jar_root + '/source/com/tinkerforge/IPConnection.java')
             shutil.copy(os.path.join(root, '..', 'java', 'IPConnectionBase.java'), jar_root + '/source/com/tinkerforge')

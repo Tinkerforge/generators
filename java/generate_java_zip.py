@@ -70,6 +70,7 @@ class JavaZipGenerator(common.Generator):
 
         shutil.copy(os.path.join(root, 'BrickDaemon.java'), '/tmp/generator/jar/source/com/tinkerforge')
         shutil.copy(os.path.join(root, 'Device.java'), '/tmp/generator/jar/source/com/tinkerforge')
+        shutil.copy(os.path.join(root, 'DeviceBase.java'), '/tmp/generator/jar/source/com/tinkerforge')
         shutil.copy(os.path.join(root, 'DeviceListener.java'), '/tmp/generator/jar/source/com/tinkerforge')
         shutil.copy(os.path.join(root, 'IPConnection.java'), '/tmp/generator/jar/source/com/tinkerforge')
         shutil.copy(os.path.join(root, 'IPConnectionBase.java'), '/tmp/generator/jar/source/com/tinkerforge')
