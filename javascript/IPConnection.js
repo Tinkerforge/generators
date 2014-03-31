@@ -155,7 +155,7 @@ function IPConnection() {
     this.port = undefined;
     this.timeout = 2500;
     this.autoReconnect = true;
-    this.sequenceNumber = 0;
+    this.nextSequenceNumber = 0;
     this.devices = {};
     this.registeredCallbacks = {};
     this.socket = undefined;
@@ -982,10 +982,10 @@ function IPConnection() {
         this.registeredCallbacks[FID] = CBFunction;
     };
     this.getNextSequenceNumber = function () {
-        if (this.sequenceNumber >= 15) {
-            this.sequenceNumber = 0;
+        if (this.nextSequenceNumber >= 15) {
+            this.nextSequenceNumber = 0;
         }
-        return ++this.sequenceNumber;
+        return ++this.nextSequenceNumber;
     };
     this.createPacketHeader = function (headerDevice, headerLength, headerFunctionID, headerErrorCB) {
         var UID = IPConnection.BROADCAST_UID;
