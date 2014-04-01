@@ -46,6 +46,7 @@ IPConnection.ERROR_UNKNOWN_ERROR = 43;
 IPConnection.TASK_KIND_CONNECT = 0;
 IPConnection.TASK_KIND_DISCONNECT = 1;
 IPConnection.TASK_KIND_AUTO_RECONNECT = 2;
+IPConnection.TASK_KIND_AUTHENTICATE = 3;
 
 // Socket implementation for Node.js and Websocket.
 // The API resembles the Node.js API.
@@ -147,15 +148,38 @@ function TFSocket(PORT, HOST, ipcon) {
     };
 }
 
+BrickDaemon.FUNCTION_GET_AUTHENTICATION_NONCE = 1;
+BrickDaemon.FUNCTION_AUTHENTICATE = 2;
+
+function BrickDaemon(uid, ipcon) {
+	Device.call(this, this, uid, ipcon);
+	BrickDaemon.prototype = Object.create(Device);
+	this.responseExpected = {};
+	this.callbackFormats = {};
+	this.APIVersion = [2, 0, 0];
+	this.responseExpected[BrickDaemon.FUNCTION_GET_AUTHENTICATION_NONCE] = Device.RESPONSE_EXPECTED_ALWAYS_TRUE;
+	this.responseExpected[BrickDaemon.FUNCTION_AUTHENTICATE] = Device.RESPONSE_EXPECTED_TRUE;
+
+	this.getAuthenticationNonce = function(returnCallback, errorCallback) {
+		this.ipcon.sendRequest(this, BrickDaemon.FUNCTION_GET_AUTHENTICATION_NONCE, [], '', 'B4', returnCallback, errorCallback);
+	};
+	this.authenticate = function(clientNonce, digest, returnCallback, errorCallback) {
+		this.ipcon.sendRequest(this, BrickDaemon.FUNCTION_AUTHENTICATE, [clientNonce, digest], 'B4 B20', '', returnCallback, errorCallback);
+	};
+}
+
 // the IPConnection class and constructor
 function IPConnection() {
     // Creates an IP Connection object that can be used to enumerate the available
     // devices. It is also required for the constructor of Bricks and Bricklets.
     this.host = undefined;
     this.port = undefined;
+    this.secret = undefined;
     this.timeout = 2500;
     this.autoReconnect = true;
+    this.autoReauthenticate = true;
     this.nextSequenceNumber = 0;
+    this.nextAuthenticationNonce = 0;
     this.devices = {};
     this.registeredCallbacks = {};
     this.socket = undefined;
@@ -164,6 +188,8 @@ function IPConnection() {
     this.isConnected = false;
     this.connectErrorCallback = undefined;
     this.mergeBuffer = new Buffer(0);
+    this.brickd = new BrickDaemon('2', this);
+
     this.disconnectProbe = function () {
         if (this.socket !== undefined) {
             this.socket.write(this.createPacketHeader(undefined, 8, IPConnection.FUNCTION_DISCONNECT_PROBE), this.resetDisconnectProbe());
@@ -232,6 +258,7 @@ function IPConnection() {
 
         this.socket.end();
         this.socket.destroy();
+        // no popTask() here, will be done in handleConnectionClose()
         return;
     };
     this.connect = function (host, port, errorCallback) {
@@ -254,6 +281,9 @@ function IPConnection() {
         clearInterval(this.disconnectProbeIID);
         this.host = host;
         this.port = port;
+        if (this.getCurrentTaskKind() === IPConnection.TASK_KIND_CONNECT) {
+            this.secret = undefined;
+        }
         this.socket = new TFSocket(this.port, this.host, this);
         this.socket.setNoDelay(true);
         this.socket.on('connect', this.handleConnect.bind(this));
@@ -281,6 +311,13 @@ function IPConnection() {
                                               IPConnection.DISCONNECT_PROBE_INTERVAL);
 
         this.popTask();
+
+        if (this.secret !== undefined &&
+            this.autoReauthenticate &&
+            connectReason === IPConnection.CONNECT_REASON_AUTO_RECONNECT) {
+            // FIXME: how to handle errors here?
+            this.authenticate(this.secret);
+        }
     };
     this.handleIncomingData = function (data) {
         this.resetDisconnectProbe();
@@ -339,6 +376,8 @@ function IPConnection() {
                 this.socket.destroy();
                 this.socket = undefined;
             }
+
+            this.secret = undefined;
 
             // Check and call functions if registered for callback disconnected
             if (this.registeredCallbacks[IPConnection.CALLBACK_DISCONNECTED] !== undefined) {
@@ -977,6 +1016,98 @@ function IPConnection() {
             return;
         }
         this.socket.write(this.createPacketHeader(undefined, 8, IPConnection.FUNCTION_ENUMERATE), this.resetDisconnectProbe());
+    };
+    this.getRandomUInt32 = function (returnCallback) {
+        if (process.browser) {
+            if (window.crypto && window.crypto.getRandomValues) {
+                var r = new Uint32Array(1);
+                window.crypto.getRandomValues(r);
+                returnCallback(r[0]);
+            }
+            else if (window.msCrypto && window.msCrypto.getRandomValues) {
+                var r = new Uint32Array(1);
+                window.msCrypto.getRandomValues(r);
+                returnCallback(r[0]);
+            }
+            else {
+                returnCallback(Math.ceil(Math.random() * 4294967295));
+            }
+        }
+        else {
+            var crypto = require('crypto');
+            crypto.randomBytes(4, function(error, buffer) {
+                if (error) {
+                    crypto.pseudoRandomBytes(4, function(error, buffer) {
+                        if (error) {
+                            returnCallback(Math.ceil(Math.random() * 4294967295));
+                        }
+                        else {
+                            var data = new Buffer(buffer);
+                            returnCallback(data.readUInt32LE(0));
+                        }
+                    });
+                }
+                else {
+                    var data = new Buffer(buffer);
+                    returnCallback(data.readUInt32LE(0));
+                }
+            });
+        }
+    };
+    this.authenticateInternal = function (secret, returnCallback, errorCallback) {
+        this.brickd.getAuthenticationNonce(function (serverNonce) {
+            var serverNonceBytes = pack([serverNonce], 'B4');
+            var clientNonceNumber = this.nextAuthenticationNonce++;
+            var clientNonceBytes = pack([clientNonceNumber], 'I');
+            var clientNonce = unpack(clientNonceBytes, 'B4')[0];
+            var combinedNonceBytes = pack([serverNonce, clientNonce], 'B4 B4');
+            var crypto = require('crypto');
+            var hmac = crypto.createHmac('sha1', secret);
+
+            hmac.update(combinedNonceBytes);
+
+            var digestBytes = hmac.digest();
+            var digest = unpack(digestBytes, 'B20')[0];
+
+            this.brickd.authenticate(clientNonce, digest, function () {
+                this.secret = secret;
+
+                if (returnCallback !== undefined) {
+                    returnCallback();
+                }
+
+                this.popTask();
+            }.bind(this), function (error) {
+                if (errorCallback !== undefined) {
+                    errorCallback(error);
+                }
+
+                this.popTask();
+            }.bind(this));
+        }.bind(this), function (error) {
+            if (errorCallback !== undefined) {
+                errorCallback(error);
+            }
+
+            this.popTask();
+        }.bind(this));
+    };
+    this.authenticate = function (secret, returnCallback, errorCallback) {
+        // need to do authenticate() as a task because two authenticate() calls
+        // are not allowed to overlap, otherwise the correct order of operations
+        // in the handshake process cannot be guaranteed
+        this.pushTask(function () {
+            if (this.nextAuthenticationNonce === 0) {
+                this.getRandomUInt32(function (r) {
+                    console.log("nextAuthenticationNonce " + r);
+                    this.nextAuthenticationNonce = r;
+                    this.authenticateInternal(secret, returnCallback, errorCallback);
+                }.bind(this));
+            }
+            else {
+                this.authenticateInternal(secret, returnCallback, errorCallback);
+            }
+        }.bind(this), IPConnection.TASK_KIND_AUTHENTICATE);
     };
     this.on = function (FID, CBFunction) {
         this.registeredCallbacks[FID] = CBFunction;
