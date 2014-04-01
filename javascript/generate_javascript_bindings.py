@@ -42,7 +42,7 @@ var Device = require('./Device');\n
 {1}.DEVICE_IDENTIFIER = {2};\n""".format(common.gen_text_star.format(date, *version),
                                          self.get_javascript_class_name(),
                                          self.get_device_identifier())
-    
+
     def get_javascript_constants(self):
         callback_constants = ''
         callback_constant_statement = self.get_javascript_class_name()+'.CALLBACK_{0} = {1};\n'
@@ -61,19 +61,19 @@ var Device = require('./Device');\n
 
     def get_javascript_class_opening(self):
         return """function {0}(uid, ipcon) {{
-    //{1}
-    
-    /*
-    Creates an object with the unique device ID *uid* and adds it to
-    the IP Connection *ipcon*.
-    */
-    Device.call(this, this, uid, ipcon);
-    {2}.prototype = Object.create(Device);
-    this.responseExpected = {{}};
-    this.callbackFormats = {{}};
-    this.APIVersion = [{3}, {4}, {5}];\n""".format(self.get_javascript_class_name(),self.get_description(),
+\t//{1}
+
+\t/*
+\tCreates an object with the unique device ID *uid* and adds it to
+\tthe IP Connection *ipcon*.
+\t*/
+\tDevice.call(this, this, uid, ipcon);
+\t{2}.prototype = Object.create(Device);
+\tthis.responseExpected = {{}};
+\tthis.callbackFormats = {{}};
+\tthis.APIVersion = [{3}, {4}, {5}];\n""".format(self.get_javascript_class_name(),self.get_description(),
                                                  self.get_javascript_class_name(), *self.get_api_version())
-    
+
     def get_javascript_response_expecteds(self):
         response_expected = ''
 
@@ -91,18 +91,18 @@ var Device = require('./Device');\n
                 prefix = 'FUNCTION_'
                 flag = 'RESPONSE_EXPECTED_FALSE'
 
-            response_expected += '    this.responseExpected[{0}.{1}{2}] = Device.{3};\n' \
+            response_expected += '\tthis.responseExpected[{0}.{1}{2}] = Device.{3};\n' \
                 .format(self.get_javascript_class_name(), prefix, packet.get_upper_case_name(), flag)
 
         return response_expected
 
     def get_javascript_callback_formats(self):
         callback_format = ''
-        callback_format_statement = "    this.callbackFormats[{0}.CALLBACK_{1}] = '{2}';\n"
+        callback_format_statement = "\tthis.callbackFormats[{0}.CALLBACK_{1}] = '{2}';\n"
 
         for index, packet in enumerate(self.get_packets('callback')):
             if(index == len(self.get_packets('callback')) - 1):
-                callback_format += "    this.callbackFormats[{0}.CALLBACK_{1}] = '{2}';\n\n"\
+                callback_format += "\tthis.callbackFormats[{0}.CALLBACK_{1}] = '{2}';\n\n"\
                                                                 .format(self.get_javascript_class_name(),
                                                                         packet.get_upper_case_name(),
                                                                         packet.get_javascript_format_list('out'))
@@ -112,7 +112,7 @@ var Device = require('./Device');\n
                                                                 packet.get_javascript_format_list('out'))
 
         return callback_format
-    
+
     def get_javascript_methods(self):
         method_code = ''
         for packet in self.get_packets('function'):
@@ -122,21 +122,21 @@ var Device = require('./Device');\n
             pack_format = packet.get_javascript_format_list('in')
             unpack_format = packet.get_javascript_format_list('out')
             doc = packet.get_javascript_formatted_doc()
-            
-            no_param_method_code = """    this.{0} = function(returnCallback, errorCallback) {{
-        /*
-        {1}
-        */
-        this.ipcon.sendRequest(this, {2}.FUNCTION_{3}, [{4}], '{5}', '{6}', returnCallback, errorCallback);
-    }};   
+
+            no_param_method_code = """\tthis.{0} = function(returnCallback, errorCallback) {{
+\t\t/*
+\t\t{1}
+\t\t*/
+\t\tthis.ipcon.sendRequest(this, {2}.FUNCTION_{3}, [{4}], '{5}', '{6}', returnCallback, errorCallback);
+\t}};
 """
-            param_method_code = """    this.{0} = function({1}, returnCallback, errorCallback) {{
-        /*
-        {2}
-        */
-        this.ipcon.sendRequest(this, {3}.FUNCTION_{4}, [{5}], '{6}', '{7}', returnCallback, errorCallback);
-    }};
-"""            
+            param_method_code = """\tthis.{0} = function({1}, returnCallback, errorCallback) {{
+\t\t/*
+\t\t{2}
+\t\t*/
+\t\tthis.ipcon.sendRequest(this, {3}.FUNCTION_{4}, [{5}], '{6}', '{7}', returnCallback, errorCallback);
+\t}};
+"""
             if(len(param_list) == 0):
                 method_code += no_param_method_code.format(name, doc, self.get_javascript_class_name(), underscore_name.upper(), param_list, pack_format, unpack_format)
             if(len(param_list) > 0):
@@ -146,7 +146,7 @@ var Device = require('./Device');\n
 
     def get_javascript_class_closing(self):
         return """}}
-        
+
 module.exports = {0};
 """.format(self.get_javascript_class_name())
 
@@ -172,7 +172,7 @@ class JavaScriptBindingsPacket(javascript_common.JavaScriptPacket):
         text = common.handle_rst_substitutions(text, self)
         text += common.format_since_firmware(self.get_device(), self)
 
-        return '\n        '.join(text.strip().split('\n'))
+        return '\n\t\t'.join(text.strip().split('\n'))
 
     def get_javascript_format_list(self, io):
         forms = []
@@ -209,25 +209,25 @@ class JavaScriptBindingsGenerator(common.BindingsGenerator):
         self.released_files.append(npm_main_filename)
 
         self.browser_api_file.write("""function Tinkerforge() {
-    this.IPConnection = require('./IPConnection');
+\tthis.IPConnection = require('./IPConnection');
 """)
 
         self.npm_main_file.write("""function Tinkerforge() {
-    this.IPConnection = require('./lib/IPConnection');
+\tthis.IPConnection = require('./lib/IPConnection');
 """)
 
         return ret
 
     def add_browser_api_function(self, device):
         if device.is_released():
-            api = """    this.{0}{1} = require('./{0}{1}');
+            api = """\tthis.{0}{1} = require('./{0}{1}');
 """
             api_format = api.format(device.get_category(), device.get_camel_case_name())
             self.browser_api_file.write(api_format)
 
     def add_npm_main_function(self, device):
         if device.is_released():
-            npm_main = """    this.{0}{1} = require('./lib/{0}{1}');
+            npm_main = """\tthis.{0}{1} = require('./lib/{0}{1}');
 """
             npm_main_format = npm_main.format(device.get_category(), device.get_camel_case_name())
             self.npm_main_file.write(npm_main_format)
