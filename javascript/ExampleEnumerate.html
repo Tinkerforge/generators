@@ -50,6 +50,7 @@
                         textArea.value += 'Enumeration Type:  '+enumerationType+'\n';
                         if(enumerationType === Tinkerforge.IPConnection.ENUMERATION_TYPE_DISCONNECTED) {
                             textArea.value += '\n';
+                            textArea.scrollTop = textArea.scrollHeight;
                             return;
                         }
                         textArea.value += 'Connected UID:     '+connectedUid+'\n';
@@ -58,6 +59,7 @@
                         textArea.value += 'Firmware Version:  '+firmwareVersion+'\n';
                         textArea.value += 'Device Identifier: '+deviceIdentifier+'\n';
                         textArea.value += '\n';
+                        textArea.scrollTop = textArea.scrollHeight;
                     }
                 );
             }
