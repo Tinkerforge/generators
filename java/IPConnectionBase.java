@@ -363,7 +363,7 @@ class DisconnectProbeThread extends Thread {
 	}
 }
 
-abstract class IPConnectionBase {
+public abstract class IPConnectionBase {
 	private final static String BASE58 = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
 
 	public final static byte FUNCTION_ENUMERATE = (byte)254;
