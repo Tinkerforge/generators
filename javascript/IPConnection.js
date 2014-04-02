@@ -174,10 +174,8 @@ function IPConnection() {
     // devices. It is also required for the constructor of Bricks and Bricklets.
     this.host = undefined;
     this.port = undefined;
-    this.secret = undefined;
     this.timeout = 2500;
     this.autoReconnect = true;
-    this.autoReauthenticate = true;
     this.nextSequenceNumber = 0;
     this.nextAuthenticationNonce = 0;
     this.devices = {};
@@ -281,9 +279,6 @@ function IPConnection() {
         clearInterval(this.disconnectProbeIID);
         this.host = host;
         this.port = port;
-        if (this.getCurrentTaskKind() === IPConnection.TASK_KIND_CONNECT) {
-            this.secret = undefined;
-        }
         this.socket = new TFSocket(this.port, this.host, this);
         this.socket.setNoDelay(true);
         this.socket.on('connect', this.handleConnect.bind(this));
@@ -311,13 +306,6 @@ function IPConnection() {
                                               IPConnection.DISCONNECT_PROBE_INTERVAL);
 
         this.popTask();
-
-        if (this.secret !== undefined &&
-            this.autoReauthenticate &&
-            connectReason === IPConnection.CONNECT_REASON_AUTO_RECONNECT) {
-            // FIXME: how to handle errors here?
-            this.authenticate(this.secret);
-        }
     };
     this.handleIncomingData = function (data) {
         this.resetDisconnectProbe();
@@ -376,8 +364,6 @@ function IPConnection() {
                 this.socket.destroy();
                 this.socket = undefined;
             }
-
-            this.secret = undefined;
 
             // Check and call functions if registered for callback disconnected
             if (this.registeredCallbacks[IPConnection.CALLBACK_DISCONNECTED] !== undefined) {
@@ -1070,8 +1056,6 @@ function IPConnection() {
             var digest = unpack(digestBytes, 'B20')[0];
 
             this.brickd.authenticate(clientNonce, digest, function () {
-                this.secret = secret;
-
                 if (returnCallback !== undefined) {
                     returnCallback();
                 }
@@ -1099,7 +1083,6 @@ function IPConnection() {
         this.pushTask(function () {
             if (this.nextAuthenticationNonce === 0) {
                 this.getRandomUInt32(function (r) {
-                    console.log("nextAuthenticationNonce " + r);
                     this.nextAuthenticationNonce = r;
                     this.authenticateInternal(secret, returnCallback, errorCallback);
                 }.bind(this));
