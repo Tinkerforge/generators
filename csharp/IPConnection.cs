@@ -561,6 +561,7 @@ namespace Tinkerforge
 					if (receiveFlag)
 					{
 						HandleDisconnectByPeer(DISCONNECT_REASON_SHUTDOWN, localSocketID, false);
+						return;
 					}
 				}
 
