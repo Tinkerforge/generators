@@ -125,11 +125,9 @@ type
   private
     host: string;
     port: word;
-    secret: string; { protected by socketMutex }
     autoReconnect: boolean;
     autoReconnectAllowed: boolean;
     autoReconnectPending: boolean;
-    autoReauthenticate: boolean;
     receiveFlag: boolean;
     receiveThread: TWrapperThread;
     callback: PCallbackContext;
@@ -199,7 +197,7 @@ type
     /// <summary>
     ///  FIXME
     /// </summary>
-    procedure Authenticate(const secret_: string);
+    procedure Authenticate(const secret: string);
 
     /// <summary>
     ///  Can return the following states:
@@ -225,20 +223,6 @@ type
     ///  Returns *true* if auto-reconnect is enabled, *false* otherwise.
     /// </summary>
     function GetAutoReconnect: boolean;
-
-    /// <summary>
-    ///  Enables or disables auto-reauthenticate. If auto-reauthenticate is enabled,
-    ///  the IP Connection will try to reauthenticate with the previously given
-    ///  secret after an auto-reconnect.
-    ///
-    ///  Default value is *true*.
-    /// </summary>
-    procedure SetAutoReauthenticate(const autoReauthenticate_: boolean);
-
-    /// <summary>
-    ///  Returns *true* if auto-authenticate is enabled, *false* otherwise.
-    /// </summary>
-    function GetAutoReauthenticate: boolean;
 
     /// <summary>
     ///  Sets the timeout in milliseconds for getters and for setters for
@@ -438,12 +422,10 @@ constructor TIPConnection.Create;
 begin
   host := '';
   port := 0;
-  secret := '';
   timeout := 2500;
   autoReconnect := true;
   autoReconnectAllowed := false;
   autoReconnectPending := false;
-  autoReauthenticate := true;
   receiveFlag := false;
   receiveThread := nil;
   callback := nil;
@@ -484,7 +466,6 @@ begin
     end;
     host := host_;
     port := port_;
-    secret := '';
     ConnectUnlocked(false);
   finally
     socketMutex.Release;
@@ -533,7 +514,7 @@ begin
   end;
 end;
 
-procedure TIPConnection.Authenticate(const secret_: string);
+procedure TIPConnection.Authenticate(const secret: string);
 var serverNonce, clientNonce: TArray0To3OfUInt8; i: longint;
     secretBytes, clientNonceBytes, data: TByteArray;
     digest: TSHA1Digest;
@@ -563,16 +544,10 @@ begin
     data[4 + i] := clientNonceBytes[i];
     clientNonce[i] := clientNonceBytes[i];
   end;
-  SetLength(secretBytes, Length(secret_));
-  LEConvertStringTo(secret_, 0, Length(secret_), secretBytes);
+  SetLength(secretBytes, Length(secret));
+  LEConvertStringTo(secret, 0, Length(secret), secretBytes);
   digest := HMACSHA1(secretBytes, data);
   brickd.Authenticate(clientNonce, TArray0To19OfUInt8(digest));
-  socketMutex.Acquire;
-  try
-    secret := secret_;
-  finally
-    socketMutex.Release;
-  end;
 end;
 
 function TIPConnection.GetConnectionState: byte;
@@ -600,16 +575,6 @@ end;
 function TIPConnection.GetAutoReconnect: boolean;
 begin
   result := autoReconnect;
-end;
-
-procedure TIPConnection.SetAutoReauthenticate(const autoReauthenticate_: boolean);
-begin
-  autoReauthenticate := autoReauthenticate_;
-end;
-
-function TIPConnection.GetAutoReauthenticate: boolean;
-begin
-  result := autoReauthenticate;
 end;
 
 procedure TIPConnection.SetTimeout(const timeout_: longword);
@@ -772,8 +737,6 @@ begin
   { Destroy socket }
   closesocket(socket);
   socket := INVALID_SOCKET;
-  { Clear secret }
-  secret := '';
 end;
 
 function TIPConnection.GetLastSocketError: string;
@@ -962,7 +925,7 @@ begin
 end;
 
 procedure TIPConnection.DispatchMeta(const meta: TByteArray);
-var retry: boolean; localSecret: string;
+var retry: boolean;
 begin
   if (meta[0] = IPCON_CALLBACK_CONNECTED) then begin
     if (Assigned(connectedCallback)) then begin
@@ -1017,13 +980,11 @@ begin
         deliver when there is no connection }
       while (retry) do begin
         retry := false;
-        localSecret := '';
         socketMutex.Acquire;
         try
           if (autoReconnectAllowed and (not IsConnected)) then begin
             try
               ConnectUnlocked(true);
-              localSecret := secret;
             except
               retry := true;
             end;
@@ -1038,13 +999,6 @@ begin
           { Wait a moment to give another thread a chance to interrupt the
             auto-reconnect }
           Sleep(100);
-        end
-        else if (autoReauthenticate and (Length(localSecret) > 0)) then begin
-          try
-            Authenticate(localSecret);
-          except
-            { FIXME: how to handle errors here? }
-          end;
         end;
       end;
     end;
