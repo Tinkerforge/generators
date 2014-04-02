@@ -405,7 +405,8 @@ public abstract class IPConnectionBase {
 	private int nextSequenceNumber = 0; // protected by sequenceNumberMutex
 	private Object sequenceNumberMutex = new Object();
 
-	private long nextAuthenticationNonce = 0; // protected by sequenceNumberMutex
+	private long nextAuthenticationNonce = 0; // protected by authenticationMutex
+	private Object authenticationMutex = new Object(); // protects authentication handshake
 
 	boolean receiveFlag = false;
 
@@ -606,7 +607,7 @@ public abstract class IPConnectionBase {
 	 * FIXME
 	 */
 	public void authenticate(String secret) throws TimeoutException, NotConnectedException, SignatureException {
-		synchronized(sequenceNumberMutex) {
+		synchronized(authenticationMutex) {
 			if (nextAuthenticationNonce == 0) {
 				byte[] seed = new SecureRandom().generateSeed(4);
 				ByteBuffer bb = ByteBuffer.wrap(seed, 0, 4);
@@ -614,12 +615,9 @@ public abstract class IPConnectionBase {
 				bb.order(ByteOrder.LITTLE_ENDIAN);
 				nextAuthenticationNonce = bb.getInt();
 			}
-		}
 
-		byte[] serverNonce = brickd.getAuthenticationNonce();
-		byte[] clientNonce;
-
-		synchronized(sequenceNumberMutex) {
+			byte[] serverNonce = brickd.getAuthenticationNonce();
+			byte[] clientNonce;
 			ByteBuffer bb = ByteBuffer.allocate(4);
 
 			bb.order(ByteOrder.LITTLE_ENDIAN);
@@ -627,26 +625,26 @@ public abstract class IPConnectionBase {
 
 			clientNonce = bb.array();
 			nextAuthenticationNonce = (nextAuthenticationNonce + 1) % ((long)1 << 32);
+
+			byte[] data = new byte[serverNonce.length + clientNonce.length];
+
+			System.arraycopy(serverNonce, 0, data, 0, serverNonce.length);
+			System.arraycopy(clientNonce, 0, data, serverNonce.length, clientNonce.length);
+
+			byte[] digest;
+
+			try {
+				Mac mac = Mac.getInstance("HmacSHA1");
+
+				mac.init(new SecretKeySpec(secret.getBytes(), "HmacSHA1"));
+
+				digest = mac.doFinal(data);
+			} catch (Exception e) {
+				throw new SignatureException("Could not generate HMAC-SHA1: " + e.getMessage());
+			}
+
+			brickd.authenticate(clientNonce, digest);
 		}
-
-		byte[] data = new byte[serverNonce.length + clientNonce.length];
-
-		System.arraycopy(serverNonce, 0, data, 0, serverNonce.length);
-		System.arraycopy(clientNonce, 0, data, serverNonce.length, clientNonce.length);
-
-		byte[] digest;
-
-		try {
-			Mac mac = Mac.getInstance("HmacSHA1");
-
-			mac.init(new SecretKeySpec(secret.getBytes(), "HmacSHA1"));
-
-			digest = mac.doFinal(data);
-		} catch (Exception e) {
-			throw new SignatureException("Could not generate HMAC-SHA1: " + e.getMessage());
-		}
-
-		brickd.authenticate(clientNonce, digest);
 	}
 
 	/**
