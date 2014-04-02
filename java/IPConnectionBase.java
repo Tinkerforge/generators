@@ -882,11 +882,11 @@ public abstract class IPConnectionBase {
 	}
 
 	static boolean getResponseExpectedFromData(byte[] data) {
-		return (((int)(data[6]) >> 3) & 0x01) == 0x01;
+		return ((((int)data[6]) >> 3) & 0x01) == 0x01;
 	}
 
 	static byte getErrorCodeFromData(byte[] data) {
-		return (byte)(((int)(data[7] >> 6)) & 0x03);
+		return (byte)((((int)data[7]) >> 6) & 0x03);
 	}
 
 	static String string(ByteBuffer buffer, int length) {
@@ -913,15 +913,15 @@ public abstract class IPConnectionBase {
 	}
 
 	static short unsignedByte(byte data) {
-		return (short)(data & 0xFF);
+		return (short)((short)data & 0xFF);
 	}
 
 	static int unsignedShort(short data) {
-		return (int)(data & 0xFFFF);
+		return (int)data & 0xFFFF;
 	}
 
 	static long unsignedInt(int data) {
-		return (long)(((long)data) & 0xFFFFFFFF);
+		return (long)data & 0xFFFFFFFFL;
 	}
 
 	void sendRequest(byte[] request) throws NotConnectedException {
