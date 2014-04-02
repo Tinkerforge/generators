@@ -10,6 +10,7 @@ ipcon.connect(HOST, PORT,
     }
 ); // Connect to brickd
 
+// Register Connected Callback
 ipcon.on(Tinkerforge.IPConnection.CALLBACK_CONNECTED,
     function(connectReason) {
         // Trigger Enumerate

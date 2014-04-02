@@ -55,9 +55,10 @@ begin
   ipcon := TIPConnection.Create;
   ipcon.Connect(HOST, PORT);
 
-  { Register enumeration callback to "EnumerateCB }
+  { Register enumerate callback to "EnumerateCB" }
   ipcon.OnEnumerate := {$ifdef FPC}@{$endif}EnumerateCB;
 
+  { Trigger enumerate }
   ipcon.Enumerate;
 
   WriteLn('Press key to exit');

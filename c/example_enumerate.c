@@ -37,6 +37,7 @@ int main() {
 	IPConnection ipcon;
 	ipcon_create(&ipcon);
 
+	// Connect to brickd
 	if(ipcon_connect(&ipcon, HOST, PORT) < 0) {
 		fprintf(stderr, "Could not connect to brickd\n");
 		exit(1);
