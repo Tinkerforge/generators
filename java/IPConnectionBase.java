@@ -180,17 +180,14 @@ class CallbackThread extends Thread {
 				   ipcon.autoReconnect && ipcon.autoReconnectAllowed) {
 					ipcon.autoReconnectPending = true;
 					boolean retry = true;
-					String localSecret = null;
 
 					while(retry) {
 						retry = false;
-						localSecret = null;
 
 						synchronized(ipcon.socketMutex) {
 							if(ipcon.autoReconnectAllowed && ipcon.socket == null) {
 								try {
 									ipcon.connectUnlocked(true);
-									localSecret = ipcon.secret;
 								} catch(Exception e) {
 									retry = true;
 								}
@@ -204,12 +201,6 @@ class CallbackThread extends Thread {
 								Thread.sleep(100);
 							} catch(InterruptedException e) {
 								e.printStackTrace();
-							}
-						} else if (ipcon.autoReauthenticate && localSecret != null) {
-							try {
-								ipcon.authenticate(localSecret);
-							} catch(Exception e) {
-								// FIXME: how to handle errors here?
 							}
 						}
 					}
@@ -409,14 +400,12 @@ public abstract class IPConnectionBase {
 
 	private String host;
 	private int port;
-	String secret; // protected by socketMutex
 
 	private final static int SEQUENCE_NUMBER_POS = 4;
 	private int nextSequenceNumber = 0; // protected by sequenceNumberMutex
 	private Object sequenceNumberMutex = new Object();
 
 	private long nextAuthenticationNonce = 0; // protected by sequenceNumberMutex
-	boolean autoReauthenticate = true;
 
 	boolean receiveFlag = false;
 
@@ -473,7 +462,6 @@ public abstract class IPConnectionBase {
 
 			this.host = host;
 			this.port = port;
-			secret = null;
 
 			connectUnlocked(false);
 		}
@@ -612,9 +600,6 @@ public abstract class IPConnectionBase {
 
 			receiveThread = null;
 		}
-
-		// clear secret
-		secret = null;
 	}
 
 	/**
@@ -662,10 +647,6 @@ public abstract class IPConnectionBase {
 		}
 
 		brickd.authenticate(clientNonce, digest);
-
-		synchronized(socketMutex) {
-			this.secret = secret;
-		}
 	}
 
 	/**
@@ -709,24 +690,6 @@ public abstract class IPConnectionBase {
 	 */
 	public boolean getAutoReconnect() {
 		return autoReconnect;
-	}
-
-	/**
-	 * Enables or disables auto-reauthenticate. If auto-reauthenticate is enabled,
-	 * the IP Connection will try to reauthenticate with the previously given
-	 * secret after an auto-reconnect.
-	 *
-	 * Default value is *true*.
-	 */
-	public void setAutoReauthenticate(boolean autoReauthenticate) {
-		this.autoReauthenticate = autoReauthenticate;
-	}
-
-	/**
-	 * Returns *true* if auto-reauthenticate is enabled, *false* otherwise.
-	 */
-	public boolean getAutoReauthenticate() {
-		return autoReauthenticate;
 	}
 
 	/**
