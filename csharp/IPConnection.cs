@@ -65,6 +65,9 @@ namespace Tinkerforge
 		internal int nextSequenceNumber = 0; // protected by sequenceNumberLock
 		private object sequenceNumberLock = new object();
 
+		private uint nextAuthenticationNonce = 0; // protected by authenticationLock
+		private object authenticationLock = new object(); // protects authentication handshake
+
 		internal bool autoReconnectAllowed = false;
 		internal bool autoReconnectPending = false;
 		internal bool autoReconnect = true;
@@ -76,7 +79,6 @@ namespace Tinkerforge
 
 		string host;
 		int port;
-		uint nextAuthenticationNonce = 0; // protected by sequenceNumberLock
 		Socket socket = null; // protected by socketLock
 		internal object socketLock = new object();
 		NetworkStream socketStream = null; // protected by socketLock
@@ -315,7 +317,7 @@ namespace Tinkerforge
 		/// </summary>
 		public void Authenticate(string secret)
 		{
-			lock (sequenceNumberLock)
+			lock (authenticationLock)
 			{
 				if (nextAuthenticationNonce == 0)
 				{
@@ -345,25 +347,22 @@ namespace Tinkerforge
 						}
 					}
 				}
-			}
 
-			byte[] serverNonce = brickd.GetAuthenticationNonce();
-			byte[] clientNonce = new byte[4];
+				byte[] serverNonce = brickd.GetAuthenticationNonce();
+				byte[] clientNonce = new byte[4];
 
-			lock (sequenceNumberLock)
-			{
 				LEConverter.To((int)nextAuthenticationNonce++, 0, clientNonce);
+
+				byte[] data = new byte[serverNonce.Length + clientNonce.Length];
+
+				System.Buffer.BlockCopy(serverNonce, 0, data, 0, serverNonce.Length);
+				System.Buffer.BlockCopy(clientNonce, 0, data, serverNonce.Length, clientNonce.Length);
+
+				HMACSHA1 hmac = new HMACSHA1(Encoding.ASCII.GetBytes(secret));
+				byte[] digest = hmac.ComputeHash(data);
+
+				brickd.Authenticate(clientNonce, digest);
 			}
-
-			byte[] data = new byte[serverNonce.Length + clientNonce.Length];
-
-			System.Buffer.BlockCopy(serverNonce, 0, data, 0, serverNonce.Length);
-			System.Buffer.BlockCopy(clientNonce, 0, data, serverNonce.Length, clientNonce.Length);
-
-			HMACSHA1 hmac = new HMACSHA1(Encoding.ASCII.GetBytes(secret));
-			byte[] digest = hmac.ComputeHash(data);
-
-			brickd.Authenticate(clientNonce, digest);
 		}
 
 		/// <summary>
