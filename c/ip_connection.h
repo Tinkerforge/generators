@@ -358,8 +358,6 @@ typedef Device BrickDaemon;
  * \internal
  */
 struct _IPConnectionPrivate {
-	IPConnection *p;
-
 #ifdef _WIN32
 	bool wsa_startup_done; // protected by socket_mutex
 #endif
@@ -367,9 +365,7 @@ struct _IPConnectionPrivate {
 	char *host;
 	uint16_t port;
 
-	char secret[IPCON_MAX_SECRET_LENGTH]; // protected by socket_mutex
 	uint32_t next_authentication_nonce; // protected by sequence_number_mutex
-	bool auto_reauthenticate;
 
 	uint32_t timeout; // in msec
 
@@ -482,24 +478,6 @@ void ipcon_set_auto_reconnect(IPConnection *ipcon, bool auto_reconnect);
  * Returns *true* if auto-reconnect is enabled, *false* otherwise.
  */
 bool ipcon_get_auto_reconnect(IPConnection *ipcon);
-
-/**
- * \ingroup IPConnection
- *
- * Enables or disables auto-reauthenticate. If auto-reauthenticate is enabled,
- * the IP Connection will try to reauthenticate with the previously given
- * secret after an auto-reconnect.
- *
- * Default value is *true*.
- */
-void ipcon_set_auto_reauthenticate(IPConnection *ipcon, bool auto_reauthenticate);
-
-/**
- * \ingroup IPConnection
- *
- * Returns *true* if auto-reauthenticate is enabled, *false* otherwise.
- */
-bool ipcon_get_auto_reauthenticate(IPConnection *ipcon);
 
 /**
  * \ingroup IPConnection

@@ -1441,7 +1441,6 @@ static void ipcon_dispatch_meta(IPConnectionPrivate *ipcon_p, Meta *meta) {
 	DisconnectedCallbackFunction disconnected_callback_function;
 	void *user_data;
 	bool retry;
-	char local_secret[IPCON_MAX_SECRET_LENGTH];
 
 	if (meta->function_id == IPCON_CALLBACK_CONNECTED) {
 		if (ipcon_p->registered_callbacks[IPCON_CALLBACK_CONNECTED] != NULL) {
@@ -1494,7 +1493,6 @@ static void ipcon_dispatch_meta(IPConnectionPrivate *ipcon_p, Meta *meta) {
 			// block here until reconnect. this is okay, there is no
 			// callback to deliver when there is no connection
 			while (retry) {
-				local_secret[0] = '\0';
 				retry = false;
 
 				mutex_lock(&ipcon_p->socket_mutex);
@@ -1502,8 +1500,6 @@ static void ipcon_dispatch_meta(IPConnectionPrivate *ipcon_p, Meta *meta) {
 				if (ipcon_p->auto_reconnect_allowed && ipcon_p->socket == NULL) {
 					if (ipcon_connect_unlocked(ipcon_p, true) < 0) {
 						retry = true;
-					} else {
-						strncpy(local_secret, ipcon_p->secret, IPCON_MAX_SECRET_LENGTH);
 					}
 				} else {
 					ipcon_p->auto_reconnect_pending = false;
@@ -1515,9 +1511,6 @@ static void ipcon_dispatch_meta(IPConnectionPrivate *ipcon_p, Meta *meta) {
 					// wait a moment to give another thread a chance to
 					// interrupt the auto-reconnect
 					thread_sleep(100);
-				} else if (ipcon_p->auto_reauthenticate && strnlen(local_secret, 1) > 0) {
-					// FIXME: how to handle errors here?
-					ipcon_authenticate(ipcon_p->p, local_secret);
 				}
 			}
 		}
@@ -1966,9 +1959,6 @@ static void ipcon_disconnect_unlocked(IPConnectionPrivate *ipcon_p) {
 	socket_destroy(ipcon_p->socket);
 	free(ipcon_p->socket);
 	ipcon_p->socket = NULL;
-
-	// clear secret
-	memset(ipcon_p->secret, 0, IPCON_MAX_SECRET_LENGTH);
 }
 
 static int ipcon_send_request(IPConnectionPrivate *ipcon_p, Packet *request) {
@@ -2002,7 +1992,6 @@ void ipcon_create(IPConnection *ipcon) {
 
 	ipcon_p = (IPConnectionPrivate *)malloc(sizeof(IPConnectionPrivate));
 	ipcon->p = ipcon_p;
-	ipcon_p->p = ipcon;
 
 #ifdef _WIN32
 	ipcon_p->wsa_startup_done = false;
@@ -2011,9 +2000,7 @@ void ipcon_create(IPConnection *ipcon) {
 	ipcon_p->host = NULL;
 	ipcon_p->port = 0;
 
-	memset(ipcon_p->secret, 0, IPCON_MAX_SECRET_LENGTH);
 	ipcon_p->next_authentication_nonce = 0;
-	ipcon_p->auto_reauthenticate = true;
 
 	ipcon_p->timeout = 2500;
 
@@ -2100,8 +2087,6 @@ int ipcon_connect(IPConnection *ipcon, const char *host, uint16_t port) {
 
 	ipcon_p->host = strdup(host);
 	ipcon_p->port = port;
-
-	memset(ipcon_p->secret, 0, IPCON_MAX_SECRET_LENGTH);
 
 	ret = ipcon_connect_unlocked(ipcon_p, false);
 
@@ -2193,12 +2178,6 @@ int ipcon_authenticate(IPConnection *ipcon, const char secret[64]) {
 		return ret;
 	}
 
-	mutex_lock(&ipcon_p->socket_mutex);
-
-	strncpy(ipcon_p->secret, secret, IPCON_MAX_SECRET_LENGTH);
-
-	mutex_unlock(&ipcon_p->socket_mutex);
-
 	return E_OK;
 }
 
@@ -2227,14 +2206,6 @@ void ipcon_set_auto_reconnect(IPConnection *ipcon, bool auto_reconnect) {
 
 bool ipcon_get_auto_reconnect(IPConnection *ipcon) {
 	return ipcon->p->auto_reconnect;
-}
-
-void ipcon_set_auto_reauthenticate(IPConnection *ipcon, bool auto_reauthenticate) {
-	ipcon->p->auto_reauthenticate = auto_reauthenticate;
-}
-
-bool ipcon_get_auto_reauthenticate(IPConnection *ipcon) {
-	return ipcon->p->auto_reauthenticate;
 }
 
 void ipcon_set_timeout(IPConnection *ipcon, uint32_t timeout) { // in msec
