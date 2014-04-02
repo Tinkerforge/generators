@@ -78,6 +78,7 @@ class JavaZipGenerator(common.Generator):
         shutil.copy(os.path.join(root, 'TimeoutException.java'), '/tmp/generator/jar/source/com/tinkerforge')
         shutil.copy(os.path.join(root, 'AlreadyConnectedException.java'), '/tmp/generator/jar/source/com/tinkerforge')
         shutil.copy(os.path.join(root, 'NotConnectedException.java'), '/tmp/generator/jar/source/com/tinkerforge')
+        shutil.copy(os.path.join(root, 'CryptoException.java'), '/tmp/generator/jar/source/com/tinkerforge')
         shutil.copy(os.path.join(root, 'TinkerforgeListener.java'), '/tmp/generator/jar/source/com/tinkerforge')
         shutil.copy(os.path.join(root, 'changelog.txt'), '/tmp/generator/jar')
         shutil.copy(os.path.join(root, 'readme.txt'), '/tmp/generator/jar')

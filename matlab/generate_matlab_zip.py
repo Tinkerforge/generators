@@ -86,6 +86,7 @@ class MATLABZipGenerator(common.Generator):
             shutil.copy(os.path.join(root, '..', 'java', 'TimeoutException.java'), jar_root + '/source/com/tinkerforge')
             shutil.copy(os.path.join(root, '..', 'java', 'AlreadyConnectedException.java'), jar_root + '/source/com/tinkerforge')
             shutil.copy(os.path.join(root, '..', 'java', 'NotConnectedException.java'), jar_root + '/source/com/tinkerforge')
+            shutil.copy(os.path.join(root, '..', 'java', 'CryptoException.java'), jar_root + '/source/com/tinkerforge')
             shutil.copy(os.path.join(root, '..', 'java', 'TinkerforgeListener.java'), jar_root + '/source/com/tinkerforge')
             shutil.copy(os.path.join(root, 'changelog.txt'), '/tmp/generator/jar/')
             shutil.copy(os.path.join(root, 'readme.txt'), '/tmp/generator/jar/')

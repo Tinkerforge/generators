@@ -18,7 +18,6 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.security.SecureRandom;
-import java.security.SignatureException;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -606,7 +605,7 @@ public abstract class IPConnectionBase {
 	/**
 	 * FIXME
 	 */
-	public void authenticate(String secret) throws TimeoutException, NotConnectedException, SignatureException {
+	public void authenticate(String secret) throws TimeoutException, NotConnectedException, CryptoException {
 		synchronized(authenticationMutex) {
 			if (nextAuthenticationNonce == 0) {
 				byte[] seed = new SecureRandom().generateSeed(4);
@@ -640,7 +639,7 @@ public abstract class IPConnectionBase {
 
 				digest = mac.doFinal(data);
 			} catch (Exception e) {
-				throw new SignatureException("Could not generate HMAC-SHA1: " + e.getMessage());
+				throw new CryptoException("Could not generate HMAC-SHA1: " + e.getMessage(), e);
 			}
 
 			brickd.authenticate(clientNonce, digest);
@@ -897,7 +896,7 @@ public abstract class IPConnectionBase {
 				}
 			} catch(java.net.SocketException e) {
 				handleDisconnectByPeer(DISCONNECT_REASON_ERROR, 0, true);
-				throw new NotConnectedException(e);
+				throw new NotConnectedException("Disconnected during send operartion: " + e.getMessage(), e);
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
