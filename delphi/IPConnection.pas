@@ -136,7 +136,8 @@ type
     disconnectProbeThread: TWrapperThread;
     sequenceNumberMutex: TCriticalSection;
     nextSequenceNumber: byte; { protected by sequenceNumberMutex }
-    nextAuthenticationNonce: longword; { protected by sequenceNumberMutex }
+    authenticationMutex: TCriticalSection; { protects authentication handshake }
+    nextAuthenticationNonce: longword; { protected by authenticationMutex }
     pendingData: TByteArray;
     socketMutex: TCriticalSection;
     socketSendMutex: TCriticalSection;
@@ -434,6 +435,7 @@ begin
   disconnectProbeThread := nil;
   sequenceNumberMutex := TCriticalSection.Create;
   nextSequenceNumber := 0;
+  authenticationMutex := TCriticalSection.Create;
   nextAuthenticationNonce := 0;
   SetLength(pendingData, 0);
   devices := TDeviceTable.Create;
@@ -449,6 +451,7 @@ begin
   if (IsConnected) then begin
     Disconnect;
   end;
+  authenticationMutex.Destroy;
   sequenceNumberMutex.Destroy;
   devices.Destroy;
   socketMutex.Destroy;
@@ -519,35 +522,30 @@ var serverNonce, clientNonce: TArray0To3OfUInt8; i: longint;
     secretBytes, clientNonceBytes, data: TByteArray;
     digest: TSHA1Digest;
 begin
-  sequenceNumberMutex.Acquire;
+  authenticationMutex.Acquire;
   try
     if (nextAuthenticationNonce = 0) then begin
       nextAuthenticationNonce := GetRandomUInt32;
     end;
-  finally
-    sequenceNumberMutex.Release;
-  end;
-  serverNonce := brickd.GetAuthenticationNonce;
-  sequenceNumberMutex.Acquire;
-  try
+    serverNonce := brickd.GetAuthenticationNonce;
     SetLength(clientNonceBytes, 4);
     LEConvertUInt32To(nextAuthenticationNonce, 0, clientNonceBytes);
     Inc(nextAuthenticationNonce);
+    SetLength(data, 8);
+    for i := 0 to 3 do begin
+      data[i] := serverNonce[i];
+    end;
+    for i := 0 to 3 do begin
+      data[4 + i] := clientNonceBytes[i];
+      clientNonce[i] := clientNonceBytes[i];
+    end;
+    SetLength(secretBytes, Length(secret));
+    LEConvertStringTo(secret, 0, Length(secret), secretBytes);
+    digest := HMACSHA1(secretBytes, data);
+    brickd.Authenticate(clientNonce, TArray0To19OfUInt8(digest));
   finally
-    sequenceNumberMutex.Release;
+    authenticationMutex.Release;
   end;
-  SetLength(data, 8);
-  for i := 0 to 3 do begin
-    data[i] := serverNonce[i];
-  end;
-  for i := 0 to 3 do begin
-    data[4 + i] := clientNonceBytes[i];
-    clientNonce[i] := clientNonceBytes[i];
-  end;
-  SetLength(secretBytes, Length(secret));
-  LEConvertStringTo(secret, 0, Length(secret), secretBytes);
-  digest := HMACSHA1(secretBytes, data);
-  brickd.Authenticate(clientNonce, TArray0To19OfUInt8(digest));
 end;
 
 function TIPConnection.GetConnectionState: byte;
