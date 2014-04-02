@@ -76,9 +76,7 @@ namespace Tinkerforge
 
 		string host;
 		int port;
-		string secret = null; // protected by socketLock
 		uint nextAuthenticationNonce = 0; // protected by sequenceNumberLock
-		bool autoReauthenticate = true;
 		Socket socket = null; // protected by socketLock
 		internal object socketLock = new object();
 		NetworkStream socketStream = null; // protected by socketLock
@@ -162,7 +160,6 @@ namespace Tinkerforge
 
 				this.host = host;
 				this.port = port;
-				secret = null;
 
 				ConnectUnlocked(false);
 			}
@@ -311,8 +308,6 @@ namespace Tinkerforge
 				receiveThread.Join();
 				receiveThread = null;
 			}
-
-			secret = null;
 		}
 
 		/// <summary>
@@ -369,11 +364,6 @@ namespace Tinkerforge
 			byte[] digest = hmac.ComputeHash(data);
 
 			brickd.Authenticate(clientNonce, digest);
-
-			lock (socketLock)
-			{
-				this.secret = secret;
-			}
 		}
 
 		/// <summary>
@@ -423,26 +413,6 @@ namespace Tinkerforge
 		public bool GetAutoReconnect()
 		{
 			return autoReconnect;
-		}
-
-		/// <summary>
-		///  Enables or disables auto-reauthenticate. If auto-reauthenticate is enabled,
-		///  the IP Connection will try to reauthenticate with the previously given
-		///  secret after an auto-reconnect.
-		///
-		///  Default value is *true*.
-		/// </summary>
-		public void SetAutoReauthenticate(bool autoReauthenticate)
-		{
-			this.autoReauthenticate = autoReauthenticate;
-		}
-
-		/// <summary>
-		///  Returns *true* if auto-reauthenticate is enabled, *false* otherwise.
-		/// </summary>
-		public bool GetAutoReauthenticate()
-		{
-			return autoReauthenticate;
 		}
 
 		/// <summary>
@@ -675,11 +645,9 @@ namespace Tinkerforge
 						autoReconnectPending = true;
 
 						bool retry = true;
-						string localSecret = null;
 
 						while (retry)
 						{
-							localSecret = null;
 							retry = false;
 
 							lock (socketLock)
@@ -689,7 +657,6 @@ namespace Tinkerforge
 									try
 									{
 										ConnectUnlocked(true);
-										localSecret = secret;
 									}
 									catch (Exception)
 									{
@@ -705,17 +672,6 @@ namespace Tinkerforge
 							if (retry)
 							{
 								Thread.Sleep(100);
-							}
-							else if (autoReauthenticate && localSecret != null)
-							{
-								try
-								{
-									Authenticate(localSecret);
-								}
-								catch (Exception)
-								{
-									// FIXME: how to handle errors here?
-								}
 							}
 						}
 					}
