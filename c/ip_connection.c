@@ -2000,8 +2000,6 @@ void ipcon_create(IPConnection *ipcon) {
 	ipcon_p->host = NULL;
 	ipcon_p->port = 0;
 
-	ipcon_p->next_authentication_nonce = 0;
-
 	ipcon_p->timeout = 2500;
 
 	ipcon_p->auto_reconnect = true;
@@ -2010,6 +2008,9 @@ void ipcon_create(IPConnection *ipcon) {
 
 	mutex_create(&ipcon_p->sequence_number_mutex);
 	ipcon_p->next_sequence_number = 0;
+
+	mutex_create(&ipcon_p->authentication_mutex);
+	ipcon_p->next_authentication_nonce = 0;
 
 	table_create(&ipcon_p->devices);
 
@@ -2040,6 +2041,8 @@ void ipcon_destroy(IPConnection *ipcon) {
 	ipcon_disconnect(ipcon); // FIXME: disable disconnected callback before?
 
 	brickd_destroy(&ipcon_p->brickd);
+
+	mutex_destroy(&ipcon_p->authentication_mutex);
 
 	mutex_destroy(&ipcon_p->sequence_number_mutex);
 
@@ -2149,25 +2152,22 @@ int ipcon_authenticate(IPConnection *ipcon, const char secret[64]) {
 	uint32_t nonces[2]; // server, client
 	uint8_t digest[SHA1_DIGEST_LENGTH];
 
-	mutex_lock(&ipcon_p->sequence_number_mutex);
+	mutex_lock(&ipcon_p->authentication_mutex);
 
 	if (ipcon_p->next_authentication_nonce == 0) {
 		ipcon_p->next_authentication_nonce = get_random_uint32();
 	}
 
-	mutex_unlock(&ipcon_p->sequence_number_mutex);
-
 	ret = brickd_get_authentication_nonce(&ipcon_p->brickd, (uint8_t *)nonces);
 
 	if (ret < 0) {
+		mutex_unlock(&ipcon_p->authentication_mutex);
+
 		return ret;
 	}
 
-	mutex_lock(&ipcon_p->sequence_number_mutex);
-
 	nonces[1] = ipcon_p->next_authentication_nonce++;
 
-	mutex_unlock(&ipcon_p->sequence_number_mutex);
 
 	hmac_sha1((uint8_t *)secret, strnlen(secret, IPCON_MAX_SECRET_LENGTH),
 	          (uint8_t *)nonces, sizeof(nonces), digest);
@@ -2175,8 +2175,12 @@ int ipcon_authenticate(IPConnection *ipcon, const char secret[64]) {
 	ret = brickd_authenticate(&ipcon_p->brickd, (uint8_t *)&nonces[1], digest);
 
 	if (ret < 0) {
+		mutex_unlock(&ipcon_p->authentication_mutex);
+
 		return ret;
 	}
+
+	mutex_unlock(&ipcon_p->authentication_mutex);
 
 	return E_OK;
 }

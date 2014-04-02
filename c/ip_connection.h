@@ -365,8 +365,6 @@ struct _IPConnectionPrivate {
 	char *host;
 	uint16_t port;
 
-	uint32_t next_authentication_nonce; // protected by sequence_number_mutex
-
 	uint32_t timeout; // in msec
 
 	bool auto_reconnect;
@@ -375,6 +373,9 @@ struct _IPConnectionPrivate {
 
 	Mutex sequence_number_mutex;
 	uint8_t next_sequence_number; // protected by sequence_number_mutex
+
+	Mutex authentication_mutex; // protects authentication handshake
+	uint32_t next_authentication_nonce; // protected by authentication_mutex
 
 	Table devices;
 
