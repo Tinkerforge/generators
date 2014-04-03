@@ -307,7 +307,8 @@ class IPConnection:
         self.auto_reconnect_pending = False
         self.sequence_number_lock = Lock()
         self.next_sequence_number = 0 # protected by sequence_number_lock
-        self.next_authenticate_nonce = 0 # protected by sequence_number_lock
+        self.authentication_lock = Lock() # protects authentication handshake
+        self.next_authentication_nonce = 0 # protected by authentication_lock
         self.devices = {}
         self.registered_callbacks = {}
         self.socket = None # protected by socket_lock
@@ -385,31 +386,29 @@ class IPConnection:
 
         secret_bytes = secret.encode('ascii')
 
-        with self.sequence_number_lock:
-            if self.next_authenticate_nonce == 0:
+        with self.authentication_lock:
+            if self.next_authentication_nonce == 0:
                 try:
-                    self.next_authenticate_nonce = struct.unpack('<I', os.urandom(4))[0]
+                    self.next_authentication_nonce = struct.unpack('<I', os.urandom(4))[0]
                 except NotImplementedError:
                     subseconds, seconds = math.modf(time.time())
                     seconds = int(seconds)
                     subseconds = int(subseconds * 1000000)
-                    self.next_authenticate_nonce = ((seconds << 26 | seconds >> 6) & 0xFFFFFFFF) + subseconds + os.getpid()
+                    self.next_authentication_nonce = ((seconds << 26 | seconds >> 6) & 0xFFFFFFFF) + subseconds + os.getpid()
 
-        server_nonce = self.brickd.get_authentication_nonce()
+            server_nonce = self.brickd.get_authentication_nonce()
+            client_nonce = struct.unpack('<4B', struct.pack('<I', self.next_authentication_nonce))
+            self.next_authentication_nonce = (self.next_authentication_nonce + 1) % (1 << 32)
 
-        with self.sequence_number_lock:
-            client_nonce = struct.unpack('<4B', struct.pack('<I', self.next_authenticate_nonce))
-            self.next_authenticate_nonce = (self.next_authenticate_nonce + 1) % (1 << 32)
+            h = hmac.new(secret_bytes, digestmod=hashlib.sha1)
 
-        h = hmac.new(secret_bytes, digestmod=hashlib.sha1)
+            h.update(struct.pack('<4B', *server_nonce))
+            h.update(struct.pack('<4B', *client_nonce))
 
-        h.update(struct.pack('<4B', *server_nonce))
-        h.update(struct.pack('<4B', *client_nonce))
+            digest = struct.unpack('<20B', h.digest())
+            h = None
 
-        digest = struct.unpack('<20B', h.digest())
-        h = None
-
-        self.brickd.authenticate(client_nonce, digest)
+            self.brickd.authenticate(client_nonce, digest)
 
     def get_connection_state(self):
         """
