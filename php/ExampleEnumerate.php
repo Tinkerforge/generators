@@ -7,6 +7,7 @@ use Tinkerforge\IPConnection;
 const HOST = 'localhost';
 const PORT = 4223;
 
+// Print incoming enumeration
 function cb_enumerate($uid, $connectedUid, $position,
                       $hardwareVersion, $firmwareVersion,
                       $deviceIdentifier, $enumerationType)
@@ -31,7 +32,7 @@ function cb_enumerate($uid, $connectedUid, $position,
 $ipcon = new IPConnection();
 $ipcon->connect(HOST, PORT);
 
-// Register enumeration callback to "cb_enumerate"
+// Register enumerate callback to "cb_enumerate"
 $ipcon->registerCallback(IPConnection::CALLBACK_ENUMERATE, 'cb_enumerate');
 
 $ipcon->enumerate();
