@@ -4,7 +4,7 @@ function octave_example_authenticate
     global ipcon;
     global SECRET;
 
-    HOST = "192.168.178.46";
+    HOST = "localhost";
     PORT = 4223;
     SECRET = "My Authentication Secret!";
 
