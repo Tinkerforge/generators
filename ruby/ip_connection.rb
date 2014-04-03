@@ -490,15 +490,12 @@ module Tinkerforge
     def initialize
       @host = nil
       @port = 0
-      @secret = nil # protected by socket_mutex
 
       @timeout = 2.5
 
       @auto_reconnect = true
       @auto_reconnect_allowed = false
       @auto_reconnect_pending = false
-
-      @auto_reauthenticate = true
 
       @next_authentication_nonce = 0; # protected by sequence_number_mutex
       @next_sequence_number = 0 # protected by sequence_number_mutex
@@ -545,7 +542,6 @@ module Tinkerforge
 
         @host = host
         @port = port
-        @secret = nil
 
         connect_unlocked false
       }
@@ -607,10 +603,6 @@ module Tinkerforge
       digest = unpack(digest_bytes, 'C20')[0]
 
       @brickd.authenticate client_nonce, digest
-
-      @socket_mutex.synchronize {
-        @secret = secret
-      }
     end
 
     # Can return the following states:
@@ -648,21 +640,6 @@ module Tinkerforge
     # otherwise.
     def get_auto_reconnect
       @auto_reconnect
-    end
-
-    # Enables or disables auto-reauthenticate. If auto-reauthenticate is enabled,
-    # the IP Connection will try to reauthenticate with the previously given
-    # secret after an auto-reconnect.
-    #
-    # Default value is <tt>true</tt>.
-    def set_auto_reauthenticate(auto_reauthenticate)
-      @auto_reauthenticate = auto_reauthenticate
-    end
-
-    # Returns <tt>true</tt> if auto-reauthenticate is enabled, <tt>false</tt>
-    # otherwise.
-    def get_auto_reauthenticate
-      @auto_reauthenticate
     end
 
     # Sets the timeout in seconds for getters and for setters for which
@@ -864,9 +841,6 @@ module Tinkerforge
       # Destroy socket
       @socket.close
       @socket = nil
-
-      # clear secret
-      @secret = nil
     end
 
     # internal
@@ -976,13 +950,11 @@ module Tinkerforge
           # callback to deliver when there is no connection
           while retry_connect
             retry_connect = false
-            local_secret = nil
 
             @socket_mutex.synchronize {
               if @auto_reconnect_allowed and @socket == nil
                 begin
                   connect_unlocked true
-                  local_secret = @secret
                 rescue
                   retry_connect = true
                 end
@@ -993,12 +965,6 @@ module Tinkerforge
 
             if retry_connect
               sleep 0.1
-            elsif @auto_reauthenticate and local_secret != nil
-              begin
-                authenticate local_secret
-              rescue
-                # FIXME: how to handle errors here?
-              end
             end
           end
         end
