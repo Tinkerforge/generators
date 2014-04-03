@@ -497,9 +497,11 @@ module Tinkerforge
       @auto_reconnect_allowed = false
       @auto_reconnect_pending = false
 
-      @next_authentication_nonce = 0; # protected by sequence_number_mutex
       @next_sequence_number = 0 # protected by sequence_number_mutex
       @sequence_number_mutex = Mutex.new
+
+      @next_authentication_nonce = 0 # protected by authentication_mutex
+      @authentication_mutex = Mutex.new # protects authentication handshake
 
       @devices = {}
 
@@ -584,25 +586,20 @@ module Tinkerforge
 
     # FIXME
     def authenticate(secret)
-      @sequence_number_mutex.synchronize {
+      @authentication_mutex.synchronize {
         if @next_authentication_nonce == 0
           @next_authentication_nonce = SecureRandom.random_number(1 << 32)
         end
-      }
 
-      server_nonce = @brickd.get_authentication_nonce
-      client_nonce = nil
-
-      @sequence_number_mutex.synchronize {
+        server_nonce = @brickd.get_authentication_nonce
         client_nonce = unpack(pack([@next_authentication_nonce], 'L'), 'C4')[0]
         @next_authentication_nonce += 1
+        nonce_bytes = pack [server_nonce, client_nonce], 'C4 C4'
+        digest_bytes = OpenSSL::HMAC.digest 'sha1', secret, nonce_bytes
+        digest = unpack(digest_bytes, 'C20')[0]
+
+        @brickd.authenticate client_nonce, digest
       }
-
-      nonce_bytes = pack [server_nonce, client_nonce], 'C4 C4'
-      digest_bytes = OpenSSL::HMAC.digest 'sha1', secret, nonce_bytes
-      digest = unpack(digest_bytes, 'C20')[0]
-
-      @brickd.authenticate client_nonce, digest
     end
 
     # Can return the following states:
@@ -799,8 +796,8 @@ module Tinkerforge
         connect_reason = CONNECT_REASON_REQUEST
       end
 
-      @auto_reconnect_allowed = false;
-      @auto_reconnect_pending = false;
+      @auto_reconnect_allowed = false
+      @auto_reconnect_pending = false
 
       @callback.queue.push [QUEUE_KIND_META, [CALLBACK_CONNECTED,
                                               connect_reason, nil]]
