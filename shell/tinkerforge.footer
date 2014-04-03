@@ -106,47 +106,46 @@ def command_enumerate(ctx, argv):
 				output_response(ctx, names, values)
 				return True
 
-	try:
-		ipcon = IPConnection()
-		ipcon.connect(ctx.host, ctx.port)
-
-		if len(ctx.secret) > 0:
-			ipcon.authenticate(ctx.secret)
-
+	def function(ipcon):
 		if args.duration == 0:
 			exit_flag = [False]
 
-			def callback_wapper(*args, **kwargs):
+			def callback_wrapper(*args, **kwargs):
 				if not exit_flag[0] and callback(*args, **kwargs):
 					exit_flag[0] = True
 
-			ipcon.register_callback(IPConnection.CALLBACK_ENUMERATE, callback_wapper)
+			ipcon.register_callback(IPConnection.CALLBACK_ENUMERATE, callback_wrapper)
 			ipcon.enumerate()
 
 			while not exit_flag[0] and not ctx.abort:
 				time.sleep(0.1)
+
+				if ctx.async_exception is not None:
+					raise ctx.async_exception
 		elif args.duration < 0:
 			ipcon.register_callback(IPConnection.CALLBACK_ENUMERATE, callback)
 			ipcon.enumerate()
 
 			while not ctx.abort:
 				time.sleep(1)
+
+				if ctx.async_exception is not None:
+					raise ctx.async_exception
 		else:
 			ipcon.register_callback(IPConnection.CALLBACK_ENUMERATE, callback)
 			ipcon.enumerate()
 
+			# FIXME: if duration is large then it would be better to sleep
+			#        in multiple steps here
 			time.sleep(args.duration / 1000.0)
-	except Error as e:
-		raise FatalError(e.description.lower(), IPCONNECTION_ERROR_OFFSET - e.value)
-	except socket.error as e:
-		raise FatalError(str(e).lower(), ERROR_SOCKET_ERROR)
-	except Exception as e:
-		raise FatalError(str(e).lower(), ERROR_OTHER_EXCEPTION)
-	finally:
-		try:
-			ipcon.disconnect()
-		except:
-			pass
+
+			# FIXME: only checking for an exception after the complete sleep
+			#        is not good, sleep in shorter steps here to check for
+			#        exception more often
+			if ctx.async_exception is not None:
+				raise ctx.async_exception
+
+	connect_ipcon_and_call(ctx, function)
 
 def command_listen(ctx, argv):
 	# FIXME: add description

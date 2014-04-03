@@ -159,6 +159,7 @@ Possible exit codes for all ``tinkerforge`` commands are:
 * 23: socket error
 * 24: other exception
 * 25: invalid placeholder in format string
+* 26: authentication error
 * 201: timeout occurred
 * 209: invalid argument value
 * 210: function is not supported
@@ -252,6 +253,7 @@ Mögliche Exit Codes für alle ``tinkerforge`` Befehle sind:
 * 23: Socket-Fehler
 * 24: Andere Exception
 * 25: Ungültiger Platzhalter in Format-String
+* 26: Authentifizierungsfehler
 * 201: Timeout ist aufgetreten
 * 209: Ungültiger Argumentwert
 * 210: Funktion wird nicht unterstützt

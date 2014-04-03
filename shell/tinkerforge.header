@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copyright (C) 2013 Matthias Bolte <matthias@tinkerforge.com>
+# Copyright (C) 2013-2014 Matthias Bolte <matthias@tinkerforge.com>
 #
 # Version <<VERSION>>
 #
@@ -28,6 +28,7 @@ ERROR_ARGPARSE_MISSING = 22
 ERROR_SOCKET_ERROR = 23
 ERROR_OTHER_EXCEPTION = 24
 ERROR_INVALID_PLACEHOLDER = 25
+ERROR_AUTHENTICATION_ERROR = 26
 IPCONNECTION_ERROR_OFFSET = 200
 
 listen_mode = False
@@ -54,6 +55,7 @@ except ImportError:
 
 class Context:
 	abort = False
+	async_exception = None
 
 	host = None
 	port = None
@@ -162,6 +164,54 @@ class ParserWithExpectResponse(Parser):
 
 		self.add_argument('--expect-response', action='store_true', help='request response and wait for it')
 
+def handle_ipcon_exceptions(ipcon, function):
+	try:
+		function(ipcon)
+	except Error as e:
+		raise FatalError(e.description.lower(), IPCONNECTION_ERROR_OFFSET - e.value)
+	except socket.error as e:
+		raise FatalError(str(e).lower(), ERROR_SOCKET_ERROR)
+	except Exception as e:
+		raise FatalError(str(e).lower(), ERROR_OTHER_EXCEPTION)
+	finally:
+		try:
+			ipcon.disconnect()
+		except:
+			pass
+
+def authenticate(ipcon, secret, message):
+	# don't auto-reconnect on authentication error
+	ipcon.set_auto_reconnect(False)
+
+	try:
+		ipcon.authenticate(secret)
+	except:
+		raise FatalError(message, ERROR_AUTHENTICATION_ERROR)
+
+	ipcon.set_auto_reconnect(True)
+
+def connect_ipcon_and_call(ctx, function, timeout=None):
+	def function_wrapper(ipcon):
+		if timeout is not None:
+			ipcon.set_timeout(timeout)
+
+		ipcon.connect(ctx.host, ctx.port)
+
+		if len(ctx.secret) > 0:
+			def callback(connect_reason):
+				if connect_reason == IPConnection.CONNECT_REASON_AUTO_RECONNECT:
+					try:
+						authenticate(ipcon, ctx.secret, 'could not authenticate after auto-reconnect')
+					except FatalError as e:
+						ctx.async_exception = e
+
+			ipcon.register_callback(IPConnection.CALLBACK_CONNECTED, callback)
+			authenticate(ipcon, ctx.secret, 'could not authenticate')
+
+		function(ipcon)
+
+	handle_ipcon_exceptions(IPConnection(), function_wrapper)
+
 def call_generic(ctx, name, functions, argv):
 	parser = Parser(ctx, 'call ' + name)
 	function_choices = sorted(functions.keys())
@@ -214,14 +264,7 @@ def device_send_request(ctx, device_class, function_id, request_data, format_in,
 		def handle_response(values):
 			output_response(ctx, names, values)
 
-	try:
-		ipcon = IPConnection()
-		ipcon.set_timeout(ctx.timeout / 1000.0)
-		ipcon.connect(ctx.host, ctx.port)
-
-		if len(ctx.secret) > 0:
-			ipcon.authenticate(ctx.secret)
-
+	def function(ipcon):
 		device = device_class(ctx.uid, ipcon)
 
 		if expect_response:
@@ -238,17 +281,8 @@ def device_send_request(ctx, device_class, function_id, request_data, format_in,
 			handle_response(response)
 		elif listen_mode:
 			ctx.output(group_terminator)
-	except Error as e:
-		raise FatalError(e.description.lower(), IPCONNECTION_ERROR_OFFSET - e.value)
-	except socket.error as e:
-		raise FatalError(str(e).lower(), ERROR_SOCKET_ERROR)
-	except Exception as e:
-		raise FatalError(str(e).lower(), ERROR_OTHER_EXCEPTION)
-	finally:
-		try:
-			ipcon.disconnect()
-		except:
-			pass
+
+	connect_ipcon_and_call(ctx, function, ctx.timeout / 1000.0)
 
 def device_callback(ctx, device_class, function_id, command, names):
 	if dry_run:
@@ -269,47 +303,46 @@ def device_callback(ctx, device_class, function_id, command, names):
 
 			output_response(ctx, names, values)
 
-	try:
-		ipcon = IPConnection()
-		ipcon.connect(ctx.host, ctx.port)
-
-		if len(ctx.secret) > 0:
-			ipcon.authenticate(ctx.secret)
-
+	def function(ipcon):
 		device = device_class(ctx.uid, ipcon)
 
 		if ctx.duration == 0:
 			exit_flag = [False]
 
-			def callback_wapper(*args, **kwargs):
+			def callback_wrapper(*args, **kwargs):
 				if not exit_flag[0]:
 					callback(*args, **kwargs)
 					exit_flag[0] = True
 
-			device.registered_callbacks[function_id] = callback_wapper
+			device.registered_callbacks[function_id] = callback_wrapper
 
 			while not exit_flag[0] and not ctx.abort:
 				time.sleep(0.1)
+
+				if ctx.async_exception is not None:
+					raise ctx.async_exception
 		elif ctx.duration < 0:
 			device.registered_callbacks[function_id] = callback
 
 			while not ctx.abort:
 				time.sleep(1)
+
+				if ctx.async_exception is not None:
+					raise ctx.async_exception
 		else:
 			device.registered_callbacks[function_id] = callback
 
+			# FIXME: if duration is large then it would be better to sleep
+			#        in multiple steps here
 			time.sleep(ctx.duration / 1000.0)
-	except Error as e:
-		raise FatalError(e.description.lower(), IPCONNECTION_ERROR_OFFSET - e.value)
-	except socket.error as e:
-		raise FatalError(str(e).lower(), ERROR_SOCKET_ERROR)
-	except Exception as e:
-		raise FatalError(str(e).lower(), ERROR_OTHER_EXCEPTION)
-	finally:
-		try:
-			ipcon.disconnect()
-		except:
-			pass
+
+			# FIXME: only checking for an exception after the complete sleep
+			#        is not good, sleep in shorter steps here to check for
+			#        exception more often
+			if ctx.async_exception is not None:
+				raise ctx.async_exception
+
+	connect_ipcon_and_call(ctx, function)
 
 # length_is_fixed = False means length is maximum length
 def get_array_type_name(ctx, name, length, length_is_fixed=True):
