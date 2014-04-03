@@ -1,0 +1,38 @@
+Needs["NETLink`"]
+LoadNETAssembly["Tinkerforge",NotebookDirectory[]<>".."]
+
+host="localhost"
+port=4223
+secret="My Authentication Secret!"
+
+(* Create IPConnection *)
+ipcon=NETNew["Tinkerforge.IPConnection"]
+
+(* Authenticate each time the connection got (re-)established *)
+ConnectedCB[sender_, connectReason_]:=
+ Module[{},
+  If[connectReason==IPConnection`CONNECTUREASONUREQUEST,Print["Connected by request"]];
+  If[connectReason==IPConnection`CONNECTUREASONUAUTOURECONNECT,Print["Auto-Reconnect"]];
+  (* Authenticate first... *)
+  sender@Authenticate[secret];
+  (* ...then trigger enumerate *)
+  sender@Enumerate[]
+ ]
+
+AddEventHandler[ipcon@Connected,ConnectedCB]
+
+(* Print incoming enumeration information *)
+EnumerateCB[sender_,uid_,connectedUid_,position_,hardwareVersion_,firmwareVersion_,
+             deviceIdentifier_,enumerationType_]:=
+ Print["UID: "<>uid<>", Enumeration Type: "<>ToString[enumerationType]]
+
+AddEventHandler[ipcon@EnumerateCallback,EnumerateCB]
+
+(* Connect to brickd *)
+ipcon@Connect[host,port]
+
+Input["Click OK to exit"]
+
+(* Clean up *)
+ipcon@Disconnect[]
+ReleaseNETObject[ipcon]
