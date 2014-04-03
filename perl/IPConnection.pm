@@ -239,14 +239,12 @@ sub new
 
 	my $self :shared = shared_clone({host => undef,
 	                                 port => undef,
-	                                 secret => undef, # protected by SOCKET_LOCK
 	                                 timeout => 2.5,
 	                                 next_sequence_number => 0, # protected by SEQUENCE_NUMBER_LOCK
 	                                 next_authentication_nonce => 0, # protected by SEQUENCE_NUMBER_LOCK
 	                                 auto_reconnect => 1,
 	                                 auto_reconnect_allowed => 0,
 	                                 auto_reconnect_pending => 0,
-	                                 auto_reauthenticate => 1,
 	                                 devices => shared_clone({}),
 	                                 registered_callbacks => shared_clone({}),
 	                                 socket_fileno => undef, # protected by SOCKET_LOCK
@@ -312,7 +310,6 @@ sub connect
 	{
 		$self->{host} = $host;
 		$self->{port} = $port;
-		$self->{secret} = undef;
 
 		$self->_connect_unlocked(0);
 	}
@@ -609,9 +606,6 @@ sub _disconnect_unlocked
 
 	$self->{socket_fileno} = undef;
 
-	# clear secret
-	$self->{secret} = undef;
-
 	return 1;
 }
 
@@ -665,7 +659,7 @@ sub _read_uint32_non_blocking
 # FIXME: this code is not ideal on Windows. if the script happens to run
 #        under Cygwin then there will be a /dev/[u]random to use. otherwise
 #        it'll fall back to the current time on Windows. there seems to be
-#        no easy way to call CryptGenRandom from Perl here. on the other
+#        no easy way to call CryptGenRandom from Perl here. on the other hand
 #        the Perl bindings only work correct on Cygwin anyway, so this isn't
 #        a huge problem currently.
 sub _get_random_uint32
@@ -757,13 +751,6 @@ sub authenticate
 	my $digest = [unpack('C20', $digestBytes)];
 
 	$self->_brickd_authenticate($clientNonce, $digest);
-
-	if (1)
-	{
-		lock(${$self->{socket_lock_ref}});
-
-		$self->{secret} = $secret;
-	}
 }
 
 =item get_connection_state()
@@ -830,36 +817,6 @@ sub get_auto_reconnect
 	my ($self) = @_;
 
 	return $self->{auto_reconnect};
-}
-
-=item set_auto_reauthenticate()
-
-Enables or disables auto-reauthenticate. If auto-reauthenticate is enabled,
-the IP Connection will try to reauthenticate with the previously given
-secret after an auto-reconnect.
-
-Default value is 1.
-
-=cut
-
-sub set_auto_reauthenticate
-{
-	my ($self, $auto_reauthenticate) = @_;
-
-	$self->{auto_reauthenticate} = $auto_reauthenticate;
-}
-
-=item get_auto_reauthenticate()
-
-Returns 1 if auto-reauthenticate is enabled, 0 otherwise.
-
-=cut
-
-sub get_auto_reauthenticate
-{
-	my ($self) = @_;
-
-	return $self->{auto_reauthenticate};
 }
 
 =item set_timeout()
@@ -1452,14 +1409,12 @@ sub _dispatch_meta
 			$self->{auto_reconnect_pending} = 1;
 
 			my $retry = 1;
-			my $local_secret = undef;
 
 			# block here until reconnect. this is okay, there is no
 			# callback to deliver when there is no connection
 			while ($retry)
 			{
 				$retry = 0;
-				$local_secret = undef;
 
 				if (1) {
 					lock(${$self->{socket_lock_ref}});
@@ -1469,7 +1424,6 @@ sub _dispatch_meta
 						eval
 						{
 							$self->_connect_unlocked(1);
-							$local_secret = $self->{secret};
 						};
 						if($!)
 						{
@@ -1487,14 +1441,6 @@ sub _dispatch_meta
 					# wait a moment to give another thread a chance to
 					# interrupt the auto-reconnect
 					select(undef, undef, undef, 0.1);
-				}
-				elsif ($self->{auto_reauthenticate} and defined($local_secret))
-				{
-					eval
-					{
-						# FIXME: how to handle errors here?
-						$self->authenticate($local_secret);
-					};
 				}
 			}
 		}
