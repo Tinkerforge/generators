@@ -241,7 +241,7 @@ sub new
 	                                 port => undef,
 	                                 timeout => 2.5,
 	                                 next_sequence_number => 0, # protected by SEQUENCE_NUMBER_LOCK
-	                                 next_authentication_nonce => 0, # protected by SEQUENCE_NUMBER_LOCK
+	                                 next_authentication_nonce => 0, # protected by AUTHENTICATION_LOCK
 	                                 auto_reconnect => 1,
 	                                 auto_reconnect_allowed => 0,
 	                                 auto_reconnect_pending => 0,
@@ -261,6 +261,7 @@ sub new
 	                                 local_socket_lock_ref => undef,
 	                                 send_lock_ref => undef,
 	                                 sequence_number_lock_ref => undef,
+	                                 authentication_lock_ref => undef, # protectes authentication handshake
 	                                 brickd => undef
 	                                });
 
@@ -270,11 +271,13 @@ sub new
 	my $local_socket_lock :shared;
 	my $send_lock :shared;
 	my $sequence_number_lock :shared;
+	my $authentication_lock :shared;
 
 	$self->{socket_lock_ref} = \$socket_lock;
 	$self->{local_socket_lock_ref} = \$local_socket_lock;
 	$self->{send_lock_ref} = \$send_lock;
 	$self->{sequence_number_lock_ref} = \$sequence_number_lock;
+	$self->{authentication_lock_ref} = \$authentication_lock;
 
 	$self->_brickd_create();
 
@@ -721,32 +724,19 @@ sub authenticate
 {
 	my ($self, $secret) = @_;
 
-	if (1)
-	{
-		lock(${$self->{sequence_number_lock_ref}});
+	lock(${$self->{authentication_lock_ref}});
 
-		if ($self->{next_authentication_nonce} == 0)
-		{
-			$self->{next_authentication_nonce} = $self->_get_random_uint32();
-		}
+	if ($self->{next_authentication_nonce} == 0)
+	{
+		$self->{next_authentication_nonce} = $self->_get_random_uint32();
 	}
 
 	my @serverNonceArray = $self->_brickd_get_authentication_nonce();
 	my $serverNonce = \@serverNonceArray;
 	my $serverNonceBytes = pack('C4', @serverNonceArray);
-	my $clientNonce = undef;
-	my $clientNonceBytes = undef;
-
-	if (1)
-	{
-		lock(${$self->{sequence_number_lock_ref}});
-
-		my $clientNonceNumber = $self->{next_authentication_nonce}++;
-
-		$clientNonceBytes = pack('V', $clientNonceNumber);
-		$clientNonce = [unpack('C4', $clientNonceBytes)];
-	}
-
+	my $clientNonceNumber = $self->{next_authentication_nonce}++;
+	my $clientNonceBytes = pack('V', $clientNonceNumber);
+	my $clientNonce = [unpack('C4', $clientNonceBytes)];
 	my $digestBytes = hmac_sha1($serverNonceBytes . $clientNonceBytes, $secret);
 	my $digest = [unpack('C20', $digestBytes)];
 
