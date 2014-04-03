@@ -9,7 +9,7 @@
             <h1>Enumerate Example</h1>
             <p>
                 <input value="localhost" id="host" type="text" size="20">:
-                <input value="4280" id="port" type="text" size="5">,
+                <input value="4280" id="port" type="text" size="5">
                 <input value="Start Example" id="start" type="button" onclick="startExample();">
             </p>
             <p>
@@ -36,12 +36,14 @@
                 ); // Connect to brickd
                 // Don't use device before ipcon is connected
 
+                // Register Connected Callback
                 ipcon.on(Tinkerforge.IPConnection.CALLBACK_CONNECTED,
                     function(connectReason) {
                         // Trigger Enumerate
                         ipcon.enumerate();
                     }
                 );
+                // Register Enumerate Callback
                 ipcon.on(Tinkerforge.IPConnection.CALLBACK_ENUMERATE,
                     // Print incoming enumeration
                     function(uid, connectedUid, position, hardwareVersion,
