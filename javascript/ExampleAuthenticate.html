@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <head>
+        <title>Tinkerforge | JavaScript Example</title>
+    </head>
+    <body>
+        <div style="text-align:center;">
+            <h1>Authenticate Example</h1>
+            <p>
+                <input value="localhost" id="host" type="text" size="20">:
+                <input value="4280" id="port" type="text" size="5">,
+                <input value="My Authentication Secret!" id="secret" type="text" size="30">:
+                <input value="Start Example" id="start" type="button" onclick="startExample();">
+            </p>
+            <p>
+                <textarea id="text" cols="80" rows="24" style="resize:none;"
+                          >Press "Start Example" to begin ...</textarea>
+            </p>
+        <div>
+        <script src="./Tinkerforge.js" type='text/javascript'></script>
+        <script type='text/javascript'>
+            var ipcon;
+            var textArea = document.getElementById("text");
+            function startExample() {
+                textArea.value = "";
+                var HOST = document.getElementById("host").value;
+                var PORT = parseInt(document.getElementById("port").value);
+                var SECRET = document.getElementById("secret").value;
+                if(ipcon !== undefined) {
+                    ipcon.disconnect();
+                }
+                ipcon = new Tinkerforge.IPConnection(); // Create IP connection
+                ipcon.connect(HOST, PORT,
+                    function(error) {
+                        textArea.value += 'Error: '+error+ '\n';
+                    }
+                ); // Connect to brickd
+                // Don't use device before ipcon is connected
+
+                // Register Connected Callback
+                ipcon.on(Tinkerforge.IPConnection.CALLBACK_CONNECTED,
+                    // Authenticate each time the connection got (re-)established
+                    function(connectReason) {
+                        switch(connectReason) {
+                        case Tinkerforge.IPConnection.CONNECT_REASON_REQUEST:
+                            textArea.value += 'Connected by request\n';
+                            break;
+                        case Tinkerforge.IPConnection.CONNECT_REASON_AUTO_RECONNECT:
+                            textArea.value += 'Auto-Reconnected\n';
+                            break;
+                        }
+                        ipcon.authenticate(SECRET,
+                            function() {
+                                textArea.value += 'Authentication succeeded\n';
+
+                                // ...then trigger Enumerate
+                                ipcon.enumerate();
+                            },
+                            function(error) {
+                                textArea.value += 'Could not authenticate: '+error+'\n';
+                            }
+                        );
+                    }
+                );
+                // Register Enumerate Callback
+                ipcon.on(Tinkerforge.IPConnection.CALLBACK_ENUMERATE,
+                    // Print incoming enumeration
+                    function(uid, connectedUid, position, hardwareVersion, firmwareVersion,
+                             deviceIdentifier, enumerationType) {
+                        textArea.value += 'UID: '+uid+', Enumeration Type: '+enumerationType+'\n';
+                        textArea.scrollTop = textArea.scrollHeight;
+                    }
+                );
+            }
+        </script>
+    </body>
+</html>
