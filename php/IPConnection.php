@@ -498,7 +498,6 @@ class IPConnection
 
     private $host = "";
     private $port = 0;
-    private $secret = "";
 
     public $socket = FALSE;
     private $pendingData = '';
@@ -553,7 +552,6 @@ class IPConnection
 
         $this->host = $host;
         $this->port = $port;
-        $this->secret = '';
 
         $address = '';
 
@@ -648,8 +646,6 @@ class IPConnection
         $digest = self::collectUnpackedArray(unpack('C20digest', $digestBytes), 'digest', 20);
 
         $this->brickd->authenticate($clientNonce, $digest);
-
-        $this->secret = $secret;
     }
 
     /**
@@ -925,9 +921,6 @@ class IPConnection
                                  array($disconnectReason,
                                        $this->registeredCallbackUserData[self::CALLBACK_DISCONNECTED]));
         }
-
-        // clear secret
-        $this->secret = '';
     }
 
     /**
