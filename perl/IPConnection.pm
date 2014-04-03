@@ -1404,98 +1404,97 @@ sub _dispatch_meta
 {
 	my ($self, $callback, $reason, $socket_id) = @_;
 
-	if(defined($callback))
+	if(!defined($callback) || !defined($reason))
 	{
-		if(defined($reason))
+		return 1;
+	}
+
+	if($callback == &CALLBACK_CONNECTED)
+	{
+		if(defined($self->{registered_callbacks}->{&CALLBACK_CONNECTED}))
 		{
-			if($callback == &CALLBACK_CONNECTED)
+			eval("$self->{registered_callbacks}->{&CALLBACK_CONNECTED}($reason);");
+			return 1;
+		}
+	}
+	elsif($callback == &CALLBACK_DISCONNECTED)
+	{
+		# need to do this here, the receive loop is not allowed to
+		# hold the socket mutex because this could cause a deadlock
+		# with a concurrent call to the (dis-)connect function
+		if($reason != &DISCONNECT_REASON_REQUEST)
+		{
+			lock(${$self->{socket_lock_ref}});
+
+			# don't close the socket if it got disconnected or
+			# reconnected in the meantime
+			if (defined($self->{socket_fileno}) && $self->{socket_id} == $socket_id)
 			{
-				if(defined($self->{registered_callbacks}->{&CALLBACK_CONNECTED}))
-				{
-					eval("$self->{registered_callbacks}->{&CALLBACK_CONNECTED}($reason);");
-					return 1;
-				}
+				# destroy disconnect probe thread
+				$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
+				$self->{disconnect_probe_thread}->join();
+				$self->{disconnect_probe_thread} = undef;
+
+				# destroy socket
+				$self->_destroy_socket();
 			}
-			elsif($callback == &CALLBACK_DISCONNECTED)
+		}
+
+		if(defined($self->{registered_callbacks}->{&CALLBACK_DISCONNECTED}))
+		{
+			eval("$self->{registered_callbacks}->{&CALLBACK_DISCONNECTED}($reason);");
+		}
+
+		if ($reason != &DISCONNECT_REASON_REQUEST &&
+			$self->{auto_reconnect} &&
+			$self->{auto_reconnect_allowed})
+		{
+			$self->{auto_reconnect_pending} = 1;
+
+			my $retry = 1;
+			my $local_secret = undef;
+
+			# block here until reconnect. this is okay, there is no
+			# callback to deliver when there is no connection
+			while ($retry)
 			{
-				# need to do this here, the receive loop is not allowed to
-				# hold the socket mutex because this could cause a deadlock
-				# with a concurrent call to the (dis-)connect function
-				if($reason != &DISCONNECT_REASON_REQUEST)
-				{
+				$retry = 0;
+				$local_secret = undef;
+
+				if (1) {
 					lock(${$self->{socket_lock_ref}});
 
-					# don't close the socket if it got disconnected or
-					# reconnected in the meantime
-					if (defined($self->{socket_fileno}) && $self->{socket_id} == $socket_id)
+					if ($self->{auto_reconnect_allowed} && !defined($self->{socket_fileno}))
 					{
-						# destroy disconnect probe thread
-						$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
-						$self->{disconnect_probe_thread}->join();
-						$self->{disconnect_probe_thread} = undef;
-
-						# destroy socket
-						$self->_destroy_socket();
+						eval
+						{
+							$self->_connect_unlocked(1);
+							$local_secret = $self->{secret};
+						};
+						if($!)
+						{
+							$retry = 1;
+						}
+					}
+					else
+					{
+						$self->{auto_reconnect_pending} = 0;
 					}
 				}
 
-				if(defined($self->{registered_callbacks}->{&CALLBACK_DISCONNECTED}))
+				if ($retry)
 				{
-					eval("$self->{registered_callbacks}->{&CALLBACK_DISCONNECTED}($reason);");
+					# wait a moment to give another thread a chance to
+					# interrupt the auto-reconnect
+					select(undef, undef, undef, 0.1);
 				}
-
-				if ($reason != &DISCONNECT_REASON_REQUEST &&
-				    $self->{auto_reconnect} &&
-				    $self->{auto_reconnect_allowed})
+				elsif ($self->{auto_reauthenticate} and defined($local_secret))
 				{
-					$self->{auto_reconnect_pending} = 1;
-
-					my $retry = 1;
-					my $local_secret = undef;
-
-					# block here until reconnect. this is okay, there is no
-					# callback to deliver when there is no connection
-					while ($retry)
+					eval
 					{
-						$retry = 0;
-						$local_secret = undef;
-
-						if (1) {
-							lock(${$self->{socket_lock_ref}});
-
-							if ($self->{auto_reconnect_allowed} && !defined($self->{socket_fileno}))
-							{
-								eval
-								{
-									$self->_connect_unlocked(1);
-									$local_secret = $self->{secret};
-								};
-								if($!)
-								{
-									$retry = 1;
-								}
-							}
-							else
-							{
-								$self->{auto_reconnect_pending} = 0;
-							}
-						}
-
-						if ($retry)
-						{
-							# wait a moment to give another thread a chance to
-							# interrupt the auto-reconnect
-							select(undef, undef, undef, 0.1);
-						}
-						elsif ($self->{auto_reauthenticate} and defined($local_secret))
-						{
-							eval
-							{
-								# FIXME: how to handle errors here?
-								$self->authenticate($local_secret);
-							};
-						}
-					}
+						# FIXME: how to handle errors here?
+						$self->authenticate($local_secret);
+					};
 				}
 			}
 		}
