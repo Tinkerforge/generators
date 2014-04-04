@@ -716,7 +716,14 @@ sub _brickd_authenticate
 
 =item authenticate()
 
-FIXME
+Performs an authentication handshake with the connected Brick Daemon or
+WIFI/Ethernet Extension. On success the connection switches from
+non-authenticated to authenticated state and communication can continue as
+normal. On failure the connection gets closed by the server side. Authentication
+can fail if the authentication secrets mismatch or if authentication is not
+enabled at all on the Brick Daemon or WIFI/Ethernet Extension.
+
+For more information about authentication see TODO.
 
 =cut
 
