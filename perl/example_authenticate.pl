@@ -6,6 +6,9 @@ use constant HOST => 'localhost';
 use constant PORT => 4223;
 use constant SECRET => 'My Authentication Secret!';
 
+# Create IPConnection
+our $ipcon = Tinkerforge::IPConnection->new();
+
 # Authenticate each time the connection got (re-)established
 sub cb_connected
 {
@@ -44,9 +47,6 @@ sub cb_enumerate
 
 	print "UID: $uid, Enumeration Type: $enumeration_type\n";
 }
-
-# Create IPConnection
-our $ipcon = Tinkerforge::IPConnection->new();
 
 # Register Connected Callback
 $ipcon->register_callback($ipcon->CALLBACK_CONNECTED, 'cb_connected');

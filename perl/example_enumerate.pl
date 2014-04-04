@@ -5,6 +5,9 @@ use Tinkerforge::IPConnection;
 use constant HOST => 'localhost';
 use constant PORT => 4223;
 
+# Create connection and connect to brickd
+my $ipcon = Tinkerforge::IPConnection->new();
+
 # Print incoming enumeration
 sub cb_enumerate
 {
@@ -27,9 +30,6 @@ sub cb_enumerate
 	print "Device Identifier: $device_identifier\n";
 	print "\n";
 }
-
-# Create connection and connect to brickd
-my $ipcon = Tinkerforge::IPConnection->new();
 
 $ipcon->connect(&HOST, &PORT);
 
