@@ -11,8 +11,8 @@ as Linux and Mac OS X, etc.).
 
 As an example we will compile the Stepper Brick configuration example with
 the Free Pascal Compiler (FPC) that comes with the Lazarus. For that we
-have to copy the IP Connection (Base58.pas, BlockingQueue.pas, Device.pas,
-DeviceBase.pas, IPConnection.pas, LEConverter.pas, BrickDaemon.pas, SHA1.pas
+have to copy the IP Connection (Base58.pas, BlockingQueue.pas, BrickDaemon.pas,
+Device.pas, DeviceBase.pas, IPConnection.pas, LEConverter.pas, SHA1.pas
 and TimedSemaphore.pas) and the Stepper Brick bindings (BrickStepper.pas) from
 the bindings/ folder as well as the ExampleConfiguration.pas from the
 examples/Brick/Stepper/ folder into our project:
@@ -20,13 +20,13 @@ examples/Brick/Stepper/ folder into our project:
  project_folder/
  -> Base58.pas
  -> BlockingQueue.pas
+ -> BrickDaemon.pas
  -> Device.pas
  -> DeviceBase.pas
  -> IPConnection.pas
  -> LEConverter.pas
- -> TimedSemaphore.pas
- -> BrickDaemon.pas
  -> SHA1.pas
+ -> TimedSemaphore.pas
  -> BrickStepper.pas
  -> ExampleConfiguration.pas
 
