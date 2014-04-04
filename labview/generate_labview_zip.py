@@ -68,8 +68,20 @@ class LabVIEWZipGenerator(common.Generator):
 
         # Copy IPConnection examples
         examples = common.find_examples(root, '^Example .*\.vi$')
+        dest = os.path.join('/tmp/generator/dll/examples')
+        dest_10 = os.path.join('/tmp/generator/dll/examples', '10.0')
+
+        if not os.path.exists(dest):
+            os.makedirs(dest)
+
+        if not os.path.exists(dest_10):
+            os.makedirs(dest_10)
+
         for example in examples:
-            shutil.copy(example[1], '/tmp/generator/dll/examples')
+            shutil.copy(example[1], dest)
+
+            parts = os.path.split(example[1])
+            shutil.copy(os.path.join(parts[0], '10.0', parts[1]), dest_10)
 
         # Copy bindings and readme
         for filename in released_files:
