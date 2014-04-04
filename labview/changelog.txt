@@ -1,1 +1,2 @@
 2.0.0: Initial version
+2.1.0: Add authentication support to IPConnection and Master Brick API

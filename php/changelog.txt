@@ -53,3 +53,4 @@
         Fix mixup of Set/GetDateTimeCallbackPeriod and Set/GetMotionCallbackPeriod in GPS Bricklet API
         Support addressing types of Intertechno and ELRO Home Easy devices in Remote Switch Bricklet API
 2.0.13: Fix passing $userData parameter to callbacks
+2.1.0: Add authentication support to IPConnection and Master Brick API
