@@ -834,7 +834,7 @@ sub set_timeout
 		croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_PARAMETER, 'Timeout cannot be negative'));
 	}
 
-	$self->{auto_reconnect} = $timeout;
+	$self->{timeout} = $timeout;
 
 }
 
