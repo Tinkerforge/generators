@@ -2113,7 +2113,6 @@ gesetzt.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function', 
 'name': ('GetEthernetStatus', 'get_ethernet_status'), 
@@ -2282,7 +2281,7 @@ com['packets'].append({
 'en':
 """
 Sets the Ethernet authentication secret. The secret can be a string of up to 64
-characters. An empty string deactivates the authentication
+characters. An empty string disables the authentication
 
 For more information about authentication see TODO.
 
@@ -2291,16 +2290,16 @@ you have to restart the Master Brick after configuration.
 
 It is recommended to use the Brick Viewer to set the Ethernet authentication secret.
 
-The default value is an emtpy string (authentication deactivated).
+The default value is an empty string (authentication disabled).
 """,
 'de':
 """
-Setzt das Authentifizierungsgeheimniss. Das Geheimniss ist ein String aus bis zu
-64 Buchstaben. Ein leerer String deaktiviert die Authentifizierung
+Setzt das Authentifizierungsgeheimnis. Das Geheimnis ist ein String aus bis zu
+64 Buchstaben. Ein leerer String deaktiviert die Authentifizierung.
 
 Für mehr Informationen zur Authentifizierung siehe TODO.
 
-Das Authentifizierungsgehemniss wird im EEPROM gespeichert und nur beim Start angewandt.
+Das Authentifizierungsgehemnis wird im EEPROM gespeichert und nur beim Start angewandt.
 Das bedeutet der Master Brick muss nach einer Konfiguration neu gestartet
 werden.
 
@@ -2324,7 +2323,7 @@ Returns the authentication secret as set by :func:`SetEthernetAuthenticationSecr
 """,
 'de':
 """
-Gibt das Authentifizierungsgeheimniss zurück, wie von 
+Gibt das Authentifizierungsgeheimnis zurück, wie von
 :func:`SetEthernetAuthenticationSecret` gesetzt.
 """
 }]
@@ -2339,7 +2338,7 @@ com['packets'].append({
 'en':
 """
 Sets the WIFI authentication secret. The secret can be a string of up to 64
-characters. An empty string deactivates the authentication
+characters. An empty string disables the authentication
 
 For more information about authentication see TODO.
 
@@ -2348,16 +2347,16 @@ you have to restart the Master Brick after configuration.
 
 It is recommended to use the Brick Viewer to set the WIFI authentication secret.
 
-The default value is an emtpy string (authentication deactivated).
+The default value is an empty string (authentication disabled).
 """,
 'de':
 """
-Setzt das Authentifizierungsgeheimniss. Das Geheimniss ist ein String aus bis zu
+Setzt das Authentifizierungsgeheimnis. Das Geheimnis ist ein String aus bis zu
 64 Buchstaben. Ein leerer String deaktiviert die Authentifizierung
 
 Für mehr Informationen zur Authentifizierung siehe TODO.
 
-Das Authentifizierungsgehemniss wird im EEPROM gespeichert und nur beim Start angewandt.
+Das Authentifizierungsgehemnis wird im EEPROM gespeichert und nur beim Start angewandt.
 Das bedeutet der Master Brick muss nach einer Konfiguration neu gestartet
 werden.
 
