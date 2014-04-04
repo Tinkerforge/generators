@@ -315,19 +315,19 @@ typedef void (WINAPI *GETSYSTEMTIMEPRECISEASFILETIME)(LPFILETIME);
 
 // implement gettimeofday based on GetSystemTime(Precise)AsFileTime
 static int gettimeofday(struct timeval *tv, struct timezone *tz) {
-	GETSYSTEMTIMEPRECISEASFILETIME get_system_time_precise_as_file_time = NULL;
+	GETSYSTEMTIMEPRECISEASFILETIME ptr_GetSystemTimePreciseAsFileTime = NULL;
 	FILETIME ft;
 	uint64_t t;
 
 	(void)tz;
 
 	if (tv != NULL) {
-		get_system_time_precise_as_file_time =
+		ptr_GetSystemTimePreciseAsFileTime =
 		  (GETSYSTEMTIMEPRECISEASFILETIME)GetProcAddress(GetModuleHandle("kernel32"),
 		                                                 "GetSystemTimePreciseAsFileTime");
 
-		if (get_system_time_precise_as_file_time != NULL) {
-			get_system_time_precise_as_file_time(&ft);
+		if (ptr_GetSystemTimePreciseAsFileTime != NULL) {
+			ptr_GetSystemTimePreciseAsFileTime(&ft);
 		} else {
 			GetSystemTimeAsFileTime(&ft);
 		}
