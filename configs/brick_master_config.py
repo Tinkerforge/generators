@@ -2283,7 +2283,8 @@ com['packets'].append({
 Sets the Ethernet authentication secret. The secret can be a string of up to 64
 characters. An empty string disables the authentication.
 
-For more information about authentication see TODO.
+See the :ref:`authentication tutorial <tutorial_authentication>` for more
+information.
 
 The secret is stored in the EEPROM and only applied on startup. That means
 you have to restart the Master Brick after configuration.
@@ -2297,7 +2298,8 @@ The default value is an empty string (authentication disabled).
 Setzt das Authentifizierungsgeheimnis. Das Geheimnis ist ein String aus bis zu
 64 Buchstaben. Ein leerer String deaktiviert die Authentifizierung.
 
-Für mehr Informationen zur Authentifizierung siehe TODO.
+Für mehr Informationen zur Authentifizierung siehe das dazugehörige
+:ref:`Tutorial <tutorial_authentication>`.
 
 Das Authentifizierungsgehemnis wird im EEPROM gespeichert und nur beim Start angewandt.
 Das bedeutet der Master Brick muss nach einer Konfiguration neu gestartet
@@ -2340,7 +2342,8 @@ com['packets'].append({
 Sets the WIFI authentication secret. The secret can be a string of up to 64
 characters. An empty string disables the authentication.
 
-For more information about authentication see TODO.
+See the :ref:`authentication tutorial <tutorial_authentication>` for more
+information.
 
 The secret is stored in the EEPROM and only applied on startup. That means
 you have to restart the Master Brick after configuration.
@@ -2354,11 +2357,12 @@ The default value is an empty string (authentication disabled).
 Setzt das Authentifizierungsgeheimnis. Das Geheimnis ist ein String aus bis zu
 64 Buchstaben. Ein leerer String deaktiviert die Authentifizierung.
 
-Für mehr Informationen zur Authentifizierung siehe TODO.
+Für mehr Informationen zur Authentifizierung siehe das dazugehörige
+:ref:`Tutorial <tutorial_authentication>`.
 
-Das Authentifizierungsgehemnis wird im EEPROM gespeichert und nur beim Start angewandt.
-Das bedeutet der Master Brick muss nach einer Konfiguration neu gestartet
-werden.
+Das Authentifizierungsgehemnis wird im EEPROM gespeichert und nur beim Start
+angewandt. Das bedeutet der Master Brick muss nach einer Konfiguration neu
+gestartet werden.
 
 Wir empfehlen den Brick Viewer zu nutzen um die Authentifizierung der WIFI 
 Extension einzurichten.
