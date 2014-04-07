@@ -2281,7 +2281,7 @@ com['packets'].append({
 'en':
 """
 Sets the Ethernet authentication secret. The secret can be a string of up to 64
-characters. An empty string disables the authentication
+characters. An empty string disables the authentication.
 
 For more information about authentication see TODO.
 
@@ -2338,7 +2338,7 @@ com['packets'].append({
 'en':
 """
 Sets the WIFI authentication secret. The secret can be a string of up to 64
-characters. An empty string disables the authentication
+characters. An empty string disables the authentication.
 
 For more information about authentication see TODO.
 
@@ -2352,7 +2352,7 @@ The default value is an empty string (authentication disabled).
 'de':
 """
 Setzt das Authentifizierungsgeheimnis. Das Geheimnis ist ein String aus bis zu
-64 Buchstaben. Ein leerer String deaktiviert die Authentifizierung
+64 Buchstaben. Ein leerer String deaktiviert die Authentifizierung.
 
 Für mehr Informationen zur Authentifizierung siehe TODO.
 
@@ -2380,7 +2380,7 @@ Returns the authentication secret as set by :func:`SetWifiAuthenticationSecret`.
 """,
 'de':
 """
-Gibt das Authentifizierungsgeheimniss zurück, wie von 
+Gibt das Authentifizierungsgeheimnis zurück, wie von
 :func:`SetWifiAuthenticationSecret` gesetzt.
 """
 }]
