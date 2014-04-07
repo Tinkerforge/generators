@@ -23,7 +23,7 @@ AddEventHandler[ipcon@Connected,ConnectedCB]
 
 (* Print incoming enumeration information *)
 EnumerateCB[sender_,uid_,connectedUid_,position_,hardwareVersion_,firmwareVersion_,
-             deviceIdentifier_,enumerationType_]:=
+            deviceIdentifier_,enumerationType_]:=
  Print["UID: "<>uid<>", Enumeration Type: "<>ToString[enumerationType]]
 
 AddEventHandler[ipcon@EnumerateCallback,EnumerateCB]
