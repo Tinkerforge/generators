@@ -1,9 +1,7 @@
-
 #!/usr/bin/env ruby
 # -*- ruby encoding: utf-8 -*-
 
-#require 'tinkerforge/ip_connection'
-require 'ip_connection'
+require 'tinkerforge/ip_connection'
 
 include Tinkerforge
 
