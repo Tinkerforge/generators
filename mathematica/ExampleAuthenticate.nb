@@ -1,19 +1,12 @@
-(* Content-type: application/vnd.wolfram.mathematica *)
-
-(*** Wolfram Notebook File ***)
-(* http://www.wolfram.com/nb *)
-
-(* CreatedBy='Mathematica 10.0' *)
-
 (*CacheID: 234*)
 (* Internal cache information:
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
-NotebookDataPosition[       158,          7]
-NotebookDataLength[      5120,        146]
-NotebookOptionsPosition[      4846,        132]
-NotebookOutlinePosition[      5185,        147]
-CellTagsIndexPosition[      5142,        144]
+NotebookDataPosition[         0,          0]
+NotebookDataLength[      5462,        149]
+NotebookOptionsPosition[      5031,        128]
+NotebookOutlinePosition[      5369,        143]
+CellTagsIndexPosition[      5326,        140]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -25,31 +18,33 @@ Cell[BoxData[{
    RowBox[{
     RowBox[{"NotebookDirectory", "[", "]"}], "<>", "\"\<..\>\""}]}], 
   "]"}]}], "Input",
- CellChangeTimes->{{3.605533753948743*^9, 3.605533754226322*^9}}],
+ CellChangeTimes->{{3.605533753948743*^9, 3.605533754226322*^9}, 
+   3.605935110340149*^9, {3.605935214159247*^9, 3.605935214594624*^9}, {
+   3.605935304897544*^9, 3.605935307777445*^9}}],
 
 Cell[BoxData[{
  RowBox[{"host", "=", "\"\<localhost\>\""}], "\n", 
  RowBox[{"port", "=", "4223"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"secret", "=", "\"\<My Authentication Secret!\>\""}], 
-  "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", "\n", 
   RowBox[{"(*", " ", 
-   RowBox[{"Create", " ", "IPConnection"}], " ", "*)"}]}], "\n", 
+   RowBox[{"Create", " ", "IPConnection"}], " ", 
+   "*)"}]}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"ipcon", "=", 
    RowBox[{"NETNew", "[", "\"\<Tinkerforge.IPConnection\>\"", "]"}]}], 
-  "\[IndentingNewLine]", "\n", 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", 
   RowBox[{"(*", " ", 
    RowBox[{
    "Authenticate", " ", "each", " ", "time", " ", "the", " ", "connection", 
     " ", "got", " ", 
     RowBox[{"(", 
-     RowBox[{"re", "-"}], ")"}], "established"}], " ", 
-   "*)"}]}], "\[IndentingNewLine]", 
+     RowBox[{"re", "-"}], ")"}], "established"}], " ", "*)"}]}], "\n", 
  RowBox[{
   RowBox[{
    RowBox[{"ConnectedCB", "[", 
-    RowBox[{"sender_", ",", " ", "connectReason_"}], "]"}], ":=", 
+    RowBox[{"sender_", ",", "connectReason_"}], "]"}], ":=", 
    "\[IndentingNewLine]", 
    RowBox[{"Module", "[", 
     RowBox[{
@@ -58,15 +53,15 @@ Cell[BoxData[{
       RowBox[{"If", "[", 
        RowBox[{
         RowBox[{
-        "connectReason", "\[Equal]", "IPConnection`CONNECTUREASONUREQUEST"}], 
-        ",", 
+        "connectReason", "\[Equal]", 
+         "Tinkerforge`IPConnection`CONNECTUREASONUREQUEST"}], ",", 
         RowBox[{"Print", "[", "\"\<Connected by request\>\"", "]"}]}], "]"}], 
       ";", "\[IndentingNewLine]", 
       RowBox[{"If", "[", 
        RowBox[{
         RowBox[{
         "connectReason", "\[Equal]", 
-         "IPConnection`CONNECTUREASONUAUTOURECONNECT"}], ",", 
+         "Tinkerforge`IPConnection`CONNECTUREASONUAUTOURECONNECT"}], ",", 
         RowBox[{"Print", "[", "\"\<Auto-Reconnect\>\"", "]"}]}], "]"}], ";", 
       "\[IndentingNewLine]", 
       RowBox[{"(*", " ", 
@@ -81,7 +76,7 @@ Cell[BoxData[{
        "\[IndentingNewLine]", 
       RowBox[{"sender", "@", 
        RowBox[{"Enumerate", "[", "]"}]}]}]}], "\[IndentingNewLine]", "]"}]}], 
-  "\[IndentingNewLine]"}], "\n", 
+  "\n"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"AddEventHandler", "[", 
    RowBox[{
@@ -96,43 +91,44 @@ Cell[BoxData[{
     RowBox[{
     "sender_", ",", "uid_", ",", "connectedUid_", ",", "position_", ",", 
      "hardwareVersion_", ",", "firmwareVersion_", ",", "\[IndentingNewLine]", 
-     "             ", "deviceIdentifier_", ",", "enumerationType_"}], "]"}], ":=",
-    "\[IndentingNewLine]", 
+     "                      ", "deviceIdentifier_", ",", "enumerationType_"}],
+     "]"}], ":=", "\[IndentingNewLine]", 
    RowBox[{"Print", "[", 
     RowBox[{
     "\"\<UID: \>\"", "<>", "uid", "<>", "\"\<, Enumeration Type: \>\"", "<>", 
      
      RowBox[{"ToString", "[", "enumerationType", "]"}]}], "]"}]}], 
-  "\n"}], "\[IndentingNewLine]", 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"AddEventHandler", "[", 
    RowBox[{
     RowBox[{"ipcon", "@", "EnumerateCallback"}], ",", "EnumerateCB"}], "]"}], 
-  "\n", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", 
   RowBox[{"(*", " ", 
-   RowBox[{"Connect", " ", "to", " ", "brickd"}], " ", 
-   "*)"}]}], "\[IndentingNewLine]", 
+   RowBox[{"Connect", " ", "to", " ", "brickd"}], " ", "*)"}]}], "\n", 
  RowBox[{
   RowBox[{"ipcon", "@", 
    RowBox[{"Connect", "[", 
     RowBox[{"host", ",", "port"}], "]"}]}], "\n"}], "\n", 
  RowBox[{
   RowBox[{"Input", "[", "\"\<Click OK to exit\>\"", "]"}], 
-  "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", "\n", 
   RowBox[{"(*", " ", 
-   RowBox[{"Clean", " ", "up"}], " ", "*)"}]}], "\n", 
+   RowBox[{"Clean", " ", "up"}], " ", "*)"}]}], "\[IndentingNewLine]", 
  RowBox[{"ipcon", "@", 
   RowBox[{"Disconnect", "[", "]"}]}], "\n", 
  RowBox[{"ReleaseNETObject", "[", "ipcon", "]"}]}], "Input",
  CellChangeTimes->{{3.605533769312714*^9, 3.605533799192195*^9}, {
-  3.605533855646306*^9, 3.60553396786145*^9}, {3.605534006504216*^9, 
-  3.605534118469757*^9}, {3.6055341598067093`*^9, 3.605534257262924*^9}, {
-  3.60553429776966*^9, 3.605534533176559*^9}, {3.6055346008694887`*^9, 
-  3.6055346118521347`*^9}}]
+   3.605533855646306*^9, 3.60553396786145*^9}, {3.605534006504216*^9, 
+   3.605534118469757*^9}, {3.6055341598067093`*^9, 3.605534257262924*^9}, {
+   3.60553429776966*^9, 3.605534533176559*^9}, {3.6055346008694887`*^9, 
+   3.6055346118521347`*^9}, {3.605935023487055*^9, 3.605935033889661*^9}, {
+   3.6059352124058657`*^9, 3.6059352130425034`*^9}, 3.605935278837904*^9, {
+   3.6059356102318783`*^9, 3.605935610915814*^9}}]
 },
 WindowSize->{1444, 911},
 WindowMargins->{{Automatic, 79}, {Automatic, 65}},
-FrontEndVersion->"10.0 for Linux ARM (32-bit) (November 19, 2013)",
+FrontEndVersion->"9.0 for Linux x86 (64-bit) (November 20, 2012)",
 StyleDefinitions->"Default.nb"
 ]
 (* End of Notebook Content *)
@@ -146,10 +142,9 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[558, 20, 312, 7, 55, "Input"],
-Cell[873, 29, 3969, 101, 781, "Input"]
+Cell[400, 13, 434, 9, 55, "Input"],
+Cell[837, 24, 4190, 102, 781, "Input"]
 }
 ]
 *)
 
-(* End of internal cache information *)

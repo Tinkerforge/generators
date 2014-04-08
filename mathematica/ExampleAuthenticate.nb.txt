@@ -9,10 +9,10 @@ secret="My Authentication Secret!"
 ipcon=NETNew["Tinkerforge.IPConnection"]
 
 (* Authenticate each time the connection got (re-)established *)
-ConnectedCB[sender_, connectReason_]:=
+ConnectedCB[sender_,connectReason_]:=
  Module[{},
-  If[connectReason==IPConnection`CONNECTUREASONUREQUEST,Print["Connected by request"]];
-  If[connectReason==IPConnection`CONNECTUREASONUAUTOURECONNECT,Print["Auto-Reconnect"]];
+  If[connectReason==Tinkerforge`IPConnection`CONNECTUREASONUREQUEST,Print["Connected by request"]];
+  If[connectReason==Tinkerforge`IPConnection`CONNECTUREASONUAUTOURECONNECT,Print["Auto-Reconnect"]];
   (* Authenticate first... *)
   sender@Authenticate[secret];
   (* ...then trigger enumerate *)
