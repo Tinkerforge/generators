@@ -33,10 +33,18 @@ use:
  var ipcon = new IPConnection();
  var stepper = new BrickStepper(UID, ipcon);
 
-For using the HTML examples, just put the browser implementation source
-file from (browser/source/Tinkerforge.js) and the HTML file of the example
-that you want to try in the same directory and simply open the HTML file with
-a browser.
+The Browser version of the JavaScript bindings is using WebSockets. They are
+supported by Brick Daemon (since version 2.1.0) and the Ethernet Extension
+(since Master Brick firmware version 2.2.0), but they are disabled by default
+and need to be configured first:
+
+ http://www.tinkerforge.com/en/doc/Software/Brickd.html#websocket-configuration
+ http://www.tinkerforge.com/en/doc/Hardware/Master_Extensions/Ethernet_Extension.html#websockets
+
+If WebSockets are enabled you can test the HTML examples. Just put the browser
+JavaScript source file from browser/source/Tinkerforge.js and the HTML file
+of the example that you want to try in the same directory and open the HTML
+file with a browser.
 
 Documentation for the API can be found at
 
