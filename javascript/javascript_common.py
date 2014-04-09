@@ -76,7 +76,7 @@ class JavaScriptElement(common.Element):
     def get_javascript_type(self):
         t = JavaScriptElement.javascript_types[self.get_type()]
 
-        if self.get_cardinality() == 1 or t == 'str':
+        if self.get_cardinality() == 1 or t == 'string':
             return t
 
         return '[' + ', '.join([t]*self.get_cardinality()) + ']'

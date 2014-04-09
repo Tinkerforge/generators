@@ -21,6 +21,7 @@ configuration example from nodejs/examples/Brick/Stepper/ExampleConfiguration.js
 The require statement must be modified in this case as follows. Instead of:
 
  var Tinkerforge = require('tinkerforge');
+
  var ipcon = new Tinkerforge.IPConnection();
  var stepper = new Tinkerforge.BrickStepper(UID, ipcon);
 
@@ -28,6 +29,7 @@ use:
 
  var IPConnection = require('./Tinkerforge/IPConnection');
  var BrickStepper = require('./Tinkerforge/BrickStepper');
+
  var ipcon = new IPConnection();
  var stepper = new BrickStepper(UID, ipcon);
 

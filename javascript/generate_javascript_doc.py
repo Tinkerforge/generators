@@ -4,6 +4,7 @@
 """
 JavaScript Documentation Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_javascript_doc.py: Generator for JavaScript documentation
 
@@ -68,15 +69,38 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
             params = packet.get_javascript_parameter_list()
             pd = packet.get_javascript_parameter_desc('in')
             r = packet.get_javascript_return_desc()
+
+            if name == 'getAPIVersion':
+                r = ' :rtype: [int, int, int]\n'
+            elif name == 'getResponseExpected':
+                r = ' :rtype: boolean\n'
+            elif name == 'setResponseExpected':
+                r = ''
+            elif name == 'setResponseExpectedAll':
+                r = ''
+
             d = packet.get_javascript_formatted_doc()
             desc = '{0}{1}{2}'.format(pd, r, d)
-            if len(params) > 0:
+            callbacks = '[returnCallback], [errorCallback]'
+
+            if name == 'getAPIVersion':
+                callbacks = ''
+            elif name == 'getResponseExpected':
+                callbacks = '[errorCallback]'
+            elif name == 'setResponseExpected':
+                callbacks = '[errorCallback]'
+            elif name == 'setResponseExpectedAll':
+                callbacks = ''
+
+            if len(params) > 0 and len(callbacks) > 0:
                 params += ", "
-            func = '{0}{1}.{2}({3}[returnCallback], [errorCallback])\n{4}'.format(func_start,
-                                                 cls,
-                                                 name,
-                                                 params,
-                                                 desc)
+
+            func = '{0}{1}.{2}({3}{4})\n{5}'.format(func_start,
+                                                    cls,
+                                                    name,
+                                                    params,
+                                                    callbacks,
+                                                    desc)
 
             methods += func + '\n'
 
@@ -226,11 +250,12 @@ weiter unten beschrieben.
 API
 ---
 
-Generally, every method of the JavaScript bindings can take two optional parameters,
-``returnCallback`` and ``errorCallback``. These are two user defined callback functions.
-``returnCallback`` is called when a return value is expected with the value as the
-function's argument and ``errorCallback`` is called in case of an error with an error code.
-The error code can be one of the following:
+Generally, every method of the JavaScript bindings can take two optional
+parameters, ``returnCallback`` and ``errorCallback``. These are two user
+defined callback functions. The ``returnCallback`` is called with the return
+values as parameters, if the method returns something. The ``errorCallback``
+is called with an error code in case of an error. The error code can be one
+of the following values:
 
 * IPConnection.ERROR_ALREADY_CONNECTED = 11
 * IPConnection.ERROR_NOT_CONNECTED = 12
@@ -252,7 +277,23 @@ The namespace for the JavaScript bindings is ``Tinkerforge.*``.
 API
 ---
 
-Alle folgend aufgelisteten Funktionen sind Thread-sicher.
+Allgemein kann jede Methode der JavaScript Bindings zwei optionale Parameter
+haben, ``returnCallback`` und ``errorCallback``. Dies sind benutzerdefinierte
+Callback-Funktionen. Der ``returnCallback`` wird aufgerufen mit den
+Rückgabewerten der Methode, sofern vorhanden. Der ``errorCallback`` wird im
+Fehlerfall mit einem Fehlercode aufgerufen. Der Fehlercode kann einer der
+folgenden Werte sein:
+
+* IPConnection.ERROR_ALREADY_CONNECTED = 11
+* IPConnection.ERROR_NOT_CONNECTED = 12
+* IPConnection.ERROR_CONNECT_FAILED = 13
+* IPConnection.ERROR_INVALID_FUNCTION_ID = 21
+* IPConnection.ERROR_TIMEOUT = 31
+* IPConnection.ERROR_INVALID_PARAMETER = 41
+* IPConnection.ERROR_FUNCTION_NOT_SUPPORTED = 42
+* IPConnection.ERROR_UNKNOWN_ERROR = 43
+
+Der Namespace der JavaScript Bindings ist ``Tinkerforge.*``.
 
 {1}
 
