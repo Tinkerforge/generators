@@ -248,7 +248,8 @@ ausgeführt werden können ist :ref:`hier <{3}>` zu finden.
 
 def make_rst_examples(title_from_filename, device,
                       url_fixer=None, is_picture=False, additional_download_finder=None,
-                      display_name_fixer=None, language_from_filename=None):
+                      display_name_fixer=None, language_from_filename=None,
+                      add_test_link=False):
     bindings_name = device.get_generator().get_bindings_name()
     filename_regex = device.get_generator().get_doc_example_regex()
 
@@ -318,6 +319,7 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
 """
 
     download = '`Download ({0}) <{1}>`__'
+    url_format = 'https://github.com/Tinkerforge/{0}/raw/master/software/examples/{1}/{2}'
 
     imp = imp_code
     if is_picture:
@@ -347,7 +349,7 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
         copy_files.append((f[1], include))
         title = title_from_filename(f[0])
         git_name = device.get_underscore_name().replace('_', '-') + '-' + device.get_category().lower()
-        url = 'https://github.com/Tinkerforge/{0}/raw/master/software/examples/{1}/{2}'.format(git_name, bindings_name, f[0].replace(' ', '%20'))
+        url = url_format.format(git_name, bindings_name, f[0].replace(' ', '%20'))
 
         if url_fixer is not None:
             url = url_fixer(url)
@@ -361,10 +363,13 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
 
         if additional_download_finder is not None:
             for additional_download in additional_download_finder(f[1]):
-                additional_url = 'https://github.com/Tinkerforge/{0}/raw/master/software/examples/{1}/{2}'.format(git_name, bindings_name, additional_download.replace(' ', '%20'))
+                additional_url = url_format.format(git_name, bindings_name, additional_download.replace(' ', '%20'))
                 downloads.append(download.format(additional_download, additional_url))
 
         downloads = [download.format(display_name, url)] + downloads
+
+        if add_test_link and include.endswith('.html'):
+            downloads.append('`Test ({0}) <http://www.tinkerforge.com/{1}/doc/Software/Examples/JavaScript/{2}>`__'.format(display_name, lang, include))
 
         examples += imp.format(title, '^'*len(title), include, ', '.join(downloads), language)
 

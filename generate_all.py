@@ -46,4 +46,5 @@ if socket.gethostname() != 'tinkerforge.com':
         print("\nGenerating ZIP for {0}:".format(binding))
         module.generate(path_binding)
 
+print('')
 print('>>> Done <<<')

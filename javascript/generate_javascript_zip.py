@@ -140,6 +140,9 @@ class JavaScriptZipGenerator(common.Generator):
         version = common.get_changelog_version(root)
         common.make_zip(self.get_bindings_name(), '/tmp/generator/npm', root, version)
 
+        # copy Tinkerforge.js to bindings root dir so copy_all.py can pick it up
+        shutil.copy('/tmp/generator/npm/browser/source/Tinkerforge.js', root)
+
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', JavaScriptZipGenerator)
 

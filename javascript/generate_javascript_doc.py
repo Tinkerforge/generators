@@ -56,7 +56,8 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
                 raise ValueError('Invalid filename ' + filename)
 
         return common.make_rst_examples(title_from_filename, self,
-                                        language_from_filename=language_from_filename)
+                                        language_from_filename=language_from_filename,
+                                        add_test_link=True)
 
     def get_javascript_methods(self, typ):
         methods = ''

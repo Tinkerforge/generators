@@ -30,4 +30,5 @@ for binding in bindings:
     if not success:
         sys.exit(1)
 
+print('')
 print('>>> Done <<<')
