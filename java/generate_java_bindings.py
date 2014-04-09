@@ -33,11 +33,6 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 import java_common
 
-html_escape_table = {
-'"': "&quot;",
-"'": "&apos;"
-}
-
 class JavaBindingsDevice(java_common.JavaDevice):
     def get_java_import(self):
         if self.get_generator().is_octave():
@@ -588,7 +583,7 @@ class JavaBindingsPacket(java_common.JavaPacket):
         link_c = '{{@link {0}.{1}Listener}}'
 
         # escape HTML special chars
-        text = escape(text, html_escape_table)
+        text = escape(text)
 
         # handle tables
         lines = text.split('\n')
