@@ -1360,7 +1360,7 @@ class ExamplesTester:
             print('>>> test succeded\n')
 
     def test(self, src, is_extra_example):
-        return False
+        raise NotImplementedError()
 
     def run(self):
         # Make temporary examples directory
@@ -1373,7 +1373,7 @@ class ExamplesTester:
             shutil.copy(os.path.join(self.path, self.zipname), '/tmp/tester/')
 
             # unzip
-            print('>>> unpacking {0}'.format(self.zipname))
+            print('>>> unpacking {0} to /tmp/tester'.format(self.zipname))
 
             args = ['/usr/bin/unzip',
                     '-q',
@@ -1393,6 +1393,91 @@ class ExamplesTester:
 
             for extra_example in self.extra_examples:
                 self.handle_source(extra_example, True)
+
+            # report
+            if self.comment is not None:
+                print('### [{0}] {1} files tested, {2} failure(s) occurred'.format(self.comment, self.test_count, self.failure_count))
+            else:
+                print('### {0} files tested, {1} failure(s) occurred'.format(self.test_count, self.failure_count))
+
+        return self.failure_count == 0
+
+class SourceTester:
+    def __init__(self, name, extension, path, subdirs=['source'], comment=None):
+        version = get_changelog_version(path)
+
+        self.extension = extension
+        self.path = path
+        self.subdirs = subdirs[:]
+        self.comment = comment
+        self.zipname = 'tinkerforge_{0}_bindings_{1}_{2}_{3}.zip'.format(name, *version)
+        self.test_count = 0
+        self.failure_count = 0
+
+    def walker(self, arg, dirname, names):
+        for name in names:
+            if not name.endswith(self.extension):
+                continue
+
+            self.handle_source(os.path.join(dirname, name))
+
+    def handle_source(self, src):
+        self.test_count += 1
+
+        if self.comment is not None:
+            print('>>> [{0}] testing {1}'.format(self.comment, src))
+        else:
+            print('>>> testing {0}'.format(src))
+
+        if not self.test(src):
+            self.failure_count += 1
+
+            print('>>> test failed\n')
+        else:
+            print('>>> test succeded\n')
+
+    def before_unzip(self):
+        # make temporary examples directory
+        if os.path.exists('/tmp/tester'):
+            shutil.rmtree('/tmp/tester/')
+
+        os.makedirs('/tmp/tester')
+        return True
+
+    def after_unzip(self):
+        return True
+
+    def test(self, src):
+        raise NotImplementedError()
+
+    def run(self):
+        if not self.before_unzip():
+            return False
+
+        with ChangedDirectory('/tmp/tester'):
+            shutil.copy(os.path.join(self.path, self.zipname), '/tmp/tester/')
+
+            # unzip
+            print('>>> unpacking {0} to /tmp/tester'.format(self.zipname))
+
+            args = ['/usr/bin/unzip',
+                    '-q',
+                    os.path.join('/tmp/tester', self.zipname)]
+
+            rc = subprocess.call(args)
+
+            if rc != 0:
+                print('### could not unpack {0}'.format(self.zipname))
+                return False
+
+            print('>>> unpacking {0} done\n'.format(self.zipname))
+
+            if not self.after_unzip():
+                return False
+
+            # test
+            for subdir in self.subdirs:
+                os.path.walk(os.path.join('/tmp/tester', subdir), self.walker, None)
 
             # report
             if self.comment is not None:

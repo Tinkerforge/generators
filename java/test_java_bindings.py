@@ -31,6 +31,12 @@ import shutil
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
+def check_output_and_error(*popenargs, **kwargs):
+    process = subprocess.Popen(stdout=subprocess.PIPE, stderr=subprocess.PIPE, *popenargs, **kwargs)
+    output, error = process.communicate()
+    retcode = process.poll()
+    return (retcode, output + error)
+
 class JavaExamplesTester(common.ExamplesTester):
     def __init__(self, path, extra_examples):
         common.ExamplesTester.__init__(self, 'java', '.java', path, extra_examples=extra_examples)
@@ -48,13 +54,58 @@ class JavaExamplesTester(common.ExamplesTester):
 
         return subprocess.call(args) == 0
 
+class JavaSourceTester(common.SourceTester):
+    def __init__(self, path):
+        common.SourceTester.__init__(self, 'java', '.html', path, subdirs=['javadoc/com/tinkerforge'])
+
+    def after_unzip(self):
+        if not common.SourceTester.after_unzip(self):
+            return False
+
+        print('>>> generating javadoc')
+
+        args = ['/usr/bin/javadoc',
+                '-quiet',
+                '-d',
+                '/tmp/tester/javadoc',
+                '-classpath',
+                '/tmp/tester/source',
+                'com.tinkerforge']
+
+        rc = subprocess.call(args)
+
+        if rc != 0:
+            print('>>> could not generate javadoc')
+        else:
+            print('>>> generating javadoc done\n')
+
+        return rc == 0
+
+    def test(self, src):
+        args = ['/usr/bin/xmllint',
+                '--noout',
+                '--valid',
+                '--html',
+                src]
+
+        retcode, output = check_output_and_error(args)
+        output = output.strip('\r\n')
+
+        if len(output) > 0:
+            print(output)
+
+        return retcode == 0 and len(output) == 0
+
 def run(path):
     extra_examples = [os.path.join(path, '../../weather-station/examples/GuitarStation.java'),
                       os.path.join(path, '../../weather-station/write_to_lcd/java/WeatherStation.java'),
                       os.path.join(path, '../../hardware-hacking/remote_switch/java/RemoteSwitch.java'),
                       os.path.join(path, '../../hardware-hacking/smoke_detector/java/SmokeDetector.java')]
 
-    return JavaExamplesTester(path, extra_examples).run()
+    if not JavaExamplesTester(path, extra_examples).run():
+        return False
+
+    return JavaSourceTester(path).run()
 
 if __name__ == "__main__":
     sys.exit(run(os.getcwd()))

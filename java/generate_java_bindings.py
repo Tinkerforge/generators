@@ -3,7 +3,7 @@
 
 """
 Java Bindings Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_java_bindings.py: Generator for Java bindings
@@ -27,10 +27,16 @@ Boston, MA 02111-1307, USA.
 import datetime
 import sys
 import os
+from xml.sax.saxutils import escape
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 import java_common
+
+html_escape_table = {
+'"': "&quot;",
+"'": "&apos;"
+}
 
 class JavaBindingsDevice(java_common.JavaDevice):
     def get_java_import(self):
@@ -580,6 +586,9 @@ class JavaBindingsPacket(java_common.JavaPacket):
         text = common.select_lang(self.get_doc()[1])
         link = '{{@link {0}#{1}({2})}}'
         link_c = '{{@link {0}.{1}Listener}}'
+
+        # escape HTML special chars
+        text = escape(text, html_escape_table)
 
         # handle tables
         lines = text.split('\n')
