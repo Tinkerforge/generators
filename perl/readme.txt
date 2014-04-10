@@ -1,3 +1,6 @@
+Tinkerforge Perl Bindings
+=========================
+
 This ZIP contains the Perl support for all Tinkerforge Bricks and Bricklets
 (Tinkerforge.tar.gz), the source of the CPAN package (source/) and all available
 Perl examples (examples/).
@@ -32,6 +35,10 @@ You have to add a line on top of the file example_configuration.pl:
 
 After that, the example can be executed again.
 
-Documentation for the API can be found at
+API Documentation and Examples
+------------------------------
+
+Links to the API documentation for the IP Connection, Bricks and Bricklets as
+well as the examples from this ZIP file can be found at
 
  http://www.tinkerforge.com/en/doc/Software/API_Bindings_Perl.html#api-documentation-and-examples

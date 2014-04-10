@@ -1,3 +1,6 @@
+Tinkerforge Python Bindings
+===========================
+
 This ZIP contains a Python egg with the bindings for all Tinkerforge Bricks and
 Bricklets (tinkerforge.egg), the source of the egg (in source/) and all available
 Python examples (in examples/).
@@ -29,6 +32,10 @@ we have to remove the tinkerforge package from the examples, i.e. instead of
 "from ip_connection" and "from brick_stepper". After that, the example can be
 executed again.
 
-Documentation for the API can be found at
+API Documentation and Examples
+------------------------------
+
+Links to the API documentation for the IP Connection, Bricks and Bricklets as
+well as the examples from this ZIP file can be found at
 
  http://www.tinkerforge.com/en/doc/Software/API_Bindings_Python.html#api-documentation-and-examples

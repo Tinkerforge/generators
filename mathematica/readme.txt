@@ -1,3 +1,6 @@
+Tinkerforge Mathematica Bindings
+================================
+
 The Mathematica bindings consist of a .NET library (.dll) for all Tinkerforge
 Bricks and Bricklets (Tinkerforge.dll), the C# source of the library
 (in source/) and all available Mathematica examples (in examples/).
@@ -20,6 +23,10 @@ the LoadNETAssembly[] line to make Mathematica find the Tinkerforge.dll:
 Replace the NotebookDirectory[]<>"../.." parameter with an absolute path
 to the folder that contains the Tinkerforge.dll.
 
-Documentation for the API can be found at
+API Documentation and Examples
+------------------------------
+
+Links to the API documentation for the IP Connection, Bricks and Bricklets as
+well as the examples from this ZIP file can be found at
 
  http://www.tinkerforge.com/en/doc/Software/API_Bindings_Mathematica.html#api-documentation-and-examples

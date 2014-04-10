@@ -1,3 +1,6 @@
+Tinkerforge PHP Bindings
+========================
+
 This ZIP contains a PEAR package with the bindings for all Tinkerforge Bricks
 and Bricklets (Tinkerforge.tgz), the source of the PEAR package (in source/)
 and all available PHP examples (in examples/).
@@ -29,6 +32,10 @@ examples, i.e. instead of "require_once('Tinkerforge/IPConnection.php');" we
 use "require_once('IPConnection.php');". After that, the example can be executed
 again.
 
-Documentation for the API can be found at
+API Documentation and Examples
+------------------------------
+
+Links to the API documentation for the IP Connection, Bricks and Bricklets as
+well as the examples from this ZIP file can be found at
 
  http://www.tinkerforge.com/en/doc/Software/API_Bindings_PHP.html#api-documentation-and-examples

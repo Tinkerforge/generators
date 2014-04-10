@@ -1,3 +1,6 @@
+Tinkerforge LabVIEW Bindings
+============================
+
 The LabVIEW bindings consist of a .NET library (.dll) for all Tinkerforge
 Bricks and Bricklets (Tinkerforge.dll), the C# source of the library
 (in source/) and all available LabVIEW examples (in examples/). The examples
@@ -20,6 +23,10 @@ As an example we will run the Stepper Brick configuration example. To do this
 open examples/Brick/Stepper/Example Configuration.vi in LabVIEW, change the
 UID to the one of your Stepper Brick and run it.
 
-Documentation for the API can be found at
+API Documentation and Examples
+------------------------------
+
+Links to the API documentation for the IP Connection, Bricks and Bricklets as
+well as the examples from this ZIP file can be found at
 
  http://www.tinkerforge.com/en/doc/Software/API_Bindings_LabVIEW.html#api-documentation-and-examples

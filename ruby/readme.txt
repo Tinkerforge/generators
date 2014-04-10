@@ -1,3 +1,6 @@
+Tinkerforge Ruby Bindings
+=========================
+
 This ZIP contains a Ruby GEM with the bindings for all Tinkerforge Bricks and
 Bricklets (tinkerforge.gem), the source of the GEM (in source/) and all available
 Ruby examples (in examples/).
@@ -35,6 +38,10 @@ we have to remove the tinkerforge package from the examples, i.e. instead of
 we use "require 'ip_connection'" and "require 'brick_stepper'". After that,
 the example can be executed again.
 
-Documentation for the API can be found at
+API Documentation and Examples
+------------------------------
+
+Links to the API documentation for the IP Connection, Bricks and Bricklets as
+well as the examples from this ZIP file can be found at
 
  http://www.tinkerforge.com/en/doc/Software/API_Bindings_Ruby.html#api-documentation-and-examples

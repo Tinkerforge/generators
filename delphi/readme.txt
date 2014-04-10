@@ -1,3 +1,6 @@
+Tinkerforge Delphi Bindings
+===========================
+
 This ZIP contains the Delphi bindings for all Tinkerforge Bricks and Bricklets
 (in bindings/) and all available Delphi examples (in examples/).
 
@@ -59,6 +62,10 @@ ExampleConfiguration.dpr then click:
 
 Now we are ready to go again!
 
-Documentation for the API can be found at
+API Documentation and Examples
+------------------------------
+
+Links to the API documentation for the IP Connection, Bricks and Bricklets as
+well as the examples from this ZIP file can be found at
 
  http://www.tinkerforge.com/en/doc/Software/API_Bindings_Delphi.html#api-documentation-and-examples

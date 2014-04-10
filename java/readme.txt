@@ -1,3 +1,6 @@
+Tinkerforge Java Bindings
+=========================
+
 This ZIP contains a Java library (.jar) for all Tinkerforge Bricks and Bricklets
 (Tinkerforge.jar), the source of the library (in source/) and all available Java
 examples (in examples/).
@@ -28,6 +31,10 @@ and run it with the following parameters (1. Windows and 2. Linux/Mac OS X)
 Or, alternatively add the JAR and the Example in an Java development environment
 of your choice (such as Eclipse or NetBeans).
 
-Documentation for the API can be found at
+API Documentation and Examples
+------------------------------
+
+Links to the API documentation for the IP Connection, Bricks and Bricklets as
+well as the examples from this ZIP file can be found at
 
  http://www.tinkerforge.com/en/doc/Software/API_Bindings_Java.html#api-documentation-and-examples

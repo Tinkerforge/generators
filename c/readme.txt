@@ -1,3 +1,6 @@
+Tinkerforge C/C++ Bindings
+==========================
+
 This ZIP contains the C/C++ bindings for all Tinkerforge Bricks and Bricklets
 (in bindings/) and all available C/C++ examples (in examples/).
 
@@ -76,6 +79,10 @@ The Visual Studio compiler can also be used from the command line:
 
  cl.exe /I. brick_stepper.cpp ip_connection.cpp example_configuration.cpp /link /out:example_configuration.exe ws2_32.lib advapi32.lib
 
-Documentation for the API can be found at
+API Documentation and Examples
+------------------------------
+
+Links to the API documentation for the IP Connection, Bricks and Bricklets as
+well as the examples from this ZIP file can be found at
 
  http://www.tinkerforge.com/en/doc/Software/API_Bindings_C.html#api-documentation-and-examples

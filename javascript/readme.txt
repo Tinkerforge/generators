@@ -1,3 +1,6 @@
+Tinkerforge JavaScript Bindings
+===============================
+
 This ZIP contains the Node.js NPM package (tinkerforge.tgz) and the WebSocket
 based browser version (in browser/) of the JavaScript bindings for all Tinkerforge
 Bricks and Bricklets. The ZIP file also contains the source of the Node.js
@@ -46,6 +49,10 @@ JavaScript source file from browser/source/Tinkerforge.js and the HTML file
 of the example that you want to try in the same directory and open the HTML
 file with a browser.
 
-Documentation for the API can be found at
+API Documentation and Examples
+------------------------------
+
+Links to the API documentation for the IP Connection, Bricks and Bricklets as
+well as the examples from this ZIP file can be found at
 
  http://www.tinkerforge.com/en/doc/Software/API_Bindings_JavaScript.html#api-documentation-and-examples

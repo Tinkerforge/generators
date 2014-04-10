@@ -1,3 +1,6 @@
+Tinkerforge C# Bindings
+=======================
+
 This ZIP contains a C# library (.dll) for all Tinkerforge Bricks and Bricklets
 (Tinkerforge.dll), the source of the library (in source/) and all available C#
 examples (in examples/).
@@ -21,6 +24,10 @@ In this folder we can now call the C# compiler with the following parameters
 Or, alternatively add the DLL and the Example in an C# development environment
 of your choice (such as Visual Studio or Mono Develop).
 
-Documentation for the API can be found at
+API Documentation and Examples
+------------------------------
+
+Links to the API documentation for the IP Connection, Bricks and Bricklets as
+well as the examples from this ZIP file can be found at
 
  http://www.tinkerforge.com/en/doc/Software/API_Bindings_CSharp.html#api-documentation-and-examples
