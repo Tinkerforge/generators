@@ -101,11 +101,13 @@ class MATLABZipGenerator(common.Generator):
                     args = ['/usr/bin/javac ' +
                             octave_jar_path +
                             '-Xlint ' +
+                            '-source 1.5 ' +
                             '-target 1.5 ' +
                             jar_root + '/source/com/tinkerforge/*.java']
                 else:
                     args = ['/usr/bin/javac ' +
                             '-Xlint ' +
+                            '-source 1.5 ' +
                             '-target 1.5 ' +
                             jar_root + '/source/com/tinkerforge/*.java']
                 if subprocess.call(args, shell=True) != 0:

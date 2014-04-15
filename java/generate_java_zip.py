@@ -91,6 +91,7 @@ class JavaZipGenerator(common.Generator):
         with common.ChangedDirectory('/tmp/generator'):
             args = ['/usr/bin/javac ' +
                     '-Xlint ' +
+                    '-source 1.5 ' +
                     '-target 1.5 ' +
                     '/tmp/generator/jar/source/com/tinkerforge/*.java']
             if subprocess.call(args, shell=True) != 0:
