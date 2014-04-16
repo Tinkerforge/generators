@@ -44,7 +44,7 @@ import java.nio.ByteOrder;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.octave.Octave;
+import org.octave.OctaveReference;
 """
         else:
             include = """{0}
@@ -105,6 +105,10 @@ public class {0} extends Device {{
             assignments = []
             for element in packet.get_elements():
                 typ = element.get_java_type()
+
+                if self.get_generator().is_octave() and typ == 'char':
+                    typ = 'String'
+
                 ele_name = element.get_headless_camel_case_name()
                 if element.get_cardinality() > 1 and element.get_type() != 'string':
                     arr = '[]'
@@ -193,7 +197,7 @@ public class {0} extends Device {{
             name = packet.get_camel_case_name()
             name_lower = packet.get_headless_camel_case_name()
 
-            if self.get_generator().is_matlab():
+            if self.get_generator().is_matlab() or self.get_generator().is_octave():
                 parameter = name + 'CallbackData data'
             else:
                 parameter = packet.get_java_parameter_list()
@@ -260,7 +264,7 @@ public class {0} extends Device {{
 
             device_param = ''
 
-            if self.get_generator().is_matlab():
+            if self.get_generator().is_matlab() or self.get_generator().is_octave():
                 if len(parameter) > 0:
                     parameter = ', ' + parameter
                 parameter = 'new {0}CallbackData(device{1})'.format(name, parameter)
@@ -274,8 +278,8 @@ public class {0} extends Device {{
         cb = """
 \t\tcallbacks[CALLBACK_{0}] = new IPConnection.DeviceCallbackListener() {{
 \t\t\tpublic void callback({5}byte[] data) {{{1}
-\t\t\t\tfor(String listener: listener{2}) {{
-\t\t\t\t\tOctave.call(listener, new Object[]{{{4}}}, new Object[]{{}});
+\t\t\t\tfor(OctaveReference listener: listener{2}) {{
+\t\t\t\t\tlistener.invoke(new Object[]{{{4}}});
 \t\t\t\t}}
 \t\t\t}}
 \t\t}};
@@ -306,7 +310,7 @@ public class {0} extends Device {{
 
             device_param = ''
 
-            if self.get_generator().is_matlab():
+            if self.get_generator().is_matlab() or self.get_generator().is_octave():
                 if len(parameter) > 0:
                     parameter = ', ' + parameter
                 parameter = 'new {0}CallbackData(device{1})'.format(name, parameter)
@@ -351,14 +355,14 @@ public class {0} extends Device {{
 \t/**
 \t * Adds a {0} listener.
 \t */
-\tpublic void add{0}Listener(String listener) {{
+\tpublic void add{0}Callback(OctaveReference listener) {{
 \t\tlistener{0}.add(listener);
 \t}}
 
 \t/**
 \t * Removes a {0} listener.
 \t */
-\tpublic void remove{0}Listener(String listener) {{
+\tpublic void remove{0}Callback(OctaveReference listener) {{
 \t\tlistener{0}.remove(listener);
 \t}}
 """
@@ -414,7 +418,7 @@ public class {0} extends Device {{
 
     def get_octave_listener_lists(self):
         llists = '\n'
-        llist = '\tprivate List<String> listener{0} = new CopyOnWriteArrayList<String>();\n'
+        llist = '\tprivate List<OctaveReference> listener{0} = new CopyOnWriteArrayList<OctaveReference>();\n'
         for packet in self.get_packets('callback'):
             name = packet.get_camel_case_name()
             llists += llist.format(name)
@@ -551,7 +555,7 @@ public class {0} extends Device {{
         else:
             source += self.get_java_listener_lists()
 
-        if self.get_generator().is_matlab():
+        if self.get_generator().is_matlab() or self.get_generator().is_octave():
             source += self.get_matlab_callback_data_objects()
 
         source += self.get_java_return_objects()

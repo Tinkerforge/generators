@@ -4,13 +4,11 @@ function octave_example_enumerate
     HOST = "localhost";
     PORT = 4223;
 
-    global ipcon;
     ipcon = java_new("com.tinkerforge.IPConnection"); % Create IP connection
-
     ipcon.connect(HOST, PORT); % Connect to brickd
 
     % Register Enumerate Callback
-    ipcon.addEnumerateListener("cb_enumerate");
+    ipcon.addEnumerateCallback(@cb_enumerate);
 
     % Trigger Enumerate
     ipcon.enumerate();
@@ -20,24 +18,28 @@ function octave_example_enumerate
 end
 
 % Print incoming enumeration
-function cb_enumerate(uid, connected_uid, position, hardware_version,
-                      firmware_version, device_identifier, enumeration_type)
-    global ipcon;
+function cb_enumerate(e)
+    ipcon = e.getSource();
 
-    fprintf("UID: %s\n", uid);
-    fprintf("Enumeration Type: %s\n", enumeration_type.toString());
+    fprintf("UID: %s\n", e.uid);
+    fprintf("Enumeration Type: %s\n", e.enumerationType.toString());
 
-    if strcmp(enumeration_type.toString(), ipcon.ENUMERATION_TYPE_DISCONNECTED.toString())
+    if strcmp(e.enumerationType.toString(), ipcon.ENUMERATION_TYPE_DISCONNECTED.toString())
         fprintf("\n");
         return;
     end
 
-    fprintf("Connected UID: %s\n", connected_uid);
-    fprintf("Position: %s\n", position.toString());
-    fprintf("Hardware Version: %s.%s.%s\n",hardware_version(1).toString(), ...
-            hardware_version(2).toString(), hardware_version(3).toString());
-    fprintf("Firmware Version: %s.%s.%s\n",firmware_version(1).toString(), ...
-            firmware_version(2).toString(), firmware_version(3).toString());
-    fprintf("Device Identifier: %g\n", device_identifier);
+    hardwareVersion = e.hardwareVersion;
+    firmwareVersion = e.firmwareVersion;
+
+    fprintf("Connected UID: %s\n", e.connectedUid);
+    fprintf("Position: %s\n", e.position.toString());
+    fprintf("Hardware Version: %s.%s.%s\n", hardwareVersion(1).toString(), ...
+                                            hardwareVersion(2).toString(), ...
+                                            hardwareVersion(3).toString());
+    fprintf("Firmware Version: %s.%s.%s\n", firmwareVersion(1).toString(), ...
+                                            firmwareVersion(2).toString(), ...
+                                            firmwareVersion(3).toString());
+    fprintf("Device Identifier: %g\n", e.deviceIdentifier);
     fprintf("\n");
 end

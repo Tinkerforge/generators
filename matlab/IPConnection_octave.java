@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+ * Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
  * with or without modification, are permitted. See the Creative
@@ -10,26 +11,66 @@ package com.tinkerforge;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import org.octave.Octave;
+import org.octave.OctaveReference;
 
 public class IPConnection extends IPConnectionBase {
-	List<String> listenerEnumerate = new CopyOnWriteArrayList<String>();
-	List<String> listenerConnected = new CopyOnWriteArrayList<String>();
-	List<String> listenerDisconnected = new CopyOnWriteArrayList<String>();
+	List<OctaveReference> listenerEnumerate = new CopyOnWriteArrayList<OctaveReference>();
+	List<OctaveReference> listenerConnected = new CopyOnWriteArrayList<OctaveReference>();
+	List<OctaveReference> listenerDisconnected = new CopyOnWriteArrayList<OctaveReference>();
 
 	interface DeviceCallbackListener {
-		public void callback(byte data[]);
+		public void callback(Device device, byte data[]);
 	}
-	public interface EnumerateListener extends TinkerforgeListener {
-		public void enumerate(String uid, String connectedUid, char position,
-		                      short[] hardwareVersion, short[] firmwareVersion,
-		                      int deviceIdentifier, short enumerationType);
+
+	public class EnumerateCallbackData extends java.util.EventObject {
+		private static final long serialVersionUID = 1L;
+
+		public String uid;
+		public String connectedUid;
+		public char position;
+		public short[] hardwareVersion;
+		public short[] firmwareVersion;
+		public int deviceIdentifier;
+		public short enumerationType;
+
+		public EnumerateCallbackData(IPConnection ipcon,
+		                             String uid, String connectedUid, char position,
+		                             short[] hardwareVersion, short[] firmwareVersion,
+		                             int deviceIdentifier, short enumerationType) {
+			super(ipcon);
+
+			this.uid = uid;
+			this.connectedUid = connectedUid;
+			this.position = position;
+			this.hardwareVersion = hardwareVersion;
+			this.firmwareVersion = firmwareVersion;
+			this.deviceIdentifier = deviceIdentifier;
+			this.enumerationType = enumerationType;
+		}
 	}
-	public interface ConnectedListener extends TinkerforgeListener {
-		public void connected(short connectReason);
+
+	public class ConnectedCallbackData extends java.util.EventObject {
+		private static final long serialVersionUID = 1L;
+
+		public short connectReason;
+
+		public ConnectedCallbackData(IPConnection ipcon, short connectReason) {
+			super(ipcon);
+
+			this.connectReason = connectReason;
+		}
 	}
-	public interface DisconnectedListener extends TinkerforgeListener {
-		public void disconnected(short disconnectReason);
+
+	public class DisconnectedCallbackData extends java.util.EventObject {
+		private static final long serialVersionUID = 1L;
+
+		public short disconnectReason;
+
+		public DisconnectedCallbackData(IPConnection ipcon, short disconnectReason) {
+			super(ipcon);
+
+			this.disconnectReason = disconnectReason;
+		}
 	}
 
 	/**
@@ -43,54 +84,52 @@ public class IPConnection extends IPConnectionBase {
 	/**
 	 * Adds a Enumerate listener.
 	 */
-	public void addEnumerateListener(String listener) {
+	public void addEnumerateCallback(OctaveReference listener) {
 		listenerEnumerate.add(listener);
 	}
 
 	/**
 	 * Removes a Enumerate listener.
 	 */
-	public void removeEnumerateListener(String listener) {
+	public void removeEnumerateCallback(OctaveReference listener) {
 		listenerEnumerate.remove(listener);
 	}
 
 	/**
 	 * Adds a Connected listener.
 	 */
-	public void addConnectedListener(String listener) {
+	public void addConnectedCallback(OctaveReference listener) {
 		listenerConnected.add(listener);
 	}
 
 	/**
 	 * Removes a Connected listener.
 	 */
-	public void removeConnectedListener(String listener) {
+	public void removeConnectedCallback(OctaveReference listener) {
 		listenerConnected.remove(listener);
 	}
 
 	/**
 	 * Adds a Disconnected listener.
 	 */
-	public void addDisconnectedListener(String listener) {
+	public void addDisconnectedCallback(OctaveReference listener) {
 		listenerDisconnected.add(listener);
 	}
 
 	/**
 	 * Removes a Disconnected listener.
 	 */
-	public void removeDisconnectedListener(String listener) {
+	public void removeDisconnectedCallback(OctaveReference listener) {
 		listenerDisconnected.remove(listener);
 	}
 
 	void callEnumerateListeners(String uid, String connectedUid, char position,
 	                            short[] hardwareVersion, short[] firmwareVersion,
 	                            int deviceIdentifier, short enumerationType) {
-		for(String listener: listenerEnumerate) {
-            Octave.call(listener,
-                        new Object[]{uid, connectedUid, position,
-                                     hardwareVersion, firmwareVersion,
-                                     deviceIdentifier, enumerationType},
-                        new Object[]{});
+		for(OctaveReference listener: listenerEnumerate) {
+			listener.invoke(new Object[]{new EnumerateCallbackData(this, uid, connectedUid, position,
+			                                                       hardwareVersion, firmwareVersion,
+			                                                       deviceIdentifier, enumerationType)});
 		}
 	}
 
@@ -99,20 +138,20 @@ public class IPConnection extends IPConnectionBase {
 	}
 
 	void callConnectedListeners(short connectReason) {
-		for(String listener: listenerConnected) {
-			Octave.call(listener, new Object[]{connectReason}, new Object[]{});
+		for(OctaveReference listener: listenerConnected) {
+			listener.invoke(new Object[]{new ConnectedCallbackData(this, connectReason)});
 		}
 	}
 
 	void callDisconnectedListeners(short disconnectReason) {
-		for(String listener: listenerDisconnected) {
-            Octave.call(listener, new Object[]{disconnectReason}, new Object[]{});
+		for(OctaveReference listener: listenerDisconnected) {
+			listener.invoke(new Object[]{new DisconnectedCallbackData(this, disconnectReason)});
 		}
 	}
 
 	void callDeviceListener(Device device, byte functionID, byte[] data) {
 		if(device.callbacks[functionID] != null) {
-			device.callbacks[functionID].callback(data);
+			device.callbacks[functionID].callback(device, data);
 		}
 	}
 }
