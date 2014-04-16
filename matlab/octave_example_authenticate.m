@@ -28,17 +28,17 @@ function cb_connected(connect_reason)
     global ipcon;
 
     if strcmp(connect_reason.toString(), ipcon.CONNECT_REASON_REQUEST.toString())
-        fprintf('Connected by request\n');
+        fprintf("Connected by request\n");
     elseif strcmp(connect_reason.toString(), ipcon.CONNECT_REASON_AUTO_RECONNECT.toString())
-        fprintf('Auto-Reconnect\n');
+        fprintf("Auto-Reconnect\n");
     end
 
     % Authenticate first...
     try
         ipcon.authenticate(SECRET);
-        fprintf('Authentication succeeded\n');
+        fprintf("Authentication succeeded\n");
     catch e
-        fprintf('Could not authenticate\n');
+        fprintf("Could not authenticate\n");
         return
     end
 
