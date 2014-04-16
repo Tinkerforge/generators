@@ -454,6 +454,17 @@ class JavaScriptDocGenerator(common.DocGenerator):
     def get_element_class(self):
         return javascript_common.JavaScriptElement
 
+    def compare_examples(self, example1, example2):
+        ext1 = os.path.splitext(example1[1])[1]
+        ext2 = os.path.splitext(example2[1])[1]
+
+        if ext1 == ext2:
+            return common.DocGenerator.compare_examples(self, example1, example2)
+        elif ext1 == '.js':
+            return -1
+        else:
+            return 1
+
     def generate(self, device):
         rst = open(device.get_doc_rst_path(), 'wb')
         rst.write(device.get_javascript_doc())

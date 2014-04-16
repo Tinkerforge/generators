@@ -376,12 +376,20 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
     copy_examples(copy_files, device.get_generator().get_bindings_root_directory())
     return examples
 
-def find_examples(examples_directory, filename_regex):
+def default_example_compare(i, j):
+    c = cmp(i[2], j[2]) # lines
+
+    if c != 0:
+        return c
+
+    return cmp(i[0], j[0]) # filename
+
+def find_examples(examples_directory, filename_regex, compare_examples=default_example_compare):
     compiled_filename_regex = re.compile(filename_regex)
     examples = []
 
-    try:
-        for example_filename in os.listdir(examples_directory):
+    if os.path.isdir(examples_directory):
+        for example_filename in sorted(os.listdir(examples_directory)):
             if compiled_filename_regex.match(example_filename) is not None:
                 example_path = os.path.join(examples_directory, example_filename)
                 lines = 0
@@ -395,9 +403,7 @@ def find_examples(examples_directory, filename_regex):
 
                 examples.append((example_filename, example_path, lines))
 
-        examples.sort(lambda i, j: cmp(i[2], j[2]))
-    except:
-        return []
+        examples.sort(compare_examples)
 
     return examples
 
@@ -407,7 +413,7 @@ def find_device_examples(device, filename_regex):
     device_git_name = '{0}-{1}'.format(device.get_underscore_name(), device.get_category().lower()).replace('_', '-')
     examples_directory = os.path.join(root_directory, device_git_name, 'software', 'examples', bindings_name)
 
-    return find_examples(examples_directory, filename_regex)
+    return find_examples(examples_directory, filename_regex, device.get_generator().compare_examples)
 
 def copy_examples(copy_files, path):
     doc_path = '{0}/doc/{1}'.format(path, lang)
@@ -1252,6 +1258,9 @@ class Generator:
     def is_doc(self):
         return False
 
+    def compare_examples(self, example1, example2):
+        return cmp(example1[2], example2[2])
+
     def prepare(self):
         pass
 
@@ -1291,7 +1300,7 @@ class DocGenerator(Generator):
         if example_regex is not None:
             print(' * ip_connection')
 
-            examples = find_examples(self.get_bindings_root_directory(), example_regex)
+            examples = find_examples(self.get_bindings_root_directory(), example_regex, self.compare_examples)
             copy_files = []
 
             for example in examples:

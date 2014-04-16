@@ -111,7 +111,7 @@ class JavaScriptZipGenerator(common.Generator):
         # Make Tinkerforge.js for browser with browserify
         with common.ChangedDirectory('/tmp/generator/npm/nodejs/source/Tinkerforge/'):
             browserify_args = ['browserify']
-            browserify_args.extend(os.listdir('/tmp/generator/npm/nodejs/source/Tinkerforge/'))
+            browserify_args.extend(sorted(os.listdir('/tmp/generator/npm/nodejs/source/Tinkerforge/')))
             browserify_args.append('-o')
             browserify_args.append('/tmp/generator/npm/browser/source/Tinkerforge.js')
 
