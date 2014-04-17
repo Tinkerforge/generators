@@ -27,6 +27,7 @@ import sys
 import os
 import shutil
 import subprocess
+import glob
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -61,7 +62,8 @@ class MATLABZipGenerator(common.Generator):
                 shutil.copy(example[1], dest)
 
     def finish(self):
-        octave_jar_path = '-classpath /usr/share/octave/packages/java-1.2.8/octave.jar '
+        octave_jar_path_urls = glob.glob('/usr/share/octave/packages/java-*/octave.jar')
+        octave_jar_path = '-classpath {0} '.format(octave_jar_path_urls[0])
         root = self.get_bindings_root_directory()
 
         for flavor in ['matlab', 'octave']:
