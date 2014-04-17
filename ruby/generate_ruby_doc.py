@@ -308,7 +308,7 @@ Konstanten
     def get_ruby_doc(self):
         title = { 'en': 'Ruby bindings', 'de': 'Ruby Bindings' }
 
-        doc  = common.make_rst_header(self, 'Ruby')
+        doc  = common.make_rst_header(self, self.get_generator().get_bindings_display_name())
         doc += common.make_rst_summary(self, common.select_lang(title))
         doc += self.get_ruby_examples()
         doc += self.get_ruby_api()
@@ -403,7 +403,10 @@ class RubyDocGenerator(common.DocGenerator):
     def get_bindings_name(self):
         return 'ruby'
 
-    def get_doc_rst_name(self):
+    def get_bindings_display_name(self):
+        return 'Ruby'
+
+    def get_doc_rst_filename_part(self):
         return 'Ruby'
 
     def get_doc_example_regex(self):

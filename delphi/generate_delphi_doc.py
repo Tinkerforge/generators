@@ -289,9 +289,9 @@ Konstanten
         return common.select_lang(api).format(ref, self.get_api_doc(), api_str)
 
     def get_delphi_doc(self):
-        title = { 'en': 'Delphi bindings', 'de': 'Delphi Bindings' }
+        title = { 'en': 'Delphi/Lazarus bindings', 'de': 'Delphi/Lazarus Bindings' }
 
-        doc  = common.make_rst_header(self, 'Delphi')
+        doc  = common.make_rst_header(self, self.get_generator().get_bindings_display_name())
         doc += common.make_rst_summary(self, common.select_lang(title))
         doc += self.get_delphi_examples()
         doc += self.get_delphi_api()
@@ -334,7 +334,10 @@ class DelphiDocGenerator(common.DocGenerator):
     def get_bindings_name(self):
         return 'delphi'
 
-    def get_doc_rst_name(self):
+    def get_bindings_display_name(self):
+        return 'Delphi/Lazarus'
+
+    def get_doc_rst_filename_part(self):
         return 'Delphi'
 
     def get_doc_example_regex(self):

@@ -358,7 +358,7 @@ Konstanten
     def get_matlab_doc(self):
         title = { 'en': 'MATLAB bindings', 'de': 'MATLAB Bindings' }
 
-        doc  = common.make_rst_header(self, 'MATLAB')
+        doc  = common.make_rst_header(self, self.get_generator().get_bindings_display_name())
         doc += common.make_rst_summary(self, common.select_lang(title))
         doc += self.get_matlab_examples()
         doc += self.get_matlab_api()
@@ -445,7 +445,10 @@ class MATLABDocGenerator(common.DocGenerator):
     def get_bindings_name(self):
         return 'matlab'
 
-    def get_doc_rst_name(self):
+    def get_bindings_display_name(self):
+        return 'MATLAB/Octave'
+
+    def get_doc_rst_filename_part(self):
         return 'MATLAB'
 
     def get_doc_example_regex(self):

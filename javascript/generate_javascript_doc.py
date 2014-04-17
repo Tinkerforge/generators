@@ -377,7 +377,7 @@ Konstanten
     def get_javascript_doc(self):
         title = { 'en': 'JavaScript bindings', 'de': 'JavaScript Bindings' }
 
-        doc  = common.make_rst_header(self, 'JavaScript')
+        doc  = common.make_rst_header(self, self.get_generator().get_bindings_display_name())
         doc += common.make_rst_summary(self, common.select_lang(title))
         doc += self.get_javascript_examples()
         doc += self.get_javascript_api()
@@ -439,7 +439,10 @@ class JavaScriptDocGenerator(common.DocGenerator):
     def get_bindings_name(self):
         return 'javascript'
 
-    def get_doc_rst_name(self):
+    def get_bindings_display_name(self):
+        return 'JavaScript'
+
+    def get_doc_rst_filename_part(self):
         return 'JavaScript'
 
     def get_doc_example_regex(self):

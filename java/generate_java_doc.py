@@ -358,7 +358,7 @@ Konstanten
     def get_java_doc(self):
         title = { 'en': 'Java bindings', 'de': 'Java Bindings' }
 
-        doc  = common.make_rst_header(self, 'Java')
+        doc  = common.make_rst_header(self, self.get_generator().get_bindings_display_name())
         doc += common.make_rst_summary(self, common.select_lang(title))
         doc += self.get_java_examples()
         doc += self.get_java_api()
@@ -445,7 +445,10 @@ class JavaDocGenerator(common.DocGenerator):
     def get_bindings_name(self):
         return 'java'
 
-    def get_doc_rst_name(self):
+    def get_bindings_display_name(self):
+        return 'Java'
+
+    def get_doc_rst_filename_part(self):
         return 'Java'
 
     def get_doc_example_regex(self):

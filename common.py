@@ -162,11 +162,11 @@ def select_lang(d):
     else:
         return "Missing '{0}' documentation".format(lang)
 
-def make_rst_header(device, title, has_device_identifier_constant=True):
+def make_rst_header(device, bindings_display_name, has_device_identifier_constant=True):
     ref_name = device.get_generator().get_bindings_name()
     category = device.get_category()
     date = datetime.datetime.now().strftime("%Y-%m-%d")
-    full_title = '{0} - {1} {2}'.format(title, device.get_display_name(), category)
+    full_title = '{0} - {1} {2}'.format(bindings_display_name, device.get_display_name(), category)
     full_title_underline = '='*len(full_title)
     breadcrumbs = select_lang(breadcrumbs_str).format(category.lower(), category, full_title)
     device_identifier_constant = {'en': '.. |device_identifier_constant| replace:: There is also a :ref:`constant <{0}_{1}_{2}_constants>` for the device identifier of this {3}.\n',
@@ -331,7 +331,7 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
     examples = select_lang(ex).format(ref)
     files = find_device_examples(device, filename_regex)
     copy_files = []
-    include_name = device.get_generator().get_doc_rst_name()
+    include_name = device.get_generator().get_doc_rst_filename_part()
 
     for f in files:
         if is_picture:
@@ -1178,7 +1178,7 @@ class Device:
 
         filename = '{0}_{1}_{2}.rst'.format(self.get_camel_case_name(),
                                             self.get_category(),
-                                            self.get_generator().get_doc_rst_name())
+                                            self.get_generator().get_doc_rst_filename_part())
 
         return os.path.join(self.get_generator().get_bindings_root_directory(),
                             'doc',
@@ -1234,6 +1234,9 @@ class Generator:
     def get_bindings_name(self):
         raise Exception("get_bindings_name() not implemented")
 
+    def get_bindings_display_name(self):
+        raise Exception("get_bindings_display_name() not implemented")
+
     def get_device_class(self):
         return Device
 
@@ -1274,11 +1277,11 @@ class DocGenerator(Generator):
     def __init__(self, *args, **kwargs):
         Generator.__init__(self, *args, **kwargs)
 
-        if self.get_bindings_name() != self.get_doc_rst_name().lower():
-            raise Exception("bindings name '{0}' and doc rst name '{1}' do not match".format(self.get_bindings_name(), self.get_doc_rst_name()))
+        if self.get_bindings_name() != self.get_doc_rst_filename_part().lower():
+            raise Exception("bindings name '{0}' and doc rst name '{1}' do not match".format(self.get_bindings_name(), self.get_doc_rst_filename_part()))
 
-    def get_doc_rst_name(self):
-        raise Exception("get_doc_rst_name() not implemented")
+    def get_doc_rst_filename_part(self):
+        raise Exception("get_doc_rst_filename_part() not implemented")
 
     def get_doc_example_regex(self):
         raise Exception("get_doc_example_regex() not implemented")
@@ -1304,7 +1307,7 @@ class DocGenerator(Generator):
             copy_files = []
 
             for example in examples:
-                include = 'IPConnection_{0}_{1}'.format(self.get_doc_rst_name(), example[0].replace(' ', '_'))
+                include = 'IPConnection_{0}_{1}'.format(self.get_doc_rst_filename_part(), example[0].replace(' ', '_'))
                 copy_files.append((example[1], include))
 
             copy_examples(copy_files, self.get_bindings_root_directory())

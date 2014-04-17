@@ -148,7 +148,8 @@ Eine allgemeine Beschreibung der TCP/IP Protokollstruktur findet sich
     def get_tcpip_doc(self):
         title = { 'en': 'TCP/IP protocol', 'de': 'TCP/IP Protokoll' }
 
-        doc  = common.make_rst_header(self, 'TCP/IP', has_device_identifier_constant=False)
+        doc  = common.make_rst_header(self, self.get_generator().get_bindings_display_name(),
+                                      has_device_identifier_constant=False)
         doc += common.make_rst_summary(self, common.select_lang(title), is_programming_language=False)
         doc += self.get_tcpip_api()
 
@@ -241,7 +242,10 @@ class TCPIPDocGenerator(common.DocGenerator):
     def get_bindings_name(self):
         return 'tcpip'
 
-    def get_doc_rst_name(self):
+    def get_bindings_display_name(self):
+        return 'TCP/IP'
+
+    def get_doc_rst_filename_part(self):
         return 'TCPIP'
 
     def get_doc_example_regex(self):
