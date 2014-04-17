@@ -160,7 +160,7 @@ Listeners
 
 Listeners can be registered to receive
 time critical or recurring data from the device. The registration is done
-with "addListener" functions of the device object.
+with "add*Listener" functions of the device object.
 
 The parameter is a listener class object, for example:
 
@@ -174,7 +174,7 @@ The parameter is a listener class object, for example:
 
 The available listener classes with inherent methods to be overwritten
 are described below. It is possible to add several listeners and
-to remove them with the corresponding "removeListener" function.
+to remove them with the corresponding "remove*Listener" function.
 
 .. note::
  Using listeners for recurring events is *always* preferred
@@ -192,7 +192,7 @@ Listener
 
 Listener können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
-mit "addListener" Funktionen eines Geräteobjekts durchgeführt werden.
+mit "add*Listener" Funktionen eines Geräteobjekts durchgeführt werden.
 
 Der Parameter ist ein Listener Klassen Objekt, z.B.:
 
@@ -207,7 +207,7 @@ Der Parameter ist ein Listener Klassen Objekt, z.B.:
 Die verfügbaren Listener Klassen mit den Methoden welche überschrieben
 werden können werden unterhalb beschrieben. Es ist möglich mehrere
 Listener hinzuzufügen und auch mit einem korrespondierenden
-"removeListener" wieder zu entfernen.
+"remove*Listener" wieder zu entfernen.
 
 .. note::
  Listener für wiederkehrende Ereignisse zu verwenden ist
@@ -228,8 +228,8 @@ API
 Generally, every method of the Java bindings that returns a value can
 throw a ``TimeoutException``. This exception gets thrown if the
 device did not respond. If a cable based connection is used, it is
-unlikely that this exception gets thrown (Assuming nobody plugs the
-device out). However, if a wireless connection is used, timeouts will occur
+unlikely that this exception gets thrown (assuming nobody unplugs the
+device). However, if a wireless connection is used, timeouts will occur
 if the distance to the device gets too big.
 
 Beside the ``TimeoutException`` there is also a ``NotConnectedException`` that
@@ -269,7 +269,7 @@ kommunizieren, aber die IP Connection nicht verbunden ist.
 
 Da Java nicht mehrere Rückgabewerte unterstützt und eine Referenzrückgabe
 für elementare Type nicht möglich ist, werden kleine Klassen verwendet, die
-nur aus Member Variablen bestehen. Die Member Variablen des zurückgegebenen
+nur aus Member-Variablen bestehen. Die Member-Variablen des zurückgegebenen
 Objektes werden in der jeweiligen Methodenbeschreibung erläutert.
 
 Das Package für alle Brick/Bricklet Bindings und die IP Connection ist
@@ -414,7 +414,7 @@ class JavaDocPacket(java_common.JavaPacket):
  The returned object has the public member variables {0}.
 """,
         'de': """
- Das zurückgegebene Objekt enthält die Public Member Variablen {0}.
+ Das zurückgegebene Objekt enthält die Public-Member-Variablen {0}.
 """
         }
 
