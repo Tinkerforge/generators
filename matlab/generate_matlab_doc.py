@@ -3,7 +3,7 @@
 
 """
 MATLAB Documentation Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_matlab_doc.py: Generator for MATLAB documentation
@@ -38,10 +38,25 @@ import matlab_common
 class MATLABDocDevice(matlab_common.MATLABDevice):
     def get_matlab_examples(self):
         def title_from_filename(filename):
-            filename = filename.replace('example_', '').replace('.m', '')
-            return common.underscore_to_space(filename)
+            title = filename.replace('matlab_example_', '').replace('octave_example_', '').replace('.m', '')
 
-        return common.make_rst_examples(title_from_filename, self)
+            if filename.startswith('matlab_'):
+                return common.underscore_to_space(title) + ' (MATLAB)'
+            elif filename.startswith('octave_'):
+                return common.underscore_to_space(title) + ' (Octave)'
+            else:
+                raise ValueError('Invalid filename ' + filename)
+
+        def language_from_filename(filename):
+            if filename.startswith('matlab_'):
+                return 'matlab'
+            elif filename.startswith('octave_'):
+                return 'octave_fixed'
+            else:
+                raise ValueError('Invalid filename ' + filename)
+
+        return common.make_rst_examples(title_from_filename, self,
+                                        language_from_filename=language_from_filename)
 
     def get_matlab_methods(self, typ):
         methods = ''
@@ -70,40 +85,55 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
     def get_matlab_callbacks(self):
         cb = {
         'en': """
-.. matlab:function:: public class {0}.{1}Listener()
+.. matlab:member:: public callback {0}.{1}Callback
 
- This listener can be added with the ``add{1}Listener()`` function.
- An added listener can be removed with the ``remove{1}Listener()`` function.
+{2}
 
- .. matlab:function:: public void {2}({3})
-  :noindex:
+{3}
 
-{4}
+ In MATLAB the ``set()`` function can be used to register a callback function
+ to this callback.
+
+ In Octave a callback function can be added to this callback using the
+ ``add{1}Callback()`` function. An added callback function can be removed with
+ the ``remove{1}Callback()`` function.
+
 """,
         'de': """
-.. matlab:function:: public class {0}.{1}Listener()
+.. matlab:member:: public callback {0}.{1}Callback
 
- Dieser Listener kann mit der Funktion ``add{1}Listener()`` hinzugefügt werde.
- Ein hinzugefügter Listener kann mit der Funktion ``remove{1}Listener()`` wieder
- entfernt werden.
+{2}
 
- .. matlab:function:: public void {2}({3})
-  :noindex:
+{3}
 
-{4}
+ In MATLAB kann die ``set()`` Function verwendet werden um diesem Callback eine
+ Callback-Function zuzuweisen.
+
+ In Octave kann diesem Callback mit ``add{1}Callback()`` eine Callback-Function
+ hinzugefügt werde. Eine hinzugefügter Callback-Function kann mit
+ ``remove{1}Callback()`` wieder entfernt werden.
+
 """
         }
 
         cbs = ''
         cls = self.get_matlab_class_name()
         for packet in self.get_packets('callback'):
-            desc = packet.get_matlab_formatted_doc(2)
-            params = packet.get_matlab_parameter_list()
+            desc = packet.get_matlab_formatted_doc(1)
+            params = []
+
+            for element in packet.get_elements('out'):
+                matlab_type = element.get_matlab_type()
+                name = element.get_headless_camel_case_name()
+
+                if element.get_cardinality() > 1 and element.get_type() != 'string':
+                    matlab_type += '[]'
+
+                params.append(' :param {0}: {1}'.format(name, matlab_type))
 
             cbs += common.select_lang(cb).format(cls,
                                                  packet.get_camel_case_name(),
-                                                 packet.get_headless_camel_case_name(),
-                                                 params,
+                                                 '\n'.join(params),
                                                  desc)
 
         return cbs
@@ -113,11 +143,21 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
         'en': """
 .. matlab:function:: class {3}{1}(String uid, IPConnection ipcon)
 
- Creates an object with the unique device ID ``uid``:
+ Creates an object with the unique device ID ``uid``.
+
+ In MATLAB:
 
  .. code-block:: matlab
 
-  {3}{1} {0} = new {3}{1}("YOUR_DEVICE_UID", ipcon);
+  import com.tinkerforge.{3}{1};
+
+  {0} = {3}{1}('YOUR_DEVICE_UID', ipcon);
+
+ In Octave:
+
+ .. code-block:: octave_fixed
+
+  {0} = java_new("com.tinkerforge.{3}{1}", "YOUR_DEVICE_UID", ipcon);
 
  This object can then be used after the IP Connection is connected
  (see examples :ref:`above <{4}_{2}_matlab_examples>`).
@@ -125,11 +165,21 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
         'de': """
 .. matlab:function:: class {3}{1}(String uid, IPConnection ipcon)
 
- Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``:
+ Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``.
+
+ In MATLAB:
 
  .. code-block:: matlab
 
-  {3}{1} {0} = new {3}{1}("YOUR_DEVICE_UID", ipcon);
+  import com.tinkerforge.{3}{1};
+
+  {0} = {3}{1}("YOUR_DEVICE_UID", ipcon);
+
+ In Octave:
+
+ .. code-block:: octave_fixed
+
+  {0} = java_new("com.tinkerforge.{3}{1}", "YOUR_DEVICE_UID", ipcon);
 
  Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
  (siehe Beispiele :ref:`oben <{4}_{2}_matlab_examples>`).
@@ -138,14 +188,14 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
 
         ccf_str = {
         'en': """
-Listener Configuration Functions
+Callback Configuration Functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 {0}
 """,
         'de': """
-Konfigurationsfunktionen für Listener
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Konfigurationsfunktionen für Callbacks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 {0}
 """
@@ -155,29 +205,44 @@ Konfigurationsfunktionen für Listener
         'en': """
 .. _{1}_{2}_matlab_callbacks:
 
-Listeners
+Callbacks
 ^^^^^^^^^
 
-Listeners can be registered to receive
-time critical or recurring data from the device. The registration is done
-with "addListener" functions of the device object.
-
-The parameter is a listener class object, for example:
+Callbacks can be registered to receive time critical or recurring data from
+the device. The registration is done with "set" function of MATLAB. The
+parameters consist of the IP Connection object, the callback name and the
+callback function. For example, it looks like this in MATLAB:
 
 .. code-block:: matlab
 
-    device.addExampleListener(new {3}{4}.ExampleListener() {{
-        public void property(int value) {{
-            System.out.println("Value: " + value);
-        }}
-    }});
+    function cb_example(e)
+        fprintf('Parameter: %s\\n', e.param);
+    end
 
-The available listener classes with inherent methods to be overwritten
-are described below. It is possible to add several listeners and
-to remove them with the corresponding "removeListener" function.
+    set(device, 'ExampleCallback', @(h, e) cb_example(e));
+
+Due to a difference in the Octave Java support the "set" function cannot be
+used in Octave. The registration is done with "add*Callback" functions of the
+device object. It looks like this in Octave:
+
+.. code-block:: octave_fixed
+
+    function cb_example(e)
+        fprintf("Parameter: %s\\n", e.param);
+    end
+
+    device.addExampleCallback(@cb_example);
+
+It is possible to add several callbacks and to remove them with the
+corresponding "remove*Callback" function.
+
+The parameters of the callback are passed to the callback function as fields of
+the structure ``e``, which is derived from the ``java.util.EventObject`` class.
+The available callback names with corresponding structure fields are described
+below.
 
 .. note::
- Using listeners for recurring events is *always* preferred
+ Using callbacks for recurring events is *always* preferred
  compared to using getters. It will use less USB bandwidth and the latency
  will be a lot better, since there is no round trip time.
 
@@ -187,30 +252,45 @@ to remove them with the corresponding "removeListener" function.
         'de': """
 .. _{1}_{2}_matlab_callbacks:
 
-Listener
-^^^^^^^^
+Callbacks
+^^^^^^^^^
 
-Listener können registriert werden um zeitkritische
-oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
-mit "addListener" Funktionen eines Geräteobjekts durchgeführt werden.
-
-Der Parameter ist ein Listener Klassen Objekt, z.B.:
+Callbacks können registriert werden um zeitkritische oder wiederkehrende
+Daten vom Gerät zu erhalten. Die Registrierung wird mit MATLABs "set"
+Funktion durchgeführt. Die Parameter sind ein Gerätobjekt, der Callback-Name
+und die Callback-Funktion. Hier ein Beispiel in MATLAB:
 
 .. code-block:: matlab
 
-    device.addExampleListener(new {3}{4}.ExampleListener() {{
-        public void property(int value) {{
-            System.out.println("Value: " + value);
-        }}
-    }});
+    function cb_example(e)
+        fprintf('Parameter: %s\\n', e.param);
+    end
 
-Die verfügbaren Listener Klassen mit den Methoden welche überschrieben
-werden können werden unterhalb beschrieben. Es ist möglich mehrere
-Listener hinzuzufügen und auch mit einem korrespondierenden
-"removeListener" wieder zu entfernen.
+    set(device, 'ExampleCallback', @(h, e) cb_example(e));
+
+Die Octave Java Unterstützung unterscheidet sich hier von MATLAB, die "set"
+Funktion kann hier nicht verwendet werden. Die Registrierung wird in Octave
+mit  "add*Callback" Funktionen des Gerätobjekts durchgeführt. Hier ein Beispiel
+in Octave:
+
+.. code-block:: octave_fixed
+
+    function cb_example(e)
+        fprintf("Parameter: %s\\n", e.param);
+    end
+
+    device.addExampleCallback(@cb_example);
+
+Es ist möglich mehrere Callback-Funktion hinzuzufügen und auch mit einem
+korrespondierenden "remove*Callback" wieder zu entfernen.
+
+Die Parameter des Callbacks werden der Callback-Funktion als Felder der
+Struktur ``e`` übergeben. Diese ist von der ``java.util.EventObject`` Klasse
+abgeleitete. Die verfügbaren Callback-Namen mit den entsprechenden
+Strukturfeldern werden unterhalb beschrieben.
 
 .. note::
- Listener für wiederkehrende Ereignisse zu verwenden ist
+ Callbacks für wiederkehrende Ereignisse zu verwenden ist
  *immer* zu bevorzugen gegenüber der Verwendung von Abfragen.
  Es wird weniger USB-Bandbreite benutzt und die Latenz ist
  erheblich geringer, da es keine Paketumlaufzeit gibt.
@@ -228,18 +308,18 @@ API
 Generally, every method of the MATLAB bindings that returns a value can
 throw a ``TimeoutException``. This exception gets thrown if the
 device did not respond. If a cable based connection is used, it is
-unlikely that this exception gets thrown (Assuming nobody plugs the
-device out). However, if a wireless connection is used, timeouts will occur
+unlikely that this exception gets thrown (assuming nobody unplugs the
+device). However, if a wireless connection is used, timeouts will occur
 if the distance to the device gets too big.
 
 Beside the ``TimeoutException`` there is also a ``NotConnectedException`` that
 is thrown if a method needs to communicate with the device while the
 IP Connection is not connected.
 
-Since MATLAB does not support multiple return values and return by reference
-is not possible for primitive types, we use small classes that
-only consist of member variables. The member variables of the returned objects
-are described in the corresponding method descriptions.
+Since the MATLAB bindings are based on Java and Java does not support multiple
+return values and return by reference is not possible for primitive types, we
+use small classes that only consist of member variables. The member variables
+of the returned objects are described in the corresponding method descriptions.
 
 The package for all Brick/Bricklet bindings and the IP Connection is
 ``com.tinkerforge.*``
@@ -267,10 +347,11 @@ Neben der ``TimeoutException`` kann auch noch eine ``NotConnectedException``
 geworfen werden, wenn versucht wird mit einem Brick oder Bricklet zu
 kommunizieren, aber die IP Connection nicht verbunden ist.
 
-Da MATLAB nicht mehrere Rückgabewerte unterstützt und eine Referenzrückgabe
-für elementare Type nicht möglich ist, werden kleine Klassen verwendet, die
-nur aus Member Variablen bestehen. Die Member Variablen des zurückgegebenen
-Objektes werden in der jeweiligen Methodenbeschreibung erläutert.
+Da die MATLAB Bindings auf Java basieren und Java nicht mehrere Rückgabewerte
+unterstützt und eine Referenzrückgabe für elementare Type nicht möglich ist,
+werden kleine Klassen verwendet, die nur aus Member-Variablen bestehen. Die
+Member-Variablen des zurückgegebenen Objektes werden in der jeweiligen
+Methodenbeschreibung erläutert.
 
 Das Package für alle Brick/Bricklet Bindings und die IP Connection ist
 ``com.tinkerforge.*``
@@ -295,8 +376,8 @@ Constants
  This constant is used to identify a {3} {4}.
 
  The :matlab:func:`getIdentity() <{4}{3}::getIdentity>` function and the
- :matlab:func:`EnumerateListener <IPConnection.EnumerateListener>`
- listener of the IP Connection have a ``deviceIdentifier`` parameter to specify
+ :matlab:member:`EnumerateCallback <IPConnection.EnumerateCallback>`
+ callback of the IP Connection have a ``deviceIdentifier`` parameter to specify
  the Brick's or Bricklet's type.
 """,
         'de' : """
@@ -310,8 +391,8 @@ Konstanten
  Diese Konstante wird verwendet um {2} {3} {4} zu identifizieren.
 
  Die :matlab:func:`getIdentity() <{4}{3}::getIdentity>` Funktion und der
- :matlab:func:`EnumerateListener <IPConnection.EnumerateListener>`
- Listener der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
+ :matlab:member:`EnumerateCallback <IPConnection.EnumerateCallback>`
+ Callback der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 """
         }
@@ -356,7 +437,7 @@ Konstanten
         return common.select_lang(api).format(ref, self.get_api_doc(), api_str)
 
     def get_matlab_doc(self):
-        title = { 'en': 'MATLAB bindings', 'de': 'MATLAB Bindings' }
+        title = { 'en': 'MATLAB/Octave bindings', 'de': 'MATLAB/Octave Bindings' }
 
         doc  = common.make_rst_header(self, self.get_generator().get_bindings_display_name())
         doc += common.make_rst_summary(self, common.select_lang(title))
@@ -368,7 +449,7 @@ Konstanten
 class MATLABDocPacket(matlab_common.MATLABPacket):
     def get_matlab_formatted_doc(self, shift_right):
         text = common.select_lang(self.get_doc()[1])
-        cb_link = ':matlab:func:`{1}Listener <{0}.{1}Listener>`'
+        cb_link = ':matlab:member:`{1}Callback <{0}.{1}Callback>`'
         fu_link = ':matlab:func:`{1}() <{0}::{1}>`'
 
         cls = self.get_device().get_matlab_class_name()
@@ -382,11 +463,6 @@ class MATLABDocPacket(matlab_common.MATLABPacket):
                 name_right = fu_link.format(cls, name)
 
             text = text.replace(name_false, name_right)
-
-        text = text.replace('Callback ', 'Listener ')
-        text = text.replace(' Callback', ' Listener')
-        text = text.replace('callback ', 'listener ')
-        text = text.replace(' callback', ' listener')
 
         def format_parameter(name):
             return '``{0}``'.format(name) # FIXME
@@ -414,7 +490,7 @@ class MATLABDocPacket(matlab_common.MATLABPacket):
  The returned object has the public member variables {0}.
 """,
         'de': """
- Das zurückgegebene Objekt enthält die Public Member Variablen {0}.
+ Das zurückgegebene Objekt enthält die Public-Member-Variablen {0}.
 """
         }
 
@@ -452,7 +528,7 @@ class MATLABDocGenerator(common.DocGenerator):
         return 'MATLAB'
 
     def get_doc_example_regex(self):
-        return '^example_.*\.m$'
+        return '^(matlab|octave)_example_.*\.m$'
 
     def get_device_class(self):
         return MATLABDocDevice
@@ -462,6 +538,17 @@ class MATLABDocGenerator(common.DocGenerator):
 
     def get_element_class(self):
         return matlab_common.MATLABElement
+
+    def compare_examples(self, example1, example2):
+        flavor1 = example1[1].split('_')[0]
+        flavor2 = example2[1].split('_')[0]
+
+        if flavor1 == flavor2:
+            return common.DocGenerator.compare_examples(self, example1, example2)
+        elif flavor1 == 'matlab':
+            return -1
+        else:
+            return 1
 
     def generate(self, device):
         rst = open(device.get_doc_rst_path(), 'wb')
