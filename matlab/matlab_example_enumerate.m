@@ -1,10 +1,11 @@
-function matlab_example_enumerate
+function matlab_example_enumerate()
     import com.tinkerforge.IPConnection;
 
     HOST = 'localhost';
     PORT = 4223;
 
     ipcon = IPConnection(); % Create IP connection
+
     ipcon.connect(HOST, PORT); % Connect to brickd
 
     % Register Enumerate Callback

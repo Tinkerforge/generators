@@ -1,7 +1,6 @@
-function octave_example_authenticate
+function octave_example_authenticate()
     more off;
 
-    global ipcon;
     global SECRET;
 
     HOST = "localhost";
@@ -11,10 +10,10 @@ function octave_example_authenticate
     ipcon = java_new("com.tinkerforge.IPConnection"); % Create IP connection
 
     % Register Connected Callback
-    ipcon.addConnectedListener("cb_connected");
+    ipcon.addConnectedCallback(@cb_connected);
 
     % Register Enumerate Callback
-    ipcon.addEnumerateListener("cb_enumerate");
+    ipcon.addEnumerateCallback(@cb_enumerate);
 
     ipcon.connect(HOST, PORT); % Connect to brickd
 
@@ -23,13 +22,14 @@ function octave_example_authenticate
 end
 
 % Authenticate each time the connection got (re-)established
-function cb_connected(connect_reason)
-    global SECRET;
-    global ipcon;
+function cb_connected(e)
+    ipcon = e.getSource();
 
-    if strcmp(connect_reason.toString(), ipcon.CONNECT_REASON_REQUEST.toString())
+    global SECRET;
+
+    if strcmp(e.connectReason.toString(), ipcon.CONNECT_REASON_REQUEST.toString())
         fprintf("Connected by request\n");
-    elseif strcmp(connect_reason.toString(), ipcon.CONNECT_REASON_AUTO_RECONNECT.toString())
+    elseif strcmp(e.connectReason.toString(), ipcon.CONNECT_REASON_AUTO_RECONNECT.toString())
         fprintf("Auto-Reconnect\n");
     end
 
@@ -37,7 +37,7 @@ function cb_connected(connect_reason)
     try
         ipcon.authenticate(SECRET);
         fprintf("Authentication succeeded\n");
-    catch e
+    catch ex
         fprintf("Could not authenticate\n");
         return
     end
@@ -47,7 +47,6 @@ function cb_connected(connect_reason)
 end
 
 % Print incoming enumeration
-function cb_enumerate(uid, connected_uid, position, hardware_version,
-                      firmware_version, device_identifier, enumeration_type)
-    fprintf("UID: %s, Enumeration Type: %s\n", uid, enumeration_type.toString());
+function cb_enumerate(e)
+    fprintf("UID: %s, Enumeration Type: %s\n", e.uid, e.enumerationType.toString());
 end

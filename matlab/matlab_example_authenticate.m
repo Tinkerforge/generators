@@ -1,8 +1,7 @@
-function matlab_example_authenticate
+function matlab_example_authenticate()
     import com.tinkerforge.IPConnection;
 
     global SECRET;
-    global ipcon;
 
     HOST = 'localhost';
     PORT = 4223;
@@ -11,12 +10,10 @@ function matlab_example_authenticate
     ipcon = IPConnection(); % Create IP connection
 
     % Register Connected Callback
-    set(ipcon, 'ConnectedCallback', @(h, e)cb_connected(e.connectReason));
+    set(ipcon, 'ConnectedCallback', @(h, e) cb_connected(e));
 
     % Register Enumerate Callback
-    set(ipcon, 'EnumerateCallback', @(h, e)cb_enumerate(e.uid, e.connectedUid, e.position, ...
-                                                        e.hardwareVersion, e.firmwareVersion, ...
-                                                        e.deviceIdentifier, e.enumerationType));
+    set(ipcon, 'EnumerateCallback', @(h, e) cb_enumerate(e));
 
     ipcon.connect(HOST, PORT); % Connect to brickd
 
@@ -25,13 +22,14 @@ function matlab_example_authenticate
 end
 
 % Authenticate each time the connection got (re-)established
-function cb_connected(connect_reason)
-    global SECRET;
-    global ipcon;
+function cb_connected(e)
+    ipcon = e.getSource();
 
-    if connect_reason == ipcon.CONNECT_REASON_REQUEST
+    global SECRET;
+
+    if e.connectReason == ipcon.CONNECT_REASON_REQUEST
         fprintf('Connected by request\n');
-    elseif connect_reason == ipcon.CONNECT_REASON_AUTO_RECONNECT
+    elseif e.connectReason == ipcon.CONNECT_REASON_AUTO_RECONNECT
         fprintf('Auto-Reconnect\n');
     end
 
@@ -39,7 +37,7 @@ function cb_connected(connect_reason)
     try
         ipcon.authenticate(SECRET);
         fprintf('Authentication succeeded\n');
-    catch e
+    catch ex
         fprintf('Could not authenticate\n');
         return
     end
@@ -49,7 +47,6 @@ function cb_connected(connect_reason)
 end
 
 % Print incoming enumeration
-function cb_enumerate(uid, connected_uid, position, hardware_version,
-                      firmware_version, device_identifier, enumeration_type)
-    fprintf('UID: %s, Enumeration Type: %g\n', char(uid), enumeration_type);
+function cb_enumerate(e)
+    fprintf('UID: %s, Enumeration Type: %g\n', char(e.uid), e.enumerationType);
 end
