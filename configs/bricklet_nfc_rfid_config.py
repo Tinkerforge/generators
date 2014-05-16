@@ -165,7 +165,7 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetPageType1', 'get_page_mifare_classic'), 
+'name': ('GetPageType1', 'get_page_type1'), 
 'elements': [('data', 'uint8', 8, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -180,7 +180,7 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetPageType2', 'get_page_mifare_classic'), 
+'name': ('GetPageType2', 'get_page_type2'), 
 'elements': [('data', 'uint8', 4, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {

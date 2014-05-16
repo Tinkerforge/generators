@@ -652,7 +652,7 @@ cn_valid_display_chars = re.compile('^[A-Z][A-Za-z0-9/ -]*$')
 cn_valid_constant_camel_case_chars = re.compile('^[A-Za-z0-9]+$')
 cn_valid_constant_underscore_chars = re.compile('^[a-z0-9_]+$')
 
-cn_all_uppercase = ['api', 'ir', 'us', 'lcd', 'dc', 'imu', 'pwm', 'gps', 'io4',
+cn_all_uppercase = ['api', 'ir', 'us', 'lcd', 'dc', 'imu', 'pwm', 'gps', 'id', 'io4',
                     'io16', 'led', 'i2c', 'ptc', 'rs485', 'eap', 'usb', 'mac',
                     '2d', '3d', '1k', '100k', '500k', '3v', '6v', '10v', '36v',
                     '45v', 'sps', 'oqpsk', 'bpsk40', 'dhcp', 'ip', 'wpa',
