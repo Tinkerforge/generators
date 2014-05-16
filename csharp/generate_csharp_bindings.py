@@ -312,9 +312,6 @@ class CSharpBindingsPacket(csharp_common.CSharpPacket):
         text = common.select_lang(self.get_doc()[1])
         link = '<see cref="Tinkerforge.{0}.{1}"/>'
 
-        # escape XML special chars
-        text = escape(text)
-
         # handle notes and warnings
         lines = text.split('\n')
         replaced_lines = []
@@ -374,6 +371,9 @@ class CSharpBindingsPacket(csharp_common.CSharpPacket):
         text = common.handle_rst_word(text)
         text = common.handle_rst_substitutions(text, self)
         text += common.format_since_firmware(self.get_device(), self)
+
+        # escape XML special chars
+        text = escape(text)
 
         return '\n\t\t///  '.join(text.strip().split('\n'))
 

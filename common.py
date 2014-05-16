@@ -131,9 +131,9 @@ Konfigurationsfunktionen für Callbacks
 }
 
 breadcrumbs_str = {
-'en': """:breadcrumbs: <a href="../../index.html">Home</a> / <a href="../../Product_Overview.html#{0}s">{1}s</a> / {2}
+'en': """:breadcrumbs: <a href="../../index.html">Home</a> / <a href="../../index.html#software-{0}">Software</a> / {1}
 """,
-'de': """:breadcrumbs: <a href="../../index.html">Startseite</a> / <a href="../../Product_Overview.html#{0}s">{1}s</a> / {2}
+'de': """:breadcrumbs: <a href="../../index.html">Startseite</a> / <a href="../../index.html#software-{0}">Software</a> / {1}
 """
 }
 
@@ -168,7 +168,7 @@ def make_rst_header(device, bindings_display_name, has_device_identifier_constan
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     full_title = '{0} - {1} {2}'.format(bindings_display_name, device.get_display_name(), category)
     full_title_underline = '='*len(full_title)
-    breadcrumbs = select_lang(breadcrumbs_str).format(category.lower(), category, full_title)
+    breadcrumbs = select_lang(breadcrumbs_str).format(ref_name, full_title)
     device_identifier_constant = {'en': '.. |device_identifier_constant| replace:: There is also a :ref:`constant <{0}_{1}_{2}_constants>` for the device identifier of this {3}.\n',
                                   'de': '.. |device_identifier_constant| replace:: Es gibt auch eine :ref:`Konstante <{0}_{1}_{2}_constants>` für den Device Identifier dieses {3}.\n'}
     if has_device_identifier_constant:
@@ -656,7 +656,7 @@ cn_all_uppercase = ['api', 'ir', 'us', 'lcd', 'dc', 'imu', 'pwm', 'gps', 'io4',
                     'io16', 'led', 'i2c', 'ptc', 'rs485', 'eap', 'usb', 'mac',
                     '2d', '3d', '1k', '100k', '500k', '3v', '6v', '10v', '36v',
                     '45v', 'sps', 'oqpsk', 'bpsk40', 'dhcp', 'ip', 'wpa',
-                    'wpa2', 'ca', 'wep', 'rgb']
+                    'wpa2', 'ca', 'wep', 'rgb', 'nfc', 'rfid']
 
 cn_eap_suffix = ['fast', 'tls', 'ttls', 'peap', 'mschap', 'gtc']
 
@@ -743,6 +743,8 @@ def check_name(camel_case, underscore, display, is_constant=False):
             camel_case_to_check = camel_case_to_check.replace('4x 7', '4x7')
         elif camel_case.endswith('020mA'):
             camel_case_to_check = camel_case_to_check.replace('020m A', '0-20mA')
+        elif camel_case == 'NFCRFID':
+            camel_case_to_check = camel_case_to_check.replace('NFCRFID', 'NFC/RFID')
 
         if camel_case_to_check != display:
             raise ValueError("camel case name '{0}' ({1}) and display name '{2}' mismatch (test 2)" \

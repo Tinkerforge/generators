@@ -586,9 +586,6 @@ class JavaBindingsPacket(java_common.JavaPacket):
         link = '{{@link {0}#{1}({2})}}'
         link_c = '{{@link {0}.{1}Listener}}'
 
-        # escape HTML special chars
-        text = escape(text)
-
         # handle tables
         lines = text.split('\n')
         replaced_lines = []
@@ -644,6 +641,9 @@ class JavaBindingsPacket(java_common.JavaPacket):
         text = common.handle_rst_word(text)
         text = common.handle_rst_substitutions(text, self)
         text += common.format_since_firmware(self.get_device(), self)
+
+        # escape HTML special chars
+        text = escape(text)
 
         return '\n\t * '.join(text.strip().split('\n'))
 
