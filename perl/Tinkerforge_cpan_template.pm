@@ -28,23 +28,15 @@ German: L<strict|http://www.tinkerforge.com/de/doc/Software/API_Bindings_Perl.ht
 
 =head1 INSTALLATION
 
-As a very basic requirement one must install the following packages from the
-Tinkerforge namespace,
-
-Tinkerforge::IPConnection
-Tinkerforge::Error
-Tinkerforge::Device
-
-After having these packages installed one can run the authentication and
-enumeration examples.
-
-To be able to use the Perl bindings with a device on must install the device
-specific packages first. For example, if someone wants to use the Humidity Bricklet
-then the person must install the package,
+Just install the package for the device you want to use.
+For example, if you want to use the Humidity Bricklet then install
+the following package,
 
 Tinkerforge::BrickletHumidity
 
-After installing the basic packages as mentioned above.
+Installing any package from the Tinkerforge namespace will provide you with everything
+that you need to use the perl bindings and you won't have to install anything for a
+new device again.
 
 =head1 EXAMPLES
 
