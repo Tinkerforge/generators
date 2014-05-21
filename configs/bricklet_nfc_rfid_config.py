@@ -10,7 +10,7 @@ com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
-    'device_identifier': 245,
+    'device_identifier': 246,
     'name': ('NFCRFID', 'nfc_rfid', 'NFC/RFID'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device that can read and write NFC and RFID tags',
@@ -20,7 +20,7 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('ReadPassiveTargetID', 'read_passive_target_id'), 
+'name': ('RequestTagID', 'request_tag_id'), 
 'elements': [('target_type', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -35,7 +35,7 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetPassiveTargetID', 'get_passive_target_id'), 
+'name': ('GetTagID', 'get_tag_id'), 
 'elements': [('target_type', 'uint8', 1, 'out'),
              ('tid_length', 'uint16', 1, 'out'),
              ('tid', 'uint8', 7, 'out')],
@@ -68,11 +68,10 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('AuthenticatePageMifareClassic', 'authenticate_page_mifare_classic'), 
-'elements': [('page', 'uint8', 1, 'in'),
+'name': ('AuthenticateMifareClassicPage', 'authenticate_mifare_classic_page'), 
+'elements': [('page', 'uint16', 1, 'in'),
              ('key_number', 'uint8', 1, 'in'),
-             ('key', 'uint8', 7, 'in'),
-             ('tid', 'uint8', 4, 'in')],
+             ('key', 'uint8', 6, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -86,8 +85,8 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('WritePageMifareClassic', 'write_page_mifare_classic'), 
-'elements': [('page', 'uint8', 1, 'in'),
+'name': ('WritePage', 'write_page'), 
+'elements': [('page', 'uint16', 1, 'in'),
              ('data', 'uint8', 16, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -102,9 +101,8 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('WritePageType1', 'write_page_type1'), 
-'elements': [('page', 'uint8', 1, 'in'),
-             ('data', 'uint8', 8, 'in')],
+'name': ('RequestPage', 'request_page'), 
+'elements': [('page', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -118,39 +116,7 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('WritePageType2', 'write_page_type2'), 
-'elements': [('page', 'uint8', 1, 'in'),
-             ('data', 'uint8', 4, 'in')],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('ReadPage', 'read_page'), 
-'elements': [('target_type', 'uint8', 1, 'in'),
-             ('page', 'uint8', 1, 'in')],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('GetPageMifareClassic', 'get_page_mifare_classic'), 
+'name': ('GetPage', 'get_page'), 
 'elements': [('data', 'uint8', 16, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -163,58 +129,12 @@ com['packets'].append({
 }]
 })
 
-com['packets'].append({
-'type': 'function',
-'name': ('GetPageType1', 'get_page_type1'), 
-'elements': [('data', 'uint8', 8, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-""",
-'de':
-"""
-"""
-}]
-})
 
 com['packets'].append({
-'type': 'function',
-'name': ('GetPageType2', 'get_page_type2'), 
-'elements': [('data', 'uint8', 4, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['bf', {
-'en':
-"""
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('NewPassiveTargetID', 'new_passive_target_id'), 
-'elements': [('target_type', 'uint8', 1, 'out'),
-             ('tid_length', 'uint16', 1, 'out'),
-             ('tid', 'uint8', 7, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['c', {
-'en':
-"""
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
+'type': 'callback',
 'name': ('StateChanged', 'state_changed'), 
 'elements': [('state', 'uint8', 1, 'out'),
-             ('error', 'uint16', 1, 'out')],
+             ('idle', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
