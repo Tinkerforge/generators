@@ -621,7 +621,10 @@ def generate(bindings_root_directory, language, generator_class):
                         common_packet['since_firmware'] = \
                             common_packet['since_firmware']['*']
 
-                return common_packets
+                    if common_packet['since_firmware'] is None:
+                        common_packet['to_be_removed'] = True
+
+                return filter(lambda x: 'to_be_removed' not in x, common_packets)
 
             if 'brick_' in config and 'common_included' not in com:
                 common_packets = copy.deepcopy(common_device_packets) + copy.deepcopy(common_brick_packets)
@@ -653,7 +656,7 @@ cn_valid_constant_camel_case_chars = re.compile('^[A-Za-z0-9]+$')
 cn_valid_constant_underscore_chars = re.compile('^[a-z0-9_]+$')
 
 cn_all_uppercase = ['api', 'ir', 'us', 'lcd', 'dc', 'imu', 'pwm', 'gps', 'id', 'io4',
-                    'io16', 'led', 'i2c', 'ptc', 'rs485', 'eap', 'usb', 'mac',
+                    'io16', 'led', 'i2c', 'ptc', 'red', 'rs485', 'eap', 'usb', 'mac',
                     '2d', '3d', '1k', '100k', '500k', '3v', '6v', '10v', '36v',
                     '45v', 'sps', 'oqpsk', 'bpsk40', 'dhcp', 'ip', 'wpa',
                     'wpa2', 'ca', 'wep', 'rgb', 'nfc', 'rfid']

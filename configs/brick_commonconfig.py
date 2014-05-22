@@ -19,6 +19,7 @@ common_packets.append({
 'since_firmware': {'dc': [2, 0, 0],
                    'imu': [2, 0, 0],
                    'master': [2, 0, 0],
+                   'red': None,
                    'servo': [2, 0, 0],
                    'stepper': [2, 0, 0]},
 'doc': ['af', {
@@ -49,6 +50,7 @@ common_packets.append({
 'since_firmware': {'dc': [1, 1, 3],
                    'imu': [1, 0, 7],
                    'master': [1, 2, 1],
+                   'red': None,
                    'servo': [1, 1, 3],
                    'stepper': [1, 1, 4]},
 'doc': ['af', {
@@ -81,6 +83,7 @@ common_packets.append({
 'since_firmware': {'dc': [1, 1, 3],
                    'imu': [1, 0, 7],
                    'master': [1, 2, 1],
+                   'red': None,
                    'servo': [1, 1, 3],
                    'stepper': [1, 1, 4]},
 'doc': ['af', {
