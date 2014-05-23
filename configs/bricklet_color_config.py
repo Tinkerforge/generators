@@ -13,7 +13,7 @@ com = {
     'device_identifier': 243,
     'name': ('Color', 'color', 'Color'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for measuring color(RGB value) of objects',
+    'description': 'Device for measuring color (RGB value) of objects',
     'released': False,
     'packets': []
 }
