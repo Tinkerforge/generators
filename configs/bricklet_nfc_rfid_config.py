@@ -82,7 +82,7 @@ com['packets'].append({
 'elements': [('tag_type', 'uint8', 1, 'out', ('TagType', 'tag_type', [('MifareClassic', 'mifare_classic', 0),
                                                                       ('Type1', 'type1', 1),
                                                                       ('Type2', 'type2', 2)])),
-             ('tid_length', 'uint16', 1, 'out'),
+             ('tid_length', 'uint8', 1, 'out'),
              ('tid', 'uint8', 7, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
