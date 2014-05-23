@@ -40,9 +40,9 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': ('RequestTagID', 'request_tag_id'), 
-'elements': [('target_type', 'uint8', 1, 'in', ('TargetType', 'target_type', [('MifareClassic', 'mifare_classic', 0),
-                                                                              ('Type1', 'type1', 1),
-                                                                              ('Type2', 'type2', 2)]))],
+'elements': [('tag_type', 'uint8', 1, 'in', ('TagType', 'tag_type', [('MifareClassic', 'mifare_classic', 0),
+                                                                     ('Type1', 'type1', 1),
+                                                                     ('Type2', 'type2', 2)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -57,9 +57,9 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': ('GetTagID', 'get_tag_id'), 
-'elements': [('target_type', 'uint8', 1, 'out', ('TargetType', 'target_type', [('MifareClassic', 'mifare_classic', 0),
-                                                                               ('Type1', 'type1', 1),
-                                                                               ('Type2', 'type2', 2)])),
+'elements': [('tag_type', 'uint8', 1, 'out', ('TagType', 'tag_type', [('MifareClassic', 'mifare_classic', 0),
+                                                                      ('Type1', 'type1', 1),
+                                                                      ('Type2', 'type2', 2)])),
              ('tid_length', 'uint16', 1, 'out'),
              ('tid', 'uint8', 7, 'out')],
 'since_firmware': [1, 0, 0],
