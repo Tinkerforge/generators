@@ -34,7 +34,7 @@ have a range of 0 to 65535.
 
 The red (r), green (g), blue (b) and clear (c) colors are measured
 with four different photodiodes that are responsive at different
-wavelength:
+wavelengths:
 
 .. image:: /Images/Bricklets/bricklet_color_wavelength_chart_600.jpg
    :scale: 100 %
