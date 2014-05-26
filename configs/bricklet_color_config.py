@@ -414,10 +414,10 @@ The default values are 60x gain and 154ms integration time.
 """,
 'de':
 """
-Setzt die Konfiguration des Sensors. Gain und Integrationszeit können
+Setzt die Konfiguration des Sensors. Verstärkung und Integrationszeit können
 eingestellt werden.
 
-Für Konfiguration des Gains:
+Für die Konfiguration der Verstärkung:
 
 * 0: 1x Gain
 * 1: 4x Gain
@@ -432,14 +432,14 @@ Für die Konfiguration der Integrationszeit:
 * 3: 154ms
 * 4: 700ms
 
-Eine Erhöhung des Gains ermöglicht es dem Sensor Farben aus größeren
+Eine Erhöhung der Verstärkung ermöglicht es dem Sensor Farben aus größeren
 Entfernungen zu erkennen.
 
 Die Integrationszeit ist ein Trade-off zwischen Konvertierungszeit und
 Genauigkeit. Mit einer höheren Integrationszeit werden die Werte genauer,
 es dauert allerdings länger bis ein Resultat bereitsteht.
 
-Die Standardwerte sind 60x Gain und 154ms Integrationszeit.
+Die Standardwerte sind 60x Verstärkung und 154ms Integrationszeit.
 """
 }]
 })
@@ -483,8 +483,8 @@ Returns the illuminance in Lux multiplied by the gain as set by
 """,
 'de':
 """
-Gibt die Beleuchtungsstärke in Lux multipliziert mit dem Gain zurück.
-Der Gain kann mit :func:`SetConfig` eingestellt werden.
+Gibt die Beleuchtungsstärke in Lux multipliziert mit der Verstärkung zurück.
+Die Verstärkung kann mit :func:`SetConfig` eingestellt werden.
 """
 }]
 })
@@ -511,7 +511,7 @@ Gibt die Farbtemperatur in Kelvin zurück.
 Für eine korrekte Berechnung der Farbtemperatur muss sichergestellt
 sein das die Farbwerte (R, G oder B) nicht saturiert sind. Ein
 Farbwert ist saturiert wenn der Wert 65535 beträgt. In diesem Fall
-kann der Gain per :func:`SetConfig` reduziert werden.
+kann die Verstärkung per :func:`SetConfig` reduziert werden.
 """
 }]
 })
