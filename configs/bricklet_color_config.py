@@ -13,7 +13,7 @@ com = {
     'device_identifier': 243,
     'name': ('Color', 'color', 'Color'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for measuring color (RGB value) of objects',
+    'description': 'Device for measuring color (RGB value), illuminance and color temperature',
     'released': False,
     'packets': []
 }
@@ -29,8 +29,18 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the color of the sensor. The value
-has a range of 0 to 65535.
+Returns the color of the sensor. The values
+have a range of 0 to 65535.
+
+The red (r), green (g), blue (b) and clear (c) colors are measured
+with four different photodiodes that are responsive at different
+wavelength:
+
+.. image:: /Images/Bricklets/bricklet_color_wavelength_chart_600.jpg
+   :scale: 100 %
+   :alt: Chart Responsivity / Wavelength
+   :align: center
+   :target: ../../_images/Bricklets/bricklet_color_wavelength_chart_600.jpg
 
 If you want to get the color periodically, it is recommended 
 to use the callback :func:`Color` and set the period with 
@@ -40,6 +50,16 @@ to use the callback :func:`Color` and set the period with
 """
 Gibt die Farbe des Sensors zurück. Der Wertebereich ist von
 0 bis 65535.
+
+Die rot (r), grün (g), blau (b) and clear (c) werden mit vier
+unterschiedlichen Fotodioden gemessen. Diese sind Empfindlich
+in unterschiedlichen Wellenlängen:
+
+.. image:: /Images/Bricklets/bricklet_color_wavelength_chart_600.jpg
+   :scale: 100 %
+   :alt: Chart Responsivity / Wavelength
+   :align: center
+   :target: ../../_images/Bricklets/bricklet_color_wavelength_chart_600.jpg
 
 Wenn die Farbe periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Color` zu nutzen und die Periode mit 
@@ -248,9 +268,20 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
+This callback is triggered periodically with the period that is set by
+:func:`SetColorCallbackPeriod`. The :word:`parameter` is the color
+of the sensor as RGBC.
+
+:func:`Color` is only triggered if the color has changed since the
+last triggering.
 """,
 'de':
 """
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetColorCallbackPeriod`,
+ausgelöst. Der :word:`parameter` ist die Farbe des Sensors als RGBC
+
+:func:`Color` wird nur ausgelöst wenn sich die Farbe seit der
+letzten Auslösung geändert hat.
 """
 }]
 })
@@ -270,15 +301,15 @@ This callback is triggered periodically with the period that is set by
 :func:`SetColorCallbackPeriod`. The :word:`parameter` is the color
 of the sensor as RGBC.
 
-:func:`Color` is only triggered if the temperature has changed since the
+:func:`Color` is only triggered if the color has changed since the
 last triggering.
 """,
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetColorCallbackPeriod`,
-ausgelöst. Der :word:`parameter` ist die Color des Sensors als RGBC.
+ausgelöst. Der :word:`parameter` ist die Farbe des Sensors als RGBC.
 
-:func:`Color` wird nur ausgelöst wenn sich die Temperatur seit der
+:func:`Color` wird nur ausgelöst wenn sich die Farbe seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -371,18 +402,44 @@ For configuring the integration time:
 * 3: 154ms
 * 4: 700ms
 
-Increasing the gain makes the sensor be able to detect a
+Increasing the gain enables the sensor to detect a
 color from a higher distance.
 
-The integration time provdes a trade-off between conversion time
-and accuracy. With a longer integration time  the values read will
+The integration time provides a trade-off between conversion time
+and accuracy. With a longer integration time the values read will
 be more accurate but it will take longer time to get the conversion
 results.
 
-The default values are 16x gain and 153ms integration time.
+The default values are 60x gain and 154ms integration time.
 """,
 'de':
 """
+Setzt die Konfiguration des Sensors. Gain und Integrationszeit können
+eingestellt werden.
+
+Für Konfiguration des Gains:
+
+* 0: 1x Gain
+* 1: 4x Gain
+* 2: 16x Gain
+* 3: 60x Gain
+
+Für die Konfiguration der Integrationszeit:
+
+* 0: 2ms
+* 1: 24ms
+* 2: 101ms
+* 3: 154ms
+* 4: 700ms
+
+Eine Erhöhung des Gains ermöglicht es dem Sensor Farben aus größeren
+Entfernungen zu erkennen.
+
+Die Integrationszeit ist ein Trade-off zwischen Konvertierungszeit und
+Genauigkeit. Mit einer höheren Integrationszeit werden die Werte genauer,
+es dauert allerdings länger bis ein Resultat bereitsteht.
+
+Die Standardwerte sind 60x Gain und 154ms Integrationszeit.
 """
 }]
 })
@@ -421,11 +478,13 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-
+Returns the illuminance in Lux multiplied by the gain as set by 
+:func:`SetConfig`. 
 """,
 'de':
 """
-
+Gibt die Beleuchtungsstärke in Lux multipliziert mit dem Gain zurück.
+Der Gain kann mit :func:`SetConfig` eingestellt werden.
 """
 }]
 })
@@ -438,11 +497,21 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the color temperature in Kelvin. 
 
+Make sure that the color
+values themself are not saturated. The color value (R, G or B)
+is saturated if it is equal to the maximum value of 65535.
+In that case you have to reduce the gain, see :func:`SetConfig`.
 """,
 'de':
 """
+Gibt die Farbtemperatur in Kelvin zurück.
 
+Für eine korrekte Berechnung der Farbtemperatur muss sichergestellt
+sein das die Farbwerte (R, G oder B) nicht saturiert sind. Ein
+Farbwert ist saturiert wenn der Wert 65535 beträgt. In diesem Fall
+kann der Gain per :func:`SetConfig` reduziert werden.
 """
 }]
 })
@@ -549,9 +618,20 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
+This callback is triggered periodically with the period that is set by
+:func:`SetIlluminanceCallbackPeriod`. The :word:`parameter` is the illuminance
+in Lux.
+
+:func:`Illuminance` is only triggered if the illuminance has changed since the
+last triggering.
 """,
 'de':
 """
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetIlluminanceCallbackPeriod`,
+ausgelöst. Der :word:`parameter` ist die Beleuchtungsstärke des Sensors.
+
+:func:`Illuminance` wird nur ausgelöst wenn sich die Beleuchtungsstärke seit der
+letzten Auslösung geändert hat.
 """
 }]
 })
@@ -564,9 +644,20 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
+This callback is triggered periodically with the period that is set by
+:func:`SetColorTemperatureCallbackPeriod`. The :word:`parameter` is the 
+color temperature in Kelvin.
+
+:func:`ColorTemperature` is only triggered if the color temperature has 
+changed since the last triggering.
 """,
 'de':
 """
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetColorTemperatureCallbackPeriod`,
+ausgelöst. Der :word:`parameter` ist die Farbtemperatur des Sensors.
+
+:func:`ColorTemperature` wird nur ausgelöst wenn sich die Farbtemperatur seit der
+letzten Auslösung geändert hat.
 """
 }]
 })
