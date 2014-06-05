@@ -29,7 +29,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the color of the sensor. The values
+Returns the measured color of the sensor. The values
 have a range of 0 to 65535.
 
 The red (r), green (g), blue (b) and clear (c) colors are measured
@@ -48,7 +48,7 @@ to use the callback :func:`Color` and set the period with
 """,
 'de':
 """
-Gibt die Farbe des Sensors zurück. Der Wertebereich ist von
+Gibt die gemessene Farbe des Sensors zurück. Der Wertebereich ist von
 0 bis 65535.
 
 Die rot (r), grün (g), blau (b) and clear (c) werden mit vier
@@ -384,10 +384,10 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the configuration of the sensor. Gain and itegration time
+Sets the configuration of the sensor. Gain and integration time
 can be configured in this way.
 
-For confguring the gain:
+For configuring the gain:
 
 * 0: 1x Gain
 * 1: 4x Gain
