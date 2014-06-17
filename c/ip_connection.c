@@ -327,7 +327,7 @@ static int gettimeofday(struct timeval *tv, struct timezone *tz) {
 
 	if (tv != NULL) {
 		ptr_GetSystemTimePreciseAsFileTime =
-		  (GETSYSTEMTIMEPRECISEASFILETIME)GetProcAddress(GetModuleHandle("kernel32"),
+		  (GETSYSTEMTIMEPRECISEASFILETIME)GetProcAddress(GetModuleHandleA("kernel32"),
 		                                                 "GetSystemTimePreciseAsFileTime");
 
 		if (ptr_GetSystemTimePreciseAsFileTime != NULL) {
