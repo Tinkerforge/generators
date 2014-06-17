@@ -69,6 +69,7 @@ class CZipGenerator(common.Generator):
 
         shutil.copy(os.path.join(root, 'ip_connection.c'), '/tmp/generator/bindings')
         shutil.copy(os.path.join(root, 'ip_connection.h'), '/tmp/generator/bindings')
+        shutil.copy(os.path.join(root, 'Makefile'), '/tmp/generator/bindings')
         shutil.copy(os.path.join(root, 'changelog.txt'), '/tmp/generator')
         shutil.copy(os.path.join(root, 'readme.txt'), '/tmp/generator')
 
