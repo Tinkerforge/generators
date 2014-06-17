@@ -35,6 +35,10 @@
 	#include <semaphore.h>
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 enum {
 	E_OK = 0,
 	E_TIMEOUT = -1,
@@ -652,5 +656,9 @@ uint64_t leconvert_uint64_from(uint64_t little);
 float leconvert_float_from(float little);
 
 #endif // IPCON_EXPOSE_INTERNALS
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

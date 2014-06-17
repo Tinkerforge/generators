@@ -42,6 +42,10 @@ class CBindingsDevice(common.Device):
 
 #include <string.h>
 
+#ifdef __cplusplus
+extern "C" {{
+#endif
+
 """
         date = datetime.datetime.now().strftime("%Y-%m-%d")
         version = common.get_changelog_version(self.get_generator().get_bindings_root_directory())
@@ -400,6 +404,10 @@ static void {0}_callback_wrapper_{1}(DevicePrivate *device_p, Packet *packet) {{
 
 #include "ip_connection.h"
 
+#ifdef __cplusplus
+extern "C" {{
+#endif
+
 /**
  * \defgroup {4}{3} {3} {4}
  */
@@ -425,7 +433,10 @@ typedef Device {3};
                               self.get_description())
 
     def get_c_end_h(self):
-        return "\n#endif\n"
+        return "\n#ifdef __cplusplus\n}\n#endif\n\n#endif\n"
+
+    def get_c_end_c(self):
+        return "\n#ifdef __cplusplus\n}\n#endif\n"
 
     def get_c_typedefs(self):
         typedef = """
@@ -585,6 +596,7 @@ void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data
         source += self.get_c_response_expected_functions()
         source += self.get_c_register_callback_function()
         source += self.get_c_functions()
+        source += self.get_c_end_c()
 
         return source
 

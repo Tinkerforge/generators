@@ -50,6 +50,10 @@
 
 #include "ip_connection.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #if defined _MSC_VER || defined __BORLANDC__
 	#pragma pack(push)
 	#pragma pack(1)
@@ -2425,3 +2429,7 @@ float leconvert_float_from(float little) {
 
 	return c.f;
 }
+
+#ifdef __cplusplus
+}
+#endif
