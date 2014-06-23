@@ -318,6 +318,22 @@ com['packets'].append({
 })
 
 com['packets'].append({
+'type': 'function',
+'name': ('AbortAsyncFileRead', 'abort_async_file_read'),
+'elements': [('file_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
 'type': 'callback',
 'name': ('AsyncFileRead', 'async_file_read'),
 'elements': [('file_id', 'uint16', 1, 'out'),
