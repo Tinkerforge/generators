@@ -1,5 +1,5 @@
 #
-# Minimal Makefile to create a basic Tinkerforge shared/static library
+# Minimal Makefile to create a basic Tinkerforge shared/static library for Linux
 #
 
 ifneq ($(findstring $(MAKEFLAGS),s),s)

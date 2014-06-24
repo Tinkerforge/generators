@@ -76,3 +76,7 @@
         Support addressing types of Intertechno and ELRO Home Easy devices in Remote Switch Bricklet API
 2.1.0: Add authentication support to IPConnection and Master Brick API
        Rewrite endian handling logic to work without detecting the actual host endian
+2.1.1: Add extern "C" markup to all files to force proper symbol names in C++
+       Explicitly use ANSI version of WinAPI functions to support UNICODE builds on Windows
+       Add simple library Makefile for Linux
+       Fix race condition between device destruction and callback dispatch
