@@ -209,6 +209,8 @@ struct _Device {
  * \internal
  */
 struct _DevicePrivate {
+	int ref_count;
+
 	uint32_t uid;
 
 	IPConnectionPrivate *ipcon_p;
@@ -250,7 +252,7 @@ void device_create(Device *device, const char *uid,
 /**
  * \internal
  */
-void device_destroy(Device *device);
+void device_release(DevicePrivate *device_p);
 
 /**
  * \internal
@@ -381,6 +383,7 @@ struct _IPConnectionPrivate {
 	Mutex authentication_mutex; // protects authentication handshake
 	uint32_t next_authentication_nonce; // protected by authentication_mutex
 
+	Mutex devices_ref_mutex; // protects DevicePrivate.ref_count
 	Table devices;
 
 	void *registered_callbacks[IPCON_NUM_CALLBACK_IDS];

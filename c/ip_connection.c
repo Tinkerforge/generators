@@ -1147,6 +1147,19 @@ enum {
 
 static int ipcon_send_request(IPConnectionPrivate *ipcon_p, Packet *request);
 
+// NOTE: assumes device_p->ref_count == 0
+static void device_destroy(DevicePrivate *device_p) {
+	table_remove(&device_p->ipcon_p->devices, device_p->uid);
+
+	event_destroy(&device_p->response_event);
+
+	mutex_destroy(&device_p->response_mutex);
+
+	mutex_destroy(&device_p->request_mutex);
+
+	free(device_p);
+}
+
 void device_create(Device *device, const char *uid_str,
                    IPConnectionPrivate *ipcon_p, uint8_t api_version_major,
                    uint8_t api_version_minor, uint8_t api_version_release) {
@@ -1172,6 +1185,8 @@ void device_create(Device *device, const char *uid_str,
 		uid |= (value2 & 0x000F0000) << 6;
 		uid |= (value2 & 0x3F000000) << 2;
 	}
+
+	device_p->ref_count = 1;
 
 	device_p->uid = uid & 0xFFFFFFFF;
 
@@ -1212,18 +1227,18 @@ void device_create(Device *device, const char *uid_str,
 	table_insert(&ipcon_p->devices, device_p->uid, device_p);
 }
 
-void device_destroy(Device *device) {
-	DevicePrivate *device_p = device->p;
+void device_release(DevicePrivate *device_p) {
+	IPConnectionPrivate *ipcon_p = device_p->ipcon_p;
 
-	table_remove(&device_p->ipcon_p->devices, device_p->uid);
+	mutex_lock(&ipcon_p->devices_ref_mutex);
 
-	event_destroy(&device_p->response_event);
+	--device_p->ref_count;
 
-	mutex_destroy(&device_p->response_mutex);
+	if (device_p->ref_count == 0) {
+		device_destroy(device_p);
+	}
 
-	mutex_destroy(&device_p->request_mutex);
-
-	free(device_p);
+	mutex_unlock(&ipcon_p->devices_ref_mutex);
 }
 
 int device_get_response_expected(DevicePrivate *device_p, uint8_t function_id,
@@ -1378,7 +1393,7 @@ static void brickd_create(BrickDaemon *brickd, const char *uid, IPConnection *ip
 }
 
 static void brickd_destroy(BrickDaemon *brickd) {
-	device_destroy(brickd);
+	device_release(brickd->p);
 }
 
 static int brickd_get_authentication_nonce(BrickDaemon *brickd, uint8_t ret_server_nonce[4]) {
@@ -1439,6 +1454,22 @@ struct _CallbackContext {
 
 static int ipcon_connect_unlocked(IPConnectionPrivate *ipcon_p, bool is_auto_reconnect);
 static void ipcon_disconnect_unlocked(IPConnectionPrivate *ipcon_p);
+
+static DevicePrivate *ipcon_acquire_device(IPConnectionPrivate *ipcon_p, uint32_t uid) {
+	DevicePrivate *device_p;
+
+	mutex_lock(&ipcon_p->devices_ref_mutex);
+
+	device_p = (DevicePrivate *)table_get(&ipcon_p->devices, uid);
+
+	if (device_p != NULL) {
+		++device_p->ref_count;
+	}
+
+	mutex_unlock(&ipcon_p->devices_ref_mutex);
+
+	return device_p;
+}
 
 static void ipcon_dispatch_meta(IPConnectionPrivate *ipcon_p, Meta *meta) {
 	ConnectedCallbackFunction connected_callback_function;
@@ -1544,7 +1575,7 @@ static void ipcon_dispatch_packet(IPConnectionPrivate *ipcon_p, Packet *packet) 
 			                            user_data);
 		}
 	} else {
-		device_p = (DevicePrivate *)table_get(&ipcon_p->devices, packet->header.uid);
+		device_p = ipcon_acquire_device(ipcon_p, packet->header.uid);
 
 		if (device_p == NULL) {
 			return;
@@ -1553,10 +1584,14 @@ static void ipcon_dispatch_packet(IPConnectionPrivate *ipcon_p, Packet *packet) 
 		callback_wrapper_function = device_p->callback_wrappers[packet->header.function_id];
 
 		if (callback_wrapper_function == NULL) {
+			device_release(device_p);
+
 			return;
 		}
 
 		callback_wrapper_function(device_p, packet);
+
+		device_release(device_p);
 	}
 }
 
@@ -1675,7 +1710,7 @@ static void ipcon_handle_response(IPConnectionPrivate *ipcon_p, Packet *response
 		return;
 	}
 
-	device_p = (DevicePrivate *)table_get(&ipcon_p->devices, response->header.uid);
+	device_p = ipcon_acquire_device(ipcon_p, response->header.uid);
 
 	if (device_p == NULL) {
 		// ignoring response for an unknown device
@@ -1690,6 +1725,8 @@ static void ipcon_handle_response(IPConnectionPrivate *ipcon_p, Packet *response
 			queue_put(&ipcon_p->callback->queue, QUEUE_KIND_PACKET, callback);
 		}
 
+		device_release(device_p);
+
 		return;
 	}
 
@@ -1700,8 +1737,13 @@ static void ipcon_handle_response(IPConnectionPrivate *ipcon_p, Packet *response
 		mutex_unlock(&device_p->response_mutex);
 
 		event_set(&device_p->response_event);
+
+		device_release(device_p);
+
 		return;
 	}
+
+	device_release(device_p);
 
 	// response seems to be OK, but can't be handled
 }
@@ -2016,6 +2058,7 @@ void ipcon_create(IPConnection *ipcon) {
 	mutex_create(&ipcon_p->authentication_mutex);
 	ipcon_p->next_authentication_nonce = 0;
 
+	mutex_create(&ipcon_p->devices_ref_mutex);
 	table_create(&ipcon_p->devices);
 
 	for (i = 0; i < IPCON_NUM_CALLBACK_IDS; ++i) {
@@ -2050,7 +2093,8 @@ void ipcon_destroy(IPConnection *ipcon) {
 
 	mutex_destroy(&ipcon_p->sequence_number_mutex);
 
-	table_destroy(&ipcon_p->devices);
+	table_destroy(&ipcon_p->devices); // FIXME: destroy all devices?
+	mutex_destroy(&ipcon_p->devices_ref_mutex);
 
 	mutex_destroy(&ipcon_p->socket_mutex);
 

@@ -250,7 +250,7 @@ void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
     def get_c_destroy_function(self):
         function = """
 void {0}_destroy({1} *{0}) {{
-\tdevice_destroy({0});
+\tdevice_release({0}->p);
 }}
 """
         return function.format(self.get_underscore_name(),
