@@ -32,6 +32,10 @@ class Base58
      */
     public static function encode($value)
     {
+        if (bccomp($value, 0) < 0) {
+            throw new \InvalidArgumentException('Cannot encode negative value');
+        }
+
         $encoded = '';
 
         while (bccomp($value, '58') >= 0) {
@@ -77,6 +81,10 @@ class Base256
      */
     public static function encode($value, $length)
     {
+        if (bccomp($value, 0) < 0) {
+            throw new \InvalidArgumentException('Cannot encode negative value');
+        }
+
         $bytes = array();
 
         while (bccomp($value, '256') >= 0) {
@@ -101,6 +109,20 @@ class Base256
         }
 
         return $packed;
+    }
+
+    public static function encodeAndPackInt64($value)
+    {
+        if (bccomp($value, 0) < 0) {
+            $value = bcadd($value, '18446744073709551616');
+        }
+
+        return self::encodeAndPack($value, 8);
+    }
+
+    public static function encodeAndPackUInt64($value)
+    {
+        return self::encodeAndPack($value, 8);
     }
 
     /**
@@ -1044,8 +1066,13 @@ class IPConnection
     /**
      * @internal
      */
-    static public function fixUnpackedInt16($value)
+    static public function fixUnpackedInt16($payload, $field)
     {
+        $value = $payload[$field];
+
+        // int16 is unpacked as uint16, but PHP stores it in an int32 or int64
+        // which makes actually negtive values show up as positive values.
+        // detect if this has happend and fix it
         if ($value >= 32768) {
             $value -= 65536;
         }
@@ -1056,8 +1083,13 @@ class IPConnection
     /**
      * @internal
      */
-    static public function fixUnpackedInt32($value)
+    static public function fixUnpackedInt32($payload, $field)
     {
+        $value = $payload[$field];
+
+        // int32 is unpacked as uint32, but PHP might store it in an int64
+        // which makes actually negtive values show up as positive values.
+        // detect if this has happend and fix it
         if (bccomp($value, '2147483648') >= 0) {
             $value = bcsub($value, '4294967296');
         }
@@ -1068,8 +1100,13 @@ class IPConnection
     /**
      * @internal
      */
-    static public function fixUnpackedUInt32($value)
+    static public function fixUnpackedUInt32($payload, $field)
     {
+        $value = $payload[$field];
+
+        // int32 is unpacked as uint32, but PHP might store it in an int32
+        // which makes values bigger than INT32_MAX overflow into negative
+        // values. detect if this has happend and fix it
         if (bccomp($value, 0) < 0) {
             $value = bcadd($value, '4294967296');
         }
@@ -1080,12 +1117,37 @@ class IPConnection
     /**
      * @internal
      */
+    static public function fixUnpackedInt64($payload, $field)
+    {
+        // int64 is unpacked as 8 uint8 values, collect and decode them
+        $value = Base256::decode(self::collectUnpackedArray($payload, $field, 8));
+
+        // the base256 decoder produces and uint64 value, convert back to int64
+        if (bccomp($value, '9223372036854775808') >= 0) {
+            $value = bcsub($value, '18446744073709551616');
+        }
+
+        return $value;
+    }
+
+    /**
+     * @internal
+     */
+    static public function fixUnpackedUInt64($payload, $field)
+    {
+        // uint64 is unpacked as 8 uint8 values, collect and decode them
+        return Base256::decode(self::collectUnpackedArray($payload, $field, 8));
+    }
+
+    /**
+     * @internal
+     */
     static public function collectUnpackedInt16Array($payload, $field, $length)
     {
         $result = array();
 
         for ($i = 1; $i <= $length; $i++) {
-            array_push($result, self::fixUnpackedInt16($payload[$field . $i]));
+            array_push($result, self::fixUnpackedInt16($payload, $field . $i));
         }
 
         return $result;
@@ -1099,7 +1161,7 @@ class IPConnection
         $result = array();
 
         for ($i = 1; $i <= $length; $i++) {
-            array_push($result, self::fixUnpackedInt32($payload[$field . $i]));
+            array_push($result, self::fixUnpackedInt32($payload, $field . $i));
         }
 
         return $result;
@@ -1113,7 +1175,35 @@ class IPConnection
         $result = array();
 
         for ($i = 1; $i <= $length; $i++) {
-            array_push($result, self::fixUnpackedUInt32($payload[$field . $i]));
+            array_push($result, self::fixUnpackedUInt32($payload, $field . $i));
+        }
+
+        return $result;
+    }
+
+    /**
+     * @internal
+     */
+    static public function collectUnpackedInt64Array($payload, $field, $length)
+    {
+        $result = array();
+
+        for ($i = 1; $i <= $length; $i++) {
+            array_push($result, self::fixUnpackedInt64($payload, $field . chr(ord('A') + $i - 1)));
+        }
+
+        return $result;
+    }
+
+    /**
+     * @internal
+     */
+    static public function collectUnpackedUInt64Array($payload, $field, $length)
+    {
+        $result = array();
+
+        for ($i = 1; $i <= $length; $i++) {
+            array_push($result, self::fixUnpackedUInt64($payload, $field . chr(ord('A') + $i - 1)));
         }
 
         return $result;
@@ -1204,7 +1294,7 @@ class IPConnection
 
         $data = unpack('V1number', $bytes);
 
-        return self::fixUnpackedUInt32($data['number']);
+        return self::fixUnpackedUInt32($data, 'number');
     }
 
     /**
@@ -1230,7 +1320,7 @@ class IPConnection
             if ($bytes !== FALSE) {
                 $data = unpack('V1number', $bytes);
 
-                return self::fixUnpackedUInt32($data['number']);
+                return self::fixUnpackedUInt32($data, 'number');
             }
         }
 
@@ -1241,7 +1331,7 @@ class IPConnection
             if (!$strong && $bytes !== FALSE) {
                 $data = unpack('V1number', $bytes);
 
-                return self::fixUnpackedUInt32($data['number']);
+                return self::fixUnpackedUInt32($data, 'number');
             }
         }
 

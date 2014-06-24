@@ -3,7 +3,7 @@
 
 """
 PHP Generator
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012, 2014 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 php_common.py: Common Library for generation of PHP bindings and documentation
@@ -88,8 +88,8 @@ class PHPElement(common.Element):
         'uint16': 'v',
         'int32':  'V',
         'uint32': 'V',
-       #'int64':  # FIXME: unsupported
-       #'uint64': # FIXME: unsupported
+        'int64':  'C8', # needs special handling
+        'uint64': 'C8', # needs special handling
         'float':  'f',
         'bool':   'C',
         'char':   'c',
@@ -103,37 +103,58 @@ class PHPElement(common.Element):
         return PHPElement.php_pack_format[self.get_type()]
 
     def get_php_unpack_format(self):
-        # pack und unpack format are the same
-        return self.get_php_pack_format()
+        cardinality = self.get_cardinality()
+        underscore_name = self.get_underscore_name()
+
+        if self.get_type() in ['int64', 'uint64']:
+            if cardinality > 1:
+                unpack_format = []
+
+                for i in range(0, cardinality):
+                    unpack_format.append('C8{0}{1}'.format(underscore_name, chr(ord('A') + i)))
+
+                return '/'.join(unpack_format)
+            else:
+                return 'C8{0}'.format(underscore_name)
+        else:
+            return'{0}{1}{2}'.format(PHPElement.php_pack_format[self.get_type()], cardinality, underscore_name)
 
     def get_php_unpack_fix(self):
         if self.get_cardinality() > 1:
             if self.get_type() == 'int16':
-                return ('IPConnection::collectUnpackedInt16Array(', ')')
+                return ('IPConnection::collectUnpackedInt16Array(', ')', ', ', '')
             elif self.get_type() == 'int32':
-                return ('IPConnection::collectUnpackedInt32Array(', ')')
+                return ('IPConnection::collectUnpackedInt32Array(', ')', ', ', '')
             elif self.get_type() == 'uint32':
-                return ('IPConnection::collectUnpackedUInt32Array(', ')')
+                return ('IPConnection::collectUnpackedUInt32Array(', ')', ', ', '')
+            elif self.get_type() == 'int64':
+                return ('IPConnection::collectUnpackedInt64Array(', ')', ', ', '')
+            elif self.get_type() == 'uint64':
+                return ('IPConnection::collectUnpackedUInt64Array(', ')', ', ', '')
             elif self.get_type() == 'bool':
-                return ('IPConnection::collectUnpackedBoolArray(', ')')
+                return ('IPConnection::collectUnpackedBoolArray(', ')', ', ', '')
             elif self.get_type() == 'string':
-                return ('IPConnection::implodeUnpackedString(', ')')
+                return ('IPConnection::implodeUnpackedString(', ')', ', ', '')
             elif self.get_type() == 'char':
-                return ('IPConnection::collectUnpackedCharArray(', ')')
+                return ('IPConnection::collectUnpackedCharArray(', ')', ', ', '')
             else:
-                return ('IPConnection::collectUnpackedArray(', ')')
+                return ('IPConnection::collectUnpackedArray(', ')', ', ', '')
         else:
             if self.get_type() == 'int16':
-                return ('IPConnection::fixUnpackedInt16(', ')')
+                return ('IPConnection::fixUnpackedInt16(', ')', ', ', '')
             elif self.get_type() == 'int32':
-                return ('IPConnection::fixUnpackedInt32(', ')')
+                return ('IPConnection::fixUnpackedInt32(', ')', ', ', '')
             elif self.get_type() == 'uint32':
-                return ('IPConnection::fixUnpackedUInt32(', ')')
+                return ('IPConnection::fixUnpackedUInt32(', ')', ', ', '')
+            elif self.get_type() == 'int64':
+                return ('IPConnection::fixUnpackedInt64(', ')', ', ', '')
+            elif self.get_type() == 'uint64':
+                return ('IPConnection::fixUnpackedUInt64(', ')', ', ', '')
             elif self.get_type() == 'bool':
-                return ('(bool)', '')
+                return ('(bool)', '', '[', ']')
             elif self.get_type() == 'string':
-                return ('chr(', ')')
+                return ('chr(', ')', '[', ']')
             elif self.get_type() == 'char':
-                return ('chr(', ')')
+                return ('chr(', ')', '[', ']')
             else:
-                return ('', '')
+                return ('', '', '[', ']')

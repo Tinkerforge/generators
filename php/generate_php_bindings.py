@@ -3,7 +3,7 @@
 
 """
 PHP Bindings Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_php_bindings.py: Generator for PHP bindings
@@ -184,19 +184,20 @@ class {0} extends Device
             name_lower = packet.get_headless_camel_case_name()
             parameter = packet.get_php_parameter_list()
             pack = []
+
             for element in packet.get_elements('in'):
                 underscore_name = element.get_underscore_name()
                 cardinality = element.get_cardinality()
                 pack_format = element.get_php_pack_format()
 
                 if element.get_type() == 'bool':
-                    if element.get_cardinality() > 1:
+                    if cardinality > 1:
                         pack.append('        for ($i = 0; $i < {0}; $i++) {{'.format(element[2]))
                         pack.append('            $payload .= pack(\'{0}\', intval((bool)${1}[$i]));\n        }}'.format(pack_format, underscore_name))
                     else:
                         pack.append('        $payload .= pack(\'{0}\', intval((bool)${1}));'.format(pack_format, underscore_name))
                 elif element.get_type() == 'string':
-                    if element.get_cardinality() > 1:
+                    if cardinality > 1:
                         pack.append('        for ($i = 0; $i < strlen(${0}) && $i < {1}; $i++) {{'.format(underscore_name, cardinality))
                         pack.append('            $payload .= pack(\'{0}\', ord(${1}[$i]));\n        }}'.format(pack_format, underscore_name))
                         pack.append('        for ($i = strlen(${0}); $i < {1}; $i++) {{'.format(underscore_name, cardinality))
@@ -204,22 +205,34 @@ class {0} extends Device
                     else:
                         pack.append('        $payload .= pack(\'{0}\', ord(${1}));'.format(pack_format, underscore_name))
                 elif element.get_type() == 'char':
-                    if element.get_cardinality() > 1:
+                    if cardinality > 1:
                         pack.append('        for ($i = 0; $i < count(${0}) && $i < {1}; $i++) {{'.format(underscore_name, cardinality))
                         pack.append('            $payload .= pack(\'{0}\', ord(${1}[$i]));\n        }}'.format(pack_format, underscore_name))
                         pack.append('        for ($i = count(${0}); $i < {1}; $i++) {{'.format(underscore_name, cardinality))
                         pack.append('            $payload .= pack(\'{0}\', 0);\n        }}'.format(pack_format))
                     else:
                         pack.append('        $payload .= pack(\'{0}\', ord(${1}));'.format(pack_format, underscore_name))
+                elif element.get_type() == 'int64':
+                    if cardinality > 1:
+                        pack.append('        for ($i = 0; $i < {0}; $i++) {{'.format(cardinality))
+                        pack.append('            $payload .= Base256::encodeAndPackInt64(${0}[$i], 8);\n        }}'.format(underscore_name))
+                    else:
+                        pack.append('        $payload .= Base256::encodeAndPackInt64(${0}, 8);'.format(underscore_name))
+                elif element.get_type() == 'uint64':
+                    if cardinality > 1:
+                        pack.append('        for ($i = 0; $i < {0}; $i++) {{'.format(cardinality))
+                        pack.append('            $payload .= Base256::encodeAndPackUInt64(${0}[$i], 8);\n        }}'.format(underscore_name))
+                    else:
+                        pack.append('        $payload .= Base256::encodeAndPackUInt64(${0}, 8);'.format(underscore_name))
                 else:
-                    if element.get_cardinality() > 1:
+                    if cardinality > 1:
                         pack.append('        for ($i = 0; $i < {0}; $i++) {{'.format(cardinality))
                         pack.append('            $payload .= pack(\'{0}\', ${1}[$i]);\n        }}'.format(pack_format, underscore_name))
                     else:
                         pack.append('        $payload .= pack(\'{0}\', ${1});'.format(pack_format, underscore_name))
 
             has_multi_return_value = len(packet.get_elements('out')) > 1
-            unpack_format = []
+            unpack_formats = []
             collect = []
 
             for element in packet.get_elements('out'):
@@ -227,28 +240,28 @@ class {0} extends Device
                 cardinality = element.get_cardinality()
                 unpack_fix = element.get_php_unpack_fix()
 
-                unpack_format.append('{0}{1}{2}'.format(element.get_php_unpack_format(), cardinality, underscore_name))
+                unpack_formats.append(element.get_php_unpack_format())
 
                 if has_multi_return_value:
-                    if element.get_cardinality() > 1:
-                        collect.append('        $result[\'{0}\'] = {2}$payload, \'{0}\', {1}{3};'.format(underscore_name, cardinality, unpack_fix[0], unpack_fix[1]))
+                    if cardinality > 1:
+                        collect.append('        $result[\'{0}\'] = {2}$payload{4}\'{0}\'{5}, {1}{3};'.format(underscore_name, cardinality, *unpack_fix))
                     else:
-                        collect.append('        $result[\'{0}\'] = {1}$payload[\'{0}\']{2};'.format(underscore_name, unpack_fix[0], unpack_fix[1]))
+                        collect.append('        $result[\'{0}\'] = {1}$payload{3}\'{0}\'{4}{2};'.format(underscore_name, *unpack_fix))
                 else:
-                    if element.get_cardinality() > 1:
-                        collect.append('        return {2}$payload, \'{0}\', {1}{3};'.format(underscore_name, cardinality, unpack_fix[0], unpack_fix[1]))
+                    if cardinality > 1:
+                        collect.append('        return {2}$payload{4}\'{0}\'{5}, {1}{3};'.format(underscore_name, cardinality, *unpack_fix))
                     else:
-                        collect.append('        return {1}$payload[\'{0}\']{2};'.format(underscore_name, unpack_fix[0], unpack_fix[1]))
+                        collect.append('        return {1}$payload{3}\'{0}\'{4}{2};'.format(underscore_name, *unpack_fix))
 
-            if len(unpack_format) > 0:
+            if len(unpack_formats) > 0:
                 send = '        $data = $this->sendRequest(self::FUNCTION_{0}, $payload);\n'.format(packet.get_upper_case_name())
             else:
                 send = '        $this->sendRequest(self::FUNCTION_{0}, $payload);\n'.format(packet.get_upper_case_name())
 
             final_unpack = ''
 
-            if len(unpack_format) > 0:
-                final_unpack = '        $payload = unpack(\'{0}\', $data);'.format('/'.join(unpack_format))
+            if len(unpack_formats) > 0:
+                final_unpack = '        $payload = unpack(\'{0}\', $data);'.format('/'.join(unpack_formats))
 
             doc = packet.get_php_formatted_doc([''] + packet.get_php_parameter_doc().split('\n'))
 
@@ -332,26 +345,29 @@ class {0} extends Device
 
         for packet in self.get_packets('callback'):
             name = packet.get_camel_case_name()
-            unpack_format = []
+            unpack_formats = []
             collect = []
             result = []
 
             for element in packet.get_elements('out'):
-                unpack_format.append('{0}{1}{2}'.format(element.get_php_unpack_format(), element.get_cardinality(), element.get_underscore_name()))
+                underscore_name = element.get_underscore_name()
+                cardinality = element.get_cardinality()
+
+                unpack_formats.append(element.get_php_unpack_format())
 
                 unpack_fix = element.get_php_unpack_fix()
 
-                if element.get_cardinality() > 1:
-                    collect.append('        array_push($result, {2}$payload, \'{0}\', {1}{3});'.format(element.get_underscore_name(), element.get_cardinality(), unpack_fix[0], unpack_fix[1]))
+                if cardinality > 1:
+                    collect.append('        array_push($result, {2}$payload{4}\'{0}\'{5}, {1}{3});'.format(underscore_name, cardinality, *unpack_fix))
                 else:
-                    collect.append('        array_push($result, {1}$payload[\'{0}\']{2});'.format(element.get_underscore_name(), unpack_fix[0], unpack_fix[1]))
+                    collect.append('        array_push($result, {1}$payload{3}\'{0}\'{4}{2});'.format(underscore_name, *unpack_fix))
 
-                result.append('$payload[\'{0}\']'.format(element.get_underscore_name()))
+                result.append('$payload[\'{0}\']'.format(underscore_name))
 
             final_unpack = ''
 
-            if len(unpack_format) > 0:
-                final_unpack = '        $payload = unpack(\'{0}\', $data);'.format('/'.join(unpack_format))
+            if len(unpack_formats) > 0:
+                final_unpack = '        $payload = unpack(\'{0}\', $data);'.format('/'.join(unpack_formats))
 
             wrappers += wrapper.format(name,
                                        final_unpack,
