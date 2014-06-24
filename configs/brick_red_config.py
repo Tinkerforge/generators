@@ -175,13 +175,24 @@ com['packets'].append({
 'type': 'function',
 'name': ('OpenFile', 'open_file'),
 'elements': [('name_string_id', 'uint16', 1, 'in'),
-             ('flags', 'uint32', 1, 'in', ('FileFlag', 'file_flag', [('ReadOnly', 'read_only', 0x0001),
+             ('flags', 'uint16', 1, 'in', ('FileFlag', 'file_flag', [('ReadOnly', 'read_only', 0x0001),
                                                                      ('WriteOnly', 'write_only', 0x0002),
                                                                      ('ReadWrite', 'read_write', 0x0004),
                                                                      ('Append', 'append', 0x0008),
                                                                      ('Create', 'create', 0x0010),
                                                                      ('Truncate', 'truncate', 0x0020)])),
-             ('permissions', 'uint32', 1, 'in'),
+             ('permissions', 'uint16', 1, 'in', ('FilePermission', 'file_permission', [('UserAll', 'user_all', 00700),
+                                                                                       ('UserRead', 'user_read', 00400),
+                                                                                       ('UserWrite', 'user_write', 00200),
+                                                                                       ('UserExecute', 'user_execute', 00100),
+                                                                                       ('GroupAll', 'group_all', 00070),
+                                                                                       ('GroupRead', 'group_read', 00040),
+                                                                                       ('GroupWrite', 'group_write', 00020),
+                                                                                       ('GroupExecute', 'group_execute', 00010),
+                                                                                       ('OthersAll', 'others_all', 00007),
+                                                                                       ('OthersRead', 'others_read', 00004),
+                                                                                       ('OthersWrite', 'others_write', 00002),
+                                                                                       ('OthersExecute', 'others_execute', 00001)])),
              ('error_code', 'uint8', 1, 'out'),
              ('file_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -334,14 +345,34 @@ com['packets'].append({
 })
 
 com['packets'].append({
-'type': 'callback',
-'name': ('AsyncFileRead', 'async_file_read'),
-'elements': [('file_id', 'uint16', 1, 'out'),
+'type': 'function',
+'name': ('SetFilePosition', 'set_file_position'),
+'elements': [('file_id', 'uint16', 1, 'in'),
+             ('offset', 'int64', 1, 'in'),
+             ('origin', 'uint8', 1, 'in', ('FileOrigin', 'file_origin', [('Set', 'set', 0),
+                                                                         ('Current', 'current', 1),
+                                                                         ('End', 'end', 2)])),
              ('error_code', 'uint8', 1, 'out'),
-             ('buffer', 'uint8', 60, 'out'),
-             ('length_read', 'uint8', 1, 'out')],
+             ('position', 'uint64', 1, 'out')],
 'since_firmware': [1, 0, 0],
-'doc': ['c', {
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetFilePosition', 'get_file_position'),
+'elements': [('file_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('position', 'uint64', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
 'en':
 """
 """,
@@ -357,6 +388,24 @@ com['packets'].append({
 'elements': [('file_id', 'uint16', 1, 'out'),
              ('error_code', 'uint8', 1, 'out'),
              ('length_written', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('AsyncFileRead', 'async_file_read'),
+'elements': [('file_id', 'uint16', 1, 'out'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('buffer', 'uint8', 60, 'out'),
+             ('length_read', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
