@@ -20,10 +20,9 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetObjectType', 'get_object_type'),
+'name': ('ReleaseObject', 'release_object'),
 'elements': [('object_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out'),
-             ('object_type', 'uint8', 1, 'out')],
+             ('error_code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -70,26 +69,10 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('AcquireString', 'acquire_string'),
+'name': ('AllocateString', 'allocate_string'),
 'elements': [('length_to_reserve', 'uint32', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('string_id', 'uint16', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('ReleaseString', 'release_string'),
-'elements': [('string_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -195,22 +178,6 @@ com['packets'].append({
                                                                                        ('OthersExecute', 'others_execute', 00001)])),
              ('error_code', 'uint8', 1, 'out'),
              ('file_id', 'uint16', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('CloseFile', 'close_file'),
-'elements': [('file_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
