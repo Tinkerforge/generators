@@ -659,7 +659,7 @@ cn_all_uppercase = ['api', 'ir', 'us', 'lcd', 'dc', 'imu', 'pwm', 'gps', 'id', '
                     'io16', 'led', 'i2c', 'ptc', 'red', 'rs485', 'eap', 'usb', 'mac',
                     '2d', '3d', '1k', '100k', '500k', '3v', '6v', '10v', '36v',
                     '45v', 'sps', 'oqpsk', 'bpsk40', 'dhcp', 'ip', 'wpa',
-                    'wpa2', 'ca', 'wep', 'rgb', 'nfc', 'rfid']
+                    'wpa2', 'ca', 'wep', 'rgb', 'nfc', 'rfid', 'fifo']
 
 cn_eap_suffix = ['fast', 'tls', 'ttls', 'peap', 'mschap', 'gtc']
 

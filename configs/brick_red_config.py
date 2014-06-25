@@ -14,7 +14,7 @@ com = {
     'name': ('RED', 'red', 'RED'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for running user programs standalone on the stack',
-    'released': False,
+    'released': True,
     'packets': []
 }
 
@@ -375,6 +375,116 @@ com['packets'].append({
              ('length_read', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetFileInfo', 'get_file_info'),
+'elements': [('name_string_id', 'uint16', 1, 'in'),
+             ('follow_symlink', 'bool', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('type', 'uint8', 1, 'out', ('FileType', 'file_type', [('Unknown', 'unknown', 0),
+                                                                    ('Regular', 'regular', 1),
+                                                                    ('Directory', 'directory', 2),
+                                                                    ('Character', 'character', 3),
+                                                                    ('Block', 'block', 4),
+                                                                    ('FIFO', 'fifo', 5),
+                                                                    ('Symlink', 'symlink', 6),
+                                                                    ('Socket', 'socket', 7)])),
+             ('permissions', 'uint16', 1, 'out', ('FilePermission', 'file_permission', [('UserAll', 'user_all', 00700),
+                                                                                        ('UserRead', 'user_read', 00400),
+                                                                                        ('UserWrite', 'user_write', 00200),
+                                                                                        ('UserExecute', 'user_execute', 00100),
+                                                                                        ('GroupAll', 'group_all', 00070),
+                                                                                        ('GroupRead', 'group_read', 00040),
+                                                                                        ('GroupWrite', 'group_write', 00020),
+                                                                                        ('GroupExecute', 'group_execute', 00010),
+                                                                                        ('OthersAll', 'others_all', 00007),
+                                                                                        ('OthersRead', 'others_read', 00004),
+                                                                                        ('OthersWrite', 'others_write', 00002),
+                                                                                        ('OthersExecute', 'others_execute', 00001)])),
+             ('user_id', 'uint32', 1, 'out'),
+             ('group_id', 'uint32', 1, 'out'),
+             ('length', 'uint64', 1, 'out'),
+             ('access_time', 'uint64', 1, 'out'),
+             ('modification_time', 'uint64', 1, 'out'),
+             ('status_change_time', 'uint64', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('OpenDirectory', 'open_directory'),
+'elements': [('name_string_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('directory_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetDirectoryName', 'get_directory_name'),
+'elements': [('directory_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('name_string_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetNextDirectoryEntry', 'get_next_directory_entry'),
+'elements': [('directory_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('name_string_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('RewindDirectory', 'rewind_directory'),
+'elements': [('directory_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
 'en':
 """
 """,
