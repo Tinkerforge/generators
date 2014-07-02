@@ -18,6 +18,10 @@ com = {
     'packets': []
 }
 
+#
+# object table
+#
+
 com['packets'].append({
 'type': 'function',
 'name': ('ReleaseObject', 'release_object'),
@@ -37,7 +41,12 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': ('GetNextObjectTableEntry', 'get_next_object_table_entry'),
-'elements': [('object_type', 'uint8', 1, 'in'),
+'elements': [('object_type', 'uint8', 1, 'in', ('ObjectType', 'object_type', [('String', 'string', 0),
+                                                                              ('List', 'list', 1),
+                                                                              ('File', 'file', 2),
+                                                                              ('Directory', 'directory', 3),
+                                                                              ('Process', 'process', 4),
+                                                                              ('Program', 'program', 5)])),
              ('error_code', 'uint8', 1, 'out'),
              ('object_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -54,7 +63,12 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': ('RewindObjectTable', 'rewind_object_table'),
-'elements': [('object_type', 'uint8', 1, 'in'),
+'elements': [('object_type', 'uint8', 1, 'in', ('ObjectType', 'object_type', [('String', 'string', 0),
+                                                                              ('List', 'list', 1),
+                                                                              ('File', 'file', 2),
+                                                                              ('Directory', 'directory', 3),
+                                                                              ('Process', 'process', 4),
+                                                                              ('Program', 'program', 5)])),
              ('error_code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -66,6 +80,10 @@ com['packets'].append({
 """
 }]
 })
+
+#
+# string
+#
 
 com['packets'].append({
 'type': 'function',
@@ -153,6 +171,100 @@ com['packets'].append({
 """
 }]
 })
+
+#
+# list
+#
+
+com['packets'].append({
+'type': 'function',
+'name': ('AllocateList', 'allocate_list'),
+'elements': [('length_to_reserve', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('list_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetListLength', 'get_list_length'),
+'elements': [('list_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('length', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetListItem', 'get_list_item'),
+'elements': [('list_id', 'uint16', 1, 'in'),
+             ('index', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('item_object_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('AppendToList', 'append_to_list'),
+'elements': [('list_id', 'uint16', 1, 'in'),
+             ('item_object_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('RemoveFromList', 'remove_from_list'),
+'elements': [('list_id', 'uint16', 1, 'in'),
+             ('index', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+#
+# file
+#
 
 com['packets'].append({
 'type': 'function',
@@ -429,6 +541,28 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
+'name': ('GetSymlinkTarget', 'get_symlink_target'),
+'elements': [('name_string_id', 'uint16', 1, 'in'),
+             ('canonicalize', 'bool', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('target_string_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+#
+# directory
+#
+
+com['packets'].append({
+'type': 'function',
 'name': ('OpenDirectory', 'open_directory'),
 'elements': [('name_string_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
@@ -466,7 +600,15 @@ com['packets'].append({
 'name': ('GetNextDirectoryEntry', 'get_next_directory_entry'),
 'elements': [('directory_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
-             ('name_string_id', 'uint16', 1, 'out')],
+             ('name_string_id', 'uint16', 1, 'out'),
+             ('type', 'uint8', 1, 'out', ('FileType', 'file_type', [('Unknown', 'unknown', 0),
+                                                                    ('Regular', 'regular', 1),
+                                                                    ('Directory', 'directory', 2),
+                                                                    ('Character', 'character', 3),
+                                                                    ('Block', 'block', 4),
+                                                                    ('FIFO', 'fifo', 5),
+                                                                    ('Symlink', 'symlink', 6),
+                                                                    ('Socket', 'socket', 7)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
