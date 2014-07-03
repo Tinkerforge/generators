@@ -14,7 +14,7 @@ com = {
     'name': ('RED', 'red', 'RED'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for running user programs standalone on the stack',
-    'released': True,
+    'released': False,
     'packets': []
 }
 
@@ -41,12 +41,12 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': ('GetNextObjectTableEntry', 'get_next_object_table_entry'),
-'elements': [('object_type', 'uint8', 1, 'in', ('ObjectType', 'object_type', [('String', 'string', 0),
-                                                                              ('List', 'list', 1),
-                                                                              ('File', 'file', 2),
-                                                                              ('Directory', 'directory', 3),
-                                                                              ('Process', 'process', 4),
-                                                                              ('Program', 'program', 5)])),
+'elements': [('type', 'uint8', 1, 'in', ('ObjectType', 'object_type', [('String', 'string', 0),
+                                                                       ('List', 'list', 1),
+                                                                       ('File', 'file', 2),
+                                                                       ('Directory', 'directory', 3),
+                                                                       ('Process', 'process', 4),
+                                                                       ('Program', 'program', 5)])),
              ('error_code', 'uint8', 1, 'out'),
              ('object_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -63,12 +63,12 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': ('RewindObjectTable', 'rewind_object_table'),
-'elements': [('object_type', 'uint8', 1, 'in', ('ObjectType', 'object_type', [('String', 'string', 0),
-                                                                              ('List', 'list', 1),
-                                                                              ('File', 'file', 2),
-                                                                              ('Directory', 'directory', 3),
-                                                                              ('Process', 'process', 4),
-                                                                              ('Program', 'program', 5)])),
+'elements': [('type', 'uint8', 1, 'in', ('ObjectType', 'object_type', [('String', 'string', 0),
+                                                                       ('List', 'list', 1),
+                                                                       ('File', 'file', 2),
+                                                                       ('Directory', 'directory', 3),
+                                                                       ('Process', 'process', 4),
+                                                                       ('Program', 'program', 5)])),
              ('error_code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -307,6 +307,30 @@ com['packets'].append({
 'elements': [('file_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('name_string_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetFileType', 'type'),
+'elements': [('file_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('type', 'uint8', 1, 'out', ('FileType', 'file_type', [('Unknown', 'unknown', 0),
+                                                                    ('Regular', 'regular', 1),
+                                                                    ('Directory', 'directory', 2),
+                                                                    ('Character', 'character', 3),
+                                                                    ('Block', 'block', 4),
+                                                                    ('FIFO', 'fifo', 5),
+                                                                    ('Symlink', 'symlink', 6),
+                                                                    ('Socket', 'socket', 7)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
