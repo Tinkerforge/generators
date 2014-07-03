@@ -78,3 +78,4 @@
 2.1.0: Add authentication support to IPConnection and Master Brick API
        Add TinkerforgeListener and DeviceListener as base interfaces for all listeners
        Escape special HTML characters in JavaDoc
+2.1.1: Add support for WS2811 and WS2812 to LED Strip Bricklet API

@@ -1,1 +1,2 @@
 2.0.0: Initial version
+2.0.1: Add support for WS2811 and WS2812 to LED Strip Bricklet API

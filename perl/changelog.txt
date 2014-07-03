@@ -9,3 +9,4 @@
        Make IPConnection locks proper members of the class instance
        Make Brick and Bricklet classes proper subclasses of Device
        Don't overwrite auto_reconnect option in set_timeout function
+2.1.1: Add support for WS2811 and WS2812 to LED Strip Bricklet API

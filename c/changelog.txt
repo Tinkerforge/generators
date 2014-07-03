@@ -80,3 +80,4 @@
        Explicitly use ANSI version of WinAPI functions to support UNICODE builds on Windows
        Add simple library Makefile for Linux
        Fix race condition between device destruction and callback dispatch
+2.1.2: Add support for WS2811 and WS2812 to LED Strip Bricklet API

@@ -49,3 +49,4 @@
         Support addressing types of Intertechno and ELRO Home Easy devices in Remote Switch Bricklet API
 2.1.0: Add authentication support to IPConnection and Master Brick API
        Add TDeviceBase class as empty base class for all devices
+2.1.1: Add support for WS2811 and WS2812 to LED Strip Bricklet API
