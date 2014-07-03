@@ -320,7 +320,7 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetFileType', 'type'),
+'name': ('GetFileType', 'get_file_type'),
 'elements': [('file_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('type', 'uint8', 1, 'out', ('FileType', 'file_type', [('Unknown', 'unknown', 0),
