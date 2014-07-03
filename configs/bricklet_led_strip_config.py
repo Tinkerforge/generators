@@ -305,11 +305,72 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the currently used clock frequency.
+Returns the currently used clock frequency as set by :func:`SetClockFrequency`.
 """,
 'de':
 """
-Gibt die aktuell genutzte Clock-Frequenz zurück.
+Gibt die aktuell genutzte Clock-Frequenz zurück, wie von
+:func:`SetClockFrequency` gesetzt.
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetChipType', 'set_chip_type'), 
+'elements': [('chip', 'uint16', 1, 'in', ('ChipType', 'chip_type', [('WS2801', 'ws2801', 2801),
+                                                                    ('WS2811', 'ws2811', 2811),
+                                                                    ('WS2812', 'ws2812', 2812)]))],
+'since_firmware': [2, 0, 2],
+'doc': ['bf', {
+'en':
+"""
+Sets the type of the led driver chip. We currently support
+the chips
+
+* WS2801,
+* WS2811 and
+* WS2812.
+
+The WS2812 is sometimes also called "NeoPixel", a name coined by
+Adafruit.
+
+The default value is WS2801 = 2801.
+""",
+'de':
+"""
+Setzt den Typ des LED-Treiber-Chips. Aktuell unterstützen
+wir die Chips
+
+* WS2801,
+* WS2811 und
+* WS2812.
+
+Der WS2812 wird manchmal auch "NeoPixel" genannt, ein Name
+der von Adafruit geprägt wurde.
+
+Der Standardwert ist WS2801 = 2801.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetChipType', 'get_chip_type'), 
+'elements': [('chip', 'uint16', 1, 'out', ('ChipType', 'chip_type', [('WS2801', 'ws2801', 2801),
+                                                                     ('WS2811', 'ws2811', 2811),
+                                                                     ('WS2812', 'ws2812', 2812)]))],
+'since_firmware': [2, 0, 2],
+'doc': ['bf', {
+'en':
+"""
+Returns the currently used chip type as set by :func:`SetChipType`.
+""",
+'de':
+"""
+Gibt den aktuell genutzten Typ des Chips zurück, wie von
+:func:`SetChipType` gesetzt.
+"""
+}]
+})
+
