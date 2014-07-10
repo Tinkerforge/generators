@@ -9,6 +9,7 @@
 device_identifiers.py
 delphi/*.o
 delphi/*.ppu
+java/maven-tmp/
 perl/Tinkerforge-*.tar.gz
 ruby/tinkerforge-*.gem
 shell/tinkerforge

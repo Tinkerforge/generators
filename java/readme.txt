@@ -5,6 +5,11 @@ This ZIP contains a Java library (.jar) for all Tinkerforge Bricks and Bricklets
 (Tinkerforge.jar), the source of the library (in source/) and all available Java
 examples (in examples/).
 
+The library is also available from the Central Maven Repository (search for
+tinkerforge):
+
+ http://search.maven.org/
+
 The library can be used without any further extensions. As an example let's
 compile the configuration example of the Stepper Brick.
 
