@@ -397,7 +397,11 @@ public class {0} extends Device {{
                     else:
                         value = "'{0}'".format(constant_item.get_value())
                 else:
-                    cast = '({0})'.format(typ)
+                    if typ == 'int':
+                        cast = ''
+                    else:
+                        cast = '({0})'.format(typ)
+
                     value = str(constant_item.get_value())
 
                 constants.append(constant.format(typ,
