@@ -8,7 +8,7 @@ Bricks and Bricklets (Tinkerforge.dll), the C# source of the library
 The .NET/Link support in Mathematica requires the .NET Framework on Windows and
 the Mono Framework on Linux and Mac OS X. For further details on .NET/Link see
 
- http://reference.wolfram.com/mathematica/NETLink/tutorial/CallingNETFromMathematica.html
+ http://reference.wolfram.com/language/NETLink/tutorial/CallingNETFromTheWolframLanguage.html
 
 As an example we will run the Stepper Brick configuration example. To do this
 open the examples/Brick/Stepper/ExampleConfiguration.nb Notebook in
