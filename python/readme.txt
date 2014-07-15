@@ -1,17 +1,25 @@
 Tinkerforge Python Bindings
 ===========================
 
-This ZIP contains a Python egg with the bindings for all Tinkerforge Bricks and
-Bricklets (tinkerforge.egg), the source of the egg (in source/) and all available
-Python examples (in examples/).
+This ZIP contains the Python source of the bindings for all Tinkerforge Bricks
+and Bricklets (in source/) and all available Python examples (in examples/).
 
-You can install the egg with easy_install ("easy_install tinkerforge.egg").
+You can install the bindings using setuptools by executing the following command
+in the source/ folder:
+
+ python setup.py install
+
+The bindings are also available on the PyPI (https://pypi.python.org). You can
+install them with the Python Package Installer pip (https://pip.pypa.io):
+
+ pip install tinkerforge
+
 After that you can use the examples as they are.
 
-If you can't or don't want to use the egg, you can also use the source directly,
-just create a folder for your project and copy the tinkerforge folder from
-source/ and the example you want to try in there (e.g. the Stepper Brick
-configuration example from examples/brick/stepper/example_configuration.py).
+If you can't or don't want to install the bindings then you can also use the
+source directly, just create a folder for your project and copy the tinkerforge/
+folder from source/ and the example you want to try in there (e.g. the Stepper
+Brick configuration example from examples/brick/stepper/example_configuration.py).
 
  example_folder/
  -> tinkerforge/

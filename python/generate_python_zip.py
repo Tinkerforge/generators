@@ -72,40 +72,25 @@ class PythonZipGenerator(common.Generator):
         shutil.copy(os.path.join(root, 'changelog.txt'), '/tmp/generator/egg')
         shutil.copy(os.path.join(root, 'readme.txt'), '/tmp/generator/egg')
 
+        # Make __init__.py
+        file('/tmp/generator/egg/source/tinkerforge/__init__.py', 'wb').write(' ')
+
         # Write setup.py
         version = common.get_changelog_version(root)
-        file('/tmp/generator/egg/source/setup.py', 'wb').write("""
-#!/usr/bin/env python
+        file('/tmp/generator/egg/source/setup.py', 'wb').write("""#!/usr/bin/env python
 
 from setuptools import setup
 
 setup(name='tinkerforge',
       version='{0}.{1}.{2}',
-      description='TCP/IP based library for Bricks and Bricklets',
+      description='Python API Bindings for Tinkerforge Bricks and Bricklets',
+      license='CC0 1.0 Universal',
       author='Tinkerforge GmbH',
       author_email='olaf@tinkerforge.com',
       url='http://www.tinkerforge.com',
-      packages=['tinkerforge'])
+      packages=['tinkerforge'],
+      platforms = ('Any'))
 """.format(*version))
-
-        # Make egg
-        with common.ChangedDirectory('/tmp/generator/egg/source'):
-            args = ['/usr/bin/python',
-                    'setup.py',
-                    'bdist_egg']
-            if subprocess.call(args) != 0:
-                raise Exception("Command '{0}' failed".format(' '.join(args)))
-
-        # Remove build stuff
-        shutil.rmtree('/tmp/generator/egg/source/build')
-        shutil.rmtree('/tmp/generator/egg/source/tinkerforge.egg-info')
-        shutil.copy('/tmp/generator/egg/source/dist/' +
-                    os.listdir('/tmp/generator/egg/source/dist')[0],
-                    '/tmp/generator/egg/tinkerforge.egg')
-        shutil.rmtree('/tmp/generator/egg/source/dist')
-
-        # Make __init__.py
-        file('/tmp/generator/egg/source/tinkerforge/__init__.py', 'wb').write(' ')
 
         # Make zip
         common.make_zip(self.get_bindings_name(), '/tmp/generator/egg', root, version)
