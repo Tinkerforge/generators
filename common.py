@@ -162,7 +162,8 @@ def select_lang(d):
     else:
         return "Missing '{0}' documentation".format(lang)
 
-def make_rst_header(device, bindings_display_name, has_device_identifier_constant=True):
+def make_rst_header(device, has_device_identifier_constant=True):
+    bindings_display_name = device.get_generator().get_bindings_display_name()
     ref_name = device.get_generator().get_bindings_name()
     category = device.get_category()
     date = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -183,7 +184,7 @@ def make_rst_header(device, bindings_display_name, has_device_identifier_constan
                                                    full_title,
                                                    full_title_underline)
 
-def make_rst_summary(device, title, is_programming_language=True):
+def make_rst_summary(device, is_programming_language=True):
     not_released = {
     'en': """
 .. note::
@@ -201,20 +202,25 @@ def make_rst_summary(device, title, is_programming_language=True):
 
     summary = {
     'en': """
-This is the API description for the {4} of the {0} {1}. General information
-on what this device does and the technical specifications can be found
-:ref:`here <{2}>`.
-
-A tutorial on how to test the {0} {1} and get the first examples running
-can be found :ref:`here <{3}>`.
+This is the description {0} for {1}. General information and technical
+specifications for the {2} are summuarzied in its :ref:`hardware description
+<{3}_description>`.
 """,
     'de': """
-Dies ist die API Beschreibung für die {4} des {0} {1}s. Allgemeine Informationen
-über die Funktionen des Gerätes und die technischen Spezifikationen sind
-:ref:`hier <{2}>` zu finden.
+Dies ist die Beschreibung {0} für {1}. Allgemeine Informationen über
+die Funktionen und technischen Spezifikationen des {2} sind in dessen
+:ref:`Hardware Beschreibung <{3}_description>` zusammengefasst.
+"""
+    }
 
-Eine Anleitung wie der {0} {1} getestet werden kann und die ersten Beispiele
-ausgeführt werden können ist :ref:`hier <{3}>` zu finden.
+    summary_install = {
+    'en': """
+An :ref:`installation guide <api_bindings_{0}_install>` for the {1} API
+bindings is part of their general description.
+""",
+    'de': """
+Eine :ref:`Installationanleitung <api_bindings_{0}_install>` für die {1} API
+Bindings ist Teil deren allgemeine Beschreibung.
 """
     }
 
@@ -228,13 +234,52 @@ ausgeführt werden können ist :ref:`hier <{3}>` zu finden.
     'de': 'Dieses Bricklet'
     }
 
-    hw_link = device.get_underscore_name() + '_' + device.get_category().lower()
-    hw_test = hw_link + '_test'
+    programming_language_name_link = {
+    'en': 'of the :ref:`{0} API bindings <api_bindings_{1}>`',
+    'de': 'der :ref:`{0} API Bindings <api_bindings_{1}>`'
+    }
+
+    protocol_name_link = {
+    'en': 'of the :ref:`{0} protocol <llproto_{1}>`',
+    'de': 'des :ref:`{0} Protokolls <llproto_{1}>`'
+    }
+
+    brick_name = {
+    'en': 'the :ref:`{0} Brick <{1}_brick>`',
+    'de': 'den :ref:`{0} Brick <{1}_brick>`',
+    }
+
+    bricklet_name = {
+    'en': 'the :ref:`{0} Bricklet <{1}_bricklet>`',
+    'de': 'das :ref:`{0} Bricklet <{1}_bricklet>`',
+    }
+
+    # format bindings name
     if is_programming_language:
-        title_link = ':ref:`{0} <api_bindings_{1}>`'.format(title, device.get_generator().get_bindings_name())
+        bindings_name_link = select_lang(programming_language_name_link)
     else:
-        title_link = title
-    s = select_lang(summary).format(device.get_display_name(), device.get_category(), hw_link, hw_test, title_link)
+        bindings_name_link = select_lang(protocol_name_link)
+
+    bindings_name_link = bindings_name_link.format(device.get_generator().get_bindings_display_name(),
+                                                   device.get_generator().get_bindings_name())
+
+    # format device name
+    if device.get_category() == 'Brick':
+        device_name = select_lang(brick_name)
+    else:
+        device_name = select_lang(bricklet_name)
+
+    device_name = device_name.format(device.get_display_name(),
+                                     device.get_underscore_name())
+
+    s = select_lang(summary).format(bindings_name_link,
+                                    device_name,
+                                    device.get_display_name() + ' ' + device.get_category(),
+                                    device.get_underscore_name() + '_' + device.get_category().lower())
+
+    if is_programming_language:
+        s += select_lang(summary_install).format(device.get_generator().get_bindings_name(),
+                                                 device.get_generator().get_bindings_display_name())
 
     if not device.is_released():
         if device.get_category() == 'Brick':
@@ -659,7 +704,7 @@ cn_all_uppercase = ['api', 'ir', 'us', 'lcd', 'dc', 'imu', 'pwm', 'gps', 'id', '
                     'io16', 'led', 'i2c', 'ptc', 'red', 'rs485', 'eap', 'usb', 'mac',
                     '2d', '3d', '1k', '100k', '500k', '3v', '6v', '10v', '36v',
                     '45v', 'sps', 'oqpsk', 'bpsk40', 'dhcp', 'ip', 'wpa',
-                    'wpa2', 'ca', 'wep', 'rgb', 'nfc', 'rfid', 'fifo', 
+                    'wpa2', 'ca', 'wep', 'rgb', 'nfc', 'rfid', 'fifo',
                     'ws2801', 'ws2811', 'ws2812']
 
 cn_eap_suffix = ['fast', 'tls', 'ttls', 'peap', 'mschap', 'gtc']

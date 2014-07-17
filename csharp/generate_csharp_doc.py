@@ -296,10 +296,8 @@ Konstanten
         return common.select_lang(api).format(ref, self.get_api_doc(), api_str)
 
     def get_csharp_doc(self):
-        title = { 'en': 'C# bindings', 'de': 'C# Bindings' }
-
-        doc  = common.make_rst_header(self, self.get_generator().get_bindings_display_name())
-        doc += common.make_rst_summary(self, common.select_lang(title))
+        doc  = common.make_rst_header(self)
+        doc += common.make_rst_summary(self)
         doc += self.get_csharp_examples()
         doc += self.get_csharp_api()
 
