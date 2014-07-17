@@ -40,7 +40,7 @@ class PerlZipGenerator(common.Generator):
 
     def prepare(self):
         common.recreate_directory('/tmp/generator')
-        os.makedirs('/tmp/generator/cpan/source/Tinkerforge')
+        os.makedirs('/tmp/generator/cpan/source/lib/Tinkerforge')
         os.makedirs('/tmp/generator/cpan/examples')
 
     def generate(self, device):
@@ -69,11 +69,11 @@ class PerlZipGenerator(common.Generator):
 
         # Copy bindings and readme
         for filename in released_files:
-            shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/cpan/source/Tinkerforge')
+            shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/cpan/source/lib/Tinkerforge')
 
-        shutil.copy(os.path.join(root, 'IPConnection.pm'), '/tmp/generator/cpan/source/Tinkerforge')
-        shutil.copy(os.path.join(root, 'Device.pm'), '/tmp/generator/cpan/source/Tinkerforge')
-        shutil.copy(os.path.join(root, 'Error.pm'), '/tmp/generator/cpan/source/Tinkerforge')
+        shutil.copy(os.path.join(root, 'IPConnection.pm'), '/tmp/generator/cpan/source/lib/Tinkerforge')
+        shutil.copy(os.path.join(root, 'Device.pm'), '/tmp/generator/cpan/source/lib/Tinkerforge')
+        shutil.copy(os.path.join(root, 'Error.pm'), '/tmp/generator/cpan/source/lib/Tinkerforge')
         shutil.copy(os.path.join(root, 'changelog.txt'), '/tmp/generator/cpan')
         shutil.copy(os.path.join(root, 'readme.txt'), '/tmp/generator/cpan')
 
@@ -97,11 +97,12 @@ class PerlZipGenerator(common.Generator):
                         " --author=\"Ishraq Ibne Ashraf\" --email=ishraq@tinkerforge.com".format(modules), shell=True)
 
         # Version replacing
-        common.replace_in_file(os.path.join(root, 'Tinkerforge_cpan_template.pm'),
-                               os.path.join(root, 'Tinkerforge_cpan.pm'),
+        common.replace_in_file(os.path.join(root, 'Tinkerforge.pm.template'),
+                               '/tmp/generator/cpan/Tinkerforge/lib/Tinkerforge.pm',
                                '<TF_API_VERSION>', dot_version)
-        common.replace_in_file(os.path.join(root, 'README_cpan_template'),
-                               os.path.join(root, 'README_cpan'),
+        shutil.copy('/tmp/generator/cpan/Tinkerforge/lib/Tinkerforge.pm', '/tmp/generator/cpan/source/lib')
+        common.replace_in_file(os.path.join(root, 'README.template'),
+                               '/tmp/generator/cpan/Tinkerforge/README',
                                '<TF_API_VERSION>', dot_version)
 
         # Copying bindings
@@ -115,21 +116,14 @@ class PerlZipGenerator(common.Generator):
         subprocess.call("cp -ar {0}/Device.pm /tmp/generator/cpan/Tinkerforge/lib/Tinkerforge/".format(root), shell=True)
         subprocess.call("cp -ar {0}/Error.pm /tmp/generator/cpan/Tinkerforge/lib/Tinkerforge/".format(root), shell=True)
 
-        # Copying README
-        subprocess.call("rm -rf /tmp/generator/cpan/Tinkerforge/README", shell=True)
-        subprocess.call("cp -ar {0}/README_cpan /tmp/generator/cpan/Tinkerforge/README".format(root), shell=True)
-
         # Copying Changes
         subprocess.call("rm -rf /tmp/generator/cpan/Tinkerforge/Changes", shell=True)
         subprocess.call("cp -ar {0}/changelog.txt /tmp/generator/cpan/Tinkerforge/Changes".format(root), shell=True)
 
-        # Copying Tinkerforge.pm
-        subprocess.call("rm -rf /tmp/generator/cpan/Tinkerforge/lib/Tinkerforge.pm", shell=True)
-        subprocess.call("cp {0}/Tinkerforge_cpan.pm /tmp/generator/cpan/Tinkerforge/lib/Tinkerforge.pm".format(root), shell=True)
-
         # Copying Makefile.PL
         subprocess.call("rm -rf /tmp/generator/cpan/Tinkerforge/Makefile.PL", shell=True)
-        subprocess.call("cp {0}/Makefile_cpan.PL /tmp/generator/cpan/Tinkerforge/Makefile.PL".format(root), shell=True)
+        subprocess.call("cp {0}/Makefile.PL /tmp/generator/cpan/Tinkerforge/Makefile.PL".format(root), shell=True)
+        subprocess.call("cp {0}/Makefile.PL /tmp/generator/cpan/source/Makefile.PL".format(root), shell=True)
 
         # Modifying 00-load.t test file
         old_test_file = open('/tmp/generator/cpan/Tinkerforge/t/00-load.t')
@@ -151,11 +145,8 @@ class PerlZipGenerator(common.Generator):
         # Generating the CPAN package archive and cleaning up
         subprocess.call("cd /tmp/generator/cpan/Tinkerforge/ && perl /tmp/generator/cpan/Tinkerforge/Makefile.PL", shell=True)
         subprocess.call("cd /tmp/generator/cpan/Tinkerforge/ && make dist", shell=True)
-        shutil.copy("/tmp/generator/cpan/Tinkerforge/Tinkerforge-{0}.{1}.{2}.tar.gz".format(*version), "/tmp/generator/cpan/Tinkerforge.tar.gz")
         shutil.copy("/tmp/generator/cpan/Tinkerforge/Tinkerforge-{0}.{1}.{2}.tar.gz".format(*version), root)
         shutil.rmtree('/tmp/generator/cpan/Tinkerforge')
-        os.remove(os.path.join(root, 'Tinkerforge_cpan.pm'))
-        os.remove(os.path.join(root, 'README_cpan'))
 
         # Make zip
         common.make_zip(self.get_bindings_name(), '/tmp/generator/cpan', root, version)
