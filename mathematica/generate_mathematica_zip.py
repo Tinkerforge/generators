@@ -95,7 +95,6 @@ using System.Runtime.CompilerServices;
                     '/optimize',
                     '/target:library',
                     '/out:/tmp/generator/dll/Tinkerforge.dll',
-                    '/doc:/tmp/generator/dll/Tinkerforge.xml',
                     '/tmp/generator/dll/source/Tinkerforge/*.cs']
             if subprocess.call(args) != 0:
                 raise Exception("Command '{0}' failed".format(' '.join(args)))
