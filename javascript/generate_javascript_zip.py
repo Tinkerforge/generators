@@ -92,7 +92,7 @@ class JavaScriptZipGenerator(common.Generator):
             shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/npm/nodejs/npm_pkg_dir/lib/')
 
         # Replace <TF_API_VERSION> in package.json file
-        common.replace_in_file(os.path.join(root, 'package.json'), '/tmp/generator/npm/nodejs/npm_pkg_dir/package.json', '<TF_API_VERSION>', dot_version)
+        common.replace_in_file(os.path.join(root, 'package.json.template'), '/tmp/generator/npm/nodejs/npm_pkg_dir/package.json', '<TF_API_VERSION>', dot_version)
 
         shutil.copy(os.path.join(root, 'README.md'), '/tmp/generator/npm/nodejs/npm_pkg_dir')
         shutil.copy(os.path.join(root, 'LICENSE'), '/tmp/generator/npm/nodejs/npm_pkg_dir')
