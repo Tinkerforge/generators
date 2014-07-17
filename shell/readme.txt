@@ -1,26 +1,12 @@
 Tinkerforge Shell Bindings
 ==========================
 
-This ZIP contains a script to interact with all Tinkerforge Bricks and
-Bricklets (tinkerforge), a corresponding Bash Completion script
-(tinkerforge-bash-completion.sh) and all available Shell examples (in
-examples/).
+The Shell bindings allow you to control Tinkerforge Bricks and Bricklets from
+your shell scripts. The tinkerforge file is an all-in-one Python script that
+acts as a shell command. The tinkerforge-bash-completion.sh file is a bash
+completion script that provides bash completion for the tinkerforge script.
+The examples/ directory contains shell examples for every Brick and Bricklet.
+For more information about the Shell bindings go to:
 
-To get Bash Completion to work the tinkerforge script has to be in PATH. For
-example by copying it to /usr/local/bin/. The Bash Completion script
-tinkerforge-bash-completion.sh has to be in /etc/bash_completion.d/. Bash
-Completion can then be reloaded by:
-
- . /etc/bash_completion
-
-All examples are meant for typical Unix shells such as Bash. They will work
-on Linux and Mac OS X as they are. There are Bash ports for Windows that allow
-to run the examples unmodified, too.
-
-API Documentation and Examples
-------------------------------
-
-Links to the API documentation for the IP Connection, Bricks and Bricklets as
-well as the examples from this ZIP file can be found at
-
- http://www.tinkerforge.com/en/doc/Software/API_Bindings_Shell.html#api-documentation-and-examples
+ http://www.tinkerforge.com/en/doc/Software/API_Bindings_Shell.html (English)
+ http://www.tinkerforge.com/de/doc/Software/API_Bindings_Shell.html (German)
