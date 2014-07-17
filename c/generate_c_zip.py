@@ -38,7 +38,7 @@ class CZipGenerator(common.Generator):
 
     def prepare(self):
         common.recreate_directory('/tmp/generator')
-        os.makedirs('/tmp/generator/bindings')
+        os.makedirs('/tmp/generator/source')
         os.makedirs('/tmp/generator/examples')
 
     def generate(self, device):
@@ -65,11 +65,11 @@ class CZipGenerator(common.Generator):
 
         # Copy bindings and readme
         for filename in released_files:
-            shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/bindings')
+            shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/source')
 
-        shutil.copy(os.path.join(root, 'ip_connection.c'), '/tmp/generator/bindings')
-        shutil.copy(os.path.join(root, 'ip_connection.h'), '/tmp/generator/bindings')
-        shutil.copy(os.path.join(root, 'Makefile'), '/tmp/generator/bindings')
+        shutil.copy(os.path.join(root, 'ip_connection.c'), '/tmp/generator/source')
+        shutil.copy(os.path.join(root, 'ip_connection.h'), '/tmp/generator/source')
+        shutil.copy(os.path.join(root, 'Makefile'), '/tmp/generator/source')
         shutil.copy(os.path.join(root, 'changelog.txt'), '/tmp/generator')
         shutil.copy(os.path.join(root, 'readme.txt'), '/tmp/generator')
 

@@ -39,7 +39,7 @@ class DelphiZipGenerator(common.Generator):
 
     def prepare(self):
         common.recreate_directory('/tmp/generator')
-        os.makedirs('/tmp/generator/bindings')
+        os.makedirs('/tmp/generator/source')
         os.makedirs('/tmp/generator/examples')
 
     def generate(self, device):
@@ -66,17 +66,17 @@ class DelphiZipGenerator(common.Generator):
 
         # Copy bindings and readme
         for filename in released_files:
-            shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/bindings')
+            shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/source')
 
-        shutil.copy(os.path.join(root, 'Base58.pas'), '/tmp/generator/bindings')
-        shutil.copy(os.path.join(root, 'BlockingQueue.pas'), '/tmp/generator/bindings')
-        shutil.copy(os.path.join(root, 'DeviceBase.pas'), '/tmp/generator/bindings')
-        shutil.copy(os.path.join(root, 'Device.pas'), '/tmp/generator/bindings')
-        shutil.copy(os.path.join(root, 'IPConnection.pas'), '/tmp/generator/bindings')
-        shutil.copy(os.path.join(root, 'LEConverter.pas'), '/tmp/generator/bindings')
-        shutil.copy(os.path.join(root, 'TimedSemaphore.pas'), '/tmp/generator/bindings')
-        shutil.copy(os.path.join(root, 'SHA1.pas'), '/tmp/generator/bindings')
-        shutil.copy(os.path.join(root, 'BrickDaemon.pas'), '/tmp/generator/bindings')
+        shutil.copy(os.path.join(root, 'Base58.pas'), '/tmp/generator/source')
+        shutil.copy(os.path.join(root, 'BlockingQueue.pas'), '/tmp/generator/source')
+        shutil.copy(os.path.join(root, 'DeviceBase.pas'), '/tmp/generator/source')
+        shutil.copy(os.path.join(root, 'Device.pas'), '/tmp/generator/source')
+        shutil.copy(os.path.join(root, 'IPConnection.pas'), '/tmp/generator/source')
+        shutil.copy(os.path.join(root, 'LEConverter.pas'), '/tmp/generator/source')
+        shutil.copy(os.path.join(root, 'TimedSemaphore.pas'), '/tmp/generator/source')
+        shutil.copy(os.path.join(root, 'SHA1.pas'), '/tmp/generator/source')
+        shutil.copy(os.path.join(root, 'BrickDaemon.pas'), '/tmp/generator/source')
         shutil.copy(os.path.join(root, 'changelog.txt'), '/tmp/generator/')
         shutil.copy(os.path.join(root, 'readme.txt'), '/tmp/generator/')
 
