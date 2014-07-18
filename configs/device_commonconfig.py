@@ -20,13 +20,16 @@ common_packets.append({
 'doc': ['af', {
 'en':
 """
-Returns the API version (major, minor, revision) of the bindings for this
-device.
+Returns the version of the API definition (major, minor, revision) implemented
+by this API bindings. This is neither the release version of this API bindings
+nor does it tell you anything about the represented Brick or Bricklet.
 """,
 'de':
 """
-Gibt die API Version (Major, Minor, Revision) der Bindings für diese Gerät
-zurück.
+Gibt die Version der API Definition (Major, Minor, Revision) zurück, die diese
+API Bindings implementieren. Dies ist werder die Release-Version dieser API
+Bindings noch gibt es in irgendeiner Weise Auskunft über den oder das
+repräsentierte(n) Brick oder Bricklet.
 """
 }]
 })
