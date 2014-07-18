@@ -2,7 +2,7 @@ Tinkerforge Java Bindings
 =========================
 
 The Java bindings allow you to control Tinkerforge Bricks and Bricklets from
-your Java program. This ZIP file contains:
+your Java programs. This ZIP file contains:
 
  Tinkerforge.jar -- precompiled Java library
  source/         -- source code of Tinkerforge.jar

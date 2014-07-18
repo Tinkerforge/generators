@@ -2,7 +2,7 @@ Tinkerforge Mathematica Bindings
 ================================
 
 The Mathematica bindings allow you to control Tinkerforge Bricks and Bricklets
-from your Mathematica program. This ZIP file contains:
+from your Mathematica programs. This ZIP file contains:
 
  Tinkerforge.dll -- precompiled .NET library
  source/         -- source code of Tinkerforge.dll

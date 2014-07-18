@@ -2,7 +2,7 @@ Tinkerforge C/C++ Bindings
 ==========================
 
 The C/C++ bindings allow you to control Tinkerforge Bricks and Bricklets from
-your C/C++ program. This ZIP file contains:
+your C/C++ programs. This ZIP file contains:
 
  source/   -- source code of the bindings
  examples/ -- examples for every Brick and Bricklet

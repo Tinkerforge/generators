@@ -2,7 +2,7 @@ Tinkerforge JavaScript Bindings
 ===============================
 
 The JavaScript bindings allow you to control Tinkerforge Bricks and Bricklets
-from your JavaScript program. The bindings can be used with Node.js or in your
+from your JavaScript programs. The bindings can be used with Node.js or in your
 browser. This ZIP file contains:
 
  tinkerforge.tgz   -- Node.js package (install with npm tool)

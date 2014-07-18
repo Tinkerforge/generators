@@ -2,7 +2,7 @@ Tinkerforge Visual Basic .NET Bindings
 ======================================
 
 The  Visual Basic .NET bindings allow you to control Tinkerforge Bricks and
-Bricklets from your Visual Basic .NET program. This ZIP file contains:
+Bricklets from your Visual Basic .NET programs. This ZIP file contains:
 
  Tinkerforge.dll -- precompiled .NET library
  Tinkerforge.xml -- API documentation for Visual Studio, MonoDevelop, etc

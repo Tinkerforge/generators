@@ -2,7 +2,7 @@ Tinkerforge Perl Bindings
 =========================
 
 The Perl bindings allow you to control Tinkerforge Bricks and Bricklets from
-your Perl program. This ZIP file contains:
+your Perl programs. This ZIP file contains:
 
  source/   -- source code of the bindings (install with Makefile.PL script)
  examples/ -- examples for every Brick and Bricklet

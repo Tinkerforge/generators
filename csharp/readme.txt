@@ -2,7 +2,7 @@ Tinkerforge C# Bindings
 =======================
 
 The C# bindings allow you to control Tinkerforge Bricks and Bricklets from your
-C# program. This ZIP file contains:
+C# programs. This ZIP file contains:
 
  Tinkerforge.dll -- precompiled C#/.NET library
  Tinkerforge.xml -- API documentation for Visual Studio, MonoDevelop, etc

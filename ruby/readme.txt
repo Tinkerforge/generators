@@ -2,7 +2,7 @@ Tinkerforge Ruby Bindings
 =========================
 
 The Ruby bindings allow you to control Tinkerforge Bricks and Bricklets from
-your Ruby program. This ZIP file contains:
+your Ruby programs. This ZIP file contains:
 
  tinkerforge.gem -- Ruby GEM (install with gem tool)
  source/         -- source code of tinkerforge.gem
