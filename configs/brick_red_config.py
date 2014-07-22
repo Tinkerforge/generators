@@ -275,7 +275,8 @@ com['packets'].append({
                                                                      ('ReadWrite', 'read_write', 0x0004),
                                                                      ('Append', 'append', 0x0008),
                                                                      ('Create', 'create', 0x0010),
-                                                                     ('Truncate', 'truncate', 0x0020)])),
+                                                                     ('Exclusive', 'exclusive', 0x0020),
+                                                                     ('Truncate', 'truncate', 0x0040)])),
              ('permissions', 'uint16', 1, 'in', ('FilePermission', 'file_permission', [('UserAll', 'user_all', 00700),
                                                                                        ('UserRead', 'user_read', 00400),
                                                                                        ('UserWrite', 'user_write', 00200),
@@ -288,6 +289,8 @@ com['packets'].append({
                                                                                        ('OthersRead', 'others_read', 00004),
                                                                                        ('OthersWrite', 'others_write', 00002),
                                                                                        ('OthersExecute', 'others_execute', 00001)])),
+             ('user_id', 'uint32', 1, 'in'),
+             ('group_id', 'uint32', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('file_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -649,6 +652,32 @@ com['packets'].append({
 'name': ('RewindDirectory', 'rewind_directory'),
 'elements': [('directory_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+#
+# process
+#
+
+com['packets'].append({
+'type': 'function',
+'name': ('StartProcess', 'start_process'),
+'elements': [('command_string_id', 'uint16', 1, 'in'),
+             ('argument_string_ids', 'uint16', 20, 'in'),
+             ('argument_count', 'uint8', 1, 'in'),
+             ('environment_string_ids', 'uint16', 8, 'in'),
+             ('environment_count', 'uint8', 1, 'in'),
+             ('merge_stdout_and_stderr', 'bool', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('process_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
