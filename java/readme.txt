@@ -15,4 +15,4 @@ For more information about the Java bindings go to:
 
 The Java bindings are also available from the Maven Central Repository:
 
- http://search.maven.org/#browse%7C1012008284
+ http://search.maven.org/#search%7Cga%7C1%7Ca%3Atinkerforge
