@@ -184,7 +184,6 @@ class JavaScriptBindingsPacket(javascript_common.JavaScriptPacket):
 
 class JavaScriptBindingsGenerator(common.BindingsGenerator):
     released_files_name_prefix = 'javascript'
-    browser_api_file = None
 
     def get_bindings_name(self):
         return 'javascript'
@@ -202,11 +201,16 @@ class JavaScriptBindingsGenerator(common.BindingsGenerator):
         ret = common.BindingsGenerator.prepare(self)
 
         browser_api_filename = os.path.join(self.get_bindings_root_directory(), 'bindings', 'BrowserAPI.js')
-        npm_main_filename = os.path.join(self.get_bindings_root_directory(), 'bindings', 'TinkerforgeMain.js')
+        npm_main_filename = os.path.join(self.get_bindings_root_directory(), 'bindings', 'TinkerforgeNPM.js')
+        source_main_filename = os.path.join(self.get_bindings_root_directory(), 'bindings', 'TinkerforgeSource.js')
+
         self.browser_api_file = open(browser_api_filename, 'wb')
         self.npm_main_file = open(npm_main_filename, 'wb')
+        self.source_main_file = open(source_main_filename, 'wb')
+
         self.released_files.append(browser_api_filename)
         self.released_files.append(npm_main_filename)
+        self.released_files.append(source_main_filename)
 
         self.browser_api_file.write("""function Tinkerforge() {
 \tthis.IPConnection = require('./IPConnection');
@@ -214,6 +218,10 @@ class JavaScriptBindingsGenerator(common.BindingsGenerator):
 
         self.npm_main_file.write("""function Tinkerforge() {
 \tthis.IPConnection = require('./lib/IPConnection');
+""")
+
+        self.source_main_file.write("""function Tinkerforge() {
+\tthis.IPConnection = require('./Tinkerforge/IPConnection');
 """)
 
         return ret
@@ -232,9 +240,17 @@ class JavaScriptBindingsGenerator(common.BindingsGenerator):
             npm_main_format = npm_main.format(device.get_category(), device.get_camel_case_name())
             self.npm_main_file.write(npm_main_format)
 
+    def add_source_main_function(self, device):
+        if device.is_released():
+            source_main = """\tthis.{0}{1} = require('./Tinkerforge/{0}{1}');
+"""
+            source_main_format = source_main.format(device.get_category(), device.get_camel_case_name())
+            self.source_main_file.write(source_main_format)
+
     def generate(self, device):
         self.add_browser_api_function(device)
         self.add_npm_main_function(device)
+        self.add_source_main_function(device)
 
         filename = '{0}{1}.js'.format(device.get_category(), device.get_camel_case_name())
 
@@ -255,6 +271,11 @@ global.window.Tinkerforge = new Tinkerforge();""")
 
 module.exports = new Tinkerforge();""")
         self.npm_main_file.close()
+
+        self.source_main_file.write("""}
+
+module.exports = new Tinkerforge();""")
+        self.source_main_file.close()
 
         return common.BindingsGenerator.finish(self)
 

@@ -82,14 +82,15 @@ class JavaScriptZipGenerator(common.Generator):
 
         # Copy bindings and readme
         for filename in released_files:
-            if filename == os.path.join(root, 'bindings', 'TinkerforgeMain.js'):
+            if filename == os.path.join(root, 'bindings', 'TinkerforgeNPM.js'):
                 shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/npm/nodejs/npm_pkg_dir/Tinkerforge.js')
-                continue
-            if filename == os.path.join(root, 'bindings', 'BrowserAPI.js'):
+            elif filename == os.path.join(root, 'bindings', 'BrowserAPI.js'):
                 shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/npm/nodejs/source/Tinkerforge/')
-                continue
-            shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/npm/nodejs/source/Tinkerforge/')
-            shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/npm/nodejs/npm_pkg_dir/lib/')
+            elif filename == os.path.join(root, 'bindings', 'TinkerforgeSource.js'):
+                shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/npm/nodejs/source/Tinkerforge.js')
+            else:
+                shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/npm/nodejs/source/Tinkerforge/')
+                shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/npm/nodejs/npm_pkg_dir/lib/')
 
         # Replace <TF_API_VERSION> in package.json file
         common.replace_in_file(os.path.join(root, 'package.json.template'), '/tmp/generator/npm/nodejs/npm_pkg_dir/package.json', '<TF_API_VERSION>', dot_version)
