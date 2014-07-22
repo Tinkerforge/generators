@@ -129,7 +129,7 @@ class JavaScriptZipGenerator(common.Generator):
                 raise Exception("Command npm pack failed")
 
         shutil.copy('/tmp/generator/npm/nodejs/npm_pkg_dir/tinkerforge-{0}.tgz'.format(dot_version),
-                    '/tmp/generator/npm/tinkerforge.tgz')
+                    '/tmp/generator/npm/nodejs/tinkerforge.tgz')
         shutil.copy('/tmp/generator/npm/nodejs/npm_pkg_dir/tinkerforge-{0}.tgz'.format(dot_version),
                     os.path.join(root, 'tinkerforge-{0}.tgz'.format(dot_version)))
 

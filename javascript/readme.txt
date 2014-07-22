@@ -5,11 +5,11 @@ The JavaScript bindings allow you to control Tinkerforge Bricks and Bricklets
 from your JavaScript programs. The bindings can be used with Node.js or in your
 browser. This ZIP file contains:
 
- tinkerforge.tgz   -- Node.js package (install with npm tool)
- nodejs/source/    -- source code of tinkerforge.tgz
- nodejs/examples/  -- Node.js examples for every Brick and Bricklet
- browser/source/   -- source code of the browser version
- browser/examples/ -- browser examples for every Brick and Bricklet
+ nodejs/tinkerforge.tgz -- Node.js NPM package (install with npm tool)
+ nodejs/source/         -- source code of tinkerforge.tgz
+ nodejs/examples/       -- Node.js examples for every Brick and Bricklet
+ browser/source/        -- source code of the browser version of the bindings
+ browser/examples/      -- HTML examples for every Brick and Bricklet
 
 For more information about the JavaScript bindings go to:
 
