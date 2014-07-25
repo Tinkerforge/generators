@@ -118,12 +118,12 @@ class MathematicaDocDevice(common.Device):
  no longer in use by a program. But because Mathematica can not automatically
  tell when a Mathematica "program" doesn't use a .NET object anymore, this has
  to be done by the program. For this the `ReleaseNETObject[]
- <http://reference.wolfram.com/mathematica/NETLink/ref/ReleaseNETObject.html>`__
+ <http://reference.wolfram.com/language/NETLink/ref/ReleaseNETObject.html>`__
  function is used in the examples.
 
  For further information about object management in .NET/Link see the
  corresponding Mathematica `.NET/Link documentation
- <http://reference.wolfram.com/mathematica/NETLink/tutorial/CallingNETFromMathematica.html#14400>`__.
+ <http://reference.wolfram.com/language/NETLink/tutorial/CallingNETFromTheWolframLanguage.html#14400>`__.
 """,
         'de': """
 .. mathematica:function:: {3}{1}[uid, ipcon] -> {4}
@@ -146,12 +146,12 @@ class MathematicaDocDevice(common.Device):
  aber selbst nicht automatisch feststellen kann, wann ein Mathematica "Programm"
  ein .NET Objekt nicht mehr verwendet, muss sich das Programm selbst darum
  kümmern. Für diesen Zweck wird die `ReleaseNETObject[]
- <http://reference.wolfram.com/mathematica/NETLink/ref/ReleaseNETObject.html>`__
+ <http://reference.wolfram.com/language/NETLink/ref/ReleaseNETObject.html>`__
  Funktion in den Beispielen verwendet.
 
  Weitere Informationen über Objekt-Verwaltung mittels .NET/Link sind in der
  entsprechende Mathematica `.NET/Link Dokumentation
- <http://reference.wolfram.com/mathematica/NETLink/tutorial/CallingNETFromMathematica.html#14400>`__
+ hhttp://reference.wolfram.com/language/NETLink/tutorial/CallingNETFromTheWolframLanguage.html#14400>`__
  zu finden.
 """
         }
@@ -175,7 +175,7 @@ property of the device object:
 
 For further information about event handling using .NET/Link see the
 corresponding Mathematica `.NET/Link documentation
-<http://reference.wolfram.com/mathematica/NETLink/tutorial/CallingNETFromMathematica.html#17034>`__.
+<http://reference.wolfram.com/language/NETLink/tutorial/CallingNETFromMathematica.html#17034>`__.
 
 The available callback property and their type of parameters are described below.
 
@@ -204,7 +204,7 @@ eine Funktion einem Callback Property des Geräte Objektes zugewiesen wird:
 
 Weitere Informationen über Event-Behandlung mittels .NET/Link sind in der
 entsprechende Mathematica `.NET/Link Dokumentation
-<http://reference.wolfram.com/mathematica/NETLink/tutorial/CallingNETFromMathematica.html#17034>`__
+<http://reference.wolfram.com/language/NETLink/tutorial/CallingNETFromMathematica.html#17034>`__
 zu finden.
 
 Die verfügbaren Callback Properties und ihre Parametertypen werden weiter
@@ -237,7 +237,7 @@ Since .NET/Link does not support multiple return values directly, we use the
 ``out`` keyword to return multiple values from a method. For further
 information about the ``out`` keyword in .NET/Link see the corresponding
 Mathematica `.NET/Link documentation
-<http://reference.wolfram.com/mathematica/NETLink/tutorial/CallingNETFromMathematica.html#15993>`__.
+<http://reference.wolfram.com/language/NETLink/tutorial/CallingNETFromMathematica.html#15993>`__.
 
 The namespace for all Brick/Bricklet bindings and the IPConnection is
 ``Tinkerforge.*``.
@@ -263,7 +263,7 @@ Da .NET/Link nicht mehrere Rückgabewerte direkt unterstützt, wird das ``out``
 Schlüsselwort genutzt, um mehrere Werte aus einer Funktion zurückzugeben.
 Weitere Informationen über das ``out`` Schlüsselwort in .NET/Link sind in der
 entsprechende Mathematica `.NET/Link Dokumentation
-<http://reference.wolfram.com/mathematica/NETLink/tutorial/CallingNETFromMathematica.html#15993>`__
+<http://reference.wolfram.com/language/NETLink/tutorial/CallingNETFromMathematica.html#15993>`__
 zu finden.
 
 Der Namensraum für alle Brick/Bricklet Bindings und die IPConnection ist
