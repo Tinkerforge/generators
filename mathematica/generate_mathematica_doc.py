@@ -151,7 +151,7 @@ class MathematicaDocDevice(common.Device):
 
  Weitere Informationen über Objekt-Verwaltung mittels .NET/Link sind in der
  entsprechende Mathematica `.NET/Link Dokumentation
- hhttp://reference.wolfram.com/language/NETLink/tutorial/CallingNETFromTheWolframLanguage.html#14400>`__
+ <http://reference.wolfram.com/language/NETLink/tutorial/CallingNETFromTheWolframLanguage.html#14400>`__
  zu finden.
 """
         }
