@@ -373,13 +373,13 @@ sub _connect_unlocked
 		$socket->setsockopt(IPPROTO_TCP, TCP_NODELAY, 1);
 
 		$| = 1; # enable autoflush
-		if ($^O eq 'MSWin32')
+		if (defined(&{"MSG_NOSIGNAL"}))
 		{
-			$socket->send('');
+			$socket->send('', MSG_NOSIGNAL);
 		}
 		else
 		{
-			$socket->send('', MSG_NOSIGNAL);
+			$socket->send('');
 		}
 
 		$self->{socket_fileno} = dup($socket->fileno());
@@ -1004,13 +1004,13 @@ sub _ipcon_send
 		lock(${$self->{send_lock_ref}});
 
 		$| = 1; # enable autoflush
-		if ($^O eq 'MSWin32')
+		if (defined(&{"MSG_NOSIGNAL"}))
 		{
-			$rc = $self->_get_local_socket()->send($packet);
+			$rc = $self->_get_local_socket()->send($packet, MSG_NOSIGNAL);
 		}
 		else
 		{
-			$rc = $self->_get_local_socket()->send($packet, MSG_NOSIGNAL);
+			$rc = $self->_get_local_socket()->send($packet);
 		}
 	};
 	if(!defined($rc))
@@ -1682,13 +1682,13 @@ sub _disconnect_probe_thread_subroutine
 				lock(${$self->{send_lock_ref}});
 
 				$| = 1; # enable autoflush
-				if ($^O eq 'MSWin32')
+				if (defined(&{"MSG_NOSIGNAL"}))
 				{
-					$rc = $self->_get_local_socket()->send($packet);
+					$rc = $self->_get_local_socket()->send($packet, MSG_NOSIGNAL);
 				}
 				else
 				{
-					$rc = $self->_get_local_socket()->send($packet, MSG_NOSIGNAL);
+					$rc = $self->_get_local_socket()->send($packet);
 				}
 			};
 			if(!defined($rc))
