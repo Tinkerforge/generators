@@ -14,7 +14,7 @@ com = {
     'name': ('Color', 'color', 'Color'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for measuring color (RGB value), illuminance and color temperature',
-    'released': False,
+    'released': True,
     'packets': []
 }
 
@@ -396,7 +396,7 @@ For configuring the gain:
 
 For configuring the integration time:
 
-* 0: 2ms
+* 0: 2.4ms
 * 1: 24ms
 * 2: 101ms
 * 3: 154ms
@@ -426,7 +426,7 @@ Für die Konfiguration der Verstärkung:
 
 Für die Konfiguration der Integrationszeit:
 
-* 0: 2ms
+* 0: 2,4ms
 * 1: 24ms
 * 2: 101ms
 * 3: 154ms
@@ -478,13 +478,29 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the illuminance in Lux multiplied by the gain as set by 
-:func:`SetConfig`. 
+Returns the illuminance affected by the gain and integration time as
+set by :func:`SetConfig`. To get the illuminance in Lux apply this formula::
+
+ lux = illuminance * 700 / gain / integration_time
+
+To get a correct illuminance measurement make sure that the color
+values themself are not saturated. The color value (R, G or B)
+is saturated if it is equal to the maximum value of 65535.
+In that case you have to reduce the gain, see :func:`SetConfig`.
 """,
 'de':
 """
-Gibt die Beleuchtungsstärke in Lux multipliziert mit der Verstärkung zurück.
-Die Verstärkung kann mit :func:`SetConfig` eingestellt werden.
+Gibt die Beleuchtungsstärke beeinflusst durch die Verstärkung und die
+Integrationszeit zurück. Verstärkung und Integrationszeit können mit
+:func:`SetConfig` eingestellt werden. Um die Beleuchtungsstärke in Lux zu
+ermitteln muss folgende Formel angewendet werden::
+
+ lux = illuminance * 700 / gain / integration_time
+
+Für eine korrekte Messung der Beleuchtungsstärke muss sichergestellt
+sein, dass die Farbwerte (R, G oder B) nicht saturiert sind. Ein
+Farbwert ist saturiert wenn der Wert 65535 beträgt. In diesem Fall
+kann die Verstärkung per :func:`SetConfig` reduziert werden.
 """
 }]
 })
@@ -497,9 +513,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the color temperature in Kelvin. 
+Returns the color temperature in Kelvin.
 
-Make sure that the color
+To get a correct color temperature measurement make sure that the color
 values themself are not saturated. The color value (R, G or B)
 is saturated if it is equal to the maximum value of 65535.
 In that case you have to reduce the gain, see :func:`SetConfig`.
@@ -508,7 +524,7 @@ In that case you have to reduce the gain, see :func:`SetConfig`.
 """
 Gibt die Farbtemperatur in Kelvin zurück.
 
-Für eine korrekte Berechnung der Farbtemperatur muss sichergestellt
+Für eine korrekte Messung der Farbtemperatur muss sichergestellt
 sein das die Farbwerte (R, G oder B) nicht saturiert sind. Ein
 Farbwert ist saturiert wenn der Wert 65535 beträgt. In diesem Fall
 kann die Verstärkung per :func:`SetConfig` reduziert werden.
@@ -619,8 +635,8 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetIlluminanceCallbackPeriod`. The :word:`parameter` is the illuminance
-in Lux.
+:func:`SetIlluminanceCallbackPeriod`. The :word:`parameter` is the illuminance.
+See :func:`GetIlluminance` for how to interrept this value.
 
 :func:`Illuminance` is only triggered if the illuminance has changed since the
 last triggering.
@@ -629,6 +645,7 @@ last triggering.
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetIlluminanceCallbackPeriod`,
 ausgelöst. Der :word:`parameter` ist die Beleuchtungsstärke des Sensors.
+Siehe :func:`GetIlluminance` für eine Erklärung wie dieser zu interpretieren ist.
 
 :func:`Illuminance` wird nur ausgelöst wenn sich die Beleuchtungsstärke seit der
 letzten Auslösung geändert hat.
@@ -654,7 +671,7 @@ changed since the last triggering.
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetColorTemperatureCallbackPeriod`,
-ausgelöst. Der :word:`parameter` ist die Farbtemperatur des Sensors.
+ausgelöst. Der :word:`parameter` ist die Farbtemperatur des Sensors in Kelvin.
 
 :func:`ColorTemperature` wird nur ausgelöst wenn sich die Farbtemperatur seit der
 letzten Auslösung geändert hat.
