@@ -1423,9 +1423,9 @@ class ExamplesTester:
         if not self.test(src, is_extra_example):
             self.failure_count += 1
 
-            print('>>> test failed\n')
+            print('\033[01;31m>>> test failed\033[0m\n')
         else:
-            print('>>> test succeded\n')
+            print('\033[01;32m>>> test succeded\033[0m\n')
 
     def test(self, src, is_extra_example):
         raise NotImplementedError()
@@ -1500,9 +1500,9 @@ class SourceTester:
         if not self.test(src):
             self.failure_count += 1
 
-            print('>>> test failed\n')
+            print('\033[01;31m>>> test failed\033[0m\n')
         else:
-            print('>>> test succeded\n')
+            print('\033[01;32m>>> test succeded\033[0m\n')
 
     def before_unzip(self):
         # make temporary examples directory
