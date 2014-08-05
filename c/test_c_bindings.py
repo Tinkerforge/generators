@@ -47,7 +47,7 @@ class CExamplesTester(common.ExamplesTester):
 
         if not is_extra_example and '/brick' in src:
             dirname = os.path.split(src)[0]
-            device = '/tmp/tester/bindings/{0}_{1}.c'.format(os.path.split(os.path.split(dirname)[0])[-1], os.path.split(dirname)[-1])
+            device = '/tmp/tester/source/{0}_{1}.c'.format(os.path.split(os.path.split(dirname)[0])[-1], os.path.split(dirname)[-1])
         else:
             device = ''
 
@@ -67,16 +67,16 @@ class CExamplesTester(common.ExamplesTester):
                  '-Werror',
                  '-O2',
                  '-pthread',
-                 '-I/tmp/tester/bindings',
+                 '-I/tmp/tester/source',
                  '-o',
                  dest,
-                 '/tmp/tester/bindings/ip_connection.c']
+                 '/tmp/tester/source/ip_connection.c']
 
         if len(device) > 0:
             args.append(device)
         elif is_extra_example:
-            deps = glob.glob('/tmp/tester/bindings/*.c')
-            deps.remove('/tmp/tester/bindings/ip_connection.c')
+            deps = glob.glob('/tmp/tester/source/*.c')
+            deps.remove('/tmp/tester/source/ip_connection.c')
             args.append('-Wno-error=unused-parameter')
             args += deps
 

@@ -42,7 +42,7 @@ class DelphiExamplesTester(common.ExamplesTester):
 
         args = ['/usr/bin/fpc',
                 '-vw',
-                '-Fu/tmp/tester/bindings',
+                '-Fu/tmp/tester/source',
                 '-l',
                 src]
 
