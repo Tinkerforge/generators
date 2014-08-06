@@ -330,17 +330,17 @@ The buffer can then be read out with :func:`GetPage`.
 How many pages are read depends on the tag type. The page sizes are 
 as follows:
 
-* Mifare Classic page size: 16 byte (1 page is read)
-* NFC Forum Type 1 page size: 8 byte (2 pages are read)
-* NFC Forum Type 2 page size: 4 byte (4 pages are read)
+* Mifare Classic page size: 16 byte (one page is read)
+* NFC Forum Type 1 page size: 8 byte (two pages are read)
+* NFC Forum Type 2 page size: 4 byte (four pages are read)
 
 The general approach for reading a tag is as follows:
 
 * Call :func:`RequestTagID`
 * Wait for state to change to *RequestTagIDReady* (see :func:`GetState` or :func:`StateChanged`)
 * Call :func:`GetTagID` and check if tag ID is correct
-* Call :func:`ReadPage` with page number
-* Wait for state to change to *ReadPageReady*
+* Call :func:`RequestPage` with page number
+* Wait for state to change to *RequestPageReady*
 * Call :func:`GetPage` to retrieve the page from the buffer
 
 If you use a Mifare Classic tag you have to authenticate a page before you
@@ -353,17 +353,17 @@ einem Buffer. Dieser Buffer kann mit :func:`GetPage` ausgelesen werden.
 Wie viele Pages dadurch gelesen werden hängt vom Typ des Tags ab. 
 Die Pagegrößen verhalten sich wie folgt:
 
-* Mifare Classic Pagegröße: 16 byte (1 Page wird gelesen)
-* NFC Forum Type 1 Pagegröße: 8 byte (2 Pages werden gelesen)
-* NFC Forum Type 2 Pagegröße: 4 byte (4 Pages werden gelesen)
+* Mifare Classic Pagegröße: 16 byte (eine Page wird gelesen)
+* NFC Forum Type 1 Pagegröße: 8 byte (zwei Pages werden gelesen)
+* NFC Forum Type 2 Pagegröße: 4 byte (vier Pages werden gelesen)
 
 Der generelle Ansatz zum Lesen eines Tags sieht wie folgt aus:
 
 * Rufe :func:`RequestTagID` auf
 * Warte auf einen Zustandswechsel auf *RequestTagIDReady* (siehe :func:`GetState` oder :func:`StateChanged`)
 * Rufe :func:`GetTagID` auf und überprüfe ob Tag ID korrekt ist.
-* Rufe :func:`ReadPage` mit der zu lesenden Page auf
-* Warte auf einen Zustandswechsel auf *ReadPageReady*
+* Rufe :func:`RequestPage` mit der zu lesenden Page auf
+* Warte auf einen Zustandswechsel auf *RequestPageReady*
 * Rufe :func:`GetPage` auf um die gespeicherte Page abzufragen
 
 Wenn ein Mifare Classic Tag verwendet wird muss die Page authentifiziert
@@ -391,7 +391,6 @@ kann zuvor mit spezifischen Pages über einen Aufruf von
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'callback',
@@ -427,4 +426,3 @@ sich verändert. Siehe :func:`GetState` für mehr Informationen
 """
 }]
 })
-
