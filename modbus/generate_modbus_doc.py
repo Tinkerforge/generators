@@ -36,6 +36,20 @@ class ModbusDocDevice(common.Device):
     def get_modbus_name(self):
         return self.get_category() + self.get_camel_case_name()
 
+    def replace_modbus_function_links(self, text):
+        cls = self.get_modbus_name()
+        for other_packet in self.get_packets():
+            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+            if other_packet.get_type() == 'callback':
+                name_upper = other_packet.get_upper_case_name()
+                name_right = ':modbus:func:`CALLBACK_{1} <{0}.CALLBACK_{1}>`'.format(cls, name_upper)
+            else:
+                name_right = ':modbus:func:`{1} <{0}.{1}>`'.format(cls, other_packet.get_underscore_name())
+
+            text = text.replace(name_false, name_right)
+
+        return text
+
     def get_modbus_methods(self, typ):
         methods = ''
         func_start = '.. modbus:function:: '
@@ -142,7 +156,7 @@ Eine allgemeine Beschreibung der Modbus Protokollstruktur findet sich
         ref = '.. _{0}_{1}_modbus_api:\n'.format(self.get_underscore_name(),
                                                  self.get_category().lower())
 
-        return common.select_lang(api).format(ref, self.get_api_doc(), api_str)
+        return common.select_lang(api).format(ref, self.replace_modbus_function_links(self.get_api_doc()), api_str)
 
     def get_modbus_doc(self):
         doc  = common.make_rst_header(self, has_device_identifier_constant=False)
@@ -163,15 +177,7 @@ class ModbusDocPacket(common.Packet):
         'de': 'Rückgabewerte'
         }
 
-        cls = self.get_device().get_modbus_name()
-        for other_packet in self.get_device().get_packets():
-            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-            if other_packet.get_type() == 'callback':
-                name_upper = other_packet.get_upper_case_name()
-                name_right = ':modbus:func:`CALLBACK_{1} <{0}.CALLBACK_{1}>`'.format(cls, name_upper)
-            else:
-                name_right = ':modbus:func:`{1} <{0}.{1}>`'.format(cls, other_packet.get_underscore_name())
-            text = text.replace(name_false, name_right)
+        text = self.get_device().replace_modbus_function_links(text)
 
         def format_parameter(name):
             return '``{0}``'.format(name) # FIXME

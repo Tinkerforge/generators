@@ -3,7 +3,7 @@
 
 """
 Visual Basic .NET Documentation Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_vbnet_doc.py: Generator for Visual Basic .NET documentation
@@ -37,6 +37,20 @@ import common
 class VBNETDocDevice(common.Device):
     def get_vbnet_class_name(self):
         return self.get_category() + self.get_camel_case_name()
+
+    def replace_vbnet_function_links(self, text):
+        cls = self.get_vbnet_class_name()
+        for other_packet in self.get_packets():
+            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+            name = other_packet.get_camel_case_name()
+            if other_packet.get_type() == 'callback':
+                name_right = ':vbnet:func:`{1} <{0}.{1}>`'.format(cls, name)
+            else:
+                name_right = ':vbnet:func:`{1}() <{0}.{1}>`'.format(cls, name)
+
+            text = text.replace(name_false, name_right)
+
+        return text
 
     def get_vbnet_examples(self):
         def title_from_filename(filename):
@@ -284,7 +298,7 @@ Konstanten
         ref = '.. _{0}_{1}_vbnet_api:\n'.format(self.get_underscore_name(),
                                                 self.get_category().lower())
 
-        return common.select_lang(api).format(ref, self.get_api_doc(), api_str)
+        return common.select_lang(api).format(ref, self.replace_vbnet_function_links(self.get_api_doc()), api_str)
 
     def get_vbnet_doc(self):
         doc  = common.make_rst_header(self)
@@ -301,15 +315,7 @@ class VBNETDocPacket(common.Packet):
     def get_vbnet_formatted_doc(self):
         text = common.select_lang(self.get_doc()[1])
 
-        cls = self.get_device().get_vbnet_class_name()
-        for other_packet in self.get_device().get_packets():
-            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-            name = other_packet.get_camel_case_name()
-            if other_packet.get_type() == 'callback':
-                name_right = ':vbnet:func:`{1} <{0}.{1}>`'.format(cls, name)
-            else:
-                name_right = ':vbnet:func:`{1}() <{0}.{1}>`'.format(cls, name)
-            text = text.replace(name_false, name_right)
+        text = self.get_device().replace_vbnet_function_links(text)
 
         # FIXME: add something similar for :char:`c`
         def format_parameter(name):
@@ -319,7 +325,7 @@ class VBNETDocPacket(common.Packet):
         text = common.handle_rst_word(text)
         text = common.handle_rst_substitutions(text, self)
 
-        prefix = cls + '.'
+        prefix = self.get_device().get_vbnet_class_name() + '.'
         if self.get_underscore_name() == 'set_response_expected':
             text += common.format_function_id_constants(prefix, self.get_device())
         else:

@@ -3,7 +3,7 @@
 
 """
 Java Documentation Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_java_doc.py: Generator for Java documentation
@@ -36,6 +36,24 @@ import common
 import java_common
 
 class JavaDocDevice(java_common.JavaDevice):
+    def replace_java_function_links(self, text):
+        cb_link = ':java:func:`{1}Listener <{0}.{1}Listener>`'
+        fu_link = ':java:func:`{1}() <{0}::{1}>`'
+
+        cls = self.get_java_class_name()
+        for other_packet in self.get_packets():
+            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+            if other_packet.get_type() == 'callback':
+                name = other_packet.get_camel_case_name()
+                name_right = cb_link.format(cls, name)
+            else:
+                name = other_packet.get_headless_camel_case_name()
+                name_right = fu_link.format(cls, name)
+
+            text = text.replace(name_false, name_right)
+
+        return text
+
     def get_java_examples(self):
         def title_from_filename(filename):
             filename = filename.replace('Example', '').replace('.java', '')
@@ -353,7 +371,7 @@ Konstanten
         ref = '.. _{0}_{1}_java_api:\n'.format(self.get_underscore_name(),
                                                self.get_category().lower())
 
-        return common.select_lang(api).format(ref, self.get_api_doc(), api_str)
+        return common.select_lang(api).format(ref, self.replace_java_function_links(self.get_api_doc()), api_str)
 
     def get_java_doc(self):
         doc  = common.make_rst_header(self)
@@ -366,20 +384,8 @@ Konstanten
 class JavaDocPacket(java_common.JavaPacket):
     def get_java_formatted_doc(self, shift_right):
         text = common.select_lang(self.get_doc()[1])
-        cb_link = ':java:func:`{1}Listener <{0}.{1}Listener>`'
-        fu_link = ':java:func:`{1}() <{0}::{1}>`'
 
-        cls = self.get_device().get_java_class_name()
-        for other_packet in self.get_device().get_packets():
-            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-            if other_packet.get_type() == 'callback':
-                name = other_packet.get_camel_case_name()
-                name_right = cb_link.format(cls, name)
-            else:
-                name = other_packet.get_headless_camel_case_name()
-                name_right = fu_link.format(cls, name)
-
-            text = text.replace(name_false, name_right)
+        text = self.get_device().replace_java_function_links(text)
 
         text = text.replace('Callback ', 'Listener ')
         text = text.replace(' Callback', ' Listener')
@@ -393,7 +399,7 @@ class JavaDocPacket(java_common.JavaPacket):
         text = common.handle_rst_word(text)
         text = common.handle_rst_substitutions(text, self)
 
-        prefix = cls + '.'
+        prefix = self.get_device().get_java_class_name() + '.'
         if self.get_underscore_name() == 'set_response_expected':
             text += common.format_function_id_constants(prefix, self.get_device())
         else:

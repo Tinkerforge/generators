@@ -36,6 +36,24 @@ import common
 import matlab_common
 
 class MATLABDocDevice(matlab_common.MATLABDevice):
+    def replace_matlab_function_links(self, text):
+        cb_link = ':matlab:member:`{1}Callback <{0}.{1}Callback>`'
+        fu_link = ':matlab:func:`{1}() <{0}::{1}>`'
+
+        cls = self.get_matlab_class_name()
+        for other_packet in self.get_packets():
+            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+            if other_packet.get_type() == 'callback':
+                name = other_packet.get_camel_case_name()
+                name_right = cb_link.format(cls, name)
+            else:
+                name = other_packet.get_headless_camel_case_name()
+                name_right = fu_link.format(cls, name)
+
+            text = text.replace(name_false, name_right)
+
+        return text
+
     def get_matlab_examples(self):
         def title_from_filename(filename):
             title = filename.replace('matlab_example_', '').replace('octave_example_', '').replace('.m', '')
@@ -434,7 +452,7 @@ Konstanten
         ref = '.. _{0}_{1}_matlab_api:\n'.format(self.get_underscore_name(),
                                                self.get_category().lower())
 
-        return common.select_lang(api).format(ref, self.get_api_doc(), api_str)
+        return common.select_lang(api).format(ref, self.replace_matlab_function_links(self.get_api_doc()), api_str)
 
     def get_matlab_doc(self):
         doc  = common.make_rst_header(self)
@@ -447,20 +465,8 @@ Konstanten
 class MATLABDocPacket(matlab_common.MATLABPacket):
     def get_matlab_formatted_doc(self, shift_right):
         text = common.select_lang(self.get_doc()[1])
-        cb_link = ':matlab:member:`{1}Callback <{0}.{1}Callback>`'
-        fu_link = ':matlab:func:`{1}() <{0}::{1}>`'
 
-        cls = self.get_device().get_matlab_class_name()
-        for other_packet in self.get_device().get_packets():
-            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-            if other_packet.get_type() == 'callback':
-                name = other_packet.get_camel_case_name()
-                name_right = cb_link.format(cls, name)
-            else:
-                name = other_packet.get_headless_camel_case_name()
-                name_right = fu_link.format(cls, name)
-
-            text = text.replace(name_false, name_right)
+        text = self.get_device().replace_matlab_function_links(text)
 
         def format_parameter(name):
             return '``{0}``'.format(name) # FIXME
@@ -469,7 +475,7 @@ class MATLABDocPacket(matlab_common.MATLABPacket):
         text = common.handle_rst_word(text)
         text = common.handle_rst_substitutions(text, self)
 
-        prefix = cls + '.'
+        prefix = self.get_device().get_matlab_class_name() + '.'
         if self.get_underscore_name() == 'set_response_expected':
             text += common.format_function_id_constants(prefix, self.get_device())
         else:

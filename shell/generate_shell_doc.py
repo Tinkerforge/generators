@@ -3,7 +3,7 @@
 
 """
 Shell Documentation Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_shell_doc.py: Generator for Shell documentation
@@ -36,6 +36,15 @@ import common
 import shell_common
 
 class ShellDocDevice(shell_common.ShellDevice):
+    def replace_shell_function_links(self, text):
+        device_name = self.get_shell_device_name()
+        for other_packet in self.get_packets():
+            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+            name_right = ':sh:func:`{1} <{0} {1}>`'.format(device_name, other_packet.get_dash_name())
+            text = text.replace(name_false, name_right)
+
+        return text
+
     def get_shell_examples(self):
         def title_from_filename(filename):
             filename = filename.replace('example-', '').replace('.sh', '').replace('-', '_')
@@ -358,8 +367,8 @@ Befehlsstruktur dargestellt.
         ref = '.. _{0}_{1}_shell_api:\n'.format(self.get_underscore_name(),
                                                 self.get_category().lower())
 
-        return common.select_lang(api).format(ref, self.get_api_doc(), api_str,
-                                              self.get_shell_device_name(),
+        return common.select_lang(api).format(ref, self.replace_shell_function_links(self.get_api_doc()),
+                                              api_str, self.get_shell_device_name(),
                                               self.get_display_name() + ' ' + self.get_category())
 
     def get_shell_doc(self):
@@ -373,13 +382,9 @@ Befehlsstruktur dargestellt.
 class ShellDocPacket(shell_common.ShellPacket):
     def get_shell_formatted_doc(self):
         text = common.select_lang(self.get_doc()[1])
-        device_name = self.get_device().get_shell_device_name()
         constants = {'en': 'symbols', 'de': 'Symbole'}
 
-        for other_packet in self.get_device().get_packets():
-            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-            name_right = ':sh:func:`{1} <{0} {1}>`'.format(device_name, other_packet.get_dash_name())
-            text = text.replace(name_false, name_right)
+        text = self.get_device().replace_shell_function_links(text)
 
         def format_parameter(name):
             return '``{0}``'.format(name) # FIXME

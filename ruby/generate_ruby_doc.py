@@ -3,7 +3,7 @@
 
 """
 Ruby Documentation Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_ruby_doc.py: Generator for Ruby documentation
@@ -36,6 +36,20 @@ import common
 import ruby_common
 
 class RubyDocDevice(ruby_common.RubyDevice):
+    def replace_ruby_function_links(self, text):
+        cls = self.get_ruby_class_name()
+        for other_packet in self.get_packets():
+            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+            if other_packet.get_type() == 'callback':
+                name_upper = other_packet.get_upper_case_name()
+                name_right = ':rb:attr:`::CALLBACK_{1} <{0}::CALLBACK_{1}>`'.format(cls, name_upper)
+            else:
+                name_right = ':rb:func:`#{1} <{0}#{1}>`'.format(cls, other_packet.get_underscore_name())
+
+            text = text.replace(name_false, name_right)
+
+        return text
+
     def get_ruby_examples(self):
         def title_from_filename(filename):
             filename = filename.replace('example_', '').replace('.rb', '')
@@ -303,7 +317,7 @@ Konstanten
         ref = '.. _{0}_{1}_ruby_api:\n'.format(self.get_underscore_name(),
                                                self.get_category().lower())
 
-        return common.select_lang(api).format(ref, self.get_api_doc(), api_str)
+        return common.select_lang(api).format(ref, self.replace_ruby_function_links(self.get_api_doc()), api_str)
 
     def get_ruby_doc(self):
         doc  = common.make_rst_header(self)
@@ -317,15 +331,7 @@ class RubyDocPacket(ruby_common.RubyPacket):
     def get_ruby_formatted_doc(self):
         text = common.select_lang(self.get_doc()[1])
 
-        cls = self.get_device().get_ruby_class_name()
-        for other_packet in self.get_device().get_packets():
-            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-            if other_packet.get_type() == 'callback':
-                name_upper = other_packet.get_upper_case_name()
-                name_right = ':rb:attr:`::CALLBACK_{1} <{0}::CALLBACK_{1}>`'.format(cls, name_upper)
-            else:
-                name_right = ':rb:func:`#{1} <{0}#{1}>`'.format(cls, other_packet.get_underscore_name())
-            text = text.replace(name_false, name_right)
+        text = self.get_device().replace_ruby_function_links(text)
 
         def format_parameter(name):
             return '``{0}``'.format(name) # FIXME
@@ -334,7 +340,7 @@ class RubyDocPacket(ruby_common.RubyPacket):
         text = common.handle_rst_word(text)
         text = common.handle_rst_substitutions(text, self)
 
-        prefix = cls + '::'
+        prefix = self.get_device().get_ruby_class_name() + '::'
         if self.get_underscore_name() == 'set_response_expected':
             text += common.format_function_id_constants(prefix, self.get_device())
         else:

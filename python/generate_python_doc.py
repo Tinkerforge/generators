@@ -3,7 +3,7 @@
 
 """
 Python Documentation Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_python_doc.py: Generator for Python documentation
@@ -36,6 +36,20 @@ import common
 import python_common
 
 class PythonDocDevice(python_common.PythonDevice):
+    def replace_python_function_links(self, text):
+        cls = self.get_camel_case_name()
+        for other_packet in self.get_packets():
+            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+            if other_packet.get_type() == 'callback':
+                name_upper = other_packet.get_upper_case_name()
+                name_right = ':py:attr:`CALLBACK_{1} <{0}.CALLBACK_{1}>`'.format(cls, name_upper)
+            else:
+                name_right = ':py:func:`{1}() <{0}.{1}>`'.format(cls, other_packet.get_underscore_name())
+
+            text = text.replace(name_false, name_right)
+
+        return text
+
     def get_python_examples(self):
         def title_from_filename(filename):
             filename = filename.replace('example_', '').replace('.py', '')
@@ -320,7 +334,7 @@ Konstanten
         ref = '.. _{0}_{1}_python_api:\n'.format(self.get_underscore_name(),
                                                  self.get_category().lower())
 
-        return common.select_lang(api).format(ref, self.get_api_doc(), api_str)
+        return common.select_lang(api).format(ref, self.replace_python_function_links(self.get_api_doc()), api_str)
 
     def get_python_doc(self):
         doc  = common.make_rst_header(self)
@@ -333,15 +347,8 @@ Konstanten
 class PythonDocPacket(python_common.PythonPacket):
     def get_python_formatted_doc(self):
         text = common.select_lang(self.get_doc()[1])
-        cls = self.get_device().get_camel_case_name()
-        for other_packet in self.get_device().get_packets():
-            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-            if other_packet.get_type() == 'callback':
-                name_upper = other_packet.get_upper_case_name()
-                name_right = ':py:attr:`CALLBACK_{1} <{0}.CALLBACK_{1}>`'.format(cls, name_upper)
-            else:
-                name_right = ':py:func:`{1}() <{0}.{1}>`'.format(cls, other_packet.get_underscore_name())
-            text = text.replace(name_false, name_right)
+
+        text = self.get_device().replace_python_function_links(text)
 
         def format_parameter(name):
             return '``{0}``'.format(name) # FIXME
