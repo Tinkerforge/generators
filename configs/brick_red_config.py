@@ -6,6 +6,47 @@
 
 # RED Brick communication config
 
+OBJECT_TYPE_CONSTANTS = ('ObjectType', 'object_type', [('String', 'string', 0),
+                                                       ('List', 'list', 1),
+                                                       ('File', 'file', 2),
+                                                       ('Directory', 'directory', 3),
+                                                       ('Process', 'process', 4),
+                                                       ('Program', 'program', 5)])
+
+FILE_TYPE_CONSTANTS = ('FileType', 'file_type', [('Unknown', 'unknown', 0),
+                                                 ('Regular', 'regular', 1),
+                                                 ('Directory', 'directory', 2),
+                                                 ('Character', 'character', 3),
+                                                 ('Block', 'block', 4),
+                                                 ('FIFO', 'fifo', 5),
+                                                 ('Symlink', 'symlink', 6),
+                                                 ('Socket', 'socket', 7)])
+
+FILE_FLAG_CONSTANTS = ('FileFlag', 'file_flag', [('ReadOnly', 'read_only', 0x0001),
+                                                 ('WriteOnly', 'write_only', 0x0002),
+                                                 ('ReadWrite', 'read_write', 0x0004),
+                                                 ('Append', 'append', 0x0008),
+                                                 ('Create', 'create', 0x0010),
+                                                 ('Exclusive', 'exclusive', 0x0020),
+                                                 ('Truncate', 'truncate', 0x0040)])
+
+FILE_PERMISSION_CONSTANTS = ('FilePermission', 'file_permission', [('UserAll', 'user_all', 00700),
+                                                                   ('UserRead', 'user_read', 00400),
+                                                                   ('UserWrite', 'user_write', 00200),
+                                                                   ('UserExecute', 'user_execute', 00100),
+                                                                   ('GroupAll', 'group_all', 00070),
+                                                                   ('GroupRead', 'group_read', 00040),
+                                                                   ('GroupWrite', 'group_write', 00020),
+                                                                   ('GroupExecute', 'group_execute', 00010),
+                                                                   ('OthersAll', 'others_all', 00007),
+                                                                   ('OthersRead', 'others_read', 00004),
+                                                                   ('OthersWrite', 'others_write', 00002),
+                                                                   ('OthersExecute', 'others_execute', 00001)])
+
+FILE_ORIGIN_CONSTANTS = ('FileOrigin', 'file_origin', [('Set', 'set', 0),
+                                                       ('Current', 'current', 1),
+                                                       ('End', 'end', 2)])
+
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -16,6 +57,54 @@ com = {
     'description': 'Device for running user programs standalone on the stack',
     'released': False,
     'packets': []
+}
+
+com['api'] = {
+'en':
+"""
+The RED Brick API operates on reference counted objects (strings, lists, files,
+directories, processes and programs) that are identified by their 16bit object
+ID. Functions that return an object ID (e.g. :func:`AllocateString` and
+:func:`GetNextDirectoryEntry`) increase the reference count of the returned
+object. If the object is no longer needed then :func:`ReleaseObject` has to
+be called to decrease the reference count of the object again.
+
+The RED Brick API is more complex then the typical Brick API and requires more
+elaborate error reporting than the :ref:`TCP/IP protocol <llproto_tcpip>`
+can provide with its 2bit error code. Therefore, almost all functions of the
+RED Brick API return an 8bit error code. Possible error codes are:
+
+* API_E_OK = 0
+* API_E_UNKNOWN_ERROR = 1
+* API_E_INVALID_OPERATION = 2
+* API_E_OPERATION_ABORTED = 3
+* API_E_INTERNAL_ERROR = 4
+* API_E_UNKNOWN_OBJECT_ID = 5
+* API_E_NO_FREE_OBJECT_ID = 6
+* API_E_OBJECT_IS_LOCKED = 7
+* API_E_NO_MORE_DATA = 8
+* API_E_WRONG_LIST_ITEM_TYPE = 9
+* API_E_INVALID_PARAMETER = 10
+* API_E_NO_FREE_MEMORY = 11
+* API_E_NO_FREE_SPACE = 12
+* API_E_ACCESS_DENIED = 13
+* API_E_ALREADY_EXISTS = 14
+* API_E_DOES_NOT_EXIST = 15
+* API_E_INTERRUPTED = 16
+* API_E_IS_DIRECTORY = 17
+* API_E_NOT_A_DIRECTORY = 18
+* API_E_WOULD_BLOCK = 19
+* API_E_OVERFLOW = 20
+* API_E_INVALID_FILE_DESCRIPTOR = 21
+* API_E_OUT_OF_RANGE = 22
+* API_E_NAME_TOO_LONG = 23
+
+If a function returns an error code other than ``API_E_OK`` then its other
+return values are invalid and must not be used.
+""",
+'de':
+"""
+"""
 }
 
 #
@@ -31,6 +120,8 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Decreases the reference count of an object by one and returns the resulting
+error code. If the reference count reaches zero the object is destroyed.
 """,
 'de':
 """
@@ -41,18 +132,16 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': ('GetNextObjectTableEntry', 'get_next_object_table_entry'),
-'elements': [('type', 'uint8', 1, 'in', ('ObjectType', 'object_type', [('String', 'string', 0),
-                                                                       ('List', 'list', 1),
-                                                                       ('File', 'file', 2),
-                                                                       ('Directory', 'directory', 3),
-                                                                       ('Process', 'process', 4),
-                                                                       ('Program', 'program', 5)])),
+'elements': [('type', 'uint8', 1, 'in', OBJECT_TYPE_CONSTANTS),
              ('error_code', 'uint8', 1, 'out'),
              ('object_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
+Returns the next ``type`` object in the object table and the resulting error
+code. If there is not next ``type`` object then error code ``API_E_NO_MORE_DATA``
+is returned. To rewind the table call :func:`RewindObjectTable`.
 """,
 'de':
 """
@@ -63,17 +152,13 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': ('RewindObjectTable', 'rewind_object_table'),
-'elements': [('type', 'uint8', 1, 'in', ('ObjectType', 'object_type', [('String', 'string', 0),
-                                                                       ('List', 'list', 1),
-                                                                       ('File', 'file', 2),
-                                                                       ('Directory', 'directory', 3),
-                                                                       ('Process', 'process', 4),
-                                                                       ('Program', 'program', 5)])),
+'elements': [('type', 'uint8', 1, 'in', OBJECT_TYPE_CONSTANTS),
              ('error_code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
+Rewinds the object table for ``type`` and returns the resulting error code.
 """,
 'de':
 """
@@ -95,6 +180,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Allocates a new string object and reserves ``length_to_reserve`` bytes memory
+for it. Set ``length_to_reserve`` to the length of the string that should be
+stored in the string object.
+
+Returns the object ID of the new string object and the resulting error code.
 """,
 'de':
 """
@@ -112,6 +202,8 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Truncates a string object to ``length`` bytes and returns the resulting
+error code.
 """,
 'de':
 """
@@ -129,6 +221,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the length of a string object in bytes and the resulting error code.
 """,
 'de':
 """
@@ -147,6 +240,9 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Sets a chunk of up to 58 bytes in a string object beginning at ``offset``.
+
+Returns the resulting error code.
 """,
 'de':
 """
@@ -165,6 +261,8 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns a chunk up to 63 bytes from a string object beginning at ``offset`` and
+returns the resulting error code.
 """,
 'de':
 """
@@ -186,6 +284,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Allocates a new list object and reserves memory for ``length_to_reserve`` items.
+Set ``length_to_reserve`` to the number of items that should be stored in the
+list object.
+
+Returns the object ID of the new list object and the resulting error code.
 """,
 'de':
 """
@@ -203,6 +306,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the length of a list object in items and the resulting error code.
 """,
 'de':
 """
@@ -221,6 +325,8 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the object ID of the object stored at ``index`` in a list object and
+returns the resulting error code.
 """,
 'de':
 """
@@ -238,6 +344,10 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Appends an object to a list object and increases the reference count of the
+appended object by one.
+
+Returns the resulting error code.
 """,
 'de':
 """
@@ -255,6 +365,10 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Removes the object stored at ``index`` from a list object and decreases the
+reference count of the removed object by one.
+
+Returns the resulting error code.
 """,
 'de':
 """
@@ -270,25 +384,8 @@ com['packets'].append({
 'type': 'function',
 'name': ('OpenFile', 'open_file'),
 'elements': [('name_string_id', 'uint16', 1, 'in'),
-             ('flags', 'uint16', 1, 'in', ('FileFlag', 'file_flag', [('ReadOnly', 'read_only', 0x0001),
-                                                                     ('WriteOnly', 'write_only', 0x0002),
-                                                                     ('ReadWrite', 'read_write', 0x0004),
-                                                                     ('Append', 'append', 0x0008),
-                                                                     ('Create', 'create', 0x0010),
-                                                                     ('Exclusive', 'exclusive', 0x0020),
-                                                                     ('Truncate', 'truncate', 0x0040)])),
-             ('permissions', 'uint16', 1, 'in', ('FilePermission', 'file_permission', [('UserAll', 'user_all', 00700),
-                                                                                       ('UserRead', 'user_read', 00400),
-                                                                                       ('UserWrite', 'user_write', 00200),
-                                                                                       ('UserExecute', 'user_execute', 00100),
-                                                                                       ('GroupAll', 'group_all', 00070),
-                                                                                       ('GroupRead', 'group_read', 00040),
-                                                                                       ('GroupWrite', 'group_write', 00020),
-                                                                                       ('GroupExecute', 'group_execute', 00010),
-                                                                                       ('OthersAll', 'others_all', 00007),
-                                                                                       ('OthersRead', 'others_read', 00004),
-                                                                                       ('OthersWrite', 'others_write', 00002),
-                                                                                       ('OthersExecute', 'others_execute', 00001)])),
+             ('flags', 'uint16', 1, 'in', FILE_FLAG_CONSTANTS),
+             ('permissions', 'uint16', 1, 'in', FILE_PERMISSION_CONSTANTS),
              ('user_id', 'uint32', 1, 'in'),
              ('group_id', 'uint32', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
@@ -297,6 +394,9 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Opens an existing file or creates a new file.
+
+Returns the object ID of the new file object and the resulting error code.
 """,
 'de':
 """
@@ -314,6 +414,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the name of a file object and the resulting error code.
 """,
 'de':
 """
@@ -326,18 +427,12 @@ com['packets'].append({
 'name': ('GetFileType', 'get_file_type'),
 'elements': [('file_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
-             ('type', 'uint8', 1, 'out', ('FileType', 'file_type', [('Unknown', 'unknown', 0),
-                                                                    ('Regular', 'regular', 1),
-                                                                    ('Directory', 'directory', 2),
-                                                                    ('Character', 'character', 3),
-                                                                    ('Block', 'block', 4),
-                                                                    ('FIFO', 'fifo', 5),
-                                                                    ('Symlink', 'symlink', 6),
-                                                                    ('Socket', 'socket', 7)]))],
+             ('type', 'uint8', 1, 'out', FILE_TYPE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
+Returns the type of a file object and the resulting error code.
 """,
 'de':
 """
@@ -357,6 +452,9 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Writes up to 61 bytes to a file object.
+
+Returns the actual number of bytes written and the resulting error code.
 """,
 'de':
 """
@@ -374,6 +472,10 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Writes up to 61 bytes to a file object.
+
+Does neither report the actual number of bytes written nor the resulting error
+code.
 """,
 'de':
 """
@@ -391,6 +493,10 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Writes up to 61 bytes to a file object.
+
+Reports the actual number of bytes written and the resulting error code via the
+:func:`AsyncFileWrite` callback.
 """,
 'de':
 """
@@ -405,11 +511,14 @@ com['packets'].append({
              ('length_to_read', 'uint8', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('buffer', 'uint8', 62, 'out'),
-             ('length_read', 'int8', 1, 'out')],
+             ('length_read', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
+Reads up to 62 bytes from a file object.
+
+Returns the read bytes and the resulting error code.
 """,
 'de':
 """
@@ -427,6 +536,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Reads up to 2\ :sup:`63`\  - 1 bytes from a file object.
+
+Returns the resulting error code.
+
+Reports the read bytes in 60 byte chunks and the resulting error code of the
+read operation via the :func:`AsyncFileRead` callback.
 """,
 'de':
 """
@@ -443,6 +558,9 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Aborts a :func:`ReadFileAsync` operation in progress.
+
+Returns the resulting error code.
 """,
 'de':
 """
@@ -455,15 +573,16 @@ com['packets'].append({
 'name': ('SetFilePosition', 'set_file_position'),
 'elements': [('file_id', 'uint16', 1, 'in'),
              ('offset', 'int64', 1, 'in'),
-             ('origin', 'uint8', 1, 'in', ('FileOrigin', 'file_origin', [('Set', 'set', 0),
-                                                                         ('Current', 'current', 1),
-                                                                         ('End', 'end', 2)])),
+             ('origin', 'uint8', 1, 'in', FILE_ORIGIN_CONSTANTS),
              ('error_code', 'uint8', 1, 'out'),
              ('position', 'uint64', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
+Set the current seek position of a file object in bytes.
+
+Returns the resulting seek position and error code.
 """,
 'de':
 """
@@ -481,6 +600,8 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the current seek position of a file object in bytes and returns the
+resulting error code.
 """,
 'de':
 """
@@ -498,6 +619,8 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
+This callback reports the result of a call to the :func:`WriteFileAsync`
+function.
 """,
 'de':
 """
@@ -516,6 +639,8 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
+This callback reports the result of a call to the :func:`ReadFileAsync`
+function.
 """,
 'de':
 """
@@ -529,26 +654,8 @@ com['packets'].append({
 'elements': [('name_string_id', 'uint16', 1, 'in'),
              ('follow_symlink', 'bool', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
-             ('type', 'uint8', 1, 'out', ('FileType', 'file_type', [('Unknown', 'unknown', 0),
-                                                                    ('Regular', 'regular', 1),
-                                                                    ('Directory', 'directory', 2),
-                                                                    ('Character', 'character', 3),
-                                                                    ('Block', 'block', 4),
-                                                                    ('FIFO', 'fifo', 5),
-                                                                    ('Symlink', 'symlink', 6),
-                                                                    ('Socket', 'socket', 7)])),
-             ('permissions', 'uint16', 1, 'out', ('FilePermission', 'file_permission', [('UserAll', 'user_all', 00700),
-                                                                                        ('UserRead', 'user_read', 00400),
-                                                                                        ('UserWrite', 'user_write', 00200),
-                                                                                        ('UserExecute', 'user_execute', 00100),
-                                                                                        ('GroupAll', 'group_all', 00070),
-                                                                                        ('GroupRead', 'group_read', 00040),
-                                                                                        ('GroupWrite', 'group_write', 00020),
-                                                                                        ('GroupExecute', 'group_execute', 00010),
-                                                                                        ('OthersAll', 'others_all', 00007),
-                                                                                        ('OthersRead', 'others_read', 00004),
-                                                                                        ('OthersWrite', 'others_write', 00002),
-                                                                                        ('OthersExecute', 'others_execute', 00001)])),
+             ('type', 'uint8', 1, 'out', FILE_TYPE_CONSTANTS),
+             ('permissions', 'uint16', 1, 'out', FILE_PERMISSION_CONSTANTS),
              ('user_id', 'uint32', 1, 'out'),
              ('group_id', 'uint32', 1, 'out'),
              ('length', 'uint64', 1, 'out'),
@@ -559,6 +666,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns various information about a file and the resulting error code.
 """,
 'de':
 """
@@ -577,6 +685,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the target of a symlink and the resulting error code.
 """,
 'de':
 """
@@ -598,6 +707,9 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Opens an existing directory.
+
+Returns the object ID of the new directory object and the resulting error code.
 """,
 'de':
 """
@@ -615,6 +727,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the name of a directory object and the resulting error code.
 """,
 'de':
 """
@@ -628,18 +741,14 @@ com['packets'].append({
 'elements': [('directory_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('name_string_id', 'uint16', 1, 'out'),
-             ('type', 'uint8', 1, 'out', ('FileType', 'file_type', [('Unknown', 'unknown', 0),
-                                                                    ('Regular', 'regular', 1),
-                                                                    ('Directory', 'directory', 2),
-                                                                    ('Character', 'character', 3),
-                                                                    ('Block', 'block', 4),
-                                                                    ('FIFO', 'fifo', 5),
-                                                                    ('Symlink', 'symlink', 6),
-                                                                    ('Socket', 'socket', 7)]))],
+             ('type', 'uint8', 1, 'out', FILE_TYPE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
+Returns the next entry in the directory object and the resulting error
+code. If there is not next entry then error code ``API_E_NO_MORE_DATA`` is
+returned. To rewind the directory object call :func:`RewindDirectory`.
 """,
 'de':
 """
@@ -656,6 +765,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Rewinds the directory object and returns the resulting error code.
 """,
 'de':
 """
@@ -671,11 +781,14 @@ com['packets'].append({
 'type': 'function',
 'name': ('StartProcess', 'start_process'),
 'elements': [('command_string_id', 'uint16', 1, 'in'),
-             ('argument_string_ids', 'uint16', 20, 'in'),
-             ('argument_count', 'uint8', 1, 'in'),
-             ('environment_string_ids', 'uint16', 8, 'in'),
-             ('environment_count', 'uint8', 1, 'in'),
-             ('merge_stdout_and_stderr', 'bool', 1, 'in'),
+             ('arguments_list_id', 'uint16', 1, 'in'),
+             ('environment_list_id', 'uint16', 1, 'in'),
+             ('working_directory_string_id', 'uint16', 1, 'in'),
+             ('user_id', 'uint32', 1, 'in'),
+             ('group_id', 'uint32', 1, 'in'),
+             ('stdin_file_id', 'uint16', 1, 'in'),
+             ('stdout_file_id', 'uint16', 1, 'in'),
+             ('stderr_file_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('process_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
