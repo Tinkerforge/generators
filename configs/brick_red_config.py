@@ -64,8 +64,8 @@ com['api'] = {
 """
 The RED Brick API operates on reference counted objects (strings, lists, files,
 directories, processes and programs) that are identified by their 16bit object
-ID. Functions that return an object ID (e.g. :func:`AllocateString` and
-:func:`GetNextDirectoryEntry`) increase the reference count of the returned
+ID. Functions that create or return an object ID (e.g. :func:`AllocateString`
+and :func:`GetNextDirectoryEntry`) increase the reference count of the returned
 object. If the object is no longer needed then :func:`ReleaseObject` has to
 be called to decrease the reference count of the object again.
 
@@ -100,7 +100,7 @@ RED Brick API return an 8bit error code. Possible error codes are:
 * API_E_NAME_TOO_LONG = 23
 
 If a function returns an error code other than ``API_E_OK`` then its other
-return values are invalid and must not be used.
+return values (if any) are invalid and must not be used.
 """,
 'de':
 """
@@ -139,9 +139,10 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the next ``type`` object in the object table and the resulting error
-code. If there is not next ``type`` object then error code ``API_E_NO_MORE_DATA``
-is returned. To rewind the table call :func:`RewindObjectTable`.
+Returns the object ID of the next ``type`` object in the object table and the
+resulting error code. If there is not next ``type`` object then error code
+``API_E_NO_MORE_DATA`` is returned. To rewind the table call
+:func:`RewindObjectTable`.
 """,
 'de':
 """
@@ -394,7 +395,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Opens an existing file or creates a new file.
+Opens an existing file or creates a new file and creates a file object for it.
+
+The reference count of the name string object is increased by one. When the
+file object is destroyed then the reference count of the name string object is
+decreased by one. Also the name string object is locked and cannot be modified
+while the file object holds a reference to it.
 
 Returns the object ID of the new file object and the resulting error code.
 """,
@@ -667,6 +673,12 @@ com['packets'].append({
 'en':
 """
 Returns various information about a file and the resulting error code.
+
+The information is obtained via the
+`stat() <http://pubs.opengroup.org/onlinepubs/9699919799/functions/stat.html>`__
+function. If ``follow_symlink`` is *false* then the
+`lstat() <http://pubs.opengroup.org/onlinepubs/9699919799/functions/stat.html>`__
+function is used instead.
 """,
 'de':
 """
@@ -686,6 +698,13 @@ com['packets'].append({
 'en':
 """
 Returns the target of a symlink and the resulting error code.
+
+If ``canonicalize`` is *false* then the target of the symlink is resolved one
+level via the
+`readlink() <http://pubs.opengroup.org/onlinepubs/9699919799/functions/readlink.html>`__
+function, otherwise it is fully resolved using the
+`realpath() <http://pubs.opengroup.org/onlinepubs/9699919799/functions/realpath.html>`__
+function.
 """,
 'de':
 """
@@ -707,7 +726,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Opens an existing directory.
+Opens an existing directory and creates a directory object for it.
+
+The reference count of the name string object is increased by one. When the
+directory object is destroyed then the reference count of the name string
+object is decreased by one. Also the name string object is locked and cannot be
+modified while the directory object holds a reference to it.
 
 Returns the object ID of the new directory object and the resulting error code.
 """,
@@ -746,9 +770,9 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the next entry in the directory object and the resulting error
-code. If there is not next entry then error code ``API_E_NO_MORE_DATA`` is
-returned. To rewind the directory object call :func:`RewindDirectory`.
+Returns the next entry in the directory object and the resulting error code.
+If there is not next entry then error code ``API_E_NO_MORE_DATA`` is returned.
+To rewind the directory object call :func:`RewindDirectory`.
 """,
 'de':
 """
