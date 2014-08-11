@@ -1021,7 +1021,6 @@ namespace Tinkerforge
 
 	public abstract class Device
 	{
-		internal byte stackID = 0;
 		internal short[] apiVersion = new short[3];
 		internal ResponseExpectedFlag[] responseExpected = new ResponseExpectedFlag[256];
 		internal byte expectedResponseFunctionID = 0; // protected by requestLock
