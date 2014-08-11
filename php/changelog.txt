@@ -55,3 +55,4 @@
 2.0.13: Fix passing $userData parameter to callbacks
 2.1.0: Add authentication support to IPConnection and Master Brick API
 2.1.1: Add support for WS2811 and WS2812 to LED Strip Bricklet API
+2.1.2: Add support for Color, NFC/RFID and Solid State Relay Bricklet

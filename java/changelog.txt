@@ -79,3 +79,5 @@
        Add TinkerforgeListener and DeviceListener as base interfaces for all listeners
        Escape special HTML characters in JavaDoc
 2.1.1: Add support for WS2811 and WS2812 to LED Strip Bricklet API
+2.1.2: Add support for Color, NFC/RFID and Solid State Relay Bricklet
+       Replace System.console() usage with an Eclipse compatible pattern in examples
