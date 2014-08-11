@@ -91,7 +91,7 @@ class CDocDevice(common.Device):
         cbs = ''
         func_start = '.. c:var:: '
         for packet in self.get_packets('callback'):
-            plist = packet.get_c_parameter_list()[2:].replace('*ret_', '')
+            plist = packet.get_c_parameter_list()[2:].replace('*ret_', '').replace('ret_', '')
             if not plist:
                 plist = 'void *user_data'
             else:
