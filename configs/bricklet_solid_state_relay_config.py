@@ -14,7 +14,7 @@ com = {
     'name': ('SolidStateRelay', 'solid_state_relay', 'Solid State Relay'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling AC and DC Solid State Relays',
-    'released': False,
+    'released': True,
     'packets': []
 }
 

@@ -14,7 +14,7 @@ com = {
     'name': ('Color', 'color', 'Color'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for measuring color (RGB value), illuminance and color temperature',
-    'released': False,
+    'released': True,
     'packets': []
 }
 

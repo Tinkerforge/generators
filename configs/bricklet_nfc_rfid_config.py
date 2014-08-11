@@ -33,7 +33,7 @@ com = {
     'name': ('NFCRFID', 'nfc_rfid', 'NFC/RFID'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device that can read and write NFC and RFID tags',
-    'released': False,
+    'released': True,
     'packets': []
 }
 
