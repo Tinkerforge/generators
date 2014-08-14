@@ -175,15 +175,16 @@ com['packets'].append({
 'type': 'function',
 'name': ('AllocateString', 'allocate_string'),
 'elements': [('length_to_reserve', 'uint32', 1, 'in'),
+             ('buffer', 'string', 60, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('string_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Allocates a new string object and reserves ``length_to_reserve`` bytes memory
-for it. Set ``length_to_reserve`` to the length of the string that should be
-stored in the string object.
+Allocates a new string object, reserves ``length_to_reserve`` bytes memory
+for it and sets up to the first 60 bytes. Set ``length_to_reserve`` to the
+length of the string that should be stored in the string object.
 
 Returns the object ID of the new string object and the resulting error code.
 """,
