@@ -121,7 +121,49 @@ return values (if any) are invalid and must not be used.
 }
 
 #
-# object table
+# inventory
+#
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetNextInventoryEntry', 'get_next_inventory_entry'),
+'elements': [('type', 'uint8', 1, 'in', OBJECT_TYPE_CONSTANTS),
+             ('error_code', 'uint8', 1, 'out'),
+             ('object_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Returns the object ID of the next ``type`` object in the inventory and the
+resulting error code. If there is not next ``type`` object then error code
+``API_E_NO_MORE_DATA`` is returned. To rewind the inventory call
+:func:`RewindInventory`.
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('RewindInventory', 'rewind_inventory'),
+'elements': [('type', 'uint8', 1, 'in', OBJECT_TYPE_CONSTANTS),
+             ('error_code', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Rewinds the inventory for ``type`` objects and returns the resulting error code.
+""",
+'de':
+"""
+"""
+}]
+})
+
+#
+# object
 #
 
 com['packets'].append({
@@ -135,44 +177,6 @@ com['packets'].append({
 """
 Decreases the reference count of an object by one and returns the resulting
 error code. If the reference count reaches zero the object is destroyed.
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('GetNextObjectTableEntry', 'get_next_object_table_entry'),
-'elements': [('type', 'uint8', 1, 'in', OBJECT_TYPE_CONSTANTS),
-             ('error_code', 'uint8', 1, 'out'),
-             ('object_id', 'uint16', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Returns the object ID of the next ``type`` object in the object table and the
-resulting error code. If there is not next ``type`` object then error code
-``API_E_NO_MORE_DATA`` is returned. To rewind the table call
-:func:`RewindObjectTable`.
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('RewindObjectTable', 'rewind_object_table'),
-'elements': [('type', 'uint8', 1, 'in', OBJECT_TYPE_CONSTANTS),
-             ('error_code', 'uint8', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Rewinds the object table for ``type`` and returns the resulting error code.
 """,
 'de':
 """
