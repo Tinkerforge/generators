@@ -47,6 +47,16 @@ FILE_ORIGIN_CONSTANTS = ('FileOrigin', 'file_origin', [('Set', 'set', 0),
                                                        ('Current', 'current', 1),
                                                        ('End', 'end', 2)])
 
+PROCESS_SIGNAL_CONSTANTS = ('ProcessSignal', 'process_signal', [('Interrupt', 'interrupt', 2),
+                                                                ('Quit', 'quit', 3),
+                                                                ('Abort', 'abort', 6),
+                                                                ('Kill', 'kill', 9),
+                                                                ('User1', 'user1', 10),
+                                                                ('User2', 'user2', 12),
+                                                                ('Terminate', 'terminate', 15),
+                                                                ('Continue', 'continue', 18),
+                                                                ('Stop', 'stop', 19)])
+
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -67,7 +77,10 @@ directories, processes and programs) that are identified by their 16bit object
 ID. Functions that create or return an object ID (e.g. :func:`AllocateString`
 and :func:`GetNextDirectoryEntry`) increase the reference count of the returned
 object. If the object is no longer needed then :func:`ReleaseObject` has to
-be called to decrease the reference count of the object again.
+be called to decrease the reference count of the object again. In contrast to
+create and getter functions, the reference count for an object returned by a
+callback is not increased and :func:`ReleaseObject` must not be called for such
+an object in response to a callback.
 
 The RED Brick API is more complex then the typical Brick API and requires more
 elaborate error reporting than the :ref:`TCP/IP protocol <llproto_tcpip>`
@@ -804,7 +817,7 @@ Rewinds the directory object and returns the resulting error code.
 
 com['packets'].append({
 'type': 'function',
-'name': ('StartProcess', 'start_process'),
+'name': ('SpawnProcess', 'spawn_process'),
 'elements': [('command_string_id', 'uint16', 1, 'in'),
              ('arguments_list_id', 'uint16', 1, 'in'),
              ('environment_list_id', 'uint16', 1, 'in'),
@@ -816,6 +829,209 @@ com['packets'].append({
              ('stderr_file_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('process_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('KillProcess', 'kill_process'),
+'elements': [('process_id', 'uint16', 1, 'in'),
+             ('signal', 'uint8', 1, 'in', PROCESS_SIGNAL_CONSTANTS)],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetProcessCommand', 'get_process_command'),
+'elements': [('process_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('command_string_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetProcessArguments', 'get_process_arguments'),
+'elements': [('process_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('arguments_list_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetProcessEnvironment', 'get_process_environment'),
+'elements': [('process_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('environment_list_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetProcessWorkingDirectory', 'get_process_working_directory'),
+'elements': [('process_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('working_directory_string_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetProcessUserID', 'get_process_user_id'),
+'elements': [('process_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('user_id', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetProcessGroupID', 'get_process_group_id'),
+'elements': [('process_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('group_id', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetProcessStdin', 'get_process_stdin'),
+'elements': [('process_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('stdin_file_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetProcessStdout', 'get_process_stdout'),
+'elements': [('process_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('stdout_file_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetProcessStderr', 'get_process_stderr'),
+'elements': [('process_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('stderr_file_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetProcessState', 'get_process_state'),
+'elements': [('process_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('state', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetProcessExitCode', 'get_process_exit_code'),
+'elements': [('process_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('exit_code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
