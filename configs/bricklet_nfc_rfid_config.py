@@ -278,9 +278,9 @@ com['packets'].append({
 Writes 16 bytes starting from the given page. How many pages are written
 depends on the tag type. The page sizes are as follows:
 
-* Mifare Classic page size: 16 byte (1 page is written)
-* NFC Forum Type 1 page size: 8 byte (2 pages are written)
-* NFC Forum Type 2 page size: 4 byte (4 pages are written)
+* Mifare Classic page size: 16 byte (one page is written)
+* NFC Forum Type 1 page size: 8 byte (two pages are written)
+* NFC Forum Type 2 page size: 4 byte (four pages are written)
 
 The general approach for writing to a tag is as follows:
 
@@ -299,9 +299,9 @@ Schreibt 16 Bytes startend von der übergebenen Page. Wie viele Pages
 dadurch geschrieben werden hängt vom Typ des Tags ab. Die Pagegrößen
 verhalten sich wie folgt:
 
-* Mifare Classic Pagegröße: 16 byte (1 Page wird geschrieben)
-* NFC Forum Type 1 Pagegröße: 8 byte (2 Pages werden geschrieben)
-* NFC Forum Type 2 Pagegröße: 4 byte (4 Pages werden geschrieben)
+* Mifare Classic Pagegröße: 16 byte (eine Page wird geschrieben)
+* NFC Forum Type 1 Pagegröße: 8 byte (zwei Pages werden geschrieben)
+* NFC Forum Type 2 Pagegröße: 4 byte (vier Pages werden geschrieben)
 
 Der generelle Ansatz zum Schreiben eines Tags sieht wie folgt aus:
 
