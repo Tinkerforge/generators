@@ -43,7 +43,7 @@ FILE_PERMISSION_CONSTANTS = ('FilePermission', 'file_permission', [('UserAll', '
                                                                    ('OthersWrite', 'others_write', 00002),
                                                                    ('OthersExecute', 'others_execute', 00001)])
 
-FILE_ORIGIN_CONSTANTS = ('FileOrigin', 'file_origin', [('Set', 'set', 0),
+FILE_ORIGIN_CONSTANTS = ('FileOrigin', 'file_origin', [('Beginning', 'beginning', 0),
                                                        ('Current', 'current', 1),
                                                        ('End', 'end', 2)])
 
