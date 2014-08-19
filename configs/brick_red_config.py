@@ -6,12 +6,13 @@
 
 # RED Brick communication config
 
-OBJECT_TYPE_CONSTANTS = ('ObjectType', 'object_type', [('String', 'string', 0),
-                                                       ('List', 'list', 1),
-                                                       ('File', 'file', 2),
-                                                       ('Directory', 'directory', 3),
-                                                       ('Process', 'process', 4),
-                                                       ('Program', 'program', 5)])
+OBJECT_TYPE_CONSTANTS = ('ObjectType', 'object_type', [('Inventory', 'inventory', 0),
+                                                       ('String', 'string', 1),
+                                                       ('List', 'list', 2),
+                                                       ('File', 'file', 3),
+                                                       ('Directory', 'directory', 4),
+                                                       ('Process', 'process', 5),
+                                                       ('Program', 'program', 6)])
 
 FILE_TYPE_CONSTANTS = ('FileType', 'file_type', [('Unknown', 'unknown', 0),
                                                  ('Regular', 'regular', 1),
@@ -123,48 +124,6 @@ return values (if any) are invalid and must not be used.
 }
 
 #
-# inventory
-#
-
-com['packets'].append({
-'type': 'function',
-'name': ('GetNextInventoryEntry', 'get_next_inventory_entry'),
-'elements': [('type', 'uint8', 1, 'in', OBJECT_TYPE_CONSTANTS),
-             ('error_code', 'uint8', 1, 'out'),
-             ('object_id', 'uint16', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Returns the object ID of the next ``type`` object in the inventory and the
-resulting error code. If there is not next ``type`` object then error code
-``API_E_NO_MORE_DATA`` is returned. To rewind the inventory call
-:func:`RewindInventory`.
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('RewindInventory', 'rewind_inventory'),
-'elements': [('type', 'uint8', 1, 'in', OBJECT_TYPE_CONSTANTS),
-             ('error_code', 'uint8', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Rewinds the inventory for ``type`` objects and returns the resulting error code.
-""",
-'de':
-"""
-"""
-}]
-})
-
-#
 # object
 #
 
@@ -179,6 +138,87 @@ com['packets'].append({
 """
 Decreases the reference count of an object by one and returns the resulting
 error code. If the reference count reaches zero the object is destroyed.
+""",
+'de':
+"""
+"""
+}]
+})
+
+#
+# inventory
+#
+
+com['packets'].append({
+'type': 'function',
+'name': ('OpenInventory', 'open_inventory'),
+'elements': [('type', 'uint8', 1, 'in', OBJECT_TYPE_CONSTANTS),
+             ('error_code', 'uint8', 1, 'out'),
+             ('inventory_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Opens the inventory for a specific object type and creates an inventory object
+for it.
+
+Returns the object ID of the new directory object and the resulting error code.
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetInventoryType', 'get_inventory_type'),
+'elements': [('inventory_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('type', 'uint8', 1, 'out', OBJECT_TYPE_CONSTANTS)],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Returns the object type of a inventory object and the resulting error code.
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetNextInventoryEntry', 'get_next_inventory_entry'),
+'elements': [('inventory_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('object_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Returns the object ID of the next object in an inventory object and the
+resulting error code. If there is not next object then error code
+``API_E_NO_MORE_DATA`` is returned. To rewind an inventory object call
+:func:`RewindInventory`.
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('RewindInventory', 'rewind_inventory'),
+'elements': [('inventory_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Rewinds an inventory object and returns the resulting error code.
 """,
 'de':
 """
@@ -790,9 +830,9 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the next entry in the directory object and the resulting error code.
+Returns the next entry in a directory object and the resulting error code.
 If there is not next entry then error code ``API_E_NO_MORE_DATA`` is returned.
-To rewind the directory object call :func:`RewindDirectory`.
+To rewind a directory object call :func:`RewindDirectory`.
 """,
 'de':
 """
@@ -809,7 +849,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Rewinds the directory object and returns the resulting error code.
+Rewinds a directory object and returns the resulting error code.
 """,
 'de':
 """
