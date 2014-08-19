@@ -292,7 +292,7 @@ Mit abnehmender Frequenz nimmt allerdings auch die maximale Framerateab.
 Der Standardwert ist 1,66MHz
 
 .. note::
- Die Frequenz in Firmwareversion 2.0.0 ist fest auf 2MHz gesetzt.
+ Die Frequenz in Firmware Version 2.0.0 ist fest auf 2MHz gesetzt.
 """
 }]
 })

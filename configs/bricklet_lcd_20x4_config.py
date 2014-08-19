@@ -179,15 +179,15 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns *true* if the button (0 to 2 or 0 to 3 with hardware version >= 1.2) 
+Returns *true* if the button (0 to 2 or 0 to 3 since hardware version 1.2)
 is pressed. If you want to react
 on button presses and releases it is recommended to use the
 :func:`ButtonPressed` and :func:`ButtonReleased` callbacks.
 """,
 'de':
 """
-Gibt *true* zurück wenn die Taste (0 bis 2 oder 0 bis 3 mit Hardware 
-Version >= 1.2) gedrückt ist. Wenn auf Tastendrücken
+Gibt *true* zurück wenn die Taste (0 bis 2 oder 0 bis 3 seit Hardware
+Version 1.2) gedrückt ist. Wenn auf Tastendrücken
 und -loslassen reagiert werden soll, wird empfohlen die :func:`ButtonPressed`
 und :func:`ButtonReleased` Callbacks zu nutzen.
 """
@@ -203,12 +203,12 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when a button is pressed. The :word:`parameter` is
-the number of the button (0 to 2 or 0 to 3 with hardware version >= 1.2).
+the number of the button (0 to 2 or 0 to 3 since hardware version 1.2).
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn eine Taste gedrückt wird. Der :word:`parameter`
-ist die Nummer der Taste (0 bis 2 oder 0 bis 3 mit Hardware Version >= 1.2).
+ist die Nummer der Taste (0 bis 2 oder 0 bis 3 seit Hardware Version 1.2).
 """
 }]
 })
@@ -222,12 +222,12 @@ com['packets'].append({
 'en':
 """
 This callback is triggered when a button is released. The :word:`parameter` is
-the number of the button (0 to 2 or 0 to 3 with hardware version >= 1.2).
+the number of the button (0 to 2 or 0 to 3 since hardware version 1.2).
 """,
 'de':
 """
 Dieser Callback wird ausgelöst wenn eine Taste losgelassen wird. Der :word:`parameter`
-ist die Nummer der Taste (0 bis 2 oder 0 bis 3 mit Hardware Version >= 1.2).
+ist die Nummer der Taste (0 bis 2 oder 0 bis 3 seit Hardware Version 1.2).
 """
 }]
 })
