@@ -21,7 +21,8 @@ com = {
 com['packets'].append({
 'type': 'function',
 'name': ('Beep', 'beep'), 
-'elements': [('duration', 'uint32', 1, 'in'),
+'elements': [('duration', 'uint32', 1, 'in', ('BeepDuration', 'beep_duration', [('Off', 'off', 0),
+                                                                                ('Infinite', 'infinite', 4294967295)])),
              ('frequency', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -32,7 +33,11 @@ If you set a duration of 1000, with a frequency value of 2000
 the piezo buzzer will beep for one second with a frequency of
 approximately 2 kHz.
 
-*frequency* can be set between 585 and 7100.
+.. versionchanged:: 2.0.2~(Plugin)
+   A duration of 0 stops the current beep if any, the frequency parameter is
+   ignored. A duration of 4294967295 results in an infinite beep.
+
+The *frequency* parameter can be set between 585 and 7100.
 
 The Piezo Speaker Bricklet can only approximate the frequency, it will play
 the best possible match by applying the calibration (see :func:`Calibrate`).
@@ -44,7 +49,12 @@ Beispiel: Wenn *duration* auf 1000 und *frequency* auf 2000 gesetzt wird,
 erzeugt der Piezosummer einen Piepton für eine Sekunde mit einer Frequenz 
 von ca. 2 kHz.
 
-*frequency* kann die Werte 585 bis 7100 annehmen.
+.. versionchanged:: 2.0.2~(Plugin)
+   Eine *durarion* von 0 stoppt den aktuellen Piepton, das *frequency* Parameter
+   wird ignoriert. Eine *durarion* von 4294967295 führt zu einem unendlich
+   langen Piepton.
+
+Das *frequency* Parameter kann Werte von 585 bis 7100 annehmen.
 
 Das Piezo Speaker Bricklet kann die angegebenen Frequenzen nur approximieren,
 es wählt die bestmögliche Zuordnung anhand der Kalibrierung 

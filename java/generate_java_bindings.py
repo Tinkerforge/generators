@@ -398,11 +398,15 @@ public class {0} extends Device {{
                         value = "'{0}'".format(constant_item.get_value())
                 else:
                     if typ == 'int':
-                        cast = ''
+                        cast = '' # no need to cast int, its the default type for number literals
                     else:
                         cast = '({0})'.format(typ)
 
                     value = str(constant_item.get_value())
+
+                    if typ == 'long':
+                        cast = ''
+                        value += 'L' # mark longs as such, because int is the default type for number literals
 
                 constants.append(constant.format(typ,
                                                  constant_group.get_upper_case_name(),
