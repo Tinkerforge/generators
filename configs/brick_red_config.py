@@ -77,11 +77,11 @@ com['api'] = {
 """
 The RED Brick API operates on reference counted objects (strings, lists, files,
 directories, processes and programs) that are identified by their 16bit object
-ID. Functions that create or return an object ID (e.g. :func:`AllocateString`
+ID. Functions that allocate or return an object ID (e.g. :func:`AllocateString`
 and :func:`GetNextDirectoryEntry`) increase the reference count of the returned
 object. If the object is no longer needed then :func:`ReleaseObject` has to
 be called to decrease the reference count of the object again. In contrast to
-create and getter functions, the reference count for an object returned by a
+allocation and getter functions, the reference count for an object returned by a
 callback is not increased and :func:`ReleaseObject` must not be called for such
 an object in response to a callback.
 
@@ -159,8 +159,8 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Opens the inventory for a specific object type and creates an inventory object
-for it.
+Opens the inventory for a specific object type and allocates a new inventory
+object for it.
 
 Returns the object ID of the new directory object and the resulting error code.
 """,
@@ -455,7 +455,8 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Opens an existing file or creates a new file and creates a file object for it.
+Opens an existing file or creates a new file and allocates a new file object
+for it.
 
 The reference count of the name string object is increased by one. When the
 file object is destroyed then the reference count of the name string object is
@@ -646,9 +647,9 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Set the current seek position of a file object in bytes.
+Set the current seek position of a file object in bytes relative to ``origin``.
 
-Returns the resulting seek position and error code.
+Returns the resulting absolute seek position and error code.
 """,
 'de':
 """
@@ -786,7 +787,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Opens an existing directory and creates a directory object for it.
+Opens an existing directory and allocates a new directory object for it.
 
 The reference count of the name string object is increased by one. When the
 directory object is destroyed then the reference count of the name string
