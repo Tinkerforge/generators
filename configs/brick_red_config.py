@@ -28,7 +28,9 @@ FILE_FLAG_CONSTANTS = ('FileFlag', 'file_flag', [('ReadOnly', 'read_only', 0x000
                                                  ('Append', 'append', 0x0008),
                                                  ('Create', 'create', 0x0010),
                                                  ('Exclusive', 'exclusive', 0x0020),
-                                                 ('Truncate', 'truncate', 0x0040)])
+                                                 ('NoAccessTime', 'no_access_time', 0x0040),
+                                                 ('NoFollow', 'no_follow', 0x0080),
+                                                 ('Truncate', 'truncate', 0x0100)])
 
 FILE_PERMISSION_CONSTANTS = ('FilePermission', 'file_permission', [('UserAll', 'user_all', 00700),
                                                                    ('UserRead', 'user_read', 00400),
