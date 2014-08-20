@@ -756,7 +756,7 @@ sub authenticate
 Can return the following states:
 
 * IPConnection->CONNECTION_STATE_DISCONNECTED (0): No connection is established.
-* IPConnection->CONNECTION_STATE_CONNETED (1): A connection to the Brick Daemon
+* IPConnection->CONNECTION_STATE_CONNECTED (1): A connection to the Brick Daemon
   or the WIFI/Ethernet Extension  is established.
 * IPConnection->CONNECTION_STATE_PENDING (2): IP Connection is currently trying
   to connect.
