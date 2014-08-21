@@ -33,6 +33,8 @@ FILE_FLAG_CONSTANTS = ('FileFlag', 'file_flag', [('ReadOnly', 'read_only', 0x000
                                                  ('NoFollow', 'no_follow', 0x0080),
                                                  ('Truncate', 'truncate', 0x0100)])
 
+# the permission bit values match the UNIX permission bit values, this allows
+# to use the normal octal way to write them, e.g. 0755
 FILE_PERMISSION_CONSTANTS = ('FilePermission', 'file_permission', [('UserAll', 'user_all', 00700),
                                                                    ('UserRead', 'user_read', 00400),
                                                                    ('UserWrite', 'user_write', 00200),
@@ -50,6 +52,7 @@ FILE_ORIGIN_CONSTANTS = ('FileOrigin', 'file_origin', [('Beginning', 'beginning'
                                                        ('Current', 'current', 1),
                                                        ('End', 'end', 2)])
 
+# the signal numbers match the UNIX signal numbers on purpose
 PROCESS_SIGNAL_CONSTANTS = ('ProcessSignal', 'process_signal', [('Interrupt', 'interrupt', 2),
                                                                 ('Quit', 'quit', 3),
                                                                 ('Abort', 'abort', 6),
@@ -59,6 +62,12 @@ PROCESS_SIGNAL_CONSTANTS = ('ProcessSignal', 'process_signal', [('Interrupt', 'i
                                                                 ('Terminate', 'terminate', 15),
                                                                 ('Continue', 'continue', 18),
                                                                 ('Stop', 'stop', 19)])
+
+PROCESS_STATE_CONSTANTS = ('ProcessState', 'process_state', [('Unknown', 'unknown', 0),
+                                                             ('Running', 'running', 1),
+                                                             ('Exited', 'exited', 2),
+                                                             ('Killed', 'killed', 3),
+                                                             ('Stopped', 'stopped', 4)])
 
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
@@ -1061,7 +1070,8 @@ com['packets'].append({
 'name': ('GetProcessState', 'get_process_state'),
 'elements': [('process_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
-             ('state', 'uint8', 1, 'out')],
+             ('state', 'uint8', 1, 'out', PROCESS_STATE_CONSTANTS),
+             ('exit_code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1074,13 +1084,13 @@ com['packets'].append({
 })
 
 com['packets'].append({
-'type': 'function',
-'name': ('GetProcessExitCode', 'get_process_exit_code'),
-'elements': [('process_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out'),
+'type': 'callback',
+'name': ('ProcessStateChanged', 'process_state_changed'),
+'elements': [('process_id', 'uint16', 1, 'out'),
+             ('state', 'uint8', 1, 'out', PROCESS_STATE_CONSTANTS),
              ('exit_code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
-'doc': ['af', {
+'doc': ['c', {
 'en':
 """
 """,
