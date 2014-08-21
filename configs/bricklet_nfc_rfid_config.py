@@ -54,9 +54,9 @@ the available tag types until the tag gives an answer to the request.
 
 Current the following tag types are supported:
 
-* Mifare Classic
-* NFC Forum Type 1
-* NFC Forum Type 2
+* Mifare Classic (``tag_type`` = 0)
+* NFC Forum Type 1 (``tag_type`` = 1)
+* NFC Forum Type 2 (``tag_type`` = 2)
 
 After you call :func:`RequestTagID` the NFC/RFID Bricklet will try to read 
 the tag ID from the tag. After this process is done the state will change.
@@ -86,9 +86,9 @@ durchzutesten bis das Tag antwortet.
 
 Aktuell werden die folgenden Tag Typen unterstützt:
 
-* Mifare Classic
-* NFC Forum Type 1
-* NFC Forum Type 2
+* Mifare Classic (``tag_type`` = 0)
+* NFC Forum Type 1 (``tag_type`` = 1)
+* NFC Forum Type 2 (``tag_type`` = 2)
 
 Beim Aufruf von :func:`RequestTagID` probiert das NFC/RFID Bricklet die tag ID
 eines Tags auszulesen. Nachdem dieser Prozess beendet ist ändert sich
@@ -135,7 +135,6 @@ To get the tag ID of a tag the approach is as follows:
 * Call :func:`RequestTagID`
 * Wait for state to change to *RequestTagIDReady* (see :func:`GetState` or :func:`StateChanged`)
 * Call :func:`GetTagID`
-
 """,
 'de':
 """
@@ -150,7 +149,6 @@ Der Ansatz um die Tag ID eines Tags zu bekommen sieht wie folgt aus:
 * Rufe :func:`RequestTagID` auf
 * Warte auf einen Zustandswechsel auf *RequestTagIDReady* (siehe :func:`GetState` oder :func:`StateChanged`)
 * Rufe :func:`GetTagID` auf
-
 """
 }]
 })
@@ -180,8 +178,8 @@ com['packets'].append({
 """
 Returns the current state of the NFC/RFID Bricklet.
 
-On startup the Bricklet will be in the *Initialization* state. The initialization
-will only take about 20ms. After that it changes to *Idle*.
+On startup the Bricklet will be in the *Initialization* state. The
+initialization will only take about 20ms. After that it changes to *Idle*.
 
 The functions of this Bricklet can be called in the *Idle* state and all of
 the *Ready* and *Error* states.
@@ -229,39 +227,41 @@ com['packets'].append({
 """
 Mifare Classic tags use authentication. If you want to read from or write to
 a Mifare Classic page you have to authenticate it beforehand.
-Each page can be authenticated with two keys (A and B). A new Mifare Classic
-tag that has not yet been written to can can be accessed with key number A
-and the default key *[0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]*.
+Each page can be authenticated with two keys: A (``key_number`` = 0) and B
+(``key_number`` = 1). A new Mifare Classic
+tag that has not yet been written to can can be accessed with key A
+and the default key ``[0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]``.
 
 The approach to read or write a Mifare Classic page is as follows:
 
 * Call :func:`RequestTagID`
-* Wait for state to change to *RequestTagIDReady* (see :func:`GetState` or :func:`StateChanged`)
+* Wait for state to change to *RequestTagIDReady* (see :func:`GetState`
+  or :func:`StateChanged`)
 * Call :func:`GetTagID` and check if tag ID is correct
 * Call :func:`AuthenticateMifareClassicPage` with page and key for the page
 * Wait for state to change to *AuthenticatingMifareClassicPageReady*
 * Call :func:`RequestPage` or :func`WritePage` to read/write page
-
 """,
 'de':
 """
 Mifare Classic Tags nutzen Authentifizierung. Wenn eine Page eines 
 Mifare Classic Tags gelesen oder geschrieben werden soll muss diese
-zuvor Authentifiziert werden. Jede Page kann mit zwei Schlüsseln (A und B)
+zuvor Authentifiziert werden. Jede Page kann mit zwei Schlüsseln, A
+(``key_number`` = 0) und B (``key_number`` = 1),
 authentifiziert werden. Ein neues Mifare Classic Tag welches noch nicht
-beschrieben wurde kann über Schlüsselnummer A mit dem Standardschlüssel
-*[0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]* genutzt werden.
+beschrieben wurde kann über Schlüssel A mit dem Standardschlüssel
+``[0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]`` genutzt werden.
 
 Der Ansatz um eine Mifare Classic Page zu lesen oder zu schreiben sieht wie
 folgt aus:
 
 * Rufe :func:`RequestTagID` auf
-* Warte auf einen Zustandswechsel auf *RequestTagIDReady* (siehe :func:`GetState` oder :func:`StateChanged`)
+* Warte auf einen Zustandswechsel auf *RequestTagIDReady* (siehe :func:`GetState`
+  oder :func:`StateChanged`)
 * Rufe :func:`GetTagID` auf und überprüfe ob Tag ID korrekt ist.
 * Rufe :func:`AuthenticateMifareClassicPage` mit Page und Schlüssel für die Page auf
 * Warte auf einen Zustandswechsel auf *AuthenticatingMifareClassicPageReady*
 * Rufe :func:`RequestPage` oder :func`WritePage` zum lesen/schreiben einer Page auf
-
 """
 }]
 })
