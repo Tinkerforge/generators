@@ -1,5 +1,5 @@
 {
-  Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+  Copyright (C) 2012, 2014 Matthias Bolte <matthias@tinkerforge.com>
 
   Redistribution and use in source and binary forms of this file,
   with or without modification, are permitted. See the Creative
@@ -8,7 +8,11 @@
 
 unit TimedSemaphore;
 
-{$ifdef FPC}{$mode OBJFPC}{$H+}{$endif}
+{$ifdef FPC}
+ {$mode OBJFPC}{$H+}
+{$else}
+ {$ifdef MACOS}{$define DELPHI_MACOS}{$endif}
+{$endif}
 
 interface
 
@@ -24,7 +28,11 @@ type
     handle: THandle;
 {$else}
     mutex: TCriticalSection;
+ {$ifdef DELPHI_MACOS}
+    event: TEvent;
+ {$else}
     event: PRTLEvent;
+ {$endif}
     available: longint;
 {$endif}
   public
@@ -43,7 +51,11 @@ begin
   handle := CreateSemaphore(nil, 0, 2147483647, nil);
 {$else}
   mutex := TCriticalSection.Create;
-  event := RTLEventCreate;
+ {$ifdef DELPHI_MACOS}
+  event := TEvent.Create; { This is a manual-reset event }
+ {$else}
+  event := RTLEventCreate; { This is a manual-reset event }
+ {$endif}
   available := 0;
 {$endif}
 end;
@@ -58,7 +70,11 @@ begin
 {$ifdef MSWINDOWS}
   CloseHandle(handle);
 {$else}
-  RTLeventDestroy(event);
+ {$ifdef DELPHI_MACOS}
+  event.Destroy;
+ {$else}
+  RTLEventDestroy(event);
+ {$endif}
   mutex.Destroy;
 {$endif}
   inherited Destroy;
@@ -81,7 +97,11 @@ begin
       Dec(available);
       result := true;
       if (available = 0) then begin
-        RTLeventResetEvent(event);
+ {$ifdef DELPHI_MACOS}
+        event.ResetEvent();
+ {$else}
+        RTLEventResetEvent(event);
+ {$endif}
       end;
     end;
   finally
@@ -89,10 +109,18 @@ begin
   end;
   if not result then begin
     if (timeout < 0) then begin
-      RTLeventWaitFor(event);
+ {$ifdef DELPHI_MACOS}
+      event.WaitFor(INFINITE);
+ {$else}
+      RTLEventWaitFor(event);
+ {$endif}
     end
     else begin
-      RTLeventWaitFor(event, timeout);
+ {$ifdef DELPHI_MACOS}
+      event.WaitFor(timeout);
+ {$else}
+      RTLEventWaitFor(event, timeout);
+ {$endif}
     end;
     mutex.Acquire;
     try
@@ -121,7 +149,11 @@ begin
   finally
     mutex.Release;
   end;
-  RTLeventSetEvent(event);
+ {$ifdef DELPHI_MACOS}
+  event.SetEvent();
+ {$else}
+  RTLEventSetEvent(event);
+ {$endif}
 {$endif}
 end;
 

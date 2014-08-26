@@ -20,7 +20,7 @@ uses
    {$ifdef MSWINDOWS}
     WinSock
    {$else}
-    { FIXME: what to use for htonl? }
+     Posix.ArpaInet
    {$endif}
   {$endif};
 

@@ -8,19 +8,25 @@
 
 unit IPConnection;
 
-{$ifdef FPC}{$mode OBJFPC}{$H+}{$endif}
 
-{ FIXME: the code assumes in some places non-FPC means Delphi IDE on Windows }
+{$ifdef FPC}
+ {$mode OBJFPC}{$H+}
+{$else}
+ {$ifdef MACOS}{$define DELPHI_MACOS}{$endif}
+{$endif}
 
 interface
 
 uses
-  {$ifdef FPC}
-   {$ifdef UNIX}CThreads, Errors, CNetDB, BaseUnix, {$else}Windows, WinSock,{$endif}
-  {$else}
-   {$ifdef MSWINDOWS}Windows, WinSock,{$endif}
-  {$endif}
-  Classes, Sockets, SyncObjs, SysUtils, LEConverter, BlockingQueue, Device, TimedSemaphore, SHA1, BrickDaemon;
+{$ifdef FPC}
+ {$ifdef UNIX}CThreads, Errors, CNetDB, BaseUnix,{$else} Windows, WinSock,{$endif} Sockets,
+{$else}
+ {$ifdef MSWINDOWS}Windows, WinSock,{$endif}
+{$endif}
+{$ifdef DELPHI_MACOS}
+  Posix.ArpaInet, Posix.Errno, Posix.NetDB, Posix.NetinetIn, Posix.NetinetTcp, Posix.String_, Posix.SysSocket, Posix.SysTypes, Posix.Unistd,
+{$endif}
+  Classes, SyncObjs, SysUtils, LEConverter, BlockingQueue, Device, TimedSemaphore, SHA1, BrickDaemon;
 
 const
   IPCON_FUNCTION_DISCONNECT_PROBE = 128;
@@ -62,7 +68,12 @@ const
   ESysEINTR = WSAEINTR;
  {$endif}
 {$else}
+ {$ifdef DELPHI_MACOS}
+  INVALID_SOCKET = -1;
+  ESysEINTR = EINTR;
+ {$else}
   ESysEINTR = WSAEINTR;
+ {$endif}
 {$endif}
 
 type
@@ -141,7 +152,11 @@ type
     pendingData: TByteArray;
     socketMutex: TCriticalSection;
     socketSendMutex: TCriticalSection;
+{$ifdef DELPHI_MACOS}
+    socket: longint; { protected by socketMutex }
+{$else}
     socket: TSocket; { protected by socketMutex }
+{$endif}
     socketID: longword; { protected by socketMutex }
     waiter: TTimedSemaphore;
     enumerateCallback: TIPConnectionNotifyEnumerate;
@@ -151,7 +166,8 @@ type
 
     procedure ConnectUnlocked(const isAutoReconnect: boolean);
     procedure DisconnectUnlocked;
-    function GetLastSocketError: string;
+    function GetLastSocketErrorNumber: longint;
+    function GetLastSocketErrorMessage: string;
     procedure ReceiveLoop(thread: TWrapperThread; opaque: pointer);
     procedure CallbackLoop(thread: TWrapperThread; opaque: pointer);
     procedure DisconnectProbeLoop(thread: TWrapperThread; opaque: pointer);
@@ -300,8 +316,9 @@ function CryptGenRandom(hProv: ULONG; dwLen: DWORD; pbBuffer: PBYTE): BOOL; stdc
 {$else}
 
 function ReadUInt32(const filename: string): longword;
-var fh: File; bytes: array [0..3] of byte; count: longint;
+var fh: File; bytes: TByteArray; count: longint;
 begin
+  SetLength(bytes, 4);
   count := 0;
   AssignFile(fh, filename);
   try
@@ -422,7 +439,7 @@ begin
 {$ifdef FPC}
   result := GetCurrentThreadId = ThreadID;
 {$else}
-  result := Windows.GetCurrentThreadId = ThreadID;
+  result := CurrentThread.ThreadID = ThreadID;
 {$endif}
 end;
 
@@ -614,16 +631,26 @@ end;
 procedure TIPConnection.ConnectUnlocked(const isAutoReconnect: boolean);
 var
 {$ifndef FPC}
+ {$ifdef MSWINDOWS}
     data: WSAData;
+ {$endif}
 {$endif}
     nodelay: longint;
     entry: PHostEnt;
 {$ifdef FPC}
     address: TInetSockAddr;
 {$else}
+ {$ifdef DELPHI_MACOS}
+    address: sockaddr_in;
+ {$else}
     address: TSockAddrIn;
+ {$endif}
 {$endif}
+{$ifdef DELPHI_MACOS}
+    resolved: in_addr;
+{$else}
     resolved: TInAddr;
+{$endif}
     connectReason: word;
     meta: TByteArray;
 begin
@@ -638,30 +665,44 @@ begin
   end;
   { Create and connect socket }
 {$ifndef FPC}
+ {$ifdef MSWINDOWS}
   if (WSAStartup(MakeWord(2, 2), data) <> 0) then begin
-    raise Exception.Create('Could not initialize Windows Sockets 2.2: ' + GetLastSocketError);
+    raise Exception.Create('Could not initialize Windows Sockets 2.2: ' + GetLastSocketErrorMessage);
   end;
+ {$endif}
 {$endif}
 {$ifdef FPC}
   socket := fpsocket(AF_INET, SOCK_STREAM, 0);
   if (socket < 0) then begin
 {$else}
+ {$ifdef DELPHI_MACOS}
+  socket := Posix.SysSocket.socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+ {$else}
   socket := WinSock.socket(AF_INET, SOCK_STREAM, 0);
+ {$endif}
   if (socket = INVALID_SOCKET) then begin
 {$endif}
-    raise Exception.Create('Could not create socket: ' + GetLastSocketError);
+    raise Exception.Create('Could not create socket: ' + GetLastSocketErrorMessage);
   end;
   nodelay := 1;
 {$ifdef FPC}
   if (fpsetsockopt(socket, IPPROTO_TCP, TCP_NODELAY, @nodelay, sizeof(nodelay)) < 0) then begin
 {$else}
+ {$ifdef DELPHI_MACOS}
+  if (setsockopt(socket, IPPROTO_TCP, TCP_NODELAY, nodelay, sizeof(nodelay)) < 0) then begin
+ {$else}
   if (setsockopt(socket, IPPROTO_TCP, TCP_NODELAY, @nodelay, sizeof(nodelay)) = SOCKET_ERROR) then begin
+ {$endif}
 {$endif}
-    raise Exception.Create('Could not set TCP_NODELAY socket option: ' + GetLastSocketError);
+    raise Exception.Create('Could not set TCP_NODELAY socket option: ' + GetLastSocketErrorMessage);
   end;
   entry := gethostbyname(PAnsiChar(AnsiString(host)));
   if (entry = nil) then begin
+{$ifdef DELPHI_MACOS}
+    Posix.Unistd.__close(socket);
+{$else}
     closesocket(socket);
+{$endif}
     socket := INVALID_SOCKET;
     raise Exception.Create('Could not resolve host: ' + host);
   end;
@@ -672,11 +713,19 @@ begin
 {$ifdef FPC}
   if (fpconnect(socket, @address, sizeof(address)) < 0) then begin
 {$else}
+ {$ifdef DELPHI_MACOS}
+  if (Posix.SysSocket.connect(socket, sockaddr(address), sizeof(address)) < 0) then begin
+ {$else}
   if (WinSock.connect(socket, address, sizeof(address)) = SOCKET_ERROR) then begin
+ {$endif}
 {$endif}
+{$ifdef DELPHI_MACOS}
+    Posix.Unistd.__close(socket);
+{$else}
     closesocket(socket);
+{$endif}
     socket := INVALID_SOCKET;
-    raise Exception.Create('Could not connect socket: ' + GetLastSocketError);
+    raise Exception.Create('Could not connect socket: ' + GetLastSocketErrorMessage);
   end;
   socketID := socketID + 1;
   { Create disconnect probe thread }
@@ -733,7 +782,11 @@ begin
 {$ifdef FPC}
   fpshutdown(socket, 2);
 {$else}
+ {$ifdef DELPHI_MACOS}
+  shutdown(socket, SHUT_RDWR);
+ {$else}
   shutdown(socket, SD_BOTH);
+ {$endif}
 {$endif}
   if (not receiveThread.IsCurrent) then begin
     receiveThread.WaitFor;
@@ -741,11 +794,28 @@ begin
   receiveThread.Destroy;
   receiveThread := nil;
   { Destroy socket }
-  closesocket(socket);
+{$ifdef DELPHI_MACOS}
+    Posix.Unistd.__close(socket);
+{$else}
+    closesocket(socket);
+{$endif}
   socket := INVALID_SOCKET;
 end;
 
-function TIPConnection.GetLastSocketError: string;
+function TIPConnection.GetLastSocketErrorNumber: longint;
+begin
+{$ifdef FPC}
+  result := socketerror;
+{$else}
+ {$ifdef DELPHI_MACOS}
+  result := errno;
+ {$else}
+  result := WSAGetLastError;
+ {$endif}
+{$endif}
+end;
+
+function TIPConnection.GetLastSocketErrorMessage: string;
 begin
 {$ifdef FPC}
  {$ifdef UNIX}
@@ -754,7 +824,11 @@ begin
   result := SysErrorMessage(socketerror);
  {$endif}
 {$else}
+ {$ifdef DELPHI_MACOS}
+  result := string(strerror(errno));
+ {$else}
   result := SysErrorMessage(WSAGetLastError);
+ {$endif}
 {$endif}
 end;
 
@@ -769,14 +843,18 @@ begin
 {$ifdef FPC}
     len := fprecv(socket, @data[0], Length(data), 0);
 {$else}
-    len := Recv(socket, data, Length(data), 0);
+ {$ifdef DELPHI_MACOS}
+    len := recv(socket, data, Length(data), 0);
+ {$else}
+    len := WinSock.Recv(socket, data, Length(data), 0);
+ {$endif}
 {$endif}
     if (not receiveFlag) then begin
       exit;
     end;
     if ((len < 0) or (len = 0)) then begin
       if (len < 0) then begin
-        if ({$ifdef FPC}socketerror{$else}WSAGetLastError{$endif} = ESysEINTR) then begin
+        if (GetLastSocketErrorNumber = ESysEINTR) then begin
           continue;
         end;
         disconnectReason := IPCON_DISCONNECT_REASON_ERROR;
@@ -867,7 +945,11 @@ begin
 {$ifdef FPC}
         error := fpsend(socket, @request[0], Length(request), 0) < 0;
 {$else}
+ {$ifdef DELPHI_MACOS}
+        error := send(socket, request[0], Length(request), 0) < 0;
+ {$else}
         error := WinSock.Send(socket, request[0], Length(request), 0) = SOCKET_ERROR;
+ {$endif}
 {$endif}
       finally
         socketSendMutex.Release;
@@ -960,7 +1042,11 @@ begin
           disconnectProbeQueue.Destroy;
           disconnectProbeQueue := nil;
           { Destroy socket }
+{$ifdef DELPHI_MACOS}
+          Posix.Unistd.__close(socket);
+{$else}
           closesocket(socket);
+{$endif}
           socket := INVALID_SOCKET;
         end;
       finally
@@ -1098,7 +1184,11 @@ begin
 {$ifdef FPC}
       error := fpsend(socket, @request[0], Length(request), 0) < 0;
 {$else}
+ {$ifdef DELPHI_MACOS}
+      error := send(socket, request[0], Length(request), 0) < 0;
+ {$else}
       error := WinSock.Send(socket, request[0], Length(request), 0) = SOCKET_ERROR;
+ {$endif}
 {$endif}
     finally
       socketSendMutex.Release;
