@@ -518,70 +518,6 @@ Returns the type of a file object and the resulting error code.
 
 com['packets'].append({
 'type': 'function',
-'name': ('WriteFile', 'write_file'),
-'elements': [('file_id', 'uint16', 1, 'in'),
-             ('buffer', 'uint8', 61, 'in'),
-             ('length_to_write', 'uint8', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out'),
-             ('length_written', 'uint8', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Writes up to 61 bytes to a file object.
-
-Returns the actual number of bytes written and the resulting error code.
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('WriteFileUnchecked', 'write_file_unchecked'),
-'elements': [('file_id', 'uint16', 1, 'in'),
-             ('buffer', 'uint8', 61, 'in'),
-             ('length_to_write', 'uint8', 1, 'in')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Writes up to 61 bytes to a file object.
-
-Does neither report the actual number of bytes written nor the resulting error
-code.
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('WriteFileAsync', 'write_file_async'),
-'elements': [('file_id', 'uint16', 1, 'in'),
-             ('buffer', 'uint8', 61, 'in'),
-             ('length_to_write', 'uint8', 1, 'in')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Writes up to 61 bytes to a file object.
-
-Reports the actual number of bytes written and the resulting error code via the
-:func:`AsyncFileWrite` callback.
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
 'name': ('ReadFile', 'read_file'),
 'elements': [('file_id', 'uint16', 1, 'in'),
              ('length_to_read', 'uint8', 1, 'in'),
@@ -646,6 +582,70 @@ Returns the resulting error code.
 
 com['packets'].append({
 'type': 'function',
+'name': ('WriteFile', 'write_file'),
+'elements': [('file_id', 'uint16', 1, 'in'),
+             ('buffer', 'uint8', 61, 'in'),
+             ('length_to_write', 'uint8', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('length_written', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Writes up to 61 bytes to a file object.
+
+Returns the actual number of bytes written and the resulting error code.
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('WriteFileUnchecked', 'write_file_unchecked'),
+'elements': [('file_id', 'uint16', 1, 'in'),
+             ('buffer', 'uint8', 61, 'in'),
+             ('length_to_write', 'uint8', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Writes up to 61 bytes to a file object.
+
+Does neither report the actual number of bytes written nor the resulting error
+code.
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('WriteFileAsync', 'write_file_async'),
+'elements': [('file_id', 'uint16', 1, 'in'),
+             ('buffer', 'uint8', 61, 'in'),
+             ('length_to_write', 'uint8', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Writes up to 61 bytes to a file object.
+
+Reports the actual number of bytes written and the resulting error code via the
+:func:`AsyncFileWrite` callback.
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
 'name': ('SetFilePosition', 'set_file_position'),
 'elements': [('file_id', 'uint16', 1, 'in'),
              ('offset', 'int64', 1, 'in'),
@@ -687,25 +687,6 @@ resulting error code.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('AsyncFileWrite', 'async_file_write'),
-'elements': [('file_id', 'uint16', 1, 'out'),
-             ('error_code', 'uint8', 1, 'out'),
-             ('length_written', 'uint8', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['c', {
-'en':
-"""
-This callback reports the result of a call to the :func:`WriteFileAsync`
-function.
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'callback',
 'name': ('AsyncFileRead', 'async_file_read'),
 'elements': [('file_id', 'uint16', 1, 'out'),
              ('error_code', 'uint8', 1, 'out'),
@@ -716,6 +697,25 @@ com['packets'].append({
 'en':
 """
 This callback reports the result of a call to the :func:`ReadFileAsync`
+function.
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('AsyncFileWrite', 'async_file_write'),
+'elements': [('file_id', 'uint16', 1, 'out'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('length_written', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+This callback reports the result of a call to the :func:`WriteFileAsync`
 function.
 """,
 'de':
