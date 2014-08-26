@@ -8,6 +8,7 @@
 
 unit IPConnection;
 
+{ FIXME: add TSocketWrapper to deal with the various socket implementations }
 
 {$ifdef FPC}
  {$mode OBJFPC}{$H+}
@@ -99,10 +100,10 @@ type
   end;
   NotSupportedException = ENotSupportedException; { for backward compatibility }
 
-  { TWrapperThread }
-  TWrapperThread = class;
-  TThreadProcedure = procedure(thread: TWrapperThread; opaque: pointer) of object;
-  TWrapperThread = class(TThread)
+  { TThreadWrapper }
+  TThreadWrapper = class;
+  TThreadProcedure = procedure(thread: TThreadWrapper; opaque: pointer) of object;
+  TThreadWrapper = class(TThread)
   private
     proc: TThreadProcedure;
     opaque: pointer;
@@ -116,7 +117,7 @@ type
     queue: TBlockingQueue;
     mutex: TCriticalSection;
     packetDispatchAllowed: boolean;
-    thread: TWrapperThread;
+    thread: TThreadWrapper;
   end;
 
   PCallbackContext = ^TCallbackContext;
@@ -140,11 +141,11 @@ type
     autoReconnectAllowed: boolean;
     autoReconnectPending: boolean;
     receiveFlag: boolean;
-    receiveThread: TWrapperThread;
+    receiveThread: TThreadWrapper;
     callback: PCallbackContext;
     disconnectProbeFlag: boolean;
     disconnectProbeQueue: TBlockingQueue;
-    disconnectProbeThread: TWrapperThread;
+    disconnectProbeThread: TThreadWrapper;
     sequenceNumberMutex: TCriticalSection;
     nextSequenceNumber: byte; { protected by sequenceNumberMutex }
     authenticationMutex: TCriticalSection; { protects authentication handshake }
@@ -168,9 +169,9 @@ type
     procedure DisconnectUnlocked;
     function GetLastSocketErrorNumber: longint;
     function GetLastSocketErrorMessage: string;
-    procedure ReceiveLoop(thread: TWrapperThread; opaque: pointer);
-    procedure CallbackLoop(thread: TWrapperThread; opaque: pointer);
-    procedure DisconnectProbeLoop(thread: TWrapperThread; opaque: pointer);
+    procedure ReceiveLoop(thread: TThreadWrapper; opaque: pointer);
+    procedure CallbackLoop(thread: TThreadWrapper; opaque: pointer);
+    procedure DisconnectProbeLoop(thread: TThreadWrapper; opaque: pointer);
     procedure HandleDisconnectByPeer(const disconnectReason: byte;
                                      const socketID_: longword;
                                      const disconnectImmediately: boolean);
@@ -421,20 +422,20 @@ begin
   result := SHA1Final(sha1);
 end;
 
-{ TWrapperThread }
-constructor TWrapperThread.Create(const proc_: TThreadProcedure; opaque_: pointer);
+{ TThreadWrapper }
+constructor TThreadWrapper.Create(const proc_: TThreadProcedure; opaque_: pointer);
 begin
   proc := proc_;
   opaque := opaque_;
   inherited Create(false);
 end;
 
-procedure TWrapperThread.Execute;
+procedure TThreadWrapper.Execute;
 begin
   proc(self, opaque);
 end;
 
-function TWrapperThread.IsCurrent: boolean;
+function TThreadWrapper.IsCurrent: boolean;
 begin
 {$ifdef FPC}
   result := GetCurrentThreadId = ThreadID;
@@ -660,7 +661,7 @@ begin
     callback^.mutex := TCriticalSection.Create;
     callback^.packetDispatchAllowed := false;
     callback^.queue := TBlockingQueue.Create;
-    callback^.thread := TWrapperThread.Create({$ifdef FPC}@{$endif}self.CallbackLoop,
+    callback^.thread := TThreadWrapper.Create({$ifdef FPC}@{$endif}self.CallbackLoop,
                                               callback);
   end;
   { Create and connect socket }
@@ -731,11 +732,11 @@ begin
   { Create disconnect probe thread }
   disconnectProbeFlag := true;
   disconnectProbeQueue := TBlockingQueue.Create;
-  disconnectProbeThread := TWrapperThread.Create({$ifdef FPC}@{$endif}self.DisconnectProbeLoop, nil);
+  disconnectProbeThread := TThreadWrapper.Create({$ifdef FPC}@{$endif}self.DisconnectProbeLoop, nil);
   { Create receive thread }
   callback^.packetDispatchAllowed := true;
   receiveFlag := true;
-  receiveThread := TWrapperThread.Create({$ifdef FPC}@{$endif}self.ReceiveLoop, nil);
+  receiveThread := TThreadWrapper.Create({$ifdef FPC}@{$endif}self.ReceiveLoop, nil);
   autoReconnectAllowed := false;
   autoReconnectPending := false;
   { Trigger connected callback }
@@ -832,7 +833,7 @@ begin
 {$endif}
 end;
 
-procedure TIPConnection.ReceiveLoop(thread: TWrapperThread; opaque: pointer);
+procedure TIPConnection.ReceiveLoop(thread: TThreadWrapper; opaque: pointer);
 var socketID_: longword; data: array [0..8191] of byte;
     len, pendingLen, remainingLen: longint; packet: TByteArray;
     disconnectReason: byte;
@@ -893,7 +894,7 @@ begin
   end;
 end;
 
-procedure TIPConnection.CallbackLoop(thread: TWrapperThread; opaque: pointer);
+procedure TIPConnection.CallbackLoop(thread: TThreadWrapper; opaque: pointer);
 var callback_: PCallbackContext; kind: byte; data: TByteArray;
 begin
   callback_ := PCallbackContext(opaque);
@@ -933,7 +934,7 @@ end;
 
 { NOTE: The disconnect probe loop is not allowed to hold the socketMutex at any
         time because it is created and joined while the socketMutex is locked }
-procedure TIPConnection.DisconnectProbeLoop(thread: TWrapperThread; opaque: pointer);
+procedure TIPConnection.DisconnectProbeLoop(thread: TThreadWrapper; opaque: pointer);
 var kind: byte; data, request: TByteArray; error: boolean;
 begin
   SetLength(data, 0);
