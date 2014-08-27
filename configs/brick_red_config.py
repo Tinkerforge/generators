@@ -21,7 +21,8 @@ FILE_TYPE_CONSTANTS = ('FileType', 'file_type', [('Unknown', 'unknown', 0),
                                                  ('Block', 'block', 4),
                                                  ('FIFO', 'fifo', 5),
                                                  ('Symlink', 'symlink', 6),
-                                                 ('Socket', 'socket', 7)])
+                                                 ('Socket', 'socket', 7),
+                                                 ('Pipe', 'pipe', 8)])
 
 FILE_FLAG_CONSTANTS = ('FileFlag', 'file_flag', [('ReadOnly', 'read_only', 0x0001),
                                                  ('WriteOnly', 'write_only', 0x0002),
@@ -471,6 +472,25 @@ The reference count of the name string object is increased by one. When the
 file object is destroyed then the reference count of the name string object is
 decreased by one. Also the name string object is locked and cannot be modified
 while the file object holds a reference to it.
+
+Returns the object ID of the new file object and the resulting error code.
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('CreatePipe', 'create_pipe'),
+'elements': [('error_code', 'uint8', 1, 'out'),
+             ('file_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Creates a new pipe and allocates a new file object for it.
 
 Returns the object ID of the new file object and the resulting error code.
 """,
