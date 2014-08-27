@@ -920,7 +920,8 @@ com['packets'].append({
 'type': 'function',
 'name': ('KillProcess', 'kill_process'),
 'elements': [('process_id', 'uint16', 1, 'in'),
-             ('signal', 'uint8', 1, 'in', PROCESS_SIGNAL_CONSTANTS)],
+             ('signal', 'uint8', 1, 'in', PROCESS_SIGNAL_CONSTANTS),
+             ('error_code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
