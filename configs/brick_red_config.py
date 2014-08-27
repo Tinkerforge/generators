@@ -34,6 +34,9 @@ FILE_FLAG_CONSTANTS = ('FileFlag', 'file_flag', [('ReadOnly', 'read_only', 0x000
                                                  ('NoFollow', 'no_follow', 0x0080),
                                                  ('Truncate', 'truncate', 0x0100)])
 
+PIPE_FLAG_CONSTANTS = ('PipeFlag', 'pipe_flag', [('NonBlockingRead', 'non_blocking_read', 0x0001),
+                                                 ('NonBlockingWrite', 'non_blocking_write', 0x0002)])
+
 # the permission bit values match the UNIX permission bit values, this allows
 # to use the normal octal way to write them, e.g. 0755
 FILE_PERMISSION_CONSTANTS = ('FilePermission', 'file_permission', [('UserAll', 'user_all', 00700),
@@ -484,7 +487,8 @@ Returns the object ID of the new file object and the resulting error code.
 com['packets'].append({
 'type': 'function',
 'name': ('CreatePipe', 'create_pipe'),
-'elements': [('error_code', 'uint8', 1, 'out'),
+'elements': [('flags', 'uint16', 1, 'in', PIPE_FLAG_CONSTANTS),
+             ('error_code', 'uint8', 1, 'out'),
              ('file_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
