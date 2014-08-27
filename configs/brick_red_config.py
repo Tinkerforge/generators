@@ -113,20 +113,22 @@ RED Brick API return an 8bit error code. Possible error codes are:
 * API_E_OBJECT_IS_LOCKED = 7
 * API_E_NO_MORE_DATA = 8
 * API_E_WRONG_LIST_ITEM_TYPE = 9
-* API_E_INVALID_PARAMETER = 10
-* API_E_NO_FREE_MEMORY = 11
-* API_E_NO_FREE_SPACE = 12
-* API_E_ACCESS_DENIED = 13
-* API_E_ALREADY_EXISTS = 14
-* API_E_DOES_NOT_EXIST = 15
-* API_E_INTERRUPTED = 16
-* API_E_IS_DIRECTORY = 17
-* API_E_NOT_A_DIRECTORY = 18
-* API_E_WOULD_BLOCK = 19
-* API_E_OVERFLOW = 20
-* API_E_INVALID_FILE_DESCRIPTOR = 21
-* API_E_OUT_OF_RANGE = 22
-* API_E_NAME_TOO_LONG = 23
+* API_E_INVALID_PARAMETER = 10 (EINVAL)
+* API_E_NO_FREE_MEMORY = 11 (ENOMEM)
+* API_E_NO_FREE_SPACE = 12 (ENOSPC)
+* API_E_ACCESS_DENIED = 13 (EACCES)
+* API_E_ALREADY_EXISTS = 14 (EEXIST)
+* API_E_DOES_NOT_EXIST = 15 (ENOENT)
+* API_E_INTERRUPTED = 16 (EINTR)
+* API_E_IS_DIRECTORY = 17 (EISDIR)
+* API_E_NOT_A_DIRECTORY = 18 (ENOTDIR)
+* API_E_WOULD_BLOCK = 19 (EWOULDBLOCK)
+* API_E_OVERFLOW = 20 (EOVERFLOW)
+* API_E_BAD_FILE_DESCRIPTOR = 21 (EBADF)
+* API_E_OUT_OF_RANGE = 22 (ERANGE)
+* API_E_NAME_TOO_LONG = 23 (ENAMETOOLONG)
+* API_E_INVALID_SEEK = 24 (ESPIPE)
+* API_E_NOT_SUPPORTED = 25 (ENOTSUP)
 
 If a function returns an error code other than ``API_E_OK`` then its other
 return values (if any) are invalid and must not be used.
@@ -506,6 +508,24 @@ Returns the object ID of the new file object and the resulting error code.
 
 com['packets'].append({
 'type': 'function',
+'name': ('GetFileType', 'get_file_type'),
+'elements': [('file_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('type', 'uint8', 1, 'out', FILE_TYPE_CONSTANTS)],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Returns the type of a file object and the resulting error code.
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
 'name': ('GetFileName', 'get_file_name'),
 'elements': [('file_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
@@ -524,15 +544,16 @@ Returns the name of a file object and the resulting error code.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetFileType', 'get_file_type'),
+'name': ('GetFileFlags', 'get_file_flags'),
 'elements': [('file_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
-             ('type', 'uint8', 1, 'out', FILE_TYPE_CONSTANTS)],
+             ('flags', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the type of a file object and the resulting error code.
+Returns the flags used to open or create a file object and the resulting
+error code.
 """,
 'de':
 """
