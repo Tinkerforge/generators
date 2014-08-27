@@ -377,22 +377,22 @@ com['packets'].append({
 'en':
 """
 Sets the minimum voltage in mV, below which the :func:`UnderVoltage` callback
-is triggered. The minimum possible value that works with the DC Brick is 5V.
+is triggered. The minimum possible value that works with the DC Brick is 6V.
 You can use this function to detect the discharge of a battery that is used
 to drive the motor. If you have a fixed power supply, you likely do not need
 this functionality.
 
-The default value is 5V.
+The default value is 6V.
 """,
 'de':
 """
 Setzt die minimale Spannung in mV, bei welcher der :func:`UnderVoltage` Callback
 ausgelöst wird. Der kleinste mögliche Wert mit dem der DC Brick noch funktioniert,
-ist 5V. Mit dieser Funktion kann eine Entladung der versorgenden Batterie detektiert
+ist 6V. Mit dieser Funktion kann eine Entladung der versorgenden Batterie detektiert
 werden. Beim Einsatz einer Netzstromversorgung wird diese Funktionalität
 höchstwahrscheinlich nicht benötigt.
 
-Der Standardwert ist 5V.
+Der Standardwert ist 6V.
 """
 }]
 })
