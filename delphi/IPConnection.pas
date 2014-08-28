@@ -637,7 +637,13 @@ var
  {$endif}
 {$endif}
     nodelay: longint;
+{$ifdef DELPHI_MACOS}
+    hints: addrinfo;
+    entry: PAddrInfo;
+    error: longint;
+{$else}
     entry: PHostEnt;
+{$endif}
 {$ifdef FPC}
     address: TInetSockAddr;
 {$else}
@@ -697,17 +703,28 @@ begin
 {$endif}
     raise Exception.Create('Could not set TCP_NODELAY socket option: ' + GetLastSocketErrorMessage);
   end;
+{$ifdef DELPHI_MACOS}
+  FillChar(hints, SizeOf(hints), 0);
+  hints.ai_flags := AI_PASSIVE;
+  hints.ai_family := AF_UNSPEC;
+  hints.ai_socktype := SOCK_STREAM;
+  error := getaddrinfo(PAnsiChar(AnsiString(host)), nil, hints, entry);
+  if (error <> 0) then begin
+    Posix.Unistd.__close(socket);
+    socket := INVALID_SOCKET;
+    raise Exception.Create('Could not resolve host ' + host + ': ' + string(gai_strerror(error)));
+  end;
+  resolved := sockaddr_in(entry.ai_addr^).sin_addr;
+  freeaddrinfo(entry^);
+{$else}
   entry := gethostbyname(PAnsiChar(AnsiString(host)));
   if (entry = nil) then begin
-{$ifdef DELPHI_MACOS}
-    Posix.Unistd.__close(socket);
-{$else}
     closesocket(socket);
-{$endif}
     socket := INVALID_SOCKET;
     raise Exception.Create('Could not resolve host: ' + host);
   end;
   resolved.s_addr := longint(pointer(entry^.h_addr_list^)^);
+{$endif}
   address.sin_family := AF_INET;
   address.sin_port := htons(port);
   address.sin_addr := resolved;
