@@ -912,6 +912,26 @@ Rewinds a directory object and returns the resulting error code.
 }]
 })
 
+com['packets'].append({
+'type': 'function',
+'name': ('CreateDirectory', 'create_directory'),
+'elements': [('name_string_id', 'uint16', 1, 'in'),
+             ('recursive', 'bool', 1, 'in'),
+             ('permissions', 'uint16', 1, 'in'),
+             ('user_id', 'uint32', 1, 'in'),
+             ('group_id', 'uint32', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
 #
 # process
 #
