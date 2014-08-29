@@ -110,7 +110,7 @@ RED Brick API return an 8bit error code. Possible error codes are:
 * API_E_INTERNAL_ERROR = 4
 * API_E_UNKNOWN_OBJECT_ID = 5
 * API_E_NO_FREE_OBJECT_ID = 6
-* API_E_OBJECT_IS_LOCKED = 7
+* API_E_OBJECT_IN_USE = 7
 * API_E_NO_MORE_DATA = 8
 * API_E_WRONG_LIST_ITEM_TYPE = 9
 * API_E_INVALID_PARAMETER = 128 (EINVAL)
@@ -1157,6 +1157,77 @@ com['packets'].append({
              ('exit_code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+#
+# program
+#
+
+com['packets'].append({
+'type': 'function',
+'name': ('DefineProgram', 'define_program'),
+'elements': [('identifier_string_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('program_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('UndefineProgram', 'undefine_program'),
+'elements': [('program_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetProgramIdentifier', 'get_program_identifier'),
+'elements': [('program_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('identifier_string_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetProgramDirectory', 'get_program_directory'),
+'elements': [('program_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('directory_string_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
 'en':
 """
 """,
