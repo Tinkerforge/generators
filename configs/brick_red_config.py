@@ -177,6 +177,16 @@ com['packets'].append({
 Opens the inventory for a specific object type and allocates a new inventory
 object for it.
 
+Possible object types are:
+
+* Inventory = 0
+* String = 1
+* List = 2
+* File = 3
+* Directory = 4
+* Process = 5
+* Program = 6
+
 Returns the object ID of the new directory object and the resulting error code.
 """,
 'de':
@@ -195,7 +205,10 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the object type of a inventory object and the resulting error code.
+Returns the object type of a inventory object, as passed to
+:func:`OpenInventory`, and the resulting error code.
+
+See :func:`OpenInventory` for possible object types.
 """,
 'de':
 """
@@ -214,9 +227,10 @@ com['packets'].append({
 'en':
 """
 Returns the object ID of the next object in an inventory object and the
-resulting error code. If there is not next object then error code
-``API_E_NO_MORE_DATA`` is returned. To rewind an inventory object call
-:func:`RewindInventory`.
+resulting error code.
+
+If there is not next object then error code ``API_E_NO_MORE_DATA`` is returned.
+To rewind an inventory object call :func:`RewindInventory`.
 """,
 'de':
 """
@@ -478,6 +492,32 @@ file object is destroyed then the reference count of the name string object is
 decreased by one. Also the name string object is locked and cannot be modified
 while the file object holds a reference to it.
 
+The ``flags`` parameter takes a ORed combination of the following possible file
+flags (in hexadecimal notation):
+
+* ReadOnly = 0x0001 (O_RDONLY)
+* WriteOnly = 0x0002 (O_WRONLY)
+* ReadWrite = 0x0004 (O_RDWR)
+* Append = 0x0008 (O_APPEND)
+* Create = 0x0010 (O_CREAT)
+* Exclusive = 0x0020 (O_EXCL)
+* NoAccessTime = 0x0040 (O_NOATIME)
+* NoFollow = 0x0080 (O_NOFOLLOW)
+* Truncate = 0x0100 (O_TRUNC)
+
+The ``permissions`` parameter takes a ORed combination of the following possible
+file permissions (in octal notation) that match the common UNIX permission bits:
+
+* UserRead = 00400
+* UserWrite = 00200
+* UserExecute = 00100
+* GroupRead = 00040
+* GroupWrite = 00020
+* GroupExecute = 00010
+* OthersRead = 00004
+* OthersWrite = 00002
+* OthersExecute = 00001
+
 Returns the object ID of the new file object and the resulting error code.
 """,
 'de':
@@ -498,6 +538,12 @@ com['packets'].append({
 """
 Creates a new pipe and allocates a new file object for it.
 
+The ``flags`` parameter takes a ORed combination of the following possible
+pipe flags (in hexadecimal notation):
+
+* NonBlockingRead = 0x0001
+* NonBlockingWrite = 0x0002
+
 Returns the object ID of the new file object and the resulting error code.
 """,
 'de':
@@ -517,6 +563,18 @@ com['packets'].append({
 'en':
 """
 Returns the type of a file object and the resulting error code.
+
+Possible file types are:
+
+* Unknown = 0
+* Regular = 1
+* Directory = 2
+* Character = 3
+* Block = 4
+* FIFO = 5
+* Symlink = 6
+* Socket = 7
+* Pipe = 8
 """,
 'de':
 """
@@ -534,7 +592,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the name of a file object and the resulting error code.
+Returns the name of a file object, as passed to :func:`OpenFile`, and the
+resulting error code.
+
+If the file object was created by :func:`CreatePipe` then it has no name and
+the error code ``API_E_NOT_SUPPORTED`` is returned.
 """,
 'de':
 """
@@ -552,8 +614,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the flags used to open or create a file object and the resulting
-error code.
+Returns the flags used to open or create a file object, as passed to
+:func:`OpenFile` or :func:`CreatePipe`, and the resulting error code.
+
+See :func:`OpenFile` and :func:`CreatePipe` for a list of possible file and
+pipe flags.
 """,
 'de':
 """
@@ -576,6 +641,9 @@ com['packets'].append({
 Reads up to 62 bytes from a file object.
 
 Returns the read bytes and the resulting error code.
+
+If the file object was created by :func:`CreatePipe` without the
+*NonBlockingRead* flag then the error code ``API_E_NOT_SUPPORTED`` is returned.
 """,
 'de':
 """
@@ -593,12 +661,15 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Reads up to 2\ :sup:`63`\  - 1 bytes from a file object.
+Reads up to 2\ :sup:`63`\  - 1 bytes from a file object asynchronously.
 
 Returns the resulting error code.
 
-Reports the read bytes in 60 byte chunks and the resulting error code of the
-read operation via the :func:`AsyncFileRead` callback.
+The read bytes in 60 byte chunks and the resulting error codes of the read
+operations are reported via the :func:`AsyncFileRead` callback.
+
+If the file object was created by :func:`CreatePipe` without the
+*NonBlockingRead* flag then the error code ``API_E_NOT_SUPPORTED`` is reported.
 """,
 'de':
 """
@@ -640,6 +711,9 @@ com['packets'].append({
 Writes up to 61 bytes to a file object.
 
 Returns the actual number of bytes written and the resulting error code.
+
+If the file object was created by :func:`CreatePipe` without the
+*NonBlockingWrite* flag then the error code ``API_E_NOT_SUPPORTED`` is returned.
 """,
 'de':
 """
@@ -682,6 +756,9 @@ Writes up to 61 bytes to a file object.
 
 Reports the actual number of bytes written and the resulting error code via the
 :func:`AsyncFileWrite` callback.
+
+If the file object was created by :func:`CreatePipe` without the
+*NonBlockingWrite* flag then the error code ``API_E_NOT_SUPPORTED`` is returned.
 """,
 'de':
 """
@@ -703,7 +780,16 @@ com['packets'].append({
 """
 Set the current seek position of a file object in bytes relative to ``origin``.
 
+Possible file origins are:
+
+* Beginning = 0
+* Current = 1
+* End = 2
+
 Returns the resulting absolute seek position and error code.
+
+If the file object was created by :func:`CreatePipe` then it has no seek
+position and the error code ``API_E_INVALID_SEEK`` is returned.
 """,
 'de':
 """
@@ -723,6 +809,9 @@ com['packets'].append({
 """
 Returns the current seek position of a file object in bytes and returns the
 resulting error code.
+
+If the file object was created by :func:`CreatePipe` then it has no seek
+position and the error code ``API_E_INVALID_SEEK`` is returned.
 """,
 'de':
 """
@@ -794,6 +883,9 @@ The information is obtained via the
 function. If ``follow_symlink`` is *false* then the
 `lstat() <http://pubs.opengroup.org/onlinepubs/9699919799/functions/stat.html>`__
 function is used instead.
+
+See :func:`GetFileType` for a list of possible file types and see
+:func:`OpenFile` for a list of possible file permissions.
 """,
 'de':
 """
@@ -812,10 +904,10 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the target of a symlink and the resulting error code.
+Returns the target of a symbolic link and the resulting error code.
 
-If ``canonicalize`` is *false* then the target of the symlink is resolved one
-level via the
+If ``canonicalize`` is *false* then the target of the symbolic link is resolved
+one level via the
 `readlink() <http://pubs.opengroup.org/onlinepubs/9699919799/functions/readlink.html>`__
 function, otherwise it is fully resolved using the
 `realpath() <http://pubs.opengroup.org/onlinepubs/9699919799/functions/realpath.html>`__
@@ -866,7 +958,8 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the name of a directory object and the resulting error code.
+Returns the name of a directory object, as passed to :func:`OpenDirectory`, and
+the resulting error code.
 """,
 'de':
 """
@@ -886,8 +979,11 @@ com['packets'].append({
 'en':
 """
 Returns the next entry in a directory object and the resulting error code.
+
 If there is not next entry then error code ``API_E_NO_MORE_DATA`` is returned.
 To rewind a directory object call :func:`RewindDirectory`.
+
+See :func:`GetFileType` for a list of possible file types.
 """,
 'de':
 """
@@ -917,7 +1013,7 @@ com['packets'].append({
 'name': ('CreateDirectory', 'create_directory'),
 'elements': [('name_string_id', 'uint16', 1, 'in'),
              ('recursive', 'bool', 1, 'in'),
-             ('permissions', 'uint16', 1, 'in'),
+             ('permissions', 'uint16', 1, 'in', FILE_PERMISSION_CONSTANTS),
              ('user_id', 'uint32', 1, 'in'),
              ('group_id', 'uint32', 1, 'in'),
              ('error_code', 'uint8', 1, 'out')],
@@ -971,6 +1067,19 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Sends a UNIX signal to a process object and returns the resulting error code.
+
+Possible UNIX signals are:
+
+* Interrupt = 2
+* Quit = 3
+* Abort = 6
+* Kill = 9
+* User1 = 10
+* User2 = 12
+* Terminate = 15
+* Continue =  18
+* Stop = 19
 """,
 'de':
 """
@@ -988,6 +1097,8 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the command used to spawn a process object, as passed to
+:func:`SpawnProcess`, and the resulting error code.
 """,
 'de':
 """
@@ -1005,6 +1116,8 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the arguments used to spawn a process object, as passed to
+:func:`SpawnProcess`, and the resulting error code.
 """,
 'de':
 """
@@ -1022,6 +1135,8 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the environment used to spawn a process object, as passed to
+:func:`SpawnProcess`, and the resulting error code.
 """,
 'de':
 """
@@ -1039,6 +1154,8 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the working directory used to spawn a process object, as passed to
+:func:`SpawnProcess`, and the resulting error code.
 """,
 'de':
 """
@@ -1056,6 +1173,8 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the user ID used to spawn a process object, as passed to
+:func:`SpawnProcess`, and the resulting error code.
 """,
 'de':
 """
@@ -1073,6 +1192,8 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the group ID used to spawn a process object, as passed to
+:func:`SpawnProcess`, and the resulting error code.
 """,
 'de':
 """
@@ -1090,6 +1211,8 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the stdin file used to spawn a process object, as passed to
+:func:`SpawnProcess`, and the resulting error code.
 """,
 'de':
 """
@@ -1107,6 +1230,8 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the stdout file used to spawn a process object, as passed to
+:func:`SpawnProcess`, and the resulting error code.
 """,
 'de':
 """
@@ -1124,6 +1249,8 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the stderr file used to spawn a process object, as passed to
+:func:`SpawnProcess`, and the resulting error code.
 """,
 'de':
 """
@@ -1142,6 +1269,23 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the current state and exit code of a process object, and the resulting
+error code.
+
+Possible process states are:
+
+* Unknown = 0
+* Running = 1
+* Exited = 2
+* Killed = 3
+* Stopped = 4
+
+The exit code is only valid if the state is *Exited*, *Killed* or *Stopped* and
+has different meanings depending on the state:
+
+* Exited: exit status of the process
+* Killed: UNIX signal number used to kill the process
+* Stopped: UNIX signal number used to stop the process
 """,
 'de':
 """
