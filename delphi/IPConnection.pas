@@ -440,7 +440,11 @@ begin
 {$ifdef FPC}
   result := GetCurrentThreadId = ThreadID;
 {$else}
+ {$ifdef MSWINDOWS}
+  result := Windows.GetCurrentThreadId = ThreadID;
+ {$else}
   result := CurrentThread.ThreadID = ThreadID;
+ {$endif}
 {$endif}
 end;
 
