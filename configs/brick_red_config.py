@@ -32,7 +32,8 @@ FILE_FLAG_CONSTANTS = ('FileFlag', 'file_flag', [('ReadOnly', 'read_only', 0x000
                                                  ('Exclusive', 'exclusive', 0x0020),
                                                  ('NoAccessTime', 'no_access_time', 0x0040),
                                                  ('NoFollow', 'no_follow', 0x0080),
-                                                 ('Truncate', 'truncate', 0x0100)])
+                                                 ('NonBlocking', 'non_blocking', 0x0100),
+                                                 ('Truncate', 'truncate', 0x0200)])
 
 PIPE_FLAG_CONSTANTS = ('PipeFlag', 'pipe_flag', [('NonBlockingRead', 'non_blocking_read', 0x0001),
                                                  ('NonBlockingWrite', 'non_blocking_write', 0x0002)])
@@ -503,7 +504,8 @@ flags (in hexadecimal notation):
 * Exclusive = 0x0020 (O_EXCL)
 * NoAccessTime = 0x0040 (O_NOATIME)
 * NoFollow = 0x0080 (O_NOFOLLOW)
-* Truncate = 0x0100 (O_TRUNC)
+* NonBlocking = 0x0100 (O_NONBLOCK)
+* Truncate = 0x0200 (O_TRUNC)
 
 The ``permissions`` parameter takes a ORed combination of the following possible
 file permissions (in octal notation) that match the common UNIX permission bits:
@@ -642,8 +644,9 @@ Reads up to 62 bytes from a file object.
 
 Returns the read bytes and the resulting error code.
 
-If the file object was created by :func:`CreatePipe` without the
-*NonBlockingRead* flag then the error code ``API_E_NOT_SUPPORTED`` is returned.
+If the file object was created by :func:`OpenFile` without the
+*NonBlocking* flag or by :func:`CreatePipe` without the *NonBlockingRead* flag
+then the error code ``API_E_NOT_SUPPORTED`` is returned.
 """,
 'de':
 """
@@ -668,8 +671,10 @@ Returns the resulting error code.
 The read bytes in 60 byte chunks and the resulting error codes of the read
 operations are reported via the :func:`AsyncFileRead` callback.
 
-If the file object was created by :func:`CreatePipe` without the
-*NonBlockingRead* flag then the error code ``API_E_NOT_SUPPORTED`` is reported.
+If the file object was created by :func:`OpenFile` without the
+*NonBlocking* flag or by :func:`CreatePipe` without the *NonBlockingRead* flag
+then the error code ``API_E_NOT_SUPPORTED`` is reported via the
+:func:`AsyncFileRead` callback.
 """,
 'de':
 """
@@ -712,8 +717,9 @@ Writes up to 61 bytes to a file object.
 
 Returns the actual number of bytes written and the resulting error code.
 
-If the file object was created by :func:`CreatePipe` without the
-*NonBlockingWrite* flag then the error code ``API_E_NOT_SUPPORTED`` is returned.
+If the file object was created by :func:`OpenFile` without the
+*NonBlocking* flag or by :func:`CreatePipe` without the *NonBlockingWrite* flag
+then the error code ``API_E_NOT_SUPPORTED`` is returned.
 """,
 'de':
 """
@@ -735,6 +741,10 @@ Writes up to 61 bytes to a file object.
 
 Does neither report the actual number of bytes written nor the resulting error
 code.
+
+If the file object was created by :func:`OpenFile` without the
+*NonBlocking* flag or by :func:`CreatePipe` without the *NonBlockingWrite* flag
+then the write operation will fail silently.
 """,
 'de':
 """
@@ -757,8 +767,10 @@ Writes up to 61 bytes to a file object.
 Reports the actual number of bytes written and the resulting error code via the
 :func:`AsyncFileWrite` callback.
 
-If the file object was created by :func:`CreatePipe` without the
-*NonBlockingWrite* flag then the error code ``API_E_NOT_SUPPORTED`` is returned.
+If the file object was created by :func:`OpenFile` without the
+*NonBlocking* flag or by :func:`CreatePipe` without the *NonBlockingWrite* flag
+then the error code ``API_E_NOT_SUPPORTED`` is reported via the
+:func:`AsyncFileWrite` callback.
 """,
 'de':
 """
