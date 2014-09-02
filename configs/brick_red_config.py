@@ -1392,3 +1392,105 @@ com['packets'].append({
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetProgramCommand', 'set_program_command'),
+'elements': [('program_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('command_string_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetProgramCommand', 'get_program_command'),
+'elements': [('program_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('command_string_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetProgramArguments', 'set_program_arguments'),
+'elements': [('program_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('arguments_list_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetProgramArguments', 'get_program_arguments'),
+'elements': [('program_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('arguments_list_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetProgramEnvironment', 'set_program_environment'),
+'elements': [('program_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('environment_list_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetProgramEnvironment', 'get_program_environment'),
+'elements': [('program_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('environment_list_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
