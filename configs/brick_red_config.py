@@ -74,6 +74,14 @@ PROCESS_STATE_CONSTANTS = ('ProcessState', 'process_state', [('Unknown', 'unknow
                                                              ('Killed', 'killed', 3),
                                                              ('Stopped', 'stopped', 4)])
 
+PROGRAM_STDIO_CONSTANTS = ('ProgramStdio', 'program_stdio', [('Input', 'input', 0),
+                                                             ('Output', 'output', 1),
+                                                             ('Error', 'error', 2)])
+
+PROGRAM_STDIO_OPTION_CONSTANTS = ('ProgramStdioOption', 'program_stdio_option', [('Null', 'null', 0),
+                                                                                 ('Pipe', 'pipe', 1),
+                                                                                 ('File', 'file', 2)])
+
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -164,7 +172,7 @@ com['packets'].append({
 'en':
 """
 Decreases the reference count of an object by one and returns the resulting
-error code. If the reference count reaches zero the object is destroyed.
+error code. If the reference count reaches zero the object gets destroyed.
 """,
 'de':
 """
@@ -391,6 +399,9 @@ items. Set ``length_to_reserve`` to the number of items that should be stored
 in the list object.
 
 Returns the object ID of the new list object and the resulting error code.
+
+When a list object gets destroyed then the reference count of each object in
+the list object is decreased by one.
 """,
 'de':
 """
@@ -1494,6 +1505,78 @@ com['packets'].append({
 'elements': [('program_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('environment_list_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetProgramStdioOption', 'set_program_stdio_option'),
+'elements': [('program_id', 'uint16', 1, 'in'),
+             ('stdio', 'uint8', 1, 'in', PROGRAM_STDIO_CONSTANTS),
+             ('option', 'uint8', 1, 'in', PROGRAM_STDIO_OPTION_CONSTANTS),
+             ('error_code', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetProgramStdioOption', 'get_program_stdio_option'),
+'elements': [('program_id', 'uint16', 1, 'in'),
+             ('stdio', 'uint8', 1, 'in', PROGRAM_STDIO_CONSTANTS),
+             ('error_code', 'uint8', 1, 'out'),
+             ('option', 'uint8', 1, 'out', PROGRAM_STDIO_OPTION_CONSTANTS)],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetProgramStdioFileName', 'set_program_stdio_file_name'),
+'elements': [('program_id', 'uint16', 1, 'in'),
+             ('stdio', 'uint8', 1, 'in', PROGRAM_STDIO_CONSTANTS),
+             ('file_name_string_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetProgramStdioFileName', 'get_program_stdio_file_name'),
+'elements': [('program_id', 'uint16', 1, 'in'),
+             ('stdio', 'uint8', 1, 'in', PROGRAM_STDIO_CONSTANTS),
+             ('error_code', 'uint8', 1, 'out'),
+             ('file_name_string_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
