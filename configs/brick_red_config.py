@@ -95,44 +95,55 @@ ID. Functions that allocate or return an object ID (e.g. :func:`AllocateString`
 and :func:`GetNextDirectoryEntry`) increase the reference count of the returned
 object. If the object is no longer needed then :func:`ReleaseObject` has to
 be called to decrease the reference count of the object again. In contrast to
-allocation and getter functions, the reference count for an object returned by a
-callback is not increased and :func:`ReleaseObject` must not be called for such
-an object in response to a callback.
+allocation and getter functions, the reference count for an object returned by
+a callback is not increased and :func:`ReleaseObject` must not be called for
+such an object in response to a callback.
 
 The RED Brick API is more complex then the typical Brick API and requires more
 elaborate error reporting than the :ref:`TCP/IP protocol <llproto_tcpip>`
 can provide with its 2bit error code. Therefore, almost all functions of the
 RED Brick API return an 8bit error code. Possible error codes are:
 
-* API_E_OK = 0
-* API_E_UNKNOWN_ERROR = 1
-* API_E_INVALID_OPERATION = 2
-* API_E_OPERATION_ABORTED = 3
-* API_E_INTERNAL_ERROR = 4
-* API_E_UNKNOWN_OBJECT_ID = 5
-* API_E_NO_FREE_OBJECT_ID = 6
-* API_E_OBJECT_IN_USE = 7
-* API_E_NO_MORE_DATA = 8
-* API_E_WRONG_LIST_ITEM_TYPE = 9
-* API_E_INVALID_PARAMETER = 128 (EINVAL)
-* API_E_NO_FREE_MEMORY = 129 (ENOMEM)
-* API_E_NO_FREE_SPACE = 130 (ENOSPC)
-* API_E_ACCESS_DENIED = 131 (EACCES)
-* API_E_ALREADY_EXISTS = 132 (EEXIST)
-* API_E_DOES_NOT_EXIST = 133 (ENOENT)
-* API_E_INTERRUPTED = 134 (EINTR)
-* API_E_IS_DIRECTORY = 135 (EISDIR)
-* API_E_NOT_A_DIRECTORY = 136 (ENOTDIR)
-* API_E_WOULD_BLOCK = 137 (EWOULDBLOCK)
-* API_E_OVERFLOW = 138 (EOVERFLOW)
-* API_E_BAD_FILE_DESCRIPTOR = 139 (EBADF)
-* API_E_OUT_OF_RANGE = 140 (ERANGE)
-* API_E_NAME_TOO_LONG = 141 (ENAMETOOLONG)
-* API_E_INVALID_SEEK = 142 (ESPIPE)
-* API_E_NOT_SUPPORTED = 143 (ENOTSUP)
+* Success = 0
+* UnknownError = 1
+* InvalidOperation = 2
+* OperationAborted = 3
+* InternalError = 4
+* UnknownObjectID = 5
+* NoFreeObjectID = 6
+* ObjectInUse = 7
+* NoMoreData = 8
+* WrongListItemType = 9
+* InvalidParameter = 128 (EINVAL)
+* NoFreeMemory = 129 (ENOMEM)
+* NoFreeSpace = 130 (ENOSPC)
+* AccessDenied = 131 (EACCES)
+* AlreadyExists = 132 (EEXIST)
+* DoesNotExist = 133 (ENOENT)
+* Interrupted = 134 (EINTR)
+* IsDirectory = 135 (EISDIR)
+* NotADirectory = 136 (ENOTDIR)
+* WouldBlock = 137 (EWOULDBLOCK)
+* Overflow = 138 (EOVERFLOW)
+* BadFileDescriptor = 139 (EBADF)
+* OutOfRange = 140 (ERANGE)
+* NameTooLong = 141 (ENAMETOOLONG)
+* InvalidSeek = 142 (ESPIPE)
+* NotSupported = 143 (ENOTSUP)
 
-If a function returns an error code other than ``API_E_OK`` then its other
+If a function returns an error code other than *Success* then its other
 return values (if any) are invalid and must not be used.
+
+The error code *InvalidOperation* is returned if the requested operation cannot
+be performed because the current state of the object does not allow it. For
+example, trying to append an item to a full list object or trying to undefine
+an already undefined program.
+
+The error code *NotSupported* is returned if the requested operation can never
+be performed. For example, trying to append a list object to itself, trying to
+get the name of a file object with type *Pipe* or trying to create a directory
+non-recursively with more than the last part of the directory name referring
+to non-existing directories.
 """,
 'de':
 """
@@ -230,8 +241,8 @@ com['packets'].append({
 Returns the object ID of the next object in an inventory object and the
 resulting error code.
 
-If there is not next object then error code ``API_E_NO_MORE_DATA`` is returned.
-To rewind an inventory object call :func:`RewindInventory`.
+If there is not next object then error code *NoMoreData* is returned. To rewind
+an inventory object call :func:`RewindInventory`.
 """,
 'de':
 """
@@ -375,9 +386,9 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Allocates a new list object and reserves memory for ``length_to_reserve`` items.
-Set ``length_to_reserve`` to the number of items that should be stored in the
-list object.
+Allocates a new list object and reserves memory for ``length_to_reserve``
+items. Set ``length_to_reserve`` to the number of items that should be stored
+in the list object.
 
 Returns the object ID of the new list object and the resulting error code.
 """,
@@ -507,8 +518,9 @@ flags (in hexadecimal notation):
 * NonBlocking = 0x0100 (O_NONBLOCK)
 * Truncate = 0x0200 (O_TRUNC)
 
-The ``permissions`` parameter takes a ORed combination of the following possible
-file permissions (in octal notation) that match the common UNIX permission bits:
+The ``permissions`` parameter takes a ORed combination of the following
+possible file permissions (in octal notation) that match the common UNIX
+permission bits:
 
 * UserRead = 00400
 * UserWrite = 00200
@@ -598,7 +610,7 @@ Returns the name of a file object, as passed to :func:`OpenFile`, and the
 resulting error code.
 
 If the file object was created by :func:`CreatePipe` then it has no name and
-the error code ``API_E_NOT_SUPPORTED`` is returned.
+the error code *NotSupported* is returned.
 """,
 'de':
 """
@@ -644,9 +656,9 @@ Reads up to 62 bytes from a file object.
 
 Returns the read bytes and the resulting error code.
 
-If the file object was created by :func:`OpenFile` without the
-*NonBlocking* flag or by :func:`CreatePipe` without the *NonBlockingRead* flag
-then the error code ``API_E_NOT_SUPPORTED`` is returned.
+If the file object was created by :func:`OpenFile` without the *NonBlocking*
+flag or by :func:`CreatePipe` without the *NonBlockingRead* flag then the
+error code *NotSupported* is returned.
 """,
 'de':
 """
@@ -671,10 +683,9 @@ Returns the resulting error code.
 The read bytes in 60 byte chunks and the resulting error codes of the read
 operations are reported via the :func:`AsyncFileRead` callback.
 
-If the file object was created by :func:`OpenFile` without the
-*NonBlocking* flag or by :func:`CreatePipe` without the *NonBlockingRead* flag
-then the error code ``API_E_NOT_SUPPORTED`` is reported via the
-:func:`AsyncFileRead` callback.
+If the file object was created by :func:`OpenFile` without the *NonBlocking*
+flag or by :func:`CreatePipe` without the *NonBlockingRead* flag then the error
+code *NotSupported* is reported via the :func:`AsyncFileRead` callback.
 """,
 'de':
 """
@@ -717,9 +728,9 @@ Writes up to 61 bytes to a file object.
 
 Returns the actual number of bytes written and the resulting error code.
 
-If the file object was created by :func:`OpenFile` without the
-*NonBlocking* flag or by :func:`CreatePipe` without the *NonBlockingWrite* flag
-then the error code ``API_E_NOT_SUPPORTED`` is returned.
+If the file object was created by :func:`OpenFile` without the *NonBlocking*
+flag or by :func:`CreatePipe` without the *NonBlockingWrite* flag then the
+error code *NotSupported* is returned.
 """,
 'de':
 """
@@ -742,9 +753,9 @@ Writes up to 61 bytes to a file object.
 Does neither report the actual number of bytes written nor the resulting error
 code.
 
-If the file object was created by :func:`OpenFile` without the
-*NonBlocking* flag or by :func:`CreatePipe` without the *NonBlockingWrite* flag
-then the write operation will fail silently.
+If the file object was created by :func:`OpenFile` without the *NonBlocking*
+flag or by :func:`CreatePipe` without the *NonBlockingWrite* flag then the
+write operation will fail silently.
 """,
 'de':
 """
@@ -767,10 +778,9 @@ Writes up to 61 bytes to a file object.
 Reports the actual number of bytes written and the resulting error code via the
 :func:`AsyncFileWrite` callback.
 
-If the file object was created by :func:`OpenFile` without the
-*NonBlocking* flag or by :func:`CreatePipe` without the *NonBlockingWrite* flag
-then the error code ``API_E_NOT_SUPPORTED`` is reported via the
-:func:`AsyncFileWrite` callback.
+If the file object was created by :func:`OpenFile` without the *NonBlocking*
+flag or by :func:`CreatePipe` without the *NonBlockingWrite* flag then the
+error code *NotSupported* is reported via the :func:`AsyncFileWrite` callback.
 """,
 'de':
 """
@@ -801,7 +811,7 @@ Possible file origins are:
 Returns the resulting absolute seek position and error code.
 
 If the file object was created by :func:`CreatePipe` then it has no seek
-position and the error code ``API_E_INVALID_SEEK`` is returned.
+position and the error code *InvalidSeek* is returned.
 """,
 'de':
 """
@@ -823,7 +833,7 @@ Returns the current seek position of a file object in bytes and returns the
 resulting error code.
 
 If the file object was created by :func:`CreatePipe` then it has no seek
-position and the error code ``API_E_INVALID_SEEK`` is returned.
+position and the error code *InvalidSeek* is returned.
 """,
 'de':
 """
@@ -992,8 +1002,8 @@ com['packets'].append({
 """
 Returns the next entry in a directory object and the resulting error code.
 
-If there is not next entry then error code ``API_E_NO_MORE_DATA`` is returned.
-To rewind a directory object call :func:`RewindDirectory`.
+If there is not next entry then error code *NoMoreData* is returned. To rewind
+a directory object call :func:`RewindDirectory`.
 
 See :func:`GetFileType` for a list of possible file types.
 """,
