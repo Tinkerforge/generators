@@ -78,9 +78,9 @@ PROGRAM_STDIO_CONSTANTS = ('ProgramStdio', 'program_stdio', [('Input', 'input', 
                                                              ('Output', 'output', 1),
                                                              ('Error', 'error', 2)])
 
-PROGRAM_STDIO_OPTION_CONSTANTS = ('ProgramStdioOption', 'program_stdio_option', [('Null', 'null', 0),
-                                                                                 ('Pipe', 'pipe', 1),
-                                                                                 ('File', 'file', 2)])
+PROGRAM_STDIO_REDIRECTION_CONSTANTS = ('ProgramStdioRedirection', 'program_stdio_redirection', [('DevNull', 'dev_null', 0),
+                                                                                                ('Pipe', 'pipe', 1),
+                                                                                                ('File', 'file', 2)])
 
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
@@ -511,7 +511,7 @@ Opens an existing file or creates a new file and allocates a new file object
 for it.
 
 The reference count of the name string object is increased by one. When the
-file object is destroyed then the reference count of the name string object is
+file object gets destroyed then the reference count of the name string object is
 decreased by one. Also the name string object is locked and cannot be modified
 while the file object holds a reference to it.
 
@@ -1518,10 +1518,10 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetProgramStdioOption', 'set_program_stdio_option'),
+'name': ('SetProgramStdioRedirection', 'set_program_stdio_redirection'),
 'elements': [('program_id', 'uint16', 1, 'in'),
              ('stdio', 'uint8', 1, 'in', PROGRAM_STDIO_CONSTANTS),
-             ('option', 'uint8', 1, 'in', PROGRAM_STDIO_OPTION_CONSTANTS),
+             ('redirection', 'uint8', 1, 'in', PROGRAM_STDIO_REDIRECTION_CONSTANTS),
              ('error_code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -1536,11 +1536,11 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetProgramStdioOption', 'get_program_stdio_option'),
+'name': ('GetProgramStdioRedirection', 'get_program_stdio_redirection'),
 'elements': [('program_id', 'uint16', 1, 'in'),
              ('stdio', 'uint8', 1, 'in', PROGRAM_STDIO_CONSTANTS),
              ('error_code', 'uint8', 1, 'out'),
-             ('option', 'uint8', 1, 'out', PROGRAM_STDIO_OPTION_CONSTANTS)],
+             ('redirection', 'uint8', 1, 'out', PROGRAM_STDIO_REDIRECTION_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
