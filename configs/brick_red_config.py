@@ -33,7 +33,8 @@ FILE_FLAG_CONSTANTS = ('FileFlag', 'file_flag', [('ReadOnly', 'read_only', 0x000
                                                  ('NoAccessTime', 'no_access_time', 0x0040),
                                                  ('NoFollow', 'no_follow', 0x0080),
                                                  ('NonBlocking', 'non_blocking', 0x0100),
-                                                 ('Truncate', 'truncate', 0x0200)])
+                                                 ('Truncate', 'truncate', 0x0200),
+                                                 ('Temporary', 'temporary', 0x0400)])
 
 PIPE_FLAG_CONSTANTS = ('PipeFlag', 'pipe_flag', [('NonBlockingRead', 'non_blocking_read', 0x0001),
                                                  ('NonBlockingWrite', 'non_blocking_write', 0x0002)])
@@ -510,6 +511,8 @@ com['packets'].append({
 Opens an existing file or creates a new file and allocates a new file object
 for it.
 
+FIXME: name has to be absolute
+
 The reference count of the name string object is increased by one. When the
 file object gets destroyed then the reference count of the name string object is
 decreased by one. Also the name string object is locked and cannot be modified
@@ -528,6 +531,9 @@ flags (in hexadecimal notation):
 * NoFollow = 0x0080 (O_NOFOLLOW)
 * NonBlocking = 0x0100 (O_NONBLOCK)
 * Truncate = 0x0200 (O_TRUNC)
+* Temporary = 0x0400
+
+FIXME: explain *Temporary* flag
 
 The ``permissions`` parameter takes a ORed combination of the following
 possible file permissions (in octal notation) that match the common UNIX
@@ -911,6 +917,8 @@ com['packets'].append({
 """
 Returns various information about a file and the resulting error code.
 
+FIXME: name has to be absolute
+
 The information is obtained via the
 `stat() <http://pubs.opengroup.org/onlinepubs/9699919799/functions/stat.html>`__
 function. If ``follow_symlink`` is *false* then the
@@ -938,6 +946,8 @@ com['packets'].append({
 'en':
 """
 Returns the target of a symbolic link and the resulting error code.
+
+FIXME: name has to be absolute
 
 If ``canonicalize`` is *false* then the target of the symbolic link is resolved
 one level via the
@@ -967,6 +977,8 @@ com['packets'].append({
 'en':
 """
 Opens an existing directory and allocates a new directory object for it.
+
+FIXME: name has to be absolute
 
 The reference count of the name string object is increased by one. When the
 directory object is destroyed then the reference count of the name string
@@ -1054,6 +1066,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+FIXME: name has to be absolute
 """,
 'de':
 """
@@ -1563,6 +1576,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+FIXME: file name has to be absolute
 """,
 'de':
 """
