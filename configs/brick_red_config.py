@@ -75,10 +75,6 @@ PROCESS_STATE_CONSTANTS = ('ProcessState', 'process_state', [('Unknown', 'unknow
                                                              ('Killed', 'killed', 3),
                                                              ('Stopped', 'stopped', 4)])
 
-PROGRAM_STDIO_CONSTANTS = ('ProgramStdio', 'program_stdio', [('Input', 'input', 0),
-                                                             ('Output', 'output', 1),
-                                                             ('Error', 'error', 2)])
-
 PROGRAM_STDIO_REDIRECTION_CONSTANTS = ('ProgramStdioRedirection', 'program_stdio_redirection', [('DevNull', 'dev_null', 0),
                                                                                                 ('Pipe', 'pipe', 1),
                                                                                                 ('File', 'file', 2)])
@@ -107,6 +103,15 @@ be called to decrease the reference count of the object again. In contrast to
 allocation and getter functions, the reference count for an object returned by
 a callback is not increased and :func:`ReleaseObject` must not be called for
 such an object in response to a callback.
+
+There are functions (e.g. :func:`GetFileInfo`) that only return valid objects
+under certain conditions. This conditions are documented for the specific
+functions. For invalid objects :func:`ReleaseObject` must not be called.
+
+There are also function (e.g. :func:`SetProcessStdioRedirection`) that have
+conditionally unused object parameters. Under which conditions an object
+parameter is unused is documented for the specific functions. For unused
+object parameters 0 has to be passed as object ID.
 
 The RED Brick API is more complex then the typical Brick API and requires more
 elaborate error reporting than the :ref:`TCP/IP protocol <llproto_tcpip>`
@@ -585,15 +590,17 @@ Returns the object ID of the new file object and the resulting error code.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetFileType', 'get_file_type'),
+'name': ('GetFileInfo', 'get_file_info'),
 'elements': [('file_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
-             ('type', 'uint8', 1, 'out', FILE_TYPE_CONSTANTS)],
+             ('type', 'uint8', 1, 'out', FILE_TYPE_CONSTANTS),
+             ('name_string_id', 'uint16', 1, 'out'),
+             ('flags', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the type of a file object and the resulting error code.
+Returns various information about a file and the resulting error code.
 
 Possible file types are:
 
@@ -606,50 +613,14 @@ Possible file types are:
 * Symlink = 6
 * Socket = 7
 * Pipe = 8
-""",
-'de':
-"""
-"""
-}]
-})
 
-com['packets'].append({
-'type': 'function',
-'name': ('GetFileName', 'get_file_name'),
-'elements': [('file_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out'),
-             ('name_string_id', 'uint16', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Returns the name of a file object, as passed to :func:`OpenFile`, and the
-resulting error code.
+If the file type is *Pipe* then the returned name string object is invalid,
+because a pipe has no name. Otherwise the returned name string object was used
+to open or create the file object, as passed to :func:`OpenFile`.
 
-If the file object was created by :func:`CreatePipe` then it has no name and
-the error code *NotSupported* is returned.
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('GetFileFlags', 'get_file_flags'),
-'elements': [('file_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out'),
-             ('flags', 'uint16', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Returns the flags used to open or create a file object, as passed to
-:func:`OpenFile` or :func:`CreatePipe`, and the resulting error code.
-
-See :func:`OpenFile` and :func:`CreatePipe` for a list of possible file and
-pipe flags.
+The returned flags were used to open or create the file object, as passed to
+:func:`OpenFile` or :func:`CreatePipe`. See the respective function for a list
+of possible file and pipe flags.
 """,
 'de':
 """
@@ -899,7 +870,7 @@ function.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetFileInfo', 'get_file_info'),
+'name': ('LookupFileInfo', 'lookup_file_info'),
 'elements': [('name_string_id', 'uint16', 1, 'in'),
              ('follow_symlink', 'bool', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
@@ -925,7 +896,7 @@ function. If ``follow_symlink`` is *false* then the
 `lstat() <http://pubs.opengroup.org/onlinepubs/9699919799/functions/stat.html>`__
 function is used instead.
 
-See :func:`GetFileType` for a list of possible file types and see
+See :func:`GetFileInfo` for a list of possible file types and see
 :func:`OpenFile` for a list of possible file permissions.
 """,
 'de':
@@ -936,7 +907,7 @@ See :func:`GetFileType` for a list of possible file types and see
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetSymlinkTarget', 'get_symlink_target'),
+'name': ('LookupSymlinkTarget', 'lookup_symlink_target'),
 'elements': [('name_string_id', 'uint16', 1, 'in'),
              ('canonicalize', 'bool', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
@@ -1081,7 +1052,7 @@ FIXME: name has to be absolute
 com['packets'].append({
 'type': 'function',
 'name': ('SpawnProcess', 'spawn_process'),
-'elements': [('command_string_id', 'uint16', 1, 'in'),
+'elements': [('executable_string_id', 'uint16', 1, 'in'),
              ('arguments_list_id', 'uint16', 1, 'in'),
              ('environment_list_id', 'uint16', 1, 'in'),
              ('working_directory_string_id', 'uint16', 1, 'in'),
@@ -1138,70 +1109,17 @@ com['packets'].append({
 'name': ('GetProcessCommand', 'get_process_command'),
 'elements': [('process_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
-             ('command_string_id', 'uint16', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Returns the command used to spawn a process object, as passed to
-:func:`SpawnProcess`, and the resulting error code.
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('GetProcessArguments', 'get_process_arguments'),
-'elements': [('process_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out'),
-             ('arguments_list_id', 'uint16', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Returns the arguments used to spawn a process object, as passed to
-:func:`SpawnProcess`, and the resulting error code.
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('GetProcessEnvironment', 'get_process_environment'),
-'elements': [('process_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out'),
-             ('environment_list_id', 'uint16', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Returns the environment used to spawn a process object, as passed to
-:func:`SpawnProcess`, and the resulting error code.
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('GetProcessWorkingDirectory', 'get_process_working_directory'),
-'elements': [('process_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out'),
+             ('executable_string_id', 'uint16', 1, 'out'),
+             ('arguments_list_id', 'uint16', 1, 'out'),
+             ('environment_list_id', 'uint16', 1, 'out'),
              ('working_directory_string_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the working directory used to spawn a process object, as passed to
-:func:`SpawnProcess`, and the resulting error code.
+Returns the executable, arguments, environment and working directory used to
+spawn a process object, as passed to :func:`SpawnProcess`, and the resulting
+error code.
 """,
 'de':
 """
@@ -1211,34 +1129,16 @@ Returns the working directory used to spawn a process object, as passed to
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetProcessUserID', 'get_process_user_id'),
+'name': ('GetProcessIdentity', 'get_process_identity'),
 'elements': [('process_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
-             ('user_id', 'uint32', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Returns the user ID used to spawn a process object, as passed to
-:func:`SpawnProcess`, and the resulting error code.
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('GetProcessGroupID', 'get_process_group_id'),
-'elements': [('process_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out'),
+             ('user_id', 'uint32', 1, 'out'),
              ('group_id', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the group ID used to spawn a process object, as passed to
+Returns the user and group ID used to spawn a process object, as passed to
 :func:`SpawnProcess`, and the resulting error code.
 """,
 'de':
@@ -1249,54 +1149,18 @@ Returns the group ID used to spawn a process object, as passed to
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetProcessStdin', 'get_process_stdin'),
+'name': ('GetProcessStdio', 'get_process_stdio'),
 'elements': [('process_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
-             ('stdin_file_id', 'uint16', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Returns the stdin file used to spawn a process object, as passed to
-:func:`SpawnProcess`, and the resulting error code.
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('GetProcessStdout', 'get_process_stdout'),
-'elements': [('process_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out'),
-             ('stdout_file_id', 'uint16', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Returns the stdout file used to spawn a process object, as passed to
-:func:`SpawnProcess`, and the resulting error code.
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('GetProcessStderr', 'get_process_stderr'),
-'elements': [('process_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out'),
+             ('stdin_file_id', 'uint16', 1, 'out'),
+             ('stdout_file_id', 'uint16', 1, 'out'),
              ('stderr_file_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the stderr file used to spawn a process object, as passed to
-:func:`SpawnProcess`, and the resulting error code.
+Returns the stdin, stdout and stderr files used to spawn a process object, as
+passed to :func:`SpawnProcess`, and the resulting error code.
 """,
 'de':
 """
@@ -1431,8 +1295,10 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetProgramCommand', 'set_program_command'),
 'elements': [('program_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out'),
-             ('command_string_id', 'uint16', 1, 'out')],
+             ('executable_string_id', 'uint16', 1, 'in'),
+             ('arguments_list_id', 'uint16', 1, 'in'),
+             ('environment_list_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1449,74 +1315,8 @@ com['packets'].append({
 'name': ('GetProgramCommand', 'get_program_command'),
 'elements': [('program_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
-             ('command_string_id', 'uint16', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('SetProgramArguments', 'set_program_arguments'),
-'elements': [('program_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out'),
-             ('arguments_list_id', 'uint16', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('GetProgramArguments', 'get_program_arguments'),
-'elements': [('program_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out'),
-             ('arguments_list_id', 'uint16', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('SetProgramEnvironment', 'set_program_environment'),
-'elements': [('program_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out'),
-             ('environment_list_id', 'uint16', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('GetProgramEnvironment', 'get_program_environment'),
-'elements': [('program_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out'),
+             ('executable_string_id', 'uint16', 1, 'out'),
+             ('arguments_list_id', 'uint16', 1, 'out'),
              ('environment_list_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -1533,8 +1333,12 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetProgramStdioRedirection', 'set_program_stdio_redirection'),
 'elements': [('program_id', 'uint16', 1, 'in'),
-             ('stdio', 'uint8', 1, 'in', PROGRAM_STDIO_CONSTANTS),
-             ('redirection', 'uint8', 1, 'in', PROGRAM_STDIO_REDIRECTION_CONSTANTS),
+             ('stdin_redirection', 'uint8', 1, 'in', PROGRAM_STDIO_REDIRECTION_CONSTANTS),
+             ('stdin_file_name_string_id', 'uint16', 1, 'in'),
+             ('stdout_redirection', 'uint8', 1, 'in', PROGRAM_STDIO_REDIRECTION_CONSTANTS),
+             ('stdout_file_name_string_id', 'uint16', 1, 'in'),
+             ('stderr_redirection', 'uint8', 1, 'in', PROGRAM_STDIO_REDIRECTION_CONSTANTS),
+             ('stderr_file_name_string_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -1551,46 +1355,13 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetProgramStdioRedirection', 'get_program_stdio_redirection'),
 'elements': [('program_id', 'uint16', 1, 'in'),
-             ('stdio', 'uint8', 1, 'in', PROGRAM_STDIO_CONSTANTS),
              ('error_code', 'uint8', 1, 'out'),
-             ('redirection', 'uint8', 1, 'out', PROGRAM_STDIO_REDIRECTION_CONSTANTS)],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('SetProgramStdioFileName', 'set_program_stdio_file_name'),
-'elements': [('program_id', 'uint16', 1, 'in'),
-             ('stdio', 'uint8', 1, 'in', PROGRAM_STDIO_CONSTANTS),
-             ('file_name_string_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-FIXME: file name has to be absolute
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('GetProgramStdioFileName', 'get_program_stdio_file_name'),
-'elements': [('program_id', 'uint16', 1, 'in'),
-             ('stdio', 'uint8', 1, 'in', PROGRAM_STDIO_CONSTANTS),
-             ('error_code', 'uint8', 1, 'out'),
-             ('file_name_string_id', 'uint16', 1, 'out')],
+             ('stdin_redirection', 'uint8', 1, 'out', PROGRAM_STDIO_REDIRECTION_CONSTANTS),
+             ('stdin_file_name_string_id', 'uint16', 1, 'out'),
+             ('stdout_redirection', 'uint8', 1, 'out', PROGRAM_STDIO_REDIRECTION_CONSTANTS),
+             ('stdout_file_name_string_id', 'uint16', 1, 'out'),
+             ('stderr_redirection', 'uint8', 1, 'out', PROGRAM_STDIO_REDIRECTION_CONSTANTS),
+             ('stderr_file_name_string_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
