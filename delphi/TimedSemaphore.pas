@@ -52,7 +52,7 @@ begin
 {$else}
   mutex := TCriticalSection.Create;
  {$ifdef DELPHI_MACOS}
-  event := TEvent.Create; { This is a manual-reset event }
+  event := TEvent.Create(nil, true, false, '', false);
  {$else}
   event := RTLEventCreate; { This is a manual-reset event }
  {$endif}
