@@ -127,6 +127,13 @@ begin
       if (available > 0) then begin
         Dec(available);
         result := true;
+        if (available = 0) then begin
+ {$ifdef DELPHI_MACOS}
+          event.ResetEvent();
+ {$else}
+          RTLEventResetEvent(event);
+ {$endif}
+        end;
       end;
     finally
       mutex.Release;
