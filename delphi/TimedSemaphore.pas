@@ -20,6 +20,27 @@ uses
   {$ifdef UNIX}CThreads,{$endif} {$ifdef MSWINDOWS}Windows{$else}SyncObjs{$endif};
 
 type
+
+{$ifndef MSWINDOWS}
+
+  { Manual-Reset Event }
+  TEventWrapper = class
+  private
+ {$ifdef DELPHI_MACOS}
+    event: TEvent;
+ {$else}
+    event: PRTLEvent;
+ {$endif}
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure WaitFor(const timeout: longint);
+    procedure SetEvent;
+    procedure ResetEvent;
+  end;
+
+{$endif}
+
   { Semaphore with blocking lower bound, but without blocking upper bound }
   TTimedSemaphore = class
   private
@@ -28,11 +49,7 @@ type
     handle: THandle;
 {$else}
     mutex: TCriticalSection;
- {$ifdef DELPHI_MACOS}
-    event: TEvent;
- {$else}
-    event: PRTLEvent;
- {$endif}
+    event: TEventWrapper;
     available: longint;
 {$endif}
   public
@@ -51,11 +68,7 @@ begin
   handle := CreateSemaphore(nil, 0, 2147483647, nil);
 {$else}
   mutex := TCriticalSection.Create;
- {$ifdef DELPHI_MACOS}
-  event := TEvent.Create(nil, true, false, '', false);
- {$else}
-  event := RTLEventCreate; { This is a manual-reset event }
- {$endif}
+  event := TEventWrapper.Create;
   available := 0;
 {$endif}
 end;
@@ -70,11 +83,7 @@ begin
 {$ifdef MSWINDOWS}
   CloseHandle(handle);
 {$else}
- {$ifdef DELPHI_MACOS}
   event.Destroy;
- {$else}
-  RTLEventDestroy(event);
- {$endif}
   mutex.Destroy;
 {$endif}
   inherited Destroy;
@@ -97,42 +106,21 @@ begin
       Dec(available);
       result := true;
       if (available = 0) then begin
- {$ifdef DELPHI_MACOS}
         event.ResetEvent();
- {$else}
-        RTLEventResetEvent(event);
- {$endif}
       end;
     end;
   finally
     mutex.Release;
   end;
   if not result then begin
-    if (timeout < 0) then begin
- {$ifdef DELPHI_MACOS}
-      event.WaitFor(INFINITE);
- {$else}
-      RTLEventWaitFor(event);
- {$endif}
-    end
-    else begin
- {$ifdef DELPHI_MACOS}
-      event.WaitFor(timeout);
- {$else}
-      RTLEventWaitFor(event, timeout);
- {$endif}
-    end;
+    event.WaitFor(timeout);
     mutex.Acquire;
     try
       if (available > 0) then begin
         Dec(available);
         result := true;
         if (available = 0) then begin
- {$ifdef DELPHI_MACOS}
           event.ResetEvent();
- {$else}
-          RTLEventResetEvent(event);
- {$endif}
         end;
       end;
     finally
@@ -156,12 +144,68 @@ begin
   finally
     mutex.Release;
   end;
+  event.SetEvent();
+{$endif}
+end;
+
+{$ifndef MSWINDOWS}
+
+{ TEventWrapper }
+constructor TEventWrapper.Create;
+begin
+ {$ifdef DELPHI_MACOS}
+  event := TEvent.Create(nil, true, false, '', false);
+ {$else}
+  event := RTLEventCreate; { This is a manual-reset event }
+ {$endif}
+end;
+
+destructor TEventWrapper.Destroy;
+begin
+ {$ifdef DELPHI_MACOS}
+  event.Destroy;
+ {$else}
+  RTLEventDestroy(event);
+ {$endif}
+  inherited Destroy;
+end;
+
+procedure TEventWrapper.WaitFor(const timeout: longint);
+begin
+  if (timeout < 0) then begin
+ {$ifdef DELPHI_MACOS}
+    event.WaitFor(INFINITE);
+ {$else}
+    RTLEventWaitFor(event);
+ {$endif}
+  end
+  else begin
+ {$ifdef DELPHI_MACOS}
+    event.WaitFor(timeout);
+ {$else}
+    RTLEventWaitFor(event, timeout);
+ {$endif}
+  end;
+end;
+
+procedure TEventWrapper.SetEvent;
+begin
  {$ifdef DELPHI_MACOS}
   event.SetEvent();
  {$else}
   RTLEventSetEvent(event);
  {$endif}
-{$endif}
 end;
+
+procedure TEventWrapper.ResetEvent;
+begin
+ {$ifdef DELPHI_MACOS}
+  event.ResetEvent();
+ {$else}
+  RTLEventResetEvent(event);
+ {$endif}
+end;
+
+{$endif}
 
 end.
