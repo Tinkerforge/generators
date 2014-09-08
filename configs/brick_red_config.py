@@ -30,11 +30,9 @@ FILE_FLAG_CONSTANTS = ('FileFlag', 'file_flag', [('ReadOnly', 'read_only', 0x000
                                                  ('Append', 'append', 0x0008),
                                                  ('Create', 'create', 0x0010),
                                                  ('Exclusive', 'exclusive', 0x0020),
-                                                 ('NoAccessTime', 'no_access_time', 0x0040),
-                                                 ('NoFollow', 'no_follow', 0x0080),
-                                                 ('NonBlocking', 'non_blocking', 0x0100),
-                                                 ('Truncate', 'truncate', 0x0200),
-                                                 ('Temporary', 'temporary', 0x0400)])
+                                                 ('NonBlocking', 'non_blocking', 0x0040),
+                                                 ('Truncate', 'truncate', 0x0080),
+                                                 ('Temporary', 'temporary', 0x0100)])
 
 PIPE_FLAG_CONSTANTS = ('PipeFlag', 'pipe_flag', [('NonBlockingRead', 'non_blocking_read', 0x0001),
                                                  ('NonBlockingWrite', 'non_blocking_write', 0x0002)])
@@ -78,6 +76,15 @@ PROCESS_STATE_CONSTANTS = ('ProcessState', 'process_state', [('Unknown', 'unknow
 PROGRAM_STDIO_REDIRECTION_CONSTANTS = ('ProgramStdioRedirection', 'program_stdio_redirection', [('DevNull', 'dev_null', 0),
                                                                                                 ('Pipe', 'pipe', 1),
                                                                                                 ('File', 'file', 2)])
+
+PROGRAM_SCHEDULE_START_CONDITION_CONSTANTS = ('ProgramScheduleStartCondition', 'program_schedule_start_condition', [('Never', 'never', 0),
+                                                                                                                    ('Now', 'now', 1),
+                                                                                                                    ('Boot', 'boot', 2),
+                                                                                                                    ('Time', 'time', 2)])
+
+PROGRAM_SCHEDULE_REPEAT_MODE_CONSTANTS = ('ProgramScheduleRepeatMode', 'program_schedule_repeat_mode', [('Never', 'never', 0),
+                                                                                                        ('Relative', 'relative', 1),
+                                                                                                        ('Absolute', 'absolute', 2)])
 
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
@@ -532,11 +539,9 @@ flags (in hexadecimal notation):
 * Append = 0x0008 (O_APPEND)
 * Create = 0x0010 (O_CREAT)
 * Exclusive = 0x0020 (O_EXCL)
-* NoAccessTime = 0x0040 (O_NOATIME)
-* NoFollow = 0x0080 (O_NOFOLLOW)
-* NonBlocking = 0x0100 (O_NONBLOCK)
-* Truncate = 0x0200 (O_TRUNC)
-* Temporary = 0x0400
+* NonBlocking = 0x0040 (O_NONBLOCK)
+* Truncate = 0x0080 (O_TRUNC)
+* Temporary = 0x0100
 
 FIXME: explain *Temporary* flag
 
@@ -1366,6 +1371,62 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetProgramSchedule', 'set_program_schedule'),
+'elements': [('program_id', 'uint16', 1, 'in'),
+             ('start_condition', 'uint8', 1, 'in', PROGRAM_SCHEDULE_START_CONDITION_CONSTANTS),
+             ('start_time', 'uint64', 1, 'in'),
+             ('start_delay', 'uint32', 1, 'in'),
+             ('repeat_mode', 'uint8', 1, 'in', PROGRAM_SCHEDULE_REPEAT_MODE_CONSTANTS),
+             ('repeat_interval', 'uint32', 1, 'in'),
+             ('repeat_second_mask', 'uint64', 1, 'in'),
+             ('repeat_minute_mask', 'uint64', 1, 'in'),
+             ('repeat_hour_mask', 'uint32', 1, 'in'),
+             ('repeat_day_mask', 'uint32', 1, 'in'),
+             ('repeat_month_mask', 'uint16', 1, 'in'),
+             ('repeat_weekday_mask', 'uint8', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+FIXME: week starts on monday
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetProgramSchedule', 'get_program_schedule'),
+'elements': [('program_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('start_condition', 'uint8', 1, 'out', PROGRAM_SCHEDULE_START_CONDITION_CONSTANTS),
+             ('start_time', 'uint64', 1, 'out'),
+             ('start_delay', 'uint32', 1, 'out'),
+             ('repeat_mode', 'uint8', 1, 'out', PROGRAM_SCHEDULE_REPEAT_MODE_CONSTANTS),
+             ('repeat_interval', 'uint32', 1, 'out'),
+             ('repeat_second_mask', 'uint64', 1, 'out'),
+             ('repeat_minute_mask', 'uint64', 1, 'out'),
+             ('repeat_hour_mask', 'uint32', 1, 'out'),
+             ('repeat_day_mask', 'uint32', 1, 'out'),
+             ('repeat_month_mask', 'uint16', 1, 'out'),
+             ('repeat_weekday_mask', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+FIXME: week starts on monday
 """,
 'de':
 """
