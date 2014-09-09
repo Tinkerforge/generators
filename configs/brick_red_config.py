@@ -600,7 +600,14 @@ com['packets'].append({
              ('error_code', 'uint8', 1, 'out'),
              ('type', 'uint8', 1, 'out', FILE_TYPE_CONSTANTS),
              ('name_string_id', 'uint16', 1, 'out'),
-             ('flags', 'uint16', 1, 'out')],
+             ('flags', 'uint16', 1, 'out'),
+             ('permissions', 'uint16', 1, 'out', FILE_PERMISSION_CONSTANTS),
+             ('user_id', 'uint32', 1, 'out'),
+             ('group_id', 'uint32', 1, 'out'),
+             ('length', 'uint64', 1, 'out'),
+             ('access_time', 'uint64', 1, 'out'),
+             ('modification_time', 'uint64', 1, 'out'),
+             ('status_change_time', 'uint64', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -626,6 +633,8 @@ to open or create the file object, as passed to :func:`OpenFile`.
 The returned flags were used to open or create the file object, as passed to
 :func:`OpenFile` or :func:`CreatePipe`. See the respective function for a list
 of possible file and pipe flags.
+
+FIXME: everything except flags is invalid if file type is *Pipe*
 """,
 'de':
 """
