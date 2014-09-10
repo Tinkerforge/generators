@@ -37,11 +37,11 @@ Usage
 
 If you only want to generate the bindings it is sufficient to clone this
 repository. For example, to generate the C# bindings execute the following
-commands:
+commands::
 
-	cd csharp
-	python generate_csharp_bindings.py
-	python generate_csharp_zip.py
+  cd csharp
+  python generate_csharp_bindings.py
+  python generate_csharp_zip.py
 
 If you want to generate the documentation as well, you have to clone **all**
 Brick gits and **all** Bricklet gits in parallel to the generators git.
