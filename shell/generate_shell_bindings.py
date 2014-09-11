@@ -350,7 +350,7 @@ class ShellBindingsGenerator(common.BindingsGenerator):
 
         os.system('chmod +x {0}/tinkerforge'.format(directory))
 
-        template = file(os.path.join(directory, 'tinkerforge-bash-completion.template'), 'rb').read()
+        template = file(os.path.join(directory, 'tinkerforge-bash-completion.sh.template'), 'rb').read()
         template = template.replace('<<DEVICES>>', '|'.join(sorted(self.completion_devices)))
 
         if len(getter_patterns) > 0:
