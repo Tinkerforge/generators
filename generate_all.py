@@ -8,10 +8,13 @@ import common
 
 path = os.getcwd()
 bindings = []
+
 for d in os.listdir(path):
     if os.path.isdir(d):
         if not d in ('configs', '.git', '__pycache__'):
             bindings.append(d)
+            sys.path.append(os.path.join(path, d))
+
 bindings = sorted(bindings)
 
 # bindings
@@ -19,20 +22,16 @@ for binding in bindings:
     if binding in ('tcpip', 'modbus'):
         continue
 
-    path_binding = '{0}/{1}'.format(path, binding)
-    sys.path.append(path_binding)
     module = __import__('generate_{0}_bindings'.format(binding))
     print("\nGenerating bindings for {0}:".format(binding))
-    module.generate(path_binding)
+    module.generate(os.path.join(path, binding))
 
 # doc
 for binding in bindings:
-    path_binding = '{0}/{1}'.format(path, binding)
-    sys.path.append(path_binding)
     module = __import__('generate_{0}_doc'.format(binding))
     for lang in ['en', 'de']:
         print("\nGenerating '{0}' documentation for {1}:".format(lang, binding))
-        module.generate(path_binding, lang)
+        module.generate(os.path.join(path, binding), lang)
 
 # zip
 if socket.gethostname() != 'tinkerforge.com':
@@ -40,11 +39,9 @@ if socket.gethostname() != 'tinkerforge.com':
         if binding in ('tcpip', 'modbus'):
             continue
 
-        path_binding = '{0}/{1}'.format(path, binding)
-        sys.path.append(path_binding)
         module = __import__('generate_{0}_zip'.format(binding))
         print("\nGenerating ZIP for {0}:".format(binding))
-        module.generate(path_binding)
+        module.generate(os.path.join(path, binding))
 
 print('')
 print('>>> Done <<<')
