@@ -82,7 +82,8 @@ class CSharpZipGenerator(common.Generator):
 
         common.specialize_template(os.path.join(root_dir, 'AssemblyInfo.cs.template'),
                                    os.path.join(self.tmp_source_tinkerforge_dir, 'AssemblyInfo.cs'),
-                                   {'<<VERSION>>': '.'.join(version)})
+                                   {'<<BINDINGS>>': 'C#',
+                                    '<<VERSION>>': '.'.join(version)})
 
         # Make Tinkerforge.csproj
         project_items = []

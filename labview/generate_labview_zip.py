@@ -94,9 +94,10 @@ class LabVIEWZipGenerator(common.Generator):
         # Make AssemblyInfo.cs
         version = common.get_changelog_version(root_dir)
 
-        common.specialize_template(os.path.join(root_dir, 'AssemblyInfo.cs.template'),
+        common.specialize_template(os.path.join(root_dir, '..', 'csharp', 'AssemblyInfo.cs.template'),
                                    os.path.join(self.tmp_source_tinkerforge_dir, 'AssemblyInfo.cs'),
-                                   {'<<VERSION>>': '.'.join(version)})
+                                   {'<<BINDINGS>>': 'LabVIEW',
+                                    '<<VERSION>>': '.'.join(version)})
 
         # Make dll
         with common.ChangedDirectory(self.tmp_dir):

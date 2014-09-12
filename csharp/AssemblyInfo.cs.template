@@ -1,11 +1,11 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle("C# API Bindings")]
-[assembly: AssemblyDescription("C# API Bindings for Tinkerforge Bricks and Bricklets")]
+[assembly: AssemblyTitle("<<BINDINGS>> API Bindings")]
+[assembly: AssemblyDescription("<<BINDINGS>> API Bindings for Tinkerforge Bricks and Bricklets")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Tinkerforge GmbH")]
-[assembly: AssemblyProduct("C# API Bindings")]
+[assembly: AssemblyProduct("<<BINDINGS>> API Bindings")]
 [assembly: AssemblyCopyright("Tinkerforge GmbH 2011-2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
