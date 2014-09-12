@@ -40,7 +40,7 @@ class VBNETExamplesTester(common.ExamplesTester):
             shutil.copy(src, '/tmp/tester/vbnet')
             src = os.path.join('/tmp/tester/vbnet', os.path.split(src)[1])
 
-        dest = src[:-3] + '.exe';
+        dest = src[:-3] + '.exe'
 
         args = ['/usr/bin/vbnc2',
                 '/nologo',
