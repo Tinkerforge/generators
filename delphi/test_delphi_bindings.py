@@ -37,12 +37,12 @@ class DelphiExamplesTester(common.ExamplesTester):
 
     def test(self, src, is_extra_example):
         if is_extra_example:
-            shutil.copy(src, '/tmp/tester/')
-            src = os.path.join('/tmp/tester/', os.path.split(src)[1])
+            shutil.copy(src, '/tmp/tester/delphi')
+            src = os.path.join('/tmp/tester/delphi', os.path.split(src)[1])
 
         args = ['/usr/bin/fpc',
                 '-vw',
-                '-Fu/tmp/tester/source',
+                '-Fu/tmp/tester/delphi/source',
                 '-l',
                 src]
 

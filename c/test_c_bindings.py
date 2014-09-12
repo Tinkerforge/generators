@@ -40,14 +40,14 @@ class CExamplesTester(common.ExamplesTester):
 
     def test(self, src, is_extra_example):
         if is_extra_example:
-            shutil.copy(src, '/tmp/tester/')
-            src = os.path.join('/tmp/tester/', os.path.split(src)[1])
+            shutil.copy(src, '/tmp/tester/c')
+            src = os.path.join('/tmp/tester/c', os.path.split(src)[1])
 
         dest = src[:-2]
 
         if not is_extra_example and '/brick' in src:
             dirname = os.path.split(src)[0]
-            device = '/tmp/tester/source/{0}_{1}.c'.format(os.path.split(os.path.split(dirname)[0])[-1], os.path.split(dirname)[-1])
+            device = '/tmp/tester/c/source/{0}_{1}.c'.format(os.path.split(os.path.split(dirname)[0])[-1], os.path.split(dirname)[-1])
         else:
             device = ''
 
@@ -67,16 +67,16 @@ class CExamplesTester(common.ExamplesTester):
                  '-Werror',
                  '-O2',
                  '-pthread',
-                 '-I/tmp/tester/source',
+                 '-I/tmp/tester/c/source',
                  '-o',
                  dest,
-                 '/tmp/tester/source/ip_connection.c']
+                 '/tmp/tester/c/source/ip_connection.c']
 
         if len(device) > 0:
             args.append(device)
         elif is_extra_example:
-            deps = glob.glob('/tmp/tester/source/*.c')
-            deps.remove('/tmp/tester/source/ip_connection.c')
+            deps = glob.glob('/tmp/tester/c/source/*.c')
+            deps.remove('/tmp/tester/c/source/ip_connection.c')
             args.append('-Wno-error=unused-parameter')
             args += deps
 

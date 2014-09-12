@@ -39,8 +39,8 @@ class PythonExamplesTester(common.ExamplesTester):
 
     def test(self, src, is_extra_example):
         if is_extra_example:
-            shutil.copy(src, '/tmp/tester/')
-            src = os.path.join('/tmp/tester/', os.path.split(src)[1])
+            shutil.copy(src, '/tmp/tester/python')
+            src = os.path.join('/tmp/tester/python', os.path.split(src)[1])
 
         args = [self.python,
                 '-c',

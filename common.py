@@ -1398,6 +1398,7 @@ class ExamplesTester:
     def __init__(self, name, extension, path, subdirs=['examples'], comment=None, extra_examples=[]):
         version = get_changelog_version(path)
 
+        self.name = name
         self.extension = extension
         self.path = path
         self.subdirs = subdirs[:]
@@ -1433,21 +1434,23 @@ class ExamplesTester:
         raise NotImplementedError()
 
     def run(self):
+        tmp_dir = os.path.join('/tmp/tester', self.name)
+
         # Make temporary examples directory
-        if os.path.exists('/tmp/tester'):
-            shutil.rmtree('/tmp/tester/')
+        if os.path.exists(tmp_dir):
+            shutil.rmtree(tmp_dir)
 
-        os.makedirs('/tmp/tester')
+        os.makedirs(tmp_dir)
 
-        with ChangedDirectory('/tmp/tester'):
-            shutil.copy(os.path.join(self.path, self.zipname), '/tmp/tester/')
+        with ChangedDirectory(tmp_dir):
+            shutil.copy(os.path.join(self.path, self.zipname), tmp_dir)
 
             # unzip
-            print('>>> unpacking {0} to /tmp/tester'.format(self.zipname))
+            print('>>> unpacking {0} to {1}'.format(self.zipname, tmp_dir))
 
             args = ['/usr/bin/unzip',
                     '-q',
-                    os.path.join('/tmp/tester', self.zipname)]
+                    os.path.join(tmp_dir, self.zipname)]
 
             rc = subprocess.call(args)
 
@@ -1459,7 +1462,7 @@ class ExamplesTester:
 
             # test
             for subdir in self.subdirs:
-                os.path.walk(os.path.join('/tmp/tester', subdir), self.walker, None)
+                os.path.walk(os.path.join(tmp_dir, subdir), self.walker, None)
 
             for extra_example in self.extra_examples:
                 self.handle_source(extra_example, True)
@@ -1476,6 +1479,7 @@ class SourceTester:
     def __init__(self, name, extension, path, subdirs=['source'], comment=None):
         version = get_changelog_version(path)
 
+        self.name = name
         self.extension = extension
         self.path = path
         self.subdirs = subdirs[:]
@@ -1506,14 +1510,6 @@ class SourceTester:
         else:
             print('\033[01;32m>>> test succeded\033[0m\n')
 
-    def before_unzip(self):
-        # make temporary examples directory
-        if os.path.exists('/tmp/tester'):
-            shutil.rmtree('/tmp/tester/')
-
-        os.makedirs('/tmp/tester')
-        return True
-
     def after_unzip(self):
         return True
 
@@ -1521,18 +1517,23 @@ class SourceTester:
         raise NotImplementedError()
 
     def run(self):
-        if not self.before_unzip():
-            return False
+        tmp_dir = os.path.join('/tmp/tester', self.name)
 
-        with ChangedDirectory('/tmp/tester'):
-            shutil.copy(os.path.join(self.path, self.zipname), '/tmp/tester/')
+        # make temporary examples directory
+        if os.path.exists(tmp_dir):
+            shutil.rmtree(tmp_dir)
+
+        os.makedirs(tmp_dir)
+
+        with ChangedDirectory(tmp_dir):
+            shutil.copy(os.path.join(self.path, self.zipname), tmp_dir)
 
             # unzip
-            print('>>> unpacking {0} to /tmp/tester'.format(self.zipname))
+            print('>>> unpacking {0} to {1}'.format(self.zipname, tmp_dir))
 
             args = ['/usr/bin/unzip',
                     '-q',
-                    os.path.join('/tmp/tester', self.zipname)]
+                    os.path.join(tmp_dir, self.zipname)]
 
             rc = subprocess.call(args)
 
@@ -1547,7 +1548,7 @@ class SourceTester:
 
             # test
             for subdir in self.subdirs:
-                os.path.walk(os.path.join('/tmp/tester', subdir), self.walker, None)
+                os.path.walk(os.path.join(tmp_dir, subdir), self.walker, None)
 
             # report
             if self.comment is not None:

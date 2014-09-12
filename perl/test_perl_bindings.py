@@ -44,13 +44,13 @@ class PerlExamplesTester(common.ExamplesTester):
 
     def test(self, src, is_extra_example):
         if is_extra_example:
-            shutil.copy(src, '/tmp/tester/')
-            src = os.path.join('/tmp/tester/', os.path.split(src)[1])
+            shutil.copy(src, '/tmp/tester/perl')
+            src = os.path.join('/tmp/tester/perl', os.path.split(src)[1])
 
         src_check = src.replace('.pl', '_check.pl')
 
         code = file(src, 'rb').read()
-        file(src_check, 'wb').write('use lib "/tmp/tester/source/lib"; use strict; use warnings; CHECK { sub __check__ { ' + code + '\n\n}}\n\n__check__;\n');
+        file(src_check, 'wb').write('use lib "/tmp/tester/perl/source/lib"; use strict; use warnings; CHECK { sub __check__ { ' + code + '\n\n}}\n\n__check__;\n');
 
         args = ['perl',
                 '-cWT',

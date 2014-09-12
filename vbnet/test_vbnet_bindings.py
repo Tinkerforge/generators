@@ -37,8 +37,8 @@ class VBNETExamplesTester(common.ExamplesTester):
 
     def test(self, src, is_extra_example):
         if is_extra_example:
-            shutil.copy(src, '/tmp/tester/')
-            src = os.path.join('/tmp/tester/', os.path.split(src)[1])
+            shutil.copy(src, '/tmp/tester/vbnet')
+            src = os.path.join('/tmp/tester/vbnet', os.path.split(src)[1])
 
         dest = src[:-3] + '.exe';
 
@@ -49,7 +49,7 @@ class VBNETExamplesTester(common.ExamplesTester):
                 '/warnaserror',
                 '/target:exe',
                 '/out:' + dest,
-                '/reference:/tmp/tester/Tinkerforge.dll',
+                '/reference:/tmp/tester/vbnet/Tinkerforge.dll',
                 src]
 
         return subprocess.call(args) == 0

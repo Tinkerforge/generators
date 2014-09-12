@@ -43,13 +43,13 @@ class JavaExamplesTester(common.ExamplesTester):
 
     def test(self, src, is_extra_example):
         if is_extra_example:
-            shutil.copy(src, '/tmp/tester/')
-            src = os.path.join('/tmp/tester/', os.path.split(src)[1])
+            shutil.copy(src, '/tmp/tester/java')
+            src = os.path.join('/tmp/tester/java', os.path.split(src)[1])
 
         args = ['/usr/bin/javac',
                 '-Xlint',
                 '-cp',
-                '/tmp/tester/Tinkerforge.jar:.',
+                '/tmp/tester/java/Tinkerforge.jar:.',
                 src]
 
         return subprocess.call(args) == 0
@@ -67,9 +67,9 @@ class JavaSourceTester(common.SourceTester):
         args = ['/usr/bin/javadoc',
                 '-quiet',
                 '-d',
-                '/tmp/tester/javadoc',
+                '/tmp/tester/java/javadoc',
                 '-classpath',
-                '/tmp/tester/source',
+                '/tmp/tester/java/source',
                 'com.tinkerforge']
 
         rc = subprocess.call(args)

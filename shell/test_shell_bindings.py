@@ -35,7 +35,7 @@ class ShellExamplesTester(common.ExamplesTester):
         common.ExamplesTester.__init__(self, 'shell', '.sh', path, extra_examples=extra_examples)
 
     def test(self, src, is_extra_example):
-        return os.system('TINKERFORGE_SHELL_BINDINGS_DRY_RUN=1 PATH=/tmp/tester:${PATH} ' + src) == 0
+        return os.system('TINKERFORGE_SHELL_BINDINGS_DRY_RUN=1 PATH=/tmp/tester/shell:${PATH} ' + src) == 0
 
 def run(path):
     return ShellExamplesTester(path, []).run()

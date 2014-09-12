@@ -37,8 +37,8 @@ class CSharpExamplesTester(common.ExamplesTester):
 
     def test(self, src, is_extra_example):
         if is_extra_example:
-            shutil.copy(src, '/tmp/tester/')
-            src = os.path.join('/tmp/tester/', os.path.split(src)[1])
+            shutil.copy(src, '/tmp/tester/csharp')
+            src = os.path.join('/tmp/tester/csharp', os.path.split(src)[1])
 
         dest = src[:-3] + '.exe';
 
