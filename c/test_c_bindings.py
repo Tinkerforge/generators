@@ -54,11 +54,13 @@ class CExamplesTester(common.ExamplesTester):
         args = []
 
         if self.compiler == 'gcc':
-            args += ['/usr/bin/gcc', '-std=c99']
+            args += ['/usr/bin/gcc', '-std=c99', '-pthread']
         elif self.compiler == 'g++':
-            args += ['/usr/bin/g++', '-std=c++98']
+            args += ['/usr/bin/g++', '-std=c++98', '-pthread']
+        elif self.compiler == 'mingw32-gcc':
+            args += ['/usr/bin/x86_64-w64-mingw32-gcc', '-Wno-error=return-type', '-lws2_32']
         elif self.compiler == 'scan-build clang':
-            args += ['/usr/bin/scan-build', '/usr/bin/clang', '-std=c99']
+            args += ['/usr/bin/scan-build', '/usr/bin/clang', '-std=c99', '-pthread']
         else:
             raise ValueError('Invalid compiler ' + self.compiler);
 
@@ -66,11 +68,13 @@ class CExamplesTester(common.ExamplesTester):
                  '-Wextra',
                  '-Werror',
                  '-O2',
-                 '-pthread',
                  '-I/tmp/tester/c/source',
                  '-o',
                  dest,
                  '/tmp/tester/c/source/ip_connection.c']
+
+        if self.compiler == 'mingw32-gcc':
+            args += ['-lws2_32']
 
         if len(device) > 0:
             args.append(device)
@@ -95,6 +99,11 @@ def run(path):
         return success
 
     success = CExamplesTester(path, 'g++', extra_examples).run()
+
+    if not success:
+        return success
+
+    success = CExamplesTester(path, 'mingw32-gcc', extra_examples).run()
 
     if not success:
         return success
