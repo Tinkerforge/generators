@@ -5,6 +5,7 @@
 JavaScript ZIP Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_javascript_zip.py: Generator for JavaScript ZIP
 
@@ -34,115 +35,134 @@ import common
 from javascript_released_files import released_files
 
 class JavaScriptZipGenerator(common.Generator):
+    tmp_dir                           = '/tmp/generator/javascript'
+    tmp_nodejs_dir                    = os.path.join(tmp_dir, 'nodejs')
+    tmp_nodejs_source_dir             = os.path.join(tmp_nodejs_dir, 'source')
+    tmp_nodejs_source_tinkerforge_dir = os.path.join(tmp_nodejs_source_dir, 'Tinkerforge')
+    tmp_nodejs_examples_dir           = os.path.join(tmp_nodejs_dir, 'examples')
+    tmp_nodejs_package_dir            = os.path.join(tmp_nodejs_dir, 'package')
+    tmp_nodejs_package_lib_dir        = os.path.join(tmp_nodejs_package_dir, 'lib')
+    tmp_browser_source_dir            = os.path.join(tmp_dir, 'browser', 'source')
+    tmp_browser_examples_dir          = os.path.join(tmp_dir, 'browser', 'examples')
+
     def get_bindings_name(self):
         return 'javascript'
 
     def prepare(self):
-        common.recreate_directory('/tmp/generator')
-        os.makedirs('/tmp/generator/npm/nodejs/source/Tinkerforge')
-        os.makedirs('/tmp/generator/npm/nodejs/examples')
-        os.makedirs('/tmp/generator/npm/nodejs/npm_pkg_dir')
-        os.makedirs('/tmp/generator/npm/nodejs/npm_pkg_dir/lib')
-        os.makedirs('/tmp/generator/npm/browser/source')
-        os.makedirs('/tmp/generator/npm/browser/examples')
+        common.recreate_directory(self.tmp_dir)
+        os.makedirs(self.tmp_nodejs_dir)
+        os.makedirs(self.tmp_nodejs_source_dir)
+        os.makedirs(self.tmp_nodejs_source_tinkerforge_dir)
+        os.makedirs(self.tmp_nodejs_examples_dir)
+        os.makedirs(self.tmp_nodejs_package_dir)
+        os.makedirs(self.tmp_nodejs_package_lib_dir)
+        os.makedirs(self.tmp_browser_source_dir)
+        os.makedirs(self.tmp_browser_examples_dir)
 
     def generate(self, device):
         if not device.is_released():
             return
 
         # Copy device examples
-        examples_nodejs = common.find_device_examples(device, '^Example.*\.js')
-        examples_browser = common.find_device_examples(device, '^Example.*\.html')
-        dest_nodejs = os.path.join('/tmp/generator/npm/nodejs/examples/', device.get_category(), device.get_camel_case_name())
-        dest_browser = os.path.join('/tmp/generator/npm/browser/examples/', device.get_category(), device.get_camel_case_name())
+        tmp_nodejs_examples_device = os.path.join(self.tmp_nodejs_examples_dir,
+                                                  device.get_category(),
+                                                  device.get_camel_case_name())
+        tmp_browser_examples_device = os.path.join(self.tmp_browser_examples_dir,
+                                                   device.get_category(),
+                                                   device.get_camel_case_name())
 
-        if not os.path.exists(dest_nodejs):
-            os.makedirs(dest_nodejs)
-        if not os.path.exists(dest_browser):
-            os.makedirs(dest_browser)
+        if not os.path.exists(tmp_nodejs_examples_device):
+            os.makedirs(tmp_nodejs_examples_device)
 
-        for example in examples_nodejs:
-            shutil.copy(example[1], dest_nodejs)
+        if not os.path.exists(tmp_browser_examples_device):
+            os.makedirs(tmp_browser_examples_device)
 
-        for example in examples_browser:
-            shutil.copy(example[1], dest_browser)
+        for example in common.find_device_examples(device, '^Example.*\.js'):
+            shutil.copy(example[1], tmp_nodejs_examples_device)
+
+        for example in common.find_device_examples(device, '^Example.*\.html'):
+            shutil.copy(example[1], tmp_browser_examples_device)
 
     def finish(self):
-        root = self.get_bindings_root_directory()
-        version = common.get_changelog_version(root)
-        dot_version = "{0}.{1}.{2}".format(*version)
+        root_dir = self.get_bindings_root_directory()
 
-        # Copy IPConnection examples
-        examples_nodejs = common.find_examples(root, '^Example.*\.js')
-        examples_browser = common.find_examples(root, '^Example.*\.html')
-        for example in examples_nodejs:
-            shutil.copy(example[1], '/tmp/generator/npm/nodejs/examples')
-        for example in examples_browser:
-            shutil.copy(example[1], '/tmp/generator/npm/browser/examples')
+        # Copy IP Connection examples
+        for example in common.find_examples(root_dir, '^Example.*\.js'):
+            shutil.copy(example[1], self.tmp_nodejs_examples_dir)
+
+        for example in common.find_examples(root_dir, '^Example.*\.html'):
+            shutil.copy(example[1], self.tmp_browser_examples_dir)
 
         # Copy bindings and readme
         for filename in released_files:
-            if filename == os.path.join(root, 'bindings', 'TinkerforgeNPM.js'):
-                shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/npm/nodejs/npm_pkg_dir/Tinkerforge.js')
-            elif filename == os.path.join(root, 'bindings', 'BrowserAPI.js'):
-                shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/npm/nodejs/source/Tinkerforge/')
-            elif filename == os.path.join(root, 'bindings', 'TinkerforgeSource.js'):
-                shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/npm/nodejs/source/Tinkerforge.js')
+            if filename == 'TinkerforgeNPM.js':
+                shutil.copy(os.path.join(root_dir, 'bindings', filename), os.path.join(self.tmp_nodejs_package_dir, 'Tinkerforge.js'))
+            elif filename == 'BrowserAPI.js':
+                shutil.copy(os.path.join(root_dir, 'bindings', filename), self.tmp_nodejs_source_tinkerforge_dir)
+            elif filename == 'TinkerforgeSource.js':
+                shutil.copy(os.path.join(root_dir, 'bindings', filename), os.path.join(self.tmp_nodejs_source_dir, 'Tinkerforge.js'))
             else:
-                shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/npm/nodejs/source/Tinkerforge/')
-                shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/npm/nodejs/npm_pkg_dir/lib/')
+                shutil.copy(os.path.join(root_dir, 'bindings', filename), self.tmp_nodejs_source_tinkerforge_dir)
+                shutil.copy(os.path.join(root_dir, 'bindings', filename), self.tmp_nodejs_package_lib_dir)
 
-        # Replace <TF_API_VERSION> in package.json file
-        common.replace_in_file(os.path.join(root, 'package.json.template'), '/tmp/generator/npm/nodejs/npm_pkg_dir/package.json', '<TF_API_VERSION>', dot_version)
+        # Make package.json
+        version = common.get_changelog_version(root_dir)
 
-        shutil.copy(os.path.join(root, 'README.md'), '/tmp/generator/npm/nodejs/npm_pkg_dir')
-        shutil.copy(os.path.join(root, 'LICENSE'), '/tmp/generator/npm/nodejs/npm_pkg_dir')
-        shutil.copy(os.path.join(root, 'IPConnection.js'), '/tmp/generator/npm/nodejs/npm_pkg_dir/lib')
-        shutil.copy(os.path.join(root, 'Device.js'), '/tmp/generator/npm/nodejs/npm_pkg_dir/lib')
+        common.specialize_template(os.path.join(root_dir, 'package.json.template'),
+                                   os.path.join(self.tmp_nodejs_package_dir, 'package.json'),
+                                   {'<<VERSION>>': '.'.join(version)})
 
-        shutil.copy(os.path.join(root, 'IPConnection.js'), '/tmp/generator/npm/nodejs/source/Tinkerforge')
-        shutil.copy(os.path.join(root, 'Device.js'), '/tmp/generator/npm/nodejs/source/Tinkerforge')
-        shutil.copy(os.path.join(root, 'changelog.txt'), '/tmp/generator/npm')
-        shutil.copy(os.path.join(root, 'readme.txt'), '/tmp/generator/npm/readme.txt')
+        shutil.copy(os.path.join(root_dir, 'IPConnection.js'), self.tmp_nodejs_package_lib_dir)
+        shutil.copy(os.path.join(root_dir, 'Device.js'),       self.tmp_nodejs_package_lib_dir)
+        shutil.copy(os.path.join(root_dir, 'LICENSE'),         self.tmp_nodejs_package_dir)
+        shutil.copy(os.path.join(root_dir, 'README.md'),       self.tmp_nodejs_package_dir)
+
+        shutil.copy(os.path.join(root_dir, 'IPConnection.js'), self.tmp_nodejs_source_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'Device.js'),       self.tmp_nodejs_source_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'changelog.txt'),   self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'readme.txt'),      self.tmp_dir)
 
         # Copy browser specific files
-        shutil.copy(os.path.join(root, 'es5-shim.js'), '/tmp/generator/npm/nodejs/source/Tinkerforge')
-        shutil.copy(os.path.join(root, 'es5-sham.js'), '/tmp/generator/npm/nodejs/source/Tinkerforge')
+        shutil.copy(os.path.join(root_dir, 'es5-shim.js'),     self.tmp_nodejs_source_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'es5-sham.js'),     self.tmp_nodejs_source_tinkerforge_dir)
 
         # Make Tinkerforge.js for browser with browserify
-        with common.ChangedDirectory('/tmp/generator/npm/nodejs/source/Tinkerforge/'):
-            browserify_args = ['browserify']
-            browserify_args.extend(sorted(os.listdir('/tmp/generator/npm/nodejs/source/Tinkerforge/')))
-            browserify_args.append('-o')
-            browserify_args.append('/tmp/generator/npm/browser/source/Tinkerforge.js')
+        with common.ChangedDirectory(self.tmp_nodejs_source_tinkerforge_dir):
+            args = ['browserify']
+            args.extend(sorted(os.listdir(self.tmp_nodejs_source_tinkerforge_dir)))
+            args.append('-o')
+            args.append(os.path.join(self.tmp_browser_source_dir, 'Tinkerforge.js'))
 
-            if subprocess.call(browserify_args) != 0:
-                raise Exception("Command '{0}' failed".format(' '.join(browserify_args)))
+            if subprocess.call(args) != 0:
+                raise Exception("Command '{0}' failed".format(' '.join(args)))
 
         # Remove browser specific files
-        os.remove('/tmp/generator/npm/nodejs/source/Tinkerforge/BrowserAPI.js')
-        os.remove('/tmp/generator/npm/nodejs/source/Tinkerforge/es5-shim.js')
-        os.remove('/tmp/generator/npm/nodejs/source/Tinkerforge/es5-sham.js')
+        os.remove(os.path.join(self.tmp_nodejs_source_tinkerforge_dir, 'BrowserAPI.js'))
+        os.remove(os.path.join(self.tmp_nodejs_source_tinkerforge_dir, 'es5-shim.js'))
+        os.remove(os.path.join(self.tmp_nodejs_source_tinkerforge_dir, 'es5-sham.js'))
 
         # Generate the NPM package and put it on the root of ZIP archive
-        with common.ChangedDirectory('/tmp/generator/npm/nodejs/npm_pkg_dir'):
+        with common.ChangedDirectory(self.tmp_nodejs_package_dir):
             if subprocess.call('npm pack', shell=True) != 0:
-                raise Exception("Command npm pack failed")
+                raise Exception("Command 'npm pack' failed")
 
-        shutil.copy('/tmp/generator/npm/nodejs/npm_pkg_dir/tinkerforge-{0}.tgz'.format(dot_version),
-                    '/tmp/generator/npm/nodejs/tinkerforge.tgz')
-        shutil.copy('/tmp/generator/npm/nodejs/npm_pkg_dir/tinkerforge-{0}.tgz'.format(dot_version),
-                    os.path.join(root, 'tinkerforge-{0}.tgz'.format(dot_version)))
+        package_name = 'tinkerforge-{0}.{1}.{2}.tgz'.format(*version)
 
-        # Remove directory npm_pkg_dir
-        shutil.rmtree('/tmp/generator/npm/nodejs/npm_pkg_dir/')
+        shutil.copy(os.path.join(self.tmp_nodejs_package_dir, package_name),
+                    os.path.join(self.tmp_nodejs_dir, 'tinkerforge.tgz'))
+        shutil.copy(os.path.join(self.tmp_nodejs_package_dir, package_name),
+                    os.path.join(root_dir, package_name))
+
+        # Remove package directory
+        shutil.rmtree(self.tmp_nodejs_package_dir)
 
         # Make zip
-        version = common.get_changelog_version(root)
-        common.make_zip(self.get_bindings_name(), '/tmp/generator/npm', root, version)
+        version = common.get_changelog_version(root_dir)
+
+        common.make_zip(self.get_bindings_name(), self.tmp_dir, root_dir, version)
 
         # copy Tinkerforge.js to bindings root dir so copy_all.py can pick it up
-        shutil.copy('/tmp/generator/npm/browser/source/Tinkerforge.js', root)
+        shutil.copy(os.path.join(self.tmp_browser_source_dir, 'Tinkerforge.js'), root_dir)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', JavaScriptZipGenerator)

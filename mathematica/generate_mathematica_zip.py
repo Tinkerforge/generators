@@ -34,73 +34,68 @@ import common
 from mathematica_released_files import released_files
 
 class MathematicaZipGenerator(common.Generator):
+    tmp_dir                    = '/tmp/generator/mathematica'
+    tmp_source_tinkerforge_dir = os.path.join(tmp_dir, 'source', 'Tinkerforge')
+    tmp_examples_dir           = os.path.join(tmp_dir, 'examples')
+
     def get_bindings_name(self):
         return 'mathematica'
 
     def prepare(self):
-        common.recreate_directory('/tmp/generator')
-        os.makedirs('/tmp/generator/dll/source/Tinkerforge')
-        os.makedirs('/tmp/generator/dll/examples')
+        common.recreate_directory(self.tmp_dir)
+        os.makedirs(self.tmp_source_tinkerforge_dir)
+        os.makedirs(self.tmp_examples_dir)
 
     def generate(self, device):
         if not device.is_released():
             return
 
         # Copy device examples
-        examples = common.find_device_examples(device, '^Example.*\.nb$')
-        dest = os.path.join('/tmp/generator/dll/examples', device.get_category(), device.get_camel_case_name())
+        tmp_examples_device_dir = os.path.join(self.tmp_examples_dir,
+                                               device.get_category(),
+                                               device.get_camel_case_name())
 
-        if not os.path.exists(dest):
-            os.makedirs(dest)
+        if not os.path.exists(tmp_examples_device_dir):
+            os.makedirs(tmp_examples_device_dir)
 
-        for example in examples:
-            shutil.copy(example[1], dest)
+        for example in common.find_device_examples(device, '^Example.*\.nb$'):
+            shutil.copy(example[1], tmp_examples_device_dir)
 
     def finish(self):
-        root = self.get_bindings_root_directory()
+        root_dir = self.get_bindings_root_directory()
 
-        # Copy IPConnection examples
-        examples = common.find_examples(root, '^Example.*\.nb$')
-        for example in examples:
-            shutil.copy(example[1], '/tmp/generator/dll/examples')
+        # Copy IP Connection examples
+        for example in common.find_examples(root_dir, '^Example.*\.nb$'):
+            shutil.copy(example[1], self.tmp_examples_dir)
 
         # Copy bindings and readme
         for filename in released_files:
-            shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/dll/source/Tinkerforge')
+            shutil.copy(os.path.join(root_dir, 'bindings', filename), self.tmp_source_tinkerforge_dir)
 
-        shutil.copy(os.path.join(root, '..', 'csharp', 'IPConnection.cs'), '/tmp/generator/dll/source/Tinkerforge')
-        shutil.copy(os.path.join(root, 'changelog.txt'), '/tmp/generator/dll')
-        shutil.copy(os.path.join(root, 'readme.txt'), '/tmp/generator/dll')
+        shutil.copy(os.path.join(root_dir, '..', 'csharp', 'IPConnection.cs'), self.tmp_source_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'changelog.txt'),                   self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'readme.txt'),                      self.tmp_dir)
 
-        # Write AssemblyInfo
-        version = common.get_changelog_version(root)
-        file('/tmp/generator/dll/source/Tinkerforge/AssemblyInfo.cs', 'wb').write("""
-using System.Reflection;
-using System.Runtime.CompilerServices;
+        # Make AssemblyInfo.cs
+        version = common.get_changelog_version(root_dir)
 
-[assembly: AssemblyTitle("Mathematica API Bindings")]
-[assembly: AssemblyDescription("Mathematica API Bindings for Tinkerforge Bricks and Bricklets")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Tinkerforge GmbH")]
-[assembly: AssemblyProduct("Mathematica API Bindings")]
-[assembly: AssemblyCopyright("Tinkerforge GmbH 2011-2014")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-[assembly: AssemblyVersion("{0}.{1}.{2}.0")]
-""".format(*version))
+        common.specialize_template(os.path.join(root_dir, 'AssemblyInfo.cs.template'),
+                                   os.path.join(self.tmp_source_tinkerforge_dir, 'AssemblyInfo.cs'),
+                                   {'<<VERSION>>': '.'.join(version)})
 
         # Make dll
-        with common.ChangedDirectory('/tmp/generator'):
+        with common.ChangedDirectory(self.tmp_dir):
             args = ['/usr/bin/gmcs',
                     '/optimize',
                     '/target:library',
-                    '/out:/tmp/generator/dll/Tinkerforge.dll',
-                    '/tmp/generator/dll/source/Tinkerforge/*.cs']
+                    '/out:' + os.path.join(self.tmp_dir, 'Tinkerforge.dll'),
+                    os.path.join(self.tmp_source_tinkerforge_dir, '*.cs')]
+
             if subprocess.call(args) != 0:
                 raise Exception("Command '{0}' failed".format(' '.join(args)))
 
         # Make zip
-        common.make_zip(self.get_bindings_name(), '/tmp/generator/dll', root, version)
+        common.make_zip(self.get_bindings_name(), self.tmp_dir, root_dir, version)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', MathematicaZipGenerator)

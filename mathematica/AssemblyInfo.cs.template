@@ -1,0 +1,12 @@
+using System.Reflection;
+using System.Runtime.CompilerServices;
+
+[assembly: AssemblyTitle("Mathematica API Bindings")]
+[assembly: AssemblyDescription("Mathematica API Bindings for Tinkerforge Bricks and Bricklets")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("Tinkerforge GmbH")]
+[assembly: AssemblyProduct("Mathematica API Bindings")]
+[assembly: AssemblyCopyright("Tinkerforge GmbH 2011-2014")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+[assembly: AssemblyVersion("<<VERSION>>.0")]

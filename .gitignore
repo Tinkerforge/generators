@@ -6,10 +6,13 @@
 */bindings_matlab/
 */bindings_octave/
 */doc/
+*/*_package/
 device_identifiers.py
+csharp/tinkerforge.*.nupkg
 delphi/*.o
 delphi/*.ppu
-java/maven-tmp/
+javascript/Tinkerforge.js
+javascript/tinkerforge-*.tgz
 perl/Tinkerforge-*.tar.gz
 ruby/tinkerforge-*.gem
 shell/tinkerforge

@@ -2,7 +2,7 @@ package Tinkerforge;
 
 # setting the module version
 use vars '$VERSION';
-our $VERSION = '<TF_API_VERSION>';
+our $VERSION = '<<VERSION>>';
 
 =pod
 
@@ -14,7 +14,7 @@ Tinkerforge - Official Perl support for all Tinkerforge Bricks and Bricklets
 
 =head1 VERSION
 
-Version <TF_API_VERSION>
+Version <<VERSION>>
 
 =head1 ABSTRACT
 

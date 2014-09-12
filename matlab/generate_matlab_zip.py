@@ -4,6 +4,7 @@
 """
 MATLAB ZIP Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_matlab_zip.py: Generator for MATLAB ZIP
 
@@ -34,17 +35,27 @@ import common
 from matlab_released_files import released_files
 
 class MATLABZipGenerator(common.Generator):
+    tmp_dir                               = '/tmp/generator/matlab'
+    tmp_flavor_dir                        = {'matlab': os.path.join(tmp_dir, 'matlab'),
+                                             'octave': os.path.join(tmp_dir, 'octave')}
+    tmp_flavor_source_dir                 = {'matlab': os.path.join(tmp_flavor_dir['matlab'], 'source'),
+                                             'octave': os.path.join(tmp_flavor_dir['octave'], 'source')}
+    tmp_flavor_source_com_tinkerforge_dir = {'matlab': os.path.join(tmp_flavor_source_dir['matlab'], 'com', 'tinkerforge'),
+                                             'octave': os.path.join(tmp_flavor_source_dir['octave'], 'com', 'tinkerforge')}
+    tmp_flavor_examples_dir               = {'matlab': os.path.join(tmp_flavor_dir['matlab'], 'examples'),
+                                             'octave': os.path.join(tmp_flavor_dir['octave'], 'examples')}
+
     def get_bindings_name(self):
         return 'matlab'
 
     def prepare(self):
-        common.recreate_directory('/tmp/generator')
+        common.recreate_directory(self.tmp_dir)
 
-        os.makedirs('/tmp/generator/jar/matlab/source/com/tinkerforge')
-        os.makedirs('/tmp/generator/jar/matlab/examples')
-
-        os.makedirs('/tmp/generator/jar/octave/source/com/tinkerforge')
-        os.makedirs('/tmp/generator/jar/octave/examples')
+        for flavor in ['matlab', 'octave']:
+            os.makedirs(self.tmp_flavor_dir[flavor])
+            os.makedirs(self.tmp_flavor_source_dir[flavor])
+            os.makedirs(self.tmp_flavor_source_com_tinkerforge_dir[flavor])
+            os.makedirs(self.tmp_flavor_examples_dir[flavor])
 
     def generate(self, device):
         if not device.is_released():
@@ -52,87 +63,90 @@ class MATLABZipGenerator(common.Generator):
 
         # Copy device examples
         for flavor in ['matlab', 'octave']:
-            examples = common.find_device_examples(device, '^{0}_example_.*\.m$'.format(flavor))
-            dest = os.path.join('/tmp/generator/jar/{0}/examples'.format(flavor), device.get_category().lower(), device.get_underscore_name())
+            tmp_examples_device_dir = os.path.join(self.tmp_flavor_examples_dir[flavor],
+                                                   device.get_category().lower(),
+                                                   device.get_underscore_name())
 
-            if not os.path.exists(dest):
-                os.makedirs(dest)
+            if not os.path.exists(tmp_examples_device_dir):
+                os.makedirs(tmp_examples_device_dir)
 
-            for example in examples:
-                shutil.copy(example[1], dest)
+            for example in common.find_device_examples(device, '^{0}_example_.*\.m$'.format(flavor)):
+                shutil.copy(example[1], tmp_examples_device_dir)
 
     def finish(self):
-        octave_jar_path = '-classpath {0} '.format(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'octave.jar'))
-        root = self.get_bindings_root_directory()
+        root_dir = self.get_bindings_root_directory()
 
         for flavor in ['matlab', 'octave']:
-            jar_root = '/tmp/generator/jar/' + flavor
+            tmp_dir = self.tmp_flavor_dir[flavor]
+            tmp_source_dir = self.tmp_flavor_source_dir[flavor]
+            tmp_source_com_tinkerforge_dir = self.tmp_flavor_source_com_tinkerforge_dir[flavor]
+            tmp_examples_dir = self.tmp_flavor_examples_dir[flavor]
 
-            # Copy IPConnection examples
-            examples = common.find_examples(root, '^example_.*\.m$')
-            for example in examples:
-                shutil.copy(example[1], jar_root + '/examples')
+            # Copy IP Connection examples
+            for example in common.find_examples(root_dir, '^example_.*\.m$'):
+                shutil.copy(example[1], tmp_examples_dir)
 
             # Copy bindings and readme
             for filename in released_files:
-                shutil.copy(os.path.join(root, 'bindings_' + flavor, filename), jar_root + '/source/com/tinkerforge')
+                shutil.copy(os.path.join(root_dir, 'bindings_' + flavor, filename), tmp_source_com_tinkerforge_dir)
 
-            shutil.copy(os.path.join(root, '..', 'java', 'BrickDaemon.java'), jar_root + '/source/com/tinkerforge')
-            shutil.copy(os.path.join(root, '..', 'java', 'DeviceBase.java'), jar_root + '/source/com/tinkerforge')
-            shutil.copy(os.path.join(root, 'Device_{0}.java'.format(flavor)), jar_root + '/source/com/tinkerforge/Device.java')
-            shutil.copy(os.path.join(root, '..', 'java', 'DeviceListener.java'), jar_root + '/source/com/tinkerforge')
-            shutil.copy(os.path.join(root, 'IPConnection_{0}.java'.format(flavor)), jar_root + '/source/com/tinkerforge/IPConnection.java')
-            shutil.copy(os.path.join(root, '..', 'java', 'IPConnectionBase.java'), jar_root + '/source/com/tinkerforge')
-            shutil.copy(os.path.join(root, '..', 'java', 'TinkerforgeException.java'), jar_root + '/source/com/tinkerforge')
-            shutil.copy(os.path.join(root, '..', 'java', 'TimeoutException.java'), jar_root + '/source/com/tinkerforge')
-            shutil.copy(os.path.join(root, '..', 'java', 'AlreadyConnectedException.java'), jar_root + '/source/com/tinkerforge')
-            shutil.copy(os.path.join(root, '..', 'java', 'NotConnectedException.java'), jar_root + '/source/com/tinkerforge')
-            shutil.copy(os.path.join(root, '..', 'java', 'CryptoException.java'), jar_root + '/source/com/tinkerforge')
-            shutil.copy(os.path.join(root, '..', 'java', 'TinkerforgeListener.java'), jar_root + '/source/com/tinkerforge')
-            shutil.copy(os.path.join(root, 'changelog.txt'), '/tmp/generator/jar/')
-            shutil.copy(os.path.join(root, 'readme.txt'), '/tmp/generator/jar/')
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'BrickDaemon.java'),               tmp_source_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'DeviceBase.java'),                tmp_source_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'Device_{0}.java'.format(flavor)),               os.path.join(tmp_source_com_tinkerforge_dir, 'Device.java'))
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'DeviceListener.java'),            tmp_source_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'IPConnection_{0}.java'.format(flavor)),         os.path.join(tmp_source_com_tinkerforge_dir, 'IPConnection.java'))
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'IPConnectionBase.java'),          tmp_source_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'TinkerforgeException.java'),      tmp_source_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'TimeoutException.java'),          tmp_source_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'AlreadyConnectedException.java'), tmp_source_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'NotConnectedException.java'),     tmp_source_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'CryptoException.java'),           tmp_source_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'java', 'TinkerforgeListener.java'),       tmp_source_com_tinkerforge_dir)
+            shutil.copy(os.path.join(root_dir, 'changelog.txt'),                                self.tmp_dir)
+            shutil.copy(os.path.join(root_dir, 'readme.txt'),                                   self.tmp_dir)
 
-            # Make Manifest
-            version = common.get_changelog_version(root)
-            file('/tmp/generator/manifest.txt', 'wb').write('Bindings-Version: {1}.{2}.{3}\nBindings-Flavor: {0}\n'.format(flavor.upper(), *version))
+            # Make manifest
+            version = common.get_changelog_version(root_dir)
+
+            file(os.path.join(tmp_dir, 'manifest.txt'), 'wb').write('Bindings-Version: {1}.{2}.{3}\nBindings-Flavor: {0}\n'.format(flavor.upper(), *version))
 
             # Make jar
-            with common.ChangedDirectory('/tmp/generator'):
+            with common.ChangedDirectory(tmp_dir):
                 if flavor == 'octave':
-                    args = ['/usr/bin/javac ' +
-                            octave_jar_path +
-                            '-Xlint ' +
-                            '-source 1.5 ' +
-                            '-target 1.5 ' +
-                            jar_root + '/source/com/tinkerforge/*.java']
+                    classpath = '-classpath {0} '.format(os.path.join(root_dir, 'octave.jar'))
                 else:
-                    args = ['/usr/bin/javac ' +
-                            '-Xlint ' +
-                            '-source 1.5 ' +
-                            '-target 1.5 ' +
-                            jar_root + '/source/com/tinkerforge/*.java']
+                    classpath = ''
+
+                args = ['/usr/bin/javac ' +
+                        classpath +
+                        '-Xlint ' +
+                        '-source 1.5 ' +
+                        '-target 1.5 ' +
+                        os.path.join(tmp_source_com_tinkerforge_dir, '*.java')]
+
                 if subprocess.call(args, shell=True) != 0:
                     raise Exception("Command '{0}' failed".format(' '.join(args)))
 
-            with common.ChangedDirectory(jar_root + '/source'):
+            with common.ChangedDirectory(tmp_source_dir):
                 args = ['/usr/bin/jar ' +
                         'cfm ' +
-                        jar_root + '/Tinkerforge.jar ' +
-                        '/tmp/generator/manifest.txt ' +
+                        os.path.join(tmp_dir, 'Tinkerforge.jar') + ' ' +
+                        os.path.join(tmp_dir, 'manifest.txt') + ' ' +
                         'com']
+
                 if subprocess.call(args, shell=True) != 0:
                     raise Exception("Command '{0}' failed".format(' '.join(args)))
 
-            # Remove class
-            for f in os.listdir(jar_root + '/source/com/tinkerforge/'):
-                if f.endswith('.class'):
-                    os.remove(jar_root + '/source/com/tinkerforge/' + f)
+            # Remove manifest
+            os.remove(os.path.join(tmp_dir, 'manifest.txt'))
 
-            # FIXME: remove this
-            shutil.copy(jar_root + '/Tinkerforge.jar', root + '/Tinkerforge_' + flavor + '.jar')
+            # Remove classes
+            for f in os.listdir(tmp_source_com_tinkerforge_dir):
+                if f.endswith('.class'):
+                    os.remove(os.path.join(tmp_source_com_tinkerforge_dir, f))
 
         # Make zip
-        common.make_zip(self.get_bindings_name(), '/tmp/generator/jar', root, version)
+        common.make_zip(self.get_bindings_name(), self.tmp_dir, root_dir, version)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', MATLABZipGenerator)

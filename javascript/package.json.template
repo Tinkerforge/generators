@@ -1,7 +1,7 @@
 {
   "name": "tinkerforge",
   "preferGlobal": true,
-  "version": "<TF_API_VERSION>",
+  "version": "<<VERSION>>",
   "author": "Ishraq Ibne Ashraf <ishraq@tinkerforge.com>",
   "description": "JavaScript API Bindings for Tinkerforge Bricks and Bricklets",
   "contributors": [{}],

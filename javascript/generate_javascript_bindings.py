@@ -208,9 +208,9 @@ class JavaScriptBindingsGenerator(common.BindingsGenerator):
         self.npm_main_file = open(npm_main_filename, 'wb')
         self.source_main_file = open(source_main_filename, 'wb')
 
-        self.released_files.append(browser_api_filename)
-        self.released_files.append(npm_main_filename)
-        self.released_files.append(source_main_filename)
+        self.released_files.append('BrowserAPI.js')
+        self.released_files.append('TinkerforgeNPM.js')
+        self.released_files.append('TinkerforgeSource.js')
 
         self.browser_api_file.write("""function Tinkerforge() {
 \tthis.IPConnection = require('./IPConnection');

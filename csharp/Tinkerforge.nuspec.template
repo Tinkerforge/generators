@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Tinkerforge</id>
+    <version>{{VERSION}}</version>
+    <title>Tinkerforge C# API Bindings</title>
+    <authors>Tinkerforge GmbH</authors>
+    <owners>Tinkerforge GmbH</owners>
+    <licenseUrl>http://creativecommons.org/publicdomain/zero/1.0/</licenseUrl>
+    <projectUrl>http://www.tinkerforge.com</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/Tinkerforge/generators/master/csharp/package.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>This .NET library provides the C# API bindings for
+      Tinkerforge Bricks and Bricklets.</description>
+    <summary>Tinkerforge is an open source hardware platform of stackable
+      microcontroller building blocks (Bricks) that can control different
+      modules (Bricklets). The hardware can be controlled by external
+      programs written in different programming languages including C#.</summary>
+    <copyright>Tinkerforge GmbH 2011-2014</copyright>
+    <tags>Tinkerforge Open-Source Hardware Brick Bricklet</tags>
+  </metadata>
+  <files>
+    <file src="unzipped/Tinkerforge.dll" target="lib/Net40" />
+    <file src="unzipped/Tinkerforge.xml" target="lib/Net40" />
+  </files>
+</package>

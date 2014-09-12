@@ -609,15 +609,17 @@ def recreate_directory(directory):
         shutil.rmtree(directory)
     os.makedirs(directory)
 
-def replace_in_file(source_filename, destination_filename, search, replace):
-    source_file = open(source_filename, 'rb')
+def specialize_template(template_filename, destination_filename, replacements):
+    template_file = open(template_filename, 'rb')
     lines = []
 
-    for line in source_file.readlines():
-        line = line.replace(search, replace)
+    for line in template_file.readlines():
+        for key in replacements:
+            line = line.replace(key, replacements[key])
+
         lines.append(line)
 
-    source_file.close()
+    template_file.close()
 
     destination_file = open(destination_filename, 'wb')
     destination_file.writelines(lines)

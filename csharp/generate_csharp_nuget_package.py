@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-Java Maven Package Generator
+C# NuGet Package Generator
 Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
-generate_java_maven_package.py: Generator for Java Maven Package
+generate_csharp_nuget_package.py: Generator for C# NuGet Package
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -32,42 +32,48 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 def generate(bindings_root_directory):
-    tmp_dir               = os.path.join(bindings_root_directory, 'maven_package')
-    tmp_src_main_java_dir = os.path.join(tmp_dir, 'src', 'main', 'java')
-    tmp_unzipped_dir      = os.path.join(tmp_dir, 'unzipped')
+    tmp_dir          = os.path.join(bindings_root_directory, 'nuget_package')
+    tmp_unzipped_dir = os.path.join(tmp_dir, 'unzipped')
 
     # Make directories
     common.recreate_directory(tmp_dir)
-    os.makedirs(tmp_src_main_java_dir)
 
     # Unzip
     version = common.get_changelog_version(bindings_root_directory)
     args = ['/usr/bin/unzip',
             '-q',
-            os.path.join(bindings_root_directory, 'tinkerforge_java_bindings_{0}_{1}_{2}.zip'.format(*version)),
+            os.path.join(bindings_root_directory, 'tinkerforge_csharp_bindings_{0}_{1}_{2}.zip'.format(*version)),
             '-d',
             tmp_unzipped_dir]
 
     if subprocess.call(args) != 0:
         raise Exception("Command '{0}' failed".format(' '.join(args)))
 
-    # Copy source
-    shutil.copytree(os.path.join(tmp_unzipped_dir, 'source', 'com'),
-                    os.path.join(tmp_src_main_java_dir, 'com'))
+    # Download nuget.exe
+    with common.ChangedDirectory(tmp_dir):
+        args = ['wget',
+                'http://www.nuget.org/nuget.exe']
 
-    # Make pom.xml
-    common.specialize_template(os.path.join(bindings_root_directory, 'pom.xml.template'),
-                               os.path.join(tmp_dir, 'pom.xml'),
+        if subprocess.call(args) != 0:
+            raise Exception("Command '{0}' failed".format(' '.join(args)))
+
+    # Make Tinkerforge.nuspec
+    common.specialize_template(os.path.join(bindings_root_directory, 'Tinkerforge.nuspec.template'),
+                               os.path.join(tmp_dir, 'Tinkerforge.nuspec'),
                                {'{{VERSION}}': '.'.join(version)})
 
     # Make package
     with common.ChangedDirectory(tmp_dir):
-        args = ['/usr/bin/mvn',
-                'clean',
-                'verify']
+        args = ['mono',
+                os.path.join(tmp_dir, 'nuget.exe'),
+                'pack',
+                os.path.join(tmp_dir, 'Tinkerforge.nuspec')]
 
         if subprocess.call(args) != 0:
             raise Exception("Command '{0}' failed".format(' '.join(args)))
+
+    shutil.move(os.path.join(tmp_dir, 'Tinkerforge.{0}.{1}.{2}.nupkg'.format(*version)),
+                os.path.join(bindings_root_directory, 'tinkerforge.{0}.{1}.{2}.nupkg'.format(*version)))
 
 if __name__ == "__main__":
     generate(os.getcwd())

@@ -3,7 +3,7 @@
 
 """
 PHP ZIP Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_php_zip.py: Generator for PHP ZIP
@@ -36,106 +36,78 @@ import php_common
 from php_released_files import released_files
 
 class PHPZipGenerator(common.Generator):
+    tmp_dir                    = '/tmp/generator/php'
+    tmp_source_dir             = os.path.join(tmp_dir, 'source')
+    tmp_source_tinkerforge_dir = os.path.join(tmp_source_dir, 'Tinkerforge')
+    tmp_examples_dir           = os.path.join(tmp_dir, 'examples')
+
     def get_bindings_name(self):
         return 'php'
 
     def prepare(self):
-        common.recreate_directory('/tmp/generator')
-        os.makedirs('/tmp/generator/pear/source/Tinkerforge')
-        os.makedirs('/tmp/generator/pear/examples')
+        common.recreate_directory(self.tmp_dir)
+        os.makedirs(self.tmp_source_dir)
+        os.makedirs(self.tmp_source_tinkerforge_dir)
+        os.makedirs(self.tmp_examples_dir)
 
     def generate(self, device):
         if not device.is_released():
             return
 
         # Copy device examples
-        examples = common.find_device_examples(device, '^Example.*\.php$')
-        dest = os.path.join('/tmp/generator/pear/examples', device.get_category(), device.get_camel_case_name())
+        tmp_examples_device_dir = os.path.join(self.tmp_examples_dir,
+                                               device.get_category(),
+                                               device.get_camel_case_name())
 
-        if not os.path.exists(dest):
-            os.makedirs(dest)
+        if not os.path.exists(tmp_examples_device_dir):
+            os.makedirs(tmp_examples_device_dir)
 
-        for example in examples:
-            shutil.copy(example[1], dest)
+        for example in common.find_device_examples(device, '^Example.*\.php$'):
+            shutil.copy(example[1], tmp_examples_device_dir)
 
     def finish(self):
-        root = self.get_bindings_root_directory()
+        root_dir = self.get_bindings_root_directory()
 
-        # Copy IPConnection examples
-        examples = common.find_examples(root, '^Example.*\.php$')
-        for example in examples:
-            shutil.copy(example[1], '/tmp/generator/pear/examples')
+        # Copy IP Connection examples
+        for example in common.find_examples(root_dir, '^Example.*\.php$'):
+            shutil.copy(example[1], self.tmp_examples_dir)
 
         # Copy bindings and readme
         package_files = ['<file name="Tinkerforge/IPConnection.php" role="php" />']
         for filename in released_files:
-            shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/pear/source/Tinkerforge')
+            shutil.copy(os.path.join(root_dir, 'bindings', filename), self.tmp_source_tinkerforge_dir)
             package_files.append('<file name="Tinkerforge/{0}" role="php" />'.format(os.path.basename(filename)))
 
-        shutil.copy(os.path.join(root, 'IPConnection.php'), '/tmp/generator/pear/source/Tinkerforge')
-        shutil.copy(os.path.join(root, 'changelog.txt'), '/tmp/generator/pear')
-        shutil.copy(os.path.join(root, 'readme.txt'), '/tmp/generator/pear')
+        shutil.copy(os.path.join(root_dir, 'IPConnection.php'), self.tmp_source_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'changelog.txt'),    self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'readme.txt'),       self.tmp_dir)
 
-        # Write package.xml
-        version = common.get_changelog_version(root)
+        # Make package.xml
+        version = common.get_changelog_version(root_dir)
         date = datetime.datetime.now().strftime("%Y-%m-%d")
-        file('/tmp/generator/pear/source/package.xml', 'wb').write("""<?xml version="1.0" encoding="UTF-8"?>
-<package packagerversion="1.9.0" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0">
- <name>Tinkerforge</name>
- <uri>http://download.tinkerforge.com/bindings/php/pear/Tinkerforge-{2}.{3}.{4}</uri>
- <summary>PHP API Bindings for Tinkerforge Bricks and Bricklets</summary>
- <description>no description</description>
- <lead>
-  <name>Matthias Bolte</name>
-  <user>matthias</user>
-  <email>matthias@tinkerforge.com</email>
-  <active>yes</active>
- </lead>
- <date>{0}</date>
- <version>
-  <release>{2}.{3}.{4}</release>
-  <api>{2}.{3}.{4}</api>
- </version>
- <stability>
-  <release>stable</release>
-  <api>stable</api>
- </stability>
- <license>Public Domain</license>
- <notes>no notes</notes>
- <contents>
-  <dir name="Tinkerforge">
-   {1}
-  </dir>
- </contents>
- <dependencies>
-  <required>
-   <php>
-    <min>5.3.0</min>
-   </php>
-   <pearinstaller>
-    <min>1.9.0</min>
-   </pearinstaller>
-  </required>
- </dependencies>
- <phprelease />
-</package>
-""".format(date, '\n    '.join(package_files), *version))
+
+        common.specialize_template(os.path.join(root_dir, 'package.xml.template'),
+                                   os.path.join(self.tmp_source_dir, 'package.xml'),
+                                   {'{{VERSION}}': '.'.join(version),
+                                    '{{DATE}}': date,
+                                    '{{FILES}}': '\n    '.join(package_files)})
 
         # Make PEAR package
-        with common.ChangedDirectory('/tmp/generator/pear/source'):
+        with common.ChangedDirectory(self.tmp_source_dir):
             args = ['/usr/bin/pear',
                     'package',
                     'package.xml']
+
             if subprocess.call(args) != 0:
                 raise Exception("Command '{0}' failed".format(' '.join(args)))
 
         # Remove build stuff
-        shutil.move('/tmp/generator/pear/source/Tinkerforge-{0}.{1}.{2}.tgz'.format(*version),
-                    '/tmp/generator/pear/Tinkerforge.tgz')
-        os.remove('/tmp/generator/pear/source/package.xml')
+        shutil.move(os.path.join(self.tmp_source_dir, 'Tinkerforge-{0}.{1}.{2}.tgz'.format(*version)),
+                    os.path.join(self.tmp_dir, 'Tinkerforge.tgz'))
+        os.remove(os.path.join(self.tmp_source_dir, 'package.xml'))
 
         # Make zip
-        common.make_zip(self.get_bindings_name(), '/tmp/generator/pear', root, version)
+        common.make_zip(self.get_bindings_name(), self.tmp_dir, root_dir, version)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', PHPZipGenerator)

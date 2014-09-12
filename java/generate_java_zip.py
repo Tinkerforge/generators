@@ -3,7 +3,7 @@
 
 """
 Java ZIP Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_java_zip.py: Generator for Java ZIP
@@ -34,85 +34,98 @@ import common
 from java_released_files import released_files
 
 class JavaZipGenerator(common.Generator):
+    tmp_dir                        = '/tmp/generator/java'
+    tmp_source_dir                 = os.path.join(tmp_dir, 'source')
+    tmp_source_com_tinkerforge_dir = os.path.join(tmp_source_dir, 'com', 'tinkerforge')
+    tmp_examples_dir               = os.path.join(tmp_dir, 'examples')
+
     def get_bindings_name(self):
         return 'java'
 
     def prepare(self):
-        common.recreate_directory('/tmp/generator')
-        os.makedirs('/tmp/generator/jar/source/com/tinkerforge')
-        os.makedirs('/tmp/generator/jar/examples')
+        common.recreate_directory(self.tmp_dir)
+        os.makedirs(self.tmp_source_dir)
+        os.makedirs(self.tmp_source_com_tinkerforge_dir)
+        os.makedirs(self.tmp_examples_dir)
 
     def generate(self, device):
         if not device.is_released():
             return
 
         # Copy device examples
-        examples = common.find_device_examples(device, '^Example.*\.java$')
-        dest = os.path.join('/tmp/generator/jar/examples', device.get_category(), device.get_camel_case_name())
+        tmp_examples_device_dir = os.path.join(self.tmp_examples_dir,
+                                               device.get_category(),
+                                               device.get_camel_case_name())
 
-        if not os.path.exists(dest):
-            os.makedirs(dest)
+        if not os.path.exists(tmp_examples_device_dir):
+            os.makedirs(tmp_examples_device_dir)
 
-        for example in examples:
-            shutil.copy(example[1], dest)
+        for example in common.find_device_examples(device, '^Example.*\.java$'):
+            shutil.copy(example[1], tmp_examples_device_dir)
 
     def finish(self):
-        root = self.get_bindings_root_directory()
+        root_dir = self.get_bindings_root_directory()
 
-        # Copy IPConnection examples
-        examples = common.find_examples(root, '^Example.*\.java$')
-        for example in examples:
-            shutil.copy(example[1], '/tmp/generator/jar/examples')
+        # Copy IP Connection examples
+        for example in common.find_examples(root_dir, '^Example.*\.java$'):
+            shutil.copy(example[1], self.tmp_examples_dir)
 
         # Copy bindings and readme
         for filename in released_files:
-            shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/jar/source/com/tinkerforge')
+            shutil.copy(os.path.join(root_dir, 'bindings', filename), self.tmp_source_com_tinkerforge_dir)
 
-        shutil.copy(os.path.join(root, 'BrickDaemon.java'), '/tmp/generator/jar/source/com/tinkerforge')
-        shutil.copy(os.path.join(root, 'Device.java'), '/tmp/generator/jar/source/com/tinkerforge')
-        shutil.copy(os.path.join(root, 'DeviceBase.java'), '/tmp/generator/jar/source/com/tinkerforge')
-        shutil.copy(os.path.join(root, 'DeviceListener.java'), '/tmp/generator/jar/source/com/tinkerforge')
-        shutil.copy(os.path.join(root, 'IPConnection.java'), '/tmp/generator/jar/source/com/tinkerforge')
-        shutil.copy(os.path.join(root, 'IPConnectionBase.java'), '/tmp/generator/jar/source/com/tinkerforge')
-        shutil.copy(os.path.join(root, 'TinkerforgeException.java'), '/tmp/generator/jar/source/com/tinkerforge')
-        shutil.copy(os.path.join(root, 'TimeoutException.java'), '/tmp/generator/jar/source/com/tinkerforge')
-        shutil.copy(os.path.join(root, 'AlreadyConnectedException.java'), '/tmp/generator/jar/source/com/tinkerforge')
-        shutil.copy(os.path.join(root, 'NotConnectedException.java'), '/tmp/generator/jar/source/com/tinkerforge')
-        shutil.copy(os.path.join(root, 'CryptoException.java'), '/tmp/generator/jar/source/com/tinkerforge')
-        shutil.copy(os.path.join(root, 'TinkerforgeListener.java'), '/tmp/generator/jar/source/com/tinkerforge')
-        shutil.copy(os.path.join(root, 'changelog.txt'), '/tmp/generator/jar')
-        shutil.copy(os.path.join(root, 'readme.txt'), '/tmp/generator/jar')
+        shutil.copy(os.path.join(root_dir, 'BrickDaemon.java'),               self.tmp_source_com_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'Device.java'),                    self.tmp_source_com_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'DeviceBase.java'),                self.tmp_source_com_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'DeviceListener.java'),            self.tmp_source_com_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'IPConnection.java'),              self.tmp_source_com_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'IPConnectionBase.java'),          self.tmp_source_com_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'TinkerforgeException.java'),      self.tmp_source_com_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'TimeoutException.java'),          self.tmp_source_com_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'AlreadyConnectedException.java'), self.tmp_source_com_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'NotConnectedException.java'),     self.tmp_source_com_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'CryptoException.java'),           self.tmp_source_com_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'TinkerforgeListener.java'),       self.tmp_source_com_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'changelog.txt'),                  self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'readme.txt'),                     self.tmp_dir)
 
-        # Make Manifest
-        version = common.get_changelog_version(root)
-        file('/tmp/generator/manifest.txt', 'wb').write('Bindings-Version: {0}.{1}.{2}\n'.format(*version))
+        # Make manifest
+        version = common.get_changelog_version(root_dir)
 
-        # Make jar
-        with common.ChangedDirectory('/tmp/generator'):
+        file(os.path.join(self.tmp_dir, 'manifest.txt'), 'wb').write('Bindings-Version: {0}.{1}.{2}\n'.format(*version))
+
+        # Compile source
+        with common.ChangedDirectory(self.tmp_dir):
             args = ['/usr/bin/javac ' +
                     '-Xlint ' +
                     '-source 1.5 ' +
                     '-target 1.5 ' +
-                    '/tmp/generator/jar/source/com/tinkerforge/*.java']
+                    os.path.join(self.tmp_source_com_tinkerforge_dir, '*.java')]
+
             if subprocess.call(args, shell=True) != 0:
                 raise Exception("Command '{0}' failed".format(' '.join(args)))
 
-        with common.ChangedDirectory('/tmp/generator/jar/source'):
+        # Make jar
+        with common.ChangedDirectory(self.tmp_source_dir):
             args = ['/usr/bin/jar ' +
                     'cfm ' +
-                    '/tmp/generator/jar/Tinkerforge.jar ' +
-                    '/tmp/generator/manifest.txt ' +
+                    os.path.join(self.tmp_dir, 'Tinkerforge.jar') + ' ' +
+                    os.path.join(self.tmp_dir, 'manifest.txt') + ' ' +
                     'com']
+
             if subprocess.call(args, shell=True) != 0:
                 raise Exception("Command '{0}' failed".format(' '.join(args)))
 
-        # Remove class
-        for f in os.listdir('/tmp/generator/jar/source/com/tinkerforge/'):
+        # Remove manifest
+        os.remove(os.path.join(self.tmp_dir, 'manifest.txt'))
+
+        # Remove classes
+        for f in os.listdir(self.tmp_source_com_tinkerforge_dir):
             if f.endswith('.class'):
-                os.remove('/tmp/generator/jar/source/com/tinkerforge/' + f)
+                os.remove(os.path.join(self.tmp_source_com_tinkerforge_dir, f))
 
         # Make zip
-        common.make_zip(self.get_bindings_name(), '/tmp/generator/jar', root, version)
+        common.make_zip(self.get_bindings_name(), self.tmp_dir, root_dir, version)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', JavaZipGenerator)

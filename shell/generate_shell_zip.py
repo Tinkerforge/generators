@@ -3,7 +3,7 @@
 
 """
 Shell ZIP Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_shell_zip.py: Generator for Shell ZIP
@@ -33,44 +33,48 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class ShellZipGenerator(common.Generator):
+    tmp_dir          = '/tmp/generator/shell'
+    tmp_examples_dir = os.path.join(tmp_dir, 'examples')
+
     def get_bindings_name(self):
         return 'shell'
 
     def prepare(self):
-        common.recreate_directory('/tmp/generator')
-        os.makedirs('/tmp/generator/examples')
+        common.recreate_directory(self.tmp_dir)
+        os.makedirs(self.tmp_examples_dir)
 
     def generate(self, device):
         if not device.is_released():
             return
 
         # Copy device examples
-        examples = common.find_device_examples(device, '^example-.*\.sh$')
-        dest = os.path.join('/tmp/generator/examples', device.get_category().lower(), device.get_underscore_name())
+        tmp_examples_device_dir = os.path.join(self.tmp_examples_dir,
+                                               device.get_category().lower(),
+                                               device.get_underscore_name())
 
-        if not os.path.exists(dest):
-            os.makedirs(dest)
+        if not os.path.exists(tmp_examples_device_dir):
+            os.makedirs(tmp_examples_device_dir)
 
-        for example in examples:
-            shutil.copy(example[1], dest)
+        for example in common.find_device_examples(device, '^example-.*\.sh$'):
+            shutil.copy(example[1], tmp_examples_device_dir)
 
     def finish(self):
-        root = self.get_bindings_root_directory()
+        root_dir = self.get_bindings_root_directory()
 
-        # Copy IPConnection examples
-        examples = common.find_examples(root, '^example-.*\.sh$')
-        for example in examples:
-            shutil.copy(example[1], '/tmp/generator/examples')
+        # Copy IP Connection examples
+        for example in common.find_examples(root_dir, '^example-.*\.sh$'):
+            shutil.copy(example[1], self.tmp_examples_dir)
 
         # Copy bindings and readme
-        shutil.copy(os.path.join(root, 'tinkerforge'), '/tmp/generator')
-        shutil.copy(os.path.join(root, 'tinkerforge-bash-completion.sh'), '/tmp/generator')
-        shutil.copy(os.path.join(root, 'changelog.txt'), '/tmp/generator')
-        shutil.copy(os.path.join(root, 'readme.txt'), '/tmp/generator')
+        shutil.copy(os.path.join(root_dir, 'tinkerforge'),                    self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'tinkerforge-bash-completion.sh'), self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'changelog.txt'),                  self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'readme.txt'),                     self.tmp_dir)
 
         # Make zip
-        version = common.get_changelog_version(root)
-        common.make_zip(self.get_bindings_name(), '/tmp/generator', root, version)
+        version = common.get_changelog_version(root_dir)
+
+        common.make_zip(self.get_bindings_name(), self.tmp_dir, root_dir, version)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', ShellZipGenerator)

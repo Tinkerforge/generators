@@ -3,7 +3,7 @@
 
 """
 Ruby ZIP Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_ruby_zip.py: Generator for Ruby ZIP
@@ -35,99 +35,96 @@ import common
 from ruby_released_files import released_files
 
 class RubyZipGenerator(common.Generator):
+    tmp_dir                        = '/tmp/generator/ruby'
+    tmp_source_dir                 = os.path.join(tmp_dir, 'source')
+    tmp_source_lib_dir             = os.path.join(tmp_source_dir, 'lib')
+    tmp_source_lib_tinkerforge_dir = os.path.join(tmp_source_lib_dir, 'tinkerforge')
+    tmp_examples_dir               = os.path.join(tmp_dir, 'examples')
+
     def get_bindings_name(self):
         return 'ruby'
 
     def prepare(self):
-        common.recreate_directory('/tmp/generator')
-        os.makedirs('/tmp/generator/gem/source/lib/tinkerforge')
-        os.makedirs('/tmp/generator/gem/examples')
+        common.recreate_directory(self.tmp_dir)
+        os.makedirs(self.tmp_source_dir)
+        os.makedirs(self.tmp_source_lib_dir)
+        os.makedirs(self.tmp_source_lib_tinkerforge_dir)
+        os.makedirs(self.tmp_examples_dir)
 
     def generate(self, device):
         if not device.is_released():
             return
 
         # Copy device examples
-        examples = common.find_device_examples(device, '^example_.*\.rb$')
-        dest = os.path.join('/tmp/generator/gem/examples', device.get_category().lower(), device.get_underscore_name())
+        tmp_examples_device = os.path.join(self.tmp_examples_dir,
+                                           device.get_category().lower(),
+                                           device.get_underscore_name())
 
-        if not os.path.exists(dest):
-            os.makedirs(dest)
+        if not os.path.exists(tmp_examples_device):
+            os.makedirs(tmp_examples_device)
 
-        for example in examples:
-            shutil.copy(example[1], dest)
+        for example in common.find_device_examples(device, '^example_.*\.rb$'):
+            shutil.copy(example[1], tmp_examples_device)
 
     def finish(self):
-        root = self.get_bindings_root_directory()
+        root_dir = self.get_bindings_root_directory()
 
-        # Copy IPConnection examples
-        examples = common.find_examples(root, '^example_.*\.rb$')
-        for example in examples:
-            shutil.copy(example[1], '/tmp/generator/gem/examples')
+        # Copy IP Connection examples
+        for example in common.find_examples(root_dir, '^example_.*\.rb$'):
+            shutil.copy(example[1], self.tmp_examples_dir)
 
         # Copy bindings and readme
         for filename in released_files:
-            shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/gem/source/lib/tinkerforge')
+            shutil.copy(os.path.join(root_dir, 'bindings', filename), self.tmp_source_lib_tinkerforge_dir)
 
-        shutil.copy(os.path.join(root, 'ip_connection.rb'), '/tmp/generator/gem/source/lib/tinkerforge')
-        shutil.copy(os.path.join(root, 'changelog.txt'), '/tmp/generator/gem')
-        shutil.copy(os.path.join(root, 'readme.txt'), '/tmp/generator/gem')
+        shutil.copy(os.path.join(root_dir, 'ip_connection.rb'), self.tmp_source_lib_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'changelog.txt'),    self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'readme.txt'),       self.tmp_dir)
 
-        # Write version.rb
-        version = common.get_changelog_version(root)
-        file('/tmp/generator/gem/source/lib/tinkerforge/version.rb', 'wb').write("""
+        # Make version.rb
+        version = common.get_changelog_version(root_dir)
+        file(os.path.join(self.tmp_source_lib_tinkerforge_dir, 'version.rb'), 'wb').write("""
 module Tinkerforge
   VERSION = '{0}.{1}.{2}'
 end
 """.format(*version))
 
-        # Write tinkerforge.rb
-        file('/tmp/generator/gem/source/lib/tinkerforge.rb', 'wb').write("""
+        # Make tinkerforge.rb
+        file(os.path.join(self.tmp_source_lib_dir, 'tinkerforge.rb'), 'wb').write("""
 require 'tinkerforge/version'
 
 module Tinkerforge
 end
 """)
 
-        # Write tinkerforge.gemspec
-        file('/tmp/generator/gem/source/tinkerforge.gemspec', 'wb').write("""
-spec = Gem::Specification.new do |s|
-  s.name = 'tinkerforge'
-  s.version = '{0}.{1}.{2}'
-  s.summary = 'Ruby API Bindings for Tinkerforge Bricks and Bricklets'
-  s.files = Dir['lib/*.rb'] + Dir['lib/tinkerforge/*.rb']
-  s.has_rdoc = true
-  s.rdoc_options << '--title' << 'Tinkerforge'
-  s.required_ruby_version = '>= 1.9.0'
-  s.license = 'CC0-1.0'
-  s.author = 'Matthias Bolte'
-  s.email = 'matthias@tinkerforge.com'
-  s.homepage = 'http://www.tinkerforge.com/'
-end
-""".format(*version))
+        # Make tinkerforge.gemspec
+        tmp_gemspec = os.path.join(self.tmp_source_dir, 'tinkerforge.gemspec')
+
+        common.specialize_template(os.path.join(root_dir, 'tinkerforge.gemspec.template'),
+                                   tmp_gemspec,
+                                   {'<<VERSION>>': '.'.join(version)})
 
         # Make gem
-        with common.ChangedDirectory('/tmp/generator/gem/source'):
+        with common.ChangedDirectory(self.tmp_source_dir):
             args = ['/usr/bin/gem',
                     'build',
                     'tinkerforge.gemspec']
+
             if subprocess.call(args) != 0:
                 raise Exception("Command '{0}' failed".format(' '.join(args)))
 
         # Remove build stuff
-        os.remove('/tmp/generator/gem/source/tinkerforge.gemspec')
-        shutil.copy('/tmp/generator/gem/source/tinkerforge-{0}.{1}.{2}.gem'.format(*version), root)
-        shutil.move('/tmp/generator/gem/source/tinkerforge-{0}.{1}.{2}.gem'.format(*version),
-                    '/tmp/generator/gem/tinkerforge.gem')
-        shutil.move('/tmp/generator/gem/source/lib/tinkerforge.rb',
-                    '/tmp/generator/gem/source/')
-        os.makedirs('/tmp/generator/gem/source/tinkerforge')
-        for filename in glob.glob('/tmp/generator/gem/source/lib/tinkerforge/*.rb'):
-            shutil.move(filename, '/tmp/generator/gem/source/tinkerforge/')
-        shutil.rmtree('/tmp/generator/gem/source/lib/')
+        tmp_gem = os.path.join(self.tmp_source_dir, 'tinkerforge-{0}.{1}.{2}.gem'.format(*version))
+
+        os.remove(tmp_gemspec)
+        shutil.copy(tmp_gem, root_dir)
+        shutil.move(tmp_gem, os.path.join(self.tmp_dir, 'tinkerforge.gem'))
+        shutil.move(os.path.join(self.tmp_source_lib_dir, 'tinkerforge.rb'), self.tmp_source_dir)
+        shutil.move(self.tmp_source_lib_tinkerforge_dir, os.path.join(self.tmp_source_dir, 'tinkerforge'))
+        shutil.rmtree(self.tmp_source_lib_dir)
 
         # Make zip
-        common.make_zip(self.get_bindings_name(), '/tmp/generator/gem', root, version)
+        common.make_zip(self.get_bindings_name(), self.tmp_dir, root_dir, version)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', RubyZipGenerator)

@@ -3,7 +3,7 @@
 
 """
 Delphi ZIP Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_delphi_doc.py: Generator for Delphi ZIP
@@ -34,55 +34,60 @@ import delphi_common
 from delphi_released_files import released_files
 
 class DelphiZipGenerator(common.Generator):
+    tmp_dir          = '/tmp/generator/delphi'
+    tmp_source_dir   = os.path.join(tmp_dir, 'source')
+    tmp_examples_dir = os.path.join(tmp_dir, 'examples')
+
     def get_bindings_name(self):
         return 'delphi'
 
     def prepare(self):
-        common.recreate_directory('/tmp/generator')
-        os.makedirs('/tmp/generator/source')
-        os.makedirs('/tmp/generator/examples')
+        common.recreate_directory(self.tmp_dir)
+        os.makedirs(self.tmp_source_dir)
+        os.makedirs(self.tmp_examples_dir)
 
     def generate(self, device):
         if not device.is_released():
             return
 
         # Copy device examples
-        examples = common.find_device_examples(device, '^Example.*\.pas$')
-        dest = os.path.join('/tmp/generator/examples', device.get_category(), device.get_camel_case_name())
+        tmp_examples_device_dir = os.path.join(self.tmp_examples_dir,
+                                               device.get_category(),
+                                               device.get_camel_case_name())
 
-        if not os.path.exists(dest):
-            os.makedirs(dest)
+        if not os.path.exists(tmp_examples_device_dir):
+            os.makedirs(tmp_examples_device_dir)
 
-        for example in examples:
-            shutil.copy(example[1], dest)
+        for example in common.find_device_examples(device, '^Example.*\.pas$'):
+            shutil.copy(example[1], tmp_examples_device_dir)
 
     def finish(self):
-        root = self.get_bindings_root_directory()
+        root_dir = self.get_bindings_root_directory()
 
-        # Copy IPConnection examples
-        examples = common.find_examples(root, '^Example.*\.pas$')
-        for example in examples:
-            shutil.copy(example[1], '/tmp/generator/examples')
+        # Copy IP Connection examples
+        for example in common.find_examples(root_dir, '^Example.*\.pas$'):
+            shutil.copy(example[1], self.tmp_examples_dir)
 
         # Copy bindings and readme
         for filename in released_files:
-            shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/source')
+            shutil.copy(os.path.join(root_dir, 'bindings', filename), self.tmp_source_dir)
 
-        shutil.copy(os.path.join(root, 'Base58.pas'), '/tmp/generator/source')
-        shutil.copy(os.path.join(root, 'BlockingQueue.pas'), '/tmp/generator/source')
-        shutil.copy(os.path.join(root, 'DeviceBase.pas'), '/tmp/generator/source')
-        shutil.copy(os.path.join(root, 'Device.pas'), '/tmp/generator/source')
-        shutil.copy(os.path.join(root, 'IPConnection.pas'), '/tmp/generator/source')
-        shutil.copy(os.path.join(root, 'LEConverter.pas'), '/tmp/generator/source')
-        shutil.copy(os.path.join(root, 'TimedSemaphore.pas'), '/tmp/generator/source')
-        shutil.copy(os.path.join(root, 'SHA1.pas'), '/tmp/generator/source')
-        shutil.copy(os.path.join(root, 'BrickDaemon.pas'), '/tmp/generator/source')
-        shutil.copy(os.path.join(root, 'changelog.txt'), '/tmp/generator/')
-        shutil.copy(os.path.join(root, 'readme.txt'), '/tmp/generator/')
+        shutil.copy(os.path.join(root_dir, 'Base58.pas'),         self.tmp_source_dir)
+        shutil.copy(os.path.join(root_dir, 'BlockingQueue.pas'),  self.tmp_source_dir)
+        shutil.copy(os.path.join(root_dir, 'DeviceBase.pas'),     self.tmp_source_dir)
+        shutil.copy(os.path.join(root_dir, 'Device.pas'),         self.tmp_source_dir)
+        shutil.copy(os.path.join(root_dir, 'IPConnection.pas'),   self.tmp_source_dir)
+        shutil.copy(os.path.join(root_dir, 'LEConverter.pas'),    self.tmp_source_dir)
+        shutil.copy(os.path.join(root_dir, 'TimedSemaphore.pas'), self.tmp_source_dir)
+        shutil.copy(os.path.join(root_dir, 'SHA1.pas'),           self.tmp_source_dir)
+        shutil.copy(os.path.join(root_dir, 'BrickDaemon.pas'),    self.tmp_source_dir)
+        shutil.copy(os.path.join(root_dir, 'changelog.txt'),      self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'readme.txt'),         self.tmp_dir)
 
         # Make zip
-        version = common.get_changelog_version(root)
-        common.make_zip(self.get_bindings_name(), '/tmp/generator', root, version)
+        version = common.get_changelog_version(root_dir)
+
+        common.make_zip(self.get_bindings_name(), self.tmp_dir, root_dir, version)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', DelphiZipGenerator)

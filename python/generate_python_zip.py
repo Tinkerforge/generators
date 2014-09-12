@@ -3,7 +3,7 @@
 
 """
 Python ZIP Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_python_zip.py: Generator for Python ZIP
@@ -34,66 +34,62 @@ import common
 from python_released_files import released_files
 
 class PythonZipGenerator(common.Generator):
+    tmp_dir                    = '/tmp/generator/python'
+    tmp_source_dir             = os.path.join(tmp_dir, 'source')
+    tmp_source_tinkerforge_dir = os.path.join(tmp_source_dir, 'tinkerforge')
+    tmp_examples_dir           = os.path.join(tmp_dir, 'examples')
+
     def get_bindings_name(self):
         return 'python'
 
     def prepare(self):
-        common.recreate_directory('/tmp/generator')
-        os.makedirs('/tmp/generator/egg/source/tinkerforge')
-        os.makedirs('/tmp/generator/egg/examples')
+        common.recreate_directory(self.tmp_dir)
+        os.makedirs(self.tmp_source_dir)
+        os.makedirs(self.tmp_source_tinkerforge_dir)
+        os.makedirs(self.tmp_examples_dir)
 
     def generate(self, device):
         if not device.is_released():
             return
 
         # Copy device examples
-        examples = common.find_device_examples(device, '^example_.*\.py$')
-        dest = os.path.join('/tmp/generator/egg/examples', device.get_category().lower(), device.get_underscore_name())
+        tmp_examples_device = os.path.join(self.tmp_examples_dir,
+                                           device.get_category().lower(),
+                                           device.get_underscore_name())
 
-        if not os.path.exists(dest):
-            os.makedirs(dest)
+        if not os.path.exists(tmp_examples_device):
+            os.makedirs(tmp_examples_device)
 
-        for example in examples:
-            shutil.copy(example[1], dest)
+        for example in common.find_device_examples(device, '^example_.*\.py$'):
+            shutil.copy(example[1], tmp_examples_device)
 
     def finish(self):
-        root = self.get_bindings_root_directory()
+        root_dir = self.get_bindings_root_directory()
 
-        # Copy IPConnection examples
-        examples = common.find_examples(root, '^example_.*\.py$')
-        for example in examples:
-            shutil.copy(example[1], '/tmp/generator/egg/examples')
+        # Copy IP Connection examples
+        for example in common.find_examples(root_dir, '^example_.*\.py$'):
+            shutil.copy(example[1], self.tmp_examples_dir)
 
         # Copy bindings and readme
         for filename in released_files:
-            shutil.copy(os.path.join(root, 'bindings', filename), '/tmp/generator/egg/source/tinkerforge')
+            shutil.copy(os.path.join(root_dir, 'bindings', filename), self.tmp_source_tinkerforge_dir)
 
-        shutil.copy(os.path.join(root, 'ip_connection.py'), '/tmp/generator/egg/source/tinkerforge')
-        shutil.copy(os.path.join(root, 'changelog.txt'), '/tmp/generator/egg')
-        shutil.copy(os.path.join(root, 'readme.txt'), '/tmp/generator/egg')
+        shutil.copy(os.path.join(root_dir, 'ip_connection.py'), self.tmp_source_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'changelog.txt'), self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'readme.txt'), self.tmp_dir)
 
         # Make __init__.py
-        file('/tmp/generator/egg/source/tinkerforge/__init__.py', 'wb').write(' ')
+        file(os.path.join(self.tmp_source_tinkerforge_dir, '__init__.py'), 'wb').write(' ')
 
-        # Write setup.py
-        version = common.get_changelog_version(root)
-        file('/tmp/generator/egg/source/setup.py', 'wb').write("""#!/usr/bin/env python
+        # Make setup.py
+        version = common.get_changelog_version(root_dir)
 
-from setuptools import setup
-
-setup(name='tinkerforge',
-      version='{0}.{1}.{2}',
-      description='Python API Bindings for Tinkerforge Bricks and Bricklets',
-      license='CC0 1.0 Universal',
-      author='Tinkerforge GmbH',
-      author_email='olaf@tinkerforge.com',
-      url='http://www.tinkerforge.com',
-      packages=['tinkerforge'],
-      platforms = ('Any'))
-""".format(*version))
+        common.specialize_template(os.path.join(root_dir, 'setup.py.template'),
+                                   os.path.join(self.tmp_source_dir, 'setup.py'),
+                                   {'<<VERSION>>': '.'.join(version)})
 
         # Make zip
-        common.make_zip(self.get_bindings_name(), '/tmp/generator/egg', root, version)
+        common.make_zip(self.get_bindings_name(), self.tmp_dir, root_dir, version)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', PythonZipGenerator)
