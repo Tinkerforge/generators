@@ -34,14 +34,19 @@ for binding in bindings:
         module.generate(os.path.join(path, binding), lang)
 
 # zip
-if socket.gethostname() != 'tinkerforge.com':
+def run_zip_generator(path, binding):
+    module = __import__('generate_{0}_zip'.format(binding))
+    print("\nGenerating ZIP for {0}:".format(binding))
+    module.generate(os.path.join(path, binding))
+
+if socket.gethostname() == 'tinkerforge.com':
+    run_zip_generator(path, 'javascript')
+else:
     for binding in bindings:
         if binding in ('tcpip', 'modbus'):
             continue
 
-        module = __import__('generate_{0}_zip'.format(binding))
-        print("\nGenerating ZIP for {0}:".format(binding))
-        module.generate(os.path.join(path, binding))
+        run_zip_generator(path, binding)
 
 print('')
 print('>>> Done <<<')
