@@ -77,14 +77,14 @@ PROGRAM_STDIO_REDIRECTION_CONSTANTS = ('ProgramStdioRedirection', 'program_stdio
                                                                                                 ('Pipe', 'pipe', 1),
                                                                                                 ('File', 'file', 2)])
 
-PROGRAM_SCHEDULE_START_CONDITION_CONSTANTS = ('ProgramScheduleStartCondition', 'program_schedule_start_condition', [('Never', 'never', 0),
-                                                                                                                    ('Now', 'now', 1),
-                                                                                                                    ('Boot', 'boot', 2),
-                                                                                                                    ('Time', 'time', 2)])
+PROGRAM_START_CONDITION_CONSTANTS = ('ProgramStartCondition', 'program_start_condition', [('Never', 'never', 0),
+                                                                                          ('Now', 'now', 1),
+                                                                                          ('Boot', 'boot', 2),
+                                                                                          ('Time', 'time', 2)])
 
-PROGRAM_SCHEDULE_REPEAT_MODE_CONSTANTS = ('ProgramScheduleRepeatMode', 'program_schedule_repeat_mode', [('Never', 'never', 0),
-                                                                                                        ('Relative', 'relative', 1),
-                                                                                                        ('Absolute', 'absolute', 2)])
+PROGRAM_REPEAT_MODE_CONSTANTS = ('ProgramRepeatMode', 'program_repeat_mode', [('Never', 'never', 0),
+                                                                              ('Interval', 'interval', 1),
+                                                                              ('Selection', 'selection', 2)])
 
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
@@ -135,6 +135,7 @@ RED Brick API return an 8bit error code. Possible error codes are:
 * ObjectInUse = 7
 * NoMoreData = 8
 * WrongListItemType = 9
+* MalformedProgramConfig = 10
 * InvalidParameter = 128 (EINVAL)
 * NoFreeMemory = 129 (ENOMEM)
 * NoFreeSpace = 130 (ENOSPC)
@@ -1391,10 +1392,10 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetProgramSchedule', 'set_program_schedule'),
 'elements': [('program_id', 'uint16', 1, 'in'),
-             ('start_condition', 'uint8', 1, 'in', PROGRAM_SCHEDULE_START_CONDITION_CONSTANTS),
+             ('start_condition', 'uint8', 1, 'in', PROGRAM_START_CONDITION_CONSTANTS),
              ('start_time', 'uint64', 1, 'in'),
              ('start_delay', 'uint32', 1, 'in'),
-             ('repeat_mode', 'uint8', 1, 'in', PROGRAM_SCHEDULE_REPEAT_MODE_CONSTANTS),
+             ('repeat_mode', 'uint8', 1, 'in', PROGRAM_REPEAT_MODE_CONSTANTS),
              ('repeat_interval', 'uint32', 1, 'in'),
              ('repeat_second_mask', 'uint64', 1, 'in'),
              ('repeat_minute_mask', 'uint64', 1, 'in'),
@@ -1420,10 +1421,10 @@ com['packets'].append({
 'name': ('GetProgramSchedule', 'get_program_schedule'),
 'elements': [('program_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
-             ('start_condition', 'uint8', 1, 'out', PROGRAM_SCHEDULE_START_CONDITION_CONSTANTS),
+             ('start_condition', 'uint8', 1, 'out', PROGRAM_START_CONDITION_CONSTANTS),
              ('start_time', 'uint64', 1, 'out'),
              ('start_delay', 'uint32', 1, 'out'),
-             ('repeat_mode', 'uint8', 1, 'out', PROGRAM_SCHEDULE_REPEAT_MODE_CONSTANTS),
+             ('repeat_mode', 'uint8', 1, 'out', PROGRAM_REPEAT_MODE_CONSTANTS),
              ('repeat_interval', 'uint32', 1, 'out'),
              ('repeat_second_mask', 'uint64', 1, 'out'),
              ('repeat_minute_mask', 'uint64', 1, 'out'),
