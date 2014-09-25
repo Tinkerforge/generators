@@ -75,7 +75,9 @@ PROCESS_STATE_CONSTANTS = ('ProcessState', 'process_state', [('Unknown', 'unknow
 
 PROGRAM_STDIO_REDIRECTION_CONSTANTS = ('ProgramStdioRedirection', 'program_stdio_redirection', [('DevNull', 'dev_null', 0),
                                                                                                 ('Pipe', 'pipe', 1),
-                                                                                                ('File', 'file', 2)])
+                                                                                                ('File', 'file', 2),
+                                                                                                ('Stdout', 'stdout', 3),
+                                                                                                ('Log', 'log', 4)])
 
 PROGRAM_START_CONDITION_CONSTANTS = ('ProgramStartCondition', 'program_start_condition', [('Never', 'never', 0),
                                                                                           ('Now', 'now', 1),
