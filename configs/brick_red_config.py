@@ -79,8 +79,8 @@ PROGRAM_STDIO_REDIRECTION_CONSTANTS = ('ProgramStdioRedirection', 'program_stdio
 
 PROGRAM_START_CONDITION_CONSTANTS = ('ProgramStartCondition', 'program_start_condition', [('Never', 'never', 0),
                                                                                           ('Now', 'now', 1),
-                                                                                          ('Boot', 'boot', 2),
-                                                                                          ('Time', 'time', 2)])
+                                                                                          ('Reboot', 'reboot', 2),
+                                                                                          ('Timestamp', 'timestamp', 3)])
 
 PROGRAM_REPEAT_MODE_CONSTANTS = ('ProgramRepeatMode', 'program_repeat_mode', [('Never', 'never', 0),
                                                                               ('Interval', 'interval', 1),
@@ -606,9 +606,9 @@ com['packets'].append({
              ('user_id', 'uint32', 1, 'out'),
              ('group_id', 'uint32', 1, 'out'),
              ('length', 'uint64', 1, 'out'),
-             ('access_time', 'uint64', 1, 'out'),
-             ('modification_time', 'uint64', 1, 'out'),
-             ('status_change_time', 'uint64', 1, 'out')],
+             ('access_timestamp', 'uint64', 1, 'out'),
+             ('modification_timestamp', 'uint64', 1, 'out'),
+             ('status_change_timestamp', 'uint64', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -894,9 +894,9 @@ com['packets'].append({
              ('user_id', 'uint32', 1, 'out'),
              ('group_id', 'uint32', 1, 'out'),
              ('length', 'uint64', 1, 'out'),
-             ('access_time', 'uint64', 1, 'out'),
-             ('modification_time', 'uint64', 1, 'out'),
-             ('status_change_time', 'uint64', 1, 'out')],
+             ('access_timestamp', 'uint64', 1, 'out'),
+             ('modification_timestamp', 'uint64', 1, 'out'),
+             ('status_change_timestamp', 'uint64', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1393,7 +1393,7 @@ com['packets'].append({
 'name': ('SetProgramSchedule', 'set_program_schedule'),
 'elements': [('program_id', 'uint16', 1, 'in'),
              ('start_condition', 'uint8', 1, 'in', PROGRAM_START_CONDITION_CONSTANTS),
-             ('start_time', 'uint64', 1, 'in'),
+             ('start_timestamp', 'uint64', 1, 'in'),
              ('start_delay', 'uint32', 1, 'in'),
              ('repeat_mode', 'uint8', 1, 'in', PROGRAM_REPEAT_MODE_CONSTANTS),
              ('repeat_interval', 'uint32', 1, 'in'),
@@ -1422,7 +1422,7 @@ com['packets'].append({
 'elements': [('program_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('start_condition', 'uint8', 1, 'out', PROGRAM_START_CONDITION_CONSTANTS),
-             ('start_time', 'uint64', 1, 'out'),
+             ('start_timestamp', 'uint64', 1, 'out'),
              ('start_delay', 'uint32', 1, 'out'),
              ('repeat_mode', 'uint8', 1, 'out', PROGRAM_REPEAT_MODE_CONSTANTS),
              ('repeat_interval', 'uint32', 1, 'out'),
