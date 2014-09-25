@@ -69,9 +69,10 @@ PROCESS_SIGNAL_CONSTANTS = ('ProcessSignal', 'process_signal', [('Interrupt', 'i
 
 PROCESS_STATE_CONSTANTS = ('ProcessState', 'process_state', [('Unknown', 'unknown', 0),
                                                              ('Running', 'running', 1),
-                                                             ('Exited', 'exited', 2),
-                                                             ('Killed', 'killed', 3),
-                                                             ('Stopped', 'stopped', 4)])
+                                                             ('Error', 'error', 2),
+                                                             ('Exited', 'exited', 3),
+                                                             ('Killed', 'killed', 4),
+                                                             ('Stopped', 'stopped', 5)])
 
 PROGRAM_STDIO_REDIRECTION_CONSTANTS = ('ProgramStdioRedirection', 'program_stdio_redirection', [('DevNull', 'dev_null', 0),
                                                                                                 ('Pipe', 'pipe', 1),
@@ -1203,16 +1204,24 @@ Possible process states are:
 
 * Unknown = 0
 * Running = 1
-* Exited = 2
-* Killed = 3
-* Stopped = 4
+* Error = 2
+* Exited = 3
+* Killed = 4
+* Stopped = 5
 
-The exit code is only valid if the state is *Exited*, *Killed* or *Stopped* and
-has different meanings depending on the state:
+The exit code is only valid if the state is *Error*, *Exited*, *Killed* or
+*Stopped* and has different meanings depending on the state:
 
+* Error: error code for error occurred while spawning the process (see below)
 * Exited: exit status of the process
 * Killed: UNIX signal number used to kill the process
 * Stopped: UNIX signal number used to stop the process
+
+Possible exit/error codes in *Error* state are:
+
+* InternalError = 125
+* CannotExecute = 126
+* DoesNotExist = 127
 """,
 'de':
 """
