@@ -450,13 +450,14 @@ com['packets'].append({
 'elements': [('list_id', 'uint16', 1, 'in'),
              ('index', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
-             ('item_object_id', 'uint16', 1, 'out')],
+             ('item_object_id', 'uint16', 1, 'out'),
+             ('type', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the object ID of the object stored at ``index`` in a list object and
-returns the resulting error code.
+Returns the object ID and type of the object stored at ``index`` in a list
+object and returns the resulting error code.
 """,
 'de':
 """
