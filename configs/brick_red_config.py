@@ -516,8 +516,8 @@ com['packets'].append({
 'elements': [('name_string_id', 'uint16', 1, 'in'),
              ('flags', 'uint16', 1, 'in', FILE_FLAG_CONSTANTS),
              ('permissions', 'uint16', 1, 'in', FILE_PERMISSION_CONSTANTS),
-             ('user_id', 'uint32', 1, 'in'),
-             ('group_id', 'uint32', 1, 'in'),
+             ('uid', 'uint32', 1, 'in'),
+             ('gid', 'uint32', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('file_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -606,8 +606,8 @@ com['packets'].append({
              ('name_string_id', 'uint16', 1, 'out'),
              ('flags', 'uint16', 1, 'out'),
              ('permissions', 'uint16', 1, 'out', FILE_PERMISSION_CONSTANTS),
-             ('user_id', 'uint32', 1, 'out'),
-             ('group_id', 'uint32', 1, 'out'),
+             ('uid', 'uint32', 1, 'out'),
+             ('gid', 'uint32', 1, 'out'),
              ('length', 'uint64', 1, 'out'),
              ('access_timestamp', 'uint64', 1, 'out'),
              ('modification_timestamp', 'uint64', 1, 'out'),
@@ -894,8 +894,8 @@ com['packets'].append({
              ('error_code', 'uint8', 1, 'out'),
              ('type', 'uint8', 1, 'out', FILE_TYPE_CONSTANTS),
              ('permissions', 'uint16', 1, 'out', FILE_PERMISSION_CONSTANTS),
-             ('user_id', 'uint32', 1, 'out'),
-             ('group_id', 'uint32', 1, 'out'),
+             ('uid', 'uint32', 1, 'out'),
+             ('gid', 'uint32', 1, 'out'),
              ('length', 'uint64', 1, 'out'),
              ('access_timestamp', 'uint64', 1, 'out'),
              ('modification_timestamp', 'uint64', 1, 'out'),
@@ -1048,8 +1048,8 @@ com['packets'].append({
 'elements': [('name_string_id', 'uint16', 1, 'in'),
              ('recursive', 'bool', 1, 'in'),
              ('permissions', 'uint16', 1, 'in', FILE_PERMISSION_CONSTANTS),
-             ('user_id', 'uint32', 1, 'in'),
-             ('group_id', 'uint32', 1, 'in'),
+             ('uid', 'uint32', 1, 'in'),
+             ('gid', 'uint32', 1, 'in'),
              ('error_code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -1074,8 +1074,8 @@ com['packets'].append({
              ('arguments_list_id', 'uint16', 1, 'in'),
              ('environment_list_id', 'uint16', 1, 'in'),
              ('working_directory_string_id', 'uint16', 1, 'in'),
-             ('user_id', 'uint32', 1, 'in'),
-             ('group_id', 'uint32', 1, 'in'),
+             ('uid', 'uint32', 1, 'in'),
+             ('gid', 'uint32', 1, 'in'),
              ('stdin_file_id', 'uint16', 1, 'in'),
              ('stdout_file_id', 'uint16', 1, 'in'),
              ('stderr_file_id', 'uint16', 1, 'in'),
@@ -1150,8 +1150,8 @@ com['packets'].append({
 'name': ('GetProcessIdentity', 'get_process_identity'),
 'elements': [('process_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
-             ('user_id', 'uint32', 1, 'out'),
-             ('group_id', 'uint32', 1, 'out')],
+             ('uid', 'uint32', 1, 'out'),
+             ('gid', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1192,13 +1192,14 @@ com['packets'].append({
 'elements': [('process_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('state', 'uint8', 1, 'out', PROCESS_STATE_CONSTANTS),
+             ('pid', 'uint32', 1, 'out'),
              ('exit_code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the current state and exit code of a process object, and the resulting
-error code.
+Returns the current state, process ID and exit code of a process object, and
+the resulting error code.
 
 Possible process states are:
 
@@ -1208,6 +1209,8 @@ Possible process states are:
 * Exited = 3
 * Killed = 4
 * Stopped = 5
+
+The process ID is only valid if the state is *Running* or *Stopped*.
 
 The exit code is only valid if the state is *Error*, *Exited*, *Killed* or
 *Stopped* and has different meanings depending on the state:
@@ -1234,6 +1237,7 @@ com['packets'].append({
 'name': ('ProcessStateChanged', 'process_state_changed'),
 'elements': [('process_id', 'uint16', 1, 'out'),
              ('state', 'uint8', 1, 'out', PROCESS_STATE_CONSTANTS),
+             ('pid', 'uint32', 1, 'out'),
              ('exit_code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
