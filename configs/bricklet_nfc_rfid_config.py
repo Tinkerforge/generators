@@ -190,6 +190,24 @@ to either *RequestPageReady* if it worked or to *RequestPageError* if it
 didn't. If the request worked you can get the page by calling :func:`GetPage`.
 
 The same approach is used analogously for the other API functions.
+
+Possible states are:
+
+* Initialization = 0
+* Idle = 128
+* Error = 192
+* RequestTagID = 2
+* RequestTagIDReady = 130
+* RequestTagIDError = 194
+* AuthenticatingMifareClassicPage = 3
+* AuthenticatingMifareClassicPageReady = 131
+* AuthenticatingMifareClassicPageError = 195
+* WritePage = 4
+* WritePageReady = 132
+* WritePageError = 196
+* RequestPage = 5
+* RequestPageReady = 133
+* RequestPageError = 197
 """,
 'de':
 """
@@ -210,6 +228,24 @@ funktioniert hat oder zu *RequestPageError* wenn nicht. Wenn die Anfrage
 erfolgreich war kann die Page mit :func:`GetPage` abgerufen werden.
 
 Der gleiche Ansatz kann analog für andere API Funktionen verwendet werden.
+
+Mögliche Zustände sind:
+
+* Initialization = 0
+* Idle = 128
+* Error = 192
+* RequestTagID = 2
+* RequestTagIDReady = 130
+* RequestTagIDError = 194
+* AuthenticatingMifareClassicPage = 3
+* AuthenticatingMifareClassicPageReady = 131
+* AuthenticatingMifareClassicPageError = 195
+* WritePage = 4
+* WritePageReady = 132
+* WritePageError = 196
+* RequestPage = 5
+* RequestPageReady = 133
+* RequestPageError = 197
 """
 }]
 })
