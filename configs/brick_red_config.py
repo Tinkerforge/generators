@@ -1193,14 +1193,15 @@ com['packets'].append({
 'elements': [('process_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('state', 'uint8', 1, 'out', PROCESS_STATE_CONSTANTS),
+             ('timestamp', 'uint64', 1, 'out'),
              ('pid', 'uint32', 1, 'out'),
              ('exit_code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the current state, process ID and exit code of a process object, and
-the resulting error code.
+Returns the current state, timestamp, process ID and exit code of a process
+object, and the resulting error code.
 
 Possible process states are:
 
@@ -1210,6 +1211,9 @@ Possible process states are:
 * Exited = 3
 * Killed = 4
 * Stopped = 5
+
+The timestamp represents the UNIX time since the process is in its current
+state.
 
 The process ID is only valid if the state is *Running* or *Stopped*.
 
@@ -1238,6 +1242,7 @@ com['packets'].append({
 'name': ('ProcessStateChanged', 'process_state_changed'),
 'elements': [('process_id', 'uint16', 1, 'out'),
              ('state', 'uint8', 1, 'out', PROCESS_STATE_CONSTANTS),
+             ('timestamp', 'uint64', 1, 'out'),
              ('pid', 'uint32', 1, 'out'),
              ('exit_code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
