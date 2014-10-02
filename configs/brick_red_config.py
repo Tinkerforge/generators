@@ -56,6 +56,9 @@ FILE_ORIGIN_CONSTANTS = ('FileOrigin', 'file_origin', [('Beginning', 'beginning'
                                                        ('Current', 'current', 1),
                                                        ('End', 'end', 2)])
 
+DIRECTORY_FLAG_CONSTANTS = ('DirectoryFlag', 'directory_flag', [('Recursive', 'recursive', 0x0001),
+                                                                ('Exclusive', 'exclusive', 0x0002)])
+
 # the signal numbers match the UNIX signal numbers on purpose
 PROCESS_SIGNAL_CONSTANTS = ('ProcessSignal', 'process_signal', [('Interrupt', 'interrupt', 2),
                                                                 ('Quit', 'quit', 3),
@@ -1047,7 +1050,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('CreateDirectory', 'create_directory'),
 'elements': [('name_string_id', 'uint16', 1, 'in'),
-             ('recursive', 'bool', 1, 'in'),
+             ('flags', 'uint16', 1, 'in', DIRECTORY_FLAG_CONSTANTS),
              ('permissions', 'uint16', 1, 'in', FILE_PERMISSION_CONSTANTS),
              ('uid', 'uint32', 1, 'in'),
              ('gid', 'uint32', 1, 'in'),
