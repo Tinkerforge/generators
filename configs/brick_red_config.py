@@ -135,7 +135,7 @@ RED Brick API return an 8bit error code. Possible error codes are:
 * InternalError = 4
 * UnknownObjectID = 5
 * NoFreeObjectID = 6
-* ObjectInUse = 7
+* ObjectIsLocked = 7
 * NoMoreData = 8
 * WrongListItemType = 9
 * MalformedProgramConfig = 10
@@ -258,7 +258,7 @@ com['packets'].append({
 'name': ('GetNextInventoryEntry', 'get_next_inventory_entry'),
 'elements': [('inventory_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
-             ('object_id', 'uint16', 1, 'out')],
+             ('entry_object_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
