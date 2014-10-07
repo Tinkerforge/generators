@@ -6,13 +6,12 @@
 
 # RED Brick communication config
 
-OBJECT_TYPE_CONSTANTS = ('ObjectType', 'object_type', [('Inventory', 'inventory', 0),
-                                                       ('String', 'string', 1),
-                                                       ('List', 'list', 2),
-                                                       ('File', 'file', 3),
-                                                       ('Directory', 'directory', 4),
-                                                       ('Process', 'process', 5),
-                                                       ('Program', 'program', 6)])
+OBJECT_TYPE_CONSTANTS = ('ObjectType', 'object_type', [('String', 'string', 0),
+                                                       ('List', 'list', 1),
+                                                       ('File', 'file', 2),
+                                                       ('Directory', 'directory', 3),
+                                                       ('Process', 'process', 4),
+                                                       ('Program', 'program', 5)])
 
 FILE_TYPE_CONSTANTS = ('FileType', 'file_type', [('Unknown', 'unknown', 0),
                                                  ('Regular', 'regular', 1),
@@ -201,101 +200,6 @@ error code. If the reference count reaches zero the object gets destroyed.
 })
 
 #
-# inventory
-#
-
-com['packets'].append({
-'type': 'function',
-'name': ('OpenInventory', 'open_inventory'),
-'elements': [('type', 'uint8', 1, 'in', OBJECT_TYPE_CONSTANTS),
-             ('error_code', 'uint8', 1, 'out'),
-             ('inventory_id', 'uint16', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Opens the inventory for a specific object type and allocates a new inventory
-object for it.
-
-Possible object types are:
-
-* Inventory = 0
-* String = 1
-* List = 2
-* File = 3
-* Directory = 4
-* Process = 5
-* Program = 6
-
-Returns the object ID of the new directory object and the resulting error code.
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('GetInventoryType', 'get_inventory_type'),
-'elements': [('inventory_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out'),
-             ('type', 'uint8', 1, 'out', OBJECT_TYPE_CONSTANTS)],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Returns the object type of a inventory object, as passed to
-:func:`OpenInventory`, and the resulting error code.
-
-See :func:`OpenInventory` for possible object types.
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('GetNextInventoryEntry', 'get_next_inventory_entry'),
-'elements': [('inventory_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out'),
-             ('entry_object_id', 'uint16', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Returns the object ID of the next object in an inventory object and the
-resulting error code.
-
-If there is not next object then error code *NoMoreData* is returned. To rewind
-an inventory object call :func:`RewindInventory`.
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('RewindInventory', 'rewind_inventory'),
-'elements': [('inventory_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Rewinds an inventory object and returns the resulting error code.
-""",
-'de':
-"""
-"""
-}]
-})
-
-#
 # string
 #
 
@@ -454,13 +358,22 @@ com['packets'].append({
              ('index', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('item_object_id', 'uint16', 1, 'out'),
-             ('type', 'uint8', 1, 'out')],
+             ('type', 'uint8', 1, 'out', OBJECT_TYPE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
 Returns the object ID and type of the object stored at ``index`` in a list
 object and returns the resulting error code.
+
+Possible object types are:
+
+* String = 0
+* List = 1
+* File = 2
+* Directory = 3
+* Process = 4
+* Program = 5
 """,
 'de':
 """
@@ -686,7 +599,8 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Reads up to 2\ :sup:`63`\  - 1 bytes from a file object asynchronously.
+Reads up to 2\ :sup:`63`\  - 1 bytes from a file object asynchronously. The
+minimum asynchronous read length is 1 byte.
 
 Returns the resulting error code.
 
@@ -1073,6 +987,22 @@ FIXME: name has to be absolute
 
 com['packets'].append({
 'type': 'function',
+'name': ('GetProcesses', 'get_processes'),
+'elements': [('error_code', 'uint8', 1, 'out'),
+             ('processes_list_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
 'name': ('SpawnProcess', 'spawn_process'),
 'elements': [('executable_string_id', 'uint16', 1, 'in'),
              ('arguments_list_id', 'uint16', 1, 'in'),
@@ -1262,6 +1192,22 @@ com['packets'].append({
 #
 # program
 #
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetDefinedPrograms', 'get_defined_programs'),
+'elements': [('error_code', 'uint8', 1, 'out'),
+             ('programs_list_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
 
 com['packets'].append({
 'type': 'function',
@@ -1492,6 +1438,76 @@ com['packets'].append({
              ('error_code', 'uint8', 1, 'out'),
              ('timestamp', 'uint64', 1, 'out'),
              ('message_string_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetCustomProgramOptionNames', 'get_custom_program_option_names'),
+'elements': [('program_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('names_list_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetCustomProgramOptionValue', 'set_custom_program_option_value'),
+'elements': [('program_id', 'uint16', 1, 'in'),
+             ('name_string_id', 'uint16', 1, 'in'),
+             ('value_string_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetCustomProgramOptionValue', 'get_custom_program_option_value'),
+'elements': [('program_id', 'uint16', 1, 'in'),
+             ('name_string_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('value_string_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('RemoveCustomProgramOption', 'remove_custom_program_option'),
+'elements': [('program_id', 'uint16', 1, 'in'),
+             ('name_string_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
