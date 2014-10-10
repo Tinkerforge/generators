@@ -1279,10 +1279,10 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetProgramDirectory', 'get_program_directory'),
+'name': ('GetProgramRootDirectory', 'get_program_root_directory'),
 'elements': [('program_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
-             ('directory_string_id', 'uint16', 1, 'out')],
+             ('root_directory_string_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
