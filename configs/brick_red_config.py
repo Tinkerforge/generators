@@ -586,7 +586,12 @@ com['packets'].append({
 """
 Reads up to 62 bytes from a file object.
 
-Returns the read bytes and the resulting error code.
+Returns the bytes read, the actual number of bytes read and the resulting
+error code.
+
+If there is not data to be read, either because the file position reached
+end-of-file or because there is not data in the pipe, then zero bytes are
+returned.
 
 If the file object was created by :func:`OpenFile` without the *NonBlocking*
 flag or by :func:`CreatePipe` without the *NonBlockingRead* flag then the
@@ -602,19 +607,19 @@ com['packets'].append({
 'type': 'function',
 'name': ('ReadFileAsync', 'read_file_async'),
 'elements': [('file_id', 'uint16', 1, 'in'),
-             ('length_to_read', 'uint64', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out')],
+             ('length_to_read', 'uint64', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Reads up to 2\ :sup:`63`\  - 1 bytes from a file object asynchronously. The
-minimum asynchronous read length is 1 byte.
+Reads up to 2\ :sup:`63`\  - 1 bytes from a file object asynchronously.
 
-Returns the resulting error code.
+Reports the bytes read (in 60 byte chunks), the actual number of bytes read and
+the resulting error code via the :func:`AsyncFileRead` callback.
 
-The read bytes in 60 byte chunks and the resulting error codes of the read
-operations are reported via the :func:`AsyncFileRead` callback.
+If there is not data to be read, either because the file position reached
+end-of-file or because there is not data in the pipe, then zero bytes are
+reported.
 
 If the file object was created by :func:`OpenFile` without the *NonBlocking*
 flag or by :func:`CreatePipe` without the *NonBlockingRead* flag then the error
@@ -638,6 +643,8 @@ com['packets'].append({
 Aborts a :func:`ReadFileAsync` operation in progress.
 
 Returns the resulting error code.
+
+On success the :func:`AsyncFileRead` callback will report *OperationAborted*.
 """,
 'de':
 """
