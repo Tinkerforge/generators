@@ -55,6 +55,15 @@ FILE_ORIGIN_CONSTANTS = ('FileOrigin', 'file_origin', [('Beginning', 'beginning'
                                                        ('Current', 'current', 1),
                                                        ('End', 'end', 2)])
 
+DIRECTORY_ENTRY_TYPE_CONSTANTS = ('DirectoryEntryType', 'directory_entry_type', [('Unknown', 'unknown', 0),
+                                                                                 ('Regular', 'regular', 1),
+                                                                                 ('Directory', 'directory', 2),
+                                                                                 ('Character', 'character', 3),
+                                                                                 ('Block', 'block', 4),
+                                                                                 ('FIFO', 'fifo', 5),
+                                                                                 ('Symlink', 'symlink', 6),
+                                                                                 ('Socket', 'socket', 7)])
+
 DIRECTORY_FLAG_CONSTANTS = ('DirectoryFlag', 'directory_flag', [('Recursive', 'recursive', 0x0001),
                                                                 ('Exclusive', 'exclusive', 0x0002)])
 
@@ -925,7 +934,7 @@ com['packets'].append({
 'elements': [('directory_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('name_string_id', 'uint16', 1, 'out'),
-             ('type', 'uint8', 1, 'out', FILE_TYPE_CONSTANTS)],
+             ('type', 'uint8', 1, 'out', DIRECTORY_ENTRY_TYPE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -935,7 +944,16 @@ Returns the next entry in a directory object and the resulting error code.
 If there is not next entry then error code *NoMoreData* is returned. To rewind
 a directory object call :func:`RewindDirectory`.
 
-See :func:`GetFileType` for a list of possible file types.
+Possible directory entry types are:
+
+* Unknown = 0
+* Regular = 1
+* Directory = 2
+* Character = 3
+* Block = 4
+* FIFO = 5
+* Symlink = 6
+* Socket = 7
 """,
 'de':
 """
