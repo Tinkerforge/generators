@@ -328,28 +328,28 @@ com['packets'].append({
 Sets the type of the led driver chip. We currently support
 the chips
 
-* WS2801,
-* WS2811 and
-* WS2812.
+* WS2801 (``chip`` = 2801),
+* WS2811 (``chip`` = 2811) and
+* WS2812 (``chip`` = 2812).
 
 The WS2812 is sometimes also called "NeoPixel", a name coined by
 Adafruit.
 
-The default value is WS2801 = 2801.
+The default value is WS2801 (``chip`` = 2801).
 """,
 'de':
 """
 Setzt den Typ des LED-Treiber-Chips. Aktuell unterstützen
 wir die Chips
 
-* WS2801,
-* WS2811 und
-* WS2812.
+* WS2801 (``chip`` = 2801),
+* WS2811 (``chip`` = 2811) und
+* WS2812 (``chip`` = 2812).
 
 Der WS2812 wird manchmal auch "NeoPixel" genannt, ein Name
 der von Adafruit geprägt wurde.
 
-Der Standardwert ist WS2801 = 2801.
+Der Standardwert ist WS2801 (``chip`` = 2801).
 """
 }]
 })
