@@ -1185,6 +1185,9 @@ Possible exit/error codes in *Error* state are:
 * InternalError = 125
 * CannotExecute = 126
 * DoesNotExist = 127
+
+The *CannotExecute* error can be caused by the executable being opened for
+writing.
 """,
 'de':
 """
