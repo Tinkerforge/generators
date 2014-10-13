@@ -1439,7 +1439,8 @@ com['packets'].append({
 'name': ('GetLastSpawnedProgramProcess', 'get_last_spawned_program_process'),
 'elements': [('program_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
-             ('process_id', 'uint16', 1, 'out')],
+             ('process_id', 'uint16', 1, 'out'),
+             ('timestamp', 'uint64', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1456,8 +1457,8 @@ com['packets'].append({
 'name': ('GetLastProgramSchedulerError', 'get_last_program_scheduler_error'),
 'elements': [('program_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
-             ('timestamp', 'uint64', 1, 'out'),
-             ('message_string_id', 'uint16', 1, 'out')],
+             ('message_string_id', 'uint16', 1, 'out'),
+             ('timestamp', 'uint64', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
