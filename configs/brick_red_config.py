@@ -170,6 +170,7 @@ RED Brick API return an 8bit error code. Possible error codes are:
 * NameTooLong = 141 (ENAMETOOLONG)
 * InvalidSeek = 142 (ESPIPE)
 * NotSupported = 143 (ENOTSUP)
+* TooManyOpenFiles = 144 (EMFILE)
 
 If a function returns an error code other than *Success* then its other
 return values (if any) are invalid and must not be used.
