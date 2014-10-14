@@ -115,6 +115,8 @@ com = {
 com['api'] = {
 'en':
 """
+FIXME: explain sessions
+
 The RED Brick API operates on reference counted objects (strings, lists, files,
 directories, processes and programs) that are identified by their 16bit object
 ID. Functions that allocate or return an object ID (e.g. :func:`AllocateString`
@@ -144,12 +146,14 @@ RED Brick API return an 8bit error code. Possible error codes are:
 * InvalidOperation = 2
 * OperationAborted = 3
 * InternalError = 4
-* UnknownObjectID = 5
-* NoFreeObjectID = 6
-* ObjectIsLocked = 7
-* NoMoreData = 8
-* WrongListItemType = 9
-* MalformedProgramConfig = 10
+* UnknownSessionID = 5
+* NoFreeSessionID = 6
+* UnknownObjectID = 7
+* NoFreeObjectID = 8
+* ObjectIsLocked = 9
+* NoMoreData = 10
+* WrongListItemType = 11
+* MalformedProgramConfig = 12
 * InvalidParameter = 128 (EINVAL)
 * NoFreeMemory = 129 (ENOMEM)
 * NoFreeSpace = 130 (ENOSPC)
@@ -187,6 +191,60 @@ to non-existing directories.
 }
 
 #
+# session
+#
+
+com['packets'].append({
+'type': 'function',
+'name': ('CreateSession', 'create_session'),
+'elements': [('lifetime', 'uint32', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('session_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('ExpireSession', 'expire_session'),
+'elements': [('session_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('KeepSessionAlive', 'keep_session_alive'),
+'elements': [('session_id', 'uint16', 1, 'in'),
+             ('lifetime', 'uint32', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+#
 # object
 #
 
@@ -194,6 +252,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('ReleaseObject', 'release_object'),
 'elements': [('object_id', 'uint16', 1, 'in'),
+             ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -216,7 +275,8 @@ com['packets'].append({
 'type': 'function',
 'name': ('AllocateString', 'allocate_string'),
 'elements': [('length_to_reserve', 'uint32', 1, 'in'),
-             ('buffer', 'string', 60, 'in'),
+             ('buffer', 'string', 58, 'in'),
+             ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('string_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -321,6 +381,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('AllocateList', 'allocate_list'),
 'elements': [('length_to_reserve', 'uint16', 1, 'in'),
+             ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('list_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -365,6 +426,7 @@ com['packets'].append({
 'name': ('GetListItem', 'get_list_item'),
 'elements': [('list_id', 'uint16', 1, 'in'),
              ('index', 'uint16', 1, 'in'),
+             ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('item_object_id', 'uint16', 1, 'out'),
              ('type', 'uint8', 1, 'out', OBJECT_TYPE_CONSTANTS)],
@@ -444,6 +506,7 @@ com['packets'].append({
              ('permissions', 'uint16', 1, 'in', FILE_PERMISSION_CONSTANTS),
              ('uid', 'uint32', 1, 'in'),
              ('gid', 'uint32', 1, 'in'),
+             ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('file_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -501,6 +564,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('CreatePipe', 'create_pipe'),
 'elements': [('flags', 'uint16', 1, 'in', PIPE_FLAG_CONSTANTS),
+             ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('file_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -527,6 +591,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetFileInfo', 'get_file_info'),
 'elements': [('file_id', 'uint16', 1, 'in'),
+             ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('type', 'uint8', 1, 'out', FILE_TYPE_CONSTANTS),
              ('name_string_id', 'uint16', 1, 'out'),
@@ -862,6 +927,7 @@ com['packets'].append({
 'name': ('LookupSymlinkTarget', 'lookup_symlink_target'),
 'elements': [('name_string_id', 'uint16', 1, 'in'),
              ('canonicalize', 'bool', 1, 'in'),
+             ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('target_string_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -893,6 +959,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('OpenDirectory', 'open_directory'),
 'elements': [('name_string_id', 'uint16', 1, 'in'),
+             ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('directory_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -920,6 +987,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetDirectoryName', 'get_directory_name'),
 'elements': [('directory_id', 'uint16', 1, 'in'),
+             ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('name_string_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -939,6 +1007,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetNextDirectoryEntry', 'get_next_directory_entry'),
 'elements': [('directory_id', 'uint16', 1, 'in'),
+             ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('name_string_id', 'uint16', 1, 'out'),
              ('type', 'uint8', 1, 'out', DIRECTORY_ENTRY_TYPE_CONSTANTS)],
@@ -1013,7 +1082,8 @@ FIXME: name has to be absolute
 com['packets'].append({
 'type': 'function',
 'name': ('GetProcesses', 'get_processes'),
-'elements': [('error_code', 'uint8', 1, 'out'),
+'elements': [('session_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
              ('processes_list_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -1038,6 +1108,7 @@ com['packets'].append({
              ('stdin_file_id', 'uint16', 1, 'in'),
              ('stdout_file_id', 'uint16', 1, 'in'),
              ('stderr_file_id', 'uint16', 1, 'in'),
+             ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('process_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -1085,6 +1156,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetProcessCommand', 'get_process_command'),
 'elements': [('process_id', 'uint16', 1, 'in'),
+             ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('executable_string_id', 'uint16', 1, 'out'),
              ('arguments_list_id', 'uint16', 1, 'out'),
@@ -1132,6 +1204,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetProcessStdio', 'get_process_stdio'),
 'elements': [('process_id', 'uint16', 1, 'in'),
+             ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('stdin_file_id', 'uint16', 1, 'out'),
              ('stdout_file_id', 'uint16', 1, 'out'),
@@ -1219,7 +1292,8 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function',
 'name': ('GetDefinedPrograms', 'get_defined_programs'),
-'elements': [('error_code', 'uint8', 1, 'out'),
+'elements': [('session_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
              ('programs_list_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -1236,6 +1310,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('DefineProgram', 'define_program'),
 'elements': [('identifier_string_id', 'uint16', 1, 'in'),
+             ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('program_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -1269,6 +1344,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetProgramIdentifier', 'get_program_identifier'),
 'elements': [('program_id', 'uint16', 1, 'in'),
+             ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('identifier_string_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -1286,6 +1362,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetProgramRootDirectory', 'get_program_root_directory'),
 'elements': [('program_id', 'uint16', 1, 'in'),
+             ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('root_directory_string_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -1322,6 +1399,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetProgramCommand', 'get_program_command'),
 'elements': [('program_id', 'uint16', 1, 'in'),
+             ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('executable_string_id', 'uint16', 1, 'out'),
              ('arguments_list_id', 'uint16', 1, 'out'),
@@ -1363,6 +1441,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetProgramStdioRedirection', 'get_program_stdio_redirection'),
 'elements': [('program_id', 'uint16', 1, 'in'),
+             ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('stdin_redirection', 'uint8', 1, 'out', PROGRAM_STDIO_REDIRECTION_CONSTANTS),
              ('stdin_file_name_string_id', 'uint16', 1, 'out'),
@@ -1441,6 +1520,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetLastSpawnedProgramProcess', 'get_last_spawned_program_process'),
 'elements': [('program_id', 'uint16', 1, 'in'),
+             ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('process_id', 'uint16', 1, 'out'),
              ('timestamp', 'uint64', 1, 'out')],
@@ -1459,6 +1539,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetLastProgramSchedulerError', 'get_last_program_scheduler_error'),
 'elements': [('program_id', 'uint16', 1, 'in'),
+             ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('message_string_id', 'uint16', 1, 'out'),
              ('timestamp', 'uint64', 1, 'out')],
@@ -1477,6 +1558,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetCustomProgramOptionNames', 'get_custom_program_option_names'),
 'elements': [('program_id', 'uint16', 1, 'in'),
+             ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('names_list_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -1513,6 +1595,7 @@ com['packets'].append({
 'name': ('GetCustomProgramOptionValue', 'get_custom_program_option_value'),
 'elements': [('program_id', 'uint16', 1, 'in'),
              ('name_string_id', 'uint16', 1, 'in'),
+             ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('value_string_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
