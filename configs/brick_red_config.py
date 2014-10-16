@@ -230,6 +230,21 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
+'name': ('ExpireSessionUnchecked', 'expire_session_unchecked'),
+'elements': [('session_id', 'uint16', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
 'name': ('KeepSessionAlive', 'keep_session_alive'),
 'elements': [('session_id', 'uint16', 1, 'in'),
              ('lifetime', 'uint32', 1, 'in'),
@@ -261,6 +276,22 @@ com['packets'].append({
 """
 Decreases the reference count of an object by one and returns the resulting
 error code. If the reference count reaches zero the object gets destroyed.
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('ReleaseObjectUnchecked', 'release_object_unchecked'),
+'elements': [('object_id', 'uint16', 1, 'in'),
+             ('session_id', 'uint16', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
 """,
 'de':
 """
