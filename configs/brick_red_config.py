@@ -153,7 +153,6 @@ RED Brick API return an 8bit error code. Possible error codes are:
 * ObjectIsLocked = 9
 * NoMoreData = 10
 * WrongListItemType = 11
-* MalformedProgramConfig = 12
 * InvalidParameter = 128 (EINVAL)
 * NoFreeMemory = 129 (ENOMEM)
 * NoFreeSpace = 130 (ENOSPC)
@@ -1401,6 +1400,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+FIXME: root directory is absolute: <home>/programs/<identifier>
 """,
 'de':
 """
@@ -1415,11 +1415,13 @@ com['packets'].append({
              ('executable_string_id', 'uint16', 1, 'in'),
              ('arguments_list_id', 'uint16', 1, 'in'),
              ('environment_list_id', 'uint16', 1, 'in'),
+             ('working_directory_string_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
+FIXME: working directory is relative to <home>/programs/<identifier>/bin
 """,
 'de':
 """
@@ -1435,11 +1437,13 @@ com['packets'].append({
              ('error_code', 'uint8', 1, 'out'),
              ('executable_string_id', 'uint16', 1, 'out'),
              ('arguments_list_id', 'uint16', 1, 'out'),
-             ('environment_list_id', 'uint16', 1, 'out')],
+             ('environment_list_id', 'uint16', 1, 'out'),
+             ('working_directory_string_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
+FIXME: working directory is relative to <home>/programs/<identifier>/bin
 """,
 'de':
 """
@@ -1462,6 +1466,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+FIXME: stdio file names are relative to <home>/programs/<identifier>/bin
 """,
 'de':
 """
@@ -1485,6 +1490,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+FIXME: stdio file names are relative to <home>/programs/<identifier>/bin
 """,
 'de':
 """
