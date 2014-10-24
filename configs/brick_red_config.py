@@ -153,6 +153,7 @@ RED Brick API return an 8bit error code. Possible error codes are:
 * ObjectIsLocked = 9
 * NoMoreData = 10
 * WrongListItemType = 11
+* ProgramIsPurged = 12
 * InvalidParameter = 128 (EINVAL)
 * NoFreeMemory = 129 (ENOMEM)
 * NoFreeSpace = 130 (ENOSPC)
@@ -1322,7 +1323,7 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDefinedPrograms', 'get_defined_programs'),
+'name': ('GetPrograms', 'get_programs'),
 'elements': [('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('programs_list_id', 'uint16', 1, 'out')],
@@ -1357,8 +1358,9 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('UndefineProgram', 'undefine_program'),
+'name': ('PurgeProgram', 'purge_program'),
 'elements': [('program_id', 'uint16', 1, 'in'),
+             ('cookie', 'uint32', 1, 'in'),
              ('error_code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
