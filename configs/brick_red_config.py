@@ -98,7 +98,7 @@ PROGRAM_START_CONDITION_CONSTANTS = ('ProgramStartCondition', 'program_start_con
 
 PROGRAM_REPEAT_MODE_CONSTANTS = ('ProgramRepeatMode', 'program_repeat_mode', [('Never', 'never', 0),
                                                                               ('Interval', 'interval', 1),
-                                                                              ('Selection', 'selection', 2)])
+                                                                              ('Cron', 'cron', 2)])
 
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
@@ -185,6 +185,8 @@ be performed. For example, trying to append a list object to itself, trying to
 get the name of a file object with type *Pipe* or trying to create a directory
 non-recursively with more than the last part of the directory name referring
 to non-existing directories.
+
+String objects store UTF-8 encoded data.
 """,
 'de':
 """
@@ -596,6 +598,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('CreatePipe', 'create_pipe'),
 'elements': [('flags', 'uint16', 1, 'in', PIPE_FLAG_CONSTANTS),
+             ('length', 'uint64', 1, 'in'),
              ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('file_id', 'uint16', 1, 'out')],
@@ -610,6 +613,9 @@ pipe flags (in hexadecimal notation):
 
 * NonBlockingRead = 0x0001
 * NonBlockingWrite = 0x0002
+
+The length of the pipe buffer can be specified with the ``length`` parameter
+in bytes. If length is set to zero, then the default pipe buffer length is used.
 
 Returns the object ID of the new file object and the resulting error code.
 """,
@@ -661,7 +667,7 @@ The returned flags were used to open or create the file object, as passed to
 :func:`OpenFile` or :func:`CreatePipe`. See the respective function for a list
 of possible file and pipe flags.
 
-FIXME: everything except flags is invalid if file type is *Pipe*
+FIXME: everything except flags and length is invalid if file type is *Pipe*
 """,
 'de':
 """
@@ -1509,12 +1515,7 @@ com['packets'].append({
              ('start_delay', 'uint32', 1, 'in'),
              ('repeat_mode', 'uint8', 1, 'in', PROGRAM_REPEAT_MODE_CONSTANTS),
              ('repeat_interval', 'uint32', 1, 'in'),
-             ('repeat_second_mask', 'uint64', 1, 'in'),
-             ('repeat_minute_mask', 'uint64', 1, 'in'),
-             ('repeat_hour_mask', 'uint32', 1, 'in'),
-             ('repeat_day_mask', 'uint32', 1, 'in'),
-             ('repeat_month_mask', 'uint16', 1, 'in'),
-             ('repeat_weekday_mask', 'uint8', 1, 'in'),
+             ('repeat_fields_string_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -1532,18 +1533,14 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetProgramSchedule', 'get_program_schedule'),
 'elements': [('program_id', 'uint16', 1, 'in'),
+             ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('start_condition', 'uint8', 1, 'out', PROGRAM_START_CONDITION_CONSTANTS),
              ('start_timestamp', 'uint64', 1, 'out'),
              ('start_delay', 'uint32', 1, 'out'),
              ('repeat_mode', 'uint8', 1, 'out', PROGRAM_REPEAT_MODE_CONSTANTS),
              ('repeat_interval', 'uint32', 1, 'out'),
-             ('repeat_second_mask', 'uint64', 1, 'out'),
-             ('repeat_minute_mask', 'uint64', 1, 'out'),
-             ('repeat_hour_mask', 'uint32', 1, 'out'),
-             ('repeat_day_mask', 'uint32', 1, 'out'),
-             ('repeat_month_mask', 'uint16', 1, 'out'),
-             ('repeat_weekday_mask', 'uint8', 1, 'out')],
+             ('repeat_fields_string_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
