@@ -359,11 +359,17 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns *true* if the backlight is on and *false* otherwise.
+Returns the state of the LED. Possible values are:
+
+* 0: On
+* 1: Off
 """,
 'de':
 """
-Gibt *true* zurück wenn die LED aktiv ist, sonst *false*.
+Gibt den Zustand der LED zurück: Mögliche Werte sind:
+
+* 0: On
+* 1: Off
 """
 }]
 })
