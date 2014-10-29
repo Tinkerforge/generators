@@ -366,7 +366,7 @@ Returns the state of the LED. Possible values are:
 """,
 'de':
 """
-Gibt den Zustand der LED zurück: Mögliche Werte sind:
+Gibt den Zustand der LED zurück. Mögliche Werte sind:
 
 * 0: On
 * 1: Off
