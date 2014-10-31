@@ -100,6 +100,12 @@ PROGRAM_REPEAT_MODE_CONSTANTS = ('ProgramRepeatMode', 'program_repeat_mode', [('
                                                                               ('Interval', 'interval', 1),
                                                                               ('Cron', 'cron', 2)])
 
+PROGRAM_SCHEDULER_STATE_CONSTANTS = ('ProgramSchedulerState', 'program_scheduler_state', [('Stopped', 'stopped', 0),
+                                                                                          ('WaitingForStartCondition', 'waiting_for_start_condition', 1),
+                                                                                          ('DelayingStart', 'delaying_start', 2),
+                                                                                          ('WaitingForRepeatCondition', 'waiting_for_repeat_condition', 3),
+                                                                                          ('ErrorOccurred', 'error_occurred', 4)])
+
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -1526,7 +1532,6 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-FIXME: week starts on monday
 """,
 'de':
 """
@@ -1550,7 +1555,43 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-FIXME: week starts on monday
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetProgramSchedulerState', 'get_program_scheduler_state'),
+'elements': [('program_id', 'uint16', 1, 'in'),
+             ('session_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('state', 'uint8', 1, 'out', PROGRAM_SCHEDULER_STATE_CONSTANTS),
+             ('timestamp', 'uint64', 1, 'out'),
+             ('message_string_id', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+FIXME: message is currently vaild in error-occurred state only
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('ScheduleProgramNow', 'schedule_program_now'),
+'elements': [('program_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
 """,
 'de':
 """
@@ -1565,25 +1606,6 @@ com['packets'].append({
              ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('process_id', 'uint16', 1, 'out'),
-             ('timestamp', 'uint64', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-""",
-'de':
-"""
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('GetLastProgramSchedulerError', 'get_last_program_scheduler_error'),
-'elements': [('program_id', 'uint16', 1, 'in'),
-             ('session_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out'),
-             ('message_string_id', 'uint16', 1, 'out'),
              ('timestamp', 'uint64', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -1670,7 +1692,7 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'callback',
-'name': ('ProgramProcessSpawned', 'program_process_spawned'),
+'name': ('ProgramSchedulerStateChanged', 'program_scheduler_state_changed'),
 'elements': [('program_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -1685,7 +1707,7 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'callback',
-'name': ('ProgramSchedulerErrorOccurred', 'program_scheduler_error_occurred'),
+'name': ('ProgramProcessSpawned', 'program_process_spawned'),
 'elements': [('program_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
