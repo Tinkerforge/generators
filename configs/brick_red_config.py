@@ -88,13 +88,15 @@ PROCESS_STATE_CONSTANTS = ('ProcessState', 'process_state', [('Unknown', 'unknow
 PROGRAM_STDIO_REDIRECTION_CONSTANTS = ('ProgramStdioRedirection', 'program_stdio_redirection', [('DevNull', 'dev_null', 0),
                                                                                                 ('Pipe', 'pipe', 1),
                                                                                                 ('File', 'file', 2),
-                                                                                                ('Log', 'log', 3),
-                                                                                                ('Stdout', 'stdout', 4)])
+                                                                                                ('IndividualLog', 'individual_log', 3),
+                                                                                                ('ContinuousLog', 'continuous_log', 4),
+                                                                                                ('Stdout', 'stdout', 5)])
 
 PROGRAM_START_CONDITION_CONSTANTS = ('ProgramStartCondition', 'program_start_condition', [('Never', 'never', 0),
                                                                                           ('Now', 'now', 1),
                                                                                           ('Reboot', 'reboot', 2),
-                                                                                          ('Timestamp', 'timestamp', 3)])
+                                                                                          ('Timestamp', 'timestamp', 3),
+                                                                                          ('Cron', 'cron', 4)])
 
 PROGRAM_REPEAT_MODE_CONSTANTS = ('ProgramRepeatMode', 'program_repeat_mode', [('Never', 'never', 0),
                                                                               ('Interval', 'interval', 1),
@@ -1524,6 +1526,7 @@ com['packets'].append({
              ('start_condition', 'uint8', 1, 'in', PROGRAM_START_CONDITION_CONSTANTS),
              ('start_timestamp', 'uint64', 1, 'in'),
              ('start_delay', 'uint32', 1, 'in'),
+             ('start_fields_string_id', 'uint16', 1, 'in'),
              ('repeat_mode', 'uint8', 1, 'in', PROGRAM_REPEAT_MODE_CONSTANTS),
              ('repeat_interval', 'uint32', 1, 'in'),
              ('repeat_fields_string_id', 'uint16', 1, 'in'),
@@ -1548,6 +1551,7 @@ com['packets'].append({
              ('start_condition', 'uint8', 1, 'out', PROGRAM_START_CONDITION_CONSTANTS),
              ('start_timestamp', 'uint64', 1, 'out'),
              ('start_delay', 'uint32', 1, 'out'),
+             ('start_fields_string_id', 'uint16', 1, 'out'),
              ('repeat_mode', 'uint8', 1, 'out', PROGRAM_REPEAT_MODE_CONSTANTS),
              ('repeat_interval', 'uint32', 1, 'out'),
              ('repeat_fields_string_id', 'uint16', 1, 'out')],
