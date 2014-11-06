@@ -125,6 +125,10 @@ com['api'] = {
 """
 FIXME: explain sessions
 
+The RED Brick API is used by the Brick Viewer to implement the offered 
+functionality (Get status information, transfer files etc.) Normalusers will not 
+need to use this API, it may only be interesting for power users.
+
 The RED Brick API operates on reference counted objects (strings, lists, files,
 directories, processes and programs) that are identified by their 16bit object
 ID. Functions that allocate or return an object ID (e.g. :func:`AllocateString`
