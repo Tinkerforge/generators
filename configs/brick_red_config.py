@@ -92,21 +92,13 @@ PROGRAM_STDIO_REDIRECTION_CONSTANTS = ('ProgramStdioRedirection', 'program_stdio
                                                                                                 ('ContinuousLog', 'continuous_log', 4),
                                                                                                 ('Stdout', 'stdout', 5)])
 
-PROGRAM_START_CONDITION_CONSTANTS = ('ProgramStartCondition', 'program_start_condition', [('Never', 'never', 0),
-                                                                                          ('Now', 'now', 1),
-                                                                                          ('Reboot', 'reboot', 2),
-                                                                                          ('Timestamp', 'timestamp', 3),
-                                                                                          ('Cron', 'cron', 4)])
-
-PROGRAM_REPEAT_MODE_CONSTANTS = ('ProgramRepeatMode', 'program_repeat_mode', [('Never', 'never', 0),
-                                                                              ('Interval', 'interval', 1),
-                                                                              ('Cron', 'cron', 2)])
+PROGRAM_START_MODE_CONSTANTS = ('ProgramStartMode', 'program_start_mode', [('Never', 'never', 0),
+                                                                           ('Always', 'always', 1),
+                                                                           ('Interval', 'interval', 2),
+                                                                           ('Cron', 'cron', 3)])
 
 PROGRAM_SCHEDULER_STATE_CONSTANTS = ('ProgramSchedulerState', 'program_scheduler_state', [('Stopped', 'stopped', 0),
-                                                                                          ('WaitingForStartCondition', 'waiting_for_start_condition', 1),
-                                                                                          ('DelayingStart', 'delaying_start', 2),
-                                                                                          ('WaitingForRepeatCondition', 'waiting_for_repeat_condition', 3),
-                                                                                          ('ErrorOccurred', 'error_occurred', 4)])
+                                                                                          ('Running', 'running', 1)])
 
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
@@ -1527,13 +1519,10 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetProgramSchedule', 'set_program_schedule'),
 'elements': [('program_id', 'uint16', 1, 'in'),
-             ('start_condition', 'uint8', 1, 'in', PROGRAM_START_CONDITION_CONSTANTS),
-             ('start_timestamp', 'uint64', 1, 'in'),
-             ('start_delay', 'uint32', 1, 'in'),
+             ('start_mode', 'uint8', 1, 'in', PROGRAM_START_MODE_CONSTANTS),
+             ('continue_after_error', 'bool', 1, 'in'),
+             ('start_interval', 'uint32', 1, 'in'),
              ('start_fields_string_id', 'uint16', 1, 'in'),
-             ('repeat_mode', 'uint8', 1, 'in', PROGRAM_REPEAT_MODE_CONSTANTS),
-             ('repeat_interval', 'uint32', 1, 'in'),
-             ('repeat_fields_string_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -1552,13 +1541,10 @@ com['packets'].append({
 'elements': [('program_id', 'uint16', 1, 'in'),
              ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
-             ('start_condition', 'uint8', 1, 'out', PROGRAM_START_CONDITION_CONSTANTS),
-             ('start_timestamp', 'uint64', 1, 'out'),
-             ('start_delay', 'uint32', 1, 'out'),
-             ('start_fields_string_id', 'uint16', 1, 'out'),
-             ('repeat_mode', 'uint8', 1, 'out', PROGRAM_REPEAT_MODE_CONSTANTS),
-             ('repeat_interval', 'uint32', 1, 'out'),
-             ('repeat_fields_string_id', 'uint16', 1, 'out')],
+             ('start_mode', 'uint8', 1, 'out', PROGRAM_START_MODE_CONSTANTS),
+             ('continue_after_error', 'bool', 1, 'out'),
+             ('start_interval', 'uint32', 1, 'out'),
+             ('start_fields_string_id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1593,7 +1579,23 @@ FIXME: message is currently vaild in error-occurred state only
 
 com['packets'].append({
 'type': 'function',
-'name': ('ScheduleProgramNow', 'schedule_program_now'),
+'name': ('ContinueProgramSchedule', 'continue_program_schedule'),
+'elements': [('program_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('StartProgram', 'start_program'),
 'elements': [('program_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
