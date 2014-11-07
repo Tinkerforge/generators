@@ -115,11 +115,12 @@ com = {
 com['api'] = {
 'en':
 """
-FIXME: explain sessions
+The RED Brick API is meant to be used by the Brick Viewer to implement the
+offered  functionality (getting status information, managing programs etc.).
+Normal users will not need to use this API, it may only be interesting for
+power users.
 
-The RED Brick API is used by the Brick Viewer to implement the offered 
-functionality (Get status information, transfer files etc.) Normalusers will not 
-need to use this API, it may only be interesting for power users.
+FIXME: explain sessions
 
 The RED Brick API operates on reference counted objects (strings, lists, files,
 directories, processes and programs) that are identified by their 16bit object
