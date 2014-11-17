@@ -47,7 +47,7 @@ class CSharpExamplesTester(common.ExamplesTester):
                 '/optimize',
                 '/target:exe',
                 '/out:' + dest,
-                '/reference:/tmp/tester/Tinkerforge.dll',
+                '/reference:/tmp/tester/csharp/Tinkerforge.dll',
                 src]
 
         return subprocess.call(args) == 0
