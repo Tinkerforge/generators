@@ -55,6 +55,9 @@ FILE_ORIGIN_CONSTANTS = ('FileOrigin', 'file_origin', [('Beginning', 'beginning'
                                                        ('Current', 'current', 1),
                                                        ('End', 'end', 2)])
 
+FILE_EVENT_CONSTANTS = ('FileEvent', 'file_event', [('Readable', 'readable', 0x0001),
+                                                    ('Writable', 'writable', 0x0002)])
+
 DIRECTORY_ENTRY_TYPE_CONSTANTS = ('DirectoryEntryType', 'directory_entry_type', [('Unknown', 'unknown', 0),
                                                                                  ('Regular', 'regular', 1),
                                                                                  ('Directory', 'directory', 2),
@@ -890,6 +893,40 @@ position and the error code *InvalidSeek* is returned.
 })
 
 com['packets'].append({
+'type': 'function',
+'name': ('SetFileEvents', 'set_file_events'),
+'elements': [('file_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('events', 'uint16', 1, 'in', FILE_EVENT_CONSTANTS)],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetFileEvents', 'get_file_events'),
+'elements': [('file_id', 'uint16', 1, 'in'),
+             ('error_code', 'uint8', 1, 'out'),
+             ('events', 'uint16', 1, 'out', FILE_EVENT_CONSTANTS)],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
 'type': 'callback',
 'name': ('AsyncFileRead', 'async_file_read'),
 'elements': [('file_id', 'uint16', 1, 'out'),
@@ -921,6 +958,22 @@ com['packets'].append({
 """
 This callback reports the result of a call to the :func:`WriteFileAsync`
 function.
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('FileEventsOccurred', 'file_events_occurred'),
+'elements': [('file_id', 'uint16', 1, 'out'),
+             ('events', 'uint16', 1, 'out', FILE_EVENT_CONSTANTS)],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
 """,
 'de':
 """
