@@ -1,0 +1,10 @@
+[package]
+name=tinkerforge
+version=<<VERSION>>
+
+[target]
+units=<<UNITS>>
+
+[install]
+fpcpackage=y
+basedir=$(FPCDIR)
