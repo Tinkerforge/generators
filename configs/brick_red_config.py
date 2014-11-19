@@ -139,7 +139,7 @@ There are functions (e.g. :func:`GetFileInfo`) that only return valid objects
 under certain conditions. This conditions are documented for the specific
 functions. For invalid objects :func:`ReleaseObject` must not be called.
 
-There are also function (e.g. :func:`SetProcessStdioRedirection`) that have
+There are also function (e.g. :func:`SetProgramStdioRedirection`) that have
 conditionally unused object parameters. Under which conditions an object
 parameter is unused is documented for the specific functions. For unused
 object parameters 0 has to be passed as object ID.
