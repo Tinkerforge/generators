@@ -31,7 +31,8 @@ FILE_FLAG_CONSTANTS = ('FileFlag', 'file_flag', [('ReadOnly', 'read_only', 0x000
                                                  ('Exclusive', 'exclusive', 0x0020),
                                                  ('NonBlocking', 'non_blocking', 0x0040),
                                                  ('Truncate', 'truncate', 0x0080),
-                                                 ('Temporary', 'temporary', 0x0100)])
+                                                 ('Temporary', 'temporary', 0x0100),
+                                                 ('Replace', 'replace', 0x0200)])
 
 PIPE_FLAG_CONSTANTS = ('PipeFlag', 'pipe_flag', [('NonBlockingRead', 'non_blocking_read', 0x0001),
                                                  ('NonBlockingWrite', 'non_blocking_write', 0x0002)])
@@ -577,8 +578,9 @@ flags (in hexadecimal notation):
 * NonBlocking = 0x0040 (O_NONBLOCK)
 * Truncate = 0x0080 (O_TRUNC)
 * Temporary = 0x0100
+* Replace = 0x0200
 
-FIXME: explain *Temporary* flag
+FIXME: explain *Temporary* and *Replace* flag
 
 The ``permissions`` parameter takes a ORed combination of the following
 possible file permissions (in octal notation) that match the common UNIX
