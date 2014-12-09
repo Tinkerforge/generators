@@ -574,6 +574,7 @@ public abstract class IPConnectionBase {
 		}
 	}
 
+	// NOTE: Assumes that socketMutex is locked
 	void disconnectUnlocked() {
 		disconnectProbeThread.shutdown();
 		try {
@@ -728,16 +729,29 @@ public abstract class IPConnectionBase {
 		sendRequest(request.array());
 	}
 
-	abstract void callEnumerateListeners(String uid, String connectedUid, char position,
-	                                    short[] hardwareVersion, short[] firmwareVersion,
-	                                    int deviceIdentifier, short enumerationType);
-	abstract boolean hasEnumerateListeners();
-	
-	abstract void callConnectedListeners(short connectReason);
-	
-	abstract void callDisconnectedListeners(short disconnectReason);
+	// to preserve the exact current behavior of the IPConnection all of the
+	// following abstract methods have to operate synchronous. all listeners
+	// have to be called before the methods return. this is especially important
+	// for the DisconnectedListener, because the callback thread expects that
+	// the user got informed about the disconnect event before it starts the
+	// auto-reconnect logic. this is because the user shall get a chance to act
+	// upon the disconnect event before the auto-reconnect logic starts.
+	//
+	// synchronous dispatch of the callback is only important if the current
+	// behavior should be preserved exactly. all callbacks can also be dispatched
+	// asynchronously. the only negative effect of asynchronous dispatch is
+	// that the current order of operations around the disconnected callback
+	// cannot be guaranteed anymore.
+	protected abstract void callEnumerateListeners(String uid, String connectedUid, char position,
+	                                               short[] hardwareVersion, short[] firmwareVersion,
+	                                               int deviceIdentifier, short enumerationType);
+	protected abstract boolean hasEnumerateListeners();
 
-	abstract void callDeviceListener(Device device, byte functionID, byte[] data);
+	protected abstract void callConnectedListeners(short connectReason);
+
+	protected abstract void callDisconnectedListeners(short disconnectReason);
+
+	protected abstract void callDeviceListener(Device device, byte functionID, byte[] data);
 
 	void handleResponse(byte[] packet) {
 		byte functionID = getFunctionIDFromData(packet);

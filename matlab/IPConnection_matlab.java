@@ -133,9 +133,10 @@ public class IPConnection extends IPConnectionBase {
 		listenerDisconnected.remove(listener);
 	}
 
-	void callEnumerateListeners(String uid, String connectedUid, char position,
-	                            short[] hardwareVersion, short[] firmwareVersion,
-	                            int deviceIdentifier, short enumerationType) {
+	@Override
+	protected void callEnumerateListeners(String uid, String connectedUid, char position,
+	                                      short[] hardwareVersion, short[] firmwareVersion,
+	                                      int deviceIdentifier, short enumerationType) {
 		for(IPConnection.EnumerateListener listener: listenerEnumerate) {
 			listener.enumerate(new EnumerateCallbackData(this, uid, connectedUid, position,
 			                                             hardwareVersion, firmwareVersion,
@@ -143,23 +144,27 @@ public class IPConnection extends IPConnectionBase {
 		}
 	}
 
-	boolean hasEnumerateListeners() {
+	@Override
+	protected boolean hasEnumerateListeners() {
 		return !listenerEnumerate.isEmpty();
 	}
 
-	void callConnectedListeners(short connectReason) {
+	@Override
+	protected void callConnectedListeners(short connectReason) {
 		for(IPConnection.ConnectedListener listener: listenerConnected) {
 			listener.connected(new ConnectedCallbackData(this, connectReason));
 		}
 	}
 
-	void callDisconnectedListeners(short disconnectReason) {
+	@Override
+	protected void callDisconnectedListeners(final short disconnectReason) {
 		for(IPConnection.DisconnectedListener listener: listenerDisconnected) {
 			listener.disconnected(new DisconnectedCallbackData(this, disconnectReason));
 		}
 	}
 
-	void callDeviceListener(Device device, byte functionID, byte[] data) {
+	@Override
+	protected void callDeviceListener(final Device device, final byte functionID, byte[] data) {
 		if(device.callbacks[functionID] != null) {
 			device.callbacks[functionID].callback(device, data);
 		}
