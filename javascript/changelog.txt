@@ -3,4 +3,5 @@
 2.0.2: Add support for Color, NFC/RFID and Solid State Relay Bricklet
        Move NPM package into nodejs/ folder of ZIP file
        Add main Tinkerforge.js script to simplify direct usage of the Node.js source code
-2.0.3: Add support for RED Brick
+2.0.3: (no changes)
+2.0.4: Add support for RED Brick

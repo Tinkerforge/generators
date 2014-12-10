@@ -1,4 +1,5 @@
 2.0.0: Initial version
 2.0.1: Add support for WS2811 and WS2812 to LED Strip Bricklet API
 2.0.2: Add support for Color, NFC/RFID and Solid State Relay Bricklet
-2.0.3: Add support for RED Brick
+2.0.3: (no changes)
+2.0.4: Add support for RED Brick

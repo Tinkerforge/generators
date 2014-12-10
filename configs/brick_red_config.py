@@ -112,7 +112,7 @@ com = {
     'name': ('RED', 'red', 'RED'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for running user programs standalone on the stack',
-    'released': False,
+    'released': True,
     'packets': []
 }
 
