@@ -73,3 +73,5 @@
 2.1.1: Add support for WS2811 and WS2812 to LED Strip Bricklet API
 2.1.2: Add support for Color, NFC/RFID and Solid State Relay Bricklet
        Get rid of the egg and easy_install, use setuptools directly or pip instead
+2.1.3: Add support for RED Brick
+       Handle EINTR error in receive loop

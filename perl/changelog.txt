@@ -13,3 +13,4 @@
 2.1.2: Add support for Color, NFC/RFID and Solid State Relay Bricklet
        Only use MSG_NOSIGNAL if it's really defined
        Remove CPAN package from ZIP file, include relevant files into the source/ folder
+2.1.3: Add support for RED Brick

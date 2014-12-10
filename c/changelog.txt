@@ -84,3 +84,4 @@
 2.1.3: Fix strnlen redeclaration in some MinGW environments
 2.1.4: Add support for Color, NFC/RFID and Solid State Relay Bricklet
        Rename bindings/ folder to source/ in ZIP file
+2.1.5: Add support for RED Brick
