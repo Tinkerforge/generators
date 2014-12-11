@@ -111,7 +111,7 @@ com = {
     'device_identifier': 17,
     'name': ('RED', 'red', 'RED'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for running user programs standalone on the stack',
+    'description': 'Device for executing user programs standalone',
     'released': True,
     'packets': []
 }
