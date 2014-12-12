@@ -27,7 +27,7 @@ nor does it tell you anything about the represented Brick or Bricklet.
 'de':
 """
 Gibt die Version der API Definition (Major, Minor, Revision) zurück, die diese
-API Bindings implementieren. Dies ist werder die Release-Version dieser API
+API Bindings implementieren. Dies ist weder die Release-Version dieser API
 Bindings noch gibt es in irgendeiner Weise Auskunft über den oder das
 repräsentierte(n) Brick oder Bricklet.
 """

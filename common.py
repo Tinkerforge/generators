@@ -2,7 +2,7 @@
 
 """
 Common Generator Library
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2012-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 common.py: Common Library for generation of bindings and documentation
@@ -203,7 +203,7 @@ def make_rst_summary(device, is_programming_language=True):
     summary = {
     'en': """
 This is the description {0} for {1}. General information and technical
-specifications for the {2} are summuarzied in its :ref:`hardware description
+specifications for the {2} are summarized in its :ref:`hardware description
 <{3}_description>`.
 """,
     'de': """

@@ -51,7 +51,7 @@ to use the callback :func:`Color` and set the period with
 Gibt die gemessene Farbe des Sensors zurück. Der Wertebereich ist von
 0 bis 65535.
 
-Die rot (r), grün (g), blau (b) and clear (c) werden mit vier
+Die rot (r), grün (g), blau (b) und clear (c) werden mit vier
 unterschiedlichen Fotodioden gemessen. Diese sind Empfindlich
 in unterschiedlichen Wellenlängen:
 
@@ -278,7 +278,7 @@ last triggering.
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetColorCallbackPeriod`,
-ausgelöst. Der :word:`parameter` ist die Farbe des Sensors als RGBC
+ausgelöst. Der :word:`parameter` ist die Farbe des Sensors als RGBC.
 
 :func:`Color` wird nur ausgelöst wenn sich die Farbe seit der
 letzten Auslösung geändert hat.
@@ -642,7 +642,7 @@ com['packets'].append({
 """
 This callback is triggered periodically with the period that is set by
 :func:`SetIlluminanceCallbackPeriod`. The :word:`parameter` is the illuminance.
-See :func:`GetIlluminance` for how to interrept this value.
+See :func:`GetIlluminance` for how to interpret this value.
 
 :func:`Illuminance` is only triggered if the illuminance has changed since the
 last triggering.
