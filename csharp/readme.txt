@@ -14,3 +14,7 @@ For more information about the C# bindings go to:
 
  http://www.tinkerforge.com/en/doc/Software/API_Bindings_CSharp.html (English)
  http://www.tinkerforge.com/de/doc/Software/API_Bindings_CSharp.html (German)
+
+The C# bindings are also available from the NuGet package repository:
+
+ https://www.nuget.org/packages/Tinkerforge/
