@@ -918,7 +918,7 @@ class IPConnection:
             elif 'c' in f:
                 if len(f) > 1:
                     if int(f.replace('c', '')) != len(d):
-                        raise ValueError('Incorrect char list length');
+                        raise ValueError('Incorrect char list length')
                     for k in d:
                         request += pack_string('c', k)
                 else:
