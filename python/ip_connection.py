@@ -22,7 +22,6 @@ except ImportError:
 
 import struct
 import socket
-import types
 import sys
 import time
 import os
@@ -896,12 +895,14 @@ class IPConnection:
 
         def pack_string(f, d):
             if sys.hexversion < 0x03000000:
-                if type(d) == types.UnicodeType:
-                    f = f.replace('s', 'B')
+                if isinstance(d, unicode):
+                    f = f.replace('s', 'B').replace('c', 'B')
                     l = map(ord, d)
-                    l += [0] * (int(f.replace('B', '')) - len(l))
+                    p = f.replace('B', '')
+                    if len(p) == 0:
+                        p = '1'
+                    l += [0] * (int(p) - len(l))
                     return struct.pack('<' + f, *l)
-
                 else:
                     return struct.pack('<' + f, d)
             else:
