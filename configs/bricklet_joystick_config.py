@@ -470,7 +470,7 @@ last triggering.
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetPositionCallbackPeriod`,
 ausgelöst. Der :word:`parameter` ist die Position des Joysticks.
 
-:func:`Position` wird nur ausgelöst wenn sich der Strom seit der
+:func:`Position` wird nur ausgelöst, wenn sich die Position seit der
 letzten Auslösung geändert hat.
 """
 }]
