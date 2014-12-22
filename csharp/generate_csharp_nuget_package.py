@@ -33,9 +33,9 @@ import common
 
 def generate(bindings_root_directory):
     tmp_dir                                = os.path.join(bindings_root_directory, 'nuget_package')
-    tmp_unzipped_40_dir                    = os.path.join(tmp_dir, 'unzipped_40')
     tmp_unzipped_20_dir                    = os.path.join(tmp_dir, 'unzipped_20')
-    tmp_unzipped_20_source_tinkerforge_dir = os.path.join(tmp_unzipped_20_dir, 'source', 'Tinkerforge')
+    tmp_unzipped_40_dir                    = os.path.join(tmp_dir, 'unzipped_40')
+    tmp_unzipped_40_source_tinkerforge_dir = os.path.join(tmp_unzipped_40_dir, 'source', 'Tinkerforge')
 
     # Make directories
     common.recreate_directory(tmp_dir)
@@ -46,23 +46,23 @@ def generate(bindings_root_directory):
             '-q',
             os.path.join(bindings_root_directory, 'tinkerforge_csharp_bindings_{0}_{1}_{2}.zip'.format(*version)),
             '-d',
-            tmp_unzipped_40_dir]
+            tmp_unzipped_20_dir]
 
     if subprocess.call(args) != 0:
         raise Exception("Command '{0}' failed".format(' '.join(args)))
 
-    shutil.copytree(tmp_unzipped_40_dir, tmp_unzipped_20_dir)
+    shutil.copytree(tmp_unzipped_20_dir, tmp_unzipped_40_dir)
 
-    # Make Tinkerforge.csproj for NET 2.0
-    common.specialize_template(os.path.join(tmp_unzipped_20_source_tinkerforge_dir, 'Tinkerforge.csproj'),
-                               os.path.join(tmp_unzipped_20_source_tinkerforge_dir, 'Tinkerforge.csproj'),
-                               {'ToolsVersion="4.0"': 'ToolsVersion="2.0"'})
+    # Make Tinkerforge.csproj for NET 4.0
+    common.specialize_template(os.path.join(tmp_unzipped_40_source_tinkerforge_dir, 'Tinkerforge.csproj'),
+                               os.path.join(tmp_unzipped_40_source_tinkerforge_dir, 'Tinkerforge.csproj'),
+                               {'ToolsVersion="2.0"': 'ToolsVersion="4.0"'})
 
-    # Make dll for NET 2.0
-    with common.ChangedDirectory(tmp_unzipped_20_source_tinkerforge_dir):
+    # Make dll for NET 4.0
+    with common.ChangedDirectory(tmp_unzipped_40_source_tinkerforge_dir):
         args = ['xbuild',
                 '/p:Configuration=Release',
-                os.path.join(tmp_unzipped_20_source_tinkerforge_dir, 'Tinkerforge.csproj')]
+                os.path.join(tmp_unzipped_40_source_tinkerforge_dir, 'Tinkerforge.csproj')]
 
         if subprocess.call(args) != 0:
             raise Exception("Command '{0}' failed".format(' '.join(args)))

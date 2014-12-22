@@ -92,7 +92,8 @@ class CSharpZipGenerator(common.Generator):
 
         common.specialize_template(os.path.join(root_dir, 'Tinkerforge.csproj.template'),
                                    os.path.join(self.tmp_source_tinkerforge_dir, 'Tinkerforge.csproj'),
-                                   {'{{ITEMS}}': '\n    '.join(project_items)})
+                                   {'{{TOOLS_VERSION}}': '2.0',
+                                    '{{ITEMS}}': '\n    '.join(project_items)})
 
         # Make dll
         with common.ChangedDirectory(self.tmp_source_tinkerforge_dir):

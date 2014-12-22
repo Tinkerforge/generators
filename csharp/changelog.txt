@@ -82,3 +82,4 @@
 2.1.2: Add support for Color, NFC/RFID and Solid State Relay Bricklet
 2.1.3: (no changes)
 2.1.4: Add support for RED Brick
+2.1.5: Compiled for CLR 2.0 again, instead of CLR 4.0 (accidentally changed in 2.1.3)
