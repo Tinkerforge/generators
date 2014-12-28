@@ -710,7 +710,7 @@ class IPConnection
      */
     public function setTimeout($seconds)
     {
-        if ($timeout < 0) {
+        if ($seconds < 0) {
             throw new \Exception('Timeout cannot be negative');
         }
 
