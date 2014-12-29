@@ -56,3 +56,4 @@
        Add workaround for older Delphi versions that lack TThread.CurrentThread
        Add simple library fpcmake file
 2.1.4: Add support for RED Brick
+2.1.5: Add support for arrays in callbacks
