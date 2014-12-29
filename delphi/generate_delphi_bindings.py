@@ -92,7 +92,7 @@ uses
         arrays = 'type\n'
         types = {}
 
-        for packet in self.get_packets('function'):
+        for packet in self.get_packets():
             for element in packet.get_elements():
                 if element.get_type() == 'string' or element.get_cardinality() < 2:
                     continue
@@ -363,8 +363,18 @@ begin
                                                                                              packet.get_camel_case_name())
 
             if len(packet.get_elements('out')) > 0:
-                wrapper += 'var ' + packet.get_delphi_parameter_list(False, False) + ';\n'
+                wrapper += 'var ' + packet.get_delphi_parameter_list(False, False) + ';'
 
+            has_array = False
+            for element in packet.get_elements():
+                if element.get_cardinality() > 1 and element.get_type() != 'string':
+                    has_array = True
+                    break
+
+            if has_array:
+                wrapper += ' i: longint;'
+
+            wrapper += '\n'
             wrapper += 'begin\n'
 
             if len(packet.get_elements('out')) == 0:
