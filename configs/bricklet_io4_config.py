@@ -116,9 +116,9 @@ Pull-Up oder Standard (gesetzt als *true* oder *false*).
 Beispiele:
 
 * (15, 'i', true) bzw. (0b1111, 'i', true) setzt alle Pins als Eingang mit Pull-Up.
-* (8, 'i', false) bzw. (0b1000, 'i', true) setzt Pin 3 als Standard Eingang (potentialfrei wenn nicht verbunden).
-* (3, 'o', false) bzw. (0b0011, 'i', true) setzt die Pins 0 und 1 als Ausgang im Zustand logisch 0.
-* (4, 'o', true) bzw. (0b0100, 'i', true) setzt Pin 2 als Ausgang im Zustand logisch 1.
+* (8, 'i', false) bzw. (0b1000, 'i', false) setzt Pin 3 als Standard Eingang (potentialfrei wenn nicht verbunden).
+* (3, 'o', false) bzw. (0b0011, 'o', false) setzt die Pins 0 und 1 als Ausgang im Zustand logisch 0.
+* (4, 'o', true) bzw. (0b0100, 'o', true) setzt Pin 2 als Ausgang im Zustand logisch 1.
 
 Die Standardkonfiguration ist Eingang mit Pull-Up.
 """
