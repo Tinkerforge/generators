@@ -1305,11 +1305,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the USB voltage in mV.
+Returns the USB voltage in mV. Does not work with hardware version 2.1.
 """,
 'de':
 """
-Gibt die USB Spannung in mV zurück.
+Gibt die USB Spannung in mV zurück. Funktioniert nicht mit Hardware Version 2.1.
 """
 }]
 })
