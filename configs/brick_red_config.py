@@ -472,7 +472,7 @@ com['packets'].append({
              ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('item_object_id', 'uint16', 1, 'out'),
-             ('object_type', 'uint8', 1, 'out', OBJECT_TYPE_CONSTANTS)],
+             ('type', 'uint8', 1, 'out', OBJECT_TYPE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -641,7 +641,7 @@ com['packets'].append({
 'elements': [('file_id', 'uint16', 1, 'in'),
              ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
-             ('file_type', 'uint8', 1, 'out', FILE_TYPE_CONSTANTS),
+             ('type', 'uint8', 1, 'out', FILE_TYPE_CONSTANTS),
              ('name_string_id', 'uint16', 1, 'out'),
              ('flags', 'uint32', 1, 'out'),
              ('permissions', 'uint16', 1, 'out', FILE_PERMISSION_CONSTANTS),
@@ -1042,7 +1042,7 @@ com['packets'].append({
              ('session_id', 'uint16', 1, 'in'),
              ('error_code', 'uint8', 1, 'out'),
              ('name_string_id', 'uint16', 1, 'out'),
-             ('directory_entry_type', 'uint8', 1, 'out', DIRECTORY_ENTRY_TYPE_CONSTANTS)],
+             ('type', 'uint8', 1, 'out', DIRECTORY_ENTRY_TYPE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
