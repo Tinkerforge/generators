@@ -1910,6 +1910,8 @@ in mV.
 
 :func:`USBVoltage` is only triggered if the USB voltage has changed since the
 last triggering.
+
+Does not work with hardware version 2.1.
 """,
 'de':
 """
@@ -1918,6 +1920,8 @@ ausgelöst. Der :word:`parameter` ist die USB Spannung in mV.
 
 :func:`USBVoltage` wird nur ausgelöst wenn sich die USB Spannung seit der
 letzten Auslösung geändert hat.
+
+Funktioniert nicht mit Hardware Version 2.1.
 """
 }]
 })
