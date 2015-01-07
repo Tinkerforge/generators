@@ -132,9 +132,10 @@ is the ID that was saved through the last call of :func:`RequestTagID`.
 
 To get the tag ID of a tag the approach is as follows:
 
-* Call :func:`RequestTagID`
-* Wait for state to change to *RequestTagIDReady* (see :func:`GetState` or :func:`StateChanged`)
-* Call :func:`GetTagID`
+1. Call :func:`RequestTagID`
+2. Wait for state to change to *RequestTagIDReady* (see :func:`GetState` or
+   :func:`StateChanged`)
+3. Call :func:`GetTagID`
 """,
 'de':
 """
@@ -146,9 +147,10 @@ zurückgegebene ID ist die letzte ID die durch einen Aufruf von
 
 Der Ansatz um die Tag ID eines Tags zu bekommen sieht wie folgt aus:
 
-* Rufe :func:`RequestTagID` auf
-* Warte auf einen Zustandswechsel auf *RequestTagIDReady* (siehe :func:`GetState` oder :func:`StateChanged`)
-* Rufe :func:`GetTagID` auf
+1. Rufe :func:`RequestTagID` auf
+2. Warte auf einen Zustandswechsel auf *RequestTagIDReady* (siehe
+   :func:`GetState` oder :func:`StateChanged`)
+3. Rufe :func:`GetTagID` auf
 """
 }]
 })
@@ -270,13 +272,15 @@ and the default key ``[0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]``.
 
 The approach to read or write a Mifare Classic page is as follows:
 
-* Call :func:`RequestTagID`
-* Wait for state to change to *RequestTagIDReady* (see :func:`GetState`
-  or :func:`StateChanged`)
-* Call :func:`GetTagID` and check if tag ID is correct
-* Call :func:`AuthenticateMifareClassicPage` with page and key for the page
-* Wait for state to change to *AuthenticatingMifareClassicPageReady*
-* Call :func:`RequestPage` or :func`WritePage` to read/write page
+1. Call :func:`RequestTagID`
+2. Wait for state to change to *RequestTagIDReady* (see :func:`GetState`
+   or :func:`StateChanged`)
+3. If looking for a specific tag then call :func:`GetTagID` and check if the
+   expected tag was found, if it was not found got back to step 1
+4. Call :func:`AuthenticateMifareClassicPage` with page and key for the page
+5. Wait for state to change to *AuthenticatingMifareClassicPageReady* (see
+   :func:`GetState` or :func:`StateChanged`)
+6. Call :func:`RequestPage` or :func:`WritePage` to read/write page
 """,
 'de':
 """
@@ -291,13 +295,18 @@ beschrieben wurde kann über Schlüssel A mit dem Standardschlüssel
 Der Ansatz um eine Mifare Classic Page zu lesen oder zu schreiben sieht wie
 folgt aus:
 
-* Rufe :func:`RequestTagID` auf
-* Warte auf einen Zustandswechsel auf *RequestTagIDReady* (siehe :func:`GetState`
-  oder :func:`StateChanged`)
-* Rufe :func:`GetTagID` auf und überprüfe ob Tag ID korrekt ist.
-* Rufe :func:`AuthenticateMifareClassicPage` mit Page und Schlüssel für die Page auf
-* Warte auf einen Zustandswechsel auf *AuthenticatingMifareClassicPageReady*
-* Rufe :func:`RequestPage` oder :func`WritePage` zum lesen/schreiben einer Page auf
+1. Rufe :func:`RequestTagID` auf
+2. Warte auf einen Zustandswechsel auf *RequestTagIDReady* (siehe :func:`GetState`
+   oder :func:`StateChanged`)
+3. Wenn mit einem bestimmten Tag gearbeitet werden soll, dann rufe
+   :func:`GetTagID` auf und überprüfe, ob der erwartete Tag gefunden wurde,
+   wenn er nicht gefunden wurde mit Schritt 1 fortfahren
+4. Rufe :func:`AuthenticateMifareClassicPage` mit Page und Schlüssel für die
+   Page auf
+5. Warte auf einen Zustandswechsel auf *AuthenticatingMifareClassicPageReady*
+   (siehe :func:`GetState` oder :func:`StateChanged`)
+6. Rufe :func:`RequestPage` oder :func:`WritePage` zum Lesen/Schreiben einer
+   Page auf
 """
 }]
 })
@@ -320,11 +329,14 @@ depends on the tag type. The page sizes are as follows:
 
 The general approach for writing to a tag is as follows:
 
-* Call :func:`RequestTagID`
-* Wait for state to change to *RequestTagIDReady* (see :func:`GetState` or :func:`StateChanged`)
-* Call :func:`GetTagID` and check if tag ID is correct
-* Call :func:`WritePage` with page number and data
-* Wait for state to change to *WritePageReady*
+1. Call :func:`RequestTagID`
+2. Wait for state to change to *RequestTagIDReady* (see :func:`GetState` or
+   :func:`StateChanged`)
+3. If looking for a specific tag then call :func:`GetTagID` and check if the
+   expected tag was found, if it was not found got back to step 1
+4. Call :func:`WritePage` with page number and data
+5. Wait for state to change to *WritePageReady* (see :func:`GetState` or
+   :func:`StateChanged`)
 
 If you use a Mifare Classic tag you have to authenticate a page before you
 can write to it. See :func:`AuthenticateMifareClassicPage`.
@@ -341,14 +353,19 @@ verhalten sich wie folgt:
 
 Der generelle Ansatz zum Schreiben eines Tags sieht wie folgt aus:
 
-* Rufe :func:`RequestTagID` auf
-* Warte auf einen Zustandswechsel auf *RequestTagIDReady* (siehe :func:`GetState` oder :func:`StateChanged`)
-* Rufe :func:`GetTagID` auf und überprüfe ob Tag ID korrekt ist.
-* Rufe :func:`WritePage` mit der Page sowie den zu schreibenden Daten auf.
-* Warte auf einen Zustandswechsel auf *WritePageReady*
+1. Rufe :func:`RequestTagID` auf
+2. Warte auf einen Zustandswechsel auf *RequestTagIDReady* (siehe
+   :func:`GetState` oder :func:`StateChanged`)
+3. Wenn mit einem bestimmten Tag gearbeitet werden soll, dann rufe
+   :func:`GetTagID` auf und überprüfe, ob der erwartete Tag gefunden wurde,
+   wenn er nicht gefunden wurde mit Schritt 1 fortfahren
+4. Rufe :func:`WritePage` mit der Page sowie den zu schreibenden Daten auf
+5. Warte auf einen Zustandswechsel auf *WritePageReady* (siehe
+   :func:`GetState` oder :func:`StateChanged`)
 
 Wenn ein Mifare Classic Tag verwendet wird muss die Page authentifiziert
-werden bevor sie geschrieben werden kann. Siehe :func:`AuthenticateMifareClassicPage`.
+werden bevor sie geschrieben werden kann. Siehe
+:func:`AuthenticateMifareClassicPage`.
 """
 }]
 })
@@ -372,12 +389,15 @@ as follows:
 
 The general approach for reading a tag is as follows:
 
-* Call :func:`RequestTagID`
-* Wait for state to change to *RequestTagIDReady* (see :func:`GetState` or :func:`StateChanged`)
-* Call :func:`GetTagID` and check if tag ID is correct
-* Call :func:`RequestPage` with page number
-* Wait for state to change to *RequestPageReady*
-* Call :func:`GetPage` to retrieve the page from the buffer
+1. Call :func:`RequestTagID`
+2. Wait for state to change to *RequestTagIDReady* (see :func:`GetState`
+   or :func:`StateChanged`)
+3. If looking for a specific tag then call :func:`GetTagID` and check if the
+   expected tag was found, if it was not found got back to step 1
+4. Call :func:`RequestPage` with page number
+5. Wait for state to change to *RequestPageReady* (see :func:`GetState`
+   or :func:`StateChanged`)
+6. Call :func:`GetPage` to retrieve the page from the buffer
 
 If you use a Mifare Classic tag you have to authenticate a page before you
 can read it. See :func:`AuthenticateMifareClassicPage`.
@@ -395,12 +415,16 @@ Die Pagegrößen verhalten sich wie folgt:
 
 Der generelle Ansatz zum Lesen eines Tags sieht wie folgt aus:
 
-* Rufe :func:`RequestTagID` auf
-* Warte auf einen Zustandswechsel auf *RequestTagIDReady* (siehe :func:`GetState` oder :func:`StateChanged`)
-* Rufe :func:`GetTagID` auf und überprüfe ob Tag ID korrekt ist.
-* Rufe :func:`RequestPage` mit der zu lesenden Page auf
-* Warte auf einen Zustandswechsel auf *RequestPageReady*
-* Rufe :func:`GetPage` auf um die gespeicherte Page abzufragen
+1. Rufe :func:`RequestTagID` auf
+2. Warte auf einen Zustandswechsel auf *RequestTagIDReady* (siehe
+   :func:`GetState` oder :func:`StateChanged`)
+3. Wenn mit einem bestimmten Tag gearbeitet werden soll, dann rufe
+   :func:`GetTagID` auf und überprüfe, ob der erwartete Tag gefunden wurde,
+   wenn er nicht gefunden wurde mit Schritt 1 fortfahren
+4. Rufe :func:`RequestPage` mit der zu lesenden Page auf
+5. Warte auf einen Zustandswechsel auf *RequestPageReady* (siehe
+   :func:`GetState` oder :func:`StateChanged`)
+6. Rufe :func:`GetPage` auf um die gespeicherte Page abzufragen
 
 Wenn ein Mifare Classic Tag verwendet wird muss die Page authentifiziert
 werden bevor sie gelesen werden kann. Siehe :func:`AuthenticateMifareClassicPage`.
