@@ -8,7 +8,8 @@ your shell scripts. This ZIP file contains:
  tinkerforge-bash-completion.sh -- bash completion script
  examples/                      -- examples for every Brick and Bricklet
 
-For more information about the Shell bindings go to:
+For more information about the Shell bindings (including setup instructions)
+go to:
 
  http://www.tinkerforge.com/en/doc/Software/API_Bindings_Shell.html (English)
  http://www.tinkerforge.com/de/doc/Software/API_Bindings_Shell.html (German)

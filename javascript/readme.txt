@@ -11,7 +11,8 @@ browser. This ZIP file contains:
  browser/source/        -- source code of the browser version of the bindings
  browser/examples/      -- HTML examples for every Brick and Bricklet
 
-For more information about the JavaScript bindings go to:
+For more information about the JavaScript bindings (including setup
+instructions) go to:
 
  http://www.tinkerforge.com/en/doc/Software/API_Bindings_JavaScript.html (English)
  http://www.tinkerforge.com/de/doc/Software/API_Bindings_JavaScript.html (German)

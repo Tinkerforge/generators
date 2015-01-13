@@ -10,7 +10,7 @@ C# programs. This ZIP file contains:
  source/             -- source code of Tinkerforge.dll
  examples/           -- examples for every Brick and Bricklet
 
-For more information about the C# bindings go to:
+For more information about the C# bindings (including setup instructions) go to:
 
  http://www.tinkerforge.com/en/doc/Software/API_Bindings_CSharp.html (English)
  http://www.tinkerforge.com/de/doc/Software/API_Bindings_CSharp.html (German)

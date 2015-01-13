@@ -11,7 +11,8 @@ Bricklets from your MATLAB/Octave programs. This ZIP file contains:
  octave/source/         -- source code of Tinkerforge.jar for Octave
  octave/examples/       -- Octave examples for every Brick and Bricklet
 
-For more information about the MATLAB/Octave bindings go to:
+For more information about the MATLAB/Octave bindings (including setup
+instructions) go to:
 
  http://www.tinkerforge.com/en/doc/Software/API_Bindings_MATLAB.html (English)
  http://www.tinkerforge.com/de/doc/Software/API_Bindings_MATLAB.html (German)

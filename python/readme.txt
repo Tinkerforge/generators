@@ -7,7 +7,8 @@ your Python programs. This ZIP file contains:
  source/   -- source code of the bindings (install with setup.py script)
  examples/ -- examples for every Brick and Bricklet
 
-For more information about the Python bindings go to:
+For more information about the Python bindings (including setup instructions)
+go to:
 
  http://www.tinkerforge.com/en/doc/Software/API_Bindings_Python.html (English)
  http://www.tinkerforge.com/de/doc/Software/API_Bindings_Python.html (German)

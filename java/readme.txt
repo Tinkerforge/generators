@@ -8,7 +8,8 @@ your Java programs. This ZIP file contains:
  source/         -- source code of Tinkerforge.jar
  examples/       -- examples for every Brick and Bricklet
 
-For more information about the Java bindings go to:
+For more information about the Java bindings (including setup instructions)
+go to:
 
  http://www.tinkerforge.com/en/doc/Software/API_Bindings_Java.html (English)
  http://www.tinkerforge.com/de/doc/Software/API_Bindings_Java.html (German)

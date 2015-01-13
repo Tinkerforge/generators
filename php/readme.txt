@@ -8,7 +8,8 @@ your PHP programs. This ZIP file contains:
  source/         -- source code of Tinkerforge.tgz
  examples/       -- examples for every Brick and Bricklet
 
-For more information about the PHP bindings go to:
+For more information about the PHP bindings (including setup instructions)
+go to:
 
  http://www.tinkerforge.com/en/doc/Software/API_Bindings_PHP.html (English)
  http://www.tinkerforge.com/de/doc/Software/API_Bindings_PHP.html (German)

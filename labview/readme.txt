@@ -8,7 +8,8 @@ your LabVIEW programs (Windows only). This ZIP file contains:
  source/         -- source code of Tinkerforge.dll
  examples/       -- examples for every Brick and Bricklet
 
-For more information about the LabVIEW bindings go to:
+For more information about the LabVIEW bindings (including setup instructions)
+go to:
 
  http://www.tinkerforge.com/en/doc/Software/API_Bindings_LabVIEW.html (English)
  http://www.tinkerforge.com/de/doc/Software/API_Bindings_LabVIEW.html (German)
