@@ -5,7 +5,7 @@
 JavaScript ZIP Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_javascript_zip.py: Generator for JavaScript ZIP
 
@@ -112,19 +112,21 @@ class JavaScriptZipGenerator(common.Generator):
                                    os.path.join(self.tmp_nodejs_package_dir, 'package.json'),
                                    {'<<VERSION>>': '.'.join(version)})
 
-        shutil.copy(os.path.join(root_dir, 'IPConnection.js'), self.tmp_nodejs_package_lib_dir)
-        shutil.copy(os.path.join(root_dir, 'Device.js'),       self.tmp_nodejs_package_lib_dir)
-        shutil.copy(os.path.join(root_dir, 'LICENSE'),         self.tmp_nodejs_package_dir)
-        shutil.copy(os.path.join(root_dir, 'README.md'),       self.tmp_nodejs_package_dir)
+        shutil.copy(os.path.join(root_dir, 'IPConnection.js'),              self.tmp_nodejs_package_lib_dir)
+        shutil.copy(os.path.join(root_dir, 'Device.js'),                    self.tmp_nodejs_package_lib_dir)
+        shutil.copy(os.path.join(root_dir, 'LICENSE'),                      self.tmp_nodejs_package_dir)
+        shutil.copy(os.path.join(root_dir, 'README.md'),                    self.tmp_nodejs_package_dir)
 
-        shutil.copy(os.path.join(root_dir, 'IPConnection.js'), self.tmp_nodejs_source_tinkerforge_dir)
-        shutil.copy(os.path.join(root_dir, 'Device.js'),       self.tmp_nodejs_source_tinkerforge_dir)
-        shutil.copy(os.path.join(root_dir, 'changelog.txt'),   self.tmp_dir)
-        shutil.copy(os.path.join(root_dir, 'readme.txt'),      self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'IPConnection.js'),              self.tmp_nodejs_source_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'Device.js'),                    self.tmp_nodejs_source_tinkerforge_dir)
+
+        shutil.copy(os.path.join(root_dir, 'changelog.txt'),                self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'readme.txt'),                   self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
 
         # Copy browser specific files
-        shutil.copy(os.path.join(root_dir, 'es5-shim.js'),     self.tmp_nodejs_source_tinkerforge_dir)
-        shutil.copy(os.path.join(root_dir, 'es5-sham.js'),     self.tmp_nodejs_source_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'es5-shim.js'),                  self.tmp_nodejs_source_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'es5-sham.js'),                  self.tmp_nodejs_source_tinkerforge_dir)
 
         # Make Tinkerforge.js for browser with browserify
         with common.ChangedDirectory(self.tmp_nodejs_source_tinkerforge_dir):

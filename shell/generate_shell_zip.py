@@ -3,7 +3,7 @@
 
 """
 Shell ZIP Generator
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_shell_zip.py: Generator for Shell ZIP
@@ -70,6 +70,7 @@ class ShellZipGenerator(common.Generator):
         shutil.copy(os.path.join(root_dir, 'tinkerforge-bash-completion.sh'), self.tmp_dir)
         shutil.copy(os.path.join(root_dir, 'changelog.txt'),                  self.tmp_dir)
         shutil.copy(os.path.join(root_dir, 'readme.txt'),                     self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'),   self.tmp_dir)
 
         # Make zip
         version = common.get_changelog_version(root_dir)

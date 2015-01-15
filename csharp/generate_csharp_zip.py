@@ -3,7 +3,7 @@
 
 """
 C# ZIP Generator
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_csharp_zip.py: Generator for C# ZIP
@@ -72,9 +72,10 @@ class CSharpZipGenerator(common.Generator):
         for filename in released_files:
             shutil.copy(os.path.join(root_dir, 'bindings', filename), self.tmp_source_tinkerforge_dir)
 
-        shutil.copy(os.path.join(root_dir, 'IPConnection.cs'), self.tmp_source_tinkerforge_dir)
-        shutil.copy(os.path.join(root_dir, 'changelog.txt'),   self.tmp_dir)
-        shutil.copy(os.path.join(root_dir, 'readme.txt'),      self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'IPConnection.cs'),              self.tmp_source_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'changelog.txt'),                self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'readme.txt'),                   self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
 
         # Make AssemblyInfo.cs
         version = common.get_changelog_version(root_dir)

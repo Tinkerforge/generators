@@ -3,7 +3,7 @@
 
 """
 Perl ZIP Generator
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_perl_zip.py: Generator for Perl ZIP
@@ -76,11 +76,12 @@ class PerlZipGenerator(common.Generator):
         for filename in released_files:
             shutil.copy(os.path.join(root_dir, 'bindings', filename), self.tmp_source_lib_tinkerforge_dir)
 
-        shutil.copy(os.path.join(root_dir, 'IPConnection.pm'), self.tmp_source_lib_tinkerforge_dir)
-        shutil.copy(os.path.join(root_dir, 'Device.pm'),       self.tmp_source_lib_tinkerforge_dir)
-        shutil.copy(os.path.join(root_dir, 'Error.pm'),        self.tmp_source_lib_tinkerforge_dir)
-        shutil.copy(os.path.join(root_dir, 'changelog.txt'),   self.tmp_dir)
-        shutil.copy(os.path.join(root_dir, 'readme.txt'),      self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'IPConnection.pm'),              self.tmp_source_lib_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'Device.pm'),                    self.tmp_source_lib_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'Error.pm'),                     self.tmp_source_lib_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'changelog.txt'),                self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'readme.txt'),                   self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
 
         # Make Tinkerforge.pm
         version = common.get_changelog_version(root_dir)

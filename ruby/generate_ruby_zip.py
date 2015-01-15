@@ -3,7 +3,7 @@
 
 """
 Ruby ZIP Generator
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_ruby_zip.py: Generator for Ruby ZIP
@@ -77,9 +77,10 @@ class RubyZipGenerator(common.Generator):
         for filename in released_files:
             shutil.copy(os.path.join(root_dir, 'bindings', filename), self.tmp_source_lib_tinkerforge_dir)
 
-        shutil.copy(os.path.join(root_dir, 'ip_connection.rb'), self.tmp_source_lib_tinkerforge_dir)
-        shutil.copy(os.path.join(root_dir, 'changelog.txt'),    self.tmp_dir)
-        shutil.copy(os.path.join(root_dir, 'readme.txt'),       self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'ip_connection.rb'),             self.tmp_source_lib_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'changelog.txt'),                self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'readme.txt'),                   self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
 
         # Make version.rb
         version = common.get_changelog_version(root_dir)

@@ -3,7 +3,7 @@
 
 """
 C/C++ ZIP Generator
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_c_zip.py: Generator for C/C++ ZIP
@@ -71,11 +71,12 @@ class CZipGenerator(common.Generator):
         for filename in released_files:
             shutil.copy(os.path.join(root_dir, 'bindings', filename), self.tmp_source_dir)
 
-        shutil.copy(os.path.join(root_dir, 'ip_connection.c'), self.tmp_source_dir)
-        shutil.copy(os.path.join(root_dir, 'ip_connection.h'), self.tmp_source_dir)
-        shutil.copy(os.path.join(root_dir, 'Makefile'),        self.tmp_source_dir)
-        shutil.copy(os.path.join(root_dir, 'changelog.txt'),   self.tmp_dir)
-        shutil.copy(os.path.join(root_dir, 'readme.txt'),      self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'ip_connection.c'),              self.tmp_source_dir)
+        shutil.copy(os.path.join(root_dir, 'ip_connection.h'),              self.tmp_source_dir)
+        shutil.copy(os.path.join(root_dir, 'Makefile'),                     self.tmp_source_dir)
+        shutil.copy(os.path.join(root_dir, 'changelog.txt'),                self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'readme.txt'),                   self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
 
         # Make zip
         version = common.get_changelog_version(root_dir)

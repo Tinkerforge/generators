@@ -3,7 +3,7 @@
 
 """
 Java ZIP Generator
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_java_zip.py: Generator for Java ZIP
@@ -88,6 +88,7 @@ class JavaZipGenerator(common.Generator):
         shutil.copy(os.path.join(root_dir, 'TinkerforgeListener.java'),       self.tmp_source_com_tinkerforge_dir)
         shutil.copy(os.path.join(root_dir, 'changelog.txt'),                  self.tmp_dir)
         shutil.copy(os.path.join(root_dir, 'readme.txt'),                     self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'),   self.tmp_dir)
 
         # Make manifest
         version = common.get_changelog_version(root_dir)

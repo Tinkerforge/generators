@@ -3,7 +3,7 @@
 
 """
 PHP ZIP Generator
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_php_zip.py: Generator for PHP ZIP
@@ -78,9 +78,10 @@ class PHPZipGenerator(common.Generator):
             shutil.copy(os.path.join(root_dir, 'bindings', filename), self.tmp_source_tinkerforge_dir)
             package_files.append('<file name="Tinkerforge/{0}" role="php" />'.format(os.path.basename(filename)))
 
-        shutil.copy(os.path.join(root_dir, 'IPConnection.php'), self.tmp_source_tinkerforge_dir)
-        shutil.copy(os.path.join(root_dir, 'changelog.txt'),    self.tmp_dir)
-        shutil.copy(os.path.join(root_dir, 'readme.txt'),       self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'IPConnection.php'),             self.tmp_source_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'changelog.txt'),                self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'readme.txt'),                   self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
 
         # Make package.xml
         version = common.get_changelog_version(root_dir)

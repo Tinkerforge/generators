@@ -4,7 +4,7 @@
 """
 MATLAB ZIP Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_matlab_zip.py: Generator for MATLAB ZIP
 
@@ -104,6 +104,7 @@ class MATLABZipGenerator(common.Generator):
             shutil.copy(os.path.join(root_dir, '..', 'java', 'TinkerforgeListener.java'),       tmp_source_com_tinkerforge_dir)
             shutil.copy(os.path.join(root_dir, 'changelog.txt'),                                self.tmp_dir)
             shutil.copy(os.path.join(root_dir, 'readme.txt'),                                   self.tmp_dir)
+            shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'),                 self.tmp_dir)
 
             # Make manifest
             version = common.get_changelog_version(root_dir)

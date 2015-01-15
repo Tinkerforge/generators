@@ -3,7 +3,7 @@
 
 """
 Delphi ZIP Generator
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_delphi_doc.py: Generator for Delphi ZIP
@@ -72,17 +72,18 @@ class DelphiZipGenerator(common.Generator):
         for filename in released_files:
             shutil.copy(os.path.join(root_dir, 'bindings', filename), self.tmp_source_dir)
 
-        shutil.copy(os.path.join(root_dir, 'Base58.pas'),         self.tmp_source_dir)
-        shutil.copy(os.path.join(root_dir, 'BlockingQueue.pas'),  self.tmp_source_dir)
-        shutil.copy(os.path.join(root_dir, 'DeviceBase.pas'),     self.tmp_source_dir)
-        shutil.copy(os.path.join(root_dir, 'Device.pas'),         self.tmp_source_dir)
-        shutil.copy(os.path.join(root_dir, 'IPConnection.pas'),   self.tmp_source_dir)
-        shutil.copy(os.path.join(root_dir, 'LEConverter.pas'),    self.tmp_source_dir)
-        shutil.copy(os.path.join(root_dir, 'TimedSemaphore.pas'), self.tmp_source_dir)
-        shutil.copy(os.path.join(root_dir, 'SHA1.pas'),           self.tmp_source_dir)
-        shutil.copy(os.path.join(root_dir, 'BrickDaemon.pas'),    self.tmp_source_dir)
-        shutil.copy(os.path.join(root_dir, 'changelog.txt'),      self.tmp_dir)
-        shutil.copy(os.path.join(root_dir, 'readme.txt'),         self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'Base58.pas'),                   self.tmp_source_dir)
+        shutil.copy(os.path.join(root_dir, 'BlockingQueue.pas'),            self.tmp_source_dir)
+        shutil.copy(os.path.join(root_dir, 'DeviceBase.pas'),               self.tmp_source_dir)
+        shutil.copy(os.path.join(root_dir, 'Device.pas'),                   self.tmp_source_dir)
+        shutil.copy(os.path.join(root_dir, 'IPConnection.pas'),             self.tmp_source_dir)
+        shutil.copy(os.path.join(root_dir, 'LEConverter.pas'),              self.tmp_source_dir)
+        shutil.copy(os.path.join(root_dir, 'TimedSemaphore.pas'),           self.tmp_source_dir)
+        shutil.copy(os.path.join(root_dir, 'SHA1.pas'),                     self.tmp_source_dir)
+        shutil.copy(os.path.join(root_dir, 'BrickDaemon.pas'),              self.tmp_source_dir)
+        shutil.copy(os.path.join(root_dir, 'changelog.txt'),                self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'readme.txt'),                   self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
 
         # Make Makefile.fpc
         version = common.get_changelog_version(root_dir)

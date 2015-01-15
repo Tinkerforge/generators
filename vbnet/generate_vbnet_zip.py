@@ -3,7 +3,7 @@
 
 """
 Visual Basic .NET ZIP Generator
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_vbnet_zip.py: Generator for Visual Basic .NET ZIP
@@ -75,6 +75,7 @@ class VBNETZipGenerator(common.Generator):
         shutil.copy(os.path.join(root_dir, '..', 'csharp', 'IPConnection.cs'), self.tmp_source_tinkerforge_dir)
         shutil.copy(os.path.join(root_dir, 'changelog.txt'),                   self.tmp_dir)
         shutil.copy(os.path.join(root_dir, 'readme.txt'),                      self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'),    self.tmp_dir)
 
         # Make AssemblyInfo.cs
         version = common.get_changelog_version(root_dir)
