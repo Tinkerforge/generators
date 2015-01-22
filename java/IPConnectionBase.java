@@ -532,7 +532,7 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 		try {
 			disconnect();
 		} catch(NotConnectedException e) {
-			throw new java.io.IOException(e.getMessage());
+			throw new java.io.IOException(e.getMessage(), e);
 		}
 	}
 
