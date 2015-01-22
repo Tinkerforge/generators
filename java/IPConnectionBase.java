@@ -353,7 +353,7 @@ class DisconnectProbeThread extends Thread {
 	}
 }
 
-public abstract class IPConnectionBase {
+public abstract class IPConnectionBase implements java.io.Closeable {
 	private final static String BASE58 = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
 
 	public final static byte FUNCTION_ENUMERATE = (byte)254;
@@ -520,6 +520,19 @@ public abstract class IPConnectionBase {
 			                                          connectReason, 0, null));
 		} catch(InterruptedException e) {
 			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Implement Closable interface to allow something like
+	 * try(IPConnection ipconntion = new IPConnection()){ }
+	 */
+	@Override
+	public void close() throws java.io.IOException {
+		try {
+			disconnect();
+		} catch(NotConnectedException e) {
+			throw new java.io.IOException(e.getMessage());
 		}
 	}
 
