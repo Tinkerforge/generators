@@ -83,5 +83,4 @@
        Replace System.console() usage with an Eclipse compatible pattern in examples
 2.1.3: Make listener dispatch methods protected to allow external changes(no changes)
 2.1.4: Add support for RED Brick
-2.1.5: Increase minimum supported version of Java to 1.7
-       Add "Closable interface" to IPConnection
+2.1.5: Add "Closable interface" to IPConnection
