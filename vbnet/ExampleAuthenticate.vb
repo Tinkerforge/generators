@@ -17,9 +17,9 @@ Module ExampleAuthenticate
         ' Authenticate first...
         Try
             sender.Authenticate(SECRET)
-            Console.WriteLine("Authentication succeeded")
+            System.Console.WriteLine("Authentication succeeded")
         catch
-            Console.WriteLine("Could not authenticate")
+            System.Console.WriteLine("Could not authenticate")
             Exit Sub
         End Try
 
@@ -35,7 +35,7 @@ Module ExampleAuthenticate
                     ByVal firmwareVersion() As Short, _
                     ByVal deviceIdentifier As Integer, _
                     ByVal enumerationType As Short)
-        Console.WriteLine("UID: {0}, Enumeration Type: {1}", uid, enumerationType)
+        System.Console.WriteLine("UID: {0}, Enumeration Type: {1}", uid, enumerationType)
     End Sub
 
     Sub Main()
@@ -51,8 +51,8 @@ Module ExampleAuthenticate
         ' Connect to brickd
         ipcon.Connect(HOST, PORT)
 
-        Console.WriteLine("Press key to exit")
-        Console.ReadKey()
+        System.Console.WriteLine("Press key to exit")
+        System.Console.ReadLine()
         ipcon.Disconnect()
     End Sub
 End Module

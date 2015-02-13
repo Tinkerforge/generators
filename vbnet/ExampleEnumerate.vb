@@ -12,22 +12,22 @@ Module ExampleEnumerate
                     ByVal firmwareVersion() As Short, _
                     ByVal deviceIdentifier As Integer, _
                     ByVal enumerationType As Short)
-        Console.WriteLine("UID:               {0}", uid)
-        Console.WriteLine("Enumeration Type:  {0}", enumerationType)
+        System.Console.WriteLine("UID:               {0}", uid)
+        System.Console.WriteLine("Enumeration Type:  {0}", enumerationType)
 
         If enumerationType = IPConnection.ENUMERATION_TYPE_DISCONNECTED Then
-            Console.WriteLine("")
+            System.Console.WriteLine("")
             Return
         End If
 
-        Console.WriteLine("Connected UID:     {0}", connectedUid)
-        Console.WriteLine("Position:          {0}", position)
-        Console.WriteLine("Hardware Version:  {0}.{1}.{2}", _
-                          hardwareVersion(0), hardwareVersion(1), hardwareVersion(2))
-        Console.WriteLine("Firmware Version:  {0}.{1}.{2}", _
-                          firmwareVersion(0), firmwareVersion(1), firmwareVersion(2))
-        Console.WriteLine("Device Identifier: {0}", deviceIdentifier)
-        Console.WriteLine("")
+        System.Console.WriteLine("Connected UID:     {0}", connectedUid)
+        System.Console.WriteLine("Position:          {0}", position)
+        System.Console.WriteLine("Hardware Version:  {0}.{1}.{2}", _
+                                 hardwareVersion(0), hardwareVersion(1), hardwareVersion(2))
+        System.Console.WriteLine("Firmware Version:  {0}.{1}.{2}", _
+                                 firmwareVersion(0), firmwareVersion(1), firmwareVersion(2))
+        System.Console.WriteLine("Device Identifier: {0}", deviceIdentifier)
+        System.Console.WriteLine("")
     End Sub
 
     Sub Main()
@@ -41,8 +41,8 @@ Module ExampleEnumerate
         ' Trigger Enumerate
         ipcon.Enumerate()
 
-        Console.WriteLine("Press key to exit")
-        Console.ReadKey()
+        System.Console.WriteLine("Press key to exit")
+        System.Console.ReadLine()
         ipcon.Disconnect()
     End Sub
 End Module
