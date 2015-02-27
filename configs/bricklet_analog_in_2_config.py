@@ -14,7 +14,7 @@ com = {
     'name': ('AnalogIn2', 'analog_in_2', 'Analog In 2'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing voltages between 0 and 42V',
-    'released': True,
+    'released': False,
     'packets': []
 }
 
