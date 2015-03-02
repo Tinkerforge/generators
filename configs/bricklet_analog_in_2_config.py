@@ -377,47 +377,50 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetAveraging', 'set_averaging'),
+'name': ('SetMovingAverage', 'set_moving_average'), 
 'elements': [('average', 'uint8', 1, 'in')],
-'since_firmware': [2, 0, 3],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Set the length of a moving averaging for the voltage value.
+Sets the length of a `moving averaging <http://en.wikipedia.org/wiki/Moving_average>`__ 
+for the moisture value.
 
-Setting the length to 1 means that no averaging is taking place. If the
-averaging is off, there is more noise on the data, but the data is without
-delay.
+Setting the length to 1 will turn the averaging off. With less
+averaging, there is more noise on the data.
 
-Valid values are between 1 and 50. The default value is 50.
+The range for the averaging is 1-50.
+
+The default value is 50.
 """,
 'de':
 """
-Setzt die Länge des gleitenden Mittelwerts für die Spannung.
+Setzt die Länge eines gleitenden Mittelwerts für den Feuchtigkeitswert.
 
-Wenn die Länge auf 1 gesetzt wird, ist findet keine Mittelwertberechnung statt.
-In diesem Fall gibt es mehr Rauschen auf den Daten, allerdings sind die Daten dann ohne
-Verzögerung.
+Wenn die Länge auf 1 gesetzt wird, ist das Averaging aus. Desto kleiner
+die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
 
-Gültig sind Werte zwischen 1 und 50. Der Standardwert ist 50.
+Der Wertebereich liegt bei 1-50.
+
+Der Standardwert ist 50.
 """
 }]
 })
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAveraging', 'get_averaging'),
+'name': ('GetMovingAverage', 'get_moving_average'), 
 'elements': [('average', 'uint8', 1, 'out')],
-'since_firmware': [2, 0, 3],
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the averaging configuration as set by :func:`SetAveraging`.
+Returns the length moving average as set by :func:`SetMovingAverage`.
 """,
 'de':
 """
-Gibt die Averaging-Konfiguration zurück, wie von :func:`SetAveraging`
-gesetzt.
+Gibt die Länge des gleitenden Mittelwerts zurück, wie von 
+:func:`SetMovingAverage` gesetzt.
 """
 }]
 })
