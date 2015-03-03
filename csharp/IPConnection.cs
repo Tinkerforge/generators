@@ -1051,7 +1051,7 @@ namespace Tinkerforge
 		internal delegate void CallbackWrapper(byte[] data);
 
 		/// <summary>
-		///  Creates the device objectwith the unique device ID *uid* and adds
+		///  Creates the device object with the unique device ID *uid* and adds
 		///  it to the IPConnection *ipcon*.
 		/// </summary>
 		public Device(string uid, IPConnection ipcon)
@@ -1087,7 +1087,7 @@ namespace Tinkerforge
 		///  For getter functions this is enabled by default and cannot be
 		///  disabled, because those functions will always send a response.
 		///  For callback configuration functions it is enabled by default
-		///  too, but can be disabled via the setResponseExpected function.
+		///  too, but can be disabled via the SetResponseExpected function.
 		///  For setter functions it is disabled by default and can be enabled.
 		///
 		///  Enabling the response expected flag for a setter function allows
