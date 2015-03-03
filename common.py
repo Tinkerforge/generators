@@ -771,10 +771,10 @@ def check_name(camel_case, underscore, display, is_constant=False):
 
     if camel_case is not None and display is not None:
         # test 1
-        display_to_check = display.replace(' ', '').replace('-', '').replace('/', '').replace('.', '')
+        display_to_check = display.replace(' ', '').replace('-', '').replace('/', '')
 
-        if display_to_check in ('AnalogIn20', 'AnalogOut20'):
-            display_to_check = display_to_check.replace('20', 'V2')
+        if display_to_check.endswith('2.0'):
+            display_to_check = display_to_check.replace('2.0', 'V2')
 
         if camel_case != display_to_check:
             raise ValueError("camel case name '{0}' and display name '{1}' ({2}) mismatch (test 1)" \
@@ -783,7 +783,7 @@ def check_name(camel_case, underscore, display, is_constant=False):
         # test 2
         camel_case_to_check = camel_case_to_space(camel_case)
 
-        if camel_case in ('AnalogInV2', 'AnalogOutV2'):
+        if camel_case.endswith('V2'):
             camel_case_to_check = camel_case_to_check.replace('V2', '2.0')
         elif camel_case in ['IO4', 'IO16']:
             camel_case_to_check = camel_case_to_check.replace(' ', '-')
@@ -807,10 +807,10 @@ def check_name(camel_case, underscore, display, is_constant=False):
                              .format(camel_case, camel_case_to_check, display))
 
     if underscore is not None and display is not None:
-        display_to_check = display.replace(' ', '_').replace('/', '_').replace('.', '')
+        display_to_check = display.replace(' ', '_').replace('/', '_')
 
-        if display in ('Analog In 2.0', 'Analog Out 2.0'):
-            display_to_check = display_to_check.replace('20', 'V2')
+        if display.endswith('2.0'):
+            display_to_check = display_to_check.replace('2.0', 'V2')
         elif display in ['IO-4', 'IO-16']:
             display_to_check = display_to_check.replace('-', '')
         else:
