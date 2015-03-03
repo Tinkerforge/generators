@@ -943,6 +943,9 @@ namespace Tinkerforge
 		}
 	}
 
+	/// <summary>
+	///  Base class for all Tinkerforge exceptions.
+	/// </summary>
 	public class TinkerforgeException : Exception
 	{
 		public TinkerforgeException()
@@ -955,6 +958,9 @@ namespace Tinkerforge
 		}
 	}
 
+	/// <summary>
+	///  Used to report timeout errors.
+	/// </summary>
 	public class TimeoutException : TinkerforgeException
 	{
 		public TimeoutException(string message)
@@ -963,6 +969,10 @@ namespace Tinkerforge
 		}
 	}
 
+	/// <summary>
+	///  Used to report if <see cref="Tinkerforge.IPConnection.Connect"/> is
+	///  called on an already connected IPConnection.
+	/// </summary>
 	public class AlreadyConnectedException : TinkerforgeException
 	{
 		public AlreadyConnectedException(string message)
@@ -971,6 +981,10 @@ namespace Tinkerforge
 		}
 	}
 
+	/// <summary>
+	///  Used to report if a method is called on an unconnected IPConnection
+	///  that requires a connected IPConnection.
+	/// </summary>
 	public class NotConnectedException : TinkerforgeException
 	{
 		public NotConnectedException()
@@ -1019,6 +1033,9 @@ namespace Tinkerforge
 		}
 	}
 
+	/// <summary>
+	///  Base class for all Tinkerforge Brick and Bricklet classes.
+	/// </summary>
 	public abstract class Device
 	{
 		internal short[] apiVersion = new short[3];
@@ -1296,7 +1313,8 @@ namespace Tinkerforge
 			SendRequest(request);
 		}
 
-		public override void GetIdentity(out string uid, out string connectedUid, out char position, out byte[] hardwareVersion, out byte[] firmwareVersion, out int deviceIdentifier)
+		public override void GetIdentity(out string uid, out string connectedUid, out char position,
+		                                 out byte[] hardwareVersion, out byte[] firmwareVersion, out int deviceIdentifier)
 		{
 			uid = "";
 			connectedUid = "";
@@ -1834,7 +1852,7 @@ namespace Tinkerforge
 
 		public override void Flush()
 		{
-			//stream is always flushed
+			// stream is always flushed
 		}
 
 		public NetworkStream(Socket sock)
@@ -1861,7 +1879,7 @@ namespace Tinkerforge
 			}
 			else if (e.SocketError != SocketError.Success)
 			{
-				//TODO: error handling
+				// TODO: error handling
 			}
 
 			switch (e.LastOperation)
@@ -1869,7 +1887,7 @@ namespace Tinkerforge
 				case SocketAsyncOperation.Receive:
 					if (e.BytesTransferred == 0)
 					{
-						//TODO: error handling
+						// TODO: error handling
 						break;
 					}
 					byte[] receiveBuffer = new byte[e.BytesTransferred];
@@ -1877,14 +1895,14 @@ namespace Tinkerforge
 					ReceiveQueue.Enqueue(receiveBuffer);
 					if (!socket.ReceiveAsync(e))
 					{
-						//TODO: error handling
+						// TODO: error handling
 					}
 					break;
 				case SocketAsyncOperation.Send:
 					WriteCompleteEvent.Set();
 					break;
 				default:
-					break; //TODO: error handling
+					break; // TODO: error handling
 			}
 		}
 
