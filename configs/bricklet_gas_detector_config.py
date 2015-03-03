@@ -14,7 +14,7 @@ com = {
     'name': ('GasDetector', 'gas_detector', 'Gas Detector'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing different gases',
-    'released': True,
+    'released': False,
     'packets': []
 }
 
