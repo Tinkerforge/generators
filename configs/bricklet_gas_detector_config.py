@@ -14,14 +14,14 @@ com = {
     'name': ('GasDetector', 'gas_detector', 'Gas Detector'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing different gases',
-    'released': False,
+    'released': True,
     'packets': []
 }
 
 com['packets'].append({
 'type': 'function',
 'name': ('GetValue', 'get_value'), 
-'elements': [('value', 'uint16', 1, 'out')],
+'elements': [('moisture', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -36,7 +36,7 @@ to use the callback :func:`Value` and set the period with
 """
 TODO
 
-Wenn der Wert periodisch abgefragt werden soll, wird empfohlen
+Wenn der Feuchtigkeitswert periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Value` zu nutzen und die Periode mit 
 :func:`SetValueCallbackPeriod` vorzugeben.
 """
@@ -54,7 +54,7 @@ com['packets'].append({
 Sets the period in ms with which the :func:`Value` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`Value` is only triggered if the value has changed since the
+:func:`Value` is only triggered if the moisture value has changed since the
 last triggering.
 
 The default value is 0.
@@ -64,7 +64,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :func:`Value` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Value` wird nur ausgelöst wenn sich der Wert seit der
+:func:`Value` wird nur ausgelöst wenn sich der Feuchtigkeitswert seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -113,10 +113,10 @@ The following options are possible:
  :widths: 10, 100
 
  "'x'",    "Callback is turned off"
- "'o'",    "Callback is triggered when the value is *outside* the min and max values"
- "'i'",    "Callback is triggered when the value is *inside* the min and max values"
- "'<'",    "Callback is triggered when the value is smaller than the min value (max is ignored)"
- "'>'",    "Callback is triggered when the value is greater than the min value (max is ignored)"
+ "'o'",    "Callback is triggered when the moisture value is *outside* the min and max values"
+ "'i'",    "Callback is triggered when the moisture value is *inside* the min and max values"
+ "'<'",    "Callback is triggered when the moisture value is smaller than the min value (max is ignored)"
+ "'>'",    "Callback is triggered when the moisture value is greater than the min value (max is ignored)"
 
 The default value is ('x', 0, 0).
 """,
@@ -131,10 +131,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
  
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn der Wert *außerhalb* des min und max Wertes ist"
- "'i'",    "Callback wird ausgelöst wenn der Wert *innerhalb* des min und max Wertes ist"
- "'<'",    "Callback wird ausgelöst wenn der Wert kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn der Wert größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst wenn der Feuchtigkeitswert *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst wenn der Feuchtigkeitswert *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst wenn der Feuchtigkeitswert kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn der Feuchtigkeitswert größer als der min Wert ist (max wird ignoriert)"
  
 Der Standardwert ist ('x', 0, 0).
 """
@@ -229,7 +229,7 @@ com['packets'].append({
 'en':
 """
 Sets the length of a `moving averaging <http://en.wikipedia.org/wiki/Moving_average>`__ 
-for the value.
+for the moisture value.
 
 Setting the length to 1 will turn the averaging off. With less
 averaging, there is more noise on the data.
@@ -240,7 +240,7 @@ The default value is 100.
 """,
 'de':
 """
-Setzt die Länge eines gleitenden Mittelwerts für den Wert.
+Setzt die Länge eines gleitenden Mittelwerts für den Feuchtigkeitswert.
 
 Wenn die Länge auf 1 gesetzt wird, ist das Averaging aus. Desto kleiner
 die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
@@ -365,18 +365,18 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetValueCallbackPeriod`. The :word:`parameter` is the value
+:func:`SetValueCallbackPeriod`. The :word:`parameter` is the moisture value
 of the sensor.
 
-:func:`Value` is only triggered if the value has changed since the
+:func:`Value` is only triggered if the moisture value has changed since the
 last triggering.
 """,
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetValueCallbackPeriod`,
-ausgelöst. Der :word:`parameter` ist der Wert.
+ausgelöst. Der :word:`parameter` ist der Feuchtigkeitswert des Sensors.
 
-:func:`Value` wird nur ausgelöst wenn sich der Wert seit der
+:func:`Value` wird nur ausgelöst wenn sich der Feuchtigkeitswert seit der
 letzten Auslösung geändert hat.
 """
 }]
