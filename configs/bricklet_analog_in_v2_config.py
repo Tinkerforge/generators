@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 251,
-    'name': ('AnalogIn2', 'analog_in_2', 'Analog In 2'),
+    'name': ('AnalogInV2', 'analog_in_v2', 'Analog In 2.0'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing voltages between 0 and 42V',
     'released': False,
@@ -20,7 +20,7 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetVoltage', 'get_voltage'), 
+'name': ('GetVoltage', 'get_voltage'),
 'elements': [('voltage', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -30,16 +30,16 @@ Returns the measured voltage. The value is in mV and
 between 0V and 42V. The resolution is approximately 10mV.
 
 If you want to get the voltage periodically, it is recommended to use the
-callback :func:`Voltage` and set the period with 
+callback :func:`Voltage` and set the period with
 :func:`SetVoltageCallbackPeriod`.
 """,
 'de':
 """
-Gibt die gemessene Spannung zurück. Der Wert ist in mV und im 
+Gibt die gemessene Spannung zurück. Der Wert ist in mV und im
 Bereich von 0 bis 42V. Die Auflösung ca. 10mV.
 
 Wenn die Spannung periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`Voltage` zu nutzen und die Periode mit 
+den Callback :func:`Voltage` zu nutzen und die Periode mit
 :func:`SetVoltageCallbackPeriod` vorzugeben.
 """
 }]
@@ -47,7 +47,7 @@ den Callback :func:`Voltage` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAnalogValue', 'get_analog_value'), 
+'name': ('GetAnalogValue', 'get_analog_value'),
 'elements': [('value', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -56,8 +56,8 @@ com['packets'].append({
 Returns the value as read by a 12-bit analog-to-digital converter.
 The value is between 0 and 4095.
 
-If you want the analog value periodically, it is recommended to use the 
-callback :func:`AnalogValue` and set the period with 
+If you want the analog value periodically, it is recommended to use the
+callback :func:`AnalogValue` and set the period with
 :func:`SetAnalogValueCallbackPeriod`.
 """,
 'de':
@@ -66,7 +66,7 @@ Gibt den Wert, wie vom 12-Bit Analog-Digital-Wandler gelesen, zurück. Der
 Wertebereich ist 0 bis 4095.
 
 Wenn der Analogwert periodisch abgefragt werden soll, wird empfohlen
-den Callback :func:`AnalogValue` zu nutzen und die Periode mit 
+den Callback :func:`AnalogValue` zu nutzen und die Periode mit
 :func:`SetAnalogValueCallbackPeriod` vorzugeben.
 """
 }]
@@ -74,7 +74,7 @@ den Callback :func:`AnalogValue` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetVoltageCallbackPeriod', 'set_voltage_callback_period'), 
+'name': ('SetVoltageCallbackPeriod', 'set_voltage_callback_period'),
 'elements': [('period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -103,7 +103,7 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetVoltageCallbackPeriod', 'get_voltage_callback_period'), 
+'name': ('GetVoltageCallbackPeriod', 'get_voltage_callback_period'),
 'elements': [('period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -121,7 +121,7 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetAnalogValueCallbackPeriod', 'set_analog_value_callback_period'), 
+'name': ('SetAnalogValueCallbackPeriod', 'set_analog_value_callback_period'),
 'elements': [('period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -150,7 +150,7 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAnalogValueCallbackPeriod', 'get_analog_value_callback_period'), 
+'name': ('GetAnalogValueCallbackPeriod', 'get_analog_value_callback_period'),
 'elements': [('period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -168,19 +168,19 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetVoltageCallbackThreshold', 'set_voltage_callback_threshold'), 
+'name': ('SetVoltageCallbackThreshold', 'set_voltage_callback_threshold'),
 'elements': [('option', 'char', 1, 'in', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
                                                                                   ('Outside', 'outside', 'o'),
                                                                                   ('Inside', 'inside', 'i'),
                                                                                   ('Smaller', 'smaller', '<'),
-                                                                                  ('Greater', 'greater', '>')])), 
+                                                                                  ('Greater', 'greater', '>')])),
              ('min', 'int16', 1, 'in'),
              ('max', 'int16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`VoltageReached` callback. 
+Sets the thresholds for the :func:`VoltageReached` callback.
 
 The following options are possible:
 
@@ -205,13 +205,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn die Spannung *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn die Spannung *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn die Spannung kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn die Spannung größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0).
 """
 }]
@@ -219,12 +219,12 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetVoltageCallbackThreshold', 'get_voltage_callback_threshold'), 
+'name': ('GetVoltageCallbackThreshold', 'get_voltage_callback_threshold'),
 'elements': [('option', 'char', 1, 'out', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
                                                                                    ('Outside', 'outside', 'o'),
                                                                                    ('Inside', 'inside', 'i'),
                                                                                    ('Smaller', 'smaller', '<'),
-                                                                                   ('Greater', 'greater', '>')])), 
+                                                                                   ('Greater', 'greater', '>')])),
              ('min', 'int16', 1, 'out'),
              ('max', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -243,19 +243,19 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetAnalogValueCallbackThreshold', 'set_analog_value_callback_threshold'), 
+'name': ('SetAnalogValueCallbackThreshold', 'set_analog_value_callback_threshold'),
 'elements': [('option', 'char', 1, 'in', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
                                                                                   ('Outside', 'outside', 'o'),
                                                                                   ('Inside', 'inside', 'i'),
                                                                                   ('Smaller', 'smaller', '<'),
-                                                                                  ('Greater', 'greater', '>')])), 
+                                                                                  ('Greater', 'greater', '>')])),
              ('min', 'uint16', 1, 'in'),
              ('max', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`AnalogValueReached` callback. 
+Sets the thresholds for the :func:`AnalogValueReached` callback.
 
 The following options are possible:
 
@@ -280,13 +280,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn der Analogwert *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn der Analogwert *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn der Analogwert kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn der Analogwert größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0).
 """
 }]
@@ -294,12 +294,12 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAnalogValueCallbackThreshold', 'get_analog_value_callback_threshold'), 
+'name': ('GetAnalogValueCallbackThreshold', 'get_analog_value_callback_threshold'),
 'elements': [('option', 'char', 1, 'out', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
                                                                                    ('Outside', 'outside', 'o'),
                                                                                    ('Inside', 'inside', 'i'),
                                                                                    ('Smaller', 'smaller', '<'),
-                                                                                   ('Greater', 'greater', '>')])), 
+                                                                                   ('Greater', 'greater', '>')])),
              ('min', 'uint16', 1, 'out'),
              ('max', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
@@ -318,7 +318,7 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDebouncePeriod', 'set_debounce_period'), 
+'name': ('SetDebouncePeriod', 'set_debounce_period'),
 'elements': [('debounce', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -344,12 +344,12 @@ Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
 * :func:`VoltageReached`,
 * :func:`AnalogValueReached`
- 
-ausgelöst werden, wenn die Schwellwerte 
+
+ausgelöst werden, wenn die Schwellwerte
 
 * :func:`SetVoltageCallbackThreshold`,
 * :func:`SetAnalogValueCallbackThreshold`
- 
+
 weiterhin erreicht bleiben.
 
 Der Standardwert ist 100.
@@ -359,7 +359,7 @@ Der Standardwert ist 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDebouncePeriod', 'get_debounce_period'), 
+'name': ('GetDebouncePeriod', 'get_debounce_period'),
 'elements': [('debounce', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -377,13 +377,13 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetMovingAverage', 'set_moving_average'), 
+'name': ('SetMovingAverage', 'set_moving_average'),
 'elements': [('average', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Sets the length of a `moving averaging <http://en.wikipedia.org/wiki/Moving_average>`__ 
+Sets the length of a `moving averaging <http://en.wikipedia.org/wiki/Moving_average>`__
 for the moisture value.
 
 Setting the length to 1 will turn the averaging off. With less
@@ -409,7 +409,7 @@ Der Standardwert ist 50.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetMovingAverage', 'get_moving_average'), 
+'name': ('GetMovingAverage', 'get_moving_average'),
 'elements': [('average', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -419,7 +419,7 @@ Returns the length moving average as set by :func:`SetMovingAverage`.
 """,
 'de':
 """
-Gibt die Länge des gleitenden Mittelwerts zurück, wie von 
+Gibt die Länge des gleitenden Mittelwerts zurück, wie von
 :func:`SetMovingAverage` gesetzt.
 """
 }]
@@ -427,7 +427,7 @@ Gibt die Länge des gleitenden Mittelwerts zurück, wie von
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Voltage', 'voltage'), 
+'name': ('Voltage', 'voltage'),
 'elements': [('voltage', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -453,7 +453,7 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('AnalogValue', 'analog_value'), 
+'name': ('AnalogValue', 'analog_value'),
 'elements': [('value', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -479,7 +479,7 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('VoltageReached', 'voltage_reached'), 
+'name': ('VoltageReached', 'voltage_reached'),
 'elements': [('voltage', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -494,7 +494,7 @@ with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`SetVoltageCallbackThreshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die gemessene Spannung des Sensors.
 
@@ -506,7 +506,7 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('AnalogValueReached', 'analog_value_reached'), 
+'name': ('AnalogValueReached', 'analog_value_reached'),
 'elements': [('value', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -521,7 +521,7 @@ with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`SetAnalogValueCallbackThreshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der Analogwert des Sensors.
 
