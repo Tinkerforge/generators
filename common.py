@@ -698,7 +698,7 @@ def generate(bindings_root_directory, language, generator_class):
 
 cn_valid_camel_case_chars = re.compile('^[A-Z][A-Za-z0-9]*$')
 cn_valid_underscore_chars = re.compile('^[a-z][a-z0-9_]*$')
-cn_valid_display_chars = re.compile('^[A-Z][A-Za-z0-9/ -]*$')
+cn_valid_display_chars = re.compile('^[A-Z][A-Za-z0-9/ -.]*$')
 cn_valid_constant_camel_case_chars = re.compile('^[A-Za-z0-9]+$')
 cn_valid_constant_underscore_chars = re.compile('^[a-z0-9_]+$')
 
@@ -771,7 +771,7 @@ def check_name(camel_case, underscore, display, is_constant=False):
 
     if camel_case is not None and display is not None:
         # test 1
-        display_to_check = display.replace(' ', '').replace('-', '').replace('/', '')
+        display_to_check = display.replace(' ', '').replace('-', '').replace('/', '').replace('.', '')
 
         if camel_case != display_to_check:
             raise ValueError("camel case name '{0}' and display name '{1}' ({2}) mismatch (test 1)" \
