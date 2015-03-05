@@ -10,7 +10,7 @@ com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
-    'device_identifier': 229,
+    'device_identifier': 255,
     'name': ('LaserRangeFinder', 'laser_range_finder', 'Laser Range Finder'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device that measures distance with a laser range finder',
