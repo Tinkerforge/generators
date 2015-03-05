@@ -707,7 +707,7 @@ cn_all_uppercase = ['api', 'ir', 'us', 'lcd', 'dc', 'imu', 'pwm', 'gps', 'id', '
                     '2d', '3d', '1k', '100k', '500k', '3v', '6v', '10v', '36v',
                     '45v', 'sps', 'oqpsk', 'bpsk40', 'dhcp', 'ip', 'wpa',
                     'wpa2', 'ca', 'wep', 'rgb', 'nfc', 'rfid', 'fifo',
-                    'ws2801', 'ws2811', 'ws2812', 'adc']
+                    'ws2801', 'ws2811', 'ws2812', 'adc', 'rs232']
 
 cn_eap_suffix = ['fast', 'tls', 'ttls', 'peap', 'mschap', 'gtc']
 
@@ -799,6 +799,8 @@ def check_name(camel_case, underscore, display, is_constant=False):
             camel_case_to_check = camel_case_to_check.replace('4x 7', '4x7')
         elif camel_case.endswith('020mA'):
             camel_case_to_check = camel_case_to_check.replace('020m A', '0-20mA')
+        elif camel_case.endswith('RS232'):
+            camel_case_to_check = camel_case_to_check.replace('RS 232', 'RS232')
         elif camel_case == 'NFCRFID':
             camel_case_to_check = camel_case_to_check.replace('NFCRFID', 'NFC/RFID')
 
