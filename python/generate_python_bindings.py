@@ -35,7 +35,7 @@ import python_common
 class PythonBindingsDevice(python_common.PythonDevice):
     def get_python_import(self):
         include = """# -*- coding: utf-8 -*-
-{0}
+{0}{1}
 try:
     from collections import namedtuple
 except ImportError:
@@ -52,10 +52,13 @@ except ValueError:
 """
         date = datetime.datetime.now().strftime("%Y-%m-%d")
         version = common.get_changelog_version(self.get_generator().get_bindings_root_directory())
-        lower_type = self.get_category().lower()
+        released = ''
+
+        if not self.is_released():
+            released = '\n#### __DEVICE_IS_NOT_RELEASED__ ####\n'
 
         return include.format(common.gen_text_hash.format(date, *version),
-                              lower_type, self.get_underscore_name())
+                              released)
 
     def get_python_namedtuples(self):
         tup = """{0} = namedtuple('{1}', [{2}])
