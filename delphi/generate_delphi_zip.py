@@ -87,7 +87,7 @@ class DelphiZipGenerator(common.Generator):
 
         # Make Makefile.fpc
         version = common.get_changelog_version(root_dir)
-        units = [filename.replace('.pas', '') for filename in os.listdir(self.tmp_source_dir)]
+        units = sorted([filename.replace('.pas', '') for filename in os.listdir(self.tmp_source_dir)])
 
         common.specialize_template(os.path.join(root_dir, 'Makefile.fpc.template'),
                                    os.path.join(self.tmp_source_dir, 'Makefile.fpc'),
