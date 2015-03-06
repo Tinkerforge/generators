@@ -54,14 +54,21 @@ namespace Tinkerforge
 \t{{
 \t\t/// <summary>
 \t\t///  Used to identify this device type in
-\t\t///  <see cref="Tinkerforge.IPConnection.EnumerateCallback"/>
+\t\t///  <see cref="Tinkerforge.IPConnection.EnumerateCallback"/>.
 \t\t/// </summary>
 \t\tpublic static int DEVICE_IDENTIFIER = {2};
+
+\t\t/// <summary>
+\t\t///  The display name of this device.
+\t\t/// </summary>
+\t\tpublic static string DEVICE_DISPLAY_NAME = "{3} {4}";
 """
 
         return class_str.format(self.get_csharp_class_name(),
                                 self.get_description(),
-                                self.get_device_identifier())
+                                self.get_device_identifier(),
+                                self.get_display_name(),
+                                self.get_category())
 
     def get_csharp_delegates(self):
         cbs = '\n'

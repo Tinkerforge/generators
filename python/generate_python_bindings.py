@@ -85,10 +85,13 @@ class {0}(Device):
     \"\"\"
 
     DEVICE_IDENTIFIER = {2}
+    DEVICE_DISPLAY_NAME = '{3} {4}'
 
 """.format(self.get_python_class_name(),
            self.get_description(),
-           self.get_device_identifier())
+           self.get_device_identifier(),
+           self.get_display_name(),
+           self.get_category())
 
     def get_python_callback_id_definitions(self):
         cbs = ''

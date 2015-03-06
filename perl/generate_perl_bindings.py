@@ -83,7 +83,17 @@ Bricklet's type.
 =cut
 
 use constant DEVICE_IDENTIFIER => {0};
-""".format(self.get_device_identifier(), self.get_display_name(), self.get_category())
+
+=item DEVICE_DISPLAY_NAME
+
+This constant represents the display name of a {1} {2}.
+
+=cut
+
+use constant DEVICE_DISPLAY_NAME => '{1} {2}';
+""".format(self.get_device_identifier(),
+           self.get_display_name(),
+           self.get_category())
 
     def get_perl_constants(self):
         callbacks = []

@@ -56,12 +56,21 @@ uses
     def get_delphi_device_identifier(self):
         did = """const
   {0}_{1}_DEVICE_IDENTIFIER = {2};
-
 """
 
         return did.format(self.get_category().upper(),
                           self.get_upper_case_name(),
                           self.get_device_identifier())
+
+    def get_delphi_device_display_name(self):
+        did = """  {0}_{1}_DEVICE_DISPLAY_NAME = '{2} {3}';
+
+"""
+
+        return did.format(self.get_category().upper(),
+                          self.get_upper_case_name(),
+                          self.get_display_name(),
+                          self.get_category())
 
     def get_delphi_function_id_definitions(self):
         function_ids = ''
@@ -412,6 +421,7 @@ begin
     def get_delphi_source(self):
         source  = self.get_delphi_unit_header()
         source += self.get_delphi_device_identifier()
+        source += self.get_delphi_device_display_name()
         source += self.get_delphi_function_id_definitions()
         source += self.get_delphi_callback_id_definitions()
         source += self.get_delphi_constants()

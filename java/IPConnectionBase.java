@@ -525,7 +525,8 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 
 	/**
 	 * Implement Closable interface to allow something like
-	 * try(IPConnection ipconntion = new IPConnection()){ }
+	 *
+	 * try (IPConnection ipcon = new IPConnection()) { }
 	 */
 	@Override
 	public void close() throws java.io.IOException {

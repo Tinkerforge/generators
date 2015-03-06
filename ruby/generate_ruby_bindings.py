@@ -49,7 +49,12 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
   # {1}
   class {0} < Device
     DEVICE_IDENTIFIER = {2} # :nodoc:
-""".format(self.get_ruby_class_name(), self.get_description(), self.get_device_identifier())
+    DEVICE_DISPLAY_NAME = '{3} {4}' # :nodoc:
+""".format(self.get_ruby_class_name(),
+           self.get_description(),
+           self.get_device_identifier(),
+           self.get_display_name(),
+           self.get_category())
 
     def get_ruby_callback_id_definitions(self):
         cbs = ''

@@ -109,7 +109,7 @@ extern "C" {{
 /**
  * \ingroup {3}{2}
  *
- * This constant is used to identify a {2} {3}.
+ * This constant is used to identify a {5} {3}.
  *
  * The {{@link {4}_get_identity}} function and the
  * {{@link IPCON_CALLBACK_ENUMERATE}} callback of the IP Connection have a
@@ -119,6 +119,22 @@ extern "C" {{
 """
         return define_temp.format(self.get_upper_case_name(),
                                   self.get_device_identifier(),
+                                  self.get_camel_case_name(),
+                                  self.get_category(),
+                                  self.get_underscore_name(),
+                                  self.get_display_name())
+
+    def get_c_device_display_name_define(self):
+        define_temp = """
+/**
+ * \ingroup {3}{2}
+ *
+ * This constant represents the display name of a {1} {3}.
+ */
+#define {0}_DEVICE_DISPLAY_NAME "{1} {3}"
+"""
+        return define_temp.format(self.get_upper_case_name(),
+                                  self.get_display_name(),
                                   self.get_camel_case_name(),
                                   self.get_category(),
                                   self.get_underscore_name())
@@ -606,6 +622,7 @@ void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data
         header += self.get_c_callback_defines()
         header += self.get_c_constants()
         header += self.get_c_device_identifier_define()
+        header += self.get_c_device_display_name_define()
         header += self.get_c_create_declaration()
         header += self.get_c_destroy_declaration()
         header += self.get_c_response_expected_declarations()

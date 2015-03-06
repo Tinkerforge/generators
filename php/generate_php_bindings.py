@@ -103,6 +103,11 @@ class {0} extends Device
     const DEVICE_IDENTIFIER = {0};
 """.format(self.get_device_identifier())
 
+    def get_php_device_display_name(self):
+        return """
+    const DEVICE_DISPLAY_NAME = "{0} {1}";
+""".format(self.get_display_name(), self.get_category())
+
     def get_php_constructor(self):
         con = """
     /**
@@ -384,6 +389,7 @@ class {0} extends Device
         source += self.get_php_function_id_definitions()
         source += self.get_php_constants()
         source += self.get_php_device_identifier()
+        source += self.get_php_device_display_name()
         source += self.get_php_constructor()
         source += self.get_php_callback_wrapper_definitions()
         source += self.get_php_methods()

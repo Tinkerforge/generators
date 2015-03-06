@@ -68,12 +68,15 @@ import java.util.List;
  */
 public class {0} extends Device {{
 \tpublic final static int DEVICE_IDENTIFIER = {2};
+\tpublic final static String DEVICE_DISPLAY_NAME = "{3} {4}";
 
 """
 
         return class_str.format(self.get_java_class_name(),
                                 self.get_description(),
-                                self.get_device_identifier())
+                                self.get_device_identifier(),
+                                self.get_display_name(),
+                                self.get_category())
 
     def get_matlab_callback_data_objects(self):
         objs = ''
