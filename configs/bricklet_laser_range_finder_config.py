@@ -221,6 +221,56 @@ gesetzt.
 })
 
 com['packets'].append({
+'type': 'function',
+'name': ('SetMovingAverage', 'set_moving_average'), 
+'elements': [('length', 'uint8', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Sets the length of a `moving averaging <http://en.wikipedia.org/wiki/Moving_average>`__ 
+for the distance.
+
+Setting the length to 0 will turn the averaging completely off. With less
+averaging, there is more noise on the data.
+
+The range for the averaging is 0-50.
+
+The default value is 20.
+""",
+'de':
+"""
+Setzt die Länge eines gleitenden Mittelwerts für die Entfernung.
+
+Wenn die Länge auf 0 gesetzt wird, ist das Averaging komplett aus. Desto kleiner
+die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
+
+Der Wertebereich liegt bei 0-50.
+
+Der Standardwert ist 20.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetMovingAverage', 'get_moving_average'), 
+'elements': [('length', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Returns the length moving average as set by :func:`SetMovingAverage`.
+""",
+'de':
+"""
+Gibt die Länge des gleitenden Mittelwerts zurück, wie von 
+:func:`SetMovingAverage` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
 'type': 'callback',
 'name': ('Distance', 'distance'), 
 'elements': [('distance', 'uint16', 1, 'out')],
@@ -273,52 +323,3 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 }]
 })
 
-com['packets'].append({
-'type': 'function',
-'name': ('SetMovingAverage', 'set_moving_average'), 
-'elements': [('length', 'uint8', 1, 'in')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Sets the length of a `moving averaging <http://en.wikipedia.org/wiki/Moving_average>`__ 
-for the distance.
-
-Setting the length to 0 will turn the averaging completely off. With less
-averaging, there is more noise on the data.
-
-The range for the averaging is 0-50.
-
-The default value is 20.
-""",
-'de':
-"""
-Setzt die Länge eines gleitenden Mittelwerts für die Entfernung.
-
-Wenn die Länge auf 0 gesetzt wird, ist das Averaging komplett aus. Desto kleiner
-die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
-
-Der Wertebereich liegt bei 0-50.
-
-Der Standardwert ist 20.
-"""
-}]
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('GetMovingAverage', 'get_moving_average'), 
-'elements': [('length', 'uint8', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Returns the length moving average as set by :func:`SetMovingAverage`.
-""",
-'de':
-"""
-Gibt die Länge des gleitenden Mittelwerts zurück, wie von 
-:func:`SetMovingAverage` gesetzt.
-"""
-}]
-})
