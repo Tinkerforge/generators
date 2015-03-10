@@ -310,7 +310,7 @@ Constants
 
 .. java:member:: public static final int {1}{0}.DEVICE_IDENTIFIER
 
- This constant is used to identify a {3} {4}.
+ This constant is used to identify a {7} {4}.
 
  The :java:func:`getIdentity() <{4}{3}::getIdentity>` function and the
  :java:func:`EnumerateListener <IPConnection.EnumerateListener>`
@@ -325,7 +325,7 @@ Konstanten
 
 .. java:member:: public static final int {1}{0}.DEVICE_IDENTIFIER
 
- Diese Konstante wird verwendet um {2} {3} {4} zu identifizieren.
+ Diese Konstante wird verwendet um {2} {7} {4} zu identifizieren.
 
  Die :java:func:`getIdentity() <{4}{3}::getIdentity>` Funktion und der
  :java:func:`EnumerateListener <IPConnection.EnumerateListener>`
@@ -366,7 +366,8 @@ Konstanten
                                                         self.get_camel_case_name(),
                                                         self.get_category(),
                                                         self.get_underscore_name(),
-                                                        self.get_category().lower())
+                                                        self.get_category().lower(),
+                                                        self.get_display_name())
 
         ref = '.. _{0}_{1}_java_api:\n'.format(self.get_underscore_name(),
                                                self.get_category().lower())

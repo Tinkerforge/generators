@@ -254,7 +254,7 @@ Constants
 
 .. rb:attribute:: {1}{0}::DEVICE_IDENTIFIER
 
- This constant is used to identify a {3} {4}.
+ This constant is used to identify a {7} {4}.
 
  The :rb:func:`#get_identity() <{4}{3}#get_identity>` function and the
  :rb:attr:`::CALLBACK_ENUMERATE <IPConnection::CALLBACK_ENUMERATE>`
@@ -269,7 +269,7 @@ Konstanten
 
 .. rb:attribute:: {1}{0}::DEVICE_IDENTIFIER
 
- Diese Konstante wird verwendet um {2} {3} {4} zu identifizieren.
+ Diese Konstante wird verwendet um {2} {7} {4} zu identifizieren.
 
  Die :rb:func:`#get_identity() <{4}{3}#get_identity>` Funktion und der
  :rb:attr:`::CALLBACK_ENUMERATE <IPConnection::CALLBACK_ENUMERATE>`
@@ -312,7 +312,8 @@ Konstanten
                                                         self.get_camel_case_name(),
                                                         self.get_category(),
                                                         self.get_underscore_name(),
-                                                        self.get_category().lower())
+                                                        self.get_category().lower(),
+                                                        self.get_display_name())
 
         ref = '.. _{0}_{1}_ruby_api:\n'.format(self.get_underscore_name(),
                                                self.get_category().lower())

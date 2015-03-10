@@ -373,7 +373,7 @@ Konstanten
         api_str += common.select_lang(const_str).format(self.get_upper_case_name(),
                                                         self.get_underscore_name(),
                                                         article,
-                                                        self.get_camel_case_name(),
+                                                        self.get_display_name(),
                                                         self.get_category(),
                                                         self.get_category().lower())
 

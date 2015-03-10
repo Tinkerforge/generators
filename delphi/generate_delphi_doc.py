@@ -239,7 +239,7 @@ Constants
 
 .. delphi:function:: const {1}_{0}_DEVICE_IDENTIFIER
 
- This constant is used to identify a {3} {4}.
+ This constant is used to identify a {7} {4}.
 
  The :delphi:func:`GetIdentity <T{4}{3}.GetIdentity>` function and the
  :delphi:func:`OnEnumerate <TIPConnection.OnEnumerate>`
@@ -254,7 +254,7 @@ Konstanten
 
 .. delphi:function:: const {1}_{0}_DEVICE_IDENTIFIER
 
- Diese Konstante wird verwendet um {2} {3} {4} zu identifizieren.
+ Diese Konstante wird verwendet um {2} {7} {4} zu identifizieren.
 
  Die :delphi:func:`GetIdentity <T{4}{3}.GetIdentity>` Funktion und der
  :delphi:func:`OnEnumerate <TIPConnection.OnEnumerate>`
@@ -294,7 +294,8 @@ Konstanten
                                                         self.get_camel_case_name(),
                                                         self.get_category(),
                                                         self.get_underscore_name(),
-                                                        self.get_category().lower())
+                                                        self.get_category().lower(),
+                                                        self.get_display_name())
 
         ref = '.. _{0}_{1}_delphi_api:\n'.format(self.get_underscore_name(),
                                                  self.get_category().lower())

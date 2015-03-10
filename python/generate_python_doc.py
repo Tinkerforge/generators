@@ -274,7 +274,7 @@ Constants
 
 .. py:attribute:: {0}.DEVICE_IDENTIFIER
 
- This constant is used to identify a {3} {4}.
+ This constant is used to identify a {7} {4}.
 
  The :py:func:`get_identity() <{3}.get_identity>` function and the
  :py:attr:`CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
@@ -289,7 +289,7 @@ Konstanten
 
 .. py:attribute:: {0}.DEVICE_IDENTIFIER
 
- Diese Konstante wird verwendet um {2} {3} {4} zu identifizieren.
+ Diese Konstante wird verwendet um {2} {7} {4} zu identifizieren.
 
  Die :py:func:`get_identity() <{3}.get_identity>` Funktion und der
  :py:attr:`CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
@@ -329,7 +329,8 @@ Konstanten
                                                         self.get_camel_case_name(),
                                                         self.get_category(),
                                                         self.get_underscore_name(),
-                                                        self.get_category().lower())
+                                                        self.get_category().lower(),
+                                                        self.get_display_name())
 
         ref = '.. _{0}_{1}_python_api:\n'.format(self.get_underscore_name(),
                                                  self.get_category().lower())

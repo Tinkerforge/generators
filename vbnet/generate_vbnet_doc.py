@@ -238,7 +238,7 @@ Constants
 
 .. vbnet:attribute:: Const {1}{0}.DEVICE_IDENTIFIER
 
- This constant is used to identify a {0} {1}.
+ This constant is used to identify a {5} {1}.
 
  The :vbnet:func:`GetIdentity() <{1}{0}.GetIdentity>` function and the
  :vbnet:func:`EnumerateCallback <IPConnection.EnumerateCallback>`
@@ -253,7 +253,7 @@ Konstanten
 
 .. vbnet:attribute:: Const {1}{0}.DEVICE_IDENTIFIER
 
- Diese Konstante wird verwendet um {2} {0} {1} zu identifizieren.
+ Diese Konstante wird verwendet um {2} {5} {1} zu identifizieren.
 
  Die :vbnet:func:`GetIdentity() <{1}{0}.GetIdentity>` Funktion und der
  :vbnet:func:`EnumerateCallback <IPConnection.EnumerateCallback>`
@@ -293,7 +293,8 @@ Konstanten
                                                         self.get_category(),
                                                         article,
                                                         self.get_underscore_name(),
-                                                        self.get_category().lower())
+                                                        self.get_category().lower(),
+                                                        self.get_display_name())
 
         ref = '.. _{0}_{1}_vbnet_api:\n'.format(self.get_underscore_name(),
                                                 self.get_category().lower())

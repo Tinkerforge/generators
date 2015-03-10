@@ -298,7 +298,7 @@ Constants
 
 .. mathematica:symbol:: {1}{0}`DEVICEUIDENTIFIER
 
- This constant is used to identify a {0} {1}.
+ This constant is used to identify a {5} {1}.
 
  The :mathematica:func:`GetIdentity[] <{1}{0}@GetIdentity>` function and the
  :mathematica:func:`EnumerateCallback <IPConnection@EnumerateCallback>`
@@ -313,7 +313,7 @@ Konstanten
 
 .. mathematica:symbol:: {1}{0}`DEVICEUIDENTIFIER
 
- Diese Konstante wird verwendet um {2} {0} {1} zu identifizieren.
+ Diese Konstante wird verwendet um {2} {5} {1} zu identifizieren.
 
  Die :mathematica:func:`GetIdentity[] <{1}{0}@GetIdentity>` Funktion und der
  :mathematica:func:`EnumerateCallback <IPConnection@EnumerateCallback>`
@@ -353,7 +353,8 @@ Konstanten
                                                         self.get_category(),
                                                         article,
                                                         self.get_underscore_name(),
-                                                        self.get_category().lower())
+                                                        self.get_category().lower(),
+                                                        self.get_display_name())
 
         ref = '.. _{0}_{1}_mathematica_api:\n'.format(self.get_underscore_name(),
                                                       self.get_category().lower())

@@ -391,7 +391,7 @@ Constants
 
 .. matlab:member:: public static final int {1}{0}.DEVICE_IDENTIFIER
 
- This constant is used to identify a {3} {4}.
+ This constant is used to identify a {7} {4}.
 
  The :matlab:func:`getIdentity() <{4}{3}::getIdentity>` function and the
  :matlab:member:`EnumerateCallback <IPConnection.EnumerateCallback>`
@@ -406,7 +406,7 @@ Konstanten
 
 .. matlab:member:: public static final int {1}{0}.DEVICE_IDENTIFIER
 
- Diese Konstante wird verwendet um {2} {3} {4} zu identifizieren.
+ Diese Konstante wird verwendet um {2} {7} {4} zu identifizieren.
 
  Die :matlab:func:`getIdentity() <{4}{3}::getIdentity>` Funktion und der
  :matlab:member:`EnumerateCallback <IPConnection.EnumerateCallback>`
@@ -447,7 +447,8 @@ Konstanten
                                                         self.get_camel_case_name(),
                                                         self.get_category(),
                                                         self.get_underscore_name(),
-                                                        self.get_category().lower())
+                                                        self.get_category().lower(),
+                                                        self.get_display_name())
 
         ref = '.. _{0}_{1}_matlab_api:\n'.format(self.get_underscore_name(),
                                                self.get_category().lower())
