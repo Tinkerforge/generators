@@ -197,7 +197,7 @@ user data:
         printf("parameter: %d\\n", p);
     }}
 
-    {0}_register_callback(&{0}, {1}_CALLBACK_EXAMPLE, (void*)my_callback, NULL);
+    {0}_register_callback(&{0}, {1}_CALLBACK_EXAMPLE, (void *)my_callback, NULL);
 
 The available constants with corresponding callback function signatures
 are described below.
@@ -227,7 +227,7 @@ und optionalen Benutzer Daten:
         printf("parameter: %d\\n", p);
     }}
 
-    {0}_register_callback(&{0}, {1}_CALLBACK_EXAMPLE, (void*)my_callback, NULL);
+    {0}_register_callback(&{0}, {1}_CALLBACK_EXAMPLE, (void *)my_callback, NULL);
 
 Die verfügbaren IDs mit den zugehörigen Callback Funktionssignaturen
 werden weiter unten beschrieben.
