@@ -20,7 +20,7 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDistanceValue', 'get_distance_value'), 
+'name': ('GetDistance', 'get_distance'), 
 'elements': [('distance', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -28,7 +28,9 @@ com['packets'].append({
 """
 TODO
 
-If you want to get the distance value periodically, it is recommended to
+unit: cm
+
+If you want to get the distance periodically, it is recommended to
 use the callback :func:`Distance` and set the period with 
 :func:`SetDistanceCallbackPeriod`.
 """,
@@ -39,6 +41,33 @@ TODO
 Wenn der Entfernungswert periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Distance` zu nutzen und die Periode mit 
 :func:`SetDistanceCallbackPeriod` vorzugeben.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetVelocity', 'get_velocity'), 
+'elements': [('velocity', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+
+unit: 0.01 m/s
+
+If you want to get the velocity periodically, it is recommended to
+use the callback :func:`Velocity` and set the period with 
+:func:`SetVelocityCallbackPeriod`.
+""",
+'de':
+"""
+TODO
+
+Wenn der Geschwindigkeitswert periodisch abgefragt werden soll, wird empfohlen
+den Callback :func:`Velocity` zu nutzen und die Periode mit 
+:func:`SetVelocityCallbackPeriod` vorzugeben.
 """
 }]
 })
@@ -92,14 +121,62 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
+'name': ('SetVelocityCallbackPeriod', 'set_velocity_callback_period'), 
+'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Sets the period in ms with which the :func:`Velocity` callback is triggered
+periodically. A value of 0 turns the callback off.
+
+:func:`Velocity` is only triggered if the velocity value has changed since the
+last triggering.
+
+The default value is 0.
+""",
+'de':
+"""
+Setzt die Periode in ms mit welcher der :func:`Velocity` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+:func:`Velocity` wird nur ausgelöst wenn sich der Geschwindigkeitswert seit der
+letzten Auslösung geändert hat.
+
+Der Standardwert ist 0.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetVelocityCallbackPeriod', 'get_velocity_callback_period'), 
+'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Returns the period as set by :func:`SetVelocityCallbackPeriod`.
+""",
+'de':
+"""
+Gibt die Periode zurück, wie von :func:`SetVelocityCallbackPeriod`
+gesetzt.
+"""
+}]
+})
+
+
+com['packets'].append({
+'type': 'function',
 'name': ('SetDistanceCallbackThreshold', 'set_distance_callback_threshold'), 
 'elements': [('option', 'char', 1, 'in', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
                                                                                   ('Outside', 'outside', 'o'),
                                                                                   ('Inside', 'inside', 'i'),
                                                                                   ('Smaller', 'smaller', '<'),
                                                                                   ('Greater', 'greater', '>')])), 
-             ('min', 'int16', 1, 'in'),
-             ('max', 'int16', 1, 'in')],
+             ('min', 'uint16', 1, 'in'),
+             ('max', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -149,8 +226,8 @@ com['packets'].append({
                                                                                    ('Inside', 'inside', 'i'),
                                                                                    ('Smaller', 'smaller', '<'),
                                                                                    ('Greater', 'greater', '>')])), 
-             ('min', 'int16', 1, 'out'),
-             ('max', 'int16', 1, 'out')],
+             ('min', 'uint16', 1, 'out'),
+             ('max', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -160,6 +237,84 @@ Returns the threshold as set by :func:`SetDistanceCallbackThreshold`.
 'de':
 """
 Gibt den Schwellwert zurück, wie von :func:`SetDistanceCallbackThreshold`
+gesetzt.
+"""
+}]
+})
+
+
+
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetVelocityCallbackThreshold', 'set_velocity_callback_threshold'), 
+'elements': [('option', 'char', 1, 'in', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
+                                                                                  ('Outside', 'outside', 'o'),
+                                                                                  ('Inside', 'inside', 'i'),
+                                                                                  ('Smaller', 'smaller', '<'),
+                                                                                  ('Greater', 'greater', '>')])), 
+             ('min', 'int16', 1, 'in'),
+             ('max', 'int16', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Sets the thresholds for the :func:`VelocityReached` callback. 
+
+The following options are possible:
+
+.. csv-table::
+ :header: "Option", "Description"
+ :widths: 10, 100
+
+ "'x'",    "Callback is turned off"
+ "'o'",    "Callback is triggered when the velocity is *outside* the min and max values"
+ "'i'",    "Callback is triggered when the velocity is *inside* the min and max values"
+ "'<'",    "Callback is triggered when the velocity is smaller than the min value (max is ignored)"
+ "'>'",    "Callback is triggered when the velocity is greater than the min value (max is ignored)"
+
+The default value is ('x', 0, 0).
+""",
+'de':
+"""
+Setzt den Schwellwert für den :func:`VelocityReached` Callback.
+
+Die folgenden Optionen sind möglich:
+
+.. csv-table::
+ :header: "Option", "Beschreibung"
+ :widths: 10, 100
+ 
+ "'x'",    "Callback ist inaktiv"
+ "'o'",    "Callback wird ausgelöst wenn der Geschwindigkeitswert *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst wenn der Geschwindigkeitswert *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst wenn der Geschwindigkeitswert kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn der Geschwindigkeitswert größer als der min Wert ist (max wird ignoriert)"
+ 
+Der Standardwert ist ('x', 0, 0).
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetVelocityCallbackThreshold', 'get_velocity_callback_threshold'), 
+'elements': [('option', 'char', 1, 'out', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
+                                                                                   ('Outside', 'outside', 'o'),
+                                                                                   ('Inside', 'inside', 'i'),
+                                                                                   ('Smaller', 'smaller', '<'),
+                                                                                   ('Greater', 'greater', '>')])), 
+             ('min', 'int16', 1, 'out'),
+             ('max', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Returns the threshold as set by :func:`SetVelocityCallbackThreshold`.
+""",
+'de':
+"""
+Gibt den Schwellwert zurück, wie von :func:`SetVelocityCallbackThreshold`
 gesetzt.
 """
 }]
@@ -176,10 +331,12 @@ com['packets'].append({
 Sets the period in ms with which the threshold callbacks
 
 * :func:`DistanceReached`,
+* :func:`VelocityReached`,
 
 are triggered, if the thresholds
 
 * :func:`SetDistanceCallbackThreshold`,
+* :func:`SetVelocityCallbackThreshold`,
 
 keep being reached.
 
@@ -190,10 +347,12 @@ The default value is 100.
 Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
 * :func:`DistanceReached`,
+* :func:`VelocityReached`,
  
 ausgelöst werden, wenn die Schwellwerte 
 
 * :func:`SetDistanceCallbackThreshold`,
+* :func:`SetVelocityCallbackThreshold`,
  
 weiterhin erreicht bleiben.
 
@@ -223,31 +382,32 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': ('SetMovingAverage', 'set_moving_average'), 
-'elements': [('length', 'uint8', 1, 'in')],
+'elements': [('distance_average_length', 'uint8', 1, 'in'),
+             ('velocity_average_length', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
 Sets the length of a `moving averaging <http://en.wikipedia.org/wiki/Moving_average>`__ 
-for the distance.
+for the distance and velocity.
 
 Setting the length to 0 will turn the averaging completely off. With less
 averaging, there is more noise on the data.
 
-The range for the averaging is 0-50.
+The range for the averaging is 0-30.
 
-The default value is 20.
+The default value is 10.
 """,
 'de':
 """
-Setzt die Länge eines gleitenden Mittelwerts für die Entfernung.
+Setzt die Länge eines gleitenden Mittelwerts für die Entfernung und Geschwindigkeit.
 
 Wenn die Länge auf 0 gesetzt wird, ist das Averaging komplett aus. Desto kleiner
 die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
 
-Der Wertebereich liegt bei 0-50.
+Der Wertebereich liegt bei 0-30.
 
-Der Standardwert ist 20.
+Der Standardwert ist 10.
 """
 }]
 })
@@ -255,7 +415,8 @@ Der Standardwert ist 20.
 com['packets'].append({
 'type': 'function',
 'name': ('GetMovingAverage', 'get_moving_average'), 
-'elements': [('length', 'uint8', 1, 'out')],
+'elements': [('distance_average_length', 'uint8', 1, 'out'),
+             ('velocity_average_length', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -269,6 +430,95 @@ Gibt die Länge des gleitenden Mittelwerts zurück, wie von
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetMode', 'set_mode'), 
+'elements': [('mode', 'uint8', 1, 'in', ('Mode', 'mode', [('Distance', 'distance', 0),
+                                                          ('VelocityMax13ms', 'velocity_max_13ms', 1),
+                                                          ('VelocityMax32ms', 'velocity_max_32ms', 2),
+                                                          ('VelocityMax64ms', 'velocity_max_64ms', 3),
+                                                          ('VelocityMax127ms', 'velocity_max_127ms', 4)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+* resolution 0.1m/s => 12.7m/s max
+* resolution 0.25m/s => 31.75m/s max
+* resolution 0.5m/s => 63.5m/s max
+* resolution 1m/s => 127 m/s max
+""",
+'de':
+"""
+
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetMode', 'get_mode'), 
+'elements': [('mode', 'uint8', 1, 'out', ('Mode', 'mode', [('Distance', 'distance', 0),
+                                                           ('VelocityMax13ms', 'velocity_max_13ms', 1),
+                                                           ('VelocityMax32ms', 'velocity_max_32ms', 2),
+                                                           ('VelocityMax64ms', 'velocity_max_64ms', 3),
+                                                           ('VelocityMax127ms', 'velocity_max_127ms', 4)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('EnableLaser', 'enable_laser'), 
+'elements': [],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('DisableLaser', 'disable_laser'), 
+'elements': [],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('IsLaserEnabled', 'is_laser_enabled'), 
+'elements': [('laser_enabled', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
 
 com['packets'].append({
 'type': 'callback',
@@ -291,6 +541,32 @@ Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetDistanceCallback
 ausgelöst. Der :word:`parameter` ist die Entfernungswert des Sensors.
 
 :func:`Distance` wird nur ausgelöst wenn sich der Entfernungswert seit der
+letzten Auslösung geändert hat.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('Velocity', 'velocity'), 
+'elements': [('velocity', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered periodically with the period that is set by
+:func:`SetVelocityCallbackPeriod`. The :word:`parameter` is the velocity value
+of the sensor.
+
+:func:`Velocity` is only triggered if the velocity has changed since the
+last triggering.
+""",
+'de':
+"""
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetVelocityCallbackPeriod`,
+ausgelöst. Der :word:`parameter` ist die Geschwindigkeit des Sensors.
+
+:func:`Velocity` wird nur ausgelöst wenn sich der Geschwindigkeitswert seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -323,3 +599,29 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 }]
 })
 
+com['packets'].append({
+'type': 'callback',
+'name': ('VelocityReached', 'velocity_reached'), 
+'elements': [('velocity', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered when the threshold as set by
+:func:`SetVelocityCallbackThreshold` is reached.
+The :word:`parameter` is the velocity value of the sensor.
+
+If the threshold keeps being reached, the callback is triggered periodically
+with the period as set by :func:`SetDebouncePeriod`.
+""",
+'de':
+"""
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+:func:`SetVelocityCallbackThreshold` gesetzt, erreicht wird.
+Der :word:`parameter` ist der Geschwindigkeitswert des Sensors.
+
+Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
+mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+"""
+}]
+})
