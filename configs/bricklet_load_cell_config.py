@@ -221,6 +221,156 @@ gesetzt.
 })
 
 com['packets'].append({
+'type': 'function',
+'name': ('SetMovingAverage', 'set_moving_average'), 
+'elements': [('average', 'uint8', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Sets the length of a `moving averaging <http://en.wikipedia.org/wiki/Moving_average>`__ 
+for the value value.
+
+Setting the length to 1 will turn the averaging off. With less
+averaging, there is more noise on the data.
+
+The range for the averaging is 1-40.
+
+The default value is 4.
+""",
+'de':
+"""
+Setzt die Länge eines gleitenden Mittelwerts für den Wert.
+
+Wenn die Länge auf 1 gesetzt wird, ist das Averaging aus. Desto kleiner
+die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
+
+Der Wertebereich liegt bei 1-40.
+
+Der Standardwert ist 4.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetMovingAverage', 'get_moving_average'), 
+'elements': [('average', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Returns the length moving average as set by :func:`SetMovingAverage`.
+""",
+'de':
+"""
+Gibt die Länge des gleitenden Mittelwerts zurück, wie von 
+:func:`SetMovingAverage` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('LEDOn', 'led_on'), 
+'elements': [],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('LEDOff', 'led_off'), 
+'elements': [],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('IsLEDOn', 'is_led_on'), 
+'elements': [('value', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+
+com['packets'].append({
+'type': 'function',
+'name': ('Calibrate', 'calibrate'), 
+'elements': [('weight', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+* 0   = set zero point
+* > 0 = set gain
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetConfiguration', 'set_configuration'), 
+'elements': [('rate', 'uint8', 1, 'in'),
+             ('gain', 'uint8', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetConfiguration', 'get_configuration'), 
+'elements': [('rate', 'uint8', 1, 'out'),
+             ('gain', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+rate: 0 = 10Hz
+rate: 1 = 80Hz
+gain: 0 = +-3.3*0.5V/128
+gain: 1 = +-3.3*0.5V/64
+gain: 2 = +-3.3*0.5V/32
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
 'type': 'callback',
 'name': ('Weight', 'weight'), 
 'elements': [('weight', 'uint32', 1, 'out')],
