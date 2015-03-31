@@ -233,7 +233,7 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': ('GetTemperature', 'get_temperature'), 
-'elements': [('temperature', 'int8', 1, 'out')],
+'elements': [('temperature', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -243,6 +243,117 @@ Returns the temperature of the accelerometer in °C.
 'de':
 """
 Gibt die Temperatur des Beschleunigungssensors in °C zurück.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetConfiguration', 'set_configuration'), 
+'elements': [('data_rate', 'uint8', 1, 'in', ('DataRate', 'data_rate', [('Off', 'off', 0),
+                                                                        ('3Hz', '3hz', 1),
+                                                                        ('6Hz', '6hz', 2),
+                                                                        ('12Hz', '12hz', 3),
+                                                                        ('25Hz', '25hz', 4),
+                                                                        ('50Hz', '50hz', 5),
+                                                                        ('100Hz', '100hz', 6),
+                                                                        ('400Hz', '400hz', 7),
+                                                                        ('800Hz', '800hz', 8),
+                                                                        ('1600Hz', '1600hz', 9)])),
+             ('full_scale', 'uint8', 1, 'in', ('FullScale', 'full_scale', [('2G', '2g', 0),
+                                                                           ('4G', '4g', 1),
+                                                                           ('6G', '6g', 2),
+                                                                           ('8G', '8g', 3),
+                                                                           ('16G', '16g', 4)])),
+             ('filter_bandwidth', 'uint8', 1, 'in', ('FilterBandwidth', 'filter_bandwidth', [('800Hz', '800hz', 0),
+                                                                                             ('400Hz', '400hz', 1),
+                                                                                             ('200Hz', '200hz', 2),
+                                                                                             ('50Hz', '50hz', 3)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetConfiguration', 'get_configuration'), 
+'elements': [('data_rate', 'uint8', 1, 'out', ('DataRate', 'data_rate', [('Off', 'off', 0),
+                                                                         ('3Hz', '3hz', 1),
+                                                                         ('6Hz', '6hz', 2),
+                                                                         ('12Hz', '12hz', 3),
+                                                                         ('25Hz', '25hz', 4),
+                                                                         ('50Hz', '50hz', 5),
+                                                                         ('100Hz', '100hz', 6),
+                                                                         ('400Hz', '400hz', 7),
+                                                                         ('800Hz', '800hz', 8),
+                                                                         ('1600Hz', '1600hz', 9)])),
+             ('full_scale', 'uint8', 1, 'out', ('FullScale', 'full_scale', [('2G', '2g', 0),
+                                                                            ('4G', '4g', 1),
+                                                                            ('6G', '6g', 2),
+                                                                            ('8G', '8g', 3),
+                                                                            ('16G', '16g', 4)])),
+             ('filter_bandwidth', 'uint8', 1, 'out', ('FilterBandwidth', 'filter_bandwidth', [('800Hz', '800hz', 0),
+                                                                                              ('400Hz', '400hz', 1),
+                                                                                              ('200Hz', '200hz', 2),
+                                                                                              ('50Hz', '50hz', 3)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('LEDOn', 'led_on'), 
+'elements': [],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('LEDOff', 'led_off'), 
+'elements': [],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('IsLEDOn', 'is_led_on'), 
+'elements': [('value', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
 """
 }]
 })
