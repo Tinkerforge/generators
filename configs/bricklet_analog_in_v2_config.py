@@ -415,7 +415,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the length moving average as set by :func:`SetMovingAverage`.
+Returns the length of the moving average as set by :func:`SetMovingAverage`.
 """,
 'de':
 """
