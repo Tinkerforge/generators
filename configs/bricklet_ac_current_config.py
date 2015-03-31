@@ -10,7 +10,7 @@ com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
-    'device_identifier': 251,
+    'device_identifier': 257,
     'name': ('ACCurrent', 'ac_current', 'AC Current'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing ac currents between 0 and 100A',
