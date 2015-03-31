@@ -711,13 +711,28 @@ cn_all_uppercase = ['api', 'ir', 'us', 'lcd', 'dc', 'imu', 'pwm', 'gps', 'id', '
 
 cn_eap_suffix = ['fast', 'tls', 'ttls', 'peap', 'mschap', 'gtc']
 
-cn_special_camel_case = {'mhz':   'MHz',
-                         '20ma':  '20mA',
-                         '50hz':  '50Hz',
-                         '60hz':  '60Hz',
-                         '1to11': '1To11',
-                         '1to13': '1To13',
-                         '1to14': '1To14'}
+cn_special_camel_case = {'mhz':    'MHz',
+                         '20ma':   '20mA',
+                         '2g':     '2G',
+                         '4g':     '4G',
+                         '6g':     '6G',
+                         '8g':     '8G',
+                         '16g':    '16G',
+                         '3hz':    '3Hz',
+                         '6hz':    '6Hz',
+                         '12hz':   '12Hz',
+                         '25hz':   '25Hz',
+                         '50hz':   '50Hz',
+                         '100hz':  '100Hz',
+                         '200hz':  '200Hz',
+                         '400hz':  '400Hz',
+                         '800hz':  '800Hz',
+                         '1600hz': '1600Hz',
+                         '50hz':   '50Hz',
+                         '60hz':   '60Hz',
+                         '1to11':  '1To11',
+                         '1to13':  '1To13',
+                         '1to14':  '1To14'}
 
 def check_name(camel_case, underscore, display, is_constant=False):
     if camel_case is not None:
