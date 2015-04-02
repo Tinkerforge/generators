@@ -224,6 +224,67 @@ gesetzt.
 }]
 })
 
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetConfiguration', 'set_configuration'), 
+'elements': [('illuminance_range', 'uint8', 1, 'in', ('IlluminanceRange', 'illuminance_range', [('64000Lux', '64000lux', 0),
+                                                                                                ('32000Lux', '32000lux', 1),
+                                                                                                ('16000Lux', '16000lux', 2),
+                                                                                                ('8000Lux', '8000lux', 3),
+                                                                                                ('1300Lux', '1300lux', 4),
+                                                                                                ('600Lux', '600lux', 5)])),
+             ('integration_time', 'uint8', 1, 'in', ('IntegrationTime', 'integration_time', [('50ms', '50ms', 0),
+                                                                                             ('100ms', '100ms', 1),
+                                                                                             ('150ms', '150ms', 2),
+                                                                                             ('200ms', '200ms', 3),
+                                                                                             ('250ms', '250ms', 4),
+                                                                                             ('300ms', '300ms', 5),
+                                                                                             ('350ms', '350ms', 6),
+                                                                                             ('400ms', '400ms', 7)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetConfiguration', 'get_configuration'), 
+'elements': [('illuminance_range', 'uint8', 1, 'out', ('IlluminanceRange', 'illuminance_range', [('64000Lux', '64000lux', 0),
+                                                                                                 ('32000Lux', '32000lux', 1),
+                                                                                                 ('16000Lux', '16000lux', 2),
+                                                                                                 ('8000Lux', '8000lux', 3),
+                                                                                                 ('1300Lux', '1300lux', 4),
+                                                                                                 ('600Lux', '600lux', 5)])),
+             ('integration_time', 'uint8', 1, 'out', ('IntegrationTime', 'integration_time', [('50ms', '50ms', 0),
+                                                                                              ('100ms', '100ms', 1),
+                                                                                              ('150ms', '150ms', 2),
+                                                                                              ('200ms', '200ms', 3),
+                                                                                              ('250ms', '250ms', 4),
+                                                                                              ('300ms', '300ms', 5),
+                                                                                              ('350ms', '350ms', 6),
+                                                                                              ('400ms', '400ms', 7)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Returns the configuration as set by :func:`SetConfiguration`.
+""",
+'de':
+"""
+Gibt die Konfiguration zurück, wie von :func:`SetConfiguration`
+gesetzt.
+"""
+}]
+})
+
 com['packets'].append({
 'type': 'callback',
 'name': ('Illuminance', 'illuminance'), 
