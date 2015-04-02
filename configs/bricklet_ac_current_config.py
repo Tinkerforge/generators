@@ -424,6 +424,36 @@ Gibt die Länge des gleitenden Mittelwerts zurück, wie von
 })
 
 com['packets'].append({
+'type': 'function',
+'name': ('SetConfiguration', 'set_configuration'),
+'elements': [('current_range', 'uint8', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetConfiguration', 'get_configuration'),
+'elements': [('current_range', 'uint8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
 'type': 'callback',
 'name': ('Current', 'current'),
 'elements': [('current', 'uint16', 1, 'out')],
