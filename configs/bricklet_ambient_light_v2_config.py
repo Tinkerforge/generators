@@ -102,8 +102,8 @@ com['packets'].append({
                                                                                   ('Inside', 'inside', 'i'),
                                                                                   ('Smaller', 'smaller', '<'),
                                                                                   ('Greater', 'greater', '>')])), 
-             ('min', 'int16', 1, 'in'),
-             ('max', 'int16', 1, 'in')],
+             ('min', 'uint32', 1, 'in'),
+             ('max', 'iint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -153,8 +153,8 @@ com['packets'].append({
                                                                                    ('Inside', 'inside', 'i'),
                                                                                    ('Smaller', 'smaller', '<'),
                                                                                    ('Greater', 'greater', '>')])), 
-             ('min', 'int16', 1, 'out'),
-             ('max', 'int16', 1, 'out')],
+             ('min', 'uint32', 1, 'out'),
+             ('max', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -227,7 +227,7 @@ gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': ('Illuminance', 'illuminance'), 
-'elements': [('illuminance', 'uint16', 1, 'out')],
+'elements': [('illuminance', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -253,7 +253,7 @@ letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': ('IlluminanceReached', 'illuminance_reached'), 
-'elements': [('illuminance', 'uint16', 1, 'out')],
+'elements': [('illuminance', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
