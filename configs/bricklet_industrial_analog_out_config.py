@@ -20,6 +20,51 @@ com = {
 
 com['packets'].append({
 'type': 'function',
+'name': ('Enable', 'enable'), 
+'elements': [],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('Disable', 'disable'), 
+'elements': [],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('IsEnabled', 'is_enabled'), 
+'elements': [('enabled', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
 'name': ('SetVoltage', 'set_voltage'), 
 'elements': [('voltage', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
