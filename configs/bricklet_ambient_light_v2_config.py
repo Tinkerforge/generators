@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 259,
-    'name': ('AmbientLight2', 'ambient_light_2', 'Ambient Light 2.0'),
+    'name': ('AmbientLightV2', 'ambient_light_v2', 'Ambient Light 2.0'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing Ambient Light',
     'released': False,
@@ -103,7 +103,7 @@ com['packets'].append({
                                                                                   ('Smaller', 'smaller', '<'),
                                                                                   ('Greater', 'greater', '>')])), 
              ('min', 'uint32', 1, 'in'),
-             ('max', 'iint32', 1, 'in')],
+             ('max', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
