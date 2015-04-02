@@ -111,11 +111,11 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': ('GetConfiguration', 'get_configuration'), 
-'elements': [('voltage_range', 'uint8', 1, 'in', ('VoltageRange', 'voltage_range', [('0To5V', '0_to_5v', 0),
-                                                                                    ('0To10V', '0_to_10v', 1)])),
-             ('current_range', 'uint8', 1, 'in', ('CurrentRange', 'current_range', [('4To20mA', '4_to_20ma', 0),
-                                                                                    ('0To20mA', '0_to_20ma', 1),
-                                                                                    ('0To24mA', '0_to_24ma', 2)]))],
+'elements': [('voltage_range', 'uint8', 1, 'out', ('VoltageRange', 'voltage_range', [('0To5V', '0_to_5v', 0),
+                                                                                     ('0To10V', '0_to_10v', 1)])),
+             ('current_range', 'uint8', 1, 'out', ('CurrentRange', 'current_range', [('4To20mA', '4_to_20ma', 0),
+                                                                                     ('0To20mA', '0_to_20ma', 1),
+                                                                                     ('0To24mA', '0_to_24ma', 2)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
