@@ -713,6 +713,9 @@ cn_eap_suffix = ['fast', 'tls', 'ttls', 'peap', 'mschap', 'gtc']
 
 cn_special_camel_case = {'mhz':    'MHz',
                          '20ma':   '20mA',
+                         '24ma':   '24mA',
+                         '5v':     '5V',
+                         '10v':    '10V',
                          '2g':     '2G',
                          '4g':     '4G',
                          '6g':     '6G',
