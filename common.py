@@ -807,7 +807,10 @@ def check_name(camel_case, underscore, display, is_constant=False):
         # test 2
         camel_case_to_check = camel_case_to_space(camel_case)
 
-        if camel_case.endswith('V2'):
+        
+        if camel_case == 'IMUV2':
+            camel_case_to_check = camel_case_to_check.replace('V 2', ' 2.0')
+        elif camel_case.endswith('V2'):
             camel_case_to_check = camel_case_to_check.replace('V2', '2.0')
         elif camel_case in ['IO4', 'IO16']:
             camel_case_to_check = camel_case_to_check.replace(' ', '-')
