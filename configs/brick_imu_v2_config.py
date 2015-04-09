@@ -109,40 +109,18 @@ den Callback :func:`AngularVelocity` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAllData', 'get_all_data'), 
-'elements': [('acc_x', 'int16', 1, 'out'), 
-             ('acc_y', 'int16', 1, 'out'),
-             ('acc_z', 'int16', 1, 'out'),
-             ('mag_x', 'int16', 1, 'out'), 
-             ('mag_y', 'int16', 1, 'out'),
-             ('mag_z', 'int16', 1, 'out'),
-             ('ang_x', 'int16', 1, 'out'), 
-             ('ang_y', 'int16', 1, 'out'),
-             ('ang_z', 'int16', 1, 'out'),
-             ('temperature', 'int16', 1, 'out')],
+'name': ('GetTemperature', 'get_temperature'), 
+'elements': [('temperature', 'int8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the data from :func:`GetAcceleration`, :func:`GetMagneticField` 
-and :func:`GetAngularVelocity` as well as the temperature of the IMU Brick.
-
-The temperature is given in °C/100.
-
-If you want to get the data periodically, it is recommended 
-to use the callback :func:`AllData` and set the period with 
-:func:`SetAllDataPeriod`.
+Returns the temperature of the IMU Brick. The temperature is given in 
+°C/100.
 """,
 'de':
 """
-Gibt die Daten von :func:`GetAcceleration`, :func:`GetMagneticField` 
-und :func:`GetAngularVelocity` sowie die Temperatur des IMU Brick zurück.
-
-Die Temperatur wird in °C/100 ausgegeben.
-
-Wenn die Daten periodisch abgefragt werden sollen, wird empfohlen den
-Callback :func:`AllData` zu nutzen und die Periode mit :func:`SetAllDataPeriod`
-vorzugeben.
+Gibt die Temperatur (in °C/100) des IMU Brick zurück.
 """
 }] 
 })
@@ -152,12 +130,12 @@ com['packets'].append({
 'name': ('GetOrientation', 'get_orientation'), 
 'elements': [('roll', 'int16', 1, 'out'), 
              ('pitch', 'int16', 1, 'out'),
-             ('yaw', 'int16', 1, 'out')],
+             ('heading', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the current orientation (roll, pitch, yaw) of the IMU Brick as Euler
+Returns the current orientation (roll, pitch, heading) of the IMU Brick as Euler
 angles in one-hundredth degree. Note that Euler angles always experience a
 `gimbal lock <http://en.wikipedia.org/wiki/Gimbal_lock>`__.
 
@@ -190,11 +168,49 @@ vorzugeben.
 
 com['packets'].append({
 'type': 'function',
+'name': ('GetLinearAcceleration', 'get_linear_acceleration'), 
+'elements': [('x', 'int16', 1, 'out'), 
+             ('y', 'int16', 1, 'out'),
+             ('z', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}] 
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetGravityVector', 'get_gravity_vector'), 
+'elements': [('x', 'int16', 1, 'out'), 
+             ('y', 'int16', 1, 'out'),
+             ('z', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}] 
+})
+
+com['packets'].append({
+'type': 'function',
 'name': ('GetQuaternion', 'get_quaternion'), 
-'elements': [('x', 'float', 1, 'out'),
-             ('y', 'float', 1, 'out'), 
-             ('z', 'float', 1, 'out'),
-             ('w', 'float', 1, 'out')],
+'elements': [('w', 'uint16', 1, 'out'),
+             ('x', 'uint16', 1, 'out'), 
+             ('y', 'uint16', 1, 'out'),
+             ('z', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -270,18 +286,33 @@ vorzugeben.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetIMUTemperature', 'get_imu_temperature'), 
-'elements': [('temperature', 'int16', 1, 'out')],
+'name': ('GetAllData', 'get_all_data'), 
+'elements': [('acceleration', 'int16', 3, 'out'), 
+             ('magnetic_field', 'int16', 3, 'out'),
+             ('angular_velocity', 'int16', 3, 'out'),
+             ('euler_angle', 'int16', 3, 'out'), 
+             ('quaternion', 'uint16', 4, 'out'),
+             ('linear_acceleration', 'int16', 3, 'out'),
+             ('gravity_vector', 'int16', 3, 'out'), 
+             ('temperature', 'int8', 1, 'out'),
+             ('calibration_status', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the temperature of the IMU Brick. The temperature is given in 
-°C/100.
+TODO
+
+If you want to get the data periodically, it is recommended 
+to use the callback :func:`AllData` and set the period with 
+:func:`SetAllDataPeriod`.
 """,
 'de':
 """
-Gibt die Temperatur (in °C/100) des IMU Brick zurück.
+TODO
+
+Wenn die Daten periodisch abgefragt werden sollen, wird empfohlen den
+Callback :func:`AllData` zu nutzen und die Periode mit :func:`SetAllDataPeriod`
+vorzugeben.
 """
 }] 
 })
@@ -484,20 +515,23 @@ Gibt die Periode zurück, wie von :func:`SetAngularVelocityPeriod` gesetzt.
 }] 
 })
 
+
+
+
 com['packets'].append({
 'type': 'function',
-'name': ('SetAllDataPeriod', 'set_all_data_period'), 
+'name': ('SetTemperaturePeriod', 'set_temperature_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Sets the period in ms with which the :func:`AllData` callback is triggered
+Sets the period in ms with which the :func:`Temperature` callback is triggered
 periodically. A value of 0 turns the callback off.
 """,
 'de':
 """
-Setzt die Periode in ms mit welcher der :func:`AllData` Callback ausgelöst wird.
+Setzt die Periode in ms mit welcher der :func:`Temperature` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 """
 }] 
@@ -505,17 +539,17 @@ Ein Wert von 0 deaktiviert den Callback.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAllDataPeriod', 'get_all_data_period'), 
+'name': ('GetTemperaturePeriod', 'get_temperature_period'), 
 'elements': [('period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetAllDataPeriod`.
+Returns the period as set by :func:`SetTemperaturePeriod`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetAllDataPeriod` gesetzt.
+Gibt die Periode zurück, wie von :func:`SetTemperaturePeriod` gesetzt.
 """
 }] 
 })
@@ -558,6 +592,78 @@ Gibt die Periode zurück, wie von :func:`SetOrientationPeriod` gesetzt.
 
 com['packets'].append({
 'type': 'function',
+'name': ('SetLinearAccelerationPeriod', 'set_linear_acceleration_period'), 
+'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Sets the period in ms with which the :func:`LinearAcceleration` callback is triggered
+periodically. A value of 0 turns the callback off.
+""",
+'de':
+"""
+Setzt die Periode in ms mit welcher der :func:`LinearAcceleration` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+"""
+}] 
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetLinearAccelerationPeriod', 'get_linear_acceleration_period'), 
+'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Returns the period as set by :func:`SetLinearAccelerationPeriod`.
+""",
+'de':
+"""
+Gibt die Periode zurück, wie von :func:`SetLinearAccelerationPeriod` gesetzt.
+"""
+}] 
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetGravityVectorPeriod', 'set_gravity_vector_period'), 
+'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Sets the period in ms with which the :func:`GravityVector` callback is triggered
+periodically. A value of 0 turns the callback off.
+""",
+'de':
+"""
+Setzt die Periode in ms mit welcher der :func:`GravityVector` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+"""
+}] 
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetGravityVectorPeriod', 'get_gravity_vector_period'), 
+'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Returns the period as set by :func:`SetGravityVectorPeriod`.
+""",
+'de':
+"""
+Gibt die Periode zurück, wie von :func:`SetGravityVectorPeriod` gesetzt.
+"""
+}] 
+})
+
+com['packets'].append({
+'type': 'function',
 'name': ('SetQuaternionPeriod', 'set_quaternion_period'), 
 'elements': [('period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
@@ -588,6 +694,42 @@ Returns the period as set by :func:`SetQuaternionPeriod`.
 'de':
 """
 Gibt die Periode zurück, wie von :func:`SetQuaternionPeriod` gesetzt.
+"""
+}] 
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('SetAllDataPeriod', 'set_all_data_period'), 
+'elements': [('period', 'uint32', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Sets the period in ms with which the :func:`AllData` callback is triggered
+periodically. A value of 0 turns the callback off.
+""",
+'de':
+"""
+Setzt die Periode in ms mit welcher der :func:`AllData` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+"""
+}] 
+})
+
+com['packets'].append({
+'type': 'function',
+'name': ('GetAllDataPeriod', 'get_all_data_period'), 
+'elements': [('period', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Returns the period as set by :func:`SetAllDataPeriod`.
+""",
+'de':
+"""
+Gibt die Periode zurück, wie von :func:`SetAllDataPeriod` gesetzt.
 """
 }] 
 })
@@ -660,6 +802,116 @@ ausgelöst. Die :word:`parameters` sind die Winkelgeschwindigkeiten der X, Y und
 
 com['packets'].append({
 'type': 'callback',
+'name': ('Temperature', 'temperature'), 
+'elements': [('temperature', 'int8', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered periodically with the period that is set by
+:func:`SetTemperaturePeriod`. The :word:`parameters` TODO.
+""",
+'de':
+"""
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetTemperaturePeriod`,
+ausgelöst. Die :word:`parameters` TODO.
+"""
+}] 
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('LinearAcceleration', 'linear_acceleration'), 
+'elements': [('x', 'int16', 1, 'out'),
+             ('y', 'int16', 1, 'out'),
+             ('z', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered periodically with the period that is set by
+:func:`SetLinearAccelerationPeriod`. The :word:`parameters` TODO.
+""",
+'de':
+"""
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetLinearAccelerationPeriod`,
+ausgelöst. Die :word:`parameters` TODO.
+"""
+}] 
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('GravityVector', 'gravity_vector'), 
+'elements': [('x', 'int16', 1, 'out'),
+             ('y', 'int16', 1, 'out'),
+             ('z', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered periodically with the period that is set by
+:func:`SetGravityVectorPeriod`. The :word:`parameters` TODO.
+""",
+'de':
+"""
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetGravityVectorPeriod`,
+ausgelöst. Die :word:`parameters` TODO.
+"""
+}] 
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('Orientation', 'orientation'), 
+'elements': [('roll', 'int16', 1, 'out'),
+             ('pitch', 'int16', 1, 'out'),
+             ('heading', 'int16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered periodically with the period that is set by
+:func:`SetOrientationPeriod`. The :word:`parameters` are the orientation
+(roll, pitch and heading (yaw)) of the IMU Brick in Euler angles. See
+:func:`GetOrientation` for details.
+""",
+'de':
+"""
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetOrientationPeriod`,
+ausgelöst. Die :word:`parameters` sind die Orientierung (Roll-, Nick-, Gierwinkel) des
+IMU Brick in Eulerwinkeln. Siehe :func:`GetOrientation` für Details.
+"""
+}] 
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': ('Quaternion', 'quaternion'), 
+'elements': [('w', 'uint16', 1, 'out'),
+             ('x', 'uint16', 1, 'out'),
+             ('y', 'uint16', 1, 'out'),
+             ('z', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered periodically with the period that is set by
+:func:`SetQuaternionPeriod`. The :word:`parameters` are the orientation
+(x, y, z, w) of the IMU Brick in quaternions. See :func:`GetQuaternion`
+for details.
+""",
+'de':
+"""
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetQuaternionPeriod`,
+ausgelöst. Die :word:`parameters` sind die Orientierung (x, y, z, w) des
+IMU Brick in Quaternionen. Siehe :func:`GetQuaternion` für Details.
+"""
+}] 
+})
+
+com['packets'].append({
+'type': 'callback',
 'name': ('AllData', 'all_data'), 
 'elements': [('acc_x', 'int16', 1, 'out'), 
              ('acc_y', 'int16', 1, 'out'),
@@ -686,55 +938,6 @@ Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAllDataPeriod`,
 ausgelöst. Die :word:`parameters` sind die Beschleunigungen, Magnetfeldkomponenten
 und die Winkelgeschwindigkeiten der X, Y und Z-Achse sowie die Temperatur
 des IMU Brick.
-"""
-}] 
-})
-
-com['packets'].append({
-'type': 'callback',
-'name': ('Orientation', 'orientation'), 
-'elements': [('roll', 'int16', 1, 'out'),
-             ('pitch', 'int16', 1, 'out'),
-             ('yaw', 'int16', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['c', {
-'en':
-"""
-This callback is triggered periodically with the period that is set by
-:func:`SetOrientationPeriod`. The :word:`parameters` are the orientation
-(roll, pitch and yaw) of the IMU Brick in Euler angles. See
-:func:`GetOrientation` for details.
-""",
-'de':
-"""
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetOrientationPeriod`,
-ausgelöst. Die :word:`parameters` sind die Orientierung (Roll-, Nick-, Gierwinkel) des
-IMU Brick in Eulerwinkeln. Siehe :func:`GetOrientation` für Details.
-"""
-}] 
-})
-
-com['packets'].append({
-'type': 'callback',
-'name': ('Quaternion', 'quaternion'), 
-'elements': [('x', 'float', 1, 'out'),
-             ('y', 'float', 1, 'out'),
-             ('z', 'float', 1, 'out'),
-             ('w', 'float', 1, 'out')],
-'since_firmware': [1, 0, 0],
-'doc': ['c', {
-'en':
-"""
-This callback is triggered periodically with the period that is set by
-:func:`SetQuaternionPeriod`. The :word:`parameters` are the orientation
-(x, y, z, w) of the IMU Brick in quaternions. See :func:`GetQuaternion`
-for details.
-""",
-'de':
-"""
-Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetQuaternionPeriod`,
-ausgelöst. Die :word:`parameters` sind die Orientierung (x, y, z, w) des
-IMU Brick in Quaternionen. Siehe :func:`GetQuaternion` für Details.
 """
 }] 
 })
