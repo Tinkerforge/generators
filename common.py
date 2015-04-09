@@ -2,7 +2,7 @@
 
 """
 Common Generator Library
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2012-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 common.py: Common Library for generation of bindings and documentation
@@ -32,7 +32,6 @@ import sys
 import copy
 from collections import namedtuple
 from pprint import pprint
-from PIL import Image
 
 gen_text_star = """/* ***********************************************************
  * This file was automatically generated on {0}.      *
@@ -153,6 +152,11 @@ def get_changelog_version(bindings_root_directory):
             last = (m.group(1), m.group(2), m.group(3))
 
     return last
+
+def get_image_size(path):
+    from PIL import Image
+
+    return Image.open(path).size
 
 def select_lang(d):
     if lang in d:
@@ -380,7 +384,7 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
 
     for f in files:
         if is_picture:
-            if Image.open(f[1]).size[0] > 950:
+            if get_image_size(f[1])[0] > 950:
                 imp = imp_picture_scroll
             else:
                 imp = imp_picture
@@ -440,7 +444,7 @@ def find_examples(examples_directory, filename_regex, compare_examples=default_e
                 lines = 0
 
                 if example_path.endswith('.png'):
-                    size = Image.open(example_path).size
+                    size = get_image_size(example_path)
                     lines = size[0] * size[1]
                 else:
                     for line in open(example_path):
