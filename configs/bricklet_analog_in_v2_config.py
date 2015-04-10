@@ -4,7 +4,7 @@
 # with or without modification, are permitted. See the Creative
 # Commons Zero (CC0 1.0) License for more details.
 
-# Analog In 2.0 Bricklet communication config
+# Analog In Bricklet 2.0 communication config
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',

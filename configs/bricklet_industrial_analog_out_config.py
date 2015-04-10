@@ -13,7 +13,7 @@ com = {
     'device_identifier': 258,
     'name': ('IndustrialAnalogOut', 'industrial_analog_out', 'Industrial Analog Out'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for output of voltage between 0 and 10V and current between 4 an 20mA',
+    'description': 'Device for output of voltage between 0 and 10V and current between 4 and 20mA',
     'released': False,
     'packets': []
 }
