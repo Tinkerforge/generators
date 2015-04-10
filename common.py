@@ -689,7 +689,9 @@ def generate(bindings_root_directory, language, generator_class):
 
             device = generator.get_device_class()(com, generator)
 
-            device_identifiers.append((device.get_device_identifier(), device.get_category() + ' ' + device.get_display_name()))
+            device_identifiers.append((device.get_device_identifier(),
+                                       device.get_long_display_name(),
+                                       device.get_underscore_name() + '_' + device.get_category().lower()))
 
             generator.generate(device)
 
