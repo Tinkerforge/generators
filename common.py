@@ -1277,19 +1277,6 @@ class Device:
     def get_description(self):
         return self.raw_data['description']
 
-    def get_doc_rst_path(self):
-        if not self.get_generator().is_doc():
-            raise Exception("Invalid call in non-doc generator")
-
-        filename = '{0}_{1}_{2}.rst'.format(self.get_camel_case_name(),
-                                            self.get_category(),
-                                            self.get_generator().get_doc_rst_filename_part())
-
-        return os.path.join(self.get_generator().get_bindings_root_directory(),
-                            'doc',
-                            self.get_generator().get_language(),
-                            filename)
-
     def get_packets(self, type=None):
         if type is None:
             if self.generator.is_doc():
@@ -1330,6 +1317,25 @@ class Device:
                                                         **extra_value))
 
         return ''.join(constants)
+
+    def get_doc_rst_path(self):
+        if not self.get_generator().is_doc():
+            raise Exception("Invalid call in non-doc generator")
+
+        filename = '{0}_{1}_{2}.rst'.format(self.get_camel_case_name(),
+                                            self.get_category(),
+                                            self.get_generator().get_doc_rst_filename_part())
+
+        return os.path.join(self.get_generator().get_bindings_root_directory(),
+                            'doc',
+                            self.get_generator().get_language(),
+                            filename)
+
+    def get_doc_rst_ref_name(self):
+        if not self.get_generator().is_doc():
+            raise Exception("Invalid call in non-doc generator")
+
+        return self.get_underscore_name() + '_' + self.get_category().lower()
 
 class Generator:
     def __init__(self, bindings_root_directory, language):

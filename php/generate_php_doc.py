@@ -120,62 +120,62 @@ class PHPDocDevice(php_common.PHPDevice):
     def get_php_api(self):
         create_str = {
         'en': """
-.. php:function:: class {3}{1}(string $uid, IPConnection $ipcon)
+.. php:function:: class {1}(string $uid, IPConnection $ipcon)
 
  Creates an object with the unique device ID ``$uid``:
 
  .. code-block:: php
 
-    <?php   ${0} = new {3}{1}('YOUR_DEVICE_UID', $ipcon);   ?>
+    <?php   ${2} = new {1}('YOUR_DEVICE_UID', $ipcon);   ?>
 
  This object can then be used after the IP Connection is connected
- (see examples :ref:`above <{0}_{2}_php_examples>`).
+ (see examples :ref:`above <{0}_php_examples>`).
 """,
         'de': """
-.. php:function:: class {3}{1}(string $uid, IPConnection $ipcon)
+.. php:function:: class {1}(string $uid, IPConnection $ipcon)
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``$uid``:
 
  .. code-block:: php
 
-    <?php   ${0} = new {3}{1}('YOUR_DEVICE_UID', $ipcon);   ?>
+    <?php   ${2} = new {1}('YOUR_DEVICE_UID', $ipcon);   ?>
 
  Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
- (siehe Beispiele :ref:`oben <{0}_{2}_php_examples>`).
+ (siehe Beispiele :ref:`oben <{0}_php_examples>`).
 """
         }
 
         register_str = {
         'en': """
-.. php:function:: void {3}{1}::registerCallback(int $id, callable $callback, mixed $userData = NULL)
+.. php:function:: void {1}::registerCallback(int $id, callable $callback, mixed $userData = NULL)
 
  Registers a callback with ID *$id* to the callable *$callback*.
  The *$userData*  will be given as a parameter of the callback.
 
  The available  IDs with corresponding function signatures are listed
- :ref:`below <{0}_{2}_php_callbacks>`.
+ :ref:`below <{0}_php_callbacks>`.
 """,
         'de': """
-.. php:function:: void {3}{1}::registerCallback(int $id, callable $callback, mixed $userData = NULL)
+.. php:function:: void {1}::registerCallback(int $id, callable $callback, mixed $userData = NULL)
 
  Registriert einen Callback mit der ID *$id* zu der Callable *$callback*.
  Der Parameter *$userData* wird bei jedem Callback wieder mit übergeben.
 
- Die verfügbaren IDs mit den zugehörigen Funktionssignaturen sind :ref:`unten <{0}_{2}_php_callbacks>`
+ Die verfügbaren IDs mit den zugehörigen Funktionssignaturen sind :ref:`unten <{0}_php_callbacks>`
  zu finden.
 """
         }
 
         c_str = {
         'en': """
-.. _{1}_{2}_php_callbacks:
+.. _{0}_php_callbacks:
 
 Callbacks
 ^^^^^^^^^
 
 Callbacks can be registered to receive
 time critical or recurring data from the device. The registration is done
-with the :php:func:`registerCallback() <{3}{4}::registerCallback>` function of
+with the :php:func:`registerCallback() <{1}::registerCallback>` function of
 the device object. The first parameter is the callback ID and the second
 parameter the callback function:
 
@@ -188,7 +188,7 @@ parameter the callback function:
         echo $param . "\\n";
     }}
 
-    ${1}->registerCallback({3}{4}::CALLBACK_EXAMPLE, 'myCallback');
+    ${2}->registerCallback({1}::CALLBACK_EXAMPLE, 'myCallback');
 
     ?>
 
@@ -200,17 +200,17 @@ described below.
  compared to using getters. It will use less USB bandwidth and the latency
  will be a lot better, since there is no round trip time.
 
-{0}
+{3}
 """,
         'de': """
-.. _{1}_{2}_php_callbacks:
+.. _{0}_php_callbacks:
 
 Callbacks
 ^^^^^^^^^
 
 Callbacks können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
-mit der Funktion :php:func:`registerCallback() <{3}{4}::registerCallback>` des
+mit der Funktion :php:func:`registerCallback() <{1}::registerCallback>` des
 Geräte Objektes durchgeführt werden. Der erste Parameter ist der Callback ID
 und der zweite die Callback-Funktion:
 
@@ -223,7 +223,7 @@ und der zweite die Callback-Funktion:
         echo $param . "\\n";
     }}
 
-    ${1}->registerCallback({3}{4}::CALLBACK_EXAMPLE, 'myCallback');
+    ${2}->registerCallback({1}::CALLBACK_EXAMPLE, 'myCallback');
 
     ?>
 
@@ -236,13 +236,14 @@ weiter unten beschrieben.
  Es wird weniger USB-Bandbreite benutzt und die Latenz ist
  erheblich geringer, da es keine Paketumlaufzeit gibt.
 
-{0}
+{3}
 """
         }
 
         api = {
         'en': """
-{0}
+.. _{0}_php_api:
+
 API
 ---
 
@@ -253,7 +254,8 @@ Functions that return multiple values return them in an associative array.
 {2}
 """,
         'de': """
-{0}
+.. _{0}_php_api:
+
 API
 ---
 
@@ -267,46 +269,43 @@ zurück.
         }
 
         const_str = {
-        'en' : """
-.. _{3}_{4}_php_constants:
+        'en': """
+.. _{0}_php_constants:
 
 Constants
 ^^^^^^^^^
 
-.. php:member:: int {1}{0}::DEVICE_IDENTIFIER
+.. php:member:: int {1}::DEVICE_IDENTIFIER
 
- This constant is used to identify a {5}.
+ This constant is used to identify a {3}.
 
- The :php:func:`getIdentity() <{1}{0}::getIdentity>` function and the
+ The :php:func:`getIdentity() <{1}::getIdentity>` function and the
  :php:member:`CALLBACK_ENUMERATE <IPConnection::CALLBACK_ENUMERATE>`
  callback of the IP Connection have a ``deviceIdentifier`` parameter to specify
  the Brick's or Bricklet's type.
 """,
-        'de' : """
-.. _{3}_{4}_php_constants:
+        'de': """
+.. _{0}_php_constants:
 
 Konstanten
 ^^^^^^^^^^
 
-.. php:member:: int {1}{0}::DEVICE_IDENTIFIER
+.. php:member:: int {1}::DEVICE_IDENTIFIER
 
- Diese Konstante wird verwendet um {2} {5} zu identifizieren.
+ Diese Konstante wird verwendet um {2} {3} zu identifizieren.
 
- Die :php:func:`getIdentity() <{1}{0}::getIdentity>` Funktion und der
+ Die :php:func:`getIdentity() <{1}::getIdentity>` Funktion und der
  :php:func:`CALLBACK_ENUMERATE <IPConnection::CALLBACK_ENUMERATE>`
  Callback der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 """
         }
 
-        cre = common.select_lang(create_str).format(self.get_underscore_name(),
-                                                    self.get_camel_case_name(),
-                                                    self.get_category().lower(),
-                                                    self.get_category())
-        reg = common.select_lang(register_str).format(self.get_underscore_name(),
-                                                      self.get_camel_case_name(),
-                                                      self.get_category().lower(),
-                                                      self.get_category())
+        cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
+                                                    self.get_php_class_name(),
+                                                    self.get_underscore_name())
+        reg = common.select_lang(register_str).format(self.get_doc_rst_ref_name(),
+                                                      self.get_php_class_name())
 
         bf = self.get_php_methods('bf')
         af = self.get_php_methods('af')
@@ -319,25 +318,22 @@ Konstanten
             api_str += common.select_lang(common.af_str).format(af)
         if c:
             api_str += common.select_lang(common.ccf_str).format(reg, ccf)
-            api_str += common.select_lang(c_str).format(c, self.get_underscore_name(),
-                                                        self.get_category().lower(),
-                                                        self.get_category(),
-                                                        self.get_camel_case_name())
+            api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
+                                                        self.get_php_class_name(),
+                                                        self.get_underscore_name(),
+                                                        c)
 
         article = 'ein'
         if self.get_category() == 'Brick':
             article = 'einen'
-        api_str += common.select_lang(const_str).format(self.get_camel_case_name(),
-                                                        self.get_category(),
+        api_str += common.select_lang(const_str).format(self.get_doc_rst_ref_name(),
+                                                        self.get_php_class_name(),
                                                         article,
-                                                        self.get_underscore_name(),
-                                                        self.get_category().lower(),
                                                         self.get_long_display_name())
 
-        ref = '.. _{0}_{1}_php_api:\n'.format(self.get_underscore_name(),
-                                              self.get_category().lower())
-
-        return common.select_lang(api).format(ref, self.replace_php_function_links(self.get_api_doc()), api_str)
+        return common.select_lang(api).format(self.get_doc_rst_ref_name(),
+                                              self.replace_php_function_links(self.get_api_doc()),
+                                              api_str)
 
     def get_php_doc(self):
         doc  = common.make_rst_header(self)

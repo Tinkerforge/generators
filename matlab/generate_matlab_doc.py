@@ -159,7 +159,7 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
     def get_matlab_api(self):
         create_str = {
         'en': """
-.. matlab:function:: class {3}{1}(String uid, IPConnection ipcon)
+.. matlab:function:: class {1}(String uid, IPConnection ipcon)
 
  Creates an object with the unique device ID ``uid``.
 
@@ -167,21 +167,21 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
 
  .. code-block:: matlab
 
-  import com.tinkerforge.{3}{1};
+  import com.tinkerforge.{1};
 
-  {0} = {3}{1}('YOUR_DEVICE_UID', ipcon);
+  {2} = {1}('YOUR_DEVICE_UID', ipcon);
 
  In Octave:
 
  .. code-block:: octave_fixed
 
-  {0} = java_new("com.tinkerforge.{3}{1}", "YOUR_DEVICE_UID", ipcon);
+  {2} = java_new("com.tinkerforge.{1}", "YOUR_DEVICE_UID", ipcon);
 
  This object can then be used after the IP Connection is connected
- (see examples :ref:`above <{4}_{2}_matlab_examples>`).
+ (see examples :ref:`above <{0}_matlab_examples>`).
 """,
         'de': """
-.. matlab:function:: class {3}{1}(String uid, IPConnection ipcon)
+.. matlab:function:: class {1}(String uid, IPConnection ipcon)
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``.
 
@@ -189,18 +189,18 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
 
  .. code-block:: matlab
 
-  import com.tinkerforge.{3}{1};
+  import com.tinkerforge.{1};
 
-  {0} = {3}{1}("YOUR_DEVICE_UID", ipcon);
+  {2} = {1}("YOUR_DEVICE_UID", ipcon);
 
  In Octave:
 
  .. code-block:: octave_fixed
 
-  {0} = java_new("com.tinkerforge.{3}{1}", "YOUR_DEVICE_UID", ipcon);
+  {2} = java_new("com.tinkerforge.{1}", "YOUR_DEVICE_UID", ipcon);
 
  Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
- (siehe Beispiele :ref:`oben <{4}_{2}_matlab_examples>`).
+ (siehe Beispiele :ref:`oben <{0}_matlab_examples>`).
 """
         }
 
@@ -221,7 +221,7 @@ Konfigurationsfunktionen für Callbacks
 
         c_str = {
         'en': """
-.. _{1}_{2}_matlab_callbacks:
+.. _{0}_matlab_callbacks:
 
 Callbacks
 ^^^^^^^^^
@@ -265,10 +265,10 @@ below.
  will be a lot better, since there is no round trip time.
 
 
-{0}
+{1}
 """,
         'de': """
-.. _{1}_{2}_matlab_callbacks:
+.. _{0}_matlab_callbacks:
 
 Callbacks
 ^^^^^^^^^
@@ -313,13 +313,14 @@ Strukturfeldern werden unterhalb beschrieben.
  Es wird weniger USB-Bandbreite benutzt und die Latenz ist
  erheblich geringer, da es keine Paketumlaufzeit gibt.
 
-{0}
+{1}
 """
         }
 
         api = {
         'en': """
-{0}
+.. _{0}_matlab_api:
+
 API
 ---
 
@@ -349,7 +350,8 @@ All methods listed below are thread-safe.
 {2}
 """,
         'de': """
-{0}
+.. _{0}_matlab_api:
+
 API
 ---
 
@@ -383,43 +385,41 @@ Alle folgend aufgelisteten Methoden sind Thread-sicher.
         }
 
         const_str = {
-        'en' : """
-.. _{3}_{4}_matlab_constants:
+        'en': """
+.. _{0}_matlab_constants:
 
 Constants
 ^^^^^^^^^
 
-.. matlab:member:: public static final int {1}{0}.DEVICE_IDENTIFIER
+.. matlab:member:: public static final int {1}.DEVICE_IDENTIFIER
 
- This constant is used to identify a {5}.
+ This constant is used to identify a {3}.
 
- The :matlab:func:`getIdentity() <{1}{0}::getIdentity>` function and the
+ The :matlab:func:`getIdentity() <{1}::getIdentity>` function and the
  :matlab:member:`EnumerateCallback <IPConnection.EnumerateCallback>`
  callback of the IP Connection have a ``deviceIdentifier`` parameter to specify
  the Brick's or Bricklet's type.
 """,
-        'de' : """
-.. _{3}_{4}_matlab_constants:
+        'de': """
+.. _{0}_matlab_constants:
 
 Konstanten
 ^^^^^^^^^^
 
-.. matlab:member:: public static final int {1}{0}.DEVICE_IDENTIFIER
+.. matlab:member:: public static final int {1}.DEVICE_IDENTIFIER
 
- Diese Konstante wird verwendet um {2} {5} zu identifizieren.
+ Diese Konstante wird verwendet um {2} {3} zu identifizieren.
 
- Die :matlab:func:`getIdentity() <{1}{0}::getIdentity>` Funktion und der
+ Die :matlab:func:`getIdentity() <{1}::getIdentity>` Funktion und der
  :matlab:member:`EnumerateCallback <IPConnection.EnumerateCallback>`
  Callback der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 """
         }
 
-        cre = common.select_lang(create_str).format(self.get_headless_camel_case_name(),
-                                                    self.get_camel_case_name(),
-                                                    self.get_category().lower(),
-                                                    self.get_category(),
-                                                    self.get_underscore_name())
+        cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
+                                                    self.get_matlab_class_name(),
+                                                    self.get_headless_camel_case_name())
 
         bf = self.get_matlab_methods('bf')
         af = self.get_matlab_methods('af')
@@ -433,25 +433,20 @@ Konstanten
         if ccf:
             api_str += common.select_lang(ccf_str).format(ccf)
         if c:
-            api_str += common.select_lang(c_str).format(c, self.get_underscore_name(),
-                                                        self.get_category().lower(),
-                                                        self.get_category(),
-                                                        self.get_camel_case_name())
+            api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
+                                                        c)
 
         article = 'ein'
         if self.get_category() == 'Brick':
             article = 'einen'
-        api_str += common.select_lang(const_str).format(self.get_camel_case_name(),
-                                                        self.get_category(),
+        api_str += common.select_lang(const_str).format(self.get_doc_rst_ref_name(),
+                                                        self.get_matlab_class_name(),
                                                         article,
-                                                        self.get_underscore_name(),
-                                                        self.get_category().lower(),
                                                         self.get_long_display_name())
 
-        ref = '.. _{0}_{1}_matlab_api:\n'.format(self.get_underscore_name(),
-                                               self.get_category().lower())
-
-        return common.select_lang(api).format(ref, self.replace_matlab_function_links(self.get_api_doc()), api_str)
+        return common.select_lang(api).format(self.get_doc_rst_ref_name(),
+                                              self.replace_matlab_function_links(self.get_api_doc()),
+                                              api_str)
 
     def get_matlab_doc(self):
         doc  = common.make_rst_header(self)

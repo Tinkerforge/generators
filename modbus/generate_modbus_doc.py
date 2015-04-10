@@ -92,26 +92,26 @@ class ModbusDocDevice(common.Device):
     def get_modbus_api(self):
         c_str = {
         'en': """
-.. _{1}_{2}_modbus_callbacks:
+.. _{0}_modbus_callbacks:
 
 Callbacks
 ^^^^^^^^^
 
-{0}
+{1}
 """,
         'de': """
-.. _{1}_{2}_modbus_callbacks:
+.. _{0}_modbus_callbacks:
 
 Callbacks
 ^^^^^^^^^
 
-{0}
+{1}
 """
         }
 
         api = {
         'en': """
-{0}
+.. _{0}_modbus_api:
 
 API
 ---
@@ -124,7 +124,7 @@ A general description of the Modbus protocol structure can be found
 {2}
 """,
         'de': """
-{0}
+.. _{0}_modbus_api:
 
 API
 ---
@@ -150,13 +150,12 @@ Eine allgemeine Beschreibung der Modbus Protokollstruktur findet sich
         if ccf:
             api_str += common.select_lang(common.ccf_str).format('', ccf)
         if c:
-            api_str += common.select_lang(c_str).format(c, self.get_underscore_name(),
-                                                        self.get_category().lower())
+            api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
+                                                        c)
 
-        ref = '.. _{0}_{1}_modbus_api:\n'.format(self.get_underscore_name(),
-                                                 self.get_category().lower())
-
-        return common.select_lang(api).format(ref, self.replace_modbus_function_links(self.get_api_doc()), api_str)
+        return common.select_lang(api).format(self.get_doc_rst_ref_name(),
+                                              self.replace_modbus_function_links(self.get_api_doc()),
+                                              api_str)
 
     def get_modbus_doc(self):
         doc  = common.make_rst_header(self, has_device_identifier_constant=False)

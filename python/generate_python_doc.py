@@ -109,10 +109,10 @@ class PythonDocDevice(python_common.PythonDevice):
 
  .. code-block:: python
 
-    {0} = {1}("YOUR_DEVICE_UID", ipcon)
+    {2} = {1}("YOUR_DEVICE_UID", ipcon)
 
  This object can then be used after the IP Connection is connected
- (see examples :ref:`above <{0}_{2}_python_examples>`).
+ (see examples :ref:`above <{0}_python_examples>`).
 """,
         'de': """
 .. py:function:: {1}(uid, ipcon)
@@ -124,10 +124,10 @@ class PythonDocDevice(python_common.PythonDevice):
 
  .. code-block:: python
 
-    {0} = {1}("YOUR_DEVICE_UID", ipcon)
+    {2} = {1}("YOUR_DEVICE_UID", ipcon)
 
  Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
- (siehe Beispiele :ref:`oben <{0}_{2}_python_examples>`).
+ (siehe Beispiele :ref:`oben <{0}_python_examples>`).
 """
         }
 
@@ -141,7 +141,7 @@ class PythonDocDevice(python_common.PythonDevice):
 
  Registers a callback with ID *id* to the function *callback*. The available
  IDs with corresponding function signatures are listed
- :ref:`below <{0}_{2}_python_callbacks>`.
+ :ref:`below <{0}_python_callbacks>`.
 """,
         'de': """
 .. py:function:: {1}.register_callback(id, callback)
@@ -152,20 +152,20 @@ class PythonDocDevice(python_common.PythonDevice):
 
  Registriert einen Callback mit der ID *id* mit der Funktion *callback*. Die
  verfügbaren IDs mit den zugehörigen Funktionssignaturen sind
- :ref:`unten <{0}_{2}_python_callbacks>` zu finden.
+ :ref:`unten <{0}_python_callbacks>` zu finden.
 """
         }
 
         c_str = {
         'en': """
-.. _{1}_{2}_python_callbacks:
+.. _{0}_python_callbacks:
 
 Callbacks
 ^^^^^^^^^
 
 Callbacks can be registered to receive
 time critical or recurring data from the device. The registration is done
-with the :py:func:`register_callback() <{3}.register_callback>` function of
+with the :py:func:`register_callback() <{1}.register_callback>` function of
 the device object. The first parameter is the callback ID and the second
 parameter the callback function:
 
@@ -174,7 +174,7 @@ parameter the callback function:
     def my_callback(param):
         print(param)
 
-    {1}.register_callback({3}.CALLBACK_EXAMPLE, my_callback)
+    {2}.register_callback({1}.CALLBACK_EXAMPLE, my_callback)
 
 The available constants with inherent number and type of parameters are
 described below.
@@ -184,17 +184,17 @@ described below.
  compared to using getters. It will use less USB bandwidth and the latency
  will be a lot better, since there is no round trip time.
 
-{0}
+{3}
 """,
         'de': """
-.. _{1}_{2}_python_callbacks:
+.. _{0}_python_callbacks:
 
 Callbacks
 ^^^^^^^^^
 
 Callbacks können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
-mit der Funktion :py:func:`register_callback() <{3}.register_callback>` des
+mit der Funktion :py:func:`register_callback() <{1}.register_callback>` des
 Geräte Objektes durchgeführt werden. Der erste Parameter ist die Callback ID
 und der zweite Parameter die Callback-Funktion:
 
@@ -203,7 +203,7 @@ und der zweite Parameter die Callback-Funktion:
     def my_callback(param):
         print(param)
 
-    {1}.register_callback({3}.CALLBACK_EXAMPLE, my_callback)
+    {2}.register_callback({1}.CALLBACK_EXAMPLE, my_callback)
 
 Die verfügbaren IDs mit der dazugehörigen Parameteranzahl und -typen werden
 weiter unten beschrieben.
@@ -214,13 +214,14 @@ weiter unten beschrieben.
  Es wird weniger USB-Bandbreite benutzt und die Latenz ist
  erheblich geringer, da es keine Paketumlaufzeit gibt.
 
-{0}
+{3}
 """
         }
 
         api = {
         'en': """
-{0}
+.. _{0}_python_api:
+
 API
 ---
 
@@ -242,7 +243,8 @@ All methods listed below are thread-safe.
 {2}
 """,
         'de': """
-{0}
+.. _{0}_python_api:
+
 API
 ---
 
@@ -266,44 +268,43 @@ Alle folgend aufgelisteten Funktionen sind Thread-sicher.
         }
 
         const_str = {
-        'en' : """
-.. _{4}_{5}_python_constants:
+        'en': """
+.. _{0}_python_constants:
 
 Constants
 ^^^^^^^^^
 
-.. py:attribute:: {0}.DEVICE_IDENTIFIER
+.. py:attribute:: {1}.DEVICE_IDENTIFIER
 
  This constant is used to identify a {3}.
 
- The :py:func:`get_identity() <{0}.get_identity>` function and the
+ The :py:func:`get_identity() <{1}.get_identity>` function and the
  :py:attr:`CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
  callback of the IP Connection have a ``device_identifier`` parameter to specify
  the Brick's or Bricklet's type.
 """,
-        'de' : """
-.. _{4}_{5}_python_constants:
+        'de': """
+.. _{0}_python_constants:
 
 Konstanten
 ^^^^^^^^^^
 
-.. py:attribute:: {0}.DEVICE_IDENTIFIER
+.. py:attribute:: {1}.DEVICE_IDENTIFIER
 
  Diese Konstante wird verwendet um {2} {3} zu identifizieren.
 
- Die :py:func:`get_identity() <{0}.get_identity>` Funktion und der
+ Die :py:func:`get_identity() <{1}.get_identity>` Funktion und der
  :py:attr:`CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
  Callback der IP Connection haben ein ``device_identifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 """
         }
 
-        cre = common.select_lang(create_str).format(self.get_underscore_name(),
+        cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
                                                     self.get_camel_case_name(),
-                                                    self.get_category().lower())
-        reg = common.select_lang(register_str).format(self.get_underscore_name(),
-                                                      self.get_camel_case_name(),
-                                                      self.get_category().lower())
+                                                    self.get_underscore_name())
+        reg = common.select_lang(register_str).format(self.get_doc_rst_ref_name(),
+                                                      self.get_camel_case_name())
 
         bf = self.get_python_methods('bf')
         af = self.get_python_methods('af')
@@ -316,24 +317,22 @@ Konstanten
             api_str += common.select_lang(common.af_str).format(af)
         if c:
             api_str += common.select_lang(common.ccf_str).format(reg, ccf)
-            api_str += common.select_lang(c_str).format(c, self.get_underscore_name(),
-                                                        self.get_category().lower(),
-                                                        self.get_camel_case_name())
+            api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
+                                                        self.get_camel_case_name(),
+                                                        self.get_underscore_name(),
+                                                        c)
 
         article = 'ein'
         if self.get_category() == 'Brick':
             article = 'einen'
-        api_str += common.select_lang(const_str).format(self.get_camel_case_name(),
-                                                        self.get_category(),
+        api_str += common.select_lang(const_str).format(self.get_doc_rst_ref_name(),
+                                                        self.get_camel_case_name(),
                                                         article,
-                                                        self.get_long_display_name(),
-                                                        self.get_underscore_name(),
-                                                        self.get_category().lower())
+                                                        self.get_long_display_name())
 
-        ref = '.. _{0}_{1}_python_api:\n'.format(self.get_underscore_name(),
-                                                 self.get_category().lower())
-
-        return common.select_lang(api).format(ref, self.replace_python_function_links(self.get_api_doc()), api_str)
+        return common.select_lang(api).format(self.get_doc_rst_ref_name(),
+                                              self.replace_python_function_links(self.get_api_doc()),
+                                              api_str)
 
     def get_python_doc(self):
         doc  = common.make_rst_header(self)

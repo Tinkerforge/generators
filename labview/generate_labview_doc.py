@@ -129,32 +129,32 @@ class LabVIEWDocDevice(common.Device):
     def get_labview_api(self):
         create_str = {
         'en': """
-.. labview:function:: {3}{1}(uid, ipcon) -> {4}
+.. labview:function:: {1}(uid, ipcon) -> {2}
 
  :input uid: String
  :input ipcon: .NET Refnum (IPConnection)
- :output {4}: .NET Refnum ({3}{1})
+ :output {2}: .NET Refnum ({1})
 
  Creates an object with the unique device ID ``uid``.
  This object can then be used after the IP Connection is connected
- (see examples :ref:`above <{0}_{2}_labview_examples>`).
+ (see examples :ref:`above <{0}_labview_examples>`).
 """,
         'de': """
-.. labview:function:: {3}{1}(uid, ipcon) -> {4}
+.. labview:function:: {1}(uid, ipcon) -> {2}
 
  :input uid: String
  :input ipcon: .NET Refnum (IPConnection)
- :output {4}: .NET Refnum ({3}{1})
+ :output {2}: .NET Refnum ({1})
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``.
  Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
- (siehe Beispiele :ref:`oben <{0}_{2}_labview_examples>`).
+ (siehe Beispiele :ref:`oben <{0}_labview_examples>`).
 """
         }
 
         c_str = {
         'en': """
-.. _{1}_{2}_labview_callbacks:
+.. _{0}_labview_callbacks:
 
 Callbacks
 ^^^^^^^^^
@@ -169,10 +169,10 @@ of parameters are described below.
  compared to using getters. It will use less USB bandwidth and the latency
  will be a lot better, since there is no round trip time.
 
-{0}
+{1}
 """,
         'de': """
-.. _{1}_{2}_labview_callbacks:
+.. _{0}_labview_callbacks:
 
 Callbacks
 ^^^^^^^^^
@@ -189,13 +189,14 @@ unten beschrieben.
  Es wird weniger USB-Bandbreite benutzt und die Latenz ist
  erheblich geringer, da es keine Paketumlaufzeit gibt.
 
-{0}
+{1}
 """
         }
 
         api = {
         'en': """
-{0}
+.. _{0}_labview_api:
+
 API
 ---
 
@@ -214,7 +215,8 @@ The namespace for all Brick/Bricklet bindings and the IPConnection is
 {2}
 """,
         'de': """
-{0}
+.. _{0}_labview_api:
+
 API
 ---
 
@@ -236,42 +238,40 @@ Der Namensraum für alle Brick/Bricklet Bindings und die IPConnection ist
         }
 
         const_str = {
-        'en' : """
-.. _{3}_{4}_labview_constants:
+        'en': """
+.. _{0}_labview_constants:
 
 Constants
 ^^^^^^^^^
 
-.. labview:symbol:: {1}{0}.DEVICE_IDENTIFIER
+.. labview:symbol:: {1}.DEVICE_IDENTIFIER
 
- This constant is used to identify a {5}.
+ This constant is used to identify a {3}.
 
- The :labview:func:`GetIdentity() <{1}{0}.GetIdentity>` function and the
+ The :labview:func:`GetIdentity() <{1}.GetIdentity>` function and the
  :labview:func:`EnumerateCallback <IPConnection.EnumerateCallback>`
  callback of the IP Connection have a ``deviceIdentifier`` parameter to specify
  the Brick's or Bricklet's type.
 """,
-        'de' : """
-.. _{3}_{4}_labview_constants:
+        'de': """
+.. _{0}_labview_constants:
 
 Konstanten
 ^^^^^^^^^^
 
-.. labview:symbol:: {1}{0}.DEVICE_IDENTIFIER
+.. labview:symbol:: {1}.DEVICE_IDENTIFIER
 
- Diese Konstante wird verwendet um {2} {5} zu identifizieren.
+ Diese Konstante wird verwendet um {2} {3} zu identifizieren.
 
- Die :labview:func:`GetIdentity() <{1}{0}.GetIdentity>` Funktion und der
+ Die :labview:func:`GetIdentity() <{1}.GetIdentity>` Funktion und der
  :labview:func:`EnumerateCallback <IPConnection.EnumerateCallback>`
  Callback der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 """
         }
 
-        cre = common.select_lang(create_str).format(self.get_underscore_name(),
-                                                    self.get_camel_case_name(),
-                                                    self.get_category().lower(),
-                                                    self.get_category(),
+        cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
+                                                    self.get_labview_class_name(),
                                                     self.get_headless_camel_case_name())
 
         bf = self.get_labview_functions('bf')
@@ -286,26 +286,20 @@ Konstanten
         if ccf:
             api_str += common.select_lang(common.ccf_str).format('', ccf)
         if c:
-            api_str += common.select_lang(c_str).format(c, self.get_underscore_name(),
-                                                        self.get_category().lower(),
-                                                        self.get_category(),
-                                                        self.get_camel_case_name(),
-                                                        self.get_headless_camel_case_name())
+            api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
+                                                        c)
 
         article = 'ein'
         if self.get_category() == 'Brick':
             article = 'einen'
-        api_str += common.select_lang(const_str).format(self.get_camel_case_name(),
-                                                        self.get_category(),
+        api_str += common.select_lang(const_str).format(self.get_doc_rst_ref_name(),
+                                                        self.get_labview_class_name(),
                                                         article,
-                                                        self.get_underscore_name(),
-                                                        self.get_category().lower(),
                                                         self.get_long_display_name())
 
-        ref = '.. _{0}_{1}_labview_api:\n'.format(self.get_underscore_name(),
-                                                  self.get_category().lower())
-
-        return common.select_lang(api).format(ref, self.replace_labview_function_links(self.get_api_doc()), api_str)
+        return common.select_lang(api).format(self.get_doc_rst_ref_name(),
+                                              self.replace_labview_function_links(self.get_api_doc()),
+                                              api_str)
 
     def get_labview_doc(self):
         doc  = common.make_rst_header(self)

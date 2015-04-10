@@ -108,7 +108,7 @@ class RubyDocDevice(ruby_common.RubyDevice):
     def get_ruby_api(self):
         create_str = {
         'en': """
-.. rb:function:: {3}{1}::new(uid, ipcon) -> {0}
+.. rb:function:: {1}::new(uid, ipcon) -> {2}
 
  :param uid: str
  :param ipcon: IPConnection
@@ -117,13 +117,13 @@ class RubyDocDevice(ruby_common.RubyDevice):
 
  .. code-block:: ruby
 
-    {0} = {3}{1}.new 'YOUR_DEVICE_UID', ipcon
+    {2} = {1}.new 'YOUR_DEVICE_UID', ipcon
 
  This object can then be used after the IP Connection is connected
- (see examples :ref:`above <{0}_{2}_ruby_examples>`).
+ (see examples :ref:`above <{0}_ruby_examples>`).
 """,
         'de': """
-.. rb:function:: {3}{1}::new(uid, ipcon) -> {0}
+.. rb:function:: {1}::new(uid, ipcon) -> {2}
 
  :param uid: str
  :param ipcon: IPConnection
@@ -132,50 +132,50 @@ class RubyDocDevice(ruby_common.RubyDevice):
 
  .. code-block:: ruby
 
-    {0} = {3}{1}.new 'YOUR_DEVICE_UID', ipcon
+    {2} = {1}.new 'YOUR_DEVICE_UID', ipcon
 
  Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
- (siehe Beispiele :ref:`oben <{0}_{2}_ruby_examples>`).
+ (siehe Beispiele :ref:`oben <{0}_ruby_examples>`).
 """
         }
 
         register_str = {
         'en': """
-.. rb:function:: {3}{1}#register_callback(id) {{ |param [, ...]| block }} -> nil
+.. rb:function:: {1}#register_callback(id) {{ |param [, ...]| block }} -> nil
 
  :param id: int
 
  Registers a callback with ID *id* to the given block. The available
  IDs with corresponding function signatures are listed
- :ref:`below <{0}_{2}_ruby_callbacks>`.
+ :ref:`below <{0}_ruby_callbacks>`.
 """,
         'de': """
-.. rb:function:: {3}{1}#register_callback(id) {{ |param [, ...]| block }} -> nil
+.. rb:function:: {1}#register_callback(id) {{ |param [, ...]| block }} -> nil
 
  :param id: int
 
  Registriert einen Callback mit der ID *id* in den gegebenen Block. Die verfügbaren
- IDs mit den zugehörigen Funktionssignaturen sind :ref:`unten <{0}_{2}_ruby_callbacks>`
+ IDs mit den zugehörigen Funktionssignaturen sind :ref:`unten <{0}_ruby_callbacks>`
  zu finden.
 """
         }
 
         c_str = {
         'en': """
-.. _{1}_{2}_ruby_callbacks:
+.. _{0}_ruby_callbacks:
 
 Callbacks
 ^^^^^^^^^
 
 Callbacks can be registered to receive time critical or recurring data from
 the device. The registration is done with the
-:rb:func:`#register_callback <{4}{3}#register_callback>` function of
+:rb:func:`#register_callback <{1}#register_callback>` function of
 the device object. The first parameter is the callback ID and the second
 parameter is a block:
 
 .. code-block:: ruby
 
-    {1}.register_callback {4}{3}::CALLBACK_EXAMPLE, do |param|
+    {2}.register_callback {1}::CALLBACK_EXAMPLE, do |param|
       puts "#{{param}}"
     end
 
@@ -187,23 +187,23 @@ described below.
  compared to using getters. It will use less USB bandwidth and the latency
  will be a lot better, since there is no round trip time.
 
-{0}
+{3}
 """,
         'de': """
-.. _{1}_{2}_ruby_callbacks:
+.. _{0}_ruby_callbacks:
 
 Callbacks
 ^^^^^^^^^
 
 Callbacks können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
-mit der Funktion :rb:func:`#register_callback <{4}{3}#register_callback>` des
+mit der Funktion :rb:func:`#register_callback <{1}#register_callback>` des
 Geräte Objektes durchgeführt werden. Der erste Parameter ist der Callback ID
 und der zweite Parameter der Block:
 
 .. code-block:: ruby
 
-    {1}.register_callback {4}{3}::CALLBACK_EXAMPLE, do |param|
+    {2}.register_callback {1}::CALLBACK_EXAMPLE, do |param|
       puts "#{{param}}"
     end
 
@@ -216,13 +216,14 @@ weiter unten beschrieben.
  Es wird weniger USB-Bandbreite benutzt und die Latenz ist
  erheblich geringer, da es keine Paketumlaufzeit gibt.
 
-{0}
+{3}
 """
         }
 
         api = {
         'en': """
-{0}
+.. _{0}_ruby_api:
+
 API
 ---
 
@@ -233,7 +234,8 @@ All methods listed below are thread-safe.
 {2}
 """,
         'de': """
-{0}
+.. _{0}_ruby_api:
+
 API
 ---
 
@@ -246,46 +248,43 @@ Alle folgend aufgelisteten Methoden sind Thread-sicher.
         }
 
         const_str = {
-        'en' : """
-.. _{3}_{4}_ruby_constants:
+        'en': """
+.. _{0}_ruby_constants:
 
 Constants
 ^^^^^^^^^
 
-.. rb:attribute:: {1}{0}::DEVICE_IDENTIFIER
+.. rb:attribute:: {1}::DEVICE_IDENTIFIER
 
- This constant is used to identify a {5}.
+ This constant is used to identify a {3}.
 
- The :rb:func:`#get_identity() <{1}{0}#get_identity>` function and the
+ The :rb:func:`#get_identity() <{1}#get_identity>` function and the
  :rb:attr:`::CALLBACK_ENUMERATE <IPConnection::CALLBACK_ENUMERATE>`
  callback of the IP Connection have a ``device_identifier`` parameter to specify
  the Brick's or Bricklet's type.
 """,
-        'de' : """
-.. _{3}_{4}_ruby_constants:
+        'de': """
+.. _{0}_ruby_constants:
 
 Konstanten
 ^^^^^^^^^^
 
-.. rb:attribute:: {1}{0}::DEVICE_IDENTIFIER
+.. rb:attribute:: {1}::DEVICE_IDENTIFIER
 
- Diese Konstante wird verwendet um {2} {5} zu identifizieren.
+ Diese Konstante wird verwendet um {2} {3} zu identifizieren.
 
- Die :rb:func:`#get_identity() <{1}{0}#get_identity>` Funktion und der
+ Die :rb:func:`#get_identity() <{1}#get_identity>` Funktion und der
  :rb:attr:`::CALLBACK_ENUMERATE <IPConnection::CALLBACK_ENUMERATE>`
  Callback der IP Connection haben ein ``device_identifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 """
         }
 
-        cre = common.select_lang(create_str).format(self.get_underscore_name(),
-                                                    self.get_camel_case_name(),
-                                                    self.get_category().lower(),
-                                                    self.get_category())
-        reg = common.select_lang(register_str).format(self.get_underscore_name(),
-                                                      self.get_camel_case_name(),
-                                                      self.get_category().lower(),
-                                                      self.get_category())
+        cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
+                                                    self.get_ruby_class_name(),
+                                                    self.get_underscore_name())
+        reg = common.select_lang(register_str).format(self.get_doc_rst_ref_name(),
+                                                      self.get_ruby_class_name())
 
         bf = self.get_ruby_methods('bf')
         af = self.get_ruby_methods('af')
@@ -298,25 +297,22 @@ Konstanten
             api_str += common.select_lang(common.af_str).format(af)
         if c:
             api_str += common.select_lang(common.ccf_str).format(reg, ccf)
-            api_str += common.select_lang(c_str).format(c, self.get_underscore_name(),
-                                                        self.get_category().lower(),
-                                                        self.get_camel_case_name(),
-                                                        self.get_category())
+            api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
+                                                        self.get_ruby_class_name(),
+                                                        self.get_underscore_name(),
+                                                        c)
 
         article = 'ein'
         if self.get_category() == 'Brick':
             article = 'einen'
-        api_str += common.select_lang(const_str).format(self.get_camel_case_name(),
-                                                        self.get_category(),
+        api_str += common.select_lang(const_str).format(self.get_doc_rst_ref_name(),
+                                                        self.get_ruby_class_name(),
                                                         article,
-                                                        self.get_underscore_name(),
-                                                        self.get_category().lower(),
                                                         self.get_long_display_name())
 
-        ref = '.. _{0}_{1}_ruby_api:\n'.format(self.get_underscore_name(),
-                                               self.get_category().lower())
-
-        return common.select_lang(api).format(ref, self.replace_ruby_function_links(self.get_api_doc()), api_str)
+        return common.select_lang(api).format(self.get_doc_rst_ref_name(),
+                                              self.replace_ruby_function_links(self.get_api_doc()),
+                                              api_str)
 
     def get_ruby_doc(self):
         doc  = common.make_rst_header(self)

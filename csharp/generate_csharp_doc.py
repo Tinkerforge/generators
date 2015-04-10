@@ -106,34 +106,34 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
     def get_csharp_api(self):
         create_str = {
         'en': """
-.. csharp:function:: class {3}{1}(String uid, IPConnection ipcon)
+.. csharp:function:: class {1}(String uid, IPConnection ipcon)
 
  Creates an object with the unique device ID ``uid``:
 
  .. code-block:: csharp
 
-  {3}{1} {0} = new {3}{1}("YOUR_DEVICE_UID", ipcon);
+  {1} {2} = new {1}("YOUR_DEVICE_UID", ipcon);
 
  This object can then be used after the IP Connection is connected
- (see examples :ref:`above <{4}_{2}_csharp_examples>`).
+ (see examples :ref:`above <{0}_csharp_examples>`).
 """,
         'de': """
-.. csharp:function:: class {3}{1}(String uid, IPConnection ipcon)
+.. csharp:function:: class {1}(String uid, IPConnection ipcon)
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``:
 
  .. code-block:: csharp
 
-  {3}{1} {0} = new {3}{1}("YOUR_DEVICE_UID", ipcon);
+  {1} {2} = new {1}("YOUR_DEVICE_UID", ipcon);
 
  Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
- (siehe Beispiele :ref:`oben <{4}_{2}_csharp_examples>`).
+ (siehe Beispiele :ref:`oben <{0}_csharp_examples>`).
 """
         }
 
         c_str = {
         'en': """
-.. _{1}_{2}_csharp_callbacks:
+.. _{0}_csharp_callbacks:
 
 Callbacks
 ^^^^^^^^^
@@ -144,12 +144,12 @@ the corresponding event:
 
 .. code-block:: csharp
 
-    void Callback({3} sender, int value)
+    void Callback({1} sender, int value)
     {{
         System.Console.WriteLine("Value: " + value);
     }}
 
-    {1}.ExampleCallback += Callback;
+    {2}.ExampleCallback += Callback;
 
 The available events are described below.
 
@@ -158,10 +158,10 @@ The available events are described below.
  compared to using getters. It will use less USB bandwidth and the latency
  will be a lot better, since there is no round trip time.
 
-{0}
+{3}
 """,
         'de': """
-.. _{1}_{2}_csharp_callbacks:
+.. _{0}_csharp_callbacks:
 
 Callbacks
 ^^^^^^^^^
@@ -172,12 +172,12 @@ Handlers an den passenden Event:
 
 .. code-block:: csharp
 
-    void Callback({3} sender, int value)
+    void Callback({1} sender, int value)
     {{
         System.Console.WriteLine("Value: " + value);
     }}
 
-    {1}.ExampleCallback += Callback;
+    {2}.ExampleCallback += Callback;
 
 Die verfügbaren Events werden weiter unten beschrieben.
 
@@ -187,13 +187,14 @@ Die verfügbaren Events werden weiter unten beschrieben.
  Es wird weniger USB-Bandbreite benutzt und die Latenz ist
  erheblich geringer, da es keine Paketumlaufzeit gibt.
 
-{0}
+{3}
 """
         }
 
         api = {
         'en': """
-{0}
+.. _{0}_csharp_api:
+
 API
 ---
 
@@ -217,7 +218,8 @@ All methods listed below are thread-safe.
 {2}
 """,
         'de': """
-{0}
+.. _{0}_csharp_api:
+
 API
 ---
 
@@ -244,43 +246,41 @@ Alle folgend aufgelisteten Methoden sind Thread-sicher.
         }
 
         const_str = {
-        'en' : """
-.. _{3}_{4}_csharp_constants:
+        'en': """
+.. _{0}_csharp_constants:
 
 Constants
 ^^^^^^^^^
 
-.. csharp:member:: public int {1}{0}::DEVICE_IDENTIFIER
+.. csharp:member:: public int {1}::DEVICE_IDENTIFIER
 
- This constant is used to identify a {5}.
+ This constant is used to identify a {3}.
 
- The :csharp:func:`GetIdentity() <{1}{0}::GetIdentity>` function and the
+ The :csharp:func:`GetIdentity() <{1}::GetIdentity>` function and the
  :csharp:func:`EnumerateCallback <IPConnection::EnumerateCallback>`
  callback of the IP Connection have a ``deviceIdentifier`` parameter to specify
  the Brick's or Bricklet's type.
 """,
-        'de' : """
-.. _{3}_{4}_csharp_constants:
+        'de': """
+.. _{0}_csharp_constants:
 
 Konstanten
 ^^^^^^^^^^
 
-.. csharp:member:: public int {1}{0}::DEVICE_IDENTIFIER
+.. csharp:member:: public int {1}::DEVICE_IDENTIFIER
 
- Diese Konstante wird verwendet um {2} {5} zu identifizieren.
+ Diese Konstante wird verwendet um {2} {3} zu identifizieren.
 
- Die :csharp:func:`GetIdentity() <{1}{0}::GetIdentity>` Funktion und der
+ Die :csharp:func:`GetIdentity() <{1}::GetIdentity>` Funktion und der
  :csharp:func:`EnumerateCallback <IPConnection::EnumerateCallback>`
  Callback der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 """
         }
 
-        cre = common.select_lang(create_str).format(self.get_headless_camel_case_name(),
-                                                    self.get_camel_case_name(),
-                                                    self.get_category().lower(),
-                                                    self.get_category(),
-                                                    self.get_underscore_name())
+        cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
+                                                    self.get_csharp_class_name(),
+                                                    self.get_headless_camel_case_name())
 
         bf = self.get_csharp_methods('bf')
         af = self.get_csharp_methods('af')
@@ -294,24 +294,22 @@ Konstanten
         if ccf:
             api_str += common.select_lang(common.ccf_str).format('', ccf)
         if c:
-            api_str += common.select_lang(c_str).format(c, self.get_underscore_name(),
-                                                        self.get_category().lower(),
-                                                        self.get_csharp_class_name())
+            api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
+                                                        self.get_csharp_class_name(),
+                                                        self.get_headless_camel_case_name(),
+                                                        c)
 
         article = 'ein'
         if self.get_category() == 'Brick':
             article = 'einen'
-        api_str += common.select_lang(const_str).format(self.get_camel_case_name(),
-                                                        self.get_category(),
+        api_str += common.select_lang(const_str).format(self.get_doc_rst_ref_name(),
+                                                        self.get_csharp_class_name(),
                                                         article,
-                                                        self.get_underscore_name(),
-                                                        self.get_category().lower(),
                                                         self.get_long_display_name())
 
-        ref = '.. _{0}_{1}_csharp_api:\n'.format(self.get_underscore_name(),
-                                                 self.get_category().lower())
-
-        return common.select_lang(api).format(ref, self.replace_csharp_function_links(self.get_api_doc()), api_str)
+        return common.select_lang(api).format(self.get_doc_rst_ref_name(),
+                                              self.replace_csharp_function_links(self.get_api_doc()),
+                                              api_str)
 
     def get_csharp_doc(self):
         doc  = common.make_rst_header(self)

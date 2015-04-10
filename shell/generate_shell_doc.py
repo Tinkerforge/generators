@@ -107,7 +107,7 @@ class ShellDocDevice(shell_common.ShellDevice):
     def get_shell_api(self):
         c_str = {
         'en': """
-.. _{1}_{2}_shell_callbacks:
+.. _{0}_shell_callbacks:
 
 Callbacks
 ^^^^^^^^^
@@ -117,7 +117,7 @@ device:
 
 .. code-block:: bash
 
-    tinkerforge dispatch {3} <uid> example
+    tinkerforge dispatch {1} <uid> example
 
 The available callbacks are described below.
 
@@ -126,10 +126,10 @@ The available callbacks are described below.
  compared to using getters. It will use less USB bandwidth and the latency
  will be a lot better, since there is no round trip time.
 
-{0}
+{2}
 """,
         'de': """
-.. _{1}_{2}_shell_callbacks:
+.. _{0}_shell_callbacks:
 
 Callbacks
 ^^^^^^^^^
@@ -139,7 +139,7 @@ vom Gerät zu erhalten:
 
 .. code-block:: bash
 
-    tinkerforge dispatch {3} <uid> example
+    tinkerforge dispatch {1} <uid> example
 
 Die verfügbaren Callbacks werden weiter unten beschrieben.
 
@@ -149,13 +149,14 @@ Die verfügbaren Callbacks werden weiter unten beschrieben.
  Es wird weniger USB-Bandbreite benutzt und die Latenz ist
  erheblich geringer, da es keine Paketumlaufzeit gibt.
 
-{0}
+{2}
 """
         }
 
         api = {
         'en': """
-{0}
+.. _{0}_shell_api:
+
 API
 ---
 
@@ -249,7 +250,8 @@ The common options of the ``call`` and ``dispatch`` commands are documented
 {2}
 """,
         'de': """
-{0}
+.. _{0}_shell_api:
+
 API
 ---
 
@@ -360,14 +362,11 @@ Befehlsstruktur dargestellt.
         if ccf:
             api_str += common.select_lang(common.ccf_str).format('', ccf)
         if c:
-            api_str += common.select_lang(c_str).format(c, self.get_underscore_name(),
-                                                        self.get_category().lower(),
-                                                        self.get_shell_device_name())
+            api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
+                                                        self.get_shell_device_name(),
+                                                        c)
 
-        ref = '.. _{0}_{1}_shell_api:\n'.format(self.get_underscore_name(),
-                                                self.get_category().lower())
-
-        return common.select_lang(api).format(ref,
+        return common.select_lang(api).format(self.get_doc_rst_ref_name(),
                                               self.replace_shell_function_links(self.get_api_doc()),
                                               api_str,
                                               self.get_shell_device_name(),

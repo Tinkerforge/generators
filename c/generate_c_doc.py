@@ -113,32 +113,32 @@ class CDocDevice(common.Device):
     def get_c_api(self):
         create_str = {
         'en': """
-.. c:function:: void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon)
+.. c:function:: void {1}_create({2} *{1}, const char *uid, IPConnection *ipcon)
 
- Creates the device object ``{0}`` with the unique device ID ``uid`` and adds
+ Creates the device object ``{1}`` with the unique device ID ``uid`` and adds
  it to the IPConnection ``ipcon``:
 
  .. code-block:: c
 
-    {1} {0};
-    {0}_create(&{0}, "YOUR_DEVICE_UID", &ipcon);
+    {2} {1};
+    {1}_create(&{1}, "YOUR_DEVICE_UID", &ipcon);
 
  This device object can be used after the IP connection has been connected
- (see examples :ref:`above <{0}_{2}_c_examples>`).
+ (see examples :ref:`above <{0}_c_examples>`).
 """,
         'de': """
-.. c:function:: void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon)
+.. c:function:: void {1}_create({2} *{1}, const char *uid, IPConnection *ipcon)
 
- Erzeugt ein Geräteobjekt ``{0}`` mit der eindeutigen Geräte ID ``uid`` und
+ Erzeugt ein Geräteobjekt ``{1}`` mit der eindeutigen Geräte ID ``uid`` und
  fügt es der IP Connection ``ipcon`` hinzu:
 
  .. code-block:: c
 
-    {1} {0};
-    {0}_create(&{0}, "YOUR_DEVICE_UID", &ipcon);
+    {2} {1};
+    {1}_create(&{1}, "YOUR_DEVICE_UID", &ipcon);
 
  Dieses Geräteobjekt kann benutzt werden, nachdem die IP Connection verbunden
- wurde (siehe Beispiele :ref:`oben <{0}_{2}_c_examples>`).
+ wurde (siehe Beispiele :ref:`oben <{0}_c_examples>`).
 """
         }
 
@@ -159,35 +159,35 @@ class CDocDevice(common.Device):
 
         register_str = {
         'en': """
-.. c:function:: void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data)
+.. c:function:: void {1}_register_callback({2} *{1}, uint8_t id, void *callback, void *user_data)
 
  Registers a callback with ID ``id`` to the function ``callback``. The
  ``user_data`` will be given as a parameter of the callback.
 
  The available IDs with corresponding function signatures are listed
- :ref:`below <{0}_{2}_c_callbacks>`.
+ :ref:`below <{0}_c_callbacks>`.
 """,
         'de': """
-.. c:function:: void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data)
+.. c:function:: void {1}_register_callback({2} *{1}, uint8_t id, void *callback, void *user_data)
 
  Registriert einen Callback mit der ID ``id`` mit der Funktion ``callback``.
  Der Parameter ``user_data`` wird bei jedem Callback wieder mit übergeben.
 
  Die verfügbaren IDs mit den zugehörigen Funktionssignaturen sind
- :ref:`unten <{0}_{2}_c_callbacks>` zu finden.
+ :ref:`unten <{0}_c_callbacks>` zu finden.
 """
         }
 
         c_str = {
         'en': """
-.. _{0}_{3}_c_callbacks:
+.. _{0}_c_callbacks:
 
 Callbacks
 ^^^^^^^^^
 
 Callbacks can be registered to receive
 time critical or recurring data from the device. The registration is done
-with the :c:func:`{0}_register_callback` function. The parameters consist of
+with the :c:func:`{1}_register_callback` function. The parameters consist of
 the device object, the callback ID, the callback function and optional
 user data:
 
@@ -197,7 +197,7 @@ user data:
         printf("parameter: %d\\n", p);
     }}
 
-    {0}_register_callback(&{0}, {1}_CALLBACK_EXAMPLE, (void *)my_callback, NULL);
+    {1}_register_callback(&{1}, {2}_CALLBACK_EXAMPLE, (void *)my_callback, NULL);
 
 The available constants with corresponding callback function signatures
 are described below.
@@ -207,17 +207,17 @@ are described below.
  compared to using getters. It will use less USB bandwidth and the latency
  will be a lot better, since there is no round trip time.
 
-{2}
+{3}
 """,
         'de': """
-.. _{0}_{3}_c_callbacks:
+.. _{0}_c_callbacks:
 
 Callbacks
 ^^^^^^^^^
 
 Callbacks können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
-mit der Funktion :c:func:`{0}_register_callback` durchgeführt werden. Die
+mit der Funktion :c:func:`{1}_register_callback` durchgeführt werden. Die
 Parameter bestehen aus dem Geräteobjekt, der Callback ID, der Callback Funktion
 und optionalen Benutzer Daten:
 
@@ -227,7 +227,7 @@ und optionalen Benutzer Daten:
         printf("parameter: %d\\n", p);
     }}
 
-    {0}_register_callback(&{0}, {1}_CALLBACK_EXAMPLE, (void *)my_callback, NULL);
+    {1}_register_callback(&{1}, {2}_CALLBACK_EXAMPLE, (void *)my_callback, NULL);
 
 Die verfügbaren IDs mit den zugehörigen Callback Funktionssignaturen
 werden weiter unten beschrieben.
@@ -238,13 +238,14 @@ werden weiter unten beschrieben.
  Es wird weniger USB-Bandbreite benutzt und die Latenz ist
  erheblich geringer, da es keine Paketumlaufzeit gibt.
 
-{2}
+{3}
 """
         }
 
         api = {
         'en': """
-{0}
+.. _{0}_c_api:
+
 API
 ---
 
@@ -277,7 +278,8 @@ All functions listed below are thread-safe.
 {2}
 """,
         'de': """
-{0}
+.. _{0}_c_api:
+
 API
 ---
 
@@ -312,45 +314,44 @@ Alle folgend aufgelisteten Funktionen sind Thread-sicher.
         }
 
         const_str = {
-    'en' : """
-.. _{1}_{4}_c_constants:
+        'en': """
+.. _{0}_c_constants:
 
 Constants
 ^^^^^^^^^
 
-.. c:var:: {0}_DEVICE_IDENTIFIER
+.. c:var:: {1}_DEVICE_IDENTIFIER
 
- This constant is used to identify a {3}.
+ This constant is used to identify a {4}.
 
- The :c:func:`{1}_get_identity` function and the :c:data:`IPCON_CALLBACK_ENUMERATE`
+ The :c:func:`{2}_get_identity` function and the :c:data:`IPCON_CALLBACK_ENUMERATE`
  callback of the IP Connection have a ``device_identifier`` parameter to specify
  the Brick's or Bricklet's type.
 """,
-    'de' : """
-.. _{1}_{4}_c_constants:
+        'de': """
+.. _{0}_c_constants:
 
 Konstanten
 ^^^^^^^^^^
 
-.. c:var:: {0}_DEVICE_IDENTIFIER
+.. c:var:: {1}_DEVICE_IDENTIFIER
 
- Diese Konstante wird verwendet um {2} {3} zu identifizieren.
+ Diese Konstante wird verwendet um {3} {4} zu identifizieren.
 
- Die :c:func:`{1}_get_identity` Funktion und der :c:data:`IPCON_CALLBACK_ENUMERATE`
+ Die :c:func:`{2}_get_identity` Funktion und der :c:data:`IPCON_CALLBACK_ENUMERATE`
  Callback der IP Connection haben ein ``device_identifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 """
         }
 
-        cre = common.select_lang(create_str).format(self.get_underscore_name(),
-                                                    self.get_camel_case_name(),
-                                                    self.get_category().lower())
+        cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
+                                                    self.get_underscore_name(),
+                                                    self.get_camel_case_name())
         des = common.select_lang(destroy_str).format(self.get_underscore_name(),
-                                                     self.get_camel_case_name(),
-                                                     self.get_category().lower())
-        reg = common.select_lang(register_str).format(self.get_underscore_name(),
-                                                      self.get_camel_case_name(),
-                                                      self.get_category().lower())
+                                                     self.get_camel_case_name())
+        reg = common.select_lang(register_str).format(self.get_doc_rst_ref_name(),
+                                                      self.get_underscore_name(),
+                                                      self.get_camel_case_name())
         bf = self.get_c_methods('bf')
         af = self.get_c_methods('af')
         ccf = self.get_c_methods('ccf')
@@ -362,24 +363,23 @@ Konstanten
             api_str += common.select_lang(common.af_str).format(af)
         if c:
             api_str += common.select_lang(common.ccf_str).format(reg, ccf)
-            api_str += common.select_lang(c_str).format(self.get_underscore_name(),
+            api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
+                                                        self.get_underscore_name(),
                                                         self.get_upper_case_name(),
-                                                        c,
-                                                        self.get_category().lower())
+                                                        c)
 
         article = 'ein'
         if self.get_category() == 'Brick':
             article = 'einen'
-        api_str += common.select_lang(const_str).format(self.get_upper_case_name(),
+        api_str += common.select_lang(const_str).format(self.get_doc_rst_ref_name(),
+                                                        self.get_upper_case_name(),
                                                         self.get_underscore_name(),
                                                         article,
-                                                        self.get_long_display_name(),
-                                                        self.get_category().lower())
+                                                        self.get_long_display_name())
 
-        ref = '.. _{0}_{1}_c_api:\n'.format(self.get_underscore_name(),
-                                            self.get_category().lower())
-
-        return common.select_lang(api).format(ref, self.replace_c_function_links(self.get_api_doc()), api_str)
+        return common.select_lang(api).format(self.get_doc_rst_ref_name(),
+                                              self.replace_c_function_links(self.get_api_doc()),
+                                              api_str)
 
     def get_c_doc(self):
         doc  = common.make_rst_header(self)

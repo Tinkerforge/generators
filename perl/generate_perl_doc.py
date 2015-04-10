@@ -111,10 +111,10 @@ class PerlDocDevice(perl_common.PerlDevice):
 
  .. code-block:: perl
 
-    ${0} = {1}->new("YOUR_DEVICE_UID", $ipcon);
+    ${2} = {1}->new("YOUR_DEVICE_UID", $ipcon);
 
  This object can then be used after the IP Connection is connected
- (see examples :ref:`above <{0}_{2}_perl_examples>`).
+ (see examples :ref:`above <{0}_perl_examples>`).
 """,
         'de': """
 .. perl:function:: {1}->new($uid, $ipcon)
@@ -127,10 +127,10 @@ class PerlDocDevice(perl_common.PerlDevice):
 
  .. code-block:: perl
 
-    ${0} = {1}->new("YOUR_DEVICE_UID", $ipcon);
+    ${2} = {1}->new("YOUR_DEVICE_UID", $ipcon);
 
  Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
- (siehe Beispiele :ref:`oben <{0}_{2}_perl_examples>`).
+ (siehe Beispiele :ref:`oben <{0}_perl_examples>`).
 """
         }
 
@@ -144,7 +144,7 @@ class PerlDocDevice(perl_common.PerlDevice):
 
  Registers a callback with ID ``$id`` to the function named ``$callback``. The
  available IDs with corresponding function signatures are listed
- :ref:`below <{0}_{2}_perl_callbacks>`.
+ :ref:`below <{0}_perl_callbacks>`.
 """,
         'de': """
 .. perl:function:: {1}->register_callback($id, $callback)
@@ -155,20 +155,20 @@ class PerlDocDevice(perl_common.PerlDevice):
 
  Registriert einen Callback mit der ID ``$id`` mit der Funktion namens ``$callback``.
  Die verfügbaren IDs mit den zugehörigen Funktionssignaturen sind
- :ref:`unten <{0}_{2}_perl_callbacks>` zu finden.
+ :ref:`unten <{0}_perl_callbacks>` zu finden.
 """
         }
 
         c_str = {
         'en': """
-.. _{1}_{2}_perl_callbacks:
+.. _{0}_perl_callbacks:
 
 Callbacks
 ^^^^^^^^^
 
 Callbacks can be registered to receive
 time critical or recurring data from the device. The registration is done
-with the :perl:func:`register_callback() <{3}->register_callback>` function of
+with the :perl:func:`register_callback() <{1}->register_callback>` function of
 the device object. The first parameter is the callback ID and the second
 parameter the callback function name:
 
@@ -179,7 +179,7 @@ parameter the callback function name:
         print "@_[0]";
     }}
 
-    ${1}->register_callback({3}->CALLBACK_EXAMPLE, 'my_callback')
+    ${2}->register_callback({1}->CALLBACK_EXAMPLE, 'my_callback')
 
 The callback function will be called from an internal thread of the
 IP Connection. In contrast to many other programming languages, variables are
@@ -196,17 +196,17 @@ described below.
  compared to using getters. It will use less USB bandwidth and the latency
  will be a lot better, since there is no round trip time.
 
-{0}
+{3}
 """,
         'de': """
-.. _{1}_{2}_perl_callbacks:
+.. _{0}_perl_callbacks:
 
 Callbacks
 ^^^^^^^^^
 
 Callbacks können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
-mit der Funktion :perl:func:`register_callback() <{3}->register_callback>` des
+mit der Funktion :perl:func:`register_callback() <{1}->register_callback>` des
 Geräte Objektes durchgeführt werden. Der erste Parameter ist die Callback ID
 und der zweite Parameter ist der Name der Callback-Funktion:
 
@@ -217,7 +217,7 @@ und der zweite Parameter ist der Name der Callback-Funktion:
         print "@_[0]";
     }}
 
-    ${1}->register_callback({3}->CALLBACK_EXAMPLE, 'my_callback')
+    ${2}->register_callback({1}->CALLBACK_EXAMPLE, 'my_callback')
 
 Die Callback Funktion wird dann von einem internen Thread der IP Connection
 aufgerufen werden. Im Gegensatz zu vielen anderen Programmiersprachen werden
@@ -237,13 +237,14 @@ weiter unten beschrieben.
  Es wird weniger USB-Bandbreite benutzt und die Latenz ist
  erheblich geringer, da es keine Paketumlaufzeit gibt.
 
-{0}
+{3}
 """
         }
 
         api = {
         'en': """
-{0}
+.. _{0}_perl_api:
+
 API
 ---
 
@@ -268,7 +269,8 @@ All methods listed below are thread-safe.
 {2}
 """,
         'de': """
-{0}
+.. _{0}_perl_api:
+
 API
 ---
 
@@ -295,44 +297,43 @@ Alle folgend aufgelisteten Funktionen sind Thread-sicher.
         }
 
         const_str = {
-        'en' : """
-.. _{2}_{3}_perl_constants:
+        'en': """
+.. _{0}_perl_constants:
 
 Constants
 ^^^^^^^^^
 
-.. perl:attribute:: {0}->DEVICE_IDENTIFIER
+.. perl:attribute:: {1}->DEVICE_IDENTIFIER
 
- This constant is used to identify a {4}.
+ This constant is used to identify a {3}.
 
- The :perl:func:`get_identity() <{0}->get_identity>` function and the
+ The :perl:func:`get_identity() <{1}->get_identity>` function and the
  :perl:attr:`CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
  callback of the IP Connection have a ``device_identifier`` parameter to specify
  the Brick's or Bricklet's type.
 """,
-        'de' : """
-.. _{2}_{3}_perl_constants:
+        'de': """
+.. _{0}_perl_constants:
 
 Konstanten
 ^^^^^^^^^^
 
-.. perl:attribute:: {0}->DEVICE_IDENTIFIER
+.. perl:attribute:: {1}->DEVICE_IDENTIFIER
 
- Diese Konstante wird verwendet um {1} {4} zu identifizieren.
+ Diese Konstante wird verwendet um {2} {3} zu identifizieren.
 
- Die :perl:func:`get_identity() <{0}->get_identity>` Funktion und der
+ Die :perl:func:`get_identity() <{1}->get_identity>` Funktion und der
  :perl:attr:`CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
  Callback der IP Connection haben ein ``device_identifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 """
         }
 
-        cre = common.select_lang(create_str).format(self.get_underscore_name(),
+        cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
                                                     self.get_perl_class_name(),
-                                                    self.get_category().lower())
-        reg = common.select_lang(register_str).format(self.get_underscore_name(),
-                                                      self.get_perl_class_name(),
-                                                      self.get_category().lower())
+                                                    self.get_underscore_name())
+        reg = common.select_lang(register_str).format(self.get_doc_rst_ref_name(),
+                                                      self.get_perl_class_name())
 
         bf = self.get_perl_methods('bf')
         af = self.get_perl_methods('af')
@@ -345,23 +346,22 @@ Konstanten
             api_str += common.select_lang(common.af_str).format(af)
         if c:
             api_str += common.select_lang(common.ccf_str).format(reg, ccf)
-            api_str += common.select_lang(c_str).format(c, self.get_underscore_name(),
-                                                        self.get_category().lower(),
-                                                        self.get_perl_class_name())
+            api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
+                                                        self.get_perl_class_name(),
+                                                        self.get_underscore_name(),
+                                                        c)
 
         article = 'ein'
         if self.get_category() == 'Brick':
             article = 'einen'
-        api_str += common.select_lang(const_str).format(self.get_perl_class_name(),
+        api_str += common.select_lang(const_str).format(self.get_doc_rst_ref_name(),
+                                                        self.get_perl_class_name(),
                                                         article,
-                                                        self.get_underscore_name(),
-                                                        self.get_category().lower(),
                                                         self.get_long_display_name())
 
-        ref = '.. _{0}_{1}_perl_api:\n'.format(self.get_underscore_name(),
-                                               self.get_category().lower())
-
-        return common.select_lang(api).format(ref, self.replace_perl_function_links(self.get_api_doc()), api_str)
+        return common.select_lang(api).format(self.get_doc_rst_ref_name(),
+                                              self.replace_perl_function_links(self.get_api_doc()),
+                                              api_str)
 
     def get_perl_doc(self):
         doc  = common.make_rst_header(self)

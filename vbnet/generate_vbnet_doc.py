@@ -114,34 +114,34 @@ class VBNETDocDevice(common.Device):
     def get_vbnet_api(self):
         create_str = {
         'en': """
-.. vbnet:function:: Class {3}{1}(ByVal uid As String, ByVal ipcon As IPConnection)
+.. vbnet:function:: Class {1}(ByVal uid As String, ByVal ipcon As IPConnection)
 
  Creates an object with the unique device ID ``uid``:
 
  .. code-block:: vbnet
 
-    Dim {4} As New {3}{1}("YOUR_DEVICE_UID", ipcon)
+    Dim {2} As New {1}("YOUR_DEVICE_UID", ipcon)
 
  This object can then be used after the IP Connection is connected
- (see examples :ref:`above <{0}_{2}_vbnet_examples>`).
+ (see examples :ref:`above <{0}_vbnet_examples>`).
 """,
         'de': """
-.. vbnet:function:: Class {3}{1}(ByVal uid As String, ByVal ipcon As IPConnection)
+.. vbnet:function:: Class {1}(ByVal uid As String, ByVal ipcon As IPConnection)
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``:
 
  .. code-block:: vbnet
 
-    Dim {4} As New {3}{1}("YOUR_DEVICE_UID", ipcon)
+    Dim {2} As New {1}("YOUR_DEVICE_UID", ipcon)
 
  Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
- (siehe Beispiele :ref:`oben <{0}_{2}_vbnet_examples>`).
+ (siehe Beispiele :ref:`oben <{0}_vbnet_examples>`).
 """
         }
 
         c_str = {
         'en': """
-.. _{1}_{2}_vbnet_callbacks:
+.. _{0}_vbnet_callbacks:
 
 Callbacks
 ^^^^^^^^^
@@ -152,11 +152,11 @@ property of the device object:
 
  .. code-block:: vbnet
 
-    Sub Callback(ByVal sender As {3}{4}, ByVal value As Short)
+    Sub Callback(ByVal sender As {1}, ByVal value As Short)
         Console.WriteLine("Value: {{0}}", value)
     End Sub
 
-    AddHandler {5}.Example, AddressOf Callback
+    AddHandler {2}.Example, AddressOf Callback
 
 The available callback property and their type of parameters are described below.
 
@@ -165,10 +165,10 @@ The available callback property and their type of parameters are described below
  compared to using getters. It will use less USB bandwidth and the latency
  will be a lot better, since there is no round trip time.
 
-{0}
+{3}
 """,
         'de': """
-.. _{1}_{2}_vbnet_callbacks:
+.. _{0}_vbnet_callbacks:
 
 Callbacks
 ^^^^^^^^^
@@ -179,11 +179,11 @@ eine Prozedur einem Callback Property des Geräte Objektes zugewiesen wird:
 
  .. code-block:: vbnet
 
-    Sub Callback(ByVal sender As {3}{4}, ByVal value As Short)
+    Sub Callback(ByVal sender As {1}, ByVal value As Short)
         Console.WriteLine("Value: {{0}}", value)
     End Sub
 
-    AddHandler {5}.Example, AddressOf Callback
+    AddHandler {2}.Example, AddressOf Callback
 
 Die verfügbaren Callback Properties und ihre Parametertypen werden weiter
 unten beschrieben.
@@ -194,13 +194,14 @@ unten beschrieben.
  Es wird weniger USB-Bandbreite benutzt und die Latenz ist
  erheblich geringer, da es keine Paketumlaufzeit gibt.
 
-{0}
+{3}
 """
         }
 
         api = {
         'en': """
-{0}
+.. _{0}_vbnet_api:
+
 API
 ---
 
@@ -214,7 +215,8 @@ All functions and procedures listed below are thread-safe.
 {2}
 """,
         'de': """
-{0}
+.. _{0}_vbnet_api:
+
 API
 ---
 
@@ -230,42 +232,40 @@ Alle folgend aufgelisteten Funktionen und Prozeduren sind Thread-sicher.
         }
 
         const_str = {
-        'en' : """
-.. _{3}_{4}_vbnet_constants:
+        'en': """
+.. _{0}_vbnet_constants:
 
 Constants
 ^^^^^^^^^
 
-.. vbnet:attribute:: Const {1}{0}.DEVICE_IDENTIFIER
+.. vbnet:attribute:: Const {1}.DEVICE_IDENTIFIER
 
- This constant is used to identify a {5}.
+ This constant is used to identify a {3}.
 
- The :vbnet:func:`GetIdentity() <{1}{0}.GetIdentity>` function and the
+ The :vbnet:func:`GetIdentity() <{1}.GetIdentity>` function and the
  :vbnet:func:`EnumerateCallback <IPConnection.EnumerateCallback>`
  callback of the IP Connection have a ``deviceIdentifier`` parameter to specify
  the Brick's or Bricklet's type.
 """,
-        'de' : """
-.. _{3}_{4}_vbnet_constants:
+        'de': """
+.. _{0}_vbnet_constants:
 
 Konstanten
 ^^^^^^^^^^
 
-.. vbnet:attribute:: Const {1}{0}.DEVICE_IDENTIFIER
+.. vbnet:attribute:: Const {1}.DEVICE_IDENTIFIER
 
- Diese Konstante wird verwendet um {2} {5} zu identifizieren.
+ Diese Konstante wird verwendet um {2} {3} zu identifizieren.
 
- Die :vbnet:func:`GetIdentity() <{1}{0}.GetIdentity>` Funktion und der
+ Die :vbnet:func:`GetIdentity() <{1}.GetIdentity>` Funktion und der
  :vbnet:func:`EnumerateCallback <IPConnection.EnumerateCallback>`
  Callback der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 """
         }
 
-        cre = common.select_lang(create_str).format(self.get_underscore_name(),
-                                                    self.get_camel_case_name(),
-                                                    self.get_category().lower(),
-                                                    self.get_category(),
+        cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
+                                                    self.get_vbnet_class_name(),
                                                     self.get_headless_camel_case_name())
 
         bf = self.get_vbnet_methods('bf')
@@ -280,26 +280,22 @@ Konstanten
         if ccf:
             api_str += common.select_lang(common.ccf_str).format('', ccf)
         if c:
-            api_str += common.select_lang(c_str).format(c, self.get_underscore_name(),
-                                                        self.get_category().lower(),
-                                                        self.get_category(),
-                                                        self.get_camel_case_name(),
-                                                        self.get_headless_camel_case_name())
+            api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
+                                                        self.get_vbnet_class_name(),
+                                                        self.get_headless_camel_case_name(),
+                                                        c)
 
         article = 'ein'
         if self.get_category() == 'Brick':
             article = 'einen'
-        api_str += common.select_lang(const_str).format(self.get_camel_case_name(),
-                                                        self.get_category(),
+        api_str += common.select_lang(const_str).format(self.get_doc_rst_ref_name(),
+                                                        self.get_vbnet_class_name(),
                                                         article,
-                                                        self.get_underscore_name(),
-                                                        self.get_category().lower(),
                                                         self.get_long_display_name())
 
-        ref = '.. _{0}_{1}_vbnet_api:\n'.format(self.get_underscore_name(),
-                                                self.get_category().lower())
-
-        return common.select_lang(api).format(ref, self.replace_vbnet_function_links(self.get_api_doc()), api_str)
+        return common.select_lang(api).format(self.get_doc_rst_ref_name(),
+                                              self.replace_vbnet_function_links(self.get_api_doc()),
+                                              api_str)
 
     def get_vbnet_doc(self):
         doc  = common.make_rst_header(self)

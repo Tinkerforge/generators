@@ -113,34 +113,34 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
     def get_delphi_api(self):
         create_str = {
         'en': """
-.. delphi:function:: constructor T{3}{1}.Create(const uid: string; ipcon: TIPConnection)
+.. delphi:function:: constructor {1}.Create(const uid: string; ipcon: TIPConnection)
 
  Creates an object with the unique device ID ``uid``:
 
  .. code-block:: delphi
 
-    {4} := T{3}{1}.Create('YOUR_DEVICE_UID', ipcon);
+    {2} := {1}.Create('YOUR_DEVICE_UID', ipcon);
 
  This object can then be used after the IP Connection is connected
- (see examples :ref:`above <{0}_{2}_delphi_examples>`).
+ (see examples :ref:`above <{0}_delphi_examples>`).
 """,
         'de': """
-.. delphi:function:: constructor T{3}{1}.Create(const uid: string; ipcon: TIPConnection)
+.. delphi:function:: constructor {1}.Create(const uid: string; ipcon: TIPConnection)
 
  Erzeugt ein Objekt mit der eindeutigen Geräte ID ``uid``:
 
  .. code-block:: delphi
 
-    {4} := T{3}{1}.Create('YOUR_DEVICE_UID', ipcon);
+    {2} := {1}.Create('YOUR_DEVICE_UID', ipcon);
 
  Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
- (siehe Beispiele :ref:`oben <{0}_{2}_delphi_examples>`).
+ (siehe Beispiele :ref:`oben <{0}_delphi_examples>`).
 """
         }
 
         c_str = {
         'en': """
-.. _{1}_{2}_delphi_callbacks:
+.. _{0}_delphi_callbacks:
 
 Callbacks
 ^^^^^^^^^
@@ -151,12 +151,12 @@ property of the device object:
 
  .. code-block:: delphi
 
-  procedure TExample.MyCallback(sender: {3}; const param: word);
+  procedure TExample.MyCallback(sender: {1}; const param: word);
   begin
     WriteLn(param);
   end;
 
-  {4}.OnExample := {{$ifdef FPC}}@{{$endif}}example.MyCallback;
+  {2}.OnExample := {{$ifdef FPC}}@{{$endif}}example.MyCallback;
 
 The available callback property and their type of parameters are described below.
 
@@ -165,10 +165,10 @@ The available callback property and their type of parameters are described below
  compared to using getters. It will use less USB bandwidth and the latency
  will be a lot better, since there is no round trip time.
 
-{0}
+{3}
 """,
         'de': """
-.. _{1}_{2}_delphi_callbacks:
+.. _{0}_delphi_callbacks:
 
 Callbacks
 ^^^^^^^^^
@@ -179,12 +179,12 @@ eine Prozedur einem Callback Property des Geräte Objektes zugewiesen wird:
 
  .. code-block:: delphi
 
-  procedure TExample.MyCallback(sender: {3}; const param: word);
+  procedure TExample.MyCallback(sender: {1}; const param: word);
   begin
     WriteLn(param);
   end;
 
-  {4}.OnExample := {{$ifdef FPC}}@{{$endif}}example.MyCallback;
+  {2}.OnExample := {{$ifdef FPC}}@{{$endif}}example.MyCallback;
 
 Die verfügbaren Callback Properties und ihre Parametertypen werden weiter
 unten beschrieben.
@@ -195,13 +195,14 @@ unten beschrieben.
  Es wird weniger USB-Bandbreite benutzt und die Latenz ist
  erheblich geringer, da es keine Paketumlaufzeit gibt.
 
-{0}
+{3}
 """
         }
 
         api = {
         'en': """
-{0}
+.. _{0}_delphi_api:
+
 API
 ---
 
@@ -215,7 +216,8 @@ All functions and procedures listed below are thread-safe.
 {2}
 """,
         'de': """
-{0}
+.. _{0}_delphi_api:
+
 API
 ---
 
@@ -231,42 +233,40 @@ Alle folgend aufgelisteten Funktionen und Prozeduren sind Thread-sicher.
         }
 
         const_str = {
-        'en' : """
-.. _{5}_{6}_delphi_constants:
+        'en': """
+.. _{0}_delphi_constants:
 
 Constants
 ^^^^^^^^^
 
-.. delphi:function:: const {1}_{0}_DEVICE_IDENTIFIER
+.. delphi:function:: const {1}_{2}_DEVICE_IDENTIFIER
 
- This constant is used to identify a {7}.
+ This constant is used to identify a {4}.
 
- The :delphi:func:`GetIdentity <T{4}{3}.GetIdentity>` function and the
+ The :delphi:func:`GetIdentity <{5}.GetIdentity>` function and the
  :delphi:func:`OnEnumerate <TIPConnection.OnEnumerate>`
  callback of the IP Connection have a ``deviceIdentifier`` parameter to specify
  the Brick's or Bricklet's type.
 """,
-        'de' : """
-.. _{5}_{6}_delphi_constants:
+        'de': """
+.. _{0}_delphi_constants:
 
 Konstanten
 ^^^^^^^^^^
 
-.. delphi:function:: const {1}_{0}_DEVICE_IDENTIFIER
+.. delphi:function:: const {1}_{2}_DEVICE_IDENTIFIER
 
- Diese Konstante wird verwendet um {2} {7} zu identifizieren.
+ Diese Konstante wird verwendet um {3} {4} zu identifizieren.
 
- Die :delphi:func:`GetIdentity <T{4}{3}.GetIdentity>` Funktion und der
+ Die :delphi:func:`GetIdentity <{5}.GetIdentity>` Funktion und der
  :delphi:func:`OnEnumerate <TIPConnection.OnEnumerate>`
  Callback der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 """
         }
 
-        cre = common.select_lang(create_str).format(self.get_underscore_name(),
-                                                    self.get_camel_case_name(),
-                                                    self.get_category().lower(),
-                                                    self.get_category(),
+        cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
+                                                    self.get_delphi_class_name(),
                                                     self.get_headless_camel_case_name())
 
         bf = self.get_delphi_methods('bf')
@@ -280,27 +280,24 @@ Konstanten
             api_str += common.select_lang(common.af_str).format(af)
         if c:
             api_str += common.select_lang(common.ccf_str).format(ccf, '')
-            api_str += common.select_lang(c_str).format(c, self.get_underscore_name(),
-                                                        self.get_category().lower(),
+            api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_delphi_class_name(),
-                                                        self.get_headless_camel_case_name())
+                                                        self.get_headless_camel_case_name(),
+                                                        c)
 
         article = 'ein'
         if self.get_category() == 'Brick':
             article = 'einen'
-        api_str += common.select_lang(const_str).format(self.get_upper_case_name(),
+        api_str += common.select_lang(const_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_category().upper(),
+                                                        self.get_upper_case_name(),
                                                         article,
-                                                        self.get_camel_case_name(),
-                                                        self.get_category(),
-                                                        self.get_underscore_name(),
-                                                        self.get_category().lower(),
-                                                        self.get_long_display_name())
+                                                        self.get_long_display_name(),
+                                                        self.get_delphi_class_name())
 
-        ref = '.. _{0}_{1}_delphi_api:\n'.format(self.get_underscore_name(),
-                                                 self.get_category().lower())
-
-        return common.select_lang(api).format(ref, self.replace_delphi_function_links(self.get_api_doc()), api_str)
+        return common.select_lang(api).format(self.get_doc_rst_ref_name(),
+                                              self.replace_delphi_function_links(self.get_api_doc()),
+                                              api_str)
 
     def get_delphi_doc(self):
         doc  = common.make_rst_header(self)

@@ -150,10 +150,10 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
 
  .. code-block:: javascript
 
-    var {3} = new {1}("YOUR_DEVICE_UID", ipcon);
+    var {2} = new {1}("YOUR_DEVICE_UID", ipcon);
 
  This object can then be used after the IP Connection is connected
- (see examples :ref:`above <{0}_{2}_javascript_examples>`).
+ (see examples :ref:`above <{0}_javascript_examples>`).
 """,
         'de': """
 .. javascript:function:: new {1}(uid, ipcon)
@@ -165,10 +165,10 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
 
  .. code-block:: javascript
 
-    var {3} = new {1}("YOUR_DEVICE_UID", ipcon)
+    var {2} = new {1}("YOUR_DEVICE_UID", ipcon)
 
  Dieses Objekt kann benutzt werden, nachdem die IP Connection verbunden ist
- (siehe Beispiele :ref:`oben <{0}_{2}_javascript_examples>`).
+ (siehe Beispiele :ref:`oben <{0}_javascript_examples>`).
 """
         }
 
@@ -181,7 +181,7 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
 
  Registers a callback with ID *id* to the function *callback*. The available
  IDs with corresponding function signatures are listed
- :ref:`below <{0}_{2}_javascript_callbacks>`.
+ :ref:`below <{0}_javascript_callbacks>`.
 """,
         'de': """
 .. javascript:function:: {1}.on(id, callback)
@@ -191,26 +191,26 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
 
  Registriert einen Callback mit der ID *id* mit der Funktion *callback*. Die
  verfügbaren IDs mit den zugehörigen Funktionssignaturen sind
- :ref:`unten <{0}_{2}_javascript_callbacks>` zu finden.
+ :ref:`unten <{0}_javascript_callbacks>` zu finden.
 """
         }
 
         c_str = {
         'en': """
-.. _{1}_{2}_javascript_callbacks:
+.. _{0}_javascript_callbacks:
 
 Callbacks
 ^^^^^^^^^
 
 Callbacks can be registered to receive
 time critical or recurring data from the device. The registration is done
-with the :javascript:func:`on() <{3}.on>` function of
+with the :javascript:func:`on() <{1}.on>` function of
 the device object. The first parameter is the callback ID and the second
 parameter the callback function:
 
 .. code-block:: javascript
 
-    {4}.on({3}.CALLBACK_EXAMPLE,
+    {2}.on({1}.CALLBACK_EXAMPLE,
         function (param) {{
             console.log(param);
         }}
@@ -224,23 +224,23 @@ described below.
  compared to using getters. It will use less USB bandwidth and the latency
  will be a lot better, since there is no round trip time.
 
-{0}
+{3}
 """,
         'de': """
-.. _{1}_{2}_javascript_callbacks:
+.. _{0}_javascript_callbacks:
 
 Callbacks
 ^^^^^^^^^
 
 Callbacks können registriert werden um zeitkritische
 oder wiederkehrende Daten vom Gerät zu erhalten. Die Registrierung kann
-mit der Funktion :javascript:func:`on() <{3}.on>` des
+mit der Funktion :javascript:func:`on() <{1}.on>` des
 Geräte Objektes durchgeführt werden. Der erste Parameter ist die Callback ID
 und der zweite Parameter die Callback-Funktion:
 
 .. code-block:: javascript
 
-    {4}.on({3}.CALLBACK_EXAMPLE,
+    {2}.on({1}.CALLBACK_EXAMPLE,
         function (param) {{
             console.log(param);
         }}
@@ -255,13 +255,14 @@ weiter unten beschrieben.
  Es wird weniger USB-Bandbreite benutzt und die Latenz ist
  erheblich geringer, da es keine Paketumlaufzeit gibt.
 
-{0}
+{3}
 """
         }
 
         api = {
         'en': """
-{0}
+.. _{0}_javascript_api:
+
 API
 ---
 
@@ -288,7 +289,8 @@ The namespace for the JavaScript bindings is ``Tinkerforge.*``.
 {2}
 """,
         'de': """
-{0}
+.. _{0}_javascript_api:
+
 API
 ---
 
@@ -317,45 +319,43 @@ Der Namespace der JavaScript Bindings ist ``Tinkerforge.*``.
         }
 
         const_str = {
-        'en' : """
-.. _{3}_{4}_javascript_constants:
+        'en': """
+.. _{0}_javascript_constants:
 
 Constants
 ^^^^^^^^^
 
-.. javascript:attribute:: {0}.DEVICE_IDENTIFIER
+.. javascript:attribute:: {1}.DEVICE_IDENTIFIER
 
- This constant is used to identify a {2}.
+ This constant is used to identify a {3}.
 
- The :javascript:func:`getIdentity() <{0}.getIdentity>` function and the
+ The :javascript:func:`getIdentity() <{1}.getIdentity>` function and the
  :javascript:attr:`CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
  callback of the IP Connection have a ``device_identifier`` parameter to specify
  the Brick's or Bricklet's type.
 """,
-        'de' : """
-.. _{3}_{4}_javascript_constants:
+        'de': """
+.. _{0}_javascript_constants:
 
 Konstanten
 ^^^^^^^^^^
 
-.. javascript:attribute:: {0}.DEVICE_IDENTIFIER
+.. javascript:attribute:: {1}.DEVICE_IDENTIFIER
 
- Diese Konstante wird verwendet um {1} {2} zu identifizieren.
+ Diese Konstante wird verwendet um {2} {3} zu identifizieren.
 
- Die :javascript:func:`getIdentity() <{0}.getIdentity>` Funktion und der
+ Die :javascript:func:`getIdentity() <{1}.getIdentity>` Funktion und der
  :javascript:attr:`CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
  Callback der IP Connection haben ein ``device_identifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
 """
         }
 
-        cre = common.select_lang(create_str).format(self.get_underscore_name(),
+        cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
                                                     self.get_javascript_class_name(),
-                                                    self.get_category().lower(),
                                                     self.get_headless_camel_case_name())
-        reg = common.select_lang(register_str).format(self.get_underscore_name(),
-                                                      self.get_javascript_class_name(),
-                                                      self.get_category().lower())
+        reg = common.select_lang(register_str).format(self.get_doc_rst_ref_name(),
+                                                      self.get_javascript_class_name())
 
         bf = self.get_javascript_methods('bf')
         af = self.get_javascript_methods('af')
@@ -368,24 +368,22 @@ Konstanten
             api_str += common.select_lang(common.af_str).format(af)
         if c:
             api_str += common.select_lang(common.ccf_str).format(reg, ccf)
-            api_str += common.select_lang(c_str).format(c, self.get_underscore_name(),
-                                                        self.get_category().lower(),
+            api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_javascript_class_name(),
-                                                        self.get_headless_camel_case_name())
+                                                        self.get_headless_camel_case_name(),
+                                                        c)
 
         article = 'ein'
         if self.get_category() == 'Brick':
             article = 'einen'
-        api_str += common.select_lang(const_str).format(self.get_javascript_class_name(),
+        api_str += common.select_lang(const_str).format(self.get_doc_rst_ref_name(),
+                                                        self.get_javascript_class_name(),
                                                         article,
-                                                        self.get_long_display_name(),
-                                                        self.get_underscore_name(),
-                                                        self.get_category().lower())
+                                                        self.get_long_display_name())
 
-        ref = '.. _{0}_{1}_javascript_api:\n'.format(self.get_underscore_name(),
-                                                 self.get_category().lower())
-
-        return common.select_lang(api).format(ref, self.replace_javascript_function_links(self.get_api_doc()), api_str)
+        return common.select_lang(api).format(self.get_doc_rst_ref_name(),
+                                              self.replace_javascript_function_links(self.get_api_doc()),
+                                              api_str)
 
     def get_javascript_doc(self):
         doc  = common.make_rst_header(self)
