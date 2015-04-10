@@ -4,7 +4,7 @@
 """
 JavaScript Documentation Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_javascript_doc.py: Generator for JavaScript documentation
 
@@ -318,14 +318,14 @@ Der Namespace der JavaScript Bindings ist ``Tinkerforge.*``.
 
         const_str = {
         'en' : """
-.. _{4}_{5}_javascript_constants:
+.. _{3}_{4}_javascript_constants:
 
 Constants
 ^^^^^^^^^
 
 .. javascript:attribute:: {0}.DEVICE_IDENTIFIER
 
- This constant is used to identify a {2} {3}.
+ This constant is used to identify a {2}.
 
  The :javascript:func:`getIdentity() <{0}.getIdentity>` function and the
  :javascript:attr:`CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
@@ -333,14 +333,14 @@ Constants
  the Brick's or Bricklet's type.
 """,
         'de' : """
-.. _{4}_{5}_javascript_constants:
+.. _{3}_{4}_javascript_constants:
 
 Konstanten
 ^^^^^^^^^^
 
 .. javascript:attribute:: {0}.DEVICE_IDENTIFIER
 
- Diese Konstante wird verwendet um {1} {2} {3} zu identifizieren.
+ Diese Konstante wird verwendet um {1} {2} zu identifizieren.
 
  Die :javascript:func:`getIdentity() <{0}.getIdentity>` Funktion und der
  :javascript:attr:`CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
@@ -378,8 +378,7 @@ Konstanten
             article = 'einen'
         api_str += common.select_lang(const_str).format(self.get_javascript_class_name(),
                                                         article,
-                                                        self.get_display_name(),
-                                                        self.get_category(),
+                                                        self.get_long_display_name(),
                                                         self.get_underscore_name(),
                                                         self.get_category().lower())
 

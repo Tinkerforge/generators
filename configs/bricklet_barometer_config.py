@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 221,
-    'name': ('Barometer', 'barometer', 'Barometer'),
+    'name': ('Barometer', 'barometer', 'Barometer', 'Barometer Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing air pressure and altitude changes',
     'released': True,

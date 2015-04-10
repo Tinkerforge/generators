@@ -109,7 +109,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Brick',
     'device_identifier': 17,
-    'name': ('RED', 'red', 'RED'),
+    'name': ('RED', 'red', 'RED', 'RED Brick'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for executing user programs standalone',
     'released': True,

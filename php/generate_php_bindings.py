@@ -3,7 +3,7 @@
 
 """
 PHP Bindings Generator
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_php_bindings.py: Generator for PHP bindings
@@ -105,8 +105,8 @@ class {0} extends Device
 
     def get_php_device_display_name(self):
         return """
-    const DEVICE_DISPLAY_NAME = "{0} {1}";
-""".format(self.get_display_name(), self.get_category())
+    const DEVICE_DISPLAY_NAME = "{0}";
+""".format(self.get_long_display_name())
 
     def get_php_constructor(self):
         con = """

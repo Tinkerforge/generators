@@ -4,6 +4,7 @@
 """
 MATLAB Bindings Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_matlab_bindings.py: Generator for MATLAB bindings
 

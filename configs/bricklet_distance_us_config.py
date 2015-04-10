@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 229,
-    'name': ('DistanceUS', 'distance_us', 'Distance US'),
+    'name': ('DistanceUS', 'distance_us', 'Distance US', 'Distance US Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing distance via ultrasound',
     'released': True,

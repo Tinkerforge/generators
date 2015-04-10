@@ -4,7 +4,7 @@
 """
 Perl Bindings Generator
 Copyright (C) 2013-2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_perl_bindings.py: Generator for Perl bindings
 
@@ -74,7 +74,7 @@ use Tinkerforge::Error;
 
 =item DEVICE_IDENTIFIER
 
-This constant is used to identify a {1} {2}.
+This constant is used to identify a {1}.
 
 The get_identity() subroutine and the CALLBACK_ENUMERATE callback of the
 IP Connection have a device_identifier parameter to specify the Brick's or
@@ -86,14 +86,13 @@ use constant DEVICE_IDENTIFIER => {0};
 
 =item DEVICE_DISPLAY_NAME
 
-This constant represents the display name of a {1} {2}.
+This constant represents the display name of a {1}.
 
 =cut
 
-use constant DEVICE_DISPLAY_NAME => '{1} {2}';
+use constant DEVICE_DISPLAY_NAME => '{1}';
 """.format(self.get_device_identifier(),
-           self.get_display_name(),
-           self.get_category())
+           self.get_long_display_name())
 
     def get_perl_constants(self):
         callbacks = []

@@ -3,7 +3,7 @@
 
 """
 PHP Documentation Generator
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_php_doc.py: Generator for PHP documentation
@@ -268,31 +268,31 @@ zurück.
 
         const_str = {
         'en' : """
-.. _{5}_{6}_php_constants:
+.. _{3}_{4}_php_constants:
 
 Constants
 ^^^^^^^^^
 
 .. php:member:: int {1}{0}::DEVICE_IDENTIFIER
 
- This constant is used to identify a {7} {4}.
+ This constant is used to identify a {5}.
 
- The :php:func:`getIdentity() <{4}{3}::getIdentity>` function and the
+ The :php:func:`getIdentity() <{1}{0}::getIdentity>` function and the
  :php:member:`CALLBACK_ENUMERATE <IPConnection::CALLBACK_ENUMERATE>`
  callback of the IP Connection have a ``deviceIdentifier`` parameter to specify
  the Brick's or Bricklet's type.
 """,
         'de' : """
-.. _{5}_{6}_php_constants:
+.. _{3}_{4}_php_constants:
 
 Konstanten
 ^^^^^^^^^^
 
 .. php:member:: int {1}{0}::DEVICE_IDENTIFIER
 
- Diese Konstante wird verwendet um {2} {7} {4} zu identifizieren.
+ Diese Konstante wird verwendet um {2} {5} zu identifizieren.
 
- Die :php:func:`getIdentity() <{4}{3}::getIdentity>` Funktion und der
+ Die :php:func:`getIdentity() <{1}{0}::getIdentity>` Funktion und der
  :php:func:`CALLBACK_ENUMERATE <IPConnection::CALLBACK_ENUMERATE>`
  Callback der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
@@ -330,11 +330,9 @@ Konstanten
         api_str += common.select_lang(const_str).format(self.get_camel_case_name(),
                                                         self.get_category(),
                                                         article,
-                                                        self.get_camel_case_name(),
-                                                        self.get_category(),
                                                         self.get_underscore_name(),
                                                         self.get_category().lower(),
-                                                        self.get_display_name())
+                                                        self.get_long_display_name())
 
         ref = '.. _{0}_{1}_php_api:\n'.format(self.get_underscore_name(),
                                               self.get_category().lower())

@@ -3,7 +3,7 @@
 
 """
 C# Documentation Generator
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_csharp_doc.py: Generator for C# documentation
@@ -252,7 +252,7 @@ Constants
 
 .. csharp:member:: public int {1}{0}::DEVICE_IDENTIFIER
 
- This constant is used to identify a {5} {1}.
+ This constant is used to identify a {5}.
 
  The :csharp:func:`GetIdentity() <{1}{0}::GetIdentity>` function and the
  :csharp:func:`EnumerateCallback <IPConnection::EnumerateCallback>`
@@ -267,7 +267,7 @@ Konstanten
 
 .. csharp:member:: public int {1}{0}::DEVICE_IDENTIFIER
 
- Diese Konstante wird verwendet um {2} {5} {1} zu identifizieren.
+ Diese Konstante wird verwendet um {2} {5} zu identifizieren.
 
  Die :csharp:func:`GetIdentity() <{1}{0}::GetIdentity>` Funktion und der
  :csharp:func:`EnumerateCallback <IPConnection::EnumerateCallback>`
@@ -306,7 +306,7 @@ Konstanten
                                                         article,
                                                         self.get_underscore_name(),
                                                         self.get_category().lower(),
-                                                        self.get_display_name())
+                                                        self.get_long_display_name())
 
         ref = '.. _{0}_{1}_csharp_api:\n'.format(self.get_underscore_name(),
                                                  self.get_category().lower())

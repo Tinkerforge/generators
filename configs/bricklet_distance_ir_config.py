@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 25,
-    'name': ('DistanceIR', 'distance_ir', 'Distance IR'),
+    'name': ('DistanceIR', 'distance_ir', 'Distance IR', 'Distance IR Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing distance via infrared',
     'released': True,

@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 222,
-    'name': ('GPS', 'gps', 'GPS'),
+    'name': ('GPS', 'gps', 'GPS', 'GPS Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for receiving GPS position',
     'released': True,

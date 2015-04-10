@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 252,
-    'name': ('GasDetector', 'gas_detector', 'Gas Detector'),
+    'name': ('GasDetector', 'gas_detector', 'Gas Detector', 'Gas Detector Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing different gases',
     'released': False,

@@ -3,7 +3,7 @@
 
 """
 C/C++ Documentation Generator
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_c_doc.py: Generator for C/C++ documentation
@@ -313,28 +313,28 @@ Alle folgend aufgelisteten Funktionen sind Thread-sicher.
 
         const_str = {
     'en' : """
-.. _{1}_{5}_c_constants:
+.. _{1}_{4}_c_constants:
 
 Constants
 ^^^^^^^^^
 
 .. c:var:: {0}_DEVICE_IDENTIFIER
 
- This constant is used to identify a {3} {4}.
+ This constant is used to identify a {3}.
 
  The :c:func:`{1}_get_identity` function and the :c:data:`IPCON_CALLBACK_ENUMERATE`
  callback of the IP Connection have a ``device_identifier`` parameter to specify
  the Brick's or Bricklet's type.
 """,
     'de' : """
-.. _{1}_{5}_c_constants:
+.. _{1}_{4}_c_constants:
 
 Konstanten
 ^^^^^^^^^^
 
 .. c:var:: {0}_DEVICE_IDENTIFIER
 
- Diese Konstante wird verwendet um {2} {3} {4} zu identifizieren.
+ Diese Konstante wird verwendet um {2} {3} zu identifizieren.
 
  Die :c:func:`{1}_get_identity` Funktion und der :c:data:`IPCON_CALLBACK_ENUMERATE`
  Callback der IP Connection haben ein ``device_identifier`` Parameter um den Typ
@@ -373,8 +373,7 @@ Konstanten
         api_str += common.select_lang(const_str).format(self.get_upper_case_name(),
                                                         self.get_underscore_name(),
                                                         article,
-                                                        self.get_display_name(),
-                                                        self.get_category(),
+                                                        self.get_long_display_name(),
                                                         self.get_category().lower())
 
         ref = '.. _{0}_{1}_c_api:\n'.format(self.get_underscore_name(),

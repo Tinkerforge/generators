@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 238,
-    'name': ('SoundIntensity', 'sound_intensity', 'Sound Intensity'),
+    'name': ('SoundIntensity', 'sound_intensity', 'Sound Intensity', 'Sound Intensity Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing sound intensity',
     'released': True,

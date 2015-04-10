@@ -3,7 +3,7 @@
 
 """
 Ruby Bindings Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_ruby.py: Generator for Ruby bindings
@@ -49,12 +49,11 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
   # {1}
   class {0} < Device
     DEVICE_IDENTIFIER = {2} # :nodoc:
-    DEVICE_DISPLAY_NAME = '{3} {4}' # :nodoc:
+    DEVICE_DISPLAY_NAME = '{3}' # :nodoc:
 """.format(self.get_ruby_class_name(),
            self.get_description(),
            self.get_device_identifier(),
-           self.get_display_name(),
-           self.get_category())
+           self.get_long_display_name())
 
     def get_ruby_callback_id_definitions(self):
         cbs = ''

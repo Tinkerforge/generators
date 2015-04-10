@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 224,
-    'name': ('IndustrialDigitalOut4', 'industrial_digital_out_4', 'Industrial Digital Out 4'),
+    'name': ('IndustrialDigitalOut4', 'industrial_digital_out_4', 'Industrial Digital Out 4', 'Industrial Digital Out 4 Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling up to 4 optically coupled digital outputs',
     'released': True,

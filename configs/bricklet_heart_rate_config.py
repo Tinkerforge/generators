@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 245,
-    'name': ('HeartRate', 'heart_rate', 'Heart Rate'),
+    'name': ('HeartRate', 'heart_rate', 'Heart Rate', 'Heart Rate Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing heart rate',
     'released': False,

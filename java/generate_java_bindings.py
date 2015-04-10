@@ -3,7 +3,7 @@
 
 """
 Java Bindings Generator
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_java_bindings.py: Generator for Java bindings
@@ -68,15 +68,14 @@ import java.util.List;
  */
 public class {0} extends Device {{
 \tpublic final static int DEVICE_IDENTIFIER = {2};
-\tpublic final static String DEVICE_DISPLAY_NAME = "{3} {4}";
+\tpublic final static String DEVICE_DISPLAY_NAME = "{3}";
 
 """
 
         return class_str.format(self.get_java_class_name(),
                                 self.get_description(),
                                 self.get_device_identifier(),
-                                self.get_display_name(),
-                                self.get_category())
+                                self.get_long_display_name())
 
     def get_matlab_callback_data_objects(self):
         objs = ''

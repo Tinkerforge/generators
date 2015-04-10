@@ -3,7 +3,7 @@
 
 """
 Shell Documentation Generator
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_shell_doc.py: Generator for Shell documentation
@@ -282,11 +282,11 @@ Befehlsstruktur dargestellt.
  :param <uid>: string
  :param <function>: string
 
- Der ``call`` Befehl wird verwendet um eine Funktion des {4}s aufzurufen. Der
+ Der ``call`` Befehl wird verwendet um eine Funktion des {4} aufzurufen. Der
  Befehl kennt mehrere Optionen:
 
  * ``--help`` zeigt Hilfe für den spezifischen ``call`` Befehl an und endet dann
- * ``--list-functions`` zeigt eine Liste der bekannten Funktionen des {4}s an
+ * ``--list-functions`` zeigt eine Liste der bekannten Funktionen des {4} an
    und endet dann
 
 
@@ -295,12 +295,12 @@ Befehlsstruktur dargestellt.
  :param <uid>: string
  :param <callback>: string
 
- Der ``dispatch`` Befehl wird verwendet um eingehende Callbacks des {4}s
+ Der ``dispatch`` Befehl wird verwendet um eingehende Callbacks des {4}
  abzufertigen. Der Befehl kennt mehrere Optionen:
 
  * ``--help`` zeigt Hilfe für den spezifischen ``dispatch`` Befehl an und endet
    dann
- * ``--list-callbacks`` zeigt eine Liste der bekannten Callbacks des {4}s an
+ * ``--list-callbacks`` zeigt eine Liste der bekannten Callbacks des {4} an
    und endet dann
 
 
@@ -367,9 +367,11 @@ Befehlsstruktur dargestellt.
         ref = '.. _{0}_{1}_shell_api:\n'.format(self.get_underscore_name(),
                                                 self.get_category().lower())
 
-        return common.select_lang(api).format(ref, self.replace_shell_function_links(self.get_api_doc()),
-                                              api_str, self.get_shell_device_name(),
-                                              self.get_display_name() + ' ' + self.get_category())
+        return common.select_lang(api).format(ref,
+                                              self.replace_shell_function_links(self.get_api_doc()),
+                                              api_str,
+                                              self.get_shell_device_name(),
+                                              self.get_long_display_name())
 
     def get_shell_doc(self):
         doc  = common.make_rst_header(self, has_device_identifier_constant=False)

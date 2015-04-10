@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 230,
-    'name': ('DualButton', 'dual_button', 'Dual Button'),
+    'name': ('DualButton', 'dual_button', 'Dual Button', 'Dual Button Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device with two buttons and two LEDs',
     'released': True,

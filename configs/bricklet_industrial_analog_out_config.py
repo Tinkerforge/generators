@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 258,
-    'name': ('IndustrialAnalogOut', 'industrial_analog_out', 'Industrial Analog Out'),
+    'name': ('IndustrialAnalogOut', 'industrial_analog_out', 'Industrial Analog Out', 'Industrial Analog Out Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for output of voltage between 0 and 10V and current between 4 and 20mA',
     'released': False,

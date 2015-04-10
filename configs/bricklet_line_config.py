@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 241,
-    'name': ('Line', 'line', 'Line'),
+    'name': ('Line', 'line', 'Line', 'Line Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device that measures reflectivity to allow following a line',
     'released': True,

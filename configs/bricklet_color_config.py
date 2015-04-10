@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 243,
-    'name': ('Color', 'color', 'Color'),
+    'name': ('Color', 'color', 'Color', 'Color Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for measuring color (RGB value), illuminance and color temperature',
     'released': True,

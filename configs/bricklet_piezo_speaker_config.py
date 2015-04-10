@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 242,
-    'name': ('PiezoSpeaker', 'piezo_speaker', 'Piezo Speaker'),
+    'name': ('PiezoSpeaker', 'piezo_speaker', 'Piezo Speaker', 'Piezo Speaker Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling a piezo buzzer with configurable frequencies',
     'released': True,

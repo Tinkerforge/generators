@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 251,
-    'name': ('AnalogInV2', 'analog_in_v2', 'Analog In 2.0'),
+    'name': ('AnalogInV2', 'analog_in_v2', 'Analog In 2.0', 'Analog In Bricklet 2.0'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing voltages between 0 and 42V',
     'released': False,

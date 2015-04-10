@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 239,
-    'name': ('Tilt', 'tilt', 'Tilt'),
+    'name': ('Tilt', 'tilt', 'Tilt', 'Tilt Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing tilt and vibration',
     'released': True,

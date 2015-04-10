@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 217,
-    'name': ('TemperatureIR', 'temperature_ir', 'Temperature IR'),
+    'name': ('TemperatureIR', 'temperature_ir', 'Temperature IR', 'Temperature IR Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for non-contact temperature sensing',
     'released': True,

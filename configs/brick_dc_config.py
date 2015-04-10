@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Brick',
     'device_identifier': 11,
-    'name': ('DC', 'dc', 'DC'),
+    'name': ('DC', 'dc', 'DC', 'DC Brick'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling DC motors',
     'released': True,

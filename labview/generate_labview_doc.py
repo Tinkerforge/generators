@@ -3,7 +3,7 @@
 
 """
 LabVIEW Documentation Generator
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_labview_doc.py: Generator for LabVIEW documentation
@@ -244,7 +244,7 @@ Constants
 
 .. labview:symbol:: {1}{0}.DEVICE_IDENTIFIER
 
- This constant is used to identify a {5} {1}.
+ This constant is used to identify a {5}.
 
  The :labview:func:`GetIdentity() <{1}{0}.GetIdentity>` function and the
  :labview:func:`EnumerateCallback <IPConnection.EnumerateCallback>`
@@ -259,7 +259,7 @@ Konstanten
 
 .. labview:symbol:: {1}{0}.DEVICE_IDENTIFIER
 
- Diese Konstante wird verwendet um {2} {5} {1} zu identifizieren.
+ Diese Konstante wird verwendet um {2} {5} zu identifizieren.
 
  Die :labview:func:`GetIdentity() <{1}{0}.GetIdentity>` Funktion und der
  :labview:func:`EnumerateCallback <IPConnection.EnumerateCallback>`
@@ -300,10 +300,10 @@ Konstanten
                                                         article,
                                                         self.get_underscore_name(),
                                                         self.get_category().lower(),
-                                                        self.get_display_name())
+                                                        self.get_long_display_name())
 
         ref = '.. _{0}_{1}_labview_api:\n'.format(self.get_underscore_name(),
-                                                      self.get_category().lower())
+                                                  self.get_category().lower())
 
         return common.select_lang(api).format(ref, self.replace_labview_function_links(self.get_api_doc()), api_str)
 

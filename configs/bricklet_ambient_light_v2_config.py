@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 259,
-    'name': ('AmbientLightV2', 'ambient_light_v2', 'Ambient Light 2.0'),
+    'name': ('AmbientLightV2', 'ambient_light_v2', 'Ambient Light 2.0', 'Ambient Light Bricklet 2.0'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing Ambient Light',
     'released': False,

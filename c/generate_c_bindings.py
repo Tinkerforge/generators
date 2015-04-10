@@ -3,7 +3,7 @@
 
 """
 C/C++ Bindings Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_c_bindings.py: Generator for C/C++ bindings
@@ -109,7 +109,7 @@ extern "C" {{
 /**
  * \ingroup {3}{2}
  *
- * This constant is used to identify a {5} {3}.
+ * This constant is used to identify a {5}.
  *
  * The {{@link {4}_get_identity}} function and the
  * {{@link IPCON_CALLBACK_ENUMERATE}} callback of the IP Connection have a
@@ -122,22 +122,21 @@ extern "C" {{
                                   self.get_camel_case_name(),
                                   self.get_category(),
                                   self.get_underscore_name(),
-                                  self.get_display_name())
+                                  self.get_long_display_name())
 
     def get_c_device_display_name_define(self):
         define_temp = """
 /**
  * \ingroup {3}{2}
  *
- * This constant represents the display name of a {1} {3}.
+ * This constant represents the display name of a {1}.
  */
-#define {0}_DEVICE_DISPLAY_NAME "{1} {3}"
+#define {0}_DEVICE_DISPLAY_NAME "{1}"
 """
         return define_temp.format(self.get_upper_case_name(),
-                                  self.get_display_name(),
+                                  self.get_long_display_name(),
                                   self.get_camel_case_name(),
-                                  self.get_category(),
-                                  self.get_underscore_name())
+                                  self.get_category())
 
     def get_c_structs(self):
         structs = """
@@ -425,7 +424,7 @@ extern "C" {{
 #endif
 
 /**
- * \defgroup {4}{3} {3} {4}
+ * \defgroup {4}{3} {6}
  */
 
 /**
@@ -446,7 +445,8 @@ typedef Device {3};
                               upper_name,
                               self.get_camel_case_name(),
                               self.get_category(),
-                              self.get_description())
+                              self.get_description(),
+                              self.get_long_display_name())
 
     def get_c_end_h(self):
         return "\n#ifdef __cplusplus\n}\n#endif\n\n#endif\n"

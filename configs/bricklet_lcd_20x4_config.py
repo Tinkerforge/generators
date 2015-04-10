@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 212,
-    'name': ('LCD20x4', 'lcd_20x4', 'LCD 20x4'),
+    'name': ('LCD20x4', 'lcd_20x4', 'LCD 20x4', 'LCD 20x4 Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling a LCD with 4 lines a 20 characters',
     'released': True,

@@ -5,7 +5,7 @@
 JavaScript Bindings Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_javascript_bindings.py: Generator for JavaScript bindings
 
@@ -41,12 +41,11 @@ class JavaScriptBindingsDevice(javascript_common.JavaScriptDevice):
 var Device = require('./Device');
 
 {1}.DEVICE_IDENTIFIER = {2};
-{1}.DEVICE_DISPLAY_NAME = '{3} {4}';
+{1}.DEVICE_DISPLAY_NAME = '{3}';
 """.format(common.gen_text_star.format(date, *version),
            self.get_javascript_class_name(),
            self.get_device_identifier(),
-           self.get_display_name(),
-           self.get_category())
+           self.get_long_display_name())
 
     def get_javascript_constants(self):
         callback_constants = ''

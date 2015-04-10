@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 27,
-    'name': ('Humidity', 'humidity', 'Humidity'),
+    'name': ('Humidity', 'humidity', 'Humidity', 'Humidity Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing Humidity',
     'released': True,

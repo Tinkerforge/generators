@@ -3,7 +3,7 @@
 
 """
 MATLAB Documentation Generator
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_matlab_doc.py: Generator for MATLAB documentation
@@ -384,31 +384,31 @@ Alle folgend aufgelisteten Methoden sind Thread-sicher.
 
         const_str = {
         'en' : """
-.. _{5}_{6}_matlab_constants:
+.. _{3}_{4}_matlab_constants:
 
 Constants
 ^^^^^^^^^
 
 .. matlab:member:: public static final int {1}{0}.DEVICE_IDENTIFIER
 
- This constant is used to identify a {7} {4}.
+ This constant is used to identify a {5}.
 
- The :matlab:func:`getIdentity() <{4}{3}::getIdentity>` function and the
+ The :matlab:func:`getIdentity() <{1}{0}::getIdentity>` function and the
  :matlab:member:`EnumerateCallback <IPConnection.EnumerateCallback>`
  callback of the IP Connection have a ``deviceIdentifier`` parameter to specify
  the Brick's or Bricklet's type.
 """,
         'de' : """
-.. _{5}_{6}_matlab_constants:
+.. _{3}_{4}_matlab_constants:
 
 Konstanten
 ^^^^^^^^^^
 
 .. matlab:member:: public static final int {1}{0}.DEVICE_IDENTIFIER
 
- Diese Konstante wird verwendet um {2} {7} {4} zu identifizieren.
+ Diese Konstante wird verwendet um {2} {5} zu identifizieren.
 
- Die :matlab:func:`getIdentity() <{4}{3}::getIdentity>` Funktion und der
+ Die :matlab:func:`getIdentity() <{1}{0}::getIdentity>` Funktion und der
  :matlab:member:`EnumerateCallback <IPConnection.EnumerateCallback>`
  Callback der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
@@ -444,11 +444,9 @@ Konstanten
         api_str += common.select_lang(const_str).format(self.get_camel_case_name(),
                                                         self.get_category(),
                                                         article,
-                                                        self.get_camel_case_name(),
-                                                        self.get_category(),
                                                         self.get_underscore_name(),
                                                         self.get_category().lower(),
-                                                        self.get_display_name())
+                                                        self.get_long_display_name())
 
         ref = '.. _{0}_{1}_matlab_api:\n'.format(self.get_underscore_name(),
                                                self.get_category().lower())

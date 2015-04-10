@@ -3,7 +3,7 @@
 
 """
 C# Bindings Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_csharp_bindings.py: Generator for C# bindings
@@ -61,14 +61,13 @@ namespace Tinkerforge
 \t\t/// <summary>
 \t\t///  The display name of this device.
 \t\t/// </summary>
-\t\tpublic static string DEVICE_DISPLAY_NAME = "{3} {4}";
+\t\tpublic static string DEVICE_DISPLAY_NAME = "{3}";
 """
 
         return class_str.format(self.get_csharp_class_name(),
                                 self.get_description(),
                                 self.get_device_identifier(),
-                                self.get_display_name(),
-                                self.get_category())
+                                self.get_long_display_name())
 
     def get_csharp_delegates(self):
         cbs = '\n'

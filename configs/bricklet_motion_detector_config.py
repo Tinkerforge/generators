@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 233,
-    'name': ('MotionDetector', 'motion_detector', 'Motion Detector'),
+    'name': ('MotionDetector', 'motion_detector', 'Motion Detector', 'Motion Detector Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device that reads out PIR motion detector',
     'released': True,

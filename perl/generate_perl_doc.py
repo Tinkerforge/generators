@@ -4,7 +4,7 @@
 """
 Perl Documentation Generator
 Copyright (C) 2013-2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_perl_doc.py: Generator for Perl documentation
@@ -296,31 +296,31 @@ Alle folgend aufgelisteten Funktionen sind Thread-sicher.
 
         const_str = {
         'en' : """
-.. _{5}_{6}_perl_constants:
+.. _{2}_{3}_perl_constants:
 
 Constants
 ^^^^^^^^^
 
 .. perl:attribute:: {0}->DEVICE_IDENTIFIER
 
- This constant is used to identify a {7} {4}.
+ This constant is used to identify a {4}.
 
- The :perl:func:`get_identity() <{4}{3}->get_identity>` function and the
+ The :perl:func:`get_identity() <{0}->get_identity>` function and the
  :perl:attr:`CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
  callback of the IP Connection have a ``device_identifier`` parameter to specify
  the Brick's or Bricklet's type.
 """,
         'de' : """
-.. _{5}_{6}_perl_constants:
+.. _{2}_{3}_perl_constants:
 
 Konstanten
 ^^^^^^^^^^
 
 .. perl:attribute:: {0}->DEVICE_IDENTIFIER
 
- Diese Konstante wird verwendet um {2} {7} {4} zu identifizieren.
+ Diese Konstante wird verwendet um {1} {4} zu identifizieren.
 
- Die :perl:func:`get_identity() <{4}{3}->get_identity>` Funktion und der
+ Die :perl:func:`get_identity() <{0}->get_identity>` Funktion und der
  :perl:attr:`CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
  Callback der IP Connection haben ein ``device_identifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
@@ -353,13 +353,10 @@ Konstanten
         if self.get_category() == 'Brick':
             article = 'einen'
         api_str += common.select_lang(const_str).format(self.get_perl_class_name(),
-                                                        self.get_category(),
                                                         article,
-                                                        self.get_camel_case_name(),
-                                                        self.get_category(),
                                                         self.get_underscore_name(),
                                                         self.get_category().lower(),
-                                                        self.get_display_name())
+                                                        self.get_long_display_name())
 
         ref = '.. _{0}_{1}_perl_api:\n'.format(self.get_underscore_name(),
                                                self.get_category().lower())

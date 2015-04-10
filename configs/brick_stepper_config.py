@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Brick',
     'device_identifier': 15,
-    'name': ('Stepper', 'stepper', 'Stepper'),
+    'name': ('Stepper', 'stepper', 'Stepper', 'Stepper Brick'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling stepper motors',
     'released': True,

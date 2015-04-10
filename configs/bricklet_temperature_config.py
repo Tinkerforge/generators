@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 216,
-    'name': ('Temperature', 'temperature', 'Temperature'),
+    'name': ('Temperature', 'temperature', 'Temperature', 'Temperature Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing Temperature',
     'released': True,

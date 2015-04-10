@@ -3,7 +3,7 @@
 
 """
 Python Documentation Generator
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_python_doc.py: Generator for Python documentation
@@ -267,31 +267,31 @@ Alle folgend aufgelisteten Funktionen sind Thread-sicher.
 
         const_str = {
         'en' : """
-.. _{5}_{6}_python_constants:
+.. _{4}_{5}_python_constants:
 
 Constants
 ^^^^^^^^^
 
 .. py:attribute:: {0}.DEVICE_IDENTIFIER
 
- This constant is used to identify a {7} {4}.
+ This constant is used to identify a {3}.
 
- The :py:func:`get_identity() <{3}.get_identity>` function and the
+ The :py:func:`get_identity() <{0}.get_identity>` function and the
  :py:attr:`CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
  callback of the IP Connection have a ``device_identifier`` parameter to specify
  the Brick's or Bricklet's type.
 """,
         'de' : """
-.. _{5}_{6}_python_constants:
+.. _{4}_{5}_python_constants:
 
 Konstanten
 ^^^^^^^^^^
 
 .. py:attribute:: {0}.DEVICE_IDENTIFIER
 
- Diese Konstante wird verwendet um {2} {7} {4} zu identifizieren.
+ Diese Konstante wird verwendet um {2} {3} zu identifizieren.
 
- Die :py:func:`get_identity() <{3}.get_identity>` Funktion und der
+ Die :py:func:`get_identity() <{0}.get_identity>` Funktion und der
  :py:attr:`CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
  Callback der IP Connection haben ein ``device_identifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
@@ -326,11 +326,9 @@ Konstanten
         api_str += common.select_lang(const_str).format(self.get_camel_case_name(),
                                                         self.get_category(),
                                                         article,
-                                                        self.get_camel_case_name(),
-                                                        self.get_category(),
+                                                        self.get_long_display_name(),
                                                         self.get_underscore_name(),
-                                                        self.get_category().lower(),
-                                                        self.get_display_name())
+                                                        self.get_category().lower())
 
         ref = '.. _{0}_{1}_python_api:\n'.format(self.get_underscore_name(),
                                                  self.get_category().lower())

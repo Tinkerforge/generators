@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 228,
-    'name': ('IndustrialDual020mA', 'industrial_dual_0_20ma', 'Industrial Dual 0-20mA'), 
+    'name': ('IndustrialDual020mA', 'industrial_dual_0_20ma', 'Industrial Dual 0-20mA', 'Industrial Dual 0-20mA Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing two currents between 0 and 20mA (IEC 60381-1)',
     'released': True,

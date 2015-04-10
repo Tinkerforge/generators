@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 215,
-    'name': ('RotaryPoti', 'rotary_poti', 'Rotary Poti'),
+    'name': ('RotaryPoti', 'rotary_poti', 'Rotary Poti', 'Rotary Poti Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing Rotary Potentiometer input',
     'released': True,

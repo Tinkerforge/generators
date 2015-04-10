@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 256,
-    'name': ('AnalogOutV2', 'analog_out_v2', 'Analog Out 2.0'),
+    'name': ('AnalogOutV2', 'analog_out_v2', 'Analog Out 2.0', 'Analog Out Bricklet 2.0'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for output of voltage between 0 and 16V',
     'released': False,

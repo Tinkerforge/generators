@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 236,
-    'name': ('RotaryEncoder', 'rotary_encoder', 'Rotary Encoder'),
+    'name': ('RotaryEncoder', 'rotary_encoder', 'Rotary Encoder', 'Rotary Encoder Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing Rotary Encoder input',
     'released': True,

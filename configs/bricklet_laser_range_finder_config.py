@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 255,
-    'name': ('LaserRangeFinder', 'laser_range_finder', 'Laser Range Finder'),
+    'name': ('LaserRangeFinder', 'laser_range_finder', 'Laser Range Finder', 'Laser Range Finder Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device that measures distance with a laser range finder',
     'released': False,

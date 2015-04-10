@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Brick',
     'device_identifier': 14,
-    'name': ('Servo', 'servo', 'Servo'),
+    'name': ('Servo', 'servo', 'Servo', 'Servo Brick'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling up to seven servos',
     'released': True,

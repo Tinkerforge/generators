@@ -171,7 +171,7 @@ def make_rst_header(device, has_device_identifier_constant=True):
     ref_name = device.get_generator().get_bindings_name()
     category = device.get_category()
     date = datetime.datetime.now().strftime("%Y-%m-%d")
-    full_title = '{0} - {1} {2}'.format(bindings_display_name, device.get_display_name(), category)
+    full_title = '{0} - {1}'.format(bindings_display_name, device.get_long_display_name())
     full_title_underline = '='*len(full_title)
     breadcrumbs = select_lang(breadcrumbs_str).format(ref_name, full_title)
     device_identifier_constant = {'en': '.. |device_identifier_constant| replace:: There is also a :ref:`constant <{0}_{1}_{2}_constants>` for the device identifier of this {3}.\n',
@@ -249,13 +249,13 @@ Bindings ist Teil deren allgemeine Beschreibung.
     }
 
     brick_name = {
-    'en': 'the :ref:`{0} Brick <{1}_brick>`',
-    'de': 'den :ref:`{0} Brick <{1}_brick>`',
+    'en': 'the :ref:`{0} <{1}_brick>`',
+    'de': 'den :ref:`{0} <{1}_brick>`',
     }
 
     bricklet_name = {
-    'en': 'the :ref:`{0} Bricklet <{1}_bricklet>`',
-    'de': 'das :ref:`{0} Bricklet <{1}_bricklet>`',
+    'en': 'the :ref:`{0} <{1}_bricklet>`',
+    'de': 'das :ref:`{0} <{1}_bricklet>`',
     }
 
     # format bindings name
@@ -273,12 +273,12 @@ Bindings ist Teil deren allgemeine Beschreibung.
     else:
         device_name = select_lang(bricklet_name)
 
-    device_name = device_name.format(device.get_display_name(),
+    device_name = device_name.format(device.get_long_display_name(),
                                      device.get_underscore_name())
 
     s = select_lang(summary).format(bindings_name_link,
                                     device_name,
-                                    device.get_display_name() + ' ' + device.get_category(),
+                                    device.get_long_display_name(),
                                     device.get_underscore_name() + '_' + device.get_category().lower())
 
     if is_programming_language:
@@ -748,7 +748,7 @@ cn_special_camel_case = {'mhz':      'MHz',
                          '1to13':    '1To13',
                          '1to14':    '1To14'}
 
-def check_name(camel_case, underscore, display, is_constant=False):
+def check_name(camel_case, underscore, short_display, long_display, is_constant=False, device_category=None):
     if camel_case is not None:
         if is_constant:
             r = cn_valid_constant_camel_case_chars
@@ -767,9 +767,9 @@ def check_name(camel_case, underscore, display, is_constant=False):
         if r.match(underscore) is None:
             raise ValueError("underscore name '{0}' contains invalid chars".format(underscore))
 
-    if display is not None:
-        if cn_valid_display_chars.match(display) is None:
-            raise ValueError("display name '{0}' contains invalid chars".format(display))
+    if short_display is not None:
+        if cn_valid_display_chars.match(short_display) is None:
+            raise ValueError("short display name '{0}' contains invalid chars".format(short_display))
 
     if camel_case is not None and underscore is not None:
         # test 1
@@ -798,21 +798,20 @@ def check_name(camel_case, underscore, display, is_constant=False):
             raise ValueError("camel case name '{0}' and underscore name '{1}' ({2}) mismatch (test 2)" \
                              .format(camel_case, underscore, underscore_to_check))
 
-    if camel_case is not None and display is not None:
+    if camel_case is not None and short_display is not None:
         # test 1
-        display_to_check = display.replace(' ', '').replace('-', '').replace('/', '')
+        short_display_to_check = short_display.replace(' ', '').replace('-', '').replace('/', '')
 
-        if display_to_check.endswith('2.0'):
-            display_to_check = display_to_check.replace('2.0', 'V2')
+        if short_display_to_check.endswith('2.0'):
+            short_display_to_check = short_display_to_check.replace('2.0', 'V2')
 
-        if camel_case != display_to_check:
-            raise ValueError("camel case name '{0}' and display name '{1}' ({2}) mismatch (test 1)" \
-                             .format(camel_case, display, display_to_check))
+        if camel_case != short_display_to_check:
+            raise ValueError("camel case name '{0}' and short display name '{1}' ({2}) mismatch (test 1)" \
+                             .format(camel_case, short_display, short_display_to_check))
 
         # test 2
         camel_case_to_check = camel_case_to_space(camel_case)
 
-        
         if camel_case == 'IMUV2':
             camel_case_to_check = camel_case_to_check.replace('V 2', ' 2.0')
         elif camel_case.endswith('V2'):
@@ -836,25 +835,34 @@ def check_name(camel_case, underscore, display, is_constant=False):
         elif camel_case == 'NFCRFID':
             camel_case_to_check = camel_case_to_check.replace('NFCRFID', 'NFC/RFID')
 
-        if camel_case_to_check != display:
-            raise ValueError("camel case name '{0}' ({1}) and display name '{2}' mismatch (test 2)" \
-                             .format(camel_case, camel_case_to_check, display))
+        if camel_case_to_check != short_display:
+            raise ValueError("camel case name '{0}' ({1}) and short display name '{2}' mismatch (test 2)" \
+                             .format(camel_case, camel_case_to_check, short_display))
 
-    if underscore is not None and display is not None:
-        display_to_check = display.replace(' ', '_').replace('/', '_')
+    if underscore is not None and short_display is not None:
+        short_display_to_check = short_display.replace(' ', '_').replace('/', '_')
 
-        if display.endswith('2.0'):
-            display_to_check = display_to_check.replace('2.0', 'V2')
-        elif display in ['IO-4', 'IO-16']:
-            display_to_check = display_to_check.replace('-', '')
+        if short_display.endswith('2.0'):
+            short_display_to_check = short_display_to_check.replace('2.0', 'V2')
+        elif short_display in ['IO-4', 'IO-16']:
+            short_display_to_check = short_display_to_check.replace('-', '')
         else:
-            display_to_check = display_to_check.replace('-', '_')
+            short_display_to_check = short_display_to_check.replace('-', '_')
 
-        display_to_check = display_to_check.lower()
+        short_display_to_check = short_display_to_check.lower()
 
-        if underscore != display_to_check.lower():
-            raise ValueError("underscore name '{0}' and display name '{1}' ({2}) mismatch" \
-                             .format(underscore, display, display_to_check))
+        if underscore != short_display_to_check.lower():
+            raise ValueError("underscore name '{0}' and short display name '{1}' ({2}) mismatch" \
+                             .format(underscore, short_display, short_display_to_check))
+
+    if short_display != None and long_display != None and device_category != None:
+        short_display_to_check = set(short_display.split(' ') + [device_category])
+        long_display_to_check = set(long_display.split(' '))
+
+        if short_display_to_check != long_display_to_check:
+            raise ValueError("long display name '{0}' and short display name '{1}' + '{2}' ({3}) do not contain the same words" \
+                             .format(long_display, short_display, device_category, ' '.join(list(short_display_to_check))))
+
 
 class ConstantItem:
     def __init__(self, raw_data):
@@ -986,14 +994,14 @@ class Packet:
         self.in_elements = []
         self.out_elements = []
 
-        check_name(raw_data['name'][0], raw_data['name'][1], None)
+        check_name(raw_data['name'][0], raw_data['name'][1], None, None)
 
         for raw_element in self.raw_data['elements']:
             element = generator.get_element_class()(self, raw_element, generator)
 
             self.all_elements.append(element)
 
-            check_name(None, element.get_underscore_name(), None)
+            check_name(None, element.get_underscore_name(), None, None)
 
             if element.get_type() not in Packet.valid_types:
                 raise ValueError('Invalid element type ' + element.get_type())
@@ -1011,10 +1019,10 @@ class Packet:
             constant_group = element.get_constant_group()
 
             if constant_group is not None:
-                check_name(constant_group.get_camel_case_name(), constant_group.get_underscore_name(), None)
+                check_name(constant_group.get_camel_case_name(), constant_group.get_underscore_name(), None, None)
 
                 for constant_item in constant_group.get_items():
-                    check_name(constant_item.get_camel_case_name(), constant_item.get_underscore_name(), None, True)
+                    check_name(constant_item.get_camel_case_name(), constant_item.get_underscore_name(), None, None, is_constant=True)
 
         self.constant_groups = []
 
@@ -1169,7 +1177,7 @@ class Device:
         self.all_function_packets_without_doc_only = []
         self.callback_packets = []
 
-        check_name(raw_data['name'][0], raw_data['name'][1], raw_data['name'][2])
+        check_name(raw_data['name'][0], raw_data['name'][1], raw_data['name'][2], raw_data['name'][3], device_category=raw_data['category'])
 
         for i, p in zip(range(len(raw_data['packets'])), raw_data['packets']):
             if not 'function_id' in p:
@@ -1260,8 +1268,11 @@ class Device:
     def get_dash_name(self):
         return self.get_underscore_name().replace('_', '-')
 
-    def get_display_name(self):
+    def get_short_display_name(self):
         return self.raw_data['name'][2]
+
+    def get_long_display_name(self):
+        return self.raw_data['name'][3]
 
     def get_description(self):
         return self.raw_data['description']

@@ -247,31 +247,31 @@ Alle folgend aufgelisteten Methoden sind Thread-sicher.
 
         const_str = {
         'en' : """
-.. _{5}_{6}_ruby_constants:
+.. _{3}_{4}_ruby_constants:
 
 Constants
 ^^^^^^^^^
 
 .. rb:attribute:: {1}{0}::DEVICE_IDENTIFIER
 
- This constant is used to identify a {7} {4}.
+ This constant is used to identify a {5}.
 
- The :rb:func:`#get_identity() <{4}{3}#get_identity>` function and the
+ The :rb:func:`#get_identity() <{1}{0}#get_identity>` function and the
  :rb:attr:`::CALLBACK_ENUMERATE <IPConnection::CALLBACK_ENUMERATE>`
  callback of the IP Connection have a ``device_identifier`` parameter to specify
  the Brick's or Bricklet's type.
 """,
         'de' : """
-.. _{5}_{6}_ruby_constants:
+.. _{3}_{4}_ruby_constants:
 
 Konstanten
 ^^^^^^^^^^
 
 .. rb:attribute:: {1}{0}::DEVICE_IDENTIFIER
 
- Diese Konstante wird verwendet um {2} {7} {4} zu identifizieren.
+ Diese Konstante wird verwendet um {2} {5} zu identifizieren.
 
- Die :rb:func:`#get_identity() <{4}{3}#get_identity>` Funktion und der
+ Die :rb:func:`#get_identity() <{1}{0}#get_identity>` Funktion und der
  :rb:attr:`::CALLBACK_ENUMERATE <IPConnection::CALLBACK_ENUMERATE>`
  Callback der IP Connection haben ein ``device_identifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
@@ -309,11 +309,9 @@ Konstanten
         api_str += common.select_lang(const_str).format(self.get_camel_case_name(),
                                                         self.get_category(),
                                                         article,
-                                                        self.get_camel_case_name(),
-                                                        self.get_category(),
                                                         self.get_underscore_name(),
                                                         self.get_category().lower(),
-                                                        self.get_display_name())
+                                                        self.get_long_display_name())
 
         ref = '.. _{0}_{1}_ruby_api:\n'.format(self.get_underscore_name(),
                                                self.get_category().lower())

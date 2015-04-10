@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 23,
-    'name': ('Current12', 'current12', 'Current12'),
+    'name': ('Current12', 'current12', 'Current12', 'Current12 Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing current of up to 12.5A',
     'released': True,

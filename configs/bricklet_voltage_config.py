@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 218,
-    'name': ('Voltage', 'voltage', 'Voltage'),
+    'name': ('Voltage', 'voltage', 'Voltage', 'Voltage Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing Voltages between 0 and 50V',
     'released': True,

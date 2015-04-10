@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 1],
     'category': 'Brick',
     'device_identifier': 16,
-    'name': ('IMU', 'imu', 'IMU'),
+    'name': ('IMU', 'imu', 'IMU', 'IMU Brick'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing acceleration, magnetic field and angular velocity',
     'released': True,

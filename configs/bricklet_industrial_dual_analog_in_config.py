@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 249,
-    'name': ('IndustrialDualAnalogIn', 'industrial_dual_analog_in', 'Industrial Dual Analog In'), 
+    'name': ('IndustrialDualAnalogIn', 'industrial_dual_analog_in', 'Industrial Dual Analog In', 'Industrial Dual Analog In Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'TODO',
     'released': False,

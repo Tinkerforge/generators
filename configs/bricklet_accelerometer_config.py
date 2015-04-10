@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 250,
-    'name': ('Accelerometer', 'accelerometer', 'Accelerometer'),
+    'name': ('Accelerometer', 'accelerometer', 'Accelerometer', 'Accelerometer Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing acceleration in three axis',
     'released': False,

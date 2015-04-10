@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 21,
-    'name': ('AmbientLight', 'ambient_light', 'Ambient Light'),
+    'name': ('AmbientLight', 'ambient_light', 'Ambient Light', 'Ambient Light Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for sensing Ambient Light',
     'released': True,

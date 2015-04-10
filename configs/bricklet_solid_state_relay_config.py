@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 244,
-    'name': ('SolidStateRelay', 'solid_state_relay', 'Solid State Relay'),
+    'name': ('SolidStateRelay', 'solid_state_relay', 'Solid State Relay', 'Solid State Relay Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling AC and DC Solid State Relays',
     'released': True,

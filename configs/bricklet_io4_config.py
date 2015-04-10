@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 29,
-    'name': ('IO4', 'io4', 'IO-4'),
+    'name': ('IO4', 'io4', 'IO-4', 'IO-4 Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': 'Device for controlling up to 4 general purpose input/output pins',
     'released': True,

@@ -3,7 +3,7 @@
 
 """
 Delphi Bindings Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_delphi_bindings.py: Generator for Delphi bindings
@@ -63,14 +63,13 @@ uses
                           self.get_device_identifier())
 
     def get_delphi_device_display_name(self):
-        did = """  {0}_{1}_DEVICE_DISPLAY_NAME = '{2} {3}';
+        did = """  {0}_{1}_DEVICE_DISPLAY_NAME = '{2}';
 
 """
 
         return did.format(self.get_category().upper(),
                           self.get_upper_case_name(),
-                          self.get_display_name(),
-                          self.get_category())
+                          self.get_long_display_name())
 
     def get_delphi_function_id_definitions(self):
         function_ids = ''

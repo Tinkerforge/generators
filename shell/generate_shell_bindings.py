@@ -3,7 +3,7 @@
 
 """
 Shell Bindings Generator
-Copyright (C) 2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2013-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_shell_bindings.py: Generator for shell bindings
 
