@@ -372,11 +372,20 @@ Gibt zurück ob die Orientierungs- und Richtungs-LEDs des IMU Brick aktiv sind.
 com['packets'].append({
 'type': 'function',
 'name': ('SetConfiguration', 'set_configuration'), 
-'elements': [],
+'elements': [('accelerometer_range', 'uint8', 1, 'in', ('AccelerometerRange', 'accelerometer_range', [('2G', '2g', 0),
+                                                                                                      ('4G', '4g', 1),
+                                                                                                      ('8G', '8g', 2),
+                                                                                                      ('16G', '16g', 3)])),
+             ('gyroscope_range', 'uint8', 1, 'in', ('GyroscopeRange', 'gyroscope_range', [('2000DPS', '2000dps', 0),
+                                                                                          ('1000DPS', '1000dps', 1),
+                                                                                          ('500DPS', '500dps', 2),
+                                                                                          ('250DPS', '250dps', 3),
+                                                                                          ('125DPS', '125dps', 4)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
+Default: 4G, 2000DPS
 TODO
 """,
 'de':
@@ -389,7 +398,15 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': ('GetConfiguration', 'get_configuration'), 
-'elements': [],
+'elements': [('accelerometer_range', 'uint8', 1, 'out', ('AccelerometerRange', 'accelerometer_range', [('2G', '2g', 0),
+                                                                                                       ('4G', '4g', 1),
+                                                                                                       ('8G', '8g', 2),
+                                                                                                       ('16G', '16g', 3)])),
+             ('gyroscope_range', 'uint8', 1, 'out', ('GyroscopeRange', 'gyroscope_range', [('2000DPS', '2000dps', 0),
+                                                                                           ('1000DPS', '1000dps', 1),
+                                                                                           ('500DPS', '500dps', 2),
+                                                                                           ('250DPS', '250dps', 3),
+                                                                                           ('125DPS', '125dps', 4)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
