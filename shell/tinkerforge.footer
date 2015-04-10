@@ -1,7 +1,12 @@
 
 def command_call(ctx, argv):
+	if listen_mode:
+		prefix = ''
+	else:
+		prefix = 'tinkerforge '
+
 	# FIXME: add description
-	parser = Parser(ctx, 'call')
+	parser = Parser(ctx, 'call', epilog="try '{0}call <device> --help' for device specific help.".format(prefix))
 	device_choices = sorted(call_devices.keys())
 
 	class ListDevicesAction(argparse.Action):
@@ -21,8 +26,13 @@ def command_call(ctx, argv):
 	call_devices[args.device](ctx, args.args)
 
 def command_dispatch(ctx, argv):
+	if listen_mode:
+		prefix = ''
+	else:
+		prefix = 'tinkerforge '
+
 	# FIXME: add description
-	parser = Parser(ctx, 'dispatch')
+	parser = Parser(ctx, 'dispatch', epilog="try '{0}dispatch <device> --help' for device specific help.".format(prefix))
 	device_choices = sorted(dispatch_devices.keys())
 
 	class ListDevicesAction(argparse.Action):
@@ -149,7 +159,7 @@ def command_enumerate(ctx, argv):
 
 def command_listen(ctx, argv):
 	# FIXME: add description
-	parser = Parser(ctx, 'listen', epilog="In listen mode some command line options are disabled by default for incoming commands.\n\nThe --host and --port options are disabled by default so incoming commands can only connect to the host and port given to the listen command. Use --enable-host and --enable-port to enable these options for incoming commands.\n\nThe --execute option for getter calls and callback dispatching is disabled by default so incoming command cannot execute other commands. Use --enable-execute to enable this option for incoming commands.\n\nNo group separator is included in the output and the --group-separator option is ignored.\n\nIncoming commands have to be terminated by \\n. The output is also terminated by \\n.")
+	parser = Parser(ctx, 'listen', epilog="in listen mode some command line options are disabled by default for incoming commands.\n\nthe --host and --port options are disabled by default so incoming commands can only connect to the host and port given to the listen command. use --enable-host and --enable-port to enable these options for incoming commands.\n\nthe --execute option for getter calls and callback dispatching is disabled by default so incoming command cannot execute other commands. use --enable-execute to enable this option for incoming commands.\n\nno group separator is included in the output and the --group-separator option is ignored.\n\nincoming commands have to be terminated by \\n. the output is also terminated by \\n.")
 
 	parser.add_argument('--address', default='0.0.0.0', type=str, help='IP address to listen to, default: 0.0.0.0', metavar='<address>')
 	parser.add_argument('--port', default=4217, type=convert_int, help='port number to listen to, default: 4217', metavar='<port>')
@@ -292,7 +302,8 @@ def parse(ctx, argv):
 	else:
 		prefix = 'tinkerforge '
 
-	parser = Parser(ctx, '', epilog="Try '{0}<command> --help' for command specific help.".format(prefix))
+	# FIXME: add description
+	parser = Parser(ctx, '', epilog="try '{0}<command> --help' for command specific help.".format(prefix))
 	command_choices = ['call', 'dispatch', 'enumerate']
 
 	if not listen_mode:

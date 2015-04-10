@@ -213,7 +213,13 @@ def connect_ipcon_and_call(ctx, function, timeout=None):
 	handle_ipcon_exceptions(IPConnection(), function_wrapper)
 
 def call_generic(ctx, name, functions, argv):
-	parser = Parser(ctx, 'call ' + name)
+	if listen_mode:
+		prefix = ''
+	else:
+		prefix = 'tinkerforge '
+
+	# FIXME: add description
+	parser = Parser(ctx, 'call ' + name, epilog="try '{0}call {1} dummy <function> --help' for function specific help.".format(prefix, name))
 	function_choices = sorted(functions.keys())
 
 	class ListFunctionsAction(argparse.Action):
@@ -233,7 +239,13 @@ def call_generic(ctx, name, functions, argv):
 	functions[args.function](ctx, args.args)
 
 def dispatch_generic(ctx, name, callbacks, argv):
-	parser = Parser(ctx, 'dispatch ' + name)
+	if listen_mode:
+		prefix = ''
+	else:
+		prefix = 'tinkerforge '
+
+	# FIXME: add description
+	parser = Parser(ctx, 'dispatch ' + name, epilog="try '{0}dispatch {1} dummy <callback> --help' for callback specific help.".format(prefix, name))
 	callback_choices = sorted(callbacks.keys())
 
 	class ListCallbacksAction(argparse.Action):
