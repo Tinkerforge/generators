@@ -128,9 +128,9 @@ Gibt die Temperatur (in °C/100) des IMU Brick zurück.
 com['packets'].append({
 'type': 'function',
 'name': ('GetOrientation', 'get_orientation'), 
-'elements': [('roll', 'int16', 1, 'out'), 
-             ('pitch', 'int16', 1, 'out'),
-             ('heading', 'int16', 1, 'out')],
+'elements': [('heading', 'int16', 1, 'out'),
+             ('roll', 'int16', 1, 'out'), 
+             ('pitch', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -207,10 +207,10 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': ('GetQuaternion', 'get_quaternion'), 
-'elements': [('w', 'uint16', 1, 'out'),
-             ('x', 'uint16', 1, 'out'), 
-             ('y', 'uint16', 1, 'out'),
-             ('z', 'uint16', 1, 'out')],
+'elements': [('w', 'int16', 1, 'out'),
+             ('x', 'int16', 1, 'out'), 
+             ('y', 'int16', 1, 'out'),
+             ('z', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -291,7 +291,7 @@ com['packets'].append({
              ('magnetic_field', 'int16', 3, 'out'),
              ('angular_velocity', 'int16', 3, 'out'),
              ('euler_angle', 'int16', 3, 'out'), 
-             ('quaternion', 'uint16', 4, 'out'),
+             ('quaternion', 'int16', 4, 'out'),
              ('linear_acceleration', 'int16', 3, 'out'),
              ('gravity_vector', 'int16', 3, 'out'), 
              ('temperature', 'int8', 1, 'out'),
@@ -371,42 +371,8 @@ Gibt zurück ob die Orientierungs- und Richtungs-LEDs des IMU Brick aktiv sind.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetConfiguration', 'set_configuration'), 
-'elements': [('accelerometer_range', 'uint8', 1, 'in', ('AccelerometerRange', 'accelerometer_range', [('2G', '2g', 0),
-                                                                                                      ('4G', '4g', 1),
-                                                                                                      ('8G', '8g', 2),
-                                                                                                      ('16G', '16g', 3)])),
-             ('gyroscope_range', 'uint8', 1, 'in', ('GyroscopeRange', 'gyroscope_range', [('2000DPS', '2000dps', 0),
-                                                                                          ('1000DPS', '1000dps', 1),
-                                                                                          ('500DPS', '500dps', 2),
-                                                                                          ('250DPS', '250dps', 3),
-                                                                                          ('125DPS', '125dps', 4)]))],
-'since_firmware': [1, 0, 0],
-'doc': ['af', {
-'en':
-"""
-Default: 4G, 2000DPS
-TODO
-""",
-'de':
-"""
-TODO
-"""
-}] 
-})
-
-com['packets'].append({
-'type': 'function',
-'name': ('GetConfiguration', 'get_configuration'), 
-'elements': [('accelerometer_range', 'uint8', 1, 'out', ('AccelerometerRange', 'accelerometer_range', [('2G', '2g', 0),
-                                                                                                       ('4G', '4g', 1),
-                                                                                                       ('8G', '8g', 2),
-                                                                                                       ('16G', '16g', 3)])),
-             ('gyroscope_range', 'uint8', 1, 'out', ('GyroscopeRange', 'gyroscope_range', [('2000DPS', '2000dps', 0),
-                                                                                           ('1000DPS', '1000dps', 1),
-                                                                                           ('500DPS', '500dps', 2),
-                                                                                           ('250DPS', '250dps', 3),
-                                                                                           ('125DPS', '125dps', 4)]))],
+'name': ('SaveCalibration', 'save_calibration'), 
+'elements': [('calibration_done', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -881,9 +847,9 @@ ausgelöst. Die :word:`parameters` TODO.
 com['packets'].append({
 'type': 'callback',
 'name': ('Orientation', 'orientation'), 
-'elements': [('roll', 'int16', 1, 'out'),
-             ('pitch', 'int16', 1, 'out'),
-             ('heading', 'int16', 1, 'out')],
+'elements': [('heading', 'int16', 1, 'out'),
+             ('roll', 'int16', 1, 'out'),
+             ('pitch', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -905,10 +871,10 @@ IMU Brick in Eulerwinkeln. Siehe :func:`GetOrientation` für Details.
 com['packets'].append({
 'type': 'callback',
 'name': ('Quaternion', 'quaternion'), 
-'elements': [('w', 'uint16', 1, 'out'),
-             ('x', 'uint16', 1, 'out'),
-             ('y', 'uint16', 1, 'out'),
-             ('z', 'uint16', 1, 'out')],
+'elements': [('w', 'int16', 1, 'out'),
+             ('x', 'int16', 1, 'out'),
+             ('y', 'int16', 1, 'out'),
+             ('z', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -930,16 +896,15 @@ IMU Brick in Quaternionen. Siehe :func:`GetQuaternion` für Details.
 com['packets'].append({
 'type': 'callback',
 'name': ('AllData', 'all_data'), 
-'elements': [('acc_x', 'int16', 1, 'out'), 
-             ('acc_y', 'int16', 1, 'out'),
-             ('acc_z', 'int16', 1, 'out'),
-             ('mag_x', 'int16', 1, 'out'), 
-             ('mag_y', 'int16', 1, 'out'),
-             ('mag_z', 'int16', 1, 'out'),
-             ('ang_x', 'int16', 1, 'out'), 
-             ('ang_y', 'int16', 1, 'out'),
-             ('ang_z', 'int16', 1, 'out'),
-             ('temperature', 'int16', 1, 'out')],
+'elements': [('acceleration', 'int16', 3, 'out'), 
+             ('magnetic_field', 'int16', 3, 'out'),
+             ('angular_velocity', 'int16', 3, 'out'),
+             ('euler_angle', 'int16', 3, 'out'), 
+             ('quaternion', 'int16', 4, 'out'),
+             ('linear_acceleration', 'int16', 3, 'out'),
+             ('gravity_vector', 'int16', 3, 'out'), 
+             ('temperature', 'int8', 1, 'out'),
+             ('calibration_status', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
