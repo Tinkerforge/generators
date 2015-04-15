@@ -99,11 +99,13 @@ value with the each step incremented by *increment*.
 The *length* of the increment is given in ms.
 
 Example: If you set *from* to 0, *to* to 100, *increment* to 1 and
-*length* to 1000, a counter that goes from 0 to 100 with 1 second
+*length* to 1000, a counter that goes from 0 to 100 with one second
 pause between each increment will be started.
 
 The maximum values for *from*, *to* and *increment* is 9999, 
 the minimum value is -999.
+
+Using a negative increment allows to count backwards.
 
 You can stop the counter at every time by calling :func:`SetSegments`.
 """,
@@ -115,7 +117,12 @@ Pause zwischen den Erhöhungen in ms an.
 
 Beispiel: Wenn *from* auf 0, *to* auf 100, *increment* auf 1 und
 *length* auf 1000 gesetzt wird, wird ein Zähler gestartet der von
-0 bis 100 zählt mit Rate von 1 Sekunde zwischen jeder Erhöhung.
+0 bis 100 zählt mit Rate von einer Sekunde zwischen jeder Erhöhung.
+
+Der Maximalwert für *from*, *to* und *increment* ist 9999, der Minimalwert
+ist -999.
+
+Wenn das increment negativ ist läuft der Zähler rückwärts.
 
 Der Zähler kann jederzeit durch einen Aufruf von :func:`SetSegments`
 gestoppt werden.
