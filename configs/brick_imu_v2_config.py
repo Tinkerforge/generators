@@ -29,7 +29,7 @@ com['packets'].append({
 'en':
 """ 
 Returns the calibrated acceleration from the accelerometer for the 
-x, y and z axis in mG (G/1000, 1G = 9.80605m/s²).
+x, y and z axis in 1/100 m/s².
 
 If you want to get the acceleration periodically, it is recommended 
 to use the callback :func:`Acceleration` and set the period with 
@@ -38,9 +38,9 @@ to use the callback :func:`Acceleration` and set the period with
 'de':
 """
 Gibt die kalibrierten Beschleunigungen des Beschleunigungsmessers für die 
-X, Y und Z-Achse in mG zurück (G/1000, 1G = 9.80605m/s²).
+X, Y und Z-Achse in 1/100 m/s².
 
-Wenn die kalibrierten Beschleunigungen periodisch abgefragt werden soll, wird empfohlen
+Wenn die Beschleunigungen periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Acceleration` zu nutzen und die Periode mit :func:`SetAccelerationPeriod`
 vorzugeben.
 """
@@ -58,7 +58,7 @@ com['packets'].append({
 'en':
 """
 Returns the calibrated magnetic field from the magnetometer for the 
-x, y and z axis in mG (Milligauss or Nanotesla).
+x, y and z axis in 1/16 µT (Microtesla).
 
 If you want to get the magnetic field periodically, it is recommended 
 to use the callback :func:`MagneticField` and set the period with 
@@ -67,7 +67,7 @@ to use the callback :func:`MagneticField` and set the period with
 'de':
 """
 Gibt das kalibrierte magnetische Feld des Magnetometers mit den X, Y und
-Z Komponenten in mG zurück (Milligauss oder Nanotesla).
+Z Komponenten in 1/16 µT zurück (Microtesla).
 
 Wenn das magnetische Feld periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`MagneticField` zu nutzen und die Periode mit :func:`SetMagneticFieldPeriod`
@@ -87,8 +87,7 @@ com['packets'].append({
 'en':
 """
 Returns the calibrated angular velocity from the gyroscope for the 
-x, y and z axis in °/14.375s (you have to divide by 14.375 to
-get the value in °/s).
+x, y and z axis in 1/16 °/s.
 
 If you want to get the angular velocity periodically, it is recommended 
 to use the callback :func:`AngularVelocity` and set the period with 
@@ -96,9 +95,8 @@ to use the callback :func:`AngularVelocity` and set the period with
 """,
 'de':
 """
-Gibt die kalibrierten Winkelgeschwindigkeiten des Gyroskops für die X, Y und
-Z-Achse in °/14,375s zurück. (Um den Wert in °/s zu erhalten ist es notwendig
-durch 14,375 zu teilen)
+Gibt die Winkelgeschwindigkeiten des Gyroskops für die X, Y und
+Z-Achse in 1/16 °/s zurück.
 
 Wenn die Winkelgeschwindigkeiten periodisch abgefragt werden sollen, wird empfohlen
 den Callback :func:`AngularVelocity` zu nutzen und die Periode mit
@@ -116,11 +114,13 @@ com['packets'].append({
 'en':
 """
 Returns the temperature of the IMU Brick. The temperature is given in 
-°C/100.
+°C. The temperature is measured in the core of the BNO055 IC, it is not the
+ambient temperature
 """,
 'de':
 """
-Gibt die Temperatur (in °C/100) des IMU Brick zurück.
+Gibt die Temperatur (in °C) des IMU Brick zurück. Die Temperatur wird im Kern
+des BNO055 IC gemessen, es handelt sich nicht um die Umgebungstemperatur.
 """
 }] 
 })
@@ -135,14 +135,17 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the current orientation (roll, pitch, heading) of the IMU Brick as Euler
-angles in one-hundredth degree. Note that Euler angles always experience a
+Returns the current orientation (heading, roll, pitch) of the IMU Brick as Euler
+angles in 1/16 degree. Note that Euler angles always experience a
 `gimbal lock <http://en.wikipedia.org/wiki/Gimbal_lock>`__.
 
 We recommend that you use quaternions instead.
 
-The order to sequence in which the orientation values should be applied is 
-roll, yaw, pitch. 
+The rotation angle has the following ranges:
+
+* heading: 0° - 360°
+* roll: -90° - 90°
+* pitch: -180° - 180°
 
 If you want to get the orientation periodically, it is recommended 
 to use the callback :func:`Orientation` and set the period with 
@@ -150,14 +153,17 @@ to use the callback :func:`Orientation` and set the period with
 """,
 'de':
 """
-Gibt die aktuelle Orientierung (Roll-, Nick-, Gierwinkel) des IMU Brick in Eulerwinkeln
-(in 1/100 °) zurück. Zu beachten ist, dass Eulerwinkel immer eine 
+Gibt die aktuelle Orientierung (Gier-, Roll-, Nickwinkel) des IMU Brick in Eulerwinkeln
+(in 1/16 °) zurück. Zu beachten ist, dass Eulerwinkel immer eine 
 `kardanische Blockade <http://de.wikipedia.org/wiki/Gimbal_Lock>`__ erfahren.
 
 Wir empfehlen die Verwendung von Quaternionen stattdessen.
 
-Die Reihenfolge in denen die Orientierungswerte angewandt werden sollten,
-ist Roll-, Nick-, Gierwinkel.
+Die Rotatationswinkel haben den folgenden Wertebereich:
+
+* Gierwinkel: 0° - 360°
+* Rollwinkel: -90° - 90°
+* Nickwinkel: -180° - 180°
 
 Wenn die Orientierung periodisch abgefragt werden sollen, wird empfohlen den
 Callback :func:`Orientation` zu nutzen und die Periode mit :func:`SetOrientationPeriod`
@@ -176,11 +182,33 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the linear acceleration of the IMU Brick for the
+x, y and z axis in 1/100 m/s².
+
+The linear acceleration is the acceleration in each of the three
+axis of the IMU Brick with the influences of gravity removed.
+
+It is also possible to get the gravity vector with the influence of linear
+acceleration removed, see :func:`GetGravityVector`.
+
+If you want to get the linear acceleration periodically, it is recommended 
+to use the callback :func:`LinearAcceleration` and set the period with 
+:func:`SetLinearAccelerationPeriod`.
 """,
 'de':
 """
-TODO
+Gibt die lineare Beschleunigungen des IMU Brick für die 
+X, Y und Z-Achse in 1/100 m/s² zurück.
+
+Die lineare Beschleunigung ist die Beschleunigung in jede der drei
+Achsen. Der Einfluss von Erdbeschleunigung ist entfernt.
+
+Es ist auch möglich einen Vektor der Erdbeschleunigung zu bekommen, siehe
+:func:GetGravityVector`
+
+Wenn die Beschleunigungen periodisch abgefragt werden soll, wird empfohlen
+den Callback :func:`LinearAcceleration` zu nutzen und die Periode mit 
+:func:`SetLinearAccelerationPeriod` vorzugeben.
 """
 }] 
 })
@@ -195,11 +223,33 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the current gravity vector of the IMU Brick for the
+x, y and z axis in 1/100 m/s².
+
+The gravity vector is the acceleration that occurs due to gravity.
+Influences of additional linear acceleration are removed.
+
+It is also possible to get the linear acceleration with the influence 
+of gravity removed, see :func:`GetLinearAcceleration`.
+
+If you want to get the gravity vector periodically, it is recommended 
+to use the callback :func:`GravityVector` and set the period with 
+:func:`SetGravityVectorPeriod`.
 """,
 'de':
 """
-TODO
+Gibt den Vektor der Erdbeschleunigung des IMU Brick für die 
+X, Y und Z-Achse in 1/100 m/s² zurück.
+
+Die Erdbeschleunigung ist die Beschleunigung die auf Grund von Schwerkraft
+entsteht. Einflüsse von linearen Beschleunigungen sind entfernt.
+
+Es ist auch möglich die lineare Beschleunigung zu bekommen, siehe
+:func:GetLinearAcceleration`
+
+Wenn die Erdbeschleunigungen periodisch abgefragt werden soll, wird empfohlen
+den Callback :func:`GravityVector` zu nutzen und die Periode mit 
+:func:`SetGravityVectorPeriod` vorzugeben.
 """
 }] 
 })
@@ -215,33 +265,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the current orientation (x, y, z, w) of the IMU as 
+Returns the current orientation (w, x, y, z) of the IMU as 
 `quaternions <http://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__.
 
-You can go from quaternions to Euler angles with the following formula::
-
- xAngle = atan2(2*y*w - 2*x*z, 1 - 2*y*y - 2*z*z)
- yAngle = atan2(2*x*w - 2*y*z, 1 - 2*x*x - 2*z*z)
- zAngle =  asin(2*x*y + 2*z*w)
-
-This process is not reversible, because of the 
-`gimbal lock <http://en.wikipedia.org/wiki/Gimbal_lock>`__.
-
-It is also possible to calculate independent angles. You can calculate 
-yaw, pitch and roll in a right-handed vehicle coordinate system according to DIN70000
-with::
-
- yaw   =  atan2(2*x*y + 2*w*z, w*w + x*x - y*y - z*z)
- pitch = -asin(2*w*y - 2*x*z)
- roll  = -atan2(2*y*z + 2*w*x, -w*w + x*x + y*y - z*z))
-
-Converting the quaternions to an OpenGL transformation matrix is
-possible with the following formula::
-
- matrix = [[1 - 2*(y*y + z*z),     2*(x*y - w*z),     2*(x*z + w*y), 0],
-           [    2*(x*y + w*z), 1 - 2*(x*x + z*z),     2*(y*z - w*x), 0],
-           [    2*(x*z - w*y),     2*(y*z + w*x), 1 - 2*(x*x + y*y), 0],
-           [                0,                 0,                 0, 1]]
+You have to divide the returnes values by 16383 (14 bit) to get
+the usual range of -1 to 1 for quaternions.
 
 If you want to get the quaternions periodically, it is recommended 
 to use the callback :func:`Quaternion` and set the period with 
@@ -252,30 +280,8 @@ to use the callback :func:`Quaternion` and set the period with
 Gibt die aktuelle Orientierung (x, y, z, w) des IMU Brick als
 `Quaterinonen <http://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__ zurück.
 
-Die Umrechnung von Quaternionen in Eulerwinkel ist mit folgender Formel möglich::
-
- xAngle = atan2(2*y*w - 2*x*z, 1 - 2*y*y - 2*z*z)
- yAngle = atan2(2*x*w - 2*y*z, 1 - 2*x*x - 2*z*z)
- zAngle =  asin(2*x*y + 2*z*w)
-
-Es ist auch möglich unabhängige Winkel zu berechen. Yaw, Pitch und Roll
-in einem rechtshändigen Fahrzeugkoordinatensystem nach DIN70000 können
-wie folgt berechnet werden::
-
- yaw   =  atan2(2*x*y + 2*w*z, w*w + x*x - y*y - z*z)
- pitch = -asin(2*w*y - 2*x*z)
- roll  = -atan2(2*y*z + 2*w*x, -w*w + x*x + y*y - z*z))
- 
-Diese Umrechnung ist irreversibel aufgrund der 
-`kardanischen Blockade <http://de.wikipedia.org/wiki/Gimbal_lock>`__.
-
-Die Umrechnung von Quaternionen in eine OpenGL Transformationsmatrix ist
-mit folgender Formel möglich::
-
- matrix = [[1 - 2*(y*y + z*z),     2*(x*y - w*z),     2*(x*z + w*y), 0],
-           [    2*(x*y + w*z), 1 - 2*(x*x + z*z),     2*(y*z - w*x), 0],
-           [    2*(x*z - w*y),     2*(y*z + w*x), 1 - 2*(x*x + y*y), 0],
-           [                0,                 0,                 0, 1]]
+Die zurückgegebenen Werte müssen mit 16383 (14 bit) dividiert werden um 
+in den üblichen Wertebereich für Quaternionen (-1 bis 1) gebracht zu werden.
 
 Wenn die Quaternionen periodisch abgefragt werden sollen, wird empfohlen den
 Callback :func:`Quaternion` zu nutzen und die Periode mit :func:`SetQuaternionPeriod`
@@ -300,7 +306,32 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-TODO
+Return all of the available data of the IMU Brick.
+
+* acceleration in 1/100 m/s² (see :func:`GetAcceleration`)
+* magnetic field in 1/16 µT (see :func:`GetMagneticField`)
+* angular velocity in 1/16 °/s (see :func:`GetAngularVelocity`)
+* euler angles in 1/16 ° (see :func:`GetOrientation`)
+* quaternion 1/16383 (see :func:`GetQuaternion`)
+* linear acceleration 1/100 m/s² (see :func:`GetLinearAcceleration`)
+* gravity vector 1/100 m/s² (see :func:`GetGravityVector`)
+* temperature in 1 °C (see :func:`GetTemperature`)
+* calibration status (see below)
+
+The calibration status consists of four pairs of two bits. Each pair
+of bits represents the status of the current calibration.
+
+* bit 0-1: Magnetometer
+* bit 2-3: Accelerometer
+* bit 4-5: Gyroscope
+* bit 6-7: System
+
+A value of 0 means for "not calibrated" and a value of 3 means
+"fully calibrated". In your program you should always be able to
+ignore the calibration status, it is used by the calibration
+window of the Brick Viewer and it can be ignored after the first
+calibration. See the documentation in the calibration window for
+more information regarding the calibration of the IMU Brick.
 
 If you want to get the data periodically, it is recommended 
 to use the callback :func:`AllData` and set the period with 
@@ -308,7 +339,32 @@ to use the callback :func:`AllData` and set the period with
 """,
 'de':
 """
-TODO
+Gibt alle Daten zurück die dem IMU Brick zur Verfügung stehen.
+
+* Beschleunigung in 1/100 m/s² (see :func:`GetAcceleration`)
+* Magnetfeld in 1/16 µT (see :func:`GetMagneticField`)
+* Winkelgeschwindigkeit in 1/16 °/s (see :func:`GetAngularVelocity`)
+* Eulerwinkel in 1/16 ° (see :func:`GetOrientation`)
+* Quaternion 1/16383 (see :func:`GetQuaternion`)
+* Lineare Beschleunigung 1/100 m/s² (see :func:`GetLinearAcceleration`)
+* Erdbeschleunigungsvektor 1/100 m/s² (see :func:`GetGravityVector`)
+* Temperatur in 1 °C (see :func:`GetTemperature`)
+* Kalibrierungsstatus (siehe unten)
+
+Der Kalibrierungsstatus bsteht aus vier paaren von je zwei Bits. Jedes
+Paar von Bits repräsentiert den Status der aktuellen Kalibrierung.
+
+* Bit 0-1: Magnetometer
+* Bit 2-3: Beschleunigungsmesser
+* Bit 4-5: Gyroskop
+* Bit 6-7: System
+
+Ein Wert von 0 bedeutet "nicht kalibriert" und ein Wert von 3
+bedeutet "vollständig kalibriert". Normalerweise kann der 
+Kalibrierungsstatus vollständig ignoriert werden. Er wird vom
+Brick Viewer im Kalibrierungsfenster benutzt und nur für die
+initiale Kalibrierung benötigt. Mehr Information zur Kalibrierung
+des IMU Bricks gibt es im Kalibrierungsfenster.
 
 Wenn die Daten periodisch abgefragt werden sollen, wird empfohlen den
 Callback :func:`AllData` zu nutzen und die Periode mit :func:`SetAllDataPeriod`
@@ -377,11 +433,30 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-TODO
+A call of this function saves the current calibration to be used
+as a starting point for the next restart of continuous calibration
+of the IMU Brick.
+
+A return value of *true* means that the calibration could be used and
+*false* means that it could not be used (this happens if the calibration 
+status is not "fully calibrated").
+
+This function is used by the calibration window of the Brick Viewer, you
+should not need to call it in your program.
 """,
 'de':
 """
-TODO
+Ein Aufruf dieser Funktion speichert die aktuelle Kalibrierung damit
+sie beim nächsten neustart des IMU Bricks als startpunkt für die
+kontinuierliche Kalibrierung genutzt werden kann.
+
+Ein Rückgabewert von *true* bedeuetet das die Kalibrierung genutzt werden
+konnte und *false* bedeutet das die Kalibrierung nicht genutzt werden
+konnte (dies passiert wenn der Kalibrierungsstatus nicht "fully calibrated"
+ist).
+
+Diese Funktion wird vom Kalibrierungsfenster des Brick Viewer benutzt. Sie
+sollte in einem normalen Benutzerprogramm nicht aufgerufen werden müssen.
 """
 }] 
 })
@@ -792,12 +867,12 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetTemperaturePeriod`. The :word:`parameters` TODO.
+:func:`SetTemperaturePeriod`. The :word:`parameter` is the temperature.
 """,
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetTemperaturePeriod`,
-ausgelöst. Die :word:`parameters` TODO.
+ausgelöst. Der :word:`parameter` ist die Temperatur.
 """
 }] 
 })
@@ -813,12 +888,13 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetLinearAccelerationPeriod`. The :word:`parameters` TODO.
+:func:`SetLinearAccelerationPeriod`. The :word:`parameters` are the 
+linear acceleration for the x, y and z axis.
 """,
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetLinearAccelerationPeriod`,
-ausgelöst. Die :word:`parameters` TODO.
+ausgelöst. Die :word:`parameter` sind die linearen Beschleunigungen der X, Y und Z-Achse.
 """
 }] 
 })
@@ -834,12 +910,14 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetGravityVectorPeriod`. The :word:`parameters` TODO.
+:func:`SetGravityVectorPeriod`. The :word:`parameters` gravity vector
+for the x, y and z axis.
 """,
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetGravityVectorPeriod`,
-ausgelöst. Die :word:`parameters` TODO.
+ausgelöst. Die :word:`parameter` sind die Erdbeschleunigungsvektor-Werte 
+der X, Y und Z-Achse.
 """
 }] 
 })
@@ -856,13 +934,13 @@ com['packets'].append({
 """
 This callback is triggered periodically with the period that is set by
 :func:`SetOrientationPeriod`. The :word:`parameters` are the orientation
-(roll, pitch and heading (yaw)) of the IMU Brick in Euler angles. See
+(heading (yaw), roll, pitch) of the IMU Brick in Euler angles. See
 :func:`GetOrientation` for details.
 """,
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetOrientationPeriod`,
-ausgelöst. Die :word:`parameters` sind die Orientierung (Roll-, Nick-, Gierwinkel) des
+ausgelöst. Die :word:`parameters` sind die Orientierung (Gier-, Roll-, Nickwinkel) des
 IMU Brick in Eulerwinkeln. Siehe :func:`GetOrientation` für Details.
 """
 }] 
@@ -910,16 +988,12 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetAllDataPeriod`. The :word:`parameters` are the acceleration,
-the magnetic field and the angular velocity for the x, y and z axis as
-well as the temperature of the IMU Brick.
+:func:`SetAllDataPeriod`. The :word:`parameters` are as for :func:`GetAllData`.
 """,
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAllDataPeriod`,
-ausgelöst. Die :word:`parameters` sind die Beschleunigungen, Magnetfeldkomponenten
-und die Winkelgeschwindigkeiten der X, Y und Z-Achse sowie die Temperatur
-des IMU Brick.
+ausgelöst. Die :word:`parameter` sind die gleichen wie bei :func:`GetAllData`.
 """
 }] 
 })
