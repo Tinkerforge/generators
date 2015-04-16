@@ -26,9 +26,13 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the measured distance. The value has a range of 0 to 4000
+and is given in cm.
 
-unit: cm
+The Laser Range Finder Bricklet knows different modes. Distances
+are only measured in the distace measurement mode, 
+see :func:`SetMode`. Also the laser has to be enabled, see
+:func:`EnableLaser`.
 
 If you want to get the distance periodically, it is recommended to
 use the callback :func:`Distance` and set the period with 
@@ -36,7 +40,12 @@ use the callback :func:`Distance` and set the period with
 """,
 'de':
 """
-TODO
+Gibt die gemessene Distanz zurück. Der Wertebereich ist 0 bis 4000
+und die Werte haen die Einheit cm.
+
+Das Lase Range Finder Bricklet kennt verschiedene Modi. Eine Distanz
+wird nur im Distanzmodus gemessen, siehe :func:`SetMode`. Zusätzlich
+muss der Laser aktiviert werden, siehe :func:`EnableLaser`.
 
 Wenn der Entfernungswert periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Distance` zu nutzen und die Periode mit 
@@ -53,9 +62,13 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the measured velocity. The value has a range of 0 to 12700
+and is given in 1/100 m/s.
 
-unit: 0.01 m/s
+The Laser Range Finder Bricklet knows different modes. Velocity 
+is only measured in the velocity measurement modes, 
+see :func:`SetMode`. Also the laser has to be enabled, see
+:func:`EnableLaser`.
 
 If you want to get the velocity periodically, it is recommended to
 use the callback :func:`Velocity` and set the period with 
@@ -63,7 +76,12 @@ use the callback :func:`Velocity` and set the period with
 """,
 'de':
 """
-TODO
+Gibt die gemessene Geschwindigkeit zurück. Der Wertebereich ist 0 bis 12700
+und die Werte haben die Einheit 1/100 m/s.
+
+Das Lase Range Finder Bricklet kennt verschiedene Modi. Eine Geschwindigkeit 
+wird nur in den Geschwindigkeitsmodi gemessen, siehe :func:`SetMode`. Zusätzlich
+muss der Laser aktiviert werden, siehe :func:`EnableLaser`.
 
 Wenn der Geschwindigkeitswert periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Velocity` zu nutzen und die Periode mit 
@@ -443,14 +461,35 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-* resolution 0.1m/s => 12.7m/s max
-* resolution 0.25m/s => 31.75m/s max
-* resolution 0.5m/s => 63.5m/s max
-* resolution 1m/s => 127 m/s max
+The LIDAR has five different modes. One mode is for distance
+measurements and four modes are for velocity measurements with
+different ranges.
+
+The following modes are available:
+
+* 0: Distance is measured with resolution 1.0 cm and range 0-400 cm
+* 1: Velocity is measured with resolution 0.1 m/s and range is 0-12.7 m/s
+* 2: Velocity is measured with resolution 0.25 m/s and range is 0-31.75 m/s
+* 3: Velocity is measured with resolution 0.5 m/s and range is 0-63.5 m/s
+* 4: Velocity is measured with resolution 1.0 m/s and range is 0-127 m/s
+
+The default mode is 0 (Distance is measured).
 """,
 'de':
 """
+Das LIDAR hat fünf verschiedene Modi. Ein Modus ist für
+Distanzmessungen und vier Modi sind für Geschwindigkeitsmessungen
+mit unterschiedlichen Wertebereichen.
 
+Die folgenden Modi können genutzt werden:
+
+* 0: Distanz wird gemessen mit Auflösung 1,0 cm und Wertebereich 0-400 cm
+* 1: Geschwindigkeit wird gemessen mit Auflösung 0,1 m/s und Wertebereich 0-12.7 m/s
+* 2: Geschwindigkeit wird gemessen mit Auflösung 0,25 m/s und Wertebereich 0-31.75 m/s
+* 3: Geschwindigkeit wird gemessen mit Auflösung 0,5 m/s und Wertebereich 0-63.5 m/s
+* 4: Geschwindigkeit wird gemessen mit Auflösung 1,0 m/s und Wertebereich 0-127 m/s
+
+Der Standardmodus ist 0 (Distanzmessung).
 """
 }]
 })
@@ -467,9 +506,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns the mode as set by :func:`SetMode`.
 """,
 'de':
 """
+Gibt den Modus zurück, wie von :func:`SetMode` gesetzt.
 """
 }]
 })
@@ -482,9 +523,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Activates the laser of the LIDAR.
 """,
 'de':
 """
+Aktiviert den Laser des LIDAR.
 """
 }]
 })
@@ -497,9 +540,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Deactivates the laser of the LIDAR.
 """,
 'de':
 """
+Deaktiviert den Laser des LIDAR.
 """
 }]
 })
@@ -512,9 +557,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns *true* if the laser is enabled, *false* otherwise.
 """,
 'de':
 """
+Gibt *true* zurück wenn der Laser aktiviert ist, *false* sonst.
 """
 }]
 })
