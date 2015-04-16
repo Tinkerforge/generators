@@ -132,7 +132,7 @@ com['packets'].append({
              ('roll', 'int16', 1, 'out'), 
              ('pitch', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
-'doc': ['bf', {
+'doc': ['af', {
 'en':
 """
 Returns the current orientation (heading, roll, pitch) of the IMU Brick as Euler
@@ -179,7 +179,7 @@ com['packets'].append({
              ('y', 'int16', 1, 'out'),
              ('z', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
-'doc': ['bf', {
+'doc': ['af', {
 'en':
 """
 Returns the linear acceleration of the IMU Brick for the
@@ -220,7 +220,7 @@ com['packets'].append({
              ('y', 'int16', 1, 'out'),
              ('z', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
-'doc': ['bf', {
+'doc': ['af', {
 'en':
 """
 Returns the current gravity vector of the IMU Brick for the
@@ -262,7 +262,7 @@ com['packets'].append({
              ('y', 'int16', 1, 'out'),
              ('z', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
-'doc': ['bf', {
+'doc': ['af', {
 'en':
 """
 Returns the current orientation (w, x, y, z) of the IMU as 
@@ -303,7 +303,7 @@ com['packets'].append({
              ('temperature', 'int8', 1, 'out'),
              ('calibration_status', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
-'doc': ['af', {
+'doc': ['bf', {
 'en':
 """
 Return all of the available data of the IMU Brick.
