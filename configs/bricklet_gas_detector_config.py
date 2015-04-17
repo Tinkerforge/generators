@@ -26,7 +26,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns a value between 0 and 4095. 
+
+See `here <TODO>`__ for more information about the measurements.
 
 If you want to get the value periodically, it is recommended 
 to use the callback :func:`Value` and set the period with 
@@ -34,7 +36,9 @@ to use the callback :func:`Value` and set the period with
 """,
 'de':
 """
-TODO
+Gibt einen Wert zwischen 0 und 4095 zurück.
+
+Siehe `hier <TODO>`__ für mehr Informationen zu den Messwerten.
 
 Wenn der Wert periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Value` zu nutzen und die Periode mit 
@@ -273,16 +277,43 @@ Gibt die Länge des gleitenden Mittelwerts zurück, wie von
 com['packets'].append({
 'type': 'function',
 'name': ('SetDetectorType', 'set_detector_type'), 
-'elements': [('detector_type', 'uint8', 1, 'in')],
+'elements': [('detector_type', 'uint8', 1, 'in', ('DetectorType', 'detector_type', [('0', '0', 0),
+                                                                                    ('1', '1', 1)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-TODO
+Sets the detector type.
+
+The following types are currently supported.
+
+* Type 0: MQ2 and MQ5
+* Type 1: MQ3
+
+The detector type is written to the EEPROM of the Bricklet, so it only has
+to be set once.
+
+You can use the Brick Viewer to set the detector type, so you likely
+don't need to use this function in your source code.
+
+The default type is 0.
 """,
 'de':
 """
-TODO
+Setzt den Detektortyp
+
+Die folgenden Typen werden aktuell unterstützt:
+
+* Typ 0: MQ2 und MQ5
+* Typ 1: MQ3
+
+Der Detektortyp wird in das EEPROM des Bricklets geschrieben und muss
+daher nur einmal gesetzt werden.
+
+Wir empfehlen den Typ des Detektors im Brick Viewer zu setzen anstatt
+diese Funktion zu nutzen.
+
+Der Standar-Detektortyp ist 0.
 """
 }]
 })
@@ -290,16 +321,17 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': ('GetDetectorType', 'get_detector_type'), 
-'elements': [('detector_type', 'uint8', 1, 'out')],
+'elements': [('detector_type', 'uint8', 1, 'out', ('DetectorType', 'detector_type', [('0', '0', 0),
+                                                                                     ('1', '1', 1)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-TODO
+Returns the detector type as set by :func:`SetDetectorType`.
 """,
 'de':
 """
-TODO
+Gibt den Detektortyp zurück, wie von :func:`SetDetectorType` gesetzt.
 """
 }]
 })
@@ -312,11 +344,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-TODO
+Turns the internal heater on.
 """,
 'de':
 """
-TODO
+Aktiviert den internen Erhitzer.
 """
 }]
 })
@@ -329,11 +361,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-TODO
+Turns the internal heater off.
 """,
 'de':
 """
-TODO
+Deaktiviert den internen Erhitzer.
 """
 }]
 })
@@ -347,11 +379,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-TODO
+Returns *true* if the heater is on, *false* otherwise.
 """,
 'de':
 """
-TODO
+Gibt *true* zurück wenn der interne Erhitzer aktiviert ist, *false* sonst.
 """
 }]
 })
@@ -368,7 +400,7 @@ This callback is triggered periodically with the period that is set by
 :func:`SetValueCallbackPeriod`. The :word:`parameter` is the value value
 of the sensor.
 
-:func:`Value` is only triggered if the value value has changed since the
+:func:`Value` is only triggered if the value has changed since the
 last triggering.
 """,
 'de':
