@@ -1,5 +1,5 @@
 {
-  Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+  Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 
   Redistribution and use in source and binary forms of this file,
   with or without modification, are permitted. See the Creative
@@ -632,13 +632,18 @@ begin
   waiter.Release;
 end;
 
-{ NOTE: Assumes that socketMutex is locked }
+{ NOTE: Assumes that socket is nil and socketMutex is locked }
 procedure TIPConnection.ConnectUnlocked(const isAutoReconnect: boolean);
 var
 {$ifndef FPC}
  {$ifdef MSWINDOWS}
     data: WSAData;
  {$endif}
+{$endif}
+{$ifdef DELPHI_MACOS}
+    tmp: longint;
+{$else}
+    tmp: TSocket;
 {$endif}
     nodelay: longint;
 {$ifdef DELPHI_MACOS}
@@ -683,26 +688,26 @@ begin
  {$endif}
 {$endif}
 {$ifdef FPC}
-  socket := fpsocket(AF_INET, SOCK_STREAM, 0);
-  if (socket < 0) then begin
+  tmp := fpsocket(AF_INET, SOCK_STREAM, 0);
+  if (tmp < 0) then begin
 {$else}
  {$ifdef DELPHI_MACOS}
-  socket := Posix.SysSocket.socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+  tmp := Posix.SysSocket.socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
  {$else}
-  socket := WinSock.socket(AF_INET, SOCK_STREAM, 0);
+  tmp := WinSock.socket(AF_INET, SOCK_STREAM, 0);
  {$endif}
-  if (socket = INVALID_SOCKET) then begin
+  if (tmp = INVALID_SOCKET) then begin
 {$endif}
     raise Exception.Create('Could not create socket: ' + GetLastSocketErrorMessage);
   end;
   nodelay := 1;
 {$ifdef FPC}
-  if (fpsetsockopt(socket, IPPROTO_TCP, TCP_NODELAY, @nodelay, sizeof(nodelay)) < 0) then begin
+  if (fpsetsockopt(tmp, IPPROTO_TCP, TCP_NODELAY, @nodelay, sizeof(nodelay)) < 0) then begin
 {$else}
  {$ifdef DELPHI_MACOS}
-  if (setsockopt(socket, IPPROTO_TCP, TCP_NODELAY, nodelay, sizeof(nodelay)) < 0) then begin
+  if (setsockopt(tmp, IPPROTO_TCP, TCP_NODELAY, nodelay, sizeof(nodelay)) < 0) then begin
  {$else}
-  if (setsockopt(socket, IPPROTO_TCP, TCP_NODELAY, @nodelay, sizeof(nodelay)) = SOCKET_ERROR) then begin
+  if (setsockopt(tmp, IPPROTO_TCP, TCP_NODELAY, @nodelay, sizeof(nodelay)) = SOCKET_ERROR) then begin
  {$endif}
 {$endif}
     raise Exception.Create('Could not set TCP_NODELAY socket option: ' + GetLastSocketErrorMessage);
@@ -714,8 +719,7 @@ begin
   hints.ai_socktype := SOCK_STREAM;
   error := getaddrinfo(PAnsiChar(AnsiString(host)), nil, hints, entry);
   if (error <> 0) then begin
-    Posix.Unistd.__close(socket);
-    socket := INVALID_SOCKET;
+    Posix.Unistd.__close(tmp);
     raise Exception.Create('Could not resolve host ' + host + ': ' + string(gai_strerror(error)));
   end;
   resolved := sockaddr_in(entry.ai_addr^).sin_addr;
@@ -723,8 +727,7 @@ begin
 {$else}
   entry := gethostbyname(PAnsiChar(AnsiString(host)));
   if (entry = nil) then begin
-    closesocket(socket);
-    socket := INVALID_SOCKET;
+    closesocket(tmp);
     raise Exception.Create('Could not resolve host: ' + host);
   end;
   resolved.s_addr := longint(pointer(entry^.h_addr_list^)^);
@@ -733,22 +736,22 @@ begin
   address.sin_port := htons(port);
   address.sin_addr := resolved;
 {$ifdef FPC}
-  if (fpconnect(socket, @address, sizeof(address)) < 0) then begin
+  if (fpconnect(tmp, @address, sizeof(address)) < 0) then begin
 {$else}
  {$ifdef DELPHI_MACOS}
-  if (Posix.SysSocket.connect(socket, sockaddr(address), sizeof(address)) < 0) then begin
+  if (Posix.SysSocket.connect(tmp, sockaddr(address), sizeof(address)) < 0) then begin
  {$else}
-  if (WinSock.connect(socket, address, sizeof(address)) = SOCKET_ERROR) then begin
+  if (WinSock.connect(tmp, address, sizeof(address)) = SOCKET_ERROR) then begin
  {$endif}
 {$endif}
 {$ifdef DELPHI_MACOS}
-    Posix.Unistd.__close(socket);
+    Posix.Unistd.__close(tmp);
 {$else}
-    closesocket(socket);
+    closesocket(tmp);
 {$endif}
-    socket := INVALID_SOCKET;
     raise Exception.Create('Could not connect socket: ' + GetLastSocketErrorMessage);
   end;
+  socket := tmp;
   socketID := socketID + 1;
   { Create disconnect probe thread }
   disconnectProbeFlag := true;
@@ -773,7 +776,7 @@ begin
   callback^.queue.Enqueue(IPCON_QUEUE_KIND_META, meta);
 end;
 
-{ NOTE: Assumes that socketMutex is locked }
+{ NOTE: Assumes that socket is not nil and socketMutex is locked }
 procedure TIPConnection.DisconnectUnlocked;
 begin
   { Destroy disconnect probe thread }

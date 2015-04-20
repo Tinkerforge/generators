@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
@@ -1801,10 +1801,11 @@ static void ipcon_receive_loop(void *opaque) {
 	}
 }
 
-// NOTE: assumes that socket_mutex is locked
+// NOTE: assumes that socket is NULL and socket_mutex is locked
 static int ipcon_connect_unlocked(IPConnectionPrivate *ipcon_p, bool is_auto_reconnect) {
 	struct hostent *entity;
 	struct sockaddr_in address;
+	Socket *tmp;
 	uint8_t connect_reason;
 	Meta *meta;
 
@@ -1854,9 +1855,9 @@ static int ipcon_connect_unlocked(IPConnectionPrivate *ipcon_p, bool is_auto_rec
 	address.sin_family = AF_INET;
 	address.sin_port = htons(ipcon_p->port);
 
-	ipcon_p->socket = (Socket *)malloc(sizeof(Socket));
+	tmp = (Socket *)malloc(sizeof(Socket));
 
-	if (socket_create(ipcon_p->socket, AF_INET, SOCK_STREAM, 0) < 0) {
+	if (socket_create(tmp, AF_INET, SOCK_STREAM, 0) < 0) {
 		// destroy callback thread
 		if (!is_auto_reconnect) {
 			queue_put(&ipcon_p->callback->queue, QUEUE_KIND_EXIT, NULL);
@@ -1869,13 +1870,12 @@ static int ipcon_connect_unlocked(IPConnectionPrivate *ipcon_p, bool is_auto_rec
 		}
 
 		// destroy socket
-		free(ipcon_p->socket);
-		ipcon_p->socket = NULL;
+		free(tmp);
 
 		return E_NO_STREAM_SOCKET;
 	}
 
-	if (socket_connect(ipcon_p->socket, &address, sizeof(address)) < 0) {
+	if (socket_connect(tmp, &address, sizeof(address)) < 0) {
 		// destroy callback thread
 		if (!is_auto_reconnect) {
 			queue_put(&ipcon_p->callback->queue, QUEUE_KIND_EXIT, NULL);
@@ -1888,13 +1888,13 @@ static int ipcon_connect_unlocked(IPConnectionPrivate *ipcon_p, bool is_auto_rec
 		}
 
 		// destroy socket
-		socket_destroy(ipcon_p->socket);
-		free(ipcon_p->socket);
-		ipcon_p->socket = NULL;
+		socket_destroy(tmp);
+		free(tmp);
 
 		return E_NO_CONNECT;
 	}
 
+	ipcon_p->socket = tmp;
 	++ipcon_p->socket_id;
 
 	// create disconnect probe thread
@@ -1965,7 +1965,7 @@ static int ipcon_connect_unlocked(IPConnectionPrivate *ipcon_p, bool is_auto_rec
 	return E_OK;
 }
 
-// NOTE: assumes that socket_mutex is locked
+// NOTE: assumes that socket is not NULL and socket_mutex is locked
 static void ipcon_disconnect_unlocked(IPConnectionPrivate *ipcon_p) {
 	// destroy disconnect probe thread
 	event_set(&ipcon_p->disconnect_probe_event);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
@@ -467,7 +467,7 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 		}
 	}
 
-	// NOTE: Assumes that socketMutex is locked
+	// NOTE: Assumes that socket is null and socketMutex is locked
 	void connectUnlocked(boolean isAutoReconnect) throws java.net.UnknownHostException,
 	                                                     java.io.IOException {
 		if(callbackThread == null) {
@@ -476,24 +476,15 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 			callbackThread.start();
 		}
 
-		try {
-			socket = new Socket(host, port);
-			socket.setTcpNoDelay(true);
-			in = socket.getInputStream();
-			out = socket.getOutputStream();
-			out.flush();
-		} catch(java.net.UnknownHostException e) {
-			socket = null;
-			in = null;
-			out = null;
-			throw(e);
-		} catch(java.io.IOException e) {
-			socket = null;
-			in = null;
-			out = null;
-			throw(e);
-		}
+		Socket tmpSocket = new Socket(host, port);
+		tmpSocket.setTcpNoDelay(true);
+		InputStream tmpIn = tmpSocket.getInputStream();
+		OutputStream tmpOut = tmpSocket.getOutputStream();
+		tmpOut.flush();
 
+		socket = tmpSocket;
+		in = tmpIn;
+		out = tmpOut;
 		++socketID;
 
 		// create disconnect probe thread
@@ -588,7 +579,7 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 		}
 	}
 
-	// NOTE: Assumes that socketMutex is locked
+	// NOTE: Assumes that socket is not null and socketMutex is locked
 	void disconnectUnlocked() {
 		disconnectProbeThread.shutdown();
 		try {

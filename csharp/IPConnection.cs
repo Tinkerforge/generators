@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
@@ -167,7 +167,7 @@ namespace Tinkerforge
 			}
 		}
 
-		// NOTE: assumes that socketLock is locked
+		// NOTE: assumes that socket is null and socketLock is locked
 		private void ConnectUnlocked(bool isAutoReconnect)
 		{
 			if (callback == null)
@@ -182,22 +182,48 @@ namespace Tinkerforge
 				callback.thread.Start();
 			}
 
+			Socket tmp = null;
+
 			try
 			{
-				socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-				socket.NoDelay = true;
-				ConnectSocket(host, port);
+				tmp = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+				tmp.NoDelay = true;
+
+#if WINDOWS_PHONE
+				IPAddress ipAddress = IPAddress.Parse(host);
+				var endpoint = new IPEndPoint(ipAddress, port);
+
+				SocketAsyncEventArgs args = new SocketAsyncEventArgs();
+				args.RemoteEndPoint = endpoint;
+
+				AutoResetEvent connectedEvent = new AutoResetEvent(false);
+				args.Completed += new EventHandler<SocketAsyncEventArgs>((o, e) => { connectedEvent.Set(); });
+				bool connectPending = tmp.ConnectAsync(args);
+
+				if (connectPending)
+				{
+					connectedEvent.WaitOne();
+				}
+
+				if (!connectPending || args.SocketError != SocketError.Success)
+				{
+					throw new IOException(string.Format("Could not connect: {0}", args.SocketError));
+				}
+#else
+				tmp.Connect(host, port);
+#endif
 			}
 			catch (Exception)
 			{
-				if (socket != null)
+				if (tmp != null)
 				{
-					socket.Close();
-					socket = null;
+					tmp.Close();
 				}
+
 				throw;
 			}
 
+			socket = tmp;
 			socketStream = new NetworkStream(socket);
 			++socketID;
 
@@ -271,7 +297,7 @@ namespace Tinkerforge
 			}
 		}
 
-		// NOTE: assumes that socketLock is locked
+		// NOTE: assumes that socket is not null and socketLock is locked
 		private void DisconnectUnlocked()
 		{
 			// destroy disconnect probe thread
@@ -499,32 +525,6 @@ namespace Tinkerforge
 				nextSequenceNumber = currentSequenceNumber % 15;
 			}
 			return currentSequenceNumber;
-		}
-
-		private void ConnectSocket(string host, int port)
-		{
-#if WINDOWS_PHONE
-			IPAddress ipAddress = IPAddress.Parse(host);
-			var endpoint = new IPEndPoint(ipAddress, port);
-
-			SocketAsyncEventArgs args = new SocketAsyncEventArgs();
-			args.RemoteEndPoint = endpoint;
-
-			AutoResetEvent connectedEvent = new AutoResetEvent(false);
-			args.Completed += new EventHandler<SocketAsyncEventArgs>((o, e) => { connectedEvent.Set(); });
-			bool connectPending = socket.ConnectAsync(args);
-
-			if (connectPending)
-			{
-				connectedEvent.WaitOne();
-			}
-			if (!connectPending || args.SocketError != SocketError.Success)
-			{
-				throw new IOException(string.Format("Could not connect: {0}", args.SocketError));
-			}
-#else
-			socket.Connect(host, port);
-#endif
 		}
 
 		private void ReceiveLoop(long localSocketID)

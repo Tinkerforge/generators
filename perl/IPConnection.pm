@@ -320,7 +320,7 @@ sub connect
 	return 1;
 }
 
-# NOTE: assumes that SOCKET_LOCK is locked
+# NOTE: assumes that socket_fileno is undef and SOCKET_LOCK is locked
 sub _connect_unlocked
 {
 	my ($self, $is_auto_reconnect) = @_;
@@ -345,8 +345,7 @@ sub _connect_unlocked
 	}
 
 	# create socket
-	$self->{socket_fileno} = undef;
-
+	my $socket_fileno = undef;
 	my $socket = IO::Socket::INET->new(PeerAddr => $self->{host},
 	                                   PeerPort => $self->{port},
 	                                   Proto => 'tcp',
@@ -382,7 +381,7 @@ sub _connect_unlocked
 			$socket->send('');
 		}
 
-		$self->{socket_fileno} = dup($socket->fileno());
+		$socket_fileno = dup($socket->fileno());
 	};
 	$error = $!;
 
@@ -401,13 +400,11 @@ sub _connect_unlocked
 			$self->{callback_thread} = undef;
 		}
 
-		# destroy socket
-		$self->_destroy_socket();
-
 		croak(Tinkerforge::Error->_new(Tinkerforge::Error->CONNECT_FAILED,
 		                               "Could not connect to $self->{host}:$self->{port}: $error"));
 	}
 
+	$self->{socket_fileno} = $socket_fileno;
 	$self->{socket_id}++;
 
 	$self->_init_local_socket();
@@ -449,7 +446,7 @@ sub _connect_unlocked
 	# FIXME: this only covers one case. if the user creates a thread then this
 	#        one will deadlock on Windows if the receive thread is doing a
 	#        blocking recv() call. another case is the user calling a setter or
-	#        getter after an auto-reconnect. the IPConnection takes case of
+	#        getter after an auto-reconnect. the IPConnection takes care of
 	#        its own threads to have a valid local socket before starting to
 	#        receive data. but the program main thread or user-created threads
 	#        will update their local sockets (via _get_local_socket) later while
@@ -568,7 +565,7 @@ sub disconnect
 	return 1;
 }
 
-# NOTE: assumes that SOCKET_LOCK is locked
+# NOTE: assumes that socket_fileno is not undef and SOCKET_LOCK is locked
 sub _disconnect_unlocked
 {
 	my ($self) = @_;
