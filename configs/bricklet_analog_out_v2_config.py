@@ -13,7 +13,7 @@ com = {
     'device_identifier': 256,
     'name': ('AnalogOutV2', 'analog_out_v2', 'Analog Out 2.0', 'Analog Out Bricklet 2.0'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for output of voltage between 0 and 16V',
+    'description': 'Device for output of voltage between 0 and 12V',
     'released': False,
     'packets': []
 }
@@ -26,11 +26,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the voltage in mV. The possible range is 0V to 16V (0-16000).
+Sets the voltage in mV. The possible range is 0V to 12V (0-12000).
 """,
 'de':
 """
-Setzt die Spannung in mV. Der mögliche Bereich ist 0V bis 16V (0-16000).
+Setzt die Spannung in mV. Der mögliche Bereich ist 0V bis 12V (0-12000).
 """
 }]
 })
@@ -61,9 +61,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the input voltage in mV.
 """,
 'de':
 """
+Gibt die Eingangsspannung in mV zurück.
 """
 }]
 })
