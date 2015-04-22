@@ -897,7 +897,7 @@ Example for EAP-TTLS + EAP-GTC + Private Key: ``option = 2 | (1 << 2) | (2 << 3)
 The values are stored in the EEPROM and only applied on startup. That means
 you have to restart the Master Brick after configuration.
 
-It is recommended to use the Brick Viewer to set the WIFI encryption.
+It is recommended to use the Brick Viewer to set the Wi-Fi encryption.
 """,
 'de':
 """
@@ -944,7 +944,7 @@ Beispiel für EAP-TTLS + EAP-GTC + Private Key: ``option = 2 | (1 << 2) | (2 << 
 Die Werte sind im EEPROM gespeichert und werden nur beim Start angewandt.
 Das bedeutet der Master Brick muss nach einer Konfiguration neu gestartet werden.
 
-Wir empfehlen den Brick Viewer zu nutzen um die WIFI Extension Verschlüsselung
+Wir empfehlen den Brick Viewer zu nutzen um die WLAN Verschlüsselung
 zu konfigurieren.
 """
 }]
@@ -1051,8 +1051,8 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Refreshes the WIFI status (see :func:`GetWifiStatus`). To read the status
-of the WIFI module, the Master Brick has to change from data mode to
+Refreshes the Wi-Fi status (see :func:`GetWifiStatus`). To read the status
+of the Wi-Fi module, the Master Brick has to change from data mode to
 command mode and back. This transaction and the readout itself is
 unfortunately time consuming. This means, that it might take some ms
 until the stack with attached WIFI Extension reacts again after this
@@ -1060,8 +1060,8 @@ function is called.
 """,
 'de':
 """
-Aktualisiert den WIFI Status (siehe :func:`GetWifiStatus`). Um den Status
-vom WIFI Modul zu lesen, muss der Master Brick vom Datenmodus in den
+Aktualisiert den WLAN Status (siehe :func:`GetWifiStatus`). Um den Status
+vom WLAN Modul zu lesen, muss der Master Brick vom Datenmodus in den
 Kommandomodus und wieder zurück wechseln. Dieser Wechsel und das eigentliche
 Auslesen ist leider zeitaufwändig. Dass heißt, es dauert ein paar ms bis der
 Stapel mit aufgesteckter WIFI Extension wieder reagiert nachdem die
@@ -1207,7 +1207,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns informations about the WIFI receive buffer. The WIFI
+Returns informations about the Wi-Fi receive buffer. The Wi-Fi
 receive buffer has a max size of 1500 byte and if data is transfered
 too fast, it might overflow.
 
@@ -1224,7 +1224,7 @@ break between them.
 """,
 'de':
 """
-Gibt Informationen über denn WIFI Empfangsbuffer zurück. Der WIFI
+Gibt Informationen über denn WLAN Empfangsbuffer zurück. Der WLAN
 Empfangsbuffer hat eine maximale Größe von 1500 Byte und falls zu viele
 Daten übertragen werden, kann er überlaufen.
 
@@ -1325,7 +1325,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets a long WIFI key (up to 63 chars, at least 8 chars) for WPA encryption.
+Sets a long Wi-Fi key (up to 63 chars, at least 8 chars) for WPA encryption.
 This key will be used
 if the key in :func:`SetWifiEncryption` is set to "-". In the old protocol,
 a payload of size 63 was not possible, so the maximum key length was 50 chars.
@@ -1335,7 +1335,7 @@ this function was added additionally.
 """,
 'de':
 """
-Setzt einen langen WIFI Schlüssel (bis zu 63 Zeichen, mindestens 8 Zeichen) für
+Setzt einen langen WLAN Schlüssel (bis zu 63 Zeichen, mindestens 8 Zeichen) für
 WPA Verschlüsselung. Dieser Schlüssel wird genutzt, wenn der Schlüssel in
 :func:`SetWifiEncryption` auf "-" gesetzt wird. Im alten Protokoll war
 ein Payload der Größe 63 nicht möglich, dadurch wurde die maximale
