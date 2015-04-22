@@ -10,6 +10,100 @@ common_packets = []
 
 common_packets.append({
 'type': 'function',
+'function_id': 238,
+'name': ('EnableStatusLED', 'enable_status_led'), 
+'elements': [], 
+'since_firmware': {'*': [2, 0, 0],
+                   'dc': [2, 3, 1],
+                   'imu': [2, 3, 1],
+                   'master': [2, 3, 2],
+                   'red': None,
+                   'servo': [2, 3, 1],
+                   'stepper': [2, 3, 1]},
+'doc': ['af', {
+'en':
+"""
+Enables the status LED.
+
+The status LED is the blue LED next to the USB connector. If enabled is is
+on and it flickers if data is transfered. If disabled it is always off.
+
+The default state is enabled.
+""",
+'de':
+"""
+Aktiviert die Status LED.
+
+Die Status LED ist die blaue LED neben dem USB-Stecker. Wenn diese aktiviert
+ist, ist sie an und sie flackert wenn Daten transferiert werden. Wenn sie
+deaktiviert ist, ist sie immer aus.
+
+Der Standardzustand ist aktiviert.
+"""
+}]
+})
+
+common_packets.append({
+'type': 'function',
+'function_id': 239,
+'name': ('DisableStatusLED', 'disable_status_led'), 
+'elements': [],
+'since_firmware': {'*': [2, 0, 0],
+                   'dc': [2, 3, 1],
+                   'imu': [2, 3, 1],
+                   'master': [2, 3, 2],
+                   'red': None,
+                   'servo': [2, 3, 1],
+                   'stepper': [2, 3, 1]},
+'doc': ['af', {
+'en':
+"""
+Disables the status LED.
+
+The status LED is the blue LED next to the USB connector. If enabled is is
+on and it flickers if data is transfered. If disabled it is always off.
+
+The default state is enabled.
+""",
+'de':
+"""
+Deaktiviert die Status LED.
+
+Die Status LED ist die blaue LED neben dem USB-Stecker. Wenn diese aktiviert
+ist, ist sie an und sie flackert wenn Daten transferiert werden. Wenn sie
+deaktiviert ist, ist sie immer aus.
+
+Der Standardzustand ist aktiviert.
+"""
+}]
+})
+
+common_packets.append({
+'type': 'function',
+'function_id': 240,
+'name': ('IsStatusLEDEnabled', 'is_status_led_enabled'), 
+'elements': [('enabled', 'bool', 1, 'out')],
+'since_firmware': {'*': [2, 0, 0],
+                   'dc': [2, 3, 1],
+                   'imu': [2, 3, 1],
+                   'master': [2, 3, 2],
+                   'red': None,
+                   'servo': [2, 3, 1],
+                   'stepper': [2, 3, 1]},
+'doc': ['af', {
+'en':
+"""
+Returns *true* if the status led is enabled, *false* otherwise.
+""",
+'de':
+"""
+Gibt *true* zurück wenn die Status LED aktiviert ist, *false* sonst.
+"""
+}]
+})
+
+common_packets.append({
+'type': 'function',
 'function_id': 241,
 'name': ('GetProtocol1BrickletName', 'get_protocol1_bricklet_name'), 
 'elements': [('port', 'char', 1, 'in'),
