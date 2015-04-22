@@ -27,11 +27,23 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Writes a string of up to 60 characters to the RS232 interface. The string
+can be binary data, ASCII or similar is not necessary.
+
+The length of the string has to be given as an additional parameter.
+
+See :func:`SetConfigurations` for configuration possibilities
+regarding baudrate, parity and so on.
 """,
 'de':
 """
-TODO
+Schreibt einen String aus bis zu 60 Chars auf die RS232-Schnittstelle. Der
+String kann aus Binärdaten bestehen, ASCII o.ä. ist nicht notwendig.
+
+Die Länge des Strings muss als ein zusätzlicher Parameter angegeben werden.
+
+Siehe :func:`SetConfiguration` für Konfigurationsmöglichkeiten
+bezüglich Baudrate, Parität usw.
 """
 }]
 })
@@ -45,11 +57,22 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the currently buffered message. The maximum length
+of message is 60. If the length is given as 0, there was no
+new data available.
+
+Instead of polling with this function, you can also use
+callbacks. See :func:`EnableCallback` and :func:`ReadCallback`.
 """,
 'de':
 """
-TODO
+Gibt die aktuell gespeicherte Nachricht zurück. Die maximale Länge
+beträgt 60. Wenn die Länge als 0 gegeben wird, waren keine
+neuen Daten verfügbar.
+
+Anstatt zu mit dieser Funktion zu pollen, ist es auch möglich
+Callbacks zu nutzen. Siehe :func:`EnableCallback` und
+:func:`DisableCallback`.
 """
 }]
 })
@@ -62,11 +85,15 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-TODO
+Enables the :func:`ReadCallback`.
+
+By default the callback is disabled.
 """,
 'de':
 """
-TODO
+Aktiviert den :func:`ReadCallback`.
+
+Im Startzustand ist der Callback deaktiviert
 """
 }]
 })
@@ -79,11 +106,15 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-TODO
+Disables the :func:`ReadCallback`.
+
+By default the callback is disabled.
 """,
 'de':
 """
-TODO
+Deaktiviert den :func:`ReadCallback`.
+
+Im Startzustand ist der Callback deaktiviert
 """
 }]
 })
@@ -96,11 +127,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-TODO
+Returns *true* if the :func:`ReadCallback` is enabled,
+*false* otherwise.
 """,
 'de':
 """
-TODO
+Gibt *true* zurück falls :func:`ReadCallback` aktiviert ist, 
+*false* sonst.
 """
 }]
 })
@@ -140,11 +173,26 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the configuration for the RS232 communication. Available options:
+
+* Baudrate between 300 and 230400 baud.
+* Parity of None, Odd, Even or forced parity.
+* Stopbits can be 1 or 2.
+* Word length of 5 to 8.
+* Hard-/Software flow control can each be on or off.
+
+The default is: 115200 baud, parity none, 1 stop bit, word length 8, hard-/software flow control off.
 """,
 'de':
 """
-TODO
+Setzt die Konfiguration für die RS232-Kommunikation.
+Verfügbare Optionen sind:
+
+* Baudrate zwischen 300 und 230400 Baud.
+* Parität von None, Odd, Even und Forced Parity.
+* Stop Bits von 1 oder 2.
+* Wortlänge zwischen 5 und 8.
+* Hard-/Software flow control kann je an oder aus sein.
 """
 }]
 })
@@ -183,11 +231,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the configuration as set by :func:`SetConfiguration`.
 """,
 'de':
 """
-TODO
+Gibt die Konfiguration zurück, wie von :func:`SetConfiguration` gesetzt.
 """
 }]
 })
@@ -201,11 +249,19 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-TODO
+This callback is called if new data is available. The message has
+a maximum size of 60 characters. The actual length of the message
+is given in addition.
+
+To enable this callback, use :func:`EnableCallback`.
 """,
 'de':
 """
-TODO
+Dieser Callback wird aufgerufen wenn neue Daten zur Verfügung stehen.
+Die Nachricht hat eine Maximalgröße von 60 Chars. Die Länge
+der Nachricht wird zusätzlich übergeben.
+
+Dieser Callback kann durch :func:`EnableCallback` aktiviert werden.
 """
 }]
 })
