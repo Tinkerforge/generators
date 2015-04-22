@@ -13,7 +13,7 @@ com = {
     'device_identifier': 258,
     'name': ('IndustrialAnalogOut', 'industrial_analog_out', 'Industrial Analog Out', 'Industrial Analog Out Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for output of voltage between 0 and 10V and current between 4 and 20mA',
+    'description': 'Device for output of voltage between 0 and 10V as well as current between 4 and 20mA',
     'released': False,
     'packets': []
 }
@@ -26,9 +26,15 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Enables the output of voltage and current.
+
+The default is disabled.
 """,
 'de':
 """
+Aktiviert die Ausgabe von Spannung und Strom.
+
+Der Standardwert ist deaktiviert.
 """
 }]
 })
@@ -41,9 +47,15 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Disables the output of voltage and current.
+
+The default is disabled.
 """,
 'de':
 """
+Deaktiviert die Ausgabe von Spannung und Strom.
+
+Der Standardwert ist deaktiviert.
 """
 }]
 })
@@ -56,9 +68,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns *true* if output of voltage and current is enabled, *false* otherwise.
 """,
 'de':
 """
+Gibt *true* zurück falls die Ausgabe von Spannung und Strom aktiviert ist, 
+*false* sonst.
 """
 }]
 })
@@ -71,11 +86,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the voltage in mV.
+Sets the output voltage in mV.
 """,
 'de':
 """
-Setzt die Spannung in mV.
+Setzt die Ausgabespannung in mV.
 """
 }]
 })
@@ -106,11 +121,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the current in µA.
+Sets the output current in µA.
 """,
 'de':
 """
-Setzt den Strom in µA.
+Setzt den Ausgabestrom in µA.
 """
 }]
 })
@@ -145,10 +160,39 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-TODO
+Configures the voltage and current range.
+
+Possible voltage ranges are:
+
+* 0V - 5V
+* 0V - 10V
+
+Possible current ranges are:
+
+* 4mA to 20mA
+* 0mA to 20mA
+* 0mA to 24mA
+
+The resolution will always be 12 bit. This means, that the
+precision is higher with a smaller range.
 """,
 'de':
 """
+Konfiguriert die Spannungs- und Stromwertebereiche.
+
+Einstellbare Spannungswertebereiche sind:
+
+* 0V - 5V
+* 0V - 10V
+
+Einstellbare Stromwertebereiche sind:
+
+* 4mA to 20mA
+* 0mA to 20mA
+* 0mA to 24mA
+
+Die Auflösung ist immer 12 Bit. D.h., die Genauigkeit erhöht
+sich bei kleineren Wertebereichen.
 """
 }]
 })
