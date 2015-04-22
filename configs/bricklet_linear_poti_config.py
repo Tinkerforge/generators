@@ -15,7 +15,7 @@ com = {
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': '59mm linear potentiometer',
-        'de': '59mm Linear-Potentiometer'
+        'de': '59mm Linearpotentiometer'
     },
     'released': True,
     'packets': []

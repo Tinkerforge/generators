@@ -15,7 +15,7 @@ com = {
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': '300° rotary potentiometer',
-        'de': '300° Dreh-Potentiometer'
+        'de': '300° Drehpotentiometer'
     },
     'released': True,
     'packets': []
