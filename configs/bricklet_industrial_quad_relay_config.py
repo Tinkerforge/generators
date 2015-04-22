@@ -13,7 +13,10 @@ com = {
     'device_identifier': 225,
     'name': ('IndustrialQuadRelay', 'industrial_quad_relay', 'Industrial Quad Relay', 'Industrial Quad Relay Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for controlling up to 4 Solid State Relays',
+    'description': {
+        'en': '4 galvanically isolated solid state relays',
+        'de': '4 galvanisch getrennte Halbleiterrelais (Solid State Relais)'
+    },
     'released': True,
     'packets': []
 }

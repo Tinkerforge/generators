@@ -13,7 +13,10 @@ com = {
     'device_identifier': 215,
     'name': ('RotaryPoti', 'rotary_poti', 'Rotary Poti', 'Rotary Poti Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for sensing Rotary Potentiometer input',
+    'description': {
+        'en': '300° rotary potentiometer',
+        'de': '300° Dreh-Potentiometer'
+    },
     'released': True,
     'packets': []
 }

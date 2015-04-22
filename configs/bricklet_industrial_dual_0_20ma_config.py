@@ -13,7 +13,10 @@ com = {
     'device_identifier': 228,
     'name': ('IndustrialDual020mA', 'industrial_dual_0_20ma', 'Industrial Dual 0-20mA', 'Industrial Dual 0-20mA Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for sensing two currents between 0 and 20mA (IEC 60381-1)',
+    'description': {
+        'en': 'Measures two DC currents between 0mA and 20mA (IEC 60381-1)',
+        'de': 'Misst zwei Gleichströme zwischen 0mA und 20mA (IEC 60381-1)'
+    },
     'released': True,
     'packets': []
 }

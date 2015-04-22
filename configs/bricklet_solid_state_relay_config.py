@@ -13,7 +13,10 @@ com = {
     'device_identifier': 244,
     'name': ('SolidStateRelay', 'solid_state_relay', 'Solid State Relay', 'Solid State Relay Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for controlling AC and DC Solid State Relays',
+    'description': {
+        'en': 'Controls AC and DC Solid State Relays',
+        'de': 'Schaltet AC und DC Halbleiterrelais (Solid State Relais)'
+    },
     'released': True,
     'packets': []
 }

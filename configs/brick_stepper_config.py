@@ -13,7 +13,10 @@ com = {
     'device_identifier': 15,
     'name': ('Stepper', 'stepper', 'Stepper', 'Stepper Brick'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for controlling stepper motors',
+    'description': {
+        'en': 'Drives one bipolar stepper motor with up to 38V and 2.5A per phase',
+        'de': 'Steuert einen bipolaren Schrittmotor mit bis zu 38V und 2,5A pro Phase'
+    },
     'released': True,
     'packets': []
 }

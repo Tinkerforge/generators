@@ -13,7 +13,10 @@ com = {
     'device_identifier': 226,
     'name': ('PTC', 'ptc', 'PTC', 'PTC Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for reading temperatures from Pt100 or Pt1000 sensors',
+    'description': {
+        'en': 'Reads temperatures from Pt100 und Pt1000 sensors',
+        'de': 'Liest Temperaturen von Pt100 und Pt1000 Sensoren'
+    },
     'released': True,
     'packets': []
 }

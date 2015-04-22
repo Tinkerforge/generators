@@ -13,7 +13,10 @@ com = {
     'device_identifier': 257,
     'name': ('ACCurrent', 'ac_current', 'AC Current', 'AC Current Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for sensing ac currents between 0 and 100A',
+    'description': {
+        'en': 'Measures AC current between 0A and 100A',
+        'de': 'Misst Wechselstrom zwischen 0A und 100A'
+    },
     'released': False,
     'packets': []
 }

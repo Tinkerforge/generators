@@ -13,7 +13,10 @@ com = {
     'device_identifier': 249,
     'name': ('IndustrialDualAnalogIn', 'industrial_dual_analog_in', 'Industrial Dual Analog In', 'Industrial Dual Analog In Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for sensing voltage between -35V and +35V.',
+    'description': {
+        'en': 'Measures two DC voltages between -35V and +35V',
+        'de': 'Misst zwei Gleichspannungen zwischen -35V und +35V'
+    },
     'released': False,
     'packets': []
 }

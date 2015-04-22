@@ -13,7 +13,10 @@ com = {
     'device_identifier': 243,
     'name': ('Color', 'color', 'Color', 'Color Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for measuring color (RGB value), illuminance and color temperature',
+    'description': {
+        'en': 'Measures color (RGB value), illuminance and color temperature',
+        'de': 'Misst Farbe (RGB Wert), Beleuchtungsstärke und Farbtemperatur'
+    },
     'released': True,
     'packets': []
 }

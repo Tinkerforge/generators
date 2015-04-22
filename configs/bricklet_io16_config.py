@@ -13,7 +13,10 @@ com = {
     'device_identifier': 28,
     'name': ('IO16', 'io16', 'IO-16', 'IO-16 Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for controlling up to 16 general purpose input/output pins',
+    'description': {
+        'en': '16-channel digital input/output',
+        'de': '16 digitale Ein- und Ausgänge'
+    },
     'released': True,
     'packets': []
 }

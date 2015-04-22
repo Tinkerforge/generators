@@ -13,7 +13,10 @@ com = {
     'device_identifier': 223,
     'name': ('IndustrialDigitalIn4', 'industrial_digital_in_4', 'Industrial Digital In 4', 'Industrial Digital In 4 Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for controlling up to 4 optically coupled digital inputs',
+    'description': {
+        'en': '4 galvanically isolated digital inputs',
+        'de': '4 galvanisch getrennte digitale Eingänge'
+    },
     'released': True,
     'packets': []
 }

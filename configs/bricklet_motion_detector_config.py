@@ -13,7 +13,10 @@ com = {
     'device_identifier': 233,
     'name': ('MotionDetector', 'motion_detector', 'Motion Detector', 'Motion Detector Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device that reads out PIR motion detector',
+    'description': {
+        'en': 'Passive infrared (PIR) motion sensor, 7m range',
+        'de': 'Passiver Infrarot (PIR) Bewegungssensor, 7m Reichweite'
+    },
     'released': True,
     'packets': []
 }

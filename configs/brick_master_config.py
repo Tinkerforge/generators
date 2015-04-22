@@ -13,7 +13,10 @@ com = {
     'device_identifier': 13,
     'name': ('Master', 'master', 'Master', 'Master Brick'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for controlling Stacks and four Bricklets',
+    'description': {
+        'en': 'Basis to build stacks and has 4 Bricklet ports',
+        'de': 'Grundlage um Stapel zu bauen und bietet 4 Bricklet Anschlüsse'
+    },
     'released': True,
     'packets': []
 }

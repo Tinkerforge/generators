@@ -13,7 +13,10 @@ com = {
     'device_identifier': 227,
     'name': ('VoltageCurrent', 'voltage_current', 'Voltage/Current', 'Voltage/Current Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for high precision sensing of voltage and current',
+    'description': {
+        'en': 'Measure power, DC voltage and DC current up to 720W/36V/20A',
+        'de': 'Misst Leistung, Gleichspannung und Gleichstrom bis zu 720W/36V/20A'
+    },
     'released': True,
     'packets': []
 }

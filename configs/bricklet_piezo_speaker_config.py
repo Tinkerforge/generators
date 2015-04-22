@@ -13,7 +13,10 @@ com = {
     'device_identifier': 242,
     'name': ('PiezoSpeaker', 'piezo_speaker', 'Piezo Speaker', 'Piezo Speaker Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for controlling a piezo buzzer with configurable frequencies',
+    'description': {
+        'en': 'Creates beep with configurable frequency',
+        'de': 'Erzeugt Piepton mit konfigurierbarer Frequenz'
+    },
     'released': True,
     'packets': []
 }

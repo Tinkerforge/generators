@@ -13,7 +13,10 @@ com = {
     'device_identifier': 230,
     'name': ('DualButton', 'dual_button', 'Dual Button', 'Dual Button Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device with two buttons and two LEDs',
+    'description': {
+        'en': 'Two tactile buttons with built-in blue LEDs',
+        'de': 'Zwei Taster mit eingebauten blauen LEDs'
+    },
     'released': True,
     'packets': []
 }

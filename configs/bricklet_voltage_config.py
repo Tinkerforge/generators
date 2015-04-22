@@ -13,7 +13,10 @@ com = {
     'device_identifier': 218,
     'name': ('Voltage', 'voltage', 'Voltage', 'Voltage Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for sensing Voltages between 0 and 50V',
+    'description': {
+        'en': 'Measures DC voltage between 0V and 50V',
+        'de': 'Misst Gleichspannung zwischen 0V und 50V'
+    },
     'released': True,
     'packets': []
 }

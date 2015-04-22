@@ -13,7 +13,10 @@ com = {
     'device_identifier': 213,
     'name': ('LinearPoti', 'linear_poti', 'Linear Poti', 'Linear Poti Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for sensing Linear Potentiometer input',
+    'description': {
+        'en': '59mm linear potentiometer',
+        'de': '59mm Linear-Potentiometer'
+    },
     'released': True,
     'packets': []
 }

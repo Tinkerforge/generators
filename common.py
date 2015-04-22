@@ -656,6 +656,8 @@ def generate(bindings_root_directory, language, generator_class):
     common_bricklet_packets = copy.deepcopy(__import__('bricklet_commonconfig').common_packets)
 
     device_identifiers = []
+    brick_descriptions = {}
+    bricklet_descriptions = {}
 
     generator = generator_class(bindings_root_directory, language)
 
@@ -702,14 +704,31 @@ def generate(bindings_root_directory, language, generator_class):
                                        device.get_long_display_name(),
                                        device.get_underscore_name() + '_' + device.get_category().lower()))
 
+            if device.get_category() == 'Brick':
+                brick_descriptions[device.get_underscore_name()] = {
+                    'en': device.get_description('en'),
+                    'de': device.get_description('de')
+                }
+            else:
+                bricklet_descriptions[device.get_underscore_name()] = {
+                    'en': device.get_description('en'),
+                    'de': device.get_description('de')
+                }
+
             generator.generate(device)
 
     generator.finish()
 
-    f = open(os.path.join(bindings_root_directory, '..', 'device_identifiers.py'), 'wb')
-    f.write('device_identifiers = ')
-    pprint(sorted(device_identifiers),  f)
-    f.close()
+    with open(os.path.join(bindings_root_directory, '..', 'device_identifiers.py'), 'wb') as f:
+        f.write('device_identifiers = \\\n')
+        pprint(sorted(device_identifiers), f)
+
+    with open(os.path.join(bindings_root_directory, '..', 'device_descriptions.py'), 'wb') as f:
+        f.write('brick_descriptions = \\\n')
+        pprint(brick_descriptions, f)
+        f.write('\n')
+        f.write('bricklet_descriptions = \\\n')
+        pprint(bricklet_descriptions, f)
 
 cn_valid_camel_case_chars = re.compile('^[A-Z][A-Za-z0-9]*$')
 cn_valid_underscore_chars = re.compile('^[a-z][a-z0-9_]*$')
@@ -1286,8 +1305,8 @@ class Device:
     def get_long_display_name(self):
         return self.raw_data['name'][3]
 
-    def get_description(self):
-        return self.raw_data['description']
+    def get_description(self, language='en'):
+        return self.raw_data['description'][language]
 
     def get_packets(self, type=None):
         if type is None:

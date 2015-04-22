@@ -13,7 +13,10 @@ com = {
     'device_identifier': 27,
     'name': ('Humidity', 'humidity', 'Humidity', 'Humidity Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for sensing Humidity',
+    'description': {
+        'en': 'Measures relative humidity',
+        'de': 'Misst relative Luftfeuchtigkeit'
+    },
     'released': True,
     'packets': []
 }

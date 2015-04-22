@@ -13,7 +13,10 @@ com = {
     'device_identifier': 237,
     'name': ('SegmentDisplay4x7', 'segment_display_4x7', 'Segment Display 4x7', 'Segment Display 4x7 Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for controling four 7-segment displays',
+    'description': {
+        'en': 'Four 7-segment displays with switchable colon',
+        'de': 'Vier 7-Segment Anzeigen mit schaltbarem Doppelpunkt'
+    },
     'released': True,
     'packets': []
 }

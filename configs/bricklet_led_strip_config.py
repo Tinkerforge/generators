@@ -13,7 +13,10 @@ com = {
     'device_identifier': 231,
     'name': ('LEDStrip', 'led_strip', 'LED Strip', 'LED Strip Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device to control up to 320 RGB LEDs',
+    'description': {
+        'en': 'Controls up to 320 RGB LEDs',
+        'de': 'Steuert bis zu 320 RGB LEDs'
+    },
     'released': True,
     'packets': []
 }

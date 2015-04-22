@@ -13,7 +13,10 @@ com = {
     'device_identifier': 217,
     'name': ('TemperatureIR', 'temperature_ir', 'Temperature IR', 'Temperature IR Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for non-contact temperature sensing',
+    'description': {
+        'en': 'Measures contactless object temperature between -70°C and +380°C',
+        'de': 'Kontaktlose Objekttemperaturmessung zwischen -70°C und +380°C'
+    },
     'released': True,
     'packets': []
 }

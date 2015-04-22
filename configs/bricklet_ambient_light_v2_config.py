@@ -13,7 +13,10 @@ com = {
     'device_identifier': 259,
     'name': ('AmbientLightV2', 'ambient_light_v2', 'Ambient Light 2.0', 'Ambient Light Bricklet 2.0'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for sensing Ambient Light',
+    'description': {
+        'en': 'Measures ambient light up to 64000lux',
+        'de': 'Misst Umgebungslicht bis zu 64000Lux'
+    },
     'released': False,
     'packets': []
 }

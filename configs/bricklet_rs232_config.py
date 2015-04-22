@@ -13,7 +13,10 @@ com = {
     'device_identifier': 254,
     'name': ('RS232', 'rs232', 'RS232', 'RS232 Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for RS232 communication',
+    'description': {
+        'en': 'Communicates with RS232 devices',
+        'de': 'Kommuniziert mit RS232 Geräten'
+    },
     'released': False,
     'packets': []
 }

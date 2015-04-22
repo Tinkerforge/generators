@@ -13,7 +13,10 @@ com = {
     'device_identifier': 253,
     'name': ('LoadCell', 'load_cell', 'Load Cell', 'Load Cell Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for measuring weight with a load cell',
+    'description':  {
+        'en': 'Measures weight with a load cell',
+        'de': 'Misst Gewicht mit einer Wägezelle'
+    },
     'released': False,
     'packets': []
 }

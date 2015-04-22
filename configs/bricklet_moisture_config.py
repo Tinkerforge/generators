@@ -13,7 +13,10 @@ com = {
     'device_identifier': 232,
     'name': ('Moisture', 'moisture', 'Moisture', 'Moisture Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for sensing Moisture',
+    'description': {
+        'en': 'Measures soil moisture',
+        'de': 'Misst Erdfeuchtigkeit'
+    },
     'released': True,
     'packets': []
 }

@@ -13,7 +13,10 @@ com = {
     'device_identifier': 250,
     'name': ('Accelerometer', 'accelerometer', 'Accelerometer', 'Accelerometer Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for sensing acceleration in three axis',
+    'description': {
+        'en': 'Measures acceleration in three axis',
+        'de': 'Misst Beschleunigung in drei Achsen'
+    },
     'released': False,
     'packets': []
 }

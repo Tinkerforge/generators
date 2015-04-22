@@ -13,7 +13,10 @@ com = {
     'device_identifier': 222,
     'name': ('GPS', 'gps', 'GPS', 'GPS Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for receiving GPS position',
+    'description': {
+        'en': 'Determine position, velocity and altitude using GPS',
+        'de': 'Bestimmt Position, Geschwindigkeit und Höhe mittels GPS'
+    },
     'released': True,
     'packets': []
 }

@@ -32,7 +32,10 @@ com = {
     'device_identifier': 246,
     'name': ('NFCRFID', 'nfc_rfid', 'NFC/RFID', 'NFC/RFID Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device that can read and write NFC and RFID tags',
+    'description': {
+        'en': 'Reads and writes NFC and RFID tags',
+        'de': 'Liest und schreibt NFC und RFID Tags'
+    },
     'released': True,
     'packets': []
 }

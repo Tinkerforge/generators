@@ -13,7 +13,10 @@ com = {
     'device_identifier': 251,
     'name': ('AnalogInV2', 'analog_in_v2', 'Analog In 2.0', 'Analog In Bricklet 2.0'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for sensing voltages between 0 and 42V',
+    'description': {
+        'en': 'Measures DC voltage between 0V and 42V',
+        'de': 'Misst Gleichspannung zwischen 0V und 42V'
+    },
     'released': False,
     'packets': []
 }

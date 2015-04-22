@@ -13,7 +13,10 @@ com = {
     'device_identifier': 18,
     'name': ('IMUV2', 'imu_v2', 'IMU 2.0', 'IMU Brick 2.0'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for sensing acceleration, magnetic field and angular velocity',
+    'description': {
+        'en': 'Full fledged AHRS with 9 degrees of freedom',
+        'de': 'Voll ausgestattetes AHRS mit 9 Freiheitsgraden'
+    },
     'released': False,
     'packets': []
 }

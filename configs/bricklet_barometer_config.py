@@ -13,7 +13,10 @@ com = {
     'device_identifier': 221,
     'name': ('Barometer', 'barometer', 'Barometer', 'Barometer Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for sensing air pressure and altitude changes',
+    'description': {
+        'en': 'Measures air pressure and altitude changes',
+        'de': 'Misst Luftdruck und Höhenänderungen'
+    },
     'released': True,
     'packets': []
 }

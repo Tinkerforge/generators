@@ -13,7 +13,10 @@ com = {
     'device_identifier': 238,
     'name': ('SoundIntensity', 'sound_intensity', 'Sound Intensity', 'Sound Intensity Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for sensing sound intensity',
+    'description': {
+        'en': 'Measures sound intensity',
+        'de': 'Misst Schallintensität'
+    },
     'released': True,
     'packets': []
 }

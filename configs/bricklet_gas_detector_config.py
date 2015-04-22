@@ -13,7 +13,10 @@ com = {
     'device_identifier': 252,
     'name': ('GasDetector', 'gas_detector', 'Gas Detector', 'Gas Detector Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for sensing different gases',
+    'description': {
+        'en': 'Measures concentration of different gases',
+        'de': 'Misst Konzentration verschiedener Gase'
+    },
     'released': False,
     'packets': []
 }

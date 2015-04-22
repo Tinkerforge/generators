@@ -13,7 +13,10 @@ com = {
     'device_identifier': 211,
     'name': ('LCD16x2', 'lcd_16x2', 'LCD 16x2', 'LCD 16x2 Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for controlling a LCD with 2 lines a 16 characters',
+    'description': {
+        'en': '16x2 character alphanumeric display with blue backlight',
+        'de': '16x2 Zeichen alphanumerisches Display mit blauer Hintergrundbeleuchtung'
+    },
     'released': True,
     'packets': []
 }

@@ -13,7 +13,10 @@ com = {
     'device_identifier': 239,
     'name': ('Tilt', 'tilt', 'Tilt', 'Tilt Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for sensing tilt and vibration',
+    'description': {
+        'en': 'Detects inclination of Bricklet (tilt switch open/closed)',
+        'de': 'Erkennt Neigung des Bricklets (Neigungsschalter offen/geschlossen)'
+    },
     'released': True,
     'packets': []
 }

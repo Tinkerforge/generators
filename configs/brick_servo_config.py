@@ -13,7 +13,10 @@ com = {
     'device_identifier': 14,
     'name': ('Servo', 'servo', 'Servo', 'Servo Brick'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for controlling up to seven servos',
+    'description': {
+        'en': 'Drives up to 7 RC Servos with up to 3A',
+        'de': 'Steuert bis zu 7 RC Servos mit bis zu 3A'
+    },
     'released': True,
     'packets': []
 }

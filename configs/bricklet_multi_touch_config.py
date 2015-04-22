@@ -13,7 +13,10 @@ com = {
     'device_identifier': 234,
     'name': ('MultiTouch', 'multi_touch', 'Multi Touch', 'Multi Touch Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device with 12 touch sensors',
+    'description': {
+        'en': 'Capacitive touch sensor for 12 electrodes',
+        'de': 'Kapazitiver Touch Sensor für 12 Elektroden'
+    },
     'released': True,
     'packets': []
 }

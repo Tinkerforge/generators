@@ -13,7 +13,10 @@ com = {
     'device_identifier': 220,
     'name': ('AnalogOut', 'analog_out', 'Analog Out', 'Analog Out Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for output of voltage between 0 and 5V',
+    'description': {
+        'en': 'Generates configurable DC voltage between 0V and 5V',
+        'de': 'Erzeugt konfigurierbare Gleichspannung zwischen 0V und 5V'
+    },
     'released': True,
     'packets': []
 }

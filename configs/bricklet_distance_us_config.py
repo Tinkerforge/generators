@@ -13,7 +13,10 @@ com = {
     'device_identifier': 229,
     'name': ('DistanceUS', 'distance_us', 'Distance US', 'Distance US Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for sensing distance via ultrasound',
+    'description': {
+        'en': 'Measures distance between 2cm and 400cm with ultrasound',
+        'de': 'Misst Entfernung zwischen 2cm und 400cm mit Ultraschall'
+    },
     'released': True,
     'packets': []
 }

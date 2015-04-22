@@ -111,7 +111,10 @@ com = {
     'device_identifier': 17,
     'name': ('RED', 'red', 'RED', 'RED Brick'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device for executing user programs standalone',
+    'description': {
+        'en': 'Executes user programs and controls other Bricks/Bricklets standalone',
+        'de': 'Führt Programme aus und steuert andere Bricks/Bricklets selbständig'
+    },
     'released': True,
     'packets': []
 }

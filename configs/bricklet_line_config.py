@@ -13,7 +13,10 @@ com = {
     'device_identifier': 241,
     'name': ('Line', 'line', 'Line', 'Line Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'Device that measures reflectivity to allow following a line',
+    'description': {
+        'en': 'Measures reflectivity of a surface',
+        'de': 'Misst Reflektivität einer Oberfläche'
+    },
     'released': True,
     'packets': []
 }
