@@ -14,7 +14,7 @@ com = {
     'name': ('Current25', 'current25', 'Current25', 'Current25 Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'Measures AC and DC current between -25A and +25A',
+        'en': 'Measures AC/DC current between -25A and +25A',
         'de': 'Misst Gleich- und Wechselstrom zwischen -25A und +25A'
     },
     'released': True,
