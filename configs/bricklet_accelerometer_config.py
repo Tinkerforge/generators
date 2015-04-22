@@ -28,7 +28,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the acceleration in X, Y and Z direction. The values
+are given in mG (1/1000 G).
 
 If you want to get the acceleration periodically, it is recommended 
 to use the callback :func:`Acceleration` and set the period with 
@@ -36,9 +37,10 @@ to use the callback :func:`Acceleration` and set the period with
 """,
 'de':
 """
-TODO
+Gibt die Beschleunigung in X-, Y- und Z-Richtung zurück. Die Werte
+haben die Einheit mG (1/1000 G).
 
-Wenn die Farbe periodisch abgefragt werden soll, wird empfohlen
+Wenn die Beschleunigungswerte periodisch abgefragt werden sollen, wird empfohlen
 den Callback :func:`Acceleration` zu nutzen und die Periode mit 
 :func:`SetAccelerationCallbackPeriod` vorzugeben.
 """
@@ -273,9 +275,33 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Configures the data rate, full scale range and filter bandwith.
+Possible values are:
+
+* Data rate of 0Hz to 1600 Hz.
+* Full scale range of -2G to 2G up to -16G to 16G.
+* Filter bandwidth between 50Hz and 800Hz.
+
+Decreasing data rate or full scale range will also decrease the noise on 
+the data.
+
+The default values are 100Hz data rate, -4G to 4G range and 200Hz 
+filter bandwidth.
 """,
 'de':
 """
+Konfiguriert die Datenrate, den Wertebereich und die Filterbandbreite.
+Mögliche Konfigurationswerte sind:
+
+* Datenrate zwischen 0Hz und 1600 Hz.
+* Wertebereich von -2G bis 2G bis zu -16G bis 16G.
+* Filterbandbreite zwischen 50Hz und 800Hz.
+
+Eine Verringerung der Datenrate oder des Wertebereichs verringert auch
+automatisch das Rauschen auf den Daten.
+
+Die Standardwerte sind 100Hz Datenrate, -4G bis 4G Wertebereich und 200Hz
+Filterbandbreite.
 """
 }]
 })
@@ -306,9 +332,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the configuration as set by :func:`SetConfiguration`.
 """,
 'de':
 """
+Gibt die Konfiguration zurück, wie von :func:`SetConfiguration` gesetzt.
 """
 }]
 })
@@ -321,9 +349,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Enables the LED on the Bricklet.
 """,
 'de':
 """
+Aktiviert die LED auf dem Bricklet.
 """
 }]
 })
@@ -336,9 +366,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Disables the LED on the Bricklet.
 """,
 'de':
 """
+Deaktiviert die LED auf dem Bricklet.
 """
 }]
 })
@@ -351,9 +383,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+Returns *true* if the LED is enabled, *false* otherwise.
 """,
 'de':
 """
+Gibt *true* zurück wenn die LED aktiviert ist, *false* sonst.
 """
 }]
 })
@@ -368,16 +402,20 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-TODO
+This callback is triggered periodically with the period that is set by
+:func:`SetAccelerationCallbackPeriod`. The :word:`parameters` are the
+X, Y and Z acceleration.
 
 :func:`Acceleration` is only triggered if the acceleration has changed since the
 last triggering.
 """,
 'de':
 """
-TODO
+Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAccelerationCallbackPeriod`,
+ausgelöst. Die :word:`parameter` sind die Beschleunigungen der X-, Y- und 
+Z-Achse.
 
-:func:`Acceleration` wird nur ausgelöst wenn sich die Farbe seit der
+:func:`Acceleration` wird nur ausgelöst wenn sich die Beschleunigung seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -393,17 +431,21 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-TODO
+This callback is triggered when the threshold as set by
+:func:`SetAccelerationCallbackThreshold` is reached.
+The :word:`parameters` are the X, Y and Z acceleration.
 
-:func:`Acceleration` is only triggered if the acceleration has changed since the
-last triggering.
+If the threshold keeps being reached, the callback is triggered periodically
+with the period as set by :func:`SetDebouncePeriod`.
 """,
 'de':
 """
-TODO
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+:func:`SetAccelerationCallbackThreshold` gesetzt, erreicht wird.
+Die :word:`parameter` sind die Beschleunigungen der X-, Y- und Z-Achse.
 
-:func:`Acceleration` wird nur ausgelöst wenn sich die Farbe seit der
-letzten Auslösung geändert hat.
+Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
+mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 """
 }]
 })
