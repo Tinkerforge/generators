@@ -13,7 +13,7 @@ com = {
     'device_identifier': 249,
     'name': ('IndustrialDualAnalogIn', 'industrial_dual_analog_in', 'Industrial Dual Analog In', 'Industrial Dual Analog In Bricklet'),
     'manufacturer': 'Tinkerforge',
-    'description': 'TODO',
+    'description': 'Device for sensing voltage between -35V and +35V.',
     'released': False,
     'packets': []
 }
@@ -21,16 +21,12 @@ com = {
 com['api'] = {
 'en':
 """
-TODO
-
 Two channels can be connected to the Bricklet. Functions that are related
 directly to a channel have a ``channel`` parameter to specify one of the two
 channels. Valid values for the ``channel`` parameter are 0 and 1.
 """,
 'de':
 """
-TODO
-
 Es können zwei Sensoren an das Bricklet angeschlossen werden. Funktionen die
 sich direkt auf einen der Sensoren beziehen haben einen ``channel`` Parameter,
 um den Sensor anzugeben. Gültige Werte für den ``channel`` Parameter sind 0
@@ -47,7 +43,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the voltage for the given channel in mV.
 
 If you want to get the voltage periodically, it is recommended to use the
 callback :func:`Voltage` and set the period with 
@@ -55,7 +51,7 @@ callback :func:`Voltage` and set the period with
 """,
 'de':
 """
-TODO
+Gibt die Spannung für den übergebenen Kanal in mV zurück.
 
 Wenn die Stromstärke periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Voltage` zu nutzen und die Periode mit 
@@ -263,11 +259,15 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-TODO
+Sets the sample rate. The sample rate can be between 1 sample per second
+and 976 samples per second. Decreasing the sample rate will also decrease the
+noise on the data.
 """,
 'de':
 """
-TODO
+Setzt die Abtastrate. Der Wertebereich der verfügbare Abtastraten
+liegt zwischen 1 Wert pro Sekunde und 976 Werte pro Sekunde. Ein
+Verringern der Abtastrate wird auch das Rauschen auf den Daten verringern.
 """
 }]
 })
@@ -306,11 +306,19 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-TODO
+Sets offset and gain of MCP3911 internal calibration registers.
+
+See MCP3911 datasheet 7.7 and 7.8. The Industrial Dual Analog In Bricklet
+is already factory calibrated by Tinkerforge. It should not be necessary
+for you to use this function
 """,
 'de':
 """
-TODO
+Setzt Offset und Gain der MCP3911 internen Kalibrierungsregister.
+
+Siehe MCP3911 Datenblatt 7.7 und 7.8. Das Industrial Dual Analog In Bricklet
+wird von Tinkerforge Werkskalibriert worden. Ein Aufruf dieser Funktion sollte
+nicht notwendig sein.
 """
 }]
 })
@@ -324,11 +332,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-TODO
+Returns the calibration as set by :func:`SetCalibration`.
 """,
 'de':
 """
-TODO
+Gibt die Kalibrierung zurück, wie von :func:`SetCalibration` gesetzt.
 """
 }]
 })
@@ -341,11 +349,13 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-TODO
+Returns the ADC values as given by the MCP3911 IC. This function
+is needed for proper calibration, see :func:`SetCalibration`.
 """,
 'de':
 """
-TODO
+Gibt die ADC-Werte des MCP3911 IC zurück. Diese Funktion
+wird für die Kalibrierung benötigt, siehe :func:`SetCalibration`.
 """
 }]
 })
