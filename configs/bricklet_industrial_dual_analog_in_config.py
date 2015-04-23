@@ -24,15 +24,15 @@ com = {
 com['api'] = {
 'en':
 """
-Two channels can be connected to the Bricklet. Functions that are related
+The Bricklet has two input channel. Functions that are related
 directly to a channel have a ``channel`` parameter to specify one of the two
 channels. Valid values for the ``channel`` parameter are 0 and 1.
 """,
 'de':
 """
-Es können zwei Sensoren an das Bricklet angeschlossen werden. Funktionen die
-sich direkt auf einen der Sensoren beziehen haben einen ``channel`` Parameter,
-um den Sensor anzugeben. Gültige Werte für den ``channel`` Parameter sind 0
+Das Bricklet hat zwei Eingangskanäle. Funktionen die
+sich direkt auf einen der Kanäle beziehen haben einen ``channel`` Parameter,
+um den Sensor anzugeben. Gültige Werte für das ``channel`` Parameter sind 0
 und 1.
 """
 }
@@ -320,7 +320,7 @@ for you to use this function
 Setzt Offset und Gain der MCP3911 internen Kalibrierungsregister.
 
 Siehe MCP3911 Datenblatt 7.7 und 7.8. Das Industrial Dual Analog In Bricklet
-wird von Tinkerforge Werkskalibriert worden. Ein Aufruf dieser Funktion sollte
+wird von Tinkerforge werkskalibriert worden. Ein Aufruf dieser Funktion sollte
 nicht notwendig sein.
 """
 }]
@@ -357,7 +357,7 @@ is needed for proper calibration, see :func:`SetCalibration`.
 """,
 'de':
 """
-Gibt die ADC-Werte des MCP3911 IC zurück. Diese Funktion
+Gibt die ADC-Werte des MCP3911 ICs zurück. Diese Funktion
 wird für die Kalibrierung benötigt, siehe :func:`SetCalibration`.
 """
 }]

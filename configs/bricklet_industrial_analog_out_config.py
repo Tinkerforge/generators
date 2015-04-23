@@ -167,8 +167,8 @@ Configures the voltage and current range.
 
 Possible voltage ranges are:
 
-* 0V - 5V
-* 0V - 10V
+* 0V to 5V
+* 0V to 10V
 
 Possible current ranges are:
 
@@ -185,16 +185,16 @@ Konfiguriert die Spannungs- und Stromwertebereiche.
 
 Einstellbare Spannungswertebereiche sind:
 
-* 0V - 5V
-* 0V - 10V
+* 0V bis 5V
+* 0V bis 10V
 
 Einstellbare Stromwertebereiche sind:
 
-* 4mA to 20mA
-* 0mA to 20mA
-* 0mA to 24mA
+* 4mA bis 20mA
+* 0mA bis 20mA
+* 0mA bis 24mA
 
-Die Auflösung ist immer 12 Bit. D.h., die Genauigkeit erhöht
+Die Auflösung ist immer 12 Bit. Dass heißt, die Genauigkeit erhöht
 sich bei kleineren Wertebereichen.
 """
 }]

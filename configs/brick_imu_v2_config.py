@@ -41,7 +41,7 @@ to use the callback :func:`Acceleration` and set the period with
 'de':
 """
 Gibt die kalibrierten Beschleunigungen des Beschleunigungsmessers für die 
-X, Y und Z-Achse in 1/100 m/s².
+X-, Y- und Z-Achse in 1/100 m/s².
 
 Wenn die Beschleunigungen periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Acceleration` zu nutzen und die Periode mit :func:`SetAccelerationPeriod`
@@ -69,8 +69,8 @@ to use the callback :func:`MagneticField` and set the period with
 """,
 'de':
 """
-Gibt das kalibrierte magnetische Feld des Magnetometers mit den X, Y und
-Z Komponenten in 1/16 µT zurück (Microtesla).
+Gibt das kalibrierte magnetische Feld des Magnetometers mit den X-, Y- und
+Z-Komponenten in 1/16 µT zurück (Microtesla).
 
 Wenn das magnetische Feld periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`MagneticField` zu nutzen und die Periode mit :func:`SetMagneticFieldPeriod`
@@ -98,7 +98,7 @@ to use the callback :func:`AngularVelocity` and set the period with
 """,
 'de':
 """
-Gibt die Winkelgeschwindigkeiten des Gyroskops für die X, Y und
+Gibt die kalibrierte Winkelgeschwindigkeiten des Gyroskops für die X-, Y- und
 Z-Achse in 1/16 °/s zurück.
 
 Wenn die Winkelgeschwindigkeiten periodisch abgefragt werden sollen, wird empfohlen
@@ -123,7 +123,7 @@ ambient temperature
 'de':
 """
 Gibt die Temperatur (in °C) des IMU Brick zurück. Die Temperatur wird im Kern
-des BNO055 IC gemessen, es handelt sich nicht um die Umgebungstemperatur.
+des BNO055 ICs gemessen, es handelt sich nicht um die Umgebungstemperatur.
 """
 }] 
 })
@@ -146,9 +146,9 @@ We recommend that you use quaternions instead.
 
 The rotation angle has the following ranges:
 
-* heading: 0° - 360°
-* roll: -90° - 90°
-* pitch: -180° - 180°
+* heading: 0° to 360°
+* roll: -90° to +90°
+* pitch: -180° to +180°
 
 If you want to get the orientation periodically, it is recommended 
 to use the callback :func:`Orientation` and set the period with 
@@ -162,11 +162,11 @@ Gibt die aktuelle Orientierung (Gier-, Roll-, Nickwinkel) des IMU Brick in Euler
 
 Wir empfehlen die Verwendung von Quaternionen stattdessen.
 
-Die Rotatationswinkel haben den folgenden Wertebereich:
+Die Rotationswinkel haben den folgenden Wertebereich:
 
-* Gierwinkel: 0° - 360°
-* Rollwinkel: -90° - 90°
-* Nickwinkel: -180° - 180°
+* Gierwinkel: 0° bis 360°
+* Rollwinkel: -90° bis +90°
+* Nickwinkel: -180° bis +180°
 
 Wenn die Orientierung periodisch abgefragt werden sollen, wird empfohlen den
 Callback :func:`Orientation` zu nutzen und die Periode mit :func:`SetOrientationPeriod`
@@ -201,7 +201,7 @@ to use the callback :func:`LinearAcceleration` and set the period with
 'de':
 """
 Gibt die lineare Beschleunigungen des IMU Brick für die 
-X, Y und Z-Achse in 1/100 m/s² zurück.
+X-, Y- und Z-Achse in 1/100 m/s² zurück.
 
 Die lineare Beschleunigung ist die Beschleunigung in jede der drei
 Achsen. Der Einfluss von Erdbeschleunigung ist entfernt.
@@ -242,7 +242,7 @@ to use the callback :func:`GravityVector` and set the period with
 'de':
 """
 Gibt den Vektor der Erdbeschleunigung des IMU Brick für die 
-X, Y und Z-Achse in 1/100 m/s² zurück.
+X-, Y- und Z-Achse in 1/100 m/s² zurück.
 
 Die Erdbeschleunigung ist die Beschleunigung die auf Grund von Schwerkraft
 entsteht. Einflüsse von linearen Beschleunigungen sind entfernt.
@@ -268,11 +268,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the current orientation (w, x, y, z) of the IMU as 
+Returns the current orientation (w, x, y, z) of the IMU Brick as
 `quaternions <http://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__.
 
 You have to divide the returns values by 16383 (14 bit) to get
-the usual range of -1 to 1 for quaternions.
+the usual range of -1.0 to +1.0 for quaternions.
 
 If you want to get the quaternions periodically, it is recommended 
 to use the callback :func:`Quaternion` and set the period with 
@@ -280,11 +280,11 @@ to use the callback :func:`Quaternion` and set the period with
 """,
 'de':
 """
-Gibt die aktuelle Orientierung (x, y, z, w) des IMU Brick als
+Gibt die aktuelle Orientierung (w, x, y, z) des IMU Brick als
 `Quaterinonen <http://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__ zurück.
 
-Die zurückgegebenen Werte müssen mit 16383 (14 bit) dividiert werden um 
-in den üblichen Wertebereich für Quaternionen (-1 bis 1) gebracht zu werden.
+Die zurückgegebenen Werte müssen mit 16383 (14 Bit) dividiert werden um
+in den üblichen Wertebereich für Quaternionen (-1,0 bis +1,0) gebracht zu werden.
 
 Wenn die Quaternionen periodisch abgefragt werden sollen, wird empfohlen den
 Callback :func:`Quaternion` zu nutzen und die Periode mit :func:`SetQuaternionPeriod`
@@ -354,7 +354,7 @@ Gibt alle Daten zurück die dem IMU Brick zur Verfügung stehen.
 * Temperatur in 1 °C (see :func:`GetTemperature`)
 * Kalibrierungsstatus (siehe unten)
 
-Der Kalibrierungsstatus bsteht aus vier paaren von je zwei Bits. Jedes
+Der Kalibrierungsstatus besteht aus vier paaren von je zwei Bits. Jedes
 Paar von Bits repräsentiert den Status der aktuellen Kalibrierung.
 
 * Bit 0-1: Magnetometer
@@ -450,10 +450,10 @@ should not need to call it in your program.
 'de':
 """
 Ein Aufruf dieser Funktion speichert die aktuelle Kalibrierung damit
-sie beim nächsten neustart des IMU Bricks als startpunkt für die
+sie beim nächsten Neustart des IMU Brick als Startpunkt für die
 kontinuierliche Kalibrierung genutzt werden kann.
 
-Ein Rückgabewert von *true* bedeuetet das die Kalibrierung genutzt werden
+Ein Rückgabewert von *true* bedeutet das die Kalibrierung genutzt werden
 konnte und *false* bedeutet das die Kalibrierung nicht genutzt werden
 konnte (dies passiert wenn der Kalibrierungsstatus nicht "fully calibrated"
 ist).
@@ -575,9 +575,6 @@ Gibt die Periode zurück, wie von :func:`SetAngularVelocityPeriod` gesetzt.
 """
 }] 
 })
-
-
-
 
 com['packets'].append({
 'type': 'function',

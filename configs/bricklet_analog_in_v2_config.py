@@ -398,7 +398,8 @@ The default value is 50.
 """,
 'de':
 """
-Setzt die Länge eines gleitenden Mittelwerts für den Feuchtigkeitswert.
+Setzt die Länge eines `gleitenden Mittelwerts <http://de.wikipedia.org/wiki/Gleitender_Mittelwert>`__
+für den Feuchtigkeitswert.
 
 Wenn die Länge auf 1 gesetzt wird, ist das Averaging aus. Desto kleiner
 die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.

@@ -31,7 +31,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the acceleration in X, Y and Z direction. The values
+Returns the acceleration in x, y and z direction. The values
 are given in mG (1/1000 G).
 
 If you want to get the acceleration periodically, it is recommended 
@@ -281,14 +281,14 @@ com['packets'].append({
 Configures the data rate, full scale range and filter bandwidth.
 Possible values are:
 
-* Data rate of 0Hz to 1600 Hz.
-* Full scale range of -2G to 2G up to -16G to 16G.
+* Data rate of 0Hz to 1600Hz.
+* Full scale range of -2G to +2G up to -16G to +16G.
 * Filter bandwidth between 50Hz and 800Hz.
 
 Decreasing data rate or full scale range will also decrease the noise on 
 the data.
 
-The default values are 100Hz data rate, -4G to 4G range and 200Hz 
+The default values are 100Hz data rate, -4G to +4G range and 200Hz
 filter bandwidth.
 """,
 'de':
@@ -296,14 +296,14 @@ filter bandwidth.
 Konfiguriert die Datenrate, den Wertebereich und die Filterbandbreite.
 Mögliche Konfigurationswerte sind:
 
-* Datenrate zwischen 0Hz und 1600 Hz.
-* Wertebereich von -2G bis 2G bis zu -16G bis 16G.
+* Datenrate zwischen 0Hz und 1600Hz.
+* Wertebereich von -2G bis +2G bis zu -16G bis +16G.
 * Filterbandbreite zwischen 50Hz und 800Hz.
 
 Eine Verringerung der Datenrate oder des Wertebereichs verringert auch
 automatisch das Rauschen auf den Daten.
 
-Die Standardwerte sind 100Hz Datenrate, -4G bis 4G Wertebereich und 200Hz
+Die Standardwerte sind 100Hz Datenrate, -4G bis +4G Wertebereich und 200Hz
 Filterbandbreite.
 """
 }]
@@ -452,4 +452,3 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 """
 }]
 })
-

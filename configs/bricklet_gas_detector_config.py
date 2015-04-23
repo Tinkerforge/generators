@@ -236,7 +236,7 @@ com['packets'].append({
 'en':
 """
 Sets the length of a `moving averaging <http://en.wikipedia.org/wiki/Moving_average>`__ 
-for the value value.
+for the measured value.
 
 Setting the length to 1 will turn the averaging off. With less
 averaging, there is more noise on the data.
@@ -247,7 +247,8 @@ The default value is 100.
 """,
 'de':
 """
-Setzt die Länge eines gleitenden Mittelwerts für den Wert.
+Setzt die Länge eines `gleitenden Mittelwerts <http://de.wikipedia.org/wiki/Gleitender_Mittelwert>`__
+für den gemessenen Wert.
 
 Wenn die Länge auf 1 gesetzt wird, ist das Averaging aus. Desto kleiner
 die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
@@ -299,7 +300,7 @@ to be set once.
 You can use the Brick Viewer to set the detector type, so you likely
 don't need to use this function in your source code.
 
-The default type is 0.
+The default detector type is 0.
 """,
 'de':
 """
@@ -316,7 +317,7 @@ daher nur einmal gesetzt werden.
 Wir empfehlen den Typ des Detektors im Brick Viewer zu setzen anstatt
 diese Funktion zu nutzen.
 
-Der Standar-Detektortyp ist 0.
+Der standard Detektortyp ist 0.
 """
 }]
 })
@@ -351,7 +352,7 @@ Turns the internal heater on.
 """,
 'de':
 """
-Aktiviert den internen Erhitzer.
+Aktiviert die interne Heizung.
 """
 }]
 })
@@ -368,11 +369,10 @@ Turns the internal heater off.
 """,
 'de':
 """
-Deaktiviert den internen Erhitzer.
+Deaktiviert die interne Heizung.
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',
@@ -386,7 +386,7 @@ Returns *true* if the heater is on, *false* otherwise.
 """,
 'de':
 """
-Gibt *true* zurück wenn der interne Erhitzer aktiviert ist, *false* sonst.
+Gibt *true* zurück wenn die interne Heizung aktiviert ist, *false* sonst.
 """
 }]
 })

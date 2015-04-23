@@ -44,9 +44,9 @@ use the callback :func:`Distance` and set the period with
 'de':
 """
 Gibt die gemessene Distanz zurück. Der Wertebereich ist 0 bis 4000
-und die Werte haen die Einheit cm.
+und die Werte haben die Einheit cm.
 
-Das Lase Range Finder Bricklet kennt verschiedene Modi. Eine Distanz
+Das Laser Range Finder Bricklet kennt verschiedene Modi. Eine Distanz
 wird nur im Distanzmodus gemessen, siehe :func:`SetMode`. Zusätzlich
 muss der Laser aktiviert werden, siehe :func:`EnableLaser`.
 
@@ -82,7 +82,7 @@ use the callback :func:`Velocity` and set the period with
 Gibt die gemessene Geschwindigkeit zurück. Der Wertebereich ist 0 bis 12700
 und die Werte haben die Einheit 1/100 m/s.
 
-Das Lase Range Finder Bricklet kennt verschiedene Modi. Eine Geschwindigkeit 
+Das Laser Range Finder Bricklet kennt verschiedene Modi. Eine Geschwindigkeit
 wird nur in den Geschwindigkeitsmodi gemessen, siehe :func:`SetMode`. Zusätzlich
 muss der Laser aktiviert werden, siehe :func:`EnableLaser`.
 
@@ -263,9 +263,6 @@ gesetzt.
 }]
 })
 
-
-
-
 com['packets'].append({
 'type': 'function',
 'name': ('SetVelocityCallbackThreshold', 'set_velocity_callback_threshold'), 
@@ -421,7 +418,8 @@ The default value is 10.
 """,
 'de':
 """
-Setzt die Länge eines gleitenden Mittelwerts für die Entfernung und Geschwindigkeit.
+Setzt die Länge eines `gleitenden Mittelwerts <http://de.wikipedia.org/wiki/Gleitender_Mittelwert>`__
+für die Entfernung und Geschwindigkeit.
 
 Wenn die Länge auf 0 gesetzt wird, ist das Averaging komplett aus. Desto kleiner
 die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
@@ -476,7 +474,7 @@ The following modes are available:
 * 3: Velocity is measured with resolution 0.5 m/s and range is 0-63.5 m/s
 * 4: Velocity is measured with resolution 1.0 m/s and range is 0-127 m/s
 
-The default mode is 0 (Distance is measured).
+The default mode is 0 (distance is measured).
 """,
 'de':
 """
@@ -487,9 +485,9 @@ mit unterschiedlichen Wertebereichen.
 Die folgenden Modi können genutzt werden:
 
 * 0: Distanz wird gemessen mit Auflösung 1,0 cm und Wertebereich 0-400 cm
-* 1: Geschwindigkeit wird gemessen mit Auflösung 0,1 m/s und Wertebereich 0-12.7 m/s
-* 2: Geschwindigkeit wird gemessen mit Auflösung 0,25 m/s und Wertebereich 0-31.75 m/s
-* 3: Geschwindigkeit wird gemessen mit Auflösung 0,5 m/s und Wertebereich 0-63.5 m/s
+* 1: Geschwindigkeit wird gemessen mit Auflösung 0,1 m/s und Wertebereich 0-12,7 m/s
+* 2: Geschwindigkeit wird gemessen mit Auflösung 0,25 m/s und Wertebereich 0-31,75 m/s
+* 3: Geschwindigkeit wird gemessen mit Auflösung 0,5 m/s und Wertebereich 0-63,5 m/s
 * 4: Geschwindigkeit wird gemessen mit Auflösung 1,0 m/s und Wertebereich 0-127 m/s
 
 Der Standardmodus ist 0 (Distanzmessung).

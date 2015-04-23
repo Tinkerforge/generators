@@ -232,7 +232,7 @@ com['packets'].append({
 'en':
 """
 Sets the length of a `moving averaging <http://en.wikipedia.org/wiki/Moving_average>`__ 
-for the value value.
+for the weight value.
 
 Setting the length to 1 will turn the averaging off. With less
 averaging, there is more noise on the data.
@@ -243,7 +243,8 @@ The default value is 4.
 """,
 'de':
 """
-Setzt die Länge eines gleitenden Mittelwerts für den Wert.
+Setzt die Länge eines `gleitenden Mittelwerts <http://de.wikipedia.org/wiki/Gleitender_Mittelwert>`__
+für den Gewichtswert.
 
 Wenn die Länge auf 1 gesetzt wird, ist das Averaging aus. Desto kleiner
 die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
@@ -350,7 +351,7 @@ to call this function in your source code.
 Zum Kalibrieren des Load Cell Bricklet müssen die folgenden zwei 
 Schritte durchgeführt werden:
 
-* Die Wage leeren und die Funktion mit 0 aufrufen.
+* Die Waage leeren und die Funktion mit 0 aufrufen.
 * Eine bekanntes gewicht auf die Waage legen und die Funktion mit dem
   Gewicht in Gramm aufrufen.
 
@@ -358,7 +359,7 @@ Die Kalibrierung wird auf dem EEPROM des Bricklets gespeichert und muss
 nur einmal gesetzt werden.
 
 Wir empfehlen die Kalibrierung über den Brick Viewer zu setzen, diese
-Funktion muss nicht im Quellcode genutzt werden.
+Funktion muss nicht im Quelltext genutzt werden.
 """
 }]
 })
@@ -382,9 +383,9 @@ It is additionally possible to add a moving average
 (see :func:`SetMovingAverage`) to the measurements.
 
 The gain can be 128x, 64x or 32x. It represents a measurement range of
-+-20mV, +-40mV and +-80mV respectively. The Load Cell Bricklet uses an
+±20mV, ±40mV and ±80mV respectively. The Load Cell Bricklet uses an
 excitation voltage of 5V and most load cells use an output of 2mV/V. That
-means the voltage range is +-15mV for most load cells (i.e. gain of 128 
+means the voltage range is ±15mV for most load cells (i.e. gain of 128x
 is best). If you don't know what all of this means you should keep it at 
 128x, it will most likely be correct.
 
@@ -405,11 +406,11 @@ erzeugt mehr Störungen. Zusätzlich ist es möglich einen gleitenden
 Mittelwert auf die Werte anzuwenden (siehe :func:`SetMovingAverage`).
 
 Der Gain kann zwischen 128x, 64x und 32x konfiguriert werden. Er
-respräsentiert einenen Messbereich von +-20mV, +-40mV und +-80mV
+respräsentiert einenen Messbereich von ±20mV, ±40mV und ±80mV
 respektive. Das Load Cell Bricklet nutzt eine
 Erregerspannung (Excitation Voltage) von 5V und die meisten Wägezellen
 haben eine Ausgabe von 2mV/V. Dies bedeutet, der Spannungsbereich ist
-+-15mV für die meisten Wägezellen (d.h. ein Gain von 128 ist am
+±15mV für die meisten Wägezellen (d.h. ein Gain von 128x ist am
 geeignetsten). Falls nicht klar ist was dies alles bedeutet, ein
 Gain von 128x ist höchstwahrscheinlich korrekt.
 
@@ -417,7 +418,7 @@ Die Konfiguration wird auf dem EEPROM des Bricklets gespeichert und muss
 nur einmal gesetzt werden.
 
 Wir empfehlen die Konfiguration über den Brick Viewer zu setzen, diese
-Funktion muss nicht im Quellcode genutzt werden.
+Funktion muss nicht im Quelltext genutzt werden.
 
 Die Standardwerte sind 10Hz für die Rate und 128x für den Gain.
 """

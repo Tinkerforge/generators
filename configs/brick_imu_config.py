@@ -69,8 +69,8 @@ to use the callback :func:`MagneticField` and set the period with
 """,
 'de':
 """
-Gibt das kalibrierte magnetische Feld des Magnetometers mit den X, Y und
-Z Komponenten in mG zurück (Milligauss oder Nanotesla).
+Gibt das kalibrierte magnetische Feld des Magnetometers mit den X-, Y- und
+Z-Komponenten in mG zurück (Milligauss oder Nanotesla).
 
 Wenn das magnetische Feld periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`MagneticField` zu nutzen und die Periode mit :func:`SetMagneticFieldPeriod`
@@ -99,7 +99,7 @@ to use the callback :func:`AngularVelocity` and set the period with
 """,
 'de':
 """
-Gibt die kalibrierten Winkelgeschwindigkeiten des Gyroskops für die X, Y und
+Gibt die kalibrierten Winkelgeschwindigkeiten des Gyroskops für die X-, Y- und
 Z-Achse in °/14,375s zurück. (Um den Wert in °/s zu erhalten ist es notwendig
 durch 14,375 zu teilen)
 

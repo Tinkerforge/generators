@@ -40,7 +40,7 @@ regarding baudrate, parity and so on.
 """,
 'de':
 """
-Schreibt einen String aus bis zu 60 Chars auf die RS232-Schnittstelle. Der
+Schreibt einen String aus bis zu 60 Zeichen auf die RS232-Schnittstelle. Der
 String kann aus Binärdaten bestehen, ASCII o.ä. ist nicht notwendig.
 
 Die Länge des Strings muss als ein zusätzlicher Parameter angegeben werden.
@@ -179,7 +179,7 @@ com['packets'].append({
 Sets the configuration for the RS232 communication. Available options:
 
 * Baudrate between 300 and 230400 baud.
-* Parity of None, Odd, Even or forced parity.
+* Parity of none, odd, even or forced parity.
 * Stopbits can be 1 or 2.
 * Word length of 5 to 8.
 * Hard-/Software flow control can each be on or off.
@@ -195,7 +195,9 @@ Verfügbare Optionen sind:
 * Parität von None, Odd, Even und Forced Parity.
 * Stop Bits von 1 oder 2.
 * Wortlänge zwischen 5 und 8.
-* Hard-/Software flow control kann je an oder aus sein.
+* Hard-/Software Flow Control kann je an oder aus sein.
+
+Der Standard ist: 115200 Baud, Parität None, 1 Stop Bits, Wortlänge 8, Hard-/Software Flow Control aus.
 """
 }]
 })
@@ -261,7 +263,7 @@ To enable this callback, use :func:`EnableCallback`.
 'de':
 """
 Dieser Callback wird aufgerufen wenn neue Daten zur Verfügung stehen.
-Die Nachricht hat eine Maximalgröße von 60 Chars. Die Länge
+Die Nachricht hat eine Maximalgröße von 60 Zeichen. Die Länge
 der Nachricht wird zusätzlich übergeben.
 
 Dieser Callback kann durch :func:`EnableCallback` aktiviert werden.
