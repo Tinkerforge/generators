@@ -249,10 +249,24 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-TODO
+Sets the configuration. It is possible to configure an illuminance range
+between 0-600lux and 0-64000lux and an integration time between 50ms and 400ms.
+
+A smaller illuminance range increases the resolution of the data. An
+increase in integration time will result in less noise on the data.
+
+The default values are 0-8000lux illuminance range and 200ms integration time.
 """,
 'de':
 """
+Setzt die Konfiguration. Es ist möglich den Helligkeitswertebereich zwischen
+0-600 Lux und 0-64000Lux sowie eine Integrationszeit zwischen 50ms und 400ms
+zu konfigurieren.
+
+Ein kleinerer Helligkeitswertebereich erhöht die Auflösung der Daten. Eine
+Erhöhung der Integrationszeit verringert das Rauschen auf den Daten.
+
+Die Standardwerte sind 0-8000Lux Helligkeitsbereich und 200ms Integrationszeit.
 """
 }]
 })
