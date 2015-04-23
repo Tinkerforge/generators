@@ -1562,7 +1562,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-FIXME: message is currently vaild in error-occurred state only
+FIXME: message is currently valid in error-occurred state only
 """,
 'de':
 """

@@ -33,7 +33,7 @@ Returns the measured distance. The value has a range of 0 to 4000
 and is given in cm.
 
 The Laser Range Finder Bricklet knows different modes. Distances
-are only measured in the distace measurement mode, 
+are only measured in the distance measurement mode,
 see :func:`SetMode`. Also the laser has to be enabled, see
 :func:`EnableLaser`.
 

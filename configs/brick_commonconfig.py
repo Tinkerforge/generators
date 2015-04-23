@@ -93,7 +93,7 @@ common_packets.append({
 'doc': ['af', {
 'en':
 """
-Returns *true* if the status led is enabled, *false* otherwise.
+Returns *true* if the status LED is enabled, *false* otherwise.
 """,
 'de':
 """

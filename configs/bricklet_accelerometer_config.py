@@ -278,7 +278,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Configures the data rate, full scale range and filter bandwith.
+Configures the data rate, full scale range and filter bandwidth.
 Possible values are:
 
 * Data rate of 0Hz to 1600 Hz.
