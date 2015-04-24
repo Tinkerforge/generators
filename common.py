@@ -655,9 +655,8 @@ def generate(bindings_root_directory, language, generator_class):
     common_brick_packets = copy.deepcopy(__import__('brick_commonconfig').common_packets)
     common_bricklet_packets = copy.deepcopy(__import__('bricklet_commonconfig').common_packets)
 
-    device_identifiers = []
-    brick_descriptions = {}
-    bricklet_descriptions = {}
+    brick_infos = []
+    bricklet_infos = []
 
     generator = generator_class(bindings_root_directory, language)
 
@@ -700,35 +699,89 @@ def generate(bindings_root_directory, language, generator_class):
 
             device = generator.get_device_class()(com, generator)
 
-            device_identifiers.append((device.get_device_identifier(),
-                                       device.get_long_display_name(),
-                                       device.get_underscore_name() + '_' + device.get_category().lower()))
-
             if device.get_category() == 'Brick':
-                brick_descriptions[device.get_underscore_name()] = {
-                    'en': device.get_description('en'),
-                    'de': device.get_description('de')
-                }
+                ref_name = device.get_underscore_name() + '_brick'
+                hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2') + '_Brick'
+                software_doc_prefix = device.get_camel_case_name() + '_Brick'
+                git_name = device.get_underscore_name().replace('_', '-') + '-brick'
+
+                if device.get_device_identifier() != 17:
+                    firmware_url_part = device.get_underscore_name()
+                else:
+                    firmware_url_part = None
+
+                device_info = (device.get_device_identifier(),
+                               device.get_long_display_name(),
+                               device.get_short_display_name(),
+                               ref_name,
+                               hardware_doc_name,
+                               software_doc_prefix,
+                               git_name,
+                               firmware_url_part,
+                               device.is_released(),
+                               True,
+                               {
+                                   'en': device.get_description('en'),
+                                   'de': device.get_description('de')
+                               })
+
+                brick_infos.append(device_info)
             else:
-                bricklet_descriptions[device.get_underscore_name()] = {
-                    'en': device.get_description('en'),
-                    'de': device.get_description('de')
-                }
+                ref_name = device.get_underscore_name() + '_bricklet'
+                hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2')
+                software_doc_prefix = device.get_camel_case_name() + '_Bricklet'
+                git_name = device.get_underscore_name().replace('_', '-') + '-bricklet'
+                firmware_url_part = device.get_underscore_name()
+
+                device_info = (device.get_device_identifier(),
+                               device.get_long_display_name(),
+                               device.get_short_display_name(),
+                               ref_name,
+                               hardware_doc_name,
+                               software_doc_prefix,
+                               git_name,
+                               firmware_url_part,
+                               device.is_released(),
+                               True,
+                               {
+                                   'en': device.get_description('en'),
+                                   'de': device.get_description('de')
+                               })
+
+                bricklet_infos.append(device_info)
 
             generator.generate(device)
 
     generator.finish()
 
-    with open(os.path.join(bindings_root_directory, '..', 'device_identifiers.py'), 'wb') as f:
-        f.write('device_identifiers = \\\n')
-        pprint(sorted(device_identifiers), f)
+    brick_infos.append((None, 'Debug Brick', 'Debug', 'debug_brick', 'Debug_Brick', None, 'debug-brick', None, True, False,
+                        {'en': 'For Firmware Developers: JTAG and serial console',
+                         'de': 'Für Firmware Entwickler: JTAG und serielle Konsole'}))
 
-    with open(os.path.join(bindings_root_directory, '..', 'device_descriptions.py'), 'wb') as f:
-        f.write('brick_descriptions = \\\n')
-        pprint(brick_descriptions, f)
+    bricklet_infos.append((None, 'Breakout Bricklet', 'Breakout', 'breakout_bricklet', 'Breakout', None, 'breakout-bricklet', None, True, False,
+                           {'en': 'Makes all Bricklet signals available',
+                            'de': 'Macht alle Bricklet Signale zugänglich'}))
+
+    with open(os.path.join(bindings_root_directory, '..', 'device_infos.py'), 'wb') as f:
+        f.write('from collections import namedtuple\n')
         f.write('\n')
-        f.write('bricklet_descriptions = \\\n')
-        pprint(bricklet_descriptions, f)
+        f.write("DeviceInfo = namedtuple('DeviceInfo', 'identifier long_display_name short_display_name ref_name hardware_doc_name software_doc_prefix git_name firmware_url_part is_released has_bindings description')\n")
+        f.write('\n')
+        f.write('brick_infos = \\\n')
+        f.write('[\n')
+
+        for brick_info in sorted(brick_infos):
+            f.write('    DeviceInfo{0},\n'.format(brick_info))
+
+        f.write(']\n')
+        f.write('\n')
+        f.write('bricklet_infos = \\\n')
+        f.write('[\n')
+
+        for bricklet_info in sorted(bricklet_infos):
+            f.write('    DeviceInfo{0},\n'.format(bricklet_info))
+
+        f.write(']\n')
 
 cn_valid_camel_case_chars = re.compile('^[A-Z][A-Za-z0-9]*$')
 cn_valid_underscore_chars = re.compile('^[a-z][a-z0-9_]*$')
