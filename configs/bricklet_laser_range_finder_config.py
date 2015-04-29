@@ -526,14 +526,14 @@ com['packets'].append({
 """
 Activates the laser of the LIDAR.
 
-We recommend that you wait 100ms after enabling the laser before
+We recommend that you wait 250ms after enabling the laser before
 the first call of :func:`GetDistance` to ensure stable measurements.
 """,
 'de':
 """
 Aktiviert den Laser des LIDAR.
 
-Wir empfehlen nach dem aktivieren des Lasers 100ms zu warten bis zum
+Wir empfehlen nach dem aktivieren des Lasers 250ms zu warten bis zum
 ersten Aufruf von :func:`GetDistance` um stabile Messwerte zu garantieren.
 """
 }]
