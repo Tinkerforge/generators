@@ -366,6 +366,23 @@ Funktion muss nicht im Quelltext genutzt werden.
 
 com['packets'].append({
 'type': 'function',
+'name': ('Tare', 'tare'), 
+'elements': [],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Sets the currently measured weight as tare weight.
+""",
+'de':
+"""
+Setzt das aktuelle gemessene gewicht als Leergewicht.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
 'name': ('SetConfiguration', 'set_configuration'), 
 'elements': [('rate', 'uint8', 1, 'in', ('Rate', 'rate', [('10Hz', '10hz', 0),
                                                           ('80Hz', '80hz', 1)])),
