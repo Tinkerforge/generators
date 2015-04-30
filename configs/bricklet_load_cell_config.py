@@ -376,7 +376,7 @@ Sets the currently measured weight as tare weight.
 """,
 'de':
 """
-Setzt das aktuelle gemessene gewicht als Leergewicht.
+Setzt das aktuell gemessene Gewicht als Leergewicht.
 """
 }]
 })
