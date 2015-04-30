@@ -32,7 +32,7 @@ channels. Valid values for the ``channel`` parameter are 0 and 1.
 """
 Das Bricklet hat zwei Eingangskanäle. Funktionen die
 sich direkt auf einen der Kanäle beziehen haben einen ``channel`` Parameter,
-um den Sensor anzugeben. Gültige Werte für das ``channel`` Parameter sind 0
+um den Kanal anzugeben. Gültige Werte für das ``channel`` Parameter sind 0
 und 1.
 """
 }
@@ -56,7 +56,7 @@ callback :func:`Voltage` and set the period with
 """
 Gibt die Spannung für den übergebenen Kanal in mV zurück.
 
-Wenn die Stromstärke periodisch abgefragt werden soll, wird empfohlen
+Wenn die Spannung periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Voltage` zu nutzen und die Periode mit 
 :func:`SetVoltageCallbackPeriod` vorzugeben.
 """
@@ -83,10 +83,10 @@ The default value is 0.
 'de':
 """
 Setzt die Periode in ms mit welcher der :func:`Voltage` Callback für den
-übergebenen Sensor ausgelöst wird.
+übergebenen Kanal ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`Voltage` wird nur ausgelöst wenn sich die Stromstärke seit der
+:func:`Voltage` wird nur ausgelöst wenn sich die Spannung seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0. 
@@ -148,7 +148,7 @@ The default value is ('x', 0, 0).
 'de':
 """
 Setzt den Schwellwert des :func:`VoltageReached` Callbacks für den übergebenen
-Sensor.
+Kanal.
 
 Die folgenden Optionen sind möglich:
 
@@ -157,10 +157,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
  
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Stromstärke *außerhalb* des min und max Wertes ist"
- "'i'",    "Callback wird ausgelöst wenn die Stromstärke *innerhalb* des min und max Wertes ist"
- "'<'",    "Callback wird ausgelöst wenn die Stromstärke kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn die Stromstärke größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst wenn die Spannung *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst wenn die Spannung *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst wenn die Spannung kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn die Spannung größer als der min Wert ist (max wird ignoriert)"
  
 Der Standardwert ist ('x', 0, 0).
 """
@@ -382,9 +382,9 @@ last triggering.
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetVoltageCallbackPeriod`,
-ausgelöst. Der :word:`parameter` ist die Stromstärke des Sensors.
+ausgelöst. Der :word:`parameter` ist die Spannung des Kanals.
 
-:func:`Voltage` wird nur ausgelöst wenn sich die Stromstärke seit der
+:func:`Voltage` wird nur ausgelöst wenn sich die Spannung seit der
 letzten Auslösung geändert hat.
 """
 }]
@@ -410,7 +410,7 @@ with the period as set by :func:`SetDebouncePeriod`.
 """
 Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
 :func:`SetVoltageCallbackThreshold` gesetzt, erreicht wird.
-Der :word:`parameter` ist die Stromstärke des Sensors.
+Der :word:`parameter` ist die Spannung des Kanals.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
 mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
