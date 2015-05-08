@@ -84,3 +84,6 @@
 2.1.3: Make listener dispatch methods protected to allow external changes(no changes)
 2.1.4: Add support for RED Brick
 2.1.5: IPConnection implements java.io.Closeable interface
+       Add DEVICE_DISPLAY_NAME constant to all Device classes
+       Avoid possible connection state race condition on connect
+       Add support for IMU Brick 2.0, Accelerometer, Ambient Light 2.0, Analog In 2.0, Analog Out 2.0, Dust Detector, Industrial Analog Out, Industrial Dual Analog In, Laser Range Finder, Load Cell and RS232 Bricklet
