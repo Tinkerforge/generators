@@ -176,17 +176,26 @@ def make_rst_header(device, has_device_identifier_constant=True):
     breadcrumbs = select_lang(breadcrumbs_str).format(ref_name, full_title)
     device_identifier_constant = {'en': '.. |device_identifier_constant| replace:: There is also a :ref:`constant <{0}_{1}_{2}_constants>` for the device identifier of this {3}.\n',
                                   'de': '.. |device_identifier_constant| replace:: Es gibt auch eine :ref:`Konstante <{0}_{1}_{2}_constants>` für den Device Identifier dieses {3}.\n'}
+
+    if device.is_released():
+        orphan = ''
+    else:
+        orphan = ':orphan:'
+
     if has_device_identifier_constant:
         device_identifier_constant = select_lang(device_identifier_constant).format(device.get_underscore_name(), category.lower(), ref_name, category)
     else:
         device_identifier_constant = '.. |device_identifier_constant| unicode:: 0xA0\n   :trim:\n'
+
     ref = '.. _{0}_{1}_{2}:\n'.format(device.get_underscore_name(), category.lower(), ref_name)
-    return '{0}\n{1}\n{2}\n{3}\n{4}\n{5}\n'.format(gen_text_rst.format(date),
-                                                   breadcrumbs,
-                                                   device_identifier_constant,
-                                                   ref,
-                                                   full_title,
-                                                   full_title_underline)
+
+    return '{0}\n{1}\n{2}\n{3}\n{4}\n{5}\n{6}\n'.format(gen_text_rst.format(date),
+                                                        orphan,
+                                                        breadcrumbs,
+                                                        device_identifier_constant,
+                                                        ref,
+                                                        full_title,
+                                                        full_title_underline)
 
 def make_rst_summary(device, is_programming_language=True):
     not_released = {
