@@ -25,7 +25,8 @@ com['packets'].append({
 'type': 'function',
 'name': ('Write', 'write'),
 'elements': [('message', 'char', 60, 'in'),
-             ('length', 'uint8', 1, 'in')],
+             ('length', 'uint8', 1, 'in'),
+             ('written', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -34,6 +35,8 @@ Writes a string of up to 60 characters to the RS232 interface. The string
 can be binary data, ASCII or similar is not necessary.
 
 The length of the string has to be given as an additional parameter.
+
+The return value is the number of bytes that could be written.
 
 See :func:`SetConfigurations` for configuration possibilities
 regarding baudrate, parity and so on.
@@ -44,6 +47,8 @@ Schreibt einen String aus bis zu 60 Zeichen auf die RS232-Schnittstelle. Der
 String kann aus Binärdaten bestehen, ASCII o.ä. ist nicht notwendig.
 
 Die Länge des Strings muss als ein zusätzlicher Parameter angegeben werden.
+
+Der Rückgabewert ist die Anzahl der Zeichen die geschrieben werden konnten.
 
 Siehe :func:`SetConfiguration` für Konfigurationsmöglichkeiten
 bezüglich Baudrate, Parität usw.
