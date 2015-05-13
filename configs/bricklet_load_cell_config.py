@@ -101,8 +101,8 @@ com['packets'].append({
                                                                                   ('Inside', 'inside', 'i'),
                                                                                   ('Smaller', 'smaller', '<'),
                                                                                   ('Greater', 'greater', '>')])), 
-             ('min', 'int16', 1, 'in'),
-             ('max', 'int16', 1, 'in')],
+             ('min', 'int32', 1, 'in'),
+             ('max', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -152,8 +152,8 @@ com['packets'].append({
                                                                                    ('Inside', 'inside', 'i'),
                                                                                    ('Smaller', 'smaller', '<'),
                                                                                    ('Greater', 'greater', '>')])), 
-             ('min', 'int16', 1, 'out'),
-             ('max', 'int16', 1, 'out')],
+             ('min', 'int32', 1, 'out'),
+             ('max', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -466,7 +466,7 @@ Gibt die Konfiguration zurück, wie von :func:`SetConfiguration` gesetzt.
 com['packets'].append({
 'type': 'callback',
 'name': ('Weight', 'weight'), 
-'elements': [('weight', 'uint32', 1, 'out')],
+'elements': [('weight', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -492,7 +492,7 @@ letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': ('WeightReached', 'weight_reached'), 
-'elements': [('weight', 'int16', 1, 'out')],
+'elements': [('weight', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
