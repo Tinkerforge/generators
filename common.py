@@ -3,7 +3,7 @@
 """
 Common Generator Library
 Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
-Copyright (C) 2012-2013 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2012-2015 Olaf Lüke <olaf@tinkerforge.com>
 
 common.py: Common Library for generation of bindings and documentation
 
@@ -804,7 +804,7 @@ cn_all_uppercase = ['api', 'ir', 'us', 'lcd', 'dc', 'imu', 'pwm', 'gps', 'id', '
                     '45v', 'sps', 'oqpsk', 'bpsk40', 'dhcp', 'ip', 'wpa',
                     'wpa2', 'ca', 'wep', 'rgb', 'nfc', 'rfid', 'fifo',
                     'ws2801', 'ws2811', 'ws2812', 'adc', 'rs232', 'ac',
-                    '125dps', '250dps', '500dps', '1000dps', '2000dps']
+                    '125dps', '250dps', '500dps', '1000dps', '2000dps', 'co2']
 
 cn_eap_suffix = ['fast', 'tls', 'ttls', 'peap', 'mschap', 'gtc']
 
@@ -907,6 +907,8 @@ def check_name(camel_case, underscore, short_display, long_display, is_constant=
 
         if camel_case == 'IMUV2':
             camel_case_to_check = camel_case_to_check.replace('V 2', ' 2.0')
+        elif camel_case_to_check.endswith('CO 2'):
+            camel_case_to_check = camel_case_to_check.replace('CO 2', 'CO2')
         elif camel_case.endswith('V2'):
             camel_case_to_check = camel_case_to_check.replace('V2', '2.0')
         elif camel_case in ['IO4', 'IO16']:
