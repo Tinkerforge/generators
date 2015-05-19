@@ -30,7 +30,7 @@ com['packets'].append({
 'en':
 """
 Returns the measured ozone concentration. The value is in 
-`ppb (parts-per-billion) <http://en.wikipedia.org/wiki/Parts-per_notation>` 
+`ppb (parts-per-billion) <http://en.wikipedia.org/wiki/Parts-per_notation>`__
 and between 0 to 250.
 
 If you want to get the ozone concentration periodically, it is recommended to use the
@@ -39,8 +39,8 @@ callback :func:`OzoneConcentration` and set the period with
 """,
 'de':
 """
-Gibt die gemessene Ozone-Konfiguration zurück. Der Wert ist in
-`ppb (parts-per-billion) <http://de.wikipedia.org/wiki/Parts_per_billion>` 
+Gibt die gemessene Ozon-Konzentration zurück. Der Wert ist in
+`ppb (parts-per-billion) <http://de.wikipedia.org/wiki/Parts_per_billion>`__
 und im Bereich von 0 bis 250.
 
 Wenn die Spannung periodisch abgefragt werden soll, wird empfohlen
