@@ -29,10 +29,10 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the measured co2 concentration. The value is in ppb and
+Returns the measured CO2 concentration. The value is in ppb and
 between TBD and TBD.
 
-If you want to get the co2 concentration periodically, it is recommended to use the
+If you want to get the CO2 concentration periodically, it is recommended to use the
 callback :func:`CO2Concentration` and set the period with
 :func:`SetCO2ConcentrationCallbackPeriod`.
 """,
@@ -261,7 +261,7 @@ com['packets'].append({
 """
 This callback is triggered when the threshold as set by
 :func:`SetCO2ConcentrationCallbackThreshold` is reached.
-The :word:`parameter` is the co2 concentration.
+The :word:`parameter` is the CO2 concentration.
 
 If the threshold keeps being reached, the callback is triggered periodically
 with the period as set by :func:`SetDebouncePeriod`.
