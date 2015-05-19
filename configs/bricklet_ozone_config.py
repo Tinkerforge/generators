@@ -29,8 +29,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the measured ozone concentration. The value is in ppb and
-between TBD and TBD.
+Returns the measured ozone concentration. The value is in 
+`ppb (parts-per-billion) <http://en.wikipedia.org/wiki/Parts-per_notation>` 
+and between 0 to 250.
 
 If you want to get the ozone concentration periodically, it is recommended to use the
 callback :func:`OzoneConcentration` and set the period with
@@ -38,8 +39,9 @@ callback :func:`OzoneConcentration` and set the period with
 """,
 'de':
 """
-Gibt die gemessene Ozone-Konfiguration zurück. Der Wert ist in ppb und im
-Bereich von TBD bis TBD.
+Gibt die gemessene Ozone-Konfiguration zurück. Der Wert ist in
+`ppb (parts-per-billion) <http://de.wikipedia.org/wiki/Parts_per_billion>` 
+und im Bereich von 0 bis 250.
 
 Wenn die Spannung periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`OzoneConcentration` zu nutzen und die Periode mit
