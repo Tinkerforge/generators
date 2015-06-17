@@ -70,7 +70,7 @@ of message is 60. If the length is given as 0, there was no
 new data available.
 
 Instead of polling with this function, you can also use
-callbacks. See :func:`EnableCallback` and :func:`ReadCallback`.
+callbacks. See :func:`EnableReadCallback` and :func:`ReadCallback`.
 """,
 'de':
 """
@@ -79,7 +79,7 @@ beträgt 60. Wenn die Länge als 0 gegeben wird, waren keine
 neuen Daten verfügbar.
 
 Anstatt zu mit dieser Funktion zu pollen, ist es auch möglich
-Callbacks zu nutzen. Siehe :func:`EnableCallback` und
+Callbacks zu nutzen. Siehe :func:`EnableReadCallback` und
 :func:`DisableCallback`.
 """
 }]
@@ -87,7 +87,7 @@ Callbacks zu nutzen. Siehe :func:`EnableCallback` und
 
 com['packets'].append({
 'type': 'function',
-'name': ('EnableCallback', 'enable_callback'),
+'name': ('EnableReadCallback', 'enable_read_callback'),
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -108,7 +108,7 @@ Im Startzustand ist der Callback deaktiviert
 
 com['packets'].append({
 'type': 'function',
-'name': ('DisableCallback', 'disable_callback'),
+'name': ('DisableReadCallback', 'disable_read_callback'),
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -129,7 +129,7 @@ Im Startzustand ist der Callback deaktiviert
 
 com['packets'].append({
 'type': 'function',
-'name': ('IsCallbackEnabled', 'is_callback_enabled'),
+'name': ('IsReadCallbackEnabled', 'is_read_callback_enabled'),
 'elements': [('enable', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -263,7 +263,7 @@ This callback is called if new data is available. The message has
 a maximum size of 60 characters. The actual length of the message
 is given in addition.
 
-To enable this callback, use :func:`EnableCallback`.
+To enable this callback, use :func:`EnableReadCallback`.
 """,
 'de':
 """
@@ -271,7 +271,7 @@ Dieser Callback wird aufgerufen wenn neue Daten zur Verfügung stehen.
 Die Nachricht hat eine Maximalgröße von 60 Zeichen. Die Länge
 der Nachricht wird zusätzlich übergeben.
 
-Dieser Callback kann durch :func:`EnableCallback` aktiviert werden.
+Dieser Callback kann durch :func:`EnableReadCallback` aktiviert werden.
 """
 }]
 })
