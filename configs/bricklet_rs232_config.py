@@ -80,7 +80,7 @@ neuen Daten verfügbar.
 
 Anstatt zu mit dieser Funktion zu pollen, ist es auch möglich
 Callbacks zu nutzen. Siehe :func:`EnableReadCallback` und
-:func:`DisableCallback`.
+:func:`DisableReadCallback`.
 """
 }]
 })
@@ -130,7 +130,7 @@ Im Startzustand ist der Callback deaktiviert
 com['packets'].append({
 'type': 'function',
 'name': ('IsReadCallbackEnabled', 'is_read_callback_enabled'),
-'elements': [('enable', 'bool', 1, 'out')],
+'elements': [('enabled', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
