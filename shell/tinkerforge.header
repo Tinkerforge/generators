@@ -192,7 +192,7 @@ def authenticate(ipcon, secret, message):
 
 def connect_ipcon_and_call(ctx, function, timeout=None):
 	def function_wrapper(ipcon):
-		if timeout is not None:
+		if timeout != None:
 			ipcon.set_timeout(timeout)
 
 		ipcon.connect(ctx.host, ctx.port)
@@ -269,7 +269,7 @@ def device_send_request(ctx, device_class, function_id, request_data, format_in,
 	if dry_run:
 		return
 
-	if command is not None:
+	if command != None:
 		def handle_response(values):
 			execute_response(ctx, command, names, values)
 	else:
@@ -284,7 +284,7 @@ def device_send_request(ctx, device_class, function_id, request_data, format_in,
 
 		response = ipcon.send_request(device, function_id, request_data, format_in, format_out)
 
-		if response is not None:
+		if response != None:
 			if len(names) == 1:
 				response = (response,)
 
@@ -296,12 +296,14 @@ def device_send_request(ctx, device_class, function_id, request_data, format_in,
 
 	connect_ipcon_and_call(ctx, function, ctx.timeout / 1000.0)
 
-def device_callback(ctx, device_class, function_id, command, names):
+def device_callback(ctx, device_class, function_id, command, names, symbols):
 	if dry_run:
 		return
 
-	if command is not None:
+	if command != None:
 		def callback(*values):
+			values = format_symbolic_output(ctx, values, symbols)
+
 			execute_response(ctx, command, names, values)
 	else:
 		is_first_callback = [True]
@@ -312,6 +314,8 @@ def device_callback(ctx, device_class, function_id, command, names):
 					is_first_callback[0] = False
 				else:
 					ctx.output(ctx.group_separator)
+
+			values = format_symbolic_output(ctx, values, symbols)
 
 			output_response(ctx, names, values)
 
@@ -331,7 +335,7 @@ def device_callback(ctx, device_class, function_id, command, names):
 			while not exit_flag[0] and not ctx.abort:
 				time.sleep(0.1)
 
-				if ctx.async_exception is not None:
+				if ctx.async_exception != None:
 					raise ctx.async_exception
 		elif ctx.duration < 0:
 			device.registered_callbacks[function_id] = callback
@@ -339,7 +343,7 @@ def device_callback(ctx, device_class, function_id, command, names):
 			while not ctx.abort:
 				time.sleep(1)
 
-				if ctx.async_exception is not None:
+				if ctx.async_exception != None:
 					raise ctx.async_exception
 		else:
 			device.registered_callbacks[function_id] = callback
@@ -351,7 +355,7 @@ def device_callback(ctx, device_class, function_id, command, names):
 			# FIXME: only checking for an exception after the complete sleep
 			#        is not good, sleep in shorter steps here to check for
 			#        exception more often
-			if ctx.async_exception is not None:
+			if ctx.async_exception != None:
 				raise ctx.async_exception
 
 	connect_ipcon_and_call(ctx, function)
@@ -373,7 +377,7 @@ def format_symbolic_output(ctx, values, symbols):
 	translated_values = []
 
 	for vs in zip(values, symbols):
-		if vs[1] is not None:
+		if vs[1] != None:
 			try:
 				translated_values.append(vs[1][vs[0]])
 			except KeyError:

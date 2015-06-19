@@ -150,7 +150,7 @@ def call_{0}_{1}(ctx, argv):
                 for element in packet.get_elements('out'):
                     output_names.append("'{0}'".format(element.get_dash_name()))
 
-                    if element.get_constant_group() is not None:
+                    if element.get_constant_group() != None:
                         symbols = {}
 
                         for constant_item in element.get_constant_group().get_items():
@@ -226,17 +226,28 @@ def dispatch_{0}_{1}(ctx, argv):
 
 \t\targs = parser.parse_args(argv)
 
-\t\tdevice_callback(ctx, {2}{3}, {4}, args.execute, [{5}])
+\t\tdevice_callback(ctx, {2}{3}, {4}, args.execute, [{5}], [{6}])
 """
 
         functions = []
         entries = []
 
         for packet in self.get_packets('callback'):
-            output = []
+            output_names = []
+            output_symbols = []
 
             for element in packet.get_elements('out'):
-                output.append("'{0}'".format(element.get_dash_name()))
+                output_names.append("'{0}'".format(element.get_dash_name()))
+
+                if element.get_constant_group() != None:
+                    symbols = {}
+
+                    for constant_item in element.get_constant_group().get_items():
+                        symbols[constant_item.get_value()] = constant_item.get_dash_name()
+
+                    output_symbols.append(str(symbols))
+                else:
+                    output_symbols.append('None')
 
             underscore_name = packet.get_underscore_name()
             dash_name = packet.get_dash_name()
@@ -246,7 +257,8 @@ def dispatch_{0}_{1}(ctx, argv):
                                    self.get_camel_case_name(),
                                    self.get_category(),
                                    packet.get_function_id(),
-                                   ', '.join(output))
+                                   ', '.join(output_names),
+                                   ', '.join(output_symbols))
 
             entries.append("'{0}': {1}".format(dash_name,
                                                underscore_name))

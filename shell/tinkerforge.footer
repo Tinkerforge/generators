@@ -95,7 +95,7 @@ def command_enumerate(ctx, argv):
 
 		return values
 
-	if args.execute is not None:
+	if args.execute != None:
 		def callback(*values):
 			if -1 in args.types or values[6] in args.types:
 				values = format_symbolic_output(ctx, fix_position(values), symbols)
@@ -130,7 +130,7 @@ def command_enumerate(ctx, argv):
 			while not exit_flag[0] and not ctx.abort:
 				time.sleep(0.1)
 
-				if ctx.async_exception is not None:
+				if ctx.async_exception != None:
 					raise ctx.async_exception
 		elif args.duration < 0:
 			ipcon.register_callback(IPConnection.CALLBACK_ENUMERATE, callback)
@@ -139,7 +139,7 @@ def command_enumerate(ctx, argv):
 			while not ctx.abort:
 				time.sleep(1)
 
-				if ctx.async_exception is not None:
+				if ctx.async_exception != None:
 					raise ctx.async_exception
 		else:
 			ipcon.register_callback(IPConnection.CALLBACK_ENUMERATE, callback)
@@ -152,7 +152,7 @@ def command_enumerate(ctx, argv):
 			# FIXME: only checking for an exception after the complete sleep
 			#        is not good, sleep in shorter steps here to check for
 			#        exception more often
-			if ctx.async_exception is not None:
+			if ctx.async_exception != None:
 				raise ctx.async_exception
 
 	connect_ipcon_and_call(ctx, function)
@@ -309,17 +309,17 @@ def parse(ctx, argv):
 	if not listen_mode:
 		command_choices.append('listen')
 
-	if ctx.host is not None:
+	if ctx.host != None:
 		host_default = ctx.host
 	else:
 		host_default = 'localhost'
 
-	if ctx.port is not None:
+	if ctx.port != None:
 		port_default = ctx.port
 	else:
 		port_default = 4223
 
-	if ctx.item_separator is not None:
+	if ctx.item_separator != None:
 		item_separator_default = ctx.item_separator
 	else:
 		item_separator_default = ','
@@ -329,12 +329,12 @@ def parse(ctx, argv):
 	else:
 		item_separator_help_suffix = ''
 
-	if ctx.no_symbolic_input is not None:
+	if ctx.no_symbolic_input != None:
 		no_symbolic_input_default = ctx.no_symbolic_input
 	else:
 		no_symbolic_input_default = False
 
-	if ctx.no_symbolic_output is not None:
+	if ctx.no_symbolic_output != None:
 		no_symbolic_output_default = ctx.no_symbolic_output
 	else:
 		no_symbolic_output_default = False
@@ -415,7 +415,7 @@ def main():
 	except ParserExit:
 		sys.exit(0)
 	except FatalError as e:
-		if ctx.current_parser is not None:
+		if ctx.current_parser != None:
 			prog = ctx.current_parser.prog
 		else:
 			prog = 'tinkerforge'
