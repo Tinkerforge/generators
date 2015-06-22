@@ -98,7 +98,7 @@ def command_enumerate(ctx, argv):
 	if args.execute != None:
 		def callback(*values):
 			if -1 in args.types or values[6] in args.types:
-				values = format_symbolic_output(ctx, fix_position(values), symbols)
+				values = format_escaped_output(ctx, format_symbolic_output(ctx, fix_position(values), symbols))
 
 				execute_response(ctx, args.execute, names, values)
 				return True
@@ -111,7 +111,7 @@ def command_enumerate(ctx, argv):
 					else:
 						ctx.output(ctx.group_separator)
 
-				values = format_symbolic_output(ctx, fix_position(values), symbols)
+				values = format_escaped_output(ctx, format_symbolic_output(ctx, fix_position(values), symbols))
 
 				output_response(ctx, names, values)
 				return True
@@ -329,6 +329,16 @@ def parse(ctx, argv):
 	else:
 		item_separator_help_suffix = ''
 
+	if ctx.no_escaped_input != None:
+		no_escaped_input_default = ctx.no_escaped_input
+	else:
+		no_escaped_input_default = False
+
+	if ctx.no_escaped_output != None:
+		no_escaped_output_default = ctx.no_escaped_output
+	else:
+		no_escaped_output_default = False
+
 	if ctx.no_symbolic_input != None:
 		no_symbolic_input_default = ctx.no_symbolic_input
 	else:
@@ -361,6 +371,8 @@ def parse(ctx, argv):
 	else:
 		setattr(namespace, 'group_separator', '\n')
 
+	parser.add_argument('--no-escaped-input', const=True, default=no_escaped_input_default, action='store_const', help='disable escaped input of values')
+	parser.add_argument('--no-escaped-output', const=True, default=no_escaped_output_default, action='store_const', help='disable escaped output of values')
 	parser.add_argument('--no-symbolic-input', const=True, default=no_symbolic_input_default, action='store_const', help='disable symbolic input of values')
 	parser.add_argument('--no-symbolic-output', const=True, default=no_symbolic_output_default, action='store_const', help='disable symbolic output of values')
 
@@ -385,6 +397,8 @@ def parse(ctx, argv):
 	ctx.group_separator = ctx.group_separator.replace('\\n', '\n')
 	ctx.group_separator = ctx.group_separator.replace('\\\\', '\\')
 
+	ctx.no_escaped_input = args.no_escaped_input
+	ctx.no_escaped_output = args.no_escaped_output
 	ctx.no_symbolic_input = args.no_symbolic_input
 	ctx.no_symbolic_output = args.no_symbolic_output
 

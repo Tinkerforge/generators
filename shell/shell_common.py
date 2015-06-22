@@ -88,7 +88,7 @@ class ShellElement(common.Element):
         'uint64': 'convert_int',
         'float':  'float',
         'bool':   'convert_bool',
-        'char':   'check_char',
+        'char':   'create_char_converter(ctx)',
         'string': 'string'
     }
 
@@ -135,7 +135,7 @@ class ShellElement(common.Element):
     def get_shell_type_converter(self):
         t = ShellElement.shell_type_converters[self.get_type()]
 
-        if self.get_constant_group() is not None:
+        if self.get_constant_group() != None:
             symbols = {}
 
             for constant_item in self.get_constant_group().get_items():
@@ -144,13 +144,13 @@ class ShellElement(common.Element):
             if self.get_cardinality() > 1 and t != 'string':
                 return 'create_array_converter(ctx, create_symbol_converter(ctx, {0}, {1}), {2})'.format(t, symbols, self.get_cardinality())
             elif t == 'string':
-                return 'create_string_checker(create_symbol_converter(ctx, str, {0}), {1})'.format(symbols, self.get_cardinality())
+                return 'create_string_converter(ctx, create_symbol_converter(ctx, str, {0}), {1})'.format(symbols, self.get_cardinality())
             else:
                 return 'create_symbol_converter(ctx, {0}, {1})'.format(t, symbols)
         else:
             if self.get_cardinality() > 1 and t != 'string':
                 return 'create_array_converter(ctx, {0}, {1})'.format(t, self.get_cardinality())
             elif t == 'string':
-                return 'create_string_checker(str, {0})'.format(self.get_cardinality())
+                return 'create_string_converter(ctx, str, {0})'.format(self.get_cardinality())
             else:
                 return t
