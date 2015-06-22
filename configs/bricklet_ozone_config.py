@@ -14,7 +14,7 @@ com = {
     'name': ('Ozone', 'ozone', 'Ozone', 'Ozone Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'Measures Ozone concentration in ppb',
+        'en': 'Measures ozone concentration in ppb',
         'de': 'Misst Ozon-Konzentration in ppb'
     },
     'released': False,
