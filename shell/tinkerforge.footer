@@ -63,7 +63,7 @@ def command_enumerate(ctx, argv):
 	}
 
 	parser.add_argument('--duration', default=250, type=create_symbol_converter(ctx, int, {'exit-after-first': 0, 'forever': -1}), help='time (msec) to dispatch incoming enumerate responses (exit-after-first: 0, forever: -1), default: 250', metavar='<duration>')
-	parser.add_argument('--types', default=[IPConnection.ENUMERATION_TYPE_AVAILABLE], type=create_array_converter(ctx, create_symbol_converter(ctx, int, enumeration_type_symbols, True), 3, False), help='array of enumeration types to dispatch (available: 0, connected: 1, disconnected: 2, all: -1), default: available', metavar='<types>')
+	parser.add_argument('--types', default=[IPConnection.ENUMERATION_TYPE_AVAILABLE], type=create_array_converter(ctx, create_symbol_converter(ctx, int, enumeration_type_symbols, strict=True), None, 3, length_is_fixed=False), help='array of enumeration types to dispatch (available: 0, connected: 1, disconnected: 2, all: -1), default: available', metavar='<types>')
 
 	if enable_execute:
 		parser.add_argument('--execute', type=str, help='shell command line to execute for each incoming response', metavar='<command>')
@@ -329,6 +329,16 @@ def parse(ctx, argv):
 	else:
 		item_separator_help_suffix = ''
 
+	if ctx.array_ellipsis != None:
+		array_ellipsis_default = ctx.array_ellipsis
+	else:
+		array_ellipsis_default = '..'
+
+	if array_ellipsis_default == '..':
+		array_ellipsis_help_suffix = ' (two dots)'
+	else:
+		array_ellipsis_help_suffix = ''
+
 	if ctx.no_escaped_input != None:
 		no_escaped_input_default = ctx.no_escaped_input
 	else:
@@ -371,11 +381,11 @@ def parse(ctx, argv):
 	else:
 		setattr(namespace, 'group_separator', '\n')
 
+	parser.add_argument('--array-ellipsis', default=array_ellipsis_default, type=str, help='ellipsis for arrays, default: {0}{1}'.format(array_ellipsis_default, array_ellipsis_help_suffix), metavar='<array-ellipsis>')
 	parser.add_argument('--no-escaped-input', const=True, default=no_escaped_input_default, action='store_const', help='disable escaped input of values')
 	parser.add_argument('--no-escaped-output', const=True, default=no_escaped_output_default, action='store_const', help='disable escaped output of values')
 	parser.add_argument('--no-symbolic-input', const=True, default=no_symbolic_input_default, action='store_const', help='disable symbolic input of values')
 	parser.add_argument('--no-symbolic-output', const=True, default=no_symbolic_output_default, action='store_const', help='disable symbolic output of values')
-
 	parser.add_argument('command', choices=command_choices, help='{' + ', '.join(command_choices) + '}', metavar='<command>')
 	parser.add_argument('args', nargs=argparse.REMAINDER, help='command specific arguments', metavar='<args>')
 
@@ -384,23 +394,29 @@ def parse(ctx, argv):
 	ctx.host = args.host
 	ctx.port = args.port
 	ctx.secret = args.secret
-
 	ctx.item_separator = args.item_separator
-	ctx.item_separator = ctx.item_separator.replace('\\t', '\t')
-	ctx.item_separator = ctx.item_separator.replace('\\r', '\r')
-	ctx.item_separator = ctx.item_separator.replace('\\n', '\n')
-	ctx.item_separator = ctx.item_separator.replace('\\\\', '\\')
-
 	ctx.group_separator = args.group_separator
-	ctx.group_separator = ctx.group_separator.replace('\\t', '\t')
-	ctx.group_separator = ctx.group_separator.replace('\\r', '\r')
-	ctx.group_separator = ctx.group_separator.replace('\\n', '\n')
-	ctx.group_separator = ctx.group_separator.replace('\\\\', '\\')
-
+	ctx.array_ellipsis = args.array_ellipsis
 	ctx.no_escaped_input = args.no_escaped_input
 	ctx.no_escaped_output = args.no_escaped_output
 	ctx.no_symbolic_input = args.no_symbolic_input
 	ctx.no_symbolic_output = args.no_symbolic_output
+
+	if not ctx.no_escaped_input:
+		try:
+			ctx.item_separator = ctx.item_separator.decode('string-escape')
+		except ValueError:
+			parser.error('argument --item-separator: invalid escape sequence: %r' % ctx.item_separator)
+
+		try:
+			ctx.group_separator = ctx.group_separator.decode('string-escape')
+		except ValueError:
+			parser.error('argument --group-separator: invalid escape sequence: %r' % ctx.group_separator)
+
+		try:
+			ctx.array_ellipsis = ctx.array_ellipsis.decode('string-escape')
+		except ValueError:
+			parser.error('argument --array-ellipsis: invalid escape sequence: %r' % ctx.array_ellipsis)
 
 	commands = {
 	'call': command_call,

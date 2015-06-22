@@ -63,6 +63,7 @@ class Context:
 	secret = None
 	item_separator = None
 	group_separator = None
+	array_ellipsis = None
 	no_escaped_input = None
 	no_escaped_output = None
 	no_symbolic_input = None
@@ -82,6 +83,7 @@ class Context:
 		ctx.secret = self.secret
 		ctx.item_separator = self.item_separator
 		ctx.group_separator = self.group_separator
+		ctx.array_ellipsis = self.array_ellipsis
 		ctx.no_escaped_input = self.no_escaped_input
 		ctx.no_escaped_output = self.no_escaped_output
 		ctx.no_symbolic_input = self.no_symbolic_input
@@ -529,11 +531,21 @@ def create_symbol_converter(ctx, type, symbols, strict=False):
 	return convert_symbol
 
 # length_is_fixed = False means length is maximum length
-def create_array_converter(ctx, type, length, length_is_fixed=True):
+def create_array_converter(ctx, type, default_value, length, length_is_fixed=True):
 	def convert_array(string):
+		items = string.split(ctx.item_separator)
+
+		if len(ctx.array_ellipsis) > 0 and len(items) > 0 and items[-1] == ctx.array_ellipsis:
+			if default_value == None:
+				name = getattr(type, '__name__', repr(type))
+				msg = 'array ellipsis not supported for %s value: %r' % (get_array_type_name(ctx, name, length, length_is_fixed), string)
+				raise argparse.ArgumentTypeError(msg)
+
+			items = items[:-1] + [default_value]*(length - len(items) + 1)
+
 		array = []
 
-		for item in string.split(ctx.item_separator):
+		for item in items:
 			try:
 				value = type(item)
 			except (ValueError, TypeError, argparse.ArgumentTypeError):
