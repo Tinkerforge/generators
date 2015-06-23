@@ -185,7 +185,8 @@ sub _init_local_socket
 	#          threads as they won't call this and will have their local
 	#          copies not properly initialized
 
-	if (defined($local_socket)) {
+	if(defined($local_socket))
+	{
 		$local_socket->close();
 	}
 
@@ -205,9 +206,9 @@ sub _get_local_socket
 
 	lock(${$self->{local_socket_lock_ref}});
 
-	if ($self->{socket_id} != $local_socket_id)
+	if($self->{socket_id} != $local_socket_id)
 	{
-		if (defined($local_socket))
+		if(defined($local_socket))
 		{
 			$local_socket->close();
 		}
@@ -355,7 +356,7 @@ sub _connect_unlocked
 
 	if(!defined($socket))
 	{
-		if (!$is_auto_reconnect)
+		if(!$is_auto_reconnect)
 		{
 			# destroy callback thread
 			$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
@@ -372,7 +373,7 @@ sub _connect_unlocked
 		$socket->setsockopt(IPPROTO_TCP, TCP_NODELAY, 1);
 
 		$| = 1; # enable autoflush
-		if (defined(&{"MSG_NOSIGNAL"}))
+		if(defined(&{"MSG_NOSIGNAL"}))
 		{
 			$socket->send('', MSG_NOSIGNAL);
 		}
@@ -392,7 +393,7 @@ sub _connect_unlocked
 
 	if($error)
 	{
-		if (!$is_auto_reconnect)
+		if(!$is_auto_reconnect)
 		{
 			# destroy callback thread
 			$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
@@ -419,7 +420,7 @@ sub _connect_unlocked
 
 	if(!defined($self->{disconnect_probe_thread}))
 	{
-		if (!$is_auto_reconnect)
+		if(!$is_auto_reconnect)
 		{
 			# destroy callback thread
 			$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
@@ -465,7 +466,7 @@ sub _connect_unlocked
 		# destroy socket
 		$self->_disconnect_unlocked();
 
-		if (!$is_auto_reconnect)
+		if(!$is_auto_reconnect)
 		{
 			# destroy callback thread
 			$self->{callback_queue}->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
@@ -483,7 +484,7 @@ sub _connect_unlocked
 	$self->{auto_reconnect_allowed} = 0;
 
 	# trigger connected callback
-	if ($is_auto_reconnect)
+	if($is_auto_reconnect)
 	{
 		$self->{callback_queue}->enqueue([&_QUEUE_META, &CALLBACK_CONNECTED,
 		                                  &CONNECT_REASON_AUTO_RECONNECT, undef]);
@@ -513,19 +514,19 @@ sub disconnect
 	my $callback_queue = undef;
 	my $callback_thread = undef;
 
-	if (1) {
+	if(1) {
 		lock(${$self->{socket_lock_ref}});
 
 		$self->{auto_reconnect_allowed} = 0;
 
-		if ($self->{auto_reconnect_pending})
+		if($self->{auto_reconnect_pending})
 		{
 			# abort pending auto-reconnect
 			$self->{auto_reconnect_pending} = 0;
 		}
 		else
 		{
-			if (!defined($self->{socket_fileno}))
+			if(!defined($self->{socket_fileno}))
 			{
 				croak(Tinkerforge::Error->_new(Tinkerforge::Error->NOT_CONNECTED,
 				                               'Not connected'));
@@ -548,7 +549,7 @@ sub disconnect
 	                          &DISCONNECT_REASON_REQUEST, undef]);
 	$callback_queue->enqueue([&_QUEUE_EXIT, undef, undef, undef]);
 
-	if (threads->self() != $callback_thread)
+	if(threads->self() != $callback_thread)
 	{
 		$callback_thread->join();
 	}
@@ -614,7 +615,7 @@ sub _destroy_socket
 {
 	my ($self) = @_;
 
-	if (defined($self->{socket_fileno}))
+	if(defined($self->{socket_fileno}))
 	{
 		my $socket = $self->_get_local_socket();
 
@@ -637,14 +638,14 @@ sub _read_uint32_non_blocking
 
 	my $fh = undef;
 
-	if (!defined(sysopen($fh, $filename, O_RDONLY | O_NONBLOCK)))
+	if(!defined(sysopen($fh, $filename, O_RDONLY | O_NONBLOCK)))
 	{
 		return undef;
 	}
 
 	my $bytes = undef;
 
-	if (sysread($fh, $bytes, 4) != 4)
+	if(sysread($fh, $bytes, 4) != 4)
 	{
 		close($fh);
 
@@ -668,14 +669,14 @@ sub _get_random_uint32
 
 	my $r = $self->_read_uint32_non_blocking('/dev/urandom');
 
-	if (defined($r))
+	if(defined($r))
 	{
 		return $r;
 	}
 
 	$r = $self->_read_uint32_non_blocking('/dev/random');
 
-	if (defined($r))
+	if(defined($r))
 	{
 		return $r;
 	}
@@ -731,7 +732,7 @@ sub authenticate
 
 	lock(${$self->{authentication_lock_ref}});
 
-	if ($self->{next_authentication_nonce} == 0)
+	if($self->{next_authentication_nonce} == 0)
 	{
 		$self->{next_authentication_nonce} = $self->_get_random_uint32();
 	}
@@ -794,7 +795,7 @@ sub set_auto_reconnect
 
 	$self->{auto_reconnect} = $auto_reconnect;
 
-	if (!$self->{auto_reconnect})
+	if(!$self->{auto_reconnect})
 	{
 		# abort potentially pending auto reconnect
 		$self->{auto_reconnect_allowed} = 0;
@@ -827,13 +828,12 @@ sub set_timeout
 {
 	my ($self, $timeout) = @_;
 
-	if ($timeout < 0)
+	if($timeout < 0)
 	{
 		croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_PARAMETER, 'Timeout cannot be negative'));
 	}
 
 	$self->{timeout} = $timeout;
-
 }
 
 =item get_timeout()
@@ -976,7 +976,7 @@ sub _handle_disconnect_by_peer
 
 	$self->{auto_reconnect_allowed} = 1;
 
-	if ($disconnect_immediately) {
+	if($disconnect_immediately) {
 		$self->_disconnect_unlocked();
 	}
 
@@ -1001,7 +1001,7 @@ sub _ipcon_send
 		lock(${$self->{send_lock_ref}});
 
 		$| = 1; # enable autoflush
-		if (defined(&{"MSG_NOSIGNAL"}))
+		if(defined(&{"MSG_NOSIGNAL"}))
 		{
 			$rc = $self->_get_local_socket()->send($packet, MSG_NOSIGNAL);
 		}
@@ -1380,7 +1380,7 @@ sub _dispatch_meta
 
 			# don't close the socket if it got disconnected or
 			# reconnected in the meantime
-			if (defined($self->{socket_fileno}) && $self->{socket_id} == $socket_id)
+			if(defined($self->{socket_fileno}) && $self->{socket_id} == $socket_id)
 			{
 				# destroy disconnect probe thread
 				$self->{disconnect_probe_queue}->enqueue(&_QUEUE_EXIT);
@@ -1397,9 +1397,9 @@ sub _dispatch_meta
 			eval("$self->{registered_callbacks}->{&CALLBACK_DISCONNECTED}($reason);");
 		}
 
-		if ($reason != &DISCONNECT_REASON_REQUEST &&
-			$self->{auto_reconnect} &&
-			$self->{auto_reconnect_allowed})
+		if($reason != &DISCONNECT_REASON_REQUEST &&
+		   $self->{auto_reconnect} &&
+		   $self->{auto_reconnect_allowed})
 		{
 			$self->{auto_reconnect_pending} = 1;
 
@@ -1411,10 +1411,10 @@ sub _dispatch_meta
 			{
 				$retry = 0;
 
-				if (1) {
+				if(1) {
 					lock(${$self->{socket_lock_ref}});
 
-					if ($self->{auto_reconnect_allowed} && !defined($self->{socket_fileno}))
+					if($self->{auto_reconnect_allowed} && !defined($self->{socket_fileno}))
 					{
 						eval
 						{
@@ -1431,7 +1431,7 @@ sub _dispatch_meta
 					}
 				}
 
-				if ($retry)
+				if($retry)
 				{
 					# wait a moment to give another thread a chance to
 					# interrupt the auto-reconnect
@@ -1670,7 +1670,7 @@ sub _disconnect_probe_thread_subroutine
 			last;
 		}
 
-		if ($self->{disconnect_probe_flag}) {
+		if($self->{disconnect_probe_flag}) {
 			my $packet = $self->_create_packet_header(undef, 8, &_FUNCTION_DISCONNECT_PROBE);
 
 			my $rc;
@@ -1679,7 +1679,7 @@ sub _disconnect_probe_thread_subroutine
 				lock(${$self->{send_lock_ref}});
 
 				$| = 1; # enable autoflush
-				if (defined(&{"MSG_NOSIGNAL"}))
+				if(defined(&{"MSG_NOSIGNAL"}))
 				{
 					$rc = $self->_get_local_socket()->send($packet, MSG_NOSIGNAL);
 				}

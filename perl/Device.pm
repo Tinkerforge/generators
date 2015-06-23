@@ -448,13 +448,13 @@ sub get_response_expected
 
 	lock(${$self->{device_lock_ref}});
 
-	if (!defined($self->{response_expected}->{$function_id}))
+	if(!defined($self->{response_expected}->{$function_id}))
 	{
 		croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_FUNCTION_ID, "Function ID $function_id is unknown"));
 	}
 
-	if ($self->{response_expected}->{$function_id} == &_RESPONSE_EXPECTED_ALWAYS_TRUE ||
-	    $self->{response_expected}->{$function_id} == &_RESPONSE_EXPECTED_TRUE)
+	if($self->{response_expected}->{$function_id} == &_RESPONSE_EXPECTED_ALWAYS_TRUE ||
+	   $self->{response_expected}->{$function_id} == &_RESPONSE_EXPECTED_TRUE)
 	{
 		return 1;
 	}
@@ -486,18 +486,18 @@ sub set_response_expected
 
 	lock(${$self->{device_lock_ref}});
 
-	if (!defined($self->{response_expected}->{$function_id}))
+	if(!defined($self->{response_expected}->{$function_id}))
 	{
 		croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_FUNCTION_ID, "Function ID $function_id is unknown"));
 	}
 
-	if ($self->{response_expected}->{$function_id} != &_RESPONSE_EXPECTED_TRUE &&
-	    $self->{response_expected}->{$function_id} != &_RESPONSE_EXPECTED_FALSE)
+	if($self->{response_expected}->{$function_id} != &_RESPONSE_EXPECTED_TRUE &&
+	   $self->{response_expected}->{$function_id} != &_RESPONSE_EXPECTED_FALSE)
 	{
 		croak(Tinkerforge::Error->_new(Tinkerforge::Error->INVALID_FUNCTION_ID, "Response-Exepcted for function ID $function_id cannot be changed"));
 	}
 
-	if ($response_expected)
+	if($response_expected)
 	{
 		$self->{response_expected}->{$function_id} = &_RESPONSE_EXPECTED_TRUE;
 	}
@@ -522,10 +522,10 @@ sub set_response_expected_all
 
 	foreach my $function_id (keys $self->{response_expected})
 	{
-		if ($self->{response_expected}->{$function_id} == &_RESPONSE_EXPECTED_TRUE ||
-		    $self->{response_expected}->{$function_id} == &_RESPONSE_EXPECTED_FALSE)
+		if($self->{response_expected}->{$function_id} == &_RESPONSE_EXPECTED_TRUE ||
+		   $self->{response_expected}->{$function_id} == &_RESPONSE_EXPECTED_FALSE)
 		{
-			if ($response_expected)
+			if($response_expected)
 			{
 				$self->{response_expected}->{$function_id} = &_RESPONSE_EXPECTED_TRUE;
 			}
