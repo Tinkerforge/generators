@@ -1444,6 +1444,272 @@ sub _dispatch_meta
 	return 1;
 }
 
+sub _dispatch_response
+{
+	my ($self, $payload, $form_unpack, $uid, $fid) = @_;
+
+	my @form_unpack_arr = split(' ', $form_unpack);
+
+	if(scalar(@form_unpack_arr) > 1)
+	{
+		my @copy_info_arr;
+		my $copy_info_arr_len;
+		my $copy_from_index = 0;
+		my $arguments_arr_index = 0;
+		my $anon_arr_index = 0;
+		my @return_arr;
+		my @arguments_arr = unpack('('.$form_unpack.')<', $payload);
+
+		foreach(@form_unpack_arr)
+		{
+			my $count = $_;
+			my @form_single_arr = split('', $_);
+
+			if($form_single_arr[0] eq 'c' ||
+			   $form_single_arr[0] eq 'C' ||
+			   $form_single_arr[0] eq 's' ||
+			   $form_single_arr[0] eq 'S' ||
+			   $form_single_arr[0] eq 'l' ||
+			   $form_single_arr[0] eq 'L' ||
+			   $form_single_arr[0] eq 'q' ||
+			   $form_single_arr[0] eq 'Q' ||
+			   $form_single_arr[0] eq 'f')
+			{
+				if(scalar(@form_single_arr) > 1)
+				{
+					$count =~ s/[^\d]//g;
+					push(@copy_info_arr, [$copy_from_index, $count]);
+					$copy_from_index += $count;
+
+					next;
+				}
+				else
+				{
+					$copy_from_index++;
+				}
+			}
+			else
+			{
+				$copy_from_index++;
+			}
+		}
+
+		$copy_info_arr_len = scalar(@copy_info_arr);
+
+		if($copy_info_arr_len > 0)
+		{
+			while($arguments_arr_index < scalar(@arguments_arr))
+			{
+				if(scalar(@copy_info_arr) > 0)
+				{
+					if($copy_info_arr[0][0] == $arguments_arr_index)
+					{
+						my $anon_arr_iterator = $copy_info_arr[0][0];
+
+						if($anon_arr_index == 0)
+						{
+							$anon_arr_index = $anon_arr_iterator;
+						}
+
+						$return_arr[$anon_arr_index] = [];
+
+						for(; $anon_arr_iterator < ($copy_info_arr[0][0] + $copy_info_arr[0][1]); $anon_arr_iterator++)
+						{
+							push($return_arr[$anon_arr_index], $arguments_arr[$anon_arr_iterator]);
+						}
+
+						$anon_arr_index++;
+						$arguments_arr_index += $copy_info_arr[0][1];
+						shift(@copy_info_arr);
+					}
+					else
+					{
+						push(@return_arr, $arguments_arr[$arguments_arr_index]);
+						$anon_arr_index++;
+						$arguments_arr_index++;
+					}
+				}
+				else
+				{
+					push(@return_arr, $arguments_arr[$arguments_arr_index]);
+					$arguments_arr_index++;
+				}
+			}
+
+			my $i = 0;
+
+			foreach(@form_unpack_arr)
+			{
+				my @form_single_arr = split('', $_);
+
+				if($form_single_arr[0] eq 'a' && scalar(@form_single_arr) > 1)
+				{
+					my @string_to_split_arr = split('', $return_arr[$i]);
+					$return_arr[$i] = [];
+
+					foreach(@string_to_split_arr)
+					{
+						push($return_arr[$i], $_);
+					}
+				}
+
+				$i++;
+			}
+
+			if(defined($fid))
+			{
+				if(defined($uid))
+				{
+					eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}(\@return_arr)");
+				}
+				else
+				{
+					eval("$self->{registered_callbacks}->{$fid}(\@return_arr)");
+				}
+			}
+
+			return @return_arr;
+		}
+		elsif($copy_info_arr_len == 0)
+		{
+			my @return_arr = unpack($form_unpack, $payload);
+			my $i = 0;
+
+			foreach(@form_unpack_arr)
+			{
+				my @form_single_arr = split('', $_);
+
+				if($form_single_arr[0] eq 'a' && scalar(@form_single_arr) > 1)
+				{
+					my @string_to_split_arr = split('', $return_arr[$i]);
+					$return_arr[$i] = [];
+
+					foreach(@string_to_split_arr)
+					{
+						push($return_arr[$i], $_);
+					}
+				}
+
+				$i++;
+			}
+
+			if(defined($fid))
+			{
+				if(defined($uid))
+				{
+					eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}(\@return_arr)");
+				}
+				else
+				{
+					eval("$self->{registered_callbacks}->{$fid}(\@return_arr)");
+				}
+			}
+
+			return @return_arr;
+		}
+	}
+	elsif(scalar(@form_unpack_arr) == 1)
+	{
+		my @form_unpack_arr_0_arr = split('', $form_unpack_arr[0]);
+
+		if(scalar(@form_unpack_arr_0_arr) > 1)
+		{
+			my @unpack_tmp_arr = unpack($form_unpack, $payload);
+
+			if($form_unpack_arr_0_arr[0] eq 'a')
+			{
+				my @return_arr = split('', $unpack_tmp_arr[0]);
+
+				if(defined($fid))
+				{
+					if(defined($uid))
+					{
+						eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}(\@return_arr)");
+					}
+					else
+					{
+						eval("$self->{registered_callbacks}->{$fid}(\@return_arr)");
+					}
+				}
+
+				return \@return_arr;
+			}
+			elsif($form_unpack_arr_0_arr[0] eq 'Z')
+			{
+				my @return_arr = @unpack_tmp_arr;
+
+				if(defined($fid))
+				{
+					if(defined($uid))
+					{
+						eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}($return_arr[0])");
+					}
+					else
+					{
+						eval("$self->{registered_callbacks}->{$fid}($return_arr[0])");
+					}
+				}
+
+				return $return_arr[0];
+			}
+			else
+			{
+				my @return_arr = @unpack_tmp_arr;
+
+				if(defined($fid))
+				{
+					if(defined($uid))
+					{
+						eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}(\@return_arr)");
+					}
+					else
+					{
+						eval("$self->{registered_callbacks}->{$fid}(\@return_arr)");
+					}
+				}
+
+				return \@return_arr;
+			}
+		}
+		elsif(scalar(@form_unpack_arr_0_arr) == 1)
+		{
+			my $unpack_tmp = unpack($form_unpack, $payload);
+
+			if(defined($fid))
+			{
+				if(defined($uid))
+				{
+					eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}($unpack_tmp)");
+				}
+				else
+				{
+					eval("$self->{registered_callbacks}->{$fid}($unpack_tmp)");
+				}
+			}
+
+			return $unpack_tmp;
+		}
+	}
+	elsif(scalar(@form_unpack_arr) == 0)
+	{
+		if(defined($fid))
+		{
+			if(defined($uid))
+			{
+				eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}()");
+			}
+			else
+			{
+				eval("$self->{registered_callbacks}->{$fid}()");
+			}
+		}
+
+		return 1;
+	}
+
+	return 1;
+}
+
 sub _dispatch_packet
 {
 	my ($self, $packet) = @_;
@@ -1457,171 +1723,9 @@ sub _dispatch_packet
 	{
 		if(defined($self->{registered_callbacks}->{&CALLBACK_ENUMERATE}))
 		{
-			my $form_unpack = 'Z8 Z8 Z C3 C3 S C';
-			my @form_unpack_arr = split(' ', $form_unpack);
-			my @copy_info_arr;
-			my $copy_info_arr_len;
-			my $copy_from_index = 0;
-			my $arguments_arr_index = 0;
-			my $anon_arr_index = 0;
-			my @return_arr;
-			my @arguments_arr = unpack($form_unpack, $payload);
-
-			if(scalar(@form_unpack_arr) > 1)
-			{
-				foreach(@form_unpack_arr)
-				{
-					my $count = $_;
-					my @form_single_arr = split('', $_);
-
-					if($form_single_arr[0] eq 'c' ||
-					   $form_single_arr[0] eq 'C' ||
-					   $form_single_arr[0] eq 's' ||
-					   $form_single_arr[0] eq 'S' ||
-					   $form_single_arr[0] eq 'l' ||
-					   $form_single_arr[0] eq 'L' ||
-					   $form_single_arr[0] eq 'q' ||
-					   $form_single_arr[0] eq 'Q' ||
-					   $form_single_arr[0] eq 'f')
-					{
-							if(scalar(@form_single_arr) > 1)
-							{
-								$count =~ s/[^\d]//g;
-								push(@copy_info_arr, [$copy_from_index, $count]);
-								$copy_from_index += $count;
-
-								next;
-							}
-							else
-							{
-								$copy_from_index ++;
-							}
-					}
-					else
-					{
-						$copy_from_index ++;
-					}
-				}
-
-				$copy_info_arr_len = scalar(@copy_info_arr);
-
-				if($copy_info_arr_len > 0)
-				{
-					while($arguments_arr_index < scalar(@arguments_arr))
-					{
-						if(scalar(@copy_info_arr) > 0)
-						{
-							if($copy_info_arr[0][0] == $arguments_arr_index)
-							{
-								my $anon_arr_iterator = $copy_info_arr[0][0];
-
-								if($anon_arr_index == 0)
-								{
-									$anon_arr_index = $anon_arr_iterator;
-								}
-
-								$return_arr[$anon_arr_index] = [];
-
-								for(; $anon_arr_iterator < ($copy_info_arr[0][0]+$copy_info_arr[0][1]); $anon_arr_iterator++)
-								{
-									push($return_arr[$anon_arr_index], $arguments_arr[$anon_arr_iterator]);
-								}
-
-								$anon_arr_index ++;
-								$arguments_arr_index += $copy_info_arr[0][1];
-								shift(@copy_info_arr);
-							}
-							else
-							{
-								push(@return_arr, $arguments_arr[$arguments_arr_index]);
-								$anon_arr_index ++;
-								$arguments_arr_index ++;
-							}
-						}
-						else
-						{
-							push(@return_arr, $arguments_arr[$arguments_arr_index]);
-							$arguments_arr_index ++;
-						}
-					}
-
-					my $i = 0;
-
-					foreach(@form_unpack_arr)
-					{
-						my @form_single_arr = split('', $_);
-
-						if($form_single_arr[0] eq 'a' && scalar(@form_single_arr) > 1)
-						{
-							my @string_to_split_arr = split('', $return_arr[$i]);
-							$return_arr[$i] = [];
-
-							foreach(@string_to_split_arr)
-							{
-								push($return_arr[$i], $_);
-							}
-						}
-						$i ++;
-					}
-
-					eval("$self->{registered_callbacks}->{&CALLBACK_ENUMERATE}(\@return_arr)");
-
-					return 1;
-				}
-
-				if($copy_info_arr_len == 0)
-				{
-					my @return_arr = unpack($form_unpack, $payload);
-					my $i = 0;
-
-					foreach(@form_unpack_arr)
-					{
-						my @form_single_arr = split('', $_);
-
-						if($form_single_arr[0] eq 'a' && scalar(@form_single_arr) > 1)
-						{
-							my @string_to_split_arr = split('', $return_arr[$i]);
-							$return_arr[$i] = [];
-
-							foreach(@string_to_split_arr)
-							{
-								push($return_arr[$i], $_);
-							}
-						}
-						$i ++;
-					}
-
-					eval("$self->{registered_callbacks}->{&CALLBACK_ENUMERATE}(\@return_arr)");
-				}
-			}
-
-			if(scalar(@form_unpack_arr) == 1)
-			{
-				my @form_unpack_arr_0_arr = split('', $form_unpack_arr[0]);
-
-				if(scalar(@form_unpack_arr_0_arr) > 1)
-				{
-					my @unpack_tmp_arr = unpack($form_unpack, $payload);
-
-					if($form_unpack_arr_0_arr[0] eq 'a')
-					{
-						my @return_arr = split('', $unpack_tmp_arr[0]);
-						eval("$self->{registered_callbacks}->{&CALLBACK_ENUMERATE}(\@return_arr)");
-					}
-					if($form_unpack_arr_0_arr[0] eq 'Z')
-					{
-						my @return_arr = @unpack_tmp_arr;
-						eval("$self->{registered_callbacks}->{&CALLBACK_ENUMERATE}($return_arr[0])");
-					}
-					my @return_arr = @unpack_tmp_arr;
-					eval("$self->{registered_callbacks}->{&CALLBACK_ENUMERATE}(\@return_arr)");
-				}
-				if(scalar(@form_unpack_arr_0_arr) == 1)
-				{
-					eval("$self->{registered_callbacks}->{&CALLBACK_ENUMERATE}(unpack($form_unpack, $payload))");
-				}
-			}
+			$self->_dispatch_response($payload, 'Z8 Z8 Z C3 C3 S C', undef, &CALLBACK_ENUMERATE);
 		}
+
 		return 1;
 	}
 
@@ -1632,24 +1736,7 @@ sub _dispatch_packet
 
 	if(defined($self->{devices}->{$uid}->{registered_callbacks}->{$fid}))
 	{
-		my @callback_format_arr = split(' ', $self->{devices}->{$uid}->{callback_formats}->{$fid});
-
-		if(scalar(@callback_format_arr) > 1)
-		{
-			my @callback_return_arr = unpack($self->{devices}->{$uid}->{callback_formats}->{$fid}, $payload);
-			eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}(\@callback_return_arr)");
-		}
-
-		if(scalar(@callback_format_arr) == 1)
-		{
-			my $_payload_unpacked = unpack($self->{devices}->{$uid}->{callback_formats}->{$fid}, $payload);
-			eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}($_payload_unpacked)");
-		}
-
-		if(scalar(@callback_format_arr) == 0)
-		{
-			eval("$self->{devices}->{$uid}->{registered_callbacks}->{$fid}()");
-		}
+		$self->_dispatch_response($payload, $self->{devices}->{$uid}->{callback_formats}->{$fid}, $uid, $fid);
 	}
 
 	return 1;
