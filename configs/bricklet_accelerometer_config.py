@@ -32,7 +32,7 @@ com['packets'].append({
 'en':
 """
 Returns the acceleration in x, y and z direction. The values
-are given in mG (1/1000 G).
+are given in mg (1/1000 g), not to be confused with grams.
 
 If you want to get the acceleration periodically, it is recommended 
 to use the callback :func:`Acceleration` and set the period with 
@@ -41,7 +41,7 @@ to use the callback :func:`Acceleration` and set the period with
 'de':
 """
 Gibt die Beschleunigung in X-, Y- und Z-Richtung zurück. Die Werte
-haben die Einheit mG (1/1000 G).
+haben die Einheit mg (1/1000 g), nicht zu verwechseln mit Gramm.
 
 Wenn die Beschleunigungswerte periodisch abgefragt werden sollen, wird empfohlen
 den Callback :func:`Acceleration` zu nutzen und die Periode mit 
@@ -265,11 +265,11 @@ com['packets'].append({
                                                                         ('400Hz', '400hz', 7),
                                                                         ('800Hz', '800hz', 8),
                                                                         ('1600Hz', '1600hz', 9)])),
-             ('full_scale', 'uint8', 1, 'in', ('FullScale', 'full_scale', [('2G', '2g', 0),
-                                                                           ('4G', '4g', 1),
-                                                                           ('6G', '6g', 2),
-                                                                           ('8G', '8g', 3),
-                                                                           ('16G', '16g', 4)])),
+             ('full_scale', 'uint8', 1, 'in', ('FullScale', 'full_scale', [('2g', '2g', 0),
+                                                                           ('4g', '4g', 1),
+                                                                           ('6g', '6g', 2),
+                                                                           ('8g', '8g', 3),
+                                                                           ('16g', '16g', 4)])),
              ('filter_bandwidth', 'uint8', 1, 'in', ('FilterBandwidth', 'filter_bandwidth', [('800Hz', '800hz', 0),
                                                                                              ('400Hz', '400hz', 1),
                                                                                              ('200Hz', '200hz', 2),
@@ -322,11 +322,11 @@ com['packets'].append({
                                                                          ('400Hz', '400hz', 7),
                                                                          ('800Hz', '800hz', 8),
                                                                          ('1600Hz', '1600hz', 9)])),
-             ('full_scale', 'uint8', 1, 'out', ('FullScale', 'full_scale', [('2G', '2g', 0),
-                                                                            ('4G', '4g', 1),
-                                                                            ('6G', '6g', 2),
-                                                                            ('8G', '8g', 3),
-                                                                            ('16G', '16g', 4)])),
+             ('full_scale', 'uint8', 1, 'out', ('FullScale', 'full_scale', [('2g', '2g', 0),
+                                                                            ('4g', '4g', 1),
+                                                                            ('6g', '6g', 2),
+                                                                            ('8g', '8g', 3),
+                                                                            ('16g', '16g', 4)])),
              ('filter_bandwidth', 'uint8', 1, 'out', ('FilterBandwidth', 'filter_bandwidth', [('800Hz', '800hz', 0),
                                                                                               ('400Hz', '400hz', 1),
                                                                                               ('200Hz', '200hz', 2),
