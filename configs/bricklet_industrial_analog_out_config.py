@@ -90,10 +90,16 @@ com['packets'].append({
 'en':
 """
 Sets the output voltage in mV.
+
+The output voltage and output current are linked. Changing the output voltage
+also changes the output current.
 """,
 'de':
 """
-Setzt die Ausgabespannung in mV.
+Setzt die Ausgangsspannung in mV.
+
+Die Ausgangsspannung und der Ausgangsstrom sind gekoppelt. Eine Änderung der
+Ausgangsspannung führt auch zu einer Änderung des Ausgangsstroms.
 """
 }]
 })
@@ -110,8 +116,7 @@ Returns the voltage as set by :func:`SetVoltage`.
 """,
 'de':
 """
-Gibt die Spannung zurück, wie von :func:`SetVoltage`
-gesetzt.
+Gibt die Spannung zurück, wie von :func:`SetVoltage` gesetzt.
 """
 }]
 })
@@ -125,10 +130,16 @@ com['packets'].append({
 'en':
 """
 Sets the output current in µA.
+
+The output current and output voltage are linked. Changing the output current
+also changes the output voltage.
 """,
 'de':
 """
-Setzt den Ausgabestrom in µA.
+Setzt den Ausgangsstrom in µA.
+
+Der Ausgangsstrom und die Ausgangsspannung sind gekoppelt. Eine Änderung des
+Ausgangsstroms führt auch zu einer Änderung der Ausgangsspannung.
 """
 }]
 })
@@ -145,8 +156,7 @@ Returns the current as set by :func:`SetCurrent`.
 """,
 'de':
 """
-Gibt die Spannung zurück, wie von :func:`SetCurrent`
-gesetzt.
+Gibt die Spannung zurück, wie von :func:`SetCurrent` gesetzt.
 """
 }]
 })
@@ -216,8 +226,7 @@ Returns the configuration as set by :func:`SetConfiguration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetConfiguration`
-gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`SetConfiguration` gesetzt.
 """
 }]
 })
