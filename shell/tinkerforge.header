@@ -412,7 +412,7 @@ def format_escaped_output(ctx, values):
 						message = 'output not escapable: %r' % item
 						raise FatalError(message, ERROR_OUTPUT_NOT_ESCAPABLE_ERROR)
 				else:
-					translated_items.append(value)
+					translated_items.append(item)
 
 			translated_values.append(tuple(translated_items))
 		elif type(value) == str:
