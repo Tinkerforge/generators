@@ -17,8 +17,13 @@ public class ExampleAuthenticate {
 		ipcon.addConnectedListener(new IPConnection.ConnectedListener() {
 			public void connected(short connectReason) {
 				switch(connectReason) {
-					case IPConnection.CONNECT_REASON_REQUEST: System.out.println("Connected by request"); break;
-					case IPConnection.CONNECT_REASON_AUTO_RECONNECT: System.out.println("Auto-Reconnect"); break;
+				case IPConnection.CONNECT_REASON_REQUEST:
+					System.out.println("Connected by request");
+					break;
+
+				case IPConnection.CONNECT_REASON_AUTO_RECONNECT:
+					System.out.println("Auto-Reconnect");
+					break;
 				}
 
 				// Authenticate first...
