@@ -23,9 +23,9 @@ function cb_enumerate(e)
     ipcon = e.getSource();
 
     fprintf("UID: %s\n", e.uid);
-    fprintf("Enumeration Type: %s\n", e.enumerationType.toString());
+    fprintf("Enumeration Type: %d\n", short2int(e.enumerationType));
 
-    if strcmp(e.enumerationType.toString(), ipcon.ENUMERATION_TYPE_DISCONNECTED.toString())
+    if short2int(e.enumerationType) == short2int(ipcon.ENUMERATION_TYPE_DISCONNECTED)
         fprintf("\n");
         return;
     end
@@ -34,13 +34,21 @@ function cb_enumerate(e)
     firmwareVersion = e.firmwareVersion;
 
     fprintf("Connected UID: %s\n", e.connectedUid);
-    fprintf("Position: %s\n", e.position.toString());
-    fprintf("Hardware Version: %s.%s.%s\n", hardwareVersion(1).toString(), ...
-                                            hardwareVersion(2).toString(), ...
-                                            hardwareVersion(3).toString());
-    fprintf("Firmware Version: %s.%s.%s\n", firmwareVersion(1).toString(), ...
-                                            firmwareVersion(2).toString(), ...
-                                            firmwareVersion(3).toString());
-    fprintf("Device Identifier: %g\n", e.deviceIdentifier);
+    fprintf("Position: %s\n", e.position);
+    fprintf("Hardware Version: %d.%d.%d\n", short2int(hardwareVersion(1)), ...
+                                            short2int(hardwareVersion(2)), ...
+                                            short2int(hardwareVersion(3)));
+    fprintf("Firmware Version: %d.%d.%d\n", short2int(firmwareVersion(1)), ...
+                                            short2int(firmwareVersion(2)), ...
+                                            short2int(firmwareVersion(3)));
+    fprintf("Device Identifier: %d\n", e.deviceIdentifier);
     fprintf("\n");
+end
+
+function int = short2int(short)
+    if compare_versions(version(), "3.8", "<=")
+        int = short.intValue();
+    else
+        int = short;
+    end
 end

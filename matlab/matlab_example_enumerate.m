@@ -23,7 +23,7 @@ function cb_enumerate(e)
     ipcon = e.getSource();
 
     fprintf('UID: %s\n', char(e.uid));
-    fprintf('Enumeration Type: %g\n', e.enumerationType);
+    fprintf('Enumeration Type: %d\n', e.enumerationType);
 
     if e.enumerationType == ipcon.ENUMERATION_TYPE_DISCONNECTED
         fprintf('\n');
@@ -38,6 +38,6 @@ function cb_enumerate(e)
     fprintf('Firmware Version: ');
     fprintf('%d', rot90(e.firmwareVersion));
     fprintf('\n');
-    fprintf('Device Identifier: %g\n', e.deviceIdentifier);
+    fprintf('Device Identifier: %d\n', e.deviceIdentifier);
     fprintf('\n');
 end

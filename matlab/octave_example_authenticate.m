@@ -27,9 +27,9 @@ function cb_connected(e)
 
     global SECRET;
 
-    if strcmp(e.connectReason.toString(), ipcon.CONNECT_REASON_REQUEST.toString())
+    if short2int(e.connectReason) == short2int(ipcon.CONNECT_REASON_REQUEST)
         fprintf("Connected by request\n");
-    elseif strcmp(e.connectReason.toString(), ipcon.CONNECT_REASON_AUTO_RECONNECT.toString())
+    elseif short2int(e.connectReason) == short2int(ipcon.CONNECT_REASON_AUTO_RECONNECT)
         fprintf("Auto-Reconnect\n");
     end
 
@@ -48,5 +48,13 @@ end
 
 % Print incoming enumeration
 function cb_enumerate(e)
-    fprintf("UID: %s, Enumeration Type: %s\n", e.uid, e.enumerationType.toString());
+    fprintf("UID: %s, Enumeration Type: %d\n", e.uid, e.enumerationType);
+end
+
+function int = short2int(short)
+    if compare_versions(version(), "3.8", "<=")
+        int = short.intValue();
+    else
+        int = short;
+    end
 end
