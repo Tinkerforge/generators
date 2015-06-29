@@ -30,6 +30,7 @@ import datetime
 import subprocess
 import sys
 import copy
+import multiprocessing.dummy
 from collections import namedtuple
 from pprint import pprint
 
@@ -1542,7 +1543,17 @@ class BindingsGenerator(Generator):
             py.write('released_files = ' + repr(self.released_files))
             py.close()
 
+def examples_tester_worker(cookie, args, env):
+    try:
+        output = subprocess.check_output(args, env=env, stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as e:
+        return cookie, e.output, e.returncode == 0
+
+    return cookie, output, True
+
 class ExamplesTester:
+    PROCESSES = 4
+
     def __init__(self, name, extension, path, subdirs=['examples'], comment=None, extra_examples=[]):
         version = get_changelog_version(path)
 
@@ -1554,7 +1565,9 @@ class ExamplesTester:
         self.extra_examples = extra_examples[:]
         self.zipname = 'tinkerforge_{0}_bindings_{1}_{2}_{3}.zip'.format(name, *version)
         self.test_count = 0
+        self.success_count = 0
         self.failure_count = 0
+        self.pool = multiprocessing.dummy.Pool(processes=self.PROCESSES)
 
     def walker(self, arg, dirname, names):
         for name in names:
@@ -1563,22 +1576,38 @@ class ExamplesTester:
 
             self.handle_source(os.path.join(dirname, name), False)
 
+    def execute(self, cookie, args, env=None):
+        def callback(result):
+            self.handle_result(*result)
+
+        self.pool.apply_async(examples_tester_worker, args=(cookie, args, env),
+                              callback=callback)
+
     def handle_source(self, src, is_extra_example):
         self.test_count += 1
+        self.test((src,), src, is_extra_example)
 
-        if self.comment is not None:
+    def handle_result(self, cookie, output, success):
+        src = cookie[0]
+
+        if self.comment != None:
             print('>>> [{0}] testing {1}'.format(self.comment, src))
         else:
             print('>>> testing {0}'.format(src))
 
-        if not self.test(src, is_extra_example):
-            self.failure_count += 1
+        output = output.strip()
 
-            print('\033[01;31m>>> test failed\033[0m\n')
-        else:
+        if len(output) > 0:
+            print(output)
+
+        if success:
+            self.success_count += 1
             print('\033[01;32m>>> test succeded\033[0m\n')
+        else:
+            self.failure_count += 1
+            print('\033[01;31m>>> test failed\033[0m\n')
 
-    def test(self, src, is_extra_example):
+    def test(self, cookie, src, is_extra_example):
         raise NotImplementedError()
 
     def run(self):
@@ -1615,11 +1644,16 @@ class ExamplesTester:
             for extra_example in self.extra_examples:
                 self.handle_source(extra_example, True)
 
-            # report
-            if self.comment is not None:
-                print('### [{0}] {1} files tested, {2} failure(s) occurred'.format(self.comment, self.test_count, self.failure_count))
-            else:
-                print('### {0} files tested, {1} failure(s) occurred'.format(self.test_count, self.failure_count))
+        self.pool.close()
+        self.pool.join()
+
+        # report
+        if self.comment != None:
+            print('### [{0}] {1} file(s) tested, {2} test(s) succeded, {3} failure(s) occurred'
+                  .format(self.comment, self.test_count, self.success_count, self.failure_count))
+        else:
+            print('### {0} file(s) tested, {1} test(s) succeded, {2} failure(s) occurred'
+                  .format(self.test_count, self.success_count, self.failure_count))
 
         return self.failure_count == 0
 

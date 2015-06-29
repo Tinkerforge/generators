@@ -41,7 +41,7 @@ class JavaExamplesTester(common.ExamplesTester):
     def __init__(self, path, extra_examples):
         common.ExamplesTester.__init__(self, 'java', '.java', path, extra_examples=extra_examples)
 
-    def test(self, src, is_extra_example):
+    def test(self, cookie, src, is_extra_example):
         if is_extra_example:
             shutil.copy(src, '/tmp/tester/java')
             src = os.path.join('/tmp/tester/java', os.path.split(src)[1])
@@ -52,7 +52,7 @@ class JavaExamplesTester(common.ExamplesTester):
                 '/tmp/tester/java/Tinkerforge.jar:.',
                 src]
 
-        return subprocess.call(args) == 0
+        self.execute(cookie, args)
 
 class JavaSourceTester(common.SourceTester):
     def __init__(self, path):

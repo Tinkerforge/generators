@@ -35,7 +35,7 @@ class CSharpExamplesTester(common.ExamplesTester):
     def __init__(self, path, extra_examples):
         common.ExamplesTester.__init__(self, 'csharp', '.cs', path, extra_examples=extra_examples)
 
-    def test(self, src, is_extra_example):
+    def test(self, cookie, src, is_extra_example):
         if is_extra_example:
             shutil.copy(src, '/tmp/tester/csharp')
             src = os.path.join('/tmp/tester/csharp', os.path.split(src)[1])
@@ -50,7 +50,7 @@ class CSharpExamplesTester(common.ExamplesTester):
                 '/reference:/tmp/tester/csharp/Tinkerforge.dll',
                 src]
 
-        return subprocess.call(args) == 0
+        self.execute(cookie, args)
 
 def run(path):
     extra_examples = [os.path.join(path, '../../weather-station/button_control/csharp/WeatherStationButton.cs'),

@@ -38,7 +38,7 @@ class CExamplesTester(common.ExamplesTester):
 
         self.compiler = compiler
 
-    def test(self, src, is_extra_example):
+    def test(self, cookie, src, is_extra_example):
         if is_extra_example:
             shutil.copy(src, '/tmp/tester/c')
             src = os.path.join('/tmp/tester/c', os.path.split(src)[1])
@@ -86,7 +86,7 @@ class CExamplesTester(common.ExamplesTester):
 
         args.append(src)
 
-        return subprocess.call(args) == 0
+        self.execute(cookie, args)
 
 def run(path):
     extra_examples = [os.path.join(path, '../../weather-station/write_to_lcd/c/weather_station.c'),

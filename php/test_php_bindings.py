@@ -34,12 +34,12 @@ class PHPExamplesTester(common.ExamplesTester):
     def __init__(self, path, extra_examples):
         common.ExamplesTester.__init__(self, 'php', '.php', path, subdirs=['examples', 'source'], extra_examples=extra_examples)
 
-    def test(self, src, is_extra_example):
+    def test(self, cookie, src, is_extra_example):
         args = ['/usr/bin/php',
                 '-l',
                 src]
 
-        return subprocess.call(args) == 0
+        self.execute(cookie, args)
 
 def run(path):
     extra_examples = [os.path.join(path, '../../weather-station/website/php/WeatherStationWebsite.php'),

@@ -37,7 +37,7 @@ class PythonExamplesTester(common.ExamplesTester):
 
         self.python = python
 
-    def test(self, src, is_extra_example):
+    def test(self, cookie, src, is_extra_example):
         if is_extra_example:
             shutil.copy(src, '/tmp/tester/python')
             src = os.path.join('/tmp/tester/python', os.path.split(src)[1])
@@ -46,7 +46,7 @@ class PythonExamplesTester(common.ExamplesTester):
                 '-c',
                 'import py_compile; py_compile.compile("{0}", doraise=True)'.format(src)]
 
-        return subprocess.call(args) == 0
+        self.execute(cookie, args)
 
 def run(path):
     extra_examples = [os.path.join(path, '../../weather-station/demo/starter_kit_weather_station_demo/main.py'),

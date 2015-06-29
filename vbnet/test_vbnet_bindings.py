@@ -35,7 +35,7 @@ class VBNETExamplesTester(common.ExamplesTester):
     def __init__(self, path, extra_examples):
         common.ExamplesTester.__init__(self, 'vbnet', '.vb', path, extra_examples=extra_examples)
 
-    def test(self, src, is_extra_example):
+    def test(self, cookie, src, is_extra_example):
         if is_extra_example:
             shutil.copy(src, '/tmp/tester/vbnet')
             src = os.path.join('/tmp/tester/vbnet', os.path.split(src)[1])
@@ -52,7 +52,7 @@ class VBNETExamplesTester(common.ExamplesTester):
                 '/reference:/tmp/tester/vbnet/Tinkerforge.dll',
                 src]
 
-        return subprocess.call(args) == 0
+        self.execute(cookie, args)
 
 def run(path):
     extra_examples = [os.path.join(path, '../../weather-station/write_to_lcd/vbnet/WeatherStation.vb'),

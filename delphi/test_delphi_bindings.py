@@ -32,10 +32,14 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class DelphiExamplesTester(common.ExamplesTester):
+    # FIXME: examples can not be tested in parallel, because of the shared
+    # output directory and the way fpc works
+    PROCESSES = 1
+
     def __init__(self, path, extra_examples):
         common.ExamplesTester.__init__(self, 'delphi', '.pas', path, extra_examples=extra_examples)
 
-    def test(self, src, is_extra_example):
+    def test(self, cookie, src, is_extra_example):
         if is_extra_example:
             shutil.copy(src, '/tmp/tester/delphi')
             src = os.path.join('/tmp/tester/delphi', os.path.split(src)[1])
@@ -46,7 +50,7 @@ class DelphiExamplesTester(common.ExamplesTester):
                 '-l',
                 src]
 
-        return subprocess.call(args) == 0
+        self.execute(cookie, args)
 
 def run(path):
     extra_examples = [os.path.join(path, '../../weather-station/write_to_lcd/delphi/WeatherStation.pas'),

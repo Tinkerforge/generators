@@ -42,7 +42,7 @@ class PerlExamplesTester(common.ExamplesTester):
         # FIXME: currently only the exampels code is checked, but not the actual bindings code in .pm files
         common.ExamplesTester.__init__(self, 'perl', '.pl', path, extra_examples=extra_examples)
 
-    def test(self, src, is_extra_example):
+    def test(self, cookie, src, is_extra_example):
         if is_extra_example:
             shutil.copy(src, '/tmp/tester/perl')
             src = os.path.join('/tmp/tester/perl', os.path.split(src)[1])
@@ -58,10 +58,9 @@ class PerlExamplesTester(common.ExamplesTester):
 
         retcode, output = check_output_and_error(args)
         output = output.strip('\r\n')
+        success = retcode == 0 and len(output.split('\n')) == 1 and 'syntax OK' in output
 
-        print output
-
-        return retcode == 0 and len(output.split('\n')) == 1 and 'syntax OK' in output
+        self.handle_result(cookie, output, success)
 
 def run(path):
     extra_examples = []

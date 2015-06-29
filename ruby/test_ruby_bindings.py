@@ -40,17 +40,16 @@ class RubyExamplesTester(common.ExamplesTester):
     def __init__(self, path, extra_examples):
         common.ExamplesTester.__init__(self, 'ruby', '.rb', path, subdirs=['examples', 'source'], extra_examples=extra_examples)
 
-    def test(self, src, is_extra_example):
+    def test(self, cookie, src, is_extra_example):
         args = ['/usr/bin/ruby',
                 '-wc',
                 src]
 
         retcode, output = check_output_and_error(args)
         output = output.strip('\r\n')
+        success = retcode == 0 and len(output.split('\n')) == 1 and 'Syntax OK' in output
 
-        print output
-
-        return retcode == 0 and len(output.split('\n')) == 1 and 'Syntax OK' in output
+        self.handle_result(cookie, output, success)
 
 def run(path):
     extra_examples = [os.path.join(path, '../../weather-station/write_to_lcd/ruby/weather_station.rb'),
