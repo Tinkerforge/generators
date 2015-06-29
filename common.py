@@ -804,8 +804,8 @@ cn_all_uppercase = ['api', 'ir', 'us', 'lcd', 'dc', 'imu', 'pwm', 'gps', 'id', '
                     '2d', '3d', '1k', '100k', '500k', '3v', '6v', '10v', '36v',
                     '45v', 'sps', 'oqpsk', 'bpsk40', 'dhcp', 'ip', 'wpa',
                     'wpa2', 'ca', 'wep', 'rgb', 'nfc', 'rfid', 'fifo',
-                    'ws2801', 'ws2811', 'ws2812', 'adc', 'rs232', 'ac',
-                    '125dps', '250dps', '500dps', '1000dps', '2000dps', 'co2']
+                    'ws2801', 'ws2811', 'ws2812', 'adc', 'rs232', 'ac', 'oled',
+                    '125dps', '250dps', '500dps', '1000dps', '2000dps', 'co2',]
 
 cn_eap_suffix = ['fast', 'tls', 'ttls', 'peap', 'mschap', 'gtc']
 
@@ -917,6 +917,10 @@ def check_name(camel_case, underscore, short_display, long_display, is_constant=
             camel_case_to_check = camel_case_to_check.replace('16x 2', '16x2')
         elif camel_case.endswith('20x4'):
             camel_case_to_check = camel_case_to_check.replace('20x 4', '20x4')
+        elif camel_case.endswith('128x64'):
+            camel_case_to_check = camel_case_to_check.replace('128x 64', '128x64')
+        elif camel_case.endswith('64x48'):
+            camel_case_to_check = camel_case_to_check.replace('64x 48', '64x48')
         elif camel_case.endswith('4x7'):
             camel_case_to_check = camel_case_to_check.replace('4x 7', '4x7')
         elif camel_case.endswith('020mA'):
