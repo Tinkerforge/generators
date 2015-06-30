@@ -515,7 +515,7 @@ def format_since_firmware(device, packet):
         else:
             suffix = 'Plugin'
 
-        return '\n.. versionadded:: {1}.{2}.{3}~({0})\n'.format(suffix, *since)
+        return '\n.. versionadded:: {1}.{2}.{3}$nbsp;({0})\n'.format(suffix, *since)
     else:
         return ''
 
