@@ -268,7 +268,7 @@ class JavaScriptBindingsGenerator(common.BindingsGenerator):
     def finish(self):
         self.browser_api_file.write("""}
 
-global.window.Tinkerforge = new Tinkerforge();""")
+global.Tinkerforge = new Tinkerforge();""")
         self.browser_api_file.close()
 
         self.npm_main_file.write("""}
