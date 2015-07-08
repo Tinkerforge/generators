@@ -1005,17 +1005,18 @@ function IPConnection() {
     };
     this.getRandomUInt32 = function (returnCallback) {
         if (process.browser) {
-            if (window.crypto && window.crypto.getRandomValues) {
+            if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
                 var r = new Uint32Array(1);
                 window.crypto.getRandomValues(r);
                 returnCallback(r[0]);
             }
-            else if (window.msCrypto && window.msCrypto.getRandomValues) {
+            else if (typeof window !== 'undefined' && window.msCrypto && window.msCrypto.getRandomValues) {
                 var r = new Uint32Array(1);
                 window.msCrypto.getRandomValues(r);
                 returnCallback(r[0]);
             }
             else {
+                // fallback to non-crypto random numbers
                 returnCallback(Math.ceil(Math.random() * 4294967295));
             }
         }
