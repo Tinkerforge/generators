@@ -1,15 +1,15 @@
-program SHA1Test;
+program SHAoneTest;
 
 {$ifdef MSWINDOWS}{$apptype CONSOLE}{$endif}
 {$ifdef FPC}{$mode OBJFPC}{$H+}{$endif}
 
 uses
-  SysUtils, SHA1;
+  SysUtils, SHAone;
 
 var
-  ctx: TSHA1;
+  ctx: TSHAone;
   buffer: array of byte;
-  digest: TSHA1Digest;
+  digest: TSHAoneDigest;
 
 begin
   SetLength(buffer, 3);
@@ -17,9 +17,9 @@ begin
   buffer[1] := byte('b');
   buffer[2] := byte('c');
 
-  SHA1Init(ctx);
-  SHA1Update(ctx, buffer);
-  digest := SHA1Final(ctx);
+  SHAoneInit(ctx);
+  SHAoneUpdate(ctx, buffer);
+  digest := SHAoneFinal(ctx);
 
   WriteLn('expected A9 99 3E 36 47    6 81 6A BA 3E   25 71 78 50 C2   6C 9C D0 D8 9D');
   WriteLn(Format('got      %02x %02x %02x %02x %02x   %02x %02x %02x %02x %02x   %02x %02x %02x %02x %02x   %02x %02x %02x %02x %02x',

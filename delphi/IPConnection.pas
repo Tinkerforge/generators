@@ -27,7 +27,7 @@ uses
 {$ifdef DELPHI_MACOS}
   Posix.ArpaInet, Posix.Errno, Posix.NetDB, Posix.NetinetIn, Posix.NetinetTcp, Posix.String_, Posix.SysSocket, Posix.SysTypes, Posix.Unistd,
 {$endif}
-  Classes, SyncObjs, SysUtils, LEConverter, BlockingQueue, Device, TimedSemaphore, SHA1, BrickDaemon;
+  Classes, SyncObjs, SysUtils, LEConverter, BlockingQueue, Device, TimedSemaphore, SHAone, BrickDaemon;
 
 const
   IPCON_FUNCTION_DISCONNECT_PROBE = 128;
@@ -390,14 +390,14 @@ begin
   end;
 end;
 
-function HMACSHA1(const secret: TByteArray; const data: TByteArray): TSHA1Digest;
-var preparedSecret: TByteArray; sha1: TSHA1; i: longint;
-    ipad, opad: array [0..63] of byte; digest: TSHA1Digest;
+function HMACSHA1(const secret: TByteArray; const data: TByteArray): TSHAoneDigest;
+var preparedSecret: TByteArray; sha1: TSHAone; i: longint;
+    ipad, opad: array [0..63] of byte; digest: TSHAoneDigest;
 begin
   if Length(secret) > 64 then begin
-    SHA1Init(sha1);
-    SHA1Update(sha1, secret);
-    digest := SHA1Final(sha1);
+    SHAoneInit(sha1);
+    SHAoneUpdate(sha1, secret);
+    digest := SHAoneFinal(sha1);
     SetLength(preparedSecret, 64);
     Move(digest, preparedSecret, 64);
   end
@@ -412,14 +412,14 @@ begin
     ipad[i] := preparedSecret[i] xor ipad[i];
     opad[i] := preparedSecret[i] xor opad[i];
   end;
-  SHA1Init(sha1);
-  SHA1Update(sha1, ipad);
-  SHA1Update(sha1, data);
-  digest := SHA1Final(sha1);
-  SHA1Init(sha1);
-  SHA1Update(sha1, opad);
-  SHA1Update(sha1, digest);
-  result := SHA1Final(sha1);
+  SHAoneInit(sha1);
+  SHAoneUpdate(sha1, ipad);
+  SHAoneUpdate(sha1, data);
+  digest := SHAoneFinal(sha1);
+  SHAoneInit(sha1);
+  SHAoneUpdate(sha1, opad);
+  SHAoneUpdate(sha1, digest);
+  result := SHAoneFinal(sha1);
 end;
 
 { TThreadWrapper }
@@ -550,7 +550,7 @@ end;
 procedure TIPConnection.Authenticate(const secret: string);
 var serverNonce, clientNonce: TArray0To3OfUInt8; i: longint;
     secretBytes, clientNonceBytes, data: TByteArray;
-    digest: TSHA1Digest;
+    digest: TSHAoneDigest;
 begin
   authenticationMutex.Acquire;
   try

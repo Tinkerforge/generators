@@ -79,7 +79,7 @@ class DelphiZipGenerator(common.Generator):
         shutil.copy(os.path.join(root_dir, 'IPConnection.pas'),             self.tmp_source_dir)
         shutil.copy(os.path.join(root_dir, 'LEConverter.pas'),              self.tmp_source_dir)
         shutil.copy(os.path.join(root_dir, 'TimedSemaphore.pas'),           self.tmp_source_dir)
-        shutil.copy(os.path.join(root_dir, 'SHA1.pas'),                     self.tmp_source_dir)
+        shutil.copy(os.path.join(root_dir, 'SHAone.pas'),                   self.tmp_source_dir)
         shutil.copy(os.path.join(root_dir, 'BrickDaemon.pas'),              self.tmp_source_dir)
         shutil.copy(os.path.join(root_dir, 'changelog.txt'),                self.tmp_dir)
         shutil.copy(os.path.join(root_dir, 'readme.txt'),                   self.tmp_dir)

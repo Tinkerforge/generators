@@ -7,7 +7,7 @@
   100% Public Domain
 }
 
-unit SHA1;
+unit SHAone;
 
 {$ifdef FPC}{$mode OBJFPC}{$H+}{$endif}
 
@@ -25,13 +25,13 @@ uses
   {$endif};
 
 type
-  TSHA1Block = array [0..63] of byte;
-  TSHA1Digest = array [0..19] of byte;
+  TSHAoneBlock = array [0..63] of byte;
+  TSHAoneDigest = array [0..19] of byte;
 
-  TSHA1 = record
+  TSHAone = record
     state: array [0..4] of longword;
     count: uint64;
-    buffer: TSHA1Block;
+    buffer: TSHAoneBlock;
   end;
 
   TLongWordConverter = packed record case longword of
@@ -39,13 +39,13 @@ type
     1: (total: longword);
   end;
 
-  procedure SHA1Init(var sha1: TSHA1);
-  procedure SHA1Update(var sha1: TSHA1; const data: array of byte);
-  function SHA1Final(var sha1: TSHA1): TSHA1Digest;
+  procedure SHAoneInit(var sha1: TSHAone);
+  procedure SHAoneUpdate(var sha1: TSHAone; const data: array of byte);
+  function SHAoneFinal(var sha1: TSHAone): TSHAoneDigest;
 
 implementation
 
-procedure SHA1Transform(var sha1: TSHA1; const buffer: TSHA1Block);
+procedure SHAoneTransform(var sha1: TSHAone; const buffer: TSHAoneBlock);
 const K1 = $5A827999; K2 = $6ED9EBA1; K3 = $8F1BBCDC; K4 = $CA62C1D6;
 var i, k: longint; converter: TLongWordConverter; temp, A, B, C, D, E: longword;
     W: array [0..79] of longword;
@@ -105,7 +105,7 @@ begin
   Inc(sha1.state[4], E);
 end;
 
-procedure SHA1Init(var sha1: TSHA1);
+procedure SHAoneInit(var sha1: TSHAone);
 begin
   sha1.state[0] := $67452301;
   sha1.state[1] := $EFCDAB89;
@@ -115,8 +115,8 @@ begin
   sha1.count := 0;
 end;
 
-procedure SHA1Update(var sha1: TSHA1; const data: array of byte);
-var len, i, j: longword; buffer: TSHA1Block;
+procedure SHAoneUpdate(var sha1: TSHAone; const data: array of byte);
+var len, i, j: longword; buffer: TSHAoneBlock;
 begin
   len := Length(data);
   j := longword((sha1.count shr 3) and 63);
@@ -124,10 +124,10 @@ begin
   if ((j + len) > 63) then begin
     i := 64 - j;
     Move(data[0], sha1.buffer[j], i);
-    SHA1Transform(sha1, sha1.buffer);
+    SHAoneTransform(sha1, sha1.buffer);
     while ((i + 63) < len) do begin
       Move(data[i], buffer[0], 64);
-      SHA1Transform(sha1, buffer);
+      SHAoneTransform(sha1, buffer);
       Inc(i, 64);
     end;
     j := 0;
@@ -138,7 +138,7 @@ begin
   Move(data[i], sha1.buffer[j], len - i);
 end;
 
-function SHA1Final(var sha1: TSHA1): TSHA1Digest;
+function SHAoneFinal(var sha1: TSHAone): TSHAoneDigest;
 var count: array of byte; i: longint; pad: array of byte;
 begin
   SetLength(count, 8);
@@ -147,12 +147,12 @@ begin
   end;
   SetLength(pad, 1);
   pad[0] := 128;
-  SHA1Update(sha1, pad);
+  SHAoneUpdate(sha1, pad);
   pad[0] := 0;
   while ((sha1.count and 504) <> 448) do begin
-    SHA1Update(sha1, pad);
+    SHAoneUpdate(sha1, pad);
   end;
-  SHA1Update(sha1, count);
+  SHAoneUpdate(sha1, count);
   for i := 0 to 19 do begin
     result[i] := byte((sha1.state[i shr 2] shr ((3 - (i and 3)) * 8)) and 255);
   end;
