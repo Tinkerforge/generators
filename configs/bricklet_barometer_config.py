@@ -397,8 +397,8 @@ altitude of 0cm. Passing 0 is a shortcut for passing the current air pressure as
 reference.
 
 Well known reference values are the Q codes
-`QNH <http://en.wikipedia.org/wiki/QNH>`__ and
-`QFE <http://en.wikipedia.org/wiki/Mean_sea_level_pressure#Mean_sea_level_pressure>`__
+`QNH <https://en.wikipedia.org/wiki/QNH>`__ and
+`QFE <https://en.wikipedia.org/wiki/Mean_sea_level_pressure#Mean_sea_level_pressure>`__
 used in aviation.
 
 The default value is 1013.25mbar.
@@ -411,8 +411,8 @@ aktuelle Luftdruckwert als Referenz übergeben wird dann gibt die Höhenberechnu
 Referenzluftdruck intern auf den aktuellen Luftdruckwert gesetzt.
 
 Wohl bekannte Referenzluftdruckwerte, die in der Luftfahrt verwendet werden, sind
-`QNH <http://de.wikipedia.org/wiki/Barometrische_H%C3%B6henmessung_in_der_Luftfahrt#QNH>`__ und
-`QFE <http://de.wikipedia.org/wiki/Barometrische_H%C3%B6henmessung_in_der_Luftfahrt#QFE>`__
+`QNH <https://de.wikipedia.org/wiki/Barometrische_H%C3%B6henmessung_in_der_Luftfahrt#QNH>`__ und
+`QFE <https://de.wikipedia.org/wiki/Barometrische_H%C3%B6henmessung_in_der_Luftfahrt#QFE>`__
 aus dem Q-Schlüssel.
 
 Der Standardwert ist 1013,25mbar.
@@ -587,7 +587,7 @@ com['packets'].append({
 Sets the different averaging parameters. It is possible to set
 the length of a normal averaging for the temperature and pressure,
 as well as an additional length of a 
-`moving average <http://en.wikipedia.org/wiki/Moving_average>`__ 
+`moving average <https://en.wikipedia.org/wiki/Moving_average>`__
 for the pressure. The moving average is calculated from the normal 
 averages.  There is no moving average for the temperature.
 
@@ -609,7 +609,7 @@ Setzt die unterschiedlichen Averaging-Parameter (Mittelwertbildung).
 Es ist möglich die Länge des Mittelwerts für Temperatur und
 Luftdruck anzugeben. Zusätzlich gibt kann die Länge für
 einen 
-`gleitenden Mittelwert <http://de.wikipedia.org/wiki/Gleitender_Mittelwert>`__ 
+`gleitenden Mittelwert <https://de.wikipedia.org/wiki/Gleitender_Mittelwert>`__
 für den Luftdruck angegeben werden. Der gleitende Mittelwert wird
 mit den Werten des normalen Mittelwerts berechnet. Es gibt keinen
 gleitenden Mittelwert für die Temperatur.

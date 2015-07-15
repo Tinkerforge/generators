@@ -295,7 +295,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets the length of a `moving averaging <http://en.wikipedia.org/wiki/Moving_average>`__ 
+Sets the length of a `moving averaging <https://en.wikipedia.org/wiki/Moving_average>`__
 for the distance value.
 
 Setting the length to 0 will turn the averaging completely off. With less
@@ -307,7 +307,7 @@ The default value is 20.
 """,
 'de':
 """
-Setzt die Länge eines `gleitenden Mittelwerts <http://de.wikipedia.org/wiki/Gleitender_Mittelwert>`__
+Setzt die Länge eines `gleitenden Mittelwerts <https://de.wikipedia.org/wiki/Gleitender_Mittelwert>`__
 für den Entfernungswert.
 
 Wenn die Länge auf 0 gesetzt wird, ist das Averaging komplett aus. Desto kleiner

@@ -30,7 +30,7 @@ com['packets'].append({
 'en':
 """
 Returns the measured ozone concentration. The value is in 
-`ppb (parts-per-billion) <http://en.wikipedia.org/wiki/Parts-per_notation>`__
+`ppb (parts per billion) <https://en.wikipedia.org/wiki/Parts-per_notation>`__
 and between 0 to 250.
 
 If you want to get the ozone concentration periodically, it is recommended to use the
@@ -40,7 +40,7 @@ callback :func:`OzoneConcentration` and set the period with
 'de':
 """
 Gibt die gemessene Ozon-Konzentration zurück. Der Wert ist in
-`ppb (parts-per-billion) <http://de.wikipedia.org/wiki/Parts_per_billion>`__
+`ppb (Teile pro Milliarde) <https://de.wikipedia.org/wiki/Parts_per_billion>`__
 und im Bereich von 0 bis 250.
 
 Wenn die Spannung periodisch abgefragt werden soll, wird empfohlen
@@ -388,7 +388,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets the length of a `moving averaging <http://en.wikipedia.org/wiki/Moving_average>`__
+Sets the length of a `moving averaging <https://en.wikipedia.org/wiki/Moving_average>`__
 for the ozone concentration.
 
 Setting the length to 1 will turn the averaging off. With less
@@ -400,7 +400,7 @@ The default value is 50.
 """,
 'de':
 """
-Setzt die Länge eines `gleitenden Mittelwerts <http://de.wikipedia.org/wiki/Gleitender_Mittelwert>`__
+Setzt die Länge eines `gleitenden Mittelwerts <https://de.wikipedia.org/wiki/Gleitender_Mittelwert>`__
 für die Ozone-Konzentration.
 
 Wenn die Länge auf 1 gesetzt wird, ist das Averaging aus. Desto kleiner

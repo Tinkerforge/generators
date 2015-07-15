@@ -834,7 +834,7 @@ With synchronous rectification on, the decay can be changed
 decay is used.
 
 For an explanation of synchronous rectification see 
-`here <http://en.wikipedia.org/wiki/Active_rectification>`__.
+`here <https://en.wikipedia.org/wiki/Active_rectification>`__.
 
 .. warning::
  If you want to use high speeds (> 10000 steps/s) for a large 
@@ -853,7 +853,7 @@ Bei aktiver Synchrongleichrichtung kann der Decay Modus geändert werden
 Decay Modus verwendet.
 
 Für eine Erläuterung der Synchrongleichrichtung siehe
-`hier <http://de.wikipedia.org/wiki/Gleichrichter#Synchrongleichrichter>`__.
+`hier <https://de.wikipedia.org/wiki/Gleichrichter#Synchrongleichrichter>`__.
 
 .. warning::
  Wenn hohe Geschwindigkeiten (> 10000 Schritte/s) mit einem großen

@@ -45,7 +45,7 @@ and 'W' (north, south, east and west).
 PDOP, HDOP and VDOP are the dilution of precision (DOP) values. They specify
 the additional multiplicative effect of GPS satellite geometry on GPS 
 precision. See 
-`here <http://en.wikipedia.org/wiki/Dilution_of_precision_(GPS)>`__
+`here <https://en.wikipedia.org/wiki/Dilution_of_precision_(GPS)>`__
 for more information. The values are give in hundredths.
 
 EPE is the "Estimated Position Error". The EPE is given in cm. This is not the
@@ -66,7 +66,7 @@ und 'W' (Nord, Süd, Ost, West).
 PDOP, HDOP und VDOP sind die "Dilution Of Precision" (DOP) Werte. Sie
 spezifizieren die zusätzlichen multiplikativen Effekte von der GPS
 Satellitengeometrie auf die GPS-Präzision.
-`hier <http://en.wikipedia.org/wiki/Dilution_of_precision_(GPS)>`__ gibt
+`hier <https://en.wikipedia.org/wiki/Dilution_of_precision_(GPS)>`__ gibt
 es mehr Informationen dazu. Die Werte werden in Hundertstel gegeben.
 
 EPE ist der "Estimated Position Error". Der EPE wird in cm gegeben.

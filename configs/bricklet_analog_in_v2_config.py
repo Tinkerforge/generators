@@ -386,7 +386,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets the length of a `moving averaging <http://en.wikipedia.org/wiki/Moving_average>`__
+Sets the length of a `moving averaging <https://en.wikipedia.org/wiki/Moving_average>`__
 for the moisture value.
 
 Setting the length to 1 will turn the averaging off. With less
@@ -398,7 +398,7 @@ The default value is 50.
 """,
 'de':
 """
-Setzt die Länge eines `gleitenden Mittelwerts <http://de.wikipedia.org/wiki/Gleitender_Mittelwert>`__
+Setzt die Länge eines `gleitenden Mittelwerts <https://de.wikipedia.org/wiki/Gleitender_Mittelwert>`__
 für den Feuchtigkeitswert.
 
 Wenn die Länge auf 1 gesetzt wird, ist das Averaging aus. Desto kleiner

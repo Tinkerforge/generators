@@ -140,7 +140,7 @@ com['packets'].append({
 """
 Returns the current orientation (heading, roll, pitch) of the IMU Brick as Euler
 angles in 1/16 degree. Note that Euler angles always experience a
-`gimbal lock <http://en.wikipedia.org/wiki/Gimbal_lock>`__.
+`gimbal lock <https://en.wikipedia.org/wiki/Gimbal_lock>`__.
 
 We recommend that you use quaternions instead.
 
@@ -158,7 +158,7 @@ to use the callback :func:`Orientation` and set the period with
 """
 Gibt die aktuelle Orientierung (Gier-, Roll-, Nickwinkel) des IMU Brick in Eulerwinkeln
 (in 1/16 °) zurück. Zu beachten ist, dass Eulerwinkel immer eine 
-`kardanische Blockade <http://de.wikipedia.org/wiki/Gimbal_Lock>`__ erfahren.
+`kardanische Blockade <https://de.wikipedia.org/wiki/Gimbal_Lock>`__ erfahren.
 
 Wir empfehlen die Verwendung von Quaternionen stattdessen.
 
@@ -269,7 +269,7 @@ com['packets'].append({
 'en':
 """
 Returns the current orientation (w, x, y, z) of the IMU Brick as
-`quaternions <http://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__.
+`quaternions <https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__.
 
 You have to divide the returns values by 16383 (14 bit) to get
 the usual range of -1.0 to +1.0 for quaternions.
@@ -281,7 +281,7 @@ to use the callback :func:`Quaternion` and set the period with
 'de':
 """
 Gibt die aktuelle Orientierung (w, x, y, z) des IMU Brick als
-`Quaterinonen <http://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__ zurück.
+`Quaterinonen <https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__ zurück.
 
 Die zurückgegebenen Werte müssen mit 16383 (14 Bit) dividiert werden um
 in den üblichen Wertebereich für Quaternionen (-1,0 bis +1,0) gebracht zu werden.
