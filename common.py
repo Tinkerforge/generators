@@ -407,7 +407,7 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
         include = '{0}_{1}_{2}_{3}'.format(device.get_camel_case_name(), device.get_category(), include_name, f[0].replace(' ', '_'))
         copy_files.append((f[1], include))
         title = title_from_filename(f[0])
-        git_name = device.get_underscore_name().replace('_', '-') + '-' + device.get_category().lower()
+        git_name = device.get_dash_name() + '-' + device.get_category().lower()
         url = url_format.format(git_name, bindings_name, f[0].replace(' ', '%20'))
 
         if url_fixer is not None:
@@ -710,7 +710,7 @@ def generate(bindings_root_directory, language, generator_class):
                 ref_name = device.get_underscore_name() + '_brick'
                 hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2') + '_Brick'
                 software_doc_prefix = device.get_camel_case_name() + '_Brick'
-                git_name = device.get_underscore_name().replace('_', '-') + '-brick'
+                git_name = device.get_dash_name() + '-brick'
 
                 if device.get_device_identifier() != 17:
                     firmware_url_part = device.get_underscore_name()
@@ -737,7 +737,7 @@ def generate(bindings_root_directory, language, generator_class):
                 ref_name = device.get_underscore_name() + '_bricklet'
                 hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2')
                 software_doc_prefix = device.get_camel_case_name() + '_Bricklet'
-                git_name = device.get_underscore_name().replace('_', '-') + '-bricklet'
+                git_name = device.get_dash_name() + '-bricklet'
                 firmware_url_part = device.get_underscore_name()
 
                 device_info = (device.get_device_identifier(),
