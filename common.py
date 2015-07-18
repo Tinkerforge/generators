@@ -468,17 +468,15 @@ def find_examples(examples_directory, filename_regex, compare_examples=default_e
 
 def find_device_examples(device, filename_regex):
     bindings_name = device.get_generator().get_bindings_name()
-    root_directory = device.get_generator().get_bindings_root_directory().replace('/generators/' + bindings_name, '')
-    device_git_name = '{0}-{1}'.format(device.get_underscore_name(), device.get_category().lower()).replace('_', '-')
-    examples_directory = os.path.join(root_directory, device_git_name, 'software', 'examples', bindings_name)
+    examples_directory = os.path.join(device.get_git_directory(), 'software', 'examples', bindings_name)
 
     return find_examples(examples_directory, filename_regex, device.get_generator().compare_examples)
 
 def copy_examples(copy_files, path):
-    doc_path = '{0}/doc/{1}'.format(path, lang)
+    doc_path = os.path.join(path, 'doc', lang)
     print('  * Copying examples:')
     for copy_file in copy_files:
-        doc_dest = '{0}/{1}'.format(doc_path, copy_file[1])
+        doc_dest = os.path.join(doc_path, copy_file[1])
         doc_src = copy_file[0]
         shutil.copy(doc_src, doc_dest)
         print('   - {0}'.format(copy_file[1]))
@@ -618,7 +616,6 @@ def underscore_to_space(name):
     return ' '.join(ret)
 
 def recreate_directory(directory):
-    directory = os.path.join(directory)
     if os.path.exists(directory):
         shutil.rmtree(directory)
     os.makedirs(directory)
@@ -1371,6 +1368,13 @@ class Device:
 
     def get_description(self, language='en'):
         return self.raw_data['description'][language]
+
+    def get_git_directory(self):
+        global_root_directory = os.path.normpath(os.path.join(self.get_generator().get_bindings_root_directory(), '..', '..'))
+        git_name = self.get_dash_name() + '-' + self.get_category().lower()
+        git_directory = os.path.join(global_root_directory, git_name)
+
+        return git_directory
 
     def get_packets(self, type=None):
         if type is None:
