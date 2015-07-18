@@ -1500,13 +1500,9 @@ class DocGenerator(Generator):
         return True
 
     def prepare(self):
-        Generator.prepare(self)
-
         recreate_directory(os.path.join(self.get_bindings_root_directory(), 'doc', self.get_language()))
 
     def finish(self):
-        Generator.finish(self)
-
         # Copy IPConnection examples
         example_regex = self.get_doc_example_regex()
 
@@ -1524,7 +1520,6 @@ class DocGenerator(Generator):
 
 class BindingsGenerator(Generator):
     released_files_name_prefix = None
-    recreate_bindings_subdirectory = True
     bindings_subdirectory_name = 'bindings'
     check_directory_name = True
 
@@ -1539,8 +1534,7 @@ class BindingsGenerator(Generator):
         self.released_files = []
 
     def prepare(self):
-        if self.recreate_bindings_subdirectory:
-            recreate_directory(os.path.join(self.get_bindings_root_directory(), self.bindings_subdirectory_name))
+        recreate_directory(os.path.join(self.get_bindings_root_directory(), self.bindings_subdirectory_name))
 
     def finish(self):
         if self.released_files_name_prefix is None:
