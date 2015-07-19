@@ -671,7 +671,7 @@ class JavaBindingsPacket(java_common.JavaPacket):
             if not with_obj:
                 typ = element.get_java_type()
 
-                if self.get_device().get_generator().is_octave() and typ == 'char':
+                if self.get_generator().is_octave() and typ == 'char':
                     typ = 'String'
 
                 typ += ' '
@@ -692,7 +692,7 @@ class JavaBindingsPacket(java_common.JavaPacket):
             elif element.get_type() == 'bool':
                 suffix = ' != 0'
             elif element.get_type() == 'char':
-                if self.get_device().get_generator().is_octave():
+                if self.get_generator().is_octave():
                     cast = 'new String(new char[]{(char)'
                     suffix = '})'
                 else:

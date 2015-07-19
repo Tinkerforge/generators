@@ -834,30 +834,30 @@ cn_special_camel_case = {'mhz':      'MHz',
                          '1to13':    '1To13',
                          '1to14':    '1To14'}
 
-def check_name(camel_case, underscore, short_display, long_display, is_constant=False, device_category=None):
-    if camel_case is not None:
+def check_name(camel_case, underscore, short_display=None, long_display=None, is_constant=False, device_category=None):
+    if camel_case != None:
         if is_constant:
             r = cn_valid_constant_camel_case_chars
         else:
             r = cn_valid_camel_case_chars
 
-        if r.match(camel_case) is None:
+        if r.match(camel_case) == None:
             raise ValueError("camel case name '{0}' contains invalid chars".format(camel_case))
 
-    if underscore is not None:
+    if underscore != None:
         if is_constant:
             r = cn_valid_constant_underscore_chars
         else:
             r = cn_valid_underscore_chars
 
-        if r.match(underscore) is None:
+        if r.match(underscore) == None:
             raise ValueError("underscore name '{0}' contains invalid chars".format(underscore))
 
-    if short_display is not None:
-        if cn_valid_display_chars.match(short_display) is None:
+    if short_display != None:
+        if cn_valid_display_chars.match(short_display) == None:
             raise ValueError("short display name '{0}' contains invalid chars".format(short_display))
 
-    if camel_case is not None and underscore is not None:
+    if camel_case != None and underscore != None:
         # test 1
         camel_case_to_check = camel_case.lower()
         underscore_to_check = underscore.replace('_', '')
@@ -884,7 +884,7 @@ def check_name(camel_case, underscore, short_display, long_display, is_constant=
             raise ValueError("camel case name '{0}' and underscore name '{1}' ({2}) mismatch (test 2)" \
                              .format(camel_case, underscore, underscore_to_check))
 
-    if camel_case is not None and short_display is not None:
+    if camel_case != None and short_display != None:
         # test 1
         short_display_to_check = short_display.replace(' ', '').replace('-', '').replace('/', '')
 
@@ -931,7 +931,7 @@ def check_name(camel_case, underscore, short_display, long_display, is_constant=
             raise ValueError("camel case name '{0}' ({1}) and short display name '{2}' mismatch (test 2)" \
                              .format(camel_case, camel_case_to_check, short_display))
 
-    if underscore is not None and short_display is not None:
+    if underscore != None and short_display != None:
         short_display_to_check = short_display.replace(' ', '_').replace('/', '_')
 
         if short_display.endswith('2.0'):
@@ -982,8 +982,8 @@ class ConstantGroup:
         self.elements = [element]
         self.items = []
 
-        for item_raw_data in raw_data[2]:
-            self.items.append(generator.get_constant_item_class()(item_raw_data))
+        for raw_item in raw_data[2]:
+            self.items.append(generator.get_constant_item_class()(raw_item))
 
     def add_elements(self, elements):
         self.elements += elements
@@ -1010,9 +1010,10 @@ class ConstantGroup:
         return self.elements
 
 class Element:
-    def __init__(self, packet, raw_data, generator):
-        self.packet = packet
+    def __init__(self, raw_data, packet, device, generator):
         self.raw_data = raw_data
+        self.packet = packet
+        self.device = device
         self.generator = generator
         self.constant_group = None
 
@@ -1021,6 +1022,12 @@ class Element:
 
     def get_packet(self):
         return self.packet
+
+    def get_device(self):
+        return self.device
+
+    def get_generator(self):
+        return self.generator
 
     def get_underscore_name(self):
         return self.raw_data[0]
@@ -1078,22 +1085,22 @@ class Packet:
                        'char',
                        'string'])
 
-    def __init__(self, device, raw_data, generator):
+    def __init__(self, raw_data, device, generator):
+        self.raw_data = raw_data
         self.device = device
         self.generator = generator
-        self.raw_data = raw_data
         self.all_elements = []
         self.in_elements = []
         self.out_elements = []
 
-        check_name(raw_data['name'][0], raw_data['name'][1], None, None)
+        check_name(raw_data['name'][0], raw_data['name'][1])
 
         for raw_element in self.raw_data['elements']:
-            element = generator.get_element_class()(self, raw_element, generator)
+            element = generator.get_element_class()(raw_element, self, device, generator)
 
             self.all_elements.append(element)
 
-            check_name(None, element.get_underscore_name(), None, None)
+            check_name(None, element.get_underscore_name())
 
             if element.get_type() not in Packet.valid_types:
                 raise ValueError('Invalid element type ' + element.get_type())
@@ -1111,10 +1118,10 @@ class Packet:
             constant_group = element.get_constant_group()
 
             if constant_group is not None:
-                check_name(constant_group.get_camel_case_name(), constant_group.get_underscore_name(), None, None)
+                check_name(constant_group.get_camel_case_name(), constant_group.get_underscore_name())
 
                 for constant_item in constant_group.get_items():
-                    check_name(constant_item.get_camel_case_name(), constant_item.get_underscore_name(), None, None, is_constant=True)
+                    check_name(constant_item.get_camel_case_name(), constant_item.get_underscore_name(), is_constant=True)
 
         self.constant_groups = []
 
@@ -1155,6 +1162,9 @@ class Packet:
 
     def get_device(self):
         return self.device
+
+    def get_generator(self):
+        return self.generator
 
     def get_type(self):
         return self.raw_data['type']
@@ -1202,7 +1212,7 @@ class Packet:
             subsitutions = doc[2]['*']
 
         filtered_subsitutions = {}
-        bindings_name = self.get_device().get_generator().get_bindings_name()
+        bindings_name = self.get_generator().get_bindings_name()
 
         for key, value in subsitutions.items():
             if bindings_name in value:
@@ -1271,11 +1281,11 @@ class Device:
 
         check_name(raw_data['name'][0], raw_data['name'][1], raw_data['name'][2], raw_data['name'][3], device_category=raw_data['category'])
 
-        for i, p in zip(range(len(raw_data['packets'])), raw_data['packets']):
-            if not 'function_id' in p:
-                p['function_id'] = i + 1
+        for i, raw_packet in zip(range(len(raw_data['packets'])), raw_data['packets']):
+            if not 'function_id' in raw_packet:
+                raw_packet['function_id'] = i + 1
 
-            packet = generator.get_packet_class()(self, p, generator)
+            packet = generator.get_packet_class()(raw_packet, self, generator)
 
             self.all_packets.append(packet)
 
