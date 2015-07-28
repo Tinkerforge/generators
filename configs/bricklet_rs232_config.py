@@ -17,7 +17,7 @@ com = {
         'en': 'Communicates with RS232 devices',
         'de': 'Kommuniziert mit RS232 Geräten'
     },
-    'released': False,
+    'released': True,
     'packets': []
 }
 

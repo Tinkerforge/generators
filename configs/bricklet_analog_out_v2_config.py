@@ -17,7 +17,7 @@ com = {
         'en': 'Generates configurable DC voltage between 0V and 12V',
         'de': 'Erzeugt konfigurierbare Gleichspannung zwischen 0V und 12V'
     },
-    'released': False,
+    'released': True,
     'packets': []
 }
 

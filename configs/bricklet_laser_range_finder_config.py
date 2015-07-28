@@ -17,7 +17,7 @@ com = {
         'en': 'Measures distance up to 40m with laser light',
         'de': 'Misst Entfernung bis zu 40m mit Laser-Licht'
     },
-    'released': False,
+    'released': True,
     'packets': []
 }
 

@@ -17,7 +17,7 @@ com = {
         'en': 'Measures two DC voltages between -35V and +35V with 24bit resolution each',
         'de': 'Misst zwei Gleichspannungen zwischen -35V und +35V mit jeweils 24Bit Auflösung'
     },
-    'released': False,
+    'released': True,
     'packets': []
 }
 

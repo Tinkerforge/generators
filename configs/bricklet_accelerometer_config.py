@@ -17,7 +17,7 @@ com = {
         'en': 'Measures acceleration in three axis',
         'de': 'Misst Beschleunigung in drei Achsen'
     },
-    'released': False,
+    'released': True,
     'packets': []
 }
 

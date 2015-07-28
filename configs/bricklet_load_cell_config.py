@@ -17,7 +17,7 @@ com = {
         'en': 'Measures weight with a load cell',
         'de': 'Misst Gewicht mit einer Wägezelle'
     },
-    'released': False,
+    'released': True,
     'packets': []
 }
 

@@ -17,7 +17,7 @@ com = {
         'en': 'Generates configurable DC voltage and current, 0V to 10V and 4mA to 20mA',
         'de': 'Erzeugt konfigurierbare Gleichspannung und -strom, 0V bis 10V und 4mA bis 20mA'
     },
-    'released': False,
+    'released': True,
     'packets': []
 }
 

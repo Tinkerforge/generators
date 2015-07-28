@@ -17,7 +17,7 @@ com = {
         'en': 'Measures ambient light up to 64000lux',
         'de': 'Misst Umgebungslicht bis zu 64000Lux'
     },
-    'released': False,
+    'released': True,
     'packets': []
 }
 

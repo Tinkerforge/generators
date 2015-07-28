@@ -17,7 +17,7 @@ com = {
         'en': 'Measures dust density',
         'de': 'Misst Staubdichte'
     },
-    'released': False,
+    'released': True,
     'packets': []
 }
 
