@@ -1,7 +1,25 @@
-2.0.0: Initial version
-2.0.1: Add support for WS2811 and WS2812 to LED Strip Bricklet API
-2.0.2: Add support for Color, NFC/RFID and Solid State Relay Bricklet
-       Move NPM package into nodejs/ folder of ZIP file
-       Add main Tinkerforge.js script to simplify direct usage of the Node.js source code
-2.0.3: (no changes)
-2.0.4: Add support for RED Brick
+2.0.0:
+- Initial version
+
+2.0.1:
+- Add support for WS2811 and WS2812 to LED Strip Bricklet API
+
+2.0.2:
+- Add support for Color, NFC/RFID and Solid State Relay Bricklet
+- Move NPM package into nodejs/ folder of ZIP file
+- Add main Tinkerforge.js script to simplify direct usage of the Node.js
+  source code
+
+2.0.3:
+- (no changes)
+
+2.0.4:
+- Add support for RED Brick
+
+2.0.5:
+- Add DEVICE_DISPLAY_NAME constant to all Device classes
+- Add functions for all Bricks to turn status LEDs on and off
+- Avoid using window to make the bindings work WebWorker environment
+- Add support for IMU Brick 2.0, Accelerometer, Ambient Light 2.0,
+  Analog In 2.0, Analog Out 2.0, Dust Detector, Industrial Analog Out,
+  Industrial Dual Analog In, Laser Range Finder, Load Cell and RS232 Bricklet

@@ -1,85 +1,197 @@
-1.0.0: Initial version
-1.0.1: Add thread for callbacks in IPConnection (allows to call getters in callbacks)
-1.0.2: Remove accidental debug output that was present in 1.0.1
-1.0.3: Remove trailing '\0' from StringFrom Method (issue #2), clean up if callbackQueue is closed
-1.0.4: Add support for IMU Brick, Analog In Bricklet and Analog Out Bricklet
-1.0.5: Add ChibiChannel and ChibiFrequency Methods
-1.0.6: Add sync rect support to Stepper Brick bindings
-1.0.7: Better locking (thanks to Jan)
-1.1.0: Replaced optional argument with method-overloading to be compatible with older C# versions
-       Callback methods are only internally visible
-       Add version information to Tinkerforge.dll
-       Silently ignore messages from devices with unknown stack ID
-       Single-return methods return their value instead of using out-parameters, old single-out methods stay for compatibility
-1.1.1: Don't generate RegisterCallback method for devices without callbacks
-       Add inline code documentation
-1.1.2: Unify networking for Windows Phone 7 and Rest of .NET (thanks to Jan)
-       Ensure that the answering device matches the expected type in IPConnection.AddDevice
-1.1.3: Ensure to serialize arrays and strings with the correct length
-       Treat '-' and ' ' as equal in device name check for backward compatibility
-1.1.4: Improve exception handling in receive thread
-       Fix handling of fragmented packets
-1.1.5: Add RS485 support
-1.1.6: Add chip temperature and reset functions
-1.1.7: Add monoflop functionality to Dual Relay Bricklet API
-1.1.8: Add time base all data function/callback and state callback to Stepper Brick API
-1.1.9: Fix direction of GetAllDataPeriod method in Stepper Brick API
-       Make AddDevice thread-safe
-       Ensure correct shutdown order of threads
-1.1.10: Fix race condition in AddDevice method
-        Add monoflop functionality to IO-4 and IO-16 Bricklet API
-1.1.11: Add WIFI support
-1.1.12: Add getter for WIFI buffer status information
-        Change WIFI certificate getter/setter to transfer bytes instead of a string
-        Add API for setting of WIFI regulatory domain
-        Add reconnect functionality to IPConnection (for WIFI Extension)
-        Add API for Industrial Bricklets: Digital In 4, Digital Out 4 and Quad Relay
-        Use StringBuilder when deserializing strings
-        Avoid a race condition in expectedResponseFunctionID handling
-1.1.13: Add API for Barometer Bricklet
-1.1.14: Replace Barometer Bricklet calibrate function with getter/setter for reference air pressure
-1.1.15: Add GetUSBVoltage function to Master Brick API
-        Add Barometer Bricklet examples
-1.1.16: Add API for Voltage/Current Bricklet
-        Add API for GPS Bricklet
-2.0.0: Add compatability for Protocol 2.0
-2.0.1: Add support for custom characters in LCD Bricklets
-2.0.2: Improve internal UID handling and simplify internal locking
-       Make sequence number generation thread-safe
-2.0.3: Add Get/SetLongWifiKey functions to Master Brick API
-2.0.4: Reduce scope of request lock to improve concurrency
-       Improve and unify code for response expected flag handling
-       Add Get/SetWifiHostname functions and callbacks for stack/USB voltage and stack current to Master Brick API
-2.0.5: Add Get/SetRange functions to Analog In Bricklet API
-       Fix unlikely race condition in response packet handling
-       Add TinkerforgeException as basis for all other exceptions
-2.0.6: Add enable/disable functions for PositionReached and VelocityReached callbacks to Servo Brick API
-       Add get/set_i2c_mode (100kHz/400kHz) functions to Temperature Bricklet API
-       Add default text functions to LCD 20x4 Bricklet API
-       Fix auto reconnect on socket receive error
-       Don't dispatch callbacks after disconnect
-       Fix race condition in callback handling that could result in closing the wrong socket
-       Don't ignore socket errors when sending request packets
-       Send a request packet at least every 10sec to improve WIFI disconnect detection
-2.0.7: Add Ethernet Extension support to Master Brick API
-       Only send disconnect probe if there was no packet send or received for 5s
-       Avoid race condition during socket closing
-       Add IMU orientation and Barometer averaging API
-2.0.8: Add support for PTC Bricklet and Industrial Dual 0-20mA Bricklet
-       Fix Windows Phone support
-2.0.9: Avoid race condition between disconnect probe thread and disconnect function
-2.0.10: Add edge counters to Industrial Digital In 4, IO-4 and IO-16 Bricklet
-        Make averaging length configurable for Analog In Bricklet
-2.0.11: Fix signature of edge count functions in IO-16 Bricklet API
-2.0.12: Add support for Distance US, Dual Button, Hall Effect, LED Strip, Line, Moisture, Motion Detector, Multi Touch, Piezo Speaker, Remote Switch, Rotary Encoder, Segment Display 4x7, Sound Intensity and Tilt Bricklet
-        Throw ArgumentOutOfRangeException on invalid Base58 value as UID
-2.0.13: Add Get/SetClockFrequency function to LED Strip Bricklet API
-        Fix mixup of Set/GetDateTimeCallbackPeriod and Set/GetMotionCallbackPeriod in GPS Bricklet API
-        Support addressing types of Intertechno and ELRO Home Easy devices in Remote Switch Bricklet API
-2.1.0: Add authentication support to IPConnection and Master Brick API
-       Exit receive thread on socket shutdown by peer to avoid triggering multiple disconnected callbacks
-2.1.1: Add support for WS2811 and WS2812 to LED Strip Bricklet API
-2.1.2: Add support for Color, NFC/RFID and Solid State Relay Bricklet
-2.1.3: (no changes)
-2.1.4: Add support for RED Brick
-2.1.5: Compiled for CLR 2.0 again, instead of CLR 4.0 (accidentally changed in 2.1.3)
+1.0.0:
+- Initial version
+
+1.0.1:
+- Add callback thread to IPConnection (allows to call getters in callbacks)
+
+1.0.2:
+- Remove accidental debug output that was present in 1.0.1
+
+1.0.3:
+- Remove trailing '\0' from StringFrom method (issue #2), clean up if
+  callback queue is closed
+
+1.0.4:
+- Add support for IMU Brick, Analog In Bricklet and Analog Out Bricklet
+
+1.0.5:
+- Add ChibiChannel and ChibiFrequency methods
+
+1.0.6:
+- Add sync rect support to Stepper Brick bindings
+
+1.0.7:
+- Better locking (thanks to Jan)
+
+1.1.0:
+- Replaced optional argument with method-overloading to be compatible with
+  older C# versions
+- Callback methods are only internally visible
+- Add version information to Tinkerforge.dll
+- Silently ignore messages from devices with unknown stack ID
+- Single-return methods return their value instead of using out-parameters,
+  old single-out methods stay for compatibility
+
+1.1.1:
+- Don't generate RegisterCallback method for devices without callbacks
+- Add inline code documentation
+
+1.1.2:
+- Unify networking for Windows Phone 7 and Rest of .NET (thanks to Jan)
+- Ensure that the answering device matches the expected type in
+  IPConnection.AddDevice
+
+1.1.3:
+- Ensure to serialize arrays and strings with the correct length
+- Treat '-' and ' ' as equal in device name check for backward compatibility
+
+1.1.4:
+- Improve exception handling in receive thread
+- Fix handling of fragmented packets
+
+1.1.5:
+- Add RS485 support
+
+1.1.6:
+- Add chip temperature and reset functions
+
+1.1.7:
+- Add monoflop functionality to Dual Relay Bricklet API
+
+1.1.8:
+- Add time base, all-data function/callback and state callback to Stepper
+  Brick API
+
+1.1.9:
+- Fix direction of GetAllDataPeriod method in Stepper Brick API
+- Make AddDevice thread-safe
+- Ensure correct shutdown order of threads
+
+1.1.10:
+- Fix race condition in AddDevice method
+- Add monoflop functionality to IO-4 and IO-16 Bricklet API
+
+1.1.11:
+- Add WIFI support
+
+1.1.12:
+- Add getter for WIFI buffer status information
+- Change WIFI certificate getter/setter to transfer bytes instead of a string
+- Add API for setting of WIFI regulatory domain
+- Add reconnect functionality to IPConnection (for WIFI Extension)
+- Add API for Industrial Bricklets- Digital In 4, Digital Out 4 and Quad Relay
+- Use StringBuilder when deserializing strings
+- Avoid a race condition in expectedResponseFunctionID handling
+
+1.1.13:
+- Add API for Barometer Bricklet
+
+1.1.14:
+- Replace Barometer Bricklet calibrate function with getter/setter for
+  reference air pressure
+
+1.1.15:
+- Add GetUSBVoltage function to Master Brick API
+- Add Barometer Bricklet examples
+
+1.1.16:
+- Add API for Voltage/Current Bricklet
+- Add API for GPS Bricklet
+
+2.0.0:
+- Add compatibility for Protocol 2.0
+
+2.0.1:
+- Add support for custom characters in LCD Bricklets
+
+2.0.2:
+- Improve internal UID handling and simplify internal locking
+- Make sequence number generation thread-safe
+
+2.0.3:
+- Add Get/SetLongWifiKey functions to Master Brick API
+
+2.0.4:
+- Reduce scope of request lock to improve concurrency
+- Improve and unify code for response expected flag handling
+- Add Get/SetWifiHostname functions and callbacks for stack/USB voltage and
+  stack current to Master Brick API
+
+2.0.5:
+- Add Get/SetRange functions to Analog In Bricklet API
+- Fix unlikely race condition in response packet handling
+- Add TinkerforgeException as basis for all other exceptions
+
+2.0.6:
+- Add enable/disable functions for PositionReached and VelocityReached
+  callbacks to Servo Brick API
+- Add get/set_i2c_mode (100kHz/400kHz) functions to Temperature Bricklet API
+- Add default text functions to LCD 20x4 Bricklet API
+- Fix auto reconnect on socket receive error
+- Don't dispatch callbacks after disconnect
+- Fix race condition in callback handling that could result in closing the
+  wrong socket
+- Don't ignore socket errors when sending request packets
+- Send a request packet at least every 10sec to improve WIFI disconnect
+  detection
+
+2.0.7:
+- Add Ethernet Extension support to Master Brick API
+- Only send disconnect probe if there was no packet send or received for 5s
+- Avoid race condition during socket closing
+- Add IMU orientation and Barometer averaging API
+
+2.0.8:
+- Add support for PTC Bricklet and Industrial Dual 0-20mA Bricklet
+- Fix Windows Phone support
+
+2.0.9:
+- Avoid race condition between disconnect probe thread and disconnect function
+
+2.0.10:
+- Add edge counters to Industrial Digital In 4, IO-4 and IO-16 Bricklet
+- Make averaging length configurable for Analog In Bricklet
+
+2.0.11:
+- Fix signature of edge count functions in IO-16 Bricklet API
+
+2.0.12:
+- Add support for Distance US, Dual Button, Hall Effect, LED Strip, Line,
+  Moisture, Motion Detector, Multi Touch, Piezo Speaker, Remote Switch,
+  Rotary Encoder, Segment Display 4x7, Sound Intensity and Tilt Bricklet
+- Throw ArgumentOutOfRangeException on invalid Base58 value as UID
+
+2.0.13:
+- Add Get/SetClockFrequency function to LED Strip Bricklet API
+- Fix mixup of Set/GetDateTimeCallbackPeriod and Set/GetMotionCallbackPeriod in
+  GPS Bricklet API
+- Support addressing types of Intertechno and ELRO Home Easy devices in Remote
+  Switch Bricklet API
+
+2.1.0:
+- Add authentication support to IPConnection and Master Brick API
+- Exit receive thread on socket shutdown by peer to avoid triggering multiple
+  disconnected callbacks
+
+2.1.1:
+- Add support for WS2811 and WS2812 to LED Strip Bricklet API
+
+2.1.2:
+- Add support for Color, NFC/RFID and Solid State Relay Bricklet
+
+2.1.3:
+- (no changes)
+
+2.1.4:
+- Add support for RED Brick
+
+2.1.5:
+- Compiled for CLR 2.0 again, instead of CLR 4.0 (accidentally changed in 2.1.3)
+
+2.1.6:
+- Add DEVICE_DISPLAY_NAME constant to all Device classes
+- Add functions for all Bricks to turn status LEDs on and off
+- Avoid possible connection state race condition on connect
+- Add support for IMU Brick 2.0, Accelerometer, Ambient Light 2.0,
+  Analog In 2.0, Analog Out 2.0, Dust Detector, Industrial Analog Out,
+  Industrial Dual Analog In, Laser Range Finder, Load Cell and RS232 Bricklet

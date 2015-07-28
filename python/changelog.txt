@@ -1,77 +1,187 @@
-1.0.0: Initial version
-1.0.1: Add thread for callbacks in IPConnection (allows to call getters in callbacks)
-1.0.2: Add __init__.py to source/tinkerforge/
-1.0.3: Fix thread exception at shutdown
-1.0.4: Add support for IMU Brick, Analog In Bricklet and Analog Out Bricklet
-1.0.5: Remove Python 3.2 bug (no decode function for str in 3.2)
-1.0.6: Add sync rect support to Stepper Brick bindings
-1.0.7: Add version information to tinkerforge.egg
-       Silently ignore messages from devices with unknown stack ID
-       Don't generate register_callback method for devices without callbacks
-       Add inline code documentation
-1.0.8: Fix relative import and str packing problem with Python 3
-1.0.9: Ensure that the answering device matches the expected type in IPConnection.add_device
-1.0.10: Fix device name decoding for add_device handling in Python 3
-1.0.11: Don't let a thread join itself
-1.0.12: Treat '-' and ' ' as equal in device name check for backward compatibility
-1.0.13: Fix handling of fragmented packets
-1.0.14: Add RS485 support
-1.0.15: Add chip temperature and reset functions
-1.0.16: Add monoflop functionality to Dual Relay Bricklet API
-1.0.17: Add time base all data function/callback and state callback to Stepper Brick API
-1.0.18: Fix direction of get_all_data_period method in Stepper Brick API
-        Make add_device thread-safe
-        Ensure correct shutdown order of threads
-1.0.19: Fix race condition in add_device method
-        Add monoflop functionality to IO-4 and IO-16 Bricklet API
-1.0.20: Add WIFI support
-1.0.21: Add getter for WIFI buffer status information
-        Change WIFI certificate getter/setter to transfer bytes instead of a string
-        Add API for setting of WIFI regulatory domain
-        Add reconnect functionality to IPConnection (for WIFI Extension)
-        Add API for Industrial Bricklets: Digital In 4, Digital Out 4 and Quad Relay
-        Trim NUL characters from strings properly
-1.0.22: Add API for Barometer Bricklet
-1.0.23: Replace Barometer Bricklet calibrate function with getter/setter for reference air pressure
-1.0.24: Add get_usb_voltage function to Master Brick API
-        Add Barometer Bricklet examples
-        Handle difference between currentThread and current_thread to support Python 2.5
-        Changed callback_queue from class variable to instance variable
-1.0.25: Add API for Voltage/Current Bricklet
-        Add API for GPS Bricklet
-2.0.0: Add compatability for Protocol 2.0
-2.0.1: Add support for custom characters in LCD Bricklets
-2.0.2: Fix char list packing in Python3
-2.0.3: Add get/set_long_wifi_key functions to Master Brick API
-2.0.4: Reduce scope of request and socket lock to improve concurrency
-       Improve and unify code for response expected flag handling
-       Add get/set_wifi_hostname functions and callbacks for stack/USB voltage and stack current to Master Brick API
-2.0.5: Add get/set_range functions to Analog In Bricklet API
-       Fix unlikely race condition in response packet handling
-       Fix serialization of unicode strings
-2.0.6: Add enable/disable functions for PositionReached and VelocityReached callbacks to Servo Brick API
-       Add get/set_i2c_mode (100kHz/400kHz) functions to Temperature Bricklet API
-       Add default text functions to LCD 20x4 Bricklet API
-       Don't dispatch callbacks after disconnect
-       Fix race condition in callback handling that could result in closing the wrong socket
-       Don't ignore socket errors when sending request packets
-       Send a request packet at least every 10sec to improve WIFI disconnect detection
-2.0.7: Add Ethernet Extension support to Master Brick API
-       Only send disconnect probe if there was no packet send or received for 5s
-       Fix deserialization of chars in Python 3
-       Add IMU orientation and Barometer averaging API
-2.0.8: Add support for PTC Bricklet and Industrial Dual 0-20mA Bricklet
-2.0.9: Avoid race condition between disconnect probe thread and disconnect function
-2.0.10: Add edge counters to Industrial Digital In 4, IO-4 and IO-16 Bricklet
-        Make averaging length configurable for Analog In Bricklet
-2.0.11: Fix signature of edge count functions in IO-16 Bricklet API
-2.0.12: Add support for Distance US, Dual Button, Hall Effect, LED Strip, Line, Moisture, Motion Detector, Multi Touch, Piezo Speaker, Remote Switch, Rotary Encoder, Segment Display 4x7, Sound Intensity and Tilt Bricklet
-2.0.13: Add Get/SetClockFrequency function to LED Strip Bricklet API
-        Fix mixup of Set/GetDateTimeCallbackPeriod and Set/GetMotionCallbackPeriod in GPS Bricklet API
-        Support addressing types of Intertechno and ELRO Home Easy devices in Remote Switch Bricklet API
-2.1.0: Add authentication support to IPConnection and Master Brick API
-2.1.1: Add support for WS2811 and WS2812 to LED Strip Bricklet API
-2.1.2: Add support for Color, NFC/RFID and Solid State Relay Bricklet
-       Get rid of the egg and easy_install, use setuptools directly or pip instead
-2.1.3: Handle EINTR error in receive loop
-2.1.4: Add support for RED Brick
+1.0.0:
+- Initial version
+
+1.0.1:
+- Add callback thread to IPConnection (allows to call getters in callbacks)
+
+1.0.2:
+- Add __init__.py to source/tinkerforge/
+
+1.0.3:
+- Fix thread exception at shutdown
+
+1.0.4:
+- Add support for IMU Brick, Analog In Bricklet and Analog Out Bricklet
+
+1.0.5:
+- Remove Python 3.2 bug (no decode function for str in 3.2)
+
+1.0.6:
+- Add sync rect support to Stepper Brick bindings
+
+1.0.7:
+- Add version information to tinkerforge.egg
+- Silently ignore messages from devices with unknown stack ID
+- Don't generate register_callback method for devices without callbacks
+- Add inline code documentation
+
+1.0.8:
+- Fix relative import and str packing problem with Python 3
+
+1.0.9:
+- Ensure that the answering device matches the expected type in
+  IPConnection.add_device
+
+1.0.10:
+- Fix device name decoding for add_device handling in Python 3
+
+1.0.11:
+- Don't let a thread join itself
+
+1.0.12:
+- Treat '-' and ' ' as equal in device name check for backward compatibility
+
+1.0.13:
+- Fix handling of fragmented packets
+
+1.0.14:
+- Add RS485 support
+
+1.0.15:
+- Add chip temperature and reset functions
+
+1.0.16:
+- Add monoflop functionality to Dual Relay Bricklet API
+
+1.0.17:
+- Add time base, all-data function/callback and state callback to Stepper
+  Brick API
+
+1.0.18:
+- Fix direction of get_all_data_period method in Stepper Brick API
+- Make add_device thread-safe
+- Ensure correct shutdown order of threads
+
+1.0.19:
+- Fix race condition in add_device method
+- Add monoflop functionality to IO-4 and IO-16 Bricklet API
+
+1.0.20:
+- Add WIFI support
+
+1.0.21:
+- Add getter for WIFI buffer status information
+- Change WIFI certificate getter/setter to transfer bytes instead of a string
+- Add API for setting of WIFI regulatory domain
+- Add reconnect functionality to IPConnection (for WIFI Extension)
+- Add API for Industrial Bricklets: Digital In 4, Digital Out 4 and Quad Relay
+- Trim NUL characters from strings properly
+
+1.0.22:
+- Add API for Barometer Bricklet
+
+1.0.23:
+- Replace Barometer Bricklet calibrate function with getter/setter for
+  reference air pressure
+
+1.0.24:
+- Add get_usb_voltage function to Master Brick API
+- Add Barometer Bricklet examples
+- Handle difference between currentThread and current_thread to support
+  Python 2.5
+- Changed callback_queue from class variable to instance variable
+
+1.0.25:
+- Add API for Voltage/Current Bricklet
+- Add API for GPS Bricklet
+
+2.0.0:
+- Add compatibility for Protocol 2.0
+
+2.0.1:
+- Add support for custom characters in LCD Bricklets
+
+2.0.2:
+- Fix char list packing in Python3
+
+2.0.3:
+- Add get/set_long_wifi_key functions to Master Brick API
+
+2.0.4:
+- Reduce scope of request and socket lock to improve concurrency
+- Improve and unify code for response expected flag handling
+- Add get/set_wifi_hostname functions and callbacks for stack/USB voltage and
+  stack current to Master Brick API
+
+2.0.5:
+- Add get/set_range functions to Analog In Bricklet API
+- Fix unlikely race condition in response packet handling
+- Fix serialization of Unicode strings
+
+2.0.6:
+- Add enable/disable functions for PositionReached and VelocityReached
+  callbacks to Servo Brick API
+- Add get/set_i2c_mode (100kHz/400kHz) functions to Temperature Bricklet API
+- Add default text functions to LCD 20x4 Bricklet API
+- Don't dispatch callbacks after disconnect
+- Fix race condition in callback handling that could result in closing the
+  wrong socket
+- Don't ignore socket errors when sending request packets
+- Send a request packet at least every 10sec to improve WIFI disconnect
+  detection
+
+2.0.7:
+- Add Ethernet Extension support to Master Brick API
+- Only send disconnect probe if there was no packet send or received for 5s
+- Fix deserialization of chars in Python 3
+- Add IMU orientation and Barometer averaging API
+
+2.0.8:
+- Add support for PTC Bricklet and Industrial Dual 0-20mA Bricklet
+
+2.0.9:
+- Avoid race condition between disconnect probe thread and disconnect function
+
+2.0.10:
+- Add edge counters to Industrial Digital In 4, IO-4 and IO-16 Bricklet
+- Make averaging length configurable for Analog In Bricklet
+
+2.0.11:
+- Fix signature of edge count functions in IO-16 Bricklet API
+
+2.0.12:
+- Add support for Distance US, Dual Button, Hall Effect, LED Strip, Line,
+  Moisture, Motion Detector, Multi Touch, Piezo Speaker, Remote Switch,
+  Rotary Encoder, Segment Display 4x7, Sound Intensity and Tilt Bricklet
+
+2.0.13:
+- Add Get/SetClockFrequency function to LED Strip Bricklet API
+- Fix mixup of Set/GetDateTimeCallbackPeriod and Set/GetMotionCallbackPeriod in
+  GPS Bricklet API
+- Support addressing types of Intertechno and ELRO Home Easy devices in Remote
+  Switch Bricklet API
+
+2.1.0:
+- Add authentication support to IPConnection and Master Brick API
+
+2.1.1:
+- Add support for WS2811 and WS2812 to LED Strip Bricklet API
+
+2.1.2:
+- Add support for Color, NFC/RFID and Solid State Relay Bricklet
+- Get rid of the egg and easy_install, use setuptools directly or pip instead
+
+2.1.3:
+- Handle EINTR error in receive loop
+
+2.1.4:
+- Add support for RED Brick
+
+2.1.5:
+- Fix packing of Unicode chars
+- Add DEVICE_DISPLAY_NAME constant to all Device classes
+- Add functions for all Bricks to turn status LEDs on and off
+- Avoid possible connection state race condition on connect
+- Add support for IMU Brick 2.0, Accelerometer, Ambient Light 2.0,
+  Analog In 2.0, Analog Out 2.0, Dust Detector, Industrial Analog Out,
+  Industrial Dual Analog In, Laser Range Finder, Load Cell and RS232 Bricklet
