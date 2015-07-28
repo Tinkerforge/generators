@@ -955,8 +955,23 @@ def check_name(camel_case, underscore, short_display=None, long_display=None, is
             raise ValueError("long display name '{0}' and short display name '{1}' + '{2}' ({3}) do not contain the same words" \
                              .format(long_display, short_display, device_category, ' '.join(list(short_display_to_check))))
 
+class NameMixin:
+    def get_camel_case_name(self):
+        raise NotImplementedError()
 
-class ConstantItem:
+    def get_underscore_name(self):
+        raise NotImplementedError()
+
+    def get_headless_camel_case_name(self):
+        return make_headless_camel_case(self.get_camel_case_name(), self.get_underscore_name())
+
+    def get_upper_case_name(self):
+        return self.get_underscore_name().upper()
+
+    def get_dash_name(self):
+        return self.get_underscore_name().replace('_', '-')
+
+class ConstantItem(NameMixin):
     def __init__(self, raw_data):
         self.raw_data = raw_data
 
@@ -966,16 +981,10 @@ class ConstantItem:
     def get_underscore_name(self):
         return self.raw_data[1]
 
-    def get_upper_case_name(self):
-        return self.get_underscore_name().upper()
-
-    def get_dash_name(self):
-        return self.get_underscore_name().replace('_', '-')
-
     def get_value(self):
         return self.raw_data[2]
 
-class ConstantGroup:
+class ConstantGroup(NameMixin):
     def __init__(self, element, type, raw_data, generator):
         self.type = type
         self.raw_data = raw_data
@@ -993,12 +1002,6 @@ class ConstantGroup:
 
     def get_underscore_name(self):
         return self.raw_data[1]
-
-    def get_upper_case_name(self):
-        return self.get_underscore_name().upper()
-
-    def get_dash_name(self):
-        return self.get_underscore_name().replace('_', '-')
 
     def get_type(self):
         return self.type
@@ -1071,7 +1074,7 @@ class Element:
     def get_size(self):
         return self.get_item_size() * self.get_cardinality()
 
-class Packet:
+class Packet(NameMixin):
     valid_types = set(['int8',
                        'uint8',
                        'int16',
@@ -1172,17 +1175,8 @@ class Packet:
     def get_camel_case_name(self):
         return self.raw_data['name'][0]
 
-    def get_headless_camel_case_name(self):
-        return make_headless_camel_case(self.get_camel_case_name(), self.get_underscore_name())
-
     def get_underscore_name(self):
         return self.raw_data['name'][1]
-
-    def get_upper_case_name(self):
-        return self.get_underscore_name().upper()
-
-    def get_dash_name(self):
-        return self.get_underscore_name().replace('_', '-')
 
     def get_elements(self, direction=None):
         if direction is None:
@@ -1269,7 +1263,7 @@ class Packet:
                 return True
         return False
 
-class Device:
+class Device(NameMixin):
     def __init__(self, raw_data, generator):
         self.raw_data = raw_data
         self.generator = generator
@@ -1358,17 +1352,8 @@ class Device:
     def get_camel_case_name(self):
         return self.raw_data['name'][0]
 
-    def get_headless_camel_case_name(self):
-        return make_headless_camel_case(self.get_camel_case_name(), self.get_underscore_name())
-
     def get_underscore_name(self):
         return self.raw_data['name'][1]
-
-    def get_upper_case_name(self):
-        return self.get_underscore_name().upper()
-
-    def get_dash_name(self):
-        return self.get_underscore_name().replace('_', '-')
 
     def get_short_display_name(self):
         return self.raw_data['name'][2]
