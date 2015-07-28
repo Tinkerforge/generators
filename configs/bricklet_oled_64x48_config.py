@@ -21,8 +21,6 @@ com = {
     'packets': []
 }
 
-
-
 com['packets'].append({
 'type': 'function',
 'name': ('Write', 'write'), 
