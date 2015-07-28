@@ -677,7 +677,7 @@ def generate(bindings_root_directory, language, generator_class):
             if com['released']:
                 print(' * {0}'.format(config[:-10]))
             else:
-                print(' * {0} (not released)'.format(config[:-10]))
+                print(' * {0} \033[01;36m(not released)\033[0m'.format(config[:-10]))
 
             def prepare_common_packets(common_packets):
                 for common_packet in common_packets:
