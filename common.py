@@ -170,7 +170,6 @@ def select_lang(d):
 def make_rst_header(device, has_device_identifier_constant=True):
     bindings_display_name = device.get_generator().get_bindings_display_name()
     ref_name = device.get_generator().get_bindings_name()
-    category = device.get_category()
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     full_title = '{0} - {1}'.format(bindings_display_name, device.get_long_display_name())
     full_title_underline = '='*len(full_title)
@@ -184,11 +183,14 @@ def make_rst_header(device, has_device_identifier_constant=True):
         orphan = ':orphan:'
 
     if has_device_identifier_constant:
-        device_identifier_constant = select_lang(device_identifier_constant).format(device.get_underscore_name(), category.lower(), ref_name, category)
+        device_identifier_constant = select_lang(device_identifier_constant).format(device.get_underscore_name(),
+                                                                                    device.get_underscore_category(),
+                                                                                    ref_name,
+                                                                                    device.get_camel_case_category())
     else:
         device_identifier_constant = '.. |device_identifier_constant| unicode:: 0xA0\n   :trim:\n'
 
-    ref = '.. _{0}_{1}_{2}:\n'.format(device.get_underscore_name(), category.lower(), ref_name)
+    ref = '.. _{0}_{1}_{2}:\n'.format(device.get_underscore_name(), device.get_underscore_category(), ref_name)
 
     return '{0}\n{1}\n{2}\n{3}\n{4}\n{5}\n{6}\n'.format(gen_text_rst.format(date),
                                                         orphan,
@@ -278,7 +280,7 @@ Bindings ist Teil deren allgemeine Beschreibung.
                                                    device.get_generator().get_bindings_name())
 
     # format device name
-    if device.get_category() == 'Brick':
+    if device.get_camel_case_category() == 'Brick':
         device_name = select_lang(brick_name)
     else:
         device_name = select_lang(bricklet_name)
@@ -289,14 +291,14 @@ Bindings ist Teil deren allgemeine Beschreibung.
     s = select_lang(summary).format(bindings_name_link,
                                     device_name,
                                     device.get_long_display_name(),
-                                    device.get_underscore_name() + '_' + device.get_category().lower())
+                                    device.get_underscore_name() + '_' + device.get_underscore_category())
 
     if is_programming_language:
         s += select_lang(summary_install).format(device.get_generator().get_bindings_name(),
                                                  device.get_generator().get_bindings_display_name())
 
     if not device.is_released():
-        if device.get_category() == 'Brick':
+        if device.get_camel_case_category() == 'Brick':
             d = brick
         else:
             d = bricklet
@@ -385,7 +387,7 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
         imp = imp_picture_scroll
 
     ref = '.. _{0}_{1}_{2}_examples:\n'.format(device.get_underscore_name(),
-                                               device.get_category().lower(),
+                                               device.get_underscore_category(),
                                                bindings_name)
     examples = select_lang(ex).format(ref)
     files = find_device_examples(device, filename_regex)
@@ -404,10 +406,10 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
         else:
             language = language_from_filename(f[0])
 
-        include = '{0}_{1}_{2}_{3}'.format(device.get_camel_case_name(), device.get_category(), include_name, f[0].replace(' ', '_'))
+        include = '{0}_{1}_{2}_{3}'.format(device.get_camel_case_name(), device.get_camel_case_category(), include_name, f[0].replace(' ', '_'))
         copy_files.append((f[1], include))
         title = title_from_filename(f[0])
-        git_name = device.get_dash_name() + '-' + device.get_category().lower()
+        git_name = device.get_dash_name() + '-' + device.get_dash_category()
         url = url_format.format(git_name, bindings_name, f[0].replace(' ', '%20'))
 
         if url_fixer is not None:
@@ -508,7 +510,7 @@ def format_since_firmware(device, packet):
     since = packet.get_since_firmware()
 
     if since is not None and since > [2, 0, 0]:
-        if device.get_category() == 'Brick':
+        if device.get_camel_case_category() == 'Brick':
             suffix = 'Firmware'
         else:
             suffix = 'Plugin'
@@ -706,7 +708,7 @@ def generate(bindings_root_directory, language, generator_class):
 
             device = generator.get_device_class()(com, generator)
 
-            if device.get_category() == 'Brick':
+            if device.get_camel_case_category() == 'Brick':
                 ref_name = device.get_underscore_name() + '_brick'
                 hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2') + '_Brick'
                 software_doc_prefix = device.get_camel_case_name() + '_Brick'
@@ -1343,8 +1345,17 @@ class Device(NameMixin):
         else:
             return ''
 
-    def get_category(self):
+    def get_camel_case_category(self):
         return self.raw_data['category']
+
+    def get_underscore_category(self):
+        return self.raw_data['category'].lower()
+
+    def get_upper_case_category(self):
+        return self.get_underscore_category().upper()
+
+    def get_dash_category(self):
+        return self.get_underscore_category().replace('_', '-')
 
     def get_device_identifier(self):
         return self.raw_data['device_identifier']
@@ -1366,7 +1377,7 @@ class Device(NameMixin):
 
     def get_git_directory(self):
         global_root_directory = os.path.normpath(os.path.join(self.get_generator().get_bindings_root_directory(), '..', '..'))
-        git_name = self.get_dash_name() + '-' + self.get_category().lower()
+        git_name = self.get_dash_name() + '-' + self.get_dash_category()
         git_directory = os.path.join(global_root_directory, git_name)
 
         return git_directory
@@ -1417,7 +1428,7 @@ class Device(NameMixin):
             raise Exception("Invalid call in non-doc generator")
 
         filename = '{0}_{1}_{2}.rst'.format(self.get_camel_case_name(),
-                                            self.get_category(),
+                                            self.get_camel_case_category(),
                                             self.get_generator().get_doc_rst_filename_part())
 
         return os.path.join(self.get_generator().get_bindings_root_directory(),
@@ -1429,7 +1440,7 @@ class Device(NameMixin):
         if not self.get_generator().is_doc():
             raise Exception("Invalid call in non-doc generator")
 
-        return self.get_underscore_name() + '_' + self.get_category().lower()
+        return self.get_underscore_name() + '_' + self.get_underscore_category()
 
 class Generator:
     def __init__(self, bindings_root_directory, language):

@@ -34,7 +34,7 @@ import common
 
 class ModbusDocDevice(common.Device):
     def get_modbus_name(self):
-        return self.get_category() + self.get_camel_case_name()
+        return self.get_camel_case_category() + self.get_camel_case_name()
 
     def replace_modbus_function_links(self, text):
         cls = self.get_modbus_name()

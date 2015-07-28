@@ -32,7 +32,7 @@ import common
 
 class RubyDevice(common.Device):
     def get_ruby_class_name(self):
-        return self.get_category() + self.get_camel_case_name()
+        return self.get_camel_case_category() + self.get_camel_case_name()
 
 class RubyPacket(common.Packet):
     def get_ruby_parameter_list(self):

@@ -3,7 +3,7 @@
 
 """
 Java Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 java_common.py: Common Library for generation of Java bindings and documentation
@@ -32,7 +32,7 @@ import common
 
 class JavaDevice(common.Device):
     def get_java_class_name(self):
-        return self.get_category() + self.get_camel_case_name()
+        return self.get_camel_case_category() + self.get_camel_case_name()
 
 class JavaPacket(common.Packet):
     def get_java_object_name(self):

@@ -36,7 +36,7 @@ import common
 
 class LabVIEWDocDevice(common.Device):
     def get_labview_class_name(self):
-        return self.get_category() + self.get_camel_case_name()
+        return self.get_camel_case_category() + self.get_camel_case_name()
 
     def replace_labview_function_links(self, text):
         cls = self.get_labview_class_name()
@@ -290,7 +290,7 @@ Konstanten
                                                         c)
 
         article = 'ein'
-        if self.get_category() == 'Brick':
+        if self.get_camel_case_category() == 'Brick':
             article = 'einen'
         api_str += common.select_lang(const_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_labview_class_name(),

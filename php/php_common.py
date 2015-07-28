@@ -32,7 +32,7 @@ import common
 
 class PHPDevice(common.Device):
     def get_php_class_name(self):
-        return self.get_category() + self.get_camel_case_name()
+        return self.get_camel_case_category() + self.get_camel_case_name()
 
 class PHPPacket(common.Packet):
     def get_php_return_type(self):

@@ -32,7 +32,7 @@ import common
 
 class PerlDevice(common.Device):
     def get_perl_class_name(self):
-        return self.get_category() + self.get_camel_case_name()
+        return self.get_camel_case_category() + self.get_camel_case_name()
 
 class PerlElement(common.Element):
     perl_types = {

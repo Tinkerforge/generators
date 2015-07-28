@@ -34,7 +34,7 @@ import common
 
 class TCPIPDocDevice(common.Device):
     def get_tcpip_name(self):
-        return self.get_category() + self.get_camel_case_name()
+        return self.get_camel_case_category() + self.get_camel_case_name()
 
     def replace_tcpip_function_links(self, text):
         cls = self.get_tcpip_name()

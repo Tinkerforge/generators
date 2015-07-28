@@ -39,7 +39,7 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
 """
         date = datetime.datetime.now().strftime("%Y-%m-%d")
         version = common.get_changelog_version(self.get_generator().get_bindings_root_directory())
-        lower_type = self.get_category().lower()
+        lower_type = self.get_underscore_category()
 
         return include.format(common.gen_text_hash.format(date, *version),
                               lower_type, self.get_underscore_name())
@@ -273,7 +273,7 @@ class RubyBindingsGenerator(common.BindingsGenerator):
         return ruby_common.RubyElement
 
     def generate(self, device):
-        filename = '{0}_{1}.rb'.format(device.get_category().lower(), device.get_underscore_name())
+        filename = '{0}_{1}.rb'.format(device.get_underscore_category(), device.get_underscore_name())
 
         rb = open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'wb')
         rb.write(device.get_ruby_source())

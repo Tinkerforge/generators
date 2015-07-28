@@ -32,7 +32,7 @@ import common
 
 class PythonDevice(common.Device):
     def get_python_class_name(self):
-        return self.get_category() + self.get_camel_case_name()
+        return self.get_camel_case_category() + self.get_camel_case_name()
 
 class PythonPacket(common.Packet):
     def get_python_parameter_list(self):

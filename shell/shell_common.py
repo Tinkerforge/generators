@@ -32,10 +32,10 @@ import common
 
 class ShellDevice(common.Device):
     def get_shell_class_name(self):
-        return self.get_camel_case_name() + self.get_category()
+        return self.get_camel_case_name() + self.get_camel_case_category()
 
     def get_shell_device_name(self):
-        return self.get_dash_name() + '-' + self.get_category().lower()
+        return self.get_dash_name() + '-' + self.get_dash_category()
 
 class ShellPacket(common.Packet):
     def get_shell_parameter_list(self):

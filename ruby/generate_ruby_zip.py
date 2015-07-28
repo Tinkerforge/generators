@@ -57,7 +57,7 @@ class RubyZipGenerator(common.Generator):
 
         # Copy device examples
         tmp_examples_device = os.path.join(self.tmp_examples_dir,
-                                           device.get_category().lower(),
+                                           device.get_underscore_category(),
                                            device.get_underscore_name())
 
         if not os.path.exists(tmp_examples_device):

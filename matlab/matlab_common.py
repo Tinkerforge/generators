@@ -3,7 +3,7 @@
 
 """
 MATLAB Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 matlab_common.py: Common Library for generation of MATLAB bindings and documentation
@@ -32,7 +32,7 @@ import common
 
 class MATLABDevice(common.Device):
     def get_matlab_class_name(self):
-        return self.get_category() + self.get_camel_case_name()
+        return self.get_camel_case_category() + self.get_camel_case_name()
 
 class MATLABPacket(common.Packet):
     def get_matlab_object_name(self):

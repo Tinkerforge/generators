@@ -282,7 +282,7 @@ class PythonBindingsGenerator(common.BindingsGenerator):
         return python_common.PythonElement
 
     def generate(self, device):
-        filename = '{0}_{1}.py'.format(device.get_category().lower(), device.get_underscore_name())
+        filename = '{0}_{1}.py'.format(device.get_underscore_category(), device.get_underscore_name())
 
         py = open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'wb')
         py.write(device.get_python_source())

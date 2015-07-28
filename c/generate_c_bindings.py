@@ -51,7 +51,7 @@ extern "C" {{
         version = common.get_changelog_version(self.get_generator().get_bindings_root_directory())
 
         return include.format(common.gen_text_star.format(date, *version),
-                              self.get_category().lower(),
+                              self.get_underscore_category(),
                               self.get_underscore_name())
 
     def get_c_function_id_defines(self):
@@ -68,7 +68,7 @@ extern "C" {{
                                           packet.get_upper_case_name(),
                                           packet.get_function_id(),
                                           self.get_camel_case_name(),
-                                          self.get_category())
+                                          self.get_camel_case_category())
 
         return defines
 
@@ -89,7 +89,7 @@ extern "C" {{
                                           packet.get_function_id(),
                                           packet.get_c_formatted_doc(),
                                           self.get_camel_case_name(),
-                                          self.get_category())
+                                          self.get_camel_case_category())
 
         return defines
 
@@ -101,7 +101,7 @@ extern "C" {{
 #define {prefix}_{constant_group_upper_case_name}_{constant_item_upper_case_name} {constant_item_value}
 """
         return '\n' + self.get_formatted_constants(constant_format,
-                                                   doxygen=self.get_category()+self.get_camel_case_name(),
+                                                   doxygen=self.get_camel_case_category()+self.get_camel_case_name(),
                                                    prefix=self.get_upper_case_name())
 
     def get_c_device_identifier_define(self):
@@ -120,7 +120,7 @@ extern "C" {{
         return define_temp.format(self.get_upper_case_name(),
                                   self.get_device_identifier(),
                                   self.get_camel_case_name(),
-                                  self.get_category(),
+                                  self.get_camel_case_category(),
                                   self.get_underscore_name(),
                                   self.get_long_display_name())
 
@@ -136,7 +136,7 @@ extern "C" {{
         return define_temp.format(self.get_upper_case_name(),
                                   self.get_long_display_name(),
                                   self.get_camel_case_name(),
-                                  self.get_category())
+                                  self.get_camel_case_category())
 
     def get_c_structs(self):
         structs = """
@@ -437,14 +437,14 @@ typedef Device {3};
 
         date = datetime.datetime.now().strftime("%Y-%m-%d")
         version = common.get_changelog_version(self.get_generator().get_bindings_root_directory())
-        upper_type = self.get_category().upper()
+        upper_type = self.get_upper_case_category()
         upper_name = self.get_upper_case_name()
 
         return include.format(common.gen_text_star.format(date, *version),
                               upper_type,
                               upper_name,
                               self.get_camel_case_name(),
-                              self.get_category(),
+                              self.get_camel_case_category(),
                               self.get_description(),
                               self.get_long_display_name())
 
@@ -487,7 +487,7 @@ void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon);
 """
         return create.format(self.get_underscore_name(),
                              self.get_camel_case_name(),
-                             self.get_category())
+                             self.get_camel_case_category())
 
     def get_c_destroy_declaration(self):
         destroy = """
@@ -501,7 +501,7 @@ void {0}_destroy({1} *{0});
 """
         return destroy.format(self.get_underscore_name(),
                               self.get_camel_case_name(),
-                              self.get_category())
+                              self.get_camel_case_category())
 
     def get_c_response_expected_declarations(self):
         response_expected = """
@@ -553,7 +553,7 @@ int {0}_set_response_expected_all({1} *{0}, bool response_expected);
 """
         return response_expected.format(self.get_underscore_name(),
                                         self.get_camel_case_name(),
-                                        self.get_category())
+                                        self.get_camel_case_category())
 
     def get_c_function_declaration(self):
         func_version = """
@@ -583,9 +583,9 @@ int {0}_{1}({2} *{0}{3});
             d = packet.get_c_parameter_list()
             doc = packet.get_c_formatted_doc()
 
-            funcs += func.format(a, b, c, d, doc, self.get_category())
+            funcs += func.format(a, b, c, d, doc, self.get_camel_case_category())
 
-        return func_version.format(a, c, self.get_category()) + funcs
+        return func_version.format(a, c, self.get_camel_case_category()) + funcs
 
     def get_c_register_callback_declaration(self):
         if self.get_callback_count() == 0:
@@ -600,7 +600,7 @@ int {0}_{1}({2} *{0}{3});
  */
 void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data);
 """
-        return func.format(self.get_underscore_name(), self.get_camel_case_name(), self.get_category())
+        return func.format(self.get_underscore_name(), self.get_camel_case_name(), self.get_camel_case_category())
 
     def get_c_source(self):
         source  = self.get_c_include_c()
@@ -769,7 +769,7 @@ class CBindingsGenerator(common.BindingsGenerator):
         return c_common.CElement
 
     def generate(self, device):
-        filename = '{0}_{1}'.format(device.get_category().lower(), device.get_underscore_name())
+        filename = '{0}_{1}'.format(device.get_underscore_category(), device.get_underscore_name())
 
         c = open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename + '.c'), 'wb')
         c.write(device.get_c_source())

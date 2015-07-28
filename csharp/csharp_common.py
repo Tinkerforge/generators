@@ -3,7 +3,7 @@
 
 """
 C# Generator
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 csharp_common.py: Common Library for generation of C# bindings and documentation
@@ -32,7 +32,7 @@ import common
 
 class CSharpDevice(common.Device):
     def get_csharp_class_name(self):
-        return self.get_category() + self.get_camel_case_name()
+        return self.get_camel_case_category() + self.get_camel_case_name()
 
 class CSharpPacket(common.Packet):
     def get_csharp_parameter_list(self, use_out_params=True):

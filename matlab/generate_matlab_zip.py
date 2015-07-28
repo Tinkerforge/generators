@@ -64,7 +64,7 @@ class MATLABZipGenerator(common.Generator):
         # Copy device examples
         for flavor in ['matlab', 'octave']:
             tmp_examples_device_dir = os.path.join(self.tmp_flavor_examples_dir[flavor],
-                                                   device.get_category().lower(),
+                                                   device.get_underscore_category(),
                                                    device.get_underscore_name())
 
             if not os.path.exists(tmp_examples_device_dir):

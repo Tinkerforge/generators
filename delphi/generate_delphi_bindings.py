@@ -50,7 +50,7 @@ uses
         version = common.get_changelog_version(self.get_generator().get_bindings_root_directory())
 
         return include.format(common.gen_text_curly.format(date, *version),
-                              self.get_category(),
+                              self.get_camel_case_category(),
                               self.get_camel_case_name())
 
     def get_delphi_device_identifier(self):
@@ -58,7 +58,7 @@ uses
   {0}_{1}_DEVICE_IDENTIFIER = {2};
 """
 
-        return did.format(self.get_category().upper(),
+        return did.format(self.get_upper_case_category(),
                           self.get_upper_case_name(),
                           self.get_device_identifier())
 
@@ -67,7 +67,7 @@ uses
 
 """
 
-        return did.format(self.get_category().upper(),
+        return did.format(self.get_upper_case_category(),
                           self.get_upper_case_name(),
                           self.get_long_display_name())
 
@@ -75,7 +75,7 @@ uses
         function_ids = ''
         function_id = '  {0}_{1}_FUNCTION_{2} = {3};\n'
         for packet in self.get_packets('function'):
-            function_ids += function_id.format(self.get_category().upper(),
+            function_ids += function_id.format(self.get_upper_case_category(),
                                                self.get_upper_case_name(),
                                                packet.get_upper_case_name(),
                                                packet.get_function_id())
@@ -84,13 +84,13 @@ uses
     def get_delphi_constants(self):
         constant_format = '  {prefix}_{constant_group_upper_case_name}_{constant_item_upper_case_name} = {constant_item_value};\n'
 
-        return self.get_formatted_constants(constant_format, prefix=self.get_category().upper()+'_'+self.get_upper_case_name()) + '\n'
+        return self.get_formatted_constants(constant_format, prefix=self.get_upper_case_category()+'_'+self.get_upper_case_name()) + '\n'
 
     def get_delphi_callback_id_definitions(self):
         cbs = ''
         cb = '  {0}_{1}_CALLBACK_{2} = {3};\n'
         for packet in self.get_packets('callback'):
-            cbs += cb.format(self.get_category().upper(),
+            cbs += cb.format(self.get_upper_case_category(),
                              self.get_upper_case_name(),
                              packet.get_upper_case_name(),
                              packet.get_function_id())
@@ -242,7 +242,7 @@ begin
                 flag = 'DEVICE_RESPONSE_EXPECTED_FALSE'
 
             response_expected += '  responseExpected[{0}_{1}_{2}{3}] := {4};\n' \
-                .format(self.get_category().upper(),
+                .format(self.get_upper_case_category(),
                         self.get_upper_case_name(),
                         prefix,
                         packet.get_upper_case_name(),
@@ -259,7 +259,7 @@ begin
         cb = '  callbackWrappers[{0}_{1}_CALLBACK_{2}] := {{$ifdef FPC}}@{{$endif}}CallbackWrapper{3};\n'
         cbs_end = 'end;\n\n'
         for packet in self.get_packets('callback'):
-            cbs += cb.format(self.get_category().upper(),
+            cbs += cb.format(self.get_upper_case_category(),
                              self.get_upper_case_name(),
                              packet.get_upper_case_name(),
                              packet.get_camel_case_name())
@@ -276,7 +276,7 @@ begin
             out_count = len(packet.get_elements('out'))
             name = packet.get_camel_case_name()
             params = packet.get_delphi_parameter_list(False)
-            function_id = '{0}_{1}_FUNCTION_{2}'.format(self.get_category().upper(),
+            function_id = '{0}_{1}_FUNCTION_{2}'.format(self.get_upper_case_category(),
                                                         self.get_upper_case_name(),
                                                         packet.get_upper_case_name())
             if len(params) > 0:
@@ -491,7 +491,7 @@ class DelphiBindingsPacket(delphi_common.DelphiPacket):
         for other_packet in self.get_device().get_packets():
             name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
             name = other_packet.get_camel_case_name()
-            name_right = link.format(self.get_device().get_category(), cls, name)
+            name_right = link.format(self.get_device().get_camel_case_category(), cls, name)
 
             text = text.replace(name_false, name_right)
 
@@ -531,7 +531,7 @@ class DelphiBindingsGenerator(common.BindingsGenerator):
         return DelphiBindingsElement
 
     def generate(self, device):
-        filename = '{0}{1}.pas'.format(device.get_category(), device.get_camel_case_name())
+        filename = '{0}{1}.pas'.format(device.get_camel_case_category(), device.get_camel_case_name())
 
         pas = open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'wb')
         pas.write(device.get_delphi_source())

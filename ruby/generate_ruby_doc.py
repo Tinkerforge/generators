@@ -303,7 +303,7 @@ Konstanten
                                                         c)
 
         article = 'ein'
-        if self.get_category() == 'Brick':
+        if self.get_camel_case_category() == 'Brick':
             article = 'einen'
         api_str += common.select_lang(const_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_ruby_class_name(),

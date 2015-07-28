@@ -286,10 +286,10 @@ Konstanten
                                                         c)
 
         article = 'ein'
-        if self.get_category() == 'Brick':
+        if self.get_camel_case_category() == 'Brick':
             article = 'einen'
         api_str += common.select_lang(const_str).format(self.get_doc_rst_ref_name(),
-                                                        self.get_category().upper(),
+                                                        self.get_upper_case_category(),
                                                         self.get_upper_case_name(),
                                                         article,
                                                         self.get_long_display_name(),
@@ -320,7 +320,7 @@ class DelphiBindingsPacket(delphi_common.DelphiPacket):
         text = common.handle_rst_word(text)
         text = common.handle_rst_substitutions(text, self)
 
-        prefix = '{0}_{1}_'.format(self.get_device().get_category().upper(),
+        prefix = '{0}_{1}_'.format(self.get_device().get_upper_case_category(),
                                    self.get_device().get_upper_case_name())
         if self.get_underscore_name() == 'set_response_expected':
             text += common.format_function_id_constants(prefix, self.get_device())

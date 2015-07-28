@@ -53,7 +53,7 @@ package Tinkerforge::{1}{2};
         version = common.get_changelog_version(self.get_generator().get_bindings_root_directory())
 
         return package.format(common.gen_text_hash.format(date, *version),
-                              self.get_category(),
+                              self.get_camel_case_category(),
                               self.get_camel_case_name(),
                               self.get_description())
 
@@ -315,7 +315,7 @@ class PerlBindingsGenerator(common.BindingsGenerator):
         return perl_common.PerlElement
 
     def generate(self, device):
-        filename = '{0}{1}.pm'.format(device.get_category(), device.get_camel_case_name())
+        filename = '{0}{1}.pm'.format(device.get_camel_case_category(), device.get_camel_case_name())
 
         pm = open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename), 'wb')
         pm.write(device.get_perl_source())

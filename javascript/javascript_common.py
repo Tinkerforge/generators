@@ -4,6 +4,7 @@
 """
 JavaScript Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 javascript_common.py: Common Library for generation of JavaScript bindings and documentation
 
@@ -31,7 +32,7 @@ import common
 
 class JavaScriptDevice(common.Device):
     def get_javascript_class_name(self):
-        return self.get_category() + self.get_camel_case_name()
+        return self.get_camel_case_category() + self.get_camel_case_name()
 
 class JavaScriptPacket(common.Packet):
     def get_javascript_parameter_list(self):
