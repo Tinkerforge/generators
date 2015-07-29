@@ -20,7 +20,7 @@
 - Add DEVICE_DISPLAY_NAME constant to all Device classes
 - Add functions for all Bricks to turn status LEDs on and off
 - Avoid possible connection state race condition on connect
-- Include Tinkerforge.dll for .NET 2.0 and .NET 4.0
+- Compile Tinkerforge.dll for .NET 2.0 and .NET 4.0
 - Add support for IMU Brick 2.0, Accelerometer, Ambient Light 2.0,
   Analog In 2.0, Analog Out 2.0, Dust Detector, Industrial Analog Out,
   Industrial Dual Analog In, Laser Range Finder, Load Cell and RS232 Bricklet
