@@ -327,6 +327,10 @@ Constants
  The :c:func:`{2}_get_identity` function and the :c:data:`IPCON_CALLBACK_ENUMERATE`
  callback of the IP Connection have a ``device_identifier`` parameter to specify
  the Brick's or Bricklet's type.
+
+.. c:var:: {1}_DEVICE_DISPLAY_NAME
+
+ This constant represents the human readable name of a {4}.
 """,
         'de': """
 .. _{0}_c_constants:
@@ -341,6 +345,10 @@ Konstanten
  Die :c:func:`{2}_get_identity` Funktion und der :c:data:`IPCON_CALLBACK_ENUMERATE`
  Callback der IP Connection haben ein ``device_identifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
+
+.. c:var:: {1}_DEVICE_DISPLAY_NAME
+
+ Diese Konstante stellt den Anzeigenamen eines {4} dar.
 """
         }
 

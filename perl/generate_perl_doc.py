@@ -311,6 +311,10 @@ Constants
  :perl:attr:`CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
  callback of the IP Connection have a ``device_identifier`` parameter to specify
  the Brick's or Bricklet's type.
+
+.. perl:attribute:: {1}->DEVICE_DISPLAY_NAME
+
+ This constant represents the human readable name of a {3}.
 """,
         'de': """
 .. _{0}_perl_constants:
@@ -326,6 +330,10 @@ Konstanten
  :perl:attr:`CALLBACK_ENUMERATE <IPConnection.CALLBACK_ENUMERATE>`
  Callback der IP Connection haben ein ``device_identifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
+
+.. perl:attribute:: {1}->DEVICE_DISPLAY_NAME
+
+ Diese Konstante stellt den Anzeigenamen eines {3} dar.
 """
         }
 

@@ -252,6 +252,10 @@ Constants
  :labview:func:`EnumerateCallback <IPConnection.EnumerateCallback>`
  callback of the IP Connection have a ``deviceIdentifier`` parameter to specify
  the Brick's or Bricklet's type.
+
+.. labview:symbol:: {1}.DEVICE_DISPLAY_NAME
+
+ This constant represents the human readable name of a {3}.
 """,
         'de': """
 .. _{0}_labview_constants:
@@ -267,6 +271,10 @@ Konstanten
  :labview:func:`EnumerateCallback <IPConnection.EnumerateCallback>`
  Callback der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
+
+.. labview:symbol:: {1}.DEVICE_DISPLAY_NAME
+
+ Diese Konstante stellt den Anzeigenamen eines {3} dar.
 """
         }
 

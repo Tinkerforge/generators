@@ -283,6 +283,10 @@ Constants
  :php:member:`CALLBACK_ENUMERATE <IPConnection::CALLBACK_ENUMERATE>`
  callback of the IP Connection have a ``deviceIdentifier`` parameter to specify
  the Brick's or Bricklet's type.
+
+.. php:member:: string {1}::DEVICE_DISPLAY_NAME
+
+ This constant represents the human readable name of a {3}.
 """,
         'de': """
 .. _{0}_php_constants:
@@ -298,6 +302,10 @@ Konstanten
  :php:func:`CALLBACK_ENUMERATE <IPConnection::CALLBACK_ENUMERATE>`
  Callback der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
+
+.. php:member:: string {1}::DEVICE_DISPLAY_NAME
+
+ Diese Konstante stellt den Anzeigenamen eines {3} dar.
 """
         }
 

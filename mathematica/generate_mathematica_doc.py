@@ -306,6 +306,10 @@ Constants
  :mathematica:func:`EnumerateCallback <IPConnection@EnumerateCallback>`
  callback of the IP Connection have a ``deviceIdentifier`` parameter to specify
  the Brick's or Bricklet's type.
+
+.. mathematica:symbol:: {1}`DEVICEDISPLAYNAME
+
+ This constant represents the human readable name of a {3}.
 """,
         'de': """
 .. _{0}_mathematica_constants:
@@ -321,6 +325,10 @@ Konstanten
  :mathematica:func:`EnumerateCallback <IPConnection@EnumerateCallback>`
  Callback der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
+
+.. mathematica:symbol:: {1}`DEVICEDISPLAYNAME
+
+ Diese Konstante stellt den Anzeigenamen eines {3} dar.
 """
         }
 

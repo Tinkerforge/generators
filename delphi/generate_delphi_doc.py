@@ -247,6 +247,10 @@ Constants
  :delphi:func:`OnEnumerate <TIPConnection.OnEnumerate>`
  callback of the IP Connection have a ``deviceIdentifier`` parameter to specify
  the Brick's or Bricklet's type.
+
+.. delphi:function:: const {1}_{2}_DEVICE_DISPLAY_NAME
+
+ This constant represents the human readable name of a {4}.
 """,
         'de': """
 .. _{0}_delphi_constants:
@@ -262,6 +266,10 @@ Konstanten
  :delphi:func:`OnEnumerate <TIPConnection.OnEnumerate>`
  Callback der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
+
+.. delphi:function:: const {1}_{2}_DEVICE_DISPLAY_NAME
+
+ Diese Konstante stellt den Anzeigenamen eines {4} dar.
 """
         }
 

@@ -317,6 +317,10 @@ Constants
  :java:func:`EnumerateListener <IPConnection.EnumerateListener>`
  listener of the IP Connection have a ``deviceIdentifier`` parameter to specify
  the Brick's or Bricklet's type.
+
+.. java:member:: public static final String {1}.DEVICE_DISPLAY_NAME
+
+ This constant represents the human readable name of a {3}.
 """,
         'de': """
 .. _{0}_java_constants:
@@ -332,6 +336,10 @@ Konstanten
  :java:func:`EnumerateListener <IPConnection.EnumerateListener>`
  Listener der IP Connection haben ein ``deviceIdentifier`` Parameter um den Typ
  des Bricks oder Bricklets anzugeben.
+
+.. java:member:: public static final String {1}.DEVICE_DISPLAY_NAME
+
+ Diese Konstante stellt den Anzeigenamen eines {3} dar.
 """
         }
 
