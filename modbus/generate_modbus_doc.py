@@ -167,6 +167,17 @@ Eine allgemeine Beschreibung der Modbus Protokollstruktur findet sich
 class ModbusDocPacket(common.Packet):
     def get_modbus_formatted_doc(self):
         text = common.select_lang(self.get_doc()[1])
+        constants = {'en': 'meanings', 'de': 'Bedeutungen'}
+        constants_intro = {
+        'en': """
+The following {0} are defined for the parameters of this function:
+
+""",
+        'de': """
+Die folgenden {0} sind für die Parameter dieser Funktion definiert:
+
+"""
+        }
         parameter = {
         'en': 'response value',
         'de': 'Rückgabewert'
@@ -185,6 +196,38 @@ class ModbusDocPacket(common.Packet):
         text = common.handle_rst_word(text, parameter, parameters)
         text = common.handle_rst_substitutions(text, self)
         text += common.format_since_firmware(self.get_device(), self)
+
+        def constant_format(prefix, constant_group, constant_item, value):
+            c = '* {0}: {1}, '.format(value, constant_item.get_underscore_name().replace('_', ' '))
+
+            for_ = {
+            'en': 'for',
+            'de': 'für'
+            }
+
+            c += common.select_lang(for_) + ' '
+
+            e = []
+            for element in constant_group.get_elements():
+                name = element.get_underscore_name()
+                e.append(name)
+
+            if len(e) > 1:
+                and_ = {
+                'en': 'and',
+                'de': 'und'
+                }
+
+                c += ', '.join(e[:-1]) + ' ' + common.select_lang(and_) + ' ' + e[-1]
+            else:
+                c += e[0]
+
+            return c + '\n'
+
+        text += common.format_constants('', self, constants_name=constants,
+                                        char_format='{0}',
+                                        constant_format_func=constant_format,
+                                        constants_intro=constants_intro)
 
         return common.shift_right(text, 1)
 
