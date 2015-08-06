@@ -30,8 +30,8 @@ com['packets'].append({
 'en':
 """
 Returns the illuminance of the ambient light sensor. The value
-has a range of 0 to 6400000 and is given in 1/100 Lux, i.e. a value
-of 45000 means that an illuminance of 450 Lux is measured.
+has a range of 0 to 6400000 and is given in lux/100, i.e. a value
+of 45000 means that an illuminance of 450lux is measured.
 
 If you want to get the illuminance periodically, it is recommended to use the
 callback :func:`Illuminance` and set the period with 
@@ -40,8 +40,8 @@ callback :func:`Illuminance` and set the period with
 'de':
 """
 Gibt die Beleuchtungsstärke des Umgebungslichtsensors zurück. Der Wertbereich
-ist von 0 bis 6400000 und ist in 1/100 Lux angegeben, d.h. bei einem Wert von 
-45000 wurde eine Beleuchtungsstärke von 450 Lux gemessen.
+ist von 0 bis 6400000 und ist in Lux/100 angegeben, d.h. bei einem Wert von
+45000 wurde eine Beleuchtungsstärke von 450Lux gemessen.
 
 Wenn die Beleuchtungsstärke periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Illuminance` zu nutzen und die Periode mit 

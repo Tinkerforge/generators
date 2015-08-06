@@ -526,17 +526,20 @@ def default_constant_format(prefix, constant_group, constant_item, value):
 def format_constants(prefix, packet,
                      constants_name={'en': 'constants', 'de': 'Konstanten'},
                      char_format="'{0}'",
-                     constant_format_func=default_constant_format):
-    constants_intro = {
-'en': """
+                     constant_format_func=default_constant_format,
+                     constants_intro=None):
+    if constants_intro == None:
+        constants_intro = {
+        'en': """
 The following {0} are available for this function:
 
 """,
-'de': """
+        'de': """
 Die folgenden {0} sind für diese Funktion verfügbar:
 
 """
-}
+        }
+
     constants = []
 
     for constant_group in packet.get_constant_groups():
@@ -1324,10 +1327,9 @@ class Device(NameMixin):
                             raise ValueError('Constant item value ({0} != {1}) mismatch in constant group {2}'.format(a, b, constant_group.get_underscore_name()))
 
                     constant_group = None
-
                     break
 
-                if constant_group is not None:
+                if constant_group != None:
                     self.constant_groups.append(constant_group)
 
     def get_generator(self):

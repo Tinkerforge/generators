@@ -57,9 +57,9 @@ the available tag types until the tag gives an answer to the request.
 
 Current the following tag types are supported:
 
-* Mifare Classic (``tag_type`` = 0)
-* NFC Forum Type 1 (``tag_type`` = 1)
-* NFC Forum Type 2 (``tag_type`` = 2)
+* Mifare Classic
+* NFC Forum Type 1
+* NFC Forum Type 2
 
 After you call :func:`RequestTagID` the NFC/RFID Bricklet will try to read 
 the tag ID from the tag. After this process is done the state will change.
@@ -89,9 +89,9 @@ durchzutesten bis das Tag antwortet.
 
 Aktuell werden die folgenden Tag Typen unterstützt:
 
-* Mifare Classic (``tag_type`` = 0)
-* NFC Forum Type 1 (``tag_type`` = 1)
-* NFC Forum Type 2 (``tag_type`` = 2)
+* Mifare Classic
+* NFC Forum Type 1
+* NFC Forum Type 2
 
 Beim Aufruf von :func:`RequestTagID` probiert das NFC/RFID Bricklet die tag ID
 eines Tags auszulesen. Nachdem dieser Prozess beendet ist ändert sich
@@ -195,24 +195,6 @@ to either *RequestPageReady* if it worked or to *RequestPageError* if it
 didn't. If the request worked you can get the page by calling :func:`GetPage`.
 
 The same approach is used analogously for the other API functions.
-
-Possible states are:
-
-* Initialization = 0
-* Idle = 128
-* Error = 192
-* RequestTagID = 2
-* RequestTagIDReady = 130
-* RequestTagIDError = 194
-* AuthenticatingMifareClassicPage = 3
-* AuthenticatingMifareClassicPageReady = 131
-* AuthenticatingMifareClassicPageError = 195
-* WritePage = 4
-* WritePageReady = 132
-* WritePageError = 196
-* RequestPage = 5
-* RequestPageReady = 133
-* RequestPageError = 197
 """,
 'de':
 """
@@ -233,24 +215,6 @@ funktioniert hat oder zu *RequestPageError* wenn nicht. Wenn die Anfrage
 erfolgreich war kann die Page mit :func:`GetPage` abgerufen werden.
 
 Der gleiche Ansatz kann analog für andere API Funktionen verwendet werden.
-
-Mögliche Zustände sind:
-
-* Initialization = 0
-* Idle = 128
-* Error = 192
-* RequestTagID = 2
-* RequestTagIDReady = 130
-* RequestTagIDError = 194
-* AuthenticatingMifareClassicPage = 3
-* AuthenticatingMifareClassicPageReady = 131
-* AuthenticatingMifareClassicPageError = 195
-* WritePage = 4
-* WritePageReady = 132
-* WritePageError = 196
-* RequestPage = 5
-* RequestPageReady = 133
-* RequestPageError = 197
 """
 }]
 })

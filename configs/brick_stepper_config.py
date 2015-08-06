@@ -1047,30 +1047,12 @@ com['packets'].append({
 """
 This callback is triggered whenever the Stepper Brick enters a new state. 
 It returns the new state as well as the previous state.
-
-Possible states are:
-
-* 1 = Stop
-* 2 = Acceleration
-* 3 = Run
-* 4 = Deacceleration
-* 5 = Direction change to forward
-* 6 = Direction change to backward
 """,
 'de':
 """
 Dieser Callback wird immer dann ausgelöst wenn der Stepper Brick einen
 neuen Zustand erreicht. Es wird sowohl der neue wie auch der alte Zustand 
 zurückgegeben.
-
-Mögliche Zustände sind:
-
-* 1 = Stopp
-* 2 = Beschleunigung
-* 3 = Fahren
-* 4 = Verzögerung
-* 5 = Richtungswechsel auf Vorwärts
-* 6 = Richtungswechsel auf Rückwärts
 """
 }]
 })
