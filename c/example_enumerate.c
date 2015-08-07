@@ -32,7 +32,7 @@ void cb_enumerate(const char *uid, const char *connected_uid,
 	printf("\n");
 }
 
-int main() {
+int main(void) {
 	// Create IP Connection
 	IPConnection ipcon;
 	ipcon_create(&ipcon);
@@ -40,7 +40,7 @@ int main() {
 	// Connect to brickd
 	if(ipcon_connect(&ipcon, HOST, PORT) < 0) {
 		fprintf(stderr, "Could not connect to brickd\n");
-		exit(1);
+		return 1;
 	}
 
 	// Register enumeration callback to "cb_enumerate"
@@ -55,4 +55,5 @@ int main() {
 	printf("Press key to exit\n");
 	getchar();
 	ipcon_destroy(&ipcon); // Calls ipcon_disconnect internally
+	return 0;
 }
