@@ -541,6 +541,9 @@ begin
       callback_^.queue.Enqueue(IPCON_QUEUE_KIND_EXIT, nil);
       callback_^.thread.WaitFor;
       callback_^.thread.Destroy;
+      callback_^.queue.Destroy;
+      callback_^.mutex.Destroy;
+      Dispose(callback_);
     end
     else begin
       callback_^.queue.Enqueue(IPCON_QUEUE_KIND_DESTROY_AND_EXIT, nil);
@@ -933,6 +936,9 @@ begin
     end
     else if (kind = IPCON_QUEUE_KIND_DESTROY_AND_EXIT) then begin
       thread.Destroy;
+      callback_^.queue.Destroy;
+      callback_^.mutex.Destroy;
+      Dispose(callback_);
       break;
     end;
     { FIXME: Cannot lock callback mutex here because this can
@@ -952,9 +958,6 @@ begin
     //  callback_.mutex.Release;
     //end;
   end;
-  callback_^.queue.Destroy;
-  callback_^.mutex.Destroy;
-  Dispose(callback_);
 end;
 
 { NOTE: The disconnect probe loop is not allowed to hold the socketMutex at any
