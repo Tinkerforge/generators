@@ -194,11 +194,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the frame duration as set by :func:`SetFrameDuration`.
+Returns the frame duration in ms as set by :func:`SetFrameDuration`.
 """,
 'de':
 """
-Gibt die *frame duration* (Länge des Frames) zurück, wie von
+Gibt die *frame duration* (Länge des Frames) in ms zurück, wie von
 :func:`SetFrameDuration` gesetzt.
 """
 }]
@@ -230,7 +230,8 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is triggered directly after a new frame is rendered.
+This callback is triggered directly after a new frame is rendered. The
+:word:`parameter` is the number of LEDs in that frame.
 
 You should send the data for the next frame directly after this callback
 was triggered.
@@ -240,6 +241,7 @@ For an explanation of the general approach see :func:`SetRGBValues`.
 'de':
 """
 Dieser Callback wird direkt direkt nachdem ein Frame gerendert wurde ausgelöst.
+Der :word:`parameter` ist die Anzahl der LEDs in diesem Frame.
 
 Die Daten für das nächste Frame sollten direkt nach dem auslösen dieses
 Callbacks übertragen werden.
