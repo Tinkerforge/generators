@@ -255,6 +255,11 @@ between 0-600lux and 0-64000lux and an integration time between 50ms and 400ms.
 A smaller illuminance range increases the resolution of the data. An
 increase in integration time will result in less noise on the data.
 
+With a long integration time the sensor might not be able to measure up to the
+high end of the selected illuminance range. Start with a big illuminance range
+and a short integration time then narrow it down to find a good balance between
+resolution and noise for your setup.
+
 The default values are 0-8000lux illuminance range and 200ms integration time.
 """,
 'de':
@@ -265,6 +270,12 @@ zu konfigurieren.
 
 Ein kleinerer Helligkeitswertebereich erhöht die Auflösung der Daten. Eine
 Erhöhung der Integrationszeit verringert das Rauschen auf den Daten.
+
+Mit einer langen Integrationszeit kann es sein, dass der Sensor nicht bis zum
+Maximum der ausgewählten Helligkeitswertebereich messen kann. Am besten beginnt
+man mit einem großen Helligkeitswertebereich und einer kurzen Integrationszeit
+und tastet sich dann an eine gute Balance zwischen Auflösung und Rauschen der
+Daten heran.
 
 Die Standardwerte sind 0-8000Lux Helligkeitsbereich und 200ms Integrationszeit.
 """
