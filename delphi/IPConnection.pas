@@ -481,6 +481,7 @@ begin
   if (IsConnected) then begin
     Disconnect;
   end;
+  brickd.Destroy;
   authenticationMutex.Destroy;
   sequenceNumberMutex.Destroy;
   devices.Destroy;
