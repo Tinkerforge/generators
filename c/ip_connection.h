@@ -14,6 +14,10 @@
  * \defgroup IPConnection IP Connection
  */
 
+#if defined IPCON_EXPOSE_MILLISLEEP && !defined _WIN32 && !defined _BSD_SOURCE
+	#define _BSD_SOURCE // for usleep from unistd.h
+#endif
+
 #ifndef __STDC_LIMIT_MACROS
 	#define __STDC_LIMIT_MACROS
 #endif
@@ -659,6 +663,28 @@ uint64_t leconvert_uint64_from(uint64_t little);
 float leconvert_float_from(float little);
 
 #endif // IPCON_EXPOSE_INTERNALS
+
+#ifdef IPCON_EXPOSE_MILLISLEEP
+
+#ifndef _WIN32
+	#include <unistd.h>
+#endif
+
+static void millisleep(uint32_t msec) {
+#ifdef _WIN32
+	Sleep(msec);
+#else
+	if (msec >= 1000) {
+		sleep(msec / 1000);
+
+		msec %= 1000;
+	}
+
+	usleep(msec * 1000);
+#endif
+}
+
+#endif // IPCON_EXPOSE_MILLISLEEP
 
 #ifdef __cplusplus
 }
