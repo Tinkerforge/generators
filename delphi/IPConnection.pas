@@ -114,10 +114,10 @@ type
   end;
 
   type TCallbackContext = record
-    queue: TBlockingQueue;
     mutex: TCriticalSection;
-    packetDispatchAllowed: boolean;
+    queue: TBlockingQueue;
     thread: TThreadWrapper;
+    packetDispatchAllowed: boolean;
   end;
 
   PCallbackContext = ^TCallbackContext;
@@ -170,6 +170,8 @@ type
     function GetLastSocketErrorNumber: longint;
     function GetLastSocketErrorMessage: string;
     procedure ReceiveLoop(thread: TThreadWrapper; opaque: pointer);
+    procedure ExitCallbackThread(callback_: PCallbackContext);
+    procedure DestroyCallbackContext(callback_: PCallbackContext);
     procedure CallbackLoop(thread: TThreadWrapper; opaque: pointer);
     procedure DisconnectProbeLoop(thread: TThreadWrapper; opaque: pointer);
     procedure HandleDisconnectByPeer(const disconnectReason: byte;
@@ -537,17 +539,7 @@ begin
     meta[0] := IPCON_CALLBACK_DISCONNECTED;
     meta[1] := IPCON_DISCONNECT_REASON_REQUEST;
     callback_^.queue.Enqueue(IPCON_QUEUE_KIND_META, meta);
-    if (not callback_^.thread.IsCurrent) then begin
-      callback_^.queue.Enqueue(IPCON_QUEUE_KIND_EXIT, nil);
-      callback_^.thread.WaitFor;
-      callback_^.thread.Destroy;
-      callback_^.queue.Destroy;
-      callback_^.mutex.Destroy;
-      Dispose(callback_);
-    end
-    else begin
-      callback_^.queue.Enqueue(IPCON_QUEUE_KIND_DESTROY_AND_EXIT, nil);
-    end;
+    ExitCallbackThread(callback_);
   end;
 end;
 
@@ -687,6 +679,11 @@ begin
 {$ifndef FPC}
  {$ifdef MSWINDOWS}
   if (WSAStartup(MakeWord(2, 2), data) <> 0) then begin
+    { Destroy callback thread }
+    if (not isAutoReconnect) then begin
+      ExitCallbackThread(callback);
+      callback := nil;
+    end;
     raise Exception.Create('Could not initialize Windows Sockets 2.2: ' + GetLastSocketErrorMessage);
   end;
  {$endif}
@@ -702,6 +699,11 @@ begin
  {$endif}
   if (tmp = INVALID_SOCKET) then begin
 {$endif}
+    { Destroy callback thread }
+    if (not isAutoReconnect) then begin
+      ExitCallbackThread(callback);
+      callback := nil;
+    end;
     raise Exception.Create('Could not create socket: ' + GetLastSocketErrorMessage);
   end;
   nodelay := 1;
@@ -723,6 +725,12 @@ begin
   hints.ai_socktype := SOCK_STREAM;
   error := getaddrinfo(PAnsiChar(AnsiString(host)), nil, hints, entry);
   if (error <> 0) then begin
+    { Destroy callback thread }
+    if (not isAutoReconnect) then begin
+      ExitCallbackThread(callback);
+      callback := nil;
+    end;
+    { Destroy socket }
     Posix.Unistd.__close(tmp);
     raise Exception.Create('Could not resolve host ' + host + ': ' + string(gai_strerror(error)));
   end;
@@ -731,6 +739,12 @@ begin
 {$else}
   entry := gethostbyname(PAnsiChar(AnsiString(host)));
   if (entry = nil) then begin
+    { Destroy callback thread }
+    if (not isAutoReconnect) then begin
+      ExitCallbackThread(callback);
+      callback := nil;
+    end;
+    { Destroy socket }
     closesocket(tmp);
     raise Exception.Create('Could not resolve host: ' + host);
   end;
@@ -748,6 +762,12 @@ begin
   if (WinSock.connect(tmp, address, sizeof(address)) = SOCKET_ERROR) then begin
  {$endif}
 {$endif}
+    { Destroy callback thread }
+    if (not isAutoReconnect) then begin
+      ExitCallbackThread(callback);
+      callback := nil;
+    end;
+    { Destroy socket }
 {$ifdef DELPHI_MACOS}
     Posix.Unistd.__close(tmp);
 {$else}
@@ -922,23 +942,42 @@ begin
   end;
 end;
 
+procedure TIPConnection.ExitCallbackThread(callback_: PCallbackContext);
+begin
+  if (not callback_^.thread.IsCurrent) then begin
+    callback_^.queue.Enqueue(IPCON_QUEUE_KIND_EXIT, nil);
+    callback_^.thread.WaitFor;
+    DestroyCallbackContext(callback_);
+  end
+  else begin
+    callback_^.queue.Enqueue(IPCON_QUEUE_KIND_DESTROY_AND_EXIT, nil);
+  end;
+end;
+
+procedure TIPConnection.DestroyCallbackContext(callback_: PCallbackContext);
+begin
+  callback_^.thread.Destroy;
+  callback_^.mutex.Destroy;
+  callback_^.queue.Destroy;
+  Dispose(callback_);
+end;
+
 procedure TIPConnection.CallbackLoop(thread: TThreadWrapper; opaque: pointer);
 var callback_: PCallbackContext; kind: byte; data: TByteArray;
 begin
   callback_ := PCallbackContext(opaque);
+  callback_^.thread := thread;
   while (true) do begin
     SetLength(data, 0);
     if (not callback_^.queue.Dequeue(kind, data, -1)) then begin
+      { FIXME: What to do here? try again? exit? }
       break;
     end;
     if (kind = IPCON_QUEUE_KIND_EXIT) then begin
       break;
     end
     else if (kind = IPCON_QUEUE_KIND_DESTROY_AND_EXIT) then begin
-      thread.Destroy;
-      callback_^.queue.Destroy;
-      callback_^.mutex.Destroy;
-      Dispose(callback_);
+      DestroyCallbackContext(callback_);
       break;
     end;
     { FIXME: Cannot lock callback mutex here because this can
