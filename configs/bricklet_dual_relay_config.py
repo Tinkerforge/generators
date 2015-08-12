@@ -18,7 +18,8 @@ com = {
         'de': 'Zwei Relais um Gleich- und Wechselstromgeräte zu schalten'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -186,4 +187,9 @@ Setzt den Zustand des selektierten Relais (1 oder 2), *true* bedeutet ein und *f
 Das andere Relais bleibt unangetastet.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Simple'
 })

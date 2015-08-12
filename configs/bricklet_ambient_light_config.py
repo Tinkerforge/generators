@@ -18,7 +18,8 @@ com = {
         'de': 'Misst Umgebungslicht bis zu 900Lux'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -504,4 +505,22 @@ Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
 mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'getter',
+'name': 'Simple',
+'values': [(('Illuminance', 'illuminance', 'Illuminance'), 'uint16', 10.0, 'Lux/10', 'Lux', None, [])]
+})
+
+com['examples'].append({
+'type': 'callback',
+'name': 'Callback',
+'values': [(('Illuminance', 'illuminance', 'Illuminance'), 'uint16', 10.0, 'Lux/10', 'Lux', None, 1000)]
+})
+
+com['examples'].append({
+'type': 'threshold',
+'name': 'Threshold',
+'values': [(('Illuminance', 'illuminance', 'Illuminance'), 'uint16', 10.0, 'Lux/10', 'Lux', 10000, '>', 'int16', 500, 0, 'Too bright, close the curtains!')]
 })

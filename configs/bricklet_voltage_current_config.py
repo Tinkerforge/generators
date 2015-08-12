@@ -18,7 +18,8 @@ com = {
         'de': 'Misst Leistung, Gleichspannung und Gleichstrom bis zu 720W/36V/20A'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -866,3 +867,20 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 }]
 })
 
+com['examples'].append({
+'type': 'getter',
+'name': 'Simple',
+'values': [(('Voltage', 'voltage', 'Voltage'), 'int32', 1000.0, 'mV', 'V', None, [])]
+})
+
+com['examples'].append({
+'type': 'callback',
+'name': 'Callback',
+'values': [(('Current', 'current', 'Current'), 'int32', 1000.0, 'mA', 'A', None, 1000)]
+})
+
+com['examples'].append({
+'type': 'threshold',
+'name': 'Threshold',
+'values': [(('Power', 'power', 'Power'), 'int32', 1000.0, 'mW', 'W', 10000, '>', 'int32', 10, 0, None)]
+})

@@ -18,7 +18,8 @@ com = {
         'de': 'Misst Gleichspannung zwischen 0V und 50V'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -494,4 +495,22 @@ Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
 mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'getter',
+'name': 'Simple',
+'values': [(('Voltage', 'voltage', 'Voltage'), 'uint16', 1000.0, 'mV', 'V', None, [])]
+})
+
+com['examples'].append({
+'type': 'callback',
+'name': 'Callback',
+'values': [(('Voltage', 'voltage', 'Voltage'), 'uint16', 1000.0, 'mV', 'V', None, 1000)]
+})
+
+com['examples'].append({
+'type': 'threshold',
+'name': 'Threshold',
+'values': [(('Voltage', 'voltage', 'Voltage'), 'uint16', 1000.0, 'mV', 'V', 10000, '>', 'int16', 5, 0, None)]
 })

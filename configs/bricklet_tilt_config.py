@@ -18,7 +18,8 @@ com = {
         'de': 'Erkennt Neigung des Bricklets (Neigungsschalter offen/geschlossen)'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -137,4 +138,14 @@ aufgerufen wenn sich der Status ändert.
 Siehe :func:`GetTiltState` für eine Beschreibung der Zustände.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Simple'
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Callback'
 })

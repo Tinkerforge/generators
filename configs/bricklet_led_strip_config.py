@@ -18,7 +18,8 @@ com = {
         'de': 'Steuert bis zu 320 RGB LEDs'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -379,3 +380,12 @@ Gibt den aktuell genutzten Typ des Chips zurück, wie von
 }]
 })
 
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Simple'
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Callback'
+})

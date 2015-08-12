@@ -18,7 +18,8 @@ com = {
         'de': 'Steuert bis zu 7 RC Servos mit bis zu 3A'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['api'] = {
@@ -940,4 +941,40 @@ Returns *true* if :func:`VelocityReached` callback is enabled, *false* otherwise
 Gibt *true* zurück wenn der :func:`VelocityReached` Callback aktiviert ist, *false* sonst.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'setter',
+'name': 'Configuration',
+'values': [('Set Output Voltage', [('uint16', 5500)], 'Configure two servos with voltage 5.5V\nServo 1: Connected to port 0, period of 19.5ms, pulse width of 1 to 2ms\n         and operating angle -100 to 100°\n\nServo 2: Connected to port 5, period of 20ms, pulse width of 0.95 \n         to 1.95ms and operating angle -90 to 90°', None),
+           None,
+           ('Set Degree', [('uint8', 0), ('int16', -10000), ('int16', 10000)], None, None),
+           ('Set Pulse Width', [('uint8', 0), ('uint16', 1000), ('uint16', 2000)], None, None),
+           ('Set Period', [('uint8', 0), ('uint16', 19500)], None, None),
+           ('Set Acceleration', [('uint8', 0), ('uint16', 1000)], None, 'Slow acceleration'),
+           ('Set Velocity', [('uint8', 0), ('uint16', 65535)], None, 'Full speed'),
+           None,
+           ('Set Degree', [('uint8', 5), ('int16', -9000), ('int16', 9000)], None, None),
+           ('Set Pulse Width', [('uint8', 5), ('uint16', 950), ('uint16', 1950)], None, None),
+           ('Set Period', [('uint8', 5), ('uint16', 20000)], None, None),
+           ('Set Acceleration', [('uint8', 5), ('uint16', 65535)], None, 'Full acceleration'),
+           ('Set Velocity', [('uint8', 5), ('uint16', 65535)], None, 'Full speed'),
+           None,
+           ('Set Position', [('uint8', 0), ('int16', 10000)], None, 'Set to most right position'),
+           ('Enable', [('uint8', 0)], None, None),
+           None,
+           ('Set Position', [('uint8', 5), ('int16', -9000)], None, 'Set to most left position'),
+           ('Enable', [('uint8', 5)], None, None)],
+'cleanups': [('Disable', [('uint8', 0)], None, None),
+             ('Disable', [('uint8', 5)], None, None)]
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Callback'
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'PWM Generator'
 })

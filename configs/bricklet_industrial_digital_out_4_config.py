@@ -18,7 +18,8 @@ com = {
         'de': '4 galvanisch getrennte digitale Ausgänge'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -313,4 +314,9 @@ Gruppe. Element 1 in der Gruppe bekommt Pins 0-3,
 Element 2 Pins 4-7, Element 3 Pins 8-11 und Element 4 Pins 12-15.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Simple'
 })

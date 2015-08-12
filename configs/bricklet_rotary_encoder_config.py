@@ -18,7 +18,8 @@ com = {
         'de': '360° Drehgeber/Drehencoder mit Taster'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -338,4 +339,16 @@ This callback is triggered when the button is released.
 Dieser Callback wird ausgelöst wenn der Taster losgelassen wird.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'getter',
+'name': 'Simple',
+'values': [(('Count', 'count without reset', 'Count'), 'int32', None, None, None, None, [('bool', False)])]
+})
+
+com['examples'].append({
+'type': 'callback',
+'name': 'Callback',
+'values': [(('Count', 'count', 'Count'), 'int32', None, None, None, None, 50)]
 })

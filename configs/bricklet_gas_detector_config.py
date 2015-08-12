@@ -18,7 +18,8 @@ com = {
         'de': 'Misst Konzentration verschiedener Gase'
     },
     'released': False,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({

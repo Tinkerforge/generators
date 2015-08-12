@@ -18,7 +18,8 @@ com = {
         'de': 'Erzeugt konfigurierbare Gleichspannung zwischen 0V und 5V'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -120,4 +121,11 @@ Returns the mode as set by :func:`SetMode`.
 Gibt den Modus zurück, wie von :func:`SetMode` gesetzt.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'setter',
+'name': 'Simple',
+'values': [('Set Voltage', [('uint16', 3300)], 'Set output voltage to 3.3V', None)],
+'cleanups': []
 })

@@ -18,7 +18,8 @@ com = {
         'de': 'Vier 7-Segment Anzeigen mit schaltbarem Doppelpunkt'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -172,4 +173,9 @@ Diese Callback wird ausgelöst wenn der Zähler (siehe :func:`StartCounter`)
 fertig ist.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Simple'
 })

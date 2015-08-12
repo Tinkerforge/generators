@@ -18,7 +18,8 @@ com = {
         'de': 'Erzeugt konfigurierbare Gleichspannung und -strom, 0V bis 10V und 4mA bis 20mA'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -229,4 +230,20 @@ Returns the configuration as set by :func:`SetConfiguration`.
 Gibt die Konfiguration zurück, wie von :func:`SetConfiguration` gesetzt.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'setter',
+'name': 'Simple Voltage',
+'values': [('Set Voltage', [('uint16', 3300)], 'Set output voltage to 3.3V', None),
+           ('Enable', [], None, None)],
+'cleanups': [('Disable', [], None)]
+})
+
+com['examples'].append({
+'type': 'setter',
+'name': 'Simple Current',
+'values': [('Set Current', [('uint16', 4500)], 'Set output current to 4.5mA', None),
+           ('Enable', [], None, None)],
+'cleanups': [('Disable', [], None)]
 })

@@ -18,7 +18,8 @@ com = {
         'de': 'Misst Luftdruck und Höhenänderungen'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -649,3 +650,22 @@ gesetzt.
 }]
 })
 
+com['examples'].append({
+'type': 'getter',
+'name': 'Simple',
+'values': [(('Air Pressure', 'air pressure', 'Air Pressure'), 'int32', 1000.0, 'mbar/1000', 'mbar', None, []),
+           (('Altitude', 'altitude', 'Altitude'), 'int32', 100.0, 'cm', 'm', None, [])]
+})
+
+com['examples'].append({
+'type': 'callback',
+'name': 'Callback',
+'values': [(('Air Pressure', 'air pressure', 'Air Pressure'), 'int32', 1000.0, 'mbar/1000', 'mbar', None, 1000),
+           (('Altitude', 'altitude', 'Altitude'), 'int32', 100.0, 'cm', 'm', None, 1000)]
+})
+
+com['examples'].append({
+'type': 'threshold',
+'name': 'Threshold',
+'values': [(('Air Pressure', 'air pressure', 'Air Pressure'), 'int32', 1000.0, 'mbar/1000', 'mbar', 10000, '>', 'int32', 1025, 0, 'Enjoy the potentially good weather!')]
+})

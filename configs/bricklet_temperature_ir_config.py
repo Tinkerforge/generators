@@ -18,7 +18,8 @@ com = {
         'de': 'Kontaktlose Objekttemperaturmessung zwischen -70°C und +380°C'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -567,4 +568,23 @@ Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
 mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'getter',
+'name': 'Simple',
+'values': [(('Ambient Temperature', 'ambient temperature', 'Ambient Temperature'), 'int16', 10.0, '°C/10', '°C', None, []),
+           (('Object Temperature', 'object temperature', 'Object Temperature'), 'int16', 10.0, '°C/10', '°C', None, [])]
+})
+
+com['examples'].append({
+'type': 'callback',
+'name': 'Callback',
+'values': [(('Ambient Temperature', 'ambient temperature', 'Ambient Temperature'), 'int16', 10.0, '°C/10', '°C', None, 1000),
+           (('Object Temperature', 'object temperature', 'Object Temperature'), 'int16', 10.0, '°C/10', '°C', None, 1000)]
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Water Boiling'
 })

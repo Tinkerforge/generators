@@ -18,7 +18,8 @@ com = {
         'de': 'Misst zwei Gleichspannungen zwischen -35V und +35V mit jeweils 24Bit Auflösung'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['api'] = {
@@ -416,4 +417,20 @@ Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
 mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'getter',
+'name': 'Simple',
+'values': [(('Voltage', 'voltage from channel 1', 'Voltage (Channel 1)'), 'int32', 1000.0, 'mV', 'V', None, [('uint8', 1)])]
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Callback'
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Threshold'
 })

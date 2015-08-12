@@ -18,7 +18,8 @@ com = {
         'de': 'Steuert einen Gleichstrommotor mit bis zu 28V und 5A (Peak)'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -780,3 +781,20 @@ Geschwindigkeit geändert hat.
 #"""
 #}]
 #})
+
+com['examples'].append({
+'type': 'setter',
+'name': 'Configuration',
+'values': [('Set PWM Frequency', [('uint16', 10000)], None, 'Use PWM frequency of 10kHz'),
+           ('Set Drive Mode', [('uint8', 1)], None, 'Use 1 = Drive/Coast instead of 0 = Drive/Brake'),
+           None,
+           ('Enable', [], None, None),
+           ('Set Acceleration', [('uint16', 5000)], None, 'Slow acceleration'),
+           ('Set Velocity', [('int16', 32767)], None, 'Full speed forward')],
+'cleanups': [('Disable', [], None, None)]
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Callback'
+})

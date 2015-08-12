@@ -18,7 +18,8 @@ com = {
         'de': 'Schaltet AC und DC Halbleiterrelais (Solid State Relais)'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -150,4 +151,9 @@ Der Parameter ist der aktuellen Zustand des Relais
 (der Zustand nach dem Monoflop).
 """
 }]
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Simple'
 })

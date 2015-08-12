@@ -18,7 +18,8 @@ com = {
         'de': 'Kommuniziert mit RS232 Geräten'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -287,4 +288,9 @@ der Nachricht wird zusätzlich übergeben.
 Dieser Callback kann durch :func:`EnableReadCallback` aktiviert werden.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Loopback'
 })

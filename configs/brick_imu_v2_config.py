@@ -18,7 +18,8 @@ com = {
         'de': 'Voll ausgestattetes AHRS mit 9 Freiheitsgraden'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -996,4 +997,19 @@ Dieser Callback wird mit der Periode, wie gesetzt mit :func:`SetAllDataPeriod`,
 ausgelöst. Die :word:`parameter` sind die gleichen wie bei :func:`GetAllData`.
 """
 }] 
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Simple'
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Callback'
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'All Data'
 })

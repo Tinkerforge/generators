@@ -18,7 +18,8 @@ com = {
         'de': '4 galvanisch getrennte digitale Eingänge'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -401,4 +402,14 @@ Gibt den Flankentyp sowie die Entprellzeit für den ausgewählten Pin zurück,
 wie von :func:`SetEdgeCountConfig` gesetzt.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Simple'
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Interrupt'
 })

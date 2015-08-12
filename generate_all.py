@@ -32,6 +32,21 @@ if 'bindings' in args:
         print("\nGenerating bindings for {0}:".format(binding))
         module.generate(os.path.join(path, binding))
 
+# examples
+if 'examples' in args:
+    for binding in bindings:
+        if binding in ('tcpip', 'modbus'):
+            continue
+
+        try:
+            module = __import__('generate_{0}_examples'.format(binding))
+        except:
+            print("\nNo example generator for {0}".format(binding))
+            continue
+
+        print("\nGenerating examples for {0}:".format(binding))
+        module.generate(os.path.join(path, binding))
+
 # doc
 if 'doc' in args:
     for binding in bindings:

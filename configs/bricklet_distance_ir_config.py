@@ -18,7 +18,8 @@ com = {
         'de': 'Misst Entfernung bis zu 150cm mit Infrarot-Licht'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -566,4 +567,22 @@ Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
 mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'getter',
+'name': 'Simple',
+'values': [(('Distance', 'distance', 'Distance'), 'uint16', 10.0, 'mm', 'cm', None, [])]
+})
+
+com['examples'].append({
+'type': 'callback',
+'name': 'Callback',
+'values': [(('Distance', 'distance', 'Distance'), 'uint16', 10.0, 'mm', 'cm', None, 200)]
+})
+
+com['examples'].append({
+'type': 'threshold',
+'name': 'Threshold',
+'values': [(('Distance', 'distance', 'Distance'), 'uint16', 10.0, 'mm', 'cm', 10000, '<', 'int16', 30, 0, None)]
 })

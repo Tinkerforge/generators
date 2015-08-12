@@ -37,7 +37,8 @@ com = {
         'de': 'Liest und schreibt NFC und RFID Tags'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -452,4 +453,14 @@ sich verändert. Siehe :func:`GetState` für mehr Informationen
 über die möglichen Zustände des Bricklets.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Scan For Tags'
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Write Read Type2'
 })

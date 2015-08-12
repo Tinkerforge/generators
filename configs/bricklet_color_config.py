@@ -18,7 +18,8 @@ com = {
         'de': 'Misst Farbe (RGB Wert), Beleuchtungsstärke und Farbtemperatur'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -690,3 +691,17 @@ letzten Auslösung geändert hat.
 }]
 })
 
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Simple'
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Callback'
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Threshold'
+})

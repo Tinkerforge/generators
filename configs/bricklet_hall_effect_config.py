@@ -18,7 +18,8 @@ com = {
         'de': 'Detektiert Magnetfelder'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -292,4 +293,15 @@ sind der aktuelle Zählerstand und der aktuelle Wert (siehe
 der beiden Werte seit der letzten Auslösung geändert hat.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'getter',
+'name': 'Simple',
+'values': [(('Edge Count', 'edge count without reset', 'Edge Count'), 'uint32', None, None, None, None, [('bool', False)])]
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Callback'
 })

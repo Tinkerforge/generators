@@ -18,7 +18,8 @@ com = {
         'de': 'Misst Ozon-Konzentration in ppb'
     },
     'released': False,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -535,4 +536,22 @@ Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
 mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'getter',
+'name': 'Simple',
+'values': [(('Ozone Concentration', 'ozone concentration', 'Ozone Concentration'), 'uint16', None, 'ppb', 'ppb', None, [])]
+})
+
+com['examples'].append({
+'type': 'callback',
+'name': 'Callback',
+'values': [(('Ozone Concentration', 'ozone concentration', 'Ozone Concentration'), 'uint16', None, 'ppb', 'ppb', None, 1000)]
+})
+
+com['examples'].append({
+'type': 'threshold',
+'name': 'Threshold',
+'values': [(('Ozone Concentration', 'ozone concentration', 'Ozone Concentration'), 'uint16', None, 'ppb', 'ppb', 10000, '>', 'int16', 20, 0, None)]
 })

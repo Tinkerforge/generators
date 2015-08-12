@@ -18,7 +18,8 @@ com = {
         'de': 'Bestimmt Position, Geschwindigkeit und Höhe mittels GPS'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -641,4 +642,14 @@ gleichen wie die von :func:`GetDateTime`.
 seit der letzten Auslösung geändert haben.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Simple'
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Callback'
 })

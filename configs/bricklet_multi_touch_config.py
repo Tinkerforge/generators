@@ -18,7 +18,8 @@ com = {
         'de': 'Kapazitiver Touch Sensor für 12 Elektroden'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -237,3 +238,12 @@ Gibt die aktuelle Empfindlichkeit zurück, wie von
 }]
 })
 
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Simple'
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Callback'
+})

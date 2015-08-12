@@ -18,7 +18,8 @@ com = {
         'de': 'Steuert Funksteckdosen'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -271,4 +272,9 @@ Eine detaillierte Beschreibung wie man den System- und Gerätecode herausfinden
 kann gibt es :ref:`hier <remote_switch_bricklet_type_c_system_and_device_code>`.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Switch Socket'
 })

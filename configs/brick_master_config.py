@@ -18,7 +18,8 @@ com = {
         'de': 'Grundlage um Stapel zu bauen und bietet 4 Bricklet Anschlüsse'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -2395,4 +2396,11 @@ Gibt das Authentifizierungsgeheimnis zurück, wie von
 :func:`SetWifiAuthenticationSecret` gesetzt.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'getter',
+'name': 'Stack Status',
+'values': [(('Stack Voltage', 'stack voltage', 'Stack Voltage'), 'uint16', 1000.0, 'mV', 'V', None, []),
+           (('Stack Current', 'stack current', 'Stack Current'), 'uint16', 1000.0, 'mA', 'A', None, [])]
 })

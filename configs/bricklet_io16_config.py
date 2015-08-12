@@ -18,7 +18,8 @@ com = {
         'de': '16 digitale Ein- und Ausgänge'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -568,4 +569,17 @@ Gibt den Flankentyp sowie die Entprellzeit für den ausgewählten Pin von Port A
 zurück, wie von :func:`SetEdgeCountConfig` gesetzt.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'setter',
+'name': 'Output',
+'values': [('Set Port Configuration', [('char', 'a'), ('uint8:bitmask', 1 << 0), ('char', 'o'), ('bool', False)], 'Set pin 0 on port a to output low', None),
+           ('Set Port Configuration', [('char', 'b'), ('uint8:bitmask', (1 << 0) | (1 << 7)), ('char', 'o'), ('bool', True)], 'Set pin 0 and 7 on port b to output high', None)],
+'cleanups': []
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Interrupt'
 })

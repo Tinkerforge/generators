@@ -18,7 +18,8 @@ com = {
         'de': '59mm Linearpotentiometer'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -495,4 +496,16 @@ Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
 mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'getter',
+'name': 'Simple',
+'values': [(('Position', 'position', 'Position'), 'uint16', None, None, None, (0, 100), [])]
+})
+
+com['examples'].append({
+'type': 'callback',
+'name': 'Callback',
+'values': [(('Position', 'position', 'Position'), 'uint16', None, None, None, (0, 100), 50)]
 })

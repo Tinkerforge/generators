@@ -18,7 +18,8 @@ com = {
         'de': 'Misst zwei Gleichströme zwischen 0mA und 20mA (IEC 60381-1)'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['api'] = {
@@ -383,4 +384,20 @@ Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
 mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'getter',
+'name': 'Simple',
+'values': [(('Current', 'current from sensor 1', 'Current (Sensor 1)'), 'int32', 1000000.0, 'nA', 'mA', None, [('uint8', 1)])]
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Callback'
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Threshold'
 })

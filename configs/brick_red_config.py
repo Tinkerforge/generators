@@ -147,7 +147,8 @@ com = {
         'de': 'Führt Programme aus und steuert andere Bricks/Bricklets selbständig'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['api'] = {

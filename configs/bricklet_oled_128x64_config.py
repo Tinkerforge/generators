@@ -18,7 +18,8 @@ com = {
         'de': '1.3" OLED mit 128x64 Pixel'
     },
     'released': False,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -116,4 +117,17 @@ com['packets'].append({
 """
 """
 }]
+})
+
+com['examples'].append({
+'type': 'setter',
+'name': 'Hello World',
+'values': [('Clear Display', [], 'Clear display', None),
+           ('Write Line', [('uint8', 0), ('uint8', 0), ('string', 'Hello World')], 'Write "Hello World" starting from upper left corner of the screen', None)],
+'cleanups': []
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Pixel Matrix'
 })

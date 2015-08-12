@@ -18,7 +18,8 @@ com = {
         'de': 'Liest Temperaturen von Pt100 und Pt1000 Sensoren'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -612,4 +613,22 @@ Returns the wire mode as set by :func:`SetWireMode`
 Gibt die Leiter-Konfiguration zurück, wie von :func:`SetWireMode` gesetzt.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'getter',
+'name': 'Simple',
+'values': [(('Temperature', 'temperature', 'Temperature'), 'int32', 100.0, '°C/100', '°C', None, [])]
+})
+
+com['examples'].append({
+'type': 'callback',
+'name': 'Callback',
+'values': [(('Temperature', 'temperature', 'Temperature'), 'int32', 100.0, '°C/100', '°C', None, 1000)]
+})
+
+com['examples'].append({
+'type': 'threshold',
+'name': 'Threshold',
+'values': [(('Temperature', 'temperature', 'Temperature'), 'int32', 100.0, '°C/100', '°C', 10000, '>', 'uint16', 120, 0, None)]
 })

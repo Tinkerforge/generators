@@ -18,7 +18,8 @@ com = {
         'de': 'Misst Herzfrequenz'
     },
     'released': False,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -355,3 +356,20 @@ Gibt *true* zurück wenn der :func:`BeatStateChanged` Callback aktiviert ist.
 }]
 })
 
+com['examples'].append({
+'type': 'getter',
+'name': 'Simple',
+'values': [(('Heart Rate', 'heart rate', 'Heart Rate'), 'uint16', None, 'bpm', 'bpm', None, [])]
+})
+
+com['examples'].append({
+'type': 'callback',
+'name': 'Callback',
+'values': [(('Heart Rate', 'heart rate', 'Heart Rate'), 'uint16', None, 'bpm', 'bpm', None, 1000)]
+})
+
+com['examples'].append({
+'type': 'threshold',
+'name': 'Threshold',
+'values': [(('Heart Rate', 'heart rate', 'Heart Rate'), 'uint16', None, 'bpm', 'bpm', 10000, '>', 'uint16', 100, 0, None)]
+})

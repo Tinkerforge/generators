@@ -18,7 +18,8 @@ com = {
         'de': 'Misst Schallintensität'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -282,4 +283,22 @@ Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
 mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'getter',
+'name': 'Simple',
+'values': [(('Intensity', 'intensity', 'Intensity'), 'uint16', None, None, None, None, [])]
+})
+
+com['examples'].append({
+'type': 'callback',
+'name': 'Callback',
+'values': [(('Intensity', 'intensity', 'Intensity'), 'uint16', None, None, None, None, 1000)]
+})
+
+com['examples'].append({
+'type': 'threshold',
+'name': 'Threshold',
+'values': [(('Intensity', 'intensity', 'Intensity'), 'uint16', None, None, None, 1000, '>', 'uint16', 2000, 0, None)]
 })

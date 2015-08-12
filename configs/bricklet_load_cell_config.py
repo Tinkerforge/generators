@@ -18,7 +18,8 @@ com = {
         'de': 'Misst Gewicht mit einer Wägezelle'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -514,4 +515,22 @@ Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
 mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'getter',
+'name': 'Simple',
+'values': [(('Weight', 'weight', 'Weight'), 'int32', 1000.0, 'g', 'kg', None, [])]
+})
+
+com['examples'].append({
+'type': 'callback',
+'name': 'Callback',
+'values': [(('Weight', 'weight', 'Weight'), 'int32', 1000.0, 'g', 'kg', None, 1000)]
+})
+
+com['examples'].append({
+'type': 'threshold',
+'name': 'Threshold',
+'values': [(('Weight', 'weight', 'Weight'), 'int32', 1000.0, 'g', 'kg', 1000, '>', 'int32', 2, 0, None)]
 })

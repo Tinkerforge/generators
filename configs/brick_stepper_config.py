@@ -18,7 +18,8 @@ com = {
         'de': 'Steuert einen bipolaren Schrittmotor mit bis zu 38V und 2,5A pro Phase'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -1055,4 +1056,22 @@ neuen Zustand erreicht. Es wird sowohl der neue wie auch der alte Zustand
 zurückgegeben.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'setter',
+'name': 'Configuration',
+'values': [('Set Motor Current', [('uint16', 800)], None, '800mA'),
+           ('Set Step Mode', [('uint8', 8)], None, '1/8 step mode'),
+           ('Set Max Velocity', [('uint16', 2000)], None, 'Velocity 2000 steps/s'),
+           ('Set Speed Ramping', [('uint16', 500), ('uint16', 5000)], 'Slow acceleration (500 steps/s^2),\nFast deacceleration (5000 steps/s^2)', None),
+           None,
+           ('Enable', [], None, None),
+           ('Set Steps', [('int32', 60000)], None, 'Drive 60000 steps forward')],
+'cleanups': [('Disable', [], None, None)]
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Callback'
 })

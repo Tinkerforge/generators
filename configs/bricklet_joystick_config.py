@@ -18,7 +18,8 @@ com = {
         'de': '2-Achsen Joystick mit Taster'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -594,4 +595,19 @@ This callback is triggered when the button is released.
 Dieser Callback wird ausgelöst wenn die Taste losgelassen wird.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Simple'
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Callback'
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Find Borders'
 })

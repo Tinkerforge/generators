@@ -18,7 +18,8 @@ com = {
         'de': 'Erzeugt konfigurierbare Gleichspannung zwischen 0V und 12V'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -71,4 +72,11 @@ Returns the input voltage in mV.
 Gibt die Eingangsspannung in mV zurück.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'setter',
+'name': 'Simple',
+'values': [('Set Output Voltage', [('uint16', 3300)], 'Set output voltage to 3.3V', None)],
+'cleanups': []
 })

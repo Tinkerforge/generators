@@ -18,7 +18,8 @@ com = {
         'de': 'Passiver Infrarot (PIR) Bewegungssensor, 7m Reichweite'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -87,4 +88,9 @@ beendet ist. Wenn dieser Callback aufgerufen wurde kann wieder
 eine weitere Bewegung erkannt werden nach ungefähr 2 Sekunden.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Callback'
 })

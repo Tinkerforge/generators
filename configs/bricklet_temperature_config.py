@@ -18,7 +18,8 @@ com = {
         'de': 'Misst Umgebungstemperatur mit 0,5°C Genauigkeit'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -337,3 +338,20 @@ Gibt den I2C Modus zurück, wie von :func:`SetI2CMode` gesetzt.
 }]
 })
 
+com['examples'].append({
+'type': 'getter',
+'name': 'Simple',
+'values': [(('Temperature', 'temperature', 'Temperature'), 'int16', 100.0, '°C/100', '°C', None, [])]
+})
+
+com['examples'].append({
+'type': 'callback',
+'name': 'Callback',
+'values': [(('Temperature', 'temperature', 'Temperature'), 'int16', 100.0, '°C/100', '°C', None, 1000)]
+})
+
+com['examples'].append({
+'type': 'threshold',
+'name': 'Threshold',
+'values': [(('Temperature', 'temperature', 'Temperature'), 'int16', 100.0, '°C/100', '°C', 10000, '>', 'int16', 30, 0, 'It is too hot, we need air conditioning!')]
+})

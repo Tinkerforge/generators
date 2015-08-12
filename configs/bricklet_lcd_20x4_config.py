@@ -18,7 +18,8 @@ com = {
         'de': '20x4 Zeichen alphanumerisches Display mit blauer Hintergrundbeleuchtung'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -423,4 +424,24 @@ Returns the current value of the default text counter.
 Gibt den aktuellen Wert des Standard-Text-Zählers zurück.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'setter',
+'name': 'Hello World',
+'values': [('Backlight On', [], 'Turn backlight on', None),
+           ('Write Line', [('uint8', 0), ('uint8', 0), ('string', 'Hello World')], 'Write "Hello World"', None)],
+'cleanups': []
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Unicode'
+})
+
+com['examples'].append({
+'type': 'callback',
+'name': 'Button Callback',
+'values': [(('Button Pressed', 'button pressed', 'Button Pressed'), 'uint8', None, None, None, None, None),
+           (('Button Released', 'button released', 'Button Released'), 'uint8', None, None, None, None, None)]
 })

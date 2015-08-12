@@ -18,7 +18,8 @@ com = {
         'de': 'Voll ausgestattetes AHRS mit 9 Freiheitsgraden'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -1048,4 +1049,14 @@ is on, *false* otherwise.
 Gibt zurück ob die Orientierungsberechnungen des IMU Brick aktiv sind. 
 """
 }] 
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Simple'
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Callback'
 })

@@ -18,7 +18,8 @@ com = {
         'de': 'Zwei Taster mit eingebauten blauen LEDs'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -200,4 +201,9 @@ Setzt den Zustand der selektierten LED (0 oder 1).
 Die andere LED bleibt unangetastet.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'skeleton',
+'name': 'Callback'
 })

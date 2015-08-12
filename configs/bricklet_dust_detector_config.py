@@ -18,7 +18,8 @@ com = {
         'de': 'Misst Staubdichte'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -324,4 +325,22 @@ Gibt die Länge des gleitenden Mittelwerts zurück, wie von
 :func:`SetMovingAverage` gesetzt.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'getter',
+'name': 'Simple',
+'values': [(('Dust Density', 'dust density', 'Dust Density'), 'uint16', None, 'µg/m³', 'µg/m³', None, [])]
+})
+
+com['examples'].append({
+'type': 'callback',
+'name': 'Callback',
+'values': [(('Dust Density', 'dust density', 'Dust Density'), 'uint16', None, 'µg/m³', 'µg/m³', None, 1000)]
+})
+
+com['examples'].append({
+'type': 'threshold',
+'name': 'Threshold',
+'values': [(('Dust Density', 'dust density', 'Dust Density'), 'uint16', None, 'µg/m³', 'µg/m³', 10000, '>', 'uint16', 10, 0, None)]
 })

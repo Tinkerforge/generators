@@ -18,7 +18,8 @@ com = {
         'de': 'Misst Gleich- und Wechselstrom zwischen -25A und +25A'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -572,4 +573,22 @@ Dieser Callback wird ausgelöst wenn ein Überstrom gemessen wurde
 (siehe :func:`IsOverCurrent`).
 """
 }]
+})
+
+com['examples'].append({
+'type': 'getter',
+'name': 'Simple',
+'values': [(('Current', 'current', 'Current'), 'int16', 1000.0, 'mA', 'A', None, [])]
+})
+
+com['examples'].append({
+'type': 'callback',
+'name': 'Callback',
+'values': [(('Current', 'current', 'Current'), 'int16', 1000.0, 'mA', 'A', None, 1000)]
+})
+
+com['examples'].append({
+'type': 'threshold',
+'name': 'Threshold',
+'values': [(('Current', 'current', 'Current'), 'int16', 1000.0, 'mA', 'A', 10000, '>', 'int16', 5, 0, None)]
 })

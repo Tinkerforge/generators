@@ -18,7 +18,8 @@ com = {
         'de': 'Misst CO2-Konzentration in ppm'
     },
     'released': False,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -278,4 +279,22 @@ Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
 mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'getter',
+'name': 'Simple',
+'values': [(('CO2 Concentration', 'CO2 concentration', 'CO2 Concentration'), 'uint16', None, 'ppm', 'ppm', None, [])]
+})
+
+com['examples'].append({
+'type': 'callback',
+'name': 'Callback',
+'values': [(('CO2 Concentration', 'CO2 concentration', 'CO2 Concentration'), 'uint16', None, 'ppm', 'ppm', None, 1000)]
+})
+
+com['examples'].append({
+'type': 'threshold',
+'name': 'Threshold',
+'values': [(('CO2 Concentration', 'CO2 concentration', 'CO2 Concentration'), 'uint16', None, 'ppm', 'ppm', 10000, '>', 'int16', 750, 0, None)]
 })

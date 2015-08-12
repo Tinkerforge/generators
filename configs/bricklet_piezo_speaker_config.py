@@ -18,7 +18,8 @@ com = {
         'de': 'Erzeugt Piepton mit konfigurierbarer Frequenz'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -172,4 +173,18 @@ Dieser Callback wird ausgelöst wenn die Wiedergabe des Morsecodes, wie von
 :func:`MorseCode` gesetzt, beendet wurde.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'setter',
+'name': 'Beep',
+'values': [('Beep', [('uint16', 2000), ('uint16', 1000)], 'Make 2 second beep with a frequency of 1kHz', None)],
+'cleanups': []
+})
+
+com['examples'].append({
+'type': 'setter',
+'name': 'Morse Code',
+'values': [('Morse Code', [('string', '... --- ...'), ('uint16', 2000)], 'Morse SOS with a frequency of 2kHz', None)],
+'cleanups': []
 })

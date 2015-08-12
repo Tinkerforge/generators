@@ -18,7 +18,8 @@ com = {
         'de': 'Misst relative Luftfeuchtigkeit'
     },
     'released': True,
-    'packets': []
+    'packets': [],
+    'examples': []
 }
 
 com['packets'].append({
@@ -502,4 +503,22 @@ Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
 mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 """
 }]
+})
+
+com['examples'].append({
+'type': 'getter',
+'name': 'Simple',
+'values': [(('Humidity', 'humidity', 'Humidity'), 'uint16', 10.0, '%RH/10', '%RH', None, [])]
+})
+
+com['examples'].append({
+'type': 'callback',
+'name': 'Callback',
+'values': [(('Humidity', 'humidity', 'Humidity'), 'uint16', 10.0, '%RH/10', '%RH', None, 1000)]
+})
+
+com['examples'].append({
+'type': 'threshold',
+'name': 'Threshold',
+'values': [(('Humidity', 'humidity', 'Humidity'), 'uint16', 10.0, '%RH/10', '%RH', 10000, 'o', 'int16', 30, 60, 'Recommended humiditiy for human comfort is 30 to 60 %RH.')]
 })
