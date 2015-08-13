@@ -6,6 +6,8 @@
 
 # Joystick Bricklet communication config
 
+from commonconstants import THRESHOLD_OPTION_CONSTANTS
+
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
     'api_version': [2, 0, 0],
@@ -239,11 +241,7 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': ('SetPositionCallbackThreshold', 'set_position_callback_threshold'), 
-'elements': [('option', 'char', 1, 'in', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
-                                                                                  ('Outside', 'outside', 'o'),
-                                                                                  ('Inside', 'inside', 'i'),
-                                                                                  ('Smaller', 'smaller', '<'),
-                                                                                  ('Greater', 'greater', '>')])), 
+'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
              ('min_x', 'int16', 1, 'in'),
              ('max_x', 'int16', 1, 'in'),
              ('min_y', 'int16', 1, 'in'),
@@ -292,11 +290,7 @@ Der Standardwert ist ('x', 0, 0, 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': ('GetPositionCallbackThreshold', 'get_position_callback_threshold'), 
-'elements': [('option', 'char', 1, 'out', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
-                                                                                   ('Outside', 'outside', 'o'),
-                                                                                   ('Inside', 'inside', 'i'),
-                                                                                   ('Smaller', 'smaller', '<'),
-                                                                                   ('Greater', 'greater', '>')])), 
+'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
              ('min_x', 'int16', 1, 'out'),
              ('max_x', 'int16', 1, 'out'),
              ('min_y', 'int16', 1, 'out'),
@@ -318,11 +312,7 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': ('SetAnalogValueCallbackThreshold', 'set_analog_value_callback_threshold'), 
-'elements': [('option', 'char', 1, 'in', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
-                                                                                  ('Outside', 'outside', 'o'),
-                                                                                  ('Inside', 'inside', 'i'),
-                                                                                  ('Smaller', 'smaller', '<'),
-                                                                                  ('Greater', 'greater', '>')])), 
+'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
              ('min_x', 'uint16', 1, 'in'),
              ('max_x', 'uint16', 1, 'in'),
              ('min_y', 'uint16', 1, 'in'),
@@ -371,11 +361,7 @@ Der Standardwert ist ('x', 0, 0, 0, 0).
 com['packets'].append({
 'type': 'function',
 'name': ('GetAnalogValueCallbackThreshold', 'get_analog_value_callback_threshold'), 
-'elements': [('option', 'char', 1, 'out', ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
-                                                                                   ('Outside', 'outside', 'o'),
-                                                                                   ('Inside', 'inside', 'i'),
-                                                                                   ('Smaller', 'smaller', '<'),
-                                                                                   ('Greater', 'greater', '>')])), 
+'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
              ('min_x', 'uint16', 1, 'out'),
              ('max_x', 'uint16', 1, 'out'),
              ('min_y', 'uint16', 1, 'out'),
