@@ -123,10 +123,10 @@ The following options are possible:
  :widths: 10, 100
 
  "'x'",    "Callback is turned off"
- "'o'",    "Callback is triggered when the temperature is *outside* the min and max values"
- "'i'",    "Callback is triggered when the temperature is *inside* the min and max values"
- "'<'",    "Callback is triggered when the temperature is smaller than the min value (max is ignored)"
- "'>'",    "Callback is triggered when the temperature is greater than the min value (max is ignored)"
+ "'o'",    "Callback is triggered when the acceleration is *outside* the min and max values"
+ "'i'",    "Callback is triggered when the acceleration is *inside* the min and max values"
+ "'<'",    "Callback is triggered when the acceleration is smaller than the min value (max is ignored)"
+ "'>'",    "Callback is triggered when the acceleration is greater than the min value (max is ignored)"
 
 The default value is ('x', 0, 0, 0, 0, 0, 0).
 """,
@@ -141,10 +141,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
  
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Temperatur *außerhalb* des min und max Wertes ist"
- "'i'",    "Callback wird ausgelöst wenn die Temperatur *innerhalb* des min und max Wertes ist"
- "'<'",    "Callback wird ausgelöst wenn die Temperatur kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn die Temperatur größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst wenn die Beschleunigung *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst wenn die Beschleunigung *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst wenn die Beschleunigung kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn die Beschleunigung größer als der min Wert ist (max wird ignoriert)"
  
 Der Standardwert ist ('x', 0, 0, 0, 0, 0, 0, 0, 0).
 """
