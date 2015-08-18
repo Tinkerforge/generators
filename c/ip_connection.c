@@ -47,6 +47,7 @@
 #endif
 
 #define IPCON_EXPOSE_INTERNALS
+#define IPCON_EXPOSE_MILLISLEEP
 
 #include "ip_connection.h"
 
@@ -128,6 +129,20 @@ typedef struct {
 	STATIC_ASSERT(sizeof(GetAuthenticationNonceResponse) == 12, "GetAuthenticationNonceResponse has invalid size");
 	STATIC_ASSERT(sizeof(Authenticate) == 32, "Authenticate has invalid size");
 #endif
+
+void millisleep(uint32_t msec) {
+#ifdef _WIN32
+	Sleep(msec);
+#else
+	if (msec >= 1000) {
+		sleep(msec / 1000);
+
+		msec %= 1000;
+	}
+
+	usleep(msec * 1000);
+#endif
+}
 
 /*****************************************************************************
  *
@@ -900,10 +915,6 @@ static void thread_join(Thread *thread) {
 	WaitForSingleObject(thread->handle, INFINITE);
 }
 
-static void thread_sleep(int msec) {
-	Sleep(msec);
-}
-
 #else
 
 static void *thread_wrapper(void *opaque) {
@@ -931,10 +942,6 @@ static bool thread_is_current(Thread *thread) {
 
 static void thread_join(Thread *thread) {
 	pthread_join(thread->handle, NULL);
-}
-
-static void thread_sleep(int msec) {
-	usleep(msec * 1000);
 }
 
 #endif
@@ -1508,7 +1515,7 @@ static void ipcon_dispatch_meta(IPConnectionPrivate *ipcon_p, Meta *meta) {
 		// FIXME: wait a moment here, otherwise the next connect
 		// attempt will succeed, even if there is no open server
 		// socket. the first receive will then fail directly
-		thread_sleep(100);
+		millisleep(100);
 
 		if (ipcon_p->registered_callbacks[IPCON_CALLBACK_DISCONNECTED] != NULL) {
 			*(void **)(&disconnected_callback_function) = ipcon_p->registered_callbacks[IPCON_CALLBACK_DISCONNECTED];
@@ -1542,7 +1549,7 @@ static void ipcon_dispatch_meta(IPConnectionPrivate *ipcon_p, Meta *meta) {
 				if (retry) {
 					// wait a moment to give another thread a chance to
 					// interrupt the auto-reconnect
-					thread_sleep(100);
+					millisleep(100);
 				}
 			}
 		}
