@@ -260,8 +260,8 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetDistanceCallbackThreshold', 'set_distance_callback_threshold'), 
 'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int16', 1, 'in'),
-             ('max', 'int16', 1, 'in')],
+             ('min', 'uint16', 1, 'in'),
+             ('max', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -307,8 +307,8 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetDistanceCallbackThreshold', 'get_distance_callback_threshold'), 
 'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int16', 1, 'out'),
-             ('max', 'int16', 1, 'out')],
+             ('min', 'uint16', 1, 'out'),
+             ('max', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -570,5 +570,5 @@ com['examples'].append({
 com['examples'].append({
 'type': 'threshold',
 'name': 'Threshold',
-'values': [(('Distance', 'distance', 'Distance'), 'uint16', 10.0, 'mm', 'cm', 10000, '<', 'int16', 30, 0, None)]
+'values': [(('Distance', 'distance', 'Distance'), 'uint16', 10.0, 'mm', 'cm', 10000, '<', 'uint16', 30, 0, None)]
 })

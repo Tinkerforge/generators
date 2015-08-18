@@ -196,8 +196,8 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetHumidityCallbackThreshold', 'set_humidity_callback_threshold'), 
 'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int16', 1, 'in'),
-             ('max', 'int16', 1, 'in')],
+             ('min', 'uint16', 1, 'in'),
+             ('max', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -243,8 +243,8 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetHumidityCallbackThreshold', 'get_humidity_callback_threshold'), 
 'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int16', 1, 'out'),
-             ('max', 'int16', 1, 'out')],
+             ('min', 'uint16', 1, 'out'),
+             ('max', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -506,5 +506,5 @@ com['examples'].append({
 com['examples'].append({
 'type': 'threshold',
 'name': 'Threshold',
-'values': [(('Humidity', 'humidity', 'Humidity'), 'uint16', 10.0, '%RH/10', '%RH', 10000, 'o', 'int16', 30, 60, 'Recommended humiditiy for human comfort is 30 to 60 %RH.')]
+'values': [(('Humidity', 'humidity', 'Humidity'), 'uint16', 10.0, '%RH/10', '%RH', 10000, 'o', 'uint16', 30, 60, 'Recommended humiditiy for human comfort is 30 to 60 %RH.')]
 })
