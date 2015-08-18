@@ -746,6 +746,11 @@ class JavaBindingsGenerator(common.BindingsGenerator):
     def get_element_class(self):
         return java_common.JavaElement
 
+    def prepare(self):
+        self.device_factory_classes = []
+
+        return common.BindingsGenerator.prepare(self)
+
     def generate(self, device):
         filename = '{0}.java'.format(device.get_java_class_name())
         suffix = ''
@@ -760,7 +765,45 @@ class JavaBindingsGenerator(common.BindingsGenerator):
         java.close()
 
         if device.is_released():
+            self.device_factory_classes.append(device.get_java_class_name())
             self.released_files.append(filename)
+
+    def finish(self):
+        template = """{0}
+package com.tinkerforge;
+
+public class DeviceFactory {{
+	public static Device createDevice(int deviceIdentifier, String uid, IPConnection ipcon) throws Exception {{
+		return getDeviceClass(deviceIdentifier).getConstructor(String.class, IPConnection.class).newInstance(uid, ipcon);
+	}}
+
+	public static Class<? extends Device> getDeviceClass(int deviceIdentifier) {{
+		switch (deviceIdentifier) {{
+{1}
+		default: throw new IllegalArgumentException("Unknown device identifier: " + deviceIdentifier);
+		}}
+	}}
+}}
+"""
+        date = datetime.datetime.now().strftime("%Y-%m-%d")
+        version = common.get_changelog_version(self.get_bindings_root_directory())
+        classes = []
+
+        for name in sorted(self.device_factory_classes):
+            classes.append('\t\tcase {0}.DEVICE_IDENTIFIER: return {0}.class;'.format(name))
+
+        suffix = ''
+
+        if self.is_matlab():
+            suffix = '_matlab'
+        elif self.is_octave():
+            suffix = '_octave'
+
+        java = open(os.path.join(self.get_bindings_root_directory(), 'bindings' + suffix, 'DeviceFactory.java'), 'wb')
+        java.write(template.format(common.gen_text_star.format(date, *version), '\n'.join(classes)))
+        java.close()
+
+        return common.BindingsGenerator.finish(self)
 
     def is_matlab(self):
         return False
