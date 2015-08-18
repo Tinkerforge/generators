@@ -290,6 +290,27 @@ Dieser Callback kann durch :func:`EnableReadCallback` aktiviert werden.
 }]
 })
 
+com['packets'].append({
+'type': 'callback',
+'name': ('ErrorCallback', 'error_callback'),
+'elements': [('error', 'uint8', 1, 'out', ('Error', 'error', [('Overrun', 'overrun', 1),
+                                                              ('Parity', 'parity', 2),
+                                                              ('Framing', 'framing', 4)]))],
+'since_firmware': [2, 0, 1],
+'doc': ['c', {
+'en':
+"""
+This callback is called if an error occurs. 
+Possible errors are overrun, parity or framing error.
+""",
+'de':
+"""
+Dieser Callback wird aufgerufen wenn ein Fehler auftritt.
+Mögliche Fehler sind Overrun-, Parity- oder Framing-Fehler.
+"""
+}]
+})
+
 com['examples'].append({
 'type': 'skeleton',
 'name': 'Loopback'
