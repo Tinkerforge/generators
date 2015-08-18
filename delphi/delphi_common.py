@@ -105,22 +105,25 @@ class DelphiPacket(common.Packet):
                                                   final_type))
         return '; '.join(param)
 
-class DelphiElement(common.Element):
-    delphi_types = {
-        'int8':   ('shortint', 'Int8'),
-        'uint8':  ('byte',     'UInt8'),
-        'int16':  ('smallint', 'Int16'),
-        'uint16': ('word',     'UInt16'),
-        'int32':  ('longint',  'Int32'),
-        'uint32': ('longword', 'UInt32'),
-        'int64':  ('int64',    'Int64'),
-        'uint64': ('uint64',   'UInt64'),
-        'float':  ('single',   'Float'),
-        'bool':   ('boolean',  'Boolean'),
-        'char':   ('char',     'Char'),
-        'string': ('string',   'String')
-    }
+delphi_types = {
+    'int8':   ('shortint', 'Int8'),
+    'uint8':  ('byte',     'UInt8'),
+    'int16':  ('smallint', 'Int16'),
+    'uint16': ('word',     'UInt16'),
+    'int32':  ('longint',  'Int32'),
+    'uint32': ('longword', 'UInt32'),
+    'int64':  ('int64',    'Int64'),
+    'uint64': ('uint64',   'UInt64'),
+    'float':  ('single',   'Float'),
+    'bool':   ('boolean',  'Boolean'),
+    'char':   ('char',     'Char'),
+    'string': ('string',   'String')
+}
 
+def get_delphi_type(type):
+    return delphi_types[type]
+
+class DelphiElement(common.Element):
     delphi_le_convert_types = {
         'int8':   'Int8',
         'uint8':  'UInt8',
@@ -137,7 +140,7 @@ class DelphiElement(common.Element):
     }
 
     def get_delphi_type(self):
-        return DelphiElement.delphi_types[self.get_type()]
+        return get_delphi_type(self.get_type())
 
     def get_delphi_le_convert_type(self):
         return DelphiElement.delphi_le_convert_types[self.get_type()]
