@@ -336,5 +336,5 @@ com['examples'].append({
 com['examples'].append({
 'type': 'threshold',
 'name': 'Threshold',
-'values': [(('Dust Density', 'dust density', 'Dust Density'), 'uint16', None, 'µg/m³', 'µg/m³', 10000, '>', 'uint16', 10, 0, None)]
+'values': [(('Dust Density', 'dust density', 'Dust Density'), 'uint16', None, 'µg/m³', 'µg/m³', 10000, '>', 10, 0, None)]
 })

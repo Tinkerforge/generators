@@ -290,5 +290,5 @@ com['examples'].append({
 com['examples'].append({
 'type': 'threshold',
 'name': 'Threshold',
-'values': [(('CO2 Concentration', 'CO2 concentration', 'CO2 Concentration'), 'uint16', None, 'ppm', 'ppm', 10000, '>', 'int16', 750, 0, None)]
+'values': [(('CO2 Concentration', 'CO2 concentration', 'CO2 Concentration'), 'uint16', None, 'ppm', 'ppm', 10000, '>', 750, 0, None)]
 })

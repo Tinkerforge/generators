@@ -506,5 +506,5 @@ com['examples'].append({
 com['examples'].append({
 'type': 'threshold',
 'name': 'Threshold',
-'values': [(('Humidity', 'humidity', 'Humidity'), 'uint16', 10.0, '%RH/10', '%RH', 10000, 'o', 'uint16', 30, 60, 'Recommended humiditiy for human comfort is 30 to 60 %RH.')]
+'values': [(('Humidity', 'humidity', 'Humidity'), 'uint16', 10.0, '%RH/10', '%RH', 10000, 'o', 30, 60, 'Recommended humiditiy for human comfort is 30 to 60 %RH.')]
 })

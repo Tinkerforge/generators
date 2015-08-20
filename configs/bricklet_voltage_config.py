@@ -498,5 +498,5 @@ com['examples'].append({
 com['examples'].append({
 'type': 'threshold',
 'name': 'Threshold',
-'values': [(('Voltage', 'voltage', 'Voltage'), 'uint16', 1000.0, 'mV', 'V', 10000, '>', 'uint16', 5, 0, None)]
+'values': [(('Voltage', 'voltage', 'Voltage'), 'uint16', 1000.0, 'mV', 'V', 10000, '>', 5, 0, None)]
 })

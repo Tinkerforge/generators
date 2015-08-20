@@ -376,5 +376,5 @@ com['examples'].append({
 com['examples'].append({
 'type': 'threshold',
 'name': 'Threshold',
-'values': [(('Illuminance', 'illuminance', 'Illuminance'), 'uint32', 100.0, 'Lux/100', 'Lux', 10000, '>', 'uint32', 1000, 0, 'Too bright, close the curtains!')]
+'values': [(('Illuminance', 'illuminance', 'Illuminance'), 'uint32', 100.0, 'Lux/100', 'Lux', 10000, '>', 1000, 0, 'Too bright, close the curtains!')]
 })

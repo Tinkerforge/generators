@@ -539,5 +539,5 @@ com['examples'].append({
 com['examples'].append({
 'type': 'threshold',
 'name': 'Threshold',
-'values': [(('Ozone Concentration', 'ozone concentration', 'Ozone Concentration'), 'uint16', None, 'ppb', 'ppb', 10000, '>', 'int16', 20, 0, None)]
+'values': [(('Ozone Concentration', 'ozone concentration', 'Ozone Concentration'), 'uint16', None, 'ppb', 'ppb', 10000, '>', 20, 0, None)]
 })

@@ -347,5 +347,5 @@ com['examples'].append({
 com['examples'].append({
 'type': 'threshold',
 'name': 'Threshold',
-'values': [(('Temperature', 'temperature', 'Temperature'), 'int16', 100.0, '°C/100', '°C', 10000, '>', 'int16', 30, 0, 'It is too hot, we need air conditioning!')]
+'values': [(('Temperature', 'temperature', 'Temperature'), 'int16', 100.0, '°C/100', '°C', 10000, '>', 30, 0, 'It is too hot, we need air conditioning!')]
 })

@@ -294,5 +294,5 @@ com['examples'].append({
 com['examples'].append({
 'type': 'threshold',
 'name': 'Threshold',
-'values': [(('Reflectivity', 'reflectivity', 'Reflectivity'), 'uint16', None, None, None, 1000, '>', 'uint16', 2000, 0, None)]
+'values': [(('Reflectivity', 'reflectivity', 'Reflectivity'), 'uint16', None, None, None, 1000, '>', 2000, 0, None)]
 })

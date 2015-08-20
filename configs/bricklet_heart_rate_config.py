@@ -365,5 +365,5 @@ com['examples'].append({
 com['examples'].append({
 'type': 'threshold',
 'name': 'Threshold',
-'values': [(('Heart Rate', 'heart rate', 'Heart Rate'), 'uint16', None, 'bpm', 'bpm', 10000, '>', 'uint16', 100, 0, None)]
+'values': [(('Heart Rate', 'heart rate', 'Heart Rate'), 'uint16', None, 'bpm', 'bpm', 10000, '>', 100, 0, None)]
 })

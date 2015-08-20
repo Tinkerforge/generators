@@ -860,5 +860,5 @@ com['examples'].append({
 com['examples'].append({
 'type': 'threshold',
 'name': 'Threshold',
-'values': [(('Power', 'power', 'Power'), 'int32', 1000.0, 'mW', 'W', 10000, '>', 'int32', 10, 0, None)]
+'values': [(('Power', 'power', 'Power'), 'int32', 1000.0, 'mW', 'W', 10000, '>', 10, 0, None)]
 })

@@ -350,5 +350,5 @@ com['examples'].append({
 'type': 'threshold',
 'name': 'Threshold',
 # FIXME: name mismatch here because of a naming inconsistency in the API
-'values': [(('Distance', 'distance value', 'Distance Value'), 'uint16', None, None, None, 10000, '<', 'uint16', 200, 0, None)]
+'values': [(('Distance', 'distance value', 'Distance Value'), 'uint16', None, None, None, 10000, '<', 200, 0, None)]
 })

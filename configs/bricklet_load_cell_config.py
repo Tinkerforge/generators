@@ -526,5 +526,5 @@ com['examples'].append({
 com['examples'].append({
 'type': 'threshold',
 'name': 'Threshold',
-'values': [(('Weight', 'weight', 'Weight'), 'int32', 1000.0, 'g', 'kg', 1000, '>', 'int32', 2, 0, None)]
+'values': [(('Weight', 'weight', 'Weight'), 'int32', 1000.0, 'g', 'kg', 1000, '>', 2, 0, None)]
 })

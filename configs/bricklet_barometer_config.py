@@ -653,5 +653,5 @@ com['examples'].append({
 com['examples'].append({
 'type': 'threshold',
 'name': 'Threshold',
-'values': [(('Air Pressure', 'air pressure', 'Air Pressure'), 'int32', 1000.0, 'mbar/1000', 'mbar', 10000, '>', 'int32', 1025, 0, 'Enjoy the potentially good weather!')]
+'values': [(('Air Pressure', 'air pressure', 'Air Pressure'), 'int32', 1000.0, 'mbar/1000', 'mbar', 10000, '>', 1025, 0, 'Enjoy the potentially good weather!')]
 })

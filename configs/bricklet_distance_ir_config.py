@@ -570,5 +570,5 @@ com['examples'].append({
 com['examples'].append({
 'type': 'threshold',
 'name': 'Threshold',
-'values': [(('Distance', 'distance', 'Distance'), 'uint16', 10.0, 'mm', 'cm', 10000, '<', 'uint16', 30, 0, None)]
+'values': [(('Distance', 'distance', 'Distance'), 'uint16', 10.0, 'mm', 'cm', 10000, '<', 30, 0, None)]
 })

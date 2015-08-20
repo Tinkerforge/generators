@@ -576,5 +576,5 @@ com['examples'].append({
 com['examples'].append({
 'type': 'threshold',
 'name': 'Threshold',
-'values': [(('Current', 'current', 'Current'), 'int16', 1000.0, 'mA', 'A', 10000, '>', 'int16', 5, 0, None)]
+'values': [(('Current', 'current', 'Current'), 'int16', 1000.0, 'mA', 'A', 10000, '>', 5, 0, None)]
 })

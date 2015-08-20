@@ -616,5 +616,5 @@ com['examples'].append({
 com['examples'].append({
 'type': 'threshold',
 'name': 'Threshold',
-'values': [(('Temperature', 'temperature', 'Temperature'), 'int32', 100.0, '°C/100', '°C', 10000, '>', 'uint16', 120, 0, None)]
+'values': [(('Temperature', 'temperature', 'Temperature'), 'int32', 100.0, '°C/100', '°C', 10000, '>', 120, 0, None)]
 })

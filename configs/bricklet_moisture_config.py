@@ -344,5 +344,5 @@ com['examples'].append({
 'type': 'threshold',
 'name': 'Threshold',
 # FIXME: name mismatch here because of a naming inconsistency in the API
-'values': [(('Moisture', 'moisture value', 'Moisture Value'), 'uint16', None, None, None, 1000, '>', 'uint16', 200, 0, None)]
+'values': [(('Moisture', 'moisture value', 'Moisture Value'), 'uint16', None, None, None, 1000, '>', 200, 0, None)]
 })
