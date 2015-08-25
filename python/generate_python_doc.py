@@ -37,7 +37,7 @@ import python_common
 
 class PythonDocDevice(python_common.PythonDevice):
     def replace_python_function_links(self, text):
-        cls = self.get_camel_case_name()
+        cls = self.get_python_class_name()
         for other_packet in self.get_packets():
             name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
             if other_packet.get_type() == 'callback':
@@ -60,7 +60,7 @@ class PythonDocDevice(python_common.PythonDevice):
     def get_python_methods(self, type):
         methods = []
         func_start = '.. py:function:: '
-        cls = self.get_camel_case_name()
+        cls = self.get_python_class_name()
         for packet in self.get_packets('function'):
             if packet.get_doc()[0] != type:
                 continue
@@ -83,7 +83,7 @@ class PythonDocDevice(python_common.PythonDevice):
     def get_python_callbacks(self):
         cbs = ''
         func_start = '.. py:attribute:: '
-        cls = self.get_camel_case_name()
+        cls = self.get_python_class_name()
         for packet in self.get_packets('callback'):
             param_desc = packet.get_python_parameter_desc('out')
             desc = packet.get_python_formatted_doc()
@@ -309,7 +309,7 @@ Konstanten
         }
 
         cre = common.select_lang(create_str).format(self.get_doc_rst_ref_name(),
-                                                    self.get_camel_case_name(),
+                                                    self.get_python_class_name(),
                                                     self.get_underscore_name())
         reg = common.select_lang(register_str).format(self.get_doc_rst_ref_name(),
                                                       self.get_camel_case_name())
@@ -326,7 +326,7 @@ Konstanten
         if c:
             api_str += common.select_lang(common.ccf_str).format(reg, ccf)
             api_str += common.select_lang(c_str).format(self.get_doc_rst_ref_name(),
-                                                        self.get_camel_case_name(),
+                                                        self.get_python_class_name(),
                                                         self.get_underscore_name(),
                                                         c)
 
@@ -334,7 +334,7 @@ Konstanten
         if self.get_camel_case_category() == 'Brick':
             article = 'einen'
         api_str += common.select_lang(const_str).format(self.get_doc_rst_ref_name(),
-                                                        self.get_camel_case_name(),
+                                                        self.get_python_class_name(),
                                                         article,
                                                         self.get_long_display_name())
 
@@ -363,7 +363,7 @@ class PythonDocPacket(python_common.PythonPacket):
         text = common.handle_rst_word(text)
         text = common.handle_rst_substitutions(text, self)
 
-        prefix = self.get_device().get_camel_case_name() + '.'
+        prefix = self.get_device().get_python_class_name() + '.'
         if self.get_underscore_name() == 'set_response_expected':
             text += common.format_function_id_constants(prefix, self.get_device())
         else:
