@@ -130,8 +130,8 @@ class ShellElement(common.Element):
         if self.get_constant_group() is not None:
             symbols = []
 
-            for constant_item in self.get_constant_group().get_items():
-                symbols.append('{0}: {1}'.format(constant_item.get_dash_name(), constant_item.get_value()))
+            for constant in self.get_constant_group().get_constants():
+                symbols.append('{0}: {1}'.format(constant.get_dash_name(), constant.get_value()))
 
             symbols_doc = ' (' + ', '.join(symbols) + ')'
 
@@ -154,8 +154,8 @@ class ShellElement(common.Element):
         if self.get_constant_group() != None:
             symbols = {}
 
-            for constant_item in self.get_constant_group().get_items():
-                symbols[constant_item.get_dash_name()] = constant_item.get_value()
+            for constant in self.get_constant_group().get_constants():
+                symbols[constant.get_dash_name()] = constant.get_value()
 
             if self.get_cardinality() > 1 and type_converter != 'string':
                 return 'create_array_converter(ctx, create_symbol_converter(ctx, {0}, {1}), {2}, {3})'.format(type_converter, symbols, default_value, self.get_cardinality())

@@ -394,8 +394,8 @@ class ShellDocPacket(shell_common.ShellPacket):
         text = common.handle_rst_word(text)
         text = common.handle_rst_substitutions(text, self)
 
-        def constant_format(prefix, constant_group, constant_item, value):
-            c = '* ``{0}`` = {1}, '.format(constant_item.get_dash_name(), value)
+        def constant_format(prefix, constant_group, constant, value):
+            c = '* ``{0}`` = {1}, '.format(constant.get_dash_name(), value)
 
             for_ = {
             'en': 'for',

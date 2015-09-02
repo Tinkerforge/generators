@@ -82,7 +82,7 @@ uses
         return function_ids + '\n'
 
     def get_delphi_constants(self):
-        constant_format = '  {prefix}_{constant_group_upper_case_name}_{constant_item_upper_case_name} = {constant_item_value};\n'
+        constant_format = '  {prefix}_{constant_group_upper_case_name}_{constant_upper_case_name} = {constant_value};\n'
 
         return self.get_formatted_constants(constant_format, prefix=self.get_upper_case_category()+'_'+self.get_upper_case_name()) + '\n'
 

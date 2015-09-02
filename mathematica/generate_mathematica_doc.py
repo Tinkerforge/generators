@@ -389,9 +389,9 @@ class MathematicaDocPacket(common.Packet):
         if self.get_underscore_name() == 'set_response_expected':
             text += common.format_function_id_constants(prefix, self.get_device()).replace('_', 'U')
         else:
-            def constant_format(prefix, constant_group, constant_item, value):
+            def constant_format(prefix, constant_group, constant, value):
                 return '* {0}{1}U{2} = {3}\n'.format(prefix, constant_group.get_upper_case_name().replace('_', 'U'),
-                                                     constant_item.get_upper_case_name().replace('_', 'U'), value)
+                                                     constant.get_upper_case_name().replace('_', 'U'), value)
 
             text += common.format_constants(prefix, self, char_format='``ToCharacterCode["{0}"][[0]]``',
                                             constant_format_func=constant_format)

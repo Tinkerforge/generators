@@ -125,14 +125,14 @@ use constant FUNCTION_{0} => {1};"""
         str_constants = '\n'
         str_constant = 'use constant {0}_{1} => {2};\n'
         for constant_group in self.get_constant_groups():
-            for constant_item in constant_group.get_items():
+            for constant in constant_group.get_constants():
                 if constant_group.get_type() == 'char':
-                    value = "'{0}'".format(constant_item.get_value())
+                    value = "'{0}'".format(constant.get_value())
                 else:
-                    value = str(constant_item.get_value())
+                    value = str(constant.get_value())
 
                 str_constants += str_constant.format(constant_group.get_upper_case_name(),
-                                                     constant_item.get_upper_case_name(),
+                                                     constant.get_upper_case_name(),
                                                      value)
 
         return '\n'.join(callbacks) + '\n' + '\n'.join(function_ids) + str_constants + "\n\n=back\n"

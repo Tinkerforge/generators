@@ -108,22 +108,22 @@ namespace Tinkerforge
         return function_ids
 
     def get_csharp_constants(self):
-        constant = """
+        template = """
 \t\t/// <summary>
 \t\t/// </summary>
 \t\tpublic const {0} {1}_{2} = {3};
 """
         constants = []
         for constant_group in self.get_constant_groups():
-            for constant_item in constant_group.get_items():
+            for constant in constant_group.get_constants():
                 if constant_group.get_type() == 'char':
-                    value = "'{0}'".format(constant_item.get_value())
+                    value = "'{0}'".format(constant.get_value())
                 else:
-                    value = str(constant_item.get_value())
+                    value = str(constant.get_value())
 
-                constants.append(constant.format(csharp_common.get_csharp_type(constant_group.get_type(), 1),
+                constants.append(template.format(csharp_common.get_csharp_type(constant_group.get_type(), 1),
                                                  constant_group.get_upper_case_name(),
-                                                 constant_item.get_upper_case_name(),
+                                                 constant.get_upper_case_name(),
                                                  value))
         return '\n' + ''.join(constants)
 

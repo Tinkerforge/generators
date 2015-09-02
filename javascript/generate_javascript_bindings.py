@@ -59,7 +59,7 @@ var Device = require('./Device');
             function_constants += function_constant_statement.format(packet.get_upper_case_name(),
                                                                      packet.get_function_id())
         constant_statement = self.get_javascript_class_name()+\
-        '.{constant_group_upper_case_name}_{constant_item_upper_case_name} = {constant_item_value};\n'
+        '.{constant_group_upper_case_name}_{constant_upper_case_name} = {constant_value};\n'
         constants = self.get_formatted_constants(constant_statement) + '\n'
         return callback_constants+function_constants+constants
 

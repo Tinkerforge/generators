@@ -153,8 +153,8 @@ def call_{0}_{1}(ctx, argv):
                     if element.get_constant_group() != None:
                         symbols = {}
 
-                        for constant_item in element.get_constant_group().get_items():
-                            symbols[constant_item.get_value()] = constant_item.get_dash_name()
+                        for constant in element.get_constant_group().get_constants():
+                            symbols[constant.get_value()] = constant.get_dash_name()
 
                         output_symbols.append(str(symbols))
                     else:
@@ -242,8 +242,8 @@ def dispatch_{0}_{1}(ctx, argv):
                 if element.get_constant_group() != None:
                     symbols = {}
 
-                    for constant_item in element.get_constant_group().get_items():
-                        symbols[constant_item.get_value()] = constant_item.get_dash_name()
+                    for constant in element.get_constant_group().get_constants():
+                        symbols[constant.get_value()] = constant.get_dash_name()
 
                     output_symbols.append(str(symbols))
                 else:

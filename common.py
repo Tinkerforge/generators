@@ -519,9 +519,9 @@ def format_since_firmware(device, packet):
     else:
         return ''
 
-def default_constant_format(prefix, constant_group, constant_item, value):
+def default_constant_format(prefix, constant_group, constant, value):
     return '* {0}{1}_{2} = {3}\n'.format(prefix, constant_group.get_upper_case_name(),
-                                         constant_item.get_upper_case_name(), value)
+                                         constant.get_upper_case_name(), value)
 
 def format_constants(prefix, packet,
                      constants_name={'en': 'constants', 'de': 'Konstanten'},
@@ -543,13 +543,13 @@ Die folgenden {0} sind für diese Funktion verfügbar:
     constants = []
 
     for constant_group in packet.get_constant_groups():
-        for constant_item in constant_group.get_items():
+        for constant in constant_group.get_constants():
             if constant_group.get_type() == 'char':
-                value = char_format.format(constant_item.get_value())
+                value = char_format.format(constant.get_value())
             else:
-                value = str(constant_item.get_value())
+                value = str(constant.get_value())
 
-            constants.append(constant_format_func(prefix, constant_group, constant_item, value))
+            constants.append(constant_format_func(prefix, constant_group, constant, value))
 
     if len(constants) > 0:
         return select_lang(constants_intro).format(select_lang(constants_name)) + ''.join(constants)
@@ -976,7 +976,7 @@ class NameMixin:
     def get_dash_name(self):
         return self.get_underscore_name().replace('_', '-')
 
-class ConstantItem(NameMixin):
+class Constant(NameMixin):
     def __init__(self, raw_data):
         self.raw_data = raw_data
 
@@ -994,10 +994,10 @@ class ConstantGroup(NameMixin):
         self.type = type
         self.raw_data = raw_data
         self.elements = [element]
-        self.items = []
+        self.constants = []
 
-        for raw_item in raw_data[2]:
-            self.items.append(generator.get_constant_item_class()(raw_item))
+        for raw_constant in raw_data[2]:
+            self.constants.append(generator.get_constant_class()(raw_constant))
 
     def add_elements(self, elements):
         self.elements += elements
@@ -1011,8 +1011,8 @@ class ConstantGroup(NameMixin):
     def get_type(self):
         return self.type
 
-    def get_items(self):
-        return self.items
+    def get_constants(self):
+        return self.constants
 
     def get_elements(self):
         return self.elements
@@ -1026,7 +1026,7 @@ class Element:
         self.constant_group = None
 
         if len(self.raw_data) > 4:
-            self.constant_group = generator.get_constant_group_class()(self, self.raw_data[1], self.raw_data[4], generator)
+            self.constant_group = generator.get_constant_group_class()(self, raw_data[1], raw_data[4], generator)
 
     def get_packet(self):
         return self.packet
@@ -1128,8 +1128,8 @@ class Packet(NameMixin):
             if constant_group is not None:
                 check_name(constant_group.get_camel_case_name(), constant_group.get_underscore_name())
 
-                for constant_item in constant_group.get_items():
-                    check_name(constant_item.get_camel_case_name(), constant_item.get_underscore_name(), is_constant=True)
+                for constant in constant_group.get_constants():
+                    check_name(constant.get_camel_case_name(), constant.get_underscore_name(), is_constant=True)
 
         self.constant_groups = []
 
@@ -1146,15 +1146,15 @@ class Packet(NameMixin):
                 if constant_group.get_type() != known_constant_group.get_type():
                     raise ValueError('Multiple instance of constant group {0} with different types'.format(constant_group.get_underscore_name()))
 
-                for constant_item, known_constant_item in zip(constant_group.get_items(), known_constant_group.get_items()):
-                    a = known_constant_item.get_underscore_name()
-                    b = constant_item.get_underscore_name()
+                for constant, known_constant in zip(constant_group.get_constants(), known_constant_group.get_constants()):
+                    a = known_constant.get_underscore_name()
+                    b = constant.get_underscore_name()
 
                     if a != b:
                         raise ValueError('Constant item name ({0} != {1}) mismatch in constant group {2}'.format(a, b, constant_group.get_underscore_name()))
 
-                    a = known_constant_item.get_value()
-                    b = constant_item.get_value()
+                    a = known_constant.get_value()
+                    b = constant.get_value()
 
                     if a != b:
                         raise ValueError('Constant item value ({0} != {1}) mismatch in constant group {2}'.format(a, b, constant_group.get_underscore_name()))
@@ -1243,15 +1243,15 @@ class Packet(NameMixin):
         constants = []
 
         for constant_group in self.get_constant_groups():
-            for constant_item in constant_group.get_items():
+            for constant in constant_group.get_constants():
                 if constant_group.get_type() == 'char':
-                    value = char_format.format(constant_item.get_value())
+                    value = char_format.format(constant.get_value())
                 else:
-                    value = str(constant_item.get_value())
+                    value = str(constant.get_value())
 
                 constants.append(constant_format.format(constant_group_upper_case_name=constant_group.get_upper_case_name(),
-                                                        constant_item_upper_case_name=constant_item.get_upper_case_name(),
-                                                        constant_item_value=value,
+                                                        constant_upper_case_name=constant.get_upper_case_name(),
+                                                        constant_value=value,
                                                         **extra_value))
 
         return ''.join(constants)
@@ -1313,15 +1313,15 @@ class Device(NameMixin):
                     if constant_group.get_type() != known_constant_group.get_type():
                         raise ValueError('Multiple instance of constant group {0} with different types'.format(constant_group.get_underscore_name()))
 
-                    for constant_item, known_constant_item in zip(constant_group.get_items(), known_constant_group.get_items()):
-                        a = known_constant_item.get_underscore_name()
-                        b = constant_item.get_underscore_name()
+                    for constant, known_constant in zip(constant_group.get_constants(), known_constant_group.get_constants()):
+                        a = known_constant.get_underscore_name()
+                        b = constant.get_underscore_name()
 
                         if a != b:
                             raise ValueError('Constant item name ({0} != {1}) mismatch in constant group {2}'.format(a, b, constant_group.get_underscore_name()))
 
-                        a = known_constant_item.get_value()
-                        b = constant_item.get_value()
+                        a = known_constant.get_value()
+                        b = constant.get_value()
 
                         if a != b:
                             raise ValueError('Constant item value ({0} != {1}) mismatch in constant group {2}'.format(a, b, constant_group.get_underscore_name()))
@@ -1410,17 +1410,17 @@ class Device(NameMixin):
         constants = []
 
         for constant_group in self.get_constant_groups():
-            for constant_item in constant_group.get_items():
+            for constant in constant_group.get_constants():
                 if constant_group.get_type() == 'char':
-                    value = char_format.format(constant_item.get_value())
+                    value = char_format.format(constant.get_value())
                 else:
-                    value = str(constant_item.get_value())
+                    value = str(constant.get_value())
 
                 constants.append(constant_format.format(constant_group_upper_case_name=constant_group.get_upper_case_name(),
                                                         constant_group_camel_case_name=constant_group.get_camel_case_name(),
-                                                        constant_item_upper_case_name=constant_item.get_upper_case_name(),
-                                                        constant_item_camel_case_name=constant_item.get_camel_case_name(),
-                                                        constant_item_value=value,
+                                                        constant_upper_case_name=constant.get_upper_case_name(),
+                                                        constant_camel_case_name=constant.get_camel_case_name(),
+                                                        constant_value=value,
                                                         **extra_value))
 
         return ''.join(constants)
@@ -1467,8 +1467,8 @@ class Generator:
     def get_constant_group_class(self):
         return ConstantGroup
 
-    def get_constant_item_class(self):
-        return ConstantItem
+    def get_constant_class(self):
+        return Constant
 
     def get_bindings_root_directory(self):
         return self.bindings_root_directory

@@ -385,34 +385,34 @@ public class {0} extends Device {{
         return function_ids
 
     def get_java_constants(self):
-        constant = '\tpublic final static {0} {1}_{2} = {3}{4};\n'
+        template = '\tpublic final static {0} {1}_{2} = {3}{4};\n'
         constants = []
         for constant_group in self.get_constant_groups():
             typ = java_common.get_java_type(constant_group.get_type())
 
-            for constant_item in constant_group.get_items():
+            for constant in constant_group.get_constants():
                 if constant_group.get_type() == 'char':
                     cast = ''
                     if self.get_generator().is_octave():
-                        value = "new String(new char[]{{'{0}'}})".format(constant_item.get_value())
+                        value = "new String(new char[]{{'{0}'}})".format(constant.get_value())
                         typ = 'String'
                     else:
-                        value = "'{0}'".format(constant_item.get_value())
+                        value = "'{0}'".format(constant.get_value())
                 else:
                     if typ == 'int':
                         cast = '' # no need to cast int, its the default type for number literals
                     else:
                         cast = '({0})'.format(typ)
 
-                    value = str(constant_item.get_value())
+                    value = str(constant.get_value())
 
                     if typ == 'long':
                         cast = ''
                         value += 'L' # mark longs as such, because int is the default type for number literals
 
-                constants.append(constant.format(typ,
+                constants.append(template.format(typ,
                                                  constant_group.get_upper_case_name(),
-                                                 constant_item.get_upper_case_name(),
+                                                 constant.get_upper_case_name(),
                                                  cast,
                                                  value))
         return '\n' + ''.join(constants)

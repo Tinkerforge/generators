@@ -94,7 +94,7 @@ class {0} extends Device
 
 
     def get_php_constants(self):
-        constant_format = '    const {constant_group_upper_case_name}_{constant_item_upper_case_name} = {constant_item_value};\n'
+        constant_format = '    const {constant_group_upper_case_name}_{constant_upper_case_name} = {constant_value};\n'
 
         return '\n' + self.get_formatted_constants(constant_format)
 

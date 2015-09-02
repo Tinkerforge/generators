@@ -76,7 +76,7 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
         return function_ids
 
     def get_ruby_constants(self):
-        constant_format = '    {constant_group_upper_case_name}_{constant_item_upper_case_name} = {constant_item_value} # :nodoc:\n'
+        constant_format = '    {constant_group_upper_case_name}_{constant_upper_case_name} = {constant_value} # :nodoc:\n'
 
         return '\n' + self.get_formatted_constants(constant_format)
 
