@@ -32,9 +32,10 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the illuminance of the ambient light sensor. The value
-has a range of 0 to 6400000 and is given in lux/100, i.e. a value
-of 45000 means that an illuminance of 450lux is measured.
+Returns the illuminance of the ambient light sensor. The measurement range goes
+up to about 100000lux, but above 64000lux the precision starts to drop.
+The illuminance is given in lux/100, i.e. a value of 450000 means that an
+illuminance of 4500lux is measured.
 
 If you want to get the illuminance periodically, it is recommended to use the
 callback :func:`Illuminance` and set the period with 
@@ -42,9 +43,10 @@ callback :func:`Illuminance` and set the period with
 """,
 'de':
 """
-Gibt die Beleuchtungsstärke des Umgebungslichtsensors zurück. Der Wertbereich
-ist von 0 bis 6400000 und ist in Lux/100 angegeben, d.h. bei einem Wert von
-45000 wurde eine Beleuchtungsstärke von 450Lux gemessen.
+Gibt die Beleuchtungsstärke des Umgebungslichtsensors zurück. Der Messbereich
+erstreckt sich bis über 100000Lux, aber ab 64000Lux nimmt die Messgenauigkeit
+ab. Die Beleuchtungsstärke ist in Lux/100 angegeben, d.h. bei einem Wert von
+450000 wurde eine Beleuchtungsstärke von 4500Lux gemessen.
 
 Wenn die Beleuchtungsstärke periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Illuminance` zu nutzen und die Periode mit 
@@ -246,6 +248,9 @@ com['packets'].append({
 """
 Sets the configuration. It is possible to configure an illuminance range
 between 0-600lux and 0-64000lux and an integration time between 50ms and 400ms.
+The upper bound of the illuminance range is not a hard limit. Typically the
+sensor will measure up to 150% of the configured illuminance range. But after
+the 100% mark the precision starts to drop.
 
 A smaller illuminance range increases the resolution of the data. An
 increase in integration time will result in less noise on the data.
@@ -260,8 +265,11 @@ The default values are 0-8000lux illuminance range and 200ms integration time.
 'de':
 """
 Setzt die Konfiguration. Es ist möglich den Helligkeitswertebereich zwischen
-0-600 Lux und 0-64000Lux sowie eine Integrationszeit zwischen 50ms und 400ms
-zu konfigurieren.
+0-600Lux und 0-64000Lux sowie eine Integrationszeit zwischen 50ms und 400ms
+zu konfigurieren. Die obere Grenze des Helligkeitswertebereich ist keine harte
+Schranke. Typischer Weise misst der Sensor bis zu 150% des eingestellten
+Helligkeitswertebereichs. Allerdings nimmt ab der 100% Marke die Messgenauigkeit
+ab.
 
 Ein kleinerer Helligkeitswertebereich erhöht die Auflösung der Daten. Eine
 Erhöhung der Integrationszeit verringert das Rauschen auf den Daten.
