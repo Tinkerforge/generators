@@ -2376,6 +2376,56 @@ Gibt das Authentifizierungsgeheimnis zurück, wie von
 }]
 })
 
+com['packets'].append({
+'type': 'function', 
+'name': ('StartWifi2Bootloader', 'start_wifi2_bootloader'), 
+'elements': [('result', 'int8', 1, 'out')], 
+'since_firmware': [2, 4, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('WriteWifi2Flash', 'write_wifi2_flash'), 
+'elements': [('data', 'uint8', 60, 'in'),
+             ('length', 'uint8', 1, 'in'),
+             ('result', 'int8', 1, 'out')], 
+'since_firmware': [2, 4, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('ReadWifi2Flash', 'read_wifi2_flash'), 
+'elements': [('length_in', 'uint8', 1, 'in'),
+             ('data', 'uint8', 60, 'out'),
+             ('length_out', 'uint8', 1, 'out')], 
+'since_firmware': [2, 4, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+
 com['examples'].append({
 'type': 'getter',
 'name': 'Stack Status',
