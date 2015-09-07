@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/prism.css">
+    <script type="text/javascript" src="js/FileSaver.js"></script>
+    <script type="text/javascript" src="../blockly_compressed.js"></script>
+    <script type="text/javascript" src="../blocks_compressed.js"></script>
+    <script type="text/javascript" src="../msg/js/en.js"></script>
+    <script type="text/javascript" src="../javascript_compressed.js"></script>
+    <script type="text/javascript" src="../python_compressed.js"></script>
+    <script type="text/javascript" src="../blocks/tinkerforge.js"></script>
+    <title>Tinkerforge Visual Programming Language</title>
+  </head>
+
+  <body>
+    <input id="workspaceFileUploader" type="file" onchange="workspaceFileUploadRequest(this)" />
+
+    <table id="tableHeader">
+      <tr>
+        <td>
+          <h2 align="center">Tinkerforge Visual Programming Language</h2>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <hr/>
+        </td>
+      </tr>
+      <tr>
+        <td id="tdCompatibilityErrorMessage" align="center">
+          <p id="pCompatibilityErrorMessage">Seems like the browser you are using is not compatible to be used for Tinkerforge Visual Programming Language.</p>
+        </td>
+      </tr>
+      <tr>
+        <td id ="tdTableHeaderToolbar" align="center">
+          <button id="buttonToolbar" title="Show the workspace" onclick="clickedEditor();">
+            <img src="media/editor.png" width="32" height="32"/>
+          </button>
+          <button id="buttonToolbar" title="Execute code generated from current workspace" onclick="clickedExecute();">
+            <img src="media/execute.png" width="32" height="32"/>
+          </button>
+          <button id="buttonToolbar" title="View generated code" onclick="clickedViewCode();">
+            <img src="media/code.png" width="32" height="32"/>
+          </button>
+          <button id="buttonToolbar" title="Save current state of the workspace" onclick="clickedSave();">
+            <img src="media/save.png" width="32" height="32"/>
+          </button>
+          <button id="buttonToolbar" title="Load previously saved workspace state" onclick="clickedLoadWorkspace();">
+            <img src="media/restore.png" width="32" height="32"/>
+          </button>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <hr/>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Blockly editor -->
+    <div id="blocklyArea"/>
+    <div id="blocklyDiv"/>
+
+    <!-- Execution view -->
+    <div id="divExecute">
+      <table id="tableExecute">
+        <tr>
+          <td align="center">
+            <button id="buttonToolbar" title="Run graphical program from workspace" onclick="clickedRunProgram();">
+              <img src="media/runcode.png" width="32" height="32"/>
+            </button>
+            <button id="buttonToolbar" title="Stop the graphical program" onclick="clickedStopProgram();">
+              <img src="media/stopcode.png" width="32" height="32"/>
+            </button>
+            <button id="buttonToolbar" title="Clear output" onclick="clickedClearOutput();">
+              <img src="media/clear.png" width="32" height="32"/>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <textarea readonly id="textareaExecute" rows="32"></textarea>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Code viewer -->
+    <div id="divCode">
+      <table id="tableCode">
+        <tr>
+          <td align="center">
+            <b>Generate Code:</b>
+            <select id="selectLanguageCode" onchange="updateCodeViewer()">
+              <option value="js">JavaScript</option>
+              <option value="py">Python</option>
+            </select>
+          </td>
+        </tr>
+      </table>
+<pre>
+<code id="codeContent" class="line-numbers language-javascript">
+</code>
+</pre>
+    </div>
+
+    <xml id="blocklyToolbox">
+      <category name="Tinkerforge">
+        <category name="Bricks">
+          <category name="IMU">
+            <block type="brick_imu_get_quaternion">
+              <value name="BRICK_IMU_UID">
+                <block type="text">
+                  <field name="TEXT"></field>
+                </block>
+              </value>
+              <value name="BRICK_IMU_HOST">
+                <block type="text">
+                  <field name="TEXT">localhost</field>
+                </block>
+              </value>
+              <value name="BRICK_IMU_PORT">
+                <block type="math_number">
+                  <field name="NUM">4223</field>
+                </block>
+              </value>
+            </block>
+          </category>
+        </category>
+        <category name="Bricklets">
+          <category name="Humidity">
+            <block type="bricklet_humidity_get_humidity">
+              <value name="BRICKLET_HUMIDITY_UID">
+                <block type="text">
+                  <field name="TEXT"></field>
+                </block>
+              </value>
+              <value name="BRICKLET_HUMIDITY_HOST">
+                <block type="text">
+                  <field name="TEXT">localhost</field>
+                </block>
+              </value>
+              <value name="BRICKLET_HUMIDITY_PORT">
+                <block type="math_number">
+                  <field name="NUM">4223</field>
+                </block>
+              </value>
+            </block>
+          </category>
+          <category name="Dual Button">
+            <block type="bricklet_dual_button_set_led_state">
+              <value name="BRICKLET_DUAL_BUTTON_UID">
+                <block type="text">
+                  <field name="TEXT"></field>
+                </block>
+              </value>
+              <value name="BRICKLET_DUAL_BUTTON_HOST">
+                <block type="text">
+                  <field name="TEXT">localhost</field>
+                </block>
+              </value>
+              <value name="BRICKLET_DUAL_BUTTON_PORT">
+                <block type="math_number">
+                  <field name="NUM">4223</field>
+                </block>
+              </value>
+            </block>
+          </category>
+        </category>
+      </category>
+      <sep></sep>
+      <category name="Logic">
+        <block type="controls_if"></block>
+        <block type="logic_compare"></block>
+        <block type="logic_operation"></block>
+        <block type="logic_negate"></block>
+        <block type="logic_boolean"></block>
+        <block type="logic_null"></block>
+        <block type="logic_ternary"></block>
+      </category>
+      <category name="Loops">
+        <block type="controls_repeat_ext">
+          <value name="TIMES">
+            <block type="math_number">
+              <field name="NUM">10</field>
+            </block>
+          </value>
+        </block>
+        <block type="controls_whileUntil"></block>
+        <block type="controls_for">
+          <value name="FROM">
+            <block type="math_number">
+              <field name="NUM">1</field>
+            </block>
+          </value>
+          <value name="TO">
+            <block type="math_number">
+              <field name="NUM">10</field>
+            </block>
+          </value>
+          <value name="BY">
+            <block type="math_number">
+              <field name="NUM">1</field>
+            </block>
+          </value>
+        </block>
+        <block type="controls_forEach"></block>
+        <block type="controls_flow_statements"></block>
+      </category>
+      <category name="Math">
+        <block type="math_number"></block>
+        <block type="math_arithmetic"></block>
+        <block type="math_single"></block>
+        <block type="math_trig"></block>
+        <block type="math_constant"></block>
+        <block type="math_number_property"></block>
+        <block type="math_change">
+          <value name="DELTA">
+            <block type="math_number">
+              <field name="NUM">1</field>
+            </block>
+          </value>
+        </block>
+        <block type="math_round"></block>
+        <block type="math_on_list"></block>
+        <block type="math_modulo"></block>
+        <block type="math_constrain">
+          <value name="LOW">
+            <block type="math_number">
+              <field name="NUM">1</field>
+            </block>
+          </value>
+          <value name="HIGH">
+            <block type="math_number">
+              <field name="NUM">100</field>
+            </block>
+          </value>
+        </block>
+        <block type="math_random_int">
+          <value name="FROM">
+            <block type="math_number">
+              <field name="NUM">1</field>
+            </block>
+          </value>
+          <value name="TO">
+            <block type="math_number">
+              <field name="NUM">100</field>
+            </block>
+          </value>
+        </block>
+        <block type="math_random_float"></block>
+      </category>
+      <category name="Text">
+        <block type="text"></block>
+        <block type="text_join"></block>
+        <block type="text_append">
+          <value name="TEXT">
+            <block type="text"></block>
+          </value>
+        </block>
+        <block type="text_length"></block>
+        <block type="text_isEmpty"></block>
+        <block type="text_indexOf">
+          <value name="VALUE">
+            <block type="variables_get">
+              <field name="VAR" class="textVar">...</field>
+            </block>
+          </value>
+        </block>
+        <block type="text_charAt">
+          <value name="VALUE">
+            <block type="variables_get">
+              <field name="VAR" class="textVar">...</field>
+            </block>
+          </value>
+        </block>
+        <block type="text_getSubstring">
+          <value name="STRING">
+            <block type="variables_get">
+              <field name="VAR" class="textVar">...</field>
+            </block>
+          </value>
+        </block>
+        <block type="text_changeCase"></block>
+        <block type="text_trim"></block>
+        <block type="text_print"></block>
+        <block type="text_prompt_ext">
+          <value name="TEXT">
+            <block type="text"></block>
+          </value>
+        </block>
+      </category>
+      <category name="Lists">
+        <block type="lists_create_empty"></block>
+        <block type="lists_create_with"></block>
+        <block type="lists_repeat">
+          <value name="NUM">
+            <block type="math_number">
+              <field name="NUM">5</field>
+            </block>
+          </value>
+        </block>
+        <block type="lists_length"></block>
+        <block type="lists_isEmpty"></block>
+        <block type="lists_indexOf">
+          <value name="VALUE">
+            <block type="variables_get">
+              <field name="VAR" class="listVar">...</field>
+            </block>
+          </value>
+        </block>
+        <block type="lists_getIndex">
+          <value name="VALUE">
+            <block type="variables_get">
+              <field name="VAR" class="listVar">...</field>
+            </block>
+          </value>
+        </block>
+        <block type="lists_setIndex">
+          <value name="LIST">
+            <block type="variables_get">
+              <field name="VAR" class="listVar">...</field>
+            </block>
+          </value>
+        </block>
+        <block type="lists_getSublist">
+          <value name="LIST">
+            <block type="variables_get">
+              <field name="VAR" class="listVar">...</field>
+            </block>
+          </value>
+        </block>
+        <block type="lists_split">
+          <value name="DELIM">
+            <block type="text">
+              <field name="TEXT">,</field>
+            </block>
+          </value>
+        </block>
+      </category>
+          <category name="Colour">
+        <block type="colour_picker"></block>
+        <block type="colour_random"></block>
+        <block type="colour_rgb">
+          <value name="RED">
+            <block type="math_number">
+              <field name="NUM">100</field>
+            </block>
+          </value>
+          <value name="GREEN">
+            <block type="math_number">
+              <field name="NUM">50</field>
+            </block>
+          </value>
+          <value name="BLUE">
+            <block type="math_number">
+              <field name="NUM">0</field>
+            </block>
+          </value>
+        </block>
+        <block type="colour_blend">
+          <value name="COLOUR1">
+            <block type="colour_picker">
+              <field name="COLOUR">#ff0000</field>
+            </block>
+          </value>
+          <value name="COLOUR2">
+            <block type="colour_picker">
+              <field name="COLOUR">#3333ff</field>
+            </block>
+          </value>
+          <value name="RATIO">
+            <block type="math_number">
+              <field name="NUM">0.5</field>
+            </block>
+          </value>
+        </block>
+      </category>
+      <sep></sep>
+      <category name="Variables" custom="VARIABLE"></category>
+    </xml>
+
+    <script type="text/javascript" >
+      var tdCompatibilityErrorMessage = document.getElementById('tdCompatibilityErrorMessage');
+
+      function browserSupportsWebWorkers(e) {
+        return typeof window.Worker === "function";
+      }
+
+      function browserSupportsYield(e) {
+        try {
+          eval("(function *(){yield 1;})");
+        } catch(e) {
+          return false;
+        }
+        return true;
+      }
+
+      function browserSupportsBlobs() {
+        if (window.FileReader && window.File && window.FileList && window.Blob) {
+          return true;
+        }
+        return false;
+      }
+
+      if (!browserSupportsWebWorkers() || !browserSupportsYield() || !browserSupportsBlobs) {
+          tdCompatibilityErrorMessage.style.display = 'block';
+      }
+      else {
+        var HIGHLIGHT_NONE = 1;
+        var HIGHLIGHT_JS = 2;
+        var HIGHLIGHT_PY = 3;
+        var VIEW_EDITOR = 4;
+        var VIEW_EXECUTE = 5;
+        var VIEW_CODE = 6;
+        var DEFAULT_CODE = 'Seems like the workspace is empty. Generated code will appear here...';
+        var MSG_ERROR_NOT_VALID_WORKSPACE_FILE = 'ERROR: Not a valid workspace file.';
+        var MSG_ERROR_FILE_READ_FAILED = 'ERROR: Reading file failed.';
+        var MSG_ERROR_WORKSPACE_LOAD_FAILED = 'ERROR: Failed to load worskspace from file. Check that the file is valid workspace file.';
+        var MSG_INFO_UNSAVED_WORKSPACE = 'Unsaved changes on the workspace will be lost.';
+        var MSG_INFO_PROGRAM_RUNNING = 'A program is already running. Stop the running program to start a new one.'
+        var MSG_INFO_WORKSPACE_EMPTY = 'Nothing to execute. Seems like the workspace is empty.';
+        var tdTableHeaderToolbar = document.getElementById('tdTableHeaderToolbar');
+        var blocklyArea = document.getElementById('blocklyArea');
+        var blocklyDiv = document.getElementById('blocklyDiv');
+        var blocklyToolbox = document.getElementById('blocklyToolbox');
+        var divExecute = document.getElementById('divExecute');
+        var textareaExecute = document.getElementById('textareaExecute');
+        var workerExecuteCode = null;
+        var selectLanguageCode = document.getElementById("selectLanguageCode");
+        var codeContent = document.getElementById('codeContent');
+        var divCode = document.getElementById('divCode');
+        var fileReader = new FileReader();
+        var blocklyWorkspace = Blockly.inject(blocklyDiv,
+          {grid:
+            {spacing: 25,
+             length: 3,
+             Colour: '#ccc',
+             snap: true},
+            media: '../media/',
+            trashcan: true,
+            toolbox: blocklyToolbox,
+            zoom: {enabled: true}});
+
+        tdTableHeaderToolbar.style.display = 'block';
+
+        function clickedClearOutput(e) {
+          textareaExecute.value = '';
+        }
+
+        function clickedRunProgram(e){
+          var code = '';
+
+          if (workerExecuteCode) {
+            alert(MSG_INFO_PROGRAM_RUNNING);
+            return;
+          }
+          code = Blockly.JavaScript.workspaceToCode(blocklyWorkspace);
+          if (code === '') {
+            alert(MSG_INFO_WORKSPACE_EMPTY);
+            return;
+          }
+          workerExecuteCode = new Worker('js/workerExecuteCode.js');
+          workerExecuteCode.onmessage = function(e) {
+            textareaExecute.value = e.data + textareaExecute.value;
+          };
+          workerExecuteCode.postMessage(code);
+        }
+
+        function clickedStopProgram(e) {
+          if (workerExecuteCode) {
+            workerExecuteCode.terminate();
+            workerExecuteCode = null;
+          }
+        }
+
+        function workspaceFileUploadRequest(fileInput) {
+          var file;
+          var xmlText;
+          if(fileInput.value.substr(-5) !== ".tvpl" ) {
+            alert(MSG_ERROR_NOT_VALID_WORKSPACE_FILE);
+            return;
+          }
+          try {
+            file = fileInput.files[0];
+            fileReader.onload = function(e) {
+              xmlText = fileReader.result;
+              if (xmlText === '') {
+                return;
+              }
+              try {
+                blocklyWorkspace.clear();
+                Blockly.Xml.domToWorkspace(blocklyWorkspace, Blockly.Xml.textToDom(xmlText));
+              }
+              catch(e) {
+                alert(MSG_ERROR_WORKSPACE_LOAD_FAILED);
+              }
+            }
+            fileReader.readAsText(file);
+          }
+          catch(e){
+            alert(MSG_ERROR_FILE_READ_FAILED);
+          }
+        }
+
+        function switchView(view) {
+          if (view == VIEW_EDITOR) {
+              divExecute.style.display = 'none';
+              divCode.style.display = 'none';
+              blocklyWorkspace.setVisible(true);
+          } else if(view == VIEW_EXECUTE) {
+              blocklyWorkspace.setVisible(false);
+              divCode.style.display = 'none';
+              divExecute.style.display = 'block';
+          } else if (view == VIEW_CODE) {
+              blocklyWorkspace.setVisible(false);
+              divExecute.style.display = 'none';
+              divCode.style.display = 'block';
+          }
+        }
+
+        function clickedEditor(e) {
+          switchView(VIEW_EDITOR);
+        }
+
+        function clickedExecute(e) {
+          switchView(VIEW_EXECUTE);
+        }
+
+        function clickedViewCode(e) {
+          switchView(VIEW_CODE);
+        }
+
+        function clickedSave(e) {
+          var xmlText = Blockly.Xml.domToPrettyText(Blockly.Xml.workspaceToDom(blocklyWorkspace));
+          saveAs(new Blob([xmlText], {type: "text/xml;charset=utf-8"}), 'workspace.tvpl');
+        }
+
+        function clickedLoadWorkspace(e) {
+          workspaceFileUploader.click();
+        }
+
+        function updateCodeViewer(e) {
+          var code = DEFAULT_CODE;
+          var language = selectLanguageCode.options[selectLanguageCode.selectedIndex].value;
+
+          if (language == 'js') {
+              code = Blockly.JavaScript.workspaceToCode(blocklyWorkspace);
+              if (code == '') {
+                codeContent.innerHTML = DEFAULT_CODE;
+                Prism.highlightElement(codeContent);
+                return;
+              }
+              codeContent.innerHTML = code;
+              Prism.highlightElement(codeContent);
+          } else if (language == 'py') {
+              code = Blockly.Python.workspaceToCode(blocklyWorkspace);
+              if (code == '') {
+                codeContent.innerHTML = DEFAULT_CODE;
+                Prism.highlightElement(codeContent);
+                return;
+              }
+              codeContent.innerHTML = code;
+              Prism.highlightElement(codeContent);
+          } else {
+              codeContent.innerHTML = code;
+              Prism.highlightElement(codeContent);
+          }
+        }
+
+        function onLoad(e) {
+          textareaExecute.value = '';
+          codeContent.innerHTML = DEFAULT_CODE;
+          Prism.highlightElement(codeContent);
+        }
+
+        function onResize(e) {
+          // Compute the absolute coordinates and dimensions of blocklyArea.
+          var element = blocklyArea;
+          var x = 0;
+          var y = 0;
+          do {
+            x += element.offsetLeft;
+            y += element.offsetTop;
+            element = element.offsetParent;
+          } while (element);
+          // Position blocklyDiv over blocklyArea.
+          blocklyDiv.style.left = x + 'px';
+          blocklyDiv.style.top = y + 'px';
+          blocklyDiv.style.width = blocklyArea.offsetWidth + 'px';
+          blocklyDiv.style.height = blocklyArea.offsetHeight + 'px';
+        }
+        window.addEventListener('resize', onResize, false);
+        window.addEventListener('load', onLoad, false);
+        window.onbeforeunload = function(e) {
+          return MSG_INFO_UNSAVED_WORKSPACE;
+        }
+        blocklyWorkspace.addChangeListener(updateCodeViewer);
+        onResize();
+      }
+    </script>
+
+    <script type="text/javascript"  src="js/prism.js"></script>
+
+  </body>
+</html>
+

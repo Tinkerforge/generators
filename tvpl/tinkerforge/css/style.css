@@ -1,0 +1,63 @@
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: auto;
+}
+#tableHeader {
+  width: 100%;
+  height: 1px;
+}
+#tdCompatibilityErrorMessage {
+  display: none;
+}
+#pCompatibilityErrorMessage {
+  color: red;
+  font-weight: bold;
+}
+#tdTableHeaderToolbar {
+  display: none;
+}
+#buttonToolbar {
+  border-style: none;
+}
+#blocklyArea {
+  width: 100%;
+  height: 100%;
+}
+#blocklyDiv {
+  position: absolute;
+}
+#blocklyToolbox {
+  display: none;
+}
+#divExecute{
+  display: none;
+}
+#tableExecute{
+  width: 100%;
+  height: 100%;
+}
+#textareaExecute {
+  width: 100%;
+  resize: none;
+  border: solid 1px #272822;
+  color: white;
+  background-color: #272822;
+  font-size: 15px;
+  font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+}
+#divCode {
+  width: 100%;
+  height: 100%;
+  display: none;
+}
+#tableCode {
+  width: 100%;
+  height: 1px;
+}
+#selectLanguageCode{
+  width: 200px;
+}
+#workspaceFileUploader {
+  display: none;
+}
