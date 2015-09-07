@@ -108,8 +108,9 @@
 
     <script type="text/javascript" >
       var tdCompatibilityErrorMessage = document.getElementById('tdCompatibilityErrorMessage');
+      var xmlHttp;
       var xmlBlocklyToolbox;
-      var xmlBlocklyToolboxLoaded = false;
+      var xmlBlocklyToolboxLoaded;
 
       function browserSupportsWebWorkers(e) {
         return typeof window.Worker === "function";
@@ -131,27 +132,22 @@
         return false;
       }
 
-      if (window.ActiveXObject){
-        try {
-          xmlBlocklyToolbox = new ActiveXObject("Microsoft.XMLDOM");
-          xmlBlocklyToolbox.async = false;
-          xmlBlocklyToolbox.load('xml/toolbox.xml')
-          xmlBlocklyToolboxLoaded = true;
-        } catch(e) {
-            xmlBlocklyToolboxLoaded = false;
+      /*
+        If being launched locally then Google Chrome must be launched with "--allow-file-access-from-files" parameter
+        to be able to use TVPL.
+      */
+      try {
+        if (window.XMLHttpRequest) {
+          xmlHttp = new XMLHttpRequest();
+        } else {
+            xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
         }
-      } else if (document.implementation && document.implementation.createDocument) {
-          try {
-            xmlBlocklyToolbox = document.implementation.createDocument('', '', null);
-            xmlBlocklyToolbox.async = false;
-            xmlBlocklyToolbox.load('xml/toolbox.xml')
-            xmlBlocklyToolboxLoaded = true;
-          } catch(e) {
-              xmlBlocklyToolboxLoaded = false;
-          }
-      }
-      else {
-        xmlBlocklyToolboxLoaded = false;
+        xmlHttp.open('GET', 'xml/toolbox.xml', false);
+        xmlHttp.send();
+        xmlBlocklyToolbox = xmlHttp.responseXML;
+        xmlBlocklyToolboxLoaded = true;
+      } catch(e) {
+          xmlBlocklyToolboxLoaded = false;
       }
 
       if (!browserSupportsWebWorkers() || !browserSupportsYield() || !browserSupportsBlobs || !xmlBlocklyToolboxLoaded) {
@@ -355,4 +351,3 @@
 
   </body>
 </html>
-
