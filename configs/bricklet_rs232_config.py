@@ -8,7 +8,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 1],
+    'api_version': [2, 0, 2],
     'category': 'Bricklet',
     'device_identifier': 254,
     'name': ('RS232', 'rs232', 'RS232', 'RS232 Bricklet'),
@@ -315,7 +315,7 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetBreakCondition', 'set_break_condition'),
 'elements': [('break_time', 'uint16', 1, 'in')],
-'since_firmware': [1, 0, 0],
+'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
 """
