@@ -311,6 +311,25 @@ Mögliche Fehler sind Overrun-, Parity- oder Framing-Fehler.
 }]
 })
 
+com['packets'].append({
+'type': 'function',
+'name': ('SetBreakCondition', 'set_break_condition'),
+'elements': [('break_time', 'uint16', 1, 'in')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Sets a break condition (the TX output is forced to a logic 0 state). 
+The parameter sets the hold-time of the break condition (in ms). 
+""",
+'de':
+"""
+Setzt eine Break Condition (die TX-Ausgabe wird fest of logisch 0 gezwungen).
+Der Parameter setzt die Haltezeit der Break Condition (in ms).
+"""
+}]
+})
+
 com['examples'].append({
 'type': 'skeleton',
 'name': 'Loopback'
