@@ -26,7 +26,15 @@ Boston, MA 02111-1307, USA.
 import os
 
 def generate(bindings_root_directory, language):
-    pass
+    try:
+        os.mkdir(os.path.join(bindings_root_directory, 'doc'))
+    except:
+        pass
+
+    try:
+        os.mkdir(os.path.join(bindings_root_directory, 'doc', language))
+    except:
+        pass
 
 if __name__ == "__main__":
     for language in ['en', 'de']:
