@@ -354,7 +354,7 @@ sub set_response_expected_all
 
 	lock(${$self->{device_lock_ref}});
 
-	foreach my $function_id (keys $self->{response_expected})
+	foreach my $function_id (keys %{$self->{response_expected}})
 	{
 		if($self->{response_expected}->{$function_id} == &_RESPONSE_EXPECTED_TRUE ||
 		   $self->{response_expected}->{$function_id} == &_RESPONSE_EXPECTED_FALSE)

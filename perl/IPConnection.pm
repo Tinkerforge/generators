@@ -1515,7 +1515,7 @@ sub _dispatch_response
 
 						for(; $anon_arr_iterator < ($copy_info_arr[0][0] + $copy_info_arr[0][1]); $anon_arr_iterator++)
 						{
-							push($return_arr[$anon_arr_index], $arguments_arr[$anon_arr_iterator]);
+							push(@{$return_arr[$anon_arr_index]}, $arguments_arr[$anon_arr_iterator]);
 						}
 
 						$anon_arr_index++;
@@ -1549,7 +1549,7 @@ sub _dispatch_response
 
 					foreach(@string_to_split_arr)
 					{
-						push($return_arr[$i], $_);
+						push(@{$return_arr[$i]}, $_);
 					}
 				}
 
@@ -1586,7 +1586,7 @@ sub _dispatch_response
 
 					foreach(@string_to_split_arr)
 					{
-						push($return_arr[$i], $_);
+						push(@{$return_arr[$i]}, $_);
 					}
 				}
 
