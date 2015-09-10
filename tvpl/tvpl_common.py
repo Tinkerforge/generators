@@ -33,10 +33,6 @@ class TVPLDevice(common.Device):
     def get_tvpl_block_name(self):
         return self.get_underscore_category() + '_' + self.get_underscore_name()
 
-class TVPLPacket(common.Packet):
-    def get_tvpl_tooltip_from_doc(self):
-        return common.select_lang(self.get_doc()[1]).split('.\n')[0].replace('\n', ' ')[1:].replace(':func:', 'the function ')
-
 class TVPLElement(common.Element):
     tvpl_types = {
         'int8':   'Number',
