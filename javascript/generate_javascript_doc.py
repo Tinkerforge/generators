@@ -54,10 +54,10 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
         def title_from_filename(filename):
             if filename.endswith('.js'):
                 filename = filename.replace('Example', '').replace('.js', '')
-                return common.underscore_to_space(filename) + ' (Node.js)'
+                return common.camel_case_to_space(filename) + ' (Node.js)'
             elif filename.endswith('.html'):
                 filename = filename.replace('Example', '').replace('.html', '')
-                return common.underscore_to_space(filename) + ' (HTML)'
+                return common.camel_case_to_space(filename) + ' (HTML)'
             else:
                 raise ValueError('Invalid filename ' + filename)
 
