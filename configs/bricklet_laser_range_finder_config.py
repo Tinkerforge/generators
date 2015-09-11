@@ -668,16 +668,28 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Simple'
+'name': 'Simple',
+'functions': [('setter', 'Enable Laser', [], 'Turn laser on and wait 250ms for very first measurement to be ready', None),
+              ('sleep', 250, None, None),
+              ('getter', ('Get Distance', 'distance'), [(('distance', 'Distance'), 'uint16', None, 'cm', 'cm', None)], [])],
+'cleanups': [('setter', 'Disable Laser', [], None, 'Turn laser off')]
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Callback'
+'name': 'Callback',
+'functions': [('setter', 'Enable Laser', [], 'Turn laser on and wait 250ms for very first measurement to be ready', None),
+              ('sleep', 250, None, None),
+              ('callback', ('Distance', 'distance'), [(('distance', 'Distance'), 'uint16', None, 'cm', 'cm', None)], None, None),
+              ('callback_period', ('Distance', 'distance'), [], 200)],
+'cleanups': [('setter', 'Disable Laser', [], None, 'Turn laser off')]
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Threshold'
+'name': 'Threshold',
+'functions': [('setter', 'Enable Laser', [], 'Turn laser on and wait 250ms for very first measurement to be ready', None),
+              ('sleep', 250, None, None),
+              ('debounce_period', 10000),
+              ('callback', ('Distance Reached', 'distance reached'), [(('distance', 'Distance'), 'uint16', None, 'cm', 'cm', None)], None, None),
+              ('callback_threshold', ('Distance', 'distance'), [], '>', [(20, 0)])],
+'cleanups': [('setter', 'Disable Laser', [], None, 'Turn laser off')]
 })

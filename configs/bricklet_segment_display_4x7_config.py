@@ -176,6 +176,6 @@ fertig ist.
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Simple'
+'name': 'Simple',
+'incomplete': True # because of array parameter
 })

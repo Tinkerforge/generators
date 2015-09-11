@@ -551,14 +551,13 @@ wie von :func:`SetEdgeCountConfig` gesetzt.
 })
 
 com['examples'].append({
-'type': 'setter',
 'name': 'Output',
-'values': [('Set Configuration', [('uint8:bitmask', 1 << 1), ('char', 'o'), ('bool', False)], 'Set pin 1 to output low', None),
-           ('Set Configuration', [('uint8:bitmask', (1 << 2) | (1 << 3)), ('char', 'o'), ('bool', True)], 'Set pin 2 and 3 to output high', None)],
-'cleanups': []
+'functions': [('setter', 'Set Configuration', [('uint8:bitmask:4', 1 << 1), ('char', 'o'), ('bool', False)], 'Set pin 1 to output low', None),
+              ('setter', 'Set Configuration', [('uint8:bitmask:4', (1 << 2) | (1 << 3)), ('char', 'o'), ('bool', True)], 'Set pin 2 and 3 to output high', None)]
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Interrupt'
+'name': 'Interrupt',
+'functions': [('callback', ('Interrupt', 'interrupt'), [(('interrupt_mask', 'Interrupt Mask'), 'uint8:bitmask:4', None, None, None, None), (('value_mask', 'Value Mask'), 'uint8:bitmask:4', None, None, None, None)], None, None),
+              ('setter', 'Set Interrupt', [('uint8:bitmask:4', 1 << 0)], 'Enable interrupt on pin 0', None)]
 })

@@ -141,11 +141,14 @@ Siehe :func:`GetTiltState` für eine Beschreibung der Zustände.
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Simple'
+'name': 'Simple',
+'functions': [('getter', ('Get Tilt State', 'tilt state'), [(('state', 'Tilt State'), 'uint8', None, None, None, None)], [])],
+'incomplete': True # because of special print logic
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Callback'
+'name': 'Callback',
+'functions': [('setter', 'Enable Tilt State Callback', [], 'Enable tilt state callback', None),
+              ('callback', ('Tilt State', 'tilt state'), [(('state', 'Tilt State'), 'uint8', None, None, None, None)], None, None)],
+'incomplete': True # because of special print logic in callback
 })

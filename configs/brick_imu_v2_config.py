@@ -1000,16 +1000,19 @@ ausgelöst. Die :word:`parameter` sind die gleichen wie bei :func:`GetAllData`.
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Simple'
+'name': 'Simple',
+'functions': [('getter', ('Get Quaternion', 'quaternion'), [(('w', 'Quaternion[W]'), 'int16', 16383.0, None, None, None), (('x', 'Quaternion[X]'), 'int16', 16383.0, None, None, None), (('y', 'Quaternion[Y]'), 'int16', 16383.0, None, None, None), (('z', 'Quaternion[Z]'), 'int16', 16383.0, None, None, None)], [])],
+'incomplete': True # because of %.02f formatting
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Callback'
+'name': 'Callback',
+'functions': [('callback', ('Quaternion', 'quaternion'), [(('w', 'Quaternion[W]'), 'int16', 16383.0, None, None, None), (('x', 'Quaternion[X]'), 'int16', 16383.0, None, None, None), (('y', 'Quaternion[Y]'), 'int16', 16383.0, None, None, None), (('z', 'Quaternion[Z]'), 'int16', 16383.0, None, None, None)], None, None),
+              ('callback_period', ('Quaternion', 'quaternion'), [], 100)],
+'incomplete': True # because of %.02f formatting
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'All Data'
+'name': 'All Data',
+'incomplete': True # because of %.02f formatting and parameters with array type
 })

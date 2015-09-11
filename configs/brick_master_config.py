@@ -2425,10 +2425,8 @@ com['packets'].append({
 }]
 })
 
-
 com['examples'].append({
-'type': 'getter',
 'name': 'Stack Status',
-'values': [(('Stack Voltage', 'stack voltage', 'Stack Voltage'), 'uint16', 1000.0, 'mV', 'V', None, []),
-           (('Stack Current', 'stack current', 'Stack Current'), 'uint16', 1000.0, 'mA', 'A', None, [])]
+'functions': [('getter', ('Get Stack Voltage', 'stack voltage'), [(('stack_voltage', 'Stack Voltage'), 'uint16', 1000.0, 'mV', 'V', None)], []),
+              ('getter', ('Get Stack Current', 'stack current'), [(('stack_current', 'Stack Current'), 'uint16', 1000.0, 'mA', 'A', None)], [])]
 })

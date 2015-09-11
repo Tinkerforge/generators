@@ -316,21 +316,17 @@ Index zurück, wie von :func:`GetCustomCharacter` gesetzt.
 })
 
 com['examples'].append({
-'type': 'setter',
 'name': 'Hello World',
-'values': [('Backlight On', [], 'Turn backlight on', None),
-           ('Write Line', [('uint8', 0), ('uint8', 0), ('string', 'Hello World')], 'Write "Hello World"', None)],
-'cleanups': []
+'functions': [('setter', 'Backlight On', [], 'Turn backlight on', None),
+              ('setter', 'Write Line', [('uint8', 0), ('uint8', 0), ('string', 'Hello World')], 'Write "Hello World"', None)]
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Unicode'
-})
-
-com['examples'].append({
-'type': 'callback',
 'name': 'Button Callback',
-'values': [(('Button Pressed', 'button pressed', 'Button Pressed'), 'uint8', None, None, None, None, None),
-           (('Button Released', 'button released', 'Button Released'), 'uint8', None, None, None, None, None)]
+'functions': [('callback', ('Button Pressed', 'button pressed'), [(('button', 'Button Pressed'), 'uint8', None, None, None, None)], None, None),
+              ('callback', ('Button Released', 'button released'), [(('button', 'Button Released'), 'uint8', None, None, None, None)], None, None)]
 })
+
+#com['examples'].append({
+#'name': 'Unicode'
+#})

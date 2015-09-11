@@ -485,13 +485,12 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 })
 
 com['examples'].append({
-'type': 'getter',
 'name': 'Simple',
-'values': [(('Position', 'position', 'Position'), 'uint16', None, None, None, (0, 100), [])]
+'functions': [('getter', ('Get Position', 'position'), [(('position', 'Position'), 'uint16', None, None, None, (0, 100))], [])]
 })
 
 com['examples'].append({
-'type': 'callback',
 'name': 'Callback',
-'values': [(('Position', 'position', 'Position'), 'uint16', None, None, None, (0, 100), 50)]
+'functions': [('callback', ('Position', 'position'), [(('position', 'Position'), 'uint16', None, None, None, (0, 100))], None, None),
+              ('callback_period', ('Position', 'position'), [], 50)]
 })

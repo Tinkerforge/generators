@@ -275,6 +275,6 @@ kann gibt es :ref:`hier <remote_switch_bricklet_type_c_system_and_device_code>`.
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Switch Socket'
+'name': 'Switch Socket',
+'incomplete': True # because of setter with constant
 })

@@ -494,19 +494,19 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 })
 
 com['examples'].append({
-'type': 'getter',
 'name': 'Simple',
-'values': [(('Illuminance', 'illuminance', 'Illuminance'), 'uint16', 10.0, 'Lux/10', 'Lux', None, [])]
+'functions': [('getter', ('Get Illuminance', 'illuminance'), [(('illuminance', 'Illuminance'), 'uint16', 10.0, 'Lux/10', 'Lux', None)], [])]
 })
 
 com['examples'].append({
-'type': 'callback',
 'name': 'Callback',
-'values': [(('Illuminance', 'illuminance', 'Illuminance'), 'uint16', 10.0, 'Lux/10', 'Lux', None, 1000)]
+'functions': [('callback', ('Illuminance', 'illuminance'), [(('illuminance', 'Illuminance'), 'uint16', 10.0, 'Lux/10', 'Lux', None)], None, None),
+              ('callback_period', ('Illuminance', 'illuminance'), [], 1000)]
 })
 
 com['examples'].append({
-'type': 'threshold',
 'name': 'Threshold',
-'values': [(('Illuminance', 'illuminance', 'Illuminance'), 'uint16', 10.0, 'Lux/10', 'Lux', 10000, '>', 500, 0, 'Too bright, close the curtains!')]
+'functions': [('debounce_period', 10000),
+              ('callback', ('Illuminance Reached', 'illuminance reached'), [(('illuminance', 'Illuminance'), 'uint16', 10.0, 'Lux/10', 'Lux', None)], None, 'Too bright, close the curtains!'),
+              ('callback_threshold', ('Illuminance', 'illuminance'), [], '>', [(200, 0)])]
 })

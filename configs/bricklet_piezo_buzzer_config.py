@@ -112,15 +112,11 @@ Dieser Callback wird ausgelöst wenn die Wiedergabe des Morsecodes, wie von
 })
 
 com['examples'].append({
-'type': 'setter',
 'name': 'Beep',
-'values': [('Beep', [('uint32', 2000)], 'Make 2 second beep', None)],
-'cleanups': []
+'functions': [('setter', 'Beep', [('uint32', 2000)], 'Make 2 second beep', None)]
 })
 
 com['examples'].append({
-'type': 'setter',
 'name': 'Morse Code',
-'values': [('Morse Code', [('string', '... --- ...')], 'Morse SOS', None)],
-'cleanups': []
+'functions': [('setter', 'Morse Code', [('string', '... --- ...')], 'Morse SOS', None)]
 })

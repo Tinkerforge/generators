@@ -381,11 +381,13 @@ Gibt den aktuell genutzten Typ des Chips zurück, wie von
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Simple'
+'name': 'Simple',
+'incomplete': True # because of array parameters
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Callback'
+'name': 'Callback',
+'functions': [('setter', 'Set Frame Duration', [('uint16', 50)], 'Set frame duration to 50ms (20 frames per second)', None),
+              ('callback', ('Frame Rendered', 'frame rendered'), [(('length', 'Length'), 'uint16', None, None, None, None)], None, None)],
+'incomplete': True # because of array parameters and special logic in callback
 })

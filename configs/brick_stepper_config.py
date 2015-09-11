@@ -1059,19 +1059,23 @@ zurückgegeben.
 })
 
 com['examples'].append({
-'type': 'setter',
 'name': 'Configuration',
-'values': [('Set Motor Current', [('uint16', 800)], None, '800mA'),
-           ('Set Step Mode', [('uint8', 8)], None, '1/8 step mode'),
-           ('Set Max Velocity', [('uint16', 2000)], None, 'Velocity 2000 steps/s'),
-           ('Set Speed Ramping', [('uint16', 500), ('uint16', 5000)], 'Slow acceleration (500 steps/s^2),\nFast deacceleration (5000 steps/s^2)', None),
-           None,
-           ('Enable', [], None, None),
-           ('Set Steps', [('int32', 60000)], None, 'Drive 60000 steps forward')],
-'cleanups': [('Disable', [], None, None)]
+'functions': [('setter', 'Set Motor Current', [('uint16', 800)], None, '800mA'),
+              ('setter', 'Set Step Mode', [('uint8', 8)], None, '1/8 step mode'),
+              ('setter', 'Set Max Velocity', [('uint16', 2000)], None, 'Velocity 2000 steps/s'),
+              ('setter', 'Set Speed Ramping', [('uint16', 500), ('uint16', 5000)], 'Slow acceleration (500 steps/s^2),\nFast deacceleration (5000 steps/s^2)', None),
+              ('empty',),
+              ('setter', 'Enable', [], None, 'Enable motor power'),
+              ('setter', 'Set Steps', [('int32', 60000)], None, 'Drive 60000 steps forward')],
+'cleanups': [('setter', 'Disable', [], None, None)]
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Callback'
+'name': 'Callback',
+'functions': [('callback', ('Position Reached', 'position reached'), [(('position', 'Position'), 'int32', None, None, None, None)], 'Use position reached callback to program random movement', None),
+              ('empty',),
+              ('setter', 'Enable', [], None, 'Enable motor power'),
+              ('setter', 'Set Steps', [('int32', 1)], None, 'Drive one step forward to get things going')],
+'cleanups': [('setter', 'Disable', [], None, None)],
+'incomplete': True # because of special random movement logic in callback
 })

@@ -645,11 +645,11 @@ seit der letzten Auslösung geändert haben.
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Simple'
+'name': 'Simple',
+'incomplete': True # because of selective print logic
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Callback'
+'name': 'Callback',
+'incomplete': True # because of selective print logic
 })

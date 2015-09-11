@@ -584,16 +584,20 @@ Dieser Callback wird ausgelöst wenn die Taste losgelassen wird.
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Simple'
+'name': 'Simple',
+'functions': [('getter', ('Get Position', 'position'), [(('x', 'Position[X]'), 'int16', None, None, None, None), (('y', 'Position[Y]'), 'int16', None, None, None, None)], [])]
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Callback'
+'name': 'Callback',
+'functions': [('callback', ('Pressed', 'pressed'), [], None, 'Pressed'),
+              ('callback', ('Released', 'released'), [], None, 'Released')]
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Find Borders'
+'name': 'Find Borders',
+'functions': [('debounce_period', 200),
+              ('callback', ('Position Reached', 'position reached'), [(('x', 'Position[X]'), 'int16', None, None, None, None), (('y', 'Position[Y]'), 'int16', None, None, None, None)], None, None),
+              ('callback_threshold', ('Position', 'position'), [], 'o', [(-99, 99), (-99, 99)])],
+'incomplete': True # because of special print logic in callback
 })

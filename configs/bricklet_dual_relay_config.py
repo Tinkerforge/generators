@@ -190,6 +190,11 @@ Das andere Relais bleibt unangetastet.
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Simple'
+'name': 'Simple',
+'functions': [('loop_header', 5, 'Turn relays alternating on/off for 10 times with 1 second delay'),
+              ('sleep', 1000, None, None),
+              ('setter', 'Set State', [('bool', True), ('bool', False)], None, None),
+              ('sleep', 1000, None, None),
+              ('setter', 'Set State', [('bool', False), ('bool', True)], None, None),
+              ('loop_footer',)]
 })

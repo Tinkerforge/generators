@@ -449,16 +449,19 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Simple'
+'name': 'Simple',
+'functions': [('getter', ('Get Acceleration', 'acceleration'), [(('x', 'Acceleration[X]'), 'int16', 1000.0, 'g/1000', 'g', None), (('y', 'Acceleration[Y]'), 'int16', 1000.0, 'g/1000', 'g', None), (('z', 'Acceleration[Z]'), 'int16', 1000.0, 'g/1000', 'g', None)], [])]
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Callback'
+'name': 'Callback',
+'functions': [('callback', ('Acceleration', 'acceleration'), [(('x', 'Acceleration[X]'), 'int16', 1000.0, 'g/1000', 'g', None), (('y', 'Acceleration[Y]'), 'int16', 1000.0, 'g/1000', 'g', None), (('z', 'Acceleration[Z]'), 'int16', 1000.0, 'g/1000', 'g', None)], None, None),
+              ('callback_period', ('Acceleration', 'acceleration'), [], 1000)]
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Threshold'
+'name': 'Threshold',
+'functions': [('debounce_period', 10000),
+              ('callback', ('Acceleration Reached', 'acceleration reached'), [(('x', 'Acceleration[X]'), 'int16', 1000.0, 'g/1000', 'g', None), (('y', 'Acceleration[Y]'), 'int16', 1000.0, 'g/1000', 'g', None), (('z', 'Acceleration[Z]'), 'int16', 1000.0, 'g/1000', 'g', None)], None, None),
+              ('callback_threshold', ('Acceleration', 'acceleration'), [], '>', [(2, 0), (2, 0), (2, 0)])]
 })

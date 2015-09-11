@@ -523,19 +523,19 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 })
 
 com['examples'].append({
-'type': 'getter',
 'name': 'Simple',
-'values': [(('Voltage', 'voltage', 'Voltage'), 'uint16', 1000.0, 'mV', 'V', None, [])]
+'functions': [('getter', ('Get Voltage', 'voltage'), [(('voltage', 'Voltage'), 'uint16', 1000.0, 'mV', 'V', None)], [])]
 })
 
 com['examples'].append({
-'type': 'callback',
 'name': 'Callback',
-'values': [(('Voltage', 'voltage', 'Voltage'), 'uint16', 1000.0, 'mV', 'V', None, 1000)]
+'functions': [('callback', ('Voltage', 'voltage'), [(('voltage', 'Voltage'), 'uint16', 1000.0, 'mV', 'V', None)], None, None),
+              ('callback_period', ('Voltage', 'voltage'), [], 1000)]
 })
 
 com['examples'].append({
-'type': 'threshold',
 'name': 'Threshold',
-'values': [(('Voltage', 'voltage', 'Voltage'), 'uint16', 1000.0, 'mV', 'V', 10000, '<', 5, 0, None)]
+'functions': [('debounce_period', 10000),
+              ('callback', ('Voltage Reached', 'voltage reached'), [(('voltage', 'Voltage'), 'uint16', 1000.0, 'mV', 'V', None)], None, None),
+              ('callback_threshold', ('Voltage', 'voltage'), [], '<', [(5, 0)])]
 })

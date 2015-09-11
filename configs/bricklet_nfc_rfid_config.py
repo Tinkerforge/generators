@@ -456,11 +456,13 @@ sich verändert. Siehe :func:`GetState` für mehr Informationen
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Scan For Tags'
+'name': 'Scan For Tags',
+'functions': [('callback', ('State Changed', 'state changed'), [(('state', 'State'), 'uint8', None, None, None, None), (('idle', 'Idle'), 'bool', None, None, None, None)], None, None)],
+'incomplete': True # because of setter with constant and special logic in callback
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Write Read Type2'
+'name': 'Write Read Type2',
+'functions': [('callback', ('State Changed', 'state changed'), [(('state', 'State'), 'uint8', None, None, None, None), (('idle', 'Idle'), 'bool', None, None, None, None)], None, None)],
+'incomplete': True # because of setter with constant and special logic in callback
 })

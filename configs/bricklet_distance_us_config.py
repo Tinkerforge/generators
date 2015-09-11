@@ -334,21 +334,21 @@ Gibt die Länge des gleitenden Mittelwerts zurück, wie von
 })
 
 com['examples'].append({
-'type': 'getter',
 'name': 'Simple',
-'values': [(('Distance Value', 'distance value', 'Distance Value'), 'uint16', None, None, None, None, [])]
+'functions': [('getter', ('Get Distance Value', 'distance value'), [(('distance', 'Distance Value'), 'uint16', None, None, None, None)], [])]
 })
 
 com['examples'].append({
-'type': 'callback',
 'name': 'Callback',
 # FIXME: name mismatch here because of a naming inconsistency in the API
-'values': [(('Distance', 'distance value', 'Distance Value'), 'uint16', None, None, None, None, 200)]
+'functions': [('callback', ('Distance', 'distance value'), [(('distance', 'Distance Value'), 'uint16', None, None, None, None)], None, None),
+              ('callback_period', ('Distance', 'distance value'), [], 200)]
 })
 
 com['examples'].append({
-'type': 'threshold',
 'name': 'Threshold',
 # FIXME: name mismatch here because of a naming inconsistency in the API
-'values': [(('Distance', 'distance value', 'Distance Value'), 'uint16', None, None, None, 10000, '<', 200, 0, None)]
+'functions': [('debounce_period', 10000),
+              ('callback', ('Distance Reached', 'distance value reached'), [(('distance', 'Distance Value'), 'uint16', None, None, None, None)], None, None),
+              ('callback_threshold', ('Distance', 'distance value'), [], '<', [(200, 0)])]
 })

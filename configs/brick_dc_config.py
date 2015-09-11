@@ -783,18 +783,21 @@ Geschwindigkeit geändert hat.
 #})
 
 com['examples'].append({
-'type': 'setter',
 'name': 'Configuration',
-'values': [('Set PWM Frequency', [('uint16', 10000)], None, 'Use PWM frequency of 10kHz'),
-           ('Set Drive Mode', [('uint8', 1)], None, 'Use 1 = Drive/Coast instead of 0 = Drive/Brake'),
-           None,
-           ('Enable', [], None, None),
-           ('Set Acceleration', [('uint16', 5000)], None, 'Slow acceleration'),
-           ('Set Velocity', [('int16', 32767)], None, 'Full speed forward')],
-'cleanups': [('Disable', [], None, None)]
+'functions': [('setter', 'Set PWM Frequency', [('uint16', 10000)], None, 'Use PWM frequency of 10kHz'),
+              ('setter', 'Set Drive Mode', [('uint8', 1)], None, 'Use drive/coast instead of drive/brake'),
+              ('setter', 'Set Acceleration', [('uint16', 5000)], None, 'Slow acceleration'),
+              ('setter', 'Set Velocity', [('int16', 32767)], None, 'Full speed forward'),
+              ('setter', 'Enable', [], None, 'Enable motor power')],
+'cleanups': [('setter', 'Disable', [], None, 'Disable motor power')]
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Callback'
+'name': 'Callback',
+'functions': [('setter', 'Set Acceleration', [('uint16', 5000)], 'The acceleration has to be smaller or equal to the maximum acceleration of\nthe DC motor, otherwise velocity reached callback will be called too early', 'Slow acceleration'),
+              ('setter', 'Set Velocity', [('int16', 32767)], None, 'Full speed forward'),
+              ('callback', ('Velocity Reached', 'velocity reached'), [(('velocity', 'Velocity'), 'int16', None, None, None, None)], None, None),
+              ('setter', 'Enable', [], 'Enable motor power', None)],
+'cleanups': [('setter', 'Disable', [], None, 'Disable motor power')],
+'incomplete': True # because of special print logic in callback
 })

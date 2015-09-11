@@ -846,19 +846,20 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 })
 
 com['examples'].append({
-'type': 'getter',
 'name': 'Simple',
-'values': [(('Voltage', 'voltage', 'Voltage'), 'int32', 1000.0, 'mV', 'V', None, [])]
+'functions': [('getter', ('Get Voltage', 'voltage'), [(('voltage', 'Voltage'), 'int32', 1000.0, 'mV', 'V', None)], []),
+              ('getter', ('Get Current', 'current'), [(('current', 'Current'), 'int32', 1000.0, 'mA', 'A', None)], [])]
 })
 
 com['examples'].append({
-'type': 'callback',
 'name': 'Callback',
-'values': [(('Current', 'current', 'Current'), 'int32', 1000.0, 'mA', 'A', None, 1000)]
+'functions': [('callback', ('Current', 'current'), [(('current', 'Current'), 'int32', 1000.0, 'mA', 'A', None)], None, None),
+              ('callback_period', ('Current', 'current'), [], 1000)]
 })
 
 com['examples'].append({
-'type': 'threshold',
 'name': 'Threshold',
-'values': [(('Power', 'power', 'Power'), 'int32', 1000.0, 'mW', 'W', 10000, '>', 10, 0, None)]
+'functions': [('debounce_period', 10000),
+              ('callback', ('Power Reached', 'power reached'), [(('power', 'Power'), 'int32', 1000.0, 'mW', 'W', None)], None, None),
+              ('callback_threshold', ('Power', 'power'), [], '>', [(10, 0)])]
 })

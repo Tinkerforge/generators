@@ -280,19 +280,19 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 })
 
 com['examples'].append({
-'type': 'getter',
 'name': 'Simple',
-'values': [(('Intensity', 'intensity', 'Intensity'), 'uint16', None, None, None, None, [])]
+'functions': [('getter', ('Get Intensity', 'intensity'), [(('intensity', 'Intensity'), 'uint16', None, None, None, None)], [])]
 })
 
 com['examples'].append({
-'type': 'callback',
 'name': 'Callback',
-'values': [(('Intensity', 'intensity', 'Intensity'), 'uint16', None, None, None, None, 1000)]
+'functions': [('callback', ('Intensity', 'intensity'), [(('intensity', 'Intensity'), 'uint16', None, None, None, None)], None, None),
+              ('callback_period', ('Intensity', 'intensity'), [], 50)]
 })
 
 com['examples'].append({
-'type': 'threshold',
 'name': 'Threshold',
-'values': [(('Intensity', 'intensity', 'Intensity'), 'uint16', None, None, None, 1000, '>', 2000, 0, None)]
+'functions': [('debounce_period', 1000),
+              ('callback', ('Intensity Reached', 'intensity reached'), [(('intensity', 'Intensity'), 'uint16', None, None, None, None)], None, None),
+              ('callback_threshold', ('Intensity', 'intensity'), [], '>', [(2000, 0)])]
 })

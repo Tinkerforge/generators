@@ -381,17 +381,19 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 })
 
 com['examples'].append({
-'type': 'getter',
 'name': 'Simple',
-'values': [(('Current', 'current from sensor 1', 'Current (Sensor 1)'), 'int32', 1000000.0, 'nA', 'mA', None, [('uint8', 1)])]
+'functions': [('getter', ('Get Current', 'current from sensor 1'), [(('current', 'Current (Sensor 1)'), 'int32', 1000000.0, 'nA', 'mA', None)], [('uint8', 1)])]
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Callback'
+'name': 'Callback',
+'functions': [('callback', ('Current', 'current'), [(('sensor', 'Sensor'), 'uint8', None, None, None, None), (('current', 'Current'), 'int32', 1000000.0, 'nA', 'mA', None)], None, None),
+              ('callback_period', ('Current', 'current (sensor 1)'), [('uint8', 1)], 1000)]
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Threshold'
+'name': 'Threshold',
+'functions': [('debounce_period', 10000),
+              ('callback', ('Current Reached', 'current reached'), [(('sensor', 'Sensor'), 'uint8', None, None, None, None), (('current', 'Current'), 'int32', 1000000.0, 'nA', 'mA', None)], None, None),
+              ('callback_threshold', ('Current', 'current (sensor 1)'), [('uint8', 1)], '>', [(10, 0)])]
 })

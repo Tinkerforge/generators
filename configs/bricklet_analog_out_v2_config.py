@@ -75,8 +75,6 @@ Gibt die Eingangsspannung in mV zurück.
 })
 
 com['examples'].append({
-'type': 'setter',
 'name': 'Simple',
-'values': [('Set Output Voltage', [('uint16', 3300)], 'Set output voltage to 3.3V', None)],
-'cleanups': []
+'functions': [('setter', 'Set Output Voltage', [('uint16', 3300)], 'Set output voltage to 3.3V', None)]
 })

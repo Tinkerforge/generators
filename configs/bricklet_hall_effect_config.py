@@ -296,12 +296,12 @@ der beiden Werte seit der letzten Auslösung geändert hat.
 })
 
 com['examples'].append({
-'type': 'getter',
 'name': 'Simple',
-'values': [(('Edge Count', 'edge count without reset', 'Edge Count'), 'uint32', None, None, None, None, [('bool', False)])]
+'functions': [('getter', ('Get Edge Count', 'edge count without reset'), [(('edge_count', 'Edge Count'), 'uint32', None, None, None, None)], [('bool', False)])]
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Callback'
+'name': 'Callback',
+'functions': [('callback', ('Edge Count', 'edge count'), [(('edge_count', 'Edge Count'), 'uint32', None, None, None, None), (('value', None), 'bool', None, None, None, None)], None, None),
+              ('callback_period', ('Edge Count', 'edge count'), [], 50)]
 })

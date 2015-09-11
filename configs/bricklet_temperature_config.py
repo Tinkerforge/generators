@@ -333,19 +333,19 @@ Gibt den I2C Modus zurück, wie von :func:`SetI2CMode` gesetzt.
 })
 
 com['examples'].append({
-'type': 'getter',
 'name': 'Simple',
-'values': [(('Temperature', 'temperature', 'Temperature'), 'int16', 100.0, '°C/100', '°C', None, [])]
+'functions': [('getter', ('Get Temperature', 'temperature'), [(('temperature', 'Temperature'), 'int16', 100.0, '°C/100', '°C', None)], [])]
 })
 
 com['examples'].append({
-'type': 'callback',
 'name': 'Callback',
-'values': [(('Temperature', 'temperature', 'Temperature'), 'int16', 100.0, '°C/100', '°C', None, 1000)]
+'functions': [('callback', ('Temperature', 'temperature'), [(('temperature', 'Temperature'), 'int16', 100.0, '°C/100', '°C', None)], None, None),
+              ('callback_period', ('Temperature', 'temperature'), [], 1000)]
 })
 
 com['examples'].append({
-'type': 'threshold',
 'name': 'Threshold',
-'values': [(('Temperature', 'temperature', 'Temperature'), 'int16', 100.0, '°C/100', '°C', 10000, '>', 30, 0, 'It is too hot, we need air conditioning!')]
+'functions': [('debounce_period', 10000),
+              ('callback', ('Temperature Reached', 'temperature reached'), [(('temperature', 'Temperature'), 'int16', 100.0, '°C/100', '°C', None)], None, 'It is too hot, we need air conditioning!'),
+              ('callback_threshold', ('Temperature', 'temperature'), [], '>', [(30, 0)])]
 })

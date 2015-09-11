@@ -1052,11 +1052,12 @@ Gibt zurück ob die Orientierungsberechnungen des IMU Brick aktiv sind.
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Simple'
+'name': 'Simple',
+'functions': [('getter', ('Get Quaternion', 'quaternion'), [(('x', 'Quaternion[X]'), 'float', None, None, None, None), (('y', 'Quaternion[Y]'), 'float', None, None, None, None), (('z', 'Quaternion[Z]'), 'float', None, None, None, None), (('w', 'Quaternion[W]'), 'float', None, None, None, None)], [])]
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Callback'
+'name': 'Callback',
+'functions': [('callback', ('Quaternion', 'quaternion'), [(('x', 'Quaternion[X]'), 'float', None, None, None, None), (('y', 'Quaternion[Y]'), 'float', None, None, None, None), (('z', 'Quaternion[Z]'), 'float', None, None, None, None), (('w', 'Quaternion[W]'), 'float', None, None, None, None)], None, None),
+              ('callback_period', ('Quaternion', 'quaternion'), [], 1000)]
 })

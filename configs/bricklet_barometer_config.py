@@ -637,21 +637,20 @@ gesetzt.
 })
 
 com['examples'].append({
-'type': 'getter',
 'name': 'Simple',
-'values': [(('Air Pressure', 'air pressure', 'Air Pressure'), 'int32', 1000.0, 'mbar/1000', 'mbar', None, []),
-           (('Altitude', 'altitude', 'Altitude'), 'int32', 100.0, 'cm', 'm', None, [])]
+'functions': [('getter', ('Get Air Pressure', 'air pressure'), [(('air_pressure', 'Air Pressure'), 'int32', 1000.0, 'mbar/1000', 'mbar', None)], []),
+              ('getter', ('Get Altitude', 'altitude'), [(('altitude', 'Altitude'), 'int32', 100.0, 'cm', 'm', None)], [])]
 })
 
 com['examples'].append({
-'type': 'callback',
 'name': 'Callback',
-'values': [(('Air Pressure', 'air pressure', 'Air Pressure'), 'int32', 1000.0, 'mbar/1000', 'mbar', None, 1000),
-           (('Altitude', 'altitude', 'Altitude'), 'int32', 100.0, 'cm', 'm', None, 1000)]
+'functions': [('callback', ('Air Pressure', 'air pressure'), [(('air_pressure', 'Air Pressure'), 'int32', 1000.0, 'mbar/1000', 'mbar', None)], None, None),
+              ('callback_period', ('Air Pressure', 'air pressure'), [], 1000)]
 })
 
 com['examples'].append({
-'type': 'threshold',
 'name': 'Threshold',
-'values': [(('Air Pressure', 'air pressure', 'Air Pressure'), 'int32', 1000.0, 'mbar/1000', 'mbar', 10000, '>', 1025, 0, 'Enjoy the potentially good weather!')]
+'functions': [('debounce_period', 10000),
+              ('callback', ('Air Pressure Reached', 'air pressure reached'), [(('air_pressure', 'Air Pressure'), 'int32', 1000.0, 'mbar/1000', 'mbar', None)], None, 'Enjoy the potentially good weather!'),
+              ('callback_threshold', ('Air Pressure', 'air pressure'), [], '>', [(1025, 0)])]
 })

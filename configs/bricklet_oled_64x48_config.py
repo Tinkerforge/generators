@@ -120,14 +120,13 @@ com['packets'].append({
 })
 
 com['examples'].append({
-'type': 'setter',
 'name': 'Hello World',
-'values': [('Clear Display', [], 'Clear display', None),
-           ('Write Line', [('uint8', 0), ('uint8', 0), ('string', 'Hello World')], 'Write "Hello World" starting from upper left corner of the screen', None)],
-'cleanups': []
+'functions': [('setter', 'Clear Display', [], 'Clear display', None),
+              ('setter', 'Write Line', [('uint8', 0), ('uint8', 0), ('string', 'Hello World')], 'Write "Hello World" starting from upper left corner of the screen', None)]
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Pixel Matrix'
+'name': 'Pixel Matrix',
+'functions': [('setter', 'Clear Display', [], 'Clear display', None)],
+'incomplete': True # because of special logic
 })

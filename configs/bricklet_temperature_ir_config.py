@@ -557,20 +557,21 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 })
 
 com['examples'].append({
-'type': 'getter',
 'name': 'Simple',
-'values': [(('Ambient Temperature', 'ambient temperature', 'Ambient Temperature'), 'int16', 10.0, '°C/10', '°C', None, []),
-           (('Object Temperature', 'object temperature', 'Object Temperature'), 'int16', 10.0, '°C/10', '°C', None, [])]
+'functions': [('getter', ('Get Ambient Temperature', 'ambient temperature'), [(('ambient_temperature', 'Ambient Temperature'), 'int16', 10.0, '°C/10', '°C', None)], []),
+              ('getter', ('Get Object Temperature', 'object temperature'), [(('object_temperature', 'Object Temperature'), 'int16', 10.0, '°C/10', '°C', None)], [])]
 })
 
 com['examples'].append({
-'type': 'callback',
 'name': 'Callback',
-'values': [(('Ambient Temperature', 'ambient temperature', 'Ambient Temperature'), 'int16', 10.0, '°C/10', '°C', None, 1000),
-           (('Object Temperature', 'object temperature', 'Object Temperature'), 'int16', 10.0, '°C/10', '°C', None, 1000)]
+'functions': [('callback', ('Object Temperature', 'object temperature'), [(('temperature', 'Object Temperature'), 'int16', 10.0, '°C/10', '°C', None)], None, None),
+              ('callback_period', ('Object Temperature', 'object temperature'), [], 1000)]
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Water Boiling'
+'name': 'Water Boiling',
+'functions': [('setter', 'Set Emissivity', [('uint16', 64224)], 'Set emissivity to 0.98 (emissivity of water, 65535 * 0.98 = 64224.299)', None),
+              ('debounce_period', 10000),
+              ('callback', ('Object Temperature Reached', 'object temperature reached'), [(('temperature', 'Object Temperature'), 'int16', 10.0, '°C/10', '°C', None)], None, 'The water is boiling!'),
+              ('callback_threshold', ('Object Temperature', 'object temperature'), [], '>', [(100, 0)])]
 })

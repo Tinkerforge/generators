@@ -331,6 +331,7 @@ Der Parameter setzt die Haltezeit der Break Condition (in ms).
 })
 
 com['examples'].append({
-'type': 'skeleton',
-'name': 'Loopback'
+'name': 'Loopback',
+'functions': [('setter', 'Enable Read Callback', [], 'Enable read callback', None)],
+'incomplete': True # because of special logic and callback with array parameter
 })
