@@ -33,7 +33,7 @@ import common
 import tvpl_common
 
 class TVPLBindingsDevice(tvpl_common.TVPLDevice):
-    def get_tvpl_source_block(self):
+    def get_tvpl_source_block(self, dir_bindings_root):
         def get_source_block(packet):
             is_getter = False
             elements_in = packet.get_elements('in')
@@ -140,13 +140,14 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
     this.appendDummyInput()
         .appendField('{1}:');
     this.appendDummyInput()
-        .appendField(new Blockly.FieldDropdown({2}), {3});'''.format(block_display_function_name,
-                                                                     e.get_headless_camel_case_name(),
-                                                                     combo_constants_array,
-                                                                     '_'.join([self.get_underscore_category().upper(),
-                                                                               self.get_underscore_name().upper(),
-                                                                               packet.get_underscore_name().upper(),
-                                                                               e.get_underscore_name().upper()]))
+        .appendField(new Blockly.FieldDropdown({2}), {3});
+'''.format(block_display_function_name,
+           e.get_headless_camel_case_name(),
+           combo_constants_array,
+           '_'.join([self.get_underscore_category().upper(),
+            self.get_underscore_name().upper(),
+            packet.get_underscore_name().upper(),
+            e.get_underscore_name().upper()]))
                         else:
                             block_code_body = block_code_body + '''
     this.appendDummyInput()
@@ -255,9 +256,9 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
 
                 return block_code_header + block_code_body + block_code_footer
 
-        # Ignore RED Brick
+        # Exclude RED Brick
         if self.get_underscore_name() == 'red':
-            return ('', '', '')
+            return ''
 
         source = ''
         device = '_'.join([self.get_underscore_category(),
@@ -273,7 +274,8 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
         for packet in self.get_packets('function'):
             # Exclude callbacks and thresholds
             if 'callback' in packet.get_underscore_name() or \
-               'threshold' in packet.get_underscore_name():
+               'threshold' in packet.get_underscore_name() or \
+               'debounce' in packet.get_underscore_name():
                    continue
 
             source = source + get_source_block(packet)
@@ -321,40 +323,37 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
         # having all the getters and setter as blocks in sub-elements
         filename_tvpl_toolbox_part = '_'.join([self.get_underscore_category(),
                                                self.get_underscore_name()]) + '.toolbox.part'
-        return (source, filename_tvpl_toolbox_part, etree.tostring(e_device))
+        file_tvpl_toolbox_part = open(os.path.join(dir_bindings_root, 'bindings', filename_tvpl_toolbox_part), 'wb')
+        file_tvpl_toolbox_part.write(etree.tostring(e_device))
+        file_tvpl_toolbox_part.close()
+
+        return source
 
     def get_tvpl_source_generator_javascript(self):
-        def get_getter_callback_args(elements_out):
-            e_out = []
+        def get_packet_elements_as_args(elements):
+            list_e = []
 
-            for e in elements_out:
-                e_out.append(e.get_underscore_name())
+            for e in elements:
+                list_e.append(e.get_underscore_name())
 
-            if len(e_out) > 1:
-                e_out_args_function = '(' + ', '.join(e_out) + ')'
-                e_out_args_assignment = '[' + ', '.join(e_out) + ']'
-            else:
-                e_out_args_function = '(' + ''.join(e_out) + ')'
-                e_out_args_assignment = ''.join(e_out)
-
-            return [e_out_args_function, e_out_args_assignment]
-
-        def get_function_input_args(elements_in):
-            e_in = []
-
-            for e in elements_in:
-                e_in.append(e.get_underscore_name())
-
-            return e_in
+            return ', '.join(list_e)
 
         source = ''
 
+        # Exclude RED Brick
+        if self.get_underscore_name() == 'red':
+            return ''
+
         for packet in self.get_packets('function'):
+            # Exclude callbacks and thresholds
+            if 'callback' in packet.get_underscore_name() or \
+               'threshold' in packet.get_underscore_name() or \
+               'debounce' in packet.get_underscore_name():
+                   continue
+
             is_getter = False
             generator_code_body = ''
             function_to_generate = ''
-            generator_code_header = ''
-            generator_code_footer = ''
             index_global_variable = ''
             returned_blockly_code = ''
             elements_in = packet.get_elements('in')
@@ -398,6 +397,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
                 is_getter = True
 
             if is_getter:
+                # Getter
                 index_global_variable = '''  var index_global_variable = {0}+
 '@'+
 {1}+
@@ -446,8 +446,8 @@ index_global_variable+
 '    device = new Tinkerforge.{1}(uid, _ipcon_cache[key_ipcon_cache]);\\n'+
 '    _device_cache[key_device_cache] = device;\\n'+
 '  }}\\n'+
-'  device.{2}(function{3} {{\\n'+
-'    _tf_global_variables[key_global_variable] = {4};\\n'+
+'  device.{2}(function({3}) {{\\n'+
+'    _tf_global_variables[key_global_variable] = [{3}];\\n'+
 '    _iterator_main.next();\\n'+
 '  }}, _error_handler);\\n'+
 '}}\\n';
@@ -455,12 +455,15 @@ index_global_variable+
 '''.format(block_name,
            self.get_camel_case_category() + self.get_camel_case_name(),
            packet.get_headless_camel_case_name(),
-           get_getter_callback_args(elements_out)[0],
-           get_getter_callback_args(elements_out)[1])
+           get_packet_elements_as_args(elements_out))
 
                 else:
-                    # Getter with arguments
-                    e_in = get_function_input_args(elements_in) # Returns a list of in arg underscore names
+                    # Getter with aguments
+                    e_in = []
+
+                    for e in elements_in:
+                        e_in.append(e.get_underscore_name())
+
                     hash_value_to_code_variable = {}
                     hash_get_field_value_variable = {}
 
@@ -476,7 +479,7 @@ index_global_variable+
                         # Constants in constant group
                         for e in e_in:
                             for constant_group in constant_groups:
-                                list_blockly_get_field_value_statements.append('''var {0} = block.getFieldValue('{1}_{2}_{3}');
+                                list_blockly_get_field_value_statements.append('''  var {0} = block.getFieldValue('{1}_{2}_{3}');
 '''.format(hash_get_field_value_variable[e],
            self.get_tvpl_block_name().upper(),
            packet.get_underscore_name().upper(),
@@ -484,14 +487,44 @@ index_global_variable+
                     else:
                         # Nothing in constant group
                         for e in e_in:
-                            for constant_group in constant_groups:
-                                list_blockly_value_to_code_statements.append('''var {0} = Blockly.JavaScript.valueToCode(block, '{1}_{2}', Blockly.JavaScript.ORDER_ATOMIC);
+                            list_blockly_value_to_code_statements.append('''  var {0} = Blockly.JavaScript.valueToCode(block, '{1}_{2}', Blockly.JavaScript.ORDER_ATOMIC);
 '''.format(hash_value_to_code_variable[e],
            self.get_tvpl_block_name().upper(),
            e.upper()))
 
+                    if len(list_blockly_get_field_value_statements) > 0:
+                        generator_code_header = generator_code_header + '\n'.join(list_blockly_get_field_value_statements)
+                    elif len(list_blockly_value_to_code_statements) > 0:
+                        generator_code_header = generator_code_header + '\n'.join(list_blockly_value_to_code_statements)
+
+                    returned_blockly_code = '''  var code = '(_ipcon_connect(\\''+
+{0}+
+'\\', '+
+String({1})+
+'), (yield 1), _{2}(\\''+
+{3}+
+'\\', '+
+String({4})+
+', \\''+
+{5}+
+'\\', \\''+
+String(block_identifier)+
+'\\', {6}'+
+'), (yield 1), _tf_global_variables[\\''+
+index_global_variable+
+'\\']);';
+
+'''.format('_'.join([self.get_tvpl_block_name(), 'host']),
+           '_'.join(['value', self.get_tvpl_block_name(), 'port']),
+           block_name,
+           '_'.join([self.get_tvpl_block_name(), 'host']),
+           '_'.join(['value', self.get_tvpl_block_name(), 'port']),
+           '_'.join([self.get_tvpl_block_name(), 'uid']),
+           get_packet_elements_as_args(elements_out))
+
                 generator_code_body = index_global_variable + returned_blockly_code + function_to_generate
                 source = source + generator_code_header + generator_code_body + generator_code_footer
+
                 continue
 
             else:
@@ -536,15 +569,9 @@ class TVPLBindingsGenerator(common.BindingsGenerator):
         filename_tvpl_code_generator_javascript = '{0}_{1}.generator.javascript'.format(device.get_underscore_category(), device.get_underscore_name())
         filename_tvpl_code_generator_python = '{0}_{1}.generator.python'.format(device.get_underscore_category(), device.get_underscore_name())
 
-        ret_get_tvpl_source_block = device.get_tvpl_source_block()
-        if ret_get_tvpl_source_block[0] != '':
-            file_tvpl_block = open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename_tvpl_block), 'wb')
-            file_tvpl_block.write(ret_get_tvpl_source_block[0])
-            file_tvpl_block.close()
-        if ret_get_tvpl_source_block[1] != '' and ret_get_tvpl_source_block[2] != '':
-            file_tvpl_toolbox_part = open(os.path.join(self.bindings_root_directory, 'bindings', ret_get_tvpl_source_block[1]), 'wb')
-            file_tvpl_toolbox_part.write(ret_get_tvpl_source_block[2])
-            file_tvpl_toolbox_part.close()
+        file_tvpl_block = open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename_tvpl_block), 'wb')
+        file_tvpl_block.write(device.get_tvpl_source_block(self.get_bindings_root_directory()))
+        file_tvpl_block.close()
 
         file_tvpl_code_generator_javascript = open(os.path.join(self.bindings_root_directory, self.get_bindings_root_directory(), 'bindings', filename_tvpl_code_generator_javascript), 'wb')
         file_tvpl_code_generator_javascript.write(device.get_tvpl_source_generator_javascript())
