@@ -31,7 +31,7 @@ import common
 
 class TVPLDevice(common.Device):
     def get_tvpl_block_name(self):
-        return self.get_underscore_category() + '_' + self.get_underscore_name()
+        return '_'.join([self.get_underscore_category(), self.get_underscore_name()])
 
 class TVPLElement(common.Element):
     tvpl_types = {

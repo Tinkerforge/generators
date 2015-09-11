@@ -257,7 +257,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
 
         # Ignore RED Brick
         if self.get_underscore_name() == 'red':
-            return ''
+            return ('', '', '')
 
         source = ''
         device = '_'.join([self.get_underscore_category(),
@@ -321,16 +321,192 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
         # having all the getters and setter as blocks in sub-elements
         filename_tvpl_toolbox_part = '_'.join([self.get_underscore_category(),
                                                self.get_underscore_name()]) + '.toolbox.part'
-        file_tvpl_toolbox_part = open(os.path.join('bindings', filename_tvpl_toolbox_part), 'wb')
-        file_tvpl_toolbox_part.write(etree.tostring(e_device))
-        file_tvpl_toolbox_part.close()
-
-        return source
+        return (source, filename_tvpl_toolbox_part, etree.tostring(e_device))
 
     def get_tvpl_source_generator_javascript(self):
+        def get_getter_callback_args(elements_out):
+            e_out = []
+
+            for e in elements_out:
+                e_out.append(e.get_underscore_name())
+
+            if len(e_out) > 1:
+                e_out_args_function = '(' + ', '.join(e_out) + ')'
+                e_out_args_assignment = '[' + ', '.join(e_out) + ']'
+            else:
+                e_out_args_function = '(' + ''.join(e_out) + ')'
+                e_out_args_assignment = ''.join(e_out)
+
+            return [e_out_args_function, e_out_args_assignment]
+
+        def get_function_input_args(elements_in):
+            e_in = []
+
+            for e in elements_in:
+                e_in.append(e.get_underscore_name())
+
+            return e_in
+
+        source = ''
+
         for packet in self.get_packets('function'):
-            pass
-        return ''
+            is_getter = False
+            generator_code_body = ''
+            function_to_generate = ''
+            generator_code_header = ''
+            generator_code_footer = ''
+            index_global_variable = ''
+            returned_blockly_code = ''
+            elements_in = packet.get_elements('in')
+            elements_out = packet.get_elements('out')
+            block_name = '_'.join([self.get_tvpl_block_name(), packet.get_underscore_name()])
+
+            generator_code_header = '''Blockly.JavaScript['{0}'] = function(block) {{
+  var value_{0}_uid = Blockly.JavaScript.valueToCode(block, '{1}_UID', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_{0}_host = Blockly.JavaScript.valueToCode(block, '{1}_HOST', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_{0}_port = Blockly.JavaScript.valueToCode(block, '{1}_PORT', Blockly.JavaScript.ORDER_ATOMIC);
+  var {0}_uid = value_{0}_uid.substr(1).slice(0, -1);
+  var {0}_host = value_{0}_host.substr(1).slice(0, -1);
+  var blockIdentifier = Blockly.JavaScript.tfGetUniqueNumber();
+'''.format(block_name,
+           self.get_tvpl_block_name().upper())
+
+            generator_code_footer = '''  Blockly.JavaScript.definitions_['common_javascript_ipcon_connect'] = 'function _ipcon_connect(host, port) {\\n'+
+'  var ipcon;\\n'+
+'  var key_ipcon_cache = host + \\':\\' + String(port);\\n'+
+'\\n'+
+'  if (key_ipcon_cache in _ipcon_cache) {\\n'+
+'    setTimeout(function() {\\n'+
+'      _iterator_main.next();\\n'+
+'    }, 0);\\n'+
+'  }\\n'+
+'  else {\\n'+
+'     ipcon = new Tinkerforge.IPConnection();\\n'+
+'     ipcon.on(Tinkerforge.IPConnection.CALLBACK_CONNECTED, function(e) {\\n'+
+'       _ipcon_cache[key_ipcon_cache] = ipcon;\\n'+
+'       _iterator_main.next();\\n'+
+'     });\\n'+
+'     ipcon.connect(host, port, _error_handler);\\n'+
+'  }\\n'+
+'}\\n';
+
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+'''
+            if len(elements_out) > 0:
+                is_getter = True
+
+            if is_getter:
+                index_global_variable = '''  var index_global_variable = {0}+
+'@'+
+{1}+
+':'+
+String({2})+
+'_{3}_'+
+String(blockIdentifier);
+
+'''.format('_'.join([block_name, 'uid']),
+           '_'.join([block_name, 'host']),
+           '_'.join([block_name, 'port']),
+           block_name)
+
+                if len(elements_in) < 1:
+                    # Getter without arguments
+                    returned_blockly_code = '''  var code = '(_ipcon_connect(\\''+
+{0}+
+'\\', '+
+String({1})+
+'), (yield 1), _{2}(\\''+
+{3}+
+'\\', '+
+String({4})+
+', \\''+
+{5}+
+'\\', \\''+
+String(block_identifier)+
+'\\'), (yield 1), _tf_global_variables[\\''+
+index_global_variable+
+'\\']);';
+
+'''.format('_'.join([self.get_tvpl_block_name(), 'host']),
+           '_'.join(['value', self.get_tvpl_block_name(), 'port']),
+           block_name,
+           '_'.join([self.get_tvpl_block_name(), 'host']),
+           '_'.join(['value', self.get_tvpl_block_name(), 'port']),
+           '_'.join([self.get_tvpl_block_name(), 'uid']))
+
+                    function_to_generate = '''Blockly.JavaScript.definitions_['{0}'] = 'function _{0}(host, port, uid, block_id) {{\\n'+
+'  var key_ipcon_cache = host + \\':\\' + String(port);\\n'+
+'  var key_device_cache = uid + \\'@\\' + key_ipcon_cache;\\n'+
+'  var device = _device_cache[key_device_cache];\\n'+
+'  var key_global_variable = key_device_cache + \\'_{0}_\\' + block_id;\\n'+
+'\\n'+
+'  if (device == null) {{\\n'+
+'    device = new Tinkerforge.{1}(uid, _ipcon_cache[key_ipcon_cache]);\\n'+
+'    _device_cache[key_device_cache] = device;\\n'+
+'  }}\\n'+
+'  device.{2}(function{3} {{\\n'+
+'    _tf_global_variables[key_global_variable] = {4};\\n'+
+'    _iterator_main.next();\\n'+
+'  }}, _error_handler);\\n'+
+'}}\\n';
+
+'''.format(block_name,
+           self.get_camel_case_category() + self.get_camel_case_name(),
+           packet.get_headless_camel_case_name(),
+           get_getter_callback_args(elements_out)[0],
+           get_getter_callback_args(elements_out)[1])
+
+                else:
+                    # Getter with arguments
+                    e_in = get_function_input_args(elements_in) # Returns a list of in arg underscore names
+                    hash_value_to_code_variable = {}
+                    hash_get_field_value_variable = {}
+
+                    for e in e_in:
+                        hash_value_to_code_variable[e] = 'value_' + self.get_tvpl_block_name() + '_' + e
+                        hash_get_field_value_variable[e] = 'dropdown_' + self.get_tvpl_block_name() + '_' + e
+
+                    list_blockly_value_to_code_statements = []
+                    list_blockly_get_field_value_statements = []
+                    constant_groups = packet.get_constant_groups()
+
+                    if len(constant_groups) > 0:
+                        # Constants in constant group
+                        for e in e_in:
+                            for constant_group in constant_groups:
+                                list_blockly_get_field_value_statements.append('''var {0} = block.getFieldValue('{1}_{2}_{3}');
+'''.format(hash_get_field_value_variable[e],
+           self.get_tvpl_block_name().upper(),
+           packet.get_underscore_name().upper(),
+           e.upper()))
+                    else:
+                        # Nothing in constant group
+                        for e in e_in:
+                            for constant_group in constant_groups:
+                                list_blockly_value_to_code_statements.append('''var {0} = Blockly.JavaScript.valueToCode(block, '{1}_{2}', Blockly.JavaScript.ORDER_ATOMIC);
+'''.format(hash_value_to_code_variable[e],
+           self.get_tvpl_block_name().upper(),
+           e.upper()))
+
+                generator_code_body = index_global_variable + returned_blockly_code + function_to_generate
+                source = source + generator_code_header + generator_code_body + generator_code_footer
+                continue
+
+            else:
+                if len(elements_in) < 1:
+                    # Setter without arguments
+                    pass
+                else:
+                    # Setter without arguments
+                    pass
+
+                generator_code_body = index_global_variable + returned_blockly_code + function_to_generate
+                source = source + generator_code_header + generator_code_body + generator_code_footer
+                continue
+
+        return source
 
     def get_tvpl_source_generator_python(self):
         for packet in self.get_packets('function'):
@@ -360,11 +536,17 @@ class TVPLBindingsGenerator(common.BindingsGenerator):
         filename_tvpl_code_generator_javascript = '{0}_{1}.generator.javascript'.format(device.get_underscore_category(), device.get_underscore_name())
         filename_tvpl_code_generator_python = '{0}_{1}.generator.python'.format(device.get_underscore_category(), device.get_underscore_name())
 
-        file_tvpl_block = open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename_tvpl_block), 'wb')
-        file_tvpl_block.write(device.get_tvpl_source_block())
-        file_tvpl_block.close()
+        ret_get_tvpl_source_block = device.get_tvpl_source_block()
+        if ret_get_tvpl_source_block[0] != '':
+            file_tvpl_block = open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename_tvpl_block), 'wb')
+            file_tvpl_block.write(ret_get_tvpl_source_block[0])
+            file_tvpl_block.close()
+        if ret_get_tvpl_source_block[1] != '' and ret_get_tvpl_source_block[2] != '':
+            file_tvpl_toolbox_part = open(os.path.join(self.bindings_root_directory, 'bindings', ret_get_tvpl_source_block[1]), 'wb')
+            file_tvpl_toolbox_part.write(ret_get_tvpl_source_block[2])
+            file_tvpl_toolbox_part.close()
 
-        file_tvpl_code_generator_javascript = open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename_tvpl_code_generator_javascript), 'wb')
+        file_tvpl_code_generator_javascript = open(os.path.join(self.bindings_root_directory, self.get_bindings_root_directory(), 'bindings', filename_tvpl_code_generator_javascript), 'wb')
         file_tvpl_code_generator_javascript.write(device.get_tvpl_source_generator_javascript())
         file_tvpl_code_generator_javascript.close()
 
