@@ -42,7 +42,7 @@ Setzt den Zustand des Relais, *true* bedeutet ein und *false* aus.
 
 Laufende Monoflop Timer werden überschrieben wenn diese Funktion aufgerufen wird.
 
-Der Standardwert ist *false*, *false*.
+Der Standardwert ist *false*.
 """
 }]
 })
