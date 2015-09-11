@@ -40,7 +40,7 @@ if 'examples' in args:
 
         try:
             module = __import__('generate_{0}_examples'.format(binding))
-        except:
+        except ImportError:
             print("\nNo example generator for {0}".format(binding))
             continue
 
