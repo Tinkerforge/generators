@@ -51,7 +51,9 @@ class TVPLZipGenerator(common.Generator):
         self.dict_brick_file_content_xml_toolbox_part    = {}
         self.dict_bricklet_file_content_xml_toolbox_part = {}
         self.file_name_xml_toolbox_part_merge_with       = 'toolbox.xml.part'
-
+        self.file_content_append_block                   = 'use \'strict\';\ngoog.provide(\'Blockly.Blocks.tinkerforge\');\ngoog.require(\'Blockly.Blocks\');\n\n'
+        self.file_content_append_generator_javascript    = 'use \'strict\';\ngoog.provide(\'Blockly.JavaScript.tinkerforge\');\ngoog.require(\'Blockly.JavaScript\');\n\n'
+        self.file_content_append_generator_python        = 'use \'strict\';\ngoog.provide(\'Blockly.Python.tinkerforge\');\ngoog.require(\'Blockly.Python\');\n\n'
     def get_bindings_name(self):
         return 'tvpl'
 
@@ -111,15 +113,15 @@ class TVPLZipGenerator(common.Generator):
 
         # Write block definition file
         with open(os.path.join(self.path_dir_tmp_blocks, 'tinkerforge.js'), 'w') as fh_blocks:
-            fh_blocks.write(self.file_content_block)
+            fh_blocks.write(self.file_content_append_block + self.file_content_block)
 
         # Write JavaScript generator file
         with open(os.path.join(self.path_dir_tmp_generators_javascript, 'tinkerforge.js'), 'w') as fh_generator_javascript:
-            fh_generator_javascript.write(self.file_content_generator_javascript)
+            fh_generator_javascript.write(self.file_content_append_generator_javascript + self.file_content_generator_javascript)
 
         # Write Python generator file
         with open(os.path.join(self.path_dir_tmp_generators_python, 'tinkerforge.js'), 'w') as fh_generator_python:
-            fh_generator_python.write(self.file_content_generator_python)
+            fh_generator_python.write(self.file_content_append_generator_python + self.file_content_generator_python)
 
         # Write toolbox XML file
         with open(os.path.join(root_dir, root_dir, 'tinkerforge', 'xml', self.file_name_xml_toolbox_part_merge_with), 'r') as fh_xml_toolbox_merge_with:
