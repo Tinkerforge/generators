@@ -27,6 +27,7 @@ import sys
 import os
 import shutil
 import subprocess
+import datetime
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -51,9 +52,29 @@ class TVPLZipGenerator(common.Generator):
         self.dict_brick_file_content_xml_toolbox_part    = {}
         self.dict_bricklet_file_content_xml_toolbox_part = {}
         self.file_name_xml_toolbox_part_merge_with       = 'toolbox.xml.part'
-        self.file_content_append_block                   = 'use \'strict\';\ngoog.provide(\'Blockly.Blocks.tinkerforge\');\ngoog.require(\'Blockly.Blocks\');\n\n'
-        self.file_content_append_generator_javascript    = 'use \'strict\';\ngoog.provide(\'Blockly.JavaScript.tinkerforge\');\ngoog.require(\'Blockly.JavaScript\');\n\n'
-        self.file_content_append_generator_python        = 'use \'strict\';\ngoog.provide(\'Blockly.Python.tinkerforge\');\ngoog.require(\'Blockly.Python\');\n\n'
+        self.date                                        = datetime.datetime.now().strftime("%Y-%m-%d")
+        self.version                                     = common.get_changelog_version(self.get_bindings_root_directory())
+        self.file_content_append_block                   = '''{0}
+\'use strict\';
+goog.provide(\'Blockly.Blocks.tinkerforge\');
+goog.require(\'Blockly.Blocks\');
+
+'''.format(common.gen_text_star.format(self.date, *self.version))
+
+        self.file_content_append_generator_javascript    = '''{0}
+\'use strict\';
+goog.provide(\'Blockly.JavaScript.tinkerforge\');
+goog.require(\'Blockly.JavaScript\');
+
+'''.format(common.gen_text_star.format(self.date, *self.version))
+
+        self.file_content_append_generator_python        = '''{0}
+\'use strict\';
+goog.provide(\'Blockly.Python.tinkerforge\');
+goog.require(\'Blockly.Python\');
+
+'''.format(common.gen_text_star.format(self.date, *self.version))
+
     def get_bindings_name(self):
         return 'tvpl'
 
@@ -91,7 +112,7 @@ class TVPLZipGenerator(common.Generator):
         with open(os.path.join(self.bindings_root_directory, 'bindings', filename_generator_python), 'r') as fh_generator_python:
             self.file_content_generator_python = self.file_content_generator_python + fh_generator_python.read()
 
-        # Get device toolbox code and append
+        # Get device toolbox code and put in dict
         with open(os.path.join(self.bindings_root_directory, 'bindings', filename_toolbox_part), 'r') as fh_toolbox_part:
             if is_brick:
                 self.dict_brick_file_content_xml_toolbox_part[device_category_name] = fh_toolbox_part.read()
@@ -138,7 +159,8 @@ class TVPLZipGenerator(common.Generator):
                                        fh_xml_toolbox_merge_with.read()
 
             with open(os.path.join(self.path_dir_tmp_tinkerforge, 'xml', 'toolbox.xml'), 'w') as fh_xml_toolbox:
-                fh_xml_toolbox.write(file_content_xml_toolbox)
+                fh_xml_toolbox.write('<!--\n' + common.gen_text_hash.format(self.date, *self.version) + \
+                                     '-->\n' + file_content_xml_toolbox.replace('\n', ''))
 
         # Compile with closure library
 

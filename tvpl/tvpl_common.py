@@ -30,7 +30,7 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class TVPLDevice(common.Device):
-    def get_tvpl_block_name(self):
+    def get_tvpl_device_name(self):
         return '_'.join([self.get_underscore_category(), self.get_underscore_name()])
 
 class TVPLElement(common.Element):
