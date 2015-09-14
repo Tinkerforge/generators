@@ -179,11 +179,11 @@ Configures the voltage and current range.
 Possible voltage ranges are:
 
 * 0V to 5V
-* 0V to 10V
+* 0V to 10V (default)
 
 Possible current ranges are:
 
-* 4mA to 20mA
+* 4mA to 20mA (default)
 * 0mA to 20mA
 * 0mA to 24mA
 
@@ -197,11 +197,11 @@ Konfiguriert die Spannungs- und Stromwertebereiche.
 Einstellbare Spannungswertebereiche sind:
 
 * 0V bis 5V
-* 0V bis 10V
+* 0V bis 10V (Standard)
 
 Einstellbare Stromwertebereiche sind:
 
-* 4mA bis 20mA
+* 4mA bis 20mA (Standard)
 * 0mA bis 20mA
 * 0mA bis 24mA
 
