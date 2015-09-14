@@ -1,10 +1,7 @@
 <hr />
 
 # Tinkerforge
-
-Tinkerforge is a Node.js package that provides the
-Tinkerforge API bindings for all Tinkerforge Bricks
-and Bricklets.
+Tinkerforge is a Node.js package that provides the Tinkerforge API bindings for all Tinkerforge Bricks and Bricklets.
 
 ## How to Install
 
@@ -13,16 +10,13 @@ npm install tinkerforge
 ```
 
 ## How to Use
-
-To be able to use the bindings first the API must be
-included in the code in following way:
+To be able to use the bindings first the API must be included in the code in following way:
 
 ```js
 var Tinkerforge = require('tinkerforge');
 ```
 
-After that all the classes and their functionalities
-provided by the binding can be accessed like:
+After that all the classes and their functionalities provided by the binding can be accessed like:
 
 ```js
 var IPConnection = Tinkerforge.IPConnection;
@@ -37,12 +31,11 @@ BrickletDualButton = new BrickletDualButton();
 ```
 
 ## Documentation
-
 For detailed documentation see the [Tinkerforge](http://www.tinkerforge.com/en/doc/Software/API_Bindings_JavaScript.html) homepage.
 
 ## Examples
-
 ### Enumeration
+
 ```js
 var Tinkerforge = require('tinkerforge');
 
@@ -88,7 +81,9 @@ process.stdin.on('data',
     }
 );
 ```
+
 ### Getter Call
+
 ```js
 var Tinkerforge = require('tinkerforge');
 
@@ -127,9 +122,10 @@ process.stdin.on('data',
         process.exit(0);
     }
 );
-
 ```
+
 ### Setter and Callbacks
+
 ```js
 var Tinkerforge = require('tinkerforge');
 
@@ -150,7 +146,7 @@ ipcon.connect(HOST, PORT,
 ipcon.on(Tinkerforge.IPConnection.CALLBACK_CONNECTED,
     function(connectReason) {
         // Set threshold callbacks with a debounce time of 10 seconds (10000ms)
-        h.setDebouncePeriod(10000); 
+        h.setDebouncePeriod(10000);
         // Configure threshold for "outside of 30 to 60 %RH" (unit is %RH/10)
         h.setHumidityCallbackThreshold('o', 30*10, 60*10);    
     }
@@ -176,14 +172,11 @@ process.stdin.on('data',
         process.exit(0);
     }
 );
-
 ```
-## License
 
+## License
 (CC0)
 
-Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+Copyright (C) 2014 Ishraq Ibne Ashraf [ishraq@tinkerforge.com](mailto:ishraq@tinkerforge.com)
 
-Redistribution and use in source and binary forms of this file,
-with or without modification, are permitted. See the Creative
-Commons Zero (CC0 1.0) License for more details.
+Redistribution and use in source and binary forms of this file, with or without modification, are permitted. See the Creative Commons Zero (CC0 1.0) License for more details.
