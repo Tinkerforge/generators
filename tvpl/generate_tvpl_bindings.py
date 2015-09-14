@@ -33,6 +33,10 @@ import common
 import tvpl_common
 
 class TVPLBindingsDevice(tvpl_common.TVPLDevice):
+    def __init__(self, bindings_root_directory, language):
+        tvpl_common.TVPLDevice.__init__(self, bindings_root_directory, language)
+        self.RED_BRICK_DEVICE_ID = 17
+
     def get_packet_elements_as_list(self, elements):
         list_e = []
 
@@ -60,16 +64,16 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
             # Constants in constant group
             for e in e_in:
                 for constant_group in constant_groups:
-                    list_blockly_get_field_value_statements.append('''  var {0} = block.getFieldValue('{1}_{2}_{3}');'''.format(hash_get_field_value_variable[e],
-                                                                                                                                  self.get_tvpl_device_name().upper(),
-                                                                                                                                  packet.get_underscore_name().upper(),
-                                                                                                                                  e.upper()))
+                    list_blockly_get_field_value_statements.append('''  var {fieldvaluevariable} = block.getFieldValue('{devicenameupper}_{packetname}_{eupper}');'''.format(fieldvaluevariable = hash_get_field_value_variable[e],
+                                                                                                                                                                             devicenameupper = self.get_tvpl_device_name().upper(),
+                                                                                                                                                                             packetname = packet.get_underscore_name().upper(),
+                                                                                                                                                                             eupper = e.upper()))
         else:
             # Nothing in constant group
             for e in e_in:
-                list_blockly_value_to_code_statements.append('''  var {0} = Blockly.JavaScript.valueToCode(block, '{1}_{2}', Blockly.JavaScript.ORDER_ATOMIC);'''.format(hash_value_to_code_variable[e],
-                                                                                                                                                                           self.get_tvpl_device_name().upper(),
-                                                                                                                                                                           e.upper()))
+                list_blockly_value_to_code_statements.append('''  var {valuetocodevariable} = Blockly.JavaScript.valueToCode(block, '{devicenameupper}_{eupper}', Blockly.JavaScript.ORDER_ATOMIC);'''.format(valuetocodevariable = hash_value_to_code_variable[e],
+                                                                                                                                                                                                              devicenameupper = self.get_tvpl_device_name().upper(),
+                                                                                                                                                                                                              eupper = e.upper()))
         return (list_blockly_value_to_code_statements, list_blockly_get_field_value_statements)
 
     def get_function_in_args(self, e_in, ret_get_hash_value_field_variable):
@@ -107,11 +111,11 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
                 is_getter = True
 
             block_name = '_'.join([self.get_tvpl_device_name(), packet.get_underscore_name()])
-            block_uid = '_'.join([self.get_underscore_category().upper(), self.get_underscore_name().upper(), 'UID'])
-            block_host = '_'.join([self.get_underscore_category().upper(), self.get_underscore_name().upper(), 'HOST'])
-            block_port = '_'.join([self.get_underscore_category().upper(), self.get_underscore_name().upper(), 'PORT'])
+            block_uid = '_'.join([self.get_underscore_category().upper(), self.get_underscore_name().upper(), 'IPCON_UID'])
+            block_host = '_'.join([self.get_underscore_category().upper(), self.get_underscore_name().upper(), 'IPCON_HOST'])
+            block_port = '_'.join([self.get_underscore_category().upper(), self.get_underscore_name().upper(), 'IPCON_PORT'])
             block_display_device_name = self.get_long_display_name()
-            block_display_function_name = packet.get_headless_camel_case_name()
+            block_display_function_name = common.camel_case_to_space(packet.get_camel_case_name())
             block_set_color = 'this.setColour(210);'
             block_help_url = 'this.setHelpUrl(\'' + '/'.join(['http://www.tinkerforge.com/en/doc/Software',
                                                               self.get_camel_case_category() +\
@@ -128,8 +132,8 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
             block_set_previous_statement = 'this.setPreviousStatement(true);'
             block_set_next_statement = 'this.setNextStatement(true);'
             block_set_output = 'this.setOutput(false);'
-            block_code_header = '''Blockly.Blocks['{0}'] = {{
-  init: function() {{'''.format(block_name)
+            block_code_header = '''Blockly.Blocks['{blockname}'] = {{
+  init: function() {{'''.format(blockname = block_name)
 
             if is_getter:
                 block_set_previous_statement = 'this.setPreviousStatement(false);'
@@ -142,35 +146,35 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
                     # Getters without in args
                     block_code_body = '''
     this.appendDummyInput()
-        .appendField('{0}');
-    this.appendValueInput('{1}')
+        .appendField('{blockdescription}');
+    this.appendValueInput('{uid}')
         .setCheck(\'String\');
     this.appendDummyInput()
         .appendField(\'at\');
-    this.appendValueInput('{2}')
+    this.appendValueInput('{host}')
         .setCheck(\'String\');
     this.appendDummyInput()
         .appendField(\':\');
-    this.appendValueInput('{3}')
+    this.appendValueInput('{port}')
         .setCheck(\'Number\');
-'''.format(' '.join([block_display_function_name, 'of', block_display_device_name]),
-           block_uid,
-           block_host,
-           block_port)
+'''.format(blockdescription = ' '.join([block_display_function_name, 'of', block_display_device_name]),
+           uid = block_uid,
+           host = block_host,
+           port = block_port)
 
                     block_code_footer = '''    this.setInputsInline(true);
-    {0}
-    {1}
-    {2}
-    {3}
-    {4}
+    {setoutput}
+    {previousstatement}
+    {nextstatement}
+    {color}
+    {helpurl}
   }}
 }};
-'''.format(block_set_output,
-           block_set_previous_statement,
-           block_set_next_statement,
-           block_set_color,
-           block_help_url)
+'''.format(setoutput = block_set_output,
+           previousstatement = block_set_previous_statement,
+           nextstatement = block_set_next_statement,
+           color = block_set_color,
+           helpurl = block_help_url)
                     return block_code_header + block_code_body + block_code_footer
 
             if not is_getter:
@@ -178,51 +182,64 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
                     # Setters without in args
                     block_code_body = '''
     this.appendDummyInput()
-        .appendField('{0}');
-    this.appendValueInput('{1}')
+        .appendField('{blockdescription}');
+    this.appendValueInput('{uid}')
         .setCheck(\'String\');
     this.appendDummyInput()
         .appendField(\'at\');
-    this.appendValueInput('{2}')
+    this.appendValueInput('{host}')
         .setCheck(\'String\');
     this.appendDummyInput()
         .appendField(\':\');
-    this.appendValueInput('{3}')
+    this.appendValueInput('{port}')
         .setCheck(\'Number\');
-'''.format(' '.join([block_display_function_name, 'of', block_display_device_name]),
-           block_uid,
-           block_host,
-           block_port)
+'''.format(blockdescription = ' '.join([block_display_function_name, 'of', block_display_device_name]),
+           uid = block_uid,
+           host = block_host,
+           port = block_port)
 
                     block_code_footer = '''    this.setInputsInline(true);
-    {0}
-    {1}
-    {2}
-    {3}
-    {4}
+    {setoutput}
+    {previousstatement}
+    {nextstatement}
+    {color}
+    {helpurl}
   }}
 }};
-'''.format(block_set_output,
-           block_set_previous_statement,
-           block_set_next_statement,
-           block_set_color,
-           block_help_url)
+'''.format(setoutput = block_set_output,
+           previousstatement = block_set_previous_statement,
+           nextstatement = block_set_next_statement,
+           color = block_set_color,
+           helpurl = block_help_url)
                     return block_code_header + block_code_body + block_code_footer
 
             # Getters/setters with in args
             block_code_body = ''
-            for e in elements_in:
+
+            if len(elements_out) < 1:
+                block_code_body = '''
+    this.appendDummyInput()
+        .appendField('{functionname}');
+    this.appendDummyInput()
+        .appendField('to');
+'''.format(functionname = block_display_function_name)
+            else:
+                block_code_body = '''
+    this.appendDummyInput()
+        .appendField('{functionname}');
+'''.format(functionname = block_display_function_name)
+
+            for i, e in enumerate(elements_in):
                 if e.get_constant_group():
                     # Create combobox with allowed input values
                     constant_group = e.get_constant_group()
                     combo_constants_array = ''
-                    constant_group_name = constant_group.get_headless_camel_case_name()
                     for index , constant in enumerate(constant_group.get_constants()):
                         if index == 0:
                             combo_constants_array = '['
                         combo_constants_array = combo_constants_array +\
                                                 '[\'' +\
-                                                constant.get_camel_case_name() +\
+                                                common.camel_case_to_space(constant.get_camel_case_name()) +\
                                                 '\'' +\
                                                 ', ' +\
                                                 '\'' +\
@@ -233,115 +250,102 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
                         else:
                             combo_constants_array = combo_constants_array + ', '
 
-                    if block_code_body == '':
-                        block_code_body = '''
+                    block_code_body = block_code_body + '''    this.appendDummyInput()
+        .appendField('{ename}');
     this.appendDummyInput()
-        .appendField('{0}');
-    this.appendDummyInput()
-        .appendField('{1}:');
-    this.appendDummyInput()
-        .appendField(new Blockly.FieldDropdown({2}), '{3}');
-'''.format(block_display_function_name,
-           constant_group_name,
-           combo_constants_array,
-           '_'.join([self.get_underscore_category().upper(),
-            self.get_underscore_name().upper(),
-            packet.get_underscore_name().upper(),
-            e.get_underscore_name().upper()]))
-                    else:
-                        block_code_body = block_code_body + '''
-    this.appendDummyInput()
-        .appendField('{0}:');
-    this.appendDummyInput()
-        .appendField(new Blockly.FieldDropdown({1}), '{2}');
-'''.format(constant_group_name,
-           combo_constants_array,
-           '_'.join([self.get_underscore_category().upper(),
-                     self.get_underscore_name().upper(),
-                     packet.get_underscore_name().upper(),
-                     e.get_underscore_name().upper()]))
+        .appendField(new Blockly.FieldDropdown({constantsarray}), '{fieldname}');
+'''.format(ename = common.camel_case_to_space(e.get_headless_camel_case_name()),
+           constantsarray = combo_constants_array,
+           fieldname = '_'.join([self.get_underscore_category().upper(),
+                                 self.get_underscore_name().upper(),
+                                 packet.get_underscore_name().upper(),
+                                 e.get_underscore_name().upper()]))
+
+                    if i < len(elements_in) - 2:
+                        block_code_body = block_code_body + '''    this.appendDummyInput()
+        .appendField(',');
+'''
+                    elif i == len(elements_in) - 2:
+                        block_code_body = block_code_body + '''    this.appendDummyInput()
+        .appendField('and');
+'''
+
                 else:
                     # Create input field of specific types
-                    if block_code_body == '':
-                        block_code_body = '''
-    this.appendDummyInput()
-        .appendField('{0}');
-    this.appendDummyInput()
-        .appendField('{1}:');
-    this.appendValueInput('{2}')
-        .setCheck('{3}');
-'''.format(block_display_function_name,
-           e.get_headless_camel_case_name(),
-           '_'.join([self.get_underscore_category().upper(),
-                     self.get_underscore_name().upper(),
-                     e.get_underscore_name().upper()]),
-           e.get_tvpl_type())
-                    else:
+                    block_code_body = block_code_body + '''    this.appendDummyInput()
+        .appendField('{ename}');
+    this.appendValueInput('{variablename}')
+        .setCheck('{etvpltype}');
+'''.format(ename = common.camel_case_to_space(e.get_headless_camel_case_name()),
+           variablename = '_'.join([self.get_underscore_category().upper(),
+                                    self.get_underscore_name().upper(),
+                                    e.get_underscore_name().upper()]),
+           etvpltype = e.get_tvpl_type())
+
+                    if i < len(elements_in) - 2:
                         block_code_body = block_code_body + '''    this.appendDummyInput()
-        .appendField('{0}:');
-    this.appendValueInput('{1}')
-        .setCheck('{2}');
-'''.format(e.get_headless_camel_case_name(),
-           '_'.join([self.get_underscore_category().upper(),
-                     self.get_underscore_name().upper(),
-                     e.get_underscore_name().upper()]),
-           e.get_tvpl_type())
+        .appendField(',');
+'''
+                    elif i == len(elements_in) - 2:
+                        block_code_body = block_code_body + '''    this.appendDummyInput()
+        .appendField('and');
+'''
 
             block_code_body = block_code_body + '''    this.appendDummyInput()
-        .appendField('of {0}');
-    this.appendValueInput('{1}')
+        .appendField('of {devicename}');
+    this.appendValueInput('{uid}')
         .setCheck("String");
     this.appendDummyInput()
         .appendField("at");
-    this.appendValueInput('{2}')
+    this.appendValueInput('{host}')
         .setCheck("String");
     this.appendDummyInput()
         .appendField(":");
-    this.appendValueInput('{3}')
+    this.appendValueInput('{port}')
         .setCheck("Number");
-'''.format(block_display_device_name,
-           block_uid,
-           block_host,
-           block_port)
+'''.format(devicename = block_display_device_name,
+           uid = block_uid,
+           host = block_host,
+           port = block_port)
 
             block_code_footer = '''    this.setInputsInline(true);
-    {0}
-    {1}
-    {2}
-    {3}
-    {4}
+    {output}
+    {previousstatement}
+    {nextstatement}
+    {color}
+    {helpurl}
   }}
 }};
-'''.format(block_set_output,
-           block_set_previous_statement,
-           block_set_next_statement,
-           block_set_color,
-           block_help_url)
+'''.format(output = block_set_output,
+           previousstatement = block_set_previous_statement,
+           nextstatement = block_set_next_statement,
+           color = block_set_color,
+           helpurl = block_help_url)
 
             return block_code_header + block_code_body + block_code_footer
 
         # Exclude RED Brick
-        if self.get_underscore_name() == 'red':
+        if self.get_device_identifier() == self.RED_BRICK_DEVICE_ID:
             return ''
 
         source = ''
         device = '_'.join([self.get_underscore_category(),
                            self.get_underscore_name()]).upper()
-        xml_toolbox_uid = '_'.join([device, 'UID'])
-        xml_toolbox_host = '_'.join([device, 'HOST'])
-        xml_toolbox_port = '_'.join([device, 'PORT'])
+        xml_toolbox_uid = '_'.join([device, 'IPCON_UID'])
+        xml_toolbox_host = '_'.join([device, 'IPCON_HOST'])
+        xml_toolbox_port = '_'.join([device, 'IPCON_PORT'])
         xml_toolbox_part_function = ''
 
         e_device = etree.Element('category')
         e_device.set('name', self.get_short_display_name())
 
         for packet in self.get_packets('function'):
-            # Exclude callbacks and thresholds
-            if 'callback' in packet.get_underscore_name() or \
-               'threshold' in packet.get_underscore_name() or \
-               'debounce' in packet.get_underscore_name() or \
-               'period' in packet.get_underscore_name():
+            # Exclude unrelated functions
+            if packet.get_doc()[0] != 'af' and \
+               packet.get_doc()[0] != 'bf':
                    continue
+            if packet.is_virtual():
+                continue
 
             source = source + get_source_block(packet)
 
@@ -398,16 +402,16 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
         source = ''
 
         # Exclude RED Brick
-        if self.get_underscore_name() == 'red':
+        if self.get_device_identifier() == self.RED_BRICK_DEVICE_ID:
             return ''
 
         for packet in self.get_packets('function'):
-            # Exclude callbacks and thresholds
-            if 'callback' in packet.get_underscore_name() or \
-               'threshold' in packet.get_underscore_name() or \
-               'debounce' in packet.get_underscore_name() or \
-               'period' in packet.get_underscore_name():
+           # Exclude unrelated functions
+            if packet.get_doc()[0] != 'af' and \
+               packet.get_doc()[0] != 'bf':
                    continue
+            if packet.is_virtual():
+                continue
 
             is_getter = False
             generator_code_body = ''
@@ -418,19 +422,19 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
             elements_out = packet.get_elements('out')
             block_name = '_'.join([self.get_tvpl_device_name(), packet.get_underscore_name()])
 
-            generator_code_header = '''Blockly.JavaScript['{0}'] = function(block) {{
-  var value_{0}_uid = Blockly.JavaScript.valueToCode(block, '{1}_UID', Blockly.JavaScript.ORDER_ATOMIC);
-  var value_{0}_host = Blockly.JavaScript.valueToCode(block, '{1}_HOST', Blockly.JavaScript.ORDER_ATOMIC);
-  var value_{0}_port = Blockly.JavaScript.valueToCode(block, '{1}_PORT', Blockly.JavaScript.ORDER_ATOMIC);
-  var {0}_uid = value_{0}_uid.substr(1).slice(0, -1);
-  var {0}_host = value_{0}_host.substr(1).slice(0, -1);
+            generator_code_header = '''Blockly.JavaScript['{blockname}'] = function(block) {{
+  var value_{blockname}_ipcon_uid = Blockly.JavaScript.valueToCode(block, '{devicenameupper}_IPCON_UID', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_{blockname}_ipcon_host = Blockly.JavaScript.valueToCode(block, '{devicenameupper}_IPCON_HOST', Blockly.JavaScript.ORDER_ATOMIC);
+  var value_{blockname}_ipcon_port = Blockly.JavaScript.valueToCode(block, '{devicenameupper}_IPCON_PORT', Blockly.JavaScript.ORDER_ATOMIC);
+  var {blockname}_ipcon_uid = value_{blockname}_ipcon_uid.substr(1).slice(0, -1);
+  var {blockname}_ipcon_host = value_{blockname}_ipcon_host.substr(1).slice(0, -1);
   var block_identifier = Blockly.JavaScript.tfGetUniqueNumber();
-'''.format(block_name,
-           self.get_tvpl_device_name().upper())
+'''.format(blockname = block_name,
+           devicenameupper = self.get_tvpl_device_name().upper())
 
-            generator_code_footer = '''  Blockly.JavaScript.definitions_['common_javascript_ipcon_connect'] = 'function _ipcon_connect(host, port) {{\\n'+
+            generator_code_footer = '''  Blockly.JavaScript.definitions_['common_javascript_ipcon_connect'] = 'function _ipcon_connect(ipcon_host, ipcon_port) {{\\n'+
 '  var ipcon;\\n'+
-'  var key_ipcon_cache = host + \\':\\' + String(port);\\n'+
+'  var key_ipcon_cache = ipcon_host + \\':\\' + String(ipcon_port);\\n'+
 '\\n'+
 '  if (key_ipcon_cache in _ipcon_cache) {{\\n'+
 '    setTimeout(function() {{\\n'+
@@ -443,11 +447,11 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
 '       _ipcon_cache[key_ipcon_cache] = ipcon;\\n'+
 '       _iterator_main.next();\\n'+
 '     }});\\n'+
-'     ipcon.connect(host, port, _error_handler);\\n'+
+'     ipcon.connect(ipcon_host, ipcon_port, _error_handler);\\n'+
 '  }}\\n'+
 '}}\\n';
 
-  return {0};
+  return {returncode};
 }};
 
 '''
@@ -456,68 +460,69 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
 
             if is_getter:
                 # Getters
-                index_global_variable = '''  var index_global_variable = {0}+
+                index_global_variable = '''  var index_global_variable = {uid}+
 '@'+
-{1}+
+{host}+
 ':'+
-String({2})+
-'_{3}_'+
+String({port})+
+'_{blockname}_'+
 String(block_identifier);
 
-'''.format('_'.join([block_name, 'uid']),
-           '_'.join([block_name, 'host']),
-           '_'.join(['value', block_name, 'port']),
-           block_name)
+'''.format(uid = '_'.join([block_name, 'ipcon_uid']),
+           host = '_'.join([block_name, 'ipcon_host']),
+           port = '_'.join(['value', block_name, 'ipcon_port']),
+           blockname = block_name)
 
                 if len(elements_in) < 1:
                     # Getters without in args
                     returned_blockly_code = '''  var code = '(_ipcon_connect(\\''+
-{0}+
+{host}+
 '\\', '+
-String({1})+
-'), (yield 1), _{2}(\\''+
-{0}+
+String({port})+
+'), (yield 1), _{blockname}(\\''+
+{host}+
 '\\', '+
-String({1})+
+String({port})+
 ', \\''+
-{3}+
+{uid}+
 '\\', \\''+
 String(block_identifier)+
 '\\'), (yield 1), _tf_global_variables[\\''+
 index_global_variable+
 '\\'])'
 
-'''.format('_'.join([block_name, 'host']),
-           '_'.join(['value', block_name, 'port']),
-           block_name,
-           '_'.join([block_name, 'uid']))
+'''.format(host = '_'.join([block_name, 'ipcon_host']),
+           port = '_'.join(['value', block_name, 'ipcon_port']),
+           blockname = block_name,
+           uid = '_'.join([block_name, 'ipcon_uid']))
 
                     out_args_assignment = ', '.join(self.get_packet_elements_as_list(elements_out))
 
                     if len(elements_out) > 1:
                         out_args_assignment = '[' + ', '.join(self.get_packet_elements_as_list(elements_out)) + ']'
 
-                    function_to_generate = '''Blockly.JavaScript.definitions_['{0}'] = 'function _{0}(host, port, uid, block_id) {{\\n'+
-'  var key_ipcon_cache = host + \\':\\' + String(port);\\n'+
-'  var key_device_cache = uid + \\'@\\' + key_ipcon_cache;\\n'+
+                    function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function _{blockname}(ipcon_host, ipcon_port, ipcon_uid, block_id) {{\\n'+
+'  var key_ipcon_cache = ipcon_host + \\':\\' + String(ipcon_port);\\n'+
+'  var key_device_cache = ipcon_uid + \\'@\\' + key_ipcon_cache;\\n'+
 '  var device = _device_cache[key_device_cache];\\n'+
-'  var key_global_variable = key_device_cache + \\'_{0}_\\' + block_id;\\n'+
+'  var key_global_variable = key_device_cache + \\'_{blockname}_\\' + block_id;\\n'+
 '\\n'+
 '  if (device == null) {{\\n'+
-'    device = new Tinkerforge.{1}(uid, _ipcon_cache[key_ipcon_cache]);\\n'+
+'    device = new Tinkerforge.{categoryname}(ipcon_uid, _ipcon_cache[key_ipcon_cache]);\\n'+
+'    device.setResponseExpectedAll(true);\\n'+
 '    _device_cache[key_device_cache] = device;\\n'+
 '  }}\\n'+
-'  device.{2}(function({3}) {{\\n'+
-'    _tf_global_variables[key_global_variable] = {4};\\n'+
+'  device.{packetname}(function({eoutargs}) {{\\n'+
+'    _tf_global_variables[key_global_variable] = {eoutassignment};\\n'+
 '    _iterator_main.next();\\n'+
 '  }}, _error_handler);\\n'+
 '}}\\n';
 
-'''.format(block_name,
-           self.get_camel_case_category() + self.get_camel_case_name(),
-           packet.get_headless_camel_case_name(),
-           ', '.join(self.get_packet_elements_as_list(elements_out)),
-           out_args_assignment)
+'''.format(blockname = block_name,
+           categoryname = self.get_camel_case_category() + self.get_camel_case_name(),
+           packetname = packet.get_headless_camel_case_name(),
+           eoutargs = ', '.join(self.get_packet_elements_as_list(elements_out)),
+           eoutassignment = out_args_assignment)
 
                 else:
                     # Getters with in args
@@ -533,57 +538,58 @@ index_global_variable+
                         generator_code_header = generator_code_header + '\n'.join(ret_get_list_value_field_statements[1]) + '\n'
 
                     returned_blockly_code = '''  var code = '(_ipcon_connect(\\''+
-{0}+
+{host}+
 '\\', '+
-String({1})+
-'), (yield 1), _{2}(\\''+
-{0}+
+String({port})+
+'), (yield 1), _{blockname}(\\''+
+{host}+
 '\\', '+
-String({1})+
+String({port})+
 ', \\''+
-{3}+
+{uid}+
 '\\', \\''+
 String(block_identifier)+
-'\\', ' + {4} + '), (yield 1), _tf_global_variables[\\''+
+'\\', ' + {einargs} + '), (yield 1), _tf_global_variables[\\''+
 index_global_variable+
 '\\'])'
 
-'''.format('_'.join([block_name, 'host']),
-           '_'.join(['value', block_name, 'port']),
-           block_name,
-           '_'.join([block_name, 'uid']),
-           self.get_function_in_args(self.get_packet_elements_as_list(elements_in), ret_get_hash_value_field_variable))
+'''.format(host = '_'.join([block_name, 'ipcon_host']),
+           port = '_'.join(['value', block_name, 'ipcon_port']),
+           blockname = block_name,
+           uid = '_'.join([block_name, 'ipcon_uid']),
+           einargs = self.get_function_in_args(self.get_packet_elements_as_list(elements_in), ret_get_hash_value_field_variable))
 
                     out_args_assignment = ', '.join(self.get_packet_elements_as_list(elements_out))
 
                     if len(elements_out) > 1:
                         out_args_assignment = '[' + ', '.join(self.get_packet_elements_as_list(elements_out)) + ']'
 
-                    function_to_generate = '''Blockly.JavaScript.definitions_['{0}'] = 'function _{0}(host, port, uid, block_id, {1}) {{\\n'+
-'  var key_ipcon_cache = host + \\':\\' + String(port);\\n'+
-'  var key_device_cache = uid + \\'@\\' + key_ipcon_cache;\\n'+
+                    function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function _{blockname}(ipcon_host, ipcon_port, ipcon_uid, block_id, {einargs}) {{\\n'+
+'  var key_ipcon_cache = ipcon_host + \\':\\' + String(ipcon_port);\\n'+
+'  var key_device_cache = ipcon_uid + \\'@\\' + key_ipcon_cache;\\n'+
 '  var device = _device_cache[key_device_cache];\\n'+
-'  var key_global_variable = key_device_cache + \\'_{0}_\\' + block_id;\\n'+
+'  var key_global_variable = key_device_cache + \\'_{blockname}_\\' + block_id;\\n'+
 '\\n'+
 '  if (device == null) {{\\n'+
-'    device = new Tinkerforge.{2}(uid, _ipcon_cache[key_ipcon_cache]);\\n'+
+'    device = new Tinkerforge.{categoryname}(ipcon_uid, _ipcon_cache[key_ipcon_cache]);\\n'+
+'    device.setResponseExpectedAll(true);\\n'+
 '    _device_cache[key_device_cache] = device;\\n'+
 '  }}\\n'+
-'  device.{3}({1}, function({4}) {{\\n'+
-'    _tf_global_variables[key_global_variable] = {5};\\n'+
+'  device.{packetname}({einargs}, function({eoutargs}) {{\\n'+
+'    _tf_global_variables[key_global_variable] = {eoutargsassignment};\\n'+
 '    _iterator_main.next();\\n'+
 '  }}, _error_handler);\\n'+
 '}}\\n';
 
-'''.format(block_name,
-           ', '.join(self.get_packet_elements_as_list(elements_in)),
-           self.get_camel_case_category() + self.get_camel_case_name(),
-           packet.get_headless_camel_case_name(),
-           ', '.join(self.get_packet_elements_as_list(elements_out)),
-           out_args_assignment)
+'''.format(blockname = block_name,
+           einargs = ', '.join(self.get_packet_elements_as_list(elements_in)),
+           categoryname = self.get_camel_case_category() + self.get_camel_case_name(),
+           packetname = packet.get_headless_camel_case_name(),
+           eoutargs = ', '.join(self.get_packet_elements_as_list(elements_out)),
+           eoutargsassignment = out_args_assignment)
 
                 generator_code_body = index_global_variable + returned_blockly_code + function_to_generate
-                source = source + generator_code_header + generator_code_body + generator_code_footer.format('[code, Blockly.JavaScript.ORDER_FUNCTION_CALL]')
+                source = source + generator_code_header + generator_code_body + generator_code_footer.format(returncode = '[code, Blockly.JavaScript.ORDER_FUNCTION_CALL]')
 
                 continue
 
@@ -592,41 +598,42 @@ index_global_variable+
                 if len(elements_in) < 1:
                     # Setters without in args
                     returned_blockly_code = '''  var code = '(_ipcon_connect(\\''+
-{0}+
+{host}+
 '\\', '+
-String({1})+
-'), (yield 1), _{2}(\\''+
-{0}+
+String({port})+
+'), (yield 1), _{blockname}(\\''+
+{host}+
 '\\', '+
-String({1})+
+String({port})+
 ', \\''+
-{3}+
+{uid}+
 '\\', \\''+
 String(block_identifier)+
 '\\'), (yield 1));\\n'
 
-'''.format('_'.join([block_name, 'host']),
-           '_'.join(['value', block_name, 'port']),
-           block_name,
-           '_'.join([block_name, 'uid']))
+'''.format(host = '_'.join([block_name, 'ipcon_host']),
+           port = '_'.join(['value', block_name, 'ipcon_port']),
+           blockname = block_name,
+           uid = '_'.join([block_name, 'ipcon_uid']))
 
-                    function_to_generate = '''Blockly.JavaScript.definitions_['{0}'] = 'function _{0}(host, port, uid, block_id) {{\\n'+
-'  var key_ipcon_cache = host + \\':\\' + String(port);\\n'+
-'  var key_device_cache = uid + \\'@\\' + key_ipcon_cache;\\n'+
+                    function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function _{blockname}(ipcon_host, ipcon_port, ipcon_uid, block_id) {{\\n'+
+'  var key_ipcon_cache = ipcon_host + \\':\\' + String(ipcon_port);\\n'+
+'  var key_device_cache = ipcon_uid + \\'@\\' + key_ipcon_cache;\\n'+
 '  var device = _device_cache[key_device_cache];\\n'+
 '\\n'+
 '  if (device == null) {{\\n'+
-'    device = new Tinkerforge.{1}(uid, _ipcon_cache[key_ipcon_cache]);\\n'+
+'    device = new Tinkerforge.{categoryname}(ipcon_uid, _ipcon_cache[key_ipcon_cache]);\\n'+
+'    device.setResponseExpectedAll(true);\\n'+
 '    _device_cache[key_device_cache] = device;\\n'+
 '  }}\\n'+
-'  device.{2}(function(e) {{\\n'+
+'  device.{packetname}(function(e) {{\\n'+
 '    _iterator_main.next();\\n'+
 '  }}, _error_handler);\\n'+
 '}}\\n';
 
-'''.format(block_name,
-           self.get_camel_case_category() + self.get_camel_case_name(),
-           packet.get_headless_camel_case_name())
+'''.format(blockname = block_name,
+           categoryname = self.get_camel_case_category() + self.get_camel_case_name(),
+           packetname = packet.get_headless_camel_case_name())
 
                 else:
                     # Setters with in args
@@ -642,91 +649,92 @@ String(block_identifier)+
                         generator_code_header = generator_code_header + '\n'.join(ret_get_list_value_field_statements[1]) + '\n'
 
                     returned_blockly_code = '''  var code = '(_ipcon_connect(\\''+
-{0}+
+{host}+
 '\\', '+
-String({1})+
-'), (yield 1), _{2}(\\''+
-{0}+
+String({port})+
+'), (yield 1), _{blockname}(\\''+
+{host}+
 '\\', '+
-String({1})+
+String({port})+
 ', \\''+
-{3}+
+{uid}+
 '\\', \\''+
 String(block_identifier)+
-'\\', ' + {4} + '), (yield 1));\\n'
+'\\', ' + {einargs} + '), (yield 1));\\n'
 
-'''.format('_'.join([block_name, 'host']),
-           '_'.join(['value', block_name, 'port']),
-           block_name,
-           '_'.join([block_name, 'uid']),
-           self.get_function_in_args(self.get_packet_elements_as_list(elements_in), ret_get_hash_value_field_variable))
+'''.format(host = '_'.join([block_name, 'ipcon_host']),
+           port = '_'.join(['value', block_name, 'ipcon_port']),
+           blockname = block_name,
+           uid = '_'.join([block_name, 'ipcon_uid']),
+           einargs = self.get_function_in_args(self.get_packet_elements_as_list(elements_in), ret_get_hash_value_field_variable))
 
-                    function_to_generate = '''Blockly.JavaScript.definitions_['{0}'] = 'function _{0}(host, port, uid, block_id, {1}) {{\\n'+
-'  var key_ipcon_cache = host + \\':\\' + String(port);\\n'+
-'  var key_device_cache = uid + \\'@\\' + key_ipcon_cache;\\n'+
+                    function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function _{blockname}(ipcon_host, ipcon_port, ipcon_uid, block_id, {einargs}) {{\\n'+
+'  var key_ipcon_cache = ipcon_host + \\':\\' + String(ipcon_port);\\n'+
+'  var key_device_cache = ipcon_uid + \\'@\\' + key_ipcon_cache;\\n'+
 '  var device = _device_cache[key_device_cache];\\n'+
 '\\n'+
 '  if (device == null) {{\\n'+
-'    device = new Tinkerforge.{2}(uid, _ipcon_cache[key_ipcon_cache]);\\n'+
+'    device = new Tinkerforge.{categoryname}(ipcon_uid, _ipcon_cache[key_ipcon_cache]);\\n'+
+'    device.setResponseExpectedAll(true);\\n'+
 '    _device_cache[key_device_cache] = device;\\n'+
 '  }}\\n'+
-'  device.{3}({1}, function({4}) {{\\n'+
+'  device.{packetname}({einargs}, function({eoutargs}) {{\\n'+
 '    _iterator_main.next();\\n'+
 '  }}, _error_handler);\\n'+
 '}}\\n';
 
-'''.format(block_name,
-           ', '.join(self.get_packet_elements_as_list(elements_in)),
-           self.get_camel_case_category() + self.get_camel_case_name(),
-           packet.get_headless_camel_case_name(),
-           ', '.join(self.get_packet_elements_as_list(elements_out)))
+'''.format(blockname = block_name,
+           einargs = ', '.join(self.get_packet_elements_as_list(elements_in)),
+           categoryname = self.get_camel_case_category() + self.get_camel_case_name(),
+           packetname = packet.get_headless_camel_case_name(),
+           eoutargs = ', '.join(self.get_packet_elements_as_list(elements_out)))
 
                 generator_code_body = returned_blockly_code + function_to_generate
-                source = source + generator_code_header + generator_code_body + generator_code_footer.format('code')
+                source = source + generator_code_header + generator_code_body + generator_code_footer.format(returncode = 'code')
                 continue
 
         return source
 
     def get_tvpl_source_generator_python(self):
         # Exclude RED Brick
-        if self.get_underscore_name() == 'red':
+        if self.get_device_identifier() == self.RED_BRICK_DEVICE_ID:
             return ''
 
         source = ''
 
         for packet in self.get_packets('function'):
-            # Exclude callbacks and thresholds
-            if 'callback' in packet.get_underscore_name() or \
-               'threshold' in packet.get_underscore_name() or \
-               'debounce' in packet.get_underscore_name() or \
-               'period' in packet.get_underscore_name():
+            # Exclude unrelated functions
+            if packet.get_doc()[0] != 'af' and \
+               packet.get_doc()[0] != 'bf':
                    continue
+            if packet.is_virtual():
+                continue
 
             has_in_args = False
             elements_in = packet.get_elements('in')
             elements_out = packet.get_elements('out')
             block_name = '_'.join([self.get_tvpl_device_name(), packet.get_underscore_name()])
-            generator_code_header = '''Blockly.Python['{0}'] = function(block) {{
-  var value_{1}_uid = Blockly.Python.valueToCode(block, '{2}_UID', Blockly.Python.ORDER_ATOMIC);
-  var value_{1}_host = Blockly.Python.valueToCode(block, '{2}_HOST', Blockly.Python.ORDER_ATOMIC);
-  var value_{1}_port = Blockly.Python.valueToCode(block, '{2}_PORT', Blockly.Python.ORDER_ATOMIC);
+            generator_code_header = '''Blockly.Python['{blockname}'] = function(block) {{
+  var value_{devicename}_ipcon_uid = Blockly.Python.valueToCode(block, '{devicenameupper}_IPCON_UID', Blockly.Python.ORDER_ATOMIC);
+  var value_{devicename}_ipcon_host = Blockly.Python.valueToCode(block, '{devicenameupper}_IPCON_HOST', Blockly.Python.ORDER_ATOMIC);
+  var value_{devicename}_ipcon_port = Blockly.Python.valueToCode(block, '{devicenameupper}_IPCON_PORT', Blockly.Python.ORDER_ATOMIC);
   Blockly.Python.tfAppendCleanupCall_ = true;
-'''.format(block_name,
-           self.get_tvpl_device_name(),
-           self.get_tvpl_device_name().upper())
+'''.format(blockname = block_name,
+           devicename = self.get_tvpl_device_name(),
+           devicenameupper = self.get_tvpl_device_name().upper())
 
             generator_code_fixed_definitions = '''  Blockly.Python.definitions_['common_python_import'] = '_ipcon_cache = {}\\n'+
 '_device_cache = {}\\n'+
 '\\n'+
 'from tinkerforge.ip_connection import IPConnection';
 
-  Blockly.Python.definitions_['common_python_get_ipcon'] = 'def _get_ipcon(host, port):\\n'+
+  Blockly.Python.definitions_['common_python_get_ipcon'] = 'def _get_ipcon(ipcon_host, ipcon_port):\\n'+
 '  global _ipcon_cache\\n'+
-'  key = host + \\':\\' + str(port)\\n'+
+'  key = ipcon_host + \\':\\' + str(ipcon_port)\\n'+
 '\\n'+
 '  if key not in _ipcon_cache:\\n'+
 '    ipcon = IPConnection()\\n'+
-'    ipcon.connect(host, port)\\n'+
+'    ipcon.connect(ipcon_host, ipcon_port)\\n'+
 '    _ipcon_cache[key] = ipcon\\n'+
 '\\n'+
 '  return _ipcon_cache[key]';
@@ -737,6 +745,7 @@ String(block_identifier)+
 '\\n'+
 '  if key not in _device_cache:\\n'+
 '    device = device_class(uid, ipcon)\\n'+
+'    device.set_response_expected_all(True)\\n'+
 '    _device_cache[key] = device\\n'+
 '\\n'+
 '  return _device_cache[key]';
@@ -746,10 +755,10 @@ String(block_identifier)+
 '    ipcon.disconnect()';
 
 '''
-            generator_code_device_import = '''  Blockly.Python.definitions_['import_{0}'] = 'from tinkerforge.{0} import {1}';
+            generator_code_device_import = '''  Blockly.Python.definitions_['import_{devicename}'] = 'from tinkerforge.{devicename} import {categoryname}';
 
-'''.format(self.get_tvpl_device_name(),
-           self.get_camel_case_category() + self.get_camel_case_name())
+'''.format(devicename = self.get_tvpl_device_name(),
+           categoryname = self.get_camel_case_category() + self.get_camel_case_name())
 
             generator_code_footer = '  return [code, Blockly.Python.ORDER_FUNCTION_CALL];\n};\n\n'
 
@@ -763,29 +772,29 @@ String(block_identifier)+
                 # Function without in args
                 if len(elements_out) > 0:
                     # Getters
-                    function_to_generate = '''  Blockly.Python.definitions_['{0}'] = 'def {0}(HOST, PORT, UID):\\n'+
-'  return get_device({1}, UID, _get_ipcon(HOST, PORT)).{2}()';
+                    function_to_generate = '''  Blockly.Python.definitions_['{blockname}'] = 'def {blockname}(ipcon_host, ipcon_port, ipcon_uid):\\n'+
+'  return _get_device({categoryname}, uid, _get_ipcon(ipcon_host, ipcon_port)).{packetname}()';
 
-'''.format(block_name,
-           self.get_camel_case_category() + self.get_camel_case_name(),
-           packet.get_underscore_name())
+'''.format(blockname = block_name,
+           categoryname = self.get_camel_case_category() + self.get_camel_case_name(),
+           packetname = packet.get_underscore_name())
 
-                    returned_blockly_code = '''  var code = '{0}(' + value_{1}_host + ', ' + value_{1}_port + ', ' + value_{1}_uid + ')';
-'''.format(block_name,
-           self.get_tvpl_device_name())
+                    returned_blockly_code = '''  var code = '{blockname}(' + value_{devicename}_ipcon_host + ', ' + value_{devicename}_ipcon_port + ', ' + value_{devicename}_ipcon_uid + ')';
+'''.format(blockname = block_name,
+           devicename = self.get_tvpl_device_name())
 
                 else:
                     # Setters
-                    function_to_generate = '''  Blockly.Python.definitions_['{0}'] = 'def {0}(HOST, PORT, UID):\\n'+
-'  get_device({1}, UID, _get_ipcon(HOST, PORT)).{2}()';
+                    function_to_generate = '''  Blockly.Python.definitions_['{blockname}'] = 'def {blockname}(ipcon_host, ipcon_port, ipcon_uid):\\n'+
+'  _get_device({categoryname}, uid, _get_ipcon(ipcon_host, ipcon_port)).{packetname}()';
 
-'''.format(block_name,
-           self.get_camel_case_category() + self.get_camel_case_name(),
-           packet.get_underscore_name())
+'''.format(blockname = block_name,
+           categoryname = self.get_camel_case_category() + self.get_camel_case_name(),
+           packetname = packet.get_underscore_name())
 
-                    returned_blockly_code = '''  var code = '{0}(' + value_{1}_host + ', ' + value_{1}_port + ', ' + value_{1}_uid + ')\\n';
-'''.format(block_name,
-           self.get_tvpl_device_name())
+                    returned_blockly_code = '''  var code = '{blockname}(' + value_{devicename}_ipcon_host + ', ' + value_{devicename}_ipcon_port + ', ' + value_{devicename}_ipcon_uid + ')\\n';
+'''.format(blockname = block_name,
+           devicename = self.get_tvpl_device_name())
 
             else:
                 # Function with in args
@@ -802,34 +811,33 @@ String(block_identifier)+
 
                 if len(elements_out) > 0:
                     # Getters
-                    function_to_generate = '''  Blockly.Python.definitions_['{0}'] = 'def {0}(HOST, PORT, UID, {1}):\\n'+
-'  return get_device({2}, UID, _get_ipcon(HOST, PORT)).{3}({1})';
+                    function_to_generate = '''  Blockly.Python.definitions_['{blockname}'] = 'def {blockname}(ipcon_host, ipcon_port, ipcon_uid, {einargs}):\\n'+
+'  return _get_device({categoryname}, uid, _get_ipcon(ipcon_host, ipcon_port)).{packetname}({einargs})';
 
-'''.format(block_name,
-           ', '.join(self.get_packet_elements_as_list(elements_in)),
-           self.get_camel_case_category() + self.get_camel_case_name(),
-           packet.get_underscore_name())
+'''.format(blockname = block_name,
+           einargs = ', '.join(self.get_packet_elements_as_list(elements_in)),
+           categoryname = self.get_camel_case_category() + self.get_camel_case_name(),
+           packetname = packet.get_underscore_name())
 
-                    returned_blockly_code = '''  var code = '{0}(' + String(value_{1}_host) + ', ' + String(value_{1}_port) + ', ' + String(value_{1}_uid) + ', ' + {2} + ')';
-'''.format(block_name,
-           self.get_tvpl_device_name(),
-           self.get_function_in_args(self.get_packet_elements_as_list(elements_in), ret_get_hash_value_field_variable))
-
+                    returned_blockly_code = '''  var code = '{blockname}(' + String(value_{devicename}_ipcon_host) + ', ' + String(value_{devicename}_ipcon_port) + ', ' + String(value_{devicename}_ipcon_uid) + ', ' + {einargs} + ')';
+'''.format(blockname = block_name,
+           devicename = self.get_tvpl_device_name(),
+           einargs = self.get_function_in_args(self.get_packet_elements_as_list(elements_in), ret_get_hash_value_field_variable))
 
                 else:
                     # Setters
-                    function_to_generate = '''  Blockly.Python.definitions_['{0}'] = 'def {0}(HOST, PORT, UID, {1}):\\n'+
-'  get_device({2}, UID, _get_ipcon(HOST, PORT)).{3}({1})';
+                    function_to_generate = '''  Blockly.Python.definitions_['{blockname}'] = 'def {blockname}(ipcon_host, ipcon_port, ipcon_uid, {einargs}):\\n'+
+'  _get_device({categoryname}, uid, _get_ipcon(ipcon_host, ipcon_port)).{packetname}({einargs})';
 
-'''.format(block_name,
-           ', '.join(self.get_packet_elements_as_list(elements_in)),
-           self.get_camel_case_category() + self.get_camel_case_name(),
-           packet.get_underscore_name())
+'''.format(blockname = block_name,
+           einargs = ', '.join(self.get_packet_elements_as_list(elements_in)),
+           categoryname = self.get_camel_case_category() + self.get_camel_case_name(),
+           packetname = packet.get_underscore_name())
 
-                    returned_blockly_code = '''  var code = '{0}(' + String(value_{1}_host) + ', ' + String(value_{1}_port) + ', ' + String(value_{1}_uid) + ', ' + {2} + ')\\n';
-'''.format(block_name,
-           self.get_tvpl_device_name(),
-           self.get_function_in_args(self.get_packet_elements_as_list(elements_in), ret_get_hash_value_field_variable))
+                    returned_blockly_code = '''  var code = '{blockname}(' + String(value_{devicename}_ipcon_host) + ', ' + String(value_{devicename}_ipcon_port) + ', ' + String(value_{devicename}_ipcon_uid) + ', ' + {einargs} + ')\\n';
+'''.format(blockname = block_name,
+           devicename = self.get_tvpl_device_name(),
+           einargs = self.get_function_in_args(self.get_packet_elements_as_list(elements_in), ret_get_hash_value_field_variable))
 
             source = source + \
                      generator_code_header + \
@@ -860,9 +868,12 @@ class TVPLBindingsGenerator(common.BindingsGenerator):
         return common.BindingsGenerator.prepare(self)
 
     def generate(self, device):
-        filename_tvpl_block = '{0}_{1}.block'.format(device.get_underscore_category(), device.get_underscore_name())
-        filename_tvpl_code_generator_javascript = '{0}_{1}.generator.javascript'.format(device.get_underscore_category(), device.get_underscore_name())
-        filename_tvpl_code_generator_python = '{0}_{1}.generator.python'.format(device.get_underscore_category(), device.get_underscore_name())
+        filename_tvpl_block = '{devicecategory}_{devicename}.block'.format(devicecategory = device.get_underscore_category(),
+                                                                           devicename = device.get_underscore_name())
+        filename_tvpl_code_generator_javascript = '{devicecategory}_{devicename}.generator.javascript'.format(devicecategory = device.get_underscore_category(),
+                                                                                                              devicename = device.get_underscore_name())
+        filename_tvpl_code_generator_python = '{devicecategory}_{devicename}.generator.python'.format(devicecategory = device.get_underscore_category(),
+                                                                                                      devicename = device.get_underscore_name())
 
         file_tvpl_block = open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename_tvpl_block), 'wb')
         file_tvpl_block.write(device.get_tvpl_source_block(self.get_bindings_root_directory()))

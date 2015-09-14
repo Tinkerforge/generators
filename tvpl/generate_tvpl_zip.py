@@ -37,6 +37,8 @@ class TVPLZipGenerator(common.Generator):
     def __init__(self, bindings_root_directory, language):
         common.Generator.__init__(self, bindings_root_directory, language)
         self.path_dir_tmp                                = '/tmp/generator/tvpl'
+        self.path_dir_tmp_javascript                     = '/tmp/generator/javascript'
+        self.path_dir_tmp_closure_library                = '/tmp/generator/closure-library'
         self.path_dir_tmp_tinkerforge                    = os.path.join(self.path_dir_tmp, 'tinkerforge')
         self.path_dir_tmp_blocks                         = os.path.join(self.path_dir_tmp, 'blocks')
         self.path_dir_tmp_generators_javascript          = os.path.join(self.path_dir_tmp, 'generators', 'javascript')
@@ -54,35 +56,53 @@ class TVPLZipGenerator(common.Generator):
         self.file_name_xml_toolbox_part_merge_with       = 'toolbox.xml.part'
         self.date                                        = datetime.datetime.now().strftime("%Y-%m-%d")
         self.version                                     = common.get_changelog_version(self.get_bindings_root_directory())
-        self.file_content_append_block                   = '''{0}
+        self.file_content_append_block                   = '''{gentextstar}
 \'use strict\';
 goog.provide(\'Blockly.Blocks.tinkerforge\');
 goog.require(\'Blockly.Blocks\');
 
-'''.format(common.gen_text_star.format(self.date, *self.version))
+'''.format(gentextstar = common.gen_text_star.format(self.date, *self.version))
 
-        self.file_content_append_generator_javascript    = '''{0}
+        self.file_content_append_generator_javascript    = '''{gentextstar}
 \'use strict\';
 goog.provide(\'Blockly.JavaScript.tinkerforge\');
 goog.require(\'Blockly.JavaScript\');
 
-'''.format(common.gen_text_star.format(self.date, *self.version))
+'''.format(gentextstar = common.gen_text_star.format(self.date, *self.version))
 
-        self.file_content_append_generator_python        = '''{0}
+        self.file_content_append_generator_python        = '''{gentextstar}
 \'use strict\';
 goog.provide(\'Blockly.Python.tinkerforge\');
 goog.require(\'Blockly.Python\');
 
-'''.format(common.gen_text_star.format(self.date, *self.version))
+'''.format(gentextstar = common.gen_text_star.format(self.date, *self.version))
 
     def get_bindings_name(self):
         return 'tvpl'
 
     def prepare(self):
         shutil.rmtree(self.path_dir_tmp, True)
+        shutil.rmtree(self.path_dir_tmp_closure_library, True)
         shutil.copytree(self.path_dir_git_tvpl_blockly, self.path_dir_tmp)
         shutil.copytree(os.path.join(self.get_bindings_root_directory(), 'tinkerforge'), self.path_dir_tmp_tinkerforge)
         os.remove(os.path.join(self.path_dir_tmp_tinkerforge, 'xml', self.file_name_xml_toolbox_part_merge_with))
+
+        previous_working_directory = os.getcwd()
+        os.chdir(os.path.join(self.get_bindings_root_directory(), '..', 'javascript'))
+        args = ['python']
+        args.append('generate_javascript_bindings.py')
+        if subprocess.call(args) != 0:
+            raise Exception("Command '{cmdarg}' failed".format(cmdarg = ' '.join(args)))
+        args = ['python']
+        args.append(os.path.join(self.get_bindings_root_directory(), '..', 'javascript', 'generate_javascript_zip.py'))
+        if subprocess.call(args) != 0:
+            raise Exception("Command '{cmdarg}' failed".format(cmdarg = ' '.join(args)))
+        os.chdir(previous_working_directory)
+
+        shutil.copy(os.path.join(self.path_dir_tmp_javascript, 'browser', 'source', 'Tinkerforge.js'),
+                    os.path.join(self.path_dir_tmp_tinkerforge, 'js', 'Tinkerforge.js'))
+        shutil.copytree(os.path.join(self.get_bindings_root_directory(), '..', '..', 'tvpl-closure-library'),
+                        self.path_dir_tmp_closure_library)
 
     def generate(self, device):
         if not device.is_released() or device.get_underscore_name() == 'red':
@@ -126,10 +146,10 @@ goog.require(\'Blockly.Python\');
         file_content_xml_toolbox_brick    = ''
         file_content_xml_toolbox_bricklet = ''
 
-        for device in self.dict_brick_file_content_xml_toolbox_part:
+        for device in sorted(self.dict_brick_file_content_xml_toolbox_part):
             file_content_xml_toolbox_brick = file_content_xml_toolbox_brick + self.dict_brick_file_content_xml_toolbox_part[device]
 
-        for device in self.dict_bricklet_file_content_xml_toolbox_part:
+        for device in sorted(self.dict_bricklet_file_content_xml_toolbox_part):
             file_content_xml_toolbox_bricklet = file_content_xml_toolbox_bricklet + self.dict_bricklet_file_content_xml_toolbox_part[device]
 
         # Write block definition file
@@ -163,12 +183,19 @@ goog.require(\'Blockly.Python\');
                                      '-->\n' + file_content_xml_toolbox.replace('\n', ''))
 
         # Compile with closure library
+        previous_working_directory = os.getcwd()
+        os.chdir(self.path_dir_tmp)
+        args = ['python']
+        args.append(os.path.join(self.path_dir_tmp, 'build.py'))
+        if subprocess.call(args) != 0:
+            raise Exception("Command '{cmdarg}' failed".format(cmdarg = ' '.join(args)))
+        os.chdir(previous_working_directory)
 
         # Make zip
-        #version = common.get_changelog_version(root_dir)
-        #common.make_zip(self.get_bindings_name(), self.tmp_dir, root_dir, version)
-
-        # Remove tmp directory
+        common.make_zip(self.get_bindings_name(),
+                        self.path_dir_tmp,
+                        root_dir,
+                        common.get_changelog_version(root_dir))
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', TVPLZipGenerator)
