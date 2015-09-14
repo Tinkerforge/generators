@@ -154,6 +154,9 @@ com = {
 com['api'] = {
 'en':
 """
+.. note::
+ The API documentation for the RED Brick is currently incomplete.
+
 The RED Brick API is meant to be used by the Brick Viewer to implement the
 offered  functionality (getting status information, managing programs etc.).
 Normal users will not need to use this API, it may only be interesting for
@@ -234,6 +237,8 @@ String objects store UTF-8 encoded data.
 """,
 'de':
 """
+.. note::
+ Die API Dokumentation für den RED Brick ist noch nicht vollständig.
 """
 }
 
