@@ -1555,7 +1555,8 @@ class BindingsGenerator(Generator):
 
 def examples_tester_worker(cookie, args, env):
     try:
-        output = subprocess.check_output(args, env=env, stderr=subprocess.STDOUT)
+        with open(os.devnull) as DEVNULL:
+            output = subprocess.check_output(args, env=env, stderr=subprocess.STDOUT, stdin=DEVNULL)
     except subprocess.CalledProcessError as e:
         return cookie, e.output, e.returncode == 0
 
