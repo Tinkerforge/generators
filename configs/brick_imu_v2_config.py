@@ -139,11 +139,10 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the current orientation (heading, roll, pitch) of the IMU Brick as Euler
-angles in 1/16 degree. Note that Euler angles always experience a
-`gimbal lock <https://en.wikipedia.org/wiki/Gimbal_lock>`__.
-
-We recommend that you use quaternions instead.
+Returns the current orientation (heading, roll, pitch) of the IMU Brick as
+independent Euler angles in 1/16 degree. Note that Euler angles always
+experience a `gimbal lock <https://en.wikipedia.org/wiki/Gimbal_lock>`__. We
+recommend that you use quaternions instead, if you need the absolute orientation.
 
 The rotation angle has the following ranges:
 
@@ -157,11 +156,11 @@ to use the callback :func:`Orientation` and set the period with
 """,
 'de':
 """
-Gibt die aktuelle Orientierung (Gier-, Roll-, Nickwinkel) des IMU Brick in Eulerwinkeln
-(in 1/16 °) zurück. Zu beachten ist, dass Eulerwinkel immer eine 
-`kardanische Blockade <https://de.wikipedia.org/wiki/Gimbal_Lock>`__ erfahren.
-
-Wir empfehlen die Verwendung von Quaternionen stattdessen.
+Gibt die aktuelle Orientierung (Gier-, Roll-, Nickwinkel) des IMU Brick in
+unabhängigen Eulerwinkeln (in 1/16 °) zurück. Zu beachten ist, dass Eulerwinkel
+immer eine `kardanische Blockade <https://de.wikipedia.org/wiki/Gimbal_Lock>`__
+erfahren. Wir empfehlen daher stattdessen Quaternionen zu verwenden, wenn die
+absolute Lage im Raum bestimmt werden soll.
 
 Die Rotationswinkel haben den folgenden Wertebereich:
 
