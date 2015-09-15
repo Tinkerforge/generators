@@ -10,7 +10,7 @@ from commonconstants import THRESHOLD_OPTION_CONSTANTS
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 3],
+    'api_version': [2, 0, 4],
     'category': 'Brick',
     'device_identifier': 13,
     'name': ('Master', 'master', 'Master', 'Master Brick'),
@@ -2372,6 +2372,25 @@ Returns the authentication secret as set by :func:`SetWifiAuthenticationSecret`.
 """
 Gibt das Authentifizierungsgeheimnis zurück, wie von
 :func:`SetWifiAuthenticationSecret` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('IsWifi2Present', 'is_wifi2_present'), 
+'elements': [('present', 'bool', 1, 'out')], 
+'since_firmware': [2, 4, 0],
+'doc': ['af', {
+'en':
+"""
+Returns *true* if a WIFI Extension 2.0 is available to be used by the Master
+Brick.
+""",
+'de':
+"""
+Gibt zurück ob eine WIFI Extension 2.0 zur Nutzung durch den Master Brick
+verfügbar ist.
 """
 }]
 })
