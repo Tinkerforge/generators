@@ -33,74 +33,6 @@ import common
 import tvpl_common
 
 class TVPLBindingsDevice(tvpl_common.TVPLDevice):
-    def __init__(self, bindings_root_directory, language):
-        tvpl_common.TVPLDevice.__init__(self, bindings_root_directory, language)
-        self.RED_BRICK_DEVICE_ID = 17
-
-    def get_packet_elements_as_list(self, elements):
-        list_e = []
-
-        for e in elements:
-            list_e.append(e.get_underscore_name())
-
-        return list_e
-
-    def get_hash_value_field_variable(self, e_in):
-        hash_value_to_code_variable = {}
-        hash_get_field_value_variable = {}
-
-        for e in e_in:
-            hash_value_to_code_variable[e] = 'value_' + self.get_tvpl_device_name() + '_' + e
-            hash_get_field_value_variable[e] = 'value_' + self.get_tvpl_device_name() + '_' + e
-
-        return (hash_value_to_code_variable, hash_get_field_value_variable)
-
-    def get_list_value_field_statements(self, packet, e_in, hash_value_to_code_variable, hash_get_field_value_variable):
-        list_blockly_value_to_code_statements = []
-        list_blockly_get_field_value_statements = []
-        constant_groups = packet.get_constant_groups()
-
-        if len(constant_groups) > 0:
-            # Constants in constant group
-            for e in e_in:
-                for constant_group in constant_groups:
-                    list_blockly_get_field_value_statements.append('''  var {fieldvaluevariable} = block.getFieldValue('{devicenameupper}_{packetname}_{eupper}');'''.format(fieldvaluevariable = hash_get_field_value_variable[e],
-                                                                                                                                                                             devicenameupper = self.get_tvpl_device_name().upper(),
-                                                                                                                                                                             packetname = packet.get_underscore_name().upper(),
-                                                                                                                                                                             eupper = e.upper()))
-        else:
-            # Nothing in constant group
-            for e in e_in:
-                list_blockly_value_to_code_statements.append('''  var {valuetocodevariable} = Blockly.JavaScript.valueToCode(block, '{devicenameupper}_{eupper}', Blockly.JavaScript.ORDER_ATOMIC);'''.format(valuetocodevariable = hash_value_to_code_variable[e],
-                                                                                                                                                                                                              devicenameupper = self.get_tvpl_device_name().upper(),
-                                                                                                                                                                                                              eupper = e.upper()))
-        return (list_blockly_value_to_code_statements, list_blockly_get_field_value_statements)
-
-    def get_function_in_args(self, e_in, ret_get_hash_value_field_variable):
-        function_in_args = ''
-
-        for i, e in enumerate(e_in):
-            if e in ret_get_hash_value_field_variable[0]:
-                if function_in_args == '':
-                    function_in_args = 'String(' + ret_get_hash_value_field_variable[0][e] + ')'
-                    if i < len(e_in) - 1:
-                        function_in_args = function_in_args + ' + \', \' + '
-                else:
-                    function_in_args = function_in_args + 'String(' + ret_get_hash_value_field_variable[0][e] + ')'
-                    if i < len(e_in) - 1:
-                        function_in_args = function_in_args + ' + \', \' + '
-            elif e in ret_get_hash_value_field_variable[1]:
-                if function_in_args == '':
-                    function_in_args = 'String(' + ret_get_hash_value_field_variable[1][e] + ')'
-                    if i < len(e_in) - 1:
-                        function_in_args = function_in_args + ' + \', \' + '
-                else:
-                    function_in_args = function_in_args + 'String(' + ret_get_hash_value_field_variable[1][e] + ')'
-                    if i < len(e_in) - 1:
-                        function_in_args = function_in_args + ' + \', \' + '
-
-        return function_in_args
-
     def get_tvpl_source_block(self, dir_bindings_root):
         def get_source_block(packet):
             is_getter = False
@@ -325,7 +257,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
             return block_code_header + block_code_body + block_code_footer
 
         # Exclude RED Brick
-        if self.get_device_identifier() == self.RED_BRICK_DEVICE_ID:
+        if self.get_device_identifier() == 17:
             return ''
 
         source = ''
@@ -402,7 +334,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
         source = ''
 
         # Exclude RED Brick
-        if self.get_device_identifier() == self.RED_BRICK_DEVICE_ID:
+        if self.get_device_identifier() == 17:
             return ''
 
         for packet in self.get_packets('function'):
@@ -496,10 +428,10 @@ index_global_variable+
            blockname = block_name,
            uid = '_'.join([block_name, 'ipcon_uid']))
 
-                    out_args_assignment = ', '.join(self.get_packet_elements_as_list(elements_out))
+                    out_args_assignment = ', '.join(packet.get_packet_elements_underscore_name_as_list(elements_out))
 
                     if len(elements_out) > 1:
-                        out_args_assignment = '[' + ', '.join(self.get_packet_elements_as_list(elements_out)) + ']'
+                        out_args_assignment = '[' + ', '.join(packet.get_packet_elements_underscore_name_as_list(elements_out)) + ']'
 
                     function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function _{blockname}(ipcon_host, ipcon_port, ipcon_uid, block_id) {{\\n'+
 '  var key_ipcon_cache = ipcon_host + \\':\\' + String(ipcon_port);\\n'+
@@ -521,21 +453,22 @@ index_global_variable+
 '''.format(blockname = block_name,
            categoryname = self.get_camel_case_category() + self.get_camel_case_name(),
            packetname = packet.get_headless_camel_case_name(),
-           eoutargs = ', '.join(self.get_packet_elements_as_list(elements_out)),
+           eoutargs = ', '.join(packet.get_packet_elements_underscore_name_as_list(elements_out)),
            eoutassignment = out_args_assignment)
 
                 else:
                     # Getters with in args
-                    ret_get_hash_value_field_variable = self.get_hash_value_field_variable(self.get_packet_elements_as_list(elements_in))
-                    ret_get_list_value_field_statements = self.get_list_value_field_statements(packet,
-                                                                                          self.get_packet_elements_as_list(elements_in),
-                                                                                          ret_get_hash_value_field_variable[0],
-                                                                                          ret_get_hash_value_field_variable[1])
+                    ret_get_hash_of_value_and_field_variables = packet.get_hash_of_value_and_field_variables(packet.get_packet_elements_underscore_name_as_list(elements_in),
+                                                                                                             self.get_tvpl_device_name())
+                    ret_get_list_of_value_field_statements_from_hash = packet.get_list_of_value_field_statements_from_hash(packet.get_packet_elements_underscore_name_as_list(elements_in),
+                                                                                          self.get_tvpl_device_name(),
+                                                                                          ret_get_hash_of_value_and_field_variables[0],
+                                                                                          ret_get_hash_of_value_and_field_variables[1])
 
-                    if len(ret_get_list_value_field_statements[0]) > 0:
-                        generator_code_header = generator_code_header + '\n'.join(ret_get_list_value_field_statements[0]) + '\n'
-                    elif len(ret_get_list_value_field_statements[1]) > 0:
-                        generator_code_header = generator_code_header + '\n'.join(ret_get_list_value_field_statements[1]) + '\n'
+                    if len(ret_get_list_of_value_field_statements_from_hash[0]) > 0:
+                        generator_code_header = generator_code_header + '\n'.join(ret_get_list_of_value_field_statements_from_hash[0]) + '\n'
+                    elif len(ret_get_list_of_value_field_statements_from_hash[1]) > 0:
+                        generator_code_header = generator_code_header + '\n'.join(ret_get_list_of_value_field_statements_from_hash[1]) + '\n'
 
                     returned_blockly_code = '''  var code = '(_ipcon_connect(\\''+
 {host}+
@@ -557,12 +490,12 @@ index_global_variable+
            port = '_'.join(['value', block_name, 'ipcon_port']),
            blockname = block_name,
            uid = '_'.join([block_name, 'ipcon_uid']),
-           einargs = self.get_function_in_args(self.get_packet_elements_as_list(elements_in), ret_get_hash_value_field_variable))
+           einargs = packet.get_caller_generation_arguments_from_value_and_field_hash(packet.get_packet_elements_underscore_name_as_list(elements_in), ret_get_hash_of_value_and_field_variables))
 
-                    out_args_assignment = ', '.join(self.get_packet_elements_as_list(elements_out))
+                    out_args_assignment = ', '.join(packet.get_packet_elements_underscore_name_as_list(elements_out))
 
                     if len(elements_out) > 1:
-                        out_args_assignment = '[' + ', '.join(self.get_packet_elements_as_list(elements_out)) + ']'
+                        out_args_assignment = '[' + ', '.join(packet.get_packet_elements_underscore_name_as_list(elements_out)) + ']'
 
                     function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function _{blockname}(ipcon_host, ipcon_port, ipcon_uid, block_id, {einargs}) {{\\n'+
 '  var key_ipcon_cache = ipcon_host + \\':\\' + String(ipcon_port);\\n'+
@@ -582,10 +515,10 @@ index_global_variable+
 '}}\\n';
 
 '''.format(blockname = block_name,
-           einargs = ', '.join(self.get_packet_elements_as_list(elements_in)),
+           einargs = ', '.join(packet.get_packet_elements_underscore_name_as_list(elements_in)),
            categoryname = self.get_camel_case_category() + self.get_camel_case_name(),
            packetname = packet.get_headless_camel_case_name(),
-           eoutargs = ', '.join(self.get_packet_elements_as_list(elements_out)),
+           eoutargs = ', '.join(packet.get_packet_elements_underscore_name_as_list(elements_out)),
            eoutargsassignment = out_args_assignment)
 
                 generator_code_body = index_global_variable + returned_blockly_code + function_to_generate
@@ -637,16 +570,17 @@ String(block_identifier)+
 
                 else:
                     # Setters with in args
-                    ret_get_hash_value_field_variable = self.get_hash_value_field_variable(self.get_packet_elements_as_list(elements_in))
-                    ret_get_list_value_field_statements = self.get_list_value_field_statements(packet,
-                                                                                               self.get_packet_elements_as_list(elements_in),
-                                                                                               ret_get_hash_value_field_variable[0],
-                                                                                               ret_get_hash_value_field_variable[1])
+                    ret_get_hash_of_value_and_field_variables = packet.get_hash_of_value_and_field_variables(packet.get_packet_elements_underscore_name_as_list(elements_in),
+                                                                                                             self.get_tvpl_device_name())
+                    ret_get_list_of_value_field_statements_from_hash = packet.get_list_of_value_field_statements_from_hash(packet.get_packet_elements_underscore_name_as_list(elements_in),
+                                                                                               self.get_tvpl_device_name(),
+                                                                                               ret_get_hash_of_value_and_field_variables[0],
+                                                                                               ret_get_hash_of_value_and_field_variables[1])
 
-                    if len(ret_get_list_value_field_statements[0]) > 0:
-                        generator_code_header = generator_code_header + '\n'.join(ret_get_list_value_field_statements[0]) + '\n'
-                    elif len(ret_get_list_value_field_statements[1]) > 0:
-                        generator_code_header = generator_code_header + '\n'.join(ret_get_list_value_field_statements[1]) + '\n'
+                    if len(ret_get_list_of_value_field_statements_from_hash[0]) > 0:
+                        generator_code_header = generator_code_header + '\n'.join(ret_get_list_of_value_field_statements_from_hash[0]) + '\n'
+                    elif len(ret_get_list_of_value_field_statements_from_hash[1]) > 0:
+                        generator_code_header = generator_code_header + '\n'.join(ret_get_list_of_value_field_statements_from_hash[1]) + '\n'
 
                     returned_blockly_code = '''  var code = '(_ipcon_connect(\\''+
 {host}+
@@ -666,7 +600,7 @@ String(block_identifier)+
            port = '_'.join(['value', block_name, 'ipcon_port']),
            blockname = block_name,
            uid = '_'.join([block_name, 'ipcon_uid']),
-           einargs = self.get_function_in_args(self.get_packet_elements_as_list(elements_in), ret_get_hash_value_field_variable))
+           einargs = packet.get_caller_generation_arguments_from_value_and_field_hash(packet.get_packet_elements_underscore_name_as_list(elements_in), ret_get_hash_of_value_and_field_variables))
 
                     function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function _{blockname}(ipcon_host, ipcon_port, ipcon_uid, block_id, {einargs}) {{\\n'+
 '  var key_ipcon_cache = ipcon_host + \\':\\' + String(ipcon_port);\\n'+
@@ -684,10 +618,10 @@ String(block_identifier)+
 '}}\\n';
 
 '''.format(blockname = block_name,
-           einargs = ', '.join(self.get_packet_elements_as_list(elements_in)),
+           einargs = ', '.join(packet.get_packet_elements_underscore_name_as_list(elements_in)),
            categoryname = self.get_camel_case_category() + self.get_camel_case_name(),
            packetname = packet.get_headless_camel_case_name(),
-           eoutargs = ', '.join(self.get_packet_elements_as_list(elements_out)))
+           eoutargs = ', '.join(packet.get_packet_elements_underscore_name_as_list(elements_out)))
 
                 generator_code_body = returned_blockly_code + function_to_generate
                 source = source + generator_code_header + generator_code_body + generator_code_footer.format(returncode = 'code')
@@ -697,7 +631,7 @@ String(block_identifier)+
 
     def get_tvpl_source_generator_python(self):
         # Exclude RED Brick
-        if self.get_device_identifier() == self.RED_BRICK_DEVICE_ID:
+        if self.get_device_identifier() == 17:
             return ''
 
         source = ''
@@ -798,16 +732,17 @@ String(block_identifier)+
 
             else:
                 # Function with in args
-                ret_get_hash_value_field_variable = self.get_hash_value_field_variable(self.get_packet_elements_as_list(elements_in))
-                ret_get_list_value_field_statements = self.get_list_value_field_statements(packet,
-                                                                                           self.get_packet_elements_as_list(elements_in),
-                                                                                           ret_get_hash_value_field_variable[0],
-                                                                                           ret_get_hash_value_field_variable[1])
+                ret_get_hash_of_value_and_field_variables = packet.get_hash_of_value_and_field_variables(packet.get_packet_elements_underscore_name_as_list(elements_in),
+                                                                                                         self.get_tvpl_device_name())
+                ret_get_list_of_value_field_statements_from_hash = packet.get_list_of_value_field_statements_from_hash(packet.get_packet_elements_underscore_name_as_list(elements_in),
+                                                                                           self.get_tvpl_device_name(),
+                                                                                           ret_get_hash_of_value_and_field_variables[0],
+                                                                                           ret_get_hash_of_value_and_field_variables[1])
 
-                if len(ret_get_list_value_field_statements[0]) > 0:
-                    generator_code_header = generator_code_header + '\n'.join(ret_get_list_value_field_statements[0]) + '\n'
-                elif len(ret_get_list_value_field_statements[1]) > 0:
-                    generator_code_header = generator_code_header + '\n'.join(ret_get_list_value_field_statements[1]) + '\n'
+                if len(ret_get_list_of_value_field_statements_from_hash[0]) > 0:
+                    generator_code_header = generator_code_header + '\n'.join(ret_get_list_of_value_field_statements_from_hash[0]) + '\n'
+                elif len(ret_get_list_of_value_field_statements_from_hash[1]) > 0:
+                    generator_code_header = generator_code_header + '\n'.join(ret_get_list_of_value_field_statements_from_hash[1]) + '\n'
 
                 if len(elements_out) > 0:
                     # Getters
@@ -815,14 +750,14 @@ String(block_identifier)+
 '  return _get_device({categoryname}, uid, _get_ipcon(ipcon_host, ipcon_port)).{packetname}({einargs})';
 
 '''.format(blockname = block_name,
-           einargs = ', '.join(self.get_packet_elements_as_list(elements_in)),
+           einargs = ', '.join(packet.get_packet_elements_underscore_name_as_list(elements_in)),
            categoryname = self.get_camel_case_category() + self.get_camel_case_name(),
            packetname = packet.get_underscore_name())
 
                     returned_blockly_code = '''  var code = '{blockname}(' + String(value_{devicename}_ipcon_host) + ', ' + String(value_{devicename}_ipcon_port) + ', ' + String(value_{devicename}_ipcon_uid) + ', ' + {einargs} + ')';
 '''.format(blockname = block_name,
            devicename = self.get_tvpl_device_name(),
-           einargs = self.get_function_in_args(self.get_packet_elements_as_list(elements_in), ret_get_hash_value_field_variable))
+           einargs = packet.get_caller_generation_arguments_from_value_and_field_hash(packet.get_packet_elements_underscore_name_as_list(elements_in), ret_get_hash_of_value_and_field_variables))
 
                 else:
                     # Setters
@@ -830,14 +765,14 @@ String(block_identifier)+
 '  _get_device({categoryname}, uid, _get_ipcon(ipcon_host, ipcon_port)).{packetname}({einargs})';
 
 '''.format(blockname = block_name,
-           einargs = ', '.join(self.get_packet_elements_as_list(elements_in)),
+           einargs = ', '.join(packet.get_packet_elements_underscore_name_as_list(elements_in)),
            categoryname = self.get_camel_case_category() + self.get_camel_case_name(),
            packetname = packet.get_underscore_name())
 
                     returned_blockly_code = '''  var code = '{blockname}(' + String(value_{devicename}_ipcon_host) + ', ' + String(value_{devicename}_ipcon_port) + ', ' + String(value_{devicename}_ipcon_uid) + ', ' + {einargs} + ')\\n';
 '''.format(blockname = block_name,
            devicename = self.get_tvpl_device_name(),
-           einargs = self.get_function_in_args(self.get_packet_elements_as_list(elements_in), ret_get_hash_value_field_variable))
+           einargs = packet.get_caller_generation_arguments_from_value_and_field_hash(packet.get_packet_elements_underscore_name_as_list(elements_in), ret_get_hash_of_value_and_field_variables))
 
             source = source + \
                      generator_code_header + \
@@ -849,6 +784,63 @@ String(block_identifier)+
 
         return source
 
+class TVPLBindingsPacket(tvpl_common.TVPLPacket):
+    def get_hash_of_value_and_field_variables(self, elements, device_name):
+        hash_value_to_code_variable = {}
+        hash_get_field_value_variable = {}
+
+        for e in elements:
+            hash_value_to_code_variable[e] = 'value_' + device_name + '_' + e
+            hash_get_field_value_variable[e] = 'value_' + device_name + '_' + e
+
+        return (hash_value_to_code_variable, hash_get_field_value_variable)
+
+    def get_list_of_value_field_statements_from_hash(self, elements, device_name, hash_value_to_code_variable, hash_get_field_value_variable):
+        list_blockly_value_to_code_statements = []
+        list_blockly_get_field_value_statements = []
+        constant_groups = self.get_constant_groups()
+
+        if len(constant_groups) > 0:
+            # Constants in constant group
+            for e in elements:
+                for constant_group in constant_groups:
+                    list_blockly_get_field_value_statements.append('''  var {fieldvaluevariable} = block.getFieldValue('{devicenameupper}_{packetname}_{eupper}');'''.format(fieldvaluevariable = hash_get_field_value_variable[e],
+                                                                                                                                                                             devicenameupper = device_name.upper(),
+                                                                                                                                                                             packetname = self.get_underscore_name().upper(),
+                                                                                                                                                                             eupper = e.upper()))
+        else:
+            # Nothing in constant group
+            for e in elements:
+                list_blockly_value_to_code_statements.append('''  var {valuetocodevariable} = Blockly.JavaScript.valueToCode(block, '{devicenameupper}_{eupper}', Blockly.JavaScript.ORDER_ATOMIC);'''.format(valuetocodevariable = hash_value_to_code_variable[e],
+                                                                                                                                                                                                              devicenameupper = device_name.upper(),
+                                                                                                                                                                                                              eupper = e.upper()))
+        return (list_blockly_value_to_code_statements, list_blockly_get_field_value_statements)
+
+    def get_caller_generation_arguments_from_value_and_field_hash(self, underscore_names, ret_get_hash_of_value_and_field_variables):
+        function_in_args = ''
+
+        for i, e in enumerate(underscore_names):
+            if e in ret_get_hash_of_value_and_field_variables[0]:
+                if function_in_args == '':
+                    function_in_args = 'String(' + ret_get_hash_of_value_and_field_variables[0][e] + ')'
+                    if i < len(underscore_names) - 1:
+                        function_in_args = function_in_args + ' + \', \' + '
+                else:
+                    function_in_args = function_in_args + 'String(' + ret_get_hash_of_value_and_field_variables[0][e] + ')'
+                    if i < len(underscore_names) - 1:
+                        function_in_args = function_in_args + ' + \', \' + '
+            elif e in ret_get_hash_of_value_and_field_variables[1]:
+                if function_in_args == '':
+                    function_in_args = 'String(' + ret_get_hash_of_value_and_field_variables[1][e] + ')'
+                    if i < len(underscore_names) - 1:
+                        function_in_args = function_in_args + ' + \', \' + '
+                else:
+                    function_in_args = function_in_args + 'String(' + ret_get_hash_of_value_and_field_variables[1][e] + ')'
+                    if i < len(underscore_names) - 1:
+                        function_in_args = function_in_args + ' + \', \' + '
+
+        return function_in_args
+
 class TVPLBindingsGenerator(common.BindingsGenerator):
     released_files_name_prefix = 'tvpl'
 
@@ -859,7 +851,7 @@ class TVPLBindingsGenerator(common.BindingsGenerator):
         return TVPLBindingsDevice
 
     def get_packet_class(self):
-        return common.Packet
+        return TVPLBindingsPacket
 
     def get_element_class(self):
         return tvpl_common.TVPLElement

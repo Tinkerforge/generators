@@ -33,6 +33,15 @@ class TVPLDevice(common.Device):
     def get_tvpl_device_name(self):
         return '_'.join([self.get_underscore_category(), self.get_underscore_name()])
 
+class TVPLPacket(common.Packet):
+    def get_packet_elements_underscore_name_as_list(self, elements):
+        list_e = []
+
+        for e in elements:
+            list_e.append(e.get_underscore_name())
+
+        return list_e
+
 class TVPLElement(common.Element):
     tvpl_types = {
         'int8':   'Number',

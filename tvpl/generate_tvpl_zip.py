@@ -105,8 +105,9 @@ goog.require(\'Blockly.Python\');
                         self.path_dir_tmp_closure_library)
 
     def generate(self, device):
-        if not device.is_released() or device.get_underscore_name() == 'red':
-            return
+        if '_'.join([device.get_underscore_category(), device.get_underscore_name()]) not in released_files or \
+           device.get_device_identifier() == 17:
+                return
 
         is_brick    = False
         is_bricklet = False
