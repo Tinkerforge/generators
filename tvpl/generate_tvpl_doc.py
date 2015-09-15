@@ -508,7 +508,16 @@ class TVPLDocGenerator(common.DocGenerator):
         rst.close()
 
 def generate(bindings_root_directory, language):
-    common.generate(bindings_root_directory, language, TVPLDocGenerator)
+    try:
+       os.mkdir(os.path.join(bindings_root_directory, 'doc'))
+    except:
+        pass
+    try:
+       os.mkdir(os.path.join(bindings_root_directory, 'doc', language))
+    except:
+        pass
+
+    #common.generate(bindings_root_directory, language, TVPLDocGenerator)
 
 if __name__ == "__main__":
     for language in ['en', 'de']:
