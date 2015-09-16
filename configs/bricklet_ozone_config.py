@@ -178,8 +178,8 @@ com['packets'].append({
 'type': 'function',
 'name': ('SetOzoneConcentrationCallbackThreshold', 'set_ozone_concentration_callback_threshold'),
 'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int16', 1, 'in'),
-             ('max', 'int16', 1, 'in')],
+             ('min', 'uint16', 1, 'in'),
+             ('max', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -225,8 +225,8 @@ com['packets'].append({
 'type': 'function',
 'name': ('GetOzoneConcentrationCallbackThreshold', 'get_ozone_concentration_callback_threshold'),
 'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int16', 1, 'out'),
-             ('max', 'int16', 1, 'out')],
+             ('min', 'uint16', 1, 'out'),
+             ('max', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
