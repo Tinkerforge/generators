@@ -37,7 +37,7 @@ If you set a duration of 1000, with a frequency value of 2000
 the piezo buzzer will beep for one second with a frequency of
 approximately 2 kHz.
 
-.. versionchanged:: 2.0.2~(Plugin)
+.. versionchanged:: 2.0.2$nbsp;(Plugin)
    A duration of 0 stops the current beep if any, the frequency parameter is
    ignored. A duration of 4294967295 results in an infinite beep.
 
@@ -53,7 +53,7 @@ Beispiel: Wenn *duration* auf 1000 und *frequency* auf 2000 gesetzt wird,
 erzeugt der Piezosummer einen Piepton für eine Sekunde mit einer Frequenz 
 von ca. 2 kHz.
 
-.. versionchanged:: 2.0.2~(Plugin)
+.. versionchanged:: 2.0.2$nbsp;(Plugin)
    Eine *durarion* von 0 stoppt den aktuellen Piepton, das *frequency* Parameter
    wird ignoriert. Eine *durarion* von 4294967295 führt zu einem unendlich
    langen Piepton.

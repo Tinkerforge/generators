@@ -505,7 +505,7 @@ Sets the measurement range. Possible ranges:
 * 2: 0V - 10.32V, ~2.52mV resolution
 * 3: 0V - 36.30V, ~8.86mV resolution
 * 4: 0V - 45.00V, ~11.25mV resolution
-* 5: 0V - 3.3V, ~0.81mV resolution, new in version 2.0.3 (Plugin)
+* 5: 0V - 3.3V, ~0.81mV resolution, new in version 2.0.3$nbsp;(Plugin)
 
 The default measurement range is 0.
 """,
@@ -518,7 +518,7 @@ Setzt den Messbereich. Mögliche Bereiche:
 * 2: 0V - 10,32V, ~2,52mV Auflösung
 * 3: 0V - 36,30V, ~8,86mV Auflösung
 * 4: 0V - 45,00V, ~11,25mV Auflösung
-* 5: 0V - 3,3V, ~0,81mV Auflösung, neu in Version 2.0.3 (Plugin)
+* 5: 0V - 3,3V, ~0,81mV Auflösung, neu in Version 2.0.3$nbsp;(Plugin)
 
 Der Standardbereich ist 0.
 """

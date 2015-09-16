@@ -259,14 +259,14 @@ com['packets'].append({
 Sets the configuration. It is possible to configure an illuminance range
 between 0-600lux and 0-64000lux and an integration time between 50ms and 400ms.
 
-.. versionadded:: 2.0.2~(Plugin)
+.. versionadded:: 2.0.2$nbsp;(Plugin)
   The unlimited illuminance range allows to measure up to about 100000lux, but
   above 64000lux the precision starts to drop.
 
 A smaller illuminance range increases the resolution of the data. A longer
 integration time will result in less noise on the data.
 
-.. versionchanged:: 2.0.2~(Plugin)
+.. versionchanged:: 2.0.2$nbsp;(Plugin)
   If the actual measure illuminance is out-of-range then the current illuminance
   range maximum +0.01lux is reported by :func:`GetIlluminance` and the
   :func:`Illuminance` callback. For example, 800001 for the 0-8000lux range.
@@ -287,14 +287,14 @@ Setzt die Konfiguration. Es ist möglich den Helligkeitswertebereich zwischen
 0-600Lux und 0-64000Lux sowie eine Integrationszeit zwischen 50ms und 400ms
 zu konfigurieren.
 
-.. versionadded:: 2.0.2~(Plugin)
+.. versionadded:: 2.0.2$nbsp;(Plugin)
   Der unbeschränkt (unlimited) Helligkeitswertebereich ermöglicht es bis über
   100000Lux zu messen, aber ab 64000Lux nimmt die Messgenauigkeit ab.
 
 Ein kleinerer Helligkeitswertebereich erhöht die Auflösung der Daten. Eine
 längere Integrationszeit verringert das Rauschen auf den Daten.
 
-.. versionchanged:: 2.0.2~(Plugin)
+.. versionchanged:: 2.0.2$nbsp;(Plugin)
   Wenn der eigentliche Messwert außerhalb des eingestellten
   Helligkeitswertebereichs liegt, dann geben :func:`GetIlluminance` und der
   :func:`Illuminance` Callback das Maximum des eingestellten
