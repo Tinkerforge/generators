@@ -807,7 +807,7 @@ cn_all_uppercase = ['api', 'ir', 'us', 'lcd', 'dc', 'imu', 'pwm', 'gps', 'id', '
                     '45v', 'sps', 'oqpsk', 'bpsk40', 'dhcp', 'ip', 'wpa',
                     'wpa2', 'ca', 'wep', 'rgb', 'nfc', 'rfid', 'fifo', 'uv',
                     'ws2801', 'ws2811', 'ws2812', 'adc', 'rs232', 'ac', 'oled',
-                    '125dps', '250dps', '500dps', '1000dps', '2000dps', 'co2',]
+                    '125dps', '250dps', '500dps', '1000dps', '2000dps', 'co2', 'ap']
 
 cn_eap_suffix = ['fast', 'tls', 'ttls', 'peap', 'mschap', 'gtc']
 

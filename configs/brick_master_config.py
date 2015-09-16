@@ -2448,8 +2448,303 @@ com['packets'].append({
 }]
 })
 
+com['packets'].append({
+'type': 'function', 
+'name': ('SetWifi2AuthenticationSecret', 'set_wifi2_authentication_secret'), 
+'elements': [('secret', 'string', 64, 'in')], 
+'since_firmware': [2, 2, 0],
+'doc': ['af', {
+'en':
+"""
+Sets the WIFI authentication secret. The secret can be a string of up to 64
+characters. An empty string disables the authentication.
+
+See the :ref:`authentication tutorial <tutorial_authentication>` for more
+information.
+
+The secret is stored in the EEPROM and only applied on startup. That means
+you have to restart the Master Brick after configuration.
+
+It is recommended to use the Brick Viewer to set the WIFI authentication secret.
+
+The default value is an empty string (authentication disabled).
+""",
+'de':
+"""
+Setzt das Authentifizierungsgeheimnis. Das Geheimnis ist ein String aus bis zu
+64 Buchstaben. Ein leerer String deaktiviert die Authentifizierung.
+
+Für mehr Informationen zur Authentifizierung siehe das dazugehörige
+:ref:`Tutorial <tutorial_authentication>`.
+
+Das Authentifizierungsgehemnis wird im EEPROM gespeichert und nur beim Start
+angewandt. Das bedeutet der Master Brick muss nach einer Konfiguration neu
+gestartet werden.
+
+Wir empfehlen den Brick Viewer zu nutzen um die Authentifizierung der WIFI 
+Extension einzurichten.
+
+Der Standardwert ist ein leerer String (Authentifizierung deaktiviert).
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('GetWifi2AuthenticationSecret', 'get_wifi2_authentication_secret'), 
+'elements': [('secret', 'string', 64, 'out')], 
+'since_firmware': [2, 2, 0],
+'doc': ['af', {
+'en':
+"""
+Returns the authentication secret as set by :func:`SetWifiAuthenticationSecret`.
+""",
+'de':
+"""
+Gibt das Authentifizierungsgeheimnis zurück, wie von
+:func:`SetWifiAuthenticationSecret` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('SetWifi2Configuration', 'set_wifi2_configuration'), 
+'elements': [('port', 'uint16', 1, 'in'),
+             ('websocket_port', 'uint16', 1, 'in'),
+             ('website_port', 'uint16', 1, 'in'),
+             ('phy_mode', 'uint8', 1, 'in'),
+             ('sleep_mode', 'uint8', 1, 'in'),
+             ('website', 'uint8', 1, 'in')], 
+'since_firmware': [2, 4, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('GetWifi2Configuration', 'get_wifi2_configuration'), 
+'elements': [('port', 'uint16', 1, 'out'),
+             ('websocket_port', 'uint16', 1, 'out'),
+             ('phy_mode', 'uint8', 1, 'out'),
+             ('sleep_mode', 'uint8', 1, 'out'),
+             ('website', 'uint8', 1, 'out')], 
+'since_firmware': [2, 4, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+# TODO: Add Status API
+com['packets'].append({
+'type': 'function', 
+'name': ('GetWifi2Status', 'get_wifi2_status'), 
+'elements': [('todo', 'uint8', 1, 'out')], 
+'since_firmware': [2, 4, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('SetWifi2ClientConfiguration', 'set_wifi2_client_configuration'), 
+'elements': [('enable', 'bool', 1, 'in'),
+             ('ssid', 'string', 32, 'in'),
+             ('dhcp', 'bool', 1, 'in'),
+             ('ip', 'uint8', 4, 'in'),
+             ('subnet_mask', 'uint8', 4, 'in'),
+             ('gateway', 'uint8', 4, 'in'),
+             ('mac_address', 'uint8', 6, 'in'),
+             ('bssid', 'uint8', 6, 'in')],
+'since_firmware': [2, 4, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('GetWifi2ClientConfiguration', 'get_wifi2_client_configuration'), 
+'elements': [('enable', 'bool', 1, 'out'),
+             ('ssid', 'string', 32, 'out'),
+             ('dhcp', 'bool', 1, 'out'),
+             ('ip', 'uint8', 4, 'out'),
+             ('subnet_mask', 'uint8', 4, 'out'),
+             ('gateway', 'uint8', 4, 'out'),
+             ('mac_address', 'uint8', 6, 'out'),
+             ('bssid', 'uint8', 6, 'out')],
+'since_firmware': [2, 4, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('SetWifi2ClientHostname', 'set_wifi2_client_hostname'), 
+'elements': [('hostname', 'string', 32, 'in')],
+'since_firmware': [2, 4, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('GetWifi2ClientHostname', 'get_wifi2_client_hostname'), 
+'elements': [('hostname', 'string', 32, 'out')],
+'since_firmware': [2, 4, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('SetWifi2ClientPassword', 'set_wifi2_client_password'), 
+'elements': [('password', 'string', 64, 'in')],
+'since_firmware': [2, 4, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('GetWifi2ClientPassword', 'get_wifi2_client_password'), 
+'elements': [('password', 'string', 64, 'out')],
+'since_firmware': [2, 4, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('SetWifi2APConfiguration', 'set_wifi2_ap_configuration'), 
+'elements': [('enable', 'bool', 1, 'in'),
+             ('ssid', 'string', 32, 'in'),
+             ('dhcp', 'bool', 1, 'in'),
+             ('ip', 'uint8', 4, 'in'),
+             ('subnet_mask', 'uint8', 4, 'in'),
+             ('gateway', 'uint8', 4, 'in'),
+             ('auth', 'uint8', 1, 'in'),
+             ('hidden', 'bool', 1, 'in'),
+             ('mac_address', 'uint8', 6, 'in')],
+'since_firmware': [2, 4, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('GetWifi2APConfiguration', 'get_wifi2_ap_configuration'), 
+'elements': [('enable', 'bool', 1, 'out'),
+             ('ssid', 'string', 32, 'out'),
+             ('dhcp', 'bool', 1, 'out'),
+             ('ip', 'uint8', 4, 'out'),
+             ('subnet_mask', 'uint8', 4, 'out'),
+             ('gateway', 'uint8', 4, 'out'),
+             ('auth', 'uint8', 1, 'out'),
+             ('hidden', 'bool', 1, 'out'),
+             ('mac_address', 'uint8', 6, 'out')],
+'since_firmware': [2, 4, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('SetWifi2APPassword', 'set_wifi2_ap_password'), 
+'elements': [('password', 'string', 64, 'in')],
+'since_firmware': [2, 4, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': ('GetWifi2APPassword', 'get_wifi2_ap_password'), 
+'elements': [('password', 'string', 64, 'out')],
+'since_firmware': [2, 4, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
+"""
+}]
+})
+
 com['examples'].append({
 'name': 'Stack Status',
 'functions': [('getter', ('Get Stack Voltage', 'stack voltage'), [(('stack_voltage', 'Stack Voltage'), 'uint16', 1000.0, 'mV', 'V', None)], []),
               ('getter', ('Get Stack Current', 'stack current'), [(('stack_current', 'Stack Current'), 'uint16', 1000.0, 'mA', 'A', None)], [])]
 })
+
