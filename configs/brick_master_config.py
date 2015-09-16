@@ -73,7 +73,8 @@ com['packets'].append({
              ('exttype', 'uint32', 1, 'in', ('ExtensionType', 'extension_type', [('Chibi', 'chibi', 1),
                                                                                  ('RS485', 'rs485', 2),
                                                                                  ('Wifi', 'wifi', 3),
-                                                                                 ('Ethernet', 'ethernet', 4)]))], 
+                                                                                 ('Ethernet', 'ethernet', 4),
+                                                                                 ('Wifi2', 'wifi2', 5)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -92,6 +93,7 @@ Possible extension types:
  "2",    "RS485"
  "3",    "WIFI"
  "4",    "Ethernet"
+ "5",    "WIFI 2.0"
 
 The extension type is already set when bought and it can be set with the 
 Brick Viewer, it is unlikely that you need this function.
@@ -112,6 +114,7 @@ Mögliche Extensiontypen:
  "2",    "RS485"
  "3",    "WIFI"
  "4",    "Ethernet"
+ "5",    "WIFI 2.0"
 
 Der Typ der Extension ist schon gesetzt beim Erwerb der Extension und kann
 über den Brick Viewer gesetzt werden. Daher ist es unwahrscheinlich, dass
@@ -127,7 +130,8 @@ com['packets'].append({
              ('exttype', 'uint32', 1, 'out', ('ExtensionType', 'extension_type', [('Chibi', 'chibi', 1),
                                                                                   ('RS485', 'rs485', 2),
                                                                                   ('Wifi', 'wifi', 3),
-                                                                                  ('Ethernet', 'ethernet', 4)]))],
+                                                                                  ('Ethernet', 'ethernet', 4),
+                                                                                  ('Wifi2', 'wifi2', 5)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
