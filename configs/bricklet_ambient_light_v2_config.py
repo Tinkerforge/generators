@@ -10,7 +10,7 @@ from commonconstants import THRESHOLD_OPTION_CONSTANTS
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 259,
     'name': ('AmbientLightV2', 'ambient_light_v2', 'Ambient Light 2.0', 'Ambient Light Bricklet 2.0'),
@@ -37,6 +37,10 @@ up to about 100000lux, but above 64000lux the precision starts to drop.
 The illuminance is given in lux/100, i.e. a value of 450000 means that an
 illuminance of 4500lux is measured.
 
+.. versionchanged:: 2.0.2~(Plugin)
+  An illuminance of 0lux indicates that the sensor is saturated and the
+  configuration should be modified, see :func:`SetConfiguration`.
+
 If you want to get the illuminance periodically, it is recommended to use the
 callback :func:`Illuminance` and set the period with 
 :func:`SetIlluminanceCallbackPeriod`.
@@ -47,6 +51,11 @@ Gibt die Beleuchtungsstärke des Umgebungslichtsensors zurück. Der Messbereich
 erstreckt sich bis über 100000Lux, aber ab 64000Lux nimmt die Messgenauigkeit
 ab. Die Beleuchtungsstärke ist in Lux/100 angegeben, d.h. bei einem Wert von
 450000 wurde eine Beleuchtungsstärke von 4500Lux gemessen.
+
+.. versionchanged:: 2.0.2~(Plugin)
+  Eine Beleuchtungsstärke von 0Lux bedeutet, dass der Sensor gesättigt
+  (saturated) ist und die Konfiguration angepasst werden sollte, siehe
+  :func:`SetConfiguration`.
 
 Wenn die Beleuchtungsstärke periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Illuminance` zu nutzen und die Periode mit 
@@ -228,7 +237,8 @@ gesetzt.
 com['packets'].append({
 'type': 'function',
 'name': ('SetConfiguration', 'set_configuration'), 
-'elements': [('illuminance_range', 'uint8', 1, 'in', ('IlluminanceRange', 'illuminance_range', [('64000Lux', '64000lux', 0),
+'elements': [('illuminance_range', 'uint8', 1, 'in', ('IlluminanceRange', 'illuminance_range', [('Unlimited', 'unlimited', 6),
+                                                                                                ('64000Lux', '64000lux', 0),
                                                                                                 ('32000Lux', '32000lux', 1),
                                                                                                 ('16000Lux', '16000lux', 2),
                                                                                                 ('8000Lux', '8000lux', 3),
@@ -248,17 +258,26 @@ com['packets'].append({
 """
 Sets the configuration. It is possible to configure an illuminance range
 between 0-600lux and 0-64000lux and an integration time between 50ms and 400ms.
-The upper bound of the illuminance range is not a hard limit. Typically the
-sensor will measure up to 150% of the configured illuminance range. But after
-the 100% mark the precision starts to drop.
 
-A smaller illuminance range increases the resolution of the data. An
-increase in integration time will result in less noise on the data.
+.. versionadded:: 2.0.2~(Plugin)
+  The unlimited illuminance range allows to measure up to about 100000lux, but
+  above 64000lux the precision starts to drop.
 
-With a long integration time the sensor might not be able to measure up to the
-high end of the selected illuminance range. Start with a big illuminance range
-and a short integration time then narrow it down to find a good balance between
-resolution and noise for your setup.
+A smaller illuminance range increases the resolution of the data. A longer
+integration time will result in less noise on the data.
+
+.. versionchanged:: 2.0.2~(Plugin)
+  If the actual measure illuminance is out-of-range then the current illuminance
+  range maximum +0.01lux is reported by :func:`GetIlluminance` and the
+  :func:`Illuminance` callback. For example, 800001 for the 0-8000lux range.
+
+  With a long integration time the sensor might be saturated before the measured
+  value reaches the maximum of the selected illuminance range. In this case 0lux
+  is reported by :func:`GetIlluminance` and the :func:`Illuminance` callback.
+
+If the measurement is out-of-range or the sensor is saturated then you should
+configure the next higher illuminance range. If the highest range is already
+in use, then start to reduce the integration time.
 
 The default values are 0-8000lux illuminance range and 200ms integration time.
 """,
@@ -266,19 +285,31 @@ The default values are 0-8000lux illuminance range and 200ms integration time.
 """
 Setzt die Konfiguration. Es ist möglich den Helligkeitswertebereich zwischen
 0-600Lux und 0-64000Lux sowie eine Integrationszeit zwischen 50ms und 400ms
-zu konfigurieren. Die obere Grenze des Helligkeitswertebereich ist keine harte
-Schranke. Typischer Weise misst der Sensor bis zu 150% des eingestellten
-Helligkeitswertebereichs. Allerdings nimmt ab der 100% Marke die Messgenauigkeit
-ab.
+zu konfigurieren.
+
+.. versionadded:: 2.0.2~(Plugin)
+  Der unbeschränkt (unlimited) Helligkeitswertebereich ermöglicht es bis über
+  100000Lux zu messen, aber ab 64000Lux nimmt die Messgenauigkeit ab.
 
 Ein kleinerer Helligkeitswertebereich erhöht die Auflösung der Daten. Eine
-Erhöhung der Integrationszeit verringert das Rauschen auf den Daten.
+längere Integrationszeit verringert das Rauschen auf den Daten.
 
-Mit einer langen Integrationszeit kann es sein, dass der Sensor nicht bis zum
-Maximum der ausgewählten Helligkeitswertebereich messen kann. Am besten beginnt
-man mit einem großen Helligkeitswertebereich und einer kurzen Integrationszeit
-und tastet sich dann an eine gute Balance zwischen Auflösung und Rauschen der
-Daten heran.
+.. versionchanged:: 2.0.2~(Plugin)
+  Wenn der eigentliche Messwert außerhalb des eingestellten
+  Helligkeitswertebereichs liegt, dann geben :func:`GetIlluminance` und der
+  :func:`Illuminance` Callback das Maximum des eingestellten
+  Helligkeitswertebereichs +0,01Lux zurück. Also z.B. 800001 für den 0-8000Lux
+  Bereich.
+
+  Bei einer langen Integrationszeit kann es sein, dass der Sensor gesättigt
+  (saturated) ist bevor der Messwert das Maximum des ausgewählten
+  Helligkeitswertebereichs erreicht hat. In diesem Fall geben
+  :func:`GetIlluminance` und der :func:`Illuminance` Callback 0Lux zurück.
+
+Wenn der Messwert außerhalb des eingestellten Helligkeitswertebereichs liegt
+oder der Sensor gesättigt ist, dann sollte nächst höhere Helligkeitswertebereich
+eingestellt werden. Wenn der höchste Helligkeitswertebereich schon erreicht ist,
+dann kann noch die Integrationszeit verringert werden.
 
 Die Standardwerte sind 0-8000Lux Helligkeitsbereich und 200ms Integrationszeit.
 """
@@ -288,7 +319,8 @@ Die Standardwerte sind 0-8000Lux Helligkeitsbereich und 200ms Integrationszeit.
 com['packets'].append({
 'type': 'function',
 'name': ('GetConfiguration', 'get_configuration'), 
-'elements': [('illuminance_range', 'uint8', 1, 'out', ('IlluminanceRange', 'illuminance_range', [('64000Lux', '64000lux', 0),
+'elements': [('illuminance_range', 'uint8', 1, 'out', ('IlluminanceRange', 'illuminance_range', [('Unlimited', 'unlimited', 6),
+                                                                                                 ('64000Lux', '64000lux', 0),
                                                                                                  ('32000Lux', '32000lux', 1),
                                                                                                  ('16000Lux', '16000lux', 2),
                                                                                                  ('8000Lux', '8000lux', 3),
