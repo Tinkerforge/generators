@@ -271,6 +271,7 @@ integration time will result in less noise on the data.
   range maximum +0.01lux is reported by :func:`GetIlluminance` and the
   :func:`Illuminance` callback. For example, 800001 for the 0-8000lux range.
 
+.. versionchanged:: 2.0.2$nbsp;(Plugin)
   With a long integration time the sensor might be saturated before the measured
   value reaches the maximum of the selected illuminance range. In this case 0lux
   is reported by :func:`GetIlluminance` and the :func:`Illuminance` callback.
@@ -301,6 +302,7 @@ längere Integrationszeit verringert das Rauschen auf den Daten.
   Helligkeitswertebereichs +0,01Lux zurück. Also z.B. 800001 für den 0-8000Lux
   Bereich.
 
+.. versionchanged:: 2.0.2$nbsp;(Plugin)
   Bei einer langen Integrationszeit kann es sein, dass der Sensor gesättigt
   (saturated) ist bevor der Messwert das Maximum des ausgewählten
   Helligkeitswertebereichs erreicht hat. In diesem Fall geben
