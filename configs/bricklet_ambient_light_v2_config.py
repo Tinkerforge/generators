@@ -309,9 +309,10 @@ längere Integrationszeit verringert das Rauschen auf den Daten.
   :func:`GetIlluminance` und der :func:`Illuminance` Callback 0Lux zurück.
 
 Wenn der Messwert außerhalb des eingestellten Helligkeitswertebereichs liegt
-oder der Sensor gesättigt ist, dann sollte nächst höhere Helligkeitswertebereich
-eingestellt werden. Wenn der höchste Helligkeitswertebereich schon erreicht ist,
-dann kann noch die Integrationszeit verringert werden.
+oder der Sensor gesättigt ist, dann sollte der nächst höhere
+Helligkeitswertebereich eingestellt werden. Wenn der höchste
+Helligkeitswertebereich schon erreicht ist, dann kann noch die Integrationszeit
+verringert werden.
 
 Die Standardwerte sind 0-8000Lux Helligkeitsbereich und 200ms Integrationszeit.
 """
