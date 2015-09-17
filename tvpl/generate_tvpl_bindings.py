@@ -188,10 +188,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
         .appendField(new Blockly.FieldDropdown({constantsarray}), '{fieldname}');
 '''.format(ename = common.camel_case_to_space(e.get_headless_camel_case_name()).title(),
            constantsarray = combo_constants_array,
-           fieldname = '_'.join([self.get_underscore_category().upper(),
-                                 self.get_underscore_name().upper(),
-                                 packet.get_underscore_name().upper(),
-                                 e.get_underscore_name().upper()]))
+           fieldname = e.get_underscore_name().upper())
 
                     if i < len(elements_in) - 2:
                         block_code_body = block_code_body + '''    this.appendDummyInput()
@@ -209,10 +206,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
     this.appendDummyInput()
         .appendField(new Blockly.FieldDropdown([['True', '1'], ['False', '0']]), '{fieldname}');
 '''.format(ename = common.camel_case_to_space(e.get_headless_camel_case_name()).title(),
-           fieldname = '_'.join([self.get_underscore_category().upper(),
-                                 self.get_underscore_name().upper(),
-                                 packet.get_underscore_name().upper(),
-                                 e.get_underscore_name().upper()]))
+           fieldname = e.get_underscore_name().upper())
 
                     if i < len(elements_in) - 2:
                         block_code_body = block_code_body + '''    this.appendDummyInput()
@@ -230,9 +224,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
     this.appendValueInput('{variablename}')
         .setCheck('{etvpltype}');
 '''.format(ename = common.camel_case_to_space(e.get_headless_camel_case_name()).title(),
-           variablename = '_'.join([self.get_underscore_category().upper(),
-                                    self.get_underscore_name().upper(),
-                                    e.get_underscore_name().upper()]),
+           variablename = e.get_underscore_name().upper(),
            etvpltype = e.get_tvpl_type())
 
                     if i < len(elements_in) - 2:
@@ -481,10 +473,9 @@ index_global_variable+
                     # Getters with in args
                     ret_get_hash_of_value_and_field_variables = packet.get_hash_of_value_and_field_variables(packet.get_packet_elements_underscore_name_as_list(elements_in),
                                                                                                              self.get_tvpl_device_name())
-                    ret_get_list_of_value_field_statements_from_hash = packet.get_list_of_value_field_statements_from_hash(packet.get_packet_elements_underscore_name_as_list(elements_in),
-                                                                                          self.get_tvpl_device_name(),
-                                                                                          ret_get_hash_of_value_and_field_variables[0],
-                                                                                          ret_get_hash_of_value_and_field_variables[1])
+                    ret_get_list_of_value_field_statements_from_hash = packet.get_list_of_value_field_statements_from_hash(elements_in,
+                                                                                                                           ret_get_hash_of_value_and_field_variables[0],
+                                                                                                                           ret_get_hash_of_value_and_field_variables[1])
 
                     if len(ret_get_list_of_value_field_statements_from_hash[0]) > 0:
                         generator_code_header = generator_code_header + '\n'.join(ret_get_list_of_value_field_statements_from_hash[0]) + '\n'
@@ -593,10 +584,9 @@ String(block_identifier)+
                     # Setters with in args
                     ret_get_hash_of_value_and_field_variables = packet.get_hash_of_value_and_field_variables(packet.get_packet_elements_underscore_name_as_list(elements_in),
                                                                                                              self.get_tvpl_device_name())
-                    ret_get_list_of_value_field_statements_from_hash = packet.get_list_of_value_field_statements_from_hash(packet.get_packet_elements_underscore_name_as_list(elements_in),
-                                                                                               self.get_tvpl_device_name(),
-                                                                                               ret_get_hash_of_value_and_field_variables[0],
-                                                                                               ret_get_hash_of_value_and_field_variables[1])
+                    ret_get_list_of_value_field_statements_from_hash = packet.get_list_of_value_field_statements_from_hash(elements_in,
+                                                                                                                           ret_get_hash_of_value_and_field_variables[0],
+                                                                                                                           ret_get_hash_of_value_and_field_variables[1])
 
                     if len(ret_get_list_of_value_field_statements_from_hash[0]) > 0:
                         generator_code_header = generator_code_header + '\n'.join(ret_get_list_of_value_field_statements_from_hash[0]) + '\n'
@@ -762,10 +752,9 @@ String(block_identifier)+
                 # Function with in args
                 ret_get_hash_of_value_and_field_variables = packet.get_hash_of_value_and_field_variables(packet.get_packet_elements_underscore_name_as_list(elements_in),
                                                                                                          self.get_tvpl_device_name())
-                ret_get_list_of_value_field_statements_from_hash = packet.get_list_of_value_field_statements_from_hash(packet.get_packet_elements_underscore_name_as_list(elements_in),
-                                                                                           self.get_tvpl_device_name(),
-                                                                                           ret_get_hash_of_value_and_field_variables[0],
-                                                                                           ret_get_hash_of_value_and_field_variables[1])
+                ret_get_list_of_value_field_statements_from_hash = packet.get_list_of_value_field_statements_from_hash(elements_in,
+                                                                                                                       ret_get_hash_of_value_and_field_variables[0],
+                                                                                                                       ret_get_hash_of_value_and_field_variables[1])
 
                 if len(ret_get_list_of_value_field_statements_from_hash[0]) > 0:
                     generator_code_header = generator_code_header + '\n'.join(ret_get_list_of_value_field_statements_from_hash[0]) + '\n'
@@ -823,25 +812,21 @@ class TVPLBindingsPacket(tvpl_common.TVPLPacket):
 
         return (hash_value_to_code_variable, hash_get_field_value_variable)
 
-    def get_list_of_value_field_statements_from_hash(self, elements, device_name, hash_value_to_code_variable, hash_get_field_value_variable):
+    def get_list_of_value_field_statements_from_hash(self,
+                                                     elements,
+                                                     hash_value_to_code_variable,
+                                                     hash_get_field_value_variable):
         list_blockly_value_to_code_statements = []
         list_blockly_get_field_value_statements = []
-        constant_groups = self.get_constant_groups()
 
-        if len(constant_groups) > 0:
-            # Constants in constant group
-            for e in elements:
-                for constant_group in constant_groups:
-                    list_blockly_get_field_value_statements.append('''  var {fieldvaluevariable} = block.getFieldValue('{devicenameupper}_{packetname}_{eupper}');'''.format(fieldvaluevariable = hash_get_field_value_variable[e],
-                                                                                                                                                                             devicenameupper = device_name.upper(),
-                                                                                                                                                                             packetname = self.get_underscore_name().upper(),
-                                                                                                                                                                             eupper = e.upper()))
-        else:
-            # Nothing in constant group
-            for e in elements:
-                list_blockly_value_to_code_statements.append('''  var {valuetocodevariable} = Blockly.JavaScript.valueToCode(block, '{devicenameupper}_{eupper}', Blockly.JavaScript.ORDER_ATOMIC);'''.format(valuetocodevariable = hash_value_to_code_variable[e],
-                                                                                                                                                                                                              devicenameupper = device_name.upper(),
-                                                                                                                                                                                                              eupper = e.upper()))
+        for e in elements:
+            if e.get_constant_group() or e.get_tvpl_type() == 'Boolean':
+                list_blockly_get_field_value_statements.append('''  var {fieldvaluevariable} = block.getFieldValue('{eupper}');'''.format(fieldvaluevariable = hash_get_field_value_variable[e.get_underscore_name()],
+                                                                                                                                          eupper = e.get_underscore_name().upper()))
+            else:
+                list_blockly_value_to_code_statements.append('''  var {valuetocodevariable} = Blockly.JavaScript.valueToCode(block, '{eupper}', Blockly.JavaScript.ORDER_ATOMIC);'''.format(valuetocodevariable = hash_value_to_code_variable[e.get_underscore_name()],
+                                                                                                                                                                                            eupper = e.get_underscore_name().upper()))
+
         return (list_blockly_value_to_code_statements, list_blockly_get_field_value_statements)
 
     def get_caller_generation_arguments_from_value_and_field_hash(self, underscore_names, ret_get_hash_of_value_and_field_variables):
