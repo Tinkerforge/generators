@@ -2382,6 +2382,29 @@ Gibt das Authentifizierungsgeheimnis zurück, wie von
 
 com['packets'].append({
 'type': 'function', 
+'name': ('GetConnectionType', 'get_connection_type'), 
+'elements': [('connection_type', 'uint8', 1, 'out')], 
+'since_firmware': [2, 4, 0],
+'doc': ['af', {
+'en':
+"""
+	COM_NONE      = 0,
+	COM_USB       = 1,
+	COM_SPI_STACK = 2,
+	COM_CHIBI     = 3,
+	COM_RS485     = 4,
+	COM_WIFI      = 5,
+	COM_ETHERNET  = 6,
+	COM_WIFI2     = 7,
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
 'name': ('IsWifi2Present', 'is_wifi2_present'), 
 'elements': [('present', 'bool', 1, 'out')], 
 'since_firmware': [2, 4, 0],
@@ -2698,7 +2721,7 @@ com['packets'].append({
              ('ip', 'uint8', 4, 'out'),
              ('subnet_mask', 'uint8', 4, 'out'),
              ('gateway', 'uint8', 4, 'out'),
-             ('auth', 'uint8', 1, 'out'),
+             ('encryption', 'uint8', 1, 'out'),
              ('hidden', 'bool', 1, 'out'),
              ('mac_address', 'uint8', 6, 'out')],
 'since_firmware': [2, 4, 0],
@@ -2741,6 +2764,23 @@ com['packets'].append({
 """
 }]
 })
+
+com['packets'].append({
+'type': 'function', 
+'name': ('SaveWifi2Configuration', 'save_wifi2_configuration'), 
+'elements': [('value', 'uint8', 1, 'out')],
+'since_firmware': [2, 4, 0],
+'doc': ['af', {
+'en':
+"""
+Call this function to actually save configuration
+""",
+'de':
+"""
+"""
+}]
+})
+
 
 com['examples'].append({
 'name': 'Stack Status',
