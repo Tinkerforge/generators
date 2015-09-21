@@ -107,13 +107,16 @@ class ShellElement(common.Element):
         'string': 'None'
     }
 
-    def get_shell_type(self):
+    def get_shell_type(self, for_doc=False):
         t = ShellElement.shell_types[self.get_type()]
 
         if self.get_cardinality() == 1 or t == 'string':
             return t
 
-        return ','.join([t]*self.get_cardinality())
+        if for_doc and self.get_cardinality() > 16:
+            return '{0},{0},..{1}x..,{0},{0}'.format(t, self.get_cardinality() - 4)
+        else:
+            return ','.join([t]*self.get_cardinality())
 
     def get_shell_struct_format(self):
         f = ShellElement.shell_struct_formats[self.get_type()]

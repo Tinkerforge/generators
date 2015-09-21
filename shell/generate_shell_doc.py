@@ -441,7 +441,7 @@ class ShellDocPacket(shell_common.ShellPacket):
         }
 
         for element in self.get_elements('in'):
-            t = element.get_shell_type()
+            t = element.get_shell_type(True)
             desc += param.format(element.get_dash_name(), t)
 
             if element.get_constant_group() is not None:
@@ -467,7 +467,7 @@ class ShellDocPacket(shell_common.ShellPacket):
 
         ret = '\n'
         for element in elements:
-            t = element.get_shell_type()
+            t = element.get_shell_type(True)
             ret += ' :returns {0}: {1}'.format(element.get_dash_name(), t)
 
             if element.get_constant_group() is not None or \
