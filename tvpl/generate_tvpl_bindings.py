@@ -724,27 +724,27 @@ String(block_identifier)+
                 # Function without in args
                 if len(elements_out) > 0:
                     # Getters
-                    function_to_generate = '''  Blockly.Python.definitions_['{blockname}'] = 'def {blockname}(ipcon_host, ipcon_port, ipcon_uid):\\n'+
+                    function_to_generate = '''  Blockly.Python.definitions_['{blockname}'] = 'def _{blockname}(ipcon_host, ipcon_port, ipcon_uid):\\n'+
 '  return _get_device({categoryname}, ipcon_uid, _get_ipcon(ipcon_host, ipcon_port)).{packetname}()';
 
 '''.format(blockname = block_name,
            categoryname = self.get_camel_case_category() + self.get_camel_case_name(),
            packetname = packet.get_underscore_name())
 
-                    returned_blockly_code = '''  var code = '{blockname}(' + value_{devicename}_ipcon_host + ', ' + value_{devicename}_ipcon_port + ', ' + value_{devicename}_ipcon_uid + ')';
+                    returned_blockly_code = '''  var code = '_{blockname}(' + value_{devicename}_ipcon_host + ', ' + value_{devicename}_ipcon_port + ', ' + value_{devicename}_ipcon_uid + ')';
 '''.format(blockname = block_name,
            devicename = self.get_tvpl_device_name())
 
                 else:
                     # Setters
-                    function_to_generate = '''  Blockly.Python.definitions_['{blockname}'] = 'def {blockname}(ipcon_host, ipcon_port, ipcon_uid):\\n'+
+                    function_to_generate = '''  Blockly.Python.definitions_['{blockname}'] = 'def _{blockname}(ipcon_host, ipcon_port, ipcon_uid):\\n'+
 '  _get_device({categoryname}, ipcon_uid, _get_ipcon(ipcon_host, ipcon_port)).{packetname}()';
 
 '''.format(blockname = block_name,
            categoryname = self.get_camel_case_category() + self.get_camel_case_name(),
            packetname = packet.get_underscore_name())
 
-                    returned_blockly_code = '''  var code = '{blockname}(' + value_{devicename}_ipcon_host + ', ' + value_{devicename}_ipcon_port + ', ' + value_{devicename}_ipcon_uid + ')\\n';
+                    returned_blockly_code = '''  var code = '_{blockname}(' + value_{devicename}_ipcon_host + ', ' + value_{devicename}_ipcon_port + ', ' + value_{devicename}_ipcon_uid + ')\\n';
 '''.format(blockname = block_name,
            devicename = self.get_tvpl_device_name())
 
@@ -763,7 +763,7 @@ String(block_identifier)+
 
                 if len(elements_out) > 0:
                     # Getters
-                    function_to_generate = '''  Blockly.Python.definitions_['{blockname}'] = 'def {blockname}(ipcon_host, ipcon_port, ipcon_uid, {einargs}):\\n'+
+                    function_to_generate = '''  Blockly.Python.definitions_['{blockname}'] = 'def _{blockname}(ipcon_host, ipcon_port, ipcon_uid, {einargs}):\\n'+
 '  return _get_device({categoryname}, ipcon_uid, _get_ipcon(ipcon_host, ipcon_port)).{packetname}({einargs})';
 
 '''.format(blockname = block_name,
@@ -771,14 +771,14 @@ String(block_identifier)+
            categoryname = self.get_camel_case_category() + self.get_camel_case_name(),
            packetname = packet.get_underscore_name())
 
-                    returned_blockly_code = '''  var code = '{blockname}(' + String(value_{devicename}_ipcon_host) + ', ' + String(value_{devicename}_ipcon_port) + ', ' + String(value_{devicename}_ipcon_uid) + ', ' + {einargs} + ')';
+                    returned_blockly_code = '''  var code = '_{blockname}(' + String(value_{devicename}_ipcon_host) + ', ' + String(value_{devicename}_ipcon_port) + ', ' + String(value_{devicename}_ipcon_uid) + ', ' + {einargs} + ')';
 '''.format(blockname = block_name,
            devicename = self.get_tvpl_device_name(),
            einargs = packet.get_caller_generation_arguments_from_value_and_field_hash(packet.get_packet_elements_underscore_name_as_list(elements_in), ret_get_hash_of_value_and_field_variables))
 
                 else:
                     # Setters
-                    function_to_generate = '''  Blockly.Python.definitions_['{blockname}'] = 'def {blockname}(ipcon_host, ipcon_port, ipcon_uid, {einargs}):\\n'+
+                    function_to_generate = '''  Blockly.Python.definitions_['{blockname}'] = 'def _{blockname}(ipcon_host, ipcon_port, ipcon_uid, {einargs}):\\n'+
 '  _get_device({categoryname}, ipcon_uid, _get_ipcon(ipcon_host, ipcon_port)).{packetname}({einargs})';
 
 '''.format(blockname = block_name,
@@ -786,7 +786,7 @@ String(block_identifier)+
            categoryname = self.get_camel_case_category() + self.get_camel_case_name(),
            packetname = packet.get_underscore_name())
 
-                    returned_blockly_code = '''  var code = '{blockname}(' + String(value_{devicename}_ipcon_host) + ', ' + String(value_{devicename}_ipcon_port) + ', ' + String(value_{devicename}_ipcon_uid) + ', ' + {einargs} + ')\\n';
+                    returned_blockly_code = '''  var code = '_{blockname}(' + String(value_{devicename}_ipcon_host) + ', ' + String(value_{devicename}_ipcon_port) + ', ' + String(value_{devicename}_ipcon_uid) + ', ' + {einargs} + ')\\n';
 '''.format(blockname = block_name,
            devicename = self.get_tvpl_device_name(),
            einargs = packet.get_caller_generation_arguments_from_value_and_field_hash(packet.get_packet_elements_underscore_name_as_list(elements_in), ret_get_hash_of_value_and_field_variables))
