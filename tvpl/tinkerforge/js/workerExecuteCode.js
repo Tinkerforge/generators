@@ -1,5 +1,7 @@
 importScripts('Tinkerforge.js');
 
+var TVPL_WORKER_CMD_END = '____TVPL:WORKER:CMD:END____';
+
 handlerOnMessage = function(e) {
   try {
     eval(e.data);

@@ -17,7 +17,7 @@ html, body {
 #tdTableHeaderToolbar {
   display: none;
 }
-#buttonToolbar {
+#buttonToolbar, #buttonToolbarRunStop {
   border-style: none;
 }
 #blocklyArea {

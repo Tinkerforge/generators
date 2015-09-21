@@ -68,11 +68,8 @@
       <table id="tableExecute">
         <tr>
           <td align="center">
-            <button id="buttonToolbar" title="Run graphical program from workspace" onclick="clickedRunProgram();">
-              <img src="media/runcode.png" width="32" height="32"/>
-            </button>
-            <button id="buttonToolbar" title="Stop the graphical program" onclick="clickedStopProgram();">
-              <img src="media/stopcode.png" width="32" height="32"/>
+            <button id="buttonToolbarRunStop" title="Run graphical program from workspace" onclick="clickedRunProgram();">
+              <img id="buttonToolbarRunStopImage" src="media/runcode.png" width="32" height="32"/>
             </button>
             <button id="buttonToolbar" title="Clear output" onclick="clickedClearOutput();">
               <img src="media/clear.png" width="32" height="32"/>
@@ -160,6 +157,7 @@
         var VIEW_EDITOR = 4;
         var VIEW_EXECUTE = 5;
         var VIEW_CODE = 6;
+        var TVPL_WORKER_CMD_END = '____TVPL:WORKER:CMD:END____';
         var DEFAULT_CODE = 'Seems like the workspace is empty. Generated code will appear here...';
         var MSG_ERROR_NOT_VALID_WORKSPACE_FILE = 'ERROR: Not a valid workspace file.';
         var MSG_ERROR_FILE_READ_FAILED = 'ERROR: Reading file failed.';
@@ -177,6 +175,8 @@
         var selectLanguageCode = document.getElementById("selectLanguageCode");
         var codeContent = document.getElementById('codeContent');
         var divCode = document.getElementById('divCode');
+        var buttonToolbarRunStop = document.getElementById('buttonToolbarRunStop');
+        var buttonToolbarRunStopImage = document.getElementById('buttonToolbarRunStopImage');
         var fileReader = new FileReader();
         var blocklyWorkspace = Blockly.inject(blocklyDiv,
           {grid:
@@ -209,9 +209,18 @@
           }
           workerExecuteCode = new Worker('js/workerExecuteCode.js');
           workerExecuteCode.onmessage = function(e) {
-            textareaExecute.value = e.data + textareaExecute.value;
+            if (e.data === TVPL_WORKER_CMD_END) {
+              clickedStopProgram();
+            }
+            else {
+              textareaExecute.value += e.data;
+              textareaExecute.scrollTop = textareaExecute.scrollHeight;
+            }
           };
           workerExecuteCode.postMessage(code);
+
+          buttonToolbarRunStop.setAttribute('onclick','clickedStopProgram()');
+          buttonToolbarRunStopImage.setAttribute('src', 'media/stopcode.png');
         }
 
         function clickedStopProgram(e) {
@@ -219,6 +228,8 @@
             workerExecuteCode.terminate();
             workerExecuteCode = null;
           }
+          buttonToolbarRunStop.setAttribute('onclick','clickedRunProgram()');
+          buttonToolbarRunStopImage.setAttribute('src', 'media/runcode.png');
         }
 
         function workspaceFileUploadRequest(fileInput) {
@@ -341,6 +352,7 @@
         window.addEventListener('load', onLoad, false);
         window.onbeforeunload = function(e) {
           return MSG_INFO_UNSAVED_WORKSPACE;
+          clickedStopProgram();
         }
         blocklyWorkspace.addChangeListener(updateCodeViewer);
         onResize();
