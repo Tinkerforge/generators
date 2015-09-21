@@ -479,7 +479,7 @@ index_global_variable+
 
                     if len(ret_get_list_of_value_field_statements_from_hash[0]) > 0:
                         generator_code_header = generator_code_header + '\n'.join(ret_get_list_of_value_field_statements_from_hash[0]) + '\n'
-                    elif len(ret_get_list_of_value_field_statements_from_hash[1]) > 0:
+                    if len(ret_get_list_of_value_field_statements_from_hash[1]) > 0:
                         generator_code_header = generator_code_header + '\n'.join(ret_get_list_of_value_field_statements_from_hash[1]) + '\n'
 
                     returned_blockly_code = '''  var code = '(_ipcon_connect(\\''+
@@ -590,7 +590,7 @@ String(block_identifier)+
 
                     if len(ret_get_list_of_value_field_statements_from_hash[0]) > 0:
                         generator_code_header = generator_code_header + '\n'.join(ret_get_list_of_value_field_statements_from_hash[0]) + '\n'
-                    elif len(ret_get_list_of_value_field_statements_from_hash[1]) > 0:
+                    if len(ret_get_list_of_value_field_statements_from_hash[1]) > 0:
                         generator_code_header = generator_code_header + '\n'.join(ret_get_list_of_value_field_statements_from_hash[1]) + '\n'
 
                     returned_blockly_code = '''  var code = '(_ipcon_connect(\\''+
@@ -758,7 +758,7 @@ String(block_identifier)+
 
                 if len(ret_get_list_of_value_field_statements_from_hash[0]) > 0:
                     generator_code_header = generator_code_header + '\n'.join(ret_get_list_of_value_field_statements_from_hash[0]) + '\n'
-                elif len(ret_get_list_of_value_field_statements_from_hash[1]) > 0:
+                if len(ret_get_list_of_value_field_statements_from_hash[1]) > 0:
                     generator_code_header = generator_code_header + '\n'.join(ret_get_list_of_value_field_statements_from_hash[1]) + '\n'
 
                 if len(elements_out) > 0:
