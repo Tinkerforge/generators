@@ -7,7 +7,9 @@ handlerOnMessage = function(e) {
     eval(e.data);
   } catch(e) {
       postMessage(String('ERROR: ' + e + '\n'));
+      postMessage(TVPL_WORKER_CMD_END);
   }
+  postMessage(TVPL_WORKER_CMD_END);
 }
 
 self.onmessage = handlerOnMessage;
