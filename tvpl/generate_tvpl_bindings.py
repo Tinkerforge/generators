@@ -384,14 +384,14 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
 '  if (key_ipcon_cache in _ipcon_cache) {{\\n'+
 '    setTimeout(function() {{\\n'+
 '      iterator.next();\\n'+
-'    }}.bind(null, iterator), 0);\\n'+
+'    }}, iterator, 0);\\n'+
 '  }}\\n'+
 '  else {{\\n'+
 '     ipcon = new Tinkerforge.IPConnection();\\n'+
 '     ipcon.on(Tinkerforge.IPConnection.CALLBACK_CONNECTED, function(e) {{\\n'+
 '       _ipcon_cache[key_ipcon_cache] = ipcon;\\n'+
 '       iterator.next();\\n'+
-'     }}.bind(null, iterator));\\n'+
+'     }}, iterator);\\n'+
 '     ipcon.connect(ipcon_host, ipcon_port, _error_handler);\\n'+
 '  }}\\n'+
 '}}\\n';
@@ -460,7 +460,7 @@ index_global_variable+
 '  device.{packetname}(function({eoutargs}) {{\\n'+
 '    _tf_global_variables[key_global_variable] = {eoutassignment};\\n'+
 '    iterator.next();\\n'+
-'  }}.bind(null, iterator), _error_handler);\\n'+
+'  }}, iterator, _error_handler);\\n'+
 '}}\\n';
 
 '''.format(blockname = block_name,
@@ -523,7 +523,7 @@ index_global_variable+
 '  device.{packetname}({einargs}, function({eoutargs}) {{\\n'+
 '    _tf_global_variables[key_global_variable] = {eoutargsassignment};\\n'+
 '    iterator.next();\\n'+
-'  }}.bind(null, iterator), _error_handler);\\n'+
+'  }}, iterator, _error_handler);\\n'+
 '}}\\n';
 
 '''.format(blockname = block_name,
@@ -573,7 +573,7 @@ String(block_identifier)+
 '  }}\\n'+
 '  device.{packetname}(function(e) {{\\n'+
 '    iterator.next();\\n'+
-'  }}.bind(null, iterator), _error_handler);\\n'+
+'  }}, iterator, _error_handler);\\n'+
 '}}\\n';
 
 '''.format(blockname = block_name,
@@ -625,7 +625,7 @@ String(block_identifier)+
 '  }}\\n'+
 '  device.{packetname}({einargs}, function({eoutargs}) {{\\n'+
 '    iterator.next();\\n'+
-'  }}.bind(null, iterator), _error_handler);\\n'+
+'  }}, iterator, _error_handler);\\n'+
 '}}\\n';
 
 '''.format(blockname = block_name,
