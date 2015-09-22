@@ -377,21 +377,21 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
 '''.format(blockname = block_name,
            devicenameupper = self.get_tvpl_device_name().upper())
 
-            generator_code_footer = '''  Blockly.JavaScript.definitions_['common_javascript_ipcon_connect'] = 'function _ipcon_connect(ipcon_host, ipcon_port) {{\\n'+
+            generator_code_footer = '''  Blockly.JavaScript.definitions_['common_javascript_ipcon_connect'] = 'function _ipcon_connect(ipcon_host, ipcon_port, iterator) {{\\n'+
 '  var ipcon;\\n'+
 '  var key_ipcon_cache = ipcon_host + \\':\\' + String(ipcon_port);\\n'+
 '\\n'+
 '  if (key_ipcon_cache in _ipcon_cache) {{\\n'+
 '    setTimeout(function() {{\\n'+
-'      _iterator_main.next();\\n'+
-'    }}, 0);\\n'+
+'      iterator.next();\\n'+
+'    }}.bind(null, iterator), 0);\\n'+
 '  }}\\n'+
 '  else {{\\n'+
 '     ipcon = new Tinkerforge.IPConnection();\\n'+
 '     ipcon.on(Tinkerforge.IPConnection.CALLBACK_CONNECTED, function(e) {{\\n'+
 '       _ipcon_cache[key_ipcon_cache] = ipcon;\\n'+
-'       _iterator_main.next();\\n'+
-'     }});\\n'+
+'       iterator.next();\\n'+
+'     }}.bind(null, iterator));\\n'+
 '     ipcon.connect(ipcon_host, ipcon_port, _error_handler);\\n'+
 '  }}\\n'+
 '}}\\n';
@@ -424,7 +424,7 @@ String(block_identifier);
 {host}+
 '\\', '+
 String({port})+
-'), (yield 1), _{blockname}(\\''+
+', self_iterator), (yield 1), _{blockname}(\\''+
 {host}+
 '\\', '+
 String({port})+
@@ -432,7 +432,7 @@ String({port})+
 {uid}+
 '\\', \\''+
 String(block_identifier)+
-'\\'), (yield 1), _tf_global_variables[\\''+
+'\\', self_iterator), (yield 1), _tf_global_variables[\\''+
 index_global_variable+
 '\\'])'
 
@@ -446,7 +446,7 @@ index_global_variable+
                     if len(elements_out) > 1:
                         out_args_assignment = '[' + ', '.join(packet.get_packet_elements_underscore_name_as_list(elements_out)) + ']'
 
-                    function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function _{blockname}(ipcon_host, ipcon_port, ipcon_uid, block_id) {{\\n'+
+                    function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function _{blockname}(ipcon_host, ipcon_port, ipcon_uid, block_id, iterator) {{\\n'+
 '  var key_ipcon_cache = ipcon_host + \\':\\' + String(ipcon_port);\\n'+
 '  var key_device_cache = ipcon_uid + \\'@\\' + key_ipcon_cache;\\n'+
 '  var device = _device_cache[key_device_cache];\\n'+
@@ -459,8 +459,8 @@ index_global_variable+
 '  }}\\n'+
 '  device.{packetname}(function({eoutargs}) {{\\n'+
 '    _tf_global_variables[key_global_variable] = {eoutassignment};\\n'+
-'    _iterator_main.next();\\n'+
-'  }}, _error_handler);\\n'+
+'    iterator.next();\\n'+
+'  }}.bind(null, iterator), _error_handler);\\n'+
 '}}\\n';
 
 '''.format(blockname = block_name,
@@ -486,7 +486,7 @@ index_global_variable+
 {host}+
 '\\', '+
 String({port})+
-'), (yield 1), _{blockname}(\\''+
+', self_iterator), (yield 1), _{blockname}(\\''+
 {host}+
 '\\', '+
 String({port})+
@@ -494,7 +494,7 @@ String({port})+
 {uid}+
 '\\', \\''+
 String(block_identifier)+
-'\\', ' + {einargs} + '), (yield 1), _tf_global_variables[\\''+
+'\\', ' + {einargs} + ', self_iterator), (yield 1), _tf_global_variables[\\''+
 index_global_variable+
 '\\'])'
 
@@ -509,7 +509,7 @@ index_global_variable+
                     if len(elements_out) > 1:
                         out_args_assignment = '[' + ', '.join(packet.get_packet_elements_underscore_name_as_list(elements_out)) + ']'
 
-                    function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function _{blockname}(ipcon_host, ipcon_port, ipcon_uid, block_id, {einargs}) {{\\n'+
+                    function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function _{blockname}(ipcon_host, ipcon_port, ipcon_uid, block_id, {einargs}, iterator) {{\\n'+
 '  var key_ipcon_cache = ipcon_host + \\':\\' + String(ipcon_port);\\n'+
 '  var key_device_cache = ipcon_uid + \\'@\\' + key_ipcon_cache;\\n'+
 '  var device = _device_cache[key_device_cache];\\n'+
@@ -522,8 +522,8 @@ index_global_variable+
 '  }}\\n'+
 '  device.{packetname}({einargs}, function({eoutargs}) {{\\n'+
 '    _tf_global_variables[key_global_variable] = {eoutargsassignment};\\n'+
-'    _iterator_main.next();\\n'+
-'  }}, _error_handler);\\n'+
+'    iterator.next();\\n'+
+'  }}.bind(null, iterator), _error_handler);\\n'+
 '}}\\n';
 
 '''.format(blockname = block_name,
@@ -546,7 +546,7 @@ index_global_variable+
 {host}+
 '\\', '+
 String({port})+
-'), (yield 1), _{blockname}(\\''+
+', self_iterator), (yield 1), _{blockname}(\\''+
 {host}+
 '\\', '+
 String({port})+
@@ -554,14 +554,14 @@ String({port})+
 {uid}+
 '\\', \\''+
 String(block_identifier)+
-'\\'), (yield 1));\\n'
+'\\', self_iterator), (yield 1));\\n'
 
 '''.format(host = '_'.join([block_name, 'ipcon_host']),
            port = '_'.join(['value', block_name, 'ipcon_port']),
            blockname = block_name,
            uid = '_'.join([block_name, 'ipcon_uid']))
 
-                    function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function _{blockname}(ipcon_host, ipcon_port, ipcon_uid, block_id) {{\\n'+
+                    function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function _{blockname}(ipcon_host, ipcon_port, ipcon_uid, block_id, iterator) {{\\n'+
 '  var key_ipcon_cache = ipcon_host + \\':\\' + String(ipcon_port);\\n'+
 '  var key_device_cache = ipcon_uid + \\'@\\' + key_ipcon_cache;\\n'+
 '  var device = _device_cache[key_device_cache];\\n'+
@@ -572,8 +572,8 @@ String(block_identifier)+
 '    _device_cache[key_device_cache] = device;\\n'+
 '  }}\\n'+
 '  device.{packetname}(function(e) {{\\n'+
-'    _iterator_main.next();\\n'+
-'  }}, _error_handler);\\n'+
+'    iterator.next();\\n'+
+'  }}.bind(null, iterator), _error_handler);\\n'+
 '}}\\n';
 
 '''.format(blockname = block_name,
@@ -597,7 +597,7 @@ String(block_identifier)+
 {host}+
 '\\', '+
 String({port})+
-'), (yield 1), _{blockname}(\\''+
+', self_iterator), (yield 1), _{blockname}(\\''+
 {host}+
 '\\', '+
 String({port})+
@@ -605,7 +605,7 @@ String({port})+
 {uid}+
 '\\', \\''+
 String(block_identifier)+
-'\\', ' + {einargs} + '), (yield 1));\\n'
+'\\', ' + {einargs} + ', self_iterator), (yield 1));\\n'
 
 '''.format(host = '_'.join([block_name, 'ipcon_host']),
            port = '_'.join(['value', block_name, 'ipcon_port']),
@@ -613,7 +613,7 @@ String(block_identifier)+
            uid = '_'.join([block_name, 'ipcon_uid']),
            einargs = packet.get_caller_generation_arguments_from_value_and_field_hash(packet.get_packet_elements_underscore_name_as_list(elements_in), ret_get_hash_of_value_and_field_variables))
 
-                    function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function _{blockname}(ipcon_host, ipcon_port, ipcon_uid, block_id, {einargs}) {{\\n'+
+                    function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function _{blockname}(ipcon_host, ipcon_port, ipcon_uid, block_id, {einargs}, iterator) {{\\n'+
 '  var key_ipcon_cache = ipcon_host + \\':\\' + String(ipcon_port);\\n'+
 '  var key_device_cache = ipcon_uid + \\'@\\' + key_ipcon_cache;\\n'+
 '  var device = _device_cache[key_device_cache];\\n'+
@@ -624,8 +624,8 @@ String(block_identifier)+
 '    _device_cache[key_device_cache] = device;\\n'+
 '  }}\\n'+
 '  device.{packetname}({einargs}, function({eoutargs}) {{\\n'+
-'    _iterator_main.next();\\n'+
-'  }}, _error_handler);\\n'+
+'    iterator.next();\\n'+
+'  }}.bind(null, iterator), _error_handler);\\n'+
 '}}\\n';
 
 '''.format(blockname = block_name,
