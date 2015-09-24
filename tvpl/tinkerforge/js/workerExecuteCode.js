@@ -1,13 +1,13 @@
 importScripts('Tinkerforge.js');
-
-var TVPL_WORKER_CMD_END = '____TVPL:WORKER:CMD:END____';
+importScripts('workerProtocol.js');
 
 handlerOnMessage = function(e) {
   try {
     eval(e.data);
   } catch(e) {
       postMessage(String('ERROR: ' + e + '\n'));
-      postMessage(TVPL_WORKER_CMD_END);
+      postMessage(workerProtocolSendMessage(WORKER_PROTOCOL_TYPE_COMMAND,
+                                            WORKER_PROTOCOL_TYPE_DATA_COMMAND_END));
   }
 }
 

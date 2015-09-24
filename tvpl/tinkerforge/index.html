@@ -4,6 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/prism.css">
+    <script type="text/javascript" src="js/workerProtocol.js"></script>
     <script type="text/javascript" src="js/FileSaver.js"></script>
     <script type="text/javascript" src="../blockly_compressed.js"></script>
     <script type="text/javascript" src="../blocks_compressed.js"></script>
@@ -209,11 +210,14 @@
           }
           workerExecuteCode = new Worker('js/workerExecuteCode.js');
           workerExecuteCode.onmessage = function(e) {
-            if (e.data === TVPL_WORKER_CMD_END) {
-              clickedStopProgram();
+            var workerProtocolMessage = JSON.parse(e.data);
+
+            if (workerProtocolMessage.type === WORKER_PROTOCOL_TYPE_COMMAND &&
+                workerProtocolMessage.data === WORKER_PROTOCOL_TYPE_DATA_COMMAND_END) {
+                  clickedStopProgram();
             }
-            else {
-              textareaExecute.value += e.data;
+            else if (workerProtocolMessage.type === WORKER_PROTOCOL_TYPE_MESSAGE){
+              textareaExecute.value += workerProtocolMessage.data;
               textareaExecute.scrollTop = textareaExecute.scrollHeight;
             }
           };
