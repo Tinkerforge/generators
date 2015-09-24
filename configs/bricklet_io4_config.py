@@ -551,6 +551,11 @@ wie von :func:`SetEdgeCountConfig` gesetzt.
 })
 
 com['examples'].append({
+'name': 'Input',
+'functions': [('getter', ('Get Value', 'value as bitmask'), [(('value_mask', 'Value Mask'), 'uint8:bitmask:4', None, None, None, None)], [])]
+})
+
+com['examples'].append({
 'name': 'Output',
 'functions': [('setter', 'Set Configuration', [('uint8:bitmask:4', 1 << 1), ('char', 'o'), ('bool', False)], 'Set pin 1 to output low', None),
               ('setter', 'Set Configuration', [('uint8:bitmask:4', (1 << 2) | (1 << 3)), ('char', 'o'), ('bool', True)], 'Set pin 2 and 3 to output high', None)]

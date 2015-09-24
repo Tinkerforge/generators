@@ -572,6 +572,11 @@ zurück, wie von :func:`SetEdgeCountConfig` gesetzt.
 })
 
 com['examples'].append({
+'name': 'Input',
+'functions': [('getter', ('Get Port', 'value from port A as bitmask'), [(('value_mask', 'Value Mask (Port A)'), 'uint8:bitmask:8', None, None, None, None)], [('char', 'a')])]
+})
+
+com['examples'].append({
 'name': 'Output',
 'functions': [('setter', 'Set Port Configuration', [('char', 'a'), ('uint8:bitmask:8', 1 << 0), ('char', 'o'), ('bool', False)], 'Set pin 0 on port A to output low', None),
               ('setter', 'Set Port Configuration', [('char', 'b'), ('uint8:bitmask:8', (1 << 0) | (1 << 7)), ('char', 'o'), ('bool', True)], 'Set pin 0 and 7 on port B to output high', None)]
