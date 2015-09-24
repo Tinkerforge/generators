@@ -49,6 +49,8 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
             block_display_device_name = self.get_long_display_name()
             block_display_function_name = common.camel_case_to_space(packet.get_camel_case_name())
             block_set_color = 'this.setColour(210);'
+            if self.get_underscore_category() == 'bricklet':
+                block_set_color = 'this.setColour(260);'
             block_help_url = 'this.setHelpUrl(\'' + '/'.join(['http://www.tinkerforge.com/en/doc/Software',
                                                               self.get_camel_case_category() +\
                                                               's',
