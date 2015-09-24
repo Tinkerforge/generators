@@ -176,7 +176,6 @@ goog.require(\'Blockly.Python\');
                                        file_content_xml_toolbox_bricklet + \
                                        '</category>' + \
                                        '</category>' + \
-                                       '<sep></sep>' + \
                                        fh_xml_toolbox_merge_with.read()
 
             with open(os.path.join(self.path_dir_tmp_tinkerforge, 'xml', 'toolbox.xml'), 'w') as fh_xml_toolbox:

@@ -614,9 +614,9 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
 '\\n'+
 'from tinkerforge.ip_connection import IPConnection';
 
-  Blockly.Python.definitions_['common_python_get_ipcon'] = 'def _get_ipcon(ipcon_host, ipcon_port):\\n'+
+  Blockly.Python.definitions_['common_python_get_ipcon'] = 'def _get_ipcon(host, port):\\n'+
 '  global _ipcon_cache\\n'+
-'  key = ipcon_host + \\':\\' + str(ipcon_port)\\n'+
+'  key = host + \\':\\' + str(port)\\n'+
 '\\n'+
 '  if key not in _ipcon_cache:\\n'+
 '    ipcon = IPConnection()\\n'+
@@ -661,8 +661,8 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
                 # Function without in args
                 if len(elements_out) > 0:
                     # Getters
-                    function_to_generate = '''  Blockly.Python.definitions_['{blockname}'] = 'def _{blockname}(ipcon_host, ipcon_port, ipcon_uid):\\n'+
-'  return _get_device({categoryname}, ipcon_uid, _get_ipcon(ipcon_host, ipcon_port)).{packetname}()';
+                    function_to_generate = '''  Blockly.Python.definitions_['{blockname}'] = 'def _{blockname}(host, port, uid):\\n'+
+'  return _get_device({categoryname}, uid, _get_ipcon(host, port)).{packetname}()';
 
 '''.format(blockname = block_name,
            categoryname = self.get_camel_case_category() + self.get_camel_case_name(),
@@ -674,8 +674,8 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
 
                 else:
                     # Setters
-                    function_to_generate = '''  Blockly.Python.definitions_['{blockname}'] = 'def _{blockname}(ipcon_host, ipcon_port, ipcon_uid):\\n'+
-'  _get_device({categoryname}, ipcon_uid, _get_ipcon(ipcon_host, ipcon_port)).{packetname}()';
+                    function_to_generate = '''  Blockly.Python.definitions_['{blockname}'] = 'def _{blockname}(host, port, uid):\\n'+
+'  _get_device({categoryname}, uid, _get_ipcon(host, port)).{packetname}()';
 
 '''.format(blockname = block_name,
            categoryname = self.get_camel_case_category() + self.get_camel_case_name(),
@@ -700,8 +700,8 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
 
                 if len(elements_out) > 0:
                     # Getters
-                    function_to_generate = '''  Blockly.Python.definitions_['{blockname}'] = 'def _{blockname}(ipcon_host, ipcon_port, ipcon_uid, {einargs}):\\n'+
-'  return _get_device({categoryname}, ipcon_uid, _get_ipcon(ipcon_host, ipcon_port)).{packetname}({einargs})';
+                    function_to_generate = '''  Blockly.Python.definitions_['{blockname}'] = 'def _{blockname}(host, port, uid, {einargs}):\\n'+
+'  return _get_device({categoryname}, uid, _get_ipcon(host, port)).{packetname}({einargs})';
 
 '''.format(blockname = block_name,
            einargs = ', '.join(packet.get_packet_elements_underscore_name_as_list(elements_in)),
@@ -715,8 +715,8 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
 
                 else:
                     # Setters
-                    function_to_generate = '''  Blockly.Python.definitions_['{blockname}'] = 'def _{blockname}(ipcon_host, ipcon_port, ipcon_uid, {einargs}):\\n'+
-'  _get_device({categoryname}, ipcon_uid, _get_ipcon(ipcon_host, ipcon_port)).{packetname}({einargs})';
+                    function_to_generate = '''  Blockly.Python.definitions_['{blockname}'] = 'def _{blockname}(host, port, uid, {einargs}):\\n'+
+'  _get_device({categoryname}, uid, _get_ipcon(host, port)).{packetname}({einargs})';
 
 '''.format(blockname = block_name,
            einargs = ', '.join(packet.get_packet_elements_underscore_name_as_list(elements_in)),
