@@ -318,7 +318,7 @@ Element 2 Pins 4-7, Element 3 Pins 8-11 und Element 4 Pins 12-15.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('loop_header', 10, 'Turn pins alternating high/low for 10 times with 100ms delay'),
+'functions': [('loop_header', 10, 'Turn pins alternating high/low 10 times with 100ms delay'),
               ('sleep', 100, None, None),
               ('setter', 'Set Value', [('uint16:bitmask:4', 1 << 0)], None, None),
               ('sleep', 100, None, None),

@@ -963,7 +963,8 @@ com['examples'].append({
               ('setter', 'Enable', [('uint8', 0)], None, None),
               ('empty',),
               ('setter', 'Set Position', [('uint8', 5), ('int16', -9000)], None, 'Set to most left position'),
-              ('setter', 'Enable', [('uint8', 5)], None, None)],
+              ('setter', 'Enable', [('uint8', 5)], None, None),
+              ('wait',)],
 'cleanups': [('setter', 'Disable', [('uint8', 0)], None, None),
              ('setter', 'Disable', [('uint8', 5)], None, None)]
 })
@@ -978,7 +979,3 @@ com['examples'].append({
 'cleanups': [('setter', 'Disable', [('uint8', 0)], None, None)],
 'incomplete': True # because of special ping/pong logic in callback
 })
-
-#com['examples'].append({
-#'name': 'PWM Generator'
-#})

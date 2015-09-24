@@ -1066,7 +1066,8 @@ com['examples'].append({
               ('setter', 'Set Speed Ramping', [('uint16', 500), ('uint16', 5000)], 'Slow acceleration (500 steps/s^2),\nFast deacceleration (5000 steps/s^2)', None),
               ('empty',),
               ('setter', 'Enable', [], None, 'Enable motor power'),
-              ('setter', 'Set Steps', [('int32', 60000)], None, 'Drive 60000 steps forward')],
+              ('setter', 'Set Steps', [('int32', 60000)], None, 'Drive 60000 steps forward'),
+              ('wait',)],
 'cleanups': [('setter', 'Disable', [], None, None)]
 })
 

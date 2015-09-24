@@ -235,13 +235,15 @@ Gibt die Konfiguration zurück, wie von :func:`SetConfiguration` gesetzt.
 com['examples'].append({
 'name': 'Simple Voltage',
 'functions': [('setter', 'Set Voltage', [('uint16', 3300)], 'Set output voltage to 3.3V', None),
-              ('setter', 'Enable', [], None, None)],
+              ('setter', 'Enable', [], None, None),
+              ('wait',)],
 'cleanups': [('setter', 'Disable', [], None, None)]
 })
 
 com['examples'].append({
 'name': 'Simple Current',
 'functions': [('setter', 'Set Current', [('uint16', 4500)], 'Set output current to 4.5mA', None),
-              ('setter', 'Enable', [], None, None)],
+              ('setter', 'Enable', [], None, None),
+              ('wait',)],
 'cleanups': [('setter', 'Disable', [], None, None)]
 })

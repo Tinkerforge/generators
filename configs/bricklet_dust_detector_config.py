@@ -329,7 +329,7 @@ com['examples'].append({
 com['examples'].append({
 'name': 'Callback',
 'functions': [('callback', ('Dust Density', 'dust density'), [(('dust_density', 'Dust Density'), 'uint16', None, 'µg/m³', 'µg/m³', None)], None, None),
-              ('callback_period', ('Dust Density', 'dust density'), [], 200)]
+              ('callback_period', ('Dust Density', 'dust density'), [], 1000)]
 })
 
 com['examples'].append({

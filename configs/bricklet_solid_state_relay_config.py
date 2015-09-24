@@ -155,7 +155,7 @@ Der Parameter ist der aktuellen Zustand des Relais
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('loop_header', 5, 'Turn relay on/off for 10 times with 1 second delay'),
+'functions': [('loop_header', 5, 'Turn relay on/off 10 times with 1 second delay'),
               ('sleep', 1000, None, None),
               ('setter', 'Set State', [('bool', True)], None, None),
               ('sleep', 1000, None, None),
