@@ -185,6 +185,18 @@
       }
 
       if (runOK) {
+        var MONTH_NAMES = ['Jan',
+                           'Feb',
+                           'Mar',
+                           'Apr',
+                           'May',
+                           'Jun',
+                           'Jul',
+                           'Aug',
+                           'Sep',
+                           'Oct',
+                           'Nov',
+                           'Dec'];
         var HIGHLIGHT_NONE = 1;
         var HIGHLIGHT_JS = 2;
         var HIGHLIGHT_PY = 3;
@@ -328,7 +340,16 @@
 
         function clickedSave(e) {
           var xmlText = Blockly.Xml.domToPrettyText(Blockly.Xml.workspaceToDom(blocklyWorkspace));
-          saveAs(new Blob([xmlText], {type: "text/xml;charset=utf-8"}), 'workspace.tvpl');
+          var d = new Date();
+          var fileName = MONTH_NAMES[d.getUTCMonth()] +
+                         d.getUTCDate() +
+                         '_' +
+                         d.getUTCHours() +
+                         '_' +
+                         d.getUTCMinutes() +
+                         '_' +
+                         d.getUTCSeconds();
+          saveAs(new Blob([xmlText], {type: "text/xml;charset=utf-8"}), fileName + '.tvpl');
         }
 
         function clickedLoadWorkspace(e) {
