@@ -103,9 +103,9 @@ class PHPDocDevice(php_common.PHPDevice):
         for packet in self.get_packets('callback'):
             params = packet.get_php_parameter_list(True)
             if len(params) > 0:
-                params += " [, mixed $userData]"
+                params += " [, mixed $user_data]"
             else:
-                params += "[mixed $userData]"
+                params += "[mixed $user_data]"
             desc = packet.get_php_formatted_doc()
             signature = common.select_lang(signature_str).format(params)
             func = '{0}{1}::CALLBACK_{2}\n{3}{4}'.format(func_start,
@@ -147,19 +147,19 @@ class PHPDocDevice(php_common.PHPDevice):
 
         register_str = {
         'en': """
-.. php:function:: void {1}::registerCallback(int $id, callable $callback, mixed $userData = NULL)
+.. php:function:: void {1}::registerCallback(int $id, callable $callback, mixed $user_data = NULL)
 
  Registers a callback with ID *$id* to the callable *$callback*.
- The *$userData*  will be given as a parameter of the callback.
+ The *$user_data*  will be given as a parameter of the callback.
 
  The available  IDs with corresponding function signatures are listed
  :ref:`below <{0}_php_callbacks>`.
 """,
         'de': """
-.. php:function:: void {1}::registerCallback(int $id, callable $callback, mixed $userData = NULL)
+.. php:function:: void {1}::registerCallback(int $id, callable $callback, mixed $user_data = NULL)
 
  Registriert einen Callback mit der ID *$id* zu der Callable *$callback*.
- Der Parameter *$userData* wird bei jedem Callback wieder mit übergeben.
+ Der Parameter *$user_data* wird bei jedem Callback wieder mit übergeben.
 
  Die verfügbaren IDs mit den zugehörigen Funktionssignaturen sind :ref:`unten <{0}_php_callbacks>`
  zu finden.

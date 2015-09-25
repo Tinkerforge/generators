@@ -317,18 +317,18 @@ class {0} extends Device
      *
      * @param int $id
      * @param callable $callback
-     * @param mixed $userData
+     * @param mixed $user_data
      *
      * @return void
      */
-    public function registerCallback($id, $callback, $userData = NULL)
+    public function registerCallback($id, $callback, $user_data = NULL)
     {
         if (!is_callable($callback)) {
             throw new \Exception('Callback function is not callable');
         }
 
         $this->registeredCallbacks[$id] = $callback;
-        $this->registeredCallbackUserData[$id] = $userData;
+        $this->registeredCallbackUserData[$id] = $user_data;
     }
 """
         wrapper = """
