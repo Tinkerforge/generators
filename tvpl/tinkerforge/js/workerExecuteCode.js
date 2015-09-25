@@ -9,7 +9,6 @@ handlerOnMessage = function(e) {
     //eval(e.data);
     babel.run(babel.transform(e.data).code);
   } catch(e) {
-      postMessage();
       postMessage(workerProtocolSendMessage(WORKER_PROTOCOL_TYPE_MESSAGE,
                                             String('ERROR: ' + e + '\n')));
       postMessage(workerProtocolSendMessage(WORKER_PROTOCOL_TYPE_COMMAND,
