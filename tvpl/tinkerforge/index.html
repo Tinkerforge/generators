@@ -29,9 +29,24 @@
           <hr/>
         </td>
       </tr>
-      <tr>
-        <td id="tdCompatibilityErrorMessage" align="center">
-          <p id="pCompatibilityErrorMessage">Seems like the browser you are using is not compatible to be used for Tinkerforge Visual Programming Language.</p>
+      <tr id="trErrorMessageWebworker">
+        <td align="center">
+          <p id="pErrorMessage">Seems like the browser you are using does not support Web workers which is required to use TVPL.</p>
+        </td>
+      </tr>
+      <tr id="trErrorMessageXmlToolboxGeneric">
+        <td align="center">
+          <p id="pErrorMessage">Could not load toolbox XML file which is required to use TVPL.</p>
+        </td>
+      </tr>
+      <tr id="trErrorMessageXmlToolboxChrome">
+        <td align="center">
+          <p id="pErrorMessage">Could not load toolbox XML file. Seems like you are using Google Chrome browser and accessing the application without a web server. Try launching Google Chrome with "--allow-file-access-from-files" switch.</p>
+        </td>
+      </tr>
+      <tr id="trErrorMessageBlob">
+        <td align="center">
+          <p id="pErrorMessageBlob">Seems like the browser you are using does not support Blob objects. Save and load workspace feature will not be available.</p>
         </td>
       </tr>
       <tr>
@@ -45,10 +60,10 @@
           <button id="buttonToolbar" title="View generated code" onclick="clickedViewCode();">
             <img src="media/code.png" width="32" height="32"/>
           </button>
-          <button id="buttonToolbar" title="Save current state of the workspace" onclick="clickedSave();">
+          <button id="buttonToolbarSave" title="Save current state of the workspace" onclick="clickedSave();">
             <img src="media/save.png" width="32" height="32"/>
           </button>
-          <button id="buttonToolbar" title="Load previously saved workspace state" onclick="clickedLoadWorkspace();">
+          <button id="buttonToolbarRestore" title="Load previously saved workspace state" onclick="clickedLoadWorkspace();">
             <img src="media/restore.png" width="32" height="32"/>
           </button>
         </td>
@@ -61,8 +76,8 @@
     </table>
 
     <!-- Blockly editor -->
-    <div id="blocklyArea"/>
-    <div id="blocklyDiv"/>
+    <div id="blocklyArea" />
+    <div id="blocklyDiv" />
 
     <!-- Execution view -->
     <div id="divExecute">
@@ -105,25 +120,25 @@
     </div>
 
     <script type="text/javascript" >
-      var tdCompatibilityErrorMessage = document.getElementById('tdCompatibilityErrorMessage');
+      var trErrorMessageWebworker = document.getElementById('trErrorMessageWebworker');
+      var trErrorMessageXmlToolboxGeneric = document.getElementById('trErrorMessageXmlToolboxGeneric');
+      var trErrorMessageXmlToolboxChrome = document.getElementById('trErrorMessageXmlToolboxChrome');
+      var trErrorMessageBlob = document.getElementById('trErrorMessageBlob');
       var xmlHttp;
       var xmlBlocklyToolbox;
       var xmlBlocklyToolboxLoaded;
+      var buttonToolbarSave = document.getElementById('buttonToolbarSave');
+      var buttonToolbarRestore = document.getElementById('buttonToolbarRestore');
+      var runOK = true;
 
-      function browserSupportsWebWorkers(e) {
-        return typeof window.Worker === "function";
-      }
-
-      function browserSupportsYield(e) {
-        try {
-          eval("(function *(){yield 1;})");
-        } catch(e) {
-          return false;
+      function browserSupportsWebWorker(e) {
+        if (window.Worker) {
+          return true;
         }
-        return true;
+        return false;
       }
 
-      function browserSupportsBlobs() {
+      function browserSupportsBlob() {
         if (window.FileReader && window.File && window.FileList && window.Blob) {
           return true;
         }
@@ -131,7 +146,7 @@
       }
 
       /*
-        If being launched locally then Google Chrome must be launched with "--allow-file-access-from-files" parameter
+        If being accessed without a server then Google Chrome must be launched with "--allow-file-access-from-files" parameter
         to be able to use TVPL.
       */
       try {
@@ -148,10 +163,28 @@
           xmlBlocklyToolboxLoaded = false;
       }
 
-      if (!browserSupportsWebWorkers() || !browserSupportsYield() || !browserSupportsBlobs || !xmlBlocklyToolboxLoaded) {
-          tdCompatibilityErrorMessage.style.display = 'block';
+      if (!browserSupportsWebWorker()) {
+        trErrorMessageWebworker.style.display = 'table-row';
+        runOK = false;
       }
-      else {
+
+      if(!xmlBlocklyToolboxLoaded) {
+        if (window.navigator.userAgent.search('Chrome') > -1) {
+          trErrorMessageXmlToolboxChrome.style.display = 'table-row';
+        }
+        else {
+          trErrorMessageXmlToolboxGeneric.style.display = 'table-row';
+        }
+        runOK = false;
+      }
+
+      if(!browserSupportsBlob()) {
+        trErrorMessageBlob.style.display = 'table-row';
+        buttonToolbarSave.style.display = 'none';
+        buttonToolbarRestore.style.display = 'none';
+      }
+
+      if (runOK) {
         var HIGHLIGHT_NONE = 1;
         var HIGHLIGHT_JS = 2;
         var HIGHLIGHT_PY = 3;
