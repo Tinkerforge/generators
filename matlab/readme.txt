@@ -2,7 +2,7 @@ Tinkerforge MATLAB/Octave Bindings
 ==================================
 
 The MATLAB/Octave bindings allow you to control Tinkerforge Bricks and
-Bricklets from your MATLAB/Octave programs. This ZIP file contains:
+Bricklets from your MATLAB/Octave scripts. This ZIP file contains:
 
  matlab/Tinkerforge.jar -- precompiled Java library for MATLAB
  matlab/source/         -- source code of Tinkerforge.jar for MATLAB

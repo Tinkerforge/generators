@@ -2,7 +2,7 @@ Tinkerforge PHP Bindings
 ========================
 
 The PHP bindings allow you to control Tinkerforge Bricks and Bricklets from
-your PHP programs. This ZIP file contains:
+your PHP scripts. This ZIP file contains:
 
  Tinkerforge.tgz -- PEAR package (install with pear tool)
  source/         -- source code of Tinkerforge.tgz

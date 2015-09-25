@@ -2,7 +2,7 @@ Tinkerforge Python Bindings
 ===========================
 
 The Python bindings allow you to control Tinkerforge Bricks and Bricklets from
-your Python programs. This ZIP file contains:
+your Python scripts. This ZIP file contains:
 
  source/   -- source code of the bindings (install with setup.py script)
  examples/ -- examples for every Brick and Bricklet
