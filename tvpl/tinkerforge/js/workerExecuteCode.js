@@ -6,7 +6,6 @@ importScripts('babelBrowser.js');
 
 handlerOnMessage = function(e) {
   try {
-    //eval(e.data);
     babel.run(babel.transform(e.data).code);
   } catch(e) {
       postMessage(workerProtocolSendMessage(WORKER_PROTOCOL_TYPE_MESSAGE,
