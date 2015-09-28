@@ -2570,11 +2570,26 @@ com['packets'].append({
 }]
 })
 
-# TODO: Add Status API
 com['packets'].append({
 'type': 'function', 
 'name': ('GetWifi2Status', 'get_wifi2_status'), 
-'elements': [('todo', 'uint8', 1, 'out')], 
+'elements': [('client_enabled', 'bool', 1, 'out'),
+             ('client_status', 'uint8', 1, 'out'),
+             ('client_ip', 'uint8', 4, 'out'),
+             ('client_subnet_mask', 'uint8', 4, 'out'),
+             ('client_gateway', 'uint8', 4, 'out'),
+             ('client_mac_address', 'uint8', 6, 'out'),
+             ('client_rx_count', 'uint32', 1, 'out'),
+             ('client_tx_count', 'uint32', 1, 'out'),
+             ('client_rssi', 'int8', 1, 'out'),
+             ('ap_enabled', 'bool', 1, 'out'),
+             ('ap_ip', 'uint8', 4, 'out'),
+             ('ap_subnet_mask', 'uint8', 4, 'out'),
+             ('ap_gateway', 'uint8', 4, 'out'),
+             ('ap_mac_address', 'uint8', 6, 'out'),
+             ('ap_rx_count', 'uint32', 1, 'out'),
+             ('ap_tx_count', 'uint32', 1, 'out'),
+             ('ap_connected_count', 'uint8', 1, 'out')], 
 'since_firmware': [2, 4, 0],
 'doc': ['af', {
 'en':
@@ -2698,6 +2713,7 @@ com['packets'].append({
              ('gateway', 'uint8', 4, 'in'),
              ('auth', 'uint8', 1, 'in'),
              ('hidden', 'bool', 1, 'in'),
+             ('channel', 'uint8', 1, 'in'),
              ('mac_address', 'uint8', 6, 'in')],
 'since_firmware': [2, 4, 0],
 'doc': ['af', {
@@ -2720,6 +2736,7 @@ com['packets'].append({
              ('gateway', 'uint8', 4, 'out'),
              ('encryption', 'uint8', 1, 'out'),
              ('hidden', 'bool', 1, 'out'),
+             ('channel', 'uint8', 1, 'out'),
              ('mac_address', 'uint8', 6, 'out')],
 'since_firmware': [2, 4, 0],
 'doc': ['af', {
