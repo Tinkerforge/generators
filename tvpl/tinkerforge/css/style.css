@@ -45,6 +45,17 @@ html, body {
 }
 #divExecute{
   display: none;
+  width: 100%;
+  height: 100%;
+}
+#divGeneratedGUI{
+  width: 100%;
+  height: 100%;
+  border: solid 1px #272822;
+}
+#tableGeneratedGUI{
+  width: 100%;
+  height: 100%;
 }
 #tableExecute{
   width: 100%;
@@ -52,6 +63,7 @@ html, body {
 }
 #textareaExecute {
   width: 100%;
+  height: 100%;
   resize: none;
   border: solid 1px #272822;
   color: white;

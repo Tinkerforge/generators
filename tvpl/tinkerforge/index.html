@@ -83,7 +83,7 @@
     <div id="divExecute">
       <table id="tableExecute">
         <tr>
-          <td align="center">
+          <td align="center" colspan="2">
             <button id="buttonToolbarRunStop" title="Run graphical program from workspace" onclick="clickedRunProgram()">
               <img id="buttonToolbarRunStopImage" src="media/runcode.png" width="32" height="32"/>
             </button>
@@ -93,8 +93,19 @@
           </td>
         </tr>
         <tr>
-          <td>
-            <textarea readonly id="textareaExecute" rows="32"></textarea>
+          <td width="50%" height="100%">
+            <textarea readonly id="textareaExecute"></textarea>
+          </td>
+          <td width="50%" height="100%">
+            <div id="divGeneratedGUI">
+              <table id="tableGeneratedGUI" align="center">
+                <tr>
+                  <td align="center">
+                    <button title="test_button">TEST BUTTON</button>
+                  </td>
+                </tr>
+              </table>
+            </div>
           </td>
         </tr>
       </table>
