@@ -51,19 +51,19 @@
       </tr>
       <tr>
         <td id ="tdTableHeaderToolbar" align="center">
-          <button id="buttonToolbar" title="Show the workspace" onclick="clickedEditor();">
+          <button id="buttonToolbar" title="Show the workspace" onclick="clickedEditor()">
             <img src="media/editor.png" width="32" height="32"/>
           </button>
-          <button id="buttonToolbar" title="Execute code generated from current workspace" onclick="clickedExecute();">
+          <button id="buttonToolbar" title="Execute code generated from current workspace" onclick="clickedExecute()">
             <img src="media/execute.png" width="32" height="32"/>
           </button>
-          <button id="buttonToolbar" title="View generated code" onclick="clickedViewCode();">
+          <button id="buttonToolbar" title="View generated code" onclick="clickedViewCode()">
             <img src="media/code.png" width="32" height="32"/>
           </button>
-          <button id="buttonToolbarSave" title="Save current state of the workspace" onclick="clickedSave();">
+          <button id="buttonToolbarSave" title="Save current state of the workspace" onclick="clickedSave()">
             <img src="media/save.png" width="32" height="32"/>
           </button>
-          <button id="buttonToolbarRestore" title="Load previously saved workspace state" onclick="clickedLoadWorkspace();">
+          <button id="buttonToolbarRestore" title="Load previously saved workspace state" onclick="clickedLoadWorkspace()">
             <img src="media/restore.png" width="32" height="32"/>
           </button>
         </td>
@@ -84,10 +84,10 @@
       <table id="tableExecute">
         <tr>
           <td align="center">
-            <button id="buttonToolbarRunStop" title="Run graphical program from workspace" onclick="clickedRunProgram();">
+            <button id="buttonToolbarRunStop" title="Run graphical program from workspace" onclick="clickedRunProgram()">
               <img id="buttonToolbarRunStopImage" src="media/runcode.png" width="32" height="32"/>
             </button>
-            <button id="buttonToolbar" title="Clear output" onclick="clickedClearOutput();">
+            <button id="buttonToolbar" title="Clear output" onclick="clickedClearOutput()">
               <img src="media/clear.png" width="32" height="32"/>
             </button>
           </td>
@@ -236,6 +236,68 @@
 
         tdTableHeaderToolbar.style.display = 'block';
 
+        var onLoad = function(e) {
+          textareaExecute.value = '';
+          codeContent.innerHTML = DEFAULT_CODE;
+          Prism.highlightElement(codeContent);
+        };
+
+        var onBeforeUnload = function(e) {
+          return MSG_INFO_UNSAVED_WORKSPACE;
+          clickedStopProgram();
+        };
+
+        var onResize = function(e) {
+          // Compute the absolute coordinates and dimensions of blocklyArea.
+          var element = blocklyArea;
+          var x = 0;
+          var y = 0;
+          do {
+            x += element.offsetLeft;
+            y += element.offsetTop;
+            element = element.offsetParent;
+          } while (element);
+          // Position blocklyDiv over blocklyArea.
+          blocklyDiv.style.left = x + 'px';
+          blocklyDiv.style.top = y + 'px';
+          blocklyDiv.style.width = blocklyArea.offsetWidth + 'px';
+          blocklyDiv.style.height = blocklyArea.offsetHeight + 'px';
+        };
+
+        var updateCodeViewer = function(e) {
+          var code = DEFAULT_CODE;
+          var language = selectLanguageCode.options[selectLanguageCode.selectedIndex].value;
+
+          if (language == 'js') {
+              code = Blockly.JavaScript.workspaceToCode(blocklyWorkspace);
+              if (code == '') {
+                codeContent.innerHTML = DEFAULT_CODE;
+                Prism.highlightElement(codeContent);
+                return;
+              }
+              codeContent.innerHTML = code;
+              Prism.highlightElement(codeContent);
+          } else if (language == 'py') {
+              code = Blockly.Python.workspaceToCode(blocklyWorkspace);
+              if (code == '') {
+                codeContent.innerHTML = DEFAULT_CODE;
+                Prism.highlightElement(codeContent);
+                return;
+              }
+              codeContent.innerHTML = code;
+              Prism.highlightElement(codeContent);
+          } else {
+              codeContent.innerHTML = code;
+              Prism.highlightElement(codeContent);
+          }
+        };
+
+        window.onbeforeunload = onBeforeUnload;
+        window.addEventListener('load', onLoad, false);
+        window.addEventListener('resize', onResize, false);
+        blocklyWorkspace.addChangeListener(updateCodeViewer);
+        onResize();
+
         function clickedClearOutput(e) {
           textareaExecute.value = '';
         }
@@ -354,65 +416,6 @@
         function clickedLoadWorkspace(e) {
           workspaceFileUploader.click();
         }
-
-        function updateCodeViewer(e) {
-          var code = DEFAULT_CODE;
-          var language = selectLanguageCode.options[selectLanguageCode.selectedIndex].value;
-
-          if (language == 'js') {
-              code = Blockly.JavaScript.workspaceToCode(blocklyWorkspace);
-              if (code == '') {
-                codeContent.innerHTML = DEFAULT_CODE;
-                Prism.highlightElement(codeContent);
-                return;
-              }
-              codeContent.innerHTML = code;
-              Prism.highlightElement(codeContent);
-          } else if (language == 'py') {
-              code = Blockly.Python.workspaceToCode(blocklyWorkspace);
-              if (code == '') {
-                codeContent.innerHTML = DEFAULT_CODE;
-                Prism.highlightElement(codeContent);
-                return;
-              }
-              codeContent.innerHTML = code;
-              Prism.highlightElement(codeContent);
-          } else {
-              codeContent.innerHTML = code;
-              Prism.highlightElement(codeContent);
-          }
-        }
-
-        function onLoad(e) {
-          textareaExecute.value = '';
-          codeContent.innerHTML = DEFAULT_CODE;
-          Prism.highlightElement(codeContent);
-        }
-
-        function onResize(e) {
-          // Compute the absolute coordinates and dimensions of blocklyArea.
-          var element = blocklyArea;
-          var x = 0;
-          var y = 0;
-          do {
-            x += element.offsetLeft;
-            y += element.offsetTop;
-            element = element.offsetParent;
-          } while (element);
-          // Position blocklyDiv over blocklyArea.
-          blocklyDiv.style.left = x + 'px';
-          blocklyDiv.style.top = y + 'px';
-          blocklyDiv.style.width = blocklyArea.offsetWidth + 'px';
-          blocklyDiv.style.height = blocklyArea.offsetHeight + 'px';
-        }
-        window.addEventListener('resize', onResize, false);
-        window.addEventListener('load', onLoad, false);
-        window.onbeforeunload = function(e) {
-          return MSG_INFO_UNSAVED_WORKSPACE;
-          clickedStopProgram();
-        }
-        blocklyWorkspace.addChangeListener(updateCodeViewer);
-        onResize();
       }
     </script>
 
