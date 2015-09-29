@@ -101,7 +101,8 @@
               <table id="tableGeneratedGUI" align="center">
                 <tr>
                   <td align="center">
-                    <button title="test_button" onclick="">TEST BUTTON</button>
+                    <label id="labelTest" title="test_button" onclick="" style="border: solid 1px #272822;">...</label>
+                    <button id="buttonTest" onclick="">TEST BUTTON</button>
                   </td>
                 </tr>
               </table>
@@ -224,6 +225,8 @@
         var MSG_INFO_UNSAVED_WORKSPACE = 'Unsaved changes on the workspace will be lost.';
         var MSG_INFO_PROGRAM_RUNNING = 'A program is already running. Stop the running program to start a new one.'
         var MSG_INFO_WORKSPACE_EMPTY = 'Nothing to execute. Seems like the workspace is empty.';
+        var MSG_TOOLTIP_BUTTON_RUNSTOP_RUN = 'Execute code generated from current workspace';
+        var MSG_TOOLTIP_BUTTON_RUNSTOP_STOP = 'Stop currently running program';
         var tdTableHeaderToolbar = document.getElementById('tdTableHeaderToolbar');
         var blocklyArea = document.getElementById('blocklyArea');
         var blocklyDiv = document.getElementById('blocklyDiv');
@@ -345,6 +348,7 @@
                   }
                   else {
                     textareaExecute.value += messageParsed.data;
+                    document.getElementById('labelTest').innerHTML = messageParsed.data;
                     textareaExecute.scrollTop = textareaExecute.scrollHeight;
                   }
                   break;
@@ -385,6 +389,7 @@
                                                                   code));
 
           buttonToolbarRunStop.setAttribute('onclick', 'clickedStopProgram()');
+          buttonToolbarRunStop.setAttribute('title', MSG_TOOLTIP_BUTTON_RUNSTOP_STOP);
           buttonToolbarRunStopImage.setAttribute('src', 'media/stopcode.png');
         }
 
@@ -403,6 +408,7 @@
             workerExecuteCode = null;
           }
           buttonToolbarRunStop.setAttribute('onclick', 'clickedRunProgram()');
+          buttonToolbarRunStop.setAttribute('title', MSG_TOOLTIP_BUTTON_RUNSTOP_RUN);
           buttonToolbarRunStopImage.setAttribute('src', 'media/runcode.png');
         }
 
