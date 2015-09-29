@@ -101,7 +101,7 @@
               <table id="tableGeneratedGUI" align="center">
                 <tr>
                   <td align="center">
-                    <button title="test_button">TEST BUTTON</button>
+                    <button title="test_button" onclick="">TEST BUTTON</button>
                   </td>
                 </tr>
               </table>
@@ -163,8 +163,9 @@
       try {
         if (window.XMLHttpRequest) {
           xmlHttp = new XMLHttpRequest();
-        } else {
-            xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        else {
+          xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
         }
         xmlHttp.open('GET', 'xml/toolbox.xml', false);
         xmlHttp.send();
@@ -218,6 +219,8 @@
         var MSG_ERROR_NOT_VALID_WORKSPACE_FILE = 'ERROR: Not a valid workspace file.';
         var MSG_ERROR_FILE_READ_FAILED = 'ERROR: Reading file failed.';
         var MSG_ERROR_WORKSPACE_LOAD_FAILED = 'ERROR: Failed to load worskspace from file. Check that the file is valid workspace file.';
+        var MSG_ERROR_PROTOCOL_MESSAGE_MALFORMED = 'ERROR: Malformed protocol message recieved from worker.\n';
+        var MSG_ERROR_PROTOCOL_UNKNOWN_MESSAGE_TYPE = 'ERROR: Unknown message type recieved from worker.\n';
         var MSG_INFO_UNSAVED_WORKSPACE = 'Unsaved changes on the workspace will be lost.';
         var MSG_INFO_PROGRAM_RUNNING = 'A program is already running. Stop the running program to start a new one.'
         var MSG_INFO_WORKSPACE_EMPTY = 'Nothing to execute. Seems like the workspace is empty.';
@@ -280,26 +283,28 @@
           var language = selectLanguageCode.options[selectLanguageCode.selectedIndex].value;
 
           if (language == 'js') {
-              code = Blockly.JavaScript.workspaceToCode(blocklyWorkspace);
-              if (code == '') {
-                codeContent.innerHTML = DEFAULT_CODE;
-                Prism.highlightElement(codeContent);
-                return;
-              }
-              codeContent.innerHTML = code;
+            code = Blockly.JavaScript.workspaceToCode(blocklyWorkspace);
+            if (code == '') {
+              codeContent.innerHTML = DEFAULT_CODE;
               Prism.highlightElement(codeContent);
-          } else if (language == 'py') {
-              code = Blockly.Python.workspaceToCode(blocklyWorkspace);
-              if (code == '') {
-                codeContent.innerHTML = DEFAULT_CODE;
-                Prism.highlightElement(codeContent);
-                return;
-              }
-              codeContent.innerHTML = code;
+              return;
+            }
+            codeContent.innerHTML = code;
+            Prism.highlightElement(codeContent);
+          }
+          else if (language == 'py') {
+            code = Blockly.Python.workspaceToCode(blocklyWorkspace);
+            if (code == '') {
+              codeContent.innerHTML = DEFAULT_CODE;
               Prism.highlightElement(codeContent);
-          } else {
-              codeContent.innerHTML = code;
-              Prism.highlightElement(codeContent);
+              return;
+            }
+            codeContent.innerHTML = code;
+            Prism.highlightElement(codeContent);
+          }
+          else {
+            codeContent.innerHTML = code;
+            Prism.highlightElement(codeContent);
           }
         };
 
@@ -316,40 +321,92 @@
         function clickedRunProgram(e){
           var code = '';
 
-          if (workerExecuteCode) {
-            alert(MSG_INFO_PROGRAM_RUNNING);
-            return;
-          }
           code = Blockly.JavaScript.workspaceToCode(blocklyWorkspace);
+
           if (code === '') {
             alert(MSG_INFO_WORKSPACE_EMPTY);
             return;
           }
           workerExecuteCode = new Worker('js/workerExecuteCode.js');
-          workerExecuteCode.onmessage = function(e) {
-            var workerProtocolMessage = JSON.parse(e.data);
 
-            if (workerProtocolMessage.type === WORKER_PROTOCOL_TYPE_COMMAND &&
-                workerProtocolMessage.data === WORKER_PROTOCOL_TYPE_DATA_COMMAND_END) {
-                  clickedStopProgram();
-            }
-            else if (workerProtocolMessage.type === WORKER_PROTOCOL_TYPE_MESSAGE){
-              textareaExecute.value += workerProtocolMessage.data;
+          workerExecuteCode.onmessage = function(e) {
+            var messageParsed = JSON.parse(e.data);
+
+            if (messageParsed.type == null || !workerProtocol.isNumber(messageParsed.type)) {
+              textareaExecute.value += MSG_ERROR_PROTOCOL_MESSAGE_MALFORMED;
               textareaExecute.scrollTop = textareaExecute.scrollHeight;
             }
-          };
-          workerExecuteCode.postMessage(code);
+            else {
+              switch(messageParsed.type) {
+                case workerProtocol.TYPE_MESSAGE:
+                  if (messageParsed.data === null || messageParsed.data === '') {
+                    textareaExecute.value += MSG_ERROR_PROTOCOL_MESSAGE_MALFORMED;
+                    textareaExecute.scrollTop = textareaExecute.scrollHeight;
+                  }
+                  else {
+                    textareaExecute.value += messageParsed.data;
+                    textareaExecute.scrollTop = textareaExecute.scrollHeight;
+                  }
+                  break;
 
-          buttonToolbarRunStop.setAttribute('onclick','clickedStopProgram()');
+                case workerProtocol.TYPE_COMMAND_WORKER_GENERIC_ERROR:
+                  if (messageParsed.data === null || messageParsed.data === '') {
+                    textareaExecute.value += MSG_ERROR_PROTOCOL_MESSAGE_MALFORMED;
+                    textareaExecute.scrollTop = textareaExecute.scrollHeight;
+                  }
+                  else {
+                    textareaExecute.value += messageParsed.data;
+                    textareaExecute.scrollTop = textareaExecute.scrollHeight;
+                  }
+                  clickedStopProgram();
+                  break;
+
+                case workerProtocol.TYPE_COMMAND_WORKER_CODE_EXEC_ERROR:
+                  if (messageParsed.data === null || messageParsed.data === '') {
+                    textareaExecute.value += MSG_ERROR_PROTOCOL_MESSAGE_MALFORMED;
+                    textareaExecute.scrollTop = textareaExecute.scrollHeight;
+                  }
+                  else {
+                    textareaExecute.value += messageParsed.data;
+                    textareaExecute.scrollTop = textareaExecute.scrollHeight;
+                  }
+                  clickedStopProgram();
+                  break;
+
+                case workerProtocol.TYPE_COMMAND_WORKER_CODE_EXEC_END:
+                  clickedStopProgram();
+                  break;
+
+                default:
+                  textareaExecute.value += MSG_ERROR_PROTOCOL_UNKNOWN_MESSAGE_TYPE;
+                  textareaExecute.scrollTop = textareaExecute.scrollHeight;
+                  clickedStopProgram();
+              }
+            }
+          };
+
+          workerExecuteCode.postMessage(workerProtocol.getMessage(workerProtocol.TYPE_COMMAND_MASTER_CODE_EXEC_START,
+                                                                  code));
+
+          buttonToolbarRunStop.setAttribute('onclick', 'clickedStopProgram()');
           buttonToolbarRunStopImage.setAttribute('src', 'media/stopcode.png');
         }
 
         function clickedStopProgram(e) {
           if (workerExecuteCode) {
+            workerExecuteCode.postMessage(workerProtocol.getMessage(workerProtocol.TYPE_COMMAND_MASTER_CODE_EXEC_STOP,
+                                                                    null));
+            // Give the Web worker thread 1 second to do its own clean up before cleaning up the objects related to the worker
+            setTimeout(cleanupWorkerExecuteCode, 1000);
+          }
+        }
+
+        function cleanupWorkerExecuteCode() {
+          if (workerExecuteCode) {
             workerExecuteCode.terminate();
             workerExecuteCode = null;
           }
-          buttonToolbarRunStop.setAttribute('onclick','clickedRunProgram()');
+          buttonToolbarRunStop.setAttribute('onclick', 'clickedRunProgram()');
           buttonToolbarRunStopImage.setAttribute('src', 'media/runcode.png');
         }
 
@@ -370,6 +427,7 @@
               try {
                 blocklyWorkspace.clear();
                 Blockly.Xml.domToWorkspace(blocklyWorkspace, Blockly.Xml.textToDom(xmlText));
+                clickedStopProgram();
               }
               catch(e) {
                 alert(MSG_ERROR_WORKSPACE_LOAD_FAILED);
