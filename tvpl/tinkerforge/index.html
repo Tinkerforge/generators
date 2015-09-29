@@ -373,10 +373,6 @@
                   clickedStopProgram();
                   break;
 
-                case workerProtocol.TYPE_COMMAND_WORKER_CODE_EXEC_END:
-                  clickedStopProgram();
-                  break;
-
                 default:
                   textareaExecute.value += MSG_ERROR_PROTOCOL_UNKNOWN_MESSAGE_TYPE;
                   textareaExecute.scrollTop = textareaExecute.scrollHeight;
