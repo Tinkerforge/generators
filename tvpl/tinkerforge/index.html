@@ -220,8 +220,6 @@
         var MSG_ERROR_NOT_VALID_WORKSPACE_FILE = 'ERROR: Not a valid workspace file.';
         var MSG_ERROR_FILE_READ_FAILED = 'ERROR: Reading file failed.';
         var MSG_ERROR_WORKSPACE_LOAD_FAILED = 'ERROR: Failed to load worskspace from file. Check that the file is valid workspace file.';
-        var MSG_ERROR_PROTOCOL_MESSAGE_MALFORMED = 'ERROR: Malformed protocol message recieved from worker.\n';
-        var MSG_ERROR_PROTOCOL_UNKNOWN_MESSAGE_TYPE = 'ERROR: Unknown message type recieved from worker.\n';
         var MSG_INFO_UNSAVED_WORKSPACE = 'Unsaved changes on the workspace will be lost.';
         var MSG_INFO_PROGRAM_RUNNING = 'A program is already running. Stop the running program to start a new one.'
         var MSG_INFO_WORKSPACE_EMPTY = 'Nothing to execute. Seems like the workspace is empty.';
@@ -240,6 +238,7 @@
         var buttonToolbarRunStop = document.getElementById('buttonToolbarRunStop');
         var buttonToolbarRunStopImage = document.getElementById('buttonToolbarRunStopImage');
         var fileReader = new FileReader();
+        var workerBlobURL = null;
         var blocklyWorkspace = Blockly.inject(blocklyDiv,
           {grid:
             {spacing: 25,
@@ -354,64 +353,33 @@
             return;
           }
 
-          //workerExecuteCode = new Worker('js/workerExecuteCode.js');
-          workerExecuteCode = new Worker(window.URL.createObjectURL(new Blob([prepareJavaScriptCode(code)])));
+          if (workerBlobURL === null) {
+            workerBlobURL = window.URL.createObjectURL(new Blob([prepareJavaScriptCode(code)]));
+          }
+          workerExecuteCode = new Worker(workerBlobURL);
 
           workerExecuteCode.onmessage = function(e) {
             var messageParsed = JSON.parse(e.data);
 
-            if (messageParsed.type === null || !workerProtocol.isNumber(messageParsed.type)) {
-              textareaExecute.value += MSG_ERROR_PROTOCOL_MESSAGE_MALFORMED;
-              textareaExecute.scrollTop = textareaExecute.scrollHeight;
-            }
-            else {
+            if (messageParsed.type !== null && workerProtocol.isNumber(messageParsed.type)) {
               switch(messageParsed.type) {
                 case workerProtocol.TYPE_MESSAGE:
-                  if (messageParsed.data === null || messageParsed.data === '') {
-                    textareaExecute.value += MSG_ERROR_PROTOCOL_MESSAGE_MALFORMED;
-                    textareaExecute.scrollTop = textareaExecute.scrollHeight;
-                  }
-                  else {
+                  if (messageParsed.data !== null && messageParsed.data !== '') {
                     textareaExecute.value += messageParsed.data;
                     document.getElementById('labelTest').innerHTML = messageParsed.data;
                     textareaExecute.scrollTop = textareaExecute.scrollHeight;
                   }
                   break;
 
-                case workerProtocol.TYPE_COMMAND_WORKER_GENERIC_ERROR:
-                  if (messageParsed.data === null || messageParsed.data === '') {
-                    textareaExecute.value += MSG_ERROR_PROTOCOL_MESSAGE_MALFORMED;
-                    textareaExecute.scrollTop = textareaExecute.scrollHeight;
-                  }
-                  else {
+                case workerProtocol.TYPE_COMMAND_WORKER_ERROR:
+                  if (messageParsed.data !== null && messageParsed.data !== '') {
                     textareaExecute.value += messageParsed.data;
                     textareaExecute.scrollTop = textareaExecute.scrollHeight;
                   }
-                  clickedStopProgram();
-                  break;
-
-                case workerProtocol.TYPE_COMMAND_WORKER_CODE_EXEC_ERROR:
-                  if (messageParsed.data === null || messageParsed.data === '') {
-                    textareaExecute.value += MSG_ERROR_PROTOCOL_MESSAGE_MALFORMED;
-                    textareaExecute.scrollTop = textareaExecute.scrollHeight;
-                  }
-                  else {
-                    textareaExecute.value += messageParsed.data;
-                    textareaExecute.scrollTop = textareaExecute.scrollHeight;
-                  }
-                  clickedStopProgram();
-                  break;
-
-                default:
-                  textareaExecute.value += MSG_ERROR_PROTOCOL_UNKNOWN_MESSAGE_TYPE;
-                  textareaExecute.scrollTop = textareaExecute.scrollHeight;
                   clickedStopProgram();
               }
             }
           };
-
-          workerExecuteCode.postMessage(workerProtocol.getMessage(workerProtocol.TYPE_COMMAND_MASTER_CODE_EXEC_START,
-                                                                  code));
 
           buttonToolbarRunStop.setAttribute('onclick', 'clickedStopProgram()');
           buttonToolbarRunStop.setAttribute('title', MSG_TOOLTIP_BUTTON_RUNSTOP_STOP);
@@ -420,7 +388,7 @@
 
         function clickedStopProgram(e) {
           if (workerExecuteCode) {
-            workerExecuteCode.postMessage(workerProtocol.getMessage(workerProtocol.TYPE_COMMAND_MASTER_CODE_EXEC_STOP,
+            workerExecuteCode.postMessage(workerProtocol.getMessage(workerProtocol.TYPE_COMMAND_MASTER_STOP,
                                                                     null));
             // Give the Web worker thread 1 second to do its own clean up before cleaning up the objects related to the worker
             setTimeout(cleanupWorkerExecuteCode, 1000);

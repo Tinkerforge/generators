@@ -1,10 +1,8 @@
 var workerProtocol = {};
 
 workerProtocol.TYPE_MESSAGE = 1;
-workerProtocol.TYPE_COMMAND_MASTER_CODE_EXEC_START = 2;
-workerProtocol.TYPE_COMMAND_MASTER_CODE_EXEC_STOP = 3;
-workerProtocol.TYPE_COMMAND_WORKER_GENERIC_ERROR = 4;
-workerProtocol.TYPE_COMMAND_WORKER_CODE_EXEC_ERROR = 5;
+workerProtocol.TYPE_COMMAND_MASTER_STOP = 2;
+workerProtocol.TYPE_COMMAND_WORKER_ERROR = 3;
 
 workerProtocol.isNumber = function(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
