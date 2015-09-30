@@ -238,7 +238,6 @@
         var buttonToolbarRunStop = document.getElementById('buttonToolbarRunStop');
         var buttonToolbarRunStopImage = document.getElementById('buttonToolbarRunStopImage');
         var fileReader = new FileReader();
-        var workerBlobURL = null;
         var blocklyWorkspace = Blockly.inject(blocklyDiv,
           {grid:
             {spacing: 25,
@@ -353,10 +352,7 @@
             return;
           }
 
-          if (workerBlobURL === null) {
-            workerBlobURL = window.URL.createObjectURL(new Blob([prepareJavaScriptCode(code)]));
-          }
-          workerExecuteCode = new Worker(workerBlobURL);
+          workerExecuteCode = new Worker(window.URL.createObjectURL(new Blob([prepareJavaScriptCode(code)])));
 
           workerExecuteCode.onmessage = function(e) {
             var messageParsed = JSON.parse(e.data);
