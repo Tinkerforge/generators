@@ -1,9 +1,3 @@
-importScripts('workerProtocol.js');
-importScripts('Tinkerforge.js');
-importScripts('babelPolyfill.js');
-importScripts('babelRuntime.js');
-importScripts('babelBrowser.js');
-
 function dispatchMessage(message) {
   var messageParsed = JSON.parse(message);
 

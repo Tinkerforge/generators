@@ -4,6 +4,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/prism.css">
+    <script type="text/javascript" src="js/babelPolyfill.js"></script>
+    <script type="text/javascript" src="js/babelRuntime.js"></script>
+    <script type="text/javascript" src="js/babelBrowser.js"></script>
     <script type="text/javascript" src="js/workerProtocol.js"></script>
     <script type="text/javascript" src="js/fileSaver.js"></script>
     <script type="text/javascript" src="../blockly_compressed.js"></script>
@@ -46,7 +49,7 @@
       </tr>
       <tr id="trErrorMessageBlob">
         <td align="center">
-          <p id="pErrorMessageBlob">Seems like the browser you are using does not support Blob objects. Save and load workspace feature will not be available.</p>
+          <p id="pErrorMessage">Seems like the browser you are using does not support Blob objects which is required to use TVPL.</p>
         </td>
       </tr>
       <tr>
@@ -139,8 +142,6 @@
       var xmlHttp;
       var xmlBlocklyToolbox;
       var xmlBlocklyToolboxLoaded;
-      var buttonToolbarSave = document.getElementById('buttonToolbarSave');
-      var buttonToolbarRestore = document.getElementById('buttonToolbarRestore');
       var runOK = true;
 
       function browserSupportsWebWorker(e) {
@@ -151,7 +152,7 @@
       }
 
       function browserSupportsBlob() {
-        if (window.FileReader && window.File && window.FileList && window.Blob) {
+        if (window.Blob && window.FileReader && window.File && window.FileList) {
           return true;
         }
         return false;
@@ -193,8 +194,7 @@
 
       if(!browserSupportsBlob()) {
         trErrorMessageBlob.style.display = 'table-row';
-        buttonToolbarSave.style.display = 'none';
-        buttonToolbarRestore.style.display = 'none';
+        runOK = false;
       }
 
       if (runOK) {
@@ -285,19 +285,21 @@
           var code = DEFAULT_CODE;
           var language = selectLanguageCode.options[selectLanguageCode.selectedIndex].value;
 
-          if (language == 'js') {
+          if (language === 'js') {
             code = Blockly.JavaScript.workspaceToCode(blocklyWorkspace);
-            if (code == '') {
+
+            if (code === '') {
               codeContent.innerHTML = DEFAULT_CODE;
               Prism.highlightElement(codeContent);
               return;
             }
-            codeContent.innerHTML = code;
+
+            codeContent.innerHTML = prepareJavaScriptCode(code);
             Prism.highlightElement(codeContent);
           }
-          else if (language == 'py') {
+          else if (language === 'py') {
             code = Blockly.Python.workspaceToCode(blocklyWorkspace);
-            if (code == '') {
+            if (code === '') {
               codeContent.innerHTML = DEFAULT_CODE;
               Prism.highlightElement(codeContent);
               return;
@@ -317,6 +319,27 @@
         blocklyWorkspace.addChangeListener(updateCodeViewer);
         onResize();
 
+        function prepareJavaScriptCode(code) {
+          var docLocation = '';
+          var workerImports = '';
+          var docLocationSplit = [];
+          var workerImportsList = [];
+
+          docLocationSplit = document.location.href.split('/');
+          docLocationSplit.pop();
+          docLocationSplit.push('js/');
+          docLocation = docLocationSplit.join('/');
+          workerImportsList.push('importScripts(\'' + docLocation + 'workerProtocol.js\');');
+          workerImportsList.push('importScripts(\'' + docLocation + 'Tinkerforge.js\');');
+          workerImportsList.push('importScripts(\'' + docLocation + 'babelPolyfill.js\');');
+          workerImportsList.push('importScripts(\'' + docLocation + 'babelRuntime.js\');');
+          workerImportsList.push('importScripts(\'' + docLocation + 'babelBrowser.js\');');
+          workerImportsList.push('\n');
+          workerImports = workerImportsList.join('\n');
+
+          return workerImports + babel.transform(code).code;
+        }
+
         function clickedClearOutput(e) {
           textareaExecute.value = '';
         }
@@ -330,12 +353,14 @@
             alert(MSG_INFO_WORKSPACE_EMPTY);
             return;
           }
-          workerExecuteCode = new Worker('js/workerExecuteCode.js');
+
+          //workerExecuteCode = new Worker('js/workerExecuteCode.js');
+          workerExecuteCode = new Worker(window.URL.createObjectURL(new Blob([prepareJavaScriptCode(code)])));
 
           workerExecuteCode.onmessage = function(e) {
             var messageParsed = JSON.parse(e.data);
 
-            if (messageParsed.type == null || !workerProtocol.isNumber(messageParsed.type)) {
+            if (messageParsed.type === null || !workerProtocol.isNumber(messageParsed.type)) {
               textareaExecute.value += MSG_ERROR_PROTOCOL_MESSAGE_MALFORMED;
               textareaExecute.scrollTop = textareaExecute.scrollHeight;
             }
@@ -443,15 +468,15 @@
         }
 
         function switchView(view) {
-          if (view == VIEW_EDITOR) {
+          if (view === VIEW_EDITOR) {
               divExecute.style.display = 'none';
               divCode.style.display = 'none';
               blocklyWorkspace.setVisible(true);
-          } else if(view == VIEW_EXECUTE) {
+          } else if(view === VIEW_EXECUTE) {
               blocklyWorkspace.setVisible(false);
               divCode.style.display = 'none';
               divExecute.style.display = 'block';
-          } else if (view == VIEW_CODE) {
+          } else if (view === VIEW_CODE) {
               blocklyWorkspace.setVisible(false);
               divExecute.style.display = 'none';
               divCode.style.display = 'block';
