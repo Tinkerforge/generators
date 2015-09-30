@@ -183,7 +183,7 @@
       }
 
       if(!xmlBlocklyToolboxLoaded) {
-        if (window.navigator.userAgent.search('Chrome') > -1) {
+        if (window.chrome) {
           trErrorMessageXmlToolboxChrome.style.display = 'table-row';
         }
         else {
