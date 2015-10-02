@@ -376,7 +376,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
 '''.format(blockname = block_name,
            devicenameupper = self.get_tvpl_device_name().upper())
 
-            generator_code_footer = '''  Blockly.JavaScript.definitions_['common_javascript_ipcon_connect'] = 'function* _ipcon_connect(host, port) {{\\n'+
+            generator_code_footer = '''  Blockly.JavaScript.definitions_['common_javascript_ipcon_connect'] = 'function *_ipcon_connect(host, port) {{\\n'+
 '  var ipcon = null;\\n'+
 '  var key_ipcon_cache = host + \\':\\' + String(port);\\n'+
 '\\n'+
@@ -402,7 +402,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
             if is_getter:
                 if len(elements_in) < 1:
                     # Getters without in args
-                    returned_blockly_code = '''  var code = '(yield* _{blockname}(' + {host} + ', ' + {port} + ', ' + {uid} + '))'
+                    returned_blockly_code = '''  var code = '(yield *_{blockname}(' + {host} + ', ' + {port} + ', ' + {uid} + '))'
 
 '''.format(blockname = block_name,
            host = '_'.join(['value', block_name, 'ipcon_host']),
@@ -414,13 +414,13 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
                     if len(elements_out) > 1:
                         out_args_assignment = '[' + ', '.join(packet.get_packet_elements_underscore_name_as_list(elements_out)) + ']'
 
-                    function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function* _{blockname}(host, port, uid) {{\\n'+
+                    function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function *_{blockname}(host, port, uid) {{\\n'+
 '  var r = null;\\n'+
 '  var key_device_cache = uid + \\'@\\' + host + \\':\\' + String(port);\\n'+
 '  var device = _device_cache[key_device_cache];\\n'+
 '\\n'+
 '  if (device == null) {{\\n'+
-'    device = new Tinkerforge.{categoryname}(uid, yield* _ipcon_connect(host, port));\\n'+
+'    device = new Tinkerforge.{categoryname}(uid, yield *_ipcon_connect(host, port));\\n'+
 '    device.setResponseExpectedAll(true);\\n'+
 '    _device_cache[key_device_cache] = device;\\n'+
 '  }}\\n'+
@@ -451,7 +451,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
                     if len(ret_get_list_of_value_field_statements_from_hash[1]) > 0:
                         generator_code_header = generator_code_header + '\n'.join(ret_get_list_of_value_field_statements_from_hash[1]) + '\n'
 
-                    returned_blockly_code = '''  var code = '(yield* _{blockname}(' + {host} + ', ' + {port} + ', ' + {uid} + ', ' + {einargs} + '))'
+                    returned_blockly_code = '''  var code = '(yield *_{blockname}(' + {host} + ', ' + {port} + ', ' + {uid} + ', ' + {einargs} + '))'
 
 '''.format(blockname = block_name,
            host = '_'.join(['value', block_name, 'ipcon_host']),
@@ -465,13 +465,13 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
                     if len(elements_out) > 1:
                         out_args_assignment = '[' + ', '.join(packet.get_packet_elements_underscore_name_as_list(elements_out)) + ']'
 
-                    function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function* _{blockname}(host, port, uid, {einargs}) {{\\n'+
+                    function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function *_{blockname}(host, port, uid, {einargs}) {{\\n'+
 '  var r = null;\\n'+
 '  var key_device_cache = uid + \\'@\\' + host + \\':\\' + String(port);\\n'+
 '  var device = _device_cache[key_device_cache];\\n'+
 '\\n'+
 '  if (device == null) {{\\n'+
-'    device = new Tinkerforge.{categoryname}(uid, yield* _ipcon_connect(host, port));\\n'+
+'    device = new Tinkerforge.{categoryname}(uid, yield *_ipcon_connect(host, port));\\n'+
 '    device.setResponseExpectedAll(true);\\n'+
 '    _device_cache[key_device_cache] = device;\\n'+
 '  }}\\n'+
@@ -503,19 +503,19 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
                 # Setters
                 if len(elements_in) < 1:
                     # Setters without in args
-                    returned_blockly_code = '''  var code = 'yield* _{blockname}(' + {host} + ', ' + {port} + ', ' + {uid} + ');\\n'
+                    returned_blockly_code = '''  var code = 'yield *_{blockname}(' + {host} + ', ' + {port} + ', ' + {uid} + ');\\n'
 
 '''.format(blockname = block_name,
            host = '_'.join(['value', block_name, 'ipcon_host']),
            port = '_'.join(['value', block_name, 'ipcon_port']),
            uid = '_'.join(['value', block_name, 'ipcon_uid']));
 
-                    function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function* _{blockname}(host, port, uid) {{\\n'+
+                    function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function *_{blockname}(host, port, uid) {{\\n'+
 '  var key_device_cache = uid + \\'@\\' + host + \\':\\' + String(port);\\n'+
 '  var device = _device_cache[key_device_cache];\\n'+
 '\\n'+
 '  if (device == null) {{\\n'+
-'    device = new Tinkerforge.{categoryname}(uid, yield* _ipcon_connect(host, port));\\n'+
+'    device = new Tinkerforge.{categoryname}(uid, yield *_ipcon_connect(host, port));\\n'+
 '    device.setResponseExpectedAll(true);\\n'+
 '    _device_cache[key_device_cache] = device;\\n'+
 '  }}\\n'+
@@ -542,7 +542,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
                     if len(ret_get_list_of_value_field_statements_from_hash[1]) > 0:
                         generator_code_header = generator_code_header + '\n'.join(ret_get_list_of_value_field_statements_from_hash[1]) + '\n'
 
-                    returned_blockly_code = '''  var code = 'yield* _{blockname}(' + {host} + ', ' + {port} + ', ' + {uid} + ', ' + {einargs} + ');\\n'
+                    returned_blockly_code = '''  var code = 'yield *_{blockname}(' + {host} + ', ' + {port} + ', ' + {uid} + ', ' + {einargs} + ');\\n'
 
 '''.format(blockname = block_name,
            host = '_'.join(['value', block_name, 'ipcon_host']),
@@ -551,12 +551,12 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
            einargs = packet.get_caller_generation_arguments_from_value_and_field_hash(packet.get_packet_elements_underscore_name_as_list(elements_in),
                                                                                       ret_get_hash_of_value_and_field_variables));
 
-                    function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function* _{blockname}(host, port, uid, {einargs}) {{\\n'+
+                    function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function *_{blockname}(host, port, uid, {einargs}) {{\\n'+
 '  var key_device_cache = uid + \\'@\\' + host + \\':\\' + String(port);\\n'+
 '  var device = _device_cache[key_device_cache];\\n'+
 '\\n'+
 '  if (device == null) {{\\n'+
-'    device = new Tinkerforge.{categoryname}(uid, yield* _ipcon_connect(host, port));\\n'+
+'    device = new Tinkerforge.{categoryname}(uid, yield *_ipcon_connect(host, port));\\n'+
 '    device.setResponseExpectedAll(true);\\n'+
 '    _device_cache[key_device_cache] = device;\\n'+
 '  }}\\n'+
