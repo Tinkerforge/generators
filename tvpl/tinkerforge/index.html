@@ -104,8 +104,8 @@
               <table id="tableGeneratedGUI" align="center">
                 <tr>
                   <td align="center">
-                    <label id="labelTest" title="test_button" onclick="" style="border: solid 1px #272822;">...</label>
-                    <button id="buttonTest" onclick="">TEST BUTTON</button>
+                    <label id="labelTest" onclick="" style="border: solid 1px #272822;">...</label>
+                    <button id="buttonTest" onclick="clickedButtonTest()">TEST BUTTON</button>
                   </td>
                 </tr>
               </table>
@@ -135,6 +135,10 @@
     </div>
 
     <script type="text/javascript" >
+      function clickedButtonTest() {
+
+      }
+
       var trErrorMessageWebworker = document.getElementById('trErrorMessageWebworker');
       var trErrorMessageXmlToolboxGeneric = document.getElementById('trErrorMessageXmlToolboxGeneric');
       var trErrorMessageXmlToolboxChrome = document.getElementById('trErrorMessageXmlToolboxChrome');
@@ -359,7 +363,7 @@
 
             if (messageParsed.type !== null && workerProtocol.isNumber(messageParsed.type)) {
               switch(messageParsed.type) {
-                case workerProtocol.TYPE_MESSAGE:
+                case workerProtocol.TYPE_RESPONSE_CONSOLE_MESSAGE:
                   if (messageParsed.data !== null && messageParsed.data !== '') {
                     textareaExecute.value += messageParsed.data;
                     document.getElementById('labelTest').innerHTML = messageParsed.data;
@@ -367,7 +371,7 @@
                   }
                   break;
 
-                case workerProtocol.TYPE_COMMAND_WORKER_ERROR:
+                case workerProtocol.TYPE_RESPONSE_ERROR:
                   if (messageParsed.data !== null && messageParsed.data !== '') {
                     textareaExecute.value += messageParsed.data;
                     textareaExecute.scrollTop = textareaExecute.scrollHeight;
@@ -384,7 +388,7 @@
 
         function clickedStopProgram(e) {
           if (workerExecuteCode) {
-            workerExecuteCode.postMessage(workerProtocol.getMessage(workerProtocol.TYPE_COMMAND_MASTER_STOP,
+            workerExecuteCode.postMessage(workerProtocol.getMessage(workerProtocol.TYPE_REQUEST_STOP_EXECUTION,
                                                                     null));
             // Give the Web worker thread 1 second to do its own clean up before cleaning up the objects related to the worker
             setTimeout(cleanupWorkerExecuteCode, 1000);
