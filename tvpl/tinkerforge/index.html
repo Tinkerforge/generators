@@ -224,6 +224,7 @@
         var MSG_ERROR_NOT_VALID_WORKSPACE_FILE = 'ERROR: Not a valid workspace file.';
         var MSG_ERROR_FILE_READ_FAILED = 'ERROR: Reading file failed.';
         var MSG_ERROR_WORKSPACE_LOAD_FAILED = 'ERROR: Failed to load worskspace from file. Check that the file is valid workspace file.';
+        var MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED = 'ERROR: The following error occurred while preparing JavaScript code.\n\n\n';
         var MSG_INFO_UNSAVED_WORKSPACE = 'Unsaved changes on the workspace will be lost.';
         var MSG_INFO_PROGRAM_RUNNING = 'A program is already running. Stop the running program to start a new one.'
         var MSG_INFO_WORKSPACE_EMPTY = 'Nothing to execute. Seems like the workspace is empty.';
@@ -285,7 +286,10 @@
 
         var updateCodeViewer = function(e) {
           var code = DEFAULT_CODE;
+          var retPrepareJavaScriptCode = [];
           var language = selectLanguageCode.options[selectLanguageCode.selectedIndex].value;
+
+          clickedStopProgram();
 
           if (language === 'js') {
             code = Blockly.JavaScript.workspaceToCode(blocklyWorkspace);
@@ -296,7 +300,16 @@
               return;
             }
 
-            codeContent.innerHTML = prepareJavaScriptCode(code);
+            retPrepareJavaScriptCode = prepareJavaScriptCode(code);
+
+            if (!retPrepareJavaScriptCode[0]) {
+              codeContent.innerHTML = MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED;
+              codeContent.innerHTML += retPrepareJavaScriptCode[1];
+              Prism.highlightElement(codeContent);
+              return;
+            }
+
+            codeContent.innerHTML = retPrepareJavaScriptCode[1];
             Prism.highlightElement(codeContent);
           }
           else if (language === 'py') {
@@ -326,6 +339,7 @@
           var workerImports = '';
           var docLocationSplit = [];
           var workerImportsList = [];
+          var returnedCode = [];
 
           docLocationSplit = document.location.href.split('/');
           docLocationSplit.pop();
@@ -339,7 +353,14 @@
           workerImportsList.push('\n');
           workerImports = workerImportsList.join('\n');
 
-          return workerImports + babel.transform(code).code;
+          try {
+            returnedCode = workerImports + babel.transform(code).code;
+          }
+          catch(e) {
+            return [false, String(e)];
+          }
+
+          return [true, String(returnedCode)];
         }
 
         function clickedClearOutput(e) {
@@ -348,6 +369,7 @@
 
         function clickedRunProgram(e){
           var code = '';
+          var retPrepareJavaScriptCode = [];
 
           code = Blockly.JavaScript.workspaceToCode(blocklyWorkspace);
 
@@ -356,7 +378,16 @@
             return;
           }
 
-          workerExecuteCode = new Worker(window.URL.createObjectURL(new Blob([prepareJavaScriptCode(code)])));
+          retPrepareJavaScriptCode = prepareJavaScriptCode(code);
+
+          if (!retPrepareJavaScriptCode[0]) {
+            textareaExecute.value = MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED;
+            textareaExecute.value += retPrepareJavaScriptCode[1];
+            textareaExecute.scrollTop = textareaExecute.scrollHeight;
+            return;
+          }
+
+          workerExecuteCode = new Worker(window.URL.createObjectURL(new Blob([retPrepareJavaScriptCode[1]])));
 
           workerExecuteCode.onmessage = function(e) {
             var messageParsed = JSON.parse(e.data);
@@ -381,6 +412,8 @@
             }
           };
 
+          textareaExecute.value = '';
+          textareaExecute.scrollTop = textareaExecute.scrollHeight;
           buttonToolbarRunStop.setAttribute('onclick', 'clickedStopProgram()');
           buttonToolbarRunStop.setAttribute('title', MSG_TOOLTIP_BUTTON_RUNSTOP_STOP);
           buttonToolbarRunStopImage.setAttribute('src', 'media/stopcode.png');
