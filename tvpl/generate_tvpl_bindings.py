@@ -372,7 +372,6 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
   var value_{blockname}_ipcon_uid = Blockly.JavaScript.valueToCode(block, '_UID', Blockly.JavaScript.ORDER_ATOMIC);
   var value_{blockname}_ipcon_host = Blockly.JavaScript.valueToCode(block, '_HOST', Blockly.JavaScript.ORDER_ATOMIC);
   var value_{blockname}_ipcon_port = Blockly.JavaScript.valueToCode(block, '_PORT', Blockly.JavaScript.ORDER_ATOMIC);
-  var block_identifier = Blockly.JavaScript.tfGetUniqueNumber();
 '''.format(blockname = block_name,
            devicenameupper = self.get_tvpl_device_name().upper())
 
