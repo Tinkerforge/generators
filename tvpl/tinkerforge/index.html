@@ -2,6 +2,9 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="./css/material.min.css">
+    <script src="/js./material.min.js"></script>
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/prism.css">
     <script type="text/javascript" src="js/babelPolyfill.js"></script>
@@ -27,11 +30,6 @@
           <h2 align="center">Tinkerforge Visual Programming Language</h2>
         </td>
       </tr>
-      <tr>
-        <td>
-          <hr/>
-        </td>
-      </tr>
       <tr id="trErrorMessageWebworker">
         <td align="center">
           <p id="pErrorMessage">Seems like the browser you are using does not support Web workers which is required to use TVPL.</p>
@@ -54,29 +52,32 @@
       </tr>
       <tr>
         <td id ="tdTableHeaderToolbar" align="center">
-          <button id="buttonToolbar" title="Show the workspace" onclick="clickedEditor()">
-            <img src="media/editor.png" width="32" height="32"/>
+
+          <button title="Show the workspace" onclick="clickedEditor()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+            <i class="material-icons">border_color</i>
           </button>
-          <button id="buttonToolbar" title="Execute code generated from current workspace" onclick="clickedExecute()">
-            <img src="media/execute.png" width="32" height="32"/>
+
+          <button title="Execute code generated from current workspace" onclick="clickedExecute()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+            <i class="material-icons">settings</i>
           </button>
-          <button id="buttonToolbar" title="View generated code" onclick="clickedViewCode()">
-            <img src="media/code.png" width="32" height="32"/>
+
+          <button title="View generated code" onclick="clickedViewCode()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+            <i class="material-icons">code</i>
           </button>
-          <button id="buttonToolbarSave" title="Save current state of the workspace" onclick="clickedSave()">
-            <img src="media/save.png" width="32" height="32"/>
+
+          <button title="Save current state of the workspace" onclick="clickedSave()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+            <i class="material-icons">save</i>
           </button>
-          <button id="buttonToolbarRestore" title="Load previously saved workspace state" onclick="clickedLoadWorkspace()">
-            <img src="media/restore.png" width="32" height="32"/>
+
+          <button title="Load previously saved workspace state" onclick="clickedLoadWorkspace()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+            <i class="material-icons">folder_open</i>
           </button>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <hr/>
+
         </td>
       </tr>
     </table>
+
+    <br />
 
     <!-- Blockly editor -->
     <div id="blocklyArea" />
@@ -87,11 +88,11 @@
       <table id="tableExecute">
         <tr>
           <td align="center" colspan="2">
-            <button id="buttonToolbarRunStop" title="Run graphical program from workspace" onclick="clickedRunProgram()">
-              <img id="buttonToolbarRunStopImage" src="media/runcode.png" width="32" height="32"/>
+            <button id="buttonToolbarRunStop" title="Run graphical program from workspace" onclick="clickedRunProgram()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+              <i id="buttonToolbarRunStopImage" class="material-icons">play_arrow</i>
             </button>
-            <button id="buttonToolbar" title="Clear output" onclick="clickedClearOutput()">
-              <img src="media/clear.png" width="32" height="32"/>
+            <button id="buttonToolbar" title="Clear output" onclick="clickedClearOutput()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+              <i class="material-icons">clear_all</i>
             </button>
           </td>
         </tr>
@@ -226,7 +227,6 @@
         var MSG_ERROR_WORKSPACE_LOAD_FAILED = 'ERROR: Failed to load worskspace from file. Check that the file is valid workspace file.';
         var MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED = 'ERROR: The following error occurred while preparing JavaScript code.\n\n\n';
         var MSG_INFO_UNSAVED_WORKSPACE = 'Unsaved changes on the workspace will be lost.';
-        var MSG_INFO_PROGRAM_RUNNING = 'A program is already running. Stop the running program to start a new one.'
         var MSG_INFO_WORKSPACE_EMPTY = 'Nothing to execute. Seems like the workspace is empty.';
         var MSG_TOOLTIP_BUTTON_RUNSTOP_RUN = 'Execute code generated from current workspace';
         var MSG_TOOLTIP_BUTTON_RUNSTOP_STOP = 'Stop currently running program';
@@ -292,15 +292,16 @@
           clickedStopProgram();
 
           if (language === 'js') {
-            code = Blockly.JavaScript.workspaceToCode(blocklyWorkspace);
+            topLevelBlockCodes = Blockly.JavaScript.workspaceToCode(blocklyWorkspace);
 
-            if (code === '') {
+            if (topLevelBlockCodes.length < 1) {
               codeContent.innerHTML = DEFAULT_CODE;
               Prism.highlightElement(codeContent);
               return;
             }
 
-            retPrepareJavaScriptCode = prepareJavaScriptCode(code);
+            retPrepareJavaScriptCode = prepareJavaScriptCode(topLevelBlockCodes[0]);
+            console.info(topLevelBlockCodes[0]);
 
             if (!retPrepareJavaScriptCode[0]) {
               codeContent.innerHTML = MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED;
@@ -368,17 +369,17 @@
         }
 
         function clickedRunProgram(e){
-          var code = '';
+          var topLevelBlockCodes = [];
           var retPrepareJavaScriptCode = [];
 
-          code = Blockly.JavaScript.workspaceToCode(blocklyWorkspace);
+          topLevelBlockCodes = Blockly.JavaScript.workspaceToCode(blocklyWorkspace);
 
-          if (code === '') {
+          if (topLevelBlockCodes.length < 1) {
             alert(MSG_INFO_WORKSPACE_EMPTY);
             return;
           }
 
-          retPrepareJavaScriptCode = prepareJavaScriptCode(code);
+          retPrepareJavaScriptCode = prepareJavaScriptCode(topLevelBlockCodes[0]);
 
           if (!retPrepareJavaScriptCode[0]) {
             textareaExecute.value = MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED;
@@ -416,7 +417,7 @@
           textareaExecute.scrollTop = textareaExecute.scrollHeight;
           buttonToolbarRunStop.setAttribute('onclick', 'clickedStopProgram()');
           buttonToolbarRunStop.setAttribute('title', MSG_TOOLTIP_BUTTON_RUNSTOP_STOP);
-          buttonToolbarRunStopImage.setAttribute('src', 'media/stopcode.png');
+          buttonToolbarRunStopImage.innerHTML = 'stop';
         }
 
         function clickedStopProgram(e) {
@@ -435,7 +436,7 @@
           }
           buttonToolbarRunStop.setAttribute('onclick', 'clickedRunProgram()');
           buttonToolbarRunStop.setAttribute('title', MSG_TOOLTIP_BUTTON_RUNSTOP_RUN);
-          buttonToolbarRunStopImage.setAttribute('src', 'media/runcode.png');
+          buttonToolbarRunStopImage.innerHTML = 'play_arrow';
         }
 
         function workspaceFileUploadRequest(fileInput) {
