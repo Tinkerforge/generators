@@ -283,7 +283,7 @@ The resolution for the rates is 12, 14, 16 and 18 bit respectively.
  "2",    "15 samples per second, 16 bit resolution"
  "3",    "4 samples per second, 18 bit resolution"
 
-The default value is 3: 4 samples per second with 18 bit resolution.
+The default value is 3 (4 samples per second with 18 bit resolution).
 """,
 'de':
 """
@@ -299,7 +299,7 @@ Die Auflösung für die Raten sind 12, 14, 16 und 18 Bit respektive.
  "2",    "15 Samples pro Sekunde, 16 Bit Auflösung"
  "3",    "4 Samples pro Sekunde, 18 Bit Auflösung"
 
-Der Standardwert ist 3: 4 Samples pro Sekunde mit 18 Bit Auflösung.
+Der Standardwert ist 3 (4 Samples pro Sekunde mit 18 Bit Auflösung).
 """
 }]
 })

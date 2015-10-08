@@ -260,12 +260,16 @@ com['packets'].append({
 Sets the sample rate. The sample rate can be between 1 sample per second
 and 976 samples per second. Decreasing the sample rate will also decrease the
 noise on the data.
+
+The default value is 6 (2 samples per second).
 """,
 'de':
 """
 Setzt die Abtastrate. Der Wertebereich der verfügbare Abtastraten
 liegt zwischen 1 Wert pro Sekunde und 976 Werte pro Sekunde. Ein
 Verringern der Abtastrate wird auch das Rauschen auf den Daten verringern.
+
+Der Standardwert ist 6 (2 Werte pro Sekunde).
 """
 }]
 })
