@@ -35,7 +35,17 @@ class ShellExamplesTester(common.ExamplesTester):
         common.ExamplesTester.__init__(self, 'shell', '.sh', path, extra_examples=extra_examples)
 
     def test(self, cookie, src, is_extra_example):
-        args = [src]
+        src_check = src.replace('.sh', '-check.sh')
+
+        with open(src, 'rb') as f:
+            code = f.read()
+
+        with open(src_check, 'wb') as f:
+            f.write(code.replace('; read dummy', '').replace('kill -- -$$', 'kill $(jobs -p)'))
+
+        os.chmod(src_check, 0755)
+
+        args = [src_check]
         env = {'TINKERFORGE_SHELL_BINDINGS_DRY_RUN': '1',
                'PATH': '/tmp/tester/shell:{0}'.format(os.environ['PATH'])}
 

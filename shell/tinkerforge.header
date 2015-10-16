@@ -305,6 +305,9 @@ def device_send_request(ctx, device_class, function_id, request_data, format_in,
 
 def device_callback(ctx, device_class, function_id, command, names, symbols):
 	if dry_run:
+		while True:
+			time.sleep(0.5)
+
 		return
 
 	if command != None:
