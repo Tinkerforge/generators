@@ -13,7 +13,7 @@ for d in os.listdir(path):
 bindings = sorted(bindings)
 
 for binding in bindings:
-    if binding in ('tcpip', 'modbus'):
+    if binding in ('tcpip', 'modbus') or '-' + binding in sys.argv:
         continue
 
     path_binding = '{0}/{1}'.format(path, binding)
