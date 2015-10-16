@@ -773,24 +773,33 @@ class JavaBindingsGenerator(common.BindingsGenerator):
 package com.tinkerforge;
 
 public class DeviceFactory {{
-	public static Device createDevice(int deviceIdentifier, String uid, IPConnection ipcon) throws Exception {{
-		return getDeviceClass(deviceIdentifier).getConstructor(String.class, IPConnection.class).newInstance(uid, ipcon);
-	}}
-
 	public static Class<? extends Device> getDeviceClass(int deviceIdentifier) {{
 		switch (deviceIdentifier) {{
 {1}
 		default: throw new IllegalArgumentException("Unknown device identifier: " + deviceIdentifier);
 		}}
 	}}
+
+	public static String getDeviceDisplayName(int deviceIdentifier) {{
+		switch (deviceIdentifier) {{
+{2}
+		default: throw new IllegalArgumentException("Unknown device identifier: " + deviceIdentifier);
+		}}
+	}}
+
+	public static Device createDevice(int deviceIdentifier, String uid, IPConnection ipcon) throws Exception {{
+		return getDeviceClass(deviceIdentifier).getConstructor(String.class, IPConnection.class).newInstance(uid, ipcon);
+	}}
 }}
 """
         date = datetime.datetime.now().strftime("%Y-%m-%d")
         version = common.get_changelog_version(self.get_bindings_root_directory())
         classes = []
+        display_names = []
 
         for name in sorted(self.device_factory_classes):
             classes.append('\t\tcase {0}.DEVICE_IDENTIFIER: return {0}.class;'.format(name))
+            display_names.append('\t\tcase {0}.DEVICE_IDENTIFIER: return {0}.DEVICE_DISPLAY_NAME;'.format(name))
 
         suffix = ''
 
@@ -800,7 +809,7 @@ public class DeviceFactory {{
             suffix = '_octave'
 
         java = open(os.path.join(self.get_bindings_root_directory(), 'bindings' + suffix, 'DeviceFactory.java'), 'wb')
-        java.write(template.format(common.gen_text_star.format(date, *version), '\n'.join(classes)))
+        java.write(template.format(common.gen_text_star.format(date, *version), '\n'.join(classes), '\n'.join(display_names)))
         java.close()
 
         return common.BindingsGenerator.finish(self)
