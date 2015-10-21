@@ -1559,6 +1559,8 @@ def examples_tester_worker(cookie, args, env):
             output = subprocess.check_output(args, env=env, stderr=subprocess.STDOUT, stdin=DEVNULL)
     except subprocess.CalledProcessError as e:
         return cookie, e.output, e.returncode == 0
+    except Exception as e:
+        return cookie, 'ExamplesTester Exception: ' + str(e), False
 
     return cookie, output, True
 
