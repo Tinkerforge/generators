@@ -33,7 +33,7 @@ com['packets'].append({
 'en':
 """ 
 Returns the calibrated acceleration from the accelerometer for the 
-x, y and z axis in mG (G/1000, 1G = 9.80605m/s²).
+x, y and z axis in g/1000 (1g = 9.80665m/s²).
 
 If you want to get the acceleration periodically, it is recommended 
 to use the callback :func:`Acceleration` and set the period with 
@@ -42,7 +42,7 @@ to use the callback :func:`Acceleration` and set the period with
 'de':
 """
 Gibt die kalibrierten Beschleunigungen des Beschleunigungsmessers für die 
-X, Y und Z-Achse in mG zurück (G/1000, 1G = 9.80605m/s²).
+X, Y und Z-Achse in g/1000 zurück (1g = 9,80665m/s²).
 
 Wenn die kalibrierten Beschleunigungen periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Acceleration` zu nutzen und die Periode mit :func:`SetAccelerationPeriod`
