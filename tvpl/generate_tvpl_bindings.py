@@ -375,20 +375,34 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
 '''.format(blockname = block_name,
            devicenameupper = self.get_tvpl_device_name().upper())
 
-            generator_code_footer = '''  Blockly.JavaScript.definitions_['common_javascript_ipcon_connect'] = 'function *_ipcon_connect(host, port) {{\\n'+
-'  var ipcon = null;\\n'+
-'  var key_ipcon_cache = host + \\':\\' + String(port);\\n'+
-'\\n'+
-'  if (!(key_ipcon_cache in _ipcon_cache)) {{\\n'+
-'    ipcon = new Tinkerforge.IPConnection();\\n'+
-'    ipcon.on(Tinkerforge.IPConnection.CALLBACK_CONNECTED, function(e) {{\\n'+
-'      _ipcon_cache[key_ipcon_cache] = ipcon;\\n'+
-'      _iterator_main.next();\\n'+
-'    }});\\n'+
-'    ipcon.connect(host, port, _error_handler);\\n'+
-'    yield 1;\\n'+
+            generator_code_footer = '''  Blockly.JavaScript.definitions_['common_javascript_error_handler'] = 'function _error_handler(e) {{\\n'+
+'  postMessage(workerProtocol.getMessage(_worker_id, workerProtocol._TYPE_RES_ERROR, \\'ERROR: \\' + String(e) + \\'\\\\n\\'));\\n'+
+'}}\\n';
+
+  Blockly.JavaScript.definitions_['common_javascript_dispatch_message'] = 'function _dispatch_message(message) {{\\n'+
+'  var message_parsed = null;\\n'+
+'  try {{\\n'+
+'    message_parsed = JSON.parse(message);\\n'+
 '  }}\\n'+
-'  return _ipcon_cache[key_ipcon_cache];\\n'+
+'  catch(e) {{\\n'+
+'    _error_handler(String(e));\\n'+
+'    return;\\n'+
+'  }}\\n'+
+'\\n'+
+'  if (message_parsed.type !== null && workerProtocol.isNumber(message_parsed.type)) {{\\n'+
+'    switch(message_parsed.type) {{\\n'+
+'      case workerProtocol._TYPE_REQ_SUBWORKER_START:\\n'+
+'        _worker_id = message_parsed.data;\\n'+
+'        _iterator_main.next();\\n'+
+'        postMessage(workerProtocol.getMessage(_worker_id, workerProtocol._TYPE_RES_SUBWORKER_START_ACK, null));\\n'+
+'        break;\\n'+
+'      case workerProtocol._TYPE_REQ_FUNCTION_TF_RETURN:\\n'+
+'        _return_value = message_parsed.data;\\n'+
+'        _iterator_main.next();\\n'+
+'        postMessage(workerProtocol.getMessage(_worker_id, workerProtocol._TYPE_RES_FUNCTION_TF_RETURN_ACK, null));\\n'+
+'        break;\\n'+
+'    }}\\n'+
+'  }}\\n'+
 '}}\\n';
 
   return {returncode};
@@ -414,21 +428,19 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
                         out_args_assignment = '[' + ', '.join(packet.get_packet_elements_underscore_name_as_list(elements_out)) + ']'
 
                     function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function *_{blockname}(host, port, uid) {{\\n'+
-'  var r = null;\\n'+
-'  var key_device_cache = uid + \\'@\\' + host + \\':\\' + String(port);\\n'+
-'  var device = _device_cache[key_device_cache];\\n'+
-'\\n'+
-'  if (device == null) {{\\n'+
-'    device = new Tinkerforge.{categoryname}(uid, yield *_ipcon_connect(host, port));\\n'+
-'    device.setResponseExpectedAll(true);\\n'+
-'    _device_cache[key_device_cache] = device;\\n'+
-'  }}\\n'+
-'  device.{packetname}(function({eoutargs}) {{\\n'+
-'    r = {eoutassignment};\\n'+
-'    _iterator_main.next();\\n'+
-'  }}, r, _error_handler);\\n'+
+'  var dict_tf_function_call = {{}};\\n'+
+'  dict_tf_function_call.worker_id = String(_worker_id);\\n'+
+'  dict_tf_function_call.host = String(host);\\n'+
+'  dict_tf_function_call.port = Number(port);\\n'+
+'  dict_tf_function_call.uid = String(uid);\\n'+
+'  dict_tf_function_call.device_class_name = \\'{categoryname}\\';\\n'+
+'  dict_tf_function_call.device_function_name = \\'{packetname}\\';\\n'+
+'  dict_tf_function_call.device_function_input_args = null;\\n'+
+'  dict_tf_function_call.device_function_output_args = \\'{eoutargs}\\';\\n'+
+'  dict_tf_function_call.device_function_output_assignment = \\'{eoutassignment}\\';\\n'+
+'  postMessage(workerProtocol.getMessage(_worker_id, workerProtocol._TYPE_RES_FUNCTION_TF_CALL, dict_tf_function_call));\\n'+
 '  yield 1;\\n'+
-'  return r;\\n'+
+'  return _return_value;\\n'+
 '}}\\n';
 
 '''.format(blockname = block_name,
@@ -467,14 +479,14 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
                     function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function *_{blockname}(host, port, uid, {einargs}) {{\\n'+
 '  var r = null;\\n'+
 '  var key_device_cache = uid + \\'@\\' + host + \\':\\' + String(port);\\n'+
-'  var device = _device_cache[key_device_cache];\\n'+
 '\\n'+
-'  if (device == null) {{\\n'+
-'    device = new Tinkerforge.{categoryname}(uid, yield *_ipcon_connect(host, port));\\n'+
+'  yield 1;\\n'+
+'  if (device === null) {{\\n'+
+'    var device = new Tinkerforge.{categoryname}(uid, _ipcon);\\n'+
 '    device.setResponseExpectedAll(true);\\n'+
 '    _device_cache[key_device_cache] = device;\\n'+
 '  }}\\n'+
-'  device.{packetname}({einargs}, function({eoutargs}) {{\\n'+
+'  _device_cache[key_device_cache].{packetname}({einargs}, function({eoutargs}) {{\\n'+
 '    r = {eoutassignment};\\n'+
 '    _iterator_main.next();\\n'+
 '  }}, r, _error_handler);\\n'+
@@ -511,14 +523,14 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
 
                     function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function *_{blockname}(host, port, uid) {{\\n'+
 '  var key_device_cache = uid + \\'@\\' + host + \\':\\' + String(port);\\n'+
-'  var device = _device_cache[key_device_cache];\\n'+
 '\\n'+
-'  if (device == null) {{\\n'+
-'    device = new Tinkerforge.{categoryname}(uid, yield *_ipcon_connect(host, port));\\n'+
+'  yield 1;\\n'+
+'  if (device === null) {{\\n'+
+'    var device = new Tinkerforge.{categoryname}(uid, _ipcon);\\n'+
 '    device.setResponseExpectedAll(true);\\n'+
 '    _device_cache[key_device_cache] = device;\\n'+
 '  }}\\n'+
-'  device.{packetname}(function(e) {{\\n'+
+'  _device_cache[key_device_cache].{packetname}(function(e) {{\\n'+
 '    _iterator_main.next();\\n'+
 '  }}, _error_handler);\\n'+
 '  yield 1;\\n'+
@@ -552,14 +564,14 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
 
                     function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function *_{blockname}(host, port, uid, {einargs}) {{\\n'+
 '  var key_device_cache = uid + \\'@\\' + host + \\':\\' + String(port);\\n'+
-'  var device = _device_cache[key_device_cache];\\n'+
 '\\n'+
-'  if (device == null) {{\\n'+
-'    device = new Tinkerforge.{categoryname}(uid, yield *_ipcon_connect(host, port));\\n'+
+'  yield 1;\\n'+
+'  if (device === null) {{\\n'+
+'    var device = new Tinkerforge.{categoryname}(uid, _ipcon);\\n'+
 '    device.setResponseExpectedAll(true);\\n'+
 '    _device_cache[key_device_cache] = device;\\n'+
 '  }}\\n'+
-'  device.{packetname}({einargs}, function(e) {{\\n'+
+'  _device_cache[key_device_cache].{packetname}({einargs}, function(e) {{\\n'+
 '    _iterator_main.next();\\n'+
 '  }}, _error_handler);\\n'+
 '  yield 1;\\n'+
