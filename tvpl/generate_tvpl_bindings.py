@@ -427,11 +427,11 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
                     if len(elements_out) > 1:
                         out_args_assignment = '[' + ', '.join(packet.get_packet_elements_underscore_name_as_list(elements_out)) + ']'
 
-                    function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function *_{blockname}(host, port, uid) {{\\n'+
+                    function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function *_{blockname}(host, port_ip, uid) {{\\n'+
 '  var dict_tf_function_call = {{}};\\n'+
 '  dict_tf_function_call.worker_id = String(_worker_id);\\n'+
 '  dict_tf_function_call.host = String(host);\\n'+
-'  dict_tf_function_call.port = Number(port);\\n'+
+'  dict_tf_function_call.port = Number(port_ip);\\n'+
 '  dict_tf_function_call.uid = String(uid);\\n'+
 '  dict_tf_function_call.device_class_name = \\'{categoryname}\\';\\n'+
 '  dict_tf_function_call.device_function_name = \\'{packetname}\\';\\n'+
@@ -476,28 +476,26 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
                     if len(elements_out) > 1:
                         out_args_assignment = '[' + ', '.join(packet.get_packet_elements_underscore_name_as_list(elements_out)) + ']'
 
-                    function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function *_{blockname}(host, port, uid, {einargs}) {{\\n'+
-'  var r = null;\\n'+
-'  var key_device_cache = uid + \\'@\\' + host + \\':\\' + String(port);\\n'+
-'\\n'+
+                    function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function *_{blockname}(host, port_ip, uid, {einargs}) {{\\n'+
+'  var dict_tf_function_call = {{}};\\n'+
+'  dict_tf_function_call.worker_id = String(_worker_id);\\n'+
+'  dict_tf_function_call.host = String(host);\\n'+
+'  dict_tf_function_call.port = Number(port_ip);\\n'+
+'  dict_tf_function_call.uid = String(uid);\\n'+
+'  dict_tf_function_call.device_class_name = \\'{categoryname}\\';\\n'+
+'  dict_tf_function_call.device_function_name = \\'{packetname}\\';\\n'+
+'  dict_tf_function_call.device_function_input_args = [{einargs}].join(\\', \\');\\n'+
+'  dict_tf_function_call.device_function_output_args = \\'{eoutargs}\\';\\n'+
+'  dict_tf_function_call.device_function_output_assignment = \\'{eoutassignment}\\';\\n'+
+'  postMessage(workerProtocol.getMessage(_worker_id, workerProtocol._TYPE_RES_FUNCTION_TF_CALL, dict_tf_function_call));\\n'+
 '  yield 1;\\n'+
-'  if (device === null) {{\\n'+
-'    var device = new Tinkerforge.{categoryname}(uid, _ipcon);\\n'+
-'    device.setResponseExpectedAll(true);\\n'+
-'    _device_cache[key_device_cache] = device;\\n'+
-'  }}\\n'+
-'  _device_cache[key_device_cache].{packetname}({einargs}, function({eoutargs}) {{\\n'+
-'    r = {eoutassignment};\\n'+
-'    _iterator_main.next();\\n'+
-'  }}, r, _error_handler);\\n'+
-'  yield 1;\\n'+
-'  return r;\\n'+
+'  return _return_value;\\n'+
 '}}\\n';
 
 '''.format(blockname = block_name,
-           einargs = ', '.join(packet.get_packet_elements_underscore_name_as_list(elements_in)),
            categoryname = self.get_camel_case_category() + self.get_camel_case_name(),
            packetname = packet.get_headless_camel_case_name(),
+           einargs = ', '.join(packet.get_packet_elements_underscore_name_as_list(elements_in)),
            eoutargs = ', '.join(packet.get_packet_elements_underscore_name_as_list(elements_out)),
            eoutassignment = out_args_assignment)
 
@@ -521,19 +519,20 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
            port = '_'.join(['value', block_name, 'ipcon_port']),
            uid = '_'.join(['value', block_name, 'ipcon_uid']));
 
-                    function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function *_{blockname}(host, port, uid) {{\\n'+
-'  var key_device_cache = uid + \\'@\\' + host + \\':\\' + String(port);\\n'+
-'\\n'+
+                    function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function *_{blockname}(host, port_ip, uid) {{\\n'+
+'  var dict_tf_function_call = {{}};\\n'+
+'  dict_tf_function_call.worker_id = String(_worker_id);\\n'+
+'  dict_tf_function_call.host = String(host);\\n'+
+'  dict_tf_function_call.port = Number(port_ip);\\n'+
+'  dict_tf_function_call.uid = String(uid);\\n'+
+'  dict_tf_function_call.device_class_name = \\'{categoryname}\\';\\n'+
+'  dict_tf_function_call.device_function_name = \\'{packetname}\\';\\n'+
+'  dict_tf_function_call.device_function_input_args = null;\\n'+
+'  dict_tf_function_call.device_function_output_args = null;\\n'+
+'  dict_tf_function_call.device_function_output_assignment = null;\\n'+
+'  postMessage(workerProtocol.getMessage(_worker_id, workerProtocol._TYPE_RES_FUNCTION_TF_CALL, dict_tf_function_call));\\n'+
 '  yield 1;\\n'+
-'  if (device === null) {{\\n'+
-'    var device = new Tinkerforge.{categoryname}(uid, _ipcon);\\n'+
-'    device.setResponseExpectedAll(true);\\n'+
-'    _device_cache[key_device_cache] = device;\\n'+
-'  }}\\n'+
-'  _device_cache[key_device_cache].{packetname}(function(e) {{\\n'+
-'    _iterator_main.next();\\n'+
-'  }}, _error_handler);\\n'+
-'  yield 1;\\n'+
+'  return _return_value;\\n'+
 '}}\\n';
 
 '''.format(blockname = block_name,
@@ -562,19 +561,20 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
            einargs = packet.get_caller_generation_arguments_from_value_and_field_hash(packet.get_packet_elements_underscore_name_as_list(elements_in),
                                                                                       ret_get_hash_of_value_and_field_variables));
 
-                    function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function *_{blockname}(host, port, uid, {einargs}) {{\\n'+
-'  var key_device_cache = uid + \\'@\\' + host + \\':\\' + String(port);\\n'+
-'\\n'+
+                    function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function *_{blockname}(host, port_ip, uid, {einargs}) {{\\n'+
+'  var dict_tf_function_call = {{}};\\n'+
+'  dict_tf_function_call.worker_id = String(_worker_id);\\n'+
+'  dict_tf_function_call.host = String(host);\\n'+
+'  dict_tf_function_call.port = Number(port_ip);\\n'+
+'  dict_tf_function_call.uid = String(uid);\\n'+
+'  dict_tf_function_call.device_class_name = \\'{categoryname}\\';\\n'+
+'  dict_tf_function_call.device_function_name = \\'{packetname}\\';\\n'+
+'  dict_tf_function_call.device_function_input_args = [{einargs}].join(\\', \\');\\n'+
+'  dict_tf_function_call.device_function_output_args = null;\\n'+
+'  dict_tf_function_call.device_function_output_assignment = null;\\n'+
+'  postMessage(workerProtocol.getMessage(_worker_id, workerProtocol._TYPE_RES_FUNCTION_TF_CALL, dict_tf_function_call));\\n'+
 '  yield 1;\\n'+
-'  if (device === null) {{\\n'+
-'    var device = new Tinkerforge.{categoryname}(uid, _ipcon);\\n'+
-'    device.setResponseExpectedAll(true);\\n'+
-'    _device_cache[key_device_cache] = device;\\n'+
-'  }}\\n'+
-'  _device_cache[key_device_cache].{packetname}({einargs}, function(e) {{\\n'+
-'    _iterator_main.next();\\n'+
-'  }}, _error_handler);\\n'+
-'  yield 1;\\n'+
+'  return _return_value;\\n'+
 '}}\\n';
 
 '''.format(blockname = block_name,
@@ -672,7 +672,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
                 # Function without in args
                 if len(elements_out) > 0:
                     # Getters
-                    function_to_generate = '''  Blockly.Python.definitions_['{blockname}'] = 'def _{blockname}(host, port, uid):\\n'+
+                    function_to_generate = '''  Blockly.Python.definitions_['{blockname}'] = 'def _{blockname}(host, port_ip, uid):\\n'+
 '  return _get_device({categoryname}, uid, _get_ipcon(host, port)).{packetname}()';
 
 '''.format(blockname = block_name,
@@ -685,7 +685,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
 
                 else:
                     # Setters
-                    function_to_generate = '''  Blockly.Python.definitions_['{blockname}'] = 'def _{blockname}(host, port, uid):\\n'+
+                    function_to_generate = '''  Blockly.Python.definitions_['{blockname}'] = 'def _{blockname}(host, port_ip, uid):\\n'+
 '  _get_device({categoryname}, uid, _get_ipcon(host, port)).{packetname}()';
 
 '''.format(blockname = block_name,
@@ -711,7 +711,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
 
                 if len(elements_out) > 0:
                     # Getters
-                    function_to_generate = '''  Blockly.Python.definitions_['{blockname}'] = 'def _{blockname}(host, port, uid, {einargs}):\\n'+
+                    function_to_generate = '''  Blockly.Python.definitions_['{blockname}'] = 'def _{blockname}(host, port_ip, uid, {einargs}):\\n'+
 '  return _get_device({categoryname}, uid, _get_ipcon(host, port)).{packetname}({einargs})';
 
 '''.format(blockname = block_name,
@@ -726,7 +726,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
 
                 else:
                     # Setters
-                    function_to_generate = '''  Blockly.Python.definitions_['{blockname}'] = 'def _{blockname}(host, port, uid, {einargs}):\\n'+
+                    function_to_generate = '''  Blockly.Python.definitions_['{blockname}'] = 'def _{blockname}(host, port_ip, uid, {einargs}):\\n'+
 '  _get_device({categoryname}, uid, _get_ipcon(host, port)).{packetname}({einargs})';
 
 '''.format(blockname = block_name,

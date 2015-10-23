@@ -100,7 +100,7 @@
         </tr>
         <tr>
           <td width="50%" height="100%">
-            <textarea readonly id="textareaExecute"></textarea>
+            <textarea readonly id="textareaConsole"></textarea>
           </td>
           <td width="50%" height="100%">
             <div id="divGeneratedGUI">
@@ -237,7 +237,7 @@
         var blocklyDiv = document.getElementById('blocklyDiv');
         var blocklyToolbox = document.getElementById('blocklyToolbox');
         var divExecute = document.getElementById('divExecute');
-        var textareaExecute = document.getElementById('textareaExecute');
+        var textareaConsole = document.getElementById('textareaConsole');
         var workerManager = null;
         var selectLanguageCode = document.getElementById("selectLanguageCode");
         var codeContent = document.getElementById('codeContent');
@@ -276,6 +276,15 @@
 '  var code_eval = \'\';\n'+
 '  if(data.device_function_input_args === null && data.device_function_output_args !== null) {\n'+
 '    code_eval = \'if (!(key_device in _device_cache)) { var device = new Tinkerforge.\' + data.device_class_name + \'(\\\'\' + String(data.uid) + \'\\\', ipcon); device.setResponseExpectedAll(true); _device_cache[key_device] = device; } _device_cache[key_device].\' + data.device_function_name + \'(function(\' + data.device_function_output_args + \') { _running_workers[\\\'\' + data.worker_id + \'\\\'].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_FUNCTION_TF_RETURN, \' + data.device_function_output_assignment + \') ); if(_function_tf_call_queue.length < 1) { _queue_function_tf_call = false; } else { _do_function_tf_call(_function_tf_call_queue.shift()); } }, _error_handler);\';\n'+
+'  }\n'+
+'  else if(data.device_function_input_args !== null && data.device_function_output_args !== null) {\n'+
+'    code_eval = \'if (!(key_device in _device_cache)) { var device = new Tinkerforge.\' + data.device_class_name + \'(\\\'\' + String(data.uid) + \'\\\', ipcon); device.setResponseExpectedAll(true); _device_cache[key_device] = device; } _device_cache[key_device].\' + data.device_function_name + \'(\' + data.device_function_input_args + \', function(\' + data.device_function_output_args + \') { _running_workers[\\\'\' + data.worker_id + \'\\\'].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_FUNCTION_TF_RETURN, \' + data.device_function_output_assignment + \') ); if(_function_tf_call_queue.length < 1) { _queue_function_tf_call = false; } else { _do_function_tf_call(_function_tf_call_queue.shift()); } }, _error_handler);\';\n'+
+'  }\n'+
+'  else if(data.device_function_input_args === null && data.device_function_output_args === null) {\n'+
+'    code_eval = \'if (!(key_device in _device_cache)) { var device = new Tinkerforge.\' + data.device_class_name + \'(\\\'\' + String(data.uid) + \'\\\', ipcon); device.setResponseExpectedAll(true); _device_cache[key_device] = device; } _device_cache[key_device].\' + data.device_function_name + \'(function(e) { _running_workers[\\\'\' + data.worker_id + \'\\\'].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_FUNCTION_TF_RETURN, null) ); if(_function_tf_call_queue.length < 1) { _queue_function_tf_call = false; } else { _do_function_tf_call(_function_tf_call_queue.shift()); } }, _error_handler);\';\n'+
+'  }\n'+
+'  else if(data.device_function_input_args !== null && data.device_function_output_args === null) {\n'+
+'    code_eval = \'if (!(key_device in _device_cache)) { var device = new Tinkerforge.\' + data.device_class_name + \'(\\\'\' + String(data.uid) + \'\\\', ipcon); device.setResponseExpectedAll(true); _device_cache[key_device] = device; } _device_cache[key_device].\' + data.device_function_name + \'(\' + data.device_function_input_args + \', function(e) { _running_workers[\\\'\' + data.worker_id + \'\\\'].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_FUNCTION_TF_RETURN, null) ); if(_function_tf_call_queue.length < 1) { _queue_function_tf_call = false; } else { _do_function_tf_call(_function_tf_call_queue.shift()); } }, _error_handler);\';\n'+
 '  }\n'+
 '  if (key_ipcon in _ipcon_cache) {\n'+
 '    ipcon = _ipcon_cache[key_ipcon];\n'+
@@ -354,7 +363,7 @@
         tdTableHeaderToolbar.style.display = 'block';
 
         var onLoad = function(e) {
-          textareaExecute.value = '';
+          textareaConsole.value = '';
           codeContent.innerHTML = DEFAULT_CODE;
           Prism.highlightElement(codeContent);
         };
@@ -470,7 +479,7 @@
         }
 
         function clickedClearOutput(e) {
-          textareaExecute.value = '';
+          textareaConsole.value = '';
         }
 
         function clickedRunProgram(e) {
@@ -491,9 +500,9 @@
           retPrepareJavaScriptCodeWorkerManager = prepareJavaScriptCode(codeWorkerManager);
 
           if (!retPrepareJavaScriptCodeWorkerManager[0]) {
-            textareaExecute.value = MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED;
-            textareaExecute.value += retPrepareJavaScriptCodeWorkerManager[1];
-            textareaExecute.scrollTop = textareaExecute.scrollHeight;
+            textareaConsole.value = MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED;
+            textareaConsole.value += retPrepareJavaScriptCodeWorkerManager[1];
+            textareaConsole.scrollTop = textareaConsole.scrollHeight;
             return;
           }
 
@@ -503,6 +512,9 @@
             if (!retPrepareJavaScriptCode[0]) {
               codeContent.innerHTML = MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED;
               codeContent.innerHTML += retPrepareJavaScriptCode[1];
+              textareaConsole.value = MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED;
+              textareaConsole.value += retPrepareJavaScriptCode[1];
+              textareaConsole.scrollTop = textareaConsole.scrollHeight;
               Prism.highlightElement(codeContent);
               return;
             }
@@ -510,22 +522,21 @@
           }
 
           workerManager = new Worker(window.URL.createObjectURL(new Blob([retPrepareJavaScriptCodeWorkerManager[1]])));
-
           workerManager.onmessage = function(e) {
             var messageParsed = JSON.parse(e.data);
 
             if (messageParsed.type !== null && workerProtocol.isNumber(messageParsed.type)) {
               switch(messageParsed.type) {
                 case workerProtocol.TYPE_RES_PROGRAM_START_ACK:
-                  textareaExecute.value = '';
-                  textareaExecute.scrollTop = textareaExecute.scrollHeight;
+                  textareaConsole.value = '';
+                  textareaConsole.scrollTop = textareaConsole.scrollHeight;
                   buttonToolbarRunStop.setAttribute('onclick', 'clickedStopProgram()');
                   buttonToolbarRunStop.setAttribute('title', MSG_TOOLTIP_BUTTON_RUNSTOP_STOP);
                   buttonToolbarRunStopImage.innerHTML = 'stop';
                   buttonToolbarRunStop.disabled = false;
                   break;
                 case workerProtocol.TYPE_RES_PROGRAM_STOP_ACK:
-                  textareaExecute.scrollTop = textareaExecute.scrollHeight;
+                  textareaConsole.scrollTop = textareaConsole.scrollHeight;
 
                   if (workerManager) {
                     workerManager.terminate();
@@ -538,22 +549,21 @@
                   break;
                 case workerProtocol.TYPE_RES_MESSAGE_CONSOLE:
                   if (messageParsed.data !== null && messageParsed.data !== '') {
-                    textareaExecute.value += messageParsed.data;
-                    textareaExecute.scrollTop = textareaExecute.scrollHeight;
+                    textareaConsole.value += messageParsed.data;
+                    textareaConsole.scrollTop = textareaConsole.scrollHeight;
                     //document.getElementById('labelTest').innerHTML = messageParsed.data;
                   }
                   break;
 
                 case workerProtocol.TYPE_RES_ERROR:
                   if (messageParsed.data !== null && messageParsed.data !== '') {
-                    textareaExecute.value += messageParsed.data;
-                    textareaExecute.scrollTop = textareaExecute.scrollHeight;
+                    textareaConsole.value += messageParsed.data;
+                    textareaConsole.scrollTop = textareaConsole.scrollHeight;
                   }
                   clickedStopProgram();
               }
             }
           };
-
           workerManager.postMessage(workerProtocol.getMessage(workerProtocol.SENDER_GUI,
                                                               workerProtocol.TYPE_REQ_PROGRAM_START,
                                                               subworkerBlobsUrlArray));
