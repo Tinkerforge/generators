@@ -338,6 +338,12 @@
 '        _running_workers[message_parsed.sender].terminate();\n'+
 '        delete _running_workers[message_parsed.data];\n'+
 '        break;\n'+
+'      case workerProtocol._TYPE_RES_SET_VARIABLE:\n'+
+'        for (key in _running_workers) {\n'+
+'          _running_workers[key].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_SET_VARIABLE, messageParsed.data));\n'+
+'        }\n'+
+'        _running_workers[messageParsed.sender].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_YIELD_NEXT, null));\n'+
+'        break;\n'+
 '      case workerProtocol._TYPE_RES_FUNCTION_TF_CALL:\n'+
 '        if(_queue_function_tf_call) {\n'+
 '          _function_tf_call_queue.push(message_parsed.data);\n'+

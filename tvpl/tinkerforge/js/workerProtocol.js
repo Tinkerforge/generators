@@ -34,12 +34,17 @@ workerProtocol.TYPE_RES_ERROR = 10;
 
 workerProtocol._TYPE_REQ_SUBWORKER_START = 11;
 workerProtocol._TYPE_REQ_FUNCTION_TF_RETURN = 12;
-workerProtocol._TYPE_RES_SUBWORKER_START_ACK = 13;
-workerProtocol._TYPE_RES_FUNCTION_TF_RETURN_ACK = 14;
-workerProtocol._TYPE_RES_FUNCTION_TF_CALL = 15;
-workerProtocol._TYPE_RES_MESSAGE_CONSOLE = 16;
-workerProtocol._TYPE_RES_ERROR = 17;
-workerProtocol._TYPE_RES_SUBWORKER_DONE = 18;
+workerProtocol._TYPE_REQ_SET_VARIABLE = 13;
+workerProtocol._TYPE_REQ_YIELD_NEXT = 14;
+workerProtocol._TYPE_RES_SUBWORKER_START_ACK = 15;
+workerProtocol._TYPE_RES_FUNCTION_TF_RETURN_ACK = 16;
+workerProtocol._TYPE_RES_SET_VARIABLE_ACK = 17;
+workerProtocol._TYPE_RES_YIELD_NEXT_ACK = 18;
+workerProtocol._TYPE_RES_SET_VARIABLE = 19;
+workerProtocol._TYPE_RES_FUNCTION_TF_CALL = 20;
+workerProtocol._TYPE_RES_MESSAGE_CONSOLE = 21;
+workerProtocol._TYPE_RES_ERROR = 22;
+workerProtocol._TYPE_RES_SUBWORKER_DONE = 23;
 
 workerProtocol.isNumber = function(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
