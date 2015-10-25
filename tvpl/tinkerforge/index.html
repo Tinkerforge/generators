@@ -340,9 +340,9 @@
 '        break;\n'+
 '      case workerProtocol._TYPE_RES_SET_VARIABLE:\n'+
 '        for (key in _running_workers) {\n'+
-'          _running_workers[key].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_SET_VARIABLE, messageParsed.data));\n'+
+'          _running_workers[key].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_SET_VARIABLE, message_parsed.data));\n'+
 '        }\n'+
-'        _running_workers[messageParsed.sender].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_YIELD_NEXT, null));\n'+
+'        _running_workers[message_parsed.sender].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_YIELD_NEXT, null));\n'+
 '        break;\n'+
 '      case workerProtocol._TYPE_RES_FUNCTION_TF_CALL:\n'+
 '        if(_queue_function_tf_call) {\n'+
@@ -356,7 +356,7 @@
 '        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_MESSAGE_CONSOLE, String(message_parsed.data)));\n'+
 '        break;\n'+
 '      case workerProtocol._TYPE_RES_ERROR:\n'+
-'        _error_handler(String(e));\n'+
+'        _error_handler(String(message_parsed.data));\n'+
 '    }\n'+
 '  }\n'+
 '}\n'+
