@@ -313,7 +313,7 @@
 '             var worker_id = message_parsed.data[i].split(\'/\')[message_parsed.data[i].split(\'/\').length - 1];\n'+
 '             _running_workers[worker_id] = new Worker(message_parsed.data[i]);\n'+
 '             _running_workers[worker_id].onmessage = onmessage;\n'+
-'             _running_workers[worker_id].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_SUBWORKER_START, worker_id));\n'+
+'             _running_workers[worker_id].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_SUBWORKER_START, {wid: worker_id, dictv: _dictVariables}));\n'+
 '           }\n'+
 '          postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_PROGRAM_START_ACK, null));\n'+
 '        }\n'+
@@ -330,8 +330,11 @@
 '        break;\n'+
 '      case workerProtocol.TYPE_REQ_FUNCTION_EXECUTE:\n'+
 '        var worker_id = message_parsed.data[i].split(\'/\')[message_parsed.data[i].split(\'/\').length - 1];\n'+
+'        for (var key in _dictVariables) {\n'+
+'          _dictVariables[key] = key;\n'+
+'        }\n'+
 '        _running_workers[worker_id] = new Worker(message_parsed.data[i]);\n'+
-'        _running_workers[worker_id].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_SUBWORKER_START, worker_id));\n'+
+'        _running_workers[worker_id].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_SUBWORKER_START, {wid: worker_id, dictv: _dictVariables}));\n'+
 '        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_FUNCTION_EXECUTE_ACK, null));\n'+
 '        break;\n'+
 '      case workerProtocol._TYPE_RES_SUBWORKER_DONE:\n'+
@@ -339,7 +342,8 @@
 '        delete _running_workers[message_parsed.data];\n'+
 '        break;\n'+
 '      case workerProtocol._TYPE_RES_SET_VARIABLE:\n'+
-'        for (key in _running_workers) {\n'+
+'        for (var key in _running_workers) {\n'+
+'          eval(message_parsed.data);\n'+
 '          _running_workers[key].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_SET_VARIABLE, message_parsed.data));\n'+
 '        }\n'+
 '        _running_workers[message_parsed.sender].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_YIELD_NEXT, null));\n'+
@@ -503,7 +507,7 @@
 
           definitionsGeneratedCode = dictWorkspaceToCode.definitions;
 
-          retPrepareJavaScriptCodeWorkerManager = prepareJavaScriptCode(codeWorkerManager);
+          retPrepareJavaScriptCodeWorkerManager = prepareJavaScriptCode(dictWorkspaceToCode.definitions + dictWorkspaceToCode.dictVariables + codeWorkerManager);
 
           if (!retPrepareJavaScriptCodeWorkerManager[0]) {
             textareaConsole.value = MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED;
