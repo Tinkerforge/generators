@@ -35,7 +35,7 @@ com['packets'].append({
 'en':
 """
 Returns the acceleration in x, y and z direction. The values
-are given in mg (1/1000 g), not to be confused with grams.
+are given in g/1000 (1g = 9.80665m/s²), not to be confused with grams.
 
 If you want to get the acceleration periodically, it is recommended 
 to use the callback :func:`Acceleration` and set the period with 
@@ -44,7 +44,7 @@ to use the callback :func:`Acceleration` and set the period with
 'de':
 """
 Gibt die Beschleunigung in X-, Y- und Z-Richtung zurück. Die Werte
-haben die Einheit mg (1/1000 g), nicht zu verwechseln mit Gramm.
+haben die Einheit g/1000 (1g = 9,80665m/s²), nicht zu verwechseln mit Gramm.
 
 Wenn die Beschleunigungswerte periodisch abgefragt werden sollen, wird empfohlen
 den Callback :func:`Acceleration` zu nutzen und die Periode mit 
