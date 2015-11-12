@@ -37,7 +37,7 @@ up to about 100000lux, but above 64000lux the precision starts to drop.
 The illuminance is given in lux/100, i.e. a value of 450000 means that an
 illuminance of 4500lux is measured.
 
-.. versionchanged:: 2.0.2~(Plugin)
+.. versionchanged:: 2.0.2$nbsp;(Plugin)
   An illuminance of 0lux indicates that the sensor is saturated and the
   configuration should be modified, see :func:`SetConfiguration`.
 
@@ -52,7 +52,7 @@ erstreckt sich bis über 100000Lux, aber ab 64000Lux nimmt die Messgenauigkeit
 ab. Die Beleuchtungsstärke ist in Lux/100 angegeben, d.h. bei einem Wert von
 450000 wurde eine Beleuchtungsstärke von 4500Lux gemessen.
 
-.. versionchanged:: 2.0.2~(Plugin)
+.. versionchanged:: 2.0.2$nbsp;(Plugin)
   Eine Beleuchtungsstärke von 0Lux bedeutet, dass der Sensor gesättigt
   (saturated) ist und die Konfiguration angepasst werden sollte, siehe
   :func:`SetConfiguration`.
