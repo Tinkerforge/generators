@@ -379,6 +379,7 @@ com['packets'].append({
 'en':
 """
 Sets the reference air pressure in mbar/1000 for the altitude calculation.
+Valid values are between 10000 and 1200000.
 Setting the reference to the current air pressure results in a calculated
 altitude of 0cm. Passing 0 is a shortcut for passing the current air pressure as
 reference.
@@ -392,7 +393,8 @@ The default value is 1013.25mbar.
 """,
 'de':
 """
-Setzt den Referenzluftdruck in mbar/1000 für die Höhenberechnung. Wenn der
+Setzt den Referenzluftdruck in mbar/1000 für die Höhenberechnung.
+Gültige Werte liegen zwischen 10000 und 1200000. Wenn der
 aktuelle Luftdruckwert als Referenz übergeben wird dann gibt die Höhenberechnung
 0cm aus. Als Abkürzung kann auch 0 übergeben werden, dadurch wird der
 Referenzluftdruck intern auf den aktuellen Luftdruckwert gesetzt.
