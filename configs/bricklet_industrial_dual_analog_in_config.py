@@ -419,18 +419,18 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Voltage', 'voltage from channel 1'), [(('voltage', 'Voltage (Channel 1)'), 'int32', 1000.0, 'mV', 'V', None)], [('uint8', 1)])]
+'functions': [('getter', ('Get Voltage', 'voltage from channel 1'), [(('Voltage', 'Voltage (Channel 1)'), 'int32', 1000.0, 'mV', 'V', None)], [('uint8', 1)])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Voltage', 'voltage'), [(('channel', 'Channel'), 'uint8', None, None, None, None), (('voltage', 'Voltage'), 'int32', 1000.0, 'mV', 'V', None)], None, None),
+'functions': [('callback', ('Voltage', 'voltage'), [(('Channel', 'Channel'), 'uint8', None, None, None, None), (('Voltage', 'Voltage'), 'int32', 1000.0, 'mV', 'V', None)], None, None),
               ('callback_period', ('Voltage', 'voltage (channel 1)'), [('uint8', 1)], 1000)]
 })
 
 com['examples'].append({
 'name': 'Threshold',
 'functions': [('debounce_period', 10000),
-              ('callback', ('Voltage Reached', 'voltage reached'), [(('channel', 'Channel'), 'uint8', None, None, None, None), (('voltage', 'Voltage'), 'int32', 1000.0, 'mV', 'V', None)], None, None),
+              ('callback', ('Voltage Reached', 'voltage reached'), [(('Channel', 'Channel'), 'uint8', None, None, None, None), (('Voltage', 'Voltage'), 'int32', 1000.0, 'mV', 'V', None)], None, None),
               ('callback_threshold', ('Voltage', 'voltage (channel 1)'), [('uint8', 1)], '>', [(10, 0)])]
 })

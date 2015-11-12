@@ -434,10 +434,15 @@ com['examples'].append({
 
 com['examples'].append({
 'name': 'Button Callback',
-'functions': [('callback', ('Button Pressed', 'button pressed'), [(('button', 'Button Pressed'), 'uint8', None, None, None, None)], None, None),
-              ('callback', ('Button Released', 'button released'), [(('button', 'Button Released'), 'uint8', None, None, None, None)], None, None)]
+'functions': [('callback', ('Button Pressed', 'button pressed'), [(('Button', 'Button Pressed'), 'uint8', None, None, None, None)], None, None),
+              ('callback', ('Button Released', 'button released'), [(('Button', 'Button Released'), 'uint8', None, None, None, None)], None, None)]
 })
 
-#com['examples'].append({
-#'name': 'Unicode'
-#})
+com['examples'].append({
+'name': 'Unicode',
+'functions': [('setter', 'Backlight On', [], 'Turn backlight on', None),
+              ('setter', 'Write Line', [('uint8', 0), ('uint8', 0), ('string', 'FIXME')], 'Write some strings using the FIXME function to map to the LCD charset', None),
+              ('setter', 'Write Line', [('uint8', 1), ('uint8', 0), ('string', 'FIXME')], None, None),
+              ('setter', 'Write Line', [('uint8', 2), ('uint8', 0), ('string', 'FIXME')], 'Write a string directly including characters from the LCD charset', None)],
+'incomplete': True # because of Unicode handling
+})

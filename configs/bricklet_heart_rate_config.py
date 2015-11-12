@@ -352,18 +352,18 @@ Gibt *true* zurück wenn der :func:`BeatStateChanged` Callback aktiviert ist.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Heart Rate', 'heart rate'), [(('heart_rate', 'Heart Rate'), 'uint16', None, 'bpm', 'bpm', None)], [])]
+'functions': [('getter', ('Get Heart Rate', 'heart rate'), [(('Heart Rate', 'Heart Rate'), 'uint16', None, 'bpm', 'bpm', None)], [])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Heart Rate', 'heart rate'), [(('heart_rate', 'Heart Rate'), 'uint16', None, 'bpm', 'bpm', None)], None, None),
+'functions': [('callback', ('Heart Rate', 'heart rate'), [(('Heart Rate', 'Heart Rate'), 'uint16', None, 'bpm', 'bpm', None)], None, None),
               ('callback_period', ('Heart Rate', 'heart rate'), [], 1000)]
 })
 
 com['examples'].append({
 'name': 'Threshold',
 'functions': [('debounce_period', 10000),
-              ('callback', ('Heart Rate Reached', 'heart rate reached'), [(('heart_rate', 'Heart Rate'), 'uint16', None, 'bpm', 'bpm', None)], None, None),
+              ('callback', ('Heart Rate Reached', 'heart rate reached'), [(('Heart Rate', 'Heart Rate'), 'uint16', None, 'bpm', 'bpm', None)], None, None),
               ('callback_threshold', ('Heart Rate', 'heart rate'), [], '>', [(100, 0)])]
 })

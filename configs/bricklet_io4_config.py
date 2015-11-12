@@ -552,7 +552,7 @@ wie von :func:`SetEdgeCountConfig` gesetzt.
 
 com['examples'].append({
 'name': 'Input',
-'functions': [('getter', ('Get Value', 'value as bitmask'), [(('value_mask', 'Value Mask'), 'uint8:bitmask:4', None, None, None, None)], [])]
+'functions': [('getter', ('Get Value', 'value as bitmask'), [(('Value Mask', 'Value Mask'), 'uint8:bitmask:4', None, None, None, None)], [])]
 })
 
 com['examples'].append({
@@ -563,6 +563,6 @@ com['examples'].append({
 
 com['examples'].append({
 'name': 'Interrupt',
-'functions': [('callback', ('Interrupt', 'interrupt'), [(('interrupt_mask', 'Interrupt Mask'), 'uint8:bitmask:4', None, None, None, None), (('value_mask', 'Value Mask'), 'uint8:bitmask:4', None, None, None, None)], None, None),
+'functions': [('callback', ('Interrupt', 'interrupt'), [(('Interrupt Mask', 'Interrupt Mask'), 'uint8:bitmask:4', None, None, None, None), (('Value Mask', 'Value Mask'), 'uint8:bitmask:4', None, None, None, None)], None, None),
               ('setter', 'Set Interrupt', [('uint8:bitmask:4', 1 << 0)], 'Enable interrupt on pin 0', None)]
 })

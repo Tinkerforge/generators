@@ -797,7 +797,7 @@ com['examples'].append({
 'name': 'Callback',
 'functions': [('setter', 'Set Acceleration', [('uint16', 5000)], 'The acceleration has to be smaller or equal to the maximum\nacceleration of the DC motor, otherwise the velocity reached\ncallback will be called too early', 'Slow acceleration'),
               ('setter', 'Set Velocity', [('int16', 32767)], None, 'Full speed forward'),
-              ('callback', ('Velocity Reached', 'velocity reached'), [(('velocity', 'Velocity'), 'int16', None, None, None, None)], 'Use velocity reached callback to swing back and forth\nbetween full speed forward and full speed backward', None),
+              ('callback', ('Velocity Reached', 'velocity reached'), [(('Velocity', 'Velocity'), 'int16', None, None, None, None)], 'Use velocity reached callback to swing back and forth\nbetween full speed forward and full speed backward', None),
               ('setter', 'Enable', [], 'Enable motor power', None)],
 'cleanups': [('setter', 'Disable', [], None, 'Disable motor power')],
 'incomplete': True # because of special print logic in callback

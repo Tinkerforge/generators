@@ -573,7 +573,7 @@ zurück, wie von :func:`SetEdgeCountConfig` gesetzt.
 
 com['examples'].append({
 'name': 'Input',
-'functions': [('getter', ('Get Port', 'value from port A as bitmask'), [(('value_mask', 'Value Mask (Port A)'), 'uint8:bitmask:8', None, None, None, None)], [('char', 'a')])]
+'functions': [('getter', ('Get Port', 'value from port A as bitmask'), [(('Value Mask', 'Value Mask (Port A)'), 'uint8:bitmask:8', None, None, None, None)], [('char', 'a')])]
 })
 
 com['examples'].append({
@@ -584,6 +584,6 @@ com['examples'].append({
 
 com['examples'].append({
 'name': 'Interrupt',
-'functions': [('callback', ('Interrupt', 'interrupt'), [(('port', 'Port'), 'char', None, None, None, None), (('interrupt_mask', 'Interrupt Mask'), 'uint8:bitmask:8', None, None, None, None), (('value_mask', 'Value Mask'), 'uint8:bitmask:8', None, None, None, None)], None, None),
+'functions': [('callback', ('Interrupt', 'interrupt'), [(('Port', 'Port'), 'char', None, None, None, None), (('Interrupt Mask', 'Interrupt Mask'), 'uint8:bitmask:8', None, None, None, None), (('Value Mask', 'Value Mask'), 'uint8:bitmask:8', None, None, None, None)], None, None),
               ('setter', 'Set Port Interrupt', [('char', 'a'), ('uint8:bitmask:8', 1 << 2)], 'Enable interrupt on pin 2 of port A', None)]
 })

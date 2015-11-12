@@ -457,12 +457,14 @@ sich verändert. Siehe :func:`GetState` für mehr Informationen
 
 com['examples'].append({
 'name': 'Scan For Tags',
-'functions': [('callback', ('State Changed', 'state changed'), [(('state', 'State'), 'uint8', None, None, None, None), (('idle', 'Idle'), 'bool', None, None, None, None)], None, None)],
-'incomplete': True # because of setter with constant and special logic in callback
+'functions': [('callback', ('State Changed', 'state changed'), [(('State', 'State'), 'uint8', None, None, None, None), (('Idle', 'Idle'), 'bool', None, None, None, None)], None, None),
+              ('setter', 'Request Tag ID', [('uint8:constant', 0)], 'Start scan loop', None)],
+'incomplete': True # because of special logic in callback
 })
 
 com['examples'].append({
 'name': 'Write Read Type2',
-'functions': [('callback', ('State Changed', 'state changed'), [(('state', 'State'), 'uint8', None, None, None, None), (('idle', 'Idle'), 'bool', None, None, None, None)], None, None)],
-'incomplete': True # because of setter with constant and special logic in callback
+'functions': [('callback', ('State Changed', 'state changed'), [(('State', 'State'), 'uint8', None, None, None, None), (('Idle', 'Idle'), 'bool', None, None, None, None)], None, None),
+              ('setter', 'Request Tag ID', [('uint8:constant', 2)], 'Select NFC Forum Type 2 tag', None)],
+'incomplete': True # because of special logic in callback
 })

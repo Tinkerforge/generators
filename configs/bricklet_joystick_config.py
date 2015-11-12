@@ -585,7 +585,7 @@ Dieser Callback wird ausgelöst wenn die Taste losgelassen wird.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Position', 'position'), [(('x', 'Position[X]'), 'int16', None, None, None, None), (('y', 'Position[Y]'), 'int16', None, None, None, None)], [])]
+'functions': [('getter', ('Get Position', 'position'), [(('X', 'Position[X]'), 'int16', None, None, None, None), (('Y', 'Position[Y]'), 'int16', None, None, None, None)], [])]
 })
 
 com['examples'].append({
@@ -597,7 +597,7 @@ com['examples'].append({
 com['examples'].append({
 'name': 'Find Borders',
 'functions': [('debounce_period', 200),
-              ('callback', ('Position Reached', 'position reached'), [(('x', 'Position[X]'), 'int16', None, None, None, None), (('y', 'Position[Y]'), 'int16', None, None, None, None)], None, None),
+              ('callback', ('Position Reached', 'position reached'), [(('X', 'Position[X]'), 'int16', None, None, None, None), (('Y', 'Position[Y]'), 'int16', None, None, None, None)], None, None),
               ('callback_threshold', ('Position', 'position'), [], 'o', [(-99, 99), (-99, 99)])],
 'incomplete': True # because of special print logic in callback
 })

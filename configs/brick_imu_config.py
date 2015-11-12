@@ -1053,11 +1053,11 @@ Gibt zurück ob die Orientierungsberechnungen des IMU Brick aktiv sind.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Quaternion', 'quaternion'), [(('x', 'Quaternion[X]'), 'float', None, None, None, None), (('y', 'Quaternion[Y]'), 'float', None, None, None, None), (('z', 'Quaternion[Z]'), 'float', None, None, None, None), (('w', 'Quaternion[W]'), 'float', None, None, None, None)], [])]
+'functions': [('getter', ('Get Quaternion', 'quaternion'), [(('X', 'Quaternion[X]'), 'float', None, None, None, None), (('Y', 'Quaternion[Y]'), 'float', None, None, None, None), (('Z', 'Quaternion[Z]'), 'float', None, None, None, None), (('W', 'Quaternion[W]'), 'float', None, None, None, None)], [])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Quaternion', 'quaternion'), [(('x', 'Quaternion[X]'), 'float', None, None, None, None), (('y', 'Quaternion[Y]'), 'float', None, None, None, None), (('z', 'Quaternion[Z]'), 'float', None, None, None, None), (('w', 'Quaternion[W]'), 'float', None, None, None, None)], None, None),
+'functions': [('callback', ('Quaternion', 'quaternion'), [(('X', 'Quaternion[X]'), 'float', None, None, None, None), (('Y', 'Quaternion[Y]'), 'float', None, None, None, None), (('Z', 'Quaternion[Z]'), 'float', None, None, None, None), (('W', 'Quaternion[W]'), 'float', None, None, None, None)], None, None),
               ('callback_period', ('Quaternion', 'quaternion'), [], 1000)]
 })

@@ -329,13 +329,14 @@ Gibt die Länge des gleitenden Mittelwerts zurück, wie von
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Moisture Value', 'moisture value'), [(('moisture', 'Moisture Value'), 'uint16', None, None, None, None)], [])]
+# FIXME: name mismatch here because of a naming inconsistency in the API
+'functions': [('getter', ('Get Moisture Value', 'moisture value'), [(('Moisture', 'Moisture Value'), 'uint16', None, None, None, None)], [])]
 })
 
 com['examples'].append({
 'name': 'Callback',
 # FIXME: name mismatch here because of a naming inconsistency in the API
-'functions': [('callback', ('Moisture', 'moisture value'), [(('moisture', 'Moisture Value'), 'uint16', None, None, None, None)], None, None),
+'functions': [('callback', ('Moisture', 'moisture value'), [(('Moisture', 'Moisture Value'), 'uint16', None, None, None, None)], None, None),
               ('callback_period', ('Moisture', 'moisture value'), [], 1000)]
 })
 
@@ -343,6 +344,6 @@ com['examples'].append({
 'name': 'Threshold',
 # FIXME: name mismatch here because of a naming inconsistency in the API
 'functions': [('debounce_period', 1000),
-              ('callback', ('Moisture Reached', 'moisture value reached'), [(('moisture', 'Moisture Value'), 'uint16', None, None, None, None)], None, None),
+              ('callback', ('Moisture Reached', 'moisture value reached'), [(('Moisture', 'Moisture Value'), 'uint16', None, None, None, None)], None, None),
               ('callback_threshold', ('Moisture', 'moisture value'), [], '>', [(200, 0)])]
 })

@@ -557,18 +557,18 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Distance', 'distance'), [(('distance', 'Distance'), 'uint16', 10.0, 'mm', 'cm', None)], [])]
+'functions': [('getter', ('Get Distance', 'distance'), [(('Distance', 'Distance'), 'uint16', 10.0, 'mm', 'cm', None)], [])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Distance', 'distance'), [(('distance', 'Distance'), 'uint16', 10.0, 'mm', 'cm', None)], None, None),
+'functions': [('callback', ('Distance', 'distance'), [(('Distance', 'Distance'), 'uint16', 10.0, 'mm', 'cm', None)], None, None),
               ('callback_period', ('Distance', 'distance'), [], 200)]
 })
 
 com['examples'].append({
 'name': 'Threshold',
 'functions': [('debounce_period', 10000),
-              ('callback', ('Distance Reached', 'distance reached'), [(('distance', 'Distance'), 'uint16', 10.0, 'mm', 'cm', None)], None, None),
+              ('callback', ('Distance Reached', 'distance reached'), [(('Distance', 'Distance'), 'uint16', 10.0, 'mm', 'cm', None)], None, None),
               ('callback_threshold', ('Distance', 'distance'), [], '<', [(30, 0)])]
 })

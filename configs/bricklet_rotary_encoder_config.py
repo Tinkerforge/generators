@@ -337,11 +337,11 @@ Dieser Callback wird ausgelöst wenn der Taster losgelassen wird.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Count', 'count without reset'), [(('count', 'Count'), 'int32', None, None, None, None)], [('bool', False)])]
+'functions': [('getter', ('Get Count', 'count without reset'), [(('Count', 'Count'), 'int32', None, None, None, None)], [('bool', False)])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Count', 'count'), [(('count', 'Count'), 'int32', None, None, None, None)], None, None),
+'functions': [('callback', ('Count', 'count'), [(('Count', 'Count'), 'int32', None, None, None, None)], None, None),
               ('callback_period', ('Count', 'count'), [], 50)]
 })

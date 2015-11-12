@@ -646,10 +646,13 @@ seit der letzten Auslösung geändert haben.
 
 com['examples'].append({
 'name': 'Simple',
-'incomplete': True # because of selective print logic
+'functions': [('getter', ('Get Coordinates', 'coordinates'), [(('Latitude', 'Latitude'), 'uint32', 1000000.0, '°/1000000', '°', None), (('NS', 'N/S'), 'char', None, None, None, None), (('Longitude', 'Longitude'), 'uint32', 1000000.0, '°/1000000', '°', None), (('EW', 'E/W'), 'char', None, None, None, None), (('PDOP', None), 'uint16', None, None, None, None), (('HDOP', None), 'uint16', None, None, None, None), (('VDOP', None), 'uint16', None, None, None, None), (('EPE', None), 'uint16', 100.0, 'cm', 'm', None)], [])],
+'incomplete': True # because of special print logic
 })
 
 com['examples'].append({
 'name': 'Callback',
-'incomplete': True # because of selective print logic
+'functions': [('callback', ('Coordinates', 'coordinates'), [(('Latitude', 'Latitude'), 'uint32', 1000000.0, '°/1000000', '°', None), (('NS', 'N/S'), 'char', None, None, None, None), (('Longitude', 'Longitude'), 'uint32', 1000000.0, '°/1000000', '°', None), (('EW', 'E/W'), 'char', None, None, None, None), (('PDOP', None), 'uint16', None, None, None, None), (('HDOP', None), 'uint16', None, None, None, None), (('VDOP', None), 'uint16', None, None, None, None), (('EPE', None), 'uint16', 100.0, 'cm', 'm', None)], None, None),
+              ('callback_period', ('Coordinates', 'coordinates'), [], 1000)],
+'incomplete': True # because of special print logic
 })

@@ -596,18 +596,18 @@ gesetzt.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Voltage', 'voltage'), [(('voltage', 'Voltage'), 'uint16', 1000.0, 'mV', 'V', None)], [])]
+'functions': [('getter', ('Get Voltage', 'voltage'), [(('Voltage', 'Voltage'), 'uint16', 1000.0, 'mV', 'V', None)], [])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Voltage', 'voltage'), [(('voltage', 'Voltage'), 'uint16', 1000.0, 'mV', 'V', None)], None, None),
+'functions': [('callback', ('Voltage', 'voltage'), [(('Voltage', 'Voltage'), 'uint16', 1000.0, 'mV', 'V', None)], None, None),
               ('callback_period', ('Voltage', 'voltage'), [], 1000)]
 })
 
 com['examples'].append({
 'name': 'Threshold',
 'functions': [('debounce_period', 10000),
-              ('callback', ('Voltage Reached', 'voltage reached'), [(('voltage', 'Voltage'), 'uint16', 1000.0, 'mV', 'V', None)], None, None),
+              ('callback', ('Voltage Reached', 'voltage reached'), [(('Voltage', 'Voltage'), 'uint16', 1000.0, 'mV', 'V', None)], None, None),
               ('callback_threshold', ('Voltage', 'voltage'), [], '<', [(5, 0)])]
 })

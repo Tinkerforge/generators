@@ -526,18 +526,18 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Ozone Concentration', 'ozone concentration'), [(('ozone_concentration', 'Ozone Concentration'), 'uint16', None, 'ppb', 'ppb', None)], [])]
+'functions': [('getter', ('Get Ozone Concentration', 'ozone concentration'), [(('Ozone Concentration', 'Ozone Concentration'), 'uint16', None, 'ppb', 'ppb', None)], [])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Ozone Concentration', 'ozone concentration'), [(('ozone_concentration', 'Ozone Concentration'), 'uint16', None, 'ppb', 'ppb', None)], None, None),
+'functions': [('callback', ('Ozone Concentration', 'ozone concentration'), [(('Ozone Concentration', 'Ozone Concentration'), 'uint16', None, 'ppb', 'ppb', None)], None, None),
               ('callback_period', ('Ozone Concentration', 'ozone concentration'), [], 1000)]
 })
 
 com['examples'].append({
 'name': 'Threshold',
 'functions': [('debounce_period', 10000),
-              ('callback', ('Ozone Concentration Reached', 'ozone concentration reached'), [(('ozone_concentration', 'Ozone Concentration'), 'uint16', None, 'ppb', 'ppb', None)], None, None),
+              ('callback', ('Ozone Concentration Reached', 'ozone concentration reached'), [(('Ozone Concentration', 'Ozone Concentration'), 'uint16', None, 'ppb', 'ppb', None)], None, None),
               ('callback_threshold', ('Ozone Concentration', 'ozone concentration'), [], '>', [(20, 0)])]
 })

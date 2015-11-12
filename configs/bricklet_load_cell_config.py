@@ -513,18 +513,18 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 
 com['examples'].append({
 'name': 'Simple',
-'functions': [('getter', ('Get Weight', 'weight'), [(('weight', 'Weight'), 'int32', None, 'g', 'g', None)], [])]
+'functions': [('getter', ('Get Weight', 'weight'), [(('Weight', 'Weight'), 'int32', None, 'g', 'g', None)], [])]
 })
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Weight', 'weight'), [(('weight', 'Weight'), 'int32', None, 'g', 'g', None)], None, None),
+'functions': [('callback', ('Weight', 'weight'), [(('Weight', 'Weight'), 'int32', None, 'g', 'g', None)], None, None),
               ('callback_period', ('Weight', 'weight'), [], 1000)]
 })
 
 com['examples'].append({
 'name': 'Threshold',
 'functions': [('debounce_period', 1000),
-              ('callback', ('Weight Reached', 'weight reached'), [(('weight', 'Weight'), 'int32', None, 'g', 'g', None)], None, None),
-              ('callback_threshold', ('Weight', 'weight'), [], '>', [(500, 0)])]
+              ('callback', ('Weight Reached', 'weight reached'), [(('Weight', 'Weight'), 'int32', None, 'g', 'g', None)], None, None),
+              ('callback_threshold', ('Weight', 'weight'), [], '>', [(200, 0)])]
 })

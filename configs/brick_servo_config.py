@@ -971,7 +971,7 @@ com['examples'].append({
 
 com['examples'].append({
 'name': 'Callback',
-'functions': [('callback', ('Position Reached', 'position reached'), [(('servo_num', 'Servo Number'), 'uint8', None, None, None, None), (('position', 'Position'), 'int16', None, None, None, None)], 'Use position reached callback to swing back and forth', None),
+'functions': [('callback', ('Position Reached', 'position reached'), [(('Servo Num', 'Servo Number'), 'uint8', None, None, None, None), (('Position', 'Position'), 'int16', None, None, None, None)], 'Use position reached callback to swing back and forth', None),
               ('setter', 'Enable Position Reached Callback', [], 'Enable position reached callback', None),
               ('setter', 'Set Velocity', [('uint8', 0), ('uint16', 10000)], 'Set velocity to 100°/s. This has to be smaller or equal to the\nmaximum velocity of the servo you are using, otherwise the position\nreached callback will be called too early', None),
               ('setter', 'Set Position', [('uint8', 0), ('int16', 9000)], None, None),
