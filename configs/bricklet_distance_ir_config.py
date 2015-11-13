@@ -10,7 +10,7 @@ from commonconstants import THRESHOLD_OPTION_CONSTANTS
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 25,
     'name': ('DistanceIR', 'distance_ir', 'Distance IR', 'Distance IR Bricklet'),
