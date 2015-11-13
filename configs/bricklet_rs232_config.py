@@ -192,11 +192,6 @@ Sets the configuration for the RS232 communication. Available options:
 * Hard-/Software flow control can each be on or off.
 
 The default is: 115200 baud, parity none, 1 stop bit, word length 8, hard-/software flow control off.
-
-.. note::
- The currently released Bindings have a off-by-one in the baudrate constants.
- Please use the actual number and not the constant. The bug will be fixed
- with the next Binding release.
 """,
 'de':
 """
@@ -210,12 +205,6 @@ Verfügbare Optionen sind:
 * Hard-/Software Flow Control kann je an oder aus sein.
 
 Der Standard ist: 115200 Baud, Parität None, 1 Stop Bits, Wortlänge 8, Hard-/Software Flow Control aus.
-
-.. note::
- Die aktuell veröffentlichen Bindings haben einen "off-by-one" in den
- Baudraten-Kostanten. Aktuell kann nur die eigentliche Zahl genutzt werden
- und nicht die vordefinierte Konstante. Dieser Bug wird mit dem nächsten
- Binding-Release gefixt.
 """
 }]
 })
