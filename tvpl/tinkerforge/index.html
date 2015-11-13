@@ -333,17 +333,20 @@
 '        for (var key in _dictVariables) {\n'+
 '          _dictVariables[key] = key;\n'+
 '        }\n'+
-'        _running_workers[worker_id] = new Worker(message_parsed.data[i]);\n'+
-'        _running_workers[worker_id].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_SUBWORKER_START, {wid: worker_id, dictv: _dictVariables}));\n'+
+'        _running_workers[worker_id] = new Worker(message_parsed.data.blobFunction);\n'+
+'        _running_workers[worker_id].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_SUBWORKER_START, {wid: worker_id, dictv: _dictVariables, codeButtonEnable: message_parsed.data.codeButtonEnable}));\n'+
 '        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_FUNCTION_EXECUTE_ACK, null));\n'+
 '        break;\n'+
 '      case workerProtocol._TYPE_RES_SUBWORKER_DONE:\n'+
+'        if (message_parsed.data.codeButtonEnable) {\n'+
+'          eval(message_parsed.data.codeButtonEnable);\n'+
+'        }\n'+
 '        _running_workers[message_parsed.sender].terminate();\n'+
 '        delete _running_workers[message_parsed.data];\n'+
 '        break;\n'+
 '      case workerProtocol._TYPE_RES_SET_VARIABLE:\n'+
+'        eval(message_parsed.data);\n'+
 '        for (var key in _running_workers) {\n'+
-'          eval(message_parsed.data);\n'+
 '          _running_workers[key].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_SET_VARIABLE, message_parsed.data));\n'+
 '        }\n'+
 '        _running_workers[message_parsed.sender].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_YIELD_NEXT, null));\n'+
