@@ -8,7 +8,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
     'category': 'Brick',
     'device_identifier': 14,
     'name': ('Servo', 'servo', 'Servo', 'Servo Brick'),
@@ -870,7 +870,7 @@ Voreinstellung ist deaktiviert.
 com['packets'].append({
 'type': 'function',
 'name': ('IsPositionReachedCallbackEnabled', 'is_position_reached_callback_enabled'), 
-'elements': [('enabled', 'uint8', 1, 'out')], # FIXME: should have been bool instead of uint8, maybe fix in 3.0
+'elements': [('enabled', 'bool', 1, 'out')],
 'since_firmware': [2, 0, 1],
 'doc': ['ccf', {
 'en':

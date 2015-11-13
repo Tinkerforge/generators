@@ -10,7 +10,7 @@ from commonconstants import THRESHOLD_OPTION_CONSTANTS
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 250,
     'name': ('Accelerometer', 'accelerometer', 'Accelerometer', 'Accelerometer Bricklet'),
@@ -376,7 +376,7 @@ Deaktiviert die LED auf dem Bricklet.
 com['packets'].append({
 'type': 'function',
 'name': ('IsLEDOn', 'is_led_on'), 
-'elements': [('value', 'uint8', 1, 'out')],
+'elements': [('on', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
