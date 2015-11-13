@@ -929,7 +929,7 @@ Voreinstellung ist deaktiviert.
 com['packets'].append({
 'type': 'function',
 'name': ('IsVelocityReachedCallbackEnabled', 'is_velocity_reached_callback_enabled'), 
-'elements': [('enabled', 'uint8', 1, 'out')], # FIXME: should have been bool instead of uint8, maybe fix in 3.0
+'elements': [('enabled', 'bool', 1, 'out')],
 'since_firmware': [2, 0, 1],
 'doc': ['ccf', {
 'en':
