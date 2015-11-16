@@ -224,7 +224,7 @@ namespace Tinkerforge
 
             cbs += cb.format(name, convs, name_upper, callParams, pos, signatureParams)
 
-        return cbs + "\t}\n}"
+        return cbs + "\t}\n}\n"
 
     def get_csharp_methods(self):
         methods = ''

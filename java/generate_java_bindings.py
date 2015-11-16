@@ -323,7 +323,7 @@ public class {0} extends Device {{
 
     def get_java_add_listener(self):
         if self.get_callback_count() == 0:
-            return '}'
+            return '}\n'
 
         listeners = ''
         listener = """
@@ -346,11 +346,11 @@ public class {0} extends Device {{
         for packet in self.get_packets('callback'):
             name = packet.get_camel_case_name()
             listeners += listener.format(name)
-        return listeners + '}'
+        return listeners + '}\n'
 
     def get_octave_add_listener(self):
         if self.get_callback_count() == 0:
-            return '}'
+            return '}\n'
 
         listeners = ''
         listener = """
@@ -373,7 +373,7 @@ public class {0} extends Device {{
         for packet in self.get_packets('callback'):
             name = packet.get_camel_case_name()
             listeners += listener.format(name)
-        return listeners + '}'
+        return listeners + '}\n'
 
     def get_java_function_id_definitions(self):
         function_ids = ''
