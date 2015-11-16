@@ -11,15 +11,15 @@ common_packets = []
 common_packets.append({
 'type': 'function',
 'function_id': 238,
-'name': ('EnableStatusLED', 'enable_status_led'), 
-'elements': [], 
+'name': 'Enable Status LED',
+'elements': [],
 'since_firmware': {'*': [2, 0, 0],
-                   'dc': [2, 3, 1],
-                   'imu': [2, 3, 1],
-                   'master': [2, 3, 2],
-                   'red': None,
-                   'servo': [2, 3, 1],
-                   'stepper': [2, 3, 1]},
+                   'DC': [2, 3, 1],
+                   'IMU': [2, 3, 1],
+                   'Master': [2, 3, 2],
+                   'RED': None,
+                   'Servo': [2, 3, 1],
+                   'Stepper': [2, 3, 1]},
 'doc': ['af', {
 'en':
 """
@@ -46,15 +46,15 @@ Der Standardzustand ist aktiviert.
 common_packets.append({
 'type': 'function',
 'function_id': 239,
-'name': ('DisableStatusLED', 'disable_status_led'), 
+'name': 'Disable Status LED',
 'elements': [],
 'since_firmware': {'*': [2, 0, 0],
-                   'dc': [2, 3, 1],
-                   'imu': [2, 3, 1],
-                   'master': [2, 3, 2],
-                   'red': None,
-                   'servo': [2, 3, 1],
-                   'stepper': [2, 3, 1]},
+                   'DC': [2, 3, 1],
+                   'IMU': [2, 3, 1],
+                   'Master': [2, 3, 2],
+                   'RED': None,
+                   'Servo': [2, 3, 1],
+                   'Stepper': [2, 3, 1]},
 'doc': ['af', {
 'en':
 """
@@ -81,15 +81,15 @@ Der Standardzustand ist aktiviert.
 common_packets.append({
 'type': 'function',
 'function_id': 240,
-'name': ('IsStatusLEDEnabled', 'is_status_led_enabled'), 
-'elements': [('enabled', 'bool', 1, 'out')],
+'name': 'Is Status LED Enabled',
+'elements': [('Enabled', 'bool', 1, 'out')],
 'since_firmware': {'*': [2, 0, 0],
-                   'dc': [2, 3, 1],
-                   'imu': [2, 3, 1],
-                   'master': [2, 3, 2],
-                   'red': None,
-                   'servo': [2, 3, 1],
-                   'stepper': [2, 3, 1]},
+                   'DC': [2, 3, 1],
+                   'IMU': [2, 3, 1],
+                   'Master': [2, 3, 2],
+                   'RED': None,
+                   'Servo': [2, 3, 1],
+                   'Stepper': [2, 3, 1]},
 'doc': ['af', {
 'en':
 """
@@ -105,18 +105,18 @@ Gibt *true* zurück wenn die Status LED aktiviert ist, *false* sonst.
 common_packets.append({
 'type': 'function',
 'function_id': 241,
-'name': ('GetProtocol1BrickletName', 'get_protocol1_bricklet_name'), 
-'elements': [('port', 'char', 1, 'in'),
-             ('protocol_version', 'uint8', 1, 'out'),
-             ('firmware_version', 'uint8', 3, 'out'),
-             ('name', 'string', 40, 'out')], 
+'name': 'Get Protocol1 Bricklet Name',
+'elements': [('Port', 'char', 1, 'in'),
+             ('Protocol Version', 'uint8', 1, 'out'),
+             ('Firmware Version', 'uint8', 3, 'out'),
+             ('Name', 'string', 40, 'out')],
 'since_firmware': {'*': [2, 0, 0],
-                   'dc': [2, 0, 0],
-                   'imu': [2, 0, 0],
-                   'master': [2, 0, 0],
-                   'red': None,
-                   'servo': [2, 0, 0],
-                   'stepper': [2, 0, 0]},
+                   'DC': [2, 0, 0],
+                   'IMU': [2, 0, 0],
+                   'Master': [2, 0, 0],
+                   'RED': None,
+                   'Servo': [2, 0, 0],
+                   'Stepper': [2, 0, 0]},
 'doc': ['af', {
 'en':
 """
@@ -140,15 +140,15 @@ v1.x.y Plugins zu ermöglichen.
 common_packets.append({
 'type': 'function',
 'function_id': 242,
-'name': ('GetChipTemperature', 'get_chip_temperature'),
-'elements': [('temperature', 'int16', 1, 'out')],
+'name': 'Get Chip Temperature',
+'elements': [('Temperature', 'int16', 1, 'out')],
 'since_firmware': {'*': [2, 0, 0],
-                   'dc': [1, 1, 3],
-                   'imu': [1, 0, 7],
-                   'master': [1, 2, 1],
-                   'red': None,
-                   'servo': [1, 1, 3],
-                   'stepper': [1, 1, 4]},
+                   'DC': [1, 1, 3],
+                   'IMU': [1, 0, 7],
+                   'Master': [1, 2, 1],
+                   'RED': None,
+                   'Servo': [1, 1, 3],
+                   'Stepper': [1, 1, 4]},
 'doc': ['af', {
 'en':
 """
@@ -174,15 +174,15 @@ Indikation von Temperaturveränderungen.
 common_packets.append({
 'type': 'function',
 'function_id': 243,
-'name': ('Reset', 'reset'),
+'name': 'Reset',
 'elements': [],
 'since_firmware': {'*': [2, 0, 0],
-                   'dc': [1, 1, 3],
-                   'imu': [1, 0, 7],
-                   'master': [1, 2, 1],
-                   'red': None,
-                   'servo': [1, 1, 3],
-                   'stepper': [1, 1, 4]},
+                   'DC': [1, 1, 3],
+                   'IMU': [1, 0, 7],
+                   'Master': [1, 2, 1],
+                   'RED': None,
+                   'Servo': [1, 1, 3],
+                   'Stepper': [1, 1, 4]},
 'doc': ['af', {
 'en':
 """
@@ -207,13 +207,13 @@ Funktionsaufrufe auf bestehende führt zu undefiniertem Verhalten.
 common_packets.append({
 'type': 'function',
 'function_id': 255,
-'name': ('GetIdentity', 'get_identity'),
-'elements': [('uid', 'string', 8, 'out'),
-             ('connected_uid', 'string', 8, 'out'),
-             ('position', 'char', 1, 'out'),
-             ('hardware_version', 'uint8', 3, 'out'),
-             ('firmware_version', 'uint8', 3, 'out'),
-             ('device_identifier', 'uint16', 1, 'out')],
+'name': 'Get Identity',
+'elements': [('Uid', 'string', 8, 'out'),
+             ('Connected Uid', 'string', 8, 'out'),
+             ('Position', 'char', 1, 'out'),
+             ('Hardware Version', 'uint8', 3, 'out'),
+             ('Firmware Version', 'uint8', 3, 'out'),
+             ('Device Identifier', 'uint16', 1, 'out')],
 'since_firmware': {'*': [2, 0, 0]},
 'prototype_in_device': True,
 'doc': ['af', {

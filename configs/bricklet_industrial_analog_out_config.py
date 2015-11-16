@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 258,
-    'name': ('IndustrialAnalogOut', 'industrial_analog_out', 'Industrial Analog Out', 'Industrial Analog Out Bricklet'),
+    'name': ('Industrial Analog Out', 'Industrial Analog Out', 'Industrial Analog Out Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Generates configurable DC voltage and current, 0V to 10V and 4mA to 20mA',
@@ -24,7 +24,7 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('Enable', 'enable'), 
+'name': 'Enable',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -45,7 +45,7 @@ Der Standardwert ist deaktiviert.
 
 com['packets'].append({
 'type': 'function',
-'name': ('Disable', 'disable'), 
+'name': 'Disable',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -66,8 +66,8 @@ Der Standardwert ist deaktiviert.
 
 com['packets'].append({
 'type': 'function',
-'name': ('IsEnabled', 'is_enabled'), 
-'elements': [('enabled', 'bool', 1, 'out')],
+'name': 'Is Enabled',
+'elements': [('Enabled', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -84,8 +84,8 @@ Gibt *true* zurück falls die Ausgabe von Spannung und Strom aktiviert ist,
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetVoltage', 'set_voltage'), 
-'elements': [('voltage', 'uint16', 1, 'in')],
+'name': 'Set Voltage',
+'elements': [('Voltage', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -107,8 +107,8 @@ Ausgangsspannung führt auch zu einer Änderung des Ausgangsstroms.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetVoltage', 'get_voltage'), 
-'elements': [('voltage', 'uint16', 1, 'out')],
+'name': 'Get Voltage',
+'elements': [('Voltage', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -124,8 +124,8 @@ Gibt die Spannung zurück, wie von :func:`SetVoltage` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetCurrent', 'set_current'), 
-'elements': [('current', 'uint16', 1, 'in')],
+'name': 'Set Current',
+'elements': [('Current', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -147,8 +147,8 @@ Ausgangsstroms führt auch zu einer Änderung der Ausgangsspannung.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCurrent', 'get_current'), 
-'elements': [('current', 'uint16', 1, 'out')],
+'name': 'Get Current',
+'elements': [('Current', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -164,12 +164,12 @@ Gibt die Spannung zurück, wie von :func:`SetCurrent` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetConfiguration', 'set_configuration'), 
-'elements': [('voltage_range', 'uint8', 1, 'in', ('VoltageRange', 'voltage_range', [('0To5V', '0_to_5v', 0),
-                                                                                    ('0To10V', '0_to_10v', 1)])),
-             ('current_range', 'uint8', 1, 'in', ('CurrentRange', 'current_range', [('4To20mA', '4_to_20ma', 0),
-                                                                                    ('0To20mA', '0_to_20ma', 1),
-                                                                                    ('0To24mA', '0_to_24ma', 2)]))],
+'name': 'Set Configuration',
+'elements': [('Voltage Range', 'uint8', 1, 'in', ('Voltage Range', [('0 To 5V', 0),
+                                                                    ('0 To 10V', 1)])),
+             ('Current Range', 'uint8', 1, 'in', ('Current Range', [('4 To 20mA', 0),
+                                                                    ('0 To 20mA', 1),
+                                                                    ('0 To 24ma', 2)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -213,12 +213,12 @@ sich bei kleineren Wertebereichen.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetConfiguration', 'get_configuration'), 
-'elements': [('voltage_range', 'uint8', 1, 'out', ('VoltageRange', 'voltage_range', [('0To5V', '0_to_5v', 0),
-                                                                                     ('0To10V', '0_to_10v', 1)])),
-             ('current_range', 'uint8', 1, 'out', ('CurrentRange', 'current_range', [('4To20mA', '4_to_20ma', 0),
-                                                                                     ('0To20mA', '0_to_20ma', 1),
-                                                                                     ('0To24mA', '0_to_24ma', 2)]))],
+'name': 'Get Configuration',
+'elements': [('Voltage Range', 'uint8', 1, 'out', ('Voltage Range', [('0 To 5V', 0),
+                                                                     ('0 To 10V', 1)])),
+             ('Current Range', 'uint8', 1, 'out', ('Current Range', [('4 To 20mA', 0),
+                                                                     ('0 To 20mA', 1),
+                                                                     ('0 To 24ma', 2)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

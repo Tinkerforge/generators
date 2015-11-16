@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 2],
     'category': 'Bricklet',
     'device_identifier': 254,
-    'name': ('RS232', 'rs232', 'RS232', 'RS232 Bricklet'),
+    'name': ('RS232', 'RS232', 'RS232 Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Communicates with RS232 devices',
@@ -24,10 +24,10 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('Write', 'write'),
-'elements': [('message', 'char', 60, 'in'),
-             ('length', 'uint8', 1, 'in'),
-             ('written', 'uint8', 1, 'out')],
+'name': 'Write',
+'elements': [('Message', 'char', 60, 'in'),
+             ('Length', 'uint8', 1, 'in'),
+             ('Written', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -59,9 +59,9 @@ bezüglich Baudrate, Parität usw.
 
 com['packets'].append({
 'type': 'function',
-'name': ('Read', 'read'),
-'elements': [('message', 'char', 60, 'out'),
-             ('length', 'uint8', 1, 'out')],
+'name': 'Read',
+'elements': [('Message', 'char', 60, 'out'),
+             ('Length', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -88,7 +88,7 @@ Callbacks zu nutzen. Siehe :func:`EnableReadCallback` und
 
 com['packets'].append({
 'type': 'function',
-'name': ('EnableReadCallback', 'enable_read_callback'),
+'name': 'Enable Read Callback',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -109,7 +109,7 @@ Im Startzustand ist der Callback deaktiviert
 
 com['packets'].append({
 'type': 'function',
-'name': ('DisableReadCallback', 'disable_read_callback'),
+'name': 'Disable Read Callback',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -130,8 +130,8 @@ Im Startzustand ist der Callback deaktiviert
 
 com['packets'].append({
 'type': 'function',
-'name': ('IsReadCallbackEnabled', 'is_read_callback_enabled'),
-'elements': [('enabled', 'bool', 1, 'out')],
+'name': 'Is Read Callback Enabled',
+'elements': [('Enabled', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -149,35 +149,35 @@ Gibt *true* zurück falls :func:`ReadCallback` aktiviert ist,
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetConfiguration', 'set_configuration'),
-'elements': [('baudrate', 'uint8', 1, 'in', ('Baudrate', 'baudrate', [('300', '300', 0),
-                                                                      ('600', '600', 1),
-                                                                      ('1200', '1200', 2),
-                                                                      ('2400', '2400', 3),
-                                                                      ('4800', '4800', 4),
-                                                                      ('9600', '9600', 5),
-                                                                      ('14400', '14400', 6),
-                                                                      ('19200', '19200', 7),
-                                                                      ('28800', '28800', 8),
-                                                                      ('38400', '38400', 9),
-                                                                      ('57600', '57600', 10),
-                                                                      ('115200', '115200', 11),
-                                                                      ('230400', '230400', 12)])),
-             ('parity', 'uint8', 1, 'in', ('Parity', 'parity', [('None', 'none', 0),
-                                                                ('Odd', 'odd', 1),
-                                                                ('Even', 'even', 2),
-                                                                ('ForcedParity1', 'forced_parity_1', 3),
-                                                                ('ForcedParity0', 'forced_parity_0', 4)])),
-             ('stopbits', 'uint8', 1, 'in', ('Stopbits', 'stopbits', [('1', '1', 1),
-                                                                      ('2', '2', 2)])),
-             ('wordlength', 'uint8', 1, 'in', ('Wordlength', 'wordlength', [('5', '5', 5),
-                                                                            ('6', '6', 6),
-                                                                            ('7', '7', 7),
-                                                                            ('8', '8', 8)])),
-             ('hardware_flowcontrol', 'uint8', 1, 'in', ('HardwareFlowcontrol', 'hardware_flowcontrol', [('Off', 'off', 0),
-                                                                                                         ('On', 'on', 1)])),
-             ('software_flowcontrol', 'uint8', 1, 'in', ('SoftwareFlowcontrol', 'software_flowcontrol', [('Off', 'off', 0),
-                                                                                                         ('On', 'on', 1)]))],
+'name': 'Set Configuration',
+'elements': [('Baudrate', 'uint8', 1, 'in', ('Baudrate', [('300', 0),
+                                                          ('600', 1),
+                                                          ('1200', 2),
+                                                          ('2400', 3),
+                                                          ('4800', 4),
+                                                          ('9600', 5),
+                                                          ('14400', 6),
+                                                          ('19200', 7),
+                                                          ('28800', 8),
+                                                          ('38400', 9),
+                                                          ('57600', 10),
+                                                          ('115200', 11),
+                                                          ('230400', 12)])),
+             ('Parity', 'uint8', 1, 'in', ('Parity', [('None', 0),
+                                                      ('Odd', 1),
+                                                      ('Even', 2),
+                                                      ('Forced Parity 1', 3),
+                                                      ('Forced Parity 0', 4)])),
+             ('Stopbits', 'uint8', 1, 'in', ('Stopbits', [('1', 1),
+                                                          ('2', 2)])),
+             ('Wordlength', 'uint8', 1, 'in', ('Wordlength', [('5', 5),
+                                                              ('6', 6),
+                                                              ('7', 7),
+                                                              ('8', 8)])),
+             ('Hardware Flowcontrol', 'uint8', 1, 'in', ('Hardware Flowcontrol', [('Off', 0),
+                                                                                  ('On', 1)])),
+             ('Software Flowcontrol', 'uint8', 1, 'in', ('Software Flowcontrol', [('Off', 0),
+                                                                                  ('On', 1)]))],
 
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -211,35 +211,35 @@ Der Standard ist: 115200 Baud, Parität None, 1 Stop Bits, Wortlänge 8, Hard-/S
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetConfiguration', 'get_configuration'),
-'elements': [('baudrate', 'uint8', 1, 'out', ('Baudrate', 'baudrate', [('300', '300', 0),
-                                                                       ('600', '600', 1),
-                                                                       ('1200', '1200', 2),
-                                                                       ('2400', '2400', 3),
-                                                                       ('4800', '4800', 4),
-                                                                       ('9600', '9600', 5),
-                                                                       ('14400', '14400', 6),
-                                                                       ('19200', '19200', 7),
-                                                                       ('28800', '28800', 8),
-                                                                       ('38400', '38400', 9),
-                                                                       ('57600', '57600', 10),
-                                                                       ('115200', '115200', 11),
-                                                                       ('230400', '230400', 12)])),
-             ('parity', 'uint8', 1, 'out', ('Parity', 'parity', [('None', 'none', 0),
-                                                                 ('Odd', 'odd', 1),
-                                                                 ('Even', 'even', 2),
-                                                                 ('ForcedParity1', 'forced_parity_1', 3),
-                                                                 ('ForcedParity0', 'forced_parity_0', 4)])),
-             ('stopbits', 'uint8', 1, 'out', ('Stopbits', 'stopbits', [('1', '1', 1),
-                                                                       ('2', '2', 2)])),
-             ('wordlength', 'uint8', 1, 'out', ('Wordlength', 'wordlength', [('5', '5', 5),
-                                                                             ('6', '6', 6),
-                                                                             ('7', '7', 7),
-                                                                             ('8', '8', 8)])),
-             ('hardware_flowcontrol', 'uint8', 1, 'out', ('HardwareFlowcontrol', 'hardware_flowcontrol', [('Off', 'off', 0),
-                                                                                                          ('On', 'on', 1)])),
-             ('software_flowcontrol', 'uint8', 1, 'out', ('SoftwareFlowcontrol', 'software_flowcontrol', [('Off', 'off', 0),
-                                                                                                          ('On', 'on', 1)]))],
+'name': 'Get Configuration',
+'elements': [('Baudrate', 'uint8', 1, 'out', ('Baudrate', [('300', 0),
+                                                           ('600', 1),
+                                                           ('1200', 2),
+                                                           ('2400', 3),
+                                                           ('4800', 4),
+                                                           ('9600', 5),
+                                                           ('14400', 6),
+                                                           ('19200', 7),
+                                                           ('28800', 8),
+                                                           ('38400', 9),
+                                                           ('57600', 10),
+                                                           ('115200', 11),
+                                                           ('230400', 12)])),
+             ('Parity', 'uint8', 1, 'out', ('Parity', [('None', 0),
+                                                       ('Odd', 1),
+                                                       ('Even', 2),
+                                                       ('Forced Parity 1', 3),
+                                                       ('Forced Parity 0', 4)])),
+             ('Stopbits', 'uint8', 1, 'out', ('Stopbits', [('1', 1),
+                                                           ('2', 2)])),
+             ('Wordlength', 'uint8', 1, 'out', ('Wordlength', [('5', 5),
+                                                               ('6', 6),
+                                                               ('7', 7),
+                                                               ('8', 8)])),
+             ('Hardware Flowcontrol', 'uint8', 1, 'out', ('Hardware Flowcontrol', [('Off', 0),
+                                                                                   ('On', 1)])),
+             ('Software Flowcontrol', 'uint8', 1, 'out', ('Software Flowcontrol', [('Off', 0),
+                                                                                   ('On', 1)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -255,9 +255,9 @@ Gibt die Konfiguration zurück, wie von :func:`SetConfiguration` gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('ReadCallback', 'read_callback'),
-'elements': [('message', 'char', 60, 'out'),
-             ('length', 'uint8', 1, 'out')],
+'name': 'Read Callback',
+'elements': [('Message', 'char', 60, 'out'),
+             ('Length', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -281,10 +281,10 @@ Dieser Callback kann durch :func:`EnableReadCallback` aktiviert werden.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('ErrorCallback', 'error_callback'),
-'elements': [('error', 'uint8', 1, 'out', ('Error', 'error', [('Overrun', 'overrun', 1),
-                                                              ('Parity', 'parity', 2),
-                                                              ('Framing', 'framing', 4)]))],
+'name': 'Error Callback',
+'elements': [('Error', 'uint8', 1, 'out', ('Error', [('Overrun', 1),
+                                                     ('Parity', 2),
+                                                     ('Framing', 4)]))],
 'since_firmware': [2, 0, 1],
 'doc': ['c', {
 'en':
@@ -302,8 +302,8 @@ Mögliche Fehler sind Overrun-, Parity- oder Framing-Fehler.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetBreakCondition', 'set_break_condition'),
-'elements': [('break_time', 'uint16', 1, 'in')],
+'name': 'Set Break Condition',
+'elements': [('Break Time', 'uint16', 1, 'in')],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':

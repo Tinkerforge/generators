@@ -13,7 +13,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 228,
-    'name': ('IndustrialDual020mA', 'industrial_dual_0_20ma', 'Industrial Dual 0-20mA', 'Industrial Dual 0-20mA Bricklet'),
+    'name': ('Industrial Dual 0 20mA', 'Industrial Dual 0-20mA', 'Industrial Dual 0-20mA Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures two DC currents between 0mA and 20mA (IEC 60381-1)',
@@ -42,9 +42,9 @@ und 1.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCurrent', 'get_current'), 
-'elements': [('sensor', 'uint8', 1, 'in'),
-             ('current', 'int32', 1, 'out')],
+'name': 'Get Current',
+'elements': [('Sensor', 'uint8', 1, 'in'),
+             ('Current', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -86,9 +86,9 @@ den Callback :func:`Current` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetCurrentCallbackPeriod', 'set_current_callback_period'), 
-'elements': [('sensor', 'uint8', 1, 'in'),
-             ('period', 'uint32', 1, 'in')],
+'name': 'Set Current Callback Period',
+'elements': [('Sensor', 'uint8', 1, 'in'),
+             ('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -117,9 +117,9 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCurrentCallbackPeriod', 'get_current_callback_period'), 
-'elements': [('sensor', 'uint8', 1, 'in'),
-             ('period', 'uint32', 1, 'out')],
+'name': 'Get Current Callback Period',
+'elements': [('Sensor', 'uint8', 1, 'in'),
+             ('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -136,11 +136,11 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetCurrentCallbackThreshold', 'set_current_callback_threshold'), 
-'elements': [('sensor', 'uint8', 1, 'in'),
-             ('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int32', 1, 'in'),
-             ('max', 'int32', 1, 'in')],
+'name': 'Set Current Callback Threshold',
+'elements': [('Sensor', 'uint8', 1, 'in'),
+             ('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'int32', 1, 'in'),
+             ('Max', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -186,11 +186,11 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCurrentCallbackThreshold', 'get_current_callback_threshold'), 
-'elements': [('sensor', 'uint8', 1, 'in'),
-             ('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int32', 1, 'out'),
-             ('max', 'int32', 1, 'out')],
+'name': 'Get Current Callback Threshold',
+'elements': [('Sensor', 'uint8', 1, 'in'),
+             ('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'int32', 1, 'out'),
+             ('Max', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -207,8 +207,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDebouncePeriod', 'set_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'in')],
+'name': 'Set Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -244,8 +244,8 @@ Der Standardwert ist 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDebouncePeriod', 'get_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'out')],
+'name': 'Get Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -262,11 +262,11 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetSampleRate', 'set_sample_rate'), 
-'elements': [('rate', 'uint8', 1, 'in', ('SampleRate', 'sample_rate', [('240SPS', '240_sps', 0),
-                                                                       ('60SPS', '60_sps', 1),
-                                                                       ('15SPS', '15_sps', 2),
-                                                                       ('4SPS', '4_sps', 3)]))],
+'name': 'Set Sample Rate',
+'elements': [('Rate', 'uint8', 1, 'in', ('Sample Rate', [('240 SPS', 0),
+                                                         ('60 SPS', 1),
+                                                         ('15 SPS', 2),
+                                                         ('4 SPS', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -306,11 +306,11 @@ Der Standardwert ist 3 (4 Samples pro Sekunde mit 18 Bit Auflösung).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetSampleRate', 'get_sample_rate'), 
-'elements': [('rate', 'uint8', 1, 'out', ('SampleRate', 'sample_rate', [('240SPS', '240_sps', 0),
-                                                                        ('60SPS', '60_sps', 1),
-                                                                        ('15SPS', '15_sps', 2),
-                                                                        ('4SPS', '4_sps', 3)]))],
+'name': 'Get Sample Rate',
+'elements': [('Rate', 'uint8', 1, 'out', ('Sample Rate', [('240 SPS', 0),
+                                                          ('60 SPS', 1),
+                                                          ('15 SPS', 2),
+                                                          ('4 SPS', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -327,9 +327,9 @@ gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Current', 'current'), 
-'elements': [('sensor', 'uint8', 1, 'out'),
-             ('current', 'int32', 1, 'out')],
+'name': 'Current',
+'elements': [('Sensor', 'uint8', 1, 'out'),
+             ('Current', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -354,9 +354,9 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('CurrentReached', 'current_reached'), 
-'elements': [('sensor', 'uint8', 1, 'out'),
-             ('current', 'int32', 1, 'out')],
+'name': 'Current Reached',
+'elements': [('Sensor', 'uint8', 1, 'out'),
+             ('Current', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

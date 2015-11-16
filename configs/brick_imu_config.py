@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 1],
     'category': 'Brick',
     'device_identifier': 16,
-    'name': ('IMU', 'imu', 'IMU', 'IMU Brick'),
+    'name': ('IMU', 'IMU', 'IMU Brick'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Full fledged AHRS with 9 degrees of freedom',
@@ -24,10 +24,10 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAcceleration', 'get_acceleration'), 
-'elements': [('x', 'int16', 1, 'out'), 
-             ('y', 'int16', 1, 'out'),
-             ('z', 'int16', 1, 'out')],
+'name': 'Get Acceleration',
+'elements': [('X', 'int16', 1, 'out'),
+             ('Y', 'int16', 1, 'out'),
+             ('Z', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -53,10 +53,10 @@ vorzugeben.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetMagneticField', 'get_magnetic_field'), 
-'elements': [('x', 'int16', 1, 'out'), 
-             ('y', 'int16', 1, 'out'),
-             ('z', 'int16', 1, 'out')],
+'name': 'Get Magnetic Field',
+'elements': [('X', 'int16', 1, 'out'),
+             ('Y', 'int16', 1, 'out'),
+             ('Z', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -82,10 +82,10 @@ vorzugeben.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAngularVelocity', 'get_angular_velocity'), 
-'elements': [('x', 'int16', 1, 'out'), 
-             ('y', 'int16', 1, 'out'),
-             ('z', 'int16', 1, 'out')],
+'name': 'Get Angular Velocity',
+'elements': [('X', 'int16', 1, 'out'),
+             ('Y', 'int16', 1, 'out'),
+             ('Z', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -113,17 +113,17 @@ den Callback :func:`AngularVelocity` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAllData', 'get_all_data'), 
-'elements': [('acc_x', 'int16', 1, 'out'), 
-             ('acc_y', 'int16', 1, 'out'),
-             ('acc_z', 'int16', 1, 'out'),
-             ('mag_x', 'int16', 1, 'out'), 
-             ('mag_y', 'int16', 1, 'out'),
-             ('mag_z', 'int16', 1, 'out'),
-             ('ang_x', 'int16', 1, 'out'), 
-             ('ang_y', 'int16', 1, 'out'),
-             ('ang_z', 'int16', 1, 'out'),
-             ('temperature', 'int16', 1, 'out')],
+'name': 'Get All Data',
+'elements': [('Acc X', 'int16', 1, 'out'),
+             ('Acc Y', 'int16', 1, 'out'),
+             ('Acc Z', 'int16', 1, 'out'),
+             ('Mag X', 'int16', 1, 'out'),
+             ('Mag Y', 'int16', 1, 'out'),
+             ('Mag Z', 'int16', 1, 'out'),
+             ('Ang X', 'int16', 1, 'out'),
+             ('Ang Y', 'int16', 1, 'out'),
+             ('Ang Z', 'int16', 1, 'out'),
+             ('Temperature', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -153,10 +153,10 @@ vorzugeben.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetOrientation', 'get_orientation'), 
-'elements': [('roll', 'int16', 1, 'out'), 
-             ('pitch', 'int16', 1, 'out'),
-             ('yaw', 'int16', 1, 'out')],
+'name': 'Get Orientation',
+'elements': [('Roll', 'int16', 1, 'out'),
+             ('Pitch', 'int16', 1, 'out'),
+             ('Yaw', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -194,11 +194,11 @@ vorzugeben.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetQuaternion', 'get_quaternion'), 
-'elements': [('x', 'float', 1, 'out'),
-             ('y', 'float', 1, 'out'), 
-             ('z', 'float', 1, 'out'),
-             ('w', 'float', 1, 'out')],
+'name': 'Get Quaternion',
+'elements': [('X', 'float', 1, 'out'),
+             ('Y', 'float', 1, 'out'),
+             ('Z', 'float', 1, 'out'),
+             ('W', 'float', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -274,8 +274,8 @@ vorzugeben.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetIMUTemperature', 'get_imu_temperature'), 
-'elements': [('temperature', 'int16', 1, 'out')],
+'name': 'Get IMU Temperature',
+'elements': [('Temperature', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -292,7 +292,7 @@ Gibt die Temperatur (in °C/100) des IMU Brick zurück.
 
 com['packets'].append({
 'type': 'function',
-'name': ('LedsOn', 'leds_on'), 
+'name': 'Leds On',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -309,7 +309,7 @@ Aktiviert die Orientierungs- und Richtungs-LEDs des IMU Brick.
     
 com['packets'].append({
 'type': 'function',
-'name': ('LedsOff', 'leds_off'), 
+'name': 'Leds Off',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -326,8 +326,8 @@ Deaktiviert die Orientierungs- und Richtungs-LEDs des IMU Brick.
 
 com['packets'].append({
 'type': 'function',
-'name': ('AreLedsOn', 'are_leds_on'), 
-'elements': [('leds', 'bool', 1, 'out')],
+'name': 'Are Leds On',
+'elements': [('Leds', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -344,8 +344,8 @@ Gibt zurück ob die Orientierungs- und Richtungs-LEDs des IMU Brick aktiv sind.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetAccelerationRange', 'set_acceleration_range'), 
-'elements': [('range', 'uint8', 1, 'in')],
+'name': 'Set Acceleration Range',
+'elements': [('Range', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -361,8 +361,8 @@ Bisher nicht implementiert.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAccelerationRange', 'get_acceleration_range'), 
-'elements': [('range', 'uint8', 1, 'out')],
+'name': 'Get Acceleration Range',
+'elements': [('Range', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -378,8 +378,8 @@ Bisher nicht implementiert.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetMagnetometerRange', 'set_magnetometer_range'), 
-'elements': [('range', 'uint8', 1, 'in')],
+'name': 'Set Magnetometer Range',
+'elements': [('Range', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -395,8 +395,8 @@ Bisher nicht implementiert.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetMagnetometerRange', 'get_magnetometer_range'), 
-'elements': [('range', 'uint8', 1, 'out')],
+'name': 'Get Magnetometer Range',
+'elements': [('Range', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -412,8 +412,8 @@ Bisher nicht implementiert.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetConvergenceSpeed', 'set_convergence_speed'), 
-'elements': [('speed', 'uint16', 1, 'in')],
+'name': 'Set Convergence Speed',
+'elements': [('Speed', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -482,8 +482,8 @@ auszuprobieren.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetConvergenceSpeed', 'get_convergence_speed'), 
-'elements': [('speed', 'uint16', 1, 'out')],
+'name': 'Get Convergence Speed',
+'elements': [('Speed', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -499,14 +499,14 @@ Gibt die Konvergenzgeschwindigkeit zurück, wie von :func:`SetConvergenceSpeed` 
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetCalibration', 'set_calibration'), 
-'elements': [('typ', 'uint8', 1, 'in', ('CalibrationType', 'calibration_type', [('AccelerometerGain', 'accelerometer_gain', 0),
-                                                                                ('AccelerometerBias', 'accelerometer_bias', 1),
-                                                                                ('MagnetometerGain', 'magnetometer_gain', 2),
-                                                                                ('MagnetometerBias', 'magnetometer_bias', 3),
-                                                                                ('GyroscopeGain', 'gyroscope_gain', 4),
-                                                                                ('GyroscopeBias', 'gyroscope_bias', 5)])),
-             ('data', 'int16', 10, 'in')],
+'name': 'Set Calibration',
+'elements': [('Typ', 'uint8', 1, 'in', ('Calibration Type', [('Accelerometer Gain', 0),
+                                                             ('Accelerometer Bias', 1),
+                                                             ('Magnetometer Gain', 2),
+                                                             ('Magnetometer Bias', 3),
+                                                             ('Gyroscope Gain', 4),
+                                                             ('Gyroscope Bias', 5)])),
+             ('Data', 'int16', 10, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -586,14 +586,14 @@ Betriebstemperatur des IMU Brick sollte einer der Kalibrierpunkte sein.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCalibration', 'get_calibration'), 
-'elements': [('typ', 'uint8', 1, 'in', ('CalibrationType', 'calibration_type', [('AccelerometerGain', 'accelerometer_gain', 0),
-                                                                                ('AccelerometerBias', 'accelerometer_bias', 1),
-                                                                                ('MagnetometerGain', 'magnetometer_gain', 2),
-                                                                                ('MagnetometerBias', 'magnetometer_bias', 3),
-                                                                                ('GyroscopeGain', 'gyroscope_gain', 4),
-                                                                                ('GyroscopeBias', 'gyroscope_bias', 5)])),
-             ('data', 'int16', 10, 'out')],
+'name': 'Get Calibration',
+'elements': [('Typ', 'uint8', 1, 'in', ('Calibration Type', [('Accelerometer Gain', 0),
+                                                             ('Accelerometer Bias', 1),
+                                                             ('Magnetometer Gain', 2),
+                                                             ('Magnetometer Bias', 3),
+                                                             ('Gyroscope Gain', 4),
+                                                             ('Gyroscope Bias', 5)])),
+             ('Data', 'int16', 10, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -609,8 +609,8 @@ Gibt die Kalibrierung für den ausgewählten Typ zurück, wie von :func:`SetCali
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetAccelerationPeriod', 'set_acceleration_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Acceleration Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -632,8 +632,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAccelerationPeriod', 'get_acceleration_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Acceleration Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -649,8 +649,8 @@ Gibt die Periode zurück, wie von :func:`SetAccelerationPeriod` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetMagneticFieldPeriod', 'set_magnetic_field_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Magnetic Field Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -668,8 +668,8 @@ Ein Wert von 0 deaktiviert den Callback.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetMagneticFieldPeriod', 'get_magnetic_field_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Magnetic Field Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -685,8 +685,8 @@ Gibt die Periode zurück, wie von :func:`SetMagneticFieldPeriod` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetAngularVelocityPeriod', 'set_angular_velocity_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Angular Velocity Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -704,8 +704,8 @@ Ein Wert von 0 deaktiviert den Callback.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAngularVelocityPeriod', 'get_angular_velocity_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Angular Velocity Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -721,8 +721,8 @@ Gibt die Periode zurück, wie von :func:`SetAngularVelocityPeriod` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetAllDataPeriod', 'set_all_data_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set All Data Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -740,8 +740,8 @@ Ein Wert von 0 deaktiviert den Callback.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAllDataPeriod', 'get_all_data_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get All Data Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -757,8 +757,8 @@ Gibt die Periode zurück, wie von :func:`SetAllDataPeriod` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetOrientationPeriod', 'set_orientation_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Orientation Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -776,8 +776,8 @@ Ein Wert von 0 deaktiviert den Callback.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetOrientationPeriod', 'get_orientation_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Orientation Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -793,8 +793,8 @@ Gibt die Periode zurück, wie von :func:`SetOrientationPeriod` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetQuaternionPeriod', 'set_quaternion_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Quaternion Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -812,8 +812,8 @@ Ein Wert von 0 deaktiviert den Callback.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetQuaternionPeriod', 'get_quaternion_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Quaternion Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -829,10 +829,10 @@ Gibt die Periode zurück, wie von :func:`SetQuaternionPeriod` gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Acceleration', 'acceleration'), 
-'elements': [('x', 'int16', 1, 'out'),
-             ('y', 'int16', 1, 'out'),
-             ('z', 'int16', 1, 'out')],
+'name': 'Acceleration',
+'elements': [('X', 'int16', 1, 'out'),
+             ('Y', 'int16', 1, 'out'),
+             ('Z', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -851,10 +851,10 @@ ausgelöst. Die :word:`parameters` sind die Beschleunigungen der X, Y und Z-Achs
 
 com['packets'].append({
 'type': 'callback',
-'name': ('MagneticField', 'magnetic_field'), 
-'elements': [('x', 'int16', 1, 'out'),
-             ('y', 'int16', 1, 'out'),
-             ('z', 'int16', 1, 'out')],
+'name': 'Magnetic Field',
+'elements': [('X', 'int16', 1, 'out'),
+             ('Y', 'int16', 1, 'out'),
+             ('Z', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -873,10 +873,10 @@ ausgelöst. Die :word:`parameters` sind die Magnetfeldkomponenten der X, Y und Z
 
 com['packets'].append({
 'type': 'callback',
-'name': ('AngularVelocity', 'angular_velocity'), 
-'elements': [('x', 'int16', 1, 'out'),
-             ('y', 'int16', 1, 'out'),
-             ('z', 'int16', 1, 'out')],
+'name': 'Angular Velocity',
+'elements': [('X', 'int16', 1, 'out'),
+             ('Y', 'int16', 1, 'out'),
+             ('Z', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -895,17 +895,17 @@ ausgelöst. Die :word:`parameters` sind die Winkelgeschwindigkeiten der X, Y und
 
 com['packets'].append({
 'type': 'callback',
-'name': ('AllData', 'all_data'), 
-'elements': [('acc_x', 'int16', 1, 'out'), 
-             ('acc_y', 'int16', 1, 'out'),
-             ('acc_z', 'int16', 1, 'out'),
-             ('mag_x', 'int16', 1, 'out'), 
-             ('mag_y', 'int16', 1, 'out'),
-             ('mag_z', 'int16', 1, 'out'),
-             ('ang_x', 'int16', 1, 'out'), 
-             ('ang_y', 'int16', 1, 'out'),
-             ('ang_z', 'int16', 1, 'out'),
-             ('temperature', 'int16', 1, 'out')],
+'name': 'All Data',
+'elements': [('Acc X', 'int16', 1, 'out'),
+             ('Acc Y', 'int16', 1, 'out'),
+             ('Acc Z', 'int16', 1, 'out'),
+             ('Mag X', 'int16', 1, 'out'),
+             ('Mag Y', 'int16', 1, 'out'),
+             ('Mag Z', 'int16', 1, 'out'),
+             ('Ang X', 'int16', 1, 'out'),
+             ('Ang Y', 'int16', 1, 'out'),
+             ('Ang Z', 'int16', 1, 'out'),
+             ('Temperature', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -927,10 +927,10 @@ des IMU Brick.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Orientation', 'orientation'), 
-'elements': [('roll', 'int16', 1, 'out'),
-             ('pitch', 'int16', 1, 'out'),
-             ('yaw', 'int16', 1, 'out')],
+'name': 'Orientation',
+'elements': [('Roll', 'int16', 1, 'out'),
+             ('Pitch', 'int16', 1, 'out'),
+             ('Yaw', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -951,11 +951,11 @@ IMU Brick in Eulerwinkeln. Siehe :func:`GetOrientation` für Details.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Quaternion', 'quaternion'), 
-'elements': [('x', 'float', 1, 'out'),
-             ('y', 'float', 1, 'out'),
-             ('z', 'float', 1, 'out'),
-             ('w', 'float', 1, 'out')],
+'name': 'Quaternion',
+'elements': [('X', 'float', 1, 'out'),
+             ('Y', 'float', 1, 'out'),
+             ('Z', 'float', 1, 'out'),
+             ('W', 'float', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -976,7 +976,7 @@ IMU Brick in Quaternionen. Siehe :func:`GetQuaternion` für Details.
 
 com['packets'].append({
 'type': 'function',
-'name': ('OrientationCalculationOn', 'orientation_calculation_on'), 
+'name': 'Orientation Calculation On',
 'elements': [],
 'since_firmware': [2, 0, 2],
 'doc': ['af', {
@@ -997,7 +997,7 @@ Standardmäßig sind die Berechnungen an.
     
 com['packets'].append({
 'type': 'function',
-'name': ('OrientationCalculationOff', 'orientation_calculation_off'), 
+'name': 'Orientation Calculation Off',
 'elements': [],
 'since_firmware': [2, 0, 2],
 'doc': ['af', {
@@ -1035,8 +1035,8 @@ Standardmäßig sind die Berechnungen an.
 
 com['packets'].append({
 'type': 'function',
-'name': ('IsOrientationCalculationOn', 'is_orientation_calculation_on'), 
-'elements': [('orientation_calculation_on', 'bool', 1, 'out')],
+'name': 'Is Orientation Calculation On',
+'elements': [('Orientation Calculation On', 'bool', 1, 'out')],
 'since_firmware': [2, 0, 2],
 'doc': ['af', {
 'en':

@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 220,
-    'name': ('AnalogOut', 'analog_out', 'Analog Out', 'Analog Out Bricklet'),
+    'name': ('Analog Out', 'Analog Out', 'Analog Out Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Generates configurable DC voltage between 0V and 5V',
@@ -24,8 +24,8 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetVoltage', 'set_voltage'), 
-'elements': [('voltage', 'uint16', 1, 'in')],
+'name': 'Set Voltage',
+'elements': [('Voltage', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -47,8 +47,8 @@ Der Standardwert ist 0 (im Modus 1).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetVoltage', 'get_voltage'), 
-'elements': [('voltage', 'uint16', 1, 'out')],
+'name': 'Get Voltage',
+'elements': [('Voltage', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -65,11 +65,11 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetMode', 'set_mode'), 
-'elements': [('mode', 'uint8', 1, 'in', ('Mode', 'mode', [('AnalogValue', 'analog_value', 0),
-                                                          ('1KToGround', '1k_to_ground', 1),
-                                                          ('100KToGround', '100k_to_ground', 2),
-                                                          ('500KToGround', '500k_to_ground', 3)]))],
+'name': 'Set Mode',
+'elements': [('Mode', 'uint8', 1, 'in', ('Mode', [('Analog Value', 0),
+                                                  ('1k To Ground', 1),
+                                                  ('100k To Ground', 2),
+                                                  ('500k To Ground', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -105,11 +105,11 @@ Der Standardmodus ist 1.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetMode', 'get_mode'), 
-'elements': [('mode', 'uint8', 1, 'out', ('Mode', 'mode', [('AnalogValue', 'analog_value', 0),
-                                                           ('1KToGround', '1k_to_ground', 1),
-                                                           ('100KToGround', '100k_to_ground', 2),
-                                                           ('500KToGround', '500k_to_ground', 3)]))],
+'name': 'Get Mode',
+'elements': [('Mode', 'uint8', 1, 'out', ('Mode', [('Analog Value', 0),
+                                                   ('1k To Ground', 1),
+                                                   ('100k To Ground', 2),
+                                                   ('500k To Ground', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

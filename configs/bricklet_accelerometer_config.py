@@ -13,7 +13,7 @@ com = {
     'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 250,
-    'name': ('Accelerometer', 'accelerometer', 'Accelerometer', 'Accelerometer Bricklet'),
+    'name': ('Accelerometer', 'Accelerometer', 'Accelerometer Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures acceleration in three axis',
@@ -26,10 +26,10 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAcceleration', 'get_acceleration'), 
-'elements': [('x', 'int16', 1, 'out'),
-             ('y', 'int16', 1, 'out'),
-             ('z', 'int16', 1, 'out')],
+'name': 'Get Acceleration',
+'elements': [('X', 'int16', 1, 'out'),
+             ('Y', 'int16', 1, 'out'),
+             ('Z', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -55,8 +55,8 @@ den Callback :func:`Acceleration` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetAccelerationCallbackPeriod', 'set_acceleration_callback_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Acceleration Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -84,8 +84,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAccelerationCallbackPeriod', 'get_acceleration_callback_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Acceleration Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -102,14 +102,14 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetAccelerationCallbackThreshold', 'set_acceleration_callback_threshold'), 
-'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min_x', 'int16', 1, 'in'),
-             ('max_x', 'int16', 1, 'in'),
-             ('min_y', 'int16', 1, 'in'),
-             ('max_y', 'int16', 1, 'in'),
-             ('min_z', 'int16', 1, 'in'),
-             ('max_z', 'int16', 1, 'in')],
+'name': 'Set Acceleration Callback Threshold',
+'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min X', 'int16', 1, 'in'),
+             ('Max X', 'int16', 1, 'in'),
+             ('Min Y', 'int16', 1, 'in'),
+             ('Max Y', 'int16', 1, 'in'),
+             ('Min Z', 'int16', 1, 'in'),
+             ('Max Z', 'int16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -153,14 +153,14 @@ Der Standardwert ist ('x', 0, 0, 0, 0, 0, 0, 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAccelerationCallbackThreshold', 'get_acceleration_callback_threshold'), 
-'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min_x', 'int16', 1, 'out'),
-             ('max_x', 'int16', 1, 'out'),
-             ('min_y', 'int16', 1, 'out'),
-             ('max_y', 'int16', 1, 'out'),
-             ('min_z', 'int16', 1, 'out'),
-             ('max_z', 'int16', 1, 'out')],
+'name': 'Get Acceleration Callback Threshold',
+'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min X', 'int16', 1, 'out'),
+             ('Max X', 'int16', 1, 'out'),
+             ('Min Y', 'int16', 1, 'out'),
+             ('Max Y', 'int16', 1, 'out'),
+             ('Min Z', 'int16', 1, 'out'),
+             ('Max Z', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -177,8 +177,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDebouncePeriod', 'set_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'in')],
+'name': 'Set Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -214,8 +214,8 @@ Der Standardwert ist 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDebouncePeriod', 'get_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'out')],
+'name': 'Get Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -232,8 +232,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetTemperature', 'get_temperature'), 
-'elements': [('temperature', 'int16', 1, 'out')],
+'name': 'Get Temperature',
+'elements': [('Temperature', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -249,26 +249,26 @@ Gibt die Temperatur des Beschleunigungssensors in °C zurück.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetConfiguration', 'set_configuration'), 
-'elements': [('data_rate', 'uint8', 1, 'in', ('DataRate', 'data_rate', [('Off', 'off', 0),
-                                                                        ('3Hz', '3hz', 1),
-                                                                        ('6Hz', '6hz', 2),
-                                                                        ('12Hz', '12hz', 3),
-                                                                        ('25Hz', '25hz', 4),
-                                                                        ('50Hz', '50hz', 5),
-                                                                        ('100Hz', '100hz', 6),
-                                                                        ('400Hz', '400hz', 7),
-                                                                        ('800Hz', '800hz', 8),
-                                                                        ('1600Hz', '1600hz', 9)])),
-             ('full_scale', 'uint8', 1, 'in', ('FullScale', 'full_scale', [('2g', '2g', 0),
-                                                                           ('4g', '4g', 1),
-                                                                           ('6g', '6g', 2),
-                                                                           ('8g', '8g', 3),
-                                                                           ('16g', '16g', 4)])),
-             ('filter_bandwidth', 'uint8', 1, 'in', ('FilterBandwidth', 'filter_bandwidth', [('800Hz', '800hz', 0),
-                                                                                             ('400Hz', '400hz', 1),
-                                                                                             ('200Hz', '200hz', 2),
-                                                                                             ('50Hz', '50hz', 3)]))],
+'name': 'Set Configuration',
+'elements': [('Data Rate', 'uint8', 1, 'in', ('Data Rate', [('Off', 0),
+                                                            ('3Hz', 1),
+                                                            ('6Hz', 2),
+                                                            ('12Hz', 3),
+                                                            ('25Hz', 4),
+                                                            ('50Hz', 5),
+                                                            ('100Hz', 6),
+                                                            ('400Hz', 7),
+                                                            ('800Hz', 8),
+                                                            ('1600Hz', 9)])),
+             ('Full Scale', 'uint8', 1, 'in', ('Full Scale', [('2g', 0),
+                                                              ('4g', 1),
+                                                              ('6g', 2),
+                                                              ('8g', 3),
+                                                              ('16g', 4)])),
+             ('Filter Bandwidth', 'uint8', 1, 'in', ('Filter Bandwidth', [('800Hz', 0),
+                                                                          ('400Hz', 1),
+                                                                          ('200Hz', 2),
+                                                                          ('50Hz', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -306,26 +306,26 @@ Filterbandbreite.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetConfiguration', 'get_configuration'), 
-'elements': [('data_rate', 'uint8', 1, 'out', ('DataRate', 'data_rate', [('Off', 'off', 0),
-                                                                         ('3Hz', '3hz', 1),
-                                                                         ('6Hz', '6hz', 2),
-                                                                         ('12Hz', '12hz', 3),
-                                                                         ('25Hz', '25hz', 4),
-                                                                         ('50Hz', '50hz', 5),
-                                                                         ('100Hz', '100hz', 6),
-                                                                         ('400Hz', '400hz', 7),
-                                                                         ('800Hz', '800hz', 8),
-                                                                         ('1600Hz', '1600hz', 9)])),
-             ('full_scale', 'uint8', 1, 'out', ('FullScale', 'full_scale', [('2g', '2g', 0),
-                                                                            ('4g', '4g', 1),
-                                                                            ('6g', '6g', 2),
-                                                                            ('8g', '8g', 3),
-                                                                            ('16g', '16g', 4)])),
-             ('filter_bandwidth', 'uint8', 1, 'out', ('FilterBandwidth', 'filter_bandwidth', [('800Hz', '800hz', 0),
-                                                                                              ('400Hz', '400hz', 1),
-                                                                                              ('200Hz', '200hz', 2),
-                                                                                              ('50Hz', '50hz', 3)]))],
+'name': 'Get Configuration',
+'elements': [('Data Rate', 'uint8', 1, 'out', ('Data Rate', [('Off', 0),
+                                                             ('3Hz', 1),
+                                                             ('6Hz', 2),
+                                                             ('12Hz', 3),
+                                                             ('25Hz', 4),
+                                                             ('50Hz', 5),
+                                                             ('100Hz', 6),
+                                                             ('400Hz', 7),
+                                                             ('800Hz', 8),
+                                                             ('1600Hz', 9)])),
+             ('Full Scale', 'uint8', 1, 'out', ('Full Scale', [('2g', 0),
+                                                               ('4g', 1),
+                                                               ('6g', 2),
+                                                               ('8g', 3),
+                                                               ('16g', 4)])),
+             ('Filter Bandwidth', 'uint8', 1, 'out', ('Filter Bandwidth', [('800Hz', 0),
+                                                                           ('400Hz', 1),
+                                                                           ('200Hz', 2),
+                                                                           ('50Hz', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -341,7 +341,7 @@ Gibt die Konfiguration zurück, wie von :func:`SetConfiguration` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('LEDOn', 'led_on'), 
+'name': 'LED On',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -358,7 +358,7 @@ Aktiviert die LED auf dem Bricklet.
 
 com['packets'].append({
 'type': 'function',
-'name': ('LEDOff', 'led_off'), 
+'name': 'LED Off',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -375,8 +375,8 @@ Deaktiviert die LED auf dem Bricklet.
 
 com['packets'].append({
 'type': 'function',
-'name': ('IsLEDOn', 'is_led_on'), 
-'elements': [('on', 'bool', 1, 'out')],
+'name': 'Is LED On',
+'elements': [('On', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -392,10 +392,10 @@ Gibt *true* zurück wenn die LED aktiviert ist, *false* sonst.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Acceleration', 'acceleration'), 
-'elements': [('x', 'int16', 1, 'out'),
-             ('y', 'int16', 1, 'out'),
-             ('z', 'int16', 1, 'out')],
+'name': 'Acceleration',
+'elements': [('X', 'int16', 1, 'out'),
+             ('Y', 'int16', 1, 'out'),
+             ('Z', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -421,10 +421,10 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('AccelerationReached', 'acceleration_reached'), 
-'elements': [('x', 'int16', 1, 'out'),
-             ('y', 'int16', 1, 'out'),
-             ('z', 'int16', 1, 'out')],
+'name': 'Acceleration Reached',
+'elements': [('X', 'int16', 1, 'out'),
+             ('Y', 'int16', 1, 'out'),
+             ('Z', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 28,
-    'name': ('IO16', 'io16', 'IO-16', 'IO-16 Bricklet'),
+    'name': ('IO16', 'IO-16', 'IO-16 Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': '16-channel digital input/output',
@@ -24,9 +24,9 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetPort', 'set_port'), 
-'elements': [('port', 'char', 1, 'in'),
-             ('value_mask', 'uint8', 1, 'in')],
+'name': 'Set Port',
+'elements': [('Port', 'char', 1, 'in'),
+             ('Value Mask', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -59,9 +59,9 @@ Pins 4-7 auf logisch 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetPort', 'get_port'), 
-'elements': [('port', 'char', 1, 'in'),
-             ('value_mask', 'uint8', 1, 'out')],
+'name': 'Get Port',
+'elements': [('Port', 'char', 1, 'in'),
+             ('Value Mask', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -81,12 +81,12 @@ Ein- oder Ausgang konfiguriert sind.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetPortConfiguration', 'set_port_configuration'), 
-'elements': [('port', 'char', 1, 'in'),
-             ('selection_mask', 'uint8', 1, 'in'),
-             ('direction', 'char', 1, 'in', ('Direction', 'direction', [('In', 'in', 'i'),
-                                                                        ('Out', 'out', 'o')])),
-             ('value', 'bool', 1, 'in')],
+'name': 'Set Port Configuration',
+'elements': [('Port', 'char', 1, 'in'),
+             ('Selection Mask', 'uint8', 1, 'in'),
+             ('Direction', 'char', 1, 'in', ('Direction', [('In', 'i'),
+                                                           ('Out', 'o')])),
+             ('Value', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -134,10 +134,10 @@ Die Standardkonfiguration ist Eingang mit Pull-Up.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetPortConfiguration', 'get_port_configuration'), 
-'elements': [('port', 'char', 1, 'in'),
-             ('direction_mask', 'uint8', 1, 'out'),
-             ('value_mask', 'uint8', 1, 'out')],
+'name': 'Get Port Configuration',
+'elements': [('Port', 'char', 1, 'in'),
+             ('Direction Mask', 'uint8', 1, 'out'),
+             ('Value Mask', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -172,8 +172,8 @@ Richtung und Zustand bedeutet:
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDebouncePeriod', 'set_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'in')],
+'name': 'Set Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -201,8 +201,8 @@ Der Standardwert ist 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDebouncePeriod', 'get_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'out')],
+'name': 'Get Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -219,9 +219,9 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetPortInterrupt', 'set_port_interrupt'), 
-'elements': [('port', 'char', 1, 'in'),
-             ('interrupt_mask', 'uint8', 1, 'in')],
+'name': 'Set Port Interrupt',
+'elements': [('Port', 'char', 1, 'in'),
+             ('Interrupt Mask', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -251,9 +251,9 @@ Der Interrupt wird mit der Callback :func:`Interrupt` zugestellt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetPortInterrupt', 'get_port_interrupt'), 
-'elements': [('port', 'char', 1, 'in'),
-             ('interrupt_mask', 'uint8', 1, 'out')],
+'name': 'Get Port Interrupt',
+'elements': [('Port', 'char', 1, 'in'),
+             ('Interrupt Mask', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -271,10 +271,10 @@ Gibt die Interrupt Bitmaske für den angegebenen Port zurück, wie von
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Interrupt', 'interrupt'), 
-'elements': [('port', 'char', 1, 'out'),
-             ('interrupt_mask', 'uint8', 1, 'out'),
-             ('value_mask', 'uint8', 1, 'out')],
+'name': 'Interrupt',
+'elements': [('Port', 'char', 1, 'out'),
+             ('Interrupt Mask', 'uint8', 1, 'out'),
+             ('Value Mask', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -316,11 +316,11 @@ Beispiele:
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetPortMonoflop', 'set_port_monoflop'),
-'elements': [('port', 'char', 1, 'in'),
-             ('selection_mask', 'uint8', 1, 'in'),
-             ('value_mask', 'uint8', 1, 'in'),
-             ('time', 'uint32', 1, 'in')],
+'name': 'Set Port Monoflop',
+'elements': [('Port', 'char', 1, 'in'),
+             ('Selection Mask', 'uint8', 1, 'in'),
+             ('Value Mask', 'uint8', 1, 'in'),
+             ('Time', 'uint32', 1, 'in')],
 'since_firmware': [1, 1, 2],
 'doc': ['af', {
 'en':
@@ -375,12 +375,12 @@ Sekunden in den Zustand logisch 0 wechseln.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetPortMonoflop', 'get_port_monoflop'),
-'elements': [('port', 'char', 1, 'in'),
-             ('pin', 'uint8', 1, 'in'),
-             ('value', 'uint8', 1, 'out'),
-             ('time', 'uint32', 1, 'out'),
-             ('time_remaining', 'uint32', 1, 'out')],
+'name': 'Get Port Monoflop',
+'elements': [('Port', 'char', 1, 'in'),
+             ('Pin', 'uint8', 1, 'in'),
+             ('Value', 'uint8', 1, 'out'),
+             ('Time', 'uint32', 1, 'out'),
+             ('Time Remaining', 'uint32', 1, 'out')],
 'since_firmware': [1, 1, 2],
 'doc': ['af', {
 'en':
@@ -404,10 +404,10 @@ Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('MonoflopDone', 'monoflop_done'),
-'elements': [('port', 'char', 1, 'out'),
-             ('selection_mask', 'uint8', 1, 'out'),
-             ('value_mask', 'uint8', 1, 'out')],
+'name': 'Monoflop Done',
+'elements': [('Port', 'char', 1, 'out'),
+             ('Selection Mask', 'uint8', 1, 'out'),
+             ('Value Mask', 'uint8', 1, 'out')],
 'since_firmware': [1, 1, 2],
 'doc': ['c', {
 'en':
@@ -427,10 +427,10 @@ den aktuellen Zustand als Bitmaske (der Zustand nach dem Monoflop).
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetSelectedValues', 'set_selected_values'),
-'elements': [('port', 'char', 1, 'in'),
-             ('selection_mask', 'uint8', 1, 'in'),
-             ('value_mask', 'uint8', 1, 'in')],
+'name': 'Set Selected Values',
+'elements': [('Port', 'char', 1, 'in'),
+             ('Selection Mask', 'uint8', 1, 'in'),
+             ('Value Mask', 'uint8', 1, 'in')],
 'since_firmware': [2, 0, 0],
 'doc': ['af', {
 'en':
@@ -466,10 +466,10 @@ setzen den Pin 7 auf logisch 1 und den Pin 6 auf logisch 0 an Port A. Die Pins
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetEdgeCount', 'get_edge_count'),
-'elements': [('pin', 'uint8', 1, 'in'),
-             ('reset_counter', 'bool', 1, 'in'),
-             ('count', 'uint32', 1, 'out')],
+'name': 'Get Edge Count',
+'elements': [('Pin', 'uint8', 1, 'in'),
+             ('Reset Counter', 'bool', 1, 'in'),
+             ('Count', 'uint32', 1, 'out')],
 'since_firmware': [2, 0, 3],
 'doc': ['bf', {
 'en':
@@ -494,12 +494,12 @@ nach dem auslesen auf 0 zurückgesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetEdgeCountConfig', 'set_edge_count_config'),
-'elements': [('pin', 'uint8', 1, 'in'),
-             ('edge_type', 'uint8', 1, 'in', ('EdgeType', 'edge_type', [('Rising', 'rising', 0),
-                                                                        ('Falling', 'falling', 1),
-                                                                        ('Both', 'both', 2)])),
-             ('debounce', 'uint8', 1, 'in')],
+'name': 'Set Edge Count Config',
+'elements': [('Pin', 'uint8', 1, 'in'),
+             ('Edge Type', 'uint8', 1, 'in', ('Edge Type', [('Rising', 0),
+                                                            ('Falling', 1),
+                                                            ('Both', 2)])),
+             ('Debounce', 'uint8', 1, 'in')],
 'since_firmware': [2, 0, 3],
 'doc': ['af', {
 'en':
@@ -550,12 +550,12 @@ Standardwerte: 0 (edge type) und 100ms (debounce).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetEdgeCountConfig', 'get_edge_count_config'),
-'elements': [('pin', 'uint8', 1, 'in'),
-             ('edge_type', 'uint8', 1, 'out', ('EdgeType', 'edge_type', [('Rising', 'rising', 0),
-                                                                         ('Falling', 'falling', 1),
-                                                                         ('Both', 'both', 2)])),
-             ('debounce', 'uint8', 1, 'out')],
+'name': 'Get Edge Count Config',
+'elements': [('Pin', 'uint8', 1, 'in'),
+             ('Edge Type', 'uint8', 1, 'out', ('Edge Type', [('Rising', 0),
+                                                             ('Falling', 1),
+                                                             ('Both', 2)])),
+             ('Debounce', 'uint8', 1, 'out')],
 'since_firmware': [2, 0, 3],
 'doc': ['af', {
 'en':

@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 256,
-    'name': ('AnalogOutV2', 'analog_out_v2', 'Analog Out 2.0', 'Analog Out Bricklet 2.0'),
+    'name': ('Analog Out V2', 'Analog Out 2.0', 'Analog Out Bricklet 2.0'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Generates configurable DC voltage between 0V and 12V',
@@ -24,8 +24,8 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetOutputVoltage', 'set_output_voltage'), 
-'elements': [('voltage', 'uint16', 1, 'in')],
+'name': 'Set Output Voltage',
+'elements': [('Voltage', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -41,8 +41,8 @@ Setzt die Spannung in mV. Der mögliche Bereich ist 0V bis 12V (0-12000).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetOutputVoltage', 'get_output_voltage'), 
-'elements': [('voltage', 'uint16', 1, 'out')],
+'name': 'Get Output Voltage',
+'elements': [('Voltage', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -59,8 +59,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetInputVoltage', 'get_input_voltage'), 
-'elements': [('voltage', 'uint16', 1, 'out')],
+'name': 'Get Input Voltage',
+'elements': [('Voltage', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

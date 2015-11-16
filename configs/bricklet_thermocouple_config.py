@@ -13,7 +13,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 266,
-    'name': ('Thermocouple', 'thermocouple', 'Thermocouple', 'Thermocouple Bricklet'),
+    'name': ('Thermocouple', 'Thermocouple', 'Thermocouple Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures temperature with thermocouples',
@@ -26,8 +26,8 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetTemperature', 'get_temperature'), 
-'elements': [('temperature', 'int32', 1, 'out')],
+'name': 'Get Temperature',
+'elements': [('Temperature', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -41,8 +41,8 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetTemperatureCallbackPeriod', 'set_temperature_callback_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Temperature Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -56,8 +56,8 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetTemperatureCallbackPeriod', 'get_temperature_callback_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Temperature Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -74,10 +74,10 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetTemperatureCallbackThreshold', 'set_temperature_callback_threshold'), 
-'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int32', 1, 'in'),
-             ('max', 'int32', 1, 'in')],
+'name': 'Set Temperature Callback Threshold',
+'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'int32', 1, 'in'),
+             ('Max', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -121,10 +121,10 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetTemperatureCallbackThreshold', 'get_temperature_callback_threshold'), 
-'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int32', 1, 'out'),
-             ('max', 'int32', 1, 'out')],
+'name': 'Get Temperature Callback Threshold',
+'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'int32', 1, 'out'),
+             ('Max', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -141,8 +141,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDebouncePeriod', 'set_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'in')],
+'name': 'Set Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -178,8 +178,8 @@ Der Standardwert ist 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDebouncePeriod', 'get_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'out')],
+'name': 'Get Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -196,8 +196,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Temperature', 'temperature'), 
-'elements': [('temperature', 'int32', 1, 'out')],
+'name': 'Temperature',
+'elements': [('Temperature', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -222,8 +222,8 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('TemperatureReached', 'temperature_reached'), 
-'elements': [('temperature', 'int32', 1, 'out')],
+'name': 'Temperature Reached',
+'elements': [('Temperature', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -249,24 +249,24 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetConfiguration', 'set_configuration'), 
-'elements': [('averaging', 'uint8', 1, 'in', ('Averaging', 'averaging', [('1', '1', 1),
-                                                                         ('2', '2', 2),
-                                                                         ('4', '4', 4),
-                                                                         ('8', '8', 8),
-                                                                         ('16', '16', 16)])),
-             ('thermocouple_type', 'uint8', 1, 'in', ('Type', 'type', [('B', 'b', 0),
-                                                                       ('E', 'e', 1),
-                                                                       ('J', 'j', 2),
-                                                                       ('K', 'k', 3),
-                                                                       ('N', 'n', 4),
-                                                                       ('R', 'r', 5),
-                                                                       ('S', 's', 6),
-                                                                       ('T', 't', 7),
-                                                                       ('G8', 'g8', 8),
-                                                                       ('G32', 'g32', 9)])),
-             ('filter', 'uint8', 1, 'in', ('FilterOption', 'filter_option', [('50Hz', '50hz', 0),
-                                                                             ('60Hz', '60hz', 1)]))],
+'name': 'Set Configuration',
+'elements': [('Averaging', 'uint8', 1, 'in', ('Averaging', [('1', 1),
+                                                            ('2', 2),
+                                                            ('4', 4),
+                                                            ('8', 8),
+                                                            ('16', 16)])),
+             ('Thermocouple Type', 'uint8', 1, 'in', ('Type', [('B', 0),
+                                                               ('E', 1),
+                                                               ('J', 2),
+                                                               ('K', 3),
+                                                               ('N', 4),
+                                                               ('R', 5),
+                                                               ('S', 6),
+                                                               ('T', 7),
+                                                               ('G8', 8),
+                                                               ('G32', 9)])),
+             ('Filter', 'uint8', 1, 'in', ('Filter Option', [('50Hz', 0),
+                                                             ('60Hz', 1)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -289,24 +289,24 @@ Default: 16, K, 50Hz
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetConfiguration', 'get_configuration'),
-'elements': [('averaging', 'uint8', 1, 'out', ('Averaging', 'averaging', [('1', '1', 1),
-                                                                          ('2', '2', 2),
-                                                                          ('4', '4', 4),
-                                                                          ('8', '8', 8),
-                                                                          ('16', '16', 16)])),
-             ('thermocouple_type', 'uint8', 1, 'out', ('Type', 'type', [('B', 'b', 0),
-                                                                        ('E', 'e', 1),
-                                                                        ('J', 'j', 2),
-                                                                        ('K', 'k', 3),
-                                                                        ('N', 'n', 4),
-                                                                        ('R', 'r', 5),
-                                                                        ('S', 's', 6),
-                                                                        ('T', 't', 7),
-                                                                        ('G8', 'g8', 8),
-                                                                        ('G32', 'g32', 9)])),
-             ('filter', 'uint8', 1, 'out', ('FilterOption', 'filter_option', [('50Hz', '50hz', 0),
-                                                                              ('60Hz', '60hz', 1)]))],
+'name': 'Get Configuration',
+'elements': [('Averaging', 'uint8', 1, 'out', ('Averaging', [('1', 1),
+                                                             ('2', 2),
+                                                             ('4', 4),
+                                                             ('8', 8),
+                                                             ('16', 16)])),
+             ('Thermocouple Type', 'uint8', 1, 'out', ('Type', [('B', 0),
+                                                                ('E', 1),
+                                                                ('J', 2),
+                                                                ('K', 3),
+                                                                ('N', 4),
+                                                                ('R', 5),
+                                                                ('S', 6),
+                                                                ('T', 7),
+                                                                ('G8', 8),
+                                                                ('G32', 9)])),
+             ('Filter', 'uint8', 1, 'out', ('Filter Option', [('50Hz', 0),
+                                                              ('60Hz', 1)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -320,9 +320,9 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetErrorState', 'get_error_state'),
-'elements': [('over_under', 'bool', 1, 'out'),
-             ('open_circuit', 'bool', 1, 'out')],
+'name': 'Get Error State',
+'elements': [('Over Under', 'bool', 1, 'out'),
+             ('Open Circuit', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -337,9 +337,9 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'callback',
-'name': ('ErrorState', 'error_state'), 
-'elements': [('over_under', 'bool', 1, 'out'),
-             ('open_circuit', 'bool', 1, 'out')],
+'name': 'Error State',
+'elements': [('Over Under', 'bool', 1, 'out'),
+             ('Open Circuit', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

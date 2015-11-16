@@ -13,7 +13,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 238,
-    'name': ('SoundIntensity', 'sound_intensity', 'Sound Intensity', 'Sound Intensity Bricklet'),
+    'name': ('Sound Intensity', 'Sound Intensity', 'Sound Intensity Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures sound intensity',
@@ -26,8 +26,8 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetIntensity', 'get_intensity'), 
-'elements': [('intensity', 'uint16', 1, 'out')],
+'name': 'Get Intensity',
+'elements': [('Intensity', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -59,8 +59,8 @@ den Callback :func:`Intensity` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetIntensityCallbackPeriod', 'set_intensity_callback_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Intensity Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -88,8 +88,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetIntensityCallbackPeriod', 'get_intensity_callback_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Intensity Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -106,10 +106,10 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetIntensityCallbackThreshold', 'set_intensity_callback_threshold'), 
-'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'uint16', 1, 'in'),
-             ('max', 'uint16', 1, 'in')],
+'name': 'Set Intensity Callback Threshold',
+'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'uint16', 1, 'in'),
+             ('Max', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -153,10 +153,10 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetIntensityCallbackThreshold', 'get_intensity_callback_threshold'), 
-'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'uint16', 1, 'out'),
-             ('max', 'uint16', 1, 'out')],
+'name': 'Get Intensity Callback Threshold',
+'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'uint16', 1, 'out'),
+             ('Max', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -173,8 +173,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDebouncePeriod', 'set_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'in')],
+'name': 'Set Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -210,8 +210,8 @@ Der Standardwert ist 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDebouncePeriod', 'get_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'out')],
+'name': 'Get Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -228,8 +228,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Intensity', 'intensity'), 
-'elements': [('intensity', 'uint16', 1, 'out')],
+'name': 'Intensity',
+'elements': [('Intensity', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -254,8 +254,8 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('IntensityReached', 'intensity_reached'), 
-'elements': [('intensity', 'uint16', 1, 'out')],
+'name': 'Intensity Reached',
+'elements': [('Intensity', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

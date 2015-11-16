@@ -13,7 +13,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 257,
-    'name': ('ACCurrent', 'ac_current', 'AC Current', 'AC Current Bricklet'),
+    'name': ('AC Current', 'AC Current', 'AC Current Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures AC current between 0A and 100A',
@@ -26,8 +26,8 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCurrent', 'get_current'),
-'elements': [('current', 'uint16', 1, 'out')],
+'name': 'Get Current',
+'elements': [('Current', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -51,8 +51,8 @@ den Callback :func:`Current` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAnalogValue', 'get_analog_value'),
-'elements': [('value', 'uint16', 1, 'out')],
+'name': 'Get Analog Value',
+'elements': [('Value', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -78,8 +78,8 @@ den Callback :func:`AnalogValue` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetCurrentCallbackPeriod', 'set_current_callback_period'),
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Current Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -107,8 +107,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCurrentCallbackPeriod', 'get_current_callback_period'),
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Current Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -125,8 +125,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetAnalogValueCallbackPeriod', 'set_analog_value_callback_period'),
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Analog Value Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -154,8 +154,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAnalogValueCallbackPeriod', 'get_analog_value_callback_period'),
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Analog Value Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -172,10 +172,10 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetCurrentCallbackThreshold', 'set_current_callback_threshold'),
-'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'uint16', 1, 'in'),
-             ('max', 'uint16', 1, 'in')],
+'name': 'Set Current Callback Threshold',
+'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'uint16', 1, 'in'),
+             ('Max', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -219,10 +219,10 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCurrentCallbackThreshold', 'get_current_callback_threshold'),
-'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'uint16', 1, 'out'),
-             ('max', 'uint16', 1, 'out')],
+'name': 'Get Current Callback Threshold',
+'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'uint16', 1, 'out'),
+             ('Max', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -239,10 +239,10 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetAnalogValueCallbackThreshold', 'set_analog_value_callback_threshold'),
-'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'uint16', 1, 'in'),
-             ('max', 'uint16', 1, 'in')],
+'name': 'Set Analog Value Callback Threshold',
+'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'uint16', 1, 'in'),
+             ('Max', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -286,10 +286,10 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAnalogValueCallbackThreshold', 'get_analog_value_callback_threshold'),
-'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'uint16', 1, 'out'),
-             ('max', 'uint16', 1, 'out')],
+'name': 'Get Analog Value Callback Threshold',
+'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'uint16', 1, 'out'),
+             ('Max', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -306,8 +306,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDebouncePeriod', 'set_debounce_period'),
-'elements': [('debounce', 'uint32', 1, 'in')],
+'name': 'Set Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -347,8 +347,8 @@ Der Standardwert ist 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDebouncePeriod', 'get_debounce_period'),
-'elements': [('debounce', 'uint32', 1, 'out')],
+'name': 'Get Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -365,8 +365,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetMovingAverage', 'set_moving_average'),
-'elements': [('average', 'uint8', 1, 'in')],
+'name': 'Set Moving Average',
+'elements': [('Average', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -398,8 +398,8 @@ Der Standardwert ist 50.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetMovingAverage', 'get_moving_average'),
-'elements': [('average', 'uint8', 1, 'out')],
+'name': 'Get Moving Average',
+'elements': [('Average', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -416,8 +416,8 @@ Gibt die Länge des gleitenden Mittelwerts zurück, wie von
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetConfiguration', 'set_configuration'),
-'elements': [('current_range', 'uint8', 1, 'in')],
+'name': 'Set Configuration',
+'elements': [('Current Range', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -431,8 +431,8 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetConfiguration', 'get_configuration'),
-'elements': [('current_range', 'uint8', 1, 'out')],
+'name': 'Get Configuration',
+'elements': [('Current Range', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -446,8 +446,8 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Current', 'current'),
-'elements': [('current', 'uint16', 1, 'out')],
+'name': 'Current',
+'elements': [('Current', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -472,8 +472,8 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('AnalogValue', 'analog_value'),
-'elements': [('value', 'uint16', 1, 'out')],
+'name': 'Analog Value',
+'elements': [('Value', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -498,8 +498,8 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('CurrentReached', 'current_reached'),
-'elements': [('current', 'uint16', 1, 'out')],
+'name': 'Current Reached',
+'elements': [('Current', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -525,8 +525,8 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('AnalogValueReached', 'analog_value_reached'),
-'elements': [('value', 'uint16', 1, 'out')],
+'name': 'Analog Value Reached',
+'elements': [('Value', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

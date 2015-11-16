@@ -13,7 +13,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 232,
-    'name': ('Moisture', 'moisture', 'Moisture', 'Moisture Bricklet'),
+    'name': ('Moisture', 'Moisture', 'Moisture Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures soil moisture',
@@ -26,8 +26,8 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetMoistureValue', 'get_moisture_value'), 
-'elements': [('moisture', 'uint16', 1, 'out')],
+'name': 'Get Moisture Value',
+'elements': [('Moisture', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -56,8 +56,8 @@ den Callback :func:`Moisture` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetMoistureCallbackPeriod', 'set_moisture_callback_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Moisture Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -85,8 +85,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetMoistureCallbackPeriod', 'get_moisture_callback_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Moisture Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -103,10 +103,10 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetMoistureCallbackThreshold', 'set_moisture_callback_threshold'), 
-'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'uint16', 1, 'in'),
-             ('max', 'uint16', 1, 'in')],
+'name': 'Set Moisture Callback Threshold',
+'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'uint16', 1, 'in'),
+             ('Max', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -150,10 +150,10 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetMoistureCallbackThreshold', 'get_moisture_callback_threshold'), 
-'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'uint16', 1, 'out'),
-             ('max', 'uint16', 1, 'out')],
+'name': 'Get Moisture Callback Threshold',
+'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'uint16', 1, 'out'),
+             ('Max', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -170,8 +170,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDebouncePeriod', 'set_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'in')],
+'name': 'Set Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -207,8 +207,8 @@ Der Standardwert ist 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDebouncePeriod', 'get_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'out')],
+'name': 'Get Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -225,8 +225,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Moisture', 'moisture'), 
-'elements': [('moisture', 'uint16', 1, 'out')],
+'name': 'Moisture',
+'elements': [('Moisture', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -251,8 +251,8 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('MoistureReached', 'moisture_reached'), 
-'elements': [('moisture', 'uint16', 1, 'out')],
+'name': 'Moisture Reached',
+'elements': [('Moisture', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -278,8 +278,8 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetMovingAverage', 'set_moving_average'), 
-'elements': [('average', 'uint8', 1, 'in')],
+'name': 'Set Moving Average',
+'elements': [('Average', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -311,8 +311,8 @@ Der Standardwert ist 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetMovingAverage', 'get_moving_average'), 
-'elements': [('average', 'uint8', 1, 'out')],
+'name': 'Get Moving Average',
+'elements': [('Average', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

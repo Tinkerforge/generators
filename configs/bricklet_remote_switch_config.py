@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 235,
-    'name': ('RemoteSwitch', 'remote_switch', 'Remote Switch', 'Remote Switch Bricklet'),
+    'name': ('Remote Switch', 'Remote Switch', 'Remote Switch Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Controls remote mains switches',
@@ -24,11 +24,11 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('SwitchSocket', 'switch_socket'), 
-'elements': [('house_code', 'uint8', 1, 'in'),
-             ('receiver_code', 'uint8', 1, 'in'),
-             ('switch_to', 'uint8', 1, 'in', ('SwitchTo', 'switch_to', [('Off', 'off', 0),
-                                                                        ('On', 'on', 1)]))],
+'name': 'Switch Socket',
+'elements': [('House Code', 'uint8', 1, 'in'),
+             ('Receiver Code', 'uint8', 1, 'in'),
+             ('Switch To', 'uint8', 1, 'in', ('Switch To', [('Off', 0),
+                                                            ('On', 1)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -44,9 +44,9 @@ Diese Funktion ist veraltet und wurde durch :func:`SwitchSocketA` ersetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetSwitchingState', 'get_switching_state'), 
-'elements': [('state', 'uint8', 1, 'out', ('SwitchingState', 'switching_state', [('Ready', 'ready', 0),
-                                                                                 ('Busy', 'busy', 1)]))],
+'name': 'Get Switching State',
+'elements': [('State', 'uint8', 1, 'out', ('Switching State', [('Ready', 0),
+                                                               ('Busy', 1)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -73,7 +73,7 @@ siehe :func:`SetRepeats`.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('SwitchingDone', 'switching_done'), 
+'name': 'Switching Done',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -92,8 +92,8 @@ von busy auf ready wechselt, siehe :func:`GetSwitchingState`.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetRepeats', 'set_repeats'), 
-'elements': [('repeats', 'uint8', 1, 'in')],
+'name': 'Set Repeats',
+'elements': [('Repeats', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -124,8 +124,8 @@ Der Standardwert ist 5.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetRepeats', 'get_repeats'), 
-'elements': [('repeats', 'uint8', 1, 'out')],
+'name': 'Get Repeats',
+'elements': [('Repeats', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -141,11 +141,11 @@ Gibt die Anzahl der Wiederholungen zurück, wie von :func:`SetRepeats` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SwitchSocketA', 'switch_socket_a'), 
-'elements': [('house_code', 'uint8', 1, 'in'),
-             ('receiver_code', 'uint8', 1, 'in'),
-             ('switch_to', 'uint8', 1, 'in', ('SwitchTo', 'switch_to', [('Off', 'off', 0),
-                                                                        ('On', 'on', 1)]))],
+'name': 'Switch Socket A',
+'elements': [('House Code', 'uint8', 1, 'in'),
+             ('Receiver Code', 'uint8', 1, 'in'),
+             ('Switch To', 'uint8', 1, 'in', ('Switch To', [('Off', 0),
+                                                            ('On', 1)]))],
 'since_firmware': [2, 0, 1],
 'doc': ['bf', {
 'en':
@@ -173,11 +173,11 @@ kann gibt es :ref:`hier <remote_switch_bricklet_type_a_house_and_receiver_code>`
 
 com['packets'].append({
 'type': 'function',
-'name': ('SwitchSocketB', 'switch_socket_b'), 
-'elements': [('address', 'uint32', 1, 'in'),
-             ('unit', 'uint8', 1, 'in'),
-             ('switch_to', 'uint8', 1, 'in', ('SwitchTo', 'switch_to', [('Off', 'off', 0),
-                                                                        ('On', 'on', 1)]))],
+'name': 'Switch Socket B',
+'elements': [('Address', 'uint32', 1, 'in'),
+             ('Unit', 'uint8', 1, 'in'),
+             ('Switch To', 'uint8', 1, 'in', ('Switch To', [('Off', 0),
+                                                            ('On', 1)]))],
 'since_firmware': [2, 0, 1],
 'doc': ['bf', {
 'en':
@@ -209,10 +209,10 @@ kann gibt es :ref:`hier <remote_switch_bricklet_type_b_address_and_unit>`.
 
 com['packets'].append({
 'type': 'function',
-'name': ('DimSocketB', 'dim_socket_b'), 
-'elements': [('address', 'uint32', 1, 'in'),
-             ('unit', 'uint8', 1, 'in'),
-             ('dim_value', 'uint8', 1, 'in')],
+'name': 'Dim Socket B',
+'elements': [('Address', 'uint32', 1, 'in'),
+             ('Unit', 'uint8', 1, 'in'),
+             ('Dim Value', 'uint8', 1, 'in')],
 'since_firmware': [2, 0, 1],
 'doc': ['bf', {
 'en':
@@ -242,11 +242,11 @@ kann gibt es :ref:`hier <remote_switch_bricklet_type_b_address_and_unit>`.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SwitchSocketC', 'switch_socket_c'),
-'elements': [('system_code', 'char', 1, 'in'),
-             ('device_code', 'uint8', 1, 'in'),
-             ('switch_to', 'uint8', 1, 'in', ('SwitchTo', 'switch_to', [('Off', 'off', 0),
-                                                                        ('On', 'on', 1)]))],
+'name': 'Switch Socket C',
+'elements': [('System Code', 'char', 1, 'in'),
+             ('Device Code', 'uint8', 1, 'in'),
+             ('Switch To', 'uint8', 1, 'in', ('Switch To', [('Off', 0),
+                                                            ('On', 1)]))],
 'since_firmware': [2, 0, 1],
 'doc': ['bf', {
 'en':

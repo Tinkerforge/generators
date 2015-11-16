@@ -13,7 +13,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 227,
-    'name': ('VoltageCurrent', 'voltage_current', 'Voltage/Current', 'Voltage/Current Bricklet'),
+    'name': ('Voltage Current', 'Voltage/Current', 'Voltage/Current Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures power, DC voltage and DC current up to 720W/36V/20A',
@@ -26,8 +26,8 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCurrent', 'get_current'), 
-'elements': [('current', 'int32', 1, 'out')],
+'name': 'Get Current',
+'elements': [('Current', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -53,8 +53,8 @@ den Callback :func:`Current` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetVoltage', 'get_voltage'), 
-'elements': [('voltage', 'int32', 1, 'out')],
+'name': 'Get Voltage',
+'elements': [('Voltage', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -80,8 +80,8 @@ den Callback :func:`Voltage` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetPower', 'get_power'), 
-'elements': [('power', 'int32', 1, 'out')],
+'name': 'Get Power',
+'elements': [('Power', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -107,17 +107,17 @@ den Callback :func:`Power` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetConfiguration', 'set_configuration'), 
-'elements': [('averaging', 'uint8', 1, 'in', ('Averaging', 'averaging', [('1', '1', 0),
-                                                                         ('4', '4', 1),
-                                                                         ('16', '16', 2),
-                                                                         ('64', '64', 3),
-                                                                         ('128', '128', 4),
-                                                                         ('256', '256', 5),
-                                                                         ('512', '512', 6),
-                                                                         ('1024', '1024', 7)])),
-             ('voltage_conversion_time', 'uint8', 1, 'in'),
-             ('current_conversion_time', 'uint8', 1, 'in')],
+'name': 'Set Configuration',
+'elements': [('Averaging', 'uint8', 1, 'in', ('Averaging', [('1', 0),
+                                                            ('4', 1),
+                                                            ('16', 2),
+                                                            ('64', 3),
+                                                            ('128', 4),
+                                                            ('256', 5),
+                                                            ('512', 6),
+                                                            ('1024', 7)])),
+             ('Voltage Conversion Time', 'uint8', 1, 'in'),
+             ('Current Conversion Time', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -203,17 +203,17 @@ Durchschnittsbildung und die Spannungs/Stromstärkenwandlungszeit.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetConfiguration', 'get_configuration'), 
-'elements': [('averaging', 'uint8', 1, 'out', ('Averaging', 'averaging', [('1', '1', 0),
-                                                                          ('4', '4', 1),
-                                                                          ('16', '16', 2),
-                                                                          ('64', '64', 3),
-                                                                          ('128', '128', 4),
-                                                                          ('256', '256', 5),
-                                                                          ('512', '512', 6),
-                                                                          ('1024', '1024', 7)])),
-             ('voltage_conversion_time', 'uint8', 1, 'out'),
-             ('current_conversion_time', 'uint8', 1, 'out')],
+'name': 'Get Configuration',
+'elements': [('Averaging', 'uint8', 1, 'out', ('Averaging', [('1', 0),
+                                                             ('4', 1),
+                                                             ('16', 2),
+                                                             ('64', 3),
+                                                             ('128', 4),
+                                                             ('256', 5),
+                                                             ('512', 6),
+                                                             ('1024', 7)])),
+             ('Voltage Conversion Time', 'uint8', 1, 'out'),
+             ('Current Conversion Time', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -230,9 +230,9 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetCalibration', 'set_calibration'), 
-'elements': [('gain_multiplier', 'uint16', 1, 'in'),
-             ('gain_divisor', 'uint16', 1, 'in')],
+'name': 'Set Calibration',
+'elements': [('Gain Multiplier', 'uint16', 1, 'in'),
+             ('Gain Divisor', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -261,9 +261,9 @@ werden.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCalibration', 'get_calibration'), 
-'elements': [('gain_multiplier', 'uint16', 1, 'out'),
-             ('gain_divisor', 'uint16', 1, 'out')],
+'name': 'Get Calibration',
+'elements': [('Gain Multiplier', 'uint16', 1, 'out'),
+             ('Gain Divisor', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -280,8 +280,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetCurrentCallbackPeriod', 'set_current_callback_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Current Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -309,8 +309,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCurrentCallbackPeriod', 'get_current_callback_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Current Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -327,8 +327,8 @@ gesetzt
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetVoltageCallbackPeriod', 'set_voltage_callback_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Voltage Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -356,8 +356,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetVoltageCallbackPeriod', 'get_voltage_callback_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Voltage Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -374,8 +374,8 @@ gesetzt
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetPowerCallbackPeriod', 'set_power_callback_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Power Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -403,8 +403,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetPowerCallbackPeriod', 'get_power_callback_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Power Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -422,10 +422,10 @@ gesetzt
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetCurrentCallbackThreshold', 'set_current_callback_threshold'), 
-'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int32', 1, 'in'),
-             ('max', 'int32', 1, 'in')],
+'name': 'Set Current Callback Threshold',
+'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'int32', 1, 'in'),
+             ('Max', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -469,10 +469,10 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCurrentCallbackThreshold', 'get_current_callback_threshold'), 
-'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int32', 1, 'out'),
-             ('max', 'int32', 1, 'out')],
+'name': 'Get Current Callback Threshold',
+'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'int32', 1, 'out'),
+             ('Max', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -489,10 +489,10 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetVoltageCallbackThreshold', 'set_voltage_callback_threshold'), 
-'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int32', 1, 'in'),
-             ('max', 'int32', 1, 'in')],
+'name': 'Set Voltage Callback Threshold',
+'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'int32', 1, 'in'),
+             ('Max', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -536,10 +536,10 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetVoltageCallbackThreshold', 'get_voltage_callback_threshold'), 
-'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int32', 1, 'out'),
-             ('max', 'int32', 1, 'out')],
+'name': 'Get Voltage Callback Threshold',
+'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'int32', 1, 'out'),
+             ('Max', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -556,10 +556,10 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetPowerCallbackThreshold', 'set_power_callback_threshold'), 
-'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int32', 1, 'in'),
-             ('max', 'int32', 1, 'in')],
+'name': 'Set Power Callback Threshold',
+'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'int32', 1, 'in'),
+             ('Max', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -603,10 +603,10 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetPowerCallbackThreshold', 'get_power_callback_threshold'), 
-'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int32', 1, 'out'),
-             ('max', 'int32', 1, 'out')],
+'name': 'Get Power Callback Threshold',
+'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'int32', 1, 'out'),
+             ('Max', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -624,8 +624,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDebouncePeriod', 'set_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'in')],
+'name': 'Set Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -669,8 +669,8 @@ Der Standardwert ist 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDebouncePeriod', 'get_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'out')],
+'name': 'Get Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -687,8 +687,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Current', 'current'), 
-'elements': [('current', 'int32', 1, 'out')],
+'name': 'Current',
+'elements': [('Current', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -713,8 +713,8 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Voltage', 'voltage'), 
-'elements': [('voltage', 'int32', 1, 'out')],
+'name': 'Voltage',
+'elements': [('Voltage', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -739,8 +739,8 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Power', 'power'), 
-'elements': [('power', 'int32', 1, 'out')],
+'name': 'Power',
+'elements': [('Power', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -766,8 +766,8 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('CurrentReached', 'current_reached'), 
-'elements': [('current', 'int32', 1, 'out')],
+'name': 'Current Reached',
+'elements': [('Current', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -793,8 +793,8 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('VoltageReached', 'voltage_reached'), 
-'elements': [('voltage', 'int32', 1, 'out')],
+'name': 'Voltage Reached',
+'elements': [('Voltage', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -820,8 +820,8 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('PowerReached', 'power_reached'), 
-'elements': [('power', 'int32', 1, 'out')],
+'name': 'Power Reached',
+'elements': [('Power', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

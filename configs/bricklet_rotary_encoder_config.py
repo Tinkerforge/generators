@@ -13,7 +13,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 236,
-    'name': ('RotaryEncoder', 'rotary_encoder', 'Rotary Encoder', 'Rotary Encoder Bricklet'),
+    'name': ('Rotary Encoder', 'Rotary Encoder', 'Rotary Encoder Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': '360° rotary encoder with push-button',
@@ -26,9 +26,9 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCount', 'get_count'), 
-'elements': [('reset', 'bool', 1, 'in'),
-             ('count', 'int32', 1, 'out')],
+'name': 'Get Count',
+'elements': [('Reset', 'bool', 1, 'in'),
+             ('Count', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -58,8 +58,8 @@ dekrementiert, d.h. negative Zählerwerte sind möglich.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetCountCallbackPeriod', 'set_count_callback_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Count Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -87,8 +87,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCountCallbackPeriod', 'get_count_callback_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Count Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -105,10 +105,10 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetCountCallbackThreshold', 'set_count_callback_threshold'), 
-'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int32', 1, 'in'),
-             ('max', 'int32', 1, 'in')],
+'name': 'Set Count Callback Threshold',
+'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'int32', 1, 'in'),
+             ('Max', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -152,10 +152,10 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCountCallbackThreshold', 'get_count_callback_threshold'), 
-'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int32', 1, 'out'),
-             ('max', 'int32', 1, 'out')],
+'name': 'Get Count Callback Threshold',
+'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'int32', 1, 'out'),
+             ('Max', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -172,8 +172,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDebouncePeriod', 'set_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'in')],
+'name': 'Set Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -209,8 +209,8 @@ Der Standardwert ist 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDebouncePeriod', 'get_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'out')],
+'name': 'Get Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -227,8 +227,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Count', 'count'), 
-'elements': [('count', 'int32', 1, 'out')],
+'name': 'Count',
+'elements': [('Count', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -253,8 +253,8 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('CountReached', 'count_reached'), 
-'elements': [('count', 'int32', 1, 'out')],
+'name': 'Count Reached',
+'elements': [('Count', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -280,8 +280,8 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 
 com['packets'].append({
 'type': 'function',
-'name': ('IsPressed', 'is_pressed'), 
-'elements': [('pressed', 'bool', 1, 'out')],
+'name': 'Is Pressed',
+'elements': [('Pressed', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -303,7 +303,7 @@ zu nutzen, um den Taster programmatisch zu behandeln.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Pressed', 'pressed'), 
+'name': 'Pressed',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -320,7 +320,7 @@ Dieser Callback wird ausgelöst wenn der Taster gedrückt wird.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Released', 'released'), 
+'name': 'Released',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {

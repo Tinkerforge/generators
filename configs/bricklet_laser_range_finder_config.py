@@ -13,7 +13,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 255,
-    'name': ('LaserRangeFinder', 'laser_range_finder', 'Laser Range Finder', 'Laser Range Finder Bricklet'),
+    'name': ('Laser Range Finder', 'Laser Range Finder', 'Laser Range Finder Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures distance up to 40m with laser light',
@@ -26,8 +26,8 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDistance', 'get_distance'), 
-'elements': [('distance', 'uint16', 1, 'out')],
+'name': 'Get Distance',
+'elements': [('Distance', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -62,8 +62,8 @@ den Callback :func:`Distance` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetVelocity', 'get_velocity'), 
-'elements': [('velocity', 'int16', 1, 'out')],
+'name': 'Get Velocity',
+'elements': [('Velocity', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -98,8 +98,8 @@ den Callback :func:`Velocity` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDistanceCallbackPeriod', 'set_distance_callback_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Distance Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -127,8 +127,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDistanceCallbackPeriod', 'get_distance_callback_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Distance Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -145,8 +145,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetVelocityCallbackPeriod', 'set_velocity_callback_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Velocity Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -174,8 +174,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetVelocityCallbackPeriod', 'get_velocity_callback_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Velocity Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -193,10 +193,10 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDistanceCallbackThreshold', 'set_distance_callback_threshold'), 
-'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'uint16', 1, 'in'),
-             ('max', 'uint16', 1, 'in')],
+'name': 'Set Distance Callback Threshold',
+'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'uint16', 1, 'in'),
+             ('Max', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -240,10 +240,10 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDistanceCallbackThreshold', 'get_distance_callback_threshold'), 
-'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'uint16', 1, 'out'),
-             ('max', 'uint16', 1, 'out')],
+'name': 'Get Distance Callback Threshold',
+'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'uint16', 1, 'out'),
+             ('Max', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -260,10 +260,10 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetVelocityCallbackThreshold', 'set_velocity_callback_threshold'), 
-'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int16', 1, 'in'),
-             ('max', 'int16', 1, 'in')],
+'name': 'Set Velocity Callback Threshold',
+'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'int16', 1, 'in'),
+             ('Max', 'int16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -307,10 +307,10 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetVelocityCallbackThreshold', 'get_velocity_callback_threshold'), 
-'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int16', 1, 'out'),
-             ('max', 'int16', 1, 'out')],
+'name': 'Get Velocity Callback Threshold',
+'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'int16', 1, 'out'),
+             ('Max', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -327,8 +327,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDebouncePeriod', 'set_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'in')],
+'name': 'Set Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -368,8 +368,8 @@ Der Standardwert ist 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDebouncePeriod', 'get_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'out')],
+'name': 'Get Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -386,9 +386,9 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetMovingAverage', 'set_moving_average'), 
-'elements': [('distance_average_length', 'uint8', 1, 'in'),
-             ('velocity_average_length', 'uint8', 1, 'in')],
+'name': 'Set Moving Average',
+'elements': [('Distance Average Length', 'uint8', 1, 'in'),
+             ('Velocity Average Length', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -420,9 +420,9 @@ Der Standardwert ist 10.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetMovingAverage', 'get_moving_average'), 
-'elements': [('distance_average_length', 'uint8', 1, 'out'),
-             ('velocity_average_length', 'uint8', 1, 'out')],
+'name': 'Get Moving Average',
+'elements': [('Distance Average Length', 'uint8', 1, 'out'),
+             ('Velocity Average Length', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -439,12 +439,12 @@ Gibt die Länge des gleitenden Mittelwerts zurück, wie von
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetMode', 'set_mode'), 
-'elements': [('mode', 'uint8', 1, 'in', ('Mode', 'mode', [('Distance', 'distance', 0),
-                                                          ('VelocityMax13ms', 'velocity_max_13ms', 1),
-                                                          ('VelocityMax32ms', 'velocity_max_32ms', 2),
-                                                          ('VelocityMax64ms', 'velocity_max_64ms', 3),
-                                                          ('VelocityMax127ms', 'velocity_max_127ms', 4)]))],
+'name': 'Set Mode',
+'elements': [('Mode', 'uint8', 1, 'in', ('Mode', [('Distance', 0),
+                                                  ('Velocity Max 13ms', 1),
+                                                  ('Velocity Max 32ms', 2),
+                                                  ('Velocity Max 64ms', 3),
+                                                  ('Velocity Max 127ms', 4)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -484,12 +484,12 @@ Der Standardmodus ist 0 (Distanzmessung).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetMode', 'get_mode'), 
-'elements': [('mode', 'uint8', 1, 'out', ('Mode', 'mode', [('Distance', 'distance', 0),
-                                                           ('VelocityMax13ms', 'velocity_max_13ms', 1),
-                                                           ('VelocityMax32ms', 'velocity_max_32ms', 2),
-                                                           ('VelocityMax64ms', 'velocity_max_64ms', 3),
-                                                           ('VelocityMax127ms', 'velocity_max_127ms', 4)]))],
+'name': 'Get Mode',
+'elements': [('Mode', 'uint8', 1, 'out', ('Mode', [('Distance', 0),
+                                                   ('Velocity Max 13ms', 1),
+                                                   ('Velocity Max 32ms', 2),
+                                                   ('Velocity Max 64ms', 3),
+                                                   ('Velocity Max 127ms', 4)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -505,7 +505,7 @@ Gibt den Modus zurück, wie von :func:`SetMode` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('EnableLaser', 'enable_laser'), 
+'name': 'Enable Laser',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -528,7 +528,7 @@ ersten Aufruf von :func:`GetDistance` um stabile Messwerte zu garantieren.
 
 com['packets'].append({
 'type': 'function',
-'name': ('DisableLaser', 'disable_laser'), 
+'name': 'Disable Laser',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -545,8 +545,8 @@ Deaktiviert den Laser des LIDAR.
 
 com['packets'].append({
 'type': 'function',
-'name': ('IsLaserEnabled', 'is_laser_enabled'), 
-'elements': [('laser_enabled', 'bool', 1, 'out')],
+'name': 'Is Laser Enabled',
+'elements': [('Laser Enabled', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -563,8 +563,8 @@ Gibt *true* zurück wenn der Laser aktiviert ist, *false* sonst.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Distance', 'distance'), 
-'elements': [('distance', 'uint16', 1, 'out')],
+'name': 'Distance',
+'elements': [('Distance', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -589,8 +589,8 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Velocity', 'velocity'), 
-'elements': [('velocity', 'int16', 1, 'out')],
+'name': 'Velocity',
+'elements': [('Velocity', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -615,8 +615,8 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('DistanceReached', 'distance_reached'), 
-'elements': [('distance', 'uint16', 1, 'out')],
+'name': 'Distance Reached',
+'elements': [('Distance', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -642,8 +642,8 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('VelocityReached', 'velocity_reached'), 
-'elements': [('velocity', 'int16', 1, 'out')],
+'name': 'Velocity Reached',
+'elements': [('Velocity', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

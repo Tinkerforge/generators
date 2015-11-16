@@ -13,7 +13,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 252,
-    'name': ('GasDetector', 'gas_detector', 'Gas Detector', 'Gas Detector Bricklet'),
+    'name': ('Gas Detector', 'Gas Detector', 'Gas Detector Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures concentration of different gases',
@@ -26,8 +26,8 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetValue', 'get_value'), 
-'elements': [('value', 'uint16', 1, 'out')],
+'name': 'Get Value',
+'elements': [('Value', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -55,8 +55,8 @@ den Callback :func:`Value` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetValueCallbackPeriod', 'set_value_callback_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Value Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -84,8 +84,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetValueCallbackPeriod', 'get_value_callback_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Value Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -102,10 +102,10 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetValueCallbackThreshold', 'set_value_callback_threshold'), 
-'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'uint16', 1, 'in'),
-             ('max', 'uint16', 1, 'in')],
+'name': 'Set Value Callback Threshold',
+'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'uint16', 1, 'in'),
+             ('Max', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -149,10 +149,10 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetValueCallbackThreshold', 'get_value_callback_threshold'), 
-'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'uint16', 1, 'out'),
-             ('max', 'uint16', 1, 'out')],
+'name': 'Get Value Callback Threshold',
+'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'uint16', 1, 'out'),
+             ('Max', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -169,8 +169,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDebouncePeriod', 'set_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'in')],
+'name': 'Set Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -206,8 +206,8 @@ Der Standardwert ist 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDebouncePeriod', 'get_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'out')],
+'name': 'Get Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -224,8 +224,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetMovingAverage', 'set_moving_average'), 
-'elements': [('average', 'uint8', 1, 'in')],
+'name': 'Set Moving Average',
+'elements': [('Average', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -257,8 +257,8 @@ Der Standardwert ist 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetMovingAverage', 'get_moving_average'), 
-'elements': [('average', 'uint8', 1, 'out')],
+'name': 'Get Moving Average',
+'elements': [('Average', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -275,9 +275,9 @@ Gibt die Länge des gleitenden Mittelwerts zurück, wie von
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDetectorType', 'set_detector_type'), 
-'elements': [('detector_type', 'uint8', 1, 'in', ('DetectorType', 'detector_type', [('0', '0', 0),
-                                                                                    ('1', '1', 1)]))],
+'name': 'Set Detector Type',
+'elements': [('Detector Type', 'uint8', 1, 'in', ('Detector Type', [('0', 0),
+                                                                    ('1', 1)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -319,9 +319,9 @@ Der standard Detektortyp ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDetectorType', 'get_detector_type'), 
-'elements': [('detector_type', 'uint8', 1, 'out', ('DetectorType', 'detector_type', [('0', '0', 0),
-                                                                                     ('1', '1', 1)]))],
+'name': 'Get Detector Type',
+'elements': [('Detector Type', 'uint8', 1, 'out', ('Detector Type', [('0', 0),
+                                                                     ('1', 1)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -337,7 +337,7 @@ Gibt den Detektortyp zurück, wie von :func:`SetDetectorType` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('HeaterOn', 'heater_on'), 
+'name': 'Heater On',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -354,7 +354,7 @@ Aktiviert die interne Heizung.
 
 com['packets'].append({
 'type': 'function',
-'name': ('HeaterOff', 'heater_off'), 
+'name': 'Heater Off',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -371,8 +371,8 @@ Deaktiviert die interne Heizung.
 
 com['packets'].append({
 'type': 'function',
-'name': ('IsHeaterOn', 'is_heater_on'), 
-'elements': [('heater', 'bool', 1, 'out')],
+'name': 'Is Heater On',
+'elements': [('Heater', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -388,8 +388,8 @@ Gibt *true* zurück wenn die interne Heizung aktiviert ist, *false* sonst.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Value', 'value'), 
-'elements': [('value', 'uint16', 1, 'out')],
+'name': 'Value',
+'elements': [('Value', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -414,8 +414,8 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('ValueReached', 'value_reached'), 
-'elements': [('value', 'uint16', 1, 'out')],
+'name': 'Value Reached',
+'elements': [('Value', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

@@ -13,7 +13,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 245,
-    'name': ('HeartRate', 'heart_rate', 'Heart Rate', 'Heart Rate Bricklet'),
+    'name': ('Heart Rate', 'Heart Rate', 'Heart Rate Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures heart rate',
@@ -26,8 +26,8 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetHeartRate', 'get_heart_rate'), 
-'elements': [('heart_rate', 'uint16', 1, 'out')],
+'name': 'Get Heart Rate',
+'elements': [('Heart Rate', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -51,8 +51,8 @@ mit :func:`SetHeartRateCallbackPeriod` vorzugeben.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetHeartRateCallbackPeriod', 'set_heart_rate_callback_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Heart Rate Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -80,8 +80,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetHeartRateCallbackPeriod', 'get_heart_rate_callback_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Heart Rate Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -98,10 +98,10 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetHeartRateCallbackThreshold', 'set_heart_rate_callback_threshold'), 
-'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'uint16', 1, 'in'),
-             ('max', 'uint16', 1, 'in')],
+'name': 'Set Heart Rate Callback Threshold',
+'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'uint16', 1, 'in'),
+             ('Max', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -145,10 +145,10 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetHeartRateCallbackThreshold', 'get_heart_rate_callback_threshold'), 
-'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'uint16', 1, 'out'),
-             ('max', 'uint16', 1, 'out')],
+'name': 'Get Heart Rate Callback Threshold',
+'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'uint16', 1, 'out'),
+             ('Max', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -165,8 +165,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDebouncePeriod', 'set_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'in')],
+'name': 'Set Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -202,8 +202,8 @@ Der Standardwert ist 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDebouncePeriod', 'get_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'out')],
+'name': 'Get Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -220,8 +220,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('HeartRate', 'heart_rate'), 
-'elements': [('heart_rate', 'uint16', 1, 'out')],
+'name': 'Heart Rate',
+'elements': [('Heart Rate', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -247,8 +247,8 @@ seit der letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('HeartRateReached', 'heart_rate_reached'), 
-'elements': [('heart_rate', 'uint16', 1, 'out')],
+'name': 'Heart Rate Reached',
+'elements': [('Heart Rate', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -274,9 +274,9 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('BeatStateChanged', 'beat_state_changed'), 
-'elements': [('state', 'uint8', 1, 'out', ('BeatState', 'beat_state', [('Falling', 'falling', 0),
-                                                                       ('Rising', 'rising', 1)]))],
+'name': 'Beat State Changed',
+'elements': [('State', 'uint8', 1, 'out', ('Beat State', [('Falling', 0),
+                                                          ('Rising', 1)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -301,7 +301,7 @@ annehmen:
 
 com['packets'].append({
 'type': 'function',
-'name': ('EnableBeatStateChangedCallback', 'enable_beat_state_changed_callback'),
+'name': 'Enable Beat State Changed Callback',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -318,7 +318,7 @@ Aktiviert den :func:`BeatStateChanged` Callback.
 
 com['packets'].append({
 'type': 'function',
-'name': ('DisableBeatStateChangedCallback', 'disable_beat_state_changed_callback'),
+'name': 'Disable Beat State Changed Callback',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -335,8 +335,8 @@ Deaktiviert den :func:`BeatStateChanged` Callback.
 
 com['packets'].append({
 'type': 'function',
-'name': ('IsBeatStateChangedCallbackEnabled', 'is_beat_state_changed_callback_enabled'),
-'elements': [('enabled', 'bool', 1, 'out')],
+'name': 'Is Beat State Changed Callback Enabled',
+'elements': [('Enabled', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':

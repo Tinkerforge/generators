@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 239,
-    'name': ('Tilt', 'tilt', 'Tilt', 'Tilt Bricklet'),
+    'name': ('Tilt', 'Tilt', 'Tilt Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Detects inclination of Bricklet (tilt switch open/closed)',
@@ -24,10 +24,10 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetTiltState', 'get_tilt_state'),
-'elements': [('state', 'uint8', 1, 'out', ('TiltState', 'tilt_state', [('Closed', 'closed', 0),
-                                                                       ('Open', 'open', 1),
-                                                                       ('ClosedVibrating', 'closed_vibrating', 2)]))],
+'name': 'Get Tilt State',
+'elements': [('State', 'uint8', 1, 'out', ('Tilt State', [('Closed', 0),
+                                                          ('Open', 1),
+                                                          ('Closed Vibrating', 2)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -66,7 +66,7 @@ annehmen:
 
 com['packets'].append({
 'type': 'function',
-'name': ('EnableTiltStateCallback', 'enable_tilt_state_callback'),
+'name': 'Enable Tilt State Callback',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -83,7 +83,7 @@ Aktiviert den :func:`TiltState` Callback.
 
 com['packets'].append({
 'type': 'function',
-'name': ('DisableTiltStateCallback', 'disable_tilt_state_callback'),
+'name': 'Disable Tilt State Callback',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
@@ -100,8 +100,8 @@ Deaktiviert den :func:`TiltState` Callback.
 
 com['packets'].append({
 'type': 'function',
-'name': ('IsTiltStateCallbackEnabled', 'is_tilt_state_callback_enabled'),
-'elements': [('enabled', 'bool', 1, 'out')],
+'name': 'Is Tilt State Callback Enabled',
+'elements': [('Enabled', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -117,10 +117,10 @@ Gibt *true* zurück wenn der :func:`TiltState` Callback aktiviert ist.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('TiltState', 'tilt_state'), 
-'elements': [('state', 'uint8', 1, 'out', ('TiltState', 'tilt_state', [('Closed', 'closed', 0),
-                                                                       ('Open', 'open', 1),
-                                                                       ('ClosedVibrating', 'closed_vibrating', 2)]))],
+'name': 'Tilt State',
+'elements': [('State', 'uint8', 1, 'out', ('Tilt State', [('Closed', 0),
+                                                          ('Open', 1),
+                                                          ('Closed Vibrating', 2)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

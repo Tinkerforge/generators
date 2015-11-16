@@ -13,7 +13,7 @@ com = {
     'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 21,
-    'name': ('AmbientLight', 'ambient_light', 'Ambient Light', 'Ambient Light Bricklet'),
+    'name': ('Ambient Light', 'Ambient Light', 'Ambient Light Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures ambient light up to 900lux',
@@ -26,8 +26,8 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetIlluminance', 'get_illuminance'), 
-'elements': [('illuminance', 'uint16', 1, 'out')],
+'name': 'Get Illuminance',
+'elements': [('Illuminance', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -55,8 +55,8 @@ den Callback :func:`Illuminance` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAnalogValue', 'get_analog_value'), 
-'elements': [('value', 'uint16', 1, 'out')],
+'name': 'Get Analog Value',
+'elements': [('Value', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -102,8 +102,8 @@ den Callback :func:`AnalogValue` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetIlluminanceCallbackPeriod', 'set_illuminance_callback_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Illuminance Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -131,8 +131,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetIlluminanceCallbackPeriod', 'get_illuminance_callback_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Illuminance Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -149,8 +149,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetAnalogValueCallbackPeriod', 'set_analog_value_callback_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Analog Value Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -178,8 +178,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAnalogValueCallbackPeriod', 'get_analog_value_callback_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Analog Value Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -196,10 +196,10 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetIlluminanceCallbackThreshold', 'set_illuminance_callback_threshold'), 
-'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'uint16', 1, 'in'),
-             ('max', 'uint16', 1, 'in')],
+'name': 'Set Illuminance Callback Threshold',
+'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'uint16', 1, 'in'),
+             ('Max', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -243,10 +243,10 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetIlluminanceCallbackThreshold', 'get_illuminance_callback_threshold'), 
-'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'uint16', 1, 'out'),
-             ('max', 'uint16', 1, 'out')],
+'name': 'Get Illuminance Callback Threshold',
+'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'uint16', 1, 'out'),
+             ('Max', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -263,10 +263,10 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetAnalogValueCallbackThreshold', 'set_analog_value_callback_threshold'), 
-'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'uint16', 1, 'in'),
-             ('max', 'uint16', 1, 'in')],
+'name': 'Set Analog Value Callback Threshold',
+'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'uint16', 1, 'in'),
+             ('Max', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -310,10 +310,10 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAnalogValueCallbackThreshold', 'get_analog_value_callback_threshold'), 
-'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'uint16', 1, 'out'),
-             ('max', 'uint16', 1, 'out')],
+'name': 'Get Analog Value Callback Threshold',
+'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'uint16', 1, 'out'),
+             ('Max', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -330,8 +330,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDebouncePeriod', 'set_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'in')],
+'name': 'Set Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -371,8 +371,8 @@ Der Standardwert ist 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDebouncePeriod', 'get_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'out')],
+'name': 'Get Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -389,8 +389,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Illuminance', 'illuminance'), 
-'elements': [('illuminance', 'uint16', 1, 'out')],
+'name': 'Illuminance',
+'elements': [('Illuminance', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -415,8 +415,8 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('AnalogValue', 'analog_value'), 
-'elements': [('value', 'uint16', 1, 'out')],
+'name': 'Analog Value',
+'elements': [('Value', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -441,8 +441,8 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('IlluminanceReached', 'illuminance_reached'), 
-'elements': [('illuminance', 'uint16', 1, 'out')],
+'name': 'Illuminance Reached',
+'elements': [('Illuminance', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -468,8 +468,8 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('AnalogValueReached', 'analog_value_reached'), 
-'elements': [('value', 'uint16', 1, 'out')],
+'name': 'Analog Value Reached',
+'elements': [('Value', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 214,
-    'name': ('PiezoBuzzer', 'piezo_buzzer', 'Piezo Buzzer', 'Piezo Buzzer Bricklet'),
+    'name': ('Piezo Buzzer', 'Piezo Buzzer', 'Piezo Buzzer Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Creates 1kHz beep',
@@ -24,8 +24,8 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('Beep', 'beep'), 
-'elements': [('duration', 'uint32', 1, 'in')],
+'name': 'Beep',
+'elements': [('Duration', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -43,8 +43,8 @@ Wert auf 1000 gesetzt wird, erzeugt der Piezosummer einen Piepton für eine Seku
 
 com['packets'].append({
 'type': 'function',
-'name': ('MorseCode', 'morse_code'), 
-'elements': [('morse', 'string', 60, 'in')],
+'name': 'Morse Code',
+'elements': [('Morse', 'string', 60, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -76,7 +76,7 @@ Die maximale Zeichenkettenlänge ist 60.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('BeepFinished', 'beep_finished'), 
+'name': 'Beep Finished',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -94,7 +94,7 @@ beendet wurde.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('MorseCodeFinished', 'morse_code_finished'), 
+'name': 'Morse Code Finished',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {

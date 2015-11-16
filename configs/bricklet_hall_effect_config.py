@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 240,
-    'name': ('HallEffect', 'hall_effect', 'Hall Effect', 'Hall Effect Bricklet'),
+    'name': ('Hall Effect', 'Hall Effect', 'Hall Effect Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Detects presence of magnetic field',
@@ -24,8 +24,8 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetValue', 'get_value'),
-'elements': [('value', 'bool', 1, 'out')],
+'name': 'Get Value',
+'elements': [('Value', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -42,9 +42,9 @@ detektiert wird.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetEdgeCount', 'get_edge_count'),
-'elements': [('reset_counter', 'bool', 1, 'in'),
-             ('count', 'uint32', 1, 'out')],
+'name': 'Get Edge Count',
+'elements': [('Reset Counter', 'bool', 1, 'in'),
+             ('Count', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -70,11 +70,11 @@ nach dem auslesen auf 0 zurückgesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetEdgeCountConfig', 'set_edge_count_config'),
-'elements': [('edge_type', 'uint8', 1, 'in', ('EdgeType', 'edge_type', [('Rising', 'rising', 0),
-                                                                        ('Falling', 'falling', 1),
-                                                                        ('Both', 'both', 2)])),
-             ('debounce', 'uint8', 1, 'in')],
+'name': 'Set Edge Count Config',
+'elements': [('Edge Type', 'uint8', 1, 'in', ('Edge Type', [('Rising', 0),
+                                                            ('Falling', 1),
+                                                            ('Both', 2)])),
+             ('Debounce', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -129,11 +129,11 @@ Standardwerte: 0 (edge type) und 100ms (debounce).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetEdgeCountConfig', 'get_edge_count_config'),
-'elements': [('edge_type', 'uint8', 1, 'out', ('EdgeType', 'edge_type', [('Rising', 'rising', 0),
-                                                                         ('Falling', 'falling', 1),
-                                                                         ('Both', 'both', 2)])),
-             ('debounce', 'uint8', 1, 'out')],
+'name': 'Get Edge Count Config',
+'elements': [('Edge Type', 'uint8', 1, 'out', ('Edge Type', [('Rising', 0),
+                                                             ('Falling', 1),
+                                                             ('Both', 2)])),
+             ('Debounce', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -150,8 +150,8 @@ Gibt den Flankentyp sowie die Entprellzeit zurück, wie von
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetEdgeInterrupt', 'set_edge_interrupt'),
-'elements': [('edges', 'uint32', 1, 'in')],
+'name': 'Set Edge Interrupt',
+'elements': [('Edges', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -181,8 +181,8 @@ Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetEdgeInterrupt', 'get_edge_interrupt'),
-'elements': [('edges', 'uint32', 1, 'out')],
+'name': 'Get Edge Interrupt',
+'elements': [('Edges', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -198,8 +198,8 @@ Gibt *edges* zurück, wie von :func:`SetEdgeInterrupt` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetEdgeCountCallbackPeriod', 'set_edge_count_callback_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Edge Count Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -227,8 +227,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetEdgeCountCallbackPeriod', 'get_edge_count_callback_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Edge Count Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -245,9 +245,9 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('EdgeInterrupt', 'edge_interrupt'),
-'elements': [('count', 'uint32', 1, 'out'),
-             ('value', 'bool', 1, 'out')],
+'name': 'Edge Interrupt',
+'elements': [('Count', 'uint32', 1, 'out'),
+             ('Value', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -268,9 +268,9 @@ sind der aktuelle Zählerstand und der aktuelle Wert (siehe
 
 com['packets'].append({
 'type': 'callback',
-'name': ('EdgeCount', 'edge_count'), 
-'elements': [('count', 'uint32', 1, 'out'),
-             ('value', 'bool', 1, 'out')],
+'name': 'Edge Count',
+'elements': [('Count', 'uint32', 1, 'out'),
+             ('Value', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 211,
-    'name': ('LCD16x2', 'lcd_16x2', 'LCD 16x2', 'LCD 16x2 Bricklet'),
+    'name': ('LCD 16x2', 'LCD 16x2', 'LCD 16x2 Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': '16x2 character alphanumeric display with blue backlight',
@@ -24,10 +24,10 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('WriteLine', 'write_line'), 
-'elements': [('line', 'uint8', 1, 'in'),
-             ('position', 'uint8', 1, 'in'),
-             ('text', 'string', 16, 'in')],
+'name': 'Write Line',
+'elements': [('Line', 'uint8', 1, 'in'),
+             ('Position', 'uint8', 1, 'in'),
+             ('Text', 'string', 16, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -63,7 +63,7 @@ und wie die Wandlung von Unicode in den LCD Zeichensatz möglich ist.
 
 com['packets'].append({
 'type': 'function',
-'name': ('ClearDisplay', 'clear_display'), 
+'name': 'Clear Display',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -80,7 +80,7 @@ Löscht alle Zeichen auf dem Display.
 
 com['packets'].append({
 'type': 'function',
-'name': ('BacklightOn', 'backlight_on'), 
+'name': 'Backlight On',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -97,7 +97,7 @@ Aktiviert die Hintergrundbeleuchtung.
 
 com['packets'].append({
 'type': 'function',
-'name': ('BacklightOff', 'backlight_off'), 
+'name': 'Backlight Off',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -114,8 +114,8 @@ Deaktiviert die Hintergrundbeleuchtung.
 
 com['packets'].append({
 'type': 'function',
-'name': ('IsBacklightOn', 'is_backlight_on'), 
-'elements': [('backlight', 'bool', 1, 'out')],
+'name': 'Is Backlight On',
+'elements': [('Backlight', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -131,9 +131,9 @@ Gibt *true* zurück wenn die Hintergrundbeleuchtung aktiv ist, sonst *false*.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetConfig', 'set_config'), 
-'elements': [('cursor', 'bool', 1, 'in'),
-             ('blinking', 'bool', 1, 'in')],
+'name': 'Set Config',
+'elements': [('Cursor', 'bool', 1, 'in'),
+             ('Blinking', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -158,9 +158,9 @@ Der Standardwert ist (false, false).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetConfig', 'get_config'), 
-'elements': [('cursor', 'bool', 1, 'out'),
-             ('blinking', 'bool', 1, 'out')],
+'name': 'Get Config',
+'elements': [('Cursor', 'bool', 1, 'out'),
+             ('Blinking', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -176,9 +176,9 @@ Gibt die Konfiguration zurück, wie von :func:`SetConfig` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('IsButtonPressed', 'is_button_pressed'), 
-'elements': [('button', 'uint8', 1, 'in'),
-             ('pressed', 'bool', 1, 'out')],
+'name': 'Is Button Pressed',
+'elements': [('Button', 'uint8', 1, 'in'),
+             ('Pressed', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -198,8 +198,8 @@ und :func:`ButtonReleased` Callbacks zu nutzen.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('ButtonPressed', 'button_pressed'), 
-'elements': [('button', 'uint8', 1, 'out')],
+'name': 'Button Pressed',
+'elements': [('Button', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -217,8 +217,8 @@ ist die Nummer der Taste (0 bis 2).
 
 com['packets'].append({
 'type': 'callback',
-'name': ('ButtonReleased', 'button_released'), 
-'elements': [('button', 'uint8', 1, 'out')],
+'name': 'Button Released',
+'elements': [('Button', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -236,9 +236,9 @@ ist die Nummer der Taste (0 bis 2).
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetCustomCharacter', 'set_custom_character'), 
-'elements': [('index', 'uint8', 1, 'in'),
-             ('character', 'uint8', 8, 'in')],
+'name': 'Set Custom Character',
+'elements': [('Index', 'uint8', 1, 'in'),
+             ('Character', 'uint8', 8, 'in')],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':
@@ -297,9 +297,9 @@ müssen sie nach jedem Start des LCD 16x2 Bricklets gesetzt werden.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCustomCharacter', 'get_custom_character'), 
-'elements': [('index', 'uint8', 1, 'in'),
-             ('character', 'uint8', 8, 'out')],
+'name': 'Get Custom Character',
+'elements': [('Index', 'uint8', 1, 'in'),
+             ('Character', 'uint8', 8, 'out')],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':

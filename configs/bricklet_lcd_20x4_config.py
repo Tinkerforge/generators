@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 212,
-    'name': ('LCD20x4', 'lcd_20x4', 'LCD 20x4', 'LCD 20x4 Bricklet'),
+    'name': ('LCD 20x4', 'LCD 20x4', 'LCD 20x4 Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': '20x4 character alphanumeric display with blue backlight',
@@ -24,10 +24,10 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('WriteLine', 'write_line'), 
-'elements': [('line', 'uint8', 1, 'in'),
-             ('position', 'uint8', 1, 'in'),
-             ('text', 'string', 20, 'in')],
+'name': 'Write Line',
+'elements': [('Line', 'uint8', 1, 'in'),
+             ('Position', 'uint8', 1, 'in'),
+             ('Text', 'string', 20, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -63,7 +63,7 @@ und wie die Wandlung von Unicode in den LCD Zeichensatz möglich ist.
 
 com['packets'].append({
 'type': 'function',
-'name': ('ClearDisplay', 'clear_display'), 
+'name': 'Clear Display',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -80,7 +80,7 @@ Löscht alle Zeichen auf dem Display.
 
 com['packets'].append({
 'type': 'function',
-'name': ('BacklightOn', 'backlight_on'), 
+'name': 'Backlight On',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -97,7 +97,7 @@ Aktiviert die Hintergrundbeleuchtung.
 
 com['packets'].append({
 'type': 'function',
-'name': ('BacklightOff', 'backlight_off'), 
+'name': 'Backlight Off',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -114,8 +114,8 @@ Deaktiviert die Hintergrundbeleuchtung.
 
 com['packets'].append({
 'type': 'function',
-'name': ('IsBacklightOn', 'is_backlight_on'), 
-'elements': [('backlight', 'bool', 1, 'out')],
+'name': 'Is Backlight On',
+'elements': [('Backlight', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -131,9 +131,9 @@ Gibt *true* zurück wenn die Hintergrundbeleuchtung aktiv ist, sonst *false*.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetConfig', 'set_config'), 
-'elements': [('cursor', 'bool', 1, 'in'),
-             ('blinking', 'bool', 1, 'in')],
+'name': 'Set Config',
+'elements': [('Cursor', 'bool', 1, 'in'),
+             ('Blinking', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -158,9 +158,9 @@ Der Standardwert ist (*false*, *false*).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetConfig', 'get_config'), 
-'elements': [('cursor', 'bool', 1, 'out'),
-             ('blinking', 'bool', 1, 'out')],
+'name': 'Get Config',
+'elements': [('Cursor', 'bool', 1, 'out'),
+             ('Blinking', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -176,9 +176,9 @@ Gibt die Konfiguration zurück, wie von :func:`SetConfig` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('IsButtonPressed', 'is_button_pressed'), 
-'elements': [('button', 'uint8', 1, 'in'),
-             ('pressed', 'bool', 1, 'out')],
+'name': 'Is Button Pressed',
+'elements': [('Button', 'uint8', 1, 'in'),
+             ('Pressed', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -200,8 +200,8 @@ und :func:`ButtonReleased` Callbacks zu nutzen.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('ButtonPressed', 'button_pressed'), 
-'elements': [('button', 'uint8', 1, 'out')],
+'name': 'Button Pressed',
+'elements': [('Button', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -219,8 +219,8 @@ ist die Nummer der Taste (0 bis 2 oder 0 bis 3 seit Hardware Version 1.2).
 
 com['packets'].append({
 'type': 'callback',
-'name': ('ButtonReleased', 'button_released'), 
-'elements': [('button', 'uint8', 1, 'out')],
+'name': 'Button Released',
+'elements': [('Button', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -238,9 +238,9 @@ ist die Nummer der Taste (0 bis 2 oder 0 bis 3 seit Hardware Version 1.2).
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetCustomCharacter', 'set_custom_character'), 
-'elements': [('index', 'uint8', 1, 'in'),
-             ('character', 'uint8', 8, 'in')],
+'name': 'Set Custom Character',
+'elements': [('Index', 'uint8', 1, 'in'),
+             ('Character', 'uint8', 8, 'in')],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':
@@ -299,9 +299,9 @@ müssen sie nach jedem Start des LCD 20x4 Bricklets gesetzt werden.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCustomCharacter', 'get_custom_character'), 
-'elements': [('index', 'uint8', 1, 'in'),
-             ('character', 'uint8', 8, 'out')],
+'name': 'Get Custom Character',
+'elements': [('Index', 'uint8', 1, 'in'),
+             ('Character', 'uint8', 8, 'out')],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':
@@ -319,9 +319,9 @@ Index zurück, wie von :func:`GetCustomCharacter` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDefaultText', 'set_default_text'), 
-'elements': [('line', 'uint8', 1, 'in'),
-             ('text', 'string', 20, 'in')],
+'name': 'Set Default Text',
+'elements': [('Line', 'uint8', 1, 'in'),
+             ('Text', 'string', 20, 'in')],
 'since_firmware': [2, 0, 2],
 'doc': ['af', {
 'en':
@@ -345,9 +345,9 @@ ausläuft, siehe :func:`SetDefaultTextCounter`.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDefaultText', 'get_default_text'), 
-'elements': [('line', 'uint8', 1, 'in'),
-             ('text', 'string', 20, 'out')],
+'name': 'Get Default Text',
+'elements': [('Line', 'uint8', 1, 'in'),
+             ('Text', 'string', 20, 'out')],
 'since_firmware': [2, 0, 2],
 'doc': ['af', {
 'en':
@@ -365,8 +365,8 @@ Gibt den Standard-Text für die Zeilen 0-3 zurück, wie von
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDefaultTextCounter', 'set_default_text_counter'), 
-'elements': [('counter', 'int32', 1, 'in')],
+'name': 'Set Default Text Counter',
+'elements': [('Counter', 'int32', 1, 'in')],
 'since_firmware': [2, 0, 2],
 'doc': ['af', {
 'en':
@@ -411,8 +411,8 @@ Der Standardwert ist -1.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDefaultTextCounter', 'get_default_text_counter'), 
-'elements': [('counter', 'int32', 1, 'out')],
+'name': 'Get Default Text Counter',
+'elements': [('Counter', 'int32', 1, 'out')],
 'since_firmware': [2, 0, 2],
 'doc': ['af', {
 'en':

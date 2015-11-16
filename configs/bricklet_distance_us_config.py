@@ -13,7 +13,7 @@ com = {
     'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 229,
-    'name': ('DistanceUS', 'distance_us', 'Distance US', 'Distance US Bricklet'),
+    'name': ('Distance US', 'Distance US', 'Distance US Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures distance between 2cm and 400cm with ultrasound',
@@ -26,8 +26,8 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDistanceValue', 'get_distance_value'), 
-'elements': [('distance', 'uint16', 1, 'out')],
+'name': 'Get Distance Value',
+'elements': [('Distance', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -62,8 +62,8 @@ den Callback :func:`Distance` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDistanceCallbackPeriod', 'set_distance_callback_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Distance Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -91,8 +91,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDistanceCallbackPeriod', 'get_distance_callback_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Distance Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -109,10 +109,10 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDistanceCallbackThreshold', 'set_distance_callback_threshold'), 
-'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'uint16', 1, 'in'),
-             ('max', 'uint16', 1, 'in')],
+'name': 'Set Distance Callback Threshold',
+'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'uint16', 1, 'in'),
+             ('Max', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -156,10 +156,10 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDistanceCallbackThreshold', 'get_distance_callback_threshold'), 
-'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'uint16', 1, 'out'),
-             ('max', 'uint16', 1, 'out')],
+'name': 'Get Distance Callback Threshold',
+'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'uint16', 1, 'out'),
+             ('Max', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -176,8 +176,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDebouncePeriod', 'set_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'in')],
+'name': 'Set Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -213,8 +213,8 @@ Der Standardwert ist 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDebouncePeriod', 'get_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'out')],
+'name': 'Get Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -231,8 +231,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Distance', 'distance'), 
-'elements': [('distance', 'uint16', 1, 'out')],
+'name': 'Distance',
+'elements': [('Distance', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -257,8 +257,8 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('DistanceReached', 'distance_reached'), 
-'elements': [('distance', 'uint16', 1, 'out')],
+'name': 'Distance Reached',
+'elements': [('Distance', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -284,8 +284,8 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetMovingAverage', 'set_moving_average'), 
-'elements': [('average', 'uint8', 1, 'in')],
+'name': 'Set Moving Average',
+'elements': [('Average', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -317,8 +317,8 @@ Der Standardwert ist 20.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetMovingAverage', 'get_moving_average'), 
-'elements': [('average', 'uint8', 1, 'out')],
+'name': 'Get Moving Average',
+'elements': [('Average', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':

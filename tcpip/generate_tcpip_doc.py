@@ -198,7 +198,7 @@ Die folgenden {0} sind für die Parameter dieser Funktion definiert:
         text = common.handle_rst_substitutions(text, self)
 
         def constant_format(prefix, constant_group, constant, value):
-            c = '* {0}: {1}, '.format(value, constant.get_underscore_name().replace('_', ' '))
+            c = '* {0}: {1}, '.format(value, constant.get_name().lower())
 
             for_ = {
             'en': 'for',

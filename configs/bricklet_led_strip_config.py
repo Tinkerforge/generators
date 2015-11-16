@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 2],
     'category': 'Bricklet',
     'device_identifier': 231,
-    'name': ('LEDStrip', 'led_strip', 'LED Strip', 'LED Strip Bricklet'),
+    'name': ('LED Strip', 'LED Strip', 'LED Strip Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Controls up to 320 RGB LEDs',
@@ -24,12 +24,12 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetRGBValues', 'set_rgb_values'), 
-'elements': [('index', 'uint16', 1, 'in'),
-             ('length', 'uint8', 1, 'in'),
-             ('r', 'uint8', 16, 'in'),
-             ('g', 'uint8', 16, 'in'),
-             ('b', 'uint8', 16, 'in')],
+'name': 'Set RGB Values',
+'elements': [('Index', 'uint16', 1, 'in'),
+             ('Length', 'uint8', 1, 'in'),
+             ('R', 'uint8', 16, 'in'),
+             ('G', 'uint8', 16, 'in'),
+             ('B', 'uint8', 16, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -131,12 +131,12 @@ Begrenzung werden komplett ingnoriert.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetRGBValues', 'get_rgb_values'), 
-'elements': [('index', 'uint16', 1, 'in'),
-             ('length', 'uint8', 1, 'in'),
-             ('r', 'uint8', 16, 'out'),
-             ('g', 'uint8', 16, 'out'),
-             ('b', 'uint8', 16, 'out')],
+'name': 'Get RGB Values',
+'elements': [('Index', 'uint16', 1, 'in'),
+             ('Length', 'uint8', 1, 'in'),
+             ('R', 'uint8', 16, 'out'),
+             ('G', 'uint8', 16, 'out'),
+             ('B', 'uint8', 16, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -158,8 +158,8 @@ Die Werte sind die letzten von :func:`SetRGBValues` gesetzten Werte.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetFrameDuration', 'set_frame_duration'), 
-'elements': [('duration', 'uint16', 1, 'in')],
+'name': 'Set Frame Duration',
+'elements': [('Duration', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -189,8 +189,8 @@ Standardwert: 100ms (10 Frames pro Sekunde).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetFrameDuration', 'get_frame_duration'), 
-'elements': [('duration', 'uint16', 1, 'out')],
+'name': 'Get Frame Duration',
+'elements': [('Duration', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -207,8 +207,8 @@ Gibt die *frame duration* (Länge des Frames) in ms zurück, wie von
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetSupplyVoltage', 'get_supply_voltage'), 
-'elements': [('voltage', 'uint16', 1, 'out')],
+'name': 'Get Supply Voltage',
+'elements': [('Voltage', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -225,8 +225,8 @@ in mV angegeben.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('FrameRendered', 'frame_rendered'), 
-'elements': [('length', 'uint16', 1, 'out')],
+'name': 'Frame Rendered',
+'elements': [('Length', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -254,8 +254,8 @@ Für eine Erklärung des generellen Ansatzes siehe :func:`SetRGBValues`.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetClockFrequency', 'set_clock_frequency'), 
-'elements': [('frequency', 'uint32', 1, 'in')],
+'name': 'Set Clock Frequency',
+'elements': [('Frequency', 'uint32', 1, 'in')],
 'since_firmware': [2, 0, 1],
 'doc': ['bf', {
 'en':
@@ -305,8 +305,8 @@ Der Standardwert ist 1,66MHz
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetClockFrequency', 'get_clock_frequency'), 
-'elements': [('frequency', 'uint32', 1, 'out')],
+'name': 'Get Clock Frequency',
+'elements': [('Frequency', 'uint32', 1, 'out')],
 'since_firmware': [2, 0, 1],
 'doc': ['bf', {
 'en':
@@ -323,10 +323,10 @@ Gibt die aktuell genutzte Clock-Frequenz zurück, wie von
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetChipType', 'set_chip_type'), 
-'elements': [('chip', 'uint16', 1, 'in', ('ChipType', 'chip_type', [('WS2801', 'ws2801', 2801),
-                                                                    ('WS2811', 'ws2811', 2811),
-                                                                    ('WS2812', 'ws2812', 2812)]))],
+'name': 'Set Chip Type',
+'elements': [('Chip', 'uint16', 1, 'in', ('Chip Type', [('WS2801', 2801),
+                                                        ('WS2811', 2811),
+                                                        ('WS2812', 2812)]))],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
@@ -362,10 +362,10 @@ Der Standardwert ist WS2801 (``chip`` = 2801).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetChipType', 'get_chip_type'), 
-'elements': [('chip', 'uint16', 1, 'out', ('ChipType', 'chip_type', [('WS2801', 'ws2801', 2801),
-                                                                     ('WS2811', 'ws2811', 2811),
-                                                                     ('WS2812', 'ws2812', 2812)]))],
+'name': 'Get Chip Type',
+'elements': [('Chip', 'uint16', 1, 'out', ('Chip Type', [('WS2801', 2801),
+                                                         ('WS2811', 2811),
+                                                         ('WS2812', 2812)]))],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':

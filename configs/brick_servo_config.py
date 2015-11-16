@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 1],
     'category': 'Brick',
     'device_identifier': 14,
-    'name': ('Servo', 'servo', 'Servo', 'Servo Brick'),
+    'name': ('Servo', 'Servo', 'Servo Brick'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Drives up to 7 RC Servos with up to 3A',
@@ -51,8 +51,8 @@ für alle Servos entsprechend der Bitmaske.
 
 com['packets'].append({
 'type': 'function',
-'name': ('Enable', 'enable'), 
-'elements': [('servo_num', 'uint8', 1, 'in')], 
+'name': 'Enable',
+'elements': [('Servo Num', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -70,8 +70,8 @@ konfigurierte Position, Geschwindigkeit, Beschleunigung, etc. sofort übernommen
 
 com['packets'].append({
 'type': 'function',
-'name': ('Disable', 'disable'), 
-'elements': [('servo_num', 'uint8', 1, 'in')], 
+'name': 'Disable',
+'elements': [('Servo Num', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -89,9 +89,9 @@ z.B. halten deaktivierte Servos nicht ihre Position wenn eine Last angebracht is
 
 com['packets'].append({
 'type': 'function',
-'name': ('IsEnabled', 'is_enabled'), 
-'elements': [('servo_num', 'uint8', 1, 'in'),
-             ('enabled', 'bool', 1, 'out')], 
+'name': 'Is Enabled',
+'elements': [('Servo Num', 'uint8', 1, 'in'),
+             ('Enabled', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -102,14 +102,14 @@ Returns *true* if the specified servo is enabled, *false* otherwise.
 """
 Gibt zurück ob ein Servo aktiviert ist.
 """
-}] 
+}]
 })
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetPosition', 'set_position'), 
-'elements': [('servo_num', 'uint8', 1, 'in'),
-             ('position', 'int16', 1, 'in')], 
+'name': 'Set Position',
+'elements': [('Servo Num', 'uint8', 1, 'in'),
+             ('Position', 'int16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -139,9 +139,9 @@ Servo Brick gesteuert werden soll, können Längen oder Geschwindigkeiten mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetPosition', 'get_position'), 
-'elements': [('servo_num', 'uint8', 1, 'in'),
-             ('position', 'int16', 1, 'out')], 
+'name': 'Get Position',
+'elements': [('Servo Num', 'uint8', 1, 'in'),
+             ('Position', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -158,9 +158,9 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCurrentPosition', 'get_current_position'), 
-'elements': [('servo_num', 'uint8', 1, 'in'),
-             ('position', 'int16', 1, 'out')], 
+'name': 'Get Current Position',
+'elements': [('Servo Num', 'uint8', 1, 'in'),
+             ('Position', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -179,9 +179,9 @@ von :func:`SetPosition` abweichen, wenn der Servo gerade sein Positionsziel anf�
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetVelocity', 'set_velocity'), 
-'elements': [('servo_num', 'uint8', 1, 'in'),
-             ('velocity', 'uint16', 1, 'in')], 
+'name': 'Set Velocity',
+'elements': [('Servo Num', 'uint8', 1, 'in'),
+             ('Velocity', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -210,9 +210,9 @@ Der Standardwert ist 65535.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetVelocity', 'get_velocity'), 
-'elements': [('servo_num', 'uint8', 1, 'in'),
-             ('velocity', 'uint16', 1, 'out')], 
+'name': 'Get Velocity',
+'elements': [('Servo Num', 'uint8', 1, 'in'),
+             ('Velocity', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -229,9 +229,9 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCurrentVelocity', 'get_current_velocity'), 
-'elements': [('servo_num', 'uint8', 1, 'in'),
-             ('velocity', 'uint16', 1, 'out')], 
+'name': 'Get Current Velocity',
+'elements': [('Servo Num', 'uint8', 1, 'in'),
+             ('Velocity', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -250,9 +250,9 @@ von :func:`SetVelocity` abweichen, wenn der Servo gerade sein Geschwindigkeitszi
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetAcceleration', 'set_acceleration'), 
-'elements': [('servo_num', 'uint8', 1, 'in'),
-             ('acceleration', 'uint16', 1, 'in')], 
+'name': 'Set Acceleration',
+'elements': [('Servo Num', 'uint8', 1, 'in'),
+             ('Acceleration', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -278,9 +278,9 @@ Der Standardwert ist 65535.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAcceleration', 'get_acceleration'), 
-'elements': [('servo_num', 'uint8', 1, 'in'),
-             ('acceleration', 'uint16', 1, 'out')], 
+'name': 'Get Acceleration',
+'elements': [('Servo Num', 'uint8', 1, 'in'),
+             ('Acceleration', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -298,8 +298,8 @@ Gibt die Beschleunigung des angegebenen Servos zurück, wie von
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetOutputVoltage', 'set_output_voltage'), 
-'elements': [('voltage', 'uint16', 1, 'in')], 
+'name': 'Set Output Voltage',
+'elements': [('Voltage', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -332,8 +332,8 @@ Der Standardwert ist 5000.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetOutputVoltage', 'get_output_voltage'), 
-'elements': [('voltage', 'uint16', 1, 'out')], 
+'name': 'Get Output Voltage',
+'elements': [('Voltage', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -349,10 +349,10 @@ Gibt die Ausgangsspannung zurück, wie von :func:`SetOutputVoltage` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetPulseWidth', 'set_pulse_width'), 
-'elements': [('servo_num', 'uint8', 1, 'in'),
-             ('min', 'uint16', 1, 'in'),
-             ('max', 'uint16', 1, 'in')], 
+'name': 'Set Pulse Width',
+'elements': [('Servo Num', 'uint8', 1, 'in'),
+             ('Min', 'uint16', 1, 'in'),
+             ('Max', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -401,10 +401,10 @@ Pulsweite.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetPulseWidth', 'get_pulse_width'), 
-'elements': [('servo_num', 'uint8', 1, 'in'),
-             ('min', 'uint16', 1, 'out'),
-             ('max', 'uint16', 1, 'out')], 
+'name': 'Get Pulse Width',
+'elements': [('Servo Num', 'uint8', 1, 'in'),
+             ('Min', 'uint16', 1, 'out'),
+             ('Max', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -422,10 +422,10 @@ Gibt die minimale und maximale Pulsweite des angegebenen Servos zurück, wie von
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDegree', 'set_degree'), 
-'elements': [('servo_num', 'uint8', 1, 'in'),
-             ('min', 'int16', 1, 'in'),
-             ('max', 'int16', 1, 'in')], 
+'name': 'Set Degree',
+'elements': [('Servo Num', 'uint8', 1, 'in'),
+             ('Min', 'int16', 1, 'in'),
+             ('Max', 'int16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -503,10 +503,10 @@ Die Standardwerte sind -9000 und 9000 für den minimalen und maximalen Winkel.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDegree', 'get_degree'), 
-'elements': [('servo_num', 'uint8', 1, 'in'),
-             ('min', 'int16', 1, 'out'),
-             ('max', 'int16', 1, 'out')], 
+'name': 'Get Degree',
+'elements': [('Servo Num', 'uint8', 1, 'in'),
+             ('Min', 'int16', 1, 'out'),
+             ('Max', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -524,9 +524,9 @@ wie von :func:`SetDegree` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetPeriod', 'set_period'), 
-'elements': [('servo_num', 'uint8', 1, 'in'),
-             ('period', 'uint16', 1, 'in')],
+'name': 'Set Period',
+'elements': [('Servo Num', 'uint8', 1, 'in'),
+             ('Period', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -570,9 +570,9 @@ Der Standardwert ist 19,5ms (19500µs).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetPeriod', 'get_period'), 
-'elements': [('servo_num', 'uint8', 1, 'in'),
-             ('period', 'uint16', 1, 'out')],
+'name': 'Get Period',
+'elements': [('Servo Num', 'uint8', 1, 'in'),
+             ('Period', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -589,9 +589,9 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetServoCurrent', 'get_servo_current'), 
-'elements': [('servo_num', 'uint8', 1, 'in'),
-             ('current', 'uint16', 1, 'out')],
+'name': 'Get Servo Current',
+'elements': [('Servo Num', 'uint8', 1, 'in'),
+             ('Current', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -607,8 +607,8 @@ Gibt den Stromverbrauch des angegebenen Servos in mA zurück.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetOverallCurrent', 'get_overall_current'), 
-'elements': [('current', 'uint16', 1, 'out')],
+'name': 'Get Overall Current',
+'elements': [('Current', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -624,8 +624,8 @@ Gibt den Stromverbrauch aller Servos zusammen in mA zurück.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetStackInputVoltage', 'get_stack_input_voltage'), 
-'elements': [('voltage', 'uint16', 1, 'out')],
+'name': 'Get Stack Input Voltage',
+'elements': [('Voltage', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -645,8 +645,8 @@ oder Step-Up Power Supply.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetExternalInputVoltage', 'get_external_input_voltage'), 
-'elements': [('voltage', 'uint16', 1, 'out')],
+'name': 'Get External Input Voltage',
+'elements': [('Voltage', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -684,8 +684,8 @@ des Stapels verfügbar sein, erfolgt die Versorgung der Motoren über diese.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetMinimumVoltage', 'set_minimum_voltage'), 
-'elements': [('voltage', 'uint16', 1, 'in')],
+'name': 'Set Minimum Voltage',
+'elements': [('Voltage', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -713,8 +713,8 @@ Der Standardwert ist 5V (5000mV).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetMinimumVoltage', 'get_minimum_voltage'), 
-'elements': [('voltage', 'uint16', 1, 'out')],
+'name': 'Get Minimum Voltage',
+'elements': [('Voltage', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -730,8 +730,8 @@ Gibt die minimale Spannung zurück, wie von :func:`SetMinimumVoltage` gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('UnderVoltage', 'under_voltage'), 
-'elements': [('voltage', 'uint16', 1, 'out')],
+'name': 'Under Voltage',
+'elements': [('Voltage', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -751,9 +751,9 @@ ist die aktuelle Spannung in mV.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('PositionReached', 'position_reached'), 
-'elements': [('servo_num', 'uint8', 1, 'out'),
-             ('position', 'int16', 1, 'out')], 
+'name': 'Position Reached',
+'elements': [('Servo Num', 'uint8', 1, 'out'),
+             ('Position', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -789,9 +789,9 @@ Dieser Callback kann mit :func:`EnablePositionReachedCallback` aktiviert werden.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('VelocityReached', 'velocity_reached'), 
-'elements': [('servo_num', 'uint8', 1, 'out'),
-             ('velocity', 'int16', 1, 'out')], 
+'name': 'Velocity Reached',
+'elements': [('Servo Num', 'uint8', 1, 'out'),
+             ('Velocity', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -827,7 +827,7 @@ Dieser Callback kann mit :func:`EnableVelocityReachedCallback` aktiviert werden.
 
 com['packets'].append({
 'type': 'function',
-'name': ('EnablePositionReachedCallback', 'enable_position_reached_callback'), 
+'name': 'Enable Position Reached Callback',
 'elements': [],
 'since_firmware': [2, 0, 1],
 'doc': ['ccf', {
@@ -848,7 +848,7 @@ Voreinstellung ist deaktiviert.
 
 com['packets'].append({
 'type': 'function',
-'name': ('DisablePositionReachedCallback', 'disable_position_reached_callback'), 
+'name': 'Disable Position Reached Callback',
 'elements': [],
 'since_firmware': [2, 0, 1],
 'doc': ['ccf', {
@@ -869,8 +869,8 @@ Voreinstellung ist deaktiviert.
 
 com['packets'].append({
 'type': 'function',
-'name': ('IsPositionReachedCallbackEnabled', 'is_position_reached_callback_enabled'), 
-'elements': [('enabled', 'bool', 1, 'out')],
+'name': 'Is Position Reached Callback Enabled',
+'elements': [('Enabled', 'bool', 1, 'out')],
 'since_firmware': [2, 0, 1],
 'doc': ['ccf', {
 'en':
@@ -886,7 +886,7 @@ Gibt *true* zurück wenn der :func:`PositionReached` Callback aktiviert ist, *fa
 
 com['packets'].append({
 'type': 'function',
-'name': ('EnableVelocityReachedCallback', 'enable_velocity_reached_callback'), 
+'name': 'Enable Velocity Reached Callback',
 'elements': [],
 'since_firmware': [2, 0, 1],
 'doc': ['ccf', {
@@ -907,7 +907,7 @@ Voreinstellung ist deaktiviert.
 
 com['packets'].append({
 'type': 'function',
-'name': ('DisableVelocityReachedCallback', 'disable_velocity_reached_callback'), 
+'name': 'Disable Velocity Reached Callback',
 'elements': [],
 'since_firmware': [2, 0, 1],
 'doc': ['ccf', {
@@ -928,8 +928,8 @@ Voreinstellung ist deaktiviert.
 
 com['packets'].append({
 'type': 'function',
-'name': ('IsVelocityReachedCallbackEnabled', 'is_velocity_reached_callback_enabled'), 
-'elements': [('enabled', 'bool', 1, 'out')],
+'name': 'Is Velocity Reached Callback Enabled',
+'elements': [('Enabled', 'bool', 1, 'out')],
 'since_firmware': [2, 0, 1],
 'doc': ['ccf', {
 'en':

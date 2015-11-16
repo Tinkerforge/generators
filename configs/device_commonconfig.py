@@ -14,8 +14,8 @@ common_packets.append({
 'is_virtual': True,
 'type': 'function',
 'function_id': -1,
-'name': ('GetAPIVersion', 'get_api_version'),
-'elements': [('api_version', 'uint8', 3, 'out')],
+'name': 'Get API Version',
+'elements': [('API Version', 'uint8', 3, 'out')],
 'since_firmware': None,
 'doc': ['af', {
 'en':
@@ -38,9 +38,9 @@ common_packets.append({
 'is_virtual': True,
 'type': 'function',
 'function_id': -1,
-'name': ('GetResponseExpected', 'get_response_expected'),
-'elements': [('function_id', 'uint8', 1, 'in'),
-             ('response_expected', 'bool', 1, 'out')],
+'name': 'Get Response Expected',
+'elements': [('Function Id', 'uint8', 1, 'in'),
+             ('Response Expected', 'bool', 1, 'out')],
 'since_firmware': None,
 'doc': ['af', {
 'en':
@@ -93,9 +93,9 @@ common_packets.append({
 'is_virtual': True,
 'type': 'function',
 'function_id': -1,
-'name': ('SetResponseExpected', 'set_response_expected'),
-'elements': [('function_id', 'uint8', 1, 'in'),
-             ('response_expected', 'bool', 1, 'in')],
+'name': 'Set Response Expected',
+'elements': [('Function Id', 'uint8', 1, 'in'),
+             ('Response Expected', 'bool', 1, 'in')],
 'since_firmware': None,
 'doc': ['af', {
 'en':
@@ -132,8 +132,8 @@ common_packets.append({
 'is_virtual': True,
 'type': 'function',
 'function_id': -1,
-'name': ('SetResponseExpectedAll', 'set_response_expected_all'),
-'elements': [('response_expected', 'bool', 1, 'in')],
+'name': 'Set Response Expected All',
+'elements': [('Response Expected', 'bool', 1, 'in')],
 'since_firmware': None,
 'doc': ['af', {
 'en':

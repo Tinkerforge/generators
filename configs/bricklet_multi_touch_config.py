@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 234,
-    'name': ('MultiTouch', 'multi_touch', 'Multi Touch', 'Multi Touch Bricklet'),
+    'name': ('Multi Touch', 'Multi Touch', 'Multi Touch Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Capacitive touch sensor for 12 electrodes',
@@ -24,8 +24,8 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetTouchState', 'get_touch_state'), 
-'elements': [('state', 'uint16', 1, 'out')],
+'name': 'Get Touch State',
+'elements': [('State', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -76,7 +76,7 @@ professionellen Aussehen zu bauen.
 
 com['packets'].append({
 'type': 'function',
-'name': ('Recalibrate', 'recalibrate'), 
+'name': 'Recalibrate',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -95,8 +95,8 @@ Elektroden verändert oder bewegt wurden.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetElectrodeConfig', 'set_electrode_config'), 
-'elements': [('enabled_electrodes', 'uint16', 1, 'in')],
+'name': 'Set Electrode Config',
+'elements': [('Enabled Electrodes', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -137,8 +137,8 @@ Standardwert: 8191 = 0x1FFF = 0b1111111111111 (alle Elektroden aktiviert)
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetElectrodeConfig', 'get_electrode_config'), 
-'elements': [('enabled_electrodes', 'uint16', 1, 'out')],
+'name': 'Get Electrode Config',
+'elements': [('Enabled Electrodes', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -155,8 +155,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('TouchState', 'touch_state'), 
-'elements': [('state', 'uint16', 1, 'out')],
+'name': 'Touch State',
+'elements': [('State', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -178,8 +178,8 @@ Dieser Callback wird ausgelöst wenn sich ein Tastzustand ändert.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetElectrodeSensitivity', 'set_electrode_sensitivity'), 
-'elements': [('sensitivity', 'uint8', 1, 'in')],
+'name': 'Set Electrode Sensitivity',
+'elements': [('Sensitivity', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -222,8 +222,8 @@ Der voreingestellte Empfindlichkeitswert ist 181.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetElectrodeSensitivity', 'get_electrode_sensitivity'), 
-'elements': [('sensitivity', 'uint8', 1, 'out')],
+'name': 'Get Electrode Sensitivity',
+'elements': [('Sensitivity', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':

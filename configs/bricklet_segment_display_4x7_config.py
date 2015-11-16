@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 237,
-    'name': ('SegmentDisplay4x7', 'segment_display_4x7', 'Segment Display 4x7', 'Segment Display 4x7 Bricklet'),
+    'name': ('Segment Display 4x7', 'Segment Display 4x7', 'Segment Display 4x7 Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Four 7-segment displays with switchable colon',
@@ -24,10 +24,10 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetSegments', 'set_segments'), 
-'elements': [('segments', 'uint8', 4, 'in'),
-             ('brightness', 'uint8', 1, 'in'),
-             ('colon', 'bool', 1, 'in')],
+'name': 'Set Segments',
+'elements': [('Segments', 'uint8', 4, 'in'),
+             ('Brightness', 'uint8', 1, 'in'),
+             ('Colon', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -68,10 +68,10 @@ Der dritte Parameter aktiviert/deaktiviert den Doppelpunkt auf der Anzeige.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetSegments', 'get_segments'), 
-'elements': [('segments', 'uint8', 4, 'out'),
-             ('brightness', 'uint8', 1, 'out'),
-             ('colon', 'bool', 1, 'out')],
+'name': 'Get Segments',
+'elements': [('Segments', 'uint8', 4, 'out'),
+             ('Brightness', 'uint8', 1, 'out'),
+             ('Colon', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -89,11 +89,11 @@ Gibt die Segment-, Helligkeit- und Doppelpunktdaten zurück, wie von
 
 com['packets'].append({
 'type': 'function',
-'name': ('StartCounter', 'start_counter'), 
-'elements': [('value_from', 'int16', 1, 'in'),
-             ('value_to', 'int16', 1, 'in'),
-             ('increment', 'int16', 1, 'in'),
-             ('length', 'uint32', 1, 'in')],
+'name': 'Start Counter',
+'elements': [('Value From', 'int16', 1, 'in'),
+             ('Value To', 'int16', 1, 'in'),
+             ('Increment', 'int16', 1, 'in'),
+             ('Length', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -136,8 +136,8 @@ gestoppt werden.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCounterValue', 'get_counter_value'), 
-'elements': [('value', 'uint16', 1, 'out')],
+'name': 'Get Counter Value',
+'elements': [('Value', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -158,7 +158,7 @@ Wenn kein Zähler am laufen ist wird eine 0 zurückgegeben.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('CounterFinished', 'counter_finished'), 
+'name': 'Counter Finished',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {

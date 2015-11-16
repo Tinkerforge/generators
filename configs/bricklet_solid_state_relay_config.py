@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 244,
-    'name': ('SolidStateRelay', 'solid_state_relay', 'Solid State Relay', 'Solid State Relay Bricklet'),
+    'name': ('Solid State Relay', 'Solid State Relay', 'Solid State Relay Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Controls AC and DC Solid State Relays',
@@ -24,8 +24,8 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetState', 'set_state'), 
-'elements': [('state', 'bool', 1, 'in')],
+'name': 'Set State',
+'elements': [('State', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -49,8 +49,8 @@ Der Standardwert ist *false*.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetState', 'get_state'), 
-'elements': [('state', 'bool', 1, 'out')],
+'name': 'Get State',
+'elements': [('State', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -66,9 +66,9 @@ Gibt den Zustand der Relais zurück, *true* bedeutet ein und *false* aus.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetMonoflop', 'set_monoflop'), 
-'elements': [('state', 'bool', 1, 'in'),
-             ('time', 'uint32', 1, 'in')],
+'name': 'Set Monoflop',
+'elements': [('State', 'bool', 1, 'in'),
+             ('Time', 'uint32', 1, 'in')],
 'since_firmware': [1, 1, 1],
 'doc': ['af', {
 'en':
@@ -107,10 +107,10 @@ getrennt wird, wird das Relais nach spätestens zwei Sekunden ausschalten.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetMonoflop', 'get_monoflop'), 
-'elements': [('state', 'bool', 1, 'out'),
-             ('time', 'uint32', 1, 'out'),
-             ('time_remaining', 'uint32', 1, 'out')],
+'name': 'Get Monoflop',
+'elements': [('State', 'bool', 1, 'out'),
+             ('Time', 'uint32', 1, 'out'),
+             ('Time Remaining', 'uint32', 1, 'out')],
 'since_firmware': [1, 1, 1],
 'doc': ['af', {
 'en':
@@ -134,8 +134,8 @@ Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('MonoflopDone', 'monoflop_done'), 
-'elements': [('state', 'bool', 1, 'out')],
+'name': 'Monoflop Done',
+'elements': [('State', 'bool', 1, 'out')],
 'since_firmware': [1, 1, 1],
 'doc': ['c', {
 'en':

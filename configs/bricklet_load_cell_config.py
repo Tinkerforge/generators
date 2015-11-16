@@ -13,7 +13,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 253,
-    'name': ('LoadCell', 'load_cell', 'Load Cell', 'Load Cell Bricklet'),
+    'name': ('Load Cell', 'Load Cell', 'Load Cell Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description':  {
         'en': 'Measures weight with a load cell',
@@ -26,8 +26,8 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetWeight', 'get_weight'), 
-'elements': [('weight', 'int32', 1, 'out')],
+'name': 'Get Weight',
+'elements': [('Weight', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -51,8 +51,8 @@ den Callback :func:`Weight` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetWeightCallbackPeriod', 'set_weight_callback_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Weight Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -80,8 +80,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetWeightCallbackPeriod', 'get_weight_callback_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Weight Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -98,10 +98,10 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetWeightCallbackThreshold', 'set_weight_callback_threshold'), 
-'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int32', 1, 'in'),
-             ('max', 'int32', 1, 'in')],
+'name': 'Set Weight Callback Threshold',
+'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'int32', 1, 'in'),
+             ('Max', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -145,10 +145,10 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetWeightCallbackThreshold', 'get_weight_callback_threshold'), 
-'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int32', 1, 'out'),
-             ('max', 'int32', 1, 'out')],
+'name': 'Get Weight Callback Threshold',
+'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'int32', 1, 'out'),
+             ('Max', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -165,8 +165,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDebouncePeriod', 'set_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'in')],
+'name': 'Set Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -202,8 +202,8 @@ Der Standardwert ist 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDebouncePeriod', 'get_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'out')],
+'name': 'Get Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -220,8 +220,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetMovingAverage', 'set_moving_average'), 
-'elements': [('average', 'uint8', 1, 'in')],
+'name': 'Set Moving Average',
+'elements': [('Average', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -253,8 +253,8 @@ Der Standardwert ist 4.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetMovingAverage', 'get_moving_average'), 
-'elements': [('average', 'uint8', 1, 'out')],
+'name': 'Get Moving Average',
+'elements': [('Average', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -271,7 +271,7 @@ Gibt die Länge des gleitenden Mittelwerts zurück, wie von
 
 com['packets'].append({
 'type': 'function',
-'name': ('LEDOn', 'led_on'), 
+'name': 'LED On',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -288,7 +288,7 @@ Aktiviert die LED.
 
 com['packets'].append({
 'type': 'function',
-'name': ('LEDOff', 'led_off'), 
+'name': 'LED Off',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -305,8 +305,8 @@ Deaktiviert die LED.
 
 com['packets'].append({
 'type': 'function',
-'name': ('IsLEDOn', 'is_led_on'), 
-'elements': [('value', 'uint8', 1, 'out')],
+'name': 'Is LED On',
+'elements': [('Value', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -323,8 +323,8 @@ Gibt *true* zurück wenn die LED aktiviert ist, *false* sonst.
 
 com['packets'].append({
 'type': 'function',
-'name': ('Calibrate', 'calibrate'), 
-'elements': [('weight', 'uint32', 1, 'in')],
+'name': 'Calibrate',
+'elements': [('Weight', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -361,7 +361,7 @@ Funktion muss nicht im Quelltext genutzt werden.
 
 com['packets'].append({
 'type': 'function',
-'name': ('Tare', 'tare'), 
+'name': 'Tare',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -378,12 +378,12 @@ Setzt das aktuell gemessene Gewicht als Leergewicht.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetConfiguration', 'set_configuration'), 
-'elements': [('rate', 'uint8', 1, 'in', ('Rate', 'rate', [('10Hz', '10hz', 0),
-                                                          ('80Hz', '80hz', 1)])),
-             ('gain', 'uint8', 1, 'in', ('Gain', 'gain', [('128x', '128x', 0),
-                                                          ('64x', '64x', 1),
-                                                          ('32x', '32x', 2)]))],
+'name': 'Set Configuration',
+'elements': [('Rate', 'uint8', 1, 'in', ('Rate', [('10Hz', 0),
+                                                  ('80Hz', 1)])),
+             ('Gain', 'uint8', 1, 'in', ('Gain', [('128x', 0),
+                                                  ('64x', 1),
+                                                  ('32x', 2)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -439,12 +439,12 @@ Die Standardwerte sind 10Hz für die Rate und 128x für den Gain.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetConfiguration', 'get_configuration'), 
-'elements': [('rate', 'uint8', 1, 'out', ('Rate', 'rate', [('10Hz', '10hz', 0),
-                                                           ('80Hz', '80hz', 1)])),
-             ('gain', 'uint8', 1, 'out', ('Gain', 'gain', [('128x', '128x', 0),
-                                                           ('64x', '64x', 1),
-                                                           ('32x', '32x', 2)]))],
+'name': 'Get Configuration',
+'elements': [('Rate', 'uint8', 1, 'out', ('Rate', [('10Hz', 0),
+                                                   ('80Hz', 1)])),
+             ('Gain', 'uint8', 1, 'out', ('Gain', [('128x', 0),
+                                                   ('64x', 1),
+                                                   ('32x', 2)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -460,8 +460,8 @@ Gibt die Konfiguration zurück, wie von :func:`SetConfiguration` gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Weight', 'weight'), 
-'elements': [('weight', 'int32', 1, 'out')],
+'name': 'Weight',
+'elements': [('Weight', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -486,8 +486,8 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('WeightReached', 'weight_reached'), 
-'elements': [('weight', 'int32', 1, 'out')],
+'name': 'Weight Reached',
+'elements': [('Weight', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

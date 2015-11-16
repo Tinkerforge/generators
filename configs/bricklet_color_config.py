@@ -13,7 +13,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 243,
-    'name': ('Color', 'color', 'Color', 'Color Bricklet'),
+    'name': ('Color', 'Color', 'Color Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures color (RGB value), illuminance and color temperature',
@@ -26,11 +26,11 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetColor', 'get_color'), 
-'elements': [('r', 'uint16', 1, 'out'),
-             ('g', 'uint16', 1, 'out'),
-             ('b', 'uint16', 1, 'out'),
-             ('c', 'uint16', 1, 'out')],
+'name': 'Get Color',
+'elements': [('R', 'uint16', 1, 'out'),
+             ('G', 'uint16', 1, 'out'),
+             ('B', 'uint16', 1, 'out'),
+             ('C', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -76,8 +76,8 @@ den Callback :func:`Color` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetColorCallbackPeriod', 'set_color_callback_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Color Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -105,8 +105,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetColorCallbackPeriod', 'get_color_callback_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Color Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -123,16 +123,16 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetColorCallbackThreshold', 'set_color_callback_threshold'), 
-'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min_r', 'uint16', 1, 'in'),
-             ('max_r', 'uint16', 1, 'in'),
-             ('min_g', 'uint16', 1, 'in'),
-             ('max_g', 'uint16', 1, 'in'),
-             ('min_b', 'uint16', 1, 'in'),
-             ('max_b', 'uint16', 1, 'in'),
-             ('min_c', 'uint16', 1, 'in'),
-             ('max_c', 'uint16', 1, 'in')],
+'name': 'Set Color Callback Threshold',
+'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min R', 'uint16', 1, 'in'),
+             ('Max R', 'uint16', 1, 'in'),
+             ('Min G', 'uint16', 1, 'in'),
+             ('Max G', 'uint16', 1, 'in'),
+             ('Min B', 'uint16', 1, 'in'),
+             ('Max B', 'uint16', 1, 'in'),
+             ('Min C', 'uint16', 1, 'in'),
+             ('Max C', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -176,16 +176,16 @@ Der Standardwert ist ('x', 0, 0, 0, 0, 0, 0, 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetColorCallbackThreshold', 'get_color_callback_threshold'), 
-'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min_r', 'uint16', 1, 'out'),
-             ('max_r', 'uint16', 1, 'out'),
-             ('min_g', 'uint16', 1, 'out'),
-             ('max_g', 'uint16', 1, 'out'),
-             ('min_b', 'uint16', 1, 'out'),
-             ('max_b', 'uint16', 1, 'out'),
-             ('min_c', 'uint16', 1, 'out'),
-             ('max_c', 'uint16', 1, 'out')],
+'name': 'Get Color Callback Threshold',
+'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min R', 'uint16', 1, 'out'),
+             ('Max R', 'uint16', 1, 'out'),
+             ('Min G', 'uint16', 1, 'out'),
+             ('Max G', 'uint16', 1, 'out'),
+             ('Min B', 'uint16', 1, 'out'),
+             ('Max B', 'uint16', 1, 'out'),
+             ('Min C', 'uint16', 1, 'out'),
+             ('Max C', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -202,8 +202,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDebouncePeriod', 'set_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'in')],
+'name': 'Set Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -239,8 +239,8 @@ Der Standardwert ist 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDebouncePeriod', 'get_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'out')],
+'name': 'Get Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -257,11 +257,11 @@ gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Color', 'color'), 
-'elements': [('r', 'uint16', 1, 'out'),
-             ('g', 'uint16', 1, 'out'),
-             ('b', 'uint16', 1, 'out'),
-             ('c', 'uint16', 1, 'out')],
+'name': 'Color',
+'elements': [('R', 'uint16', 1, 'out'),
+             ('G', 'uint16', 1, 'out'),
+             ('B', 'uint16', 1, 'out'),
+             ('C', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -286,11 +286,11 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('ColorReached', 'color_reached'), 
-'elements': [('r', 'uint16', 1, 'out'),
-             ('g', 'uint16', 1, 'out'),
-             ('b', 'uint16', 1, 'out'),
-             ('c', 'uint16', 1, 'out')],
+'name': 'Color Reached',
+'elements': [('R', 'uint16', 1, 'out'),
+             ('G', 'uint16', 1, 'out'),
+             ('B', 'uint16', 1, 'out'),
+             ('C', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -318,7 +318,7 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 
 com['packets'].append({
 'type': 'function',
-'name': ('LightOn', 'light_on'), 
+'name': 'Light On',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -335,7 +335,7 @@ Aktiviert die LED.
 
 com['packets'].append({
 'type': 'function',
-'name': ('LightOff', 'light_off'), 
+'name': 'Light Off',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -352,9 +352,9 @@ Deaktiviert die LED.
 
 com['packets'].append({
 'type': 'function',
-'name': ('IsLightOn', 'is_light_on'), 
-'elements': [('light', 'uint8', 1, 'out', ('Light', 'light', [('On', 'on', 0),
-                                                              ('Off', 'off', 1)]))],
+'name': 'Is Light On',
+'elements': [('Light', 'uint8', 1, 'out', ('Light', [('On', 0),
+                                                     ('Off', 1)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -376,16 +376,16 @@ Gibt den Zustand der LED zurück. Mögliche Werte sind:
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetConfig', 'set_config'), 
-'elements': [('gain', 'uint8', 1, 'in', ('Gain', 'gain', [('1x', '1x', 0),
-                                                          ('4x', '4x', 1),
-                                                          ('16x', '16x', 2),
-                                                          ('60x', '60x', 3)])),
-             ('integration_time', 'uint8', 1, 'in', ('IntegrationTime', 'integration_time', [('2ms', '2ms', 0),
-                                                                                             ('24ms', '24ms', 1),
-                                                                                             ('101ms', '101ms', 2),
-                                                                                             ('154ms', '154ms', 3),
-                                                                                             ('700ms', '700ms', 4)]))],
+'name': 'Set Config',
+'elements': [('Gain', 'uint8', 1, 'in', ('Gain', [('1x', 0),
+                                                  ('4x', 1),
+                                                  ('16x', 2),
+                                                  ('60x', 3)])),
+             ('Integration Time', 'uint8', 1, 'in', ('Integration Time', [('2ms', 0),
+                                                                          ('24ms', 1),
+                                                                          ('101ms', 2),
+                                                                          ('154ms', 3),
+                                                                          ('700ms', 4)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -452,16 +452,16 @@ Die Standardwerte sind 60x Verstärkung und 154ms Integrationszeit.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetConfig', 'get_config'), 
-'elements': [('gain', 'uint8', 1, 'out', ('Gain', 'gain', [('1x', '1x', 0),
-                                                            ('4x', '4x', 1),
-                                                            ('16x', '16x', 2),
-                                                            ('60x', '60x', 3)])),
-             ('integration_time', 'uint8', 1, 'out', ('IntegrationTime', 'integration_time', [('2ms', '2ms', 0),
-                                                                                              ('24ms', '24ms', 1),
-                                                                                              ('101ms', '101ms', 2),
-                                                                                              ('154ms', '154ms', 3),
-                                                                                              ('700ms', '700ms', 4)]))],
+'name': 'Get Config',
+'elements': [('Gain', 'uint8', 1, 'out', ('Gain', [('1x', 0),
+                                                   ('4x', 1),
+                                                   ('16x', 2),
+                                                   ('60x', 3)])),
+             ('Integration Time', 'uint8', 1, 'out', ('Integration Time', [('2ms', 0),
+                                                                           ('24ms', 1),
+                                                                           ('101ms', 2),
+                                                                           ('154ms', 3),
+                                                                           ('700ms', 4)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -478,8 +478,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetIlluminance', 'get_illuminance'), 
-'elements': [('illuminance', 'uint32', 1, 'out')],
+'name': 'Get Illuminance',
+'elements': [('Illuminance', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -513,8 +513,8 @@ kann die Verstärkung per :func:`SetConfig` reduziert werden.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetColorTemperature', 'get_color_temperature'), 
-'elements': [('color_temperature', 'uint16', 1, 'out')],
+'name': 'Get Color Temperature',
+'elements': [('Color Temperature', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -540,8 +540,8 @@ kann die Verstärkung per :func:`SetConfig` reduziert werden.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetIlluminanceCallbackPeriod', 'set_illuminance_callback_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Illuminance Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -569,8 +569,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetIlluminanceCallbackPeriod', 'get_illuminance_callback_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Illuminance Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -587,8 +587,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetColorTemperatureCallbackPeriod', 'set_color_temperature_callback_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Color Temperature Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -616,8 +616,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetColorTemperatureCallbackPeriod', 'get_color_temperature_callback_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Color Temperature Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -634,8 +634,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Illuminance', 'illuminance'), 
-'elements': [('illuminance', 'uint32', 1, 'out')],
+'name': 'Illuminance',
+'elements': [('Illuminance', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -661,8 +661,8 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('ColorTemperature', 'color_temperature'), 
-'elements': [('color_temperature', 'uint16', 1, 'out')],
+'name': 'Color Temperature',
+'elements': [('Color Temperature', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

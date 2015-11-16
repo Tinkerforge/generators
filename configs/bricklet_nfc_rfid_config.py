@@ -30,7 +30,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 246,
-    'name': ('NFCRFID', 'nfc_rfid', 'NFC/RFID', 'NFC/RFID Bricklet'),
+    'name': ('NFC RFID', 'NFC/RFID', 'NFC/RFID Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Reads and writes NFC and RFID tags',
@@ -43,10 +43,10 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('RequestTagID', 'request_tag_id'), 
-'elements': [('tag_type', 'uint8', 1, 'in', ('TagType', 'tag_type', [('MifareClassic', 'mifare_classic', 0),
-                                                                     ('Type1', 'type1', 1),
-                                                                     ('Type2', 'type2', 2)]))],
+'name': 'Request Tag ID',
+'elements': [('Tag Type', 'uint8', 1, 'in', ('Tag Type', [('Mifare Classic', 0),
+                                                          ('Type1', 1),
+                                                          ('Type2', 2)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -119,12 +119,12 @@ aufgerufen werden.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetTagID', 'get_tag_id'), 
-'elements': [('tag_type', 'uint8', 1, 'out', ('TagType', 'tag_type', [('MifareClassic', 'mifare_classic', 0),
-                                                                      ('Type1', 'type1', 1),
-                                                                      ('Type2', 'type2', 2)])),
-             ('tid_length', 'uint8', 1, 'out'),
-             ('tid', 'uint8', 7, 'out')],
+'name': 'Get Tag ID',
+'elements': [('Tag Type', 'uint8', 1, 'out', ('Tag Type', [('Mifare Classic', 0),
+                                                           ('Type1', 1),
+                                                           ('Type2', 2)])),
+             ('TID Length', 'uint8', 1, 'out'),
+             ('TID', 'uint8', 7, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -161,23 +161,23 @@ Der Ansatz um die Tag ID eines Tags zu bekommen sieht wie folgt aus:
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetState', 'get_state'), 
-'elements': [('state', 'uint8', 1, 'out', ('State', 'state', [('Initialization', 'initialization', STATE_INITIALIZATION),
-                                                              ('Idle', 'idle', STATE_IDLE),
-                                                              ('Error', 'error', STATE_ERROR),
-                                                              ('RequestTagID', 'request_tag_id', STATE_REQUEST_TAG_ID),
-                                                              ('RequestTagIDReady', 'request_tag_id_ready', STATE_REQUEST_TAG_ID_READY),
-                                                              ('RequestTagIDError', 'request_tag_id_error', STATE_REQUEST_TAG_ID_ERROR),
-                                                              ('AuthenticatingMifareClassicPage', 'authenticating_mifare_classic_page', STATE_AUTHENTICATING_MIFARE_CLASSIC_PAGE),
-                                                              ('AuthenticatingMifareClassicPageReady', 'authenticating_mifare_classic_page_ready', STATE_AUTHENTICATING_MIFARE_CLASSIC_PAGE_READY),
-                                                              ('AuthenticatingMifareClassicPageError', 'authenticating_mifare_classic_page_error', STATE_AUTHENTICATING_MIFARE_CLASSIC_PAGE_ERROR),
-                                                              ('WritePage', 'write_page', STATE_WRITE_PAGE),
-                                                              ('WritePageReady', 'write_page_ready', STATE_WRITE_PAGE_READY),
-                                                              ('WritePageError', 'write_page_error', STATE_WRITE_PAGE_ERROR),
-                                                              ('RequestPage', 'request_page', STATE_REQUEST_PAGE),
-                                                              ('RequestPageReady', 'request_page_ready', STATE_REQUEST_PAGE_READY),
-                                                              ('RequestPageError', 'request_page_error', STATE_REQUEST_PAGE_ERROR)])),
-             ('idle', 'bool', 1, 'out')],
+'name': 'Get State',
+'elements': [('State', 'uint8', 1, 'out', ('State', [('Initialization', STATE_INITIALIZATION),
+                                                     ('Idle', STATE_IDLE),
+                                                     ('Error', STATE_ERROR),
+                                                     ('Request Tag ID', STATE_REQUEST_TAG_ID),
+                                                     ('Request Tag ID Ready', STATE_REQUEST_TAG_ID_READY),
+                                                     ('Request Tag ID Error', STATE_REQUEST_TAG_ID_ERROR),
+                                                     ('Authenticating Mifare Classic Page', STATE_AUTHENTICATING_MIFARE_CLASSIC_PAGE),
+                                                     ('Authenticating Mifare Classic Page Ready', STATE_AUTHENTICATING_MIFARE_CLASSIC_PAGE_READY),
+                                                     ('Authenticating Mifare Classic Page Error', STATE_AUTHENTICATING_MIFARE_CLASSIC_PAGE_ERROR),
+                                                     ('Write Page', STATE_WRITE_PAGE),
+                                                     ('Write Page Ready', STATE_WRITE_PAGE_READY),
+                                                     ('Write Page Error', STATE_WRITE_PAGE_ERROR),
+                                                     ('Request Page', STATE_REQUEST_PAGE),
+                                                     ('Request Page Ready', STATE_REQUEST_PAGE_READY),
+                                                     ('Request Page Error', STATE_REQUEST_PAGE_ERROR)])),
+             ('Idle', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -222,11 +222,11 @@ Der gleiche Ansatz kann analog für andere API Funktionen verwendet werden.
 
 com['packets'].append({
 'type': 'function',
-'name': ('AuthenticateMifareClassicPage', 'authenticate_mifare_classic_page'), 
-'elements': [('page', 'uint16', 1, 'in'),
-             ('key_number', 'uint8', 1, 'in', ('Key', 'key', [('A', 'a', 0),
-                                                              ('B', 'b', 1)])),
-             ('key', 'uint8', 6, 'in')],
+'name': 'Authenticate Mifare Classic Page',
+'elements': [('Page', 'uint16', 1, 'in'),
+             ('Key Number', 'uint8', 1, 'in', ('Key', [('A', 0),
+                                                       ('B', 1)])),
+             ('Key', 'uint8', 6, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -281,9 +281,9 @@ folgt aus:
 
 com['packets'].append({
 'type': 'function',
-'name': ('WritePage', 'write_page'), 
-'elements': [('page', 'uint16', 1, 'in'),
-             ('data', 'uint8', 16, 'in')],
+'name': 'Write Page',
+'elements': [('Page', 'uint16', 1, 'in'),
+             ('Data', 'uint8', 16, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -340,8 +340,8 @@ werden bevor sie geschrieben werden kann. Siehe
 
 com['packets'].append({
 'type': 'function',
-'name': ('RequestPage', 'request_page'), 
-'elements': [('page', 'uint16', 1, 'in')],
+'name': 'Request Page',
+'elements': [('Page', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -402,8 +402,8 @@ werden bevor sie gelesen werden kann. Siehe :func:`AuthenticateMifareClassicPage
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetPage', 'get_page'), 
-'elements': [('data', 'uint8', 16, 'out')],
+'name': 'Get Page',
+'elements': [('Data', 'uint8', 16, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -422,23 +422,23 @@ kann zuvor mit spezifischen Pages über einen Aufruf von
 
 com['packets'].append({
 'type': 'callback',
-'name': ('StateChanged', 'state_changed'), 
-'elements': [('state', 'uint8', 1, 'out', ('State', 'state', [('Initialization', 'initialization', STATE_INITIALIZATION),
-                                                              ('Idle', 'idle', STATE_IDLE),
-                                                              ('Error', 'error', STATE_ERROR),
-                                                              ('RequestTagID', 'request_tag_id', STATE_REQUEST_TAG_ID),
-                                                              ('RequestTagIDReady', 'request_tag_id_ready', STATE_REQUEST_TAG_ID_READY),
-                                                              ('RequestTagIDError', 'request_tag_id_error', STATE_REQUEST_TAG_ID_ERROR),
-                                                              ('AuthenticatingMifareClassicPage', 'authenticating_mifare_classic_page', STATE_AUTHENTICATING_MIFARE_CLASSIC_PAGE),
-                                                              ('AuthenticatingMifareClassicPageReady', 'authenticating_mifare_classic_page_ready', STATE_AUTHENTICATING_MIFARE_CLASSIC_PAGE_READY),
-                                                              ('AuthenticatingMifareClassicPageError', 'authenticating_mifare_classic_page_error', STATE_AUTHENTICATING_MIFARE_CLASSIC_PAGE_ERROR),
-                                                              ('WritePage', 'write_page', STATE_WRITE_PAGE),
-                                                              ('WritePageReady', 'write_page_ready', STATE_WRITE_PAGE_READY),
-                                                              ('WritePageError', 'write_page_error', STATE_WRITE_PAGE_ERROR),
-                                                              ('RequestPage', 'request_page', STATE_REQUEST_PAGE),
-                                                              ('RequestPageReady', 'request_page_ready', STATE_REQUEST_PAGE_READY),
-                                                              ('RequestPageError', 'request_page_error', STATE_REQUEST_PAGE_ERROR)])),
-             ('idle', 'bool', 1, 'out')],
+'name': 'State Changed',
+'elements': [('State', 'uint8', 1, 'out', ('State', [('Initialization', STATE_INITIALIZATION),
+                                                     ('Idle', STATE_IDLE),
+                                                     ('Error', STATE_ERROR),
+                                                     ('Request Tag ID', STATE_REQUEST_TAG_ID),
+                                                     ('Request Tag ID Ready', STATE_REQUEST_TAG_ID_READY),
+                                                     ('Request Tag ID Error', STATE_REQUEST_TAG_ID_ERROR),
+                                                     ('Authenticating Mifare Classic Page', STATE_AUTHENTICATING_MIFARE_CLASSIC_PAGE),
+                                                     ('Authenticating Mifare Classic Page Ready', STATE_AUTHENTICATING_MIFARE_CLASSIC_PAGE_READY),
+                                                     ('Authenticating Mifare Classic Page Error', STATE_AUTHENTICATING_MIFARE_CLASSIC_PAGE_ERROR),
+                                                     ('Write Page', STATE_WRITE_PAGE),
+                                                     ('Write Page Ready', STATE_WRITE_PAGE_READY),
+                                                     ('Write Page Error', STATE_WRITE_PAGE_ERROR),
+                                                     ('Request Page', STATE_REQUEST_PAGE),
+                                                     ('Request Page Ready', STATE_REQUEST_PAGE_READY),
+                                                     ('Request Page Error', STATE_REQUEST_PAGE_ERROR)])),
+             ('Idle', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

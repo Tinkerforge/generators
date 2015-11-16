@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 223,
-    'name': ('IndustrialDigitalIn4', 'industrial_digital_in_4', 'Industrial Digital In 4', 'Industrial Digital In 4 Bricklet'),
+    'name': ('Industrial Digital In 4', 'Industrial Digital In 4', 'Industrial Digital In 4 Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': '4 galvanically isolated digital inputs',
@@ -24,8 +24,8 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetValue', 'get_value'),
-'elements': [('value_mask', 'uint16', 1, 'out')],
+'name': 'Get Value',
+'elements': [('Value Mask', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -63,8 +63,8 @@ Element 2 Pins 4-7, Element 3 Pins 8-11 und Element 4 Pins 12-15.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetGroup', 'set_group'),
-'elements': [('group', 'char', 4, 'in')],
+'name': 'Set Group',
+'elements': [('Group', 'char', 4, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -121,8 +121,8 @@ aller Flankenzähler zurück.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetGroup', 'get_group'),
-'elements': [('group', 'char', 4, 'out')],
+'name': 'Get Group',
+'elements': [('Group', 'char', 4, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -138,8 +138,8 @@ Gibt die Gruppierung zurück, wie von :func:`SetGroup` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAvailableForGroup', 'get_available_for_group'),
-'elements': [('available', 'uint8', 1, 'out')],
+'name': 'Get Available For Group',
+'elements': [('Available', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -159,8 +159,8 @@ mit Bricklets verbunden die zusammen gruppiert werden können.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDebouncePeriod', 'set_debounce_period'),
-'elements': [('debounce', 'uint32', 1, 'in')],
+'name': 'Set Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -188,8 +188,8 @@ Der Standardwert ist 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDebouncePeriod', 'get_debounce_period'),
-'elements': [('debounce', 'uint32', 1, 'out')],
+'name': 'Get Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -206,8 +206,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetInterrupt', 'set_interrupt'),
-'elements': [('interrupt_mask', 'uint16', 1, 'in')],
+'name': 'Set Interrupt',
+'elements': [('Interrupt Mask', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -242,8 +242,8 @@ Der Interrupt wird mit der Callback :func:`Interrupt` zugestellt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetInterrupt', 'get_interrupt'),
-'elements': [('interrupt_mask', 'uint16', 1, 'out')],
+'name': 'Get Interrupt',
+'elements': [('Interrupt Mask', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -259,9 +259,9 @@ Gibt die Interrupt Bitmaske zurück, wie von :func:`SetInterrupt` gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Interrupt', 'interrupt'),
-'elements': [('interrupt_mask', 'uint16', 1, 'out'),
-             ('value_mask', 'uint16', 1, 'out')],
+'name': 'Interrupt',
+'elements': [('Interrupt Mask', 'uint16', 1, 'out'),
+             ('Value Mask', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -300,10 +300,10 @@ Beispiele:
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetEdgeCount', 'get_edge_count'),
-'elements': [('pin', 'uint8', 1, 'in'),
-             ('reset_counter', 'bool', 1, 'in'),
-             ('count', 'uint32', 1, 'out')],
+'name': 'Get Edge Count',
+'elements': [('Pin', 'uint8', 1, 'in'),
+             ('Reset Counter', 'bool', 1, 'in'),
+             ('Count', 'uint32', 1, 'out')],
 'since_firmware': [2, 0, 1],
 'doc': ['bf', {
 'en':
@@ -327,12 +327,12 @@ nach dem auslesen auf 0 zurückgesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetEdgeCountConfig', 'set_edge_count_config'),
-'elements': [('selection_mask', 'uint16', 1, 'in'),
-             ('edge_type', 'uint8', 1, 'in', ('EdgeType', 'edge_type', [('Rising', 'rising', 0),
-                                                                        ('Falling', 'falling', 1),
-                                                                        ('Both', 'both', 2)])),
-             ('debounce', 'uint8', 1, 'in')],
+'name': 'Set Edge Count Config',
+'elements': [('Selection Mask', 'uint16', 1, 'in'),
+             ('Edge Type', 'uint8', 1, 'in', ('Edge Type', [('Rising', 0),
+                                                            ('Falling', 1),
+                                                            ('Both', 2)])),
+             ('Debounce', 'uint8', 1, 'in')],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':
@@ -383,12 +383,12 @@ Standardwerte: 0 (edge type) und 100ms (debounce).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetEdgeCountConfig', 'get_edge_count_config'),
-'elements': [('pin', 'uint8', 1, 'in'),
-             ('edge_type', 'uint8', 1, 'out', ('EdgeType', 'edge_type', [('Rising', 'rising', 0),
-                                                                         ('Falling', 'falling', 1),
-                                                                         ('Both', 'both', 2)])),
-             ('debounce', 'uint8', 1, 'out')],
+'name': 'Get Edge Count Config',
+'elements': [('Pin', 'uint8', 1, 'in'),
+             ('Edge Type', 'uint8', 1, 'out', ('Edge Type', [('Rising', 0),
+                                                             ('Falling', 1),
+                                                             ('Both', 2)])),
+             ('Debounce', 'uint8', 1, 'out')],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':

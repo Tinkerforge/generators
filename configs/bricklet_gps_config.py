@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 222,
-    'name': ('GPS', 'gps', 'GPS', 'GPS Bricklet'),
+    'name': ('GPS', 'GPS', 'GPS Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Determine position, velocity and altitude using GPS',
@@ -24,15 +24,15 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCoordinates', 'get_coordinates'),
-'elements': [('latitude', 'uint32', 1, 'out'),
-             ('ns', 'char', 1, 'out'),
-             ('longitude', 'uint32', 1, 'out'),
-             ('ew', 'char', 1, 'out'),
-             ('pdop', 'uint16', 1, 'out'),
-             ('hdop', 'uint16', 1, 'out'),
-             ('vdop', 'uint16', 1, 'out'),
-             ('epe', 'uint16', 1, 'out')],
+'name': 'Get Coordinates',
+'elements': [('Latitude', 'uint32', 1, 'out'),
+             ('NS', 'char', 1, 'out'),
+             ('Longitude', 'uint32', 1, 'out'),
+             ('EW', 'char', 1, 'out'),
+             ('PDOP', 'uint16', 1, 'out'),
+             ('HDOP', 'uint16', 1, 'out'),
+             ('VDOP', 'uint16', 1, 'out'),
+             ('EPE', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -82,12 +82,12 @@ Diese Daten sind nur gültig wenn ein Fix vorhanden ist (siehe :func:`GetStatus`
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetStatus', 'get_status'),
-'elements': [('fix', 'uint8', 1, 'out', ('Fix', 'fix', [('NoFix', 'no_fix', 1),
-                                                        ('2DFix', '2d_fix', 2),
-                                                        ('3DFix', '3d_fix', 3)])),
-             ('satellites_view', 'uint8', 1, 'out'),
-             ('satellites_used', 'uint8', 1, 'out')],
+'name': 'Get Status',
+'elements': [('Fix', 'uint8', 1, 'out', ('Fix', [('No Fix', 1),
+                                                 ('2D Fix', 2),
+                                                 ('3D Fix', 3)])),
+             ('Satellites View', 'uint8', 1, 'out'),
+             ('Satellites Used', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -131,9 +131,9 @@ Fix-Status anzeigt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAltitude', 'get_altitude'),
-'elements': [('altitude', 'uint32', 1, 'out'),
-             ('geoidal_separation', 'uint32', 1, 'out')],
+'name': 'Get Altitude',
+'elements': [('Altitude', 'uint32', 1, 'out'),
+             ('Geoidal Separation', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -159,9 +159,9 @@ Diese Daten sind nur gültig wenn ein Fix vorhanden ist (siehe :func:`GetStatus`
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetMotion', 'get_motion'),
-'elements': [('course', 'uint32', 1, 'out'),
-             ('speed', 'uint32', 1, 'out')],
+'name': 'Get Motion',
+'elements': [('Course', 'uint32', 1, 'out'),
+             ('Speed', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -193,9 +193,9 @@ Diese Daten sind nur gültig wenn ein Fix vorhanden ist (siehe :func:`GetStatus`
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDateTime', 'get_date_time'),
-'elements': [('date', 'uint32', 1, 'out'),
-             ('time', 'uint32', 1, 'out')],
+'name': 'Get Date Time',
+'elements': [('Date', 'uint32', 1, 'out'),
+             ('Time', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -217,11 +217,11 @@ Beispiel, 140713 bedeutet 14.05.13 als Datum und 195923568 bedeutet
 
 com['packets'].append({
 'type': 'function',
-'name': ('Restart', 'restart'),
-'elements': [('restart_type', 'uint8', 1, 'in', ('RestartType', 'restart_type', [('HotStart', 'hot_start', 0),
-                                                                                 ('WarmStart', 'warm_start', 1),
-                                                                                 ('ColdStart', 'cold_start', 2),
-                                                                                 ('FactoryReset', 'factory_reset', 3)]))],
+'name': 'Restart',
+'elements': [('Restart Type', 'uint8', 1, 'in', ('Restart Type', [('Hot Start', 0),
+                                                                  ('Warm Start', 1),
+                                                                  ('Cold Start', 2),
+                                                                  ('Factory Reset', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -256,8 +256,8 @@ Verfügung:
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetCoordinatesCallbackPeriod', 'set_coordinates_callback_period'),
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Coordinates Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -285,8 +285,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCoordinatesCallbackPeriod', 'get_coordinates_callback_period'),
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Coordinates Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -303,8 +303,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetStatusCallbackPeriod', 'set_status_callback_period'),
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Status Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -332,8 +332,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetStatusCallbackPeriod', 'get_status_callback_period'),
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Status Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -350,8 +350,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetAltitudeCallbackPeriod', 'set_altitude_callback_period'),
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Altitude Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -379,8 +379,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAltitudeCallbackPeriod', 'get_altitude_callback_period'),
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Altitude Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -397,8 +397,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetMotionCallbackPeriod', 'set_motion_callback_period'),
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Motion Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -426,8 +426,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetMotionCallbackPeriod', 'get_motion_callback_period'),
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Motion Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -444,8 +444,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDateTimeCallbackPeriod', 'set_date_time_callback_period'),
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Date Time Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -473,8 +473,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDateTimeCallbackPeriod', 'get_date_time_callback_period'),
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Date Time Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -491,15 +491,15 @@ gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Coordinates', 'coordinates'),
-'elements': [('latitude', 'uint32', 1, 'out'),
-             ('ns', 'char', 1, 'out'),
-             ('longitude', 'uint32', 1, 'out'),
-             ('ew', 'char', 1, 'out'),
-             ('pdop', 'uint16', 1, 'out'),
-             ('hdop', 'uint16', 1, 'out'),
-             ('vdop', 'uint16', 1, 'out'),
-             ('epe', 'uint16', 1, 'out')],
+'name': 'Coordinates',
+'elements': [('Latitude', 'uint32', 1, 'out'),
+             ('NS', 'char', 1, 'out'),
+             ('Longitude', 'uint32', 1, 'out'),
+             ('EW', 'char', 1, 'out'),
+             ('PDOP', 'uint16', 1, 'out'),
+             ('HDOP', 'uint16', 1, 'out'),
+             ('VDOP', 'uint16', 1, 'out'),
+             ('EPE', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -527,12 +527,12 @@ ist (siehe :func:`GetStatus`).
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Status', 'status'),
-'elements': [('fix', 'uint8', 1, 'out', ('Fix', 'fix', [('NoFix', 'no_fix', 1),
-                                                        ('2DFix', '2d_fix', 2),
-                                                        ('3DFix', '3d_fix', 3)])),
-             ('satellites_view', 'uint8', 1, 'out'),
-             ('satellites_used', 'uint8', 1, 'out')],
+'name': 'Status',
+'elements': [('Fix', 'uint8', 1, 'out', ('Fix', [('No Fix', 1),
+                                                 ('2D Fix', 2),
+                                                 ('3D Fix', 3)])),
+             ('Satellites View', 'uint8', 1, 'out'),
+             ('Satellites Used', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -558,9 +558,9 @@ Status seit der letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Altitude', 'altitude'),
-'elements': [('altitude', 'uint32', 1, 'out'),
-             ('geoidal_separation', 'uint32', 1, 'out')],
+'name': 'Altitude',
+'elements': [('Altitude', 'uint32', 1, 'out'),
+             ('Geoidal Separation', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -588,9 +588,9 @@ ist (siehe :func:`GetStatus`).
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Motion', 'motion'),
-'elements': [('course', 'uint32', 1, 'out'),
-             ('speed', 'uint32', 1, 'out')],
+'name': 'Motion',
+'elements': [('Course', 'uint32', 1, 'out'),
+             ('Speed', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -618,9 +618,9 @@ ist (siehe :func:`GetStatus`).
 
 com['packets'].append({
 'type': 'callback',
-'name': ('DateTime', 'date_time'),
-'elements': [('date', 'uint32', 1, 'out'),
-             ('time', 'uint32', 1, 'out')],
+'name': 'Date Time',
+'elements': [('Date', 'uint32', 1, 'out'),
+             ('Time', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

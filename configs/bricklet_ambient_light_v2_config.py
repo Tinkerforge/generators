@@ -13,7 +13,7 @@ com = {
     'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 259,
-    'name': ('AmbientLightV2', 'ambient_light_v2', 'Ambient Light 2.0', 'Ambient Light Bricklet 2.0'),
+    'name': ('Ambient Light V2', 'Ambient Light 2.0', 'Ambient Light Bricklet 2.0'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures ambient light up to 64000lux',
@@ -26,8 +26,8 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetIlluminance', 'get_illuminance'), 
-'elements': [('illuminance', 'uint32', 1, 'out')],
+'name': 'Get Illuminance',
+'elements': [('Illuminance', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -66,8 +66,8 @@ den Callback :func:`Illuminance` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetIlluminanceCallbackPeriod', 'set_illuminance_callback_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Illuminance Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -95,8 +95,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetIlluminanceCallbackPeriod', 'get_illuminance_callback_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Illuminance Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -113,10 +113,10 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetIlluminanceCallbackThreshold', 'set_illuminance_callback_threshold'), 
-'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'uint32', 1, 'in'),
-             ('max', 'uint32', 1, 'in')],
+'name': 'Set Illuminance Callback Threshold',
+'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'uint32', 1, 'in'),
+             ('Max', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -160,10 +160,10 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetIlluminanceCallbackThreshold', 'get_illuminance_callback_threshold'), 
-'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'uint32', 1, 'out'),
-             ('max', 'uint32', 1, 'out')],
+'name': 'Get Illuminance Callback Threshold',
+'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'uint32', 1, 'out'),
+             ('Max', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -180,8 +180,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDebouncePeriod', 'set_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'in')],
+'name': 'Set Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -217,8 +217,8 @@ Der Standardwert ist 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDebouncePeriod', 'get_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'out')],
+'name': 'Get Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -233,25 +233,24 @@ gesetzt.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
-'name': ('SetConfiguration', 'set_configuration'), 
-'elements': [('illuminance_range', 'uint8', 1, 'in', ('IlluminanceRange', 'illuminance_range', [('Unlimited', 'unlimited', 6),
-                                                                                                ('64000Lux', '64000lux', 0),
-                                                                                                ('32000Lux', '32000lux', 1),
-                                                                                                ('16000Lux', '16000lux', 2),
-                                                                                                ('8000Lux', '8000lux', 3),
-                                                                                                ('1300Lux', '1300lux', 4),
-                                                                                                ('600Lux', '600lux', 5)])),
-             ('integration_time', 'uint8', 1, 'in', ('IntegrationTime', 'integration_time', [('50ms', '50ms', 0),
-                                                                                             ('100ms', '100ms', 1),
-                                                                                             ('150ms', '150ms', 2),
-                                                                                             ('200ms', '200ms', 3),
-                                                                                             ('250ms', '250ms', 4),
-                                                                                             ('300ms', '300ms', 5),
-                                                                                             ('350ms', '350ms', 6),
-                                                                                             ('400ms', '400ms', 7)]))],
+'name': 'Set Configuration',
+'elements': [('Illuminance Range', 'uint8', 1, 'in', ('Illuminance Range', [('Unlimited', 6),
+                                                                            ('64000Lux', 0),
+                                                                            ('32000Lux', 1),
+                                                                            ('16000Lux', 2),
+                                                                            ('8000Lux', 3),
+                                                                            ('1300Lux', 4),
+                                                                            ('600Lux', 5)])),
+             ('Integration Time', 'uint8', 1, 'in', ('Integration Time', [('50ms', 0),
+                                                                          ('100ms', 1),
+                                                                          ('150ms', 2),
+                                                                          ('200ms', 3),
+                                                                          ('250ms', 4),
+                                                                          ('300ms', 5),
+                                                                          ('350ms', 6),
+                                                                          ('400ms', 7)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -321,22 +320,22 @@ Die Standardwerte sind 0-8000Lux Helligkeitsbereich und 200ms Integrationszeit.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetConfiguration', 'get_configuration'), 
-'elements': [('illuminance_range', 'uint8', 1, 'out', ('IlluminanceRange', 'illuminance_range', [('Unlimited', 'unlimited', 6),
-                                                                                                 ('64000Lux', '64000lux', 0),
-                                                                                                 ('32000Lux', '32000lux', 1),
-                                                                                                 ('16000Lux', '16000lux', 2),
-                                                                                                 ('8000Lux', '8000lux', 3),
-                                                                                                 ('1300Lux', '1300lux', 4),
-                                                                                                 ('600Lux', '600lux', 5)])),
-             ('integration_time', 'uint8', 1, 'out', ('IntegrationTime', 'integration_time', [('50ms', '50ms', 0),
-                                                                                              ('100ms', '100ms', 1),
-                                                                                              ('150ms', '150ms', 2),
-                                                                                              ('200ms', '200ms', 3),
-                                                                                              ('250ms', '250ms', 4),
-                                                                                              ('300ms', '300ms', 5),
-                                                                                              ('350ms', '350ms', 6),
-                                                                                              ('400ms', '400ms', 7)]))],
+'name': 'Get Configuration',
+'elements': [('Illuminance Range', 'uint8', 1, 'out', ('Illuminance Range', [('Unlimited', 6),
+                                                                             ('64000Lux', 0),
+                                                                             ('32000Lux', 1),
+                                                                             ('16000Lux', 2),
+                                                                             ('8000Lux', 3),
+                                                                             ('1300Lux', 4),
+                                                                             ('600Lux', 5)])),
+             ('Integration Time', 'uint8', 1, 'out', ('Integration Time', [('50ms', 0),
+                                                                           ('100ms', 1),
+                                                                           ('150ms', 2),
+                                                                           ('200ms', 3),
+                                                                           ('250ms', 4),
+                                                                           ('300ms', 5),
+                                                                           ('350ms', 6),
+                                                                           ('400ms', 7)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -353,8 +352,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Illuminance', 'illuminance'), 
-'elements': [('illuminance', 'uint32', 1, 'out')],
+'name': 'Illuminance',
+'elements': [('Illuminance', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -379,8 +378,8 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('IlluminanceReached', 'illuminance_reached'), 
-'elements': [('illuminance', 'uint32', 1, 'out')],
+'name': 'Illuminance Reached',
+'elements': [('Illuminance', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

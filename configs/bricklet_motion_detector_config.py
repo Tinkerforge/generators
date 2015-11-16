@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 233,
-    'name': ('MotionDetector', 'motion_detector', 'Motion Detector', 'Motion Detector Bricklet'),
+    'name': ('Motion Detector', 'Motion Detector', 'Motion Detector Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Passive infrared (PIR) motion sensor, 7m range',
@@ -24,9 +24,9 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetMotionDetected', 'get_motion_detected'), 
-'elements': [('motion', 'uint8', 1, 'out', ('Motion', 'motion', [('NotDetected', 'not_detected', 0),
-                                                                 ('Detected', 'detected', 1)]))],
+'name': 'Get Motion Detected',
+'elements': [('Motion', 'uint8', 1, 'out', ('Motion', [('Not Detected', 0),
+                                                       ('Detected', 1)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -54,7 +54,7 @@ im "Bewegung detektiert" Zustand ist.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('MotionDetected', 'motion_detected'), 
+'name': 'Motion Detected',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -71,7 +71,7 @@ Dieser Callback wird aufgerufen nachdem eine Bewegung detektiert wurde.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('DetectionCycleEnded', 'detection_cycle_ended'), 
+'name': 'Detection Cycle Ended',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {

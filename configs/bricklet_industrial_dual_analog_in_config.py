@@ -13,7 +13,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 249,
-    'name': ('IndustrialDualAnalogIn', 'industrial_dual_analog_in', 'Industrial Dual Analog In', 'Industrial Dual Analog In Bricklet'),
+    'name': ('Industrial Dual Analog In', 'Industrial Dual Analog In', 'Industrial Dual Analog In Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures two DC voltages between -35V and +35V with 24bit resolution each',
@@ -42,9 +42,9 @@ und 1.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetVoltage', 'get_voltage'), 
-'elements': [('channel', 'uint8', 1, 'in'),
-             ('voltage', 'int32', 1, 'out')],
+'name': 'Get Voltage',
+'elements': [('Channel', 'uint8', 1, 'in'),
+             ('Voltage', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -68,9 +68,9 @@ den Callback :func:`Voltage` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetVoltageCallbackPeriod', 'set_voltage_callback_period'), 
-'elements': [('channel', 'uint8', 1, 'in'),
-             ('period', 'uint32', 1, 'in')],
+'name': 'Set Voltage Callback Period',
+'elements': [('Channel', 'uint8', 1, 'in'),
+             ('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -99,9 +99,9 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetVoltageCallbackPeriod', 'get_voltage_callback_period'), 
-'elements': [('channel', 'uint8', 1, 'in'),
-             ('period', 'uint32', 1, 'out')],
+'name': 'Get Voltage Callback Period',
+'elements': [('Channel', 'uint8', 1, 'in'),
+             ('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -118,11 +118,11 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetVoltageCallbackThreshold', 'set_voltage_callback_threshold'), 
-'elements': [('channel', 'uint8', 1, 'in'),
-             ('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int32', 1, 'in'),
-             ('max', 'int32', 1, 'in')],
+'name': 'Set Voltage Callback Threshold',
+'elements': [('Channel', 'uint8', 1, 'in'),
+             ('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'int32', 1, 'in'),
+             ('Max', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -168,11 +168,11 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetVoltageCallbackThreshold', 'get_voltage_callback_threshold'), 
-'elements': [('channel', 'uint8', 1, 'in'),
-             ('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int32', 1, 'out'),
-             ('max', 'int32', 1, 'out')],
+'name': 'Get Voltage Callback Threshold',
+'elements': [('Channel', 'uint8', 1, 'in'),
+             ('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'int32', 1, 'out'),
+             ('Max', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -189,8 +189,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDebouncePeriod', 'set_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'in')],
+'name': 'Set Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -226,8 +226,8 @@ Der Standardwert ist 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDebouncePeriod', 'get_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'out')],
+'name': 'Get Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -244,15 +244,15 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetSampleRate', 'set_sample_rate'), 
-'elements': [('rate', 'uint8', 1, 'in', ('SampleRate', 'sample_rate', [('976SPS', '976_sps', 0),
-                                                                       ('488SPS', '488_sps', 1),
-                                                                       ('244SPS', '244_sps', 2),
-                                                                       ('122SPS', '122_sps', 3),
-                                                                       ('61SPS', '61_sps', 4),
-                                                                       ('4SPS', '4_sps', 5),
-                                                                       ('2SPS', '2_sps', 6),
-                                                                       ('1SPS', '1_sps', 7)]))],
+'name': 'Set Sample Rate',
+'elements': [('Rate', 'uint8', 1, 'in', ('Sample Rate', [('976 SPS', 0),
+                                                         ('488 SPS', 1),
+                                                         ('244 SPS', 2),
+                                                         ('122 SPS', 3),
+                                                         ('61 SPS', 4),
+                                                         ('4 SPS', 5),
+                                                         ('2 SPS', 6),
+                                                         ('1 SPS', 7)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -276,15 +276,15 @@ Der Standardwert ist 6 (2 Werte pro Sekunde).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetSampleRate', 'get_sample_rate'), 
-'elements': [('rate', 'uint8', 1, 'out', ('SampleRate', 'sample_rate', [('976SPS', '976_sps', 0),
-                                                                        ('488SPS', '488_sps', 1),
-                                                                        ('244SPS', '244_sps', 2),
-                                                                        ('122SPS', '122_sps', 3),
-                                                                        ('61SPS', '61_sps', 4),
-                                                                        ('4SPS', '4_sps', 5),
-                                                                        ('2SPS', '2_sps', 6),
-                                                                        ('1SPS', '1_sps', 7)]))],
+'name': 'Get Sample Rate',
+'elements': [('Rate', 'uint8', 1, 'out', ('Sample Rate', [('976 SPS', 0),
+                                                          ('488 SPS', 1),
+                                                          ('244 SPS', 2),
+                                                          ('122 SPS', 3),
+                                                          ('61 SPS', 4),
+                                                          ('4 SPS', 5),
+                                                          ('2 SPS', 6),
+                                                          ('1 SPS', 7)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -301,9 +301,9 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetCalibration', 'set_calibration'), 
-'elements': [('offset', 'int32', 2, 'in'),
-             ('gain', 'int32', 2, 'in')],
+'name': 'Set Calibration',
+'elements': [('Offset', 'int32', 2, 'in'),
+             ('Gain', 'int32', 2, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -327,9 +327,9 @@ nicht notwendig sein.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCalibration', 'get_calibration'), 
-'elements': [('offset', 'int32', 2, 'out'),
-             ('gain', 'int32', 2, 'out')],
+'name': 'Get Calibration',
+'elements': [('Offset', 'int32', 2, 'out'),
+             ('Gain', 'int32', 2, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -345,8 +345,8 @@ Gibt die Kalibrierung zurück, wie von :func:`SetCalibration` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetADCValues', 'get_adc_values'), 
-'elements': [('value', 'int32', 2, 'out')],
+'name': 'Get ADC Values',
+'elements': [('Value', 'int32', 2, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -364,9 +364,9 @@ wird für die Kalibrierung benötigt, siehe :func:`SetCalibration`.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Voltage', 'voltage'), 
-'elements': [('channel', 'uint8', 1, 'out'),
-             ('voltage', 'int32', 1, 'out')],
+'name': 'Voltage',
+'elements': [('Channel', 'uint8', 1, 'out'),
+             ('Voltage', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -391,9 +391,9 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('VoltageReached', 'voltage_reached'), 
-'elements': [('channel', 'uint8', 1, 'out'),
-             ('voltage', 'int32', 1, 'out')],
+'name': 'Voltage Reached',
+'elements': [('Channel', 'uint8', 1, 'out'),
+             ('Voltage', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

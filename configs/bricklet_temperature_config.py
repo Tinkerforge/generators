@@ -13,7 +13,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 216,
-    'name': ('Temperature', 'temperature', 'Temperature', 'Temperature Bricklet'),
+    'name': ('Temperature', 'Temperature', 'Temperature Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures ambient temperature with 0.5°C accuracy',
@@ -26,8 +26,8 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetTemperature', 'get_temperature'), 
-'elements': [('temperature', 'int16', 1, 'out')],
+'name': 'Get Temperature',
+'elements': [('Temperature', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -55,8 +55,8 @@ den Callback :func:`Temperature` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetTemperatureCallbackPeriod', 'set_temperature_callback_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Temperature Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -84,8 +84,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetTemperatureCallbackPeriod', 'get_temperature_callback_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Temperature Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -102,10 +102,10 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetTemperatureCallbackThreshold', 'set_temperature_callback_threshold'), 
-'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int16', 1, 'in'),
-             ('max', 'int16', 1, 'in')],
+'name': 'Set Temperature Callback Threshold',
+'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'int16', 1, 'in'),
+             ('Max', 'int16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -149,10 +149,10 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetTemperatureCallbackThreshold', 'get_temperature_callback_threshold'), 
-'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int16', 1, 'out'),
-             ('max', 'int16', 1, 'out')],
+'name': 'Get Temperature Callback Threshold',
+'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'int16', 1, 'out'),
+             ('Max', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -169,8 +169,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDebouncePeriod', 'set_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'in')],
+'name': 'Set Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -206,8 +206,8 @@ Der Standardwert ist 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDebouncePeriod', 'get_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'out')],
+'name': 'Get Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -224,8 +224,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Temperature', 'temperature'), 
-'elements': [('temperature', 'int16', 1, 'out')],
+'name': 'Temperature',
+'elements': [('Temperature', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -250,8 +250,8 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('TemperatureReached', 'temperature_reached'), 
-'elements': [('temperature', 'int16', 1, 'out')],
+'name': 'Temperature Reached',
+'elements': [('Temperature', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -277,9 +277,9 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetI2CMode', 'set_i2c_mode'), 
-'elements': [('mode', 'uint8', 1, 'in', ('I2CMode', 'i2c_mode', [('Fast', 'fast', 0),
-                                                                 ('Slow', 'slow', 1)]))],
+'name': 'Set I2C Mode',
+'elements': [('Mode', 'uint8', 1, 'in', ('I2C Mode', [('Fast', 0),
+                                                      ('Slow', 1)]))],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':
@@ -316,9 +316,9 @@ sollte die I2C Geschwindigkeit allerdings nicht verringert werden.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetI2CMode', 'get_i2c_mode'), 
-'elements': [('mode', 'uint8', 1, 'out', ('I2CMode', 'i2c_mode', [('Fast', 'fast', 0),
-                                                                  ('Slow', 'slow', 1)]))],
+'name': 'Get I2C Mode',
+'elements': [('Mode', 'uint8', 1, 'out', ('I2C Mode', [('Fast', 0),
+                                                       ('Slow', 1)]))],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':

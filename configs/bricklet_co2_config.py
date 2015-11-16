@@ -13,7 +13,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 262,
-    'name': ('CO2', 'co2', 'CO2', 'CO2 Bricklet'),
+    'name': ('CO2', 'CO2', 'CO2 Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures CO2 concentration in ppm',
@@ -26,8 +26,8 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCO2Concentration', 'get_co2_concentration'),
-'elements': [('co2_concentration', 'uint16', 1, 'out')],
+'name': 'Get CO2 Concentration',
+'elements': [('CO2 Concentration', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -55,8 +55,8 @@ den Callback :func:`CO2Concentration` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetCO2ConcentrationCallbackPeriod', 'set_co2_concentration_callback_period'),
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set CO2 Concentration Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -84,8 +84,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCO2ConcentrationCallbackPeriod', 'get_co2_concentration_callback_period'),
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get CO2 Concentration Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -102,10 +102,10 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetCO2ConcentrationCallbackThreshold', 'set_co2_concentration_callback_threshold'),
-'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'uint16', 1, 'in'),
-             ('max', 'uint16', 1, 'in')],
+'name': 'Set CO2 Concentration Callback Threshold',
+'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'uint16', 1, 'in'),
+             ('Max', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -149,10 +149,10 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCO2ConcentrationCallbackThreshold', 'get_co2_concentration_callback_threshold'),
-'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'uint16', 1, 'out'),
-             ('max', 'uint16', 1, 'out')],
+'name': 'Get CO2 Concentration Callback Threshold',
+'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'uint16', 1, 'out'),
+             ('Max', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -169,8 +169,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDebouncePeriod', 'set_debounce_period'),
-'elements': [('debounce', 'uint32', 1, 'in')],
+'name': 'Set Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -206,8 +206,8 @@ Der Standardwert ist 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDebouncePeriod', 'get_debounce_period'),
-'elements': [('debounce', 'uint32', 1, 'out')],
+'name': 'Get Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -224,8 +224,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('CO2Concentration', 'co2_concentration'),
-'elements': [('co2_concentration', 'uint16', 1, 'out')],
+'name': 'CO2 Concentration',
+'elements': [('CO2 Concentration', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -250,8 +250,8 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('CO2ConcentrationReached', 'co2_concentration_reached'),
-'elements': [('co2_concentration', 'uint16', 1, 'out')],
+'name': 'CO2 Concentration Reached',
+'elements': [('CO2 Concentration', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

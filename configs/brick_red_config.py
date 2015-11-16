@@ -6,141 +6,141 @@
 
 # RED Brick communication config
 
-ERROR_CODE_CONSTANTS = ('ErrorCode', 'error_code', [('Success', 'success', 0),
-                                                    ('UnknownError', 'unknown_error', 1),
-                                                    ('InvalidOperation', 'invalid_operation', 2),
-                                                    ('OperationAborted', 'operation_aborted', 3),
-                                                    ('InternalError', 'internal_error', 4),
-                                                    ('UnknownSessionID', 'unknown_session_id', 5),
-                                                    ('NoFreeSessionID', 'no_free_session_id', 6),
-                                                    ('UnknownObjectID', 'unknown_object_id', 7),
-                                                    ('NoFreeObjectID', 'no_free_object_id', 8),
-                                                    ('ObjectIsLocked', 'object_is_locked', 9),
-                                                    ('NoMoreData', 'no_more_data', 10),
-                                                    ('WrongListItemType', 'wrong_list_item_type', 11),
-                                                    ('ProgramIsPurged', 'program_is_purged', 12),
-                                                    ('InvalidParameter', 'invalid_parameter', 128),
-                                                    ('NoFreeMemory', 'no_free_memory', 129),
-                                                    ('NoFreeSpace', 'no_free_space', 130),
-                                                    ('AccessDenied', 'access_denied', 121),
-                                                    ('AlreadyExists', 'already_exists', 132),
-                                                    ('DoesNotExist', 'does_not_exist', 133),
-                                                    ('Interrupted', 'interrupted', 134),
-                                                    ('IsDirectory', 'is_directory', 135),
-                                                    ('NotADirectory', 'not_a_directory', 136),
-                                                    ('WouldBlock', 'would_block', 137),
-                                                    ('Overflow', 'overflow', 138),
-                                                    ('BadFileDescriptor', 'bad_file_descriptor', 139),
-                                                    ('OutOfRange', 'out_of_range', 140),
-                                                    ('NameTooLong', 'name_too_long', 141),
-                                                    ('InvalidSeek', 'invalid_seek', 142),
-                                                    ('NotSupported', 'not_supported', 143),
-                                                    ('TooManyOpenFiles', 'too_many_open_files', 144)])
+ERROR_CODE_CONSTANTS = ('Error Code', [('Success', 0),
+                                       ('Unknown Error', 1),
+                                       ('Invalid Operation', 2),
+                                       ('Operation Aborted', 3),
+                                       ('Internal Error', 4),
+                                       ('Unknown Session Id', 5),
+                                       ('No Free Session Id', 6),
+                                       ('Unknown Object Id', 7),
+                                       ('No Free Object Id', 8),
+                                       ('Object Is Locked', 9),
+                                       ('No More Data', 10),
+                                       ('Wrong List Item Type', 11),
+                                       ('Program Is Purged', 12),
+                                       ('Invalid Parameter', 128),
+                                       ('No Free Memory', 129),
+                                       ('No Free Space', 130),
+                                       ('Access Denied', 121),
+                                       ('Already Exists', 132),
+                                       ('Does Not Exist', 133),
+                                       ('Interrupted', 134),
+                                       ('Is Directory', 135),
+                                       ('Not A Directory', 136),
+                                       ('Would Block', 137),
+                                       ('Overflow', 138),
+                                       ('Bad File Descriptor', 139),
+                                       ('Out Of Range', 140),
+                                       ('Name Too Long', 141),
+                                       ('Invalid Seek', 142),
+                                       ('Not Supported', 143),
+                                       ('Too Many Open Files', 144)])
 
-OBJECT_TYPE_CONSTANTS = ('ObjectType', 'object_type', [('String', 'string', 0),
-                                                       ('List', 'list', 1),
-                                                       ('File', 'file', 2),
-                                                       ('Directory', 'directory', 3),
-                                                       ('Process', 'process', 4),
-                                                       ('Program', 'program', 5)])
+OBJECT_TYPE_CONSTANTS = ('Object Type', [('String', 0),
+                                         ('List', 1),
+                                         ('File', 2),
+                                         ('Directory', 3),
+                                         ('Process', 4),
+                                         ('Program', 5)])
 
-FILE_TYPE_CONSTANTS = ('FileType', 'file_type', [('Unknown', 'unknown', 0),
-                                                 ('Regular', 'regular', 1),
-                                                 ('Directory', 'directory', 2),
-                                                 ('Character', 'character', 3),
-                                                 ('Block', 'block', 4),
-                                                 ('FIFO', 'fifo', 5),
-                                                 ('Symlink', 'symlink', 6),
-                                                 ('Socket', 'socket', 7),
-                                                 ('Pipe', 'pipe', 8)])
+FILE_TYPE_CONSTANTS = ('File Type', [('Unknown', 0),
+                                     ('Regular', 1),
+                                     ('Directory', 2),
+                                     ('Character', 3),
+                                     ('Block', 4),
+                                     ('FIFO', 5),
+                                     ('Symlink', 6),
+                                     ('Socket', 7),
+                                     ('Pipe', 8)])
 
-FILE_FLAG_CONSTANTS = ('FileFlag', 'file_flag', [('ReadOnly', 'read_only', 0x0001),
-                                                 ('WriteOnly', 'write_only', 0x0002),
-                                                 ('ReadWrite', 'read_write', 0x0004),
-                                                 ('Append', 'append', 0x0008),
-                                                 ('Create', 'create', 0x0010),
-                                                 ('Exclusive', 'exclusive', 0x0020),
-                                                 ('NonBlocking', 'non_blocking', 0x0040),
-                                                 ('Truncate', 'truncate', 0x0080),
-                                                 ('Temporary', 'temporary', 0x0100),
-                                                 ('Replace', 'replace', 0x0200)])
+FILE_FLAG_CONSTANTS = ('File Flag', [('Read Only', 0x0001),
+                                     ('Write Only', 0x0002),
+                                     ('Read Write', 0x0004),
+                                     ('Append', 0x0008),
+                                     ('Create', 0x0010),
+                                     ('Exclusive', 0x0020),
+                                     ('Non Blocking', 0x0040),
+                                     ('Truncate', 0x0080),
+                                     ('Temporary', 0x0100),
+                                     ('Replace', 0x0200)])
 
-PIPE_FLAG_CONSTANTS = ('PipeFlag', 'pipe_flag', [('NonBlockingRead', 'non_blocking_read', 0x0001),
-                                                 ('NonBlockingWrite', 'non_blocking_write', 0x0002)])
+PIPE_FLAG_CONSTANTS = ('Pipe Flag', [('Non Blocking Read', 0x0001),
+                                     ('Non Blocking Write', 0x0002)])
 
 # the permission bit values match the UNIX permission bit values, this allows
 # to use the normal octal way to write them, e.g. 0755
-FILE_PERMISSION_CONSTANTS = ('FilePermission', 'file_permission', [('UserAll', 'user_all', 00700),
-                                                                   ('UserRead', 'user_read', 00400),
-                                                                   ('UserWrite', 'user_write', 00200),
-                                                                   ('UserExecute', 'user_execute', 00100),
-                                                                   ('GroupAll', 'group_all', 00070),
-                                                                   ('GroupRead', 'group_read', 00040),
-                                                                   ('GroupWrite', 'group_write', 00020),
-                                                                   ('GroupExecute', 'group_execute', 00010),
-                                                                   ('OthersAll', 'others_all', 00007),
-                                                                   ('OthersRead', 'others_read', 00004),
-                                                                   ('OthersWrite', 'others_write', 00002),
-                                                                   ('OthersExecute', 'others_execute', 00001)])
+FILE_PERMISSION_CONSTANTS = ('File Permission', [('User All', 00700),
+                                                 ('User Read', 00400),
+                                                 ('User Write', 00200),
+                                                 ('User Execute', 00100),
+                                                 ('Group All', 00070),
+                                                 ('Group Read', 00040),
+                                                 ('Group Write', 00020),
+                                                 ('Group Execute', 00010),
+                                                 ('Others All', 00007),
+                                                 ('Others Read', 00004),
+                                                 ('Others Write', 00002),
+                                                 ('Others Execute', 00001)])
 
-FILE_ORIGIN_CONSTANTS = ('FileOrigin', 'file_origin', [('Beginning', 'beginning', 0),
-                                                       ('Current', 'current', 1),
-                                                       ('End', 'end', 2)])
+FILE_ORIGIN_CONSTANTS = ('File Origin', [('Beginning', 0),
+                                         ('Current', 1),
+                                         ('End', 2)])
 
-FILE_EVENT_CONSTANTS = ('FileEvent', 'file_event', [('Readable', 'readable', 0x0001),
-                                                    ('Writable', 'writable', 0x0002)])
+FILE_EVENT_CONSTANTS = ('File Event', [('Readable', 0x0001),
+                                       ('Writable', 0x0002)])
 
-DIRECTORY_ENTRY_TYPE_CONSTANTS = ('DirectoryEntryType', 'directory_entry_type', [('Unknown', 'unknown', 0),
-                                                                                 ('Regular', 'regular', 1),
-                                                                                 ('Directory', 'directory', 2),
-                                                                                 ('Character', 'character', 3),
-                                                                                 ('Block', 'block', 4),
-                                                                                 ('FIFO', 'fifo', 5),
-                                                                                 ('Symlink', 'symlink', 6),
-                                                                                 ('Socket', 'socket', 7)])
+DIRECTORY_ENTRY_TYPE_CONSTANTS = ('Directory Entry Type', [('Unknown', 0),
+                                                           ('Regular', 1),
+                                                           ('Directory', 2),
+                                                           ('Character', 3),
+                                                           ('Block', 4),
+                                                           ('FIFO', 5),
+                                                           ('Symlink', 6),
+                                                           ('Socket', 7)])
 
-DIRECTORY_FLAG_CONSTANTS = ('DirectoryFlag', 'directory_flag', [('Recursive', 'recursive', 0x0001),
-                                                                ('Exclusive', 'exclusive', 0x0002)])
+DIRECTORY_FLAG_CONSTANTS = ('Directory Flag', [('Recursive', 0x0001),
+                                               ('Exclusive', 0x0002)])
 
 # the signal numbers match the UNIX signal numbers on purpose
-PROCESS_SIGNAL_CONSTANTS = ('ProcessSignal', 'process_signal', [('Interrupt', 'interrupt', 2),
-                                                                ('Quit', 'quit', 3),
-                                                                ('Abort', 'abort', 6),
-                                                                ('Kill', 'kill', 9),
-                                                                ('User1', 'user1', 10),
-                                                                ('User2', 'user2', 12),
-                                                                ('Terminate', 'terminate', 15),
-                                                                ('Continue', 'continue', 18),
-                                                                ('Stop', 'stop', 19)])
+PROCESS_SIGNAL_CONSTANTS = ('Process Signal', [('Interrupt', 2),
+                                               ('Quit', 3),
+                                               ('Abort', 6),
+                                               ('Kill', 9),
+                                               ('User1', 10),
+                                               ('User2', 12),
+                                               ('Terminate', 15),
+                                               ('Continue', 18),
+                                               ('Stop', 19)])
 
-PROCESS_STATE_CONSTANTS = ('ProcessState', 'process_state', [('Unknown', 'unknown', 0),
-                                                             ('Running', 'running', 1),
-                                                             ('Error', 'error', 2),
-                                                             ('Exited', 'exited', 3),
-                                                             ('Killed', 'killed', 4),
-                                                             ('Stopped', 'stopped', 5)])
+PROCESS_STATE_CONSTANTS = ('Process State', [('Unknown', 0),
+                                             ('Running', 1),
+                                             ('Error', 2),
+                                             ('Exited', 3),
+                                             ('Killed', 4),
+                                             ('Stopped', 5)])
 
-PROGRAM_STDIO_REDIRECTION_CONSTANTS = ('ProgramStdioRedirection', 'program_stdio_redirection', [('DevNull', 'dev_null', 0),
-                                                                                                ('Pipe', 'pipe', 1),
-                                                                                                ('File', 'file', 2),
-                                                                                                ('IndividualLog', 'individual_log', 3),
-                                                                                                ('ContinuousLog', 'continuous_log', 4),
-                                                                                                ('Stdout', 'stdout', 5)])
+PROGRAM_STDIO_REDIRECTION_CONSTANTS = ('Program Stdio Redirection', [('Dev Null', 0),
+                                                                     ('Pipe', 1),
+                                                                     ('File', 2),
+                                                                     ('Individual Log', 3),
+                                                                     ('Continuous Log', 4),
+                                                                     ('Stdout', 5)])
 
-PROGRAM_START_MODE_CONSTANTS = ('ProgramStartMode', 'program_start_mode', [('Never', 'never', 0),
-                                                                           ('Always', 'always', 1),
-                                                                           ('Interval', 'interval', 2),
-                                                                           ('Cron', 'cron', 3)])
+PROGRAM_START_MODE_CONSTANTS = ('Program Start Mode', [('Never', 0),
+                                                       ('Always', 1),
+                                                       ('Interval', 2),
+                                                       ('Cron', 3)])
 
-PROGRAM_SCHEDULER_STATE_CONSTANTS = ('ProgramSchedulerState', 'program_scheduler_state', [('Stopped', 'stopped', 0),
-                                                                                          ('Running', 'running', 1)])
+PROGRAM_SCHEDULER_STATE_CONSTANTS = ('Program Scheduler State', [('Stopped', 0),
+                                                                 ('Running', 1)])
 
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
     'api_version': [2, 0, 0],
     'category': 'Brick',
     'device_identifier': 17,
-    'name': ('RED', 'red', 'RED', 'RED Brick'),
+    'name': ('RED', 'RED', 'RED Brick'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Executes user programs and controls other Bricks/Bricklets standalone',
@@ -248,10 +248,10 @@ String objects store UTF-8 encoded data.
 
 com['packets'].append({
 'type': 'function',
-'name': ('CreateSession', 'create_session'),
-'elements': [('lifetime', 'uint32', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('session_id', 'uint16', 1, 'out')],
+'name': 'Create Session',
+'elements': [('Lifetime', 'uint32', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Session Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -265,9 +265,9 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('ExpireSession', 'expire_session'),
-'elements': [('session_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+'name': 'Expire Session',
+'elements': [('Session Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -281,8 +281,8 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('ExpireSessionUnchecked', 'expire_session_unchecked'),
-'elements': [('session_id', 'uint16', 1, 'in')],
+'name': 'Expire Session Unchecked',
+'elements': [('Session Id', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -296,10 +296,10 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('KeepSessionAlive', 'keep_session_alive'),
-'elements': [('session_id', 'uint16', 1, 'in'),
-             ('lifetime', 'uint32', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+'name': 'Keep Session Alive',
+'elements': [('Session Id', 'uint16', 1, 'in'),
+             ('Lifetime', 'uint32', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -317,10 +317,10 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('ReleaseObject', 'release_object'),
-'elements': [('object_id', 'uint16', 1, 'in'),
-             ('session_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+'name': 'Release Object',
+'elements': [('Object Id', 'uint16', 1, 'in'),
+             ('Session Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -336,9 +336,9 @@ error code. If the reference count reaches zero the object gets destroyed.
 
 com['packets'].append({
 'type': 'function',
-'name': ('ReleaseObjectUnchecked', 'release_object_unchecked'),
-'elements': [('object_id', 'uint16', 1, 'in'),
-             ('session_id', 'uint16', 1, 'in')],
+'name': 'Release Object Unchecked',
+'elements': [('Object Id', 'uint16', 1, 'in'),
+             ('Session Id', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -356,12 +356,12 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('AllocateString', 'allocate_string'),
-'elements': [('length_to_reserve', 'uint32', 1, 'in'),
-             ('buffer', 'string', 58, 'in'),
-             ('session_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('string_id', 'uint16', 1, 'out')],
+'name': 'Allocate String',
+'elements': [('Length To Reserve', 'uint32', 1, 'in'),
+             ('Buffer', 'string', 58, 'in'),
+             ('Session Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('String Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -380,10 +380,10 @@ Returns the object ID of the new string object and the resulting error code.
 
 com['packets'].append({
 'type': 'function',
-'name': ('TruncateString', 'truncate_string'),
-'elements': [('string_id', 'uint16', 1, 'in'),
-             ('length', 'uint32', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+'name': 'Truncate String',
+'elements': [('String Id', 'uint16', 1, 'in'),
+             ('Length', 'uint32', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -399,10 +399,10 @@ error code.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetStringLength', 'get_string_length'),
-'elements': [('string_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('length', 'uint32', 1, 'out')],
+'name': 'Get String Length',
+'elements': [('String Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Length', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -417,11 +417,11 @@ Returns the length of a string object in bytes and the resulting error code.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetStringChunk', 'set_string_chunk'),
-'elements': [('string_id', 'uint16', 1, 'in'),
-             ('offset', 'uint32', 1, 'in'),
-             ('buffer', 'string', 58, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+'name': 'Set String Chunk',
+'elements': [('String Id', 'uint16', 1, 'in'),
+             ('Offset', 'uint32', 1, 'in'),
+             ('Buffer', 'string', 58, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -438,11 +438,11 @@ Returns the resulting error code.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetStringChunk', 'get_string_chunk'),
-'elements': [('string_id', 'uint16', 1, 'in'),
-             ('offset', 'uint32', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('buffer', 'string', 63, 'out')],
+'name': 'Get String Chunk',
+'elements': [('String Id', 'uint16', 1, 'in'),
+             ('Offset', 'uint32', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Buffer', 'string', 63, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -462,11 +462,11 @@ returns the resulting error code.
 
 com['packets'].append({
 'type': 'function',
-'name': ('AllocateList', 'allocate_list'),
-'elements': [('length_to_reserve', 'uint16', 1, 'in'),
-             ('session_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('list_id', 'uint16', 1, 'out')],
+'name': 'Allocate List',
+'elements': [('Length To Reserve', 'uint16', 1, 'in'),
+             ('Session Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('List Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -488,10 +488,10 @@ the list object is decreased by one.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetListLength', 'get_list_length'),
-'elements': [('list_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('length', 'uint16', 1, 'out')],
+'name': 'Get List Length',
+'elements': [('List Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Length', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -506,13 +506,13 @@ Returns the length of a list object in items and the resulting error code.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetListItem', 'get_list_item'),
-'elements': [('list_id', 'uint16', 1, 'in'),
-             ('index', 'uint16', 1, 'in'),
-             ('session_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('item_object_id', 'uint16', 1, 'out'),
-             ('type', 'uint8', 1, 'out', OBJECT_TYPE_CONSTANTS)],
+'name': 'Get List Item',
+'elements': [('List Id', 'uint16', 1, 'in'),
+             ('Index', 'uint16', 1, 'in'),
+             ('Session Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Item Object Id', 'uint16', 1, 'out'),
+             ('Type', 'uint8', 1, 'out', OBJECT_TYPE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -537,10 +537,10 @@ Possible object types are:
 
 com['packets'].append({
 'type': 'function',
-'name': ('AppendToList', 'append_to_list'),
-'elements': [('list_id', 'uint16', 1, 'in'),
-             ('item_object_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+'name': 'Append To List',
+'elements': [('List Id', 'uint16', 1, 'in'),
+             ('Item Object Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -558,10 +558,10 @@ Returns the resulting error code.
 
 com['packets'].append({
 'type': 'function',
-'name': ('RemoveFromList', 'remove_from_list'),
-'elements': [('list_id', 'uint16', 1, 'in'),
-             ('index', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+'name': 'Remove From List',
+'elements': [('List Id', 'uint16', 1, 'in'),
+             ('Index', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -583,15 +583,15 @@ Returns the resulting error code.
 
 com['packets'].append({
 'type': 'function',
-'name': ('OpenFile', 'open_file'),
-'elements': [('name_string_id', 'uint16', 1, 'in'),
-             ('flags', 'uint32', 1, 'in', FILE_FLAG_CONSTANTS),
-             ('permissions', 'uint16', 1, 'in', FILE_PERMISSION_CONSTANTS),
-             ('uid', 'uint32', 1, 'in'),
-             ('gid', 'uint32', 1, 'in'),
-             ('session_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('file_id', 'uint16', 1, 'out')],
+'name': 'Open File',
+'elements': [('Name String Id', 'uint16', 1, 'in'),
+             ('Flags', 'uint32', 1, 'in', FILE_FLAG_CONSTANTS),
+             ('Permissions', 'uint16', 1, 'in', FILE_PERMISSION_CONSTANTS),
+             ('UID', 'uint32', 1, 'in'),
+             ('GID', 'uint32', 1, 'in'),
+             ('Session Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('File Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -646,12 +646,12 @@ Returns the object ID of the new file object and the resulting error code.
 
 com['packets'].append({
 'type': 'function',
-'name': ('CreatePipe', 'create_pipe'),
-'elements': [('flags', 'uint32', 1, 'in', PIPE_FLAG_CONSTANTS),
-             ('length', 'uint64', 1, 'in'),
-             ('session_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('file_id', 'uint16', 1, 'out')],
+'name': 'Create Pipe',
+'elements': [('Flags', 'uint32', 1, 'in', PIPE_FLAG_CONSTANTS),
+             ('Length', 'uint64', 1, 'in'),
+             ('Session Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('File Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -677,20 +677,20 @@ Returns the object ID of the new file object and the resulting error code.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetFileInfo', 'get_file_info'),
-'elements': [('file_id', 'uint16', 1, 'in'),
-             ('session_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('type', 'uint8', 1, 'out', FILE_TYPE_CONSTANTS),
-             ('name_string_id', 'uint16', 1, 'out'),
-             ('flags', 'uint32', 1, 'out'),
-             ('permissions', 'uint16', 1, 'out', FILE_PERMISSION_CONSTANTS),
-             ('uid', 'uint32', 1, 'out'),
-             ('gid', 'uint32', 1, 'out'),
-             ('length', 'uint64', 1, 'out'),
-             ('access_timestamp', 'uint64', 1, 'out'),
-             ('modification_timestamp', 'uint64', 1, 'out'),
-             ('status_change_timestamp', 'uint64', 1, 'out')],
+'name': 'Get File Info',
+'elements': [('File Id', 'uint16', 1, 'in'),
+             ('Session Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Type', 'uint8', 1, 'out', FILE_TYPE_CONSTANTS),
+             ('Name String Id', 'uint16', 1, 'out'),
+             ('Flags', 'uint32', 1, 'out'),
+             ('Permissions', 'uint16', 1, 'out', FILE_PERMISSION_CONSTANTS),
+             ('UID', 'uint32', 1, 'out'),
+             ('GID', 'uint32', 1, 'out'),
+             ('Length', 'uint64', 1, 'out'),
+             ('Access Timestamp', 'uint64', 1, 'out'),
+             ('Modification Timestamp', 'uint64', 1, 'out'),
+             ('Status Change Timestamp', 'uint64', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -727,12 +727,12 @@ FIXME: everything except flags and length is invalid if file type is *Pipe*
 
 com['packets'].append({
 'type': 'function',
-'name': ('ReadFile', 'read_file'),
-'elements': [('file_id', 'uint16', 1, 'in'),
-             ('length_to_read', 'uint8', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('buffer', 'uint8', 62, 'out'),
-             ('length_read', 'uint8', 1, 'out')],
+'name': 'Read File',
+'elements': [('File Id', 'uint16', 1, 'in'),
+             ('Length To Read', 'uint8', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Buffer', 'uint8', 62, 'out'),
+             ('Length Read', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -758,9 +758,9 @@ error code *NotSupported* is returned.
 
 com['packets'].append({
 'type': 'function',
-'name': ('ReadFileAsync', 'read_file_async'),
-'elements': [('file_id', 'uint16', 1, 'in'),
-             ('length_to_read', 'uint64', 1, 'in')],
+'name': 'Read File Async',
+'elements': [('File Id', 'uint16', 1, 'in'),
+             ('Length To Read', 'uint64', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -786,9 +786,9 @@ code *NotSupported* is reported via the :func:`AsyncFileRead` callback.
 
 com['packets'].append({
 'type': 'function',
-'name': ('AbortAsyncFileRead', 'abort_async_file_read'),
-'elements': [('file_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+'name': 'Abort Async File Read',
+'elements': [('File Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -807,12 +807,12 @@ On success the :func:`AsyncFileRead` callback will report *OperationAborted*.
 
 com['packets'].append({
 'type': 'function',
-'name': ('WriteFile', 'write_file'),
-'elements': [('file_id', 'uint16', 1, 'in'),
-             ('buffer', 'uint8', 61, 'in'),
-             ('length_to_write', 'uint8', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('length_written', 'uint8', 1, 'out')],
+'name': 'Write File',
+'elements': [('File Id', 'uint16', 1, 'in'),
+             ('Buffer', 'uint8', 61, 'in'),
+             ('Length To Write', 'uint8', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Length Written', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -833,10 +833,10 @@ error code *NotSupported* is returned.
 
 com['packets'].append({
 'type': 'function',
-'name': ('WriteFileUnchecked', 'write_file_unchecked'),
-'elements': [('file_id', 'uint16', 1, 'in'),
-             ('buffer', 'uint8', 61, 'in'),
-             ('length_to_write', 'uint8', 1, 'in')],
+'name': 'Write File Unchecked',
+'elements': [('File Id', 'uint16', 1, 'in'),
+             ('Buffer', 'uint8', 61, 'in'),
+             ('Length To Write', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -858,10 +858,10 @@ write operation will fail silently.
 
 com['packets'].append({
 'type': 'function',
-'name': ('WriteFileAsync', 'write_file_async'),
-'elements': [('file_id', 'uint16', 1, 'in'),
-             ('buffer', 'uint8', 61, 'in'),
-             ('length_to_write', 'uint8', 1, 'in')],
+'name': 'Write File Async',
+'elements': [('File Id', 'uint16', 1, 'in'),
+             ('Buffer', 'uint8', 61, 'in'),
+             ('Length To Write', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -883,12 +883,12 @@ error code *NotSupported* is reported via the :func:`AsyncFileWrite` callback.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetFilePosition', 'set_file_position'),
-'elements': [('file_id', 'uint16', 1, 'in'),
-             ('offset', 'int64', 1, 'in'),
-             ('origin', 'uint8', 1, 'in', FILE_ORIGIN_CONSTANTS),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('position', 'uint64', 1, 'out')],
+'name': 'Set File Position',
+'elements': [('File Id', 'uint16', 1, 'in'),
+             ('Offset', 'int64', 1, 'in'),
+             ('Origin', 'uint8', 1, 'in', FILE_ORIGIN_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Position', 'uint64', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -914,10 +914,10 @@ position and the error code *InvalidSeek* is returned.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetFilePosition', 'get_file_position'),
-'elements': [('file_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('position', 'uint64', 1, 'out')],
+'name': 'Get File Position',
+'elements': [('File Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Position', 'uint64', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -936,10 +936,10 @@ position and the error code *InvalidSeek* is returned.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetFileEvents', 'set_file_events'),
-'elements': [('file_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('events', 'uint16', 1, 'in', FILE_EVENT_CONSTANTS)],
+'name': 'Set File Events',
+'elements': [('File Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Events', 'uint16', 1, 'in', FILE_EVENT_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -953,10 +953,10 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetFileEvents', 'get_file_events'),
-'elements': [('file_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('events', 'uint16', 1, 'out', FILE_EVENT_CONSTANTS)],
+'name': 'Get File Events',
+'elements': [('File Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Events', 'uint16', 1, 'out', FILE_EVENT_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -970,11 +970,11 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'callback',
-'name': ('AsyncFileRead', 'async_file_read'),
-'elements': [('file_id', 'uint16', 1, 'out'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('buffer', 'uint8', 60, 'out'),
-             ('length_read', 'uint8', 1, 'out')],
+'name': 'Async File Read',
+'elements': [('File Id', 'uint16', 1, 'out'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Buffer', 'uint8', 60, 'out'),
+             ('Length Read', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -990,10 +990,10 @@ function.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('AsyncFileWrite', 'async_file_write'),
-'elements': [('file_id', 'uint16', 1, 'out'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('length_written', 'uint8', 1, 'out')],
+'name': 'Async File Write',
+'elements': [('File Id', 'uint16', 1, 'out'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Length Written', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -1009,9 +1009,9 @@ function.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('FileEventsOccurred', 'file_events_occurred'),
-'elements': [('file_id', 'uint16', 1, 'out'),
-             ('events', 'uint16', 1, 'out', FILE_EVENT_CONSTANTS)],
+'name': 'File Events Occurred',
+'elements': [('File Id', 'uint16', 1, 'out'),
+             ('Events', 'uint16', 1, 'out', FILE_EVENT_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -1029,11 +1029,11 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('OpenDirectory', 'open_directory'),
-'elements': [('name_string_id', 'uint16', 1, 'in'),
-             ('session_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('directory_id', 'uint16', 1, 'out')],
+'name': 'Open Directory',
+'elements': [('Name String Id', 'uint16', 1, 'in'),
+             ('Session Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Directory Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1057,11 +1057,11 @@ Returns the object ID of the new directory object and the resulting error code.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDirectoryName', 'get_directory_name'),
-'elements': [('directory_id', 'uint16', 1, 'in'),
-             ('session_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('name_string_id', 'uint16', 1, 'out')],
+'name': 'Get Directory Name',
+'elements': [('Directory Id', 'uint16', 1, 'in'),
+             ('Session Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Name String Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1077,12 +1077,12 @@ the resulting error code.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetNextDirectoryEntry', 'get_next_directory_entry'),
-'elements': [('directory_id', 'uint16', 1, 'in'),
-             ('session_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('name_string_id', 'uint16', 1, 'out'),
-             ('type', 'uint8', 1, 'out', DIRECTORY_ENTRY_TYPE_CONSTANTS)],
+'name': 'Get Next Directory Entry',
+'elements': [('Directory Id', 'uint16', 1, 'in'),
+             ('Session Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Name String Id', 'uint16', 1, 'out'),
+             ('Type', 'uint8', 1, 'out', DIRECTORY_ENTRY_TYPE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1111,9 +1111,9 @@ Possible directory entry types are:
 
 com['packets'].append({
 'type': 'function',
-'name': ('RewindDirectory', 'rewind_directory'),
-'elements': [('directory_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+'name': 'Rewind Directory',
+'elements': [('Directory Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1128,13 +1128,13 @@ Rewinds a directory object and returns the resulting error code.
 
 com['packets'].append({
 'type': 'function',
-'name': ('CreateDirectory', 'create_directory'),
-'elements': [('name_string_id', 'uint16', 1, 'in'),
-             ('flags', 'uint32', 1, 'in', DIRECTORY_FLAG_CONSTANTS),
-             ('permissions', 'uint16', 1, 'in', FILE_PERMISSION_CONSTANTS),
-             ('uid', 'uint32', 1, 'in'),
-             ('gid', 'uint32', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+'name': 'Create Directory',
+'elements': [('Name String Id', 'uint16', 1, 'in'),
+             ('Flags', 'uint32', 1, 'in', DIRECTORY_FLAG_CONSTANTS),
+             ('Permissions', 'uint16', 1, 'in', FILE_PERMISSION_CONSTANTS),
+             ('UID', 'uint32', 1, 'in'),
+             ('GID', 'uint32', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1153,10 +1153,10 @@ FIXME: name has to be absolute
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetProcesses', 'get_processes'),
-'elements': [('session_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('processes_list_id', 'uint16', 1, 'out')],
+'name': 'Get Processes',
+'elements': [('Session Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Processes List Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1170,19 +1170,19 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('SpawnProcess', 'spawn_process'),
-'elements': [('executable_string_id', 'uint16', 1, 'in'),
-             ('arguments_list_id', 'uint16', 1, 'in'),
-             ('environment_list_id', 'uint16', 1, 'in'),
-             ('working_directory_string_id', 'uint16', 1, 'in'),
-             ('uid', 'uint32', 1, 'in'),
-             ('gid', 'uint32', 1, 'in'),
-             ('stdin_file_id', 'uint16', 1, 'in'),
-             ('stdout_file_id', 'uint16', 1, 'in'),
-             ('stderr_file_id', 'uint16', 1, 'in'),
-             ('session_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('process_id', 'uint16', 1, 'out')],
+'name': 'Spawn Process',
+'elements': [('Executable String Id', 'uint16', 1, 'in'),
+             ('Arguments List Id', 'uint16', 1, 'in'),
+             ('Environment List Id', 'uint16', 1, 'in'),
+             ('Working Directory String Id', 'uint16', 1, 'in'),
+             ('UID', 'uint32', 1, 'in'),
+             ('GID', 'uint32', 1, 'in'),
+             ('Stdin File Id', 'uint16', 1, 'in'),
+             ('Stdout File Id', 'uint16', 1, 'in'),
+             ('Stderr File Id', 'uint16', 1, 'in'),
+             ('Session Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Process Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1196,10 +1196,10 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('KillProcess', 'kill_process'),
-'elements': [('process_id', 'uint16', 1, 'in'),
-             ('signal', 'uint8', 1, 'in', PROCESS_SIGNAL_CONSTANTS),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+'name': 'Kill Process',
+'elements': [('Process Id', 'uint16', 1, 'in'),
+             ('Signal', 'uint8', 1, 'in', PROCESS_SIGNAL_CONSTANTS),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1226,14 +1226,14 @@ Possible UNIX signals are:
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetProcessCommand', 'get_process_command'),
-'elements': [('process_id', 'uint16', 1, 'in'),
-             ('session_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('executable_string_id', 'uint16', 1, 'out'),
-             ('arguments_list_id', 'uint16', 1, 'out'),
-             ('environment_list_id', 'uint16', 1, 'out'),
-             ('working_directory_string_id', 'uint16', 1, 'out')],
+'name': 'Get Process Command',
+'elements': [('Process Id', 'uint16', 1, 'in'),
+             ('Session Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Executable String Id', 'uint16', 1, 'out'),
+             ('Arguments List Id', 'uint16', 1, 'out'),
+             ('Environment List Id', 'uint16', 1, 'out'),
+             ('Working Directory String Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1250,12 +1250,12 @@ error code.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetProcessIdentity', 'get_process_identity'),
-'elements': [('process_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('pid', 'uint32', 1, 'out'),
-             ('uid', 'uint32', 1, 'out'),
-             ('gid', 'uint32', 1, 'out')],
+'name': 'Get Process Identity',
+'elements': [('Process Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('PID', 'uint32', 1, 'out'),
+             ('UID', 'uint32', 1, 'out'),
+             ('GID', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1274,13 +1274,13 @@ The process ID is only valid if the state is *Running* or *Stopped*, see
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetProcessStdio', 'get_process_stdio'),
-'elements': [('process_id', 'uint16', 1, 'in'),
-             ('session_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('stdin_file_id', 'uint16', 1, 'out'),
-             ('stdout_file_id', 'uint16', 1, 'out'),
-             ('stderr_file_id', 'uint16', 1, 'out')],
+'name': 'Get Process Stdio',
+'elements': [('Process Id', 'uint16', 1, 'in'),
+             ('Session Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Stdin File Id', 'uint16', 1, 'out'),
+             ('Stdout File Id', 'uint16', 1, 'out'),
+             ('Stderr File Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1296,12 +1296,12 @@ passed to :func:`SpawnProcess`, and the resulting error code.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetProcessState', 'get_process_state'),
-'elements': [('process_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('state', 'uint8', 1, 'out', PROCESS_STATE_CONSTANTS),
-             ('timestamp', 'uint64', 1, 'out'),
-             ('exit_code', 'uint8', 1, 'out')],
+'name': 'Get Process State',
+'elements': [('Process Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('State', 'uint8', 1, 'out', PROCESS_STATE_CONSTANTS),
+             ('Timestamp', 'uint64', 1, 'out'),
+             ('Exit Code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1346,11 +1346,11 @@ writing.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('ProcessStateChanged', 'process_state_changed'),
-'elements': [('process_id', 'uint16', 1, 'out'),
-             ('state', 'uint8', 1, 'out', PROCESS_STATE_CONSTANTS),
-             ('timestamp', 'uint64', 1, 'out'),
-             ('exit_code', 'uint8', 1, 'out')],
+'name': 'Process State Changed',
+'elements': [('Process Id', 'uint16', 1, 'out'),
+             ('State', 'uint8', 1, 'out', PROCESS_STATE_CONSTANTS),
+             ('Timestamp', 'uint64', 1, 'out'),
+             ('Exit Code', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -1368,10 +1368,10 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetPrograms', 'get_programs'),
-'elements': [('session_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('programs_list_id', 'uint16', 1, 'out')],
+'name': 'Get Programs',
+'elements': [('Session Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Programs List Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1385,11 +1385,11 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('DefineProgram', 'define_program'),
-'elements': [('identifier_string_id', 'uint16', 1, 'in'),
-             ('session_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('program_id', 'uint16', 1, 'out')],
+'name': 'Define Program',
+'elements': [('Identifier String Id', 'uint16', 1, 'in'),
+             ('Session Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Program Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1403,10 +1403,10 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('PurgeProgram', 'purge_program'),
-'elements': [('program_id', 'uint16', 1, 'in'),
-             ('cookie', 'uint32', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+'name': 'Purge Program',
+'elements': [('Program Id', 'uint16', 1, 'in'),
+             ('Cookie', 'uint32', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1420,11 +1420,11 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetProgramIdentifier', 'get_program_identifier'),
-'elements': [('program_id', 'uint16', 1, 'in'),
-             ('session_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('identifier_string_id', 'uint16', 1, 'out')],
+'name': 'Get Program Identifier',
+'elements': [('Program Id', 'uint16', 1, 'in'),
+             ('Session Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Identifier String Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1438,11 +1438,11 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetProgramRootDirectory', 'get_program_root_directory'),
-'elements': [('program_id', 'uint16', 1, 'in'),
-             ('session_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('root_directory_string_id', 'uint16', 1, 'out')],
+'name': 'Get Program Root Directory',
+'elements': [('Program Id', 'uint16', 1, 'in'),
+             ('Session Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Root Directory String Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1457,13 +1457,13 @@ FIXME: root directory is absolute: <home>/programs/<identifier>
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetProgramCommand', 'set_program_command'),
-'elements': [('program_id', 'uint16', 1, 'in'),
-             ('executable_string_id', 'uint16', 1, 'in'),
-             ('arguments_list_id', 'uint16', 1, 'in'),
-             ('environment_list_id', 'uint16', 1, 'in'),
-             ('working_directory_string_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+'name': 'Set Program Command',
+'elements': [('Program Id', 'uint16', 1, 'in'),
+             ('Executable String Id', 'uint16', 1, 'in'),
+             ('Arguments List Id', 'uint16', 1, 'in'),
+             ('Environment List Id', 'uint16', 1, 'in'),
+             ('Working Directory String Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1478,14 +1478,14 @@ FIXME: working directory is relative to <home>/programs/<identifier>/bin
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetProgramCommand', 'get_program_command'),
-'elements': [('program_id', 'uint16', 1, 'in'),
-             ('session_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('executable_string_id', 'uint16', 1, 'out'),
-             ('arguments_list_id', 'uint16', 1, 'out'),
-             ('environment_list_id', 'uint16', 1, 'out'),
-             ('working_directory_string_id', 'uint16', 1, 'out')],
+'name': 'Get Program Command',
+'elements': [('Program Id', 'uint16', 1, 'in'),
+             ('Session Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Executable String Id', 'uint16', 1, 'out'),
+             ('Arguments List Id', 'uint16', 1, 'out'),
+             ('Environment List Id', 'uint16', 1, 'out'),
+             ('Working Directory String Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1500,15 +1500,15 @@ FIXME: working directory is relative to <home>/programs/<identifier>/bin
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetProgramStdioRedirection', 'set_program_stdio_redirection'),
-'elements': [('program_id', 'uint16', 1, 'in'),
-             ('stdin_redirection', 'uint8', 1, 'in', PROGRAM_STDIO_REDIRECTION_CONSTANTS),
-             ('stdin_file_name_string_id', 'uint16', 1, 'in'),
-             ('stdout_redirection', 'uint8', 1, 'in', PROGRAM_STDIO_REDIRECTION_CONSTANTS),
-             ('stdout_file_name_string_id', 'uint16', 1, 'in'),
-             ('stderr_redirection', 'uint8', 1, 'in', PROGRAM_STDIO_REDIRECTION_CONSTANTS),
-             ('stderr_file_name_string_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+'name': 'Set Program Stdio Redirection',
+'elements': [('Program Id', 'uint16', 1, 'in'),
+             ('Stdin Redirection', 'uint8', 1, 'in', PROGRAM_STDIO_REDIRECTION_CONSTANTS),
+             ('Stdin File Name String Id', 'uint16', 1, 'in'),
+             ('Stdout Redirection', 'uint8', 1, 'in', PROGRAM_STDIO_REDIRECTION_CONSTANTS),
+             ('Stdout File Name String Id', 'uint16', 1, 'in'),
+             ('Stderr Redirection', 'uint8', 1, 'in', PROGRAM_STDIO_REDIRECTION_CONSTANTS),
+             ('Stderr File Name String Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1523,16 +1523,16 @@ FIXME: stdio file names are relative to <home>/programs/<identifier>/bin
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetProgramStdioRedirection', 'get_program_stdio_redirection'),
-'elements': [('program_id', 'uint16', 1, 'in'),
-             ('session_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('stdin_redirection', 'uint8', 1, 'out', PROGRAM_STDIO_REDIRECTION_CONSTANTS),
-             ('stdin_file_name_string_id', 'uint16', 1, 'out'),
-             ('stdout_redirection', 'uint8', 1, 'out', PROGRAM_STDIO_REDIRECTION_CONSTANTS),
-             ('stdout_file_name_string_id', 'uint16', 1, 'out'),
-             ('stderr_redirection', 'uint8', 1, 'out', PROGRAM_STDIO_REDIRECTION_CONSTANTS),
-             ('stderr_file_name_string_id', 'uint16', 1, 'out')],
+'name': 'Get Program Stdio Redirection',
+'elements': [('Program Id', 'uint16', 1, 'in'),
+             ('Session Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Stdin Redirection', 'uint8', 1, 'out', PROGRAM_STDIO_REDIRECTION_CONSTANTS),
+             ('Stdin File Name String Id', 'uint16', 1, 'out'),
+             ('Stdout Redirection', 'uint8', 1, 'out', PROGRAM_STDIO_REDIRECTION_CONSTANTS),
+             ('Stdout File Name String Id', 'uint16', 1, 'out'),
+             ('Stderr Redirection', 'uint8', 1, 'out', PROGRAM_STDIO_REDIRECTION_CONSTANTS),
+             ('Stderr File Name String Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1547,13 +1547,13 @@ FIXME: stdio file names are relative to <home>/programs/<identifier>/bin
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetProgramSchedule', 'set_program_schedule'),
-'elements': [('program_id', 'uint16', 1, 'in'),
-             ('start_mode', 'uint8', 1, 'in', PROGRAM_START_MODE_CONSTANTS),
-             ('continue_after_error', 'bool', 1, 'in'),
-             ('start_interval', 'uint32', 1, 'in'),
-             ('start_fields_string_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+'name': 'Set Program Schedule',
+'elements': [('Program Id', 'uint16', 1, 'in'),
+             ('Start Mode', 'uint8', 1, 'in', PROGRAM_START_MODE_CONSTANTS),
+             ('Continue After Error', 'bool', 1, 'in'),
+             ('Start Interval', 'uint32', 1, 'in'),
+             ('Start Fields String Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1567,14 +1567,14 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetProgramSchedule', 'get_program_schedule'),
-'elements': [('program_id', 'uint16', 1, 'in'),
-             ('session_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('start_mode', 'uint8', 1, 'out', PROGRAM_START_MODE_CONSTANTS),
-             ('continue_after_error', 'bool', 1, 'out'),
-             ('start_interval', 'uint32', 1, 'out'),
-             ('start_fields_string_id', 'uint16', 1, 'out')],
+'name': 'Get Program Schedule',
+'elements': [('Program Id', 'uint16', 1, 'in'),
+             ('Session Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Start Mode', 'uint8', 1, 'out', PROGRAM_START_MODE_CONSTANTS),
+             ('Continue After Error', 'bool', 1, 'out'),
+             ('Start Interval', 'uint32', 1, 'out'),
+             ('Start Fields String Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1588,13 +1588,13 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetProgramSchedulerState', 'get_program_scheduler_state'),
-'elements': [('program_id', 'uint16', 1, 'in'),
-             ('session_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('state', 'uint8', 1, 'out', PROGRAM_SCHEDULER_STATE_CONSTANTS),
-             ('timestamp', 'uint64', 1, 'out'),
-             ('message_string_id', 'uint16', 1, 'out')],
+'name': 'Get Program Scheduler State',
+'elements': [('Program Id', 'uint16', 1, 'in'),
+             ('Session Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('State', 'uint8', 1, 'out', PROGRAM_SCHEDULER_STATE_CONSTANTS),
+             ('Timestamp', 'uint64', 1, 'out'),
+             ('Message String Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1609,9 +1609,9 @@ FIXME: message is currently valid in error-occurred state only
 
 com['packets'].append({
 'type': 'function',
-'name': ('ContinueProgramSchedule', 'continue_program_schedule'),
-'elements': [('program_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+'name': 'Continue Program Schedule',
+'elements': [('Program Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1625,9 +1625,9 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('StartProgram', 'start_program'),
-'elements': [('program_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+'name': 'Start Program',
+'elements': [('Program Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1641,12 +1641,12 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetLastSpawnedProgramProcess', 'get_last_spawned_program_process'),
-'elements': [('program_id', 'uint16', 1, 'in'),
-             ('session_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('process_id', 'uint16', 1, 'out'),
-             ('timestamp', 'uint64', 1, 'out')],
+'name': 'Get Last Spawned Program Process',
+'elements': [('Program Id', 'uint16', 1, 'in'),
+             ('Session Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Process Id', 'uint16', 1, 'out'),
+             ('Timestamp', 'uint64', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1660,11 +1660,11 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCustomProgramOptionNames', 'get_custom_program_option_names'),
-'elements': [('program_id', 'uint16', 1, 'in'),
-             ('session_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('names_list_id', 'uint16', 1, 'out')],
+'name': 'Get Custom Program Option Names',
+'elements': [('Program Id', 'uint16', 1, 'in'),
+             ('Session Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Names List Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1678,11 +1678,11 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetCustomProgramOptionValue', 'set_custom_program_option_value'),
-'elements': [('program_id', 'uint16', 1, 'in'),
-             ('name_string_id', 'uint16', 1, 'in'),
-             ('value_string_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+'name': 'Set Custom Program Option Value',
+'elements': [('Program Id', 'uint16', 1, 'in'),
+             ('Name String Id', 'uint16', 1, 'in'),
+             ('Value String Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1696,12 +1696,12 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCustomProgramOptionValue', 'get_custom_program_option_value'),
-'elements': [('program_id', 'uint16', 1, 'in'),
-             ('name_string_id', 'uint16', 1, 'in'),
-             ('session_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
-             ('value_string_id', 'uint16', 1, 'out')],
+'name': 'Get Custom Program Option Value',
+'elements': [('Program Id', 'uint16', 1, 'in'),
+             ('Name String Id', 'uint16', 1, 'in'),
+             ('Session Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS),
+             ('Value String Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1715,10 +1715,10 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
-'name': ('RemoveCustomProgramOption', 'remove_custom_program_option'),
-'elements': [('program_id', 'uint16', 1, 'in'),
-             ('name_string_id', 'uint16', 1, 'in'),
-             ('error_code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
+'name': 'Remove Custom Program Option',
+'elements': [('Program Id', 'uint16', 1, 'in'),
+             ('Name String Id', 'uint16', 1, 'in'),
+             ('Error Code', 'uint8', 1, 'out', ERROR_CODE_CONSTANTS)],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -1732,8 +1732,8 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'callback',
-'name': ('ProgramSchedulerStateChanged', 'program_scheduler_state_changed'),
-'elements': [('program_id', 'uint16', 1, 'out')],
+'name': 'Program Scheduler State Changed',
+'elements': [('Program Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -1747,8 +1747,8 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'callback',
-'name': ('ProgramProcessSpawned', 'program_process_spawned'),
-'elements': [('program_id', 'uint16', 1, 'out')],
+'name': 'Program Process Spawned',
+'elements': [('Program Id', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':

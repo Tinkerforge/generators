@@ -13,7 +13,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 210,
-    'name': ('Joystick', 'joystick', 'Joystick', 'Joystick Bricklet'),
+    'name': ('Joystick', 'Joystick', 'Joystick Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': '2-axis joystick with push-button',
@@ -26,9 +26,9 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetPosition', 'get_position'), 
-'elements': [('x', 'int16', 1, 'out'),
-             ('y', 'int16', 1, 'out')],
+'name': 'Get Position',
+'elements': [('X', 'int16', 1, 'out'),
+             ('Y', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -56,8 +56,8 @@ den Callback :func:`Position` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('IsPressed', 'is_pressed'), 
-'elements': [('pressed', 'bool', 1, 'out')],
+'name': 'Is Pressed',
+'elements': [('Pressed', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -79,9 +79,9 @@ zu nutzen, um die Taste programmatisch zu behandeln.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAnalogValue', 'get_analog_value'), 
-'elements': [('x', 'uint16', 1, 'out'),
-             ('y', 'uint16', 1, 'out')],
+'name': 'Get Analog Value',
+'elements': [('X', 'uint16', 1, 'out'),
+             ('Y', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -119,7 +119,7 @@ den Callback :func:`AnalogValue` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('Calibrate', 'calibrate'), 
+'name': 'Calibrate',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
@@ -146,8 +146,8 @@ somit ist die Kalibrierung nur einmalig notwendig.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetPositionCallbackPeriod', 'set_position_callback_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Position Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -175,8 +175,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetPositionCallbackPeriod', 'get_position_callback_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Position Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -193,8 +193,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetAnalogValueCallbackPeriod', 'set_analog_value_callback_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Analog Value Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -222,8 +222,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAnalogValueCallbackPeriod', 'get_analog_value_callback_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Analog Value Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -240,12 +240,12 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetPositionCallbackThreshold', 'set_position_callback_threshold'), 
-'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min_x', 'int16', 1, 'in'),
-             ('max_x', 'int16', 1, 'in'),
-             ('min_y', 'int16', 1, 'in'),
-             ('max_y', 'int16', 1, 'in')],
+'name': 'Set Position Callback Threshold',
+'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min X', 'int16', 1, 'in'),
+             ('Max X', 'int16', 1, 'in'),
+             ('Min Y', 'int16', 1, 'in'),
+             ('Max Y', 'int16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -289,12 +289,12 @@ Der Standardwert ist ('x', 0, 0, 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetPositionCallbackThreshold', 'get_position_callback_threshold'), 
-'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min_x', 'int16', 1, 'out'),
-             ('max_x', 'int16', 1, 'out'),
-             ('min_y', 'int16', 1, 'out'),
-             ('max_y', 'int16', 1, 'out')],
+'name': 'Get Position Callback Threshold',
+'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min X', 'int16', 1, 'out'),
+             ('Max X', 'int16', 1, 'out'),
+             ('Min Y', 'int16', 1, 'out'),
+             ('Max Y', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -311,12 +311,12 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetAnalogValueCallbackThreshold', 'set_analog_value_callback_threshold'), 
-'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min_x', 'uint16', 1, 'in'),
-             ('max_x', 'uint16', 1, 'in'),
-             ('min_y', 'uint16', 1, 'in'),
-             ('max_y', 'uint16', 1, 'in')],
+'name': 'Set Analog Value Callback Threshold',
+'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min X', 'uint16', 1, 'in'),
+             ('Max X', 'uint16', 1, 'in'),
+             ('Min Y', 'uint16', 1, 'in'),
+             ('Max Y', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -360,12 +360,12 @@ Der Standardwert ist ('x', 0, 0, 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAnalogValueCallbackThreshold', 'get_analog_value_callback_threshold'), 
-'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min_x', 'uint16', 1, 'out'),
-             ('max_x', 'uint16', 1, 'out'),
-             ('min_y', 'uint16', 1, 'out'),
-             ('max_y', 'uint16', 1, 'out')],
+'name': 'Get Analog Value Callback Threshold',
+'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min X', 'uint16', 1, 'out'),
+             ('Max X', 'uint16', 1, 'out'),
+             ('Min Y', 'uint16', 1, 'out'),
+             ('Max Y', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -382,8 +382,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDebouncePeriod', 'set_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'in')],
+'name': 'Set Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -423,8 +423,8 @@ Der Standardwert ist 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDebouncePeriod', 'get_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'out')],
+'name': 'Get Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -441,9 +441,9 @@ gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Position', 'position'), 
-'elements': [('x', 'int16', 1, 'out'),
-             ('y', 'int16', 1, 'out')],
+'name': 'Position',
+'elements': [('X', 'int16', 1, 'out'),
+             ('Y', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -468,9 +468,9 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('AnalogValue', 'analog_value'), 
-'elements': [('x', 'uint16', 1, 'out'),
-             ('y', 'uint16', 1, 'out')],
+'name': 'Analog Value',
+'elements': [('X', 'uint16', 1, 'out'),
+             ('Y', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -495,9 +495,9 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('PositionReached', 'position_reached'), 
-'elements': [('x', 'int16', 1, 'out'),
-             ('y', 'int16', 1, 'out')],
+'name': 'Position Reached',
+'elements': [('X', 'int16', 1, 'out'),
+             ('Y', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -523,9 +523,9 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('AnalogValueReached', 'analog_value_reached'), 
-'elements': [('x', 'uint16', 1, 'out'),
-             ('y', 'uint16', 1, 'out')],
+'name': 'Analog Value Reached',
+'elements': [('X', 'uint16', 1, 'out'),
+             ('Y', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -551,7 +551,7 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Pressed', 'pressed'), 
+'name': 'Pressed',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -568,7 +568,7 @@ Dieser Callback wird ausgelöst wenn die Taste gedrückt wird.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Released', 'released'), 
+'name': 'Released',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {

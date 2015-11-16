@@ -687,9 +687,9 @@ def generate(bindings_root_directory, language, generator_class):
                     if common_packet['since_firmware'] is None:
                         continue
 
-                    if com['name'][1] in common_packet['since_firmware']:
+                    if com['name'][0] in common_packet['since_firmware']:
                         common_packet['since_firmware'] = \
-                            common_packet['since_firmware'][com['name'][1]]
+                            common_packet['since_firmware'][com['name'][0]]
                     else:
                         common_packet['since_firmware'] = \
                             common_packet['since_firmware']['*']
@@ -699,12 +699,12 @@ def generate(bindings_root_directory, language, generator_class):
 
                 return filter(lambda x: 'to_be_removed' not in x, common_packets)
 
-            if 'brick_' in config and 'common_included' not in com:
+            if config.startswith('brick_') and 'common_included' not in com:
                 common_packets = copy.deepcopy(common_device_packets) + copy.deepcopy(common_brick_packets)
                 com['packets'].extend(prepare_common_packets(common_packets))
                 com['common_included'] = True
 
-            if 'bricklet_' in config and 'common_included' not in com:
+            if config.startswith('bricklet_') and 'common_included' not in com:
                 common_packets = copy.deepcopy(common_device_packets) + copy.deepcopy(common_bricklet_packets)
                 com['packets'].extend(prepare_common_packets(common_packets))
                 com['common_included'] = True
@@ -795,218 +795,137 @@ def generate(bindings_root_directory, language, generator_class):
 
         f.write(']\n')
 
-cn_valid_camel_case_chars = re.compile('^[A-Z][A-Za-z0-9]*$')
-cn_valid_underscore_chars = re.compile('^[a-z][a-z0-9_]*$')
-cn_valid_display_chars = re.compile('^[A-Z][A-Za-z0-9/ -.]*$')
-cn_valid_constant_camel_case_chars = re.compile('^[A-Za-z0-9]+$')
-cn_valid_constant_underscore_chars = re.compile('^[a-z0-9_]+$')
+check_name_valid_word_head = re.compile('^[A-Z]+[A-Z0-9]*[a-z0-9]*$')
+check_name_valid_word_tail = re.compile('^[A-Z0-9]+[a-z0-9]*$')
+check_name_valid_word_constant = re.compile('^[A-Z0-9]+[a-z0-9]*$') # constants are allowed to start with numbers
+check_name_exceptions_whole_name = ['Industrial Dual 0 20mA']
+check_name_exceptions_word_in_constant = ['20mA', '24mA']
 
-cn_all_uppercase = ['api', 'ir', 'us', 'lcd', 'dc', 'imu', 'pwm', 'gps', 'id', 'io4',
-                    'io16', 'led', 'i2c', 'ptc', 'red', 'rs485', 'eap', 'usb', 'mac',
-                    '2d', '3d', '1k', '100k', '500k', '3v', '6v', '10v', '36v',
-                    '45v', 'sps', 'oqpsk', 'bpsk40', 'dhcp', 'ip', 'wpa',
-                    'wpa2', 'ca', 'wep', 'rgb', 'nfc', 'rfid', 'fifo', 'uv',
-                    'ws2801', 'ws2811', 'ws2812', 'adc', 'rs232', 'ac', 'oled',
-                    '125dps', '250dps', '500dps', '1000dps', '2000dps', 'co2', 'ap']
+def check_name(name, short_display_name=None, long_display_name=None, category_name=None, is_constant=False):
+    if isinstance(name, tuple):
+        raise ValueError('Name {0} uses old tuple format, update it to new split-camel-case format'.format(name))
 
-cn_eap_suffix = ['fast', 'tls', 'ttls', 'peap', 'mschap', 'gtc']
+    if len(name) == 0:
+        raise ValueError('Name is empty')
 
-cn_special_camel_case = {'mhz':      'MHz',
-                         '20ma':     '20mA',
-                         '24ma':     '24mA',
-                         '5v':       '5V',
-                         '10v':      '10V',
-                         '64000lux': '64000Lux',
-                         '32000lux': '32000Lux',
-                         '16000lux': '16000Lux',
-                         '8000lux':  '8000Lux',
-                         '1300lux':  '1300Lux',
-                         '600lux':   '600Lux',
-                         '3hz':      '3Hz',
-                         '6hz':      '6Hz',
-                         '10hz':     '10Hz',
-                         '12hz':     '12Hz',
-                         '25hz':     '25Hz',
-                         '50hz':     '50Hz',
-                         '60hz':     '60Hz',
-                         '80hz':     '80Hz',
-                         '100hz':    '100Hz',
-                         '200hz':    '200Hz',
-                         '400hz':    '400Hz',
-                         '800hz':    '800Hz',
-                         '1600hz':   '1600Hz',
-                         '1to11':    '1To11',
-                         '1to13':    '1To13',
-                         '1to14':    '1To14'}
+    if name not in check_name_exceptions_whole_name:
+        words = name.split(' ')
 
-def check_name(camel_case, underscore, short_display=None, long_display=None, is_constant=False, device_category=None):
-    if camel_case != None:
-        if is_constant:
-            r = cn_valid_constant_camel_case_chars
+        if not is_constant:
+            if check_name_valid_word_head.match(words[0]) == None:
+                raise ValueError("Word '{0}' in name '{1}' is invalid".format(words[0], name))
+
+            for word in words[1:]:
+                if check_name_valid_word_tail.match(word) == None:
+                    raise ValueError("Word '{0}' in name '{1}' is invalid".format(word, name))
         else:
-            r = cn_valid_camel_case_chars
+            for word in words:
+                if word not in check_name_exceptions_word_in_constant and \
+                   check_name_valid_word_constant.match(word) == None:
+                    raise ValueError("Word '{0}' in constant name '{1}' is invalid".format(word, name))
 
-        if r.match(camel_case) == None:
-            raise ValueError("camel case name '{0}' contains invalid chars".format(camel_case))
+    if short_display_name != None:
+        short_display_name_to_check = short_display_name.replace('/', ' ')
 
-    if underscore != None:
-        if is_constant:
-            r = cn_valid_constant_underscore_chars
+        if short_display_name.endswith(' 2.0'):
+            short_display_name_to_check = short_display_name_to_check.replace(' 2.0', ' V2')
+        elif short_display_name in ['IO-4', 'IO-16']: # exceptions for legacy dash rules
+            short_display_name_to_check = short_display_name_to_check.replace('-', '')
         else:
-            r = cn_valid_underscore_chars
+            short_display_name_to_check = short_display_name_to_check.replace('-', ' ')
 
-        if r.match(underscore) == None:
-            raise ValueError("underscore name '{0}' contains invalid chars".format(underscore))
+        if name != short_display_name_to_check:
+            raise ValueError("Name '{0}' and short display name '{1}' ({2}) mismatch" \
+                             .format(name, short_display_name, short_display_name_to_check))
 
-    if short_display != None:
-        if cn_valid_display_chars.match(short_display) == None:
-            raise ValueError("short display name '{0}' contains invalid chars".format(short_display))
+    if short_display_name != None and long_display_name != None and category_name != None:
+        short_display_name_to_check = set(short_display_name.split(' ') + [category_name])
+        long_display_name_to_check = set(long_display_name.split(' '))
 
-    if camel_case != None and underscore != None:
-        # test 1
-        camel_case_to_check = camel_case.lower()
-        underscore_to_check = underscore.replace('_', '')
-
-        if camel_case_to_check != underscore_to_check:
-            raise ValueError("camel case name '{0}' ({1}) and underscore name '{2}' ({3}) mismatch (test 1)" \
-                             .format(camel_case, camel_case_to_check, underscore, underscore_to_check))
-
-        # test 2
-        parts = []
-        for part in underscore.split('_'):
-            if part in cn_all_uppercase:
-                parts.append(part.upper())
-            elif part in cn_special_camel_case:
-                parts.append(cn_special_camel_case[part])
-            elif part in cn_eap_suffix and len(parts) > 0 and parts[-1] == 'EAP':
-                parts.append(part.upper())
-            else:
-                parts.append(part[0].upper() + part[1:])
-
-        underscore_to_check = ''.join(parts)
-
-        if camel_case != underscore_to_check:
-            raise ValueError("camel case name '{0}' and underscore name '{1}' ({2}) mismatch (test 2)" \
-                             .format(camel_case, underscore, underscore_to_check))
-
-    if camel_case != None and short_display != None:
-        # test 1
-        short_display_to_check = short_display.replace(' ', '').replace('-', '').replace('/', '')
-
-        if short_display_to_check.endswith('2.0'):
-            short_display_to_check = short_display_to_check.replace('2.0', 'V2')
-
-        if camel_case != short_display_to_check:
-            raise ValueError("camel case name '{0}' and short display name '{1}' ({2}) mismatch (test 1)" \
-                             .format(camel_case, short_display, short_display_to_check))
-
-        # test 2
-        camel_case_to_check = camel_case_to_space(camel_case)
-
-        if camel_case == 'IMUV2':
-            camel_case_to_check = camel_case_to_check.replace('V 2', ' 2.0')
-        elif camel_case_to_check.endswith('CO 2'):
-            camel_case_to_check = camel_case_to_check.replace('CO 2', 'CO2')
-        elif camel_case.endswith('V2'):
-            camel_case_to_check = camel_case_to_check.replace('V2', '2.0')
-        elif camel_case in ['IO4', 'IO16']:
-            camel_case_to_check = camel_case_to_check.replace(' ', '-')
-        elif camel_case in ['Current12', 'Current25']:
-            camel_case_to_check = camel_case_to_check.replace(' ', '')
-        elif camel_case == 'VoltageCurrent':
-            camel_case_to_check = camel_case_to_check.replace(' ', '/')
-        elif camel_case.endswith('16x2'):
-            camel_case_to_check = camel_case_to_check.replace('16x 2', '16x2')
-        elif camel_case.endswith('20x4'):
-            camel_case_to_check = camel_case_to_check.replace('20x 4', '20x4')
-        elif camel_case.endswith('128x64'):
-            camel_case_to_check = camel_case_to_check.replace('128x 64', '128x64')
-        elif camel_case.endswith('64x48'):
-            camel_case_to_check = camel_case_to_check.replace('64x 48', '64x48')
-        elif camel_case.endswith('4x7'):
-            camel_case_to_check = camel_case_to_check.replace('4x 7', '4x7')
-        elif camel_case.endswith('020mA'):
-            camel_case_to_check = camel_case_to_check.replace('020m A', '0-20mA')
-        elif camel_case.endswith('RS232'):
-            camel_case_to_check = camel_case_to_check.replace('RS 232', 'RS232')
-        elif camel_case == 'NFCRFID':
-            camel_case_to_check = camel_case_to_check.replace('NFCRFID', 'NFC/RFID')
-
-        if camel_case_to_check != short_display:
-            raise ValueError("camel case name '{0}' ({1}) and short display name '{2}' mismatch (test 2)" \
-                             .format(camel_case, camel_case_to_check, short_display))
-
-    if underscore != None and short_display != None:
-        short_display_to_check = short_display.replace(' ', '_').replace('/', '_')
-
-        if short_display.endswith('2.0'):
-            short_display_to_check = short_display_to_check.replace('2.0', 'V2')
-        elif short_display in ['IO-4', 'IO-16']:
-            short_display_to_check = short_display_to_check.replace('-', '')
-        else:
-            short_display_to_check = short_display_to_check.replace('-', '_')
-
-        short_display_to_check = short_display_to_check.lower()
-
-        if underscore != short_display_to_check.lower():
-            raise ValueError("underscore name '{0}' and short display name '{1}' ({2}) mismatch" \
-                             .format(underscore, short_display, short_display_to_check))
-
-    if short_display != None and long_display != None and device_category != None:
-        short_display_to_check = set(short_display.split(' ') + [device_category])
-        long_display_to_check = set(long_display.split(' '))
-
-        if short_display_to_check != long_display_to_check:
-            raise ValueError("long display name '{0}' and short display name '{1}' + '{2}' ({3}) do not contain the same words" \
-                             .format(long_display, short_display, device_category, ' '.join(list(short_display_to_check))))
+        if short_display_name_to_check != long_display_name_to_check:
+            raise ValueError("Long display name '{0}' and short display name '{1} ' + '{2}' ({3}) do not contain the same words" \
+                             .format(long_display_name, short_display_name, category_name,
+                                     ' '.join(list(short_display_name_to_check))))
 
 class NameMixin:
-    def get_camel_case_name(self):
+    def get_name(self):
         raise NotImplementedError()
 
-    def get_underscore_name(self):
-        raise NotImplementedError()
+    def get_space_name(self, skip=0):
+        return ' '.join(self.get_name().split(' ')[skip:])
 
-    def get_headless_camel_case_name(self):
-        return make_headless_camel_case(self.get_camel_case_name(), self.get_underscore_name())
+    def get_camel_case_name(self, skip=0):
+        return ''.join(self.get_name().split(' ')[skip:])
 
-    def get_upper_case_name(self):
-        return self.get_underscore_name().upper()
+    def get_headless_camel_case_name(self, skip=0):
+        parts = self.get_name().split(' ')[skip:]
 
-    def get_dash_name(self):
-        return self.get_underscore_name().replace('_', '-')
+        return ''.join([parts[0].lower()] + parts[1:])
+
+    def get_underscore_name(self, skip=0):
+        return '_'.join(self.get_name().split(' ')[skip:]).lower()
+
+    def get_upper_case_name(self, skip=0):
+        return '_'.join(self.get_name().split(' ')[skip:]).upper()
+
+    def get_dash_name(self, skip=0):
+        return '-'.join(self.get_name().split(' ')[skip:]).lower()
 
 class Constant(NameMixin):
-    def __init__(self, raw_data):
+    def __init__(self, raw_data, constant_group):
         self.raw_data = raw_data
+        self.constant_group = constant_group
 
-    def get_camel_case_name(self):
+        if len(raw_data) != 2:
+            raise Exception('Invalid Constant: ' + repr(raw_data))
+
+        check_name(raw_data[0], is_constant=True)
+
+    def get_constant_group(self): # parent
+        return self.constant_group
+
+    def get_device(self):
+        return self.get_constant_group().get_device()
+
+    def get_generator(self):
+        return self.get_constant_group().get_generator()
+
+    def get_name(self):
         return self.raw_data[0]
-
-    def get_underscore_name(self):
-        return self.raw_data[1]
 
     def get_value(self):
-        return self.raw_data[2]
+        return self.raw_data[1]
 
 class ConstantGroup(NameMixin):
-    def __init__(self, element, type, raw_data, generator):
+    def __init__(self, type, raw_data, device):
         self.type = type
         self.raw_data = raw_data
-        self.elements = [element]
+        self.device = device
+        self.elements = []
         self.constants = []
 
-        for raw_constant in raw_data[2]:
-            self.constants.append(generator.get_constant_class()(raw_constant))
+        if len(raw_data) != 2:
+            raise Exception('Invalid ConstantGroup: ' + repr(raw_data))
 
-    def add_elements(self, elements):
-        self.elements += elements
+        check_name(raw_data[0])
 
-    def get_camel_case_name(self):
+        for raw_constant in raw_data[1]:
+            self.constants.append(self.get_generator().get_constant_class()(raw_constant, self))
+
+    def get_elements(self): # parents
+        return self.elements
+
+    def get_device(self):
+        return self.device
+
+    def get_generator(self):
+        return self.get_device().get_generator()
+
+    def get_name(self):
         return self.raw_data[0]
 
-    def get_underscore_name(self):
-        return self.raw_data[1]
+    def get_name(self):
+        return self.raw_data[0]
 
     def get_type(self):
         return self.type
@@ -1014,10 +933,10 @@ class ConstantGroup(NameMixin):
     def get_constants(self):
         return self.constants
 
-    def get_elements(self):
-        return self.elements
+    def add_elements(self, elements):
+        self.elements += elements
 
-class Element:
+class Element(NameMixin):
     def __init__(self, raw_data, packet, device, generator):
         self.raw_data = raw_data
         self.packet = packet
@@ -1025,10 +944,16 @@ class Element:
         self.generator = generator
         self.constant_group = None
 
-        if len(self.raw_data) > 4:
-            self.constant_group = generator.get_constant_group_class()(self, raw_data[1], raw_data[4], generator)
+        check_name(raw_data[0])
 
-    def get_packet(self):
+        if len(raw_data) != 4 and len(raw_data) != 5:
+            raise Exception('Invalid Element: ' + repr(raw_data))
+
+        if len(self.raw_data) > 4:
+            self.constant_group = generator.get_constant_group_class()(raw_data[1], raw_data[4], device)
+            self.constant_group.add_elements([self])
+
+    def get_packet(self): # parent
         return self.packet
 
     def get_device(self):
@@ -1037,14 +962,8 @@ class Element:
     def get_generator(self):
         return self.generator
 
-    def get_underscore_name(self):
+    def get_name(self):
         return self.raw_data[0]
-
-    def get_headless_camel_case_name(self):
-        return underscore_to_headless_camel_case(self.get_underscore_name())
-
-    def get_dash_name(self):
-        return self.get_underscore_name().replace('_', '-')
 
     def get_type(self):
         return self.raw_data[1]
@@ -1101,14 +1020,12 @@ class Packet(NameMixin):
         self.in_elements = []
         self.out_elements = []
 
-        check_name(raw_data['name'][0], raw_data['name'][1])
+        check_name(raw_data['name'])
 
         for raw_element in self.raw_data['elements']:
             element = generator.get_element_class()(raw_element, self, device, generator)
 
             self.all_elements.append(element)
-
-            check_name(None, element.get_underscore_name())
 
             if element.get_type() not in Packet.valid_types:
                 raise ValueError('Invalid element type ' + element.get_type())
@@ -1122,14 +1039,6 @@ class Packet(NameMixin):
                 self.out_elements.append(element)
             else:
                 raise ValueError('Invalid element direction ' + element.get_direction())
-
-            constant_group = element.get_constant_group()
-
-            if constant_group is not None:
-                check_name(constant_group.get_camel_case_name(), constant_group.get_underscore_name())
-
-                for constant in constant_group.get_constants():
-                    check_name(constant.get_camel_case_name(), constant.get_underscore_name(), is_constant=True)
 
         self.constant_groups = []
 
@@ -1168,7 +1077,7 @@ class Packet(NameMixin):
             if constant_group is not None:
                 self.constant_groups.append(constant_group)
 
-    def get_device(self):
+    def get_device(self): # parent
         return self.device
 
     def get_generator(self):
@@ -1177,11 +1086,8 @@ class Packet(NameMixin):
     def get_type(self):
         return self.raw_data['type']
 
-    def get_camel_case_name(self):
-        return self.raw_data['name'][0]
-
-    def get_underscore_name(self):
-        return self.raw_data['name'][1]
+    def get_name(self):
+        return self.raw_data['name']
 
     def get_elements(self, direction=None):
         if direction is None:
@@ -1278,7 +1184,7 @@ class Device(NameMixin):
         self.all_function_packets_without_doc_only = []
         self.callback_packets = []
 
-        check_name(raw_data['name'][0], raw_data['name'][1], raw_data['name'][2], raw_data['name'][3], device_category=raw_data['category'])
+        check_name(raw_data['name'][0], short_display_name=raw_data['name'][1], long_display_name=raw_data['name'][2], category_name=raw_data['category'])
 
         for i, raw_packet in zip(range(len(raw_data['packets'])), raw_data['packets']):
             if not 'function_id' in raw_packet:
@@ -1318,13 +1224,13 @@ class Device(NameMixin):
                         b = constant.get_underscore_name()
 
                         if a != b:
-                            raise ValueError('Constant item name ({0} != {1}) mismatch in constant group {2}'.format(a, b, constant_group.get_underscore_name()))
+                            raise ValueError('Constant name ({0} != {1}) mismatch in constant group {2}'.format(a, b, constant_group.get_underscore_name()))
 
                         a = known_constant.get_value()
                         b = constant.get_value()
 
                         if a != b:
-                            raise ValueError('Constant item value ({0} != {1}) mismatch in constant group {2}'.format(a, b, constant_group.get_underscore_name()))
+                            raise ValueError('Constant value ({0} != {1}) mismatch in constant group {2}'.format(a, b, constant_group.get_underscore_name()))
 
                     constant_group = None
                     break
@@ -1332,7 +1238,7 @@ class Device(NameMixin):
                 if constant_group != None:
                     self.constant_groups.append(constant_group)
 
-    def get_generator(self):
+    def get_generator(self): # parent
         return self.generator
 
     def is_released(self):
@@ -1362,17 +1268,39 @@ class Device(NameMixin):
     def get_device_identifier(self):
         return self.raw_data['device_identifier']
 
-    def get_camel_case_name(self):
+    def get_name(self):
         return self.raw_data['name'][0]
 
-    def get_underscore_name(self):
-        return self.raw_data['name'][1]
+    def get_initial_name(self):
+        name = self.get_name()
+
+        if name.endswith(' V2'):
+            name = name[:-3]
+        elif name.endswith('mA'):
+            name = name[:-2]
+        elif name in ['IO4', 'IO16']:
+            name = 'IO'
+
+        name = re.sub('[0-9]+x[0-9]+', '', name).replace('  ', ' ').strip()
+
+        if ' ' not in name and (name.isupper() or self.get_camel_case_category() == 'Brick'):
+            return name.replace(' ', '').lower()
+
+        words = name.split(' ')
+
+        def shorten(word):
+            if (len(word) < 3 and word.isupper()) or word.isdigit():
+                return word.lower()
+            else:
+                return word[0].lower()
+
+        return ''.join(map(shorten, words))
 
     def get_short_display_name(self):
-        return self.raw_data['name'][2]
+        return self.raw_data['name'][1]
 
     def get_long_display_name(self):
-        return self.raw_data['name'][3]
+        return self.raw_data['name'][2]
 
     def get_description(self, language='en'):
         return self.raw_data['description'][language]

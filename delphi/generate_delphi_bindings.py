@@ -506,11 +506,11 @@ class DelphiBindingsPacket(delphi_common.DelphiPacket):
         return '\n    ///  '.join(text.strip().split('\n'))
 
 class DelphiBindingsElement(delphi_common.DelphiElement):
-    def get_underscore_name(self):
-        name = common.Element.get_underscore_name(self)
+    def get_name(self):
+        name = common.Element.get_name(self)
 
         # avoid keywords
-        if name in ['length', 'unit', 'type']:
+        if name.lower() in ['length', 'unit', 'type', 'message']:
             name += '2'
 
         return name

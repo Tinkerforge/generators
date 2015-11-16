@@ -13,7 +13,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 226,
-    'name': ('PTC', 'ptc', 'PTC', 'PTC Bricklet'),
+    'name': ('PTC', 'PTC', 'PTC Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Reads temperatures from Pt100 und Pt1000 sensors',
@@ -26,8 +26,8 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetTemperature', 'get_temperature'), 
-'elements': [('temperature', 'int32', 1, 'out')],
+'name': 'Get Temperature',
+'elements': [('Temperature', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -55,8 +55,8 @@ den Callback :func:`Temperature` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetResistance', 'get_resistance'), 
-'elements': [('resistance', 'uint16', 1, 'out')],
+'name': 'Get Resistance',
+'elements': [('Resistance', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -90,8 +90,8 @@ den Callback :func:`Resistance` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetTemperatureCallbackPeriod', 'set_temperature_callback_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Temperature Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -119,8 +119,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetTemperatureCallbackPeriod', 'get_temperature_callback_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Temperature Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -137,8 +137,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetResistanceCallbackPeriod', 'set_resistance_callback_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Resistance Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -166,8 +166,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetResistanceCallbackPeriod', 'get_resistance_callback_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Resistance Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -184,10 +184,10 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetTemperatureCallbackThreshold', 'set_temperature_callback_threshold'), 
-'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int32', 1, 'in'),
-             ('max', 'int32', 1, 'in')],
+'name': 'Set Temperature Callback Threshold',
+'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'int32', 1, 'in'),
+             ('Max', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -231,10 +231,10 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetTemperatureCallbackThreshold', 'get_temperature_callback_threshold'), 
-'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int32', 1, 'out'),
-             ('max', 'int32', 1, 'out')],
+'name': 'Get Temperature Callback Threshold',
+'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'int32', 1, 'out'),
+             ('Max', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -251,10 +251,10 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetResistanceCallbackThreshold', 'set_resistance_callback_threshold'), 
-'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'uint16', 1, 'in'),
-             ('max', 'uint16', 1, 'in')],
+'name': 'Set Resistance Callback Threshold',
+'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'uint16', 1, 'in'),
+             ('Max', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -298,10 +298,10 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetResistanceCallbackThreshold', 'get_resistance_callback_threshold'), 
-'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'uint16', 1, 'out'),
-             ('max', 'uint16', 1, 'out')],
+'name': 'Get Resistance Callback Threshold',
+'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'uint16', 1, 'out'),
+             ('Max', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -319,8 +319,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDebouncePeriod', 'set_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'in')],
+'name': 'Set Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -360,8 +360,8 @@ Der Standardwert ist 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDebouncePeriod', 'get_debounce_period'), 
-'elements': [('debounce', 'uint32', 1, 'out')],
+'name': 'Get Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -378,8 +378,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Temperature', 'temperature'), 
-'elements': [('temperature', 'int32', 1, 'out')],
+'name': 'Temperature',
+'elements': [('Temperature', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -404,8 +404,8 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('TemperatureReached', 'temperature_reached'), 
-'elements': [('temperature', 'int32', 1, 'out')],
+'name': 'Temperature Reached',
+'elements': [('Temperature', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -431,8 +431,8 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Resistance', 'resistance'), 
-'elements': [('resistance', 'uint16', 1, 'out')],
+'name': 'Resistance',
+'elements': [('Resistance', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -457,8 +457,8 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('ResistanceReached', 'resistance_reached'), 
-'elements': [('resistance', 'uint16', 1, 'out')],
+'name': 'Resistance Reached',
+'elements': [('Resistance', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -484,9 +484,9 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetNoiseRejectionFilter', 'set_noise_rejection_filter'), 
-'elements': [('filter', 'uint8', 1, 'in', ('FilterOption', 'filter_option', [('50Hz', '50hz', 0),
-                                                                             ('60Hz', '60hz', 1)]))],
+'name': 'Set Noise Rejection Filter',
+'elements': [('Filter', 'uint8', 1, 'in', ('Filter Option', [('50Hz', 0),
+                                                             ('60Hz', 1)]))],
 'since_firmware': [1, 0, 0], 
 'doc': ['af', {
 'en':
@@ -512,9 +512,9 @@ Der Standardwert ist 0 = 50Hz.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetNoiseRejectionFilter', 'get_noise_rejection_filter'), 
-'elements': [('filter', 'uint8', 1, 'out', ('FilterOption', 'filter_option', [('50Hz', '50hz', 0),
-                                                                              ('60Hz', '60hz', 1)]))],
+'name': 'Get Noise Rejection Filter',
+'elements': [('Filter', 'uint8', 1, 'out', ('Filter Option', [('50Hz', 0),
+                                                              ('60Hz', 1)]))],
 'since_firmware': [1, 0, 0], 
 'doc': ['af', {
 'en':
@@ -532,8 +532,8 @@ Gibt die Einstellung des Entstörfilters zurück, wie von
 
 com['packets'].append({
 'type': 'function',
-'name': ('IsSensorConnected', 'is_sensor_connected'), 
-'elements': [('connected', 'bool', 1, 'out')],
+'name': 'Is Sensor Connected',
+'elements': [('Connected', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0], 
 'doc': ['bf', {
 'en':
@@ -557,10 +557,10 @@ verbunden oder der Sensor selbst ist fehlerhaft.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetWireMode', 'set_wire_mode'), 
-'elements': [('mode', 'uint8', 1, 'in', ('WireMode', 'wire_mode', [('2', '2', 2),
-                                                                   ('3', '3', 3),
-                                                                   ('4', '4', 4)]))],
+'name': 'Set Wire Mode',
+'elements': [('Mode', 'uint8', 1, 'in', ('Wire Mode', [('2', 2),
+                                                       ('3', 3),
+                                                       ('4', 4)]))],
 'since_firmware': [1, 0, 0], 
 'doc': ['bf', {
 'en':
@@ -584,10 +584,10 @@ Der Standardwert ist 2 = 2-Leiter.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetWireMode', 'get_wire_mode'), 
-'elements': [('mode', 'uint8', 1, 'out', ('WireMode', 'wire_mode', [('2', '2', 2),
-                                                                    ('3', '3', 3),
-                                                                    ('4', '4', 4)]))],
+'name': 'Get Wire Mode',
+'elements': [('Mode', 'uint8', 1, 'out', ('Wire Mode', [('2', 2),
+                                                        ('3', 3),
+                                                        ('4', 4)]))],
 'since_firmware': [1, 0, 0], 
 'doc': ['bf', {
 'en':

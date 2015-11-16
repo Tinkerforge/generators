@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Brick',
     'device_identifier': 11,
-    'name': ('DC', 'dc', 'DC', 'DC Brick'),
+    'name': ('DC', 'DC', 'DC Brick'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Drives one brushed DC motor with up to 28V and 5A (peak)',
@@ -24,8 +24,8 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetVelocity', 'set_velocity'),
-'elements': [('velocity', 'int16', 1, 'in')],
+'name': 'Set Velocity',
+'elements': [('Velocity', 'int16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -62,8 +62,8 @@ Der Standardwert für die Geschwindigkeit ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetVelocity', 'get_velocity'),
-'elements': [('velocity', 'int16', 1, 'out')],
+'name': 'Get Velocity',
+'elements': [('Velocity', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -79,8 +79,8 @@ Gibt die Geschwindigkeit zurück, wie gesetzt von :func:`SetVelocity`.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCurrentVelocity', 'get_current_velocity'),
-'elements': [('velocity', 'int16', 1, 'out')],
+'name': 'Get Current Velocity',
+'elements': [('Velocity', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -100,8 +100,8 @@ neuen Zielwert, wie von :func:`SetVelocity` vorgegeben, beschleunigt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetAcceleration', 'set_acceleration'),
-'elements': [('acceleration', 'uint16', 1, 'in')],
+'name': 'Set Acceleration',
+'elements': [('Acceleration', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -140,8 +140,8 @@ Der Standardwert für die Beschleunigung beträgt 10000.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAcceleration', 'get_acceleration'),
-'elements': [('acceleration', 'uint16', 1, 'out')],
+'name': 'Get Acceleration',
+'elements': [('Acceleration', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -157,8 +157,8 @@ Gibt die Beschleunigung zurück, wie gesetzt von :func:`SetAcceleration`.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetPWMFrequency', 'set_pwm_frequency'),
-'elements': [('frequency', 'uint16', 1, 'in')],
+'name': 'Set PWM Frequency',
+'elements': [('Frequency', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -193,8 +193,8 @@ Der Standardwert der Frequenz ist 15 kHz.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetPWMFrequency', 'get_pwm_frequency'),
-'elements': [('frequency', 'uint16', 1, 'out')],
+'name': 'Get PWM Frequency',
+'elements': [('Frequency', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -210,7 +210,7 @@ Gibt die PWM Frequenz (in Hz) zurück, wie gesetzt von :func:`SetPWMFrequency`.
 
 com['packets'].append({
 'type': 'function',
-'name': ('FullBrake', 'full_brake'),
+'name': 'Full Brake',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -241,8 +241,8 @@ Ein Aufruf von :func:`SetVelocity` mit 0 erlaubt einen normalen Stopp des Motors
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetStackInputVoltage', 'get_stack_input_voltage'),
-'elements': [('voltage', 'uint16', 1, 'out')],
+'name': 'Get Stack Input Voltage',
+'elements': [('Voltage', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -262,8 +262,8 @@ Step-Up Power Supply erzeugt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetExternalInputVoltage', 'get_external_input_voltage'),
-'elements': [('voltage', 'uint16', 1, 'out')],
+'name': 'Get External Input Voltage',
+'elements': [('Voltage', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -301,8 +301,8 @@ des Stapels verfügbar sein, erfolgt die Versorgung des Motors über diese.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCurrentConsumption', 'get_current_consumption'),
-'elements': [('voltage', 'uint16', 1, 'out')],
+'name': 'Get Current Consumption',
+'elements': [('Voltage', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -318,7 +318,7 @@ Gibt die Stromaufnahme des Motors zurück (in mA).
 
 com['packets'].append({
 'type': 'function',
-'name': ('Enable', 'enable'),
+'name': 'Enable',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -337,7 +337,7 @@ konfiguriert werden (Geschwindigkeit, Beschleunigung, etc.).
 
 com['packets'].append({
 'type': 'function',
-'name': ('Disable', 'disable'),
+'name': 'Disable',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -357,8 +357,8 @@ Aktivierung erfolgt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('IsEnabled', 'is_enabled'),
-'elements': [('enabled', 'bool', 1, 'out')],
+'name': 'Is Enabled',
+'elements': [('Enabled', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -374,8 +374,8 @@ Gibt *true* zurück wenn die Treiberstufe aktiv ist, sonst *false*.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetMinimumVoltage', 'set_minimum_voltage'),
-'elements': [('voltage', 'uint16', 1, 'in')],
+'name': 'Set Minimum Voltage',
+'elements': [('Voltage', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -403,8 +403,8 @@ Der Standardwert ist 6V.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetMinimumVoltage', 'get_minimum_voltage'),
-'elements': [('voltage', 'uint16', 1, 'out')],
+'name': 'Get Minimum Voltage',
+'elements': [('Voltage', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -420,9 +420,9 @@ Gibt die minimale Spannung zurück, wie von :func:`SetMinimumVoltage` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDriveMode', 'set_drive_mode'),
-'elements': [('mode', 'uint8', 1, 'in', ('DriveMode', 'drive_mode', [('DriveBrake', 'drive_brake', 0),
-                                                                     ('DriveCoast', 'drive_coast', 1)]))],
+'name': 'Set Drive Mode',
+'elements': [('Mode', 'uint8', 1, 'in', ('Drive Mode', [('Drive Brake', 0),
+                                                        ('Drive Coast', 1)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -470,9 +470,9 @@ Der Standardwert ist 0 = Fahren/Bremsen.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDriveMode', 'get_drive_mode'),
-'elements': [('mode', 'uint8', 1, 'out', ('DriveMode', 'drive_mode', [('DriveBrake', 'drive_brake', 0),
-                                                                      ('DriveCoast', 'drive_coast', 1)]))],
+'name': 'Get Drive Mode',
+'elements': [('Mode', 'uint8', 1, 'out', ('Drive Mode', [('Drive Brake', 0),
+                                                         ('Drive Coast', 1)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -488,8 +488,8 @@ Gibt den Fahrmodus zurück, wie von :func:`SetDriveMode` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetCurrentVelocityPeriod', 'set_current_velocity_period'),
-'elements': [('period', 'uint16', 1, 'in')],
+'name': 'Set Current Velocity Period',
+'elements': [('Period', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -511,8 +511,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCurrentVelocityPeriod', 'get_current_velocity_period'),
-'elements': [('period', 'uint16', 1, 'out')],
+'name': 'Get Current Velocity Period',
+'elements': [('Period', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -528,8 +528,8 @@ Gibt die Periode zurück, wie von :func:`SetCurrentVelocityPeriod` gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('UnderVoltage', 'under_voltage'),
-'elements': [('voltage', 'uint16', 1, 'out')],
+'name': 'Under Voltage',
+'elements': [('Voltage', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -549,7 +549,7 @@ ist die aktuelle Spannung in mV.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('EmergencyShutdown', 'emergency_shutdown'),
+'name': 'Emergency Shutdown',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -594,8 +594,8 @@ erneut zu fahren.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('VelocityReached', 'velocity_reached'),
-'elements': [('velocity', 'int16', 1, 'out')],
+'name': 'Velocity Reached',
+'elements': [('Velocity', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -631,8 +631,8 @@ konfigurierte Geschwindigkeit letztendlich erreicht ist.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('CurrentVelocity', 'current_velocity'),
-'elements': [('velocity', 'int16', 1, 'out')],
+'name': 'Current Velocity',
+'elements': [('Velocity', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -657,7 +657,7 @@ Geschwindigkeit geändert hat.
 
 #com['packets'].append({
 #'type': 'function',
-#'name': ('EnableEncoder', 'enable_encoder'),
+#'name': 'Enable Encoder',
 #'elements': [],
 #'since_firmware': [2, 0, 1],
 #'doc': ['af', {
@@ -672,7 +672,7 @@ Geschwindigkeit geändert hat.
 #
 #com['packets'].append({
 #'type': 'function',
-#'name': ('DisableEncoder', 'disable_encoder'),
+#'name': 'Disable Encoder',
 #'elements': [],
 #'since_firmware': [2, 0, 1],
 #'doc': ['af', {
@@ -687,8 +687,8 @@ Geschwindigkeit geändert hat.
 #
 #com['packets'].append({
 #'type': 'function',
-#'name': ('IsEncoderEnabled', 'is_encoder_enabled'),
-#'elements': [('enabled', 'bool', 1, 'out')],
+#'name': 'Is Encoder Enabled',
+#'elements': [('Enabled', 'bool', 1, 'out')],
 #'since_firmware': [2, 0, 1],
 #'doc': ['af', {
 #'en':
@@ -702,9 +702,9 @@ Geschwindigkeit geändert hat.
 #
 #com['packets'].append({
 #'type': 'function',
-#'name': ('GetEncoderCount', 'get_encoder_count'),
-#'elements': [('reset', 'bool', 1, 'in'),
-#             ('count', 'int32', 1, 'out')],
+#'name': 'Get Encoder Count',
+#'elements': [('Reset', 'bool', 1, 'in'),
+#             ('Count', 'int32', 1, 'out')],
 #'since_firmware': [2, 0, 1],
 #'doc': ['af', {
 #'en':
@@ -718,8 +718,8 @@ Geschwindigkeit geändert hat.
 #
 #com['packets'].append({
 #'type': 'function',
-#'name': ('SetEncoderConfig', 'set_encoder_config'),
-#'elements': [('counts_per_revolution', 'uint16', 1, 'in')],
+#'name': 'Set Encoder Config',
+#'elements': [('Counts Per Revolution', 'uint16', 1, 'in')],
 #'since_firmware': [2, 0, 1],
 #'doc': ['af', {
 #'en':
@@ -733,8 +733,8 @@ Geschwindigkeit geändert hat.
 #
 #com['packets'].append({
 #'type': 'function',
-#'name': ('GetEncoderConfig', 'get_encoder_config'),
-#'elements': [('counts_per_revolution', 'uint16', 1, 'out')],
+#'name': 'Get Encoder Config',
+#'elements': [('Counts Per Revolution', 'uint16', 1, 'out')],
 #'since_firmware': [2, 0, 1],
 #'doc': ['af', {
 #'en':
@@ -748,11 +748,11 @@ Geschwindigkeit geändert hat.
 #
 #com['packets'].append({
 #'type': 'function',
-#'name': ('SetEncoderPIDConfig', 'set_encoder_pid_config'),
-#'elements': [('p', 'float', 1, 'in'),
-#             ('i', 'float', 1, 'in'),
-#             ('d', 'float', 1, 'in'),
-#             ('sample_time', 'uint8', 1, 'in')],
+#'name': 'Set Encoder PID Config',
+#'elements': [('P', 'float', 1, 'in'),
+#             ('I', 'float', 1, 'in'),
+#             ('D', 'float', 1, 'in'),
+#             ('Sample Time', 'uint8', 1, 'in')],
 #'since_firmware': [2, 0, 1],
 #'doc': ['af', {
 #'en':
@@ -766,11 +766,11 @@ Geschwindigkeit geändert hat.
 #
 #com['packets'].append({
 #'type': 'function',
-#'name': ('GetEncoderPIDConfig', 'get_encoder_pid_config'),
-#'elements': [('p', 'float', 1, 'out'),
-#             ('i', 'float', 1, 'out'),
-#             ('d', 'float', 1, 'out'),
-#             ('sample_time', 'uint8', 1, 'out')],
+#'name': 'Get Encoder PID Config',
+#'elements': [('P', 'float', 1, 'out'),
+#             ('I', 'float', 1, 'out'),
+#             ('D', 'float', 1, 'out'),
+#             ('Sample Time', 'uint8', 1, 'out')],
 #'since_firmware': [2, 0, 1],
 #'doc': ['af', {
 #'en':

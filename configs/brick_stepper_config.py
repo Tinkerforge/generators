@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Brick',
     'device_identifier': 15,
-    'name': ('Stepper', 'stepper', 'Stepper', 'Stepper Brick'),
+    'name': ('Stepper', 'Stepper', 'Stepper Brick'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Drives one bipolar stepper motor with up to 38V and 2.5A per phase',
@@ -24,8 +24,8 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetMaxVelocity', 'set_max_velocity'), 
-'elements': [('velocity', 'uint16', 1, 'in')],
+'name': 'Set Max Velocity',
+'elements': [('Velocity', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -49,8 +49,8 @@ können :func:`SetTargetPosition`, :func:`SetSteps`, :func:`DriveForward` oder
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetMaxVelocity', 'get_max_velocity'), 
-'elements': [('velocity', 'uint16', 1, 'out')],
+'name': 'Get Max Velocity',
+'elements': [('Velocity', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -66,8 +66,8 @@ Gibt die Geschwindigkeit zurück, wie von :func:`SetMaxVelocity` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCurrentVelocity', 'get_current_velocity'), 
-'elements': [('velocity', 'uint16', 1, 'out')],
+'name': 'Get Current Velocity',
+'elements': [('Velocity', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -83,9 +83,9 @@ Gibt die *aktuelle* Geschwindigkeit des Schrittmotors in Schritten je Sekunde zu
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetSpeedRamping', 'set_speed_ramping'), 
-'elements': [('acceleration', 'uint16', 1, 'in'),
-             ('deacceleration', 'uint16', 1, 'in')],
+'name': 'Set Speed Ramping',
+'elements': [('Acceleration', 'uint16', 1, 'in'),
+             ('Deacceleration', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -123,9 +123,9 @@ Der Standardwert ist 1000 für beide Parameter.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetSpeedRamping', 'get_speed_ramping'), 
-'elements': [('acceleration', 'uint16', 1, 'out'),
-             ('deacceleration', 'uint16', 1, 'out')],
+'name': 'Get Speed Ramping',
+'elements': [('Acceleration', 'uint16', 1, 'out'),
+             ('Deacceleration', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -143,7 +143,7 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('FullBrake', 'full_brake'), 
+'name': 'Full Brake',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -174,8 +174,8 @@ Ein Aufruf von :func:`Stop` stoppt den Motor.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetCurrentPosition', 'set_current_position'), 
-'elements': [('position', 'int32', 1, 'in')],
+'name': 'Set Current Position',
+'elements': [('Position', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -195,8 +195,8 @@ Startpunkt erreicht wurde (z.B. wenn eine CNC Maschine eine Ecke erreicht).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCurrentPosition', 'get_current_position'), 
-'elements': [('position', 'int32', 1, 'out')],
+'name': 'Get Current Position',
+'elements': [('Position', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -220,8 +220,8 @@ gewünschten Wert zu setzen mit :func:`SetCurrentPosition`.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetTargetPosition', 'set_target_position'), 
-'elements': [('position', 'int32', 1, 'in')],
+'name': 'Set Target Position',
+'elements': [('Position', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -253,8 +253,8 @@ Ein Aufruf von :func:`SetTargetPosition` mit dem Parameter *x* ist
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetTargetPosition', 'get_target_position'), 
-'elements': [('position', 'int32', 1, 'out')],
+'name': 'Get Target Position',
+'elements': [('Position', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -271,8 +271,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetSteps', 'set_steps'), 
-'elements': [('steps', 'int32', 1, 'in')],
+'name': 'Set Steps',
+'elements': [('Steps', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -294,8 +294,8 @@ Dabei wird die Geschwindigkeit, Beschleunigung und Verzögerung, wie mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetSteps', 'get_steps'), 
-'elements': [('steps', 'int32', 1, 'out')],
+'name': 'Get Steps',
+'elements': [('Steps', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -311,8 +311,8 @@ Gibt die letzten Schritte zurück, wie von :func:`SetSteps` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetRemainingSteps', 'get_remaining_steps'), 
-'elements': [('steps', 'int32', 1, 'out')],
+'name': 'Get Remaining Steps',
+'elements': [('Steps', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -334,11 +334,11 @@ hat, wird 1500 zurückgegeben.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetStepMode', 'set_step_mode'), 
-'elements': [('mode', 'uint8', 1, 'in', ('StepMode', 'step_mode', [('FullStep', 'full_step', 1),
-                                                                   ('HalfStep', 'half_step', 2),
-                                                                   ('QuarterStep', 'quarter_step', 4),
-                                                                   ('EighthStep', 'eighth_step', 8)]))],
+'name': 'Set Step Mode',
+'elements': [('Mode', 'uint8', 1, 'in', ('Step Mode', [('Full Step', 1),
+                                                       ('Half Step', 2),
+                                                       ('Quarter Step', 4),
+                                                       ('Eighth Step', 8)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -374,11 +374,11 @@ Der Standardwert ist 8 (Achtelschritt).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetStepMode', 'get_step_mode'), 
-'elements': [('mode', 'uint8', 1, 'out', ('StepMode', 'step_mode', [('FullStep', 'full_step', 1),
-                                                                    ('HalfStep', 'half_step', 2),
-                                                                    ('QuarterStep', 'quarter_step', 4),
-                                                                    ('EighthStep', 'eighth_step', 8)]))],
+'name': 'Get Step Mode',
+'elements': [('Mode', 'uint8', 1, 'out', ('Step Mode', [('Full Step', 1),
+                                                        ('Half Step', 2),
+                                                        ('Quarter Step', 4),
+                                                        ('Eighth Step', 8)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -394,7 +394,7 @@ Gibt den Schrittmodus zurück, wie von :func:`SetStepMode` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('DriveForward', 'drive_forward'), 
+'name': 'Drive Forward',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -416,7 +416,7 @@ und :func:`SetSpeedRamping` gesetzt, verwendet.
 
 com['packets'].append({
 'type': 'function',
-'name': ('DriveBackward', 'drive_backward'), 
+'name': 'Drive Backward',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -438,7 +438,7 @@ und :func:`SetSpeedRamping` gesetzt, verwendet.
 
 com['packets'].append({
 'type': 'function',
-'name': ('Stop', 'stop'), 
+'name': 'Stop',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -457,8 +457,8 @@ Stoppt den Schrittmotor mit der Verzögerung, wie von
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetStackInputVoltage', 'get_stack_input_voltage'), 
-'elements': [('voltage', 'uint16', 1, 'out')],
+'name': 'Get Stack Input Voltage',
+'elements': [('Voltage', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -478,8 +478,8 @@ Step-Up Power Supply erzeugt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetExternalInputVoltage', 'get_external_input_voltage'), 
-'elements': [('voltage', 'uint16', 1, 'out')],
+'name': 'Get External Input Voltage',
+'elements': [('Voltage', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -517,8 +517,8 @@ des Stapels verfügbar sein, erfolgt die Versorgung des Motors über diese.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetCurrentConsumption', 'get_current_consumption'), 
-'elements': [('current', 'uint16', 1, 'out')],
+'name': 'Get Current Consumption',
+'elements': [('Current', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -534,8 +534,8 @@ Gibt die Stromaufnahme des Motors zurück (in mA).
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetMotorCurrent', 'set_motor_current'), 
-'elements': [('current', 'uint16', 1, 'in')],
+'name': 'Set Motor Current',
+'elements': [('Current', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -563,8 +563,8 @@ Standardwert ist 800mA.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetMotorCurrent', 'get_motor_current'), 
-'elements': [('current', 'uint16', 1, 'out')],
+'name': 'Get Motor Current',
+'elements': [('Current', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -580,7 +580,7 @@ Gibt den Strom zurück, wie von :func:`SetMotorCurrent` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('Enable', 'enable'), 
+'name': 'Enable',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -599,7 +599,7 @@ konfiguriert werden (maximale Geschwindigkeit, Beschleunigung, etc.).
 
 com['packets'].append({
 'type': 'function',
-'name': ('Disable', 'disable'), 
+'name': 'Disable',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -619,8 +619,8 @@ Aktivierung erfolgt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('IsEnabled', 'is_enabled'), 
-'elements': [('enabled', 'bool', 1, 'out')],
+'name': 'Is Enabled',
+'elements': [('Enabled', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -636,8 +636,8 @@ Gibt *true* zurück wenn die Treiberstufe aktiv ist, sonst *false*.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDecay', 'set_decay'), 
-'elements': [('decay', 'uint16', 1, 'in')],
+'name': 'Set Decay',
+'elements': [('Decay', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -706,8 +706,8 @@ Der Standardwert ist 10000.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDecay', 'get_decay'), 
-'elements': [('decay', 'uint16', 1, 'out')],
+'name': 'Get Decay',
+'elements': [('Decay', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -723,8 +723,8 @@ Gibt den Decay Modus zurück, wie von :func:`SetDecay` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetMinimumVoltage', 'set_minimum_voltage'), 
-'elements': [('voltage', 'uint16', 1, 'in')],
+'name': 'Set Minimum Voltage',
+'elements': [('Voltage', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -752,8 +752,8 @@ Der Standardwert ist 8V.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetMinimumVoltage', 'get_minimum_voltage'), 
-'elements': [('voltage', 'uint16', 1, 'out')],
+'name': 'Get Minimum Voltage',
+'elements': [('Voltage', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -769,8 +769,8 @@ Gibt die minimale Spannung zurück, wie von :func:`SetMinimumVoltage` gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('UnderVoltage', 'under_voltage'), 
-'elements': [('voltage', 'uint16', 1, 'out')],
+'name': 'Under Voltage',
+'elements': [('Voltage', 'uint16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -790,8 +790,8 @@ ist die aktuelle Spannung in mV.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('PositionReached', 'position_reached'), 
-'elements': [('position', 'int32', 1, 'out')],
+'name': 'Position Reached',
+'elements': [('Position', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -822,8 +822,8 @@ Dieser Callback wird ausgelöst immer wenn eine konfigurierte Position, wie von
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetSyncRect', 'set_sync_rect'), 
-'elements': [('sync_rect', 'bool', 1, 'in')],
+'name': 'Set Sync Rect',
+'elements': [('Sync Rect', 'bool', 1, 'in')],
 'since_firmware': [1, 1, 4],
 'doc': ['af', {
 'en':
@@ -869,8 +869,8 @@ Der Standardwert ist *false*.
 
 com['packets'].append({
 'type': 'function',
-'name': ('IsSyncRect', 'is_sync_rect'), 
-'elements': [('sync_rect', 'bool', 1, 'out')],
+'name': 'Is Sync Rect',
+'elements': [('Sync Rect', 'bool', 1, 'out')],
 'since_firmware': [1, 1, 4],
 'doc': ['af', {
 'en':
@@ -886,8 +886,8 @@ Gibt zurück ob die Synchrongleichrichtung aktiviert ist.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetTimeBase', 'set_time_base'), 
-'elements': [('time_base', 'uint32', 1, 'in')],
+'name': 'Set Time Base',
+'elements': [('Time Base', 'uint32', 1, 'in')],
 'since_firmware': [1, 1, 6],
 'doc': ['af', {
 'en':
@@ -917,8 +917,8 @@ Der Standardwert ist 1.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetTimeBase', 'get_time_base'), 
-'elements': [('time_base', 'uint32', 1, 'out')],
+'name': 'Get Time Base',
+'elements': [('Time Base', 'uint32', 1, 'out')],
 'since_firmware': [1, 1, 6],
 'doc': ['af', {
 'en':
@@ -934,13 +934,13 @@ Gibt die Zeitbasis zurück, wie von :func:`SetTimeBase` gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAllData', 'get_all_data'), 
-'elements': [('current_velocity', 'uint16', 1, 'out'),
-             ('current_position', 'int32', 1, 'out'),
-             ('remaining_steps', 'int32', 1, 'out'),
-             ('stack_voltage', 'uint16', 1, 'out'),
-             ('external_voltage', 'uint16', 1, 'out'),
-             ('current_consumption', 'uint16', 1, 'out')],
+'name': 'Get All Data',
+'elements': [('Current Velocity', 'uint16', 1, 'out'),
+             ('Current Position', 'int32', 1, 'out'),
+             ('Remaining Steps', 'int32', 1, 'out'),
+             ('Stack Voltage', 'uint16', 1, 'out'),
+             ('External Voltage', 'uint16', 1, 'out'),
+             ('Current Consumption', 'uint16', 1, 'out')],
 'since_firmware': [1, 1, 6],
 'doc': ['af', {
 'en':
@@ -965,8 +965,8 @@ Es existiert auch ein Callback für diese Funktion, siehe :func:`AllData`.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetAllDataPeriod', 'set_all_data_period'), 
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set All Data Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 1, 6],
 'doc': ['ccf', {
 'en':
@@ -984,8 +984,8 @@ Ein Wert von 0 deaktiviert den Callback.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAllDataPeriod', 'get_all_data_period'), 
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get All Data Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 1, 6],
 'doc': ['ccf', {
 'en':
@@ -1001,13 +1001,13 @@ Gibt die Periode zurück, wie von :func:`SetAllDataPeriod` gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('AllData', 'all_data'), 
-'elements': [('current_velocity', 'uint16', 1, 'out'),
-             ('current_position', 'int32', 1, 'out'),
-             ('remaining_steps', 'int32', 1, 'out'),
-             ('stack_voltage', 'uint16', 1, 'out'),
-             ('external_voltage', 'uint16', 1, 'out'),
-             ('current_consumption', 'uint16', 1, 'out')],
+'name': 'All Data',
+'elements': [('Current Velocity', 'uint16', 1, 'out'),
+             ('Current Position', 'int32', 1, 'out'),
+             ('Remaining Steps', 'int32', 1, 'out'),
+             ('Stack Voltage', 'uint16', 1, 'out'),
+             ('External Voltage', 'uint16', 1, 'out'),
+             ('Current Consumption', 'uint16', 1, 'out')],
 'since_firmware': [1, 1, 6],
 'doc': ['c', {
 'en':
@@ -1029,19 +1029,19 @@ externe Spannung und der aktuelle Stromverbrauch des Schrittmotors.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('NewState', 'new_state'), 
-'elements': [('state_new',      'uint8', 1, 'out', ('State', 'state', [('Stop', 'stop', 1),
-                                                                       ('Acceleration', 'acceleration', 2),
-                                                                       ('Run', 'run', 3),
-                                                                       ('Deacceleration', 'deacceleration', 4),
-                                                                       ('DirectionChangeToForward', 'direction_change_to_forward', 5),
-                                                                       ('DirectionChangeToBackward', 'direction_change_to_backward', 6)])),
-             ('state_previous', 'uint8', 1, 'out', ('State', 'state', [('Stop', 'stop', 1),
-                                                                       ('Acceleration', 'acceleration', 2),
-                                                                       ('Run', 'run', 3),
-                                                                       ('Deacceleration', 'deacceleration', 4),
-                                                                       ('DirectionChangeToForward', 'direction_change_to_forward', 5),
-                                                                       ('DirectionChangeToBackward', 'direction_change_to_backward', 6)]))],
+'name': 'New State',
+'elements': [('State New',      'uint8', 1, 'out', ('State', [('Stop', 1),
+                                                              ('Acceleration', 2),
+                                                              ('Run', 3),
+                                                              ('Deacceleration', 4),
+                                                              ('Direction Change To Forward', 5),
+                                                              ('Direction Change To Backward', 6)])),
+             ('State Previous', 'uint8', 1, 'out', ('State', [('Stop', 1),
+                                                              ('Acceleration', 2),
+                                                              ('Run', 3),
+                                                              ('Deacceleration', 4),
+                                                              ('Direction Change To Forward', 5),
+                                                              ('Direction Change To Backward', 6)]))],
 'since_firmware': [1, 1, 6],
 'doc': ['c', {
 'en':

@@ -4,8 +4,8 @@
 # with or without modification, are permitted. See the Creative
 # Commons Zero (CC0 1.0) License for more details.
 
-THRESHOLD_OPTION_CONSTANTS = ('ThresholdOption', 'threshold_option', [('Off', 'off', 'x'),
-                                                                      ('Outside', 'outside', 'o'),
-                                                                      ('Inside', 'inside', 'i'),
-                                                                      ('Smaller', 'smaller', '<'),
-                                                                      ('Greater', 'greater', '>')])
+THRESHOLD_OPTION_CONSTANTS = ('Threshold Option', [('Off', 'x'),
+                                                   ('Outside', 'o'),
+                                                   ('Inside', 'i'),
+                                                   ('Smaller', '<'),
+                                                   ('Greater', '>')])

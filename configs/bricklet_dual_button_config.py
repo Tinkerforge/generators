@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 230,
-    'name': ('DualButton', 'dual_button', 'Dual Button', 'Dual Button Bricklet'),
+    'name': ('Dual Button', 'Dual Button', 'Dual Button Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Two tactile buttons with built-in blue LEDs',
@@ -24,15 +24,15 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetLEDState', 'set_led_state'), 
-'elements': [('led_l', 'uint8', 1, 'in', ('LEDState', 'led_state', [('AutoToggleOn', 'auto_toggle_on', 0),
-                                                                    ('AutoToggleOff', 'auto_toggle_off', 1),
-                                                                    ('On', 'on', 2),
-                                                                    ('Off', 'off', 3)])),
-             ('led_r', 'uint8', 1, 'in', ('LEDState', 'led_state', [('AutoToggleOn', 'auto_toggle_on', 0),
-                                                                    ('AutoToggleOff', 'auto_toggle_off', 1),
-                                                                    ('On', 'on', 2),
-                                                                    ('Off', 'off', 3)]))],
+'name': 'Set LED State',
+'elements': [('LED L', 'uint8', 1, 'in', ('LED State', [('Auto Toggle On', 0),
+                                                        ('Auto Toggle Off', 1),
+                                                        ('On', 2),
+                                                        ('Off', 3)])),
+             ('LED R', 'uint8', 1, 'in', ('LED State', [('Auto Toggle On', 0),
+                                                        ('Auto Toggle Off', 1),
+                                                        ('On', 2),
+                                                        ('Off', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -75,15 +75,15 @@ Der Standardwert ist (1, 1).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetLEDState', 'get_led_state'), 
-'elements': [('led_l', 'uint8', 1, 'out', ('LEDState', 'led_state', [('AutoToggleOn', 'auto_toggle_on', 0),
-                                                                     ('AutoToggleOff', 'auto_toggle_off', 1),
-                                                                     ('On', 'on', 2),
-                                                                     ('Off', 'off', 3)])),
-             ('led_r', 'uint8', 1, 'out', ('LEDState', 'led_state', [('AutoToggleOn', 'auto_toggle_on', 0),
-                                                                     ('AutoToggleOff', 'auto_toggle_off', 1),
-                                                                     ('On', 'on', 2),
-                                                                     ('Off', 'off', 3)]))],
+'name': 'Get LED State',
+'elements': [('LED L', 'uint8', 1, 'out', ('LED State', [('Auto Toggle On', 0),
+                                                         ('Auto Toggle Off', 1),
+                                                         ('On', 2),
+                                                         ('Off', 3)])),
+             ('LED R', 'uint8', 1, 'out', ('LED State', [('Auto Toggle On', 0),
+                                                         ('Auto Toggle Off', 1),
+                                                         ('On', 2),
+                                                         ('Off', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -99,11 +99,11 @@ Gibt den aktuellen Zustand der LEDs zurück, wie von :func:`SetLEDState` gesetzt
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetButtonState', 'get_button_state'), 
-'elements': [('button_l', 'uint8', 1, 'out', ('ButtonState', 'button_state', [('Pressed', 'pressed', 0),
-                                                                              ('Released', 'released', 1)])),
-             ('button_r', 'uint8', 1, 'out', ('ButtonState', 'button_state', [('Pressed', 'pressed', 0),
-                                                                              ('Released', 'released', 1)]))],
+'name': 'Get Button State',
+'elements': [('Button L', 'uint8', 1, 'out', ('Button State', [('Pressed', 0),
+                                                               ('Released', 1)])),
+             ('Button R', 'uint8', 1, 'out', ('Button State', [('Pressed', 0),
+                                                               ('Released', 1)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -126,19 +126,19 @@ Zustände sind:
 
 com['packets'].append({
 'type': 'callback',
-'name': ('StateChanged', 'state_changed'), 
-'elements': [('button_l', 'uint8', 1, 'out', ('ButtonState', 'button_state', [('Pressed', 'pressed', 0),
-                                                                              ('Released', 'released', 1)])),
-             ('button_r', 'uint8', 1, 'out', ('ButtonState', 'button_state', [('Pressed', 'pressed', 0),
-                                                                              ('Released', 'released', 1)])),
-             ('led_l', 'uint8', 1, 'out', ('LEDState', 'led_state', [('AutoToggleOn', 'auto_toggle_on', 0),
-                                                                     ('AutoToggleOff', 'auto_toggle_off', 1),
-                                                                     ('On', 'on', 2),
-                                                                     ('Off', 'off', 3)])),
-             ('led_r', 'uint8', 1, 'out', ('LEDState', 'led_state', [('AutoToggleOn', 'auto_toggle_on', 0),
-                                                                     ('AutoToggleOff', 'auto_toggle_off', 1),
-                                                                     ('On', 'on', 2),
-                                                                     ('Off', 'off', 3)]))],
+'name': 'State Changed',
+'elements': [('Button L', 'uint8', 1, 'out', ('Button State', [('Pressed', 0),
+                                                               ('Released', 1)])),
+             ('Button R', 'uint8', 1, 'out', ('Button State', [('Pressed', 0),
+                                                               ('Released', 1)])),
+             ('LED L', 'uint8', 1, 'out', ('LED State', [('Auto Toggle On', 0),
+                                                         ('Auto Toggle Off', 1),
+                                                         ('On', 2),
+                                                         ('Off', 3)])),
+             ('LED R', 'uint8', 1, 'out', ('LED State', [('Auto Toggle On', 0),
+                                                         ('Auto Toggle Off', 1),
+                                                         ('On', 2),
+                                                         ('Off', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -178,13 +178,13 @@ Mögliche Zustände der LEDs sind:
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetSelectedLEDState', 'set_selected_led_state'), 
-'elements': [('led', 'uint8', 1, 'in', ('LED', 'led', [('Left', 'left', 0),
-                                                       ('Right', 'right', 1)])),
-             ('state', 'uint8', 1, 'in', ('LEDState', 'led_state', [('AutoToggleOn', 'auto_toggle_on', 0),
-                                                                    ('AutoToggleOff', 'auto_toggle_off', 1),
-                                                                    ('On', 'on', 2),
-                                                                    ('Off', 'off', 3)])),
+'name': 'Set Selected LED State',
+'elements': [('LED', 'uint8', 1, 'in', ('LED', [('Left', 0),
+                                                ('Right', 1)])),
+             ('State', 'uint8', 1, 'in', ('LED State', [('Auto Toggle On', 0),
+                                                        ('Auto Toggle Off', 1),
+                                                        ('On', 2),
+                                                        ('Off', 3)])),
 ],
 'since_firmware': [2, 0, 0],
 'doc': ['af', {

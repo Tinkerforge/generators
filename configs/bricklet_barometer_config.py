@@ -13,7 +13,7 @@ com = {
     'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 221,
-    'name': ('Barometer', 'barometer', 'Barometer', 'Barometer Bricklet'),
+    'name': ('Barometer', 'Barometer', 'Barometer Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures air pressure and altitude changes',
@@ -26,8 +26,8 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAirPressure', 'get_air_pressure'),
-'elements': [('air_pressure', 'int32', 1, 'out')],
+'name': 'Get Air Pressure',
+'elements': [('Air Pressure', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -55,8 +55,8 @@ den Callback :func:`AirPressure` zu nutzen und die Periode mit
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAltitude', 'get_altitude'),
-'elements': [('altitude', 'int32', 1, 'out')],
+'name': 'Get Altitude',
+'elements': [('Altitude', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -85,8 +85,8 @@ vorzugeben.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetAirPressureCallbackPeriod', 'set_air_pressure_callback_period'),
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Air Pressure Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -114,8 +114,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAirPressureCallbackPeriod', 'get_air_pressure_callback_period'),
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Air Pressure Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -132,8 +132,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetAltitudeCallbackPeriod', 'set_altitude_callback_period'),
-'elements': [('period', 'uint32', 1, 'in')],
+'name': 'Set Altitude Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -161,8 +161,8 @@ Der Standardwert ist 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAltitudeCallbackPeriod', 'get_altitude_callback_period'),
-'elements': [('period', 'uint32', 1, 'out')],
+'name': 'Get Altitude Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -179,10 +179,10 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetAirPressureCallbackThreshold', 'set_air_pressure_callback_threshold'),
-'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int32', 1, 'in'),
-             ('max', 'int32', 1, 'in')],
+'name': 'Set Air Pressure Callback Threshold',
+'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'int32', 1, 'in'),
+             ('Max', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -226,10 +226,10 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAirPressureCallbackThreshold', 'get_air_pressure_callback_threshold'),
-'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int32', 1, 'out'),
-             ('max', 'int32', 1, 'out')],
+'name': 'Get Air Pressure Callback Threshold',
+'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'int32', 1, 'out'),
+             ('Max', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -246,10 +246,10 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetAltitudeCallbackThreshold', 'set_altitude_callback_threshold'),
-'elements': [('option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int32', 1, 'in'),
-             ('max', 'int32', 1, 'in')],
+'name': 'Set Altitude Callback Threshold',
+'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'int32', 1, 'in'),
+             ('Max', 'int32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -293,10 +293,10 @@ Der Standardwert ist ('x', 0, 0).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAltitudeCallbackThreshold', 'get_altitude_callback_threshold'),
-'elements': [('option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
-             ('min', 'int32', 1, 'out'),
-             ('max', 'int32', 1, 'out')],
+'name': 'Get Altitude Callback Threshold',
+'elements': [('Option', 'char', 1, 'out', THRESHOLD_OPTION_CONSTANTS),
+             ('Min', 'int32', 1, 'out'),
+             ('Max', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -313,8 +313,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDebouncePeriod', 'set_debounce_period'),
-'elements': [('debounce', 'uint32', 1, 'in')],
+'name': 'Set Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -354,8 +354,8 @@ Der Standardwert ist 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDebouncePeriod', 'get_debounce_period'),
-'elements': [('debounce', 'uint32', 1, 'out')],
+'name': 'Get Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -372,8 +372,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetReferenceAirPressure', 'set_reference_air_pressure'),
-'elements': [('air_pressure', 'int32', 1, 'in')],
+'name': 'Set Reference Air Pressure',
+'elements': [('Air Pressure', 'int32', 1, 'in')],
 'since_firmware': [1, 1, 0],
 'doc': ['bf', {
 'en':
@@ -411,8 +411,8 @@ Der Standardwert ist 1013,25mbar.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetChipTemperature', 'get_chip_temperature'),
-'elements': [('temperature', 'int16', 1, 'out')],
+'name': 'Get Chip Temperature',
+'elements': [('Temperature', 'int16', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -441,8 +441,8 @@ wird.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('AirPressure', 'air_pressure'),
-'elements': [('air_pressure', 'int32', 1, 'out')],
+'name': 'Air Pressure',
+'elements': [('Air Pressure', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -467,8 +467,8 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Altitude', 'altitude'),
-'elements': [('altitude', 'int32', 1, 'out')],
+'name': 'Altitude',
+'elements': [('Altitude', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -493,8 +493,8 @@ letzten Auslösung geändert hat.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('AirPressureReached', 'air_pressure_reached'),
-'elements': [('air_pressure', 'int32', 1, 'out')],
+'name': 'Air Pressure Reached',
+'elements': [('Air Pressure', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -520,8 +520,8 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('AltitudeReached', 'altitude_reached'),
-'elements': [('altitude', 'int32', 1, 'out')],
+'name': 'Altitude Reached',
+'elements': [('Altitude', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -547,8 +547,8 @@ mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetReferenceAirPressure', 'get_reference_air_pressure'),
-'elements': [('air_pressure', 'int32', 1, 'out')],
+'name': 'Get Reference Air Pressure',
+'elements': [('Air Pressure', 'int32', 1, 'out')],
 'since_firmware': [1, 1, 0],
 'doc': ['bf', {
 'en':
@@ -565,10 +565,10 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetAveraging', 'set_averaging'),
-'elements': [('moving_average_pressure', 'uint8', 1, 'in'),
-             ('average_pressure', 'uint8', 1, 'in'),
-             ('average_temperature', 'uint8', 1, 'in')],
+'name': 'Set Averaging',
+'elements': [('Moving Average Pressure', 'uint8', 1, 'in'),
+             ('Average Pressure', 'uint8', 1, 'in'),
+             ('Average Temperature', 'uint8', 1, 'in')],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':
@@ -620,10 +620,10 @@ den gleitenden Mittelwert
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetAveraging', 'get_averaging'),
-'elements': [('moving_average_pressure', 'uint8', 1, 'out'),
-             ('average_pressure', 'uint8', 1, 'out'),
-             ('average_temperature', 'uint8', 1, 'out')],
+'name': 'Get Averaging',
+'elements': [('Moving Average Pressure', 'uint8', 1, 'out'),
+             ('Average Pressure', 'uint8', 1, 'out'),
+             ('Average Temperature', 'uint8', 1, 'out')],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':

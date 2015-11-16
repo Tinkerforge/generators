@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 242,
-    'name': ('PiezoSpeaker', 'piezo_speaker', 'Piezo Speaker', 'Piezo Speaker Bricklet'),
+    'name': ('Piezo Speaker', 'Piezo Speaker', 'Piezo Speaker Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Creates beep with configurable frequency',
@@ -24,10 +24,10 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('Beep', 'beep'), 
-'elements': [('duration', 'uint32', 1, 'in', ('BeepDuration', 'beep_duration', [('Off', 'off', 0),
-                                                                                ('Infinite', 'infinite', 4294967295)])),
-             ('frequency', 'uint16', 1, 'in')],
+'name': 'Beep',
+'elements': [('Duration', 'uint32', 1, 'in', ('Beep Duration', [('Off', 0),
+                                                                ('Infinite', 4294967295)])),
+             ('Frequency', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -69,9 +69,9 @@ es wählt die bestmögliche Zuordnung anhand der Kalibrierung
 
 com['packets'].append({
 'type': 'function',
-'name': ('MorseCode', 'morse_code'), 
-'elements': [('morse', 'string', 60, 'in'),
-             ('frequency', 'uint16', 1, 'in')],
+'name': 'Morse Code',
+'elements': [('Morse', 'string', 60, 'in'),
+             ('Frequency', 'uint16', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -105,8 +105,8 @@ Die maximale Zeichenkettenlänge ist 60.
 
 com['packets'].append({
 'type': 'function',
-'name': ('Calibrate', 'calibrate'), 
-'elements': [('calibration', 'bool', 1, 'out')],
+'name': 'Calibrate',
+'elements': [('Calibration', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -140,7 +140,7 @@ Gibt *true* nach Abschluss der Kalibrierung zurück.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('BeepFinished', 'beep_finished'), 
+'name': 'Beep Finished',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
@@ -158,7 +158,7 @@ beendet wurde.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('MorseCodeFinished', 'morse_code_finished'), 
+'name': 'Morse Code Finished',
 'elements': [],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {

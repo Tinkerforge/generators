@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 26,
-    'name': ('DualRelay', 'dual_relay', 'Dual Relay', 'Dual Relay Bricklet'),
+    'name': ('Dual Relay', 'Dual Relay', 'Dual Relay Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Two relays to switch AC/DC devices',
@@ -24,9 +24,9 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetState', 'set_state'), 
-'elements': [('relay1', 'bool', 1, 'in'),
-             ('relay2', 'bool', 1, 'in')],
+'name': 'Set State',
+'elements': [('Relay1', 'bool', 1, 'in'),
+             ('Relay2', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -60,9 +60,9 @@ Der Standardwert ist (*false*, *false*).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetState', 'get_state'), 
-'elements': [('relay1', 'bool', 1, 'out'),
-             ('relay2', 'bool', 1, 'out')],
+'name': 'Get State',
+'elements': [('Relay1', 'bool', 1, 'out'),
+             ('Relay2', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -78,10 +78,10 @@ Gibt den Zustand der Relais zurück, *true* bedeutet ein und *false* aus.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetMonoflop', 'set_monoflop'), 
-'elements': [('relay', 'uint8', 1, 'in'),
-             ('state', 'bool', 1, 'in'),
-             ('time', 'uint32', 1, 'in')],
+'name': 'Set Monoflop',
+'elements': [('Relay', 'uint8', 1, 'in'),
+             ('State', 'bool', 1, 'in'),
+             ('Time', 'uint32', 1, 'in')],
 'since_firmware': [1, 1, 1],
 'doc': ['af', {
 'en':
@@ -120,11 +120,11 @@ wird das Relais nach spätestens zwei Sekunden ausschalten.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetMonoflop', 'get_monoflop'), 
-'elements': [('relay', 'uint8', 1, 'in'),
-             ('state', 'bool', 1, 'out'),
-             ('time', 'uint32', 1, 'out'),
-             ('time_remaining', 'uint32', 1, 'out')],
+'name': 'Get Monoflop',
+'elements': [('Relay', 'uint8', 1, 'in'),
+             ('State', 'bool', 1, 'out'),
+             ('Time', 'uint32', 1, 'out'),
+             ('Time Remaining', 'uint32', 1, 'out')],
 'since_firmware': [1, 1, 1],
 'doc': ['af', {
 'en':
@@ -147,9 +147,9 @@ Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('MonoflopDone', 'monoflop_done'), 
-'elements': [('relay', 'uint8', 1, 'out'),
-             ('state', 'bool', 1, 'out')],
+'name': 'Monoflop Done',
+'elements': [('Relay', 'uint8', 1, 'out'),
+             ('State', 'bool', 1, 'out')],
 'since_firmware': [1, 1, 1],
 'doc': ['c', {
 'en':
@@ -169,9 +169,9 @@ des Relais (der Zustand nach dem Monoflop).
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetSelectedState', 'set_selected_state'), 
-'elements': [('relay', 'uint8', 1, 'in'),
-             ('state', 'bool', 1, 'in')],
+'name': 'Set Selected State',
+'elements': [('Relay', 'uint8', 1, 'in'),
+             ('State', 'bool', 1, 'in')],
 'since_firmware': [2, 0, 0],
 'doc': ['af', {
 'en':

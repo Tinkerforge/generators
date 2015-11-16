@@ -11,7 +11,7 @@ com = {
     'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 29,
-    'name': ('IO4', 'io4', 'IO-4', 'IO-4 Bricklet'),
+    'name': ('IO4', 'IO-4', 'IO-4 Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': '4-channel digital input/output',
@@ -24,8 +24,8 @@ com = {
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetValue', 'set_value'),
-'elements': [('value_mask', 'uint8', 1, 'in')],
+'name': 'Set Value',
+'elements': [('Value Mask', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -58,8 +58,8 @@ Pins 2-3 auf logisch 0.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetValue', 'get_value'),
-'elements': [('value_mask', 'uint8', 1, 'out')],
+'name': 'Get Value',
+'elements': [('Value Mask', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -79,11 +79,11 @@ Ein- oder Ausgang konfiguriert sind.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetConfiguration', 'set_configuration'),
-'elements': [('selection_mask', 'uint8', 1, 'in'),
-             ('direction', 'char', 1, 'in', ('Direction', 'direction', [('In', 'in', 'i'),
-                                                                        ('Out', 'out', 'o')])),
-             ('value', 'bool', 1, 'in')],
+'name': 'Set Configuration',
+'elements': [('Selection Mask', 'uint8', 1, 'in'),
+             ('Direction', 'char', 1, 'in', ('Direction', [('In', 'i'),
+                                                           ('Out', 'o')])),
+             ('Value', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -131,9 +131,9 @@ Die Standardkonfiguration ist Eingang mit Pull-Up.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetConfiguration', 'get_configuration'),
-'elements': [('direction_mask', 'uint8', 1, 'out'),
-             ('value_mask', 'uint8', 1, 'out')],
+'name': 'Get Configuration',
+'elements': [('Direction Mask', 'uint8', 1, 'out'),
+             ('Value Mask', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -168,8 +168,8 @@ Zustand bedeutet:
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetDebouncePeriod', 'set_debounce_period'),
-'elements': [('debounce', 'uint32', 1, 'in')],
+'name': 'Set Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -197,8 +197,8 @@ Der Standardwert ist 100.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetDebouncePeriod', 'get_debounce_period'),
-'elements': [('debounce', 'uint32', 1, 'out')],
+'name': 'Get Debounce Period',
+'elements': [('Debounce', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -215,8 +215,8 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetInterrupt', 'set_interrupt'),
-'elements': [('interrupt_mask', 'uint8', 1, 'in')],
+'name': 'Set Interrupt',
+'elements': [('Interrupt Mask', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -246,8 +246,8 @@ Der Interrupt wird mit der Callback :func:`Interrupt` zugestellt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetInterrupt', 'get_interrupt'),
-'elements': [('interrupt_mask', 'uint8', 1, 'out')],
+'name': 'Get Interrupt',
+'elements': [('Interrupt Mask', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['ccf', {
 'en':
@@ -263,9 +263,9 @@ Gibt die Interrupt Bitmaske zurück, wie von :func:`SetInterrupt` gesetzt.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('Interrupt', 'interrupt'),
-'elements': [('interrupt_mask', 'uint8', 1, 'out'),
-             ('value_mask', 'uint8', 1, 'out')],
+'name': 'Interrupt',
+'elements': [('Interrupt Mask', 'uint8', 1, 'out'),
+             ('Value Mask', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -304,10 +304,10 @@ Beispiele:
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetMonoflop', 'set_monoflop'),
-'elements': [('selection_mask', 'uint8', 1, 'in'),
-             ('value_mask', 'uint8', 1, 'in'),
-             ('time', 'uint32', 1, 'in')],
+'name': 'Set Monoflop',
+'elements': [('Selection Mask', 'uint8', 1, 'in'),
+             ('Value Mask', 'uint8', 1, 'in'),
+             ('Time', 'uint32', 1, 'in')],
 'since_firmware': [1, 1, 1],
 'doc': ['af', {
 'en':
@@ -361,11 +361,11 @@ Sekunden in den Zustand logisch 0 wechseln.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetMonoflop', 'get_monoflop'),
-'elements': [('pin', 'uint8', 1, 'in'),
-             ('value', 'uint8', 1, 'out'),
-             ('time', 'uint32', 1, 'out'),
-             ('time_remaining', 'uint32', 1, 'out')],
+'name': 'Get Monoflop',
+'elements': [('Pin', 'uint8', 1, 'in'),
+             ('Value', 'uint8', 1, 'out'),
+             ('Time', 'uint32', 1, 'out'),
+             ('Time Remaining', 'uint32', 1, 'out')],
 'since_firmware': [1, 1, 1],
 'doc': ['af', {
 'en':
@@ -389,9 +389,9 @@ Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.
 
 com['packets'].append({
 'type': 'callback',
-'name': ('MonoflopDone', 'monoflop_done'),
-'elements': [('selection_mask', 'uint8', 1, 'out'),
-             ('value_mask', 'uint8', 1, 'out')],
+'name': 'Monoflop Done',
+'elements': [('Selection Mask', 'uint8', 1, 'out'),
+             ('Value Mask', 'uint8', 1, 'out')],
 'since_firmware': [1, 1, 1],
 'doc': ['c', {
 'en':
@@ -411,9 +411,9 @@ Zustand als Bitmaske (der Zustand nach dem Monoflop).
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetSelectedValues', 'set_selected_values'),
-'elements': [('selection_mask', 'uint8', 1, 'in'),
-             ('value_mask', 'uint8', 1, 'in')],
+'name': 'Set Selected Values',
+'elements': [('Selection Mask', 'uint8', 1, 'in'),
+             ('Value Mask', 'uint8', 1, 'in')],
 'since_firmware': [2, 0, 0],
 'doc': ['af', {
 'en':
@@ -448,10 +448,10 @@ logisch 0 und den Pin 2 auf logisch 1. Die Pins 0 und 3 bleiben unangetastet.
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetEdgeCount', 'get_edge_count'),
-'elements': [('pin', 'uint8', 1, 'in'),
-             ('reset_counter', 'bool', 1, 'in'),
-             ('count', 'uint32', 1, 'out')],
+'name': 'Get Edge Count',
+'elements': [('Pin', 'uint8', 1, 'in'),
+             ('Reset Counter', 'bool', 1, 'in'),
+             ('Count', 'uint32', 1, 'out')],
 'since_firmware': [2, 0, 1],
 'doc': ['bf', {
 'en':
@@ -475,12 +475,12 @@ nach dem auslesen auf 0 zurückgesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': ('SetEdgeCountConfig', 'set_edge_count_config'),
-'elements': [('selection_mask', 'uint8', 1, 'in'),
-             ('edge_type', 'uint8', 1, 'in', ('EdgeType', 'edge_type', [('Rising', 'rising', 0),
-                                                                        ('Falling', 'falling', 1),
-                                                                        ('Both', 'both', 2)])),
-             ('debounce', 'uint8', 1, 'in')],
+'name': 'Set Edge Count Config',
+'elements': [('Selection Mask', 'uint8', 1, 'in'),
+             ('Edge Type', 'uint8', 1, 'in', ('Edge Type', [('Rising', 0),
+                                                            ('Falling', 1),
+                                                            ('Both', 2)])),
+             ('Debounce', 'uint8', 1, 'in')],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':
@@ -529,12 +529,12 @@ Standardwerte: 0 (edge type) und 100ms (debounce).
 
 com['packets'].append({
 'type': 'function',
-'name': ('GetEdgeCountConfig', 'get_edge_count_config'),
-'elements': [('pin', 'uint8', 1, 'in'),
-             ('edge_type', 'uint8', 1, 'out', ('EdgeType', 'edge_type', [('Rising', 'rising', 0),
-                                                                         ('Falling', 'falling', 1),
-                                                                         ('Both', 'both', 2)])),
-             ('debounce', 'uint8', 1, 'out')],
+'name': 'Get Edge Count Config',
+'elements': [('Pin', 'uint8', 1, 'in'),
+             ('Edge Type', 'uint8', 1, 'out', ('Edge Type', [('Rising', 0),
+                                                             ('Falling', 1),
+                                                             ('Both', 2)])),
+             ('Debounce', 'uint8', 1, 'out')],
 'since_firmware': [2, 0, 1],
 'doc': ['af', {
 'en':
