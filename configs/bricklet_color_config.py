@@ -353,6 +353,7 @@ Deaktiviert die LED.
 com['packets'].append({
 'type': 'function',
 'name': 'Is Light On',
+# FIXME: should return bool, but cannot be fixed because the Bricklet returns 0 for "On"
 'elements': [('Light', 'uint8', 1, 'out', ('Light', [('On', 0),
                                                      ('Off', 1)]))],
 'since_firmware': [1, 0, 0],

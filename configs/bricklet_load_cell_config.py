@@ -306,7 +306,7 @@ Deaktiviert die LED.
 com['packets'].append({
 'type': 'function',
 'name': 'Is LED On',
-'elements': [('Value', 'uint8', 1, 'out')],
+'elements': [('On', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
