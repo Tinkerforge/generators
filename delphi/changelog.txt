@@ -72,7 +72,7 @@
 2.0.8:
 - Add enable/disable functions for PositionReached and VelocityReached
   callbacks to Servo Brick API
-- Add get/set_i2c_mode (100kHz/400kHz) functions to Temperature Bricklet API
+- Add Get/SetI2CMode (100kHz/400kHz) functions to Temperature Bricklet API
 - Add default text functions to LCD 20x4 Bricklet API
 - Don't dispatching callbacks after disconnect
 - Fix race condition in callback handling that could result in closing the
@@ -105,8 +105,8 @@
   Rotary Encoder, Segment Display 4x7, Sound Intensity and Tilt Bricklet
 
 2.0.15:
-- Add Get/SetClockFrequency function to LED Strip Bricklet API
-- Fix mixup of Set/GetDateTimeCallbackPeriod and Set/GetMotionCallbackPeriod in
+- Add Get/SetClockFrequency functions to LED Strip Bricklet API
+- Fix mixup of Get/SetDateTimeCallbackPeriod and Get/SetMotionCallbackPeriod in
   GPS Bricklet API
 - Support addressing types of Intertechno and ELRO Home Easy devices in Remote
   Switch Bricklet API
@@ -135,7 +135,7 @@
 
 2.1.6:
 - Add DEVICE_DISPLAY_NAME constant to all Device classes
-- Add functions for all Bricks to turn status LEDs on and off
+- Add procedures for all Bricks to turn status LEDs on and off
 - Avoid possible connection state race condition on connect
 - Rename SHA1 to SHAone to avoid name collision with an FPC unit
 - Add support for IMU Brick 2.0, Accelerometer, Ambient Light 2.0,
@@ -146,3 +146,15 @@
 - Add missing destroy call for the brickd device
 - Fix use-after-free bug in callback thread destruction logic
 - Fix memory leak on failed connect attempts
+
+2.1.8:
+- Add missing constant for 19200 baud to RS232 Bricklet API
+- Add error callback to RS232 Bricklet API
+- Add SetBreakCondition procedure to RS232 Bricklet API
+- Add unlimited illuminance range constant to Ambient Light Bricklet 2.0 API
+- Break API to fix threshold min/max type mismatch in Ambient Light, Analog In
+  (2.0), Distance IR/US, Humidity, Linear Poti and Voltage Bricklet API
+- Break API to fix bool return type mismatch in Servo Brick
+  (IsPositionReachedCallback_enabled and IsVelocityReachedCallbackEnabled
+  function), Accelerometer Bricklet (IsLEDOn function) and Load Cell Bricklet
+  (IsLEDOn function) API

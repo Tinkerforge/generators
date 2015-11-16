@@ -87,9 +87,9 @@
 - Fix dispatch of pending enumerate callback when dispatchCallbacks(-1) is used
 
 2.0.6:
-- Add enable/disable functions for PositionReached and VelocityReached
+- Add enable/disable functions for POSITION_REACHED and VELOCITY_REACHED
   callbacks to Servo Brick API
-- Add get/set_i2c_mode (100kHz/400kHz) functions to Temperature Bricklet API
+- Add get/setI2CMode (100kHz/400kHz) functions to Temperature Bricklet API
 - Add default text functions to LCD 20x4 Bricklet API
 - Don't dispatch callbacks after disconnect
 - Don't ignore socket errors when sending request packets
@@ -118,8 +118,8 @@
 - Complain if bcmath or sockets extension is not available
 
 2.0.12:
-- Add Get/SetClockFrequency function to LED Strip Bricklet API
-- Fix mixup of Set/GetDateTimeCallbackPeriod and Set/GetMotionCallbackPeriod in
+- Add get/setClockFrequency function to LED Strip Bricklet API
+- Fix mixup of get/setDateTimeCallbackPeriod and get/setMotionCallbackPeriod in
   GPS Bricklet API
 - Support addressing types of Intertechno and ELRO Home Easy devices in Remote
   Switch Bricklet API
@@ -148,3 +148,15 @@
 - Add support for IMU Brick 2.0, Accelerometer, Ambient Light 2.0,
   Analog In 2.0, Analog Out 2.0, Dust Detector, Industrial Analog Out,
   Industrial Dual Analog In, Laser Range Finder, Load Cell and RS232 Bricklet
+
+2.1.6:
+- Add missing constant for 19200 baud to RS232 Bricklet API
+- Add error callback to RS232 Bricklet API
+- Add setBreakCondition function to RS232 Bricklet API
+- Add unlimited illuminance range constant to Ambient Light Bricklet 2.0 API
+- Break API to fix threshold min/max type mismatch in Ambient Light, Analog In
+  (2.0), Distance IR/US, Humidity, Linear Poti and Voltage Bricklet API
+- Break API to fix bool return type mismatch in Servo Brick
+  (isPositionReachedCallbackEnabled and isVelocityReachedCallbackEnabled
+  function), Accelerometer Bricklet (isLEDOn function) and Load Cell Bricklet
+  (isLEDOn function) API

@@ -23,3 +23,15 @@
 - Add support for IMU Brick 2.0, Accelerometer, Ambient Light 2.0,
   Analog In 2.0, Analog Out 2.0, Dust Detector, Industrial Analog Out,
   Industrial Dual Analog In, Laser Range Finder, Load Cell and RS232 Bricklet
+
+2.1.6:
+- Add missing constant for 19200 baud to RS232 Bricklet API
+- Add error callback to RS232 Bricklet API
+- Add SetBreakCondition function to RS232 Bricklet API
+- Add unlimited illuminance range constant to Ambient Light Bricklet 2.0 API
+- Break API to fix threshold min/max type mismatch in Ambient Light, Analog In
+  (2.0), Distance IR/US, Humidity, Linear Poti and Voltage Bricklet API
+- Break API to fix bool return type mismatch in Servo Brick
+  (IsPositionReachedCallbackEnabled and IsVelocityReachedCallbackEnabled
+  function), Accelerometer Bricklet (IsLEDOn function) and Load Cell Bricklet
+  (IsLEDOn function) API

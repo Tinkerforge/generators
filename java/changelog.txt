@@ -11,7 +11,7 @@
 - Add support for IMU Brick, Analog In Bricklet and Analog Out Bricklet
 
 1.0.4:
-- Add ChibiFreuqency and ChibiChannel methods
+- Add get/setChibiFreuqency and get/setChibiChannel methods
 
 1.0.5:
 - Add sync rect support to Stepper Brick bindings and make Device class public
@@ -41,13 +41,13 @@
 - Add RS485 support
 
 1.0.12:
-- Add chip temperature and reset functions
+- Add chip temperature and reset methods
 
 1.0.13:
 - Add monoflop functionality to Dual Relay Bricklet API
 
 1.0.14:
-- Add time base, all-data function/callback and state callback to Stepper
+- Add time base, all-data method/callback and state callback to Stepper
   Brick API
 
 1.0.15:
@@ -76,11 +76,11 @@
 - Add API for Barometer Bricklet
 
 1.0.20:
-- Replace Barometer Bricklet calibrate function with getter/setter for
+- Replace Barometer Bricklet calibrate method with getter/setter for
   reference air pressure
 
 1.0.21:
-- Add getUSBVoltage function to Master Brick API
+- Add getUSBVoltage method to Master Brick API
 - Add Barometer Bricklet examples
 
 1.0.22:
@@ -100,25 +100,25 @@
 - Ensure to set socket and stream to null even if close() throws an IOException
 - Use a shorter format for JavaDoc links
 - Don't let the callback thread die silently on exception in user code
-- Add get/setLongWifiKey functions to Master Brick API
+- Add get/setLongWifiKey methods to Master Brick API
 
 2.0.4:
-- Split IPConnection.addListener into per-Listener add functions
+- Split IPConnection.addListener into per-Listener add methods
 - Reduce scope of request and socket mutex to improve concurrency
 - Improve and unify code for response expected flag handling
-- Add get/setWifiHostname functions and callbacks for stack/USB voltage and
+- Add get/setWifiHostname methods and callbacks for stack/USB voltage and
   stack current to Master Brick API
 
 2.0.5:
-- Add get/setRange functions to Analog In Bricklet API
+- Add get/setRange methods to Analog In Bricklet API
 - Fix unlikely race condition in response packet handling
 - Add TinkerforgeException as basis for all other exceptions
 
 2.0.6:
-- Add enable/disable functions for PositionReached and VelocityReached
+- Add enable/disable methods for PositionReached and VelocityReached
   callbacks to Servo Brick API
-- Add get/set_i2c_mode (100kHz/400kHz) functions to Temperature Bricklet API
-- Add default text functions to LCD 20x4 Bricklet API
+- Add get/setI2CMode (100kHz/400kHz) methods to Temperature Bricklet API
+- Add default text methods to LCD 20x4 Bricklet API
 - Don't dispatch callbacks after disconnect
 - Fix race condition in callback handling that could result in closing the
   wrong socket
@@ -141,14 +141,14 @@
   CopyOnWriteArrayList
 
 2.0.10:
-- Avoid race condition between disconnect probe thread and disconnect function
+- Avoid race condition between disconnect probe thread and disconnect method
 
 2.0.11:
 - Add edge counters to Industrial Digital In 4, IO-4 and IO-16 Bricklet
 - Make averaging length configurable for Analog In Bricklet
 
 2.0.12:
-- Fix signature of edge count functions in IO-16 Bricklet API
+- Fix signature of edge count methods in IO-16 Bricklet API
 
 2.0.13:
 - Add support for Distance US, Dual Button, Hall Effect, LED Strip, Line,
@@ -157,8 +157,8 @@
 - Throw IllegalArgumentException on invalid Base58 value as UID
 
 2.0.14:
-- Add Get/SetClockFrequency function to LED Strip Bricklet API
-- Fix mixup of Set/GetDateTimeCallbackPeriod and Set/GetMotionCallbackPeriod in
+- Add get/setClockFrequency method to LED Strip Bricklet API
+- Fix mixup of get/setDateTimeCallbackPeriod and get/setMotionCallbackPeriod in
   GPS Bricklet API
 - Support addressing types of Intertechno and ELRO Home Easy devices in Remote
   Switch Bricklet API
@@ -185,8 +185,21 @@
 2.1.5:
 - IPConnection implements java.io.Closeable interface
 - Add DEVICE_DISPLAY_NAME constant to all Device classes
-- Add functions for all Bricks to turn status LEDs on and off
+- Add methods for all Bricks to turn status LEDs on and off
 - Avoid possible connection state race condition on connect
 - Add support for IMU Brick 2.0, Accelerometer, Ambient Light 2.0,
   Analog In 2.0, Analog Out 2.0, Dust Detector, Industrial Analog Out,
   Industrial Dual Analog In, Laser Range Finder, Load Cell and RS232 Bricklet
+
+2.1.6:
+- Add missing constant for 19200 baud to RS232 Bricklet API
+- Add error callback to RS232 Bricklet API
+- Add setBreakCondition method to RS232 Bricklet API
+- Add unlimited illuminance range constant to Ambient Light Bricklet 2.0 API
+- Break API to fix threshold min/max type mismatch in Ambient Light, Analog In
+  (2.0), Distance IR/US, Humidity, Linear Poti and Voltage Bricklet API
+- Break API to fix bool return type mismatch in Servo Brick
+  (isPositionReachedCallbackEnabled and isVelocityReachedCallbackEnabled
+  methods), Accelerometer Bricklet (isLEDOn method) and Load Cell Bricklet
+  (isLEDOn method) API
+- Add DeviceFactory class
