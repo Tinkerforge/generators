@@ -31,6 +31,9 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class PythonDevice(common.Device):
+    def get_python_import_name(self):
+        return self.get_underscore_category() + '_' + self.get_underscore_name()
+
     def get_python_class_name(self):
         return self.get_camel_case_category() + self.get_camel_case_name()
 

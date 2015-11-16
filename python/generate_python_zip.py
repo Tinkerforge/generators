@@ -71,7 +71,7 @@ class PythonZipGenerator(common.Generator):
             shutil.copy(example[1], self.tmp_examples_dir)
 
         # Copy bindings and readme
-        for filename in released_files:
+        for filename in released_files + ['device_factory.py']:
             shutil.copy(os.path.join(root_dir, 'bindings', filename), self.tmp_source_tinkerforge_dir)
 
         shutil.copy(os.path.join(root_dir, 'ip_connection.py'),             self.tmp_source_tinkerforge_dir)

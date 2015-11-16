@@ -281,6 +281,11 @@ class PythonBindingsGenerator(common.BindingsGenerator):
     def get_element_class(self):
         return python_common.PythonElement
 
+    def prepare(self):
+        self.device_factory_classes = []
+
+        return common.BindingsGenerator.prepare(self)
+
     def generate(self, device):
         filename = '{0}_{1}.py'.format(device.get_underscore_category(), device.get_underscore_name())
 
@@ -289,7 +294,45 @@ class PythonBindingsGenerator(common.BindingsGenerator):
         py.close()
 
         if device.is_released():
+            self.device_factory_classes.append((device.get_python_import_name(), device.get_python_class_name()))
             self.released_files.append(filename)
+
+    def finish(self):
+        template = """{0}
+{1}
+
+DEVICE_CLASSES = {{
+{2}
+}}
+
+def get_device_class(device_identifier):
+    return DEVICE_CLASSES[device_identifier]
+
+def get_device_display_name(device_identifier):
+    return get_device_class(device_identifier).DEVICE_DISPLAY_NAME
+
+def create_device(device_identifier, uid, ipcon):
+    return get_device_class(device_identifier)(uid, ipcon)
+"""
+        import_template = """try:
+    from .{0} import {1}
+except ValueError:
+    from {0} import {1}
+"""
+        date = datetime.datetime.now().strftime("%Y-%m-%d")
+        version = common.get_changelog_version(self.get_bindings_root_directory())
+        imports = []
+        classes = []
+
+        for import_name, class_name in sorted(self.device_factory_classes):
+            imports.append(import_template.format(import_name, class_name))
+            classes.append('{0}.DEVICE_IDENTIFIER: {0},'.format(class_name))
+
+        py = open(os.path.join(self.get_bindings_root_directory(), 'bindings', 'device_factory.py'), 'wb')
+        py.write(template.format(common.gen_text_hash.format(date, *version), '\n'.join(imports), '\n'.join(classes)))
+        py.close()
+
+        return common.BindingsGenerator.finish(self)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', PythonBindingsGenerator)
