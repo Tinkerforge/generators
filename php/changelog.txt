@@ -98,8 +98,8 @@
 
 2.0.7:
 - Add Ethernet Extension support to Master Brick API
-- Only send disconnect probe if there was no packet send or received for 5s
-- Add IMU orientation and Barometer averaging API
+- Only send disconnect probe if there was no packet send or received for 5sec
+- Add IMU Brick orientation and Barometer Bricklet averaging API
 
 2.0.8:
 - Add support for PTC Bricklet and Industrial Dual 0-20mA Bricklet
