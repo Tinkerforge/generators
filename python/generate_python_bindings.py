@@ -298,7 +298,8 @@ class PythonBindingsGenerator(common.BindingsGenerator):
             self.released_files.append(filename)
 
     def finish(self):
-        template = """{0}
+        template = """# -*- coding: utf-8 -*-
+{0}
 {1}
 
 DEVICE_CLASSES = {{
