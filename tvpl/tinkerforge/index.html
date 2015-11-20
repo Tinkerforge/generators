@@ -6,7 +6,6 @@
     <link rel="stylesheet" href="./css/material.min.css">
     <script src="/js./material.min.js"></script>
     <link rel="stylesheet" href="./css/style.css">
-    <link rel="stylesheet" href="./css/prism.css">
     <script type="text/javascript" src="js/babelPolyfill.js"></script>
     <script type="text/javascript" src="js/babelRuntime.js"></script>
     <script type="text/javascript" src="js/babelBrowser.js"></script>
@@ -59,10 +58,6 @@
 
           <button title="Execute code generated from current workspace" onclick="clickedExecute()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
             <i class="material-icons">settings</i>
-          </button>
-
-          <button title="View generated code" onclick="clickedViewCode()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
-            <i class="material-icons">code</i>
           </button>
 
           <button title="Save current state of the workspace" onclick="clickedSave()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
@@ -118,28 +113,49 @@
       </table>
     </div>
 
-    <!-- Code viewer -->
-    <div id="divCode">
-      <table id="tableCode">
-        <tr>
-          <td align="center">
-            <b>Generate Code:</b>
-            <select id="selectLanguageCode" onchange="updateCodeViewer()">
-              <option value="js">JavaScript</option>
-              <option value="py">Python</option>
-            </select>
-          </td>
-        </tr>
-      </table>
-<pre>
-<code id="codeContent" class="line-numbers language-javascript">
-</code>
-</pre>
-    </div>
-
     <script type="text/javascript" >
       function clickedButtonTest() {
+        console.info('*** clickedButtonTest ***');
 
+        var _code = 'onmessage = function (e) {\n'+
+'  _dispatch_message(e.data);\n'+
+'};\n'+
+'onerror = _error_handler;\n'+
+'function *_butfunc() {\n' +
+'    console.info(\'*_butfunc()\');\n'+
+'}\n'+
+'function *_main() {\n' +
+'    console.info(\'*** running *_main()-1\');\n'+
+'    console.info(_codeButtonEnable);\n'+
+'    yield* _butfunc();\n' +
+'    console.info(\'*** running *_main()-2\');\n'+
+'    self.postMessage(workerProtocol.getMessage(_worker_id, workerProtocol._TYPE_RES_SUBWORKER_DONE, _codeButtonEnable));\n'+
+'    console.info(\'*** running *_main()-3\');\n'+
+'}\n'+
+'_iterator_main = _main();\n';
+
+        var wsc = Blockly.JavaScript.workspaceToCode(blocklyWorkspace);
+
+        if (!wsc) {
+          return;
+        }
+        var coderaw = [wsc.definitions, wsc.dictVariables, _code].join('\n');
+        var retPrepareJavaScriptCode = prepareJavaScriptCode(coderaw);
+
+        if (!retPrepareJavaScriptCode[0]) {
+          return;
+        }
+
+        var code = retPrepareJavaScriptCode[1];
+        var bf = window.URL.createObjectURL(new Blob([code]));
+        console.info(coderaw);
+        console.info(bf);
+        console.info(code);
+        document.getElementById('buttonTest').disabled = true;
+        workerManager.postMessage(workerProtocol.getMessage(workerProtocol.SENDER_GUI,
+                                                            workerProtocol.TYPE_REQ_FUNCTION_EXECUTE,
+                                                            {blobFunction: bf,
+                                                             codeButtonEnable: 'document.getElementById(\'buttonTest\').disabled = false;'}));
       }
 
       var trErrorMessageWebworker = document.getElementById('trErrorMessageWebworker');
@@ -217,13 +233,8 @@
                            'Oct',
                            'Nov',
                            'Dec'];
-        var HIGHLIGHT_NONE = 1;
-        var HIGHLIGHT_JS = 2;
-        var HIGHLIGHT_PY = 3;
-        var VIEW_EDITOR = 4;
-        var VIEW_EXECUTE = 5;
-        var VIEW_CODE = 6;
-        var DEFAULT_CODE = 'Seems like the workspace is empty. Generated code will appear here...';
+        var VIEW_EDITOR = 1;
+        var VIEW_EXECUTE = 2;
         var MSG_ERROR_NOT_VALID_WORKSPACE_FILE = 'ERROR: Not a valid workspace file.';
         var MSG_ERROR_FILE_READ_FAILED = 'ERROR: Reading file failed.';
         var MSG_ERROR_WORKSPACE_LOAD_FAILED = 'ERROR: Failed to load worskspace from file. Check that the file is valid workspace file.';
@@ -239,9 +250,6 @@
         var divExecute = document.getElementById('divExecute');
         var textareaConsole = document.getElementById('textareaConsole');
         var workerManager = null;
-        var selectLanguageCode = document.getElementById("selectLanguageCode");
-        var codeContent = document.getElementById('codeContent');
-        var divCode = document.getElementById('divCode');
         var buttonToolbarRunStop = document.getElementById('buttonToolbarRunStop');
         var buttonToolbarRunStopImage = document.getElementById('buttonToolbarRunStopImage');
         var fileReader = new FileReader();
@@ -329,7 +337,8 @@
 '        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_PROGRAM_STOP_ACK, null));\n'+
 '        break;\n'+
 '      case workerProtocol.TYPE_REQ_FUNCTION_EXECUTE:\n'+
-'        var worker_id = message_parsed.data[i].split(\'/\')[message_parsed.data[i].split(\'/\').length - 1];\n'+
+'        console.info(\'*** TYPE_REQ_FUNCTION_EXECUTE\');\n'+
+'        var worker_id = message_parsed.data.blobFunction.split(\'/\')[message_parsed.data.blobFunction.split(\'/\').length - 1];\n'+
 '        for (var key in _dictVariables) {\n'+
 '          _dictVariables[key] = key;\n'+
 '        }\n'+
@@ -338,8 +347,9 @@
 '        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_FUNCTION_EXECUTE_ACK, null));\n'+
 '        break;\n'+
 '      case workerProtocol._TYPE_RES_SUBWORKER_DONE:\n'+
+'        console.info(\'*** _TYPE_RES_SUBWORKER_DONE\');\n'+
 '        if (message_parsed.data.codeButtonEnable) {\n'+
-'          eval(message_parsed.data.codeButtonEnable);\n'+
+'          postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_SUBWORKER_DONE, message_parsed.data.codeButtonEnable));\n'+
 '        }\n'+
 '        _running_workers[message_parsed.sender].terminate();\n'+
 '        delete _running_workers[message_parsed.data];\n'+
@@ -377,8 +387,6 @@
 
         var onLoad = function(e) {
           textareaConsole.value = '';
-          codeContent.innerHTML = DEFAULT_CODE;
-          Prism.highlightElement(codeContent);
         };
 
         var onBeforeUnload = function(e) {
@@ -403,61 +411,9 @@
           blocklyDiv.style.height = blocklyArea.offsetHeight + 'px';
         };
 
-        var updateCodeViewer = function(e) {
-          var codeArray = [];
-          var code = DEFAULT_CODE;
-          var language = selectLanguageCode.options[selectLanguageCode.selectedIndex].value;
-
-          clickedStopProgram();
-
-          if (language === 'js') {
-            dictWorkspaceToCode = Blockly.JavaScript.workspaceToCode(blocklyWorkspace);
-
-            if (dictWorkspaceToCode.implementationTopLevelBlocks === null || 
-                dictWorkspaceToCode.implementationTopLevelBlocks.length < 1) {
-              codeContent.innerHTML = DEFAULT_CODE;
-              Prism.highlightElement(codeContent);
-              return;
-            }
-
-            for (var i = 0; i < dictWorkspaceToCode.implementationTopLevelBlocks.length; i ++) {
-              var retPrepareJavaScriptCode = prepareJavaScriptCode(dictWorkspaceToCode.implementationTopLevelBlocks[i]);
-
-              if (!retPrepareJavaScriptCode[0]) {
-                codeContent.innerHTML = MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED;
-                codeContent.innerHTML += retPrepareJavaScriptCode[1];
-                Prism.highlightElement(codeContent);
-                return;
-              }
-              codeArray.push(retPrepareJavaScriptCode[1]);
-            }
-
-            codeContent.innerHTML = codeArray.join('\n');
-            Prism.highlightElement(codeContent);
-          }
-          else if (language === 'py') {
-            dictWorkspaceToCode = Blockly.Python.workspaceToCode(blocklyWorkspace);
-            return;
-
-            code = Blockly.Python.workspaceToCode(blocklyWorkspace);
-            if (code === '') {
-              codeContent.innerHTML = DEFAULT_CODE;
-              Prism.highlightElement(codeContent);
-              return;
-            }
-            codeContent.innerHTML = code;
-            Prism.highlightElement(codeContent);
-          }
-          else {
-            codeContent.innerHTML = code;
-            Prism.highlightElement(codeContent);
-          }
-        };
-
         window.onbeforeunload = onBeforeUnload;
         window.addEventListener('load', onLoad, false);
         window.addEventListener('resize', onResize, false);
-        blocklyWorkspace.addChangeListener(updateCodeViewer);
         onResize();
 
         function prepareImports() {
@@ -502,8 +458,7 @@
 
           dictWorkspaceToCode = Blockly.JavaScript.workspaceToCode(blocklyWorkspace);
 
-          if (dictWorkspaceToCode.implementationTopLevelBlocks === null || 
-              dictWorkspaceToCode.implementationTopLevelBlocks.length < 1) {
+          if (!dictWorkspaceToCode) {
             alert(MSG_INFO_WORKSPACE_EMPTY);
             return;
           }
@@ -523,12 +478,9 @@
             var retPrepareJavaScriptCode = prepareJavaScriptCode(dictWorkspaceToCode.implementationTopLevelBlocks[i]);
 
             if (!retPrepareJavaScriptCode[0]) {
-              codeContent.innerHTML = MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED;
-              codeContent.innerHTML += retPrepareJavaScriptCode[1];
               textareaConsole.value = MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED;
               textareaConsole.value += retPrepareJavaScriptCode[1];
               textareaConsole.scrollTop = textareaConsole.scrollHeight;
-              Prism.highlightElement(codeContent);
               return;
             }
             subworkerBlobsUrlArray.push(window.URL.createObjectURL(new Blob([retPrepareJavaScriptCode[1]])));
@@ -541,12 +493,7 @@
             if (messageParsed.type !== null && workerProtocol.isNumber(messageParsed.type)) {
               switch(messageParsed.type) {
                 case workerProtocol.TYPE_RES_PROGRAM_START_ACK:
-                  textareaConsole.value = '';
-                  textareaConsole.scrollTop = textareaConsole.scrollHeight;
-                  buttonToolbarRunStop.setAttribute('onclick', 'clickedStopProgram()');
-                  buttonToolbarRunStop.setAttribute('title', MSG_TOOLTIP_BUTTON_RUNSTOP_STOP);
-                  buttonToolbarRunStopImage.innerHTML = 'stop';
-                  buttonToolbarRunStop.disabled = false;
+                  handle_type_res_program_start_ack();
                   break;
                 case workerProtocol.TYPE_RES_PROGRAM_STOP_ACK:
                   textareaConsole.scrollTop = textareaConsole.scrollHeight;
@@ -574,13 +521,35 @@
                     textareaConsole.scrollTop = textareaConsole.scrollHeight;
                   }
                   clickedStopProgram();
+                  break;
+
+                case workerProtocol.TYPE_RES_SUBWORKER_DONE:
+                  if (messageParsed.data !== null && messageParsed.data !== '') {
+                    console.info('*** butfunc done');
+                    console.info(messageParsed.data);
+                    eval('');
+                  }
               }
             }
           };
-          workerManager.postMessage(workerProtocol.getMessage(workerProtocol.SENDER_GUI,
-                                                              workerProtocol.TYPE_REQ_PROGRAM_START,
-                                                              subworkerBlobsUrlArray));
-          buttonToolbarRunStop.disabled = true;
+
+          if (subworkerBlobsUrlArray.length > 0) {
+            workerManager.postMessage(workerProtocol.getMessage(workerProtocol.SENDER_GUI,
+                                                                workerProtocol.TYPE_REQ_PROGRAM_START,
+                                                                subworkerBlobsUrlArray));
+            buttonToolbarRunStop.disabled = true;
+            return;
+          }
+          handle_type_res_program_start_ack();
+        }
+
+        function handle_type_res_program_start_ack(e) {
+          textareaConsole.value = '';
+          textareaConsole.scrollTop = textareaConsole.scrollHeight;
+          buttonToolbarRunStop.setAttribute('onclick', 'clickedStopProgram()');
+          buttonToolbarRunStop.setAttribute('title', MSG_TOOLTIP_BUTTON_RUNSTOP_STOP);
+          buttonToolbarRunStopImage.innerHTML = 'stop';
+          buttonToolbarRunStop.disabled = false;
         }
 
         function clickedStopProgram(e) {
@@ -625,18 +594,11 @@
         function switchView(view) {
           if (view === VIEW_EDITOR) {
               divExecute.style.display = 'none';
-              divCode.style.display = 'none';
               blocklyWorkspace.setVisible(true);
           }
           else if(view === VIEW_EXECUTE) {
             blocklyWorkspace.setVisible(false);
-            divCode.style.display = 'none';
             divExecute.style.display = 'block';
-          }
-          else if (view === VIEW_CODE) {
-            blocklyWorkspace.setVisible(false);
-            divExecute.style.display = 'none';
-            divCode.style.display = 'block';
           }
         }
 
@@ -646,10 +608,6 @@
 
         function clickedExecute(e) {
           switchView(VIEW_EXECUTE);
-        }
-
-        function clickedViewCode(e) {
-          switchView(VIEW_CODE);
         }
 
         function clickedSave(e) {
@@ -671,8 +629,5 @@
         }
       }
     </script>
-
-    <script type="text/javascript"  src="js/prism.js"></script>
-
   </body>
 </html>

@@ -47,7 +47,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
             block_host = '_HOST'
             block_port = '_PORT'
             block_display_device_name = self.get_long_display_name()
-            block_display_function_name = common.camel_case_to_space(packet.get_camel_case_name())
+            block_display_function_name = packet.get_name()
             block_set_color = 'this.setColour(210);'
             if self.get_underscore_category() == 'bricklet':
                 block_set_color = 'this.setColour(260);'
@@ -173,7 +173,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
                             combo_constants_array = '['
                         combo_constants_array = combo_constants_array +\
                                                 '[\'' +\
-                                                common.camel_case_to_space(constant.get_camel_case_name()) +\
+                                                constant.get_name() +\
                                                 '\'' +\
                                                 ', ' +\
                                                 '\'' +\
@@ -188,7 +188,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
         .appendField('{ename}');
     this.appendDummyInput()
         .appendField(new Blockly.FieldDropdown({constantsarray}), '{fieldname}');
-'''.format(ename = common.camel_case_to_space(e.get_headless_camel_case_name()).title(),
+'''.format(ename = e.get_name(),
            constantsarray = combo_constants_array,
            fieldname = e.get_underscore_name().upper())
 
@@ -207,7 +207,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
         .appendField('{ename}');
     this.appendDummyInput()
         .appendField(new Blockly.FieldDropdown([['True', '1'], ['False', '0']]), '{fieldname}');
-'''.format(ename = common.camel_case_to_space(e.get_headless_camel_case_name()).title(),
+'''.format(ename = e.get_name(),
            fieldname = e.get_underscore_name().upper())
 
                     if i < len(elements_in) - 2:
@@ -225,7 +225,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
         .appendField('{ename}');
     this.appendValueInput('{variablename}')
         .setCheck('{etvpltype}');
-'''.format(ename = common.camel_case_to_space(e.get_headless_camel_case_name()).title(),
+'''.format(ename = e.get_name(),
            variablename = e.get_underscore_name().upper(),
            etvpltype = e.get_tvpl_type())
 
