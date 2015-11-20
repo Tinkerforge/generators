@@ -375,8 +375,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
 '''.format(blockname = block_name,
            devicenameupper = self.get_tvpl_device_name().upper())
 
-            generator_code_footer = '''
-  return {returncode};
+            generator_code_footer = '''return {returncode};
 }};
 
 '''
