@@ -115,46 +115,33 @@
 
     <script type="text/javascript" >
       function clickedButtonTest() {
-        console.info('*** clickedButtonTest ***');
-
-        var _code = 'onmessage = function (e) {\n'+
+        var code = 'onmessage = function (e) {\n'+
 '  _dispatch_message(e.data);\n'+
 '};\n'+
 'onerror = _error_handler;\n'+
-'function *_butfunc() {\n' +
-'    console.info(\'*_butfunc()\');\n'+
-'}\n'+
 'function *_main() {\n' +
-'    console.info(\'*** running *_main()-1\');\n'+
-'    console.info(_codeButtonEnable);\n'+
 '    yield* _butfunc();\n' +
-'    console.info(\'*** running *_main()-2\');\n'+
 '    self.postMessage(workerProtocol.getMessage(_worker_id, workerProtocol._TYPE_RES_SUBWORKER_DONE, _codeButtonEnable));\n'+
-'    console.info(\'*** running *_main()-3\');\n'+
 '}\n'+
 '_iterator_main = _main();\n';
 
-        var wsc = Blockly.JavaScript.workspaceToCode(blocklyWorkspace);
+        var codeWorkspace = Blockly.JavaScript.workspaceToCode(blocklyWorkspace);
 
-        if (!wsc) {
+        if (!codeWorkspace) {
           return;
         }
-        var coderaw = [wsc.definitions, wsc.dictVariables, _code].join('\n');
+        var coderaw = [codeWorkspace.definitions, codeWorkspace.dictVariables, code].join('\n');
         var retPrepareJavaScriptCode = prepareJavaScriptCode(coderaw);
 
         if (!retPrepareJavaScriptCode[0]) {
           return;
         }
 
-        var code = retPrepareJavaScriptCode[1];
-        var bf = window.URL.createObjectURL(new Blob([code]));
-        console.info(coderaw);
-        console.info(bf);
-        console.info(code);
+        var blobFunction = window.URL.createObjectURL(new Blob([retPrepareJavaScriptCode[1]]));
         document.getElementById('buttonTest').disabled = true;
         workerManager.postMessage(workerProtocol.getMessage(workerProtocol.SENDER_GUI,
                                                             workerProtocol.TYPE_REQ_FUNCTION_EXECUTE,
-                                                            {blobFunction: bf,
+                                                            {blobFunction: blobFunction,
                                                              codeButtonEnable: 'document.getElementById(\'buttonTest\').disabled = false;'}));
       }
 
@@ -337,19 +324,18 @@
 '        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_PROGRAM_STOP_ACK, null));\n'+
 '        break;\n'+
 '      case workerProtocol.TYPE_REQ_FUNCTION_EXECUTE:\n'+
-'        console.info(\'*** TYPE_REQ_FUNCTION_EXECUTE\');\n'+
 '        var worker_id = message_parsed.data.blobFunction.split(\'/\')[message_parsed.data.blobFunction.split(\'/\').length - 1];\n'+
 '        for (var key in _dictVariables) {\n'+
 '          _dictVariables[key] = key;\n'+
 '        }\n'+
 '        _running_workers[worker_id] = new Worker(message_parsed.data.blobFunction);\n'+
+'        _running_workers[worker_id].onmessage = onmessage;\n'+
 '        _running_workers[worker_id].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_SUBWORKER_START, {wid: worker_id, dictv: _dictVariables, codeButtonEnable: message_parsed.data.codeButtonEnable}));\n'+
 '        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_FUNCTION_EXECUTE_ACK, null));\n'+
 '        break;\n'+
 '      case workerProtocol._TYPE_RES_SUBWORKER_DONE:\n'+
-'        console.info(\'*** _TYPE_RES_SUBWORKER_DONE\');\n'+
-'        if (message_parsed.data.codeButtonEnable) {\n'+
-'          postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_SUBWORKER_DONE, message_parsed.data.codeButtonEnable));\n'+
+'        if (message_parsed.data !== null && message_parsed.data !== \'\') {\n'+
+'          postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_SUBWORKER_DONE, message_parsed.data));\n'+
 '        }\n'+
 '        _running_workers[message_parsed.sender].terminate();\n'+
 '        delete _running_workers[message_parsed.data];\n'+
@@ -511,7 +497,6 @@
                   if (messageParsed.data !== null && messageParsed.data !== '') {
                     textareaConsole.value += messageParsed.data;
                     textareaConsole.scrollTop = textareaConsole.scrollHeight;
-                    //document.getElementById('labelTest').innerHTML = messageParsed.data;
                   }
                   break;
 
@@ -525,9 +510,7 @@
 
                 case workerProtocol.TYPE_RES_SUBWORKER_DONE:
                   if (messageParsed.data !== null && messageParsed.data !== '') {
-                    console.info('*** butfunc done');
-                    console.info(messageParsed.data);
-                    eval('');
+                    eval(messageParsed.data);
                   }
               }
             }
