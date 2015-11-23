@@ -80,18 +80,18 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
                     # Getters without in args
                     block_code_body = '''
     this.appendDummyInput()
-        .appendField('{blockdescription}');
+        .appendField('{function_name}')
     this.appendValueInput('{uid}')
-        .setCheck(\'String\');
-    this.appendDummyInput()
-        .appendField(\'at\');
+        .setCheck(\'String\')
+        .appendField('of {device_name}')
     this.appendValueInput('{host}')
-        .setCheck(\'String\');
-    this.appendDummyInput()
-        .appendField(\':\');
+        .setCheck(\'String\')
+        .appendField(\'at\')
     this.appendValueInput('{port}')
-        .setCheck(\'Number\');
-'''.format(blockdescription = ' '.join([block_display_function_name, 'of', block_display_device_name]),
+        .setCheck(\'Number\')
+        .appendField(\':\')
+'''.format(function_name = block_display_function_name,
+           device_name = block_display_device_name,
            uid = block_uid,
            host = block_host,
            port = block_port)
@@ -116,18 +116,18 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
                     # Setters without in args
                     block_code_body = '''
     this.appendDummyInput()
-        .appendField('{blockdescription}');
+        .appendField('{function_name}')
     this.appendValueInput('{uid}')
-        .setCheck(\'String\');
-    this.appendDummyInput()
-        .appendField(\'at\');
+        .setCheck(\'String\')
+        .appendField('of {device_name}')
     this.appendValueInput('{host}')
-        .setCheck(\'String\');
-    this.appendDummyInput()
-        .appendField(\':\');
+        .setCheck(\'String\')
+        .appendField(\'at\')
     this.appendValueInput('{port}')
-        .setCheck(\'Number\');
-'''.format(blockdescription = ' '.join([block_display_function_name, 'of', block_display_device_name]),
+        .setCheck(\'Number\')
+        .appendField(\':\')
+'''.format(function_name = block_display_function_name,
+           device_name = block_display_device_name,
            uid = block_uid,
            host = block_host,
            port = block_port)
@@ -153,14 +153,12 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
             if len(elements_out) < 1:
                 block_code_body = '''
     this.appendDummyInput()
-        .appendField('{functionname}');
-    this.appendDummyInput()
-        .appendField('to');
+        .appendField('{functionname} to')
 '''.format(functionname = block_display_function_name)
             else:
                 block_code_body = '''
     this.appendDummyInput()
-        .appendField('{functionname}');
+        .appendField('{functionname} with')
 '''.format(functionname = block_display_function_name)
 
             for i, e in enumerate(elements_in):
@@ -168,7 +166,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
                     # Create combobox with allowed input values
                     constant_group = e.get_constant_group()
                     combo_constants_array = ''
-                    for index , constant in enumerate(constant_group.get_constants()):
+                    for index, constant in enumerate(constant_group.get_constants()):
                         if index == 0:
                             combo_constants_array = '['
                         combo_constants_array = combo_constants_array +\
@@ -185,71 +183,38 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
                             combo_constants_array = combo_constants_array + ', '
 
                     block_code_body = block_code_body + '''    this.appendDummyInput()
-        .appendField('{ename}');
-    this.appendDummyInput()
-        .appendField(new Blockly.FieldDropdown({constantsarray}), '{fieldname}');
-'''.format(ename = e.get_name(),
+        .appendField('{ename}')
+        .appendField(new Blockly.FieldDropdown({constantsarray}), '{fieldname}')
+'''.format(ename = ('and ' if len(elements_in) > 1 and i == len(elements_in) - 1 else '') + e.get_name(),
            constantsarray = combo_constants_array,
            fieldname = e.get_underscore_name().upper())
-
-                    if i < len(elements_in) - 2:
-                        block_code_body = block_code_body + '''    this.appendDummyInput()
-        .appendField(',');
-'''
-                    elif i == len(elements_in) - 2:
-                        block_code_body = block_code_body + '''    this.appendDummyInput()
-        .appendField('and');
-'''
 
                 elif e.get_tvpl_type() == 'Boolean':
                     # Create combobox with boolean values
                     block_code_body = block_code_body + '''    this.appendDummyInput()
-        .appendField('{ename}');
-    this.appendDummyInput()
-        .appendField(new Blockly.FieldDropdown([['True', '1'], ['False', '0']]), '{fieldname}');
-'''.format(ename = e.get_name(),
+        .appendField('{ename}')
+        .appendField(new Blockly.FieldDropdown([['True', '1'], ['False', '0']]), '{fieldname}')
+'''.format(ename = ('and ' if len(elements_in) > 1 and i == len(elements_in) - 1 else '') + e.get_name(),
            fieldname = e.get_underscore_name().upper())
-
-                    if i < len(elements_in) - 2:
-                        block_code_body = block_code_body + '''    this.appendDummyInput()
-        .appendField(',');
-'''
-                    elif i == len(elements_in) - 2:
-                        block_code_body = block_code_body + '''    this.appendDummyInput()
-        .appendField('and');
-'''
 
                 elif e.get_tvpl_type() != 'Boolean':
                     # Create input field of specific types
-                    block_code_body = block_code_body + '''    this.appendDummyInput()
-        .appendField('{ename}');
-    this.appendValueInput('{variablename}')
-        .setCheck('{etvpltype}');
-'''.format(ename = e.get_name(),
+                    block_code_body = block_code_body + '''    this.appendValueInput('{variablename}')
+        .setCheck('{etvpltype}')
+        .appendField('{ename}')
+'''.format(ename = ('and ' if len(elements_in) > 1 and i == len(elements_in) - 1 else '') + e.get_name(),
            variablename = e.get_underscore_name().upper(),
            etvpltype = e.get_tvpl_type())
 
-                    if i < len(elements_in) - 2:
-                        block_code_body = block_code_body + '''    this.appendDummyInput()
-        .appendField(',');
-'''
-                    elif i == len(elements_in) - 2:
-                        block_code_body = block_code_body + '''    this.appendDummyInput()
-        .appendField('and');
-'''
-
-            block_code_body = block_code_body + '''    this.appendDummyInput()
-        .appendField('of {devicename}');
-    this.appendValueInput('{uid}')
-        .setCheck("String");
-    this.appendDummyInput()
-        .appendField("at");
+            block_code_body += '''    this.appendValueInput('{uid}')
+        .setCheck("String")
+        .appendField('of {devicename}')
     this.appendValueInput('{host}')
-        .setCheck("String");
-    this.appendDummyInput()
-        .appendField(":");
+        .setCheck("String")
+        .appendField("at")
     this.appendValueInput('{port}')
-        .setCheck("Number");
+        .setCheck("Number")
+        .appendField(":")
 '''.format(devicename = block_display_device_name,
            uid = block_uid,
            host = block_host,
