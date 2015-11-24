@@ -70,18 +70,18 @@ PIPE_FLAG_CONSTANTS = ('Pipe Flag', [('Non Blocking Read', 0x0001),
 
 # the permission bit values match the UNIX permission bit values, this allows
 # to use the normal octal way to write them, e.g. 0755
-FILE_PERMISSION_CONSTANTS = ('File Permission', [('User All', 00700),
-                                                 ('User Read', 00400),
-                                                 ('User Write', 00200),
-                                                 ('User Execute', 00100),
-                                                 ('Group All', 00070),
-                                                 ('Group Read', 00040),
-                                                 ('Group Write', 00020),
-                                                 ('Group Execute', 00010),
-                                                 ('Others All', 00007),
-                                                 ('Others Read', 00004),
-                                                 ('Others Write', 00002),
-                                                 ('Others Execute', 00001)])
+FILE_PERMISSION_CONSTANTS = ('File Permission', [('User All', 0o0700),
+                                                 ('User Read', 0o0400),
+                                                 ('User Write', 0o0200),
+                                                 ('User Execute', 0o0100),
+                                                 ('Group All', 0o0070),
+                                                 ('Group Read', 0o0040),
+                                                 ('Group Write', 0o0020),
+                                                 ('Group Execute', 0o0010),
+                                                 ('Others All', 0o0007),
+                                                 ('Others Read', 0o0004),
+                                                 ('Others Write', 0o0002),
+                                                 ('Others Execute', 0o0001)])
 
 FILE_ORIGIN_CONSTANTS = ('File Origin', [('Beginning', 0),
                                          ('Current', 1),
