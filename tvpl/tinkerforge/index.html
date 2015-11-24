@@ -72,8 +72,6 @@
       </tr>
     </table>
 
-    <br />
-
     <!-- Blockly editor -->
     <div id="blocklyArea" />
     <div id="blocklyDiv" />
@@ -230,6 +228,8 @@
         var MSG_INFO_WORKSPACE_EMPTY = 'Nothing to execute. Seems like the workspace is empty.';
         var MSG_TOOLTIP_BUTTON_RUNSTOP_RUN = 'Execute code generated from current workspace';
         var MSG_TOOLTIP_BUTTON_RUNSTOP_STOP = 'Stop currently running program';
+        var body = document.getElementsByTagName('body')[0];
+        var tableHeader = document.getElementById('tableHeader');
         var tdTableHeaderToolbar = document.getElementById('tdTableHeaderToolbar');
         var blocklyArea = document.getElementById('blocklyArea');
         var blocklyDiv = document.getElementById('blocklyDiv');
@@ -377,6 +377,8 @@
         };
 
         var onResize = function(e) {
+          // Make blocklyArea fill the remaining height below the header
+          blocklyArea.style.height = (body.offsetHeight - tableHeader.offsetHeight) + 'px';
           // Compute the absolute coordinates and dimensions of blocklyArea.
           var element = blocklyArea;
           var x = 0;
