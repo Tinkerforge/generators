@@ -143,7 +143,7 @@ def shift_right(text, n):
     return text.replace('\n', '\n' + ' '*n)
 
 def get_changelog_version(bindings_root_directory):
-    r = re.compile('^(\d+)\.(\d+)\.(\d+):')
+    r = re.compile('^\S+: (\d+)\.(\d+)\.(\d+) \(\S+\)')
     last = None
 
     for line in file(os.path.join(bindings_root_directory, 'changelog.txt'), 'rb').readlines():
@@ -151,6 +151,9 @@ def get_changelog_version(bindings_root_directory):
 
         if m is not None:
             last = (m.group(1), m.group(2), m.group(3))
+
+    if last == None:
+        raise Exception('no version found in changelog: ' + bindings_root_directory)
 
     return last
 
