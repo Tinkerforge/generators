@@ -167,13 +167,11 @@ goog.require(\'Blockly.Python\');
         # Write toolbox XML file
         with open(os.path.join(root_dir, root_dir, 'tinkerforge', 'xml', self.file_name_xml_toolbox_part_merge_with), 'r') as fh_xml_toolbox_merge_with:
             file_content_xml_toolbox = '<xml id="toolboxTVPL">' + \
-                                       '<category name="Tinkerforge">' + \
                                        '<category name="Bricks">' + \
                                        file_content_xml_toolbox_brick + \
                                        '</category>' + \
                                        '<category name="Bricklets">' + \
                                        file_content_xml_toolbox_bricklet + \
-                                       '</category>' + \
                                        '</category>' + \
                                        fh_xml_toolbox_merge_with.read()
 
