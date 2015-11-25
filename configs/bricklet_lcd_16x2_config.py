@@ -183,15 +183,17 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns *true* if the button (0 to 2) is pressed. If you want to react
-on button presses and releases it is recommended to use the
+Returns *true* if the button (0 to 2) is pressed.
+
+If you want to react on button presses and releases it is recommended to use the
 :func:`ButtonPressed` and :func:`ButtonReleased` callbacks.
 """,
 'de':
 """
-Gibt *true* zurück wenn die Taste (0 bis 2) gedrückt ist. Wenn auf Tastendrücken
-und -loslassen reagiert werden soll, wird empfohlen die :func:`ButtonPressed`
-und :func:`ButtonReleased` Callbacks zu nutzen.
+Gibt *true* zurück wenn die Taste (0 bis 2) gedrückt ist.
+
+Wenn auf Tastendrücken und -loslassen reagiert werden soll, wird empfohlen die
+:func:`ButtonPressed` und :func:`ButtonReleased` Callbacks zu nutzen.
 """
 }]
 })
