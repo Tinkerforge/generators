@@ -1,18 +1,18 @@
-1.0.0:
+2012-07-25: 1.0.0 (28a7baf)
 - Initial version
 
-1.0.1:
+2012-07-26: 1.0.1 (aa7d4e9)
 - TThread.CurrentThread is not supported in Delphi 2007 use
   Windows.GetCurrentThreadId instead
 - Move callback wrappers from private to protected
 
-1.0.2:
+2012-08-01: 1.0.2 (f86a5f3)
 - Add monoflop functionality to IO-4 and IO-16 Bricklet API
 
-1.0.3:
+2012-09-17: 1.0.3 (dd8498f)
 - Add WIFI support
 
-1.0.4:
+2012-09-26: 1.0.4 (c8c7862)
 - Add getter for WIFI buffer status information
 - Change WIFI certificate getter/setter to transfer bytes instead of a string
 - Add API for setting of WIFI regulatory domain
@@ -21,55 +21,55 @@
 - Make TDevice.GetVersion work as documented
 - Add inline code documentation
 
-1.0.5:
+2012-09-28: 1.0.5 (69e6ae4)
 - Add API for Barometer Bricklet
 
-1.0.6:
+2012-10-01: 1.0.6 (4454bda)
 - Replace Barometer Bricklet calibrate function with getter/setter for
   reference air pressure
 
-1.0.7:
+2012-10-12: 1.0.7 (5884dd5)
 - Add get_usb_voltage function to Master Brick API
 - Add Barometer Bricklet examples
 
-1.0.8:
+2012-12-20: 1.0.8 (2b39606)
 - Add API for Voltage/Current Bricklet
 - Add API for GPS Bricklet
 
-2.0.0:
+2013-01-22: 2.0.0 (10c72f9)
 - Add compatibility for Protocol 2.0
 
-2.0.1:
+2013-01-25: 2.0.1 (13b1beb)
 - Add support for custom characters in LCD Bricklets
 
-2.0.2:
+2013-01-30: 2.0.2 (e62da8a)
 - Rewrite socket code to use WinSock on Windows, allows to set TCP_NODELAY
 
-2.0.3:
+2013-02-04: 2.0.3 (7dca9cb)
 - Avoid signature mismatch for GetIdentity procedure
 - Avoid a potential out-of-bounds array access
 - Make expected integer overflows explicit
 
-2.0.4:
+2013-02-06: 2.0.4 (3db31c0)
 - Ignore exceptions in user code so that the callback thread doesn't die
   silently
 - Add Get/SetLongWifiKey functions to Master Brick API
 
-2.0.5:
+2013-02-19: 2.0.5 (3fd93d3)
 - Reduce scope of request mutex and socket mutex to improve concurrency
 - Improve and unify code for response expected flag handling
 - Add Get/SetWifiHostname functions and callbacks for stack/USB voltage and
   stack current to Master Brick API
 
-2.0.6:
+2013-02-22: 2.0.6 (9d5de14)
 - Add Get/SetRange functions to Analog In Bricklet API
 - Fix unlikely race condition in response packet handling
 - Add ETinkerforgeException as basis for all other exceptions
 
-2.0.7:
+2013-03-11: 2.0.7 (6369faf)
 - Fix IP address lookup on Linux if host is already in dotted decimal format
 
-2.0.8:
+2013-04-02: 2.0.8 (eeb1f67)
 - Add enable/disable functions for PositionReached and VelocityReached
   callbacks to Servo Brick API
 - Add Get/SetI2CMode (100kHz/400kHz) functions to Temperature Bricklet API
@@ -81,59 +81,59 @@
 - Send a request packet at least every 10sec to improve WIFI disconnect
   detection
 
-2.0.9:
+2013-05-14: 2.0.9 (b847401)
 - Add Ethernet Extension support to Master Brick API
 - Only send disconnect probe if there was no packet send or received for 5sec
 - Add IMU Brick orientation and Barometer Bricklet averaging API
 
-2.0.10:
+2013-07-04: 2.0.10 (cdc19b0)
 - Add support for PTC Bricklet and Industrial Dual 0-20mA Bricklet
 
-2.0.11:
+2013-08-23: 2.0.11 (4b2c2d2)
 - Avoid race condition between disconnect probe thread and disconnect function
 
-2.0.12:
+2013-08-28: 2.0.12 (2251328)
 - Add edge counters to Industrial Digital In 4, IO-4 and IO-16 Bricklet
 - Make averaging length configurable for Analog In Bricklet
 
-2.0.13:
+2013-09-11: 2.0.13 (405931f)
 - Fix signature of edge count functions in IO-16 Bricklet API
 
-2.0.14:
+2013-11-27: 2.0.14 (a97b7db)
 - Add support for Distance US, Dual Button, Hall Effect, LED Strip, Line,
   Moisture, Motion Detector, Multi Touch, Piezo Speaker, Remote Switch,
   Rotary Encoder, Segment Display 4x7, Sound Intensity and Tilt Bricklet
 
-2.0.15:
+2013-12-19: 2.0.15 (9334f91)
 - Add Get/SetClockFrequency functions to LED Strip Bricklet API
 - Fix mixup of Get/SetDateTimeCallbackPeriod and Get/SetMotionCallbackPeriod in
   GPS Bricklet API
 - Support addressing types of Intertechno and ELRO Home Easy devices in Remote
   Switch Bricklet API
 
-2.1.0:
+2014-04-08: 2.1.0 (9124f8e)
 - Add authentication support to IPConnection and Master Brick API
 - Add TDeviceBase class as empty base class for all devices
 
-2.1.1:
+2014-07-03: 2.1.1 (cdb00f1)
 - Add support for WS2811 and WS2812 to LED Strip Bricklet API
 
-2.1.2:
+2014-08-11: 2.1.2 (a87f5bc)
 - Add support for Color, NFC/RFID and Solid State Relay Bricklet
 - Rename bindings/ folder to source/ in ZIP file
 
-2.1.3:
+2014-12-10: 2.1.3 (2718ddc)
 - Add support for Delphi XE on Mac OS X
 - Add workaround for older Delphi versions that lack TThread.CurrentThread
 - Add simple library fpcmake file
 
-2.1.4:
+2014-12-10: 2.1.4 (27725d5)
 - Add support for RED Brick
 
-2.1.5:
+2014-12-29: 2.1.5 (4ecb881)
 - Add support for arrays in callbacks
 
-2.1.6:
+2015-07-28: 2.1.6 (725ccd3)
 - Add DEVICE_DISPLAY_NAME constant to all Device classes
 - Add procedures for all Bricks to turn status LEDs on and off
 - Avoid possible connection state race condition on connect
@@ -142,12 +142,12 @@
   Analog In 2.0, Analog Out 2.0, Dust Detector, Industrial Analog Out,
   Industrial Dual Analog In, Laser Range Finder, Load Cell and RS232 Bricklet
 
-2.1.7:
+2015-08-12: 2.1.7 (ebe8892)
 - Add missing destroy call for the brickd device
 - Fix use-after-free bug in callback thread destruction logic
 - Fix memory leak on failed connect attempts
 
-2.1.8:
+2015-11-17: 2.1.8 (158f00f)
 - Add missing constant for 19200 baud to RS232 Bricklet API
 - Add error callback to RS232 Bricklet API
 - Add SetBreakCondition procedure to RS232 Bricklet API

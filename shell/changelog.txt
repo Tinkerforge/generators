@@ -1,19 +1,19 @@
-2.0.0:
+2013-08-14: 2.0.0 (507f7a8)
 - Initial version
 
-2.0.1:
+2013-08-23: 2.0.1 (4b2c2d2)
 - Avoid race condition between disconnect probe thread and disconnect function
 - Use exit code 1 for keyboard interrupt
 
-2.0.2:
+2013-08-28: 2.0.2 (2251328)
 - Add edge counters to Industrial Digital In 4, IO-4 and IO-16 Bricklet
 - Make averaging length configurable for Analog In Bricklet
 
-2.0.3:
+2013-09-11: 2.0.3 (405931f)
 - Fix signature of edge count functions in IO-16 Bricklet API
 - Add listen mode for handling incoming commands over a TCP/IP connection
 
-2.0.4:
+2013-11-27: 2.0.4 (a97b7db)
 - Add support for Distance US, Dual Button, Hall Effect, LED Strip, Line,
   Moisture, Motion Detector, Multi Touch, Piezo Speaker, Remote Switch,
   Rotary Encoder, Segment Display 4x7, Sound Intensity and Tilt Bricklet
@@ -21,29 +21,29 @@
 - Fix Python 3 string handling for listen command
 - Avoid printing '\0' in enumerate-disconnect callback
 
-2.0.5:
+2013-12-19: 2.0.5 (9334f91)
 - Add get/set-clock-frequency function to LED Strip Bricklet API
 - Fix mixup of get/set-date-time-callback-period and
   get/set-motion-callback-period in GPS Bricklet API
 - Support addressing types of Intertechno and ELRO Home Easy devices in Remote
   Switch Bricklet API
 
-2.1.0:
+2014-04-08: 2.1.0 (9124f8e)
 - Add authentication support to IPConnection and Master Brick API
 
-2.1.1:
+2014-07-03: 2.1.1 (cdb00f1)
 - Add support for WS2811 and WS2812 to LED Strip Bricklet API
 
-2.1.2:
+2014-08-11: 2.1.2 (a87f5bc)
 - Add support for Color, NFC/RFID and Solid State Relay Bricklet
 
-2.1.3:
+2014-12-10: 2.1.3 (2718ddc)
 - (no changes)
 
-2.1.4:
+2014-12-10: 2.1.4 (27725d5)
 - Add support for RED Brick
 
-2.1.5:
+2015-07-28: 2.1.5 (725ccd3)
 - Fix packing of Unicode chars
 - Add functions for all Bricks to turn status LEDs on and off
 - Avoid possible connection state race condition on connect
@@ -53,7 +53,7 @@
   Analog In 2.0, Analog Out 2.0, Dust Detector, Industrial Analog Out,
   Industrial Dual Analog In, Laser Range Finder, Load Cell and RS232 Bricklet
 
-2.1.6:
+2015-11-17: 2.1.6 (158f00f)
 - Add missing constant for 19200 baud to RS232 Bricklet API
 - Add error callback to RS232 Bricklet API
 - Add set-break-condition function to RS232 Bricklet API

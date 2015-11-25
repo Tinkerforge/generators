@@ -1,68 +1,68 @@
-1.0.0:
+2011-12-16: 1.0.0 (b19c7ac)
 - Initial version
 
-1.0.1:
+2011-12-17: 1.0.1 (6f00602)
 - Add callback thread to IPConnection (allows to call getters in callbacks)
 
-1.0.2:
+2011-12-20: 1.0.2 (3f6511b)
 - Remove accidental debug output that was present in 1.0.1
 
-1.0.3:
+2012-02-15: 1.0.3 (ffd64f7)
 - Add support for IMU Brick, Analog In Bricklet and Analog Out Bricklet
 
-1.0.4:
+2012-04-02: 1.0.4 (524050a)
 - Add get/setChibiFreuqency and get/setChibiChannel methods
 
-1.0.5:
+2012-04-27: 1.0.5 (6f0b9a5)
 - Add sync rect support to Stepper Brick bindings and make Device class public
 
-1.0.6:
+2012-05-07: 1.0.6 (4d0e7fb)
 - Make Device class abstract
 
-1.0.7:
+2012-05-10: 1.0.7 (baa8705)
 - Add version information to manifest of tinkerforge.jar
 - Silently ignore messages from devices with unknown stack ID
 - Don't generate addListener method for devices without callbacks
 - Add inline code documentation
 
-1.0.8:
+2012-05-18: 1.0.8 (505bc29)
 - Ensure that the answering device matches the expected type in
   IPConnection.addDevice
 
-1.0.9:
+2012-05-24: 1.0.9 (f837011)
 - Treat '-' and ' ' as equal in device name check for backward compatibility
 
-1.0.10:
+2012-06-15: 1.0.10 (bc93dc5)
 - Improve exception handling in receive thread
 - Ensure to unblock callback thread when destroying the IPConnection
 - Fix handling of fragmented packets
 
-1.0.11:
+2012-06-28: 1.0.11 (3704047)
 - Add RS485 support
 
-1.0.12:
+2012-06-29: 1.0.12 (55a3238)
 - Add chip temperature and reset methods
 
-1.0.13:
+2012-07-01: 1.0.13 (d9ecec6)
 - Add monoflop functionality to Dual Relay Bricklet API
 
-1.0.14:
+2012-07-03: 1.0.14 (afb45cf)
 - Add time base, all-data method/callback and state callback to Stepper
   Brick API
 
-1.0.15:
+2012-07-13: 1.0.15 (6ac52d1)
 - Fix direction of getAllDataPeriod method in Stepper Brick API
 - Make addDevice thread-safe
 - Ensure correct shutdown order of threads
 
-1.0.16:
+2012-08-01: 1.0.16 (f86a5f3)
 - Fix race condition in addDevice method
 - Add monoflop functionality to IO-4 and IO-16 Bricklet API
 
-1.0.17:
+2012-09-17: 1.0.17 (dd8498f)
 - Add WIFI support
 
-1.0.18:
+2012-09-26: 1.0.18 (c8c7862)
 - Add getter for WIFI buffer status information
 - Change WIFI certificate getter/setter to transfer bytes instead of a string
 - Add API for setting of WIFI regulatory domain
@@ -72,49 +72,49 @@
 - Avoid a race condition in expectedResponseFunctionID handling
 - Fix semaphore deadlock on timeout
 
-1.0.19:
+2012-09-28: 1.0.19 (69e6ae4)
 - Add API for Barometer Bricklet
 
-1.0.20:
+2012-10-01: 1.0.20 (4454bda)
 - Replace Barometer Bricklet calibrate method with getter/setter for
   reference air pressure
 
-1.0.21:
+2012-10-12: 1.0.21 (5884dd5)
 - Add getUSBVoltage method to Master Brick API
 - Add Barometer Bricklet examples
 
-1.0.22:
+2012-12-20: 1.0.22 (2b39606)
 - Add API for Voltage/Current Bricklet
 - Add API for GPS Bricklet
 
-2.0.0:
+2013-01-22: 2.0.0 (10c72f9)
 - Add compatibility for Protocol 2.0
 
-2.0.1:
+2013-01-25: 2.0.1 (13b1beb)
 - Add support for custom characters in LCD Bricklets
 
-2.0.2:
+2013-01-28: 2.0.2 (04c1105)
 - Remove unused IPConnection.*Exception classes
 
-2.0.3:
+2013-02-06: 2.0.3 (3db31c0)
 - Ensure to set socket and stream to null even if close() throws an IOException
 - Use a shorter format for JavaDoc links
 - Don't let the callback thread die silently on exception in user code
 - Add get/setLongWifiKey methods to Master Brick API
 
-2.0.4:
+2013-02-19: 2.0.4 (3fd93d3)
 - Split IPConnection.addListener into per-Listener add methods
 - Reduce scope of request and socket mutex to improve concurrency
 - Improve and unify code for response expected flag handling
 - Add get/setWifiHostname methods and callbacks for stack/USB voltage and
   stack current to Master Brick API
 
-2.0.5:
+2013-02-22: 2.0.5 (9d5de14)
 - Add get/setRange methods to Analog In Bricklet API
 - Fix unlikely race condition in response packet handling
 - Add TinkerforgeException as basis for all other exceptions
 
-2.0.6:
+2013-04-02: 2.0.6 (eeb1f67)
 - Add enable/disable methods for PositionReached and VelocityReached
   callbacks to Servo Brick API
 - Add get/setI2CMode (100kHz/400kHz) methods to Temperature Bricklet API
@@ -126,63 +126,63 @@
 - Send a request packet at least every 10sec to improve WIFI disconnect
   detection
 
-2.0.7:
+2013-05-14: 2.0.7 (b847401)
 - Add Ethernet Extension support to Master Brick API
 - Only send disconnect probe if there was no packet send or received for 5sec
 - Avoid race condition during socket closing
 - Add IMU Brick orientation and Barometer Bricklet averaging API
 - Fix locking for disconnect probe thread detecting a socket error
 
-2.0.8:
+2013-07-04: 2.0.8 (cdc19b0)
 - Add support for PTC Bricklet and Industrial Dual 0-20mA Bricklet
 
-2.0.9:
+2013-08-06: 2.0.9 (a75bd44)
 - Avoid ConcurrentModificationException in listener handling by using
   CopyOnWriteArrayList
 
-2.0.10:
+2013-08-23: 2.0.10 (4b2c2d2)
 - Avoid race condition between disconnect probe thread and disconnect method
 
-2.0.11:
+2013-08-28: 2.0.11 (2251328)
 - Add edge counters to Industrial Digital In 4, IO-4 and IO-16 Bricklet
 - Make averaging length configurable for Analog In Bricklet
 
-2.0.12:
+2013-09-11: 2.0.12 (405931f)
 - Fix signature of edge count methods in IO-16 Bricklet API
 
-2.0.13:
+2013-11-27: 2.0.13 (a97b7db)
 - Add support for Distance US, Dual Button, Hall Effect, LED Strip, Line,
   Moisture, Motion Detector, Multi Touch, Piezo Speaker, Remote Switch,
   Rotary Encoder, Segment Display 4x7, Sound Intensity and Tilt Bricklet
 - Throw IllegalArgumentException on invalid Base58 value as UID
 
-2.0.14:
+2013-12-19: 2.0.14 (9334f91)
 - Add get/setClockFrequency method to LED Strip Bricklet API
 - Fix mixup of get/setDateTimeCallbackPeriod and get/setMotionCallbackPeriod in
   GPS Bricklet API
 - Support addressing types of Intertechno and ELRO Home Easy devices in Remote
   Switch Bricklet API
 
-2.1.0:
+2014-04-09: 2.1.0 (9aad727)
 - Add authentication support to IPConnection and Master Brick API
 - Add TinkerforgeListener and DeviceListener as base interfaces for all
   listeners
 - Escape special HTML characters in JavaDoc
 
-2.1.1:
+2014-07-03: 2.1.1 (cdb00f1)
 - Add support for WS2811 and WS2812 to LED Strip Bricklet API
 
-2.1.2:
+2014-08-11: 2.1.2 (a87f5bc)
 - Add support for Color, NFC/RFID and Solid State Relay Bricklet
 - Replace System.console() usage with an Eclipse compatible pattern in examples
 
-2.1.3:
+2014-12-10: 2.1.3 (2718ddc)
 - Make listener dispatch methods protected to allow external changes
 
-2.1.4:
+2014-12-10: 2.1.4 (27725d5)
 - Add support for RED Brick
 
-2.1.5:
+2015-07-28: 2.1.5 (725ccd3)
 - IPConnection implements java.io.Closeable interface
 - Add DEVICE_DISPLAY_NAME constant to all Device classes
 - Add methods for all Bricks to turn status LEDs on and off
@@ -191,7 +191,7 @@
   Analog In 2.0, Analog Out 2.0, Dust Detector, Industrial Analog Out,
   Industrial Dual Analog In, Laser Range Finder, Load Cell and RS232 Bricklet
 
-2.1.6:
+2015-11-17: 2.1.6 (158f00f)
 - Add missing constant for 19200 baud to RS232 Bricklet API
 - Add error callback to RS232 Bricklet API
 - Add setBreakCondition method to RS232 Bricklet API
