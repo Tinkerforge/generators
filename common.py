@@ -846,28 +846,28 @@ def check_name(name, short_display_name=None, long_display_name=None, category_n
                                      ' '.join(list(short_display_name_to_check))))
 
 class NameMixin:
-    def get_name(self):
+    def _get_name(self):
         raise NotImplementedError()
 
-    def get_space_name(self, skip=0):
-        return ' '.join(self.get_name().split(' ')[skip:])
+    def get_name(self, skip=0):
+        return ' '.join(self._get_name().split(' ')[skip:])
 
     def get_camel_case_name(self, skip=0):
-        return ''.join(self.get_name().split(' ')[skip:])
+        return ''.join(self._get_name().split(' ')[skip:])
 
     def get_headless_camel_case_name(self, skip=0):
-        parts = self.get_name().split(' ')[skip:]
+        words = self._get_name().split(' ')[skip:]
 
-        return ''.join([parts[0].lower()] + parts[1:])
+        return ''.join([words[0].lower()] + words[1:])
 
     def get_underscore_name(self, skip=0):
-        return '_'.join(self.get_name().split(' ')[skip:]).lower()
+        return '_'.join(self._get_name().split(' ')[skip:]).lower()
 
     def get_upper_case_name(self, skip=0):
-        return '_'.join(self.get_name().split(' ')[skip:]).upper()
+        return '_'.join(self._get_name().split(' ')[skip:]).upper()
 
     def get_dash_name(self, skip=0):
-        return '-'.join(self.get_name().split(' ')[skip:]).lower()
+        return '-'.join(self._get_name().split(' ')[skip:]).lower()
 
 class Constant(NameMixin):
     def __init__(self, raw_data, constant_group):
@@ -888,7 +888,7 @@ class Constant(NameMixin):
     def get_generator(self):
         return self.get_constant_group().get_generator()
 
-    def get_name(self):
+    def _get_name(self): # for NameMixin
         return self.raw_data[0]
 
     def get_value(self):
@@ -919,10 +919,7 @@ class ConstantGroup(NameMixin):
     def get_generator(self):
         return self.get_device().get_generator()
 
-    def get_name(self):
-        return self.raw_data[0]
-
-    def get_name(self):
+    def _get_name(self): # for NameMixin
         return self.raw_data[0]
 
     def get_type(self):
@@ -960,7 +957,7 @@ class Element(NameMixin):
     def get_generator(self):
         return self.generator
 
-    def get_name(self):
+    def _get_name(self): # for NameMixin
         return self.raw_data[0]
 
     def get_type(self):
@@ -1084,7 +1081,7 @@ class Packet(NameMixin):
     def get_type(self):
         return self.raw_data['type']
 
-    def get_name(self):
+    def _get_name(self): # for NameMixin
         return self.raw_data['name']
 
     def get_elements(self, direction=None):
@@ -1275,7 +1272,7 @@ class Device(NameMixin):
     def get_device_identifier(self):
         return self.raw_data['device_identifier']
 
-    def get_name(self):
+    def _get_name(self): # for NameMixin
         return self.raw_data['name'][0]
 
     def get_initial_name(self):
