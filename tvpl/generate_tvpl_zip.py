@@ -88,17 +88,15 @@ goog.require(\'Blockly.Python\');
         shutil.copytree(os.path.join(self.get_bindings_root_directory(), 'tinkerforge'), self.path_dir_tmp_tinkerforge)
         os.remove(os.path.join(self.path_dir_tmp_tinkerforge, 'xml', self.file_name_xml_toolbox_part_merge_with))
 
-        previous_working_directory = os.getcwd()
-        os.chdir(os.path.join(self.get_bindings_root_directory(), '..', 'javascript'))
-        args = ['python']
-        args.append('generate_javascript_bindings.py')
-        if subprocess.call(args) != 0:
-            raise Exception("Command '{cmdarg}' failed".format(cmdarg = ' '.join(args)))
-        args = ['python']
-        args.append(os.path.join(self.get_bindings_root_directory(), '..', 'javascript', 'generate_javascript_zip.py'))
-        if subprocess.call(args) != 0:
-            raise Exception("Command '{cmdarg}' failed".format(cmdarg = ' '.join(args)))
-        os.chdir(previous_working_directory)
+        with common.ChangedDirectory(os.path.join(self.get_bindings_root_directory(), '..', 'javascript')):
+            args = ['python']
+            args.append('generate_javascript_bindings.py')
+            if subprocess.call(args) != 0:
+                raise Exception("Command '{cmdarg}' failed".format(cmdarg = ' '.join(args)))
+            args = ['python']
+            args.append(os.path.join(self.get_bindings_root_directory(), '..', 'javascript', 'generate_javascript_zip.py'))
+            if subprocess.call(args) != 0:
+                raise Exception("Command '{cmdarg}' failed".format(cmdarg = ' '.join(args)))
 
         shutil.copy(os.path.join(self.path_dir_tmp_javascript, 'browser', 'source', 'Tinkerforge.js'),
                     os.path.join(self.path_dir_tmp_tinkerforge, 'js', 'Tinkerforge.js'))
