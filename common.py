@@ -605,18 +605,6 @@ def handle_rst_substitutions(text, packet):
 
     return text
 
-def make_headless_camel_case(camel_case_name, underscore_name):
-    prefix_len = len(underscore_name.split('_')[0])
-
-    return camel_case_name[:prefix_len].lower() + camel_case_name[prefix_len:]
-
-def underscore_to_headless_camel_case(name):
-    parts = name.split('_')
-    ret = parts[0]
-    for part in parts[1:]:
-        ret += part[0].upper() + part[1:]
-    return ret
-
 def underscore_to_space(name):
     ret = []
     for part in name.split('_'):
