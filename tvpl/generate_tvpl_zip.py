@@ -84,7 +84,15 @@ goog.require(\'Blockly.Python\');
     def prepare(self):
         shutil.rmtree(self.path_dir_tmp, True)
         shutil.rmtree(self.path_dir_tmp_closure_library, True)
-        shutil.copytree(self.path_dir_git_tvpl_blockly, self.path_dir_tmp)
+
+        for blockly_subdir in ['blocks', 'core', 'generators', 'i18n', 'media', 'msg']:
+            shutil.copytree(os.path.join(self.path_dir_git_tvpl_blockly, blockly_subdir),
+                            os.path.join(self.path_dir_tmp, blockly_subdir))
+
+        for blockly_file in ['build.py']:
+            shutil.copy(os.path.join(self.path_dir_git_tvpl_blockly, blockly_file),
+                        os.path.join(self.path_dir_tmp, blockly_file))
+
         shutil.copytree(os.path.join(self.get_bindings_root_directory(), 'tinkerforge'), self.path_dir_tmp_tinkerforge)
         os.remove(os.path.join(self.path_dir_tmp_tinkerforge, 'xml', self.file_name_xml_toolbox_part_merge_with))
 
@@ -174,13 +182,15 @@ goog.require(\'Blockly.Python\');
                                      '-->\n' + file_content_xml_toolbox.replace('\n', ''))
 
         # Compile with closure library
-        previous_working_directory = os.getcwd()
-        os.chdir(self.path_dir_tmp)
-        args = ['python']
-        args.append(os.path.join(self.path_dir_tmp, 'build.py'))
-        if subprocess.call(args) != 0:
-            raise Exception("Command '{cmdarg}' failed".format(cmdarg = ' '.join(args)))
-        os.chdir(previous_working_directory)
+        with common.ChangedDirectory(self.path_dir_tmp):
+            args = ['python']
+            args.append(os.path.join(self.path_dir_tmp, 'build.py'))
+            if subprocess.call(args) != 0:
+                raise Exception("Command '{cmdarg}' failed".format(cmdarg = ' '.join(args)))
+
+        # Remove temporary files
+        for filename in ['build.py']:
+            os.remove(os.path.join(self.path_dir_tmp, filename))
 
         # Make zip
         common.make_zip(self.get_bindings_name(),
