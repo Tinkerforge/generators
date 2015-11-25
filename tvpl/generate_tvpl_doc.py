@@ -64,7 +64,7 @@ class TVPLDocDevice(tvpl_common.TVPLDevice):
             if packet.is_virtual():
                 continue
 
-            if packet.get_doc()[0] != typ:
+            if packet.get_doc_type() != typ:
                 continue
 
             name = packet.get_name().replace(' ', '_')
@@ -124,7 +124,7 @@ API
 
 class TVPLDocPacket(tvpl_common.TVPLPacket):
     def get_tvpl_formatted_doc(self):
-        text = common.select_lang(self.get_doc()[1])
+        text = common.select_lang(self.get_doc_text())
         constants = {'en': 'symbols', 'de': 'Symbole'}
 
         text = self.get_device().replace_tvpl_function_links(text)

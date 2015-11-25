@@ -160,7 +160,7 @@ namespace Tinkerforge
             setto = 'ResponseExpectedFlag.FALSE;'
             if len(packet.get_elements('out')) > 0:
                 setto = 'ResponseExpectedFlag.ALWAYS_TRUE;'
-            elif packet.get_doc()[0] == 'ccf':
+            elif packet.get_doc_type() == 'ccf':
                 setto = 'ResponseExpectedFlag.TRUE;'
 
             res += re.format(name_upper, setto)
@@ -314,7 +314,7 @@ namespace Tinkerforge
 
 class CSharpBindingsPacket(csharp_common.CSharpPacket):
     def get_csharp_formatted_doc(self):
-        text = common.select_lang(self.get_doc()[1])
+        text = common.select_lang(self.get_doc_text())
         link = '<see cref="Tinkerforge.{0}.{1}"/>'
 
         # escape XML special chars

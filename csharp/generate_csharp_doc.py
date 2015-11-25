@@ -64,7 +64,7 @@ class CSharpDocDevice(csharp_common.CSharpDevice):
         methods = ''
         func_start = '.. csharp:function:: '
         for packet in self.get_packets('function'):
-            if packet.get_doc()[0] != typ:
+            if packet.get_doc_type() != typ:
                 continue
 
             signature = packet.get_csharp_method_signature(True, True)
@@ -329,7 +329,7 @@ Konstanten
 
 class CSharpDocPacket(csharp_common.CSharpPacket):
     def get_csharp_formatted_doc(self, shift_right):
-        text = common.select_lang(self.get_doc()[1])
+        text = common.select_lang(self.get_doc_text())
 
         text = self.get_device().replace_csharp_function_links(text)
 

@@ -65,7 +65,7 @@ class ShellDocDevice(shell_common.ShellDevice):
             if packet.is_virtual():
                 continue
 
-            if packet.get_doc()[0] != typ:
+            if packet.get_doc_type() != typ:
                 continue
 
             name = packet.get_dash_name()
@@ -382,7 +382,7 @@ Befehlsstruktur dargestellt.
 
 class ShellDocPacket(shell_common.ShellPacket):
     def get_shell_formatted_doc(self):
-        text = common.select_lang(self.get_doc()[1])
+        text = common.select_lang(self.get_doc_text())
         constants = {'en': 'symbols', 'de': 'Symbole'}
 
         text = self.get_device().replace_shell_function_links(text)

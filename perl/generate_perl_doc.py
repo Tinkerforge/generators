@@ -63,7 +63,7 @@ class PerlDocDevice(perl_common.PerlDevice):
         func_start = '.. perl:function:: '
         cls = self.get_perl_class_name()
         for packet in self.get_packets('function'):
-            if packet.get_doc()[0] != typ:
+            if packet.get_doc_type() != typ:
                 continue
             name = packet.get_underscore_name()
             params = packet.get_perl_parameter_list()
@@ -389,7 +389,7 @@ class PerlDocPacket(common.Packet):
         return ', '.join(params)
 
     def get_perl_formatted_doc(self):
-        text = common.select_lang(self.get_doc()[1])
+        text = common.select_lang(self.get_doc_text())
 
         text = self.get_device().replace_perl_function_links(text)
 

@@ -253,8 +253,8 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
 
         for packet in self.get_packets('function'):
             # Exclude unrelated functions
-            if packet.get_doc()[0] != 'af' and \
-               packet.get_doc()[0] != 'bf':
+            if packet.get_doc_type() != 'af' and \
+               packet.get_doc_type() != 'bf':
                    continue
             if packet.is_virtual():
                 continue
@@ -319,8 +319,8 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
 
         for packet in self.get_packets('function'):
            # Exclude unrelated functions
-            if packet.get_doc()[0] != 'af' and \
-               packet.get_doc()[0] != 'bf':
+            if packet.get_doc_type() != 'af' and \
+               packet.get_doc_type() != 'bf':
                    continue
             if packet.is_virtual():
                 continue
@@ -532,8 +532,8 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
 
         for packet in self.get_packets('function'):
             # Exclude unrelated functions
-            if packet.get_doc()[0] != 'af' and \
-               packet.get_doc()[0] != 'bf':
+            if packet.get_doc_type() != 'af' and \
+               packet.get_doc_type() != 'bf':
                    continue
             if packet.is_virtual():
                 continue

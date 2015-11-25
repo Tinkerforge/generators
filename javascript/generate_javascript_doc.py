@@ -78,7 +78,7 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
         func_start = '.. javascript:function:: '
         cls = self.get_javascript_class_name()
         for packet in self.get_packets('function'):
-            if packet.get_doc()[0] != typ:
+            if packet.get_doc_type() != typ:
                 continue
             name = packet.get_headless_camel_case_name()
             params = packet.get_javascript_parameter_list()
@@ -403,7 +403,7 @@ Konstanten
 
 class JavaScriptDocPacket(javascript_common.JavaScriptPacket):
     def get_javascript_formatted_doc(self):
-        text = common.select_lang(self.get_doc()[1])
+        text = common.select_lang(self.get_doc_text())
 
         text = self.get_device().replace_javascript_function_links(text)
 

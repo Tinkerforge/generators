@@ -102,7 +102,7 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
             elif len(packet.get_elements('out')) > 0:
                 prefix = 'FUNCTION'
                 flag = 'RESPONSE_EXPECTED_ALWAYS_TRUE'
-            elif packet.get_doc()[0] == 'ccf':
+            elif packet.get_doc_type() == 'ccf':
                 prefix = 'FUNCTION'
                 flag = 'RESPONSE_EXPECTED_TRUE'
             else:
@@ -186,7 +186,7 @@ end
 
 class RubyBindingsPacket(ruby_common.RubyPacket):
     def get_ruby_formatted_doc(self):
-        text = common.select_lang(self.get_doc()[1])
+        text = common.select_lang(self.get_doc_text())
         link = '{0}#{1}'
         link_c = 'CALLBACK_{0}'
 

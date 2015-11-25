@@ -62,7 +62,7 @@ class DelphiBindingsDevice(delphi_common.DelphiDevice):
         procedure = '.. delphi:function:: procedure {0}.{1}({2})\n{3}'
         cls = self.get_delphi_class_name()
         for packet in self.get_packets('function'):
-            if packet.get_doc()[0] != typ:
+            if packet.get_doc_type() != typ:
                 continue
 
             ret_type = packet.get_delphi_return_type(True)
@@ -317,7 +317,7 @@ Konstanten
 
 class DelphiBindingsPacket(delphi_common.DelphiPacket):
     def get_delphi_formatted_doc(self):
-        text = common.select_lang(self.get_doc()[1])
+        text = common.select_lang(self.get_doc_text())
 
         text = self.get_device().replace_delphi_function_links(text)
 

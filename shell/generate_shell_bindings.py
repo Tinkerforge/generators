@@ -63,7 +63,7 @@ class {0}(Device):"""
         for packet in self.get_packets('function'):
             if len(packet.get_elements('out')) > 0:
                 flag = 1 #'Device.RESPONSE_EXPECTED_ALWAYS_TRUE'
-            elif packet.get_doc()[0] == 'ccf':
+            elif packet.get_doc_type() == 'ccf':
                 flag = 3 #'Device.RESPONSE_EXPECTED_TRUE'
             else:
                 flag = 4 #'Device.RESPONSE_EXPECTED_FALSE'

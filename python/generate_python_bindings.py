@@ -135,7 +135,7 @@ class {0}(Device):
             elif len(packet.get_elements('out')) > 0:
                 prefix = 'FUNCTION_'
                 flag = 'RESPONSE_EXPECTED_ALWAYS_TRUE'
-            elif packet.get_doc()[0] == 'ccf':
+            elif packet.get_doc_type() == 'ccf':
                 prefix = 'FUNCTION_'
                 flag = 'RESPONSE_EXPECTED_TRUE'
             else:
@@ -246,7 +246,7 @@ class {0}(Device):
 
 class PythonBindingsPacket(python_common.PythonPacket):
     def get_python_formatted_doc(self):
-        text = common.select_lang(self.get_doc()[1])
+        text = common.select_lang(self.get_doc_text())
 
         def format_parameter(name):
             return '``{0}``'.format(name) # FIXME

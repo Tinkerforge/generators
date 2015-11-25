@@ -56,7 +56,7 @@ class TCPIPDocDevice(common.Device):
         cls = self.get_tcpip_name()
 
         for packet in self.get_packets('function'):
-            if packet.get_doc()[0] != typ or packet.get_function_id() < 0:
+            if packet.get_doc_type() != typ or packet.get_function_id() < 0:
                 continue
 
             name = packet.get_underscore_name()
@@ -167,7 +167,7 @@ Eine allgemeine Beschreibung der TCP/IP Protokollstruktur findet sich
 
 class TCPIPDocPacket(common.Packet):
     def get_tcpip_formatted_doc(self):
-        text = common.select_lang(self.get_doc()[1])
+        text = common.select_lang(self.get_doc_text())
         constants = {'en': 'meanings', 'de': 'Bedeutungen'}
         constants_intro = {
         'en': """

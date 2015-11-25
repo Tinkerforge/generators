@@ -72,7 +72,7 @@ class MathematicaDocDevice(common.Device):
         cls = self.get_mathematica_class_name()
 
         for packet in self.get_packets('function'):
-            if packet.get_doc()[0] != type:
+            if packet.get_doc_type() != type:
                 continue
 
             name = packet.get_camel_case_name()
@@ -374,7 +374,7 @@ Konstanten
 
 class MathematicaDocPacket(common.Packet):
     def get_mathematica_formatted_doc(self):
-        text = common.select_lang(self.get_doc()[1])
+        text = common.select_lang(self.get_doc_text())
 
         text = self.get_device().replace_mathematica_function_links(text)
 

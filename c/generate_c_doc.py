@@ -63,7 +63,7 @@ class CDocDevice(common.Device):
         func_start = '.. c:function:: int '
 
         for packet in self.get_packets('function'):
-            if packet.get_doc()[0] != typ:
+            if packet.get_doc_type() != typ:
                 continue
             name = '{0}_{1}'.format(self.get_underscore_name(), packet.get_underscore_name())
             plist = packet.get_c_parameter_list()
@@ -399,7 +399,7 @@ Konstanten
 
 class CDocPacket(c_common.CPacket):
     def get_c_formatted_doc(self):
-        text = common.select_lang(self.get_doc()[1])
+        text = common.select_lang(self.get_doc_text())
         constants = {'en': 'defines', 'de': 'Defines'}
 
         text = self.get_device().replace_c_function_links(text)

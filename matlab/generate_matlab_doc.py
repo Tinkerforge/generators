@@ -81,7 +81,7 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
         func_start = '.. matlab:function:: '
         cls = self.get_matlab_class_name()
         for packet in self.get_packets('function'):
-            if packet.get_doc()[0] != typ:
+            if packet.get_doc_type() != typ:
                 continue
 
             ret_type = packet.get_matlab_return_type(True)
@@ -466,7 +466,7 @@ Konstanten
 
 class MATLABDocPacket(matlab_common.MATLABPacket):
     def get_matlab_formatted_doc(self, shift_right):
-        text = common.select_lang(self.get_doc()[1])
+        text = common.select_lang(self.get_doc_text())
 
         text = self.get_device().replace_matlab_function_links(text)
 

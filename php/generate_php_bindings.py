@@ -131,7 +131,7 @@ class {0} extends Device
             elif len(packet.get_elements('out')) > 0:
                 prefix = 'FUNCTION'
                 flag = 'self::RESPONSE_EXPECTED_ALWAYS_TRUE'
-            elif packet.get_doc()[0] == 'ccf':
+            elif packet.get_doc_type() == 'ccf':
                 prefix = 'FUNCTION'
                 flag = 'self::RESPONSE_EXPECTED_TRUE'
             else:
@@ -400,7 +400,7 @@ class {0} extends Device
 
 class PHPBindingsPacket(php_common.PHPPacket):
     def get_php_formatted_doc(self, suffix):
-        text = common.select_lang(self.get_doc()[1])
+        text = common.select_lang(self.get_doc_text())
         link = '{0}::{1}()'
         link_c = '{0}::CALLBACK_{1}'
 

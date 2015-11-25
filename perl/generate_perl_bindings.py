@@ -165,7 +165,7 @@ sub new
             elif len(packet.get_elements('out')) > 0:
                 prefix = 'FUNCTION_'
                 flag = '_RESPONSE_EXPECTED_ALWAYS_TRUE'
-            elif packet.get_doc()[0] == 'ccf':
+            elif packet.get_doc_type() == 'ccf':
                 prefix = 'FUNCTION_'
                 flag = '_RESPONSE_EXPECTED_TRUE'
             else:
@@ -279,7 +279,7 @@ class PerlBindingsPacket(common.Packet):
         return ', '.join(params)
 
     def get_perl_formatted_doc(self):
-        text = common.select_lang(self.get_doc()[1])
+        text = common.select_lang(self.get_doc_text())
 
         def format_parameter(name):
             return name # FIXME

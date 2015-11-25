@@ -217,7 +217,7 @@ public class {0} extends Device {{
             setto = 'RESPONSE_EXPECTED_FLAG_FALSE;'
             if len(packet.get_elements('out')) > 0:
                 setto = 'RESPONSE_EXPECTED_FLAG_ALWAYS_TRUE;'
-            elif packet.get_doc()[0] == 'ccf':
+            elif packet.get_doc_type() == 'ccf':
                 setto = 'RESPONSE_EXPECTED_FLAG_TRUE;'
 
             res += re.format(name_upper, setto)
@@ -592,7 +592,7 @@ public class {0} extends Device {{
 
 class JavaBindingsPacket(java_common.JavaPacket):
     def get_java_formatted_doc(self):
-        text = common.select_lang(self.get_doc()[1])
+        text = common.select_lang(self.get_doc_text())
         link = '{{@link {0}#{1}({2})}}'
         link_c = '{{@link {0}.{1}Listener}}'
 

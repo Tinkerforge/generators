@@ -244,7 +244,7 @@ void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
             elif len(packet.get_elements('out')) > 0:
                 prefix = 'FUNCTION'
                 flag = 'DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE'
-            elif packet.get_doc()[0] == 'ccf':
+            elif packet.get_doc_type() == 'ccf':
                 prefix = 'FUNCTION'
                 flag = 'DEVICE_RESPONSE_EXPECTED_TRUE'
             else:
@@ -634,7 +634,7 @@ void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data
 
 class CBindingsPacket(c_common.CPacket):
     def get_c_formatted_doc(self):
-        text = common.select_lang(self.get_doc()[1])
+        text = common.select_lang(self.get_doc_text())
         link = '{{@link {0}_{1}}}'
         link_c = '{{@link {0}_CALLBACK_{1}}}'
 

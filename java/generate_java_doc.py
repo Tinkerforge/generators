@@ -66,7 +66,7 @@ class JavaDocDevice(java_common.JavaDevice):
         func_start = '.. java:function:: '
         cls = self.get_java_class_name()
         for packet in self.get_packets('function'):
-            if packet.get_doc()[0] != typ:
+            if packet.get_doc_type() != typ:
                 continue
 
             ret_type = packet.get_java_return_type(True)
@@ -385,7 +385,7 @@ Konstanten
 
 class JavaDocPacket(java_common.JavaPacket):
     def get_java_formatted_doc(self, shift_right):
-        text = common.select_lang(self.get_doc()[1])
+        text = common.select_lang(self.get_doc_text())
 
         text = self.get_device().replace_java_function_links(text)
 

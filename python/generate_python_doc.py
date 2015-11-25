@@ -62,7 +62,7 @@ class PythonDocDevice(python_common.PythonDevice):
         func_start = '.. py:function:: '
         cls = self.get_python_class_name()
         for packet in self.get_packets('function'):
-            if packet.get_doc()[0] != type:
+            if packet.get_doc_type() != type:
                 continue
             name = packet.get_underscore_name()
             params = packet.get_python_parameter_list()
@@ -352,7 +352,7 @@ Konstanten
 
 class PythonDocPacket(python_common.PythonPacket):
     def get_python_formatted_doc(self):
-        text = common.select_lang(self.get_doc()[1])
+        text = common.select_lang(self.get_doc_text())
 
         text = self.get_device().replace_python_function_links(text)
 

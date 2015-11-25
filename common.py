@@ -1093,11 +1093,14 @@ class Packet(NameMixin):
     def get_since_firmware(self):
         return self.raw_data['since_firmware']
 
-    def get_doc(self):
-        return self.raw_data['doc']
+    def get_doc_type(self):
+        return self.raw_data['doc'][0]
+
+    def get_doc_text(self):
+        return self.raw_data['doc'][1]
 
     def get_doc_substitutions(self):
-        doc = self.get_doc()
+        doc = self.raw_data['doc']
 
         if len(doc) < 3:
             return []

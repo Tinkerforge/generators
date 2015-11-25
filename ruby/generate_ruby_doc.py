@@ -63,7 +63,7 @@ class RubyDocDevice(ruby_common.RubyDevice):
         cls = self.get_ruby_class_name()
 
         for packet in self.get_packets('function'):
-            if packet.get_doc()[0] != typ:
+            if packet.get_doc_type() != typ:
                 continue
 
             name = packet.get_underscore_name()
@@ -332,7 +332,7 @@ Konstanten
 
 class RubyDocPacket(ruby_common.RubyPacket):
     def get_ruby_formatted_doc(self):
-        text = common.select_lang(self.get_doc()[1])
+        text = common.select_lang(self.get_doc_text())
 
         text = self.get_device().replace_ruby_function_links(text)
 

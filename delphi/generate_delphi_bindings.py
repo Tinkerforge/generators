@@ -234,7 +234,7 @@ begin
             elif len(packet.get_elements('out')) > 0:
                 prefix = 'FUNCTION_'
                 flag = 'DEVICE_RESPONSE_EXPECTED_ALWAYS_TRUE'
-            elif packet.get_doc()[0] == 'ccf':
+            elif packet.get_doc_type() == 'ccf':
                 prefix = 'FUNCTION_'
                 flag = 'DEVICE_RESPONSE_EXPECTED_TRUE'
             else:
@@ -436,7 +436,7 @@ begin
 
 class DelphiBindingsPacket(delphi_common.DelphiPacket):
     def get_delphi_formatted_doc(self):
-        text = common.select_lang(self.get_doc()[1])
+        text = common.select_lang(self.get_doc_text())
         link = '<see cref="{0}{1}.T{0}{1}.{2}"/>'
 
         # escape XML special chars
