@@ -353,7 +353,7 @@ Konstanten
                                                         c)
 
         article = 'ein'
-        if self.get_camel_case_category() == 'Brick':
+        if self.is_brick():
             article = 'einen'
         api_str += common.select_lang(const_str).format(self.get_doc_rst_ref_name(),
                                                         self.get_mathematica_class_name(),

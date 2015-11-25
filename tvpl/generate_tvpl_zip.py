@@ -4,6 +4,7 @@
 """
 Tinkerforge Visual Programming Language (TVPL) ZIP Generator
 Copyright (C) 2015 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_tvpl_zip.py: Generator for TVPL ZIP
 
@@ -107,15 +108,7 @@ goog.require(\'Blockly.Python\');
     def generate(self, device):
         if '_'.join([device.get_underscore_category(), device.get_underscore_name()]) not in released_files or \
            device.get_device_identifier() == 17:
-                return
-
-        is_brick    = False
-        is_bricklet = False
-
-        if device.get_underscore_category() == 'brick':
-            is_brick = True
-        elif device.get_underscore_category() == 'bricklet':
-            is_bricklet = True
+            return
 
         device_category_name          = '_'.join([device.get_underscore_category(), device.get_underscore_name()])
         filename_block                = device_category_name + self.file_ext_block
@@ -135,9 +128,9 @@ goog.require(\'Blockly.Python\');
 
         # Get device toolbox code and put in dict
         with open(os.path.join(self.bindings_root_directory, 'bindings', filename_toolbox_part), 'r') as fh_toolbox_part:
-            if is_brick:
+            if device.is_brick():
                 self.dict_brick_file_content_xml_toolbox_part[device_category_name] = fh_toolbox_part.read()
-            elif is_bricklet:
+            else:
                 self.dict_bricklet_file_content_xml_toolbox_part[device_category_name] = fh_toolbox_part.read()
 
     def finish(self):

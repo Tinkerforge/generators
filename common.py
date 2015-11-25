@@ -283,7 +283,7 @@ Bindings ist Teil deren allgemeine Beschreibung.
                                                    device.get_generator().get_bindings_name())
 
     # format device name
-    if device.get_camel_case_category() == 'Brick':
+    if device.is_brick():
         device_name = select_lang(brick_name)
     else:
         device_name = select_lang(bricklet_name)
@@ -301,7 +301,7 @@ Bindings ist Teil deren allgemeine Beschreibung.
                                                  device.get_generator().get_bindings_display_name())
 
     if not device.is_released():
-        if device.get_camel_case_category() == 'Brick':
+        if device.is_brick():
             d = brick
         else:
             d = bricklet
@@ -412,8 +412,7 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
         include = '{0}_{1}_{2}_{3}'.format(device.get_camel_case_name(), device.get_camel_case_category(), include_name, f[0].replace(' ', '_'))
         copy_files.append((f[1], include))
         title = title_from_filename(f[0])
-        git_name = device.get_dash_name() + '-' + device.get_dash_category()
-        url = url_format.format(git_name, bindings_name, f[0].replace(' ', '%20'))
+        url = url_format.format(device.get_git_name(), bindings_name, f[0].replace(' ', '%20'))
 
         if url_fixer is not None:
             url = url_fixer(url)
@@ -427,7 +426,7 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
 
         if additional_download_finder is not None:
             for additional_download in additional_download_finder(f[1]):
-                additional_url = url_format.format(git_name, bindings_name, additional_download.replace(' ', '%20'))
+                additional_url = url_format.format(device.get_git_name(), bindings_name, additional_download.replace(' ', '%20'))
                 downloads.append(download.format(additional_download, additional_url))
 
         downloads = [download.format(display_name, url)] + downloads
@@ -517,7 +516,7 @@ def format_since_firmware(device, packet):
     since = packet.get_since_firmware()
 
     if since is not None and since > [2, 0, 0]:
-        if device.get_camel_case_category() == 'Brick':
+        if device.is_brick():
             suffix = 'Firmware'
         else:
             suffix = 'Plugin'
@@ -712,11 +711,10 @@ def generate(bindings_root_directory, language, generator_class):
 
             device = generator.get_device_class()(com, generator)
 
-            if device.get_camel_case_category() == 'Brick':
+            if device.is_brick():
                 ref_name = device.get_underscore_name() + '_brick'
                 hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2') + '_Brick'
                 software_doc_prefix = device.get_camel_case_name() + '_Brick'
-                git_name = device.get_dash_name() + '-brick'
 
                 if device.get_device_identifier() != 17:
                     firmware_url_part = device.get_underscore_name()
@@ -729,7 +727,7 @@ def generate(bindings_root_directory, language, generator_class):
                                ref_name,
                                hardware_doc_name,
                                software_doc_prefix,
-                               git_name,
+                               device.get_git_name(),
                                firmware_url_part,
                                device.is_released(),
                                True,
@@ -743,7 +741,6 @@ def generate(bindings_root_directory, language, generator_class):
                 ref_name = device.get_underscore_name() + '_bricklet'
                 hardware_doc_name = device.get_short_display_name().replace(' ', '_').replace('/', '_').replace('-', '').replace('2.0', 'V2')
                 software_doc_prefix = device.get_camel_case_name() + '_Bricklet'
-                git_name = device.get_dash_name() + '-bricklet'
                 firmware_url_part = device.get_underscore_name()
 
                 device_info = (device.get_device_identifier(),
@@ -752,7 +749,7 @@ def generate(bindings_root_directory, language, generator_class):
                                ref_name,
                                hardware_doc_name,
                                software_doc_prefix,
-                               git_name,
+                               device.get_git_name(),
                                firmware_url_part,
                                device.is_released(),
                                True,
@@ -1261,13 +1258,19 @@ class Device(NameMixin):
         return self.raw_data['category']
 
     def get_underscore_category(self):
-        return self.raw_data['category'].lower()
+        return self.get_camel_case_category().lower()
 
     def get_upper_case_category(self):
         return self.get_underscore_category().upper()
 
     def get_dash_category(self):
         return self.get_underscore_category().replace('_', '-')
+
+    def is_brick(self):
+        return self.get_camel_case_category() == 'Brick'
+
+    def is_bricklet(self):
+        return self.get_camel_case_category() == 'Bricklet'
 
     def get_device_identifier(self):
         return self.raw_data['device_identifier']
@@ -1287,7 +1290,7 @@ class Device(NameMixin):
 
         name = re.sub('[0-9]+x[0-9]+', '', name).replace('  ', ' ').strip()
 
-        if ' ' not in name and (name.isupper() or self.get_camel_case_category() == 'Brick'):
+        if ' ' not in name and (name.isupper() or self.is_brick()):
             return name.replace(' ', '').lower()
 
         words = name.split(' ')
@@ -1309,10 +1312,12 @@ class Device(NameMixin):
     def get_description(self, language='en'):
         return self.raw_data['description'][language]
 
+    def get_git_name(self):
+        return self.get_dash_name() + '-' + self.get_dash_category()
+
     def get_git_directory(self):
         global_root_directory = os.path.normpath(os.path.join(self.get_generator().get_bindings_root_directory(), '..', '..'))
-        git_name = self.get_dash_name() + '-' + self.get_dash_category()
-        git_directory = os.path.join(global_root_directory, git_name)
+        git_directory = os.path.join(global_root_directory, self.get_git_name())
 
         return git_directory
 
