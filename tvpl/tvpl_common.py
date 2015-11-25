@@ -58,5 +58,49 @@ class TVPLElement(common.Element):
         'string': 'String'
     }
 
+    tvpl_doc_types = {
+        'en': {
+            'int8':   ('Number', 'Numbers'),
+            'uint8':  ('Number', 'Numbers'),
+            'int16':  ('Number', 'Numbers'),
+            'uint16': ('Number', 'Numbers'),
+            'int32':  ('Number', 'Numbers'),
+            'uint32': ('Number', 'Numbers'),
+            'int64':  ('Number', 'Numbers'),
+            'uint64': ('Number', 'Numbers'),
+            'float':  ('Number', 'Numbers'),
+            'bool':   ('Boolean', 'Booleans'),
+            'char':   ('Letter', 'Letters'),
+            'string': ('Text' 'Texts'),
+        },
+        'de': {
+            'int8':   ('Zahl', 'Zahlen'),
+            'uint8':  ('Zahl', 'Zahlen'),
+            'int16':  ('Zahl', 'Zahlen'),
+            'uint16': ('Zahl', 'Zahlen'),
+            'int32':  ('Zahl', 'Zahlen'),
+            'uint32': ('Zahl', 'Zahlen'),
+            'int64':  ('Zahl', 'Zahlen'),
+            'uint64': ('Zahl', 'Zahlen'),
+            'float':  ('Zahl', 'Zahlen'),
+            'bool':   ('Boolescher Wert', 'Booleschen Werten'),
+            'char':   ('Buchstabe', 'Buchstaben'),
+            'string': ('Text', 'Texten')
+        }
+    }
+
     def get_tvpl_type(self):
         return self.tvpl_types[self.get_type()]
+
+    def get_tvpl_doc_type(self):
+        t = common.select_lang(self.tvpl_doc_types)[self.get_type()]
+        c = self.get_cardinality()
+        list_of = {
+        'en': 'List of ',
+        'de': 'Liste von '
+        }
+
+        if c == 1 or self.get_type() == 'string':
+            return t[0]
+
+        return '{0}{1} {2}'.format(common.select_lang(list_of), c, t[0 if c == 1 else 1])

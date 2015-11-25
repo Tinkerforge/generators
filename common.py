@@ -310,10 +310,10 @@ Bindings ist Teil deren allgemeine Beschreibung.
 
     return s
 
-def make_rst_examples(title_from_filename, device,
-                      url_fixer=None, is_picture=False, additional_download_finder=None,
+def make_rst_examples(title_from_filename, device, url_fixer=None,
+                      is_picture=False, additional_download_finder=None,
                       display_name_fixer=None, language_from_filename=None,
-                      add_test_link=False):
+                      add_html_test_link=False, add_tvpl_test_link=False):
     bindings_name = device.get_generator().get_bindings_name()
     filename_regex = device.get_generator().get_doc_example_regex()
 
@@ -432,8 +432,12 @@ Der folgende Beispielcode ist `Public Domain (CC0 1.0)
 
         downloads = [download.format(display_name, url)] + downloads
 
-        if add_test_link and include.endswith('.html'):
+        if add_html_test_link and include.endswith('.html'):
             downloads.append('`Test ({0}) <http://www.tinkerforge.com/{1}/doc/Software/Examples/JavaScript/{2}>`__'.format(display_name, lang, include))
+
+        if add_tvpl_test_link and include.endswith('.tvpl'):
+            downloads.append('`Test ({0}) <http://www.tinkerforge.com/{1}/tvpl/editor.html?example={2}/{3}/{4}>`__'
+                             .format(display_name, lang, device.get_underscore_category(), device.get_underscore_name(), f[0]))
 
         examples += imp.format(title, '^'*len(title), include, ', '.join(downloads), language)
 
@@ -640,6 +644,12 @@ def specialize_template(template_filename, destination_filename, replacements):
     destination_file = open(destination_filename, 'wb')
     destination_file.writelines(lines)
     destination_file.close()
+
+def wrap_non_empty(prefix, middle, suffix):
+    if len(middle) > 0:
+        return prefix + middle + suffix
+    else:
+        return ''
 
 def generate(bindings_root_directory, language, generator_class):
     global lang

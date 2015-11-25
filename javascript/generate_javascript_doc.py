@@ -71,7 +71,7 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
 
         return common.make_rst_examples(title_from_filename, self,
                                         language_from_filename=language_from_filename,
-                                        add_test_link=True)
+                                        add_html_test_link=True)
 
     def get_javascript_methods(self, typ):
         methods = ''

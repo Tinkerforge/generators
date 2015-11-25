@@ -36,12 +36,48 @@ import common
 import tvpl_common
 
 class TVPLDocDevice(tvpl_common.TVPLDevice):
+    # FIXME: this also filters out all paragraphs that reference callbacks or
+    #        callback configuration function. this is not perfect and might
+    #        filter too much, but for now it is a reasonable hack
     def replace_tvpl_function_links(self, text):
+        all_blocks = [[]]
+
+        for line in text.split('\n'):
+            if len(line.strip()) == 0:
+                all_blocks.append([])
+
+            all_blocks[-1].append(line)
+
         device_name = self.get_long_display_name()
-        for other_packet in self.get_packets():
-            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-            name_right = ':tvpl:func:`{0} <{0} of {1}>`'.format(other_packet.get_name(), device_name)
-            text = text.replace(name_false, name_right)
+        filtered_blocks = []
+
+        for block in all_blocks:
+            skip_block = False
+            filtered_block = []
+
+            for line in block:
+                for other_packet in self.get_packets():
+                    name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
+                    name_right = ':tvpl:func:`{0} <{0} of {1}>`'.format(other_packet.get_name(), device_name)
+                    replaced_line = line.replace(name_false, name_right)
+
+                    if line != replaced_line:
+                        if other_packet.get_doc_type() not in ['bf', 'af']:
+                            skip_block = True
+
+                    line = replaced_line
+
+                filtered_block.append(line)
+
+            if not skip_block:
+                filtered_blocks.append(filtered_block)
+
+        lines = []
+
+        for filtered_block in filtered_blocks:
+            lines += filtered_block
+
+        text = '\n'.join(lines)
 
         return text
 
@@ -54,7 +90,8 @@ class TVPLDocDevice(tvpl_common.TVPLDevice):
             return 'xml'
 
         return common.make_rst_examples(title_from_filename, self,
-                                        language_from_filename=language_from_filename)
+                                        language_from_filename=language_from_filename,
+                                        add_tvpl_test_link=True)
 
     def get_tvpl_methods(self, typ):
         methods = ''
@@ -69,11 +106,12 @@ class TVPLDocDevice(tvpl_common.TVPLDevice):
 
             name = packet.get_name().replace(' ', '_')
             params = packet.get_tvpl_parameter_list()
+            returns = packet.get_tvpl_return_list()
             pd = packet.get_tvpl_parameter_desc()
             r = packet.get_tvpl_return_desc()
             d = packet.get_tvpl_formatted_doc()
             desc = '{0}{1}{2}'.format(pd, r, d)
-            func = '.. tvpl:function:: N{0}{1} Aof P{2}\n{3}'.format(name, params, device_name, desc)
+            func = '.. tvpl:function:: N{0}{1} Aof P{2}{3}\n{4}'.format(name, params, device_name, returns, desc)
             methods += func + '\n'
 
         return methods
@@ -137,7 +175,7 @@ class TVPLDocPacket(tvpl_common.TVPLPacket):
         text = common.handle_rst_substitutions(text, self)
 
         def constant_format(prefix, constant_group, constant, value):
-            c = '* ``{0}`` = {1}, '.format(constant.get_dash_name(), value)
+            c = '* {0} = {1}, '.format(constant.get_name(), value)
 
             for_ = {
             'en': 'for',
@@ -148,11 +186,7 @@ class TVPLDocPacket(tvpl_common.TVPLPacket):
 
             e = []
             for element in constant_group.get_elements():
-                name = element.get_dash_name()
-                if element.get_direction() == 'in':
-                    e.append('<{0}>'.format(name))
-                else:
-                    e.append(name)
+                e.append(element.get_name())
 
             if len(e) > 1:
                 and_ = {
@@ -184,21 +218,46 @@ class TVPLDocPacket(tvpl_common.TVPLPacket):
             params.insert(len(params) - 1, 'Aand')
 
         if len(params) > 0:
-            params.insert(0, 'Ato')
+            if self.get_elements('out') > 0:
+                params.insert(0, 'Awith')
+            else:
+                params.insert(0, 'Ato')
 
         return common.wrap_non_empty(' ', ' '.join(params), '')
 
+    def get_tvpl_return_list(self):
+        ret = ' R{0}'
+        ret_list = []
+        and_ = {
+        'en': '_and_',
+        'de': '_und_'
+        }
+        list_of = {
+        'en': 'List_of_',
+        'de': 'Liste_mit_'
+        }
+
+        for element in self.get_elements('out'):
+            ret_list.append(element.get_name().replace(' ', '_'))
+
+        if len(ret_list) == 0:
+            return ''
+        elif len(ret_list) == 1:
+            return ret.format(ret_list[0])
+
+        return ret.format(common.select_lang(list_of) + ',_'.join(ret_list[:-1]) + common.select_lang(and_) + ret_list[-1])
+
     def get_tvpl_parameter_desc(self):
         desc = '\n'
-        param = ' :param <{0}>: {1}'
+        param = ' :param {0}: {1}'
         has_symbols = {
         'en': 'has symbols',
         'de': 'hat Symbole'
         }
 
         for element in self.get_elements('in'):
-            t = element.get_tvpl_type()
-            desc += param.format(element.get_dash_name(), t)
+            t = element.get_tvpl_doc_type()
+            desc += param.format(element.get_name().replace(' ', '$nbsp;'), t)
 
             if element.get_constant_group() is not None:
                 desc += ' ({0})'.format(common.select_lang(has_symbols))
@@ -223,8 +282,8 @@ class TVPLDocPacket(tvpl_common.TVPLPacket):
 
         ret = '\n'
         for element in elements:
-            t = element.get_tvpl_type()
-            ret += ' :returns {0}: {1}'.format(element.get_dash_name(), t)
+            t = element.get_tvpl_doc_type()
+            ret += ' :returns {0}: {1}'.format(element.get_name().replace(' ', '$nbsp;'), t)
 
             if element.get_constant_group() is not None or \
                self.get_function_id() == 255 and element.get_underscore_name() == 'device_identifier':
