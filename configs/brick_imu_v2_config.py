@@ -248,7 +248,7 @@ Die Erdbeschleunigung ist die Beschleunigung die auf Grund von Schwerkraft
 entsteht. Einflüsse von linearen Beschleunigungen sind entfernt.
 
 Es ist auch möglich die lineare Beschleunigung zu bekommen, siehe
-:func:GetLinearAcceleration`
+:func:`GetLinearAcceleration`
 
 Wenn die Erdbeschleunigungen periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`GravityVector` zu nutzen und die Periode mit 
