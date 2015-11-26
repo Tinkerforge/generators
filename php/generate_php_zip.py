@@ -95,12 +95,7 @@ class PHPZipGenerator(common.ZipGenerator):
 
         # Make PEAR package
         with common.ChangedDirectory(self.tmp_source_dir):
-            args = ['/usr/bin/pear',
-                    'package',
-                    'package.xml']
-
-            if subprocess.call(args) != 0:
-                raise Exception("Command '{0}' failed".format(' '.join(args)))
+            common.execute(['/usr/bin/pear', 'package', 'package.xml'])
 
         # Remove build stuff
         shutil.move(os.path.join(self.tmp_source_dir, 'Tinkerforge-{0}.{1}.{2}.tgz'.format(*version)),

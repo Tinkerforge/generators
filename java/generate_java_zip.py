@@ -98,25 +98,20 @@ class JavaZipGenerator(common.ZipGenerator):
 
         # Compile source
         with common.ChangedDirectory(self.tmp_dir):
-            args = ['/usr/bin/javac ' +
-                    '-Xlint ' +
-                    '-source 1.5 ' +
-                    '-target 1.5 ' +
-                    os.path.join(self.tmp_source_com_tinkerforge_dir, '*.java')]
-
-            if subprocess.call(args, shell=True) != 0:
-                raise Exception("Command '{0}' failed".format(' '.join(args)))
+            common.execute('/usr/bin/javac ' +
+                           '-Xlint ' +
+                           '-source 1.5 ' +
+                           '-target 1.5 ' +
+                           os.path.join(self.tmp_source_com_tinkerforge_dir, '*.java'),
+                           shell=True)
 
         # Make jar
         with common.ChangedDirectory(self.tmp_source_dir):
-            args = ['/usr/bin/jar ' +
-                    'cfm ' +
-                    os.path.join(self.tmp_dir, 'Tinkerforge.jar') + ' ' +
-                    os.path.join(self.tmp_dir, 'manifest.txt') + ' ' +
-                    'com']
-
-            if subprocess.call(args, shell=True) != 0:
-                raise Exception("Command '{0}' failed".format(' '.join(args)))
+            common.execute(['/usr/bin/jar',
+                            'cfm',
+                            os.path.join(self.tmp_dir, 'Tinkerforge.jar'),
+                            os.path.join(self.tmp_dir, 'manifest.txt'),
+                           'com'])
 
         # Remove manifest
         os.remove(os.path.join(self.tmp_dir, 'manifest.txt'))

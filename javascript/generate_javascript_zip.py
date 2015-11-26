@@ -135,8 +135,7 @@ class JavaScriptZipGenerator(common.ZipGenerator):
             args.append('-o')
             args.append(os.path.join(self.tmp_browser_source_dir, 'Tinkerforge.js'))
 
-            if subprocess.call(args) != 0:
-                raise Exception("Command '{0}' failed".format(' '.join(args)))
+            common.execute(args)
 
         # Remove browser specific files
         os.remove(os.path.join(self.tmp_nodejs_source_tinkerforge_dir, 'BrowserAPI.js'))
@@ -145,8 +144,7 @@ class JavaScriptZipGenerator(common.ZipGenerator):
 
         # Generate the NPM package and put it on the root of ZIP archive
         with common.ChangedDirectory(self.tmp_nodejs_package_dir):
-            if subprocess.call('npm pack', shell=True) != 0:
-                raise Exception("Command 'npm pack' failed")
+            common.execute(['npm', 'pack'])
 
         package_name = 'tinkerforge-{0}.{1}.{2}.tgz'.format(*version)
 

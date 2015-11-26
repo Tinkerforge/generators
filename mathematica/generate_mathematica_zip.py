@@ -87,14 +87,11 @@ class MathematicaZipGenerator(common.ZipGenerator):
 
         # Make dll
         with common.ChangedDirectory(self.tmp_dir):
-            args = ['/usr/bin/gmcs',
-                    '/optimize',
-                    '/target:library',
-                    '/out:' + os.path.join(self.tmp_dir, 'Tinkerforge.dll'),
-                    os.path.join(self.tmp_source_tinkerforge_dir, '*.cs')]
-
-            if subprocess.call(args) != 0:
-                raise Exception("Command '{0}' failed".format(' '.join(args)))
+            common.execute(['/usr/bin/gmcs',
+                            '/optimize',
+                            '/target:library',
+                            '/out:' + os.path.join(self.tmp_dir, 'Tinkerforge.dll'),
+                            os.path.join(self.tmp_source_tinkerforge_dir, '*.cs')])
 
         # Make zip
         self.create_zip_file(self.tmp_dir)

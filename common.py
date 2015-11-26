@@ -652,6 +652,10 @@ def wrap_non_empty(prefix, middle, suffix):
     else:
         return ''
 
+def execute(args, **kwargs):
+    if subprocess.call(args, **kwargs) != 0:
+        raise Exception("Command '{0}' failed".format(' '.join(args) if isinstance(args, list) else args))
+
 def generate(bindings_root_directory, language, generator_class):
     global lang
     lang = language
@@ -2154,15 +2158,7 @@ class ZipGenerator(Generator):
         zipname = 'tinkerforge_{0}_bindings_{1}_{2}_{3}.zip'.format(self.get_bindings_name(), *version)
 
         with ChangedDirectory(source_path):
-            args = ['/usr/bin/zip',
-                    '-q',
-                    '-r',
-                    zipname,
-                    '.']
-
-            if subprocess.call(args) != 0:
-                raise Exception("Command '{0}' failed".format(' '.join(args)))
-
+            execute(['/usr/bin/zip', '-q', '-r', zipname, '.'])
             shutil.copy(zipname, self.get_bindings_root_directory())
 
 class ExamplesGenerator(Generator):

@@ -46,14 +46,12 @@ def generate(bindings_root_directory):
 
     # Unzip
     version = common.get_changelog_version(bindings_root_directory)
-    args = ['/usr/bin/unzip',
-            '-q',
-            os.path.join(bindings_root_directory, 'tinkerforge_perl_bindings_{0}_{1}_{2}.zip'.format(*version)),
-            '-d',
-            tmp_unzipped_dir]
 
-    if subprocess.call(args) != 0:
-        raise Exception("Command '{0}' failed".format(' '.join(args)))
+    common.execute(['/usr/bin/unzip',
+                    '-q',
+                    os.path.join(bindings_root_directory, 'tinkerforge_perl_bindings_{0}_{1}_{2}.zip'.format(*version)),
+                    '-d',
+                    tmp_unzipped_dir])
 
     # Make CPAN package structure
     modules = ['Tinkerforge',
@@ -64,8 +62,12 @@ def generate(bindings_root_directory):
     for filename in released_files:
         modules.append('Tinkerforge::' + filename.replace('.pm', ''))
 
-    subprocess.call(("module-starter --dir={0} --module={1} --distro=Tinkerforge " +
-                     "--author=\"Ishraq Ibne Ashraf\" --email=ishraq@tinkerforge.com").format(tmp_cpan_dir, ','.join(modules)), shell=True)
+    common.execute(['module-starter',
+                    '--dir=' + tmp_cpan_dir,
+                    '--module=' + ','.join(modules),
+                    '--distro=Tinkerforge',
+                    '--author="Ishraq Ibne Ashraf"',
+                    '--email=ishraq@tinkerforge.com'])
 
     # Make README
     common.specialize_template(os.path.join(bindings_root_directory, 'README.template'),
@@ -85,17 +87,8 @@ def generate(bindings_root_directory):
 
     # Make package
     with common.ChangedDirectory(tmp_cpan_dir):
-        args = ['/usr/bin/perl',
-                'Makefile.PL']
-
-        if subprocess.call(args) != 0:
-            raise Exception("Command '{0}' failed".format(' '.join(args)))
-
-        args = ['make',
-                'dist']
-
-        if subprocess.call(args) != 0:
-            raise Exception("Command '{0}' failed".format(' '.join(args)))
+        common.execute(['/usr/bin/perl', 'Makefile.PL'])
+        common.execute(['make', 'dist'])
 
     shutil.copy(os.path.join(tmp_cpan_dir, 'Tinkerforge-{0}.{1}.{2}.tar.gz'.format(*version)), bindings_root_directory)
 

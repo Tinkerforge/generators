@@ -98,12 +98,9 @@ class CSharpZipGenerator(common.ZipGenerator):
 
         # Make dll
         with common.ChangedDirectory(self.tmp_source_tinkerforge_dir):
-            args = ['xbuild',
-                    '/p:Configuration=Release',
-                    os.path.join(self.tmp_source_tinkerforge_dir, 'Tinkerforge.csproj')]
-
-            if subprocess.call(args) != 0:
-                raise Exception("Command '{0}' failed".format(' '.join(args)))
+            common.execute(['xbuild',
+                            '/p:Configuration=Release',
+                            os.path.join(self.tmp_source_tinkerforge_dir, 'Tinkerforge.csproj')])
 
         release_dir = os.path.join(self.tmp_source_tinkerforge_dir, 'bin', 'Release')
 

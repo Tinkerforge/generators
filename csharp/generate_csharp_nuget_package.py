@@ -42,14 +42,12 @@ def generate(bindings_root_directory):
 
     # Unzip
     version = common.get_changelog_version(bindings_root_directory)
-    args = ['/usr/bin/unzip',
-            '-q',
-            os.path.join(bindings_root_directory, 'tinkerforge_csharp_bindings_{0}_{1}_{2}.zip'.format(*version)),
-            '-d',
-            tmp_unzipped_20_dir]
 
-    if subprocess.call(args) != 0:
-        raise Exception("Command '{0}' failed".format(' '.join(args)))
+    common.execute(['/usr/bin/unzip',
+                    '-q',
+                    os.path.join(bindings_root_directory, 'tinkerforge_csharp_bindings_{0}_{1}_{2}.zip'.format(*version)),
+                    '-d',
+                    tmp_unzipped_20_dir])
 
     shutil.copytree(tmp_unzipped_20_dir, tmp_unzipped_40_dir)
 
@@ -60,20 +58,13 @@ def generate(bindings_root_directory):
 
     # Make dll for NET 4.0
     with common.ChangedDirectory(tmp_unzipped_40_source_tinkerforge_dir):
-        args = ['xbuild',
-                '/p:Configuration=Release',
-                os.path.join(tmp_unzipped_40_source_tinkerforge_dir, 'Tinkerforge.csproj')]
-
-        if subprocess.call(args) != 0:
-            raise Exception("Command '{0}' failed".format(' '.join(args)))
+        common.execute(['xbuild',
+                        '/p:Configuration=Release',
+                        os.path.join(tmp_unzipped_40_source_tinkerforge_dir, 'Tinkerforge.csproj')])
 
     # Download nuget.exe
     with common.ChangedDirectory(tmp_dir):
-        args = ['wget',
-                'http://www.nuget.org/nuget.exe']
-
-        if subprocess.call(args) != 0:
-            raise Exception("Command '{0}' failed".format(' '.join(args)))
+        common.execute(['wget', 'http://www.nuget.org/nuget.exe'])
 
     # Make Tinkerforge.nuspec
     common.specialize_template(os.path.join(bindings_root_directory, 'Tinkerforge.nuspec.template'),
@@ -82,13 +73,10 @@ def generate(bindings_root_directory):
 
     # Make package
     with common.ChangedDirectory(tmp_dir):
-        args = ['mono',
-                os.path.join(tmp_dir, 'nuget.exe'),
-                'pack',
-                os.path.join(tmp_dir, 'Tinkerforge.nuspec')]
-
-        if subprocess.call(args) != 0:
-            raise Exception("Command '{0}' failed".format(' '.join(args)))
+        common.execute(['mono',
+                        os.path.join(tmp_dir, 'nuget.exe'),
+                        'pack',
+                        os.path.join(tmp_dir, 'Tinkerforge.nuspec')])
 
     shutil.move(os.path.join(tmp_dir, 'Tinkerforge.{0}.{1}.{2}.nupkg'.format(*version)),
                 os.path.join(bindings_root_directory, 'tinkerforge.{0}.{1}.{2}.nupkg'.format(*version)))

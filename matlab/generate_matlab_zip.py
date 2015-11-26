@@ -119,25 +119,20 @@ class MATLABZipGenerator(common.ZipGenerator):
                 else:
                     classpath = ''
 
-                args = ['/usr/bin/javac ' +
-                        classpath +
-                        '-Xlint ' +
-                        '-source 1.5 ' +
-                        '-target 1.5 ' +
-                        os.path.join(tmp_source_com_tinkerforge_dir, '*.java')]
-
-                if subprocess.call(args, shell=True) != 0:
-                    raise Exception("Command '{0}' failed".format(' '.join(args)))
+                common.execute('/usr/bin/javac ' +
+                               classpath +
+                               '-Xlint ' +
+                               '-source 1.5 ' +
+                               '-target 1.5 ' +
+                               os.path.join(tmp_source_com_tinkerforge_dir, '*.java'),
+                               shell=True)
 
             with common.ChangedDirectory(tmp_source_dir):
-                args = ['/usr/bin/jar ' +
-                        'cfm ' +
-                        os.path.join(tmp_dir, 'Tinkerforge.jar') + ' ' +
-                        os.path.join(tmp_dir, 'manifest.txt') + ' ' +
-                        'com']
-
-                if subprocess.call(args, shell=True) != 0:
-                    raise Exception("Command '{0}' failed".format(' '.join(args)))
+                common.execute(['/usr/bin/jar',
+                                'cfm',
+                                os.path.join(tmp_dir, 'Tinkerforge.jar'),
+                                os.path.join(tmp_dir, 'manifest.txt'),
+                                'com'])
 
             # Remove manifest
             os.remove(os.path.join(tmp_dir, 'manifest.txt'))

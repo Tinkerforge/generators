@@ -42,14 +42,12 @@ def generate(bindings_root_directory):
 
     # Unzip
     version = common.get_changelog_version(bindings_root_directory)
-    args = ['/usr/bin/unzip',
-            '-q',
-            os.path.join(bindings_root_directory, 'tinkerforge_java_bindings_{0}_{1}_{2}.zip'.format(*version)),
-            '-d',
-            tmp_unzipped_dir]
 
-    if subprocess.call(args) != 0:
-        raise Exception("Command '{0}' failed".format(' '.join(args)))
+    common.execute(['/usr/bin/unzip',
+                    '-q',
+                    os.path.join(bindings_root_directory, 'tinkerforge_java_bindings_{0}_{1}_{2}.zip'.format(*version)),
+                    '-d',
+                    tmp_unzipped_dir])
 
     # Copy source
     shutil.copytree(os.path.join(tmp_unzipped_dir, 'source', 'com'),
@@ -62,12 +60,7 @@ def generate(bindings_root_directory):
 
     # Make package
     with common.ChangedDirectory(tmp_dir):
-        args = ['/usr/bin/mvn',
-                'clean',
-                'verify']
-
-        if subprocess.call(args) != 0:
-            raise Exception("Command '{0}' failed".format(' '.join(args)))
+        common.execute(['/usr/bin/mvn', 'clean', 'verify'])
 
 if __name__ == "__main__":
     generate(os.getcwd())
