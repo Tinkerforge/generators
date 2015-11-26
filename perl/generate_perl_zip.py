@@ -34,7 +34,7 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 from perl_released_files import released_files
 
-class PerlZipGenerator(common.Generator):
+class PerlZipGenerator(common.ZipGenerator):
     tmp_dir                        = '/tmp/generator/perl'
     tmp_source_dir                 = os.path.join(tmp_dir, 'source')
     tmp_source_lib_dir             = os.path.join(tmp_source_dir, 'lib')
@@ -94,7 +94,7 @@ class PerlZipGenerator(common.Generator):
         shutil.copy(os.path.join(root_dir, 'Makefile.PL'), self.tmp_source_dir)
 
         # Make zip
-        common.make_zip(self.get_bindings_name(), self.tmp_dir, root_dir, version)
+        self.create_zip_file(self.tmp_dir)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', PerlZipGenerator)

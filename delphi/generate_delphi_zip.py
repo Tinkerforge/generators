@@ -33,7 +33,7 @@ import common
 import delphi_common
 from delphi_released_files import released_files
 
-class DelphiZipGenerator(common.Generator):
+class DelphiZipGenerator(common.ZipGenerator):
     tmp_dir          = '/tmp/generator/delphi'
     tmp_source_dir   = os.path.join(tmp_dir, 'source')
     tmp_examples_dir = os.path.join(tmp_dir, 'examples')
@@ -95,9 +95,7 @@ class DelphiZipGenerator(common.Generator):
                                     '<<VERSION>>': '.'.join(version)})
 
         # Make zip
-        version = common.get_changelog_version(root_dir)
-
-        common.make_zip(self.get_bindings_name(), self.tmp_dir, root_dir, version)
+        self.create_zip_file(self.tmp_dir)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', DelphiZipGenerator)

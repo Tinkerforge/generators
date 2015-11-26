@@ -492,21 +492,6 @@ def copy_examples(copy_files, path):
     if len(copy_files) == 0:
         print('   \033[01;31m! No examples\033[0m')
 
-def make_zip(dirname, source_path, dest_path, version):
-    zipname = 'tinkerforge_{0}_bindings_{1}_{2}_{3}.zip'.format(dirname, *version)
-
-    with ChangedDirectory(source_path):
-        args = ['/usr/bin/zip',
-                '-q',
-                '-r',
-                zipname,
-                '.']
-
-        if subprocess.call(args) != 0:
-            raise Exception("Command '{0}' failed".format(' '.join(args)))
-
-        shutil.copy(zipname, dest_path)
-
 re_camel_case_to_space = re.compile('([A-Z][A-Z][a-z])|([a-z][A-Z])|([a-zA-Z][0-9])')
 
 def camel_case_to_space(name):
@@ -2166,6 +2151,31 @@ class BindingsGenerator(Generator):
             py = open(os.path.join(self.get_bindings_root_directory(), self.released_files_name_prefix + '_released_files.py'), 'wb')
             py.write('released_files = ' + repr(self.released_files))
             py.close()
+
+class ZipGenerator(Generator):
+    def __init__(self, *args, **kwargs):
+        Generator.__init__(self, *args, **kwargs)
+
+        directory = os.path.split(self.get_bindings_root_directory())[1]
+
+        if self.get_bindings_name() != directory:
+            raise Exception("bindings root directory '{0}' and bindings name '{1}' do not match".format(directory, self.get_bindings_name()))
+
+    def create_zip_file(self, source_path):
+        version = get_changelog_version(self.get_bindings_root_directory())
+        zipname = 'tinkerforge_{0}_bindings_{1}_{2}_{3}.zip'.format(self.get_bindings_name(), *version)
+
+        with ChangedDirectory(source_path):
+            args = ['/usr/bin/zip',
+                    '-q',
+                    '-r',
+                    zipname,
+                    '.']
+
+            if subprocess.call(args) != 0:
+                raise Exception("Command '{0}' failed".format(' '.join(args)))
+
+            shutil.copy(zipname, self.get_bindings_root_directory())
 
 class ExamplesGenerator(Generator):
     skip_existing_incomplete_example = False

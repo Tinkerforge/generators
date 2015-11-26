@@ -33,7 +33,7 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 from csharp_released_files import released_files
 
-class CSharpZipGenerator(common.Generator):
+class CSharpZipGenerator(common.ZipGenerator):
     tmp_dir                    = '/tmp/generator/csharp'
     tmp_source_tinkerforge_dir = os.path.join(tmp_dir, 'source', 'Tinkerforge')
     tmp_examples_dir           = os.path.join(tmp_dir, 'examples')
@@ -105,15 +105,17 @@ class CSharpZipGenerator(common.Generator):
             if subprocess.call(args) != 0:
                 raise Exception("Command '{0}' failed".format(' '.join(args)))
 
-        shutil.copy(os.path.join(self.tmp_source_tinkerforge_dir, 'bin', 'Release', 'Tinkerforge.dll'),     self.tmp_dir)
-        shutil.copy(os.path.join(self.tmp_source_tinkerforge_dir, 'bin', 'Release', 'Tinkerforge.dll.mdb'), self.tmp_dir)
-        shutil.copy(os.path.join(self.tmp_source_tinkerforge_dir, 'bin', 'Release', 'Tinkerforge.xml'),     self.tmp_dir)
+        release_dir = os.path.join(self.tmp_source_tinkerforge_dir, 'bin', 'Release')
+
+        shutil.copy(os.path.join(release_dir, 'Tinkerforge.dll'),     self.tmp_dir)
+        shutil.copy(os.path.join(release_dir, 'Tinkerforge.dll.mdb'), self.tmp_dir)
+        shutil.copy(os.path.join(release_dir, 'Tinkerforge.xml'),     self.tmp_dir)
 
         shutil.rmtree(os.path.join(self.tmp_source_tinkerforge_dir, 'bin'))
         shutil.rmtree(os.path.join(self.tmp_source_tinkerforge_dir, 'obj'))
 
         # Make zip
-        common.make_zip(self.get_bindings_name(), self.tmp_dir, root_dir, version)
+        self.create_zip_file(self.tmp_dir)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', CSharpZipGenerator)

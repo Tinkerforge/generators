@@ -33,7 +33,7 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 from labview_released_files import released_files
 
-class LabVIEWZipGenerator(common.Generator):
+class LabVIEWZipGenerator(common.ZipGenerator):
     tmp_dir                    = '/tmp/generator/labview'
     tmp_source_tinkerforge_dir = os.path.join(tmp_dir, 'source', 'Tinkerforge')
     tmp_examples_dir           = os.path.join(tmp_dir, 'examples')
@@ -116,7 +116,7 @@ class LabVIEWZipGenerator(common.Generator):
                     raise Exception("Command '{0}' failed".format(' '.join(args)))
 
         # Make zip
-        common.make_zip(self.get_bindings_name(), self.tmp_dir, root_dir, version)
+        self.create_zip_file(self.tmp_dir)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', LabVIEWZipGenerator)

@@ -34,7 +34,7 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 from matlab_released_files import released_files
 
-class MATLABZipGenerator(common.Generator):
+class MATLABZipGenerator(common.ZipGenerator):
     tmp_dir                               = '/tmp/generator/matlab'
     tmp_flavor_dir                        = {'matlab': os.path.join(tmp_dir, 'matlab'),
                                              'octave': os.path.join(tmp_dir, 'octave')}
@@ -109,7 +109,8 @@ class MATLABZipGenerator(common.Generator):
             # Make manifest
             version = common.get_changelog_version(root_dir)
 
-            file(os.path.join(tmp_dir, 'manifest.txt'), 'wb').write('Bindings-Version: {1}.{2}.{3}\nBindings-Flavor: {0}\n'.format(flavor.upper(), *version))
+            with open(os.path.join(tmp_dir, 'manifest.txt'), 'wb') as f:
+                f.write('Bindings-Version: {1}.{2}.{3}\nBindings-Flavor: {0}\n'.format(flavor.upper(), *version))
 
             # Make jar
             with common.ChangedDirectory(tmp_dir):
@@ -147,7 +148,7 @@ class MATLABZipGenerator(common.Generator):
                     os.remove(os.path.join(tmp_source_com_tinkerforge_dir, f))
 
         # Make zip
-        common.make_zip(self.get_bindings_name(), self.tmp_dir, root_dir, version)
+        self.create_zip_file(self.tmp_dir)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', MATLABZipGenerator)

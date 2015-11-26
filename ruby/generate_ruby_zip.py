@@ -34,7 +34,7 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 from ruby_released_files import released_files
 
-class RubyZipGenerator(common.Generator):
+class RubyZipGenerator(common.ZipGenerator):
     tmp_dir                        = '/tmp/generator/ruby'
     tmp_source_dir                 = os.path.join(tmp_dir, 'source')
     tmp_source_lib_dir             = os.path.join(tmp_source_dir, 'lib')
@@ -125,7 +125,7 @@ end
         shutil.rmtree(self.tmp_source_lib_dir)
 
         # Make zip
-        common.make_zip(self.get_bindings_name(), self.tmp_dir, root_dir, version)
+        self.create_zip_file(self.tmp_dir)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', RubyZipGenerator)

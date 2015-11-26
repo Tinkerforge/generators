@@ -33,7 +33,7 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 from java_released_files import released_files
 
-class JavaZipGenerator(common.Generator):
+class JavaZipGenerator(common.ZipGenerator):
     tmp_dir                        = '/tmp/generator/java'
     tmp_source_dir                 = os.path.join(tmp_dir, 'source')
     tmp_source_com_tinkerforge_dir = os.path.join(tmp_source_dir, 'com', 'tinkerforge')
@@ -93,7 +93,8 @@ class JavaZipGenerator(common.Generator):
         # Make manifest
         version = common.get_changelog_version(root_dir)
 
-        file(os.path.join(self.tmp_dir, 'manifest.txt'), 'wb').write('Bindings-Version: {0}.{1}.{2}\n'.format(*version))
+        with open(os.path.join(self.tmp_dir, 'manifest.txt'), 'wb') as f:
+            f.write('Bindings-Version: {0}.{1}.{2}\n'.format(*version))
 
         # Compile source
         with common.ChangedDirectory(self.tmp_dir):
@@ -126,7 +127,7 @@ class JavaZipGenerator(common.Generator):
                 os.remove(os.path.join(self.tmp_source_com_tinkerforge_dir, f))
 
         # Make zip
-        common.make_zip(self.get_bindings_name(), self.tmp_dir, root_dir, version)
+        self.create_zip_file(self.tmp_dir)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', JavaZipGenerator)

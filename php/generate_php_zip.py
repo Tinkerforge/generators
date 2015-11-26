@@ -35,7 +35,7 @@ import common
 import php_common
 from php_released_files import released_files
 
-class PHPZipGenerator(common.Generator):
+class PHPZipGenerator(common.ZipGenerator):
     tmp_dir                    = '/tmp/generator/php'
     tmp_source_dir             = os.path.join(tmp_dir, 'source')
     tmp_source_tinkerforge_dir = os.path.join(tmp_source_dir, 'Tinkerforge')
@@ -108,7 +108,7 @@ class PHPZipGenerator(common.Generator):
         os.remove(os.path.join(self.tmp_source_dir, 'package.xml'))
 
         # Make zip
-        common.make_zip(self.get_bindings_name(), self.tmp_dir, root_dir, version)
+        self.create_zip_file(self.tmp_dir)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', PHPZipGenerator)

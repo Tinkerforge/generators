@@ -34,7 +34,7 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 from tvpl_released_files import released_files
 
-class TVPLZipGenerator(common.Generator):
+class TVPLZipGenerator(common.ZipGenerator):
     def __init__(self, bindings_root_directory, language):
         common.Generator.__init__(self, bindings_root_directory, language)
         self.path_dir_tmp                                = '/tmp/generator/tvpl'
@@ -191,10 +191,7 @@ goog.require(\'Blockly.Python\');
             os.remove(os.path.join(self.path_dir_tmp, filename))
 
         # Make zip
-        common.make_zip(self.get_bindings_name(),
-                        self.path_dir_tmp,
-                        root_dir,
-                        common.get_changelog_version(root_dir))
+        self.create_zip_file(self.path_dir_tmp)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', TVPLZipGenerator)

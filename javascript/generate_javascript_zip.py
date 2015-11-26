@@ -34,7 +34,7 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 from javascript_released_files import released_files
 
-class JavaScriptZipGenerator(common.Generator):
+class JavaScriptZipGenerator(common.ZipGenerator):
     tmp_dir                           = '/tmp/generator/javascript'
     tmp_nodejs_dir                    = os.path.join(tmp_dir, 'nodejs')
     tmp_nodejs_source_dir             = os.path.join(tmp_nodejs_dir, 'source')
@@ -159,9 +159,7 @@ class JavaScriptZipGenerator(common.Generator):
         shutil.rmtree(self.tmp_nodejs_package_dir)
 
         # Make zip
-        version = common.get_changelog_version(root_dir)
-
-        common.make_zip(self.get_bindings_name(), self.tmp_dir, root_dir, version)
+        self.create_zip_file(self.tmp_dir)
 
         # copy Tinkerforge.js to bindings root dir so copy_all.py can pick it up
         shutil.copy(os.path.join(self.tmp_browser_source_dir, 'Tinkerforge.js'), root_dir)

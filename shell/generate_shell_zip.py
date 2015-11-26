@@ -32,7 +32,7 @@ import subprocess
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
-class ShellZipGenerator(common.Generator):
+class ShellZipGenerator(common.ZipGenerator):
     tmp_dir          = '/tmp/generator/shell'
     tmp_examples_dir = os.path.join(tmp_dir, 'examples')
 
@@ -73,9 +73,7 @@ class ShellZipGenerator(common.Generator):
         shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'),   self.tmp_dir)
 
         # Make zip
-        version = common.get_changelog_version(root_dir)
-
-        common.make_zip(self.get_bindings_name(), self.tmp_dir, root_dir, version)
+        self.create_zip_file(self.tmp_dir)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', ShellZipGenerator)
