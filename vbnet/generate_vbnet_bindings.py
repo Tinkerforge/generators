@@ -34,6 +34,9 @@ class VBNETBindingsGenerator(CSharpBindingsGenerator):
     def get_bindings_name(self):
         return 'vbnet'
 
+    def get_bindings_display_name(self):
+        return 'Visual Basic .NET'
+
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', VBNETBindingsGenerator)
 

@@ -24,7 +24,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import datetime
 import sys
 import os
 from apt.package import Package
@@ -49,10 +48,8 @@ Tinkerforge::{1}{2} - {3}
 
 package Tinkerforge::{1}{2};
 """
-        date = datetime.datetime.now().strftime("%Y-%m-%d")
-        version = common.get_changelog_version(self.get_generator().get_bindings_root_directory())
 
-        return package.format(common.gen_text_hash.format(date, *version),
+        return package.format(self.get_generator().get_header_comment('hash'),
                               self.get_camel_case_category(),
                               self.get_camel_case_name(),
                               self.get_description())
@@ -302,6 +299,9 @@ class PerlBindingsPacket(common.Packet):
 class PerlBindingsGenerator(common.BindingsGenerator):
     def get_bindings_name(self):
         return 'perl'
+
+    def get_bindings_display_name(self):
+        return 'Perl'
 
     def get_device_class(self):
         return PerlBindingsDevice

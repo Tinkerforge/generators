@@ -24,7 +24,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import datetime
 import sys
 import os
 
@@ -50,14 +49,13 @@ except ValueError:
     from ip_connection import Device, IPConnection, Error
 
 """
-        date = datetime.datetime.now().strftime("%Y-%m-%d")
-        version = common.get_changelog_version(self.get_generator().get_bindings_root_directory())
-        released = ''
 
         if not self.is_released():
             released = '\n#### __DEVICE_IS_NOT_RELEASED__ ####\n'
+        else:
+            released = ''
 
-        return include.format(common.gen_text_hash.format(date, *version),
+        return include.format(self.get_generator().get_header_comment('hash'),
                               released)
 
     def get_python_namedtuples(self):
@@ -270,6 +268,9 @@ class PythonBindingsGenerator(common.BindingsGenerator):
     def get_bindings_name(self):
         return 'python'
 
+    def get_bindings_display_name(self):
+        return 'Python'
+
     def get_device_class(self):
         return PythonBindingsDevice
 
@@ -318,8 +319,6 @@ def create_device(device_identifier, uid, ipcon):
 except ValueError:
     from {0} import {1}
 """
-        date = datetime.datetime.now().strftime("%Y-%m-%d")
-        version = common.get_changelog_version(self.get_bindings_root_directory())
         imports = []
         classes = []
 
@@ -327,9 +326,10 @@ except ValueError:
             imports.append(import_template.format(import_name, class_name))
             classes.append('{0}.DEVICE_IDENTIFIER: {0},'.format(class_name))
 
-        py = open(os.path.join(self.get_bindings_root_directory(), 'bindings', 'device_factory.py'), 'wb')
-        py.write(template.format(common.gen_text_hash.format(date, *version), '\n'.join(imports), '\n'.join(classes)))
-        py.close()
+        with open(os.path.join(self.get_bindings_root_directory(), 'bindings', 'device_factory.py'), 'wb') as f:
+            f.write(template.format(self.get_header_comment('hash'),
+                                    '\n'.join(imports),
+                                    '\n'.join(classes)))
 
         return common.BindingsGenerator.finish(self)
 

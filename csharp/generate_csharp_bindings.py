@@ -24,7 +24,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import datetime
 import sys
 import os
 from xml.sax.saxutils import escape
@@ -40,10 +39,8 @@ using System;
 
 namespace Tinkerforge
 {{"""
-        date = datetime.datetime.now().strftime("%Y-%m-%d")
-        version = common.get_changelog_version(self.get_generator().get_bindings_root_directory())
 
-        return include.format(common.gen_text_star.format(date, *version))
+        return include.format(self.get_generator().get_header_comment('asterisk'))
 
     def get_csharp_class(self):
         class_str = """
@@ -385,6 +382,9 @@ class CSharpBindingsPacket(csharp_common.CSharpPacket):
 class CSharpBindingsGenerator(common.BindingsGenerator):
     def get_bindings_name(self):
         return 'csharp'
+
+    def get_bindings_display_name(self):
+        return 'C#'
 
     def get_device_class(self):
         return CSharpBindingsDevice

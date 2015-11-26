@@ -23,7 +23,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import datetime
 import sys
 import os
 import xml.etree.ElementTree as etree
@@ -741,6 +740,9 @@ class TVPLBindingsPacket(tvpl_common.TVPLPacket):
 class TVPLBindingsGenerator(common.BindingsGenerator):
     def get_bindings_name(self):
         return 'tvpl'
+
+    def get_bindings_display_name(self):
+        return 'Tinkerforge Visual Programming Language (TVPL)'
 
     def get_device_class(self):
         return TVPLBindingsDevice

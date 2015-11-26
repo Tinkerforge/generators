@@ -34,6 +34,9 @@ class MathematicaBindingsGenerator(CSharpBindingsGenerator):
     def get_bindings_name(self):
         return 'mathematica'
 
+    def get_bindings_display_name(self):
+        return 'Mathematica'
+
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', MathematicaBindingsGenerator)
 

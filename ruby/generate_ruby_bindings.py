@@ -24,7 +24,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import datetime
 import sys
 import os
 
@@ -37,12 +36,10 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
         include = """# -*- ruby encoding: utf-8 -*-
 {0}
 """
-        date = datetime.datetime.now().strftime("%Y-%m-%d")
-        version = common.get_changelog_version(self.get_generator().get_bindings_root_directory())
-        lower_type = self.get_underscore_category()
 
-        return include.format(common.gen_text_hash.format(date, *version),
-                              lower_type, self.get_underscore_name())
+        return include.format(self.get_generator().get_header_comment('hash'),
+                              self.get_underscore_category(),
+                              self.get_underscore_name())
 
     def get_ruby_class(self):
         return """module Tinkerforge
@@ -260,6 +257,9 @@ class RubyBindingsPacket(ruby_common.RubyPacket):
 class RubyBindingsGenerator(common.BindingsGenerator):
     def get_bindings_name(self):
         return 'ruby'
+
+    def get_bindings_display_name(self):
+        return 'Ruby'
 
     def get_device_class(self):
         return RubyBindingsDevice

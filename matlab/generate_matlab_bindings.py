@@ -37,6 +37,9 @@ class MATLABBindingsGenerator(JavaBindingsGenerator):
     def get_bindings_name(self):
         return 'matlab'
 
+    def get_bindings_display_name(self):
+        return 'MATLAB'
+
     def is_matlab(self):
         return True
 
@@ -46,6 +49,9 @@ class OcatveBindingsGenerator(JavaBindingsGenerator):
 
     def get_bindings_name(self):
         return 'octave'
+
+    def get_bindings_display_name(self):
+        return 'Octave'
 
     def is_octave(self):
         return True

@@ -25,7 +25,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import datetime
 import sys
 import os
 
@@ -35,17 +34,17 @@ import javascript_common
 
 class JavaScriptBindingsDevice(javascript_common.JavaScriptDevice):
     def get_javascript_require(self):
-        date = datetime.datetime.now().strftime("%Y-%m-%d")
-        version = common.get_changelog_version(self.get_generator().get_bindings_root_directory())
-        return """{0}
+        require = """{0}
 var Device = require('./Device');
 
 {1}.DEVICE_IDENTIFIER = {2};
 {1}.DEVICE_DISPLAY_NAME = '{3}';
-""".format(common.gen_text_star.format(date, *version),
-           self.get_javascript_class_name(),
-           self.get_device_identifier(),
-           self.get_long_display_name())
+"""
+
+        return require.format(self.get_generator().get_header_comment('asterisk'),
+                              self.get_javascript_class_name(),
+                              self.get_device_identifier(),
+                              self.get_long_display_name())
 
     def get_javascript_constants(self):
         callback_constants = ''
@@ -189,6 +188,9 @@ class JavaScriptBindingsPacket(javascript_common.JavaScriptPacket):
 class JavaScriptBindingsGenerator(common.BindingsGenerator):
     def get_bindings_name(self):
         return 'javascript'
+
+    def get_bindings_display_name(self):
+        return 'JavaScript'
 
     def get_device_class(self):
         return JavaScriptBindingsDevice

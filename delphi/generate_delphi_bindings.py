@@ -24,7 +24,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import datetime
 import sys
 import os
 import delphi_common
@@ -46,10 +45,8 @@ uses
   Device, IPConnection, LEConverter;
 
 """
-        date = datetime.datetime.now().strftime("%Y-%m-%d")
-        version = common.get_changelog_version(self.get_generator().get_bindings_root_directory())
 
-        return include.format(common.gen_text_curly.format(date, *version),
+        return include.format(self.get_generator().get_header_comment('curly'),
                               self.get_camel_case_category(),
                               self.get_camel_case_name())
 
@@ -518,6 +515,9 @@ class DelphiBindingsElement(delphi_common.DelphiElement):
 class DelphiBindingsGenerator(common.BindingsGenerator):
     def get_bindings_name(self):
         return 'delphi'
+
+    def get_bindings_display_name(self):
+        return 'Delphi/Lazarus'
 
     def get_device_class(self):
         return DelphiBindingsDevice

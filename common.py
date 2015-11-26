@@ -34,39 +34,6 @@ import multiprocessing.dummy
 from collections import namedtuple
 from pprint import pprint
 
-gen_text_star = """/* ***********************************************************
- * This file was automatically generated on {0}.      *
- *                                                           *
- * Bindings Version {1}.{2}.{3}                                    *
- *                                                           *
- * If you have a bugfix for this file and want to commit it, *
- * please fix the bug in the generator. You can find a link  *
- * to the generators git repository on tinkerforge.com       *
- *************************************************************/
-"""
-
-gen_text_hash = """#############################################################
-# This file was automatically generated on {0}.      #
-#                                                           #
-# Bindings Version {1}.{2}.{3}                                    #
-#                                                           #
-# If you have a bugfix for this file and want to commit it, #
-# please fix the bug in the generator. You can find a link  #
-# to the generators git repository on tinkerforge.com       #
-#############################################################
-"""
-
-gen_text_curly = """{{
-  This file was automatically generated on {0}.
-
-  Bindings Version {1}.{2}.{3}
-
-  If you have a bugfix for this file and want to commit it,
-  please fix the bug in the generator. You can find a link
-  to the generator git on tinkerforge.com
-}}
-"""
-
 gen_text_rst = """..
  #############################################################
  # This file was automatically generated on {0}.      #
@@ -2020,6 +1987,7 @@ class Generator:
     def __init__(self, bindings_root_directory, language):
         self.bindings_root_directory = bindings_root_directory
         self.language = language # en or de
+        self.date = datetime.datetime.now().strftime("%Y-%m-%d")
 
         if self.check_bindings_root_directory_name:
             directory_name = os.path.split(self.get_bindings_root_directory())[1]
@@ -2086,6 +2054,61 @@ class Generator:
 
     def get_language(self):
         return self.language # en or de
+
+    def get_header_comment(self, kind):
+        comment = {
+        'asterisk': """/* ***********************************************************
+ * This file was automatically generated on {0}.      *
+ *                                                           *
+ * {1} Bindings Version {2}.{3}.{4}{5}*
+ *                                                           *
+ * If you have a bugfix for this file and want to commit it, *
+ * please fix the bug in the generator. You can find a link  *
+ * to the generators git repository on tinkerforge.com       *
+ *************************************************************/
+""",
+        'hash': """#############################################################
+# This file was automatically generated on {0}.      #
+#                                                           #
+# {1} Bindings Version {2}.{3}.{4}{5}#
+#                                                           #
+# If you have a bugfix for this file and want to commit it, #
+# please fix the bug in the generator. You can find a link  #
+# to the generators git repository on tinkerforge.com       #
+#############################################################
+""",
+        'curly': """{{
+  This file was automatically generated on {0}.
+
+  {1} Bindings Version {2}.{3}.{4}
+
+  If you have a bugfix for this file and want to commit it,
+  please fix the bug in the generator. You can find a link
+  to the generator git on tinkerforge.com
+}}
+""",
+        'xml': """<!--
+  This file was automatically generated on {0}.
+
+  {1} Bindings Version {2}.{3}.{4}
+
+  If you have a bugfix for this file and want to commit it,
+  please fix the bug in the generator. You can find a link
+  to the generators git repository on tinkerforge.com
+-->
+"""
+        }
+
+        version = get_changelog_version(self.get_bindings_root_directory())
+        display_name = self.get_bindings_display_name()
+        delta = 38 - len(display_name) - len(''.join(map(str, version)))
+
+        return comment[kind].format(self.date,
+                                    display_name,
+                                    version[0],
+                                    version[1],
+                                    version[2],
+                                    ' '*delta)
 
     def is_doc(self):
         return False

@@ -34,6 +34,9 @@ class LabVIEWBindingsGenerator(CSharpBindingsGenerator):
     def get_bindings_name(self):
         return 'labview'
 
+    def get_bindings_display_name(self):
+        return 'LabVIEW'
+
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', LabVIEWBindingsGenerator)
 

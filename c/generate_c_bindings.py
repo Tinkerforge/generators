@@ -24,7 +24,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import datetime
 import sys
 import os
 
@@ -47,10 +46,8 @@ extern "C" {{
 #endif
 
 """
-        date = datetime.datetime.now().strftime("%Y-%m-%d")
-        version = common.get_changelog_version(self.get_generator().get_bindings_root_directory())
 
-        return include.format(common.gen_text_star.format(date, *version),
+        return include.format(self.get_generator().get_header_comment('asterisk'),
                               self.get_underscore_category(),
                               self.get_underscore_name())
 
@@ -435,14 +432,9 @@ extern "C" {{
 typedef Device {3};
 """
 
-        date = datetime.datetime.now().strftime("%Y-%m-%d")
-        version = common.get_changelog_version(self.get_generator().get_bindings_root_directory())
-        upper_type = self.get_upper_case_category()
-        upper_name = self.get_upper_case_name()
-
-        return include.format(common.gen_text_star.format(date, *version),
-                              upper_type,
-                              upper_name,
+        return include.format(self.get_generator().get_header_comment('asterisk'),
+                              self.get_upper_case_category(),
+                              self.get_upper_case_name(),
                               self.get_camel_case_name(),
                               self.get_camel_case_category(),
                               self.get_description(),
@@ -756,6 +748,9 @@ class CBindingsPacket(c_common.CPacket):
 class CBindingsGenerator(common.BindingsGenerator):
     def get_bindings_name(self):
         return 'c'
+
+    def get_bindings_display_name(self):
+        return 'C/C++'
 
     def get_device_class(self):
         return CBindingsDevice

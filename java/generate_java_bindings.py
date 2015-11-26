@@ -24,7 +24,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import datetime
 import sys
 import os
 from xml.sax.saxutils import escape
@@ -56,10 +55,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.Arrays;
 import java.util.List;
 """
-        date = datetime.datetime.now().strftime("%Y-%m-%d")
-        version = common.get_changelog_version(self.get_generator().get_bindings_root_directory())
 
-        return include.format(common.gen_text_star.format(date, *version))
+        return include.format(self.get_generator().get_header_comment('asterisk'))
 
     def get_java_class(self):
         class_str = """
@@ -735,6 +732,9 @@ class JavaBindingsGenerator(common.BindingsGenerator):
     def get_bindings_name(self):
         return 'java'
 
+    def get_bindings_display_name(self):
+        return 'Java'
+
     def get_device_class(self):
         return JavaBindingsDevice
 
@@ -790,8 +790,6 @@ public class DeviceFactory {{
 	}}
 }}
 """
-        date = datetime.datetime.now().strftime("%Y-%m-%d")
-        version = common.get_changelog_version(self.get_bindings_root_directory())
         classes = []
         display_names = []
 
@@ -806,9 +804,10 @@ public class DeviceFactory {{
         elif self.is_octave():
             suffix = '_octave'
 
-        java = open(os.path.join(self.get_bindings_root_directory(), 'bindings' + suffix, 'DeviceFactory.java'), 'wb')
-        java.write(template.format(common.gen_text_star.format(date, *version), '\n'.join(classes), '\n'.join(display_names)))
-        java.close()
+        with open(os.path.join(self.get_bindings_root_directory(), 'bindings' + suffix, 'DeviceFactory.java'), 'wb') as f:
+            f.write(template.format(self.get_header_comment('asterisk'),
+                                    '\n'.join(classes),
+                                    '\n'.join(display_names)))
 
         return common.BindingsGenerator.finish(self)
 
