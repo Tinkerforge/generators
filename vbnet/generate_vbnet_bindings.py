@@ -31,8 +31,6 @@ import common
 from csharp.generate_csharp_bindings import CSharpBindingsGenerator
 
 class VBNETBindingsGenerator(CSharpBindingsGenerator):
-    released_files_name_prefix = 'vbnet'
-
     def get_bindings_name(self):
         return 'vbnet'
 

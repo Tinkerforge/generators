@@ -267,8 +267,6 @@ class PythonBindingsPacket(python_common.PythonPacket):
         return ' '.join(forms)
 
 class PythonBindingsGenerator(common.BindingsGenerator):
-    released_files_name_prefix = 'python'
-
     def get_bindings_name(self):
         return 'python'
 

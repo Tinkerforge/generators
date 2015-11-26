@@ -2121,7 +2121,7 @@ class DocGenerator(Generator):
         # Copy IPConnection examples
         example_regex = self.get_doc_example_regex()
 
-        if example_regex is not None:
+        if example_regex != None:
             print(' * ip_connection')
 
             examples = find_examples(self.get_bindings_root_directory(), example_regex, self.compare_examples)
@@ -2134,7 +2134,6 @@ class DocGenerator(Generator):
             copy_examples(copy_files, self.get_bindings_root_directory())
 
 class BindingsGenerator(Generator):
-    released_files_name_prefix = None
     bindings_subdirectory_name = 'bindings'
 
     def __init__(self, *args, **kwargs):
@@ -2146,13 +2145,8 @@ class BindingsGenerator(Generator):
         recreate_directory(os.path.join(self.get_bindings_root_directory(), self.bindings_subdirectory_name))
 
     def finish(self):
-        if self.released_files_name_prefix is None:
-            if len(self.released_files) > 0:
-                raise Exception("Released files in list but name prefix not set")
-        else:
-            py = open(os.path.join(self.get_bindings_root_directory(), self.released_files_name_prefix + '_released_files.py'), 'wb')
-            py.write('released_files = ' + repr(self.released_files))
-            py.close()
+        with open(os.path.join(self.get_bindings_root_directory(), self.get_bindings_name() + '_released_files.py'), 'wb') as f:
+            f.write('released_files = ' + repr(self.released_files))
 
 class ZipGenerator(Generator):
     def create_zip_file(self, source_path):

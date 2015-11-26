@@ -516,8 +516,6 @@ class DelphiBindingsElement(delphi_common.DelphiElement):
         return name
 
 class DelphiBindingsGenerator(common.BindingsGenerator):
-    released_files_name_prefix = 'delphi'
-
     def get_bindings_name(self):
         return 'delphi'
 

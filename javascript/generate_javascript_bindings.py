@@ -187,8 +187,6 @@ class JavaScriptBindingsPacket(javascript_common.JavaScriptPacket):
         return ' '.join(forms)
 
 class JavaScriptBindingsGenerator(common.BindingsGenerator):
-    released_files_name_prefix = 'javascript'
-
     def get_bindings_name(self):
         return 'javascript'
 

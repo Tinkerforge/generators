@@ -300,8 +300,6 @@ class PerlBindingsPacket(common.Packet):
         return ' '.join(forms)
 
 class PerlBindingsGenerator(common.BindingsGenerator):
-    released_files_name_prefix = 'perl'
-
     def get_bindings_name(self):
         return 'perl'
 

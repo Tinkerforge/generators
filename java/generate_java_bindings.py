@@ -732,8 +732,6 @@ class JavaBindingsPacket(java_common.JavaPacket):
         return bbgets, bbret
 
 class JavaBindingsGenerator(common.BindingsGenerator):
-    released_files_name_prefix = 'java'
-
     def get_bindings_name(self):
         return 'java'
 

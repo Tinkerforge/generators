@@ -754,8 +754,6 @@ class CBindingsPacket(c_common.CPacket):
         return return_list, needs_i
 
 class CBindingsGenerator(common.BindingsGenerator):
-    released_files_name_prefix = 'c'
-
     def get_bindings_name(self):
         return 'c'
 

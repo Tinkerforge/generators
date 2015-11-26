@@ -383,8 +383,6 @@ class CSharpBindingsPacket(csharp_common.CSharpPacket):
         return '\n\t\t///  '.join(text.strip().split('\n'))
 
 class CSharpBindingsGenerator(common.BindingsGenerator):
-    released_files_name_prefix = 'csharp'
-
     def get_bindings_name(self):
         return 'csharp'
 

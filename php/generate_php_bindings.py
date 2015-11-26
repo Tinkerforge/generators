@@ -492,8 +492,6 @@ class PHPBindingsPacket(php_common.PHPPacket):
         return '\n'.join(param)
 
 class PHPBindingsGenerator(common.BindingsGenerator):
-    released_files_name_prefix = 'php'
-
     def get_bindings_name(self):
         return 'php'
 

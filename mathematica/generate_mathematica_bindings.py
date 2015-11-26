@@ -31,8 +31,6 @@ import common
 from csharp.generate_csharp_bindings import CSharpBindingsGenerator
 
 class MathematicaBindingsGenerator(CSharpBindingsGenerator):
-    released_files_name_prefix = 'mathematica'
-
     def get_bindings_name(self):
         return 'mathematica'
 

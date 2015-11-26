@@ -258,8 +258,6 @@ class RubyBindingsPacket(ruby_common.RubyPacket):
         return " ".join(forms), total_size
 
 class RubyBindingsGenerator(common.BindingsGenerator):
-    released_files_name_prefix = 'ruby'
-
     def get_bindings_name(self):
         return 'ruby'
 
