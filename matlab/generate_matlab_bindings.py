@@ -42,9 +42,9 @@ class MATLABBindingsGenerator(JavaBindingsGenerator):
         return True
 
 class OcatveBindingsGenerator(JavaBindingsGenerator):
+    check_bindings_root_directory_name = False
     released_files_name_prefix = 'octave'
     bindings_subdirectory_name = 'bindings_octave'
-    check_directory_name = False
 
     def get_bindings_name(self):
         return 'octave'

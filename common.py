@@ -2011,9 +2011,17 @@ class ExampleSpecialFunction(ExampleItem):
             return template.format(re.sub('[ ]+\n', '\n', comment.replace('\n', linebreak)))
 
 class Generator:
+    check_bindings_root_directory_name = True
+
     def __init__(self, bindings_root_directory, language):
         self.bindings_root_directory = bindings_root_directory
         self.language = language # en or de
+
+        if self.check_bindings_root_directory_name:
+            directory_name = os.path.split(self.get_bindings_root_directory())[1]
+
+            if self.get_bindings_name() != directory_name:
+                raise Exception("bindings root directory '{0}' and bindings name '{1}' do not match".format(directory_name, self.get_bindings_name()))
 
     def get_bindings_name(self):
         raise Exception("get_bindings_name() not implemented")
@@ -2128,15 +2136,9 @@ class DocGenerator(Generator):
 class BindingsGenerator(Generator):
     released_files_name_prefix = None
     bindings_subdirectory_name = 'bindings'
-    check_directory_name = True
 
     def __init__(self, *args, **kwargs):
         Generator.__init__(self, *args, **kwargs)
-
-        directory = os.path.split(self.get_bindings_root_directory())[1]
-
-        if self.check_directory_name and self.get_bindings_name() != directory:
-            raise Exception("bindings root directory '{0}' and bindings name '{1}' do not match".format(directory, self.get_bindings_name()))
 
         self.released_files = []
 
@@ -2153,14 +2155,6 @@ class BindingsGenerator(Generator):
             py.close()
 
 class ZipGenerator(Generator):
-    def __init__(self, *args, **kwargs):
-        Generator.__init__(self, *args, **kwargs)
-
-        directory = os.path.split(self.get_bindings_root_directory())[1]
-
-        if self.get_bindings_name() != directory:
-            raise Exception("bindings root directory '{0}' and bindings name '{1}' do not match".format(directory, self.get_bindings_name()))
-
     def create_zip_file(self, source_path):
         version = get_changelog_version(self.get_bindings_root_directory())
         zipname = 'tinkerforge_{0}_bindings_{1}_{2}_{3}.zip'.format(self.get_bindings_name(), *version)
@@ -2186,11 +2180,6 @@ class ExamplesGenerator(Generator):
 
         if self.forbid_execution:
             raise Exception('ExamplesGenerator execution is forbidden')
-
-        directory = os.path.split(self.get_bindings_root_directory())[1]
-
-        if self.get_bindings_name() != directory:
-            raise Exception("bindings root directory '{0}' and bindings name '{1}' do not match".format(directory, self.get_bindings_name()))
 
     def get_examples_directory(self, device):
         return os.path.join(device.get_git_directory(), 'software', 'examples', self.get_bindings_name())
