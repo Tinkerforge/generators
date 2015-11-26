@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 """
-Delphi Documentation Generator
+Delphi/Lazarus Documentation Generator
 Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
-generate_delphi_doc.py: Generator for Delphi documentation
+generate_delphi_doc.py: Generator for Delphi/Lazarus documentation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

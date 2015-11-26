@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 """
-Delphi ZIP Generator
+Delphi/Lazarus ZIP Generator
 Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
-generate_delphi_doc.py: Generator for Delphi ZIP
+generate_delphi_zip.py: Generator for Delphi/Lazarus ZIP
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

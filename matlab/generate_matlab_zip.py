@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 """
-MATLAB ZIP Generator
+MATLAB/Octave ZIP Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
-generate_matlab_zip.py: Generator for MATLAB ZIP
+generate_matlab_zip.py: Generator for MATLAB/Octave ZIP
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

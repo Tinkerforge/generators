@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 """
-MATLAB Bindings Generator
+MATLAB/Octave Bindings Generator
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
 
-generate_matlab_bindings.py: Generator for MATLAB bindings
+generate_matlab_bindings.py: Generator for MATLAB/Octave bindings
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

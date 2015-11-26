@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 """
-Delphi Bindings Generator
+Delphi/Lazarus Bindings Generator
 Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
-generate_delphi_bindings.py: Generator for Delphi bindings
+generate_delphi_bindings.py: Generator for Delphi/Lazarus bindings
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

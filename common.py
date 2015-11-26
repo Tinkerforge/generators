@@ -644,6 +644,23 @@ def specialize_template(template_filename, destination_filename, replacements):
     destination_file.writelines(lines)
     destination_file.close()
 
+def make_c_like_bitmask(value, shift='{0} << {1}', combine='({0}) | ({1})'):
+    if value == 0:
+        return str(value)
+
+    parts = []
+
+    for i in range(64):
+        if (value & (1 << i)) != 0:
+            parts.append(shift.format(1, i))
+
+    if len(parts) == 1:
+        return parts[0]
+    elif len(parts) == 2:
+        return combine.format(parts[0], parts[1])
+    else:
+        raise Exception('More than to bits ware not supported yet')
+
 def wrap_non_empty(prefix, middle, suffix):
     if len(middle) > 0:
         return prefix + middle + suffix
@@ -1181,6 +1198,7 @@ class Device(NameMixin):
         self.all_function_packets = []
         self.all_function_packets_without_doc_only = []
         self.callback_packets = []
+        self.examples = []
 
         check_name(raw_data['name'][0], short_display_name=raw_data['name'][1], long_display_name=raw_data['name'][2], category_name=raw_data['category'])
 
@@ -1235,6 +1253,9 @@ class Device(NameMixin):
 
                 if constant_group != None:
                     self.constant_groups.append(constant_group)
+
+        for raw_example in raw_data['examples']:
+            self.examples.append(generator.get_example_class()(raw_example, self))
 
     def get_generator(self): # parent
         return self.generator
@@ -1378,6 +1399,632 @@ class Device(NameMixin):
 
         return self.get_underscore_name() + '_' + self.get_underscore_category()
 
+    def get_examples(self):
+        return self.examples
+
+class Example(NameMixin):
+    def __init__(self, raw_data, device):
+        self.raw_data = raw_data
+        self.device = device
+
+        check_name(raw_data['name'])
+
+        self.functions = []
+        self.cleanups = []
+
+        if 'functions' in raw_data:
+            for index, raw_function in enumerate(raw_data['functions']):
+                if raw_function[0] == 'getter':
+                    self.functions.append(self.get_generator().get_example_getter_function_class()(raw_function[1:], index, self))
+                elif raw_function[0] == 'setter':
+                    self.functions.append(self.get_generator().get_example_setter_function_class()(raw_function[1:], index, self))
+                elif raw_function[0] == 'callback':
+                    self.functions.append(self.get_generator().get_example_callback_function_class()(raw_function[1:], index, self))
+                elif raw_function[0] == 'callback_period':
+                    self.functions.append(self.get_generator().get_example_callback_period_function_class()(raw_function[1:], index, self))
+                elif raw_function[0] == 'callback_threshold':
+                    self.functions.append(self.get_generator().get_example_callback_threshold_function_class()(raw_function[1:], index, self))
+                else:
+                    self.functions.append(self.get_generator().get_example_special_function_class()(raw_function, index, self))
+
+        if 'cleanups' in raw_data:
+            for index, raw_cleanup in enumerate(raw_data['cleanups']):
+                if raw_cleanup[0] == 'setter':
+                    self.cleanups.append(self.get_generator().get_example_setter_function_class()(raw_cleanup[1:], -index, self))
+                else:
+                    raise ValueError('only setters are allowed as cleanup functions')
+
+    def get_device(self): # parent
+        return self.device
+
+    def get_generator(self):
+        return self.get_device().get_generator()
+
+    def _get_name(self): # for NameMixin
+        return self.raw_data['name']
+
+    def get_functions(self):
+        return self.functions
+
+    def get_cleanups(self):
+        return self.cleanups
+
+    def is_incomplete(self):
+        try:
+            return self.raw_data['incomplete']
+        except KeyError:
+            return False
+
+    def get_dummy_uid(self):
+        if self.get_device().is_brick():
+            return 'XXYYZZ'
+        else:
+            return 'XYZ'
+
+class ExampleItem:
+    def __init__(self, raw_data, index, example):
+        self.raw_data = raw_data
+        self.index = index
+        self.example = example
+
+    def get_index(self):
+        return self.index
+
+    def get_example(self):
+        return self.example
+
+    def get_device(self):
+        return self.get_example().get_device()
+
+    def get_generator(self):
+        return self.get_example().get_generator()
+
+class ExampleArgument(ExampleItem):
+    def __init__(self, raw_data, index, function, example):
+        ExampleItem.__init__(self, raw_data, index, example)
+
+        self.function = function
+
+        if len(raw_data) != 2:
+            raise Exception('Invalid ExampleArgument: ' + repr(raw_data))
+
+    def get_function(self): # parent
+        return self.function
+
+    def get_element(self):
+        function_name = self.get_function().get_name()
+        value = self.get_value()
+
+        for packet in self.get_device().get_packets('function'):
+            if packet.get_name() == function_name:
+                return packet.get_elements('in')[self.get_index()]
+
+        return None
+
+    def get_type(self):
+        return self.raw_data[0]
+
+    def get_value(self):
+        return self.raw_data[1]
+
+    def get_value_constant(self):
+        element = self.get_element()
+
+        if element != None:
+            constant_group = element.get_constant_group()
+
+            if constant_group:
+                for constant in constant_group.get_constants():
+                    if self.get_value() == constant.get_value():
+                        return constant
+
+        return None
+
+class ExampleParameter(ExampleItem, NameMixin):
+    def __init__(self, raw_data, index, function, example):
+        ExampleItem.__init__(self, raw_data, index, example)
+
+        self.function = function
+
+        if len(raw_data) != 6:
+            raise Exception('Invalid ExampleParameter: ' + repr(raw_data))
+
+        if len(raw_data[0]) != 2:
+            raise Exception('Invalid ExampleParameter: ' + repr(raw_data))
+
+        check_name(raw_data[0][0])
+
+    def get_function(self): # parent
+        return self.function
+
+    def _get_name(self): # for NameMixin
+        return self.raw_data[0][0]
+
+    def get_label_name(self):
+        return self.raw_data[0][1]
+
+    def get_type(self):
+        return self.raw_data[1]
+
+    def get_divisor(self):
+        return self.raw_data[2]
+
+    def get_formatted_divisor(self, template, cast=float):
+        divisor = self.get_divisor()
+
+        if divisor == None:
+            return ''
+        else:
+            return template.format(cast(divisor))
+
+    def get_unit_raw_name(self):
+        return self.raw_data[3]
+
+    def get_unit_formatted_raw_name(self, template):
+        raw_name = self.get_unit_raw_name()
+
+        if raw_name == None:
+            return ''
+        else:
+            return template.format(raw_name)
+
+    def get_unit_final_name(self):
+        return self.raw_data[4]
+
+    def get_unit_formatted_final_name(self, template):
+        final_name = self.get_unit_final_name()
+
+        if final_name == None:
+            return ''
+        else:
+            return template.format(final_name)
+
+    def get_range(self):
+        return self.raw_data[5]
+
+    def get_formatted_range(self, template):
+        range = self.get_range()
+
+        if range == None:
+            return ''
+        else:
+            return template.format(range[0], range[1])
+
+    def get_formatted_comment(self):
+        template = '{unit_raw_name}{range}'
+
+        return template.format(unit_raw_name=self.get_unit_formatted_raw_name(' (parameter has unit {0})'),
+                               range=self.get_formatted_range(' (parameter has range {0} to {1})'))
+
+class ExampleResult(ExampleItem, NameMixin):
+    def __init__(self, raw_data, index, function, example):
+        ExampleItem.__init__(self, raw_data, index, example)
+
+        self.function = function
+
+        if len(raw_data) != 6:
+            raise Exception('Invalid ExampleResult: ' + repr(raw_data))
+
+        if len(raw_data[0]) != 2:
+            raise Exception('Invalid ExampleResult: ' + repr(raw_data))
+
+        check_name(raw_data[0][0])
+
+    def get_function(self): # parent
+        return self.function
+
+    def _get_name(self): # for NameMixin
+        return self.raw_data[0][0]
+
+    def get_label_name(self):
+        return self.raw_data[0][1]
+
+    def get_type(self):
+        return self.raw_data[1]
+
+    def get_divisor(self):
+        return self.raw_data[2]
+
+    def get_formatted_divisor(self, template, cast=float):
+        divisor = self.get_divisor()
+
+        if divisor == None:
+            return ''
+        else:
+            return template.format(cast(divisor))
+
+    def get_unit_raw_name(self):
+        return self.raw_data[3]
+
+    def get_unit_formatted_raw_name(self, template):
+        raw_name = self.get_unit_raw_name()
+
+        if raw_name == None:
+            return ''
+        else:
+            return template.format(raw_name)
+
+    def get_unit_final_name(self):
+        return self.raw_data[4]
+
+    def get_unit_formatted_final_name(self, template):
+        final_name = self.get_unit_final_name()
+
+        if final_name == None:
+            return ''
+        else:
+            return template.format(final_name)
+
+    def get_range(self):
+        return self.raw_data[5]
+
+    def get_formatted_range(self, template):
+        range = self.get_range()
+
+        if range == None:
+            return ''
+        else:
+            return template.format(range[0], range[1])
+
+    def get_formatted_comment(self):
+        template = '{unit_raw_name}{range}'
+
+        return template.format(unit_raw_name=self.get_unit_formatted_raw_name(' (unit is {0})'),
+                               range=self.get_formatted_range(' (range is {0} to {1})'))
+
+class ExampleGetterFunction(ExampleItem, NameMixin):
+    def __init__(self, raw_data, index, example):
+        ExampleItem.__init__(self, raw_data, index, example)
+
+        self.results = []
+        self.arguments = []
+
+        if len(raw_data) != 3:
+            raise Exception('Invalid ExampleGetterFunction: ' + repr(raw_data))
+
+        if len(raw_data[0]) != 2:
+            raise Exception('Invalid ExampleGetterFunction: ' + repr(raw_data))
+
+        check_name(raw_data[0][0])
+
+        for index, raw_result in enumerate(raw_data[1]):
+            self.results.append(self.get_generator().get_example_result_class()(raw_result, index, self, example))
+
+        for index, raw_argument in enumerate(raw_data[2]):
+            self.arguments.append(self.get_generator().get_example_argument_class()(raw_argument, index, self, example))
+
+    def _get_name(self): # for NameMixin
+        return self.raw_data[0][0]
+
+    def get_comment_name(self):
+        return self.raw_data[0][1]
+
+    def get_results(self):
+        return self.results
+
+    def get_arguments(self):
+        return self.arguments
+
+class ExampleSetterFunction(ExampleItem, NameMixin):
+    def __init__(self, raw_data, index, example):
+        ExampleItem.__init__(self, raw_data, index, example)
+
+        if len(raw_data) != 4:
+            raise Exception('Invalid ExampleSetterFunction: ' + repr(raw_data))
+
+        check_name(raw_data[0])
+
+        self.arguments = []
+
+        for index, raw_argument in enumerate(raw_data[1]):
+            self.arguments.append(self.get_generator().get_example_argument_class()(raw_argument, index, self, example))
+
+    def _get_name(self): # for NameMixin
+        return self.raw_data[0]
+
+    def get_arguments(self):
+        return self.arguments
+
+    def get_comment1(self):
+        return self.raw_data[2]
+
+    def get_formatted_comment1(self, template, empty, linebreak):
+        comment1 = self.get_comment1()
+
+        if comment1 == None:
+            return empty
+        else:
+            return template.format(re.sub('[ ]+\n', '\n', comment1.replace('\n', linebreak)))
+
+    def get_comment2(self):
+        return self.raw_data[3]
+
+    def get_formatted_comment2(self, template, empty):
+        comment2 = self.get_comment2()
+
+        if comment2 == None:
+            return empty
+        else:
+            return template.format(comment2)
+
+class ExampleCallbackFunction(ExampleItem, NameMixin):
+    def __init__(self, raw_data, index, example):
+        ExampleItem.__init__(self, raw_data, index, example)
+
+        if len(raw_data) != 4:
+            raise Exception('Invalid ExampleCallbackFunction: ' + repr(raw_data))
+
+        if len(raw_data[0]) != 2:
+            raise Exception('Invalid ExampleCallbackFunction: ' + repr(raw_data))
+
+        check_name(raw_data[0][0])
+
+        self.parameters = []
+
+        for index, raw_parameter in enumerate(raw_data[1]):
+            self.parameters.append(self.get_generator().get_example_parameter_class()(raw_parameter, index, self, example))
+
+    def _get_name(self): # for NameMixin
+        return self.raw_data[0][0]
+
+    def get_comment_name(self):
+        return self.raw_data[0][1]
+
+    def get_parameters(self):
+        return self.parameters
+
+    def get_override_comment(self):
+        return self.raw_data[2]
+
+    def get_formatted_override_comment(self, template, empty, linebreak):
+        comment1 = self.get_override_comment()
+
+        if comment1 == None:
+            return empty
+        else:
+            return template.format(re.sub('[ ]+\n', '\n', comment1.replace('\n', linebreak)))
+
+    def get_extra_message(self):
+        return self.raw_data[3]
+
+    def get_formatted_extra_message(self, template):
+        extra_message = self.get_extra_message()
+
+        if extra_message == None:
+            return ''
+        else:
+            return template.format(extra_message)
+
+class ExampleCallbackPeriodFunction(ExampleItem, NameMixin):
+    def __init__(self, raw_data, index, example):
+        ExampleItem.__init__(self, raw_data, index, example)
+
+        if len(raw_data) != 3:
+            raise Exception('Invalid ExampleCallbackPeriodFunction: ' + repr(raw_data))
+
+        if len(raw_data[0]) != 2:
+            raise Exception('Invalid ExampleCallbackPeriodFunction: ' + repr(raw_data))
+
+        check_name(raw_data[0][0])
+
+        self.arguments = []
+
+        for index, raw_argument in enumerate(raw_data[1]):
+            self.arguments.append(self.get_generator().get_example_argument_class()(raw_argument, index, self, example))
+
+    def _get_name(self): # for NameMixin
+        return self.raw_data[0][0]
+
+    def get_comment_name(self):
+        return self.raw_data[0][1]
+
+    def get_arguments(self):
+        return self.arguments
+
+    def get_period(self): # msec
+        return self.raw_data[2]
+
+    def get_formatted_period(self):
+        period_msec = self.get_period()
+
+        if period_msec == None:
+            return None, None, None
+
+        period_sec = round(period_msec / 1000.0, 3)
+        period_sec_short = str(period_sec).rstrip('0').rstrip('.') + 's'
+        period_sec_long = str(period_sec).rstrip('0').rstrip('.') + ' seconds'
+
+        if period_sec_long == '1 seconds':
+            period_sec_long = 'second'
+
+        return period_msec, period_sec_short, period_sec_long
+
+class ExampleCallbackThresholdMinimumMaximum(ExampleItem):
+    def __init__(self, raw_data, index, function, example):
+        ExampleItem.__init__(self, raw_data, index, example)
+
+        if len(raw_data) != 2:
+            raise Exception('Invalid ExampleCallbackThresholdMinimumMaximum: ' + repr(raw_data))
+
+        self.function = function
+        self.corresponding_callback = None
+
+        for other in reversed(example.get_functions()):
+            if isinstance(other, ExampleCallbackFunction):
+                if other.get_name() == function.get_name() + ' Reached':
+                    self.corresponding_callback = other
+
+        if self.corresponding_callback == None:
+            raise Exception('ExampleThresholdMinimumMaximum without corresponding callback: ' + repr(raw_data))
+
+    def get_function(self): # parent
+        return self.function
+
+    def get_corresponding_callback(self):
+        return self.corresponding_callback
+
+    def get_corresponding_parameter(self):
+        return self.get_corresponding_callback().get_parameters()[len(self.get_function().get_arguments()) + self.get_index()]
+
+    def get_type(self):
+        return self.get_corresponding_parameter().get_type()
+
+    def get_minimum(self):
+        return self.raw_data[0]
+
+    def get_formatted_minimum(self, template='{minimum}*{divisor}'):
+        minimum = self.get_minimum()
+        divisor = self.get_corresponding_parameter().get_divisor()
+
+        if minimum == 0 or divisor == None:
+            return str(minimum)
+        else:
+            return template.format(minimum=minimum,
+                                   divisor=int(divisor),
+                                   result=minimum * int(divisor))
+
+    def get_maximum(self):
+        return self.raw_data[1]
+
+    def get_formatted_maximum(self, template='{maximum}*{divisor}'):
+        maximum = self.get_maximum()
+        divisor = self.get_corresponding_parameter().get_divisor()
+
+        if maximum == 0 or divisor == None:
+            return str(maximum)
+        else:
+            return template.format(maximum=maximum,
+                                   divisor=int(divisor),
+                                   result=maximum * int(divisor))
+
+    def get_unit_comment(self):
+        template = '{unit_raw_name}{range}'
+        parameter = self.get_corresponding_parameter()
+
+        return template.format(unit_raw_name=parameter.get_unit_formatted_raw_name(' (unit is {0})'),
+                               range=parameter.get_formatted_range(' (range is {0} to {1})'))
+
+class ExampleCallbackThresholdFunction(ExampleItem, NameMixin):
+    def __init__(self, raw_data, index, example):
+        ExampleItem.__init__(self, raw_data, index, example)
+
+        if len(raw_data) != 4:
+            raise Exception('Invalid ExampleCallbackThresholdFunction: ' + repr(raw_data))
+
+        if len(raw_data[0]) != 2:
+            raise Exception('Invalid ExampleCallbackThresholdFunction: ' + repr(raw_data))
+
+        check_name(raw_data[0][0])
+
+        self.arguments = []
+
+        for index, raw_argument in enumerate(raw_data[1]):
+            self.arguments.append(self.get_generator().get_example_argument_class()(raw_argument, index, self, example))
+
+        self.minimum_maximums = []
+
+        for index, raw_minimum_maximum in enumerate(raw_data[3]):
+            self.minimum_maximums.append(self.get_generator().get_example_callback_threshold_minimum_maximum_class()(raw_minimum_maximum, index, self, example))
+
+    def _get_name(self): # for NameMixin
+        return self.raw_data[0][0]
+
+    def get_comment_name(self):
+        return self.raw_data[0][1]
+
+    def get_arguments(self):
+        return self.arguments
+
+    def get_option_char(self):
+        return self.raw_data[2]
+
+    def get_option_comment(self):
+        option_char = self.get_option_char()
+        minimums = []
+        minimums_with_unit = []
+        maximums_with_unit = []
+
+        for minimum_maximum in self.get_minimum_maximums():
+            unit_final_name = minimum_maximum.get_corresponding_parameter().get_unit_formatted_final_name(' {0}')
+
+            minimums.append(str(minimum_maximum.get_minimum()))
+            minimums_with_unit.append(str(minimum_maximum.get_minimum()) + unit_final_name)
+            maximums_with_unit.append(str(minimum_maximum.get_maximum()) + unit_final_name)
+
+        if option_char == '>':
+            return 'greater than {0}'.format(', '.join(minimums_with_unit))
+        elif option_char == '<':
+            return 'smaller than {0}'.format(', '.join(minimums_with_unit))
+        elif option_char == 'o':
+            return 'outside of {0} to {1}'.format(', '.join(minimums),
+                                                  ', '.join(maximums_with_unit))
+        else:
+            raise Exception('Unhandled option: ' + option_char)
+
+    def get_minimum_maximums(self):
+        return self.minimum_maximums
+
+class ExampleSpecialFunction(ExampleItem):
+    def __init__(self, raw_data, index, example):
+        ExampleItem.__init__(self, raw_data, index, example)
+
+        if raw_data[0] not in ['empty', 'debounce_period', 'sleep', 'wait', 'loop_header', 'loop_footer']:
+            raise ValueError('Invalid special function type: ' + raw_data[0])
+
+    def get_type(self):
+        return self.raw_data[0]
+
+    def get_debounce_period(self):
+        return self.raw_data[1]
+
+    def get_formatted_debounce_period(self):
+        period_msec = self.get_debounce_period()
+        period_sec = str(round(period_msec / 1000.0, 3)).rstrip('0').rstrip('.') + ' seconds'
+
+        if period_sec == '1 seconds':
+            period_sec = '1 second'
+
+        return period_msec, period_sec
+
+    def get_sleep_duration(self): # msec
+        return self.raw_data[1]
+
+    def get_sleep_comment1(self):
+        return self.raw_data[2]
+
+    def get_formatted_sleep_comment1(self, template, empty, linebreak):
+        comment1 = self.get_sleep_comment1()
+
+        if comment1 == None:
+            return empty
+        else:
+            return template.format(re.sub('[ ]+\n', '\n', comment1.replace('\n', linebreak)))
+
+    def get_sleep_comment2(self):
+        return self.raw_data[3]
+
+    def get_formatted_sleep_comment2(self, template, empty):
+        comment2 = self.get_sleep_comment2()
+
+        if comment2 == None:
+            return empty
+        else:
+            return template.format(comment2)
+
+    def get_loop_header_limit(self):
+        return self.raw_data[1]
+
+    def get_loop_header_comment(self):
+        return self.raw_data[2]
+
+    def get_formatted_loop_header_comment(self, template, empty, linebreak):
+        comment = self.get_loop_header_comment()
+
+        if comment == None:
+            return empty
+        else:
+            return template.format(re.sub('[ ]+\n', '\n', comment.replace('\n', linebreak)))
+
 class Generator:
     def __init__(self, bindings_root_directory, language):
         self.bindings_root_directory = bindings_root_directory
@@ -1403,6 +2050,39 @@ class Generator:
 
     def get_constant_class(self):
         return Constant
+
+    def get_example_class(self):
+        return Example
+
+    def get_example_argument_class(self):
+        return ExampleArgument
+
+    def get_example_parameter_class(self):
+        return ExampleParameter
+
+    def get_example_result_class(self):
+        return ExampleResult
+
+    def get_example_getter_function_class(self):
+        return ExampleGetterFunction
+
+    def get_example_setter_function_class(self):
+        return ExampleSetterFunction
+
+    def get_example_callback_function_class(self):
+        return ExampleCallbackFunction
+
+    def get_example_callback_period_function_class(self):
+        return ExampleCallbackPeriodFunction
+
+    def get_example_callback_threshold_minimum_maximum_class(self):
+        return ExampleCallbackThresholdMinimumMaximum
+
+    def get_example_callback_threshold_function_class(self):
+        return ExampleCallbackThresholdFunction
+
+    def get_example_special_function_class(self):
+        return ExampleSpecialFunction
 
     def get_bindings_root_directory(self):
         return self.bindings_root_directory
@@ -1486,6 +2166,24 @@ class BindingsGenerator(Generator):
             py = open(os.path.join(self.get_bindings_root_directory(), self.released_files_name_prefix + '_released_files.py'), 'wb')
             py.write('released_files = ' + repr(self.released_files))
             py.close()
+
+class ExamplesGenerator(Generator):
+    skip_existing_incomplete_example = False
+    forbid_execution = True
+
+    def __init__(self, *args, **kwargs):
+        Generator.__init__(self, *args, **kwargs)
+
+        if self.forbid_execution:
+            raise Exception('ExamplesGenerator execution is forbidden')
+
+        directory = os.path.split(self.get_bindings_root_directory())[1]
+
+        if self.get_bindings_name() != directory:
+            raise Exception("bindings root directory '{0}' and bindings name '{1}' do not match".format(directory, self.get_bindings_name()))
+
+    def get_examples_directory(self, device):
+        return os.path.join(device.get_git_directory(), 'software', 'examples', self.get_bindings_name())
 
 def examples_tester_worker(cookie, args, env):
     try:

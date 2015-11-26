@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 """
-MATLAB Documentation Generator
+MATLAB/Octave Documentation Generator
 Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2013 Olaf Lüke <olaf@tinkerforge.com>
 
-generate_matlab_doc.py: Generator for MATLAB documentation
+generate_matlab_doc.py: Generator for MATLAB/Octave documentation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
