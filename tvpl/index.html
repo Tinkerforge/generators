@@ -6,6 +6,10 @@
     <link rel="stylesheet" href="css/material.min.css">
     <script src="js/material.min.js"></script>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/form-builder.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/form-render.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script
     <script type="text/javascript" src="js/babelPolyfill.js"></script>
     <script type="text/javascript" src="js/babelRuntime.js"></script>
     <script type="text/javascript" src="js/babelBrowser.js"></script>
@@ -88,7 +92,13 @@
               <i class="material-icons">clear_all</i>
             </button>
           </td>
-          <td>
+          <td align="center">
+            <button id="buttonToolbarRunStop" title="Edit GUI" onclick="" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+              <i id="buttonToolbarRunStopImage" class="material-icons">web</i>
+            </button>
+            <button id="buttonToolbar" title="Render GUI" onclick="" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+              <i class="material-icons">desktop_windows</i>
+            </button>
           </td>
         </tr>
         <tr>
@@ -96,16 +106,7 @@
             <textarea readonly id="textareaConsole"></textarea>
           </td>
           <td width="50%" height="100%">
-            <div id="divGeneratedGUI">
-              <table id="tableGeneratedGUI" align="center">
-                <tr>
-                  <td align="center">
-                    <label id="labelTest" onclick="" style="border: solid 1px #272822;">...</label>
-                    <button id="buttonTest" onclick="clickedButtonTest()">TEST BUTTON</button>
-                  </td>
-                </tr>
-              </table>
-            </div>
+            <textarea name="textAreaEditorGUI" id="textAreaEditorGUI"></textarea>
           </td>
         </tr>
       </table>
@@ -206,6 +207,12 @@
       }
 
       if (runOK) {
+        var textAreaEditorGUI = document.getElementById('textAreaEditorGUI');
+        jQuery(document).ready(function($) {
+          'use strict';
+          $(document.getElementById('textAreaEditorGUI')).formBuilder();
+        });
+
         var MONTH_NAMES = ['Jan',
                            'Feb',
                            'Mar',
@@ -610,5 +617,9 @@
         }
       }
     </script>
+
+    <script type="text/javascript" src="js/form-builder.js"></script>
+    <script type="text/javascript" src="js/form-render.js"></script>
+
   </body>
 </html>
