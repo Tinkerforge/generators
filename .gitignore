@@ -1,5 +1,8 @@
 *.pyc
 *.zip
+*.project
+*.pydevproject
+.settings/*
 */tinkerforge_*
 */*_released_files.py
 */bindings/
