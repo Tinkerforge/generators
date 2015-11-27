@@ -40,7 +40,6 @@ class TVPLZipGenerator(common.ZipGenerator):
     tmp_build_dir                 = os.path.join(tmp_dir, 'build')
     tmp_build_blockly_dir         = os.path.join(tmp_build_dir, 'blockly')
     tmp_build_closure_library_dir = os.path.join(tmp_build_dir, 'closure-library')
-    tmp_tinkerforge_dir           = os.path.join(tmp_build_blockly_dir, 'tinkerforge')
 
     tmp_javascript_dir            = '/tmp/generator/javascript'
     tmp_blocks_dir                = os.path.join(tmp_build_blockly_dir, 'blocks')
@@ -72,10 +71,12 @@ class TVPLZipGenerator(common.ZipGenerator):
         shutil.copytree(os.path.join(root_dir, '..', '..', 'tvpl-blockly'), self.tmp_build_blockly_dir,
                         ignore=shutil.ignore_patterns('*/.git'))
         shutil.copytree(os.path.join(root_dir, '..', '..', 'tvpl-closure-library'), self.tmp_build_closure_library_dir,
-                        ignore=shutil.ignore_patterns('*/.git'))
-        shutil.copytree(os.path.join(root_dir, 'tinkerforge'), self.tmp_tinkerforge_dir)
+                        ignore=shutil.ignore_patterns('*/.git', '*_test.js'))
 
-        os.remove(os.path.join(self.tmp_tinkerforge_dir, 'xml', 'toolbox.xml.part'))
+        # Copy css/ js/ and index.html
+        shutil.copytree(os.path.join(root_dir, 'css'), os.path.join(self.tmp_source_dir, 'css'))
+        shutil.copytree(os.path.join(root_dir, 'js'), os.path.join(self.tmp_source_dir, 'js'))
+        shutil.copy(os.path.join(root_dir, 'index.html'), self.tmp_source_dir)
 
         # Generate JavaScript bindings
         with common.ChangedDirectory(os.path.join(root_dir, '..', 'javascript')):
@@ -83,7 +84,7 @@ class TVPLZipGenerator(common.ZipGenerator):
             common.execute(['python', 'generate_javascript_zip.py'])
 
         shutil.copy(os.path.join(self.tmp_javascript_dir, 'browser', 'source', 'Tinkerforge.js'),
-                    os.path.join(self.tmp_tinkerforge_dir, 'js', 'Tinkerforge.js'))
+                    os.path.join(self.tmp_source_dir, 'js', 'Tinkerforge.js'))
 
     def generate(self, device):
         root_dir = self.get_bindings_root_directory()
@@ -156,7 +157,7 @@ goog.require(\'Blockly.Python\');
             f.write(generator_python_header + self.generator_python_content)
 
         # Write toolbox XML file
-        with open(os.path.join(root_dir, 'tinkerforge', 'xml', 'toolbox.xml.part'), 'rb') as f:
+        with open(os.path.join(root_dir, 'toolbox.xml.part'), 'rb') as f:
             toolbox = '<xml id="toolboxTVPL">' + \
                       '<category name="Bricks">' + \
                       brick_toolbox + \
@@ -166,7 +167,9 @@ goog.require(\'Blockly.Python\');
                       '</category>' + \
                       f.read()
 
-        with open(os.path.join(self.tmp_tinkerforge_dir, 'xml', 'toolbox.xml'), 'wb') as f:
+        os.makedirs(os.path.join(self.tmp_source_dir, 'xml'))
+
+        with open(os.path.join(self.tmp_source_dir, 'xml', 'toolbox.xml'), 'wb') as f:
             f.write(self.get_header_comment('xml') + toolbox.replace('\n', ''))
 
         # Compile with closure library
@@ -174,13 +177,15 @@ goog.require(\'Blockly.Python\');
             common.execute(['python', 'build.py'])
 
         # Get necessary files from the build directory
-        for name in ['blocks', 'core', 'generators', 'media', 'msg', 'tinkerforge']:
+        shutil.rmtree(os.path.join(self.tmp_build_blockly_dir, 'msg', 'json'))
+
+        for name in ['media', 'msg']:
             shutil.copytree(os.path.join(self.tmp_build_blockly_dir, name),
                             os.path.join(self.tmp_source_dir, name))
 
-        for name in ['blockly_compressed.js', 'blockly_uncompressed.js', 'blocks_compressed.js', 'javascript_compressed.js', 'python_compressed.js']:
+        for name in ['blockly_compressed.js', 'blocks_compressed.js', 'javascript_compressed.js', 'python_compressed.js']:
             shutil.copy(os.path.join(self.tmp_build_blockly_dir, name),
-                        os.path.join(self.tmp_source_dir, name))
+                        os.path.join(self.tmp_source_dir, 'js', name))
 
         shutil.rmtree(self.tmp_build_dir)
 
