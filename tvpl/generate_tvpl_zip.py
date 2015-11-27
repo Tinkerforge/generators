@@ -112,6 +112,17 @@ class TVPLZipGenerator(common.ZipGenerator):
             else:
                 self.bricklet_toolbox_part[device_name] = f.read()
 
+        # Copy device examples
+        tmp_examples_device = os.path.join(self.tmp_examples_dir,
+                                           device.get_underscore_category(),
+                                           device.get_underscore_name())
+
+        if not os.path.exists(tmp_examples_device):
+            os.makedirs(tmp_examples_device)
+
+        for example in common.find_device_examples(device, '^example_.*\.tvpl$'):
+            shutil.copy(example[1], tmp_examples_device)
+
     def finish(self):
         root_dir = self.get_bindings_root_directory()
         block_header = '''{comment}
