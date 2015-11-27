@@ -28,170 +28,164 @@ import sys
 import os
 import shutil
 import subprocess
-import datetime
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
 from tvpl_released_files import released_files
 
 class TVPLZipGenerator(common.ZipGenerator):
-    def __init__(self, bindings_root_directory, language):
-        common.Generator.__init__(self, bindings_root_directory, language)
-        self.path_dir_tmp                                = '/tmp/generator/tvpl'
-        self.path_dir_tmp_javascript                     = '/tmp/generator/javascript'
-        self.path_dir_tmp_closure_library                = '/tmp/generator/closure-library'
-        self.path_dir_tmp_tinkerforge                    = os.path.join(self.path_dir_tmp, 'tinkerforge')
-        self.path_dir_tmp_blocks                         = os.path.join(self.path_dir_tmp, 'blocks')
-        self.path_dir_tmp_generators_javascript          = os.path.join(self.path_dir_tmp, 'generators', 'javascript')
-        self.path_dir_tmp_generators_python              = os.path.join(self.path_dir_tmp, 'generators', 'python')
-        self.path_dir_git_tvpl_blockly                   = os.path.join(self.get_bindings_root_directory(), '..', '..', 'tvpl-blockly')
-        self.file_ext_block                              = '.block'
-        self.file_ext_generator_javascript               = '.generator.javascript'
-        self.file_ext_generator_python                   = '.generator.python'
-        self.file_ext_toolbox_part                       = '.toolbox.part'
-        self.file_content_block                          = ''
-        self.file_content_generator_javascript           = ''
-        self.file_content_generator_python               = ''
-        self.dict_brick_file_content_xml_toolbox_part    = {}
-        self.dict_bricklet_file_content_xml_toolbox_part = {}
-        self.file_name_xml_toolbox_part_merge_with       = 'toolbox.xml.part'
-        self.date                                        = datetime.datetime.now().strftime("%Y-%m-%d")
-        self.version                                     = common.get_changelog_version(self.get_bindings_root_directory())
-        self.file_content_append_block                   = '''{gentextstar}
-\'use strict\';
-goog.provide(\'Blockly.Blocks.tinkerforge\');
-goog.require(\'Blockly.Blocks\');
+    tmp_dir                       = '/tmp/generator/tvpl'
+    tmp_examples_dir              = os.path.join(tmp_dir, 'examples')
+    tmp_source_dir                = os.path.join(tmp_dir, 'source')
+    tmp_build_dir                 = os.path.join(tmp_dir, 'build')
+    tmp_build_blockly_dir         = os.path.join(tmp_build_dir, 'blockly')
+    tmp_build_closure_library_dir = os.path.join(tmp_build_dir, 'closure-library')
+    tmp_tinkerforge_dir           = os.path.join(tmp_build_blockly_dir, 'tinkerforge')
 
-'''.format(gentextstar = common.gen_text_star.format(self.date, *self.version))
+    tmp_javascript_dir            = '/tmp/generator/javascript'
+    tmp_blocks_dir                = os.path.join(tmp_build_blockly_dir, 'blocks')
+    tmp_generators_javascript_dir = os.path.join(tmp_build_blockly_dir, 'generators', 'javascript')
+    tmp_generators_python_dir     = os.path.join(tmp_build_blockly_dir, 'generators', 'python')
 
-        self.file_content_append_generator_javascript    = '''{gentextstar}
-\'use strict\';
-goog.provide(\'Blockly.JavaScript.tinkerforge\');
-goog.require(\'Blockly.JavaScript\');
-
-'''.format(gentextstar = common.gen_text_star.format(self.date, *self.version))
-
-        self.file_content_append_generator_python        = '''{gentextstar}
-\'use strict\';
-goog.provide(\'Blockly.Python.tinkerforge\');
-goog.require(\'Blockly.Python\');
-
-'''.format(gentextstar = common.gen_text_star.format(self.date, *self.version))
+    block_content                 = ''
+    generator_javascript_content  = ''
+    generator_python_content      = ''
+    brick_toolbox_part            = {}
+    bricklet_toolbox_part         = {}
 
     def get_bindings_name(self):
         return 'tvpl'
 
+    def get_bindings_display_name(self):
+        return 'Tinkerforge Visual Programming Language (TVPL)'
+
     def prepare(self):
-        shutil.rmtree(self.path_dir_tmp, True)
-        shutil.rmtree(self.path_dir_tmp_closure_library, True)
+        root_dir = self.get_bindings_root_directory()
 
-        for blockly_subdir in ['blocks', 'core', 'generators', 'i18n', 'media', 'msg']:
-            shutil.copytree(os.path.join(self.path_dir_git_tvpl_blockly, blockly_subdir),
-                            os.path.join(self.path_dir_tmp, blockly_subdir))
+        # Create directories
+        common.recreate_directory(self.tmp_dir)
+        os.makedirs(self.tmp_examples_dir)
+        os.makedirs(self.tmp_source_dir)
+        os.makedirs(self.tmp_build_dir)
 
-        for blockly_file in ['build.py']:
-            shutil.copy(os.path.join(self.path_dir_git_tvpl_blockly, blockly_file),
-                        os.path.join(self.path_dir_tmp, blockly_file))
+        # Copy blockly and closure-library to build directory
+        shutil.copytree(os.path.join(root_dir, '..', '..', 'tvpl-blockly'), self.tmp_build_blockly_dir,
+                        ignore=shutil.ignore_patterns('*/.git'))
+        shutil.copytree(os.path.join(root_dir, '..', '..', 'tvpl-closure-library'), self.tmp_build_closure_library_dir,
+                        ignore=shutil.ignore_patterns('*/.git'))
+        shutil.copytree(os.path.join(root_dir, 'tinkerforge'), self.tmp_tinkerforge_dir)
 
-        shutil.copytree(os.path.join(self.get_bindings_root_directory(), 'tinkerforge'), self.path_dir_tmp_tinkerforge)
-        os.remove(os.path.join(self.path_dir_tmp_tinkerforge, 'xml', self.file_name_xml_toolbox_part_merge_with))
+        os.remove(os.path.join(self.tmp_tinkerforge_dir, 'xml', 'toolbox.xml.part'))
 
-        with common.ChangedDirectory(os.path.join(self.get_bindings_root_directory(), '..', 'javascript')):
-            args = ['python']
-            args.append('generate_javascript_bindings.py')
-            if subprocess.call(args) != 0:
-                raise Exception("Command '{cmdarg}' failed".format(cmdarg = ' '.join(args)))
-            args = ['python']
-            args.append(os.path.join(self.get_bindings_root_directory(), '..', 'javascript', 'generate_javascript_zip.py'))
-            if subprocess.call(args) != 0:
-                raise Exception("Command '{cmdarg}' failed".format(cmdarg = ' '.join(args)))
+        # Generate JavaScript bindings
+        with common.ChangedDirectory(os.path.join(root_dir, '..', 'javascript')):
+            common.execute(['python', 'generate_javascript_bindings.py'])
+            common.execute(['python', 'generate_javascript_zip.py'])
 
-        shutil.copy(os.path.join(self.path_dir_tmp_javascript, 'browser', 'source', 'Tinkerforge.js'),
-                    os.path.join(self.path_dir_tmp_tinkerforge, 'js', 'Tinkerforge.js'))
-        shutil.copytree(os.path.join(self.get_bindings_root_directory(), '..', '..', 'tvpl-closure-library'),
-                        self.path_dir_tmp_closure_library)
+        shutil.copy(os.path.join(self.tmp_javascript_dir, 'browser', 'source', 'Tinkerforge.js'),
+                    os.path.join(self.tmp_tinkerforge_dir, 'js', 'Tinkerforge.js'))
 
     def generate(self, device):
-        if '_'.join([device.get_underscore_category(), device.get_underscore_name()]) not in released_files or \
-           device.get_device_identifier() == 17:
+        root_dir = self.get_bindings_root_directory()
+
+        if not device.is_released() or device.get_device_identifier() == 17:
             return
 
-        device_category_name          = '_'.join([device.get_underscore_category(), device.get_underscore_name()])
-        filename_block                = device_category_name + self.file_ext_block
-        filename_generator_javascript = device_category_name + self.file_ext_generator_javascript
-        filename_generator_python     = device_category_name + self.file_ext_generator_python
-        filename_toolbox_part         = device_category_name + self.file_ext_toolbox_part
+        device_name = device.get_underscore_category() + '_' +  device.get_underscore_name()
 
-        # Get device block definitions and append
-        with open(os.path.join(self.bindings_root_directory, 'bindings', filename_block), 'r') as fh_block:
-            self.file_content_block = self.file_content_block + fh_block.read()
+        # Collect device block definitions
+        with open(os.path.join(root_dir, 'bindings', device_name + '.block'), 'rb') as f:
+            self.block_content += f.read()
 
-        # Get device block generators and append
-        with open(os.path.join(self.bindings_root_directory, 'bindings', filename_generator_javascript), 'r') as fh_generator_javascript:
-            self.file_content_generator_javascript = self.file_content_generator_javascript + fh_generator_javascript.read()
-        with open(os.path.join(self.bindings_root_directory, 'bindings', filename_generator_python), 'r') as fh_generator_python:
-            self.file_content_generator_python = self.file_content_generator_python + fh_generator_python.read()
+        # Collect device block generators
+        with open(os.path.join(root_dir, 'bindings', device_name + '.generator.javascript'), 'rb') as f:
+            self.generator_javascript_content += f.read()
 
-        # Get device toolbox code and put in dict
-        with open(os.path.join(self.bindings_root_directory, 'bindings', filename_toolbox_part), 'r') as fh_toolbox_part:
+        with open(os.path.join(root_dir, 'bindings', device_name + '.generator.python'), 'rb') as f:
+            self.generator_python_content += f.read()
+
+        # Collect device toolbox code
+        with open(os.path.join(root_dir, 'bindings', device_name + '.toolbox.part'), 'rb') as f:
             if device.is_brick():
-                self.dict_brick_file_content_xml_toolbox_part[device_category_name] = fh_toolbox_part.read()
+                self.brick_toolbox_part[device_name] = f.read()
             else:
-                self.dict_bricklet_file_content_xml_toolbox_part[device_category_name] = fh_toolbox_part.read()
+                self.bricklet_toolbox_part[device_name] = f.read()
 
     def finish(self):
         root_dir = self.get_bindings_root_directory()
+        block_header = '''{comment}
+\'use strict\';
+goog.provide(\'Blockly.Blocks.tinkerforge\');
+goog.require(\'Blockly.Blocks\');
+
+'''.format(comment=self.get_header_comment('asterisk'))
+        generator_javascript_header = '''{comment}
+\'use strict\';
+goog.provide(\'Blockly.JavaScript.tinkerforge\');
+goog.require(\'Blockly.JavaScript\');
+
+'''.format(comment=self.get_header_comment('asterisk'))
+        generator_python_header = '''{comment}
+\'use strict\';
+goog.provide(\'Blockly.Python.tinkerforge\');
+goog.require(\'Blockly.Python\');
+
+'''.format(comment=self.get_header_comment('asterisk'))
 
         # Prepare toolbox XML file content
-        file_content_xml_toolbox_brick    = ''
-        file_content_xml_toolbox_bricklet = ''
+        brick_toolbox = ''
 
-        for device in sorted(self.dict_brick_file_content_xml_toolbox_part):
-            file_content_xml_toolbox_brick = file_content_xml_toolbox_brick + self.dict_brick_file_content_xml_toolbox_part[device]
+        for device in sorted(self.brick_toolbox_part):
+            brick_toolbox += self.brick_toolbox_part[device]
 
-        for device in sorted(self.dict_bricklet_file_content_xml_toolbox_part):
-            file_content_xml_toolbox_bricklet = file_content_xml_toolbox_bricklet + self.dict_bricklet_file_content_xml_toolbox_part[device]
+        bricklet_toolbox = ''
+
+        for device in sorted(self.bricklet_toolbox_part):
+            bricklet_toolbox += self.bricklet_toolbox_part[device]
 
         # Write block definition file
-        with open(os.path.join(self.path_dir_tmp_blocks, 'tinkerforge.js'), 'w') as fh_blocks:
-            fh_blocks.write(self.file_content_append_block + self.file_content_block)
+        with open(os.path.join(self.tmp_blocks_dir, 'tinkerforge.js'), 'wb') as f:
+            f.write(block_header + self.block_content)
 
         # Write JavaScript generator file
-        with open(os.path.join(self.path_dir_tmp_generators_javascript, 'tinkerforge.js'), 'w') as fh_generator_javascript:
-            fh_generator_javascript.write(self.file_content_append_generator_javascript + self.file_content_generator_javascript)
+        with open(os.path.join(self.tmp_generators_javascript_dir, 'tinkerforge.js'), 'wb') as f:
+            f.write(generator_javascript_header + self.generator_javascript_content)
 
         # Write Python generator file
-        with open(os.path.join(self.path_dir_tmp_generators_python, 'tinkerforge.js'), 'w') as fh_generator_python:
-            fh_generator_python.write(self.file_content_append_generator_python + self.file_content_generator_python)
+        with open(os.path.join(self.tmp_generators_python_dir, 'tinkerforge.js'), 'wb') as f:
+            f.write(generator_python_header + self.generator_python_content)
 
         # Write toolbox XML file
-        with open(os.path.join(root_dir, root_dir, 'tinkerforge', 'xml', self.file_name_xml_toolbox_part_merge_with), 'r') as fh_xml_toolbox_merge_with:
-            file_content_xml_toolbox = '<xml id="toolboxTVPL">' + \
-                                       '<category name="Bricks">' + \
-                                       file_content_xml_toolbox_brick + \
-                                       '</category>' + \
-                                       '<category name="Bricklets">' + \
-                                       file_content_xml_toolbox_bricklet + \
-                                       '</category>' + \
-                                       fh_xml_toolbox_merge_with.read()
+        with open(os.path.join(root_dir, 'tinkerforge', 'xml', 'toolbox.xml.part'), 'rb') as f:
+            toolbox = '<xml id="toolboxTVPL">' + \
+                      '<category name="Bricks">' + \
+                      brick_toolbox + \
+                      '</category>' + \
+                      '<category name="Bricklets">' + \
+                      bricklet_toolbox + \
+                      '</category>' + \
+                      f.read()
 
-            with open(os.path.join(self.path_dir_tmp_tinkerforge, 'xml', 'toolbox.xml'), 'w') as fh_xml_toolbox:
-                fh_xml_toolbox.write('<!--\n' + common.gen_text_hash.format(self.date, *self.version) + \
-                                     '-->\n' + file_content_xml_toolbox.replace('\n', ''))
+        with open(os.path.join(self.tmp_tinkerforge_dir, 'xml', 'toolbox.xml'), 'wb') as f:
+            f.write(self.get_header_comment('xml') + toolbox.replace('\n', ''))
 
         # Compile with closure library
-        with common.ChangedDirectory(self.path_dir_tmp):
-            args = ['python']
-            args.append(os.path.join(self.path_dir_tmp, 'build.py'))
-            if subprocess.call(args) != 0:
-                raise Exception("Command '{cmdarg}' failed".format(cmdarg = ' '.join(args)))
+        with common.ChangedDirectory(self.tmp_build_blockly_dir):
+            common.execute(['python', 'build.py'])
 
-        # Remove temporary files
-        for filename in ['build.py']:
-            os.remove(os.path.join(self.path_dir_tmp, filename))
+        # Get necessary files from the build directory
+        for name in ['blocks', 'core', 'generators', 'media', 'msg', 'tinkerforge']:
+            shutil.copytree(os.path.join(self.tmp_build_blockly_dir, name),
+                            os.path.join(self.tmp_source_dir, name))
+
+        for name in ['blockly_compressed.js', 'blockly_uncompressed.js', 'blocks_compressed.js', 'javascript_compressed.js', 'python_compressed.js']:
+            shutil.copy(os.path.join(self.tmp_build_blockly_dir, name),
+                        os.path.join(self.tmp_source_dir, name))
+
+        shutil.rmtree(self.tmp_build_dir)
 
         # Make zip
-        self.create_zip_file(self.path_dir_tmp)
+        self.create_zip_file(self.tmp_dir)
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', TVPLZipGenerator)
