@@ -560,7 +560,8 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
       'class': 'cb-wrap'
     }).append(cbHeader, cbUL);
 
-    $stageWrap.append($sortableFields, cbWrap, actionLinks, viewXML, saveAll);
+    //$stageWrap.append($sortableFields, cbWrap, actionLinks, viewXML, saveAll);
+    $stageWrap.append($sortableFields, cbWrap, actionLinks);
     $stageWrap.before($formWrap);
     $formWrap.append($stageWrap, cbWrap);
 
