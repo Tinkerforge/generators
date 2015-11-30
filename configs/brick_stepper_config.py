@@ -682,8 +682,8 @@ aktiviert ist (siehe :func:`SetSyncRect`).
 
 Für eine gute Erläuterung der verschiedenen Decay Modi siehe 
 `diesen <http://ebldc.com/?p=86/>`__ Blogeintrag (Englisch) von Avayan oder
-`diesen <http://www.schrittmotor-blog.de/?p=51>`__ Blogeintrag (Deutsch) von
-T. Ostermann.
+`diesen <http://www.schrittmotor-blog.de/stromregelung-von-schrittmotoren-auf-das-abschalten-kommt-es-an/>`__
+Blogeintrag (Deutsch) von T. Ostermann.
 
 Ein guter Decay Modus ist leider unterschiedlich für jeden Motor. Der beste
 Weg einen guten Decay Modus für den jeweiligen Schrittmotor zu finden, wenn der
