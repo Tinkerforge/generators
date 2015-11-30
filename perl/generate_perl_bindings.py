@@ -34,8 +34,7 @@ import perl_common
 
 class PerlBindingsDevice(perl_common.PerlDevice):
     def get_perl_package(self):
-        package = """
-{0}
+        package = """{0}
 =pod
 
 =encoding utf8
