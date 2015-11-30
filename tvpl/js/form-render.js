@@ -197,7 +197,7 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
           settings = $('settings', formData); // @todo
 
       if (!formData) {
-        alert('No formData. Add some fields and try again');
+        alert('Nothing to render. Seems like the GUI editor is empty.');
         return false;
       }
 

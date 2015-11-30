@@ -9,7 +9,8 @@
     <link rel="stylesheet" type="text/css" media="screen" href="css/form-builder.css">
     <link rel="stylesheet" type="text/css" media="screen" href="css/form-render.css">
     <script src="js/jquery.min.js"></script>
-    <script src="js/jquery-ui.min.js"></script
+    <script src="js/jquery-ui.min.js"></script>
+    <script src="js/jquery.blockUI.js"></script>
     <script type="text/javascript" src="js/babelPolyfill.js"></script>
     <script type="text/javascript" src="js/babelRuntime.js"></script>
     <script type="text/javascript" src="js/babelBrowser.js"></script>
@@ -88,15 +89,15 @@
             <button id="buttonToolbarRunStop" title="Run graphical program from workspace" onclick="clickedRunProgram()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
               <i id="buttonToolbarRunStopImage" class="material-icons">play_arrow</i>
             </button>
-            <button id="buttonToolbar" title="Clear output" onclick="clickedClearOutput()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+            <button title="Clear output" onclick="clickedClearOutput()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
               <i class="material-icons">clear_all</i>
             </button>
           </td>
           <td align="center">
-            <button id="buttonToolbarRunStop" title="Edit GUI" onclick="" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
-              <i id="buttonToolbarRunStopImage" class="material-icons">web</i>
+            <button title="Edit GUI" onclick="clickedEditGUI()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+              <i class="material-icons">web</i>
             </button>
-            <button id="buttonToolbar" title="Render GUI" onclick="" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+            <button title="Render GUI" onclick="clickedRenderGUI()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
               <i class="material-icons">desktop_windows</i>
             </button>
           </td>
@@ -106,7 +107,10 @@
             <textarea readonly id="textareaConsole"></textarea>
           </td>
           <td width="50%" height="100%">
-            <textarea name="textAreaEditorGUI" id="textAreaEditorGUI"></textarea>
+	        <div id="divEditorGUI" style="display: block;">
+	          <textarea name="textAreaEditorGUI" id="textAreaEditorGUI"></textarea>
+	        </div>
+	        <form id="formRenderGUI" style="display: none;"></form>
           </td>
         </tr>
       </table>
@@ -246,6 +250,8 @@
         var workerManager = null;
         var buttonToolbarRunStop = document.getElementById('buttonToolbarRunStop');
         var buttonToolbarRunStopImage = document.getElementById('buttonToolbarRunStopImage');
+        var divEditorGUI = document.getElementById('divEditorGUI');
+        var formRenderGUI = document.getElementById('formRenderGUI');
         var fileReader = new FileReader();
         var blocklyWorkspace = Blockly.inject(blocklyDiv,
           {grid:
@@ -436,6 +442,32 @@
           }
 
           return [true, String(returnedCode)];
+        }
+
+        function clickedEditGUI(e) {
+          divEditorGUI.style.display = 'block';
+          formRenderGUI.style.display = 'none';
+        }
+
+        function clickedRenderGUI(e) {
+          var editor = document.getElementById('textAreaEditorGUI');
+
+          $(editor).formRender({container: $(formRenderGUI)});
+
+          if (formRenderGUI.childNodes.length < 1) {
+            divEditorGUI.style.display = 'block';
+            formRenderGUI.style.display = 'none';
+          }
+          else {
+            divEditorGUI.style.display = 'none';
+            formRenderGUI.style.display = 'block';
+          }
+
+          /*
+          $('#formRenderGUI').block({
+            message: '<h1>Blocked...</h1>',
+          });
+          */
         }
 
         function clickedClearOutput(e) {
