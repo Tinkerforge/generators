@@ -334,7 +334,9 @@ class VBNETExampleCallbackFunction(common.ExampleCallbackFunction):
 """
         template1B = r"""{override_comment}
 """
-        template2 = r"""    Sub {function_camel_case_name}CB(ByVal sender As {device_camel_case_category}{device_camel_case_name}{parameters})
+        template2 = '    Sub {function_camel_case_name}CB('
+        template3 = 'ByVal sender As {device_camel_case_category}{device_camel_case_name}'
+        template4 = r""")
 {write_lines}{extra_message}
     End Sub
 """
@@ -368,14 +370,21 @@ class VBNETExampleCallbackFunction(common.ExampleCallbackFunction):
         if len(extra_message) > 0 and len(write_lines) > 0:
             extra_message = '\n' + extra_message
 
+        specialized2 = template2.format(function_camel_case_name=self.get_camel_case_name())
+        specialized3 = template3.format(device_camel_case_category=self.get_device().get_camel_case_category(),
+                                        device_camel_case_name=self.get_device().get_camel_case_name())
+        parameters = ', '.join(parameters)
+
+        if len(parameters) > 0 and len(specialized2) + len(specialized3) + len(parameters) > 90:
+            specialized23p = specialized2 + specialized3 + ', _\n' + ' ' * len(specialized2) + parameters
+        else:
+            specialized23p = specialized2 + specialized3 + common.wrap_non_empty(', ', parameters, '')
+
         return template1.format(function_comment_name=self.get_comment_name(),
                                 comments=''.join(comments),
                                 override_comment=override_comment) + \
-               template2.format(device_camel_case_category=self.get_device().get_camel_case_category(),
-                                device_camel_case_name=self.get_device().get_camel_case_name(),
-                                function_camel_case_name=self.get_camel_case_name(),
-                                parameters=common.wrap_non_empty(', ', ', '.join(parameters), ''),
-                                write_lines='\n'.join(write_lines),
+               specialized23p + \
+               template4.format(write_lines='\n'.join(write_lines),
                                 extra_message=extra_message)
 
     def get_vbnet_source(self):
