@@ -319,7 +319,7 @@ for you to use this function
 Setzt Offset und Gain der MCP3911 internen Kalibrierungsregister.
 
 Siehe MCP3911 Datenblatt 7.7 und 7.8. Das Industrial Dual Analog In Bricklet
-wird von Tinkerforge werkskalibriert worden. Ein Aufruf dieser Funktion sollte
+wird von Tinkerforge werkskalibriert. Ein Aufruf dieser Funktion sollte
 nicht notwendig sein.
 """
 }]

@@ -374,7 +374,7 @@ com['packets'].append({
 'en':
 """
 Sets the length of a `moving averaging <https://en.wikipedia.org/wiki/Moving_average>`__
-for the moisture value.
+for the voltage.
 
 Setting the length to 1 will turn the averaging off. With less
 averaging, there is more noise on the data.
@@ -386,7 +386,7 @@ The default value is 50.
 'de':
 """
 Setzt die Länge eines `gleitenden Mittelwerts <https://de.wikipedia.org/wiki/Gleitender_Mittelwert>`__
-für den Feuchtigkeitswert.
+für die Spannung.
 
 Wenn die Länge auf 1 gesetzt wird, ist das Averaging aus. Desto kleiner
 die Länge des Mittelwerts ist, desto mehr Rauschen ist auf den Daten.
