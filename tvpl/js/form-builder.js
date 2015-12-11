@@ -99,7 +99,7 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
         devMode: 'Developer Mode',
         disableFields: 'These fields cannot be moved.',
         editNames: 'Edit Names',
-        editorTitle: 'Form Elements',
+        editorTitle: 'GUI Elements',
         editXML: 'Edit XML',
         fieldVars: 'Field Variables',
         fieldRemoveWarning: 'Are you sure you want to remove this field?',
@@ -132,7 +132,7 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
         selectOptions: 'Select Items',
         select: 'Select',
         selectionsMessage: 'Allow Multiple Selections',
-        text: 'Text Field',
+        text: 'Output Field',
         toggle: 'Toggle',
         warning: 'Warning!',
         viewXML: 'View XML',
@@ -210,14 +210,28 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
 
     // saves the field data to our canvas (elem)
     _helpers.save = function () {
+
+      console.info('*** _helpers.save() ***');
+
       $sortableFields.children('li').not('.disabled').each(function () {
         _helpers.updatePreview($(this));
       });
+
+      console.info('*** $sortableFields = ***');
+      console.info($sortableFields);
+      console.info('*** $sortableFields.toXML() = ***');
+      console.info($sortableFields.toXML());
+
       elem.val($sortableFields.toXML());
     };
 
     // updatePreview will generate the preview for radio and checkbox groups
     _helpers.updatePreview = function (field) {
+
+      console.info('*** _helpers.updatePreview() ***');
+      console.info('*** field = ***');
+      console.info(field);
+
       var fieldClass = field.attr('class'),
           $prevHolder = $('.prev-holder', field);
 
@@ -251,6 +265,8 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
       }
 
       preview = fieldPreview(previewData);
+      console.info('*** preview = ***');
+      console.info(preview);
 
       $prevHolder.html(preview);
 
@@ -339,6 +355,7 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
         boxID = frmbID + '-control-box';
 
     // create array of field objects to cycle through
+    /*
     var frmbFields = [{
       label: opts.messages.text,
       attrs: {
@@ -396,6 +413,22 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
         name: 'autocomplete'
       }
     }];
+    */
+    var frmbFields = [{
+        label: opts.messages.text,
+        attrs: {
+          type: 'text',
+          className: 'text-input',
+          name: 'text-input'
+        }
+      }, {
+        label: 'Button',
+        attrs: {
+          type: 'button',
+          className: 'button',
+          name: 'button'
+        }
+      }];
 
     // Create draggable fields for formBuilder
     var cbUL = $('<ul/>', {
