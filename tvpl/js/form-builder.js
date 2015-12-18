@@ -2,6 +2,9 @@
 formBuilder - git@github.com:kevinchappell/formBuilder.git
 Version: 1.5.2
 Author: Kevin Chappell <kevin.b.chappell@gmail.com>
+
+Tinkerforge TVPL modifications: Start tracing from,
+"function update(event, ui)".
 */
 'use strict';
 
@@ -85,6 +88,7 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
         add: 'Add Item',
         allowSelect: 'Allow Select',
         autocomplete: 'Autocomplete',
+        button: 'Button',
         cannotBeEmpty: 'This field cannot be empty',
         checkboxGroup: 'Checkbox Group',
         checkbox: 'Checkbox',
@@ -119,7 +123,9 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
         optionLabelPlaceholder: 'Label',
         optionValuePlaceholder: 'Value',
         optionEmpty: 'Option value required',
+        outputField: 'Output Field',
         paragraph: 'Paragraph',
+        plot: 'Plot',
         preview: 'Preview',
         radioGroup: 'Radio Group',
         radio: 'Radio',
@@ -132,7 +138,7 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
         selectOptions: 'Select Items',
         select: 'Select',
         selectionsMessage: 'Allow Multiple Selections',
-        text: 'Output Field',
+        //text: 'Output Field',
         toggle: 'Toggle',
         warning: 'Warning!',
         viewXML: 'View XML',
@@ -415,20 +421,32 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
     }];
     */
     var frmbFields = [{
-        label: opts.messages.text,
-        attrs: {
-          type: 'text',
-          className: 'text-input',
-          name: 'text-input'
-        }
-      }, {
-        label: 'Button',
-        attrs: {
-          type: 'button',
-          className: 'button',
-          name: 'button'
-        }
-      }];
+        				label: opts.messages.plot,
+        				attrs:
+        				{
+        					type: 'plot',
+        					className: 'plot',
+        					name: 'plot'
+        				}
+      				  },
+      				  {
+      				    label: opts.messages.button,
+      				    attrs:
+      				    {
+      				    	type: 'button',
+      				    	className: 'button',
+      				    	name: 'button'
+      				    }
+      				  },
+      				  {
+      				    label: opts.messages.outputField,
+      				    attrs:
+      				    {
+      				    	type: 'output-field',
+      				    	className: 'output-field',
+      				    	name: 'output-field'
+      				    }
+      				  }];
 
     // Create draggable fields for formBuilder
     var cbUL = $('<ul/>', {
@@ -558,11 +576,21 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
         }
       },
       update: function update(event, ui) {
+    	console.info('*** update()');
         // _helpers.stopMoving;
         elem.stopIndex = $('li', $sortableFields).index(ui.item) === 0 ? '0' : $('li', $sortableFields).index(ui.item);
         if ($('li', $sortableFields).index(ui.item) < 0) {
-          $(this).sortable('cancel');
+        	console.info('*** update(), sortable cancel');
+        	$(this).sortable('cancel');
         } else {
+          console.info('*** update(), else');
+          console.info('*** ui.item[0]');
+          console.info($(ui.item[0]));
+          /*
+           * TODO:
+           * Stringify in JSON and store $(ui.item[0]) here for restoration of saved workspace?
+           * For restoration read a list of stringified objects and call prepFieldVars for each?
+           */
           prepFieldVars($(ui.item[0]), true);
         }
       },
@@ -621,7 +649,10 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
           prepFieldVars($(this));
         });
       } else if (!xml) {
-        // Load default fields if none are set
+        /*
+         * TODO:
+         * Load default fields if none are set
+         */
         if (opts.defaultFields.length) {
           for (var i = opts.defaultFields.length - 1; i >= 0; i--) {
             appendNewField(opts.defaultFields[i]);
@@ -649,6 +680,9 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
     };
 
     var prepFieldVars = function prepFieldVars($field, isNew) {
+    	console.info('*** prepFieldVars');
+    	console.info('*** $field');
+    	console.info($field);
       isNew = isNew || false;
 
       var fieldAttrs = $field.data('attrs') || {},
@@ -656,6 +690,11 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
           isMultiple = fType.match(/(select|checkbox-group|radio-group)/),
           values = {};
 
+      
+      /*
+       * TODO:
+       * Editable fields can be assigned default values here
+       */
       values.label = _helpers.htmlEncode($field.attr('label'));
       values.name = isNew ? nameAttr($field) : fieldAttrs.name || $field.attr('name');
       values.role = $field.attr('role');
@@ -678,6 +717,9 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
         });
       }
 
+      console.info('*** values');
+      console.info(values);
+      
       appendNewField(values);
       $stageWrap.removeClass('empty');
       disabledBeforeAfter();
@@ -689,9 +731,21 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
     };
 
     var appendInput = function appendInput(values) {
+        console.info('*** appendInput()');
+        console.info('*** values');
+        console.info(values);
+        console.info('*** values.type');
+        console.info(values.type);
+        appendFieldLi(opts.messages[values.type], advFields(values.type, values), values);
+      };
+    
+    // This was the original function
+    /*
+    var appendInput = function appendInput(values) {
       var type = values.type || 'text';
       appendFieldLi(opts.messages[type], advFields(values), values);
     };
+    */
 
     // add select dropdown
     var appendSelectList = function appendSelectList(values) {
@@ -733,7 +787,8 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
     };
 
     var appendNewField = function appendNewField(values) {
-
+      console.info('*** appendNewField');
+    
       if (values === undefined) {
         values = '';
       }
@@ -744,29 +799,83 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
         // 'checkbox': appendCheckbox(values),
         // 'select': appendSelectList(values),
         // 'textarea': appendTextarea(values),
-        '2': appendInput,
-        'date': appendInput,
-        'autocomplete': appendInput,
-        'checkbox': appendInput,
-        'select': appendSelectList,
-        'rich-text': appendTextarea,
-        'textarea': appendTextarea,
-        'radio-group': appendSelectList,
-        'checkbox-group': appendSelectList,
-        'text': appendInput
+        //'2': appendInput,
+        //'date': appendInput,
+        //'autocomplete': appendInput,
+        //'checkbox': appendInput,
+        //'select': appendSelectList,
+        //'rich-text': appendTextarea,
+        //'textarea': appendTextarea,
+        //'radio-group': appendSelectList,
+        //'checkbox-group': appendSelectList,
+        'output-field': appendInput,
+        'button': appendInput,
+        'plot': appendInput
       };
 
+      console.info('*** values.type');
+      console.info(values.type);
+      
       if (typeof appendFieldType[values.type] === 'function') {
         appendFieldType[values.type](values);
       }
     };
 
+    var advFields = function advFields(type, values) {
+    	console.info('*** advField()');
+    	console.info('*** type');
+    	console.info(type);
+
+        var advFields = '';
+
+        // Common editable fields
+        var fieldLabel = $('<div>', {
+          'class': 'frm-fld label-wrap'
+        });
+        $('<label/>').html(opts.messages.label).appendTo(fieldLabel);
+        $('<input>', {
+          type: 'text',
+          name: 'label',
+          value: values.label,
+          'class': 'fld-label'
+        }).appendTo(fieldLabel);
+        advFields += fieldLabel[0].outerHTML;
+
+        var fieldDesc = $('<div>', {
+          'class': 'frm-fld description-wrap'
+        });
+        $('<label/>').html(opts.messages.description).appendTo(fieldDesc);
+
+        advFields += '<div class="frm-fld description-wrap"><label>' + opts.messages.description + '</label>';
+        advFields += '<input type="text" name="description" value="" class="fld-description" id="description-' + lastID + '" /></div>';
+
+        advFields += '<div class="frm-fld name-wrap"><label>' + opts.messages.name + ' <span class="required">*</span></label>';
+        advFields += '<input type="text" name="name" value="' + values.name + '" class="fld-name" id="title-' + lastID + '" /></div>';
+
+        advFields += '</div>';
+        
+        if (type === 'output-field') {
+        	// TODO: Setup output field specific editable fields
+        }
+        else if (type === 'button') {
+        	// TODO: Setup button specific editable fields
+        }
+        else if (type === 'plot') {
+        	// TODO: Setup plot specific editable fields
+        }
+
+        return advFields;
+      };
+    
+    
+    // This was the original function
     /**
      * Build the editable properties for the field
      * @param  {object} values configuration object for advanced fields
      * @return {string}        markup for advanced fields
      */
-    var advFields = function advFields(values) {
+    /*
+    var advFields = function advFields(type, values) {
 
       var advFields = '',
           key,
@@ -786,7 +895,7 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
       var fieldDesc = $('<div>', {
         'class': 'frm-fld description-wrap'
       });
-      $('<label/>').html(opts.messages.description + ' *').appendTo(fieldDesc);
+      $('<label/>').html(opts.messages.description).appendTo(fieldDesc);
 
       advFields += '<div class="frm-fld description-wrap"><label>' + opts.messages.description + '</label>';
       advFields += '<input type="text" name="description" value="' + values.description + '" class="fld-description" id="description-' + lastID + '" /></div>';
@@ -814,9 +923,61 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
 
       return advFields;
     };
+    */
 
+     var appendFieldLi = function appendFieldLi(title, field, values) {
+      console.info('*** appendFieldLi');
+
+      var label = $(field).find('input[name="label"]').val() !== '' ? $(field).find('input[name="label"]').val() : title;
+
+      var li = '',
+          delBtn = '<a id="del_' + lastID + '" class="del-button btn delete-confirm" href="#" title="' + opts.messages.removeMessage + '">' + opts.messages.remove + '</a>',
+          toggleBtn = '<a id="frm-' + lastID + '" class="toggle-form btn icon-pencil" href="#" title="' + opts.messages.hide + '"></a> ',
+          required = values.required,
+          toggle = values.toggle || undefined,
+          tooltip = values.description !== '' ? '<span class="tooltip-element" tooltip="' + values.description + '">?</span>' : '';
+
+      li += '<li id="frm-' + lastID + '-item" class="' + values.type + ' form-field">';
+      li += '<div class="legend">';
+      li += delBtn;
+      li += '<span id="txt-title-' + lastID + '" class="field-label">' + label + '</span>' + tooltip + '<span class="required-asterisk" ' + (required === 'true' ? 'style="display:inline"' : '') + '> *</span>' + toggleBtn;
+      li += '</div>';
+      li += '<div class="prev-holder">' + fieldPreview(values) + '</div>';
+      li += '<div id="frm-' + lastID + '-fld" class="frm-holder">';
+      li += '<div class="form-elements">';
+      li += '<div class="frm-fld">';
+      li += '<label>&nbsp;</label>';
+      li += '</div>';
+      li += field;
+      li += '</div>';
+      li += '</div>';
+      li += '</li>';
+
+      if (elem.stopIndex) {
+        $('li', $sortableFields).eq(elem.stopIndex).after(li);
+      } else {
+        $sortableFields.append(li);
+      }
+
+      $(document.getElementById('frm-' + lastID + '-item')).hide().slideDown(250);
+
+      lastID++;
+      _helpers.save();
+    };
+      
+      
+    // This was the original function  
     // Append the new field to the editor
+    /*
     var appendFieldLi = function appendFieldLi(title, field, values) {
+      console.info('*** appendFieldLi');
+      console.info('*** title');
+      console.info(title);
+      console.info('*** field');
+      console.info(field);
+      console.info('*** values');
+      console.info(values);
+
       var label = $(field).find('input[name="label"]').val() !== '' ? $(field).find('input[name="label"]').val() : title;
 
       var li = '',
@@ -860,6 +1021,7 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
       lastID++;
       _helpers.save();
     };
+    */
 
     /**
      * Generate preview markup
@@ -890,7 +1052,8 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
             preview += '<div><input type="' + type + '" id="' + type + '-' + epoch + '-' + i + '" value="' + attrs.values[i].value + '" /><label for="' + type + '-' + epoch + '-' + i + '">' + attrs.values[i].label + '</label></div>';
           }
           break;
-        case 'text':
+        //case 'text':
+        case 'output-field':
         case 'password':
         case 'email':
         case 'date':
@@ -898,6 +1061,14 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
           var toggle = attrs.toggle ? 'toggle' : '';
           preview = '<input type="' + attrs.type + '" ' + toggle + ' placeholder="">';
           break;
+        case 'button':
+        	console.info('*** attrs from preview markup');
+        	console.info(attrs);
+        	preview = '<' + attrs.type + ' placeholder="">' + attrs.label + '</' + attrs.type + '>';
+        	break;
+        case plot:
+        	// TODO: Preview generation code for plot
+        	break;
         case 'autocomplete':
           preview = '<input class="ui-autocomplete-input" autocomplete="on" placeholder="">';
           break;
@@ -1237,7 +1408,7 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
 (function ($) {
   'use strict';
   $.fn.toXML = function (options) {
-    var defaults = {
+	var defaults = {
       prepend: '',
       attributes: ['class']
     };

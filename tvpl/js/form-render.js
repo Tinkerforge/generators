@@ -145,12 +145,18 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
           }
           fieldMarkup = fieldLabel + '<div class="' + fieldAttrs.type + '-group">' + optionsMarkup + '</div>';
           break;
-        case 'text':
+        case 'output-field':
+        case 'plot':
         case 'password':
         case 'email':
         case 'date':
         case 'autocomplete':
           fieldMarkup = fieldLabel + ' <input ' + fieldAttrsString + '>';
+          break;
+        case 'button':
+        	console.info('*** field from renderer markup');
+        	console.info(field);
+          fieldMarkup = '<' + fieldAttrs.type + '>' + fieldAttrs.label + '</' + fieldAttrs.type + '>';
           break;
         case 'checkbox':
           fieldMarkup = '<input ' + fieldAttrsString + '> ' + fieldLabel;

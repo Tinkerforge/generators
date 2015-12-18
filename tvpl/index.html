@@ -110,7 +110,7 @@
 	        <div id="divEditGUI" style="display: block;">
 	          <textarea name="textAreaEditGUI" id="textAreaEditGUI"></textarea>
 	        </div>
-	        <form id="formRenderGUI" style="display: none;"></form>
+	        <div id="formRenderGUI" style="display: none;"></div>
           </td>
         </tr>
       </table>
@@ -468,6 +468,8 @@
               blockRenderGUI(true, MSG_INFO_NO_PROGRAM_RUNNING);
             }
           }
+          console.info('*** INNER HTML');
+          console.info(formRenderGUI.innerHTML)
         }
 
         function blockEditGUI(state, msg) {
