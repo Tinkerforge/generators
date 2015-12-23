@@ -608,7 +608,9 @@ Gibt *true* zurück wenn die Treiberstufe aktiv ist, sonst *false*.
 }]
 })
 
-# standstill power down
+
+# TODO: Add constants:
+# standstill power down on/off
 # chopper off time low/medium/high
 # chopper hysteresis low/medium/high
 # choppper blank time low/medium/high
@@ -616,7 +618,10 @@ Gibt *true* zurück wenn die Treiberstufe aktiv ist, sonst *false*.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Decay', 'uint16', 1, 'in')],
+'elements': [('Standstill Power Down', 'uint8', 1, 'in'),
+             ('Chopper Off Time', 'uint8', 1, 'in'),
+             ('Chopper Hysteresis', 'uint8', 1, 'in'),
+             ('Chopper Blank Time', 'uint8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -633,7 +638,10 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Decay', 'uint16', 1, 'out')],
+'elements': [('Standstill Power Down', 'uint8', 1, 'out'),
+             ('Chopper Off Time', 'uint8', 1, 'out'),
+             ('Chopper Hysteresis', 'uint8', 1, 'out'),
+             ('Chopper Blank Time', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
