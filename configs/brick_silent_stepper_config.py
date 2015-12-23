@@ -335,7 +335,15 @@ hat, wird 1500 zurückgegeben.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Step Mode',
-'elements': [('Mode', 'uint8', 1, 'in')], # TODO: Add constants
+'elements': [('Step Mode', 'uint8', 1, 'in', ('Step Mode', [('Normal Full', 0),
+                                                            ('Normal Half', 1),
+                                                            ('Normal Half Interpolate', 2),
+                                                            ('Normal Quarter', 3),
+                                                            ('Normal Sixteenth', 4),
+                                                            ('Normal Quarter Interpolate', 5),
+                                                            ('Normal Sixteenth Interpolate', 6),
+                                                            ('Silent Quarter Interpolate', 7),
+                                                            ('Silent Sixteenth Interpolate', 8)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -352,7 +360,16 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Get Step Mode',
-'elements': [('Mode', 'uint8', 1, 'out')],
+'elements': [('Step Mode', 'uint8', 1, 'out', ('Step Mode', [('Normal Full', 0),
+                                                             ('Normal Half', 1),
+                                                             ('Normal Half Interpolate', 2),
+                                                             ('Normal Quarter', 3),
+                                                             ('Normal Sixteenth', 4),
+                                                             ('Normal Quarter Interpolate', 5),
+                                                             ('Normal Sixteenth Interpolate', 6),
+                                                             ('Silent Quarter Interpolate', 7),
+                                                             ('Silent Sixteenth Interpolate', 8)]))],
+
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -608,20 +625,20 @@ Gibt *true* zurück wenn die Treiberstufe aktiv ist, sonst *false*.
 }]
 })
 
-
-# TODO: Add constants:
-# standstill power down on/off
-# chopper off time low/medium/high
-# chopper hysteresis low/medium/high
-# choppper blank time low/medium/high
-
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Standstill Power Down', 'uint8', 1, 'in'),
-             ('Chopper Off Time', 'uint8', 1, 'in'),
-             ('Chopper Hysteresis', 'uint8', 1, 'in'),
-             ('Chopper Blank Time', 'uint8', 1, 'in')],
+'elements': [('Standstill Power Down', 'uint8', 1, 'in', ('Standstill Power Down', [('On', 0),
+                                                                                    ('Off', 1)])),
+             ('Chopper Off Time', 'uint8', 1, 'in', ('Chopper Off Time', [('Low', 0),
+                                                                          ('Medium', 1),
+                                                                          ('High', 2)])),
+             ('Chopper Hysteresis', 'uint8', 1, 'in', ('Chopper Hysteresis', [('Low', 0),
+                                                                              ('Medium', 1),
+                                                                              ('High', 2)])),
+             ('Chopper Blank Time', 'uint8', 1, 'in', ('Chopper Blank Time', [('Low', 0),
+                                                                              ('Medium', 1),
+                                                                              ('High', 2)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -638,10 +655,17 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Standstill Power Down', 'uint8', 1, 'out'),
-             ('Chopper Off Time', 'uint8', 1, 'out'),
-             ('Chopper Hysteresis', 'uint8', 1, 'out'),
-             ('Chopper Blank Time', 'uint8', 1, 'out')],
+'elements': [('Standstill Power Down', 'uint8', 1, 'out', ('Standstill Power Down', [('On', 0),
+                                                                                     ('Off', 1)])),
+             ('Chopper Off Time', 'uint8', 1, 'out', ('Chopper Off Time', [('Low', 0),
+                                                                           ('Medium', 1),
+                                                                           ('High', 2)])),
+             ('Chopper Hysteresis', 'uint8', 1, 'out', ('Chopper Hysteresis', [('Low', 0),
+                                                                               ('Medium', 1),
+                                                                               ('High', 2)])),
+             ('Chopper Blank Time', 'uint8', 1, 'out', ('Chopper Blank Time', [('Low', 0),
+                                                                               ('Medium', 1),
+                                                                               ('High', 2)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
