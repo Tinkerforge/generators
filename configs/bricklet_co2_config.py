@@ -34,7 +34,7 @@ com['packets'].append({
 """
 Returns the measured CO2 concentration. The value is in 
 `ppm (parts per million) <https://en.wikipedia.org/wiki/Parts-per_notation>`__
-and between 0 to 5000.
+and between 0 to 10000.
 
 If you want to get the CO2 concentration periodically, it is recommended to use the
 callback :func:`CO2Concentration` and set the period with
@@ -44,7 +44,7 @@ callback :func:`CO2Concentration` and set the period with
 """
 Gibt die gemessene CO2-Konzentration zurück. Der Wert ist in
 `ppm (Teile pro Million) <https://de.wikipedia.org/wiki/Parts_per_million>`__
-und im Bereich von 0 bis 5000.
+und im Bereich von 0 bis 10000.
 
 Wenn die Spannung periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`CO2Concentration` zu nutzen und die Periode mit
