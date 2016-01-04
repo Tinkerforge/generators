@@ -133,7 +133,7 @@ class PythonDocDevice(python_common.PythonDevice):
 
         register_str = {
         'en': """
-.. py:function:: {1}.register_callback(id, callback)
+.. py:function:: {2}{1}.register_callback(id, callback)
 
  :param id: int
  :param callback: callable
@@ -144,7 +144,7 @@ class PythonDocDevice(python_common.PythonDevice):
  :ref:`below <{0}_python_callbacks>`.
 """,
         'de': """
-.. py:function:: {1}.register_callback(id, callback)
+.. py:function:: {2}{1}.register_callback(id, callback)
 
  :param id: int
  :param callback: callable
@@ -312,7 +312,8 @@ Konstanten
                                                     self.get_python_class_name(),
                                                     self.get_underscore_name())
         reg = common.select_lang(register_str).format(self.get_doc_rst_ref_name(),
-                                                      self.get_camel_case_name())
+                                                      self.get_camel_case_name(),
+                                                      self.get_camel_case_category())
 
         bf = self.get_python_methods('bf')
         af = self.get_python_methods('af')
