@@ -26,7 +26,6 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import os
-from apt.package import Package
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
