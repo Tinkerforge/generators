@@ -35,7 +35,7 @@ com['packets'].append({
 Returns the UV Light intensity of the sensor, the intensity is given 
 in µW/cm².
 
-To get UV Index you have to divide the value by 250. E.g. a UV Light
+To get UV Index you have to divide the value by 250. For example, a UV Light
 intensity of 500µW/cm² is equivalent to an UV Index of 2.
 
 If you want to get the intensity periodically, it is recommended to use the
