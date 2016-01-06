@@ -35,5 +35,5 @@
   (isLEDOn method) API
 - Add DeviceFactory class
 
-<unknown>: 2.0.7 (<unknown>)
+2016-01-06: 2.0.7 (<unknown>)
 - Add support for CO2, OLED 64x48 and 128x64, Thermocouple and UV Light Bricklet

@@ -86,5 +86,5 @@
   methods), Accelerometer Bricklet (IsLEDOn method) and Load Cell Bricklet
   (IsLEDOn method) API
 
-<unknown>: 2.1.7 (<unknown>)
+2016-01-06: 2.1.7 (<unknown>)
 - Add support for CO2, OLED 64x48 and 128x64, Thermocouple and UV Light Bricklet
