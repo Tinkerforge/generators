@@ -308,8 +308,8 @@ different thermocouple or a custom thermocouple you can also use
 G8 and G32. With these types the returned value will not be in °C/100,
 it will be calculated by the following formulas:
 
-* G8:  value = 8  * 1.6 * 2^17 * Vin
-* G32: value = 32 * 1.6 * 2^17 * Vin
+* G8: ``value = 8 * 1.6 * 2^17 * Vin``
+* G32: ``value = 32 * 1.6 * 2^17 * Vin``
 
 where Vin is the thermocouple input voltage.
 
@@ -319,8 +319,8 @@ configure it according to your utility frequency.
 The conversion time depends on the averaging and filter configuration, it can
 be calculated as follows:
 
-* 60Hz: 82 + (samples-1)*16.67
-* 50Hz: 98 + (samples-1)*20
+* 60Hz: ``time = 82 + (samples - 1) * 16.67``
+* 50Hz: ``time = 98 + (samples - 1) * 20``
 
 The default configuration is 16 samples, K type and 50Hz.
 """,
@@ -336,8 +336,8 @@ Falls ein anderes Thermoelement benutzt werden soll, können G8 und G32
 genutzt werden. Mit diesen Typen wird der Wert nicht in °C/100 zurückgegeben
 sondern er wird durch folgende Formeln bestimmt:
 
-* G8:  Wert = 8  * 1.6 * 2^17 * Vin
-* G32: Wert = 32 * 1.6 * 2^17 * Vin
+* G8: ``Wert = 8 * 1.6 * 2^17 * Vin``
+* G32: ``Wert = 32 * 1.6 * 2^17 * Vin``
 
 dabei ist Vin die Eingangsspannung des Thermoelements.
 
@@ -347,8 +347,8 @@ abhängig von der lokalen Netzfrequenz gewählt werden.
 Die Konvertierungszeit ist abhängig von der Averaging-Größe und der
 Frequenz-Filter-Konfiguration. Sie kann wie folgt bestimmt werden:
 
-* 60Hz: 82 + (Samples-1)*16.67
-* 50Hz: 98 + (Samples-1)*20
+* 60Hz: ``Zeit = 82 + (Samples - 1) * 16.67``
+* 50Hz: ``Zeit = 98 + (Samples - 1) * 20``
 
 Die Standardkonfiguration ist 16 Samples, Typ K und 50Hz.
 """

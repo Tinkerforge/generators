@@ -46,7 +46,7 @@ Gibt die gemessene CO2-Konzentration zurück. Der Wert ist in
 `ppm (Teile pro Million) <https://de.wikipedia.org/wiki/Parts_per_million>`__
 und im Bereich von 0 bis 10000.
 
-Wenn die Spannung periodisch abgefragt werden soll, wird empfohlen
+Wenn die CO2-Konzentration periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`CO2Concentration` zu nutzen und die Periode mit
 :func:`SetCO2ConcentrationCallbackPeriod` vorzugeben.
 """
@@ -64,7 +64,7 @@ com['packets'].append({
 Sets the period in ms with which the :func:`CO2Concentration` callback is triggered
 periodically. A value of 0 turns the callback off.
 
-:func:`CO2Concentration` is only triggered if the co2_concentration has changed since the
+:func:`CO2Concentration` is only triggered if the CO2 concentration has changed since the
 last triggering.
 
 The default value is 0.
@@ -74,7 +74,7 @@ The default value is 0.
 Setzt die Periode in ms mit welcher der :func:`CO2Concentration` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 
-:func:`CO2Concentration` wird nur ausgelöst wenn sich die Spannung seit der
+:func:`CO2Concentration` wird nur ausgelöst wenn sich die CO2-Konzentration seit der
 letzten Auslösung geändert hat.
 
 Der Standardwert ist 0.
@@ -119,10 +119,10 @@ The following options are possible:
  :widths: 10, 100
 
  "'x'",    "Callback is turned off"
- "'o'",    "Callback is triggered when the co2_concentration is *outside* the min and max values"
- "'i'",    "Callback is triggered when the co2_concentration is *inside* the min and max values"
- "'<'",    "Callback is triggered when the co2_concentration is smaller than the min value (max is ignored)"
- "'>'",    "Callback is triggered when the co2_concentration is greater than the min value (max is ignored)"
+ "'o'",    "Callback is triggered when the CO2 concentration is *outside* the min and max values"
+ "'i'",    "Callback is triggered when the CO2 concentration is *inside* the min and max values"
+ "'<'",    "Callback is triggered when the CO2 concentration is smaller than the min value (max is ignored)"
+ "'>'",    "Callback is triggered when the CO2 concentration is greater than the min value (max is ignored)"
 
 The default value is ('x', 0, 0).
 """,
@@ -137,10 +137,10 @@ Die folgenden Optionen sind möglich:
  :widths: 10, 100
 
  "'x'",    "Callback ist inaktiv"
- "'o'",    "Callback wird ausgelöst wenn die Spannung *außerhalb* des min und max Wertes ist"
- "'i'",    "Callback wird ausgelöst wenn die Spannung *innerhalb* des min und max Wertes ist"
- "'<'",    "Callback wird ausgelöst wenn die Spannung kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn die Spannung größer als der min Wert ist (max wird ignoriert)"
+ "'o'",    "Callback wird ausgelöst wenn die CO2-Konzentration *außerhalb* des min und max Wertes ist"
+ "'i'",    "Callback wird ausgelöst wenn die CO2-Konzentration *innerhalb* des min und max Wertes ist"
+ "'<'",    "Callback wird ausgelöst wenn die CO2-Konzentration kleiner als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn die CO2-Konzentration größer als der min Wert ist (max wird ignoriert)"
 
 Der Standardwert ist ('x', 0, 0).
 """
@@ -231,10 +231,10 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetCO2ConcentrationCallbackPeriod`. The :word:`parameter` is the co2 concentration of the
+:func:`SetCO2ConcentrationCallbackPeriod`. The :word:`parameter` is the CO2 concentration of the
 sensor.
 
-:func:`CO2Concentration` is only triggered if the co2 concentration has changed since the
+:func:`CO2Concentration` is only triggered if the CO2 concentration has changed since the
 last triggering.
 """,
 'de':

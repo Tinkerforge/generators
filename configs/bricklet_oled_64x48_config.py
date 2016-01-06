@@ -30,13 +30,13 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Appends the data to the window as set by :func:`NewWindow`.
+Appends 64 byte of data to the window as set by :func:`NewWindow`.
 
 Each row has a height of 8 pixels which corresponds to one byte of data.
 
-Example: if we call :func:`NewWindow` with column from 0 to 63 and row
-from 0 to 5 (the whole display) each call of :func:`Write` will write
-one row.
+Example: if you call :func:`NewWindow` with column from 0 to 63 and row
+from 0 to 5 (the whole display) each call of :func:`Write` (red arrow) will
+write one row.
 
 .. image:: /Images/Bricklets/bricklet_oled_64x48_display.png
    :scale: 100 %
@@ -52,13 +52,13 @@ fill the whole display you need to call :func:`Write` 6 times.
 """,
 'de':
 """
-Fügt die Daten zu dem mit :func:`NewWindow` gesetztem Fenster hinzu.
+Fügt 64 Byte Daten zu dem mit :func:`NewWindow` gesetztem Fenster hinzu.
 
 Jede Zeile hat eine Höhe von 8 Pixeln welche einem Byte Daten entsprechen.
 
 Beispiel: Wenn :func:`NewWindow` mit Spalte (Column) von 0 bis 63 und
 Zeile (Row) von 0 bis 5 (das ganze Display) aufgerufen wird, schreibt
-jedes :func:`Write` eine Zeile.
+jedes :func:`Write` (roter Pfeil) eine Zeile.
 
 .. image:: /Images/Bricklets/bricklet_oled_64x48_display.png
    :scale: 100 %
@@ -90,12 +90,12 @@ com['packets'].append({
 Sets the window in which you can write with :func:`Write`. One row
 has a height of 8 pixels.
 
-The collumns have a range of 0 to 63 and the rows have a range of 0-5.
+The columns have a range of 0 to 63 and the rows have a range of 0 to 5.
 """,
 'de':
 """
 Setzt das Fenster in welches mit :func:`Write` geschrieben
-werden kann. Eine Zeile (row) hat eine Höhe von 8 Pixel.
+werden kann. Eine Zeile (Row) hat eine Höhe von 8 Pixel.
 
 Die Spalten haben einen Wertebereich von 0 bis 63 und die Zeilen haben
 einen Wertebereich von 0 bis 5.
@@ -131,16 +131,17 @@ com['packets'].append({
 """
 Sets the configuration of the display.
 
-You can set a contrast value from 0-255 and you can invert the display.
+You can set a contrast value from 0 to 255 and you can invert the color
+(black/white) of the display.
 
-The default values are contrast 143 and invert off.
+The default values are contrast 143 and inverting off.
 """,
 'de':
 """
 Setzt die Konfiguration des Displays
 
-Es können der Kontrast mit einem Wertebereich von 0-255 gesetzt, sowie das
-Display invertiert werden.
+Es können der Kontrast mit einem Wertebereich von 0 bis 255 gesetzt, sowie die
+Farben (schwarz/weiß) des Displays invertiert werden.
 
 Die Standardwerte sind ein Kontrast von 143 und die Invertierung ist aus.
 """
@@ -186,7 +187,7 @@ You can draw to the display with :func:`Write` and then add text to it
 afterwards.
 
 The display uses a special 5x7 pixel charset. You can view the characters 
-of the charset in the Brick Viewer.
+of the charset in Brick Viewer.
 """,
 'de':
 """
@@ -197,10 +198,10 @@ Beispiel: (1, 4, "Hallo") schreibt *Hallo* in die Mitte der zweiten Zeile
 des Displays.
 
 Es ist möglich zuerst auf das Display mit :func:`Write` zu malen und danach
-text hinzuzufügen.
+Text hinzuzufügen.
 
 Das Display nutzt einen speziellen 5x7 Pixel Zeichensatz. Der Zeichensatz
-kann mit hilfe des Brick Viewers eingesehen werden.
+kann mit Hilfe von Brick Viewer angezeigt werden.
 """
 }]
 })

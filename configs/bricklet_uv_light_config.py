@@ -48,7 +48,7 @@ Gibt die UV-Licht-Intensität des Sensors zurück. Die Intensität wird
 in der Einheit µW/cm² gegeben.
 
 Die Intensität kann einfach durch 250 geteilt werden um den UV Index zu
-bestimmen. Beispiel: Eine UV-Lich-Intensität von 500µW/cm² entspricht
+bestimmen. Beispiel: Eine UV-Licht-Intensität von 500µW/cm² entspricht
 einem UV Index von 2.
 
 Wenn die Intensität periodisch abgefragt werden soll, wird empfohlen
@@ -145,7 +145,7 @@ Die folgenden Optionen sind möglich:
  "'o'",    "Callback wird ausgelöst wenn die Intensität *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn die Intensität *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn die Intensität kleiner als der min Wert ist (max wird ignoriert)"
- "'>'",    "Callback wird ausgelöst wenn dieIntensität  größer als der min Wert ist (max wird ignoriert)"
+ "'>'",    "Callback wird ausgelöst wenn die Intensität größer als der min Wert ist (max wird ignoriert)"
  
 Der Standardwert ist ('x', 0, 0).
 """
