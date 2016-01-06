@@ -36,5 +36,5 @@
   function), Accelerometer Bricklet (isLEDOn function) and Load Cell Bricklet
   (isLEDOn function) API
 
-2016-01-06: 2.0.7 (<unknown>)
+2016-01-06: 2.0.7 (3ade121)
 - Add support for CO2, OLED 64x48 and 128x64, Thermocouple and UV Light Bricklet

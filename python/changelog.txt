@@ -199,5 +199,5 @@
   (is_led_on function) API
 - Don't decode non-ASCII strings and chars in Python 3
 
-2016-01-06: 2.1.7 (<unknown>)
+2016-01-06: 2.1.7 (3ade121)
 - Add support for CO2, OLED 64x48 and 128x64, Thermocouple and UV Light Bricklet
