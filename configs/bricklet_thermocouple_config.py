@@ -19,7 +19,7 @@ com = {
         'en': 'Measures temperature with thermocouples',
         'de': 'Misst Temperatur mit Thermoelementen'
     },
-    'released': False,
+    'released': True,
     'packets': [],
     'examples': []
 }

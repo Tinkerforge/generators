@@ -213,3 +213,6 @@
   function), Accelerometer Bricklet (is_led_on function) and Load Cell Bricklet
   (is_led_on function) API
 - Avoid race condition in callback thread destruction
+
+<unknown>: 2.1.9 (<unknown>)
+- Add support for CO2, OLED 64x48 and 128x64, Thermocouple and UV Light Bricklet

@@ -198,3 +198,6 @@
   function), Accelerometer Bricklet (is_led_on function) and Load Cell Bricklet
   (is_led_on function) API
 - Don't decode non-ASCII strings and chars in Python 3
+
+<unknown>: 2.1.7 (<unknown>)
+- Add support for CO2, OLED 64x48 and 128x64, Thermocouple and UV Light Bricklet

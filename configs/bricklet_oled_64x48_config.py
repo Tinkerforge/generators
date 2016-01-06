@@ -17,7 +17,7 @@ com = {
         'en': '0.66" OLED with 64x48 pixels',
         'de': '0,66" OLED mit 64x48 Pixel'
     },
-    'released': False,
+    'released': True,
     'packets': [],
     'examples': []
 }

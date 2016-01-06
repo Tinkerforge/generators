@@ -19,7 +19,7 @@ com = {
         'en': 'Measures CO2 concentration in ppm',
         'de': 'Misst CO2-Konzentration in ppm'
     },
-    'released': False,
+    'released': True,
     'packets': [],
     'examples': []
 }

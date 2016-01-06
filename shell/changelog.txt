@@ -64,3 +64,6 @@
   (is-position-reached-callback-enabled and is-velocity-reached-callback-enabled
   function), Accelerometer Bricklet (is-led-on function) and Load Cell Bricklet
   (is-led-on function) API
+
+<unknown>: 2.1.7 (<unknown>)
+- Add support for CO2, OLED 64x48 and 128x64, Thermocouple and UV Light Bricklet

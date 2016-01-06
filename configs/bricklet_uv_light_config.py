@@ -19,7 +19,7 @@ com = {
         'en': 'Measures UV Light',
         'de': 'Misst UV Light'
     },
-    'released': False,
+    'released': True,
     'packets': [],
     'examples': []
 }
