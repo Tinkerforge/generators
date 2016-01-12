@@ -14,8 +14,8 @@ com = {
     'name': ('OLED 128x64', 'OLED 128x64', 'OLED 128x64 Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': '1.3" OLED with 128x64 pixels',
-        'de': '1,3" OLED mit 128x64 Pixel'
+        'en': '3.3cm (1.3") OLED with 128x64 pixels',
+        'de': '3,3cm (1,3") OLED mit 128x64 Pixel'
     },
     'released': True,
     'packets': [],
