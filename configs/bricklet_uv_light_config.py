@@ -16,8 +16,8 @@ com = {
     'name': ('UV Light', 'UV Light', 'UV Light Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'Measures UV Light',
-        'de': 'Misst UV Light'
+        'en': 'Measures UV light',
+        'de': 'Misst UV-Licht'
     },
     'released': True,
     'packets': [],
@@ -32,7 +32,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the UV Light intensity of the sensor, the intensity is given 
+Returns the UV light intensity of the sensor, the intensity is given
 in µW/cm².
 
 To get UV Index you have to divide the value by 250. For example, a UV Light

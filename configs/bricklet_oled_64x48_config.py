@@ -178,7 +178,7 @@ com['packets'].append({
 'en':
 """
 Writes text to a specific line (0 to 5) with a specific position 
-(0 to 13). The text can have a maximum of 14 characters.
+(0 to 12). The text can have a maximum of 13 characters.
 
 For example: (1, 4, "Hello") will write *Hello* in the middle of the
 second line of the display.
