@@ -21,7 +21,7 @@ sudo npm install -g browserify
 sudo ln -s /usr/bin/nodejs /usr/local/bin/node
 
 # Packages for "generators/test_all.py"
-sudo apt-get -y install libxml2-utils
+sudo apt-get -y install libxml2-utils libgd-dev
 
 # Packages for "$:~/doc/ make html"
 sudo apt-get -y install python-sphinx python-sphinxcontrib.spelling

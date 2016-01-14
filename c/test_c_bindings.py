@@ -3,7 +3,7 @@
 
 """
 C/C++ Bindings Tester
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 test_c_bindings.py: Tests the C/C++ bindings
 
@@ -39,6 +39,11 @@ class CExamplesTester(common.ExamplesTester):
         self.compiler = compiler
 
     def test(self, cookie, src, is_extra_example):
+        # skip OLED scribble example because mingw32 has no libgd package
+        if self.compiler == 'mingw32-gcc' and src.endswith('example_scribble.c'):
+            self.execute(cookie, ['true'])
+            return
+
         if is_extra_example:
             shutil.copy(src, '/tmp/tester/c')
             src = os.path.join('/tmp/tester/c', os.path.split(src)[1])
@@ -73,9 +78,6 @@ class CExamplesTester(common.ExamplesTester):
                  dest,
                  '/tmp/tester/c/source/ip_connection.c']
 
-        if self.compiler == 'mingw32-gcc':
-            args += ['-lws2_32']
-
         if len(device) > 0:
             args.append(device)
         elif is_extra_example:
@@ -85,6 +87,12 @@ class CExamplesTester(common.ExamplesTester):
             args += deps
 
         args.append(src)
+
+        if self.compiler == 'mingw32-gcc':
+            args += ['-lws2_32']
+
+        if src.endswith('example_scribble.c'):
+            args += ['-lm', '-lgd']
 
         self.execute(cookie, args)
 

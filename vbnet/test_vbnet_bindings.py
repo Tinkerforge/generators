@@ -3,7 +3,7 @@
 
 """
 Visual Basic .NET Bindings Tester
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 test_vbnet_bindings.py: Tests the Visual Basic .NET bindings
 
@@ -49,6 +49,7 @@ class VBNETExamplesTester(common.ExamplesTester):
                 '/warnaserror',
                 '/target:exe',
                 '/out:' + dest,
+                '/reference:System.Drawing.dll',
                 '/reference:/tmp/tester/vbnet/Tinkerforge.dll',
                 src]
 

@@ -3,7 +3,7 @@
 
 """
 C# Bindings Tester
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 test_csharp_bindings.py: Tests the C# bindings
 
@@ -47,6 +47,7 @@ class CSharpExamplesTester(common.ExamplesTester):
                 '/optimize',
                 '/target:exe',
                 '/out:' + dest,
+                '/reference:System.Drawing.dll',
                 '/reference:/tmp/tester/csharp/Tinkerforge.dll',
                 src]
 
