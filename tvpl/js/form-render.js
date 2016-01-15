@@ -100,15 +100,15 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
       }
 
       if (!fieldAttrs.label) {
-        var fieldLabel = '<label for="' + fieldAttrs.id + '">-</label>';
+        var fieldLabel = '<label for="' + fieldAttrs.id + '">?</label>';
       }
       else {
         var fieldLabel = '<label for="' + fieldAttrs.id + '">' + fieldAttrs.label + '</label>';
       }
 
       if (fieldAttrs.type === 'button') {
-        if (!fieldAttrs.type) {
-          buttonLabel = '-';
+        if (!fieldAttrs.label) {
+          buttonLabel = '?';
         }
         else {
           buttonLabel = fieldAttrs.label;
