@@ -241,6 +241,7 @@
         var MSG_INFO_PROGRAM_RUNNING = 'A program is currently running.';
         var MSG_TOOLTIP_BUTTON_RUNSTOP_RUN = 'Execute code generated from current workspace';
         var MSG_TOOLTIP_BUTTON_RUNSTOP_STOP = 'Stop currently running program';
+        var PROGRAM_STATUS_RUNNING = false;
         var body = document.getElementsByTagName('body')[0];
         var tableHeader = document.getElementById('tableHeader');
         var tdTableHeaderToolbar = document.getElementById('tdTableHeaderToolbar');
@@ -449,6 +450,14 @@
         function clickedEditGUI(e) {
           divEditGUI.style.display = 'block';
           formRenderGUI.style.display = 'none';
+
+          /*
+           * This is a fix for UI block message not appearing on the the center
+           * if the element was not visible at the time of blocking.
+           */
+          if (PROGRAM_STATUS_RUNNING) {
+			blockEditGUI(true, MSG_INFO_PROGRAM_RUNNING);
+          }
         }
 
         function clickedRenderGUI(e) {
@@ -586,6 +595,7 @@
         }
 
         function handle_type_res_program_start_ack(e) {
+          PROGRAM_STATUS_RUNNING = true;
           textareaConsole.value = '';
           textareaConsole.scrollTop = textareaConsole.scrollHeight;
           buttonToolbarRunStop.setAttribute('onclick', 'clickedStopProgram()');
@@ -597,6 +607,8 @@
         }
 
         function clickedStopProgram(e) {
+          PROGRAM_STATUS_RUNNING = false;
+
           if (workerManager !== null) {
             buttonToolbarRunStop.disabled = true;
             workerManager.postMessage(workerProtocol.getMessage(workerProtocol.SENDER_GUI,
