@@ -89,7 +89,8 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
     _helpers.fieldRender = function (field) {
       var fieldMarkup = '',
           optionsMarkup = '',
-          buttonLabel = '';
+          buttonLabel = '',
+          buttonOnClick = '';
       var fieldAttrs = _helpers.parseAttrs(field.attributes),
           fieldDesc = fieldAttrs.description,
           // @todo
@@ -112,6 +113,13 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
         }
         else {
           buttonLabel = fieldAttrs.label;
+        }
+
+        if (!fieldAttrs.buttonOnClick) {
+          buttonOnClick = '';
+        }
+        else {
+          buttonOnClick = ' onClick="' + fieldAttrs.buttonOnClick + '" ';
         }
       }
 
@@ -169,7 +177,7 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
           fieldMarkup = fieldLabel + ' <input ' + fieldAttrsString + '>';
           break;
         case 'button':
-          fieldMarkup = '<' + fieldAttrs.type + '>' + buttonLabel + '</' + fieldAttrs.type + '>';
+          fieldMarkup = '<' + fieldAttrs.type + buttonOnClick + '>' + buttonLabel + '</' + fieldAttrs.type + '>';
           break;
         case 'checkbox':
           fieldMarkup = '<input ' + fieldAttrsString + '> ' + fieldLabel;

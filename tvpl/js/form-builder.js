@@ -436,7 +436,8 @@ Tinkerforge TVPL modifications: Start tracing from,
       				    {
       				    	type: 'button',
       				    	className: 'button',
-      				    	name: 'button'
+                            name: 'button',
+                            buttonOnClick: ''
       				    }
       				  },
       				  {
@@ -853,7 +854,7 @@ Tinkerforge TVPL modifications: Start tracing from,
         else if (type === 'button') {
           // TODO: Setup button specific editable fields
           advFields += '<div class="frm-fld label-wrap"><label>' + opts.messages.buttonOnClick + '</label>';
-          advFields += '<input type="text" name="buttonOnClick" value="" class="fld-name" id="title-' + lastID + '" /></div>';
+          advFields += '<input type="text" name="buttonOnClick" value="" class="fld-button-on-click" /></div>';
         }
         else if (type === 'plot') {
         	// TODO: Setup plot specific editable fields
@@ -1424,6 +1425,7 @@ Tinkerforge TVPL modifications: Start tracing from,
         // build new xml
         $(this).children().each(function () {
           var $field = $(this);
+
           if (!($field.hasClass('moving') || $field.hasClass('disabled'))) {
             for (var att = 0; att < opts.attributes.length; att++) {
               var required = $('input.required', $field).is(':checked') ? 'required="true" ' : 'required="false" ',
@@ -1444,9 +1446,15 @@ Tinkerforge TVPL modifications: Start tracing from,
                   maxLength = 'max-length="' + (maxLengthVal !== undefined ? maxLengthVal : '') + '" ',
                   fSlash = !multipleField ? '/' : '';
 
+              var fButtonOnClick = '';
+
+              if (t === 'button') {
+                fButtonOnClick = 'buttonOnClick="' + $('input.fld-button-on-click', $field).val() + '" ';
+              }
+
               var fToggle = $('.checkbox-toggle', $field).is(':checked') ? 'toggle="true" ' : '';
 
-              serialStr += '\n\t\t<field ' + fName + fLabel + fToggle + multiple + roles + desc + (maxLengthVal !== '' ? maxLengthVal !== undefined ? maxLength : '' : '') + required + type + fSlash + '>';
+              serialStr += '\n\t\t<field ' + fName + fLabel + fToggle + multiple + roles + desc + (maxLengthVal !== '' ? maxLengthVal !== undefined ? maxLength : '' : '') + required + type + fButtonOnClick + fSlash + '>';
               if (multipleField) {
                 c = 1;
                 $('.sortable-options li', $field).each(function () {
