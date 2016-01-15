@@ -88,7 +88,8 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
      */
     _helpers.fieldRender = function (field) {
       var fieldMarkup = '',
-          optionsMarkup = '';
+          optionsMarkup = '',
+          buttonLabel = '';
       var fieldAttrs = _helpers.parseAttrs(field.attributes),
           fieldDesc = fieldAttrs.description,
           // @todo
@@ -98,7 +99,21 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
         fieldAttrs['class'] = 'form-control';
       }
 
-      var fieldLabel = '<label for="' + fieldAttrs.id + '">' + fieldAttrs.label + '</label>';
+      if (!fieldAttrs.label) {
+        var fieldLabel = '<label for="' + fieldAttrs.id + '">-</label>';
+      }
+      else {
+        var fieldLabel = '<label for="' + fieldAttrs.id + '">' + fieldAttrs.label + '</label>';
+      }
+
+      if (fieldAttrs.type === 'button') {
+        if (!fieldAttrs.type) {
+          buttonLabel = '-';
+        }
+        else {
+          buttonLabel = fieldAttrs.label;
+        }
+      }
 
       delete fieldAttrs.label;
       delete fieldAttrs.description;
@@ -154,9 +169,7 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
           fieldMarkup = fieldLabel + ' <input ' + fieldAttrsString + '>';
           break;
         case 'button':
-        	console.info('*** field from renderer markup');
-        	console.info(field);
-          fieldMarkup = '<' + fieldAttrs.type + '>' + fieldAttrs.label + '</' + fieldAttrs.type + '>';
+          fieldMarkup = '<' + fieldAttrs.type + '>' + buttonLabel + '</' + fieldAttrs.type + '>';
           break;
         case 'checkbox':
           fieldMarkup = '<input ' + fieldAttrsString + '> ' + fieldLabel;

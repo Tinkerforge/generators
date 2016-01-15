@@ -89,6 +89,7 @@ Tinkerforge TVPL modifications: Start tracing from,
         allowSelect: 'Allow Select',
         autocomplete: 'Autocomplete',
         button: 'Button',
+        buttonOnClick: 'On Click',
         cannotBeEmpty: 'This field cannot be empty',
         checkboxGroup: 'Checkbox Group',
         checkbox: 'Checkbox',
@@ -830,39 +831,36 @@ Tinkerforge TVPL modifications: Start tracing from,
 
         // Common editable fields
         var fieldLabel = $('<div>', {
-          'class': 'frm-fld label-wrap'
-        });
-        $('<label/>').html(opts.messages.label).appendTo(fieldLabel);
-        $('<input>', {
-          type: 'text',
-          name: 'label',
-          value: values.label,
-          'class': 'fld-label'
-        }).appendTo(fieldLabel);
-        advFields += fieldLabel[0].outerHTML;
+            'class': 'frm-fld label-wrap'
+          });
 
-        var fieldDesc = $('<div>', {
-          'class': 'frm-fld description-wrap'
-        });
-        $('<label/>').html(opts.messages.description).appendTo(fieldDesc);
+	    $('<label/>').html(opts.messages.label).appendTo(fieldLabel);
+	    $('<input>', {
+	      type: 'text',
+	      name: 'label',
+	      value: values.label,
+	      'class': 'fld-label'
+	    }).appendTo(fieldLabel);
 
-        advFields += '<div class="frm-fld description-wrap"><label>' + opts.messages.description + '</label>';
-        advFields += '<input type="text" name="description" value="" class="fld-description" id="description-' + lastID + '" /></div>';
+	    advFields += fieldLabel[0].outerHTML;
 
-        advFields += '<div class="frm-fld name-wrap"><label>' + opts.messages.name + ' <span class="required">*</span></label>';
-        advFields += '<input type="text" name="name" value="' + values.name + '" class="fld-name" id="title-' + lastID + '" /></div>';
+	    advFields += '<div class="frm-fld name-wrap"><label>' + opts.messages.name + ' </label>';
+	    advFields += '<input type="text" name="name" value="' + values.name + '" class="fld-name" id="title-' + lastID + '" /></div>';
 
-        advFields += '</div>';
-        
         if (type === 'output-field') {
-        	// TODO: Setup output field specific editable fields
+          // TODO: Setup output field specific editable fields
         }
         else if (type === 'button') {
-        	// TODO: Setup button specific editable fields
+          // TODO: Setup button specific editable fields
+          advFields += '<div class="frm-fld label-wrap"><label>' + opts.messages.buttonOnClick + '</label>';
+          advFields += '<input type="text" name="buttonOnClick" value="" class="fld-name" id="title-' + lastID + '" /></div>';
         }
         else if (type === 'plot') {
         	// TODO: Setup plot specific editable fields
         }
+
+        console.info('*** advFields');
+        console.info(advFields);
 
         return advFields;
       };
@@ -876,7 +874,6 @@ Tinkerforge TVPL modifications: Start tracing from,
      */
     /*
     var advFields = function advFields(type, values) {
-
       var advFields = '',
           key,
           roles = values.role !== undefined ? values.role.split(',') : [];
