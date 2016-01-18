@@ -111,11 +111,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Clears the current content of the display.
+Clears the current content of the window as set by :func:`NewWindow`.
 """,
 'de':
 """
-Löscht den aktuellen Inhalt auf dem Display.
+Löscht den aktuellen Inhalt des mit :func:`NewWindow` gesetztem Fensters.
 """
 }]
 })
