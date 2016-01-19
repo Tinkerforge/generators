@@ -16,7 +16,7 @@ sudo apt-get update
 sudo apt-get -y install git
 
 # Packages for "generators/generate_all.py"
-sudo apt-get -y install build-essential mono-complete python python3 perl default-jre default-jdk nodejs npm php5 php-pear ruby
+sudo apt-get -y install build-essential mono-complete python python3 perl default-jre default-jdk nodejs npm php5 php-pear ruby zip
 sudo npm install -g browserify
 sudo ln -s /usr/bin/nodejs /usr/local/bin/node
 
