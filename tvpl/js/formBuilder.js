@@ -1066,7 +1066,7 @@ Tinkerforge TVPL modifications: Start tracing from,
           break;
         case 'plot':
           // TODO: Preview generation code for plot
-          preview = '<img src="media/plot.png" alt="Plot Widget" height="64" width="64" />';
+          preview = '<img src="media/plotpreview.png" alt="Plot Widget" height="64" width="64" />';
           break;
         case 'autocomplete':
           preview = '<input class="ui-autocomplete-input" autocomplete="on" placeholder="">';
