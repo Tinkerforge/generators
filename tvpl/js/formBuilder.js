@@ -104,7 +104,7 @@ Tinkerforge TVPL modifications: Start tracing from,
         devMode: 'Developer Mode',
         disableFields: 'These fields cannot be moved.',
         editNames: 'Edit Names',
-        editorTitle: 'GUI Elements',
+        editorTitle: 'Widgets',
         editXML: 'Edit XML',
         fieldVars: 'Field Variables',
         fieldRemoveWarning: 'Are you sure you want to remove this field?',
@@ -1060,13 +1060,14 @@ Tinkerforge TVPL modifications: Start tracing from,
           preview = '<input type="' + attrs.type + '" ' + toggle + ' placeholder="">';
           break;
         case 'button':
-        	console.info('*** attrs from preview markup');
-        	console.info(attrs);
-        	preview = '<' + attrs.type + ' placeholder="">' + attrs.label + '</' + attrs.type + '>';
-        	break;
-        case plot:
-        	// TODO: Preview generation code for plot
-        	break;
+          console.info('*** attrs from preview markup');
+          console.info(attrs);
+          preview = '<' + attrs.type + ' placeholder="">' + attrs.label + '</' + attrs.type + '>';
+          break;
+        case 'plot':
+          // TODO: Preview generation code for plot
+          preview = '<img src="media/plot.png" alt="Plot Widget" height="64" width="64" />';
+          break;
         case 'autocomplete':
           preview = '<input class="ui-autocomplete-input" autocomplete="on" placeholder="">';
           break;
