@@ -46,6 +46,17 @@ com['packets'].append({
 Sets the current date (including weekday) and the current time with hundredths
 of a second resolution.
 
+Possible value ranges:
+
+* Year: 2000 to 2099
+* Month: 1 to 12 (January to December)
+* Day: 1 to 31
+* Hour: 0 to 23
+* Minute: 0 to 59
+* Second: 0 to 59
+* Centisecond: 0 to 99
+* Weekday: 1 to 7 (Monday to Sunday)
+
 If the backup battery is installed then the real-time clock keeps date and
 time even if the Bricklet is not powered by a Brick.
 
@@ -57,6 +68,17 @@ handled.
 """
 Setzt das aktuelle Datum (inklusive Wochentag) und die aktuelle Zeit mit
 Hundertstelsekunden Auflösung.
+
+Mögliche Wertebereiche:
+
+* Year: 2000 bis 2099
+* Month: 1 bis 12 (Januar bis Dezember)
+* Day: 1 bis 31
+* Hour: 0 bis 23
+* Minute: 0 bis 59
+* Second: 0 bis 59
+* Centisecond: 0 bis 99
+* Weekday: 1 bis 7 (Montag bis Sontag)
 
 Wenn die Backup Batterie eingebaut ist, dann behält die Echtzeituhr Datum und
 Zeit auch dann, wenn kein Brick das Bricklet mit Strom versorgt.
@@ -121,52 +143,60 @@ zurück. Der Zeitstempel hat eine effektive Auflösung von Hundertstelsekunden.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set Correction Offset',
+'name': 'Set Offset',
 'elements': [('Offset', 'int8', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Sets the correction offset for the real-time clock in 2.17 ppm steps between
--277.76 ppm (-128) and +275.59 ppm (127).
+Sets the offset the real-time clock should compensate for in 2.17 ppm steps
+between -277.76 ppm (-128) and +275.59 ppm (127).
 
 The real-time clock time can deviate from the actual time due to the frequency
-deviation of its 32.768 kHz crystal. Without correction (factory default) the
-time deviation should less than ±20 ppm (±1.728 seconds per day).
+deviation of its 32.768 kHz crystal. Even without compensation (factory
+default) the resulting time deviation should be at most ±20 ppm (±1.728
+seconds per day).
 
 This deviation can be calculated by comparing the same duration measured by the
 real-time clock (``rtc_duration``) an accurate reference clock
-(``ref_duration``). For best results the offset should be set to 0 ppm first
-and then a duration of at least 6 hours should be measured.
+(``ref_duration``).
 
-The new correction offset can be calculated as follow::
+For best results the configured offset should be set to 0 ppm first and then a
+duration of at least 6 hours should be measured.
 
-  offset = round(1000000 * (ref_duration - rtc_duration) / rtc_duration / 2.17)
+The new offset (``new_offset``) can be calculated from the currently configured
+offset (``current_offset``) and the measured durations as follow::
 
-If you want to apply an offset correction, then we recommend using the
-calibration dialog in Brick Viewer, instead of doing it manually.
+  new_offset = current_offset - round(1000000 * (rtc_duration - ref_duration) / rtc_duration / 2.17)
+
+If you want to calculate the offset, then we recommend using the calibration
+dialog in Brick Viewer, instead of doing it manually.
 """,
 'de':
 """
-Setzt den Korrekturversatz für die Echtzeituhr in 2,17 ppm Schritten zwischen
--277,76 ppm (-128) und +275,59 ppm (127).
+Setzt den Versatz ein, den die Echtzeituhr ausgleichen soll.
+Der Versatz kann in 2,17 ppm Schritten zwischen -277,76 ppm (-128) und
++275,59 ppm (127) eingestellt werden.
 
 Die Echtzeituhr kann von der eigentlichen Zeit abweichen, bedingt durch die
-Frequenzabweichung des verbauten 32,768 kHz Quarzes. Ohne Korrektur
-(Werkseinstellung) sollte die Zeitabweichung weniger als ±20 ppm (±1,728
-Sekunden pro Tag) betragen.
+Frequenzabweichung des verbauten 32,768 kHz Quarzes. Selbst ohne Ausgleich
+(Werkseinstellung) sollte die daraus entstehende Zeitabweichung höchstens
+±20 ppm (±1,728 Sekunden pro Tag) betragen.
 
 Diese Abweichung kann berechnet werden, durch Vergleich der gleichen Zeitdauer
 einmal mit der Echtzeituhr (``rtc_duration``) gemessen und einmal mit einer
-genauen Kontrolluhr (``ref_duration``) gemessen. Um das beste Ergebnis zu
-erzielen, sollte der Korrekturversatz zuerst auf 0 ppm gesetzt und dann eine
-Zeitdauer von mindestens 6 Stunden gemessen werden.
+genauen Kontrolluhr (``ref_duration``) gemessen.
 
-Der neue Korrekturversatz kann dann wie folgt berechnet werden::
+Um das beste Ergebnis zu erzielen, sollte der eingestellte Versatz zuerst auf
+0 ppm gesetzt und dann eine Zeitdauer von mindestens 6 Stunden gemessen werden.
 
-  offset = round(1000000 * (ref_duration - rtc_duration) / rtc_duration / 2.17)
+Der neue Versatz (``new_offset``) kann dann wie folgt aus dem aktuell
+eingestellten Versatz (``current_offset``) und den gemessenen
+Zeitdauern berechnet werden::
 
-Wenn eine Korrekturversatz berechnet werden soll, dann empfehlen wir den
+  new_offset = current_offset - round(1000000 * (rtc_duration - ref_duration) / rtc_duration / 2.17)
+
+Wenn der Versatz berechnet werden soll, dann empfehlen wir den
 Kalibrierungsdialog in Brick Viewer dafür zu verwenden, anstatt die Berechnung
 von Hand durchzuführen.
 """
@@ -175,17 +205,17 @@ von Hand durchzuführen.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Correction Offset',
+'name': 'Get Offset',
 'elements': [('Offset', 'int8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the correction offset as set by :func:`SetCorrectionOffset`.
+Returns the offset as set by :func:`SetOffset`.
 """,
 'de':
 """
-Gibt den Korrekturversatz zurück, wie von :func:`SetCorrectionOffset` gesetzt.
+Gibt den Versatz zurück, wie von :func:`SetOffset` gesetzt.
 """
 }]
 })
