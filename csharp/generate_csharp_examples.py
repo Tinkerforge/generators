@@ -3,7 +3,7 @@
 
 """
 C# Examples Generator
-Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_csharp_examples.py: Generator for C# examples
 
@@ -536,6 +536,9 @@ class CSharpExamplesGenerator(common.ExamplesGenerator):
         return CSharpExampleSpecialFunction
 
     def generate(self, device):
+        if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_camel_case_name()) != device.get_camel_case_name():
+            return
+
         examples_directory = self.get_examples_directory(device)
         examples = device.get_examples()
 

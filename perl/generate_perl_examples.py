@@ -3,7 +3,7 @@
 
 """
 Perl Examples Generator
-Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_perl_examples.py: Generator for Perl examples
 
@@ -480,6 +480,9 @@ class PerlExamplesGenerator(common.ExamplesGenerator):
         return PerlExampleSpecialFunction
 
     def generate(self, device):
+        if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_camel_case_name()) != device.get_camel_case_name():
+            return
+
         examples_directory = self.get_examples_directory(device)
         examples = device.get_examples()
 

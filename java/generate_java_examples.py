@@ -3,7 +3,7 @@
 
 """
 Java Examples Generator
-Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 generate_java_examples.py: Generator for Java examples
 
@@ -516,6 +516,9 @@ class JavaExamplesGenerator(common.ExamplesGenerator):
         return JavaExampleSpecialFunction
 
     def generate(self, device):
+        if os.getenv('TINKERFORGE_GENERATE_EXAMPLES_FOR_DEVICE', device.get_camel_case_name()) != device.get_camel_case_name():
+            return
+
         examples_directory = self.get_examples_directory(device)
         examples = device.get_examples()
 
