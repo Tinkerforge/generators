@@ -127,6 +127,8 @@ Tinkerforge TVPL modifications: Start tracing from,
         outputField: 'Output Field',
         paragraph: 'Paragraph',
         plot: 'Plot',
+        plotWidth: 'Width (Pixels)',
+        plotHeight: 'Height (Pixels)',
         preview: 'Preview',
         radioGroup: 'Radio Group',
         radio: 'Radio',
@@ -846,7 +848,7 @@ Tinkerforge TVPL modifications: Start tracing from,
 	    advFields += fieldLabel[0].outerHTML;
 
 	    advFields += '<div class="frm-fld name-wrap"><label>' + opts.messages.name + ' </label>';
-	    advFields += '<input type="text" name="name" value="' + values.name + '" class="fld-name" id="title-' + lastID + '" /></div>';
+	    advFields += '<input readonly type="text" name="name" value="' + values.name + '" class="fld-name" id="title-' + lastID + '" /></div>';
 
         if (type === 'output-field') {
           // TODO: Setup output field specific editable fields
@@ -857,7 +859,12 @@ Tinkerforge TVPL modifications: Start tracing from,
           advFields += '<input type="text" name="buttonOnClick" value="" class="fld-button-on-click" /></div>';
         }
         else if (type === 'plot') {
-        	// TODO: Setup plot specific editable fields
+          // TODO: Setup plot specific editable fields
+          advFields += '<div class="frm-fld label-wrap"><label>' + opts.messages.plotWidth + '</label>';
+          advFields += '<input type="number" min="200" value="200" name="plotWidth" value="" class="fld-plot-width" /></div>';
+
+          advFields += '<div class="frm-fld label-wrap"><label>' + opts.messages.plotHeight + '</label>';
+          advFields += '<input type="number" min="100" value="100" name="plotHeight" value="" class="fld-plot-height" /></div>';
         }
 
         console.info('*** advFields');
@@ -1448,14 +1455,21 @@ Tinkerforge TVPL modifications: Start tracing from,
                   fSlash = !multipleField ? '/' : '';
 
               var fButtonOnClick = '';
+              var fPlotWidth = '';
+              var fPlotHeight = '';
 
               if (t === 'button') {
                 fButtonOnClick = 'buttonOnClick="' + $('input.fld-button-on-click', $field).val() + '" ';
               }
+              
+              if (t === 'plot') {
+                fPlotWidth  = 'plotWidth="' + $('input.fld-plot-width', $field).val() + '" ';
+                fPlotHeight = 'plotHeight="' + $('input.fld-plot-height', $field).val() + '" ';
+              }
 
               var fToggle = $('.checkbox-toggle', $field).is(':checked') ? 'toggle="true" ' : '';
 
-              serialStr += '\n\t\t<field ' + fName + fLabel + fToggle + multiple + roles + desc + (maxLengthVal !== '' ? maxLengthVal !== undefined ? maxLength : '' : '') + required + type + fButtonOnClick + fSlash + '>';
+              serialStr += '\n\t\t<field ' + fName + fLabel + fToggle + multiple + roles + desc + (maxLengthVal !== '' ? maxLengthVal !== undefined ? maxLength : '' : '') + required + type + fButtonOnClick + fPlotWidth + fPlotHeight + fSlash + '>';
               if (multipleField) {
                 c = 1;
                 $('.sortable-options li', $field).each(function () {

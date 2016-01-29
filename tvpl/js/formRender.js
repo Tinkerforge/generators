@@ -90,7 +90,10 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
       var fieldMarkup = '',
           optionsMarkup = '',
           buttonLabel = '',
-          buttonOnClick = '';
+          buttonOnClick = '',
+      	  plotLabel = '',
+      	  plotWidth = '40',
+      	  plotHeight ='20';
       var fieldAttrs = _helpers.parseAttrs(field.attributes),
           fieldDesc = fieldAttrs.description,
           // @todo
@@ -121,6 +124,23 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
         else {
           buttonOnClick = ' onClick="' + fieldAttrs.buttonOnClick + '" ';
         }
+      }
+      
+      if (fieldAttrs.type === 'plot') {
+	    if (!fieldAttrs.label) {
+	      plotLabel = '?';
+	    }
+	    else {
+	      plotLabel = fieldAttrs.label;
+	    }
+	    
+	    if (fieldAttrs.plotWidth) {
+	      plotWidth = fieldAttrs.plotWidth;
+	    }
+	    
+	    if (fieldAttrs.plotHeight) {
+	      plotHeight = fieldAttrs.plotHeight;
+	    }
       }
 
       delete fieldAttrs.label;
@@ -169,7 +189,6 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
           fieldMarkup = fieldLabel + '<div class="' + fieldAttrs.type + '-group">' + optionsMarkup + '</div>';
           break;
         case 'output-field':
-        case 'plot':
         case 'password':
         case 'email':
         case 'date':
@@ -179,6 +198,20 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
         case 'button':
           fieldMarkup = '<' + fieldAttrs.type + buttonOnClick + '>' + buttonLabel + '</' + fieldAttrs.type + '>';
           break;
+        case 'plot':
+        	fieldMarkup = '<div id=\'' + fieldAttrs.name + '\' style=\'width:' + plotWidth + 'px; height:' + plotHeight + 'px\'></div>';
+
+        	plotConfigs[fieldAttrs.name] = {
+										     axisY  : {
+										    	        label: plotLabel,
+										    	        data : [[0, 0]]
+										     		  },
+										     options: {
+										    	 	    xaxis: {show: false}
+										     		  },
+										     plot   : null
+        								   };
+            break;
         case 'checkbox':
           fieldMarkup = '<input ' + fieldAttrsString + '> ' + fieldLabel;
 

@@ -258,6 +258,7 @@
         var divEditGUI = document.getElementById('divEditGUI');
         var formRenderGUI = document.getElementById('formRenderGUI');
         var fileReader = new FileReader();
+        var plotConfigs = {};
         var blocklyWorkspace = Blockly.inject(blocklyDiv,
           {grid:
             {spacing: 25,
@@ -465,22 +466,36 @@
         function clickedRenderGUI(e) {
           var editorGUI = document.getElementById('textAreaEditGUI');
 
-          $(editorGUI).formRender({container: $(formRenderGUI)});
+          divEditGUI.style.display = 'none';
+          formRenderGUI.style.display = 'block';
 
-          if (formRenderGUI.childNodes.length < 1) {
-            divEditGUI.style.display = 'block';
-            formRenderGUI.style.display = 'none';
-          }
-          else {
-            divEditGUI.style.display = 'none';
-            formRenderGUI.style.display = 'block';
+          if (!PROGRAM_STATUS_RUNNING) {
+	          $(editorGUI).formRender({container: $(formRenderGUI)});
+	
+	          if (formRenderGUI.childNodes.length < 1) {
+	            divEditGUI.style.display = 'block';
+	            formRenderGUI.style.display = 'none';
+	          }
+	          else {	
+	              // Reset all available plot widgets if no program is running and we are rendering the GUI.
+	              for (var plot_cfg in plotConfigs) {
+		        	  plotConfigs[plot_cfg].axisY.data = [[0, 0]];
 
-            if (workerManager === null) {
-              blockRenderGUI(true, MSG_INFO_NO_PROGRAM_RUNNING);
-            }
+		        	  plotConfigs[plot_cfg].plot = $.plot(document.getElementById(plot_cfg),
+		        			                              [plotConfigs[plot_cfg].axisY],
+		        			  							  plotConfigs[plot_cfg].options);
+	
+		        	  plotConfigs[plot_cfg].plot.setData([plotConfigs[plot_cfg].axisY]);
+		        	  plotConfigs[plot_cfg].plot.setupGrid();
+		        	  plotConfigs[plot_cfg].plot.draw();
+		          }
+
+	              blockRenderGUI(true, MSG_INFO_NO_PROGRAM_RUNNING);
+
+	              console.info('*** INNER HTML');
+		          console.info(formRenderGUI.innerHTML);
+	          }
           }
-          console.info('*** INNER HTML');
-          console.info(formRenderGUI.innerHTML)
         }
 
         function blockEditGUI(state, msg) {
