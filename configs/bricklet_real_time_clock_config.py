@@ -124,7 +124,7 @@ Echtzeituhr mit Hundertstelsekunden Auflösung zurück.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Timestamp',
-'elements': [('Milliseconds', 'int64', 1, 'out')],
+'elements': [('Timestamp', 'int64', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -218,4 +218,10 @@ Returns the offset as set by :func:`SetOffset`.
 Gibt den Versatz zurück, wie von :func:`SetOffset` gesetzt.
 """
 }]
+})
+
+com['examples'].append({
+'name': 'Simple',
+'functions': [('getter', ('Get Date Time', 'date and time'), [(('Year', 'Year'), 'uint16', None, None, None, None), (('Month', 'Month'), 'uint8', None, None, None, None), (('Day', 'Day'), 'uint8', None, None, None, None), (('Hour', 'Hour'), 'uint8', None, None, None, None), (('Minute', 'Minute'), 'uint8', None, None, None, None), (('Second', 'Second'), 'uint8', None, None, None, None), (('Centisecond', 'Centisecond'), 'uint8', None, None, None, None), (('Weekday', 'Weekday'), 'uint8', None, None, None, None)], []),
+              ('getter', ('Get Timestamp', 'timestamp'), [(('Timestamp', 'Timestamp'), 'int64', None, 'ms', 'ms', None)], [])]
 })
