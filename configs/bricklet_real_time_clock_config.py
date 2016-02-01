@@ -14,7 +14,7 @@ com = {
     'name': ('Real Time Clock', 'Real-Time Clock', 'Real-Time Clock Bricklet'),
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'Battery backed real-time clock',
+        'en': 'Battery-backed real-time clock',
         'de': 'Batteriegepufferte Echtzeituhr'
     },
     'released': False,
@@ -171,6 +171,9 @@ offset (``current_offset``) and the measured durations as follow::
 
 If you want to calculate the offset, then we recommend using the calibration
 dialog in Brick Viewer, instead of doing it manually.
+
+The offset is saved in the EEPROM of the Bricklet and only needs to be
+configured once.
 """,
 'de':
 """
@@ -199,6 +202,9 @@ Zeitdauern berechnet werden::
 Wenn der Versatz berechnet werden soll, dann empfehlen wir den
 Kalibrierungsdialog in Brick Viewer dafür zu verwenden, anstatt die Berechnung
 von Hand durchzuführen.
+
+Der Versatz wird im EEPROM des Bricklets gespeichert und muss nur einmal
+gesetzt werden.
 """
 }]
 })
