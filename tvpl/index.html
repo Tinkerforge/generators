@@ -4,13 +4,14 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="css/material.min.css">
-    <script src="js/material.min.js"></script>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" type="text/css" media="screen" href="css/form-builder.css">
     <link rel="stylesheet" type="text/css" media="screen" href="css/form-render.css">
-    <script src="js/jquery.min.js"></script>
-    <script src="js/jquery-ui.min.js"></script>
-    <script src="js/jquery.blockUI.js"></script>
+    <script type="text/javascript" src="js/subworkers.js"></script>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/material.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="js/jquery.blockUI.js"></script>
     <script type="text/javascript" src="js/jquery.flot.min.js"></script>
     <script type="text/javascript" src="js/jquery.flot.resize.min.js"></script>
     <script type="text/javascript" src="js/babelPolyfill.js"></script>
@@ -271,13 +272,15 @@
             trashcan: true,
             toolbox: xmlBlocklyToolbox.getElementById('toolboxTVPL'),
             zoom: {enabled: true}});
-        var listImportScripts = ['workerProtocol.js',
+        var listImportScripts = ['subworkers.js',
+                                 'workerProtocol.js',
                                  'Tinkerforge.js',
                                  'babelPolyfill.js',
                                  'babelRuntime.js',
                                  'babelBrowser.js'];
         definitionsGeneratedCode = '';
-        var codeWorkerManager = 'var _queue_function_tf_call = false;\n'+
+        var codeWorkerManager = 'var is_tvpl = true; // This is currently required only for Chrome/Safari subworker polyfill code (subworkers.js).\n'+
+'var _queue_function_tf_call = false;\n'+
 'var _function_tf_call_queue = [];\n'+
 'var _ipcon_cache = {};\n'+
 'var _device_cache = {};\n'+
@@ -398,7 +401,7 @@
         };
 
         var onResize = function(e) {
-          // Make blocklyArea fill the remaining height below the header
+          // Make blocklyArea fill the remaining height below the header.
           blocklyArea.style.height = (body.offsetHeight - tableHeader.offsetHeight) + 'px';
           // Compute the absolute coordinates and dimensions of blocklyArea.
           var element = blocklyArea;
@@ -560,6 +563,8 @@
           workerManager = new Worker(window.URL.createObjectURL(new Blob([retPrepareJavaScriptCodeWorkerManager[1]])));
           workerManager.onmessage = function(e) {
             var messageParsed = JSON.parse(e.data);
+
+            console.log(messageParsed);
 
             if (messageParsed.type !== null && workerProtocol.isNumber(messageParsed.type)) {
               switch(messageParsed.type) {
