@@ -244,6 +244,7 @@
         var MSG_INFO_WORKSPACE_EMPTY = 'Nothing to execute. Seems like the workspace is empty.';
         var MSG_INFO_NO_PROGRAM_RUNNING = 'No program is running.';
         var MSG_INFO_PROGRAM_RUNNING = 'A program is currently running.';
+        var MSG_INFO_GUI_EDITOR_EMPTY = 'Nothing to render. Seems like the GUI editor is empty.';
         var MSG_TOOLTIP_BUTTON_RUNSTOP_RUN = 'Execute code generated from current workspace';
         var MSG_TOOLTIP_BUTTON_RUNSTOP_STOP = 'Stop currently running program';
         var PROGRAM_STATUS_RUNNING = false;
@@ -262,6 +263,7 @@
         var formRenderGUI = document.getElementById('formRenderGUI');
         var fileReader = new FileReader();
         var plotConfigs = {};
+        var initialGUIRender = true;
         var blocklyWorkspace = Blockly.inject(blocklyDiv,
           {grid:
             {spacing: 25,
@@ -460,43 +462,69 @@
            * if the element was not visible at the time of blocking.
            */
           if (PROGRAM_STATUS_RUNNING) {
-			blockEditGUI(true, MSG_INFO_PROGRAM_RUNNING);
+            blockEditGUI(true, MSG_INFO_PROGRAM_RUNNING);
+          }
+        }
+
+        function resetRenderPlotWidgets() {
+          for (var plot_cfg in plotConfigs) {
+            plotConfigs[plot_cfg].axisY.data = [[0, 0]];
+            plotConfigs[plot_cfg].plot = $.plot(document.getElementById(plot_cfg),
+                                                [plotConfigs[plot_cfg].axisY],
+                                                plotConfigs[plot_cfg].options);
+            plotConfigs[plot_cfg].plot.setData([plotConfigs[plot_cfg].axisY]);
+            plotConfigs[plot_cfg].plot.setupGrid();
+            plotConfigs[plot_cfg].plot.draw();
           }
         }
 
         function clickedRenderGUI(e) {
           var editorGUI = document.getElementById('textAreaEditGUI');
 
+          if (PROGRAM_STATUS_RUNNING) {
+            if (initialGUIRender) {
+              /*
+               * To get proper count of rendered child objects.
+               * For example if the user haven't clicked render button even once and already ran the program.
+               */
+              initialGUIRender = false;
+
+              $(editorGUI).formRender({container: $(formRenderGUI)});
+
+              // Render and reset all plot widgets if there are any.
+              resetRenderPlotWidgets();
+
+              if (formRenderGUI.childNodes.length < 1) {
+                clickedEditGUI();
+                return;
+              }
+            }
+            if (formRenderGUI.childNodes.length < 1) {
+              clickedEditGUI();
+              alert(MSG_INFO_GUI_EDITOR_EMPTY);
+              return;
+            }
+            divEditGUI.style.display = 'none';
+            formRenderGUI.style.display = 'block';
+            return;
+          }
+
+          $(editorGUI).formRender({container: $(formRenderGUI)});
+
+          // Reset all available plot widgets if no program is running and we are rendering the GUI.
+          resetRenderPlotWidgets();
+
+          if (formRenderGUI.childNodes.length < 1) {
+            clickedEditGUI();
+            return;
+          }
+
           divEditGUI.style.display = 'none';
           formRenderGUI.style.display = 'block';
 
-          if (!PROGRAM_STATUS_RUNNING) {
-	          $(editorGUI).formRender({container: $(formRenderGUI)});
-	
-	          if (formRenderGUI.childNodes.length < 1) {
-	            divEditGUI.style.display = 'block';
-	            formRenderGUI.style.display = 'none';
-	          }
-	          else {	
-	              // Reset all available plot widgets if no program is running and we are rendering the GUI.
-	              for (var plot_cfg in plotConfigs) {
-		        	  plotConfigs[plot_cfg].axisY.data = [[0, 0]];
-
-		        	  plotConfigs[plot_cfg].plot = $.plot(document.getElementById(plot_cfg),
-		        			                              [plotConfigs[plot_cfg].axisY],
-		        			  							  plotConfigs[plot_cfg].options);
-	
-		        	  plotConfigs[plot_cfg].plot.setData([plotConfigs[plot_cfg].axisY]);
-		        	  plotConfigs[plot_cfg].plot.setupGrid();
-		        	  plotConfigs[plot_cfg].plot.draw();
-		          }
-
-	              blockRenderGUI(true, MSG_INFO_NO_PROGRAM_RUNNING);
-
-	              console.info('*** INNER HTML');
-		          console.info(formRenderGUI.innerHTML);
-	          }
-          }
+          blockRenderGUI(true, MSG_INFO_NO_PROGRAM_RUNNING);
+          console.info('*** INNER HTML');
+          console.info(formRenderGUI.innerHTML);
         }
 
         function blockEditGUI(state, msg) {
