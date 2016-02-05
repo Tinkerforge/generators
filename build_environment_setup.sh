@@ -13,10 +13,10 @@ cd ~
 sudo apt-get update
 
 # Packages for general use
-sudo apt-get -y install git
+sudo apt-get -y install python git
 
 # Packages for "generators/generate_all.py"
-sudo apt-get -y install build-essential mono-complete python python3 perl default-jre default-jdk nodejs npm php5 php-pear ruby zip
+sudo apt-get -y install build-essential mono-complete python3 perl default-jre default-jdk nodejs npm php5 php-pear ruby zip
 sudo npm install -g browserify
 sudo ln -s /usr/bin/nodejs /usr/local/bin/node
 
@@ -39,7 +39,44 @@ sudo apt-get -y install cmake gcc-arm-none-eabi
 sudo apt-get -y install kicad freecad
 
 # Clone all necessary gits
-gits=( "ac-current-bricklet" "accelerometer-bricklet" "ambient-light-bricklet" "ambient-light-v2-bricklet" "analog-in-bricklet" "analog-in-v2-bricklet" "analog-out-bricklet" "analog-out-v2-bricklet" "barometer-bricklet" "blinkenlights" "breakout-brick" "breakout-bricklet" "brickboot" "brickd" "brickletlib" "bricklib" "brickv" "cases" "chibi-extension" "color-bricklet" "co2-bricklet" "current12-bricklet" "current25-bricklet" "daemonlib" "dc-adapter" "dc-brick" "debug-brick" "distance-ir-bricklet" "distance-us-bricklet" "doc" "dual-button-bricklet" "dual-button-bricklet" "dual-relay-bricklet" "dust-detector-bricklet" "ethernet-extension" "gas-detector-bricklet" "generators" "gps-bricklet" "hall-effect-bricklet" "hardware-hacking" "heart-rate-bricklet" "humidity-bricklet" "imu-brick" "imu-v2-brick" "industrial-analog-out-bricklet" "industrial-digital-in-4-bricklet" "industrial-digital-out-4-bricklet" "industrial-dual-0-20ma-bricklet" "industrial-dual-analog-in-bricklet" "industrial-quad-relay-bricklet" "internet-of-things" "io16-bricklet" "io4-bricklet" "joystick-bricklet" "kicad-libraries" "laser-range-finder-bricklet" "lcd-16x2-bricklet" "lcd-20x4-bricklet" "led-strip-bricklet" "line-bricklet" "linear-poti-bricklet" "load-cell-bricklet" "master-brick" "moisture-bricklet" "motion-detector-bricklet" "multi-touch-bricklet" "nfc-rfid-bricklet" "oled-128x64-bricklet" "oled-64x48-bricklet" "ozone-bricklet" "piezo-buzzer-bricklet" "piezo-speaker-bricklet" "ptc-bricklet" "remote-switch-bricklet" "rotary-encoder-bricklet" "rotary-poti-bricklet" "rs232-bricklet" "rs485-extension" "segment-display-4x7-bricklet" "server-room-monitoring" "servo-brick" "solid-state-relay-bricklet" "sound-intensity-bricklet" "step-down-powersupply" "stepper-brick" "temperature-bricklet" "temperature-ir-bricklet" "thermocouple-bricklet" "tilt-bricklet" "tvpl-blockly" "tvpl-closure-library" "uv-light-bricklet" "voltage-bricklet" "voltage-current-bricklet" "weather-station" "wifi-extension" )
+gitgetter=$(mktemp)
+
+cat > ${gitgetter} <<- EOF
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import urllib2
+import json
+
+page = 1
+repos = []
+names = []
+
+while True:
+    request = urllib2.urlopen('https://api.github.com/orgs/Tinkerforge/repos?page={0}&per_page=100'.format(page))
+    data = request.read()
+    decoded = json.loads(data)
+    repos += decoded
+
+    if len(decoded) < 100:
+        break
+
+    page += 1
+
+for repo in repos:
+    name = repo['name'].replace('Tinkerforge/', '')
+
+    if not name.startswith('red-brick-'):
+        names.append(name)
+
+print ' '.join(names)
+EOF
+
+chmod +x ${gitgetter}
+
+gits=( $(${gitgetter}) )
+
+rm ${gitgetter}
 
 mkdir tf
 cd tf
