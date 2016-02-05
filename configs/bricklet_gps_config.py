@@ -8,7 +8,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 222,
     'name': ('GPS', 'GPS', 'GPS Bricklet'),
@@ -101,9 +101,9 @@ Possible fix status values can be:
  :header: "Value", "Description"
  :widths: 10, 100
 
- "1", "No Fix, :func:`GetCoordinates` and :func:`GetAltitude` return invalid data"
- "2", "2D Fix, only :func:`GetCoordinates` returns valid data"
- "3", "3D Fix, :func:`GetCoordinates` and :func:`GetAltitude` return valid data"
+ "1", "No Fix, :func:`GetCoordinates`, :func:`GetAltitude` and :func:`GetMotion` return invalid data"
+ "2", "2D Fix, only :func:`GetCoordinates` and :func:`GetMotion` return valid data"
+ "3", "3D Fix, :func:`GetCoordinates`, :func:`GetAltitude` and :func:`GetMotion` return valid data"
 
 There is also a :ref:`blue LED <gps_bricklet_fix_led>` on the Bricklet that
 indicates the fix status.
@@ -119,9 +119,9 @@ Mögliche Fix-Status Werte sind:
  :header: "Wert", "Beschreibung"
  :widths: 10, 100
 
- "1", "Kein Fix, :func:`GetCoordinates` und :func:`GetAltitude` geben ungültige Daten zurück"
- "2", "2D Fix, nur :func:`GetCoordinates` gibt gültige Daten zurück"
- "3", "3D Fix, :func:`GetCoordinates` und :func:`GetAltitude` geben gültige Daten zurück"
+ "1", "Kein Fix, :func:`GetCoordinates`, :func:`GetAltitude` und :func:`GetMotion` geben ungültige Daten zurück"
+ "2", "2D Fix, nur :func:`GetCoordinates` und :func:`GetMotion` geben gültige Daten zurück"
+ "3", "3D Fix, :func:`GetCoordinates`, :func:`GetAltitude` und :func:`GetMotion` geben gültige Daten zurück"
 
 Auf dem Bricklet ist eine :ref:`blaue LED <gps_bricklet_fix_led>`, die den
 Fix-Status anzeigt.
@@ -132,8 +132,8 @@ Fix-Status anzeigt.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Altitude',
-'elements': [('Altitude', 'uint32', 1, 'out'),
-             ('Geoidal Separation', 'uint32', 1, 'out')],
+'elements': [('Altitude', 'int32', 1, 'out'),
+             ('Geoidal Separation', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -559,8 +559,8 @@ Status seit der letzten Auslösung geändert hat.
 com['packets'].append({
 'type': 'callback',
 'name': 'Altitude',
-'elements': [('Altitude', 'uint32', 1, 'out'),
-             ('Geoidal Separation', 'uint32', 1, 'out')],
+'elements': [('Altitude', 'int32', 1, 'out'),
+             ('Geoidal Separation', 'int32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
