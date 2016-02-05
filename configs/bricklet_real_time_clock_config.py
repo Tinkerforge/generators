@@ -154,8 +154,8 @@ between -277.76 ppm (-128) and +275.59 ppm (127).
 
 The real-time clock time can deviate from the actual time due to the frequency
 deviation of its 32.768 kHz crystal. Even without compensation (factory
-default) the resulting time deviation should be at most ±20 ppm (±1.728
-seconds per day).
+default) the resulting time deviation should be at most ±20 ppm (about ±53
+seconds per month).
 
 This deviation can be calculated by comparing the same duration measured by the
 real-time clock (``rtc_duration``) an accurate reference clock
@@ -184,7 +184,7 @@ Der Versatz kann in 2,17 ppm Schritten zwischen -277,76 ppm (-128) und
 Die Echtzeituhr kann von der eigentlichen Zeit abweichen, bedingt durch die
 Frequenzabweichung des verbauten 32,768 kHz Quarzes. Selbst ohne Ausgleich
 (Werkseinstellung) sollte die daraus entstehende Zeitabweichung höchstens
-±20 ppm (±1,728 Sekunden pro Tag) betragen.
+±20 ppm (etwa ±53 Sekunden pro Monat) betragen.
 
 Diese Abweichung kann berechnet werden, durch Vergleich der gleichen Zeitdauer
 einmal mit der Echtzeituhr (``rtc_duration``) gemessen und einmal mit einer
