@@ -367,15 +367,17 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Sensor Type',
 'elements': [('Sensor', 'uint8', 1, 'in', ('Sensor Type', [('MPX5500', 0),
-                                                           ('MPXV5004', 1)]))],
+                                                           ('MPXV5004', 1),
+                                                           ('MPX4115A', 2)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
 Sets the sensor type. Possible values are:
 
-* 0 = MPX5500 (0-500 kPa)
-* 1 = MPXV5004, MPVZ5004 (0-3.92 kPa)
+* 0 = MPX5500 (0 to 500 kPa)
+* 1 = MPXV5004, MPVZ5004 (0 to 3.92 kPa)
+* 2 = MPX4115A (15 to 115 kPa)
 
 The default value is 0.
 """,
@@ -383,8 +385,9 @@ The default value is 0.
 """
 Setzt den Sensortyp. Mögliche Werte sind:
 
-* 0 = MPX5500 (0-500 kPa)
-* 1 = MPXV5004, MPVZ5004 (0-3,92 kPa)
+* 0 = MPX5500 (0 bis 500 kPa)
+* 1 = MPXV5004, MPVZ5004 (0 bis 3,92 kPa)
+* 2 = MPX4115A (15 bis 115 kPa)
 
 Der Standardwert ist 0.
 """
@@ -395,7 +398,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Sensor Type',
 'elements': [('Sensor', 'uint8', 1, 'out', ('Sensor Type', [('MPX5500', 0),
-                                                            ('MPXV5004', 1)]))],
+                                                            ('MPXV5004', 1),
+                                                            ('MPX4115A', 2)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
