@@ -60,5 +60,5 @@ workerProtocol.getMessage = function(sender, type, data) {
   message.sender = sender;
   message.type = type;
   message.data = data;
-  return JSON.stringify(message);
+  return message;
 }

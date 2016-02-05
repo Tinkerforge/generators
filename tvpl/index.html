@@ -279,7 +279,8 @@
                                  'babelRuntime.js',
                                  'babelBrowser.js'];
         definitionsGeneratedCode = '';
-        var codeWorkerManager = 'var is_tvpl = true; // This is currently required only for Chrome/Safari subworker polyfill code (subworkers.js).\n'+
+        // Variable "is_tvpl" is currently only used for Chrome/Safari subworker polyfill code in the file subworkers.js.
+        var codeWorkerManager = 'var is_tvpl = true;\n'+
 'var _queue_function_tf_call = false;\n'+
 'var _function_tf_call_queue = [];\n'+
 'var _ipcon_cache = {};\n'+
@@ -315,22 +316,17 @@
 '  ipcon.connect(data.host, Number(data.port), _error_handler);\n'+
 '}\n'+
 'function _dispatch_message(message) {\n'+
-'  var message_parsed = null;\n'+
-'  try {\n'+
-'    message_parsed = JSON.parse(message);\n'+
-'  }\n'+
-'  catch(e) {\n'+
-'    _error_handler(String(e));\n'+
+'  if (typeof(message) !== \'object\') {\n'+
 '    return;\n'+
 '  }\n'+
 '\n'+
-'  if (message_parsed.type !== null && workerProtocol.isNumber(message_parsed.type)) {\n'+
-'    switch(message_parsed.type) {\n'+
+'  if (message.type !== null && workerProtocol.isNumber(message.type)) {\n'+
+'    switch(message.type) {\n'+
 '      case workerProtocol.TYPE_REQ_PROGRAM_START:\n'+
-'        if (message_parsed.data instanceof Array && message_parsed.data.length > 0) {\n'+
-'           for (var i = 0; i < message_parsed.data.length; i++) {\n'+
-'             var worker_id = message_parsed.data[i].split(\'/\')[message_parsed.data[i].split(\'/\').length - 1];\n'+
-'             _running_workers[worker_id] = new Worker(message_parsed.data[i]);\n'+
+'        if (message.data instanceof Array && message.data.length > 0) {\n'+
+'           for (var i = 0; i < message.data.length; i++) {\n'+
+'             var worker_id = message.data[i].split(\'/\')[message.data[i].split(\'/\').length - 1];\n'+
+'             _running_workers[worker_id] = new Worker(message.data[i]);\n'+
 '             _running_workers[worker_id].onmessage = onmessage;\n'+
 '             _running_workers[worker_id].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_SUBWORKER_START, {wid: worker_id, dictv: _dict_variables}));\n'+
 '           }\n'+
@@ -348,38 +344,38 @@
 '        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_PROGRAM_STOP_ACK, null));\n'+
 '        break;\n'+
 '      case workerProtocol.TYPE_REQ_FUNCTION_EXECUTE:\n'+
-'        var worker_id = message_parsed.data.blobFunction.split(\'/\')[message_parsed.data.blobFunction.split(\'/\').length - 1];\n'+
-'        _running_workers[worker_id] = new Worker(message_parsed.data.blobFunction);\n'+
+'        var worker_id = message.data.blobFunction.split(\'/\')[message.data.blobFunction.split(\'/\').length - 1];\n'+
+'        _running_workers[worker_id] = new Worker(message.data.blobFunction);\n'+
 '        _running_workers[worker_id].onmessage = onmessage;\n'+
-'        _running_workers[worker_id].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_SUBWORKER_START, {wid: worker_id, dictv: _dict_variables, codeButtonEnable: message_parsed.data.codeButtonEnable}));\n'+
+'        _running_workers[worker_id].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_SUBWORKER_START, {wid: worker_id, dictv: _dict_variables, codeButtonEnable: message.data.codeButtonEnable}));\n'+
 '        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_FUNCTION_EXECUTE_ACK, null));\n'+
 '        break;\n'+
 '      case workerProtocol._TYPE_RES_SUBWORKER_DONE:\n'+
-'        if (message_parsed.data !== null && message_parsed.data !== \'\') {\n'+
-'          postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_SUBWORKER_DONE, message_parsed.data));\n'+
+'        if (message.data !== null && message.data !== \'\') {\n'+
+'          postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_SUBWORKER_DONE, message.data));\n'+
 '        }\n'+
-'        _running_workers[message_parsed.sender].terminate();\n'+
-'        delete _running_workers[message_parsed.data];\n'+
+'        _running_workers[message.sender].terminate();\n'+
+'        delete _running_workers[message.data];\n'+
 '        break;\n'+
 '      case workerProtocol._TYPE_RES_SET_VARIABLE:\n'+
-'        _dict_variables = message_parsed.data;\n'+
+'        _dict_variables = message.data;\n'+
 '        for (var key in _running_workers) {\n'+
-'          _running_workers[key].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_SET_VARIABLE, message_parsed.data));\n'+
+'          _running_workers[key].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_SET_VARIABLE, message.data));\n'+
 '        }\n'+
 '        break;\n'+
 '      case workerProtocol._TYPE_RES_FUNCTION_TF_CALL:\n'+
 '        if(_queue_function_tf_call) {\n'+
-'          _function_tf_call_queue.push(message_parsed.data);\n'+
+'          _function_tf_call_queue.push(message.data);\n'+
 '          break;\n'+
 '        }\n'+
 '        _queue_function_tf_call = true;\n'+
-'        _do_function_tf_call(message_parsed.data);\n'+
+'        _do_function_tf_call(message.data);\n'+
 '        break;\n'+
 '      case workerProtocol._TYPE_RES_MESSAGE_CONSOLE:\n'+
-'        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_MESSAGE_CONSOLE, String(message_parsed.data)));\n'+
+'        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_MESSAGE_CONSOLE, String(message.data)));\n'+
 '        break;\n'+
 '      case workerProtocol._TYPE_RES_ERROR:\n'+
-'        _error_handler(String(message_parsed.data));\n'+
+'        _error_handler(String(message.data));\n'+
 '    }\n'+
 '  }\n'+
 '}\n'+
@@ -562,12 +558,16 @@
 
           workerManager = new Worker(window.URL.createObjectURL(new Blob([retPrepareJavaScriptCodeWorkerManager[1]])));
           workerManager.onmessage = function(e) {
-            var messageParsed = JSON.parse(e.data);
+            var message = null;
 
-            console.log(messageParsed);
+            if (typeof(e.data) !== 'object') {
+              return;
+            }
 
-            if (messageParsed.type !== null && workerProtocol.isNumber(messageParsed.type)) {
-              switch(messageParsed.type) {
+            message = e.data;
+
+            if (message.type !== null && workerProtocol.isNumber(message.type)) {
+              switch(message.type) {
                 case workerProtocol.TYPE_RES_PROGRAM_START_ACK:
                   handle_type_res_program_start_ack();
                   break;
@@ -586,23 +586,23 @@
                   blockRenderGUI(true, MSG_INFO_NO_PROGRAM_RUNNING);
                   break;
                 case workerProtocol.TYPE_RES_MESSAGE_CONSOLE:
-                  if (messageParsed.data !== null && messageParsed.data !== '') {
-                    textareaConsole.value += messageParsed.data;
+                  if (message.data !== null && message.data !== '') {
+                    textareaConsole.value += message.data;
                     textareaConsole.scrollTop = textareaConsole.scrollHeight;
                   }
                   break;
 
                 case workerProtocol.TYPE_RES_ERROR:
-                  if (messageParsed.data !== null && messageParsed.data !== '') {
-                    textareaConsole.value += messageParsed.data;
+                  if (message.data !== null && message.data !== '') {
+                    textareaConsole.value += message.data;
                     textareaConsole.scrollTop = textareaConsole.scrollHeight;
                   }
                   clickedStopProgram();
                   break;
 
                 case workerProtocol.TYPE_RES_SUBWORKER_DONE:
-                  if (messageParsed.data !== null && messageParsed.data !== '') {
-                    eval(messageParsed.data);
+                  if (message.data !== null && message.data !== '') {
+                    eval(message.data);
                   }
               }
             }
