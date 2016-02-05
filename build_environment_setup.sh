@@ -54,6 +54,12 @@ cd ~/tf/generators/
 python generate_all.py
 python copy_all.py
 
+# Install additional pygments lexers
+cd ~/tf/doc/pygments-mathematica/
+sudo python setup.py install
+cd ~/tf/doc/pygments-octave-fixed/
+sudo python setup.py install
+
 # Generate doc
 cd ~/tf/doc/
 make html
