@@ -466,39 +466,51 @@
           }
         }
 
-        function resetRenderPlotWidgets() {
+        function resetRenderPlotWidgets(e) {
+          /*
+           * This is required because because Flot plotting tool confuses width alignment
+           * if element is not visible at the time of drawing the plot.
+           */
+          formRenderGUI.style.display = 'block';
+
           for (var plot_cfg in plotConfigs) {
             plotConfigs[plot_cfg].axisY.data = [[0, 0]];
             plotConfigs[plot_cfg].plot = $.plot(document.getElementById(plot_cfg),
                                                 [plotConfigs[plot_cfg].axisY],
                                                 plotConfigs[plot_cfg].options);
             plotConfigs[plot_cfg].plot.setData([plotConfigs[plot_cfg].axisY]);
+
             plotConfigs[plot_cfg].plot.setupGrid();
             plotConfigs[plot_cfg].plot.draw();
           }
+
+          // Now hide the rendered GUI.
+          formRenderGUI.style.display = 'none';
         }
 
         function clickedRenderGUI(e) {
           var editorGUI = document.getElementById('textAreaEditGUI');
 
-          if (PROGRAM_STATUS_RUNNING) {
-            if (initialGUIRender) {
-              /*
-               * To get proper count of rendered child objects.
-               * For example if the user haven't clicked render button even once and already ran the program.
-               */
-              initialGUIRender = false;
+          if (initialGUIRender) {
+            /*
+             * To get proper count of rendered child objects.
+             * For example if the user haven't clicked render button even once and already ran the program.
+             */
+            initialGUIRender = false;
 
-              $(editorGUI).formRender({container: $(formRenderGUI)});
+            $(editorGUI).formRender({container: $(formRenderGUI)});
 
-              // Render and reset all plot widgets if there are any.
-              resetRenderPlotWidgets();
-
-              if (formRenderGUI.childNodes.length < 1) {
-                clickedEditGUI();
-                return;
-              }
+            if (formRenderGUI.childNodes.length < 1) {
+              clickedEditGUI();
+              return;
             }
+
+            // Render and reset all plot widgets if there are any.
+            resetRenderPlotWidgets();
+          }
+
+          // A program is currently running.
+          if (PROGRAM_STATUS_RUNNING) {
             if (formRenderGUI.childNodes.length < 1) {
               clickedEditGUI();
               alert(MSG_INFO_GUI_EDITOR_EMPTY);
@@ -509,6 +521,7 @@
             return;
           }
 
+          // No program running.
           $(editorGUI).formRender({container: $(formRenderGUI)});
 
           // Reset all available plot widgets if no program is running and we are rendering the GUI.
@@ -523,6 +536,7 @@
           formRenderGUI.style.display = 'block';
 
           blockRenderGUI(true, MSG_INFO_NO_PROGRAM_RUNNING);
+
           console.info('*** INNER HTML');
           console.info(formRenderGUI.innerHTML);
         }
