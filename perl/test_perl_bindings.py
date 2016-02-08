@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 """
-Python Bindings Tester
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Perl Bindings Tester
+Copyright (C) 2012-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 test_perl_bindings.py: Tests the Perl bindings
 
