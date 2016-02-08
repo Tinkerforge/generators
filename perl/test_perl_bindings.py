@@ -58,7 +58,10 @@ class PerlExamplesTester(common.ExamplesTester):
 
         retcode, output = check_output_and_error(args)
         output = output.strip('\r\n')
-        success = retcode == 0 and len(output.split('\n')) == 1 and 'syntax OK' in output
+
+        # FIXME: filter out some internal Perl problems with the Math::Complex module
+        filtered_output = [line for line in output.split('\n') if not line.startswith('Prototype mismatch: sub Math::Complex::')]
+        success = retcode == 0 and len(filtered_output) == 1 and 'syntax OK' in output
 
         self.handle_result(cookie, output, success)
 
