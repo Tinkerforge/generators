@@ -115,7 +115,7 @@ real-time clock with hundredths of a second resolution.
 """,
 'de':
 """
-Gitb das aktuelle Datum (inklusive Wochentag) und die aktuelle Zeit der
+Gibt das aktuelle Datum (inklusive Wochentag) und die aktuelle Zeit der
 Echtzeituhr mit Hundertstelsekunden Auflösung zurück.
 """
 }]
@@ -135,7 +135,7 @@ second.
 """,
 'de':
 """
-Gitb das aktuelle Datum und Zeit der Echtzeituhr in Millisekunden umgerechnet
+Gibt das aktuelle Datum und Zeit der Echtzeituhr in Millisekunden umgerechnet
 zurück. Der Zeitstempel hat eine effektive Auflösung von Hundertstelsekunden.
 """
 }]
