@@ -17,7 +17,7 @@ com = {
         'en': 'Battery-backed real-time clock',
         'de': 'Batteriegepufferte Echtzeituhr'
     },
-    'released': False,
+    'released': True,
     'packets': [],
     'examples': []
 }
