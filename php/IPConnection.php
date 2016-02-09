@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2012-2014, Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (c) 2012-2016, Matthias Bolte <matthias@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
  * with or without modification, are permitted. See the Creative
@@ -285,12 +285,12 @@ abstract class Device
 
         $flag = $this->responseExpected[$functionID];
 
-        if ($flag == self::RESPONSE_EXPECTED_INVALID_FUNCTION_ID) {
+        if ($flag === self::RESPONSE_EXPECTED_INVALID_FUNCTION_ID) {
             throw new \InvalidArgumentException('Invalid function ID ' . $functionID);
         }
 
-        if ($flag == self::RESPONSE_EXPECTED_ALWAYS_TRUE ||
-            $flag == self::RESPONSE_EXPECTED_TRUE) {
+        if ($flag === self::RESPONSE_EXPECTED_ALWAYS_TRUE ||
+            $flag === self::RESPONSE_EXPECTED_TRUE) {
             return TRUE;
         } else {
             return FALSE;
@@ -323,12 +323,12 @@ abstract class Device
 
         $flag = $this->responseExpected[$functionID];
 
-        if ($flag == self::RESPONSE_EXPECTED_INVALID_FUNCTION_ID) {
+        if ($flag === self::RESPONSE_EXPECTED_INVALID_FUNCTION_ID) {
             throw new \InvalidArgumentException('Invalid function ID ' . $functionID);
         }
 
-        if ($flag == self::RESPONSE_EXPECTED_ALWAYS_TRUE ||
-            $flag == self::RESPONSE_EXPECTED_ALWAYS_FALSE) {
+        if ($flag === self::RESPONSE_EXPECTED_ALWAYS_TRUE ||
+            $flag === self::RESPONSE_EXPECTED_ALWAYS_FALSE) {
             throw new \InvalidArgumentException('Response Expected flag cannot be changed for function ID ' . $functionID);
         }
 
@@ -351,8 +351,8 @@ abstract class Device
                                   : self::RESPONSE_EXPECTED_FALSE;
 
         for ($i = 0; $i < 256; ++$i) {
-            if ($this->responseExpected[$i] == self::RESPONSE_EXPECTED_TRUE ||
-                $this->responseExpected[$i] == self::RESPONSE_EXPECTED_FALSE) {
+            if ($this->responseExpected[$i] === self::RESPONSE_EXPECTED_TRUE ||
+                $this->responseExpected[$i] === self::RESPONSE_EXPECTED_FALSE) {
                 $this->responseExpected[$i] = $flag;
             }
         }
@@ -403,7 +403,7 @@ abstract class Device
             $this->expectedResponseFunctionID = 0;
             $this->expectedResponseSequenceNumber = 0;
 
-            if ($this->receivedResponse == NULL) {
+            if ($this->receivedResponse === NULL) {
                 throw new TimeoutException("Did not receive response in time for function ID $functionID");
             }
 
@@ -412,11 +412,11 @@ abstract class Device
 
             $errorCode = ($response[0]['errorCodeAndFutureUse'] >> 6) & 0x03;
 
-            if ($errorCode == 0) {
+            if ($errorCode === 0) {
                 // no error
-            } else if ($errorCode == 1) {
+            } else if ($errorCode === 1) {
                 throw new NotSupportedException("Got invalid parameter for function ID $functionID");
-            } else if ($errorCode == 2) {
+            } else if ($errorCode === 2) {
                 throw new NotSupportedException("Function ID $functionID is not supported");
             } else {
                 throw new NotSupportedException("Function ID $functionID returned an unknown error");
@@ -577,10 +577,10 @@ class IPConnection
 
         $address = '';
 
-        if (preg_match('/^\d+\.\d+\.\d+\.\d+$/', $host) == 0) {
+        if (preg_match('/^\d+\.\d+\.\d+\.\d+$/', $host) === 0) {
             $address = gethostbyname($host);
 
-            if ($address == $host) {
+            if ($address === $host) {
                 throw new \Exception('Could not resolve hostname');
             }
         } else {
@@ -650,7 +650,7 @@ class IPConnection
      */
     public function authenticate($secret)
     {
-        if ($this->nextAuthenticationNonce == 0) {
+        if ($this->nextAuthenticationNonce === 0) {
             $this->nextAuthenticationNonce = self::getRandomUInt32();
         }
 
@@ -802,7 +802,7 @@ class IPConnection
         $this->nextSequenceNumber = $sequenceNumber % 15;
         $responseExpected = 0;
 
-        if ($device != NULL) {
+        if ($device !== NULL) {
             $uid = $device->uid;
 
             if ($device->getResponseExpected($functionID)) {
@@ -888,7 +888,7 @@ class IPConnection
                 $data = '';
                 $length = @socket_recv($this->socket, $data, 8192, 0);
 
-                if ($length === FALSE || $length == 0) {
+                if ($length === FALSE || $length === 0) {
                     if ($length === FALSE) {
                         $disconnectReason = self::DISCONNECT_REASON_ERROR;
                     } else {
@@ -929,7 +929,7 @@ class IPConnection
                     $end += $after - $before;
                 }
 
-                if ($device != NULL && $device->receivedResponse != NULL) {
+                if ($device !== NULL && $device->receivedResponse !== NULL) {
                     break;
                 }
             }
@@ -967,7 +967,7 @@ class IPConnection
 
         $this->nextDisconnectProbe = microtime(true) + self::DISCONNECT_PROBE_INTERVAL;
 
-        if ($sequenceNumber == 0 && $functionID == self::CALLBACK_ENUMERATE) {
+        if ($sequenceNumber === 0 && $functionID === self::CALLBACK_ENUMERATE) {
             if (array_key_exists(self::CALLBACK_ENUMERATE, $this->registeredCallbacks)) {
                 if ($directCallbackDispatch) {
                     if ($this->socket === FALSE) {
@@ -990,7 +990,7 @@ class IPConnection
 
         $device = $this->devices[$uid];
 
-        if ($sequenceNumber == 0) {
+        if ($sequenceNumber === 0) {
             if (array_key_exists($functionID, $device->registeredCallbacks)) {
                 if ($directCallbackDispatch) {
                     if ($this->socket === FALSE) {
@@ -1006,8 +1006,8 @@ class IPConnection
             return;
         }
 
-        if ($device->expectedResponseFunctionID == $functionID &&
-            $device->expectedResponseSequenceNumber == $sequenceNumber) {
+        if ($device->expectedResponseFunctionID === $functionID &&
+            $device->expectedResponseSequenceNumber === $sequenceNumber) {
             $device->receivedResponse = array($header, $payload);
             return;
         }
@@ -1053,7 +1053,7 @@ class IPConnection
                 break;
             }
 
-            if ($pendingCallback[0]['functionID'] == self::CALLBACK_ENUMERATE) {
+            if ($pendingCallback[0]['functionID'] === self::CALLBACK_ENUMERATE) {
                 $this->handleEnumerate($pendingCallback[0], $pendingCallback[1]);
             }
         }
@@ -1233,7 +1233,7 @@ class IPConnection
         for ($i = 1; $i <= $length; $i++) {
             $c = $payload[$field . $i];
 
-            if ($c == 0) {
+            if ($c === 0) {
                 break;
             }
 
@@ -1288,7 +1288,7 @@ class IPConnection
 
         @fclose($fp);
 
-        if (strlen($bytes) != 4) {
+        if (strlen($bytes) !== 4) {
             return FALSE;
         }
 
