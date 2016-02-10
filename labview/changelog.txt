@@ -43,3 +43,4 @@
 2016-02-09: 2.1.8 (<unknown>)
 - Add support for Real-Time Clock Bricklet
 - Break GPS Bricklet API to fix types of altitude and geoidal separation values
+  (GetAltitude function and Altitude callback)
