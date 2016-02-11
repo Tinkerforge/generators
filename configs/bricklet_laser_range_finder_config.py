@@ -68,7 +68,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the measured velocity. The value has a range of 0 to 12700
+Returns the measured velocity. The value has a range of -12800 to 12700
 and is given in 1/100 m/s.
 
 The Laser Range Finder Bricklet knows different modes. Velocity 
@@ -82,7 +82,7 @@ use the callback :func:`Velocity` and set the period with
 """,
 'de':
 """
-Gibt die gemessene Geschwindigkeit zurück. Der Wertebereich ist 0 bis 12700
+Gibt die gemessene Geschwindigkeit zurück. Der Wertebereich ist -12800 bis 12700
 und die Werte haben die Einheit 1/100 m/s.
 
 Das Laser Range Finder Bricklet kennt verschiedene Modi. Eine Geschwindigkeit
