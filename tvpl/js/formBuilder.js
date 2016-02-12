@@ -127,8 +127,9 @@ Tinkerforge TVPL modifications: Start tracing from,
         outputField: 'Output Field',
         paragraph: 'Paragraph',
         plot: 'Plot',
-        plotWidth: 'Width (Pixels)',
+        plotDataPoints: 'Data Points',
         plotHeight: 'Height (Pixels)',
+        plotWidth: 'Width (Pixels)',
         preview: 'Preview',
         radioGroup: 'Radio Group',
         radio: 'Radio',
@@ -861,10 +862,13 @@ Tinkerforge TVPL modifications: Start tracing from,
         else if (type === 'plot') {
           // TODO: Setup plot specific editable fields
           advFields += '<div class="frm-fld label-wrap"><label>' + opts.messages.plotWidth + '</label>';
-          advFields += '<input type="number" min="200" value="200" name="plotWidth" value="" class="fld-plot-width" /></div>';
+          advFields += '<input type="number" min="200" value="200" name="plotWidth" class="fld-plot-width" /></div>';
 
           advFields += '<div class="frm-fld label-wrap"><label>' + opts.messages.plotHeight + '</label>';
-          advFields += '<input type="number" min="100" value="100" name="plotHeight" value="" class="fld-plot-height" /></div>';
+          advFields += '<input type="number" min="100" value="100" name="plotHeight" class="fld-plot-height" /></div>';
+
+          advFields += '<div class="frm-fld label-wrap"><label>' + opts.messages.plotDataPoints + '</label>';
+          advFields += '<input type="number" min="2" value="10" name="plotDataPoints" class="fld-plot-data-points" /></div>';
         }
 
         console.info('*** advFields');
@@ -1090,8 +1094,7 @@ Tinkerforge TVPL modifications: Start tracing from,
       formRenderGUI = document.getElementById('formRenderGUI');
 
       if (editorGUI && formRenderGUI && typeof resetRenderPlotWidgets === "function") {
-        $(editorGUI).formRender({container: $(formRenderGUI)});
-        resetRenderPlotWidgets();
+        setTimeout(function() { $(editorGUI).formRender({container: $(formRenderGUI)}); resetRenderPlotWidgets(); }, 250);
       }
 
       return preview;
@@ -1467,6 +1470,7 @@ Tinkerforge TVPL modifications: Start tracing from,
                   fSlash = !multipleField ? '/' : '';
 
               var fButtonOnClick = '';
+              var fPlotDataPoints = '';
               var fPlotWidth = '';
               var fPlotHeight = '';
 
@@ -1475,13 +1479,14 @@ Tinkerforge TVPL modifications: Start tracing from,
               }
               
               if (t === 'plot') {
-                fPlotWidth  = 'plotWidth="' + $('input.fld-plot-width', $field).val() + '" ';
-                fPlotHeight = 'plotHeight="' + $('input.fld-plot-height', $field).val() + '" ';
+                fPlotDataPoints = 'plotDataPoints="' + $('input.fld-plot-data-points', $field).val() + '" ';
+                fPlotWidth      = 'plotWidth="' + $('input.fld-plot-width', $field).val() + '" ';
+                fPlotHeight     = 'plotHeight="' + $('input.fld-plot-height', $field).val() + '" ';
               }
 
               var fToggle = $('.checkbox-toggle', $field).is(':checked') ? 'toggle="true" ' : '';
 
-              serialStr += '\n\t\t<field ' + fName + fLabel + fToggle + multiple + roles + desc + (maxLengthVal !== '' ? maxLengthVal !== undefined ? maxLength : '' : '') + required + type + fButtonOnClick + fPlotWidth + fPlotHeight + fSlash + '>';
+              serialStr += '\n\t\t<field ' + fName + fLabel + fToggle + multiple + roles + desc + (maxLengthVal !== '' ? maxLengthVal !== undefined ? maxLength : '' : '') + required + type + fButtonOnClick + fPlotDataPoints + fPlotWidth + fPlotHeight + fSlash + '>';
               if (multipleField) {
                 c = 1;
                 $('.sortable-options li', $field).each(function () {

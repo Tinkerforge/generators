@@ -375,6 +375,12 @@
 '      case workerProtocol._TYPE_RES_MESSAGE_CONSOLE:\n'+
 '        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_MESSAGE_CONSOLE, String(message.data)));\n'+
 '        break;\n'+
+'      case workerProtocol._TYPE_RES_MESSAGE_GUI_OUTPUT_FIELD:\n'+
+'        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_MESSAGE_GUI_OUTPUT_FIELD, message));\n'+
+'        break;\n'+
+'      case workerProtocol._TYPE_RES_MESSAGE_GUI_PLOT:\n'+
+'        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_MESSAGE_GUI_PLOT, message));\n'+
+'        break;\n'+
 '      case workerProtocol._TYPE_RES_ERROR:\n'+
 '        _error_handler(String(message.data));\n'+
 '    }\n'+
@@ -545,6 +551,48 @@
           textareaConsole.value = '';
         }
 
+        function updateWidgetPlot(nameWidgetPlot, value) {
+          var plotConfig = plotConfigs[nameWidgetPlot];
+
+          if (!plotConfig.plot) {
+            return;
+          }
+
+          //plotConfig.axisY.data = [[0, 0]];
+
+          if (plotConfig.axisY.data.length < plotConfig.dataPoints) {
+            // Append new data point.
+            var dataLength = plotConfig.axisY.data.length;
+            plotConfig.axisY.data.push([dataLength, value]);
+          }
+          else if (plotConfig.axisY.data.length == plotConfig.dataPoints) {
+            // Shift data set and then append new data point.
+            plotConfig.axisY.data.shift();
+ 
+            for (var i = 0; i < plotConfig.axisY.data.length; i++) {
+              plotConfig.axisY.data[i] = [plotConfig.axisY.data[i][0] - 1, plotConfig.axisY.data[i][1]];
+            }
+
+            plotConfig.axisY.data.push([plotConfig.dataPoints - 1, value]);
+          }
+          else {
+            return;
+          }
+
+          console.log('*DATA POINTS*');
+          console.log(plotConfig.dataPoints);
+          console.log('*** SETTING PLOT DATA ***');
+          console.log([plotConfig.axisY]);
+
+          // Update and redraw the plot
+          //plotConfig.plot = $.plot(document.getElementById(nameWidgetPlot),
+          //                         [plotConfig.axisY],
+          //                         plotConfig.options);
+          plotConfig.plot.setData([plotConfig.axisY]);
+          plotConfig.plot.setupGrid();
+          plotConfig.plot.draw();
+        }
+
         function clickedRunProgram(e) {
           var subworkerBlobsUrlArray = [];
           var dictWorkspaceToCode = {};
@@ -595,6 +643,7 @@
                 case workerProtocol.TYPE_RES_PROGRAM_START_ACK:
                   handle_type_res_program_start_ack();
                   break;
+
                 case workerProtocol.TYPE_RES_PROGRAM_STOP_ACK:
                   textareaConsole.scrollTop = textareaConsole.scrollHeight;
 
@@ -609,6 +658,7 @@
                   blockEditGUI(false);
                   blockRenderGUI(true, MSG_INFO_NO_PROGRAM_RUNNING);
                   break;
+
                 case workerProtocol.TYPE_RES_MESSAGE_CONSOLE:
                   if (message.data !== null && message.data !== '') {
                     textareaConsole.value += message.data;
@@ -622,6 +672,24 @@
                     textareaConsole.scrollTop = textareaConsole.scrollHeight;
                   }
                   clickedStopProgram();
+                  break;
+
+                case workerProtocol.TYPE_RES_MESSAGE_GUI_OUTPUT_FIELD:
+                  if (message.data.data.widget) {
+                    var widgetOutputField = document.getElementById(message.data.data.widget);
+
+                    if (widgetOutputField) {
+                      widgetOutputField.value = message.data.data.value;
+                    }
+                  }
+                  break;
+
+                case workerProtocol.TYPE_RES_MESSAGE_GUI_PLOT:
+                  if (message.data.data.widget) {
+                    if (message.data.data.widget in plotConfigs) {
+                      updateWidgetPlot(message.data.data.widget, parseInt(message.data.data.value));
+                    }
+                  }
                   break;
 
                 case workerProtocol.TYPE_RES_SUBWORKER_DONE:

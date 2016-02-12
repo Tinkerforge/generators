@@ -91,9 +91,10 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
           optionsMarkup = '',
           buttonLabel = '',
           buttonOnClick = '',
-      	  plotLabel = '',
-      	  plotWidth = '40',
-      	  plotHeight ='20';
+          plotLabel = '',
+          plotWidth = '',
+          plotHeight = '',
+          plotDataPoints = null;
       var fieldAttrs = _helpers.parseAttrs(field.attributes),
           fieldDesc = fieldAttrs.description,
           // @todo
@@ -127,20 +128,33 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
       }
       
       if (fieldAttrs.type === 'plot') {
-	    if (!fieldAttrs.label) {
-	      plotLabel = '?';
-	    }
-	    else {
-	      plotLabel = fieldAttrs.label;
-	    }
-	    
-	    if (fieldAttrs.plotWidth) {
-	      plotWidth = fieldAttrs.plotWidth;
-	    }
-	    
-	    if (fieldAttrs.plotHeight) {
-	      plotHeight = fieldAttrs.plotHeight;
-	    }
+        if (!fieldAttrs.label) {
+          plotLabel = '?';
+        }
+        else {
+          plotLabel = fieldAttrs.label;
+        }
+
+        if (fieldAttrs.plotWidth) {
+          plotWidth = fieldAttrs.plotWidth;
+        }
+        else {
+          plotWidth = '200';
+        }
+
+        if (fieldAttrs.plotHeight) {
+          plotHeight = fieldAttrs.plotHeight;
+        }
+        else {
+          plotHeight = '100';
+        }
+
+        if (plotDataPoints) {
+          plotDataPoints = parseInt(fieldAttrs.plotDataPoints);
+        }
+        else {
+          plotDataPoints = 10;
+        }
       }
 
       delete fieldAttrs.label;
@@ -188,30 +202,35 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
           }
           fieldMarkup = fieldLabel + '<div class="' + fieldAttrs.type + '-group">' + optionsMarkup + '</div>';
           break;
-        case 'output-field':
         case 'password':
         case 'email':
         case 'date':
         case 'autocomplete':
           fieldMarkup = fieldLabel + ' <input ' + fieldAttrsString + '>';
           break;
+        case 'output-field':
+          fieldMarkup = fieldLabel + ' <input readonly ' + fieldAttrsString + '>';
+          break;
         case 'button':
           fieldMarkup = '<' + fieldAttrs.type + buttonOnClick + '>' + buttonLabel + '</' + fieldAttrs.type + '>';
           break;
         case 'plot':
-        	fieldMarkup = '<div id=\'' + fieldAttrs.name + '\' style=\'width:' + plotWidth + 'px; height:' + plotHeight + 'px\'></div>';
+          fieldMarkup = '<div id=\'' + fieldAttrs.name + '\' style=\'width:' + plotWidth + 'px; height:' + plotHeight + 'px\'></div>';
 
-        	plotConfigs[fieldAttrs.name] = {
-										     axisY  : {
-										    	        label: plotLabel,
-										    	        data : [[0, 0]]
-										     		  },
-										     options: {
-										    	 	    xaxis: {show: false}
-										     		  },
-										     plot   : null
-        								   };
-            break;
+          plotConfigs[fieldAttrs.name] = {
+                                           dataPoints: plotDataPoints,
+                                           axisY: {
+                                             label: plotLabel,
+                                             data: [[0, 0]]
+                                           },
+                                           options: {
+                                             xaxis: {
+                                               show: false
+                                             }
+                                           },
+                                           plot: null
+                                         };
+          break;
         case 'checkbox':
           fieldMarkup = '<input ' + fieldAttrsString + '> ' + fieldLabel;
 
