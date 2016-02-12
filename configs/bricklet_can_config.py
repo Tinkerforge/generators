@@ -68,6 +68,65 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function',
+'name': 'Enable Frame Read Callback',
+'elements': [],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Enables the :func:`FrameRead` callback.
+
+By default the callback is disabled.
+""",
+'de':
+"""
+Aktiviert den :func:`FrameRead` Callback.
+
+Im Startzustand ist der Callback deaktiviert.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Disable Frame Read Callback',
+'elements': [],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Disables the :func:`FrameRead` callback.
+
+By default the callback is disabled.
+""",
+'de':
+"""
+Deaktiviert den :func:`FrameRead` Callback.
+
+Im Startzustand ist der Callback deaktiviert.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Is Frame Read Callback Enabled',
+'elements': [('Enabled', 'bool', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['ccf', {
+'en':
+"""
+Returns *true* if the :func:`FrameRead` callback is enabled, *false* otherwise.
+""",
+'de':
+"""
+Gibt *true* zurück falls :func:`FrameRead` Callback aktiviert ist, *false* sonst.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
 'name': 'Set Configuration',
 'elements': [('Baud Rate', 'uint8', 1, 'in', ('Baud Rate', [('10000', 0),
                                                             ('20000', 1),
@@ -121,10 +180,36 @@ Gibt die Konfiguration zurück, wie von :func:`SetConfiguration` gesetzt.
 })
 
 com['packets'].append({
+'type': 'function',
+'name': 'Get Error Log',
+'elements': [('Transceiver Disabled', 'bool', 1, 'out'), # FIXME: use bitmask instead to allow for future extensions?
+             ('Write Error Level', 'uint8', 1, 'out'),
+             ('Read Error Level', 'uint8', 1, 'out'),
+             ('Write Timeout Count', 'uint32', 1, 'out'),
+             ('Read Register Overflow Count', 'uint32', 1, 'out'), # FIXME: this is not exact, just a lower bound, because the Bricklet might not notice all overflows
+             ('Read Buffer Overflow Count', 'uint32', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+FIXME: in what modes are which values available and how are they reset if they are?
+""",
+'de':
+"""
+"""
+}]
+})
+
+com['packets'].append({
 'type': 'callback',
-'name': 'Error',
-'elements': [('Error Mask', 'uint32', 1, 'out', ('Error', [('Read Register Full', 1),
-                                                           ('Read Buffer Full', 2)]))],
+'name': 'Frame Read',
+'elements': [('Frame Type', 'uint8', 1, 'out', ('Frame Type', [('Standard Data', 0),
+                                                               ('Standard Remote', 1),
+                                                               ('Extended Data', 2),
+                                                               ('Extended Remote', 3)])),
+             ('Identifier', 'uint32', 1, 'out'),
+             ('Data', 'uint8', 8, 'out'),
+             ('Length', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
