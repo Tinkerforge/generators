@@ -1082,6 +1082,18 @@ Tinkerforge TVPL modifications: Start tracing from,
           preview = '<' + attrs.type + '></' + attrs.type + '>';
       }
 
+      // Render here
+      var editorGUI = null;
+      var formRenderGUI = null;
+
+      editorGUI = document.getElementById('textAreaEditGUI');
+      formRenderGUI = document.getElementById('formRenderGUI');
+
+      if (editorGUI && formRenderGUI && typeof resetRenderPlotWidgets === "function") {
+        $(editorGUI).formRender({container: $(formRenderGUI)});
+        resetRenderPlotWidgets();
+      }
+
       return preview;
     };
 

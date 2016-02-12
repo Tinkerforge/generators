@@ -263,7 +263,6 @@
         var formRenderGUI = document.getElementById('formRenderGUI');
         var fileReader = new FileReader();
         var plotConfigs = {};
-        var initialGUIRender = true;
         var blocklyWorkspace = Blockly.inject(blocklyDiv,
           {grid:
             {spacing: 25,
@@ -491,51 +490,34 @@
         function clickedRenderGUI(e) {
           var editorGUI = document.getElementById('textAreaEditGUI');
 
-          if (initialGUIRender) {
-            /*
-             * To get proper count of rendered child objects.
-             * For example if the user haven't clicked render button even once and already ran the program.
-             */
-            initialGUIRender = false;
-
+          if (!PROGRAM_STATUS_RUNNING) {
+            // No program running.
             $(editorGUI).formRender({container: $(formRenderGUI)});
 
-            if (formRenderGUI.childNodes.length < 1) {
-              clickedEditGUI();
-              return;
-            }
-
-            // Render and reset all plot widgets if there are any.
+            // Reset all available plot widgets if no program is running and we are rendering the GUI.
             resetRenderPlotWidgets();
-          }
 
-          // A program is currently running.
-          if (PROGRAM_STATUS_RUNNING) {
             if (formRenderGUI.childNodes.length < 1) {
               clickedEditGUI();
-              alert(MSG_INFO_GUI_EDITOR_EMPTY);
               return;
             }
+
             divEditGUI.style.display = 'none';
             formRenderGUI.style.display = 'block';
+            blockRenderGUI(true, MSG_INFO_NO_PROGRAM_RUNNING);
+
             return;
           }
 
-          // No program running.
-          $(editorGUI).formRender({container: $(formRenderGUI)});
-
-          // Reset all available plot widgets if no program is running and we are rendering the GUI.
-          resetRenderPlotWidgets();
-
+          // A program is running.
           if (formRenderGUI.childNodes.length < 1) {
             clickedEditGUI();
+            alert(MSG_INFO_GUI_EDITOR_EMPTY);
             return;
           }
 
           divEditGUI.style.display = 'none';
           formRenderGUI.style.display = 'block';
-
-          blockRenderGUI(true, MSG_INFO_NO_PROGRAM_RUNNING);
 
           console.info('*** INNER HTML');
           console.info(formRenderGUI.innerHTML);
