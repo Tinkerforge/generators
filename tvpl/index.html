@@ -696,7 +696,7 @@
                 case workerProtocol.TYPE_RES_MESSAGE_GUI_PLOT:
                   if (message.data.data.widget) {
                     if (message.data.data.widget in plotConfigs) {
-                      updateWidgetPlot(message.data.data.widget, parseInt(message.data.data.value));
+                      updateWidgetPlot(message.data.data.widget, parseFloat(message.data.data.value));
                     }
                   }
                   break;
