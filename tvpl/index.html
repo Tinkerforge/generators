@@ -471,26 +471,51 @@
           }
         }
 
-        function resetRenderPlotWidgets(e) {
-          /*
-           * This is required because because Flot plotting tool confuses width alignment
-           * if element is not visible at the time of drawing the plot.
-           */
+        function drawPlotWidget(plotWidget, plotData) {
+          var wasVisibility = formRenderGUI.style.display;
+
           formRenderGUI.style.display = 'block';
+          plotWidget.setData(plotData);
+          plotWidget.setupGrid();
+          plotWidget.draw();
+          // Restore visibility.
+          formRenderGUI.style.display = wasVisibility;
+        }
 
-          for (var plot_cfg in plotConfigs) {
-            plotConfigs[plot_cfg].axisY.data = [[0, 0]];
-            plotConfigs[plot_cfg].plot = $.plot(document.getElementById(plot_cfg),
-                                                [plotConfigs[plot_cfg].axisY],
-                                                plotConfigs[plot_cfg].options);
-            plotConfigs[plot_cfg].plot.setData([plotConfigs[plot_cfg].axisY]);
+        function updatePlotWidgetConfigs() {
+          for (var plotCfg in plotConfigs) {
+            var found = false;
 
-            plotConfigs[plot_cfg].plot.setupGrid();
-            plotConfigs[plot_cfg].plot.draw();
+            for (var i in formRenderGUI.childNodes) {
+              if (formRenderGUI.childNodes[i].tagName !== 'DIV') continue;
+
+              for (var j in formRenderGUI.childNodes[i].children) {
+                if (formRenderGUI.childNodes[i].children[j].id === plotCfg) {
+                  found = true;
+                  break;
+                }
+              }
+
+              if (found) break;
+            }
+
+            if (!found) {
+              // Remove corresponding plot configuration.
+              delete plotConfigs[plotCfg];
+            }
           }
+        }
 
-          // Now hide the rendered GUI.
-          formRenderGUI.style.display = 'none';
+        function resetRenderPlotWidgets(e) {
+          updatePlotWidgetConfigs();
+
+          for (var plotCfg in plotConfigs) {
+            plotConfigs[plotCfg].axisY.data = [[0, 0]];
+            plotConfigs[plotCfg].plot = $.plot(document.getElementById(plotCfg),
+                                               [plotConfigs[plotCfg].axisY],
+                                               plotConfigs[plotCfg].options);
+            drawPlotWidget(plotConfigs[plotCfg].plot, [plotConfigs[plotCfg].axisY]);
+          }
         }
 
         function clickedRenderGUI(e) {
@@ -524,9 +549,6 @@
 
           divEditGUI.style.display = 'none';
           formRenderGUI.style.display = 'block';
-
-          console.info('*** INNER HTML');
-          console.info(formRenderGUI.innerHTML);
         }
 
         function blockEditGUI(state, msg) {
@@ -558,8 +580,6 @@
             return;
           }
 
-          //plotConfig.axisY.data = [[0, 0]];
-
           if (plotConfig.axisY.data.length < plotConfig.dataPoints) {
             // Append new data point.
             var dataLength = plotConfig.axisY.data.length;
@@ -579,18 +599,7 @@
             return;
           }
 
-          console.log('*DATA POINTS*');
-          console.log(plotConfig.dataPoints);
-          console.log('*** SETTING PLOT DATA ***');
-          console.log([plotConfig.axisY]);
-
-          // Update and redraw the plot
-          //plotConfig.plot = $.plot(document.getElementById(nameWidgetPlot),
-          //                         [plotConfig.axisY],
-          //                         plotConfig.options);
-          plotConfig.plot.setData([plotConfig.axisY]);
-          plotConfig.plot.setupGrid();
-          plotConfig.plot.draw();
+          drawPlotWidget(plotConfig.plot, [plotConfig.axisY]);
         }
 
         function clickedRunProgram(e) {

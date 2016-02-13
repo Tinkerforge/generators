@@ -220,28 +220,14 @@ Tinkerforge TVPL modifications: Start tracing from,
 
     // saves the field data to our canvas (elem)
     _helpers.save = function () {
-
-      console.info('*** _helpers.save() ***');
-
       $sortableFields.children('li').not('.disabled').each(function () {
         _helpers.updatePreview($(this));
       });
-
-      console.info('*** $sortableFields = ***');
-      console.info($sortableFields);
-      console.info('*** $sortableFields.toXML() = ***');
-      console.info($sortableFields.toXML());
-
       elem.val($sortableFields.toXML());
     };
 
     // updatePreview will generate the preview for radio and checkbox groups
     _helpers.updatePreview = function (field) {
-
-      console.info('*** _helpers.updatePreview() ***');
-      console.info('*** field = ***');
-      console.info(field);
-
       var fieldClass = field.attr('class'),
           $prevHolder = $('.prev-holder', field);
 
@@ -275,11 +261,7 @@ Tinkerforge TVPL modifications: Start tracing from,
       }
 
       preview = fieldPreview(previewData);
-      console.info('*** preview = ***');
-      console.info(preview);
-
       $prevHolder.html(preview);
-
       $('input[toggle]', $prevHolder).kcToggle();
     };
 
@@ -581,16 +563,11 @@ Tinkerforge TVPL modifications: Start tracing from,
         }
       },
       update: function update(event, ui) {
-    	console.info('*** update()');
         // _helpers.stopMoving;
         elem.stopIndex = $('li', $sortableFields).index(ui.item) === 0 ? '0' : $('li', $sortableFields).index(ui.item);
         if ($('li', $sortableFields).index(ui.item) < 0) {
-        	console.info('*** update(), sortable cancel');
-        	$(this).sortable('cancel');
+          $(this).sortable('cancel');
         } else {
-          console.info('*** update(), else');
-          console.info('*** ui.item[0]');
-          console.info($(ui.item[0]));
           /*
            * TODO:
            * Stringify in JSON and store $(ui.item[0]) here for restoration of saved workspace?
@@ -685,17 +662,11 @@ Tinkerforge TVPL modifications: Start tracing from,
     };
 
     var prepFieldVars = function prepFieldVars($field, isNew) {
-    	console.info('*** prepFieldVars');
-    	console.info('*** $field');
-    	console.info($field);
       isNew = isNew || false;
-
       var fieldAttrs = $field.data('attrs') || {},
           fType = fieldAttrs.type || $field.attr('type'),
           isMultiple = fType.match(/(select|checkbox-group|radio-group)/),
           values = {};
-
-      
       /*
        * TODO:
        * Editable fields can be assigned default values here
@@ -721,10 +692,6 @@ Tinkerforge TVPL modifications: Start tracing from,
           values.values.push(value);
         });
       }
-
-      console.info('*** values');
-      console.info(values);
-      
       appendNewField(values);
       $stageWrap.removeClass('empty');
       disabledBeforeAfter();
@@ -736,11 +703,6 @@ Tinkerforge TVPL modifications: Start tracing from,
     };
 
     var appendInput = function appendInput(values) {
-        console.info('*** appendInput()');
-        console.info('*** values');
-        console.info(values);
-        console.info('*** values.type');
-        console.info(values.type);
         appendFieldLi(opts.messages[values.type], advFields(values.type, values), values);
       };
     
@@ -792,8 +754,6 @@ Tinkerforge TVPL modifications: Start tracing from,
     };
 
     var appendNewField = function appendNewField(values) {
-      console.info('*** appendNewField');
-    
       if (values === undefined) {
         values = '';
       }
@@ -818,19 +778,12 @@ Tinkerforge TVPL modifications: Start tracing from,
         'plot': appendInput
       };
 
-      console.info('*** values.type');
-      console.info(values.type);
-      
       if (typeof appendFieldType[values.type] === 'function') {
         appendFieldType[values.type](values);
       }
     };
 
     var advFields = function advFields(type, values) {
-    	console.info('*** advField()');
-    	console.info('*** type');
-    	console.info(type);
-
         var advFields = '';
 
         // Common editable fields
@@ -870,9 +823,6 @@ Tinkerforge TVPL modifications: Start tracing from,
           advFields += '<div class="frm-fld label-wrap"><label>' + opts.messages.plotDataPoints + '</label>';
           advFields += '<input type="number" min="2" value="10" name="plotDataPoints" class="fld-plot-data-points" /></div>';
         }
-
-        console.info('*** advFields');
-        console.info(advFields);
 
         return advFields;
       };
@@ -935,8 +885,6 @@ Tinkerforge TVPL modifications: Start tracing from,
     */
 
      var appendFieldLi = function appendFieldLi(title, field, values) {
-      console.info('*** appendFieldLi');
-
       var label = $(field).find('input[name="label"]').val() !== '' ? $(field).find('input[name="label"]').val() : title;
 
       var li = '',
@@ -979,14 +927,6 @@ Tinkerforge TVPL modifications: Start tracing from,
     // Append the new field to the editor
     /*
     var appendFieldLi = function appendFieldLi(title, field, values) {
-      console.info('*** appendFieldLi');
-      console.info('*** title');
-      console.info(title);
-      console.info('*** field');
-      console.info(field);
-      console.info('*** values');
-      console.info(values);
-
       var label = $(field).find('input[name="label"]').val() !== '' ? $(field).find('input[name="label"]').val() : title;
 
       var li = '',
@@ -1071,8 +1011,6 @@ Tinkerforge TVPL modifications: Start tracing from,
           preview = '<input type="' + attrs.type + '" ' + toggle + ' placeholder="">';
           break;
         case 'button':
-          console.info('*** attrs from preview markup');
-          console.info(attrs);
           preview = '<' + attrs.type + ' placeholder="">' + attrs.label + '</' + attrs.type + '>';
           break;
         case 'plot':
@@ -1084,17 +1022,6 @@ Tinkerforge TVPL modifications: Start tracing from,
           break;
         default:
           preview = '<' + attrs.type + '></' + attrs.type + '>';
-      }
-
-      // Render here
-      var editorGUI = null;
-      var formRenderGUI = null;
-
-      editorGUI = document.getElementById('textAreaEditGUI');
-      formRenderGUI = document.getElementById('formRenderGUI');
-
-      if (editorGUI && formRenderGUI && typeof resetRenderPlotWidgets === "function") {
-        setTimeout(function() { $(editorGUI).formRender({container: $(formRenderGUI)}); resetRenderPlotWidgets(); }, 250);
       }
 
       return preview;
@@ -1425,6 +1352,19 @@ Tinkerforge TVPL modifications: Start tracing from,
   };
 })(jQuery);
 
+function renderGUI() {
+  var editorGUI = null;
+  var formRenderGUI = null;
+
+  editorGUI = document.getElementById('textAreaEditGUI');
+  formRenderGUI = document.getElementById('formRenderGUI');
+
+  if (editorGUI && formRenderGUI && typeof resetRenderPlotWidgets === "function") {
+    $(editorGUI).formRender({container: $(formRenderGUI)});
+    resetRenderPlotWidgets();
+  }
+}
+
 // toXML is a jQuery plugin that turns our form editor into XML
 (function ($) {
   'use strict';
@@ -1506,6 +1446,10 @@ Tinkerforge TVPL modifications: Start tracing from,
         serialStr += '\n\t</fields>\n</form-template>';
       } // if "$(this).children().length >= 1"
     });
+
+    // Schedule a render after returning updated GUI editor preview code.
+    setTimeout(renderGUI, 50);
+
     return serialStr;
   };
 })(jQuery);
