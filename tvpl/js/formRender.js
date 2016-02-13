@@ -149,7 +149,7 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
           plotHeight = '100';
         }
 
-        if (plotDataPoints) {
+        if (fieldAttrs.plotDataPoints) {
           plotDataPoints = parseInt(fieldAttrs.plotDataPoints);
         }
         else {
