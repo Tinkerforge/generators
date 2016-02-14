@@ -89,7 +89,7 @@ Tinkerforge TVPL modifications: Start tracing from,
         allowSelect: 'Allow Select',
         autocomplete: 'Autocomplete',
         button: 'Button',
-        buttonOnClick: 'On Click',
+        buttonFunctionToCall: 'On Click',
         cannotBeEmpty: 'This field cannot be empty',
         checkboxGroup: 'Checkbox Group',
         checkbox: 'Checkbox',
@@ -422,7 +422,7 @@ Tinkerforge TVPL modifications: Start tracing from,
       				    	type: 'button',
       				    	className: 'button',
                             name: 'button',
-                            buttonOnClick: ''
+                            buttonFunctionToCall: ''
       				    }
       				  },
       				  {
@@ -809,8 +809,8 @@ Tinkerforge TVPL modifications: Start tracing from,
         }
         else if (type === 'button') {
           // TODO: Setup button specific editable fields
-          advFields += '<div class="frm-fld label-wrap"><label>' + opts.messages.buttonOnClick + '</label>';
-          advFields += '<input type="text" name="buttonOnClick" value="" class="fld-button-on-click" /></div>';
+          advFields += '<div class="frm-fld label-wrap"><label>' + opts.messages.buttonFunctionToCall + '</label>';
+          advFields += '<input type="text" name="buttonFunctionToCall" value="" class="fld-button-function-to-call" /></div>';
         }
         else if (type === 'plot') {
           // TODO: Setup plot specific editable fields
@@ -1410,14 +1410,18 @@ function renderGUI() {
                   fSlash = !multipleField ? '/' : '';
 
               var fButtonOnClick = '';
+              var fButtonFunctionToCall = '';
+              var fButtonFunctionCallHandler = '';
               var fPlotDataPoints = '';
               var fPlotWidth = '';
               var fPlotHeight = '';
 
               if (t === 'button') {
-                fButtonOnClick = 'buttonOnClick="' + $('input.fld-button-on-click', $field).val() + '" ';
+                fButtonFunctionToCall = $('input.fld-button-function-to-call', $field).val().replace(/"/g, '\'');
+                fButtonFunctionCallHandler = 'handleGUIButtonClick(this.id, ' + JSON.stringify(escape(fButtonFunctionToCall)).replace(/"/g, '\'') + ')';
+                fButtonOnClick = 'buttonOnClick="' + fButtonFunctionCallHandler + '" ';
               }
-              
+
               if (t === 'plot') {
                 fPlotDataPoints = 'plotDataPoints="' + $('input.fld-plot-data-points', $field).val() + '" ';
                 fPlotWidth      = 'plotWidth="' + $('input.fld-plot-width', $field).val() + '" ';

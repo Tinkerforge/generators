@@ -212,7 +212,7 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
           fieldMarkup = fieldLabel + ' <input readonly ' + fieldAttrsString + '>';
           break;
         case 'button':
-          fieldMarkup = '<' + fieldAttrs.type + buttonOnClick + '>' + buttonLabel + '</' + fieldAttrs.type + '>';
+          fieldMarkup = '<' + fieldAttrs.type + ' id="' + fieldAttrs.name + '" ' + buttonOnClick + '>' + buttonLabel + '</' + fieldAttrs.type + '>';
           break;
         case 'plot':
           fieldMarkup = '<div id=\'' + fieldAttrs.name + '\' style=\'width:' + plotWidth + 'px; height:' + plotHeight + 'px\'></div>';

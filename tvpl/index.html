@@ -121,38 +121,6 @@
 
     <script type="text/javascript" >
 
-      // Sample implementation of button click to execute function mechanism
-      function clickedButtonTest() {
-        var code = 'onmessage = function (e) {\n'+
-'  _dispatch_message(e.data);\n'+
-'};\n'+
-'onerror = _error_handler;\n'+
-'function *_main() {\n' +
-'    yield* _butfunc();\n' +
-'    self.postMessage(workerProtocol.getMessage(_worker_id, workerProtocol._TYPE_RES_SUBWORKER_DONE, _code_button_enable));\n'+
-'}\n'+
-'_iterator_main = _main();\n';
-
-        var codeWorkspace = Blockly.JavaScript.workspaceToCode(blocklyWorkspace);
-
-        if (!codeWorkspace) {
-          return;
-        }
-        var coderaw = [codeWorkspace.definitions, code].join('\n');
-        var retPrepareJavaScriptCode = prepareJavaScriptCode(coderaw);
-
-        if (!retPrepareJavaScriptCode[0]) {
-          return;
-        }
-
-        var blobFunction = window.URL.createObjectURL(new Blob([retPrepareJavaScriptCode[1]]));
-        document.getElementById('buttonTest').disabled = true;
-        workerManager.postMessage(workerProtocol.getMessage(workerProtocol.SENDER_GUI,
-                                                            workerProtocol.TYPE_REQ_FUNCTION_EXECUTE,
-                                                            {blobFunction: blobFunction,
-                                                             codeButtonEnable: 'document.getElementById(\'buttonTest\').disabled = false;'}));
-      }
-
       var trErrorMessageWebworker = document.getElementById('trErrorMessageWebworker');
       var trErrorMessageXmlToolboxGeneric = document.getElementById('trErrorMessageXmlToolboxGeneric');
       var trErrorMessageXmlToolboxChrome = document.getElementById('trErrorMessageXmlToolboxChrome');
@@ -456,6 +424,43 @@
           }
 
           return [true, String(returnedCode)];
+        }
+
+        function handleGUIButtonClick(id, functionToCall) {
+          if (!id || !functionToCall) return;
+
+          var unescapedFunctionToCall = unescape(functionToCall);
+          var code = 'onmessage = function (e) {\n'+
+'  _dispatch_message(e.data);\n'+
+'};\n'+
+'onerror = _error_handler;\n'+
+'function *_main() {\n' +
+'    yield* ' + unescapedFunctionToCall + ';\n' +
+'    self.postMessage(workerProtocol.getMessage(_worker_id, workerProtocol._TYPE_RES_SUBWORKER_DONE, _code_button_enable));\n'+
+'}\n'+
+'_iterator_main = _main();\n';
+
+          var codeWorkspace = Blockly.JavaScript.workspaceToCode(blocklyWorkspace);
+
+          if (!codeWorkspace) {
+            return;
+          }
+
+          var codeRaw = [codeWorkspace.definitions, code].join('\n');
+          var retPrepareJavaScriptCode = prepareJavaScriptCode(codeRaw);
+
+          if (!retPrepareJavaScriptCode[0]) {
+            return;
+          }
+
+          var blobFunction = window.URL.createObjectURL(new Blob([retPrepareJavaScriptCode[1]]));
+          document.getElementById(id).disabled = true;
+          workerManager.postMessage(workerProtocol.getMessage(workerProtocol.SENDER_GUI,
+                                                              workerProtocol.TYPE_REQ_FUNCTION_EXECUTE,
+                                                              {
+                                                                blobFunction: blobFunction,
+                                                                codeButtonEnable: 'document.getElementById(\'' + id + '\').disabled = false;'
+                                                              }));
         }
 
         function clickedEditGUI(e) {
