@@ -18,6 +18,7 @@
     <script type="text/javascript" src="js/babelRuntime.js"></script>
     <script type="text/javascript" src="js/babelBrowser.js"></script>
     <script type="text/javascript" src="js/workerProtocol.js"></script>
+    <script type="text/javascript" src="js/jszip.min.js"></script>
     <script type="text/javascript" src="js/fileSaver.js"></script>
     <script type="text/javascript" src="js/blockly_compressed.js"></script>
     <script type="text/javascript" src="js/blocks_compressed.js"></script>
@@ -29,7 +30,7 @@
   </head>
 
   <body>
-    <input id="workspaceFileUploader" type="file" onchange="workspaceFileUploadRequest(this)" />
+    <input id="projectFileUploader" type="file" onchange="projectFileUploadRequest(this)" />
 
     <table id="tableHeader">
       <tr>
@@ -60,19 +61,19 @@
       <tr>
         <td id ="tdTableHeaderToolbar" align="center">
 
-          <button title="Show the workspace" onclick="clickedEditor()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+          <button title="Show program editor" onclick="clickedEditor()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
             <i class="material-icons">border_color</i>
           </button>
 
-          <button title="Execute code generated from current workspace" onclick="clickedExecute()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+          <button title="Execute code generated from current program editor" onclick="clickedExecute()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
             <i class="material-icons">settings</i>
           </button>
 
-          <button title="Save current state of the workspace" onclick="clickedSave()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+          <button title="Save project" onclick="clickedSave()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
             <i class="material-icons">save</i>
           </button>
 
-          <button title="Load previously saved workspace state" onclick="clickedLoadWorkspace()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+          <button title="Load project" onclick="clickedLoadProject()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
             <i class="material-icons">folder_open</i>
           </button>
 
@@ -89,7 +90,7 @@
       <table id="tableExecute">
         <tr>
           <td align="center">
-            <button id="buttonToolbarRunStop" title="Run graphical program from workspace" onclick="clickedRunProgram()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+            <button id="buttonToolbarRunStop" title="Run program" onclick="clickedRunProgram()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
               <i id="buttonToolbarRunStopImage" class="material-icons">play_arrow</i>
             </button>
             <button title="Clear output" onclick="clickedClearOutput()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
@@ -110,10 +111,10 @@
             <textarea readonly id="textareaConsole"></textarea>
           </td>
           <td width="50%" height="100%">
-	        <div id="divEditGUI" style="display: block;">
+	        <div id="divEditGUI">
 	          <textarea name="textAreaEditGUI" id="textAreaEditGUI"></textarea>
 	        </div>
-	        <div id="formRenderGUI" style="display: none;"></div>
+	        <div id="formRenderGUI"></div>
           </td>
         </tr>
       </table>
@@ -184,7 +185,6 @@
       }
 
       if (runOK) {
-        var textAreaEditGUI = document.getElementById('textAreaEditGUI');
         jQuery(document).ready(function($) {
           'use strict';
           $(document.getElementById('textAreaEditGUI')).formBuilder();
@@ -204,16 +204,18 @@
                            'Dec'];
         var VIEW_EDITOR = 1;
         var VIEW_EXECUTE = 2;
-        var MSG_ERROR_NOT_VALID_WORKSPACE_FILE = 'ERROR: Not a valid workspace file.';
-        var MSG_ERROR_FILE_READ_FAILED = 'ERROR: Reading file failed.';
-        var MSG_ERROR_WORKSPACE_LOAD_FAILED = 'ERROR: Failed to load worskspace from file. Check that the file is valid workspace file.';
+        var MSG_ERROR_NOT_VALID_PROJECT_FILE = 'ERROR: Not a valid project file.';
+        var MSG_ERROR_PROJECT_FILE_READ_FAILED = 'ERROR: Reading project file failed.';
+        var MSG_ERROR_PROJECT_LOAD_NO_PRG_FILE = 'ERROR: Error loading project. No program editor file (tvpl.prg) found';
+        var MSG_ERROR_PROJECT_LOAD_NO_GUI_FILE = 'ERROR: Error loading project. No GUI editor file (tvpl.gui) found';
+        var MSG_ERROR_PROJECT_LOAD_FAILED = 'ERROR: Failed to load saved project.';
         var MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED = 'ERROR: The following error occurred while preparing JavaScript code.\n\n\n';
-        var MSG_INFO_UNSAVED_WORKSPACE = 'Unsaved changes on the workspace will be lost.';
-        var MSG_INFO_WORKSPACE_EMPTY = 'Nothing to execute. Seems like the workspace is empty.';
+        var MSG_INFO_UNSAVED_PROJECT = 'Unsaved changes on the project will be lost.';
+        var MSG_INFO_PROGRAM_EDITOR_EMPTY = 'Nothing to execute. Seems like the program editor is empty.';
         var MSG_INFO_NO_PROGRAM_RUNNING = 'No program is running.';
         var MSG_INFO_PROGRAM_RUNNING = 'A program is currently running.';
         var MSG_INFO_GUI_EDITOR_EMPTY = 'Nothing to render. Seems like the GUI editor is empty.';
-        var MSG_TOOLTIP_BUTTON_RUNSTOP_RUN = 'Execute code generated from current workspace';
+        var MSG_TOOLTIP_BUTTON_RUNSTOP_RUN = 'Execute code generated from program editor.';
         var MSG_TOOLTIP_BUTTON_RUNSTOP_STOP = 'Stop currently running program';
         var PROGRAM_STATUS_RUNNING = false;
         var body = document.getElementsByTagName('body')[0];
@@ -228,10 +230,13 @@
         var buttonToolbarRunStop = document.getElementById('buttonToolbarRunStop');
         var buttonToolbarRunStopImage = document.getElementById('buttonToolbarRunStopImage');
         var divEditGUI = document.getElementById('divEditGUI');
+        var editorGUI = document.getElementById('textAreaEditGUI');
         var formRenderGUI = document.getElementById('formRenderGUI');
         var fileReader = new FileReader();
         var plotConfigs = {};
-        var blocklyWorkspace = Blockly.inject(blocklyDiv,
+        var fileNameProgramEditor = 'tvpl.prg';
+        var fileNameGUIEditor = 'tvpl.gui';
+        var blocklyProgramEditor = Blockly.inject(blocklyDiv,
           {grid:
             {spacing: 25,
              length: 3,
@@ -367,7 +372,7 @@
         };
 
         var onBeforeUnload = function(e) {
-          return MSG_INFO_UNSAVED_WORKSPACE;
+          return MSG_INFO_UNSAVED_PROJECT;
           clickedStopProgram();
         };
 
@@ -440,13 +445,13 @@
 '}\n'+
 '_iterator_main = _main();\n';
 
-          var codeWorkspace = Blockly.JavaScript.workspaceToCode(blocklyWorkspace);
+          var codeProgramEditor = Blockly.JavaScript.workspaceToCode(blocklyProgramEditor);
 
-          if (!codeWorkspace) {
+          if (!codeProgramEditor) {
             return;
           }
 
-          var codeRaw = [codeWorkspace.definitions, code].join('\n');
+          var codeRaw = [codeProgramEditor.definitions, code].join('\n');
           var retPrepareJavaScriptCode = prepareJavaScriptCode(codeRaw);
 
           if (!retPrepareJavaScriptCode[0]) {
@@ -524,8 +529,6 @@
         }
 
         function clickedRenderGUI(e) {
-          var editorGUI = document.getElementById('textAreaEditGUI');
-
           if (!PROGRAM_STATUS_RUNNING) {
             // No program running.
             $(editorGUI).formRender({container: $(formRenderGUI)});
@@ -609,19 +612,19 @@
 
         function clickedRunProgram(e) {
           var subworkerBlobsUrlArray = [];
-          var dictWorkspaceToCode = {};
+          var dictProgramEditorToCode = {};
           var retPrepareJavaScriptCodeWorkerManager = [];
 
-          dictWorkspaceToCode = Blockly.JavaScript.workspaceToCode(blocklyWorkspace);
+          dictProgramEditorToCode = Blockly.JavaScript.workspaceToCode(blocklyProgramEditor);
 
-          if (!dictWorkspaceToCode) {
-            alert(MSG_INFO_WORKSPACE_EMPTY);
+          if (!dictProgramEditorToCode) {
+            alert(MSG_INFO_PROGRAM_EDITOR_EMPTY);
             return;
           }
 
-          definitionsGeneratedCode = dictWorkspaceToCode.definitions;
+          definitionsGeneratedCode = dictProgramEditorToCode.definitions;
 
-          retPrepareJavaScriptCodeWorkerManager = prepareJavaScriptCode(dictWorkspaceToCode.dictVariablesInit + codeWorkerManager);
+          retPrepareJavaScriptCodeWorkerManager = prepareJavaScriptCode(dictProgramEditorToCode.dictVariablesInit + codeWorkerManager);
 
           if (!retPrepareJavaScriptCodeWorkerManager[0]) {
             textareaConsole.value = MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED;
@@ -630,8 +633,8 @@
             return;
           }
 
-          for (var i = 0; i < dictWorkspaceToCode.implementationTopLevelBlocks.length; i ++) {
-            var retPrepareJavaScriptCode = prepareJavaScriptCode(dictWorkspaceToCode.implementationTopLevelBlocks[i]);
+          for (var i = 0; i < dictProgramEditorToCode.implementationTopLevelBlocks.length; i ++) {
+            var retPrepareJavaScriptCode = prepareJavaScriptCode(dictProgramEditorToCode.implementationTopLevelBlocks[i]);
 
             if (!retPrepareJavaScriptCode[0]) {
               textareaConsole.value = MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED;
@@ -655,7 +658,7 @@
             if (message.type !== null && workerProtocol.isNumber(message.type)) {
               switch(message.type) {
                 case workerProtocol.TYPE_RES_PROGRAM_START_ACK:
-                  handle_type_res_program_start_ack();
+                  handleTypeTesProgramStartAck();
                   break;
 
                 case workerProtocol.TYPE_RES_PROGRAM_STOP_ACK:
@@ -721,10 +724,10 @@
             buttonToolbarRunStop.disabled = true;
             return;
           }
-          handle_type_res_program_start_ack();
+          handleTypeTesProgramStartAck();
         }
 
-        function handle_type_res_program_start_ack(e) {
+        function handleTypeTesProgramStartAck(e) {
           PROGRAM_STATUS_RUNNING = true;
           textareaConsole.value = '';
           textareaConsole.scrollTop = textareaConsole.scrollHeight;
@@ -747,43 +750,71 @@
           }
         }
 
-        function workspaceFileUploadRequest(fileInput) {
-          var file;
-          var xmlText;
-          if(fileInput.value.substr(-5) !== ".tvpl" ) {
-            alert(MSG_ERROR_NOT_VALID_WORKSPACE_FILE);
+        function projectFileUploadRequest(fileInput) {
+          var file = null;
+          var zip = null;
+          var xmlProgramEditorText = '';
+          var guiEditorText = '';
+
+          if(fileInput.value.substr(-5) !== '.tvpl' ) {
+            alert(MSG_ERROR_NOT_VALID_PROJECT_FILE);
             return;
           }
+
           try {
             file = fileInput.files[0];
+
             fileReader.onload = function(e) {
-              xmlText = fileReader.result;
-              if (xmlText === '') {
+              zip = new JSZip(fileReader.result);
+
+              if (!zip.file(fileNameProgramEditor)) {
+                alert(MSG_ERROR_PROJECT_LOAD_NO_PRG_FILE);
                 return;
               }
-              try {
-                blocklyWorkspace.clear();
-                Blockly.Xml.domToWorkspace(blocklyWorkspace, Blockly.Xml.textToDom(xmlText));
-                clickedStopProgram();
+
+              if (!zip.file(fileNameGUIEditor)) {
+                alert(MSG_ERROR_PROJECT_LOAD_NO_GUI_FILE);
+                return;
               }
-              catch(e) {
-                alert(MSG_ERROR_WORKSPACE_LOAD_FAILED);
+
+              xmlProgramEditorText = zip.file(fileNameProgramEditor).asText();
+              guiEditorText = zip.file(fileNameGUIEditor).asText();
+
+              if (xmlProgramEditorText !== '') {
+                try {
+                  blocklyProgramEditor.clear();
+                  Blockly.Xml.domToWorkspace(blocklyProgramEditor, Blockly.Xml.textToDom(xmlProgramEditorText));
+                  clickedStopProgram();
+                }
+                catch(e) {
+                  alert(MSG_ERROR_PROJECT_LOAD_FAILED);
+                  return;
+                }
+              }
+
+              if (xmlProgramEditorText !== '') {
+                  /*
+                   * Restore GUI editor here.
+                   *
+                   * The plan is to save $sortableFields from FormBuilder object
+                   * and use it to call _helpers.save() in FormBuilder object to resotre the GUI editor.
+                   */
               }
             }
-            fileReader.readAsText(file);
+            fileReader.readAsArrayBuffer(file);
           }
           catch(e) {
-            alert(MSG_ERROR_FILE_READ_FAILED);
+            alert(MSG_ERROR_PROJECT_FILE_READ_FAILED);
           }
         }
 
         function switchView(view) {
           if (view === VIEW_EDITOR) {
               divExecute.style.display = 'none';
-              blocklyWorkspace.setVisible(true);
+              blocklyProgramEditor.setVisible(true);
           }
           else if(view === VIEW_EXECUTE) {
-            blocklyWorkspace.setVisible(false);
+            blocklyProgramEditor.setVisible(false);
             divExecute.style.display = 'block';
           }
         }
@@ -797,21 +828,44 @@
         }
 
         function clickedSave(e) {
-          var xmlText = Blockly.Xml.domToPrettyText(Blockly.Xml.workspaceToDom(blocklyWorkspace));
+          var xmlProgramEditorText = ''';
+          var guiEditorText = '';
           var d = new Date();
-          var fileName = MONTH_NAMES[d.getUTCMonth()] +
-                         d.getUTCDate() +
-                         '_' +
-                         d.getUTCHours() +
-                         '_' +
-                         d.getUTCMinutes() +
-                         '_' +
-                         d.getUTCSeconds();
-          saveAs(new Blob([xmlText], {type: "text/xml;charset=utf-8"}), fileName + '.tvpl');
+          var zip = null;
+          var zipContent = null;
+          var projectFileNameTVPL = MONTH_NAMES[d.getUTCMonth()] +
+                                    d.getUTCDate() +
+                                    '_' +
+                                    d.getUTCHours() +
+                                    '_' +
+                                    d.getUTCMinutes() +
+                                    '_' +
+                                    d.getUTCSeconds() +
+                                    '.tvpl';
+
+          xmlProgramEditorText = Blockly.Xml.domToPrettyText(Blockly.Xml.workspaceToDom(blocklyProgramEditor));
+
+          if (formRenderGUI.childNodes.length > 0) {
+            /*
+             * The plan is to save $sortableFields from FormBuilder object
+             * and use it to call _helpers.save() in FormBuilder object to resotre the GUI editor.
+             */
+            guiEditorText = '';
+          }
+
+          // Initiate JSZip.
+          zip = new JSZip();
+          // Create program editor and GUI editor files.
+          zip.file(fileNameProgramEditor, xmlProgramEditorText);
+          zip.file(fileNameGUIEditor, guiEditorText);
+          // Generate ZIP file.
+          zipContent = zip.generate({type:"blob"});
+          // Save the generated ZIP file.
+          saveAs(zipContent, projectFileNameTVPL);
         }
 
-        function clickedLoadWorkspace(e) {
-          workspaceFileUploader.click();
+        function clickedLoadProject(e) {
+          projectFileUploader.click();
         }
       }
     </script>
