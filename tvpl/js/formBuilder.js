@@ -108,7 +108,7 @@ Tinkerforge TVPL modifications: Start tracing from,
         editXML: 'Edit XML',
         fieldVars: 'Field Variables',
         fieldRemoveWarning: 'Are you sure you want to remove this field?',
-        getStarted: 'Drag a field from the right to this area',
+        getStarted: 'Drag a widget from the right to this area',
         hide: 'Edit',
         label: 'Label',
         labelEmpty: 'Field Label cannot be empty',
@@ -1452,7 +1452,7 @@ function renderGUI() {
     });
 
     // Schedule a render after returning updated GUI editor preview code.
-    setTimeout(renderGUI, 50);
+    if (serialStr) setTimeout(renderGUI, 50);
 
     return serialStr;
   };
