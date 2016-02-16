@@ -2,16 +2,16 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="css/material.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" type="text/css" media="screen" href="css/form-builder.css">
-    <link rel="stylesheet" type="text/css" media="screen" href="css/form-render.css">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" type="text/css" href="css/material.min.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/form-builder.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="css/form-render.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="css/jquery.growl.css"/>
     <script type="text/javascript" src="js/subworkers.js"></script>
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <script type="text/javascript" src="js/material.min.js"></script>
     <script type="text/javascript" src="js/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="js/jquery.blockUI.js"></script>
     <script type="text/javascript" src="js/jquery.flot.min.js"></script>
     <script type="text/javascript" src="js/jquery.flot.resize.min.js"></script>
     <script type="text/javascript" src="js/babelPolyfill.js"></script>
@@ -25,6 +25,8 @@
     <script type="text/javascript" src="msg/js/en.js"></script>
     <script type="text/javascript" src="js/javascript_compressed.js"></script>
     <script type="text/javascript" src="js/python_compressed.js"></script>
+    <script type="text/javascript" src="js/jquery.growl.js"></script>
+
 
     <title>Tinkerforge Visual Programming Language</title>
   </head>
@@ -61,7 +63,7 @@
       <tr>
         <td id ="tdTableHeaderToolbar" align="center">
 
-          <button title="Show program editor" onclick="clickedEditor()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+          <button title="Show program editor" onclick="clickedProgramEditor()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
             <i class="material-icons">border_color</i>
           </button>
 
@@ -81,7 +83,7 @@
       </tr>
     </table>
 
-    <!-- Blockly editor -->
+    <!-- Blockly program editor -->
     <div id="blocklyArea" />
     <div id="blocklyDiv" />
 
@@ -202,7 +204,7 @@
                            'Oct',
                            'Nov',
                            'Dec'];
-        var VIEW_EDITOR = 1;
+        var VIEW_PROGRAM_EDITOR = 1;
         var VIEW_EXECUTE = 2;
         var MSG_ERROR_NOT_VALID_PROJECT_FILE = 'ERROR: Not a valid project file.';
         var MSG_ERROR_PROJECT_FILE_READ_FAILED = 'ERROR: Reading project file failed.';
@@ -212,8 +214,8 @@
         var MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED = 'ERROR: The following error occurred while preparing JavaScript code.\n\n\n';
         var MSG_INFO_UNSAVED_PROJECT = 'Unsaved changes on the project will be lost.';
         var MSG_INFO_PROGRAM_EDITOR_EMPTY = 'Nothing to execute. Seems like the program editor is empty.';
-        var MSG_INFO_NO_PROGRAM_RUNNING = 'No program is running.';
-        var MSG_INFO_PROGRAM_RUNNING = 'A program is currently running.';
+        var MSG_INFO_NO_PROGRAM_RUNNING_RENDERED_GUI_BLOCKED = 'Rendered GUI blocked: No program running.';
+        var MSG_INFO_PROGRAM_RUNNING_PROGRAM_EDITOR_BLOCKED = 'GUI editor blocked: Program running.';
         var MSG_INFO_GUI_EDITOR_EMPTY = 'Nothing to render. Seems like the GUI editor is empty.';
         var MSG_TOOLTIP_BUTTON_RUNSTOP_RUN = 'Execute code generated from program editor.';
         var MSG_TOOLTIP_BUTTON_RUNSTOP_STOP = 'Stop currently running program';
@@ -472,12 +474,8 @@
           divEditGUI.style.display = 'block';
           formRenderGUI.style.display = 'none';
 
-          /*
-           * This is a fix for UI block message not appearing on the the center
-           * if the element was not visible at the time of blocking.
-           */
           if (PROGRAM_STATUS_RUNNING) {
-            blockEditGUI(true, MSG_INFO_PROGRAM_RUNNING);
+            $.growl.warning({ message: MSG_INFO_PROGRAM_RUNNING_PROGRAM_EDITOR_BLOCKED });
           }
         }
 
@@ -541,9 +539,10 @@
               return;
             }
 
+            $.growl.warning({ message: MSG_INFO_NO_PROGRAM_RUNNING_RENDERED_GUI_BLOCKED });
             divEditGUI.style.display = 'none';
             formRenderGUI.style.display = 'block';
-            blockRenderGUI(true, MSG_INFO_NO_PROGRAM_RUNNING);
+            blockRenderGUI(true);
 
             return;
           }
@@ -559,21 +558,21 @@
           formRenderGUI.style.display = 'block';
         }
 
-        function blockEditGUI(state, msg) {
+        function blockEditGUI(state) {
          if (state) {
-           $('#divEditGUI').block({message: msg});
+           divEditGUI.style.pointerEvents = 'none';
          }
          else {
-           $('#divEditGUI').unblock();
+           divEditGUI.style.pointerEvents = '';
          }
         }
 
-        function blockRenderGUI(state, msg) {
+        function blockRenderGUI(state) {
           if (state) {
-            $('#formRenderGUI').block({message: msg});
+            formRenderGUI.style.pointerEvents = 'none';
           }
           else {
-            $('#formRenderGUI').unblock();
+            formRenderGUI.style.pointerEvents = '';
           }
         }
 
@@ -673,7 +672,7 @@
                   buttonToolbarRunStopImage.innerHTML = 'play_arrow';
                   buttonToolbarRunStop.disabled = false;
                   blockEditGUI(false);
-                  blockRenderGUI(true, MSG_INFO_NO_PROGRAM_RUNNING);
+                  blockRenderGUI(true);
                   break;
 
                 case workerProtocol.TYPE_RES_MESSAGE_CONSOLE:
@@ -729,18 +728,22 @@
 
         function handleTypeTesProgramStartAck(e) {
           PROGRAM_STATUS_RUNNING = true;
+          $.growl.warning({ message: MSG_INFO_PROGRAM_RUNNING_PROGRAM_EDITOR_BLOCKED });
           textareaConsole.value = '';
           textareaConsole.scrollTop = textareaConsole.scrollHeight;
           buttonToolbarRunStop.setAttribute('onclick', 'clickedStopProgram()');
           buttonToolbarRunStop.setAttribute('title', MSG_TOOLTIP_BUTTON_RUNSTOP_STOP);
           buttonToolbarRunStopImage.innerHTML = 'stop';
           buttonToolbarRunStop.disabled = false;
-          blockEditGUI(true, MSG_INFO_PROGRAM_RUNNING);
+          blockEditGUI(true);
           blockRenderGUI(false);
         }
 
         function clickedStopProgram(e) {
           PROGRAM_STATUS_RUNNING = false;
+          if (formRenderGUI.childNodes.length > 0) {
+            $.growl.warning({ message: MSG_INFO_NO_PROGRAM_RUNNING_RENDERED_GUI_BLOCKED });
+          }
 
           if (workerManager !== null) {
             buttonToolbarRunStop.disabled = true;
@@ -817,7 +820,7 @@
         }
 
         function switchView(view) {
-          if (view === VIEW_EDITOR) {
+          if (view === VIEW_PROGRAM_EDITOR) {
               divExecute.style.display = 'none';
               blocklyProgramEditor.setVisible(true);
           }
@@ -827,8 +830,8 @@
           }
         }
 
-        function clickedEditor(e) {
-          switchView(VIEW_EDITOR);
+        function clickedProgramEditor(e) {
+          switchView(VIEW_PROGRAM_EDITOR);
         }
 
         function clickedExecute(e) {
