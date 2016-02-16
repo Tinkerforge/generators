@@ -793,12 +793,20 @@
               }
 
               if (xmlProgramEditorText !== '') {
-                  /*
-                   * Restore GUI editor here.
-                   *
-                   * The plan is to save $sortableFields from FormBuilder object
-                   * and use it to call _helpers.save() in FormBuilder object to resotre the GUI editor.
-                   */
+                // Remove the textarea
+                divEditGUI.removeChild(document.getElementById('frmb-0-form-wrap'));
+
+                // Recreate the text area
+                var newTextAreaEditGUI = document.createElement('textarea');
+                newTextAreaEditGUI.setAttribute('id', 'textAreaEditGUI');
+                newTextAreaEditGUI.setAttribute('name', 'textAreaEditGUI');
+                divEditGUI.appendChild(newTextAreaEditGUI);
+
+                // Re-initialize form builder
+                editorGUI = document.getElementById('textAreaEditGUI');
+                $(editorGUI).val(guiEditorText);
+                $(editorGUI).formBuilder();
+                $(editorGUI).formRender({container: $(formRenderGUI)});
               }
             }
             fileReader.readAsArrayBuffer(file);
@@ -846,11 +854,7 @@
           xmlProgramEditorText = Blockly.Xml.domToPrettyText(Blockly.Xml.workspaceToDom(blocklyProgramEditor));
 
           if (formRenderGUI.childNodes.length > 0) {
-            /*
-             * The plan is to save $sortableFields from FormBuilder object
-             * and use it to call _helpers.save() in FormBuilder object to resotre the GUI editor.
-             */
-            guiEditorText = '';
+            guiEditorText = $(editorGUI).val();
           }
 
           // Initiate JSZip.
