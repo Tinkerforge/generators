@@ -117,7 +117,7 @@
 	        <div id="divEditGUI">
 	          <textarea name="textAreaEditGUI" id="textAreaEditGUI"></textarea>
 	        </div>
-	        <div id="formRenderGUI"></div>
+	        <div id="divRenderGUI"></div>
           </td>
         </tr>
       </table>
@@ -234,7 +234,7 @@
         var buttonToolbarRunStopImage = document.getElementById('buttonToolbarRunStopImage');
         var divEditGUI = document.getElementById('divEditGUI');
         var editorGUI = document.getElementById('textAreaEditGUI');
-        var formRenderGUI = document.getElementById('formRenderGUI');
+        var divRenderGUI = document.getElementById('divRenderGUI');
         var fileReader = new FileReader();
         var plotConfigs = {};
         var fileNameProgramEditor = 'tvpl.prg';
@@ -473,7 +473,7 @@
 
         function clickedEditGUI(e) {
           divEditGUI.style.display = 'block';
-          formRenderGUI.style.display = 'none';
+          divRenderGUI.style.display = 'none';
 
           if (PROGRAM_STATUS_RUNNING) {
             $.growl.warning({ message: MSG_INFO_PROGRAM_RUNNING_PROGRAM_EDITOR_BLOCKED });
@@ -481,25 +481,25 @@
         }
 
         function drawPlotWidget(plotWidget, plotData) {
-          var wasVisibility = formRenderGUI.style.display;
+          var wasVisibility = divRenderGUI.style.display;
 
-          formRenderGUI.style.display = 'block';
+          divRenderGUI.style.display = 'block';
           plotWidget.setData(plotData);
           plotWidget.setupGrid();
           plotWidget.draw();
           // Restore visibility.
-          formRenderGUI.style.display = wasVisibility;
+          divRenderGUI.style.display = wasVisibility;
         }
 
         function updatePlotWidgetConfigs() {
           for (var plotCfg in plotConfigs) {
             var found = false;
 
-            for (var i in formRenderGUI.childNodes) {
-              if (formRenderGUI.childNodes[i].tagName !== 'DIV') continue;
+            for (var i in divRenderGUI.childNodes) {
+              if (divRenderGUI.childNodes[i].tagName !== 'DIV') continue;
 
-              for (var j in formRenderGUI.childNodes[i].children) {
-                if (formRenderGUI.childNodes[i].children[j].id === plotCfg) {
+              for (var j in divRenderGUI.childNodes[i].children) {
+                if (divRenderGUI.childNodes[i].children[j].id === plotCfg) {
                   found = true;
                   break;
                 }
@@ -530,38 +530,40 @@
         function clickedRenderGUI(e) {
           if (!PROGRAM_STATUS_RUNNING) {
             // No program running.
-            $(editorGUI).formRender({container: $(formRenderGUI)});
+            $(editorGUI).formRender({container: $(divRenderGUI)});
 
             // Reset all available plot widgets if no program is running and we are rendering the GUI.
             resetRenderPlotWidgets();
 
-            if (formRenderGUI.childNodes.length < 1) {
+            if (divRenderGUI.childNodes.length < 1) {
               clickedEditGUI();
               return;
             }
 
             $.growl.warning({ message: MSG_INFO_NO_PROGRAM_RUNNING_RENDERED_GUI_BLOCKED });
             divEditGUI.style.display = 'none';
-            formRenderGUI.style.display = 'block';
+            divRenderGUI.style.display = 'block';
             blockRenderGUI(true);
 
             return;
           }
 
           // A program is running.
-          if (formRenderGUI.childNodes.length < 1) {
+          if (divRenderGUI.childNodes.length < 1) {
             clickedEditGUI();
             alert(MSG_INFO_GUI_EDITOR_EMPTY);
             return;
           }
 
           divEditGUI.style.display = 'none';
-          formRenderGUI.style.display = 'block';
+          divRenderGUI.style.display = 'block';
         }
 
         function blockEditGUI(state) {
          if (state) {
            divEditGUI.style.pointerEvents = 'none';
+           $(divEditGUI).css({'opacity': 0.5});
+           $(divRenderGUI).css({'opacity': 1});
          }
          else {
            divEditGUI.style.pointerEvents = '';
@@ -570,10 +572,12 @@
 
         function blockRenderGUI(state) {
           if (state) {
-            formRenderGUI.style.pointerEvents = 'none';
+            divRenderGUI.style.pointerEvents = 'none';
+            $(divRenderGUI).css({'opacity': 0.5});
+            $(divEditGUI).css({'opacity': 1});
           }
           else {
-            formRenderGUI.style.pointerEvents = '';
+            divRenderGUI.style.pointerEvents = '';
           }
         }
 
@@ -742,7 +746,7 @@
 
         function clickedStopProgram(e) {
           PROGRAM_STATUS_RUNNING = false;
-          if (formRenderGUI.childNodes.length > 0) {
+          if (divRenderGUI.childNodes.length > 0) {
             $.growl.warning({ message: MSG_INFO_NO_PROGRAM_RUNNING_RENDERED_GUI_BLOCKED });
           }
 
@@ -810,7 +814,7 @@
                 editorGUI = document.getElementById('textAreaEditGUI');
                 $(editorGUI).val(guiEditorText);
                 $(editorGUI).formBuilder();
-                $(editorGUI).formRender({container: $(formRenderGUI)});
+                $(editorGUI).formRender({container: $(divRenderGUI)});
               }
             }
             fileReader.readAsArrayBuffer(file);
@@ -857,7 +861,7 @@
 
           xmlProgramEditorText = Blockly.Xml.domToPrettyText(Blockly.Xml.workspaceToDom(blocklyProgramEditor));
 
-          if (formRenderGUI.childNodes.length > 0) {
+          if (divRenderGUI.childNodes.length > 0) {
             guiEditorText = $(editorGUI).val();
           }
 

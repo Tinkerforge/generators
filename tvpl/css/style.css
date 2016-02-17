@@ -46,20 +46,18 @@ html, body {
   display: block;
   width: 100%;
   height: 100%;
-  overflow: auto;"
+  overflow-y: auto;
 }
-#formRenderGUI {
+#divRenderGUI {
+  display: none;
   width: 100%;
   height: 100%;
-  overflow: auto;"
+  overflow-y: auto;
 }
 #divGeneratedGUI {
   width: 100%;
   height: 100%;
   border: solid 1px #272822;
-}
-#formRenderGUI {
-  display: none;
 }
 #tableGeneratedGUI {
   width: 100%;
