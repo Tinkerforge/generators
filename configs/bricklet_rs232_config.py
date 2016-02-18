@@ -79,9 +79,9 @@ Gibt die aktuell gespeicherte Nachricht zurück. Die maximale Länge
 beträgt 60. Wenn die Länge als 0 gegeben wird, waren keine
 neuen Daten verfügbar.
 
-Anstatt zu mit dieser Funktion zu pollen, ist es auch möglich
+Anstatt mit dieser Funktion zu pollen, ist es auch möglich
 Callbacks zu nutzen. Siehe :func:`EnableReadCallback` und
-:func:`DisableReadCallback`.
+:func:`ReadCallback`.
 """
 }]
 })
