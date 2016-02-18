@@ -8,6 +8,19 @@ Tinkerforge TVPL modifications: Start tracing from,
 */
 'use strict';
 
+function renderGUI() {
+  var editorGUI = null;
+  var divRenderGUI = null;
+
+  editorGUI = document.getElementById('textAreaEditGUI');
+  divRenderGUI = document.getElementById('divRenderGUI');
+
+  if (editorGUI && divRenderGUI && typeof resetRenderPlotWidgets === "function") {
+    $(editorGUI).formRender({container: $(divRenderGUI)});
+    resetRenderPlotWidgets();
+  }
+}
+
 (function ($) {
   'use strict';
 
@@ -177,6 +190,8 @@ Tinkerforge TVPL modifications: Start tracing from,
         $(ui.sender).sortable('cancel');
         $(this).sortable('cancel');
       }
+
+      _helpers.save();
     };
 
     /**
@@ -1386,19 +1401,6 @@ Tinkerforge TVPL modifications: Start tracing from,
     });
   };
 })(jQuery);
-
-function renderGUI() {
-  var editorGUI = null;
-  var divRenderGUI = null;
-
-  editorGUI = document.getElementById('textAreaEditGUI');
-  divRenderGUI = document.getElementById('divRenderGUI');
-
-  if (editorGUI && divRenderGUI && typeof resetRenderPlotWidgets === "function") {
-    $(editorGUI).formRender({container: $(divRenderGUI)});
-    resetRenderPlotWidgets();
-  }
-}
 
 // toXML is a jQuery plugin that turns our form editor into XML
 (function ($) {
