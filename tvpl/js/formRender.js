@@ -123,7 +123,8 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
           buttonOnClick = '';
         }
         else {
-          buttonOnClick = ' onClick="' + fieldAttrs.buttonOnClick + '" ';
+          // fieldAttrs.buttonOnClick must be provided from fromBuilder.js as escaped.
+          buttonOnClick = ' onClick="handleGUIButtonClick(this.id, \'' + fieldAttrs.buttonOnClick + '\')" ';
         }
       }
       

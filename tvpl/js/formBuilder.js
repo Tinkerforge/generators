@@ -680,6 +680,18 @@ Tinkerforge TVPL modifications: Start tracing from,
       values.type = fType;
       values.description = $field.attr('description') !== undefined ? _helpers.htmlEncode($field.attr('description')) : '';
 
+      switch(fType) {
+        case 'button':
+          // Must unescape field value since it was saved escaped and now will be used to display the value to the user.
+          values.buttonOnClick = isNew ? '' : unescape(fieldAttrs.buttonOnClick || $field.attr('buttonOnClick'));
+          break;
+        case 'plot':
+          values.plotWidth = isNew ? '' : fieldAttrs.plotWidth || $field.attr('plotWidth');
+          values.plotHeight = isNew ? '' : fieldAttrs.plotHeight || $field.attr('plotHeight');
+          values.plotDataPoints = isNew ? '' : fieldAttrs.plotDataPoints || $field.attr('plotDataPoints');
+          break;
+      }
+
       if (isMultiple) {
         values.multiple = true;
         values.values = [];
@@ -809,19 +821,42 @@ Tinkerforge TVPL modifications: Start tracing from,
         }
         else if (type === 'button') {
           // TODO: Setup button specific editable fields
+          var buttonFunctionToCall = '';
+
+          if (values.buttonOnClick) {
+            buttonFunctionToCall = values.buttonOnClick;
+          }
+
           advFields += '<div class="frm-fld label-wrap"><label>' + opts.messages.buttonFunctionToCall + '</label>';
-          advFields += '<input type="text" name="buttonFunctionToCall" value="" class="fld-button-function-to-call" /></div>';
+          // TODO: The value to display is provided unescaped but the problem is with double quotes which should be escaped here.
+          advFields += '<input type="text" name="buttonFunctionToCall" value="' + buttonFunctionToCall + '" class="fld-button-function-to-call" /></div>';
         }
         else if (type === 'plot') {
           // TODO: Setup plot specific editable fields
+          var plotWidth = '200';
+          var plotHeight = '100';
+          var plotDataPoints = '10';
+
+          if (values.plotWidth) {
+            plotWidth = values.plotWidth;
+          }
+
+          if (values.plotHeight) {
+            plotHeight = values.plotHeight;
+          }
+
+          if (values.plotDataPoints) {
+            plotDataPoints =  values.plotDataPoints;
+          }
+
           advFields += '<div class="frm-fld label-wrap"><label>' + opts.messages.plotWidth + '</label>';
-          advFields += '<input type="number" min="200" value="200" name="plotWidth" class="fld-plot-width" /></div>';
+          advFields += '<input type="number" min="200" value="' + plotWidth + '" name="plotWidth" class="fld-plot-width" /></div>';
 
           advFields += '<div class="frm-fld label-wrap"><label>' + opts.messages.plotHeight + '</label>';
-          advFields += '<input type="number" min="100" value="100" name="plotHeight" class="fld-plot-height" /></div>';
+          advFields += '<input type="number" min="100" value="' + plotHeight + '" name="plotHeight" class="fld-plot-height" /></div>';
 
           advFields += '<div class="frm-fld label-wrap"><label>' + opts.messages.plotDataPoints + '</label>';
-          advFields += '<input type="number" min="2" value="10" name="plotDataPoints" class="fld-plot-data-points" /></div>';
+          advFields += '<input type="number" min="2" value="' + plotDataPoints + '" name="plotDataPoints" class="fld-plot-data-points" /></div>';
         }
 
         return advFields;
@@ -1354,13 +1389,13 @@ Tinkerforge TVPL modifications: Start tracing from,
 
 function renderGUI() {
   var editorGUI = null;
-  var formRenderGUI = null;
+  var divRenderGUI = null;
 
   editorGUI = document.getElementById('textAreaEditGUI');
-  formRenderGUI = document.getElementById('formRenderGUI');
+  divRenderGUI = document.getElementById('divRenderGUI');
 
-  if (editorGUI && formRenderGUI && typeof resetRenderPlotWidgets === "function") {
-    $(editorGUI).formRender({container: $(formRenderGUI)});
+  if (editorGUI && divRenderGUI && typeof resetRenderPlotWidgets === "function") {
+    $(editorGUI).formRender({container: $(divRenderGUI)});
     resetRenderPlotWidgets();
   }
 }
@@ -1410,16 +1445,13 @@ function renderGUI() {
                   fSlash = !multipleField ? '/' : '';
 
               var fButtonOnClick = '';
-              var fButtonFunctionToCall = '';
-              var fButtonFunctionCallHandler = '';
               var fPlotDataPoints = '';
               var fPlotWidth = '';
               var fPlotHeight = '';
 
-              if (t === 'button') {
-                fButtonFunctionToCall = $('input.fld-button-function-to-call', $field).val().replace(/"/g, '\'');
-                fButtonFunctionCallHandler = 'handleGUIButtonClick(this.id, ' + JSON.stringify(escape(fButtonFunctionToCall)).replace(/"/g, '\'') + ')';
-                fButtonOnClick = 'buttonOnClick="' + fButtonFunctionCallHandler + '" ';
+              if (t === 'button' && $('input.fld-button-function-to-call', $field).val()) {
+                // Must escape field value since currently it is unescaped for displaying to the user.
+                fButtonOnClick = 'buttonOnClick="' + escape($('input.fld-button-function-to-call', $field).val()) + '" ';
               }
 
               if (t === 'plot') {
