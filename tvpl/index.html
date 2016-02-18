@@ -193,6 +193,8 @@
           $(document.getElementById('textAreaEditGUI')).formBuilder();
         });
 
+        document.getElementById('divEditGUI').style.display = 'block';
+
         var MONTH_NAMES = ['Jan',
                            'Feb',
                            'Mar',
@@ -216,7 +218,7 @@
         var MSG_INFO_UNSAVED_PROJECT = 'Unsaved changes on the project will be lost.';
         var MSG_INFO_PROGRAM_EDITOR_EMPTY = 'Nothing to execute. Seems like the program editor is empty.';
         var MSG_INFO_NO_PROGRAM_RUNNING_RENDERED_GUI_BLOCKED = 'Rendered GUI blocked: No program running.';
-        var MSG_INFO_PROGRAM_RUNNING_PROGRAM_EDITOR_BLOCKED = 'GUI editor blocked: Program running.';
+        var MSG_INFO_PROGRAM_RUNNING_GUI_EDITOR_BLOCKED = 'GUI editor blocked: Program running.';
         var MSG_INFO_GUI_EDITOR_EMPTY = 'Nothing to render. Seems like the GUI editor is empty.';
         var MSG_TOOLTIP_BUTTON_RUNSTOP_RUN = 'Execute code generated from program editor.';
         var MSG_TOOLTIP_BUTTON_RUNSTOP_STOP = 'Stop currently running program';
@@ -255,7 +257,7 @@
                                  'babelPolyfill.js',
                                  'babelRuntime.js',
                                  'babelBrowser.js'];
-        definitionsGeneratedCode = '';
+        var definitionsGeneratedCode = '';
         // Variable "is_tvpl" is currently only used for Chrome/Safari subworker polyfill code in the file subworkers.js.
         var codeWorkerManager = 'var is_tvpl = true;\n'+
 'var _queue_function_tf_call = false;\n'+
@@ -476,7 +478,7 @@
           divRenderGUI.style.display = 'none';
 
           if (PROGRAM_STATUS_RUNNING) {
-            $.growl.warning({ message: MSG_INFO_PROGRAM_RUNNING_PROGRAM_EDITOR_BLOCKED });
+            $.growl.warning({ message: MSG_INFO_PROGRAM_RUNNING_GUI_EDITOR_BLOCKED });
           }
         }
 
@@ -662,7 +664,7 @@
             if (message.type !== null && workerProtocol.isNumber(message.type)) {
               switch(message.type) {
                 case workerProtocol.TYPE_RES_PROGRAM_START_ACK:
-                  handleTypeTesProgramStartAck();
+                  handleTypeResProgramStartAck();
                   break;
 
                 case workerProtocol.TYPE_RES_PROGRAM_STOP_ACK:
@@ -672,12 +674,18 @@
                     workerManager.terminate();
                     workerManager = null;
                   }
+
                   buttonToolbarRunStop.setAttribute('onclick', 'clickedRunProgram()');
                   buttonToolbarRunStop.setAttribute('title', MSG_TOOLTIP_BUTTON_RUNSTOP_RUN);
                   buttonToolbarRunStopImage.innerHTML = 'play_arrow';
                   buttonToolbarRunStop.disabled = false;
                   blockEditGUI(false);
                   blockRenderGUI(true);
+
+                  if (divRenderGUI.style.display === 'block') {
+                      $.growl.warning({ message: MSG_INFO_NO_PROGRAM_RUNNING_RENDERED_GUI_BLOCKED });
+                  }
+
                   break;
 
                 case workerProtocol.TYPE_RES_MESSAGE_CONSOLE:
@@ -728,12 +736,11 @@
             buttonToolbarRunStop.disabled = true;
             return;
           }
-          handleTypeTesProgramStartAck();
+          handleTypeResProgramStartAck();
         }
 
-        function handleTypeTesProgramStartAck(e) {
+        function handleTypeResProgramStartAck(e) {
           PROGRAM_STATUS_RUNNING = true;
-          $.growl.warning({ message: MSG_INFO_PROGRAM_RUNNING_PROGRAM_EDITOR_BLOCKED });
           textareaConsole.value = '';
           textareaConsole.scrollTop = textareaConsole.scrollHeight;
           buttonToolbarRunStop.setAttribute('onclick', 'clickedStopProgram()');
@@ -742,13 +749,14 @@
           buttonToolbarRunStop.disabled = false;
           blockEditGUI(true);
           blockRenderGUI(false);
+
+          if (divEditGUI.style.display === 'block') {
+              $.growl.warning({ message: MSG_INFO_PROGRAM_RUNNING_GUI_EDITOR_BLOCKED });
+          }
         }
 
         function clickedStopProgram(e) {
           PROGRAM_STATUS_RUNNING = false;
-          if (divRenderGUI.childNodes.length > 0) {
-            $.growl.warning({ message: MSG_INFO_NO_PROGRAM_RUNNING_RENDERED_GUI_BLOCKED });
-          }
 
           if (workerManager !== null) {
             buttonToolbarRunStop.disabled = true;
