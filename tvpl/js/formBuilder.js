@@ -102,7 +102,7 @@ function renderGUI() {
         allowSelect: 'Allow Select',
         autocomplete: 'Autocomplete',
         button: 'Button',
-        buttonFunctionToCall: 'On Click',
+        buttonFunctionToCall: 'Function to Call',
         cannotBeEmpty: 'This field cannot be empty',
         checkboxGroup: 'Checkbox Group',
         checkbox: 'Checkbox',
