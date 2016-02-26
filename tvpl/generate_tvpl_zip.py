@@ -73,10 +73,11 @@ class TVPLZipGenerator(common.ZipGenerator):
         shutil.copytree(os.path.join(root_dir, '..', '..', 'tvpl-closure-library'), self.tmp_build_closure_library_dir,
                         ignore=shutil.ignore_patterns('*/.git', '*_test.js'))
 
-        # Copy css/ js/ and index.html
+        # Copy css/, js/, index.html and programEditor.html
         shutil.copytree(os.path.join(root_dir, 'css'), os.path.join(self.tmp_source_dir, 'css'))
         shutil.copytree(os.path.join(root_dir, 'js'), os.path.join(self.tmp_source_dir, 'js'))
         shutil.copy(os.path.join(root_dir, 'index.html'), self.tmp_source_dir)
+        shutil.copy(os.path.join(root_dir, 'programEditor.html'), self.tmp_source_dir)
 
         # Copy changelog.txt and readme.txt
         shutil.copy(os.path.join(root_dir, 'changelog.txt'),self.tmp_dir)
