@@ -2,65 +2,896 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" type="text/css" href="css/material.min.css">
-    <link rel="stylesheet" type="text/css" href="css/form-render.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
     <link rel="stylesheet" type="text/css" href="css/form-builder.css" media="screen">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-
+    <link rel="stylesheet" type="text/css" href="css/form-render.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="css/jquery.growl.css"/>
     <script type="text/javascript" src="js/subworkers.js"></script>
     <script type="text/javascript" src="js/jquery.min.js"></script>
-    <script type="text/javascript" src="js/jszip.min.js"></script>
-    <script type="text/javascript" src="js/fileSaver.js"></script>
-    <script type="text/javascript" src="js/formRender.js"></script>
-    <script type="text/javascript" src="js/formBuilder.js"></script>
-    <script type="text/javascript" src="js/babelRuntime.js"></script>
-    <script type="text/javascript" src="js/babelBrowser.js"></script>
-    <script type="text/javascript" src="js/jquery.growl.js"></script>
-    <script type="text/javascript" src="js/babelPolyfill.js"></script>
     <script type="text/javascript" src="js/material.min.js"></script>
     <script type="text/javascript" src="js/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="js/workerProtocol.js"></script>
+    <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
     <script type="text/javascript" src="js/jquery.flot.min.js"></script>
     <script type="text/javascript" src="js/jquery.flot.resize.min.js"></script>
-    <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
+    <script type="text/javascript" src="js/babelPolyfill.js"></script>
+    <script type="text/javascript" src="js/babelRuntime.js"></script>
+    <script type="text/javascript" src="js/babelBrowser.js"></script>
+    <script type="text/javascript" src="js/workerProtocol.js"></script>
+    <script type="text/javascript" src="js/jszip.min.js"></script>
+    <script type="text/javascript" src="js/fileSaver.js"></script>
+    <script type="text/javascript" src="js/blockly_compressed.js"></script>
+    <script type="text/javascript" src="js/blocks_compressed.js"></script>
+    <script type="text/javascript" src="msg/js/en.js"></script>
+    <script type="text/javascript" src="js/javascript_compressed.js"></script>
+    <script type="text/javascript" src="js/python_compressed.js"></script>
+    <script type="text/javascript" src="js/jquery.growl.js"></script>
+
 
     <title>Tinkerforge Visual Programming Language</title>
   </head>
+
   <body>
-    <div class="demo-layout-waterfall mdl-layout mdl-js-layout">
-      <header class="mdl-layout__header mdl-layout__header--waterfall">
-        <div class="mdl-layout__header-row">
-          <span class="mdl-layout-title">Tinkerforge Visual Programming Language</span>
-          <div class="mdl-layout-spacer"></div>
-          <nav class="mdl-navigation">
-            <a class="mdl-navigation__link" href=""><i class="material-icons">code</i>Program Editor</a>
-            <a class="mdl-navigation__link" href=""><i class="material-icons">web</i>GUI Editor</a>
-            <a class="mdl-navigation__link" href=""><i class="material-icons">settings</i>Execute Program</a>
-          </nav>
-        </div>
-      </header>
-      <div class="mdl-layout__drawer">
-        <span class="mdl-layout-title">Main Menu</span>
-        <nav class="mdl-navigation">
-          <a class="mdl-navigation__link" href=""><i class="material-icons">folder_open</i>Load Project</a>
-          <a class="mdl-navigation__link" href=""><i class="material-icons">save</i>Save Project</a>
-          <a class="mdl-navigation__link" href=""><i class="material-icons">info</i>About</a>
-        </nav>
-      </div>
-      <main class="mdl-layout__content">
-        <div class="page-content">
-          <iframe id="iframeProgramEditor" src="./programEditor.html"></iframe>
-        </div>
-      </main>
+    <input id="projectFileUploader" type="file" onchange="projectFileUploadRequest(this)" />
+
+    <table id="tableHeader">
+      <tr>
+        <td>
+          <h2 align="center">Tinkerforge Visual Programming Language</h2>
+        </td>
+      </tr>
+      <tr id="trErrorMessageWebworker">
+        <td align="center">
+          <p id="pErrorMessage">Seems like the browser you are using does not support Web workers which is required to use TVPL.</p>
+        </td>
+      </tr>
+      <tr id="trErrorMessageXmlToolboxGeneric">
+        <td align="center">
+          <p id="pErrorMessage">Could not load toolbox XML file which is required to use TVPL.</p>
+        </td>
+      </tr>
+      <tr id="trErrorMessageXmlToolboxChrome">
+        <td align="center">
+          <p id="pErrorMessage">Could not load toolbox XML file. Seems like you are using Google Chrome browser and accessing the application without a web server. Try launching Google Chrome with "--allow-file-access-from-files" switch.</p>
+        </td>
+      </tr>
+      <tr id="trErrorMessageBlob">
+        <td align="center">
+          <p id="pErrorMessage">Seems like the browser you are using does not support Blob objects which is required to use TVPL.</p>
+        </td>
+      </tr>
+      <tr>
+        <td id ="tdTableHeaderToolbar" align="center">
+
+          <button title="Show program editor" onclick="clickedProgramEditor()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+            <i class="material-icons">border_color</i>
+          </button>
+
+          <button title="Execute code generated from current program editor" onclick="clickedExecute()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+            <i class="material-icons">settings</i>
+          </button>
+
+          <button title="Save project" onclick="clickedSave()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+            <i class="material-icons">save</i>
+          </button>
+
+          <button title="Load project" onclick="clickedLoadProject()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+            <i class="material-icons">folder_open</i>
+          </button>
+
+        </td>
+      </tr>
+    </table>
+
+    <!-- Blockly program editor -->
+    <div id="blocklyArea" />
+    <div id="blocklyDiv" />
+
+    <!-- Execution view -->
+    <div id="divExecute">
+      <table id="tableExecute">
+        <tr>
+          <td align="center">
+            <button id="buttonToolbarRunStop" title="Run program" onclick="clickedRunProgram()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+              <i id="buttonToolbarRunStopImage" class="material-icons">play_arrow</i>
+            </button>
+            <button title="Clear output" onclick="clickedClearOutput()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+              <i class="material-icons">clear_all</i>
+            </button>
+          </td>
+          <td align="center">
+            <button title="Edit GUI" onclick="clickedEditGUI()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+              <i class="material-icons">web</i>
+            </button>
+            <button title="Render GUI" onclick="clickedRenderGUI()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+              <i class="material-icons">desktop_windows</i>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td width="50%" height="100%">
+            <textarea readonly id="textareaConsole"></textarea>
+          </td>
+          <td width="50%" height="100%">
+	        <div id="divEditGUI">
+	          <textarea name="textAreaEditGUI" id="textAreaEditGUI"></textarea>
+	        </div>
+	        <div id="divRenderGUI"></div>
+          </td>
+        </tr>
+      </table>
     </div>
+
+    <script type="text/javascript" >
+
+      var trErrorMessageWebworker = document.getElementById('trErrorMessageWebworker');
+      var trErrorMessageXmlToolboxGeneric = document.getElementById('trErrorMessageXmlToolboxGeneric');
+      var trErrorMessageXmlToolboxChrome = document.getElementById('trErrorMessageXmlToolboxChrome');
+      var trErrorMessageBlob = document.getElementById('trErrorMessageBlob');
+      var xmlHttp;
+      var xmlBlocklyToolbox;
+      var xmlBlocklyToolboxLoaded;
+      var runOK = true;
+
+      function browserSupportsWebWorker(e) {
+        if (window.Worker) {
+          return true;
+        }
+        return false;
+      }
+
+      function browserSupportsBlob() {
+        if (window.Blob && window.FileReader && window.File && window.FileList) {
+          return true;
+        }
+        return false;
+      }
+
+      /*
+        If being accessed without a server then Google Chrome must be launched with "--allow-file-access-from-files" parameter
+        to be able to use TVPL.
+      */
+      try {
+        if (window.XMLHttpRequest) {
+          xmlHttp = new XMLHttpRequest();
+        }
+        else {
+          xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlHttp.open('GET', 'xml/toolbox.xml', false);
+        xmlHttp.send();
+        xmlBlocklyToolbox = xmlHttp.responseXML;
+        xmlBlocklyToolboxLoaded = true;
+      } catch(e) {
+          xmlBlocklyToolboxLoaded = false;
+      }
+
+      if (!browserSupportsWebWorker()) {
+        trErrorMessageWebworker.style.display = 'table-row';
+        runOK = false;
+      }
+
+      if(!xmlBlocklyToolboxLoaded) {
+        if (window.chrome) {
+          trErrorMessageXmlToolboxChrome.style.display = 'table-row';
+        }
+        else {
+          trErrorMessageXmlToolboxGeneric.style.display = 'table-row';
+        }
+        runOK = false;
+      }
+
+      if(!browserSupportsBlob()) {
+        trErrorMessageBlob.style.display = 'table-row';
+        runOK = false;
+      }
+
+      if (runOK) {
+        jQuery(document).ready(function($) {
+          'use strict';
+          $(document.getElementById('textAreaEditGUI')).formBuilder();
+        });
+
+        document.getElementById('divEditGUI').style.display = 'block';
+
+        var MONTH_NAMES = ['Jan',
+                           'Feb',
+                           'Mar',
+                           'Apr',
+                           'May',
+                           'Jun',
+                           'Jul',
+                           'Aug',
+                           'Sep',
+                           'Oct',
+                           'Nov',
+                           'Dec'];
+        var VIEW_PROGRAM_EDITOR = 1;
+        var VIEW_EXECUTE = 2;
+        var MSG_ERROR_NOT_VALID_PROJECT_FILE = 'ERROR: Not a valid project file.';
+        var MSG_ERROR_PROJECT_FILE_READ_FAILED = 'ERROR: Reading project file failed.';
+        var MSG_ERROR_PROJECT_LOAD_NO_PRG_FILE = 'ERROR: Error loading project. No program editor file (tvpl.prg) found';
+        var MSG_ERROR_PROJECT_LOAD_NO_GUI_FILE = 'ERROR: Error loading project. No GUI editor file (tvpl.gui) found';
+        var MSG_ERROR_PROJECT_LOAD_FAILED = 'ERROR: Failed to load saved project.';
+        var MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED = 'ERROR: The following error occurred while preparing JavaScript code.\n\n\n';
+        var MSG_INFO_UNSAVED_PROJECT = 'Unsaved changes on the project will be lost.';
+        var MSG_INFO_PROGRAM_EDITOR_EMPTY = 'Nothing to execute. Seems like the program editor is empty.';
+        var MSG_INFO_NO_PROGRAM_RUNNING_RENDERED_GUI_BLOCKED = 'Rendered GUI blocked: No program running.';
+        var MSG_INFO_PROGRAM_RUNNING_GUI_EDITOR_BLOCKED = 'GUI editor blocked: Program running.';
+        var MSG_INFO_GUI_EDITOR_EMPTY = 'Nothing to render. Seems like the GUI editor is empty.';
+        var MSG_TOOLTIP_BUTTON_RUNSTOP_RUN = 'Execute code generated from program editor.';
+        var MSG_TOOLTIP_BUTTON_RUNSTOP_STOP = 'Stop currently running program';
+        var PROGRAM_STATUS_RUNNING = false;
+        var body = document.getElementsByTagName('body')[0];
+        var tableHeader = document.getElementById('tableHeader');
+        var tdTableHeaderToolbar = document.getElementById('tdTableHeaderToolbar');
+        var blocklyArea = document.getElementById('blocklyArea');
+        var blocklyDiv = document.getElementById('blocklyDiv');
+        var blocklyToolbox = document.getElementById('blocklyToolbox');
+        var divExecute = document.getElementById('divExecute');
+        var textareaConsole = document.getElementById('textareaConsole');
+        var workerManager = null;
+        var buttonToolbarRunStop = document.getElementById('buttonToolbarRunStop');
+        var buttonToolbarRunStopImage = document.getElementById('buttonToolbarRunStopImage');
+        var divEditGUI = document.getElementById('divEditGUI');
+        var editorGUI = document.getElementById('textAreaEditGUI');
+        var divRenderGUI = document.getElementById('divRenderGUI');
+        var fileReader = new FileReader();
+        var plotConfigs = {};
+        var fileNameProgramEditor = 'tvpl.prg';
+        var fileNameGUIEditor = 'tvpl.gui';
+        var blocklyProgramEditor = Blockly.inject(blocklyDiv,
+          {grid:
+            {spacing: 25,
+             length: 3,
+             Colour: '#ccc',
+             snap: true},
+            media: 'media/',
+            trashcan: true,
+            toolbox: xmlBlocklyToolbox.getElementById('toolboxTVPL'),
+            zoom: {enabled: true}});
+        var listImportScripts = ['subworkers.js',
+                                 'workerProtocol.js',
+                                 'Tinkerforge.js',
+                                 'babelPolyfill.js',
+                                 'babelRuntime.js',
+                                 'babelBrowser.js'];
+        var definitionsGeneratedCode = '';
+        // Variable "is_tvpl" is currently only used for Chrome/Safari subworker polyfill code in the file subworkers.js.
+        var codeWorkerManager = 'var is_tvpl = true;\n'+
+'var _queue_function_tf_call = false;\n'+
+'var _function_tf_call_queue = [];\n'+
+'var _ipcon_cache = {};\n'+
+'var _device_cache = {};\n'+
+'var _running_workers = {};\n'+
+'function _error_handler(e) {\n'+
+'  postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_ERROR, \'ERROR: \' + String(e) + \'\\n\'));\n'+
+'}\n'+
+'function _do_function_tf_call(data) {\n'+
+'  var ipcon = null;\n'+
+'  var key_ipcon = [String(data.host), String(data.port)].join(\':\');\n'+
+'  var key_device = [String(data.uid), key_ipcon].join(\'@\');\n'+
+'  var code_eval = \'\';\n'+
+'  if(data.device_function_input_args === null && data.device_function_output_args !== null) {\n'+
+'    code_eval = \'if (!(key_device in _device_cache)) { var device = new Tinkerforge.\' + data.device_class_name + \'(\\\'\' + String(data.uid) + \'\\\', ipcon); device.setResponseExpectedAll(true); _device_cache[key_device] = device; } _device_cache[key_device].\' + data.device_function_name + \'(function(\' + data.device_function_output_args + \') { _running_workers[\\\'\' + data.worker_id + \'\\\'].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_FUNCTION_TF_RETURN, \' + data.device_function_output_assignment + \') ); if(_function_tf_call_queue.length < 1) { _queue_function_tf_call = false; } else { _do_function_tf_call(_function_tf_call_queue.shift()); } }, _error_handler);\';\n'+
+'  }\n'+
+'  else if(data.device_function_input_args !== null && data.device_function_output_args !== null) {\n'+
+'    code_eval = \'if (!(key_device in _device_cache)) { var device = new Tinkerforge.\' + data.device_class_name + \'(\\\'\' + String(data.uid) + \'\\\', ipcon); device.setResponseExpectedAll(true); _device_cache[key_device] = device; } _device_cache[key_device].\' + data.device_function_name + \'(\' + data.device_function_input_args + \', function(\' + data.device_function_output_args + \') { _running_workers[\\\'\' + data.worker_id + \'\\\'].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_FUNCTION_TF_RETURN, \' + data.device_function_output_assignment + \') ); if(_function_tf_call_queue.length < 1) { _queue_function_tf_call = false; } else { _do_function_tf_call(_function_tf_call_queue.shift()); } }, _error_handler);\';\n'+
+'  }\n'+
+'  else if(data.device_function_input_args === null && data.device_function_output_args === null) {\n'+
+'    code_eval = \'if (!(key_device in _device_cache)) { var device = new Tinkerforge.\' + data.device_class_name + \'(\\\'\' + String(data.uid) + \'\\\', ipcon); device.setResponseExpectedAll(true); _device_cache[key_device] = device; } _device_cache[key_device].\' + data.device_function_name + \'(function(e) { _running_workers[\\\'\' + data.worker_id + \'\\\'].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_FUNCTION_TF_RETURN, null) ); if(_function_tf_call_queue.length < 1) { _queue_function_tf_call = false; } else { _do_function_tf_call(_function_tf_call_queue.shift()); } }, _error_handler);\';\n'+
+'  }\n'+
+'  else if(data.device_function_input_args !== null && data.device_function_output_args === null) {\n'+
+'    code_eval = \'if (!(key_device in _device_cache)) { var device = new Tinkerforge.\' + data.device_class_name + \'(\\\'\' + String(data.uid) + \'\\\', ipcon); device.setResponseExpectedAll(true); _device_cache[key_device] = device; } _device_cache[key_device].\' + data.device_function_name + \'(\' + data.device_function_input_args + \', function(e) { _running_workers[\\\'\' + data.worker_id + \'\\\'].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_FUNCTION_TF_RETURN, null) ); if(_function_tf_call_queue.length < 1) { _queue_function_tf_call = false; } else { _do_function_tf_call(_function_tf_call_queue.shift()); } }, _error_handler);\';\n'+
+'  }\n'+
+'  if (key_ipcon in _ipcon_cache) {\n'+
+'    ipcon = _ipcon_cache[key_ipcon];\n'+
+'    eval(code_eval);\n'+
+'    return;\n'+
+'  }\n'+
+'  ipcon = new Tinkerforge.IPConnection();\n'+
+'  ipcon.on(Tinkerforge.IPConnection.CALLBACK_CONNECTED, function(e) { _ipcon_cache[key_ipcon] = ipcon; eval(code_eval); });\n'+
+'  ipcon.connect(data.host, Number(data.port), _error_handler);\n'+
+'}\n'+
+'function _dispatch_message(message) {\n'+
+'  if (typeof(message) !== \'object\') {\n'+
+'    return;\n'+
+'  }\n'+
+'\n'+
+'  if (message.type !== null && workerProtocol.isNumber(message.type)) {\n'+
+'    switch(message.type) {\n'+
+'      case workerProtocol.TYPE_REQ_PROGRAM_START:\n'+
+'        if (message.data instanceof Array && message.data.length > 0) {\n'+
+'           for (var i = 0; i < message.data.length; i++) {\n'+
+'             var worker_id = message.data[i].split(\'/\')[message.data[i].split(\'/\').length - 1];\n'+
+'             _running_workers[worker_id] = new Worker(message.data[i]);\n'+
+'             _running_workers[worker_id].onmessage = onmessage;\n'+
+'             _running_workers[worker_id].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_SUBWORKER_START, {wid: worker_id, dictv: _dict_variables}));\n'+
+'           }\n'+
+'          postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_PROGRAM_START_ACK, null));\n'+
+'        }\n'+
+'        break;\n'+
+'      case workerProtocol.TYPE_REQ_PROGRAM_STOP:\n'+
+'        for (var key in _running_workers) {\n'+
+'          _running_workers[key].terminate();\n'+
+'        }\n'+
+'        _function_tf_call_queue = []\n'+
+'        for (var key in _ipcon_cache) {\n'+
+'          _ipcon_cache[key].disconnect();\n'+
+'        }\n'+
+'        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_PROGRAM_STOP_ACK, null));\n'+
+'        break;\n'+
+'      case workerProtocol.TYPE_REQ_FUNCTION_EXECUTE:\n'+
+'        var worker_id = message.data.blobFunction.split(\'/\')[message.data.blobFunction.split(\'/\').length - 1];\n'+
+'        _running_workers[worker_id] = new Worker(message.data.blobFunction);\n'+
+'        _running_workers[worker_id].onmessage = onmessage;\n'+
+'        _running_workers[worker_id].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_SUBWORKER_START, {wid: worker_id, dictv: _dict_variables, codeButtonEnable: message.data.codeButtonEnable}));\n'+
+'        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_FUNCTION_EXECUTE_ACK, null));\n'+
+'        break;\n'+
+'      case workerProtocol._TYPE_RES_SUBWORKER_DONE:\n'+
+'        if (message.data !== null && message.data !== \'\') {\n'+
+'          postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_SUBWORKER_DONE, message.data));\n'+
+'        }\n'+
+'        _running_workers[message.sender].terminate();\n'+
+'        delete _running_workers[message.data];\n'+
+'        break;\n'+
+'      case workerProtocol._TYPE_RES_SET_VARIABLE:\n'+
+'        _dict_variables = message.data;\n'+
+'        for (var key in _running_workers) {\n'+
+'          _running_workers[key].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_SET_VARIABLE, message.data));\n'+
+'        }\n'+
+'        break;\n'+
+'      case workerProtocol._TYPE_RES_FUNCTION_TF_CALL:\n'+
+'        if(_queue_function_tf_call) {\n'+
+'          _function_tf_call_queue.push(message.data);\n'+
+'          break;\n'+
+'        }\n'+
+'        _queue_function_tf_call = true;\n'+
+'        _do_function_tf_call(message.data);\n'+
+'        break;\n'+
+'      case workerProtocol._TYPE_RES_MESSAGE_CONSOLE:\n'+
+'        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_MESSAGE_CONSOLE, String(message.data)));\n'+
+'        break;\n'+
+'      case workerProtocol._TYPE_RES_MESSAGE_GUI_OUTPUT_FIELD:\n'+
+'        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_MESSAGE_GUI_OUTPUT_FIELD, message));\n'+
+'        break;\n'+
+'      case workerProtocol._TYPE_RES_MESSAGE_GUI_PLOT:\n'+
+'        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_MESSAGE_GUI_PLOT, message));\n'+
+'        break;\n'+
+'      case workerProtocol._TYPE_RES_ERROR:\n'+
+'        _error_handler(String(message.data));\n'+
+'    }\n'+
+'  }\n'+
+'}\n'+
+'\n'+
+'onmessage = function(e) {\n'+
+'  _dispatch_message(e.data);\n'+
+'};\n'+
+'onerror = _error_handler;\n';
+
+        tdTableHeaderToolbar.style.display = 'block';
+
+        var onLoad = function(e) {
+          textareaConsole.value = '';
+        };
+
+        var onBeforeUnload = function(e) {
+          return MSG_INFO_UNSAVED_PROJECT;
+          clickedStopProgram();
+        };
+
+        var onResize = function(e) {
+          // Make blocklyArea fill the remaining height below the header.
+          blocklyArea.style.height = (body.offsetHeight - tableHeader.offsetHeight) + 'px';
+          // Compute the absolute coordinates and dimensions of blocklyArea.
+          var element = blocklyArea;
+          var x = 0;
+          var y = 0;
+          do {
+            x += element.offsetLeft;
+            y += element.offsetTop;
+            element = element.offsetParent;
+          } while (element);
+          // Position blocklyDiv over blocklyArea.
+          blocklyDiv.style.left = x + 'px';
+          blocklyDiv.style.top = y + 'px';
+          blocklyDiv.style.width = blocklyArea.offsetWidth + 'px';
+          blocklyDiv.style.height = blocklyArea.offsetHeight + 'px';
+        };
+
+        window.onbeforeunload = onBeforeUnload;
+        window.addEventListener('load', onLoad, false);
+        window.addEventListener('resize', onResize, false);
+        onResize();
+
+        function prepareImports() {
+          var docLocationSplit = [];
+          var docLocation = '';
+          var workerImportsList = [];
+
+          docLocationSplit = document.location.href.split('/');
+          docLocationSplit.pop();
+          docLocationSplit.push('js/');
+          docLocation = docLocationSplit.join('/');
+
+          for (var i = 0; i < listImportScripts.length; i++) {
+            workerImportsList.push('importScripts(\'' + docLocation + listImportScripts[i] + '\');');
+          }
+          workerImportsList.push('\n');
+          return workerImportsList.join('\n');
+        }
+
+        function prepareJavaScriptCode(code) {
+          var returnedCode = [];
+          var workerImports = prepareImports();
+
+          try {
+            returnedCode = workerImports + babel.transform(code).code;
+          }
+          catch(e) {
+            return [false, String(e)];
+          }
+
+          return [true, String(returnedCode)];
+        }
+
+        function handleGUIButtonClick(id, functionToCall) {
+          if (!id || !functionToCall) return;
+
+          var unescapedFunctionToCall = unescape(functionToCall);
+          var code = 'onmessage = function (e) {\n'+
+'  _dispatch_message(e.data);\n'+
+'};\n'+
+'onerror = _error_handler;\n'+
+'function *_main() {\n' +
+'    yield* ' + unescapedFunctionToCall + ';\n' +
+'    self.postMessage(workerProtocol.getMessage(_worker_id, workerProtocol._TYPE_RES_SUBWORKER_DONE, _code_button_enable));\n'+
+'}\n'+
+'_iterator_main = _main();\n';
+
+          var codeProgramEditor = Blockly.JavaScript.workspaceToCode(blocklyProgramEditor);
+
+          if (!codeProgramEditor) {
+            return;
+          }
+
+          var codeRaw = [codeProgramEditor.definitions, code].join('\n');
+          var retPrepareJavaScriptCode = prepareJavaScriptCode(codeRaw);
+
+          if (!retPrepareJavaScriptCode[0]) {
+            return;
+          }
+
+          var blobFunction = window.URL.createObjectURL(new Blob([retPrepareJavaScriptCode[1]]));
+          document.getElementById(id).disabled = true;
+          workerManager.postMessage(workerProtocol.getMessage(workerProtocol.SENDER_GUI,
+                                                              workerProtocol.TYPE_REQ_FUNCTION_EXECUTE,
+                                                              {
+                                                                blobFunction: blobFunction,
+                                                                codeButtonEnable: 'document.getElementById(\'' + id + '\').disabled = false;'
+                                                              }));
+        }
+
+        function clickedEditGUI(e) {
+          divEditGUI.style.display = 'block';
+          divRenderGUI.style.display = 'none';
+
+          if (PROGRAM_STATUS_RUNNING) {
+            $.growl.warning({ message: MSG_INFO_PROGRAM_RUNNING_GUI_EDITOR_BLOCKED });
+          }
+        }
+
+        function drawPlotWidget(plotWidget, plotData) {
+          var wasVisibility = divRenderGUI.style.display;
+
+          divRenderGUI.style.display = 'block';
+          plotWidget.setData(plotData);
+          plotWidget.setupGrid();
+          plotWidget.draw();
+          // Restore visibility.
+          divRenderGUI.style.display = wasVisibility;
+        }
+
+        function updatePlotWidgetConfigs() {
+          for (var plotCfg in plotConfigs) {
+            var found = false;
+
+            for (var i in divRenderGUI.childNodes) {
+              if (divRenderGUI.childNodes[i].tagName !== 'DIV') continue;
+
+              for (var j in divRenderGUI.childNodes[i].children) {
+                if (divRenderGUI.childNodes[i].children[j].id === plotCfg) {
+                  found = true;
+                  break;
+                }
+              }
+
+              if (found) break;
+            }
+
+            if (!found) {
+              // Remove corresponding plot configuration.
+              delete plotConfigs[plotCfg];
+            }
+          }
+        }
+
+        function resetRenderPlotWidgets(e) {
+          updatePlotWidgetConfigs();
+
+          for (var plotCfg in plotConfigs) {
+            plotConfigs[plotCfg].axisY.data = [[0, 0]];
+            plotConfigs[plotCfg].plot = $.plot(document.getElementById(plotCfg),
+                                               [plotConfigs[plotCfg].axisY],
+                                               plotConfigs[plotCfg].options);
+            drawPlotWidget(plotConfigs[plotCfg].plot, [plotConfigs[plotCfg].axisY]);
+          }
+        }
+
+        function clickedRenderGUI(e) {
+          if (!PROGRAM_STATUS_RUNNING) {
+            // No program running.
+            $(editorGUI).formRender({container: $(divRenderGUI)});
+
+            // Reset all available plot widgets if no program is running and we are rendering the GUI.
+            resetRenderPlotWidgets();
+
+            if (divRenderGUI.childNodes.length < 1) {
+              clickedEditGUI();
+              return;
+            }
+
+            $.growl.warning({ message: MSG_INFO_NO_PROGRAM_RUNNING_RENDERED_GUI_BLOCKED });
+            divEditGUI.style.display = 'none';
+            divRenderGUI.style.display = 'block';
+            blockRenderGUI(true);
+
+            return;
+          }
+
+          // A program is running.
+          if (divRenderGUI.childNodes.length < 1) {
+            clickedEditGUI();
+            alert(MSG_INFO_GUI_EDITOR_EMPTY);
+            return;
+          }
+
+          divEditGUI.style.display = 'none';
+          divRenderGUI.style.display = 'block';
+        }
+
+        function blockEditGUI(state) {
+         if (state) {
+           divEditGUI.style.pointerEvents = 'none';
+           $(divEditGUI).css({'opacity': 0.5});
+           $(divRenderGUI).css({'opacity': 1});
+         }
+         else {
+           divEditGUI.style.pointerEvents = '';
+         }
+        }
+
+        function blockRenderGUI(state) {
+          if (state) {
+            divRenderGUI.style.pointerEvents = 'none';
+            $(divRenderGUI).css({'opacity': 0.5});
+            $(divEditGUI).css({'opacity': 1});
+          }
+          else {
+            divRenderGUI.style.pointerEvents = '';
+          }
+        }
+
+        function clickedClearOutput(e) {
+          textareaConsole.value = '';
+        }
+
+        function updateWidgetPlot(nameWidgetPlot, value) {
+          var plotConfig = plotConfigs[nameWidgetPlot];
+
+          if (!plotConfig.plot) {
+            return;
+          }
+
+          if (plotConfig.axisY.data.length < plotConfig.dataPoints) {
+            // Append new data point.
+            var dataLength = plotConfig.axisY.data.length;
+            plotConfig.axisY.data.push([dataLength, value]);
+          }
+          else if (plotConfig.axisY.data.length == plotConfig.dataPoints) {
+            // Shift data set and then append new data point.
+            plotConfig.axisY.data.shift();
+ 
+            for (var i = 0; i < plotConfig.axisY.data.length; i++) {
+              plotConfig.axisY.data[i] = [plotConfig.axisY.data[i][0] - 1, plotConfig.axisY.data[i][1]];
+            }
+
+            plotConfig.axisY.data.push([plotConfig.dataPoints - 1, value]);
+          }
+          else {
+            return;
+          }
+
+          drawPlotWidget(plotConfig.plot, [plotConfig.axisY]);
+        }
+
+        function clickedRunProgram(e) {
+          var subworkerBlobsUrlArray = [];
+          var dictProgramEditorToCode = {};
+          var retPrepareJavaScriptCodeWorkerManager = [];
+
+          dictProgramEditorToCode = Blockly.JavaScript.workspaceToCode(blocklyProgramEditor);
+
+          if (!dictProgramEditorToCode) {
+            alert(MSG_INFO_PROGRAM_EDITOR_EMPTY);
+            return;
+          }
+
+          definitionsGeneratedCode = dictProgramEditorToCode.definitions;
+
+          retPrepareJavaScriptCodeWorkerManager = prepareJavaScriptCode(dictProgramEditorToCode.dictVariablesInit + codeWorkerManager);
+
+          if (!retPrepareJavaScriptCodeWorkerManager[0]) {
+            textareaConsole.value = MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED;
+            textareaConsole.value += retPrepareJavaScriptCodeWorkerManager[1];
+            textareaConsole.scrollTop = textareaConsole.scrollHeight;
+            return;
+          }
+
+          for (var i = 0; i < dictProgramEditorToCode.implementationTopLevelBlocks.length; i ++) {
+            var retPrepareJavaScriptCode = prepareJavaScriptCode(dictProgramEditorToCode.implementationTopLevelBlocks[i]);
+
+            if (!retPrepareJavaScriptCode[0]) {
+              textareaConsole.value = MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED;
+              textareaConsole.value += retPrepareJavaScriptCode[1];
+              textareaConsole.scrollTop = textareaConsole.scrollHeight;
+              return;
+            }
+            subworkerBlobsUrlArray.push(window.URL.createObjectURL(new Blob([retPrepareJavaScriptCode[1]])));
+          }
+
+          workerManager = new Worker(window.URL.createObjectURL(new Blob([retPrepareJavaScriptCodeWorkerManager[1]])));
+          workerManager.onmessage = function(e) {
+            var message = null;
+
+            if (typeof(e.data) !== 'object') {
+              return;
+            }
+
+            message = e.data;
+
+            if (message.type !== null && workerProtocol.isNumber(message.type)) {
+              switch(message.type) {
+                case workerProtocol.TYPE_RES_PROGRAM_START_ACK:
+                  handleTypeResProgramStartAck();
+                  break;
+
+                case workerProtocol.TYPE_RES_PROGRAM_STOP_ACK:
+                  textareaConsole.scrollTop = textareaConsole.scrollHeight;
+
+                  if (workerManager) {
+                    workerManager.terminate();
+                    workerManager = null;
+                  }
+
+                  buttonToolbarRunStop.setAttribute('onclick', 'clickedRunProgram()');
+                  buttonToolbarRunStop.setAttribute('title', MSG_TOOLTIP_BUTTON_RUNSTOP_RUN);
+                  buttonToolbarRunStopImage.innerHTML = 'play_arrow';
+                  buttonToolbarRunStop.disabled = false;
+                  blockEditGUI(false);
+                  blockRenderGUI(true);
+
+                  if (divRenderGUI.style.display === 'block') {
+                      $.growl.warning({ message: MSG_INFO_NO_PROGRAM_RUNNING_RENDERED_GUI_BLOCKED });
+                  }
+
+                  break;
+
+                case workerProtocol.TYPE_RES_MESSAGE_CONSOLE:
+                  if (message.data !== null && message.data !== '') {
+                    textareaConsole.value += message.data;
+                    textareaConsole.scrollTop = textareaConsole.scrollHeight;
+                  }
+                  break;
+
+                case workerProtocol.TYPE_RES_ERROR:
+                  if (message.data !== null && message.data !== '') {
+                    textareaConsole.value += message.data;
+                    textareaConsole.scrollTop = textareaConsole.scrollHeight;
+                  }
+                  clickedStopProgram();
+                  break;
+
+                case workerProtocol.TYPE_RES_MESSAGE_GUI_OUTPUT_FIELD:
+                  if (message.data.data.widget) {
+                    var widgetOutputField = document.getElementById(message.data.data.widget);
+
+                    if (widgetOutputField) {
+                      widgetOutputField.value = message.data.data.value;
+                    }
+                  }
+                  break;
+
+                case workerProtocol.TYPE_RES_MESSAGE_GUI_PLOT:
+                  if (message.data.data.widget) {
+                    if (message.data.data.widget in plotConfigs) {
+                      updateWidgetPlot(message.data.data.widget, parseFloat(message.data.data.value));
+                    }
+                  }
+                  break;
+
+                case workerProtocol.TYPE_RES_SUBWORKER_DONE:
+                  if (message.data !== null && message.data !== '') {
+                    eval(message.data);
+                  }
+              }
+            }
+          };
+
+          if (subworkerBlobsUrlArray.length > 0) {
+            workerManager.postMessage(workerProtocol.getMessage(workerProtocol.SENDER_GUI,
+                                                                workerProtocol.TYPE_REQ_PROGRAM_START,
+                                                                subworkerBlobsUrlArray));
+            buttonToolbarRunStop.disabled = true;
+            return;
+          }
+          handleTypeResProgramStartAck();
+        }
+
+        function handleTypeResProgramStartAck(e) {
+          PROGRAM_STATUS_RUNNING = true;
+          textareaConsole.value = '';
+          textareaConsole.scrollTop = textareaConsole.scrollHeight;
+          buttonToolbarRunStop.setAttribute('onclick', 'clickedStopProgram()');
+          buttonToolbarRunStop.setAttribute('title', MSG_TOOLTIP_BUTTON_RUNSTOP_STOP);
+          buttonToolbarRunStopImage.innerHTML = 'stop';
+          buttonToolbarRunStop.disabled = false;
+          blockEditGUI(true);
+          blockRenderGUI(false);
+
+          if (divEditGUI.style.display === 'block') {
+              $.growl.warning({ message: MSG_INFO_PROGRAM_RUNNING_GUI_EDITOR_BLOCKED });
+          }
+        }
+
+        function clickedStopProgram(e) {
+          PROGRAM_STATUS_RUNNING = false;
+
+          if (workerManager !== null) {
+            buttonToolbarRunStop.disabled = true;
+            workerManager.postMessage(workerProtocol.getMessage(workerProtocol.SENDER_GUI,
+                                                                workerProtocol.TYPE_REQ_PROGRAM_STOP,
+                                                                null));
+          }
+        }
+
+        function projectFileUploadRequest(fileInput) {
+          var file = null;
+          var zip = null;
+          var xmlProgramEditorText = '';
+          var guiEditorText = '';
+
+          if(fileInput.value.substr(-5) !== '.tvpl' ) {
+            alert(MSG_ERROR_NOT_VALID_PROJECT_FILE);
+            return;
+          }
+
+          try {
+            file = fileInput.files[0];
+
+            fileReader.onload = function(e) {
+              zip = new JSZip(fileReader.result);
+
+              if (!zip.file(fileNameProgramEditor)) {
+                alert(MSG_ERROR_PROJECT_LOAD_NO_PRG_FILE);
+                return;
+              }
+
+              if (!zip.file(fileNameGUIEditor)) {
+                alert(MSG_ERROR_PROJECT_LOAD_NO_GUI_FILE);
+                return;
+              }
+
+              xmlProgramEditorText = zip.file(fileNameProgramEditor).asText();
+              guiEditorText = zip.file(fileNameGUIEditor).asText();
+
+              if (xmlProgramEditorText !== '') {
+                try {
+                  blocklyProgramEditor.clear();
+                  Blockly.Xml.domToWorkspace(blocklyProgramEditor, Blockly.Xml.textToDom(xmlProgramEditorText));
+                  clickedStopProgram();
+                }
+                catch(e) {
+                  alert(MSG_ERROR_PROJECT_LOAD_FAILED);
+                  return;
+                }
+              }
+
+              if (xmlProgramEditorText !== '') {
+                // Remove the textarea
+                divEditGUI.removeChild(document.getElementById('frmb-0-form-wrap'));
+
+                // Recreate the text area
+                var newTextAreaEditGUI = document.createElement('textarea');
+                newTextAreaEditGUI.setAttribute('id', 'textAreaEditGUI');
+                newTextAreaEditGUI.setAttribute('name', 'textAreaEditGUI');
+                divEditGUI.appendChild(newTextAreaEditGUI);
+
+                // Re-initialize form builder
+                editorGUI = document.getElementById('textAreaEditGUI');
+                $(editorGUI).val(guiEditorText);
+                $(editorGUI).formBuilder();
+                $(editorGUI).formRender({container: $(divRenderGUI)});
+              }
+            }
+            fileReader.readAsArrayBuffer(file);
+          }
+          catch(e) {
+            alert(MSG_ERROR_PROJECT_FILE_READ_FAILED);
+          }
+        }
+
+        function switchView(view) {
+          if (view === VIEW_PROGRAM_EDITOR) {
+              divExecute.style.display = 'none';
+              blocklyProgramEditor.setVisible(true);
+          }
+          else if(view === VIEW_EXECUTE) {
+            blocklyProgramEditor.setVisible(false);
+            divExecute.style.display = 'block';
+          }
+        }
+
+        function clickedProgramEditor(e) {
+          switchView(VIEW_PROGRAM_EDITOR);
+        }
+
+        function clickedExecute(e) {
+          switchView(VIEW_EXECUTE);
+        }
+
+        function clickedSave(e) {
+          var xmlProgramEditorText = '';
+          var guiEditorText = '';
+          var d = new Date();
+          var zip = null;
+          var zipContent = null;
+          var projectFileNameTVPL = MONTH_NAMES[d.getUTCMonth()] +
+                                    d.getUTCDate() +
+                                    '_' +
+                                    d.getUTCHours() +
+                                    '_' +
+                                    d.getUTCMinutes() +
+                                    '_' +
+                                    d.getUTCSeconds() +
+                                    '.tvpl';
+
+          xmlProgramEditorText = Blockly.Xml.domToPrettyText(Blockly.Xml.workspaceToDom(blocklyProgramEditor));
+
+          if (divRenderGUI.childNodes.length > 0) {
+            guiEditorText = $(editorGUI).val();
+          }
+
+          // Initiate JSZip.
+          zip = new JSZip();
+          // Create program editor and GUI editor files.
+          zip.file(fileNameProgramEditor, xmlProgramEditorText);
+          zip.file(fileNameGUIEditor, guiEditorText);
+          // Generate ZIP file.
+          zipContent = zip.generate({type:"blob"});
+          // Save the generated ZIP file.
+          saveAs(zipContent, projectFileNameTVPL);
+        }
+
+        function clickedLoadProject(e) {
+          projectFileUploader.click();
+        }
+      }
+    </script>
+
+    <script type="text/javascript" src="js/formBuilder.js"></script>
+    <script type="text/javascript" src="js/formRender.js"></script>
+
   </body>
 </html>
-
-<script type="text/javascript">
-  jQuery(document).ready(function($) {
-    // All JavaSCript code goes here
-  });
-</script>
