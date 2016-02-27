@@ -4,11 +4,12 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-    <link rel="stylesheet" type="text/css" href="css/material.min.css">
-    <link rel="stylesheet" type="text/css" href="css/form-render.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="css/form-builder.css" media="screen">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <link rel="stylesheet" type="text/css" href="css/material.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/dialog-polyfill.css" />
+    <link rel="stylesheet" type="text/css" href="css/form-render.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="css/form-builder.css" media="screen" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 
     <script type="text/javascript" src="js/subworkers.js"></script>
     <script type="text/javascript" src="js/jquery.min.js"></script>
@@ -24,43 +25,91 @@
     <script type="text/javascript" src="js/jquery-ui.min.js"></script>
     <script type="text/javascript" src="js/workerProtocol.js"></script>
     <script type="text/javascript" src="js/jquery.flot.min.js"></script>
+    <script type="text/javascript" src="js/dialog-polyfill.js"></script>
     <script type="text/javascript" src="js/jquery.flot.resize.min.js"></script>
     <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
 
     <title>Tinkerforge Visual Programming Language</title>
   </head>
   <body>
-    <div class="demo-layout-waterfall mdl-layout mdl-js-layout">
-      <header class="mdl-layout__header mdl-layout__header--waterfall">
-        <div class="mdl-layout__header-row">
-          <span class="mdl-layout-title">Tinkerforge Visual Programming Language</span>
-          <div class="mdl-layout-spacer"></div>
+    <!--
+      All the dialog definitions should be outside of 'divBody' because
+      there are cases where we want to hide the body contents and show a dialog.
+    -->
+    <dialog class="mdl-dialog">
+      <h4 class="mdl-dialog__title"><mark>Error</mark></h4>
+      <div class="mdl-dialog__content">
+        <p>
+          The screen of the device you are trying to use TVPL from is too small.
+        <p>
+      </div>
+    </dialog>
+
+    <div id="divBody">
+      <div class="demo-layout-waterfall mdl-layout mdl-js-layout">
+        <header class="mdl-layout__header mdl-layout__header--waterfall">
+          <div class="mdl-layout__header-row">
+            <span class="mdl-layout-title">Tinkerforge Visual Programming Language</span>
+            <div class="mdl-layout-spacer"></div>
+            <nav class="mdl-navigation">
+              <a class="mdl-navigation__link" href=""><i class="material-icons">code</i>Program Editor</a>
+              <a class="mdl-navigation__link" href=""><i class="material-icons">web</i>GUI Editor</a>
+              <a class="mdl-navigation__link" href=""><i class="material-icons">settings</i>Execute Program</a>
+            </nav>
+          </div>
+        </header>
+        <div class="mdl-layout__drawer">
+          <span class="mdl-layout-title">Main Menu</span>
           <nav class="mdl-navigation">
-            <a class="mdl-navigation__link" href=""><i class="material-icons">code</i>Program Editor</a>
-            <a class="mdl-navigation__link" href=""><i class="material-icons">web</i>GUI Editor</a>
-            <a class="mdl-navigation__link" href=""><i class="material-icons">settings</i>Execute Program</a>
+            <a class="mdl-navigation__link" href=""><i class="material-icons">folder_open</i>Load Project</a>
+            <a class="mdl-navigation__link" href=""><i class="material-icons">save</i>Save Project</a>
+            <a class="mdl-navigation__link" href=""><i class="material-icons">info</i>About</a>
           </nav>
         </div>
-      </header>
-      <div class="mdl-layout__drawer">
-        <span class="mdl-layout-title">Main Menu</span>
-        <nav class="mdl-navigation">
-          <a class="mdl-navigation__link" href=""><i class="material-icons">folder_open</i>Load Project</a>
-          <a class="mdl-navigation__link" href=""><i class="material-icons">save</i>Save Project</a>
-          <a class="mdl-navigation__link" href=""><i class="material-icons">info</i>About</a>
-        </nav>
+        <main class="mdl-layout__content">
+          <div class="page-content">
+            <!-- Not using MDL grids as it gives padding around the element which doesn't look very nice. -->
+            <iframe id="iframeProgramEditor" src="./programEditor.html"></iframe>
+          </div>
+        </main>
       </div>
-      <main class="mdl-layout__content">
-        <div class="page-content">
-          <iframe id="iframeProgramEditor" src="./programEditor.html"></iframe>
-        </div>
-      </main>
     </div>
   </body>
 </html>
 
 <script type="text/javascript">
   jQuery(document).ready(function($) {
-    // All JavaSCript code goes here
+    // All JavaSCript code goes here. After the document body has finished loading.
+
+    // Extensive compatibility check and decision here.
+    if (!document.querySelector('dialog').showModal) {
+      dialogPolyfill.registerDialog(document.querySelector('dialog'));
+    }
+
+    function checkViewportSize() {
+      var w = window;
+      var d = document;
+      var e = d.documentElement;
+      var g = d.getElementsByTagName('body')[0];
+      var width = w.innerWidth || e.clientWidth || g.clientWidth;
+      var height = w.innerHeight || e.clientHeight || g.clientHeight;
+
+      if (width < 1025 || height < 512) {
+        document.getElementById('divBody').style.display = 'none';
+        if (!document.querySelector('dialog').open) document.querySelector('dialog').showModal();
+        else {
+          // To update the position of the modal with respect to the current viewport size.
+          document.querySelector('dialog').close();
+          document.querySelector('dialog').showModal();
+        }
+      }
+      else {
+        if (document.querySelector('dialog').open) document.querySelector('dialog').close();
+        document.getElementById('divBody').style.display = 'block';
+      }
+    }
+
+    window.addEventListener('resize', checkViewportSize, false);
+    checkViewportSize();
   });
 </script>
