@@ -11,17 +11,18 @@
     <link rel="stylesheet" type="text/css" href="css/form-builder.css" media="screen" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 
-    <script type="text/javascript" src="js/subworkers.js"></script>
-    <script type="text/javascript" src="js/jquery.min.js"></script>
     <script type="text/javascript" src="js/jszip.min.js"></script>
     <script type="text/javascript" src="js/fileSaver.js"></script>
+    <script type="text/javascript" src="js/modernizr.js"></script>
+    <script type="text/javascript" src="js/subworkers.js"></script>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
     <script type="text/javascript" src="js/formRender.js"></script>
     <script type="text/javascript" src="js/formBuilder.js"></script>
     <script type="text/javascript" src="js/babelRuntime.js"></script>
     <script type="text/javascript" src="js/babelBrowser.js"></script>
     <script type="text/javascript" src="js/jquery.growl.js"></script>
-    <script type="text/javascript" src="js/babelPolyfill.js"></script>
     <script type="text/javascript" src="js/material.min.js"></script>
+    <script type="text/javascript" src="js/babelPolyfill.js"></script>
     <script type="text/javascript" src="js/jquery-ui.min.js"></script>
     <script type="text/javascript" src="js/workerProtocol.js"></script>
     <script type="text/javascript" src="js/jquery.flot.min.js"></script>
@@ -36,25 +37,68 @@
       All the dialog definitions should be outside of 'divBody' because
       there are cases where we want to hide the body contents and show a dialog.
     -->
-    <dialog class="mdl-dialog">
-      <h4 class="mdl-dialog__title"><mark>Error</mark></h4>
+    <dialog id="dialogErrorScreenSizeSmall" class="mdl-dialog">
+      <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
       <div class="mdl-dialog__content">
         <p>
-          The screen of the device you are trying to use TVPL from is too small.
+          The window size on which you are using TVPL is not enough. Try making the window larger if possible.
+        <p>
+      </div>
+    </dialog>
+
+    <!--
+    <i class="material-icons">error</i>
+    <i class="material-icons">warning</i>
+    <i class="material-icons">info</i>
+    <i class="material-icons">check_circle</i>
+    -->
+    <dialog id="dialogErrorNoWebWorker" class="mdl-dialog">
+      <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
+      <div class="mdl-dialog__content">
+        <p>
+          Seems like the browser you are using does not support Web workers which is required to use TVPL.
+        <p>
+      </div>
+    </dialog>
+
+    <dialog id="dialogErrorToolboxLoadFailed" class="mdl-dialog">
+      <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
+      <div class="mdl-dialog__content">
+        <p>
+          Could not load toolbox XML file which is required to use TVPL.
+        <p>
+      </div>
+    </dialog>
+
+    <dialog id="dialogErrorToolboxLoadFailedChrome" class="mdl-dialog">
+      <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
+      <div class="mdl-dialog__content">
+        <p>
+          Could not load toolbox XML file. Seems like you are using Google Chrome browser and accessing the
+          application without a web server. Try launching Google Chrome with "--allow-file-access-from-files" switch.
+        <p>
+      </div>
+    </dialog>
+
+    <dialog id="dialogErrorNoBlob" class="mdl-dialog">
+      <h4 class="mdl-dialog__title"><mark><i class="material-icons">error</i> Error</mark></h4>
+      <div class="mdl-dialog__content">
+        <p>
+          Seems like the browser you are using does not support Blob objects which is required to use TVPL.
         <p>
       </div>
     </dialog>
 
     <div id="divBody">
-      <div class="demo-layout-waterfall mdl-layout mdl-js-layout">
+      <div class="layout-waterfall mdl-layout mdl-js-layout">
         <header class="mdl-layout__header mdl-layout__header--waterfall">
           <div class="mdl-layout__header-row">
             <span class="mdl-layout-title">Tinkerforge Visual Programming Language</span>
             <div class="mdl-layout-spacer"></div>
             <nav class="mdl-navigation">
-              <a class="mdl-navigation__link" href=""><i class="material-icons">code</i>Program Editor</a>
-              <a class="mdl-navigation__link" href=""><i class="material-icons">web</i>GUI Editor</a>
-              <a class="mdl-navigation__link" href=""><i class="material-icons">settings</i>Execute Program</a>
+              <a id="aProgramEditor" class="mdl-navigation__link" href=""><i class="material-icons">code</i>Program Editor</a>
+              <a id="aGUIEditor" class="mdl-navigation__link" href=""><i class="material-icons">web</i>GUI Editor</a>
+              <a id="aExecuteProgram" class="mdl-navigation__link" href=""><i class="material-icons">settings</i>Execute Program</a>
             </nav>
           </div>
         </header>
@@ -68,8 +112,18 @@
         </div>
         <main class="mdl-layout__content">
           <div class="page-content">
+
             <!-- Not using MDL grids as it gives padding around the element which doesn't look very nice. -->
+
+            <!-- iframe of program editor. -->
             <iframe id="iframeProgramEditor" src="./programEditor.html"></iframe>
+
+            <!-- div of GUI editor. -->
+            <div id="divGUIEditor">GUI editor</div>
+
+            <!-- div of execute program. -->
+            <div id="divExecuteProgram">Execute Program</div>
+
           </div>
         </main>
       </div>
@@ -79,37 +133,160 @@
 
 <script type="text/javascript">
   jQuery(document).ready(function($) {
-    // All JavaSCript code goes here. After the document body has finished loading.
+    /* 
+     * All JavaSCript code goes here, after the document body has finished loading.
+     * This ensures separation of content from behaviour/action which is a good pattern.
+     */
+     var INDEX_VIEW_PROGRAM_EDITOR = 1;
+     var INDEX_VIEW_GUI_EDITOR = 2;
+     var INDEX_VIEW_EXECUTE_PROGRAM = 3;
+     var xmlBlocklyToolbox                  = null;
+     var dialogs = {};
 
-    // Extensive compatibility check and decision here.
-    if (!document.querySelector('dialog').showModal) {
-      dialogPolyfill.registerDialog(document.querySelector('dialog'));
+     dialogs.errorNoBlob                  = document.getElementById('dialogErrorNoBlob');
+     dialogs.errorNoWebWorker             = document.getElementById('dialogErrorNoWebWorker');
+     dialogs.errorScreenSizeSmall         = document.getElementById('dialogErrorScreenSizeSmall');
+     dialogs.errorToolboxLoadFailed       = document.getElementById('dialogErrorToolboxLoadFailed');
+     dialogs.errorToolboxLoadFailedChrome = document.getElementById('dialogErrorToolboxLoadFailedChrome');
+
+    // Add custom Modernizr tests.
+    Modernizr.addTest('dialogs', function() {
+      if (!document.querySelector('dialog').showModal) return false;
+      return true;
+    });
+
+    Modernizr.addTest('blocklytoolboxloaded', function() {
+      /*
+       * If being accessed without a server then Google Chrome must be launched with,
+       * "--allow-file-access-from-files" parameter to be able to use TVPL.
+       */
+
+      var xmlHttp = null;
+
+      try {
+        if (window.XMLHttpRequest) {
+          xmlHttp = new XMLHttpRequest();
+        }
+        else {
+          xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+
+        xmlHttp.open('GET', 'xml/toolbox.xml', false);
+        xmlHttp.send();
+        xmlBlocklyToolbox = xmlHttp.responseXML;
+        return true;
+      }
+      catch(e) {
+        return false;
+      }
+    });
+
+    // Use polyfill for dialogs if dialogs aren't available.
+    if (!Modernizr.dialogs) {
+      for (var dialog in dialogs) {
+        dialogPolyfill.registerDialog(dialogs[dialog]);
+      }
     }
 
-    function checkViewportSize() {
-      var w = window;
-      var d = document;
-      var e = d.documentElement;
-      var g = d.getElementsByTagName('body')[0];
-      var width = w.innerWidth || e.clientWidth || g.clientWidth;
-      var height = w.innerHeight || e.clientHeight || g.clientHeight;
+    // Compatibility checks.
+    function checkCompatibility() {
+      // Check Blob.
+      if (!Modernizr.bloburls || !Modernizr.blobconstructor) {
+        if (!dialogs.errorNoBlob.open) dialogs.errorNoBlob.showModal();
+        return false;
+      }
 
-      if (width < 1025 || height < 512) {
-        document.getElementById('divBody').style.display = 'none';
-        if (!document.querySelector('dialog').open) document.querySelector('dialog').showModal();
+      // Check Web Workers
+      if (!Modernizr.webworkers) {
+        if (!dialogs.errorNoWebWorker.open) dialogs.errorNoWebWorker.showModal();
+        return false;
+      }
+
+      // Check if Blockly toolbox was loaded.
+      if (!Modernizr.blocklytoolboxloaded) {
+        if (window.chrome) {
+          if (!dialogs.errorToolboxLoadFailedChrome.open) dialogs.errorToolboxLoadFailedChrome.showModal();
+        }
         else {
-          // To update the position of the modal with respect to the current viewport size.
-          document.querySelector('dialog').close();
-          document.querySelector('dialog').showModal();
+          if (!dialogs.errorToolboxLoadFailed.open) dialogs.errorToolboxLoadFailed.showModal();
+        }
+        return false;
+      }
+      return true; // All compatibility tests passed.
+    }
+
+    if (checkCompatibility()) {
+      function checkViewportSize() {
+        var width = Modernizr.mq('(min-width: 1025px)');
+        var height = Modernizr.mq('(min-height: 512px)');
+
+        if (!width || !height) {
+          document.getElementById('divBody').style.display = 'none';
+          if (!dialogs.errorScreenSizeSmall.open) dialogs.errorScreenSizeSmall.showModal();
+          else {
+            // To update the position of the modal with respect to the current viewport size.
+            dialogs.errorScreenSizeSmall.close();
+            dialogs.errorScreenSizeSmall.showModal();
+          }
+        }
+        else {
+          if (dialogs.errorScreenSizeSmall.open) dialogs.errorScreenSizeSmall.close();
+          document.getElementById('divBody').style.display = 'block';
         }
       }
-      else {
-        if (document.querySelector('dialog').open) document.querySelector('dialog').close();
-        document.getElementById('divBody').style.display = 'block';
-      }
-    }
 
-    window.addEventListener('resize', checkViewportSize, false);
-    checkViewportSize();
+      function viewSwitcher(switchTo) {
+        switch(switchTo) {
+          case INDEX_VIEW_PROGRAM_EDITOR:
+            console.log(INDEX_VIEW_PROGRAM_EDITOR);
+            break;
+          case INDEX_VIEW_GUI_EDITOR:
+            console.log(INDEX_VIEW_GUI_EDITOR);
+            break;
+          case INDEX_VIEW_EXECUTE_PROGRAM:
+            console.log(INDEX_VIEW_EXECUTE_PROGRAM);
+            break;
+          default:
+            console.log('DEFAULT');
+            break;
+        }
+      }
+
+      function eventHandlerClickProgramEditor() {
+        viewSwitcher(INDEX_VIEW_PROGRAM_EDITOR);
+        return false; // So the link would not follow.
+      }
+
+      function eventHandlerClickGUIEditor() {
+        viewSwitcher(INDEX_VIEW_GUI_EDITOR);
+        return false; // So the link would not follow.
+      }
+
+      function eventHandlerClickExecuteProgram() {
+        viewSwitcher(INDEX_VIEW_EXECUTE_PROGRAM);
+        return false; // So the link would not follow.
+      }
+
+      // Register event handlers for the main view switching links (Program Editor, GUI Editor and Execute Program).
+      $('#aProgramEditor').click(eventHandlerClickProgramEditor);
+      $('#aGUIEditor').click(eventHandlerClickGUIEditor);
+      $('#aExecuteProgram').click(eventHandlerClickExecuteProgram);
+
+      window.addEventListener('resize', checkViewportSize, false);
+      checkViewportSize();
+    }
+    else {
+      function checkViewportSize() {
+        for (var dialog in dialogs) {
+          if (!dialogs[dialog].open) continue;
+          dialogs[dialog].close();
+          dialogs[dialog].showModal();
+          break; // Because only one dialog should be open at a time.
+        }
+      }
+      document.getElementById('divBody').style.display = 'none';
+      window.addEventListener('resize', checkViewportSize, false);
+      checkViewportSize();
+    }
   });
 </script>

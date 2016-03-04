@@ -18,7 +18,7 @@
 
   </head>
 
-  <body style="width: 100%;height: 100%;margin: auto;">
+  <body style="width: 100%;height: 100%;margin: auto;" oncontextmenu="return false;">
     <div id="blocklyArea" />
     <div id="blocklyDiv" />
   </body>
@@ -76,11 +76,11 @@
                                               }
                                              );
 
+    var blocklyArea = document.getElementById('blocklyArea');
+    var blocklyDiv = document.getElementById('blocklyDiv');
+    var workspace = Blockly.inject(blocklyDiv, {toolbox: document.getElementById('toolbox')});
+
     var onResize = function(e) {
-      // Make blocklyArea fill the remaining height below the header.
-      //blocklyArea.style.height = (document.body.offsetHeight - tableHeader.offsetHeight) + 'px';
-      //blocklyArea.style.height = '100%';
-      //blocklyArea.style.width = '100%';
       // Compute the absolute coordinates and dimensions of blocklyArea.
       var element = blocklyArea;
       var x = 0;
