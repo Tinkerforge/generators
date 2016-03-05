@@ -8,17 +8,15 @@
 
     <!-- Order matters for Blockly stuff. -->
     <script type="text/javascript" src="js/blockly_compressed.js"></script>
-    <script type="text/javascript" src="msg/js/en.js"></script>
     <script type="text/javascript" src="js/blocks_compressed.js"></script>
+    <script type="text/javascript" src="msg/js/en.js"></script>
     <script type="text/javascript" src="js/python_compressed.js"></script>
     <script type="text/javascript" src="js/javascript_compressed.js"></script>
 
     <script type="text/javascript" src="js/jquery.min.js"></script>
-    <script type="text/javascript" src="js/jquery-ui.min.js"></script>
-
   </head>
 
-  <body style="width: 100%;height: 100%;margin: auto;" oncontextmenu="return false;">
+  <body oncontextmenu="return false;">
     <div id="blocklyArea" />
     <div id="blocklyDiv" />
   </body>
@@ -26,31 +24,33 @@
 
 <script type="text/javascript">
   jQuery(document).ready(function($) {
-    // All JavaSCript code goes here
-    var xmlHttp;
-    var xmlBlocklyToolbox;
-    var xmlBlocklyToolboxLoaded;
-    var blocklyArea = document.getElementById('blocklyArea');
-    var blocklyDiv = document.getElementById('blocklyDiv');
     /*
-      If being accessed without a server then Google Chrome must be launched with "--allow-file-access-from-files" parameter
-      to be able to use TVPL.
-    */
-    try {
-      if (window.XMLHttpRequest) {
-        xmlHttp = new XMLHttpRequest();
-      }
-      else {
-        xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
-      }
-      xmlHttp.open('GET', 'xml/toolbox.xml', false);
-      xmlHttp.send();
-      xmlBlocklyToolbox = xmlHttp.responseXML;
-      xmlBlocklyToolboxLoaded = true;
-    }
-    catch(e) {
-      xmlBlocklyToolboxLoaded = false;
-    }
+     * All JavaSCript code goes here, after the document body has finished loading.
+     * This ensures separation of content from behaviour/action which is a good pattern.
+     */
+    var xmlHttp = null;
+    var xmlBlocklyToolbox = null;
+    var blocklyDiv = document.getElementById('blocklyDiv');
+    var blocklyArea = document.getElementById('blocklyArea');
+
+    /*
+     * If being accessed without a server then Google Chrome must be launched with "--allow-file-access-from-files" parameter
+     * to be able to use TVPL.
+     *
+     * We are not verifying toolbnox load here because it is being done in index.html.
+     * If toolbox loading has problem it will be caught while loading index.html and reported there.
+     * In that case the execution would not reach upto loading the program editor.
+     */
+     if (window.XMLHttpRequest) {
+       xmlHttp = new XMLHttpRequest();
+     }
+     else {
+       xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+     }
+
+     xmlHttp.open('GET', 'xml/toolbox.xml', false);
+     xmlHttp.send();
+     xmlBlocklyToolbox = xmlHttp.responseXML;
 
     var blocklyProgramEditor = Blockly.inject(blocklyDiv,
                                               {
@@ -73,28 +73,29 @@
                                                 media: 'media/',
                                                 toolbox: xmlBlocklyToolbox.getElementById('toolboxTVPL'),
                                                 trashcan: true
-                                              }
-                                             );
-
-    var blocklyArea = document.getElementById('blocklyArea');
-    var blocklyDiv = document.getElementById('blocklyDiv');
-    var workspace = Blockly.inject(blocklyDiv, {toolbox: document.getElementById('toolbox')});
+                                              });
 
     var onResize = function(e) {
       // Compute the absolute coordinates and dimensions of blocklyArea.
       var element = blocklyArea;
       var x = 0;
       var y = 0;
+
       do {
         x += element.offsetLeft;
         y += element.offsetTop;
         element = element.offsetParent;
-      } while (element);
+      }
+      while (element);
+
       // Position blocklyDiv over blocklyArea.
       blocklyDiv.style.left = x + 'px';
       blocklyDiv.style.top = y + 'px';
       blocklyDiv.style.width = blocklyArea.offsetWidth + 'px';
       blocklyDiv.style.height = blocklyArea.offsetHeight + 'px';
+
+      // Must call this so that the workspace bounds actually get redrawn before next click event.
+      Blockly.svgResize(blocklyProgramEditor);
     };
 
     window.addEventListener('resize', onResize, false);

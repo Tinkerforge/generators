@@ -140,7 +140,7 @@
      var INDEX_VIEW_PROGRAM_EDITOR = 1;
      var INDEX_VIEW_GUI_EDITOR = 2;
      var INDEX_VIEW_EXECUTE_PROGRAM = 3;
-     var xmlBlocklyToolbox                  = null;
+     var xmlBlocklyToolbox = null;
      var dialogs = {};
 
      dialogs.errorNoBlob                  = document.getElementById('dialogErrorNoBlob');
@@ -160,7 +160,6 @@
        * If being accessed without a server then Google Chrome must be launched with,
        * "--allow-file-access-from-files" parameter to be able to use TVPL.
        */
-
       var xmlHttp = null;
 
       try {
@@ -174,6 +173,13 @@
         xmlHttp.open('GET', 'xml/toolbox.xml', false);
         xmlHttp.send();
         xmlBlocklyToolbox = xmlHttp.responseXML;
+        /*
+         * We don't actually need to use the toolbox here.
+         * It was just to test that the toolbox loading actually works.
+         */
+        xmlHttp = null;
+        xmlBlocklyToolbox = null;
+
         return true;
       }
       catch(e) {
