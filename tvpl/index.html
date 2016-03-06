@@ -81,10 +81,19 @@
     </dialog>
 
     <dialog id="dialogErrorNoBlob" class="mdl-dialog">
-      <h4 class="mdl-dialog__title"><mark><i class="material-icons">error</i> Error</mark></h4>
+      <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
       <div class="mdl-dialog__content">
         <p>
           Seems like the browser you are using does not support Blob objects which is required to use TVPL.
+        <p>
+      </div>
+    </dialog>
+
+    <dialog id="dialogErrorGUIEditor" class="mdl-dialog">
+      <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
+      <div class="mdl-dialog__content">
+        <p>
+          Could not initialize the GUI editor.
         <p>
       </div>
     </dialog>
@@ -116,10 +125,14 @@
             <!-- Not using MDL grids as it gives padding around the element which doesn't look very nice. -->
 
             <!-- iframe of program editor. -->
-            <iframe id="iframeProgramEditor" src="./programEditor.html"></iframe>
+            <div id="divProgramEditor">
+              <iframe id="iframeProgramEditor" src="./programEditor.html"></iframe>
+            </div>
 
             <!-- div of GUI editor. -->
-            <div id="divGUIEditor">GUI editor</div>
+            <div id="divGUIEditor">
+              <textarea name="textAreaGUIEditor" id="textAreaGUIEditor"></textarea>
+            </div>
 
             <!-- div of execute program. -->
             <div id="divExecuteProgram">Execute Program</div>
@@ -137,13 +150,15 @@
      * All JavaSCript code goes here, after the document body has finished loading.
      * This ensures separation of content from behaviour/action which is a good pattern.
      */
+     var dialogs = {};
+     var textAreaGUIEditor = null;
+     var xmlBlocklyToolbox = null;
      var INDEX_VIEW_PROGRAM_EDITOR = 1;
      var INDEX_VIEW_GUI_EDITOR = 2;
      var INDEX_VIEW_EXECUTE_PROGRAM = 3;
-     var xmlBlocklyToolbox = null;
-     var dialogs = {};
 
      dialogs.errorNoBlob                  = document.getElementById('dialogErrorNoBlob');
+     dialogs.errorGUIEditor               = document.getElementById('dialogErrorGUIEditor');
      dialogs.errorNoWebWorker             = document.getElementById('dialogErrorNoWebWorker');
      dialogs.errorScreenSizeSmall         = document.getElementById('dialogErrorScreenSizeSmall');
      dialogs.errorToolboxLoadFailed       = document.getElementById('dialogErrorToolboxLoadFailed');
@@ -187,6 +202,22 @@
       }
     });
 
+    Modernizr.addTest('guieditor', function() {
+      try {
+        /*
+         * It is a requirement of the GUI editor that the <textarea> on which it is
+         * being initialized be a jQuery object.
+         */
+        textAreaGUIEditor = $(document.getElementById('textAreaGUIEditor'));
+        textAreaGUIEditor.formBuilder();
+        return true;
+      }
+      catch(e) {
+        console.log(e);
+        return false;
+      }
+    });
+
     // Use polyfill for dialogs if dialogs aren't available.
     if (!Modernizr.dialogs) {
       for (var dialog in dialogs) {
@@ -198,6 +229,7 @@
     function checkCompatibility() {
       // Check Blob.
       if (!Modernizr.bloburls || !Modernizr.blobconstructor) {
+        return true;
         if (!dialogs.errorNoBlob.open) dialogs.errorNoBlob.showModal();
         return false;
       }
@@ -218,10 +250,21 @@
         }
         return false;
       }
+
+      // Check if the GUI editor was initialized properly.
+      if (!Modernizr.guieditor) {
+        if (!dialogs.errorGUIEditor.open) dialogs.errorGUIEditor.showModal();
+        return false;
+      }
+
       return true; // All compatibility tests passed.
     }
 
     if (checkCompatibility()) {
+      var divGUIEditor = document.getElementById('divGUIEditor');
+      var divProgramEditor = document.getElementById('divProgramEditor');
+      var divExecuteProgram = document.getElementById('divExecuteProgram');
+
       function checkViewportSize() {
         var width = Modernizr.mq('(min-width: 1025px)');
         var height = Modernizr.mq('(min-height: 512px)');
@@ -244,16 +287,19 @@
       function viewSwitcher(switchTo) {
         switch(switchTo) {
           case INDEX_VIEW_PROGRAM_EDITOR:
-            console.log(INDEX_VIEW_PROGRAM_EDITOR);
+            divGUIEditor.style.display = 'none';
+            divProgramEditor.style.display = 'block';
+            divExecuteProgram.style.display = 'none';
             break;
           case INDEX_VIEW_GUI_EDITOR:
-            console.log(INDEX_VIEW_GUI_EDITOR);
+            divGUIEditor.style.display = 'block';
+            divProgramEditor.style.display = 'none';
+            divExecuteProgram.style.display = 'none';
             break;
           case INDEX_VIEW_EXECUTE_PROGRAM:
-            console.log(INDEX_VIEW_EXECUTE_PROGRAM);
-            break;
-          default:
-            console.log('DEFAULT');
+            divGUIEditor.style.display = 'none';
+            divProgramEditor.style.display = 'none';
+            divExecuteProgram.style.display = 'block';
             break;
         }
       }
