@@ -27,7 +27,7 @@ sudo apt-get -y install libxml2-utils libgd-dev
 sudo apt-get -y install python-sphinx python-sphinxcontrib.spelling
 
 # Packages for building and running brickv
-sudo apt-get -y install python-qt4 python-qt4-gl python-opengl python-serial pyqt4-dev-tools
+sudo apt-get -y install python-qt4 python-qt4-gl python-opengl python-serial python-setuptools pyqt4-dev-tools
 
 # Packages for building and running brickd
 sudo apt-get -y install pkg-config libusb-1.0-0-dev libudev-dev pm-utils
