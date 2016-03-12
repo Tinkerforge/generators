@@ -117,11 +117,11 @@ function renderGUI() {
         devMode: 'Developer Mode',
         disableFields: 'These fields cannot be moved.',
         editNames: 'Edit Names',
-        editorTitle: 'Widgets',
+        //editorTitle: 'Widgets',
         editXML: 'Edit XML',
         fieldVars: 'Field Variables',
         fieldRemoveWarning: 'Are you sure you want to remove this field?',
-        getStarted: 'Drag a widget from the right to this area',
+        getStarted: 'Drag a widget from the left to this area',
         hide: 'Edit',
         label: 'Label',
         labelEmpty: 'Field Label cannot be empty',
@@ -473,7 +473,8 @@ function renderGUI() {
     }
 
     // Build our headers and action links
-    var cbHeader = $('<h4/>').html(opts.messages.editorTitle),
+    //var cbHeader = $('<h4/>').html(opts.messages.editorTitle),
+    var cbHeader = '',
         frmbHeader = $('<h4/>').html(opts.messages.preview),
         viewXML = $('<a/>', {
       id: frmbID + '-export-xml',

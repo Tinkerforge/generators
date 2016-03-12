@@ -1,20 +1,26 @@
+/* General */
 html, body {
   width : 100%;
   height: 100%;
   margin: auto;
 }
 
+#inputFileProjectFileUpload {
+  display: none;
+}
+
+/* MDL elements. */
 .layout-waterfall
 .mdl-layout__header-row
 .mdl-navigation__link:last-of-type {
   padding-right: 0;
 }
 
+/* Dialog box headers. */
 .markDialogHeaderError {
   color           : #D8000C;
   background-color: #FFBABA;
 }
-
 
 .markDialogHeaderWarning {
   color           : #9F6000;
@@ -22,15 +28,16 @@ html, body {
 }
 
 .markDialogHeaderInformation {
-  color: #059;
-  background-color: #BEF;
+  color           : #059000;
+  background-color: #BEF000;
 }
 
 .markDialogHeaderSuccess {
-  color: #270;
+  color           : #270000;
   background-color: #DFF2BF;
 }
 
+/* Program editor. */
 #blocklyDiv {
   position: absolute;
 }
@@ -41,52 +48,43 @@ html, body {
 }
 
 #divProgramEditor {
-  height    : 93vh;
+  width     : 100%;
+  height    : 100vh;
   display   : block;
-  width     : 100vw;
   overflow-x: none;
   overflow-y: none;
 }
 
 #iframeProgramEditor {
-  width     : 100vw;
-  height    : 93vh;
+  width     : 100%;
+  height    : 100vh;
   overflow-y: scroll;
 }
 
+/* GUI editor. */
 #divGUIEditor {
-  display   : none;
   width     : 100%;
   height    : 100vh;
+  display   : none;
   overflow-x: none;
   overflow-y: none;
 }
 
+/* Execute program. */
 #divExecuteProgram {
-  display   : none;
   width     : 100%;
   height    : 100%;
+  display   : none;
   overflow-x: none;
   overflow-y: none;
-}
-
-#divMdlCellProgramEditor
-#divMdlCellButtonsRunClearConsole,
-#divMdlCellButtonsGUIEditorRenderGUI {
-  text-align: center;
-}
-
-#inputFileProjectFileUpload {
-  display: none;
 }
 
 #textareaProgramExecutionConsole {
   width           : 100%;
   color           : black;
-  height          : 80vh;
+  height          : 100vh;
   resize          : none;
   border          : solid 1px #A4A4A4;
   font-size       : 15px;
   background-color: #A4A4A4;
 }
-
