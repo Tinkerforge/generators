@@ -135,7 +135,36 @@
             </div>
 
             <!-- div of execute program. -->
-            <div id="divExecuteProgram">Execute Program</div>
+            <div id="divExecuteProgram">
+              <table id="tableExecuteProgram">
+                <tr>
+                  <td conlspan="2" height="10px"></td>
+                </tr>
+                <tr align="center" height="20px">
+                  <td colspan="2">
+                    <button id="buttonExecuteProgramRunProgram" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+                      <i class="material-icons">play_arrow</i>
+                      Run Program
+                    </button>
+                    <button id="buttonExecuteProgramStopProgram" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" disabled>
+                      <i class="material-icons">stop</i>
+                      Stop Program
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td conlspan="2" height="10px"></td>
+                </tr>
+                <tr>
+                  <td width="50%">
+                    <textarea id="textareaProgramExecutionConsole" readonly></textarea>
+                  </td>
+                  <td width="50%">
+                    <div id="divExecuteProgramRenderedGUI"></div>
+                  </td>
+                </tr>
+              </table>
+            </div>
 
           </div>
         </main>
