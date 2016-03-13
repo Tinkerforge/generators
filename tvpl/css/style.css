@@ -32,11 +32,6 @@ html, body {
   background-color: #BEF000;
 }
 
-.markDialogHeaderSuccess {
-  color           : #270000;
-  background-color: #DFF2BF;
-}
-
 /* Program editor. */
 #blocklyDiv {
   position: absolute;
@@ -48,47 +43,42 @@ html, body {
 }
 
 #divProgramEditor {
-  width     : 100%;
-  height    : 100vh;
-  display   : block;
+  width  : 100%;
+  height : 100vh;
+  display: block;
 
 }
 
 #iframeProgramEditor {
-  width     : 100%;
-  height    : 100vh;
+  width : 100%;
+  height: 100vh;
 }
 
 /* GUI editor. */
 #divGUIEditor {
-  width     : 100%;
-  height    : 100vh;
-  display   : none;
+  width  : 100%;
+  display: none;
+  height : 100vh;
 }
 
 /* Execute program. */
 #divExecuteProgram {
-  width     : 100%;
-  height    : 100%;
-  display   : none;
+  width   : 100%;
+  height  : 100%;
+  display : none;
 }
 
 #tableExecuteProgram {
-  width: 100%;
-  height:100vh;
+  width : 100%;
+  height: 100vh;
 }
 
 #textareaProgramExecutionConsole {
-  color           : black;
   width           : 100%;
-  height          : 100vh;
   resize          : none;
-  border          : solid 1px #DDDDDD;
   font-size       : 15px;
-  background-color: #DDDDDD;
-}
-
-#divExecuteProgramRenderedGUI {
-  width           : 100%;
+  color           : black;
   height          : 100vh;
+  background-color: #DDDDDD;
+  border          : solid 1px #DDDDDD;
 }

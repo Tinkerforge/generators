@@ -121,7 +121,7 @@ function renderGUI() {
         editXML: 'Edit XML',
         fieldVars: 'Field Variables',
         fieldRemoveWarning: 'Are you sure you want to remove this field?',
-        getStarted: 'Drag a widget from the left to this area',
+        getStarted: 'Drag widgets from the left to this area.',
         hide: 'Edit',
         label: 'Label',
         labelEmpty: 'Field Label cannot be empty',
