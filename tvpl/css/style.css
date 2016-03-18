@@ -77,8 +77,30 @@ html, body {
   width           : 100%;
   resize          : none;
   font-size       : 15px;
-  color           : black;
+  color           : #40FF00;
   height          : 100vh;
+  background-color: black;
+  border          : solid 2px #DDDDDD;
+}
+
+#divExecuteProgramRenderedGUIEmpty {
+  font-weight   : bold;
+  /*
+   * Not sure why but have to use vw and vh here.
+   * Maybe because of table-cell display?
+   */
+  width           : 100vw;
+  height          : 100vh;
+  text-align      : center;
+  vertical-align  : middle;
   background-color: #DDDDDD;
-  border          : solid 1px #DDDDDD;
+  display         : table-cell;
+  border          : solid 2px #DDDDDD;
+}
+
+#divExecuteProgramRenderedGUI {
+  width  : 100%;
+  height : 100%;
+  display: none;
+  border : solid 2px #DDDDDD;
 }
