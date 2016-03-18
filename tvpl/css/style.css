@@ -1,107 +1,116 @@
 /* General */
-html, body {
-  width : 100%;
-  height: 100%;
-  margin: auto;
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: auto;
 }
 
 #inputFileProjectFileUpload {
-  display: none;
+    display: none;
 }
+
 
 /* MDL elements. */
-.layout-waterfall
-.mdl-layout__header-row
-.mdl-navigation__link:last-of-type {
-  padding-right: 0;
+
+.layout-waterfall .mdl-layout__header-row .mdl-navigation__link:last-of-type {
+    padding-right: 0;
 }
 
+
 /* Dialog box headers. */
+
 .markDialogHeaderError {
-  color           : #D8000C;
-  background-color: #FFBABA;
+    color: #D8000C;
+    background-color: #FFBABA;
 }
 
 .markDialogHeaderWarning {
-  color           : #9F6000;
-  background-color: #FEEFB3;
+    color: #9F6000;
+    background-color: #FEEFB3;
 }
 
 .markDialogHeaderInformation {
-  color           : #059000;
-  background-color: #BEF000;
+    color: #059000;
+    background-color: #BEF000;
 }
 
+
 /* Program editor. */
+
 #blocklyDiv {
-  position: absolute;
+    position: absolute;
 }
 
 #blocklyArea {
-  width : 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
 }
 
 #divProgramEditor {
-  width  : 100%;
-  height : 100vh;
-  display: block;
-
+    width: 100%;
+    height: 100vh;
+    display: block;
 }
 
 #iframeProgramEditor {
-  width : 100%;
-  height: 100vh;
+    width: 100%;
+    height: 100vh;
 }
+
 
 /* GUI editor. */
+
 #divGUIEditor {
-  width  : 100%;
-  display: none;
-  height : 100vh;
+    width: 100%;
+    display: none;
+    height: 100vh;
 }
 
+
 /* Execute program. */
+
 #divExecuteProgram {
-  width   : 100%;
-  height  : 100%;
-  display : none;
+    width: 100%;
+    height: 100%;
+    display: none;
 }
 
 #tableExecuteProgram {
-  width : 100%;
-  height: 100vh;
+    width: 100%;
+    height: 100vh;
 }
 
 #textareaProgramExecutionConsole {
-  width           : 100%;
-  resize          : none;
-  font-size       : 15px;
-  color           : #40FF00;
-  height          : 100vh;
-  background-color: black;
-  border          : solid 2px #DDDDDD;
-  font-family     : "Lucida Console", Monaco, monospace;
+    width: 100%;
+    resize: none;
+    font-size: 15px;
+    color: #40FF00;
+    height: 100vh;
+    background-color: black;
+    border: solid 2px #DDDDDD;
+    font-family: "Lucida Console", Monaco, monospace;
 }
 
 #divExecuteProgramRenderedGUIEmpty {
-  font-weight   : bold;
-  /*
+    font-weight: bold;
+    /*
    * Not sure why but have to use vw and vh here.
    * Maybe because of table-cell display?
    */
-  width           : 100vw;
-  height          : 100vh;
-  text-align      : center;
-  vertical-align  : middle;
-  background-color: #DDDDDD;
-  display         : table-cell;
-  border          : solid 2px #DDDDDD;
+    width: 100vw;
+    height: 100vh;
+    text-align: center;
+    vertical-align: middle;
+    background-color: #DDDDDD;
+    display: table-cell;
+    border: solid 2px #DDDDDD;
 }
 
 #divExecuteProgramRenderedGUI {
-  width  : 100%;
-  height : 100%;
-  display: none;
-  border : solid 2px #DDDDDD;
+    width: 100%;
+    height: 100%;
+    display: none;
+    border: solid 2px #DDDDDD;
 }

@@ -24,8 +24,8 @@ workerProtocol.SENDER_GUI = 1;
 workerProtocol.SENDER_WORKER_MANAGER = 2;
 
 workerProtocol.TYPE_REQ_PROGRAM_START = 3;
-workerProtocol.TYPE_REQ_PROGRAM_STOP  = 4;
-workerProtocol.TYPE_REQ_FUNCTION_EXECUTE  = 5;
+workerProtocol.TYPE_REQ_PROGRAM_STOP = 4;
+workerProtocol.TYPE_REQ_FUNCTION_EXECUTE = 5;
 workerProtocol.TYPE_RES_PROGRAM_START_ACK = 6;
 workerProtocol.TYPE_RES_PROGRAM_STOP_ACK = 7;
 workerProtocol.TYPE_RES_FUNCTION_EXECUTE_ACK = 8;
@@ -52,13 +52,13 @@ workerProtocol._TYPE_RES_MESSAGE_GUI_PLOT = 27;
 workerProtocol._TYPE_RES_ERROR = 28;
 
 workerProtocol.isNumber = function(n) {
-  return !isNaN(parseFloat(n)) && isFinite(n);
+    return !isNaN(parseFloat(n)) && isFinite(n);
 };
 
 workerProtocol.getMessage = function(sender, type, data) {
-  var message = {};
-  message.sender = sender;
-  message.type = type;
-  message.data = data;
-  return message;
+    var message = {};
+    message.sender = sender;
+    message.type = type;
+    message.data = data;
+    return message;
 }
