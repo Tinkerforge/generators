@@ -61,7 +61,7 @@
         <div class="mdl-dialog__content">
             <p>
                 Seems like the browser you are using does not support Web workers which is required to use TVPL.
-                <p>
+            </p>
         </div>
     </dialog>
     <dialog id="dialogErrorToolboxLoadFailed" class="mdl-dialog">
@@ -69,7 +69,7 @@
         <div class="mdl-dialog__content">
             <p>
                 Could not load toolbox XML file which is required to use TVPL.
-                <p>
+            </p>
         </div>
     </dialog>
     <dialog id="dialogErrorToolboxLoadFailedChrome" class="mdl-dialog">
@@ -77,7 +77,7 @@
         <div class="mdl-dialog__content">
             <p>
                 Could not load toolbox XML file. Seems like you are using Google Chrome browser and accessing the application without a web server. Try launching Google Chrome with "--allow-file-access-from-files" switch.
-                <p>
+            </p>
         </div>
     </dialog>
     <dialog id="dialogErrorNoBlob" class="mdl-dialog">
@@ -85,7 +85,7 @@
         <div class="mdl-dialog__content">
             <p>
                 Seems like the browser you are using does not support Blob objects which is required to use TVPL.
-                <p>
+            </p>
         </div>
     </dialog>
     <dialog id="dialogErrorGUIEditor" class="mdl-dialog">
@@ -93,18 +93,18 @@
         <div class="mdl-dialog__content">
             <p>
                 Could not initialize the GUI editor.
-                <p>
+            </p>
         </div>
     </dialog>
-    <dialog class="mdl-dialog" id="modal-example">
+    <dialog id="dialogErrorProgramEditorEmpty" class="mdl-dialog">
+        <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
         <div class="mdl-dialog__content">
             <p>
-                This is an example of the MDL Dialog being used as a modal. It is using the full width action design intended for use with buttons that do not fit within the specified <a href="https://www.google.com/design/spec/components/dialogs.html#dialogs-specs">length metrics</a>.
+                Nothing to execute. Seems like the program editor is empty.
             </p>
         </div>
         <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
-            <button type="button" class="mdl-button">Close</button>
-            <button type="button" class="mdl-button" disabled>Inactive action</button>
+            <button type="button" class="mdl-button dialogButtonClose">Close</button>
         </div>
     </dialog>
     <div id="divBody">
@@ -160,7 +160,7 @@
                             </tr>
                             <tr>
                                 <td width="50%">
-                                    <textarea id="textareaProgramExecutionConsole" readonly>A running program can print text on this output console. STATUS: No program running.</textarea>
+                                    <textarea id="textareaProgramExecutionConsole" readonly>A running program can print text on this output console.&#13;&#13;STATUS: No program running.</textarea>
                                 </td>
                                 <td width="50%">
                                     <div id="divExecuteProgramRenderedGUIEmpty">
@@ -193,6 +193,15 @@
 var INDEX_VIEW_PROGRAM_EDITOR = 1;
 var INDEX_VIEW_GUI_EDITOR = 2;
 var INDEX_VIEW_EXECUTE_PROGRAM = 3;
+var LIST_IMPORT_SCRIPTS = [
+    'Tinkerforge.js',
+    'subworkers.js',
+    'babelRuntime.js',
+    'babelBrowser.js',
+    'babelPolyfill.js',
+    'workerProtocol.js'
+];
+var MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED = 'ERROR: The following error occurred while preparing JavaScript code.\n\n\n';
 
 // Variables.
 
@@ -215,6 +224,7 @@ var divExecuteProgramRenderedGUIEmpty = null;
 
 var dialogs = {};
 var programEditor = null;
+var workerManager = null;
 var xmlBlocklyToolbox = null;
 /*
  * Variable "is_tvpl" is currently only used for Chrome/Safari
@@ -333,9 +343,40 @@ var codeWorkerManager = 'var is_tvpl = true;\n' +
 
 // Functions.
 
+function prepareImports() {
+    var docLocationSplit = [];
+    var docLocation = '';
+    var workerImportsList = [];
+
+    docLocationSplit = document.location.href.split('/');
+    docLocationSplit.pop();
+    docLocationSplit.push('js/');
+    docLocation = docLocationSplit.join('/');
+
+    for (var i = 0; i < LIST_IMPORT_SCRIPTS.length; i++) {
+        workerImportsList.push('importScripts(\'' + docLocation + LIST_IMPORT_SCRIPTS[i] + '\');');
+    }
+    workerImportsList.push('\n');
+    return workerImportsList.join('\n');
+}
+
+function prepareJavaScriptCode(code) {
+    var returnedCode = [];
+    var workerImports = prepareImports();
+
+    try {
+        returnedCode = workerImports + babel.transform(code).code;
+    } catch (e) {
+        return [false, String(e)];
+    }
+
+    return [true, String(returnedCode)];
+}
+
 function eventHandlerLoadIframeProgramEditor(e) {
     // Assign the program editor.
     programEditor = iframeProgramEditor.contentWindow['programEditor'];
+
     // Checks view port size and also compatibility.
     checkCompatibility();
 }
@@ -456,10 +497,9 @@ function eventHandlerClickButtonExecuteProgramRunProgram(e) {
 
     dictProgramEditorToCode = Blockly.JavaScript.workspaceToCode(programEditor);
 
-    console.log(dictProgramEditorToCode);
-
     if (!dictProgramEditorToCode) {
-        alert(MSG_INFO_PROGRAM_EDITOR_EMPTY);
+        closeAllOpenDialogs();
+        dialogs.dialogErrorProgramEditorEmpty.showModal();
         return;
     }
 
@@ -468,9 +508,9 @@ function eventHandlerClickButtonExecuteProgramRunProgram(e) {
     retPrepareJavaScriptCodeWorkerManager = prepareJavaScriptCode(dictProgramEditorToCode.dictVariablesInit + codeWorkerManager);
 
     if (!retPrepareJavaScriptCodeWorkerManager[0]) {
-        textareaConsole.value = MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED;
-        textareaConsole.value += retPrepareJavaScriptCodeWorkerManager[1];
-        textareaConsole.scrollTop = textareaConsole.scrollHeight;
+        textareaProgramExecutionConsole.value = MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED;
+        textareaProgramExecutionConsole.value += retPrepareJavaScriptCodeWorkerManager[1];
+        textareaProgramExecutionConsole.scrollTop = textareaProgramExecutionConsole.scrollHeight;
         return;
     }
 
@@ -478,15 +518,16 @@ function eventHandlerClickButtonExecuteProgramRunProgram(e) {
         var retPrepareJavaScriptCode = prepareJavaScriptCode(dictProgramEditorToCode.implementationTopLevelBlocks[i]);
 
         if (!retPrepareJavaScriptCode[0]) {
-            textareaConsole.value = MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED;
-            textareaConsole.value += retPrepareJavaScriptCode[1];
-            textareaConsole.scrollTop = textareaConsole.scrollHeight;
+            textareaProgramExecutionConsole.value = MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED;
+            textareaProgramExecutionConsole.value += retPrepareJavaScriptCode[1];
+            textareaProgramExecutionConsole.scrollTop = textareaProgramExecutionConsole.scrollHeight;
             return;
         }
         subworkerBlobsUrlArray.push(window.URL.createObjectURL(new Blob([retPrepareJavaScriptCode[1]])));
     }
 
     workerManager = new Worker(window.URL.createObjectURL(new Blob([retPrepareJavaScriptCodeWorkerManager[1]])));
+
     workerManager.onmessage = function(e) {
         var message = null;
 
@@ -503,7 +544,7 @@ function eventHandlerClickButtonExecuteProgramRunProgram(e) {
                     break;
 
                 case workerProtocol.TYPE_RES_PROGRAM_STOP_ACK:
-                    textareaConsole.scrollTop = textareaConsole.scrollHeight;
+                    textareaConsole.scrollTop = textareaProgramExecutionConsole.scrollHeight;
 
                     if (workerManager) {
                         workerManager.terminate();
@@ -528,14 +569,14 @@ function eventHandlerClickButtonExecuteProgramRunProgram(e) {
                 case workerProtocol.TYPE_RES_MESSAGE_CONSOLE:
                     if (message.data !== null && message.data !== '') {
                         textareaConsole.value += message.data;
-                        textareaConsole.scrollTop = textareaConsole.scrollHeight;
+                        textareaConsole.scrollTop = textareaProgramExecutionConsole.scrollHeight;
                     }
                     break;
 
                 case workerProtocol.TYPE_RES_ERROR:
                     if (message.data !== null && message.data !== '') {
                         textareaConsole.value += message.data;
-                        textareaConsole.scrollTop = textareaConsole.scrollHeight;
+                        textareaConsole.scrollTop = textareaProgramExecutionConsole.scrollHeight;
                     }
                     clickedStopProgram();
                     break;
@@ -603,7 +644,12 @@ jQuery(document).ready(function($) {
     dialogs.errorNoWebWorker = document.getElementById('dialogErrorNoWebWorker');
     dialogs.errorScreenSizeSmall = document.getElementById('dialogErrorScreenSizeSmall');
     dialogs.errorToolboxLoadFailed = document.getElementById('dialogErrorToolboxLoadFailed');
+    dialogs.dialogErrorProgramEditorEmpty = document.getElementById('dialogErrorProgramEditorEmpty');
     dialogs.errorToolboxLoadFailedChrome = document.getElementById('dialogErrorToolboxLoadFailedChrome');
+
+    dialogs.dialogErrorProgramEditorEmpty.querySelector('.dialogButtonClose').addEventListener('click', function(e) {
+        dialogs.dialogErrorProgramEditorEmpty.close();
+    });
 
     // Add custom Modernizr tests.
     Modernizr.addTest('dialogs', function(e) {
