@@ -1,16 +1,21 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <link rel="stylesheet" type="text/css" href="css/style.css" />
     <link rel="stylesheet" type="text/css" href="css/material.min.css" />
     <link rel="stylesheet" type="text/css" href="css/dialog-polyfill.css" />
     <link rel="stylesheet" type="text/css" href="css/form-render.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="css/form-builder.css" media="screen" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
-
+    <!-- Order matters for Blockly stuff. -->
+    <script type="text/javascript" src="js/blockly_compressed.js"></script>
+    <script type="text/javascript" src="js/blocks_compressed.js"></script>
+    <script type="text/javascript" src="msg/js/en.js"></script>
+    <script type="text/javascript" src="js/python_compressed.js"></script>
+    <script type="text/javascript" src="js/javascript_compressed.js"></script>
     <script type="text/javascript" src="js/jszip.min.js"></script>
     <script type="text/javascript" src="js/fileSaver.js"></script>
     <script type="text/javascript" src="js/modernizr.js"></script>
@@ -29,23 +34,22 @@
     <script type="text/javascript" src="js/dialog-polyfill.js"></script>
     <script type="text/javascript" src="js/jquery.flot.resize.min.js"></script>
     <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
-
     <title>Tinkerforge Visual Programming Language</title>
-  </head>
-  <body>
+</head>
+
+<body>
     <!--
       All the dialog definitions should be outside of 'divBody' because
       there are cases where we want to hide the body contents and show a dialog.
     -->
     <dialog id="dialogErrorScreenSizeSmall" class="mdl-dialog">
-      <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
-      <div class="mdl-dialog__content">
-        <p>
-          The window size on which you are using TVPL is not enough. Try making the window larger if possible.
-        <p>
-      </div>
+        <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
+        <div class="mdl-dialog__content">
+            <p>
+                The window size on which you are using TVPL is not enough. Try making the window larger if possible.
+                <p>
+        </div>
     </dialog>
-
     <!--
     <i class="material-icons">error</i>
     <i class="material-icons">warning</i>
@@ -53,415 +57,410 @@
     <i class="material-icons">check_circle</i>
     -->
     <dialog id="dialogErrorNoWebWorker" class="mdl-dialog">
-      <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
-      <div class="mdl-dialog__content">
-        <p>
-          Seems like the browser you are using does not support Web workers which is required to use TVPL.
-        <p>
-      </div>
-    </dialog>
-
-    <dialog id="dialogErrorToolboxLoadFailed" class="mdl-dialog">
-      <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
-      <div class="mdl-dialog__content">
-        <p>
-          Could not load toolbox XML file which is required to use TVPL.
-        <p>
-      </div>
-    </dialog>
-
-    <dialog id="dialogErrorToolboxLoadFailedChrome" class="mdl-dialog">
-      <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
-      <div class="mdl-dialog__content">
-        <p>
-          Could not load toolbox XML file. Seems like you are using Google Chrome browser and accessing the
-          application without a web server. Try launching Google Chrome with "--allow-file-access-from-files" switch.
-        <p>
-      </div>
-    </dialog>
-
-    <dialog id="dialogErrorNoBlob" class="mdl-dialog">
-      <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
-      <div class="mdl-dialog__content">
-        <p>
-          Seems like the browser you are using does not support Blob objects which is required to use TVPL.
-        <p>
-      </div>
-    </dialog>
-
-    <dialog id="dialogErrorGUIEditor" class="mdl-dialog">
-      <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
-      <div class="mdl-dialog__content">
-        <p>
-          Could not initialize the GUI editor.
-        <p>
-      </div>
-    </dialog>
-
-    <div id="divBody">
-      <div class="layout-waterfall mdl-layout mdl-js-layout">
-        <header class="mdl-layout__header mdl-layout__header--waterfall">
-          <div class="mdl-layout__header-row">
-            <span class="mdl-layout-title">Tinkerforge Visual Programming Language</span>
-            <div class="mdl-layout-spacer"></div>
-            <nav class="mdl-navigation">
-              <a id="aProgramEditor" class="mdl-navigation__link" href=""><i class="material-icons">code</i>Program Editor</a>
-              <a id="aGUIEditor" class="mdl-navigation__link" href=""><i class="material-icons">web</i>GUI Editor</a>
-              <a id="aExecuteProgram" class="mdl-navigation__link" href=""><i class="material-icons">settings</i>Execute Program</a>
-            </nav>
-          </div>
-        </header>
-        <div class="mdl-layout__drawer">
-          <span class="mdl-layout-title">Main Menu</span>
-          <nav class="mdl-navigation">
-            <a class="mdl-navigation__link" href=""><i class="material-icons">folder_open</i>Load Project</a>
-            <a class="mdl-navigation__link" href=""><i class="material-icons">save</i>Save Project</a>
-            <a class="mdl-navigation__link" href=""><i class="material-icons">info</i>About</a>
-          </nav>
+        <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
+        <div class="mdl-dialog__content">
+            <p>
+                Seems like the browser you are using does not support Web workers which is required to use TVPL.
+                <p>
         </div>
-        <main class="mdl-layout__content">
-          <div class="page-content">
-
-            <!-- Not using MDL grids as it gives padding around the element which doesn't look very nice. -->
-
-            <!-- iframe of program editor. -->
-            <div id="divProgramEditor">
-              <iframe id="iframeProgramEditor" src="./programEditor.html"></iframe>
+    </dialog>
+    <dialog id="dialogErrorToolboxLoadFailed" class="mdl-dialog">
+        <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
+        <div class="mdl-dialog__content">
+            <p>
+                Could not load toolbox XML file which is required to use TVPL.
+                <p>
+        </div>
+    </dialog>
+    <dialog id="dialogErrorToolboxLoadFailedChrome" class="mdl-dialog">
+        <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
+        <div class="mdl-dialog__content">
+            <p>
+                Could not load toolbox XML file. Seems like you are using Google Chrome browser and accessing the application without a web server. Try launching Google Chrome with "--allow-file-access-from-files" switch.
+                <p>
+        </div>
+    </dialog>
+    <dialog id="dialogErrorNoBlob" class="mdl-dialog">
+        <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
+        <div class="mdl-dialog__content">
+            <p>
+                Seems like the browser you are using does not support Blob objects which is required to use TVPL.
+                <p>
+        </div>
+    </dialog>
+    <dialog id="dialogErrorGUIEditor" class="mdl-dialog">
+        <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
+        <div class="mdl-dialog__content">
+            <p>
+                Could not initialize the GUI editor.
+                <p>
+        </div>
+    </dialog>
+    <dialog class="mdl-dialog" id="modal-example">
+        <div class="mdl-dialog__content">
+            <p>
+                This is an example of the MDL Dialog being used as a modal. It is using the full width action design intended for use with buttons that do not fit within the specified <a href="https://www.google.com/design/spec/components/dialogs.html#dialogs-specs">length metrics</a>.
+            </p>
+        </div>
+        <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
+            <button type="button" class="mdl-button">Close</button>
+            <button type="button" class="mdl-button" disabled>Inactive action</button>
+        </div>
+    </dialog>
+    <div id="divBody">
+        <div class="layout-waterfall mdl-layout mdl-js-layout">
+            <header class="mdl-layout__header mdl-layout__header--waterfall">
+                <div class="mdl-layout__header-row">
+                    <span class="mdl-layout-title">Tinkerforge Visual Programming Language</span>
+                    <div class="mdl-layout-spacer"></div>
+                    <nav class="mdl-navigation">
+                        <a id="aProgramEditor" class="mdl-navigation__link" href=""><i class="material-icons">code</i>Program Editor</a>
+                        <a id="aGUIEditor" class="mdl-navigation__link" href=""><i class="material-icons">web</i>GUI Editor</a>
+                        <a id="aExecuteProgram" class="mdl-navigation__link" href=""><i class="material-icons">settings</i>Execute Program</a>
+                    </nav>
+                </div>
+            </header>
+            <div class="mdl-layout__drawer">
+                <span class="mdl-layout-title">Main Menu</span>
+                <nav class="mdl-navigation">
+                    <a class="mdl-navigation__link" href=""><i class="material-icons">folder_open</i>Load Project</a>
+                    <a class="mdl-navigation__link" href=""><i class="material-icons">save</i>Save Project</a>
+                    <a class="mdl-navigation__link" href=""><i class="material-icons">info</i>About</a>
+                </nav>
             </div>
-
-            <!-- div of GUI editor. -->
-            <div id="divGUIEditor">
-              <textarea id="textAreaGUIEditor"></textarea>
-            </div>
-
-            <!-- div of execute program. -->
-            <div id="divExecuteProgram">
-              <table id="tableExecuteProgram">
-                <tr>
-                  <td conlspan="2" height="10px"></td>
-                </tr>
-                <tr align="center" height="20px">
-                  <td colspan="2">
-                    <button id="buttonExecuteProgramRunProgram"
-                     class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" onClick="eventHandlerClickButtonExecuteProgramRunProgram()">
-                       <i class="material-icons">play_arrow</i>
-                       Run Program
-                    </button>
-                    <button id="buttonExecuteProgramStopProgram"
-                     class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" disabled>
-                       <i class="material-icons">stop</i>
-                       Stop Program
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td conlspan="2" height="10px"></td>
-                </tr>
-                <tr>
-                  <td width="50%">
-                    <textarea id="textareaProgramExecutionConsole" readonly>A running program can print text on this output console.
-
-STATUS: No program running.</textarea>
-                  </td>
-                  <td width="50%">
-                    <div id="divExecuteProgramRenderedGUIEmpty">
-                      Seems like the GUI editor is empty and there is nothing to render.
+            <main class="mdl-layout__content">
+                <div class="page-content">
+                    <!-- Not using MDL grids as it gives padding around the element which doesn't look very nice. -->
+                    <!-- iframe of program editor. -->
+                    <div id="divProgramEditor">
+                        <iframe id="iframeProgramEditor" src="./programEditor.html"></iframe>
                     </div>
-                    <div id="divExecuteProgramRenderedGUI">
+                    <!-- div of GUI editor. -->
+                    <div id="divGUIEditor">
+                        <textarea id="textAreaGUIEditor"></textarea>
                     </div>
-                  </td>
-                </tr>
-              </table>
-            </div>
-
-          </div>
-        </main>
-      </div>
+                    <!-- div of execute program. -->
+                    <div id="divExecuteProgram">
+                        <table id="tableExecuteProgram">
+                            <tr>
+                                <td conlspan="2" height="10px"></td>
+                            </tr>
+                            <tr align="center" height="20px">
+                                <td colspan="2">
+                                    <button id="buttonExecuteProgramRunProgram" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" onClick="eventHandlerClickButtonExecuteProgramRunProgram()">
+                                        <i class="material-icons">play_arrow</i> Run Program
+                                    </button>
+                                    <button id="buttonExecuteProgramStopProgram" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" disabled>
+                                        <i class="material-icons">stop</i> Stop Program
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td conlspan="2" height="10px"></td>
+                            </tr>
+                            <tr>
+                                <td width="50%">
+                                    <textarea id="textareaProgramExecutionConsole" readonly>A running program can print text on this output console. STATUS: No program running.</textarea>
+                                </td>
+                                <td width="50%">
+                                    <div id="divExecuteProgramRenderedGUIEmpty">
+                                        Seems like the GUI editor is empty and there is nothing to render.
+                                    </div>
+                                    <div id="divExecuteProgramRenderedGUI">
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
     </div>
-  </body>
+</body>
+
 </html>
-
 <script type="text/javascript">
-  // It is a good pattern to keep content and control separate.
+// It is a good pattern to keep content and control separate.
 
-  /*
-   * All the variables and functions that require a JavaScript scope of the page should
-   * be declared outside the jQuery document ready callback function. Otherwise the JavaScript
-   * variables will have scope limited only to the callback function.
-   */
+/*
+ * All the variables and functions that require a JavaScript scope of the page should
+ * be declared outside the jQuery document ready callback function. Otherwise the JavaScript
+ * variables will have scope limited only to the callback function.
+ */
 
-  // Constants.
+// Constants.
 
-  var INDEX_VIEW_PROGRAM_EDITOR = 1;
-  var INDEX_VIEW_GUI_EDITOR = 2;
-  var INDEX_VIEW_EXECUTE_PROGRAM = 3;
+var INDEX_VIEW_PROGRAM_EDITOR = 1;
+var INDEX_VIEW_GUI_EDITOR = 2;
+var INDEX_VIEW_EXECUTE_PROGRAM = 3;
 
-  // Variables.
+// Variables.
 
-  /*
-   * Elements of the page.
-   * Assigned in the jQuery document ready callback function.
-   */
-  var divBody = null;
-  var divGUIEditor = null;
-  var divProgramEditor = null;
-  var textAreaGUIEditor = null;
-  var $textAreaGUIEditor = null; // jQuery object.
-  var divExecuteProgram = null;
-  var iframeProgramEditor = null;
-  var divExecuteProgramRenderedGUI = null;
-  var buttonExecuteProgramRunProgram = null;
-  var buttonExecuteProgramStopProgram = null;
-  var textareaProgramExecutionConsole = null;
-  var divExecuteProgramRenderedGUIEmpty = null;
+/*
+ * Elements of the page.
+ * Assigned in the jQuery document ready callback function.
+ */
+var divBody = null;
+var divGUIEditor = null;
+var divProgramEditor = null;
+var textAreaGUIEditor = null;
+var $textAreaGUIEditor = null; // jQuery object.
+var divExecuteProgram = null;
+var iframeProgramEditor = null;
+var divExecuteProgramRenderedGUI = null;
+var buttonExecuteProgramRunProgram = null;
+var buttonExecuteProgramStopProgram = null;
+var textareaProgramExecutionConsole = null;
+var divExecuteProgramRenderedGUIEmpty = null;
 
-  var dialogs = {};
-  var programEditor = null;
-  var xmlBlocklyToolbox = null;
-  /*
-   * Variable "is_tvpl" is currently only used for Chrome/Safari
-   * subworker polyfill code in the file subworkers.js.
-   */
-  var codeWorkerManager = 'var is_tvpl = true;\n'+
-'var _queue_function_tf_call = false;\n'+
-'var _function_tf_call_queue = [];\n'+
-'var _ipcon_cache = {};\n'+
-'var _device_cache = {};\n'+
-'var _running_workers = {};\n'+
-'function _error_handler(e) {\n'+
-'  postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_ERROR, \'ERROR: \' + String(e) + \'\\n\'));\n'+
-'}\n'+
-'function _do_function_tf_call(data) {\n'+
-'  var ipcon = null;\n'+
-'  var key_ipcon = [String(data.host), String(data.port)].join(\':\');\n'+
-'  var key_device = [String(data.uid), key_ipcon].join(\'@\');\n'+
-'  var code_eval = \'\';\n'+
-'  if(data.device_function_input_args === null && data.device_function_output_args !== null) {\n'+
-'    code_eval = \'if (!(key_device in _device_cache)) { var device = new Tinkerforge.\' + data.device_class_name + \'(\\\'\' + String(data.uid) + \'\\\', ipcon); device.setResponseExpectedAll(true); _device_cache[key_device] = device; } _device_cache[key_device].\' + data.device_function_name + \'(function(\' + data.device_function_output_args + \') { _running_workers[\\\'\' + data.worker_id + \'\\\'].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_FUNCTION_TF_RETURN, \' + data.device_function_output_assignment + \') ); if(_function_tf_call_queue.length < 1) { _queue_function_tf_call = false; } else { _do_function_tf_call(_function_tf_call_queue.shift()); } }, _error_handler);\';\n'+
-'  }\n'+
-'  else if(data.device_function_input_args !== null && data.device_function_output_args !== null) {\n'+
-'    code_eval = \'if (!(key_device in _device_cache)) { var device = new Tinkerforge.\' + data.device_class_name + \'(\\\'\' + String(data.uid) + \'\\\', ipcon); device.setResponseExpectedAll(true); _device_cache[key_device] = device; } _device_cache[key_device].\' + data.device_function_name + \'(\' + data.device_function_input_args + \', function(\' + data.device_function_output_args + \') { _running_workers[\\\'\' + data.worker_id + \'\\\'].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_FUNCTION_TF_RETURN, \' + data.device_function_output_assignment + \') ); if(_function_tf_call_queue.length < 1) { _queue_function_tf_call = false; } else { _do_function_tf_call(_function_tf_call_queue.shift()); } }, _error_handler);\';\n'+
-'  }\n'+
-'  else if(data.device_function_input_args === null && data.device_function_output_args === null) {\n'+
-'    code_eval = \'if (!(key_device in _device_cache)) { var device = new Tinkerforge.\' + data.device_class_name + \'(\\\'\' + String(data.uid) + \'\\\', ipcon); device.setResponseExpectedAll(true); _device_cache[key_device] = device; } _device_cache[key_device].\' + data.device_function_name + \'(function(e) { _running_workers[\\\'\' + data.worker_id + \'\\\'].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_FUNCTION_TF_RETURN, null) ); if(_function_tf_call_queue.length < 1) { _queue_function_tf_call = false; } else { _do_function_tf_call(_function_tf_call_queue.shift()); } }, _error_handler);\';\n'+
-'  }\n'+
-'  else if(data.device_function_input_args !== null && data.device_function_output_args === null) {\n'+
-'    code_eval = \'if (!(key_device in _device_cache)) { var device = new Tinkerforge.\' + data.device_class_name + \'(\\\'\' + String(data.uid) + \'\\\', ipcon); device.setResponseExpectedAll(true); _device_cache[key_device] = device; } _device_cache[key_device].\' + data.device_function_name + \'(\' + data.device_function_input_args + \', function(e) { _running_workers[\\\'\' + data.worker_id + \'\\\'].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_FUNCTION_TF_RETURN, null) ); if(_function_tf_call_queue.length < 1) { _queue_function_tf_call = false; } else { _do_function_tf_call(_function_tf_call_queue.shift()); } }, _error_handler);\';\n'+
-'  }\n'+
-'  if (key_ipcon in _ipcon_cache) {\n'+
-'    ipcon = _ipcon_cache[key_ipcon];\n'+
-'    eval(code_eval);\n'+
-'    return;\n'+
-'  }\n'+
-'  ipcon = new Tinkerforge.IPConnection();\n'+
-'  ipcon.on(Tinkerforge.IPConnection.CALLBACK_CONNECTED, function(e) { _ipcon_cache[key_ipcon] = ipcon; eval(code_eval); });\n'+
-'  ipcon.connect(data.host, Number(data.port), _error_handler);\n'+
-'}\n'+
-'function _dispatch_message(message) {\n'+
-'  if (typeof(message) !== \'object\') {\n'+
-'    return;\n'+
-'  }\n'+
-'\n'+
-'  if (message.type !== null && workerProtocol.isNumber(message.type)) {\n'+
-'    switch(message.type) {\n'+
-'      case workerProtocol.TYPE_REQ_PROGRAM_START:\n'+
-'        if (message.data instanceof Array && message.data.length > 0) {\n'+
-'           for (var i = 0; i < message.data.length; i++) {\n'+
-'             var worker_id = message.data[i].split(\'/\')[message.data[i].split(\'/\').length - 1];\n'+
-'             _running_workers[worker_id] = new Worker(message.data[i]);\n'+
-'             _running_workers[worker_id].onmessage = onmessage;\n'+
-'             _running_workers[worker_id].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_SUBWORKER_START, {wid: worker_id, dictv: _dict_variables}));\n'+
-'           }\n'+
-'          postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_PROGRAM_START_ACK, null));\n'+
-'        }\n'+
-'        break;\n'+
-'      case workerProtocol.TYPE_REQ_PROGRAM_STOP:\n'+
-'        for (var key in _running_workers) {\n'+
-'          _running_workers[key].terminate();\n'+
-'        }\n'+
-'        _function_tf_call_queue = []\n'+
-'        for (var key in _ipcon_cache) {\n'+
-'          _ipcon_cache[key].disconnect();\n'+
-'        }\n'+
-'        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_PROGRAM_STOP_ACK, null));\n'+
-'        break;\n'+
-'      case workerProtocol.TYPE_REQ_FUNCTION_EXECUTE:\n'+
-'        var worker_id = message.data.blobFunction.split(\'/\')[message.data.blobFunction.split(\'/\').length - 1];\n'+
-'        _running_workers[worker_id] = new Worker(message.data.blobFunction);\n'+
-'        _running_workers[worker_id].onmessage = onmessage;\n'+
-'        _running_workers[worker_id].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_SUBWORKER_START, {wid: worker_id, dictv: _dict_variables, codeButtonEnable: message.data.codeButtonEnable}));\n'+
-'        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_FUNCTION_EXECUTE_ACK, null));\n'+
-'        break;\n'+
-'      case workerProtocol._TYPE_RES_SUBWORKER_DONE:\n'+
-'        if (message.data !== null && message.data !== \'\') {\n'+
-'          postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_SUBWORKER_DONE, message.data));\n'+
-'        }\n'+
-'        _running_workers[message.sender].terminate();\n'+
-'        delete _running_workers[message.data];\n'+
-'        break;\n'+
-'      case workerProtocol._TYPE_RES_SET_VARIABLE:\n'+
-'        _dict_variables = message.data;\n'+
-'        for (var key in _running_workers) {\n'+
-'          _running_workers[key].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_SET_VARIABLE, message.data));\n'+
-'        }\n'+
-'        break;\n'+
-'      case workerProtocol._TYPE_RES_FUNCTION_TF_CALL:\n'+
-'        if(_queue_function_tf_call) {\n'+
-'          _function_tf_call_queue.push(message.data);\n'+
-'          break;\n'+
-'        }\n'+
-'        _queue_function_tf_call = true;\n'+
-'        _do_function_tf_call(message.data);\n'+
-'        break;\n'+
-'      case workerProtocol._TYPE_RES_MESSAGE_CONSOLE:\n'+
-'        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_MESSAGE_CONSOLE, String(message.data)));\n'+
-'        break;\n'+
-'      case workerProtocol._TYPE_RES_MESSAGE_GUI_OUTPUT_FIELD:\n'+
-'        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_MESSAGE_GUI_OUTPUT_FIELD, message));\n'+
-'        break;\n'+
-'      case workerProtocol._TYPE_RES_MESSAGE_GUI_PLOT:\n'+
-'        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_MESSAGE_GUI_PLOT, message));\n'+
-'        break;\n'+
-'      case workerProtocol._TYPE_RES_ERROR:\n'+
-'        _error_handler(String(message.data));\n'+
-'    }\n'+
-'  }\n'+
-'}\n'+
-'\n'+
-'onmessage = function(e) {\n'+
-'  _dispatch_message(e.data);\n'+
-'};\n'+
-'onerror = _error_handler;\n';
+var dialogs = {};
+var programEditor = null;
+var xmlBlocklyToolbox = null;
+/*
+ * Variable "is_tvpl" is currently only used for Chrome/Safari
+ * subworker polyfill code in the file subworkers.js.
+ */
+var codeWorkerManager = 'var is_tvpl = true;\n' +
+    'var _queue_function_tf_call = false;\n' +
+    'var _function_tf_call_queue = [];\n' +
+    'var _ipcon_cache = {};\n' +
+    'var _device_cache = {};\n' +
+    'var _running_workers = {};\n' +
+    'function _error_handler(e) {\n' +
+    '  postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_ERROR, \'ERROR: \' + String(e) + \'\\n\'));\n' +
+    '}\n' +
+    'function _do_function_tf_call(data) {\n' +
+    '  var ipcon = null;\n' +
+    '  var key_ipcon = [String(data.host), String(data.port)].join(\':\');\n' +
+    '  var key_device = [String(data.uid), key_ipcon].join(\'@\');\n' +
+    '  var code_eval = \'\';\n' +
+    '  if(data.device_function_input_args === null && data.device_function_output_args !== null) {\n' +
+    '    code_eval = \'if (!(key_device in _device_cache)) { var device = new Tinkerforge.\' + data.device_class_name + \'(\\\'\' + String(data.uid) + \'\\\', ipcon); device.setResponseExpectedAll(true); _device_cache[key_device] = device; } _device_cache[key_device].\' + data.device_function_name + \'(function(\' + data.device_function_output_args + \') { _running_workers[\\\'\' + data.worker_id + \'\\\'].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_FUNCTION_TF_RETURN, \' + data.device_function_output_assignment + \') ); if(_function_tf_call_queue.length < 1) { _queue_function_tf_call = false; } else { _do_function_tf_call(_function_tf_call_queue.shift()); } }, _error_handler);\';\n' +
+    '  }\n' +
+    '  else if(data.device_function_input_args !== null && data.device_function_output_args !== null) {\n' +
+    '    code_eval = \'if (!(key_device in _device_cache)) { var device = new Tinkerforge.\' + data.device_class_name + \'(\\\'\' + String(data.uid) + \'\\\', ipcon); device.setResponseExpectedAll(true); _device_cache[key_device] = device; } _device_cache[key_device].\' + data.device_function_name + \'(\' + data.device_function_input_args + \', function(\' + data.device_function_output_args + \') { _running_workers[\\\'\' + data.worker_id + \'\\\'].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_FUNCTION_TF_RETURN, \' + data.device_function_output_assignment + \') ); if(_function_tf_call_queue.length < 1) { _queue_function_tf_call = false; } else { _do_function_tf_call(_function_tf_call_queue.shift()); } }, _error_handler);\';\n' +
+    '  }\n' +
+    '  else if(data.device_function_input_args === null && data.device_function_output_args === null) {\n' +
+    '    code_eval = \'if (!(key_device in _device_cache)) { var device = new Tinkerforge.\' + data.device_class_name + \'(\\\'\' + String(data.uid) + \'\\\', ipcon); device.setResponseExpectedAll(true); _device_cache[key_device] = device; } _device_cache[key_device].\' + data.device_function_name + \'(function(e) { _running_workers[\\\'\' + data.worker_id + \'\\\'].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_FUNCTION_TF_RETURN, null) ); if(_function_tf_call_queue.length < 1) { _queue_function_tf_call = false; } else { _do_function_tf_call(_function_tf_call_queue.shift()); } }, _error_handler);\';\n' +
+    '  }\n' +
+    '  else if(data.device_function_input_args !== null && data.device_function_output_args === null) {\n' +
+    '    code_eval = \'if (!(key_device in _device_cache)) { var device = new Tinkerforge.\' + data.device_class_name + \'(\\\'\' + String(data.uid) + \'\\\', ipcon); device.setResponseExpectedAll(true); _device_cache[key_device] = device; } _device_cache[key_device].\' + data.device_function_name + \'(\' + data.device_function_input_args + \', function(e) { _running_workers[\\\'\' + data.worker_id + \'\\\'].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_FUNCTION_TF_RETURN, null) ); if(_function_tf_call_queue.length < 1) { _queue_function_tf_call = false; } else { _do_function_tf_call(_function_tf_call_queue.shift()); } }, _error_handler);\';\n' +
+    '  }\n' +
+    '  if (key_ipcon in _ipcon_cache) {\n' +
+    '    ipcon = _ipcon_cache[key_ipcon];\n' +
+    '    eval(code_eval);\n' +
+    '    return;\n' +
+    '  }\n' +
+    '  ipcon = new Tinkerforge.IPConnection();\n' +
+    '  ipcon.on(Tinkerforge.IPConnection.CALLBACK_CONNECTED, function(e) { _ipcon_cache[key_ipcon] = ipcon; eval(code_eval); });\n' +
+    '  ipcon.connect(data.host, Number(data.port), _error_handler);\n' +
+    '}\n' +
+    'function _dispatch_message(message) {\n' +
+    '  if (typeof(message) !== \'object\') {\n' +
+    '    return;\n' +
+    '  }\n' +
+    '\n' +
+    '  if (message.type !== null && workerProtocol.isNumber(message.type)) {\n' +
+    '    switch(message.type) {\n' +
+    '      case workerProtocol.TYPE_REQ_PROGRAM_START:\n' +
+    '        if (message.data instanceof Array && message.data.length > 0) {\n' +
+    '           for (var i = 0; i < message.data.length; i++) {\n' +
+    '             var worker_id = message.data[i].split(\'/\')[message.data[i].split(\'/\').length - 1];\n' +
+    '             _running_workers[worker_id] = new Worker(message.data[i]);\n' +
+    '             _running_workers[worker_id].onmessage = onmessage;\n' +
+    '             _running_workers[worker_id].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_SUBWORKER_START, {wid: worker_id, dictv: _dict_variables}));\n' +
+    '           }\n' +
+    '          postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_PROGRAM_START_ACK, null));\n' +
+    '        }\n' +
+    '        break;\n' +
+    '      case workerProtocol.TYPE_REQ_PROGRAM_STOP:\n' +
+    '        for (var key in _running_workers) {\n' +
+    '          _running_workers[key].terminate();\n' +
+    '        }\n' +
+    '        _function_tf_call_queue = []\n' +
+    '        for (var key in _ipcon_cache) {\n' +
+    '          _ipcon_cache[key].disconnect();\n' +
+    '        }\n' +
+    '        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_PROGRAM_STOP_ACK, null));\n' +
+    '        break;\n' +
+    '      case workerProtocol.TYPE_REQ_FUNCTION_EXECUTE:\n' +
+    '        var worker_id = message.data.blobFunction.split(\'/\')[message.data.blobFunction.split(\'/\').length - 1];\n' +
+    '        _running_workers[worker_id] = new Worker(message.data.blobFunction);\n' +
+    '        _running_workers[worker_id].onmessage = onmessage;\n' +
+    '        _running_workers[worker_id].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_SUBWORKER_START, {wid: worker_id, dictv: _dict_variables, codeButtonEnable: message.data.codeButtonEnable}));\n' +
+    '        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_FUNCTION_EXECUTE_ACK, null));\n' +
+    '        break;\n' +
+    '      case workerProtocol._TYPE_RES_SUBWORKER_DONE:\n' +
+    '        if (message.data !== null && message.data !== \'\') {\n' +
+    '          postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_SUBWORKER_DONE, message.data));\n' +
+    '        }\n' +
+    '        _running_workers[message.sender].terminate();\n' +
+    '        delete _running_workers[message.data];\n' +
+    '        break;\n' +
+    '      case workerProtocol._TYPE_RES_SET_VARIABLE:\n' +
+    '        _dict_variables = message.data;\n' +
+    '        for (var key in _running_workers) {\n' +
+    '          _running_workers[key].postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol._TYPE_REQ_SET_VARIABLE, message.data));\n' +
+    '        }\n' +
+    '        break;\n' +
+    '      case workerProtocol._TYPE_RES_FUNCTION_TF_CALL:\n' +
+    '        if(_queue_function_tf_call) {\n' +
+    '          _function_tf_call_queue.push(message.data);\n' +
+    '          break;\n' +
+    '        }\n' +
+    '        _queue_function_tf_call = true;\n' +
+    '        _do_function_tf_call(message.data);\n' +
+    '        break;\n' +
+    '      case workerProtocol._TYPE_RES_MESSAGE_CONSOLE:\n' +
+    '        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_MESSAGE_CONSOLE, String(message.data)));\n' +
+    '        break;\n' +
+    '      case workerProtocol._TYPE_RES_MESSAGE_GUI_OUTPUT_FIELD:\n' +
+    '        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_MESSAGE_GUI_OUTPUT_FIELD, message));\n' +
+    '        break;\n' +
+    '      case workerProtocol._TYPE_RES_MESSAGE_GUI_PLOT:\n' +
+    '        postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER, workerProtocol.TYPE_RES_MESSAGE_GUI_PLOT, message));\n' +
+    '        break;\n' +
+    '      case workerProtocol._TYPE_RES_ERROR:\n' +
+    '        _error_handler(String(message.data));\n' +
+    '    }\n' +
+    '  }\n' +
+    '}\n' +
+    '\n' +
+    'onmessage = function(e) {\n' +
+    '  _dispatch_message(e.data);\n' +
+    '};\n' +
+    'onerror = _error_handler;\n';
 
-  // Functions.
+// Functions.
 
-  function eventHandlerLoadIframeProgramEditor(e) {
+function eventHandlerLoadIframeProgramEditor(e) {
     // Assign the program editor.
     programEditor = iframeProgramEditor.contentWindow['programEditor'];
     // Checks view port size and also compatibility.
     checkCompatibility();
-  }
+}
 
-  function closeAllOpenDialogs(e) {
+function closeAllOpenDialogs(e) {
     for (var dialog in dialogs) {
-      if (dialogs[dialog].open) dialogs[dialog].close();
+        if (dialogs[dialog].open) dialogs[dialog].close();
     }
-  }
+}
 
-  function checkViewportSize(e) {
+function checkViewportSize(e) {
     var width = Modernizr.mq('(min-width: 1025px)');
     var height = Modernizr.mq('(min-height: 512px)');
 
     if (!width || !height) return false;
 
     return true;
-  }
+}
 
-  // Compatibility checks.
-  function checkCompatibility(e) {
+// Compatibility checks.
+function checkCompatibility(e) {
     // Check view port size.
     if (!checkViewportSize()) {
-      closeAllOpenDialogs();
-      dialogs.errorScreenSizeSmall.showModal();
-      divBody.style.display = 'none';
+        closeAllOpenDialogs();
+        dialogs.errorScreenSizeSmall.showModal();
+        divBody.style.display = 'none';
 
-      return false;
+        return false;
     }
 
     // Check Blob.
     if (!Modernizr.bloburls || !Modernizr.blobconstructor) {
-      closeAllOpenDialogs();
-      dialogs.errorNoBlob.showModal();
-      divBody.style.display = 'none';
+        closeAllOpenDialogs();
+        dialogs.errorNoBlob.showModal();
+        divBody.style.display = 'none';
 
-      return false;
+        return false;
     }
 
     // Check Web Workers.
     if (!Modernizr.webworkers) {
-      closeAllOpenDialogs();
-      dialogs.errorNoWebWorker.showModal();
-      divBody.style.display = 'none';
+        closeAllOpenDialogs();
+        dialogs.errorNoWebWorker.showModal();
+        divBody.style.display = 'none';
 
-      return false;
+        return false;
     }
 
     // Check if Blockly toolbox was loaded.
     if (!Modernizr.blocklytoolboxloaded) {
-      if (window.chrome) {
-        closeAllOpenDialogs();
-        dialogs.errorToolboxLoadFailedChrome.showModal();
-      }
-      else {
-        closeAllOpenDialogs();
-        dialogs.errorToolboxLoadFailed.showModal();
-      }
+        if (window.chrome) {
+            closeAllOpenDialogs();
+            dialogs.errorToolboxLoadFailedChrome.showModal();
+        } else {
+            closeAllOpenDialogs();
+            dialogs.errorToolboxLoadFailed.showModal();
+        }
 
-      divBody.style.display = 'none';
+        divBody.style.display = 'none';
 
-      return false;
+        return false;
     }
 
     // Check if the GUI editor was initialized properly.
     if (!Modernizr.guieditor) {
-      closeAllOpenDialogs();
-      dialogs.errorGUIEditor.showModal();
-      divBody.style.display = 'none';
+        closeAllOpenDialogs();
+        dialogs.errorGUIEditor.showModal();
+        divBody.style.display = 'none';
 
-      return false;
+        return false;
     }
 
     closeAllOpenDialogs();
     divBody.style.display = 'block';
 
     return true; // All compatibility tests passed.
-  }
+}
 
-  function viewSwitcher(switchTo) {
-    switch(switchTo) {
-      case INDEX_VIEW_PROGRAM_EDITOR:
-        divGUIEditor.style.display = 'none';
-        divProgramEditor.style.display = 'block';
-        divExecuteProgram.style.display = 'none';
-        break;
-      case INDEX_VIEW_GUI_EDITOR:
-        divGUIEditor.style.display = 'block';
-        divProgramEditor.style.display = 'none';
-        divExecuteProgram.style.display = 'none';
-        break;
-      case INDEX_VIEW_EXECUTE_PROGRAM:
-        divGUIEditor.style.display = 'none';
-        divProgramEditor.style.display = 'none';
-        divExecuteProgram.style.display = 'block';
-        break;
+function viewSwitcher(switchTo) {
+    switch (switchTo) {
+        case INDEX_VIEW_PROGRAM_EDITOR:
+            divGUIEditor.style.display = 'none';
+            divProgramEditor.style.display = 'block';
+            divExecuteProgram.style.display = 'none';
+            break;
+        case INDEX_VIEW_GUI_EDITOR:
+            divGUIEditor.style.display = 'block';
+            divProgramEditor.style.display = 'none';
+            divExecuteProgram.style.display = 'none';
+            break;
+        case INDEX_VIEW_EXECUTE_PROGRAM:
+            divGUIEditor.style.display = 'none';
+            divProgramEditor.style.display = 'none';
+            divExecuteProgram.style.display = 'block';
+            break;
     }
-  }
+}
 
-  function eventHandlerClickaProgramEditor(e) {
+function eventHandlerClickaProgramEditor(e) {
     viewSwitcher(INDEX_VIEW_PROGRAM_EDITOR);
     return false; // So the link would not follow.
-  }
+}
 
-  function eventHandlerClickaGUIEditor(e) {
+function eventHandlerClickaGUIEditor(e) {
     viewSwitcher(INDEX_VIEW_GUI_EDITOR);
     return false; // So the link would not follow.
-  }
+}
 
-  function eventHandlerClickaExecuteProgram(e) {
+function eventHandlerClickaExecuteProgram(e) {
     viewSwitcher(INDEX_VIEW_EXECUTE_PROGRAM);
     return false; // So the link would not follow.
-  }
+}
 
-  function eventHandlerClickButtonExecuteProgramRunProgram(e) {
+function eventHandlerClickButtonExecuteProgramRunProgram(e) {
     var subworkerBlobsUrlArray = [];
     var dictProgramEditorToCode = {};
     var retPrepareJavaScriptCodeWorkerManager = [];
 
     dictProgramEditorToCode = Blockly.JavaScript.workspaceToCode(programEditor);
 
+    console.log(dictProgramEditorToCode);
+
     if (!dictProgramEditorToCode) {
-      alert(MSG_INFO_PROGRAM_EDITOR_EMPTY);
-      return;
+        alert(MSG_INFO_PROGRAM_EDITOR_EMPTY);
+        return;
     }
 
     definitionsGeneratedCode = dictProgramEditorToCode.definitions;
@@ -469,201 +468,200 @@ STATUS: No program running.</textarea>
     retPrepareJavaScriptCodeWorkerManager = prepareJavaScriptCode(dictProgramEditorToCode.dictVariablesInit + codeWorkerManager);
 
     if (!retPrepareJavaScriptCodeWorkerManager[0]) {
-      textareaConsole.value = MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED;
-      textareaConsole.value += retPrepareJavaScriptCodeWorkerManager[1];
-      textareaConsole.scrollTop = textareaConsole.scrollHeight;
-      return;
-    }
-
-    for (var i = 0; i < dictProgramEditorToCode.implementationTopLevelBlocks.length; i ++) {
-      var retPrepareJavaScriptCode = prepareJavaScriptCode(dictProgramEditorToCode.implementationTopLevelBlocks[i]);
-
-      if (!retPrepareJavaScriptCode[0]) {
         textareaConsole.value = MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED;
-        textareaConsole.value += retPrepareJavaScriptCode[1];
+        textareaConsole.value += retPrepareJavaScriptCodeWorkerManager[1];
         textareaConsole.scrollTop = textareaConsole.scrollHeight;
         return;
-      }
-      subworkerBlobsUrlArray.push(window.URL.createObjectURL(new Blob([retPrepareJavaScriptCode[1]])));
+    }
+
+    for (var i = 0; i < dictProgramEditorToCode.implementationTopLevelBlocks.length; i++) {
+        var retPrepareJavaScriptCode = prepareJavaScriptCode(dictProgramEditorToCode.implementationTopLevelBlocks[i]);
+
+        if (!retPrepareJavaScriptCode[0]) {
+            textareaConsole.value = MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED;
+            textareaConsole.value += retPrepareJavaScriptCode[1];
+            textareaConsole.scrollTop = textareaConsole.scrollHeight;
+            return;
+        }
+        subworkerBlobsUrlArray.push(window.URL.createObjectURL(new Blob([retPrepareJavaScriptCode[1]])));
     }
 
     workerManager = new Worker(window.URL.createObjectURL(new Blob([retPrepareJavaScriptCodeWorkerManager[1]])));
     workerManager.onmessage = function(e) {
-      var message = null;
+        var message = null;
 
-      if (typeof(e.data) !== 'object') {
-        return;
-      }
+        if (typeof(e.data) !== 'object') {
+            return;
+        }
 
-      message = e.data;
+        message = e.data;
 
-      if (message.type !== null && workerProtocol.isNumber(message.type)) {
-        switch(message.type) {
-          case workerProtocol.TYPE_RES_PROGRAM_START_ACK:
-            handleTypeResProgramStartAck();
-            break;
+        if (message.type !== null && workerProtocol.isNumber(message.type)) {
+            switch (message.type) {
+                case workerProtocol.TYPE_RES_PROGRAM_START_ACK:
+                    handleTypeResProgramStartAck();
+                    break;
 
-          case workerProtocol.TYPE_RES_PROGRAM_STOP_ACK:
-            textareaConsole.scrollTop = textareaConsole.scrollHeight;
+                case workerProtocol.TYPE_RES_PROGRAM_STOP_ACK:
+                    textareaConsole.scrollTop = textareaConsole.scrollHeight;
 
-            if (workerManager) {
-              workerManager.terminate();
-              workerManager = null;
-            }
+                    if (workerManager) {
+                        workerManager.terminate();
+                        workerManager = null;
+                    }
 
-            buttonToolbarRunStop.setAttribute('onclick', 'clickedRunProgram()');
-            buttonToolbarRunStop.setAttribute('title', MSG_TOOLTIP_BUTTON_RUNSTOP_RUN);
-            buttonToolbarRunStopImage.innerHTML = 'play_arrow';
-            buttonToolbarRunStop.disabled = false;
-            blockEditGUI(false);
-            blockRenderGUI(true);
+                    buttonToolbarRunStop.setAttribute('onclick', 'clickedRunProgram()');
+                    buttonToolbarRunStop.setAttribute('title', MSG_TOOLTIP_BUTTON_RUNSTOP_RUN);
+                    buttonToolbarRunStopImage.innerHTML = 'play_arrow';
+                    buttonToolbarRunStop.disabled = false;
+                    blockEditGUI(false);
+                    blockRenderGUI(true);
 
-            if (divRenderGUI.style.display === 'block') {
-                $.growl.warning({ message: MSG_INFO_NO_PROGRAM_RUNNING_RENDERED_GUI_BLOCKED });
-            }
+                    if (divRenderGUI.style.display === 'block') {
+                        $.growl.warning({
+                            message: MSG_INFO_NO_PROGRAM_RUNNING_RENDERED_GUI_BLOCKED
+                        });
+                    }
 
-            break;
+                    break;
 
-          case workerProtocol.TYPE_RES_MESSAGE_CONSOLE:
-            if (message.data !== null && message.data !== '') {
-              textareaConsole.value += message.data;
-              textareaConsole.scrollTop = textareaConsole.scrollHeight;
-            }
-            break;
+                case workerProtocol.TYPE_RES_MESSAGE_CONSOLE:
+                    if (message.data !== null && message.data !== '') {
+                        textareaConsole.value += message.data;
+                        textareaConsole.scrollTop = textareaConsole.scrollHeight;
+                    }
+                    break;
 
-          case workerProtocol.TYPE_RES_ERROR:
-            if (message.data !== null && message.data !== '') {
-              textareaConsole.value += message.data;
-              textareaConsole.scrollTop = textareaConsole.scrollHeight;
-            }
-            clickedStopProgram();
-            break;
+                case workerProtocol.TYPE_RES_ERROR:
+                    if (message.data !== null && message.data !== '') {
+                        textareaConsole.value += message.data;
+                        textareaConsole.scrollTop = textareaConsole.scrollHeight;
+                    }
+                    clickedStopProgram();
+                    break;
 
-          case workerProtocol.TYPE_RES_MESSAGE_GUI_OUTPUT_FIELD:
-            if (message.data.data.widget) {
-              var widgetOutputField = document.getElementById(message.data.data.widget);
+                case workerProtocol.TYPE_RES_MESSAGE_GUI_OUTPUT_FIELD:
+                    if (message.data.data.widget) {
+                        var widgetOutputField = document.getElementById(message.data.data.widget);
 
-              if (widgetOutputField) {
-                widgetOutputField.value = message.data.data.value;
-              }
-            }
-            break;
+                        if (widgetOutputField) {
+                            widgetOutputField.value = message.data.data.value;
+                        }
+                    }
+                    break;
 
-          case workerProtocol.TYPE_RES_MESSAGE_GUI_PLOT:
-            if (message.data.data.widget) {
-              if (message.data.data.widget in plotConfigs) {
-                updateWidgetPlot(message.data.data.widget, parseFloat(message.data.data.value));
-              }
-            }
-            break;
+                case workerProtocol.TYPE_RES_MESSAGE_GUI_PLOT:
+                    if (message.data.data.widget) {
+                        if (message.data.data.widget in plotConfigs) {
+                            updateWidgetPlot(message.data.data.widget, parseFloat(message.data.data.value));
+                        }
+                    }
+                    break;
 
-          case workerProtocol.TYPE_RES_SUBWORKER_DONE:
-            if (message.data !== null && message.data !== '') {
-              eval(message.data);
+                case workerProtocol.TYPE_RES_SUBWORKER_DONE:
+                    if (message.data !== null && message.data !== '') {
+                        eval(message.data);
+                    }
             }
         }
-      }
     };
 
     if (subworkerBlobsUrlArray.length > 0) {
-      workerManager.postMessage(workerProtocol.getMessage(workerProtocol.SENDER_GUI,
-                                                          workerProtocol.TYPE_REQ_PROGRAM_START,
-                                                          subworkerBlobsUrlArray));
-      buttonToolbarRunStop.disabled = true;
-      return;
+        workerManager.postMessage(workerProtocol.getMessage(workerProtocol.SENDER_GUI,
+            workerProtocol.TYPE_REQ_PROGRAM_START,
+            subworkerBlobsUrlArray));
+        buttonToolbarRunStop.disabled = true;
+        return;
     }
     handleTypeResProgramStartAck();
-  }
+}
 
-  jQuery(document).ready(function($) {
+jQuery(document).ready(function($) {
     /*
      * All JavaScript code that requires that the page has
      * finished loading goes here.
      */
 
-     // Elements of the page.
-     divBody = document.getElementById('divBody');
-     divGUIEditor = document.getElementById('divGUIEditor');
-     divProgramEditor = document.getElementById('divProgramEditor');
-     textAreaGUIEditor = document.getElementById('textAreaGUIEditor');
-     $textAreaGUIEditor = $(textAreaGUIEditor); // jQuery object.
-     divExecuteProgram = document.getElementById('divExecuteProgram');
-     iframeProgramEditor = document.getElementById('iframeProgramEditor');
-     $iframeProgramEditor = $(iframeProgramEditor); // jQuery object.
-     divExecuteProgramRenderedGUI = document.getElementById('divExecuteProgramRenderedGUI');
-     buttonExecuteProgramRunProgram = document.getElementById('buttonExecuteProgramRunProgram');
-     buttonExecuteProgramStopProgram = document.getElementById('buttonExecuteProgramStopProgram');
-     textareaProgramExecutionConsole = document.getElementById('textareaProgramExecutionConsole');
-     divExecuteProgramRenderedGUIEmpty = document.getElementById('divExecuteProgramRenderedGUIEmpty');
+    // Elements of the page.
+    divBody = document.getElementById('divBody');
+    divGUIEditor = document.getElementById('divGUIEditor');
+    divProgramEditor = document.getElementById('divProgramEditor');
+    textAreaGUIEditor = document.getElementById('textAreaGUIEditor');
+    $textAreaGUIEditor = $(textAreaGUIEditor); // jQuery object.
+    divExecuteProgram = document.getElementById('divExecuteProgram');
+    iframeProgramEditor = document.getElementById('iframeProgramEditor');
+    $iframeProgramEditor = $(iframeProgramEditor); // jQuery object.
+    divExecuteProgramRenderedGUI = document.getElementById('divExecuteProgramRenderedGUI');
+    buttonExecuteProgramRunProgram = document.getElementById('buttonExecuteProgramRunProgram');
+    buttonExecuteProgramStopProgram = document.getElementById('buttonExecuteProgramStopProgram');
+    textareaProgramExecutionConsole = document.getElementById('textareaProgramExecutionConsole');
+    divExecuteProgramRenderedGUIEmpty = document.getElementById('divExecuteProgramRenderedGUIEmpty');
 
-     // Dialogs.
-     dialogs.errorNoBlob                  = document.getElementById('dialogErrorNoBlob');
-     dialogs.errorGUIEditor               = document.getElementById('dialogErrorGUIEditor');
-     dialogs.errorNoWebWorker             = document.getElementById('dialogErrorNoWebWorker');
-     dialogs.errorScreenSizeSmall         = document.getElementById('dialogErrorScreenSizeSmall');
-     dialogs.errorToolboxLoadFailed       = document.getElementById('dialogErrorToolboxLoadFailed');
-     dialogs.errorToolboxLoadFailedChrome = document.getElementById('dialogErrorToolboxLoadFailedChrome');
+    // Dialogs.
+    dialogs.errorNoBlob = document.getElementById('dialogErrorNoBlob');
+    dialogs.errorGUIEditor = document.getElementById('dialogErrorGUIEditor');
+    dialogs.errorNoWebWorker = document.getElementById('dialogErrorNoWebWorker');
+    dialogs.errorScreenSizeSmall = document.getElementById('dialogErrorScreenSizeSmall');
+    dialogs.errorToolboxLoadFailed = document.getElementById('dialogErrorToolboxLoadFailed');
+    dialogs.errorToolboxLoadFailedChrome = document.getElementById('dialogErrorToolboxLoadFailedChrome');
 
     // Add custom Modernizr tests.
     Modernizr.addTest('dialogs', function(e) {
-      if (!document.querySelector('dialog').showModal) return false;
-      return true;
+        if (!document.querySelector('dialog').showModal) return false;
+        return true;
     });
 
     Modernizr.addTest('blocklytoolboxloaded', function(e) {
-      /*
-       * If being accessed without a server then Google Chrome must be launched with,
-       * "--allow-file-access-from-files" parameter to be able to use TVPL.
-       */
-      var xmlHttp = null;
-      var xmlBlocklyToolbox = null;
-
-      try {
-        if (window.XMLHttpRequest) {
-          xmlHttp = new XMLHttpRequest();
-        }
-        else {
-          xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
-        }
-
-        xmlHttp.open('GET', 'xml/toolbox.xml', false);
-        xmlHttp.send();
-        xmlBlocklyToolbox = xmlHttp.responseXML;
         /*
-         * We don't actually need to use the toolbox here.
-         * It was just to test that the toolbox loading actually works.
+         * If being accessed without a server then Google Chrome must be launched with,
+         * "--allow-file-access-from-files" parameter to be able to use TVPL.
          */
-        xmlHttp = null;
-        xmlBlocklyToolbox = null;
+        var xmlHttp = null;
+        var xmlBlocklyToolbox = null;
 
-        return true;
-      }
-      catch(e) {
-        return false;
-      }
+        try {
+            if (window.XMLHttpRequest) {
+                xmlHttp = new XMLHttpRequest();
+            } else {
+                xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+
+            xmlHttp.open('GET', 'xml/toolbox.xml', false);
+            xmlHttp.send();
+            xmlBlocklyToolbox = xmlHttp.responseXML;
+            /*
+             * We don't actually need to use the toolbox here.
+             * It was just to test that the toolbox loading actually works.
+             */
+            xmlHttp = null;
+            xmlBlocklyToolbox = null;
+
+            return true;
+        } catch (e) {
+            return false;
+        }
     });
 
     Modernizr.addTest('guieditor', function(e) {
-      try {
-        /*
-         * It is a requirement of the GUI editor that the <textarea> on which it is
-         * being initialized be a jQuery object.
-         */
+        try {
+            /*
+             * It is a requirement of the GUI editor that the <textarea> on which it is
+             * being initialized be a jQuery object.
+             */
 
-        $textAreaGUIEditor.formBuilder();
-        return true;
-      }
-      catch(e) {
-        return false;
-      }
+            $textAreaGUIEditor.formBuilder();
+            return true;
+        } catch (e) {
+            return false;
+        }
     });
 
     // Use polyfill for dialogs if dialogs aren't available.
     if (!Modernizr.dialogs) {
-      for (var dialog in dialogs) {
-        // Dialog polyfill registration has to be for each defined dialog.
-        dialogPolyfill.registerDialog(dialogs[dialog]);
-      }
+        for (var dialog in dialogs) {
+            // Dialog polyfill registration has to be for each defined dialog.
+            dialogPolyfill.registerDialog(dialogs[dialog]);
+        }
     }
 
     /*
@@ -679,5 +677,5 @@ STATUS: No program running.</textarea>
 
     // Now wait until the program editor has finished loading and only then continue.
     $iframeProgramEditor.load(eventHandlerLoadIframeProgramEditor);
-  });
+});
 </script>
