@@ -81,6 +81,7 @@ html, body {
   height          : 100vh;
   background-color: black;
   border          : solid 2px #DDDDDD;
+  font-family     : "Lucida Console", Monaco, monospace;
 }
 
 #divExecuteProgramRenderedGUIEmpty {
