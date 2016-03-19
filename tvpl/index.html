@@ -64,6 +64,14 @@
             </p>
         </div>
     </dialog>
+    <dialog id="dialogErrorWorkerManagerCodeLoadFailed" class="mdl-dialog">
+        <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
+        <div class="mdl-dialog__content">
+            <p>
+                Could not load worker manager code which is required to use TVPL.
+            </p>
+        </div>
+    </dialog>
     <dialog id="dialogErrorToolboxLoadFailed" class="mdl-dialog">
         <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
         <div class="mdl-dialog__content">
@@ -150,7 +158,7 @@
                                     <button id="buttonExecuteProgramRunProgram" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" onClick="eventHandlerClickButtonExecuteProgramRunProgram()">
                                         <i class="material-icons">play_arrow</i> Run Program
                                     </button>
-                                    <button id="buttonExecuteProgramStopProgram" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" disabled>
+                                    <button id="buttonExecuteProgramStopProgram" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" onClick="eventHandlerClickButtonExecuteProgramStopProgram()" disabled>
                                         <i class="material-icons">stop</i> Stop Program
                                     </button>
                                 </td>
@@ -177,7 +185,7 @@
         </div>
     </div>
     <!--
-    Main JavaScript implementation.
+    Main JavaScript code.
     Following the pattern of keeping content and control separated.
     -->
     <script type="text/javascript" src="js/main.js"></script>

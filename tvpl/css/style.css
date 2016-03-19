@@ -96,9 +96,9 @@ body {
 #divExecuteProgramRenderedGUIEmpty {
     font-weight: bold;
     /*
-   * Not sure why but have to use vw and vh here.
-   * Maybe because of table-cell display?
-   */
+        Not sure why but have to use vw and vh here.
+        Maybe because of table-cell display?
+    */
     width: 100vw;
     height: 100vh;
     text-align: center;
