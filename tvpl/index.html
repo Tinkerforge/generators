@@ -42,6 +42,16 @@
       All the dialog definitions should be outside of 'divBody' because
       there are cases where we want to hide the body contents and show a dialog.
     -->
+    <div id="snackbar" class="mdl-js-snackbar mdl-snackbar">
+        <div class="mdl-snackbar__text"></div>
+        <button class="mdl-snackbar__action" type="button"></button>
+    </div>
+    <!--
+    <i class="material-icons">error</i>
+    <i class="material-icons">warning</i>
+    <i class="material-icons">info</i>
+    <i class="material-icons">check_circle</i>
+    -->
     <dialog id="dialogErrorScreenSizeSmall" class="mdl-dialog">
         <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
         <div class="mdl-dialog__content">
@@ -50,12 +60,6 @@
                 <p>
         </div>
     </dialog>
-    <!--
-    <i class="material-icons">error</i>
-    <i class="material-icons">warning</i>
-    <i class="material-icons">info</i>
-    <i class="material-icons">check_circle</i>
-    -->
     <dialog id="dialogErrorNoWebWorker" class="mdl-dialog">
         <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
         <div class="mdl-dialog__content">

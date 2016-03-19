@@ -8,6 +8,12 @@
 
 // Constants.
 
+var MSG_SNACKBAR_GUI_EDITOR_DISABLED =
+    'GUI editor is disabled as a program is currently running.';
+var MSG_OUTPUT_CONSOLE_WAITING_OUTPUT =
+    'Program running. Waiting for output...';
+var MSG_OUTPUT_CONSOLE_NO_PROGRAM_RUNNING =
+    'A running program can print text on this output console.\n\nSTATUS: No program running.';
 var INDEX_VIEW_PROGRAM_EDITOR = 1;
 var INDEX_VIEW_GUI_EDITOR = 2;
 var INDEX_VIEW_EXECUTE_PROGRAM = 3;
@@ -45,6 +51,7 @@ var $textareaProgramExecutionConsole = null; // jQuery object.
 var divExecuteProgramRenderedGUIEmpty = null;
 
 var dialogs = {};
+var snackbar = null;
 var programEditor = null;
 var workerManager = null;
 var xmlBlocklyToolbox = null;
@@ -171,7 +178,7 @@ function eventHandlerResProgramStartAck(e) {
     $buttonExecuteProgramRunProgram.attr('disabled', true);
     $buttonExecuteProgramStopProgram.removeAttr('disabled');
     $textareaProgramExecutionConsole.addClass('waiting');
-    textareaProgramExecutionConsole.value = 'Program running. Waiting for output...';
+    textareaProgramExecutionConsole.value = MSG_OUTPUT_CONSOLE_WAITING_OUTPUT;
     textareaProgramExecutionConsole.scrollTop = textareaProgramExecutionConsole.scrollHeight;
 
     /*
@@ -425,6 +432,12 @@ function eventHandlerClickaProgramEditor(e) {
 }
 
 function eventHandlerClickaGUIEditor(e) {
+    if (PROGRAM_STATUS_RUNNING) {
+        snackbar.MaterialSnackbar.showSnackbar({
+            message: MSG_SNACKBAR_GUI_EDITOR_DISABLED,
+            timeout: 2500
+        });
+    }
     viewSwitcher(INDEX_VIEW_GUI_EDITOR);
     return false; // So the link would not follow.
 }
@@ -437,8 +450,7 @@ function eventHandlerClickaExecuteProgram(e) {
 function eventHandlerClickButtonExecuteProgramStopProgram(e) {
     $buttonExecuteProgramStopProgram.attr('disabled', true);
     $buttonExecuteProgramRunProgram.removeAttr('disabled');
-    textareaProgramExecutionConsole.value =
-        'A running program can print text on this output console.\n\nSTATUS: No program running.';
+    textareaProgramExecutionConsole.value = MSG_OUTPUT_CONSOLE_NO_PROGRAM_RUNNING;
 
     /*
     $textareaProgramExecutionConsole.addClass('waiting');
@@ -520,6 +532,9 @@ jQuery(document).ready(function($) {
     textareaProgramExecutionConsole = document.getElementById('textareaProgramExecutionConsole');
     $textareaProgramExecutionConsole = $(textareaProgramExecutionConsole); // jQuery object.
     divExecuteProgramRenderedGUIEmpty = document.getElementById('divExecuteProgramRenderedGUIEmpty');
+
+    // Snackbar
+    snackbar = document.getElementById('snackbar');
 
     // Dialogs.
     dialogs.errorNoBlob = document.getElementById('dialogErrorNoBlob');
