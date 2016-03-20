@@ -39,6 +39,10 @@
 
 <body>
     <!--
+      File input for loading projects.
+    -->
+    <input id="inputLoadProjectFile" type="file" onchange="eventHandlerLoadProjectFile(this)" />
+    <!--
       All the dialog definitions should be outside of 'divBody' because
       there are cases where we want to hide the body contents and show a dialog.
     -->
@@ -135,9 +139,9 @@
             <div class="mdl-layout__drawer">
                 <span class="mdl-layout-title">Main Menu</span>
                 <nav class="mdl-navigation">
-                    <a class="mdl-navigation__link" href=""><i class="material-icons">folder_open</i>Load Project</a>
-                    <a class="mdl-navigation__link" href=""><i class="material-icons">save</i>Save Project</a>
-                    <a class="mdl-navigation__link" href=""><i class="material-icons">info</i>About</a>
+                    <a id="aLoadProject" class="mdl-navigation__link" href=""><i class="material-icons">folder_open</i>Load Project</a>
+                    <a id="aSaveProject" class="mdl-navigation__link" href=""><i class="material-icons">save</i>Save Project</a>
+                    <a id="aAbout" class="mdl-navigation__link" href=""><i class="material-icons">info</i>About</a>
                 </nav>
             </div>
             <main class="mdl-layout__content">

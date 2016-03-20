@@ -8,12 +8,8 @@
 
 // Constants.
 
-var MSG_SNACKBAR_GUI_EDITOR_DISABLED =
-    'GUI editor is disabled as a program is currently running.';
-var MSG_OUTPUT_CONSOLE_WAITING_OUTPUT =
-    'Program running. Waiting for output...';
-var MSG_OUTPUT_CONSOLE_NO_PROGRAM_RUNNING =
-    'A running program can print text on this output console.\n\nSTATUS: No program running.';
+var FILENAME_GUI_EDITOR = 'tvpl.gui';
+var FILENAME_PROGRAM_EDITOR = 'tvpl.prg';
 var INDEX_VIEW_PROGRAM_EDITOR = 1;
 var INDEX_VIEW_GUI_EDITOR = 2;
 var INDEX_VIEW_EXECUTE_PROGRAM = 3;
@@ -26,7 +22,27 @@ var LIST_IMPORT_SCRIPTS = [
     'babelPolyfill.js',
     'workerProtocol.js'
 ];
-var MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED = 'ERROR: The following error occurred while preparing JavaScript code.\n\n\n';
+var MONTH_NAMES = ['Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec'
+];
+var MSG_SNACKBAR_GUI_EDITOR_DISABLED =
+    'GUI editor is disabled as a program is currently running.';
+var MSG_OUTPUT_CONSOLE_WAITING_OUTPUT =
+    'Program running. Waiting for output...';
+var MSG_OUTPUT_CONSOLE_NO_PROGRAM_RUNNING =
+    'A running program can print text on this output console.\n\nSTATUS: No program running.';
+var MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED =
+    'ERROR: The following error occurred while preparing JavaScript code.\n\n\n';
 
 // Variables.
 
@@ -313,6 +329,123 @@ function viewSwitcher(switchTo) {
     }
 }
 
+function eventHandlerLoadProjectFile(fileInput) {
+    var zip = null;
+    var file = null;
+    var fileReader = null;
+    var guiEditorText = '';
+    var xmlProgramEditorText = '';
+
+    if (fileInput.value.substr(-5) !== '.tvpl') {
+        alert(MSG_ERROR_NOT_VALID_PROJECT_FILE);
+        return;
+    }
+
+    try {
+        file = fileInput.files[0];
+        fileReader = new FileReader();
+
+        fileReader.onload = function(e) {
+            zip = new JSZip(fileReader.result);
+
+            if (!zip.file(FILENAME_PROGRAM_EDITOR)) {
+                alert(MSG_ERROR_PROJECT_LOAD_NO_PRG_FILE);
+                return;
+            }
+
+            if (!zip.file(FILENAME_GUI_EDITOR)) {
+                alert(MSG_ERROR_PROJECT_LOAD_NO_GUI_FILE);
+                return;
+            }
+
+            xmlProgramEditorText = zip.file(FILENAME_PROGRAM_EDITOR).asText();
+            guiEditorText = zip.file(FILENAME_GUI_EDITOR).asText();
+
+            if (xmlProgramEditorText !== '') {
+                try {
+                    programEditor.clear();
+                    Blockly.Xml.domToWorkspace(programEditor, Blockly.Xml.textToDom(xmlProgramEditorText));
+                    //clickedStopProgram();
+                } catch (e) {
+                    console.log(e);
+                    // Dialog.
+                    //alert(MSG_ERROR_PROJECT_LOAD_FAILED);
+                    return;
+                }
+            }
+
+            if (xmlProgramEditorText !== '') {
+                // Remove the textarea
+                divGUIEditor.removeChild(document.getElementById('frmb-0-form-wrap'));
+
+                // Recreate the text area
+                var newTextAreaEditGUI = document.createElement('textarea');
+                newTextAreaEditGUI.setAttribute('id', 'textAreaEditGUI');
+                newTextAreaEditGUI.setAttribute('name', 'textAreaEditGUI');
+                divGUIEditor.appendChild(newTextAreaEditGUI);
+
+                // Re-initialize form builder
+                editorGUI = document.getElementById('textAreaEditGUI');
+                $(editorGUI).val(guiEditorText);
+                $(editorGUI).formBuilder();
+                $(editorGUI).formRender({ container: $(divRenderGUI) });
+            }
+        }
+        fileReader.readAsArrayBuffer(file);
+    } catch (e) {
+        console.log(e);
+        alert(MSG_ERROR_PROJECT_FILE_READ_FAILED);
+    }
+}
+
+function eventHandlerClickaLoadProject(e) {
+    inputLoadProjectFile.click();
+    return false; // So the link would not follow.
+}
+
+function eventHandlerClickaSaveProject(e) {
+    try {
+        var xmlProgramEditorText = '';
+        var guiEditorText = '';
+        var d = new Date();
+        var zip = null;
+        var zipContent = null;
+        var projectFileNameTVPL = MONTH_NAMES[d.getUTCMonth()] +
+            d.getUTCDate() +
+            '_' +
+            d.getUTCHours() +
+            '_' +
+            d.getUTCMinutes() +
+            '_' +
+            d.getUTCSeconds() +
+            '.tvpl';
+
+        xmlProgramEditorText = Blockly.Xml.domToPrettyText(Blockly.Xml.workspaceToDom(programEditor));
+
+        if (divExecuteProgramRenderedGUI.childNodes.length > 0) {
+            guiEditorText = $textAreaGUIEditor.val();
+        }
+
+        // Initiate JSZip.
+        zip = new JSZip();
+        // Create program editor and GUI editor files.
+        zip.file(FILENAME_PROGRAM_EDITOR, xmlProgramEditorText);
+        zip.file(FILENAME_GUI_EDITOR, guiEditorText);
+        // Generate ZIP file.
+        zipContent = zip.generate({ type: "blob" });
+        // Save the generated ZIP file.
+        saveAs(zipContent, projectFileNameTVPL);
+    } catch (e) {
+        // Dialog.
+    }
+
+    return false; // So the link would not follow.
+}
+
+function eventHandlerClickaAbout(e) {
+    return false; // So the link would not follow.
+}
+
 function eventHandlerClickaProgramEditor(e) {
     viewSwitcher(INDEX_VIEW_PROGRAM_EDITOR);
     return false; // So the link would not follow.
@@ -517,9 +650,17 @@ jQuery(document).ready(function($) {
      * Register event handlers for the main view switching
      * links (Program Editor, GUI Editor and Execute Program).
      */
-    $('#aProgramEditor').click(eventHandlerClickaProgramEditor);
     $('#aGUIEditor').click(eventHandlerClickaGUIEditor);
+    $('#aProgramEditor').click(eventHandlerClickaProgramEditor);
     $('#aExecuteProgram').click(eventHandlerClickaExecuteProgram);
+
+    /*
+     * Register event handlers for the drawer button
+     * links (Load Project, Save Project and About).
+     */
+    $('#aAbout').click(eventHandlerClickaAbout);
+    $('#aLoadProject').click(eventHandlerClickaLoadProject);
+    $('#aSaveProject').click(eventHandlerClickaSaveProject);
 
     // Register windows resize handler.
     window.addEventListener('resize', checkCompatibility, false);
