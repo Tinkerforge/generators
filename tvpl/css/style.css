@@ -12,6 +12,19 @@ body {
 }
 
 
+/* Class for enabling/disabling views. */
+
+.enabled {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+
 /* MDL elements. */
 
 .layout-waterfall,
@@ -96,13 +109,14 @@ body {
 }
 
 #divExecuteProgramRenderedGUIEmpty {
-    font-weight: bold;
     /*
-        Not sure why but have to use vw and vh here.
-        Maybe because of table-cell display?
+        Must use vw and vh here.
+        Most probably all these vw and vh stuff is
+        because of the viewport meta tag for mobile devices.
     */
     width: 100vw;
     height: 100vh;
+    font-weight: bold;
     text-align: center;
     vertical-align: middle;
     background-color: #DDDDDD;

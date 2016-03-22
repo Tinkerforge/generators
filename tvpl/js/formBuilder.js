@@ -9,14 +9,16 @@ Tinkerforge TVPL modifications: Start tracing from,
 'use strict';
 
 function renderGUI() {
-    var editorGUI = null;
-    var divRenderGUI = null;
+    var textAreaGUIEditor = null;
+    var divExecuteProgramRenderedGUI = null;
 
-    editorGUI = document.getElementById('textAreaEditGUI');
-    divRenderGUI = document.getElementById('divRenderGUI');
+    textAreaGUIEditor = document.getElementById('textAreaGUIEditor');
+    divExecuteProgramRenderedGUI = document.getElementById('divExecuteProgramRenderedGUI');
 
-    if (editorGUI && divRenderGUI && typeof resetRenderPlotWidgets === "function") {
-        $(editorGUI).formRender({ container: $(divRenderGUI) });
+    if (textAreaGUIEditor && divExecuteProgramRenderedGUI && typeof resetRenderPlotWidgets === "function") {
+        $(textAreaGUIEditor).formRender({
+            container: $(divExecuteProgramRenderedGUI)
+        });
         resetRenderPlotWidgets();
     }
 }
@@ -1481,6 +1483,8 @@ function renderGUI() {
 
         // Schedule a render after returning updated GUI editor preview code.
         if (serialStr) setTimeout(renderGUI, 50);
+
+        setTimeout(eventHandlerChangeTextAreaGUIEditor, 50);
 
         return serialStr;
     };

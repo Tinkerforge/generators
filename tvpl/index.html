@@ -56,12 +56,68 @@
     <i class="material-icons">info</i>
     <i class="material-icons">check_circle</i>
     -->
+    <dialog id="dialogInformationAbout" class="mdl-dialog">
+        <h4 class="mdl-dialog__title"><mark class="markDialogHeaderInformation"><i class="material-icons">info</i> About</mark></h4>
+        <div class="mdl-dialog__content">
+            <p>
+                Tinkerforge Visual Programming Language (TVPL).
+                Copyright and stuff goes here.
+            </p>
+        </div>
+        <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
+            <button type="button" class="mdl-button dialogButtonClose">Close</button>
+        </div>
+    </dialog>
+    <dialog id="dialogErrorProgramEditorEmpty" class="mdl-dialog">
+        <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
+        <div class="mdl-dialog__content">
+            <p>
+                Nothing to execute. Seems like the program editor is empty.
+            </p>
+        </div>
+        <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
+            <button type="button" class="mdl-button dialogButtonClose">Close</button>
+        </div>
+    </dialog>
+    <dialog id="dialogErrorSaveProjectFailed" class="mdl-dialog">
+        <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
+        <div class="mdl-dialog__content">
+            <p>
+                Saving project failed.
+            </p>
+        </div>
+        <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
+            <button type="button" class="mdl-button dialogButtonClose">Close</button>
+        </div>
+    </dialog>
+    <dialog id="dialogErrorLoadProjectReadFailed" class="mdl-dialog">
+        <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
+        <div class="mdl-dialog__content">
+            <p>
+                Reading project file failed.
+            </p>
+        </div>
+        <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
+            <button type="button" class="mdl-button dialogButtonClose">Close</button>
+        </div>
+    </dialog>
+    <dialog id="dialogErrorLoadProjectFileInvalid" class="mdl-dialog">
+        <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
+        <div class="mdl-dialog__content">
+            <p>
+                Not a valid project file.
+            </p>
+        </div>
+        <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
+            <button type="button" class="mdl-button dialogButtonClose">Close</button>
+        </div>
+    </dialog>
     <dialog id="dialogErrorScreenSizeSmall" class="mdl-dialog">
         <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
         <div class="mdl-dialog__content">
             <p>
                 The window size on which you are using TVPL is not enough. Try making the window larger if possible.
-                <p>
+            </p>
         </div>
     </dialog>
     <dialog id="dialogErrorNoWebWorker" class="mdl-dialog">
@@ -112,17 +168,6 @@
             </p>
         </div>
     </dialog>
-    <dialog id="dialogErrorProgramEditorEmpty" class="mdl-dialog">
-        <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
-        <div class="mdl-dialog__content">
-            <p>
-                Nothing to execute. Seems like the program editor is empty.
-            </p>
-        </div>
-        <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
-            <button type="button" class="mdl-button dialogButtonClose">Close</button>
-        </div>
-    </dialog>
     <div id="divBody">
         <div class="layout-waterfall mdl-layout mdl-js-layout">
             <header class="mdl-layout__header mdl-layout__header--waterfall">
@@ -152,7 +197,7 @@
                         <iframe id="iframeProgramEditor" src="./programEditor.html"></iframe>
                     </div>
                     <!-- div of GUI editor. -->
-                    <div id="divGUIEditor">
+                    <div id="divGUIEditor" class="enabled">
                         <textarea id="textAreaGUIEditor"></textarea>
                     </div>
                     <!-- div of execute program. -->
@@ -182,7 +227,7 @@
                                     <div id="divExecuteProgramRenderedGUIEmpty">
                                         Seems like the GUI editor is empty and there is nothing to render.
                                     </div>
-                                    <div id="divExecuteProgramRenderedGUI">
+                                    <div id="divExecuteProgramRenderedGUI" class="enabled">
                                     </div>
                                 </td>
                             </tr>

@@ -6,14 +6,13 @@
  * variables will have scope limited only to the callback function.
  */
 
-// Constants.
+// Constants. Stuff that don't change during runtime.
 
 var FILENAME_GUI_EDITOR = 'tvpl.gui';
 var FILENAME_PROGRAM_EDITOR = 'tvpl.prg';
 var INDEX_VIEW_PROGRAM_EDITOR = 1;
 var INDEX_VIEW_GUI_EDITOR = 2;
 var INDEX_VIEW_EXECUTE_PROGRAM = 3;
-var PROGRAM_STATUS_RUNNING = false;
 var LIST_IMPORT_SCRIPTS = [
     'Tinkerforge.js',
     'subworkers.js',
@@ -37,6 +36,8 @@ var MONTH_NAMES = ['Jan',
 ];
 var MSG_SNACKBAR_GUI_EDITOR_DISABLED =
     'GUI editor is disabled as a program is currently running.';
+var MSG_SNACKBAR_EXECUTE_PROGRAM_RENDERED_GUI_DISABLED =
+    'Rendered GUI is disabled no program is currently running.';
 var MSG_OUTPUT_CONSOLE_WAITING_OUTPUT =
     'Program running. Waiting for output...';
 var MSG_OUTPUT_CONSOLE_NO_PROGRAM_RUNNING =
@@ -52,22 +53,26 @@ var MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED =
  */
 var divBody = null;
 var divGUIEditor = null;
+var $divGUIEditor = null; // jQuery object.
 var divProgramEditor = null;
 var textAreaGUIEditor = null;
-var $textAreaGUIEditor = null; // jQuery object.
 var divExecuteProgram = null;
+var $textAreaGUIEditor = null; // jQuery object.
 var iframeProgramEditor = null;
+var program_status_running = false;
 var divExecuteProgramRenderedGUI = null;
+var $divExecuteProgramRenderedGUI = null; // jQuery object.
 var buttonExecuteProgramRunProgram = null;
 var $buttonExecuteProgramRunProgram = null; // jQuery object.
 var buttonExecuteProgramStopProgram = null;
-var $buttonExecuteProgramStopProgram = null; // jQuery object.
 var textareaProgramExecutionConsole = null;
+var $buttonExecuteProgramStopProgram = null; // jQuery object
 var $textareaProgramExecutionConsole = null; // jQuery object.
 var divExecuteProgramRenderedGUIEmpty = null;
 
 var dialogs = {};
 var snackbar = null;
+var plotConfigs = {};
 var programEditor = null;
 var workerManager = null;
 var xmlBlocklyToolbox = null;
@@ -75,31 +80,92 @@ var codeWorkerManager = null;
 
 // Functions.
 
-function eventHandlerResProgramStartAck(e) {
-    PROGRAM_STATUS_RUNNING = true;
-
-    $buttonExecuteProgramRunProgram.attr('disabled', true);
-    $buttonExecuteProgramStopProgram.removeAttr('disabled');
-    $textareaProgramExecutionConsole.addClass('waiting');
-    textareaProgramExecutionConsole.value = MSG_OUTPUT_CONSOLE_WAITING_OUTPUT;
-    textareaProgramExecutionConsole.scrollTop = textareaProgramExecutionConsole.scrollHeight;
-
-    /*
-    buttonToolbarRunStop.setAttribute('onclick', 'clickedStopProgram()');
-    buttonToolbarRunStop.setAttribute('title', MSG_TOOLTIP_BUTTON_RUNSTOP_STOP);
-    buttonToolbarRunStopImage.innerHTML = 'stop';
-    buttonToolbarRunStop.disabled = false;
-    blockEditGUI(true);
-    blockRenderGUI(false);
-
-    if (divEditGUI.style.display === 'block') {
-        $.growl.warning({ message: MSG_INFO_PROGRAM_RUNNING_GUI_EDITOR_BLOCKED });
+function toggleDivGUIEditor(enable) {
+    if (enable) {
+        $divGUIEditor.addClass('enabled');
+        $divGUIEditor.removeClass('disabled');
+        return;
     }
-    */
+
+    $divGUIEditor.addClass('disabled');
+    $divGUIEditor.removeClass('enabled');
+
+    snackbar.MaterialSnackbar.showSnackbar({
+        message: MSG_SNACKBAR_GUI_EDITOR_DISABLED,
+        timeout: 2500
+    });
+}
+
+function toggleDivExecuteProgramRenderedGUI(enable) {
+    if (enable) {
+        $divExecuteProgramRenderedGUI.addClass('enabled');
+        $divExecuteProgramRenderedGUI.removeClass('disabled');
+        return;
+    }
+
+    $divExecuteProgramRenderedGUI.addClass('disabled');
+    $divExecuteProgramRenderedGUI.removeClass('enabled');
+
+    if ($divExecuteProgramRenderedGUIEmpty.css('display') === 'none')
+        snackbar.MaterialSnackbar.showSnackbar({
+            message: MSG_SNACKBAR_EXECUTE_PROGRAM_RENDERED_GUI_DISABLED,
+            timeout: 2500
+        });
+}
+
+function resetRenderPlotWidgets(e) {
+    console.log('resetRenderPlotWidgets');
+}
+
+function eventHandlerChangeTextAreaGUIEditor(e) {
+    if ($textAreaGUIEditor.val() === '') {
+        $divExecuteProgramRenderedGUI.hide();
+        $divExecuteProgramRenderedGUIEmpty.show();
+    } else {
+        $divExecuteProgramRenderedGUI.show();
+        $divExecuteProgramRenderedGUIEmpty.hide();
+    }
+}
+
+function drawPlotWidget(plotWidget, plotData) {
+    var wasVisibility = divRenderGUI.style.display;
+
+    divRenderGUI.style.display = 'block';
+    plotWidget.setData(plotData);
+    plotWidget.setupGrid();
+    plotWidget.draw();
+    // Restore visibility.
+    divRenderGUI.style.display = wasVisibility;
+}
+
+function updateWidgetPlot(nameWidgetPlot, value) {
+    var plotConfig = plotConfigs[nameWidgetPlot];
+
+    if (!plotConfig.plot) {
+        return;
+    }
+
+    if (plotConfig.axisY.data.length < plotConfig.dataPoints) {
+        // Append new data point.
+        var dataLength = plotConfig.axisY.data.length;
+        plotConfig.axisY.data.push([dataLength, value]);
+    } else if (plotConfig.axisY.data.length == plotConfig.dataPoints) {
+        // Shift data set and then append new data point.
+        plotConfig.axisY.data.shift();
+
+        for (var i = 0; i < plotConfig.axisY.data.length; i++) {
+            plotConfig.axisY.data[i] = [plotConfig.axisY.data[i][0] - 1, plotConfig.axisY.data[i][1]];
+        }
+
+        plotConfig.axisY.data.push([plotConfig.dataPoints - 1, value]);
+    } else {
+        return;
+    }
+
+    drawPlotWidget(plotConfig.plot, [plotConfig.axisY]);
 }
 
 function eventHandlerMessageWorkerManager(e) {
-    console.log('*** eventHandlerMessageWorkerManager()');
     var message = null;
 
     if (typeof(e.data) !== 'object') {
@@ -111,54 +177,76 @@ function eventHandlerMessageWorkerManager(e) {
     if (message.type !== null && workerProtocol.isNumber(message.type)) {
         switch (message.type) {
             case workerProtocol.TYPE_RES_PROGRAM_START_ACK:
-                console.log('*** ACK');
-                eventHandlerResProgramStartAck();
+                /*
+                 * Update program running status.
+                 * Views are enabled/disabled based on the value of this status variable.
+                 */
+                program_status_running = true;
+                // Disable run program button.
+                $buttonExecuteProgramRunProgram.attr('disabled', true);
+                // Enable stop program button
+                $buttonExecuteProgramStopProgram.removeAttr('disabled');
+                // Program output console in waiting state.
+                $textareaProgramExecutionConsole.addClass('waiting');
+                textareaProgramExecutionConsole.value =
+                    MSG_OUTPUT_CONSOLE_WAITING_OUTPUT;
+                textareaProgramExecutionConsole.scrollTop =
+                    textareaProgramExecutionConsole.scrollHeight;
+
+                toggleDivGUIEditor(false);
+                toggleDivExecuteProgramRenderedGUI(true);
+
                 break;
 
             case workerProtocol.TYPE_RES_PROGRAM_STOP_ACK:
-                textareaProgramExecutionConsole.scrollTop = textareaProgramExecutionConsole.scrollHeight;
-
                 if (workerManager) {
                     workerManager.terminate();
                     workerManager = null;
                 }
 
-                buttonToolbarRunStop.setAttribute('onclick', 'clickedRunProgram()');
-                buttonToolbarRunStop.setAttribute('title', MSG_TOOLTIP_BUTTON_RUNSTOP_RUN);
-                buttonToolbarRunStopImage.innerHTML = 'play_arrow';
-                buttonToolbarRunStop.disabled = false;
-                blockEditGUI(false);
-                blockRenderGUI(true);
+                program_status_running = false;
 
-                if (divRenderGUI.style.display === 'block') {
-                    $.growl.warning({
-                        message: MSG_INFO_NO_PROGRAM_RUNNING_RENDERED_GUI_BLOCKED
-                    });
-                }
+                // Update Start/Stop button.
+                $buttonExecuteProgramStopProgram.attr('disabled', true);
+                $buttonExecuteProgramRunProgram.removeAttr('disabled');
+
+                // Update program output console.
+                textareaProgramExecutionConsole.value =
+                    MSG_OUTPUT_CONSOLE_NO_PROGRAM_RUNNING;
+                textareaProgramExecutionConsole.scrollTop =
+                    textareaProgramExecutionConsole.scrollHeight;
+
+                toggleDivGUIEditor(true);
+                toggleDivExecuteProgramRenderedGUI(false);
 
                 break;
 
             case workerProtocol.TYPE_RES_MESSAGE_CONSOLE:
-                console.log('*** MSG CON');
                 if (message.data !== null && message.data !== '') {
                     if ($textareaProgramExecutionConsole.hasClass('waiting')) {
                         $textareaProgramExecutionConsole.removeClass('waiting');
-                        textareaProgramExecutionConsole.value = message.data;
-                        textareaProgramExecutionConsole.scrollTop = textareaProgramExecutionConsole.scrollHeight;
+                        textareaProgramExecutionConsole.value =
+                            message.data;
+                        textareaProgramExecutionConsole.scrollTop =
+                            textareaProgramExecutionConsole.scrollHeight;
+
                         break;
                     }
 
                     textareaProgramExecutionConsole.value += message.data;
-                    textareaProgramExecutionConsole.scrollTop = textareaProgramExecutionConsole.scrollHeight;
+                    textareaProgramExecutionConsole.scrollTop =
+                        textareaProgramExecutionConsole.scrollHeight;
                 }
                 break;
 
             case workerProtocol.TYPE_RES_ERROR:
                 if (message.data !== null && message.data !== '') {
                     textareaProgramExecutionConsole.value += message.data;
-                    textareaProgramExecutionConsole.scrollTop = textareaProgramExecutionConsole.scrollHeight;
+                    textareaProgramExecutionConsole.scrollTop =
+                        textareaProgramExecutionConsole.scrollHeight;
                 }
-                clickedStopProgram();
+                eventHandlerClickButtonExecuteProgramStopProgram();
+
                 break;
 
             case workerProtocol.TYPE_RES_MESSAGE_GUI_OUTPUT_FIELD:
@@ -169,14 +257,17 @@ function eventHandlerMessageWorkerManager(e) {
                         widgetOutputField.value = message.data.data.value;
                     }
                 }
+
                 break;
 
             case workerProtocol.TYPE_RES_MESSAGE_GUI_PLOT:
                 if (message.data.data.widget) {
                     if (message.data.data.widget in plotConfigs) {
-                        updateWidgetPlot(message.data.data.widget, parseFloat(message.data.data.value));
+                        updateWidgetPlot(message.data.data.widget,
+                            parseFloat(message.data.data.value));
                     }
                 }
+
                 break;
 
             case workerProtocol.TYPE_RES_SUBWORKER_DONE:
@@ -225,9 +316,12 @@ function eventHandlerLoadIframeProgramEditor(e) {
     checkCompatibility();
 }
 
-function closeAllOpenDialogs(e) {
+function closeAllOpenDialogsWithoutCloseButton(e) {
     for (var dialog in dialogs) {
-        if (dialogs[dialog].open) dialogs[dialog].close();
+        if (!dialogs[dialog].querySelector('.dialogButtonClose')) {
+            // Try to close only if it is open otherwise an exception is thrown.
+            if (dialogs[dialog].open) dialogs[dialog].close();
+        }
     }
 }
 
@@ -244,7 +338,7 @@ function checkViewportSize(e) {
 function checkCompatibility(e) {
     // Check view port size.
     if (!checkViewportSize()) {
-        closeAllOpenDialogs();
+        closeAllOpenDialogsWithoutCloseButton();
         dialogs.errorScreenSizeSmall.showModal();
         divBody.style.display = 'none';
 
@@ -253,7 +347,7 @@ function checkCompatibility(e) {
 
     // Check Blob.
     if (!Modernizr.bloburls || !Modernizr.blobconstructor) {
-        closeAllOpenDialogs();
+        closeAllOpenDialogsWithoutCloseButton();
         dialogs.errorNoBlob.showModal();
         divBody.style.display = 'none';
 
@@ -262,7 +356,7 @@ function checkCompatibility(e) {
 
     // Check Web Workers.
     if (!Modernizr.webworkers) {
-        closeAllOpenDialogs();
+        closeAllOpenDialogsWithoutCloseButton();
         dialogs.errorNoWebWorker.showModal();
         divBody.style.display = 'none';
 
@@ -272,10 +366,10 @@ function checkCompatibility(e) {
     // Check if Blockly toolbox was loaded.
     if (!Modernizr.blocklytoolboxloaded) {
         if (window.chrome) {
-            closeAllOpenDialogs();
+            closeAllOpenDialogsWithoutCloseButton();
             dialogs.errorToolboxLoadFailedChrome.showModal();
         } else {
-            closeAllOpenDialogs();
+            closeAllOpenDialogsWithoutCloseButton();
             dialogs.errorToolboxLoadFailed.showModal();
         }
 
@@ -286,7 +380,7 @@ function checkCompatibility(e) {
 
     // Check if worker manager code was loaded.
     if (!Modernizr.workermanagercodeloaded) {
-        closeAllOpenDialogs();
+        closeAllOpenDialogsWithoutCloseButton();
         dialogs.errorToolboxLoadFailedChrome.showModal();
 
         divBody.style.display = 'none';
@@ -296,14 +390,15 @@ function checkCompatibility(e) {
 
     // Check if the GUI editor was initialized properly.
     if (!Modernizr.guieditor) {
-        closeAllOpenDialogs();
+        closeAllOpenDialogsWithoutCloseButton();
         dialogs.errorGUIEditor.showModal();
         divBody.style.display = 'none';
 
         return false;
     }
 
-    closeAllOpenDialogs();
+    closeAllOpenDialogsWithoutCloseButton();
+
     divBody.style.display = 'block';
 
     return true; // All compatibility tests passed.
@@ -335,9 +430,10 @@ function eventHandlerLoadProjectFile(fileInput) {
     var fileReader = null;
     var guiEditorText = '';
     var xmlProgramEditorText = '';
+    var newTextAreaGUIEditor = null;
 
     if (fileInput.value.substr(-5) !== '.tvpl') {
-        alert(MSG_ERROR_NOT_VALID_PROJECT_FILE);
+        dialogs.errorLoadProjectFileInvalid.showModal();
         return;
     }
 
@@ -349,52 +445,46 @@ function eventHandlerLoadProjectFile(fileInput) {
             zip = new JSZip(fileReader.result);
 
             if (!zip.file(FILENAME_PROGRAM_EDITOR)) {
-                alert(MSG_ERROR_PROJECT_LOAD_NO_PRG_FILE);
-                return;
+                throw 1;
             }
 
             if (!zip.file(FILENAME_GUI_EDITOR)) {
-                alert(MSG_ERROR_PROJECT_LOAD_NO_GUI_FILE);
-                return;
+                throw 1;
             }
 
             xmlProgramEditorText = zip.file(FILENAME_PROGRAM_EDITOR).asText();
             guiEditorText = zip.file(FILENAME_GUI_EDITOR).asText();
 
             if (xmlProgramEditorText !== '') {
-                try {
-                    programEditor.clear();
-                    Blockly.Xml.domToWorkspace(programEditor, Blockly.Xml.textToDom(xmlProgramEditorText));
-                    //clickedStopProgram();
-                } catch (e) {
-                    console.log(e);
-                    // Dialog.
-                    //alert(MSG_ERROR_PROJECT_LOAD_FAILED);
-                    return;
-                }
+                programEditor.clear();
+                Blockly.Xml.domToWorkspace(programEditor, Blockly.Xml.textToDom(xmlProgramEditorText));
+
+                if (program_status_running)
+                    eventHandlerClickButtonExecuteProgramStopProgram();
             }
 
             if (xmlProgramEditorText !== '') {
-                // Remove the textarea
+                // Remove the textarea which is child of the top level div of the view.
                 divGUIEditor.removeChild(document.getElementById('frmb-0-form-wrap'));
 
                 // Recreate the text area
-                var newTextAreaEditGUI = document.createElement('textarea');
-                newTextAreaEditGUI.setAttribute('id', 'textAreaEditGUI');
-                newTextAreaEditGUI.setAttribute('name', 'textAreaEditGUI');
-                divGUIEditor.appendChild(newTextAreaEditGUI);
+                newTextAreaGUIEditor = document.createElement('textarea');
+                newTextAreaGUIEditor.setAttribute('id', 'textAreaGUIEditor');
+                divGUIEditor.appendChild(newTextAreaGUIEditor);
+                textAreaGUIEditor = newTextAreaGUIEditor;
+                $textAreaGUIEditor = $(newTextAreaGUIEditor);
 
                 // Re-initialize form builder
-                editorGUI = document.getElementById('textAreaEditGUI');
-                $(editorGUI).val(guiEditorText);
-                $(editorGUI).formBuilder();
-                $(editorGUI).formRender({ container: $(divRenderGUI) });
+                $textAreaGUIEditor.val(guiEditorText);
+                $textAreaGUIEditor.formBuilder();
+                $textAreaGUIEditor.formRender({
+                    container: $divExecuteProgramRenderedGUI
+                });
             }
         }
         fileReader.readAsArrayBuffer(file);
     } catch (e) {
-        console.log(e);
-        alert(MSG_ERROR_PROJECT_FILE_READ_FAILED);
+        dialogs.errorLoadProjectReadFailed.showModal();
     }
 }
 
@@ -436,13 +526,15 @@ function eventHandlerClickaSaveProject(e) {
         // Save the generated ZIP file.
         saveAs(zipContent, projectFileNameTVPL);
     } catch (e) {
-        // Dialog.
+        dialogs.errorSaveProjectFailed.showModal();
     }
 
     return false; // So the link would not follow.
 }
 
 function eventHandlerClickaAbout(e) {
+    dialogs.informationAbout.showModal();
+
     return false; // So the link would not follow.
 }
 
@@ -452,31 +544,40 @@ function eventHandlerClickaProgramEditor(e) {
 }
 
 function eventHandlerClickaGUIEditor(e) {
-    if (PROGRAM_STATUS_RUNNING) {
-        snackbar.MaterialSnackbar.showSnackbar({
-            message: MSG_SNACKBAR_GUI_EDITOR_DISABLED,
-            timeout: 2500
-        });
+    if (program_status_running) {
+        toggleDivGUIEditor(false);
+    } else {
+        toggleDivGUIEditor(true);
     }
+
     viewSwitcher(INDEX_VIEW_GUI_EDITOR);
     return false; // So the link would not follow.
 }
 
 function eventHandlerClickaExecuteProgram(e) {
+    if (program_status_running) {
+        toggleDivExecuteProgramRenderedGUI(true);
+    } else {
+        toggleDivExecuteProgramRenderedGUI(false);
+    }
+
     viewSwitcher(INDEX_VIEW_EXECUTE_PROGRAM);
     return false; // So the link would not follow.
 }
 
 function eventHandlerClickButtonExecuteProgramStopProgram(e) {
-    $buttonExecuteProgramStopProgram.attr('disabled', true);
-    $buttonExecuteProgramRunProgram.removeAttr('disabled');
-    textareaProgramExecutionConsole.value = MSG_OUTPUT_CONSOLE_NO_PROGRAM_RUNNING;
-
     /*
-    $textareaProgramExecutionConsole.addClass('waiting');
-    textareaProgramExecutionConsole.value = 'Program running. Waiting for output...';
-    textareaProgramExecutionConsole.scrollTop = textareaProgramExecutionConsole.scrollHeight;
-    */
+     * Just send a request to the worker manager to stop.
+     * What should be done after stop is handled in the
+     * stop ACK case when the worker manager sends the response.
+     */
+    if (workerManager !== null) {
+        workerManager.postMessage(workerProtocol.getMessage(
+            workerProtocol.SENDER_GUI,
+            workerProtocol.TYPE_REQ_PROGRAM_STOP,
+            null));
+    }
+
 }
 
 function eventHandlerClickButtonExecuteProgramRunProgram(e) {
@@ -487,7 +588,6 @@ function eventHandlerClickButtonExecuteProgramRunProgram(e) {
     dictProgramEditorToCode = Blockly.JavaScript.workspaceToCode(programEditor);
 
     if (!dictProgramEditorToCode) {
-        closeAllOpenDialogs();
         dialogs.errorProgramEditorEmpty.showModal();
         return;
     }
@@ -523,10 +623,8 @@ function eventHandlerClickButtonExecuteProgramRunProgram(e) {
         workerManager.postMessage(workerProtocol.getMessage(workerProtocol.SENDER_GUI,
             workerProtocol.TYPE_REQ_PROGRAM_START,
             subworkerBlobsUrlArray));
-        //buttonToolbarRunStop.disabled = true;
         return;
     }
-    eventHandlerResProgramStartAck();
 }
 
 jQuery(document).ready(function($) {
@@ -535,9 +633,16 @@ jQuery(document).ready(function($) {
      * finished loading goes here.
      */
 
+    /*
+     * Mix of jQuery object and DOM objects is needed because each
+     * is better with specific features. Sometimes jQuery causes
+     * trouble for example in case of cross frame scripting.
+     */
+
     // Elements of the page.
     divBody = document.getElementById('divBody');
     divGUIEditor = document.getElementById('divGUIEditor');
+    $divGUIEditor = $(divGUIEditor); // jQuery object.
     divProgramEditor = document.getElementById('divProgramEditor');
     textAreaGUIEditor = document.getElementById('textAreaGUIEditor');
     $textAreaGUIEditor = $(textAreaGUIEditor); // jQuery object.
@@ -545,6 +650,7 @@ jQuery(document).ready(function($) {
     iframeProgramEditor = document.getElementById('iframeProgramEditor');
     $iframeProgramEditor = $(iframeProgramEditor); // jQuery object.
     divExecuteProgramRenderedGUI = document.getElementById('divExecuteProgramRenderedGUI');
+    $divExecuteProgramRenderedGUI = $(divExecuteProgramRenderedGUI); // jQuery object.
     buttonExecuteProgramRunProgram = document.getElementById('buttonExecuteProgramRunProgram');
     $buttonExecuteProgramRunProgram = $(buttonExecuteProgramRunProgram); // jQuery object.
     buttonExecuteProgramStopProgram = document.getElementById('buttonExecuteProgramStopProgram');
@@ -552,6 +658,7 @@ jQuery(document).ready(function($) {
     textareaProgramExecutionConsole = document.getElementById('textareaProgramExecutionConsole');
     $textareaProgramExecutionConsole = $(textareaProgramExecutionConsole); // jQuery object.
     divExecuteProgramRenderedGUIEmpty = document.getElementById('divExecuteProgramRenderedGUIEmpty');
+    $divExecuteProgramRenderedGUIEmpty = $(divExecuteProgramRenderedGUIEmpty); // jQuery object.
 
     // Snackbar
     snackbar = document.getElementById('snackbar');
@@ -559,11 +666,32 @@ jQuery(document).ready(function($) {
     // Dialogs.
     dialogs.errorNoBlob = document.getElementById('dialogErrorNoBlob');
     dialogs.errorGUIEditor = document.getElementById('dialogErrorGUIEditor');
+    dialogs.informationAbout = document.getElementById('dialogInformationAbout');
     dialogs.errorNoWebWorker = document.getElementById('dialogErrorNoWebWorker');
     dialogs.errorScreenSizeSmall = document.getElementById('dialogErrorScreenSizeSmall');
+    dialogs.errorSaveProjectFailed = document.getElementById('dialogErrorSaveProjectFailed');
     dialogs.errorToolboxLoadFailed = document.getElementById('dialogErrorToolboxLoadFailed');
     dialogs.errorProgramEditorEmpty = document.getElementById('dialogErrorProgramEditorEmpty');
+    dialogs.errorLoadProjectReadFailed = document.getElementById('dialogErrorLoadProjectReadFailed');
+    dialogs.errorLoadProjectFileInvalid = document.getElementById('dialogErrorLoadProjectFileInvalid');
     dialogs.errorToolboxLoadFailedChrome = document.getElementById('dialogErrorWorkerManagerCodeLoadFailed');
+
+    // Dialogs with close button.
+    dialogs.informationAbout.querySelector('.dialogButtonClose').addEventListener('click', function(e) {
+        dialogs.informationAbout.close();
+    });
+
+    dialogs.errorSaveProjectFailed.querySelector('.dialogButtonClose').addEventListener('click', function(e) {
+        dialogs.errorSaveProjectFailed.close();
+    });
+
+    dialogs.errorLoadProjectReadFailed.querySelector('.dialogButtonClose').addEventListener('click', function(e) {
+        dialogs.errorLoadProjectReadFailed.close();
+    });
+
+    dialogs.errorLoadProjectFileInvalid.querySelector('.dialogButtonClose').addEventListener('click', function(e) {
+        dialogs.errorLoadProjectFileInvalid.close();
+    });
 
     dialogs.errorProgramEditorEmpty.querySelector('.dialogButtonClose').addEventListener('click', function(e) {
         dialogs.errorProgramEditorEmpty.close();

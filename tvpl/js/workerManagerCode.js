@@ -10,8 +10,6 @@ var _running_workers = {};
 var _function_tf_call_queue = [];
 var _queue_function_tf_call = false;
 
-console.log('*** WORKER MANAGER');
-
 function _error_handler(e) {
     postMessage(workerProtocol.getMessage(workerProtocol.SENDER_WORKER_MANAGER,
         workerProtocol.TYPE_RES_ERROR,
