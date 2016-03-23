@@ -604,7 +604,7 @@ class StreamSocket extends Socket
 
     function shutdown()
     {
-        // FIXME: stream sockets don't support shutdown()
+        stream_socket_shutdown($this->handle, STREAM_SHUT_RDWR);
     }
 
     function close()
