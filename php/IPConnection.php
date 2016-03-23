@@ -15,10 +15,6 @@ if (!extension_loaded('bcmath')) {
     throw new \Exception('Required bcmath extension is not available');
 }
 
-if (!extension_loaded('sockets')) {
-    throw new \Exception('Required sockets extension is not available');
-}
-
 
 class Base58
 {
@@ -478,6 +474,189 @@ class BrickDaemon extends Device
 }
 
 
+/**
+ * @internal
+ */
+abstract class Socket
+{
+    const RECEIVE_ERROR = 1;
+    const RECEIVE_SHUTDOWN = 2;
+    const RECEIVE_TIMEOUT = 3;
+    const RECEIVE_DATA = 4;
+}
+
+
+/**
+ * @internal
+ */
+class ExtensionSocket extends Socket
+{
+    private $handle = FALSE;
+
+    function __construct($address, $port)
+    {
+        $this->handle = @socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+
+        if ($this->handle === FALSE) {
+            throw new \Exception('Could not create socket: ' .
+                                 socket_strerror(socket_last_error()));
+        }
+
+        @socket_set_option($this->handle, SOL_TCP, TCP_NODELAY, 1);
+
+        if (!@socket_connect($this->handle, $address, $port)) {
+            $error = socket_strerror(socket_last_error($this->handle));
+
+            socket_close($this->handle);
+            $this->handle = FALSE;
+
+            throw new \Exception('Could not connect socket: ' . $error);
+        }
+    }
+
+    function __destruct()
+    {
+        if ($this->handle !== FALSE) {
+            $this->shutdown();
+            $this->close();
+        }
+    }
+
+    function shutdown()
+    {
+        @socket_shutdown($this->handle, 2);
+    }
+
+    function close()
+    {
+        @socket_close($this->handle);
+        $this->handle = FALSE;
+    }
+
+    function send($data, $length)
+    {
+        return @socket_send($this->handle, $data, $length, 0);
+    }
+
+    function receive(&$data, &$length, $timeout)
+    {
+        $read = array($this->handle);
+        $write = NULL;
+        $except = array($this->handle);
+        $timeout_sec = floor($timeout);
+        $timeout_usec = ceil(($timeout - $timeout_sec) * 1000000);
+        $changed = @socket_select($read, $write, $except, $timeout_sec, $timeout_usec);
+
+        if ($changed === FALSE) {
+            throw new \Exception('Could not receive response: ' .
+                                 socket_strerror(socket_last_error($this->handle)));
+        }
+
+        if ($changed === 0) {
+            return self::RECEIVE_TIMEOUT;
+        }
+
+        if (in_array($this->handle, $except)) {
+            return self::RECEIVE_ERROR;
+        }
+
+        $result = @socket_recv($this->handle, $data, $length, 0);
+
+        if ($result === FALSE || $result === 0) {
+            if ($result === FALSE) {
+                return self::RECEIVE_ERROR;
+            } else {
+                return self::RECEIVE_SHUTDOWN;
+            }
+        }
+
+        $length = $result;
+
+        return self::RECEIVE_DATA;
+    }
+}
+
+
+/**
+ * @internal
+ */
+class StreamSocket extends Socket
+{
+    private $handle = FALSE;
+
+    function __construct($address, $port)
+    {
+        // FIXME: stream sockets don't support TCP_NODELAY, see https://bugs.php.net/bug.php?id=51879
+        $this->handle = stream_socket_client("tcp://$address:$port", $errno, $message);
+
+        if ($this->handle === FALSE) {
+            throw new \Exception('Could not connect socket: ' . $message);
+        }
+    }
+
+    function __destruct()
+    {
+        if ($this->handle !== FALSE) {
+            $this->shutdown();
+            $this->close();
+        }
+    }
+
+    function shutdown()
+    {
+        // FIXME: stream sockets don't support shutdown()
+    }
+
+    function close()
+    {
+        fclose($this->handle);
+        $this->handle = FALSE;
+    }
+
+    function send($data, $length)
+    {
+        return fwrite($this->handle, $data, $length);
+    }
+
+    function receive(&$data, &$length, $timeout)
+    {
+        $read = array($this->handle);
+        $write = NULL;
+        $except = array($this->handle);
+        $timeout_sec = floor($timeout);
+        $timeout_usec = ceil(($timeout - $timeout_sec) * 1000000);
+        $changed = @stream_select($read, $write, $except, $timeout_sec, $timeout_usec);
+
+        if ($changed === FALSE) {
+            throw new \Exception('Could not receive response: ' .
+                                 socket_strerror(socket_last_error($this->handle)));
+        }
+
+        if ($changed === 0) {
+            return self::RECEIVE_TIMEOUT;
+        }
+
+        if (in_array($this->handle, $except)) {
+            return self::RECEIVE_ERROR;
+        }
+
+        $data = fread($this->handle, $length);
+
+        if ($data === FALSE) {
+            return self::RECEIVE_ERROR;
+        }
+
+        $length = strlen($data);
+
+        if ($length === 0) {
+            return self::RECEIVE_SHUTDOWN;
+        }
+
+        return self::RECEIVE_DATA;
+    }
+}
+
+
 class IPConnection
 {
     const DISCONNECT_PROBE_INTERVAL = 5.0;
@@ -587,22 +766,10 @@ class IPConnection
             $address = $host;
         }
 
-        $this->socket = @socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-
-        if ($this->socket === FALSE) {
-            throw new \Exception('Could not create socket: ' .
-                                 socket_strerror(socket_last_error()));
-        }
-
-        @socket_set_option($this->socket, SOL_TCP, TCP_NODELAY, 1);
-
-        if (!@socket_connect($this->socket, $address, $port)) {
-            $error = socket_strerror(socket_last_error($this->socket));
-
-            socket_close($this->socket);
-            $this->socket = FALSE;
-
-            throw new \Exception('Could not connect socket: ' . $error);
+        if (extension_loaded('sockets')) {
+            $this->socket = new ExtensionSocket($address, $port);
+        } else {
+            $this->socket = new StreamSocket($address, $port);
         }
 
         if (array_key_exists(self::CALLBACK_CONNECTED, $this->registeredCallbacks)) {
@@ -626,7 +793,7 @@ class IPConnection
             throw new NotConnectedException('Not connected');
         }
 
-        @socket_shutdown($this->socket, 2);
+        $this->socket->shutdown();
 
         $this->disconnectInternal(self::DISCONNECT_REASON_REQUEST);
 
@@ -821,7 +988,7 @@ class IPConnection
      */
     public function send($request)
     {
-        if (@socket_send($this->socket, $request, strlen($request), 0) === FALSE) {
+        if ($this->socket->send($request, strlen($request)) === FALSE) {
             $this->disconnectInternal(self::DISCONNECT_REASON_ERROR);
 
             throw new NotConnectedException('Could not send request: ' .
@@ -853,8 +1020,8 @@ class IPConnection
             // FIXME: this works for timeout < DISCONNECT_PROBE_INTERVAL only
             if ($this->nextDisconnectProbe < $now ||
                 ($this->nextDisconnectProbe - $now) > self::DISCONNECT_PROBE_INTERVAL) {
-                if (@socket_send($this->socket, $this->disconnectProbeRequest,
-                                 strlen($this->disconnectProbeRequest), 0) === FALSE) {
+                if ($this->socket->send($this->disconnectProbeRequest,
+                                        strlen($this->disconnectProbeRequest)) === FALSE) {
                     $this->disconnectInternal(self::DISCONNECT_REASON_ERROR);
                     return;
                 }
@@ -863,42 +1030,25 @@ class IPConnection
                 $this->nextDisconnectProbe = $now + self::DISCONNECT_PROBE_INTERVAL;
             }
 
-            $read = array($this->socket);
-            $write = NULL;
-            $except = array($this->socket);
             $timeout = $end - $now;
 
             if ($timeout < 0) {
                 $timeout = 0;
             }
 
-            $timeout_sec = floor($timeout);
-            $timeout_usec = ceil(($timeout - $timeout_sec) * 1000000);
-            $changed = @socket_select($read, $write, $except, $timeout_sec, $timeout_usec);
+            $data = '';
+            $length = 8192;
+            $result = $this->socket->receive($data, $length, $timeout);
 
-            if ($changed === FALSE) {
-                throw new \Exception('Could not receive response: ' .
-                                     socket_strerror(socket_last_error($this->socket)));
-            } else if ($changed > 0) {
-                if (in_array($this->socket, $except)) {
-                    $this->disconnectInternal(self::DISCONNECT_REASON_ERROR);
-                    return;
-                }
-
-                $data = '';
-                $length = @socket_recv($this->socket, $data, 8192, 0);
-
-                if ($length === FALSE || $length === 0) {
-                    if ($length === FALSE) {
-                        $disconnectReason = self::DISCONNECT_REASON_ERROR;
-                    } else {
-                        $disconnectReason = self::DISCONNECT_REASON_SHUTDOWN;
-                    }
-
-                    $this->disconnectInternal($disconnectReason);
-                    return;
-                }
-
+            if ($result == Socket::RECEIVE_ERROR) {
+                $this->disconnectInternal(self::DISCONNECT_REASON_ERROR);
+                return;
+            } else if ($result == Socket::RECEIVE_SHUTDOWN) {
+                $this->disconnectInternal(self::DISCONNECT_REASON_SHUTDOWN);
+                return;
+            } else if ($result == Socket::RECEIVE_TIMEOUT) {
+                // Do nothing
+            } else if ($result == Socket::RECEIVE_DATA) {
                 $before = microtime(true);
 
                 $this->pendingData .= $data;
@@ -943,7 +1093,7 @@ class IPConnection
      */
     private function disconnectInternal($disconnectReason)
     {
-        @socket_close($this->socket);
+        $this->socket->close();
         $this->socket = FALSE;
 
         if (array_key_exists(self::CALLBACK_DISCONNECTED, $this->registeredCallbacks)) {
