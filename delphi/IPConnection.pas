@@ -319,7 +319,7 @@ function CryptGenRandom(hProv: ULONG; dwLen: DWORD; pbBuffer: PBYTE): BOOL; stdc
 {$else}
 
 function ReadUInt32(const filename: string): longword;
-var fh: File; bytes: TByteArray; count: longint;
+var fh: File; bytes: TByteArray; count: {$ifdef FPC}longint{$else}integer{$endif};
 begin
   SetLength(bytes, 4);
   count := 0;
@@ -723,7 +723,11 @@ begin
   hints.ai_flags := AI_PASSIVE;
   hints.ai_family := AF_UNSPEC;
   hints.ai_socktype := SOCK_STREAM;
+ {$if CompilerVersion >= 22.0}
+  error := getaddrinfo(MarshaledAString(UTF8Encode(host)), nil, hints, entry);
+ {$else}
   error := getaddrinfo(PAnsiChar(AnsiString(host)), nil, hints, entry);
+ {$endif}
   if (error <> 0) then begin
     { Destroy callback thread }
     if (not isAutoReconnect) then begin

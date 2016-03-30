@@ -63,6 +63,7 @@ implementation
 
 constructor TTimedSemaphore.Create;
 begin
+  inherited;
   alive := true;
 {$ifdef MSWINDOWS}
   handle := CreateSemaphore(nil, 0, 2147483647, nil);
