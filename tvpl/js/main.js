@@ -80,6 +80,82 @@ var codeWorkerManager = null;
 
 // Functions.
 
+function drawPlotWidget(plotWidget, plotData) {
+    var wasVisibility = $divExecuteProgramRenderedGUI.css('display');
+
+    $divExecuteProgramRenderedGUI.css('display', 'block');
+    plotWidget.setData(plotData);
+    plotWidget.setupGrid();
+    plotWidget.draw();
+    // Restore visibility.
+    $divExecuteProgramRenderedGUI.css('display', wasVisibility);
+}
+
+function updatePlotWidget(nameWidgetPlot, value) {
+    var plotConfig = plotConfigs[nameWidgetPlot];
+
+    if (!plotConfig.plot) {
+        return;
+    }
+
+    if (plotConfig.axisY.data.length < plotConfig.dataPoints) {
+        // Append new data point.
+        var dataLength = plotConfig.axisY.data.length;
+        plotConfig.axisY.data.push([dataLength, value]);
+    } else if (plotConfig.axisY.data.length == plotConfig.dataPoints) {
+        // Shift data set and then append new data point.
+        plotConfig.axisY.data.shift();
+
+        for (var i = 0; i < plotConfig.axisY.data.length; i++) {
+            plotConfig.axisY.data[i] = [plotConfig.axisY.data[i][0] - 1, plotConfig.axisY.data[i][1]];
+        }
+
+        plotConfig.axisY.data.push([plotConfig.dataPoints - 1, value]);
+    } else {
+        return;
+    }
+
+    drawPlotWidget(plotConfig.plot, [plotConfig.axisY]);
+}
+
+function updatePlotWidgetConfigs(e) {
+    for (var plotCfg in plotConfigs) {
+        var found = false;
+
+        for (var i in divExecuteProgramRenderedGUI.childNodes) {
+            if (divExecuteProgramRenderedGUI.childNodes[i].tagName !== 'DIV') continue;
+
+            for (var j in divExecuteProgramRenderedGUI.childNodes[i].children) {
+                if (divExecuteProgramRenderedGUI.childNodes[i].children[j].id === plotCfg) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (found) break;
+        }
+
+        if (!found) {
+            // Remove corresponding plot configuration.
+            delete plotConfigs[plotCfg];
+        }
+    }
+}
+
+function resetRenderPlotWidgets(e) {
+    updatePlotWidgetConfigs();
+
+    for (var plotCfg in plotConfigs) {
+        plotConfigs[plotCfg].axisY.data = [
+            [0, 0]
+        ];
+        plotConfigs[plotCfg].plot = $.plot(document.getElementById(plotCfg), [plotConfigs[plotCfg].axisY],
+            plotConfigs[plotCfg].options);
+
+        drawPlotWidget(plotConfigs[plotCfg].plot, [plotConfigs[plotCfg].axisY]);
+    }
+}
+
 function toggleDivGUIEditor(enable) {
     if (enable) {
         $divGUIEditor.addClass('enabled');
@@ -113,8 +189,40 @@ function toggleDivExecuteProgramRenderedGUI(enable) {
         });
 }
 
-function resetRenderPlotWidgets(e) {
-    console.log('resetRenderPlotWidgets');
+function eventHandlerClickGUIButton(id, functionToCall) {
+    if (!id || !functionToCall) return;
+
+    var unescapedFunctionToCall = unescape(functionToCall);
+    var code = 'onmessage = function (e) {\n' +
+        '  _dispatch_message(e.data);\n' +
+        '};\n' +
+        'onerror = _error_handler;\n' +
+        'function *_main() {\n' +
+        '    yield* ' + unescapedFunctionToCall + ';\n' +
+        '    self.postMessage(workerProtocol.getMessage(_worker_id, workerProtocol._TYPE_RES_SUBWORKER_DONE, _code_button_enable));\n' +
+        '}\n' +
+        '_iterator_main = _main();\n';
+
+    var codeProgramEditor = Blockly.JavaScript.workspaceToCode(programEditor);
+
+    if (!codeProgramEditor) {
+        return;
+    }
+
+    var codeRaw = [codeProgramEditor.definitions, code].join('\n');
+    var retPrepareJavaScriptCode = prepareJavaScriptCode(codeRaw);
+
+    if (!retPrepareJavaScriptCode[0]) {
+        return;
+    }
+
+    var blobFunction = window.URL.createObjectURL(new Blob([retPrepareJavaScriptCode[1]]));
+    document.getElementById(id).disabled = true;
+    workerManager.postMessage(workerProtocol.getMessage(workerProtocol.SENDER_GUI,
+        workerProtocol.TYPE_REQ_FUNCTION_EXECUTE, {
+            blobFunction: blobFunction,
+            codeButtonEnable: 'document.getElementById(\'' + id + '\').disabled = false;'
+        }));
 }
 
 function eventHandlerChangeTextAreaGUIEditor(e) {
@@ -125,44 +233,6 @@ function eventHandlerChangeTextAreaGUIEditor(e) {
         $divExecuteProgramRenderedGUI.show();
         $divExecuteProgramRenderedGUIEmpty.hide();
     }
-}
-
-function drawPlotWidget(plotWidget, plotData) {
-    var wasVisibility = divRenderGUI.style.display;
-
-    divRenderGUI.style.display = 'block';
-    plotWidget.setData(plotData);
-    plotWidget.setupGrid();
-    plotWidget.draw();
-    // Restore visibility.
-    divRenderGUI.style.display = wasVisibility;
-}
-
-function updateWidgetPlot(nameWidgetPlot, value) {
-    var plotConfig = plotConfigs[nameWidgetPlot];
-
-    if (!plotConfig.plot) {
-        return;
-    }
-
-    if (plotConfig.axisY.data.length < plotConfig.dataPoints) {
-        // Append new data point.
-        var dataLength = plotConfig.axisY.data.length;
-        plotConfig.axisY.data.push([dataLength, value]);
-    } else if (plotConfig.axisY.data.length == plotConfig.dataPoints) {
-        // Shift data set and then append new data point.
-        plotConfig.axisY.data.shift();
-
-        for (var i = 0; i < plotConfig.axisY.data.length; i++) {
-            plotConfig.axisY.data[i] = [plotConfig.axisY.data[i][0] - 1, plotConfig.axisY.data[i][1]];
-        }
-
-        plotConfig.axisY.data.push([plotConfig.dataPoints - 1, value]);
-    } else {
-        return;
-    }
-
-    drawPlotWidget(plotConfig.plot, [plotConfig.axisY]);
 }
 
 function eventHandlerMessageWorkerManager(e) {
@@ -263,7 +333,7 @@ function eventHandlerMessageWorkerManager(e) {
             case workerProtocol.TYPE_RES_MESSAGE_GUI_PLOT:
                 if (message.data.data.widget) {
                     if (message.data.data.widget in plotConfigs) {
-                        updateWidgetPlot(message.data.data.widget,
+                        updatePlotWidget(message.data.data.widget,
                             parseFloat(message.data.data.value));
                     }
                 }

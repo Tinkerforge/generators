@@ -121,7 +121,7 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
                     buttonOnClick = '';
                 } else {
                     // fieldAttrs.buttonOnClick must be provided from fromBuilder.js as escaped.
-                    buttonOnClick = ' onClick="handleGUIButtonClick(this.id, \'' + fieldAttrs.buttonOnClick + '\')" ';
+                    buttonOnClick = ' onClick="eventHandlerClickGUIButton(this.id, \'' + fieldAttrs.buttonOnClick + '\')" ';
                 }
             }
 
