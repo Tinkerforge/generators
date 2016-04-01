@@ -48,9 +48,9 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
             block_display_device_name = self.get_long_display_name()
             block_display_function_name = packet.get_name()
             if self.is_brick():
-                block_set_color = 'this.setColour(210);'
+                block_set_color = 'this.setColour(195);'
             else:
-                block_set_color = 'this.setColour(260);'
+                block_set_color = 'this.setColour(297);'
             block_help_url = 'this.setHelpUrl(\'' + '/'.join(['http://www.tinkerforge.com/en/doc/Software',
                                                               self.get_camel_case_category() +\
                                                               's',
@@ -250,6 +250,11 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
 
         e_device = etree.Element('category')
         e_device.set('name', self.get_short_display_name())
+
+        if self.get_underscore_category() == 'brick':
+            e_device.set('colour', '195')
+        elif self.get_underscore_category() == 'bricklet':
+            e_device.set('colour', '297')
 
         for packet in self.get_packets('function'):
             # Exclude unrelated functions

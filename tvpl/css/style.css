@@ -1,82 +1,139 @@
-html, body {
-  width: 100%;
-  height: 100%;
-  margin: auto;
+/* General */
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: auto;
 }
-#tableHeader {
-  width: 100%;
-  height: 1px;
-  padding-bottom: 20px;
+
+#aProgramEditor:hover,
+#aGUIEditor:hover,
+#aExecuteProgram:hover {
+    text-decoration: underline;
 }
-#trErrorMessageWebworker {
-  display: none;
+
+#inputLoadProjectFile {
+    display: none;
 }
-#trErrorMessageXmlToolboxGeneric {
-  display: none;
+
+
+/* Class for enabling/disabling views. */
+
+.enabled {
+    opacity: 1;
+    pointer-events: auto;
 }
-#trErrorMessageXmlToolboxChrome {
-  display: none;
+
+.disabled {
+    opacity: 0.5;
+    pointer-events: none;
 }
-#trErrorMessageBlob {
-  display: none;
+
+
+/* MDL elements. */
+
+.layout-waterfall,
+.mdl-layout__header-row,
+.mdl-navigation__link:last-of-type {
+    padding-right: 0;
 }
-#pErrorMessage {
-  color: #e74c3c;
-  font-weight: bold;
+
+
+/* Dialog box headers. */
+
+.markDialogHeaderError {
+    color: #D8000C;
+    background-color: #FFBABA;
 }
-#tdTableHeaderToolbar {
-  display: none;
+
+.markDialogHeaderWarning {
+    color: #9F6000;
+    background-color: #FEEFB3;
 }
-#blocklyArea {
-  width: 100%;
-  height: 100%;
+
+.markDialogHeaderInformation {
+    color: #059000;
+    background-color: #BEF000;
 }
+
+
+/* Program editor. */
+
 #blocklyDiv {
-  position: absolute;
+    position: absolute;
 }
-#blocklyToolbox {
-  display: none;
+
+#blocklyArea {
+    width: 100%;
+    height: 100%;
 }
-#divExecute {
-  display: none;
-  width: 100%;
-  height: 100%;
+
+#divProgramEditor {
+    width: 100%;
+    height: 100vh;
+    display: block;
 }
-#divEditGUI {
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow-y: auto;
+
+#iframeProgramEditor {
+    width: 100%;
+    height: 100vh;
 }
-#divRenderGUI {
-  display: none;
-  width: 100%;
-  height: 100%;
-  overflow-y: auto;
+
+
+/* GUI editor. */
+
+#divGUIEditor {
+    width: 100%;
+    display: none;
+    height: 100vh;
 }
-#divGeneratedGUI {
-  width: 100%;
-  height: 100%;
-  border: solid 1px #272822;
+
+
+/* Execute program. */
+
+#divExecuteProgram {
+    width: 100%;
+    height: 100%;
+    display: none;
 }
-#tableGeneratedGUI {
-  width: 100%;
-  height: 100%;
+
+#tableExecuteProgram {
+    width: 100%;
+    height: 100vh;
 }
-#tableExecute {
-  width: 100%;
-  height: 100%;
+
+#textareaProgramExecutionConsole {
+    width: 100%;
+    resize: none;
+    font-size: 15px;
+    color: #40FF00;
+    height: 100vh;
+    background-color: black;
+    border: solid 2px #DDDDDD;
+    font-family: "Lucida Console", Monaco, monospace;
 }
-#textareaConsole {
-  width: 100%;
-  height: 100%;
-  resize: none;
-  border: solid 1px #272822;
-  color: white;
-  background-color: #272822;
-  font-size: 15px;
-  font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+
+#divExecuteProgramRenderedGUIEmpty {
+    /*
+        Must use vw and vh here.
+        Most probably all these vw and vh stuff is
+        because of the viewport meta tag for mobile devices.
+    */
+    width: 100vw;
+    height: 100vh;
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+    background-color: #DDDDDD;
+    display: table-cell;
+    border: solid 2px #DDDDDD;
 }
-#projectFileUploader {
-  display: none;
+
+#divExecuteProgramRenderedGUI {
+    width: 100%;
+    height: 100%;
+    display: none;
+    overflow-y: auto;
+    border: solid 2px #DDDDDD;
 }

@@ -1,121 +1,27 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-    <link rel="stylesheet" type="text/css" href="css/material.min.css">
-    <link rel="stylesheet" type="text/css" href="css/form-render.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="css/form-builder.css" media="screen">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-
-    <script type="text/javascript" src="js/subworkers.js"></script>
-    <script type="text/javascript" src="js/jquery.min.js"></script>
-    <script type="text/javascript" src="js/jszip.min.js"></script>
-    <script type="text/javascript" src="js/fileSaver.js"></script>
-    <script type="text/javascript" src="js/formRender.js"></script>
-    <script type="text/javascript" src="js/formBuilder.js"></script>
-    <script type="text/javascript" src="js/babelRuntime.js"></script>
-    <script type="text/javascript" src="js/babelBrowser.js"></script>
-    <script type="text/javascript" src="js/jquery.growl.js"></script>
-    <script type="text/javascript" src="js/babelPolyfill.js"></script>
-    <script type="text/javascript" src="js/material.min.js"></script>
-    <script type="text/javascript" src="js/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="js/workerProtocol.js"></script>
-    <script type="text/javascript" src="js/jquery.flot.min.js"></script>
-    <script type="text/javascript" src="js/javascript_compressed.js"></script>
-    <script type="text/javascript" src="js/jquery.flot.resize.min.js"></script>
-    <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
-
-     <!-- Order matters for Blockly stuff. -->
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <!-- Order matters for Blockly stuff. -->
     <script type="text/javascript" src="js/blockly_compressed.js"></script>
     <script type="text/javascript" src="js/blocks_compressed.js"></script>
     <script type="text/javascript" src="msg/js/en.js"></script>
-    <script type="text/javascript" src="js/javascript_compressed.js"></script>
     <script type="text/javascript" src="js/python_compressed.js"></script>
-  </head>
+    <script type="text/javascript" src="js/javascript_compressed.js"></script>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+</head>
 
-  <body style="width: 100%;height: 100%;margin: auto;">
+<body oncontextmenu="return false;">
     <div id="blocklyArea" />
     <div id="blocklyDiv" />
-  </body>
+    <!--
+    Program editor JavaScript code.
+    Following the pattern of keeping content and control separated.
+    -->
+    <script type="text/javascript" src="js/programEditor.js"></script>
+</body>
+
 </html>
-
-<script type="text/javascript">
-  jQuery(document).ready(function($) {
-    // All JavaSCript code goes here
-    var xmlHttp;
-    var xmlBlocklyToolbox;
-    var xmlBlocklyToolboxLoaded;
-    var blocklyArea = document.getElementById('blocklyArea');
-    var blocklyDiv = document.getElementById('blocklyDiv');
-    /*
-      If being accessed without a server then Google Chrome must be launched with "--allow-file-access-from-files" parameter
-      to be able to use TVPL.
-    */
-    try {
-      if (window.XMLHttpRequest) {
-        xmlHttp = new XMLHttpRequest();
-      }
-      else {
-        xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
-      }
-      xmlHttp.open('GET', 'xml/toolbox.xml', false);
-      xmlHttp.send();
-      xmlBlocklyToolbox = xmlHttp.responseXML;
-      xmlBlocklyToolboxLoaded = true;
-    }
-    catch(e) {
-      xmlBlocklyToolboxLoaded = false;
-    }
-
-    var blocklyProgramEditor = Blockly.inject(blocklyDiv,
-                                              {
-                                                grid:
-                                                {
-                                                  snap: true,
-                                                  length: 3,
-                                                  Colour: '#ccc',
-                                                  spacing: 25
-                                                },
-                                                zoom:
-                                                {
-                                                  wheel: true,
-                                                  maxScale: 3,
-                                                  minScale: 0.3,
-                                                  controls: true,
-                                                  startScale: 1.0,
-                                                  scaleSpeed: 1.2
-                                                },
-                                                media: 'media/',
-                                                toolbox: xmlBlocklyToolbox.getElementById('toolboxTVPL'),
-                                                trashcan: true
-                                              }
-                                             );
-
-    var onResize = function(e) {
-      // Make blocklyArea fill the remaining height below the header.
-      //blocklyArea.style.height = (document.body.offsetHeight - tableHeader.offsetHeight) + 'px';
-      //blocklyArea.style.height = '100%';
-      //blocklyArea.style.width = '100%';
-      // Compute the absolute coordinates and dimensions of blocklyArea.
-      var element = blocklyArea;
-      var x = 0;
-      var y = 0;
-      do {
-        x += element.offsetLeft;
-        y += element.offsetTop;
-        element = element.offsetParent;
-      } while (element);
-      // Position blocklyDiv over blocklyArea.
-      blocklyDiv.style.left = x + 'px';
-      blocklyDiv.style.top = y + 'px';
-      blocklyDiv.style.width = blocklyArea.offsetWidth + 'px';
-      blocklyDiv.style.height = blocklyArea.offsetHeight + 'px';
-    };
-
-    window.addEventListener('resize', onResize, false);
-    onResize();
-});
-</script>
