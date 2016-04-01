@@ -79,12 +79,12 @@ var workerManager = null;
 var xmlBlocklyToolbox = null;
 var codeWorkerManager = null;
 
-var onBeforeUnload = function(e) {
+// Functions.
+
+window.onbeforeunload = function(e) {
     eventHandlerClickButtonExecuteProgramStopProgram();
     return MSG_INFO_UNSAVED_PROJECT;
 };
-
-// Functions.
 
 function drawPlotWidget(plotWidget, plotData) {
     var wasVisibility = $divExecuteProgramRenderedGUI.css('display');
