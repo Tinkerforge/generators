@@ -7,6 +7,12 @@ body {
     margin: auto;
 }
 
+#aProgramEditor:hover,
+#aGUIEditor:hover,
+#aExecuteProgram:hover {
+    text-decoration: underline;
+}
+
 #inputLoadProjectFile {
     display: none;
 }

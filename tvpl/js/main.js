@@ -44,6 +44,7 @@ var MSG_OUTPUT_CONSOLE_NO_PROGRAM_RUNNING =
     'A running program can print text on this output console.\n\nSTATUS: No program running.';
 var MSG_ERROR_JAVASCRIPT_PREPARE_CODE_FAILED =
     'ERROR: The following error occurred while preparing JavaScript code.\n\n\n';
+var MSG_INFO_UNSAVED_PROJECT = 'Unsaved changes on the project will be lost.';
 
 // Variables.
 
@@ -77,6 +78,11 @@ var programEditor = null;
 var workerManager = null;
 var xmlBlocklyToolbox = null;
 var codeWorkerManager = null;
+
+var onBeforeUnload = function(e) {
+    eventHandlerClickButtonExecuteProgramStopProgram();
+    return MSG_INFO_UNSAVED_PROJECT;
+};
 
 // Functions.
 
@@ -551,7 +557,19 @@ function eventHandlerLoadProjectFile(fileInput) {
                     container: $divExecuteProgramRenderedGUI
                 });
             }
+
+            var dummy = {
+                stopPropagation: function() {}
+            };
+
+            /*
+             * Because the internal mechanism of Blockly expects
+             * the argument of the zoomReset function to have a
+             * dictionary at least as the variable dummy is defined.
+             */
+            programEditor.zoomReset(dummy);
         }
+
         fileReader.readAsArrayBuffer(file);
     } catch (e) {
         dialogs.errorLoadProjectReadFailed.showModal();

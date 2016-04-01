@@ -8,17 +8,20 @@ Tinkerforge TVPL modifications: Start tracing from,
 */
 'use strict';
 
-function renderGUI() {
+function renderGUI(e) {
     var textAreaGUIEditor = null;
     var divExecuteProgramRenderedGUI = null;
 
     textAreaGUIEditor = document.getElementById('textAreaGUIEditor');
     divExecuteProgramRenderedGUI = document.getElementById('divExecuteProgramRenderedGUI');
 
-    if (textAreaGUIEditor && divExecuteProgramRenderedGUI && typeof resetRenderPlotWidgets === "function") {
+    if (textAreaGUIEditor &&
+        divExecuteProgramRenderedGUI &&
+        typeof resetRenderPlotWidgets === "function") {
         $(textAreaGUIEditor).formRender({
             container: $(divExecuteProgramRenderedGUI)
         });
+
         resetRenderPlotWidgets();
     }
 }
@@ -66,7 +69,6 @@ function renderGUI() {
         });
     };
 })(jQuery);
-'use strict';
 
 (function($) {
     'use strict';
@@ -671,7 +673,8 @@ function renderGUI() {
 
         var nameAttr = function nameAttr(field) {
             var epoch = new Date().getTime();
-            return field.data('attrs').name + '-' + epoch;
+            //return field.data('attrs').name + '-' + epoch;
+            return field.data('attrs').name + '-' + Math.floor(1000 + Math.random() * 9000);
         };
 
         var prepFieldVars = function prepFieldVars($field, isNew) {
@@ -810,6 +813,10 @@ function renderGUI() {
 
         var advFields = function advFields(type, values) {
             var advFields = '';
+            var buttonFunctionToCall = '';
+            var plotWidth = '200';
+            var plotHeight = '100';
+            var plotDataPoints = '10';
 
             // Common editable fields
             var fieldLabel = $('<div>', {
@@ -821,7 +828,7 @@ function renderGUI() {
                 type: 'text',
                 name: 'label',
                 value: values.label,
-                'class': 'fld-label'
+                'class': 'fld-label frm-fld-input-text'
             }).appendTo(fieldLabel);
 
             advFields += fieldLabel[0].outerHTML;
@@ -833,21 +840,16 @@ function renderGUI() {
                 // TODO: Setup output field specific editable fields
             } else if (type === 'button') {
                 // TODO: Setup button specific editable fields
-                var buttonFunctionToCall = '';
 
-                if (values.buttonOnClick) {
+                if (values.buttonOnClick && values.buttonOnClick !== 'undefined') {
                     buttonFunctionToCall = values.buttonOnClick;
                 }
 
                 advFields += '<div class="frm-fld label-wrap"><label>' + opts.messages.buttonFunctionToCall + '</label>';
                 // TODO: The value to display is provided unescaped but the problem is with double quotes which should be escaped here.
-                advFields += '<input type="text" name="buttonFunctionToCall" value="' + buttonFunctionToCall + '" class="fld-button-function-to-call" /></div>';
+                advFields += '<input type="text" name="buttonFunctionToCall" value="' + buttonFunctionToCall + '" class="frm-fld-input-text fld-button-function-to-call" /></div>';
             } else if (type === 'plot') {
                 // TODO: Setup plot specific editable fields
-                var plotWidth = '200';
-                var plotHeight = '100';
-                var plotDataPoints = '10';
-
                 if (values.plotWidth) {
                     plotWidth = values.plotWidth;
                 }
@@ -861,13 +863,13 @@ function renderGUI() {
                 }
 
                 advFields += '<div class="frm-fld label-wrap"><label>' + opts.messages.plotWidth + '</label>';
-                advFields += '<input type="number" min="200" value="' + plotWidth + '" name="plotWidth" class="fld-plot-width" /></div>';
+                advFields += '<input type="number" min="200" value="' + plotWidth + '" name="plotWidth" class="frm-fld-input-number fld-plot-width" /></div>';
 
                 advFields += '<div class="frm-fld label-wrap"><label>' + opts.messages.plotHeight + '</label>';
-                advFields += '<input type="number" min="100" value="' + plotHeight + '" name="plotHeight" class="fld-plot-height" /></div>';
+                advFields += '<input type="number" min="100" value="' + plotHeight + '" name="plotHeight" class="frm-fld-input-number fld-plot-height" /></div>';
 
                 advFields += '<div class="frm-fld label-wrap"><label>' + opts.messages.plotDataPoints + '</label>';
-                advFields += '<input type="number" min="2" value="' + plotDataPoints + '" name="plotDataPoints" class="fld-plot-data-points" /></div>';
+                advFields += '<input type="number" min="2" value="' + plotDataPoints + '" name="plotDataPoints" class="frm-fld-input-number fld-plot-data-points" /></div>';
             }
 
             return advFields;
@@ -1098,6 +1100,15 @@ function renderGUI() {
         };
 
         // ---------------------- UTILITIES ---------------------- //
+
+        // Update the GUI editor changes when widget's editable field is modified.
+        $sortableFields.delegate('.frm-fld-input-text', 'keyup', function(e) {
+            _helpers.save();
+        });
+
+        $sortableFields.delegate('.frm-fld-input-number', 'change', function(e) {
+            _helpers.save();
+        });
 
         // delete options
         $sortableFields.delegate('.remove', 'click', function(e) {
@@ -1448,7 +1459,7 @@ function renderGUI() {
                             var fPlotHeight = '';
 
                             if (t === 'button' && $('input.fld-button-function-to-call', $field).val()) {
-                                // Must escape field value since currently it is unescaped for displaying to the user.
+                                // Must escape field value. Currently it is unescaped for displaying to the user.
                                 fButtonOnClick = 'buttonOnClick="' + escape($('input.fld-button-function-to-call', $field).val()) + '" ';
                             }
 
