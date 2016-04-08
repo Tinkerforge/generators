@@ -60,7 +60,7 @@ var textAreaGUIEditor = null;
 var divExecuteProgram = null;
 var $textAreaGUIEditor = null; // jQuery object.
 var iframeProgramEditor = null;
-var program_status_running = false;
+var programStatusRunning = false;
 var divExecuteProgramRenderedGUI = null;
 var $divExecuteProgramRenderedGUI = null; // jQuery object.
 var buttonExecuteProgramRunProgram = null;
@@ -257,7 +257,7 @@ function eventHandlerMessageWorkerManager(e) {
                  * Update program running status.
                  * Views are enabled/disabled based on the value of this status variable.
                  */
-                program_status_running = true;
+                programStatusRunning = true;
                 // Disable run program button.
                 $buttonExecuteProgramRunProgram.attr('disabled', true);
                 // Enable stop program button
@@ -280,17 +280,11 @@ function eventHandlerMessageWorkerManager(e) {
                     workerManager = null;
                 }
 
-                program_status_running = false;
+                programStatusRunning = false;
 
                 // Update Start/Stop button.
                 $buttonExecuteProgramStopProgram.attr('disabled', true);
                 $buttonExecuteProgramRunProgram.removeAttr('disabled');
-
-                // Update program output console.
-                textareaProgramExecutionConsole.value =
-                    MSG_OUTPUT_CONSOLE_NO_PROGRAM_RUNNING;
-                textareaProgramExecutionConsole.scrollTop =
-                    textareaProgramExecutionConsole.scrollHeight;
 
                 toggleDivGUIEditor(true);
                 toggleDivExecuteProgramRenderedGUI(false);
@@ -535,7 +529,7 @@ function eventHandlerLoadProjectFile(fileInput) {
                 programEditor.clear();
                 Blockly.Xml.domToWorkspace(programEditor, Blockly.Xml.textToDom(xmlProgramEditorText));
 
-                if (program_status_running)
+                if (programStatusRunning)
                     eventHandlerClickButtonExecuteProgramStopProgram();
             }
 
@@ -643,7 +637,7 @@ function eventHandlerClickaGUIEditor(e) {
 }
 
 function eventHandlerClickaExecuteProgram(e) {
-    if (program_status_running) {
+    if (programStatusRunning) {
         toggleDivExecuteProgramRenderedGUI(true);
     } else {
         toggleDivExecuteProgramRenderedGUI(false);
@@ -665,7 +659,6 @@ function eventHandlerClickButtonExecuteProgramStopProgram(e) {
             workerProtocol.TYPE_REQ_PROGRAM_STOP,
             null));
     }
-
 }
 
 function eventHandlerClickButtonExecuteProgramRunProgram(e) {
