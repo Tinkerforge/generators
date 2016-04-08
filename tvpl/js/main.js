@@ -435,13 +435,8 @@ function checkCompatibility(e) {
 
     // Check if Blockly toolbox was loaded.
     if (!Modernizr.blocklytoolboxloaded) {
-        if (window.chrome) {
-            closeAllOpenDialogsWithoutCloseButton();
-            dialogs.errorToolboxLoadFailedChrome.showModal();
-        } else {
-            closeAllOpenDialogsWithoutCloseButton();
-            dialogs.errorToolboxLoadFailed.showModal();
-        }
+        closeAllOpenDialogsWithoutCloseButton();
+        dialogs.errorToolboxLoadFailed.showModal();
 
         divBody.style.display = 'none';
 
@@ -451,7 +446,7 @@ function checkCompatibility(e) {
     // Check if worker manager code was loaded.
     if (!Modernizr.workermanagercodeloaded) {
         closeAllOpenDialogsWithoutCloseButton();
-        dialogs.errorToolboxLoadFailedChrome.showModal();
+        dialogs.errorWorkerManagerCodeLoadFailed.showModal();
 
         divBody.style.display = 'none';
 
@@ -626,7 +621,7 @@ function eventHandlerClickaProgramEditor(e) {
 }
 
 function eventHandlerClickaGUIEditor(e) {
-    if (program_status_running) {
+    if (programStatusRunning) {
         toggleDivGUIEditor(false);
     } else {
         toggleDivGUIEditor(true);
@@ -755,7 +750,8 @@ jQuery(document).ready(function($) {
     dialogs.errorProgramEditorEmpty = document.getElementById('dialogErrorProgramEditorEmpty');
     dialogs.errorLoadProjectReadFailed = document.getElementById('dialogErrorLoadProjectReadFailed');
     dialogs.errorLoadProjectFileInvalid = document.getElementById('dialogErrorLoadProjectFileInvalid');
-    dialogs.errorToolboxLoadFailedChrome = document.getElementById('dialogErrorWorkerManagerCodeLoadFailed');
+    dialogs.errorWorkerManagerCodeLoadFailed = document.getElementById('dialogErrorWorkerManagerCodeLoadFailed');
+
 
     // Dialogs with close button.
     dialogs.informationAbout.querySelector('.dialogButtonClose').addEventListener('click', function(e) {
