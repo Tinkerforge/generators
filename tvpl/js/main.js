@@ -311,6 +311,11 @@ function eventHandlerMessageWorkerManager(e) {
 
             case workerProtocol.TYPE_RES_ERROR:
                 if (message.data !== null && message.data !== '') {
+                    if ($textareaProgramExecutionConsole.hasClass('waiting'))
+                    {
+                        textareaProgramExecutionConsole.value = '';
+                    }
+
                     textareaProgramExecutionConsole.value += message.data;
                     textareaProgramExecutionConsole.scrollTop =
                         textareaProgramExecutionConsole.scrollHeight;
