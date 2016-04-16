@@ -875,6 +875,7 @@ jQuery(document).ready(function($) {
     // Register windows resize handler.
     window.addEventListener('resize', checkCompatibility, false);
 
-    // Now wait until the program editor has finished loading and only then continue.
-    $iframeProgramEditor.load(eventHandlerLoadIframeProgramEditor);
+    if (checkCompatibility())
+        // Now wait until the program editor has finished loading and only then continue.
+        $iframeProgramEditor.load(eventHandlerLoadIframeProgramEditor);
 });
