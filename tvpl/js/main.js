@@ -311,8 +311,7 @@ function eventHandlerMessageWorkerManager(e) {
 
             case workerProtocol.TYPE_RES_ERROR:
                 if (message.data !== null && message.data !== '') {
-                    if ($textareaProgramExecutionConsole.hasClass('waiting'))
-                    {
+                    if ($textareaProgramExecutionConsole.hasClass('waiting')) {
                         textareaProgramExecutionConsole.value = '';
                     }
 
@@ -495,10 +494,13 @@ function viewSwitcher(switchTo) {
 }
 
 function eventHandlerLoadProjectFile(fileInput) {
-    var zip = null;
     var file = null;
+    var elementGUI = null;
     var fileReader = null;
     var guiEditorText = '';
+    var programBlock = null;
+    var elementProgram = null;
+    var projectFileDOM = null;
     var xmlProgramEditorText = '';
     var newTextAreaGUIEditor = null;
 
@@ -512,18 +514,62 @@ function eventHandlerLoadProjectFile(fileInput) {
         fileReader = new FileReader();
 
         fileReader.onload = function(e) {
-            zip = new JSZip(fileReader.result);
-
-            if (!zip.file(FILENAME_PROGRAM_EDITOR)) {
-                throw 1;
+            if (!fileReader.result) {
+                dialogs.errorLoadProjectEmptyFile.showModal();
+                return;
             }
 
-            if (!zip.file(FILENAME_GUI_EDITOR)) {
+            projectFileDOM = textToDOM(fileReader.result);
+
+            if (!projectFileDOM)
                 throw 1;
+
+            if (projectFileDOM.firstChild.nodeName.toLowerCase() !== 'xml') {
+                dialogs.errorLoadProjectMalformedFile.showModal();
+                return;
             }
 
-            xmlProgramEditorText = zip.file(FILENAME_PROGRAM_EDITOR).asText();
-            guiEditorText = zip.file(FILENAME_GUI_EDITOR).asText();
+            if (projectFileDOM.firstChild.getElementsByTagName('tvpl').length !== 1) {
+                dialogs.errorLoadProjectMalformedFile.showModal();
+                return;
+            }
+
+            elementProgram =
+                projectFileDOM.firstChild.getElementsByTagName('tvpl')[0].getElementsByTagName('program');
+            elementGUI =
+                projectFileDOM.firstChild.getElementsByTagName('tvpl')[0].getElementsByTagName('gui');
+
+            if (elementProgram.length !== 1 || elementGUI.length !== 1) {
+                dialogs.errorLoadProjectMalformedFile.showModal();
+                return;
+            }
+
+            programBlock = elementProgram[0].firstChild;
+
+            while (programBlock) {
+                var blockString = DOMToText(programBlock);
+
+                if (!blockString) {
+                    dialogs.errorLoadProjectMalformedFile.showModal();
+                    return;
+                }
+
+                xmlProgramEditorText += blockString;
+
+                programBlock = programBlock.nextSibling;
+            }
+
+            if (elementGUI[0].getElementsByTagName('form-template').length > 1) {
+                dialogs.errorLoadProjectMalformedFile.showModal();
+                return;
+            }
+
+            if (elementGUI[0].getElementsByTagName('form-template').length === 1) {
+                guiEditorText = DOMToText(elementGUI[0].getElementsByTagName('form-template')[0]);
+            }
+
+            xmlProgramEditorText =
+                '<xml xmlns="http://www.w3.org/1999/xhtml">' + xmlProgramEditorText + '</xml>'
 
             if (xmlProgramEditorText !== '') {
                 programEditor.clear();
@@ -533,7 +579,7 @@ function eventHandlerLoadProjectFile(fileInput) {
                     eventHandlerClickButtonExecuteProgramStopProgram();
             }
 
-            if (xmlProgramEditorText !== '') {
+            if (guiEditorText !== '') {
                 // Remove the textarea which is child of the top level div of the view.
                 divGUIEditor.removeChild(document.getElementById('frmb-0-form-wrap'));
 
@@ -564,7 +610,8 @@ function eventHandlerLoadProjectFile(fileInput) {
             programEditor.zoomReset(dummy);
         }
 
-        fileReader.readAsArrayBuffer(file);
+        //fileReader.readAsArrayBuffer(file);
+        fileReader.readAsText(file);
     } catch (e) {
         dialogs.errorLoadProjectReadFailed.showModal();
     }
@@ -575,14 +622,60 @@ function eventHandlerClickaLoadProject(e) {
     return false; // So the link would not follow.
 }
 
+function textToDOM(textXML) {
+    var docXML = null;
+
+    if (!textXML)
+        return docXML;
+
+    try {
+        // IE
+        docXML = new ActiveXObject('Microsoft.XMLDOM');
+        docXML.async = 'false';
+        docXML.loadXML(textXML);
+
+        return docXML;
+    } catch (e) {
+        parser = new DOMParser();
+        docXML = parser.parseFromString(textXML, 'text/xml');
+
+        return docXML;
+    }
+}
+
+function DOMToText(xmlNode) {
+    if (!xmlNode)
+        return false;
+
+    try {
+        // https://developer.mozilla.org/en-US/docs/XMLSerializer
+        if (typeof XMLSerializer !== 'undefined') {
+            return (new XMLSerializer()).serializeToString(xmlNode);
+        }
+
+        // IE
+        if (xmlNode.xml) {
+            return xmlNode.xml;
+        }
+    } catch (e) {
+        return false;
+    }
+}
+
 function eventHandlerClickaSaveProject(e) {
     try {
-        var xmlProgramEditorText = '';
-        var guiEditorText = '';
         var d = new Date();
-        var zip = null;
-        var zipContent = null;
-        var projectFileNameTVPL = MONTH_NAMES[d.getUTCMonth()] +
+        var elementGUI = null;
+        var elementXML = null;
+        var elementTVPL = null;
+        var guiEditorText = '';
+        var guiEditorDOM = null;
+        var elementProgram = null;
+        var firstProgramBlock = null;
+        var xmlProgramEditorText = '';
+        var xmlProgramEditorDOM = null;
+        var projectFileNameTVPL =
+            MONTH_NAMES[d.getUTCMonth()] +
             d.getUTCDate() +
             '_' +
             d.getUTCHours() +
@@ -592,21 +685,44 @@ function eventHandlerClickaSaveProject(e) {
             d.getUTCSeconds() +
             '.tvpl';
 
-        xmlProgramEditorText = Blockly.Xml.domToPrettyText(Blockly.Xml.workspaceToDom(programEditor));
+        guiEditorText = $textAreaGUIEditor.val();
 
-        if (divExecuteProgramRenderedGUI.childNodes.length > 0) {
-            guiEditorText = $textAreaGUIEditor.val();
+        if ((programEditor.getTopBlocks(false).length == 0) &&
+            !guiEditorText) {
+            dialogs.errorSaveProjectEmpty.showModal();
+            return false;
         }
 
-        // Initiate JSZip.
-        zip = new JSZip();
-        // Create program editor and GUI editor files.
-        zip.file(FILENAME_PROGRAM_EDITOR, xmlProgramEditorText);
-        zip.file(FILENAME_GUI_EDITOR, guiEditorText);
-        // Generate ZIP file.
-        zipContent = zip.generate({ type: "blob" });
-        // Save the generated ZIP file.
-        saveAs(zipContent, projectFileNameTVPL);
+        xmlProgramEditorText =
+            Blockly.Xml.domToPrettyText(Blockly.Xml.workspaceToDom(programEditor));
+
+        xmlProgramEditorDOM = textToDOM(xmlProgramEditorText);
+        guiEditorDOM = textToDOM(guiEditorText);
+
+        elementGUI = xmlProgramEditorDOM.createElement('gui');
+        elementTVPL = xmlProgramEditorDOM.createElement('tvpl');
+        elementProgram = xmlProgramEditorDOM.createElement('program');
+
+        elementXML = xmlProgramEditorDOM.firstChild;
+
+        firstProgramBlock = elementXML.firstChild; // First program block.
+
+        while (firstProgramBlock) {
+            elementProgram.appendChild(firstProgramBlock.cloneNode(true));
+            elementXML.removeChild(firstProgramBlock);
+            firstProgramBlock = elementXML.firstChild; // Next program block.
+        }
+
+        if (guiEditorDOM)
+            elementGUI.appendChild(guiEditorDOM.firstChild);
+
+        elementTVPL.appendChild(elementProgram);
+        elementTVPL.appendChild(elementGUI);
+
+        xmlProgramEditorDOM.firstChild.appendChild(elementTVPL);
+
+        saveAs(new Blob([Blockly.Xml.domToPrettyText(xmlProgramEditorDOM)]),
+            projectFileNameTVPL);
     } catch (e) {
         dialogs.errorSaveProjectFailed.showModal();
     }
@@ -750,11 +866,14 @@ jQuery(document).ready(function($) {
     dialogs.informationAbout = document.getElementById('dialogInformationAbout');
     dialogs.errorNoWebWorker = document.getElementById('dialogErrorNoWebWorker');
     dialogs.errorScreenSizeSmall = document.getElementById('dialogErrorScreenSizeSmall');
+    dialogs.errorSaveProjectEmpty = document.getElementById('dialogErrorSaveProjectEmpty');
     dialogs.errorSaveProjectFailed = document.getElementById('dialogErrorSaveProjectFailed');
     dialogs.errorToolboxLoadFailed = document.getElementById('dialogErrorToolboxLoadFailed');
     dialogs.errorProgramEditorEmpty = document.getElementById('dialogErrorProgramEditorEmpty');
+    dialogs.errorLoadProjectEmptyFile = document.getElementById('dialogErrorLoadProjectEmptyFile');
     dialogs.errorLoadProjectReadFailed = document.getElementById('dialogErrorLoadProjectReadFailed');
     dialogs.errorLoadProjectFileInvalid = document.getElementById('dialogErrorLoadProjectFileInvalid');
+    dialogs.errorLoadProjectMalformedFile = document.getElementById('dialogErrorLoadProjectMalformedFile');
     dialogs.errorWorkerManagerCodeLoadFailed = document.getElementById('dialogErrorWorkerManagerCodeLoadFailed');
 
 
@@ -763,8 +882,20 @@ jQuery(document).ready(function($) {
         dialogs.informationAbout.close();
     });
 
+    dialogs.errorSaveProjectEmpty.querySelector('.dialogButtonClose').addEventListener('click', function(e) {
+        dialogs.errorSaveProjectEmpty.close();
+    });
+
     dialogs.errorSaveProjectFailed.querySelector('.dialogButtonClose').addEventListener('click', function(e) {
         dialogs.errorSaveProjectFailed.close();
+    });
+
+    dialogs.errorLoadProjectEmptyFile.querySelector('.dialogButtonClose').addEventListener('click', function(e) {
+        dialogs.errorLoadProjectEmptyFile.close();
+    });
+
+    dialogs.errorLoadProjectMalformedFile.querySelector('.dialogButtonClose').addEventListener('click', function(e) {
+        dialogs.errorLoadProjectMalformedFile.close();
     });
 
     dialogs.errorLoadProjectReadFailed.querySelector('.dialogButtonClose').addEventListener('click', function(e) {
@@ -876,6 +1007,6 @@ jQuery(document).ready(function($) {
     window.addEventListener('resize', checkCompatibility, false);
 
     if (checkCompatibility())
-        // Now wait until the program editor has finished loading and only then continue.
+    // Now wait until the program editor has finished loading and only then continue.
         $iframeProgramEditor.load(eventHandlerLoadIframeProgramEditor);
 });

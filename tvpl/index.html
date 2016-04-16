@@ -81,11 +81,47 @@
         </div>
     </dialog>
 
+    <dialog id="dialogErrorSaveProjectEmpty" class="mdl-dialog">
+        <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
+        <div class="mdl-dialog__content">
+            <p>
+                Seems like there is nothing to save.
+            </p>
+        </div>
+        <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
+            <button type="button" class="mdl-button dialogButtonClose">Close</button>
+        </div>
+    </dialog>
+
     <dialog id="dialogErrorSaveProjectFailed" class="mdl-dialog">
         <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
         <div class="mdl-dialog__content">
             <p>
                 Saving project failed.
+            </p>
+        </div>
+        <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
+            <button type="button" class="mdl-button dialogButtonClose">Close</button>
+        </div>
+    </dialog>
+
+    <dialog id="dialogErrorLoadProjectEmptyFile" class="mdl-dialog">
+        <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
+        <div class="mdl-dialog__content">
+            <p>
+                Seems like the file is empty.
+            </p>
+        </div>
+        <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
+            <button type="button" class="mdl-button dialogButtonClose">Close</button>
+        </div>
+    </dialog>
+
+    <dialog id="dialogErrorLoadProjectMalformedFile" class="mdl-dialog">
+        <h4 class="mdl-dialog__title"><mark class="markDialogHeaderError"><i class="material-icons">error</i> Error</mark></h4>
+        <div class="mdl-dialog__content">
+            <p>
+                Seems like the project file contains malformed data.
             </p>
         </div>
         <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
