@@ -581,7 +581,7 @@ function eventHandlerLoadProjectFile(fileInput) {
             if (elementsGUI[0].getElementsByTagName('form-template').length === 1) {
                 guiEditorText = DOMToText(elementsGUI[0].getElementsByTagName('form-template')[0]);
 
-                if(!guiEditorText) {
+                if (!guiEditorText) {
                     dialogs.errorLoadProjectMalformedFile.showModal();
                     return;
                 }
@@ -593,7 +593,28 @@ function eventHandlerLoadProjectFile(fileInput) {
 
             // Update program editor.
             programEditor.clear();
-            Blockly.Xml.domToWorkspace(programEditor, Blockly.Xml.textToDom(xmlProgramEditorText));
+
+            if(xmlProgramEditorText)
+                // If xmlProgramEditorText is empty then Blockly.Xml.textToDom() will throw exception.
+                Blockly.Xml.domToWorkspace(programEditor,
+                                           Blockly.Xml.textToDom(xmlProgramEditorText));
+
+            /*
+             * Do zoom reset after the program editor has finished
+             * setting up the program from the loaded project file.
+             */
+            setTimeout(function() {
+                /*
+                 * Because the internal mechanism of Blockly expects
+                 * the argument of the zoomReset function to have a
+                 * dictionary at least as the variable dummy is defined.
+                 */
+                var dummy = {
+                    stopPropagation: function() {}
+                };
+
+                programEditor.zoomReset(dummy);
+            }, 50); // 50ms.
 
             // Update GUI editor.
 
@@ -618,17 +639,6 @@ function eventHandlerLoadProjectFile(fileInput) {
             $textAreaGUIEditor.formRender({
                 container: $divExecuteProgramRenderedGUI
             });
-
-            var dummy = {
-                stopPropagation: function() {}
-            };
-
-            /*
-             * Because the internal mechanism of Blockly expects
-             * the argument of the zoomReset function to have a
-             * dictionary at least as the variable dummy is defined.
-             */
-            programEditor.zoomReset(dummy);
         }
 
         fileReader.readAsText(file);
