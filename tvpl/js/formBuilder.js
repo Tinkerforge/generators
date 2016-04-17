@@ -6,25 +6,6 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
 Tinkerforge TVPL modifications: Start tracing from,
 "function update(event, ui)".
 */
-'use strict';
-
-function renderGUI(e) {
-    var textAreaGUIEditor = null;
-    var divExecuteProgramRenderedGUI = null;
-
-    textAreaGUIEditor = document.getElementById('textAreaGUIEditor');
-    divExecuteProgramRenderedGUI = document.getElementById('divExecuteProgramRenderedGUI');
-
-    if (textAreaGUIEditor &&
-        divExecuteProgramRenderedGUI &&
-        typeof resetRenderPlotWidgets === "function") {
-        $(textAreaGUIEditor).formRender({
-            container: $(divExecuteProgramRenderedGUI)
-        });
-
-        resetRenderPlotWidgets();
-    }
-}
 
 (function($) {
     'use strict';
@@ -1492,10 +1473,8 @@ function renderGUI(e) {
             } // if "$(this).children().length >= 1"
         });
 
-        // Schedule a render after returning updated GUI editor preview code.
-        if (serialStr) setTimeout(renderGUI, 50);
-
-        setTimeout(eventHandlerChangeTextAreaGUIEditor, 50);
+        // Call textarea text changed event handler.
+        setTimeout(eventHandlerChangeTextAreaGUIEditor, 50); // 50ms.
 
         return serialStr;
     };

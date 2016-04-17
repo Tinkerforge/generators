@@ -238,6 +238,12 @@ function eventHandlerChangeTextAreaGUIEditor(e) {
     } else {
         $divExecuteProgramRenderedGUI.show();
         $divExecuteProgramRenderedGUIEmpty.hide();
+
+        $textAreaGUIEditor.formRender({
+            container: $divExecuteProgramRenderedGUI
+        });
+
+        resetRenderPlotWidgets();
     }
 }
 
