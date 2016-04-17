@@ -1473,7 +1473,10 @@ Tinkerforge TVPL modifications: Start tracing from,
             } // if "$(this).children().length >= 1"
         });
 
-        // Call textarea text changed event handler.
+        /*
+         * Call textarea text changed event handler.
+         * This event handler is defined in main.js.
+         */
         setTimeout(eventHandlerChangeTextAreaGUIEditor, 50); // 50ms.
 
         return serialStr;
