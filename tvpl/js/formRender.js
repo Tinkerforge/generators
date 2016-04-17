@@ -271,16 +271,6 @@ Author: Kevin Chappell <kevin.b.chappell@gmail.com>
                 fields = $('field', formData),
                 settings = $('settings', formData); // @todo
 
-            if (!formData) {
-                alert('Nothing to render. Seems like the GUI editor is empty.');
-                /*
-                 * Do not return here as we decide whether to switch or not
-                 * based on the number of child nodes on our rendered object.
-                 * So, even if there is nothing to render the renderer
-                 * should update the object.
-                 */
-            }
-
             // generate field markup if we have fields
             if (fields.length) {
                 fields.each(function(index, field) {
