@@ -180,13 +180,15 @@ function toggleDivGUIEditor(enable) {
 
 function toggleDivExecuteProgramRenderedGUI(enable) {
     if (enable) {
-        $divExecuteProgramRenderedGUI.addClass('enabled');
+        $divExecuteProgramRenderedGUI.removeClass('enabled');
         $divExecuteProgramRenderedGUI.removeClass('disabled');
+        $divExecuteProgramRenderedGUI.addClass('enabled');
         return;
     }
 
-    $divExecuteProgramRenderedGUI.addClass('disabled');
     $divExecuteProgramRenderedGUI.removeClass('enabled');
+    $divExecuteProgramRenderedGUI.removeClass('disabled');
+    $divExecuteProgramRenderedGUI.addClass('disabled');
 
     if ($divExecuteProgramRenderedGUIEmpty.css('display') === 'none')
         snackbar.MaterialSnackbar.showSnackbar({
@@ -639,6 +641,8 @@ function eventHandlerLoadProjectFile(fileInput) {
             $textAreaGUIEditor.formRender({
                 container: $divExecuteProgramRenderedGUI
             });
+
+            eventHandlerChangeTextAreaGUIEditor();
         }
 
         fileReader.readAsText(file);
