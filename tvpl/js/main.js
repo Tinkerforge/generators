@@ -583,14 +583,14 @@ function eventHandlerLoadProjectFile(fileInput) {
                 // Remove the textarea which is child of the top level div of the view.
                 divGUIEditor.removeChild(document.getElementById('frmb-0-form-wrap'));
 
-                // Recreate the text area
+                // Recreate the text area.
                 newTextAreaGUIEditor = document.createElement('textarea');
                 newTextAreaGUIEditor.setAttribute('id', 'textAreaGUIEditor');
                 divGUIEditor.appendChild(newTextAreaGUIEditor);
                 textAreaGUIEditor = newTextAreaGUIEditor;
                 $textAreaGUIEditor = $(newTextAreaGUIEditor);
 
-                // Re-initialize form builder
+                // Re-initialize form builder.
                 $textAreaGUIEditor.val(guiEditorText);
                 $textAreaGUIEditor.formBuilder();
                 $textAreaGUIEditor.formRender({
@@ -610,7 +610,6 @@ function eventHandlerLoadProjectFile(fileInput) {
             programEditor.zoomReset(dummy);
         }
 
-        //fileReader.readAsArrayBuffer(file);
         fileReader.readAsText(file);
     } catch (e) {
         dialogs.errorLoadProjectReadFailed.showModal();
@@ -629,7 +628,7 @@ function textToDOM(textXML) {
         return docXML;
 
     try {
-        // IE
+        // IE.
         docXML = new ActiveXObject('Microsoft.XMLDOM');
         docXML.async = 'false';
         docXML.loadXML(textXML);
@@ -653,7 +652,7 @@ function DOMToText(xmlNode) {
             return (new XMLSerializer()).serializeToString(xmlNode);
         }
 
-        // IE
+        // IE.
         if (xmlNode.xml) {
             return xmlNode.xml;
         }
@@ -857,7 +856,7 @@ jQuery(document).ready(function($) {
     divExecuteProgramRenderedGUIEmpty = document.getElementById('divExecuteProgramRenderedGUIEmpty');
     $divExecuteProgramRenderedGUIEmpty = $(divExecuteProgramRenderedGUIEmpty); // jQuery object.
 
-    // Snackbar
+    // Snackbar.
     snackbar = document.getElementById('snackbar');
 
     // Dialogs.
