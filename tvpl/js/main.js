@@ -524,6 +524,11 @@ function eventHandlerLoadProjectFile(fileInput) {
             if (!projectFileDOM)
                 throw 1;
 
+            if (!projectFileDOM.firstChild) {
+                dialogs.errorLoadProjectMalformedFile.showModal();
+                return;
+            }
+
             if (projectFileDOM.firstChild.nodeName.toLowerCase() !== 'xml') {
                 dialogs.errorLoadProjectMalformedFile.showModal();
                 return;
@@ -559,6 +564,9 @@ function eventHandlerLoadProjectFile(fileInput) {
                 programBlock = programBlock.nextSibling;
             }
 
+            xmlProgramEditorText =
+                '<xml xmlns="http://www.w3.org/1999/xhtml">' + xmlProgramEditorText + '</xml>'
+
             if (elementGUI[0].getElementsByTagName('form-template').length > 1) {
                 dialogs.errorLoadProjectMalformedFile.showModal();
                 return;
@@ -566,20 +574,29 @@ function eventHandlerLoadProjectFile(fileInput) {
 
             if (elementGUI[0].getElementsByTagName('form-template').length === 1) {
                 guiEditorText = DOMToText(elementGUI[0].getElementsByTagName('form-template')[0]);
+
+                if(!guiEditorText) {
+                    dialogs.errorLoadProjectMalformedFile.showModal();
+                    return;
+                }
             }
 
-            xmlProgramEditorText =
-                '<xml xmlns="http://www.w3.org/1999/xhtml">' + xmlProgramEditorText + '</xml>'
+            // If an user program is running then stop it first.
+            if (programStatusRunning)
+                eventHandlerClickButtonExecuteProgramStopProgram();
 
-            if (xmlProgramEditorText !== '') {
-                programEditor.clear();
-                Blockly.Xml.domToWorkspace(programEditor, Blockly.Xml.textToDom(xmlProgramEditorText));
+            // Update program editor.
+            programEditor.clear();
+            Blockly.Xml.domToWorkspace(programEditor, Blockly.Xml.textToDom(xmlProgramEditorText));
 
-                if (programStatusRunning)
-                    eventHandlerClickButtonExecuteProgramStopProgram();
-            }
+            // Update GUI editor.
 
-            // Remove the textarea which is child of the top level div of the view.
+            /*
+             * Remove the textarea which is child of the top level div of the view.
+             *
+             * This is needed because we want to initiate the GUI editor with predefined
+             * state from the loaded project file.
+             */
             divGUIEditor.removeChild(document.getElementById('frmb-0-form-wrap'));
 
             // Recreate the text area.
