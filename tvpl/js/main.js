@@ -501,11 +501,11 @@ function viewSwitcher(switchTo) {
 
 function eventHandlerLoadProjectFile(fileInput) {
     var file = null;
-    var elementGUI = null;
+    var elementsGUI = null;
     var fileReader = null;
     var guiEditorText = '';
     var programBlock = null;
-    var elementProgram = null;
+    var elementsProgram = null;
     var projectFileDOM = null;
     var xmlProgramEditorText = '';
     var newTextAreaGUIEditor = null;
@@ -545,17 +545,17 @@ function eventHandlerLoadProjectFile(fileInput) {
                 return;
             }
 
-            elementProgram =
+            elementsProgram =
                 projectFileDOM.firstChild.getElementsByTagName('tvpl')[0].getElementsByTagName('program');
-            elementGUI =
+            elementsGUI =
                 projectFileDOM.firstChild.getElementsByTagName('tvpl')[0].getElementsByTagName('gui');
 
-            if (elementProgram.length !== 1 || elementGUI.length !== 1) {
+            if (elementsProgram.length !== 1 || elementsGUI.length !== 1) {
                 dialogs.errorLoadProjectMalformedFile.showModal();
                 return;
             }
 
-            programBlock = elementProgram[0].firstChild;
+            programBlock = elementsProgram[0].firstChild;
 
             while (programBlock) {
                 var blockString = DOMToText(programBlock);
@@ -573,13 +573,13 @@ function eventHandlerLoadProjectFile(fileInput) {
             xmlProgramEditorText =
                 '<xml xmlns="http://www.w3.org/1999/xhtml">' + xmlProgramEditorText + '</xml>'
 
-            if (elementGUI[0].getElementsByTagName('form-template').length > 1) {
+            if (elementsGUI[0].getElementsByTagName('form-template').length > 1) {
                 dialogs.errorLoadProjectMalformedFile.showModal();
                 return;
             }
 
-            if (elementGUI[0].getElementsByTagName('form-template').length === 1) {
-                guiEditorText = DOMToText(elementGUI[0].getElementsByTagName('form-template')[0]);
+            if (elementsGUI[0].getElementsByTagName('form-template').length === 1) {
+                guiEditorText = DOMToText(elementsGUI[0].getElementsByTagName('form-template')[0]);
 
                 if(!guiEditorText) {
                     dialogs.errorLoadProjectMalformedFile.showModal();
