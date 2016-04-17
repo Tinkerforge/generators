@@ -579,24 +579,22 @@ function eventHandlerLoadProjectFile(fileInput) {
                     eventHandlerClickButtonExecuteProgramStopProgram();
             }
 
-            if (guiEditorText !== '') {
-                // Remove the textarea which is child of the top level div of the view.
-                divGUIEditor.removeChild(document.getElementById('frmb-0-form-wrap'));
+            // Remove the textarea which is child of the top level div of the view.
+            divGUIEditor.removeChild(document.getElementById('frmb-0-form-wrap'));
 
-                // Recreate the text area.
-                newTextAreaGUIEditor = document.createElement('textarea');
-                newTextAreaGUIEditor.setAttribute('id', 'textAreaGUIEditor');
-                divGUIEditor.appendChild(newTextAreaGUIEditor);
-                textAreaGUIEditor = newTextAreaGUIEditor;
-                $textAreaGUIEditor = $(newTextAreaGUIEditor);
+            // Recreate the text area.
+            newTextAreaGUIEditor = document.createElement('textarea');
+            newTextAreaGUIEditor.setAttribute('id', 'textAreaGUIEditor');
+            divGUIEditor.appendChild(newTextAreaGUIEditor);
+            textAreaGUIEditor = newTextAreaGUIEditor;
+            $textAreaGUIEditor = $(newTextAreaGUIEditor);
 
-                // Re-initialize form builder.
-                $textAreaGUIEditor.val(guiEditorText);
-                $textAreaGUIEditor.formBuilder();
-                $textAreaGUIEditor.formRender({
-                    container: $divExecuteProgramRenderedGUI
-                });
-            }
+            // Re-initialize form builder.
+            $textAreaGUIEditor.val(guiEditorText);
+            $textAreaGUIEditor.formBuilder();
+            $textAreaGUIEditor.formRender({
+                container: $divExecuteProgramRenderedGUI
+            });
 
             var dummy = {
                 stopPropagation: function() {}
