@@ -1,3 +1,13 @@
+/*
+    This CSS file is full of combination of vw, vh and %
+    for specifying height and width. Consistently using
+    only vw,vh or % causes unexpected behaviour.
+
+    Not sure about the reason for this could be because
+    of the viewport meta tag for mobile devices.
+*/
+
+
 /* General */
 
 html,
@@ -115,11 +125,6 @@ body {
 }
 
 #divExecuteProgramRenderedGUIEmpty {
-    /*
-        Must use vw and vh here.
-        Most probably all these vw and vh stuff is
-        because of the viewport meta tag for mobile devices.
-    */
     width: 100vw;
     height: 100vh;
     font-weight: bold;
