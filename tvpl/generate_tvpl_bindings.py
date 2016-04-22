@@ -712,9 +712,12 @@ class TVPLBindingsPacket(tvpl_common.TVPLPacket):
                 list_blockly_get_field_value_statements.append('''  var {fieldvaluevariable} = block.getFieldValue('{eupper}');'''.format(fieldvaluevariable = hash_get_field_value_variable[e.get_underscore_name()],
                                                                                                                                           eupper = e.get_underscore_name().upper()))
             else:
+              if e.get_tvpl_type() == 'String':
+                list_blockly_value_to_code_statements.append('''  var {valuetocodevariable} = JSON.stringify(Blockly.JavaScript.valueToCode(block, '{eupper}', Blockly.JavaScript.ORDER_ATOMIC));'''.format(valuetocodevariable = hash_value_to_code_variable[e.get_underscore_name()],
+                                                                                                                                                                                            eupper = e.get_underscore_name().upper()))
+              else:
                 list_blockly_value_to_code_statements.append('''  var {valuetocodevariable} = Blockly.JavaScript.valueToCode(block, '{eupper}', Blockly.JavaScript.ORDER_ATOMIC);'''.format(valuetocodevariable = hash_value_to_code_variable[e.get_underscore_name()],
                                                                                                                                                                                             eupper = e.get_underscore_name().upper()))
-
         return (list_blockly_value_to_code_statements, list_blockly_get_field_value_statements)
 
     def get_caller_generation_arguments_from_value_and_field_hash(self, underscore_names, ret_get_hash_of_value_and_field_variables):
