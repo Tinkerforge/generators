@@ -3,11 +3,12 @@
 
 TVPL is a visual programming language based on Google Blockly
 (https://developers.google.com/blockly/) supporting Tinkerforge
-Bricks and Bricklets. It is an application with which the user can
-graphically create programs using puzzle like blocks and execute
-the program directly on a web browser. The application also includes
-a GUI (Graphical User Interface) creator which enables the user to
-create a GUI to interact with user's program.
+Bricks and Bricklets except RED Brick. It is an application with
+which the user can graphically create programs using puzzle like
+blocks and execute the program directly on a web browser. The
+application also includes a GUI (Graphical User Interface) creator
+which enables the user to create a GUI to interact with user's
+program.
 
 2. Getting Started
 ==================
