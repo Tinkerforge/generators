@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+ * Copyright (C) 2012-2016 Matthias Bolte <matthias@tinkerforge.com>
  * Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
  *
  * Redistribution and use in source and binary forms of this file,
@@ -250,7 +250,7 @@ static void sha1_update(SHA1 *sha1, const uint8_t *data, size_t length) {
 	size_t i, j;
 
 	j = (size_t)((sha1->count >> 3) & 63);
-	sha1->count += (length << 3);
+	sha1->count += (uint64_t)length << 3;
 
 	if ((j + length) > 63) {
 		i = 64 - j;
