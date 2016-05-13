@@ -8,7 +8,7 @@
 
 com = {
     'author': 'Matthias Bolte <matthias@tinkerforge.com>',
-    'api_version': [2, 0, 0],
+    'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 268,
     'name': ('Real Time Clock', 'Real-Time Clock', 'Real-Time Clock Bricklet'),
@@ -226,8 +226,179 @@ Gibt den Versatz zurück, wie von :func:`SetOffset` gesetzt.
 }]
 })
 
+com['packets'].append({
+'type': 'function',
+'name': 'Set Date Time Callback Period',
+'elements': [('Period', 'uint32', 1, 'in')],
+'since_firmware': [2, 0, 1],
+'doc': ['ccf', {
+'en':
+"""
+Sets the period in ms with which the :func:`DateTime` callback is triggered
+periodically. A value of 0 turns the callback off.
+
+:func:`DateTime` is only triggered if the date or time changed since the
+last triggering.
+
+The default value is 0.
+""",
+'de':
+"""
+Setzt die Periode in ms mit welcher der :func:`DateTime` Callback ausgelöst wird.
+Ein Wert von 0 deaktiviert den Callback.
+
+:func:`DateTime` wird nur ausgelöst wenn sich das Datum oder die Zeit seit der
+letzten Auslösung geändert haben.
+
+Der Standardwert ist 0.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Date Time Callback Period',
+'elements': [('Period', 'uint32', 1, 'out')],
+'since_firmware': [2, 0, 1],
+'doc': ['ccf', {
+'en':
+"""
+Returns the period as set by :func:`SetDateTimeCallbackPeriod`.
+""",
+'de':
+"""
+Gibt die Periode zurück, wie von :func:`SetDateTimeCallbackPeriod`
+gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Alarm',
+'elements': [('Month', 'int8', 1, 'in', ('Alarm Match', [('Disabled', -1)])),
+             ('Day', 'int8', 1, 'in', ('Alarm Match', [('Disabled', -1)])),
+             ('Hour', 'int8', 1, 'in', ('Alarm Match', [('Disabled', -1)])),
+             ('Minute', 'int8', 1, 'in', ('Alarm Match', [('Disabled', -1)])),
+             ('Second', 'int8', 1, 'in', ('Alarm Match', [('Disabled', -1)])),
+             ('Weekday', 'int8', 1, 'in', ('Alarm Match', [('Disabled', -1)])),
+             ('Interval', 'int32', 1, 'in', ('Alarm Interval', [('Disabled', -1)]))],
+'since_firmware': [2, 0, 1],
+'doc': ['ccf', {
+'en':
+"""
+FIXME
+""",
+'de':
+"""
+FIXME
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Alarm',
+'elements': [('Month', 'int8', 1, 'out', ('Alarm Match', [('Disabled', -1)])),
+             ('Day', 'int8', 1, 'out', ('Alarm Match', [('Disabled', -1)])),
+             ('Hour', 'int8', 1, 'out', ('Alarm Match', [('Disabled', -1)])),
+             ('Minute', 'int8', 1, 'out', ('Alarm Match', [('Disabled', -1)])),
+             ('Second', 'int8', 1, 'out', ('Alarm Match', [('Disabled', -1)])),
+             ('Weekday', 'int8', 1, 'out', ('Alarm Match', [('Disabled', -1)])),
+             ('Interval', 'int32', 1, 'out', ('Alarm Interval', [('Disabled', -1)]))],
+'since_firmware': [2, 0, 1],
+'doc': ['ccf', {
+'en':
+"""
+Returns the alarm configuration as set by :func:`SetAlarm`.
+""",
+'de':
+"""
+Gibt die Alarmkonfiguration zurück, wie von :func:`SetAlarm` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Date Time',
+'elements': [('Year', 'uint16', 1, 'out'),
+             ('Month', 'uint8', 1, 'out'),
+             ('Day', 'uint8', 1, 'out'),
+             ('Hour', 'uint8', 1, 'out'),
+             ('Minute', 'uint8', 1, 'out'),
+             ('Second', 'uint8', 1, 'out'),
+             ('Centisecond', 'uint8', 1, 'out'),
+             ('Weekday', 'uint8', 1, 'out', ('Weekday', [('Monday', 1),
+                                                         ('Tuesday', 2),
+                                                         ('Wednesday', 3),
+                                                         ('Thursday', 4),
+                                                         ('Friday', 5),
+                                                         ('Saturday', 6),
+                                                         ('Sunday', 7)])),
+             ('Timestamp', 'int64', 1, 'out')],
+'since_firmware': [2, 0, 1],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered periodically with the period that is set by
+:func:`SetDateTimeCallbackPeriod`. The parameters are the same
+as for :func:`GetDateTime` and :func:`GetTimestamp`.
+
+:func:`DateTime` is only triggered if the date or time changed since the
+last triggering.
+""",
+'de':
+"""
+Dieser Callback wird mit der Periode, wie gesetzt mit
+:func:`SetDateTimeCallbackPeriod`, ausgelöst. Die Parameter sind die
+gleichen wie die von :func:`GetDateTime` und  :func:`GetTimestamp`.
+
+:func:`DateTime` wird nur ausgelöst wenn sich das Datum oder die Zeit
+seit der letzten Auslösung geändert haben.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
+'name': 'Alarm',
+'elements': [('Year', 'uint16', 1, 'out'),
+             ('Month', 'uint8', 1, 'out'),
+             ('Day', 'uint8', 1, 'out'),
+             ('Hour', 'uint8', 1, 'out'),
+             ('Minute', 'uint8', 1, 'out'),
+             ('Second', 'uint8', 1, 'out'),
+             ('Centisecond', 'uint8', 1, 'out'),
+             ('Weekday', 'uint8', 1, 'out', ('Weekday', [('Monday', 1),
+                                                         ('Tuesday', 2),
+                                                         ('Wednesday', 3),
+                                                         ('Thursday', 4),
+                                                         ('Friday', 5),
+                                                         ('Saturday', 6),
+                                                         ('Sunday', 7)])),
+             ('Timestamp', 'int64', 1, 'out')],
+'since_firmware': [2, 0, 1],
+'doc': ['c', {
+'en':
+"""
+FIXME
+""",
+'de':
+"""
+FIXME
+"""
+}]
+})
+
 com['examples'].append({
 'name': 'Simple',
 'functions': [('getter', ('Get Date Time', 'date and time'), [(('Year', 'Year'), 'uint16', None, None, None, None), (('Month', 'Month'), 'uint8', None, None, None, None), (('Day', 'Day'), 'uint8', None, None, None, None), (('Hour', 'Hour'), 'uint8', None, None, None, None), (('Minute', 'Minute'), 'uint8', None, None, None, None), (('Second', 'Second'), 'uint8', None, None, None, None), (('Centisecond', 'Centisecond'), 'uint8', None, None, None, None), (('Weekday', 'Weekday'), 'uint8', None, None, None, None)], []),
               ('getter', ('Get Timestamp', 'timestamp'), [(('Timestamp', 'Timestamp'), 'int64', None, 'ms', 'ms', None)], [])]
+})
+
+com['examples'].append({
+'name': 'Callback',
+'functions': [('callback', ('Date Time', 'date and time'), [(('Year', 'Year'), 'uint16', None, None, None, None), (('Month', 'Month'), 'uint8', None, None, None, None), (('Day', 'Day'), 'uint8', None, None, None, None), (('Hour', 'Hour'), 'uint8', None, None, None, None), (('Minute', 'Minute'), 'uint8', None, None, None, None), (('Second', 'Second'), 'uint8', None, None, None, None), (('Centisecond', 'Centisecond'), 'uint8', None, None, None, None), (('Weekday', 'Weekday'), 'uint8', None, None, None, None), (('Timestamp', 'Timestamp'), 'int64', None, None, None, None)], None, None),
+              ('callback_period', ('Date Time', 'date and time'), [], 5000)]
 })
