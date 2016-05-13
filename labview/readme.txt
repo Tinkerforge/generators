@@ -4,9 +4,10 @@ Tinkerforge LabVIEW Bindings
 The LabVIEW bindings allow you to control Tinkerforge Bricks and Bricklets from
 your LabVIEW programs (Windows only). This ZIP file contains:
 
- Tinkerforge.dll -- precompiled .NET library
- source/         -- source code of Tinkerforge.dll
- examples/       -- examples for every Brick and Bricklet
+ net20/Tinkerforge.dll -- precompiled .NET 2.0 library
+ net40/Tinkerforge.dll -- precompiled .NET 4.0 library
+ source/               -- source code of Tinkerforge.dll
+ examples/             -- examples for every Brick and Bricklet
 
 For more information about the LabVIEW bindings (including setup instructions)
 go to:
