@@ -697,7 +697,17 @@ class CBindingsPacket(c_common.CPacket):
             sf = 'request'
 
             if element.get_type() == 'string':
-                temp = '\n\tstrncpy({0}.{1}, {1}, {2});\n'
+                # use memcpy for string instead of strncpy. strncpy would work
+                # just fine for our strings that might no be null-terminated if
+                # they have full length. but MSVC complains about strncpy being
+                # unsafe, because it might not copy the null-terminator
+                # resulting in an unterminated string. MSVC wants us to use
+                # strncpy_s instead, but we cannot do that. just use memcpy to
+                # copy the string. our strings are short, so there is no point
+                # in trying to do an optimized copy operation here. also memcpy
+                # will copy the null-terminator if there is one and MSVC has
+                # nothing to complain anymore
+                temp = '\n\tmemcpy({0}.{1}, {1}, {2});\n'
                 struct_list += temp.format(sf, element.get_underscore_name(), element.get_cardinality())
             elif element.get_cardinality() > 1:
                 if element.get_item_size() > 1:
@@ -725,7 +735,17 @@ class CBindingsPacket(c_common.CPacket):
             sf = 'response'
 
             if element.get_type() == 'string':
-                temp = '\tstrncpy(ret_{0}, {1}.{0}, {2});\n'
+                # use memcpy for string instead of strncpy. strncpy would work
+                # just fine for our strings that might no be null-terminated if
+                # they have full length. but MSVC complains about strncpy being
+                # unsafe, because it might not copy the null-terminator
+                # resulting in an unterminated string. MSVC wants us to use
+                # strncpy_s instead, but we cannot do that. just use memcpy to
+                # copy the string. our strings are short, so there is no point
+                # in trying to do an optimized copy operation here. also memcpy
+                # will copy the null-terminator if there is one and MSVC has
+                # nothing to complain anymore
+                temp = '\tmemcpy(ret_{0}, {1}.{0}, {2});\n'
                 return_list += temp.format(element.get_underscore_name(), sf, element.get_cardinality())
             elif element.get_cardinality() > 1:
                 if element.get_item_size() > 1:
