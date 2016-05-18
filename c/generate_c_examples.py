@@ -105,6 +105,7 @@ int main(void) {{
 {sources}
 	printf("Press key to exit\n");
 	getchar();{cleanups}
+	{device_underscore_name}_destroy(&{device_initial_name});
 	ipcon_destroy(&ipcon); // Calls ipcon_disconnect internally
 	return 0;
 }}
