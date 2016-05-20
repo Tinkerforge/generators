@@ -44,6 +44,47 @@
 
 <body>
     <!--
+      TVPL is implemented based on content and control separated paradigm.
+      But the following JavaScript function had to be implemented here
+      like this because we want to stop loading the page if we detect any
+      Microsoft browsers since they are not currently supported by TVPL.
+    -->
+    <script type="text/javascript">
+        function isMicrosoft(e) {
+            var ua = window.navigator.userAgent;
+
+            var msie = ua.indexOf('MSIE ');
+
+            if (msie > 0) {
+                // IE 10 or older.
+                return true;
+            }
+
+            var trident = ua.indexOf('Trident/');
+
+            if (trident > 0) {
+                // IE 11.
+                return true;
+            }
+
+            var edge = ua.indexOf('Edge/');
+
+            if (edge > 0) {
+                // Edge (IE 12+).
+                return true;
+            }
+
+            // Other browser.
+            return false;
+        }
+
+        if (isMicrosoft()) {
+            alert('TVPL currently supports only Mozilla Firefox and Google Chrome browsers.');
+            window.document.execCommand('Stop');
+        }
+    </script>
+
+    <!--
       File input for loading projects.
     -->
     <input id="inputLoadProjectFile" type="file" accept=".tvpl" onchange="eventHandlerLoadProjectFile(this)" />
