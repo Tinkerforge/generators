@@ -580,3 +580,11 @@ Dieser Callback kann durch :func:`EnableFrameReadCallback` aktiviert werden.
 """
 }]
 })
+
+com['examples'].append({
+'name': 'Loopback',
+'functions': [('setter', 'Set Configuration', [('uint8:constant', 7), ('uint8:constant', 1), ('int32', 0)], 'Configure transceiver for loopback mode', None),
+              ('setter', 'Enable Frame Read Callback', [], 'Enable frame read callback', None)],
+'cleanups': [('setter', 'Disable Frame Read Callback', [], None, None)],
+'incomplete': True # because of callback with array parameter
+})
