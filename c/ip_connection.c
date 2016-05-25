@@ -1809,7 +1809,7 @@ static void ipcon_receive_loop(void *opaque) {
 		pending_length += length;
 
 		while (ipcon_p->receive_flag) {
-			if (pending_length < 8) {
+			if (pending_length < (int)sizeof(PacketHeader)) {
 				// wait for complete header
 				break;
 			}
