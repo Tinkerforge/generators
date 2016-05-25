@@ -1892,6 +1892,7 @@ static int ipcon_connect_unlocked(IPConnectionPrivate *ipcon_p, bool is_auto_rec
 
 		// destroy socket
 		free(tmp);
+		freeaddrinfo(resolved);
 
 		return E_NO_STREAM_SOCKET;
 	}
@@ -1906,9 +1907,12 @@ static int ipcon_connect_unlocked(IPConnectionPrivate *ipcon_p, bool is_auto_rec
 		// destroy socket
 		socket_destroy(tmp);
 		free(tmp);
+		freeaddrinfo(resolved);
 
 		return E_NO_CONNECT;
 	}
+
+	freeaddrinfo(resolved);
 
 	ipcon_p->socket = tmp;
 	++ipcon_p->socket_id;
