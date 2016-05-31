@@ -166,3 +166,7 @@
 - Add support for Real-Time Clock Bricklet
 - Break GPS Bricklet API to fix types of altitude and geoidal separation values
   (GetAltitude function and Altitude callback)
+
+2016-05-31: 2.1.11 (<unknown>)
+- Add DateTime and Alarm callbacks for Real-Time Clock Bricklet
+- Use generics for newer Delphi versions

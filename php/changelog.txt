@@ -168,3 +168,7 @@
 - Add support for Real-Time Clock Bricklet
 - Break GPS Bricklet API to fix types of altitude and geoidal separation values
   (getAltitude function and ALTITUDE callback)
+
+2016-05-31: 2.1.9 (<unknown>)
+- Add DATETIME and ALARM callbacks for Real-Time Clock Bricklet
+- Use stream sockets as a fallback if the sockets extension is missing

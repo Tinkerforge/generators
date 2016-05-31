@@ -211,3 +211,6 @@
 - Add support for Real-Time Clock Bricklet
 - Break GPS Bricklet API to fix types of altitude and geoidal separation values
   (getAltitude function and Altitude listener)
+
+2016-05-31: 2.1.9 (<unknown>)
+- Add DateTime and Alarm listeners for Real-Time Clock Bricklet
