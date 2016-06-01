@@ -287,11 +287,62 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-FIXME
+Configures a repeatable alarm. The :func:`Alarm` callback is triggered if the
+current date and time matches the configured alarm.
+
+Setting a parameter to -1 means that it should be disabled and doesn't take part
+in the match. Setting all parameters to -1 disables the alarm completely.
+
+For example, to make the alarm trigger every day at 7:30 AM it can be
+configured as (-1, -1, 7, 30, -1, -1, -1). The hour is set to match 7 and the
+minute is set to match 30. The alarm is triggered if all enabled parameters
+match.
+
+The interval has a special role. It allows to make the alarm reconfigure itself.
+This is useful if you need a repeated alarm that cannot be expressed by matching
+the current date and time. For example, to make the alarm trigger every 23
+seconds it can be configured as (-1, -1, -1, -1, -1, -1, 23). Internally the
+Bricklet will take the current date and time, add 23 seconds to it and set the
+result as its alarm. The first alarm will be triggered 23 seconds after the
+call. Because the interval is not -1, the Bricklet will do the same again
+internally, take the current date and time, add 23 seconds to it and set that
+as its alarm. This results in a repeated alarm that triggers every 23 seconds.
+
+The interval can also be used in combination with the other parameters. For
+example, configuring the alarm as (-1, -1, 7, 30, -1, -1, 300) results in an
+alarm that triggers every day at 7:30 AM and is then repeated every 5 minutes.
 """,
 'de':
 """
-FIXME
+Konfiguriert einen wiederholbaren Alarm. Der :func:`Alarm` Callback wird
+ausgelöst, wenn das aktuelle Datum und die aktuelle Uhrzeit mit dem
+konfigurierten Alarm übereinstimmen.
+
+Wird ein Parameter auf -1 gesetzt, dann wird es deaktiviert und nimmt nicht
+am Übereinstimmungstest teil. Werden alle Parameter auf -1 gesetzt, dann ist
+der Alarm vollständig deaktiviert.
+
+Um z.B. den Alarm jeden Tag um 7:30 Uhr auszulösen kann dieser auf (-1, -1, 7,
+30, -1, -1, -1) konfiguriert werden. Die Stunde ist auf 7 gesetzt und die
+Minute auf 30. Der Alarm wird ausgelöst, wenn alle aktiven Parameter mit dem
+aktuellen Datum und der aktuellen Zeit übereinstimmen.
+
+Das Intervall hat eine spezielle Rolle. Wenn es nicht auf -1 gesetzt ist, dann
+konfiguriert sich der Alarm nach jeder Auslösung entsprechend selbst neu. Dies
+kann für wiederholende Alarme genutzt werden, die nicht durch Übereinstimmung
+mit Datum und Uhrzeit abgebildet werden können. Um z.B. alle 23 Sekunden einen
+Alarm auszulösen kann dieser als (-1, -1, -1, -1, -1, -1, 23) konfiguriert
+werden. Intern nimmt das Bricklet das aktuelle Datum und die aktuelle Uhrzeit,
+addiert 23 Sekunden und setzt das Ergebnis als Alarm. Der erste Alarm wir dann
+23 Sekunden nach dem Aufruf ausgelöst werden. Da das Intervall nicht -1 ist
+wird das Bricklet dann intern wieder das gleiche tun: 23 Sekunden auf das
+aktuelle Datum und die aktuelle Uhrzeit addieren und das Ergebnis als Alarm
+setzten. Dadurch entsteht ein sich alle 23 Sekunden wiederholender Alarm.
+
+Das Intervall kann auch in Kombination mit den anderen Parametern verwendet
+werden. Wird z.B. der Alarm auf (-1, -1, 7, 30, -1, -1, 300) konfiguriert dann
+wird der Alarm jeden Tag um 7:30 Uhr ausgelöst und dann all 5 Minuten
+wiederholt.
 """
 }]
 })
@@ -342,8 +393,8 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetDateTimeCallbackPeriod`. The parameters are the same
-as for :func:`GetDateTime` and :func:`GetTimestamp`.
+:func:`SetDateTimeCallbackPeriod`. The :word:`parameters` are the same
+as for :func:`GetDateTime` and :func:`GetTimestamp` combined.
 
 :func:`DateTime` is only triggered if the date or time changed since the
 last triggering.
@@ -351,8 +402,8 @@ last triggering.
 'de':
 """
 Dieser Callback wird mit der Periode, wie gesetzt mit
-:func:`SetDateTimeCallbackPeriod`, ausgelöst. Die Parameter sind die
-gleichen wie die von :func:`GetDateTime` und  :func:`GetTimestamp`.
+:func:`SetDateTimeCallbackPeriod`, ausgelöst. Die :word:`parameters` sind die
+gleichen wie die von :func:`GetDateTime` und :func:`GetTimestamp` kombiniert.
 
 :func:`DateTime` wird nur ausgelöst wenn sich das Datum oder die Zeit
 seit der letzten Auslösung geändert haben.
@@ -382,11 +433,16 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-FIXME
+This callback is triggered every time the current date and time matches the
+configured alarm (see :func:`SetAlarm`). The :word:`parameters` are the same
+as for :func:`GetDateTime` and :func:`GetTimestamp` combined.
 """,
 'de':
 """
-FIXME
+Dieser Callback wird jedes mal ausgelöst, wenn das aktuelle Datum und die
+aktuelle Uhrzeit mit dem eingestellten Alarm übereinstimmen (siehe
+:func:`SetAlarm`). Die :word:`parameters` sind die gleichen wie die von
+:func:`GetDateTime` und :func:`GetTimestamp` kombiniert.
 """
 }]
 })
