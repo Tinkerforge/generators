@@ -79,9 +79,14 @@ class TVPLZipGenerator(common.ZipGenerator):
         shutil.copy(os.path.join(root_dir, 'index.html'), self.tmp_source_dir)
         shutil.copy(os.path.join(root_dir, 'programEditor.html'), self.tmp_source_dir)
 
+        # Copy general examples
+        for example in common.find_examples(root_dir, '^example_.*\.tvpl$'):
+            shutil.copy(example[1], self.tmp_examples_dir)
+
         # Copy changelog.txt and readme.txt
         shutil.copy(os.path.join(root_dir, 'changelog.txt'),self.tmp_dir)
         shutil.copy(os.path.join(root_dir, 'readme.txt'),self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'readme-alpha.txt'),self.tmp_dir)
 
         # Generate JavaScript bindings
         with common.ChangedDirectory(os.path.join(root_dir, '..', 'javascript')):

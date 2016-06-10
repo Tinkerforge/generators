@@ -111,7 +111,10 @@ class TVPLConstant(common.Constant):
 class TVPLExample(common.Example):
     def get_tvpl_source(self):
         root = ET.Element('xml', {'xmlns': 'http://www.w3.org/1999/xhtml'})
-        parent = root
+        tvpl = ET.SubElement(root, 'tvpl')
+        program = ET.SubElement(tvpl, 'program')
+        gui = ET.SubElement(tvpl, 'gui')
+        parent = program
 
         for function in self.get_functions():
             if isinstance(function, TVPLExampleGetterFunction) or \
