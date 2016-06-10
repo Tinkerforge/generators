@@ -86,7 +86,7 @@ class TVPLZipGenerator(common.ZipGenerator):
         # Copy changelog.txt and readme.txt
         shutil.copy(os.path.join(root_dir, 'changelog.txt'),self.tmp_dir)
         shutil.copy(os.path.join(root_dir, 'readme.txt'),self.tmp_dir)
-        shutil.copy(os.path.join(root_dir, 'readme-preview.txt'),self.tmp_dir)
+        shutil.copy(os.path.join(root_dir, 'readme-alpha.txt'),self.tmp_dir)
 
         # Generate JavaScript bindings
         with common.ChangedDirectory(os.path.join(root_dir, '..', 'javascript')):
