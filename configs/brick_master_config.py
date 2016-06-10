@@ -2812,6 +2812,57 @@ Gibt die aktuelle Version der WIFI Extension 2.0 Firmware zurück (major, minor,
 }]
 })
 
+com['packets'].append({
+'type': 'function', 
+'name': 'Enable Wifi2 Status LED',
+'elements': [],
+'since_firmware': [2, 4, 0],
+'doc': ['af', {
+'en':
+"""
+Turns the green status LED of the WIFI Extension 2.0 on.
+""",
+'de':
+"""
+Aktiviert die grüne Status LED der WIFI Extension 2.0.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': 'Disable Wifi2 Status LED',
+'elements': [],
+'since_firmware': [2, 4, 0],
+'doc': ['af', {
+'en':
+"""
+Turns the green status LED of the WIFI Extension 2.0 off.
+""",
+'de':
+"""
+Deaktiviert die grüne Status LED der WIFI Extension 2.0.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function', 
+'name': 'Is Wifi2 Status LED Enabled',
+'elements': [('Enabled', 'bool', 1, 'out')],
+'since_firmware': [2, 4, 0],
+'doc': ['af', {
+'en':
+"""
+Returns *True* if the green status LED of the WIFI Extension 2.0 is turned on.
+""",
+'de':
+"""
+Gibt *True* zurück falls die grüne Status LED der WIFI Extension 2.0 aktiviert ist.
+"""
+}]
+})
+
 com['examples'].append({
 'name': 'Stack Status',
 'functions': [('getter', ('Get Stack Voltage', 'stack voltage'), [(('Stack Voltage', 'Stack Voltage'), 'uint16', 1000.0, 'mV', 'V', None)], []),
