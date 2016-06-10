@@ -408,7 +408,8 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
            host = '_'.join(['value', block_name, 'ipcon_host']),
            port = '_'.join(['value', block_name, 'ipcon_port']),
            uid = '_'.join(['value', block_name, 'ipcon_uid']),
-           einargs = packet.get_caller_generation_arguments_from_value_and_field_hash(packet.get_packet_elements_underscore_name_as_list(elements_in),
+           einargs = packet.get_caller_generation_arguments_from_value_and_field_hash(elements_in,
+                                                                                      packet.get_packet_elements_underscore_name_as_list(elements_in),
                                                                                       ret_get_hash_of_value_and_field_variables))
 
                     out_args_assignment = ', '.join(packet.get_packet_elements_underscore_name_as_list(elements_out))
@@ -416,12 +417,19 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
                     if len(elements_out) > 1:
                         out_args_assignment = '[' + ', '.join(packet.get_packet_elements_underscore_name_as_list(elements_out)) + ']'
 
+                    statements_string_inputs = ''
+
+                    for e in elements_in:
+                      if e.get_tvpl_type() == 'String':
+                        statements_string_inputs += e.get_underscore_name() + ' = JSON.stringify(' + e.get_underscore_name() + ');'
+
                     function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function *_{blockname}(host, port_ip, uid, {einargs}) {{\\n'+
 '  var dict_tf_function_call = {{}};\\n'+
 '  dict_tf_function_call.worker_id = String(_worker_id);\\n'+
 '  dict_tf_function_call.host = String(host);\\n'+
 '  dict_tf_function_call.port = Number(port_ip);\\n'+
 '  dict_tf_function_call.uid = String(uid);\\n'+
+'  {ssi}\\n'+
 '  dict_tf_function_call.device_class_name = \\'{categoryname}\\';\\n'+
 '  dict_tf_function_call.device_function_name = \\'{packetname}\\';\\n'+
 '  dict_tf_function_call.device_function_input_args = [{einargs}].join(\\', \\');\\n'+
@@ -437,7 +445,8 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
            packetname = packet.get_headless_camel_case_name(),
            einargs = ', '.join(packet.get_packet_elements_underscore_name_as_list(elements_in)),
            eoutargs = ', '.join(packet.get_packet_elements_underscore_name_as_list(elements_out)),
-           eoutassignment = out_args_assignment)
+           eoutassignment = out_args_assignment,
+           ssi = statements_string_inputs)
 
                 generator_code_body = returned_blockly_code + function_to_generate
 
@@ -498,8 +507,15 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
            host = '_'.join(['value', block_name, 'ipcon_host']),
            port = '_'.join(['value', block_name, 'ipcon_port']),
            uid = '_'.join(['value', block_name, 'ipcon_uid']),
-           einargs = packet.get_caller_generation_arguments_from_value_and_field_hash(packet.get_packet_elements_underscore_name_as_list(elements_in),
+           einargs = packet.get_caller_generation_arguments_from_value_and_field_hash(elements_in,
+                                                                                      packet.get_packet_elements_underscore_name_as_list(elements_in),
                                                                                       ret_get_hash_of_value_and_field_variables));
+
+                    statements_string_inputs = ''
+
+                    for e in elements_in:
+                      if e.get_tvpl_type() == 'String':
+                        statements_string_inputs += e.get_underscore_name() + ' = JSON.stringify(' + e.get_underscore_name() + ');'
 
                     function_to_generate = '''Blockly.JavaScript.definitions_['{blockname}'] = 'function *_{blockname}(host, port_ip, uid, {einargs}) {{\\n'+
 '  var dict_tf_function_call = {{}};\\n'+
@@ -507,6 +523,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
 '  dict_tf_function_call.host = String(host);\\n'+
 '  dict_tf_function_call.port = Number(port_ip);\\n'+
 '  dict_tf_function_call.uid = String(uid);\\n'+
+'  {ssi}\\n'+
 '  dict_tf_function_call.device_class_name = \\'{categoryname}\\';\\n'+
 '  dict_tf_function_call.device_function_name = \\'{packetname}\\';\\n'+
 '  dict_tf_function_call.device_function_input_args = [{einargs}].join(\\', \\');\\n'+
@@ -520,7 +537,8 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
 '''.format(blockname = block_name,
            einargs = ', '.join(packet.get_packet_elements_underscore_name_as_list(elements_in)),
            categoryname = self.get_camel_case_category() + self.get_camel_case_name(),
-           packetname = packet.get_headless_camel_case_name())
+           packetname = packet.get_headless_camel_case_name(),
+           ssi = statements_string_inputs)
 
                 generator_code_body = returned_blockly_code + function_to_generate
                 source = source + generator_code_header + generator_code_body + generator_code_footer.format(returncode = 'code')
@@ -662,7 +680,9 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
                     returned_blockly_code = '''  var code = '_{blockname}(' + String(value_{devicename}_ipcon_host) + ', ' + String(value_{devicename}_ipcon_port) + ', ' + String(value_{devicename}_ipcon_uid) + ', ' + {einargs} + ')';
 '''.format(blockname = block_name,
            devicename = self.get_tvpl_device_name(),
-           einargs = packet.get_caller_generation_arguments_from_value_and_field_hash(packet.get_packet_elements_underscore_name_as_list(elements_in), ret_get_hash_of_value_and_field_variables))
+           einargs = packet.get_caller_generation_arguments_from_value_and_field_hash(elements_in,
+                                                                                      packet.get_packet_elements_underscore_name_as_list(elements_in),
+                                                                                      ret_get_hash_of_value_and_field_variables))
 
                 else:
                     # Setters
@@ -677,7 +697,9 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
                     returned_blockly_code = '''  var code = '_{blockname}(' + String(value_{devicename}_ipcon_host) + ', ' + String(value_{devicename}_ipcon_port) + ', ' + String(value_{devicename}_ipcon_uid) + ', ' + {einargs} + ')\\n';
 '''.format(blockname = block_name,
            devicename = self.get_tvpl_device_name(),
-           einargs = packet.get_caller_generation_arguments_from_value_and_field_hash(packet.get_packet_elements_underscore_name_as_list(elements_in), ret_get_hash_of_value_and_field_variables))
+           einargs = packet.get_caller_generation_arguments_from_value_and_field_hash(elements_in,
+                                                                                      packet.get_packet_elements_underscore_name_as_list(elements_in),
+                                                                                      ret_get_hash_of_value_and_field_variables))
 
             source = source + \
                      generator_code_header + \
@@ -712,34 +734,54 @@ class TVPLBindingsPacket(tvpl_common.TVPLPacket):
                 list_blockly_get_field_value_statements.append('''  var {fieldvaluevariable} = block.getFieldValue('{eupper}');'''.format(fieldvaluevariable = hash_get_field_value_variable[e.get_underscore_name()],
                                                                                                                                           eupper = e.get_underscore_name().upper()))
             else:
-              if e.get_tvpl_type() == 'String':
-                list_blockly_value_to_code_statements.append('''  var {valuetocodevariable} = JSON.stringify(Blockly.JavaScript.valueToCode(block, '{eupper}', Blockly.JavaScript.ORDER_ATOMIC));'''.format(valuetocodevariable = hash_value_to_code_variable[e.get_underscore_name()],
-                                                                                                                                                                                            eupper = e.get_underscore_name().upper()))
-              else:
-                list_blockly_value_to_code_statements.append('''  var {valuetocodevariable} = Blockly.JavaScript.valueToCode(block, '{eupper}', Blockly.JavaScript.ORDER_ATOMIC);'''.format(valuetocodevariable = hash_value_to_code_variable[e.get_underscore_name()],
+              list_blockly_value_to_code_statements.append('''  var {valuetocodevariable} = Blockly.JavaScript.valueToCode(block, '{eupper}', Blockly.JavaScript.ORDER_ATOMIC);'''.format(valuetocodevariable = hash_value_to_code_variable[e.get_underscore_name()],
                                                                                                                                                                                             eupper = e.get_underscore_name().upper()))
         return (list_blockly_value_to_code_statements, list_blockly_get_field_value_statements)
 
-    def get_caller_generation_arguments_from_value_and_field_hash(self, underscore_names, ret_get_hash_of_value_and_field_variables):
+    def get_caller_generation_arguments_from_value_and_field_hash(self,
+                                                                  ein,
+                                                                  underscore_names,
+                                                                  ret_get_hash_of_value_and_field_variables):
         function_in_args = ''
+        is_input_type_string = False
 
         for i, e in enumerate(underscore_names):
+            for ein_e in ein:
+              if ein_e.get_underscore_name() == e and ein_e.get_tvpl_type() == 'String':
+                is_input_type_string = True
+
             if e in ret_get_hash_of_value_and_field_variables[0]:
                 if function_in_args == '':
-                    function_in_args = 'String(' + ret_get_hash_of_value_and_field_variables[0][e] + ')'
+                    if is_input_type_string:
+                      function_in_args = '\'String(\' + ' + 'String(' + ret_get_hash_of_value_and_field_variables[0][e] + ')' + ' + \')\''
+                    else:
+                      function_in_args = 'String(' + ret_get_hash_of_value_and_field_variables[0][e] + ')'
+
                     if i < len(underscore_names) - 1:
                         function_in_args = function_in_args + ' + \', \' + '
                 else:
-                    function_in_args = function_in_args + 'String(' + ret_get_hash_of_value_and_field_variables[0][e] + ')'
+                    if is_input_type_string:
+                      function_in_args = function_in_args + '\'String(\' + ' + 'String(' + ret_get_hash_of_value_and_field_variables[0][e] + ')' + ' + \')\''
+                    else:
+                      function_in_args = function_in_args + 'String(' + ret_get_hash_of_value_and_field_variables[0][e] + ')'
+
                     if i < len(underscore_names) - 1:
                         function_in_args = function_in_args + ' + \', \' + '
             elif e in ret_get_hash_of_value_and_field_variables[1]:
                 if function_in_args == '':
+                  if is_input_type_string:
+                    function_in_args = '\'String(\' + ' + 'String(' + ret_get_hash_of_value_and_field_variables[1][e] + ')' + ' + \')\''
+                  else:
                     function_in_args = 'String(' + ret_get_hash_of_value_and_field_variables[1][e] + ')'
-                    if i < len(underscore_names) - 1:
-                        function_in_args = function_in_args + ' + \', \' + '
+
+                  if i < len(underscore_names) - 1:
+                    function_in_args = function_in_args + ' + \', \' + '
                 else:
-                    function_in_args = function_in_args + 'String(' + ret_get_hash_of_value_and_field_variables[1][e] + ')'
+                    if is_input_type_string:
+                      function_in_args = function_in_args + '\'String(\' + ' + 'String(' + ret_get_hash_of_value_and_field_variables[1][e] + ')' + ' + \')\''
+                    else:
+                      function_in_args = function_in_args + 'String(' + ret_get_hash_of_value_and_field_variables[1][e] + ')'
+
                     if i < len(underscore_names) - 1:
                         function_in_args = function_in_args + ' + \', \' + '
 
