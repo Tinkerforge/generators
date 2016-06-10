@@ -1,0 +1,1460 @@
+<xml xmlns="http://www.w3.org/1999/xhtml">
+  <tvpl xmlns="">
+    <program>
+  
+      <block xmlns="http://www.w3.org/1999/xhtml" type="procedures_defnoreturn" id="2e^M,n8~:[}|3cl531^E" x="13" y="13">
+    
+        <field name="NAME">start_humidity_plot</field>
+    
+        <comment pinned="false" h="80" w="160">Describe this function...</comment>
+    
+        <statement name="STACK">
+      
+          <block type="variables_set" id="hH?nkx5=]!%H_aPfTvY,">
+        
+            <field name="VAR">humidityplot</field>
+        
+            <value name="VALUE">
+          
+              <block type="logic_boolean" id="6(tH]b|-c23|wse^!)6v">
+            
+                <field name="BOOL">TRUE</field>
+          
+              </block>
+        
+            </value>
+      
+          </block>
+    
+        </statement>
+  
+      </block>
+  
+      <block xmlns="http://www.w3.org/1999/xhtml" type="controls_whileUntil" id="x)8^*fW~dn.i26aQz7i4" x="13" y="113">
+    
+        <field name="MODE">WHILE</field>
+    
+        <value name="BOOL">
+      
+          <block type="logic_boolean" id="2#kS1HL36AQ?;ANV[#Ag">
+        
+            <field name="BOOL">TRUE</field>
+      
+          </block>
+    
+        </value>
+    
+        <statement name="DO">
+      
+          <block type="text_print" id="pJ^S5D[xQii6)P7{bl=E">
+        
+            <value name="TEXT">
+          
+              <block type="text_join" id=")(o%{wxvF1e=.[%rhI^+">
+            
+                <mutation items="2"></mutation>
+            
+                <value name="ADD0">
+              
+                  <block type="brick_imu_get_quaternion" id="8KZAu1H+m%sfp{_|s*4#">
+                
+                    <value name="_UID">
+                  
+                      <block type="text" id="r7O=qc{njqh`5#@4)tmK">
+                    
+                        <field name="TEXT">6QFQff</field>
+                  
+                      </block>
+                
+                    </value>
+                
+                    <value name="_HOST">
+                  
+                      <block type="text" id="E_4B+4/qsBw7NVUIN9.;">
+                    
+                        <field name="TEXT">localhost</field>
+                  
+                      </block>
+                
+                    </value>
+                
+                    <value name="_PORT">
+                  
+                      <block type="math_number" id="L@NzWe=m[:j%BRzq2^nS">
+                    
+                        <field name="NUM">4280</field>
+                  
+                      </block>
+                
+                    </value>
+              
+                  </block>
+            
+                </value>
+          
+              </block>
+        
+            </value>
+        
+            <next>
+          
+              <block type="tinkerforge_misc_write_output_field" id="Lu~~W^zTZEh7HB71}8~M">
+            
+                <value name="_TEXT_WIDGET_OUTPUT_FIELD">
+              
+                  <block type="text_join" id="yn]1g~3Y/eobF0U.-9GT">
+                
+                    <mutation items="2"></mutation>
+                
+                    <value name="ADD0">
+                  
+                      <block type="brick_imu_get_acceleration" id="R~4Z59`-R_.P3Xh@}S|_">
+                    
+                        <value name="_UID">
+                      
+                          <block type="text" id="DqTaP{o8PK@e:wG*ot(4">
+                        
+                            <field name="TEXT">6QFQff</field>
+                      
+                          </block>
+                    
+                        </value>
+                    
+                        <value name="_HOST">
+                      
+                          <block type="text" id="ow{G*~54b900QU`rz}H*">
+                        
+                            <field name="TEXT">localhost</field>
+                      
+                          </block>
+                    
+                        </value>
+                    
+                        <value name="_PORT">
+                      
+                          <block type="math_number" id="N;1U-Wr,78fo.7[P!cBe">
+                        
+                            <field name="NUM">4280</field>
+                      
+                          </block>
+                    
+                        </value>
+                  
+                      </block>
+                
+                    </value>
+              
+                  </block>
+            
+                </value>
+            
+                <value name="_WIDGET_OUTPUT_FIELD">
+              
+                  <block type="text" id="EU0pywla#~=vtwQBe-Z@">
+                
+                    <field name="TEXT">output-field-3994</field>
+              
+                  </block>
+            
+                </value>
+            
+                <next>
+              
+                  <block type="controls_if" id="r+mb{hSkY9^13h|*4(f:">
+                
+                    <value name="IF0">
+                  
+                      <block type="logic_compare" id="M#hzNfEAZN7Yvxsgs-qs">
+                    
+                        <field name="OP">EQ</field>
+                    
+                        <value name="A">
+                      
+                          <block type="text_indexOf" id="i?j!7xE}S=8Xf^G|koMC">
+                        
+                            <field name="END">FIRST</field>
+                        
+                            <value name="VALUE">
+                          
+                              <block type="text_join" id="i#37t?HLSUWeDA!@r!tn">
+                            
+                                <mutation items="2"></mutation>
+                            
+                                <value name="ADD0">
+                              
+                                  <block type="bricklet_dual_button_get_button_state" id="W.OC:,:P;I@!|PdH=CIk">
+                                
+                                    <value name="_UID">
+                                  
+                                      <block type="text" id="]A[agJJN:szbK2e}?q#F">
+                                    
+                                        <field name="TEXT">fdd</field>
+                                  
+                                      </block>
+                                
+                                    </value>
+                                
+                                    <value name="_HOST">
+                                  
+                                      <block type="text" id="Op;fHCN3kIi_/Y5:kgY3">
+                                    
+                                        <field name="TEXT">localhost</field>
+                                  
+                                      </block>
+                                
+                                    </value>
+                                
+                                    <value name="_PORT">
+                                  
+                                      <block type="math_number" id="2WdH]2V6z.XYe*a9lEU6">
+                                    
+                                        <field name="NUM">4280</field>
+                                  
+                                      </block>
+                                
+                                    </value>
+                              
+                                  </block>
+                            
+                                </value>
+                          
+                              </block>
+                        
+                            </value>
+                        
+                            <value name="FIND">
+                          
+                              <block type="text" id="{r?dq*DZj4i*o)Uvyfgd">
+                            
+                                <field name="TEXT">0,1</field>
+                          
+                              </block>
+                        
+                            </value>
+                      
+                          </block>
+                    
+                        </value>
+                    
+                        <value name="B">
+                      
+                          <block type="math_number" id="U]:vQFrlCC7!gyf0TjPR">
+                        
+                            <field name="NUM">1</field>
+                      
+                          </block>
+                    
+                        </value>
+                  
+                      </block>
+                
+                    </value>
+                
+                    <statement name="DO0">
+                  
+                      <block type="bricklet_lcd_20x4_backlight_on" id="wkPHH~524S1P+l`1ANqZ">
+                    
+                        <value name="_UID">
+                      
+                          <block type="text" id="/P^_hc5K](~lxZHbB8S)">
+                        
+                            <field name="TEXT">7xwQ9g</field>
+                      
+                          </block>
+                    
+                        </value>
+                    
+                        <value name="_HOST">
+                      
+                          <block type="text" id="l/Z#Wc0wH(Nw6bby?6P@">
+                        
+                            <field name="TEXT">localhost</field>
+                      
+                          </block>
+                    
+                        </value>
+                    
+                        <value name="_PORT">
+                      
+                          <block type="math_number" id="m~jv{LjMG)=ySv+JTjB9">
+                        
+                            <field name="NUM">4280</field>
+                      
+                          </block>
+                    
+                        </value>
+                    
+                        <next>
+                      
+                          <block type="bricklet_lcd_20x4_clear_display" id="6Cu;%7z#G=~g9fslwif(">
+                        
+                            <value name="_UID">
+                          
+                              <block type="text" id="{m##_Cnz5Cn^ni]Fk+TV">
+                            
+                                <field name="TEXT">7xwQ9g</field>
+                          
+                              </block>
+                        
+                            </value>
+                        
+                            <value name="_HOST">
+                          
+                              <block type="text" id=")Ho)0/313`Es;fjqKnh3">
+                            
+                                <field name="TEXT">localhost</field>
+                          
+                              </block>
+                        
+                            </value>
+                        
+                            <value name="_PORT">
+                          
+                              <block type="math_number" id="X8NWa=;.d@a]TQu@?_Qv">
+                            
+                                <field name="NUM">4280</field>
+                          
+                              </block>
+                        
+                            </value>
+                        
+                            <next>
+                          
+                              <block type="bricklet_lcd_20x4_write_line" id="OxDE:#t~%]G}XqJw9qKa">
+                            
+                                <value name="LINE">
+                              
+                                  <block type="math_number" id="82[T,gFncMr#h?y`/vX8">
+                                
+                                    <field name="NUM">0</field>
+                              
+                                  </block>
+                            
+                                </value>
+                            
+                                <value name="POSITION">
+                              
+                                  <block type="math_number" id="=O9.(w9S959n_0t|/yn*">
+                                
+                                    <field name="NUM">0</field>
+                              
+                                  </block>
+                            
+                                </value>
+                            
+                                <value name="TEXT">
+                              
+                                  <block type="text" id="5^h*AA{{`c2HToH6RWtx">
+                                
+                                    <field name="TEXT">Pressed L...</field>
+                              
+                                  </block>
+                            
+                                </value>
+                            
+                                <value name="_UID">
+                              
+                                  <block type="text" id="BLLF[icj4KRXT@B)eL=W">
+                                
+                                    <field name="TEXT">7xwQ9g</field>
+                              
+                                  </block>
+                            
+                                </value>
+                            
+                                <value name="_HOST">
+                              
+                                  <block type="text" id="klfYvjaM^m`hclPRJ-6o">
+                                
+                                    <field name="TEXT">localhost</field>
+                              
+                                  </block>
+                            
+                                </value>
+                            
+                                <value name="_PORT">
+                              
+                                  <block type="math_number" id="4k5;;2HU_*cK%%(c24sf">
+                                
+                                    <field name="NUM">4280</field>
+                              
+                                  </block>
+                            
+                                </value>
+                          
+                              </block>
+                        
+                            </next>
+                      
+                          </block>
+                    
+                        </next>
+                  
+                      </block>
+                
+                    </statement>
+                
+                    <next>
+                  
+                      <block type="controls_if" id="pW#*rfvxP=Q!35fp9OH^">
+                    
+                        <value name="IF0">
+                      
+                          <block type="logic_compare" id="6kNMx[0%{F4q6|v}7/(f">
+                        
+                            <field name="OP">EQ</field>
+                        
+                            <value name="A">
+                          
+                              <block type="text_indexOf" id=".%WAY?Lvc`;k2PurZ5Pv">
+                            
+                                <field name="END">FIRST</field>
+                            
+                                <value name="VALUE">
+                              
+                                  <block type="text_join" id="0d@5_FyAeYB;rm8^2U[+">
+                                
+                                    <mutation items="2"></mutation>
+                                
+                                    <value name="ADD0">
+                                  
+                                      <block type="bricklet_dual_button_get_button_state" id="Eqv+isyrdXNNjp1*[T7W">
+                                    
+                                        <value name="_UID">
+                                      
+                                          <block type="text" id="a9lMG14U-GrljeLdGYqE">
+                                        
+                                            <field name="TEXT">fdd</field>
+                                      
+                                          </block>
+                                    
+                                        </value>
+                                    
+                                        <value name="_HOST">
+                                      
+                                          <block type="text" id="eF]??/Fg1T,KnP`gxLfv">
+                                        
+                                            <field name="TEXT">localhost</field>
+                                      
+                                          </block>
+                                    
+                                        </value>
+                                    
+                                        <value name="_PORT">
+                                      
+                                          <block type="math_number" id="`MCb:bGNbV7q62|_%s2]">
+                                        
+                                            <field name="NUM">4280</field>
+                                      
+                                          </block>
+                                    
+                                        </value>
+                                  
+                                      </block>
+                                
+                                    </value>
+                              
+                                  </block>
+                            
+                                </value>
+                            
+                                <value name="FIND">
+                              
+                                  <block type="text" id="=?UtyHzZ!,I{pbSSz%i#">
+                                
+                                    <field name="TEXT">1,0</field>
+                              
+                                  </block>
+                            
+                                </value>
+                          
+                              </block>
+                        
+                            </value>
+                        
+                            <value name="B">
+                          
+                              <block type="math_number" id="^RLL`GrVX*}35PGq5/^v">
+                            
+                                <field name="NUM">1</field>
+                          
+                              </block>
+                        
+                            </value>
+                      
+                          </block>
+                    
+                        </value>
+                    
+                        <statement name="DO0">
+                      
+                          <block type="bricklet_lcd_20x4_backlight_on" id="@E?O.zs|5HN|fu%.lV`Y">
+                        
+                            <value name="_UID">
+                          
+                              <block type="text" id="@!swX?JX3?CXR}@AZcN`">
+                            
+                                <field name="TEXT">7xwQ9g</field>
+                          
+                              </block>
+                        
+                            </value>
+                        
+                            <value name="_HOST">
+                          
+                              <block type="text" id="0:[X5XsNHMhT9d)lW|e@">
+                            
+                                <field name="TEXT">localhost</field>
+                          
+                              </block>
+                        
+                            </value>
+                        
+                            <value name="_PORT">
+                          
+                              <block type="math_number" id="U;F]WWB*Jj}9M1)VnWp@">
+                            
+                                <field name="NUM">4280</field>
+                          
+                              </block>
+                        
+                            </value>
+                        
+                            <next>
+                          
+                              <block type="bricklet_lcd_20x4_clear_display" id="+/`B`26@kT{HqMdf_BU|">
+                            
+                                <value name="_UID">
+                              
+                                  <block type="text" id="CiYQ7YyDpsqKUVUF8g=Y">
+                                
+                                    <field name="TEXT">7xwQ9g</field>
+                              
+                                  </block>
+                            
+                                </value>
+                            
+                                <value name="_HOST">
+                              
+                                  <block type="text" id="-QZ@rD9#|u3u^Piw_hLf">
+                                
+                                    <field name="TEXT">localhost</field>
+                              
+                                  </block>
+                            
+                                </value>
+                            
+                                <value name="_PORT">
+                              
+                                  <block type="math_number" id="CQI9ToOy!XjKv=FG/[27">
+                                
+                                    <field name="NUM">4280</field>
+                              
+                                  </block>
+                            
+                                </value>
+                            
+                                <next>
+                              
+                                  <block type="bricklet_lcd_20x4_write_line" id="q^7qhf3^1TZhQ]Jn^.8-">
+                                
+                                    <value name="LINE">
+                                  
+                                      <block type="math_number" id="N6:]C0qT%029]jk?A()F">
+                                    
+                                        <field name="NUM">0</field>
+                                  
+                                      </block>
+                                
+                                    </value>
+                                
+                                    <value name="POSITION">
+                                  
+                                      <block type="math_number" id="q1.TtsMp{C^~DaMap{-w">
+                                    
+                                        <field name="NUM">0</field>
+                                  
+                                      </block>
+                                
+                                    </value>
+                                
+                                    <value name="TEXT">
+                                  
+                                      <block type="text" id="5/HK:jpjzScy%%y%f|6}">
+                                    
+                                        <field name="TEXT">Pressed R...</field>
+                                  
+                                      </block>
+                                
+                                    </value>
+                                
+                                    <value name="_UID">
+                                  
+                                      <block type="text" id="`:WiE*B+!0FjV=xH83b9">
+                                    
+                                        <field name="TEXT">7xwQ9g</field>
+                                  
+                                      </block>
+                                
+                                    </value>
+                                
+                                    <value name="_HOST">
+                                  
+                                      <block type="text" id="P_R}b~snytcB=omQLaaV">
+                                    
+                                        <field name="TEXT">localhost</field>
+                                  
+                                      </block>
+                                
+                                    </value>
+                                
+                                    <value name="_PORT">
+                                  
+                                      <block type="math_number" id="(h%K=~T,VL:QvRtiq}-8">
+                                    
+                                        <field name="NUM">4280</field>
+                                  
+                                      </block>
+                                
+                                    </value>
+                              
+                                  </block>
+                            
+                                </next>
+                          
+                              </block>
+                        
+                            </next>
+                      
+                          </block>
+                    
+                        </statement>
+                    
+                        <next>
+                      
+                          <block type="controls_if" id="ASk/ny*qFOFsw?CXFo8%">
+                        
+                            <value name="IF0">
+                          
+                              <block type="logic_compare" id="=q(F(5Uk!cgWZrNB,atX">
+                            
+                                <field name="OP">EQ</field>
+                            
+                                <value name="A">
+                              
+                                  <block type="text_indexOf" id="d9zO9*{gt(y^9r.,uoC;">
+                                
+                                    <field name="END">FIRST</field>
+                                
+                                    <value name="VALUE">
+                                  
+                                      <block type="text_join" id="fL(ko;F2~YFX`2T7PYI0">
+                                    
+                                        <mutation items="2"></mutation>
+                                    
+                                        <value name="ADD0">
+                                      
+                                          <block type="bricklet_dual_button_get_button_state" id="?:iaG]m-En/eEz%MS!4~">
+                                        
+                                            <value name="_UID">
+                                          
+                                              <block type="text" id="Xj;hhO9(*%YJM~3!c%d%">
+                                            
+                                                <field name="TEXT">fdd</field>
+                                          
+                                              </block>
+                                        
+                                            </value>
+                                        
+                                            <value name="_HOST">
+                                          
+                                              <block type="text" id="l^d{H!`4f8++_2e]d%!Z">
+                                            
+                                                <field name="TEXT">localhost</field>
+                                          
+                                              </block>
+                                        
+                                            </value>
+                                        
+                                            <value name="_PORT">
+                                          
+                                              <block type="math_number" id="XbA!^@Wl|3v9`~kMTAIF">
+                                            
+                                                <field name="NUM">4280</field>
+                                          
+                                              </block>
+                                        
+                                            </value>
+                                      
+                                          </block>
+                                    
+                                        </value>
+                                  
+                                      </block>
+                                
+                                    </value>
+                                
+                                    <value name="FIND">
+                                  
+                                      <block type="text" id="y1L+zlxogrA;dc)/|;oy">
+                                    
+                                        <field name="TEXT">0,0</field>
+                                  
+                                      </block>
+                                
+                                    </value>
+                              
+                                  </block>
+                            
+                                </value>
+                            
+                                <value name="B">
+                              
+                                  <block type="math_number" id="LQv:.@(#9~C[o|K-i=?|">
+                                
+                                    <field name="NUM">1</field>
+                              
+                                  </block>
+                            
+                                </value>
+                          
+                              </block>
+                        
+                            </value>
+                        
+                            <statement name="DO0">
+                          
+                              <block type="bricklet_lcd_20x4_backlight_on" id="!Q,Q7?dxN^@Rf37d!Kx2">
+                            
+                                <value name="_UID">
+                              
+                                  <block type="text" id="@#8EjYrd;}EXfNR6.E1Z">
+                                
+                                    <field name="TEXT">7xwQ9g</field>
+                              
+                                  </block>
+                            
+                                </value>
+                            
+                                <value name="_HOST">
+                              
+                                  <block type="text" id="s6eQq,=gezBDKo1uNFT,">
+                                
+                                    <field name="TEXT">localhost</field>
+                              
+                                  </block>
+                            
+                                </value>
+                            
+                                <value name="_PORT">
+                              
+                                  <block type="math_number" id="LP5F#6rT%xxqaTizik#u">
+                                
+                                    <field name="NUM">4280</field>
+                              
+                                  </block>
+                            
+                                </value>
+                            
+                                <next>
+                              
+                                  <block type="bricklet_lcd_20x4_clear_display" id="*!9DYm;DF%9@lUf~,Ce^">
+                                
+                                    <value name="_UID">
+                                  
+                                      <block type="text" id="/CWSV.*1.AFq}:QH`-%G">
+                                    
+                                        <field name="TEXT">7xwQ9g</field>
+                                  
+                                      </block>
+                                
+                                    </value>
+                                
+                                    <value name="_HOST">
+                                  
+                                      <block type="text" id="LQ9U~nW^V~VMYB;_:28.">
+                                    
+                                        <field name="TEXT">localhost</field>
+                                  
+                                      </block>
+                                
+                                    </value>
+                                
+                                    <value name="_PORT">
+                                  
+                                      <block type="math_number" id="9di27Tc;7a{0ci{{}6h8">
+                                    
+                                        <field name="NUM">4280</field>
+                                  
+                                      </block>
+                                
+                                    </value>
+                                
+                                    <next>
+                                  
+                                      <block type="bricklet_lcd_20x4_write_line" id="hu2I73Z7;{J!u*qENGGI">
+                                    
+                                        <value name="LINE">
+                                      
+                                          <block type="math_number" id="zNKqASjt(rx992k`E93d">
+                                        
+                                            <field name="NUM">0</field>
+                                      
+                                          </block>
+                                    
+                                        </value>
+                                    
+                                        <value name="POSITION">
+                                      
+                                          <block type="math_number" id="r5vpd@UtaC@+!}2at`p}">
+                                        
+                                            <field name="NUM">0</field>
+                                      
+                                          </block>
+                                    
+                                        </value>
+                                    
+                                        <value name="TEXT">
+                                      
+                                          <block type="text" id="#V/Y@`MEZvl%Z^vJV*l^">
+                                        
+                                            <field name="TEXT">Pressed L and R...</field>
+                                      
+                                          </block>
+                                    
+                                        </value>
+                                    
+                                        <value name="_UID">
+                                      
+                                          <block type="text" id="sE4qc.*u/d^W3~dp%vLZ">
+                                        
+                                            <field name="TEXT">7xwQ9g</field>
+                                      
+                                          </block>
+                                    
+                                        </value>
+                                    
+                                        <value name="_HOST">
+                                      
+                                          <block type="text" id="R{^-W2IKkw}%6_{Q6WZG">
+                                        
+                                            <field name="TEXT">localhost</field>
+                                      
+                                          </block>
+                                    
+                                        </value>
+                                    
+                                        <value name="_PORT">
+                                      
+                                          <block type="math_number" id="G}}xK^T0/aoQn70^/]%Y">
+                                        
+                                            <field name="NUM">4280</field>
+                                      
+                                          </block>
+                                    
+                                        </value>
+                                  
+                                      </block>
+                                
+                                    </next>
+                              
+                                  </block>
+                            
+                                </next>
+                          
+                              </block>
+                        
+                            </statement>
+                        
+                            <next>
+                          
+                              <block type="controls_if" id="c_!kn0G2*FqGOxn#Z!Ud">
+                            
+                                <value name="IF0">
+                              
+                                  <block type="logic_compare" id="19+yWXd1L|_bXZD=XxB[">
+                                
+                                    <field name="OP">EQ</field>
+                                
+                                    <value name="A">
+                                  
+                                      <block type="text_indexOf" id="z%mTStGSS~#n{t3j]N?{">
+                                    
+                                        <field name="END">FIRST</field>
+                                    
+                                        <value name="VALUE">
+                                      
+                                          <block type="text_join" id="?2.GgMKQf5]7^w#y{+bP">
+                                        
+                                            <mutation items="2"></mutation>
+                                        
+                                            <value name="ADD0">
+                                          
+                                              <block type="bricklet_dual_button_get_button_state" id="oWO.=_sm-MvXzWUM)^%K">
+                                            
+                                                <value name="_UID">
+                                              
+                                                  <block type="text" id="cEk{^dIY,QIOS@KR_oel">
+                                                
+                                                    <field name="TEXT">fdd</field>
+                                              
+                                                  </block>
+                                            
+                                                </value>
+                                            
+                                                <value name="_HOST">
+                                              
+                                                  <block type="text" id=",Blg*RReHY~2t;mDH(mU">
+                                                
+                                                    <field name="TEXT">localhost</field>
+                                              
+                                                  </block>
+                                            
+                                                </value>
+                                            
+                                                <value name="_PORT">
+                                              
+                                                  <block type="math_number" id="9G6X%nuSkrsv@Ro8]79+">
+                                                
+                                                    <field name="NUM">4280</field>
+                                              
+                                                  </block>
+                                            
+                                                </value>
+                                          
+                                              </block>
+                                        
+                                            </value>
+                                      
+                                          </block>
+                                    
+                                        </value>
+                                    
+                                        <value name="FIND">
+                                      
+                                          <block type="text" id="0CH%zd%m]ZEZV~Tv;9+R">
+                                        
+                                            <field name="TEXT">1,1</field>
+                                      
+                                          </block>
+                                    
+                                        </value>
+                                  
+                                      </block>
+                                
+                                    </value>
+                                
+                                    <value name="B">
+                                  
+                                      <block type="math_number" id="C#-4{)(;c787HU|nv60I">
+                                    
+                                        <field name="NUM">1</field>
+                                  
+                                      </block>
+                                
+                                    </value>
+                              
+                                  </block>
+                            
+                                </value>
+                            
+                                <statement name="DO0">
+                              
+                                  <block type="bricklet_lcd_20x4_backlight_on" id="U/8]a{.xK0A7y|O!t)R*">
+                                
+                                    <value name="_UID">
+                                  
+                                      <block type="text" id="!58]+J+5xH@@vV5(~~q`">
+                                    
+                                        <field name="TEXT">7xwQ9g</field>
+                                  
+                                      </block>
+                                
+                                    </value>
+                                
+                                    <value name="_HOST">
+                                  
+                                      <block type="text" id=":WPKQhdMx;RzAD3;=jgs">
+                                    
+                                        <field name="TEXT">localhost</field>
+                                  
+                                      </block>
+                                
+                                    </value>
+                                
+                                    <value name="_PORT">
+                                  
+                                      <block type="math_number" id="a^pe;-7a*V[,M~!,RrMu">
+                                    
+                                        <field name="NUM">4280</field>
+                                  
+                                      </block>
+                                
+                                    </value>
+                                
+                                    <next>
+                                  
+                                      <block type="bricklet_lcd_20x4_clear_display" id="rJOQVT+`q~h*sd}z_+yi">
+                                    
+                                        <value name="_UID">
+                                      
+                                          <block type="text" id="y_Od[d2BObL^d]G-ck;l">
+                                        
+                                            <field name="TEXT">7xwQ9g</field>
+                                      
+                                          </block>
+                                    
+                                        </value>
+                                    
+                                        <value name="_HOST">
+                                      
+                                          <block type="text" id="Zkdtu0h6xXB-!gDZs@_Z">
+                                        
+                                            <field name="TEXT">localhost</field>
+                                      
+                                          </block>
+                                    
+                                        </value>
+                                    
+                                        <value name="_PORT">
+                                      
+                                          <block type="math_number" id="[]^3Qy,-U=StOSu7wp{z">
+                                        
+                                            <field name="NUM">4280</field>
+                                      
+                                          </block>
+                                    
+                                        </value>
+                                    
+                                        <next>
+                                      
+                                          <block type="bricklet_lcd_20x4_write_line" id="47v#-(nkY]uy!D[+oAu%">
+                                        
+                                            <value name="LINE">
+                                          
+                                              <block type="math_number" id="rC:lAk#@UB.^yosQ}D;S">
+                                            
+                                                <field name="NUM">0</field>
+                                          
+                                              </block>
+                                        
+                                            </value>
+                                        
+                                            <value name="POSITION">
+                                          
+                                              <block type="math_number" id="lG.30Ss1B/E!e;IHTvQ;">
+                                            
+                                                <field name="NUM">0</field>
+                                          
+                                              </block>
+                                        
+                                            </value>
+                                        
+                                            <value name="TEXT">
+                                          
+                                              <block type="text" id="1lf?+.+AEL)SOJ~,m::,">
+                                            
+                                                <field name="TEXT">Pressed none...</field>
+                                          
+                                              </block>
+                                        
+                                            </value>
+                                        
+                                            <value name="_UID">
+                                          
+                                              <block type="text" id="r!,E+{X-FYVE/^u7kdS,">
+                                            
+                                                <field name="TEXT">7xwQ9g</field>
+                                          
+                                              </block>
+                                        
+                                            </value>
+                                        
+                                            <value name="_HOST">
+                                          
+                                              <block type="text" id="}[W4%*gbEtY~}C-Ko`[,">
+                                            
+                                                <field name="TEXT">localhost</field>
+                                          
+                                              </block>
+                                        
+                                            </value>
+                                        
+                                            <value name="_PORT">
+                                          
+                                              <block type="math_number" id="hUUeZ7jxY*V+uf)fVTkH">
+                                            
+                                                <field name="NUM">4280</field>
+                                          
+                                              </block>
+                                        
+                                            </value>
+                                      
+                                          </block>
+                                    
+                                        </next>
+                                  
+                                      </block>
+                                
+                                    </next>
+                              
+                                  </block>
+                            
+                                </statement>
+                          
+                              </block>
+                        
+                            </next>
+                      
+                          </block>
+                    
+                        </next>
+                  
+                      </block>
+                
+                    </next>
+              
+                  </block>
+            
+                </next>
+          
+              </block>
+        
+            </next>
+      
+          </block>
+    
+        </statement>
+  
+      </block>
+  
+      <block xmlns="http://www.w3.org/1999/xhtml" type="variables_set" id="tRE1X#]siFM7;(glbI*A" x="13" y="1138">
+    
+        <field name="VAR">linearpotiplot</field>
+    
+        <value name="VALUE">
+      
+          <block type="logic_boolean" id="0W/JoOC{NhcB*^.tcea?">
+        
+            <field name="BOOL">FALSE</field>
+      
+          </block>
+    
+        </value>
+    
+        <next>
+      
+          <block type="controls_whileUntil" id="+J[`j]XVH.+eUi@-`0J/">
+        
+            <field name="MODE">WHILE</field>
+        
+            <value name="BOOL">
+          
+              <block type="logic_boolean" id=":F5#:jJUBUo?)j!U1m6G">
+            
+                <field name="BOOL">TRUE</field>
+          
+              </block>
+        
+            </value>
+        
+            <statement name="DO">
+          
+              <block type="controls_if" id="N+=H^?.pQ;x.FOw]U{`t">
+            
+                <value name="IF0">
+              
+                  <block type="variables_get" id="G1Mf/~GNxwaWu=B.}z.2">
+                
+                    <field name="VAR">linearpotiplot</field>
+              
+                  </block>
+            
+                </value>
+            
+                <statement name="DO0">
+              
+                  <block type="tinkerforge_misc_update_plot_widget" id="@CDRYFhud`X:(QWF8~q,">
+                
+                    <value name="_WIDGET_PLOT">
+                  
+                      <block type="text" id="~f:b[kQ,t#(fFd5~?b|d">
+                    
+                        <field name="TEXT">plot-9971</field>
+                  
+                      </block>
+                
+                    </value>
+                
+                    <value name="_UPDATE_VALUE_WIDGET_PLOT">
+                  
+                      <block type="bricklet_linear_poti_get_position" id="k_^Br^s=TRvp-Y*B8ENM">
+                    
+                        <value name="_UID">
+                      
+                          <block type="text" id="n2wQu9H9Lp~^ZvILu4Z?">
+                        
+                            <field name="TEXT">5WL</field>
+                      
+                          </block>
+                    
+                        </value>
+                    
+                        <value name="_HOST">
+                      
+                          <block type="text" id="M~7,mk-I{ze9VS!4/Ka/">
+                        
+                            <field name="TEXT">localhost</field>
+                      
+                          </block>
+                    
+                        </value>
+                    
+                        <value name="_PORT">
+                      
+                          <block type="math_number" id="P/Xazt:dQ*3%H8{eqz1/">
+                        
+                            <field name="NUM">4280</field>
+                      
+                          </block>
+                    
+                        </value>
+                  
+                      </block>
+                
+                    </value>
+              
+                  </block>
+            
+                </statement>
+          
+              </block>
+        
+            </statement>
+      
+          </block>
+    
+        </next>
+  
+      </block>
+  
+      <block xmlns="http://www.w3.org/1999/xhtml" type="procedures_defnoreturn" id="d#]r4z/f^B=kj|o-5b^B" x="13" y="1313">
+    
+        <field name="NAME">stop_humidity_plot</field>
+    
+        <comment pinned="false" h="80" w="160">Describe this function...</comment>
+    
+        <statement name="STACK">
+      
+          <block type="variables_set" id="{Y?_3QUGjQ]rLq8IAX[S">
+        
+            <field name="VAR">humidityplot</field>
+        
+            <value name="VALUE">
+          
+              <block type="logic_boolean" id="3#va!,wmYcb5idl+oqS7">
+            
+                <field name="BOOL">FALSE</field>
+          
+              </block>
+        
+            </value>
+      
+          </block>
+    
+        </statement>
+  
+      </block>
+  
+      <block xmlns="http://www.w3.org/1999/xhtml" type="procedures_defnoreturn" id="vdPVhwK8|;KCevi@Bv6D" x="13" y="1413">
+    
+        <field name="NAME">start_linear_poti_plot</field>
+    
+        <comment pinned="false" h="80" w="160">Describe this function...</comment>
+    
+        <statement name="STACK">
+      
+          <block type="variables_set" id="Ou?r,cJ^wO3DLS:BRI%=">
+        
+            <field name="VAR">linearpotiplot</field>
+        
+            <value name="VALUE">
+          
+              <block type="logic_boolean" id="g,MuG9#lHGeeHm[N2kGY">
+            
+                <field name="BOOL">TRUE</field>
+          
+              </block>
+        
+            </value>
+      
+          </block>
+    
+        </statement>
+  
+      </block>
+  
+      <block xmlns="http://www.w3.org/1999/xhtml" type="variables_set" id="4ky=kKI@()B|o5`OPLHh" x="13" y="1513">
+    
+        <field name="VAR">humidityplot</field>
+    
+        <value name="VALUE">
+      
+          <block type="logic_boolean" id="Uxc.D0^|J#Grbe4jU|s?">
+        
+            <field name="BOOL">FALSE</field>
+      
+          </block>
+    
+        </value>
+    
+        <next>
+      
+          <block type="controls_whileUntil" id="6.;^{Ef;8gwG6xbJmftS">
+        
+            <field name="MODE">WHILE</field>
+        
+            <value name="BOOL">
+          
+              <block type="logic_boolean" id="?k0^)yk,zVq:Te_?2?Rg">
+            
+                <field name="BOOL">TRUE</field>
+          
+              </block>
+        
+            </value>
+        
+            <statement name="DO">
+          
+              <block type="controls_if" id="Su9+_x1bHKWRdT(#;FAE">
+            
+                <value name="IF0">
+              
+                  <block type="variables_get" id="*b7]h(BUuL[}Qz)Xim{@">
+                
+                    <field name="VAR">humidityplot</field>
+              
+                  </block>
+            
+                </value>
+            
+                <statement name="DO0">
+              
+                  <block type="tinkerforge_misc_update_plot_widget" id="x]Lx_)/?2@kN7WjXa[UK">
+                
+                    <value name="_WIDGET_PLOT">
+                  
+                      <block type="text" id="a~LS8|}^l-C`KA~|r+is">
+                    
+                        <field name="TEXT">plot-8402</field>
+                  
+                      </block>
+                
+                    </value>
+                
+                    <value name="_UPDATE_VALUE_WIDGET_PLOT">
+                  
+                      <block type="bricklet_humidity_get_humidity" id="!R~kx](~r|Gl:T+JHyYV">
+                    
+                        <value name="_UID">
+                      
+                          <block type="text" id="kBs*!7j`64^o,LTI}9IB">
+                        
+                            <field name="TEXT">qTQ</field>
+                      
+                          </block>
+                    
+                        </value>
+                    
+                        <value name="_HOST">
+                      
+                          <block type="text" id="DC}7r{QPdgAqQXnW(wAh">
+                        
+                            <field name="TEXT">localhost</field>
+                      
+                          </block>
+                    
+                        </value>
+                    
+                        <value name="_PORT">
+                      
+                          <block type="math_number" id=":HU+tILbmu,y*Rh@{0H4">
+                        
+                            <field name="NUM">4280</field>
+                      
+                          </block>
+                    
+                        </value>
+                  
+                      </block>
+                
+                    </value>
+              
+                  </block>
+            
+                </statement>
+          
+              </block>
+        
+            </statement>
+      
+          </block>
+    
+        </next>
+  
+      </block>
+  
+      <block xmlns="http://www.w3.org/1999/xhtml" type="procedures_defnoreturn" id="mZ26zZ9S`7jZq@m~Km*R" x="13" y="1688">
+    
+        <field name="NAME">stop_linear_poti_plot</field>
+    
+        <comment pinned="false" h="80" w="160">Describe this function...</comment>
+    
+        <statement name="STACK">
+      
+          <block type="variables_set" id="x_@MlINPMH#Bj/;~91QE">
+        
+            <field name="VAR">linearpotiplot</field>
+        
+            <value name="VALUE">
+          
+              <block type="logic_boolean" id=")xKhts[}^-DW#Was|W!M">
+            
+                <field name="BOOL">FALSE</field>
+          
+              </block>
+        
+            </value>
+      
+          </block>
+    
+        </statement>
+  
+      </block>
+
+    </program>
+    <gui>
+      <form-template>
+	
+        <fields>
+		
+          <field name="output-field-3994" label="IMU Acceleration" required="false" type="output-field"/>
+		
+            <field name="button-6182" label="Start Humidity Plot" required="false" type="button" buttonOnClick="start_humidity_plot%28%29"/>
+		
+              <field name="button-5863" label="Stop Humidity Plot" required="false" type="button" buttonOnClick="stop_humidity_plot%28%29"/>
+		
+                <field name="plot-8402" label="Humidity Plot" required="false" type="plot" plotDataPoints="64" plotWidth="800" plotHeight="250"/>
+		
+                  <field name="button-6866" label="Start Linear Poti Plot" required="false" type="button" buttonOnClick="start_linear_poti_plot%28%29"/>
+		
+                    <field name="button-7615" label="Stop Linear Poti Plot" required="false" type="button" buttonOnClick="stop_linear_poti_plot%28%29"/>
+		
+                      <field name="plot-9971" label="Linear Poti Plot" required="false" type="plot" plotDataPoints="64" plotWidth="800" plotHeight="250"/>
+	
+                      </fields>
+
+                    </form-template>
+                  </gui>
+                </tvpl>
+              </xml>
