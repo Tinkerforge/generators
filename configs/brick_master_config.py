@@ -2520,12 +2520,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the authentication secret as set by :func:`SetWifiAuthenticationSecret`.
+Returns the authentication secret as set by :func:`SetWifi2AuthenticationSecret`.
 """,
 'de':
 """
 Gibt das Authentifizierungsgeheimnis zurück, wie von
-:func:`SetWifiAuthenticationSecret` gesetzt.
+:func:`SetWifi2AuthenticationSecret` gesetzt.
 """
 }]
 })
@@ -2795,6 +2795,22 @@ Call this function to actually save configuration
 }]
 })
 
+com['packets'].append({
+'type': 'function', 
+'name': 'Get Wifi2 Firmware Version',
+'elements': [('Firmware Version', 'uint8', 3, 'out')],
+'since_firmware': [2, 4, 0],
+'doc': ['af', {
+'en':
+"""
+Returns the current version of the WIFI Extension 2.0 firmware (major, minor, revision).
+""",
+'de':
+"""
+Gibt die aktuelle Version der WIFI Extension 2.0 Firmware zurück (major, minor, revision).
+"""
+}]
+})
 
 com['examples'].append({
 'name': 'Stack Status',
