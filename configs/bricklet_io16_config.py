@@ -444,7 +444,7 @@ will turn pin 7 high and pin 6 low on port A, pins 0-6 will remain untouched.
 
 .. note::
  This function does nothing for pins that are configured as input.
- Pull-up resistors can be switched on with :func:`SetConfiguration`.
+ Pull-up resistors can be switched on with :func:`SetPortConfiguration`.
 """,
 'de':
 """
@@ -459,7 +459,7 @@ setzen den Pin 7 auf logisch 1 und den Pin 6 auf logisch 0 an Port A. Die Pins
 
 .. note::
  Diese Funktion bewirkt keine Änderung an Pins die als Eingang konfiguriert sind.
- Pull-Up Widerstände können mit :func:`SetConfiguration` zugeschaltet werden.
+ Pull-Up Widerstände können mit :func:`SetPortConfiguration` zugeschaltet werden.
 """
 }]
 })
