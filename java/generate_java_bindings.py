@@ -230,7 +230,7 @@ public class {0} extends Device {{
         cbs = ''
         cb = """
 \t\tcallbacks[CALLBACK_{0}] = new IPConnection.DeviceCallbackListener() {{
-\t\t\tpublic void callback({5}byte[] data) {{{1}
+\t\t\tpublic void callback({5}byte[] data_) {{{1}
 \t\t\t\tfor({2}Listener listener: listener{2}) {{
 \t\t\t\t\tlistener.{3}({4});
 \t\t\t\t}}
@@ -239,7 +239,7 @@ public class {0} extends Device {{
 """
 
         data = """
-\t\t\t\tByteBuffer bb = ByteBuffer.wrap(data, 8, data.length - 8);
+\t\t\t\tByteBuffer bb = ByteBuffer.wrap(data_, 8, data_.length - 8);
 \t\t\t\tbb.order(ByteOrder.LITTLE_ENDIAN);
 
 {1}"""
@@ -276,7 +276,7 @@ public class {0} extends Device {{
         cbs = ''
         cb = """
 \t\tcallbacks[CALLBACK_{0}] = new IPConnection.DeviceCallbackListener() {{
-\t\t\tpublic void callback({5}byte[] data) {{{1}
+\t\t\tpublic void callback({5}byte[] data_) {{{1}
 \t\t\t\tfor(OctaveReference listener: listener{2}) {{
 \t\t\t\t\tlistener.invoke(new Object[]{{{4}}});
 \t\t\t\t}}
@@ -285,7 +285,7 @@ public class {0} extends Device {{
 """
 
         data = """
-\t\t\t\tByteBuffer bb = ByteBuffer.wrap(data, 8, data.length - 8);
+\t\t\t\tByteBuffer bb = ByteBuffer.wrap(data_, 8, data_.length - 8);
 \t\t\t\tbb.order(ByteOrder.LITTLE_ENDIAN);
 
 {1}"""
