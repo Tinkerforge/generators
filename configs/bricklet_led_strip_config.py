@@ -141,14 +141,14 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the rgb with the given *length* starting from the
+Returns *rgb* values with the given *length* starting from the
 given *index*.
 
 The values are the last values that were set by :func:`SetRGBValues`.
 """,
 'de':
 """
-Gibt rgb Werte mit der übergebenen *length* zurück, beginnend vom
+Gibt *rgb* Werte mit der übergebenen *length* zurück, beginnend vom
 übergebenen *index*.
 
 Die Werte sind die letzten von :func:`SetRGBValues` gesetzten Werte.
