@@ -2438,7 +2438,7 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function', 
-'name': 'Write Wifi2 Flash',
+'name': 'Write Wifi2 Serial Port',
 'elements': [('Data', 'uint8', 60, 'in'),
              ('Length', 'uint8', 1, 'in'),
              ('Result', 'int8', 1, 'out')],
@@ -2455,7 +2455,7 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'function', 
-'name': 'Read Wifi2 Flash',
+'name': 'Read Wifi2 Serial Port',
 'elements': [('Length', 'uint8', 1, 'in'),
              ('Data', 'uint8', 60, 'out'),
              ('Result', 'uint8', 1, 'out')],
