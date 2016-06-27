@@ -150,7 +150,7 @@ typedef struct {
 #endif
 
 typedef struct {
-	uint32_t uid;
+	uint32_t uid; // always little endian
 	uint8_t length;
 	uint8_t function_id;
 	uint8_t sequence_number_and_options;
@@ -217,7 +217,7 @@ struct _Device {
 struct _DevicePrivate {
 	int ref_count;
 
-	uint32_t uid;
+	uint32_t uid; // always host endian
 
 	IPConnectionPrivate *ipcon_p;
 
