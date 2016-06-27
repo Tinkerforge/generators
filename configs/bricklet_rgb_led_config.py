@@ -32,11 +32,11 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the *rgb* value for the LED.
 """,
 'de':
 """
-TODO
+Setzt den *rgb* Wert für die LED.
 """
 }]
 })
@@ -51,11 +51,16 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Returns the *rgb* value of the LED as set by :func:`SetRGBValues`.
 """,
 'de':
 """
-TODO
+Gibt den *rgb* Wert der LED zurück, wie von :func:`SetRGBValue` gesetzt.
 """
 }]
+})
+
+com['examples'].append({
+'name': 'Simple',
+'functions': [('setter', 'Set RGB Value', [('uint8', 0), ('uint8', 170), ('uint8', 234)], 'Set light blue color', None)]
 })
