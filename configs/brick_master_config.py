@@ -2456,9 +2456,9 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function', 
 'name': 'Read Wifi2 Flash',
-'elements': [('Length In', 'uint8', 1, 'in'),
+'elements': [('Length', 'uint8', 1, 'in'),
              ('Data', 'uint8', 60, 'out'),
-             ('Length Out', 'uint8', 1, 'out')],
+             ('Result', 'uint8', 1, 'out')],
 'since_firmware': [2, 4, 0],
 'doc': ['af', {
 'en':
