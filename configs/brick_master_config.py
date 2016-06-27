@@ -80,7 +80,7 @@ com['packets'].append({
 'en':
 """
 Writes the extension type to the EEPROM of a specified extension. 
-The extension is either 0 or 1 (0 is the on the bottom, 1 is the on on top, 
+The extension is either 0 or 1 (0 is the on the bottom, 1 is the one on top,
 if only one extension is present use 0).
 
 Possible extension types:
