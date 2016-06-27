@@ -2084,7 +2084,7 @@ com['packets'].append({
 'type': 'function', 
 'name': 'Get Ethernet Configuration',
 'elements': [('Connection', 'uint8', 1, 'out', ('Ethernet Connection', [('DHCP', 0),
-                                                                       ('Static IP', 1)])),
+                                                                        ('Static IP', 1)])),
              ('IP', 'uint8', 4, 'out'),
              ('Subnet Mask', 'uint8', 4, 'out'),
              ('Gateway', 'uint8', 4, 'out'),
@@ -2383,19 +2383,18 @@ Gibt das Authentifizierungsgeheimnis zurück, wie von
 com['packets'].append({
 'type': 'function', 
 'name': 'Get Connection Type',
-'elements': [('Connection Type', 'uint8', 1, 'out')],
+'elements': [('Connection Type', 'uint8', 1, 'out', ('Connection Type', [('None', 0),
+                                                                         ('USB', 1),
+                                                                         ('SPI Stack', 2),
+                                                                         ('Chibi', 3),
+                                                                         ('RS485', 4),
+                                                                         ('Wifi', 5),
+                                                                         ('Ethernet', 6),
+                                                                         ('Wifi2', 7)]))],
 'since_firmware': [2, 4, 0],
 'doc': ['af', {
 'en':
 """
-	COM_NONE      = 0,
-	COM_USB       = 1,
-	COM_SPI_STACK = 2,
-	COM_CHIBI     = 3,
-	COM_RS485     = 4,
-	COM_WIFI      = 5,
-	COM_ETHERNET  = 6,
-	COM_WIFI2     = 7,
 """,
 'de':
 """
@@ -2536,9 +2535,11 @@ com['packets'].append({
 'elements': [('Port', 'uint16', 1, 'in'),
              ('Websocket Port', 'uint16', 1, 'in'),
              ('Website Port', 'uint16', 1, 'in'),
-             ('PHY Mode', 'uint8', 1, 'in'),
-             ('Sleep Mode', 'uint8', 1, 'in'),
-             ('Website', 'uint8', 1, 'in')],
+             ('PHY Mode', 'uint8', 1, 'in', ('Wifi2 PHY Mode', [('B', 0),
+                                                                ('G', 1),
+                                                                ('N', 2)])),
+             ('Sleep Mode', 'uint8', 1, 'in'), # FIXME: constants?
+             ('Website', 'uint8', 1, 'in')], # FIXME: constants?
 'since_firmware': [2, 4, 0],
 'doc': ['af', {
 'en':
@@ -2556,9 +2557,11 @@ com['packets'].append({
 'elements': [('Port', 'uint16', 1, 'out'),
              ('Websocket Port', 'uint16', 1, 'out'),
              ('Website Port', 'uint16', 1, 'out'),
-             ('PHY Mode', 'uint8', 1, 'out'),
-             ('Sleep Mode', 'uint8', 1, 'out'),
-             ('Website', 'uint8', 1, 'out')],
+             ('PHY Mode', 'uint8', 1, 'out', ('Wifi2 PHY Mode', [('B', 0),
+                                                                 ('G', 1),
+                                                                 ('N', 2)])),
+             ('Sleep Mode', 'uint8', 1, 'out'), # FIXME: constants?
+             ('Website', 'uint8', 1, 'out')], # FIXME: constants?
 'since_firmware': [2, 4, 0],
 'doc': ['af', {
 'en':
@@ -2574,7 +2577,12 @@ com['packets'].append({
 'type': 'function', 
 'name': 'Get Wifi2 Status',
 'elements': [('Client Enabled', 'bool', 1, 'out'),
-             ('Client Status', 'uint8', 1, 'out'),
+             ('Client Status', 'uint8', 1, 'out', ('Wifi2 Client Status', [('Idle', 0),
+                                                                           ('Connecting', 1),
+                                                                           ('Wrong Password', 2),
+                                                                           ('No AP Found', 3),
+                                                                           ('Connect Failed', 4),
+                                                                           ('Got IP', 5)])),
              ('Client IP', 'uint8', 4, 'out'),
              ('Client Subnet Mask', 'uint8', 4, 'out'),
              ('Client Gateway', 'uint8', 4, 'out'),
@@ -2711,7 +2719,11 @@ com['packets'].append({
              ('IP', 'uint8', 4, 'in'),
              ('Subnet Mask', 'uint8', 4, 'in'),
              ('Gateway', 'uint8', 4, 'in'),
-             ('Auth', 'uint8', 1, 'in'),
+             ('Encryption', 'uint8', 1, 'in', ('Wifi2 AP Encryption', [('No Encryption', 0),
+                                                                       ('WEP', 1),
+                                                                       ('WPA PSK', 2),
+                                                                       ('WPA2 PSK', 3),
+                                                                       ('WPA WPA2 PSK', 4)])),
              ('Hidden', 'bool', 1, 'in'),
              ('Channel', 'uint8', 1, 'in'),
              ('MAC Address', 'uint8', 6, 'in')],
@@ -2734,7 +2746,11 @@ com['packets'].append({
              ('IP', 'uint8', 4, 'out'),
              ('Subnet Mask', 'uint8', 4, 'out'),
              ('Gateway', 'uint8', 4, 'out'),
-             ('Encryption', 'uint8', 1, 'out'),
+             ('Encryption', 'uint8', 1, 'out', ('Wifi2 AP Encryption', [('No Encryption', 0),
+                                                                        ('WEP', 1),
+                                                                        ('WPA PSK', 2),
+                                                                        ('WPA2 PSK', 3),
+                                                                        ('WPA WPA2 PSK', 4)])),
              ('Hidden', 'bool', 1, 'out'),
              ('Channel', 'uint8', 1, 'out'),
              ('MAC Address', 'uint8', 6, 'out')],
@@ -2782,7 +2798,7 @@ com['packets'].append({
 com['packets'].append({
 'type': 'function', 
 'name': 'Save Wifi2 Configuration',
-'elements': [('Value', 'uint8', 1, 'out')],
+'elements': [('Result', 'uint8', 1, 'out')],
 'since_firmware': [2, 4, 0],
 'doc': ['af', {
 'en':
