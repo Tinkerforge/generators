@@ -803,7 +803,7 @@ verbindet. Der Standardport von brickd ist 4223.
 Die Werte sind im EEPROM gespeichert und werden nur beim Start angewandt. Dass
 bedeutet, der Master Brick muss nach einer Konfiguration neu gestartet werden.
 
-Wir empfehlen den Brick Viewer zu nutzen um die WIFI Extension zu
+Wir empfehlen den Brick Viewer zu verwenden, um die WIFI Extension zu
 konfigurieren.
 """
 }]
@@ -951,7 +951,7 @@ Beispiel für EAP-TTLS + EAP-GTC + Private Key: ``option = 2 | (1 << 2) | (2 << 
 Die Werte sind im EEPROM gespeichert und werden nur beim Start angewandt.
 Das bedeutet der Master Brick muss nach einer Konfiguration neu gestartet werden.
 
-Wir empfehlen den Brick Viewer zu nutzen um die WLAN Verschlüsselung
+Wir empfehlen den Brick Viewer zu verwenden, um die WLAN Verschlüsselung
 zu konfigurieren.
 """
 }]
@@ -1124,8 +1124,8 @@ für Private Key 20000. Die Maximalen Dateigrößen sind jeweils 1312, 1312 und
 Die Werte sind im EEPROM gespeichert und werden nur beim Start angewandt.
 Das bedeutet der Master Brick muss nach einer Konfiguration neu gestartet werden.
 
-Wir empfehlen den Brick Viewer zu nutzen um die WIFI Extension Verschlüsselung
-zu konfigurieren.
+Wir empfehlen den Brick Viewer zu verwenden, um die Zertifikate, Benutzernamen
+und Passwort zu konfigurieren.
 """
 }]
 })
@@ -2069,7 +2069,7 @@ Die Werte sind im EEPROM gespeichert und werden nur beim Start angewandt.
 Das bedeutet der Master Brick muss nach einer Konfiguration neu gestartet
 werden.
 
-Wir empfehlen den Brick Viewer zu nutzen um die Ethernet Extension zu
+Wir empfehlen den Brick Viewer zu verwenden, um die Ethernet Extension zu
 konfigurieren.
 """
 }]
@@ -2229,7 +2229,7 @@ Die Werte sind im EEPROM gespeichert und werden nur beim Start angewandt.
 Das bedeutet der Master Brick muss nach einer Konfiguration neu gestartet
 werden.
 
-Wir empfehlen den Brick Viewer zu nutzen um die Ethernet Extension zu
+Wir empfehlen den Brick Viewer zu verwenden, um die Ethernet Extension zu
 konfigurieren.
 
 Die Standardwerte sind 3 für die Anzahl der Socket-Verbindungen und
@@ -2290,7 +2290,7 @@ Das Authentifizierungsgehemnis wird im EEPROM gespeichert und nur beim Start ang
 Das bedeutet der Master Brick muss nach einer Konfiguration neu gestartet
 werden.
 
-Wir empfehlen den Brick Viewer zu nutzen um die Authentifizierung der Ethernet
+Wir empfehlen den Brick Viewer zu verwenden, um die Authentifizierung der Ethernet
 Extension einzurichten.
 
 Der Standardwert ist ein leerer String (Authentifizierung deaktiviert).
@@ -2349,7 +2349,7 @@ Das Authentifizierungsgehemnis wird im EEPROM gespeichert und nur beim Start
 angewandt. Das bedeutet der Master Brick muss nach einer Konfiguration neu
 gestartet werden.
 
-Wir empfehlen den Brick Viewer zu nutzen um die Authentifizierung der WIFI 
+Wir empfehlen den Brick Viewer zu verwenden, um die Authentifizierung der WIFI
 Extension einzurichten.
 
 Der Standardwert ist ein leerer String (Authentifizierung deaktiviert).
@@ -2390,9 +2390,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the type of the connection over which this function was called.
 """,
 'de':
 """
+Gibt den Typ der Verbingung zurück, über welche diese Funktion aufgerufen wurde.
 """
 }]
 })
@@ -2424,9 +2426,30 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Starts the bootloader of the WIFI Extension 2.0. Returns 0 on success.
+Afterwards the :func:`WriteWifi2SerialPort` and :func:`ReadWifi2SerialPort`
+functions can be used to communicate with the bootloader to flash a new
+firmware.
+
+The bootloader should only be started over a USB connection. It cannot be
+started over a WIFI2 connection, see the :func:`GetConnectionType` function.
+
+It is recommended to use the Brick Viewer to update the firmware of the WIFI
+Extension 2.0.
 """,
 'de':
 """
+Startet den Bootloader der WIFI Extension 2.0. Gibt bei Erfolg 0 zurück.
+Danach können die :func:`WriteWifi2SerialPort` und :func:`ReadWifi2SerialPort`
+Funktionen zur Kommunikation mit dem Bootloader verwendet werden, um eine neue
+Firmware zu flashen.
+
+Der bootloader sollte nur über eine USB Verbindung gestartet werden. Er kann
+nicht über eine WIFI2 Verbindung gestartet werden, siehe die
+:func:`GetConnectionType` Funktion.
+
+Wir empfehlen den Brick Viewer zu verwenden, um die Firmware der WIFI
+Extension 2.0 zu aktualisieren.
 """
 }]
 })
@@ -2441,9 +2464,27 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Writes up to 60 bytes (number of bytes to be written specified by ``length``)
+to the serial port of the bootloader of the WIFI Extension 2.0. Returns 0 on
+success.
+
+Before this function can be used the bootloader has to be started using the
+:func:`StartWifi2Bootloader` function.
+
+It is recommended to use the Brick Viewer to update the firmware of the WIFI
+Extension 2.0.
 """,
 'de':
 """
+Schreibt bis zu 60 Bytes (Anzahl zu schreibender Bytes mit ``length`` angeben)
+auf die serielle Schnittstelle des Bootloaders der WIFI Extension 2.0. Gibt
+bei Erfolg 0 zurück.
+
+Bevor diese Funktion genutzt werden kann muss der Bootloader mit der
+:func:`StartWifi2Bootloader` Funktion gestartet werden.
+
+Wir empfehlen den Brick Viewer zu verwenden, um die Firmware der WIFI
+Extension 2.0 zu aktualisieren.
 """
 }]
 })
@@ -2458,9 +2499,27 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Reads up to 60 bytes (number of bytes to be read specified by ``length``)
+from the serial port of the bootloader of the WIFI Extension 2.0.
+Returns the number of actually read bytes.
+
+Before this function can be used the bootloader has to be started using the
+:func:`StartWifi2Bootloader` function.
+
+It is recommended to use the Brick Viewer to update the firmware of the WIFI
+Extension 2.0.
 """,
 'de':
 """
+Liest bis zu 60 Bytes (Anzahl zu lesender Bytes mit ``length`` angegeben) von
+der seriellen Schnittstelle des Bootloaders der WIFI Extension 2.0. Gibt die
+Anzahl der wirklich gelesenen Bytes zurück.
+
+Bevor diese Funktion genutzt werden kann muss der Bootloader mit der
+:func:`StartWifi2Bootloader` Funktion gestartet werden.
+
+Wir empfehlen den Brick Viewer zu verwenden, um die Firmware der WIFI
+Extension 2.0 zu aktualisieren.
 """
 }]
 })
@@ -2474,34 +2533,33 @@ com['packets'].append({
 'en':
 """
 Sets the WIFI authentication secret. The secret can be a string of up to 64
-characters. An empty string disables the authentication.
+characters. An empty string disables the authentication. The default value is
+an empty string (authentication disabled).
 
 See the :ref:`authentication tutorial <tutorial_authentication>` for more
 information.
 
-The secret is stored in the EEPROM and only applied on startup. That means
-you have to restart the Master Brick after configuration.
+To apply configuration changes to the WIFI Extension 2.0 the
+:func:`SaveWifi2Configuration` function has to be called and the Master Brick
+has to be restarted afterwards.
 
 It is recommended to use the Brick Viewer to set the WIFI authentication secret.
-
-The default value is an empty string (authentication disabled).
 """,
 'de':
 """
-Setzt das Authentifizierungsgeheimnis. Das Geheimnis ist ein String aus bis zu
-64 Buchstaben. Ein leerer String deaktiviert die Authentifizierung.
+Setzt das WLAN-Authentifizierungsgeheimnis. Das Geheimnis ist ein String aus
+bis zu 64 Buchstaben. Ein leerer String deaktiviert die Authentifizierung. Der
+Standardwert ist ein leerer String (Authentifizierung deaktiviert).
 
 Für mehr Informationen zur Authentifizierung siehe das dazugehörige
 :ref:`Tutorial <tutorial_authentication>`.
 
-Das Authentifizierungsgehemnis wird im EEPROM gespeichert und nur beim Start
-angewandt. Das bedeutet der Master Brick muss nach einer Konfiguration neu
-gestartet werden.
+Um Konfigurationsänderungen für die WIFI Extension 2.0 zu übernehmen muss die
+:func:`SaveWifi2Configuration` Funktion aufgerufen und der Master Brick
+danach neugestartet werden.
 
-Wir empfehlen den Brick Viewer zu nutzen um die Authentifizierung der WIFI 
-Extension einzurichten.
-
-Der Standardwert ist ein leerer String (Authentifizierung deaktiviert).
+Wir empfehlen den Brick Viewer zu verwenden, um die Authentifizierung der WIFI
+Extension 2.0 einzurichten.
 """
 }]
 })
@@ -2514,11 +2572,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the authentication secret as set by :func:`SetWifi2AuthenticationSecret`.
+Returns the WIFI authentication secret as set by
+:func:`SetWifi2AuthenticationSecret`.
 """,
 'de':
 """
-Gibt das Authentifizierungsgeheimnis zurück, wie von
+Gibt das WLAN-Authentifizierungsgeheimnis zurück, wie von
 :func:`SetWifi2AuthenticationSecret` gesetzt.
 """
 }]
@@ -2539,9 +2598,52 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Sets the general configuration of the WIFI Extension 2.0.
+
+The ``port`` parameter sets the port number that your programm will connect
+to. The default value is 4223.
+
+The ``websocket_port`` parameter sets the WebSocket port number that your
+JavaScript programm will connect to. The default value is 4280.
+
+The ``website_port`` parameter sets the port number for the website of the
+WIFI Extension 2.0. The default value is 80.
+
+The ``phy_mode`` parameter sets the specific wireless network mode to be used.
+Possible values are B, G and N. The default value is G.
+
+The ``sleep_mode`` and ``website`` parameters are currently unused.
+
+To apply configuration changes to the WIFI Extension 2.0 the
+:func:`SaveWifi2Configuration` function has to be called and the Master Brick
+has to be restarted afterwards.
+
+It is recommended to use the Brick Viewer to set the Ethernet configuration.
 """,
 'de':
 """
+Setzt die allgemeine Konfiguration der WIFI Extension 2.0.
+
+Das ``port`` Parameter setzt die Portnummer auf den das Anwendungsprogramm sich
+verbindet. Der Standardwert ist 4223.
+
+Das ``websocket_port`` Parameter setzt die WebSocket-Portnummer auf den das
+JavaScript Anwendungsprogramm sich verbindet. Der Standardwert ist 4280.
+
+Das ``website_port`` Parameter setzt die Portnummer für die Webseite der
+WIFI Extension 2.0. Der Standardwert ist 80.
+
+Das ``phy_mode`` Parameter setzt den zu verwendenden WLAN-Modus. Mögliche Werte
+sinf B, G und N. Der Standardwert ist G.
+
+Die ``sleep_mode`` und ``website`` Parameter werden momentan nicht verwendet.
+
+Um Konfigurationsänderungen für die WIFI Extension 2.0 zu übernehmen muss die
+:func:`SaveWifi2Configuration` Funktion aufgerufen und der Master Brick
+danach neugestartet werden.
+
+Wir empfehlen den Brick Viewer zu verwenden, um die Ethernet Extension zu
+konfigurieren.
 """
 }]
 })
@@ -2561,9 +2663,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the general configuration as set by :func:`SetWifi2Configuration`.
 """,
 'de':
 """
+Gibt die allgemeine Konfiguration zurück, wie von :func:`SetWifi2Configuration`
+gesetzt.
 """
 }]
 })
@@ -2597,9 +2702,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the client and access point status of the WIFI Extension 2.0.
 """,
 'de':
 """
+Gibt den Client und Access Point Status der WIFI Extension 2.0 zurück.
 """
 }]
 })
@@ -2618,9 +2725,64 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Sets the client specific configuration of the WIFI Extension 2.0.
+
+The ``enable`` parameter enables or disables the client part fo the
+WIFI Extension 2.0. The default value is *true*.
+
+The ``ssid`` parameter sets the SSID (up to 32 characters) of the access point
+to connect to.
+
+If the ``ip``, ``subnet_mask`` and ``gateway`` parameters are set to all zero
+then DHCP is used for IP address configuration. Otherwise those three
+parameters can be used to configure a static IP address. The default
+configuration is DHCP.
+
+If the ``mac_address`` parameter is set to all zero then the factory MAC
+address is used. Otherwise this parameter can be used to set a custom MAC
+address.
+
+If the ``bssid`` parameter is set to all zero then WIFI Extension 2.0 will
+connect to any access point that matches the configured SSID. Otherwise this
+parameter can be used to make the WIFI Extension 2.0 only connect to an
+access point if SSID and BSSID match.
+
+To apply configuration changes to the WIFI Extension 2.0 the
+:func:`SaveWifi2Configuration` function has to be called and the Master Brick
+has to be restarted afterwards.
+
+It is recommended to use the Brick Viewer to set the client configuration.
 """,
 'de':
 """
+Setzt die Client-spezifische Konfiguration der WIFI Extension 2.0.
+
+Das ``enable`` Parameter aktiviert oder deaktiviert den Client-Teil der
+WIFI Extension 2.0. Der Standardwert ist *true*.
+
+Das ``ssid`` Parameter die SSID (bis zu 32 Zeichen) des Access Points zu dem
+die WLAN Verbindung hergestellt werden soll.
+
+Wenn die ``ip``, ``subnet_mask`` und ``gateway`` Parameter alle auf Null gesetzt
+sind, dann wird DHCP verwendet. Andernfalls kann mit diese drei Parametern eine
+statische IP Adresse eingestellt werden. Die Standardeinstellung ist DHCP.
+
+Wenn das ``mac_address`` Parameter auf Null gesetzt ist, dann wird die
+voreingestellt MAC Adresse verwendet. Andernfalls kann mit diesem Parameter
+eine eigene MAC Adresse eingestellt werden.
+
+Wenn das ``bssid`` Parameter auf Null gesetzt ist, dann verbindet sich die
+WIFI Extension 2.0 mit einem Access Point wenn die eingestellt SSID
+übereinstimmt. Andernfalls kann dieses Parameter verwendet werden, damit sich
+die WIFI Extension 2.0 nur dann mit einem Access Point verbindet, wenn SSID
+und BSSID übereinstimmen.
+
+Um Konfigurationsänderungen für die WIFI Extension 2.0 zu übernehmen muss die
+:func:`SaveWifi2Configuration` Funktion aufgerufen und der Master Brick
+danach neugestartet werden.
+
+Wir empfehlen den Brick Viewer zu verwenden, um die WIFI Extension 2.0 zu
+konfigurieren.
 """
 }]
 })
@@ -2639,9 +2801,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the client configuration as set by :func:`SetWifi2ClientConfiguration`.
 """,
 'de':
 """
+Gibt die Client Konfiguration zurück, wie von
+:func:`SetWifi2ClientConfiguration` gesetzt.
 """
 }]
 })
@@ -2654,9 +2819,27 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Sets the client hostname (up to 32 characters) of the WIFI Extension 2.0. The
+hostname will be displayed by access points as the hostname in the DHCP clients
+table.
+
+To apply configuration changes to the WIFI Extension 2.0 the
+:func:`SaveWifi2Configuration` function has to be called and the Master Brick
+has to be restarted afterwards.
+
+It is recommended to use the Brick Viewer to set the client hostname.
 """,
 'de':
 """
+Setzt den Client Hostnamen (bis zu 32 Zeichen) der WIFI Extension 2.0. Der
+Hostname wird von Access Points als Hostname in der DHCP Client Tabelle angezeigt.
+
+Um Konfigurationsänderungen für die WIFI Extension 2.0 zu übernehmen muss die
+:func:`SaveWifi2Configuration` Funktion aufgerufen und der Master Brick
+danach neugestartet werden.
+
+Wir empfehlen den Brick Viewer zu verwenden, um die WIFI Extension 2.0 zu
+konfigurieren.
 """
 }]
 })
@@ -2669,9 +2852,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the client hostname as set by :func:`SetWifi2ClientHostname`.
 """,
 'de':
 """
+Gibt den Client Hostnamen zurück, wie von :func:`SetWifi2ClientHostname` gesetzt.
 """
 }]
 })
@@ -2684,9 +2869,24 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Sets the client password (up to 63 chars) for WPA/WPA2 encryption.
+
+To apply configuration changes to the WIFI Extension 2.0 the
+:func:`SaveWifi2Configuration` function has to be called and the Master Brick
+has to be restarted afterwards.
+
+It is recommended to use the Brick Viewer to set the client password.
 """,
 'de':
 """
+Setzt das Client-Passwort (bis zu 63 Zeichen) für WPA/WPA2 Verschlüsselung.
+
+Um Konfigurationsänderungen für die WIFI Extension 2.0 zu übernehmen muss die
+:func:`SaveWifi2Configuration` Funktion aufgerufen und der Master Brick
+danach neugestartet werden.
+
+Wir empfehlen den Brick Viewer zu verwenden, um die WIFI Extension 2.0 zu
+konfigurieren.
 """
 }]
 })
@@ -2699,9 +2899,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the client password as set by :func:`SetWifi2ClientPassword`.
 """,
 'de':
 """
+Gibt das Client-Passwort zurück, wie von :func:`SetWifi2ClientPassword` gesetzt.
 """
 }]
 })
@@ -2714,7 +2916,7 @@ com['packets'].append({
              ('IP', 'uint8', 4, 'in'),
              ('Subnet Mask', 'uint8', 4, 'in'),
              ('Gateway', 'uint8', 4, 'in'),
-             ('Encryption', 'uint8', 1, 'in', ('Wifi2 AP Encryption', [('No Encryption', 0),
+             ('Encryption', 'uint8', 1, 'in', ('Wifi2 AP Encryption', [('Open', 0),
                                                                        ('WEP', 1),
                                                                        ('WPA PSK', 2),
                                                                        ('WPA2 PSK', 3),
@@ -2726,9 +2928,74 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Sets the access point specific configuration of the WIFI Extension 2.0.
+
+The ``enable`` parameter enables or disables the access point part fo the
+WIFI Extension 2.0. The default value is true.
+
+The ``ssid`` parameter sets the SSID (up to 32 characters) of the access point.
+
+If the ``ip``, ``subnet_mask`` and ``gateway`` parameters are set to all zero
+then a DHCP server is enabled. Otherwise those three parameters can be used to
+configure a static IP address for the access point. The default configuration
+is DHCP.
+
+The ``encryption`` parameter sets the encryption mode to be used. Possible
+values are Open (no encryption), WEP or WPA/WPA2 PSK. The default value is
+WPA/WPA2 PSK. Use the :func:`SetWifi2APPassword` function to set the encryption
+password.
+
+The ``hidden`` parameter makes the access point hide or show its SSID.
+The default value is *false*.
+
+The ``channel`` parameter sets the channel (1 to 13) of the access point.
+The default value is 1.
+
+If the ``mac_address`` parameter is set to all zero then the factory MAC
+address is used. Otherwise this parameter can be used to set a custom MAC
+address.
+
+To apply configuration changes to the WIFI Extension 2.0 the
+:func:`SaveWifi2Configuration` function has to be called and the Master Brick
+has to be restarted afterwards.
+
+It is recommended to use the Brick Viewer to set the access point configuration.
 """,
 'de':
 """
+Setzt die Access-Point-spezifische Konfiguration der WIFI Extension 2.0.
+
+Das ``enable`` Parameter aktiviert oder deaktiviert den Access-Point-Teil der
+WIFI Extension 2.0. Der Standardwert ist *true*.
+
+Das ``ssid`` Parameter die SSID (bis zu 32 Zeichen) des Access Points.
+
+Wenn die ``ip``, ``subnet_mask`` und ``gateway`` Parameter alle auf Null gesetzt
+sind, dann wird ein DHCP Server aktiviert. Andernfalls kann mit diese drei
+Parametern eine statische IP Adresse eingestellt werden. Die Standardeinstellung
+ist DHCP.
+
+Das ``encryption`` Parameter legt den Verschlüsselungsmodus fest. Mögliche Werte
+sind Open (keine  Verschlüsselung), WEP oder WPA/WPA2 PSK. Der Standardwert ist
+WPA/WPA2 PSK. Mit der :func:`SetWifi2APPassword` Kann das
+Verschlüsselungspasswort gesetzt werden.
+
+Das ``hidden`` Parameter legt fest, oder der Access Point seine SSID versteckt
+oder zeigt. Der Standardwert ist *false*.
+
+Das ``channel`` Parameter gibt den Kanal (1 to 13) des Access Points and.
+Der Standardwert ist 1.
+
+Wenn das ``mac_address`` Parameter auf Null gesetzt ist, dann wird die
+voreingestellt MAC Adresse verwendet. Andernfalls kann mit diesem Parameter
+eine eigene MAC Adresse eingestellt werden.
+
+Um Konfigurationsänderungen für die WIFI Extension 2.0 zu übernehmen muss die
+:func:`SaveWifi2Configuration` Funktion aufgerufen und der Master Brick
+danach neugestartet werden.
+
+Wir empfehlen den Brick Viewer zu verwenden, um die WIFI Extension 2.0 zu
+konfigurieren.
 """
 }]
 })
@@ -2741,7 +3008,7 @@ com['packets'].append({
              ('IP', 'uint8', 4, 'out'),
              ('Subnet Mask', 'uint8', 4, 'out'),
              ('Gateway', 'uint8', 4, 'out'),
-             ('Encryption', 'uint8', 1, 'out', ('Wifi2 AP Encryption', [('No Encryption', 0),
+             ('Encryption', 'uint8', 1, 'out', ('Wifi2 AP Encryption', [('Open', 0),
                                                                         ('WEP', 1),
                                                                         ('WPA PSK', 2),
                                                                         ('WPA2 PSK', 3),
@@ -2753,9 +3020,12 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the access point configuration as set by :func:`SetWifi2APConfiguration`.
 """,
 'de':
 """
+Gibt die Access-Point-Konfiguration zurück, wie von
+:func:`SetWifi2APConfiguration` gesetzt.
 """
 }]
 })
@@ -2768,9 +3038,26 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Sets the access point password (up to 63 chars) for the configured encryption
+mode, see :func:`SetWifi2APConfiguration`.
+
+To apply configuration changes to the WIFI Extension 2.0 the
+:func:`SaveWifi2Configuration` function has to be called and the Master Brick
+has to be restarted afterwards.
+
+It is recommended to use the Brick Viewer to set the access point password.
 """,
 'de':
 """
+Setzt das Access-Point-Passwort (bis zu 63 Zeichen) für den eingestellten
+Verschlüsselungsmodus, siehe :func:`SetWifi2APConfiguration`.
+
+Um Konfigurationsänderungen für die WIFI Extension 2.0 zu übernehmen muss die
+:func:`SaveWifi2Configuration` Funktion aufgerufen und der Master Brick
+danach neugestartet werden.
+
+Wir empfehlen den Brick Viewer zu verwenden, um die WIFI Extension 2.0 zu
+konfigurieren.
 """
 }]
 })
@@ -2783,9 +3070,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the access point password as set by :func:`SetWifi2APPassword`.
 """,
 'de':
 """
+Gibt das Access-Point-Passwort zurück, wie von :func:`SetWifi2APPassword` gesetzt.
 """
 }]
 })
@@ -2798,10 +3087,22 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Call this function to actually save configuration
+All configuration functions for the WIFI Extension 2.0 do not change the
+values permanently. After configuration this function has to be called to
+permanently store the values.
+
+The values are stored in the EEPROM and only applied on startup. That means
+you have to restart the Master Brick after configuration.
 """,
 'de':
 """
+alle Konfigurationsfunktionen der WIFI Extension 2.0 ändern die Werte nicht
+dauerhaft. Nach einer Konfiguration muss diese Funktion aufgerufen werden, um
+die Werte dauerhaft zu speichern.
+
+Die Werte sind im EEPROM gespeichert und werden nur beim Start angewandt.
+Das bedeutet der Master Brick muss nach einer Konfiguration neu gestartet
+werden.
 """
 }]
 })

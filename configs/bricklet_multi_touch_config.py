@@ -35,7 +35,7 @@ Returns the current touch state. The state is given as a bitfield.
 Bits 0 to 11 represent the 12 electrodes and bit 12 represents
 the proximity.
 
-If an electrode is touched, the corresponding bit is true. If
+If an electrode is touched, the corresponding bit is *true*. If
 a hand or similar is in proximity to the electrodes, bit 12 is
 *true*.
 
