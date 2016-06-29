@@ -212,5 +212,7 @@
 - Break GPS Bricklet API to fix types of altitude and geoidal separation values
   (getAltitude function and Altitude listener)
 
-2016-05-31: 2.1.9 (<unknown>)
-- Add DateTime and Alarm listeners for Real-Time Clock Bricklet
+2016-06-29: 2.1.9 (<unknown>)
+- Add support for WIFI Extension 2.0 to Master Brick API
+- Add support for CAN Bricklet and RGB LED Bricklet
+- Add DateTime and Alarm listeners to Real-Time Clock Bricklet API
