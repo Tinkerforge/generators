@@ -17,7 +17,7 @@ com = {
         'en': 'Communicates with CAN bus devices',
         'de': 'Kommuniziert mit CAN-Bus Geräten'
     },
-    'released': False,
+    'released': True,
     'documented': False,
     'packets': [],
     'examples': []
