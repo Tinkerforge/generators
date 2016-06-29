@@ -111,12 +111,18 @@ end{functions}
         cleanups = []
 
         for function in self.get_functions():
-            functions += function.get_matlab_functions()
+            functions += function.get_matlab_functions(0)
             sources.append(function.get_matlab_source())
 
         for cleanup in self.get_cleanups():
-            functions += cleanup.get_matlab_functions()
+            functions += cleanup.get_matlab_functions(0)
             cleanups.append(cleanup.get_matlab_source())
+
+        for function in self.get_functions():
+            functions += function.get_matlab_functions(1)
+
+        for cleanup in self.get_cleanups():
+            functions += cleanup.get_matlab_functions(1)
 
         unique_functions = []
 
@@ -178,12 +184,18 @@ end{functions}
         cleanups = []
 
         for function in self.get_functions():
-            functions += function.get_matlab_functions()
+            functions += function.get_matlab_functions(0)
             sources.append(function.get_matlab_source())
 
         for cleanup in self.get_cleanups():
-            functions += cleanup.get_matlab_functions()
+            functions += cleanup.get_matlab_functions(0)
             cleanups.append(cleanup.get_matlab_source())
+
+        for function in self.get_functions():
+            functions += function.get_matlab_functions(1)
+
+        for cleanup in self.get_cleanups():
+            functions += cleanup.get_matlab_functions(1)
 
         unique_functions = []
 
@@ -339,8 +351,8 @@ class MATLABExampleResult(common.ExampleResult, MATLABFprintfFormatMixin):
                                to_binary_suffix=to_binary_suffix)
 
 class MATLABExampleGetterFunction(common.ExampleGetterFunction):
-    def get_matlab_functions(self):
-        if global_is_octave:
+    def get_matlab_functions(self, phase):
+        if phase == 1 and global_is_octave:
             for result in self.get_results():
                 if result.needs_octave_java2int():
                     return [global_java2int]
@@ -389,7 +401,7 @@ class MATLABExampleGetterFunction(common.ExampleGetterFunction):
                                arguments=', '.join(arguments))
 
 class MATLABExampleSetterFunction(common.ExampleSetterFunction):
-    def get_matlab_functions(self):
+    def get_matlab_functions(self, phase):
         return []
 
     def get_matlab_source(self):
@@ -407,7 +419,15 @@ class MATLABExampleSetterFunction(common.ExampleSetterFunction):
                                comment2=self.get_formatted_comment2(' % {0}', ''))
 
 class MATLABExampleCallbackFunction(common.ExampleCallbackFunction):
-    def get_matlab_functions(self):
+    def get_matlab_functions(self, phase):
+        if phase == 1:
+            if global_is_octave:
+                for parameter in self.get_parameters():
+                    if parameter.needs_octave_java2int():
+                        return [global_java2int]
+
+            return []
+
         template1A = r"""% Callback function for {function_comment_name} callback{comments}
 """
         template1B = r"""{override_comment}
@@ -451,12 +471,6 @@ end
                                       fprintfs='\n'.join(fprintfs),
                                       extra_message=extra_message)]
 
-        if global_is_octave:
-            for parameter in self.get_parameters():
-                if parameter.needs_octave_java2int():
-                    functions.append(global_java2int)
-                    break
-
         return functions
 
     def get_matlab_source(self):
@@ -478,7 +492,7 @@ end
                                function_comment_name=self.get_comment_name())
 
 class MATLABExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
-    def get_matlab_functions(self):
+    def get_matlab_functions(self, phase):
         return []
 
     def get_matlab_source(self):
@@ -517,7 +531,7 @@ class MATLABExampleCallbackThresholdMinimumMaximum(common.ExampleCallbackThresho
                                maximum=self.get_formatted_maximum())
 
 class MATLABExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunction):
-    def get_matlab_functions(self):
+    def get_matlab_functions(self, phase):
         return []
 
     def get_matlab_source(self):
@@ -550,7 +564,7 @@ class MATLABExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFunc
                                mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
 
 class MATLABExampleSpecialFunction(common.ExampleSpecialFunction):
-    def get_matlab_functions(self):
+    def get_matlab_functions(self, phase):
         return []
 
     def get_matlab_source(self):
