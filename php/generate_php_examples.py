@@ -455,6 +455,7 @@ ${device_initial_name}->setDebouncePeriod({period_msec});
                                    comment=self.get_formatted_loop_header_comment('// {0}\n', '', '\n// '))
         elif type == 'loop_footer':
             global_line_prefix = ''
+
             return '\r}\n'
 
 class PHPExamplesGenerator(common.ExamplesGenerator):
@@ -518,6 +519,7 @@ class PHPExamplesGenerator(common.ExamplesGenerator):
             if example.is_incomplete():
                 if os.path.exists(filepath) and self.skip_existing_incomplete_example:
                     print('  - ' + filename + ' \033[01;35m(incomplete, skipped)\033[0m')
+                    continue
                 else:
                     print('  - ' + filename + ' \033[01;31m(incomplete)\033[0m')
             else:

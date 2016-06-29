@@ -657,6 +657,7 @@ class MATLABExamplesGenerator(common.ExamplesGenerator):
             if example.is_incomplete():
                 if os.path.exists(filepath) and self.skip_existing_incomplete_example:
                     print('  - ' + filename + ' \033[01;35m(incomplete, skipped)\033[0m')
+                    continue
                 else:
                     print('  - ' + filename + ' \033[01;31m(incomplete)\033[0m')
             else:
