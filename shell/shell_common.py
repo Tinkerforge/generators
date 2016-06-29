@@ -92,17 +92,17 @@ class ShellElement(common.Element):
         'string': 'string'
     }
 
-    shell_default_values = {
-        'int8':   '0',
-        'uint8':  '0',
-        'int16':  '0',
-        'uint16': '0',
-        'int32':  '0',
-        'uint32': '0',
-        'int64':  '0',
-        'uint64': '0',
-        'float':  '0.0',
-        'bool':   'False',
+    shell_default_items = {
+        'int8':   "'0'",
+        'uint8':  "'0'",
+        'int16':  "'0'",
+        'uint16': "'0'",
+        'int32':  "'0'",
+        'uint32': "'0'",
+        'int64':  "'0'",
+        'uint64': "'0'",
+        'float':  "'0.0'",
+        'bool':   "'false'",
         'char':   "'\\0'",
         'string': 'None'
     }
@@ -152,7 +152,7 @@ class ShellElement(common.Element):
 
     def get_shell_type_converter(self):
         type_converter = ShellElement.shell_type_converters[self.get_type()]
-        default_value = ShellElement.shell_default_values[self.get_type()]
+        default_item = ShellElement.shell_default_items[self.get_type()]
 
         if self.get_constant_group() != None:
             symbols = {}
@@ -161,14 +161,14 @@ class ShellElement(common.Element):
                 symbols[constant.get_dash_name()] = constant.get_value()
 
             if self.get_cardinality() > 1 and type_converter != 'string':
-                return 'create_array_converter(ctx, create_symbol_converter(ctx, {0}, {1}), {2}, {3})'.format(type_converter, symbols, default_value, self.get_cardinality())
+                return 'create_array_converter(ctx, create_symbol_converter(ctx, {0}, {1}), {2}, {3})'.format(type_converter, symbols, default_item, self.get_cardinality())
             elif type_converter == 'string':
                 return 'create_string_converter(ctx, create_symbol_converter(ctx, str, {0}), {1})'.format(symbols, self.get_cardinality())
             else:
                 return 'create_symbol_converter(ctx, {0}, {1})'.format(type_converter, symbols)
         else:
             if self.get_cardinality() > 1 and type_converter != 'string':
-                return 'create_array_converter(ctx, {0}, {1}, {2})'.format(type_converter, default_value, self.get_cardinality())
+                return 'create_array_converter(ctx, {0}, {1}, {2})'.format(type_converter, default_item, self.get_cardinality())
             elif type_converter == 'string':
                 return 'create_string_converter(ctx, str, {0})'.format(self.get_cardinality())
             else:
