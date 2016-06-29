@@ -193,14 +193,14 @@ sonst.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Baud Rate', 'uint8', 1, 'in', ('Baud Rate', [('10000', 0),
-                                                            ('20000', 1),
-                                                            ('50000', 2),
-                                                            ('125000', 3),
-                                                            ('250000', 4),
-                                                            ('500000', 5),
-                                                            ('800000', 6),
-                                                            ('1000000', 7)])),
+'elements': [('Baud Rate', 'uint8', 1, 'in', ('Baud Rate', [('10kbps', 0),
+                                                            ('20kbps', 1),
+                                                            ('50kbps', 2),
+                                                            ('125kbps', 3),
+                                                            ('250kbps', 4),
+                                                            ('500kbps', 5),
+                                                            ('800kbps', 6),
+                                                            ('1000kbps', 7)])),
              ('Transceiver Mode', 'uint8', 1, 'in', ('Transceiver Mode', [('Normal', 0),
                                                                           ('Loopback', 1),
                                                                           ('Read Only', 2)])),
@@ -272,14 +272,14 @@ Schreib-Timeout.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Baud Rate', 'uint8', 1, 'out', ('Baud Rate', [('10000', 0),
-                                                             ('20000', 1),
-                                                             ('50000', 2),
-                                                             ('125000', 3),
-                                                             ('250000', 4),
-                                                             ('500000', 5),
-                                                             ('800000', 6),
-                                                             ('1000000', 7)])),
+'elements': [('Baud Rate', 'uint8', 1, 'out', ('Baud Rate', [('10kbps', 0),
+                                                             ('20kbps', 1),
+                                                             ('50kbps', 2),
+                                                             ('125kbps', 3),
+                                                             ('250kbps', 4),
+                                                             ('500kbps', 5),
+                                                             ('800kbps', 6),
+                                                             ('1000kbps', 7)])),
              ('Transceiver Mode', 'uint8', 1, 'out', ('Transceiver Mode', [('Normal', 0),
                                                                            ('Loopback', 1),
                                                                            ('Read Only', 2)])),
@@ -498,7 +498,7 @@ number of these errors:
   happens if the CAN transceiver receives more frames to be added to the read
   buffer than are removed from the read buffer using the :func:`ReadFrame`
   function. Using the :func:`FrameRead` callback ensures that the read buffer
-  can never overflow.
+  can not overflow.
 """,
 'de':
 """
@@ -535,7 +535,7 @@ die Anzahl dieser Fehler:
   Dies passiert, wenn der CAN-Transceiver mehr Frames empfängt, die dem
   Lese-Buffer hinzugefügt werden sollen, als Frames mit der :func:`ReadFrame`
   Funktion aus dem Lese-Buffer entnommen werden. Die Verwendung des
-  :func:`FrameRead` Callbacks stellt sicher, dass der Lese-Buffer niemals
+  :func:`FrameRead` Callbacks stellt sicher, dass der Lese-Buffer nicht
   überlaufen kann.
 """
 }]
