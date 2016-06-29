@@ -593,7 +593,7 @@ class MATLABExampleSpecialFunction(common.ExampleSpecialFunction):
         elif type == 'loop_footer':
             global_line_prefix = ''
 
-            return '\r    end'
+            return '\r    end\n'
 
 class MATLABExamplesGenerator(common.ExamplesGenerator):
     def get_bindings_name(self):
