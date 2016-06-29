@@ -355,18 +355,12 @@ class DelphiExampleCallbackFunction(common.ExampleCallbackFunction):
         for parameter in self.get_parameters():
             parameters.append(parameter.get_delphi_source())
 
-        def specialize(parameters_prefix):
-            return template.format(device_camel_case_category=self.get_device().get_camel_case_category(),
-                                   device_camel_case_name=self.get_device().get_camel_case_name(),
-                                   function_camel_case_name=self.get_camel_case_name(),
-                                   parameters=common.wrap_non_empty(parameters_prefix, '; '.join(parameters), ''))
+        result = template.format(device_camel_case_category=self.get_device().get_camel_case_category(),
+                                 device_camel_case_name=self.get_device().get_camel_case_name(),
+                                 function_camel_case_name=self.get_camel_case_name(),
+                                 parameters=common.wrap_non_empty(';<BP>', ';<BP>'.join(parameters), ''))
 
-        result = specialize('; ')
-
-        if len(result) > 100:
-            result = specialize(';\n' + ' ' * len(result.split('sender: T')[0]))
-
-        return result
+        return common.break_string(result, '{}CB('.format(self.get_camel_case_name()))
 
     def get_delphi_procedure(self):
         template1A = r"""{{ Callback procedure for {function_comment_name} callback{comments} }}
@@ -408,23 +402,17 @@ end;
         if len(extra_message) > 0 and len(write_lns) > 0:
             extra_message = '\n' + extra_message
 
-        def specialize(parameters_prefix):
-            return template1.format(function_comment_name=self.get_comment_name(),
-                                    comments=''.join(comments),
-                                    override_comment=override_comment) + \
-                   template2.format(device_camel_case_category=self.get_device().get_camel_case_category(),
-                                    device_camel_case_name=self.get_device().get_camel_case_name(),
-                                    function_camel_case_name=self.get_camel_case_name(),
-                                    parameters=common.wrap_non_empty(parameters_prefix, '; '.join(parameters), ''),
-                                    write_lns='\n'.join(write_lns),
-                                    extra_message=extra_message)
+        result = template1.format(function_comment_name=self.get_comment_name(),
+                                  comments=''.join(comments),
+                                  override_comment=override_comment) + \
+                 template2.format(device_camel_case_category=self.get_device().get_camel_case_category(),
+                                  device_camel_case_name=self.get_device().get_camel_case_name(),
+                                  function_camel_case_name=self.get_camel_case_name(),
+                                  parameters=common.wrap_non_empty(';<BP>', ';<BP>'.join(parameters), ''),
+                                  write_lns='\n'.join(write_lns),
+                                  extra_message=extra_message)
 
-        result = specialize('; ')
-
-        if '\n' in self.get_delphi_prototype():
-            result = specialize(';\n' + ' ' * len(result.split('sender: T')[0].split('\n')[-1]))
-
-        return result
+        return common.break_string(result, '{}CB('.format(self.get_camel_case_name()))
 
     def get_delphi_variable_declarations(self):
         return []

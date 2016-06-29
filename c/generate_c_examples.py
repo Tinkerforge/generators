@@ -325,15 +325,17 @@ class CExampleGetterFunction(common.ExampleGetterFunction):
         for argument in self.get_arguments():
             arguments.append(argument.get_c_source())
 
-        return template.format(device_underscore_name=self.get_device().get_underscore_name(),
-                               device_initial_name=self.get_device().get_initial_name(),
-                               function_comment_name=self.get_comment_name(),
-                               function_underscore_name=self.get_underscore_name(),
-                               comments=''.join(comments),
-                               variable_declarations=''.join(merged_variable_declarations),
-                               variable_references=', ' + ', '.join(variable_references),
-                               printfs='\n'.join(printfs),
-                               arguments=common.wrap_non_empty(', ', ', '.join(arguments), ''))
+        result = template.format(device_underscore_name=self.get_device().get_underscore_name(),
+                                 device_initial_name=self.get_device().get_initial_name(),
+                                 function_comment_name=self.get_comment_name(),
+                                 function_underscore_name=self.get_underscore_name(),
+                                 comments=''.join(comments),
+                                 variable_declarations=''.join(merged_variable_declarations),
+                                 variable_references=',<BP>' + ',<BP>'.join(variable_references),
+                                 printfs='\n'.join(printfs),
+                                 arguments=common.wrap_non_empty(',<BP>', ',<BP>'.join(arguments), ''))
+
+        return common.break_string(result, '_{}('.format(self.get_underscore_name()))
 
 class CExampleSetterFunction(common.ExampleSetterFunction):
     def get_c_includes(self):
@@ -418,14 +420,16 @@ class CExampleCallbackFunction(common.ExampleCallbackFunction):
         if len(extra_message) > 0 and len(printfs) > 0:
             extra_message = '\n' + extra_message
 
-        return template1.format(function_comment_name=self.get_comment_name(),
-                                comments=''.join(comments),
-                                override_comment=override_comment) + \
-               template2.format(function_underscore_name=self.get_underscore_name(),
-                                parameters=common.wrap_non_empty('', ', '.join(parameters), ', '),
-                                unuseds=common.wrap_non_empty('\n', '\n'.join(unuseds), ''),
-                                printfs='\n'.join(printfs),
-                                extra_message=extra_message)
+        result = template1.format(function_comment_name=self.get_comment_name(),
+                                  comments=''.join(comments),
+                                  override_comment=override_comment) + \
+                 template2.format(function_underscore_name=self.get_underscore_name(),
+                                  parameters=common.wrap_non_empty('', ',<BP>'.join(parameters), ',<BP>'),
+                                  unuseds=common.wrap_non_empty('\n', '\n'.join(unuseds), ''),
+                                  printfs='\n'.join(printfs),
+                                  extra_message=extra_message)
+
+        return common.break_string(result, 'cb_{}('.format(self.get_underscore_name()))
 
     def get_c_source(self):
         template = r"""	// Register {function_comment_name} callback to function cb_{function_underscore_name}

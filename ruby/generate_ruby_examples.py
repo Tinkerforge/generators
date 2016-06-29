@@ -316,17 +316,19 @@ end
         if len(extra_message) > 0 and len(puts) > 0:
             extra_message = '\n' + extra_message
 
-        return template1.format(function_comment_name=self.get_comment_name(),
-                                comments=''.join(comments),
-                                override_comment=override_comment) + \
-               template2.format(device_camel_case_category=self.get_device().get_camel_case_category(),
-                                device_camel_case_name=self.get_device().get_camel_case_name(),
-                                device_initial_name=self.get_device().get_initial_name(),
-                                function_underscore_name=self.get_underscore_name(),
-                                function_upper_case_name=self.get_upper_case_name(),
-                                parameters=common.wrap_non_empty(' |', ', '.join(parameters), '|'),
-                                puts='\n'.join(puts),
-                                extra_message=extra_message)
+        result = template1.format(function_comment_name=self.get_comment_name(),
+                                  comments=''.join(comments),
+                                  override_comment=override_comment) + \
+                 template2.format(device_camel_case_category=self.get_device().get_camel_case_category(),
+                                  device_camel_case_name=self.get_device().get_camel_case_name(),
+                                  device_initial_name=self.get_device().get_initial_name(),
+                                  function_underscore_name=self.get_underscore_name(),
+                                  function_upper_case_name=self.get_upper_case_name(),
+                                  parameters=common.wrap_non_empty(' |', ',<BP>'.join(parameters), '|'),
+                                  puts='\n'.join(puts),
+                                  extra_message=extra_message)
+
+        return common.break_string(result, 'do |', continuation=' \\')
 
 class RubyExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
     def get_ruby_source(self):

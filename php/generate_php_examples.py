@@ -319,25 +319,29 @@ class PHPExampleCallbackFunction(common.ExampleCallbackFunction):
         if len(extra_message) > 0 and len(echos) > 0:
             extra_message = '\n' + extra_message
 
-        return template1.format(function_comment_name=self.get_comment_name(),
-                                comments=''.join(comments),
-                                override_comment=override_comment) + \
-               template2.format(function_headless_camel_case_name=self.get_headless_camel_case_name(),
-                                parameters=', '.join(parameters),
-                                echos='\n'.join(echos),
-                                extra_message=extra_message)
+        result = template1.format(function_comment_name=self.get_comment_name(),
+                                  comments=''.join(comments),
+                                  override_comment=override_comment) + \
+                 template2.format(function_headless_camel_case_name=self.get_headless_camel_case_name(),
+                                  parameters=',<BP>'.join(parameters),
+                                  echos='\n'.join(echos),
+                                  extra_message=extra_message)
+
+        return common.break_string(result, 'cb_{}('.format(self.get_headless_camel_case_name()))
 
     def get_php_source(self):
         template = r"""// Register {function_comment_name} callback to function cb_{function_headless_camel_case_name}
-${device_initial_name}->registerCallback({device_camel_case_category}{device_camel_case_name}::CALLBACK_{function_upper_case_name}, 'cb_{function_headless_camel_case_name}');
+${device_initial_name}->registerCallback({device_camel_case_category}{device_camel_case_name}::CALLBACK_{function_upper_case_name},<BP>'cb_{function_headless_camel_case_name}');
 """
 
-        return template.format(device_camel_case_category=self.get_device().get_camel_case_category(),
-                               device_camel_case_name=self.get_device().get_camel_case_name(),
-                               device_initial_name=self.get_device().get_initial_name(),
-                               function_headless_camel_case_name=self.get_headless_camel_case_name(),
-                               function_upper_case_name=self.get_upper_case_name(),
-                               function_comment_name=self.get_comment_name())
+        result = template.format(device_camel_case_category=self.get_device().get_camel_case_category(),
+                                 device_camel_case_name=self.get_device().get_camel_case_name(),
+                                 device_initial_name=self.get_device().get_initial_name(),
+                                 function_headless_camel_case_name=self.get_headless_camel_case_name(),
+                                 function_upper_case_name=self.get_upper_case_name(),
+                                 function_comment_name=self.get_comment_name())
+
+        return common.break_string(result, '->registerCallback(')
 
 class PHPExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
     def get_php_subroutine(self):

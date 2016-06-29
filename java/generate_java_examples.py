@@ -336,7 +336,7 @@ class JavaExampleCallbackFunction(common.ExampleCallbackFunction):
         if len(extra_message) > 0 and len(printlns) > 0:
             extra_message = '\n' + extra_message
 
-        return template1.format(function_comment_name=self.get_comment_name(),
+        result = template1.format(function_comment_name=self.get_comment_name(),
                                 comments=''.join(comments),
                                 override_comment=override_comment) + \
                template2.format(device_camel_case_category=self.get_device().get_camel_case_category(),
@@ -344,9 +344,11 @@ class JavaExampleCallbackFunction(common.ExampleCallbackFunction):
                                 device_initial_name=self.get_device().get_initial_name(),
                                 function_camel_case_name=self.get_camel_case_name(),
                                 function_headless_camel_case_name=self.get_headless_camel_case_name(),
-                                parameters=', '.join(parameters),
+                                parameters=',<BP>'.join(parameters),
                                 printlns='\n'.join(printlns),
                                 extra_message=extra_message)
+
+        return common.break_string(result, '{}('.format(self.get_headless_camel_case_name()))
 
 class JavaExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
     def get_java_imports(self):
@@ -382,7 +384,7 @@ class JavaExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
 
 class JavaExampleCallbackThresholdMinimumMaximum(common.ExampleCallbackThresholdMinimumMaximum):
     def get_java_source(self):
-        template = '{minimum}, {maximum}'
+        template = '{minimum},<BP>{maximum}'
         minimum = self.get_formatted_minimum()
         maximum = self.get_formatted_maximum()
         cast = java_common.get_java_type(self.get_type())
@@ -409,7 +411,7 @@ class JavaExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFuncti
 
     def get_java_source(self):
         template = r"""		// Configure threshold for {function_comment_name} "{option_comment}"{mininum_maximum_unit_comments}
-		{device_initial_name}.set{function_camel_case_name}CallbackThreshold({arguments}'{option_char}', {mininum_maximums});
+		{device_initial_name}.set{function_camel_case_name}CallbackThreshold({arguments}'{option_char}',<BP>{mininum_maximums});
 """
         arguments = []
 
@@ -426,14 +428,16 @@ class JavaExampleCallbackThresholdFunction(common.ExampleCallbackThresholdFuncti
         if len(mininum_maximum_unit_comments) > 1 and len(set(mininum_maximum_unit_comments)) == 1:
             mininum_maximum_unit_comments = mininum_maximum_unit_comments[:1]
 
-        return template.format(device_initial_name=self.get_device().get_initial_name(),
+        result = template.format(device_initial_name=self.get_device().get_initial_name(),
                                function_camel_case_name=self.get_camel_case_name(),
                                function_comment_name=self.get_comment_name(),
-                               arguments=common.wrap_non_empty('', ', '.join(arguments), ', '),
+                               arguments=common.wrap_non_empty('', ',<BP>'.join(arguments), ',<BP>'),
                                option_char=self.get_option_char(),
                                option_comment=self.get_option_comment(),
-                               mininum_maximums=', '.join(mininum_maximums),
+                               mininum_maximums=',<BP>'.join(mininum_maximums),
                                mininum_maximum_unit_comments=''.join(mininum_maximum_unit_comments))
+
+        return common.break_string(result, 'CallbackThreshold(')
 
 class JavaExampleSpecialFunction(common.ExampleSpecialFunction):
     def get_java_imports(self):

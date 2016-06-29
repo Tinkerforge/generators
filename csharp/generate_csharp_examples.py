@@ -276,14 +276,16 @@ class CSharpExampleGetterFunction(common.ExampleGetterFunction):
         if len(variable_references) > 1:
             arguments += variable_references
 
-        return template.format(device_initial_name=self.get_device().get_initial_name(),
-                               function_camel_case_name=self.get_camel_case_name(),
-                               function_headless_camel_case_name=self.get_headless_camel_case_name(),
-                               function_comment_name=self.get_comment_name(),
-                               comments=''.join(comments),
-                               variable_declarations=''.join(merged_variable_declarations),
-                               write_lines='\n'.join(write_lines),
-                               arguments=', '.join(arguments))
+        result = template.format(device_initial_name=self.get_device().get_initial_name(),
+                                 function_camel_case_name=self.get_camel_case_name(),
+                                 function_headless_camel_case_name=self.get_headless_camel_case_name(),
+                                 function_comment_name=self.get_comment_name(),
+                                 comments=''.join(comments),
+                                 variable_declarations=''.join(merged_variable_declarations),
+                                 write_lines='\n'.join(write_lines),
+                                 arguments=',<BP>'.join(arguments))
+
+        return common.break_string(result, '{}('.format(self.get_camel_case_name()))
 
 class CSharpExampleSetterFunction(common.ExampleSetterFunction):
     def get_csharp_imports(self):
@@ -350,15 +352,17 @@ class CSharpExampleCallbackFunction(common.ExampleCallbackFunction):
         if len(extra_message) > 0 and len(write_lines) > 0:
             extra_message = '\n' + extra_message
 
-        return template1.format(function_comment_name=self.get_comment_name(),
-                                comments=''.join(comments),
-                                override_comment=override_comment) + \
-               template2.format(device_camel_case_category=self.get_device().get_camel_case_category(),
-                                device_camel_case_name=self.get_device().get_camel_case_name(),
-                                function_camel_case_name=self.get_camel_case_name(),
-                                parameters=common.wrap_non_empty(', ', ', '.join(parameters), ''),
-                                write_lines='\n'.join(write_lines),
-                                extra_message=extra_message)
+        result = template1.format(function_comment_name=self.get_comment_name(),
+                                  comments=''.join(comments),
+                                  override_comment=override_comment) + \
+                 template2.format(device_camel_case_category=self.get_device().get_camel_case_category(),
+                                  device_camel_case_name=self.get_device().get_camel_case_name(),
+                                  function_camel_case_name=self.get_camel_case_name(),
+                                  parameters=common.wrap_non_empty(',<BP>', ',<BP>'.join(parameters), ''),
+                                  write_lines='\n'.join(write_lines),
+                                  extra_message=extra_message)
+
+        return common.break_string(result, '{}CB('.format(self.get_camel_case_name()))
 
     def get_csharp_source(self):
         template = r"""		// Register {function_comment_name} callback to function {function_camel_case_name}CB

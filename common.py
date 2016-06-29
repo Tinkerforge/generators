@@ -818,6 +818,33 @@ def check_name(name, short_display_name=None, long_display_name=None, category_n
                              .format(long_display_name, short_display_name, category_name,
                                      ' '.join(list(short_display_name_to_check))))
 
+def break_string(string, marker, continuation='', max_length=100):
+    result = string.replace('<BP>', ' ')
+
+    if len(result) > max_length:
+        prefix = result.split(marker)[0].split('\n')[-1]
+        tabs = 0
+
+        for c in prefix:
+            if c != '\t':
+                break
+
+            tabs += 1
+
+        indent = '\t' * tabs + ' ' * (len(prefix) - tabs + len(marker))
+        parts = string.split('<BP>')
+        result = parts[0]
+
+        for part in parts[1:]:
+            line = (result.split('\n')[-1] + ' ' + part.split('\n')[0]).replace('\t', '    ') + continuation
+
+            if len(line) > max_length:
+                result += continuation + '\n' + indent + part
+            else:
+                result += ' ' + part
+
+    return result
+
 class NameMixin:
     def _get_name(self):
         raise NotImplementedError()
