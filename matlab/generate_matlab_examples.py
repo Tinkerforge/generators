@@ -663,10 +663,19 @@ class MATLABExamplesGenerator(common.ExamplesGenerator):
         if not os.path.exists(examples_directory):
             os.makedirs(examples_directory)
 
+        blacklist = [
+            'lcd-16x2-bricklet/unicode',
+            'lcd-20x4-bricklet/unicode'
+        ]
+
         # matlab
         for example in examples:
             filename = 'matlab_example_{0}.m'.format(example.get_underscore_name())
             filepath = os.path.join(examples_directory, filename)
+
+            if device.get_git_name() + '/' + example.get_dash_name() in blacklist:
+                print('  - ' + filename + ' \033[01;35m(blacklisted, skipped)\033[0m')
+                continue
 
             if example.is_incomplete():
                 if os.path.exists(filepath) and self.skip_existing_incomplete_example:
@@ -685,6 +694,10 @@ class MATLABExamplesGenerator(common.ExamplesGenerator):
         for example in examples:
             filename = 'octave_example_{0}.m'.format(example.get_underscore_name())
             filepath = os.path.join(examples_directory, filename)
+
+            if device.get_git_name() + '/' + example.get_dash_name() in blacklist:
+                print('  - ' + filename + ' \033[01;35m(blacklisted, skipped)\033[0m')
+                continue
 
             if example.is_incomplete():
                 if os.path.exists(filepath) and self.skip_existing_incomplete_example:
