@@ -20,6 +20,7 @@ com = {
         'de': 'Misst Gewicht mit einer Wägezelle'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

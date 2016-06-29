@@ -18,6 +18,7 @@ com = {
         'de': 'Erzeugt 1kHz Piepton'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

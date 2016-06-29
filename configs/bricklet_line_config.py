@@ -20,6 +20,7 @@ com = {
         'de': 'Misst Reflektivität einer Oberfläche'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

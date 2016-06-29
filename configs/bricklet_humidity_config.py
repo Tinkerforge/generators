@@ -20,6 +20,7 @@ com = {
         'de': 'Misst relative Luftfeuchtigkeit'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

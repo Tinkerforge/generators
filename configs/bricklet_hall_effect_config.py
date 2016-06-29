@@ -18,6 +18,7 @@ com = {
         'de': 'Detektiert Magnetfelder'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

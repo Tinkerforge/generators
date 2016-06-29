@@ -18,6 +18,7 @@ com = {
         'de': 'Steuert Funksteckdosen'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

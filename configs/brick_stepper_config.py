@@ -18,6 +18,7 @@ com = {
         'de': 'Steuert einen bipolaren Schrittmotor mit bis zu 38V und 2,5A pro Phase'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

@@ -20,6 +20,7 @@ com = {
         'de': 'Misst Umgebungslicht bis zu 64000Lux'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

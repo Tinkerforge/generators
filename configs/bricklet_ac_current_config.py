@@ -20,6 +20,7 @@ com = {
         'de': 'Misst Wechselstrom zwischen 0A und 100A'
     },
     'released': False,
+    'documented': False,
     'packets': [],
     'examples': []
 }

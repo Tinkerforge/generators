@@ -20,6 +20,7 @@ com = {
         'de': '360° Drehgeber/Drehencoder mit Taster'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

@@ -20,6 +20,7 @@ com = {
         'de': 'Misst Entfernung zwischen 2cm und 400cm mit Ultraschall'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

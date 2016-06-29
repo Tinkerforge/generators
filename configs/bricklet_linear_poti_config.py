@@ -20,6 +20,7 @@ com = {
         'de': '59mm Linearpotentiometer'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

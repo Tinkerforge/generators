@@ -18,6 +18,7 @@ com = {
         'de': 'Vier 7-Segment Anzeigen mit schaltbarem Doppelpunkt'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

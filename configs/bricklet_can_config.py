@@ -18,6 +18,7 @@ com = {
         'de': 'Kommuniziert mit CAN-Bus Geräten'
     },
     'released': False,
+    'documented': False,
     'packets': [],
     'examples': []
 }

@@ -20,6 +20,7 @@ com = {
         'de': '300° Drehpotentiometer'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

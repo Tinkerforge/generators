@@ -18,6 +18,7 @@ com = {
         'de': 'Kapazitiver Touch Sensor für 12 Elektroden'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

@@ -20,6 +20,7 @@ com = {
         'de': 'Misst Herzfrequenz'
     },
     'released': False,
+    'documented': False,
     'packets': [],
     'examples': []
 }

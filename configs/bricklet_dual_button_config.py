@@ -18,6 +18,7 @@ com = {
         'de': 'Zwei Taster mit eingebauten blauen LEDs'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

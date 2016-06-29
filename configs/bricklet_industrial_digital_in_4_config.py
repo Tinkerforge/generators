@@ -18,6 +18,7 @@ com = {
         'de': '4 galvanisch getrennte digitale Eingänge'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

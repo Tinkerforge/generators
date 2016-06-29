@@ -20,6 +20,7 @@ com = {
         'de': 'Misst Farbe (RGB Wert), Beleuchtungsstärke und Farbtemperatur'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

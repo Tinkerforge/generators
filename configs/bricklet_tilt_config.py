@@ -18,6 +18,7 @@ com = {
         'de': 'Erkennt Neigung des Bricklets (Neigungsschalter offen/geschlossen)'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

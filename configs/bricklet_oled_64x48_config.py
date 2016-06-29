@@ -18,6 +18,7 @@ com = {
         'de': '1,68cm (0,66") OLED mit 64x48 Pixel'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

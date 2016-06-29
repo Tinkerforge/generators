@@ -20,6 +20,7 @@ com = {
         'de': 'Misst CO2-Konzentration in ppm'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

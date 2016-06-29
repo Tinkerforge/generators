@@ -650,10 +650,18 @@ def generate(bindings_root_directory, language, generator_class):
     for config in configs:
         if config.endswith('_config.py'):
             com = copy.deepcopy(__import__(config[:-3]).com)
-            if com['released']:
-                print(' * {0}'.format(config[:-10]))
-            else:
+
+            if com['documented'] and not com['released']:
+                raise Exception('{0} is marked as documented, but as not released'.format(config[:-10]))
+
+            if not com['released'] and not com['documented']:
+                print(' * {0} \033[01;36m(not released, not documented)\033[0m'.format(config[:-10]))
+            elif not com['released']:
                 print(' * {0} \033[01;36m(not released)\033[0m'.format(config[:-10]))
+            elif not com['documented']:
+                print(' * {0} \033[01;36m(not documented)\033[0m'.format(config[:-10]))
+            else:
+                print(' * {0}'.format(config[:-10]))
 
             def prepare_common_packets(common_packets):
                 for common_packet in common_packets:
@@ -703,6 +711,7 @@ def generate(bindings_root_directory, language, generator_class):
                                device.get_git_name(),
                                firmware_url_part,
                                device.is_released(),
+                               device.is_documented(),
                                True,
                                {
                                    'en': device.get_description('en'),
@@ -725,6 +734,7 @@ def generate(bindings_root_directory, language, generator_class):
                                device.get_git_name(),
                                firmware_url_part,
                                device.is_released(),
+                               device.is_documented(),
                                True,
                                {
                                    'en': device.get_description('en'),
@@ -737,18 +747,18 @@ def generate(bindings_root_directory, language, generator_class):
 
     generator.finish()
 
-    brick_infos.append((None, 'Debug Brick', 'Debug', 'debug_brick', 'Debug_Brick', None, 'debug-brick', None, True, False,
+    brick_infos.append((None, 'Debug Brick', 'Debug', 'debug_brick', 'Debug_Brick', None, 'debug-brick', None, True, True, False,
                         {'en': 'For Firmware Developers: JTAG and serial console',
                          'de': 'Für Firmware Entwickler: JTAG und serielle Konsole'}))
 
-    bricklet_infos.append((None, 'Breakout Bricklet', 'Breakout', 'breakout_bricklet', 'Breakout', None, 'breakout-bricklet', None, True, False,
+    bricklet_infos.append((None, 'Breakout Bricklet', 'Breakout', 'breakout_bricklet', 'Breakout', None, 'breakout-bricklet', None, True, True, False,
                            {'en': 'Makes all Bricklet signals available',
                             'de': 'Macht alle Bricklet Signale zugänglich'}))
 
     with open(os.path.join(bindings_root_directory, '..', 'device_infos.py'), 'wb') as f:
         f.write('from collections import namedtuple\n')
         f.write('\n')
-        f.write("DeviceInfo = namedtuple('DeviceInfo', 'identifier long_display_name short_display_name ref_name hardware_doc_name software_doc_prefix git_name firmware_url_part is_released has_bindings description')\n")
+        f.write("DeviceInfo = namedtuple('DeviceInfo', 'identifier long_display_name short_display_name ref_name hardware_doc_name software_doc_prefix git_name firmware_url_part is_released is_documented has_bindings description')\n")
         f.write('\n')
         f.write('brick_infos = \\\n')
         f.write('[\n')
@@ -1245,6 +1255,9 @@ class Device(NameMixin):
 
     def is_released(self):
         return self.raw_data['released']
+
+    def is_documented(self):
+        return self.raw_data['documented']
 
     def get_api_version(self):
         return self.raw_data['api_version']

@@ -18,6 +18,7 @@ com = {
         'de': 'Steuert bis zu 7 RC Servos mit bis zu 3A'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

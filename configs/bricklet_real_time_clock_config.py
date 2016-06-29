@@ -18,6 +18,7 @@ com = {
         'de': 'Batteriegepufferte Echtzeituhr'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

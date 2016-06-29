@@ -20,6 +20,7 @@ com = {
         'de': 'Misst Gleichspannung zwischen 0V und 45V'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

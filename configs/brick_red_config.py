@@ -147,6 +147,7 @@ com = {
         'de': 'Führt Programme aus und steuert andere Bricks/Bricklets selbständig'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

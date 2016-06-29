@@ -20,6 +20,7 @@ com = {
         'de': 'Misst Umgebungstemperatur mit 0,5°C Genauigkeit'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

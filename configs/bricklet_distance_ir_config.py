@@ -20,6 +20,7 @@ com = {
         'de': 'Misst Entfernung bis zu 150cm mit Infrarot-Licht'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

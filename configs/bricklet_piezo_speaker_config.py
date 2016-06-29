@@ -18,6 +18,7 @@ com = {
         'de': 'Erzeugt Piepton mit konfigurierbarer Frequenz'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

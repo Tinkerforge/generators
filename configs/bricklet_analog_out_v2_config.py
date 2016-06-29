@@ -18,6 +18,7 @@ com = {
         'de': 'Erzeugt konfigurierbare Gleichspannung zwischen 0V und 12V'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

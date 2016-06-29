@@ -20,6 +20,7 @@ com = {
         'de': 'Misst Staubdichte'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

@@ -20,6 +20,7 @@ com = {
         'de': 'Misst Schallintensität'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

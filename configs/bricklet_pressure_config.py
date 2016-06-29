@@ -20,6 +20,7 @@ com = {
         'de': 'Misst Druck mit verschiedenen Drucksensoren'
     },
     'released': False,
+    'documented': False,
     'packets': [],
     'examples': []
 }

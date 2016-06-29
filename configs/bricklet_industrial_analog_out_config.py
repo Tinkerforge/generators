@@ -18,6 +18,7 @@ com = {
         'de': 'Erzeugt konfigurierbare Gleichspannung und -strom, 0V bis 10V und 4mA bis 20mA'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

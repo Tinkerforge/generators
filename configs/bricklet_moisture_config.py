@@ -20,6 +20,7 @@ com = {
         'de': 'Misst Erdfeuchtigkeit'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

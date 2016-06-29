@@ -20,6 +20,7 @@ com = {
         'de': 'Misst Entfernung bis zu 40m mit Laser-Licht'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

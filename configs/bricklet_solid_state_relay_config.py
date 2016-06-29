@@ -18,6 +18,7 @@ com = {
         'de': 'Schaltet AC und DC Halbleiterrelais (Solid State Relais)'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

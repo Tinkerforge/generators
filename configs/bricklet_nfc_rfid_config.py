@@ -37,6 +37,7 @@ com = {
         'de': 'Liest und schreibt NFC und RFID Tags'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

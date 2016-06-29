@@ -20,6 +20,7 @@ com = {
         'de': 'Misst zwei Gleichspannungen zwischen -35V und +35V mit jeweils 24Bit Auflösung'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

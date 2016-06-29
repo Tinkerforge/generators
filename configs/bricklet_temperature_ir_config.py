@@ -20,6 +20,7 @@ com = {
         'de': 'Kontaktlose Objekttemperaturmessung zwischen -70°C und +380°C'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

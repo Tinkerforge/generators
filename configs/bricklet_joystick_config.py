@@ -20,6 +20,7 @@ com = {
         'de': '2-Achsen Joystick mit Taster'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

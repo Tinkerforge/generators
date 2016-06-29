@@ -18,6 +18,7 @@ com = {
         'de': '3,3cm (1,3") OLED mit 128x64 Pixel'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

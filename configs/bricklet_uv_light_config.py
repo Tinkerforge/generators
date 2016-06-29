@@ -20,6 +20,7 @@ com = {
         'de': 'Misst UV-Licht'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

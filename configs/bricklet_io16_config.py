@@ -18,6 +18,7 @@ com = {
         'de': '16 digitale Ein- und Ausgänge'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

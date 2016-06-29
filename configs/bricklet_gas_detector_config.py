@@ -20,6 +20,7 @@ com = {
         'de': 'Misst Konzentration verschiedener Gase'
     },
     'released': False,
+    'documented': False,
     'packets': [],
     'examples': []
 }

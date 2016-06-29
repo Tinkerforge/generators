@@ -18,6 +18,7 @@ com = {
         'de': 'Voll ausgestattetes AHRS mit 9 Freiheitsgraden'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

@@ -20,6 +20,7 @@ com = {
         'de': 'Misst Gleich- und Wechselstrom zwischen -12,5A und +12,5A'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

@@ -20,6 +20,7 @@ com = {
         'de': 'TODO'
     },
     'released': False,
+    'documented': False,
     'packets': [],
     'examples': []
 }

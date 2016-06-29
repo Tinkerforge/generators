@@ -18,6 +18,7 @@ com = {
         'de': 'Zwei Relais um Gleich- und Wechselstromgeräte zu schalten'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

@@ -20,6 +20,7 @@ com = {
         'de': 'Misst Beschleunigung in drei Achsen'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

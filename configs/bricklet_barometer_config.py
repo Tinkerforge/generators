@@ -20,6 +20,7 @@ com = {
         'de': 'Misst Luftdruck und Höhenänderungen'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

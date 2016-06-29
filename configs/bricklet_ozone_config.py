@@ -20,6 +20,7 @@ com = {
         'de': 'Misst Ozon-Konzentration in ppb'
     },
     'released': False,
+    'documented': False,
     'packets': [],
     'examples': []
 }

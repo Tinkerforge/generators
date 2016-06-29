@@ -18,6 +18,7 @@ com = {
         'de': 'Steuert bis zu 320 RGB LEDs'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

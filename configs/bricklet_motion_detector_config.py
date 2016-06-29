@@ -18,6 +18,7 @@ com = {
         'de': 'Passiver Infrarot (PIR) Bewegungssensor, 7m Reichweite'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

@@ -20,6 +20,7 @@ com = {
         'de': 'Liest Temperaturen von Pt100 und Pt1000 Sensoren'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

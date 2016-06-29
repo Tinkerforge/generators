@@ -18,6 +18,7 @@ com = {
         'de': 'Bestimmt Position, Geschwindigkeit und Höhe mittels GPS'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

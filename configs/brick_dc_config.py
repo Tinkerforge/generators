@@ -18,6 +18,7 @@ com = {
         'de': 'Steuert einen Gleichstrommotor mit bis zu 28V und 5A (Peak)'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

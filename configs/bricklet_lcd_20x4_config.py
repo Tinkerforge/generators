@@ -18,6 +18,7 @@ com = {
         'de': '20x4 Zeichen alphanumerisches Display mit blauer Hintergrundbeleuchtung'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

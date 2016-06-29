@@ -20,6 +20,7 @@ com = {
         'de': 'Grundlage um Stapel zu bauen und bietet 4 Bricklet Anschlüsse'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }

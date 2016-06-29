@@ -20,6 +20,7 @@ com = {
         'de': 'Misst Temperatur mit Thermoelementen'
     },
     'released': True,
+    'documented': True,
     'packets': [],
     'examples': []
 }
