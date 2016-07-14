@@ -310,7 +310,7 @@ com['packets'].append({
              ('Filter1', 'uint32', 1, 'in'),
              ('Filter2', 'uint32', 1, 'in')],
 'since_firmware': [1, 0, 0],
-'doc': ['bf', {
+'doc': ['af', {
 'en':
 """
 Set the read filter configuration. This can be used to define which frames
@@ -444,7 +444,7 @@ com['packets'].append({
              ('Filter1', 'uint32', 1, 'out'),
              ('Filter2', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
-'doc': ['bf', {
+'doc': ['af', {
 'en':
 """
 Returns the read filter as set by :func:`SetReadFilter`.
@@ -466,7 +466,7 @@ com['packets'].append({
              ('Read Register Overflow Count', 'uint32', 1, 'out'),
              ('Read Buffer Overflow Count', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
-'doc': ['bf', {
+'doc': ['af', {
 'en':
 """
 Returns information about different kinds of errors.
