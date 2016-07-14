@@ -461,9 +461,9 @@ com['packets'].append({
 'name': 'Get Error Log',
 'elements': [('Write Error Level', 'uint8', 1, 'out'),
              ('Read Error Level', 'uint8', 1, 'out'),
-             ('Transceiver Disabled', 'bool', 1, 'out'), # FIXME: use bitmask instead to allow for future extensions?
+             ('Transceiver Disabled', 'bool', 1, 'out'),
              ('Write Timeout Count', 'uint32', 1, 'out'),
-             ('Read Register Overflow Count', 'uint32', 1, 'out'), # FIXME: this is not exact, just a lower bound, because the Bricklet might not detect all overflows
+             ('Read Register Overflow Count', 'uint32', 1, 'out'),
              ('Read Buffer Overflow Count', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
@@ -493,6 +493,8 @@ number of these errors:
   case the newly arrived frame is lost. This happens if the CAN transceiver
   receives more frames than the Bricklet can handle. Using the read filter
   (see :func:`SetReadFilter`) can help to reduce the amount of received frames.
+  This count is not exact, but a lower bound, because the Bricklet might not
+  able detect all overflows if they occur in rapid succession.
 * A read buffer overflow occurs if the read buffer of the Bricklet is already
   full when the next frame should be read from the read register of the CAN
   transceiver. In this case the frame in the read register is lost. This
@@ -529,7 +531,10 @@ die Anzahl dieser Fehler:
   ankommt. In diesem Fall geht der neu ankommende Frame verloren. Dies
   passiert, wenn der CAN-Transceiver mehr Frames empfängt als das Bricklet
   behandeln kann. Mit Hilfe des Lesefilters (siehe :func:`SetReadFilter`) kann
-  die Anzahl der empfangen Frames verringert werden.
+  die Anzahl der empfangen Frames verringert werden. Dieser Zähler ist nicht
+  exakt, sondern stellt eine untere Grenze da. Es kann vorkommen, dass das
+  Bricklet nicht alle Überläufe erkennt, wenn diese in schneller Abfolge
+  auftreten.
 * Ein Lese-Buffer-Überlauf tritt dann auf, wenn der Lese-Buffer des Bricklets
   bereits voll ist und noch ein Frame vom Lese-Register des CAN-Transceiver
   gelesen werden soll. In diesem Fall geht der Frame im Lese-Register verloren.
