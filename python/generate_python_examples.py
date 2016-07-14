@@ -46,7 +46,7 @@ class PythonExample(common.Example):
 
 HOST = "localhost"
 PORT = 4223
-UID = "{dummy_uid}" # Change to your UID
+UID = "{dummy_uid}" # Change {dummy_uid} to the UID of your {device_long_display_name}
 {imports}
 from tinkerforge.ip_connection import IPConnection
 from tinkerforge.{device_underscore_category}_{device_underscore_name} import {device_camel_case_category}{device_camel_case_name}
@@ -106,6 +106,7 @@ if __name__ == "__main__":
                                device_camel_case_name=self.get_device().get_camel_case_name(),
                                device_underscore_name=self.get_device().get_underscore_name(),
                                device_initial_name=self.get_device().get_initial_name(),
+                               device_long_display_name=self.get_device().get_long_display_name(),
                                dummy_uid=self.get_dummy_uid(),
                                imports=common.wrap_non_empty('\n', ''.join(unique_imports), ''),
                                functions=common.wrap_non_empty('\n', '\n'.join(functions), ''),

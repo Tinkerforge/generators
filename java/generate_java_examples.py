@@ -49,7 +49,9 @@ import com.tinkerforge.{device_camel_case_category}{device_camel_case_name};{imp
 public class Example{example_camel_case_name} {{
 	private static final String HOST = "localhost";
 	private static final int PORT = 4223;
-	private static final String UID = "{dummy_uid}"; // Change to your UID
+
+	// Change {dummy_uid} to the UID of your {device_long_display_name}
+	private static final String UID = "{dummy_uid}";
 
 	// Note: To make the example code cleaner we do not handle exceptions. Exceptions
 	//       you might normally want to catch are described in the documentation
@@ -108,6 +110,7 @@ public class Example{example_camel_case_name} {{
                                device_camel_case_category=self.get_device().get_camel_case_category(),
                                device_camel_case_name=self.get_device().get_camel_case_name(),
                                device_initial_name=self.get_device().get_initial_name(),
+                               device_long_display_name=self.get_device().get_long_display_name(),
                                dummy_uid=self.get_dummy_uid(),
                                imports=common.wrap_non_empty('\n', ''.join(unique_imports), ''),
                                sources='\n' + '\n'.join(sources).replace('\n\r', '').lstrip('\r'),

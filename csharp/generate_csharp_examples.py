@@ -50,7 +50,7 @@ class Example
 {{
 	private static string HOST = "localhost";
 	private static int PORT = 4223;
-	private static string UID = "{dummy_uid}"; // Change to your UID
+	private static string UID = "{dummy_uid}"; // Change {dummy_uid} to the UID of your {device_long_display_name}
 {functions}
 	static void Main()
 	{{
@@ -113,6 +113,7 @@ class Example
                                device_camel_case_category=self.get_device().get_camel_case_category(),
                                device_camel_case_name=self.get_device().get_camel_case_name(),
                                device_initial_name=self.get_device().get_initial_name(),
+                               device_long_display_name=self.get_device().get_long_display_name(),
                                dummy_uid=self.get_dummy_uid(),
                                imports=''.join(unique_imports),
                                functions=common.wrap_non_empty('\n', '\n'.join(functions), ''),

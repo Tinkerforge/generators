@@ -36,7 +36,7 @@ class ShellExample(common.Example):
         template = r"""#!/bin/sh
 # Connects to localhost:4223 by default, use --host and --port to change this{incomplete}
 
-uid={dummy_uid} # Change to your UID
+uid={dummy_uid} # Change {dummy_uid} to the UID of your {device_long_display_name}
 {sources}{cleanups}"""
 
         if self.is_incomplete():
@@ -78,6 +78,7 @@ uid={dummy_uid} # Change to your UID
             cleanups.append('kill -- -$$ # Stop callback dispatch in background\n')
 
         return template.format(incomplete=incomplete,
+                               device_long_display_name=self.get_device().get_long_display_name(),
                                dummy_uid=self.get_dummy_uid(),
                                sources='\n' + '\n'.join(sources).replace('\n\r', '').lstrip('\r'),
                                cleanups=common.wrap_non_empty('\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), '')).rstrip('\n') + '\n'

@@ -52,7 +52,7 @@ use Tinkerforge\{device_camel_case_category}{device_camel_case_name};
 
 const HOST = 'localhost';
 const PORT = 4223;
-const UID = '{dummy_uid}'; // Change to your UID
+const UID = '{dummy_uid}'; // Change {dummy_uid} to the UID of your {device_long_display_name}
 {subroutines}
 $ipcon = new IPConnection(); // Create IP connection
 ${device_initial_name} = new {device_camel_case_category}{device_camel_case_name}(UID, $ipcon); // Create device object
@@ -108,6 +108,7 @@ $ipcon->dispatchCallbacks(-1); // Dispatch callbacks forever
                                device_camel_case_category=self.get_device().get_camel_case_category(),
                                device_camel_case_name=self.get_device().get_camel_case_name(),
                                device_initial_name=self.get_device().get_initial_name(),
+                               device_long_display_name=self.get_device().get_long_display_name(),
                                dummy_uid=self.get_dummy_uid(),
                                subroutines=common.wrap_non_empty('\n', '\n'.join(subroutines), ''),
                                sources='\n' + '\n'.join(sources).replace('\n\r', '').lstrip('\r'),

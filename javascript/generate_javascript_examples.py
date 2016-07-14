@@ -92,7 +92,7 @@ class JavaScriptExample(common.Example):
 
 var HOST = 'localhost';
 var PORT = 4223;
-var UID = '{dummy_uid}'; // Change to your UID
+var UID = '{dummy_uid}'; // Change {dummy_uid} to the UID of your {device_long_display_name}
 
 var ipcon = new Tinkerforge.IPConnection(); // Create IP connection
 var {device_initial_name} = new Tinkerforge.{device_camel_case_category}{device_camel_case_name}(UID, ipcon); // Create device object
@@ -157,6 +157,7 @@ process.stdin.on('data',
                                device_camel_case_category=self.get_device().get_camel_case_category(),
                                device_camel_case_name=self.get_device().get_camel_case_name(),
                                device_initial_name=self.get_device().get_initial_name(),
+                               device_long_display_name=self.get_device().get_long_display_name(),
                                dummy_uid=self.get_dummy_uid(),
                                functions=common.wrap_non_empty('\n', '\n'.join(functions), ''),
                                cleanups=common.wrap_non_empty('\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), '')).replace('<<<total_sleep_duration>>>', str(global_total_sleep_duration)).replace("console.log('');", "console.log();")

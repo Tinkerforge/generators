@@ -66,7 +66,7 @@ class VBNETExample(common.Example):
 Module Example{example_camel_case_name}
     Const HOST As String = "localhost"
     Const PORT As Integer = 4223
-    Const UID As String = "{dummy_uid}" ' Change to your UID
+    Const UID As String = "{dummy_uid}" ' Change {dummy_uid} to the UID of your {device_long_display_name}
 {subroutines}
     Sub Main()
         Dim ipcon As New IPConnection() ' Create IP connection
@@ -124,6 +124,7 @@ End Module
                                device_camel_case_category=self.get_device().get_camel_case_category(),
                                device_camel_case_name=self.get_device().get_camel_case_name(),
                                device_initial_name=self.get_device().get_initial_name(),
+                               device_long_display_name=self.get_device().get_long_display_name(),
                                dummy_uid=self.get_dummy_uid(),
                                imports=''.join(unique_imports),
                                subroutines=common.wrap_non_empty('\n', '\n'.join(subroutines), ''),

@@ -85,7 +85,7 @@ class CExample(common.Example):
 
 #define HOST "localhost"
 #define PORT 4223
-#define UID "{dummy_uid}" // Change to your UID
+#define UID "{dummy_uid}" // Change {dummy_uid} to the UID of your {device_long_display_name}
 {functions}
 int main(void) {{
 	// Create IP connection
@@ -164,6 +164,7 @@ int main(void) {{
                                device_camel_case_name=self.get_device().get_camel_case_name(),
                                device_underscore_name=self.get_device().get_underscore_name(),
                                device_initial_name=self.get_device().get_initial_name(),
+                               device_long_display_name=self.get_device().get_long_display_name(),
                                dummy_uid=self.get_dummy_uid(),
                                defines=common.wrap_non_empty('\n', ''.join(unique_defines), ''),
                                functions=common.wrap_non_empty('\n', '\n'.join(functions), ''),

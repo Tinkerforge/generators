@@ -76,7 +76,7 @@ type
 const
   HOST = 'localhost';
   PORT = 4223;
-  UID = '{dummy_uid}'; {{ Change to your UID }}
+  UID = '{dummy_uid}'; {{ Change {dummy_uid} to the UID of your {device_long_display_name} }}
 
 var
   e: TExample;
@@ -164,6 +164,7 @@ end.
                                device_camel_case_category=self.get_device().get_camel_case_category(),
                                device_camel_case_name=self.get_device().get_camel_case_name(),
                                device_initial_name=self.get_device().get_initial_name(),
+                               device_long_display_name=self.get_device().get_long_display_name(),
                                dummy_uid=self.get_dummy_uid(),
                                prototypes=common.wrap_non_empty('\n', '\n'.join(prototypes), ''),
                                procedures=common.wrap_non_empty('\n', '\n'.join(procedures), ''),

@@ -49,7 +49,7 @@ LoadNETAssembly["Tinkerforge",NotebookDirectory[]<>"../../.."]{incomplete}
 
 host="localhost"
 port=4223
-uid="{dummy_uid}"(*Change to your UID*)
+uid="{dummy_uid}"(*Change {dummy_uid} to the UID of your {device_long_display_name}*)
 
 (*Create IPConnection and device object*)
 ipcon=NETNew["Tinkerforge.IPConnection"]
@@ -98,6 +98,7 @@ ReleaseNETObject[ipcon]
                                device_camel_case_category=self.get_device().get_camel_case_category(),
                                device_camel_case_name=self.get_device().get_camel_case_name(),
                                device_initial_name=self.get_device().get_initial_name(),
+                               device_long_display_name=self.get_device().get_long_display_name(),
                                dummy_uid=self.get_dummy_uid(),
                                sources='\n' + '\n'.join(sources).replace(';\n\n\b', '\n\n').replace('\n\r', '').lstrip('\r'),
                                cleanups=common.wrap_non_empty('\n', '\n'.join(cleanups).replace('\n\r', '').lstrip('\r').rstrip('\n'), ''))
