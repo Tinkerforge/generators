@@ -18,7 +18,7 @@ com = {
         'de': 'Steuert eine RGB LED'
     },
     'released': True,
-    'documented': False,
+    'documented': True,
     'packets': [],
     'examples': []
 }
