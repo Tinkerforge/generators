@@ -296,14 +296,16 @@ class VBNETExampleGetterFunction(common.ExampleGetterFunction):
         if len(variable_references) > 1:
             arguments += variable_references
 
-        return template.format(device_initial_name=self.get_device().get_initial_name(),
-                               function_camel_case_name=self.get_camel_case_name(),
-                               function_headless_camel_case_name=self.get_headless_camel_case_name(),
-                               function_comment_name=self.get_comment_name(),
-                               comments=''.join(comments),
-                               variable_declarations='\n'.join(variable_declarations),
-                               write_lines='\n'.join(write_lines),
-                               arguments=', '.join(arguments))
+        result = template.format(device_initial_name=self.get_device().get_initial_name(),
+                                 function_camel_case_name=self.get_camel_case_name(),
+                                 function_headless_camel_case_name=self.get_headless_camel_case_name(),
+                                 function_comment_name=self.get_comment_name(),
+                                 comments=''.join(comments),
+                                 variable_declarations='\n'.join(variable_declarations),
+                                 write_lines='\n'.join(write_lines),
+                                 arguments=',<BP>'.join(arguments))
+
+        return common.break_string(result, '.{}('.format(self.get_camel_case_name()), continuation=' _')
 
 class VBNETExampleSetterFunction(common.ExampleSetterFunction):
     def get_vbnet_imports(self):
@@ -319,12 +321,14 @@ class VBNETExampleSetterFunction(common.ExampleSetterFunction):
         for argument in self.get_arguments():
             arguments.append(argument.get_vbnet_source())
 
-        return template.format(global_line_prefix=global_line_prefix,
-                               device_initial_name=self.get_device().get_initial_name(),
-                               function_camel_case_name=self.get_camel_case_name(),
-                               arguments=', '.join(arguments),
-                               comment1=self.get_formatted_comment1(global_line_prefix + "        ' {0}\n", '\r', "\n" + global_line_prefix + "        ' "),
-                               comment2=self.get_formatted_comment2(" ' {0}", ''))
+        result = template.format(global_line_prefix=global_line_prefix,
+                                 device_initial_name=self.get_device().get_initial_name(),
+                                 function_camel_case_name=self.get_camel_case_name(),
+                                 arguments=',<BP>'.join(arguments),
+                                 comment1=self.get_formatted_comment1(global_line_prefix + "        ' {0}\n", '\r', "\n" + global_line_prefix + "        ' "),
+                                 comment2=self.get_formatted_comment2(" ' {0}", ''))
+
+        return common.break_string(result, '.{}('.format(self.get_camel_case_name()), continuation=' _')
 
 class VBNETExampleCallbackFunction(common.ExampleCallbackFunction):
     def get_vbnet_imports(self):

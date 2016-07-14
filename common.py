@@ -828,7 +828,7 @@ def check_name(name, short_display_name=None, long_display_name=None, category_n
                              .format(long_display_name, short_display_name, category_name,
                                      ' '.join(list(short_display_name_to_check))))
 
-def break_string(string, marker, continuation='', max_length=100):
+def break_string(string, marker, continuation='', max_length=90):
     result = string.replace('<BP>', ' ')
 
     if len(result) > max_length:

@@ -287,12 +287,14 @@ class JavaExampleSetterFunction(common.ExampleSetterFunction):
         for argument in self.get_arguments():
             arguments.append(argument.get_java_source())
 
-        return template.format(global_line_prefix=global_line_prefix,
-                               device_initial_name=self.get_device().get_initial_name(),
-                               function_headless_camel_case_name=self.get_headless_camel_case_name(),
-                               arguments=', '.join(arguments),
-                               comment1=self.get_formatted_comment1(global_line_prefix + '\t\t// {0}\n', '\r', '\n' + global_line_prefix + '\t\t// '),
-                               comment2=self.get_formatted_comment2(' // {0}', ''))
+        result = template.format(global_line_prefix=global_line_prefix,
+                                 device_initial_name=self.get_device().get_initial_name(),
+                                 function_headless_camel_case_name=self.get_headless_camel_case_name(),
+                                 arguments=',<BP>'.join(arguments),
+                                 comment1=self.get_formatted_comment1(global_line_prefix + '\t\t// {0}\n', '\r', '\n' + global_line_prefix + '\t\t// '),
+                                 comment2=self.get_formatted_comment2(' // {0}', ''))
+
+        return common.break_string(result, '{}('.format(self.get_headless_camel_case_name()))
 
 class JavaExampleCallbackFunction(common.ExampleCallbackFunction):
     def get_java_imports(self):

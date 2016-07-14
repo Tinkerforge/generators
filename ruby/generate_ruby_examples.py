@@ -262,20 +262,25 @@ class RubyExampleSetterFunction(common.ExampleSetterFunction):
         for argument in self.get_arguments():
             arguments.append(argument.get_ruby_source())
 
+        marker = '.{} '
+
         if len(arguments) > 0:
-            arguments = ' ' + ', '.join(arguments)
+            arguments = ' ' + ',<BP>'.join(arguments)
         else:
             arguments = ''
 
         if arguments.strip().startswith('('):
             arguments = '({0})'.format(arguments.strip())
+            marker = '.{}('
 
-        return template.format(global_line_prefix=global_line_prefix,
-                               device_initial_name=self.get_device().get_initial_name(),
-                               function_underscore_name=self.get_underscore_name(),
-                               arguments=arguments,
-                               comment1=self.get_formatted_comment1(global_line_prefix + '# {0}\n', '\r', '\n' + global_line_prefix + '# '),
-                               comment2=self.get_formatted_comment2(' # {0}', ''))
+        result = template.format(global_line_prefix=global_line_prefix,
+                                 device_initial_name=self.get_device().get_initial_name(),
+                                 function_underscore_name=self.get_underscore_name(),
+                                 arguments=arguments,
+                                 comment1=self.get_formatted_comment1(global_line_prefix + '# {0}\n', '\r', '\n' + global_line_prefix + '# '),
+                                 comment2=self.get_formatted_comment2(' # {0}', ''))
+
+        return common.break_string(result, marker.format(self.get_underscore_name()), continuation=' \\')
 
 class RubyExampleCallbackFunction(common.ExampleCallbackFunction):
     def get_ruby_source(self):
