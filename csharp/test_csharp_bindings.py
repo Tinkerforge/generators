@@ -42,10 +42,11 @@ class CSharpExamplesTester(common.ExamplesTester):
 
         dest = src[:-3] + '.exe';
 
-        args = ['/usr/bin/gmcs',
+        args = ['/usr/bin/mcs',
                 '/warn:4',
                 '/optimize',
                 '/target:exe',
+                '/sdk:2',
                 '/out:' + dest,
                 '/reference:System.Drawing.dll',
                 '/reference:/tmp/tester/csharp/Tinkerforge.dll',

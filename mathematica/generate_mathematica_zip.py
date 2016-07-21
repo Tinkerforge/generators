@@ -87,8 +87,9 @@ class MathematicaZipGenerator(common.ZipGenerator):
 
         # Make dll
         with common.ChangedDirectory(self.tmp_dir):
-            common.execute(['/usr/bin/gmcs',
+            common.execute(['/usr/bin/mcs',
                             '/optimize',
+                            '/sdk:2',
                             '/target:library',
                             '/out:' + os.path.join(self.tmp_dir, 'Tinkerforge.dll'),
                             os.path.join(self.tmp_source_tinkerforge_dir, '*.cs')])

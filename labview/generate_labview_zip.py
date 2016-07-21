@@ -105,10 +105,10 @@ class LabVIEWZipGenerator(common.ZipGenerator):
             os.makedirs(os.path.join(self.tmp_dir, 'net{0}0'.format(sdk)))
 
             with common.ChangedDirectory(self.tmp_dir):
-                common.execute(['/usr/bin/gmcs',
+                common.execute(['/usr/bin/mcs',
                                 '/optimize',
-                                '/target:library',
                                 '/sdk:{0}'.format(sdk),
+                                '/target:library',
                                 '/out:' + os.path.join(self.tmp_dir, 'net{0}0'.format(sdk), 'Tinkerforge.dll'),
                                 os.path.join(self.tmp_source_tinkerforge_dir, '*.cs')])
 
