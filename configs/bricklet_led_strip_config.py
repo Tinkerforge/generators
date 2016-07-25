@@ -8,7 +8,7 @@
 
 com = {
     'author': 'Olaf Lüke <olaf@tinkerforge.com>',
-    'api_version': [2, 0, 2],
+    'api_version': [2, 0, 3],
     'category': 'Bricklet',
     'device_identifier': 231,
     'name': ('LED Strip', 'LED Strip', 'LED Strip Bricklet'),
@@ -142,14 +142,14 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns *rgb* values with the given *length* starting from the
+Returns the rgb with the given *length* starting from the
 given *index*.
 
 The values are the last values that were set by :func:`SetRGBValues`.
 """,
 'de':
 """
-Gibt *rgb* Werte mit der übergebenen *length* zurück, beginnend vom
+Gibt rgb Werte mit der übergebenen *length* zurück, beginnend vom
 übergebenen *index*.
 
 Die Werte sind die letzten von :func:`SetRGBValues` gesetzten Werte.
@@ -377,6 +377,67 @@ Returns the currently used chip type as set by :func:`SetChipType`.
 """
 Gibt den aktuell genutzten Typ des Chips zurück, wie von
 :func:`SetChipType` gesetzt.
+"""
+}]
+})
+
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set RGBW Values',
+'elements': [('Index', 'uint16', 1, 'in'),
+             ('Length', 'uint8', 1, 'in'),
+             ('R', 'uint8', 12, 'in'),
+             ('G', 'uint8', 12, 'in'),
+             ('B', 'uint8', 12, 'in'),
+             ('W', 'uint8', 12, 'in')],
+'since_firmware': [2, 0, 6],
+'doc': ['bf', {
+'en':
+"""
+FIXME
+""",
+'de':
+"""
+FIXME
+"""
+},
+{
+'*': {
+'r_values': {'php': 'array(255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)',
+             '*': '[255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]'},
+'g_values': {'php': 'array(0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)',
+             '*': '[0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]'},
+'b_values': {'php': 'array(0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)',
+             '*': '[0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]'}
+}
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get RGBW Values',
+'elements': [('Index', 'uint16', 1, 'in'),
+             ('Length', 'uint8', 1, 'in'),
+             ('R', 'uint8', 12, 'out'),
+             ('G', 'uint8', 12, 'out'),
+             ('B', 'uint8', 12, 'out'),
+             ('W', 'uint8', 12, 'out')],
+'since_firmware': [2, 0, 6],
+'doc': ['bf', {
+'en':
+"""
+Returns the rgbw with the given *length* starting from the
+given *index*.
+
+The values are the last values that were set by :func:`SetRGBWValues`.
+""",
+'de':
+"""
+Gibt rgbw Werte mit der übergebenen *length* zurück, beginnend vom
+übergebenen *index*.
+
+Die Werte sind die letzten von :func:`SetRGBWValues` gesetzten Werte.
 """
 }]
 })
