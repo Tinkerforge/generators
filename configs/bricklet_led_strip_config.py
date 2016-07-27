@@ -327,7 +327,8 @@ com['packets'].append({
 'name': 'Set Chip Type',
 'elements': [('Chip', 'uint16', 1, 'in', ('Chip Type', [('WS2801', 2801),
                                                         ('WS2811', 2811),
-                                                        ('WS2812', 2812)]))],
+                                                        ('WS2811', 2812),
+                                                        ('LPD8806', 8806)]))],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
@@ -336,11 +337,15 @@ Sets the type of the led driver chip. We currently support
 the chips
 
 * WS2801 (``chip`` = 2801),
-* WS2811 (``chip`` = 2811) and
-* WS2812 (``chip`` = 2812).
+* WS2811 (``chip`` = 2811),
+* WS2812 (``chip`` = 2812) and
+* LPD8806 (``chip`` = 8806).
 
 The WS2812 is sometimes also called "NeoPixel", a name coined by
 Adafruit.
+
+The LPD8806 has only 7 Bit PWM for each channel. Nevertheless value can
+be transfer from 0-255. They will be divided by two.
 
 The default value is WS2801 (``chip`` = 2801).
 """,
@@ -350,11 +355,15 @@ Setzt den Typ des LED-Treiber-Chips. Aktuell unterstützen
 wir die Chips
 
 * WS2801 (``chip`` = 2801),
-* WS2811 (``chip`` = 2811) und
-* WS2812 (``chip`` = 2812).
+* WS2811 (``chip`` = 2811),
+* WS2812 (``chip`` = 2812) und
+* LPD8806 (``chip`` = 8806).
 
 Der WS2812 wird manchmal auch "NeoPixel" genannt, ein Name
 der von Adafruit geprägt wurde.
+
+Der LPD8806 verfügt nur über 7 Bit PWM pro Kanal. Es können trotzdem 
+Werte von 0-255 übergeben werden, die dann durch zwei geteilt werden.
 
 Der Standardwert ist WS2801 (``chip`` = 2801).
 """
@@ -366,7 +375,8 @@ com['packets'].append({
 'name': 'Get Chip Type',
 'elements': [('Chip', 'uint16', 1, 'out', ('Chip Type', [('WS2801', 2801),
                                                          ('WS2811', 2811),
-                                                         ('WS2812', 2812)]))],
+                                                         ('WS2812', 2812),
+                                                         ('LPD8806', 8806)]))],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
