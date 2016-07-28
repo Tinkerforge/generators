@@ -328,7 +328,8 @@ com['packets'].append({
 'elements': [('Chip', 'uint16', 1, 'in', ('Chip Type', [('WS2801', 2801),
                                                         ('WS2811', 2811),
                                                         ('WS2811', 2812),
-                                                        ('LPD8806', 8806)]))],
+                                                        ('LPD8806', 8806),
+                                                        ('APA102', 102)]))],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
@@ -338,10 +339,13 @@ the chips
 
 * WS2801 (``chip`` = 2801),
 * WS2811 (``chip`` = 2811),
-* WS2812 (``chip`` = 2812) and
-* LPD8806 (``chip`` = 8806).
+* WS2812 (``chip`` = 2812),
+* LPD8806 (``chip`` = 8806) and
+* APA102 (``chip`` = 102).
 
 The WS2812 is sometimes also called "NeoPixel", a name coined by
+Adafruit.
+The APA102 is sometimes also called "DotStar", a name also coined by
 Adafruit.
 
 The LPD8806 has only 7 Bit PWM for each channel. Nevertheless value can
@@ -356,10 +360,13 @@ wir die Chips
 
 * WS2801 (``chip`` = 2801),
 * WS2811 (``chip`` = 2811),
-* WS2812 (``chip`` = 2812) und
-* LPD8806 (``chip`` = 8806).
+* WS2812 (``chip`` = 2812),
+* LPD8806 (``chip`` = 8806) und
+* APA102 (``chip`` = 102).
 
 Der WS2812 wird manchmal auch "NeoPixel" genannt, ein Name
+der von Adafruit geprägt wurde.
+Der APA102 wird manchmal auch "DotStar" genannt, ein Name auch
 der von Adafruit geprägt wurde.
 
 Der LPD8806 verfügt nur über 7 Bit PWM pro Kanal. Es können trotzdem 
@@ -376,7 +383,8 @@ com['packets'].append({
 'elements': [('Chip', 'uint16', 1, 'out', ('Chip Type', [('WS2801', 2801),
                                                          ('WS2811', 2811),
                                                          ('WS2812', 2812),
-                                                         ('LPD8806', 8806)]))],
+                                                         ('LPD8806', 8806),
+                                                         ('APA102', 102)]))],
 'since_firmware': [2, 0, 2],
 'doc': ['bf', {
 'en':
