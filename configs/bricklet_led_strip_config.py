@@ -327,7 +327,7 @@ com['packets'].append({
 'name': 'Set Chip Type',
 'elements': [('Chip', 'uint16', 1, 'in', ('Chip Type', [('WS2801', 2801),
                                                         ('WS2811', 2811),
-                                                        ('WS2811', 2812),
+                                                        ('WS2812', 2812),
                                                         ('LPD8806', 8806),
                                                         ('APA102', 102)]))],
 'since_firmware': [2, 0, 2],
@@ -416,7 +416,7 @@ com['packets'].append({
 Sets the RGBW values for the LEDs with the given *length* starting
 from *index*.
 
-The maximum length is 12, the index goes from 0 to 319 and the rgb values
+The maximum length is 12, the index goes from 0 to 319 and the rgbw values
 have 8 bits each.
 
 Example: If you set
@@ -458,8 +458,8 @@ bounds is ignored completely.
 Setzt die RGBW Werte für die LEDs mit der angegebenen *length*,
 beginnend vom angegebenen *index*.
 
-Die maximale Länge ist 16. Der Index geht von 0 bis 319 und die
-rgb Werte haben jeweils 8 Bit.
+Die maximale Länge ist 12. Der Index geht von 0 bis 319 und die
+rgbw Werte haben jeweils 8 Bit.
 
 Beispiel: Wenn
 
@@ -536,6 +536,119 @@ Gibt RGBW Werte mit der übergebenen *length* zurück, beginnend vom
 übergebenen *index*.
 
 Die Werte sind die letzten von :func:`SetRGBWValues` gesetzten Werte.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Channel Mapping',
+'elements': [('Channel', 'uint16', 1, 'in', ('Channel Mapping', [('RGB', 0),
+                                                                 ('RBG', 1),
+                                                                 ('BRG', 2),
+                                                                 ('BGR', 3),
+                                                                 ('GRB', 4),
+                                                                 ('GBR', 5),
+                                                                 ('RGBW', 6),
+                                                                 ('RGWB', 7),
+                                                                 ('RBGW', 8),
+                                                                 ('RBWG', 9),
+                                                                 ('RWGB', 10),
+                                                                 ('RWBG', 11),
+                                                                 ('GRWB', 12),
+                                                                 ('GRBW', 13),
+                                                                 ('GBWR', 14),
+                                                                 ('GBRW', 15),
+                                                                 ('GWBR', 16),
+                                                                 ('GWRB', 17),
+                                                                 ('BRGW', 18),
+                                                                 ('BRWG', 19),
+                                                                 ('BGRW', 20),
+                                                                 ('BGWR', 21),
+                                                                 ('BWRG', 22),
+                                                                 ('BWGR', 23),
+                                                                 ('WRBG', 24),
+                                                                 ('WRGB', 25),
+                                                                 ('WGBR', 26),
+                                                                 ('WGRB', 27),
+                                                                 ('WBGR', 28),
+                                                                 ('WBRG', 29)]))],
+'since_firmware': [2, 0, 6],
+'doc': ['bf', {
+'en':
+"""
+Sets the channel mapping that the transferred data match their identifiers.
+The values 0 through 5 are designed for 3 channels (RGB) and values 6 through
+29 for 4 channels (RGB + W). In each case, all permutations are available.
+
+Instructions:
+- select 0 (if RGB) or 6 (if RGBW) and activate each channel individually
+- write down the order of the illuminated colors. You have to set this order.
+Example:
+  When the LED Strip shows the order blue, yellow, red in modus 0 (RGB). Then
+  you have to give the function the value of 3 (BGR).
+""",
+'de':
+"""
+Setzt das Channel Mapping, damit die übergebenen Daten mit ihren Bezeichnern übereinstimmen.
+Die Werte 0 bis einschließlich 5 sind für 3 Kanäle ausgelegt (RGB) und
+die Werte 6 bis einschließlich 29 für 4 Kanäle (RGB+W).
+Es sind jeweils alle Permutationen vorhanden.
+
+Hinweise zur Anwendung:
+- 0 (wenn RGB) oder 6 (wenn RGBW) auswählen und der Reihe nach jeden Kanal ansteuern
+- Reihenfolge der aufgeleuchteten Farben entspricht dem einzustellendem
+  Channel Mapping Wert.
+Beispiel:
+  Der LED Streifen gibt bei 0 (RGB) die Farben in der Reihenfolge Blau, Gelb, Rot aus. Dann
+  muss der Funktion der Wert 3 (BGR) übergeben werden.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Channel Mapping',
+'elements': [('Channel', 'uint16', 1, 'out', ('Channel Mapping', [('RGB', 0),
+                                                                  ('RBG', 1),
+                                                                  ('BRG', 2),
+                                                                  ('BGR', 3),
+                                                                  ('GRB', 4),
+                                                                  ('GBR', 5),
+                                                                  ('RGBW', 6),
+                                                                  ('RGWB', 7),
+                                                                  ('RBGW', 8),
+                                                                  ('RBWG', 9),
+                                                                  ('RWGB', 10),
+                                                                  ('RWBG', 11),
+                                                                  ('GRWB', 12),
+                                                                  ('GRBW', 13),
+                                                                  ('GBWR', 14),
+                                                                  ('GBRW', 15),
+                                                                  ('GWBR', 16),
+                                                                  ('GWRB', 17),
+                                                                  ('BRGW', 18),
+                                                                  ('BRWG', 19),
+                                                                  ('BGRW', 20),
+                                                                  ('BGWR', 21),
+                                                                  ('BWRG', 22),
+                                                                  ('BWGR', 23),
+                                                                  ('WRBG', 24),
+                                                                  ('WRGB', 25),
+                                                                  ('WGBR', 26),
+                                                                  ('WGRB', 27),
+                                                                  ('WBGR', 28),
+                                                                  ('WBRG', 29)]))],
+'since_firmware': [2, 0, 6],
+'doc': ['bf', {
+'en':
+"""
+Returns the currently used channel mapping table as set by :func:`SetChannelMapping`.
+""",
+'de':
+"""
+Gibt die aktuell genutzten Art des Channel Mappings zurück, wie von
+:func:`SetChannelMapping` gesetzt.
 """
 }]
 })
