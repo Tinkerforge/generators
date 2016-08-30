@@ -73,6 +73,9 @@ class CSharpZipGenerator(common.ZipGenerator):
             shutil.copy(os.path.join(root_dir, 'bindings', filename), self.tmp_source_tinkerforge_dir)
 
         shutil.copy(os.path.join(root_dir, 'IPConnection.cs'),              self.tmp_source_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'project.json'),                 self.tmp_source_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'project.lock.json'),            self.tmp_source_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'TinkerforgeUWP.rd.xml'),        self.tmp_source_tinkerforge_dir)
         shutil.copy(os.path.join(root_dir, 'changelog.txt'),                self.tmp_dir)
         shutil.copy(os.path.join(root_dir, 'readme.txt'),                   self.tmp_dir)
         shutil.copy(os.path.join(root_dir, '..', 'configs', 'license.txt'), self.tmp_dir)
@@ -85,7 +88,7 @@ class CSharpZipGenerator(common.ZipGenerator):
                                    {'<<BINDINGS>>': 'C#',
                                     '<<VERSION>>': '.'.join(version)})
 
-        # Make Tinkerforge.csproj
+        # Make Tinkerforge(UWP).csproj
         project_items = []
 
         for filename in ['AssemblyInfo.cs', 'IPConnection.cs'] + released_files:
@@ -95,6 +98,10 @@ class CSharpZipGenerator(common.ZipGenerator):
                                    os.path.join(self.tmp_source_tinkerforge_dir, 'Tinkerforge.csproj'),
                                    {'{{TOOLS_VERSION}}': '2.0',
                                     '{{ITEMS}}': '\n    '.join(project_items)})
+
+        common.specialize_template(os.path.join(root_dir, 'TinkerforgeUWP.csproj.template'),
+                                   os.path.join(self.tmp_source_tinkerforge_dir, 'TinkerforgeUWP.csproj'),
+                                   {'{{ITEMS}}': '\n    '.join(project_items)})
 
         # Make dll
         with common.ChangedDirectory(self.tmp_source_tinkerforge_dir):

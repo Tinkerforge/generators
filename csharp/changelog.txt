@@ -220,3 +220,6 @@
 - Add support for WIFI Extension 2.0 to Master Brick API
 - Add support for CAN Bricklet and RGB LED Bricklet
 - Add DateTime and Alarm callbacks to Real-Time Clock Bricklet API
+
+<unknown>: 2.1.11 (<unknown>)
+- Add support for Universal Windows Platform (UWP)

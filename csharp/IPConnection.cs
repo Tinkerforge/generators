@@ -15,7 +15,14 @@ using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Text;
+#if WINDOWS_UWP || WINDOWS_UAP
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
+using Windows.Security.Cryptography;
+using Windows.Security.Cryptography.Core;
+#else
 using System.Security.Cryptography;
+#endif
 
 [assembly: CLSCompliant(true)]
 namespace Tinkerforge
@@ -72,8 +79,10 @@ namespace Tinkerforge
 		internal bool autoReconnectPending = false;
 		internal bool autoReconnect = true;
 
+#if !(WINDOWS_UWP || WINDOWS_UAP)
 		private static RNGCryptoServiceProvider randomGenerator = null; // protected by randomGeneratorLock
 		private static object randomGeneratorLock = new object();
+#endif
 
 		internal BrickDaemon brickd = null;
 
@@ -189,9 +198,18 @@ namespace Tinkerforge
 				tmp = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 				tmp.NoDelay = true;
 
-#if WINDOWS_PHONE
-				IPAddress ipAddress = IPAddress.Parse(host);
-				var endpoint = new IPEndPoint(ipAddress, port);
+#if WINDOWS_PHONE || WINDOWS_UWP || WINDOWS_UAP
+				var hostname = new Windows.Networking.HostName(host);
+				var task = Windows.Networking.Sockets.DatagramSocket.GetEndpointPairsAsync(hostname, "").AsTask();
+				var enumerator = task.Result.GetEnumerator();
+
+				if (!enumerator.MoveNext())
+				{
+					throw new TinkerforgeException("Unknown host: " + host);
+				}
+
+				var resolved = enumerator.Current.RemoteHostName;
+				IPEndPoint endpoint = new IPEndPoint(IPAddress.Parse(resolved.RawName), port);
 
 				SocketAsyncEventArgs args = new SocketAsyncEventArgs();
 				args.RemoteEndPoint = endpoint;
@@ -217,7 +235,11 @@ namespace Tinkerforge
 			{
 				if (tmp != null)
 				{
+#if WINDOWS_UWP || WINDOWS_UAP
+					tmp.Dispose();
+#else
 					tmp.Close();
+#endif
 				}
 
 				throw;
@@ -325,8 +347,15 @@ namespace Tinkerforge
 			receiveFlag = false;
 
 			socketStream.Close();
+#if WINDOWS_UWP || WINDOWS_UAP
+			socketStream.Dispose();
+#endif
 			socket.Shutdown(SocketShutdown.Both);
+#if WINDOWS_UWP || WINDOWS_UAP
+			socket.Dispose();
+#else
 			socket.Close();
+#endif
 
 			socketStream = null;
 			socket = null;
@@ -355,6 +384,9 @@ namespace Tinkerforge
 			{
 				if (nextAuthenticationNonce == 0)
 				{
+#if WINDOWS_UWP || WINDOWS_UAP
+					nextAuthenticationNonce = CryptographicBuffer.GenerateRandomNumber();
+#else
 					lock (randomGeneratorLock)
 					{
 						if (randomGenerator == null)
@@ -380,6 +412,7 @@ namespace Tinkerforge
 							nextAuthenticationNonce = (uint)((seconds << 26 | seconds >> 6) + remainder + pid); // overflow is intended
 						}
 					}
+#endif
 				}
 
 				byte[] serverNonce = brickd.GetAuthenticationNonce();
@@ -392,8 +425,14 @@ namespace Tinkerforge
 				System.Buffer.BlockCopy(serverNonce, 0, data, 0, serverNonce.Length);
 				System.Buffer.BlockCopy(clientNonce, 0, data, serverNonce.Length, clientNonce.Length);
 
+#if WINDOWS_UWP || WINDOWS_UAP
+				MacAlgorithmProvider hmac = MacAlgorithmProvider.OpenAlgorithm("HMAC_SHA1");
+				CryptographicKey key = hmac.CreateKey(Encoding.ASCII.GetBytes(secret).AsBuffer());
+				byte[] digest = CryptographicEngine.Sign(key, data.AsBuffer()).ToArray();
+#else
 				HMACSHA1 hmac = new HMACSHA1(Encoding.ASCII.GetBytes(secret));
 				byte[] digest = hmac.ComputeHash(data);
+#endif
 
 				brickd.Authenticate(clientNonce, digest);
 			}
@@ -631,7 +670,12 @@ namespace Tinkerforge
 
 								// destroy socket
 								socketStream.Close();
+#if WINDOWS_UWP || WINDOWS_UAP
+								socketStream.Dispose();
+								socket.Dispose();
+#else
 								socket.Close();
+#endif
 
 								socketStream = null;
 								socket = null;
@@ -1822,7 +1866,8 @@ namespace Tinkerforge
 			}
 		}
 	}
-#if WINDOWS_PHONE
+
+#if WINDOWS_PHONE || WINDOWS_UWP || WINDOWS_UAP
 	internal class NetworkStream : Stream
 	{
 		private Socket socket;
@@ -1906,10 +1951,14 @@ namespace Tinkerforge
 			}
 		}
 
+#if WINDOWS_PHONE
 		public override void Close()
 		{
 			base.Close();
-
+#else
+		public void Close()
+		{
+#endif
 			// make Read() report an socket error
 			byte[] buffer = new byte[0];
 			ReceiveQueue.Enqueue(buffer);
@@ -1983,6 +2032,47 @@ namespace Tinkerforge
 		public override long Length
 		{
 			get { throw new NotSupportedException(); }
+		}
+	}
+#endif
+
+#if WINDOWS_UWP || WINDOWS_UAP
+	internal delegate void ThreadStart();
+
+	internal class Thread
+	{
+		internal bool IsBackground;
+		internal string Name;
+		private ThreadStart function;
+		private Task task;
+		private static ThreadLocal<Thread> current = new ThreadLocal<Thread>();
+
+		public Thread(ThreadStart function)
+		{
+			this.function = function;
+		}
+
+		public static Thread CurrentThread { get { return current.Value; } }
+
+		internal static void Sleep(int millisecondsTimeout)
+		{
+			Task.Delay(millisecondsTimeout).Wait();
+		}
+
+		internal void Join()
+		{
+			task.Wait();
+		}
+
+		internal void Start()
+		{
+			task = new Task(() =>
+			{
+				current.Value = this;
+				function.Invoke();
+			});
+
+			task.Start();
 		}
 	}
 #endif
