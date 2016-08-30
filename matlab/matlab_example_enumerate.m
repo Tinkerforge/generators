@@ -4,7 +4,7 @@ function matlab_example_enumerate()
     HOST = 'localhost';
     PORT = 4223;
 
-    ipcon = IPConnection(); % Create IP connection
+    ipcon = handle(IPConnection(), 'CallbackProperties'); % Create IP connection
 
     ipcon.connect(HOST, PORT); % Connect to brickd
 

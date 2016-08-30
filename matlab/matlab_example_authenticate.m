@@ -7,7 +7,7 @@ function matlab_example_authenticate()
     PORT = 4223;
     SECRET = 'My Authentication Secret!';
 
-    ipcon = IPConnection(); % Create IP connection
+    ipcon = handle(IPConnection(), 'CallbackProperties'); % Create IP connection
 
     % Register Connected Callback
     set(ipcon, 'ConnectedCallback', @(h, e) cb_connected(e));
