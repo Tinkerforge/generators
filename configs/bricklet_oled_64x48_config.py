@@ -193,7 +193,7 @@ of the charset in Brick Viewer.
 'de':
 """
 Schreibt einen Text in die angegebene Zeile (0 bis 5) mit einer vorgegebenen
-Position (0 bis 13). Der Text kann maximal 14 Zeichen lang sein.
+Position (0 bis 12). Der Text kann maximal 13 Zeichen lang sein.
 
 Beispiel: (1, 4, "Hallo") schreibt *Hallo* in die Mitte der zweiten Zeile
 des Displays.
