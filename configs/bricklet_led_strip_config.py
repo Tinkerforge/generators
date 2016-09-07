@@ -38,6 +38,10 @@ com['packets'].append({
 Sets the RGB values for the LEDs with the given *length* starting
 from *index*.
 
+To make the colors show correctly you need to configure the chip type
+(:func:`SetChipType`) and a 3-channel channel mapping (:func:`SetChannelMapping`)
+according to the connected LEDs.
+
 The maximum length is 16, the index goes from 0 to 319 and the rgb values
 have 8 bits each.
 
@@ -78,6 +82,10 @@ bounds is ignored completely.
 """
 Setzt die RGB Werte für die LEDs mit der angegebenen *length*,
 beginnend vom angegebenen *index*.
+
+Damit die Farben richtig angezeigt werden muss den LEDs entsprechend der
+richtig Chip Type (:func:`SetChipType`) und das richtige 3-Kanal Channel Mapping
+(:func:`SetChannelMapping`) eingestellt werden.
 
 Die maximale Länge ist 16. Der Index geht von 0 bis 319 und die
 rgb Werte haben jeweils 8 Bit.
@@ -294,7 +302,7 @@ Bits auf der Leitung flippen. Dies kann behoben werden in dem man die
 Verbindung zwischen Bricklet und LEDs verringert oder in dem man die
 Frequenz reduziert.
 
-Mit abnehmender Frequenz nimmt allerdings auch die maximale Framerateab.
+Mit abnehmender Frequenz nimmt allerdings auch die maximale Framerate ab.
 
 Der Standardwert ist 1,66MHz
 
@@ -334,45 +342,30 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the type of the led driver chip. We currently support
-the chips
+Sets the type of the LED driver chip. We currently support the chips
 
-* WS2801 (``chip`` = 2801),
-* WS2811 (``chip`` = 2811),
-* WS2812 (``chip`` = 2812),
-* LPD8806 (``chip`` = 8806) and
-* APA102 (``chip`` = 102).
+* WS2801,
+* WS2811,
+* WS2812 / SK6812 / NeoPixel RGB,
+* SK6812RGBW / NeoPixel RGBW (Chip Type = WS2812),
+* LPD8806 and
+* APA102 / DotStar.
 
-The WS2812 is sometimes also called "NeoPixel", a name coined by
-Adafruit.
-The APA102 is sometimes also called "DotStar", a name also coined by
-Adafruit.
-
-The LPD8806 has only 7 Bit PWM for each channel. Nevertheless value can
-be transfer from 0-255. They will be divided by two.
-
-The default value is WS2801 (``chip`` = 2801).
+The default value is WS2801 (2801).
 """,
 'de':
 """
 Setzt den Typ des LED-Treiber-Chips. Aktuell unterstützen
-wir die Chips
+wir die folgenden Chips
 
-* WS2801 (``chip`` = 2801),
-* WS2811 (``chip`` = 2811),
-* WS2812 (``chip`` = 2812),
-* LPD8806 (``chip`` = 8806) und
-* APA102 (``chip`` = 102).
+* WS2801,
+* WS2811,
+* WS2812 / SK6812 / NeoPixel RGB,
+* SK6812RGBW / NeoPixel RGBW (Chip Type = WS2812),
+* LPD8806 and
+* APA102 / DotStar.
 
-Der WS2812 wird manchmal auch "NeoPixel" genannt, ein Name
-der von Adafruit geprägt wurde.
-Der APA102 wird manchmal auch "DotStar" genannt, ein Name auch
-der von Adafruit geprägt wurde.
-
-Der LPD8806 verfügt nur über 7 Bit PWM pro Kanal. Es können trotzdem 
-Werte von 0-255 übergeben werden, die dann durch zwei geteilt werden.
-
-Der Standardwert ist WS2801 (``chip`` = 2801).
+Der Standardwert ist WS2801 (2801).
 """
 }]
 })
@@ -416,7 +409,11 @@ com['packets'].append({
 Sets the RGBW values for the LEDs with the given *length* starting
 from *index*.
 
-The maximum length is 12, the index goes from 0 to 319 and the rgbw values
+To make the colors show correctly you need to configure the chip type
+(:func:`SetChipType`) and a 4-channel channel mapping (:func:`SetChannelMapping`)
+according to the connected LEDs.
+
+The maximum length is 12, the index goes from 0 to 239 and the rgbw values
 have 8 bits each.
 
 Example: If you set
@@ -450,15 +447,29 @@ a fixed frame rate.
 
 The actual number of controllable LEDs depends on the number of free
 Bricklet ports. See :ref:`here <led_strip_bricklet_ram_constraints>` for more
-information. A call of :func:`SetRGBValues` with index + length above the
+information. A call of :func:`SetRGBWValues` with index + length above the
 bounds is ignored completely.
+
+The LPD8806 LED driver chips have 7-bit channels for RGB. Internally the LED
+Strip Bricklets divides the 8-bit values set using this function by 2 to make
+them 7-bit. Therefore, you can just use the normal value range (0-255) for
+LPD8806 LEDs.
+
+The brightness channel of the APA102 LED driver chips has 5-bit. Internally the
+LED Strip Bricklets divides the 8-bit values set using this function by 8 to make
+them 5-bit. Therefore, you can just use the normal value range (0-255) for
+the brightness channel of APA102 LEDs.
 """,
 'de':
 """
 Setzt die RGBW Werte für die LEDs mit der angegebenen *length*,
 beginnend vom angegebenen *index*.
 
-Die maximale Länge ist 12. Der Index geht von 0 bis 319 und die
+Damit die Farben richtig angezeigt werden muss den LEDs entsptechend der
+richtig Chip Type (:func:`SetChipType`) und das richtige 4-Kanal Channel Mapping
+(:func:`SetChannelMapping`) eingestellt werden.
+
+Die maximale Länge ist 12. Der Index geht von 0 bis 239 und die
 rgbw Werte haben jeweils 8 Bit.
 
 Beispiel: Wenn
@@ -494,8 +505,18 @@ festen Framerate angezeigt werden.
 
 Die effektive Anzahl steuerbarer LEDs ist abhängig von der Anzahl
 der freien Bricklet Ports (siehe :ref:`hier <led_strip_bricklet_ram_constraints>`).
-Ein Aufruf von :func:`SetRGBValues` mit index + length größer als die
-Begrenzung werden komplett ingnoriert.
+Ein Aufruf von :func:`SetRGBWValues` mit index + length größer als die
+Begrenzung werden komplett ignoriert.
+
+Die LPD8806 LED-Treiber-Chips haben 7-Bit Kanäle für RGB. Intern teilt das
+LED Strip Bricklet die 8-Bit Werte die mit dieser Funktion gesetzt werden
+durch 2, um daraus 7-Bit Werte zu machen. Daher kann der normale Wertebereich
+(0-255) auch für LPD8806 LEDs verwendet werden.
+
+Der Helligkeitskanal der APA102 LED-Treiber-Chips hat 5-Bit. Intern teilt das
+LED Strip Bricklet die 8-Bit Werte die mit dieser Funktion gesetzt werden
+durch 8, um daraus 5-Bit Werte zu machen. Daher kann der normale Wertebereich
+(0-255) auch für den Helligkeitskanal von APA102 LEDs verwendet werden.
 """
 },
 {
@@ -506,7 +527,7 @@ Begrenzung werden komplett ingnoriert.
              '*': '[0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]'},
 'b_values': {'php': 'array(0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0)',
              '*': '[0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0]'},
-'b_values': {'php': 'array(0, 0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0)',
+'w_values': {'php': 'array(0, 0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0)',
              '*': '[0, 0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0]'}
 }
 }]
@@ -543,65 +564,87 @@ Die Werte sind die letzten von :func:`SetRGBWValues` gesetzten Werte.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Channel Mapping',
-'elements': [('Channel', 'uint16', 1, 'in', ('Channel Mapping', [('RGB', 0),
-                                                                 ('RBG', 1),
-                                                                 ('BRG', 2),
-                                                                 ('BGR', 3),
-                                                                 ('GRB', 4),
-                                                                 ('GBR', 5),
-                                                                 ('RGBW', 6),
-                                                                 ('RGWB', 7),
-                                                                 ('RBGW', 8),
-                                                                 ('RBWG', 9),
-                                                                 ('RWGB', 10),
-                                                                 ('RWBG', 11),
-                                                                 ('GRWB', 12),
-                                                                 ('GRBW', 13),
-                                                                 ('GBWR', 14),
-                                                                 ('GBRW', 15),
-                                                                 ('GWBR', 16),
-                                                                 ('GWRB', 17),
-                                                                 ('BRGW', 18),
-                                                                 ('BRWG', 19),
-                                                                 ('BGRW', 20),
-                                                                 ('BGWR', 21),
-                                                                 ('BWRG', 22),
-                                                                 ('BWGR', 23),
-                                                                 ('WRBG', 24),
-                                                                 ('WRGB', 25),
-                                                                 ('WGBR', 26),
-                                                                 ('WGRB', 27),
-                                                                 ('WBGR', 28),
-                                                                 ('WBRG', 29)]))],
+'elements': [('Mapping', 'uint8', 1, 'in', ('Channel Mapping', [('RGB', 6),
+                                                                ('RBG', 9),
+                                                                ('BRG', 33),
+                                                                ('BGR', 36),
+                                                                ('GRB', 18),
+                                                                ('GBR', 24),
+                                                                ('RGBW', 27),
+                                                                ('RGWB', 30),
+                                                                ('RBGW', 39),
+                                                                ('RBWG', 45),
+                                                                ('RWGB', 54),
+                                                                ('RWBG', 57),
+                                                                ('GRWB', 78),
+                                                                ('GRBW', 75),
+                                                                ('GBWR', 108),
+                                                                ('GBRW', 99),
+                                                                ('GWBR', 120),
+                                                                ('GWRB', 114),
+                                                                ('BRGW', 135),
+                                                                ('BRWG', 141),
+                                                                ('BGRW', 147),
+                                                                ('BGWR', 156),
+                                                                ('BWRG', 177),
+                                                                ('BWGR', 180),
+                                                                ('WRBG', 201),
+                                                                ('WRGB', 198),
+                                                                ('WGBR', 216),
+                                                                ('WGRB', 210),
+                                                                ('WBGR', 228),
+                                                                ('WBRG', 225)]))],
 'since_firmware': [2, 0, 6],
 'doc': ['bf', {
 'en':
 """
-Sets the channel mapping that the transferred data match their identifiers.
-The values 0 through 5 are designed for 3 channels (RGB) and values 6 through
-29 for 4 channels (RGB + W). In each case, all permutations are available.
+Sets the channel mapping for the connected LEDs.
 
-Instructions:
-- select 0 (if RGB) or 6 (if RGBW) and activate each channel individually
-- write down the order of the illuminated colors. You have to set this order.
-Example:
-  When the LED Strip shows the order blue, yellow, red in modus 0 (RGB). Then
-  you have to give the function the value of 3 (BGR).
+:func:`SetRGBValues` and :func:`SetRGBWValues` take the data in RGB(W) order.
+But the connected LED driver chips might have their 3 or 4 channels in a
+different order. For example, the WS2801 chips typically use BGR order, the
+WS2812 chips typically use GRB order and the APA102 chips typically use WBGR
+order.
+
+The APA102 chips are special. They have three 8-bit channels for RGB
+and an additional 5-bit channel for the overall brightness of the RGB LED
+making them 4-channel chips. Internally the brightness channel is the first
+channel, therefore one of the Wxyz channel mappings should be used. Then
+the W channel controls the brightness.
+
+If a 3-channel mapping is selected then :func:`SetRGBValues` has to be used.
+Calling :func:`SetRGBWValues` with a 3-channel mapping will produce incorrect
+results. Vice-versa if a 4-channel mapping is selected then
+:func:`SetRGBWValues` has to be used. Calling :func:`SetRGBValues` with a
+4-channel mapping will produce incorrect results.
+
+The default value is BGR (36).
 """,
 'de':
 """
-Setzt das Channel Mapping, damit die übergebenen Daten mit ihren Bezeichnern übereinstimmen.
-Die Werte 0 bis einschließlich 5 sind für 3 Kanäle ausgelegt (RGB) und
-die Werte 6 bis einschließlich 29 für 4 Kanäle (RGB+W).
-Es sind jeweils alle Permutationen vorhanden.
+Setzt das Channel Mapping für die angeschlossenene LEDs.
 
-Hinweise zur Anwendung:
-- 0 (wenn RGB) oder 6 (wenn RGBW) auswählen und der Reihe nach jeden Kanal ansteuern
-- Reihenfolge der aufgeleuchteten Farben entspricht dem einzustellendem
-  Channel Mapping Wert.
-Beispiel:
-  Der LED Streifen gibt bei 0 (RGB) die Farben in der Reihenfolge Blau, Gelb, Rot aus. Dann
-  muss der Funktion der Wert 3 (BGR) übergeben werden.
+:func:`SetRGBValues` und :func:`SetRGBWValues` nehmen die Daten in RGB(W)
+Reihenfolge entgegen. Aber die angeschlossenen LED-Treiber-Chips erwarten die
+Daten für ihre 3 oder 4 Kanäle in einer anderen Reihenfolge. Zum Beispiel
+verwenden WS2801 Chips typischerweise BGR Reihenfolge, WS2812 Chips
+verwenden typischerweise GRB Reihenfolge und APA102 verwenden typischerweise
+WBGR Reihenfolge.
+
+Die APA102 haben eine Besonderheit. Sie haben drei 8-Bit Kanäle für RGB und
+einen zusätzlichen 5-Bit Kanal für die Helligkeit der RGB LED. Dadurch ist der
+APA102 insgesamt ein 4-Kanal Chip. Intern ist der Helligkeitskanal der erste
+Kanal. Daher sollte eines der Wxyz Channel Mappings verwendet werden. Dann kann
+über den W Kanal die Helligkeit eingestellt werden.
+
+Wenn ein 3-Kanal Mapping ausgewählt wurde, dann muss auch :func:`SetRGBValues`
+für das setzen der Farben verwendet werden. :func:`SetRGBWValues` zusammen
+mit einem 3-Kanal Mapping führt zu falscher Darstellung der Farben. Im Gegenzug
+muss bei einem 4-Kanal Mapping :func:`SetRGBWValues` für das setzen der Farben
+verwendet werden. :func:`SetRGBValues` zusammen mit einem 4-Kanal Mapping führt
+zu falscher Darstellung der Farben.
+
+Der Standardwert ist BGR (36).
 """
 }]
 })
@@ -609,46 +652,106 @@ Beispiel:
 com['packets'].append({
 'type': 'function',
 'name': 'Get Channel Mapping',
-'elements': [('Channel', 'uint16', 1, 'out', ('Channel Mapping', [('RGB', 0),
-                                                                  ('RBG', 1),
-                                                                  ('BRG', 2),
-                                                                  ('BGR', 3),
-                                                                  ('GRB', 4),
-                                                                  ('GBR', 5),
-                                                                  ('RGBW', 6),
-                                                                  ('RGWB', 7),
-                                                                  ('RBGW', 8),
-                                                                  ('RBWG', 9),
-                                                                  ('RWGB', 10),
-                                                                  ('RWBG', 11),
-                                                                  ('GRWB', 12),
-                                                                  ('GRBW', 13),
-                                                                  ('GBWR', 14),
-                                                                  ('GBRW', 15),
-                                                                  ('GWBR', 16),
-                                                                  ('GWRB', 17),
-                                                                  ('BRGW', 18),
-                                                                  ('BRWG', 19),
-                                                                  ('BGRW', 20),
-                                                                  ('BGWR', 21),
-                                                                  ('BWRG', 22),
-                                                                  ('BWGR', 23),
-                                                                  ('WRBG', 24),
-                                                                  ('WRGB', 25),
-                                                                  ('WGBR', 26),
-                                                                  ('WGRB', 27),
-                                                                  ('WBGR', 28),
-                                                                  ('WBRG', 29)]))],
+'elements': [('Mapping', 'uint8', 1, 'out', ('Channel Mapping', [('RGB', 6),
+                                                                 ('RBG', 9),
+                                                                 ('BRG', 33),
+                                                                 ('BGR', 36),
+                                                                 ('GRB', 18),
+                                                                 ('GBR', 24),
+                                                                 ('RGBW', 27),
+                                                                 ('RGWB', 30),
+                                                                 ('RBGW', 39),
+                                                                 ('RBWG', 45),
+                                                                 ('RWGB', 54),
+                                                                 ('RWBG', 57),
+                                                                 ('GRWB', 78),
+                                                                 ('GRBW', 75),
+                                                                 ('GBWR', 108),
+                                                                 ('GBRW', 99),
+                                                                 ('GWBR', 120),
+                                                                 ('GWRB', 114),
+                                                                 ('BRGW', 135),
+                                                                 ('BRWG', 141),
+                                                                 ('BGRW', 147),
+                                                                 ('BGWR', 156),
+                                                                 ('BWRG', 177),
+                                                                 ('BWGR', 180),
+                                                                 ('WRBG', 201),
+                                                                 ('WRGB', 198),
+                                                                 ('WGBR', 216),
+                                                                 ('WGRB', 210),
+                                                                 ('WBGR', 228),
+                                                                 ('WBRG', 225)]))],
 'since_firmware': [2, 0, 6],
 'doc': ['bf', {
 'en':
 """
-Returns the currently used channel mapping table as set by :func:`SetChannelMapping`.
+Returns the currently used channel mapping as set by :func:`SetChannelMapping`.
 """,
 'de':
 """
-Gibt die aktuell genutzten Art des Channel Mappings zurück, wie von
+Gibt die aktuell genutzten Channel Mapping zurück, wie von
 :func:`SetChannelMapping` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Enable Frame Rendered Callback',
+'elements': [],
+'since_firmware': [2, 0, 6],
+'doc': ['ccf', {
+'en':
+"""
+Enables the :func:`FrameRendered` callback.
+
+By default the callback is enabled.
+""",
+'de':
+"""
+Aktiviert den :func:`FrameRendered` Callback.
+
+Standardmäßig ist der Callback aktiviert.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Disable Frame Rendered Callback',
+'elements': [],
+'since_firmware': [2, 0, 6],
+'doc': ['ccf', {
+'en':
+"""
+Disables the :func:`FrameRendered` callback.
+
+By default the callback is enabled.
+""",
+'de':
+"""
+Deaktiviert den :func:`FrameRendered` Callback.
+
+Standardmäßig ist der Callback aktiviert.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Is Frame Rendered Callback Enabled',
+'elements': [('Enabled', 'bool', 1, 'out')],
+'since_firmware': [2, 0, 6],
+'doc': ['ccf', {
+'en':
+"""
+Returns *true* if the :func:`FrameRendered` callback is enabled, *false* otherwise.
+""",
+'de':
+"""
+Gibt *true* zurück falls der :func:`FrameRendered` Callback aktiviert ist, *false*
+sonst.
 """
 }]
 })
