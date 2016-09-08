@@ -38,19 +38,16 @@ class MathematicaDocDevice(common.Device):
     def get_mathematica_class_name(self):
         return self.get_camel_case_category() + self.get_camel_case_name()
 
-    def replace_mathematica_function_links(self, text):
-        cls = self.get_mathematica_class_name()
-        for other_packet in self.get_packets():
-            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-            name = other_packet.get_camel_case_name()
-            if other_packet.get_type() == 'callback':
-                name_right = ':mathematica:func:`{1} <{0}@{1}>`'.format(cls, name)
+    def specialize_mathematica_doc_function_links(self, text):
+        def specializer(packet):
+            if packet.get_type() == 'callback':
+                return ':mathematica:func:`{1} <{0}@{1}>`'.format(packet.get_device().get_mathematica_class_name(),
+                                                                  packet.get_camel_case_name())
             else:
-                name_right = ':mathematica:func:`{1}[] <{0}@{1}>`'.format(cls, name)
+                return ':mathematica:func:`{1}[] <{0}@{1}>`'.format(packet.get_device().get_mathematica_class_name(),
+                                                                    packet.get_camel_case_name())
 
-            text = text.replace(name_false, name_right)
-
-        return text
+        return self.specialize_doc_function_links(text, specializer, prefix='mathematica')
 
     def get_mathematica_examples(self):
         def title_from_filename(filename):
@@ -361,7 +358,7 @@ Konstanten
                                                         self.get_long_display_name())
 
         return common.select_lang(api).format(self.get_doc_rst_ref_name(),
-                                              self.replace_mathematica_function_links(self.get_api_doc()),
+                                              self.specialize_mathematica_doc_function_links(self.get_api_doc()),
                                               api_str)
 
     def get_mathematica_doc(self):
@@ -375,8 +372,7 @@ Konstanten
 class MathematicaDocPacket(common.Packet):
     def get_mathematica_formatted_doc(self):
         text = common.select_lang(self.get_doc_text())
-
-        text = self.get_device().replace_mathematica_function_links(text)
+        text = self.get_device().specialize_mathematica_doc_function_links(text)
 
         def format_parameter(name):
             return '``{0}``'.format(name) # FIXME

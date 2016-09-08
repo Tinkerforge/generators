@@ -32,6 +32,17 @@ import common
 import c_common
 
 class CBindingsDevice(common.Device):
+    def specialize_c_doc_function_links(self, text):
+        def specializer(packet):
+            if packet.get_type() == 'callback':
+                return '{{@link {0}_CALLBACK_{1}}}'.format(packet.get_device().get_upper_case_name(),
+                                                           packet.get_upper_case_name())
+            else:
+                return '{{@link {0}_{1}}}'.format(packet.get_device().get_underscore_name(),
+                                                  packet.get_underscore_name())
+
+        return self.specialize_doc_function_links(text, specializer)
+
     def get_c_include_c(self):
         include = """{0}
 
@@ -627,8 +638,6 @@ void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data
 class CBindingsPacket(c_common.CPacket):
     def get_c_formatted_doc(self):
         text = common.select_lang(self.get_doc_text())
-        link = '{{@link {0}_{1}}}'
-        link_c = '{{@link {0}_CALLBACK_{1}}}'
 
         # handle tables
         lines = text.split('\n')
@@ -658,17 +667,7 @@ class CBindingsPacket(c_common.CPacket):
                 replaced_lines.append(line)
 
         text = '\n'.join(replaced_lines)
-
-        for other_packet in self.get_device().get_packets():
-            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-            if other_packet.get_type() == 'callback':
-                name = other_packet.get_upper_case_name()
-                name_right = link_c.format(self.get_device().get_upper_case_name(), name)
-            else:
-                name = other_packet.get_underscore_name()
-                name_right = link.format(self.get_device().get_underscore_name(), name)
-
-            text = text.replace(name_false, name_right)
+        text = self.get_device().specialize_c_doc_function_links(text)
 
         if self.get_type() == 'callback':
             plist = self.get_c_parameter_list()[2:].replace('*ret_', '')

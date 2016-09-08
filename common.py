@@ -1395,6 +1395,25 @@ class Device(NameMixin):
 
         return self.get_underscore_name() + '_' + self.get_underscore_category()
 
+    def specialize_doc_function_links(self, text, specializer, prefix=None):
+        for packet in self.get_packets():
+            generic_name = ':func:`{0}`'.format(packet.get_camel_case_name())
+            special_name = specializer(packet)
+
+            text = text.replace(generic_name, special_name)
+
+        if prefix != None:
+            p = '(?<!:' + prefix + ')(:func:`[^`]*`)'
+        else:
+            p = '(:func:`[^`]*`)'
+
+        m = re.search(p, text)
+
+        if m != None:
+            raise Exception('Unknown :func: found: ' + m.group(1))
+
+        return text
+
     def get_examples(self):
         return self.examples
 

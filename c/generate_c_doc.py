@@ -36,20 +36,16 @@ import common
 import c_common
 
 class CDocDevice(common.Device):
-    def replace_c_function_links(self, text):
-        for other_packet in self.get_packets():
-            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-            if other_packet.get_type() == 'callback':
-                name_upper = other_packet.get_upper_case_name()
-                pre_upper = self.get_upper_case_name()
-                name_right = ':c:data:`{0}_CALLBACK_{1}`'.format(pre_upper,
-                                                                 name_upper)
+    def specialize_c_doc_function_links(self, text):
+        def specializer(packet):
+            if packet.get_type() == 'callback':
+                return ':c:data:`{0}_CALLBACK_{1}`'.format(packet.get_device().get_upper_case_name(),
+                                                           packet.get_upper_case_name())
             else:
-                name_right = ':c:func:`{0}_{1}`'.format(self.get_underscore_name(),
-                                                        other_packet.get_underscore_name())
-            text = text.replace(name_false, name_right)
+                return ':c:func:`{0}_{1}`'.format(packet.get_device().get_underscore_name(),
+                                                  packet.get_underscore_name())
 
-        return text
+        return self.specialize_doc_function_links(text, specializer, prefix='c')
 
     def get_c_examples(self):
         def title_from_filename(filename):
@@ -386,7 +382,7 @@ Konstanten
                                                         self.get_long_display_name())
 
         return common.select_lang(api).format(self.get_doc_rst_ref_name(),
-                                              self.replace_c_function_links(self.get_api_doc()),
+                                              self.specialize_c_doc_function_links(self.get_api_doc()),
                                               api_str)
 
     def get_c_doc(self):
@@ -400,9 +396,9 @@ Konstanten
 class CDocPacket(c_common.CPacket):
     def get_c_formatted_doc(self):
         text = common.select_lang(self.get_doc_text())
-        constants = {'en': 'defines', 'de': 'Defines'}
+        text = self.get_device().specialize_c_doc_function_links(text)
 
-        text = self.get_device().replace_c_function_links(text)
+        constants = {'en': 'defines', 'de': 'Defines'}
 
         def format_parameter(name):
             return '``{0}``'.format(name) # FIXME

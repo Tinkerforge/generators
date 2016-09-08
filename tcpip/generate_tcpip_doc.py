@@ -3,7 +3,7 @@
 
 """
 TCP/IP Documentation Generator
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014, 2016 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_tcpip_doc.py: Generator for TCP/IP documentation
@@ -36,19 +36,16 @@ class TCPIPDocDevice(common.Device):
     def get_tcpip_name(self):
         return self.get_camel_case_category() + self.get_camel_case_name()
 
-    def replace_tcpip_function_links(self, text):
-        cls = self.get_tcpip_name()
-        for other_packet in self.get_packets():
-            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-            if other_packet.get_type() == 'callback':
-                name_upper = other_packet.get_upper_case_name()
-                name_right = ':tcpip:func:`CALLBACK_{1} <{0}.CALLBACK_{1}>`'.format(cls, name_upper)
+    def specialize_tcpip_doc_function_links(self, text):
+        def specializer(packet):
+            if packet.get_type() == 'callback':
+                return ':tcpip:func:`CALLBACK_{1} <{0}.CALLBACK_{1}>`'.format(packet.get_device().get_tcpip_name(),
+                                                                              packet.get_upper_case_name())
             else:
-                name_right = ':tcpip:func:`{1} <{0}.{1}>`'.format(cls, other_packet.get_underscore_name())
+                return ':tcpip:func:`{1} <{0}.{1}>`'.format(packet.get_device().get_tcpip_name(),
+                                                          packet.get_underscore_name())
 
-            text = text.replace(name_false, name_right)
-
-        return text
+        return self.specialize_doc_function_links(text, specializer, prefix='tcpip')
 
     def get_tcpip_methods(self, typ):
         methods = ''
@@ -155,7 +152,7 @@ Eine allgemeine Beschreibung der TCP/IP Protokollstruktur findet sich
                                                         c)
 
         return common.select_lang(api).format(self.get_doc_rst_ref_name(),
-                                              self.replace_tcpip_function_links(self.get_api_doc()),
+                                              self.specialize_tcpip_doc_function_links(self.get_api_doc()),
                                               api_str)
 
     def get_tcpip_doc(self):
@@ -188,7 +185,7 @@ Die folgenden {0} sind für die Parameter dieser Funktion definiert:
         'de': 'Rückgabewerte'
         }
 
-        text = self.get_device().replace_tcpip_function_links(text)
+        text = self.get_device().specialize_tcpip_doc_function_links(text)
 
         def format_parameter(name):
             return '``{0}``'.format(name) # FIXME

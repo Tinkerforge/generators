@@ -36,23 +36,16 @@ import common
 import java_common
 
 class JavaDocDevice(java_common.JavaDevice):
-    def replace_java_function_links(self, text):
-        cb_link = ':java:func:`{1}Listener <{0}.{1}Listener>`'
-        fu_link = ':java:func:`{1}() <{0}::{1}>`'
-
-        cls = self.get_java_class_name()
-        for other_packet in self.get_packets():
-            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-            if other_packet.get_type() == 'callback':
-                name = other_packet.get_camel_case_name()
-                name_right = cb_link.format(cls, name)
+    def specialize_java_doc_function_links(self, text):
+        def specializer(packet):
+            if packet.get_type() == 'callback':
+                return ':java:func:`{1}Listener <{0}.{1}Listener>`'.format(packet.get_device().get_java_class_name(),
+                                                                           packet.get_camel_case_name())
             else:
-                name = other_packet.get_headless_camel_case_name()
-                name_right = fu_link.format(cls, name)
+                return ':java:func:`{1}() <{0}::{1}>`'.format(packet.get_device().get_java_class_name(),
+                                                              packet.get_headless_camel_case_name())
 
-            text = text.replace(name_false, name_right)
-
-        return text
+        return self.specialize_doc_function_links(text, specializer, prefix='java')
 
     def get_java_examples(self):
         def title_from_filename(filename):
@@ -372,7 +365,7 @@ Konstanten
                                                         self.get_long_display_name())
 
         return common.select_lang(api).format(self.get_doc_rst_ref_name(),
-                                              self.replace_java_function_links(self.get_api_doc()),
+                                              self.specialize_java_doc_function_links(self.get_api_doc()),
                                               api_str)
 
     def get_java_doc(self):
@@ -386,8 +379,7 @@ Konstanten
 class JavaDocPacket(java_common.JavaPacket):
     def get_java_formatted_doc(self, shift_right):
         text = common.select_lang(self.get_doc_text())
-
-        text = self.get_device().replace_java_function_links(text)
+        text = self.get_device().specialize_java_doc_function_links(text)
 
         text = text.replace('Callback ', 'Listener ')
         text = text.replace(' Callback', ' Listener')

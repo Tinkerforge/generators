@@ -36,22 +36,16 @@ import common
 import csharp_common
 
 class CSharpDocDevice(csharp_common.CSharpDevice):
-    def replace_csharp_function_links(self, text):
-        link = ':csharp:func:`{1}() <{0}::{1}>`'
-        link_c = ':csharp:func:`{1} <{0}::{1}>`'
-
-        cls = self.get_csharp_class_name()
-        for other_packet in self.get_packets():
-            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-            name = other_packet.get_camel_case_name()
-            if other_packet.get_type() == 'callback':
-                name_right = link_c.format(cls, name)
+    def specialize_csharp_doc_function_links(self, text):
+        def specializer(packet):
+            if packet.get_type() == 'callback':
+                return ':csharp:func:`{1} <{0}::{1}>`'.format(packet.get_device().get_csharp_class_name(),
+                                                              packet.get_camel_case_name())
             else:
-                name_right = link.format(cls, name)
+                return ':csharp:func:`{1}() <{0}::{1}>`'.format(packet.get_device().get_csharp_class_name(),
+                                                                packet.get_camel_case_name())
 
-            text = text.replace(name_false, name_right)
-
-        return text
+        return self.specialize_doc_function_links(text, specializer, prefix='csharp')
 
     def get_csharp_examples(self):
         def title_from_filename(filename):
@@ -316,7 +310,7 @@ Konstanten
                                                         self.get_long_display_name())
 
         return common.select_lang(api).format(self.get_doc_rst_ref_name(),
-                                              self.replace_csharp_function_links(self.get_api_doc()),
+                                              self.specialize_csharp_doc_function_links(self.get_api_doc()),
                                               api_str)
 
     def get_csharp_doc(self):
@@ -330,8 +324,7 @@ Konstanten
 class CSharpDocPacket(csharp_common.CSharpPacket):
     def get_csharp_formatted_doc(self, shift_right):
         text = common.select_lang(self.get_doc_text())
-
-        text = self.get_device().replace_csharp_function_links(text)
+        text = self.get_device().specialize_csharp_doc_function_links(text)
 
         def format_parameter(name):
             return '``{0}``'.format(name) # FIXME

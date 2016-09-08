@@ -32,6 +32,16 @@ import common
 import ruby_common
 
 class RubyBindingsDevice(ruby_common.RubyDevice):
+    def specialize_ruby_doc_function_links(self, text):
+        def specializer(packet):
+            if packet.get_type() == 'callback':
+                return 'CALLBACK_{0}'.format(packet.get_upper_case_name())
+            else:
+                return '{0}#{1}'.format(packet.get_device().get_ruby_class_name(),
+                                        packet.get_underscore_name())
+
+        return self.specialize_doc_function_links(text, specializer)
+
     def get_ruby_header(self):
         include = """# -*- ruby encoding: utf-8 -*-
 {0}
@@ -184,8 +194,6 @@ end
 class RubyBindingsPacket(ruby_common.RubyPacket):
     def get_ruby_formatted_doc(self):
         text = common.select_lang(self.get_doc_text())
-        link = '{0}#{1}'
-        link_c = 'CALLBACK_{0}'
 
         # handle tables
         lines = text.split('\n')
@@ -212,19 +220,7 @@ class RubyBindingsPacket(ruby_common.RubyPacket):
                 replaced_lines.append(line)
 
         text = '\n'.join(replaced_lines)
-
-        cls = self.get_device().get_ruby_class_name()
-        for other_packet in self.get_device().get_packets():
-            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-
-            if other_packet.get_type() == 'callback':
-                name = other_packet.get_upper_case_name()
-                name_right = link_c.format(name)
-            else:
-                name = other_packet.get_underscore_name()
-                name_right = link.format(cls, name)
-
-            text = text.replace(name_false, name_right)
+        text = self.get_device().specialize_ruby_doc_function_links(text)
 
         def format_parameter(name):
             return name # FIXME

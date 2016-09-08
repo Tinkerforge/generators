@@ -36,23 +36,16 @@ import common
 import matlab_common
 
 class MATLABDocDevice(matlab_common.MATLABDevice):
-    def replace_matlab_function_links(self, text):
-        cb_link = ':matlab:member:`{1}Callback <{0}.{1}Callback>`'
-        fu_link = ':matlab:func:`{1}() <{0}::{1}>`'
-
-        cls = self.get_matlab_class_name()
-        for other_packet in self.get_packets():
-            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-            if other_packet.get_type() == 'callback':
-                name = other_packet.get_camel_case_name()
-                name_right = cb_link.format(cls, name)
+    def specialize_matlab_doc_function_links(self, text):
+        def specializer(packet):
+            if packet.get_type() == 'callback':
+                return ':matlab:member:`{1}Callback <{0}.{1}Callback>`'.format(packet.get_device().get_matlab_class_name(),
+                                                                               packet.get_camel_case_name())
             else:
-                name = other_packet.get_headless_camel_case_name()
-                name_right = fu_link.format(cls, name)
+                return ':matlab:func:`{1}() <{0}::{1}>`'.format(packet.get_device().get_matlab_class_name(),
+                                                                packet.get_headless_camel_case_name())
 
-            text = text.replace(name_false, name_right)
-
-        return text
+        return self.specialize_doc_function_links(text, specializer, prefix='matlab')
 
     def get_matlab_examples(self):
         def title_from_filename(filename):
@@ -453,7 +446,7 @@ Konstanten
                                                         self.get_long_display_name())
 
         return common.select_lang(api).format(self.get_doc_rst_ref_name(),
-                                              self.replace_matlab_function_links(self.get_api_doc()),
+                                              self.specialize_matlab_doc_function_links(self.get_api_doc()),
                                               api_str)
 
     def get_matlab_doc(self):
@@ -467,8 +460,7 @@ Konstanten
 class MATLABDocPacket(matlab_common.MATLABPacket):
     def get_matlab_formatted_doc(self, shift_right):
         text = common.select_lang(self.get_doc_text())
-
-        text = self.get_device().replace_matlab_function_links(text)
+        text = self.get_device().specialize_matlab_doc_function_links(text)
 
         def format_parameter(name):
             return '``{0}``'.format(name) # FIXME

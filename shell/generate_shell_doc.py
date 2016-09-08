@@ -36,14 +36,12 @@ import common
 import shell_common
 
 class ShellDocDevice(shell_common.ShellDevice):
-    def replace_shell_function_links(self, text):
-        device_name = self.get_shell_device_name()
-        for other_packet in self.get_packets():
-            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-            name_right = ':sh:func:`{1} <{0} {1}>`'.format(device_name, other_packet.get_dash_name())
-            text = text.replace(name_false, name_right)
+    def specialize_shell_doc_function_links(self, text):
+        def specializer(packet):
+            return ':sh:func:`{1} <{0} {1}>`'.format(packet.get_device().get_shell_device_name(),
+                                                     packet.get_dash_name())
 
-        return text
+        return self.specialize_doc_function_links(text, specializer, prefix='sh')
 
     def get_shell_examples(self):
         def title_from_filename(filename):
@@ -367,7 +365,7 @@ Befehlsstruktur dargestellt.
                                                         c)
 
         return common.select_lang(api).format(self.get_doc_rst_ref_name(),
-                                              self.replace_shell_function_links(self.get_api_doc()),
+                                              self.specialize_shell_doc_function_links(self.get_api_doc()),
                                               api_str,
                                               self.get_shell_device_name(),
                                               self.get_long_display_name())
@@ -383,9 +381,9 @@ Befehlsstruktur dargestellt.
 class ShellDocPacket(shell_common.ShellPacket):
     def get_shell_formatted_doc(self):
         text = common.select_lang(self.get_doc_text())
-        constants = {'en': 'symbols', 'de': 'Symbole'}
+        text = self.get_device().specialize_shell_doc_function_links(text)
 
-        text = self.get_device().replace_shell_function_links(text)
+        constants = {'en': 'symbols', 'de': 'Symbole'}
 
         def format_parameter(name):
             return '``{0}``'.format(name) # FIXME

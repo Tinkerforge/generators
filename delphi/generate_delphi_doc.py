@@ -36,18 +36,16 @@ import common
 import delphi_common
 
 class DelphiBindingsDevice(delphi_common.DelphiDevice):
-    def replace_delphi_function_links(self, text):
-        cls = self.get_delphi_class_name()
-        for other_packet in self.get_packets():
-            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-            name = other_packet.get_camel_case_name()
-            if other_packet.get_type() == 'callback':
-                name_right = ':delphi:func:`On{1} <{0}.On{1}>`'.format(cls, name)
+    def specialize_delphi_doc_function_links(self, text):
+        def specializer(packet):
+            if packet.get_type() == 'callback':
+                return ':delphi:func:`On{1} <{0}.On{1}>`'.format(packet.get_device().get_delphi_class_name(),
+                                                                 packet.get_camel_case_name())
             else:
-                name_right = ':delphi:func:`{1} <{0}.{1}>`'.format(cls, name)
-            text = text.replace(name_false, name_right)
+                return ':delphi:func:`{1} <{0}.{1}>`'.format(packet.get_device().get_delphi_class_name(),
+                                                             packet.get_camel_case_name())
 
-        return text
+        return self.specialize_doc_function_links(text, specializer, prefix='delphi')
 
     def get_delphi_examples(self):
         def title_from_filename(filename):
@@ -304,7 +302,7 @@ Konstanten
                                                         self.get_delphi_class_name())
 
         return common.select_lang(api).format(self.get_doc_rst_ref_name(),
-                                              self.replace_delphi_function_links(self.get_api_doc()),
+                                              self.specialize_delphi_doc_function_links(self.get_api_doc()),
                                               api_str)
 
     def get_delphi_doc(self):
@@ -318,8 +316,7 @@ Konstanten
 class DelphiBindingsPacket(delphi_common.DelphiPacket):
     def get_delphi_formatted_doc(self):
         text = common.select_lang(self.get_doc_text())
-
-        text = self.get_device().replace_delphi_function_links(text)
+        text = self.get_device().specialize_delphi_doc_function_links(text)
 
         def format_parameter(name):
             return '``{0}``'.format(name) # FIXME

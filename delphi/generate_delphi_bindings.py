@@ -33,6 +33,14 @@ sys.path.append(os.path.split(os.getcwd())[0])
 import common
 
 class DelphiBindingsDevice(delphi_common.DelphiDevice):
+    def specialize_delphi_doc_function_links(self, text):
+        def specializer(packet):
+            return '<see cref="{0}.{1}.{2}"/>'.format(packet.get_device().get_delphi_class_name()[1:],
+                                                      packet.get_device().get_delphi_class_name(),
+                                                      packet.get_camel_case_name())
+
+        return self.specialize_doc_function_links(text, specializer)
+
     def get_delphi_unit_header(self):
         include = """{0}
 unit {1}{2};
@@ -434,7 +442,6 @@ begin
 class DelphiBindingsPacket(delphi_common.DelphiPacket):
     def get_delphi_formatted_doc(self):
         text = common.select_lang(self.get_doc_text())
-        link = '<see cref="{0}{1}.T{0}{1}.{2}"/>'
 
         # escape XML special chars
         text = escape(text)
@@ -483,14 +490,7 @@ class DelphiBindingsPacket(delphi_common.DelphiPacket):
                 replaced_lines.append(line)
 
         text = '\n'.join(replaced_lines)
-
-        cls = self.get_device().get_camel_case_name()
-        for other_packet in self.get_device().get_packets():
-            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-            name = other_packet.get_camel_case_name()
-            name_right = link.format(self.get_device().get_camel_case_category(), cls, name)
-
-            text = text.replace(name_false, name_right)
+        text = self.get_device().specialize_delphi_doc_function_links(text)
 
         def format_parameter(name):
             return name # FIXME

@@ -32,6 +32,17 @@ import common
 import php_common
 
 class PHPBindingsDevice(php_common.PHPDevice):
+    def specialize_php_doc_function_links(self, text):
+        def specializer(packet):
+            if packet.get_type() == 'callback':
+                return '{0}::CALLBACK_{1}'.format(packet.get_device().get_php_class_name(),
+                                                  packet.get_upper_case_name())
+            else:
+                return '{0}::{1}()'.format(packet.get_device().get_php_class_name(),
+                                           packet.get_headless_camel_case_name())
+
+        return self.specialize_doc_function_links(text, specializer)
+
     def get_php_import(self):
         include = """{0}
 namespace Tinkerforge;
@@ -398,8 +409,6 @@ class {0} extends Device
 class PHPBindingsPacket(php_common.PHPPacket):
     def get_php_formatted_doc(self, suffix):
         text = common.select_lang(self.get_doc_text())
-        link = '{0}::{1}()'
-        link_c = '{0}::CALLBACK_{1}'
 
         # handle notes and warnings
         lines = text.split('\n')
@@ -445,18 +454,7 @@ class PHPBindingsPacket(php_common.PHPPacket):
                 replaced_lines.append(line)
 
         text = '\n'.join(replaced_lines)
-
-        cls = self.get_device().get_php_class_name()
-        for other_packet in self.get_device().get_packets():
-            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-            if other_packet.get_type() == 'callback':
-                name = other_packet.get_upper_case_name()
-                name_right = link_c.format(cls, name)
-            else:
-                name = other_packet.get_headless_camel_case_name()
-                name_right = link.format(cls, name)
-
-            text = text.replace(name_false, name_right)
+        text = self.get_device().specialize_php_doc_function_links(text)
 
         text = text.replace('.. note::', '\\note')
         text = text.replace('.. warning::', '\\warning')

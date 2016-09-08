@@ -33,6 +33,13 @@ import common
 import csharp_common
 
 class CSharpBindingsDevice(csharp_common.CSharpDevice):
+    def specialize_csharp_doc_function_links(self, text):
+        def specializer(packet):
+            return '<see cref="Tinkerforge.{0}.{1}"/>'.format(packet.get_device().get_csharp_class_name(),
+                                                              packet.get_camel_case_name())
+
+        return self.specialize_doc_function_links(text, specializer)
+
     def get_csharp_import(self):
         include = """{0}
 using System;
@@ -312,7 +319,6 @@ namespace Tinkerforge
 class CSharpBindingsPacket(csharp_common.CSharpPacket):
     def get_csharp_formatted_doc(self):
         text = common.select_lang(self.get_doc_text())
-        link = '<see cref="Tinkerforge.{0}.{1}"/>'
 
         # escape XML special chars
         text = escape(text)
@@ -361,13 +367,7 @@ class CSharpBindingsPacket(csharp_common.CSharpPacket):
                 replaced_lines.append(line)
 
         text = '\n'.join(replaced_lines)
-
-        cls = self.get_device().get_csharp_class_name()
-        for other_packet in self.get_device().get_packets():
-            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-            name = other_packet.get_camel_case_name()
-            name_right = link.format(cls, name)
-            text = text.replace(name_false, name_right)
+        text = self.get_device().specialize_csharp_doc_function_links(text)
 
         def format_parameter(name):
             return name # FIXME

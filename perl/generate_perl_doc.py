@@ -37,19 +37,16 @@ import common
 import perl_common
 
 class PerlDocDevice(perl_common.PerlDevice):
-    def replace_perl_function_links(self, text):
-        cls = self.get_perl_class_name()
-        for other_packet in self.get_packets():
-            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-            if other_packet.get_type() == 'callback':
-                name_upper = other_packet.get_upper_case_name()
-                name_right = ':perl:attr:`CALLBACK_{1} <{0}->CALLBACK_{1}>`'.format(cls, name_upper)
+    def specialize_perl_doc_function_links(self, text):
+        def specializer(packet):
+            if packet.get_type() == 'callback':
+                return ':perl:attr:`CALLBACK_{1} <{0}->CALLBACK_{1}>`'.format(packet.get_device().get_perl_class_name(),
+                                                                              packet.get_upper_case_name())
             else:
-                name_right = ':perl:func:`{1}() <{0}->{1}>`'.format(cls, other_packet.get_underscore_name())
+                return ':perl:func:`{1}() <{0}->{1}>`'.format(packet.get_device().get_perl_class_name(),
+                                                              packet.get_underscore_name())
 
-            text = text.replace(name_false, name_right)
-
-        return text
+        return self.specialize_doc_function_links(text, specializer, prefix='perl')
 
     def get_perl_examples(self):
         def title_from_filename(filename):
@@ -368,7 +365,7 @@ Konstanten
                                                         self.get_long_display_name())
 
         return common.select_lang(api).format(self.get_doc_rst_ref_name(),
-                                              self.replace_perl_function_links(self.get_api_doc()),
+                                              self.specialize_perl_doc_function_links(self.get_api_doc()),
                                               api_str)
 
     def get_perl_doc(self):
@@ -390,8 +387,7 @@ class PerlDocPacket(common.Packet):
 
     def get_perl_formatted_doc(self):
         text = common.select_lang(self.get_doc_text())
-
-        text = self.get_device().replace_perl_function_links(text)
+        text = self.get_device().specialize_perl_doc_function_links(text)
 
         def format_parameter(name):
             return '``{0}``'.format(name) # FIXME

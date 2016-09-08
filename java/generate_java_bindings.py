@@ -33,6 +33,18 @@ import common
 import java_common
 
 class JavaBindingsDevice(java_common.JavaDevice):
+    def specialize_java_doc_function_links(self, text):
+        def specializer(packet):
+            if packet.get_type() == 'callback':
+                return '{{@link {0}.{1}Listener}}'.format(packet.get_device().get_java_class_name(),
+                                                          packet.get_camel_case_name())
+            else:
+                return '{{@link {0}#{1}({2})}}'.format(packet.get_device().get_java_class_name(),
+                                                       packet.get_headless_camel_case_name(),
+                                                       packet.get_java_parameter_list(just_types=True))
+
+        return self.specialize_doc_function_links(text, specializer)
+
     def get_java_import(self):
         if self.get_generator().is_octave():
             include = """{0}
@@ -590,8 +602,6 @@ public class {0} extends Device {{
 class JavaBindingsPacket(java_common.JavaPacket):
     def get_java_formatted_doc(self):
         text = common.select_lang(self.get_doc_text())
-        link = '{{@link {0}#{1}({2})}}'
-        link_c = '{{@link {0}.{1}Listener}}'
 
         # handle tables
         lines = text.split('\n')
@@ -621,18 +631,7 @@ class JavaBindingsPacket(java_common.JavaPacket):
                 replaced_lines.append(line)
 
         text = '\n'.join(replaced_lines)
-
-        cls = self.get_device().get_java_class_name()
-        for other_packet in self.get_device().get_packets():
-            name_false = ':func:`{0}`'.format(other_packet.get_camel_case_name())
-            if other_packet.get_type() == 'callback':
-                name = other_packet.get_camel_case_name()
-                name_right = link_c.format(cls, name)
-            else:
-                name = other_packet.get_headless_camel_case_name()
-                name_right = link.format(cls, name, other_packet.get_java_parameter_list(just_types=True))
-
-            text = text.replace(name_false, name_right)
+        text = self.get_device().specialize_java_doc_function_links(text)
 
         text = text.replace('Callback ', 'Listener ')
         text = text.replace(' Callback', ' Listener')
