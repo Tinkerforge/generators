@@ -53,7 +53,7 @@ Pins 4-7 auf logisch 0.
 
 .. note::
  Diese Funktion bewirkt keine Änderung an Pins die als Eingang konfiguriert sind.
- Pull-Up Widerstände können mit :func:`SetConfiguration` zugeschaltet werden.
+ Pull-Up Widerstände können mit :func:`SetPortConfiguration` zugeschaltet werden.
 """
 }]
 })
@@ -395,7 +395,7 @@ as 0.
 'de':
 """
 Gibt (für den angegebenen Pin) den aktuellen Zustand und die Zeit, wie von 
-:func:`SetMonoflop` gesetzt, sowie die noch verbleibende Zeit bis zum
+:func:`SetPortMonoflop` gesetzt, sowie die noch verbleibende Zeit bis zum
 Zustandswechsel, zurück.
 
 Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.

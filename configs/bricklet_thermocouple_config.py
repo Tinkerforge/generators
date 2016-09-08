@@ -231,7 +231,7 @@ com['packets'].append({
 'en':
 """
 This callback is triggered periodically with the period that is set by
-:func:`SetThermocoupleCallbackPeriod`. The :word:`parameter` is the temperature
+:func:`SetTemperatureCallbackPeriod`. The :word:`parameter` is the temperature
 of the thermocouple.
 
 :func:`Temperature` is only triggered if the temperature has changed since the

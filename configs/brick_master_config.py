@@ -1457,11 +1457,11 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns the period as set by :func:`SetCurrentCallbackPeriod`.
+Returns the period as set by :func:`SetStackCurrentCallbackPeriod`.
 """,
 'de':
 """
-Gibt die Periode zurück, wie von :func:`SetCurrentCallbackPeriod`
+Gibt die Periode zurück, wie von :func:`SetStackCurrentCallbackPeriod`
 gesetzt
 """
 }]
@@ -1639,7 +1639,7 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Sets the thresholds for the :func:`StackStackVoltageReached` callback.
+Sets the thresholds for the :func:`StackVoltageReached` callback.
 
 The following options are possible:
 

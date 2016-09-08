@@ -40,7 +40,7 @@ The length of the string has to be given as an additional parameter.
 
 The return value is the number of bytes that could be written.
 
-See :func:`SetConfigurations` for configuration possibilities
+See :func:`SetConfiguration` for configuration possibilities
 regarding baudrate, parity and so on.
 """,
 'de':
