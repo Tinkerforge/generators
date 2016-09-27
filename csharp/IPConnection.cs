@@ -199,20 +199,8 @@ namespace Tinkerforge
 				tmp.NoDelay = true;
 
 #if WINDOWS_PHONE || WINDOWS_UWP || WINDOWS_UAP
-				var hostname = new Windows.Networking.HostName(host);
-				var task = Windows.Networking.Sockets.DatagramSocket.GetEndpointPairsAsync(hostname, "").AsTask();
-				var enumerator = task.Result.GetEnumerator();
-
-				if (!enumerator.MoveNext())
-				{
-					throw new TinkerforgeException("Unknown host: " + host);
-				}
-
-				var resolved = enumerator.Current.RemoteHostName;
-				IPEndPoint endpoint = new IPEndPoint(IPAddress.Parse(resolved.RawName), port);
-
 				SocketAsyncEventArgs args = new SocketAsyncEventArgs();
-				args.RemoteEndPoint = endpoint;
+				args.RemoteEndPoint = new DnsEndPoint(host, port);
 
 				AutoResetEvent connectedEvent = new AutoResetEvent(false);
 				args.Completed += new EventHandler<SocketAsyncEventArgs>((o, e) => { connectedEvent.Set(); });
