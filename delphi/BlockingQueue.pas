@@ -12,7 +12,7 @@ unit BlockingQueue;
 
 {$ifndef FPC}
  {$ifdef CONDITIONALEXPRESSIONS}
-  {$if CompilerVersion >= 14.0}
+  {$if CompilerVersion >= 20.0}
    {$define USE_GENERICS}
   {$ifend}
  {$endif}
