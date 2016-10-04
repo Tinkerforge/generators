@@ -727,7 +727,7 @@ begin
   error := getaddrinfo(MarshaledAString(UTF8Encode(host)), nil, hints, entry);
  {$else}
   error := getaddrinfo(PAnsiChar(AnsiString(host)), nil, hints, entry);
- {$endif}
+ {$ifend}
   if (error <> 0) then begin
     { Destroy callback thread }
     if (not isAutoReconnect) then begin

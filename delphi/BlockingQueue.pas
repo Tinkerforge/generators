@@ -14,7 +14,7 @@ unit BlockingQueue;
  {$ifdef CONDITIONALEXPRESSIONS}
   {$if CompilerVersion >= 14.0}
    {$define USE_GENERICS}
-  {$endif}
+  {$ifend}
  {$endif}
 {$endif}
 
