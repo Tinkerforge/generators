@@ -240,8 +240,7 @@ void {0}_create({1} *{0}, const char *uid, IPConnection *ipcon) {{
         cbs = ''
         dev_name = self.get_underscore_name()
         for packet in self.get_packets('callback'):
-            type_name = packet.get_underscore_name()
-            cbs += cb_temp.format(dev_name, type_name.upper(), type_name, dev_name.upper())
+            cbs += cb_temp.format(dev_name, packet.get_upper_case_name(), packet.get_underscore_name(), dev_name.upper())
 
         response_expected = ''
 

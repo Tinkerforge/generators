@@ -561,10 +561,7 @@ def handle_rst_substitutions(text, packet):
     return text
 
 def underscore_to_space(name):
-    ret = []
-    for part in name.split('_'):
-        ret.append(part[0].upper() + part[1:])
-    return ' '.join(ret)
+    return ' '.join([part.capitalize() for part in name.split('_')])
 
 def recreate_directory(directory):
     if os.path.exists(directory):

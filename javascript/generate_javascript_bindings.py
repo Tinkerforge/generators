@@ -120,7 +120,7 @@ var Device = require('./Device');
         method_code = ''
         for packet in self.get_packets('function'):
             name = packet.get_headless_camel_case_name()
-            underscore_name = packet.get_underscore_name()
+            upper_case_name = packet.get_upper_case_name()
             param_list = packet.get_javascript_parameter_list()
             pack_format = packet.get_javascript_format_list('in')
             unpack_format = packet.get_javascript_format_list('out')
@@ -141,9 +141,9 @@ var Device = require('./Device');
 \t}};
 """
             if(len(param_list) == 0):
-                method_code += no_param_method_code.format(name, doc, self.get_javascript_class_name(), underscore_name.upper(), param_list, pack_format, unpack_format)
+                method_code += no_param_method_code.format(name, doc, self.get_javascript_class_name(), upper_case_name, param_list, pack_format, unpack_format)
             if(len(param_list) > 0):
-                method_code += param_method_code.format(name, param_list, doc, self.get_javascript_class_name(), underscore_name.upper(), param_list, pack_format, unpack_format)
+                method_code += param_method_code.format(name, param_list, doc, self.get_javascript_class_name(), upper_case_name, param_list, pack_format, unpack_format)
 
         return method_code
 

@@ -187,7 +187,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
         .appendField(new Blockly.FieldDropdown({constantsarray}), '{fieldname}')
 '''.format(ename = ('and ' if len(elements_in) > 1 and i == len(elements_in) - 1 else '') + e.get_name(),
            constantsarray = combo_constants_array,
-           fieldname = e.get_underscore_name().upper())
+           fieldname = e.get_upper_case_name())
 
                 elif e.get_tvpl_type() == 'Boolean':
                     # Create combobox with boolean values
@@ -195,7 +195,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
         .appendField('{ename}')
         .appendField(new Blockly.FieldDropdown([['True', '1'], ['False', '0']]), '{fieldname}')
 '''.format(ename = ('and ' if len(elements_in) > 1 and i == len(elements_in) - 1 else '') + e.get_name(),
-           fieldname = e.get_underscore_name().upper())
+           fieldname = e.get_upper_case_name())
 
                 elif e.get_tvpl_type() != 'Boolean':
                     # Create input field of specific types
@@ -203,7 +203,7 @@ class TVPLBindingsDevice(tvpl_common.TVPLDevice):
         .setCheck('{etvpltype}')
         .appendField('{ename}')
 '''.format(ename = ('and ' if len(elements_in) > 1 and i == len(elements_in) - 1 else '') + e.get_name(),
-           variablename = e.get_underscore_name().upper(),
+           variablename = e.get_upper_case_name(),
            etvpltype = e.get_tvpl_type())
 
             block_code_body += '''    this.appendValueInput('{uid}')
@@ -732,10 +732,10 @@ class TVPLBindingsPacket(tvpl_common.TVPLPacket):
         for e in elements:
             if e.get_constant_group() or e.get_tvpl_type() == 'Boolean':
                 list_blockly_get_field_value_statements.append('''  var {fieldvaluevariable} = block.getFieldValue('{eupper}');'''.format(fieldvaluevariable = hash_get_field_value_variable[e.get_underscore_name()],
-                                                                                                                                          eupper = e.get_underscore_name().upper()))
+                                                                                                                                          eupper = e.get_upper_case_name()))
             else:
-              list_blockly_value_to_code_statements.append('''  var {valuetocodevariable} = Blockly.JavaScript.valueToCode(block, '{eupper}', Blockly.JavaScript.ORDER_ATOMIC);'''.format(valuetocodevariable = hash_value_to_code_variable[e.get_underscore_name()],
-                                                                                                                                                                                            eupper = e.get_underscore_name().upper()))
+                list_blockly_value_to_code_statements.append('''  var {valuetocodevariable} = Blockly.JavaScript.valueToCode(block, '{eupper}', Blockly.JavaScript.ORDER_ATOMIC);'''.format(valuetocodevariable = hash_value_to_code_variable[e.get_underscore_name()],
+                                                                                                                                                                                            eupper = e.get_upper_case_name()))
         return (list_blockly_value_to_code_statements, list_blockly_get_field_value_statements)
 
     def get_caller_generation_arguments_from_value_and_field_hash(self,
