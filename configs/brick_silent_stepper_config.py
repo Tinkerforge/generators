@@ -335,16 +335,17 @@ hat, wird 1500 zurückgegeben.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set Step Mode',
-'elements': [('Step Mode', 'uint8', 1, 'in', ('Step Mode', [('Normal Full', 0),
-                                                            ('Normal Half', 1),
-                                                            ('Normal Half Interpolate', 2),
-                                                            ('Normal Quarter', 3),
-                                                            ('Normal Sixteenth', 4),
-                                                            ('Normal Quarter Interpolate', 5),
-                                                            ('Normal Sixteenth Interpolate', 6),
-                                                            ('Silent Quarter Interpolate', 7),
-                                                            ('Silent Sixteenth Interpolate', 8)]))],
+'name': 'Set Step Configuration',
+'elements': [('Step Resolution', 'uint8', 1, 'in', ('Step Resolution', [('1', 8),
+                                                                        ('2', 7),
+                                                                        ('4', 6),
+                                                                        ('8', 5),
+                                                                        ('16', 4),
+                                                                        ('32', 3),
+                                                                        ('64', 2),
+                                                                        ('128', 1),
+                                                                        ('256', 0)])),
+             ('Interpolation', 'bool', 1, 'in')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -360,26 +361,26 @@ TODO
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Step Mode',
-'elements': [('Step Mode', 'uint8', 1, 'out', ('Step Mode', [('Normal Full', 0),
-                                                             ('Normal Half', 1),
-                                                             ('Normal Half Interpolate', 2),
-                                                             ('Normal Quarter', 3),
-                                                             ('Normal Sixteenth', 4),
-                                                             ('Normal Quarter Interpolate', 5),
-                                                             ('Normal Sixteenth Interpolate', 6),
-                                                             ('Silent Quarter Interpolate', 7),
-                                                             ('Silent Sixteenth Interpolate', 8)]))],
-
+'name': 'Get Step Configuration',
+'elements': [('Step Resolution', 'uint8', 1, 'out', ('Step Resolution', [('1', 8),
+                                                                         ('2', 7),
+                                                                         ('4', 6),
+                                                                         ('8', 5),
+                                                                         ('16', 4),
+                                                                         ('32', 3),
+                                                                         ('64', 2),
+                                                                         ('128', 1),
+                                                                         ('256', 0)])),
+             ('Interpolation', 'bool', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the step mode as set by :func:`SetStepMode`.
+Returns the step mode as set by :func:`SetStepConfiguration`.
 """,
 'de':
 """
-Gibt den Schrittmodus zurück, wie von :func:`SetStepMode` gesetzt.
+Gibt den Schrittmodus zurück, wie von :func:`SetStepConfiguration` gesetzt.
 """
 }]
 })
@@ -626,20 +627,76 @@ Gibt *true* zurück wenn die Treiberstufe aktiv ist, sonst *false*.
 }]
 })
 
+
+
+
+
+
+
+
+
+
 com['packets'].append({
 'type': 'function',
-'name': 'Set Configuration',
-'elements': [('Standstill Power Down', 'uint8', 1, 'in', ('Standstill Power Down', [('On', 0),
-                                                                                    ('Off', 1)])),
-             ('Chopper Off Time', 'uint8', 1, 'in', ('Chopper Off Time', [('Low', 0),
-                                                                          ('Medium', 1),
-                                                                          ('High', 2)])),
-             ('Chopper Hysteresis', 'uint8', 1, 'in', ('Chopper Hysteresis', [('Low', 0),
-                                                                              ('Medium', 1),
-                                                                              ('High', 2)])),
-             ('Chopper Blank Time', 'uint8', 1, 'in', ('Chopper Blank Time', [('Low', 0),
-                                                                              ('Medium', 1),
-                                                                              ('High', 2)]))],
+'name': 'Set Basic Configuration',
+'elements': [('Standstill Current', 'uint8', 1, 'in'), # ihold 0-31
+             ('Motor Run Current', 'uint8', 1, 'in'),  # irun 0-31
+             ('Standstill Delay Time', 'uint8', 1, 'in'), # ihold_delay 0-15 clk cycles
+             ('Power Down Time', 'uint8', 1, 'in'), # tpowerdown 0-255
+             ('Stealth Threshold', 'uint16', 1, 'in'), # tpwmthrs (in full steps/s)
+             ('Coolstep Threshold', 'uint16', 1, 'in'), # tcoolthrs (in full steps/s)
+             ('Classic Threshold', 'uint16', 1, 'in'), # thigh (in full steps/s)
+             ('High Velocity Chopper Mode', 'bool', 1, 'in')], # vhighchm (bool)
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Basic Configuration',
+'elements': [('Standstill Current', 'uint8', 1, 'out'), # ihold 0-31
+             ('Motor Run Current', 'uint8', 1, 'out'),  # irun 0-31
+             ('Standstill Delay Time', 'uint8', 1, 'out'), # ihold_delay 0-15 clk cycles
+             ('Power Down Time', 'uint8', 1, 'out'), # tpowerdown 0-255
+             ('Stealth Threshold', 'uint16', 1, 'out'), # tpwmthrs (in steps/s)
+             ('Coolstep Threshold', 'uint16', 1, 'out'), # tcoolthrs (in steps/s)
+             ('Classic Threshold', 'uint16', 1, 'out'), # thigh (in steps/s)
+             ('High Velocity Chopper Mode', 'bool', 1, 'out')], # vhighchm (bool)
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+Returns the configuration as set by :func:`SetBasicConfiguration`.
+""",
+'de':
+"""
+Gibt die Konfiguration zurück, wie von :func:`SetBasicConfiguration` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Spreadcycle Configuration',
+'elements': [('Slow Decay Duration', 'uint8', 1, 'in'), # toff 0-15
+             ('Enable Random Slow Decay', 'bool', 1, 'in'), # rndtf
+             ('Fast Decay Duration', 'uint8', 1, 'in'), # hstrt and fd3 if chm=1 0-15
+             ('Hysteresis Start Value', 'uint8', 1, 'in'), # hstrt if chm=0 0-7
+             ('Hysteresis End Value', 'int8', 1, 'in'), # hend if chm=0 -3-12
+             ('Sinewave Offset', 'int8', 1, 'in'), # hend if chm=1 -3-12
+             ('Chopper Mode', 'uint8', 1, 'in', ('Chopper Mode', [('Spread Cycle', 0),
+                                                                  ('Fast Decay', 1)])), # chm
+             ('Comperator Blank Time', 'uint8', 1, 'in'), # tbl 0-3
+             ('Fast Decay Without Comperator', 'bool', 1, 'in')], # disfdcc
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
@@ -655,27 +712,192 @@ TODO
 
 com['packets'].append({
 'type': 'function',
-'name': 'Get Configuration',
-'elements': [('Standstill Power Down', 'uint8', 1, 'out', ('Standstill Power Down', [('On', 0),
-                                                                                     ('Off', 1)])),
-             ('Chopper Off Time', 'uint8', 1, 'out', ('Chopper Off Time', [('Low', 0),
-                                                                           ('Medium', 1),
-                                                                           ('High', 2)])),
-             ('Chopper Hysteresis', 'uint8', 1, 'out', ('Chopper Hysteresis', [('Low', 0),
-                                                                               ('Medium', 1),
-                                                                               ('High', 2)])),
-             ('Chopper Blank Time', 'uint8', 1, 'out', ('Chopper Blank Time', [('Low', 0),
-                                                                               ('Medium', 1),
-                                                                               ('High', 2)]))],
+'name': 'Get Spreadcycle Configuration',
+'elements': [('Slow Decay Duration', 'uint8', 1, 'out'), # toff 0-15
+             ('Enable Random Slow Decay', 'bool', 1, 'out'), # rndtf
+             ('Fast Decay Duration', 'uint8', 1, 'out'), # hstrt and fd3 if chm=1 0-15
+             ('Hysteresis Start Value', 'uint8', 1, 'out'), # hstrt if chm=0 0-7
+             ('Hysteresis End Value', 'int8', 1, 'out'), # hend if chm=0 -3-12
+             ('Sinewave Offset', 'int8', 1, 'out'), # hend if chm=1 -3-12
+             ('Chopper Mode', 'uint8', 1, 'out', ('Chopper Mode', [('Spread Cycle', 0),
+                                                                   ('Fast Decay', 1)])), # chm
+             ('Comperator Blank Time', 'uint8', 1, 'out'), # tbl 0-3
+             ('Fast Decay Without Comperator', 'bool', 1, 'out')], # disfdcc
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the configuration as set by :func:`SetConfiguration`.
+Returns the configuration as set by :func:`SetBasicConfiguration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetConfiguration` gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`SetBasicConfiguration` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Stealth Configuration',
+'elements': [('Enable Stealth', 'bool', 1, 'in'), # en_pwm_mode
+             ('Amplitude', 'uint8', 1, 'in'), # pwm_ampl
+             ('Gradient', 'uint8', 1, 'in'), # pwm_grad
+             ('Enable Autoscale', 'bool', 1, 'in'), # pwm_autoscale
+             ('Force Symmetric', 'bool', 1, 'in'), # pwm_symmetric
+             ('Freewheel Mode', 'uint8', 1, 'in', ('Freewheel Mode', [('Normal', 0),
+                                                                      ('Freewheeling', 1),
+                                                                      ('Coil Short LS', 2),
+                                                                      ('Coil Short HS', 3)]))], # freewheel
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Stealth Configuration',
+'elements': [('Enable Stealth', 'bool', 1, 'out'), # en_pwm_mode
+             ('Amplitude', 'uint8', 1, 'out'), # pwm_ampl
+             ('Gradient', 'uint8', 1, 'out'), # pwm_grad
+             ('Enable Autoscale', 'bool', 1, 'out'), # pwm_autoscale
+             ('Force Symmetric', 'bool', 1, 'out'), # pwm_symmetric
+             ('Freewheel Mode', 'uint8', 1, 'out', ('Freewheel Mode', [('Normal', 0),
+                                                                       ('Freewheeling', 1),
+                                                                       ('Coil Short LS', 2),
+                                                                       ('Coil Short HS', 3)]))], # freewheel (if ihold=0)
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Returns the configuration as set by :func:`SetStealthConfiguration`.
+""",
+'de':
+"""
+Gibt die Konfiguration zurück, wie von :func:`SetStealthConfiguration` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Coolstep Configuration',
+'elements': [('Minimum Stallguard Value', 'uint8', 1, 'in'), # semin 0-15
+             ('Maximum Stallguard Value', 'uint8', 1, 'in'),  # semax 0-15
+             ('Current Up Step Width', 'uint8', 1, 'in'),  # seup 0-3
+             ('Current Down Step Width', 'uint8', 1, 'in'),  # sedn 0-3
+             ('Minimum Current', 'uint8', 1, 'in', ('Minimum Current', [('Half', 0),
+                                                                        ('Quarter', 1)])),  # seimin
+             ('Stallguard Threshold Value', 'int8', 1, 'in'),  # sgt -64-63
+             ('Stallguard Mode', 'uint8', 1, 'in', ('Stallguard Mode', [('Standard', 0),
+                                                                        ('Filtered', 1)]))], # sfilt
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Coolstep Configuration',
+'elements': [('Minimum Stallguard Value', 'uint8', 1, 'out'), # semin 0-15
+             ('Maximum Stallguard Value', 'uint8', 1, 'out'),  # semax 0-15
+             ('Current Up Step Width', 'uint8', 1, 'out'),  # seup 0-3
+             ('Current Down Step Width', 'uint8', 1, 'out'),  # sedn 0-3
+             ('Minimum Current', 'uint8', 1, 'out', ('Minimum Current', [('Half', 0),
+                                                                         ('Quarter', 1)])),  # seimin
+             ('Stallguard Threshold Value', 'int8', 1, 'out'),  # sgt -64-63
+             ('Stallguard Mode', 'uint8', 1, 'out', ('Stallguard Mode', [('Standard', 0),
+                                                                         ('Filtered', 1)]))], # sfilt
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Returns the configuration as set by :func:`SetStallguardCoolstepConfiguration`.
+""",
+'de':
+"""
+Gibt die Konfiguration zurück, wie von :func:`SetStallguardCoolstepConfiguration` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Misc Configuration',
+'elements': [('Disable Short To Ground Protection', 'bool', 1, 'in'), # diss2g
+             ('Synchronize Phase Frequency', 'uint8', 1, 'in')], # sync 0=off 1-15
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Misc Configuration',
+'elements': [('Disable Short To Ground Protection', 'bool', 1, 'out'), # diss2g
+             ('Synchronize Phase Frequency', 'uint8', 1, 'out')], # sync 0=off 1-15
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Returns the configuration as set by :func:`SetMiscConfiguration`.
+""",
+'de':
+"""
+Gibt die Konfiguration zurück, wie von :func:`SetMiscConfiguration` gesetzt.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Driver Status',
+'elements': [('Open Load', 'uint8', 1, 'out', ('Open Load', [('None', 0),
+                                                             ('Phase A', 1),
+                                                             ('Phase B', 2),
+                                                             ('Phase AB', 3)])), # ola, olb
+             ('Short To Ground', 'uint8', 1, 'out', ('Short To Ground', [('None', 0),
+                                                                         ('Phase A', 1),
+                                                                         ('Phase B', 2),
+                                                                         ('Phase AB', 3)])), # s2ga, s2gb
+             ('Over Temperature', 'uint8', 1, 'out', ('Over Temperature', [('None', 0),
+                                                                           ('Warning', 1),
+                                                                           ('Limit', 2)])), # otpw, ot
+             ('Motor Stalled', 'bool', 1, 'out'), # stallGuard
+             ('Actual Motor Current', 'uint8', 1, 'out'), # CS ACTUAL
+             ('Full Step Active', 'bool', 1, 'out'), # fsactive
+             ('Stallguard Result', 'uint8', 1, 'out'), # SG_RESULT
+             ('Stealth Voltage Amplitude', 'uint8', 1, 'out')], # PWM_SCALE
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+""",
+'de':
+"""
 """
 }]
 })
@@ -956,7 +1178,7 @@ zurückgegeben.
 com['examples'].append({
 'name': 'Configuration',
 'functions': [('setter', 'Set Motor Current', [('uint16', 800)], None, '800mA'),
-              ('setter', 'Set Step Mode', [('uint8', 8)], None, '1/8 step mode'),
+#              ('setter', 'Set Step Mode', [('uint8', 8)], None, '1/8 step mode'),
               ('setter', 'Set Max Velocity', [('uint16', 2000)], None, 'Velocity 2000 steps/s'),
               ('setter', 'Set Speed Ramping', [('uint16', 500), ('uint16', 5000)], 'Slow acceleration (500 steps/s^2),\nFast deacceleration (5000 steps/s^2)', None),
               ('empty',),
