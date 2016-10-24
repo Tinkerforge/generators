@@ -827,11 +827,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the configuration as set by :func:`SetStallguardCoolstepConfiguration`.
+Returns the configuration as set by :func:`SetCoolstepConfiguration`.
 """,
 'de':
 """
-Gibt die Konfiguration zurück, wie von :func:`SetStallguardCoolstepConfiguration` gesetzt.
+Gibt die Konfiguration zurück, wie von :func:`SetCoolstepConfiguration` gesetzt.
 """
 }]
 })
