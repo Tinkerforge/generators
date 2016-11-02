@@ -341,9 +341,12 @@ static int gettimeofday(struct timeval *tv, struct timezone *tz) {
 	(void)tz;
 
 	if (tv != NULL) {
+#pragma warning(push)
+#pragma warning(disable: 4191) // stop MSVC from warning about casting FARPROC
 		ptr_GetSystemTimePreciseAsFileTime =
 		  (GETSYSTEMTIMEPRECISEASFILETIME)GetProcAddress(GetModuleHandleA("kernel32"),
 		                                                 "GetSystemTimePreciseAsFileTime");
+#pragma warning(pop)
 
 		if (ptr_GetSystemTimePreciseAsFileTime != NULL) {
 			ptr_GetSystemTimePreciseAsFileTime(&ft);
