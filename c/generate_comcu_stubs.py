@@ -103,8 +103,8 @@ class COMCUBindingsDevice(common.Device):
         return structs
 
     def get_h_function_prototypes(self):
-        prototype =  'BootloaderHandleMessageReturn {0}(const {1} *data);'
-        prototype_with_response =  'BootloaderHandleMessageReturn {0}(const {1} *data, {2} *response);'
+        prototype =  'BootloaderHandleMessageResponse {0}(const {1} *data);'
+        prototype_with_response =  'BootloaderHandleMessageResponse {0}(const {1} *data, {2} *response);'
 
         prototypes = []
         for packet in self.get_packets('function'):
@@ -131,16 +131,16 @@ class COMCUBindingsDevice(common.Device):
         return cases
 
     def get_c_functions(self):
-        function_with_response = """BootloaderHandleMessageReturn {0}(const {1} *data, {2} *response) {{
+        function_with_response = """BootloaderHandleMessageResponse {0}(const {1} *data, {2} *response) {{
 \tresponse->header.length = sizeof({2});
 
-\treturn HANDLE_MESSAGE_RETURN_NEW_MESSAGE;
+\treturn HANDLE_MESSAGE_RESPONSE_NEW_MESSAGE;
 }}
 """
 
-        function = """BootloaderHandleMessageReturn {0}(const {1} *data) {{
+        function = """BootloaderHandleMessageResponse {0}(const {1} *data) {{
 
-\treturn HANDLE_MESSAGE_RETURN_EMPTY;
+\treturn HANDLE_MESSAGE_RESPONSE_EMPTY;
 }}
 """
         functions = []
@@ -182,10 +182,10 @@ class COMCUBindingsGenerator(common.BindingsGenerator):
 
 #include "bricklib2/protocols/tfp/tfp.h"
 
-BootloaderHandleMessageReturn handle_message(const void *message, void *response) {{
+BootloaderHandleMessageResponse handle_message(const void *message, void *response) {{
 \tswitch(tfp_get_fid_from_message(message)) {{
 {4}
-\t\tdefault: return HANDLE_MESSAGE_RETURN_NOT_SUPPORTED;
+\t\tdefault: return HANDLE_MESSAGE_RESPONSE_NOT_SUPPORTED;
 \t}}
 }}
 
@@ -218,7 +218,7 @@ BootloaderHandleMessageReturn handle_message(const void *message, void *response
 
 #include "bricklib2/bootloader/bootloader.h"
 
-BootloaderHandleMessageReturn handle_message(const void *data, void *response);
+BootloaderHandleMessageResponse handle_message(const void *data, void *response);
 
 
 {4}
