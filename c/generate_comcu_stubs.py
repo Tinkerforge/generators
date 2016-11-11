@@ -39,11 +39,13 @@ class COMCUBindingsDevice(common.Device):
 
         defines = []
         for packet in self.get_packets('function'):
-            defines.append(define_function.format(packet.get_upper_case_name(), packet.get_function_id()))
+            if packet.get_function_id() < 200:
+                defines.append(define_function.format(packet.get_upper_case_name(), packet.get_function_id()))
 
         defines.append('')
         for packet in self.get_packets('callback'):
-            defines.append(define_callback.format(packet.get_upper_case_name(), packet.get_function_id()))
+            if packet.get_function_id() < 200:
+                defines.append(define_callback.format(packet.get_upper_case_name(), packet.get_function_id()))
 
         return defines
 
@@ -55,10 +57,24 @@ class COMCUBindingsDevice(common.Device):
 
         structs = []
         for packet in self.get_packets():
-            if packet.get_type() == 'callback':
-                cb = "Callback"
+            if packet.get_function_id() < 200:
+                if packet.get_type() == 'callback':
+                    cb = "Callback"
+                    struct_body = ''
+                    for element in packet.get_elements():
+                        c_type = element.get_c_type(False)
+                        if element.get_cardinality() > 1:
+                            struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
+                                                                      element.get_underscore_name(),
+                                                                      element.get_cardinality());
+                        else:
+                            struct_body += '\t{0} {1};\n'.format(c_type, element.get_underscore_name())
+
+                    structs.append(struct_temp.format(struct_body, packet.get_camel_case_name(), cb))
+                    continue
+
                 struct_body = ''
-                for element in packet.get_elements():
+                for element in packet.get_elements('in'):
                     c_type = element.get_c_type(False)
                     if element.get_cardinality() > 1:
                         struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
@@ -67,35 +83,22 @@ class COMCUBindingsDevice(common.Device):
                     else:
                         struct_body += '\t{0} {1};\n'.format(c_type, element.get_underscore_name())
 
-                structs.append(struct_temp.format(struct_body, packet.get_camel_case_name(), cb))
-                continue
+                structs.append(struct_temp.format(struct_body, packet.get_camel_case_name(), ''))
 
-            struct_body = ''
-            for element in packet.get_elements('in'):
-                c_type = element.get_c_type(False)
-                if element.get_cardinality() > 1:
-                    struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
-                                                              element.get_underscore_name(),
-                                                              element.get_cardinality());
-                else:
-                    struct_body += '\t{0} {1};\n'.format(c_type, element.get_underscore_name())
+                if len(packet.get_elements('out')) == 0:
+                    continue
 
-            structs.append(struct_temp.format(struct_body, packet.get_camel_case_name(), ''))
+                struct_body = ''
+                for element in packet.get_elements('out'):
+                    c_type = element.get_c_type(False)
+                    if element.get_cardinality() > 1:
+                        struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
+                                                                  element.get_underscore_name(),
+                                                                  element.get_cardinality());
+                    else:
+                        struct_body += '\t{0} {1};\n'.format(c_type, element.get_underscore_name())
 
-            if len(packet.get_elements('out')) == 0:
-                continue
-
-            struct_body = ''
-            for element in packet.get_elements('out'):
-                c_type = element.get_c_type(False)
-                if element.get_cardinality() > 1:
-                    struct_body += '\t{0} {1}[{2}];\n'.format(c_type,
-                                                              element.get_underscore_name(),
-                                                              element.get_cardinality());
-                else:
-                    struct_body += '\t{0} {1};\n'.format(c_type, element.get_underscore_name())
-
-            structs.append(struct_temp.format(struct_body, packet.get_camel_case_name(), 'Response'))
+                structs.append(struct_temp.format(struct_body, packet.get_camel_case_name(), 'Response'))
 
         return structs
 
@@ -105,10 +108,11 @@ class COMCUBindingsDevice(common.Device):
 
         prototypes = []
         for packet in self.get_packets('function'):
-            if len(packet.get_elements('out')) == 0:
-                prototypes.append(prototype.format(packet.get_underscore_name(), packet.get_camel_case_name()))
-            else:
-                prototypes.append(prototype_with_response.format(packet.get_underscore_name(), packet.get_camel_case_name(), packet.get_camel_case_name() + 'Response'))
+            if packet.get_function_id() < 200:
+                if len(packet.get_elements('out')) == 0:
+                    prototypes.append(prototype.format(packet.get_underscore_name(), packet.get_camel_case_name()))
+                else:
+                    prototypes.append(prototype_with_response.format(packet.get_underscore_name(), packet.get_camel_case_name(), packet.get_camel_case_name() + 'Response'))
 
         return prototypes
 
@@ -118,10 +122,11 @@ class COMCUBindingsDevice(common.Device):
 
         cases = []
         for packet in self.get_packets('function'):
-            if len(packet.get_elements('out')) == 0:
-                cases.append(case.format(packet.get_underscore_name().upper(), packet.get_underscore_name()))
-            else:
-                cases.append(case_with_response.format(packet.get_underscore_name().upper(), packet.get_underscore_name()))
+            if packet.get_function_id() < 200:
+                if len(packet.get_elements('out')) == 0:
+                    cases.append(case.format(packet.get_underscore_name().upper(), packet.get_underscore_name()))
+                else:
+                    cases.append(case_with_response.format(packet.get_underscore_name().upper(), packet.get_underscore_name()))
 
         return cases
 
@@ -140,10 +145,11 @@ class COMCUBindingsDevice(common.Device):
 """
         functions = []
         for packet in self.get_packets('function'):
-            if len(packet.get_elements('out')) == 0:
-                functions.append(function.format(packet.get_underscore_name(), packet.get_camel_case_name()))
-            else:
-                functions.append(function_with_response.format(packet.get_underscore_name(), packet.get_camel_case_name(), packet.get_camel_case_name() + 'Response'))
+            if packet.get_function_id() < 200:
+                if len(packet.get_elements('out')) == 0:
+                    functions.append(function.format(packet.get_underscore_name(), packet.get_camel_case_name()))
+                else:
+                    functions.append(function_with_response.format(packet.get_underscore_name(), packet.get_camel_case_name(), packet.get_camel_case_name() + 'Response'))
 
         return functions
 
