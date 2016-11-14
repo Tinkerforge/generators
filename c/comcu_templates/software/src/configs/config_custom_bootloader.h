@@ -1,8 +1,8 @@
-/* <<<DEVICE_NAME_DASH>>>
+/* <<<DEVICE_NAME_DASH>>>-bricklet
  * Copyright (C) <<<YEAR>>> <<<NAME>>> <<<<EMAIL>>>>
  *
  * config_custom_bootloader.h: All configurations for 
- *                             <<<DEVICE_NAME_READABLE>>>
+ *                             <<<DEVICE_NAME_READABLE>>> Bricklet
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

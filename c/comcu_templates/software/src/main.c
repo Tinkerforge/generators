@@ -1,7 +1,7 @@
-/* <<<DEVICE_NAME_DASH>>>
+/* <<<DEVICE_NAME_DASH-bricklet>>>
  * Copyright (C) <<<YEAR>>> <<<NAME>>> <<<<EMAIL>>>>
  *
- * main.c: Initialization for <<<DEVICE_NAME_READABLE>>>
+ * main.c: Initialization for <<<DEVICE_NAME_READABLE>>> Bricklet
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,7 +34,7 @@
 int main(void) {
 	system_timer_init(SystemCoreClock, SYSTEM_TIMER_FREQUENCY);
 	uartbb_init();
-	uartbb_puts("Start <<<DEVICE_NAME_READABLE>>>\n\r");
+	uartbb_puts("Start <<<DEVICE_NAME_READABLE>>> Bricklet\n\r");
 
 	while(true) {
 		bootloader_tick();
