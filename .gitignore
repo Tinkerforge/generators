@@ -3,6 +3,8 @@
 *.zip
 *.project
 *.pydevproject
+*.swp
+*.class
 .settings/*
 */tinkerforge_*
 */*_released_files.py
@@ -11,6 +13,7 @@
 */bindings_octave/
 */doc/
 */*_package/
+c/comcu_output/
 device_descriptions.py
 device_identifiers.py
 device_infos.py
