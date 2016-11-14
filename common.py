@@ -636,6 +636,7 @@ def generate(bindings_root_directory, language, generator_class):
     common_device_packets = copy.deepcopy(__import__('device_commonconfig').common_packets)
     common_brick_packets = copy.deepcopy(__import__('brick_commonconfig').common_packets)
     common_bricklet_packets = copy.deepcopy(__import__('bricklet_commonconfig').common_packets)
+    common_bricklet_comcu_packets = copy.deepcopy(__import__('bricklet_comcu_commonconfig').common_packets)
 
     brick_infos = []
     bricklet_infos = []
@@ -683,7 +684,11 @@ def generate(bindings_root_directory, language, generator_class):
                 com['common_included'] = True
 
             if config.startswith('bricklet_') and 'common_included' not in com:
-                common_packets = copy.deepcopy(common_device_packets) + copy.deepcopy(common_bricklet_packets)
+                if com.get('has_comcu') == True:
+                    common_packets = copy.deepcopy(common_device_packets) + copy.deepcopy(common_bricklet_comcu_packets) + copy.deepcopy(common_bricklet_packets)
+                else:
+                    common_packets = copy.deepcopy(common_device_packets) + copy.deepcopy(common_bricklet_packets)
+
                 com['packets'].extend(prepare_common_packets(common_packets))
                 com['common_included'] = True
 
