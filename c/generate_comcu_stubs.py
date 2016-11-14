@@ -27,6 +27,7 @@ Boston, MA 02111-1307, USA.
 import sys
 import os
 import datetime
+import shutil
 
 sys.path.append(os.path.split(os.getcwd())[0])
 import common
@@ -248,12 +249,42 @@ BootloaderHandleMessageResponse handle_message(const void *data, void *response)
     def get_element_class(self):
         return c_common.CElement
 
+    def copy_templates_to(self, folder_dst):
+        folder_src = os.path.join(self.get_bindings_root_directory(), 'comcu_templates')
+        shutil.copytree(os.path.join(folder_src, 'software'), os.path.join(folder_dst, 'software'))
+        shutil.copytree(os.path.join(folder_src, 'hardware'),  os.path.join(folder_dst, 'hardware'))
+        shutil.copytree(os.path.join(folder_src, 'datasheets'),  os.path.join(folder_dst, 'datasheets'))
+
+    def fill_templates(self, folder, device_name_dash, device_name, year, name, email):
+        for dname, dirs, files in os.walk(folder):
+            for fname in files:
+                fpath = os.path.join(dname, fname)
+                with open(fpath, "r") as f:
+                    s = f.read()
+                s = s.replace("""<<<DEVICE_NAME_DASH>>>""", device_name_dash)
+                s = s.replace("""<<<DEVICE_NAME_READABLE>>>""", device_name)
+                s = s.replace("""<<<YEAR>>>""", str(year))
+                s = s.replace("""<<<NAME>>>""", name)
+                s = s.replace("""<<<EMAIL>>>""", email)
+                with open(fpath, "w") as f:
+                    f.write(s)
+    
     def generate(self, device):
         folder = os.path.join(self.get_bindings_root_directory(), 'comcu_output', '{0}_{1}'.format(device.get_underscore_category(), device.get_underscore_name()))
         try:
-            os.mkdir(folder)
+            shutil.rmtree(folder) # first we delete the comcu output if it already exists for this device
         except:
-            pass # It is OK if the directoy already exists...
+            pass # It is OK if the directory does not exist...
+
+        os.mkdir(folder)
+
+        device_name_dash = device.get_underscore_name().replace('_', '-')
+        year = datetime.datetime.now().year
+        name = 'Olaf Lüke'             # Change before generation
+        email = 'olaf@tinkerforge.com' # Change before generation
+
+        self.copy_templates_to(folder)
+        self.fill_templates(folder, device_name_dash, device.get_name(), year, name, email)
 
         h_defines = device.get_h_defines()
         h_structs = device.get_h_structs()
@@ -267,17 +298,11 @@ BootloaderHandleMessageResponse handle_message(const void *data, void *response)
         c_cases_string = '\n'.join(c_cases)
         c_functions_string = '\n'.join(c_functions)
 
-        device_name = device.get_underscore_name().replace('_', '-')
-        year = datetime.datetime.now().year
-        name = 'Olaf Lüke'             # Change before generation
-        email = 'olaf@tinkerforge.com' # Change before generation
+        with open(os.path.join(folder, 'software', 'src', 'communication.c'), 'w') as c:
+            c.write(self.c_file.format(device_name_dash, year, name, email, c_cases_string, c_functions_string))
 
-
-        with open(os.path.join(folder, 'communication.c'), 'w') as c:
-            c.write(self.c_file.format(device_name, year, name, email, c_cases_string, c_functions_string))
-
-        with open(os.path.join(folder, 'communication.h'), 'w') as h:
-            h.write(self.h_file.format(device_name, year, name, email, h_defines_string, h_structs_string, h_function_prototypes_string))
+        with open(os.path.join(folder, 'software', 'src', 'communication.h'), 'w') as h:
+            h.write(self.h_file.format(device_name_dash, year, name, email, h_defines_string, h_structs_string, h_function_prototypes_string))
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', COMCUBindingsGenerator)

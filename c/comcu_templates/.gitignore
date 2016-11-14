@@ -1,0 +1,6 @@
+software/.cproject
+software/.project
+software/.pydevproject
+software/.settings
+software/build
+software/src/bricklib2

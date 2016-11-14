@@ -1,0 +1,7 @@
+#!/bin/bash
+mkdir -p build
+cmake -E chdir build/ cmake -DCMAKE_TOOLCHAIN_FILE=../src/bricklib2/cmake/toolchains/arm-none-eabi.cmake ../
+
+# Because of a bug in cmake we have to call it two times... For the second
+# execution the toolchain files are already defined
+cmake -E chdir build/ cmake ../
