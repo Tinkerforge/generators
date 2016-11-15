@@ -684,7 +684,7 @@ def generate(bindings_root_directory, language, generator_class):
                 com['common_included'] = True
 
             if config.startswith('bricklet_') and 'common_included' not in com:
-                if com.get('has_comcu') == True:
+                if com.get('has_comcu', False):
                     common_packets = copy.deepcopy(common_device_packets) + copy.deepcopy(common_bricklet_comcu_packets) + copy.deepcopy(common_bricklet_packets)
                 else:
                     common_packets = copy.deepcopy(common_device_packets) + copy.deepcopy(common_bricklet_packets)
