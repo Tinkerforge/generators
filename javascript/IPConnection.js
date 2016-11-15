@@ -312,19 +312,24 @@ function IPConnection() {
         if (data.length === 0) {
             return;
         }
+
         this.mergeBuffer = bufferConcat([this.mergeBuffer, data]);
 
-        if (this.mergeBuffer.length < 8) {
-            return;
-        }
-        if (this.mergeBuffer.length < this.mergeBuffer.readUInt8(4)) {
-            return;
-        }
-        while (this.mergeBuffer.length >= 8) {
-            var newPacket = new Buffer(this.mergeBuffer.readUInt8(4));
-            this.mergeBuffer.copy(newPacket, 0, 0, this.mergeBuffer.readUInt8(4));
+        while (this.mergeBuffer.length > 0) {
+            if (this.mergeBuffer.length < 8) {
+                return; // wait for complete header
+            }
+
+            var length = this.mergeBuffer.readUInt8(4);
+
+            if (this.mergeBuffer.length < length) {
+                return; // wait for complete packet
+            }
+
+            var newPacket = new Buffer(length);
+            this.mergeBuffer.copy(newPacket, 0, 0, length);
             this.handlePacket(newPacket);
-            this.mergeBuffer = this.mergeBuffer.slice(this.mergeBuffer.readUInt8(4));
+            this.mergeBuffer = this.mergeBuffer.slice(length);
         }
     };
     this.handleConnectionError = function (error) {
