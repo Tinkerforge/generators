@@ -5,6 +5,9 @@ import sys
 import os
 import shutil
 import filecmp
+import socket
+import zipfile
+import tempfile
 
 def text_files_are_not_the_same(src_file, dest_path):
     dest_file = os.path.join(dest_path, src_file.split('/')[-1])
@@ -51,25 +54,26 @@ for d in os.listdir(path):
             bindings.append(d)
 bindings = sorted(bindings)
 
-print('')
-print('Copying ip_connection to brickv:')
-src_file = os.path.join(path, 'python', 'ip_connection.py')
-if files_are_not_the_same(src_file, brickv_path_bindings):
-    shutil.copy(src_file, brickv_path_bindings)
-    print(' * ip_connection.py')
+if socket.gethostname() != 'tinkerforge.com':
+    print('')
+    print('Copying ip_connection to brickv:')
+    src_file = os.path.join(path, 'python', 'ip_connection.py')
+    if files_are_not_the_same(src_file, brickv_path_bindings):
+        shutil.copy(src_file, brickv_path_bindings)
+        print(' * ip_connection.py')
 
-print('')
-print('Copying Python bindings to brickv:')
-path_binding = os.path.join(path, 'python')
-src_file_path = os.path.join(path_binding, 'bindings')
-for f in os.listdir(src_file_path):
-    if f.endswith('.py'):
-        src_file = os.path.join(src_file_path, f)
-        dest_path = brickv_path_bindings
+    print('')
+    print('Copying Python bindings to brickv:')
+    path_binding = os.path.join(path, 'python')
+    src_file_path = os.path.join(path_binding, 'bindings')
+    for f in os.listdir(src_file_path):
+        if f.endswith('.py'):
+            src_file = os.path.join(src_file_path, f)
+            dest_path = brickv_path_bindings
 
-        if files_are_not_the_same(src_file, dest_path):
-            shutil.copy(src_file, dest_path)
-            print(' * {0}'.format(f))
+            if files_are_not_the_same(src_file, dest_path):
+                shutil.copy(src_file, dest_path)
+                print(' * {0}'.format(f))
 
 doc_copy = [('_Brick_', 'Bricks'),
             ('_Bricklet_', 'Bricklets'),
@@ -110,17 +114,38 @@ for lang in ['en', 'de']:
                         print(' * {0}'.format(f))
 
 print('')
-for lang in ['en', 'de']:
-    print('Copying Tinkerforge.js to doc/{0}:'.format(lang))
-    src_file = os.path.join(path, 'javascript', 'Tinkerforge.js')
+if socket.gethostname() != 'tinkerforge.com':
+    tmp_dir = tempfile.mkdtemp()
 
-    dest_dir = os.path.join(start_path, doc_path.format(lang), t[1])
-    if not os.path.exists(dest_dir):
-        os.makedirs(dest_dir)
+    # javascript/tinkerforge_javascript_bindings_latest.zip.symlink is a symlink to the actual file
+    with zipfile.ZipFile(os.path.realpath(os.path.join(path, 'javascript', 'tinkerforge_javascript_bindings_latest.zip.symlink'))) as zf:
+        zf.extract('browser/source/Tinkerforge.js', tmp_dir)
 
-    if files_are_not_the_same(src_file, dest_dir):
-        shutil.copy(src_file, dest_dir)
-        print(' * Tinkerforge.js')
+    for lang in ['en', 'de']:
+        print('Copying Tinkerforge.js to doc/{0}:'.format(lang))
+        src_file = os.path.join(tmp_dir, 'browser', 'source', 'Tinkerforge.js')
+
+        dest_dir = os.path.join(start_path, doc_path.format(lang), t[1])
+        if not os.path.exists(dest_dir):
+            os.makedirs(dest_dir)
+
+        if files_are_not_the_same(src_file, dest_dir):
+            shutil.copy(src_file, dest_dir)
+            print(' * Tinkerforge.js')
+
+    shutil.rmtree(tmp_dir)
+else:
+    for lang in ['en', 'de']:
+        print('Copying Tinkerforge.js to doc/{0}:'.format(lang))
+        src_file = os.path.join(path, 'javascript', 'Tinkerforge.js')
+
+        dest_dir = os.path.join(start_path, doc_path.format(lang), t[1])
+        if not os.path.exists(dest_dir):
+            os.makedirs(dest_dir)
+
+        if files_are_not_the_same(src_file, dest_dir):
+            shutil.copy(src_file, dest_dir)
+            print(' * Tinkerforge.js')
 
 print('')
 print('>>> Done <<<')

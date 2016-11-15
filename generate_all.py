@@ -23,7 +23,7 @@ for d in os.listdir(path):
 bindings = sorted(bindings)
 
 # bindings
-if 'bindings' in args:
+if 'bindings' in args and socket.gethostname() != 'tinkerforge.com':
     for binding in bindings:
         if binding in ('tcpip', 'modbus'):
             continue
@@ -33,7 +33,7 @@ if 'bindings' in args:
         module.generate(os.path.join(path, binding))
 
 # examples
-if 'examples' in args:
+if 'examples' in args and socket.gethostname() != 'tinkerforge.com':
     for binding in bindings:
         if binding in ('tcpip', 'modbus'):
             continue
@@ -51,25 +51,20 @@ if 'examples' in args:
 if 'doc' in args:
     for binding in bindings:
         module = __import__('generate_{0}_doc'.format(binding))
+
         for lang in ['en', 'de']:
             print("\nGenerating '{0}' documentation for {1}:".format(lang, binding))
             module.generate(os.path.join(path, binding), lang)
 
 # zip
-if 'zip' in args:
-    def run_zip_generator(path, binding):
+if 'zip' in args and socket.gethostname() != 'tinkerforge.com':
+    for binding in bindings:
+        if binding in ('tcpip', 'modbus'):
+            continue
+
         module = __import__('generate_{0}_zip'.format(binding))
         print("\nGenerating ZIP for {0}:".format(binding))
         module.generate(os.path.join(path, binding))
-
-    if socket.gethostname() == 'tinkerforge.com':
-        run_zip_generator(path, 'javascript')
-    else:
-        for binding in bindings:
-            if binding in ('tcpip', 'modbus'):
-                continue
-
-            run_zip_generator(path, binding)
 
 print('')
 print('>>> Done <<<')
