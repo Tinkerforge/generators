@@ -1,4 +1,4 @@
-/* <<<DEVICE_NAME_DASH-bricklet>>>
+/* <<<DEVICE_NAME_DASH>>>-bricklet
  * Copyright (C) <<<YEAR>>> <<<NAME>>> <<<<EMAIL>>>>
  *
  * main.c: Initialization for <<<DEVICE_NAME_READABLE>>> Bricklet
