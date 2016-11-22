@@ -342,6 +342,7 @@ function IPConnection() {
     };
     this.handleAutoReconnectError = function (error) {
         if (!this.isConnected && this.autoReconnect && error !== IPConnection.ERROR_ALREADY_CONNECTED) {
+            // FIXME: add a small sleep here to avoid a tight loop that could consume 100% CPU power
             this.pushTask(this.connectInternal.bind(this, this.host, this.port, this.handleAutoReconnectError), IPConnection.TASK_KIND_AUTO_RECONNECT);
         }
     };

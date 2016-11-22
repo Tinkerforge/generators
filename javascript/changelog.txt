@@ -52,3 +52,7 @@
 2016-09-08: 2.0.10 (<unknown>)
 - Add support for RGBW LEDs, channel mapping and SK6812RGBW (NeoPixel RGBW),
   LPD8806 and ADA102 (DotStar) chip types to LED Strip Bricklet API
+
+2016-11-22: 2.0.11 (<unknown>)
+- Use browserify 13.1.1 to avoid the code hanging in Firefox
+- Fix handling of fragmented packets
