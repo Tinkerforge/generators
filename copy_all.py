@@ -115,6 +115,18 @@ for lang in ['en', 'de']:
 
 print('')
 if socket.gethostname() != 'tinkerforge.com':
+    for lang in ['en', 'de']:
+        print('Copying Tinkerforge.js to doc/{0}:'.format(lang))
+        src_file = os.path.join(path, 'javascript', 'Tinkerforge.js')
+
+        dest_dir = os.path.join(start_path, doc_path.format(lang), t[1])
+        if not os.path.exists(dest_dir):
+            os.makedirs(dest_dir)
+
+        if files_are_not_the_same(src_file, dest_dir):
+            shutil.copy(src_file, dest_dir)
+            print(' * Tinkerforge.js')
+else:
     tmp_dir = tempfile.mkdtemp()
 
     # javascript/tinkerforge_javascript_bindings_latest.zip.symlink is a symlink to the actual file
@@ -134,18 +146,6 @@ if socket.gethostname() != 'tinkerforge.com':
             print(' * Tinkerforge.js')
 
     shutil.rmtree(tmp_dir)
-else:
-    for lang in ['en', 'de']:
-        print('Copying Tinkerforge.js to doc/{0}:'.format(lang))
-        src_file = os.path.join(path, 'javascript', 'Tinkerforge.js')
-
-        dest_dir = os.path.join(start_path, doc_path.format(lang), t[1])
-        if not os.path.exists(dest_dir):
-            os.makedirs(dest_dir)
-
-        if files_are_not_the_same(src_file, dest_dir):
-            shutil.copy(src_file, dest_dir)
-            print(' * Tinkerforge.js')
 
 print('')
 print('>>> Done <<<')
