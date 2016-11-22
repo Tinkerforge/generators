@@ -130,8 +130,9 @@ else:
     tmp_dir = tempfile.mkdtemp()
 
     # javascript/tinkerforge_javascript_bindings_latest.zip.symlink is a symlink to the actual file
-    with zipfile.ZipFile(os.path.realpath(os.path.join(path, 'javascript', 'tinkerforge_javascript_bindings_latest.zip.symlink'))) as zf:
-        zf.extract('browser/source/Tinkerforge.js', tmp_dir)
+    zf = zipfile.ZipFile(os.path.realpath(os.path.join(path, 'javascript', 'tinkerforge_javascript_bindings_latest.zip.symlink')))
+    zf.extract('browser/source/Tinkerforge.js', tmp_dir)
+    zf.close()
 
     for lang in ['en', 'de']:
         print('Copying Tinkerforge.js to doc/{0}:'.format(lang))
