@@ -2729,16 +2729,16 @@ com['packets'].append({
 """
 Sets the client specific configuration of the WIFI Extension 2.0.
 
-The ``enable`` parameter enables or disables the client part fo the
+The ``enable`` parameter enables or disables the client part of the
 WIFI Extension 2.0. The default value is *true*.
 
 The ``ssid`` parameter sets the SSID (up to 32 characters) of the access point
 to connect to.
 
-If the ``ip``, ``subnet_mask`` and ``gateway`` parameters are set to all zero
-then DHCP is used for IP address configuration. Otherwise those three
-parameters can be used to configure a static IP address. The default
-configuration is DHCP.
+If the ``ip`` parameter is set to all zero then ``subnet_mask`` and ``gateway``
+parameters are also set to all zero and DHCP is used for IP address configuration.
+Otherwise those three parameters can be used to configure a static IP address.
+The default configuration is DHCP.
 
 If the ``mac_address`` parameter is set to all zero then the factory MAC
 address is used. Otherwise this parameter can be used to set a custom MAC
@@ -2932,15 +2932,15 @@ com['packets'].append({
 """
 Sets the access point specific configuration of the WIFI Extension 2.0.
 
-The ``enable`` parameter enables or disables the access point part fo the
+The ``enable`` parameter enables or disables the access point part of the
 WIFI Extension 2.0. The default value is true.
 
 The ``ssid`` parameter sets the SSID (up to 32 characters) of the access point.
 
-If the ``ip``, ``subnet_mask`` and ``gateway`` parameters are set to all zero
-then a DHCP server is enabled. Otherwise those three parameters can be used to
-configure a static IP address for the access point. The default configuration
-is DHCP.
+If the ``ip`` parameter is set to all zero then ``subnet_mask`` and ``gateway``
+parameters are also set to all zero and DHCP is used for IP address configuration.
+Otherwise those three parameters can be used to configure a static IP address.
+The default configuration is DHCP.
 
 The ``encryption`` parameter sets the encryption mode to be used. Possible
 values are Open (no encryption), WEP or WPA/WPA2 PSK. The default value is
@@ -3173,6 +3173,173 @@ Returns *true* if the green status LED of the WIFI Extension 2.0 is turned on.
 'de':
 """
 Gibt *true* zurück falls die grüne Status LED der WIFI Extension 2.0 aktiviert ist.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Wifi2 Mesh Configuration',
+'elements': [('Enable', 'bool', 1, 'in'),
+             ('Router IP', 'uint8', 4, 'in'),
+             ('Router Subnet Mask', 'uint8', 4, 'in'),
+             ('Router Gateway', 'uint8', 4, 'in'),
+             ('Router BSSID', 'uint8', 6, 'in'),
+             ('Group ID', 'uint8', 6, 'in'),
+             ('SSID Prefix', 'string', 16, 'in'),
+             ('Server IP', 'uint8', 4, 'in'),
+             ('Server Port', 'uint16', 1, 'in')],
+'since_firmware': [2, 4, 2],
+'doc': ['af', {
+'en':
+"""
+Sets the mesh specific configuration of the WIFI Extension 2.0.
+
+The ``enable`` parameter enables or disables the mesh part of the
+WIFI Extension 2.0. The default value is *false*.
+
+If the ``router_ip`` parameter is set to all zero then ``router_subnet_mask``
+and ``router_gateway`` parameters are also set to all zero and DHCP is used for
+IP address configuration. Otherwise those three parameters can be used to configure
+a static IP address. The default configuration is DHCP.
+
+If the ``router_bssid`` parameter is set to all zero then the information is taken
+from WiFi scan when connecting the SSID as set by :func:`SetWifi2MeshRouterSSID`.
+This only works if the the SSID is not hidden. In case the AP has hidden SSID this
+parameter must be specified, otherwise the node will not be able to reach the mesh
+router.
+
+The ``group_id`` and the ``ssid_prefix`` parameters identifies a particular mesh
+network and nodes configured with same ``group_id`` and the ``ssid_prefix`` are
+considered to be in the same mesh network.
+
+The ``server_ip`` and the ``server_port`` parameters specifies the location of the
+brickd that supports mesh feature.
+
+To apply configuration changes to the WIFI Extension 2.0 the
+:func:`SaveWifi2Configuration` function has to be called and the Master Brick
+has to be restarted afterwards.
+
+It is recommended to use the Brick Viewer to set the client configuration.
+""",
+# TODO: German mesh documentation.
+'de':
+"""
+-
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Wifi2 Mesh Configuration',
+'elements': [('Enable', 'bool', 1, 'out'),
+             ('Router IP', 'uint8', 4, 'out'),
+             ('Router Subnet Mask', 'uint8', 4, 'out'),
+             ('Router Gateway', 'uint8', 4, 'out'),
+             ('Router BSSID', 'uint8', 6, 'out'),
+             ('Group ID', 'uint8', 6, 'out'),
+             ('SSID Prefix', 'string', 16, 'out'),
+             ('Server IP', 'uint8', 4, 'out'),
+             ('Server Port', 'uint16', 1, 'out')],
+'since_firmware': [2, 4, 2],
+'doc': ['af', {
+'en':
+"""
+Returns the mesh configuration as set by :func:`SetWifi2MeshConfiguration`.
+""",
+# TODO: German mesh documentation.
+'de':
+"""
+-
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Wifi2 Mesh Router SSID',
+'elements': [('Router SSID', 'string', 32, 'in')],
+'since_firmware': [2, 4, 2],
+'doc': ['af', {
+'en':
+"""
+Sets the mesh router SSID (up to 32 characters) of the WIFI Extension 2.0.
+It is used to specify the mesh router to connect to.
+
+To apply configuration changes to the WIFI Extension 2.0 the
+:func:`SaveWifi2Configuration` function has to be called and the Master Brick
+has to be restarted afterwards.
+
+It is recommended to use the Brick Viewer to set the client hostname.
+""",
+# TODO: German mesh documentation.
+'de':
+"""
+-
+"""
+}]
+})
+
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Wifi2 Mesh Router SSID',
+'elements': [('Router SSID', 'string', 32, 'out')],
+'since_firmware': [2, 4, 2],
+'doc': ['af', {
+'en':
+"""
+Returns the mesh router password as set by :func:`SetWifi2MeshRouterSSID`.
+""",
+# TODO: German mesh documentation.
+'de':
+"""
+-
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Wifi2 Mesh Router Password',
+'elements': [('Router Password', 'string', 64, 'in')],
+'since_firmware': [2, 4, 2],
+'doc': ['af', {
+'en':
+"""
+Sets the mesh router password (up to 64 characters) of the WIFI Extension 2.0.
+The password will be used to connect to the mesh router.
+
+To apply configuration changes to the WIFI Extension 2.0 the
+:func:`SaveWifi2Configuration` function has to be called and the Master Brick
+has to be restarted afterwards.
+
+It is recommended to use the Brick Viewer to set the client hostname.
+""",
+# TODO: German mesh documentation.
+'de':
+"""
+-
+"""
+}]
+})
+
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Wifi2 Mesh Router Password',
+'elements': [('Router Password', 'string', 64, 'out')],
+'since_firmware': [2, 4, 2],
+'doc': ['af', {
+'en':
+"""
+Returns the mesh router password as set by :func:`SetWifi2MeshRouterPassword`.
+""",
+# TODO: German mesh documentation.
+'de':
+"""
+-
 """
 }]
 })
