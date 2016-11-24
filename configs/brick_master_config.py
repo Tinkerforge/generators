@@ -3325,7 +3325,6 @@ It is recommended to use the Brick Viewer to set the client hostname.
 }]
 })
 
-
 com['packets'].append({
 'type': 'function',
 'name': 'Get Wifi2 Mesh Router Password',
@@ -3335,6 +3334,77 @@ com['packets'].append({
 'en':
 """
 Returns the mesh router password as set by :func:`SetWifi2MeshRouterPassword`.
+""",
+# TODO: German mesh documentation.
+'de':
+"""
+-
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Wifi2 Mesh Common Status',
+'elements': [('Status', 'uint8', 1, 'out', ('Wifi2 Mesh Status', [('Disabled', 0),
+                                                                  ('Connecting', 1),
+                                                                  ('Got IP', 2),
+                                                                  ('Local Mesh', 3),
+                                                                  ('Online Mesh', 4)])),
+             ('Root Node', 'bool', 1, 'out'),
+             ('Root Candidate', 'bool', 1, 'out'),
+             ('Connected Nodes', 'uint16', 1, 'out'),
+             ('RX Count', 'uint32', 1, 'out'),
+             ('TX Count', 'uint32', 1, 'out')],
+'since_firmware': [2, 4, 2],
+'doc': ['af', {
+'en':
+"""
+Returns the common mesh status of the WIFI Extension 2.0.
+""",
+# TODO: German mesh documentation.
+'de':
+"""
+-
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Wifi2 Mesh Station Status',
+'elements': [('Host Name', 'string', 32, 'out'),
+             ('IP', 'uint8', 4, 'out'),
+             ('Subnet Mask', 'uint8', 4, 'out'),
+             ('Gateway', 'uint8', 4, 'out'),
+             ('MAC Address', 'uint8', 6, 'out')],
+'since_firmware': [2, 4, 2],
+'doc': ['af', {
+'en':
+"""
+Returns the mesh station status of the WIFI Extension 2.0.
+""",
+# TODO: German mesh documentation.
+'de':
+"""
+-
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Wifi2 Mesh AP Status',
+'elements': [('SSID', 'string', 32, 'out'),
+             ('IP', 'uint8', 4, 'out'),
+             ('Subnet Mask', 'uint8', 4, 'out'),
+             ('Gateway', 'uint8', 4, 'out'),
+             ('MAC Address', 'uint8', 6, 'out')],
+'since_firmware': [2, 4, 2],
+'doc': ['af', {
+'en':
+"""
+Returns the mesh AP status of the WIFI Extension 2.0.
 """,
 # TODO: German mesh documentation.
 'de':
