@@ -91,12 +91,14 @@ common_packets.append({
 'type': 'function',
 'function_id': 239,
 'name': 'Set Status LED Config',
-'elements': [('Config', 'uint8', 1, 'in')],
+'elements': [('Config', 'uint8', 1, 'in', ('Status LED Config', [('Off', 0),
+                                                                 ('On', 1),
+                                                                 ('Show Status', 2)]))],
 'since_firmware': {'*': [1, 0, 0]},
-'doc': ['bf', {
+'doc': ['af', {
 'en':
 """
-ShowCommunicationStatus = 2, On = 1, Off = 0
+
 """,
 'de':
 """
@@ -109,9 +111,11 @@ common_packets.append({
 'type': 'function',
 'function_id': 240,
 'name': 'Get Status LED Config',
-'elements': [('Config', 'uint8', 1, 'out')],
+'elements': [('Config', 'uint8', 1, 'out', ('Status LED Config', [('Off', 0),
+                                                                  ('On', 1),
+                                                                  ('Show Status', 2)]))],
 'since_firmware': {'*': [1, 0, 0]},
-'doc': ['bf', {
+'doc': ['af', {
 'en':
 """
 
