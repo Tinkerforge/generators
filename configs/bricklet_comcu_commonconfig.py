@@ -8,6 +8,26 @@
 
 common_packets = []
 
+common_packets.append({
+'type': 'function',
+'function_id': 234,
+'name': 'Get SPITFP Error Count',
+'elements': [('Error Count Ack Checksum', 'uint32', 1, 'out'),
+             ('Error Count Message Checksum', 'uint32', 1, 'out'),
+             ('Error Count Frame', 'uint32', 1, 'out'),
+             ('Error Count Overflow', 'uint32', 1, 'out')],
+'since_firmware': {'*': [1, 0, 0]},
+'doc': ['af', {
+'en':
+"""
+
+""",
+'de':
+"""
+
+"""
+}]
+})
 
 common_packets.append({
 'type': 'function',
