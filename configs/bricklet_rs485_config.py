@@ -171,7 +171,7 @@ com['packets'].append({
 """
 Sets the configuration for the RS232 communication. Available options:
 
-TODO: Baudrate 100 to 48000000*1023/(1024*16.0) = 2997070
+TODO: Baudrate 100 to 2000000
 
 * Baudrate between XXX and YYY baud.
 * Parity of none, odd or even.
