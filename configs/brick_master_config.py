@@ -3195,8 +3195,8 @@ com['packets'].append({
              ('Router BSSID', 'uint8', 6, 'in'),
              ('Group ID', 'uint8', 6, 'in'),
              ('SSID Prefix', 'string', 16, 'in'),
-             ('Server IP', 'uint8', 4, 'in'),
-             ('Server Port', 'uint16', 1, 'in')],
+             ('Gateway IP', 'uint8', 4, 'in'),
+             ('Gateway Port', 'uint16', 1, 'in')],
 'since_firmware': [2, 4, 2],
 'doc': ['af', {
 'en':
@@ -3221,7 +3221,7 @@ The ``group_id`` and the ``ssid_prefix`` parameters identifies a particular mesh
 network and nodes configured with same ``group_id`` and the ``ssid_prefix`` are
 considered to be in the same mesh network.
 
-The ``server_ip`` and the ``server_port`` parameters specifies the location of the
+The ``gateway_ip`` and the ``gateway_port`` parameters specifies the location of the
 brickd that supports mesh feature.
 
 To apply configuration changes to the WIFI Extension 2.0 the
@@ -3248,8 +3248,8 @@ com['packets'].append({
              ('Router BSSID', 'uint8', 6, 'out'),
              ('Group ID', 'uint8', 6, 'out'),
              ('SSID Prefix', 'string', 16, 'out'),
-             ('Server IP', 'uint8', 4, 'out'),
-             ('Server Port', 'uint16', 1, 'out')],
+             ('Gateway IP', 'uint8', 4, 'out'),
+             ('Gateway Port', 'uint16', 1, 'out')],
 'since_firmware': [2, 4, 2],
 'doc': ['af', {
 'en':
@@ -3288,7 +3288,6 @@ It is recommended to use the Brick Viewer to set the client hostname.
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',
