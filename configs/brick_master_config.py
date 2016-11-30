@@ -2613,7 +2613,15 @@ WIFI Extension 2.0. The default value is 80.
 The ``phy_mode`` parameter sets the specific wireless network mode to be used.
 Possible values are B, G and N. The default value is G.
 
-The ``sleep_mode`` and ``website`` parameters are currently unused.
+The ``sleep_mode`` parameter is currently unused.
+
+The ``website`` parameter is used to enable or disable the web interface of
+the WIFI Extension 2.0, which is available from firmware version 2.0.1. Note
+that, for firmware version 2.0.3 and older, to disable the the web interface
+the ``website_port`` parameter must be set to 1 and greater than 1 to enable
+the web interface. For firmware version 2.0.4 and later, setting this parameter
+to 1 will enable the web interface and setting it to 0 will disable the web
+interface.
 
 To apply configuration changes to the WIFI Extension 2.0 the
 :func:`SaveWifi2Configuration` function has to be called and the Master Brick
