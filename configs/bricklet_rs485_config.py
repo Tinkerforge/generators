@@ -35,7 +35,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Writes a string of up to 60 characters to the RS232 interface. The string
+Writes a string of up to 60 characters to the RS485 interface. The string
 can be binary data, ASCII or similar is not necessary.
 
 The length of the string has to be given as an additional parameter.
@@ -47,7 +47,7 @@ regarding baudrate, parity and so on.
 """,
 'de':
 """
-Schreibt einen String aus bis zu 60 Zeichen auf die RS232-Schnittstelle. Der
+Schreibt einen String aus bis zu 60 Zeichen auf die RS485-Schnittstelle. Der
 String kann aus Binärdaten bestehen, ASCII o.ä. ist nicht notwendig.
 
 Die Länge des Strings muss als ein zusätzlicher Parameter angegeben werden.
@@ -169,28 +169,26 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the configuration for the RS232 communication. Available options:
+Sets the configuration for the RS485 communication. Available options:
 
-TODO: Baudrate 100 to 2000000
-
-* Baudrate between XXX and YYY baud.
+* Baudrate between 100 and 2000000 baud.
 * Parity of none, odd or even.
 * Stopbits can be 1 or 2.
 * Word length of 5 to 8.
-* Duplex TODO
+* Half- or Full-Duplex
 
 The default is: 115200 baud, parity none, 1 stop bit, word length 8, half duplex.
 """,
 'de':
 """
-Setzt die Konfiguration für die RS232-Kommunikation.
+Setzt die Konfiguration für die RS485-Kommunikation.
 Verfügbare Optionen sind:
 
-* Baudrate zwischen XXX und YYY Baud.
+* Baudrate zwischen 100 und YYY 2000000 Baud.
 * Parität von None, Odd und Even Parity.
 * Stop Bits von 1 oder 2.
 * Wortlänge zwischen 5 und 8.
-* Hard-/Software Flow Control kann je an oder aus sein.
+* Half- oder Full-Duplex
 
 Der Standard ist: 115200 Baud, Parität None, 1 Stop Bits, Wortlänge 8, half duplex.
 """
@@ -230,16 +228,28 @@ com['packets'].append({
 'name': 'Set Communication LED Config',
 'elements': [('Config', 'uint8', 1, 'in', ('Communication LED Config', [('Off', 0),
                                                                         ('On', 1),
-                                                                        ('Show Communication', 2)]))],
+                                                                        ('Show Communication', 2),
+                                                                        ('Show Heartbeat', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
+Sets the communication LED configuration. By default the LED shows
+communication traffic, it flickers once for every 10 received data packets.
 
+You can also turn the LED permanently on/off or show a heartbeat.
+
+If the Bricklet is in bootloader mode, the LED is off.
 """,
 'de':
 """
+Setzt die Konfiguration der Kommunikations-LED. Standardmäßig zeigt
+die LED die Kommunikationsdatenmenge an. Sie blinkt einmal auf pro 10 empfangenen
+Datenpaketen zwischen Brick und Bricklet.
 
+Die LED kann auch permanaent an/aus gestellt werden oder einen Herzschlag anzeigen.
+
+Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
 """
 }]
 })
@@ -249,16 +259,17 @@ com['packets'].append({
 'name': 'Get Communication LED Config',
 'elements': [('Config', 'uint8', 1, 'out', ('Communication LED Config', [('Off', 0),
                                                                          ('On', 1),
-                                                                         ('Show Communication', 2)]))],
+                                                                         ('Show Communication', 2),
+                                                                         ('Show Heartbeat', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-
+Returns the configuration as set by :func:`SetCommunicationLEDConfig`
 """,
 'de':
 """
-
+Gibt die Konfiguration zurück, wie von :func:`SetCommunicationLEDConfig` gesetzt.
 """
 }]
 })
@@ -268,16 +279,33 @@ com['packets'].append({
 'name': 'Set Error LED Config',
 'elements': [('Config', 'uint8', 1, 'in', ('Error LED Config', [('Off', 0),
                                                                 ('On', 1),
-                                                                ('Show Error', 2)]))],
+                                                                ('Show Error', 2),
+                                                                ('Show Heartbeat', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
+Sets the error led configuration. 
 
+By default the error LED turns on if there is any error (see :func:`ErrorCountCallback`). 
+If you call this function with the SHOW ERROR option again, the LED will turn off until the
+next error occurs.
+
+You can also turn the LED permanently on/off or show a heartbeat.
+
+If the Bricklet is in bootloader mode, the LED is off.
 """,
 'de':
 """
+Setzt die Konfiguration der Error-LED.
 
+Standardmäßig ist geht die LED an, wenn ein Error auftritt (siehe :func:`ErrorCountCallback`).
+Wenn diese Funktion danach nochmal mit der "SHOW ERROR"-Option aufgerufen wird, geht die
+LED wieder aus bis der nächste Error auftritt.
+
+Die LED kann auch permanaent an/aus gestellt werden oder einen Herzschlag anzeigen.
+
+Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
 """
 }]
 })
@@ -287,16 +315,17 @@ com['packets'].append({
 'name': 'Get Error LED Config',
 'elements': [('Config', 'uint8', 1, 'out', ('Error LED Config', [('Off', 0),
                                                                  ('On', 1),
-                                                                 ('Show Error', 2)]))],
+                                                                 ('Show Error', 2),
+                                                                 ('Show Heartbeat', 3)]))],
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-
+Returns the configuration as set by :func:`SetErrorLEDConfig`.
 """,
 'de':
 """
-
+Gibt die Konfiguration zurück, wie von :func:`SetErrorLEDConfig` gesetzt.
 """
 }]
 })
@@ -310,14 +339,33 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Current buffer content is lost if called
+Sets the send and receive buffer size in byte. In sum there is
+10240 byte (10kb) buffer available and the minimum buffer size
+is 1024 byte (1kb) for both. 
 
-Sum = X, min for both = 1024
-default = 50/50
+The current buffer content is lost if this function is called.
+
+The send buffer holds data that is given by :func:`Write` and
+can not be written yet. The receive buffer holds data that is 
+received through RS485 but could not yet be send to the
+user, either by :func:`Read` or through :func:`ReadCallback`.
+
+The default configuration is 5120 byte (5kb) per buffer.
 """,
 'de':
 """
+Setzt die Größe des Senden- und Empfangsbuffers. In Summe können 
+die Buffer eine Größe von 10240 Byte (1kb) haben, die Minimumalgröße
+ist 1024 byte (1kb) für Beide.
 
+Der aktuelle Bufferinhalt geht bei einem Aufruf dieser Funktion verloren.
+
+Der Sendenbuffer hält die Daten welche über :func:`Write` übergeben und noch
+nicht geschrieben werden konnten. Der Empfangsbuffer hält Daten welche
+über RS485 empfangen wurden aber noch nicht über :func:`Read` oder
+:func:`ReadCallback` an ein Nutzerprogramm übertragen werden konnten.
+
+Die Standardkonfiguration ist 5120 Byte (5kb) pro Buffer.
 """
 }]
 })
@@ -331,12 +379,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sum = X, min for both = 1024
-default = 50/50
+Returns the buffer configuration as set by :func:`SetBufferConfig`.
 """,
 'de':
 """
-
+Gibt die Buffer-Konfiguration zurück, wie von :func:`SetBufferConfig` gesetzt.
 """
 }]
 })
@@ -350,11 +397,15 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Used bytes of send/receive buffer
+Returns the currently used bytes for the send and received buffer.
+
+See :func:`SetBufferConfig` for buffer size configuration.
 """,
 'de':
 """
+Gibt die aktuell genutzten Bytes des Sende- und Empfangsbuffers zurück.
 
+Siehe :func:`SetBufferConfig` zur Konfiguration der Buffergrößen.
 """
 }]
 })
@@ -429,10 +480,11 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the current number of overrun and parity errors.
 """,
 'de':
 """
-
+Gibt die aktuelle Anzahl an Overrun und Parity Fehlern zurück.
 """
 }]
 })
@@ -473,13 +525,13 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called if a new error occurs. It has a 
-Possible errors are overrun and parity error.
+This callback is called if a new error occurs. It returns
+the current overrun and parity error count.
 """,
 'de':
 """
-Dieser Callback wird aufgerufen wenn ein Fehler auftritt.
-Mögliche Fehler sind Overrun-, Parity- oder Framing-Fehler.
+Dieser Callback wird aufgerufen wenn ein neuer Fehler auftritt.
+Er gibt die Anzahl der aufgetreten Overrun and Parity Fehler zurück.
 """
 }]
 })

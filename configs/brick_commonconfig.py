@@ -25,11 +25,11 @@ common_packets.append({
 'doc': ['af', {
 'en':
 """
-between 400000 and 2000000. Default 1400000
+TODO (baud rate between 400000 and 2000000. Default 1400000)
 """,
 'de':
 """
-
+TODO
 """
 }]
 })
@@ -52,11 +52,11 @@ common_packets.append({
 'doc': ['af', {
 'en':
 """
-
+TODO
 """,
 'de':
 """
-
+TODO
 """
 }]
 })
@@ -83,11 +83,11 @@ common_packets.append({
 'doc': ['af', {
 'en':
 """
-
+TODO
 """,
 'de':
 """
-
+TODO
 """
 }]
 })
@@ -113,11 +113,11 @@ common_packets.append({
 'doc': ['af', {
 'en':
 """
-
+TODO
 """,
 'de':
 """
-
+TODO
 """
 }]
 })
