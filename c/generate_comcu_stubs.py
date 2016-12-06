@@ -39,8 +39,9 @@ class COMCUBindingsDevice(common.Device):
         char_format="'{0}'"
         constants = []
 
-        for constant_group in self.get_constant_groups()[0:-3]: # Remove last 3 constant groups (bootloader constants)
-            constants.append('')
+        for i, constant_group in enumerate(self.get_constant_groups()[0:-3]): # Remove last 3 constant groups (bootloader constants)
+            if i != 0:
+                constants.append('')
             for constant in constant_group.get_constants():
                 if constant_group.get_type() == 'char':
                     value = char_format.format(constant.get_value())
