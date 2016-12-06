@@ -34,6 +34,28 @@ import common
 import c_common
 
 class COMCUBindingsDevice(common.Device):
+    def get_h_constants(self):
+        constant_format = '#define {prefix}_{constant_group_upper_case_name}_{constant_upper_case_name} {constant_value}'
+        char_format="'{0}'"
+        constants = []
+
+        for constant_group in self.get_constant_groups()[0:-3]: # Remove last 3 constant groups (bootloader constants)
+            constants.append('')
+            for constant in constant_group.get_constants():
+                if constant_group.get_type() == 'char':
+                    value = char_format.format(constant.get_value())
+                else:
+                    value = str(constant.get_value())
+
+                constants.append(constant_format.format(constant_group_upper_case_name=constant_group.get_upper_case_name(),
+                                                        constant_group_camel_case_name=constant_group.get_camel_case_name(),
+                                                        constant_upper_case_name=constant.get_upper_case_name(),
+                                                        constant_camel_case_name=constant.get_camel_case_name(),
+                                                        constant_value=value,
+                                                        prefix=self.get_upper_case_name()))
+
+        return constants
+
     def get_h_defines(self):
         define_function =  '#define FID_{0} {1}'
         define_callback =  '#define FID_CALLBACK_{0} {1}'
@@ -301,18 +323,21 @@ BootloaderHandleMessageResponse handle_message(const void *data, void *response)
 void communication_tick(void);
 void communication_init(void);
 
-// Function and callback IDs and structs
+// Constants
 {4}
 
+// Function and callback IDs and structs
 {5}
 
-// Function prototypes
 {6}
 
-// Callbacks
+// Function prototypes
 {7}
 
+// Callbacks
 {8}
+
+{9}
 
 
 #endif
@@ -370,6 +395,7 @@ void communication_init(void);
         self.copy_templates_to(folder)
         self.fill_templates(folder, device_name_dash, device.get_name(), year, name, email)
 
+        h_constants = device.get_h_constants()
         h_defines = device.get_h_defines()
         h_structs = device.get_h_structs()
         h_function_prototypes = device.get_h_function_prototypes()
@@ -379,6 +405,7 @@ void communication_init(void);
         c_functions = device.get_c_functions()
         c_callbacks = device.get_c_callbacks()
 
+        h_constants_string = '\n'.join(h_constants)
         h_defines_string = '\n'.join(h_defines)
         h_structs_string = '\n'.join(h_structs)
         h_function_prototypes_string = '\n'.join(h_function_prototypes)
@@ -392,7 +419,7 @@ void communication_init(void);
             c.write(self.c_file.format(device_name_dash, year, name, email, c_cases_string, c_functions_string, c_callbacks_string))
 
         with open(os.path.join(folder, 'software', 'src', 'communication.h'), 'w') as h:
-            h.write(self.h_file.format(device_name_dash, year, name, email, h_defines_string, h_structs_string, h_function_prototypes_string, h_callback_prototypes_string, h_callback_list_string))
+            h.write(self.h_file.format(device_name_dash, year, name, email, h_constants_string, h_defines_string, h_structs_string, h_function_prototypes_string, h_callback_prototypes_string, h_callback_list_string))
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', COMCUBindingsGenerator)
