@@ -117,6 +117,37 @@ class COMCUBindingsDevice(common.Device):
 
         return prototypes
 
+    def get_h_callback_prototypes(self):
+        prototype = 'bool handle_{0}_callback(void);'
+
+        prototypes = []
+        for packet in self.get_packets('callback'):
+            if packet.get_function_id() < 200:
+                prototypes.append(prototype.format(packet.get_underscore_name()))
+
+        return prototypes
+
+    def get_h_callback_list(self):
+        callback_tick_wait_ms = '#define COMMUNICATION_CALLBACK_TICK_WAIT_MS {0}'
+        callback_tick_handler_num = '#define COMMUNICATION_CALLBACK_HANDLER_NUM {0}'
+        callback = '\t{{NULL, NULL, handle_{0}_callback}}, \\'
+
+        num = 0
+        for packet in self.get_packets('callback'):
+            if packet.get_function_id() < 200:
+                num += 1
+
+        callback_list = []
+        callback_list.append(callback_tick_wait_ms.format(1))
+        callback_list.append(callback_tick_handler_num.format(num))
+        callback_list.append('#define COMMUNICATION_CALLBACK_LIST_INIT \\')
+
+        for packet in self.get_packets('callback'):
+            if packet.get_function_id() < 200:
+                callback_list.append(callback.format(packet.get_underscore_name()))
+
+        return callback_list
+
     def get_c_cases(self):
         case =  '\t\tcase FID_{0}: return {1}(message);'
         case_with_response = '\t\tcase FID_{0}: return {1}(message, response);'
@@ -125,9 +156,9 @@ class COMCUBindingsDevice(common.Device):
         for packet in self.get_packets('function'):
             if packet.get_function_id() < 200:
                 if len(packet.get_elements('out')) == 0:
-                    cases.append(case.format(packet.get_underscore_name().upper(), packet.get_underscore_name()))
+                    cases.append(case.format(packet.get_upper_case_name(), packet.get_underscore_name()))
                 else:
-                    cases.append(case_with_response.format(packet.get_underscore_name().upper(), packet.get_underscore_name()))
+                    cases.append(case_with_response.format(packet.get_upper_case_name(), packet.get_underscore_name()))
 
         return cases
 
@@ -153,6 +184,37 @@ class COMCUBindingsDevice(common.Device):
                     functions.append(function_with_response.format(packet.get_underscore_name(), packet.get_camel_case_name(), packet.get_camel_case_name() + 'Response'))
 
         return functions
+
+    def get_c_callbacks(self):
+        callback = """
+bool handle_{0}_callback(void) {{
+\tstatic bool is_buffered = false;
+\tstatic {1}Callback cb;
+
+\tif(!is_buffered) {{
+\t\ttfp_make_default_header(&cb.header, bootloader_get_uid(), sizeof({1}Callback), FID_CALLBACK_{2});
+\t\t// TODO: Implement {1} callback handling
+
+\t\treturn false;
+\t}}
+
+\tif(bootloader_spitfp_is_send_possible(&bootloader_status.st)) {{
+\t\tbootloader_spitfp_send_ack_and_message(&bootloader_status, (uint8_t*)&cb, sizeof({1}Callback));
+\t\tis_buffered = false;
+\t\treturn true;
+\t}} else {{
+\t\tis_buffered = true;
+\t}}
+
+\treturn false;
+}}"""
+        callbacks = []
+        for packet in self.get_packets('callback'):
+            if packet.get_function_id() < 200:
+                callbacks.append(callback.format(packet.get_underscore_name(), packet.get_camel_case_name(), packet.get_upper_case_name()))
+
+        return callbacks
+
 
 class COMCUBindingsPacket(c_common.CPacket):
     pass
@@ -181,6 +243,7 @@ class COMCUBindingsGenerator(common.BindingsGenerator):
 
 #include "communication.h"
 
+#include "bricklib2/utility/communication_callback.h"
 #include "bricklib2/protocols/tfp/tfp.h"
 
 BootloaderHandleMessageResponse handle_message(const void *message, void *response) {{
@@ -192,6 +255,17 @@ BootloaderHandleMessageResponse handle_message(const void *message, void *respon
 
 
 {5}
+
+
+{6}
+
+void communication_tick(void) {{
+	communication_callback_tick();
+}}
+
+void communication_init(void) {{
+	communication_callback_init();
+}}
 """
     h_file = """/* {0}-bricklet
  * Copyright (C) {1} {2} <{3}>
@@ -217,18 +291,28 @@ BootloaderHandleMessageResponse handle_message(const void *message, void *respon
 #ifndef COMMUNICATION_H
 #define COMMUNICATION_H
 
+#include <stdint.h>
+#include <stdbool.h>
+
 #include "bricklib2/bootloader/bootloader.h"
 
+// Default functions
 BootloaderHandleMessageResponse handle_message(const void *data, void *response);
+void communication_tick(void);
+void communication_init(void);
 
-
+// Function and callback IDs and structs
 {4}
-
 
 {5}
 
-
+// Function prototypes
 {6}
+
+// Callbacks
+{7}
+
+{8}
 
 
 #endif
@@ -289,20 +373,26 @@ BootloaderHandleMessageResponse handle_message(const void *data, void *response)
         h_defines = device.get_h_defines()
         h_structs = device.get_h_structs()
         h_function_prototypes = device.get_h_function_prototypes()
+        h_callback_prototypes = device.get_h_callback_prototypes()
+        h_callback_list = device.get_h_callback_list()
         c_cases = device.get_c_cases()
         c_functions = device.get_c_functions()
+        c_callbacks = device.get_c_callbacks()
 
         h_defines_string = '\n'.join(h_defines)
         h_structs_string = '\n'.join(h_structs)
         h_function_prototypes_string = '\n'.join(h_function_prototypes)
+        h_callback_prototypes_string = '\n'.join(h_callback_prototypes)
+        h_callback_list_string = '\n'.join(h_callback_list)
         c_cases_string = '\n'.join(c_cases)
         c_functions_string = '\n'.join(c_functions)
+        c_callbacks_string = '\n'.join(c_callbacks)
 
         with open(os.path.join(folder, 'software', 'src', 'communication.c'), 'w') as c:
-            c.write(self.c_file.format(device_name_dash, year, name, email, c_cases_string, c_functions_string))
+            c.write(self.c_file.format(device_name_dash, year, name, email, c_cases_string, c_functions_string, c_callbacks_string))
 
         with open(os.path.join(folder, 'software', 'src', 'communication.h'), 'w') as h:
-            h.write(self.h_file.format(device_name_dash, year, name, email, h_defines_string, h_structs_string, h_function_prototypes_string))
+            h.write(self.h_file.format(device_name_dash, year, name, email, h_defines_string, h_structs_string, h_function_prototypes_string, h_callback_prototypes_string, h_callback_list_string))
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', COMCUBindingsGenerator)
