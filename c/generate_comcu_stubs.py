@@ -153,7 +153,7 @@ class COMCUBindingsDevice(common.Device):
     def get_h_callback_list(self):
         callback_tick_wait_ms = '#define COMMUNICATION_CALLBACK_TICK_WAIT_MS {0}'
         callback_tick_handler_num = '#define COMMUNICATION_CALLBACK_HANDLER_NUM {0}'
-        callback = '\t{{NULL, NULL, handle_{0}_callback}}, \\'
+        callback = '\thandle_{0}_callback, \\'
 
         num = 0
         for packet in self.get_packets('callback'):
