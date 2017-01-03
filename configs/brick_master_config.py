@@ -3264,10 +3264,11 @@ Returns the mesh configuration as set by :func:`SetWifi2MeshConfiguration`.
 }]
 })
 
+# ESP mesh library supports router SSID with maximum length of 31 characters.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Wifi2 Mesh Router SSID',
-'elements': [('Router SSID', 'string', 32, 'in')],
+'elements': [('Router SSID', 'string', 31, 'in')],
 'since_firmware': [2, 4, 2],
 'doc': ['af', {
 'en':
