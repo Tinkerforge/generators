@@ -91,6 +91,54 @@ eine weitere Bewegung erkannt werden nach ungefähr 2 Sekunden.
 }]
 })
 
+com['packets'].append({
+'type': 'function',
+'name': 'Set Status LED Config',
+'elements': [('Config', 'uint8', 1, 'in', ('Status LED Config', [('Off', 0),
+                                                                 ('On', 1),
+                                                                 ('Show Status', 2)]))],
+'since_firmware': [2, 0, 1],
+'doc': ['af', {
+'en':
+"""
+Sets the status led configuration. 
+
+By default the status LED turns on if a motion is detected and off is no motion
+is detected. 
+
+You can also turn the LED permanently on/off.
+""",
+'de':
+"""
+Setzt die Konfiguration der Status-LED.
+
+Standardmäßig geht die LED an, wenn eine Bewegung erkannt wird und
+aus wenn keine Bewegung erkannt wird.
+
+Die LED kann auch permanaent an/aus gestellt werden.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Status LED Config',
+'elements': [('Config', 'uint8', 1, 'out', ('Status LED Config', [('Off', 0),
+                                                                  ('On', 1),
+                                                                  ('Show Status', 2)]))],
+'since_firmware': [2, 0, 1],
+'doc': ['af', {
+'en':
+"""
+Returns the configuration as set by :func:`SetStatusLEDConfig`.
+""",
+'de':
+"""
+Gibt die Konfiguration zurück, wie von :func:`SetStatusLEDConfig` gesetzt.
+"""
+}]
+})
+
 com['examples'].append({
 'name': 'Callback',
 'functions': [('callback', ('Motion Detected', 'motion detected'), [], None, 'Motion Detected'),
