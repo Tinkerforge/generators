@@ -30,11 +30,7 @@ com['packets'].append({
 'elements': [('Latitude', 'uint32', 1, 'out'),
              ('NS', 'char', 1, 'out'),
              ('Longitude', 'uint32', 1, 'out'),
-             ('EW', 'char', 1, 'out'),
-             ('PDOP', 'uint16', 1, 'out'),
-             ('HDOP', 'uint16', 1, 'out'),
-             ('VDOP', 'uint16', 1, 'out'),
-             ('EPE', 'uint16', 1, 'out')],
+             ('EW', 'char', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
@@ -44,16 +40,6 @@ Returns the GPS coordinates. Latitude and longitude are given in the
 The parameter ``ns`` and ``ew`` are the cardinal directions for
 latitude and longitude. Possible values for ``ns`` and ``ew`` are 'N', 'S', 'E'
 and 'W' (north, south, east and west).
-
-PDOP, HDOP and VDOP are the dilution of precision (DOP) values. They specify
-the additional multiplicative effect of GPS satellite geometry on GPS 
-precision. See 
-`here <https://en.wikipedia.org/wiki/Dilution_of_precision_(GPS)>`__
-for more information. The values are give in hundredths.
-
-EPE is the "Estimated Position Error". The EPE is given in cm. This is not the
-absolute maximum error, it is the error with a specific confidence. See
-`here <http://www.nps.gov/gis/gps/WhatisEPE.html>`__ for more information.
 
 This data is only valid if there is currently a fix as indicated by
 :func:`GetStatus`.
@@ -66,17 +52,6 @@ Die Parameter ``ns`` und ``ew`` sind Himmelsrichtungen für
 Breiten- und Längengrad. Mögliche Werte für ``ns`` und ``ew`` sind 'N', 'S', 'E'
 und 'W' (Nord, Süd, Ost, West).
 
-PDOP, HDOP und VDOP sind die "Dilution Of Precision" (DOP) Werte. Sie
-spezifizieren die zusätzlichen multiplikativen Effekte von der GPS
-Satellitengeometrie auf die GPS-Präzision.
-`hier <https://en.wikipedia.org/wiki/Dilution_of_precision_(GPS)>`__ gibt
-es mehr Informationen dazu. Die Werte werden in Hundertstel gegeben.
-
-EPE ist der "Estimated Position Error". Der EPE wird in cm gegeben.
-Dies ist nicht der absolut maximale Fehler, es ist der Fehler mit einer
-spezifischen Konfidenz. Siehe 
-`hier <http://www.nps.gov/gis/gps/WhatisEPE.html>`__ für mehr Informationen.
-
 Diese Daten sind nur gültig wenn ein Fix vorhanden ist (siehe :func:`GetStatus`).
 """
 }]
@@ -85,46 +60,24 @@ Diese Daten sind nur gültig wenn ein Fix vorhanden ist (siehe :func:`GetStatus`
 com['packets'].append({
 'type': 'function',
 'name': 'Get Status',
-'elements': [('Fix', 'uint8', 1, 'out', ('Fix', [('No Fix', 1),
-                                                 ('2D Fix', 2),
-                                                 ('3D Fix', 3)])),
-             ('Satellites View', 'uint8', 1, 'out'),
-             ('Satellites Used', 'uint8', 1, 'out')],
+'elements': [('Has Fix', 'bool', 1, 'out'),
+             ('Satellites View', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns the current fix status, the number of satellites that are in view and
-the number of satellites that are currently used.
+Returns if a fix is currently available as well as the, the number of 
+satellites that are in view.
 
-Possible fix status values can be:
-
-.. csv-table::
- :header: "Value", "Description"
- :widths: 10, 100
-
- "1", "No Fix, :func:`GetCoordinates`, :func:`GetAltitude` and :func:`GetMotion` return invalid data"
- "2", "2D Fix, only :func:`GetCoordinates` and :func:`GetMotion` return valid data"
- "3", "3D Fix, :func:`GetCoordinates`, :func:`GetAltitude` and :func:`GetMotion` return valid data"
-
+TODO: LED color?
 There is also a :ref:`blue LED <gps_bricklet_fix_led>` on the Bricklet that
 indicates the fix status.
 """,
 'de':
 """
-Gibt den aktuellen Fix-Status, die Anzahl der sichtbaren Satelliten und die
-Anzahl der im Moment benutzten Satelliten zurück.
+Gibt zurück ob ein GPS Fix besteht sowie die Anzahl der sichtbaren Satelliten.
 
-Mögliche Fix-Status Werte sind:
-
-.. csv-table::
- :header: "Wert", "Beschreibung"
- :widths: 10, 100
-
- "1", "Kein Fix, :func:`GetCoordinates`, :func:`GetAltitude` und :func:`GetMotion` geben ungültige Daten zurück"
- "2", "2D Fix, nur :func:`GetCoordinates` und :func:`GetMotion` geben gültige Daten zurück"
- "3", "3D Fix, :func:`GetCoordinates`, :func:`GetAltitude` und :func:`GetMotion` geben gültige Daten zurück"
-
+TODO: LED Farbe?
 Auf dem Bricklet ist eine :ref:`blaue LED <gps_bricklet_fix_led>`, die den
 Fix-Status anzeigt.
 """
@@ -252,6 +205,109 @@ Verfügung:
  "1", "Warm Start (Ephemerisdaten werden verworfen)"
  "2", "Cold Start (Zeit-, Position-, Almanach- und Ephemerisdaten werden verworfen)"
  "3", "Factory Reset (Alle System/User Einstellungen werden verworfen)"
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Satellite System Status',
+'elements': [('Satellite System', 'uint8', 1, 'in', ('Satellite System', [('GPS', 0),
+                                                                          ('GLONASS', 1),
+                                                                          ('Galileo', 2)])),
+             ('Satellites', 'int8', 12, 'out'),
+             ('Fix', 'uint8', 1, 'out', ('Fix', [('No Fix', 1),
+                                                 ('2D Fix', 2),
+                                                 ('3D Fix', 3)])),
+             ('PDOP', 'uint16', 1, 'out'),
+             ('HDOP', 'uint16', 1, 'out'),
+             ('VDOP', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO (galileo not supported yet)
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Satellite Status',
+'elements': [('Satellite System', 'uint8', 1, 'in', ('Satellite System', [('GPS', 0),
+                                                                          ('GLONASS', 1),
+                                                                          ('Galileo', 2)])),
+             ('Satellite Number', 'uint8', 1, 'in'), # 1-32, for GLONASS 1-32 correspond to satellite 65-96
+             ('Elevation', 'int16', 1, 'out'),       # 0-90°
+             ('Azimuth', 'int16', 1, 'out'),         # 0-359°
+             ('SNR', 'int16', 1, 'out')],            # 0-99dB
+'since_firmware': [1, 0, 0],
+'doc': ['bf', {
+'en':
+"""
+TODO (galileo not supported yet)
+
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Fix LED Config',
+'elements': [('Config', 'uint8', 1, 'in', ('Fix LED Config', [('Off', 0),
+                                                              ('On', 1),
+                                                              ('Show Fix', 2),
+                                                              ('Show Heartbeat', 3)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Sets the fix LED configuration. By default the LED shows if
+the Bricklet got a GPS fix yet. The LED blinks as long as there is no fix.
+If a fix is established, the led stops blinking and turns on.
+
+You can also turn the LED permanently on/off or show a heartbeat.
+
+If the Bricklet is in bootloader mode, the LED is off.
+""",
+'de':
+"""
+Setzt die Konfiguration der Fix-LED. Standardmäßig zeigt
+die LED an ob ein GPS-Fix bestelt. Sie blinkt solange noch
+kein Fix hergestellt wurde. Wenn ein Fix da ist, stoppt das blinken
+und die LED geht an.
+
+Die LED kann auch permanaent an/aus gestellt werden oder einen Herzschlag anzeigen.
+
+Wenn das Bricklet sich im Bootlodermodus befindet ist die LED aus.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Fix LED Config',
+'elements': [('Config', 'uint8', 1, 'out', ('Fix LED Config', [('Off', 0),
+                                                               ('On', 1),
+                                                               ('Show Fix', 2),
+                                                               ('Show Heartbeat', 3)]))],
+'since_firmware': [1, 0, 0],
+'doc': ['af', {
+'en':
+"""
+Returns the configuration as set by :func:`SetFixLEDConfig`
+""",
+'de':
+"""
+Gibt die Konfiguration zurück, wie von :func:`SetFixLEDConfig` gesetzt.
 """
 }]
 })
@@ -493,15 +549,28 @@ gesetzt.
 
 com['packets'].append({
 'type': 'callback',
+'name': 'Pulse Per Second',
+'elements': [],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+This callback is triggered once per second... TODO
+""",
+'de':
+"""
+TODO
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'callback',
 'name': 'Coordinates',
 'elements': [('Latitude', 'uint32', 1, 'out'),
              ('NS', 'char', 1, 'out'),
              ('Longitude', 'uint32', 1, 'out'),
-             ('EW', 'char', 1, 'out'),
-             ('PDOP', 'uint16', 1, 'out'),
-             ('HDOP', 'uint16', 1, 'out'),
-             ('VDOP', 'uint16', 1, 'out'),
-             ('EPE', 'uint16', 1, 'out')],
+             ('EW', 'char', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -530,11 +599,8 @@ ist (siehe :func:`GetStatus`).
 com['packets'].append({
 'type': 'callback',
 'name': 'Status',
-'elements': [('Fix', 'uint8', 1, 'out', ('Fix', [('No Fix', 1),
-                                                 ('2D Fix', 2),
-                                                 ('3D Fix', 3)])),
-             ('Satellites View', 'uint8', 1, 'out'),
-             ('Satellites Used', 'uint8', 1, 'out')],
+'elements': [('Has Fix', 'bool', 1, 'out'),
+             ('Satellites View', 'uint8', 1, 'out')],
 'since_firmware': [1, 0, 0],
 'doc': ['c', {
 'en':
@@ -646,16 +712,16 @@ seit der letzten Auslösung geändert haben.
 }]
 })
 
-com['examples'].append({
-'name': 'Simple',
-'functions': [('getter', ('Get Coordinates', 'coordinates'), [(('Latitude', 'Latitude'), 'uint32', 1000000.0, '°/1000000', '°', None), (('NS', 'N/S'), 'char', None, None, None, None), (('Longitude', 'Longitude'), 'uint32', 1000000.0, '°/1000000', '°', None), (('EW', 'E/W'), 'char', None, None, None, None), (('PDOP', None), 'uint16', None, None, None, None), (('HDOP', None), 'uint16', None, None, None, None), (('VDOP', None), 'uint16', None, None, None, None), (('EPE', None), 'uint16', 100.0, 'cm', 'm', None)], [])],
-'incomplete': True # because of special print logic
-})
+#com['examples'].append({
+#'name': 'Simple',
+#'functions': [('getter', ('Get Coordinates', 'coordinates'), [(('Latitude', 'Latitude'), 'uint32', 1000000.0, '°/1000000', '°', None), (('NS', 'N/S'), 'char', None, None, None, None), (('Longitude', 'Longitude'), 'uint32', 1000000.0, '°/1000000', '°', None), (('EW', 'E/W'), 'char', None, None, None, None), (('PDOP', None), 'uint16', None, None, None, None), (('HDOP', None), 'uint16', None, None, None, None), (('VDOP', None), 'uint16', None, None, None, None), (('EPE', None), 'uint16', 100.0, 'cm', 'm', None)], [])],
+#'incomplete': True # because of special print logic
+#})
 
-com['examples'].append({
-'name': 'Callback',
-'functions': [('callback', ('Coordinates', 'coordinates'), [(('Latitude', 'Latitude'), 'uint32', 1000000.0, '°/1000000', '°', None), (('NS', 'N/S'), 'char', None, None, None, None), (('Longitude', 'Longitude'), 'uint32', 1000000.0, '°/1000000', '°', None), (('EW', 'E/W'), 'char', None, None, None, None), (('PDOP', None), 'uint16', None, None, None, None), (('HDOP', None), 'uint16', None, None, None, None), (('VDOP', None), 'uint16', None, None, None, None), (('EPE', None), 'uint16', 100.0, 'cm', 'm', None)], None, None),
-              ('callback_period', ('Coordinates', 'coordinates'), [], 1000)],
-'incomplete': True # because of special print logic
-})
+#com['examples'].append({
+#'name': 'Callback',
+#'functions': [('callback', ('Coordinates', 'coordinates'), [(('Latitude', 'Latitude'), 'uint32', 1000000.0, '°/1000000', '°', None), (('NS', 'N/S'), 'char', None, None, None, None), (('Longitude', 'Longitude'), 'uint32', 1000000.0, '°/1000000', '°', None), (('EW', 'E/W'), 'char', None, None, None, None), (('PDOP', None), 'uint16', None, None, None, None), (('HDOP', None), 'uint16', None, None, None, None), (('VDOP', None), 'uint16', None, None, None, None), (('EPE', None), 'uint16', 100.0, 'cm', 'm', None)], None, None),
+#              ('callback_period', ('Coordinates', 'coordinates'), [], 1000)],
+#'incomplete': True # because of special print logic
+#})
 
