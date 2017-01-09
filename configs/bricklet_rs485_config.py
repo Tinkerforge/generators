@@ -299,7 +299,7 @@ If the Bricklet is in bootloader mode, the LED is off.
 """
 Setzt die Konfiguration der Error-LED.
 
-Standardmäßig ist geht die LED an, wenn ein Error auftritt (siehe :func:`ErrorCountCallback`).
+Standardmäßig geht die LED an, wenn ein Error auftritt (siehe :func:`ErrorCountCallback`).
 Wenn diese Funktion danach nochmal mit der "SHOW ERROR"-Option aufgerufen wird, geht die
 LED wieder aus bis der nächste Error auftritt.
 
