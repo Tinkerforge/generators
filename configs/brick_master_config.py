@@ -3268,13 +3268,17 @@ Returns the mesh configuration as set by :func:`SetWifi2MeshConfiguration`.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Wifi2 Mesh Router SSID',
-'elements': [('Router SSID', 'string', 31, 'in')],
+'elements': [('Router SSID', 'string', 32, 'in')],
 'since_firmware': [2, 4, 2],
 'doc': ['af', {
 'en':
 """
-Sets the mesh router SSID (up to 32 characters) of the WIFI Extension 2.0.
+Sets the mesh router SSID of the WIFI Extension 2.0.
 It is used to specify the mesh router to connect to.
+
+Note that even though in the argument of this function a 32 characters long SSID
+is allowed, in practice valid SSID should have a maximum of 31 characters. This
+is due to a bug in the mesh library that we use in the firmware of the extension.
 
 To apply configuration changes to the WIFI Extension 2.0 the
 :func:`SaveWifi2Configuration` function has to be called and the Master Brick
@@ -3294,7 +3298,7 @@ It is recommended to use the Brick Viewer to set the client hostname.
 com['packets'].append({
 'type': 'function',
 'name': 'Get Wifi2 Mesh Router SSID',
-'elements': [('Router SSID', 'string', 31, 'out')],
+'elements': [('Router SSID', 'string', 32, 'out')],
 'since_firmware': [2, 4, 2],
 'doc': ['af', {
 'en':
