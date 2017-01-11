@@ -92,36 +92,6 @@ TODO
 }]
 })
 
-
-common_packets.append({
-'type': 'function',
-'function_id': 237,
-'name': 'Get Co MCU SPITFP Error Count',
-'elements': [('Bricklet Port', 'char', 1, 'in'),
-             ('Error Count Ack Checksum', 'uint32', 1, 'out'),
-             ('Error Count Message Checksum', 'uint32', 1, 'out'),
-             ('Error Count Frame', 'uint32', 1, 'out'),
-             ('Error Count Overflow', 'uint32', 1, 'out')],
-'since_firmware': {'*': [2, 0, 0],
-                   'DC': [2, 3, 3],
-                   'IMU': [2, 3, 3],
-                   'IMU V2': [2, 0, 5],
-                   'Master': [2, 4, 2],
-                   'RED': None,
-                   'Servo': [2, 3, 2],
-                   'Stepper': [2, 3, 3]},
-'doc': ['af', {
-'en':
-"""
-TODO
-""",
-'de':
-"""
-TODO
-"""
-}]
-})
-
 common_packets.append({
 'type': 'function',
 'function_id': 238,
