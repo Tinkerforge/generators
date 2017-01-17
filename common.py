@@ -791,7 +791,7 @@ check_name_valid_word_constant = re.compile('^[A-Z0-9]+[a-z0-9]*$') # constants 
 check_name_exceptions_whole_name = ['Industrial Dual 0 20mA']
 check_name_exceptions_word_in_constant = ['20mA', '24mA']
 
-def check_name(name, short_display_name=None, long_display_name=None, category_name=None, is_constant=False):
+def check_name(name, short_display_name=None, long_display_name=None, category=None, is_constant=False):
     if isinstance(name, tuple):
         raise ValueError('Name {0} uses old tuple format, update it to new split-camel-case format'.format(name))
 
@@ -828,13 +828,13 @@ def check_name(name, short_display_name=None, long_display_name=None, category_n
             raise ValueError("Name '{0}' and short display name '{1}' ({2}) mismatch" \
                              .format(name, short_display_name, short_display_name_to_check))
 
-    if short_display_name != None and long_display_name != None and category_name != None:
-        short_display_name_to_check = set(short_display_name.split(' ') + [category_name])
+    if short_display_name != None and long_display_name != None and category != None:
+        short_display_name_to_check = set(short_display_name.split(' ') + [category])
         long_display_name_to_check = set(long_display_name.split(' '))
 
         if short_display_name_to_check != long_display_name_to_check:
             raise ValueError("Long display name '{0}' and short display name '{1} ' + '{2}' ({3}) do not contain the same words" \
-                             .format(long_display_name, short_display_name, category_name,
+                             .format(long_display_name, short_display_name, category,
                                      ' '.join(list(short_display_name_to_check))))
 
 def break_string(string, marker, continuation='', max_length=90):
@@ -1202,7 +1202,10 @@ class Device(NameMixin):
         self.callback_packets = []
         self.examples = []
 
-        check_name(raw_data['name'][0], short_display_name=raw_data['name'][1], long_display_name=raw_data['name'][2], category_name=raw_data['category'])
+        check_name(self.get_name(),
+                   short_display_name=self.get_short_display_name(),
+                   long_display_name=self.get_long_display_name(),
+                   category=self.get_category())
 
         for i, raw_packet in zip(range(len(raw_data['packets'])), raw_data['packets']):
             if not 'function_id' in raw_packet:
@@ -1277,8 +1280,11 @@ class Device(NameMixin):
         else:
             return ''
 
-    def get_camel_case_category(self):
+    def get_category(self):
         return self.raw_data['category']
+
+    def get_camel_case_category(self):
+        return self.get_category().replace(' ', '')
 
     def get_underscore_category(self):
         return self.get_camel_case_category().lower()
