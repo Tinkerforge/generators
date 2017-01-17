@@ -640,6 +640,7 @@ def generate(bindings_root_directory, language, generator_class):
 
     brick_infos = []
     bricklet_infos = []
+    device_identifiers = set()
 
     generator = generator_class(bindings_root_directory, language)
 
@@ -693,6 +694,12 @@ def generate(bindings_root_directory, language, generator_class):
                 com['common_included'] = True
 
             device = generator.get_device_class()(com, generator)
+            device_identifier = device.get_device_identifier()
+
+            if device_identifier in device_identifiers:
+                raise Exception('Device identifier {0} is not unique'.format(device_identifier))
+
+            device_identifiers.add(device_identifier)
 
             if device.is_brick():
                 ref_name = device.get_underscore_name() + '_brick'
