@@ -21,7 +21,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#if !defined __cplusplus && defined __GNUC__
+#if (!defined __cplusplus && defined __GNUC__) || (defined _MSC_VER && _MSC_VER >= 1600)
 	#include <stdbool.h>
 #endif
 
