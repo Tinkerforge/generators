@@ -302,7 +302,7 @@ Konstanten
                                                         self.get_delphi_class_name())
 
         return common.select_lang(api).format(self.get_doc_rst_ref_name(),
-                                              self.specialize_delphi_doc_function_links(self.get_api_doc()),
+                                              self.specialize_delphi_doc_function_links(common.select_lang(self.get_doc())),
                                               api_str)
 
     def get_delphi_doc(self):

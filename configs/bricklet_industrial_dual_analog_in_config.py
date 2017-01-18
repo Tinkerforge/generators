@@ -25,7 +25,7 @@ com = {
     'examples': []
 }
 
-com['api'] = {
+com['doc'] = {
 'en':
 """
 The Bricklet has two input channel. Functions that are related

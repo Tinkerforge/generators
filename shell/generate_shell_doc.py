@@ -365,7 +365,7 @@ Befehlsstruktur dargestellt.
                                                         c)
 
         return common.select_lang(api).format(self.get_doc_rst_ref_name(),
-                                              self.specialize_shell_doc_function_links(self.get_api_doc()),
+                                              self.specialize_shell_doc_function_links(common.select_lang(self.get_doc())),
                                               api_str,
                                               self.get_shell_device_name(),
                                               self.get_long_display_name())

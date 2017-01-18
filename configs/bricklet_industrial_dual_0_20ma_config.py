@@ -25,7 +25,7 @@ com = {
     'examples': []
 }
 
-com['api'] = {
+com['doc'] = {
 'en':
 """
 Two sensors can be connected to the Bricklet. Functions that are related

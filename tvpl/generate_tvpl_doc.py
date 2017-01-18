@@ -149,7 +149,7 @@ API
             api_str += common.select_lang(common.af_str).format(af)
 
         return common.select_lang(api).format(self.get_doc_rst_ref_name(),
-                                              self.replace_tvpl_function_links(self.get_api_doc()),
+                                              self.replace_tvpl_function_links(common.select_lang(self.get_doc())),
                                               api_str)
 
     def get_tvpl_doc(self):

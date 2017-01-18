@@ -1268,11 +1268,8 @@ class Device(NameMixin):
     def get_api_version(self):
         return self.raw_data['api_version']
 
-    def get_api_doc(self):
-        if 'api' in self.raw_data:
-            return select_lang(self.raw_data['api'])
-        else:
-            return ''
+    def get_doc(self):
+        return self.raw_data.get('doc', {'en': '', 'de': ''})
 
     def get_category(self):
         return self.raw_data['category']

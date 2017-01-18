@@ -446,7 +446,7 @@ Konstanten
                                                         self.get_long_display_name())
 
         return common.select_lang(api).format(self.get_doc_rst_ref_name(),
-                                              self.specialize_matlab_doc_function_links(self.get_api_doc()),
+                                              self.specialize_matlab_doc_function_links(common.select_lang(self.get_doc())),
                                               api_str)
 
     def get_matlab_doc(self):

@@ -152,7 +152,7 @@ com = {
     'examples': []
 }
 
-com['api'] = {
+com['doc'] = {
 'en':
 """
 .. note::

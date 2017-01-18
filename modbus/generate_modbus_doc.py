@@ -151,7 +151,7 @@ Eine allgemeine Beschreibung der Modbus Protokollstruktur findet sich
                                                         c)
 
         return common.select_lang(api).format(self.get_doc_rst_ref_name(),
-                                              self.specialize_modbus_doc_function_links(self.get_api_doc()),
+                                              self.specialize_modbus_doc_function_links(common.select_lang(self.get_doc())),
                                               api_str)
 
     def get_modbus_doc(self):

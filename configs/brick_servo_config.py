@@ -23,7 +23,7 @@ com = {
     'examples': []
 }
 
-com['api'] = {
+com['doc'] = {
 'en':
 """
 Every function of the Servo Brick API that has a *servo_num* parameter can
