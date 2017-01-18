@@ -25,7 +25,7 @@ bindings = sorted(bindings)
 # bindings
 if 'bindings' in args and socket.gethostname() != 'tinkerforge.com':
     for binding in bindings:
-        if binding in ('tcpip', 'modbus'):
+        if binding in ['tcpip', 'modbus']:
             continue
 
         module = __import__('generate_{0}_bindings'.format(binding))
@@ -35,7 +35,7 @@ if 'bindings' in args and socket.gethostname() != 'tinkerforge.com':
 # examples
 if 'examples' in args and socket.gethostname() != 'tinkerforge.com':
     for binding in bindings:
-        if binding in ('tcpip', 'modbus'):
+        if binding in ['tcpip', 'modbus', 'json']:
             continue
 
         try:
@@ -50,6 +50,9 @@ if 'examples' in args and socket.gethostname() != 'tinkerforge.com':
 # doc
 if 'doc' in args:
     for binding in bindings:
+        if binding in ['json']:
+            continue
+
         module = __import__('generate_{0}_doc'.format(binding))
 
         for lang in ['en', 'de']:
@@ -59,7 +62,7 @@ if 'doc' in args:
 # zip
 if 'zip' in args and socket.gethostname() != 'tinkerforge.com':
     for binding in bindings:
-        if binding in ('tcpip', 'modbus'):
+        if binding in ['tcpip', 'modbus']:
             continue
 
         module = __import__('generate_{0}_zip'.format(binding))

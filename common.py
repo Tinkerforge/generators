@@ -1253,6 +1253,9 @@ class Device(NameMixin):
     def is_documented(self):
         return self.raw_data['documented']
 
+    def get_author(self):
+        return self.raw_data['author']
+
     def get_api_version(self):
         return self.raw_data['api_version']
 
@@ -1324,6 +1327,9 @@ class Device(NameMixin):
             return ' '.join(parts)
         else:
             return display_name + ' ' + self.get_category()
+
+    def get_manufacturer(self):
+        return self.raw_data['manufacturer']
 
     def get_description(self):
         return self.raw_data['description']
