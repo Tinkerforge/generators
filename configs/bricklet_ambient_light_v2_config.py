@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 259,
-    'name': ('Ambient Light V2', 'Ambient Light 2.0', 'Ambient Light Bricklet 2.0'),
+    'name': 'Ambient Light V2',
+    'display_name': 'Ambient Light 2.0',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures ambient light up to 64000lux',

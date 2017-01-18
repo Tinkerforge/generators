@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 258,
-    'name': ('Industrial Analog Out', 'Industrial Analog Out', 'Industrial Analog Out Bricklet'),
+    'name': 'Industrial Analog Out',
+    'display_name': 'Industrial Analog Out',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Generates configurable DC voltage and current, 0V to 10V and 4mA to 20mA',

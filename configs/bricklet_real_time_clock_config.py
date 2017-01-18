@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 268,
-    'name': ('Real Time Clock', 'Real-Time Clock', 'Real-Time Clock Bricklet'),
+    'name': 'Real Time Clock',
+    'display_name': 'Real-Time Clock',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Battery-backed real-time clock',

@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 240,
-    'name': ('Hall Effect', 'Hall Effect', 'Hall Effect Bricklet'),
+    'name': 'Hall Effect',
+    'display_name': 'Hall Effect',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Detects presence of magnetic field',

@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 277,
-    'name': ('RS485', 'RS485', 'RS485 Bricklet'),
+    'name': 'RS485',
+    'display_name': 'RS485',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Communicates with RS485 devices with full- or half-duplex',

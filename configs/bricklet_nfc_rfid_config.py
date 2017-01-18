@@ -30,7 +30,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 246,
-    'name': ('NFC RFID', 'NFC/RFID', 'NFC/RFID Bricklet'),
+    'name': 'NFC RFID',
+    'display_name': 'NFC/RFID',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Reads and writes NFC and RFID tags',

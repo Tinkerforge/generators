@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 239,
-    'name': ('Tilt', 'Tilt', 'Tilt Bricklet'),
+    'name': 'Tilt',
+    'display_name': 'Tilt',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Detects inclination of Bricklet (tilt switch open/closed)',

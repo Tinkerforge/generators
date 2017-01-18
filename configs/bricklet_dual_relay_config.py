@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 26,
-    'name': ('Dual Relay', 'Dual Relay', 'Dual Relay Bricklet'),
+    'name': 'Dual Relay',
+    'display_name': 'Dual Relay',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Two relays to switch AC/DC devices',

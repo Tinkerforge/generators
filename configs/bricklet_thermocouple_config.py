@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 266,
-    'name': ('Thermocouple', 'Thermocouple', 'Thermocouple Bricklet'),
+    'name': 'Thermocouple',
+    'display_name': 'Thermocouple',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures temperature with thermocouples',

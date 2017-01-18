@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 252,
-    'name': ('Gas Detector', 'Gas Detector', 'Gas Detector Bricklet'),
+    'name': 'Gas Detector',
+    'display_name': 'Gas Detector',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures concentration of different gases',

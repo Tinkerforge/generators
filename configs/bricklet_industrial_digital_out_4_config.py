@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 224,
-    'name': ('Industrial Digital Out 4', 'Industrial Digital Out 4', 'Industrial Digital Out 4 Bricklet'),
+    'name': 'Industrial Digital Out 4',
+    'display_name': 'Industrial Digital Out 4',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': '4 galvanically isolated digital outputs',

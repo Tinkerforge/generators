@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Brick',
     'device_identifier': 19,
-    'name': ('Silent Stepper', 'Silent Stepper', 'Silent Stepper Brick'),
+    'name': 'Silent Stepper',
+    'display_name': 'Silent Stepper',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'TODO',

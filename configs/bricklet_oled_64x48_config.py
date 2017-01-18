@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 264,
-    'name': ('OLED 64x48', 'OLED 64x48', 'OLED 64x48 Bricklet'),
+    'name': 'OLED 64x48',
+    'display_name': 'OLED 64x48',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': '1.68cm (0.66") OLED with 64x48 pixels',

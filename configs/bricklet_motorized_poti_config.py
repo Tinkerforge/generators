@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 267,
-    'name': ('Motorized Poti', 'Motorized Poti', 'Motorized Poti Bricklet'),
+    'name': 'Motorized Poti',
+    'display_name': 'Motorized Poti',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'TODO',

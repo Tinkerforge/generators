@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 28,
-    'name': ('IO16', 'IO-16', 'IO-16 Bricklet'),
+    'name': 'IO16',
+    'display_name': 'IO-16',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': '16-channel digital input/output',

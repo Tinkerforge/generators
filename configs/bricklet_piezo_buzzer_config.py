@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 214,
-    'name': ('Piezo Buzzer', 'Piezo Buzzer', 'Piezo Buzzer Bricklet'),
+    'name': 'Piezo Buzzer',
+    'display_name': 'Piezo Buzzer',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Creates 1kHz beep',

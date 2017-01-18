@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 221,
-    'name': ('Barometer', 'Barometer', 'Barometer Bricklet'),
+    'name': 'Barometer',
+    'display_name': 'Barometer',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures air pressure and altitude changes',

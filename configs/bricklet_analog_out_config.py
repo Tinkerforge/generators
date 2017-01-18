@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 220,
-    'name': ('Analog Out', 'Analog Out', 'Analog Out Bricklet'),
+    'name': 'Analog Out',
+    'display_name': 'Analog Out',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Generates configurable DC voltage between 0V and 5V',

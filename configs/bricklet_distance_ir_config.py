@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 25,
-    'name': ('Distance IR', 'Distance IR', 'Distance IR Bricklet'),
+    'name': 'Distance IR',
+    'display_name': 'Distance IR',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures distance up to 150cm with infrared light',

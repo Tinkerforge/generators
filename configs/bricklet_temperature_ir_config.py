@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 217,
-    'name': ('Temperature IR', 'Temperature IR', 'Temperature IR Bricklet'),
+    'name': 'Temperature IR',
+    'display_name': 'Temperature IR',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures contactless object temperature between -70°C and +380°C',

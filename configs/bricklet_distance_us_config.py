@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 229,
-    'name': ('Distance US', 'Distance US', 'Distance US Bricklet'),
+    'name': 'Distance US',
+    'display_name': 'Distance US',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures distance between 2cm and 400cm with ultrasound',

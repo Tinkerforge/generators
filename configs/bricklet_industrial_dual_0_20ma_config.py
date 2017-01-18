@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 228,
-    'name': ('Industrial Dual 0 20mA', 'Industrial Dual 0-20mA', 'Industrial Dual 0-20mA Bricklet'),
+    'name': 'Industrial Dual 0 20mA',
+    'display_name': 'Industrial Dual 0-20mA',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures two DC currents between 0mA and 20mA (IEC 60381-1)',

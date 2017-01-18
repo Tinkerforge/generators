@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 269,
-    'name': ('Pressure', 'Pressure', 'Pressure Bricklet'),
+    'name': 'Pressure',
+    'display_name': 'Pressure',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures pressure with various pressure sensors',

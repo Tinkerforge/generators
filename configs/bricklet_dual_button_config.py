@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 230,
-    'name': ('Dual Button', 'Dual Button', 'Dual Button Bricklet'),
+    'name': 'Dual Button',
+    'display_name': 'Dual Button',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Two tactile buttons with built-in blue LEDs',

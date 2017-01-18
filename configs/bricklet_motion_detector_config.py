@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 233,
-    'name': ('Motion Detector', 'Motion Detector', 'Motion Detector Bricklet'),
+    'name': 'Motion Detector',
+    'display_name': 'Motion Detector',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Passive infrared (PIR) motion sensor, 7m range',

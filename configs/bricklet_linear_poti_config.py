@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 213,
-    'name': ('Linear Poti', 'Linear Poti', 'Linear Poti Bricklet'),
+    'name': 'Linear Poti',
+    'display_name': 'Linear Poti',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': '59mm linear potentiometer',

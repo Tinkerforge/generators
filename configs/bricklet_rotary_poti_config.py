@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 215,
-    'name': ('Rotary Poti', 'Rotary Poti', 'Rotary Poti Bricklet'),
+    'name': 'Rotary Poti',
+    'display_name': 'Rotary Poti',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': '300° rotary potentiometer',

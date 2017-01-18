@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 262,
-    'name': ('CO2', 'CO2', 'CO2 Bricklet'),
+    'name': 'CO2',
+    'display_name': 'CO2',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures CO2 concentration in ppm',

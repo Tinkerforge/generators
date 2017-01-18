@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 210,
-    'name': ('Joystick', 'Joystick', 'Joystick Bricklet'),
+    'name': 'Joystick',
+    'display_name': 'Joystick',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': '2-axis joystick with push-button',

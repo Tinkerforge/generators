@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 242,
-    'name': ('Piezo Speaker', 'Piezo Speaker', 'Piezo Speaker Bricklet'),
+    'name': 'Piezo Speaker',
+    'display_name': 'Piezo Speaker',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Creates beep with configurable frequency',

@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 3],
     'category': 'Bricklet',
     'device_identifier': 219,
-    'name': ('Analog In', 'Analog In', 'Analog In Bricklet'),
+    'name': 'Analog In',
+    'display_name': 'Analog In',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures DC voltage between 0V and 45V',

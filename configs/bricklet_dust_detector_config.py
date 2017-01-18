@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 260,
-    'name': ('Dust Detector', 'Dust Detector', 'Dust Detector Bricklet'),
+    'name': 'Dust Detector',
+    'display_name': 'Dust Detector',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures dust density',

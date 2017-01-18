@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 216,
-    'name': ('Temperature', 'Temperature', 'Temperature Bricklet'),
+    'name': 'Temperature',
+    'display_name': 'Temperature',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures ambient temperature with 0.5°C accuracy',

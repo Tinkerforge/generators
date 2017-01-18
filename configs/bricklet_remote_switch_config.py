@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 235,
-    'name': ('Remote Switch', 'Remote Switch', 'Remote Switch Bricklet'),
+    'name': 'Remote Switch',
+    'display_name': 'Remote Switch',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Controls remote mains switches',

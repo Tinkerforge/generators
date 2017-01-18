@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 232,
-    'name': ('Moisture', 'Moisture', 'Moisture Bricklet'),
+    'name': 'Moisture',
+    'display_name': 'Moisture',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures soil moisture',

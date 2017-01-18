@@ -667,9 +667,9 @@ def generate(bindings_root_directory, language, generator_class):
                     if common_packet['since_firmware'] is None:
                         continue
 
-                    if com['name'][0] in common_packet['since_firmware']:
+                    if com['name'] in common_packet['since_firmware']:
                         common_packet['since_firmware'] = \
-                            common_packet['since_firmware'][com['name'][0]]
+                            common_packet['since_firmware'][com['name']]
                     else:
                         common_packet['since_firmware'] = \
                             common_packet['since_firmware']['*']
@@ -785,7 +785,7 @@ check_name_valid_word_constant = re.compile('^[A-Z0-9]+[a-z0-9]*$') # constants 
 check_name_exceptions_whole_name = ['Industrial Dual 0 20mA']
 check_name_exceptions_word_in_constant = ['20mA', '24mA']
 
-def check_name(name, short_display_name=None, long_display_name=None, category=None, is_constant=False):
+def check_name(name, display_name=None, is_constant=False):
     if isinstance(name, tuple):
         raise ValueError('Name {0} uses old tuple format, update it to new split-camel-case format'.format(name))
 
@@ -808,28 +808,19 @@ def check_name(name, short_display_name=None, long_display_name=None, category=N
                    check_name_valid_word_constant.match(word) == None:
                     raise ValueError("Word '{0}' in constant name '{1}' is invalid".format(word, name))
 
-    if short_display_name != None:
-        short_display_name_to_check = short_display_name.replace('/', ' ')
+    if display_name != None:
+        display_name_to_check = display_name.replace('/', ' ')
 
-        if short_display_name.endswith(' 2.0'):
-            short_display_name_to_check = short_display_name_to_check.replace(' 2.0', ' V2')
-        elif short_display_name in ['IO-4', 'IO-16']: # exceptions for legacy dash rules
-            short_display_name_to_check = short_display_name_to_check.replace('-', '')
+        if display_name.endswith(' 2.0'):
+            display_name_to_check = display_name_to_check.replace(' 2.0', ' V2')
+        elif display_name in ['IO-4', 'IO-16']: # exceptions for legacy dash rules
+            display_name_to_check = display_name_to_check.replace('-', '')
         else:
-            short_display_name_to_check = short_display_name_to_check.replace('-', ' ')
+            display_name_to_check = display_name_to_check.replace('-', ' ')
 
-        if name != short_display_name_to_check:
-            raise ValueError("Name '{0}' and short display name '{1}' ({2}) mismatch" \
-                             .format(name, short_display_name, short_display_name_to_check))
-
-    if short_display_name != None and long_display_name != None and category != None:
-        short_display_name_to_check = set(short_display_name.split(' ') + [category])
-        long_display_name_to_check = set(long_display_name.split(' '))
-
-        if short_display_name_to_check != long_display_name_to_check:
-            raise ValueError("Long display name '{0}' and short display name '{1} ' + '{2}' ({3}) do not contain the same words" \
-                             .format(long_display_name, short_display_name, category,
-                                     ' '.join(list(short_display_name_to_check))))
+        if name != display_name_to_check:
+            raise ValueError("Name '{0}' and display name '{1}' ({2}) mismatch" \
+                             .format(name, display_name, display_name_to_check))
 
 def break_string(string, marker, continuation='', max_length=90):
     result = string.replace('<BP>', ' ')
@@ -1196,10 +1187,7 @@ class Device(NameMixin):
         self.callback_packets = []
         self.examples = []
 
-        check_name(self.get_name(),
-                   short_display_name=self.get_short_display_name(),
-                   long_display_name=self.get_long_display_name(),
-                   category=self.get_category())
+        check_name(raw_data['name'], display_name=raw_data['display_name'])
 
         for i, raw_packet in zip(range(len(raw_data['packets'])), raw_data['packets']):
             if not 'function_id' in raw_packet:
@@ -1287,16 +1275,16 @@ class Device(NameMixin):
         return self.get_underscore_category().replace('_', '-')
 
     def is_brick(self):
-        return self.get_camel_case_category() == 'Brick'
+        return self.get_category() == 'Brick'
 
     def is_bricklet(self):
-        return self.get_camel_case_category() == 'Bricklet'
+        return self.get_category() == 'Bricklet'
 
     def get_device_identifier(self):
         return self.raw_data['device_identifier']
 
     def _get_name(self): # for NameMixin
-        return self.raw_data['name'][0]
+        return self.raw_data['name']
 
     def get_initial_name(self):
         name = self.get_name()
@@ -1324,10 +1312,18 @@ class Device(NameMixin):
         return ''.join(map(shorten, words))
 
     def get_short_display_name(self):
-        return self.raw_data['name'][1]
+        return self.raw_data['display_name']
 
     def get_long_display_name(self):
-        return self.raw_data['name'][2]
+        display_name = self.raw_data['display_name']
+
+        if display_name.endswith(' 2.0'):
+            parts = display_name.split(' ')
+            parts.insert(-1, self.get_category())
+
+            return ' '.join(parts)
+        else:
+            return display_name + ' ' + self.get_category()
 
     def get_description(self):
         return self.raw_data['description']

@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Brick',
     'device_identifier': 15,
-    'name': ('Stepper', 'Stepper', 'Stepper Brick'),
+    'name': 'Stepper',
+    'display_name': 'Stepper',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Drives one bipolar stepper motor with up to 38V and 2.5A per phase',

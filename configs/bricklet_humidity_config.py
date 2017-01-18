@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 27,
-    'name': ('Humidity', 'Humidity', 'Humidity Bricklet'),
+    'name': 'Humidity',
+    'display_name': 'Humidity',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures relative humidity',

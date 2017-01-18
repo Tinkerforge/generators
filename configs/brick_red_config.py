@@ -140,7 +140,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Brick',
     'device_identifier': 17,
-    'name': ('RED', 'RED', 'RED Brick'),
+    'name': 'RED',
+    'display_name': 'RED',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Executes user programs and controls other Bricks/Bricklets standalone',

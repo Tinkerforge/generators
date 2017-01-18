@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 261,
-    'name': ('Ozone', 'Ozone', 'Ozone Bricklet'),
+    'name': 'Ozone',
+    'display_name': 'Ozone',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures ozone concentration in ppb',

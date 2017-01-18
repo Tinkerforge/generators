@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 212,
-    'name': ('LCD 20x4', 'LCD 20x4', 'LCD 20x4 Bricklet'),
+    'name': 'LCD 20x4',
+    'display_name': 'LCD 20x4',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': '20x4 character alphanumeric display with blue backlight',

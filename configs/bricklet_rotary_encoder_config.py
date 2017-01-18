@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 236,
-    'name': ('Rotary Encoder', 'Rotary Encoder', 'Rotary Encoder Bricklet'),
+    'name': 'Rotary Encoder',
+    'display_name': 'Rotary Encoder',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': '360° rotary encoder with push-button',

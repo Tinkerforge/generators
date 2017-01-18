@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 4],
     'category': 'Brick',
     'device_identifier': 13,
-    'name': ('Master', 'Master', 'Master Brick'),
+    'name': 'Master',
+    'display_name': 'Master',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Basis to build stacks and has 4 Bricklet ports',

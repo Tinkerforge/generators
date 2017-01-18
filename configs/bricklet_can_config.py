@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 270,
-    'name': ('CAN', 'CAN', 'CAN Bricklet'),
+    'name': 'CAN',
+    'display_name': 'CAN',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Communicates with CAN bus devices',

@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 265,
-    'name': ('UV Light', 'UV Light', 'UV Light Bricklet'),
+    'name': 'UV Light',
+    'display_name': 'UV Light',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures UV light',

@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 225,
-    'name': ('Industrial Quad Relay', 'Industrial Quad Relay', 'Industrial Quad Relay Bricklet'),
+    'name': 'Industrial Quad Relay',
+    'display_name': 'Industrial Quad Relay',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': '4 galvanically isolated solid state relays',

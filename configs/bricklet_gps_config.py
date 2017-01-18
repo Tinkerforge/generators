@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 222,
-    'name': ('GPS', 'GPS', 'GPS Bricklet'),
+    'name': 'GPS',
+    'display_name': 'GPS',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Determine position, velocity and altitude using GPS',

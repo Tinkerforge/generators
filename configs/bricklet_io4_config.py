@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 29,
-    'name': ('IO4', 'IO-4', 'IO-4 Bricklet'),
+    'name': 'IO4',
+    'display_name': 'IO-4',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': '4-channel digital input/output',

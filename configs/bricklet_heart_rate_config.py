@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 245,
-    'name': ('Heart Rate', 'Heart Rate', 'Heart Rate Bricklet'),
+    'name': 'Heart Rate',
+    'display_name': 'Heart Rate',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures heart rate',

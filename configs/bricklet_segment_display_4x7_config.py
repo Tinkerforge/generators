@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 237,
-    'name': ('Segment Display 4x7', 'Segment Display 4x7', 'Segment Display 4x7 Bricklet'),
+    'name': 'Segment Display 4x7',
+    'display_name': 'Segment Display 4x7',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Four 7-segment displays with switchable colon',

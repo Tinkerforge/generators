@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 257,
-    'name': ('AC Current', 'AC Current', 'AC Current Bricklet'),
+    'name': 'AC Current',
+    'display_name': 'AC Current',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures AC current between 0A and 100A',

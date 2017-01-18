@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 3],
     'category': 'Bricklet',
     'device_identifier': 231,
-    'name': ('LED Strip', 'LED Strip', 'LED Strip Bricklet'),
+    'name': 'LED Strip',
+    'display_name': 'LED Strip',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Controls up to 320 RGB LEDs',

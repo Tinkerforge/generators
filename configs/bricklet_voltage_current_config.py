@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 227,
-    'name': ('Voltage Current', 'Voltage/Current', 'Voltage/Current Bricklet'),
+    'name': 'Voltage Current',
+    'display_name': 'Voltage/Current',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures power, DC voltage and DC current up to 720W/36V/20A',

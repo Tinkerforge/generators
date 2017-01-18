@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 249,
-    'name': ('Industrial Dual Analog In', 'Industrial Dual Analog In', 'Industrial Dual Analog In Bricklet'),
+    'name': 'Industrial Dual Analog In',
+    'display_name': 'Industrial Dual Analog In',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures two DC voltages between -35V and +35V with 24bit resolution each',

@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 253,
-    'name': ('Load Cell', 'Load Cell', 'Load Cell Bricklet'),
+    'name': 'Load Cell',
+    'display_name': 'Load Cell',
     'manufacturer': 'Tinkerforge',
     'description':  {
         'en': 'Measures weight with a load cell',

@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 255,
-    'name': ('Laser Range Finder', 'Laser Range Finder', 'Laser Range Finder Bricklet'),
+    'name': 'Laser Range Finder',
+    'display_name': 'Laser Range Finder',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures distance up to 40m with laser light',

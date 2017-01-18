@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 271,
-    'name': ('RGB LED', 'RGB LED', 'RGB LED Bricklet'),
+    'name': 'RGB LED',
+    'display_name': 'RGB LED',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Controls one RGB LED',

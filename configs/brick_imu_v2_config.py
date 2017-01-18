@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Brick',
     'device_identifier': 18,
-    'name': ('IMU V2', 'IMU 2.0', 'IMU Brick 2.0'),
+    'name': 'IMU V2',
+    'display_name': 'IMU 2.0',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Full fledged AHRS with 9 degrees of freedom',

@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 1],
     'category': 'Bricklet',
     'device_identifier': 218,
-    'name': ('Voltage', 'Voltage', 'Voltage Bricklet'),
+    'name': 'Voltage',
+    'display_name': 'Voltage',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures DC voltage between 0V and 50V',

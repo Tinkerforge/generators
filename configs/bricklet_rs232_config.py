@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 2],
     'category': 'Bricklet',
     'device_identifier': 254,
-    'name': ('RS232', 'RS232', 'RS232 Bricklet'),
+    'name': 'RS232',
+    'display_name': 'RS232',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Communicates with RS232 devices',

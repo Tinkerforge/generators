@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Brick',
     'device_identifier': 11,
-    'name': ('DC', 'DC', 'DC Brick'),
+    'name': 'DC',
+    'display_name': 'DC',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Drives one brushed DC motor with up to 28V and 5A (peak)',

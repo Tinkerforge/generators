@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 23,
-    'name': ('Current12', 'Current12', 'Current12 Bricklet'),
+    'name': 'Current12',
+    'display_name': 'Current12',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures AC/DC current between -12.5A and +12.5A',

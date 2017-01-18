@@ -11,7 +11,8 @@ com = {
     'api_version': [2, 0, 1],
     'category': 'Brick',
     'device_identifier': 14,
-    'name': ('Servo', 'Servo', 'Servo Brick'),
+    'name': 'Servo',
+    'display_name': 'Servo',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Drives up to 7 RC Servos with up to 3A',

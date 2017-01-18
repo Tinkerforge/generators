@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 226,
-    'name': ('PTC', 'PTC', 'PTC Bricklet'),
+    'name': 'PTC',
+    'display_name': 'PTC',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Reads temperatures from Pt100 und Pt1000 sensors',

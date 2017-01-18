@@ -13,7 +13,8 @@ com = {
     'api_version': [2, 0, 0],
     'category': 'Bricklet',
     'device_identifier': 241,
-    'name': ('Line', 'Line', 'Line Bricklet'),
+    'name': 'Line',
+    'display_name': 'Line',
     'manufacturer': 'Tinkerforge',
     'description': {
         'en': 'Measures reflectivity of a surface',
