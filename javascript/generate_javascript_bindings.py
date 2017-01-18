@@ -74,8 +74,10 @@ var Device = require('./Device');
 \t{2}.prototype = Object.create(Device);
 \tthis.responseExpected = {{}};
 \tthis.callbackFormats = {{}};
-\tthis.APIVersion = [{3}, {4}, {5}];\n""".format(self.get_javascript_class_name(),self.get_description(),
-                                                 self.get_javascript_class_name(), *self.get_api_version())
+\tthis.APIVersion = [{3}, {4}, {5}];\n""".format(self.get_javascript_class_name(),
+                                                 common.select_lang(self.get_description()),
+                                                 self.get_javascript_class_name(),
+                                                 *self.get_api_version())
 
     def get_javascript_response_expecteds(self):
         response_expected = ''

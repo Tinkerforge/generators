@@ -447,7 +447,7 @@ typedef Device {3};
                               self.get_upper_case_name(),
                               self.get_camel_case_name(),
                               self.get_camel_case_category(),
-                              self.get_description(),
+                              common.select_lang(self.get_description()),
                               self.get_long_display_name())
 
     def get_c_end_h(self):

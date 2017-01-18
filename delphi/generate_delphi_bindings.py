@@ -148,7 +148,7 @@ uses
   ///  {1}
   /// </summary>
   {0} = class(TDevice)
-""".format(self.get_delphi_class_name(), self.get_description())
+""".format(self.get_delphi_class_name(), common.select_lang(self.get_description()))
 
         callbacks = ''
         callback = '    {0}Callback: {1}Notify{2};\n'

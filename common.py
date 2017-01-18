@@ -722,10 +722,7 @@ def generate(bindings_root_directory, language, generator_class):
                                device.is_released(),
                                device.is_documented(),
                                True,
-                               {
-                                   'en': device.get_description('en'),
-                                   'de': device.get_description('de')
-                               })
+                               device.get_description())
 
                 brick_infos.append(device_info)
             else:
@@ -745,10 +742,7 @@ def generate(bindings_root_directory, language, generator_class):
                                device.is_released(),
                                device.is_documented(),
                                True,
-                               {
-                                   'en': device.get_description('en'),
-                                   'de': device.get_description('de')
-                               })
+                               device.get_description())
 
                 bricklet_infos.append(device_info)
 
@@ -1338,8 +1332,8 @@ class Device(NameMixin):
     def get_long_display_name(self):
         return self.raw_data['name'][2]
 
-    def get_description(self, language='en'):
-        return self.raw_data['description'][language]
+    def get_description(self):
+        return self.raw_data['description']
 
     def get_git_name(self):
         return self.get_dash_name() + '-' + self.get_dash_category()

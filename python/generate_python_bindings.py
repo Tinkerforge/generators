@@ -89,7 +89,7 @@ class {0}(Device):
     DEVICE_DISPLAY_NAME = '{3}'
 
 """.format(self.get_python_class_name(),
-           self.get_description(),
+           common.select_lang(self.get_description()),
            self.get_device_identifier(),
            self.get_long_display_name())
 

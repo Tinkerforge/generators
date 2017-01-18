@@ -58,7 +58,7 @@ class RubyBindingsDevice(ruby_common.RubyDevice):
     DEVICE_IDENTIFIER = {2} # :nodoc:
     DEVICE_DISPLAY_NAME = '{3}' # :nodoc:
 """.format(self.get_ruby_class_name(),
-           self.get_description(),
+           common.select_lang(self.get_description()),
            self.get_device_identifier(),
            self.get_long_display_name())
 

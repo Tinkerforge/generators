@@ -61,7 +61,7 @@ class {0} extends Device
 {{
 """
 
-        return class_str.format(self.get_php_class_name(), self.get_description())
+        return class_str.format(self.get_php_class_name(), common.select_lang(self.get_description()))
 
     def get_php_callback_wrapper_definitions(self):
         cbs = ''

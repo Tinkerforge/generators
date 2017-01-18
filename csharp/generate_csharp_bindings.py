@@ -69,7 +69,7 @@ namespace Tinkerforge
 """
 
         return class_str.format(self.get_csharp_class_name(),
-                                self.get_description(),
+                                common.select_lang(self.get_description()),
                                 self.get_device_identifier(),
                                 self.get_long_display_name())
 

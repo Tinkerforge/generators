@@ -50,7 +50,7 @@ package Tinkerforge::{1}{2};
         return package.format(self.get_generator().get_header_comment('hash'),
                               self.get_camel_case_category(),
                               self.get_camel_case_name(),
-                              self.get_description())
+                              common.select_lang(self.get_description()))
 
     def get_perl_use(self):
         return """
