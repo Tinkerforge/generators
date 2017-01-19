@@ -50,7 +50,7 @@ brickv_path_bindings = os.path.join(start_path, 'brickv/src/brickv/bindings')
 bindings = []
 for d in os.listdir(path):
     if os.path.isdir(d):
-        if not d in ('configs', '.git', '__pycache__'):
+        if not d in ('configs', 'json', '.git', '__pycache__'):
             bindings.append(d)
 bindings = sorted(bindings)
 
