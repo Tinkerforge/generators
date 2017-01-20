@@ -18,18 +18,40 @@ common_packets.append({
                    'DC': [2, 3, 3],
                    'IMU': [2, 3, 3],
                    'IMU V2': [2, 0, 5],
-                   'Master': [2, 4, 2],
+                   'Master': [2, 4, 3],
                    'RED': None,
                    'Servo': [2, 3, 2],
                    'Stepper': [2, 3, 3]},
 'doc': ['af', {
 'en':
 """
-TODO (baud rate between 400000 and 2000000. Default 1400000)
+Sets the baudrate for a specific Bricklet port ('a' - 'd'). The
+baudrate can be in the range 400000 to 2000000.
+
+If you want to increase the throughput of Bricklets you can increase
+the baudrate. If you get a high error count because of high
+interference (see :func:`GetSPITFPErrorCount`) you can decrease the baudrate.
+
+Regulatory testing is done with the default baudrate. If CE compatability
+or similar is necessary in you applications we recommend to not change
+the baudrate.
+
+The default baudrate for all ports is 1400000.
 """,
 'de':
 """
-TODO
+Setzt die Baudrate eines spezifischen Bricklet Ports ('a' - 'd'). Die
+Baudrate hat einen möglichen Wertebereich von 400000 bis 2000000.
+
+Für einen höheren Durchsatz der Bricklets kann die Baudrate erhöht werden.
+Wenn der Fehlerzähler auf Grund von lokaler Störeinstrahlung hoch ist
+(siehe :func:`GetSPITFPErrorCount`) kann die Baudrate verringert werden.
+
+EMV Tests werden mit der Standardbaudrate durchgeführt. Falls eine
+CE-Kompatibilität o.ä. in der Anwendung notwendig ist empfehlen wir die Baudrate
+nicht zu ändern.
+
+Die Standardbaudrate für alle Ports ist 1400000.
 """
 }]
 })
@@ -45,18 +67,18 @@ common_packets.append({
                    'DC': [2, 3, 3],
                    'IMU': [2, 3, 3],
                    'IMU V2': [2, 0, 5],
-                   'Master': [2, 4, 2],
+                   'Master': [2, 4, 3],
                    'RED': None,
                    'Servo': [2, 3, 2],
                    'Stepper': [2, 3, 3]},
 'doc': ['af', {
 'en':
 """
-TODO
+Returns the baudrate for a given Bricklet port, see :func:`SetSPITFPBaudrate`.
 """,
 'de':
 """
-TODO
+Gibt die Baudrate für einen Bricklet Port zurück, siehe :func:`SetSPITFPBaudrate`.
 """
 }]
 })
@@ -76,18 +98,40 @@ common_packets.append({
                    'DC': [2, 3, 3],
                    'IMU': [2, 3, 3],
                    'IMU V2': [2, 0, 5],
-                   'Master': [2, 4, 2],
+                   'Master': [2, 4, 3],
                    'RED': None,
                    'Servo': [2, 3, 2],
                    'Stepper': [2, 3, 3]},
 'doc': ['af', {
 'en':
 """
-TODO
+Returns the error count for the communication between Brick and Bricklet.
+
+The errors are divided into
+
+* ack checksum errors,
+* message checksum errors,
+* frameing errors and
+* overflow errors.
+
+The errors counts are for errors that occur on the Brick side. All
+Bricklets have a similar function that returns the errors on the Bricklet side.
 """,
 'de':
 """
-TODO
+Gibt die Anzahl der Fehler die während der Kommunikation zwischen Brick und
+Bricklet aufgetreten sind zurück.
+
+Die Fehler sind aufgeteilt in
+
+* ACK-Checksummen Fehler,
+* Message-Checksummen Fehler,
+* Framing Fehler und
+* Overflow Fehler.
+
+Die Fehlerzähler sind für Fehler die auf der Seite des Bricks auftreten.
+Jedes Bricklet hat eine ähnliche Funktion welche die Fehler auf Brickletseite
+ausgibt.
 """
 }]
 })
