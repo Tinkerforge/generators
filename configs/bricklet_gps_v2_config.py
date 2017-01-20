@@ -70,16 +70,14 @@ com['packets'].append({
 Returns if a fix is currently available as well as the, the number of 
 satellites that are in view.
 
-TODO: LED color?
-There is also a :ref:`blue LED <gps_bricklet_fix_led>` on the Bricklet that
+There is also a :ref:`green LED <gps_v2_bricklet_fix_led>` on the Bricklet that
 indicates the fix status.
 """,
 'de':
 """
 Gibt zurück ob ein GPS Fix besteht sowie die Anzahl der sichtbaren Satelliten.
 
-TODO: LED Farbe?
-Auf dem Bricklet ist eine :ref:`blaue LED <gps_bricklet_fix_led>`, die den
+Auf dem Bricklet ist eine :ref:`green LED <gps_v2_bricklet_fix_led>`, die den
 Fix-Status anzeigt.
 """
 }]
@@ -227,11 +225,37 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO (galileo not supported yet)
+Returns the
+
+* satellite numbers list
+* fix value,
+* PDOP value,
+* HDOP value and
+* VDOP value
+
+for a given satellite system. Currently GPS and GLONASS are supported, Galileo
+is not yet supported.
+
+The GPS and GLONASS satellites have unique numbers and the satellite list gives
+the numbers of the satellites that are currently utilized. The number 0 is not
+a valid satellite number and can be ignored in the list.
 """,
 'de':
 """
-TODO
+Gibt die
+
+* Liste der Satelliten,
+* den Fix-Wert,
+* PDOP-Wert,
+* HDOP-Wert and
+* VDOP-Wert zurück.
+
+für ein gegebenes Satellitensystem zurück. Aktuell werden GPS und GLONASS
+unterstützt, Galileo hat noch keine Unterstützung.
+
+Die GPS und GLONASS Satelliten haben eindeutige Nummern and die Satellitenliste
+gibt die Nummer der Satelliten die aktuell benutzt werden. Die Nummer 0 ist
+keine gültige Satellitennummer und kann ignoriert werden.
 """
 }]
 })
@@ -250,12 +274,33 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO (galileo not supported yet)
+Returns the current
 
+* elevation (0°-90°),
+* azimuth (0°-359°) and
+* SNR (0dB-99dB)
+
+for a given satellite and satellite system.
+
+The satellite number here always goes from 1 to 32. For GLONASS it corresponds to
+the satellites 65-96.
+
+Galileo is not yet supported.
 """,
 'de':
 """
-TODO
+Gibt die aktuellen Werte von
+
+* Elevation (0°-90°),
+* Azimutwinkel (0°-359°) und
+* SNR (0dB-99dB)
+
+für einen gegebenen Satelliten und ein gegebenes Satellitensystem zurück.
+
+Die Satellitennummer hat hier immer einen Bereich von 1 bis 32. Bei GLONASS
+entspricht dieser Bereich den Satelliten 65-96.
+
+Galileo wird noch nicht unterstützt.
 """
 }]
 })
@@ -556,11 +601,24 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is triggered once per second... TODO
+This callback is triggered precisely once per second,
+see `PPS <https://en.wikipedia.org/wiki/Pulse-per-second_signal>`__.
+
+The precision of two subsequent pulses will be skewed because
+of the latency in the USB/RS485/Ethernet connection. But in the
+long run this will be very precise. For example a count of
+3600 pulses will take exactly 1 hour.
 """,
 'de':
 """
-TODO
+Dieser Callback wird  präzise einmal pro sekunde ausgeführt,
+siehe `PPS <https://de.wikipedia.org/wiki/Puls_pro_Sekunde>`__.
+
+Die Präzision von zwei direkt aufeinander folgenden Pulsen
+kann auf Grund von Latenzen in der USB/RS485/Ethernet-Verbindung
+verzerrt sein. Langfristig ist dies allerdings weiterhin sehr
+präzise. Zum Beispiel wird eine Zählung von 3600 Pulsen exakt
+eine Stund dauern.
 """
 }]
 })
