@@ -129,8 +129,7 @@ if socket.gethostname() != 'tinkerforge.com':
 else:
     tmp_dir = tempfile.mkdtemp()
 
-    # javascript/tinkerforge_javascript_bindings_latest.zip.symlink is a symlink to the actual file
-    zf = zipfile.ZipFile(os.path.realpath(os.path.join(path, 'javascript', 'tinkerforge_javascript_bindings_latest.zip.symlink')))
+    zf = zipfile.ZipFile('/srv/web/com.tinkerforge.download/downloads/bindings/javascript/tinkerforge_javascript_bindings_latest.zip')
     zf.extract('browser/source/Tinkerforge.js', tmp_dir)
     zf.close()
 
