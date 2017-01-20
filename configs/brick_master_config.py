@@ -2545,7 +2545,7 @@ To apply configuration changes to the WIFI Extension 2.0 the
 :func:`SaveWifi2Configuration` function has to be called and the Master Brick
 has to be restarted afterwards.
 
-It is recommended to use the Brick Viewer to set the WIFI authentication secret.
+It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
 """,
 'de':
 """
@@ -2560,8 +2560,8 @@ Um Konfigurationsänderungen für die WIFI Extension 2.0 zu übernehmen muss die
 :func:`SaveWifi2Configuration` Funktion aufgerufen und der Master Brick
 danach neugestartet werden.
 
-Wir empfehlen den Brick Viewer zu verwenden, um die Authentifizierung der WIFI
-Extension 2.0 einzurichten.
+Wir empfehlen den Brick Viewer zu verwenden, um die WIFI Extension 2.0 zu
+konfigurieren.
 """
 }]
 })
@@ -2628,7 +2628,7 @@ To apply configuration changes to the WIFI Extension 2.0 the
 :func:`SaveWifi2Configuration` function has to be called and the Master Brick
 has to be restarted afterwards.
 
-It is recommended to use the Brick Viewer to set the Ethernet configuration.
+It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
 """,
 'de':
 """
@@ -2652,7 +2652,7 @@ Um Konfigurationsänderungen für die WIFI Extension 2.0 zu übernehmen muss die
 :func:`SaveWifi2Configuration` Funktion aufgerufen und der Master Brick
 danach neugestartet werden.
 
-Wir empfehlen den Brick Viewer zu verwenden, um die Ethernet Extension zu
+Wir empfehlen den Brick Viewer zu verwenden, um die WIFI Extension 2.0 zu
 konfigurieren.
 """
 }]
@@ -2762,7 +2762,7 @@ To apply configuration changes to the WIFI Extension 2.0 the
 :func:`SaveWifi2Configuration` function has to be called and the Master Brick
 has to be restarted afterwards.
 
-It is recommended to use the Brick Viewer to set the client configuration.
+It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
 """,
 'de':
 """
@@ -2838,7 +2838,7 @@ To apply configuration changes to the WIFI Extension 2.0 the
 :func:`SaveWifi2Configuration` function has to be called and the Master Brick
 has to be restarted afterwards.
 
-It is recommended to use the Brick Viewer to set the client hostname.
+It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
 """,
 'de':
 """
@@ -2886,7 +2886,7 @@ To apply configuration changes to the WIFI Extension 2.0 the
 :func:`SaveWifi2Configuration` function has to be called and the Master Brick
 has to be restarted afterwards.
 
-It is recommended to use the Brick Viewer to set the client password.
+It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
 """,
 'de':
 """
@@ -2970,7 +2970,7 @@ To apply configuration changes to the WIFI Extension 2.0 the
 :func:`SaveWifi2Configuration` function has to be called and the Master Brick
 has to be restarted afterwards.
 
-It is recommended to use the Brick Viewer to set the access point configuration.
+It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
 """,
 'de':
 """
@@ -3056,7 +3056,7 @@ To apply configuration changes to the WIFI Extension 2.0 the
 :func:`SaveWifi2Configuration` function has to be called and the Master Brick
 has to be restarted afterwards.
 
-It is recommended to use the Brick Viewer to set the access point password.
+It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
 """,
 'de':
 """
@@ -3202,10 +3202,13 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Requires WIFI Extension 2.0 firmware 2.1.0.
+
 Sets the mesh specific configuration of the WIFI Extension 2.0.
 
 The ``enable`` parameter enables or disables the mesh part of the
-WIFI Extension 2.0. The default value is *false*.
+WIFI Extension 2.0. The default value is *false*. The mesh part cannot be
+enabled together with the client and access-point part.
 
 If the ``root_ip`` parameter is set to all zero then ``root_subnet_mask``
 and ``root_gateway`` parameters are also set to all zero and DHCP is used for
@@ -3229,12 +3232,44 @@ To apply configuration changes to the WIFI Extension 2.0 the
 :func:`SaveWifi2Configuration` function has to be called and the Master Brick
 has to be restarted afterwards.
 
-It is recommended to use the Brick Viewer to set the client configuration.
+It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
 """,
-# TODO: German mesh documentation.
 'de':
 """
--
+Benötigt WIFI Extension 2.0 Firmware 2.1.0.
+
+Set die Mesh-Konfiguration der WIFI Extension 2.0.
+
+Das ``enable`` Parameter aktiviert oder deaktiviert den Mesh-Teil der
+WIFI Extension 2.0. Der Standardwert ist *false*. Der Mesh-Teil kann nicht
+zusammen mit dem Client- und Access-Point-Teil aktiviert werden.
+
+Wenn die ``root_ip``, ``root_subnet_mask`` und ``root_gateway`` Parameter alle
+auf Null gesetzt sind, dann wird DHCP verwendet. Andernfalls kann mit diese
+drei Parametern eine statische IP Adresse eingestellt werden. Die
+Standardeinstellung ist DHCP.
+
+Wenn das ``router_bssid`` Parameter auf Null gesetzt ist, dann verbindet sich
+die WIFI Extension 2.0 mit einem Access Point wenn die eingestellt SSID
+übereinstimmt, siehe :func:`SetWifi2MeshRouterSSID`. Andernfalls kann dieses
+Parameter verwendet werden, damit sich die WIFI Extension 2.0 nur dann mit
+einem Access Point verbindet, wenn SSID und BSSID übereinstimmen. Die BSSID
+kann auch verwendet werden, um eine Verbindung mit einer verstecken SSID
+herzustellen.
+
+Die ``group_id`` und ``group_ssid_prefix`` Parameter identifizieren in bestimmtes
+Mesh-Netzwerk und alle WIFI Extension 2.0 mit der gleichen Gruppeneinstellung
+gehören um gleichen Mesh-Netzwerk.
+
+Die ``gateway_ip`` und``gateway_port`` Parameter geben an, wie der Mesh-Gateway
+(brickd) erreicht werden kann.
+
+Um Konfigurationsänderungen für die WIFI Extension 2.0 zu übernehmen muss die
+:func:`SaveWifi2Configuration` Funktion aufgerufen und der Master Brick
+danach neugestartet werden.
+
+Wir empfehlen den Brick Viewer zu verwenden, um die WIFI Extension 2.0 zu
+konfigurieren.
 """
 }]
 })
@@ -3255,25 +3290,31 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Requires WIFI Extension 2.0 firmware 2.1.0.
+
 Returns the mesh configuration as set by :func:`SetWifi2MeshConfiguration`.
 """,
-# TODO: German mesh documentation.
 'de':
 """
--
+Benötigt WIFI Extension 2.0 Firmware 2.1.0.
+
+Gibt das Mesh Konfiguration zurück, wie von :func:`SetWifi2MeshConfiguration`
+gesetzt.
 """
 }]
 })
 
-# Espressif mesh library supports router SSID with maximum length of 31 characters.
+# FIXME: Espressif mesh library supports router SSID with maximum length of 31 characters at the moment
 com['packets'].append({
 'type': 'function',
 'name': 'Set Wifi2 Mesh Router SSID',
-'elements': [('Router SSID', 'string', 32, 'in')],
+'elements': [('SSID', 'string', 32, 'in')],
 'since_firmware': [2, 4, 2],
 'doc': ['af', {
 'en':
 """
+Requires WIFI Extension 2.0 firmware 2.1.0.
+
 Sets the mesh router SSID of the WIFI Extension 2.0.
 It is used to specify the mesh router to connect to.
 
@@ -3285,31 +3326,48 @@ To apply configuration changes to the WIFI Extension 2.0 the
 :func:`SaveWifi2Configuration` function has to be called and the Master Brick
 has to be restarted afterwards.
 
-It is recommended to use the Brick Viewer to set the client hostname.
+It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
 """,
-# TODO: German mesh documentation.
 'de':
 """
--
+Benötigt WIFI Extension 2.0 Firmware 2.1.0.
+
+Setzt die Mesh-Router-SSID der WIFI Extension 2.0. Diese wird verwendet um den
+Mesh Router festzulegen.
+
+Zu beachten ist, dass zwar 32 Zeichen als SSID übergeben werden können, aber im
+Moment davon nur die ersten 31 Zeichen genutzt werden bedingt durch einen Bug
+in der verwendeten Mesh-Bibliothek.
+
+Um Konfigurationsänderungen für die WIFI Extension 2.0 zu übernehmen muss die
+:func:`SaveWifi2Configuration` Funktion aufgerufen und der Master Brick
+danach neugestartet werden.
+
+Wir empfehlen den Brick Viewer zu verwenden, um die WIFI Extension 2.0 zu
+konfigurieren.
 """
 }]
 })
 
-# Espressif mesh library supports router SSID with maximum length of 31 characters.
+# FIXME: Espressif mesh library supports router SSID with maximum length of 31 characters at the moment
 com['packets'].append({
 'type': 'function',
 'name': 'Get Wifi2 Mesh Router SSID',
-'elements': [('Router SSID', 'string', 32, 'out')],
+'elements': [('SSID', 'string', 32, 'out')],
 'since_firmware': [2, 4, 2],
 'doc': ['af', {
 'en':
 """
-Returns the mesh router password as set by :func:`SetWifi2MeshRouterSSID`.
+Requires WIFI Extension 2.0 firmware 2.1.0.
+
+Returns the mesh router SSID as set by :func:`SetWifi2MeshRouterSSID`.
 """,
-# TODO: German mesh documentation.
 'de':
 """
--
+Benötigt WIFI Extension 2.0 Firmware 2.1.0.
+
+Gibt das Mesh-Router-SSID zurück, wie von :func:`SetWifi2MeshRouterSSID`
+gesetzt.
 """
 }]
 })
@@ -3322,19 +3380,30 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets the mesh router password (up to 64 characters) of the WIFI Extension 2.0.
+Requires WIFI Extension 2.0 firmware 2.1.0.
+
+Sets the mesh router password (up to 64 characters) for WPA/WPA2 encryption.
 The password will be used to connect to the mesh router.
 
 To apply configuration changes to the WIFI Extension 2.0 the
 :func:`SaveWifi2Configuration` function has to be called and the Master Brick
 has to be restarted afterwards.
 
-It is recommended to use the Brick Viewer to set the client hostname.
+It is recommended to use the Brick Viewer to configure the WIFI Extension 2.0.
 """,
-# TODO: German mesh documentation.
 'de':
 """
--
+Benötigt WIFI Extension 2.0 Firmware 2.1.0.
+
+Setzt das Mesh-Router-Passwort (bis zu 64 Zeichen) für WPA/WPA2 Verschlüsselung.
+Das Password wird für die Verbindung zum Mesh Router verwendet.
+
+Um Konfigurationsänderungen für die WIFI Extension 2.0 zu übernehmen muss die
+:func:`SaveWifi2Configuration` Funktion aufgerufen und der Master Brick
+danach neugestartet werden.
+
+Wir empfehlen den Brick Viewer zu verwenden, um die WIFI Extension 2.0 zu
+konfigurieren.
 """
 }]
 })
@@ -3347,12 +3416,16 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Requires WIFI Extension 2.0 firmware 2.1.0.
+
 Returns the mesh router password as set by :func:`SetWifi2MeshRouterPassword`.
 """,
-# TODO: German mesh documentation.
 'de':
 """
--
+Benötigt WIFI Extension 2.0 Firmware 2.1.0.
+
+Gibt das Mesh-Router-Password zurück, wie von :func:`SetWifi2MeshRouterPassword`
+gesetzt.
 """
 }]
 })
@@ -3377,12 +3450,15 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Requires WIFI Extension 2.0 firmware 2.1.0.
+
 Returns the common mesh status of the WIFI Extension 2.0.
 """,
-# TODO: German mesh documentation.
 'de':
 """
--
+Benötigt WIFI Extension 2.0 Firmware 2.1.0.
+
+Gibt den allgemeinen Mesh-Status der WIFI Extension 2.0 zurück.
 """
 }]
 })
@@ -3399,12 +3475,15 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the mesh station status of the WIFI Extension 2.0.
+Requires WIFI Extension 2.0 firmware 2.1.0.
+
+Returns the mesh client status of the WIFI Extension 2.0.
 """,
-# TODO: German mesh documentation.
 'de':
 """
--
+Benötigt WIFI Extension 2.0 Firmware 2.1.0.
+
+Gibt den Mesh-Client-Status der WIFI Extension 2.0 zurück.
 """
 }]
 })
@@ -3421,12 +3500,15 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Requires WIFI Extension 2.0 firmware 2.1.0.
+
 Returns the mesh AP status of the WIFI Extension 2.0.
 """,
-# TODO: German mesh documentation.
 'de':
 """
--
+Benötigt WIFI Extension 2.0 Firmware 2.1.0.
+
+Gibt den Mesh-AP-Status der WIFI Extension 2.0 zurück.
 """
 }]
 })
