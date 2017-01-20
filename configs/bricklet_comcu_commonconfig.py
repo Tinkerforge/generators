@@ -45,7 +45,7 @@ Die Fehler sind aufgeteilt in
 * Overflow Fehler.
 
 Die Fehlerzähler sind für Fehler die auf der Seite des Bricklets auftreten.
-Jedes Bricklet hat eine ähnliche Funktion welche die Fehler auf Brickseite
+Jedes Brick hat eine ähnliche Funktion welche die Fehler auf Brickseite
 ausgibt.
 """
 }]
