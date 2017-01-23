@@ -1000,6 +1000,173 @@ ausgelöst. Die :word:`parameter` sind die gleichen wie bei :func:`GetAllData`.
 }] 
 })
 
+com['packets'].append({
+'type': 'function',
+'name': 'Set Sensor Configuration',
+'elements': [('Magnetometer Rate', 'uint8', 1, 'in', ('Magnetometer Rate', [('2Hz', 0),
+                                                                            ('6Hz', 1),
+                                                                            ('8Hz', 2),
+                                                                            ('10Hz', 3),
+                                                                            ('15Hz', 4),
+                                                                            ('20Hz', 5),
+                                                                            ('25Hz', 6),
+                                                                            ('30Hz', 7)])),
+             ('Gyroscope Range', 'uint8', 1, 'in', ('Gyroscope Range', [('2000DPS', 0),
+                                                                        ('1000DPS', 1),
+                                                                        ('500DPS', 2),
+                                                                        ('250DPS', 3),
+                                                                        ('125DPS', 4)])),
+             ('Gyroscope Bandwidth', 'uint8', 1, 'in', ('Gyroscope Bandwidth', [('523Hz', 0),
+                                                                              ('230Hz', 1),
+                                                                              ('116Hz', 2),
+                                                                              ('47Hz', 3),
+                                                                              ('23Hz', 4),
+                                                                              ('12Hz', 5),
+                                                                              ('64Hz', 6),
+                                                                              ('32Hz', 7)])),
+             ('Accelerometer Range', 'uint8', 1, 'in', ('Accelerometer Range', [('2G', 0),
+                                                                                ('4G', 1),
+                                                                                ('8G', 2),
+                                                                                ('16G', 3)])),
+             ('Accelerometer Bandwidth', 'uint8', 1, 'in', ('Accelerometer Bandwidth', [('7 81Hz', 0),
+                                                                                       ('15 63Hz', 1),
+                                                                                       ('31 25Hz', 2),
+                                                                                       ('62 5Hz', 3),
+                                                                                       ('125Hz', 4),
+                                                                                       ('250Hz', 5),
+                                                                                       ('500Hz', 6),
+                                                                                       ('1000Hz', 7)]))],
+'since_firmware': [2, 0, 5],
+'doc': ['af', {
+'en':
+"""
+Sets the available sensor configuration for the Magnetometer, Gyroscope and
+Accelerometer. The Accelerometer Range is user selectable in all fusion modes,
+all other configurations are auto-controlled in fusion mode.
+
+The default values are:
+
+* Magnetometer Rate 20Hz
+* Gyroscope Range 2000°/s
+* Gyroscope Bandwidth 32Hz
+* Accelerometer Range +/-4G
+* Accelerometer Bandwidth 62.5Hz
+
+""",
+'de':
+"""
+Setzt die verfügbaren Sensorkonfigurationenen für Magnetometer, Gyroskop und
+Beschleunigungssensor. Die Der Beschleunigungssensor-Wertebereich is in allen
+Fusion-Modi wählbar, während alle anderen Konfigurationen im Fusion-Modus
+automatisch kontrolliert werden.
+
+Die Standardwerte sind:
+
+* Magnetometer-Rate 20Hz
+* Gyroskop-Wertebereich 2000°/s
+* Gyroskop-Bandweite 32Hz
+* Beischleunigungssensor-Wertebereich +/-4G
+* Beischleunigungssensor-Bandweite 62.5Hz
+
+"""
+}] 
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Sensor Configuration',
+'elements': [('Magnetometer Rate', 'uint8', 1, 'out', ('Magnetometer Rate', [('2Hz', 0),
+                                                                             ('6Hz', 1),
+                                                                             ('8Hz', 2),
+                                                                             ('10Hz', 3),
+                                                                             ('15Hz', 4),
+                                                                             ('20Hz', 5),
+                                                                             ('25Hz', 6),
+                                                                             ('30Hz', 7)])),
+             ('Gyroscope Range', 'uint8', 1, 'out', ('Gyroscope Range', [('2000DPS', 0),
+                                                                         ('1000DPS', 1),
+                                                                         ('500DPS', 2),
+                                                                         ('250DPS', 3),
+                                                                         ('125DPS', 4)])),
+             ('Gyroscope Bandwidth', 'uint8', 1, 'out', ('Gyroscope Bandwidth', [('523Hz', 0),
+                                                                               ('230Hz', 1),
+                                                                               ('116Hz', 2),
+                                                                               ('47Hz', 3),
+                                                                               ('23Hz', 4),
+                                                                               ('12Hz', 5),
+                                                                               ('64Hz', 6),
+                                                                               ('32Hz', 7)])),
+             ('Accelerometer Range', 'uint8', 1, 'out', ('Accelerometer Range', [('2G', 0),
+                                                                                 ('4G', 1),
+                                                                                 ('8G', 2),
+                                                                                 ('16G', 3)])),
+             ('Accelerometer Bandwidth', 'uint8', 1, 'out', ('Accelerometer Bandwidth', [('7 81Hz', 0),
+                                                                                        ('15 63Hz', 1),
+                                                                                        ('31 25Hz', 2),
+                                                                                        ('62 5Hz', 3),
+                                                                                        ('125Hz', 4),
+                                                                                        ('250Hz', 5),
+                                                                                        ('500Hz', 6),
+                                                                                        ('1000Hz', 7)]))],
+'since_firmware': [2, 0, 5],
+'doc': ['af', {
+'en':
+"""
+Returns the sensor configuration as set by :func:`SetSensorConfiguration`.
+""",
+'de':
+"""
+Gibt die Sensor-Konfiguration zurück, wie von :func:`SetSensorConfiguration` gesetzt.
+"""
+}] 
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Sensor Fusion Mode',
+'elements': [('Mode', 'uint8', 1, 'in', ('Sensor Fusion', [('Off', 0),
+                                                           ('On', 1)]))],
+'since_firmware': [2, 0, 5],
+'doc': ['af', {
+'en':
+"""
+If the fusion mode is turned off, the functions
+:func:`GetAcceleration`, :func:`GetMagneticField` and :func:`GetAngularVelocity`
+return uncalibrated and uncompensated sensor data. All other sensor data getters
+return no data.
+
+By default sensor fusion is on.
+""",
+'de':
+"""
+Wenn der Fusion-Modus deaktiviert wird, geben die Funktionen
+:func:`GetAcceleration`, :func:`GetMagneticField` und :func:`GetAngularVelocity`
+unkalibrierte und unkompensierte Sensorwerte zurpck. Alle anderen Sensordaten-Getter
+geben keien Daten zurück.
+
+Standardmäßig ist der Fusion-Modus aktiviert.
+"""
+}] 
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Sensor Fusion Mode',
+'elements': [('Mode', 'uint8', 1, 'out', ('Sensor Fusion', [('Off', 0),
+                                                            ('On', 1)]))],
+'since_firmware': [2, 0, 5],
+'doc': ['af', {
+'en':
+"""
+Returns the sensor fusion mode as set by :func:`SetSensorFusionMode`.
+""",
+'de':
+"""
+Gibt den aktuellen Sensor-Fusion-Modus zurück, wie von :func:`SetSensorFusionMode` gesetzt.
+"""
+}] 
+})
+
 com['examples'].append({
 'name': 'Simple',
 'functions': [('getter', ('Get Quaternion', 'quaternion'), [(('W', 'Quaternion[W]'), 'int16', 16383.0, None, None, None), (('X', 'Quaternion[X]'), 'int16', 16383.0, None, None, None), (('Y', 'Quaternion[Y]'), 'int16', 16383.0, None, None, None), (('Z', 'Quaternion[Z]'), 'int16', 16383.0, None, None, None)], [])],
