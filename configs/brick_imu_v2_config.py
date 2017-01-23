@@ -1055,8 +1055,8 @@ The default values are:
 """,
 'de':
 """
-Setzt die verfügbaren Sensorkonfigurationenen für Magnetometer, Gyroskop und
-Beschleunigungssensor. Die Der Beschleunigungssensor-Wertebereich is in allen
+Setzt die verfügbaren Sensor-Konfigurationen für Magnetometer, Gyroskop und
+Beschleunigungssensor. Der Beschleunigungssensor-Wertebereich ist in allen
 Fusion-Modi wählbar, während alle anderen Konfigurationen im Fusion-Modus
 automatisch kontrolliert werden.
 
@@ -1065,8 +1065,8 @@ Die Standardwerte sind:
 * Magnetometer-Rate 20Hz
 * Gyroskop-Wertebereich 2000°/s
 * Gyroskop-Bandweite 32Hz
-* Beischleunigungssensor-Wertebereich +/-4G
-* Beischleunigungssensor-Bandweite 62.5Hz
+* Beschleunigungssensor-Wertebereich +/-4G
+* Beschleunigungssensor-Bandweite 62.5Hz
 
 """
 }] 
@@ -1141,8 +1141,8 @@ By default sensor fusion is on.
 """
 Wenn der Fusion-Modus deaktiviert wird, geben die Funktionen
 :func:`GetAcceleration`, :func:`GetMagneticField` und :func:`GetAngularVelocity`
-unkalibrierte und unkompensierte Sensorwerte zurpck. Alle anderen Sensordaten-Getter
-geben keien Daten zurück.
+unkalibrierte und umkompensierte Sensorwerte zurück. Alle anderen Sensordaten-Getter
+geben keine Daten zurück.
 
 Standardmäßig ist der Fusion-Modus aktiviert.
 """
