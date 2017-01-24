@@ -7,7 +7,7 @@
 # Common Brick communication config
 
 common_packets = []
-
+'''
 common_packets.append({
 'type': 'function',
 'function_id': 234,
@@ -134,7 +134,7 @@ ausgibt.
 """
 }]
 })
-
+'''
 common_packets.append({
 'type': 'function',
 'function_id': 238,
