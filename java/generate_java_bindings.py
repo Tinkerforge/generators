@@ -169,7 +169,7 @@ public class {0} extends Device {{
 
             params = []
             tostr = []
-            for element in packet.get_elements():
+            for element in packet.get_elements('out'):
                 typ = element.get_java_type()
 
                 if self.get_generator().is_octave() and typ == 'char':
