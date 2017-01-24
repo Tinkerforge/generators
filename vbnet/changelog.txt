@@ -77,7 +77,7 @@
 2015-11-17: 2.1.6 (158f00f)
 - Add missing constant for 19200 baud to RS232 Bricklet API
 - Add error callback to RS232 Bricklet API
-- Add SetBreakCondition methods to RS232 Bricklet API
+- Add SetBreakCondition method to RS232 Bricklet API
 - Add unlimited illuminance range constant to Ambient Light Bricklet 2.0 API
 - Break API to fix threshold min/max type mismatch in Ambient Light, Analog In
   (2.0), Distance IR/US, Humidity, Linear Poti and Voltage Bricklet API

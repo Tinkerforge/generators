@@ -62,7 +62,7 @@
   (2.0), Distance IR/US, Humidity, Linear Poti and Voltage Bricklet API
 - Break API to fix bool return type mismatch in Servo Brick
   (is-position-reached-callback-enabled and is-velocity-reached-callback-enabled
-  function), Accelerometer Bricklet (is-led-on function) and Load Cell Bricklet
+  functions), Accelerometer Bricklet (is-led-on function) and Load Cell Bricklet
   (is-led-on function) API
 
 2016-01-06: 2.1.7 (3ade121)
