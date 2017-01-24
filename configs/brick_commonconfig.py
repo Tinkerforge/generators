@@ -56,7 +56,6 @@ Die Standardbaudrate für alle Ports ist 1400000.
 }]
 })
 
-
 common_packets.append({
 'type': 'function',
 'function_id': 235,
@@ -90,7 +89,7 @@ common_packets.append({
 'function_id': 237,
 'name': 'Get SPITFP Error Count',
 'elements': [('Bricklet Port', 'char', 1, 'in'),
-             ('Error Count Ack Checksum', 'uint32', 1, 'out'),
+             ('Error Count ACK Checksum', 'uint32', 1, 'out'),
              ('Error Count Message Checksum', 'uint32', 1, 'out'),
              ('Error Count Frame', 'uint32', 1, 'out'),
              ('Error Count Overflow', 'uint32', 1, 'out')],
@@ -109,7 +108,7 @@ Returns the error count for the communication between Brick and Bricklet.
 
 The errors are divided into
 
-* ack checksum errors,
+* ACK checksum errors,
 * message checksum errors,
 * frameing errors and
 * overflow errors.
