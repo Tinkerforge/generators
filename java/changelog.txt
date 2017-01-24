@@ -220,3 +220,8 @@
 2016-09-08: 2.1.10 (2863e14)
 - Add support for RGBW LEDs, channel mapping and SK6812RGBW (NeoPixel RGBW),
   LPD8806 and ADA102 (DotStar) chip types to LED Strip Bricklet API
+
+2017-01-24: 2.1.11 (<unknown>)
+- Add support for WIFI Extension 2.0 Mesh mode to Master Brick API
+- Add get/setStatusLEDConfig methods to Motion Detector Bricklet API
+- Add sensor and fusion mode configuration methods to IMU Brick 2.0 API

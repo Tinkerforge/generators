@@ -56,3 +56,8 @@
 2016-11-22: 2.0.11 (5c04632)
 - Use browserify 13.1.1 to avoid the code hanging in Firefox
 - Fix handling of fragmented packets
+
+2017-01-24: 2.0.12 (<unknown>)
+- Add support for WIFI Extension 2.0 Mesh mode to Master Brick API
+- Add get/setStatusLEDConfig functions to Motion Detector Bricklet API
+- Add sensor and fusion mode configuration functions to IMU Brick 2.0 API
