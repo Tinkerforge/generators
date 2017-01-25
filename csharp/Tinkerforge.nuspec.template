@@ -12,7 +12,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This .NET library provides the C# API bindings for Tinkerforge Bricks and Bricklets.</description>
     <summary>Tinkerforge is an open source hardware platform of stackable microcontroller building blocks (Bricks) that can control different modules (Bricklets). The hardware can be controlled by external programs written in different programming languages including C#.</summary>
-    <copyright>Tinkerforge GmbH 2011-2016</copyright>
+    <copyright>Tinkerforge GmbH 2011-2017</copyright>
     <tags>Tinkerforge Open-Source Hardware Brick Bricklet</tags>
   </metadata>
   <files>
