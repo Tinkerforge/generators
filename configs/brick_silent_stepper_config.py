@@ -15,8 +15,8 @@ com = {
     'display_name': 'Silent Stepper',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'TODO',
-        'de': 'TODO'
+        'en': 'Silently drives one bipolar stepper motor with up to TBDV and TBDA per phase',
+        'de': 'Steuert einen bipolaren Schrittmotor lautlos mit bis zu TBDV und TBDA pro Phase'
     },
     'released': False,
     'documented': False,
@@ -351,7 +351,19 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-TODO
+Sets the step resolution from full-step up to 1/256-step.
+
+If interpolation is turned on, the Silent Stepper Brick will always interpolate
+your step inputs as 1/256-step. If you use full-step mode with interpolation, each
+step will generate 256 1/256 steps.
+
+For maximum torque use full-step without interpoltation. For maximum resolution use
+1/256-step. Turn interpolation on to make the Stepper driving less noisy.
+
+If you often change the speed with high acceleration you should turn the
+interpolation off.
+
+The default is 1/256-step with interpolation on.
 """,
 'de':
 """
@@ -652,7 +664,52 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-TODO
+Sets the basic configuration parameters for the different modes (stealth, coolstep, classic).
+
+* Standstill Current: Possible value range is 0-31. The value range corresponds to 1/32 to 32/32
+  of the max current. The value is applied as a factor to the max current during stand still. This
+  parameter can be used to lower the current during stand still. It takes effect after the
+  Power Down Time and the transition time can be controlled with the Standstill Delay Time.
+
+* Motor Run Current: Possible value range is 0-31. The value range corresponds to 1/32 to 32/32
+  of the max current. The value is applied as a factor to the max current when the motor is
+  running. Use a value of at least 16 for good microstep performance.
+
+* Standstill Delay Time: Controls the number of clock cycles for motor power down after a motion 
+  as soon as standstill is detected and the Power Down Time is expired. A high Standstill Delay
+  Time results in a smooth transition that avoids motor jerk during power down.
+
+* Power Down Time: Sets the delay time after a stand still. The value range of 0-255 corresponds
+  to a delay time of 0 to 4 seconds.
+
+* Stealth Threshold: Sets the upper threshold for stealth mode in steps/s. The value range is
+  0-65536 steps/s. If the velocity of the motor goes above this value, stealth mode is turned
+  off. Otherwise it is turned on. In stealth mode the torque declines with high speed.
+
+* Coolstep Threshold: Sets the lower threshold for coolstep mode in steps/s. The value range is
+  0-65536 steps/s. The Coolstep Threshold needs to be above the Stealth Threshold.
+
+* Classic Threshold: Sets the lower threshold for classic mode. The value range is
+  0-65536 steps/s. In classic mode the stepper becomes more noisy, but the torque is maximized.
+
+* High Velocity Shopper Mode: If High Velocity Shopper Mode is enabled, the stepper control
+  is optimized to run the stepper motors at high velocities.
+
+
+If you want to use all three thresholds make sure that 
+Stealth Threshold < Coolstep Threshold < Classic Threshold.
+
+The default values are:
+
+* Standstill Current: 8
+* Motor Run Current: 31
+* Standstill Delay Time: 0
+* Power Down Time: 64 (~ 1 second)
+* Stealth Threshold: 500
+* Coolstep Threshold: 500
+* Classic Threshold: 1000
+* High Velocity Shopper Mode: false
+
 """,
 'de':
 """
@@ -702,7 +759,57 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-TODO
+Note: If you don't know what any of this means you can very likely keep all of
+the values as default!
+
+Sets the Spreadcycle configuration parameters. (TODO: Explain spread cycle)
+
+* Slow Decay Duration: Controls duration of off time setting of slow decay phase. The value
+  range is 0-15. 0 = driver disabled, all bridges off. Use 1 only with Comperator Blank time >= 2.
+
+* Enable Random Slow Decay: Set to false to fix chipper off time as set by Slow Decay Duration.
+  If you set it to true, Decay Duration is randomly modulated.
+
+* Fast Decay Duration: Sets the fast decay duration. The value range is 0-15. This parameters is
+  only used if the Chopper Mode is set to Fast Decay.
+
+* Hysteresis Start Value: Sets the hysteresis start value. The value range is 0-7. This parameter is
+  only used if the Chopper Mode is set to Spread Cycle.
+
+* Hysteresis End Value: Sets the hysteresis end value. The value range is -3 to 12. This parameter is
+  only used if the Chopper Mode is set to Spread Cycle.
+
+* Sinewave Offset: Sets the sinewave offset. The value range is -3 to 12. This parameters is
+  only used if the Chopper Mode is set to Fast Decay. 1/512 of the value becomes added to the absolute
+  value of the sinewave.
+
+* Chopper Mode: 0 = Spread Cycle, 1 = Fast Decay.
+
+* Comperator Blank Time: Sets the blank time of the comperator. Available values are
+ 
+  * 0 = 16 clocks,
+  * 1 = 24 clocks,
+  * 2 = 36 clocks and
+  * 3 = 54 clocks.
+
+  A value of 1 or 2 is recommended for most applications.
+
+* Fast Decay Without Comperator: If set to true the current comparator usage for termination of the
+  fast decay cycle is disabled.
+
+
+The default values are:
+
+* Slow Decay Duration: 4
+* Enable Random Slow Decay: 0
+* Fast Decay Duration: 0
+* Hysteresis Start Value: 0
+* Hysteresis End Value: 0
+* Sinewave Offset: 0
+* Chopper Mode: 0
+* Comperator Blank Time: 1
+* Fast Decay Without Comperator: false
+
 """,
 'de':
 """
@@ -753,7 +860,39 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-TODO
+Note: If you don't know what any of this means you can very likely keep all of
+the values as default!
+
+Sets the configuration relevant for stealth mode.
+
+* Enable Stealth: If set to true the stealth mode is enabled, if set to false the
+  stealth mode is disabled, even if the speed is below the threshold set in :func:`SetBasicConfiguration`.
+
+* Amplitude: If autoscale is disabled, the PWM amplitude is scaled by this value. If autoscale is enabled,
+  this value defines the maximum PWM amplitude change per half wave. The value range is 0-255.
+
+* Gradient: If autoscale is disabled, the PWM gradient is scaled by this value. If autoscale is enabled,
+  this value defines the maximum PWM gradient. With autoscale a value above 64 is recommended,
+  otherwise the regulation might not be able to measure the current. The value range is 0-255.
+
+* Enable Autoscale: If set to true, automatic current control is used. Othwerwise the user defined
+  amplitude and gradient are used.
+
+* Force Symmetric: If true, A symmetric PWM cycle is enforced. Otherwise the PWM valuee may change within each
+  PWM cycle.
+
+* Freewheel Mode: The freewheel mode defines the behavior in stand still if the Standstill Current
+  (see :func:`SetBasicConfiguration`) is set to 0.
+
+The default values are:
+
+* Enable Stealth: true
+* Amplitude: 128
+* Gradient: 4
+* Enable Autoscale: true
+* Force Symmetric: false
+* Freewheel Mode: 0 (Normal)
+
 """,
 'de':
 """
@@ -792,8 +931,14 @@ com['packets'].append({
 'name': 'Set Coolstep Configuration',
 'elements': [('Minimum Stallguard Value', 'uint8', 1, 'in'), # semin 0-15
              ('Maximum Stallguard Value', 'uint8', 1, 'in'),  # semax 0-15
-             ('Current Up Step Width', 'uint8', 1, 'in'),  # seup 0-3
-             ('Current Down Step Width', 'uint8', 1, 'in'),  # sedn 0-3
+             ('Current Up Step Width', 'uint8', 1, 'in', ('Current Up Step Increment', [('1', 0),
+                                                                                        ('2', 1),
+                                                                                        ('4', 2),
+                                                                                        ('8', 3)])),  # seup 0-3
+             ('Current Down Step Width', 'uint8', 1, 'in', ('Current Down Step Decrement', [('1', 0),
+                                                                                            ('2', 1),
+                                                                                            ('8', 2),
+                                                                                            ('32', 3)])),  # sedn 0-3
              ('Minimum Current', 'uint8', 1, 'in', ('Minimum Current', [('Half', 0),
                                                                         ('Quarter', 1)])),  # seimin
              ('Stallguard Threshold Value', 'int8', 1, 'in'),  # sgt -64-63
@@ -803,7 +948,44 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-TODO
+Note: If you don't know what any of this means you can very likely keep all of
+the values as default!
+
+Sets the configuration relevant for coolstep.
+
+* Minimum Stallguard Value: If the Stallguard result falls below this value*32, the motor current
+  is increased to reduce motor load angle. The value range is 0-15. A value of 0 turns coolstep off.
+
+* Maximum Stallguard Value: If the Stallguard result goes above 
+  (Min Stallguard Value + Max Stallguard Value + 1)*32, the motor current is decreased to save
+  energy.
+
+* Current Up Step Width: Sets the up step increment per stallguard value. The value range is 0-3,
+  corresponding to the increments 1, 2, 4 and 8.
+
+* Current Down Step Width: Sets the down step decrement per stallguard value. The value range is 0-3,
+  corresponding to the decrements 1, 2, 8 and 16.
+
+* Minimum Current: Sets the minimum current for coolstep current control. You can choose between
+  half and quarter of the run current.
+
+* Stallguard Threshold Value: Sets the level for stall output (see :func:`GetDriverStatus`). The value
+  range is -64 to +63. A lower value gives a higher sensitivity. You have to find a suitable value for your
+  motor by trial and error, 0 works for most motors.
+
+* Stallguard Mode: Set to 0 for standard resolution or 1 for filtered mode. In filtered mode the stallguard
+  signal will be updated every four fullsteps.
+
+The default values are:
+
+* Minimum Stallguard Value: 2
+* Maximum Stallguard Value: 10
+* Current Up Step Width: 0
+* Current Down Step Width: 0
+* Minimum Current: 0
+* Stallguard Threshold Value: 0
+* Stallguard Mode: 0
+
 """,
 'de':
 """
@@ -817,8 +999,14 @@ com['packets'].append({
 'name': 'Get Coolstep Configuration',
 'elements': [('Minimum Stallguard Value', 'uint8', 1, 'out'), # semin 0-15
              ('Maximum Stallguard Value', 'uint8', 1, 'out'),  # semax 0-15
-             ('Current Up Step Width', 'uint8', 1, 'out'),  # seup 0-3
-             ('Current Down Step Width', 'uint8', 1, 'out'),  # sedn 0-3
+             ('Current Up Step Width', 'uint8', 1, 'out', ('Current Up Step Increment', [('1', 0),
+                                                                                         ('2', 1),
+                                                                                         ('4', 2),
+                                                                                         ('8', 3)])),  # seup 0-3
+             ('Current Down Step Width', 'uint8', 1, 'out', ('Current Down Step Decrement', [('1', 0),
+                                                                                             ('2', 1),
+                                                                                             ('8', 2),
+                                                                                             ('32', 3)])),  # sedn 0-3
              ('Minimum Current', 'uint8', 1, 'out', ('Minimum Current', [('Half', 0),
                                                                          ('Quarter', 1)])),  # seimin
              ('Stallguard Threshold Value', 'int8', 1, 'out'),  # sgt -64-63
@@ -846,7 +1034,24 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-TODO
+Note: If you don't know what any of this means you can very likely keep all of
+the values as default!
+
+Sets miscellaneous configuration parameters.
+
+* Disable Short To Ground Protection: Set to false to enable short to ground protection, otherwise
+  it is disabled.
+
+* Synchronize Phase Frequency: With this parameter you can synchronize the chopper for both phases
+  of a two phase motor to avoid the occurrence of a beat. The value range is 0-15. If set to 0,
+  the synchronization is turned off. Otherwise the synchronization is done through the formular
+  f_sync = f_clk/(value*64). In Classic Mode the synchronization is automatically switched off.
+
+The default values are:
+
+* Disable Short To Ground Protection: 0
+* Synchronize Phase Frequency: 0
+
 """,
 'de':
 """
@@ -896,6 +1101,31 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
+Returns the current driver status.
+
+* Open Load: Indicates if an open load is present on phase A, B or both. False detection can occur in fast motion
+  as well as during stand still.
+
+* Short To Ground: Indicates if a short to ground is present on phase A, B or both. If this is detected the driver
+  automatically becomes disabled and stays disabled until it is enabled again manually.
+
+* Over Temperature: The over temperature indicator switches to "Warming" if the driver IC warms up. The warning flag
+  is expected during long duration stepper uses. If the temperature limit is reached the indicator switches
+  to "Limit". In this case the driver becomes disabled until it cools down again.
+
+* Motor Stalled: Is true if a motor stall was detected.
+
+* Actual Motor Current: Indicates the actual current control scaling as used in Coolstep mode.
+
+* Stallguard Result: Indicates the load of the motor. A lower value signals a higher load. Per trial and error
+  you can find out which value corresponds to a suitable torque for the velocity used in your application.
+  After that you can use this threshold value to find out if a motor stall becomes probable and react on it (e.g.
+  decrease velocity).
+  During stand still this value can not be used for stall detection, it shows the chopper on-time for motor coil A.
+
+* Stealth Voltage Amplitude: Shows the actual PWM scaling. In Stealth mode it can be used to detect motor load and
+  stall if autoscale is enabled (see :func:`SetStealthConfiguration`).
+
 """,
 'de':
 """
