@@ -652,10 +652,10 @@ Gibt *true* zurück wenn die Treiberstufe aktiv ist, sonst *false*.
 com['packets'].append({
 'type': 'function',
 'name': 'Set Basic Configuration',
-'elements': [('Standstill Current', 'uint8', 1, 'in'), # ihold 0-31
-             ('Motor Run Current', 'uint8', 1, 'in'),  # irun 0-31
-             ('Standstill Delay Time', 'uint8', 1, 'in'), # ihold_delay 0-15 clk cycles
-             ('Power Down Time', 'uint8', 1, 'in'), # tpowerdown 0-255
+'elements': [('Standstill Current', 'uint16', 1, 'in'), # ihold 0-31
+             ('Motor Run Current', 'uint16', 1, 'in'),  # irun 0-31
+             ('Standstill Delay Time', 'uint16', 1, 'in'), # ihold_delay 0-15 clk cycles
+             ('Power Down Time', 'uint16', 1, 'in'), # tpowerdown 0-255
              ('Stealth Threshold', 'uint16', 1, 'in'), # tpwmthrs (in full steps/s)
              ('Coolstep Threshold', 'uint16', 1, 'in'), # tcoolthrs (in full steps/s)
              ('Classic Threshold', 'uint16', 1, 'in'), # thigh (in full steps/s)
@@ -666,21 +666,23 @@ com['packets'].append({
 """
 Sets the basic configuration parameters for the different modes (stealth, coolstep, classic).
 
-* Standstill Current: Possible value range is 0-31. The value range corresponds to 1/32 to 32/32
-  of the max current. The value is applied as a factor to the max current during stand still. This
-  parameter can be used to lower the current during stand still. It takes effect after the
-  Power Down Time and the transition time can be controlled with the Standstill Delay Time.
+* Standstill Current: This value can be used to lower the current during stand still. It takes
+  effect after the Power Down Time and the transition time can be controlled with the Standstill Delay 
+  Time. The unit is in mA and the maximum allowed value is the current motor current 
+  (see :func:`SetMotorCurrent`).
 
-* Motor Run Current: Possible value range is 0-31. The value range corresponds to 1/32 to 32/32
-  of the max current. The value is applied as a factor to the max current when the motor is
-  running. Use a value of at least 16 for good microstep performance.
+* Motor Run Current: The value is applied as a factor to the max current when the motor is
+  running. Use a value of at least 16 for good microstep performance. The unit is in mA and the 
+  maximum allowed value is the current motor current (see :func:`SetMotorCurrent`).
 
-* Standstill Delay Time: Controls the number of clock cycles for motor power down after a motion 
+
+* Standstill Delay Time: Controls the duration for motor power down after a motion 
   as soon as standstill is detected and the Power Down Time is expired. A high Standstill Delay
   Time results in a smooth transition that avoids motor jerk during power down.
+  The value range is 0 to 307ms
 
-* Power Down Time: Sets the delay time after a stand still. The value range of 0-255 corresponds
-  to a delay time of 0 to 4 seconds.
+* Power Down Time: Sets the delay time after a stand still. 
+  The value range is 0 to 5222ms.
 
 * Stealth Threshold: Sets the upper threshold for stealth mode in steps/s. The value range is
   0-65536 steps/s. If the velocity of the motor goes above this value, stealth mode is turned
@@ -701,10 +703,10 @@ Stealth Threshold < Coolstep Threshold < Classic Threshold.
 
 The default values are:
 
-* Standstill Current: 8
-* Motor Run Current: 31
+* Standstill Current: 200
+* Motor Run Current: 800
 * Standstill Delay Time: 0
-* Power Down Time: 64 (~ 1 second)
+* Power Down Time: 1000
 * Stealth Threshold: 500
 * Coolstep Threshold: 500
 * Classic Threshold: 1000
@@ -721,10 +723,10 @@ TODO
 com['packets'].append({
 'type': 'function',
 'name': 'Get Basic Configuration',
-'elements': [('Standstill Current', 'uint8', 1, 'out'), # ihold 0-31
-             ('Motor Run Current', 'uint8', 1, 'out'),  # irun 0-31
-             ('Standstill Delay Time', 'uint8', 1, 'out'), # ihold_delay 0-15 clk cycles
-             ('Power Down Time', 'uint8', 1, 'out'), # tpowerdown 0-255
+'elements': [('Standstill Current', 'uint16', 1, 'out'), # ihold 0-31 -> max is max motor current
+             ('Motor Run Current', 'uint16', 1, 'out'),  # irun 0-31 -> max is max motor current
+             ('Standstill Delay Time', 'uint16', 1, 'out'), # ihold_delay 0-15 clk cycles -> max 307 ms
+             ('Power Down Time', 'uint16', 1, 'out'), # tpowerdown 0-255 -> max 5222ms
              ('Stealth Threshold', 'uint16', 1, 'out'), # tpwmthrs (in steps/s)
              ('Coolstep Threshold', 'uint16', 1, 'out'), # tcoolthrs (in steps/s)
              ('Classic Threshold', 'uint16', 1, 'out'), # thigh (in steps/s)
