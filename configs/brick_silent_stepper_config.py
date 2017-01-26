@@ -547,7 +547,7 @@ com['packets'].append({
 'en':
 """
 Sets the current in mA with which the motor will be driven.
-The minimum value is 100mA, the maximum value 2291mA and the 
+The minimum value is 360mA, the maximum value 1640mA and the 
 default value is 800mA.
 
 .. warning::
@@ -557,7 +557,7 @@ default value is 800mA.
 'de':
 """
 Setzt den Strom in mA mit welchem der Motor angetrieben wird.
-Der minimale Wert ist 100mA, der maximale Wert ist 2291mA und der
+Der minimale Wert ist 360mA, der maximale Wert ist 1640mA und der
 Standardwert ist 800mA.
 
 .. warning::
