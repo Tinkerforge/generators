@@ -15,8 +15,8 @@ com = {
     'display_name': 'Silent Stepper',
     'manufacturer': 'Tinkerforge',
     'description': {
-        'en': 'Silently drives one bipolar stepper motor with up to TBDV and TBDA per phase',
-        'de': 'Steuert einen bipolaren Schrittmotor lautlos mit bis zu TBDV und TBDA pro Phase'
+        'en': 'Silently drives one bipolar stepper motor with up to 46V and 1.6A per phase',
+        'de': 'Steuert einen bipolaren Schrittmotor lautlos mit bis zu 46V und 1.6A pro Phase'
     },
     'released': False,
     'documented': False,
