@@ -368,15 +368,20 @@ AddEventHandler[{device_initial_name}@{function_camel_case_name},{function_camel
 
 class MathematicaExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
     def get_mathematica_source(self):
-        template = r"""(*Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)*)
+        templateA = r"""(*Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)*)
+{device_initial_name}@Set{function_camel_case_name}{suffix}Period[{arguments}{period_msec}]
+"""
+        templateB = r"""(*Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)*)
 (*Note: The {function_comment_name} callback is only called every {period_sec_long}*)
 (*if the {function_comment_name} has changed since the last call!*)
 {device_initial_name}@Set{function_camel_case_name}{suffix}Period[{arguments}{period_msec}]
 """
 
         if self.get_device().get_underscore_name().startswith('imu'):
+            template = templateA # FIXME: special hack for IMU Brick (2.0) callback behavior
             suffix = '' # FIXME: special hack for IMU Brick name mismatch
         else:
+            template = templateB
             suffix = 'Callback'
 
         arguments = []

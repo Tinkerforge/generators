@@ -461,15 +461,20 @@ class CExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFunction):
         return None
 
     def get_c_source(self):
-        template = r"""	// Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
+        templateA = r"""	// Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
+	{device_underscore_name}_set_{function_underscore_name}{suffix}_period(&{device_initial_name}{arguments}, {period_msec});
+"""
+        templateB = r"""	// Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
 	// Note: The {function_comment_name} callback is only called every {period_sec_long}
 	//       if the {function_comment_name} has changed since the last call!
 	{device_underscore_name}_set_{function_underscore_name}{suffix}_period(&{device_initial_name}{arguments}, {period_msec});
 """
 
         if self.get_device().get_underscore_name().startswith('imu'):
-            suffix = '' # FIXME: special hack for IMU Brick name mismatch
+            template = templateA # FIXME: special hack for IMU Brick (2.0) callback behavior
+            suffix = '' # FIXME: special hack for IMU Brick (2.0) name mismatch
         else:
+            template = templateB
             suffix = '_callback'
 
         arguments = []

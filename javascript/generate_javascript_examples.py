@@ -494,15 +494,20 @@ class JavaScriptExampleCallbackPeriodFunction(common.ExampleCallbackPeriodFuncti
         return None
 
     def get_javascript_source(self):
-        template = r"""{global_line_prefix}        // Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
+        templateA = r"""{global_line_prefix}        // Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
+{global_line_prefix}        {device_initial_name}.set{function_camel_case_name}{suffix}Period({arguments}{period_msec});
+"""
+        templateB = r"""{global_line_prefix}        // Set period for {function_comment_name} callback to {period_sec_short} ({period_msec}ms)
 {global_line_prefix}        // Note: The {function_comment_name} callback is only called every {period_sec_long}
 {global_line_prefix}        //       if the {function_comment_name} has changed since the last call!
 {global_line_prefix}        {device_initial_name}.set{function_camel_case_name}{suffix}Period({arguments}{period_msec});
 """
 
         if self.get_device().get_underscore_name().startswith('imu'):
+            template = templateA # FIXME: special hack for IMU Brick (2.0) callback behavior
             suffix = '' # FIXME: special hack for IMU Brick name mismatch
         else:
+            template = templateB
             suffix = 'Callback'
 
         arguments = []
