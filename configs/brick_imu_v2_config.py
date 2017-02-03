@@ -1125,7 +1125,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Set Sensor Fusion Mode',
 'elements': [('Mode', 'uint8', 1, 'in', ('Sensor Fusion', [('Off', 0),
-                                                           ('On', 1)]))],
+                                                           ('On', 1),
+                                                           ('On Without Magnetometer', 2)]))],
 'since_firmware': [2, 0, 5],
 'doc': ['af', {
 'en':
@@ -1134,6 +1135,11 @@ If the fusion mode is turned off, the functions
 :func:`GetAcceleration`, :func:`GetMagneticField` and :func:`GetAngularVelocity`
 return uncalibrated and uncompensated sensor data. All other sensor data getters
 return no data.
+
+Since firmware version 2.0.6 you can also use a fusion mode without magnetometer.
+In this mode the calculated orientation is relative (with magnetometer it is
+absolute with respect to the earth). However, the calculation can't be influenced
+by spurious magnetic fields.
 
 By default sensor fusion is on.
 """,
@@ -1144,6 +1150,11 @@ Wenn der Fusion-Modus deaktiviert wird, geben die Funktionen
 unkalibrierte und umkompensierte Sensorwerte zurück. Alle anderen Sensordaten-Getter
 geben keine Daten zurück.
 
+Seit Firmware Version 2.0.6 kann auch ein Fusion-Modus ohne Magnetometer ausgewählt
+werden. In diesem Modus wird die Orientierung relativ berechnet (mit Magnetometer
+ist sie absolut in Bezug auf die Erde). Allerdings kann die Berechnung in diesem
+Fall nicht von störenden Magnetfeldern beeinflusst werden.
+
 Standardmäßig ist der Fusion-Modus aktiviert.
 """
 }] 
@@ -1153,7 +1164,8 @@ com['packets'].append({
 'type': 'function',
 'name': 'Get Sensor Fusion Mode',
 'elements': [('Mode', 'uint8', 1, 'out', ('Sensor Fusion', [('Off', 0),
-                                                            ('On', 1)]))],
+                                                            ('On', 1),
+                                                            ('On Without Magnetometer', 2)]))],
 'since_firmware': [2, 0, 5],
 'doc': ['af', {
 'en':
