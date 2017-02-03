@@ -1,0 +1,14 @@
+ipcon_create
+ipcon_destroy
+ipcon_connect
+ipcon_disconnect
+ipcon_authenticate
+ipcon_get_connection_state
+ipcon_set_auto_reconnect
+ipcon_get_auto_reconnect
+ipcon_set_timeout
+ipcon_get_timeout
+ipcon_enumerate
+ipcon_wait
+ipcon_unwait
+ipcon_register_callback

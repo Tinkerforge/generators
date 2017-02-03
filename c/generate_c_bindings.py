@@ -3,7 +3,7 @@
 
 """
 C/C++ Bindings Generator
-Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2017 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 
 generate_c_bindings.py: Generator for C/C++ bindings
@@ -634,6 +634,23 @@ void {0}_register_callback({1} *{0}, uint8_t id, void *callback, void *user_data
 
         return header
 
+    def get_c_symbols(self):
+        symbols = []
+        underscore_name = self.get_underscore_name()
+
+        symbols.append('{0}_create'.format(underscore_name))
+        symbols.append('{0}_destroy'.format(underscore_name))
+        symbols.append('{0}_get_response_expected'.format(underscore_name))
+        symbols.append('{0}_set_response_expected'.format(underscore_name))
+        symbols.append('{0}_set_response_expected_all'.format(underscore_name))
+        symbols.append('{0}_register_callback'.format(underscore_name))
+        symbols.append('{0}_get_api_version'.format(underscore_name))
+
+        for packet in self.get_packets('function'):
+            symbols.append('{0}_{1}'.format(underscore_name, packet.get_underscore_name()))
+
+        return '\n'.join(symbols) + '\n'
+
 class CBindingsPacket(c_common.CPacket):
     def get_c_formatted_doc(self):
         text = common.select_lang(self.get_doc_text())
@@ -790,9 +807,14 @@ class CBindingsGenerator(common.BindingsGenerator):
         h.write(device.get_c_header())
         h.close()
 
+        symbols = open(os.path.join(self.get_bindings_root_directory(), 'bindings', filename + '.symbols'), 'wb')
+        symbols.write(device.get_c_symbols())
+        symbols.close()
+
         if device.is_released():
             self.released_files.append(filename + '.c')
             self.released_files.append(filename + '.h')
+            self.released_files.append(filename + '.symbols')
 
 def generate(bindings_root_directory):
     common.generate(bindings_root_directory, 'en', CBindingsGenerator)

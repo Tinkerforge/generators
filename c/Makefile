@@ -20,12 +20,21 @@ ifndef libdir
 	libdir := $(prefix)/lib
 endif
 
-CC ?= gcc
+ifeq ($(OS),Windows_NT)
+	CC := gcc
+else
+	CC ?= gcc
+endif
+
 AR ?= ar
 RM := rm -f --
 INSTALL := install
 
-CFLAGS += -O2 -fPIC -Wall -Wextra
+CFLAGS += -O2 -Wall -Wextra
+
+ifneq ($(OS),Windows_NT)
+	CFLAGS += -fPIC
+endif
 
 HEADERS := $(wildcard *.h)
 SOURCES := $(wildcard *.c)
@@ -33,7 +42,11 @@ OBJECTS := ${SOURCES:.c=.o}
 
 .PHONY: all clean install
 
+ifeq ($(OS),Windows_NT)
+all: tinkerforge.dll Makefile
+else
 all: libtinkerforge.so libtinkerforge.a Makefile
+endif
 
 %.o: %.c Makefile
 	@echo CC $@
@@ -47,8 +60,12 @@ libtinkerforge.a: $(OBJECTS) Makefile
 	@echo AR $@
 	$(E)$(AR) rcs $@ *.o
 
+tinkerforge.dll: $(OBJECTS) Makefile
+	@echo LD $@
+	$(E)$(CC) -shared -o $@ *.o tinkerforge.def -lws2_32 -ladvapi32
+
 clean: Makefile
-	$(E)$(RM) $(OBJECTS) libtinkerforge.so libtinkerforge.a
+	$(E)$(RM) $(OBJECTS) libtinkerforge.so libtinkerforge.a tinkerforge.dll
 
 install: $(HEADERS) libtinkerforge.so Makefile
 	@echo "MD $(incdir)"
