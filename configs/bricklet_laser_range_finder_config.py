@@ -37,10 +37,11 @@ com['packets'].append({
 Returns the measured distance. The value has a range of 0 to 4000
 and is given in cm.
 
-The Laser Range Finder Bricklet knows different modes. Distances
-are only measured in the distance measurement mode,
-see :func:`SetMode`. Also the laser has to be enabled, see
-:func:`EnableLaser`.
+Sensor hardware version 1 (see :func:`GetSensorHardwareVersion`) cannot
+measure distance and velocity at the same time. Therefore, the distance mode
+has to be enabled using :func:`SetMode`.
+Sensor hardware version 3 can measure distance and velocity at the same
+time. Also the laser has to be enabled, see :func:`EnableLaser`.
 
 If you want to get the distance periodically, it is recommended to
 use the callback :func:`Distance` and set the period with 
@@ -51,9 +52,11 @@ use the callback :func:`Distance` and set the period with
 Gibt die gemessene Distanz zurück. Der Wertebereich ist 0 bis 4000
 und die Werte haben die Einheit cm.
 
-Das Laser Range Finder Bricklet kennt verschiedene Modi. Eine Distanz
-wird nur im Distanzmodus gemessen, siehe :func:`SetMode`. Zusätzlich
-muss der Laser aktiviert werden, siehe :func:`EnableLaser`.
+Sensor Hardware Version 1 (siehe :func:`GetSensorHardwareVersion`) kann nicht
+gleichzeitig Distanz und Geschwindigkeit messen. Daher muss mittels
+:func:`SetMode` der Distanzmodus aktiviert sein.
+Sensor Hardware Version 3 kann gleichzeitig Distanz und Geschwindigkeit
+messen. Zusätzlich muss der Laser aktiviert werden, siehe :func:`EnableLaser`.
 
 Wenn der Entfernungswert periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Distance` zu nutzen und die Periode mit 
@@ -73,10 +76,13 @@ com['packets'].append({
 Returns the measured velocity. The value has a range of -12800 to 12700
 and is given in 1/100 m/s.
 
-The Laser Range Finder Bricklet knows different modes. Velocity 
-is only measured in the velocity measurement modes, 
-see :func:`SetMode`. Also the laser has to be enabled, see
-:func:`EnableLaser`.
+Sensor hardware version 1 (see :func:`GetSensorHardwareVersion`) cannot
+measure distance and velocity at the same time. Therefore, the velocity mode
+has to be enabled using :func:`SetMode`.
+Sensor hardware version 3 can measure distance and velocity at the same
+time, but the velocity measurement only produces stables results if a fixed
+measurement rate (see :func:`SetConfiguration`) is configured. Also the laser
+has to be enabled, see :func:`EnableLaser`.
 
 If you want to get the velocity periodically, it is recommended to
 use the callback :func:`Velocity` and set the period with 
@@ -87,9 +93,13 @@ use the callback :func:`Velocity` and set the period with
 Gibt die gemessene Geschwindigkeit zurück. Der Wertebereich ist -12800 bis 12700
 und die Werte haben die Einheit 1/100 m/s.
 
-Das Laser Range Finder Bricklet kennt verschiedene Modi. Eine Geschwindigkeit
-wird nur in den Geschwindigkeitsmodi gemessen, siehe :func:`SetMode`. Zusätzlich
-muss der Laser aktiviert werden, siehe :func:`EnableLaser`.
+Sensor Hardware Version 1 (siehe :func:`GetSensorHardwareVersion`) kann nicht
+gleichzeitig Distanz und Geschwindigkeit messen. Daher muss mittels
+:func:`SetMode` ein Geschwindigkeitsmodus aktiviert sein.
+Sensor Hardware Version 3 kann gleichzeitig Distanz und Geschwindigkeit
+messen, jedoch liefert die Geschwindigkeitsmessung nur dann stabile Werte,
+wenn eine feste Messfrequenz (siehe :func:`SetConfiguration`) eingestellt ist.
+Zusätzlich muss der Laser aktiviert werden, siehe :func:`EnableLaser`.
 
 Wenn der Geschwindigkeitswert periodisch abgefragt werden soll, wird empfohlen
 den Callback :func:`Velocity` zu nutzen und die Periode mit 
@@ -191,7 +201,6 @@ gesetzt.
 """
 }]
 })
-
 
 com['packets'].append({
 'type': 'function',
@@ -452,11 +461,12 @@ com['packets'].append({
 'en':
 """
 .. note::
- This function is only available if you use the LIDAR-Lite sensor hardware version 1.
- Use :func:`SetConfiguration` for version 3.
+ This function is only available if you have a LIDAR-Lite sensor with hardware
+ version 1. Use :func:`SetConfiguration` for hardware version 3. You can check
+ the sensor hardware version using :func:`GetSensorHardwareVersion`.
 
-The LIDAR has five different modes. One mode is for distance
-measurements and four modes are for velocity measurements with
+The LIDAR-Lite sensor (hardware version 1) has five different modes. One mode is
+for distance measurements and four modes are for velocity measurements with
 different ranges.
 
 The following modes are available:
@@ -472,11 +482,13 @@ The default mode is 0 (distance is measured).
 'de':
 """
 .. note::
- Diese Funktion ist nur verfügbar wenn der LIDAR-Lite Sensor mit Hardware Version 1 benutzt wird.
- Für Hardware Version 3 gibt es :func:`SetConfiguration`.
+ Diese Funktion ist nur verfügbar, wenn ein LIDAR-Lite Sensor mit Hardware
+ Version 1 verbaut ist. Für Hardware Version 3 gibt es :func:`SetConfiguration`.
+ die Hardware Version des Sensors kann mittels :func:`GetSensorHardwareVersion`
+ abgefragt werden.
 
-Das LIDAR hat fünf verschiedene Modi. Ein Modus ist für
-Distanzmessungen und vier Modi sind für Geschwindigkeitsmessungen
+Der LIDAR-Lite Sensor (Hardware Version 1) hat fünf verschiedene Modi. Ein Modus
+ist für Distanzmessungen und vier Modi sind für Geschwindigkeitsmessungen
 mit unterschiedlichen Wertebereichen.
 
 Die folgenden Modi können genutzt werden:
@@ -707,27 +719,28 @@ com['packets'].append({
 'en':
 """
 .. note::
- This function is only available if you use the LIDAR-Lite sensor hardware version 3.
- Use :func:`SetMode` for version 1.
+ This function is only available if you have a LIDAR-Lite sensor with hardware
+ version 3. Use :func:`SetMode` for hardware version 1. You can check
+ the sensor hardware version using :func:`GetSensorHardwareVersion`.
 
 The **Aquisition Count** defines the number of times the Laser Range Finder Bricklet
-will integrate acqusitions to find a correlation record peak. With a higher count,
+will integrate acquisitions to find a correlation record peak. With a higher count,
 the Bricklet can measure longer distances. With a lower count, the rate increases. The
 allowed values are 1-255.
 
 If you set **Enable Quick Termination** to true, the distance measurement will be terminated
-early if a high peak was already detected. This means that a higher rate can be achieved
+early if a high peak was already detected. This means that a higher measurement rate can be achieved
 and long distances can be measured at the same time. However, the chance of false-positive
 distance measurements increases.
 
 Normally the distance is calculated with a detection algorithm that uses peak value,
 signal strength and noise. You can however also define a fixed **Threshold Value**.
 Set this to a low value if you want to measure the distance to something that has
-very little reflection (e.g. glas) and set it to a high value if you want to measure
+very little reflection (e.g. glass) and set it to a high value if you want to measure
 the distance to something with a very high reflection (e.g. mirror). Set this to 0 to
 use the default algorithm. The other allowed values are 1-255.
 
-Set The **Measurement Frequency** in Hz to force a steady measurement rate. If set to 0,
+Set the **Measurement Frequency** in Hz to force a fixed measurement rate. If set to 0,
 the Laser Range Finder Bricklet will use the optimal frequency according to the other
 configurations and the actual measured distance. Since the rate is not fixed in this case,
 the velocity measurement is not stable. For a stable velocity measurement you should
@@ -736,41 +749,43 @@ of the calculated velocity. The allowed values are 10Hz-500Hz (and 0 to turn the
 frequency off).
 
 The default values for Acquisition Count, Enable Quick Termination, Threshold Value and
-Measurement Frequency are 128, False, 0 and 0.
+Measurement Frequency are 128, false, 0 and 0.
 """,
 'de':
 """
 .. note::
- Diese Funktion ist nur verfügbar wenn der LIDAR-Lite Sensor mit Hardware Version 3 benutzt wird.
- Für Hardware Version 1 gibt es :func:`SetConfiguration`.
+ Diese Funktion ist nur verfügbar, wenn ein LIDAR-Lite Sensor mit Hardware
+ Version 3 verbaut ist. Für Hardware Version 1 gibt es :func:`SetMode`.
+ Die Hardware Version des Sensors kann mittels :func:`GetSensorHardwareVersion`
+ abgefragt werden.
 
 Der Parameter **Aquisition Count** definiert die Anzahl der Datenerfassungen die integriert
-werden um eine Korrelation zu finden. Mit einer größeren Anzahl kann das Bricklet höhere
+werden, um eine Korrelation zu finden. Mit einer größeren Anzahl kann das Bricklet höhere
 Distanzen messen, mit einer kleineren Anzahl ist die Messrate höher. Erlaubte Werte sind 1-255.
 
 Wenn der Parameter **Enable Quick Termination** auf true gesetzt wird, wird die Distanzmessung
-abgeschlossen sobald das erste mal ein hoher Peak erfasst wird. Dadurch kann eine höhere Rate
-erreicht werden und Messungen mit langer Distanz sind gleichzeitig möglich. Die Wahrscheinlichkeit
+abgeschlossen, sobald das erste mal ein hoher Peak erfasst wird. Dadurch kann eine höhere Messrate
+erreicht werden wobei gleichzeitig Messungen mit langer Distanz möglich sind. Die Wahrscheinlichkeit
 einer Falschmessung erhöht sich allerdings.
 
 Normalerweise wird die Distanz mit Hilfe eines Detektionsalgorithmus berechnet. Dieser verwendet
-Peakwerte, Signalstärke und Rauschen. Es ist möglich stattdessen über den Parameter
+Peak-Werte, Signalstärke und Rauschen. Es ist möglich stattdessen über den Parameter
 **Threshold Value** einen festen Schwellwert zu setzen der zur Distanzbestimmung genutzt werden soll.
 Um den Abstand zu einem Objekt mit sehr niedriger Reflektivität zu messen (z.B. Glas) kann der Wert
 niedrig gesetzt werden. Um den Abstand zu einem Objekt mit sehr hoher Reflektivität zu messen
 (z.B. Spiegel) kann der Wert sehr hoch gesetzt werden. Mit einem Wert von 0 wird der Standardalgorithmus
 genutzt. Ansonsten ist der erlaubte Wertebereich 1-255.
 
-Der **Measurement Frequency** Parameter wird in Hz gesetzt. Er erzwingt eine stabile Messfrequenz.
+Der **Measurement Frequency** Parameter wird in Hz gesetzt. Er erzwingt eine feste Messfrequenz.
 Wenn der Wert auf 0 gesetzt wird, nutzt das Laser Range Finder Bricklet die optimale Frequenz je nach
 Konfiguration und aktuell gemessener Distanz. Da die Messrate in diesem Fall nicht fest ist, ist die
 Geschwindigkeitsmessung nicht stabil. Für eine stabile Geschwindigkeitsmessung sollte eine feste
 Messfrequenz eingestellt werden. Desto niedriger die Frequenz ist, desto größer ist die Auflösung
-der Geschwindigkeitsmessung. Der erlaubte Wertebreich ist 10Hz-500Hz (und 0 um die feste
+der Geschwindigkeitsmessung. Der erlaubte Wertbereich ist 10Hz-500Hz (und 0 um die feste
 Messfrequenz auszustellen).
 
 Die Standardwerte für Acquisition Count, Enable Quick Termination, Threshold Value und
-Measurement Frequency sind 128, False, 0 und 0.
+Measurement Frequency sind 128, false, 0 und 0.
 """
 }]
 })
