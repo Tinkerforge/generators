@@ -451,6 +451,10 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
+.. note::
+ This function is only available if you use the LIDAR-Lite sensor hardware version 1.
+ Use :func:`SetConfiguration` for version 3.
+
 The LIDAR has five different modes. One mode is for distance
 measurements and four modes are for velocity measurements with
 different ranges.
@@ -467,6 +471,10 @@ The default mode is 0 (distance is measured).
 """,
 'de':
 """
+.. note::
+ Diese Funktion ist nur verfügbar wenn der LIDAR-Lite Sensor mit Hardware Version 1 benutzt wird.
+ Für Hardware Version 3 gibt es :func:`SetConfiguration`.
+
 Das LIDAR hat fünf verschiedene Modi. Ein Modus ist für
 Distanzmessungen und vier Modi sind für Geschwindigkeitsmessungen
 mit unterschiedlichen Wertebereichen.
@@ -665,6 +673,125 @@ Der :word:`parameter` ist der Geschwindigkeitswert des Sensors.
 
 Wenn der Schwellwert erreicht bleibt, wird der Callback mit der Periode, wie
 mit :func:`SetDebouncePeriod` gesetzt, ausgelöst.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Sensor Hardware Version',
+'elements': [('Version', 'uint8', 1, 'out', ('Version', [('1', 1),
+                                                         ('3', 3)]))],
+'since_firmware': [2, 0, 3],
+'doc': ['af', {
+'en':
+"""
+Returns the LIDAR-Lite hardware version. 
+""",
+'de':
+"""
+Gibt die LIDAR-Lite Hardware version zurück.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Set Configuration',
+'elements': [('Acquisition Count', 'uint8', 1, 'in'),
+             ('Enable Quick Termination', 'bool', 1, 'in'),
+             ('Threshold Value', 'uint8', 1, 'in'),
+             ('Measurement Frequency', 'uint16', 1, 'in')],
+'since_firmware': [2, 0, 3],
+'doc': ['bf', {
+'en':
+"""
+.. note::
+ This function is only available if you use the LIDAR-Lite sensor hardware version 3.
+ Use :func:`SetMode` for version 1.
+
+The **Aquisition Count** defines the number of times the Laser Range Finder Bricklet
+will integrate acqusitions to find a correlation record peak. With a higher count,
+the Bricklet can measure longer distances. With a lower count, the rate increases. The
+allowed values are 1-255.
+
+If you set **Enable Quick Termination** to true, the distance measurement will be terminated
+early if a high peak was already detected. This means that a higher rate can be achieved
+and long distances can be measured at the same time. However, the chance of false-positive
+distance measurements increases.
+
+Normally the distance is calculated with a detection algorithm that uses peak value,
+signal strength and noise. You can however also define a fixed **Threshold Value**.
+Set this to a low value if you want to measure the distance to something that has
+very little reflection (e.g. glas) and set it to a high value if you want to measure
+the distance to something with a very high reflection (e.g. mirror). Set this to 0 to
+use the default algorithm. The other allowed values are 1-255.
+
+Set The **Measurement Frequency** in Hz to force a steady measurement rate. If set to 0,
+the Laser Range Finder Bricklet will use the optimal frequency according to the other
+configurations and the actual measured distance. Since the rate is not fixed in this case,
+the velocity measurement is not stable. For a stable velocity measurement you should
+set a fixed measurement frequency. The lower the frequency, the higher is the resolution
+of the calculated velocity. The allowed values are 10Hz-500Hz (and 0 to turn the fixed
+frequency off).
+
+The default values for Acquisition Count, Enable Quick Termination, Threshold Value and
+Measurement Frequency are 128, False, 0 and 0.
+""",
+'de':
+"""
+.. note::
+ Diese Funktion ist nur verfügbar wenn der LIDAR-Lite Sensor mit Hardware Version 3 benutzt wird.
+ Für Hardware Version 1 gibt es :func:`SetConfiguration`.
+
+Der Parameter **Aquisition Count** definiert die Anzahl der Datenerfassungen die integriert
+werden um eine Korrelation zu finden. Mit einer größeren Anzahl kann das Bricklet höhere
+Distanzen messen, mit einer kleineren Anzahl ist die Messrate höher. Erlaubte Werte sind 1-255.
+
+Wenn der Parameter **Enable Quick Termination** auf true gesetzt wird, wird die Distanzmessung
+abgeschlossen sobald das erste mal ein hoher Peak erfasst wird. Dadurch kann eine höhere Rate
+erreicht werden und Messungen mit langer Distanz sind gleichzeitig möglich. Die Wahrscheinlichkeit
+einer Falschmessung erhöht sich allerdings.
+
+Normalerweise wird die Distanz mit Hilfe eines Detektionsalgorithmus berechnet. Dieser verwendet
+Peakwerte, Signalstärke und Rauschen. Es ist möglich stattdessen über den Parameter
+**Threshold Value** einen festen Schwellwert zu setzen der zur Distanzbestimmung genutzt werden soll.
+Um den Abstand zu einem Objekt mit sehr niedriger Reflektivität zu messen (z.B. Glas) kann der Wert
+niedrig gesetzt werden. Um den Abstand zu einem Objekt mit sehr hoher Reflektivität zu messen
+(z.B. Spiegel) kann der Wert sehr hoch gesetzt werden. Mit einem Wert von 0 wird der Standardalgorithmus
+genutzt. Ansonsten ist der erlaubte Wertebereich 1-255.
+
+Der **Measurement Frequency** Parameter wird in Hz gesetzt. Er erzwingt eine stabile Messfrequenz.
+Wenn der Wert auf 0 gesetzt wird, nutzt das Laser Range Finder Bricklet die optimale Frequenz je nach
+Konfiguration und aktuell gemessener Distanz. Da die Messrate in diesem Fall nicht fest ist, ist die
+Geschwindigkeitsmessung nicht stabil. Für eine stabile Geschwindigkeitsmessung sollte eine feste
+Messfrequenz eingestellt werden. Desto niedriger die Frequenz ist, desto größer ist die Auflösung
+der Geschwindigkeitsmessung. Der erlaubte Wertebreich ist 10Hz-500Hz (und 0 um die feste
+Messfrequenz auszustellen).
+
+Die Standardwerte für Acquisition Count, Enable Quick Termination, Threshold Value und
+Measurement Frequency sind 128, False, 0 und 0.
+"""
+}]
+})
+
+com['packets'].append({
+'type': 'function',
+'name': 'Get Configuration',
+'elements': [('Acquisition Count', 'uint8', 1, 'out'),
+             ('Enable Quick Termination', 'bool', 1, 'out'),
+             ('Threshold Value', 'uint8', 1, 'out'),
+             ('Measurement Frequency', 'uint16', 1, 'out')],
+'since_firmware': [2, 0, 3],
+'doc': ['bf', {
+'en':
+"""
+Returns the configuration as set by :func:`SetConfiguration`.
+""",
+'de':
+"""
+Gibt die Konfiguration zurück, wie von :func:`SetConfiguration`
+gesetzt.
 """
 }]
 })
