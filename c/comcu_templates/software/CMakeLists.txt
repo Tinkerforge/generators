@@ -12,7 +12,7 @@ PROJECT(${PROJECT_NAME})
 #SET(OPTIMIZATION_LEVEL 0)
 SET(DEBUG "-g -ggdb")
 
-SET(OPTIMIZATION_LEVEL s)
+SET(OPTIMIZATION_LEVEL 2)
 #SET(DEBUG "")
 
 SET(CMAKE_BUILD_TYPE None)
@@ -61,7 +61,8 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/src/bricklib2/cmake/configs/config_comcu_add
 # define standard compile and linker flags
 SET(LINKER_SCRIPT_NAME xmc1_firmware_with_brickletboot.ld)
 SET(FLASH_ORIGIN 0x10003000) # Move flash origin above the bootloader
-MATH(EXPR FLASH_LENGTH "${CHIP_FLASH_SIZE} - 8192") # Remove bootloader size from flash size
+SET(FLASH_EEPROM_LENGTH 1024) # Flash used for EEPROM emulation at end of flash (multiple of page size (256 byte))
+MATH(EXPR FLASH_LENGTH "${CHIP_FLASH_SIZE} - 8192 - ${FLASH_EEPROM_LENGTH}") # Remove bootloader size from flash size
 include(${CMAKE_CURRENT_SOURCE_DIR}/src/bricklib2/cmake/configs/config_comcu_add_standard_flags.txt)
 
 # add custom build commands
