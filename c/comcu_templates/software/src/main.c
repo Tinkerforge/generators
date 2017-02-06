@@ -27,6 +27,7 @@
 #include "bricklib2/bootloader/bootloader.h"
 #include "bricklib2/hal/system_timer/system_timer.h"
 #include "bricklib2/hal/uartbb/uartbb.h"
+#include "bricklib2/utility/communication_callback.h"
 #include "communication.h"
 
 int main(void) {
