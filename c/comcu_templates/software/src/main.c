@@ -29,15 +29,14 @@
 #include "bricklib2/hal/uartbb/uartbb.h"
 #include "communication.h"
 
-#define SYSTEM_TIMER_FREQUENCY 1000 // Use 1 kHz system timer
-
 int main(void) {
-	system_timer_init(SystemCoreClock, SYSTEM_TIMER_FREQUENCY);
 	uartbb_init();
 	uartbb_puts("Start <<<DEVICE_NAME_READABLE>>> Bricklet\n\r");
 
+	communication_callback_init();
+
 	while(true) {
 		bootloader_tick();
+		communication_tick();
 	}
-
 }
