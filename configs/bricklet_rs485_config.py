@@ -145,7 +145,7 @@ Returns *true* if the :func:`ReadCallback` is enabled,
 """,
 'de':
 """
-Gibt *true* zurück falls :func:`ReadCallback` aktiviert ist, 
+Gibt *true* zurück falls :func:`ReadCallback` aktiviert ist,
 *false* sonst.
 """
 }]
@@ -176,7 +176,7 @@ Sets the configuration for the RS485 communication. Available options:
 * Parity of none, odd or even.
 * Stopbits can be 1 or 2.
 * Word length of 5 to 8.
-* Half- or Full-Duplex
+* Half- or Full-Duplex.
 
 The default is: 115200 baud, parity none, 1 stop bit, word length 8, half duplex.
 """,
@@ -189,7 +189,7 @@ Verfügbare Optionen sind:
 * Parität von None, Odd und Even Parity.
 * Stop Bits von 1 oder 2.
 * Wortlänge zwischen 5 und 8.
-* Half- oder Full-Duplex
+* Half- oder Full-Duplex.
 
 Der Standard ist: 115200 Baud, Parität None, 1 Stop Bits, Wortlänge 8, half duplex.
 """
@@ -286,9 +286,9 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets the error led configuration. 
+Sets the error LED configuration.
 
-By default the error LED turns on if there is any error (see :func:`ErrorCountCallback`). 
+By default the error LED turns on if there is any error (see :func:`ErrorCountCallback`).
 If you call this function with the SHOW ERROR option again, the LED will turn off until the
 next error occurs.
 
@@ -342,12 +342,12 @@ com['packets'].append({
 """
 Sets the send and receive buffer size in byte. In sum there is
 10240 byte (10kb) buffer available and the minimum buffer size
-is 1024 byte (1kb) for both. 
+is 1024 byte (1kb) for both.
 
 The current buffer content is lost if this function is called.
 
 The send buffer holds data that is given by :func:`Write` and
-can not be written yet. The receive buffer holds data that is 
+can not be written yet. The receive buffer holds data that is
 received through RS485 but could not yet be send to the
 user, either by :func:`Read` or through :func:`ReadCallback`.
 
@@ -355,7 +355,7 @@ The default configuration is 5120 byte (5kb) per buffer.
 """,
 'de':
 """
-Setzt die Größe des Senden- und Empfangsbuffers. In Summe können 
+Setzt die Größe des Senden- und Empfangsbuffers. In Summe können
 die Buffer eine Größe von 10240 Byte (1kb) haben, die Minimumalgröße
 ist 1024 byte (1kb) für Beide.
 
@@ -466,7 +466,7 @@ Returns *true* if the :func:`ErrorCountCallback` is enabled,
 """,
 'de':
 """
-Gibt *true* zurück falls :func:`ErrorCountCallback` aktiviert ist, 
+Gibt *true* zurück falls :func:`ErrorCountCallback` aktiviert ist,
 *false* sonst.
 """
 }]
