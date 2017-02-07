@@ -936,11 +936,9 @@ class ConstantGroup(NameMixin):
         self.elements += elements
 
 class Element(NameMixin):
-    def __init__(self, raw_data, packet, device, generator):
+    def __init__(self, raw_data, packet):
         self.raw_data = raw_data
         self.packet = packet
-        self.device = device
-        self.generator = generator
         self.constant_group = None
 
         check_name(raw_data[0])
@@ -949,17 +947,17 @@ class Element(NameMixin):
             raise Exception('Invalid Element: ' + repr(raw_data))
 
         if len(self.raw_data) > 4:
-            self.constant_group = generator.get_constant_group_class()(raw_data[1], raw_data[4], device)
+            self.constant_group = self.get_generator().get_constant_group_class()(raw_data[1], raw_data[4], self.get_device())
             self.constant_group.add_elements([self])
 
     def get_packet(self): # parent
         return self.packet
 
     def get_device(self):
-        return self.device
+        return self.packet.get_device()
 
     def get_generator(self):
-        return self.generator
+        return self.packet.get_generator()
 
     def _get_name(self): # for NameMixin
         return self.raw_data[0]
@@ -1011,10 +1009,9 @@ class Packet(NameMixin):
                        'char',
                        'string'])
 
-    def __init__(self, raw_data, device, generator):
+    def __init__(self, raw_data, device):
         self.raw_data = raw_data
         self.device = device
-        self.generator = generator
         self.all_elements = []
         self.in_elements = []
         self.out_elements = []
@@ -1025,7 +1022,7 @@ class Packet(NameMixin):
             raise ValueError("Name of packet with high-level features has to end with 'Low Level'")
 
         for raw_element in self.raw_data['elements']:
-            element = generator.get_element_class()(raw_element, self, device, generator)
+            element = device.get_generator().get_element_class()(raw_element, self)
 
             self.all_elements.append(element)
 
@@ -1102,7 +1099,7 @@ class Packet(NameMixin):
         return self.device
 
     def get_generator(self):
-        return self.generator
+        return self.device.get_generator()
 
     def get_type(self):
         return self.raw_data['type']
@@ -1225,7 +1222,7 @@ class Device(NameMixin):
             if not 'function_id' in raw_packet:
                 raw_packet['function_id'] = i + 1
 
-            packet = generator.get_packet_class()(raw_packet, self, generator)
+            packet = generator.get_packet_class()(raw_packet, self)
 
             self.all_packets.append(packet)
 

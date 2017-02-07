@@ -512,14 +512,14 @@ class IPConnection:
         """
         self.waiter.release()
 
-    def register_callback(self, id, callback):
+    def register_callback(self, id_, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         if callback is None:
-            self.registered_callbacks.pop(id, None)
+            self.registered_callbacks.pop(id_, None)
         else:
-            self.registered_callbacks[id] = callback
+            self.registered_callbacks[id_] = callback
 
     def connect_unlocked(self, is_auto_reconnect):
         # NOTE: assumes that socket is None and socket_lock is locked
