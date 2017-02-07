@@ -113,11 +113,12 @@ def get_changelog_version(bindings_root_directory):
     r = re.compile('^\S+: (\d+)\.(\d+)\.(\d+) \(\S+\)')
     last = None
 
-    for line in file(os.path.join(bindings_root_directory, 'changelog.txt'), 'rb').readlines():
-        m = r.match(line)
+    with open(os.path.join(bindings_root_directory, 'changelog.txt'), 'rb') as f:
+        for line in f.readlines():
+            m = r.match(line)
 
-        if m is not None:
-            last = (m.group(1), m.group(2), m.group(3))
+            if m is not None:
+                last = (m.group(1), m.group(2), m.group(3))
 
     if last == None:
         raise Exception('no version found in changelog: ' + bindings_root_directory)
