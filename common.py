@@ -2,7 +2,7 @@
 
 """
 Common Generator Library
-Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2017 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2012-2015 Olaf Lüke <olaf@tinkerforge.com>
 
 common.py: Common Library for generation of bindings and documentation
@@ -1021,6 +1021,9 @@ class Packet(NameMixin):
 
         check_name(raw_data['name'])
 
+        if 'high_level' in raw_data and not raw_data['name'].endswith(' Low Level'):
+            raise ValueError("Name of packet with high-level features has to end with 'Low Level'")
+
         for raw_element in self.raw_data['elements']:
             element = generator.get_element_class()(raw_element, self, device, generator)
 
@@ -1038,6 +1041,25 @@ class Packet(NameMixin):
                 self.out_elements.append(element)
             else:
                 raise ValueError('Invalid element direction ' + element.get_direction())
+
+        if 'stream' in raw_data.get('high_level', []):
+            if self.all_elements[-3].get_name() != 'Stream Total Length' or \
+               self.all_elements[-2].get_name() != 'Stream Chunk Offset' or \
+               self.all_elements[-1].get_name() != 'Stream Chunk Data':
+                raise ValueError("Invalid element names for high-level feature 'stream'")
+
+            if self.all_elements[-3].get_type() != self.all_elements[-2].get_type():
+                raise ValueError("Type of 'Stream Total Length' and 'Stream Chunk Offset' are different")
+
+            directions = {self.all_elements[-3].get_direction(),
+                          self.all_elements[-2].get_direction(),
+                          self.all_elements[-1].get_direction()}
+
+            if len(directions) != 1:
+                raise ValueError("Direction of 'Stream Total Length', 'Stream Chunk Offset' and 'Stream Chunk Data' are different")
+
+            if 'in' in directions and len(self.out_elements) != 0:
+                raise ValueError("High-level feature 'stream' with 'in' direction cannot be combined with 'out' elements")
 
         self.constant_groups = []
 
@@ -1096,7 +1118,23 @@ class Packet(NameMixin):
         elif direction == 'out':
             return self.out_elements
         else:
-            raise ValueError('Invalid element direction ' + str(direction))
+            raise ValueError('Invalid element direction ' + direction)
+
+    def get_element_by_name(self, name):
+        for element in self.all_elements:
+            if element.get_name() == name:
+                return element
+
+        raise ValueError('No element with name ' + name)
+
+    def get_high_level(self):
+        return self.raw_data.get('high_level', [])
+
+    def has_high_level_stream(self):
+        return 'stream' in self.get_high_level()
+
+    def has_high_level_stream_in(self):
+        return self.has_high_level_stream() and self.get_element_by_name('Stream Total Length').get_direction() == 'in'
 
     def get_since_firmware(self):
         return self.raw_data['since_firmware']
@@ -1165,16 +1203,10 @@ class Packet(NameMixin):
         return ''.join(constants)
 
     def has_prototype_in_device(self):
-        if 'prototype_in_device' in self.raw_data:
-            if self.raw_data['prototype_in_device']:
-                return True
-        return False
+        return self.raw_data.get('prototype_in_device', False)
 
     def is_virtual(self):
-        if 'is_virtual' in self.raw_data:
-            if self.raw_data['is_virtual']:
-                return True
-        return False
+        return self.raw_data.get('is_virtual', False)
 
 class Device(NameMixin):
     def __init__(self, raw_data, generator):

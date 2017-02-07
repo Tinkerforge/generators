@@ -210,6 +210,35 @@ class {0}(Device):
 
         return methods
 
+    def get_python_high_level_methods(self):
+        methods = ''
+        cls = self.get_python_class_name()
+
+        stream_in = """
+    def {underscore_name}(self{high_level_parameter_list}):
+        stream_total_length = len(data)
+        stream_chunk_offset = 0
+
+        while stream_chunk_offset < stream_total_length:
+            stream_chunk_data = data[stream_chunk_offset:stream_chunk_offset + {chunk_cardinality}]
+
+            if len(stream_chunk_data) < {chunk_cardinality}:
+                stream_chunk_data.extend([0]*({chunk_cardinality} - len(stream_chunk_data)))
+
+            self.{underscore_name}_low_level({parameter_list})
+
+            stream_chunk_offset += {chunk_cardinality}
+"""
+
+        for packet in self.get_packets('function'):
+            if packet.has_high_level_stream_in():
+                methods += stream_in.format(underscore_name=packet.get_underscore_name().replace('_low_level', ''),
+                                            parameter_list=packet.get_python_parameter_list(),
+                                            high_level_parameter_list=common.wrap_non_empty(', ', packet.get_python_high_level_parameter_list(), ''),
+                                            chunk_cardinality=packet.get_element_by_name('Stream Chunk Data').get_cardinality())
+
+        return methods
+
     def get_python_register_callback_method(self):
         if len(self.get_packets('callback')) == 0:
             return ''
@@ -240,6 +269,7 @@ class {0}(Device):
         source += self.get_python_init_method()
         source += self.get_python_callback_formats()
         source += self.get_python_methods()
+        source += self.get_python_high_level_methods()
         source += self.get_python_register_callback_method()
         source += self.get_python_old_name()
 

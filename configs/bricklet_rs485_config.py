@@ -154,7 +154,9 @@ Gibt *true* zurück falls :func:`ReadCallback` aktiviert ist,
 com['packets'].append({
 'type': 'function',
 'name': 'Set Configuration',
-'elements': [('Baudrate', 'uint32', 1, 'in'),
+'elements': [('Mode', 'uint8', 1, 'in'),
+             ('Modbus Slave Address', 'uint8', 1, 'in'),
+             ('Baudrate', 'uint32', 1, 'in'),
              ('Parity', 'uint8', 1, 'in', ('Parity', [('None', 0),
                                                       ('Odd', 1),
                                                       ('Even', 2)])),
@@ -172,6 +174,8 @@ com['packets'].append({
 """
 Sets the configuration for the RS485 communication. Available options:
 
+* Mode specifies the operating mode, can be RS485, Modbus RTU Master or Modbus RTU Slave
+* Modbus slave address specifies the address to be used when in Modbus slave mode.
 * Baudrate between 100 and 2000000 baud.
 * Parity of none, odd or even.
 * Stopbits can be 1 or 2.
@@ -185,6 +189,8 @@ The default is: 115200 baud, parity none, 1 stop bit, word length 8, half duplex
 Setzt die Konfiguration für die RS485-Kommunikation.
 Verfügbare Optionen sind:
 
+* Mode gibt die Betriebsmodus an, kann RS485, Modbus RTU Master oder Modbus RTU Slave sein.
+* Modbus Slave Adresse für Modbus Slave Modus.
 * Baudrate zwischen 100 und YYY 2000000 Baud.
 * Parität von None, Odd und Even Parity.
 * Stop Bits von 1 oder 2.
@@ -199,7 +205,9 @@ Der Standard ist: 115200 Baud, Parität None, 1 Stop Bits, Wortlänge 8, half du
 com['packets'].append({
 'type': 'function',
 'name': 'Get Configuration',
-'elements': [('Baudrate', 'uint32', 1, 'out'),
+'elements': [('Mode', 'uint8', 1, 'out'),
+             ('Modbus Slave Address', 'uint8', 1, 'out'),
+             ('Baudrate', 'uint32', 1, 'out'),
              ('Parity', 'uint8', 1, 'out', ('Parity', [('None', 0),
                                                        ('Odd', 1),
                                                        ('Even', 2)])),
@@ -490,6 +498,26 @@ Gibt die aktuelle Anzahl an Overrun und Parity Fehlern zurück.
 }]
 })
 
+com['packets'].append({
+'type': 'function',
+'name': 'Set Modbus Slave Coils Low Level', # FIXME: need to enable response-expected as for ccf
+'elements': [('Request ID', 'uint8', 1, 'in'),
+             ('Stream Total Length', 'uint16', 1, 'in'),
+             ('Stream Chunk Offset', 'uint16', 1, 'in'),
+             ('Stream Chunk Data', 'uint8', 59, 'in')],
+'high_level': ['stream'], # FIXME: add bitmask feature
+'since_firmware': [1, 0, 0],
+'doc': ['llf', {
+'en':
+"""
+TODO: English documentation.
+""",
+'de':
+"""
+TODO: German documentation.
+"""
+}]
+})
 
 com['packets'].append({
 'type': 'callback',
@@ -537,3 +565,21 @@ Er gibt die Anzahl der aufgetreten Overrun and Parity Fehler zurück.
 }]
 })
 
+com['packets'].append({
+'type': 'callback',
+'name': 'Modbus Slave Read Coils',
+'elements': [('Request ID', 'uint8', 1, 'out'),
+             ('Starting Address', 'uint16', 1, 'out'),
+             ('Count', 'uint16', 1, 'out')],
+'since_firmware': [1, 0, 0],
+'doc': ['c', {
+'en':
+"""
+TODO: English documentation.
+""",
+'de':
+"""
+TODO: German documentation.
+"""
+}]
+})

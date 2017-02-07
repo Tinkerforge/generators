@@ -54,12 +54,12 @@ class PythonDocDevice(python_common.PythonDevice):
 
         return common.make_rst_examples(title_from_filename, self)
 
-    def get_python_methods(self, type):
+    def get_python_methods(self, type_):
         methods = []
         func_start = '.. py:function:: '
         cls = self.get_python_class_name()
         for packet in self.get_packets('function'):
-            if packet.get_doc_type() != type:
+            if packet.get_doc_type() != type_:
                 continue
             name = packet.get_underscore_name()
             params = packet.get_python_parameter_list()

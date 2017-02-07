@@ -46,6 +46,21 @@ class PythonPacket(common.Packet):
 
         return ', '.join(params)
 
+    def get_python_high_level_parameter_list(self):
+        params = []
+        elements = self.get_elements('in')
+
+        if self.has_high_level_stream_in():
+            elements = elements[:-3]
+
+        for element in elements:
+            params.append(element.get_underscore_name())
+
+        if self.has_high_level_stream_in():
+            params.append('data') # FIXME: how to get a proper name here?
+
+        return ', '.join(params)
+
 class PythonElement(common.Element):
     python_types = {
         'int8':   'int',
