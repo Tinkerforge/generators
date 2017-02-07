@@ -500,7 +500,7 @@ Gibt die aktuelle Anzahl an Overrun und Parity Fehlern zurück.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Answer Modbus Read Coils Request Low Level', # FIXME: need to enable response-expected as for ccf
+'name': 'Answer Modbus Read Coils Request Low Level',
 'elements': [('Request ID', 'uint8', 1, 'in'),
              ('Stream Total Length', 'uint16', 1, 'in'),
              ('Stream Chunk Offset', 'uint16', 1, 'in'),
