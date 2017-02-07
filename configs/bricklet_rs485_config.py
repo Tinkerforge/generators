@@ -364,7 +364,7 @@ The default configuration is 5120 byte (5kb) per buffer.
 'de':
 """
 Setzt die Größe des Senden- und Empfangsbuffers. In Summe können
-die Buffer eine Größe von 10240 Byte (1kb) haben, die Minimumalgröße
+die Buffer eine Größe von 10240 Byte (10kb) haben, die Minimumalgröße
 ist 1024 byte (1kb) für beide.
 
 Der aktuelle Bufferinhalt geht bei einem Aufruf dieser Funktion verloren.
