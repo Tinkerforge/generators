@@ -296,7 +296,7 @@ com['packets'].append({
 """
 Sets the error LED configuration.
 
-By default the error LED turns on if there is any error (see :func:`ErrorCountCallback`).
+By default the error LED turns on if there is any error (see :func:`ErrorCount`).
 If you call this function with the SHOW ERROR option again, the LED will turn off until the
 next error occurs.
 
@@ -308,7 +308,7 @@ If the Bricklet is in bootloader mode, the LED is off.
 """
 Setzt die Konfiguration der Error-LED.
 
-Standardmäßig geht die LED an, wenn ein Error auftritt (siehe :func:`ErrorCountCallback`).
+Standardmäßig geht die LED an, wenn ein Error auftritt (siehe :func:`ErrorCount`).
 Wenn diese Funktion danach nochmal mit der "SHOW ERROR"-Option aufgerufen wird, geht die
 LED wieder aus bis der nächste Error auftritt.
 
@@ -427,13 +427,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Enables the :func:`ErrorCountCallback`.
+Enables the :func:`ErrorCount`.
 
 By default the callback is disabled.
 """,
 'de':
 """
-Aktiviert den :func:`ErrorCountCallback`.
+Aktiviert den :func:`ErrorCount`.
 
 Im Startzustand ist der Callback deaktiviert
 """
@@ -448,13 +448,13 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Disables the :func:`ErrorCountCallback`.
+Disables the :func:`ErrorCount`.
 
 By default the callback is disabled.
 """,
 'de':
 """
-Deaktiviert den :func:`ErrorCountCallback`.
+Deaktiviert den :func:`ErrorCount`.
 
 Im Startzustand ist der Callback deaktiviert
 """
@@ -469,12 +469,12 @@ com['packets'].append({
 'doc': ['ccf', {
 'en':
 """
-Returns *true* if the :func:`ErrorCountCallback` is enabled,
+Returns *true* if the :func:`ErrorCount` is enabled,
 *false* otherwise.
 """,
 'de':
 """
-Gibt *true* zurück falls :func:`ErrorCountCallback` aktiviert ist,
+Gibt *true* zurück falls :func:`ErrorCount` aktiviert ist,
 *false* sonst.
 """
 }]
@@ -547,7 +547,7 @@ Dieser Callback kann durch :func:`EnableReadCallback` aktiviert werden.
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Error Count Callback',
+'name': 'Error Count',
 'elements': [('Overrun Error Count', 'uint32', 1, 'out'),
              ('Parity Error Count', 'uint32', 1, 'out')],
 'since_firmware': [1, 0, 0],
