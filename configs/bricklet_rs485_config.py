@@ -500,7 +500,7 @@ Gibt die aktuelle Anzahl an Overrun und Parity Fehlern zurück.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set Modbus Slave Coils Low Level', # FIXME: need to enable response-expected as for ccf
+'name': 'Answer Modbus Read Coils Request Low Level', # FIXME: need to enable response-expected as for ccf
 'elements': [('Request ID', 'uint8', 1, 'in'),
              ('Stream Total Length', 'uint16', 1, 'in'),
              ('Stream Chunk Offset', 'uint16', 1, 'in'),
@@ -567,7 +567,7 @@ Er gibt die Anzahl der aufgetreten Overrun and Parity Fehler zurück.
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Modbus Slave Read Coils',
+'name': 'Modbus Read Coils Request',
 'elements': [('Request ID', 'uint8', 1, 'out'),
              ('Starting Address', 'uint16', 1, 'out'),
              ('Count', 'uint16', 1, 'out')],
