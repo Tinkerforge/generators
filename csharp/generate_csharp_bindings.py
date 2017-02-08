@@ -141,9 +141,10 @@ namespace Tinkerforge
 \t\t/// </summary>
 \t\tpublic {0}(string uid, IPConnection ipcon) : base(uid, ipcon)
 \t\t{{
-\t\t\tthis.apiVersion[0] = {2};
-\t\t\tthis.apiVersion[1] = {3};
-\t\t\tthis.apiVersion[2] = {4};
+\t\t\tapiVersion[0] = {2};
+\t\t\tapiVersion[1] = {3};
+\t\t\tapiVersion[2] = {4};
+
 {1}
 """
 
