@@ -1309,7 +1309,14 @@ class Device(NameMixin):
             if packet.get_function_id() >= 0:
                 self.all_packets_without_doc_only.append(packet)
 
+        packet_names = set()
+
         for packet in self.all_packets:
+            if packet.get_name() in packet_names:
+                raise ValueError('Packet name is not unique: ' + packet.get_name())
+            else:
+                packet_names.add(packet.get_name())
+
             if packet.get_type() == 'function':
                 self.all_function_packets.append(packet)
 
