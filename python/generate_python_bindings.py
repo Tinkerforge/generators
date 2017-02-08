@@ -96,8 +96,16 @@ class {0}(Device):
     def get_python_callback_id_definitions(self):
         cbs = ''
         cb = '    CALLBACK_{0} = {1}\n'
+
         for packet in self.get_packets('callback'):
             cbs += cb.format(packet.get_upper_case_name(), packet.get_function_id())
+
+        cbs += '\n'
+
+        for packet in self.get_packets('callback'):
+            if packet.has_high_level():
+                cbs += cb.format(packet.get_upper_case_name(skip=-2), -packet.get_function_id())
+
         return cbs
 
     def get_python_function_id_definitions(self):
@@ -157,6 +165,21 @@ class {0}(Device):
                              packet.get_upper_case_name(),
                              packet.get_python_format_list('out'))
 
+        return cbs + '\n'
+
+    def get_python_low_level_callbacks(self):
+        cbs = ''
+        cb_stream = "        self.low_level_callbacks[{0}.CALLBACK_{1}] = [{0}.CALLBACK_{2}, {{'stream': {{'fixed_total_length': {3}}}}}, None]\n"
+
+        for packet in self.get_packets('callback'):
+            stream = packet.get_high_level('stream_*')
+
+            if stream != None:
+                cbs += cb_stream.format(self.get_python_class_name(),
+                                        packet.get_upper_case_name(),
+                                        packet.get_upper_case_name(skip=-2),
+                                        stream.get_fixed_total_length())
+
         return cbs
 
     def get_python_methods(self):
@@ -212,9 +235,7 @@ class {0}(Device):
 
     def get_python_high_level_methods(self):
         methods = ''
-        cls = self.get_python_class_name()
-
-        stream_in = """
+        stream_in_template = """
     def {underscore_name}(self{high_level_parameter_list}):
         stream_total_length = len(data)
         stream_chunk_offset = 0
@@ -231,11 +252,13 @@ class {0}(Device):
 """
 
         for packet in self.get_packets('function'):
-            if packet.has_high_level_stream_in():
-                methods += stream_in.format(underscore_name=packet.get_underscore_name().replace('_low_level', ''),
-                                            parameter_list=packet.get_python_parameter_list(),
-                                            high_level_parameter_list=common.wrap_non_empty(', ', packet.get_python_high_level_parameter_list(), ''),
-                                            chunk_cardinality=packet.get_element_by_name('Stream Chunk Data').get_cardinality())
+            stream_in = packet.get_high_level('stream_in')
+
+            if stream_in != None:
+                methods += stream_in_template.format(underscore_name=packet.get_underscore_name().replace('_low_level', ''),
+                                                     parameter_list=packet.get_python_parameter_list(),
+                                                     high_level_parameter_list=common.wrap_non_empty(', ', packet.get_python_high_level_parameter_list(), ''),
+                                                     chunk_cardinality=stream_in.get_chunk_data_element().get_cardinality())
 
         return methods
 
@@ -268,6 +291,7 @@ class {0}(Device):
         source += self.get_python_constants()
         source += self.get_python_init_method()
         source += self.get_python_callback_formats()
+        source += self.get_python_low_level_callbacks()
         source += self.get_python_methods()
         source += self.get_python_high_level_methods()
         source += self.get_python_register_callback_method()

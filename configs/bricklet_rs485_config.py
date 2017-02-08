@@ -505,7 +505,7 @@ com['packets'].append({
              ('Stream Total Length', 'uint16', 1, 'in'),
              ('Stream Chunk Offset', 'uint16', 1, 'in'),
              ('Stream Chunk Data', 'uint8', 59, 'in')],
-'high_level': ['stream'], # FIXME: add bitmask feature
+'high_level': {'stream_in': {}}, # FIXME: add bitmask feature
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {
 'en':

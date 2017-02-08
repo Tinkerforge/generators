@@ -850,29 +850,40 @@ def break_string(string, marker, continuation='', max_length=90):
 
     return result
 
+def skip_words(words, skip):
+    if skip < 0:
+        return words[:skip]
+    else:
+        return words[skip:]
+
 class NameMixin:
     def _get_name(self):
         raise NotImplementedError()
 
-    def get_name(self, skip=0):
-        return ' '.join(self._get_name().split(' ')[skip:])
+    def get_name(self, skip=0, remove=None):
+        words = skip_words(self._get_name().split(' '), skip)
+
+        if remove in words:
+            words.remove(remove)
+
+        return ' '.join(words)
 
     def get_camel_case_name(self, skip=0):
-        return ''.join(self._get_name().split(' ')[skip:])
+        return ''.join(skip_words(self._get_name().split(' '), skip))
 
     def get_headless_camel_case_name(self, skip=0):
-        words = self._get_name().split(' ')[skip:]
+        words = skip_words(self._get_name().split(' '), skip)
 
         return ''.join([words[0].lower()] + words[1:])
 
     def get_underscore_name(self, skip=0):
-        return '_'.join(self._get_name().split(' ')[skip:]).lower()
+        return '_'.join(skip_words(self._get_name().split(' '), skip)).lower()
 
     def get_upper_case_name(self, skip=0):
-        return '_'.join(self._get_name().split(' ')[skip:]).upper()
+        return '_'.join(skip_words(self._get_name().split(' '), skip)).upper()
 
     def get_dash_name(self, skip=0):
-        return '-'.join(self._get_name().split(' ')[skip:]).lower()
+        return '-'.join(skip_words(self._get_name().split(' '), skip)).lower()
 
 class Constant(NameMixin):
     def __init__(self, raw_data, constant_group):
@@ -900,8 +911,8 @@ class Constant(NameMixin):
         return self.raw_data[1]
 
 class ConstantGroup(NameMixin):
-    def __init__(self, type, raw_data, device):
-        self.type = type
+    def __init__(self, type_, raw_data, device):
+        self.type_ = type_
         self.raw_data = raw_data
         self.device = device
         self.elements = []
@@ -928,7 +939,7 @@ class ConstantGroup(NameMixin):
         return self.raw_data[0]
 
     def get_type(self):
-        return self.type
+        return self.type_
 
     def get_constants(self):
         return self.constants
@@ -996,6 +1007,84 @@ class Element(NameMixin):
     def get_size(self):
         return self.get_item_size() * self.get_cardinality()
 
+class HighLevelStream(object):
+    def __init__(self, raw_data, packet):
+        self.raw_data = raw_data
+        self.packet = packet
+
+    def get_packet(self): # parent
+        return self.packet
+
+    def get_total_length_element(self):
+        if 'fixed_total_length' in self.raw_data:
+            return None
+        else:
+            return self.packet.all_elements[-3]
+
+    def get_chunk_offset_element(self):
+        return self.packet.all_elements[-2]
+
+    def get_chunk_data_element(self):
+        return self.packet.all_elements[-1]
+
+    def get_fixed_total_length(self):
+        return self.raw_data.get('fixed_total_length', None)
+
+class HighLevelStreamIn(HighLevelStream):
+    def __init__(self, raw_data, packet):
+        HighLevelStream.__init__(self, raw_data, packet)
+
+        if 'fixed_total_length' not in raw_data and \
+           packet.all_elements[-3].get_name() != 'Stream Total Length':
+            raise ValueError("Invalid element names for high-level feature 'stream_in'")
+
+        if packet.all_elements[-2].get_name() != 'Stream Chunk Offset' or \
+           packet.all_elements[-1].get_name() != 'Stream Chunk Data':
+            raise ValueError("Invalid element names for high-level feature 'stream_in'")
+
+        if 'fixed_total_length' not in raw_data and \
+           packet.all_elements[-3].get_type() != packet.all_elements[-2].get_type():
+            raise ValueError("Type of 'Stream Total Length' and 'Stream Chunk Offset' are different")
+
+        if 'fixed_total_length' not in raw_data and \
+           packet.all_elements[-3].get_direction() != 'in':
+            raise ValueError("Invalid element direction for high-level feature 'stream_in'")
+
+        if packet.all_elements[-2].get_direction() != 'in' or \
+           packet.all_elements[-1].get_direction() != 'in':
+            raise ValueError("Invalid element direction for high-level feature 'stream_in'")
+
+        if len(packet.out_elements) != 0:
+            raise ValueError("High-level feature 'stream_in' cannot be combined with 'out' elements")
+
+class HighLevelStreamOut(HighLevelStream):
+    def __init__(self, raw_data, packet):
+        HighLevelStream.__init__(self, raw_data, packet)
+
+        if 'fixed_total_length' not in raw_data and \
+           packet.all_elements[-3].get_name() != 'Stream Total Length':
+            raise ValueError("Invalid element names for high-level feature 'stream_out'")
+
+        if packet.all_elements[-2].get_name() != 'Stream Chunk Offset' or \
+           packet.all_elements[-1].get_name() != 'Stream Chunk Data':
+            raise ValueError("Invalid element names for high-level feature 'stream_out'")
+
+        if 'fixed_total_length' not in raw_data and \
+           packet.all_elements[-3].get_type() != packet.all_elements[-2].get_type():
+            raise ValueError("Type of 'Stream Total Length' and 'Stream Chunk Offset' are different")
+
+        if 'fixed_total_length' not in raw_data and \
+           packet.all_elements[-3].get_direction() != 'out':
+            raise ValueError("Invalid element direction for high-level feature 'stream_out'")
+
+        if packet.all_elements[-2].get_direction() != 'out' or \
+           packet.all_elements[-1].get_direction() != 'out':
+            raise ValueError("Invalid element direction for high-level feature 'stream_out'")
+
+        if ('fixed_total_length' in raw_data and len(packet.out_elements) != 2) or \
+           ('fixed_total_length' not in raw_data and len(packet.out_elements) != 3):
+            raise ValueError("High-level feature 'stream_out' cannot be combined with other 'out' elements")
+
 class Packet(NameMixin):
     valid_types = set(['int8',
                        'uint8',
@@ -1016,6 +1105,7 @@ class Packet(NameMixin):
         self.all_elements = []
         self.in_elements = []
         self.out_elements = []
+        self.high_level = {}
 
         check_name(raw_data['name'])
 
@@ -1040,24 +1130,15 @@ class Packet(NameMixin):
             else:
                 raise ValueError('Invalid element direction ' + element.get_direction())
 
-        if 'stream' in raw_data.get('high_level', []):
-            if self.all_elements[-3].get_name() != 'Stream Total Length' or \
-               self.all_elements[-2].get_name() != 'Stream Chunk Offset' or \
-               self.all_elements[-1].get_name() != 'Stream Chunk Data':
-                raise ValueError("Invalid element names for high-level feature 'stream'")
+        raw_stream_in = raw_data.get('high_level', {}).get('stream_in', None)
+        raw_stream_out = raw_data.get('high_level', {}).get('stream_out', None)
 
-            if self.all_elements[-3].get_type() != self.all_elements[-2].get_type():
-                raise ValueError("Type of 'Stream Total Length' and 'Stream Chunk Offset' are different")
-
-            directions = {self.all_elements[-3].get_direction(),
-                          self.all_elements[-2].get_direction(),
-                          self.all_elements[-1].get_direction()}
-
-            if len(directions) != 1:
-                raise ValueError("Direction of 'Stream Total Length', 'Stream Chunk Offset' and 'Stream Chunk Data' are different")
-
-            if 'in' in directions and len(self.out_elements) != 0:
-                raise ValueError("High-level feature 'stream' with 'in' direction cannot be combined with 'out' elements")
+        if raw_stream_in != None and raw_stream_out != None:
+            raise ValueError("Cannot combine high-level features 'stream_in' and 'stream_out'")
+        elif raw_stream_in != None:
+            self.high_level['stream_in'] = HighLevelStreamIn(raw_stream_in, self)
+        elif raw_stream_out != None:
+            self.high_level['stream_out'] = HighLevelStreamOut(raw_stream_out, self)
 
         self.constant_groups = []
 
@@ -1118,21 +1199,19 @@ class Packet(NameMixin):
         else:
             raise ValueError('Invalid element direction ' + direction)
 
-    def get_element_by_name(self, name):
-        for element in self.all_elements:
-            if element.get_name() == name:
-                return element
+    def has_high_level(self):
+        return len(self.high_level) > 0
 
-        raise ValueError('No element with name ' + name)
-
-    def get_high_level(self):
-        return self.raw_data.get('high_level', [])
-
-    def has_high_level_stream(self):
-        return 'stream' in self.get_high_level()
-
-    def has_high_level_stream_in(self):
-        return self.has_high_level_stream() and self.get_element_by_name('Stream Total Length').get_direction() == 'in'
+    def get_high_level(self, feature):
+        if feature == 'stream_*':
+            if 'stream_in' in self.high_level:
+                return self.high_level['stream_in']
+            elif 'stream_out' in self.high_level:
+                return self.high_level['stream_out']
+            else:
+                return None
+        else:
+            return self.high_level.get(feature, None)
 
     def get_since_firmware(self):
         return self.raw_data['since_firmware']

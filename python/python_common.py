@@ -49,14 +49,18 @@ class PythonPacket(common.Packet):
     def get_python_high_level_parameter_list(self):
         params = []
         elements = self.get_elements('in')
+        stream = self.get_high_level('stream_*')
 
-        if self.has_high_level_stream_in():
-            elements = elements[:-3]
+        if stream != None:
+            if stream.get_fixed_total_length() == None:
+                elements = elements[:-3]
+            else:
+                elements = elements[:-2]
 
         for element in elements:
             params.append(element.get_underscore_name())
 
-        if self.has_high_level_stream_in():
+        if stream != None:
             params.append('data') # FIXME: how to get a proper name here?
 
         return ', '.join(params)

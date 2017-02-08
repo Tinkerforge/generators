@@ -58,11 +58,12 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Grey Scale Image',
-'elements': [('Data Offset', 'uint16', 1, 'out'),
-             ('Data', 'uint8', 62, 'out')],
+'name': 'Grey Scale Image Low Level',
+'elements': [('Stream Chunk Offset', 'uint16', 1, 'out'),
+             ('Stream Chunk Data', 'uint8', 62, 'out')],
+'high_level': {'stream_out': {'fixed_total_length': 60*80}},
 'since_firmware': [1, 0, 0],
-'doc': ['c', {
+'doc': ['llc', {
 'en':
 """
 """,
@@ -74,11 +75,12 @@ com['packets'].append({
 
 com['packets'].append({
 'type': 'callback',
-'name': 'Temperature Image',
-'elements': [('Data Offset', 'uint16', 1, 'out'),
-             ('Data', 'uint16', 31, 'out')],
+'name': 'Temperature Image Low Level',
+'elements': [('Stream Chunk Offset', 'uint16', 1, 'out'),
+             ('Stream Chunk Data', 'uint16', 31, 'out')],
+'high_level': {'stream_out': {'fixed_total_length': 60*80}},
 'since_firmware': [1, 0, 0],
-'doc': ['c', {
+'doc': ['llc', {
 'en':
 """
 """,
