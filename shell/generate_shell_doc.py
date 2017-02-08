@@ -38,8 +38,12 @@ import shell_common
 class ShellDocDevice(shell_common.ShellDevice):
     def specialize_shell_doc_function_links(self, text):
         def specializer(packet):
-            return ':sh:func:`{1} <{0} {1}>`'.format(packet.get_device().get_shell_device_name(),
-                                                     packet.get_dash_name())
+            if packet.get_type() == 'callback':
+                return ':sh:cb:`{1} <{0} {1}>`'.format(packet.get_device().get_shell_device_name(),
+                                                       packet.get_dash_name())
+            else:
+                return ':sh:func:`{1} <{0} {1}>`'.format(packet.get_device().get_shell_device_name(),
+                                                         packet.get_dash_name())
 
         return self.specialize_doc_function_links(text, specializer, prefix='sh')
 
@@ -83,7 +87,7 @@ class ShellDocDevice(shell_common.ShellDevice):
 
     def get_shell_callbacks(self):
         cbs = ''
-        func_start = '.. sh:function:: '
+        func_start = '.. sh:callback:: '
         device_name = self.get_shell_device_name()
 
         for packet in self.get_packets('callback'):
@@ -193,7 +197,7 @@ The common options of the ``call`` and ``dispatch`` commands are documented
  * ``--list-functions`` shows a list of known functions of the {4} and exits
 
 
-.. sh:function:: X Stinkerforge Pdispatch N{3} A[<option>..] L<uid> L<callback>
+.. sh:callback:: X Stinkerforge Pdispatch N{3} A[<option>..] L<uid> L<callback>
 
  :param <uid>: string
  :param <callback>: string
@@ -232,7 +236,7 @@ The common options of the ``call`` and ``dispatch`` commands are documented
  because they cannot be detected.
 
 
-.. sh:function:: X Stinkerforge Sdispatch P{3} L<uid> N<callback> A[<option>..]
+.. sh:callback:: X Stinkerforge Sdispatch P{3} L<uid> N<callback> A[<option>..]
 
  :param <uid>: string
  :param <callback>: string
@@ -290,7 +294,7 @@ Befehlsstruktur dargestellt.
    und endet dann
 
 
-.. sh:function:: X Stinkerforge Pdispatch N{3} A[<option>..] L<uid> L<callback>
+.. sh:callback:: X Stinkerforge Pdispatch N{3} A[<option>..] L<uid> L<callback>
 
  :param <uid>: string
  :param <callback>: string
@@ -332,7 +336,7 @@ Befehlsstruktur dargestellt.
  detektiert werden können.
 
 
-.. sh:function:: X Stinkerforge Sdispatch P{3} L<uid> N<callback> A[<option>..]
+.. sh:callback:: X Stinkerforge Sdispatch P{3} L<uid> N<callback> A[<option>..]
 
  :param <uid>: string
  :param <callback>: string
