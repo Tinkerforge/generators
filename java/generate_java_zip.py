@@ -85,6 +85,7 @@ class JavaZipGenerator(common.ZipGenerator):
         shutil.copy(os.path.join(root_dir, 'AlreadyConnectedException.java'), self.tmp_source_com_tinkerforge_dir)
         shutil.copy(os.path.join(root_dir, 'NotConnectedException.java'),     self.tmp_source_com_tinkerforge_dir)
         shutil.copy(os.path.join(root_dir, 'CryptoException.java'),           self.tmp_source_com_tinkerforge_dir)
+        shutil.copy(os.path.join(root_dir, 'NetworkException.java'),          self.tmp_source_com_tinkerforge_dir)
         shutil.copy(os.path.join(root_dir, 'TinkerforgeListener.java'),       self.tmp_source_com_tinkerforge_dir)
         shutil.copy(os.path.join(root_dir, 'changelog.txt'),                  self.tmp_dir)
         shutil.copy(os.path.join(root_dir, 'readme.txt'),                     self.tmp_dir)

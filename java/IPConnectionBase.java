@@ -452,9 +452,11 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 	 * there is no Brick Daemon or WIFI/Ethernet Extension listening at the
 	 * given host and port.
 	 */
-	public void connect(String host, int port) throws java.net.UnknownHostException,
-	                                                  java.io.IOException,
-	                                                  AlreadyConnectedException {
+	public void connect(String host, int port) throws NetworkException, AlreadyConnectedException {
+		NetworkException exception = null;
+		CallbackThread callbackThreadTmp = null;
+		LinkedBlockingQueue<CallbackQueueObject> callbackQueueTmp = null;
+
 		synchronized(socketMutex) {
 			if (socket != null) {
 				throw new AlreadyConnectedException("Already connected to " + this.host + ":" + this.port);
@@ -463,24 +465,80 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 			this.host = host;
 			this.port = port;
 
-			connectUnlocked(false);
+			try {
+				connectUnlocked(false);
+			} catch(NetworkException e) {
+				exception = e;
+
+				callbackThreadTmp = callbackThread;
+				callbackQueueTmp = callbackQueue;
+
+				callbackThread = null;
+				callbackQueue = null;
+			}
+		}
+
+		if (exception != null) {
+			try {
+				callbackQueueTmp.put(new CallbackQueueObject(QUEUE_EXIT, (byte)0, (short)0, 0, null));
+			} catch(InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			if(Thread.currentThread() != callbackThreadTmp) {
+				try {
+					callbackThreadTmp.join();
+				} catch(InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+
+			throw exception;
 		}
 	}
 
 	// NOTE: Assumes that socket is null and socketMutex is locked
-	void connectUnlocked(boolean isAutoReconnect) throws java.net.UnknownHostException,
-	                                                     java.io.IOException {
+	void connectUnlocked(boolean isAutoReconnect) throws NetworkException {
 		if(callbackThread == null) {
 			callbackQueue = new LinkedBlockingQueue<CallbackQueueObject>();
 			callbackThread = new CallbackThread(this, callbackQueue);
 			callbackThread.start();
 		}
 
-		Socket tmpSocket = new Socket(host, port);
-		tmpSocket.setTcpNoDelay(true);
-		InputStream tmpIn = tmpSocket.getInputStream();
-		OutputStream tmpOut = tmpSocket.getOutputStream();
-		tmpOut.flush();
+		Socket tmpSocket;
+
+		try {
+			tmpSocket = new Socket(host, port);
+		} catch(Exception e) {
+			throw new NetworkException("Could not create socket: " + e.getMessage(), e);
+		}
+
+		try {
+			tmpSocket.setTcpNoDelay(true);
+		} catch(Exception e) {
+			throw new NetworkException("Could not enable TCP-No-Delay socket option: " + e.getMessage(), e);
+		}
+
+		InputStream tmpIn;
+		OutputStream tmpOut;
+
+		try {
+			tmpIn = tmpSocket.getInputStream();
+		} catch(Exception e) {
+			throw new NetworkException("Could not get socket input stream: " + e.getMessage(), e);
+		}
+
+		try {
+			tmpOut = tmpSocket.getOutputStream();
+		} catch(Exception e) {
+			throw new NetworkException("Could not get socket output stream: " + e.getMessage(), e);
+		}
+
+		try {
+			tmpOut.flush();
+		} catch(Exception e) {
+			throw new NetworkException("Could not flush socket output stream: " + e.getMessage(), e);
+		}
 
 		socket = tmpSocket;
 		in = tmpIn;
@@ -564,8 +622,7 @@ public abstract class IPConnectionBase implements java.io.Closeable {
 		}
 
 		try {
-			callbackQueueTmp.put(new CallbackQueueObject(QUEUE_EXIT, (byte)0,
-			                                             (short)0, 0, null));
+			callbackQueueTmp.put(new CallbackQueueObject(QUEUE_EXIT, (byte)0, (short)0, 0, null));
 		} catch(InterruptedException e) {
 			e.printStackTrace();
 		}
