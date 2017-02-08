@@ -138,10 +138,10 @@ class JavaScriptZipGenerator(common.ZipGenerator):
         retcode, output = check_output_and_error(['browserify', '--version'])
 
         if retcode != 0:
-            raise Exception('Could not get browserify version')
+            raise common.GeneratorError('Could not get browserify version')
 
         if tuple([int(n) for n in output.strip('\r\n').split('.')]) < (13, 1, 1):
-            raise Exception('Need browserify version >= 13.1.1')
+            raise common.GeneratorError('Need browserify version >= 13.1.1')
 
         with common.ChangedDirectory(self.tmp_nodejs_source_tinkerforge_dir):
             args = ['browserify']

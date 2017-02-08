@@ -56,7 +56,7 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
             elif filename.startswith('octave_'):
                 return common.underscore_to_space(title) + ' (Octave)'
             else:
-                raise ValueError('Invalid filename ' + filename)
+                raise common.GeneratorError('Invalid filename ' + filename)
 
         def language_from_filename(filename):
             if filename.startswith('matlab_'):
@@ -64,7 +64,7 @@ class MATLABDocDevice(matlab_common.MATLABDevice):
             elif filename.startswith('octave_'):
                 return 'octave_fixed'
             else:
-                raise ValueError('Invalid filename ' + filename)
+                raise common.GeneratorError('Invalid filename ' + filename)
 
         return common.make_rst_examples(title_from_filename, self,
                                         language_from_filename=language_from_filename)

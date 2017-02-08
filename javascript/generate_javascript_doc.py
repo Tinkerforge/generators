@@ -56,7 +56,7 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
                 filename = filename.replace('Example', '').replace('.html', '')
                 return common.camel_case_to_space(filename) + ' (HTML)'
             else:
-                raise ValueError('Invalid filename ' + filename)
+                raise common.GeneratorError('Invalid filename ' + filename)
 
         def language_from_filename(filename):
             if filename.endswith('.js'):
@@ -64,7 +64,7 @@ class JavaScriptDocDevice(javascript_common.JavaScriptDevice):
             elif filename.endswith('.html'):
                 return 'html'
             else:
-                raise ValueError('Invalid filename ' + filename)
+                raise common.GeneratorError('Invalid filename ' + filename)
 
         return common.make_rst_examples(title_from_filename, self,
                                         language_from_filename=language_from_filename,

@@ -67,7 +67,7 @@ class CExamplesTester(common.ExamplesTester):
         elif self.compiler == 'scan-build clang':
             args += ['/usr/bin/scan-build', '/usr/bin/clang', '-std=c99', '-pthread']
         else:
-            raise ValueError('Invalid compiler ' + self.compiler);
+            raise common.GeneratorError('Invalid compiler ' + self.compiler);
 
         args += ['-Wall',
                  '-Wextra',

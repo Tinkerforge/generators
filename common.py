@@ -121,7 +121,7 @@ def get_changelog_version(bindings_root_directory):
                 last = (m.group(1), m.group(2), m.group(3))
 
     if last == None:
-        raise Exception('no version found in changelog: ' + bindings_root_directory)
+        raise GeneratorError('no version found in changelog: ' + bindings_root_directory)
 
     return last
 
@@ -588,7 +588,7 @@ def specialize_template(template_filename, destination_filename, replacements):
     template_file.close()
 
     if replaced != set(replacements.keys()):
-        raise Exception('Not all replacements for {0} have been applied'.format(template_filename))
+        raise GeneratorError('Not all replacements for {0} have been applied'.format(template_filename))
 
     destination_file = open(destination_filename, 'wb')
     destination_file.writelines(lines)
@@ -609,7 +609,7 @@ def make_c_like_bitmask(value, shift='{0} << {1}', combine='({0}) | ({1})'):
     elif len(parts) == 2:
         return combine.format(parts[0], parts[1])
     else:
-        raise Exception('More than to bits ware not supported yet')
+        raise GeneratorError('More than to bits ware not supported yet')
 
 def wrap_non_empty(prefix, middle, suffix):
     if len(middle) > 0:
@@ -619,7 +619,7 @@ def wrap_non_empty(prefix, middle, suffix):
 
 def execute(args, **kwargs):
     if subprocess.call(args, **kwargs) != 0:
-        raise Exception("Command '{0}' failed".format(' '.join(args) if isinstance(args, list) else args))
+        raise GeneratorError("Command '{0}' failed".format(' '.join(args) if isinstance(args, list) else args))
 
 def generate(bindings_root_directory, language, generator_class):
     global lang
@@ -652,7 +652,7 @@ def generate(bindings_root_directory, language, generator_class):
             com = copy.deepcopy(__import__(config[:-3]).com)
 
             if com['documented'] and not com['released']:
-                raise Exception('{0} is marked as documented, but as not released'.format(config[:-10]))
+                raise GeneratorError('{0} is marked as documented, but as not released'.format(config[:-10]))
 
             if not com['released'] and not com['documented']:
                 print(' * {0} \033[01;36m(not released, not documented)\033[0m'.format(config[:-10]))
@@ -698,7 +698,7 @@ def generate(bindings_root_directory, language, generator_class):
             device_identifier = device.get_device_identifier()
 
             if device_identifier in device_identifiers:
-                raise Exception('Device identifier {0} is not unique'.format(device_identifier))
+                raise GeneratorError('Device identifier {0} is not unique'.format(device_identifier))
 
             device_identifiers.add(device_identifier)
 
@@ -788,26 +788,26 @@ check_name_exceptions_word_in_constant = ['20mA', '24mA']
 
 def check_name(name, display_name=None, is_constant=False):
     if isinstance(name, tuple):
-        raise ValueError('Name {0} uses old tuple format, update it to new split-camel-case format'.format(name))
+        raise GeneratorError('Name {0} uses old tuple format, update it to new split-camel-case format'.format(name))
 
     if len(name) == 0:
-        raise ValueError('Name is empty')
+        raise GeneratorError('Name is empty')
 
     if name not in check_name_exceptions_whole_name:
         words = name.split(' ')
 
         if not is_constant:
             if check_name_valid_word_head.match(words[0]) == None:
-                raise ValueError("Word '{0}' in name '{1}' is invalid".format(words[0], name))
+                raise GeneratorError("Word '{0}' in name '{1}' is invalid".format(words[0], name))
 
             for word in words[1:]:
                 if check_name_valid_word_tail.match(word) == None:
-                    raise ValueError("Word '{0}' in name '{1}' is invalid".format(word, name))
+                    raise GeneratorError("Word '{0}' in name '{1}' is invalid".format(word, name))
         else:
             for word in words:
                 if word not in check_name_exceptions_word_in_constant and \
                    check_name_valid_word_constant.match(word) == None:
-                    raise ValueError("Word '{0}' in constant name '{1}' is invalid".format(word, name))
+                    raise GeneratorError("Word '{0}' in constant name '{1}' is invalid".format(word, name))
 
     if display_name != None:
         display_name_to_check = display_name.replace('/', ' ')
@@ -820,8 +820,8 @@ def check_name(name, display_name=None, is_constant=False):
             display_name_to_check = display_name_to_check.replace('-', ' ')
 
         if name != display_name_to_check:
-            raise ValueError("Name '{0}' and display name '{1}' ({2}) mismatch" \
-                             .format(name, display_name, display_name_to_check))
+            raise GeneratorError("Name '{0}' and display name '{1}' ({2}) mismatch" \
+                                 .format(name, display_name, display_name_to_check))
 
 def break_string(string, marker, continuation='', max_length=90):
     result = string.replace('<BP>', ' ')
@@ -849,6 +849,9 @@ def break_string(string, marker, continuation='', max_length=90):
                 result += ' ' + part
 
     return result
+
+class GeneratorError(Exception):
+    pass
 
 def skip_words(words, skip):
     if skip < 0:
@@ -891,7 +894,7 @@ class Constant(NameMixin):
         self.constant_group = constant_group
 
         if len(raw_data) != 2:
-            raise Exception('Invalid Constant: ' + repr(raw_data))
+            raise GeneratorError('Invalid Constant: ' + repr(raw_data))
 
         check_name(raw_data[0], is_constant=True)
 
@@ -919,7 +922,7 @@ class ConstantGroup(NameMixin):
         self.constants = []
 
         if len(raw_data) != 2:
-            raise Exception('Invalid ConstantGroup: ' + repr(raw_data))
+            raise GeneratorError('Invalid ConstantGroup: ' + repr(raw_data))
 
         check_name(raw_data[0])
 
@@ -956,7 +959,7 @@ class Element(NameMixin):
         check_name(raw_data[0])
 
         if len(raw_data) != 4 and len(raw_data) != 5:
-            raise Exception('Invalid Element: ' + repr(raw_data))
+            raise GeneratorError('Invalid Element: ' + repr(raw_data))
 
         if len(self.raw_data) > 4:
             self.constant_group = self.get_generator().get_constant_group_class()(raw_data[1], raw_data[4], self.get_device())
@@ -1036,26 +1039,26 @@ class HighLevelStreamIn(HighLevelStream):
 
         if 'fixed_total_length' not in raw_data and \
            packet.all_elements[-3].get_name() != 'Stream Total Length':
-            raise ValueError("Invalid element names for high-level feature 'stream_in'")
+            raise GeneratorError("Invalid element names for high-level feature 'stream_in'")
 
         if packet.all_elements[-2].get_name() != 'Stream Chunk Offset' or \
            packet.all_elements[-1].get_name() != 'Stream Chunk Data':
-            raise ValueError("Invalid element names for high-level feature 'stream_in'")
+            raise GeneratorError("Invalid element names for high-level feature 'stream_in'")
 
         if 'fixed_total_length' not in raw_data and \
            packet.all_elements[-3].get_type() != packet.all_elements[-2].get_type():
-            raise ValueError("Type of 'Stream Total Length' and 'Stream Chunk Offset' are different")
+            raise GeneratorError("Type of 'Stream Total Length' and 'Stream Chunk Offset' are different")
 
         if 'fixed_total_length' not in raw_data and \
            packet.all_elements[-3].get_direction() != 'in':
-            raise ValueError("Invalid element direction for high-level feature 'stream_in'")
+            raise GeneratorError("Invalid element direction for high-level feature 'stream_in'")
 
         if packet.all_elements[-2].get_direction() != 'in' or \
            packet.all_elements[-1].get_direction() != 'in':
-            raise ValueError("Invalid element direction for high-level feature 'stream_in'")
+            raise GeneratorError("Invalid element direction for high-level feature 'stream_in'")
 
         if len(packet.out_elements) != 0:
-            raise ValueError("High-level feature 'stream_in' cannot be combined with 'out' elements")
+            raise GeneratorError("High-level feature 'stream_in' cannot be combined with 'out' elements")
 
 class HighLevelStreamOut(HighLevelStream):
     def __init__(self, raw_data, packet):
@@ -1063,27 +1066,27 @@ class HighLevelStreamOut(HighLevelStream):
 
         if 'fixed_total_length' not in raw_data and \
            packet.all_elements[-3].get_name() != 'Stream Total Length':
-            raise ValueError("Invalid element names for high-level feature 'stream_out'")
+            raise GeneratorError("Invalid element names for high-level feature 'stream_out'")
 
         if packet.all_elements[-2].get_name() != 'Stream Chunk Offset' or \
            packet.all_elements[-1].get_name() != 'Stream Chunk Data':
-            raise ValueError("Invalid element names for high-level feature 'stream_out'")
+            raise GeneratorError("Invalid element names for high-level feature 'stream_out'")
 
         if 'fixed_total_length' not in raw_data and \
            packet.all_elements[-3].get_type() != packet.all_elements[-2].get_type():
-            raise ValueError("Type of 'Stream Total Length' and 'Stream Chunk Offset' are different")
+            raise GeneratorError("Type of 'Stream Total Length' and 'Stream Chunk Offset' are different")
 
         if 'fixed_total_length' not in raw_data and \
            packet.all_elements[-3].get_direction() != 'out':
-            raise ValueError("Invalid element direction for high-level feature 'stream_out'")
+            raise GeneratorError("Invalid element direction for high-level feature 'stream_out'")
 
         if packet.all_elements[-2].get_direction() != 'out' or \
            packet.all_elements[-1].get_direction() != 'out':
-            raise ValueError("Invalid element direction for high-level feature 'stream_out'")
+            raise GeneratorError("Invalid element direction for high-level feature 'stream_out'")
 
         if ('fixed_total_length' in raw_data and len(packet.out_elements) != 2) or \
            ('fixed_total_length' not in raw_data and len(packet.out_elements) != 3):
-            raise ValueError("High-level feature 'stream_out' cannot be combined with other 'out' elements")
+            raise GeneratorError("High-level feature 'stream_out' cannot be combined with other 'out' elements")
 
 class Packet(NameMixin):
     valid_types = set(['int8',
@@ -1110,7 +1113,7 @@ class Packet(NameMixin):
         check_name(raw_data['name'])
 
         if 'high_level' in raw_data and not raw_data['name'].endswith(' Low Level'):
-            raise ValueError("Name of packet with high-level features has to end with 'Low Level'")
+            raise GeneratorError("Name of packet with high-level features has to end with 'Low Level'")
 
         for raw_element in self.raw_data['elements']:
             element = device.get_generator().get_element_class()(raw_element, self)
@@ -1118,23 +1121,23 @@ class Packet(NameMixin):
             self.all_elements.append(element)
 
             if element.get_type() not in Packet.valid_types:
-                raise ValueError('Invalid element type ' + element.get_type())
+                raise GeneratorError('Invalid element type ' + element.get_type())
 
             if element.get_cardinality() < 1:
-                raise ValueError('Invalid element size ' + element.get_cardinality())
+                raise GeneratorError('Invalid element size ' + element.get_cardinality())
 
             if element.get_direction() == 'in':
                 self.in_elements.append(element)
             elif element.get_direction() == 'out':
                 self.out_elements.append(element)
             else:
-                raise ValueError('Invalid element direction ' + element.get_direction())
+                raise GeneratorError('Invalid element direction ' + element.get_direction())
 
         raw_stream_in = raw_data.get('high_level', {}).get('stream_in', None)
         raw_stream_out = raw_data.get('high_level', {}).get('stream_out', None)
 
         if raw_stream_in != None and raw_stream_out != None:
-            raise ValueError("Cannot combine high-level features 'stream_in' and 'stream_out'")
+            raise GeneratorError("Cannot combine high-level features 'stream_in' and 'stream_out'")
         elif raw_stream_in != None:
             self.high_level['stream_in'] = HighLevelStreamIn(raw_stream_in, self)
         elif raw_stream_out != None:
@@ -1153,20 +1156,23 @@ class Packet(NameMixin):
                     continue
 
                 if constant_group.get_type() != known_constant_group.get_type():
-                    raise ValueError('Multiple instance of constant group {0} with different types'.format(constant_group.get_underscore_name()))
+                    raise GeneratorError('Multiple instance of constant group {0} with different types' \
+                                         .format(constant_group.get_underscore_name()))
 
                 for constant, known_constant in zip(constant_group.get_constants(), known_constant_group.get_constants()):
                     a = known_constant.get_underscore_name()
                     b = constant.get_underscore_name()
 
                     if a != b:
-                        raise ValueError('Constant item name ({0} != {1}) mismatch in constant group {2}'.format(a, b, constant_group.get_underscore_name()))
+                        raise GeneratorError('Constant item name ({0} != {1}) mismatch in constant group {2}' \
+                                             .format(a, b, constant_group.get_underscore_name()))
 
                     a = known_constant.get_value()
                     b = constant.get_value()
 
                     if a != b:
-                        raise ValueError('Constant item value ({0} != {1}) mismatch in constant group {2}'.format(a, b, constant_group.get_underscore_name()))
+                        raise GeneratorError('Constant item value ({0} != {1}) mismatch in constant group {2}' \
+                                             .format(a, b, constant_group.get_underscore_name()))
 
                 known_constant_group.add_elements(constant_group.get_elements())
 
@@ -1197,7 +1203,7 @@ class Packet(NameMixin):
         elif direction == 'out':
             return self.out_elements
         else:
-            raise ValueError('Invalid element direction ' + direction)
+            raise GeneratorError('Invalid element direction ' + direction)
 
     def has_high_level(self):
         return len(self.high_level) > 0
@@ -1313,7 +1319,7 @@ class Device(NameMixin):
 
         for packet in self.all_packets:
             if packet.get_name() in packet_names:
-                raise ValueError('Packet name is not unique: ' + packet.get_name())
+                raise GeneratorError('Packet name is not unique: ' + packet.get_name())
             else:
                 packet_names.add(packet.get_name())
 
@@ -1325,7 +1331,8 @@ class Device(NameMixin):
             elif packet.get_type() == 'callback':
                 self.callback_packets.append(packet)
             else:
-                raise ValueError('Invalid packet type ' + packet.get_type())
+                raise GeneratorError('Invalid packet type ' + packet.get_type())
+
 
         self.constant_groups = []
 
@@ -1336,20 +1343,23 @@ class Device(NameMixin):
                         continue
 
                     if constant_group.get_type() != known_constant_group.get_type():
-                        raise ValueError('Multiple instance of constant group {0} with different types'.format(constant_group.get_underscore_name()))
+                        raise GeneratorError('Multiple instance of constant group {0} with different types' \
+                                             .format(constant_group.get_underscore_name()))
 
                     for constant, known_constant in zip(constant_group.get_constants(), known_constant_group.get_constants()):
                         a = known_constant.get_underscore_name()
                         b = constant.get_underscore_name()
 
                         if a != b:
-                            raise ValueError('Constant name ({0} != {1}) mismatch in constant group {2}'.format(a, b, constant_group.get_underscore_name()))
+                            raise GeneratorError('Constant name ({0} != {1}) mismatch in constant group {2}' \
+                                                 .format(a, b, constant_group.get_underscore_name()))
 
                         a = known_constant.get_value()
                         b = constant.get_value()
 
                         if a != b:
-                            raise ValueError('Constant value ({0} != {1}) mismatch in constant group {2}'.format(a, b, constant_group.get_underscore_name()))
+                            raise GeneratorError('Constant value ({0} != {1}) mismatch in constant group {2}' \
+                                                 .format(a, b, constant_group.get_underscore_name()))
 
                     constant_group = None
                     break
@@ -1502,7 +1512,7 @@ class Device(NameMixin):
 
     def get_doc_rst_path(self):
         if not self.get_generator().is_doc():
-            raise Exception("Invalid call in non-doc generator")
+            raise GeneratorError("Invalid call in non-doc generator")
 
         filename = '{0}_{1}_{2}.rst'.format(self.get_camel_case_name(),
                                             self.get_camel_case_category(),
@@ -1515,7 +1525,7 @@ class Device(NameMixin):
 
     def get_doc_rst_ref_name(self):
         if not self.get_generator().is_doc():
-            raise Exception("Invalid call in non-doc generator")
+            raise GeneratorError("Invalid call in non-doc generator")
 
         return self.get_underscore_name() + '_' + self.get_underscore_category()
 
@@ -1534,7 +1544,7 @@ class Device(NameMixin):
         m = re.search(p, text)
 
         if m != None:
-            raise Exception('Unknown :func: found: ' + m.group(1))
+            raise GeneratorError('Unknown :func: found: ' + m.group(1))
 
         return text
 
@@ -1571,7 +1581,7 @@ class Example(NameMixin):
                 if raw_cleanup[0] == 'setter':
                     self.cleanups.append(self.get_generator().get_example_setter_function_class()(raw_cleanup[1:], -index, self))
                 else:
-                    raise ValueError('only setters are allowed as cleanup functions')
+                    raise GeneratorError('only setters are allowed as cleanup functions')
 
     def get_device(self): # parent
         return self.device
@@ -1625,7 +1635,7 @@ class ExampleArgument(ExampleItem):
         self.function = function
 
         if len(raw_data) != 2:
-            raise Exception('Invalid ExampleArgument: ' + repr(raw_data))
+            raise GeneratorError('Invalid ExampleArgument: ' + repr(raw_data))
 
     def get_function(self): # parent
         return self.function
@@ -1666,10 +1676,10 @@ class ExampleParameter(ExampleItem, NameMixin):
         self.function = function
 
         if len(raw_data) != 6:
-            raise Exception('Invalid ExampleParameter: ' + repr(raw_data))
+            raise GeneratorError('Invalid ExampleParameter: ' + repr(raw_data))
 
         if len(raw_data[0]) != 2:
-            raise Exception('Invalid ExampleParameter: ' + repr(raw_data))
+            raise GeneratorError('Invalid ExampleParameter: ' + repr(raw_data))
 
         check_name(raw_data[0][0])
 
@@ -1742,10 +1752,10 @@ class ExampleResult(ExampleItem, NameMixin):
         self.function = function
 
         if len(raw_data) != 6:
-            raise Exception('Invalid ExampleResult: ' + repr(raw_data))
+            raise GeneratorError('Invalid ExampleResult: ' + repr(raw_data))
 
         if len(raw_data[0]) != 2:
-            raise Exception('Invalid ExampleResult: ' + repr(raw_data))
+            raise GeneratorError('Invalid ExampleResult: ' + repr(raw_data))
 
         check_name(raw_data[0][0])
 
@@ -1819,10 +1829,10 @@ class ExampleGetterFunction(ExampleItem, NameMixin):
         self.arguments = []
 
         if len(raw_data) != 3:
-            raise Exception('Invalid ExampleGetterFunction: ' + repr(raw_data))
+            raise GeneratorError('Invalid ExampleGetterFunction: ' + repr(raw_data))
 
         if len(raw_data[0]) != 2:
-            raise Exception('Invalid ExampleGetterFunction: ' + repr(raw_data))
+            raise GeneratorError('Invalid ExampleGetterFunction: ' + repr(raw_data))
 
         check_name(raw_data[0][0])
 
@@ -1849,7 +1859,7 @@ class ExampleSetterFunction(ExampleItem, NameMixin):
         ExampleItem.__init__(self, raw_data, index, example)
 
         if len(raw_data) != 4:
-            raise Exception('Invalid ExampleSetterFunction: ' + repr(raw_data))
+            raise GeneratorError('Invalid ExampleSetterFunction: ' + repr(raw_data))
 
         check_name(raw_data[0])
 
@@ -1891,10 +1901,10 @@ class ExampleCallbackFunction(ExampleItem, NameMixin):
         ExampleItem.__init__(self, raw_data, index, example)
 
         if len(raw_data) != 4:
-            raise Exception('Invalid ExampleCallbackFunction: ' + repr(raw_data))
+            raise GeneratorError('Invalid ExampleCallbackFunction: ' + repr(raw_data))
 
         if len(raw_data[0]) != 2:
-            raise Exception('Invalid ExampleCallbackFunction: ' + repr(raw_data))
+            raise GeneratorError('Invalid ExampleCallbackFunction: ' + repr(raw_data))
 
         check_name(raw_data[0][0])
 
@@ -1939,10 +1949,10 @@ class ExampleCallbackPeriodFunction(ExampleItem, NameMixin):
         ExampleItem.__init__(self, raw_data, index, example)
 
         if len(raw_data) != 3:
-            raise Exception('Invalid ExampleCallbackPeriodFunction: ' + repr(raw_data))
+            raise GeneratorError('Invalid ExampleCallbackPeriodFunction: ' + repr(raw_data))
 
         if len(raw_data[0]) != 2:
-            raise Exception('Invalid ExampleCallbackPeriodFunction: ' + repr(raw_data))
+            raise GeneratorError('Invalid ExampleCallbackPeriodFunction: ' + repr(raw_data))
 
         check_name(raw_data[0][0])
 
@@ -1983,7 +1993,7 @@ class ExampleCallbackThresholdMinimumMaximum(ExampleItem):
         ExampleItem.__init__(self, raw_data, index, example)
 
         if len(raw_data) != 2:
-            raise Exception('Invalid ExampleCallbackThresholdMinimumMaximum: ' + repr(raw_data))
+            raise GeneratorError('Invalid ExampleCallbackThresholdMinimumMaximum: ' + repr(raw_data))
 
         self.function = function
         self.corresponding_callback = None
@@ -1994,7 +2004,7 @@ class ExampleCallbackThresholdMinimumMaximum(ExampleItem):
                     self.corresponding_callback = other
 
         if self.corresponding_callback == None:
-            raise Exception('ExampleThresholdMinimumMaximum without corresponding callback: ' + repr(raw_data))
+            raise GeneratorError('ExampleThresholdMinimumMaximum without corresponding callback: ' + repr(raw_data))
 
     def get_function(self): # parent
         return self.function
@@ -2048,10 +2058,10 @@ class ExampleCallbackThresholdFunction(ExampleItem, NameMixin):
         ExampleItem.__init__(self, raw_data, index, example)
 
         if len(raw_data) != 4:
-            raise Exception('Invalid ExampleCallbackThresholdFunction: ' + repr(raw_data))
+            raise GeneratorError('Invalid ExampleCallbackThresholdFunction: ' + repr(raw_data))
 
         if len(raw_data[0]) != 2:
-            raise Exception('Invalid ExampleCallbackThresholdFunction: ' + repr(raw_data))
+            raise GeneratorError('Invalid ExampleCallbackThresholdFunction: ' + repr(raw_data))
 
         check_name(raw_data[0][0])
 
@@ -2098,7 +2108,7 @@ class ExampleCallbackThresholdFunction(ExampleItem, NameMixin):
             return 'outside of {0} to {1}'.format(', '.join(minimums),
                                                   ', '.join(maximums_with_unit))
         else:
-            raise Exception('Unhandled option: ' + option_char)
+            raise GeneratorError('Unhandled option: ' + option_char)
 
     def get_minimum_maximums(self):
         return self.minimum_maximums
@@ -2108,7 +2118,7 @@ class ExampleSpecialFunction(ExampleItem):
         ExampleItem.__init__(self, raw_data, index, example)
 
         if raw_data[0] not in ['empty', 'debounce_period', 'sleep', 'wait', 'loop_header', 'loop_footer']:
-            raise ValueError('Invalid special function type: ' + raw_data[0])
+            raise GeneratorError('Invalid special function type: ' + raw_data[0])
 
     def get_type(self):
         return self.raw_data[0]
@@ -2176,13 +2186,13 @@ class Generator:
             directory_name = os.path.split(self.get_bindings_root_directory())[1]
 
             if self.get_bindings_name() != directory_name:
-                raise Exception("bindings root directory '{0}' and bindings name '{1}' do not match".format(directory_name, self.get_bindings_name()))
+                raise GeneratorError("bindings root directory '{0}' and bindings name '{1}' do not match".format(directory_name, self.get_bindings_name()))
 
     def get_bindings_name(self):
-        raise Exception("get_bindings_name() not implemented")
+        raise GeneratorError("get_bindings_name() not implemented")
 
     def get_bindings_display_name(self):
-        raise Exception("get_bindings_display_name() not implemented")
+        raise GeneratorError("get_bindings_display_name() not implemented")
 
     def get_device_class(self):
         return Device
@@ -2303,7 +2313,7 @@ class Generator:
         pass
 
     def generate(self, device):
-        raise Exception("generate() not implemented")
+        raise GeneratorError("generate() not implemented")
 
     def finish(self):
         pass
@@ -2313,13 +2323,13 @@ class DocGenerator(Generator):
         Generator.__init__(self, *args, **kwargs)
 
         if self.get_bindings_name() != self.get_doc_rst_filename_part().lower():
-            raise Exception("bindings name '{0}' and doc rst name '{1}' do not match".format(self.get_bindings_name(), self.get_doc_rst_filename_part()))
+            raise GeneratorError("bindings name '{0}' and doc rst name '{1}' do not match".format(self.get_bindings_name(), self.get_doc_rst_filename_part()))
 
     def get_doc_rst_filename_part(self):
-        raise Exception("get_doc_rst_filename_part() not implemented")
+        raise GeneratorError("get_doc_rst_filename_part() not implemented")
 
     def get_doc_example_regex(self):
-        raise Exception("get_doc_example_regex() not implemented")
+        raise GeneratorError("get_doc_example_regex() not implemented")
 
     def is_doc(self):
         return True
@@ -2375,7 +2385,7 @@ class ExamplesGenerator(Generator):
         Generator.__init__(self, *args, **kwargs)
 
         if self.forbid_execution:
-            raise Exception('ExamplesGenerator execution is forbidden')
+            raise GeneratorError('ExamplesGenerator execution is forbidden')
 
     def get_examples_directory(self, device):
         return os.path.join(device.get_git_directory(), 'software', 'examples', self.get_bindings_name())
