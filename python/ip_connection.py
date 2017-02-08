@@ -806,27 +806,33 @@ class IPConnection:
                 fixed_total_length = stream.get('fixed_total_length', None)
 
                 if fixed_total_length == None:
-                    total_length, chunk_offset, chunk_data = values
+                    extra = tuple(list(values)[:-3])
+                    total_length = values[-3]
                 else:
+                    extra = tuple(list(values)[:-2])
                     total_length = fixed_total_length
-                    chunk_offset, chunk_data = values
+
+                # FIXME: validate that extra parameters are identical for all low-level callback of a stream
+
+                chunk_offset = values[-2]
+                chunk_data = values[-1]
 
                 if llcb[2] == None:
                     if chunk_offset == 0:
                         llcb[2] = chunk_data
 
                         if len(llcb[2]) >= total_length:
-                            result = (0, llcb[2][:total_length]) # FIXME: add stream result constant
+                            result = (0,) + extra + (llcb[2][:total_length],) # FIXME: add stream result constant
                             llcb[2] = None
                 else:
                     if chunk_offset != len(llcb[2]):
-                        result = (1, llcb[2] + [0]*(total_length - len(llcb[2]))) # FIXME: add stream result constant, need to handle padding for non-int types
+                        result = (1,) + extra + (llcb[2] + [0]*(total_length - len(llcb[2])),) # FIXME: add stream result constant, need to handle padding for non-int types
                         llcb[2] = None
                     else:
                         llcb[2] += chunk_data
 
                         if len(llcb[2]) >= total_length:
-                            result = (0, llcb[2][:total_length]) # FIXME: add stream result constant
+                            result = (0,) + extra + (llcb[2][:total_length],) # FIXME: add stream result constant
                             llcb[2] = None
 
                 if result != None and llcb[0] in device.registered_callbacks:

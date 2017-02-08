@@ -587,10 +587,11 @@ TODO: German documentation.
 com['packets'].append({
 'type': 'callback',
 'name': 'Modbus Read Coils Response Low Level',
-'elements': [('Request ID', 'uint8', 1, 'in'),
-             ('Stream Total Length', 'uint16', 1, 'in'),
-             ('Stream Chunk Offset', 'uint16', 1, 'in'),
-             ('Stream Chunk Data', 'uint8', 59, 'in')],
+'elements': [('Request ID', 'uint8', 1, 'out'),
+             ('Error Code', 'uint8', 1, 'out'), # FIXME: add constants
+             ('Stream Total Length', 'uint16', 1, 'out'),
+             ('Stream Chunk Offset', 'uint16', 1, 'out'),
+             ('Stream Chunk Data', 'uint8', 58, 'out')],
 'high_level': {'stream_out': {}}, # FIXME: add bitmask feature
 'since_firmware': [1, 0, 0],
 'doc': ['llf', {

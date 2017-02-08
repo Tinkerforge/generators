@@ -1084,10 +1084,6 @@ class HighLevelStreamOut(HighLevelStream):
            packet.all_elements[-1].get_direction() != 'out':
             raise GeneratorError("Invalid element direction for high-level feature 'stream_out'")
 
-        if ('fixed_total_length' in raw_data and len(packet.out_elements) != 2) or \
-           ('fixed_total_length' not in raw_data and len(packet.out_elements) != 3):
-            raise GeneratorError("High-level feature 'stream_out' cannot be combined with other 'out' elements")
-
 class Packet(NameMixin):
     valid_types = set(['int8',
                        'uint8',
