@@ -11,6 +11,9 @@ args = sys.argv[1:]
 if len(args) == 0:
     args = ['bindings', 'doc', 'zip']
 
+if not set(args).issubset({'bindings', 'doc', 'zip'}):
+    print('Invalid argument')
+
 path = os.getcwd()
 bindings = []
 
