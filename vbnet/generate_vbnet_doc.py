@@ -149,11 +149,11 @@ property of the device object:
 
  .. code-block:: vbnet
 
-    Sub Callback(ByVal sender As {1}, ByVal value As Short)
+    Sub MyCallback(ByVal sender As {1}, ByVal value As Short)
         Console.WriteLine("Value: {{0}}", value)
     End Sub
 
-    AddHandler {2}.Example, AddressOf Callback
+    AddHandler {2}.ExampleCallback, AddressOf MyCallback
 
 The available callback property and their type of parameters are described below.
 
@@ -176,11 +176,11 @@ eine Prozedur einem Callback Property des Geräte Objektes zugewiesen wird:
 
  .. code-block:: vbnet
 
-    Sub Callback(ByVal sender As {1}, ByVal value As Short)
+    Sub MyCallback(ByVal sender As {1}, ByVal value As Short)
         Console.WriteLine("Value: {{0}}", value)
     End Sub
 
-    AddHandler {2}.Example, AddressOf Callback
+    AddHandler {2}.ExampleCallback, AddressOf MyCallback
 
 Die verfügbaren Callback Properties und ihre Parametertypen werden weiter
 unten beschrieben.

@@ -138,12 +138,12 @@ the corresponding event:
 
 .. code-block:: csharp
 
-    void Callback({1} sender, int value)
+    void MyCallback({1} sender, int value)
     {{
         System.Console.WriteLine("Value: " + value);
     }}
 
-    {2}.ExampleCallback += Callback;
+    {2}.ExampleCallback += MyCallback;
 
 The available events are described below.
 
@@ -166,12 +166,12 @@ Handlers an den passenden Event:
 
 .. code-block:: csharp
 
-    void Callback({1} sender, int value)
+    void MyCallback({1} sender, int value)
     {{
         System.Console.WriteLine("Value: " + value);
     }}
 
-    {2}.ExampleCallback += Callback;
+    {2}.ExampleCallback += MyCallback;
 
 Die verfügbaren Events werden weiter unten beschrieben.
 

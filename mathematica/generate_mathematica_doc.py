@@ -180,9 +180,9 @@ property of the device object:
 
  .. code-block:: mathematica
 
-    Callback[sender_,value_]:=Print["Value: "<>ToString[value]]
+    MyCallback[sender_,value_]:=Print["Value: "<>ToString[value]]
 
-    AddEventHandler[{1}@Example,Callback]
+    AddEventHandler[{1}@ExampleCallback,MyCallback]
 
 For further information about event handling using .NET/Link see the
 corresponding Mathematica `.NET/Link documentation
@@ -209,9 +209,9 @@ eine Funktion einem Callback Property des Geräte Objektes zugewiesen wird:
 
  .. code-block:: mathematica
 
-    Callback[sender_,value_]:=Print["Value: "<>ToString[value]]
+    MyCallback[sender_,value_]:=Print["Value: "<>ToString[value]]
 
-    AddEventHandler[{1}@Example,Callback]
+    AddEventHandler[{1}@ExampleCallback,MyCallback]
 
 Weitere Informationen über Event-Behandlung mittels .NET/Link sind in der
 entsprechende Mathematica `.NET/Link Dokumentation

@@ -226,11 +226,11 @@ callback function. For example, it looks like this in MATLAB:
 
 .. code-block:: matlab
 
-    function cb_example(e)
+    function my_callback(e)
         fprintf('Parameter: %s\\n', e.param);
     end
 
-    set(device, 'ExampleCallback', @(h, e) cb_example(e));
+    set(device, 'ExampleCallback', @(h, e) my_callback(e));
 
 Due to a difference in the Octave Java support the "set" function cannot be
 used in Octave. The registration is done with "add*Callback" functions of the
@@ -238,11 +238,11 @@ device object. It looks like this in Octave:
 
 .. code-block:: octave_fixed
 
-    function cb_example(e)
+    function my_callback(e)
         fprintf("Parameter: %s\\n", e.param);
     end
 
-    device.addExampleCallback(@cb_example);
+    device.addExampleCallback(@my_callback);
 
 It is possible to add several callbacks and to remove them with the
 corresponding "remove*Callback" function.
@@ -273,11 +273,11 @@ und die Callback-Funktion. Hier ein Beispiel in MATLAB:
 
 .. code-block:: matlab
 
-    function cb_example(e)
+    function my_callback(e)
         fprintf('Parameter: %s\\n', e.param);
     end
 
-    set(device, 'ExampleCallback', @(h, e) cb_example(e));
+    set(device, 'ExampleCallback', @(h, e) my_callback(e));
 
 Die Octave Java Unterstützung unterscheidet sich hier von MATLAB, die "set"
 Funktion kann hier nicht verwendet werden. Die Registrierung wird in Octave
@@ -286,11 +286,11 @@ in Octave:
 
 .. code-block:: octave_fixed
 
-    function cb_example(e)
+    function my_callback(e)
         fprintf("Parameter: %s\\n", e.param);
     end
 
-    device.addExampleCallback(@cb_example);
+    device.addExampleCallback(@my_callback);
 
 Es ist möglich mehrere Callback-Funktion hinzuzufügen und auch mit einem
 korrespondierenden "remove*Callback" wieder zu entfernen.
