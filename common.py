@@ -1469,21 +1469,24 @@ class Device(NameMixin):
 
         return git_directory
 
-    def get_packets(self, type=None):
-        if type is None:
+    def get_packets(self, type_=None):
+        if type_ is None:
             if self.generator.is_doc():
                 return self.all_packets
             else:
                 return self.all_packets_without_doc_only
-        elif type == 'function':
+        elif type_ == 'function':
             if self.generator.is_doc():
                 return self.all_function_packets
             else:
                 return self.all_function_packets_without_doc_only
-        elif type == 'callback':
+        elif type_ == 'callback':
             return self.callback_packets
         else:
-            raise ValueError('Invalid packet type ' + str(type))
+            raise GeneratorError('Invalid packet type ' + str(type_))
+
+    def get_packet_names(self, type_=None):
+        return [packet.get_name() for packet in self.get_packets(type_)]
 
     def get_callback_count(self):
         return len(self.callback_packets)

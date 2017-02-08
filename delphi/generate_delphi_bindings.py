@@ -423,6 +423,13 @@ begin
         return wrappers + 'end.\n'
 
     def get_delphi_source(self):
+        function_names = self.get_packet_names('function')
+        callback_names = self.get_packet_names('callback')
+
+        for callback_name in callback_names:
+            if 'On ' + callback_name in function_names:
+                raise common.GeneratorError("Generated callback name '[On ]{0}' collides with function name 'On {0}'".format(callback_name))
+
         source  = self.get_delphi_unit_header()
         source += self.get_delphi_device_identifier()
         source += self.get_delphi_device_display_name()
