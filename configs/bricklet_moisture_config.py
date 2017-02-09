@@ -38,7 +38,7 @@ Returns the current moisture value. The value has a range of
 0 to 4095. A small value corresponds to little moisture, a big
 value corresponds to much moisture.
 
-If you want to get the moisture value periodically, it is recommended 
+If you want to get the moisture value periodically, it is recommended
 to use the :cb:`Moisture` callback and set the period with
 :func:`Set Moisture Callback Period`.
 """,
@@ -138,13 +138,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn der Feuchtigkeitswert *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn der Feuchtigkeitswert *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn der Feuchtigkeitswert kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn der Feuchtigkeitswert größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0).
 """
 }]
@@ -195,11 +195,11 @@ The default value is 100.
 Setzt die Periode in ms mit welcher die Schwellwert Callback
 
 * :cb:`Moisture Reached`
- 
-ausgelöst wird, wenn der Schwellwert 
+
+ausgelöst wird, wenn der Schwellwert
 
 * :func:`Set Moisture Callback Threshold`
- 
+
 weiterhin erreicht bleibt.
 
 Der Standardwert ist 100.
@@ -268,7 +268,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`Set Moisture Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Feuchtigkeitswert des Sensors.
 
@@ -323,7 +323,7 @@ Returns the length moving average as set by :func:`Set Moving Average`.
 """,
 'de':
 """
-Gibt die Länge des gleitenden Mittelwerts zurück, wie von 
+Gibt die Länge des gleitenden Mittelwerts zurück, wie von
 :func:`Set Moving Average` gesetzt.
 """
 }]

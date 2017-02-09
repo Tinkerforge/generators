@@ -126,11 +126,11 @@ aufgerufen wird: Pin 0 wird auf geschlossen und Pin 3 auf geöffnet gesetzt.
 Nach 1,5s wird Pin 0 wieder geöffnet und Pin 3 geschlossen.
 
 Ein Monoflop kann zur Ausfallsicherung verwendet werden. Beispiel:
-Angenommen ein RS485 Bus und ein Quad Relay Bricklet ist an ein Slave 
+Angenommen ein RS485 Bus und ein Quad Relay Bricklet ist an ein Slave
 Stapel verbunden.
 Jetzt kann diese Funktion sekündlich, mit einem Zeitparameter von 2 Sekunden,
 aufgerufen werden. Der Pin wird die gesamte Zeit im Zustand geschlossen sein.
-Wenn jetzt die RS485 Verbindung getrennt wird, wird der Pin nach spätestens 
+Wenn jetzt die RS485 Verbindung getrennt wird, wird der Pin nach spätestens
 zwei Sekunden in den Zustand geöffnet wechseln.
 """
 }]
@@ -155,7 +155,7 @@ as 0.
 """,
 'de':
 """
-Gibt (für den angegebenen Pin) den aktuellen Zustand und die Zeit, wie von 
+Gibt (für den angegebenen Pin) den aktuellen Zustand und die Zeit, wie von
 :func:`Set Monoflop` gesetzt, sowie die noch verbleibende Zeit bis zum
 Zustandswechsel, zurück.
 
@@ -285,8 +285,8 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets the output value with a bitmask, according to the selection mask. 
-The bitmask is 16 bit long, *true* refers to a closed relay and 
+Sets the output value with a bitmask, according to the selection mask.
+The bitmask is 16 bit long, *true* refers to a closed relay and
 *false* refers to an open relay.
 
 For example: The values (3, 1) or (0b0011, 0b0001) will close the relay of
@@ -301,7 +301,7 @@ pins 8-11 and element 4 pins 12-15.
 """,
 'de':
 """
-Setzt die Ausgabewerte mit einer Bitmaske, entsprechend der Selektionsmaske. 
+Setzt die Ausgabewerte mit einer Bitmaske, entsprechend der Selektionsmaske.
 Die Bitmaske ist 16 Bit lang.
 *true* steht für ein geschlossenes Relais und *false* für ein offenes
 Relay.

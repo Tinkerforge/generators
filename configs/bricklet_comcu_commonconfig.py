@@ -82,7 +82,7 @@ necessary to call it in a normal user program.
 """,
 'de':
 """
-Setzt den Bootloader-Modus und gibt den Status zurück nachdem die 
+Setzt den Bootloader-Modus und gibt den Status zurück nachdem die
 Modusänderungsanfrage bearbeitet wurde.
 
 Mit dieser Funktion ist es möglich vom Bootloader- in den Firmware-Modus zu
@@ -159,7 +159,7 @@ common_packets.append({
 'doc': ['af', {
 'en':
 """
-Writes 64 Bytes of firmware at the position as written by 
+Writes 64 Bytes of firmware at the position as written by
 :func:`Set Write Firmware Pointer` before. The firmware is written
 to flash every 4 chunks.
 
@@ -196,7 +196,7 @@ common_packets.append({
 'en':
 """
 Sets the status LED configuration. By default the LED shows
-communication traffic between Brick and Bricklet, it flickers once 
+communication traffic between Brick and Bricklet, it flickers once
 for every 10 received data packets.
 
 You can also turn the LED permanently on/off or show a heartbeat.

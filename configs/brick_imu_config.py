@@ -33,8 +33,8 @@ com['packets'].append({
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
-""" 
-Returns the calibrated acceleration from the accelerometer for the 
+"""
+Returns the calibrated acceleration from the accelerometer for the
 x, y and z axis in g/1000 (1g = 9.80665m/s²).
 
 If you want to get the acceleration periodically, it is recommended
@@ -43,7 +43,7 @@ to use the :cb:`Acceleration` callback and set the period with
 """,
 'de':
 """
-Gibt die kalibrierten Beschleunigungen des Beschleunigungsmessers für die 
+Gibt die kalibrierten Beschleunigungen des Beschleunigungsmessers für die
 X, Y und Z-Achse in g/1000 zurück (1g = 9,80665m/s²).
 
 Wenn die kalibrierten Beschleunigungen periodisch abgefragt werden soll, wird
@@ -63,7 +63,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the calibrated magnetic field from the magnetometer for the 
+Returns the calibrated magnetic field from the magnetometer for the
 x, y and z axis in mG (Milligauss or Nanotesla).
 
 If you want to get the magnetic field periodically, it is recommended
@@ -79,7 +79,7 @@ Wenn das magnetische Feld periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Magnetic Field` Callback zu nutzen und die Periode mit
 :func:`Set Magnetic Field Period` vorzugeben.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -92,7 +92,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the calibrated angular velocity from the gyroscope for the 
+Returns the calibrated angular velocity from the gyroscope for the
 x, y and z axis in °/14.375s (you have to divide by 14.375 to
 get the value in °/s).
 
@@ -110,7 +110,7 @@ Wenn die Winkelgeschwindigkeiten periodisch abgefragt werden sollen, wird
 empfohlen den :cb:`Angular Velocity` Callback zu nutzen und die Periode mit
 :func:`Set Angular Velocity Period` vorzugeben.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -150,7 +150,7 @@ Wenn die Daten periodisch abgefragt werden sollen, wird empfohlen den
 :cb:`All Data` Callback zu nutzen und die Periode mit
 :func:`Set All Data Period` vorzugeben.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -169,8 +169,8 @@ angles in one-hundredth degree. Note that Euler angles always experience a
 
 We recommend that you use quaternions instead.
 
-The order to sequence in which the orientation values should be applied is 
-roll, yaw, pitch. 
+The order to sequence in which the orientation values should be applied is
+roll, yaw, pitch.
 
 If you want to get the orientation periodically, it is recommended
 to use the :cb:`Orientation` callback and set the period with
@@ -178,8 +178,8 @@ to use the :cb:`Orientation` callback and set the period with
 """,
 'de':
 """
-Gibt die aktuelle Orientierung (Roll-, Nick-, Gierwinkel) des IMU Brick in Eulerwinkeln
-(in 1/100 °) zurück. Zu beachten ist, dass Eulerwinkel immer eine 
+Gibt die aktuelle Orientierung (Roll-, Nick-, Gierwinkel) des IMU Brick in
+Eulerwinkeln (in 1/100 °) zurück. Zu beachten ist, dass Eulerwinkel immer eine
 `kardanische Blockade <https://de.wikipedia.org/wiki/Gimbal_Lock>`__ erfahren.
 
 Wir empfehlen die Verwendung von Quaternionen stattdessen.
@@ -191,7 +191,7 @@ Wenn die Orientierung periodisch abgefragt werden sollen, wird empfohlen den
 :cb:`Orientation` Callback zu nutzen und die Periode mit
 :func:`Set Orientation Period` vorzugeben.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -205,7 +205,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the current orientation (x, y, z, w) of the IMU as 
+Returns the current orientation (x, y, z, w) of the IMU as
 `quaternions <https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__.
 
 You can go from quaternions to Euler angles with the following formula::
@@ -214,12 +214,12 @@ You can go from quaternions to Euler angles with the following formula::
  yAngle = atan2(2*x*w - 2*y*z, 1 - 2*x*x - 2*z*z)
  zAngle =  asin(2*x*y + 2*z*w)
 
-This process is not reversible, because of the 
+This process is not reversible, because of the
 `gimbal lock <https://en.wikipedia.org/wiki/Gimbal_lock>`__.
 
-It is also possible to calculate independent angles. You can calculate 
-yaw, pitch and roll in a right-handed vehicle coordinate system according to DIN70000
-with::
+It is also possible to calculate independent angles. You can calculate
+yaw, pitch and roll in a right-handed vehicle coordinate system according to
+DIN70000 with::
 
  yaw   =  atan2(2*x*y + 2*w*z, w*w + x*x - y*y - z*z)
  pitch = -asin(2*w*y - 2*x*z)
@@ -240,7 +240,8 @@ to use the :cb:`Quaternion` callback and set the period with
 'de':
 """
 Gibt die aktuelle Orientierung (x, y, z, w) des IMU Brick als
-`Quaterinonen <https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__ zurück.
+`Quaterinonen <https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__
+zurück.
 
 Die Umrechnung von Quaternionen in Eulerwinkel ist mit folgender Formel möglich::
 
@@ -255,8 +256,8 @@ wie folgt berechnet werden::
  yaw   =  atan2(2*x*y + 2*w*z, w*w + x*x - y*y - z*z)
  pitch = -asin(2*w*y - 2*x*z)
  roll  = -atan2(2*y*z + 2*w*x, -w*w + x*x + y*y - z*z))
- 
-Diese Umrechnung ist irreversibel aufgrund der 
+
+Diese Umrechnung ist irreversibel aufgrund der
 `kardanischen Blockade <https://de.wikipedia.org/wiki/Gimbal_lock>`__.
 
 Die Umrechnung von Quaternionen in eine OpenGL Transformationsmatrix ist
@@ -271,7 +272,7 @@ Wenn die Quaternionen periodisch abgefragt werden sollen, wird empfohlen den
 :cb:`Quaternion` Callback zu nutzen und die Periode mit
 :func:`Set Quaternion Period` vorzugeben.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -282,14 +283,14 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the temperature of the IMU Brick. The temperature is given in 
+Returns the temperature of the IMU Brick. The temperature is given in
 °C/100.
 """,
 'de':
 """
 Gibt die Temperatur (in °C/100) des IMU Brick zurück.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -306,9 +307,9 @@ Turns the orientation and direction LEDs of the IMU Brick on.
 """
 Aktiviert die Orientierungs- und Richtungs-LEDs des IMU Brick.
 """
-}] 
+}]
 })
-    
+
 com['packets'].append({
 'type': 'function',
 'name': 'Leds Off',
@@ -323,7 +324,7 @@ Turns the orientation and direction LEDs of the IMU Brick off.
 """
 Deaktiviert die Orientierungs- und Richtungs-LEDs des IMU Brick.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -339,9 +340,9 @@ are on, *false* otherwise.
 """,
 'de':
 """
-Gibt zurück ob die Orientierungs- und Richtungs-LEDs des IMU Brick aktiv sind. 
+Gibt zurück ob die Orientierungs- und Richtungs-LEDs des IMU Brick aktiv sind.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -358,7 +359,7 @@ Not implemented yet.
 """
 Bisher nicht implementiert.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -375,7 +376,7 @@ Not implemented yet.
 """
 Bisher nicht implementiert.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -392,7 +393,7 @@ Not implemented yet.
 """
 Bisher nicht implementiert.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -409,7 +410,7 @@ Not implemented yet.
 """
 Bisher nicht implementiert.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -420,10 +421,10 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the convergence speed of the IMU Brick in °/s. The convergence speed 
+Sets the convergence speed of the IMU Brick in °/s. The convergence speed
 determines how the different sensor measurements are fused.
 
-If the orientation of the IMU Brick is off by 10° and the convergence speed is 
+If the orientation of the IMU Brick is off by 10° and the convergence speed is
 set to 20°/s, it will take 0.5s until the orientation is corrected. However,
 if the correct orientation is reached and the convergence speed is too high,
 the orientation will fluctuate with the fluctuations of the accelerometer and
@@ -439,8 +440,8 @@ will fluctuate, but there won't be any errors that accumulate over time.
 In an application with high angular velocities, we recommend a high convergence
 speed, so the errors of the gyroscope can be corrected fast. In applications with
 only slow movements we recommend a low convergence speed. You can change the
-convergence speed on the fly. So it is possible (and recommended) to increase 
-the convergence speed before an abrupt movement and decrease it afterwards 
+convergence speed on the fly. So it is possible (and recommended) to increase
+the convergence speed before an abrupt movement and decrease it afterwards
 again.
 
 You might want to play around with the convergence speed in the Brick Viewer to
@@ -450,7 +451,7 @@ The default value is 30.
 """,
 'de':
 """
-Setzt die Konvergenzgeschwindigkeit des IMU Brick in °/s. Die 
+Setzt die Konvergenzgeschwindigkeit des IMU Brick in °/s. Die
 Konvergenzgeschwindigkeit bestimmt wie die unterschiedlichen Sensormessungen
 vereinigt werden.
 
@@ -471,15 +472,15 @@ treten aber keine akkumulativen Fehler auf.
 In Anwendungen mit hohen Winkelgeschwindigkeiten wird eine hohe Konvergenzgeschwindigkeit
 empfohlen, so dass Fehler des Gyroskops schnell korrigiert werden können. In
 Anwendungen mit langsamen Bewegungen wird entsprechend eine geringe
-Konvergenzgeschwindigkeit empfohlen. Es ist möglich die Konvergenzgeschwindigkeit 
-spontan zu ändern. Dadurch ist es möglich (und empfohlen) direkt vor einer abrupten 
+Konvergenzgeschwindigkeit empfohlen. Es ist möglich die Konvergenzgeschwindigkeit
+spontan zu ändern. Dadurch ist es möglich (und empfohlen) direkt vor einer abrupten
 Bewegung die Konvergenzgeschwindigkeit zu erhöhen und im Anschluss wieder zu verringern.
 
 Um ein Gefühl für einen guten Wert, für die Konvergenzgeschwindigkeit,
 in deiner Anwendung zu bekommen ist es ratsam im Brick Viewer verschiedenste Werte
 auszuprobieren.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -497,7 +498,7 @@ Returns the convergence speed as set by :func:`Set Convergence Speed`.
 Gibt die Konvergenzgeschwindigkeit zurück, wie von :func:`Set Convergence Speed`
 gesetzt.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -556,7 +557,7 @@ Es sind folgende verschiedene Kalibrierungen möglich:
 .. csv-table::
  :header: "Typ", "Beschreibung", "Werte"
  :widths: 10, 30, 110
- 
+
  "0",    "Beschleunigungsmesser Verstärkung", "``[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]``"
  "1",    "Beschleunigungsmesser Versatz",     "``[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]``"
  "2",    "Magnetometer Verstärkung",          "``[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]``"
@@ -582,9 +583,10 @@ Temperaturdifferenz sollte mindestens 5°C betragen. Die übliche
 Betriebstemperatur des IMU Brick sollte einer der Kalibrierpunkte sein.
 
 .. note::
- Wir empfehlen dringend den Brick Viewer zur Kalibrierung des IMU Brick zu verwenden.
+ Wir empfehlen dringend den Brick Viewer zur Kalibrierung des IMU Brick zu
+ verwenden.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -608,7 +610,7 @@ Returns the calibration for a given type as set by :func:`Set Calibration`.
 Gibt die Kalibrierung für den ausgewählten Typ zurück, wie von
 :func:`Set Calibration` gesetzt.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -631,7 +633,7 @@ wird. Ein Wert von 0 deaktiviert den Callback.
 
 Der Standardwert ist 0.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -648,7 +650,7 @@ Returns the period as set by :func:`Set Acceleration Period`.
 """
 Gibt die Periode zurück, wie von :func:`Set Acceleration Period` gesetzt.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -667,7 +669,7 @@ triggered periodically. A value of 0 turns the callback off.
 Setzt die Periode in ms mit welcher der :cb:`Magnetic Field` Callback
 ausgelöst wird. Ein Wert von 0 deaktiviert den Callback.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -684,7 +686,7 @@ Returns the period as set by :func:`Set Magnetic Field Period`.
 """
 Gibt die Periode zurück, wie von :func:`Set Magnetic Field Period` gesetzt.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -703,7 +705,7 @@ triggered periodically. A value of 0 turns the callback off.
 Setzt die Periode in ms mit welcher der :cb:`Angular Velocity` Callback
 ausgelöst wird. Ein Wert von 0 deaktiviert den Callback.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -720,7 +722,7 @@ Returns the period as set by :func:`Set Angular Velocity Period`.
 """
 Gibt die Periode zurück, wie von :func:`Set Angular Velocity Period` gesetzt.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -739,7 +741,7 @@ periodically. A value of 0 turns the callback off.
 Setzt die Periode in ms mit welcher der :cb:`All Data` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -756,7 +758,7 @@ Returns the period as set by :func:`Set All Data Period`.
 """
 Gibt die Periode zurück, wie von :func:`Set All Data Period` gesetzt.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -775,7 +777,7 @@ periodically. A value of 0 turns the callback off.
 Setzt die Periode in ms mit welcher der :cb:`Orientation` Callback ausgelöst
 wird. Ein Wert von 0 deaktiviert den Callback.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -792,7 +794,7 @@ Returns the period as set by :func:`Set Orientation Period`.
 """
 Gibt die Periode zurück, wie von :func:`Set Orientation Period` gesetzt.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -811,7 +813,7 @@ periodically. A value of 0 turns the callback off.
 Setzt die Periode in ms mit welcher der :cb:`Quaternion` Callback ausgelöst
 wird. Ein Wert von 0 deaktiviert den Callback.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -828,7 +830,7 @@ Returns the period as set by :func:`Set Quaternion Period`.
 """
 Gibt die Periode zurück, wie von :func:`Set Quaternion Period` gesetzt.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -851,7 +853,7 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Acceleration Period`, ausgelöst. Die :word:`parameters` sind die
 Beschleunigungen der X, Y und Z-Achse.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -874,7 +876,7 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Magnetic Field Period`, ausgelöst. Die :word:`parameters` sind die
 Magnetfeldkomponenten der X, Y und Z-Achse.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -897,7 +899,7 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Angular Velocity Period`, ausgelöst. Die :word:`parameters` sind die
 Winkelgeschwindigkeiten der X, Y und Z-Achse.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -929,7 +931,7 @@ ausgelöst. Die :word:`parameters` sind die Beschleunigungen, Magnetfeldkomponen
 und die Winkelgeschwindigkeiten der X, Y und Z-Achse sowie die Temperatur
 des IMU Brick.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -953,7 +955,7 @@ Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Orientation Per
 ausgelöst. Die :word:`parameters` sind die Orientierung (Roll-, Nick-, Gierwinkel) des
 IMU Brick in Eulerwinkeln. Siehe :func:`Get Orientation` für Details.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -978,7 +980,7 @@ Dieser Callback wird mit der Periode, wie gesetzt mit :func:`Set Quaternion Peri
 ausgelöst. Die :word:`parameters` sind die Orientierung (x, y, z, w) des
 IMU Brick in Quaternionen. Siehe :func:`Get Quaternion` für Details.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -999,9 +1001,9 @@ Aktiviert die Orientierungsberechnungen des IMU Brick.
 
 Standardmäßig sind die Berechnungen an.
 """
-}] 
+}]
 })
-    
+
 com['packets'].append({
 'type': 'function',
 'name': 'Orientation Calculation Off',
@@ -1015,7 +1017,7 @@ Turns the orientation calculation of the IMU Brick off.
 If the calculation is off, :func:`Get Orientation` will return
 the last calculated value until the calculation is turned on again.
 
-The trigonometric functions that are needed to calculate the orientation 
+The trigonometric functions that are needed to calculate the orientation
 are very expensive. We recommend to turn the orientation calculation
 off if the orientation is not needed, to free calculation time for the
 sensor fusion algorithm.
@@ -1037,7 +1039,7 @@ Rechenzeit für den Sensorfusions-Algorithmus freigegeben.
 
 Standardmäßig sind die Berechnungen an.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -1053,9 +1055,9 @@ is on, *false* otherwise.
 """,
 'de':
 """
-Gibt zurück ob die Orientierungsberechnungen des IMU Brick aktiv sind. 
+Gibt zurück ob die Orientierungsberechnungen des IMU Brick aktiv sind.
 """
-}] 
+}]
 })
 
 com['examples'].append({

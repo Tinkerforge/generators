@@ -144,13 +144,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn der Entfernungswert *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn der Entfernungswert *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn der Entfernungswert kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn der Entfernungswert größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0).
 """
 }]
@@ -201,11 +201,11 @@ The default value is 100.
 Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
 * :cb:`Distance Reached`,
- 
-ausgelöst werden, wenn die Schwellwerte 
+
+ausgelöst werden, wenn die Schwellwerte
 
 * :func:`Set Distance Callback Threshold`,
- 
+
 weiterhin erreicht bleiben.
 
 Der Standardwert ist 100.
@@ -274,7 +274,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`Set Distance Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der Entfernungswert des Sensors.
 
@@ -329,7 +329,7 @@ Returns the length moving average as set by :func:`Set Moving Average`.
 """,
 'de':
 """
-Gibt die Länge des gleitenden Mittelwerts zurück, wie von 
+Gibt die Länge des gleitenden Mittelwerts zurück, wie von
 :func:`Set Moving Average` gesetzt.
 """
 }]

@@ -23,7 +23,7 @@ common_packets.append({
 'doc': ['af', {
 'en':
 """
-Returns the UID, the UID where the Bricklet is connected to, 
+Returns the UID, the UID where the Bricklet is connected to,
 the position, the hardware and firmware version as well as the
 device identifier.
 

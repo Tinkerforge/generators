@@ -214,13 +214,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn der Luftdruck *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn der Luftdruck *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn der Luftdruck kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn der Luftdruck größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0).
 """
 }]
@@ -281,13 +281,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn die Höhe *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn die Höhe *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn die Höhe kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn die Höhe größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0).
 """
 }]
@@ -341,12 +341,12 @@ Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
 * :cb:`Air Pressure Reached`,
 * :cb:`Altitude Reached`
- 
-ausgelöst werden, wenn die Schwellwerte 
+
+ausgelöst werden, wenn die Schwellwerte
 
 * :func:`Set Air Pressure Callback Threshold`,
 * :func:`Set Altitude Callback Threshold`
- 
+
 weiterhin erreicht bleiben.
 
 Der Standardwert ist 100.
@@ -512,7 +512,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`Set Air Pressure Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der Luftdruck des Luftdrucksensors.
 
@@ -539,7 +539,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`Set Altitude Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Höhe des Luftdrucksensors.
 
@@ -579,9 +579,9 @@ com['packets'].append({
 """
 Sets the different averaging parameters. It is possible to set
 the length of a normal averaging for the temperature and pressure,
-as well as an additional length of a 
+as well as an additional length of a
 `moving average <https://en.wikipedia.org/wiki/Moving_average>`__
-for the pressure. The moving average is calculated from the normal 
+for the pressure. The moving average is calculated from the normal
 averages.  There is no moving average for the temperature.
 
 The maximum length for the pressure average is 10, for the
@@ -601,7 +601,7 @@ moving average.
 Setzt die unterschiedlichen Averaging-Parameter (Mittelwertbildung).
 Es ist möglich die Länge des Mittelwerts für Temperatur und
 Luftdruck anzugeben. Zusätzlich gibt kann die Länge für
-einen 
+einen
 `gleitenden Mittelwert <https://de.wikipedia.org/wiki/Gleitender_Mittelwert>`__
 für den Luftdruck angegeben werden. Der gleitende Mittelwert wird
 mit den Werten des normalen Mittelwerts berechnet. Es gibt keinen

@@ -291,7 +291,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called if an error occurs. 
+This callback is called if an error occurs.
 Possible errors are overrun, parity or framing error.
 """,
 'de':
@@ -310,8 +310,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets a break condition (the TX output is forced to a logic 0 state). 
-The parameter sets the hold-time of the break condition (in ms). 
+Sets a break condition (the TX output is forced to a logic 0 state).
+The parameter sets the hold-time of the break condition (in ms).
 """,
 'de':
 """

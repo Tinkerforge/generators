@@ -36,7 +36,7 @@ com['packets'].append({
 """
 Returns the current heart rate measured.
 
-If you want to get the heart rate periodically, it is recommended 
+If you want to get the heart rate periodically, it is recommended
 to use the :cb:`Heart Rate` callback and set the period with
 :func:`Set Heart Rate Callback Period`.
 """,
@@ -133,13 +133,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn die Herzschlagfrequenz *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn die Herzschlagfrequenz *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn die Herzschlagfrequenz kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn die Herzschlagfrequenz größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0).
 """
 }]
@@ -190,11 +190,11 @@ The default value is 100.
 Setzt die Periode in ms mit welcher die Schwellwert Callback
 
 * :cb:`Heart Rate Reached`
- 
-ausgelöst wird, wenn der Schwellwert 
+
+ausgelöst wird, wenn der Schwellwert
 
 * :func:`Set Heart Rate Callback Threshold`
- 
+
 weiterhin erreicht bleibt.
 
 Der Standardwert ist 100.
@@ -264,7 +264,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`Set Heart Rate Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Herzschlagfrequenz des Sensors.
 

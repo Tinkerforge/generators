@@ -380,7 +380,7 @@ as 0.
 """,
 'de':
 """
-Gibt (für den angegebenen Pin) den aktuellen Zustand und die Zeit, wie von 
+Gibt (für den angegebenen Pin) den aktuellen Zustand und die Zeit, wie von
 :func:`Set Monoflop` gesetzt, sowie die noch verbleibende Zeit bis zum
 Zustandswechsel, zurück.
 
@@ -421,7 +421,7 @@ com['packets'].append({
 'en':
 """
 Sets the output value (high or low) with a bitmask, according to
-the selection mask. The bitmask is 4 bit long, *true* refers to high 
+the selection mask. The bitmask is 4 bit long, *true* refers to high
 and *false* refers to low.
 
 For example: The parameters (9, 4) or (0b0110, 0b0100) will turn

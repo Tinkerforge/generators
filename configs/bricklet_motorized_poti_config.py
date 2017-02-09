@@ -70,7 +70,7 @@ The value is between 0 and 4095.
  unfiltered analog values. The only reason to use :func:`Get Analog Value` is,
  if you need the full resolution of the analog-to-digital converter.
 
-If you want the analog value periodically, it is recommended to use the 
+If you want the analog value periodically, it is recommended to use the
 :cb:`Analog Value` callback and set the period with
 :func:`Set Analog Value Callback Period`.
 """,
@@ -84,7 +84,7 @@ Wertebereich ist 0 bis 4095.
  Messwerte gemittelt um das Rauschen zu vermindern, während :func:`Get Analog Value`
  unverarbeitete Analogwerte zurück gibt. Der einzige Grund :func:`Get Analog Value`
  zu nutzen, ist die volle Auflösung des Analog-Digital-Wandlers zu erhalten.
- 
+
 Wenn der Analogwert periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Analog Value` Callback zu nutzen und die Periode mit
 :func:`Set Analog Value Callback Period` vorzugeben.
@@ -222,13 +222,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn die Position *außerhalb* der min und max Werte ist"
  "'i'",    "Callback wird ausgelöst wenn die Position *innerhalb* der min und max Werte ist"
  "'<'",    "Callback wird ausgelöst wenn die Position kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn die Position größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0).
 """
 }]
@@ -289,13 +289,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn der Analogwert *außerhalb* der min und max Werte ist"
  "'i'",    "Callback wird ausgelöst wenn der Analogwert *innerhalb* der min und max Werte ist"
  "'<'",    "Callback wird ausgelöst wenn der Analogwert kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn der Analogwert größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0).
 """
 }]
@@ -349,12 +349,12 @@ Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
 * :cb:`Position Reached`,
 * :cb:`Analog Value Reached`
- 
-ausgelöst werden, wenn die Schwellwerte 
+
+ausgelöst werden, wenn die Schwellwerte
 
 * :func:`Set Position Callback Threshold`,
 * :func:`Set Analog Value Callback Threshold`
- 
+
 weiterhin erreicht bleiben.
 
 Der Standardwert ist 100.
@@ -449,7 +449,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`Set Position Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Position des Linearpotentiometers.
 
@@ -476,7 +476,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`Set Analog Value Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der Analogwert des Linearpotentiometers.
 

@@ -64,7 +64,7 @@ velocity, acceleration, etc. are applied immediately.
 """,
 'de':
 """
-Aktiviert einen Servo (0 bis 6). Wenn ein Servo aktiviert wird, wird die 
+Aktiviert einen Servo (0 bis 6). Wenn ein Servo aktiviert wird, wird die
 konfigurierte Position, Geschwindigkeit, Beschleunigung, etc. sofort übernommen.
 """
 }]
@@ -86,7 +86,7 @@ disabled servo will not hold its position if a load is applied.
 Deaktiviert einen Servo (0 bis 6). Deaktivierte Servos werden nicht angesteuert,
 z.B. halten deaktivierte Servos nicht ihre Position wenn eine Last angebracht ist.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -116,7 +116,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the position in °/100 for the specified servo. 
+Sets the position in °/100 for the specified servo.
 
 The default range of the position is -9000 to 9000, but it can be specified
 according to your servo with :func:`Set Degree`.
@@ -136,7 +136,7 @@ Wenn ein Linearservo oder RC Brushless Motor Controller oder ähnlich mit dem
 Servo Brick gesteuert werden soll, können Längen oder Geschwindigkeiten mit
 :func:`Set Degree` definiert werden.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -155,7 +155,7 @@ Returns the position of the specified servo as set by :func:`Set Position`.
 Gibt die Position des angegebenen Servos zurück, wie von :func:`Set Position`
 gesetzt.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -177,7 +177,7 @@ Gibt die *aktuelle* Position des angegebenen Servos zurück. Dies kann vom Wert
 von :func:`Set Position` abweichen, wenn der Servo gerade sein Positionsziel
 anfährt.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -199,7 +199,7 @@ The default value is 65535.
 """,
 'de':
 """
-Setzt die maximale Geschwindigkeit des angegebenen Servos in °/100s. 
+Setzt die maximale Geschwindigkeit des angegebenen Servos in °/100s.
 Die Geschwindigkeit wird entsprechend mit dem Wert, wie von
 :func:`Set Acceleration` gesetzt, beschleunigt.
 
@@ -208,7 +208,7 @@ Mit einem Wert von 65535 wird die Position sofort gesetzt (keine Geschwindigkeit
 
 Der Standardwert ist 65535.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -227,7 +227,7 @@ Returns the velocity of the specified servo as set by :func:`Set Velocity`.
 Gibt die Geschwindigkeit des angegebenen Servos zurück, wie von
 :func:`Set Velocity` gesetzt.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -249,7 +249,7 @@ Gibt die *aktuelle* Geschwindigkeit des angegebenen Servos zurück. Dies kann
 vom Wert von :func:`Set Velocity` abweichen, wenn der Servo gerade sein
 Geschwindigkeitsziel anfährt.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -277,7 +277,7 @@ Die minimale Beschleunigung ist 1 und die maximale 65535. Mit einem Wert von
 
 Der Standardwert ist 65535.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -289,15 +289,15 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the acceleration for the specified servo as set by 
+Returns the acceleration for the specified servo as set by
 :func:`Set Acceleration`.
 """,
 'de':
 """
-Gibt die Beschleunigung des angegebenen Servos zurück, wie von 
+Gibt die Beschleunigung des angegebenen Servos zurück, wie von
 :func:`Set Acceleration` gesetzt.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -309,7 +309,7 @@ com['packets'].append({
 'en':
 """
 Sets the output voltages with which the servos are driven in mV.
-The minimum output voltage is 2000mV and the maximum output voltage is 
+The minimum output voltage is 2000mV and the maximum output voltage is
 9000mV.
 
 .. note::
@@ -331,7 +331,7 @@ Die minimale Ausgangsspannung ist 2000mV und die maximale 9000mV.
 
 Der Standardwert ist 5000.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -348,7 +348,7 @@ Returns the output voltage as specified by :func:`Set Output Voltage`.
 """
 Gibt die Ausgangsspannung zurück, wie von :func:`Set Output Voltage` gesetzt.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -363,7 +363,7 @@ com['packets'].append({
 """
 Sets the minimum and maximum pulse width of the specified servo in µs.
 
-Usually, servos are controlled with a 
+Usually, servos are controlled with a
 `PWM <https://en.wikipedia.org/wiki/Pulse-width_modulation>`__, whereby the
 length of the pulse controls the position of the servo. Every servo has
 different minimum and maximum pulse widths, these can be specified with
@@ -376,7 +376,7 @@ comes without any datasheet you have to find the values via trial and error.
 Both values have a range from 1 to 65535 (unsigned 16-bit integer). The
 minimum must be smaller than the maximum.
 
-The default values are 1000µs (1ms) and 2000µs (2ms) for minimum and 
+The default values are 1000µs (1ms) and 2000µs (2ms) for minimum and
 maximum pulse width.
 """,
 'de':
@@ -389,7 +389,7 @@ wobei die Länge des Pulses die Position des Servos steuert. Jeder Servo
 hat unterschiedliche minimale und maximale Pulsweiten, diese können mit
 dieser Funktion spezifiziert werden.
 
-Wenn im Datenblatt des Servos die minimale und maximale Pulsweite 
+Wenn im Datenblatt des Servos die minimale und maximale Pulsweite
 spezifiziert ist, sollten diese Werte entsprechend gesetzt werden. Sollte
 der Servo ohne ein Datenblatt vorliegen, müssen die Werte durch Ausprobieren
 gefunden werden.
@@ -400,7 +400,7 @@ Der minimale Wert muss kleiner als der maximale sein.
 Die Standardwerte sind 1000µs (1ms) und 2000µs (2ms) für minimale und maximale
 Pulsweite.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -421,7 +421,7 @@ Returns the minimum and maximum pulse width for the specified servo as set by
 Gibt die minimale und maximale Pulsweite des angegebenen Servos zurück, wie von
 :func:`Set Pulse Width` gesetzt.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -440,7 +440,7 @@ given as °/100).
 This only specifies the abstract values between which the minimum and maximum
 pulse width is scaled. For example: If you specify a pulse width of 1000µs
 to 2000µs and a degree range of -90° to 90°, a call of :func:`Set Position`
-with 0 will result in a pulse width of 1500µs 
+with 0 will result in a pulse width of 1500µs
 (-90° = 1000µs, 90° = 2000µs, etc.).
 
 Possible usage:
@@ -460,7 +460,7 @@ Possible usage:
   control it with a RC brushless motor controller. In this case you can set the
   minimum to 0 and the maximum to 10000. :func:`Set Position` now controls the rpm.
 
-Both values have a possible range from -32767 to 32767 
+Both values have a possible range from -32767 to 32767
 (signed 16-bit integer). The minimum must be smaller than the maximum.
 
 The default values are -9000 and 9000 for the minimum and maximum degree.
@@ -472,7 +472,7 @@ in °/100).
 
 Dies definiert die abstrakten Werte zwischen welchen die minimale und maximale
 Pulsweite skaliert wird. Beispiel: Wenn eine Pulsweite von 1000µs bis 2000µs und
-ein Winkelbereich von -90° bis 90° spezifiziert ist, wird ein Aufruf von 
+ein Winkelbereich von -90° bis 90° spezifiziert ist, wird ein Aufruf von
 :func:`Set Position` mit 0 in einer Pulsweite von 1500µs resultieren
 (-90° = 1000µs, 90° = 2000µs, etc.).
 
@@ -502,7 +502,7 @@ Der minimale Wert muss kleiner als der maximale sein.
 
 Die Standardwerte sind -9000 und 9000 für den minimalen und maximalen Winkel.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -523,7 +523,7 @@ Returns the minimum and maximum degree for the specified servo as set by
 Gibt den minimalen und maximalen Winkel für den angegebenen Servo zurück,
 wie von :func:`Set Degree` gesetzt.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -537,15 +537,15 @@ com['packets'].append({
 """
 Sets the period of the specified servo in µs.
 
-Usually, servos are controlled with a 
+Usually, servos are controlled with a
 `PWM <https://en.wikipedia.org/wiki/Pulse-width_modulation>`__. Different
-servos expect PWMs with different periods. Most servos run well with a 
+servos expect PWMs with different periods. Most servos run well with a
 period of about 20ms.
 
 If your servo comes with a datasheet that specifies a period, you should
 set it accordingly. If you don't have a datasheet and you have no idea
 what the correct period is, the default value (19.5ms) will most likely
-work fine. 
+work fine.
 
 The minimum possible period is 1µs and the maximum is 65535µs.
 
@@ -569,7 +569,7 @@ Die minimal mögliche Periode ist 1µs und die maximale 65535µs.
 
 Der Standardwert ist 19,5ms (19500µs).
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -588,7 +588,7 @@ Returns the period for the specified servo as set by :func:`Set Period`.
 Gibt die Periode für den angegebenen Servo zurück, wie von :func:`Set Period`
 gesetzt.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -606,7 +606,7 @@ Returns the current consumption of the specified servo in mA.
 """
 Gibt den Stromverbrauch des angegebenen Servos in mA zurück.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -623,7 +623,7 @@ Returns the current consumption of all servos together in mA.
 """
 Gibt den Stromverbrauch aller Servos zusammen in mA zurück.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -635,7 +635,7 @@ com['packets'].append({
 'en':
 """
 Returns the stack input voltage in mV. The stack input voltage is the
-voltage that is supplied via the stack, i.e. it is given by a 
+voltage that is supplied via the stack, i.e. it is given by a
 Step-Down or Step-Up Power Supply.
 """,
 'de':
@@ -644,7 +644,7 @@ Gibt die Eingangsspannung des Stapels in mV zurück. Die Eingangsspannung
 des Stapels wird über diesen verteilt, z.B. mittels einer Step-Down
 oder Step-Up Power Supply.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -656,10 +656,10 @@ com['packets'].append({
 'en':
 """
 Returns the external input voltage in mV. The external input voltage is
-given via the black power input connector on the Servo Brick. 
- 
+given via the black power input connector on the Servo Brick.
+
 If there is an external input voltage and a stack input voltage, the motors
-will be driven by the external input voltage. If there is only a stack 
+will be driven by the external input voltage. If there is only a stack
 voltage present, the motors will be driven by this voltage.
 
 .. warning::
@@ -683,7 +683,7 @@ des Stapels verfügbar sein, erfolgt die Versorgung der Motoren über diese.
  externe Versorgungsspannung. Wenn dann die externe Spannungsversorgung getrennt wird,
  erfolgt sofort die Versorgung der Motoren über die höhere Versorgungsspannung des Stapels.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -697,7 +697,7 @@ com['packets'].append({
 Sets the minimum voltage in mV, below which the :cb:`Under Voltage` callback
 is triggered. The minimum possible value that works with the Servo Brick is 5V.
 You can use this function to detect the discharge of a battery that is used
-to drive the stepper motor. If you have a fixed power supply, you likely do 
+to drive the stepper motor. If you have a fixed power supply, you likely do
 not need this functionality.
 
 The default value is 5V (5000mV).

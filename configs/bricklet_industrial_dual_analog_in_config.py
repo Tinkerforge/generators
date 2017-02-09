@@ -94,7 +94,7 @@ Ein Wert von 0 deaktiviert den Callback.
 Der :cb:`Voltage` Callback wird nur ausgelöst wenn sich die Spannung seit der
 letzten Auslösung geändert hat.
 
-Der Standardwert ist 0. 
+Der Standardwert ist 0.
 """
 }]
 })
@@ -156,13 +156,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn die Spannung *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn die Spannung *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn die Spannung kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn die Spannung größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0).
 """
 }]
@@ -214,11 +214,11 @@ The default value is 100.
 Setzt die Periode in ms mit welcher der Schwellwert Callback
 
 * :cb:`Voltage Reached`
- 
+
 ausgelöst werden, wenn der Schwellwert
 
 * :func:`Set Voltage Callback Threshold`
- 
+
 weiterhin erreicht bleibt.
 
 Der Standardwert ist 100.
@@ -409,7 +409,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`Set Voltage Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Spannung des Kanals.
 

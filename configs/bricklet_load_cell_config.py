@@ -36,7 +36,7 @@ com['packets'].append({
 """
 Returns the currently measured weight in grams.
 
-If you want to get the weight periodically, it is recommended 
+If you want to get the weight periodically, it is recommended
 to use the :cb:`Weight` callback and set the period with
 :func:`Set Weight Callback Period`.
 """,
@@ -133,13 +133,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn das Gewicht *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn das Gewicht *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn das Gewicht kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn das Gewicht größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0).
 """
 }]
@@ -190,11 +190,11 @@ The default value is 100.
 Setzt die Periode in ms mit welcher die Schwellwert Callback
 
 * :cb:`Weight Reached`
- 
-ausgelöst wird, wenn der Schwellwert 
+
+ausgelöst wird, wenn der Schwellwert
 
 * :func:`Set Weight Callback Threshold`
- 
+
 weiterhin erreicht bleibt.
 
 Der Standardwert ist 100.
@@ -265,7 +265,7 @@ Returns the length moving average as set by :func:`Set Moving Average`.
 """,
 'de':
 """
-Gibt die Länge des gleitenden Mittelwerts zurück, wie von 
+Gibt die Länge des gleitenden Mittelwerts zurück, wie von
 :func:`Set Moving Average` gesetzt.
 """
 }]
@@ -334,7 +334,7 @@ com['packets'].append({
 To calibrate your Load Cell Bricklet you have to
 
 * empty the scale and call this function with 0 and
-* add a known weight to the scale and call this function with the weight in 
+* add a known weight to the scale and call this function with the weight in
   grams.
 
 The calibration is saved in the EEPROM of the Bricklet and only
@@ -345,7 +345,7 @@ to call this function in your source code.
 """,
 'de':
 """
-Zum Kalibrieren des Load Cell Bricklet müssen die folgenden zwei 
+Zum Kalibrieren des Load Cell Bricklet müssen die folgenden zwei
 Schritte durchgeführt werden:
 
 * Die Waage leeren und die Funktion mit 0 aufrufen.
@@ -400,7 +400,7 @@ The gain can be 128x, 64x or 32x. It represents a measurement range of
 ±20mV, ±40mV and ±80mV respectively. The Load Cell Bricklet uses an
 excitation voltage of 5V and most load cells use an output of 2mV/V. That
 means the voltage range is ±15mV for most load cells (i.e. gain of 128x
-is best). If you don't know what all of this means you should keep it at 
+is best). If you don't know what all of this means you should keep it at
 128x, it will most likely be correct.
 
 The configuration is saved in the EEPROM of the Bricklet and only
@@ -503,7 +503,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`Set Weight Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist das Gewicht wie von der Wägezelle gemessen.
 

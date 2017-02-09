@@ -67,7 +67,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns if a fix is currently available as well as the, the number of 
+Returns if a fix is currently available as well as the, the number of
 satellites that are in view.
 
 There is also a :ref:`green LED <gps_v2_bricklet_fix_led>` on the Bricklet that
@@ -644,7 +644,7 @@ since the last triggering and if there is currently a fix as indicated by
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit 
+Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Coordinates Callback Period`, ausgelöst. Die Parameter sind die
 gleichen wie die von :func:`Get Coordinates`.
 
@@ -673,7 +673,7 @@ last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit 
+Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Status Callback Period`, ausgelöst. Die Parameter sind die
 gleichen wie die von :func:`Get Status`.
 
@@ -702,7 +702,7 @@ last triggering and if there is currently a fix as indicated by
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit 
+Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Altitude Callback Period`, ausgelöst. Die Parameter sind die
 gleichen wie die von :func:`Get Altitude`.
 
@@ -732,7 +732,7 @@ last triggering and if there is currently a fix as indicated by
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit 
+Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Motion Callback Period`, ausgelöst. Die Parameter sind die
 gleichen wie die von :func:`Get Motion`.
 
@@ -761,7 +761,7 @@ since the last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit 
+Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Date Time Callback Period`, ausgelöst. Die Parameter sind die
 gleichen wie die von :func:`Get Date Time`.
 

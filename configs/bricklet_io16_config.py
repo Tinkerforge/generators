@@ -395,7 +395,7 @@ as 0.
 """,
 'de':
 """
-Gibt (für den angegebenen Pin) den aktuellen Zustand und die Zeit, wie von 
+Gibt (für den angegebenen Pin) den aktuellen Zustand und die Zeit, wie von
 :func:`Set Port Monoflop` gesetzt, sowie die noch verbleibende Zeit bis zum
 Zustandswechsel, zurück.
 
@@ -437,7 +437,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets the output value (high or low) for a port ("a" or "b" with a bitmask, 
+Sets the output value (high or low) for a port ("a" or "b" with a bitmask,
 according to the selection mask. The bitmask is 8 bit long and a 1 in the
 bitmask means high and a 0 in the bitmask means low.
 

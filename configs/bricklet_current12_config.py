@@ -62,7 +62,7 @@ com['packets'].append({
 'en':
 """
 Calibrates the 0 value of the sensor. You have to call this function
-when there is no current present. 
+when there is no current present.
 
 The zero point of the current sensor
 is depending on the exact properties of the analog-to-digital converter,
@@ -75,7 +75,7 @@ Bricklet.
 """,
 'de':
 """
-Kalibriert den Nullwert des Sensors. Diese Funktion muss aufgerufen werden, 
+Kalibriert den Nullwert des Sensors. Diese Funktion muss aufgerufen werden,
 wenn kein Strom fließt.
 
 Der Nullwert des Stromsensors ist abhängig von den exakten Eigenschaften des
@@ -129,7 +129,7 @@ The value is between 0 and 4095.
  unfiltered analog values. The only reason to use :func:`Get Analog Value` is,
  if you need the full resolution of the analog-to-digital converter.
 
-If you want the analog value periodically, it is recommended to use the 
+If you want the analog value periodically, it is recommended to use the
 :cb:`Analog Value` callback and set the period with
 :func:`Set Analog Value Callback Period`.
 """,
@@ -143,7 +143,7 @@ Wertebereich ist 0 bis 4095.
  Messwerte gemittelt um das Rauschen zu vermindern, während :func:`Get Analog Value`
  unverarbeitete Analogwerte zurück gibt. Der einzige Grund :func:`Get Analog Value`
  zu nutzen, ist die volle Auflösung des Analog-Digital-Wandlers zu erhalten.
- 
+
 Wenn der Analogwert periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Analog Value` Callback zu nutzen und die Periode mit
 :func:`Set Analog Value Callback Period` vorzugeben.
@@ -175,7 +175,7 @@ Ein Wert von 0 deaktiviert den Callback.
 Der :cb:`Current` Callback wird nur ausgelöst wenn sich die Stromstärke seit
 der letzten Auslösung geändert hat.
 
-Der Standardwert ist 0. 
+Der Standardwert ist 0.
 """
 }]
 })
@@ -280,13 +280,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn die Stromstärke *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn die Stromstärke *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn die Stromstärke kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn die Stromstärke größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0).
 """
 }]
@@ -347,13 +347,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn der Analogwert *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn der Analogwert *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn der Analogwert kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn der Analogwert größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0).
 """
 }]
@@ -407,12 +407,12 @@ Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
 * :cb:`Current Reached`,
 * :cb:`Analog Value Reached`
- 
-ausgelöst werden, wenn die Schwellwerte 
+
+ausgelöst werden, wenn die Schwellwerte
 
 * :func:`Set Current Callback Threshold`,
 * :func:`Set Analog Value Callback Threshold`
- 
+
 weiterhin erreicht bleiben.
 
 Der Standardwert ist 100.
@@ -508,7 +508,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`Set Current Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Stromstärke des Sensors.
 
@@ -535,7 +535,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`Set Analog Value Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der Analogwert des Sensors.
 

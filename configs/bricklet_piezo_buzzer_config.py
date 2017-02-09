@@ -56,7 +56,7 @@ is given as a string consisting of "." (dot), "-" (minus) and " " (space)
 for *dits*, *dahs* and *pauses*. Every other character is ignored.
 
 For example: If you set the string "...---...", the piezo buzzer will beep
-nine times with the durations "short short short long long long short 
+nine times with the durations "short short short long long long short
 short short".
 
 The maximum string size is 60.

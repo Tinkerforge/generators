@@ -46,8 +46,8 @@ latitude and longitude. Possible values for ``ns`` and ``ew`` are 'N', 'S', 'E'
 and 'W' (north, south, east and west).
 
 PDOP, HDOP and VDOP are the dilution of precision (DOP) values. They specify
-the additional multiplicative effect of GPS satellite geometry on GPS 
-precision. See 
+the additional multiplicative effect of GPS satellite geometry on GPS
+precision. See
 `here <https://en.wikipedia.org/wiki/Dilution_of_precision_(GPS)>`__
 for more information. The values are give in hundredths.
 
@@ -74,7 +74,7 @@ es mehr Informationen dazu. Die Werte werden in Hundertstel gegeben.
 
 EPE ist der "Estimated Position Error". Der EPE wird in cm gegeben.
 Dies ist nicht der absolut maximale Fehler, es ist der Fehler mit einer
-spezifischen Konfidenz. Siehe 
+spezifischen Konfidenz. Siehe
 `hier <http://www.nps.gov/gis/gps/WhatisEPE.html>`__ für mehr Informationen.
 
 Diese Daten sind nur gültig wenn ein Fix vorhanden ist (siehe :func:`Get Status`).
@@ -516,7 +516,7 @@ since the last triggering and if there is currently a fix as indicated by
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit 
+Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Coordinates Callback Period`, ausgelöst. Die Parameter sind die
 gleichen wie die von :func:`Get Coordinates`.
 
@@ -548,7 +548,7 @@ last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit 
+Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Status Callback Period`, ausgelöst. Die Parameter sind die
 gleichen wie die von :func:`Get Status`.
 
@@ -577,7 +577,7 @@ the last triggering and if there is currently a fix as indicated by
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit 
+Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Altitude Callback Period`, ausgelöst. Die Parameter sind die
 gleichen wie die von :func:`Get Altitude`.
 
@@ -607,7 +607,7 @@ last triggering and if there is currently a fix as indicated by
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit 
+Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Motion Callback Period`, ausgelöst. Die Parameter sind die
 gleichen wie die von :func:`Get Motion`.
 
@@ -636,7 +636,7 @@ since the last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit 
+Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Date Time Callback Period`, ausgelöst. Die Parameter sind die
 gleichen wie die von :func:`Get Date Time`.
 

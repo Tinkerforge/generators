@@ -38,14 +38,14 @@ Returns the temperature of connected sensor. The value
 has a range of -246 to 849 °C and is given in °C/100,
 e.g. a value of 4223 means that a temperature of 42.23 °C is measured.
 
-If you want to get the temperature periodically, it is recommended 
+If you want to get the temperature periodically, it is recommended
 to use the :cb:`Temperature` callback and set the period with
 :func:`Set Temperature Callback Period`.
 """,
 'de':
 """
 Gibt die Temperatur des verbundenen Sensors zurück. Der Wertebereich ist von
--246 bis 849 °C und wird in °C/100 angegeben, z.B. bedeutet 
+-246 bis 849 °C und wird in °C/100 angegeben, z.B. bedeutet
 ein Wert von 4223 eine gemessene Temperatur von 42,23 °C.
 
 Wenn die Temperatur periodisch abgefragt werden soll, wird empfohlen
@@ -70,7 +70,7 @@ The value can be converted with the following formulas:
 * Pt100:  resistance = (value * 390) / 32768
 * Pt1000: resistance = (value * 3900) / 32768
 
-If you want to get the resistance periodically, it is recommended 
+If you want to get the resistance periodically, it is recommended
 to use the :cb:`Resistance` callback and set the period with
 :func:`Set Resistance Callback Period`.
 """,
@@ -219,13 +219,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn die Temperatur *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn die Temperatur *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn die Temperatur kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn die Temperatur größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0).
 """
 }]
@@ -286,13 +286,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn die Temperatur *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn die Temperatur *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn die Temperatur kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn die Temperatur größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0).
 """
 }]
@@ -347,12 +347,12 @@ Setzt die Periode in ms mit welcher die Schwellwert Callback
 
 * :cb:`Temperature Reached`,
 * :cb:`Resistance Reached`
- 
-ausgelöst wird, wenn der Schwellwert 
+
+ausgelöst wird, wenn der Schwellwert
 
 * :func:`Set Temperature Callback Threshold`,
 * :func:`Set Resistance Callback Threshold`
- 
+
 weiterhin erreicht bleibt.
 
 Der Standardwert ist 100.
@@ -421,7 +421,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`Set Temperature Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Temperatur des verbundenen Sensors.
 
@@ -474,7 +474,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`Set Resistance Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der Widerstand des verbundenen Sensors.
 
@@ -489,7 +489,7 @@ com['packets'].append({
 'name': 'Set Noise Rejection Filter',
 'elements': [('Filter', 'uint8', 1, 'in', ('Filter Option', [('50Hz', 0),
                                                              ('60Hz', 1)]))],
-'since_firmware': [1, 0, 0], 
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
@@ -517,11 +517,11 @@ com['packets'].append({
 'name': 'Get Noise Rejection Filter',
 'elements': [('Filter', 'uint8', 1, 'out', ('Filter Option', [('50Hz', 0),
                                                               ('60Hz', 1)]))],
-'since_firmware': [1, 0, 0], 
+'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
 """
-Returns the noise rejection filter option as set by 
+Returns the noise rejection filter option as set by
 :func:`Set Noise Rejection Filter`
 """,
 'de':
@@ -536,11 +536,11 @@ com['packets'].append({
 'type': 'function',
 'name': 'Is Sensor Connected',
 'elements': [('Connected', 'bool', 1, 'out')],
-'since_firmware': [1, 0, 0], 
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
-Returns *true* if the sensor is connected correctly. 
+Returns *true* if the sensor is connected correctly.
 
 If this function
 returns *false*, there is either no Pt100 or Pt1000 sensor connected,
@@ -563,7 +563,7 @@ com['packets'].append({
 'elements': [('Mode', 'uint8', 1, 'in', ('Wire Mode', [('2', 2),
                                                        ('3', 3),
                                                        ('4', 4)]))],
-'since_firmware': [1, 0, 0], 
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """
@@ -590,7 +590,7 @@ com['packets'].append({
 'elements': [('Mode', 'uint8', 1, 'out', ('Wire Mode', [('2', 2),
                                                         ('3', 3),
                                                         ('4', 4)]))],
-'since_firmware': [1, 0, 0], 
+'since_firmware': [1, 0, 0],
 'doc': ['bf', {
 'en':
 """

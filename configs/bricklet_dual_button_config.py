@@ -145,7 +145,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is called whenever a button is pressed. 
+This callback is called whenever a button is pressed.
 
 Possible states for buttons are:
 
@@ -192,7 +192,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets the state of the selected LED (0 or 1). 
+Sets the state of the selected LED (0 or 1).
 
 The other LED remains untouched.
 """,

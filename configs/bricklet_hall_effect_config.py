@@ -81,7 +81,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-The edge type parameter configures if rising edges, falling edges or 
+The edge type parameter configures if rising edges, falling edges or
 both are counted. Possible edge types are:
 
 * 0 = rising (default)
@@ -288,7 +288,7 @@ since the last triggering.
 """,
 'de':
 """
-Dieser Callback wird mit der Periode, wie gesetzt mit 
+Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Edge Count Callback Period`, ausgelöst. Die :word:`parameter`
 sind der aktuelle Zählerstand und der aktuelle Wert (siehe
 :func:`Get Value` and :func:`Get Edge Count`).

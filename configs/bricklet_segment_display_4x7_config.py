@@ -58,8 +58,8 @@ ein Segment:
    :alt: Bitreihenfolge eines Segments
    :align: center
 
-Beispiel: Um eine "5" auf der Anzeige darzustellen müssen die Segment 
-0, 2, 3, 5 und 6 aktiviert werden. Dies kann mit der Zahl 
+Beispiel: Um eine "5" auf der Anzeige darzustellen müssen die Segment
+0, 2, 3, 5 und 6 aktiviert werden. Dies kann mit der Zahl
 0b01101101 = 0x6d = 109 repräsentiert werden.
 
 Die Helligkeit kann zwischen 0 (dunkel) und 7 (hell) gesetzt werden.
@@ -78,7 +78,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the segment, brightness and color data as set by 
+Returns the segment, brightness and color data as set by
 :func:`Set Segments`.
 """,
 'de':
@@ -108,7 +108,7 @@ Example: If you set *from* to 0, *to* to 100, *increment* to 1 and
 *length* to 1000, a counter that goes from 0 to 100 with one second
 pause between each increment will be started.
 
-The maximum values for *from*, *to* and *increment* is 9999, 
+The maximum values for *from*, *to* and *increment* is 9999,
 the minimum value is -999.
 
 Using a negative increment allows to count backwards.

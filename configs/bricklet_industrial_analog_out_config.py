@@ -78,7 +78,7 @@ Returns *true* if output of voltage and current is enabled, *false* otherwise.
 """,
 'de':
 """
-Gibt *true* zurück falls die Ausgabe von Spannung und Strom aktiviert ist, 
+Gibt *true* zurück falls die Ausgabe von Spannung und Strom aktiviert ist,
 *false* sonst.
 """
 }]

@@ -46,7 +46,7 @@ write one row.
    :align: center
    :target: ../../_images/Bricklets/bricklet_oled_64x48_display.png
 
-The LSB (D0) of each data byte is at the top and the MSB (D7) is at the 
+The LSB (D0) of each data byte is at the top and the MSB (D7) is at the
 bottom of the row.
 
 The next call of :func:`Write` will write the second row and so on. To
@@ -179,7 +179,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Writes text to a specific line (0 to 5) with a specific position 
+Writes text to a specific line (0 to 5) with a specific position
 (0 to 12). The text can have a maximum of 13 characters.
 
 For example: (1, 4, "Hello") will write *Hello* in the middle of the
@@ -188,7 +188,7 @@ second line of the display.
 You can draw to the display with :func:`Write` and then add text to it
 afterwards.
 
-The display uses a special 5x7 pixel charset. You can view the characters 
+The display uses a special 5x7 pixel charset. You can view the characters
 of the charset in Brick Viewer.
 """,
 'de':

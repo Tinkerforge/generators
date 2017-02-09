@@ -102,10 +102,10 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets the status led configuration. 
+Sets the status led configuration.
 
 By default the status LED turns on if a motion is detected and off is no motion
-is detected. 
+is detected.
 
 You can also turn the LED permanently on/off.
 """,

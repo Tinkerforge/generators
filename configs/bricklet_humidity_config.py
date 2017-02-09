@@ -35,7 +35,7 @@ com['packets'].append({
 'en':
 """
 Returns the humidity of the sensor. The value
-has a range of 0 to 1000 and is given in %RH/10 (Relative Humidity), 
+has a range of 0 to 1000 and is given in %RH/10 (Relative Humidity),
 i.e. a value of 421 means that a humidity of 42.1 %RH is measured.
 
 If you want to get the humidity periodically, it is recommended to use the
@@ -45,7 +45,7 @@ If you want to get the humidity periodically, it is recommended to use the
 'de':
 """
 Gibt die gemessene Luftfeuchtigkeit des Sensors zurück. Der Wertebereich ist von
-0 bis 1000 und wird in %RH/10 angegeben (relative Luftfeuchtigkeit), z.B. bedeutet 
+0 bis 1000 und wird in %RH/10 angegeben (relative Luftfeuchtigkeit), z.B. bedeutet
 ein Wert von 421 eine gemessene Luftfeuchtigkeit von 42,1 %RH.
 
 Wenn die Luftfeuchtigkeit periodisch abgefragt werden soll, wird empfohlen
@@ -75,7 +75,7 @@ The value is between 0 and 4095.
  the analog value yourself. See the `HIH 5030 datasheet
  <https://github.com/Tinkerforge/humidity-bricklet/raw/master/datasheets/hih-5030.pdf>`__.
 
-If you want the analog value periodically, it is recommended to use the 
+If you want the analog value periodically, it is recommended to use the
 :cb:`Analog Value` callback and set the period with
 :func:`Set Analog Value Callback Period`.
 """,
@@ -92,7 +92,7 @@ Wertebereich ist 0 bis 4095.
  warmen Umgebungen verwendet wird, ist es ratsam den Luftfeuchtigkeitswert
  direkt aus den Analogwerten zu berechnen. Siehe hierzu das `HIH 5030 Datenblatt
  <https://github.com/Tinkerforge/humidity-bricklet/raw/master/datasheets/hih-5030.pdf>`__.
- 
+
 Wenn der Analogwert periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Analog Value` Callback zu nutzen und die Periode mit
 :func:`Set Analog Value Callback Period` vorzugeben.
@@ -229,13 +229,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn die Luftfeuchtigkeit *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn die Luftfeuchtigkeit *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn die Luftfeuchtigkeit kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn die Luftfeuchtigkeit größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0).
 """
 }]
@@ -296,13 +296,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn der Analogwert *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn der Analogwert *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn der Analogwert kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn der Analogwert größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0).
 """
 }]
@@ -356,12 +356,12 @@ Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
 * :cb:`Humidity Reached`,
 * :cb:`Analog Value Reached`
- 
-ausgelöst werden, wenn die Schwellwerte 
+
+ausgelöst werden, wenn die Schwellwerte
 
 * :func:`Set Humidity Callback Threshold`,
 * :func:`Set Analog Value Callback Threshold`
- 
+
 weiterhin erreicht bleiben.
 
 Der Standardwert ist 100.
@@ -456,7 +456,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`Set Humidity Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Luftfeuchtigkeit des Sensors.
 
@@ -483,7 +483,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`Set Analog Value Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der Analogwert des Sensors.
 

@@ -237,13 +237,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn der Entfernungswert *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn der Entfernungswert *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn der Entfernungswert kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn der Entfernungswert größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0).
 """
 }]
@@ -304,13 +304,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn der Geschwindigkeitswert *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn der Geschwindigkeitswert *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn der Geschwindigkeitswert kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn der Geschwindigkeitswert größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0).
 """
 }]
@@ -364,12 +364,12 @@ Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
 * :cb:`Distance Reached`,
 * :cb:`Velocity Reached`,
- 
-ausgelöst werden, wenn die Schwellwerte 
+
+ausgelöst werden, wenn die Schwellwerte
 
 * :func:`Set Distance Callback Threshold`,
 * :func:`Set Velocity Callback Threshold`,
- 
+
 weiterhin erreicht bleiben.
 
 Der Standardwert ist 100.
@@ -442,7 +442,7 @@ Returns the length moving average as set by :func:`Set Moving Average`.
 """,
 'de':
 """
-Gibt die Länge des gleitenden Mittelwerts zurück, wie von 
+Gibt die Länge des gleitenden Mittelwerts zurück, wie von
 :func:`Set Moving Average` gesetzt.
 """
 }]
@@ -652,7 +652,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`Set Distance Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der Entfernungswert des Sensors.
 
@@ -679,7 +679,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`Set Velocity Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist der Geschwindigkeitswert des Sensors.
 
@@ -698,7 +698,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the LIDAR-Lite hardware version. 
+Returns the LIDAR-Lite hardware version.
 """,
 'de':
 """

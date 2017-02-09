@@ -53,9 +53,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-To read or write a tag that is in proximity of the NFC/RFID Bricklet you 
+To read or write a tag that is in proximity of the NFC/RFID Bricklet you
 first have to call this function with the expected tag type as parameter.
-It is no problem if you don't know the tag type. You can cycle through 
+It is no problem if you don't know the tag type. You can cycle through
 the available tag types until the tag gives an answer to the request.
 
 Current the following tag types are supported:
@@ -69,9 +69,9 @@ the tag ID from the tag. After this process is done the state will change.
 You can either register the :cb:`State Changed` callback or you can poll
 :func:`Get State` to find out about the state change.
 
-If the state changes to *RequestTagIDError* it means that either there was 
-no tag present or that the tag is of an incompatible type. If the state 
-changes to *RequestTagIDReady* it means that a compatible tag was found 
+If the state changes to *RequestTagIDError* it means that either there was
+no tag present or that the tag is of an incompatible type. If the state
+changes to *RequestTagIDReady* it means that a compatible tag was found
 and that the tag ID could be read out. You can now get the tag ID by
 calling :func:`Get Tag ID`.
 
@@ -131,7 +131,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the tag type, tag ID and the length of the tag ID 
+Returns the tag type, tag ID and the length of the tag ID
 (4 or 7 bytes are possible length). This function can only be called if the
 NFC/RFID is currently in one of the *Ready* states. The returned ID
 is the ID that was saved through the last call of :func:`Request Tag ID`.
@@ -148,7 +148,7 @@ To get the tag ID of a tag the approach is as follows:
 Gibt den Tag Typ, die Tag ID und die Länge der Tag ID (4 oder 7 Byte
 möglich) zurück. Diese Funktion kann  nur aufgerufen werden wenn
 sich das Bricklet gerade in einem der *Ready*-Zustände befindet. Die
-zurückgegebene ID ist die letzte ID die durch einen Aufruf von 
+zurückgegebene ID ist die letzte ID die durch einen Aufruf von
 :func:`Request Tag ID` gefunden wurde.
 
 Der Ansatz um die Tag ID eines Tags zu bekommen sieht wie folgt aus:
@@ -203,7 +203,7 @@ The same approach is used analogously for the other API functions.
 """
 Gibt den aktuellen Zustand des NFC/RFID Bricklets aus.
 
-Während der Startphase ist der Zustand *Initialization*. Die 
+Während der Startphase ist der Zustand *Initialization*. Die
 Initialisierung dauert etwa 20ms. Danach ändert sich der Zustand zu
 *Idle*.
 
@@ -254,7 +254,7 @@ The approach to read or write a Mifare Classic page is as follows:
 """,
 'de':
 """
-Mifare Classic Tags nutzen Authentifizierung. Wenn eine Page eines 
+Mifare Classic Tags nutzen Authentifizierung. Wenn eine Page eines
 Mifare Classic Tags gelesen oder geschrieben werden soll muss diese
 zuvor Authentifiziert werden. Jede Page kann mit zwei Schlüsseln, A
 (``key_number`` = 0) und B (``key_number`` = 1),
@@ -348,9 +348,9 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Reads 16 bytes starting from the given page and stores them into a buffer. 
+Reads 16 bytes starting from the given page and stores them into a buffer.
 The buffer can then be read out with :func:`Get Page`.
-How many pages are read depends on the tag type. The page sizes are 
+How many pages are read depends on the tag type. The page sizes are
 as follows:
 
 * Mifare Classic page size: 16 byte (one page is read)
@@ -376,7 +376,7 @@ can read it. See :func:`Authenticate Mifare Classic Page`.
 """
 Liest 16 Bytes startend von der übergebenen Page und speichert sie in
 einem Buffer. Dieser Buffer kann mit :func:`Get Page` ausgelesen werden.
-Wie viele Pages dadurch gelesen werden hängt vom Typ des Tags ab. 
+Wie viele Pages dadurch gelesen werden hängt vom Typ des Tags ab.
 Die Pagegrößen verhalten sich wie folgt:
 
 * Mifare Classic Pagegröße: 16 byte (eine Page wird gelesen)
@@ -416,7 +416,7 @@ with specific pages you have to call :func:`Request Page` beforehand.
 'de':
 """
 Gibt 16 Bytes Daten aus einem internen Buffer zurück. Der Buffer
-kann zuvor mit spezifischen Pages über einen Aufruf von  
+kann zuvor mit spezifischen Pages über einen Aufruf von
 :func:`Request Page` gefüllt werden.
 """
 }]

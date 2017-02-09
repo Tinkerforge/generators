@@ -33,8 +33,8 @@ com['packets'].append({
 'since_firmware': [1, 0, 0],
 'doc': ['af', {
 'en':
-""" 
-Returns the calibrated acceleration from the accelerometer for the 
+"""
+Returns the calibrated acceleration from the accelerometer for the
 x, y and z axis in 1/100 m/s².
 
 If you want to get the acceleration periodically, it is recommended
@@ -43,7 +43,7 @@ to use the :cb:`Acceleration` callback and set the period with
 """,
 'de':
 """
-Gibt die kalibrierten Beschleunigungen des Beschleunigungsmessers für die 
+Gibt die kalibrierten Beschleunigungen des Beschleunigungsmessers für die
 X-, Y- und Z-Achse in 1/100 m/s².
 
 Wenn die Beschleunigungen periodisch abgefragt werden soll, wird empfohlen
@@ -63,7 +63,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the calibrated magnetic field from the magnetometer for the 
+Returns the calibrated magnetic field from the magnetometer for the
 x, y and z axis in 1/16 µT (Microtesla).
 
 If you want to get the magnetic field periodically, it is recommended
@@ -79,7 +79,7 @@ Wenn das magnetische Feld periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Magnetic Field` Callback zu nutzen und die Periode mit
 :func:`Set Magnetic Field Period` vorzugeben.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -92,7 +92,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the calibrated angular velocity from the gyroscope for the 
+Returns the calibrated angular velocity from the gyroscope for the
 x, y and z axis in 1/16 °/s.
 
 If you want to get the angular velocity periodically, it is recommended
@@ -108,7 +108,7 @@ Wenn die Winkelgeschwindigkeiten periodisch abgefragt werden sollen, wird
 empfohlen den :cb:`Angular Velocity` Callback zu nutzen und die Periode mit
 :func:`Set Angular Velocity Period` vorzugeben.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -119,7 +119,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns the temperature of the IMU Brick. The temperature is given in 
+Returns the temperature of the IMU Brick. The temperature is given in
 °C. The temperature is measured in the core of the BNO055 IC, it is not the
 ambient temperature
 """,
@@ -128,7 +128,7 @@ ambient temperature
 Gibt die Temperatur (in °C) des IMU Brick zurück. Die Temperatur wird im Kern
 des BNO055 ICs gemessen, es handelt sich nicht um die Umgebungstemperatur.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -143,8 +143,9 @@ com['packets'].append({
 """
 Returns the current orientation (heading, roll, pitch) of the IMU Brick as
 independent Euler angles in 1/16 degree. Note that Euler angles always
-experience a `gimbal lock <https://en.wikipedia.org/wiki/Gimbal_lock>`__. We
-recommend that you use quaternions instead, if you need the absolute orientation.
+experience a `gimbal lock <https://en.wikipedia.org/wiki/Gimbal_lock>`__.
+We recommend that you use quaternions instead, if you need the absolute
+orientation.
 
 The rotation angle has the following ranges:
 
@@ -174,7 +175,7 @@ Wenn die Orientierung periodisch abgefragt werden sollen, wird empfohlen den
 :cb:`Orientation` Callback zu nutzen und die Periode mit
 :func:`Set Orientation Period` vorzugeben.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -202,7 +203,7 @@ to use the :cb:`Linear Acceleration` callback and set the period with
 """,
 'de':
 """
-Gibt die lineare Beschleunigungen des IMU Brick für die 
+Gibt die lineare Beschleunigungen des IMU Brick für die
 X-, Y- und Z-Achse in 1/100 m/s² zurück.
 
 Die lineare Beschleunigung ist die Beschleunigung in jede der drei
@@ -215,7 +216,7 @@ Wenn die Beschleunigungen periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Linear Acceleration` Callback zu nutzen und die Periode mit
 :func:`Set Linear Acceleration Period` vorzugeben.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -243,7 +244,7 @@ to use the :cb:`Gravity Vector` callback and set the period with
 """,
 'de':
 """
-Gibt den Vektor der Erdbeschleunigung des IMU Brick für die 
+Gibt den Vektor der Erdbeschleunigung des IMU Brick für die
 X-, Y- und Z-Achse in 1/100 m/s² zurück.
 
 Die Erdbeschleunigung ist die Beschleunigung die auf Grund von Schwerkraft
@@ -256,7 +257,7 @@ Wenn die Erdbeschleunigungen periodisch abgefragt werden soll, wird empfohlen
 den :cb:`Gravity Vector` Callback zu nutzen und die Periode mit
 :func:`Set Gravity Vector Period` vorzugeben.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -292,7 +293,7 @@ Wenn die Quaternionen periodisch abgefragt werden sollen, wird empfohlen den
 :cb:`Quaternion` Callback zu nutzen und die Periode mit
 :func:`Set Quaternion Period` vorzugeben.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -365,7 +366,7 @@ Paar von Bits repräsentiert den Status der aktuellen Kalibrierung.
 * Bit 6-7: System
 
 Ein Wert von 0 bedeutet "nicht kalibriert" und ein Wert von 3
-bedeutet "vollständig kalibriert". Normalerweise kann der 
+bedeutet "vollständig kalibriert". Normalerweise kann der
 Kalibrierungsstatus vollständig ignoriert werden. Er wird vom
 Brick Viewer im Kalibrierungsfenster benutzt und nur für die
 initiale Kalibrierung benötigt. Mehr Information zur Kalibrierung
@@ -375,7 +376,7 @@ Wenn die Daten periodisch abgefragt werden sollen, wird empfohlen den
 :cb:`All Data` Callback zu nutzen und die Periode mit
 :func:`Set All Data Period` vorzugeben.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -392,9 +393,9 @@ Turns the orientation and direction LEDs of the IMU Brick on.
 """
 Aktiviert die Orientierungs- und Richtungs-LEDs des IMU Brick.
 """
-}] 
+}]
 })
-    
+
 com['packets'].append({
 'type': 'function',
 'name': 'Leds Off',
@@ -409,7 +410,7 @@ Turns the orientation and direction LEDs of the IMU Brick off.
 """
 Deaktiviert die Orientierungs- und Richtungs-LEDs des IMU Brick.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -425,9 +426,9 @@ are on, *false* otherwise.
 """,
 'de':
 """
-Gibt zurück ob die Orientierungs- und Richtungs-LEDs des IMU Brick aktiv sind. 
+Gibt zurück ob die Orientierungs- und Richtungs-LEDs des IMU Brick aktiv sind.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -443,7 +444,7 @@ as a starting point for the next restart of continuous calibration
 of the IMU Brick.
 
 A return value of *true* means that the calibration could be used and
-*false* means that it could not be used (this happens if the calibration 
+*false* means that it could not be used (this happens if the calibration
 status is not "fully calibrated").
 
 This function is used by the calibration window of the Brick Viewer, you
@@ -463,7 +464,7 @@ ist).
 Diese Funktion wird vom Kalibrierungsfenster des Brick Viewer benutzt. Sie
 sollte in einem normalen Benutzerprogramm nicht aufgerufen werden müssen.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -486,7 +487,7 @@ wird. Ein Wert von 0 deaktiviert den Callback.
 
 Der Standardwert ist 0.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -503,7 +504,7 @@ Returns the period as set by :func:`Set Acceleration Period`.
 """
 Gibt die Periode zurück, wie von :func:`Set Acceleration Period` gesetzt.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -522,7 +523,7 @@ periodically. A value of 0 turns the callback off.
 Setzt die Periode in ms mit welcher der :cb:`Magnetic Field` Callback ausgelöst
 wird. Ein Wert von 0 deaktiviert den Callback.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -539,7 +540,7 @@ Returns the period as set by :func:`Set Magnetic Field Period`.
 """
 Gibt die Periode zurück, wie von :func:`Set Magnetic Field Period` gesetzt.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -558,7 +559,7 @@ triggered periodically. A value of 0 turns the callback off.
 Setzt die Periode in ms mit welcher der :cb:`Angular Velocity` Callback
 ausgelöst wird. Ein Wert von 0 deaktiviert den Callback.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -594,7 +595,7 @@ periodically. A value of 0 turns the callback off.
 Setzt die Periode in ms mit welcher der :cb:`Temperature` Callback ausgelöst
 wird. Ein Wert von 0 deaktiviert den Callback.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -611,7 +612,7 @@ Returns the period as set by :func:`Set Temperature Period`.
 """
 Gibt die Periode zurück, wie von :func:`Set Temperature Period` gesetzt.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -630,7 +631,7 @@ periodically. A value of 0 turns the callback off.
 Setzt die Periode in ms mit welcher der :cb:`Orientation` Callback ausgelöst
 wird. Ein Wert von 0 deaktiviert den Callback.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -647,7 +648,7 @@ Returns the period as set by :func:`Set Orientation Period`.
 """
 Gibt die Periode zurück, wie von :func:`Set Orientation Period` gesetzt.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -666,7 +667,7 @@ triggered periodically. A value of 0 turns the callback off.
 Setzt die Periode in ms mit welcher der :cb:`Linear Acceleration` Callback
 ausgelöst wird. Ein Wert von 0 deaktiviert den Callback.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -684,7 +685,7 @@ Returns the period as set by :func:`Set Linear Acceleration Period`.
 Gibt die Periode zurück, wie von :func:`Set Linear Acceleration Period`
 gesetzt.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -703,7 +704,7 @@ periodically. A value of 0 turns the callback off.
 Setzt die Periode in ms mit welcher der :cb:`Gravity Vector` Callback ausgelöst
 wird. Ein Wert von 0 deaktiviert den Callback.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -720,7 +721,7 @@ Returns the period as set by :func:`Set Gravity Vector Period`.
 """
 Gibt die Periode zurück, wie von :func:`Set Gravity Vector Period` gesetzt.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -739,7 +740,7 @@ periodically. A value of 0 turns the callback off.
 Setzt die Periode in ms mit welcher der :cb:`Quaternion` Callback ausgelöst
 wird. Ein Wert von 0 deaktiviert den Callback.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -756,7 +757,7 @@ Returns the period as set by :func:`Set Quaternion Period`.
 """
 Gibt die Periode zurück, wie von :func:`Set Quaternion Period` gesetzt.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -775,7 +776,7 @@ periodically. A value of 0 turns the callback off.
 Setzt die Periode in ms mit welcher der :cb:`All Data` Callback ausgelöst wird.
 Ein Wert von 0 deaktiviert den Callback.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -792,7 +793,7 @@ Returns the period as set by :func:`Set All Data Period`.
 """
 Gibt die Periode zurück, wie von :func:`Set All Data Period` gesetzt.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -815,7 +816,7 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Acceleration Period`, ausgelöst. Die :word:`parameters` sind die
 Beschleunigungen der X, Y und Z-Achse.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -838,7 +839,7 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Magnetic Field Period`, ausgelöst. Die :word:`parameters` sind die
 Magnetfeldkomponenten der X, Y und Z-Achse.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -861,7 +862,7 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Angular Velocity Period`, ausgelöst. Die :word:`parameters` sind die
 Winkelgeschwindigkeiten der X, Y und Z-Achse.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -881,7 +882,7 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Temperature Period`, ausgelöst. Der :word:`parameter` ist die
 Temperatur.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -904,7 +905,7 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Linear Acceleration Period`, ausgelöst. Die :word:`parameter` sind
 die linearen Beschleunigungen der X, Y und Z-Achse.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -927,7 +928,7 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set Gravity Vector Period`, ausgelöst. Die :word:`parameter` sind die
 Erdbeschleunigungsvektor-Werte der X, Y und Z-Achse.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -952,7 +953,7 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 Orientierung (Gier-, Roll-, Nickwinkel) des IMU Brick in Eulerwinkeln. Siehe
 :func:`Get Orientation` für Details.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -978,7 +979,7 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 Orientierung (x, y, z, w) des IMU Brick in Quaternionen. Siehe
 :func:`Get Quaternion` für Details.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -1007,7 +1008,7 @@ Dieser Callback wird mit der Periode, wie gesetzt mit
 :func:`Set All Data Period`, ausgelöst. Die :word:`parameter` sind die
 gleichen wie bei :func:`Get All Data`.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -1061,7 +1062,6 @@ The default values are:
 * Gyroscope Bandwidth 32Hz
 * Accelerometer Range +/-4G
 * Accelerometer Bandwidth 62.5Hz
-
 """,
 'de':
 """
@@ -1077,9 +1077,8 @@ Die Standardwerte sind:
 * Gyroskop-Bandweite 32Hz
 * Beschleunigungssensor-Wertebereich +/-4G
 * Beschleunigungssensor-Bandweite 62.5Hz
-
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -1129,7 +1128,7 @@ Returns the sensor configuration as set by :func:`Set Sensor Configuration`.
 Gibt die Sensor-Konfiguration zurück, wie von :func:`Set Sensor Configuration`
 gesetzt.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -1167,7 +1166,7 @@ Fall nicht von störenden Magnetfeldern beeinflusst werden.
 
 Standardmäßig ist der Fusion-Modus aktiviert.
 """
-}] 
+}]
 })
 
 com['packets'].append({
@@ -1187,7 +1186,7 @@ Returns the sensor fusion mode as set by :func:`Set Sensor Fusion Mode`.
 Gibt den aktuellen Sensor-Fusion-Modus zurück, wie von
 :func:`Set Sensor Fusion Mode` gesetzt.
 """
-}] 
+}]
 })
 
 com['examples'].append({

@@ -33,7 +33,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Sets the state of the relays, *true* means on and *false* means off. 
+Sets the state of the relays, *true* means on and *false* means off.
 For example: (true, false) turns relay 1 on and relay 2 off.
 
 If you just want to set one of the relays and don't know the current state
@@ -69,7 +69,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the state of the relays, *true* means on and *false* means off. 
+Returns the state of the relays, *true* means on and *false* means off.
 """,
 'de':
 """
@@ -88,18 +88,18 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-The first parameter can be 1 or 2 (relay 1 or relay 2). The second parameter 
+The first parameter can be 1 or 2 (relay 1 or relay 2). The second parameter
 is the desired state of the relay (*true* means on and *false* means off).
-The third parameter indicates the time (in ms) that the relay should hold 
+The third parameter indicates the time (in ms) that the relay should hold
 the state.
 
 If this function is called with the parameters (1, true, 1500):
 Relay 1 will turn on and in 1.5s it will turn off again.
 
-A monoflop can be used as a failsafe mechanism. For example: Lets assume you 
-have a RS485 bus and a Dual Relay Bricklet connected to one of the slave 
+A monoflop can be used as a failsafe mechanism. For example: Lets assume you
+have a RS485 bus and a Dual Relay Bricklet connected to one of the slave
 stacks. You can now call this function every second, with a time parameter
-of two seconds. The relay will be on all the time. If now the RS485 
+of two seconds. The relay will be on all the time. If now the RS485
 connection is lost, the relay will turn off in at most two seconds.
 """,
 'de':
@@ -114,7 +114,7 @@ Relais 1 wird angeschaltet und nach 1,5s wieder ausgeschaltet.
 Ein Monoflop kann als Ausfallsicherung verwendet werden. Beispiel:
 Angenommen ein RS485 Bus und ein Dual Relay Bricklet ist an ein Slave Stapel verbunden.
 Jetzt kann diese Funktion sekündlich, mit einem Zeitparameter von 2 Sekunden, aufgerufen werden.
-Das Relais wird die gesamte Zeit ein sein. Wenn jetzt die RS485 Verbindung getrennt wird, 
+Das Relais wird die gesamte Zeit ein sein. Wenn jetzt die RS485 Verbindung getrennt wird,
 wird das Relais nach spätestens zwei Sekunden ausschalten.
 """
 }]
@@ -131,7 +131,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Returns (for the given relay) the current state and the time as set by 
+Returns (for the given relay) the current state and the time as set by
 :func:`Set Monoflop` as well as the remaining time until the state flips.
 
 If the timer is not running currently, the remaining time will be returned
@@ -139,7 +139,7 @@ as 0.
 """,
 'de':
 """
-Gibt (für das angegebene Relais) den aktuellen Zustand und die Zeit, wie von 
+Gibt (für das angegebene Relais) den aktuellen Zustand und die Zeit, wie von
 :func:`Set Monoflop` gesetzt, sowie die noch verbleibende Zeit bis zum Zustandswechsel, zurück.
 
 Wenn der Timer aktuell nicht läuft, ist die noch verbleibende Zeit 0.
@@ -156,8 +156,8 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is triggered whenever a monoflop timer reaches 0. The 
-parameter contain the relay (1 or 2) and the current state of the relay 
+This callback is triggered whenever a monoflop timer reaches 0. The
+parameter contain the relay (1 or 2) and the current state of the relay
 (the state after the monoflop).
 """,
 'de':
@@ -178,7 +178,7 @@ com['packets'].append({
 'doc': ['af', {
 'en':
 """
-Sets the state of the selected relay (1 or 2), *true* means on and *false* means off. 
+Sets the state of the selected relay (1 or 2), *true* means on and *false* means off.
 
 The other relay remains untouched.
 """,

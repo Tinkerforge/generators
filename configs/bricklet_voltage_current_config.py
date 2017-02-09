@@ -158,13 +158,13 @@ Voltage/Current conversion:
  "6",    "4.156ms"
  ">=7",  "8.244ms"
 
-The default values are 3, 4 and 4 (64, 1.1ms, 1.1ms) for averaging, voltage 
+The default values are 3, 4 and 4 (64, 1.1ms, 1.1ms) for averaging, voltage
 conversion and current conversion.
 """,
 'de':
 """
 Setzt die Konfiguration des Voltage/Current Bricklet. Es ist
-möglich die Anzahl für die Durchschnittsbildung, und die 
+möglich die Anzahl für die Durchschnittsbildung, und die
 Wandlungszeit für Spannung und Stromstärke zu definieren.
 
 Durchschnittsbildung:
@@ -244,7 +244,7 @@ perfectly precise, it needs to be calibrated by a multiplier and
 divisor if a very precise reading is needed.
 
 For example, if you are expecting a measurement of 1000mA and you
-are measuring 1023mA, you can calibrate the Voltage/Current Bricklet 
+are measuring 1023mA, you can calibrate the Voltage/Current Bricklet
 by setting the multiplier to 1000 and the divisor to 1023.
 """,
 'de':
@@ -254,7 +254,7 @@ perfekte Genauigkeit hat, ist es nötig einen Multiplikator und
 einen Divisor zu setzen falls sehr genaue Messwerte nötig sind.
 
 Zum Beispiel: Wenn eine Messung von 1000mA erwartet wird, das
-Voltage/Current Bricklet aber 1023mA zurück gibt, sollte 
+Voltage/Current Bricklet aber 1023mA zurück gibt, sollte
 der Multiplikator auf 1000 und der Divisor auf 1023 gesetzt
 werden.
 """
@@ -457,13 +457,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn die Stromstärke *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn die Stromstärke *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn die Stromstärke kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn die Stromstärke größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0).
 """
 }]
@@ -524,13 +524,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn die Spannung *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn die Spannung *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn die Spannung kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn die Spannung größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0).
 """
 }]
@@ -591,13 +591,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn die Leistung *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn die Leistung *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn die Leistung kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn die Leistung größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0).
 """
 }]
@@ -655,13 +655,13 @@ Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 * :cb:`Current Reached`,
 * :cb:`Voltage Reached`,
 * :cb:`Power Reached`
- 
-ausgelöst werden, wenn die Schwellwerte 
+
+ausgelöst werden, wenn die Schwellwerte
 
 * :func:`Set Current Callback Threshold`,
 * :func:`Set Voltage Callback Threshold`,
 * :func:`Set Power Callback Threshold`
- 
+
 weiterhin erreicht bleiben.
 
 Der Standardwert ist 100.
@@ -786,7 +786,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`Set Current Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Stromstärke des Sensors.
 
@@ -813,7 +813,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`Set Voltage Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Spannung des Sensors.
 
@@ -840,7 +840,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`Set Power Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Spannung des Sensors.
 

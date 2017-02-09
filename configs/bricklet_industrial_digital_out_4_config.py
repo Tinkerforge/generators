@@ -126,11 +126,11 @@ aufgerufen wird: Pin 0 wird auf logisch 1 und Pin 3 auf logisch 0 gesetzt.
 Nach 1,5s wird Pin 0 wieder auf logisch 0 und Pin 3 auf logisch 1 gesetzt.
 
 Ein Monoflop kann zur Ausfallsicherung verwendet werden. Beispiel:
-Angenommen ein RS485 Bus und ein Digital Out 4 Bricklet ist an ein Slave 
+Angenommen ein RS485 Bus und ein Digital Out 4 Bricklet ist an ein Slave
 Stapel verbunden.
 Jetzt kann diese Funktion sekündlich, mit einem Zeitparameter von 2 Sekunden,
 aufgerufen werden. Der Pin wird die gesamte Zeit im Zustand logisch 1 sein.
-Wenn jetzt die RS485 Verbindung getrennt wird, wird der Pin nach spätestens 
+Wenn jetzt die RS485 Verbindung getrennt wird, wird der Pin nach spätestens
 zwei Sekunden in den Zustand logisch 0 wechseln.
 """
 }]
@@ -155,7 +155,7 @@ as 0.
 """,
 'de':
 """
-Gibt (für den angegebenen Pin) den aktuellen Zustand und die Zeit, wie von 
+Gibt (für den angegebenen Pin) den aktuellen Zustand und die Zeit, wie von
 :func:`Set Monoflop` gesetzt, sowie die noch verbleibende Zeit bis zum
 Zustandswechsel, zurück.
 
@@ -286,7 +286,7 @@ com['packets'].append({
 'en':
 """
 Sets the output value with a bitmask, according to the selection mask.
-The bitmask is 16 bit long, *true* refers to high and *false* refers to 
+The bitmask is 16 bit long, *true* refers to high and *false* refers to
 low.
 
 For example: The values (3, 1) or (0b0011, 0b0001) will turn pin 0 high, pin 1

@@ -36,17 +36,17 @@ com['packets'].append({
 """
 Returns the ambient temperature of the sensor. The value
 has a range of -400 to 1250 and is given in °C/10,
-e.g. a value of 423 means that an ambient temperature of 42.3 °C is 
+e.g. a value of 423 means that an ambient temperature of 42.3 °C is
 measured.
 
-If you want to get the ambient temperature periodically, it is recommended 
+If you want to get the ambient temperature periodically, it is recommended
 to use the :cb:`Ambient Temperature` callback and set the period with
 :func:`Set Ambient Temperature Callback Period`.
 """,
 'de':
 """
 Gibt die Umgebungstemperatur des Sensors zurück. Der Wertebereich ist von
--400 bis 1250 und wird in °C/10 angegeben, z.B. bedeutet 
+-400 bis 1250 und wird in °C/10 angegeben, z.B. bedeutet
 ein Wert von 423 eine gemessene Umgebungstemperatur von 42,3 °C.
 
 Wenn die Umgebungstemperatur periodisch abgefragt werden soll, wird empfohlen
@@ -70,11 +70,11 @@ has a range of -700 to 3800 and is given in °C/10,
 e.g. a value of 3001 means that a temperature of 300.1 °C is measured
 on the surface of the object.
 
-The temperature of different materials is dependent on their `emissivity 
+The temperature of different materials is dependent on their `emissivity
 <https://en.wikipedia.org/wiki/Emissivity>`__. The emissivity of the material
 can be set with :func:`Set Emissivity`.
 
-If you want to get the object temperature periodically, it is recommended 
+If you want to get the object temperature periodically, it is recommended
 to use the :cb:`Object Temperature` callback and set the period with
 :func:`Set Object Temperature Callback Period`.
 """,
@@ -82,7 +82,7 @@ to use the :cb:`Object Temperature` callback and set the period with
 """
 Gibt die Objekttemperatur des Sensors zurück, z.B. die Temperatur
 der Oberfläche auf welche der Sensor zielt. Der Wertebereich ist von
--700 bis 3800 und wird in °C/10 angegeben, z.B. bedeutet 
+-700 bis 3800 und wird in °C/10 angegeben, z.B. bedeutet
 ein Wert von 3001 eine gemessene Temperatur von 300,1 °C auf der Oberfläche
 des Objektes.
 
@@ -106,11 +106,11 @@ com['packets'].append({
 'en':
 """
 Sets the `emissivity <https://en.wikipedia.org/wiki/Emissivity>`__ that is
-used to calculate the surface temperature as returned by 
+used to calculate the surface temperature as returned by
 :func:`Get Object Temperature`.
 
 The emissivity is usually given as a value between 0.0 and 1.0. A list of
-emissivities of different materials can be found 
+emissivities of different materials can be found
 `here <http://www.infrared-thermography.com/material.htm>`__.
 
 The parameter of :func:`Set Emissivity` has to be given with a factor of
@@ -141,7 +141,7 @@ vorgegeben werden. Beispiel: Ein Emissionsgrad von 0,1 kann mit dem Wert
 .. note::
  Wenn eine exakte Messung der Objekttemperatur notwendig ist, ist es entscheidend
  eine exakten Emissionsgrad anzugeben.
- 
+
 Der Standard Emissionsgrad ist 1,0 (Wert von 65535) und der minimale
 Emissionsgrad welcher der Sensor verarbeiten kann ist 0,1 (Wert von 6553).
 """
@@ -294,13 +294,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn die Umgebungstemperatur *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn die Umgebungstemperatur *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn die Umgebungstemperatur kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn die Umgebungstemperatur größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0).
 """
 }]
@@ -361,13 +361,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn die Objekttemperatur *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn die Objekttemperatur *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn die Objekttemperatur kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn die Objekttemperatur größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0).
 """
 }]
@@ -421,12 +421,12 @@ Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
 * :cb:`Ambient Temperature Reached`,
 * :cb:`Object Temperature Reached`
- 
-ausgelöst werden, wenn die Schwellwerte 
+
+ausgelöst werden, wenn die Schwellwerte
 
 * :func:`Set Ambient Temperature Callback Threshold`,
 * :func:`Set Object Temperature Callback Threshold`
- 
+
 weiterhin erreicht bleiben.
 
 Der Standardwert ist 100.
@@ -522,7 +522,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`Set Ambient Temperature Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Umgebungstemperatur des Sensors.
 
@@ -549,7 +549,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`Set Object Temperature Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Objekttemperatur des Sensors.
 

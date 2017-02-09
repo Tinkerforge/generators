@@ -109,7 +109,7 @@ gesetzt.
 
 com['packets'].append({
 'type': 'function',
-'name': 'Set UV Light Callback Threshold', 
+'name': 'Set UV Light Callback Threshold',
 'elements': [('Option', 'char', 1, 'in', THRESHOLD_OPTION_CONSTANTS),
              ('Min', 'uint32', 1, 'in'),
              ('Max', 'uint32', 1, 'in')],
@@ -142,13 +142,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn die Intensität *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn die Intensität *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn die Intensität kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn die Intensität größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0).
 """
 }]
@@ -199,11 +199,11 @@ The default value is 100.
 Setzt die Periode in ms mit welcher die Schwellwert Callbacks
 
 * :cb:`UV Light Reached`,
- 
-ausgelöst werden, wenn die Schwellwerte 
+
+ausgelöst werden, wenn die Schwellwerte
 
 * :func:`Set UV Light Callback Threshold`,
- 
+
 weiterhin erreicht bleiben.
 
 Der Standardwert ist 100.
@@ -274,7 +274,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`Set UV Light Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die UV-Licht-Intensität des Sensors.
 

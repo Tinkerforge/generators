@@ -37,14 +37,14 @@ com['packets'].append({
 Returns the temperature of the thermocouple. The value is given in °C/100,
 e.g. a value of 4223 means that a temperature of 42.23 °C is measured.
 
-If you want to get the temperature periodically, it is recommended 
+If you want to get the temperature periodically, it is recommended
 to use the :cb:`Temperature` callback and set the period with
 :func:`Set Temperature Callback Period`.
 """,
 'de':
 """
-Gibt die Temperatur des Thermoelements zurück. Der Wert wird in °C/100 
-angegeben, z.B. bedeutet ein Wert von 4223 eine gemessene Temperatur von 
+Gibt die Temperatur des Thermoelements zurück. Der Wert wird in °C/100
+angegeben, z.B. bedeutet ein Wert von 4223 eine gemessene Temperatur von
 42,23 °C.
 
 Wenn die Temperatur periodisch abgefragt werden soll, wird empfohlen
@@ -136,13 +136,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn die Temperatur *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn die Temperatur *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn die Temperatur kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn die Temperatur größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0).
 """
 }]
@@ -193,11 +193,11 @@ The default value is 100.
 Setzt die Periode in ms mit welcher die Schwellwert Callback
 
 * :cb:`Temperature Reached`
- 
-ausgelöst wird, wenn der Schwellwert 
+
+ausgelöst wird, wenn der Schwellwert
 
 * :func:`Set Temperature Callback Threshold`
- 
+
 weiterhin erreicht bleibt.
 
 Der Standardwert ist 100.
@@ -267,7 +267,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`Set Temperature Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Temperatur des Thermoelements.
 
@@ -439,7 +439,7 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This Callback is triggered every time the error state changes 
+This Callback is triggered every time the error state changes
 (see func:`GetErrorStatus`).
 """,
 'de':

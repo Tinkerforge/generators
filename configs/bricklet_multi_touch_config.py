@@ -207,7 +207,7 @@ Empfindlichkeit registriert eine Berührung früher als eine Elektrode mit einer
 niedrigen Empfindlichkeit.
 
 Wenn eine große Elektrode verwendet wird sollte die Empfindlichkeit verringert
-werden, da eine größere Fläche aufgeladen werden kann. Wenn eine Elektrode aus 
+werden, da eine größere Fläche aufgeladen werden kann. Wenn eine Elektrode aus
 größerem Abstand aktivierbar seien soll, muss die Empfindlichkeit
 vergrößert werden.
 
@@ -234,7 +234,7 @@ Returns the current sensitivity, as set by :func:`Set Electrode Sensitivity`.
 """,
 'de':
 """
-Gibt die aktuelle Empfindlichkeit zurück, wie von 
+Gibt die aktuelle Empfindlichkeit zurück, wie von
 :func:`Set Electrode Sensitivity` gesetzt.
 """
 }]

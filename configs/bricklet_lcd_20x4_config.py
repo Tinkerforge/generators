@@ -34,7 +34,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Writes text to a specific line (0 to 3) with a specific position 
+Writes text to a specific line (0 to 3) with a specific position
 (0 to 19). The text can have a maximum of 20 characters.
 
 For example: (0, 7, "Hello") will write *Hello* in the middle of the
@@ -142,15 +142,15 @@ com['packets'].append({
 """
 Configures if the cursor (shown as "_") should be visible and if it
 should be blinking (shown as a blinking block). The cursor position
-is one character behind the the last text written with 
+is one character behind the the last text written with
 :func:`Write Line`.
 
 The default is (*false*, *false*).
 """,
 'de':
 """
-Konfiguriert ob der Cursor (angezeigt als "_") sichtbar ist und ob er 
-blinkt (angezeigt als blinkender Block). Die Cursor Position ist ein 
+Konfiguriert ob der Cursor (angezeigt als "_") sichtbar ist und ob er
+blinkt (angezeigt als blinkender Block). Die Cursor Position ist ein
 Zeichen hinter dem zuletzt mit :func:`Write Line` geschriebenen Text.
 
 Der Standardwert ist (*false*, *false*).

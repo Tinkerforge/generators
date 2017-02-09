@@ -132,7 +132,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the acceleration and deacceleration as set by 
+Returns the acceleration and deacceleration as set by
 :func:`Set Speed Ramping`.
 """,
 'de':
@@ -151,8 +151,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Executes an active full brake. 
- 
+Executes an active full brake.
+
 .. warning::
  This function is for emergency purposes,
  where an immediate brake is necessary. Depending on the current velocity and
@@ -188,7 +188,7 @@ is reached (e.g. when a CNC machine reaches a corner).
 """,
 'de':
 """
-Setzt den aktuellen Schrittwert des internen Schrittzählers. Dies kann 
+Setzt den aktuellen Schrittwert des internen Schrittzählers. Dies kann
 benutzt werden um die aktuelle Position auf 0 zu setzen wenn ein definierter
 Startpunkt erreicht wurde (z.B. wenn eine CNC Maschine eine Ecke erreicht).
 """
@@ -211,7 +211,7 @@ set them to any other desired value with :func:`Set Current Position`.
 """,
 'de':
 """
-Gibt die aktuelle Position des Schrittmotors in Schritten zurück. Nach dem 
+Gibt die aktuelle Position des Schrittmotors in Schritten zurück. Nach dem
 Hochfahren ist die Position 0. Die Schritte werden bei Verwendung aller möglichen
 Fahrfunktionen gezählt (:func:`Set Target Position`, :func:`Set Steps`, :func:`Drive Forward` der
 :func:`Drive Backward`). Es ist auch möglich den Schrittzähler auf 0 oder jeden anderen
@@ -243,7 +243,7 @@ a call of :func:`Set Steps` with the parameter
 Setzt die Zielposition des Schrittmotors in Schritten. Beispiel:
 Wenn die aktuelle Position des Motors 500 ist und :func:`Set Target Position` mit
 1000 aufgerufen wird, dann verfährt der Schrittmotor 500 Schritte vorwärts. Dabei
-wird die Geschwindigkeit, Beschleunigung und Verzögerung, wie mit 
+wird die Geschwindigkeit, Beschleunigung und Verzögerung, wie mit
 :func:`Set Max Velocity` und :func:`Set Speed Ramping` gesetzt, verwendet.
 
 Ein Aufruf von :func:`Set Target Position` mit dem Parameter *x* ist
@@ -280,7 +280,7 @@ com['packets'].append({
 'en':
 """
 Sets the number of steps the stepper motor should run. Positive values
-will drive the motor forward and negative values backward. 
+will drive the motor forward and negative values backward.
 The velocity, acceleration and deacceleration as set by
 :func:`Set Max Velocity` and :func:`Set Speed Ramping` will be used.
 """,
@@ -288,7 +288,7 @@ The velocity, acceleration and deacceleration as set by
 """
 Setzt die Anzahl der Schritte die der Schrittmotor fahren soll.
 Positive Werte fahren den Motor vorwärts und negative rückwärts.
-Dabei wird die Geschwindigkeit, Beschleunigung und Verzögerung, wie mit 
+Dabei wird die Geschwindigkeit, Beschleunigung und Verzögerung, wie mit
 :func:`Set Max Velocity` und :func:`Set Speed Ramping` gesetzt, verwendet.
 """
 }]
@@ -403,13 +403,13 @@ com['packets'].append({
 'en':
 """
 Drives the stepper motor forward until :func:`Drive Backward` or
-:func:`Stop` is called. The velocity, acceleration and deacceleration as 
+:func:`Stop` is called. The velocity, acceleration and deacceleration as
 set by :func:`Set Max Velocity` and :func:`Set Speed Ramping` will be used.
 """,
 'de':
 """
 Fährt den Schrittmotor vorwärts bis :func:`Drive Backward` oder
-:func:`Stop` aufgerufen wird. Dabei wird die Geschwindigkeit, 
+:func:`Stop` aufgerufen wird. Dabei wird die Geschwindigkeit,
 Beschleunigung und Verzögerung, wie mit :func:`Set Max Velocity`
 und :func:`Set Speed Ramping` gesetzt, verwendet.
 """
@@ -431,7 +431,7 @@ set by :func:`Set Max Velocity` and :func:`Set Speed Ramping` will be used.
 'de':
 """
 Fährt den Schrittmotor rückwärts bis :func:`Drive Forward` oder
-:func:`Stop` aufgerufen wird. Dabei wird die Geschwindigkeit, 
+:func:`Stop` aufgerufen wird. Dabei wird die Geschwindigkeit,
 Beschleunigung und Verzögerung, wie mit :func:`Set Max Velocity`
 und :func:`Set Speed Ramping` gesetzt, verwendet.
 """
@@ -446,12 +446,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Stops the stepper motor with the deacceleration as set by 
+Stops the stepper motor with the deacceleration as set by
 :func:`Set Speed Ramping`.
 """,
 'de':
 """
-Stoppt den Schrittmotor mit der Verzögerung, wie von 
+Stoppt den Schrittmotor mit der Verzögerung, wie von
 :func:`Set Speed Ramping` gesetzt.
 """
 }]
@@ -466,7 +466,7 @@ com['packets'].append({
 'en':
 """
 Returns the stack input voltage in mV. The stack input voltage is the
-voltage that is supplied via the stack, i.e. it is given by a 
+voltage that is supplied via the stack, i.e. it is given by a
 Step-Down or Step-Up Power Supply.
 """,
 'de':
@@ -487,10 +487,10 @@ com['packets'].append({
 'en':
 """
 Returns the external input voltage in mV. The external input voltage is
-given via the black power input connector on the Stepper Brick. 
- 
+given via the black power input connector on the Stepper Brick.
+
 If there is an external input voltage and a stack input voltage, the motor
-will be driven by the external input voltage. If there is only a stack 
+will be driven by the external input voltage. If there is only a stack
 voltage present, the motor will be driven by this voltage.
 
 .. warning::
@@ -543,7 +543,7 @@ com['packets'].append({
 'en':
 """
 Sets the current in mA with which the motor will be driven.
-The minimum value is 100mA, the maximum value 2291mA and the 
+The minimum value is 100mA, the maximum value 2291mA and the
 default value is 800mA.
 
 .. warning::
@@ -652,13 +652,13 @@ decay mode.
 Changing the decay mode is only possible if synchronous rectification
 is enabled (see :func:`Set Sync Rect`).
 
-For a good explanation of the different decay modes see 
+For a good explanation of the different decay modes see
 `this <http://ebldc.com/?p=86/>`__ blog post by Avayan.
 
 A good decay mode is unfortunately different for every motor. The best
 way to work out a good decay mode for your stepper motor, if you can't
 measure the current with an oscilloscope, is to listen to the sound of
-the motor. If the value is too low, you often hear a high pitched 
+the motor. If the value is too low, you often hear a high pitched
 sound and if it is too high you can often hear a humming sound.
 
 Generally, fast decay mode (small value) will be noisier but also
@@ -676,13 +676,13 @@ The default value is 10000.
 """
 Setzt den Decay Modus (Abklingmodus) des Schrittmotors. Der mögliche
 Wertebereich ist 0 bis 65535. Ein Wert von 0 setzt den Fast Decay Modus
-(schneller Stromabbau), ein Wert von 65535 den Slow Decay Modus (langsamer 
+(schneller Stromabbau), ein Wert von 65535 den Slow Decay Modus (langsamer
 Stromabbau) ein Wert dazwischen den Mixed Decay Modus (Nutzung beider Modi).
 
 Eine Änderung des Decay Modus ist nur möglich wenn die Synchrongleichrichtung
 aktiviert ist (siehe :func:`Set Sync Rect`).
 
-Für eine gute Erläuterung der verschiedenen Decay Modi siehe 
+Für eine gute Erläuterung der verschiedenen Decay Modi siehe
 `diesen <http://ebldc.com/?p=86/>`__ Blogeintrag (Englisch) von Avayan oder
 `diesen <http://www.schrittmotor-blog.de/stromregelung-von-schrittmotoren-auf-das-abschalten-kommt-es-an/>`__
 Blogeintrag (Deutsch) von T. Ostermann.
@@ -734,7 +734,7 @@ com['packets'].append({
 Sets the minimum voltage in mV, below which the :cb:`Under Voltage` callback
 is triggered. The minimum possible value that works with the Stepper Brick is 8V.
 You can use this function to detect the discharge of a battery that is used
-to drive the stepper motor. If you have a fixed power supply, you likely do 
+to drive the stepper motor. If you have a fixed power supply, you likely do
 not need this functionality.
 
 The default value is 8V.
@@ -836,11 +836,11 @@ With synchronous rectification on, the decay can be changed
 (see :func:`Set Decay`). Without synchronous rectification fast
 decay is used.
 
-For an explanation of synchronous rectification see 
+For an explanation of synchronous rectification see
 `here <https://en.wikipedia.org/wiki/Active_rectification>`__.
 
 .. warning::
- If you want to use high speeds (> 10000 steps/s) for a large 
+ If you want to use high speeds (> 10000 steps/s) for a large
  stepper motor with a large inductivity we strongly
  suggest that you disable synchronous rectification. Otherwise the
  Brick may not be able to cope with the load and overheat.
@@ -863,7 +863,7 @@ Für eine Erläuterung der Synchrongleichrichtung siehe
  Schrittmotor mit einer hohen Induktivität genutzt werden sollen, wird
  dringend geraten die Synchrongleichrichtung zu deaktivieren. Sonst kann
  es vorkommen, dass der Brick die Last nicht bewältigen kann und überhitzt.
- 
+
 Der Standardwert ist *false*.
 """
 }]
@@ -897,8 +897,8 @@ com['packets'].append({
 Sets the time base of the velocity and the acceleration of the stepper brick
 (in seconds).
 
-For example, if you want to make one step every 1.5 seconds, you can set 
-the time base to 15 and the velocity to 10. Now the velocity is 
+For example, if you want to make one step every 1.5 seconds, you can set
+the time base to 15 and the velocity to 10. Now the velocity is
 10steps/15s = 1steps/1.5s.
 
 The default value is 1.
@@ -909,7 +909,7 @@ Setzt die Zeitbasis der Geschwindigkeit und Beschleunigung des Stepper Brick
 (in Sekunden).
 
 Beispiel: Wenn aller 1,5 Sekunden ein Schritt gefahren werden soll, kann
-die Zeitbasis auf 15 und die Geschwindigkeit auf 10 gesetzt werden. Damit ist die 
+die Zeitbasis auf 15 und die Geschwindigkeit auf 10 gesetzt werden. Damit ist die
 Geschwindigkeit 10Schritte/15s = 1Schritt/1,5s.
 
 Der Standardwert ist 1.
@@ -1048,13 +1048,13 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is triggered whenever the Stepper Brick enters a new state. 
+This callback is triggered whenever the Stepper Brick enters a new state.
 It returns the new state as well as the previous state.
 """,
 'de':
 """
 Dieser Callback wird immer dann ausgelöst wenn der Stepper Brick einen
-neuen Zustand erreicht. Es wird sowohl der neue wie auch der alte Zustand 
+neuen Zustand erreicht. Es wird sowohl der neue wie auch der alte Zustand
 zurückgegeben.
 """
 }]

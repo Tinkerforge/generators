@@ -132,7 +132,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the acceleration and deacceleration as set by 
+Returns the acceleration and deacceleration as set by
 :func:`Set Speed Ramping`.
 """,
 'de':
@@ -151,8 +151,8 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Executes an active full brake. 
- 
+Executes an active full brake.
+
 .. warning::
  This function is for emergency purposes,
  where an immediate brake is necessary. Depending on the current velocity and
@@ -188,7 +188,7 @@ is reached (e.g. when a CNC machine reaches a corner).
 """,
 'de':
 """
-Setzt den aktuellen Schrittwert des internen Schrittzählers. Dies kann 
+Setzt den aktuellen Schrittwert des internen Schrittzählers. Dies kann
 benutzt werden um die aktuelle Position auf 0 zu setzen wenn ein definierter
 Startpunkt erreicht wurde (z.B. wenn eine CNC Maschine eine Ecke erreicht).
 """
@@ -211,7 +211,7 @@ set them to any other desired value with :func:`Set Current Position`.
 """,
 'de':
 """
-Gibt die aktuelle Position des Schrittmotors in Schritten zurück. Nach dem 
+Gibt die aktuelle Position des Schrittmotors in Schritten zurück. Nach dem
 Hochfahren ist die Position 0. Die Schritte werden bei Verwendung aller möglichen
 Fahrfunktionen gezählt (:func:`Set Target Position`, :func:`Set Steps`, :func:`Drive Forward` der
 :func:`Drive Backward`). Es ist auch möglich den Schrittzähler auf 0 oder jeden anderen
@@ -243,7 +243,7 @@ a call of :func:`Set Steps` with the parameter
 Setzt die Zielposition des Schrittmotors in Schritten. Beispiel:
 Wenn die aktuelle Position des Motors 500 ist und :func:`Set Target Position` mit
 1000 aufgerufen wird, dann verfährt der Schrittmotor 500 Schritte vorwärts. Dabei
-wird die Geschwindigkeit, Beschleunigung und Verzögerung, wie mit 
+wird die Geschwindigkeit, Beschleunigung und Verzögerung, wie mit
 :func:`Set Max Velocity` und :func:`Set Speed Ramping` gesetzt, verwendet.
 
 Ein Aufruf von :func:`Set Target Position` mit dem Parameter *x* ist
@@ -280,7 +280,7 @@ com['packets'].append({
 'en':
 """
 Sets the number of steps the stepper motor should run. Positive values
-will drive the motor forward and negative values backward. 
+will drive the motor forward and negative values backward.
 The velocity, acceleration and deacceleration as set by
 :func:`Set Max Velocity` and :func:`Set Speed Ramping` will be used.
 """,
@@ -288,7 +288,7 @@ The velocity, acceleration and deacceleration as set by
 """
 Setzt die Anzahl der Schritte die der Schrittmotor fahren soll.
 Positive Werte fahren den Motor vorwärts und negative rückwärts.
-Dabei wird die Geschwindigkeit, Beschleunigung und Verzögerung, wie mit 
+Dabei wird die Geschwindigkeit, Beschleunigung und Verzögerung, wie mit
 :func:`Set Max Velocity` und :func:`Set Speed Ramping` gesetzt, verwendet.
 """
 }]
@@ -407,13 +407,13 @@ com['packets'].append({
 'en':
 """
 Drives the stepper motor forward until :func:`Drive Backward` or
-:func:`Stop` is called. The velocity, acceleration and deacceleration as 
+:func:`Stop` is called. The velocity, acceleration and deacceleration as
 set by :func:`Set Max Velocity` and :func:`Set Speed Ramping` will be used.
 """,
 'de':
 """
 Fährt den Schrittmotor vorwärts bis :func:`Drive Backward` oder
-:func:`Stop` aufgerufen wird. Dabei wird die Geschwindigkeit, 
+:func:`Stop` aufgerufen wird. Dabei wird die Geschwindigkeit,
 Beschleunigung und Verzögerung, wie mit :func:`Set Max Velocity`
 und :func:`Set Speed Ramping` gesetzt, verwendet.
 """
@@ -435,7 +435,7 @@ set by :func:`Set Max Velocity` and :func:`Set Speed Ramping` will be used.
 'de':
 """
 Fährt den Schrittmotor rückwärts bis :func:`Drive Forward` oder
-:func:`Stop` aufgerufen wird. Dabei wird die Geschwindigkeit, 
+:func:`Stop` aufgerufen wird. Dabei wird die Geschwindigkeit,
 Beschleunigung und Verzögerung, wie mit :func:`Set Max Velocity`
 und :func:`Set Speed Ramping` gesetzt, verwendet.
 """
@@ -450,12 +450,12 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Stops the stepper motor with the deacceleration as set by 
+Stops the stepper motor with the deacceleration as set by
 :func:`Set Speed Ramping`.
 """,
 'de':
 """
-Stoppt den Schrittmotor mit der Verzögerung, wie von 
+Stoppt den Schrittmotor mit der Verzögerung, wie von
 :func:`Set Speed Ramping` gesetzt.
 """
 }]
@@ -470,7 +470,7 @@ com['packets'].append({
 'en':
 """
 Returns the stack input voltage in mV. The stack input voltage is the
-voltage that is supplied via the stack, i.e. it is given by a 
+voltage that is supplied via the stack, i.e. it is given by a
 Step-Down or Step-Up Power Supply.
 """,
 'de':
@@ -491,10 +491,10 @@ com['packets'].append({
 'en':
 """
 Returns the external input voltage in mV. The external input voltage is
-given via the black power input connector on the Stepper Brick. 
- 
+given via the black power input connector on the Stepper Brick.
+
 If there is an external input voltage and a stack input voltage, the motor
-will be driven by the external input voltage. If there is only a stack 
+will be driven by the external input voltage. If there is only a stack
 voltage present, the motor will be driven by this voltage.
 
 .. warning::
@@ -547,7 +547,7 @@ com['packets'].append({
 'en':
 """
 Sets the current in mA with which the motor will be driven.
-The minimum value is 360mA, the maximum value 1640mA and the 
+The minimum value is 360mA, the maximum value 1640mA and the
 default value is 800mA.
 
 .. warning::
@@ -667,20 +667,20 @@ com['packets'].append({
 Sets the basic configuration parameters for the different modes (stealth, coolstep, classic).
 
 * Standstill Current: This value can be used to lower the current during stand still. It takes
-  effect after the Power Down Time and the transition time can be controlled with the Standstill Delay 
-  Time. The unit is in mA and the maximum allowed value is the current motor current 
+  effect after the Power Down Time and the transition time can be controlled with the Standstill Delay
+  Time. The unit is in mA and the maximum allowed value is the current motor current
   (see :func:`Set Motor Current`).
 
 * Motor Run Current: The value is applied as a factor to the max current when the motor is
-  running. Use a value of at least 16 for good microstep performance. The unit is in mA and the 
+  running. Use a value of at least 16 for good microstep performance. The unit is in mA and the
   maximum allowed value is the current motor current (see :func:`Set Motor Current`).
 
-* Standstill Delay Time: Controls the duration for motor power down after a motion 
+* Standstill Delay Time: Controls the duration for motor power down after a motion
   as soon as standstill is detected and the Power Down Time is expired. A high Standstill Delay
   Time results in a smooth transition that avoids motor jerk during power down.
   The value range is 0 to 307ms
 
-* Power Down Time: Sets the delay time after a stand still. 
+* Power Down Time: Sets the delay time after a stand still.
   The value range is 0 to 5222ms.
 
 * Stealth Threshold: Sets the upper threshold for stealth mode in steps/s. The value range is
@@ -697,7 +697,7 @@ Sets the basic configuration parameters for the different modes (stealth, coolst
   is optimized to run the stepper motors at high velocities.
 
 
-If you want to use all three thresholds make sure that 
+If you want to use all three thresholds make sure that
 Stealth Threshold < Coolstep Threshold < Classic Threshold.
 
 The default values are:
@@ -787,7 +787,7 @@ Sets the Spreadcycle configuration parameters. (TODO: Explain spread cycle)
 * Chopper Mode: 0 = Spread Cycle, 1 = Fast Decay.
 
 * Comperator Blank Time: Sets the blank time of the comperator. Available values are
- 
+
   * 0 = 16 clocks,
   * 1 = 24 clocks,
   * 2 = 36 clocks and
@@ -957,7 +957,7 @@ Sets the configuration relevant for coolstep.
 * Minimum Stallguard Value: If the Stallguard result falls below this value*32, the motor current
   is increased to reduce motor load angle. The value range is 0-15. A value of 0 turns coolstep off.
 
-* Maximum Stallguard Value: If the Stallguard result goes above 
+* Maximum Stallguard Value: If the Stallguard result goes above
   (Min Stallguard Value + Max Stallguard Value + 1)*32, the motor current is decreased to save
   energy.
 
@@ -1145,7 +1145,7 @@ com['packets'].append({
 Sets the minimum voltage in mV, below which the :cb:`Under Voltage` callback
 is triggered. The minimum possible value that works with the Stepper Brick is 8V.
 You can use this function to detect the discharge of a battery that is used
-to drive the stepper motor. If you have a fixed power supply, you likely do 
+to drive the stepper motor. If you have a fixed power supply, you likely do
 not need this functionality.
 
 The default value is 8V.
@@ -1244,8 +1244,8 @@ com['packets'].append({
 Sets the time base of the velocity and the acceleration of the stepper brick
 (in seconds).
 
-For example, if you want to make one step every 1.5 seconds, you can set 
-the time base to 15 and the velocity to 10. Now the velocity is 
+For example, if you want to make one step every 1.5 seconds, you can set
+the time base to 15 and the velocity to 10. Now the velocity is
 10steps/15s = 1steps/1.5s.
 
 The default value is 1.
@@ -1256,7 +1256,7 @@ Setzt die Zeitbasis der Geschwindigkeit und Beschleunigung des Stepper Brick
 (in Sekunden).
 
 Beispiel: Wenn aller 1,5 Sekunden ein Schritt gefahren werden soll, kann
-die Zeitbasis auf 15 und die Geschwindigkeit auf 10 gesetzt werden. Damit ist die 
+die Zeitbasis auf 15 und die Geschwindigkeit auf 10 gesetzt werden. Damit ist die
 Geschwindigkeit 10Schritte/15s = 1Schritt/1,5s.
 
 Der Standardwert ist 1.
@@ -1396,13 +1396,13 @@ com['packets'].append({
 'doc': ['c', {
 'en':
 """
-This callback is triggered whenever the Stepper Brick enters a new state. 
+This callback is triggered whenever the Stepper Brick enters a new state.
 It returns the new state as well as the previous state.
 """,
 'de':
 """
 Dieser Callback wird immer dann ausgelöst wenn der Stepper Brick einen
-neuen Zustand erreicht. Es wird sowohl der neue wie auch der alte Zustand 
+neuen Zustand erreicht. Es wird sowohl der neue wie auch der alte Zustand
 zurückgegeben.
 """
 }]

@@ -143,13 +143,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn die Intensität *außerhalb* der min und max Werte ist"
  "'i'",    "Callback wird ausgelöst wenn die Intensität *innerhalb* der min und max Werte ist"
  "'<'",    "Callback wird ausgelöst wenn die Intensität kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn die Intensität größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0).
 """
 }]
@@ -200,11 +200,11 @@ The default value is 100.
 Setzt die Periode in ms mit welcher der Schwellwert-Callback
 
 * :cb:`Intensity Reached`
- 
-ausgelöst wird, wenn der Schwellwert 
+
+ausgelöst wird, wenn der Schwellwert
 
 * :func:`Set Intensity Callback Threshold`
- 
+
 weiterhin erreicht bleibt.
 
 Der Standardwert ist 100.
@@ -273,7 +273,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`Set Intensity Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die gemessene Schallintensität.
 

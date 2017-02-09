@@ -50,7 +50,7 @@ wavelengths:
    :align: center
    :target: ../../_images/Bricklets/bricklet_color_wavelength_chart_600.jpg
 
-If you want to get the color periodically, it is recommended 
+If you want to get the color periodically, it is recommended
 to use the :cb:`Color` callback and set the period with
 :func:`Set Color Callback Period`.
 """,
@@ -164,13 +164,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn die Temperatur *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn die Temperatur *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn die Temperatur kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn die Temperatur größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0, 0, 0, 0, 0, 0, 0).
 """
 }]
@@ -227,11 +227,11 @@ The default value is 100.
 Setzt die Periode in ms mit welcher die Schwellwert Callback
 
 * :cb:`Color Reached`
- 
-ausgelöst wird, wenn der Schwellwert 
+
+ausgelöst wird, wenn der Schwellwert
 
 * :func:`Set Color Callback Threshold`
- 
+
 weiterhin erreicht bleibt.
 
 Der Standardwert ist 100.
@@ -307,7 +307,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`Set Color Callback Threshold` gesetzt, erreicht wird.
 Der :word:`parameter` ist die Farbe des Sensors als RGBC.
 

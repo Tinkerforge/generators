@@ -34,7 +34,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the measured CO2 concentration. The value is in 
+Returns the measured CO2 concentration. The value is in
 `ppm (parts per million) <https://en.wikipedia.org/wiki/Parts-per_notation>`__
 and between 0 to 10000.
 

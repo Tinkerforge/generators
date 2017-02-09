@@ -39,7 +39,7 @@ com['packets'].append({
 Returns the acceleration in x, y and z direction. The values
 are given in g/1000 (1g = 9.80665m/s²), not to be confused with grams.
 
-If you want to get the acceleration periodically, it is recommended 
+If you want to get the acceleration periodically, it is recommended
 to use the :cb:`Acceleration` callback and set the period with
 :func:`Set Acceleration Callback Period`.
 """,
@@ -141,13 +141,13 @@ Die folgenden Optionen sind möglich:
 .. csv-table::
  :header: "Option", "Beschreibung"
  :widths: 10, 100
- 
+
  "'x'",    "Callback ist inaktiv"
  "'o'",    "Callback wird ausgelöst wenn die Beschleunigung *außerhalb* des min und max Wertes ist"
  "'i'",    "Callback wird ausgelöst wenn die Beschleunigung *innerhalb* des min und max Wertes ist"
  "'<'",    "Callback wird ausgelöst wenn die Beschleunigung kleiner als der min Wert ist (max wird ignoriert)"
  "'>'",    "Callback wird ausgelöst wenn die Beschleunigung größer als der min Wert ist (max wird ignoriert)"
- 
+
 Der Standardwert ist ('x', 0, 0, 0, 0, 0, 0, 0, 0).
 """
 }]
@@ -202,11 +202,11 @@ The default value is 100.
 Setzt die Periode in ms mit welcher die Schwellwert Callback
 
 * :cb:`Acceleration Reached`
- 
-ausgelöst wird, wenn der Schwellwert 
+
+ausgelöst wird, wenn der Schwellwert
 
 * :func:`Set Acceleration Callback Threshold`
- 
+
 weiterhin erreicht bleibt.
 
 Der Standardwert ist 100.
@@ -282,7 +282,7 @@ Possible values are:
 * Full scale range of -2G to +2G up to -16G to +16G.
 * Filter bandwidth between 50Hz and 800Hz.
 
-Decreasing data rate or full scale range will also decrease the noise on 
+Decreasing data rate or full scale range will also decrease the noise on
 the data.
 
 The default values are 100Hz data rate, -4G to +4G range and 200Hz
@@ -440,7 +440,7 @@ with the period as set by :func:`Set Debounce Period`.
 """,
 'de':
 """
-Dieser Callback wird ausgelöst wenn der Schwellwert, wie von 
+Dieser Callback wird ausgelöst wenn der Schwellwert, wie von
 :func:`Set Acceleration Callback Threshold` gesetzt, erreicht wird.
 Die :word:`parameter` sind die Beschleunigungen der X-, Y- und Z-Achse.
 

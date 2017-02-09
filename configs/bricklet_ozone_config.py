@@ -34,7 +34,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Returns the measured ozone concentration. The value is in 
+Returns the measured ozone concentration. The value is in
 `ppb (parts per billion) <https://en.wikipedia.org/wiki/Parts-per_notation>`__
 and between 0 to 250.
 

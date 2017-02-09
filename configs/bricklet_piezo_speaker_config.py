@@ -34,7 +34,7 @@ com['packets'].append({
 'doc': ['bf', {
 'en':
 """
-Beeps with the given frequency for the duration in ms. For example: 
+Beeps with the given frequency for the duration in ms. For example:
 If you set a duration of 1000, with a frequency value of 2000
 the piezo buzzer will beep for one second with a frequency of
 approximately 2 kHz.
@@ -50,9 +50,9 @@ the best possible match by applying the calibration (see :func:`Calibrate`).
 """,
 'de':
 """
-Erzeugt einen Piepton mit der gegebenen Frequenz für die angegebene Dauer in ms. 
-Beispiel: Wenn *duration* auf 1000 und *frequency* auf 2000 gesetzt wird, 
-erzeugt der Piezosummer einen Piepton für eine Sekunde mit einer Frequenz 
+Erzeugt einen Piepton mit der gegebenen Frequenz für die angegebene Dauer in ms.
+Beispiel: Wenn *duration* auf 1000 und *frequency* auf 2000 gesetzt wird,
+erzeugt der Piezosummer einen Piepton für eine Sekunde mit einer Frequenz
 von ca. 2 kHz.
 
 .. versionchanged:: 2.0.2$nbsp;(Plugin)
@@ -63,7 +63,7 @@ von ca. 2 kHz.
 Das *frequency* Parameter kann Werte von 585 bis 7100 annehmen.
 
 Das Piezo Speaker Bricklet kann die angegebenen Frequenzen nur approximieren,
-es wählt die bestmögliche Zuordnung anhand der Kalibrierung 
+es wählt die bestmögliche Zuordnung anhand der Kalibrierung
 (siehe :func:`Calibrate`).
 """
 }]
@@ -84,7 +84,7 @@ for *dits*, *dahs* and *pauses*. Every other character is ignored.
 The second parameter is the frequency (see :func:`Beep`).
 
 For example: If you set the string "...---...", the piezo buzzer will beep
-nine times with the durations "short short short long long long short 
+nine times with the durations "short short short long long long short
 short short".
 
 The maximum string size is 60.
